@@ -17,6 +17,8 @@ bin_PROGRAMS =						\
 gcm_import_SOURCES =					\
 	egg-debug.c					\
 	egg-debug.h					\
+	gcm-profile.c					\
+	gcm-profile.h					\
 	gcm-import.c
 
 gcm_import_LDADD =					\
