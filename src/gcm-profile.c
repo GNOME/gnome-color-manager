@@ -33,6 +33,8 @@
 #include <glib-object.h>
 #include <math.h>
 
+#include "egg-debug.h"
+
 #include "gcm-profile.h"
 
 static void     gcm_profile_finalize	(GObject     *object);
@@ -176,7 +178,7 @@ gcm_parser_load_icc_vcgt_formula (GcmProfile *profile, const gchar *data, gsize 
 	gboolean ret = FALSE;
 	GcmClutData *ramp_data;
 
-	g_debug ("loading a formula encoded gamma table");
+	egg_debug ("loading a formula encoded gamma table");
 
 	/* just load in data into a temporary array */
 	profile->priv->ramp_data = g_new0 (GcmClutData, 4);
@@ -197,15 +199,15 @@ gcm_parser_load_icc_vcgt_formula (GcmProfile *profile, const gchar *data, gsize 
 
 	/* check if valid */
 	if (ramp_data[0].red / 65536.0 > 5.0 || ramp_data[0].green / 65536.0 > 5.0 || ramp_data[0].blue / 65536.0 > 5.0) {
-		g_warning ("Gamma values out of range: [R:%u G:%u B:%u]", ramp_data[0].red, ramp_data[0].green, ramp_data[0].blue);
+		egg_warning ("Gamma values out of range: [R:%u G:%u B:%u]", ramp_data[0].red, ramp_data[0].green, ramp_data[0].blue);
 		goto out;
 	}
 	if (ramp_data[1].red / 65536.0 >= 1.0 || ramp_data[1].green / 65536.0 >= 1.0 || ramp_data[1].blue / 65536.0 >= 1.0) {
-		g_warning ("Gamma min limit out of range: [R:%u G:%u B:%u]", ramp_data[1].red, ramp_data[1].green, ramp_data[1].blue);
+		egg_warning ("Gamma min limit out of range: [R:%u G:%u B:%u]", ramp_data[1].red, ramp_data[1].green, ramp_data[1].blue);
 		goto out;
 	}
 	if (ramp_data[2].red / 65536.0 > 1.0 || ramp_data[2].green / 65536.0 > 1.0 || ramp_data[2].blue / 65536.0 > 1.0) {
-		g_warning ("Gamma max limit out of range: [R:%u G:%u B:%u]", ramp_data[2].red, ramp_data[2].green, ramp_data[2].blue);
+		egg_warning ("Gamma max limit out of range: [R:%u G:%u B:%u]", ramp_data[2].red, ramp_data[2].green, ramp_data[2].blue);
 		goto out;
 	}
 
@@ -230,7 +232,7 @@ gcm_parser_load_icc_vcgt_table (GcmProfile *profile, const gchar *data, gsize of
 	guint i;
 	GcmClutData *ramp_data;
 
-	g_debug ("loading a table encoded gamma table");
+	egg_debug ("loading a table encoded gamma table");
 
 	num_channels = gcm_parser_unencode_16 (data, offset + GCM_VCGT_TABLE_NUM_CHANNELS);
 	num_entries = gcm_parser_unencode_16 (data, offset + GCM_VCGT_TABLE_NUM_ENTRIES);
@@ -238,25 +240,25 @@ gcm_parser_load_icc_vcgt_table (GcmProfile *profile, const gchar *data, gsize of
 
 	/* work-around for AdobeGamma-Profiles (taken from xcalib) */
 	if (profile->priv->adobe_gamma_workaround) {
-		g_debug ("Working around AdobeGamma profile");
+		egg_debug ("Working around AdobeGamma profile");
 		entry_size = 2;
 		num_entries = 256;
 		num_channels = 3;
 	}
 
-	g_debug ("channels: %u", num_channels);
-	g_debug ("entry size: %ubits", entry_size * 8);
-	g_debug ("entries/channel: %u", num_entries);
+	egg_debug ("channels: %u", num_channels);
+	egg_debug ("entry size: %ubits", entry_size * 8);
+	egg_debug ("entries/channel: %u", num_entries);
 
 	/* only able to parse RGB data */
 	if (num_channels != 3) {
-		g_warning ("cannot parse non RGB entries");
+		egg_warning ("cannot parse non RGB entries");
 		goto out;
 	}
 
 	/* bigger than will fit in 16 bits? */
 	if (entry_size > 2) {
-		g_warning ("cannot parse large entries");
+		egg_warning ("cannot parse large entries");
 		goto out;
 	}
 
@@ -300,7 +302,7 @@ gcm_parser_load_icc_vcgt (GcmProfile *profile, const gchar *data, gsize offset)
 	/* check we have a VCGT block */
 	tag_id = gcm_parser_unencode_32 (data, offset);
 	if (tag_id != GCM_TAG_ID_VCGT) {
-		g_warning ("invalid content of table vcgt, starting with %x", tag_id);
+		egg_warning ("invalid content of table vcgt, starting with %x", tag_id);
 		goto out;
 	}
 
@@ -316,7 +318,7 @@ gcm_parser_load_icc_vcgt (GcmProfile *profile, const gchar *data, gsize offset)
 	}
 
 	/* we didn't understand the encoding */
-	g_warning ("gamma type encoding not recognised");
+	egg_warning ("gamma type encoding not recognised");
 out:
 	return ret;
 }
@@ -341,7 +343,7 @@ gcm_profile_load (GcmProfile *profile, const gchar *filename, GError **error)
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
 	g_return_val_if_fail (filename != NULL, FALSE);
 
-	g_debug ("loading %s", filename);
+	egg_debug ("loading %s", filename);
 
 	/* load files */
 	ret = g_file_get_contents (filename, &data, &length, &error_local);
@@ -353,25 +355,25 @@ gcm_profile_load (GcmProfile *profile, const gchar *filename, GError **error)
 
 	/* get the number of tags in the file */
 	num_tags = gcm_parser_unencode_32 (data, GCM_NUMTAGS);
-	g_debug ("number of tags: %i", num_tags);
+	egg_debug ("number of tags: %i", num_tags);
 
 	for (i=0; i<num_tags; i++) {
 		offset = GCM_TAG_WIDTH * i;
 		tag_id = gcm_parser_unencode_32 (data, GCM_BODY + offset + GCM_TAG_ID);
 		tag_offset = gcm_parser_unencode_32 (data, GCM_BODY + offset + GCM_TAG_OFFSET);
 		tag_size = gcm_parser_unencode_32 (data, GCM_BODY + offset + GCM_TAG_SIZE);
-		g_debug ("tag %x (%s) is present at %u with size %u", tag_id, data+offset, offset, tag_size);
+		egg_debug ("tag %x (%s) is present at %u with size %u", tag_id, data+offset, offset, tag_size);
 
 		if (tag_id == GCM_TAG_ID_DESC) {
-			g_debug ("found DESC: %s", data+tag_offset+12);
+			egg_debug ("found DESC: %s", data+tag_offset+12);
 			profile->priv->description = g_strdup (data+tag_offset+12);
 		}
 		if (tag_id == GCM_TAG_ID_TEXT) {
-			g_debug ("found TEXT: %s", data+tag_offset+8);
+			egg_debug ("found TEXT: %s", data+tag_offset+8);
 			profile->priv->copyright = g_strdup (data+tag_offset+8);
 		}
 		if (tag_id == GCM_TAG_ID_MLUT) {
-			g_debug ("found MLUT which is a fixed size block");
+			egg_debug ("found MLUT which is a fixed size block");
 			ret = gcm_parser_load_icc_mlut (profile, data, tag_offset);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load mlut");
@@ -379,7 +381,7 @@ gcm_profile_load (GcmProfile *profile, const gchar *filename, GError **error)
 			}
 		}
 		if (tag_id == GCM_TAG_ID_VCGT) {
-			g_debug ("found VCGT");
+			egg_debug ("found VCGT");
 			if (tag_size == 1584)
 				profile->priv->adobe_gamma_workaround = TRUE;
 			ret = gcm_parser_load_icc_vcgt (profile, data, tag_offset);
@@ -443,9 +445,9 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 			max_green = (gfloat) ramp_data[2].green / 65536.0;
 			max_blue = (gfloat) ramp_data[2].blue / 65536.0;
 
-			g_debug ("Red	 Gamma:%f \tMin:%f \tMax:%f", gamma_red, min_red, max_red);
-			g_debug ("Green  Gamma:%f \tMin:%f \tMax:%f", gamma_green, min_green, max_green);
-			g_debug ("Blue 	 Gamma:%f \tMin:%f \tMax:%f", gamma_blue, min_blue, max_blue);
+			egg_debug ("Red	 Gamma:%f \tMin:%f \tMax:%f", gamma_red, min_red, max_red);
+			egg_debug ("Green  Gamma:%f \tMin:%f \tMax:%f", gamma_green, min_green, max_green);
+			egg_debug ("Blue 	 Gamma:%f \tMin:%f \tMax:%f", gamma_blue, min_blue, max_blue);
 
 			gamma_data[i].red = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_red) * (max_red - min_red) + min_red);
 			gamma_data[i].green = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_green) * (max_green - min_green) + min_green);

@@ -1,4 +1,6 @@
 SUBDIRS = 						\
+	po						\
+	data						\
 	src
 
 snapshot:

@@ -18,19 +18,11 @@ test -z "$srcdir" && srcdir=.
     exit 1
 }
 
-if ([ -z "$*" ] && [ "x$NOCONFIGURE" = "x" ]) ; then
-  echo "**Warning**: I am going to run 'configure' with no arguments."
-  echo "If you wish to pass any to it, please specify them on the"
-  echo "'$0' command line."
-  echo
-fi
+which gnome-autogen.sh || {
+    echo "You need to install gnome-common!"
+    exit 1
+}
 
-(cd $srcdir && autoreconf --force --install) || exit 1
+(cd $srcdir && gtkdocize) || exit 1
 
-if test x$NOCONFIGURE = x; then
-  echo Running $srcdir/configure $conf_flags "$@" ...
-  $srcdir/configure $conf_flags "$@" \
-  && echo Now type \`make\' to compile. || exit 1
-else
-  echo Skipping configure process.
-fi
+REQUIRED_AUTOMAKE_VERSION=1.7 GNOME_DATADIR="$gnome_datadir" USE_GNOME2_MACROS=1 USE_COMMON_DOC_BUILD=yes . gnome-autogen.sh
