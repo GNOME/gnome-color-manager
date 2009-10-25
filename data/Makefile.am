@@ -5,8 +5,12 @@ desktop_in_files =					\
 
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
+pkgdata_DATA =						\
+	gcm-prefs.ui
+
 EXTRA_DIST =						\
-	$(desktop_in_files)
+	$(desktop_in_files)				\
+	$(pkgdata_DATA)
 
 clean-local :
 	rm -f *~
