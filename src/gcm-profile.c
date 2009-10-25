@@ -21,11 +21,10 @@
 
 /**
  * SECTION:gcm-profile
- * @short_description: Profile object
+ * @short_description: A parser object that understands the ICC profile data format.
  *
- * This GObject represents a profile from a transaction.
- * These objects represent single items of data from the transaction, and are
- * often present in lists (#GcmResults) or just refcounted in client programs.
+ * This object is a simple parser for the ICC binary profile data. If only understands
+ * a subset of the ICC profile, just enought to get some metadata and the LUT.
  */
 
 #include "config.h"
