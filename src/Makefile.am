@@ -12,7 +12,27 @@ INCLUDES =						\
 	-DEGG_CONSOLE="\"GCM_CONSOLE\""
 
 bin_PROGRAMS =						\
+	gcm-apply					\
 	gcm-import
+
+gcm_apply_SOURCES =					\
+	egg-debug.c					\
+	egg-debug.h					\
+	gcm-utils.c					\
+	gcm-utils.h					\
+	gcm-clut.c					\
+	gcm-clut.h					\
+	gcm-profile.c					\
+	gcm-profile.h					\
+	gcm-apply.c
+
+gcm_apply_LDADD =					\
+	$(GLIB_LIBS)					\
+	$(GNOMEDESKTOP_LIBS)				\
+	$(GTK_LIBS)
+
+gcm_apply_CFLAGS =					\
+	$(WARNINGFLAGS_C)
 
 gcm_import_SOURCES =					\
 	egg-debug.c					\

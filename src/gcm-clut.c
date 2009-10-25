@@ -155,7 +155,7 @@ out:
 gboolean
 gcm_clut_save_to_config (GcmClut *clut, const gchar *filename, const gchar *id, GError **error)
 {
-	GKeyFile *file;
+	GKeyFile *file = NULL;
 	gboolean ret;
 	gchar *data;
 
@@ -189,7 +189,8 @@ gcm_clut_save_to_config (GcmClut *clut, const gchar *filename, const gchar *id, 
 	if (!ret)
 		goto out;
 out:
-	g_key_file_free (file);
+	if (file != NULL)
+		g_key_file_free (file);
 	return ret;
 }
 
