@@ -1,0 +1,58 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+ *
+ * Copyright (C) 2009 Richard Hughes <richard@hughsie.com>
+ *
+ * Licensed under the GNU General Public License Version 2
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more profile.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+#include <glib/gi18n.h>
+#include <gtk/gtk.h>
+#include <math.h>
+
+#include "egg-debug.h"
+
+#include "gcm-utils.h"
+
+/**
+ * main:
+ **/
+int
+main (int argc, char **argv)
+{
+//	gboolean ret;
+	gboolean verbose = FALSE;
+	guint retval = 0;
+//	GError *error = NULL;
+	GOptionContext *context;
+
+	const GOptionEntry options[] = {
+		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
+			"Show extra debugging information", NULL },
+		{ NULL}
+	};
+
+	gtk_init (&argc, &argv);
+
+	context = g_option_context_new ("gnome-color-manager prefs program");
+	g_option_context_add_main_entries (context, options, NULL);
+	g_option_context_parse (context, &argc, &argv, NULL);
+	g_option_context_free (context);
+
+	egg_debug_init (verbose);
+	return retval;
+}
+

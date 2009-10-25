@@ -13,6 +13,7 @@ INCLUDES =						\
 
 bin_PROGRAMS =						\
 	gcm-apply					\
+	gcm-prefs					\
 	gcm-import
 
 gcm_apply_SOURCES =					\
@@ -47,6 +48,19 @@ gcm_import_LDADD =					\
 	$(GTK_LIBS)
 
 gcm_import_CFLAGS =					\
+	$(WARNINGFLAGS_C)
+
+gcm_prefs_SOURCES =					\
+	egg-debug.c					\
+	egg-debug.h					\
+	gcm-prefs.c
+
+gcm_prefs_LDADD =					\
+	$(GLIB_LIBS)					\
+	$(GNOMEDESKTOP_LIBS)				\
+	$(GTK_LIBS)
+
+gcm_prefs_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 clean-local:
