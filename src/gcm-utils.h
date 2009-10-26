@@ -32,6 +32,8 @@
 #include "gcm-clut.h"
 
 #define GCM_PROFILE_LOCATION "./.gnome2/gnome-color-manager/config.dat"
+#define GCM_STOCK_ICON		"mail-attachment"
+#define GCM_PROFILE_PATH	"/.color/icc"
 
 gchar		*gcm_utils_get_output_name		(GnomeRROutput		*output);
 guint		 gcm_utils_get_gamma_size		(GnomeRRCrtc		*crtc,

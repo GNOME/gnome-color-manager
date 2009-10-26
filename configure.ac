@@ -96,6 +96,7 @@ dnl ---------------------------------------------------------------------------
 GLIB_REQUIRED=2.14.0
 GTK_REQUIRED=2.14.0
 GNOMEDESKTOP_REQUIRED=2.14.0
+UNIQUE_REQUIRED=1.0.0
 
 dnl ---------------------------------------------------------------------------
 dnl - Check library dependencies
@@ -111,6 +112,10 @@ AC_SUBST(GTK_LIBS)
 PKG_CHECK_MODULES(GNOMEDESKTOP, gnome-desktop-2.0 >= $GNOMEDESKTOP_REQUIRED)
 AC_SUBST(GNOMEDESKTOP_CFLAGS)
 AC_SUBST(GNOMEDESKTOP_LIBS)
+
+PKG_CHECK_MODULES(UNIQUE, unique-1.0 >= $UNIQUE_REQUIRED)
+AC_SUBST(UNIQUE_CFLAGS)
+AC_SUBST(UNIQUE_LIBS)
 
 dnl ---------------------------------------------------------------------------
 dnl - Makefiles, etc.

@@ -2,10 +2,12 @@ INCLUDES =						\
 	$(GLIB_CFLAGS)					\
 	$(GTK_CFLAGS)					\
 	$(GNOMEDESKTOP_CFLAGS)				\
+	$(UNIQUE_CFLAGS)				\
 	-DBINDIR=\"$(bindir)\"			 	\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 		\
 	-DVERSION="\"$(VERSION)\"" 			\
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"		\
+	-DGCM_DATA=\"$(pkgdatadir)\"			\
 	-DEGG_LOG_FILE=\""$(GCM_LOG_DIR)/gcm"\"		\
 	-DEGG_VERBOSE="\"GCM_VERBOSE\""			\
 	-DEGG_LOGGING="\"GCM_LOGGING\""			\
@@ -58,6 +60,7 @@ gcm_prefs_SOURCES =					\
 gcm_prefs_LDADD =					\
 	$(GLIB_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
+	$(UNIQUE_LIBS)					\
 	$(GTK_LIBS)
 
 gcm_prefs_CFLAGS =					\

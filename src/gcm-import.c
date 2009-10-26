@@ -26,9 +26,7 @@
 #include "egg-debug.h"
 
 #include "gcm-profile.h"
-
-#define GCM_STOCK_ICON		"mail-attachment"
-#define GCM_PROFILE_PATH	"/.color/icc"
+#include "gcm-utils.h"
 
 /**
  * gcm_import_get_destination:
