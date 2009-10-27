@@ -562,20 +562,14 @@ main (int argc, char **argv)
 	gtk_scale_add_mark (GTK_SCALE (widget), 1.0f, GTK_POS_TOP, "");
 	gtk_scale_add_mark (GTK_SCALE (widget), 1.8f, GTK_POS_TOP, "");
 	gtk_scale_add_mark (GTK_SCALE (widget), 2.2f, GTK_POS_TOP, "");
-	g_signal_connect (widget, "value-changed",
-			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
 
 	/* set ranges */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_brightness"));
 	gtk_range_set_range (GTK_RANGE (widget), 0.0f, 99.0f);
-	g_signal_connect (widget, "value-changed",
-			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
 
 	/* set ranges */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
 	gtk_range_set_range (GTK_RANGE (widget), 1.0f, 100.0f);
-	g_signal_connect (widget, "value-changed",
-			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
 
 	/* get screen */
         rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
@@ -601,6 +595,17 @@ main (int argc, char **argv)
 		egg_debug ("Setting xid %i", xid);
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), xid);
 	}
+
+	/* connect up sliders */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
+	g_signal_connect (widget, "value-changed",
+			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_brightness"));
+	g_signal_connect (widget, "value-changed",
+			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
+	g_signal_connect (widget, "value-changed",
+			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
 
 	gtk_widget_show (main_window);
 

@@ -201,9 +201,23 @@ gcm_clut_load_from_config (GcmClut *clut, GError **error)
 	/* load data */
 	g_free (clut->priv->profile);
 	clut->priv->profile = g_key_file_get_string (file, clut->priv->id, "profile", NULL);
-	clut->priv->gamma = g_key_file_get_double (file, clut->priv->id, "gamma", NULL);
-	clut->priv->brightness = g_key_file_get_double (file, clut->priv->id, "brightness", NULL);
-	clut->priv->contrast = g_key_file_get_double (file, clut->priv->id, "contrast", NULL);
+	clut->priv->gamma = g_key_file_get_double (file, clut->priv->id, "gamma", &error_local);
+	if (error_local != NULL) {
+		clut->priv->gamma = gconf_client_get_float (clut->priv->gconf_client, "/apps/gnome-color-manager/default_gamma", NULL);
+		if (clut->priv->gamma < 0.1f)
+			clut->priv->gamma = 1.0f;
+		g_clear_error (&error_local);
+	}
+	clut->priv->brightness = g_key_file_get_double (file, clut->priv->id, "brightness", &error_local);
+	if (error_local != NULL) {
+		clut->priv->brightness = 0.0f;
+		g_clear_error (&error_local);
+	}
+	clut->priv->contrast = g_key_file_get_double (file, clut->priv->id, "contrast", &error_local);
+	if (error_local != NULL) {
+		clut->priv->contrast = 100.0f;
+		g_clear_error (&error_local);
+	}
 
 	/* load this */
 	ret = gcm_clut_load_from_profile (clut, &error_local);
@@ -313,6 +327,7 @@ gcm_clut_get_array (GcmClut *clut)
 
 	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
 	g_return_val_if_fail (clut->priv->size != 0, FALSE);
+	g_return_val_if_fail (clut->priv->gamma != 0, FALSE);
 
 	min = clut->priv->brightness / 100.0f;
 	max = (1.0f - min) * (clut->priv->contrast / 100.0f) + min;
@@ -473,7 +488,7 @@ gcm_clut_class_init (GcmClutClass *klass)
 	 * GcmClut:gamma:
 	 */
 	pspec = g_param_spec_float ("gamma", NULL, NULL,
-				    0.0, G_MAXFLOAT, 1.0,
+				    0.0, G_MAXFLOAT, 1.01,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_GAMMA, pspec);
 
@@ -481,7 +496,7 @@ gcm_clut_class_init (GcmClutClass *klass)
 	 * GcmClut:brightness:
 	 */
 	pspec = g_param_spec_float ("brightness", NULL, NULL,
-				    0.0, G_MAXFLOAT, 1.0,
+				    0.0, G_MAXFLOAT, 1.02,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_BRIGHTNESS, pspec);
 
@@ -489,7 +504,7 @@ gcm_clut_class_init (GcmClutClass *klass)
 	 * GcmClut:contrast:
 	 */
 	pspec = g_param_spec_float ("contrast", NULL, NULL,
-				    0.0, G_MAXFLOAT, 1.0,
+				    0.0, G_MAXFLOAT, 1.03,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CONTRAST, pspec);
 
