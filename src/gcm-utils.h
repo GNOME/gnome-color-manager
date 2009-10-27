@@ -31,8 +31,6 @@
 
 #include "gcm-clut.h"
 
-//TODO: needs to be a function
-#define GCM_PROFILE_LOCATION	"./.gnome2/gnome-color-manager/config.dat"
 #define GCM_STOCK_ICON		"video-display"
 #define GCM_PROFILE_PATH	"/.color/icc"
 
@@ -43,10 +41,8 @@ gboolean	 gcm_utils_set_crtc_gamma		(GnomeRRCrtc		*crtc,
 							 GcmClut		*clut,
 							 GError			**error);
 gboolean	 gcm_utils_set_output_gamma		(GnomeRROutput		*output,
-							 const gchar		*config,
 							 GError			**error);
 GcmClut		*gcm_utils_get_clut_for_output		(GnomeRROutput		*output,
-							 const gchar		*config,
 							 GError			**error);
 GPtrArray	*gcm_utils_get_profile_filenames	(void);
 

@@ -143,7 +143,7 @@ out:
  * gcm_utils_get_clut_for_output:
  **/
 GcmClut *
-gcm_utils_get_clut_for_output (GnomeRROutput *output, const gchar *config, GError **error)
+gcm_utils_get_clut_for_output (GnomeRROutput *output, GError **error)
 {
 	gchar *name = NULL;
 	gboolean connected;
@@ -182,10 +182,10 @@ gcm_utils_get_clut_for_output (GnomeRROutput *output, const gchar *config, GErro
 		      NULL);
 
 	/* lookup from config file */
-	ret = gcm_clut_load_from_config (clut, config, &error_local);
+	ret = gcm_clut_load_from_config (clut, &error_local);
 	if (!ret) {
 		/* this is not fatal */
-		egg_debug ("failed to get values from %s for %s: %s", config, name, error_local->message);
+		egg_debug ("failed to get values for %s: %s", name, error_local->message);
 		g_error_free (error_local);
 	}
 out:
@@ -199,14 +199,14 @@ out:
  * Return value: %TRUE for success;
  **/
 gboolean
-gcm_utils_set_output_gamma (GnomeRROutput *output, const gchar *config, GError **error)
+gcm_utils_set_output_gamma (GnomeRROutput *output, GError **error)
 {
 	gboolean ret = FALSE;
 	GcmClut *clut = NULL;
 	GnomeRRCrtc *crtc;
 
 	/* get CLUT */
-	clut = gcm_utils_get_clut_for_output (output, config, error);
+	clut = gcm_utils_get_clut_for_output (output, error);
 	if (clut == NULL)
 		goto out;
 

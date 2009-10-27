@@ -224,7 +224,7 @@ gcm_prefs_add_device (GnomeRROutput *output)
 	name = gcm_utils_get_output_name (output);
 
 	/* create a clut for this output */
-	clut = gcm_utils_get_clut_for_output (output, GCM_PROFILE_LOCATION, &error);
+	clut = gcm_utils_get_clut_for_output (output, &error);
 	if (clut == NULL) {
 		egg_warning ("failed to add device: %s", error->message);
 		g_error_free (error);
@@ -373,7 +373,7 @@ gcm_prefs_history_type_combo_changed_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* save new profile */
-	ret = gcm_clut_save_to_config (current_clut, GCM_PROFILE_LOCATION, &error);
+	ret = gcm_clut_save_to_config (current_clut, &error);
 	if (!ret) {
 		egg_warning ("failed to save config: %s", error->message);
 		g_error_free (error);
@@ -388,7 +388,7 @@ gcm_prefs_history_type_combo_changed_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* actually set the new profile */
-	ret = gcm_utils_set_output_gamma (output, GCM_PROFILE_LOCATION, &error);
+	ret = gcm_utils_set_output_gamma (output, &error);
 	if (!ret) {
 		egg_warning ("failed to set output gamma: %s", error->message);
 		g_error_free (error);
@@ -428,7 +428,7 @@ gcm_prefs_slider_changed_cb (GtkRange *range, gpointer *user_data)
 		      NULL);
 
 	/* save new profile */
-	ret = gcm_clut_save_to_config (current_clut, GCM_PROFILE_LOCATION, &error);
+	ret = gcm_clut_save_to_config (current_clut, &error);
 	if (!ret) {
 		egg_warning ("failed to save config: %s", error->message);
 		g_error_free (error);
@@ -443,7 +443,7 @@ gcm_prefs_slider_changed_cb (GtkRange *range, gpointer *user_data)
 	}
 
 	/* actually set the new profile */
-	ret = gcm_utils_set_output_gamma (output, GCM_PROFILE_LOCATION, &error);
+	ret = gcm_utils_set_output_gamma (output, &error);
 	if (!ret) {
 		egg_warning ("failed to set output gamma: %s", error->message);
 		g_error_free (error);
@@ -560,6 +560,7 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
 	gtk_range_set_range (GTK_RANGE (widget), 0.1f, 5.0f);
 	gtk_scale_add_mark (GTK_SCALE (widget), 1.0f, GTK_POS_TOP, "");
+	gtk_scale_add_mark (GTK_SCALE (widget), 1.8f, GTK_POS_TOP, "");
 	gtk_scale_add_mark (GTK_SCALE (widget), 2.2f, GTK_POS_TOP, "");
 	g_signal_connect (widget, "value-changed",
 			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);

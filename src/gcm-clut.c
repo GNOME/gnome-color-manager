@@ -154,18 +154,37 @@ out:
 }
 
 /**
+ * gcm_clut_get_default_config_location:
+ **/
+static gchar *
+gcm_clut_get_default_config_location (void)
+{
+	gchar *filename;
+	const gchar *home;
+
+	/* create default path */
+	home = g_get_home_dir ();
+	filename = g_build_filename (home, ".gnome2", "gnome-color-manager", "config.dat", NULL);
+
+	return filename;
+}
+
+/**
  * gcm_clut_load_from_config:
  **/
 gboolean
-gcm_clut_load_from_config (GcmClut *clut, const gchar *filename, GError **error)
+gcm_clut_load_from_config (GcmClut *clut, GError **error)
 {
 	gboolean ret;
 	GKeyFile *file;
 	GError *error_local = NULL;
+	gchar *filename = NULL;
 
 	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
 	g_return_val_if_fail (clut->priv->id != NULL, FALSE);
-	g_return_val_if_fail (filename != NULL, FALSE);
+
+	/* get default config */
+	filename = gcm_clut_get_default_config_location ();
 
 	/* load existing file */
 	file = g_key_file_new ();
@@ -193,6 +212,7 @@ gcm_clut_load_from_config (GcmClut *clut, const gchar *filename, GError **error)
 		goto out;
 	}
 out:
+	g_free (filename);
 	g_key_file_free (file);
 	return ret;
 }
@@ -201,21 +221,24 @@ out:
  * gcm_clut_save_to_config:
  **/
 gboolean
-gcm_clut_save_to_config (GcmClut *clut, const gchar *filename, GError **error)
+gcm_clut_save_to_config (GcmClut *clut, GError **error)
 {
 	GKeyFile *keyfile = NULL;
 	gboolean ret;
 	gchar *data;
 	gchar *dirname;
 	GFile *file = NULL;
+	gchar *filename = NULL;
 
 	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
 	g_return_val_if_fail (clut->priv->id != NULL, FALSE);
-	g_return_val_if_fail (filename != NULL, FALSE);
+
+	/* get default config */
+	filename = gcm_clut_get_default_config_location ();
 
 	/* directory exists? */
 	dirname = g_path_get_dirname (filename);
-	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
+	ret = g_file_test (dirname, G_FILE_TEST_IS_DIR);
 	if (!ret) {
 		file = g_file_new_for_path (dirname);
 		ret = g_file_make_directory_with_parents (file, NULL, error);
@@ -254,6 +277,7 @@ gcm_clut_save_to_config (GcmClut *clut, const gchar *filename, GError **error)
 	if (!ret)
 		goto out;
 out:
+	g_free (filename);
 	g_free (dirname);
 	if (file != NULL)
 		g_object_unref (file);
@@ -503,9 +527,9 @@ gcm_clut_init (GcmClut *clut)
 	clut->priv = GCM_CLUT_GET_PRIVATE (clut);
 	clut->priv->array = g_ptr_array_new_with_free_func (g_free);
 	clut->priv->profile = NULL;
-	clut->priv->gamma = G_MAXFLOAT;
-	clut->priv->brightness = G_MAXFLOAT;
-	clut->priv->contrast = G_MAXFLOAT;
+	clut->priv->gamma = 1.0f;
+	clut->priv->brightness = 0.0f;
+	clut->priv->contrast = 100.f;
 }
 
 /**

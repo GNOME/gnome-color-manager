@@ -72,7 +72,7 @@ main (int argc, char **argv)
 		connected = gnome_rr_output_is_connected (outputs[i]);
 		if (!connected)
 			continue;
-		ret = gcm_utils_set_output_gamma (outputs[i], GCM_PROFILE_LOCATION, &error);
+		ret = gcm_utils_set_output_gamma (outputs[i], &error);
 		if (!ret) {
 			retval = 1;
 			egg_warning ("failed to set gamma: %s", error->message);

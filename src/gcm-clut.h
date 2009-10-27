@@ -68,10 +68,8 @@ gboolean	 gcm_clut_set_from_data			(GcmClut		*clut,
 gboolean	 gcm_clut_load_from_profile		(GcmClut		*clut,
 							 GError			**error);
 gboolean	 gcm_clut_load_from_config		(GcmClut		*clut,
-							 const gchar		*filename,
 							 GError			**error);
 gboolean	 gcm_clut_save_to_config		(GcmClut		*clut,
-							 const gchar		*filename,
 							 GError			**error);
 GPtrArray	*gcm_clut_get_array			(GcmClut		*clut);
 void		 gcm_clut_print				(GcmClut		*clut);
