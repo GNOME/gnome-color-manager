@@ -3,6 +3,7 @@ INCLUDES =						\
 	$(GTK_CFLAGS)					\
 	$(GNOMEDESKTOP_CFLAGS)				\
 	$(UNIQUE_CFLAGS)				\
+	$(GCONF_CFLAGS)				\
 	-DBINDIR=\"$(bindir)\"			 	\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 		\
 	-DVERSION="\"$(VERSION)\"" 			\
@@ -36,6 +37,7 @@ gcm_apply_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
+	$(GCONF_LIBS)					\
 	$(GTK_LIBS)
 
 gcm_apply_CFLAGS =					\
@@ -48,6 +50,7 @@ gcm_import_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
+	$(GCONF_LIBS)					\
 	$(GTK_LIBS)
 
 gcm_import_CFLAGS =					\
@@ -61,6 +64,7 @@ gcm_prefs_LDADD =					\
 	$(GLIB_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(UNIQUE_LIBS)					\
+	$(GCONF_LIBS)					\
 	$(GTK_LIBS)
 
 gcm_prefs_CFLAGS =					\

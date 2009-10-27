@@ -32,6 +32,7 @@
 #include <glib-object.h>
 #include <math.h>
 #include <gio/gio.h>
+#include <gconf/gconf-client.h>
 
 #include "gcm-clut.h"
 #include "gcm-profile.h"
@@ -58,6 +59,7 @@ struct _GcmClutPrivate
 	gchar				*profile;
 	gchar				*description;
 	gchar				*copyright;
+	GConfClient			*gconf_client;
 };
 
 enum {
@@ -527,7 +529,12 @@ gcm_clut_init (GcmClut *clut)
 	clut->priv = GCM_CLUT_GET_PRIVATE (clut);
 	clut->priv->array = g_ptr_array_new_with_free_func (g_free);
 	clut->priv->profile = NULL;
-	clut->priv->gamma = 1.0f;
+	clut->priv->gconf_client = gconf_client_get_default ();
+	clut->priv->gamma = gconf_client_get_float (clut->priv->gconf_client, "/apps/gnome-color-manager/default_gamma", NULL);
+	if (clut->priv->gamma < 0.1f) {
+		egg_warning ("failed to get setup parameters");
+		clut->priv->gamma = 1.0f;
+	}
 	clut->priv->brightness = 0.0f;
 	clut->priv->contrast = 100.f;
 }
@@ -544,6 +551,7 @@ gcm_clut_finalize (GObject *object)
 	g_free (clut->priv->profile);
 	g_free (clut->priv->id);
 	g_ptr_array_unref (priv->array);
+	g_object_unref (clut->priv->gconf_client);
 
 	G_OBJECT_CLASS (gcm_clut_parent_class)->finalize (object);
 }

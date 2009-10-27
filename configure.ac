@@ -96,6 +96,7 @@ dnl ---------------------------------------------------------------------------
 GLIB_REQUIRED=2.14.0
 GTK_REQUIRED=2.14.0
 GNOMEDESKTOP_REQUIRED=2.14.0
+GCONF_REQUIRED=0.22
 UNIQUE_REQUIRED=1.0.0
 
 dnl ---------------------------------------------------------------------------
@@ -113,9 +114,17 @@ PKG_CHECK_MODULES(GNOMEDESKTOP, gnome-desktop-2.0 >= $GNOMEDESKTOP_REQUIRED)
 AC_SUBST(GNOMEDESKTOP_CFLAGS)
 AC_SUBST(GNOMEDESKTOP_LIBS)
 
+PKG_CHECK_MODULES(GCONF, \
+ gconf-2.0 >= $GCONF_REQUIRED)
+AC_SUBST(GCONF_CFLAGS)
+AC_SUBST(GCONF_LIBS)
+
 PKG_CHECK_MODULES(UNIQUE, unique-1.0 >= $UNIQUE_REQUIRED)
 AC_SUBST(UNIQUE_CFLAGS)
 AC_SUBST(UNIQUE_LIBS)
+
+AC_PATH_PROG(GCONFTOOL, gconftool-2)
+AM_GCONF_SOURCE_2
 
 dnl ---------------------------------------------------------------------------
 dnl - Makefiles, etc.
@@ -137,5 +146,6 @@ echo "
         compiler:                  ${CC}
         cflags:                    ${CFLAGS}
         cppflags:                  ${CPPFLAGS}
+        gconf-schema dir:          $GCONF_SCHEMA_FILE_DIR
 "
 
