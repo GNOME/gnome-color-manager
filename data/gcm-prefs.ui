@@ -28,10 +28,13 @@
                   <object class="GtkTreeView" id="treeview_devices">
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
+                    <property name="headers_visible">False</property>
                   </object>
                 </child>
               </object>
               <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
                 <property name="position">0</property>
               </packing>
             </child>
@@ -61,7 +64,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkComboBox" id="combobox1">
+                  <object class="GtkComboBox" id="combobox_profile">
                     <property name="visible">True</property>
                   </object>
                   <packing>
@@ -70,7 +73,7 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkTable" id="table2">
+                  <object class="GtkTable" id="table_details">
                     <property name="visible">True</property>
                     <property name="n_rows">2</property>
                     <property name="n_columns">2</property>
@@ -118,6 +121,7 @@
                             <property name="visible">True</property>
                             <property name="label">Long description about what the profile says</property>
                             <property name="use_markup">True</property>
+                            <property name="wrap">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
@@ -138,6 +142,7 @@
                             <property name="visible">True</property>
                             <property name="label">Usually non-free</property>
                             <property name="use_markup">True</property>
+                            <property name="wrap">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>

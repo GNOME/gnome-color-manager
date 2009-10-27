@@ -342,12 +342,13 @@ gcm_profile_load (GcmProfile *profile, const gchar *filename, GError **error)
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
 	g_return_val_if_fail (filename != NULL, FALSE);
 
-	egg_debug ("loading %s", filename);
+	egg_debug ("loading '%s'", filename);
 
 	/* load files */
 	ret = g_file_get_contents (filename, &data, &length, &error_local);
 	if (!ret) {
-		*error = g_error_new (1, 0, "failed to open file: %s", error_local->message);
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to load profile: %s", error_local->message);
 		g_error_free (error_local);
 		goto out;
 	}

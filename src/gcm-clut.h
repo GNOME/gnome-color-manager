@@ -65,16 +65,13 @@ GcmClut		*gcm_clut_new				(void);
 gboolean	 gcm_clut_set_from_data			(GcmClut		*clut,
 							 const GcmClutData	*data,
 							 guint			 size);
-gboolean	 gcm_clut_set_from_filename		(GcmClut		*clut,
-							 const gchar		*filename,
+gboolean	 gcm_clut_load_from_profile		(GcmClut		*clut,
 							 GError			**error);
 gboolean	 gcm_clut_load_from_config		(GcmClut		*clut,
 							 const gchar		*filename,
-							 const gchar		*id,
 							 GError			**error);
 gboolean	 gcm_clut_save_to_config		(GcmClut		*clut,
 							 const gchar		*filename,
-							 const gchar		*id,
 							 GError			**error);
 GPtrArray	*gcm_clut_get_array			(GcmClut		*clut);
 void		 gcm_clut_print				(GcmClut		*clut);

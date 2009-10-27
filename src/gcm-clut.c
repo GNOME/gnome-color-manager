@@ -31,9 +31,12 @@
 
 #include <glib-object.h>
 #include <math.h>
+#include <gio/gio.h>
 
 #include "gcm-clut.h"
 #include "gcm-profile.h"
+
+#include "egg-debug.h"
 
 static void     gcm_clut_finalize	(GObject     *object);
 
@@ -51,15 +54,22 @@ struct _GcmClutPrivate
 	gfloat				 red;
 	gfloat				 green;
 	gfloat				 blue;
+	gchar				*id;
 	gchar				*profile;
+	gchar				*description;
+	gchar				*copyright;
 };
 
 enum {
 	PROP_0,
 	PROP_SIZE,
+	PROP_ID,
 	PROP_RED,
 	PROP_GREEN,
 	PROP_BLUE,
+	PROP_PROFILE,
+	PROP_COPYRIGHT,
+	PROP_DESCRIPTION,
 	PROP_LAST
 };
 
@@ -75,6 +85,7 @@ gcm_clut_set_from_data (GcmClut *clut, const GcmClutData *data, guint size)
 	GcmClutData *tmp;
 
 	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
+	g_return_val_if_fail (data != NULL, FALSE);
 
 	/* copy each element into the array */
 	for (i=0; i<size; i++) {
@@ -89,34 +100,54 @@ gcm_clut_set_from_data (GcmClut *clut, const GcmClutData *data, guint size)
 }
 
 /**
- * gcm_clut_set_from_filename:
+ * gcm_clut_load_from_profile:
  **/
 gboolean
-gcm_clut_set_from_filename (GcmClut *clut, const gchar *filename, GError **error)
+gcm_clut_load_from_profile (GcmClut *clut, GError **error)
 {
 	gboolean ret;
-	GcmProfile *profile;
+	GcmProfile *profile = NULL;
 	GcmClutData *data = NULL;
+	GError *error_local = NULL;
 
 	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
 
-	/* save profile name */
-	g_free (clut->priv->profile);
-	clut->priv->profile = g_strdup (filename);
+	/* no profile to load */
+	if (clut->priv->profile == NULL) {
+		g_free (clut->priv->copyright);
+		g_free (clut->priv->description);
+		clut->priv->copyright = NULL;
+		clut->priv->description = NULL;
+		g_ptr_array_set_size (clut->priv->array, 0);
+		goto out;
+	}
 
 	/* create new profile instance */
 	profile = gcm_profile_new ();
 
 	/* load the profile */
-	ret = gcm_profile_load (profile, filename, error);
-	if (!ret)
+	ret = gcm_profile_load (profile, clut->priv->profile, &error_local);
+	if (!ret) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to set from profile: %s", error_local->message);
+		g_error_free (error_local);
 		goto out;
+	}
 
 	/* generate the data */
 	data = gcm_profile_generate (profile, clut->priv->size);
 	gcm_clut_set_from_data (clut, data, clut->priv->size);
+
+	/* copy the description */
+	g_free (clut->priv->copyright);
+	g_free (clut->priv->description);
+	g_object_get (profile,
+		      "copyright", &clut->priv->copyright,
+		      "description", &clut->priv->description,
+		      NULL);
 out:
-	g_object_unref (profile);
+	if (profile != NULL)
+		g_object_unref (profile);
 	g_free (data);
 	return ret;
 }
@@ -125,25 +156,48 @@ out:
  * gcm_clut_load_from_config:
  **/
 gboolean
-gcm_clut_load_from_config (GcmClut *clut, const gchar *filename, const gchar *id, GError **error)
+gcm_clut_load_from_config (GcmClut *clut, const gchar *filename, GError **error)
 {
 	gboolean ret;
 	GKeyFile *file;
+	GError *error_local = NULL;
 
 	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
+	g_return_val_if_fail (clut->priv->id != NULL, FALSE);
+	g_return_val_if_fail (filename != NULL, FALSE);
 
 	/* load existing file */
 	file = g_key_file_new ();
-	ret = g_key_file_load_from_file (file, filename, G_KEY_FILE_NONE, error);
-	if (!ret)
+	ret = g_key_file_load_from_file (file, filename, G_KEY_FILE_NONE, &error_local);
+	if (!ret) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to load from file: %s", error_local->message);
+		g_error_free (error_local);
 		goto out;
+	}
 
 	/* load data */
 	g_free (clut->priv->profile);
-	clut->priv->profile = g_strdup (g_key_file_get_string (file, id, "profile", NULL));
-	clut->priv->red = g_key_file_get_double (file, id, "red", NULL);
-	clut->priv->green = g_key_file_get_double (file, id, "green", NULL);
-	clut->priv->blue = g_key_file_get_double (file, id, "blue", NULL);
+	clut->priv->profile = g_key_file_get_string (file, clut->priv->id, "profile", &error_local);
+	if (clut->priv->profile == NULL) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to load from config: %s", error_local->message);
+		g_error_free (error_local);
+		goto out;
+	}
+
+	clut->priv->red = g_key_file_get_double (file, clut->priv->id, "red", NULL);
+	clut->priv->green = g_key_file_get_double (file, clut->priv->id, "green", NULL);
+	clut->priv->blue = g_key_file_get_double (file, clut->priv->id, "blue", NULL);
+
+	/* load this */
+	ret = gcm_clut_load_from_profile (clut, &error_local);
+	if (!ret) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to load from config: %s", error_local->message);
+		g_error_free (error_local);
+		goto out;
+	}
 out:
 	g_key_file_free (file);
 	return ret;
@@ -153,13 +207,27 @@ out:
  * gcm_clut_save_to_config:
  **/
 gboolean
-gcm_clut_save_to_config (GcmClut *clut, const gchar *filename, const gchar *id, GError **error)
+gcm_clut_save_to_config (GcmClut *clut, const gchar *filename, GError **error)
 {
-	GKeyFile *file = NULL;
+	GKeyFile *keyfile = NULL;
 	gboolean ret;
 	gchar *data;
+	gchar *dirname;
+	GFile *file = NULL;
 
 	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
+	g_return_val_if_fail (clut->priv->id != NULL, FALSE);
+	g_return_val_if_fail (filename != NULL, FALSE);
+
+	/* directory exists? */
+	dirname = g_path_get_dirname (filename);
+	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
+	if (!ret) {
+		file = g_file_new_for_path (dirname);
+		ret = g_file_make_directory_with_parents (file, NULL, error);
+		if (!ret)
+			goto out;
+	}
 
 	/* if not ever created, then just create a dummy file */
 	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
@@ -170,27 +238,33 @@ gcm_clut_save_to_config (GcmClut *clut, const gchar *filename, const gchar *id, 
 	}
 
 	/* load existing file */
-	file = g_key_file_new ();
-	ret = g_key_file_load_from_file (file, filename, G_KEY_FILE_KEEP_COMMENTS, error);
+	keyfile = g_key_file_new ();
+	ret = g_key_file_load_from_file (keyfile, filename, G_KEY_FILE_NONE, error);
 	if (!ret)
 		goto out;
 
 	/* save data */
-	g_key_file_set_string (file, id, "profile", clut->priv->profile);
-	g_key_file_set_double (file, id, "red", clut->priv->red);
-	g_key_file_set_double (file, id, "green", clut->priv->green);
-	g_key_file_set_double (file, id, "blue", clut->priv->blue);
+	if (clut->priv->profile == NULL)
+		g_key_file_remove_key (keyfile, clut->priv->id, "profile", NULL);
+	else
+		g_key_file_set_string (keyfile, clut->priv->id, "profile", clut->priv->profile);
+	g_key_file_set_double (keyfile, clut->priv->id, "red", clut->priv->red);
+	g_key_file_set_double (keyfile, clut->priv->id, "green", clut->priv->green);
+	g_key_file_set_double (keyfile, clut->priv->id, "blue", clut->priv->blue);
 
 	/* save contents */
-	data = g_key_file_to_data (file, NULL, error);
+	data = g_key_file_to_data (keyfile, NULL, error);
 	if (data == NULL)
 		goto out;
 	ret = g_file_set_contents (filename, data, -1, error);
 	if (!ret)
 		goto out;
 out:
+	g_free (dirname);
 	if (file != NULL)
-		g_key_file_free (file);
+		g_object_unref (file);
+	if (keyfile != NULL)
+		g_key_file_free (keyfile);
 	return ret;
 }
 
@@ -200,8 +274,34 @@ out:
 GPtrArray *
 gcm_clut_get_array (GcmClut *clut)
 {
+	GPtrArray *array;
+	guint i;
+	guint value;
+	GcmClutData *data;
+
 	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
-	return g_ptr_array_ref (clut->priv->array);
+	g_return_val_if_fail (clut->priv->size != 0, FALSE);
+
+	array = clut->priv->array;
+	if (array->len == 0) {
+		/* generate a dummy gamma */
+		egg_debug ("falling back to dummy gamma");
+		array = g_ptr_array_new_with_free_func (g_free);
+		for (i=0; i<clut->priv->size; i++) {
+			value = (i * 0xffff) / clut->priv->size;
+			data = g_new0 (GcmClutData, 1);
+			data->red = value;
+			data->green = value;
+			data->blue = value;
+			g_ptr_array_add (array, data);
+		}
+		goto out;
+	}
+
+	/* for now, just copy */
+	array = g_ptr_array_ref (clut->priv->array);
+out:
+	return array;
 }
 
 /**
@@ -236,6 +336,9 @@ gcm_clut_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 	case PROP_SIZE:
 		g_value_set_uint (value, priv->size);
 		break;
+	case PROP_ID:
+		g_value_set_string (value, priv->id);
+		break;
 	case PROP_RED:
 		g_value_set_float (value, priv->red);
 		break;
@@ -244,6 +347,15 @@ gcm_clut_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 		break;
 	case PROP_BLUE:
 		g_value_set_float (value, priv->blue);
+		break;
+	case PROP_PROFILE:
+		g_value_set_string (value, priv->profile);
+		break;
+	case PROP_COPYRIGHT:
+		g_value_set_string (value, priv->copyright);
+		break;
+	case PROP_DESCRIPTION:
+		g_value_set_string (value, priv->description);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -263,6 +375,14 @@ gcm_clut_set_property (GObject *object, guint prop_id, const GValue *value, GPar
 	switch (prop_id) {
 	case PROP_SIZE:
 		priv->size = g_value_get_uint (value);
+		break;
+	case PROP_ID:
+		g_free (priv->id);
+		priv->id = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_PROFILE:
+		g_free (priv->profile);
+		priv->profile = g_strdup (g_value_get_string (value));
 		break;
 	case PROP_RED:
 		priv->red = g_value_get_float (value);
@@ -300,6 +420,14 @@ gcm_clut_class_init (GcmClutClass *klass)
 	g_object_class_install_property (object_class, PROP_SIZE, pspec);
 
 	/**
+	 * GcmClut:id:
+	 */
+	pspec = g_param_spec_string ("id", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_ID, pspec);
+
+	/**
 	 * GcmClut:red:
 	 */
 	pspec = g_param_spec_float ("red", NULL, NULL,
@@ -322,6 +450,30 @@ gcm_clut_class_init (GcmClutClass *klass)
 				    0.0, G_MAXFLOAT, 1.0,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_BLUE, pspec);
+
+	/**
+	 * GcmClut:copyright:
+	 */
+	pspec = g_param_spec_string ("copyright", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_COPYRIGHT, pspec);
+
+	/**
+	 * GcmClut:description:
+	 */
+	pspec = g_param_spec_string ("description", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_DESCRIPTION, pspec);
+
+	/**
+	 * GcmClut:profile:
+	 */
+	pspec = g_param_spec_string ("profile", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_PROFILE, pspec);
 
 	g_type_class_add_private (klass, sizeof (GcmClutPrivate));
 }
@@ -350,6 +502,7 @@ gcm_clut_finalize (GObject *object)
 	GcmClutPrivate *priv = clut->priv;
 
 	g_free (clut->priv->profile);
+	g_free (clut->priv->id);
 	g_ptr_array_unref (priv->array);
 
 	G_OBJECT_CLASS (gcm_clut_parent_class)->finalize (object);

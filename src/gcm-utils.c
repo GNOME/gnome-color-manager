@@ -101,6 +101,14 @@ gcm_utils_set_crtc_gamma (GnomeRRCrtc *crtc, GcmClut *clut, GError **error)
 		goto out;
 	}
 
+	/* no length? */
+	if (array->len == 0) {
+		ret = FALSE;
+		if (error != NULL)
+			*error = g_error_new (1, 0, "no data in the CLUT array");
+		goto out;
+	}
+
 	/* convert to a type X understands */
 	gamma = XRRAllocGamma (array->len);
 	for (i=0; i<array->len; i++) {
@@ -120,7 +128,7 @@ gcm_utils_set_crtc_gamma (GnomeRRCrtc *crtc, GcmClut *clut, GError **error)
 	if (gdk_error_trap_pop ()) {
 		ret = FALSE;
 		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to get gamma size");
+			*error = g_error_new (1, 0, "failed to set crtc gamma %p (%i) on %i", gamma, array->len, id);
 		goto out;
 	}
 out:
@@ -132,20 +140,19 @@ out:
 }
 
 /**
- * gcm_utils_set_output_gamma:
- *
- * Return value: %TRUE for success;
+ * gcm_utils_get_clut_for_output:
  **/
-gboolean
-gcm_utils_set_output_gamma (GnomeRROutput *output, const gchar *config, GError **error)
+GcmClut *
+gcm_utils_get_clut_for_output (GnomeRROutput *output, const gchar *config, GError **error)
 {
-	gboolean ret = FALSE;
 	gchar *name = NULL;
 	gboolean connected;
 	GnomeRRCrtc *crtc;
 	guint size;
 	guint id;
+	gboolean ret;
 	GcmClut *clut = NULL;
+	GError *error_local = NULL;
 
 	/* don't set the gamma if there is no device */
 	connected = gnome_rr_output_is_connected (output);
@@ -164,17 +171,47 @@ gcm_utils_set_output_gamma (GnomeRROutput *output, const gchar *config, GError *
 	size = gcm_utils_get_gamma_size (crtc, error);
 	if (size == 0)
 		goto out;
-		
+
 	/* create a lookup table */
 	clut = gcm_clut_new ();
+
+	/* set correct size */
 	g_object_set (clut,
 		      "size", size,
+		      "id", name,
 		      NULL);
 
 	/* lookup from config file */
-	ret = gcm_clut_load_from_config (clut, config, name, error);
-	if (!ret)
+	ret = gcm_clut_load_from_config (clut, config, &error_local);
+	if (!ret) {
+		/* this is not fatal */
+		egg_debug ("failed to get values from %s for %s: %s", config, name, error_local->message);
+		g_error_free (error_local);
+	}
+out:
+	g_free (name);
+	return clut;
+}
+
+/**
+ * gcm_utils_set_output_gamma:
+ *
+ * Return value: %TRUE for success;
+ **/
+gboolean
+gcm_utils_set_output_gamma (GnomeRROutput *output, const gchar *config, GError **error)
+{
+	gboolean ret = FALSE;
+	GcmClut *clut = NULL;
+	GnomeRRCrtc *crtc;
+
+	/* get CLUT */
+	clut = gcm_utils_get_clut_for_output (output, config, error);
+	if (clut == NULL)
 		goto out;
+
+	/* get crtc */
+	crtc = gnome_rr_output_get_crtc (output);
 
 	/* actually set the gamma */
 	ret = gcm_utils_set_crtc_gamma (crtc, clut, error);
@@ -183,7 +220,68 @@ gcm_utils_set_output_gamma (GnomeRROutput *output, const gchar *config, GError *
 out:
 	if (clut != NULL)
 		g_object_unref (clut);
-	g_free (name);
 	return ret;
+}
+
+/**
+ * gcm_utils_get_profile_filenames_for_directory:
+ **/
+static gboolean
+gcm_utils_get_profile_filenames_for_directory (GPtrArray *array, const gchar *directory)
+{
+	GDir *dir;
+	GError *error = NULL;
+	gboolean ret = TRUE;
+	const gchar *name;
+
+	/* get contents */
+	dir = g_dir_open (directory, 0, &error);
+	if (dir == NULL) {
+		egg_warning ("failed to open: %s", error->message);
+		g_error_free (error);
+		ret = FALSE;
+		goto out;
+	}
+
+	/* process entire list */
+	do {
+		name = g_dir_read_name (dir);
+		if (name == NULL)
+			break;
+		if (g_str_has_suffix (name, ".icc") ||
+		    g_str_has_suffix (name, ".icm")) {
+			egg_debug ("adding %s", name);
+			g_ptr_array_add (array, g_build_filename (directory, name, NULL));
+		}
+	} while (TRUE);
+out:
+	if (dir != NULL)
+		g_dir_close (dir);
+	return ret;
+}
+
+/**
+ * gcm_utils_get_profile_filenames:
+ *
+ * Return value, an array of strings, free with g_ptr_array_unref()
+ **/
+GPtrArray *
+gcm_utils_get_profile_filenames (void)
+{
+	GPtrArray *array;
+	gchar *user;
+
+	/* create output array */
+	array = g_ptr_array_new_with_free_func (g_free);
+
+	/* get systemwide profiles */
+	gcm_utils_get_profile_filenames_for_directory (array, "/usr/share/color/icc");
+
+	/* get per-user profiles */
+	user = g_build_filename (g_get_home_dir (), "/.color/icc", NULL);
+	gcm_utils_get_profile_filenames_for_directory (array, user);
+	g_free (user);
+
+	return array;
 }
 

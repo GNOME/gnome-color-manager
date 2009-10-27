@@ -41,6 +41,7 @@ main (int argc, char **argv)
 	GnomeRROutput **outputs;
 	guint i;
 	GnomeRRScreen *rr_screen;
+	gboolean connected;
 
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
@@ -67,6 +68,10 @@ main (int argc, char **argv)
 	/* set for each output */
 	outputs = gnome_rr_screen_list_outputs (rr_screen);
 	for (i=0; outputs[i] != NULL; i++) {
+		/* if nothing connected then ignore */
+		connected = gnome_rr_output_is_connected (outputs[i]);
+		if (!connected)
+			continue;
 		ret = gcm_utils_set_output_gamma (outputs[i], GCM_PROFILE_LOCATION, &error);
 		if (!ret) {
 			retval = 1;

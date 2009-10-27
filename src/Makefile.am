@@ -13,12 +13,8 @@ INCLUDES =						\
 	-DEGG_LOGGING="\"GCM_LOGGING\""			\
 	-DEGG_CONSOLE="\"GCM_CONSOLE\""
 
-bin_PROGRAMS =						\
-	gcm-apply					\
-	gcm-prefs					\
-	gcm-import
-
-gcm_apply_SOURCES =					\
+noinst_LIBRARIES = libgcmshared.a
+libgcmshared_a_SOURCES =				\
 	egg-debug.c					\
 	egg-debug.h					\
 	gcm-utils.c					\
@@ -26,10 +22,18 @@ gcm_apply_SOURCES =					\
 	gcm-clut.c					\
 	gcm-clut.h					\
 	gcm-profile.c					\
-	gcm-profile.h					\
+	gcm-profile.h
+
+bin_PROGRAMS =						\
+	gcm-apply					\
+	gcm-prefs					\
+	gcm-import
+
+gcm_apply_SOURCES =					\
 	gcm-apply.c
 
 gcm_apply_LDADD =					\
+	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GTK_LIBS)
@@ -38,13 +42,10 @@ gcm_apply_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_import_SOURCES =					\
-	egg-debug.c					\
-	egg-debug.h					\
-	gcm-profile.c					\
-	gcm-profile.h					\
 	gcm-import.c
 
 gcm_import_LDADD =					\
+	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GTK_LIBS)
@@ -53,11 +54,10 @@ gcm_import_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_prefs_SOURCES =					\
-	egg-debug.c					\
-	egg-debug.h					\
 	gcm-prefs.c
 
 gcm_prefs_LDADD =					\
+	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(UNIQUE_LIBS)					\
