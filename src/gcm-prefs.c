@@ -27,6 +27,7 @@
 #include "egg-debug.h"
 
 #include "gcm-utils.h"
+#include "gcm-profile.h"
 
 static GtkBuilder *builder = NULL;
 static GtkListStore *list_store_devices = NULL;
@@ -268,20 +269,32 @@ gcm_prefs_add_profiles (GtkWidget *widget)
 {
 	const gchar *filename;
 	guint i;
-	gchar *basename;
+	gchar *displayname;
+	GcmProfile *profile;
+	gboolean ret;
+	GError *error = NULL;
 
 	/* get profiles */
+	profile = gcm_profile_new ();
 	profiles_array = gcm_utils_get_profile_filenames ();
 	for (i=0; i<profiles_array->len; i++) {
 		filename = g_ptr_array_index (profiles_array, i);
-		basename = g_path_get_basename (filename);
-		g_strdelimit (basename, ".", '\0');
-		gtk_combo_box_append_text (GTK_COMBO_BOX (widget), basename);
-		g_free (basename);
+		ret = gcm_profile_load (profile, filename, &error);
+		if (!ret) {
+			egg_warning ("failed to add profile: %s", error->message);
+			g_error_free (error);
+			continue;
+		}
+		g_object_get (profile,
+			      "description", &displayname,
+			      NULL);
+		gtk_combo_box_append_text (GTK_COMBO_BOX (widget), displayname);
+		g_free (displayname);
 	}
 
 	/* add a clear entry */
 	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("None"));
+	g_object_unref (profile);
 }
 
 /**
