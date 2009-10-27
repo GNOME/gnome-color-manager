@@ -107,7 +107,7 @@ gcm_clut_set_from_data (GcmClut *clut, const GcmClutData *data, guint size)
 gboolean
 gcm_clut_load_from_profile (GcmClut *clut, GError **error)
 {
-	gboolean ret;
+	gboolean ret = TRUE;
 	GcmProfile *profile = NULL;
 	GcmClutData *data = NULL;
 	GError *error_local = NULL;

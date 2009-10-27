@@ -206,7 +206,6 @@ gcm_utils_get_clut_for_output (GnomeRROutput *output, GError **error)
 	gboolean connected;
 	GnomeRRCrtc *crtc;
 	guint size;
-	guint id;
 	gboolean ret;
 	GcmClut *clut = NULL;
 	GError *error_local = NULL;
@@ -222,7 +221,6 @@ gcm_utils_get_clut_for_output (GnomeRROutput *output, GError **error)
 
 	/* get crtc */
 	crtc = gnome_rr_output_get_crtc (output);
-	id = gnome_rr_crtc_get_id (crtc);
 
 	/* get gamma size */
 	size = gcm_utils_get_gamma_size (crtc, error);
