@@ -596,6 +596,9 @@ main (int argc, char **argv)
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), xid);
 	}
 
+	/* show main UI */
+	gtk_widget_show (main_window);
+
 	/* connect up sliders */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
 	g_signal_connect (widget, "value-changed",
@@ -606,8 +609,6 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
 	g_signal_connect (widget, "value-changed",
 			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
-
-	gtk_widget_show (main_window);
 
 	/* wait */
 	g_main_loop_run (loop);
