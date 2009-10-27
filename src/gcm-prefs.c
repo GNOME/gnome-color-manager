@@ -73,6 +73,20 @@ gcm_prefs_help_cb (GtkWidget *widget, gpointer data)
 }
 
 /**
+ * gcm_prefs_reset_cb:
+ **/
+static void
+gcm_prefs_reset_cb (GtkWidget *widget, gpointer data)
+{
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
+	gtk_range_set_value (GTK_RANGE (widget), 1.0f);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_brightness"));
+	gtk_range_set_value (GTK_RANGE (widget), 0.0f);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
+	gtk_range_set_value (GTK_RANGE (widget), 100.0f);
+}
+
+/**
  * gcm_prefs_message_received_cb
  **/
 static void
@@ -139,9 +153,9 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 	GtkTreeIter iter;
 	gchar *profile;
 	GtkWidget *widget;
-	gfloat red;
-	gfloat green;
-	gfloat blue;
+	gfloat localgamma;
+	gfloat brightness;
+	gfloat contrast;
 	const gchar *filename;
 	guint i;
 
@@ -161,18 +175,18 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 
 	g_object_get (current_clut,
 		      "profile", &profile,
-		      "red", &red,
-		      "green", &green,
-		      "blue", &blue,
+		      "gamma", &localgamma,
+		      "brightness", &brightness,
+		      "contrast", &contrast,
 		      NULL);
 
 	/* set adjustments */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_red"));
-	gtk_range_set_value (GTK_RANGE (widget), red);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_green"));
-	gtk_range_set_value (GTK_RANGE (widget), green);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_blue"));
-	gtk_range_set_value (GTK_RANGE (widget), blue);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
+	gtk_range_set_value (GTK_RANGE (widget), localgamma);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_brightness"));
+	gtk_range_set_value (GTK_RANGE (widget), brightness);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
+	gtk_range_set_value (GTK_RANGE (widget), contrast);
 
 	/* set correct profile */
 	if (profile == NULL) {
@@ -227,15 +241,6 @@ out:
 }
 
 /**
- * gcm_prefs_setup_slider:
- **/
-static void
-gcm_prefs_setup_slider (GtkWidget *widget)
-{
-	gtk_range_set_range (GTK_RANGE (widget), -1.0f, 1.0f);	
-}
-
-/**
  * gcm_prefs_set_combo_simple_text:
  **/
 static void
@@ -277,9 +282,6 @@ gcm_prefs_add_profiles (GtkWidget *widget)
 
 	/* add a clear entry */
 	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("None"));
-
-//	if (g_strcmp0 (history_type, GPM_HISTORY_RATE_VALUE) == 0)
-//		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 }
 
 /**
@@ -385,6 +387,60 @@ out:
 }
 
 /**
+ * gcm_prefs_slider_changed_cb:
+ **/
+static void
+gcm_prefs_slider_changed_cb (GtkRange *range, gpointer *user_data)
+{
+	gfloat localgamma;
+	gfloat brightness;
+	gfloat contrast;
+	GtkWidget *widget;
+	gboolean ret;
+	GError *error = NULL;
+	GnomeRROutput *output;
+
+	/* get values */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
+	localgamma = gtk_range_get_value (GTK_RANGE (widget));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_brightness"));
+	brightness = gtk_range_get_value (GTK_RANGE (widget));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
+	contrast = gtk_range_get_value (GTK_RANGE (widget));
+
+	g_object_set (current_clut,
+		      "gamma", localgamma,
+		      "brightness", brightness,
+		      "contrast", contrast,
+		      NULL);
+
+	/* save new profile */
+	ret = gcm_clut_save_to_config (current_clut, GCM_PROFILE_LOCATION, &error);
+	if (!ret) {
+		egg_warning ("failed to save config: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* get the device */
+	output = gnome_rr_screen_get_output_by_id (rr_screen, current_device);
+	if (output == NULL) {
+		egg_warning ("failed to get output");
+		goto out;
+	}
+
+	/* actually set the new profile */
+	ret = gcm_utils_set_output_gamma (output, GCM_PROFILE_LOCATION, &error);
+	if (!ret) {
+		egg_warning ("failed to set output gamma: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+out:
+	return;
+}
+
+/**
  * main:
  **/
 int
@@ -476,14 +532,9 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_help"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_help_cb), NULL);
-
-	/* set ranges */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_red"));
-	gcm_prefs_setup_slider (widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_green"));
-	gcm_prefs_setup_slider (widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_blue"));
-	gcm_prefs_setup_slider (widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_prefs_reset_cb), NULL);
 
 	/* setup icc profiles list */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
@@ -491,6 +542,26 @@ main (int argc, char **argv)
 	gcm_prefs_add_profiles (widget);
 	g_signal_connect (G_OBJECT (widget), "changed",
 			  G_CALLBACK (gcm_prefs_history_type_combo_changed_cb), NULL);
+
+	/* set ranges */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
+	gtk_range_set_range (GTK_RANGE (widget), 0.1f, 5.0f);
+	gtk_scale_add_mark (GTK_SCALE (widget), 1.0f, GTK_POS_TOP, "");
+	gtk_scale_add_mark (GTK_SCALE (widget), 2.2f, GTK_POS_TOP, "");
+	g_signal_connect (widget, "value-changed",
+			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
+
+	/* set ranges */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_brightness"));
+	gtk_range_set_range (GTK_RANGE (widget), 0.0f, 99.0f);
+	g_signal_connect (widget, "value-changed",
+			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
+
+	/* set ranges */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
+	gtk_range_set_range (GTK_RANGE (widget), 1.0f, 100.0f);
+	g_signal_connect (widget, "value-changed",
+			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
 
 	/* get screen */
         rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
@@ -511,13 +582,13 @@ main (int argc, char **argv)
 		gcm_prefs_add_device (outputs[i]);
 	}
 
-	gtk_widget_show (main_window);
-
 	/* set the parent window if it is specified */
 	if (xid != 0) {
 		egg_debug ("Setting xid %i", xid);
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), xid);
 	}
+
+	gtk_widget_show (main_window);
 
 	/* wait */
 	g_main_loop_run (loop);

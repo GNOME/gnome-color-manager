@@ -51,9 +51,9 @@ struct _GcmClutPrivate
 {
 	GPtrArray 			*array;
 	guint				 size;
-	gfloat				 red;
-	gfloat				 green;
-	gfloat				 blue;
+	gfloat				 gamma;
+	gfloat				 brightness;
+	gfloat				 contrast;
 	gchar				*id;
 	gchar				*profile;
 	gchar				*description;
@@ -64,9 +64,9 @@ enum {
 	PROP_0,
 	PROP_SIZE,
 	PROP_ID,
-	PROP_RED,
-	PROP_GREEN,
-	PROP_BLUE,
+	PROP_GAMMA,
+	PROP_BRIGHTNESS,
+	PROP_CONTRAST,
 	PROP_PROFILE,
 	PROP_COPYRIGHT,
 	PROP_DESCRIPTION,
@@ -178,17 +178,10 @@ gcm_clut_load_from_config (GcmClut *clut, const gchar *filename, GError **error)
 
 	/* load data */
 	g_free (clut->priv->profile);
-	clut->priv->profile = g_key_file_get_string (file, clut->priv->id, "profile", &error_local);
-	if (clut->priv->profile == NULL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to load from config: %s", error_local->message);
-		g_error_free (error_local);
-		goto out;
-	}
-
-	clut->priv->red = g_key_file_get_double (file, clut->priv->id, "red", NULL);
-	clut->priv->green = g_key_file_get_double (file, clut->priv->id, "green", NULL);
-	clut->priv->blue = g_key_file_get_double (file, clut->priv->id, "blue", NULL);
+	clut->priv->profile = g_key_file_get_string (file, clut->priv->id, "profile", NULL);
+	clut->priv->gamma = g_key_file_get_double (file, clut->priv->id, "gamma", NULL);
+	clut->priv->brightness = g_key_file_get_double (file, clut->priv->id, "brightness", NULL);
+	clut->priv->contrast = g_key_file_get_double (file, clut->priv->id, "contrast", NULL);
 
 	/* load this */
 	ret = gcm_clut_load_from_profile (clut, &error_local);
@@ -248,9 +241,9 @@ gcm_clut_save_to_config (GcmClut *clut, const gchar *filename, GError **error)
 		g_key_file_remove_key (keyfile, clut->priv->id, "profile", NULL);
 	else
 		g_key_file_set_string (keyfile, clut->priv->id, "profile", clut->priv->profile);
-	g_key_file_set_double (keyfile, clut->priv->id, "red", clut->priv->red);
-	g_key_file_set_double (keyfile, clut->priv->id, "green", clut->priv->green);
-	g_key_file_set_double (keyfile, clut->priv->id, "blue", clut->priv->blue);
+	g_key_file_set_double (keyfile, clut->priv->id, "gamma", clut->priv->gamma);
+	g_key_file_set_double (keyfile, clut->priv->id, "brightness", clut->priv->brightness);
+	g_key_file_set_double (keyfile, clut->priv->id, "contrast", clut->priv->contrast);
 
 	/* save contents */
 	data = g_key_file_to_data (keyfile, NULL, error);
@@ -268,6 +261,14 @@ out:
 	return ret;
 }
 
+static guint
+gcm_clut_get_adjusted_value (guint value, gfloat min, gfloat max, gfloat gamma)
+{
+	guint retval;
+	retval = 65536.0f * ((powf (((gfloat)value/65536.0f), gamma) * (max - min)) + min);
+	return retval;
+}
+
 /**
  * gcm_clut_get_array:
  **/
@@ -277,29 +278,43 @@ gcm_clut_get_array (GcmClut *clut)
 	GPtrArray *array;
 	guint i;
 	guint value;
+	const GcmClutData *tmp;
 	GcmClutData *data;
+	gfloat min;
+	gfloat max;
+	gfloat gamma;
 
 	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
 	g_return_val_if_fail (clut->priv->size != 0, FALSE);
 
-	array = clut->priv->array;
-	if (array->len == 0) {
+	min = clut->priv->brightness / 100.0f;
+	max = (1.0f - min) * (clut->priv->contrast / 100.0f) + min;
+	gamma = clut->priv->gamma;
+
+	array = g_ptr_array_new_with_free_func (g_free);
+	if (clut->priv->array->len == 0) {
 		/* generate a dummy gamma */
 		egg_debug ("falling back to dummy gamma");
-		array = g_ptr_array_new_with_free_func (g_free);
 		for (i=0; i<clut->priv->size; i++) {
 			value = (i * 0xffff) / clut->priv->size;
 			data = g_new0 (GcmClutData, 1);
-			data->red = value;
-			data->green = value;
-			data->blue = value;
+			data->red = gcm_clut_get_adjusted_value (value, min, max, gamma);
+			data->green = gcm_clut_get_adjusted_value (value, min, max, gamma);
+			data->blue = gcm_clut_get_adjusted_value (value, min, max, gamma);
 			g_ptr_array_add (array, data);
 		}
-		goto out;
+	} else {
+		/* just make a 1:1 copy */
+		for (i=0; i<clut->priv->size; i++) {
+			tmp = g_ptr_array_index (clut->priv->array, i);
+			data = g_new0 (GcmClutData, 1);
+			data->red = gcm_clut_get_adjusted_value (tmp->red, min, max, gamma);
+			data->green = gcm_clut_get_adjusted_value (tmp->green, min, max, gamma);
+			data->blue = gcm_clut_get_adjusted_value (tmp->blue, min, max, gamma);
+			g_ptr_array_add (array, data);
+		}
 	}
 
-	/* for now, just copy */
-	array = g_ptr_array_ref (clut->priv->array);
 out:
 	return array;
 }
@@ -322,7 +337,7 @@ gcm_clut_print (GcmClut *clut)
 	}
 }
 
-/**	PROP_RED,
+/**	PROP_GAMMA,
 
  * gcm_clut_get_property:
  **/
@@ -339,14 +354,14 @@ gcm_clut_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 	case PROP_ID:
 		g_value_set_string (value, priv->id);
 		break;
-	case PROP_RED:
-		g_value_set_float (value, priv->red);
+	case PROP_GAMMA:
+		g_value_set_float (value, priv->gamma);
 		break;
-	case PROP_GREEN:
-		g_value_set_float (value, priv->green);
+	case PROP_BRIGHTNESS:
+		g_value_set_float (value, priv->brightness);
 		break;
-	case PROP_BLUE:
-		g_value_set_float (value, priv->blue);
+	case PROP_CONTRAST:
+		g_value_set_float (value, priv->contrast);
 		break;
 	case PROP_PROFILE:
 		g_value_set_string (value, priv->profile);
@@ -384,14 +399,14 @@ gcm_clut_set_property (GObject *object, guint prop_id, const GValue *value, GPar
 		g_free (priv->profile);
 		priv->profile = g_strdup (g_value_get_string (value));
 		break;
-	case PROP_RED:
-		priv->red = g_value_get_float (value);
+	case PROP_GAMMA:
+		priv->gamma = g_value_get_float (value);
 		break;
-	case PROP_GREEN:
-		priv->green = g_value_get_float (value);
+	case PROP_BRIGHTNESS:
+		priv->brightness = g_value_get_float (value);
 		break;
-	case PROP_BLUE:
-		priv->blue = g_value_get_float (value);
+	case PROP_CONTRAST:
+		priv->contrast = g_value_get_float (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -428,28 +443,28 @@ gcm_clut_class_init (GcmClutClass *klass)
 	g_object_class_install_property (object_class, PROP_ID, pspec);
 
 	/**
-	 * GcmClut:red:
+	 * GcmClut:gamma:
 	 */
-	pspec = g_param_spec_float ("red", NULL, NULL,
+	pspec = g_param_spec_float ("gamma", NULL, NULL,
 				    0.0, G_MAXFLOAT, 1.0,
 				    G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_RED, pspec);
+	g_object_class_install_property (object_class, PROP_GAMMA, pspec);
 
 	/**
-	 * GcmClut:green:
+	 * GcmClut:brightness:
 	 */
-	pspec = g_param_spec_float ("green", NULL, NULL,
+	pspec = g_param_spec_float ("brightness", NULL, NULL,
 				    0.0, G_MAXFLOAT, 1.0,
 				    G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_GREEN, pspec);
+	g_object_class_install_property (object_class, PROP_BRIGHTNESS, pspec);
 
 	/**
-	 * GcmClut:blue:
+	 * GcmClut:contrast:
 	 */
-	pspec = g_param_spec_float ("blue", NULL, NULL,
+	pspec = g_param_spec_float ("contrast", NULL, NULL,
 				    0.0, G_MAXFLOAT, 1.0,
 				    G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_BLUE, pspec);
+	g_object_class_install_property (object_class, PROP_CONTRAST, pspec);
 
 	/**
 	 * GcmClut:copyright:
@@ -487,9 +502,9 @@ gcm_clut_init (GcmClut *clut)
 	clut->priv = GCM_CLUT_GET_PRIVATE (clut);
 	clut->priv->array = g_ptr_array_new_with_free_func (g_free);
 	clut->priv->profile = NULL;
-	clut->priv->red = 1.0;
-	clut->priv->green = 1.0;
-	clut->priv->blue = 1.0;
+	clut->priv->gamma = G_MAXFLOAT;
+	clut->priv->brightness = G_MAXFLOAT;
+	clut->priv->contrast = G_MAXFLOAT;
 }
 
 /**
