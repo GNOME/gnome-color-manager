@@ -415,7 +415,12 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
 	g_return_val_if_fail (size != 0, FALSE);
-	g_return_val_if_fail (profile->priv->data_type != GCM_DATA_TYPE_UNKNOWN, NULL);
+
+	/* the icc file might not have any gamma data */
+	if (profile->priv->data_type == GCM_DATA_TYPE_UNKNOWN) {
+		egg_warning ("no LUT to generate");
+		goto out;
+	}
 
 	/* create new output array */
 	gamma_data = g_new0 (GcmClutData, size);
@@ -453,9 +458,8 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 			gamma_data[i].green = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_green) * (max_green - min_green) + min_green);
 			gamma_data[i].blue = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_blue) * (max_blue - min_blue) + min_blue);
 		}
-	}
 
-	if (profile->priv->data_type == GCM_DATA_TYPE_VCGT_TABLE) {
+	} else if (profile->priv->data_type == GCM_DATA_TYPE_VCGT_TABLE) {
 
 		/* simply subsample if the LUT is smaller than the number of entries in the file */
 		num_entries = profile->priv->ramp_data_size;

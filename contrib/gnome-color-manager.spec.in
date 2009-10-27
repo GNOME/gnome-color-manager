@@ -1,0 +1,85 @@
+%define gtk2_version			2.16.0
+%define unique_version			1.0.0
+%define alphatag			#ALPHATAG#
+
+%{!?python_sitelib: %define python_sitelib %(python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
+
+Summary:   Color management tools for GNOME
+Name:      gnome-color-manager
+Version:   #VERSION#
+Release:   0.#BUILD#%{?alphatag}%{?dist}
+License:   GPLv2+
+Group:     Applications/System
+URL:       http://www.gnome.org
+Source0:   http://download.gnome.org/sources/gnome-color-manager/2.29/%{name}-%{version}.tar.gz
+BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+
+Requires:  glib2 >= %{glib2_version}
+Requires:  gtk2 >= %{gtk2_version}
+Requires:  gnome-icon-theme
+Requires:  unique >= %{unique_version}
+Requires:  shared-mime-info
+
+BuildRequires: glib2-devel >= %{glib2_version}
+BuildRequires: gtk2-devel >= %{gtk2_version}
+BuildRequires: gnome-doc-utils >= 0.3.2
+BuildRequires: desktop-file-utils
+BuildRequires: gettext
+BuildRequires: libtool
+BuildRequires: gnome-doc-utils
+BuildRequires: unique-devel >= %{unique_version}
+BuildRequires: intltool
+
+%description
+gnome-color-manager provides a way to control ICC colour profiles.
+
+%prep
+%setup -q
+
+%build
+%configure --disable-scrollkeeper
+make %{?_smp_mflags}
+
+%install
+rm -rf $RPM_BUILD_ROOT
+make install DESTDIR=$RPM_BUILD_ROOT
+
+for i in gcm-prefs gcm-import ; do
+  desktop-file-install --delete-original                                \
+    --dir=$RPM_BUILD_ROOT%{_datadir}/applications/                      \
+    $RPM_BUILD_ROOT%{_datadir}/applications/$i.desktop
+done
+
+#%find_lang %name --with-gnome
+
+%clean
+rm -rf $RPM_BUILD_ROOT
+
+%post
+export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
+update-desktop-database %{_datadir}/applications &> /dev/null || :
+update-mime-database %{_datadir}/mime &> /dev/null || :
+
+%postun
+update-desktop-database %{_datadir}/applications &> /dev/null || :
+update-mime-database %{_datadir}/mime &> /dev/null || :
+
+%files
+# -f %{name}.lang
+%defattr(-,root,root,-)
+%doc AUTHORS COPYING NEWS README
+%{_bindir}/gcm-prefs
+%{_bindir}/gcm-import
+%{_bindir}/gcm-apply
+%dir %{_datadir}/gnome-color-manager
+%{_datadir}/gnome-color-manager/gcm-prefs.ui
+#%{_datadir}/man/man1/*.1.gz
+#%{_datadir}/gnome/help/gnome-color-manager
+#%{_datadir}/omf/gnome-color-manager
+%{_datadir}/applications/gcm-prefs.desktop
+%{_datadir}/applications/gcm-import.desktop
+
+%changelog
+* #LONGDATE# Richard Hughes <richard@hughsie.com> #VERSION#-0.#BUILD##ALPHATAG#
+- Update from GIT
+

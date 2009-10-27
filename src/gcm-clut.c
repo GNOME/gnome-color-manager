@@ -136,7 +136,8 @@ gcm_clut_load_from_profile (GcmClut *clut, GError **error)
 
 	/* generate the data */
 	data = gcm_profile_generate (profile, clut->priv->size);
-	gcm_clut_set_from_data (clut, data, clut->priv->size);
+	if (data != NULL)
+		gcm_clut_set_from_data (clut, data, clut->priv->size);
 
 	/* copy the description */
 	g_free (clut->priv->copyright);
