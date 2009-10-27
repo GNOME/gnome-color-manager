@@ -184,17 +184,17 @@ gcm_parser_load_icc_vcgt_formula (GcmProfile *profile, const gchar *data, gsize 
 	ramp_data = profile->priv->ramp_data;
 
 	/* read in block of data */
-	ramp_data[0].red = gcm_parser_unencode_32 (data, GCM_VCGT_FORMULA_GAMMA_RED);
-	ramp_data[0].green = gcm_parser_unencode_32 (data, GCM_VCGT_FORMULA_GAMMA_GREEN);
-	ramp_data[0].blue = gcm_parser_unencode_32 (data, GCM_VCGT_FORMULA_GAMMA_BLUE);
+	ramp_data[0].red = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_GAMMA_RED);
+	ramp_data[0].green = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_GAMMA_GREEN);
+	ramp_data[0].blue = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_GAMMA_BLUE);
 
-	ramp_data[1].red = gcm_parser_unencode_32 (data, GCM_VCGT_FORMULA_MIN_RED);
-	ramp_data[1].green = gcm_parser_unencode_32 (data, GCM_VCGT_FORMULA_MIN_GREEN);
-	ramp_data[1].blue = gcm_parser_unencode_32 (data, GCM_VCGT_FORMULA_MIN_BLUE);
+	ramp_data[1].red = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_MIN_RED);
+	ramp_data[1].green = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_MIN_GREEN);
+	ramp_data[1].blue = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_MIN_BLUE);
 
-	ramp_data[2].red = gcm_parser_unencode_32 (data, GCM_VCGT_FORMULA_MAX_RED);
-	ramp_data[2].green = gcm_parser_unencode_32 (data, GCM_VCGT_FORMULA_MAX_GREEN);
-	ramp_data[2].blue = gcm_parser_unencode_32 (data, GCM_VCGT_FORMULA_MAX_BLUE);
+	ramp_data[2].red = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_MAX_RED);
+	ramp_data[2].green = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_MAX_GREEN);
+	ramp_data[2].blue = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_MAX_BLUE);
 
 	/* check if valid */
 	if (ramp_data[0].red / 65536.0 > 5.0 || ramp_data[0].green / 65536.0 > 5.0 || ramp_data[0].blue / 65536.0 > 5.0) {
@@ -449,10 +449,6 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 			max_red = (gfloat) ramp_data[2].red / 65536.0;
 			max_green = (gfloat) ramp_data[2].green / 65536.0;
 			max_blue = (gfloat) ramp_data[2].blue / 65536.0;
-
-			egg_debug ("Red	 Gamma:%f \tMin:%f \tMax:%f", gamma_red, min_red, max_red);
-			egg_debug ("Green  Gamma:%f \tMin:%f \tMax:%f", gamma_green, min_green, max_green);
-			egg_debug ("Blue 	 Gamma:%f \tMin:%f \tMax:%f", gamma_blue, min_blue, max_blue);
 
 			gamma_data[i].red = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_red) * (max_red - min_red) + min_red);
 			gamma_data[i].green = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_green) * (max_green - min_green) + min_green);
