@@ -275,14 +275,15 @@ gcm_prefs_add_profiles (GtkWidget *widget)
 	GError *error = NULL;
 
 	/* get profiles */
-	profile = gcm_profile_new ();
 	profiles_array = gcm_utils_get_profile_filenames ();
 	for (i=0; i<profiles_array->len; i++) {
 		filename = g_ptr_array_index (profiles_array, i);
+		profile = gcm_profile_new ();
 		ret = gcm_profile_load (profile, filename, &error);
 		if (!ret) {
 			egg_warning ("failed to add profile: %s", error->message);
 			g_error_free (error);
+			g_object_unref (profile);
 			continue;
 		}
 		g_object_get (profile,
@@ -290,11 +291,11 @@ gcm_prefs_add_profiles (GtkWidget *widget)
 			      NULL);
 		gtk_combo_box_append_text (GTK_COMBO_BOX (widget), displayname);
 		g_free (displayname);
+		g_object_unref (profile);
 	}
 
 	/* add a clear entry */
 	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("None"));
-	g_object_unref (profile);
 }
 
 /**
