@@ -95,6 +95,8 @@ update-mime-database %{_datadir}/mime &> /dev/null || :
 %{_bindir}/gcm-import
 %{_bindir}/gcm-apply
 %dir %{_datadir}/gnome-color-manager
+%dir %{_datadir}/gnome-color-manager/profiles
+%{_datadir}/gnome-color-manager/profiles/*.ic?
 %{_datadir}/gnome-color-manager/gcm-prefs.ui
 #%{_datadir}/man/man1/*.1.gz
 #%{_datadir}/gnome/help/gnome-color-manager

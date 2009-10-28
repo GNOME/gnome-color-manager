@@ -1,3 +1,6 @@
+SUBDIRS = 						\
+	profiles
+
 @INTLTOOL_SCHEMAS_RULE@
 schemadir = $(sysconfdir)/gconf/schemas
 schema_in_files = gnome-color-manager.schemas.in
@@ -36,5 +39,6 @@ clean-local :
 
 DISTCLEANFILES =					\
 	gnome-color-manager.schemas			\
+	gcm-prefs.desktop				\
 	gcm-import.desktop
 

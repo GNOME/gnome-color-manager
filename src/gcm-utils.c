@@ -334,6 +334,9 @@ gcm_utils_get_profile_filenames (void)
 	/* get systemwide profiles */
 	gcm_utils_get_profile_filenames_for_directory (array, "/usr/share/color/icc");
 
+	/* get gnome-color-manager test profiles */
+	gcm_utils_get_profile_filenames_for_directory (array, GCM_DATA "/profiles");
+
 	/* get per-user profiles */
 	user = g_build_filename (g_get_home_dir (), "/.color/icc", NULL);
 	gcm_utils_get_profile_filenames_for_directory (array, user);

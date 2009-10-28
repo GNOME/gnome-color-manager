@@ -133,6 +133,7 @@ AC_OUTPUT([
 Makefile
 src/Makefile
 data/Makefile
+data/profiles/Makefile
 po/Makefile.in
 ])
 
