@@ -26,57 +26,8 @@
 #include <gdk/gdkx.h>
 
 #include "gcm-utils.h"
+#include "gcm-edid.h"
 #include "egg-debug.h"
-
-/**
- * gcm_utils_get_edid_name:
- *
- * Return value: the output name, free with g_free().
- **/
-static gchar *
-gcm_utils_get_edid_name (const guint8 *edid)
-{
-	guint i;
-	gchar *monitor = NULL;
-	gchar *serial = NULL;
-	gchar *string = NULL;
-	gchar *retval = NULL;
-
-	/* parse EDID data */
-	for (i=54; i <= 108; i+=18) {
-		/* ignore pixel clock data */
-		if (edid[i] != 0)
-			continue;
-		if (edid[i+2] != 0)
-			continue;
-
-		/* any useful blocks? */
-		if (edid[i+3] == 0xfc)
-			monitor = g_strdup (&edid[i+5]);
-		else if (edid[i+3] == 0xff)
-			serial = g_strdup (&edid[i+5]);
-		else if (edid[i+3] == 0xfe)
-			string = g_strdup (&edid[i+5]);
-	}
-
-	/* find the best option */
-	if (monitor != NULL)
-		retval = g_strdup (monitor);
-	else if (serial != NULL)
-		retval = g_strdup (serial);
-	else if (string != NULL)
-		retval = g_strdup (string);
-	g_free (monitor);
-	g_free (serial);
-	g_free (string);
-
-	/* replace invalid chars */
-	if (retval != NULL) {
-		g_strdelimit (retval, "-", '_');
-		g_strdelimit (retval, "\n", '\0');
-	}
-	return retval;
-}
 
 /**
  * gcm_utils_get_output_name:
@@ -86,15 +37,30 @@ gcm_utils_get_edid_name (const guint8 *edid)
 gchar *
 gcm_utils_get_output_name (GnomeRROutput *output)
 {
-	const guint8 *edid;
+	const guint8 *data;
 	guint i, j;
 	const gchar *output_name;
-	gchar *name;
+	gchar *name = NULL;
+	GcmEdid *edid;
+	gboolean ret;
 
-	/* TODO: need to parse the EDID to get a crtc-specific name, not an output specific name */
-	edid = gnome_rr_output_get_edid_data (output);
-	name = gcm_utils_get_edid_name (edid);
+	/* parse the EDID to get a crtc-specific name, not an output specific name */
+	data = gnome_rr_output_get_edid_data (output);
+	edid = gcm_edid_new ();
+	ret = gcm_edid_parse (edid, data, NULL);
+	if (!ret) {
+		egg_warning ("failed to parse edid");
+		goto out;
+	}
 
+	/* find the best option */
+	g_object_get (edid, "monitor-name", &name, NULL);
+	if (name == NULL)
+		g_object_get (edid, "ascii-string", &name, NULL);
+	if (name == NULL)
+		g_object_get (edid, "serial-number", &name, NULL);
+
+out:
 	/* fallback to the output name */
 	if (name == NULL) {
 		output_name = gnome_rr_output_get_name (output);
@@ -103,7 +69,7 @@ gcm_utils_get_output_name (GnomeRROutput *output)
 		name = g_strdup (output_name);
 	}
 
-	/* for now, use the output name */
+	g_object_unref (edid);
 	return name;
 }
 
@@ -174,7 +140,7 @@ gcm_utils_set_crtc_gamma (GnomeRRCrtc *crtc, GcmClut *clut, GError **error)
 		gamma->green[i] = data->green;
 		gamma->blue[i] = data->blue;
 	}
-	
+
 	/* get id that X recognises */
 	id = gnome_rr_crtc_get_id (crtc);
 

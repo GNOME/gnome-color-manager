@@ -22,6 +22,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-utils.h					\
 	gcm-clut.c					\
 	gcm-clut.h					\
+	gcm-edid.c					\
+	gcm-edid.h					\
 	gcm-profile.c					\
 	gcm-profile.h
 
