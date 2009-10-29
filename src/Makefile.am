@@ -3,7 +3,8 @@ INCLUDES =						\
 	$(GTK_CFLAGS)					\
 	$(GNOMEDESKTOP_CFLAGS)				\
 	$(UNIQUE_CFLAGS)				\
-	$(GCONF_CFLAGS)				\
+	$(GCONF_CFLAGS)					\
+	$(VTE_CFLAGS)					\
 	-DBINDIR=\"$(bindir)\"			 	\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 		\
 	-DVERSION="\"$(VERSION)\"" 			\
@@ -69,6 +70,7 @@ gcm_prefs_LDADD =					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(UNIQUE_LIBS)					\
 	$(GCONF_LIBS)					\
+	$(VTE_LIBS)					\
 	$(GTK_LIBS)
 
 gcm_prefs_CFLAGS =					\
