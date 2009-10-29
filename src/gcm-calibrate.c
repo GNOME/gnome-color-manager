@@ -635,7 +635,7 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 
 	/* get UI */
 	calibrate->priv->builder = gtk_builder_new ();
-	retval = gtk_builder_add_from_file (calibrate->priv->builder, GCM_DATA "/gcm-import.ui", &error);
+	retval = gtk_builder_add_from_file (calibrate->priv->builder, GCM_DATA "/gcm-calibrate.ui", &error);
 	if (retval == 0) {
 		egg_warning ("failed to load ui: %s", error->message);
 		g_error_free (error);

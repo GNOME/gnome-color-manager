@@ -19,6 +19,7 @@ Requires:  gtk2 >= %{gtk2_version}
 Requires:  gnome-icon-theme
 Requires:  unique >= %{unique_version}
 Requires:  shared-mime-info
+Requires:  vte
 
 BuildRequires: glib2-devel >= %{glib2_version}
 BuildRequires: gtk2-devel >= %{gtk2_version}
@@ -26,6 +27,7 @@ BuildRequires: gnome-doc-utils >= 0.3.2
 BuildRequires: desktop-file-utils
 BuildRequires: gettext
 BuildRequires: libtool
+BuildRequires: vte-devel
 BuildRequires: gnome-doc-utils
 BuildRequires: unique-devel >= %{unique_version}
 BuildRequires: intltool
@@ -97,7 +99,7 @@ update-mime-database %{_datadir}/mime &> /dev/null || :
 %dir %{_datadir}/gnome-color-manager
 %dir %{_datadir}/gnome-color-manager/profiles
 %{_datadir}/gnome-color-manager/profiles/*.ic?
-%{_datadir}/gnome-color-manager/gcm-prefs.ui
+%{_datadir}/gnome-color-manager/gcm-*.ui
 #%{_datadir}/man/man1/*.1.gz
 #%{_datadir}/gnome/help/gnome-color-manager
 #%{_datadir}/omf/gnome-color-manager
