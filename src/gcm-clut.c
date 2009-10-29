@@ -379,8 +379,7 @@ gcm_clut_print (GcmClut *clut)
 	}
 }
 
-/**	PROP_GAMMA,
-
+/**
  * gcm_clut_get_property:
  **/
 static void

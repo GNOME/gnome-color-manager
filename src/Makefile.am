@@ -57,6 +57,8 @@ gcm_import_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_prefs_SOURCES =					\
+	gcm-calibrate.c					\
+	gcm-calibrate.h					\
 	gcm-prefs.c
 
 gcm_prefs_LDADD =					\
