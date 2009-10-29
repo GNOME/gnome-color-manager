@@ -90,7 +90,7 @@ gcm_prefs_reset_cb (GtkWidget *widget, gpointer data)
 /**
  * gcm_prefs_message_received_cb
  **/
-static void
+static UniqueResponse
 gcm_prefs_message_received_cb (UniqueApp *app, UniqueCommand command, UniqueMessageData *message_data, guint time_ms, gpointer data)
 {
 	GtkWindow *window;
@@ -98,6 +98,7 @@ gcm_prefs_message_received_cb (UniqueApp *app, UniqueCommand command, UniqueMess
 		window = GTK_WINDOW (gtk_builder_get_object (builder, "dialog_prefs"));
 		gtk_window_present (window);
 	}
+	return UNIQUE_RESPONSE_OK;
 }
 
 /**
