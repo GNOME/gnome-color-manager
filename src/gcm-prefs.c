@@ -80,15 +80,27 @@ gcm_prefs_help_cb (GtkWidget *widget, gpointer data)
 static void
 gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 {
-	GcmCalibrate *calib;
+	GcmCalibrate *calib = NULL;
 	gboolean ret;
 	GError *error = NULL;
 	GtkWindow *window;
+	GnomeRROutput *output;
+	const gchar *output_name;
 
+	/* get the device */
+	output = gnome_rr_screen_get_output_by_id (rr_screen, current_device);
+	if (output == NULL) {
+		egg_warning ("failed to get output");
+		goto out;
+	}
+
+	/* create new calibration object */
 	calib = gcm_calibrate_new ();
+
+	/* set the proper output name */
+	output_name = gnome_rr_output_get_name (output);
 	g_object_set (calib,
-		      "output-name", "LVDS1",
-	//	      "output-name", "DVI1",
+		      "output-name", output_name,
 		      NULL);
 
 	/* run each task in order */
@@ -131,8 +143,19 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		g_error_free (error);
 		goto out;
 	}
+	/* TODO: need to copy the ICC file to the proper location */
+	/* TODO: need to set the new profile and save config */
+	/* TODO: need to remove temporary files */
 out:
-	g_object_unref (calib);
+	if (calib != NULL)
+		g_object_unref (calib);
+
+	/* need to set the gamma back to the default after calibration */
+	ret = gcm_utils_set_output_gamma (output, &error);
+	if (!ret) {
+		egg_warning ("failed to set output gamma: %s", error->message);
+		g_error_free (error);
+	}
 }
 
 /**

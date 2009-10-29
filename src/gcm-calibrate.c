@@ -37,6 +37,7 @@
 #include <vte/vte.h>
 
 #include "gcm-calibrate.h"
+#include "gcm-utils.h"
 
 #include "egg-debug.h"
 
@@ -190,6 +191,7 @@ gcm_calibrate_setup (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 		dialog = gtk_message_dialog_new (GTK_WINDOW(widget), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL,
 						 _("Could not auto-detect CRT or LCD"));
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("Please indicate if the screen you are trying to profile is a CRT (old type) or a LCD (digital flat panel)."));
+		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 		gtk_dialog_add_button (GTK_DIALOG (dialog), _("LCD"), GTK_RESPONSE_YES);
 		gtk_dialog_add_button (GTK_DIALOG (dialog), _("CRT"), GTK_RESPONSE_NO);
 		response = gtk_dialog_run (GTK_DIALOG (dialog));
@@ -225,8 +227,6 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	gchar *cmd = NULL;
 	gchar **argc = NULL;
 	GtkWidget *widget;
-	GtkWidget *dialog;
-	GtkResponseType response;
 
 	/* match up the output name with the device number defined by dispcal */
 	priv->display = gcm_calibrate_get_display (priv->output_name, error);
@@ -248,13 +248,17 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), argc[0], &argc[1], NULL, "/tmp", FALSE, FALSE, FALSE);
 
 	/* ask user to attach device */
-	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
-	dialog = gtk_message_dialog_new (GTK_WINDOW(widget), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_OK_CANCEL,
-					 _("Please attach device"));
-	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("Please attach the hardware device to the center of the screen on the grey square."));
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
-	gtk_widget_destroy (dialog);
-	if (response != GTK_RESPONSE_OK) {
+	gcm_calibrate_set_title (calibrate, _("Please attach device"));
+	gcm_calibrate_set_message (calibrate, _("Please attach the hardware device to the center of the screen on the grey square."));
+
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "button_ok"));
+	gtk_widget_show (widget);
+
+	/* wait until user selects okay or closes window */
+	g_main_loop_run (priv->loop);
+
+	/* get result */
+	if (priv->response != GTK_RESPONSE_OK) {
 		vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), "Q", 1);
 		if (error != NULL)
 			*error = g_error_new (1, 0, "user did not attach hardware device");
@@ -271,6 +275,14 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
+
+	/* get result */
+	if (priv->response != GTK_RESPONSE_OK) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "calibration was cancelled");
+		ret = FALSE;
+		goto out;
+	}
 out:
 	g_strfreev (argc);
 	g_free (cmd);
@@ -318,6 +330,14 @@ gcm_calibrate_task_generate_patches (GcmCalibrate *calibrate, GError **error)
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
 
+	/* get result */
+	if (priv->response != GTK_RESPONSE_OK) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "calibration was cancelled");
+		ret = FALSE;
+		goto out;
+	}
+out:
 	g_strfreev (argc);
 	g_free (cmd);
 	return ret;
@@ -353,6 +373,14 @@ gcm_calibrate_task_draw_and_measure (GcmCalibrate *calibrate, GError **error)
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
 
+	/* get result */
+	if (priv->response != GTK_RESPONSE_OK) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "calibration was cancelled");
+		ret = FALSE;
+		goto out;
+	}
+out:
 	g_strfreev (argc);
 	g_free (cmd);
 	return ret;
@@ -389,6 +417,14 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
 
+	/* get result */
+	if (priv->response != GTK_RESPONSE_OK) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "calibration was cancelled");
+		ret = FALSE;
+		goto out;
+	}
+out:
 	g_strfreev (argc);
 	g_free (cmd);
 	return ret;
@@ -431,7 +467,9 @@ out:
 static void
 gcm_calibrate_exit_cb (VteTerminal *terminal, GcmCalibrate *calibrate)
 {
-	g_main_loop_quit (calibrate->priv->loop);
+	if (g_main_loop_is_running (calibrate->priv->loop))
+		g_main_loop_quit (calibrate->priv->loop);
+	calibrate->priv->child_pid = -1;
 }
 
 /**
@@ -476,6 +514,40 @@ gcm_calibrate_guess_type (GcmCalibrate *calibrate)
 		priv->is_lcd = FALSE;
 		priv->is_crt = FALSE;
 	}
+}
+
+
+/**
+ * gcm_calibrate_cancel_cb:
+ **/
+static void
+gcm_calibrate_cancel_cb (GtkWidget *widget, GcmCalibrate *calibrate)
+{
+	calibrate->priv->response = GTK_RESPONSE_CANCEL;
+	if (g_main_loop_is_running (calibrate->priv->loop))
+		g_main_loop_quit (calibrate->priv->loop);
+}
+
+/**
+ * gcm_calibrate_ok_cb:
+ **/
+static void
+gcm_calibrate_ok_cb (GtkWidget *widget, GcmCalibrate *calibrate)
+{
+	calibrate->priv->response = GTK_RESPONSE_OK;
+	if (g_main_loop_is_running (calibrate->priv->loop))
+		g_main_loop_quit (calibrate->priv->loop);
+	gtk_widget_hide (widget);
+}
+
+/**
+ * gcm_calibrate_delete_event_cb:
+ **/
+static gboolean
+gcm_calibrate_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmCalibrate *calibrate)
+{
+	gcm_calibrate_cancel_cb (widget, calibrate);
+	return FALSE;
 }
 
 /**
@@ -553,10 +625,12 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	gint retval;
 	GError *error = NULL;
 	GtkWidget *widget;
+	GtkWidget *main_window;
 
 	calibrate->priv = GCM_CALIBRATE_GET_PRIVATE (calibrate);
 	calibrate->priv->output_name = NULL;
 	calibrate->priv->basename = NULL;
+	calibrate->priv->child_pid = -1;
 	calibrate->priv->loop = g_main_loop_new (NULL, FALSE);
 
 	/* get UI */
@@ -566,6 +640,19 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 		egg_warning ("failed to load ui: %s", error->message);
 		g_error_free (error);
 	}
+
+	/* set icon */
+	main_window = GTK_WIDGET (gtk_builder_get_object (calibrate->priv->builder, "dialog_calibrate"));
+	gtk_window_set_icon_name (GTK_WINDOW (main_window), GCM_STOCK_ICON);
+	g_signal_connect (main_window, "delete_event",
+			  G_CALLBACK (gcm_calibrate_delete_event_cb), calibrate);
+
+	widget = GTK_WIDGET (gtk_builder_get_object (calibrate->priv->builder, "button_cancel"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_calibrate_cancel_cb), calibrate);
+	widget = GTK_WIDGET (gtk_builder_get_object (calibrate->priv->builder, "button_ok"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_calibrate_ok_cb), calibrate);
 
 	/* add vte widget */
 	calibrate->priv->terminal = vte_terminal_new ();
@@ -586,9 +673,14 @@ gcm_calibrate_finalize (GObject *object)
 	GcmCalibrate *calibrate = GCM_CALIBRATE (object);
 	GcmCalibratePrivate *priv = calibrate->priv;
 
-	/* wait until finished */
-	if (g_main_loop_is_running (priv->loop))
-		g_main_loop_quit (priv->loop);
+	/* process running */
+	if (priv->child_pid != -1) {
+		egg_debug ("killing child");
+		kill (priv->child_pid, SIGKILL);
+
+		/* wait until child has quit */
+		g_main_loop_run (priv->loop);
+	}
 
 	/* hide window */
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
