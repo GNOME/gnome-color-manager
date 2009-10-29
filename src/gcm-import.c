@@ -66,7 +66,7 @@ gcm_import_copy_file (const gchar *filename, const gchar *destination, GError **
 	/* ensure desination exists */
 	ret = g_file_test (path, G_FILE_TEST_EXISTS);
 	if (!ret) {
-		ret = g_file_make_directory_with_parents  (destfile, NULL, error);
+		ret = g_file_make_directory_with_parents  (destpath, NULL, error);
 		if (!ret)
 			goto out;
 	}
