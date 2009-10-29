@@ -28,6 +28,7 @@
 
 #include "gcm-utils.h"
 #include "gcm-profile.h"
+#include "gcm-calibrate.h"
 
 static GtkBuilder *builder = NULL;
 static GtkListStore *list_store_devices = NULL;
@@ -71,6 +72,67 @@ static void
 gcm_prefs_help_cb (GtkWidget *widget, gpointer data)
 {
 	egg_warning ("help for prefs");
+}
+
+/**
+ * gcm_prefs_calibrate_cb:
+ **/
+static void
+gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
+{
+	GcmCalibrate *calib;
+	gboolean ret;
+	GError *error = NULL;
+	GtkWindow *window;
+
+	calib = gcm_calibrate_new ();
+	g_object_set (calib,
+		      "output-name", "LVDS1",
+	//	      "output-name", "DVI1",
+		      NULL);
+
+	/* run each task in order */
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	ret = gcm_calibrate_setup (calib, window, &error);
+	if (!ret) {
+		egg_warning ("failed to setup: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* step 1 */
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_NEUTRALISE, &error);
+	if (!ret) {
+		egg_warning ("failed to calibrate: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* step 2 */
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_GENERATE_PATCHES, &error);
+	if (!ret) {
+		egg_warning ("failed to calibrate: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* step 3 */
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DRAW_AND_MEASURE, &error);
+	if (!ret) {
+		egg_warning ("failed to calibrate: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* step 4 */
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_GENERATE_PROFILE, &error);
+	if (!ret) {
+		egg_warning ("failed to calibrate: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+out:
+	g_object_unref (calib);
 }
 
 /**
@@ -461,10 +523,8 @@ out:
 int
 main (int argc, char **argv)
 {
-//	gboolean ret;
 	gboolean verbose = FALSE;
 	guint retval = 0;
-//	GError *error = NULL;
 	GOptionContext *context;
 	GtkWidget *main_window;
 	GtkWidget *widget;
@@ -550,6 +610,9 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_reset_cb), NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_prefs_calibrate_cb), NULL);
 
 	/* setup icc profiles list */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));

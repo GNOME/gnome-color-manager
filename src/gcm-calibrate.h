@@ -64,7 +64,10 @@ typedef enum {
 
 GType		 gcm_calibrate_get_type		  	(void);
 GcmCalibrate	*gcm_calibrate_new			(void);
-gboolean	 gcm_calibrate_run_task			(GcmCalibrate		*calibrate,
+gboolean	 gcm_calibrate_setup			(GcmCalibrate		*calibrate,
+							 GtkWindow		*window,
+							 GError			**error);
+gboolean	 gcm_calibrate_task			(GcmCalibrate		*calibrate,
 							 GcmCalibrateTask	 task,
 							 GError			**error);
 

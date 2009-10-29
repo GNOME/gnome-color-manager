@@ -15,6 +15,7 @@ desktop_in_files =					\
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
 pkgdata_DATA =						\
+	gcm-import.ui					\
 	gcm-prefs.ui
 
 EXTRA_DIST =						\
