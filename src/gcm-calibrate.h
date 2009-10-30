@@ -67,6 +67,8 @@ GcmCalibrate	*gcm_calibrate_new			(void);
 gboolean	 gcm_calibrate_setup			(GcmCalibrate		*calibrate,
 							 GtkWindow		*window,
 							 GError			**error);
+gchar		*gcm_calibrate_finish			(GcmCalibrate		*calibrate,
+							 GError			**error);
 gboolean	 gcm_calibrate_task			(GcmCalibrate		*calibrate,
 							 GcmCalibrateTask	 task,
 							 GError			**error);

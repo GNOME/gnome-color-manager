@@ -29,6 +29,7 @@
 #include "config.h"
 
 #include <glib/gi18n.h>
+#include <glib/gstdio.h>
 #include <math.h>
 #include <string.h>
 #include <gio/gio.h>
@@ -37,6 +38,7 @@
 #include <vte/vte.h>
 
 #include "gcm-calibrate.h"
+#include "gcm-edid.h"
 #include "gcm-utils.h"
 
 #include "egg-debug.h"
@@ -62,6 +64,8 @@ struct _GcmCalibratePrivate
 	GtkBuilder			*builder;
 	pid_t				 child_pid;
 	GtkResponseType			 response;
+	GnomeRRScreen			*rr_screen;
+	GcmEdid				*edid;
 };
 
 enum {
@@ -182,17 +186,23 @@ gcm_calibrate_setup (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 	if (window != NULL)
 		gdk_window_set_transient_for (gtk_widget_get_window (widget), gtk_widget_get_window (GTK_WIDGET(window)));
 
-	/* setup GUI */
+	/* TRANSLATORS: title, hardware refers to a calibration device */
 	gcm_calibrate_set_title (calibrate, _("Setup hardware"));
+	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (calibrate, _("Setting up hardware device for use..."));
 
 	/* this wasn't previously set */
 	if (!priv->is_lcd && !priv->is_crt) {
 		dialog = gtk_message_dialog_new (GTK_WINDOW(widget), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL,
+						 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
 						 _("Could not auto-detect CRT or LCD"));
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("Please indicate if the screen you are trying to profile is a CRT (old type) or a LCD (digital flat panel)."));
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+							  /* TRANSLATORS: dialog message */
+							  _("Please indicate if the screen you are trying to profile is a CRT (old type) or a LCD (digital flat panel)."));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+		/* TRANSLATORS: button, Liquid Crystal Display */
 		gtk_dialog_add_button (GTK_DIALOG (dialog), _("LCD"), GTK_RESPONSE_YES);
+		/* TRANSLATORS: button, Cathode Ray Tube */
 		gtk_dialog_add_button (GTK_DIALOG (dialog), _("CRT"), GTK_RESPONSE_NO);
 		response = gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
@@ -227,17 +237,45 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	gchar *cmd = NULL;
 	gchar **argc = NULL;
 	GtkWidget *widget;
+	GnomeRROutput *output;
+	const guint8 *data;
+	guint i;
 
 	/* match up the output name with the device number defined by dispcal */
 	priv->display = gcm_calibrate_get_display (priv->output_name, error);
 	if (priv->display == G_MAXUINT)
 		goto out;
 
+	/* get the device */
+	output = gnome_rr_screen_get_output_by_name (priv->rr_screen, priv->output_name);
+	if (output == NULL) {
+		egg_warning ("failed to get output");
+		goto out;
+	}
+
+	/* parse edid */
+	data = gnome_rr_output_get_edid_data (output);
+	ret = gcm_edid_parse (priv->edid, data, error);
+	if (!ret)
+		goto out;
+
 	/* get l-cd or c-rt */
 	type = gcm_calibrate_get_display_type (calibrate);
 
-	/* TODO: choose a better filename, maybe based on the monitor serial number */
-	priv->basename = g_strdup ("basename");
+	/* get a filename based on the serial number */
+	g_object_get (priv->edid, "serial-number", &priv->basename, NULL);
+	if (priv->basename == NULL)
+		g_object_get (priv->edid, "monitor-name", &priv->basename, NULL);
+	if (priv->basename == NULL)
+		g_object_get (priv->edid, "ascii-string", &priv->basename, NULL);
+	if (priv->basename == NULL)
+		priv->basename = g_strdup ("custom");
+
+	/* make a suitable filename */
+	g_strdelimit (priv->basename, " *?%$", '_');
+	for (i=0; priv->basename[i] != '\0'; i++)
+		priv->basename[i] = g_ascii_tolower (priv->basename[i]);
+	egg_debug ("using filename basename of %s", priv->basename);
 
 	/* setup the command */
 	cmd = g_strdup_printf ("dispcal -v -ql -m -d%i -y%c %s", priv->display, type, priv->basename);
@@ -247,8 +285,9 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	/* start up the command */
 	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), argc[0], &argc[1], NULL, "/tmp", FALSE, FALSE, FALSE);
 
-	/* ask user to attach device */
+	/* TRANSLATORS: title, device is a hardware color calibration sensor */
 	gcm_calibrate_set_title (calibrate, _("Please attach device"));
+	/* TRANSLATORS: dialog message, ask user to attach device */
 	gcm_calibrate_set_message (calibrate, _("Please attach the hardware device to the center of the screen on the grey square."));
 
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "button_ok"));
@@ -269,9 +308,10 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	/* send the terminal an okay */
 	vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), " ", 1);
 
-	/* setup GUI */
-	gcm_calibrate_set_title (calibrate, _("Resetting screen to neutral state"));
-	gcm_calibrate_set_message (calibrate, _("This brings the screen to a neutral state by sending colored and gray patches to your screen and measuring them with the hardware device."));
+	/* TRANSLATORS: title, default paramters needed to calibrate */
+	gcm_calibrate_set_title (calibrate, _("Getting default parameters"));
+	/* TRANSLATORS: dialog message */
+	gcm_calibrate_set_message (calibrate, _("This pre-calibrates the screen by sending colored and gray patches to your screen and measuring them with the hardware device."));
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -323,8 +363,9 @@ gcm_calibrate_task_generate_patches (GcmCalibrate *calibrate, GError **error)
 	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), argc[0], &argc[1], NULL, "/tmp", FALSE, FALSE, FALSE);
 	g_timeout_add_seconds (3, (GSourceFunc) gcm_calibrate_timeout_cb, calibrate);
 
-	/* setup GUI */
+	/* TRANSLATORS: title, patches are specific colours used in calibration */
 	gcm_calibrate_set_title (calibrate, _("Generating the patches"));
+	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (calibrate, _("Generating the patches that will be measured with the hardware device."));
 
 	/* wait until finished */
@@ -366,8 +407,9 @@ gcm_calibrate_task_draw_and_measure (GcmCalibrate *calibrate, GError **error)
 	/* start up the command */
 	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), argc[0], &argc[1], NULL, "/tmp", FALSE, FALSE, FALSE);
 
-	/* setup GUI */
+	/* TRANSLATORS: title, drawing means painting to the screen */
 	gcm_calibrate_set_title (calibrate, _("Drawing the patches"));
+	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (calibrate, _("Drawing the generated patches to the screen, which will then be measured by the hardware device."));
 
 	/* wait until finished */
@@ -397,12 +439,43 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	gchar type;
 	gchar *cmd = NULL;
 	gchar **argc = NULL;
+	GDate *date;
+	gchar *manufacturer = NULL;
+	gchar *model = NULL;
+	gchar *description = NULL;
+	gchar *copyright = NULL;
 
 	/* get l-cd or c-rt */
 	type = gcm_calibrate_get_display_type (calibrate);
 
+	/* create date and set it to now */
+	date = g_date_new ();
+	g_date_set_time_t (date, time (NULL));
+
+	/* get model */
+	g_object_get (priv->edid, "monitor-name", &model, NULL);
+	if (model == NULL)
+		g_object_get (priv->edid, "ascii-string", &model, NULL);
+	if (model == NULL)
+		model = g_strdup ("unknown model");
+
+	/* get description */
+	g_object_get (priv->edid, "ascii-string", &description, NULL);
+	if (description == NULL)
+		g_object_get (priv->edid, "monitor-name", &description, NULL);
+	if (description == NULL)
+		description = g_strdup ("calibrated monitor");
+
+	/* get manufacturer */
+	g_object_get (priv->edid, "ascii-string", &manufacturer, NULL);
+	if (manufacturer == NULL)
+		manufacturer = g_strdup ("unknown manufacturer");
+
+	/* form copyright */
+	copyright = g_strdup_printf ("Copyright this user, %i/%i/%i", date->year, date->month, date->day);
+
 	/* setup the command */
-	cmd = g_strdup_printf ("colprof -A \"LG\" -M \"LG Flatpanel\" -D \"October 29 2009\" -q m -as %s", priv->basename);
+	cmd = g_strdup_printf ("colprof -A \"%s\" -M \"%s\" -D \"%s\" -C \"%s\" -q m -as %s", manufacturer, model, description, copyright, priv->basename);
 
 	argc = g_strsplit (cmd, " ", -1);
 	egg_debug ("running %s", cmd);
@@ -410,8 +483,9 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	/* start up the command */
 	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), argc[0], &argc[1], NULL, "/tmp", FALSE, FALSE, FALSE);
 
-	/* setup GUI */
+	/* TRANSLATORS: title, a profile is a ICC file */
 	gcm_calibrate_set_title (calibrate, _("Generating the profile"));
+	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (calibrate, _("Generating the ICC color profile that can be used with this screen."));
 
 	/* wait until finished */
@@ -425,6 +499,11 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 		goto out;
 	}
 out:
+	g_date_free (date);
+	g_free (manufacturer);
+	g_free (model);
+	g_free (description);
+	g_free (copyright);
 	g_strfreev (argc);
 	g_free (cmd);
 	return ret;
@@ -459,6 +538,38 @@ gcm_calibrate_task (GcmCalibrate *calibrate, GcmCalibrateTask task, GError **err
 	}
 out:
 	return ret;
+}
+
+/**
+ * gcm_calibrate_finish:
+ **/
+gchar *
+gcm_calibrate_finish (GcmCalibrate *calibrate, GError **error)
+{
+	gchar *filename;
+	guint i;
+	const gchar *exts[] = {"cal", "ti1", "ti3", NULL};
+
+	/* remove all the temp files */
+	for (i=0; exts[i] != NULL; i++) {
+		filename = g_strdup_printf ("/tmp/%s.%s", calibrate->priv->basename, exts[i]);
+		egg_debug ("removing %s", filename);
+		g_unlink (filename);
+		g_free (filename);
+	}
+
+	/* get the finished icc file */
+	filename = g_strdup_printf ("/tmp/%s.icc", calibrate->priv->basename);
+
+	/* we never finished all the steps */
+	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
+		g_free (filename);
+		filename = NULL;
+		if (error != NULL)
+			*error = g_error_new (1, 0, "Could not find completed profile");
+	}
+
+	return filename;
 }
 
 /**
@@ -641,6 +752,16 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 		g_error_free (error);
 	}
 
+	/* get screen */
+	calibrate->priv->rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
+	if (calibrate->priv->rr_screen == NULL) {
+		egg_warning ("failed to get rr screen: %s", error->message);
+		g_error_free (error);
+	}
+
+	/* get edid parser */
+	calibrate->priv->edid = gcm_edid_new ();
+
 	/* set icon */
 	main_window = GTK_WIDGET (gtk_builder_get_object (calibrate->priv->builder, "dialog_calibrate"));
 	gtk_window_set_icon_name (GTK_WINDOW (main_window), GCM_STOCK_ICON);
@@ -690,6 +811,8 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->basename);
 	g_main_loop_unref (priv->loop);
 	g_object_unref (priv->builder);
+	g_object_unref (priv->edid);
+	gnome_rr_screen_destroy (priv->rr_screen);
 
 	G_OBJECT_CLASS (gcm_calibrate_parent_class)->finalize (object);
 }

@@ -86,6 +86,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	GtkWindow *window;
 	GnomeRROutput *output;
 	const gchar *output_name;
+	gchar *filename;
 
 	/* get the device */
 	output = gnome_rr_screen_get_output_by_id (rr_screen, current_device);
@@ -143,10 +144,22 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		g_error_free (error);
 		goto out;
 	}
-	/* TODO: need to copy the ICC file to the proper location */
-	/* TODO: need to set the new profile and save config */
-	/* TODO: need to remove temporary files */
 out:
+	/* step 4 */
+	filename = gcm_calibrate_finish (calib, &error);
+	if (filename == NULL) {
+		egg_warning ("failed to finish calibrate: %s", error->message);
+		g_error_free (error);
+	}
+
+	/* completed okay */
+	if (filename != NULL) {
+		/* TODO: need to copy the ICC file to the proper location */
+		/* TODO: need to set the new profile and save config */
+		/* TODO: need to remove temporary files */
+		egg_warning ("need to copy file");
+	}
+
 	if (calib != NULL)
 		g_object_unref (calib);
 
@@ -156,6 +169,7 @@ out:
 		egg_warning ("failed to set output gamma: %s", error->message);
 		g_error_free (error);
 	}
+	g_free (filename);
 }
 
 /**
@@ -660,11 +674,11 @@ main (int argc, char **argv)
 	gtk_range_set_range (GTK_RANGE (widget), 1.0f, 100.0f);
 
 	/* get screen */
-        rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
-        if (rr_screen == NULL) {
+	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
+	if (rr_screen == NULL) {
 		egg_warning ("failed to get rr screen: %s", error->message);
 		goto out;
-        }
+	}
 
 	/* add devices */
 	outputs = gnome_rr_screen_list_outputs (rr_screen);
