@@ -45,6 +45,10 @@ gboolean	 gcm_utils_set_output_gamma		(GnomeRROutput		*output,
 GcmClut		*gcm_utils_get_clut_for_output		(GnomeRROutput		*output,
 							 GError			**error);
 GPtrArray	*gcm_utils_get_profile_filenames	(void);
+gboolean	 gcm_utils_mkdir_and_copy		(const gchar		*source,
+							 const gchar		*destination,
+							 GError			**error);
+gchar		*gcm_utils_get_profile_destination	(const gchar		*filename);
 
 #endif /* __GCM_UTILS_H */
 

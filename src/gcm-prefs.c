@@ -23,6 +23,7 @@
 #include <gtk/gtk.h>
 #include <math.h>
 #include <unique/unique.h>
+#include <glib/gstdio.h>
 
 #include "egg-debug.h"
 
@@ -86,7 +87,8 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	GtkWindow *window;
 	GnomeRROutput *output;
 	const gchar *output_name;
-	gchar *filename;
+	gchar *filename = NULL;
+	gchar *destination = NULL;
 
 	/* get the device */
 	output = gnome_rr_screen_get_output_by_id (rr_screen, current_device);
@@ -110,7 +112,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	if (!ret) {
 		egg_warning ("failed to setup: %s", error->message);
 		g_error_free (error);
-		goto out;
+		goto finish_calibrate;
 	}
 
 	/* step 1 */
@@ -118,7 +120,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
-		goto out;
+		goto finish_calibrate;
 	}
 
 	/* step 2 */
@@ -126,7 +128,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
-		goto out;
+		goto finish_calibrate;
 	}
 
 	/* step 3 */
@@ -134,7 +136,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
-		goto out;
+		goto finish_calibrate;
 	}
 
 	/* step 4 */
@@ -142,24 +144,35 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
-		goto out;
+		goto finish_calibrate;
 	}
-out:
+
+finish_calibrate:
 	/* step 4 */
 	filename = gcm_calibrate_finish (calib, &error);
 	if (filename == NULL) {
 		egg_warning ("failed to finish calibrate: %s", error->message);
 		g_error_free (error);
+		goto out;
 	}
 
-	/* completed okay */
-	if (filename != NULL) {
-		/* TODO: need to copy the ICC file to the proper location */
-		/* TODO: need to set the new profile and save config */
-		/* TODO: need to remove temporary files */
-		egg_warning ("need to copy file");
+	/* copy the ICC file to the proper location */
+	destination = gcm_utils_get_profile_destination (filename);
+	ret = gcm_utils_mkdir_and_copy (filename, destination, &error);
+	if (!ret) {
+		egg_warning ("failed to calibrate: %s", error->message);
+		g_error_free (error);
+		goto out;
 	}
 
+	/* set the new profile and save config */
+	g_ptr_array_add (profiles_array, g_strdup (destination));
+	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), profiles_array->len - 1);
+
+	/* remove temporary file */
+	g_unlink (filename);
+
+out:
 	if (calib != NULL)
 		g_object_unref (calib);
 
@@ -170,6 +183,7 @@ out:
 		g_error_free (error);
 	}
 	g_free (filename);
+	g_free (destination);
 }
 
 /**

@@ -29,62 +29,6 @@
 #include "gcm-utils.h"
 
 /**
- * gcm_import_get_destination:
- **/
-static gchar *
-gcm_import_get_destination (const gchar *filename)
-{
-	gchar *basename;
-	gchar *destination;
-
-	/* get destination filename for this source file */
-	basename = g_path_get_basename (filename);
-	destination = g_build_filename (g_get_home_dir (), GCM_PROFILE_PATH, basename, NULL);
-
-	g_free (basename);
-	return destination;
-}
-
-/**
- * gcm_import_copy_file:
- **/
-static gboolean
-gcm_import_copy_file (const gchar *filename, const gchar *destination, GError **error)
-{
-	gboolean ret;
-	gchar *path;
-	GFile *source;
-	GFile *destfile;
-	GFile *destpath;
-
-	/* setup paths */
-	source = g_file_new_for_path (filename);
-	path = g_path_get_dirname (destination);
-	destpath = g_file_new_for_path (path);
-	destfile = g_file_new_for_path (destination);
-
-	/* ensure desination exists */
-	ret = g_file_test (path, G_FILE_TEST_EXISTS);
-	if (!ret) {
-		ret = g_file_make_directory_with_parents  (destpath, NULL, error);
-		if (!ret)
-			goto out;
-	}
-
-	/* do the copy */
-	egg_debug ("copying from %s to %s", filename, path);
-	ret = g_file_copy (source, destfile, G_FILE_COPY_NONE, NULL, NULL, NULL, error);
-	if (!ret)
-		goto out;
-out:
-	g_free (path);
-	g_object_unref (source);
-	g_object_unref (destpath);
-	g_object_unref (destfile);
-	return ret;
-}
-
-/**
  * main:
  **/
 int
@@ -154,7 +98,7 @@ main (int argc, char **argv)
 		      NULL);
 
 	/* check file does't already exist */
-	destination = gcm_import_get_destination (files[0]);
+	destination = gcm_utils_get_profile_destination (files[0]);
 	ret = g_file_test (destination, G_FILE_TEST_EXISTS);
 	if (ret) {
 		/* TRANSLATORS: color profile already been installed */
@@ -194,7 +138,7 @@ main (int argc, char **argv)
 		goto out;
 
 	/* copy icc file to ~/.color/icc */
-	ret = gcm_import_copy_file (files[0], destination, &error);
+	ret = gcm_utils_mkdir_and_copy (files[0], destination, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */
 		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Failed to copy file"));

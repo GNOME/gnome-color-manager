@@ -311,3 +311,59 @@ gcm_utils_get_profile_filenames (void)
 	return array;
 }
 
+/**
+ * gcm_utils_mkdir_and_copy:
+ **/
+gboolean
+gcm_utils_mkdir_and_copy (const gchar *source, const gchar *destination, GError **error)
+{
+	gboolean ret;
+	gchar *path;
+	GFile *sourcefile;
+	GFile *destfile;
+	GFile *destpath;
+
+	/* setup paths */
+	sourcefile = g_file_new_for_path (source);
+	path = g_path_get_dirname (destination);
+	destpath = g_file_new_for_path (path);
+	destfile = g_file_new_for_path (destination);
+
+	/* ensure desination exists */
+	ret = g_file_test (path, G_FILE_TEST_EXISTS);
+	if (!ret) {
+		ret = g_file_make_directory_with_parents  (destpath, NULL, error);
+		if (!ret)
+			goto out;
+	}
+
+	/* do the copy */
+	egg_debug ("copying from %s to %s", source, path);
+	ret = g_file_copy (sourcefile, destfile, G_FILE_COPY_NONE, NULL, NULL, NULL, error);
+	if (!ret)
+		goto out;
+out:
+	g_free (path);
+	g_object_unref (sourcefile);
+	g_object_unref (destpath);
+	g_object_unref (destfile);
+	return ret;
+}
+
+/**
+ * gcm_utils_get_profile_destination:
+ **/
+gchar *
+gcm_utils_get_profile_destination (const gchar *filename)
+{
+	gchar *basename;
+	gchar *destination;
+
+	/* get destination filename for this source file */
+	basename = g_path_get_basename (filename);
+	destination = g_build_filename (g_get_home_dir (), GCM_PROFILE_PATH, basename, NULL);
+
+	g_free (basename);
+	return destination;
+}
+
