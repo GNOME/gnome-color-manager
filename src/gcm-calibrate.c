@@ -412,6 +412,7 @@ gcm_calibrate_task_draw_and_measure (GcmCalibrate *calibrate, GError **error)
 	/* start up the command */
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
 	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), argc[0], &argc[1], NULL, "/tmp", FALSE, FALSE, FALSE);
+	g_timeout_add_seconds (3, (GSourceFunc) gcm_calibrate_timeout_cb, calibrate);
 
 	/* TRANSLATORS: title, drawing means painting to the screen */
 	gcm_calibrate_set_title (calibrate, _("Drawing the patches"));
