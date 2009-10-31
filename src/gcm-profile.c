@@ -41,6 +41,7 @@ static void     gcm_profile_finalize	(GObject     *object);
 #define GCM_PROFILE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_PROFILE, GcmProfilePrivate))
 
 #define GCM_HEADER			0x00
+#define GCM_SIGNATURE			0x24
 #define GCM_NUMTAGS			0x80
 #define GCM_BODY			0x84
 
@@ -501,6 +502,26 @@ gcm_profile_load (GcmProfile *profile, const gchar *filename, GError **error)
 		if (error != NULL)
 			*error = g_error_new (1, 0, "failed to load profile: %s", error_local->message);
 		g_error_free (error_local);
+		goto out;
+	}
+
+	/* ensure we have the header */
+	if (length < 0x84) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "profile was not valid (file size too small)");
+		ret = FALSE;
+		goto out;
+	}
+
+	/* ensure this is a icc file */
+	if (data[GCM_SIGNATURE+0] != 'a' ||
+	    data[GCM_SIGNATURE+1] != 'c' ||
+	    data[GCM_SIGNATURE+2] != 's' ||
+	    data[GCM_SIGNATURE+3] != 'p') {
+		data[GCM_SIGNATURE+4] = '\0';
+		if (error != NULL)
+			*error = g_error_new (1, 0, "not an ICC profile, signature is '%s', expecting 'acsp'", &data[GCM_SIGNATURE]);
+		ret = FALSE;
 		goto out;
 	}
 
