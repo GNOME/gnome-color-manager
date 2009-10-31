@@ -286,6 +286,7 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	egg_debug ("running %s", cmd);
 
 	/* start up the command */
+	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
 	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), argc[0], &argc[1], NULL, "/tmp", FALSE, FALSE, FALSE);
 
 	/* TRANSLATORS: title, device is a hardware color calibration sensor */
@@ -363,6 +364,7 @@ gcm_calibrate_task_generate_patches (GcmCalibrate *calibrate, GError **error)
 	egg_debug ("running %s", cmd);
 
 	/* start up the command */
+	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
 	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), argc[0], &argc[1], NULL, "/tmp", FALSE, FALSE, FALSE);
 	g_timeout_add_seconds (3, (GSourceFunc) gcm_calibrate_timeout_cb, calibrate);
 
@@ -408,6 +410,7 @@ gcm_calibrate_task_draw_and_measure (GcmCalibrate *calibrate, GError **error)
 	egg_debug ("running %s", cmd);
 
 	/* start up the command */
+	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
 	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), argc[0], &argc[1], NULL, "/tmp", FALSE, FALSE, FALSE);
 
 	/* TRANSLATORS: title, drawing means painting to the screen */
@@ -499,6 +502,7 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	egg_debug ("running %s", cmd);
 
 	/* start up the command */
+	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
 	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), argc[0], &argc[1], NULL, "/tmp", FALSE, FALSE, FALSE);
 
 	/* TRANSLATORS: title, a profile is a ICC file */
