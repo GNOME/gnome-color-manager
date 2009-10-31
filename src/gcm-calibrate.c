@@ -36,6 +36,9 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <vte/vte.h>
+#include <sys/types.h>
+#include <pwd.h>
+#include <unistd.h>
 
 #include "gcm-calibrate.h"
 #include "gcm-edid.h"
@@ -444,6 +447,8 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	gchar *model = NULL;
 	gchar *description = NULL;
 	gchar *copyright = NULL;
+	const gchar *username = NULL;
+	struct passwd *pw;
 
 	/* get l-cd or c-rt */
 	type = gcm_calibrate_get_display_type (calibrate);
@@ -471,8 +476,21 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	if (manufacturer == NULL)
 		manufacturer = g_strdup ("unknown manufacturer");
 
+	/* query real name */
+	pw = getpwuid (getuid ());
+	if (pw != NULL) {
+		if (pw->pw_gecos != NULL)
+			username = pw->pw_gecos;
+		else if (pw->pw_name != NULL)
+			username = pw->pw_name;
+	}
+	if (username == NULL) {
+		/* TRANSLATORS: this is the current username when the actual username could not be found */
+		username = _("Current user");
+	}
+
 	/* form copyright */
-	copyright = g_strdup_printf ("Copyright this user, %i/%i/%i", date->year, date->month, date->day);
+	copyright = g_strdup_printf ("Copyright %s, %i/%i/%i", username, date->year, date->month, date->day);
 
 	/* setup the command */
 	cmd = g_strdup_printf ("colprof -A \"%s\" -M \"%s\" -D \"%s\" -C \"%s\" -q m -as %s", manufacturer, model, description, copyright, priv->basename);
