@@ -167,6 +167,7 @@ finish_calibrate:
 
 	/* set the new profile and save config */
 	g_ptr_array_add (profiles_array, g_strdup (destination));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
 	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), profiles_array->len - 1);
 
 	/* remove temporary file */
