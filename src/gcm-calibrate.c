@@ -552,7 +552,7 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	}
 
 	/* form copyright */
-	copyright = g_strdup_printf ("Copyright %s, %i/%i/%i", username, date->year, date->month, date->day);
+	copyright = g_strdup_printf ("Copyright %s, %04i/%02i/%02i", username, date->year, date->month, date->day);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -561,7 +561,7 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	g_ptr_array_add (array, g_strdup ("-v"));
 	g_ptr_array_add (array, g_strdup_printf ("-A%s", manufacturer));
 	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
-	g_ptr_array_add (array, g_strdup_printf ("-D%s", description));
+	g_ptr_array_add (array, g_strdup_printf ("-DCustom, %s", description));
 	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
 	g_ptr_array_add (array, g_strdup ("-qm"));
 	g_ptr_array_add (array, g_strdup ("-as"));
