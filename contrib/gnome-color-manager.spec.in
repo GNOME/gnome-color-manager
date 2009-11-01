@@ -20,6 +20,7 @@ Requires:  gnome-icon-theme
 Requires:  unique >= %{unique_version}
 Requires:  shared-mime-info
 Requires:  vte
+Requires:  argyllcms
 
 BuildRequires: glib2-devel >= %{glib2_version}
 BuildRequires: gtk2-devel >= %{gtk2_version}
@@ -39,7 +40,7 @@ gnome-color-manager provides a way to control ICC colour profiles.
 %setup -q
 
 %build
-%configure --disable-scrollkeeper
+%configure --disable-scrollkeeper --disable-schemas-install
 make %{?_smp_mflags}
 
 %install
@@ -54,7 +55,7 @@ for i in gcm-prefs gcm-import ; do
     $RPM_BUILD_ROOT%{_datadir}/applications/$i.desktop
 done
 
-#%find_lang %name --with-gnome
+%find_lang %name --with-gnome
 
 %clean
 rm -rf $RPM_BUILD_ROOT
@@ -86,11 +87,15 @@ if [ "$1" -eq 0 ]; then
 fi
 
 %postun
+scrollkeeper-update -q &> /dev/null || :
+touch --no-create %{_datadir}/icons/hicolor
+if [ -x /usr/bin/gtk-update-icon-cache ]; then
+    gtk-update-icon-cache -q %{_datadir}/icons/hicolor &> /dev/null || :
+fi
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-mime-database %{_datadir}/mime &> /dev/null || :
 
-%files
-# -f %{name}.lang
+%files -f %{name}.lang
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING NEWS README
 %{_bindir}/gcm-prefs
@@ -103,6 +108,8 @@ update-mime-database %{_datadir}/mime &> /dev/null || :
 #%{_datadir}/man/man1/*.1.gz
 #%{_datadir}/gnome/help/gnome-color-manager
 #%{_datadir}/omf/gnome-color-manager
+%{_datadir}/icons/hicolor/*/*/*.png
+%{_datadir}/icons/hicolor/scalable/*/*.svg*
 %config(noreplace) %{_sysconfdir}/gconf/schemas/*.schemas
 %{_datadir}/applications/gcm-prefs.desktop
 %{_datadir}/applications/gcm-import.desktop

@@ -31,7 +31,7 @@
 
 #include "gcm-clut.h"
 
-#define GCM_STOCK_ICON		"video-display"
+#define GCM_STOCK_ICON		"gnome-color-manager"
 #define GCM_PROFILE_PATH	"/.color/icc"
 
 gchar		*gcm_utils_get_output_name		(GnomeRROutput		*output);

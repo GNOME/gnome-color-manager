@@ -1,4 +1,5 @@
 SUBDIRS = 						\
+	icons						\
 	profiles
 
 @INTLTOOL_SCHEMAS_RULE@
