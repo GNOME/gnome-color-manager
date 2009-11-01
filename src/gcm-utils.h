@@ -49,6 +49,7 @@ gboolean	 gcm_utils_mkdir_and_copy		(const gchar		*source,
 							 const gchar		*destination,
 							 GError			**error);
 gchar		*gcm_utils_get_profile_destination	(const gchar		*filename);
+gchar		**gcm_utils_ptr_array_to_strv		(GPtrArray		*array);
 
 #endif /* __GCM_UTILS_H */
 
