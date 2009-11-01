@@ -36,9 +36,6 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <vte/vte.h>
-#include <sys/types.h>
-#include <pwd.h>
-#include <unistd.h>
 
 #include "gcm-calibrate.h"
 #include "gcm-edid.h"
@@ -508,8 +505,6 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	gchar *model = NULL;
 	gchar *description = NULL;
 	gchar *copyright = NULL;
-	const gchar *username = NULL;
-	struct passwd *pw;
 	GPtrArray *array = NULL;
 
 	/* get l-cd or c-rt */
@@ -538,21 +533,8 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	if (manufacturer == NULL)
 		manufacturer = g_strdup ("unknown manufacturer");
 
-	/* query real name */
-	pw = getpwuid (getuid ());
-	if (pw != NULL) {
-		if (pw->pw_gecos != NULL)
-			username = pw->pw_gecos;
-		else if (pw->pw_name != NULL)
-			username = pw->pw_name;
-	}
-	if (username == NULL) {
-		/* TRANSLATORS: this is the current username when the actual username could not be found */
-		username = _("Current user");
-	}
-
 	/* form copyright */
-	copyright = g_strdup_printf ("Copyright %s, %04i/%02i/%02i", username, date->year, date->month, date->day);
+	copyright = g_strdup_printf ("Copyright %s, %04i/%02i/%02i", g_get_real_name (), date->year, date->month, date->day);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
