@@ -339,7 +339,7 @@ gcm_utils_mkdir_and_copy (const gchar *source, const gchar *destination, GError 
 
 	/* do the copy */
 	egg_debug ("copying from %s to %s", source, path);
-	ret = g_file_copy (sourcefile, destfile, G_FILE_COPY_NONE, NULL, NULL, NULL, error);
+	ret = g_file_copy (sourcefile, destfile, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, error);
 	if (!ret)
 		goto out;
 out:
