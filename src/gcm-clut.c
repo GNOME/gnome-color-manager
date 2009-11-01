@@ -162,11 +162,9 @@ static gchar *
 gcm_clut_get_default_config_location (void)
 {
 	gchar *filename;
-	const gchar *home;
 
 	/* create default path */
-	home = g_get_home_dir ();
-	filename = g_build_filename (home, ".gnome2", "gnome-color-manager", "config.dat", NULL);
+	filename = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "config.dat", NULL);
 
 	return filename;
 }
