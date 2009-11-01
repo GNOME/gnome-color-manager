@@ -72,7 +72,7 @@ gcm_prefs_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
 static void
 gcm_prefs_help_cb (GtkWidget *widget, gpointer data)
 {
-	egg_warning ("help for prefs");
+	gcm_gnome_help ("preferences");
 }
 
 /**

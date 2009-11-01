@@ -132,11 +132,26 @@ AC_PATH_PROG(GCONFTOOL, gconftool-2)
 AM_GCONF_SOURCE_2
 
 dnl ---------------------------------------------------------------------------
+dnl - Where should we put documentation ?
+dnl ---------------------------------------------------------------------------
+AC_ARG_WITH(doc-dir,
+            AS_HELP_STRING([--with-doc-dir=<dir>],
+                           [directory to install documentation]))
+
+if ! test -z "$with_doc_dir"; then
+   DOCDIR="$with_doc_dir/gnome-color-manager-$VERSION"
+else
+   DOCDIR="$DATADIR/doc/gnome-color-manager-$VERSION"
+fi
+AC_SUBST(DOCDIR)
+
+dnl ---------------------------------------------------------------------------
 dnl - Makefiles, etc.
 dnl ---------------------------------------------------------------------------
 AC_OUTPUT([
 Makefile
 src/Makefile
+help/Makefile
 data/Makefile
 data/profiles/Makefile
 data/icons/Makefile

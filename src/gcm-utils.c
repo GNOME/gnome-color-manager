@@ -395,3 +395,36 @@ gcm_utils_ptr_array_to_strv (GPtrArray *array)
 	return value;
 }
 
+/**
+ * gpk_gnome_help:
+ * @link_id: Subsection of help file, or %NULL.
+ **/
+gboolean
+gcm_gnome_help (const gchar *link_id)
+{
+	GError *error = NULL;
+	gchar *uri;
+	gboolean ret = TRUE;
+
+	if (link_id)
+		uri = g_strconcat ("ghelp:gnome-color-manager?", link_id, NULL);
+	else
+		uri = g_strdup ("ghelp:gnome-color-manager");
+	egg_debug ("opening uri %s", uri);
+
+	gtk_show_uri (NULL, uri, GDK_CURRENT_TIME, &error);
+
+	if (error != NULL) {
+		GtkWidget *d;
+		d = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
+					    GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", error->message);
+		gtk_dialog_run (GTK_DIALOG(d));
+		gtk_widget_destroy (d);
+		g_error_free (error);
+		ret = FALSE;
+	}
+
+	g_free (uri);
+	return ret;
+}
+

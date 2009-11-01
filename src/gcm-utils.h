@@ -50,6 +50,7 @@ gboolean	 gcm_utils_mkdir_and_copy		(const gchar		*source,
 							 GError			**error);
 gchar		*gcm_utils_get_profile_destination	(const gchar		*filename);
 gchar		**gcm_utils_ptr_array_to_strv		(GPtrArray		*array);
+gboolean	 gcm_gnome_help				(const gchar		*link_id);
 
 #endif /* __GCM_UTILS_H */
 
