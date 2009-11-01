@@ -87,8 +87,10 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	GtkWindow *window;
 	GnomeRROutput *output;
 	const gchar *output_name;
+	const gchar *name;
 	gchar *filename = NULL;
 	gchar *destination = NULL;
+	guint i;
 
 	/* get the device */
 	output = gnome_rr_screen_get_output_by_id (rr_screen, current_device);
@@ -165,10 +167,25 @@ finish_calibrate:
 		goto out;
 	}
 
+	/* find an existing profile of this name */
+	for (i=0; i<profiles_array->len; i++) {
+		name = g_ptr_array_index (profiles_array, i);
+		if (g_strcmp0 (name, destination) == 0) {
+			egg_debug ("found existing profile: %s", destination);
+			break;
+		}
+	}
+
+	/* we didn't find an existing profile */
+	if (i == profiles_array->len) {
+		egg_debug ("adding: %s", destination);
+		g_ptr_array_add (profiles_array, g_strdup (destination));
+		i = profiles_array->len - 1;
+	}
+
 	/* set the new profile and save config */
-	g_ptr_array_add (profiles_array, g_strdup (destination));
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
-	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), profiles_array->len - 1);
+	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), i);
 
 	/* remove temporary file */
 	g_unlink (filename);
