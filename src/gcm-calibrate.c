@@ -81,6 +81,9 @@ enum {
 
 G_DEFINE_TYPE (GcmCalibrate, gcm_calibrate, G_TYPE_OBJECT)
 
+/* assume this is writable by users */
+#define GCM_CALIBRATE_TEMP_DIR		"/tmp"
+
 /**
  * gcm_calibrate_get_display:
  **/
@@ -229,6 +232,18 @@ out:
 }
 
 /**
+ * gcm_calibrate_debug_argv:
+ **/
+static void
+gcm_calibrate_debug_argv (const gchar *program, gchar **argv)
+{
+	gchar *join;
+	join = g_strjoinv ("  ", argv);
+	egg_debug ("running %s  %s", program, join);
+	g_free (join);
+}
+
+/**
  * gcm_calibrate_task_neutralise:
  **/
 static gboolean
@@ -237,12 +252,12 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	gboolean ret = TRUE;
 	GcmCalibratePrivate *priv = calibrate->priv;
 	gchar type;
-	gchar *cmd = NULL;
-	gchar **argc = NULL;
+	gchar **argv = NULL;
 	GtkWidget *widget;
 	GnomeRROutput *output;
 	const guint8 *data;
 	guint i;
+	GPtrArray *array = NULL;
 
 	/* match up the output name with the device number defined by dispcal */
 	priv->display = gcm_calibrate_get_display (priv->output_name, error);
@@ -280,14 +295,22 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 		priv->basename[i] = g_ascii_tolower (priv->basename[i]);
 	egg_debug ("using filename basename of %s", priv->basename);
 
+	/* argument array */
+	array = g_ptr_array_new_with_free_func (g_free);
+
 	/* setup the command */
-	cmd = g_strdup_printf ("dispcal -v -ql -m -d%i -y%c %s", priv->display, type, priv->basename);
-	argc = g_strsplit (cmd, " ", -1);
-	egg_debug ("running %s", cmd);
+	g_ptr_array_add (array, g_strdup ("-v"));
+	g_ptr_array_add (array, g_strdup ("-ql"));
+	g_ptr_array_add (array, g_strdup ("-m"));
+	g_ptr_array_add (array, g_strdup_printf ("-d%i", priv->display));
+	g_ptr_array_add (array, g_strdup_printf ("-y%c", type));
+	g_ptr_array_add (array, g_strdup (priv->basename));
+	argv = gcm_utils_ptr_array_to_strv (array);
+	gcm_calibrate_debug_argv ("dispcal", argv);
 
 	/* start up the command */
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
-	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), argc[0], &argc[1], NULL, "/tmp", FALSE, FALSE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), "dispcal", argv, NULL, GCM_CALIBRATE_TEMP_DIR, FALSE, FALSE, FALSE);
 
 	/* TRANSLATORS: title, device is a hardware color calibration sensor */
 	gcm_calibrate_set_title (calibrate, _("Please attach device"));
@@ -301,7 +324,7 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	g_main_loop_run (priv->loop);
 
 	/* get result */
-	if (priv->response != GTK_RESPONSE_OK) {
+	if (priv->response == GTK_RESPONSE_CANCEL) {
 		vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), "Q", 1);
 		if (error != NULL)
 			*error = g_error_new (1, 0, "user did not attach hardware device");
@@ -321,15 +344,22 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	g_main_loop_run (priv->loop);
 
 	/* get result */
-	if (priv->response != GTK_RESPONSE_OK) {
+	if (priv->response == GTK_RESPONSE_CANCEL) {
 		if (error != NULL)
 			*error = g_error_new (1, 0, "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
+	if (priv->response == GTK_RESPONSE_REJECT) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "command failed to run successfully");
+		ret = FALSE;
+		goto out;
+	}
 out:
-	g_strfreev (argc);
-	g_free (cmd);
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	g_strfreev (argv);
 	return ret;
 }
 
@@ -352,20 +382,26 @@ gcm_calibrate_task_generate_patches (GcmCalibrate *calibrate, GError **error)
 	gboolean ret = TRUE;
 	GcmCalibratePrivate *priv = calibrate->priv;
 	gchar type;
-	gchar *cmd = NULL;
-	gchar **argc = NULL;
+	gchar **argv = NULL;
+	GPtrArray *array = NULL;
 
 	/* get l-cd or c-rt */
 	type = gcm_calibrate_get_display_type (calibrate);
 
+	/* argument array */
+	array = g_ptr_array_new_with_free_func (g_free);
+
 	/* setup the command */
-	cmd = g_strdup_printf ("targen -v -d3 -f250 %s", priv->basename);
-	argc = g_strsplit (cmd, " ", -1);
-	egg_debug ("running %s", cmd);
+	g_ptr_array_add (array, g_strdup ("-v"));
+	g_ptr_array_add (array, g_strdup ("-d3"));
+	g_ptr_array_add (array, g_strdup ("-f250"));
+	g_ptr_array_add (array, g_strdup (priv->basename));
+	argv = gcm_utils_ptr_array_to_strv (array);
+	gcm_calibrate_debug_argv ("targen", argv);
 
 	/* start up the command */
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
-	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), argc[0], &argc[1], NULL, "/tmp", FALSE, FALSE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), "targen", argv, NULL, GCM_CALIBRATE_TEMP_DIR, FALSE, FALSE, FALSE);
 	g_timeout_add_seconds (3, (GSourceFunc) gcm_calibrate_timeout_cb, calibrate);
 
 	/* TRANSLATORS: title, patches are specific colours used in calibration */
@@ -377,15 +413,22 @@ gcm_calibrate_task_generate_patches (GcmCalibrate *calibrate, GError **error)
 	g_main_loop_run (priv->loop);
 
 	/* get result */
-	if (priv->response != GTK_RESPONSE_OK) {
+	if (priv->response == GTK_RESPONSE_CANCEL) {
 		if (error != NULL)
 			*error = g_error_new (1, 0, "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
+	if (priv->response == GTK_RESPONSE_REJECT) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "command failed to run successfully");
+		ret = FALSE;
+		goto out;
+	}
 out:
-	g_strfreev (argc);
-	g_free (cmd);
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	g_strfreev (argv);
 	return ret;
 }
 
@@ -398,20 +441,28 @@ gcm_calibrate_task_draw_and_measure (GcmCalibrate *calibrate, GError **error)
 	gboolean ret = TRUE;
 	GcmCalibratePrivate *priv = calibrate->priv;
 	gchar type;
-	gchar *cmd = NULL;
-	gchar **argc = NULL;
+	gchar **argv = NULL;
+	GPtrArray *array = NULL;
 
 	/* get l-cd or c-rt */
 	type = gcm_calibrate_get_display_type (calibrate);
 
+	/* argument array */
+	array = g_ptr_array_new_with_free_func (g_free);
+
 	/* setup the command */
-	cmd = g_strdup_printf ("dispread -v -d%i -y%c -k %s.cal %s", priv->display, type, priv->basename, priv->basename);
-	argc = g_strsplit (cmd, " ", -1);
-	egg_debug ("running %s", cmd);
+	g_ptr_array_add (array, g_strdup ("-v"));
+	g_ptr_array_add (array, g_strdup_printf ("-d%i", priv->display));
+	g_ptr_array_add (array, g_strdup_printf ("-y%c", type));
+	g_ptr_array_add (array, g_strdup ("-k"));
+	g_ptr_array_add (array, g_strdup_printf ("%s.cal", priv->basename));
+	g_ptr_array_add (array, g_strdup (priv->basename));
+	argv = gcm_utils_ptr_array_to_strv (array);
+	gcm_calibrate_debug_argv ("dispread", argv);
 
 	/* start up the command */
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
-	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), argc[0], &argc[1], NULL, "/tmp", FALSE, FALSE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), "dispread", argv, NULL, GCM_CALIBRATE_TEMP_DIR, FALSE, FALSE, FALSE);
 	g_timeout_add_seconds (3, (GSourceFunc) gcm_calibrate_timeout_cb, calibrate);
 
 	/* TRANSLATORS: title, drawing means painting to the screen */
@@ -423,15 +474,22 @@ gcm_calibrate_task_draw_and_measure (GcmCalibrate *calibrate, GError **error)
 	g_main_loop_run (priv->loop);
 
 	/* get result */
-	if (priv->response != GTK_RESPONSE_OK) {
+	if (priv->response == GTK_RESPONSE_CANCEL) {
 		if (error != NULL)
 			*error = g_error_new (1, 0, "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
+	if (priv->response == GTK_RESPONSE_REJECT) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "command failed to run successfully");
+		ret = FALSE;
+		goto out;
+	}
 out:
-	g_strfreev (argc);
-	g_free (cmd);
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	g_strfreev (argv);
 	return ret;
 }
 
@@ -444,8 +502,7 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	gboolean ret = TRUE;
 	GcmCalibratePrivate *priv = calibrate->priv;
 	gchar type;
-	gchar *cmd = NULL;
-	gchar **argc = NULL;
+	gchar **argv = NULL;
 	GDate *date;
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
@@ -453,6 +510,7 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	gchar *copyright = NULL;
 	const gchar *username = NULL;
 	struct passwd *pw;
+	GPtrArray *array = NULL;
 
 	/* get l-cd or c-rt */
 	type = gcm_calibrate_get_display_type (calibrate);
@@ -496,15 +554,24 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	/* form copyright */
 	copyright = g_strdup_printf ("Copyright %s, %i/%i/%i", username, date->year, date->month, date->day);
 
-	/* setup the command */
-	cmd = g_strdup_printf ("colprof -A \"%s\" -M \"%s\" -D \"%s\" -C \"%s\" -q m -as %s", manufacturer, model, description, copyright, priv->basename);
+	/* argument array */
+	array = g_ptr_array_new_with_free_func (g_free);
 
-	argc = g_strsplit (cmd, " ", -1);
-	egg_debug ("running %s", cmd);
+	/* setup the command */
+	g_ptr_array_add (array, g_strdup ("-v"));
+	g_ptr_array_add (array, g_strdup_printf ("-A%s", manufacturer));
+	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
+	g_ptr_array_add (array, g_strdup_printf ("-D%s", description));
+	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
+	g_ptr_array_add (array, g_strdup ("-qm"));
+	g_ptr_array_add (array, g_strdup ("-as"));
+	g_ptr_array_add (array, g_strdup (priv->basename));
+	argv = gcm_utils_ptr_array_to_strv (array);
+	gcm_calibrate_debug_argv ("colprof", argv);
 
 	/* start up the command */
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
-	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), argc[0], &argc[1], NULL, "/tmp", FALSE, FALSE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), "colprof", argv, NULL, GCM_CALIBRATE_TEMP_DIR, FALSE, FALSE, FALSE);
 
 	/* TRANSLATORS: title, a profile is a ICC file */
 	gcm_calibrate_set_title (calibrate, _("Generating the profile"));
@@ -515,20 +582,27 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	g_main_loop_run (priv->loop);
 
 	/* get result */
-	if (priv->response != GTK_RESPONSE_OK) {
+	if (priv->response == GTK_RESPONSE_CANCEL) {
 		if (error != NULL)
 			*error = g_error_new (1, 0, "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
+	if (priv->response == GTK_RESPONSE_REJECT) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "command failed to run successfully");
+		ret = FALSE;
+		goto out;
+	}
 out:
+	if (array != NULL)
+		g_ptr_array_unref (array);
 	g_date_free (date);
 	g_free (manufacturer);
 	g_free (model);
 	g_free (description);
 	g_free (copyright);
-	g_strfreev (argc);
-	g_free (cmd);
+	g_strfreev (argv);
 	return ret;
 }
 
@@ -601,9 +675,19 @@ gcm_calibrate_finish (GcmCalibrate *calibrate, GError **error)
 static void
 gcm_calibrate_exit_cb (VteTerminal *terminal, GcmCalibrate *calibrate)
 {
+	gint exit_status;
+
+	/* get the child exit status */
+	exit_status = vte_terminal_get_child_exit_status (terminal);
+	egg_debug ("child exit-status is %i", exit_status);
+	if (exit_status == 0)
+		calibrate->priv->response = GTK_RESPONSE_ACCEPT;
+	else
+		calibrate->priv->response = GTK_RESPONSE_REJECT;
+
+	calibrate->priv->child_pid = -1;
 	if (g_main_loop_is_running (calibrate->priv->loop))
 		g_main_loop_quit (calibrate->priv->loop);
-	calibrate->priv->child_pid = -1;
 }
 
 /**
