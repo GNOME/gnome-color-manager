@@ -7,8 +7,9 @@ iconsdir = $(themedir)/$(size)/$(context)
 icons_DATA = 			  	\
 	gnome-color-manager.svg
 
-noinst_DATA = 
+install-data-hook:
+	mkdir -p $(DESTDIR)$(DATADIR)/icons/hicolor/$(size)/mimetypes;
+	ln -fs $(iconsdir)/gnome-color-manager.svg $(DESTDIR)$(DATADIR)/icons/hicolor/$(size)/mimetypes/application-vnd.iccprofile.svg;
 
 EXTRA_DIST =		\
-	$(icons_DATA)	\
-	$(noinst_DATA)
+	$(icons_DATA)

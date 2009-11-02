@@ -132,6 +132,11 @@ AC_PATH_PROG(GCONFTOOL, gconftool-2)
 AM_GCONF_SOURCE_2
 
 dnl ---------------------------------------------------------------------------
+dnl - Make paths available for source files
+dnl ---------------------------------------------------------------------------
+AC_SUBST(DATADIR, $datadir)
+
+dnl ---------------------------------------------------------------------------
 dnl - Where should we put documentation ?
 dnl ---------------------------------------------------------------------------
 AC_ARG_WITH(doc-dir,
