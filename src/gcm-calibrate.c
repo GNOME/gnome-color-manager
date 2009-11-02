@@ -378,12 +378,8 @@ gcm_calibrate_task_generate_patches (GcmCalibrate *calibrate, GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibratePrivate *priv = calibrate->priv;
-	gchar type;
 	gchar **argv = NULL;
 	GPtrArray *array = NULL;
-
-	/* get l-cd or c-rt */
-	type = gcm_calibrate_get_display_type (calibrate);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -498,7 +494,6 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibratePrivate *priv = calibrate->priv;
-	gchar type;
 	gchar **argv = NULL;
 	GDate *date;
 	gchar *manufacturer = NULL;
@@ -507,9 +502,6 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	gchar *description = NULL;
 	gchar *copyright = NULL;
 	GPtrArray *array = NULL;
-
-	/* get l-cd or c-rt */
-	type = gcm_calibrate_get_display_type (calibrate);
 
 	/* create date and set it to now */
 	date = g_date_new ();
