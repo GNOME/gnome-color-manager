@@ -52,6 +52,7 @@ struct _GcmEdidPrivate
 	gchar				*monitor_name;
 	gchar				*serial_number;
 	gchar				*ascii_string;
+	gfloat				 gamma;
 };
 
 enum {
@@ -59,6 +60,7 @@ enum {
 	PROP_MONITOR_NAME,
 	PROP_SERIAL_NUMBER,
 	PROP_ASCII_STRING,
+	PROP_GAMMA,
 	PROP_LAST
 };
 
@@ -93,6 +95,10 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 	priv->serial_number = NULL;
 	priv->ascii_string = NULL;
 
+	/* get gamma */
+	priv->gamma = ((gfloat) data[23] / 100) + 1;
+	egg_debug ("gamma is reported as %f", priv->gamma);
+
 	/* parse EDID data */
 	for (i=54; i <= 108; i+=18) {
 		/* ignore pixel clock data */
@@ -108,6 +114,8 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 			priv->serial_number = g_strdup (&data[i+5]);
 		else if (data[i+3] == 0xfe)
 			priv->ascii_string = g_strdup (&data[i+5]);
+		else if (data[i+3] == 0xfb)
+			egg_warning ("extended EDID block which may contain a better gamma value");
 	}
 
 	/* remove embedded newlines */
@@ -140,6 +148,9 @@ gcm_edid_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 	case PROP_ASCII_STRING:
 		g_value_set_string (value, priv->ascii_string);
 		break;
+	case PROP_GAMMA:
+		g_value_set_float (value, priv->gamma);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -167,6 +178,9 @@ gcm_edid_set_property (GObject *object, guint prop_id, const GValue *value, GPar
 	case PROP_ASCII_STRING:
 		g_free (priv->ascii_string);
 		priv->ascii_string = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_GAMMA:
+		priv->gamma = g_value_get_float (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -209,6 +223,14 @@ gcm_edid_class_init (GcmEdidClass *klass)
 				     NULL,
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_ASCII_STRING, pspec);
+
+	/**
+	 * GcmEdid:gamma:
+	 */
+	pspec = g_param_spec_float ("gamma", NULL, NULL,
+				    1.0f, 5.0f, 1.0f,
+				    G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_GAMMA, pspec);
 
 	g_type_class_add_private (klass, sizeof (GcmEdidPrivate));
 }
