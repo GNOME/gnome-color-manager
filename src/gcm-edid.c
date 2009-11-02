@@ -75,8 +75,9 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 	GcmEdidPrivate *priv = edid->priv;
 
 	g_return_val_if_fail (GCM_IS_EDID (edid), FALSE);
+	g_return_val_if_fail (data != NULL, FALSE);
 
-	/* chekc header */
+	/* check header */
 	if (data[0] != 0x00 || data[1] != 0xff) {
 		if (error != NULL)
 			*error = g_error_new (1, 0, "failed to parse header");
