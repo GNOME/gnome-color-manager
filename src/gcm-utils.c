@@ -51,6 +51,9 @@ gcm_utils_get_output_name (GnomeRROutput *output)
 
 	/* parse the EDID to get a crtc-specific name, not an output specific name */
 	data = gnome_rr_output_get_edid_data (output);
+	if (data == NULL)
+		goto out;
+
 	edid = gcm_edid_new ();
 	ret = gcm_edid_parse (edid, data, NULL);
 	if (!ret) {

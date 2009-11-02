@@ -268,8 +268,12 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 		goto out;
 	}
 
-	/* parse edid */
+	/* get edid */
 	data = gnome_rr_output_get_edid_data (output);
+	if (data == NULL)
+		goto out;
+
+	/* parse edid */
 	ret = gcm_edid_parse (priv->edid, data, error);
 	if (!ret)
 		goto out;
