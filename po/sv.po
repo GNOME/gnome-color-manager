@@ -1,5 +1,5 @@
 # Swedish translation for gnome-color-manager.
-# Copyright (C) 2009 Free Software Foundation, Inc. 
+# Copyright (C) 2009 Free Software Foundation, Inc.
 # This file is distributed under the same license as the gnome-color-manager package.
 # Daniel Nylander <po@danielnylander.se>, 2009.
 #
@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-02 10:58+0100\n"
-"PO-Revision-Date: 2009-11-02 11:20+0100\n"
+"POT-Creation-Date: 2009-11-02 15:48+0100\n"
+"PO-Revision-Date: 2009-11-02 15:50+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "MIME-Version: 1.0\n"
@@ -30,6 +30,14 @@ msgstr "Meddelande"
 #: ../data/gcm-calibrate.ui.h:4
 msgid "Title"
 msgstr "Titel"
+
+#: ../data/gcm-apply.desktop.in.h:1
+msgid "Applies device profile settings at session startup"
+msgstr "Tillämpar enhetsprofilinställningar vid sessionsuppstart"
+
+#: ../data/gcm-apply.desktop.in.h:2
+msgid "Load device color profiles"
+msgstr "Läs in enhetsfärgprofiler"
 
 #: ../data/gcm-import.desktop.in.h:1
 msgid "ICC Profile Installer"
@@ -92,8 +100,8 @@ msgid "_Reset to defaults"
 msgstr "Återställ till s_tandardvärden"
 
 #: ../data/gnome-color-manager.schemas.in.h:1
-msgid "Gamma is adjusted to affect the color of the attached monitor. Traditionally Linux has used a gamma value of 1.0, but this makes monitors look washed out compared Windows XP or OSX. Apple traditionally used a value of 1.8 for a long time, but now use the same value as Microsoft. Microsoft has always used a value 2.2"
-msgstr "Gamma justeras för att påverka färgen på den anslutna skärmen. Traditionellt sett har Linux använt ett gammavärde på 1.0, men detta gör att skärmar ser urtvättade ut i jämförelse med Windows XP eller OSX. Apple har traditionellt sett använt ett värde på 1.8 under en längre tid men använder nu samma värde som Microsoft gör. Microsoft har alltid använt ett värde på 2.2"
+msgid "Gamma is adjusted to affect the color of the attached monitor. Traditionally Linux has used a gamma value of 1.0, but this makes monitors look washed out compared Windows XP or OSX. Apple traditionally used a value of 1.8 for a long time, but now use the same value as Microsoft. Microsoft has always used a value of 2.2."
+msgstr "Gamma justeras för att påverka färgen på den anslutna skärmen. Traditionellt sett har Linux använt ett gammavärde på 1.0, men detta gör att skärmar ser urtvättade ut i jämförelse med Windows XP eller OSX. Apple har traditionellt sett använt ett värde på 1.8 under en längre tid men använder nu samma värde som Microsoft. Microsoft har alltid använt ett värde på 2.2."
 
 #: ../data/gnome-color-manager.schemas.in.h:2
 msgid "The default gamma to use for monitors with no previous selection."
@@ -136,7 +144,7 @@ msgstr "Anslut enheten"
 
 #. TRANSLATORS: dialog message, ask user to attach device
 #: ../src/gcm-calibrate.c:315
-msgid "Please attach the hardware device to the center of the screen on the grey square."
+msgid "Please attach the hardware device to the center of the screen on the gray square."
 msgstr "Anslut hårdvaruenheten till mitten av skärmen i den gråa fyrkanten."
 
 #. TRANSLATORS: title, default paramters needed to calibrate
@@ -150,32 +158,42 @@ msgid "This pre-calibrates the screen by sending colored and gray patches to you
 msgstr "Denna förkalibrerar skärmen genom att skicka ut färgade och gråa färgkartor till din skärm och mäter dem med hårdvaruenheten."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate.c:405
+#: ../src/gcm-calibrate.c:401
 msgid "Generating the patches"
 msgstr "Genererar färgkartan"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:407
+#: ../src/gcm-calibrate.c:403
 msgid "Generating the patches that will be measured with the hardware device."
 msgstr "Genererar färgkartan som ska mätas med hårdvaruenheten."
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate.c:466
+#: ../src/gcm-calibrate.c:462
 msgid "Drawing the patches"
 msgstr "Ritar ut färgkartan"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:468
+#: ../src/gcm-calibrate.c:464
 msgid "Drawing the generated patches to the screen, which will then be measured by the hardware device."
 msgstr "Ritar ut den genererade färgkartan till skärmen, vilken sedan kommer att mätas av hårdvaruenheten."
 
+#. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated"
+#: ../src/gcm-calibrate.c:525
+msgid "Custom"
+msgstr "Anpassad"
+
+#. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands"
+#: ../src/gcm-calibrate.c:533
+msgid "Copyright (c)"
+msgstr "Copyright ©"
+
 #. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate.c:559
+#: ../src/gcm-calibrate.c:555
 msgid "Generating the profile"
 msgstr "Genererar profilen"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:561
+#: ../src/gcm-calibrate.c:557
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "Genererar ICC-färgprofilen som kan användas med denna skärm."
 
@@ -240,20 +258,20 @@ msgid "Label"
 msgstr "Etikett"
 
 #. add a clear entry
-#: ../src/gcm-prefs.c:430
+#: ../src/gcm-prefs.c:482
 msgid "None"
 msgstr "Ingen"
 
-#: ../src/gcm-prefs.c:611
+#: ../src/gcm-prefs.c:679
 msgid "Show extra debugging information"
 msgstr "Visa extra felsökningsinformation"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-prefs.c:614
+#: ../src/gcm-prefs.c:682
 msgid "Set the parent window to make this modal"
 msgstr "Ange föräldrafönstret för att skapa denna modal"
 
-#: ../src/gcm-utils.c:68
+#: ../src/gcm-utils.c:73
 msgid "Internal LCD"
 msgstr "Intern LCD"
 
