@@ -41,8 +41,13 @@ gcm_utils_get_output_name (GnomeRROutput *output)
 	guint i, j;
 	const gchar *output_name;
 	gchar *name = NULL;
-	GcmEdid *edid;
+	GcmEdid *edid = NULL;
 	gboolean ret;
+
+	/* if nothing connected then fall back to the connector name */
+	ret = gnome_rr_output_is_connected (output);
+	if (!ret)
+		goto out;
 
 	/* parse the EDID to get a crtc-specific name, not an output specific name */
 	data = gnome_rr_output_get_edid_data (output);
@@ -69,7 +74,8 @@ out:
 		name = g_strdup (output_name);
 	}
 
-	g_object_unref (edid);
+	if (edid != NULL)
+		g_object_unref (edid);
 	return name;
 }
 
