@@ -1,6 +1,7 @@
 SUBDIRS = 						\
 	po						\
 	help						\
+	man						\
 	data						\
 	src
 
