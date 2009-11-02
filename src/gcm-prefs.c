@@ -341,6 +341,40 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 }
 
 /**
+ * gcm_prefs_has_device:
+ **/
+static gboolean
+gcm_prefs_has_device (guint id)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	guint id_tmp;
+	gboolean ret;
+
+	/* get first element */
+	model = GTK_TREE_MODEL (list_store_devices);
+	ret = gtk_tree_model_get_iter_first (model, &iter);
+	if (!ret)
+		goto out;
+
+	/* not yet found */
+	ret = FALSE;
+
+	/* get the other elements */
+	do {
+		gtk_tree_model_get (model, &iter,
+				    GPM_DEVICES_COLUMN_ID, &id_tmp,
+				    -1);
+		if (id_tmp == id) {
+			ret = TRUE;
+			break;
+		}
+	} while (gtk_tree_model_iter_next (model, &iter));
+out:
+	return ret;
+}
+
+/**
  * gcm_prefs_add_device:
  **/
 static void
@@ -351,9 +385,25 @@ gcm_prefs_add_device (GnomeRROutput *output)
 	guint id;
 	GcmClut *clut;
 	GError *error = NULL;
+	gboolean ret;
 
+	/* get details */
 	id = gnome_rr_output_get_id (output);
 	name = gcm_utils_get_output_name (output);
+
+	/* if nothing connected then ignore */
+	ret = gnome_rr_output_is_connected (output);
+	if (!ret) {
+		egg_debug ("%s is not connected", name);
+		goto out;
+	}
+
+	/* are we already in the list */
+	ret = gcm_prefs_has_device (id);
+	if (ret) {
+		egg_debug ("%s already added", name);
+		goto out;
+	}
 
 	/* create a clut for this output */
 	clut = gcm_utils_get_clut_for_output (output, &error);
@@ -363,6 +413,8 @@ gcm_prefs_add_device (GnomeRROutput *output)
 		goto out;
 	}
 
+	/* add to list */
+	egg_debug ("add %s to device list", name);
 	gtk_list_store_append (list_store_devices, &iter);
 	gtk_list_store_set (list_store_devices, &iter,
 			    GPM_DEVICES_COLUMN_ID, id,
@@ -587,6 +639,23 @@ out:
 }
 
 /**
+ * gcm_prefs_randr_event_cb:
+ **/
+static void
+gcm_prefs_randr_event_cb (GnomeRRScreen *screen, gpointer data)
+{
+	GnomeRROutput **outputs;
+	guint i;
+
+	egg_debug ("screens may have changed");
+
+	/* replug devices */
+	outputs = gnome_rr_screen_list_outputs (rr_screen);
+	for (i=0; outputs[i] != NULL; i++)
+		gcm_prefs_add_device (outputs[i]);
+}
+
+/**
  * main:
  **/
 int
@@ -604,7 +673,6 @@ main (int argc, char **argv)
 	GtkTreeSelection *selection;
 	GnomeRROutput **outputs;
 	guint i;
-	gboolean connected;
 
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
@@ -706,23 +774,16 @@ main (int argc, char **argv)
 	gtk_range_set_range (GTK_RANGE (widget), 1.0f, 100.0f);
 
 	/* get screen */
-	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
+	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), gcm_prefs_randr_event_cb, NULL, &error);
 	if (rr_screen == NULL) {
 		egg_warning ("failed to get rr screen: %s", error->message);
 		goto out;
 	}
 
-	/* add devices */
+	/* coldplug devices */
 	outputs = gnome_rr_screen_list_outputs (rr_screen);
-	for (i=0; outputs[i] != NULL; i++) {
-		/* if nothing connected then ignore */
-		connected = gnome_rr_output_is_connected (outputs[i]);
-		if (!connected)
-			continue;
-
-		/* add element */
+	for (i=0; outputs[i] != NULL; i++)
 		gcm_prefs_add_device (outputs[i]);
-	}
 
 	/* set the parent window if it is specified */
 	if (xid != 0) {
