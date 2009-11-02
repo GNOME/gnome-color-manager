@@ -66,6 +66,17 @@ enum {
 
 G_DEFINE_TYPE (GcmEdid, gcm_edid, G_TYPE_OBJECT)
 
+#define GCM_EDID_OFFSET_GAMMA				0x17
+#define GCM_EDID_OFFSET_DATA_BLOCKS			0x36
+#define GCM_EDID_OFFSET_LAST_BLOCK			0x6c
+
+#define GCM_DESCRIPTOR_DISPLAY_PRODUCT_NAME		0xfc
+#define GCM_DESCRIPTOR_DISPLAY_PRODUCT_SERIAL_NUMBER	0xff
+#define GCM_DESCRIPTOR_COLOR_MANAGEMENT_DATA		0xf9
+#define GCM_DESCRIPTOR_ALPHANUMERIC_DATA_STRING		0xfe
+#define GCM_DESCRIPTOR_COLOR_POINT			0xfb
+
+
 /**
  * gcm_edid_parse:
  **/
@@ -96,11 +107,16 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 	priv->ascii_string = NULL;
 
 	/* get gamma */
-	priv->gamma = ((gfloat) data[23] / 100) + 1;
-	egg_debug ("gamma is reported as %f", priv->gamma);
+	if (data[GCM_EDID_OFFSET_GAMMA] == 0xff) {
+		priv->gamma = 1.0f;
+		egg_debug ("gamma is stored in an extension block");
+	} else {
+		priv->gamma = ((gfloat) data[GCM_EDID_OFFSET_GAMMA] / 100) + 1;
+		egg_debug ("gamma is reported as %f", priv->gamma);
+	}
 
 	/* parse EDID data */
-	for (i=54; i <= 108; i+=18) {
+	for (i=GCM_EDID_OFFSET_DATA_BLOCKS; i <= GCM_EDID_OFFSET_LAST_BLOCK; i+=18) {
 		/* ignore pixel clock data */
 		if (data[i] != 0)
 			continue;
@@ -108,14 +124,26 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 			continue;
 
 		/* any useful blocks? */
-		if (data[i+3] == 0xfc)
+		if (data[i+3] == GCM_DESCRIPTOR_DISPLAY_PRODUCT_NAME)
 			priv->monitor_name = g_strdup (&data[i+5]);
-		else if (data[i+3] == 0xff)
+		else if (data[i+3] == GCM_DESCRIPTOR_DISPLAY_PRODUCT_SERIAL_NUMBER)
 			priv->serial_number = g_strdup (&data[i+5]);
-		else if (data[i+3] == 0xfe)
+		else if (data[i+3] == GCM_DESCRIPTOR_COLOR_MANAGEMENT_DATA)
+			egg_warning ("failing to parse color management data");
+		else if (data[i+3] == GCM_DESCRIPTOR_ALPHANUMERIC_DATA_STRING)
 			priv->ascii_string = g_strdup (&data[i+5]);
-		else if (data[i+3] == 0xfb)
-			egg_warning ("extended EDID block which may contain a better gamma value");
+		else if (data[i+3] == GCM_DESCRIPTOR_COLOR_POINT) {
+			if (data[i+3+9] != 0xff) {
+				egg_debug ("extended EDID block(1) which contains a better gamma value");
+				priv->gamma = ((gfloat) data[i+3+9] / 100) + 1;
+				egg_debug ("gamma is overridden as %f", priv->gamma);
+			}
+			if (data[i+3+14] != 0xff) {
+				egg_debug ("extended EDID block(2) which contains a better gamma value");
+				priv->gamma = ((gfloat) data[i+3+9] / 100) + 1;
+				egg_debug ("gamma is overridden as %f", priv->gamma);
+			}
+		}
 	}
 
 	/* remove embedded newlines */
