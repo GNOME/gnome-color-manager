@@ -15,12 +15,18 @@ desktop_in_files =					\
 
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
+@INTLTOOL_DESKTOP_RULE@
+autostartdir = $(datadir)/gnome/autostart
+autostart_in_files = gcm-apply.desktop.in
+autostart_DATA = $(autostart_in_files:.desktop.in=.desktop)
+
 pkgdata_DATA =						\
 	gcm-calibrate.ui				\
 	gcm-prefs.ui
 
 EXTRA_DIST =						\
 	$(schema_in_files)				\
+	$(autostart_in_files)				\
 	$(desktop_in_files)				\
 	$(pkgdata_DATA)
 
@@ -41,6 +47,7 @@ clean-local :
 
 DISTCLEANFILES =					\
 	gnome-color-manager.schemas			\
+	gcm-apply.desktop				\
 	gcm-prefs.desktop				\
 	gcm-import.desktop
 

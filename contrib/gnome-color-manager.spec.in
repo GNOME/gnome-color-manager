@@ -10,7 +10,7 @@ Version:   #VERSION#
 Release:   0.#BUILD#%{?alphatag}%{?dist}
 License:   GPLv2+
 Group:     Applications/System
-URL:       http://www.gnome.org
+URL:       http://projects.gnome.org/gnome-color-manager/
 Source0:   http://download.gnome.org/sources/gnome-color-manager/2.29/%{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
@@ -21,9 +21,15 @@ Requires:  unique >= %{unique_version}
 Requires:  shared-mime-info
 Requires:  vte
 Requires:  argyllcms
+Requires(post):   scrollkeeper
+Requires(pre):    GConf2
+Requires(post):   GConf2
+Requires(preun):  GConf2
+Requires(postun): scrollkeeper
 
 BuildRequires: glib2-devel >= %{glib2_version}
 BuildRequires: gtk2-devel >= %{gtk2_version}
+BuildRequires: scrollkeeper
 BuildRequires: gnome-doc-utils >= 0.3.2
 BuildRequires: desktop-file-utils
 BuildRequires: gettext
@@ -48,6 +54,10 @@ rm -rf $RPM_BUILD_ROOT
 export GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 make install DESTDIR=$RPM_BUILD_ROOT
 unset GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL
+
+desktop-file-install --delete-original                   \
+  --dir=$RPM_BUILD_ROOT%{_sysconfdir}/xdg/autostart/                    \
+  $RPM_BUILD_ROOT%{_datadir}/gnome/autostart/gcm-apply.desktop
 
 for i in gcm-prefs gcm-import ; do
   desktop-file-install --delete-original                                \
@@ -113,6 +123,7 @@ update-mime-database %{_datadir}/mime &> /dev/null || :
 %config(noreplace) %{_sysconfdir}/gconf/schemas/*.schemas
 %{_datadir}/applications/gcm-prefs.desktop
 %{_datadir}/applications/gcm-import.desktop
+%{_sysconfdir}/xdg/autostart/*.desktop
 
 %changelog
 * #LONGDATE# Richard Hughes <richard@hughsie.com> #VERSION#-0.#BUILD##ALPHATAG#
