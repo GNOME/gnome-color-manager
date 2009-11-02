@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-10-30 18:40+0300\n"
+"POT-Creation-Date: 2009-11-02 17:11+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: GNOME Russian <gnome-cyr@gnome.org>\n"
@@ -13,28 +13,36 @@ msgstr ""
 "X-Poedit-Country: RUSSIAN FEDERATION\n"
 
 #: ../data/gcm-calibrate.ui.h:1
-msgid "<b>Details</b>"
-msgstr "<b>Подробнее</b>"
-
-#: ../data/gcm-calibrate.ui.h:2
-msgid "<big><b>Title</b></big>"
-msgstr ""
-
-#: ../data/gcm-calibrate.ui.h:3
 msgid "Calibration"
 msgstr "Калибровка"
 
-#: ../data/gcm-calibrate.ui.h:4
+#: ../data/gcm-calibrate.ui.h:2
+msgid "Details"
+msgstr "Подробнее"
+
+#: ../data/gcm-calibrate.ui.h:3
 msgid "Message"
 msgstr "Сообщение"
 
+#: ../data/gcm-calibrate.ui.h:4
+msgid "Title"
+msgstr "Название"
+
+#: ../data/gcm-apply.desktop.in.h:1
+msgid "Applies device profile settings at session startup"
+msgstr ""
+
+#: ../data/gcm-apply.desktop.in.h:2
+msgid "Load device color profiles"
+msgstr "Загрузка цветовых профилей устройств"
+
 #: ../data/gcm-import.desktop.in.h:1
 msgid "ICC Profile Installer"
-msgstr ""
+msgstr "Установка цветовых профилей"
 
 #: ../data/gcm-import.desktop.in.h:2
 msgid "ICC profile installer"
-msgstr ""
+msgstr "Установка цветовых профилей"
 
 #: ../data/gcm-import.desktop.in.h:3
 msgid "Install ICC profiles"
@@ -49,28 +57,28 @@ msgid "Manage ICC color profiles"
 msgstr "Управление цветовыми профилями"
 
 #: ../data/gcm-prefs.ui.h:1
-msgid "<b>Color Profile:</b>"
-msgstr "<b>Цветовой профиль:</b>"
-
-#: ../data/gcm-prefs.ui.h:2
-msgid "<b>Fine tuning:</b>"
-msgstr "<b>Уточнение параметров:</b>"
-
-#: ../data/gcm-prefs.ui.h:3
 msgid "Brightness:"
 msgstr "Яркость:"
 
-#: ../data/gcm-prefs.ui.h:4
+#: ../data/gcm-prefs.ui.h:2
+msgid "Color Profile:"
+msgstr "Цветовой профиль:"
+
+#: ../data/gcm-prefs.ui.h:3
 msgid "Color management"
 msgstr "Управление цветом"
 
-#: ../data/gcm-prefs.ui.h:5
+#: ../data/gcm-prefs.ui.h:4
 msgid "Contrast:"
 msgstr "Контраст:"
 
-#: ../data/gcm-prefs.ui.h:6
+#: ../data/gcm-prefs.ui.h:5
 msgid "Description:"
 msgstr "Описание:"
+
+#: ../data/gcm-prefs.ui.h:6
+msgid "Fine tuning:"
+msgstr "Уточнение параметров:"
 
 #: ../data/gcm-prefs.ui.h:7
 msgid "Gamma:"
@@ -89,158 +97,181 @@ msgid "_Reset to defaults"
 msgstr "С_бросить"
 
 #: ../data/gnome-color-manager.schemas.in.h:1
-msgid "Gamma is adjusted to affect the color of the attached monitor. Traditionally Linux has used a gamma value of 1.0, but this makes monitors look washed out compared Windows XP or OSX. Apple traditionally used a value of 1.8 for a long time, but now use the same value as Microsoft. Microsoft has always used a value 2.2"
+msgid "Gamma is adjusted to affect the color of the attached monitor. Traditionally Linux has used a gamma value of 1.0, but this makes monitors look washed out compared Windows XP or OSX. Apple traditionally used a value of 1.8 for a long time, but now use the same value as Microsoft. Microsoft has always used a value of 2.2."
 msgstr ""
 
 #: ../data/gnome-color-manager.schemas.in.h:2
 msgid "The default gamma to use for monitors with no previous selection."
 msgstr ""
 
-#. setup GUI
-#: ../src/gcm-calibrate.c:186
+#. TRANSLATORS: title, hardware refers to a calibration device
+#: ../src/gcm-calibrate.c:193
 msgid "Setup hardware"
 msgstr ""
 
-#: ../src/gcm-calibrate.c:187
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate.c:195
 msgid "Setting up hardware device for use..."
 msgstr ""
 
-#: ../src/gcm-calibrate.c:192
+#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#: ../src/gcm-calibrate.c:201
 msgid "Could not auto-detect CRT or LCD"
 msgstr "Не удалось автоматически определить ЭЛТ или ЖК"
 
-#: ../src/gcm-calibrate.c:193
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate.c:204
 msgid "Please indicate if the screen you are trying to profile is a CRT (old type) or a LCD (digital flat panel)."
 msgstr ""
 
-#: ../src/gcm-calibrate.c:195
+#. TRANSLATORS: button, Liquid Crystal Display
+#: ../src/gcm-calibrate.c:207
 msgid "LCD"
 msgstr "LCD"
 
-#: ../src/gcm-calibrate.c:196
+#. TRANSLATORS: button, Cathode Ray Tube
+#: ../src/gcm-calibrate.c:209
 msgid "CRT"
 msgstr "CRT"
 
-#. ask user to attach device
-#: ../src/gcm-calibrate.c:251
+#. TRANSLATORS: title, device is a hardware color calibration sensor
+#: ../src/gcm-calibrate.c:313
 msgid "Please attach device"
 msgstr "Подсоедините устройство"
 
-#: ../src/gcm-calibrate.c:252
-msgid "Please attach the hardware device to the center of the screen on the grey square."
+#. TRANSLATORS: dialog message, ask user to attach device
+#: ../src/gcm-calibrate.c:315
+msgid "Please attach the hardware device to the center of the screen on the gray square."
 msgstr ""
 
-#. setup GUI
-#: ../src/gcm-calibrate.c:273
-msgid "Resetting screen to neutral state"
+#. TRANSLATORS: title, default paramters needed to calibrate
+#: ../src/gcm-calibrate.c:336
+msgid "Getting default parameters"
 msgstr ""
 
-#: ../src/gcm-calibrate.c:274
-msgid "This brings the screen to a neutral state by sending colored and gray patches to your screen and measuring them with the hardware device."
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate.c:338
+msgid "This pre-calibrates the screen by sending colored and gray patches to your screen and measuring them with the hardware device."
 msgstr ""
 
-#. setup GUI
-#: ../src/gcm-calibrate.c:327
+#. TRANSLATORS: title, patches are specific colours used in calibration
+#: ../src/gcm-calibrate.c:401
 msgid "Generating the patches"
 msgstr ""
 
-#: ../src/gcm-calibrate.c:328
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate.c:403
 msgid "Generating the patches that will be measured with the hardware device."
 msgstr ""
 
-#. setup GUI
-#: ../src/gcm-calibrate.c:370
+#. TRANSLATORS: title, drawing means painting to the screen
+#: ../src/gcm-calibrate.c:462
 msgid "Drawing the patches"
 msgstr ""
 
-#: ../src/gcm-calibrate.c:371
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate.c:464
 msgid "Drawing the generated patches to the screen, which will then be measured by the hardware device."
 msgstr ""
 
-#. setup GUI
-#: ../src/gcm-calibrate.c:414
+#. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated"
+#: ../src/gcm-calibrate.c:525
+msgid "Custom"
+msgstr ""
+
+#. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands"
+#: ../src/gcm-calibrate.c:533
+msgid "Copyright (c)"
+msgstr "Авторские права ©"
+
+#. TRANSLATORS: title, a profile is a ICC file
+#: ../src/gcm-calibrate.c:555
 msgid "Generating the profile"
 msgstr "Создаётся профиль"
 
-#: ../src/gcm-calibrate.c:415
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate.c:557
 msgid "Generating the ICC color profile that can be used with this screen."
-msgstr ""
+msgstr "Создаётся цветовой профиль для использования с этим монитором."
 
 #. TRANSLATORS: command line option: a list of catalogs to install
-#: ../src/gcm-import.c:112
+#: ../src/gcm-import.c:56
 msgid "ICC profile to install"
 msgstr "Устанавливаемый профиль ICC"
 
 #. TRANSLATORS: nothing was specified on the command line
-#: ../src/gcm-import.c:128
+#: ../src/gcm-import.c:72
 msgid "No filename specified"
 msgstr "Имя файла не указано"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-import.c:140
+#: ../src/gcm-import.c:84
 msgid "Failed to open ICC profile"
 msgstr "Не удалось открыть профиль ICC"
 
 #. TRANSLATORS: parsing error
-#: ../src/gcm-import.c:143
+#: ../src/gcm-import.c:87
 #, c-format
 msgid "Failed to parse file: %s"
-msgstr ""
+msgstr "Не удалось разобрать файл: %s"
 
 #. TRANSLATORS: color profile already been installed
-#: ../src/gcm-import.c:161
+#: ../src/gcm-import.c:105
 msgid "ICC profile already installed"
 msgstr "Цветовой профиль уже установлен"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:173
+#: ../src/gcm-import.c:117
 #, c-format
 msgid "Import ICC color profile %s?"
 msgstr "Импортировать цветовой профиль %s?"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:176
+#: ../src/gcm-import.c:120
 msgid "Import ICC color profile?"
 msgstr "Импортировать профиль ICC?"
 
 #. ask confirmation
-#: ../src/gcm-import.c:184
+#: ../src/gcm-import.c:128
 msgid "Import ICC profile"
 msgstr "Импорт цветового профиля"
 
 #. TRANSLATORS: button text
-#: ../src/gcm-import.c:188
+#: ../src/gcm-import.c:132
 msgid "Install"
 msgstr "Установить"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-import.c:200
+#: ../src/gcm-import.c:144
 msgid "Failed to copy file"
 msgstr "Не удалось скопировать файл"
 
-#: ../src/gcm-prefs.c:220
+#: ../src/gcm-prefs.c:266
 msgid "Screen"
 msgstr ""
 
-#: ../src/gcm-prefs.c:226
+#: ../src/gcm-prefs.c:272
 msgid "Label"
 msgstr ""
 
 #. add a clear entry
-#: ../src/gcm-prefs.c:384
+#: ../src/gcm-prefs.c:482
 msgid "None"
 msgstr "Нет"
 
-#: ../src/gcm-prefs.c:565
+#: ../src/gcm-prefs.c:679
 msgid "Show extra debugging information"
 msgstr ""
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-prefs.c:568
+#: ../src/gcm-prefs.c:682
 msgid "Set the parent window to make this modal"
 msgstr ""
 
-#: ../src/gcm-utils.c:68
+#: ../src/gcm-utils.c:73
 msgid "Internal LCD"
 msgstr ""
+
+#~ msgid "<b>Color Profile:</b>"
+#~ msgstr "<b>Цветовой профиль:</b>"
 
