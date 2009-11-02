@@ -503,6 +503,7 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	GDate *date;
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
+	gchar *description_tmp = NULL;
 	gchar *description = NULL;
 	gchar *copyright = NULL;
 	GPtrArray *array = NULL;
@@ -522,19 +523,22 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 		model = g_strdup ("unknown model");
 
 	/* get description */
-	g_object_get (priv->edid, "ascii-string", &description, NULL);
-	if (description == NULL)
-		g_object_get (priv->edid, "monitor-name", &description, NULL);
-	if (description == NULL)
-		description = g_strdup ("calibrated monitor");
+	g_object_get (priv->edid, "ascii-string", &description_tmp, NULL);
+	if (description_tmp == NULL)
+		g_object_get (priv->edid, "monitor-name", &description_tmp, NULL);
+	if (description_tmp == NULL)
+		description_tmp = g_strdup ("calibrated monitor");
+
+        /* TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated" */
+	description = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", _("Custom"), description_tmp, date->year, date->month, date->day);
 
 	/* get manufacturer */
 	g_object_get (priv->edid, "ascii-string", &manufacturer, NULL);
 	if (manufacturer == NULL)
 		manufacturer = g_strdup ("unknown manufacturer");
 
-	/* form copyright */
-	copyright = g_strdup_printf ("Copyright %s, %04i/%02i/%02i", g_get_real_name (), date->year, date->month, date->day);
+	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" */
+	copyright = g_strdup_printf ("%s %04i %s", _("Copyright (c)"), date->year, g_get_real_name ());
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -543,7 +547,7 @@ gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
 	g_ptr_array_add (array, g_strdup ("-v"));
 	g_ptr_array_add (array, g_strdup_printf ("-A%s", manufacturer));
 	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
-	g_ptr_array_add (array, g_strdup_printf ("-DCustom, %s", description));
+	g_ptr_array_add (array, g_strdup_printf ("-D%s", description));
 	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
 	g_ptr_array_add (array, g_strdup ("-qm"));
 	g_ptr_array_add (array, g_strdup ("-as"));
@@ -582,6 +586,7 @@ out:
 	g_date_free (date);
 	g_free (manufacturer);
 	g_free (model);
+	g_free (description_tmp);
 	g_free (description);
 	g_free (copyright);
 	g_strfreev (argv);
