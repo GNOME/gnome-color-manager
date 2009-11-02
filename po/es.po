@@ -5,8 +5,8 @@ msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager\n"
-"POT-Creation-Date: 2009-11-02 09:47+0000\n"
-"PO-Revision-Date: 2009-11-02 11:05+0100\n"
+"POT-Creation-Date: 2009-11-02 10:14+0000\n"
+"PO-Revision-Date: 2009-11-02 12:02+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,6 @@ msgid "Calibration"
 msgstr "Calibración"
 
 #: ../data/gcm-calibrate.ui.h:2
-#| msgid "<b>Details</b>"
 msgid "Details"
 msgstr "Detalles"
 
@@ -57,7 +56,6 @@ msgid "Brightness:"
 msgstr "Brillo:"
 
 #: ../data/gcm-prefs.ui.h:2
-#| msgid "Color Profiles"
 msgid "Color Profile:"
 msgstr "Perfil de color:"
 
@@ -74,7 +72,6 @@ msgid "Description:"
 msgstr "Descripción:"
 
 #: ../data/gcm-prefs.ui.h:6
-#| msgid "<b>Fine tuning:</b>"
 msgid "Fine tuning:"
 msgstr "Ajuste fino:"
 
@@ -102,20 +99,25 @@ msgid ""
 "long time, but now use the same value as Microsoft. Microsoft has always "
 "used a value 2.2"
 msgstr ""
+"La gamma se ajusta para afectar al color del monitor adjunto. "
+"Tradicionalmente Linux usaba un valor gamma de 1.0, pero esto hace que los "
+"monitores parezcan desgastados en comparación con Windows XP u OSX. Apple "
+"tradicionalmente usaba un valor de 1.8 durante mucho tiempo, pero ahora usa "
+"el mismo valor que Microsoft. Microsoft siempre ha usado un valor 2.2."
 
 #: ../data/gnome-color-manager.schemas.in.h:2
 msgid "The default gamma to use for monitors with no previous selection."
-msgstr ""
+msgstr "La gamma predeterminada que usar con monitores sin selección previa."
 
 #. TRANSLATORS: title, hardware refers to a calibration device
 #: ../src/gcm-calibrate.c:193
 msgid "Setup hardware"
-msgstr ""
+msgstr "Configurar hardware"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:195
 msgid "Setting up hardware device for use..."
-msgstr ""
+msgstr "configurando el dispositivo hardware para su uso..."
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
 #: ../src/gcm-calibrate.c:201
@@ -128,6 +130,8 @@ msgid ""
 "Please indicate if the screen you are trying to profile is a CRT (old type) "
 "or a LCD (digital flat panel)."
 msgstr ""
+"Indique si la pantalla que está intentando perfilar es CRT (antiguas) o LCD "
+"(pantalla digital plana)."
 
 #. TRANSLATORS: button, Liquid Crystal Display
 #: ../src/gcm-calibrate.c:207
@@ -150,11 +154,13 @@ msgid ""
 "Please attach the hardware device to the center of the screen on the grey "
 "square."
 msgstr ""
+"Adjunte el dispositivo hardware en el centro de la pantalla en el cuadro "
+"gris."
 
 #. TRANSLATORS: title, default paramters needed to calibrate
 #: ../src/gcm-calibrate.c:336
 msgid "Getting default parameters"
-msgstr ""
+msgstr "Obteniendo parámetros predeterminados"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:338
@@ -162,21 +168,23 @@ msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
 msgstr ""
+"Esto precalibra la pantalla enviando parches de color y grises a su pantalla "
+"y midiéndolos con el dispositivo hardware."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
 #: ../src/gcm-calibrate.c:405
 msgid "Generating the patches"
-msgstr ""
+msgstr "Generando los parches"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:407
 msgid "Generating the patches that will be measured with the hardware device."
-msgstr ""
+msgstr "Generando los parches que se medirán con el dispositivo hardware."
 
 #. TRANSLATORS: title, drawing means painting to the screen
 #: ../src/gcm-calibrate.c:466
 msgid "Drawing the patches"
-msgstr ""
+msgstr "Dibujando los parches"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:468
@@ -184,6 +192,8 @@ msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
 msgstr ""
+"Dibujando en la pantalla los parches generados que después se medirá el "
+"dispositivo hardware."
 
 #. TRANSLATORS: title, a profile is a ICC file
 #: ../src/gcm-calibrate.c:559
@@ -193,7 +203,7 @@ msgstr "Generando el perfil"
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:561
 msgid "Generating the ICC color profile that can be used with this screen."
-msgstr ""
+msgstr "Generando el perfil de color ICC que se usará con esta pantalla."
 
 #. TRANSLATORS: command line option: a list of catalogs to install
 #: ../src/gcm-import.c:56
