@@ -312,7 +312,7 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	/* TRANSLATORS: title, device is a hardware color calibration sensor */
 	gcm_calibrate_set_title (calibrate, _("Please attach device"));
 	/* TRANSLATORS: dialog message, ask user to attach device */
-	gcm_calibrate_set_message (calibrate, _("Please attach the hardware device to the center of the screen on the grey square."));
+	gcm_calibrate_set_message (calibrate, _("Please attach the hardware device to the center of the screen on the gray square."));
 
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "button_ok"));
 	gtk_widget_show (widget);
