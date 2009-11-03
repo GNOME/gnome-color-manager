@@ -51,6 +51,14 @@ gboolean	 gcm_utils_mkdir_and_copy		(const gchar		*source,
 gchar		*gcm_utils_get_profile_destination	(const gchar		*filename);
 gchar		**gcm_utils_ptr_array_to_strv		(GPtrArray		*array);
 gboolean	 gcm_gnome_help				(const gchar		*link_id);
+gboolean	 gcm_utils_get_x11_icc_profile		(guint			 id,
+							 guint8			**data,
+							 gsize			*size,
+							 GError			**error);
+gboolean	 gcm_utils_set_x11_icc_profile		(guint			 id,
+							 const guint8		*data,
+							 gsize			 size,
+							 GError			**error);
 
 #endif /* __GCM_UTILS_H */
 

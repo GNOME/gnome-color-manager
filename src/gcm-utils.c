@@ -24,6 +24,7 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
+#include <X11/Xatom.h>
 
 #include "gcm-utils.h"
 #include "gcm-edid.h"
@@ -434,6 +435,153 @@ gcm_gnome_help (const gchar *link_id)
 	}
 
 	g_free (uri);
+	return ret;
+}
+
+/**
+ * gcm_utils_get_x11_icc_profile:
+ *
+ * @id: the ID that is used according to ICC Profiles In X Specification
+ * @data: the data that is returned from the XServer. Free with g_free()
+ * @size: the size of the returned data, or %NULL if you don't care
+ * @error: a %GError that is set in the result of an error, or %NULL
+ * Return value: %TRUE for success.
+ *
+ * TODO: the ICC Profiles In X Specification is very vague about how the id
+ * map to the RROutput name or ID. Seek clarification.
+ *
+ * Gets the ICC profile data from the XServer.
+ **/
+gboolean
+gcm_utils_get_x11_icc_profile (guint id, guint8 **data, gsize *size, GError **error)
+{
+	gboolean ret = FALSE;
+	gchar *atom_name;
+	gchar *data_tmp = NULL;
+	gint format;
+	gint rc;
+	gulong bytes_after;
+	gulong nitems;
+	Atom atom = None;
+	Atom type;
+	Display	*display;
+	GdkDisplay *display_gdk;
+	GdkWindow *window_gdk;
+	Window window;
+
+	g_return_val_if_fail (data != NULL, FALSE);
+
+	/* get defaults for single screen */
+	display_gdk = gdk_display_get_default ();
+	window_gdk = gdk_get_default_root_window ();
+	display = GDK_DISPLAY_XDISPLAY (display_gdk);
+	window = GDK_WINDOW_XID (window_gdk);
+
+	/* get the atom name */
+	if (id == 0)
+		atom_name = g_strdup ("_ICC_PROFILE");
+	else
+		atom_name = g_strdup_printf ("_ICC_PROFILE_%i", id);
+
+	/* get the value */
+	gdk_error_trap_push ();
+	atom = gdk_x11_get_xatom_by_name_for_display (display_gdk, atom_name);
+	rc = XGetWindowProperty (display, window, atom, 0, G_MAXLONG, False, XA_CARDINAL,
+				 &type, &format, &nitems, &bytes_after, (void*) &data_tmp);
+	gdk_error_trap_pop ();
+
+	/* did the call fail */
+	if (rc != Success) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to get %s atom with rc %i", atom_name, rc);
+		goto out;
+	}
+
+	/* was nothing found */
+	if (nitems == 0) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "%s atom has not been set", atom_name);
+		goto out;
+	}
+
+	/* allocate the data using Glib, rather than asking the user to use XFree */
+	*data = g_new0 (guint8, nitems);
+	memcpy (*data, data_tmp, nitems);
+
+	/* copy the size */
+	if (size != NULL)
+		*size = nitems;
+
+	/* success */
+	ret = TRUE;
+out:
+	g_free (atom_name);
+	if (data_tmp != NULL)
+		XFree (data_tmp);
+	return ret;
+}
+
+/**
+ * gcm_utils_set_x11_icc_profile:
+ * @id: the ID that is used according to ICC Profiles In X Specification
+ * @data: the data that is to be set to the XServer
+ * @size: the size of the data
+ * @error: a %GError that is set in the result of an error, or %NULL
+ * Return value: %TRUE for success.
+ *
+ * Sets the ICC profile data to the XServer.
+ *
+ * TODO: the ICC Profiles In X Specification is very vague about how the id
+ * map to the RROutput name or ID. Seek clarification.
+ **/
+gboolean
+gcm_utils_set_x11_icc_profile (guint id, const guint8 *data, gsize size, GError **error)
+{
+	gboolean ret = FALSE;
+	gchar *atom_name;
+	gint rc;
+	Atom atom = None;
+	Display	*display;
+	GdkDisplay *display_gdk;
+	GdkWindow *window_gdk;
+	Window window;
+
+	g_return_val_if_fail (data != NULL, FALSE);
+	g_return_val_if_fail (size != 0, FALSE);
+
+	/* get defaults for single screen */
+	display_gdk = gdk_display_get_default ();
+	window_gdk = gdk_get_default_root_window ();
+	display = GDK_DISPLAY_XDISPLAY (display_gdk);
+	window = GDK_WINDOW_XID (window_gdk);
+
+	/* get the atom name */
+	if (id == 0)
+		atom_name = g_strdup ("_ICC_PROFILE");
+	else
+		atom_name = g_strdup_printf ("_ICC_PROFILE_%i", id);
+
+	/* get the value */
+	gdk_error_trap_push ();
+	atom = gdk_x11_get_xatom_by_name_for_display (display_gdk, atom_name);
+	rc = XChangeProperty (display, window, atom, XA_CARDINAL, 8, PropModeReplace, (unsigned char*) data, size);
+	gdk_error_trap_pop ();
+
+	/* for some reason this fails with BadRequest, but actually sets the value */
+	if (rc == BadRequest)
+		rc = Success;
+
+	/* did the call fail */
+	if (rc != Success) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to set %s atom with rc %i", atom_name, rc);
+		goto out;
+	}
+
+	/* success */
+	ret = TRUE;
+out:
+	g_free (atom_name);
 	return ret;
 }
 
