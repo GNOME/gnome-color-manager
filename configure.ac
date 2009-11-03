@@ -128,6 +128,10 @@ PKG_CHECK_MODULES(VTE, vte >= $VTE_REQUIRED)
 AC_SUBST(VTE_CFLAGS)
 AC_SUBST(VTE_LIBS)
 
+PKG_CHECK_MODULES(GUDEV, gudev-1.0)
+AC_SUBST(GUDEV_CFLAGS)
+AC_SUBST(GUDEV_LIBS)
+
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
 AM_GCONF_SOURCE_2
 
@@ -160,6 +164,17 @@ fi
 AM_CONDITIONAL(HAVE_DOCBOOK2MAN, [test "$DOCBOOK2MAN" != "no"])
 
 dnl ---------------------------------------------------------------------------
+dnl - Autodetect the hardware device
+dnl - This requires 55-Argyll.rules to set COLOR_MEASUREMENT_DEVICE
+dnl ---------------------------------------------------------------------------
+AC_ARG_ENABLE(tests, AS_HELP_STRING([--enable-hardware-detection],[enable hardware auto-detection (requires fixed argyllcms)]),
+	      enable_hardware_detection=$enableval,enable_hardware_detection=no)
+AM_CONDITIONAL(GCM_HARDWARE_DETECTION, test x$enable_hardware_detection = xyes)
+if test x$enable_hardware_detection = xyes; then
+	AC_DEFINE(GCM_HARDWARE_DETECTION,1,[Build hardware autodetection])
+fi
+
+dnl ---------------------------------------------------------------------------
 dnl - Makefiles, etc.
 dnl ---------------------------------------------------------------------------
 AC_OUTPUT([
@@ -189,6 +204,7 @@ echo "
         compiler:                  ${CC}
         cflags:                    ${CFLAGS}
         cppflags:                  ${CPPFLAGS}
+        hardware auto-detection:   ${enable_hardware_detection}
         gconf-schema dir:          $GCONF_SCHEMA_FILE_DIR
 "
 

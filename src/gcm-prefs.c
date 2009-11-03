@@ -24,6 +24,7 @@
 #include <math.h>
 #include <unique/unique.h>
 #include <glib/gstdio.h>
+#include <gudev/gudev.h>
 
 #include "egg-debug.h"
 
@@ -37,6 +38,7 @@ static guint current_device = 0;
 static GcmClut *current_clut = NULL;
 static GnomeRRScreen *rr_screen = NULL;
 static GPtrArray *profiles_array = NULL;
+static GUdevClient *client = NULL;
 
 enum {
 	GPM_DEVICES_COLUMN_ID,
@@ -656,6 +658,64 @@ gcm_prefs_randr_event_cb (GnomeRRScreen *screen, gpointer data)
 }
 
 /**
+ * gcm_prefs_has_hardware_device_attached:
+ **/
+static gboolean
+gcm_prefs_has_hardware_device_attached (void)
+{
+	GList *devices;
+	GList *l;
+	GUdevDevice *device;
+	gboolean ret = FALSE;
+
+	/* get all USB devices */
+	devices = g_udev_client_query_by_subsystem (client, "usb");
+	for (l = devices; l != NULL; l = l->next) {
+		device = l->data;
+		ret = g_udev_device_get_property_as_boolean (device, "COLOR_MEASUREMENT_DEVICE");
+		if (ret) {
+			egg_debug ("found color management device: %s", g_udev_device_get_sysfs_path (device));
+			break;
+		}
+	}
+
+	g_list_foreach (devices, (GFunc) g_object_unref, NULL);
+	g_list_free (devices);
+	return ret;
+}
+
+/**
+ * gcm_prefs_check_calibration_hardware:
+ **/
+static void
+gcm_prefs_check_calibration_hardware (void)
+{
+	gboolean ret;
+	GtkWidget *widget;
+
+	/* find whether we have hardware installed */
+	ret = gcm_prefs_has_hardware_device_attached ();
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
+
+#ifdef GCM_HARDWARE_DETECTION
+	/* disable the button if no supported hardware is found */
+	gtk_widget_set_sensitive (widget, ret);
+#else
+	egg_debug ("not setting calibrate button %s as not compiled with hardware detection", ret ? "sensitive" : "insensitive");
+#endif
+}
+
+/**
+ * gcm_prefs_uevent_cb:
+ **/
+static void
+gcm_prefs_uevent_cb (GUdevClient *client_, const gchar *action, GUdevDevice *device, gpointer user_data)
+{
+	egg_debug ("uevent %s", action);
+	gcm_prefs_check_calibration_hardware ();
+}
+
+/**
  * main:
  **/
 int
@@ -673,6 +733,7 @@ main (int argc, char **argv)
 	GtkTreeSelection *selection;
 	GnomeRROutput **outputs;
 	guint i;
+	const gchar *subsystems[] = {"usb", NULL};
 
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
@@ -713,6 +774,14 @@ main (int argc, char **argv)
 		g_error_free (error);
 		goto out;
 	}
+
+	/* use GUdev to find properties */
+	client = g_udev_client_new (subsystems);
+	g_signal_connect (client, "uevent",
+			  G_CALLBACK (gcm_prefs_uevent_cb), NULL);
+
+	/* coldplug calibrate button sensitivity */
+	gcm_prefs_check_calibration_hardware ();
 
 	/* create list stores */
 	list_store_devices = gtk_list_store_new (GPM_DEVICES_COLUMN_LAST, G_TYPE_UINT,
@@ -813,6 +882,8 @@ out:
 	g_main_loop_unref (loop);
 	if (rr_screen != NULL)
 		gnome_rr_screen_destroy (rr_screen);
+	if (client != NULL)
+		g_object_unref (client);
 	if (builder != NULL)
 		g_object_unref (builder);
 	if (profiles_array != NULL)

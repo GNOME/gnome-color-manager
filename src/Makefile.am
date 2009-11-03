@@ -5,6 +5,8 @@ INCLUDES =						\
 	$(UNIQUE_CFLAGS)				\
 	$(GCONF_CFLAGS)					\
 	$(VTE_CFLAGS)					\
+	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
+	$(GUDEV_CFLAGS)					\
 	-DBINDIR=\"$(bindir)\"			 	\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 		\
 	-DVERSION="\"$(VERSION)\"" 			\
@@ -71,6 +73,7 @@ gcm_prefs_LDADD =					\
 	$(UNIQUE_LIBS)					\
 	$(GCONF_LIBS)					\
 	$(VTE_LIBS)					\
+	$(GUDEV_LIBS)					\
 	$(GTK_LIBS)
 
 gcm_prefs_CFLAGS =					\
