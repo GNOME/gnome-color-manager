@@ -35,6 +35,22 @@ bin_PROGRAMS =						\
 	gcm-prefs					\
 	gcm-import
 
+noinst_PROGRAMS =					\
+	gcm-inspect
+
+gcm_inspect_SOURCES =					\
+	gcm-inspect.c
+
+gcm_inspect_LDADD =					\
+	libgcmshared.a					\
+	$(GLIB_LIBS)					\
+	$(GNOMEDESKTOP_LIBS)				\
+	$(GCONF_LIBS)					\
+	$(GTK_LIBS)
+
+gcm_inspect_CFLAGS =					\
+	$(WARNINGFLAGS_C)
+
 gcm_apply_SOURCES =					\
 	gcm-apply.c
 
