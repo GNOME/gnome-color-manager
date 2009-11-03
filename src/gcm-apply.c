@@ -40,7 +40,7 @@ main (int argc, char **argv)
 	GOptionContext *context;
 	GnomeRROutput **outputs;
 	guint i;
-	GnomeRRScreen *rr_screen;
+	GnomeRRScreen *rr_screen = NULL;
 	gboolean connected;
 
 	const GOptionEntry options[] = {
@@ -59,11 +59,12 @@ main (int argc, char **argv)
 	egg_debug_init (verbose);
 
 	/* get screen */
-        rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
-        if (rr_screen == NULL) {
+	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
+	if (rr_screen == NULL) {
 		egg_warning ("failed to get rr screen: %s", error->message);
+		g_error_free (error);
 		goto out;
-        }
+	}
 
 	/* set for each output */
 	outputs = gnome_rr_screen_list_outputs (rr_screen);
