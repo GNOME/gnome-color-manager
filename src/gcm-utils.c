@@ -235,11 +235,18 @@ gcm_utils_set_output_gamma (GnomeRROutput *output, GError **error)
 	gboolean ret = FALSE;
 	GcmClut *clut = NULL;
 	GnomeRRCrtc *crtc;
+	gint x, y;
+	gchar *filename;
 
 	/* get CLUT */
 	clut = gcm_utils_get_clut_for_output (output, error);
 	if (clut == NULL)
 		goto out;
+
+	/* get filename of the profile, or NULL */
+	g_object_get (clut,
+		      "profile", &filename,
+		      NULL);
 
 	/* get crtc */
 	crtc = gnome_rr_output_get_crtc (output);
@@ -248,7 +255,17 @@ gcm_utils_set_output_gamma (GnomeRROutput *output, GError **error)
 	ret = gcm_utils_set_crtc_gamma (crtc, clut, error);
 	if (!ret)
 		goto out;
+
+	/* is the monitor our primary monitor */
+	gnome_rr_output_get_position (output, &x, &y);
+	if (x == 0 && y == 0 && filename != NULL) {
+		egg_debug ("setting main ICC profile atom from %s", filename);
+		ret = gcm_utils_set_x11_icc_profile (0, filename, error);
+		if (!ret)
+			goto out;
+	}
 out:
+	g_free (filename);
 	if (clut != NULL)
 		g_object_unref (clut);
 	return ret;
@@ -439,7 +456,7 @@ gcm_gnome_help (const gchar *link_id)
 }
 
 /**
- * gcm_utils_get_x11_icc_profile:
+ * gcm_utils_get_x11_icc_profile_data:
  *
  * @id: the ID that is used according to ICC Profiles In X Specification
  * @data: the data that is returned from the XServer. Free with g_free()
@@ -453,7 +470,7 @@ gcm_gnome_help (const gchar *link_id)
  * Gets the ICC profile data from the XServer.
  **/
 gboolean
-gcm_utils_get_x11_icc_profile (guint id, guint8 **data, gsize *size, GError **error)
+gcm_utils_get_x11_icc_profile_data (guint id, guint8 **data, gsize *size, GError **error)
 {
 	gboolean ret = FALSE;
 	gchar *atom_name;
@@ -524,6 +541,41 @@ out:
 /**
  * gcm_utils_set_x11_icc_profile:
  * @id: the ID that is used according to ICC Profiles In X Specification
+ * @filename: the filename of the ICC profile
+ * @error: a %GError that is set in the result of an error, or %NULL
+ * Return value: %TRUE for success.
+ *
+ * Sets the ICC profile data to the XServer.
+ *
+ * TODO: the ICC Profiles In X Specification is very vague about how the id
+ * map to the RROutput name or ID. Seek clarification.
+ **/
+gboolean
+gcm_utils_set_x11_icc_profile (guint id, const gchar *filename, GError **error)
+{
+	gboolean ret;
+	gchar *data = NULL;
+	gsize size;
+
+	g_return_val_if_fail (filename != NULL, FALSE);
+
+	/* get contents of file */
+	ret = g_file_get_contents (filename, &data, &size, error);
+	if (!ret)
+		goto out;
+
+	/* send to the XServer */
+	ret = gcm_utils_set_x11_icc_profile_data (id, (const guint8 *) data, size, error);
+	if (!ret)
+		goto out;
+out:
+	g_free (data);
+	return ret;
+}
+
+/**
+ * gcm_utils_set_x11_icc_profile_data:
+ * @id: the ID that is used according to ICC Profiles In X Specification
  * @data: the data that is to be set to the XServer
  * @size: the size of the data
  * @error: a %GError that is set in the result of an error, or %NULL
@@ -535,7 +587,7 @@ out:
  * map to the RROutput name or ID. Seek clarification.
  **/
 gboolean
-gcm_utils_set_x11_icc_profile (guint id, const guint8 *data, gsize size, GError **error)
+gcm_utils_set_x11_icc_profile_data (guint id, const guint8 *data, gsize size, GError **error)
 {
 	gboolean ret = FALSE;
 	gchar *atom_name;
