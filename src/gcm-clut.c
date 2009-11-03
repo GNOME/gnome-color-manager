@@ -304,6 +304,10 @@ static guint
 gcm_clut_get_adjusted_value (guint value, gfloat min, gfloat max, gfloat gamma)
 {
 	guint retval;
+
+	/* optimise for the common case */
+	if (min < 0.01f && max > 0.99f && gamma > 0.99 && gamma < 1.01)
+		return value;
 	retval = 65536.0f * ((powf (((gfloat)value/65536.0f), gamma) * (max - min)) + min);
 	return retval;
 }
