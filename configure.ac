@@ -167,7 +167,7 @@ dnl ---------------------------------------------------------------------------
 dnl - Autodetect the hardware device
 dnl - This requires 55-Argyll.rules to set COLOR_MEASUREMENT_DEVICE
 dnl ---------------------------------------------------------------------------
-AC_ARG_ENABLE(tests, AS_HELP_STRING([--enable-hardware-detection],[enable hardware auto-detection (requires fixed argyllcms)]),
+AC_ARG_ENABLE(hardware_detection, AS_HELP_STRING([--enable-hardware-detection],[enable hardware auto-detection (requires fixed argyllcms)]),
 	      enable_hardware_detection=$enableval,enable_hardware_detection=no)
 AM_CONDITIONAL(GCM_HARDWARE_DETECTION, test x$enable_hardware_detection = xyes)
 if test x$enable_hardware_detection = xyes; then
