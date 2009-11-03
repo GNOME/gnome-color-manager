@@ -460,7 +460,7 @@ gcm_gnome_help (const gchar *link_id)
  *
  * @id: the ID that is used according to ICC Profiles In X Specification
  * @data: the data that is returned from the XServer. Free with g_free()
- * @size: the size of the returned data, or %NULL if you don't care
+ * @length: the size of the returned data, or %NULL if you don't care
  * @error: a %GError that is set in the result of an error, or %NULL
  * Return value: %TRUE for success.
  *
@@ -470,7 +470,7 @@ gcm_gnome_help (const gchar *link_id)
  * Gets the ICC profile data from the XServer.
  **/
 gboolean
-gcm_utils_get_x11_icc_profile_data (guint id, guint8 **data, gsize *size, GError **error)
+gcm_utils_get_x11_icc_profile_data (guint id, guint8 **data, gsize *length, GError **error)
 {
 	gboolean ret = FALSE;
 	gchar *atom_name;
@@ -525,9 +525,9 @@ gcm_utils_get_x11_icc_profile_data (guint id, guint8 **data, gsize *size, GError
 	*data = g_new0 (guint8, nitems);
 	memcpy (*data, data_tmp, nitems);
 
-	/* copy the size */
-	if (size != NULL)
-		*size = nitems;
+	/* copy the length */
+	if (length != NULL)
+		*length = nitems;
 
 	/* success */
 	ret = TRUE;
@@ -555,17 +555,17 @@ gcm_utils_set_x11_icc_profile (guint id, const gchar *filename, GError **error)
 {
 	gboolean ret;
 	gchar *data = NULL;
-	gsize size;
+	gsize length;
 
 	g_return_val_if_fail (filename != NULL, FALSE);
 
 	/* get contents of file */
-	ret = g_file_get_contents (filename, &data, &size, error);
+	ret = g_file_get_contents (filename, &data, &length, error);
 	if (!ret)
 		goto out;
 
 	/* send to the XServer */
-	ret = gcm_utils_set_x11_icc_profile_data (id, (const guint8 *) data, size, error);
+	ret = gcm_utils_set_x11_icc_profile_data (id, (const guint8 *) data, length, error);
 	if (!ret)
 		goto out;
 out:
@@ -577,7 +577,7 @@ out:
  * gcm_utils_set_x11_icc_profile_data:
  * @id: the ID that is used according to ICC Profiles In X Specification
  * @data: the data that is to be set to the XServer
- * @size: the size of the data
+ * @length: the size of the data
  * @error: a %GError that is set in the result of an error, or %NULL
  * Return value: %TRUE for success.
  *
@@ -587,7 +587,7 @@ out:
  * map to the RROutput name or ID. Seek clarification.
  **/
 gboolean
-gcm_utils_set_x11_icc_profile_data (guint id, const guint8 *data, gsize size, GError **error)
+gcm_utils_set_x11_icc_profile_data (guint id, const guint8 *data, gsize length, GError **error)
 {
 	gboolean ret = FALSE;
 	gchar *atom_name;
@@ -599,7 +599,7 @@ gcm_utils_set_x11_icc_profile_data (guint id, const guint8 *data, gsize size, GE
 	Window window;
 
 	g_return_val_if_fail (data != NULL, FALSE);
-	g_return_val_if_fail (size != 0, FALSE);
+	g_return_val_if_fail (length != 0, FALSE);
 
 	/* get defaults for single screen */
 	display_gdk = gdk_display_get_default ();
@@ -616,7 +616,7 @@ gcm_utils_set_x11_icc_profile_data (guint id, const guint8 *data, gsize size, GE
 	/* get the value */
 	gdk_error_trap_push ();
 	atom = gdk_x11_get_xatom_by_name_for_display (display_gdk, atom_name);
-	rc = XChangeProperty (display, window, atom, XA_CARDINAL, 8, PropModeReplace, (unsigned char*) data, size);
+	rc = XChangeProperty (display, window, atom, XA_CARDINAL, 8, PropModeReplace, (unsigned char*) data, length);
 	gdk_error_trap_pop ();
 
 	/* for some reason this fails with BadRequest, but actually sets the value */

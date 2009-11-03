@@ -465,7 +465,7 @@ gcm_prefs_add_profiles (GtkWidget *widget)
 	for (i=0; i<profiles_array->len; i++) {
 		filename = g_ptr_array_index (profiles_array, i);
 		profile = gcm_profile_new ();
-		ret = gcm_profile_load (profile, filename, &error);
+		ret = gcm_profile_parse (profile, filename, &error);
 		if (!ret) {
 			egg_warning ("failed to add profile: %s", error->message);
 			g_error_free (error);

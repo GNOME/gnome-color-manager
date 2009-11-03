@@ -78,7 +78,7 @@ main (int argc, char **argv)
 
 	/* load profile */
 	profile = gcm_profile_new ();
-	ret = gcm_profile_load (profile, files[0], &error);
+	ret = gcm_profile_parse (profile, files[0], &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */
 		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Failed to open ICC profile"));

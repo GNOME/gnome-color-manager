@@ -128,7 +128,7 @@ gcm_clut_load_from_profile (GcmClut *clut, GError **error)
 	profile = gcm_profile_new ();
 
 	/* load the profile */
-	ret = gcm_profile_load (profile, clut->priv->profile, &error_local);
+	ret = gcm_profile_parse (profile, clut->priv->profile, &error_local);
 	if (!ret) {
 		if (error != NULL)
 			*error = g_error_new (1, 0, "failed to set from profile: %s", error_local->message);

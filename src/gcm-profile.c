@@ -473,14 +473,12 @@ gcm_parser_load_icc_trc (GcmProfile *profile, const gchar *data, gsize offset, g
 }
 
 /**
- * gcm_profile_load:
+ * gcm_profile_parse_data:
  **/
 gboolean
-gcm_profile_load (GcmProfile *profile, const gchar *filename, GError **error)
+gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GError **error)
 {
-	gchar *data = NULL;
 	gboolean ret;
-	gsize length;
 	GError *error_local = NULL;
 	guint num_tags;
 	guint i;
@@ -488,22 +486,13 @@ gcm_profile_load (GcmProfile *profile, const gchar *filename, GError **error)
 	guint offset;
 	guint tag_size;
 	guint tag_offset;
+	gchar *signature;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
-	g_return_val_if_fail (filename != NULL, FALSE);
+	g_return_val_if_fail (data != NULL, FALSE);
 	g_return_val_if_fail (profile->priv->loaded == FALSE, FALSE);
 
-	egg_debug ("loading '%s'", filename);
 	profile->priv->loaded = TRUE;
-
-	/* load files */
-	ret = g_file_get_contents (filename, &data, &length, &error_local);
-	if (!ret) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to load profile: %s", error_local->message);
-		g_error_free (error_local);
-		goto out;
-	}
 
 	/* ensure we have the header */
 	if (length < 0x84) {
@@ -518,9 +507,14 @@ gcm_profile_load (GcmProfile *profile, const gchar *filename, GError **error)
 	    data[GCM_SIGNATURE+1] != 'c' ||
 	    data[GCM_SIGNATURE+2] != 's' ||
 	    data[GCM_SIGNATURE+3] != 'p') {
-		data[GCM_SIGNATURE+4] = '\0';
+
+		/* copy the 4 bytes of the invalid signature, with a '\0' byte */
+		signature = g_new0 (gchar, 5);
+		for (i=0; i<5; i++)
+			signature[i] = data[GCM_SIGNATURE+i];
 		if (error != NULL)
-			*error = g_error_new (1, 0, "not an ICC profile, signature is '%s', expecting 'acsp'", &data[GCM_SIGNATURE]);
+			*error = g_error_new (1, 0, "not an ICC profile, signature is '%s', expecting 'acsp'", signature);
+		g_free (signature);
 		ret = FALSE;
 		goto out;
 	}
@@ -592,6 +586,40 @@ gcm_profile_load (GcmProfile *profile, const gchar *filename, GError **error)
 	egg_debug ("Has VCGT table:   %s", profile->priv->has_vcgt_table ? "YES" : "NO");
 	egg_debug ("Has curve table:  %s", profile->priv->has_curve_table ? "YES" : "NO");
 	egg_debug ("Has fixed gamma:  %s", profile->priv->has_curve_fixed ? "YES" : "NO");
+out:
+	return ret;
+}
+
+/**
+ * gcm_profile_parse:
+ **/
+gboolean
+gcm_profile_parse (GcmProfile *profile, const gchar *filename, GError **error)
+{
+	gchar *data = NULL;
+	gboolean ret;
+	gsize length;
+	GError *error_local = NULL;
+
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
+	g_return_val_if_fail (filename != NULL, FALSE);
+	g_return_val_if_fail (profile->priv->loaded == FALSE, FALSE);
+
+	egg_debug ("loading '%s'", filename);
+
+	/* load files */
+	ret = g_file_get_contents (filename, &data, &length, &error_local);
+	if (!ret) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to load profile: %s", error_local->message);
+		g_error_free (error_local);
+		goto out;
+	}
+
+	/* parse the data */
+	ret = gcm_profile_parse_data (profile, data, length, error);
+	if (!ret)
+		goto out;
 out:
 	g_free (data);
 	return ret;

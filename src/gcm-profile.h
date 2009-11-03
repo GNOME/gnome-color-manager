@@ -57,8 +57,12 @@ struct _GcmProfileClass
 
 GType		 gcm_profile_get_type		  	(void);
 GcmProfile	*gcm_profile_new			(void);
-gboolean	 gcm_profile_load			(GcmProfile	*profile,
+gboolean	 gcm_profile_parse			(GcmProfile	*profile,
 							 const gchar	*filename,
+							 GError		**error);
+gboolean	 gcm_profile_parse_data			(GcmProfile	*profile,
+							 const gchar	*data,
+							 gsize		 length,
 							 GError		**error);
 GcmClutData	*gcm_profile_generate			(GcmProfile	*profile,
 							 guint		 size);
