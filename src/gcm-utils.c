@@ -320,7 +320,7 @@ gcm_utils_get_profile_filenames_for_directory (GPtrArray *array, const gchar *di
 	/* get contents */
 	dir = g_dir_open (directory, 0, &error);
 	if (dir == NULL) {
-		egg_warning ("failed to open: %s", error->message);
+		egg_debug ("failed to open: %s", error->message);
 		g_error_free (error);
 		ret = FALSE;
 		goto out;
@@ -361,6 +361,7 @@ gcm_utils_get_profile_filenames (void)
 
 	/* get systemwide profiles */
 	gcm_utils_get_profile_filenames_for_directory (array, "/usr/share/color/icc");
+	gcm_utils_get_profile_filenames_for_directory (array, "/usr/local/share/color/icc");
 
 	/* get gnome-color-manager test profiles */
 	gcm_utils_get_profile_filenames_for_directory (array, GCM_DATA "/profiles");
