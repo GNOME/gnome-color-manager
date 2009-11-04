@@ -403,7 +403,7 @@ gcm_parser_load_icc_trc_curve (GcmProfile *profile, const gchar *data, gsize off
 {
 	gboolean ret = TRUE;
 	guint num_entries;
-	guint i;
+	guint i = 0;
 	guint value;
 	GcmClutData *trc_data;
 
