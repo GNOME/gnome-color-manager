@@ -223,8 +223,11 @@ gcm_utils_get_clut_for_output (GnomeRROutput *output, GError **error)
 
 	/* don't set the gamma if there is no device */
 	connected = gnome_rr_output_is_connected (output);
-	if (!connected)
+	if (!connected) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "cannot get clut for a unconnected output");
 		goto out;
+	}
 
 	/* get data */
 	name = gcm_utils_get_output_name (output);
