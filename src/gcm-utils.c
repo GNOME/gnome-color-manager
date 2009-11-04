@@ -135,8 +135,11 @@ gcm_utils_get_gamma_size (GnomeRRCrtc *crtc, GError **error)
 	/* get the value, and catch errors */
 	gdk_error_trap_push ();
 	size = XRRGetCrtcGammaSize (GDK_DISPLAY(), id);
-	if (gdk_error_trap_pop ()) {
+	if (gdk_error_trap_pop ())
 		size = 0;
+
+	/* no size, or X popped an error */
+	if (size == 0) {
 		if (error != NULL)
 			*error = g_error_new (1, 0, "failed to get gamma size");
 		goto out;
