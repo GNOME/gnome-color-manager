@@ -28,6 +28,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-clut.h					\
 	gcm-edid.c					\
 	gcm-edid.h					\
+	gcm-xserver.c					\
+	gcm-xserver.h					\
 	gcm-profile.c					\
 	gcm-profile.h
 

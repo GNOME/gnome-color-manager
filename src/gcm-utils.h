@@ -51,17 +51,6 @@ gboolean	 gcm_utils_mkdir_and_copy		(const gchar		*source,
 gchar		*gcm_utils_get_profile_destination	(const gchar		*filename);
 gchar		**gcm_utils_ptr_array_to_strv		(GPtrArray		*array);
 gboolean	 gcm_gnome_help				(const gchar		*link_id);
-gboolean	 gcm_utils_get_x11_icc_profile_data	(guint			 id,
-							 guint8			**data,
-							 gsize			*length,
-							 GError			**error);
-gboolean	 gcm_utils_set_x11_icc_profile_data	(guint			 id,
-							 const guint8		*data,
-							 gsize			 length,
-							 GError			**error);
-gboolean	 gcm_utils_set_x11_icc_profile		(guint			 id,
-							 const gchar		*filename,
-							 GError			**error);
 gboolean	 gcm_utils_output_is_lcd_internal	(const gchar		*output_name);
 gboolean	 gcm_utils_output_is_lcd		(const gchar		*output_name);
 

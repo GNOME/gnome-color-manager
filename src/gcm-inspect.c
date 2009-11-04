@@ -26,6 +26,7 @@
 
 #include "gcm-utils.h"
 #include "gcm-profile.h"
+#include "gcm-xserver.h"
 
 /**
  * main:
@@ -41,6 +42,7 @@ main (int argc, char **argv)
 	guint8 *data = NULL;
 	gsize length;
 	GcmProfile *profile = NULL;
+	GcmXserver *xserver = NULL;
 	gchar *description = NULL;
 	gchar *copyright = NULL;
 
@@ -59,8 +61,11 @@ main (int argc, char **argv)
 
 	egg_debug_init (verbose);
 
+	/* setup object to access X */
+	xserver = gcm_xserver_new ();
+
 	/* get profile from XServer */
-	ret = gcm_utils_get_x11_icc_profile_data (0, &data, &length, &error);
+	ret = gcm_xserver_get_root_window_profile_data (xserver, &data, &length, &error);
 	if (!ret) {
 		egg_warning ("failed to get XServer profile data: %s", error->message);
 		g_error_free (error);
@@ -93,6 +98,8 @@ out:
 	g_free (description);
 	if (profile != NULL)
 		g_object_unref (profile);
+	if (xserver != NULL)
+		g_object_unref (xserver);
 	return retval;
 }
 
