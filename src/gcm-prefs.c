@@ -731,14 +731,16 @@ static void
 gcm_prefs_check_calibration_hardware (void)
 {
 	gboolean ret;
+#ifdef GCM_HARDWARE_DETECTION
 	GtkWidget *widget;
+#endif
 
 	/* find whether we have hardware installed */
 	ret = gcm_prefs_has_hardware_device_attached ();
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
 
 #ifdef GCM_HARDWARE_DETECTION
 	/* disable the button if no supported hardware is found */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
 	gtk_widget_set_sensitive (widget, ret);
 #else
 	egg_debug ("not setting calibrate button %s as not compiled with hardware detection", ret ? "sensitive" : "insensitive");

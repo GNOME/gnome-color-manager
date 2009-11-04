@@ -239,9 +239,9 @@ gcm_xserver_get_output_profile_data (GcmXserver *xserver, const gchar *output_na
 	const gchar *atom_name;
 	gchar *data_tmp = NULL;
 	gint format;
-	gint rc = Success;
+	gint rc = -1;
 	gulong bytes_after;
-	gulong nitems;
+	gulong nitems = 0;
 	Atom atom = None;
 	Atom type;
 	gint i;
@@ -259,7 +259,7 @@ gcm_xserver_get_output_profile_data (GcmXserver *xserver, const gchar *output_na
 	gdk_error_trap_push ();
 	atom = gdk_x11_get_xatom_by_name_for_display (priv->display_gdk, atom_name);
 	resources = XRRGetScreenResources (priv->display, priv->window);
-	for (i = 0; i < resources->noutput; ++i) {
+	for (i = 0; i < resources->noutput; i++) {
 		output = XRRGetOutputInfo (priv->display, resources, resources->outputs[i]);
 		if (g_strcmp0 (output->name, output_name) == 0) {
 			rc = XRRGetOutputProperty (priv->display, resources->outputs[i],
@@ -269,6 +269,13 @@ gcm_xserver_get_output_profile_data (GcmXserver *xserver, const gchar *output_na
 		XRRFreeOutputInfo (output);
 	}
 	gdk_error_trap_pop ();
+
+	/* we failed to match any outputs */
+	if (rc == -1) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to match adaptor %s", output_name);
+		goto out;
+	}
 
 	/* did the call fail */
 	if (rc != Success) {

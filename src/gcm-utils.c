@@ -272,7 +272,7 @@ gcm_utils_set_output_gamma (GnomeRROutput *output, GError **error)
 	GcmXserver *xserver = NULL;
 	GnomeRRCrtc *crtc;
 	gint x, y;
-	gchar *filename;
+	gchar *filename = NULL;
 	const gchar *output_name;
 
 	/* get CLUT */
