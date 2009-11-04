@@ -382,7 +382,7 @@ gcm_xserver_set_output_profile_data (GcmXserver *xserver, const gchar *output_na
 	for (i = 0; i < resources->noutput; ++i) {
 		output = XRRGetOutputInfo (priv->display, resources, resources->outputs[i]);
 		if (g_strcmp0 (output->name, output_name) == 0) {
-			egg_debug ("found %s, setting %i bytes", output_name, length);
+			egg_debug ("found %s, setting %i bytes", output_name, (guint) length);
 			XRRChangeOutputProperty (priv->display, resources->outputs[i], atom, XA_CARDINAL, 8, PropModeReplace, (unsigned char*) data, (gint)length);
 		}
 		XRRFreeOutputInfo (output);
