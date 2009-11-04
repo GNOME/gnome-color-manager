@@ -239,7 +239,7 @@ gcm_calibrate_setup (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 		g_string_append_printf (string, "%s\n\n", _("You may want to consult the owners manual for your display on how to achieve these settings."));
 
 		/* TRANSLATORS: dialog message, bullet item */
-		g_string_append_printf (string, "• %s\n", _("Reset your display to it's factory defaults."));
+		g_string_append_printf (string, "• %s\n", _("Reset your display to the factory defaults."));
 
 		/* TRANSLATORS: dialog message, bullet item */
 		g_string_append_printf (string, "• %s\n", _("Disable dynamic contrast if your display has this feature."));
@@ -252,6 +252,9 @@ gcm_calibrate_setup (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 
 		/* TRANSLATORS: dialog message, bullet item */
 		g_string_append_printf (string, "• %s\n", _("Adjust the display brightness to a comfortable level for prolonged viewing."));
+
+		/* TRANSLATORS: dialog message, suffix */
+		g_string_append_printf (string, "\n%s\n", _("For best results, the display should have been powered for at least 15 minutes before starting the calibration."));
 
 		/* set the message */
 		gcm_calibrate_set_message (calibrate, string->str);
