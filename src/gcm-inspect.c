@@ -21,6 +21,7 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#include <libgnomeui/gnome-rr.h>
 
 #include "egg-debug.h"
 

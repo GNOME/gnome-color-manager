@@ -62,9 +62,6 @@ typedef struct {
 
 GType		 gcm_clut_get_type		  	(void);
 GcmClut		*gcm_clut_new				(void);
-gboolean	 gcm_clut_set_from_data			(GcmClut		*clut,
-							 const GcmClutData	*data,
-							 guint			 size);
 gboolean	 gcm_clut_load_from_profile		(GcmClut		*clut,
 							 GError			**error);
 gboolean	 gcm_clut_load_from_config		(GcmClut		*clut,

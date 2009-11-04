@@ -24,25 +24,12 @@
 
 #include <glib-object.h>
 
-#define GNOME_DESKTOP_USE_UNSTABLE_API
-#include <libgnomeui/gnome-rr.h>
-
-#include <X11/extensions/Xrandr.h>
-
-#include "gcm-clut.h"
+#include "gcm-device.h"
 
 #define GCM_STOCK_ICON		"gnome-color-manager"
 #define GCM_PROFILE_PATH	"/.color/icc"
 
-gchar		*gcm_utils_get_output_name		(GnomeRROutput		*output);
-guint		 gcm_utils_get_gamma_size		(GnomeRRCrtc		*crtc,
-							 GError			**error);
-gboolean	 gcm_utils_set_crtc_gamma		(GnomeRRCrtc		*crtc,
-							 GcmClut		*clut,
-							 GError			**error);
-gboolean	 gcm_utils_set_output_gamma		(GnomeRROutput		*output,
-							 GError			**error);
-GcmClut		*gcm_utils_get_clut_for_output		(GnomeRROutput		*output,
+gboolean	 gcm_utils_set_gamma_for_device		(GcmDevice		*device,
 							 GError			**error);
 GPtrArray	*gcm_utils_get_profile_filenames	(void);
 gboolean	 gcm_utils_mkdir_and_copy		(const gchar		*source,

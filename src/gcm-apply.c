@@ -26,6 +26,7 @@
 #include "egg-debug.h"
 
 #include "gcm-utils.h"
+#include "gcm-client.h"
 
 /**
  * main:
@@ -38,10 +39,11 @@ main (int argc, char **argv)
 	guint retval = 0;
 	GError *error = NULL;
 	GOptionContext *context;
-	GnomeRROutput **outputs;
+	GPtrArray *array = NULL;
 	guint i;
-	GnomeRRScreen *rr_screen = NULL;
-	gboolean connected;
+	GcmClient *client = NULL;
+	GcmDevice *device;
+	GcmDeviceType type;
 
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
@@ -58,22 +60,29 @@ main (int argc, char **argv)
 
 	egg_debug_init (verbose);
 
-	/* get screen */
-	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
-	if (rr_screen == NULL) {
-		egg_warning ("failed to get rr screen: %s", error->message);
+	/* get devices */
+	client = gcm_client_new ();
+	ret = gcm_client_coldplug (client, &error);
+	if (!ret) {
+		egg_warning ("failed to get devices: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
 
 	/* set for each output */
-	outputs = gnome_rr_screen_list_outputs (rr_screen);
-	for (i=0; outputs[i] != NULL; i++) {
-		/* if nothing connected then ignore */
-		connected = gnome_rr_output_is_connected (outputs[i]);
-		if (!connected)
+	array = gcm_client_get_devices (client);
+	for (i=0; i<array->len; i++) {
+		device = g_ptr_array_index (array, i);
+		g_object_get (device,
+			      "type", &type,
+			      NULL);
+
+		/* not a xrandr panel */
+		if (type != GCM_DEVICE_TYPE_DISPLAY)
 			continue;
-		ret = gcm_utils_set_output_gamma (outputs[i], &error);
+
+		/* set gamma for device */
+		ret = gcm_utils_set_gamma_for_device (device, &error);
 		if (!ret) {
 			retval = 1;
 			egg_warning ("failed to set gamma: %s", error->message);
@@ -82,8 +91,10 @@ main (int argc, char **argv)
 		}
 	}
 out:
-	if (rr_screen != NULL)
-		gnome_rr_screen_destroy (rr_screen);
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	if (client != NULL)
+		g_object_unref (client);
 	return retval;
 }
 

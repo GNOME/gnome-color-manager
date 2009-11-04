@@ -1,0 +1,516 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+ *
+ * Copyright (C) 2009 Richard Hughes <richard@hughsie.com>
+ *
+ * Licensed under the GNU General Public License Version 2
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more device.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */
+
+/**
+ * SECTION:gcm-device
+ * @short_description: Color managed device object
+ *
+ * This object represents a device that can be colour managed.
+ */
+
+#include "config.h"
+
+#include <glib-object.h>
+#include <math.h>
+#include <gio/gio.h>
+#include <gconf/gconf-client.h>
+#include <libgnomeui/gnome-rr.h>
+
+#include "gcm-device.h"
+#include "gcm-profile.h"
+
+#include "egg-debug.h"
+
+static void     gcm_device_finalize	(GObject     *object);
+
+#define GCM_DEVICE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_DEVICE, GcmDevicePrivate))
+
+/**
+ * GcmDevicePrivate:
+ *
+ * Private #GcmDevice data
+ **/
+struct _GcmDevicePrivate
+{
+	gfloat				 gamma;
+	gfloat				 brightness;
+	gfloat				 contrast;
+	GcmDeviceType			 type;
+	gchar				*id;
+	gchar				*profile;
+	gchar				*description;
+	gchar				*title;
+	gchar				*copyright;
+	GConfClient			*gconf_client;
+	GnomeRROutput			*native_device_xrandr;
+};
+
+enum {
+	PROP_0,
+	PROP_TYPE,
+	PROP_ID,
+	PROP_GAMMA,
+	PROP_BRIGHTNESS,
+	PROP_CONTRAST,
+	PROP_PROFILE,
+	PROP_COPYRIGHT,
+	PROP_DESCRIPTION,
+	PROP_TITLE,
+	PROP_NATIVE_DEVICE_XRANDR,
+	PROP_LAST
+};
+
+G_DEFINE_TYPE (GcmDevice, gcm_device, G_TYPE_OBJECT)
+
+/**
+ * gcm_device_get_default_config_location:
+ **/
+static gchar *
+gcm_device_get_default_config_location (void)
+{
+	gchar *filename;
+
+	/* create default path */
+	filename = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "config.dat", NULL);
+
+	return filename;
+}
+
+/**
+ * gcm_device_load_from_profile:
+ **/
+static gboolean
+gcm_device_load_from_profile (GcmDevice *device, GError **error)
+{
+	gboolean ret = TRUE;
+	GcmProfile *profile = NULL;
+	GError *error_local = NULL;
+
+	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
+
+	/* no profile to load */
+	if (device->priv->profile == NULL) {
+		g_free (device->priv->copyright);
+		g_free (device->priv->description);
+		device->priv->copyright = NULL;
+		device->priv->description = NULL;
+		goto out;
+	}
+
+	/* create new profile instance */
+	profile = gcm_profile_new ();
+
+	/* load the profile */
+	ret = gcm_profile_parse (profile, device->priv->profile, &error_local);
+	if (!ret) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to set from profile: %s", error_local->message);
+		g_error_free (error_local);
+		goto out;
+	}
+
+	/* copy the description */
+	g_free (device->priv->copyright);
+	g_free (device->priv->description);
+	g_object_get (profile,
+		      "copyright", &device->priv->copyright,
+		      "description", &device->priv->description,
+		      NULL);
+out:
+	if (profile != NULL)
+		g_object_unref (profile);
+	return ret;
+}
+
+/**
+ * gcm_device_get_id:
+ **/
+const gchar *
+gcm_device_get_id (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), NULL);
+	return device->priv->id;
+}
+
+/**
+ * gcm_device_load:
+ **/
+gboolean
+gcm_device_load (GcmDevice *device, GError **error)
+{
+	gboolean ret;
+	GKeyFile *file;
+	GError *error_local = NULL;
+	gchar *filename = NULL;
+
+	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
+	g_return_val_if_fail (device->priv->id != NULL, FALSE);
+
+	/* get default config */
+	filename = gcm_device_get_default_config_location ();
+
+	/* load existing file */
+	file = g_key_file_new ();
+	ret = g_key_file_load_from_file (file, filename, G_KEY_FILE_NONE, &error_local);
+	if (!ret) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to load from file: %s", error_local->message);
+		g_error_free (error_local);
+		goto out;
+	}
+
+	/* load data */
+	g_free (device->priv->profile);
+	device->priv->profile = g_key_file_get_string (file, device->priv->id, "profile", NULL);
+	device->priv->gamma = g_key_file_get_double (file, device->priv->id, "gamma", &error_local);
+	if (error_local != NULL) {
+		device->priv->gamma = gconf_client_get_float (device->priv->gconf_client, "/apps/gnome-color-manager/default_gamma", NULL);
+		if (device->priv->gamma < 0.1f)
+			device->priv->gamma = 1.0f;
+		g_clear_error (&error_local);
+	}
+	device->priv->brightness = g_key_file_get_double (file, device->priv->id, "brightness", &error_local);
+	if (error_local != NULL) {
+		device->priv->brightness = 0.0f;
+		g_clear_error (&error_local);
+	}
+	device->priv->contrast = g_key_file_get_double (file, device->priv->id, "contrast", &error_local);
+	if (error_local != NULL) {
+		device->priv->contrast = 100.0f;
+		g_clear_error (&error_local);
+	}
+
+	/* load this */
+	ret = gcm_device_load_from_profile (device, &error_local);
+	if (!ret) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to load from config: %s", error_local->message);
+		g_error_free (error_local);
+		goto out;
+	}
+out:
+	g_free (filename);
+	g_key_file_free (file);
+	return ret;
+}
+
+/**
+ * gcm_device_save:
+ **/
+gboolean
+gcm_device_save (GcmDevice *device, GError **error)
+{
+	GKeyFile *keyfile = NULL;
+	gboolean ret;
+	gchar *data;
+	gchar *dirname;
+	GFile *file = NULL;
+	gchar *filename = NULL;
+
+	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
+	g_return_val_if_fail (device->priv->id != NULL, FALSE);
+
+	/* get default config */
+	filename = gcm_device_get_default_config_location ();
+
+	/* directory exists? */
+	dirname = g_path_get_dirname (filename);
+	ret = g_file_test (dirname, G_FILE_TEST_IS_DIR);
+	if (!ret) {
+		file = g_file_new_for_path (dirname);
+		ret = g_file_make_directory_with_parents (file, NULL, error);
+		if (!ret)
+			goto out;
+	}
+
+	/* if not ever created, then just create a dummy file */
+	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
+	if (!ret) {
+		ret = g_file_set_contents (filename, "#created today", -1, error);
+		if (!ret)
+			goto out;
+	}
+
+	/* load existing file */
+	keyfile = g_key_file_new ();
+	ret = g_key_file_load_from_file (keyfile, filename, G_KEY_FILE_NONE, error);
+	if (!ret)
+		goto out;
+
+	/* save data */
+	if (device->priv->profile == NULL)
+		g_key_file_remove_key (keyfile, device->priv->id, "profile", NULL);
+	else
+		g_key_file_set_string (keyfile, device->priv->id, "profile", device->priv->profile);
+	g_key_file_set_double (keyfile, device->priv->id, "gamma", device->priv->gamma);
+	g_key_file_set_double (keyfile, device->priv->id, "brightness", device->priv->brightness);
+	g_key_file_set_double (keyfile, device->priv->id, "contrast", device->priv->contrast);
+
+	/* save contents */
+	data = g_key_file_to_data (keyfile, NULL, error);
+	if (data == NULL)
+		goto out;
+	ret = g_file_set_contents (filename, data, -1, error);
+	if (!ret)
+		goto out;
+out:
+	g_free (filename);
+	g_free (dirname);
+	if (file != NULL)
+		g_object_unref (file);
+	if (keyfile != NULL)
+		g_key_file_free (keyfile);
+	return ret;
+}
+
+/**
+ * gcm_device_get_property:
+ **/
+static void
+gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+{
+	GcmDevice *device = GCM_DEVICE (object);
+	GcmDevicePrivate *priv = device->priv;
+
+	switch (prop_id) {
+	case PROP_TYPE:
+		g_value_set_uint (value, priv->type);
+		break;
+	case PROP_ID:
+		g_value_set_string (value, priv->id);
+		break;
+	case PROP_GAMMA:
+		g_value_set_float (value, priv->gamma);
+		break;
+	case PROP_BRIGHTNESS:
+		g_value_set_float (value, priv->brightness);
+		break;
+	case PROP_CONTRAST:
+		g_value_set_float (value, priv->contrast);
+		break;
+	case PROP_PROFILE:
+		g_value_set_string (value, priv->profile);
+		break;
+	case PROP_COPYRIGHT:
+		g_value_set_string (value, priv->copyright);
+		break;
+	case PROP_DESCRIPTION:
+		g_value_set_string (value, priv->description);
+		break;
+	case PROP_TITLE:
+		g_value_set_string (value, priv->title);
+		break;
+	case PROP_NATIVE_DEVICE_XRANDR:
+		g_value_set_pointer (value, priv->native_device_xrandr);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+/**
+ * gcm_device_set_property:
+ **/
+static void
+gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
+{
+	GcmDevice *device = GCM_DEVICE (object);
+	GcmDevicePrivate *priv = device->priv;
+
+	switch (prop_id) {
+	case PROP_TYPE:
+		priv->type = g_value_get_uint (value);
+		break;
+	case PROP_ID:
+		g_free (priv->id);
+		priv->id = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_TITLE:
+		g_free (priv->title);
+		priv->title = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_PROFILE:
+		g_free (priv->profile);
+		priv->profile = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_GAMMA:
+		priv->gamma = g_value_get_float (value);
+		break;
+	case PROP_BRIGHTNESS:
+		priv->brightness = g_value_get_float (value);
+		break;
+	case PROP_CONTRAST:
+		priv->contrast = g_value_get_float (value);
+		break;
+	case PROP_NATIVE_DEVICE_XRANDR:
+		priv->native_device_xrandr = g_value_get_pointer (value);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+/**
+ * gcm_device_class_init:
+ **/
+static void
+gcm_device_class_init (GcmDeviceClass *klass)
+{
+	GParamSpec *pspec;
+	GObjectClass *object_class = G_OBJECT_CLASS (klass);
+	object_class->finalize = gcm_device_finalize;
+	object_class->get_property = gcm_device_get_property;
+	object_class->set_property = gcm_device_set_property;
+
+	/**
+	 * GcmDevice:type:
+	 */
+	pspec = g_param_spec_uint ("type", NULL, NULL,
+				   0, G_MAXUINT, 0,
+				   G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_TYPE, pspec);
+
+	/**
+	 * GcmDevice:id:
+	 */
+	pspec = g_param_spec_string ("id", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_ID, pspec);
+
+	/**
+	 * GcmDevice:gamma:
+	 */
+	pspec = g_param_spec_float ("gamma", NULL, NULL,
+				    0.0, G_MAXFLOAT, 1.01,
+				    G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_GAMMA, pspec);
+
+	/**
+	 * GcmDevice:brightness:
+	 */
+	pspec = g_param_spec_float ("brightness", NULL, NULL,
+				    0.0, G_MAXFLOAT, 1.02,
+				    G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_BRIGHTNESS, pspec);
+
+	/**
+	 * GcmDevice:contrast:
+	 */
+	pspec = g_param_spec_float ("contrast", NULL, NULL,
+				    0.0, G_MAXFLOAT, 1.03,
+				    G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_CONTRAST, pspec);
+
+	/**
+	 * GcmDevice:copyright:
+	 */
+	pspec = g_param_spec_string ("copyright", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_COPYRIGHT, pspec);
+
+	/**
+	 * GcmDevice:description:
+	 */
+	pspec = g_param_spec_string ("description", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_DESCRIPTION, pspec);
+
+	/**
+	 * GcmDevice:title:
+	 */
+	pspec = g_param_spec_string ("title", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_TITLE, pspec);
+
+	/**
+	 * GcmDevice:profile:
+	 */
+	pspec = g_param_spec_string ("profile", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_PROFILE, pspec);
+
+	/**
+	 * GcmDevice:native-device-xrandr:
+	 */
+	pspec = g_param_spec_pointer ("native-device-xrandr", NULL, NULL,
+				      G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_NATIVE_DEVICE_XRANDR, pspec);
+
+	g_type_class_add_private (klass, sizeof (GcmDevicePrivate));
+}
+
+/**
+ * gcm_device_init:
+ **/
+static void
+gcm_device_init (GcmDevice *device)
+{
+	device->priv = GCM_DEVICE_GET_PRIVATE (device);
+	device->priv->native_device_xrandr = NULL;
+	device->priv->profile = NULL;
+	device->priv->gconf_client = gconf_client_get_default ();
+	device->priv->gamma = gconf_client_get_float (device->priv->gconf_client, "/apps/gnome-color-manager/default_gamma", NULL);
+	if (device->priv->gamma < 0.1f) {
+		egg_warning ("failed to get setup parameters");
+		device->priv->gamma = 1.0f;
+	}
+	device->priv->brightness = 0.0f;
+	device->priv->contrast = 100.f;
+}
+
+/**
+ * gcm_device_finalize:
+ **/
+static void
+gcm_device_finalize (GObject *object)
+{
+	GcmDevice *device = GCM_DEVICE (object);
+	GcmDevicePrivate *priv = device->priv;
+
+	g_free (priv->description);
+	g_free (priv->copyright);
+	g_free (priv->title);
+	g_free (priv->id);
+	g_object_unref (priv->gconf_client);
+
+	G_OBJECT_CLASS (gcm_device_parent_class)->finalize (object);
+}
+
+/**
+ * gcm_device_new:
+ *
+ * Return value: a new GcmDevice object.
+ **/
+GcmDevice *
+gcm_device_new (void)
+{
+	GcmDevice *device;
+	device = g_object_new (GCM_TYPE_DEVICE, NULL);
+	return GCM_DEVICE (device);
+}
+

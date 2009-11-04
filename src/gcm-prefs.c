@@ -25,6 +25,7 @@
 #include <unique/unique.h>
 #include <glib/gstdio.h>
 #include <gudev/gudev.h>
+#include <libgnomeui/gnome-rr.h>
 
 #include "egg-debug.h"
 
@@ -32,20 +33,20 @@
 #include "gcm-profile.h"
 #include "gcm-calibrate.h"
 #include "gcm-brightness.h"
+#include "gcm-client.h"
 
 static GtkBuilder *builder = NULL;
 static GtkListStore *list_store_devices = NULL;
-static guint current_device = 0;
-static GcmClut *current_clut = NULL;
+static GcmDevice *current_device = NULL;
 static GnomeRRScreen *rr_screen = NULL;
 static GPtrArray *profiles_array = NULL;
 static GUdevClient *client = NULL;
+static GcmClient *gcm_client = NULL;
 
 enum {
 	GPM_DEVICES_COLUMN_ID,
 	GPM_DEVICES_COLUMN_ICON,
-	GPM_DEVICES_COLUMN_TEXT,
-	GPM_DEVICES_COLUMN_CLUT,
+	GPM_DEVICES_COLUMN_TITLE,
 	GPM_DEVICES_COLUMN_LAST
 };
 
@@ -98,7 +99,9 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	guint percentage = G_MAXUINT;
 
 	/* get the device */
-	output = gnome_rr_screen_get_output_by_id (rr_screen, current_device);
+	g_object_get (current_device,
+		      "native-device-xrandr", &output,
+		      NULL);
 	if (output == NULL) {
 		egg_warning ("failed to get output");
 		goto out;
@@ -237,7 +240,7 @@ out:
 		g_object_unref (brightness);
 
 	/* need to set the gamma back to the default after calibration */
-	ret = gcm_utils_set_output_gamma (output, &error);
+	ret = gcm_utils_set_gamma_for_device (current_device, &error);
 	if (!ret) {
 		egg_warning ("failed to set output gamma: %s", error->message);
 		g_error_free (error);
@@ -312,8 +315,8 @@ gcm_prefs_add_devices_columns (GtkTreeView *treeview)
 	/* column for text */
 	renderer = gtk_cell_renderer_text_new ();
 	column = gtk_tree_view_column_new_with_attributes (_("Label"), renderer,
-							   "markup", GPM_DEVICES_COLUMN_TEXT, NULL);
-	gtk_tree_view_column_set_sort_column_id (column, GPM_DEVICES_COLUMN_TEXT);
+							   "markup", GPM_DEVICES_COLUMN_TITLE, NULL);
+	gtk_tree_view_column_set_sort_column_id (column, GPM_DEVICES_COLUMN_TITLE);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
@@ -333,6 +336,8 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 	gfloat contrast;
 	const gchar *filename;
 	guint i;
+	gchar *id;
+	GcmDeviceType type;
 
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -340,16 +345,20 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 		return;
 	}
 
+	/* get id */
 	gtk_tree_model_get (model, &iter,
-			    GPM_DEVICES_COLUMN_ID, &current_device,
-			    GPM_DEVICES_COLUMN_CLUT, &current_clut,
+			    GPM_DEVICES_COLUMN_ID, &id,
 			    -1);
 
 	/* show transaction_id */
-	egg_debug ("selected row is: %i", current_device);
+	egg_debug ("selected device is: %s", id);
+	current_device = gcm_client_get_device_by_id (gcm_client, id);
+	g_object_get (current_device,
+		      "type", &type,
+		      NULL);
 
 	/* not a xrandr device */
-	if (current_device == G_MAXUINT) {
+	if (type == GCM_DEVICE_TYPE_SCANNER) {
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
 		gtk_widget_hide (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
@@ -365,7 +374,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
 	gtk_widget_show (widget);
 
-	g_object_get (current_clut,
+	g_object_get (current_device,
 		      "profile", &profile,
 		      "gamma", &localgamma,
 		      "brightness", &brightness,
@@ -396,92 +405,54 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 		}
 	}
 out:
+	g_free (id);
 	g_free (profile);
 }
 
 /**
- * gcm_prefs_has_device:
- **/
-static gboolean
-gcm_prefs_has_device (guint id)
-{
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	guint id_tmp;
-	gboolean ret;
-
-	/* get first element */
-	model = GTK_TREE_MODEL (list_store_devices);
-	ret = gtk_tree_model_get_iter_first (model, &iter);
-	if (!ret)
-		goto out;
-
-	/* not yet found */
-	ret = FALSE;
-
-	/* get the other elements */
-	do {
-		gtk_tree_model_get (model, &iter,
-				    GPM_DEVICES_COLUMN_ID, &id_tmp,
-				    -1);
-		if (id_tmp == id) {
-			ret = TRUE;
-			break;
-		}
-	} while (gtk_tree_model_iter_next (model, &iter));
-out:
-	return ret;
-}
-
-/**
- * gcm_prefs_add_xrandr_device:
+ * gcm_prefs_add_device_xrandr:
  **/
 static void
-gcm_prefs_add_xrandr_device (GnomeRROutput *output)
+gcm_prefs_add_device_xrandr (GcmDevice *device)
 {
 	GtkTreeIter iter;
-	gchar *name;
-	guint id;
-	GcmClut *clut;
-	GError *error = NULL;
+	gchar *title;
+	gchar *id;
 	gboolean ret;
+	GError *error = NULL;
 
 	/* get details */
-	id = gnome_rr_output_get_id (output);
-	name = gcm_utils_get_output_name (output);
+	g_object_get (device,
+		      "id", &id,
+		      "title", &title,
+		      NULL);
 
-	/* if nothing connected then ignore */
-	ret = gnome_rr_output_is_connected (output);
+	/* load this */
+	ret = gcm_device_load (device, &error);
 	if (!ret) {
-		egg_debug ("%s is not connected", name);
+		egg_warning ("failed to load device: %s", error->message);
+		g_error_free (error);
 		goto out;
 	}
 
-	/* are we already in the list */
-	ret = gcm_prefs_has_device (id);
-	if (ret) {
-		egg_debug ("%s already added", name);
-		goto out;
-	}
-
-	/* create a clut for this output */
-	clut = gcm_utils_get_clut_for_output (output, &error);
-	if (clut == NULL) {
-		egg_warning ("failed to add device: %s", error->message);
+	/* set the gamma on the device */
+	ret = gcm_utils_set_gamma_for_device (device, &error);
+	if (!ret) {
+		egg_warning ("failed to set output gamma: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
 
 	/* add to list */
-	egg_debug ("add %s to device list", name);
+	egg_debug ("add %s to device list", id);
 	gtk_list_store_append (list_store_devices, &iter);
 	gtk_list_store_set (list_store_devices, &iter,
 			    GPM_DEVICES_COLUMN_ID, id,
-			    GPM_DEVICES_COLUMN_TEXT, name,
-			    GPM_DEVICES_COLUMN_CLUT, clut,
+			    GPM_DEVICES_COLUMN_TITLE, title,
 			    GPM_DEVICES_COLUMN_ICON, "video-display", -1);
 out:
-	g_free (name);
+	g_free (id);
+	g_free (title);
 }
 
 /**
@@ -550,10 +521,13 @@ gcm_prefs_history_type_combo_changed_cb (GtkWidget *widget, gpointer data)
 	guint active;
 	gchar *copyright = NULL;
 	gchar *description = NULL;
+	gchar *profile_old = NULL;
 	const gchar *filename = NULL;
 	gboolean ret;
 	GError *error = NULL;
-	GnomeRROutput *output;
+	GcmProfile *profile = NULL;
+	gboolean changed;
+	GcmDeviceType type;
 
 	active = gtk_combo_box_get_active (GTK_COMBO_BOX(widget));
 	egg_debug ("now %i", active);
@@ -563,7 +537,7 @@ gcm_prefs_history_type_combo_changed_cb (GtkWidget *widget, gpointer data)
 	egg_debug ("profile=%s", filename);
 
 	/* not a xrandr device */
-	if (current_clut == NULL) {
+	if (current_device == NULL) {
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_copyright"));
 		gtk_widget_hide (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_copyright"));
@@ -575,22 +549,35 @@ gcm_prefs_history_type_combo_changed_cb (GtkWidget *widget, gpointer data)
 		goto out;
 	}
 
-	/* set new profile */
-	g_object_set (current_clut,
-		      "profile", filename,
+	/* see if it's changed */
+	g_object_get (current_device,
+		      "profile", &profile_old,
+		      "type", &type,
 		      NULL);
+	changed = ((g_strcmp0 (profile_old, filename) != 0));
+
+	/* set new profile */
+	if (changed) {
+		g_object_set (current_device,
+			      "profile", filename,
+			      NULL);
+	}
 
 	/* get new data */
-	ret = gcm_clut_load_from_profile (current_clut, &error);
-	if (!ret) {
-		egg_warning ("failed to load profile: %s", error->message);
-		g_error_free (error);
-		goto out;
+	if (filename != NULL) {
+		profile = gcm_profile_new ();
+		ret = gcm_profile_parse (profile, filename, &error);
+		if (!ret) {
+			egg_warning ("failed to load profile: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
+		/* get the new details from the profile */
+		g_object_get (profile,
+			      "copyright", &copyright,
+			      "description", &description,
+			      NULL);
 	}
-	g_object_get (current_clut,
-		      "copyright", &copyright,
-		      "description", &description,
-		      NULL);
 
 	/* set new descriptions */
 	if (copyright == NULL) {
@@ -629,29 +616,29 @@ gcm_prefs_history_type_combo_changed_cb (GtkWidget *widget, gpointer data)
 		gtk_widget_show (widget);
 	}
 
-	/* save new profile */
-	ret = gcm_clut_save_to_config (current_clut, &error);
-	if (!ret) {
-		egg_warning ("failed to save config: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
+	/* only save and set if changed */
+	if (changed) {
+		/* save new profile */
+		ret = gcm_device_save (current_device, &error);
+		if (!ret) {
+			egg_warning ("failed to save config: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
 
-	/* get the device */
-	output = gnome_rr_screen_get_output_by_id (rr_screen, current_device);
-	if (output == NULL) {
-		egg_warning ("failed to get output");
-		goto out;
-	}
-
-	/* actually set the new profile */
-	ret = gcm_utils_set_output_gamma (output, &error);
-	if (!ret) {
-		egg_warning ("failed to set output gamma: %s", error->message);
-		g_error_free (error);
-		goto out;
+		/* set the gamma for display types */
+		if (type == GCM_DEVICE_TYPE_DISPLAY) {
+			ret = gcm_utils_set_gamma_for_device (current_device, &error);
+			if (!ret) {
+				egg_warning ("failed to set output gamma: %s", error->message);
+				g_error_free (error);
+				goto out;
+			}
+		}
 	}
 out:
+	if (profile != NULL)
+		g_object_unref (profile);
 	g_free (copyright);
 	g_free (description);
 }
@@ -668,7 +655,6 @@ gcm_prefs_slider_changed_cb (GtkRange *range, gpointer *user_data)
 	GtkWidget *widget;
 	gboolean ret;
 	GError *error = NULL;
-	GnomeRROutput *output;
 
 	/* get values */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
@@ -678,29 +664,22 @@ gcm_prefs_slider_changed_cb (GtkRange *range, gpointer *user_data)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
 	contrast = gtk_range_get_value (GTK_RANGE (widget));
 
-	g_object_set (current_clut,
+	g_object_set (current_device,
 		      "gamma", localgamma,
 		      "brightness", brightness,
 		      "contrast", contrast,
 		      NULL);
 
 	/* save new profile */
-	ret = gcm_clut_save_to_config (current_clut, &error);
+	ret = gcm_device_save (current_device, &error);
 	if (!ret) {
 		egg_warning ("failed to save config: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
 
-	/* get the device */
-	output = gnome_rr_screen_get_output_by_id (rr_screen, current_device);
-	if (output == NULL) {
-		egg_warning ("failed to get output");
-		goto out;
-	}
-
 	/* actually set the new profile */
-	ret = gcm_utils_set_output_gamma (output, &error);
+	ret = gcm_utils_set_gamma_for_device (current_device, &error);
 	if (!ret) {
 		egg_warning ("failed to set output gamma: %s", error->message);
 		g_error_free (error);
@@ -708,23 +687,6 @@ gcm_prefs_slider_changed_cb (GtkRange *range, gpointer *user_data)
 	}
 out:
 	return;
-}
-
-/**
- * gcm_prefs_randr_event_cb:
- **/
-static void
-gcm_prefs_randr_event_cb (GnomeRRScreen *screen, gpointer data)
-{
-	GnomeRROutput **outputs;
-	guint i;
-
-	egg_debug ("screens may have changed");
-
-	/* replug devices */
-	outputs = gnome_rr_screen_list_outputs (rr_screen);
-	for (i=0; outputs[i] != NULL; i++)
-		gcm_prefs_add_xrandr_device (outputs[i]);
 }
 
 /**
@@ -788,72 +750,86 @@ gcm_prefs_uevent_cb (GUdevClient *client_, const gchar *action, GUdevDevice *dev
 }
 
 /**
- * gcm_prefs_coldplug_devices_xrandr:
+ * gcm_prefs_add_device_scanner:
  **/
 static void
-gcm_prefs_coldplug_devices_xrandr (void)
-{
-	GnomeRROutput **outputs;
-	guint i;
-
-	outputs = gnome_rr_screen_list_outputs (rr_screen);
-	for (i=0; outputs[i] != NULL; i++)
-		gcm_prefs_add_xrandr_device (outputs[i]);
-}
-
-/**
- * gcm_prefs_add_scanner_device:
- **/
-static void
-gcm_prefs_add_scanner_device (GUdevDevice *device)
+gcm_prefs_add_device_scanner (GcmDevice *device)
 {
 	GtkTreeIter iter;
-	gchar *name;
+	gchar *title;
+	gchar *id;
 
 	/* get details */
-	name = g_strdup_printf ("%s - %s",
-				g_udev_device_get_property (device, "ID_VENDOR"),
-				g_udev_device_get_property (device, "ID_MODEL"));
-
-	//TODO: use g_udev_device_get_sysfs_path (device) as id
+	g_object_get (device,
+		      "id", &id,
+		      "title", &title,
+		      NULL);
 
 	/* add to list */
-	egg_debug ("add %s to device list", name);
 	gtk_list_store_append (list_store_devices, &iter);
 	gtk_list_store_set (list_store_devices, &iter,
-			    GPM_DEVICES_COLUMN_ID, G_MAXUINT,
-			    GPM_DEVICES_COLUMN_TEXT, name,
-			    GPM_DEVICES_COLUMN_CLUT, NULL,
+			    GPM_DEVICES_COLUMN_ID, id,
+			    GPM_DEVICES_COLUMN_TITLE, title,
 			    GPM_DEVICES_COLUMN_ICON, "camera-photo", -1);
-	g_free (name);
+	g_free (id);
+	g_free (title);
 }
 
 /**
- * gcm_prefs_coldplug_devices_scanner:
+ * gcm_prefs_added_cb:
  **/
 static void
-gcm_prefs_coldplug_devices_scanner (void)
+gcm_prefs_added_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user_data)
 {
-	GList *devices;
-	GList *l;
-	GUdevDevice *device;
-	const gchar *value;
+	GcmDeviceType type;
+	egg_debug ("added: %s", gcm_device_get_id (gcm_device));
 
-	/* get all USB devices */
-	devices = g_udev_client_query_by_subsystem (client, "usb");
-	for (l = devices; l != NULL; l = l->next) {
-		device = l->data;
+	/* get the type of the device */
+	g_object_get (gcm_device,
+		      "type", &type,
+		      NULL);
 
-		/* sane is slightly odd in a lowercase property, and "yes" as a value rather than "1" */
-		value = g_udev_device_get_property (device, "libsane_matched");
-		if (value != NULL) {
-			egg_debug ("found scanner device: %s", g_udev_device_get_sysfs_path (device));
-			gcm_prefs_add_scanner_device (device);
+	/* add the device */
+	if (type == GCM_DEVICE_TYPE_DISPLAY)
+		gcm_prefs_add_device_xrandr (gcm_device);
+	else if (type == GCM_DEVICE_TYPE_SCANNER)
+		gcm_prefs_add_device_scanner (gcm_device);
+}
+
+/**
+ * gcm_prefs_removed_cb:
+ **/
+static void
+gcm_prefs_removed_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user_data)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	const gchar *id;
+	gchar *id_tmp;
+	gboolean ret;
+
+	/* remove */
+	id = gcm_device_get_id (gcm_device);
+	egg_debug ("removed: %s", id);
+
+	/* get first element */
+	model = GTK_TREE_MODEL (list_store_devices);
+	ret = gtk_tree_model_get_iter_first (model, &iter);
+	if (!ret)
+		return;
+
+	/* get the other elements */
+	do {
+		gtk_tree_model_get (model, &iter,
+				    GPM_DEVICES_COLUMN_ID, &id_tmp,
+				    -1);
+		if (g_strcmp0 (id_tmp, id) == 0) {
+			gtk_list_store_remove (GTK_LIST_STORE(model), &iter);
+			g_free (id_tmp);
+			break;
 		}
-	}
-
-	g_list_foreach (devices, (GFunc) g_object_unref, NULL);
-	g_list_free (devices);
+		g_free (id_tmp);
+	} while (gtk_tree_model_iter_next (model, &iter));
 }
 
 /**
@@ -873,6 +849,7 @@ main (int argc, char **argv)
 	GMainLoop *loop;
 	GtkTreeSelection *selection;
 	const gchar *subsystems[] = {"usb", NULL};
+	gboolean ret;
 
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
@@ -914,16 +891,16 @@ main (int argc, char **argv)
 		goto out;
 	}
 
-	/* use GUdev to find properties */
+	/* use GUdev to find the calibration device */
 	client = g_udev_client_new (subsystems);
 	g_signal_connect (client, "uevent",
 			  G_CALLBACK (gcm_prefs_uevent_cb), NULL);
 
-	/* coldplug calibrate button sensitivity */
+	/* set calibrate button sensitivity */
 	gcm_prefs_check_calibration_hardware ();
 
 	/* create list stores */
-	list_store_devices = gtk_list_store_new (GPM_DEVICES_COLUMN_LAST, G_TYPE_UINT,
+	list_store_devices = gtk_list_store_new (GPM_DEVICES_COLUMN_LAST, G_TYPE_STRING,
 						 G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 
 	/* create transaction_id tree view */
@@ -982,15 +959,24 @@ main (int argc, char **argv)
 	gtk_range_set_range (GTK_RANGE (widget), 1.0f, 100.0f);
 
 	/* get screen */
-	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), gcm_prefs_randr_event_cb, NULL, &error);
+	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
 	if (rr_screen == NULL) {
 		egg_warning ("failed to get rr screen: %s", error->message);
 		goto out;
 	}
 
+	/* use a device client array */
+	gcm_client = gcm_client_new ();
+	g_signal_connect (gcm_client, "added", G_CALLBACK (gcm_prefs_added_cb), NULL);
+	g_signal_connect (gcm_client, "removed", G_CALLBACK (gcm_prefs_removed_cb), NULL);
+
 	/* coldplug devices */
-	gcm_prefs_coldplug_devices_xrandr ();
-	gcm_prefs_coldplug_devices_scanner ();
+	ret = gcm_client_coldplug (gcm_client, &error);
+	if (!ret) {
+		egg_warning ("failed to coldplug: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	/* set the parent window if it is specified */
 	if (xid != 0) {
@@ -1026,6 +1012,8 @@ out:
 		g_object_unref (builder);
 	if (profiles_array != NULL)
 		g_ptr_array_unref (profiles_array);
+	if (gcm_client != NULL)
+		g_object_unref (gcm_client);
 	return retval;
 }
 

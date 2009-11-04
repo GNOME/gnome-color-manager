@@ -24,9 +24,11 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
+#include <libgnomeui/gnome-rr.h>
+#include <X11/extensions/Xrandr.h>
 
 #include "gcm-utils.h"
-#include "gcm-edid.h"
+#include "gcm-clut.h"
 #include "gcm-xserver.h"
 
 #include "egg-debug.h"
@@ -66,64 +68,11 @@ gcm_utils_output_is_lcd (const gchar *output_name)
 }
 
 /**
- * gcm_utils_get_output_name:
- *
- * Return value: the output name, free with g_free().
- **/
-gchar *
-gcm_utils_get_output_name (GnomeRROutput *output)
-{
-	const guint8 *data;
-	const gchar *output_name;
-	gchar *name = NULL;
-	GcmEdid *edid = NULL;
-	gboolean ret;
-
-	/* if nothing connected then fall back to the connector name */
-	ret = gnome_rr_output_is_connected (output);
-	if (!ret)
-		goto out;
-
-	/* parse the EDID to get a crtc-specific name, not an output specific name */
-	data = gnome_rr_output_get_edid_data (output);
-	if (data == NULL)
-		goto out;
-
-	edid = gcm_edid_new ();
-	ret = gcm_edid_parse (edid, data, NULL);
-	if (!ret) {
-		egg_warning ("failed to parse edid");
-		goto out;
-	}
-
-	/* find the best option */
-	g_object_get (edid, "monitor-name", &name, NULL);
-	if (name == NULL)
-		g_object_get (edid, "ascii-string", &name, NULL);
-	if (name == NULL)
-		g_object_get (edid, "serial-number", &name, NULL);
-
-out:
-	/* fallback to the output name */
-	if (name == NULL) {
-		output_name = gnome_rr_output_get_name (output);
-		ret = gcm_utils_output_is_lcd_internal (output_name);
-		if (ret)
-			output_name = _("Internal LCD");
-		name = g_strdup (output_name);
-	}
-
-	if (edid != NULL)
-		g_object_unref (edid);
-	return name;
-}
-
-/**
  * gcm_utils_get_gamma_size:
  *
  * Return value: the gamma size, or 0 if error;
  **/
-guint
+static guint
 gcm_utils_get_gamma_size (GnomeRRCrtc *crtc, GError **error)
 {
 	guint id;
@@ -149,12 +98,12 @@ out:
 }
 
 /**
- * gcm_utils_set_crtc_gamma:
+ * gcm_utils_set_gamma_for_crtc:
  *
  * Return value: %TRUE for success;
  **/
-gboolean
-gcm_utils_set_crtc_gamma (GnomeRRCrtc *crtc, GcmClut *clut, GError **error)
+static gboolean
+gcm_utils_set_gamma_for_crtc (GnomeRRCrtc *crtc, GcmClut *clut, GError **error)
 {
 	guint id;
 	gboolean ret = TRUE;
@@ -211,110 +160,100 @@ out:
 }
 
 /**
- * gcm_utils_get_clut_for_output:
- **/
-GcmClut *
-gcm_utils_get_clut_for_output (GnomeRROutput *output, GError **error)
-{
-	gchar *name = NULL;
-	gboolean connected;
-	GnomeRRCrtc *crtc;
-	guint size;
-	gboolean ret;
-	GcmClut *clut = NULL;
-	GError *error_local = NULL;
-
-	/* don't set the gamma if there is no device */
-	connected = gnome_rr_output_is_connected (output);
-	if (!connected) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "cannot get clut for a unconnected output");
-		goto out;
-	}
-
-	/* get data */
-	name = gcm_utils_get_output_name (output);
-	egg_debug ("[%i] output %p (name=%s)", connected, output, name);
-
-	/* get crtc */
-	crtc = gnome_rr_output_get_crtc (output);
-
-	/* get gamma size */
-	size = gcm_utils_get_gamma_size (crtc, error);
-	if (size == 0)
-		goto out;
-
-	/* create a lookup table */
-	clut = gcm_clut_new ();
-
-	/* set correct size */
-	g_object_set (clut,
-		      "size", size,
-		      "id", name,
-		      NULL);
-
-	/* lookup from config file */
-	ret = gcm_clut_load_from_config (clut, &error_local);
-	if (!ret) {
-		/* this is not fatal */
-		egg_debug ("failed to get values for %s: %s", name, error_local->message);
-		g_error_free (error_local);
-	}
-out:
-	g_free (name);
-	return clut;
-}
-
-/**
- * gcm_utils_set_output_gamma:
+ * gcm_utils_set_gamma_for_device:
  *
  * Return value: %TRUE for success;
  **/
 gboolean
-gcm_utils_set_output_gamma (GnomeRROutput *output, GError **error)
+gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 {
 	gboolean ret = FALSE;
 	GcmClut *clut = NULL;
 	GcmXserver *xserver = NULL;
 	GnomeRRCrtc *crtc;
+	GnomeRROutput *output;
 	gint x, y;
-	gchar *filename = NULL;
+	gchar *profile = NULL;
+	gfloat gamma;
+	gfloat brightness;
+	gfloat contrast;
 	const gchar *output_name;
+	gchar *id = NULL;
+	guint size;
+	GcmDeviceType type;
 
-	/* get CLUT */
-	clut = gcm_utils_get_clut_for_output (output, error);
-	if (clut == NULL)
-		goto out;
-
-	/* get filename of the profile, or NULL */
-	g_object_get (clut,
-		      "profile", &filename,
+	/* get details about the device */
+	g_object_get (device,
+		      "id", &id,
+		      "type", &type,
+		      "profile", &profile,
+		      "gamma", &gamma,
+		      "brightness", &brightness,
+		      "contrast", &contrast,
+		      "native-device-xrandr", &output,
 		      NULL);
 
-	/* get crtc */
+	/* do no set the gamma for non-display types */
+	if (type != GCM_DEVICE_TYPE_DISPLAY) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "not a display: %s", id);
+		goto out;
+	}
+
+	/* check we have an output */
+	if (output == NULL) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "no output for device: %s", id);
+		goto out;
+	}
+
+	/* get crtc size */
 	crtc = gnome_rr_output_get_crtc (output);
+	size = gcm_utils_get_gamma_size (crtc, error);
+	if (size == 0)
+		goto out;
+
+	/* create CLUT */
+	clut = gcm_clut_new ();
+	g_object_set (clut,
+		      "profile", profile,
+		      "gamma", gamma,
+		      "brightness", brightness,
+		      "contrast", contrast,
+		      "size", size,
+		      NULL);
+
+	/* load */
+	ret = gcm_clut_load_from_profile (clut, error);
+	if (!ret)
+		goto out;
 
 	/* actually set the gamma */
-	ret = gcm_utils_set_crtc_gamma (crtc, clut, error);
+	ret = gcm_utils_set_gamma_for_crtc (crtc, clut, error);
 	if (!ret)
+		goto out;
+
+	/* no profile to set */
+	if (profile == NULL)
 		goto out;
 
 	/* set the per-output profile atoms */
 	xserver = gcm_xserver_new ();
 	output_name = gnome_rr_output_get_name (output);
-	ret = gcm_xserver_set_output_profile (xserver, output_name, filename, error);
+	ret = gcm_xserver_set_output_profile (xserver, output_name, profile, error);
 	if (!ret)
 		goto out;
 
 	/* is the monitor our primary monitor */
 	gnome_rr_output_get_position (output, &x, &y);
-	if (x == 0 && y == 0 && filename != NULL) {
-		ret = gcm_xserver_set_root_window_profile (xserver, filename, error);
+	if (x == 0 && y == 0 && profile != NULL) {
+		ret = gcm_xserver_set_root_window_profile (xserver, profile, error);
 		if (!ret)
 			goto out;
 	}
 out:
-	g_free (filename);
+	g_free (id);
+	g_free (profile);
 	if (clut != NULL)
 		g_object_unref (clut);
 	if (xserver != NULL)

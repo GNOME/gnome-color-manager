@@ -7,6 +7,7 @@ INCLUDES =						\
 	$(VTE_CFLAGS)					\
 	$(DBUS_GLIB_CFLAGS)				\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
+	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
 	$(GUDEV_CFLAGS)					\
 	-DBINDIR=\"$(bindir)\"			 	\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 		\
@@ -30,6 +31,10 @@ libgcmshared_a_SOURCES =				\
 	gcm-edid.h					\
 	gcm-xserver.c					\
 	gcm-xserver.h					\
+	gcm-client.c					\
+	gcm-client.h					\
+	gcm-device.c					\
+	gcm-device.h					\
 	gcm-profile.c					\
 	gcm-profile.h
 
@@ -52,6 +57,7 @@ gcm_inspect_LDADD =					\
 	$(GLIB_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GCONF_LIBS)					\
+	$(GUDEV_LIBS)					\
 	$(GTK_LIBS)
 
 gcm_inspect_CFLAGS =					\
@@ -65,6 +71,7 @@ gcm_apply_LDADD =					\
 	$(GLIB_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GCONF_LIBS)					\
+	$(GUDEV_LIBS)					\
 	$(GTK_LIBS)
 
 gcm_apply_CFLAGS =					\
@@ -78,6 +85,7 @@ gcm_import_LDADD =					\
 	$(GLIB_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GCONF_LIBS)					\
+	$(GUDEV_LIBS)					\
 	$(GTK_LIBS)
 
 gcm_import_CFLAGS =					\

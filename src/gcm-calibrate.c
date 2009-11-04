@@ -36,6 +36,7 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <vte/vte.h>
+#include <libgnomeui/gnome-rr.h>
 
 #include "gcm-calibrate.h"
 #include "gcm-edid.h"

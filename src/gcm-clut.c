@@ -80,7 +80,7 @@ G_DEFINE_TYPE (GcmClut, gcm_clut, G_TYPE_OBJECT)
 /**
  * gcm_clut_set_from_data:
  **/
-gboolean
+static gboolean
 gcm_clut_set_from_data (GcmClut *clut, const GcmClutData *data, guint size)
 {
 	guint i;
@@ -116,6 +116,7 @@ gcm_clut_load_from_profile (GcmClut *clut, GError **error)
 
 	/* no profile to load */
 	if (clut->priv->profile == NULL) {
+		egg_debug ("no profile to load");
 		g_free (clut->priv->copyright);
 		g_free (clut->priv->description);
 		clut->priv->copyright = NULL;
@@ -152,151 +153,6 @@ out:
 	if (profile != NULL)
 		g_object_unref (profile);
 	g_free (data);
-	return ret;
-}
-
-/**
- * gcm_clut_get_default_config_location:
- **/
-static gchar *
-gcm_clut_get_default_config_location (void)
-{
-	gchar *filename;
-
-	/* create default path */
-	filename = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "config.dat", NULL);
-
-	return filename;
-}
-
-/**
- * gcm_clut_load_from_config:
- **/
-gboolean
-gcm_clut_load_from_config (GcmClut *clut, GError **error)
-{
-	gboolean ret;
-	GKeyFile *file;
-	GError *error_local = NULL;
-	gchar *filename = NULL;
-
-	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
-	g_return_val_if_fail (clut->priv->id != NULL, FALSE);
-
-	/* get default config */
-	filename = gcm_clut_get_default_config_location ();
-
-	/* load existing file */
-	file = g_key_file_new ();
-	ret = g_key_file_load_from_file (file, filename, G_KEY_FILE_NONE, &error_local);
-	if (!ret) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to load from file: %s", error_local->message);
-		g_error_free (error_local);
-		goto out;
-	}
-
-	/* load data */
-	g_free (clut->priv->profile);
-	clut->priv->profile = g_key_file_get_string (file, clut->priv->id, "profile", NULL);
-	clut->priv->gamma = g_key_file_get_double (file, clut->priv->id, "gamma", &error_local);
-	if (error_local != NULL) {
-		clut->priv->gamma = gconf_client_get_float (clut->priv->gconf_client, "/apps/gnome-color-manager/default_gamma", NULL);
-		if (clut->priv->gamma < 0.1f)
-			clut->priv->gamma = 1.0f;
-		g_clear_error (&error_local);
-	}
-	clut->priv->brightness = g_key_file_get_double (file, clut->priv->id, "brightness", &error_local);
-	if (error_local != NULL) {
-		clut->priv->brightness = 0.0f;
-		g_clear_error (&error_local);
-	}
-	clut->priv->contrast = g_key_file_get_double (file, clut->priv->id, "contrast", &error_local);
-	if (error_local != NULL) {
-		clut->priv->contrast = 100.0f;
-		g_clear_error (&error_local);
-	}
-
-	/* load this */
-	ret = gcm_clut_load_from_profile (clut, &error_local);
-	if (!ret) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to load from config: %s", error_local->message);
-		g_error_free (error_local);
-		goto out;
-	}
-out:
-	g_free (filename);
-	g_key_file_free (file);
-	return ret;
-}
-
-/**
- * gcm_clut_save_to_config:
- **/
-gboolean
-gcm_clut_save_to_config (GcmClut *clut, GError **error)
-{
-	GKeyFile *keyfile = NULL;
-	gboolean ret;
-	gchar *data;
-	gchar *dirname;
-	GFile *file = NULL;
-	gchar *filename = NULL;
-
-	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
-	g_return_val_if_fail (clut->priv->id != NULL, FALSE);
-
-	/* get default config */
-	filename = gcm_clut_get_default_config_location ();
-
-	/* directory exists? */
-	dirname = g_path_get_dirname (filename);
-	ret = g_file_test (dirname, G_FILE_TEST_IS_DIR);
-	if (!ret) {
-		file = g_file_new_for_path (dirname);
-		ret = g_file_make_directory_with_parents (file, NULL, error);
-		if (!ret)
-			goto out;
-	}
-
-	/* if not ever created, then just create a dummy file */
-	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
-	if (!ret) {
-		ret = g_file_set_contents (filename, "#created today", -1, error);
-		if (!ret)
-			goto out;
-	}
-
-	/* load existing file */
-	keyfile = g_key_file_new ();
-	ret = g_key_file_load_from_file (keyfile, filename, G_KEY_FILE_NONE, error);
-	if (!ret)
-		goto out;
-
-	/* save data */
-	if (clut->priv->profile == NULL)
-		g_key_file_remove_key (keyfile, clut->priv->id, "profile", NULL);
-	else
-		g_key_file_set_string (keyfile, clut->priv->id, "profile", clut->priv->profile);
-	g_key_file_set_double (keyfile, clut->priv->id, "gamma", clut->priv->gamma);
-	g_key_file_set_double (keyfile, clut->priv->id, "brightness", clut->priv->brightness);
-	g_key_file_set_double (keyfile, clut->priv->id, "contrast", clut->priv->contrast);
-
-	/* save contents */
-	data = g_key_file_to_data (keyfile, NULL, error);
-	if (data == NULL)
-		goto out;
-	ret = g_file_set_contents (filename, data, -1, error);
-	if (!ret)
-		goto out;
-out:
-	g_free (filename);
-	g_free (dirname);
-	if (file != NULL)
-		g_object_unref (file);
-	if (keyfile != NULL)
-		g_key_file_free (keyfile);
 	return ret;
 }
 
