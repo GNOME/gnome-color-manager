@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-02 17:11+0300\n"
-"PO-Revision-Date: \n"
+"POT-Creation-Date: 2009-11-05 00:20+0300\n"
+"PO-Revision-Date: 2009-11-05 00:30+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: GNOME Russian <gnome-cyr@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -30,7 +30,7 @@ msgstr "Название"
 
 #: ../data/gcm-apply.desktop.in.h:1
 msgid "Applies device profile settings at session startup"
-msgstr ""
+msgstr "Применять параметры профиля устройства при запуске сеанса"
 
 #: ../data/gcm-apply.desktop.in.h:2
 msgid "Load device color profiles"
@@ -72,7 +72,9 @@ msgstr "Управление цветом"
 msgid "Contrast:"
 msgstr "Контраст:"
 
+#. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
 #: ../data/gcm-prefs.ui.h:5
+#: ../src/gcm-inspect.c:62
 msgid "Description:"
 msgstr "Описание:"
 
@@ -105,94 +107,149 @@ msgid "The default gamma to use for monitors with no previous selection."
 msgstr ""
 
 #. TRANSLATORS: title, hardware refers to a calibration device
-#: ../src/gcm-calibrate.c:193
+#: ../src/gcm-calibrate.c:194
 msgid "Setup hardware"
 msgstr ""
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:195
+#: ../src/gcm-calibrate.c:196
 msgid "Setting up hardware device for use..."
 msgstr ""
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-calibrate.c:201
+#: ../src/gcm-calibrate.c:202
 msgid "Could not auto-detect CRT or LCD"
 msgstr "Не удалось автоматически определить ЭЛТ или ЖК"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:204
+#: ../src/gcm-calibrate.c:205
 msgid "Please indicate if the screen you are trying to profile is a CRT (old type) or a LCD (digital flat panel)."
 msgstr ""
 
 #. TRANSLATORS: button, Liquid Crystal Display
-#: ../src/gcm-calibrate.c:207
+#: ../src/gcm-calibrate.c:208
 msgid "LCD"
 msgstr "LCD"
 
 #. TRANSLATORS: button, Cathode Ray Tube
-#: ../src/gcm-calibrate.c:209
+#: ../src/gcm-calibrate.c:210
 msgid "CRT"
 msgstr "CRT"
 
+#. TRANSLATORS: dialog message, preface
+#: ../src/gcm-calibrate.c:235
+msgid "Before calibrating the display, it is recommended to configure your display with the following settings to get optimal results."
+msgstr ""
+
+#. TRANSLATORS: dialog message, preface
+#: ../src/gcm-calibrate.c:238
+msgid "You may want to consult the owners manual for your display on how to achieve these settings."
+msgstr "Вероятно, вам необходимо прочитать руководство пользователя к монитору, чтобы узнать, как именно настроить монитор"
+
+#. TRANSLATORS: dialog message, bullet item
+#: ../src/gcm-calibrate.c:241
+msgid "Reset your display to it's factory defaults."
+msgstr "Сбросить параметры работы монитора до исходных заводских"
+
+#. TRANSLATORS: dialog message, bullet item
+#: ../src/gcm-calibrate.c:244
+msgid "Disable dynamic contrast if your display has this feature."
+msgstr "Отключить динамический контраст, если монитор поддерживает эту функцию"
+
+#. TRANSLATORS: dialog message, bullet item
+#: ../src/gcm-calibrate.c:247
+msgid "Configure your display with custom color settings and ensure the RGB channels are set to the same values."
+msgstr ""
+
+#. TRANSLATORS: dialog message, addition to bullet item
+#: ../src/gcm-calibrate.c:250
+msgid "If custom color is not available then use a 6500K color temperature."
+msgstr ""
+
+#. TRANSLATORS: dialog message, bullet item
+#: ../src/gcm-calibrate.c:253
+msgid "Adjust the display brightness to a comfortable level for prolonged viewing."
+msgstr "Скорректируйте яркость монитора до уровня, комфортного для длительной работы"
+
 #. TRANSLATORS: title, device is a hardware color calibration sensor
-#: ../src/gcm-calibrate.c:313
+#: ../src/gcm-calibrate.c:364
 msgid "Please attach device"
 msgstr "Подсоедините устройство"
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate.c:315
+#: ../src/gcm-calibrate.c:366
 msgid "Please attach the hardware device to the center of the screen on the gray square."
-msgstr ""
+msgstr "Разместите измерительное устройство в центре экрана на сером квадрате"
 
 #. TRANSLATORS: title, default paramters needed to calibrate
-#: ../src/gcm-calibrate.c:336
+#: ../src/gcm-calibrate.c:387
 msgid "Getting default parameters"
 msgstr ""
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:338
+#: ../src/gcm-calibrate.c:389
 msgid "This pre-calibrates the screen by sending colored and gray patches to your screen and measuring them with the hardware device."
 msgstr ""
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate.c:401
+#: ../src/gcm-calibrate.c:452
 msgid "Generating the patches"
 msgstr ""
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:403
+#: ../src/gcm-calibrate.c:454
 msgid "Generating the patches that will be measured with the hardware device."
 msgstr ""
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate.c:462
+#: ../src/gcm-calibrate.c:513
 msgid "Drawing the patches"
 msgstr ""
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:464
+#: ../src/gcm-calibrate.c:515
 msgid "Drawing the generated patches to the screen, which will then be measured by the hardware device."
 msgstr ""
 
 #. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated"
-#: ../src/gcm-calibrate.c:525
+#: ../src/gcm-calibrate.c:576
 msgid "Custom"
 msgstr ""
 
 #. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands"
-#: ../src/gcm-calibrate.c:533
+#: ../src/gcm-calibrate.c:584
 msgid "Copyright (c)"
 msgstr "Авторские права ©"
 
 #. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate.c:555
+#: ../src/gcm-calibrate.c:606
 msgid "Generating the profile"
 msgstr "Создаётся профиль"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:557
+#: ../src/gcm-calibrate.c:608
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "Создаётся цветовой профиль для использования с этим монитором."
+
+#. TRANSLATORS: this is the ICC profile copyright
+#: ../src/gcm-inspect.c:65
+msgid "Copyright:"
+msgstr "Авторские права:"
+
+#. TRANSLATORS: the root window of all the screens
+#: ../src/gcm-inspect.c:122
+msgid "Root window profile (deprecated):"
+msgstr ""
+
+#: ../src/gcm-inspect.c:137
+#, c-format
+msgid "Output profile '%s':"
+msgstr "Профиль вывода '%s':"
+
+#. TRANSLATORS: this is when the profile has not been set
+#: ../src/gcm-inspect.c:144
+msgid "not set"
+msgstr ""
 
 #. TRANSLATORS: command line option: a list of catalogs to install
 #: ../src/gcm-import.c:56
@@ -246,31 +303,31 @@ msgstr "Установить"
 msgid "Failed to copy file"
 msgstr "Не удалось скопировать файл"
 
-#: ../src/gcm-prefs.c:266
+#: ../src/gcm-prefs.c:308
 msgid "Screen"
 msgstr ""
 
-#: ../src/gcm-prefs.c:272
+#: ../src/gcm-prefs.c:314
 msgid "Label"
 msgstr ""
 
 #. add a clear entry
-#: ../src/gcm-prefs.c:482
+#: ../src/gcm-prefs.c:541
 msgid "None"
 msgstr "Нет"
 
-#: ../src/gcm-prefs.c:679
+#: ../src/gcm-prefs.c:879
 msgid "Show extra debugging information"
-msgstr ""
+msgstr "Показывать отладочную информацию"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-prefs.c:682
+#: ../src/gcm-prefs.c:882
 msgid "Set the parent window to make this modal"
 msgstr ""
 
-#: ../src/gcm-utils.c:73
+#: ../src/gcm-utils.c:112
 msgid "Internal LCD"
-msgstr ""
+msgstr "Внутренний LCD"
 
 #~ msgid "<b>Color Profile:</b>"
 #~ msgstr "<b>Цветовой профиль:</b>"
