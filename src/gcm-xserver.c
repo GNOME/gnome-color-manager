@@ -36,6 +36,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <X11/Xatom.h>
+#include <X11/extensions/Xrandr.h>
 
 #include "gcm-xserver.h"
 
@@ -70,6 +71,7 @@ G_DEFINE_TYPE (GcmXserver, gcm_xserver, G_TYPE_OBJECT)
 /**
  * gcm_xserver_get_root_window_profile_data:
  *
+ * @xserver: a valid %GcmXserver instance
  * @data: the data that is returned from the XServer. Free with g_free()
  * @length: the size of the returned data, or %NULL if you don't care
  * @error: a %GError that is set in the result of an error, or %NULL
@@ -136,6 +138,7 @@ out:
 
 /**
  * gcm_xserver_set_root_window_profile:
+ * @xserver: a valid %GcmXserver instance
  * @filename: the filename of the ICC profile
  * @error: a %GError that is set in the result of an error, or %NULL
  * Return value: %TRUE for success.
@@ -151,6 +154,8 @@ gcm_xserver_set_root_window_profile (GcmXserver *xserver, const gchar *filename,
 
 	g_return_val_if_fail (GCM_IS_XSERVER (xserver), FALSE);
 	g_return_val_if_fail (filename != NULL, FALSE);
+
+	egg_debug ("setting root window ICC profile atom from %s", filename);
 
 	/* get contents of file */
 	ret = g_file_get_contents (filename, &data, &length, error);
@@ -168,6 +173,7 @@ out:
 
 /**
  * gcm_xserver_set_root_window_profile_data:
+ * @xserver: a valid %GcmXserver instance
  * @data: the data that is to be set to the XServer
  * @length: the size of the data
  * @error: a %GError that is set in the result of an error, or %NULL
@@ -211,6 +217,183 @@ gcm_xserver_set_root_window_profile_data (GcmXserver *xserver, const guint8 *dat
 	/* success */
 	ret = TRUE;
 out:
+	return ret;
+}
+
+/**
+ * gcm_xserver_get_output_profile_data:
+ *
+ * @xserver: a valid %GcmXserver instance
+ * @output_name: the output name, e.g. "LVDS1"
+ * @data: the data that is returned from the XServer. Free with g_free()
+ * @length: the size of the returned data, or %NULL if you don't care
+ * @error: a %GError that is set in the result of an error, or %NULL
+ * Return value: %TRUE for success.
+ *
+ * Gets the ICC profile data from the specified output.
+ **/
+gboolean
+gcm_xserver_get_output_profile_data (GcmXserver *xserver, const gchar *output_name, guint8 **data, gsize *length, GError **error)
+{
+	gboolean ret = FALSE;
+	const gchar *atom_name;
+	gchar *data_tmp = NULL;
+	gint format;
+	gint rc = Success;
+	gulong bytes_after;
+	gulong nitems;
+	Atom atom = None;
+	Atom type;
+	gint i;
+	XRROutputInfo *output;
+	XRRScreenResources *resources = NULL;
+	GcmXserverPrivate *priv = xserver->priv;
+
+	g_return_val_if_fail (GCM_IS_XSERVER (xserver), FALSE);
+	g_return_val_if_fail (data != NULL, FALSE);
+
+	/* get the atom name */
+	atom_name = "_ICC_PROFILE";
+
+	/* get the value */
+	gdk_error_trap_push ();
+	atom = gdk_x11_get_xatom_by_name_for_display (priv->display_gdk, atom_name);
+	resources = XRRGetScreenResources (priv->display, priv->window);
+	for (i = 0; i < resources->noutput; ++i) {
+		output = XRRGetOutputInfo (priv->display, resources, resources->outputs[i]);
+		if (g_strcmp0 (output->name, output_name) == 0) {
+			rc = XRRGetOutputProperty (priv->display, resources->outputs[i],
+						   atom, 0, ~0, False, False, AnyPropertyType, &type, &format, &nitems, &bytes_after, (unsigned char **) &data_tmp);
+			egg_debug ("found %s, got %i bytes", output_name, (guint) nitems);
+		}
+		XRRFreeOutputInfo (output);
+	}
+	gdk_error_trap_pop ();
+
+	/* did the call fail */
+	if (rc != Success) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to get %s atom with rc %i", atom_name, rc);
+		goto out;
+	}
+
+	/* was nothing found */
+	if (nitems == 0) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "%s atom has not been set", atom_name);
+		goto out;
+	}
+
+	/* allocate the data using Glib, rather than asking the user to use XFree */
+	*data = g_new0 (guint8, nitems);
+	memcpy (*data, data_tmp, nitems);
+
+	/* copy the length */
+	if (length != NULL)
+		*length = nitems;
+
+	/* success */
+	ret = TRUE;
+out:
+	if (resources != NULL)
+		XRRFreeScreenResources (resources);
+	if (data_tmp != NULL)
+		XFree (data_tmp);
+	return ret;
+}
+
+/**
+ * gcm_xserver_set_output_profile:
+ * @xserver: a valid %GcmXserver instance
+ * @output_name: the output name, e.g. "LVDS1"
+ * @filename: the filename of the ICC profile
+ * @error: a %GError that is set in the result of an error, or %NULL
+ * Return value: %TRUE for success.
+ *
+ * Sets the ICC profile data to the specified output.
+ **/
+gboolean
+gcm_xserver_set_output_profile (GcmXserver *xserver, const gchar *output_name, const gchar *filename, GError **error)
+{
+	gboolean ret;
+	gchar *data = NULL;
+	gsize length;
+
+	g_return_val_if_fail (GCM_IS_XSERVER (xserver), FALSE);
+	g_return_val_if_fail (filename != NULL, FALSE);
+
+	egg_debug ("setting output '%s' ICC profile atom from %s", output_name, filename);
+
+	/* get contents of file */
+	ret = g_file_get_contents (filename, &data, &length, error);
+	if (!ret)
+		goto out;
+
+	/* send to the XServer */
+	ret = gcm_xserver_set_output_profile_data (xserver, output_name, (const guint8 *) data, length, error);
+	if (!ret)
+		goto out;
+out:
+	g_free (data);
+	return ret;
+}
+
+/**
+ * gcm_xserver_set_output_profile_data:
+ * @xserver: a valid %GcmXserver instance
+ * @output_name: the output name, e.g. "LVDS1"
+ * @data: the data that is to be set to the XServer
+ * @length: the size of the data
+ * @error: a %GError that is set in the result of an error, or %NULL
+ * Return value: %TRUE for success.
+ *
+ * Sets the ICC profile data to the specified output.
+ **/
+gboolean
+gcm_xserver_set_output_profile_data (GcmXserver *xserver, const gchar *output_name, const guint8 *data, gsize length, GError **error)
+{
+	gboolean ret = FALSE;
+	const gchar *atom_name;
+	gint rc;
+	gint i;
+	Atom atom = None;
+	XRROutputInfo *output;
+	XRRScreenResources *resources = NULL;
+	GcmXserverPrivate *priv = xserver->priv;
+
+	g_return_val_if_fail (GCM_IS_XSERVER (xserver), FALSE);
+	g_return_val_if_fail (data != NULL, FALSE);
+	g_return_val_if_fail (length != 0, FALSE);
+
+	/* get the atom name */
+	atom_name = "_ICC_PROFILE";
+
+	/* get the value */
+	gdk_error_trap_push ();
+	atom = gdk_x11_get_xatom_by_name_for_display (priv->display_gdk, atom_name);
+	resources = XRRGetScreenResources (priv->display, priv->window);
+	for (i = 0; i < resources->noutput; ++i) {
+		output = XRRGetOutputInfo (priv->display, resources, resources->outputs[i]);
+		if (g_strcmp0 (output->name, output_name) == 0) {
+			egg_debug ("found %s, setting %i bytes", output_name, length);
+			XRRChangeOutputProperty (priv->display, resources->outputs[i], atom, XA_CARDINAL, 8, PropModeReplace, (unsigned char*) data, (gint)length);
+		}
+		XRRFreeOutputInfo (output);
+	}
+	rc = gdk_error_trap_pop ();
+
+	/* did the call fail */
+	if (rc != Success) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to set output %s atom with rc %i", atom_name, rc);
+		goto out;
+	}
+
+	/* success */
+	ret = TRUE;
+out:
+	if (resources != NULL)
+		XRRFreeScreenResources (resources);
 	return ret;
 }
 

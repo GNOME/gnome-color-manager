@@ -56,6 +56,8 @@ struct _GcmXserverClass
 
 GType		 gcm_xserver_get_type		  		(void);
 GcmXserver	*gcm_xserver_new				(void);
+
+/* per screen */
 gboolean	 gcm_xserver_get_root_window_profile_data	(GcmXserver		*xserver,
 								 guint8			**data,
 								 gsize			*length,
@@ -68,7 +70,7 @@ gboolean	 gcm_xserver_set_root_window_profile		(GcmXserver		*xserver,
 								 const gchar		*filename,
 								 GError			**error);
 
-/* TODO: implement */
+/* per output */
 gboolean	 gcm_xserver_get_output_profile_data		(GcmXserver		*xserver,
 								 const gchar		*output_name,
 								 guint8			**data,

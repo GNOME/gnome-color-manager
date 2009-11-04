@@ -273,6 +273,7 @@ gcm_utils_set_output_gamma (GnomeRROutput *output, GError **error)
 	GnomeRRCrtc *crtc;
 	gint x, y;
 	gchar *filename;
+	const gchar *output_name;
 
 	/* get CLUT */
 	clut = gcm_utils_get_clut_for_output (output, error);
@@ -292,11 +293,16 @@ gcm_utils_set_output_gamma (GnomeRROutput *output, GError **error)
 	if (!ret)
 		goto out;
 
+	/* set the per-output profile atoms */
+	xserver = gcm_xserver_new ();
+	output_name = gnome_rr_output_get_name (output);
+	ret = gcm_xserver_set_output_profile (xserver, output_name, filename, error);
+	if (!ret)
+		goto out;
+
 	/* is the monitor our primary monitor */
 	gnome_rr_output_get_position (output, &x, &y);
 	if (x == 0 && y == 0 && filename != NULL) {
-		egg_debug ("setting main ICC profile atom from %s", filename);
-		xserver = gcm_xserver_new ();
 		ret = gcm_xserver_set_root_window_profile (xserver, filename, error);
 		if (!ret)
 			goto out;

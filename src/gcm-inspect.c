@@ -29,6 +29,49 @@
 #include "gcm-xserver.h"
 
 /**
+ * gcm_inspect_print_data_info:
+ **/
+static gboolean
+gcm_inspect_print_data_info (const gchar *title, const guint8 *data, gsize length)
+{
+	gchar *description = NULL;
+	gchar *copyright = NULL;
+	GcmProfile *profile = NULL;
+	GError *error = NULL;
+	gboolean ret;
+
+	/* parse the data */
+	profile = gcm_profile_new ();
+	ret = gcm_profile_parse_data (profile, (const gchar *) data, length, &error);
+	if (!ret) {
+		egg_warning ("failed to parse data: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* print some interesting facts about the profile */
+	g_object_get (profile,
+		      "description", &description,
+		      "copyright", &copyright,
+		      NULL);
+
+	/* print title */
+	g_print ("%s\n", title);
+
+	/* TRANSLATORS: this is the ICC profile description stored in an atom in the XServer */
+	g_print (" - %s %s\n", _("Description:"), description);
+
+	/* TRANSLATORS: this is the ICC profile copyright */
+	g_print (" - %s %s\n", _("Copyright:"), copyright);
+out:
+	g_free (copyright);
+	g_free (description);
+	if (profile != NULL)
+		g_object_unref (profile);
+	return ret;
+}
+
+/**
  * main:
  **/
 int
@@ -40,11 +83,14 @@ main (int argc, char **argv)
 	GError *error = NULL;
 	GOptionContext *context;
 	guint8 *data = NULL;
+	guint8 *data_tmp;
 	gsize length;
-	GcmProfile *profile = NULL;
 	GcmXserver *xserver = NULL;
-	gchar *description = NULL;
-	gchar *copyright = NULL;
+	GnomeRROutput **outputs;
+	guint i;
+	GnomeRRScreen *rr_screen = NULL;
+	const gchar *output_name;
+	gchar *title;
 
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
@@ -72,32 +118,45 @@ main (int argc, char **argv)
 		goto out;
 	}
 
-	/* parse the data */
-	profile = gcm_profile_new ();
-	ret = gcm_profile_parse_data (profile, (const gchar *) data, length, &error);
-	if (!ret) {
-		egg_warning ("failed to parse data: %s", error->message);
-		g_error_free (error);
+	/* TRANSLATORS: the root window of all the screens */
+	gcm_inspect_print_data_info (_("Root window profile (deprecated):"), data, length);
+
+	/* get screen */
+	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
+	if (rr_screen == NULL) {
+		egg_warning ("failed to get rr screen: %s", error->message);
 		goto out;
 	}
 
-	/* print some interesting facts about the profile */
-	g_object_get (profile,
-		      "description", &description,
-		      "copyright", &copyright,
-		      NULL);
+	/* coldplug devices */
+	outputs = gnome_rr_screen_list_outputs (rr_screen);
+	for (i=0; outputs[i] != NULL; i++) {
 
-	/* TRANSLATORS: this is the ICC profile description stored in an atom in the XServer */
-	g_print ("%s %s\n", _("Profile description:"), description);
+		/* get output name */
+		output_name = gnome_rr_output_get_name (outputs[i]);
+		title = g_strdup_printf (_("Output profile '%s':"), output_name);
 
-	/* TRANSLATORS: this is the ICC profile copyright */
-	g_print ("%s %s\n", _("Profile copyright:"), copyright);
+		/* get profile from XServer */
+		ret = gcm_xserver_get_output_profile_data (xserver, output_name, &data_tmp, &length, &error);
+		if (!ret) {
+			egg_warning ("failed to get output profile data: %s", error->message);
+			/* TRANSLATORS: this is when the profile has not been set */
+			g_print ("%s %s\n", title, _("not set"));
+			g_error_free (error);
+			/* non-fatal */
+			error = NULL;
+		} else {
+			/* TRANSLATORS: the output, i.e. the flat panel */
+			gcm_inspect_print_data_info (title, data_tmp, length);
+			g_free (data_tmp);
+		}
+		g_free (title);
+	}
+
 out:
 	g_free (data);
-	g_free (copyright);
-	g_free (description);
-	if (profile != NULL)
-		g_object_unref (profile);
+	if (rr_screen != NULL)
+		gnome_rr_screen_destroy (rr_screen);
 	if (xserver != NULL)
 		g_object_unref (xserver);
 	return retval;
