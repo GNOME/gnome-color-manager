@@ -182,6 +182,7 @@ gcm_calibrate_setup (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 	GtkWidget *dialog;
 	GtkResponseType response;
 	gboolean ret = TRUE;
+	GString *string = NULL;
 
 	/* show main UI */
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
@@ -224,7 +225,53 @@ gcm_calibrate_setup (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 			goto out;
 		}
 	}
+
+	/* show a warning for external monitors */
+	ret = gcm_utils_output_is_lcd_internal (priv->output_name);
+	if (!ret) {
+		string = g_string_new ("");
+
+		/* TRANSLATORS: dialog message, preface */
+		g_string_append_printf (string, "%s\n", _("Before calibrating the display, it is recommended to configure your display with the following settings to get optimal results."));
+
+		/* TRANSLATORS: dialog message, preface */
+		g_string_append_printf (string, "%s\n\n", _("You may want to consult the owners manual for your display on how to achieve these settings."));
+
+		/* TRANSLATORS: dialog message, bullet item */
+		g_string_append_printf (string, "• %s\n", _("Reset your display to it's factory defaults."));
+
+		/* TRANSLATORS: dialog message, bullet item */
+		g_string_append_printf (string, "• %s\n", _("Disable dynamic contrast if your display has this feature."));
+
+		/* TRANSLATORS: dialog message, bullet item */
+		g_string_append_printf (string, "• %s", _("Configure your display with custom color settings and ensure the RGB channels are set to the same values."));
+
+		/* TRANSLATORS: dialog message, addition to bullet item */
+		g_string_append_printf (string, " %s\n", _("If custom color is not available then use a 6500K color temperature."));
+
+		/* TRANSLATORS: dialog message, bullet item */
+		g_string_append_printf (string, "• %s\n", _("Adjust the display brightness to a comfortable level for prolonged viewing."));
+
+		/* set the message */
+		gcm_calibrate_set_message (calibrate, string->str);
+
+		/* wait until user selects okay or closes window */
+		g_main_loop_run (priv->loop);
+
+		/* get result */
+		if (priv->response != GTK_RESPONSE_OK) {
+			if (error != NULL)
+				*error = g_error_new (1, 0, "user follow calibration steps");
+			ret = FALSE;
+			goto out;
+		}
+	}
+
+	/* success */
+	ret = TRUE;
 out:
+	if (string != NULL)
+		g_string_free (string, TRUE);
 	return ret;
 }
 
