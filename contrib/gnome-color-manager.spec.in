@@ -60,10 +60,6 @@ export GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL=1
 make install DESTDIR=$RPM_BUILD_ROOT
 unset GCONF_DISABLE_MAKEFILE_SCHEMA_INSTALL
 
-desktop-file-install --delete-original                   \
-  --dir=$RPM_BUILD_ROOT%{_sysconfdir}/xdg/autostart/                    \
-  $RPM_BUILD_ROOT%{_datadir}/gnome/autostart/gcm-apply.desktop
-
 for i in gcm-prefs gcm-import ; do
   desktop-file-install --delete-original                                \
     --dir=$RPM_BUILD_ROOT%{_datadir}/applications/                      \

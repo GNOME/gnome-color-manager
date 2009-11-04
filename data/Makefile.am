@@ -16,7 +16,7 @@ desktop_in_files =					\
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
 @INTLTOOL_DESKTOP_RULE@
-autostartdir = $(datadir)/gnome/autostart
+autostartdir = $(sysconfdir)/xdg/autostart
 autostart_in_files = gcm-apply.desktop.in
 autostart_DATA = $(autostart_in_files:.desktop.in=.desktop)
 
