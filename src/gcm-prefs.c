@@ -326,7 +326,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
-	gchar *profile;
+	gchar *profile = NULL;
 	GtkWidget *widget;
 	gfloat localgamma;
 	gfloat brightness;
@@ -347,6 +347,23 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 
 	/* show transaction_id */
 	egg_debug ("selected row is: %i", current_device);
+
+	/* not a xrandr device */
+	if (current_device == G_MAXUINT) {
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
+		gtk_widget_hide (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
+		gtk_widget_hide (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
+		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), profiles_array->len);
+		goto out;
+	}
+
+	/* show more UI */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
+	gtk_widget_show (widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
+	gtk_widget_show (widget);
 
 	g_object_get (current_clut,
 		      "profile", &profile,
@@ -378,7 +395,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 			}
 		}
 	}
-
+out:
 	g_free (profile);
 }
 
@@ -417,10 +434,10 @@ out:
 }
 
 /**
- * gcm_prefs_add_device:
+ * gcm_prefs_add_xrandr_device:
  **/
 static void
-gcm_prefs_add_device (GnomeRROutput *output)
+gcm_prefs_add_xrandr_device (GnomeRROutput *output)
 {
 	GtkTreeIter iter;
 	gchar *name;
@@ -544,6 +561,19 @@ gcm_prefs_history_type_combo_changed_cb (GtkWidget *widget, gpointer data)
 	if (active < profiles_array->len)
 		filename = g_ptr_array_index (profiles_array, active);
 	egg_debug ("profile=%s", filename);
+
+	/* not a xrandr device */
+	if (current_clut == NULL) {
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_copyright"));
+		gtk_widget_hide (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_copyright"));
+		gtk_widget_hide (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_description"));
+		gtk_widget_hide (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_description"));
+		gtk_widget_hide (widget);
+		goto out;
+	}
 
 	/* set new profile */
 	g_object_set (current_clut,
@@ -694,7 +724,7 @@ gcm_prefs_randr_event_cb (GnomeRRScreen *screen, gpointer data)
 	/* replug devices */
 	outputs = gnome_rr_screen_list_outputs (rr_screen);
 	for (i=0; outputs[i] != NULL; i++)
-		gcm_prefs_add_device (outputs[i]);
+		gcm_prefs_add_xrandr_device (outputs[i]);
 }
 
 /**
@@ -758,6 +788,75 @@ gcm_prefs_uevent_cb (GUdevClient *client_, const gchar *action, GUdevDevice *dev
 }
 
 /**
+ * gcm_prefs_coldplug_devices_xrandr:
+ **/
+static void
+gcm_prefs_coldplug_devices_xrandr (void)
+{
+	GnomeRROutput **outputs;
+	guint i;
+
+	outputs = gnome_rr_screen_list_outputs (rr_screen);
+	for (i=0; outputs[i] != NULL; i++)
+		gcm_prefs_add_xrandr_device (outputs[i]);
+}
+
+/**
+ * gcm_prefs_add_scanner_device:
+ **/
+static void
+gcm_prefs_add_scanner_device (GUdevDevice *device)
+{
+	GtkTreeIter iter;
+	gchar *name;
+
+	/* get details */
+	name = g_strdup_printf ("%s - %s",
+				g_udev_device_get_property (device, "ID_VENDOR"),
+				g_udev_device_get_property (device, "ID_MODEL"));
+
+	//TODO: use g_udev_device_get_sysfs_path (device) as id
+
+	/* add to list */
+	egg_debug ("add %s to device list", name);
+	gtk_list_store_append (list_store_devices, &iter);
+	gtk_list_store_set (list_store_devices, &iter,
+			    GPM_DEVICES_COLUMN_ID, G_MAXUINT,
+			    GPM_DEVICES_COLUMN_TEXT, name,
+			    GPM_DEVICES_COLUMN_CLUT, NULL,
+			    GPM_DEVICES_COLUMN_ICON, "camera-photo", -1);
+	g_free (name);
+}
+
+/**
+ * gcm_prefs_coldplug_devices_scanner:
+ **/
+static void
+gcm_prefs_coldplug_devices_scanner (void)
+{
+	GList *devices;
+	GList *l;
+	GUdevDevice *device;
+	const gchar *value;
+
+	/* get all USB devices */
+	devices = g_udev_client_query_by_subsystem (client, "usb");
+	for (l = devices; l != NULL; l = l->next) {
+		device = l->data;
+
+		/* sane is slightly odd in a lowercase property, and "yes" as a value rather than "1" */
+		value = g_udev_device_get_property (device, "libsane_matched");
+		if (value != NULL) {
+			egg_debug ("found scanner device: %s", g_udev_device_get_sysfs_path (device));
+			gcm_prefs_add_scanner_device (device);
+		}
+	}
+
+	g_list_foreach (devices, (GFunc) g_object_unref, NULL);
+	g_list_free (devices);
+}
+
+/**
  * main:
  **/
 int
@@ -773,8 +872,6 @@ main (int argc, char **argv)
 	GError *error = NULL;
 	GMainLoop *loop;
 	GtkTreeSelection *selection;
-	GnomeRROutput **outputs;
-	guint i;
 	const gchar *subsystems[] = {"usb", NULL};
 
 	const GOptionEntry options[] = {
@@ -892,9 +989,8 @@ main (int argc, char **argv)
 	}
 
 	/* coldplug devices */
-	outputs = gnome_rr_screen_list_outputs (rr_screen);
-	for (i=0; outputs[i] != NULL; i++)
-		gcm_prefs_add_device (outputs[i]);
+	gcm_prefs_coldplug_devices_xrandr ();
+	gcm_prefs_coldplug_devices_scanner ();
 
 	/* set the parent window if it is specified */
 	if (xid != 0) {
