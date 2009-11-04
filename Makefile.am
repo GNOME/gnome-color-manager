@@ -48,7 +48,7 @@ distclean-local:
 ChangeLog:
 	@echo Creating $@
 	@if test -d "$(srcdir)/.git"; then \
-	  (GIT_DIR=$(top_srcdir)/.git ./missing --run git log ZIF_0_0_X.. --stat -M -C --name-status  --date=short --no-color) | fmt --split-only > $@.tmp \
+	  (GIT_DIR=$(top_srcdir)/.git ./missing --run git log 40b7dc172740c49933139d950b72aab5549df92e.. --stat -M -C --name-status  --date=short --no-color) | fmt --split-only > $@.tmp \
 	  && mv -f $@.tmp $@ \
 	  || ($(RM) $@.tmp; \
 	      echo Failed to generate ChangeLog, your ChangeLog may be outdated >&2; \
