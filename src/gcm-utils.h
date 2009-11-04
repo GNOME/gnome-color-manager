@@ -62,6 +62,8 @@ gboolean	 gcm_utils_set_x11_icc_profile_data	(guint			 id,
 gboolean	 gcm_utils_set_x11_icc_profile		(guint			 id,
 							 const gchar		*filename,
 							 GError			**error);
+gboolean	 gcm_utils_output_is_lcd_internal	(const gchar		*output_name);
+gboolean	 gcm_utils_output_is_lcd		(const gchar		*output_name);
 
 #endif /* __GCM_UTILS_H */
 

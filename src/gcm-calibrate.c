@@ -704,11 +704,12 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 static void
 gcm_calibrate_guess_type (GcmCalibrate *calibrate)
 {
+	gboolean ret;
 	GcmCalibratePrivate *priv = calibrate->priv;
 
 	/* guess based on the output name */
-	if (strstr (priv->output_name, "DVI") != NULL ||
-	    strstr (priv->output_name, "LVDS") != NULL) {
+	ret = gcm_utils_output_is_lcd (priv->output_name);
+	if (ret) {
 		priv->is_lcd = TRUE;
 		priv->is_crt = FALSE;
 	} else {

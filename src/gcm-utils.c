@@ -31,6 +31,40 @@
 #include "egg-debug.h"
 
 /**
+ * gcm_utils_output_is_lcd_internal:
+ * @output_name: the output name
+ *
+ * Return value: %TRUE is the output is an internal LCD panel
+ **/
+gboolean
+gcm_utils_output_is_lcd_internal (const gchar *output_name)
+{
+	if (g_strstr_len (output_name, -1, "LVDS") != NULL)
+		return TRUE;
+	if (g_strstr_len (output_name, -1, "lvds") != NULL)
+		return TRUE;
+	return FALSE;
+}
+
+/**
+ * gcm_utils_output_is_lcd:
+ * @output_name: the output name
+ *
+ * Return value: %TRUE is the output is an internal or external LCD panel
+ **/
+gboolean
+gcm_utils_output_is_lcd (const gchar *output_name)
+{
+	if (gcm_utils_output_is_lcd_internal (output_name))
+		return TRUE;
+	if (g_strstr_len (output_name, -1, "DVI") != NULL)
+		return TRUE;
+	if (g_strstr_len (output_name, -1, "dvi") != NULL)
+		return TRUE;
+	return FALSE;
+}
+
+/**
  * gcm_utils_get_output_name:
  *
  * Return value: the output name, free with g_free().
@@ -73,7 +107,8 @@ out:
 	/* fallback to the output name */
 	if (name == NULL) {
 		output_name = gnome_rr_output_get_name (output);
-		if (g_strstr_len (output_name, -1, "LVDS") != NULL)
+		ret = gcm_utils_output_is_lcd_internal (output_name);
+		if (ret)
 			output_name = _("Internal LCD");
 		name = g_strdup (output_name);
 	}
