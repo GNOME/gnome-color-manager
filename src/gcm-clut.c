@@ -300,15 +300,18 @@ out:
 	return ret;
 }
 
+/**
+ * gcm_clut_get_adjusted_value:
+ **/
 static guint
-gcm_clut_get_adjusted_value (guint value, gfloat min, gfloat max, gfloat gamma)
+gcm_clut_get_adjusted_value (guint value, gfloat min, gfloat max, gfloat custom_gamma)
 {
 	guint retval;
 
 	/* optimise for the common case */
-	if (min < 0.01f && max > 0.99f && gamma > 0.99 && gamma < 1.01)
+	if (min < 0.01f && max > 0.99f && custom_gamma > 0.99 && custom_gamma < 1.01)
 		return value;
-	retval = 65536.0f * ((powf (((gfloat)value/65536.0f), gamma) * (max - min)) + min);
+	retval = 65536.0f * ((powf (((gfloat)value/65536.0f), custom_gamma) * (max - min)) + min);
 	return retval;
 }
 
@@ -325,7 +328,7 @@ gcm_clut_get_array (GcmClut *clut)
 	GcmClutData *data;
 	gfloat min;
 	gfloat max;
-	gfloat gamma;
+	gfloat custom_gamma;
 
 	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
 	g_return_val_if_fail (clut->priv->size != 0, FALSE);
@@ -333,7 +336,7 @@ gcm_clut_get_array (GcmClut *clut)
 
 	min = clut->priv->brightness / 100.0f;
 	max = (1.0f - min) * (clut->priv->contrast / 100.0f) + min;
-	gamma = clut->priv->gamma;
+	custom_gamma = clut->priv->gamma;
 
 	array = g_ptr_array_new_with_free_func (g_free);
 	if (clut->priv->array->len == 0) {
@@ -342,9 +345,9 @@ gcm_clut_get_array (GcmClut *clut)
 		for (i=0; i<clut->priv->size; i++) {
 			value = (i * 0xffff) / clut->priv->size;
 			data = g_new0 (GcmClutData, 1);
-			data->red = gcm_clut_get_adjusted_value (value, min, max, gamma);
-			data->green = gcm_clut_get_adjusted_value (value, min, max, gamma);
-			data->blue = gcm_clut_get_adjusted_value (value, min, max, gamma);
+			data->red = gcm_clut_get_adjusted_value (value, min, max, custom_gamma);
+			data->green = gcm_clut_get_adjusted_value (value, min, max, custom_gamma);
+			data->blue = gcm_clut_get_adjusted_value (value, min, max, custom_gamma);
 			g_ptr_array_add (array, data);
 		}
 	} else {
@@ -352,14 +355,12 @@ gcm_clut_get_array (GcmClut *clut)
 		for (i=0; i<clut->priv->size; i++) {
 			tmp = g_ptr_array_index (clut->priv->array, i);
 			data = g_new0 (GcmClutData, 1);
-			data->red = gcm_clut_get_adjusted_value (tmp->red, min, max, gamma);
-			data->green = gcm_clut_get_adjusted_value (tmp->green, min, max, gamma);
-			data->blue = gcm_clut_get_adjusted_value (tmp->blue, min, max, gamma);
+			data->red = gcm_clut_get_adjusted_value (tmp->red, min, max, custom_gamma);
+			data->green = gcm_clut_get_adjusted_value (tmp->green, min, max, custom_gamma);
+			data->blue = gcm_clut_get_adjusted_value (tmp->blue, min, max, custom_gamma);
 			g_ptr_array_add (array, data);
 		}
 	}
-
-out:
 	return array;
 }
 

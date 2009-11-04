@@ -74,7 +74,6 @@ gchar *
 gcm_utils_get_output_name (GnomeRROutput *output)
 {
 	const guint8 *data;
-	guint i, j;
 	const gchar *output_name;
 	gchar *name = NULL;
 	GcmEdid *edid = NULL;

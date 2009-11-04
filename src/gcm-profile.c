@@ -169,7 +169,7 @@ gcm_parser_unencode_8 (const gchar *data, gsize offset)
 /**
  * gcm_prefs_get_tag_description:
  **/
-static gchar *
+static const gchar *
 gcm_prefs_get_tag_description (guint tag)
 {
 	if (tag == GCM_TAG_ID_PROFILE_DESCRIPTION)
@@ -449,7 +449,6 @@ gcm_parser_load_icc_trc_curve (GcmProfile *profile, const gchar *data, gsize off
 		/* save datatype */
 		profile->priv->has_curve_fixed = TRUE;
 	}
-out:
 	return ret;
 }
 
@@ -478,8 +477,7 @@ gcm_parser_load_icc_trc (GcmProfile *profile, const gchar *data, gsize offset, g
 gboolean
 gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GError **error)
 {
-	gboolean ret;
-	GError *error_local = NULL;
+	gboolean ret = FALSE;
 	guint num_tags;
 	guint i;
 	guint tag_id;
@@ -498,7 +496,6 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 	if (length < 0x84) {
 		if (error != NULL)
 			*error = g_error_new (1, 0, "profile was not valid (file size too small)");
-		ret = FALSE;
 		goto out;
 	}
 
@@ -515,7 +512,6 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		if (error != NULL)
 			*error = g_error_new (1, 0, "not an ICC profile, signature is '%s', expecting 'acsp'", signature);
 		g_free (signature);
-		ret = FALSE;
 		goto out;
 	}
 

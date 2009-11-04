@@ -125,13 +125,13 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 
 		/* any useful blocks? */
 		if (data[i+3] == GCM_DESCRIPTOR_DISPLAY_PRODUCT_NAME)
-			priv->monitor_name = g_strdup (&data[i+5]);
+			priv->monitor_name = g_strdup ((const gchar *) &data[i+5]);
 		else if (data[i+3] == GCM_DESCRIPTOR_DISPLAY_PRODUCT_SERIAL_NUMBER)
-			priv->serial_number = g_strdup (&data[i+5]);
+			priv->serial_number = g_strdup ((const gchar *) &data[i+5]);
 		else if (data[i+3] == GCM_DESCRIPTOR_COLOR_MANAGEMENT_DATA)
 			egg_warning ("failing to parse color management data");
 		else if (data[i+3] == GCM_DESCRIPTOR_ALPHANUMERIC_DATA_STRING)
-			priv->ascii_string = g_strdup (&data[i+5]);
+			priv->ascii_string = g_strdup ((const gchar *) &data[i+5]);
 		else if (data[i+3] == GCM_DESCRIPTOR_COLOR_POINT) {
 			if (data[i+3+9] != 0xff) {
 				egg_debug ("extended EDID block(1) which contains a better gamma value");

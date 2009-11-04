@@ -33,6 +33,9 @@ libgcmshared_a_SOURCES =				\
 	gcm-profile.c					\
 	gcm-profile.h
 
+libgcmshared_a_CFLAGS =					\
+	$(WARNINGFLAGS_C)
+
 bin_PROGRAMS =						\
 	gcm-apply					\
 	gcm-prefs					\
