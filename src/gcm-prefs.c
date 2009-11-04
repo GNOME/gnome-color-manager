@@ -31,6 +31,7 @@
 #include "gcm-utils.h"
 #include "gcm-profile.h"
 #include "gcm-calibrate.h"
+#include "gcm-brightness.h"
 
 static GtkBuilder *builder = NULL;
 static GtkListStore *list_store_devices = NULL;
@@ -84,6 +85,7 @@ static void
 gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 {
 	GcmCalibrate *calib = NULL;
+	GcmBrightness *brightness = NULL;
 	gboolean ret;
 	GError *error = NULL;
 	GtkWindow *window;
@@ -93,6 +95,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	gchar *filename = NULL;
 	gchar *destination = NULL;
 	guint i;
+	guint percentage = G_MAXUINT;
 
 	/* get the device */
 	output = gnome_rr_screen_get_output_by_id (rr_screen, current_device);
@@ -101,8 +104,9 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		goto out;
 	}
 
-	/* create new calibration object */
+	/* create new calibration and brightness objects */
 	calib = gcm_calibrate_new ();
+	brightness = gcm_brightness_new ();
 
 	/* set the proper output name */
 	output_name = gnome_rr_output_get_name (output);
@@ -117,6 +121,28 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		egg_warning ("failed to setup: %s", error->message);
 		g_error_free (error);
 		goto finish_calibrate;
+	}
+
+	/* if we are an internal LCD, we need to set the brightness to maximum */
+	ret = gcm_utils_output_is_lcd_internal (output_name);
+	if (ret) {
+		/* get the old brightness so we can restore state */
+		ret = gcm_brightness_get_percentage (brightness, &percentage, &error);
+		if (!ret) {
+			egg_warning ("failed to get brightness: %s", error->message);
+			g_error_free (error);
+			/* not fatal */
+			error = NULL;
+		}
+
+		/* set the new brightness */
+		ret = gcm_brightness_set_percentage (brightness, 100, &error);
+		if (!ret) {
+			egg_warning ("failed to set brightness: %s", error->message);
+			g_error_free (error);
+			/* not fatal */
+			error = NULL;
+		}
 	}
 
 	/* step 1 */
@@ -152,6 +178,18 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 finish_calibrate:
+	/* restore brightness */
+	if (percentage != G_MAXUINT) {
+		/* set the new brightness */
+		ret = gcm_brightness_set_percentage (brightness, percentage, &error);
+		if (!ret) {
+			egg_warning ("failed to restore brightness: %s", error->message);
+			g_error_free (error);
+			/* not fatal */
+			error = NULL;
+		}
+	}
+
 	/* step 4 */
 	filename = gcm_calibrate_finish (calib, &error);
 	if (filename == NULL) {
@@ -195,6 +233,8 @@ finish_calibrate:
 out:
 	if (calib != NULL)
 		g_object_unref (calib);
+	if (brightness != NULL)
+		g_object_unref (brightness);
 
 	/* need to set the gamma back to the default after calibration */
 	ret = gcm_utils_set_output_gamma (output, &error);

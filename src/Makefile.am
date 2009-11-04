@@ -81,6 +81,8 @@ gcm_import_CFLAGS =					\
 gcm_prefs_SOURCES =					\
 	gcm-calibrate.c					\
 	gcm-calibrate.h					\
+	gcm-brightness.c				\
+	gcm-brightness.h				\
 	gcm-prefs.c
 
 gcm_prefs_LDADD =					\
