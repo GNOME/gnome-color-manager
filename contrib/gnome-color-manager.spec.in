@@ -1,4 +1,5 @@
 %define gtk2_version			2.16.0
+%define dbus_glib_version		0.73
 %define unique_version			1.0.0
 %define alphatag			#ALPHATAG#
 
@@ -19,6 +20,8 @@ Requires:  gtk2 >= %{gtk2_version}
 Requires:  gnome-icon-theme
 Requires:  unique >= %{unique_version}
 Requires:  shared-mime-info
+Requires:  dbus-glib >= %{dbus_glib_version}
+Requires:  dbus-x11 >= %{dbus_version}
 Requires:  vte
 Requires:  argyllcms
 Requires(post):   scrollkeeper
@@ -39,6 +42,7 @@ BuildRequires: gnome-doc-utils
 BuildRequires: unique-devel >= %{unique_version}
 BuildRequires: intltool
 BuildRequires: libgudev1-devel
+BuildRequires: dbus-glib-devel >= %{dbus_glib_version}
 
 %description
 gnome-color-manager provides a way to control ICC colour profiles.

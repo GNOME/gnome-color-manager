@@ -5,6 +5,7 @@ INCLUDES =						\
 	$(UNIQUE_CFLAGS)				\
 	$(GCONF_CFLAGS)					\
 	$(VTE_CFLAGS)					\
+	$(DBUS_GLIB_CFLAGS)				\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	$(GUDEV_CFLAGS)					\
 	-DBINDIR=\"$(bindir)\"			 	\
@@ -90,6 +91,7 @@ gcm_prefs_LDADD =					\
 	$(GCONF_LIBS)					\
 	$(VTE_LIBS)					\
 	$(GUDEV_LIBS)					\
+	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)
 
 gcm_prefs_CFLAGS =					\
