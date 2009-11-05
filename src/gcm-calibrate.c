@@ -297,7 +297,7 @@ gcm_calibrate_debug_argv (const gchar *program, gchar **argv)
 static gboolean
 gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 {
-	gboolean ret = TRUE;
+	gboolean ret = FALSE;
 	GcmCalibratePrivate *priv = calibrate->priv;
 	gchar type;
 	gchar **argv = NULL;
@@ -315,14 +315,18 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	/* get the device */
 	output = gnome_rr_screen_get_output_by_name (priv->rr_screen, priv->output_name);
 	if (output == NULL) {
-		egg_warning ("failed to get output");
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to get output for %s", priv->output_name);
 		goto out;
 	}
 
 	/* get edid */
 	data = gnome_rr_output_get_edid_data (output);
-	if (data == NULL)
+	if (data == NULL) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to get EDID for %s", priv->output_name);
 		goto out;
+	}
 
 	/* parse edid */
 	ret = gcm_edid_parse (priv->edid, data, error);
