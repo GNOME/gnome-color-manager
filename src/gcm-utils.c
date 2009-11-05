@@ -290,7 +290,6 @@ gcm_utils_get_profile_filenames_for_directory (GPtrArray *array, const gchar *di
 		    g_str_has_suffix (name, ".icm") ||
 		    g_str_has_suffix (name, ".ICC") ||
 		    g_str_has_suffix (name, ".ICM")) {
-			egg_debug ("adding %s", name);
 			g_ptr_array_add (array, g_build_filename (directory, name, NULL));
 		}
 	} while (TRUE);

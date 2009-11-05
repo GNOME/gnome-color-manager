@@ -42,6 +42,7 @@ static GnomeRRScreen *rr_screen = NULL;
 static GPtrArray *profiles_array = NULL;
 static GUdevClient *client = NULL;
 static GcmClient *gcm_client = NULL;
+gboolean setting_up_device = FALSE;
 
 enum {
 	GPM_DEVICES_COLUMN_ID,
@@ -255,10 +256,13 @@ out:
 static void
 gcm_prefs_reset_cb (GtkWidget *widget, gpointer data)
 {
+	setting_up_device = TRUE;
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
 	gtk_range_set_value (GTK_RANGE (widget), 1.0f);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_brightness"));
 	gtk_range_set_value (GTK_RANGE (widget), 0.0f);
+	setting_up_device = FALSE;
+	/* we only want one save, not three */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
 	gtk_range_set_value (GTK_RANGE (widget), 100.0f);
 }
@@ -352,6 +356,8 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 
 	/* show transaction_id */
 	egg_debug ("selected device is: %s", id);
+	if (current_device != NULL)
+		g_object_unref (current_device);
 	current_device = gcm_client_get_device_by_id (gcm_client, id);
 	g_object_get (current_device,
 		      "type", &type,
@@ -363,16 +369,14 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 		gtk_widget_hide (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
 		gtk_widget_hide (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
-		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), profiles_array->len);
-		goto out;
-	}
+	} else {
 
-	/* show more UI */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
-	gtk_widget_show (widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
-	gtk_widget_show (widget);
+		/* show more UI */
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
+		gtk_widget_show (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
+		gtk_widget_show (widget);
+	}
 
 	g_object_get (current_device,
 		      "profile", &profile,
@@ -382,12 +386,14 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 		      NULL);
 
 	/* set adjustments */
+	setting_up_device = TRUE;
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
 	gtk_range_set_value (GTK_RANGE (widget), localgamma);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_brightness"));
 	gtk_range_set_value (GTK_RANGE (widget), brightness);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
 	gtk_range_set_value (GTK_RANGE (widget), contrast);
+	setting_up_device = FALSE;
 
 	/* set correct profile */
 	if (profile == NULL) {
@@ -404,7 +410,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 			}
 		}
 	}
-out:
+
 	g_free (id);
 	g_free (profile);
 }
@@ -426,14 +432,6 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 		      "id", &id,
 		      "title", &title,
 		      NULL);
-
-	/* load this */
-	ret = gcm_device_load (device, &error);
-	if (!ret) {
-		egg_warning ("failed to load device: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
 
 	/* set the gamma on the device */
 	ret = gcm_utils_set_gamma_for_device (device, &error);
@@ -513,10 +511,10 @@ gcm_prefs_add_profiles (GtkWidget *widget)
 }
 
 /**
- * gcm_prefs_history_type_combo_changed_cb:
+ * gcm_prefs_profile_combo_changed_cb:
  **/
 static void
-gcm_prefs_history_type_combo_changed_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 {
 	guint active;
 	gchar *copyright = NULL;
@@ -536,24 +534,12 @@ gcm_prefs_history_type_combo_changed_cb (GtkWidget *widget, gpointer data)
 		filename = g_ptr_array_index (profiles_array, active);
 	egg_debug ("profile=%s", filename);
 
-	/* not a xrandr device */
-	if (current_device == NULL) {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_copyright"));
-		gtk_widget_hide (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_copyright"));
-		gtk_widget_hide (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_description"));
-		gtk_widget_hide (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_description"));
-		gtk_widget_hide (widget);
-		goto out;
-	}
-
 	/* see if it's changed */
 	g_object_get (current_device,
 		      "profile", &profile_old,
 		      "type", &type,
 		      NULL);
+	egg_warning ("old: %s, new:%s", profile_old, filename);
 	changed = ((g_strcmp0 (profile_old, filename) != 0));
 
 	/* set new profile */
@@ -618,6 +604,7 @@ gcm_prefs_history_type_combo_changed_cb (GtkWidget *widget, gpointer data)
 
 	/* only save and set if changed */
 	if (changed) {
+
 		/* save new profile */
 		ret = gcm_device_save (current_device, &error);
 		if (!ret) {
@@ -655,6 +642,10 @@ gcm_prefs_slider_changed_cb (GtkRange *range, gpointer *user_data)
 	GtkWidget *widget;
 	gboolean ret;
 	GError *error = NULL;
+
+	/* we're just setting up the device, not moving the slider */
+	if (setting_up_device)
+		return;
 
 	/* get values */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
@@ -941,7 +932,7 @@ main (int argc, char **argv)
 	gcm_prefs_set_combo_simple_text (widget);
 	gcm_prefs_add_profiles (widget);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (gcm_prefs_history_type_combo_changed_cb), NULL);
+			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), NULL);
 
 	/* set ranges */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
@@ -1004,6 +995,8 @@ main (int argc, char **argv)
 out:
 	g_object_unref (unique_app);
 	g_main_loop_unref (loop);
+	if (current_device != NULL)
+		g_object_unref (current_device);
 	if (rr_screen != NULL)
 		gnome_rr_screen_destroy (rr_screen);
 	if (client != NULL)
