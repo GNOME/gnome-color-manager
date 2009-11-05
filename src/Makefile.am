@@ -5,6 +5,7 @@ INCLUDES =						\
 	$(UNIQUE_CFLAGS)				\
 	$(GCONF_CFLAGS)					\
 	$(VTE_CFLAGS)					\
+	$(XORG_CFLAGS)					\
 	$(DBUS_GLIB_CFLAGS)				\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
@@ -58,6 +59,7 @@ gcm_inspect_LDADD =					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
+	$(XORG_LIBS)					\
 	$(GTK_LIBS)
 
 gcm_inspect_CFLAGS =					\
@@ -72,6 +74,7 @@ gcm_apply_LDADD =					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
+	$(XORG_LIBS)					\
 	$(GTK_LIBS)
 
 gcm_apply_CFLAGS =					\
@@ -86,6 +89,7 @@ gcm_import_LDADD =					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
+	$(XORG_LIBS)					\
 	$(GTK_LIBS)
 
 gcm_import_CFLAGS =					\
@@ -107,6 +111,7 @@ gcm_prefs_LDADD =					\
 	$(VTE_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
+	$(XORG_LIBS)					\
 	$(GTK_LIBS)
 
 gcm_prefs_CFLAGS =					\

@@ -26,6 +26,7 @@
 #include <gdk/gdkx.h>
 #include <libgnomeui/gnome-rr.h>
 #include <X11/extensions/Xrandr.h>
+#include <X11/extensions/xf86vmode.h>
 
 #include "gcm-utils.h"
 #include "gcm-clut.h"
@@ -68,6 +69,26 @@ gcm_utils_output_is_lcd (const gchar *output_name)
 }
 
 /**
+ * gcm_utils_get_gamma_size_fallback:
+ **/
+static guint
+gcm_utils_get_gamma_size_fallback (void)
+{
+	guint size;
+	Bool rc;
+
+	/* this is per-screen, not per output which is less than ideal */
+	gdk_error_trap_push ();
+	egg_warning ("using PER-SCREEN gamma tables as driver is not XRANDR 1.3 compliant");
+	rc = XF86VidModeGetGammaRampSize (GDK_DISPLAY(), gdk_x11_get_default_screen (), (int*) &size);
+	gdk_error_trap_pop ();
+	if (!rc)
+		size = 0;
+
+	return size;
+}
+
+/**
  * gcm_utils_get_gamma_size:
  *
  * Return value: the gamma size, or 0 if error;
@@ -87,6 +108,10 @@ gcm_utils_get_gamma_size (GnomeRRCrtc *crtc, GError **error)
 	if (gdk_error_trap_pop ())
 		size = 0;
 
+	/* some drivers support Xrandr 1.2, not 1.3 */
+	if (size == 0)
+		size = gcm_utils_get_gamma_size_fallback ();
+
 	/* no size, or X popped an error */
 	if (size == 0) {
 		if (error != NULL)
@@ -95,6 +120,23 @@ gcm_utils_get_gamma_size (GnomeRRCrtc *crtc, GError **error)
 	}
 out:
 	return size;
+}
+
+/**
+ * gcm_utils_set_gamma_fallback:
+ **/
+static gboolean
+gcm_utils_set_gamma_fallback (XRRCrtcGamma *gamma, guint size)
+{
+	Bool rc;
+
+	/* this is per-screen, not per output which is less than ideal */
+	gdk_error_trap_push ();
+	egg_warning ("using PER-SCREEN gamma tables as driver is not XRANDR 1.3 compliant");
+	rc = XF86VidModeSetGammaRamp (GDK_DISPLAY(), gdk_x11_get_default_screen (), size, gamma->red, gamma->green, gamma->blue);
+	gdk_error_trap_pop ();
+
+	return rc;
 }
 
 /**
@@ -146,10 +188,13 @@ gcm_utils_set_gamma_for_crtc (GnomeRRCrtc *crtc, GcmClut *clut, GError **error)
 	XRRSetCrtcGamma (GDK_DISPLAY(), id, gamma);
 	gdk_flush ();
 	if (gdk_error_trap_pop ()) {
-		ret = FALSE;
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to set crtc gamma %p (%i) on %i", gamma, array->len, id);
-		goto out;
+		/* some drivers support Xrandr 1.2, not 1.3 */
+		ret = gcm_utils_set_gamma_fallback (gamma, array->len);
+		if (!ret) {
+			if (error != NULL)
+				*error = g_error_new (1, 0, "failed to set crtc gamma %p (%i) on %i", gamma, array->len, id);
+			goto out;
+		}
 	}
 out:
 	if (gamma != NULL)
