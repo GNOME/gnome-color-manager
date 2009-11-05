@@ -577,6 +577,10 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 			}
 		}
 	}
+
+	/* success */
+	ret = TRUE;
+
 	egg_debug ("Has MLUT:         %s", profile->priv->has_mlut ? "YES" : "NO");
 	egg_debug ("Has VCGT formula: %s", profile->priv->has_vcgt_formula ? "YES" : "NO");
 	egg_debug ("Has VCGT table:   %s", profile->priv->has_vcgt_table ? "YES" : "NO");
