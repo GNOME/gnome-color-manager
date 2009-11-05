@@ -115,25 +115,27 @@ gcm_device_load_from_profile (GcmDevice *device, GError **error)
 		goto out;
 	}
 
-	/* create new profile instance */
-	profile = gcm_profile_new ();
+	/* load the profile if it's set */
+	if (device->priv->profile != NULL) {
 
-	/* load the profile */
-	ret = gcm_profile_parse (profile, device->priv->profile, &error_local);
-	if (!ret) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to set from profile: %s", error_local->message);
-		g_error_free (error_local);
-		goto out;
+		/* create new profile instance */
+		profile = gcm_profile_new ();
+		ret = gcm_profile_parse (profile, device->priv->profile, &error_local);
+		if (!ret) {
+			if (error != NULL)
+				*error = g_error_new (1, 0, "failed to set from profile: %s", error_local->message);
+			g_error_free (error_local);
+			goto out;
+		}
+
+		/* copy the description */
+		g_free (device->priv->copyright);
+		g_free (device->priv->description);
+		g_object_get (profile,
+			      "copyright", &device->priv->copyright,
+			      "description", &device->priv->description,
+			      NULL);
 	}
-
-	/* copy the description */
-	g_free (device->priv->copyright);
-	g_free (device->priv->description);
-	g_object_get (profile,
-		      "copyright", &device->priv->copyright,
-		      "description", &device->priv->description,
-		      NULL);
 out:
 	if (profile != NULL)
 		g_object_unref (profile);
@@ -157,7 +159,7 @@ gboolean
 gcm_device_load (GcmDevice *device, GError **error)
 {
 	gboolean ret;
-	GKeyFile *file;
+	GKeyFile *file = NULL;
 	GError *error_local = NULL;
 	gchar *filename = NULL;
 
@@ -166,6 +168,14 @@ gcm_device_load (GcmDevice *device, GError **error)
 
 	/* get default config */
 	filename = gcm_device_get_default_config_location ();
+
+	/* check we have a config, or is this first start */
+	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
+	if (!ret) {
+		/* we have no profile to load from */
+		ret = TRUE;
+		goto out;
+	}
 
 	/* load existing file */
 	file = g_key_file_new ();
@@ -208,7 +218,8 @@ gcm_device_load (GcmDevice *device, GError **error)
 	}
 out:
 	g_free (filename);
-	g_key_file_free (file);
+	if (file != NULL)
+		g_key_file_free (file);
 	return ret;
 }
 

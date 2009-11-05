@@ -532,14 +532,13 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 
 	if (active < profiles_array->len)
 		filename = g_ptr_array_index (profiles_array, active);
-	egg_debug ("profile=%s", filename);
 
 	/* see if it's changed */
 	g_object_get (current_device,
 		      "profile", &profile_old,
 		      "type", &type,
 		      NULL);
-	egg_warning ("old: %s, new:%s", profile_old, filename);
+	egg_debug ("old: %s, new:%s", profile_old, filename);
 	changed = ((g_strcmp0 (profile_old, filename) != 0));
 
 	/* set new profile */
