@@ -175,28 +175,43 @@ static void
 gcm_client_gudev_add_scanner (GcmClient *client, GUdevDevice *udev_device)
 {
 	gchar *title;
-	GcmDevice *device;
+	GcmDevice *device = NULL;
 	gchar *id;
+	gboolean ret;
+	GError *error = NULL;
 	GcmClientPrivate *priv = client->priv;
 
 	/* add new device */
-	device = gcm_device_new ();
 	id = gcm_client_get_id_for_udev_device (udev_device);
 	title = g_strdup_printf ("%s - %s",
 				g_udev_device_get_property (udev_device, "ID_VENDOR"),
 				g_udev_device_get_property (udev_device, "ID_MODEL"));
+
+	/* create device */
+	device = gcm_device_new ();
 	g_object_set (device,
 		      "type", GCM_DEVICE_TYPE_SCANNER,
 		      "id", id,
 		      "title", title,
 		      NULL);
-	g_ptr_array_add (priv->array, device);
+
+	/* load the device */
+	ret = gcm_device_load (device, &error);
+	if (!ret) {
+		egg_warning ("failed to load: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* add to list */
+	g_ptr_array_add (priv->array, g_object_ref (device));
 
 	/* signal the addition */
 	egg_debug ("emit: added %s to device list", id);
 	g_signal_emit (client, signals[SIGNAL_ADDED], 0, device);
-
-	/* add to list */
+out:
+	if (device != NULL)
+		g_object_unref (device);
 	g_free (id);
 	g_free (title);
 }
