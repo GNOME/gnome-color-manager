@@ -446,7 +446,7 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 		title = g_strdup (title_tmp);
 	} else {
 		/* TRANSLATORS: this is where an output is not settable, but we are showing it in the UI */
-		title = g_strdup_printf ("%s\n<i>%s</i>", title_tmp, _("No hardware support"));
+		title = g_strdup_printf ("%s\n(%s)", title_tmp, _("No hardware support"));
 	}
 
 	/* add to list */
@@ -782,6 +782,7 @@ gcm_prefs_add_device_type (GcmDevice *device)
 {
 	GtkTreeIter iter;
 	gchar *title;
+	gchar *title_tmp;
 	gchar *id;
 	GcmDeviceType type;
 	const gchar *icon_name;
@@ -789,12 +790,20 @@ gcm_prefs_add_device_type (GcmDevice *device)
 	/* get details */
 	g_object_get (device,
 		      "id", &id,
-		      "title", &title,
+		      "title", &title_tmp,
 		      "type", &type,
 		      NULL);
 
 	/* get icon */
 	icon_name = gcm_prefs_device_type_to_icon_name (type);
+
+	/* use a different title for stuff that won't work yet */
+	if (type == GCM_DEVICE_TYPE_DISPLAY) {
+		title = g_strdup (title_tmp);
+	} else {
+		/* TRANSLATORS: this is where the required software has not been written yet */
+		title = g_strdup_printf ("%s\n(%s)", title_tmp, _("No software support"));
+	}
 
 	/* add to list */
 	gtk_list_store_append (list_store_devices, &iter);
@@ -804,6 +813,7 @@ gcm_prefs_add_device_type (GcmDevice *device)
 			    GPM_DEVICES_COLUMN_ICON, icon_name, -1);
 	g_free (id);
 	g_free (title);
+	g_free (title_tmp);
 }
 
 /**
