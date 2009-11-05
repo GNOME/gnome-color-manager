@@ -72,6 +72,7 @@ static void     gcm_profile_finalize	(GObject     *object);
 #define	GCM_TAG_ID_CALIBRATION_DATE_TIME	0x63616C74
 #define GCM_TRC_TYPE_CURVE			0x63757276
 #define GCM_TRC_TYPE_PARAMETRIC_CURVE		0x70617261
+#define	GCM_TAG_ID_COLORANT_TABLE		0x636C7274
 
 #define GCM_TRC_SIZE			0x08
 #define GCM_TRC_DATA			0x0c
@@ -212,6 +213,8 @@ gcm_prefs_get_tag_description (guint tag)
 		return "copyright";
 	if (tag == GCM_TAG_ID_CALIBRATION_DATE_TIME)
 		return "calibrationDateTime";
+	if (tag == GCM_TAG_ID_COLORANT_TABLE)
+		return "colorantTable";
 	return NULL;
 }
 
