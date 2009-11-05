@@ -209,6 +209,12 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 
 	/* get crtc size */
 	crtc = gnome_rr_output_get_crtc (output);
+	if (crtc == NULL) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to get crtc for device: %s", id);
+		goto out;
+	}
+
 	size = gcm_utils_get_gamma_size (crtc, error);
 	if (size == 0)
 		goto out;
