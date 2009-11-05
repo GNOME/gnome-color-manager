@@ -366,16 +366,16 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 	/* not a xrandr device */
 	if (type != GCM_DEVICE_TYPE_DISPLAY) {
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
-		gtk_widget_hide (widget);
+		gtk_widget_set_sensitive (widget, FALSE);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
-		gtk_widget_hide (widget);
+		gtk_widget_set_sensitive (widget, FALSE);
 	} else {
 
 		/* show more UI */
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
-		gtk_widget_show (widget);
+		gtk_widget_set_sensitive (widget, TRUE);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
-		gtk_widget_show (widget);
+		gtk_widget_set_sensitive (widget, TRUE);
 	}
 
 	g_object_get (current_device,
@@ -526,7 +526,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 {
 	guint active;
 	gchar *copyright = NULL;
-	gchar *description = NULL;
+	gchar *vendor = NULL;
 	gchar *profile_old = NULL;
 	const gchar *filename = NULL;
 	gboolean ret;
@@ -572,7 +572,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 		/* get the new details from the profile */
 		g_object_get (profile,
 			      "copyright", &copyright,
-			      "description", &description,
+			      "vendor", &vendor,
 			      NULL);
 	}
 
@@ -591,21 +591,21 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* set new descriptions */
-	if (description == NULL) {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_description"));
+	if (vendor == NULL) {
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_vendor"));
 		gtk_widget_hide (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_description"));
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_vendor"));
 		gtk_widget_hide (widget);
 	} else {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_description"));
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_vendor"));
 		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_description"));
-		gtk_label_set_label (GTK_LABEL(widget), description);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_vendor"));
+		gtk_label_set_label (GTK_LABEL(widget), vendor);
 		gtk_widget_show (widget);
 	}
 
 	/* set new descriptions */
-	if (copyright == NULL && description == NULL) {
+	if (copyright == NULL && vendor == NULL) {
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "table_details"));
 		gtk_widget_hide (widget);
 	} else {
@@ -638,7 +638,7 @@ out:
 	if (profile != NULL)
 		g_object_unref (profile);
 	g_free (copyright);
-	g_free (description);
+	g_free (vendor);
 }
 
 /**

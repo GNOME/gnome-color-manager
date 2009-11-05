@@ -42,7 +42,7 @@
               <object class="GtkVBox" id="vbox1">
                 <property name="visible">True</property>
                 <property name="orientation">vertical</property>
-                <property name="spacing">12</property>
+                <property name="spacing">9</property>
                 <child>
                   <object class="GtkHBox" id="hbox2">
                     <property name="visible">True</property>
@@ -75,93 +75,104 @@
                   </packing>
                 </child>
                 <child>
-                  <object class="GtkTable" id="table_details">
+                  <object class="GtkHBox" id="hbox3">
                     <property name="visible">True</property>
-                    <property name="n_rows">2</property>
-                    <property name="n_columns">2</property>
-                    <property name="column_spacing">3</property>
-                    <property name="row_spacing">3</property>
                     <child>
-                      <object class="GtkHBox" id="hbox5">
+                      <object class="GtkTable" id="table_details">
                         <property name="visible">True</property>
+                        <property name="n_rows">2</property>
+                        <property name="n_columns">2</property>
+                        <property name="column_spacing">3</property>
+                        <property name="row_spacing">3</property>
                         <child>
-                          <object class="GtkLabel" id="label_title_description">
+                          <object class="GtkHBox" id="hbox5">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Description:</property>
+                            <child>
+                              <object class="GtkLabel" id="label_title_vendor">
+                                <property name="visible">True</property>
+                                <property name="label" translatable="yes">Vendor:</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                          </object>
+                        </child>
+                        <child>
+                          <object class="GtkHBox" id="hbox10">
+                            <property name="visible">True</property>
+                            <child>
+                              <object class="GtkLabel" id="label_title_copyright">
+                                <property name="visible">True</property>
+                                <property name="label" translatable="yes">License:</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
-                            <property name="position">0</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
                           </packing>
                         </child>
-                      </object>
-                    </child>
-                    <child>
-                      <object class="GtkHBox" id="hbox10">
-                        <property name="visible">True</property>
                         <child>
-                          <object class="GtkLabel" id="label_title_copyright">
+                          <object class="GtkHBox" id="hbox11">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">License:</property>
+                            <child>
+                              <object class="GtkLabel" id="label_vendor">
+                                <property name="visible">True</property>
+                                <property name="label">The hardware vendor</property>
+                                <property name="use_markup">True</property>
+                                <property name="wrap">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
                           </object>
                           <packing>
-                            <property name="expand">False</property>
-                            <property name="position">0</property>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkHBox" id="hbox12">
+                            <property name="visible">True</property>
+                            <child>
+                              <object class="GtkLabel" id="label_copyright">
+                                <property name="visible">True</property>
+                                <property name="label">Usually non-free</property>
+                                <property name="use_markup">True</property>
+                                <property name="wrap">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="left_attach">1</property>
+                            <property name="right_attach">2</property>
+                            <property name="top_attach">1</property>
+                            <property name="bottom_attach">2</property>
                           </packing>
                         </child>
                       </object>
                       <packing>
-                        <property name="top_attach">1</property>
-                        <property name="bottom_attach">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkHBox" id="hbox11">
-                        <property name="visible">True</property>
-                        <child>
-                          <object class="GtkLabel" id="label_description">
-                            <property name="visible">True</property>
-                            <property name="label">Long description about what the profile says</property>
-                            <property name="use_markup">True</property>
-                            <property name="wrap">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="right_attach">2</property>
-                      </packing>
-                    </child>
-                    <child>
-                      <object class="GtkHBox" id="hbox12">
-                        <property name="visible">True</property>
-                        <child>
-                          <object class="GtkLabel" id="label_copyright">
-                            <property name="visible">True</property>
-                            <property name="label">Usually non-free</property>
-                            <property name="use_markup">True</property>
-                            <property name="wrap">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="left_attach">1</property>
-                        <property name="right_attach">2</property>
-                        <property name="top_attach">1</property>
-                        <property name="bottom_attach">2</property>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
                       </packing>
                     </child>
                   </object>
                   <packing>
                     <property name="expand">False</property>
+                    <property name="fill">False</property>
                     <property name="position">2</property>
                   </packing>
                 </child>
@@ -287,7 +298,6 @@
                     </child>
                   </object>
                   <packing>
-                    <property name="expand">False</property>
                     <property name="position">3</property>
                   </packing>
                 </child>
