@@ -713,20 +713,26 @@ static void
 gcm_prefs_check_calibration_hardware (void)
 {
 	gboolean ret;
-#ifdef GCM_HARDWARE_DETECTION
 	GtkWidget *widget;
-#endif
+
+	/* find whether argyllcms is installed */
+	ret = g_file_test ("/usr/bin/dispcal", G_FILE_TEST_EXISTS);
+	if (!ret) {
+		egg_debug ("ArgyllCMS not installed");
+		goto out;
+	}
 
 	/* find whether we have hardware installed */
 	ret = gcm_prefs_has_hardware_device_attached ();
 
-#ifdef GCM_HARDWARE_DETECTION
+#ifndef GCM_HARDWARE_DETECTION
+	egg_debug ("overriding device presence %i with TRUE", ret);
+	ret = TRUE;
+#endif
+out:
 	/* disable the button if no supported hardware is found */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
 	gtk_widget_set_sensitive (widget, ret);
-#else
-	egg_debug ("not setting calibrate button %s as not compiled with hardware detection", ret ? "sensitive" : "insensitive");
-#endif
 }
 
 /**
