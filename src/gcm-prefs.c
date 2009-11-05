@@ -530,6 +530,10 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	active = gtk_combo_box_get_active (GTK_COMBO_BOX(widget));
 	egg_debug ("now %i", active);
 
+	/* no devices */
+	if (current_device == NULL)
+		return;
+
 	if (active < profiles_array->len)
 		filename = g_ptr_array_index (profiles_array, active);
 
