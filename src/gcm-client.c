@@ -169,10 +169,10 @@ gcm_client_gudev_remove (GcmClient *client, GUdevDevice *udev_device)
 }
 
 /**
- * gcm_client_gudev_add_scanner:
+ * gcm_client_gudev_add_type:
  **/
 static void
-gcm_client_gudev_add_scanner (GcmClient *client, GUdevDevice *udev_device)
+gcm_client_gudev_add_type (GcmClient *client, GUdevDevice *udev_device, GcmDeviceType type)
 {
 	gchar *title;
 	GcmDevice *device = NULL;
@@ -187,10 +187,13 @@ gcm_client_gudev_add_scanner (GcmClient *client, GUdevDevice *udev_device)
 				g_udev_device_get_property (udev_device, "ID_VENDOR"),
 				g_udev_device_get_property (udev_device, "ID_MODEL"));
 
+	/* turn space delimiters into spaces */
+	g_strdelimit (title, "_", ' ');
+
 	/* create device */
 	device = gcm_device_new ();
 	g_object_set (device,
-		      "type", GCM_DEVICE_TYPE_SCANNER,
+		      "type", type,
 		      "id", id,
 		      "title", title,
 		      NULL);
@@ -223,11 +226,19 @@ static void
 gcm_client_gudev_add (GcmClient *client, GUdevDevice *udev_device)
 {
 	const gchar *value;
+
+	/* only matches HP printers, need to expand to all of CUPS printers */
+	value = g_udev_device_get_property (udev_device, "ID_HPLIP");
+	if (value != NULL) {
+		egg_debug ("found printer device: %s", g_udev_device_get_sysfs_path (udev_device));
+		gcm_client_gudev_add_type (client, udev_device, GCM_DEVICE_TYPE_PRINTER);
+	}
+
 	/* sane is slightly odd in a lowercase property, and "yes" as a value rather than "1" */
 	value = g_udev_device_get_property (udev_device, "libsane_matched");
 	if (value != NULL) {
 		egg_debug ("found scanner device: %s", g_udev_device_get_sysfs_path (udev_device));
-		gcm_client_gudev_add_scanner (client, udev_device);
+		gcm_client_gudev_add_type (client, udev_device, GCM_DEVICE_TYPE_SCANNER);
 	}
 }
 

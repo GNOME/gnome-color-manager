@@ -312,13 +312,13 @@ gcm_prefs_add_devices_columns (GtkTreeView *treeview)
 	/* image */
 	renderer = gtk_cell_renderer_pixbuf_new ();
 	g_object_set (renderer, "stock-size", GTK_ICON_SIZE_DIALOG, NULL);
-	column = gtk_tree_view_column_new_with_attributes (_("Screen"), renderer,
+	column = gtk_tree_view_column_new_with_attributes ("", renderer,
 							   "icon-name", GPM_DEVICES_COLUMN_ICON, NULL);
 	gtk_tree_view_append_column (treeview, column);
 
 	/* column for text */
 	renderer = gtk_cell_renderer_text_new ();
-	column = gtk_tree_view_column_new_with_attributes (_("Label"), renderer,
+	column = gtk_tree_view_column_new_with_attributes ("", renderer,
 							   "markup", GPM_DEVICES_COLUMN_TITLE, NULL);
 	gtk_tree_view_column_set_sort_column_id (column, GPM_DEVICES_COLUMN_TITLE);
 	gtk_tree_view_append_column (treeview, column);
@@ -364,7 +364,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 		      NULL);
 
 	/* not a xrandr device */
-	if (type == GCM_DEVICE_TYPE_SCANNER) {
+	if (type != GCM_DEVICE_TYPE_DISPLAY) {
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
 		gtk_widget_hide (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
@@ -740,27 +740,50 @@ gcm_prefs_uevent_cb (GUdevClient *client_, const gchar *action, GUdevDevice *dev
 }
 
 /**
- * gcm_prefs_add_device_scanner:
+ * gcm_prefs_device_type_to_icon_name:
+ **/
+static const gchar *
+gcm_prefs_device_type_to_icon_name (GcmDeviceType type)
+{
+	if (type == GCM_DEVICE_TYPE_DISPLAY)
+		return "video-display";
+	if (type == GCM_DEVICE_TYPE_SCANNER)
+		return "scanner";
+	if (type == GCM_DEVICE_TYPE_PRINTER)
+		return "printer";
+	if (type == GCM_DEVICE_TYPE_CAMERA)
+		return "camera-photo";
+	return "image-missing";
+}
+
+/**
+ * gcm_prefs_add_device_type:
  **/
 static void
-gcm_prefs_add_device_scanner (GcmDevice *device)
+gcm_prefs_add_device_type (GcmDevice *device)
 {
 	GtkTreeIter iter;
 	gchar *title;
 	gchar *id;
+	GcmDeviceType type;
+	const gchar *icon_name;
 
 	/* get details */
 	g_object_get (device,
 		      "id", &id,
 		      "title", &title,
+		      "type", &type,
 		      NULL);
+
+	/* get icon */
+	icon_name = gcm_prefs_device_type_to_icon_name (type);
 
 	/* add to list */
 	gtk_list_store_append (list_store_devices, &iter);
 	gtk_list_store_set (list_store_devices, &iter,
 			    GPM_DEVICES_COLUMN_ID, id,
 			    GPM_DEVICES_COLUMN_TITLE, title,
-			    GPM_DEVICES_COLUMN_ICON, "scanner", -1);
+			    GPM_DEVICES_COLUMN_ICON, icon_name, -1);
 	g_free (id);
 	g_free (title);
 }
@@ -782,8 +805,8 @@ gcm_prefs_added_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user
 	/* add the device */
 	if (type == GCM_DEVICE_TYPE_DISPLAY)
 		gcm_prefs_add_device_xrandr (gcm_device);
-	else if (type == GCM_DEVICE_TYPE_SCANNER)
-		gcm_prefs_add_device_scanner (gcm_device);
+	else
+		gcm_prefs_add_device_type (gcm_device);
 }
 
 /**
