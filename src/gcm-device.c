@@ -235,6 +235,7 @@ gcm_device_save (GcmDevice *device, GError **error)
 	gchar *dirname;
 	GFile *file = NULL;
 	gchar *filename = NULL;
+	GError *error_local = NULL;
 
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
 	g_return_val_if_fail (device->priv->id != NULL, FALSE);
@@ -247,24 +248,36 @@ gcm_device_save (GcmDevice *device, GError **error)
 	ret = g_file_test (dirname, G_FILE_TEST_IS_DIR);
 	if (!ret) {
 		file = g_file_new_for_path (dirname);
-		ret = g_file_make_directory_with_parents (file, NULL, error);
-		if (!ret)
+		ret = g_file_make_directory_with_parents (file, NULL, &error_local);
+		if (!ret) {
+			if (error != NULL)
+				*error = g_error_new (1, 0, "failed to create config directory: %s", error_local->message);
+			g_error_free (error_local);
 			goto out;
+		}
 	}
 
 	/* if not ever created, then just create a dummy file */
 	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
 	if (!ret) {
-		ret = g_file_set_contents (filename, "#created today", -1, error);
-		if (!ret)
+		ret = g_file_set_contents (filename, "#created today", -1, &error_local);
+		if (!ret) {
+			if (error != NULL)
+				*error = g_error_new (1, 0, "failed to create dummy header: %s", error_local->message);
+			g_error_free (error_local);
 			goto out;
+		}
 	}
 
 	/* load existing file */
 	keyfile = g_key_file_new ();
-	ret = g_key_file_load_from_file (keyfile, filename, G_KEY_FILE_NONE, error);
-	if (!ret)
+	ret = g_key_file_load_from_file (keyfile, filename, G_KEY_FILE_NONE, &error_local);
+	if (!ret) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to load existing config: %s", error_local->message);
+		g_error_free (error_local);
 		goto out;
+	}
 
 	/* save data */
 	if (device->priv->profile == NULL)
@@ -275,13 +288,24 @@ gcm_device_save (GcmDevice *device, GError **error)
 	g_key_file_set_double (keyfile, device->priv->id, "brightness", device->priv->brightness);
 	g_key_file_set_double (keyfile, device->priv->id, "contrast", device->priv->contrast);
 
+	/* convert to string */
+	data = g_key_file_to_data (keyfile, NULL, &error_local);
+	if (data == NULL) {
+		ret = FALSE;
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to convert config: %s", error_local->message);
+		g_error_free (error_local);
+		goto out;
+	}
+
 	/* save contents */
-	data = g_key_file_to_data (keyfile, NULL, error);
-	if (data == NULL)
+	ret = g_file_set_contents (filename, data, -1, &error_local);
+	if (!ret) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to save config: %s", error_local->message);
+		g_error_free (error_local);
 		goto out;
-	ret = g_file_set_contents (filename, data, -1, error);
-	if (!ret)
-		goto out;
+	}
 out:
 	g_free (filename);
 	g_free (dirname);
