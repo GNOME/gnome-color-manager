@@ -118,6 +118,15 @@ gcm_device_load_from_profile (GcmDevice *device, GError **error)
 	/* load the profile if it's set */
 	if (device->priv->profile != NULL) {
 
+		/* if the profile was deleted */
+		ret = g_file_test (device->priv->profile, G_FILE_TEST_EXISTS);
+		if (!ret) {
+			egg_warning ("the file was deleted and can't be loaded: %s", device->priv->profile);
+			/* this is not fatal */
+			ret = TRUE;
+			goto out;
+		}
+
 		/* create new profile instance */
 		profile = gcm_profile_new ();
 		ret = gcm_profile_parse (profile, device->priv->profile, &error_local);
