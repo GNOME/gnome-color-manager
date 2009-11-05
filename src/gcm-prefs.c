@@ -761,7 +761,7 @@ gcm_prefs_add_device_scanner (GcmDevice *device)
 	gtk_list_store_set (list_store_devices, &iter,
 			    GPM_DEVICES_COLUMN_ID, id,
 			    GPM_DEVICES_COLUMN_TITLE, title,
-			    GPM_DEVICES_COLUMN_ICON, "camera-photo", -1);
+			    GPM_DEVICES_COLUMN_ICON, "scanner", -1);
 	g_free (id);
 	g_free (title);
 }
