@@ -52,6 +52,7 @@ struct _GcmEdidPrivate
 	gchar				*monitor_name;
 	gchar				*serial_number;
 	gchar				*ascii_string;
+	gchar				*pnp_id;
 	gfloat				 gamma;
 };
 
@@ -61,12 +62,14 @@ enum {
 	PROP_SERIAL_NUMBER,
 	PROP_ASCII_STRING,
 	PROP_GAMMA,
+	PROP_PNP_ID,
 	PROP_LAST
 };
 
 G_DEFINE_TYPE (GcmEdid, gcm_edid, G_TYPE_OBJECT)
 
 #define GCM_EDID_OFFSET_GAMMA				0x17
+#define GCM_EDID_OFFSET_PNPID				0x08
 #define GCM_EDID_OFFSET_DATA_BLOCKS			0x36
 #define GCM_EDID_OFFSET_LAST_BLOCK			0x6c
 
@@ -105,6 +108,16 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 	priv->monitor_name = NULL;
 	priv->serial_number = NULL;
 	priv->ascii_string = NULL;
+
+	/* decode the PNP ID from three 5 bit words packed into 2 bytes
+	 * /--08--\/--09--\
+	 * 7654321076543210
+	 * |\---/\---/\---/
+	 * R  C1   C2   C3 */
+	priv->pnp_id[0] = 'A' + ((data[GCM_EDID_OFFSET_PNPID+0] & 0x7c) / 4) - 1;
+	priv->pnp_id[1] = 'A' + ((data[GCM_EDID_OFFSET_PNPID+0] & 0x3) * 8) + ((data[GCM_EDID_OFFSET_PNPID+1] & 0xe0) / 32) - 1;
+	priv->pnp_id[2] = 'A' + (data[GCM_EDID_OFFSET_PNPID+1] & 0x1f) - 1;
+	egg_debug ("PNPID: %s", priv->pnp_id);
 
 	/* get gamma */
 	if (data[GCM_EDID_OFFSET_GAMMA] == 0xff) {
@@ -179,6 +192,9 @@ gcm_edid_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 	case PROP_GAMMA:
 		g_value_set_float (value, priv->gamma);
 		break;
+	case PROP_PNP_ID:
+		g_value_set_string (value, priv->pnp_id);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -191,25 +207,7 @@ gcm_edid_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 static void
 gcm_edid_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-	GcmEdid *edid = GCM_EDID (object);
-	GcmEdidPrivate *priv = edid->priv;
-
 	switch (prop_id) {
-	case PROP_MONITOR_NAME:
-		g_free (priv->monitor_name);
-		priv->monitor_name = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_SERIAL_NUMBER:
-		g_free (priv->serial_number);
-		priv->serial_number = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_ASCII_STRING:
-		g_free (priv->ascii_string);
-		priv->ascii_string = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_GAMMA:
-		priv->gamma = g_value_get_float (value);
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -233,7 +231,7 @@ gcm_edid_class_init (GcmEdidClass *klass)
 	 */
 	pspec = g_param_spec_string ("monitor-name", NULL, NULL,
 				     NULL,
-				     G_PARAM_READWRITE);
+				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_MONITOR_NAME, pspec);
 
 	/**
@@ -241,7 +239,7 @@ gcm_edid_class_init (GcmEdidClass *klass)
 	 */
 	pspec = g_param_spec_string ("serial-number", NULL, NULL,
 				     NULL,
-				     G_PARAM_READWRITE);
+				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_SERIAL_NUMBER, pspec);
 
 	/**
@@ -249,7 +247,7 @@ gcm_edid_class_init (GcmEdidClass *klass)
 	 */
 	pspec = g_param_spec_string ("ascii-string", NULL, NULL,
 				     NULL,
-				     G_PARAM_READWRITE);
+				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_ASCII_STRING, pspec);
 
 	/**
@@ -257,8 +255,16 @@ gcm_edid_class_init (GcmEdidClass *klass)
 	 */
 	pspec = g_param_spec_float ("gamma", NULL, NULL,
 				    1.0f, 5.0f, 1.0f,
-				    G_PARAM_READWRITE);
+				    G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_GAMMA, pspec);
+
+	/**
+	 * GcmEdid:pnp-id:
+	 */
+	pspec = g_param_spec_string ("pnp-id", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_PNP_ID, pspec);
 
 	g_type_class_add_private (klass, sizeof (GcmEdidPrivate));
 }
@@ -273,6 +279,7 @@ gcm_edid_init (GcmEdid *edid)
 	edid->priv->monitor_name = NULL;
 	edid->priv->serial_number = NULL;
 	edid->priv->ascii_string = NULL;
+	edid->priv->pnp_id = g_new0 (gchar, 4);
 }
 
 /**
@@ -287,6 +294,7 @@ gcm_edid_finalize (GObject *object)
 	g_free (priv->monitor_name);
 	g_free (priv->serial_number);
 	g_free (priv->ascii_string);
+	g_free (edid->priv->pnp_id);
 
 	G_OBJECT_CLASS (gcm_edid_parent_class)->finalize (object);
 }
