@@ -322,6 +322,7 @@ gcm_utils_get_profile_filenames_for_directory (GPtrArray *array, const gchar *di
 	GError *error = NULL;
 	gboolean ret = TRUE;
 	const gchar *name;
+	gchar *full_path;
 
 	/* get contents */
 	dir = g_dir_open (directory, 0, &error);
@@ -337,12 +338,23 @@ gcm_utils_get_profile_filenames_for_directory (GPtrArray *array, const gchar *di
 		name = g_dir_read_name (dir);
 		if (name == NULL)
 			break;
-		if (g_str_has_suffix (name, ".icc") ||
-		    g_str_has_suffix (name, ".icm") ||
-		    g_str_has_suffix (name, ".ICC") ||
-		    g_str_has_suffix (name, ".ICM")) {
-			g_ptr_array_add (array, g_build_filename (directory, name, NULL));
+
+		/* make the compete path */
+		full_path = g_build_filename (directory, name, NULL);
+		if (g_file_test (full_path, G_FILE_TEST_IS_DIR)) {
+			egg_debug ("recursing to %s", full_path);
+			gcm_utils_get_profile_filenames_for_directory (array, full_path);
+		} else if (g_str_has_suffix (name, ".icc") ||
+			   g_str_has_suffix (name, ".icm") ||
+			   g_str_has_suffix (name, ".ICC") ||
+			   g_str_has_suffix (name, ".ICM")) {
+			/* add to array */
+			g_ptr_array_add (array, g_strdup (full_path));
+		} else {
+			/* invalid file */
+			egg_debug ("not recognised as ICC profile: %s", full_path);
 		}
+		g_free (full_path);
 	} while (TRUE);
 out:
 	if (dir != NULL)
