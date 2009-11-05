@@ -306,6 +306,7 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	const guint8 *data;
 	guint i;
 	GPtrArray *array = NULL;
+	gint x, y;
 
 	/* match up the output name with the device number defined by dispcal */
 	priv->display = gcm_calibrate_get_display (priv->output_name, error);
@@ -360,6 +361,7 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	g_ptr_array_add (array, g_strdup ("-m"));
 	g_ptr_array_add (array, g_strdup_printf ("-d%i", priv->display));
 	g_ptr_array_add (array, g_strdup_printf ("-y%c", type));
+//	g_ptr_array_add (array, g_strdup ("-p 0.8,0.5,1.0"));
 	g_ptr_array_add (array, g_strdup (priv->basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_debug_argv ("dispcal", argv);
@@ -367,6 +369,12 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	/* start up the command */
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
 	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), "dispcal", argv, NULL, GCM_CALIBRATE_TEMP_DIR, FALSE, FALSE, FALSE);
+
+	/* move the dialog out of the way, so the grey square doesn't cover it */
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
+	gtk_window_get_position (GTK_WINDOW(widget), &x, &y);
+	egg_debug ("currently at %i,%i, moving left", x, y);
+	gtk_window_move (GTK_WINDOW(widget), 10, y);
 
 	/* TRANSLATORS: title, device is a hardware color calibration sensor */
 	gcm_calibrate_set_title (calibrate, _("Please attach device"));
