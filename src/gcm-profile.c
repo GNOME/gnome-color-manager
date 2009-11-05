@@ -111,6 +111,7 @@ struct _GcmProfilePrivate
 	gboolean			 loaded;
 	gchar				*description;
 	gchar				*copyright;
+	gchar				*vendor;
 	gboolean			 has_mlut;
 	gboolean			 has_vcgt_formula;
 	gboolean			 has_vcgt_table;
@@ -128,6 +129,7 @@ struct _GcmProfilePrivate
 enum {
 	PROP_0,
 	PROP_COPYRIGHT,
+	PROP_VENDOR,
 	PROP_DESCRIPTION,
 	PROP_LAST
 };
@@ -534,8 +536,16 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 			profile->priv->description = g_strdup (data+tag_offset+12);
 		}
 		if (tag_id == GCM_TAG_ID_COPYRIGHT) {
-			egg_debug ("found TEXT: %s", data+tag_offset+8);
+			egg_debug ("found COPYRIGHT: %s", data+tag_offset+8);
 			profile->priv->copyright = g_strdup (data+tag_offset+8);
+		}
+		if (tag_id == GCM_TAG_ID_DEVICE_MFG_DESC) {
+			egg_debug ("found VENDOR: %s", data+tag_offset+12);
+			profile->priv->vendor = g_strdup (data+tag_offset+12);
+		}
+		if (tag_id == GCM_TAG_ID_DEVICE_MODEL_DESC) {
+			egg_debug ("found MODEL: %s", data+tag_offset+12);
+//			profile->priv->model = g_strdup (data+tag_offset+12);
 		}
 		if (tag_id == GCM_TAG_ID_MLUT) {
 			egg_debug ("found MLUT which is a fixed size block");
@@ -808,6 +818,9 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_COPYRIGHT:
 		g_value_set_string (value, priv->copyright);
 		break;
+	case PROP_VENDOR:
+		g_value_set_string (value, priv->vendor);
+		break;
 	case PROP_DESCRIPTION:
 		g_value_set_string (value, priv->description);
 		break;
@@ -823,18 +836,7 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 static void
 gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-	GcmProfile *profile = GCM_PROFILE (object);
-	GcmProfilePrivate *priv = profile->priv;
-
 	switch (prop_id) {
-	case PROP_COPYRIGHT:
-		g_free (priv->copyright);
-		priv->copyright = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_DESCRIPTION:
-		g_free (priv->description);
-		priv->description = g_strdup (g_value_get_string (value));
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -858,15 +860,23 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	 */
 	pspec = g_param_spec_string ("copyright", NULL, NULL,
 				     NULL,
-				     G_PARAM_READWRITE);
+				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_COPYRIGHT, pspec);
+
+	/**
+	 * GcmProfile:vendor:
+	 */
+	pspec = g_param_spec_string ("vendor", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_VENDOR, pspec);
 
 	/**
 	 * GcmProfile:description:
 	 */
 	pspec = g_param_spec_string ("description", NULL, NULL,
 				     NULL,
-				     G_PARAM_READWRITE);
+				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_DESCRIPTION, pspec);
 
 	g_type_class_add_private (klass, sizeof (GcmProfilePrivate));
@@ -895,6 +905,7 @@ gcm_profile_finalize (GObject *object)
 	GcmProfilePrivate *priv = profile->priv;
 
 	g_free (priv->copyright);
+	g_free (priv->vendor);
 	g_free (priv->vcgt_data);
 	g_free (priv->mlut_data);
 	g_free (priv->trc_data);

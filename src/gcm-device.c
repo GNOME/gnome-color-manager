@@ -59,6 +59,7 @@ struct _GcmDevicePrivate
 	gchar				*description;
 	gchar				*title;
 	gchar				*copyright;
+	gchar				*vendor;
 	GConfClient			*gconf_client;
 	GnomeRROutput			*native_device_xrandr;
 };
@@ -72,6 +73,7 @@ enum {
 	PROP_CONTRAST,
 	PROP_PROFILE,
 	PROP_COPYRIGHT,
+	PROP_VENDOR,
 	PROP_DESCRIPTION,
 	PROP_TITLE,
 	PROP_NATIVE_DEVICE_XRANDR,
@@ -109,8 +111,10 @@ gcm_device_load_from_profile (GcmDevice *device, GError **error)
 	/* no profile to load */
 	if (device->priv->profile == NULL) {
 		g_free (device->priv->copyright);
+		g_free (device->priv->vendor);
 		g_free (device->priv->description);
 		device->priv->copyright = NULL;
+		device->priv->vendor = NULL;
 		device->priv->description = NULL;
 		goto out;
 	}
@@ -139,9 +143,11 @@ gcm_device_load_from_profile (GcmDevice *device, GError **error)
 
 		/* copy the description */
 		g_free (device->priv->copyright);
+		g_free (device->priv->vendor);
 		g_free (device->priv->description);
 		g_object_get (profile,
 			      "copyright", &device->priv->copyright,
+			      "vendor", &device->priv->vendor,
 			      "description", &device->priv->description,
 			      NULL);
 	}
@@ -356,6 +362,9 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_COPYRIGHT:
 		g_value_set_string (value, priv->copyright);
 		break;
+	case PROP_VENDOR:
+		g_value_set_string (value, priv->vendor);
+		break;
 	case PROP_DESCRIPTION:
 		g_value_set_string (value, priv->description);
 		break;
@@ -475,6 +484,14 @@ gcm_device_class_init (GcmDeviceClass *klass)
 	g_object_class_install_property (object_class, PROP_COPYRIGHT, pspec);
 
 	/**
+	 * GcmDevice:vendor:
+	 */
+	pspec = g_param_spec_string ("vendor", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_VENDOR, pspec);
+
+	/**
 	 * GcmDevice:description:
 	 */
 	pspec = g_param_spec_string ("description", NULL, NULL,
@@ -538,6 +555,7 @@ gcm_device_finalize (GObject *object)
 
 	g_free (priv->description);
 	g_free (priv->copyright);
+	g_free (priv->vendor);
 	g_free (priv->title);
 	g_free (priv->id);
 	g_object_unref (priv->gconf_client);
