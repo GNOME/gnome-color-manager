@@ -422,6 +422,7 @@ static void
 gcm_prefs_add_device_xrandr (GcmDevice *device)
 {
 	GtkTreeIter iter;
+	gchar *title_tmp;
 	gchar *title;
 	gchar *id;
 	gboolean ret;
@@ -430,7 +431,7 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 	/* get details */
 	g_object_get (device,
 		      "id", &id,
-		      "title", &title,
+		      "title", &title_tmp,
 		      NULL);
 
 	/* set the gamma on the device */
@@ -438,7 +439,14 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 	if (!ret) {
 		egg_warning ("failed to set output gamma: %s", error->message);
 		g_error_free (error);
-		goto out;
+	}
+
+	/* use a different title if we have crap xorg drivers */
+	if (ret) {
+		title = g_strdup (title_tmp);
+	} else {
+		/* TRANSLATORS: this is where an output is not settable, but we are showing it in the UI */
+		title = g_strdup_printf ("%s\n<i>%s</i>", title_tmp, _("No hardware support"));
 	}
 
 	/* add to list */
@@ -448,8 +456,8 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 			    GPM_DEVICES_COLUMN_ID, id,
 			    GPM_DEVICES_COLUMN_TITLE, title,
 			    GPM_DEVICES_COLUMN_ICON, "video-display", -1);
-out:
 	g_free (id);
+	g_free (title_tmp);
 	g_free (title);
 }
 
