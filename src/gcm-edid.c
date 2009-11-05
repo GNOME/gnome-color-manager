@@ -35,6 +35,7 @@
 #include <stdlib.h>
 
 #include "gcm-edid.h"
+#include "gcm-tables.h"
 
 #include "egg-debug.h"
 
@@ -50,15 +51,18 @@ static void     gcm_edid_finalize	(GObject     *object);
 struct _GcmEdidPrivate
 {
 	gchar				*monitor_name;
+	gchar				*vendor_name;
 	gchar				*serial_number;
 	gchar				*ascii_string;
 	gchar				*pnp_id;
 	gfloat				 gamma;
+	GcmTables			*tables;
 };
 
 enum {
 	PROP_0,
 	PROP_MONITOR_NAME,
+	PROP_VENDOR_NAME,
 	PROP_SERIAL_NUMBER,
 	PROP_ASCII_STRING,
 	PROP_GAMMA,
@@ -103,9 +107,11 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 
 	/* free old data */
 	g_free (priv->monitor_name);
+	g_free (priv->vendor_name);
 	g_free (priv->serial_number);
 	g_free (priv->ascii_string);
 	priv->monitor_name = NULL;
+	priv->vendor_name = NULL;
 	priv->serial_number = NULL;
 	priv->ascii_string = NULL;
 
@@ -183,6 +189,11 @@ gcm_edid_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 	case PROP_MONITOR_NAME:
 		g_value_set_string (value, priv->monitor_name);
 		break;
+	case PROP_VENDOR_NAME:
+		if (priv->vendor_name == NULL)
+			priv->vendor_name = gcm_tables_get_pnp_id (priv->tables, priv->pnp_id, NULL);
+		g_value_set_string (value, priv->vendor_name);
+		break;
 	case PROP_SERIAL_NUMBER:
 		g_value_set_string (value, priv->serial_number);
 		break;
@@ -235,6 +246,14 @@ gcm_edid_class_init (GcmEdidClass *klass)
 	g_object_class_install_property (object_class, PROP_MONITOR_NAME, pspec);
 
 	/**
+	 * GcmEdid:vendor-name:
+	 */
+	pspec = g_param_spec_string ("vendor-name", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_VENDOR_NAME, pspec);
+
+	/**
 	 * GcmEdid:serial-number:
 	 */
 	pspec = g_param_spec_string ("serial-number", NULL, NULL,
@@ -277,8 +296,10 @@ gcm_edid_init (GcmEdid *edid)
 {
 	edid->priv = GCM_EDID_GET_PRIVATE (edid);
 	edid->priv->monitor_name = NULL;
+	edid->priv->vendor_name = NULL;
 	edid->priv->serial_number = NULL;
 	edid->priv->ascii_string = NULL;
+	edid->priv->tables = gcm_tables_new ();
 	edid->priv->pnp_id = g_new0 (gchar, 4);
 }
 
@@ -292,9 +313,11 @@ gcm_edid_finalize (GObject *object)
 	GcmEdidPrivate *priv = edid->priv;
 
 	g_free (priv->monitor_name);
+	g_free (priv->vendor_name);
 	g_free (priv->serial_number);
 	g_free (priv->ascii_string);
-	g_free (edid->priv->pnp_id);
+	g_free (priv->pnp_id);
+	g_object_unref (priv->tables);
 
 	G_OBJECT_CLASS (gcm_edid_parent_class)->finalize (object);
 }

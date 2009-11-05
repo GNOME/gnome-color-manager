@@ -314,6 +314,8 @@ gcm_utils_get_output_name (GnomeRROutput *output)
 		g_object_get (edid, "ascii-string", &name, NULL);
 	if (name == NULL)
 		g_object_get (edid, "serial-number", &name, NULL);
+	if (name == NULL)
+		g_object_get (edid, "vendor-name", &name, NULL);
 
 out:
 	/* fallback to the output name */

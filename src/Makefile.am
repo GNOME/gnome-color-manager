@@ -30,6 +30,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-clut.h					\
 	gcm-edid.c					\
 	gcm-edid.h					\
+	gcm-tables.c					\
+	gcm-tables.h					\
 	gcm-xserver.c					\
 	gcm-xserver.h					\
 	gcm-client.c					\
