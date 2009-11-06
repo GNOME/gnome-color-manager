@@ -22,6 +22,7 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <libgnomeui/gnome-rr.h>
+#include <dbus/dbus-glib.h>
 
 #include "egg-debug.h"
 
@@ -73,16 +74,12 @@ out:
 }
 
 /**
- * main:
+ * gcm_inspect_show_x11_atoms:
  **/
-int
-main (int argc, char **argv)
+static gboolean
+gcm_inspect_show_x11_atoms (void)
 {
 	gboolean ret;
-	gboolean verbose = FALSE;
-	guint retval = 0;
-	GError *error = NULL;
-	GOptionContext *context;
 	guint8 *data = NULL;
 	guint8 *data_tmp;
 	gsize length;
@@ -92,21 +89,7 @@ main (int argc, char **argv)
 	GnomeRRScreen *rr_screen = NULL;
 	const gchar *output_name;
 	gchar *title;
-
-	const GOptionEntry options[] = {
-		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
-			"Show extra debugging information", NULL },
-		{ NULL}
-	};
-
-	gtk_init (&argc, &argv);
-
-	context = g_option_context_new ("gnome-color-manager inspect program");
-	g_option_context_add_main_entries (context, options, NULL);
-	g_option_context_parse (context, &argc, &argv, NULL);
-	g_option_context_free (context);
-
-	egg_debug_init (verbose);
+	GError *error = NULL;
 
 	/* setup object to access X */
 	xserver = gcm_xserver_new ();
@@ -125,6 +108,7 @@ main (int argc, char **argv)
 	/* get screen */
 	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
 	if (rr_screen == NULL) {
+		ret = FALSE;
 		egg_warning ("failed to get rr screen: %s", error->message);
 		goto out;
 	}
@@ -153,13 +137,114 @@ main (int argc, char **argv)
 		}
 		g_free (title);
 	}
-
 out:
 	g_free (data);
 	if (rr_screen != NULL)
 		gnome_rr_screen_destroy (rr_screen);
 	if (xserver != NULL)
 		g_object_unref (xserver);
+	return ret;
+}
+
+/**
+ * gcm_inspect_show_profiles_for_device:
+ **/
+static gboolean
+gcm_inspect_show_profiles_for_device (const gchar *sysfs_path)
+{
+	gboolean ret;
+	DBusGConnection *connection;
+	DBusGProxy *proxy;
+	GError *error = NULL;
+	gchar **profiles = NULL;
+	guint i;
+
+	/* get a session bus connection */
+	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
+
+	/* connect to the interface */
+	proxy = dbus_g_proxy_new_for_name (connection,
+					   "org.gnome.ColorManager",
+					   "/org/gnome/ColorManager",
+					   "org.gnome.ColorManager");
+
+	/* execute sync method */
+	ret = dbus_g_proxy_call (proxy, "GetProfilesForDevice", &error,
+				 G_TYPE_STRING, sysfs_path,
+				 G_TYPE_STRING, "",
+				 G_TYPE_INVALID,
+				 G_TYPE_STRV, &profiles,
+				 G_TYPE_INVALID);
+	if (!ret) {
+		egg_warning ("failed: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	if (profiles == NULL)
+		egg_error ("moo");
+
+	/* no entries */
+	if (profiles[0] == NULL) {
+		/* TRANSLATORS: no rofile has been asigned to this device */
+		g_print ("%s\n", _("There are no ICC profiles for this device"));
+		goto out;
+	}
+
+	/* TRANSLATORS: this is a list of profiles suitable for the device */
+	g_print ("%s %s\n", _("Suitable profiles for:"), sysfs_path);
+	for (i=0; profiles[i] != NULL; i++)
+		g_print ("%i.\t%s\n", i+1, profiles[i]);
+out:
+	g_object_unref (proxy);
+	g_strfreev (profiles);
+	return ret;
+}
+
+/**
+ * main:
+ **/
+int
+main (int argc, char **argv)
+{
+	gboolean verbose = FALSE;
+	gboolean x11 = FALSE;
+	gboolean dump = FALSE;
+	gchar *sysfs_path = NULL;
+	guint retval = 0;
+	GOptionContext *context;
+
+	const GOptionEntry options[] = {
+		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
+			/* TRANSLATORS: command line option */
+			_("Show extra debugging information"), NULL },
+		{ "x11", 'x', 0, G_OPTION_ARG_NONE, &x11,
+			/* TRANSLATORS: command line option */
+			_("Show X11 properties"), NULL },
+		{ "device", 'v', 0, G_OPTION_ARG_FILENAME, &sysfs_path,
+			/* TRANSLATORS: command line option */
+			_("Get the profiles for a specific device"), NULL },
+		{ "dump", 'd', 0, G_OPTION_ARG_NONE, &dump,
+			/* TRANSLATORS: command line option */
+			_("Dump all details about this system"), NULL },
+		{ NULL}
+	};
+
+	gtk_init (&argc, &argv);
+
+	context = g_option_context_new ("gnome-color-manager inspect program");
+	g_option_context_add_main_entries (context, options, NULL);
+	g_option_context_parse (context, &argc, &argv, NULL);
+	g_option_context_free (context);
+
+	egg_debug_init (verbose);
+
+	if (x11 || dump)
+		gcm_inspect_show_x11_atoms ();
+	if (sysfs_path != NULL)
+		gcm_inspect_show_profiles_for_device (sysfs_path);
+
+	g_free (sysfs_path);
 	return retval;
 }
 

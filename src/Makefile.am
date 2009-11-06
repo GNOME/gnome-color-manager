@@ -63,6 +63,7 @@ gcm_inspect_LDADD =					\
 	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
+	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)
 
 gcm_inspect_CFLAGS =					\
