@@ -61,6 +61,8 @@ GType		 gcm_dbus_error_get_type		(void);
 GType		 gcm_dbus_get_type			(void);
 GcmDbus		*gcm_dbus_new				(void);
 
+guint		 gcm_dbus_get_idle_time			(GcmDbus	*dbus);
+
 /* org.gnome.ColorManager */
 void		 gcm_dbus_get_profiles_for_device	(GcmDbus	*dbus,
 							 const gchar	*sysfs_path,

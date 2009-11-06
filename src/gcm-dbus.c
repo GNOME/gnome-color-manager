@@ -38,6 +38,7 @@ struct GcmDbusPrivate
 {
 	GConfClient		*gconf_client;
 	GcmClient		*client;
+	GTimer			*timer;
 };
 
 G_DEFINE_TYPE (GcmDbus, gcm_dbus, G_TYPE_OBJECT)
@@ -74,6 +75,18 @@ gcm_dbus_error_get_type (void)
 		etype = g_enum_register_static ("GcmDbusError", values);
 	}
 	return etype;
+}
+
+/**
+ * gcm_dbus_get_idle_time:
+ **/
+guint
+gcm_dbus_get_idle_time (GcmDbus	*dbus)
+{
+	guint idle;
+	idle = (guint) g_timer_elapsed (dbus->priv->timer, NULL);
+	egg_debug ("we've been idle for %is", idle);
+	return idle;
 }
 
 /**
@@ -122,6 +135,9 @@ gcm_dbus_get_profiles_for_device (GcmDbus *dbus, const gchar *sysfs_path, const 
 	/* return profiles */
 	dbus_g_method_return (context, profiles);
 
+	/* reset time */
+	g_timer_reset (dbus->priv->timer);
+
 	g_strfreev (profiles);
 	g_ptr_array_unref (array);
 }
@@ -151,6 +167,7 @@ gcm_dbus_init (GcmDbus *dbus)
 	dbus->priv = GCM_DBUS_GET_PRIVATE (dbus);
 	dbus->priv->gconf_client = gconf_client_get_default ();
 	dbus->priv->client = gcm_client_new ();
+	dbus->priv->timer = g_timer_new ();
 
 	/* get all devices */
 	ret = gcm_client_coldplug (dbus->priv->client, &error);
@@ -174,6 +191,7 @@ gcm_dbus_finalize (GObject *object)
 	g_return_if_fail (dbus->priv != NULL);
 	g_object_unref (dbus->priv->client);
 	g_object_unref (dbus->priv->gconf_client);
+	g_timer_destroy (dbus->priv->timer);
 
 	G_OBJECT_CLASS (gcm_dbus_parent_class)->finalize (object);
 }

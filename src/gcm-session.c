@@ -29,9 +29,12 @@
 #include "gcm-dbus.h"
 #include "org.gnome.ColorManager.h"
 
+static GMainLoop *loop = NULL;
+
 #define GCM_DBUS_SERVICE	"org.gnome.ColorManager"
 #define GCM_DBUS_INTERFACE	"org.gnome.ColorManager"
 #define GCM_DBUS_PATH		"/org/gnome/ColorManager"
+#define GCM_SESSION_IDLE_EXIT	60 /* seconds */
 
 /**
  * gcm_session_object_register:
@@ -83,13 +86,32 @@ gcm_session_object_register (DBusGConnection *connection, GObject *object)
 }
 
 /**
+ * gcm_session_check_idle_cb:
+ **/
+static gboolean
+gcm_session_check_idle_cb (GcmDbus *dbus)
+{
+	guint idle;
+
+	/* get the idle time */
+	idle = gcm_dbus_get_idle_time (dbus);
+	if (idle > GCM_SESSION_IDLE_EXIT) {
+		egg_debug ("exiting loop as idle");
+		g_main_loop_quit (loop);
+		return FALSE;
+	}
+	/* continue to poll */
+	return TRUE;
+}
+
+/**
  * main:
  **/
 int
 main (int argc, char *argv[])
 {
 	gboolean verbose = FALSE;
-	gboolean timed_exit = FALSE;
+	gboolean no_timed_exit = FALSE;
 	GcmDbus *dbus = NULL;
 	GOptionContext *context;
 	GError *error = NULL;
@@ -100,8 +122,8 @@ main (int argc, char *argv[])
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
 		  _("Show extra debugging information"), NULL },
-		{ "timed-exit", '\0', 0, G_OPTION_ARG_NONE, &timed_exit,
-		  _("Exit after a small delay"), NULL },
+		{ "no-timed-exit", '\0', 0, G_OPTION_ARG_NONE, &no_timed_exit,
+		  _("Do not exit after the request has been processed"), NULL },
 		{ NULL}
 	};
 
@@ -123,6 +145,7 @@ main (int argc, char *argv[])
 
 	/* create new objects */
 	dbus = gcm_dbus_new ();
+	loop = g_main_loop_new (NULL, FALSE);
 
 	/* get the bus */
 	connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
@@ -141,13 +164,14 @@ main (int argc, char *argv[])
 		goto out;
 	}
 
-	/* Only timeout if we have specified iton the command line */
-	if (timed_exit)
-		g_timeout_add_seconds (120, (GSourceFunc) gtk_main_quit, NULL);
+	/* only timeout if we have specified iton the command line */
+	if (!no_timed_exit)
+		g_timeout_add_seconds (5, (GSourceFunc) gcm_session_check_idle_cb, dbus);
 
 	/* wait */
-	gtk_main ();
+	g_main_loop_run (loop);
 out:
+	g_main_loop_unref (loop);
 	g_object_unref (dbus);
 	return retval;
 }
