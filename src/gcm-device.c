@@ -61,7 +61,7 @@ struct _GcmDevicePrivate
 	gchar				*copyright;
 	gchar				*vendor;
 	GConfClient			*gconf_client;
-	GnomeRROutput			*native_device_xrandr;
+	gchar				*native_device_xrandr;
 	gchar				*native_device_sysfs;
 };
 
@@ -374,7 +374,7 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 		g_value_set_string (value, priv->title);
 		break;
 	case PROP_NATIVE_DEVICE_XRANDR:
-		g_value_set_pointer (value, priv->native_device_xrandr);
+		g_value_set_string (value, priv->native_device_xrandr);
 		break;
 	case PROP_NATIVE_DEVICE_SYSFS:
 		g_value_set_string (value, priv->native_device_sysfs);
@@ -420,7 +420,8 @@ gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GP
 		priv->contrast = g_value_get_float (value);
 		break;
 	case PROP_NATIVE_DEVICE_XRANDR:
-		priv->native_device_xrandr = g_value_get_pointer (value);
+		g_free (priv->native_device_xrandr);
+		priv->native_device_xrandr = g_strdup (g_value_get_string (value));
 		break;
 	case PROP_NATIVE_DEVICE_SYSFS:
 		g_free (priv->native_device_sysfs);
@@ -527,8 +528,9 @@ gcm_device_class_init (GcmDeviceClass *klass)
 	/**
 	 * GcmDevice:native-device-xrandr:
 	 */
-	pspec = g_param_spec_pointer ("native-device-xrandr", NULL, NULL,
-				      G_PARAM_READWRITE);
+	pspec = g_param_spec_string ("native-device-xrandr", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_NATIVE_DEVICE_XRANDR, pspec);
 
 	/**
@@ -576,6 +578,7 @@ gcm_device_finalize (GObject *object)
 	g_free (priv->vendor);
 	g_free (priv->title);
 	g_free (priv->id);
+	g_free (priv->native_device_xrandr);
 	g_free (priv->native_device_sysfs);
 	g_object_unref (priv->gconf_client);
 

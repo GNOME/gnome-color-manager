@@ -91,8 +91,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	gboolean ret;
 	GError *error = NULL;
 	GtkWindow *window;
-	GnomeRROutput *output;
-	const gchar *output_name;
+	gchar *output_name = NULL;
 	const gchar *name;
 	gchar *filename = NULL;
 	gchar *destination = NULL;
@@ -101,9 +100,9 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 
 	/* get the device */
 	g_object_get (current_device,
-		      "native-device-xrandr", &output,
+		      "native-device-xrandr", &output_name,
 		      NULL);
-	if (output == NULL) {
+	if (output_name == NULL) {
 		egg_warning ("failed to get output");
 		goto out;
 	}
@@ -113,7 +112,6 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	brightness = gcm_brightness_new ();
 
 	/* set the proper output name */
-	output_name = gnome_rr_output_get_name (output);
 	g_object_set (calib,
 		      "output-name", output_name,
 		      NULL);
@@ -248,6 +246,7 @@ out:
 	}
 	g_free (filename);
 	g_free (destination);
+	g_free (output_name);
 }
 
 /**

@@ -222,10 +222,11 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	gfloat gamma;
 	gfloat brightness;
 	gfloat contrast;
-	const gchar *output_name;
+	gchar *output_name;
 	gchar *id = NULL;
 	guint size;
 	GcmDeviceType type;
+	GnomeRRScreen *rr_screen = NULL;
 
 	/* get details about the device */
 	g_object_get (device,
@@ -235,7 +236,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 		      "gamma", &gamma,
 		      "brightness", &brightness,
 		      "contrast", &contrast,
-		      "native-device-xrandr", &output,
+		      "native-device-xrandr", &output_name,
 		      NULL);
 
 	/* do no set the gamma for non-display types */
@@ -246,9 +247,13 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	}
 
 	/* check we have an output */
+	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, error);
+	if (rr_screen == NULL)
+		goto out;
+	output = gnome_rr_screen_get_output_by_name (rr_screen, output_name);
 	if (output == NULL) {
 		if (error != NULL)
-			*error = g_error_new (1, 0, "no output for device: %s", id);
+			*error = g_error_new (1, 0, "no output for device: %s [%s]", id, output_name);
 		goto out;
 	}
 
@@ -290,7 +295,6 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 
 	/* set the per-output profile atoms */
 	xserver = gcm_xserver_new ();
-	output_name = gnome_rr_output_get_name (output);
 	ret = gcm_xserver_set_output_profile (xserver, output_name, profile, error);
 	if (!ret)
 		goto out;
@@ -305,6 +309,9 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 out:
 	g_free (id);
 	g_free (profile);
+	g_free (output_name);
+	if (rr_screen != NULL)
+		gnome_rr_screen_destroy (rr_screen);
 	if (clut != NULL)
 		g_object_unref (clut);
 	if (xserver != NULL)

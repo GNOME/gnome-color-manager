@@ -364,6 +364,7 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 	gboolean ret;
 	GcmDevice *device = NULL;
 	GError *error = NULL;
+	const gchar *output_name;
 	GcmClientPrivate *priv = client->priv;
 
 	/* get details */
@@ -387,11 +388,12 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 	/* add new device */
 	device = gcm_device_new ();
 	title = gcm_utils_get_output_name (output);
+	output_name = gnome_rr_output_get_name (output);
 	g_object_set (device,
 		      "type", GCM_DEVICE_TYPE_DISPLAY,
 		      "id", id,
 		      "title", title,
-		      "native-device-xrandr", output,
+		      "native-device-xrandr", output_name,
 		      NULL);
 
 	/* load the device */
