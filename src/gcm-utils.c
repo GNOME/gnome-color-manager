@@ -476,7 +476,7 @@ gcm_utils_ptr_array_to_strv (GPtrArray *array)
 }
 
 /**
- * gpk_gnome_help:
+ * gcm_gnome_help:
  * @link_id: Subsection of help file, or %NULL.
  **/
 gboolean
@@ -507,4 +507,23 @@ gcm_gnome_help (const gchar *link_id)
 	g_free (uri);
 	return ret;
 }
+
+/**
+ * gcm_utils_alphanum_lcase:
+ **/
+void
+gcm_utils_alphanum_lcase (gchar *data)
+{
+	guint i;
+
+	g_return_if_fail (data != NULL);
+
+	/* replace unsafe chars, and make lowercase */
+	for (i=0; data[i] != '\0'; i++) {
+		if (!g_ascii_isalnum (data[i]))
+			data[i] = '_';
+		data[i] = g_ascii_tolower (data[i]);
+	}
+}
+
 

@@ -304,7 +304,6 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 	GtkWidget *widget;
 	GnomeRROutput *output;
 	const guint8 *data;
-	guint i;
 	GPtrArray *array = NULL;
 	gint x, y;
 
@@ -349,9 +348,7 @@ gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
 		priv->basename = g_strdup ("custom");
 
 	/* make a suitable filename */
-	g_strdelimit (priv->basename, " *?%$", '_');
-	for (i=0; priv->basename[i] != '\0'; i++)
-		priv->basename[i] = g_ascii_tolower (priv->basename[i]);
+	gcm_utils_alphanum_lcase (priv->basename);
 	egg_debug ("using filename basename of %s", priv->basename);
 
 	/* argument array */

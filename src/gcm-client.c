@@ -130,7 +130,6 @@ static gchar *
 gcm_client_get_id_for_udev_device (GUdevDevice *udev_device)
 {
 	gchar *id;
-	guint i;
 
 	/* get id */
 	id = g_strdup_printf ("sysfs_%s_%s",
@@ -138,10 +137,7 @@ gcm_client_get_id_for_udev_device (GUdevDevice *udev_device)
 			      g_udev_device_get_property (udev_device, "ID_MODEL"));
 
 	/* replace unsafe chars */
-	for (i=0; id[i] != '\0'; i++) {
-		if (!g_ascii_isalnum (id[i]))
-			id[i] = '_';
-	}
+	gcm_utils_alphanum_lcase (id);
 	return id;
 }
 
@@ -340,17 +336,14 @@ gcm_client_get_id_for_xrandr_device (GnomeRROutput *output)
 {
 	gchar *id;
 	gchar *name;
-	guint i;
 
 	/* get id */
 	name = gcm_utils_get_output_name (output);
 	id = g_strdup_printf ("xrandr_%s", name);
 
 	/* replace unsafe chars */
-	for (i=0; id[i] != '\0'; i++) {
-		if (!g_ascii_isalnum (id[i]))
-			id[i] = '_';
-	}
+	gcm_utils_alphanum_lcase (id);
+
 	g_free (name);
 	return id;
 }

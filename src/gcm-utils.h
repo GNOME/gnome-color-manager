@@ -40,6 +40,7 @@ gchar		**gcm_utils_ptr_array_to_strv		(GPtrArray		*array);
 gboolean	 gcm_gnome_help				(const gchar		*link_id);
 gboolean	 gcm_utils_output_is_lcd_internal	(const gchar		*output_name);
 gboolean	 gcm_utils_output_is_lcd		(const gchar		*output_name);
+void		 gcm_utils_alphanum_lcase		(gchar			*string);
 
 #endif /* __GCM_UTILS_H */
 
