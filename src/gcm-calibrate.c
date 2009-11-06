@@ -180,10 +180,7 @@ gcm_calibrate_setup (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 {
 	GtkWidget *widget;
 	GcmCalibratePrivate *priv = calibrate->priv;
-	GtkWidget *dialog;
-	GtkResponseType response;
 	gboolean ret = TRUE;
-	GString *string = NULL;
 
 	/* show main UI */
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
@@ -195,6 +192,34 @@ gcm_calibrate_setup (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 	gcm_calibrate_set_title (calibrate, _("Setup hardware"));
 	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (calibrate, _("Setting up hardware device for use..."));
+
+	return ret;
+}
+
+/**
+ * gcm_calibrate_debug_argv:
+ **/
+static void
+gcm_calibrate_debug_argv (const gchar *program, gchar **argv)
+{
+	gchar *join;
+	join = g_strjoinv ("  ", argv);
+	egg_debug ("running %s  %s", program, join);
+	g_free (join);
+}
+
+/**
+ * gcm_calibrate_display_setup:
+ **/
+static gboolean
+gcm_calibrate_display_setup (GcmCalibrate *calibrate, GError **error)
+{
+	gboolean ret = TRUE;
+	GtkWidget *dialog;
+	GtkResponseType response;
+	GString *string = NULL;
+	GcmCalibratePrivate *priv = calibrate->priv;
+	GtkWidget *widget;
 
 	/* this wasn't previously set */
 	if (!priv->is_lcd && !priv->is_crt) {
@@ -270,9 +295,6 @@ gcm_calibrate_setup (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 			goto out;
 		}
 	}
-
-	/* success */
-	ret = TRUE;
 out:
 	if (string != NULL)
 		g_string_free (string, TRUE);
@@ -280,22 +302,10 @@ out:
 }
 
 /**
- * gcm_calibrate_debug_argv:
- **/
-static void
-gcm_calibrate_debug_argv (const gchar *program, gchar **argv)
-{
-	gchar *join;
-	join = g_strjoinv ("  ", argv);
-	egg_debug ("running %s  %s", program, join);
-	g_free (join);
-}
-
-/**
- * gcm_calibrate_task_neutralise:
+ * gcm_calibrate_display_neutralise:
  **/
 static gboolean
-gcm_calibrate_task_neutralise (GcmCalibrate *calibrate, GError **error)
+gcm_calibrate_display_neutralise (GcmCalibrate *calibrate, GError **error)
 {
 	gboolean ret = FALSE;
 	GcmCalibratePrivate *priv = calibrate->priv;
@@ -437,10 +447,10 @@ gcm_calibrate_timeout_cb (GcmCalibrate *calibrate)
 }
 
 /**
- * gcm_calibrate_task_generate_patches:
+ * gcm_calibrate_display_generate_patches:
  **/
 static gboolean
-gcm_calibrate_task_generate_patches (GcmCalibrate *calibrate, GError **error)
+gcm_calibrate_display_generate_patches (GcmCalibrate *calibrate, GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibratePrivate *priv = calibrate->priv;
@@ -492,10 +502,10 @@ out:
 }
 
 /**
- * gcm_calibrate_task_draw_and_measure:
+ * gcm_calibrate_display_draw_and_measure:
  **/
 static gboolean
-gcm_calibrate_task_draw_and_measure (GcmCalibrate *calibrate, GError **error)
+gcm_calibrate_display_draw_and_measure (GcmCalibrate *calibrate, GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibratePrivate *priv = calibrate->priv;
@@ -553,10 +563,10 @@ out:
 }
 
 /**
- * gcm_calibrate_task_generate_profile:
+ * gcm_calibrate_display_generate_profile:
  **/
 static gboolean
-gcm_calibrate_task_generate_profile (GcmCalibrate *calibrate, GError **error)
+gcm_calibrate_display_generate_profile (GcmCalibrate *calibrate, GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibratePrivate *priv = calibrate->priv;
@@ -654,7 +664,7 @@ out:
 }
 
 /**
- * gcm_calibrate_task:
+ * gcm_calibrate_display:
  **/
 gboolean
 gcm_calibrate_task (GcmCalibrate *calibrate, GcmCalibrateTask task, GError **error)
@@ -664,20 +674,24 @@ gcm_calibrate_task (GcmCalibrate *calibrate, GcmCalibrateTask task, GError **err
 	g_return_val_if_fail (GCM_IS_CALIBRATE (calibrate), FALSE);
 
 	/* each option */
-	if (task == GCM_CALIBRATE_TASK_NEUTRALISE) {
-		ret = gcm_calibrate_task_neutralise (calibrate, error);
+	if (task == GCM_CALIBRATE_TASK_DISPLAY_SETUP) {
+		ret = gcm_calibrate_display_setup (calibrate, error);
 		goto out;
 	}
-	if (task == GCM_CALIBRATE_TASK_GENERATE_PATCHES) {
-		ret = gcm_calibrate_task_generate_patches (calibrate, error);
+	if (task == GCM_CALIBRATE_TASK_DISPLAY_NEUTRALISE) {
+		ret = gcm_calibrate_display_neutralise (calibrate, error);
 		goto out;
 	}
-	if (task == GCM_CALIBRATE_TASK_DRAW_AND_MEASURE) {
-		ret = gcm_calibrate_task_draw_and_measure (calibrate, error);
+	if (task == GCM_CALIBRATE_TASK_DISPLAY_GENERATE_PATCHES) {
+		ret = gcm_calibrate_display_generate_patches (calibrate, error);
 		goto out;
 	}
-	if (task == GCM_CALIBRATE_TASK_GENERATE_PROFILE) {
-		ret = gcm_calibrate_task_generate_profile (calibrate, error);
+	if (task == GCM_CALIBRATE_TASK_DISPLAY_DRAW_AND_MEASURE) {
+		ret = gcm_calibrate_display_draw_and_measure (calibrate, error);
+		goto out;
+	}
+	if (task == GCM_CALIBRATE_TASK_DISPLAY_GENERATE_PROFILE) {
+		ret = gcm_calibrate_display_generate_profile (calibrate, error);
 		goto out;
 	}
 out:
@@ -905,6 +919,7 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	if (retval == 0) {
 		egg_warning ("failed to load ui: %s", error->message);
 		g_error_free (error);
+		return;
 	}
 
 	/* get screen */
@@ -912,6 +927,7 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	if (calibrate->priv->rr_screen == NULL) {
 		egg_warning ("failed to get rr screen: %s", error->message);
 		g_error_free (error);
+		return;
 	}
 
 	/* get edid parser */

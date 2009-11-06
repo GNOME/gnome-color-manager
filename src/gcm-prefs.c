@@ -81,21 +81,15 @@ gcm_prefs_help_cb (GtkWidget *widget, gpointer data)
 }
 
 /**
- * gcm_prefs_calibrate_cb:
+ * gcm_prefs_calibrate_display:
  **/
 static void
-gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_calibrate_display (GcmCalibrate *calib)
 {
-	GcmCalibrate *calib = NULL;
 	GcmBrightness *brightness = NULL;
 	gboolean ret;
 	GError *error = NULL;
-	GtkWindow *window;
 	gchar *output_name = NULL;
-	const gchar *name;
-	gchar *filename = NULL;
-	gchar *destination = NULL;
-	guint i;
 	guint percentage = G_MAXUINT;
 
 	/* get the device */
@@ -108,22 +102,12 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* create new calibration and brightness objects */
-	calib = gcm_calibrate_new ();
 	brightness = gcm_brightness_new ();
 
 	/* set the proper output name */
 	g_object_set (calib,
 		      "output-name", output_name,
 		      NULL);
-
-	/* run each task in order */
-	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
-	ret = gcm_calibrate_setup (calib, window, &error);
-	if (!ret) {
-		egg_warning ("failed to setup: %s", error->message);
-		g_error_free (error);
-		goto finish_calibrate;
-	}
 
 	/* if we are an internal LCD, we need to set the brightness to maximum */
 	ret = gcm_utils_output_is_lcd_internal (output_name);
@@ -148,7 +132,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* step 1 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_NEUTRALISE, &error);
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DISPLAY_NEUTRALISE, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
@@ -156,7 +140,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* step 2 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_GENERATE_PATCHES, &error);
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DISPLAY_GENERATE_PATCHES, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
@@ -164,7 +148,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* step 3 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DRAW_AND_MEASURE, &error);
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DISPLAY_DRAW_AND_MEASURE, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
@@ -172,7 +156,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* step 4 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_GENERATE_PROFILE, &error);
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DISPLAY_GENERATE_PROFILE, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
@@ -180,6 +164,14 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 finish_calibrate:
+	/* need to set the gamma back to the default after calibration */
+	error = NULL;
+	ret = gcm_utils_set_gamma_for_device (current_device, &error);
+	if (!ret) {
+		egg_warning ("failed to set output gamma: %s", error->message);
+		g_error_free (error);
+	}
+
 	/* restore brightness */
 	if (percentage != G_MAXUINT) {
 		/* set the new brightness */
@@ -191,8 +183,69 @@ finish_calibrate:
 			error = NULL;
 		}
 	}
+out:
+	if (brightness != NULL)
+		g_object_unref (brightness);
+	g_free (output_name);
+}
 
-	/* step 4 */
+/**
+ * gcm_prefs_calibrate_scanner:
+ **/
+static void
+gcm_prefs_calibrate_scanner (GcmCalibrate *calib)
+{
+	// TODO: add something!
+}
+
+/**
+ * gcm_prefs_calibrate_cb:
+ **/
+static void
+gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
+{
+	GcmCalibrate *calib = NULL;
+	GcmDeviceType type;
+	gboolean ret;
+	GError *error = NULL;
+	GtkWindow *window;
+	gchar *filename = NULL;
+	guint i;
+	const gchar *name;
+	gchar *destination = NULL;
+
+	/* get the type */
+	g_object_get (current_device,
+		      "type", &type,
+		      NULL);
+
+	/* create new calibration object */
+	calib = gcm_calibrate_new ();
+
+	/* run each task in order */
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	ret = gcm_calibrate_setup (calib, window, &error);
+	if (!ret) {
+		egg_warning ("failed to setup: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* choose the correct type of calibration */
+	switch (type) {
+	case GCM_DEVICE_TYPE_DISPLAY:
+		gcm_prefs_calibrate_display (calib);
+		break;
+	case GCM_DEVICE_TYPE_SCANNER:
+	case GCM_DEVICE_TYPE_CAMERA:
+		gcm_prefs_calibrate_scanner (calib);
+		break;
+	default:
+		egg_error ("calibration not supported for this device");
+		goto out;
+	}
+
+	/* finish */
 	filename = gcm_calibrate_finish (calib, &error);
 	if (filename == NULL) {
 		egg_warning ("failed to finish calibrate: %s", error->message);
@@ -231,22 +284,11 @@ finish_calibrate:
 
 	/* remove temporary file */
 	g_unlink (filename);
-
 out:
-	if (calib != NULL)
-		g_object_unref (calib);
-	if (brightness != NULL)
-		g_object_unref (brightness);
-
-	/* need to set the gamma back to the default after calibration */
-	ret = gcm_utils_set_gamma_for_device (current_device, &error);
-	if (!ret) {
-		egg_warning ("failed to set output gamma: %s", error->message);
-		g_error_free (error);
-	}
 	g_free (filename);
 	g_free (destination);
-	g_free (output_name);
+	if (calib != NULL)
+		g_object_unref (calib);
 }
 
 /**
