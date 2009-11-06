@@ -324,6 +324,101 @@ gcm_prefs_add_devices_columns (GtkTreeView *treeview)
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
 
+
+/**
+ * gcm_prefs_has_hardware_device_attached:
+ **/
+static gboolean
+gcm_prefs_has_hardware_device_attached (void)
+{
+	GList *devices;
+	GList *l;
+	GUdevDevice *device;
+	gboolean ret = FALSE;
+
+	/* get all USB devices */
+	devices = g_udev_client_query_by_subsystem (client, "usb");
+	for (l = devices; l != NULL; l = l->next) {
+		device = l->data;
+		ret = g_udev_device_get_property_as_boolean (device, "COLOR_MEASUREMENT_DEVICE");
+		if (ret) {
+			egg_debug ("found color management device: %s", g_udev_device_get_sysfs_path (device));
+			break;
+		}
+	}
+
+	g_list_foreach (devices, (GFunc) g_object_unref, NULL);
+	g_list_free (devices);
+	return ret;
+}
+
+/**
+ * gcm_prefs_has_argyllcms_installed:
+ **/
+static gboolean
+gcm_prefs_has_argyllcms_installed (void)
+{
+	gboolean ret;
+
+	/* find whether argyllcms is installed using a tool which should exist */
+	ret = g_file_test ("/usr/bin/dispcal", G_FILE_TEST_EXISTS);
+	if (!ret)
+		egg_debug ("ArgyllCMS not installed");
+
+	return ret;
+}
+
+/**
+ * gcm_prefs_set_calibrate_button_sensitivity:
+ **/
+static void
+gcm_prefs_set_calibrate_button_sensitivity (void)
+{
+	gboolean ret = FALSE;
+	GtkWidget *widget;
+	GcmDeviceType type;
+
+	/* no device selected */
+	if (current_device == NULL)
+		goto out;
+
+	/* are we a display */
+	g_object_get (current_device,
+		      "type", &type,
+		      NULL);
+	if (type == GCM_DEVICE_TYPE_DISPLAY) {
+
+		/* find if ArgyllCMS is installed */
+		ret = gcm_prefs_has_argyllcms_installed ();
+		if (!ret)
+			goto out;
+
+		/* find whether we have hardware installed */
+		ret = gcm_prefs_has_hardware_device_attached ();
+#ifndef GCM_HARDWARE_DETECTION
+		egg_debug ("overriding device presence %i with TRUE", ret);
+		ret = TRUE;
+#endif
+	} else if (type == GCM_DEVICE_TYPE_SCANNER) {
+
+		/* find if ArgyllCMS is installed */
+		ret = gcm_prefs_has_argyllcms_installed ();
+		if (!ret)
+			goto out;
+
+		/* TODO: find out if we can scan using gnome-scan */
+		ret = TRUE;
+	} else {
+
+		/* we can't calibrate this type of device */
+		ret = FALSE;
+	}
+out:
+	/* disable the button if no supported hardware is found */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
+	gtk_widget_set_sensitive (widget, ret);
+}
+
 /**
  * gcm_prefs_devices_treeview_clicked_cb:
  **/
@@ -409,6 +504,9 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 			}
 		}
 	}
+
+	/* can this device calibrate */
+	gcm_prefs_set_calibrate_button_sensitivity ();
 
 	g_free (id);
 	g_free (profile);
@@ -691,69 +789,13 @@ out:
 }
 
 /**
- * gcm_prefs_has_hardware_device_attached:
- **/
-static gboolean
-gcm_prefs_has_hardware_device_attached (void)
-{
-	GList *devices;
-	GList *l;
-	GUdevDevice *device;
-	gboolean ret = FALSE;
-
-	/* get all USB devices */
-	devices = g_udev_client_query_by_subsystem (client, "usb");
-	for (l = devices; l != NULL; l = l->next) {
-		device = l->data;
-		ret = g_udev_device_get_property_as_boolean (device, "COLOR_MEASUREMENT_DEVICE");
-		if (ret) {
-			egg_debug ("found color management device: %s", g_udev_device_get_sysfs_path (device));
-			break;
-		}
-	}
-
-	g_list_foreach (devices, (GFunc) g_object_unref, NULL);
-	g_list_free (devices);
-	return ret;
-}
-
-/**
- * gcm_prefs_check_calibration_hardware:
- **/
-static void
-gcm_prefs_check_calibration_hardware (void)
-{
-	gboolean ret;
-	GtkWidget *widget;
-
-	/* find whether argyllcms is installed */
-	ret = g_file_test ("/usr/bin/dispcal", G_FILE_TEST_EXISTS);
-	if (!ret) {
-		egg_debug ("ArgyllCMS not installed");
-		goto out;
-	}
-
-	/* find whether we have hardware installed */
-	ret = gcm_prefs_has_hardware_device_attached ();
-
-#ifndef GCM_HARDWARE_DETECTION
-	egg_debug ("overriding device presence %i with TRUE", ret);
-	ret = TRUE;
-#endif
-out:
-	/* disable the button if no supported hardware is found */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
-	gtk_widget_set_sensitive (widget, ret);
-}
-
-/**
  * gcm_prefs_uevent_cb:
  **/
 static void
 gcm_prefs_uevent_cb (GUdevClient *client_, const gchar *action, GUdevDevice *device, gpointer user_data)
 {
 	egg_debug ("uevent %s", action);
-	gcm_prefs_check_calibration_hardware ();
+	gcm_prefs_set_calibrate_button_sensitivity ();
 }
 
 /**
@@ -937,7 +979,7 @@ main (int argc, char **argv)
 			  G_CALLBACK (gcm_prefs_uevent_cb), NULL);
 
 	/* set calibrate button sensitivity */
-	gcm_prefs_check_calibration_hardware ();
+	gcm_prefs_set_calibrate_button_sensitivity ();
 
 	/* create list stores */
 	list_store_devices = gtk_list_store_new (GPM_DEVICES_COLUMN_LAST, G_TYPE_STRING,
