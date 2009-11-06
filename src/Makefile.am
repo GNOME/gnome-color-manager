@@ -119,6 +119,13 @@ gcm_prefs_LDADD =					\
 gcm_prefs_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
+org.gnome.ColorManager.h: org.gnome.ColorManager.xml
+	$(LIBTOOL) --mode=execute dbus-binding-tool	\
+		--prefix=gpk_dbus			\
+		--mode=glib-server			\
+		--output=org.gnome.ColorManager.h	\
+		$(srcdir)/org.gnome.ColorManager.xml
+
 clean-local:
 	rm -f *~
 
@@ -127,4 +134,10 @@ CLEANFILES = $(BUILT_SOURCES)
 MAINTAINERCLEANFILES =					\
 	*~			      			\
 	Makefile.in
+
+EXTRA_DIST =						\
+	org.gnome.ColorManager.xml
+
+BUILT_SOURCES = 					\
+	org.gnome.ColorManager.h
 
