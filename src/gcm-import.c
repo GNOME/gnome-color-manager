@@ -150,6 +150,13 @@ main (int argc, char **argv)
 		goto out;
 	}
 
+	/* open up the preferences */
+	ret = g_spawn_command_line_async (BINDIR "/gcm-prefs", &error);
+	if (!ret) {
+		egg_warning ("failed to spawn preferences: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 out:
 	if (string != NULL)
 		g_string_free (string, TRUE);
