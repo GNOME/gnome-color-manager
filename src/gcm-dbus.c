@@ -82,7 +82,48 @@ gcm_dbus_error_get_type (void)
 void
 gcm_dbus_get_profiles_for_device (GcmDbus *dbus, const gchar *sysfs_path, const gchar *options, DBusGMethodInvocation *context)
 {
-	dbus_g_method_return (context, NULL);
+	GPtrArray *array;
+	GcmDevice *device;
+	gchar **profiles;
+	gchar *sysfs_path_tmp;
+	guint i;
+
+	egg_debug ("getting profiles for %s", sysfs_path);
+
+	/* for now, hardcode one profile per device */
+	profiles = g_new0 (gchar *, 2);
+
+	/* get list */
+	array = gcm_client_get_devices (dbus->priv->client);
+	for (i=0; i<array->len; i++) {
+		device = g_ptr_array_index (array, i);
+
+		/* get the native path of this device */
+		g_object_get (device,
+			      "native-device-sysfs", &sysfs_path_tmp,
+			      NULL);
+
+		/* wrong type of device */
+		if (sysfs_path_tmp == NULL)
+			continue;
+
+		/* compare what we have against what we were given */
+		egg_debug ("comparing %s with %s", sysfs_path_tmp, sysfs_path);
+		if (g_strcmp0 (sysfs_path_tmp, sysfs_path) == 0) {
+			g_object_get (device,
+				      "profile", &profiles[0],
+				      NULL);
+			g_free (sysfs_path_tmp);
+			break;
+		}
+		g_free (sysfs_path_tmp);
+	}
+
+	/* return profiles */
+	dbus_g_method_return (context, profiles);
+
+	g_strfreev (profiles);
+	g_ptr_array_unref (array);
 }
 
 /**
@@ -104,9 +145,19 @@ gcm_dbus_class_init (GcmDbusClass *klass)
 static void
 gcm_dbus_init (GcmDbus *dbus)
 {
+	gboolean ret;
+	GError *error = NULL;
+
 	dbus->priv = GCM_DBUS_GET_PRIVATE (dbus);
 	dbus->priv->gconf_client = gconf_client_get_default ();
 	dbus->priv->client = gcm_client_new ();
+
+	/* get all devices */
+	ret = gcm_client_coldplug (dbus->priv->client, &error);
+	if (!ret) {
+		egg_warning ("failed to coldplug: %s", error->message);
+		g_error_free (error);
+	}
 }
 
 /**

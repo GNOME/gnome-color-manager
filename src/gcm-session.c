@@ -21,28 +21,13 @@
 
 #include "config.h"
 
-//#include <errno.h>
-//#include <string.h>
-//#include <unistd.h>
-//#include <stdlib.h>
-//#include <glib.h>
 #include <glib/gi18n.h>
 #include <dbus/dbus-glib.h>
 #include <gtk/gtk.h>
-//#include <locale.h>
-//#include <libnotify/notify.h>
-//#include <packagekit-glib/packagekit.h>
 
 #include "egg-debug.h"
-//#include "egg-dbus-monitor.h"
-
-//#include "gcm-check-update.h"
-//#include "gcm-watch.h"
-//#include "gcm-firmware.h"
-//#include "gcm-hardware.h"
 #include "gcm-dbus.h"
 #include "org.gnome.ColorManager.h"
-//#include "gcm-common.h"
 
 #define GCM_DBUS_SERVICE	"org.gnome.ColorManager"
 #define GCM_DBUS_INTERFACE	"org.gnome.ColorManager"

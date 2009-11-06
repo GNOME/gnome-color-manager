@@ -175,6 +175,7 @@ gcm_client_gudev_add_type (GcmClient *client, GUdevDevice *udev_device, GcmDevic
 	gchar *id;
 	gboolean ret;
 	GError *error = NULL;
+	const gchar *sysfs_path;
 	GcmClientPrivate *priv = client->priv;
 
 	/* add new device */
@@ -186,12 +187,16 @@ gcm_client_gudev_add_type (GcmClient *client, GUdevDevice *udev_device, GcmDevic
 	/* turn space delimiters into spaces */
 	g_strdelimit (title, "_", ' ');
 
+	/* get sysfs path */
+	sysfs_path = g_udev_device_get_sysfs_path (udev_device);
+
 	/* create device */
 	device = gcm_device_new ();
 	g_object_set (device,
 		      "type", type,
 		      "id", id,
 		      "title", title,
+		      "native-device-sysfs", sysfs_path,
 		      NULL);
 
 	/* load the device */

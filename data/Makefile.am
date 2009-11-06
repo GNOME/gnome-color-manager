@@ -32,6 +32,7 @@ pkgdata_DATA =						\
 
 EXTRA_DIST =						\
 	$(schema_in_files)				\
+	$(service_in_files)				\
 	$(autostart_in_files)				\
 	$(desktop_in_files)				\
 	$(pkgdata_DATA)
@@ -52,6 +53,7 @@ clean-local :
 	rm -f *~
 
 DISTCLEANFILES =					\
+	org.gnome.ColorManager.service			\
 	gnome-color-manager.schemas			\
 	gcm-apply.desktop				\
 	gcm-prefs.desktop				\

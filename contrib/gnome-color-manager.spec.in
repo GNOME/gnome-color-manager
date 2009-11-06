@@ -111,9 +111,7 @@ update-mime-database %{_datadir}/mime &> /dev/null || :
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING NEWS README
-%{_bindir}/gcm-prefs
-%{_bindir}/gcm-import
-%{_bindir}/gcm-apply
+%{_bindir}/gcm-*
 %dir %{_datadir}/gnome-color-manager
 %dir %{_datadir}/gnome-color-manager/profiles
 %{_datadir}/gnome-color-manager/profiles/*.ic?
@@ -127,6 +125,7 @@ update-mime-database %{_datadir}/mime &> /dev/null || :
 %{_datadir}/applications/gcm-prefs.desktop
 %{_datadir}/applications/gcm-import.desktop
 %{_sysconfdir}/xdg/autostart/*.desktop
+%{_datadir}/dbus-1/services/org.gnome.ColorManager.service
 
 %changelog
 * #LONGDATE# Richard Hughes <richard@hughsie.com> #VERSION#-0.#BUILD##ALPHATAG#

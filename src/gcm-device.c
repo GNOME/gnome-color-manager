@@ -62,6 +62,7 @@ struct _GcmDevicePrivate
 	gchar				*vendor;
 	GConfClient			*gconf_client;
 	GnomeRROutput			*native_device_xrandr;
+	gchar				*native_device_sysfs;
 };
 
 enum {
@@ -77,6 +78,7 @@ enum {
 	PROP_DESCRIPTION,
 	PROP_TITLE,
 	PROP_NATIVE_DEVICE_XRANDR,
+	PROP_NATIVE_DEVICE_SYSFS,
 	PROP_LAST
 };
 
@@ -374,6 +376,9 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_NATIVE_DEVICE_XRANDR:
 		g_value_set_pointer (value, priv->native_device_xrandr);
 		break;
+	case PROP_NATIVE_DEVICE_SYSFS:
+		g_value_set_string (value, priv->native_device_sysfs);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -416,6 +421,10 @@ gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GP
 		break;
 	case PROP_NATIVE_DEVICE_XRANDR:
 		priv->native_device_xrandr = g_value_get_pointer (value);
+		break;
+	case PROP_NATIVE_DEVICE_SYSFS:
+		g_free (priv->native_device_sysfs);
+		priv->native_device_sysfs = g_strdup (g_value_get_string (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -522,6 +531,14 @@ gcm_device_class_init (GcmDeviceClass *klass)
 				      G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_NATIVE_DEVICE_XRANDR, pspec);
 
+	/**
+	 * GcmDevice:native-device-sysfs:
+	 */
+	pspec = g_param_spec_string ("native-device-sysfs", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_NATIVE_DEVICE_SYSFS, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmDevicePrivate));
 }
 
@@ -533,6 +550,7 @@ gcm_device_init (GcmDevice *device)
 {
 	device->priv = GCM_DEVICE_GET_PRIVATE (device);
 	device->priv->native_device_xrandr = NULL;
+	device->priv->native_device_sysfs = NULL;
 	device->priv->profile = NULL;
 	device->priv->gconf_client = gconf_client_get_default ();
 	device->priv->gamma = gconf_client_get_float (device->priv->gconf_client, "/apps/gnome-color-manager/default_gamma", NULL);
@@ -558,6 +576,7 @@ gcm_device_finalize (GObject *object)
 	g_free (priv->vendor);
 	g_free (priv->title);
 	g_free (priv->id);
+	g_free (priv->native_device_sysfs);
 	g_object_unref (priv->gconf_client);
 
 	G_OBJECT_CLASS (gcm_device_parent_class)->finalize (object);
