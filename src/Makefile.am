@@ -47,6 +47,7 @@ libgcmshared_a_CFLAGS =					\
 bin_PROGRAMS =						\
 	gcm-apply					\
 	gcm-prefs					\
+	gcm-session					\
 	gcm-import
 
 noinst_PROGRAMS =					\
@@ -119,9 +120,28 @@ gcm_prefs_LDADD =					\
 gcm_prefs_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
+gcm_session_SOURCES =					\
+	gcm-dbus.c					\
+	gcm-dbus.h					\
+	gcm-session.c
+
+gcm_session_LDADD =					\
+	libgcmshared.a					\
+	$(GLIB_LIBS)					\
+	$(GNOMEDESKTOP_LIBS)				\
+	$(UNIQUE_LIBS)					\
+	$(GCONF_LIBS)					\
+	$(GUDEV_LIBS)					\
+	$(DBUS_GLIB_LIBS)				\
+	$(XORG_LIBS)					\
+	$(GTK_LIBS)
+
+gcm_session_CFLAGS =					\
+	$(WARNINGFLAGS_C)
+
 org.gnome.ColorManager.h: org.gnome.ColorManager.xml
 	$(LIBTOOL) --mode=execute dbus-binding-tool	\
-		--prefix=gpk_dbus			\
+		--prefix=gcm_dbus			\
 		--mode=glib-server			\
 		--output=org.gnome.ColorManager.h	\
 		$(srcdir)/org.gnome.ColorManager.xml
