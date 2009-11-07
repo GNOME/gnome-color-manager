@@ -42,7 +42,9 @@ static GnomeRRScreen *rr_screen = NULL;
 static GPtrArray *profiles_array = NULL;
 static GUdevClient *client = NULL;
 static GcmClient *gcm_client = NULL;
-gboolean setting_up_device = FALSE;
+static gboolean setting_up_device = FALSE;
+static GtkWidget *info_bar = NULL;
+static guint loading_refcount = 0;
 
 enum {
 	GPM_DEVICES_COLUMN_ID,
@@ -362,6 +364,7 @@ gcm_prefs_add_devices_columns (GtkTreeView *treeview)
 	column = gtk_tree_view_column_new_with_attributes ("", renderer,
 							   "markup", GPM_DEVICES_COLUMN_TITLE, NULL);
 	gtk_tree_view_column_set_sort_column_id (column, GPM_DEVICES_COLUMN_TITLE);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store_devices), GPM_DEVICES_COLUMN_TITLE, GTK_SORT_ASCENDING);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
@@ -546,6 +549,14 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 			}
 		}
 	}
+
+	/* make sure selectable */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
+	gtk_widget_set_sensitive (widget, TRUE);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
+	gtk_widget_set_sensitive (widget, TRUE);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_profile"));
+	gtk_widget_set_sensitive (widget, TRUE);
 
 	/* can this device calibrate */
 	gcm_prefs_set_calibrate_button_sensitivity ();
@@ -900,24 +911,52 @@ gcm_prefs_add_device_type (GcmDevice *device)
 }
 
 /**
- * gcm_prefs_added_cb:
+ * gcm_prefs_added_idle_cb:
  **/
-static void
-gcm_prefs_added_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user_data)
+static gboolean
+gcm_prefs_added_idle_cb (GcmDevice *device)
 {
 	GcmDeviceType type;
-	egg_debug ("added: %s", gcm_device_get_id (gcm_device));
+	GtkTreePath *path;
+	GtkWidget *widget;
+	egg_debug ("added: %s", gcm_device_get_id (device));
 
 	/* get the type of the device */
-	g_object_get (gcm_device,
+	g_object_get (device,
 		      "type", &type,
 		      NULL);
 
 	/* add the device */
 	if (type == GCM_DEVICE_TYPE_DISPLAY)
-		gcm_prefs_add_device_xrandr (gcm_device);
+		gcm_prefs_add_device_xrandr (device);
 	else
-		gcm_prefs_add_device_type (gcm_device);
+		gcm_prefs_add_device_type (device);
+
+	/* clear loading widget */
+	if (--loading_refcount == 0) {
+		gtk_widget_hide (info_bar);
+
+		/* set the cursor on the first device */
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
+		path = gtk_tree_path_new_from_string ("0");
+		gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
+		gtk_tree_path_free (path);
+	}
+
+	/* unref the instance */
+	g_object_unref (device);
+	return FALSE;
+}
+
+/**
+ * gcm_prefs_added_cb:
+ **/
+static void
+gcm_prefs_added_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user_data)
+{
+	gtk_widget_show (info_bar);
+	g_idle_add ((GSourceFunc) gcm_prefs_added_idle_cb, g_object_ref (gcm_device));
+	loading_refcount++;
 }
 
 /**
@@ -965,7 +1004,6 @@ gcm_prefs_startup_idle_cb (gpointer user_data)
 	GtkWidget *widget;
 	gboolean ret;
 	GError *error = NULL;
-	GtkTreePath *path;
 
 	egg_warning ("idle add");
 
@@ -981,15 +1019,8 @@ gcm_prefs_startup_idle_cb (gpointer user_data)
 		goto out;
 	}
 
-	/* set the cursor on the first device */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
-	path = gtk_tree_path_new_from_string ("0");
-	gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
-	gtk_tree_path_free (path);
-
 	/* set calibrate button sensitivity */
 	gcm_prefs_set_calibrate_button_sensitivity ();
-
 out:
 	return FALSE;
 }
@@ -1011,6 +1042,7 @@ main (int argc, char **argv)
 	GMainLoop *loop;
 	GtkTreeSelection *selection;
 	const gchar *subsystems[] = {"usb", NULL};
+	GtkWidget *info_bar_label;
 
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
@@ -1090,13 +1122,23 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_reset_cb), NULL);
+	gtk_widget_set_sensitive (widget, FALSE);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_calibrate_cb), NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
+	gtk_widget_set_sensitive (widget, FALSE);
+
+	/* hide widgets by default */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "table_details"));
+	gtk_widget_hide (widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_profile"));
+	gtk_widget_set_sensitive (widget, FALSE);
 
 	/* setup icc profiles list */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
 	gcm_prefs_set_combo_simple_text (widget);
+	gtk_widget_set_sensitive (widget, FALSE);
 	g_signal_connect (G_OBJECT (widget), "changed",
 			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), NULL);
 
@@ -1133,8 +1175,22 @@ main (int argc, char **argv)
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), xid);
 	}
 
+	/* use infobar */
+	info_bar = gtk_info_bar_new ();
+
+	/* TRANSLATORS: this is displayed while the devices are being probed */
+	info_bar_label = gtk_label_new (_("Loading list of devices..."));
+	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar), GTK_MESSAGE_INFO);
+	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar));
+	gtk_container_add (GTK_CONTAINER(widget), info_bar_label);
+	gtk_widget_show (info_bar_label);
+
+	/* add infobar to devices pane */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_devices"));
+	gtk_box_pack_start (GTK_BOX(widget), info_bar, FALSE, FALSE, 0);
+
 	/* show main UI */
-	gtk_window_set_default_size (GTK_WINDOW (main_window), 700, 200);
+	gtk_window_set_default_size (GTK_WINDOW (main_window), 700, 280);
 	gtk_widget_show (main_window);
 
 	/* connect up sliders */
