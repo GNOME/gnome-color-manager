@@ -957,6 +957,44 @@ gcm_prefs_removed_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer us
 }
 
 /**
+ * gcm_prefs_startup_idle_cb:
+ **/
+static gboolean
+gcm_prefs_startup_idle_cb (gpointer user_data)
+{
+	GtkWidget *widget;
+	gboolean ret;
+	GError *error = NULL;
+	GtkTreePath *path;
+
+	egg_warning ("idle add");
+
+	/* add profiles we can find */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
+	gcm_prefs_add_profiles (widget);
+
+	/* coldplug devices */
+	ret = gcm_client_coldplug (gcm_client, &error);
+	if (!ret) {
+		egg_warning ("failed to coldplug: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* set the cursor on the first device */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
+	path = gtk_tree_path_new_from_string ("0");
+	gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
+	gtk_tree_path_free (path);
+
+	/* set calibrate button sensitivity */
+	gcm_prefs_set_calibrate_button_sensitivity ();
+
+out:
+	return FALSE;
+}
+
+/**
  * main:
  **/
 int
@@ -973,7 +1011,6 @@ main (int argc, char **argv)
 	GMainLoop *loop;
 	GtkTreeSelection *selection;
 	const gchar *subsystems[] = {"usb", NULL};
-	gboolean ret;
 
 	const GOptionEntry options[] = {
 		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
@@ -1020,9 +1057,6 @@ main (int argc, char **argv)
 	g_signal_connect (client, "uevent",
 			  G_CALLBACK (gcm_prefs_uevent_cb), NULL);
 
-	/* set calibrate button sensitivity */
-	gcm_prefs_set_calibrate_button_sensitivity ();
-
 	/* create list stores */
 	list_store_devices = gtk_list_store_new (GPM_DEVICES_COLUMN_LAST, G_TYPE_STRING,
 						 G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
@@ -1037,7 +1071,7 @@ main (int argc, char **argv)
 
 	/* add columns to the tree view */
 	gcm_prefs_add_devices_columns (GTK_TREE_VIEW (widget));
-	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget)); /* show */
+	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
 
 	main_window = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_prefs"));
 
@@ -1063,7 +1097,6 @@ main (int argc, char **argv)
 	/* setup icc profiles list */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
 	gcm_prefs_set_combo_simple_text (widget);
-	gcm_prefs_add_profiles (widget);
 	g_signal_connect (G_OBJECT (widget), "changed",
 			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), NULL);
 
@@ -1094,14 +1127,6 @@ main (int argc, char **argv)
 	g_signal_connect (gcm_client, "added", G_CALLBACK (gcm_prefs_added_cb), NULL);
 	g_signal_connect (gcm_client, "removed", G_CALLBACK (gcm_prefs_removed_cb), NULL);
 
-	/* coldplug devices */
-	ret = gcm_client_coldplug (gcm_client, &error);
-	if (!ret) {
-		egg_warning ("failed to coldplug: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
 	/* set the parent window if it is specified */
 	if (xid != 0) {
 		egg_debug ("Setting xid %i", xid);
@@ -1109,6 +1134,7 @@ main (int argc, char **argv)
 	}
 
 	/* show main UI */
+	gtk_window_set_default_size (GTK_WINDOW (main_window), 700, 200);
 	gtk_widget_show (main_window);
 
 	/* connect up sliders */
@@ -1121,6 +1147,9 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
 	g_signal_connect (widget, "value-changed",
 			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
+
+	/* do all this after the window has been set up */
+	g_idle_add (gcm_prefs_startup_idle_cb, NULL);
 
 	/* wait */
 	g_main_loop_run (loop);
