@@ -102,6 +102,25 @@ gcm_clut_set_from_data (GcmClut *clut, const GcmClutData *data, guint size)
 }
 
 /**
+ * gcm_clut_reset:
+ **/
+gboolean
+gcm_clut_reset (GcmClut *clut)
+{
+	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
+
+	/* remove old data */
+	g_free (clut->priv->copyright);
+	g_free (clut->priv->description);
+
+	/* setup nothing */
+	clut->priv->copyright = NULL;
+	clut->priv->description = NULL;
+	g_ptr_array_set_size (clut->priv->array, 0);
+	return TRUE;
+}
+
+/**
  * gcm_clut_load_from_profile:
  **/
 gboolean
@@ -117,11 +136,7 @@ gcm_clut_load_from_profile (GcmClut *clut, GError **error)
 	/* no profile to load */
 	if (clut->priv->profile == NULL) {
 		egg_debug ("no profile to load");
-		g_free (clut->priv->copyright);
-		g_free (clut->priv->description);
-		clut->priv->copyright = NULL;
-		clut->priv->description = NULL;
-		g_ptr_array_set_size (clut->priv->array, 0);
+		gcm_clut_reset (clut);
 		goto out;
 	}
 
