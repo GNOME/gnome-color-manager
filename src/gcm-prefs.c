@@ -26,6 +26,7 @@
 #include <glib/gstdio.h>
 #include <gudev/gudev.h>
 #include <libgnomeui/gnome-rr.h>
+#include <gconf/gconf-client.h>
 
 #include "egg-debug.h"
 
@@ -45,6 +46,7 @@ static GcmClient *gcm_client = NULL;
 static gboolean setting_up_device = FALSE;
 static GtkWidget *info_bar = NULL;
 static guint loading_refcount = 0;
+static GConfClient *gconf_client = NULL;
 
 enum {
 	GPM_DEVICES_COLUMN_ID,
@@ -1026,6 +1028,64 @@ out:
 }
 
 /**
+ * gcm_prefs_reset_devices_idle_cb:
+ **/
+static gboolean
+gcm_prefs_reset_devices_idle_cb (gpointer user_data)
+{
+	GPtrArray *array = NULL;
+	GcmDevice *device;
+	GcmDeviceType type;
+	GError *error = NULL;
+	gboolean ret;
+	guint i;
+
+	/* set for each output */
+	array = gcm_client_get_devices (gcm_client);
+	for (i=0; i<array->len; i++) {
+		device = g_ptr_array_index (array, i);
+		g_object_get (device,
+			      "type", &type,
+			      NULL);
+
+		/* not a xrandr panel */
+		if (type != GCM_DEVICE_TYPE_DISPLAY)
+			continue;
+
+		/* set gamma for device */
+		ret = gcm_utils_set_gamma_for_device (device, &error);
+		if (!ret) {
+			egg_warning ("failed to set gamma: %s", error->message);
+			g_error_free (error);
+			break;
+		}
+	}
+	g_ptr_array_unref (array);
+	return FALSE;
+}
+
+/**
+ * gcm_prefs_radio_cb:
+ **/
+static void
+gcm_prefs_radio_cb (GtkWidget *widget, gpointer user_data)
+{
+	const gchar *name;
+	gboolean ret = FALSE;
+
+	/* find out what button was pressed */
+	name = gtk_widget_get_name (widget);
+	if (g_strcmp0 (name, "radiobutton_ouput_global") == 0)
+		ret = TRUE;
+
+	/* save new preference */
+	gconf_client_set_bool (gconf_client, "/apps/gnome-color-manager/global_display_correction", ret, NULL);
+
+	/* set the new setting */
+	g_idle_add ((GSourceFunc) gcm_prefs_reset_devices_idle_cb, NULL);
+}
+
+/**
  * main:
  **/
 int
@@ -1040,6 +1100,7 @@ main (int argc, char **argv)
 	guint xid = 0;
 	GError *error = NULL;
 	GMainLoop *loop;
+	gboolean ret;
 	GtkTreeSelection *selection;
 	const gchar *subsystems[] = {"usb", NULL};
 	GtkWidget *info_bar_label;
@@ -1142,6 +1203,25 @@ main (int argc, char **argv)
 	g_signal_connect (G_OBJECT (widget), "changed",
 			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), NULL);
 
+	/* setup rendering lists */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_rendering_display"));
+	gcm_prefs_set_combo_simple_text (widget);
+	gtk_widget_set_sensitive (widget, FALSE);
+//	g_signal_connect (G_OBJECT (widget), "changed",
+//			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), NULL);
+	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), "Perceptual");
+	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
+
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_rendering_softproof"));
+	gcm_prefs_set_combo_simple_text (widget);
+	gtk_widget_set_sensitive (widget, FALSE);
+//	g_signal_connect (G_OBJECT (widget), "changed",
+//			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), NULL);
+	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), "Perceptual");
+	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
+
+
+
 	/* set ranges */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
 	gtk_range_set_range (GTK_RANGE (widget), 0.1f, 5.0f);
@@ -1204,6 +1284,25 @@ main (int argc, char **argv)
 	g_signal_connect (widget, "value-changed",
 			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
 
+	/* setup defaults */
+	gconf_client = gconf_client_get_default ();
+	ret = gconf_client_get_bool (gconf_client, "/apps/gnome-color-manager/global_display_correction", NULL);
+	if (ret) {
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_global"));
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
+	} else {
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_atom"));
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
+	}
+
+	/* now connect radiobuttons */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_global"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_prefs_radio_cb), NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_atom"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_prefs_radio_cb), NULL);
+
 	/* do all this after the window has been set up */
 	g_idle_add (gcm_prefs_startup_idle_cb, NULL);
 
@@ -1219,6 +1318,8 @@ out:
 		gnome_rr_screen_destroy (rr_screen);
 	if (client != NULL)
 		g_object_unref (client);
+	if (gconf_client != NULL)
+		g_object_unref (gconf_client);
 	if (builder != NULL)
 		g_object_unref (builder);
 	if (profiles_array != NULL)

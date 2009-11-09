@@ -221,6 +221,51 @@ out:
 }
 
 /**
+ * gcm_xserver_remove_root_window_profile:
+ * @xserver: a valid %GcmXserver instance
+ * @error: a %GError that is set in the result of an error, or %NULL
+ * Return value: %TRUE for success.
+ *
+ * Removes the ICC profile data from the XServer.
+ **/
+gboolean
+gcm_xserver_remove_root_window_profile (GcmXserver *xserver, GError **error)
+{
+	const gchar *atom_name;
+	Atom atom = None;
+	gint rc;
+	gboolean ret = TRUE;
+	GcmXserverPrivate *priv = xserver->priv;
+
+	g_return_val_if_fail (GCM_IS_XSERVER (xserver), FALSE);
+
+	egg_debug ("removing root window ICC profile atom");
+
+	/* get the atom name */
+	atom_name = "_ICC_PROFILE";
+
+	/* get the value */
+	gdk_error_trap_push ();
+	atom = gdk_x11_get_xatom_by_name_for_display (priv->display_gdk, atom_name);
+	rc = XDeleteProperty(priv->display, priv->window, atom);
+	gdk_error_trap_pop ();
+
+	/* this fails with BadRequest if the atom was not set */
+	if (rc == BadRequest)
+		rc = Success;
+
+	/* did the call fail */
+	if (rc != Success) {
+		ret = FALSE;
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to delete %s root window atom with rc %i", atom_name, rc);
+		goto out;
+	}
+out:
+	return ret;
+}
+
+/**
  * gcm_xserver_get_output_profile_data:
  *
  * @xserver: a valid %GcmXserver instance
@@ -393,6 +438,61 @@ gcm_xserver_set_output_profile_data (GcmXserver *xserver, const gchar *output_na
 	if (rc != Success) {
 		if (error != NULL)
 			*error = g_error_new (1, 0, "failed to set output %s atom with rc %i", atom_name, rc);
+		goto out;
+	}
+
+	/* success */
+	ret = TRUE;
+out:
+	if (resources != NULL)
+		XRRFreeScreenResources (resources);
+	return ret;
+}
+
+/**
+ * gcm_xserver_remove_output_profile:
+ * @xserver: a valid %GcmXserver instance
+ * @output_name: the output name, e.g. "LVDS1"
+ * @error: a %GError that is set in the result of an error, or %NULL
+ * Return value: %TRUE for success.
+ *
+ * Sets the ICC profile data to the specified output.
+ **/
+gboolean
+gcm_xserver_remove_output_profile (GcmXserver *xserver, const gchar *output_name, GError **error)
+{
+	gboolean ret = FALSE;
+	const gchar *atom_name;
+	gint rc;
+	gint i;
+	Atom atom = None;
+	XRROutputInfo *output;
+	XRRScreenResources *resources = NULL;
+	GcmXserverPrivate *priv = xserver->priv;
+
+	g_return_val_if_fail (GCM_IS_XSERVER (xserver), FALSE);
+
+	/* get the atom name */
+	atom_name = "_ICC_PROFILE";
+
+	/* get the value */
+	gdk_error_trap_push ();
+	atom = gdk_x11_get_xatom_by_name_for_display (priv->display_gdk, atom_name);
+	resources = XRRGetScreenResources (priv->display, priv->window);
+	for (i = 0; i < resources->noutput; ++i) {
+		output = XRRGetOutputInfo (priv->display, resources, resources->outputs[i]);
+		if (g_strcmp0 (output->name, output_name) == 0) {
+			egg_debug ("found %s, removing atom", output_name);
+			XRRDeleteOutputProperty (priv->display, resources->outputs[i], atom);
+		}
+		XRRFreeOutputInfo (output);
+	}
+	rc = gdk_error_trap_pop ();
+
+	/* did the call fail */
+	if (rc != Success) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "failed to remove output %s atom with rc %i", atom_name, rc);
 		goto out;
 	}
 

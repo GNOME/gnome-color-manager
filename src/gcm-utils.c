@@ -27,6 +27,7 @@
 #include <libgnomeui/gnome-rr.h>
 #include <X11/extensions/Xrandr.h>
 #include <X11/extensions/xf86vmode.h>
+#include <gconf/gconf-client.h>
 
 #include "gcm-utils.h"
 #include "gcm-clut.h"
@@ -225,8 +226,14 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	gchar *output_name;
 	gchar *id = NULL;
 	guint size;
+	gboolean use_global;
+	gboolean leftmost_screen = FALSE;
 	GcmDeviceType type;
 	GnomeRRScreen *rr_screen = NULL;
+	GConfClient *gconf_client = NULL;
+
+	/* use gconf to decide to set LUT or set ATOMs */
+	gconf_client = gconf_client_get_default ();
 
 	/* get details about the device */
 	g_object_get (device,
@@ -265,51 +272,81 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 		goto out;
 	}
 
+	/* get gamma table size */
 	size = gcm_utils_get_gamma_size (crtc, error);
 	if (size == 0)
 		goto out;
 
 	/* create CLUT */
 	clut = gcm_clut_new ();
-	g_object_set (clut,
-		      "profile", profile,
-		      "gamma", gamma,
-		      "brightness", brightness,
-		      "contrast", contrast,
-		      "size", size,
-		      NULL);
 
-	/* load */
-	ret = gcm_clut_load_from_profile (clut, error);
-	if (!ret)
-		goto out;
+	/* only set the CLUT if we're not seting the atom */
+	use_global = gconf_client_get_bool (gconf_client, "/apps/gnome-color-manager/global_display_correction", NULL);
+	if (use_global) {
+		g_object_set (clut,
+			      "profile", profile,
+			      "gamma", gamma,
+			      "brightness", brightness,
+			      "contrast", contrast,
+			      "size", size,
+			      NULL);
+
+		/* load this new profile */
+		ret = gcm_clut_load_from_profile (clut, error);
+		if (!ret)
+			goto out;
+	} else {
+		/* we're using a dummy clut */
+		g_object_set (clut,
+			      "size", size,
+			      NULL);
+	}
 
 	/* actually set the gamma */
 	ret = gcm_utils_set_gamma_for_crtc (crtc, clut, error);
 	if (!ret)
 		goto out;
 
-	/* no profile to set */
-	if (profile == NULL)
-		goto out;
-
-	/* set the per-output profile atoms */
+	/* set per output and per-screen atoms */
 	xserver = gcm_xserver_new ();
-	ret = gcm_xserver_set_output_profile (xserver, output_name, profile, error);
-	if (!ret)
-		goto out;
 
 	/* is the monitor our primary monitor */
 	gnome_rr_output_get_position (output, &x, &y);
-	if (x == 0 && y == 0 && profile != NULL) {
-		ret = gcm_xserver_set_root_window_profile (xserver, profile, error);
+	leftmost_screen = (x == 0 && y == 0);
+
+	/* either remove the atoms or set them */
+	if (use_global || profile == NULL) {
+
+		/* remove the output atom if there's nothing to show */
+		ret = gcm_xserver_remove_output_profile (xserver, output_name, error);
 		if (!ret)
 			goto out;
+
+		/* primary screen */
+		if (leftmost_screen) {
+			ret = gcm_xserver_remove_root_window_profile (xserver, error);
+			if (!ret)
+				goto out;
+		}
+	} else {
+		/* set the per-output and per screen profile atoms */
+		ret = gcm_xserver_set_output_profile (xserver, output_name, profile, error);
+		if (!ret)
+			goto out;
+
+		/* primary screen */
+		if (leftmost_screen) {
+			ret = gcm_xserver_set_root_window_profile (xserver, profile, error);
+			if (!ret)
+				goto out;
+		}
 	}
 out:
 	g_free (id);
 	g_free (profile);
 	g_free (output_name);
+	if (gconf_client != NULL)
+		g_object_unref (gconf_client);
 	if (rr_screen != NULL)
 		gnome_rr_screen_destroy (rr_screen);
 	if (clut != NULL)

@@ -69,6 +69,8 @@ gboolean	 gcm_xserver_set_root_window_profile_data	(GcmXserver		*xserver,
 gboolean	 gcm_xserver_set_root_window_profile		(GcmXserver		*xserver,
 								 const gchar		*filename,
 								 GError			**error);
+gboolean	 gcm_xserver_remove_root_window_profile		(GcmXserver		*xserver,
+								 GError			**error);
 
 /* per output */
 gboolean	 gcm_xserver_get_output_profile_data		(GcmXserver		*xserver,
@@ -84,6 +86,9 @@ gboolean	 gcm_xserver_set_output_profile_data		(GcmXserver		*xserver,
 gboolean	 gcm_xserver_set_output_profile			(GcmXserver		*xserver,
 								 const gchar		*output_name,
 								 const gchar		*filename,
+								 GError			**error);
+gboolean	 gcm_xserver_remove_output_profile		(GcmXserver		*xserver,
+								 const gchar		*output_name,
 								 GError			**error);
 
 G_END_DECLS

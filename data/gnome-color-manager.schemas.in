@@ -17,6 +17,18 @@
       </locale>
     </schema>
 
+    <schema>
+      <key>/schemas/apps/gnome-color-manager/global_display_correction</key>
+      <applyto>/apps/gnome-color-manager/global_display_correction</applyto>
+      <owner>gnome-color-manager</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>If the display should be globally corrected or left to applications.</short>
+        <long>If set to TRUE then the video LUT is set with the display profile and applications will have nothing to read from __ICC_PROFILE</long>
+      </locale>
+    </schema>
+
   </schemalist>
 </gconfschemafile>
 
