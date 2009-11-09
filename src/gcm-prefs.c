@@ -650,6 +650,8 @@ gcm_prefs_add_profiles (GtkWidget *widget)
 	profiles_array = gcm_utils_get_profile_filenames ();
 	for (i=0; i<profiles_array->len; i++) {
 		filename = g_ptr_array_index (profiles_array, i);
+
+		/* parse the profile name */
 		profile = gcm_profile_new ();
 		ret = gcm_profile_parse (profile, filename, &error);
 		if (!ret) {
@@ -658,9 +660,19 @@ gcm_prefs_add_profiles (GtkWidget *widget)
 			g_object_unref (profile);
 			continue;
 		}
+
+		/* get text to use in the combobox */
 		g_object_get (profile,
 			      "description", &displayname,
 			      NULL);
+
+		/* there's nothing sensible to display */
+		if (displayname == NULL || displayname[0] == '\0') {
+			g_free (displayname);
+			displayname = g_path_get_basename (filename);
+		}
+
+		/* add the entry */
 		gtk_combo_box_append_text (GTK_COMBO_BOX (widget), displayname);
 		g_free (displayname);
 		g_object_unref (profile);
