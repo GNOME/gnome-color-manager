@@ -41,6 +41,7 @@ static void     gcm_profile_finalize	(GObject     *object);
 #define GCM_PROFILE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_PROFILE, GcmProfilePrivate))
 
 #define GCM_HEADER			0x00
+#define GCM_TYPE			0x0c
 #define GCM_SIGNATURE			0x24
 #define GCM_NUMTAGS			0x80
 #define GCM_BODY			0x84
@@ -73,6 +74,14 @@ static void     gcm_profile_finalize	(GObject     *object);
 #define GCM_TRC_TYPE_CURVE			0x63757276
 #define GCM_TRC_TYPE_PARAMETRIC_CURVE		0x70617261
 #define	GCM_TAG_ID_COLORANT_TABLE		0x636C7274
+
+#define GCM_PROFILE_CLASS_INPUT_DEVICE		0x73636e72
+#define GCM_PROFILE_CLASS_DISPLAY_DEVICE	0x6d6e7472
+#define GCM_PROFILE_CLASS_OUTPUT_DEVICE		0x70727472
+#define GCM_PROFILE_CLASS_DEVICELINK		0x6c696e6b
+#define GCM_PROFILE_CLASS_COLORSPACE_CONVERSION	0x73706163
+#define GCM_PROFILE_CLASS_ABSTRACT		0x61627374
+#define GCM_PROFILE_CLASS_NAMED_COLOUR		0x6e6d636c
 
 #define GCM_TRC_SIZE			0x08
 #define GCM_TRC_DATA			0x0c
@@ -109,6 +118,7 @@ static void     gcm_profile_finalize	(GObject     *object);
 struct _GcmProfilePrivate
 {
 	gboolean			 loaded;
+	guint				 profile_type;
 	gchar				*description;
 	gchar				*copyright;
 	gchar				*vendor;
@@ -131,6 +141,7 @@ enum {
 	PROP_COPYRIGHT,
 	PROP_VENDOR,
 	PROP_DESCRIPTION,
+	PROP_TYPE,
 	PROP_LAST
 };
 
@@ -491,6 +502,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 	guint tag_size;
 	guint tag_offset;
 	gchar *signature;
+	guint32 profile_type;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
@@ -519,6 +531,34 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 			*error = g_error_new (1, 0, "not an ICC profile, signature is '%s', expecting 'acsp'", signature);
 		g_free (signature);
 		goto out;
+	}
+
+	/* get the profile type */
+	profile_type = gcm_parser_unencode_32 (data, GCM_TYPE);
+	switch (profile_type) {
+	case GCM_PROFILE_CLASS_INPUT_DEVICE:
+		profile->priv->profile_type = GCM_PROFILE_TYPE_INPUT_DEVICE;
+		break;
+	case GCM_PROFILE_CLASS_DISPLAY_DEVICE:
+		profile->priv->profile_type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
+		break;
+	case GCM_PROFILE_CLASS_OUTPUT_DEVICE:
+		profile->priv->profile_type = GCM_PROFILE_TYPE_OUTPUT_DEVICE;
+		break;
+	case GCM_PROFILE_CLASS_DEVICELINK:
+		profile->priv->profile_type = GCM_PROFILE_TYPE_DEVICELINK;
+		break;
+	case GCM_PROFILE_CLASS_COLORSPACE_CONVERSION:
+		profile->priv->profile_type = GCM_PROFILE_TYPE_COLORSPACE_CONVERSION;
+		break;
+	case GCM_PROFILE_CLASS_ABSTRACT:
+		profile->priv->profile_type = GCM_PROFILE_TYPE_ABSTRACT;
+		break;
+	case GCM_PROFILE_CLASS_NAMED_COLOUR:
+		profile->priv->profile_type = GCM_PROFILE_TYPE_NAMED_COLOUR;
+		break;
+	default:
+		profile->priv->profile_type = GCM_PROFILE_TYPE_UNKNOWN;
 	}
 
 	/* get the number of tags in the file */
@@ -825,6 +865,9 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_DESCRIPTION:
 		g_value_set_string (value, priv->description);
 		break;
+	case PROP_TYPE:
+		g_value_set_uint (value, priv->profile_type);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -880,6 +923,14 @@ gcm_profile_class_init (GcmProfileClass *klass)
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_DESCRIPTION, pspec);
 
+	/**
+	 * GcmProfile:type:
+	 */
+	pspec = g_param_spec_uint ("type", NULL, NULL,
+				   0, G_MAXUINT, 0,
+				   G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_TYPE, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmProfilePrivate));
 }
 
@@ -894,6 +945,7 @@ gcm_profile_init (GcmProfile *profile)
 	profile->priv->mlut_data = NULL;
 	profile->priv->trc_data = NULL;
 	profile->priv->adobe_gamma_workaround = FALSE;
+	profile->priv->profile_type = GCM_PROFILE_TYPE_UNKNOWN;
 }
 
 /**

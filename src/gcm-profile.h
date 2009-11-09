@@ -55,6 +55,17 @@ struct _GcmProfileClass
 	void (*_gcm_reserved5) (void);
 };
 
+typedef enum {
+	GCM_PROFILE_TYPE_INPUT_DEVICE,
+	GCM_PROFILE_TYPE_DISPLAY_DEVICE,
+	GCM_PROFILE_TYPE_OUTPUT_DEVICE,
+	GCM_PROFILE_TYPE_DEVICELINK,
+	GCM_PROFILE_TYPE_COLORSPACE_CONVERSION,
+	GCM_PROFILE_TYPE_ABSTRACT,
+	GCM_PROFILE_TYPE_NAMED_COLOUR,
+	GCM_PROFILE_TYPE_UNKNOWN
+} GcmProfileType;
+
 GType		 gcm_profile_get_type		  	(void);
 GcmProfile	*gcm_profile_new			(void);
 gboolean	 gcm_profile_parse			(GcmProfile	*profile,
