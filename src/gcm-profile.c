@@ -472,6 +472,7 @@ gcm_parser_load_icc_trc (GcmProfile *profile, const gchar *data, gsize offset, g
 	} else if (type == GCM_TRC_TYPE_PARAMETRIC_CURVE) {
 //		ret = gcm_parser_load_icc_trc_parametric_curve (profile, data, offset, color);
 		egg_warning ("contains a parametric curve, FIXME");
+		ret = TRUE;
 	}
 	return ret;
 }
