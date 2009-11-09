@@ -683,6 +683,44 @@ gcm_prefs_add_profiles (GtkWidget *widget)
 }
 
 /**
+ * gcm_prefs_profile_type_to_text:
+ **/
+static gchar *
+gcm_prefs_profile_type_to_text (GcmProfileType type)
+{
+	if (type == GCM_PROFILE_TYPE_INPUT_DEVICE) {
+		/* TRANSLATORS: this the ICC profile type */
+		return _("Input device");
+	}
+	if (type == GCM_PROFILE_TYPE_DISPLAY_DEVICE) {
+		/* TRANSLATORS: this the ICC profile type */
+		return _("Display device");
+	}
+	if (type == GCM_PROFILE_TYPE_OUTPUT_DEVICE) {
+		/* TRANSLATORS: this the ICC profile type */
+		return _("Output device");
+	}
+	if (type == GCM_PROFILE_TYPE_DEVICELINK) {
+		/* TRANSLATORS: this the ICC profile type */
+		return _("Devicelink");
+	}
+	if (type == GCM_PROFILE_TYPE_COLORSPACE_CONVERSION) {
+		/* TRANSLATORS: this the ICC profile type */
+		return _("Colorspace conversion");
+	}
+	if (type == GCM_PROFILE_TYPE_ABSTRACT) {
+		/* TRANSLATORS: this the ICC profile type */
+		return _("Abstract");
+	}
+	if (type == GCM_PROFILE_TYPE_NAMED_COLOUR) {
+		/* TRANSLATORS: this the ICC profile type */
+		return _("Named color");
+	}
+	/* TRANSLATORS: this the ICC profile type */
+	return _("Unknown");
+}
+
+/**
  * gcm_prefs_profile_combo_changed_cb:
  **/
 static void
@@ -698,6 +736,8 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	GcmProfile *profile = NULL;
 	gboolean changed;
 	GcmDeviceType type;
+	GcmProfileType profile_type = GCM_PROFILE_TYPE_UNKNOWN;
+	const gchar *profile_type_text;
 
 	active = gtk_combo_box_get_active (GTK_COMBO_BOX(widget));
 	egg_debug ("now %i", active);
@@ -737,7 +777,23 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 		g_object_get (profile,
 			      "copyright", &copyright,
 			      "vendor", &vendor,
+			      "type", &profile_type,
 			      NULL);
+	}
+
+	/* set type */
+	if (profile_type == GCM_PROFILE_TYPE_UNKNOWN) {
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_type"));
+		gtk_widget_hide (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_type"));
+		gtk_widget_hide (widget);
+	} else {
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_type"));
+		gtk_widget_show (widget);
+		profile_type_text = gcm_prefs_profile_type_to_text (profile_type);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_type"));
+		gtk_label_set_label (GTK_LABEL (widget), profile_type_text);
+		gtk_widget_show (widget);
 	}
 
 	/* set new descriptions */
@@ -769,7 +825,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* set new descriptions */
-	if (copyright == NULL && vendor == NULL) {
+	if (copyright == NULL && vendor == NULL && profile_type == GCM_PROFILE_TYPE_UNKNOWN) {
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "table_details"));
 		gtk_widget_hide (widget);
 	} else {
