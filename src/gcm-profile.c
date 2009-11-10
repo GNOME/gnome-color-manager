@@ -30,6 +30,7 @@
 #include "config.h"
 
 #include <glib-object.h>
+#include <glib/gi18n.h>
 #include <math.h>
 
 #include "egg-debug.h"
@@ -505,6 +506,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 	guint tag_offset;
 	gchar *signature;
 	guint32 profile_type;
+	GcmProfilePrivate *priv = profile->priv;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
@@ -631,6 +633,17 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 				*error = g_error_new (1, 0, "failed to load trc");
 				goto out;
 			}
+		}
+	}
+
+	/* there's nothing sensible to display */
+	if (priv->description == NULL || priv->description[0] == '\0') {
+		g_free (priv->description);
+		if (priv->filename != NULL) {
+			priv->description = g_path_get_basename (priv->filename);
+		} else {
+			/* TRANSLATORS: this is where the ICC profile has no description */
+			priv->description = _("Missing description");
 		}
 	}
 
