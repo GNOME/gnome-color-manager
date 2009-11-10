@@ -579,7 +579,8 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		egg_debug ("overriding device presence %i with TRUE", ret);
 		ret = TRUE;
 #endif
-	} else if (type == GCM_DEVICE_TYPE_SCANNER) {
+	} else if (type == GCM_DEVICE_TYPE_SCANNER ||
+		   type == GCM_DEVICE_TYPE_CAMERA) {
 
 		/* find if ArgyllCMS is installed */
 		ret = gcm_prefs_has_argyllcms_installed ();

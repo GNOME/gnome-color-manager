@@ -241,6 +241,13 @@ gcm_client_gudev_add (GcmClient *client, GUdevDevice *udev_device)
 		egg_debug ("found scanner device: %s", g_udev_device_get_sysfs_path (udev_device));
 		gcm_client_gudev_add_type (client, udev_device, GCM_DEVICE_TYPE_SCANNER);
 	}
+
+	/* only matches cameras with gphoto drivers */
+	value = g_udev_device_get_property (udev_device, "ID_GPHOTO2");
+	if (value != NULL) {
+		egg_debug ("found camera device: %s", g_udev_device_get_sysfs_path (udev_device));
+		gcm_client_gudev_add_type (client, udev_device, GCM_DEVICE_TYPE_CAMERA);
+	}
 }
 
 /**
