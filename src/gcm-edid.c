@@ -55,6 +55,8 @@ struct _GcmEdidPrivate
 	gchar				*serial_number;
 	gchar				*ascii_string;
 	gchar				*pnp_id;
+	guint				 width;
+	guint				 height;
 	gfloat				 gamma;
 	GcmTables			*tables;
 };
@@ -67,6 +69,8 @@ enum {
 	PROP_ASCII_STRING,
 	PROP_GAMMA,
 	PROP_PNP_ID,
+	PROP_WIDTH,
+	PROP_HEIGHT,
 	PROP_LAST
 };
 
@@ -74,6 +78,7 @@ G_DEFINE_TYPE (GcmEdid, gcm_edid, G_TYPE_OBJECT)
 
 #define GCM_EDID_OFFSET_GAMMA				0x17
 #define GCM_EDID_OFFSET_PNPID				0x08
+#define GCM_EDID_OFFSET_SIZE				0x15
 #define GCM_EDID_OFFSET_DATA_BLOCKS			0x36
 #define GCM_EDID_OFFSET_LAST_BLOCK			0x6c
 
@@ -124,6 +129,16 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 	priv->pnp_id[1] = 'A' + ((data[GCM_EDID_OFFSET_PNPID+0] & 0x3) * 8) + ((data[GCM_EDID_OFFSET_PNPID+1] & 0xe0) / 32) - 1;
 	priv->pnp_id[2] = 'A' + (data[GCM_EDID_OFFSET_PNPID+1] & 0x1f) - 1;
 	egg_debug ("PNPID: %s", priv->pnp_id);
+
+	/* get the size */
+	priv->width = data[GCM_EDID_OFFSET_SIZE+0];
+	priv->height = data[GCM_EDID_OFFSET_SIZE+1];
+
+	/* we don't care about aspect */
+	if (priv->width == 0 || priv->height == 0) {
+		priv->width = 0;
+		priv->height = 0;
+	}
 
 	/* get gamma */
 	if (data[GCM_EDID_OFFSET_GAMMA] == 0xff) {
@@ -206,6 +221,12 @@ gcm_edid_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 	case PROP_PNP_ID:
 		g_value_set_string (value, priv->pnp_id);
 		break;
+	case PROP_WIDTH:
+		g_value_set_uint (value, priv->width);
+		break;
+	case PROP_HEIGHT:
+		g_value_set_uint (value, priv->height);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -284,6 +305,22 @@ gcm_edid_class_init (GcmEdidClass *klass)
 				     NULL,
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_PNP_ID, pspec);
+
+	/**
+	 * GcmEdid:width:
+	 */
+	pspec = g_param_spec_uint ("width", "in cm", NULL,
+				   0, G_MAXUINT, 0,
+				   G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_WIDTH, pspec);
+
+	/**
+	 * GcmEdid:height:
+	 */
+	pspec = g_param_spec_uint ("height", "in cm", NULL,
+				   0, G_MAXUINT, 0,
+				   G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_HEIGHT, pspec);
 
 	g_type_class_add_private (klass, sizeof (GcmEdidPrivate));
 }
