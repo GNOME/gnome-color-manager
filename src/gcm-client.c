@@ -29,9 +29,11 @@
 
 #include "config.h"
 
+#include <glib/gi18n.h>
 #include <glib-object.h>
 #include <gudev/gudev.h>
 #include <libgnomeui/gnome-rr.h>
+#include <math.h>
 
 #include "gcm-client.h"
 #include "gcm-utils.h"
@@ -286,18 +288,25 @@ gcm_client_coldplug_devices_usb (GcmClient *client, GError **error)
 }
 
 /**
- * gcm_utils_get_output_name:
+ * gcm_client_get_output_name:
  *
  * Return value: the output name, free with g_free().
  **/
 static gchar *
-gcm_utils_get_output_name (GnomeRROutput *output)
+gcm_client_get_output_name (GnomeRROutput *output)
 {
 	const guint8 *data;
 	const gchar *output_name;
 	gchar *name = NULL;
+	gchar *vendor = NULL;
+	GString *string;
 	GcmEdid *edid = NULL;
 	gboolean ret;
+	guint width;
+	guint height;
+
+	/* blank */
+	string = g_string_new ("");
 
 	/* if nothing connected then fall back to the connector name */
 	ret = gnome_rr_output_is_connected (output);
@@ -317,27 +326,141 @@ gcm_utils_get_output_name (GnomeRROutput *output)
 	}
 
 	/* find the best option */
-	g_object_get (edid, "monitor-name", &name, NULL);
+	g_object_get (edid,
+		      "width", &width,
+		      "height", &height,
+		      NULL);
+
+	/* find the best option */
+	g_object_get (edid,
+		      "monitor-name", &name,
+		      "vendor-name", &vendor,
+		      NULL);
+
+	/* prepend vendor if available */
+	if (vendor != NULL && name != NULL)
+		g_string_append_printf (string, "%s - %s", vendor, name);
+	else if (name != NULL)
+		g_string_append_printf (string, "%s", name);
+
+out:
+	/* fallback to the output name */
+	if (string->len == 0) {
+		output_name = gnome_rr_output_get_name (output);
+		ret = gcm_utils_output_is_lcd_internal (output_name);
+		if (ret) {
+			/* TRANSLATORS: this is the name of the internal panel */
+			output_name = _("Laptop LCD");
+		}
+		g_string_append (string, output_name);
+	}
+
+	/* append size if available */
+	if (width != 0 && height != 0) {
+		guint diag;
+
+		/* calculate the dialgonal using Pythagorean theorem */
+		diag = sqrtf ((powf (width,2)) + (powf (height, 2)));
+
+		/* print it in inches */
+		g_string_append_printf (string, " %i\"", (guint) ((gfloat) diag * 0.393700787f));
+	}
+
+	g_free (name);
+	g_free (vendor);
+	if (edid != NULL)
+		g_object_unref (edid);
+	return g_string_free (string, FALSE);
+}
+
+/**
+ * gcm_client_get_output_id:
+ *
+ * Return value: the output name, free with g_free().
+ **/
+static gchar *
+gcm_client_get_output_id (GnomeRROutput *output)
+{
+	const guint8 *data;
+	const gchar *output_name;
+	gchar *name = NULL;
+	gchar *vendor = NULL;
+	GString *string;
+	GcmEdid *edid = NULL;
+	gboolean ret;
+	guint width;
+	guint height;
+
+	/* blank */
+	string = g_string_new ("");
+
+	/* if nothing connected then fall back to the connector name */
+	ret = gnome_rr_output_is_connected (output);
+	if (!ret)
+		goto out;
+
+	/* parse the EDID to get a crtc-specific name, not an output specific name */
+	data = gnome_rr_output_get_edid_data (output);
+	if (data == NULL)
+		goto out;
+
+	edid = gcm_edid_new ();
+	ret = gcm_edid_parse (edid, data, NULL);
+	if (!ret) {
+		egg_warning ("failed to parse edid");
+		goto out;
+	}
+
+	/* find the best option */
+	g_object_get (edid,
+		      "width", &width,
+		      "height", &height,
+		      NULL);
+
+	/* find the best option */
+	g_object_get (edid,
+		      "monitor-name", &name,
+		      "vendor-name", &vendor,
+		      NULL);
+
+	/* find the best option */
 	if (name == NULL)
 		g_object_get (edid, "ascii-string", &name, NULL);
 	if (name == NULL)
 		g_object_get (edid, "serial-number", &name, NULL);
-	if (name == NULL)
-		g_object_get (edid, "vendor-name", &name, NULL);
+
+	/* prepend vendor if available */
+	if (vendor != NULL && name != NULL)
+		g_string_append_printf (string, "%s - %s", vendor, name);
+	else if (name != NULL)
+		g_string_append_printf (string, "%s", name);
 
 out:
 	/* fallback to the output name */
-	if (name == NULL) {
+	if (string->len == 0) {
 		output_name = gnome_rr_output_get_name (output);
 		ret = gcm_utils_output_is_lcd_internal (output_name);
 		if (ret)
-			output_name = "Internal LCD";
-		name = g_strdup (output_name);
+			output_name = "LVDS";
+		g_string_append (string, output_name);
 	}
 
+	/* append size if available */
+	if (width != 0 && height != 0) {
+		guint diag;
+
+		/* calculate the dialgonal using Pythagorean theorem */
+		diag = sqrtf ((powf (width,2)) + (powf (height, 2)));
+
+		/* print it in inches */
+		g_string_append_printf (string, " %i", (guint) ((gfloat) diag * 0.393700787f));
+	}
+
+	g_free (name);
+	g_free (vendor);
 	if (edid != NULL)
 		g_object_unref (edid);
-	return name;
+	return g_string_free (string, FALSE);
 }
 
 /**
@@ -350,7 +473,7 @@ gcm_client_get_id_for_xrandr_device (GnomeRROutput *output)
 	gchar *name;
 
 	/* get id */
-	name = gcm_utils_get_output_name (output);
+	name = gcm_client_get_output_id (output);
 	id = g_strdup_printf ("xrandr_%s", name);
 
 	/* replace unsafe chars */
@@ -394,7 +517,7 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 
 	/* add new device */
 	device = gcm_device_new ();
-	title = gcm_utils_get_output_name (output);
+	title = gcm_client_get_output_name (output);
 	output_name = gnome_rr_output_get_name (output);
 	g_object_set (device,
 		      "type", GCM_DEVICE_TYPE_DISPLAY,
