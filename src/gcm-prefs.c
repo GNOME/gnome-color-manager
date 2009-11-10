@@ -499,7 +499,7 @@ gcm_prefs_add_devices_columns (GtkTreeView *treeview)
 	column = gtk_tree_view_column_new_with_attributes ("", renderer,
 							   "markup", GPM_DEVICES_COLUMN_TITLE, NULL);
 	gtk_tree_view_column_set_sort_column_id (column, GPM_DEVICES_COLUMN_TITLE);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store_devices), GPM_DEVICES_COLUMN_TITLE, GTK_SORT_ASCENDING);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store_devices), GPM_DEVICES_COLUMN_ID, GTK_SORT_ASCENDING);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
