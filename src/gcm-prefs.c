@@ -87,11 +87,11 @@ gcm_prefs_help_cb (GtkWidget *widget, gpointer data)
 /**
  * gcm_prefs_calibrate_display:
  **/
-static void
+static gboolean
 gcm_prefs_calibrate_display (GcmCalibrate *calib)
 {
 	GcmBrightness *brightness = NULL;
-	gboolean ret;
+	gboolean ret = FALSE;
 	GError *error = NULL;
 	gchar *output_name = NULL;
 	guint percentage = G_MAXUINT;
@@ -191,15 +191,148 @@ out:
 	if (brightness != NULL)
 		g_object_unref (brightness);
 	g_free (output_name);
+	return ret;
+}
+
+/**
+ * gcm_prefs_calibrate_scanner_get_scanned_profile:
+ **/
+static gchar *
+gcm_prefs_calibrate_scanner_get_scanned_profile (void)
+{
+	gchar *filename = NULL;
+	GtkWindow *window;
+	GtkWidget *dialog;
+	GtkFileFilter *filter;
+
+	/* create new dialog */
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	/* TRANSLATORS: dialog for file->open dialog */
+	dialog = gtk_file_chooser_dialog_new (_("Select scanned reference file"), window,
+					       GTK_FILE_CHOOSER_ACTION_OPEN,
+					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					      NULL);
+	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), "/tmp");
+	gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER(dialog), FALSE);
+
+	/* setup the filter */
+	filter = gtk_file_filter_new ();
+	gtk_file_filter_add_mime_type (filter, "image/tiff");
+	/* TRANSLATORS: filter name on the file->open dialog */
+	gtk_file_filter_set_name (filter, _("Supported images files"));
+	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
+	g_object_unref (filter);
+
+	/* did user choose file */
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(dialog));
+
+	/* we're done */
+	gtk_widget_destroy (dialog);
+
+	/* or NULL for missing */
+	return filename;
+}
+
+/**
+ * gcm_prefs_calibrate_scanner_get_reference_data:
+ **/
+static gchar *
+gcm_prefs_calibrate_scanner_get_reference_data (void)
+{
+	gchar *filename = NULL;
+	GtkWindow *window;
+	GtkWidget *dialog;
+	GtkFileFilter *filter;
+
+	/* create new dialog */
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	/* TRANSLATORS: dialog for file->open dialog */
+	dialog = gtk_file_chooser_dialog_new (_("Select CIE reference values file"), window,
+					       GTK_FILE_CHOOSER_ACTION_OPEN,
+					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					      NULL);
+	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), "/media");
+	gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER(dialog), FALSE);
+
+	/* setup the filter */
+	filter = gtk_file_filter_new ();
+	gtk_file_filter_add_pattern (filter, "*.txt");
+	gtk_file_filter_add_pattern (filter, "*.TXT");
+	/* TRANSLATORS: filter name on the file->open dialog */
+	gtk_file_filter_set_name (filter, _("CIE values"));
+	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
+	g_object_unref (filter);
+
+	/* did user choose file */
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(dialog));
+
+	/* we're done */
+	gtk_widget_destroy (dialog);
+
+	/* or NULL for missing */
+	return filename;
 }
 
 /**
  * gcm_prefs_calibrate_scanner:
  **/
-static void
+static gboolean
 gcm_prefs_calibrate_scanner (GcmCalibrate *calib)
 {
-	// TODO: add something!
+	gboolean ret;
+	GError *error = NULL;
+	gchar *scanned_image = NULL;
+	gchar *reference_data = NULL;
+
+	/* get scanned image */
+	scanned_image = gcm_prefs_calibrate_scanner_get_scanned_profile ();
+	if (scanned_image == NULL)
+		goto out;
+
+	/* get reference data */
+	reference_data = gcm_prefs_calibrate_scanner_get_reference_data ();
+	if (reference_data == NULL)
+		goto out;
+
+	/* set the calibration parameters */
+	g_object_set (calib,
+		      "filename-source", scanned_image,
+		      "filename-reference", reference_data,
+		      NULL);
+
+	/* step 1 */
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_SCANNER_COPY, &error);
+	if (!ret) {
+		egg_warning ("failed to calibrate: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* step 2 */
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_SCANNER_MEASURE, &error);
+	if (!ret) {
+		egg_warning ("failed to calibrate: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* step 3 */
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_SCANNER_GENERATE_PROFILE, &error);
+	if (!ret) {
+		egg_warning ("failed to calibrate: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+out:
+	g_free (scanned_image);
+	g_free (reference_data);
+	return ret;
 }
 
 /**

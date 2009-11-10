@@ -59,6 +59,8 @@ struct _GcmCalibratePrivate
 	gboolean			 is_crt;
 	guint				 display;
 	gchar				*output_name;
+	gchar				*filename_source;
+	gchar				*filename_reference;
 	gchar				*basename;
 	GMainLoop			*loop;
 	GtkWidget			*terminal;
@@ -74,6 +76,8 @@ enum {
 	PROP_IS_LCD,
 	PROP_IS_CRT,
 	PROP_OUTPUT_NAME,
+	PROP_FILENAME_SOURCE,
+	PROP_FILENAME_REFERENCE,
 	PROP_LAST
 };
 
@@ -664,6 +668,192 @@ out:
 }
 
 /**
+ * gcm_calibrate_scanner_copy:
+ **/
+static gboolean
+gcm_calibrate_scanner_copy (GcmCalibrate *calibrate, GError **error)
+{
+	gboolean ret;
+	gchar *scanner = NULL;
+	gchar *it8src = NULL;
+	gchar *it8ref = NULL;
+	GcmCalibratePrivate *priv = calibrate->priv;
+
+	/* TRANSLATORS: title, a profile is a ICC file */
+	gcm_calibrate_set_title (calibrate, _("Copying files"));
+	/* TRANSLATORS: dialog message */
+	gcm_calibrate_set_message (calibrate, _("Copying source image, chart data and CIE reference values."));
+
+	/* build filenames */
+	scanner = g_build_filename (GCM_CALIBRATE_TEMP_DIR, "scanner.tif", NULL);
+	it8src = g_build_filename (GCM_CALIBRATE_TEMP_DIR, "it8.cht", NULL);
+	it8ref = g_build_filename (GCM_CALIBRATE_TEMP_DIR, "it8ref.txt", NULL);
+
+	/* copy all files to /tmp as argyllcms doesn't cope well with paths */
+	ret = gcm_utils_mkdir_and_copy ("/usr/share/color/argyll/ref/it8.cht", scanner, error);
+	if (!ret)
+		goto out;
+	ret = gcm_utils_mkdir_and_copy (priv->filename_source, it8src, error);
+	if (!ret)
+		goto out;
+	ret = gcm_utils_mkdir_and_copy (priv->filename_reference, it8ref, error);
+	if (!ret)
+		goto out;
+out:
+	g_free (scanner);
+	g_free (it8src);
+	g_free (it8ref);
+	return ret;
+}
+
+/**
+ * gcm_calibrate_scanner_measure:
+ **/
+static gboolean
+gcm_calibrate_scanner_measure (GcmCalibrate *calibrate, GError **error)
+{
+	gboolean ret = TRUE;
+	GcmCalibratePrivate *priv = calibrate->priv;
+	gchar type;
+	gchar **argv = NULL;
+	GPtrArray *array = NULL;
+
+	/* get l-cd or c-rt */
+	type = gcm_calibrate_get_display_type (calibrate);
+
+	/* argument array */
+	array = g_ptr_array_new_with_free_func (g_free);
+
+	/* setup the command */
+	g_ptr_array_add (array, g_strdup ("-v"));
+	g_ptr_array_add (array, g_strdup ("scanner.tif"));
+	g_ptr_array_add (array, g_strdup ("it8.cht"));
+	g_ptr_array_add (array, g_strdup ("it8ref.txt"));
+	argv = gcm_utils_ptr_array_to_strv (array);
+	gcm_calibrate_debug_argv ("scanin", argv);
+
+	/* start up the command */
+	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), "scanin", argv, NULL, GCM_CALIBRATE_TEMP_DIR, FALSE, FALSE, FALSE);
+
+	/* TRANSLATORS: title, drawing means painting to the screen */
+	gcm_calibrate_set_title (calibrate, _("Measuring the patches"));
+	/* TRANSLATORS: dialog message */
+	gcm_calibrate_set_message (calibrate, _("Detecting the reference patches and measuring them."));
+
+	/* wait until finished */
+	g_main_loop_run (priv->loop);
+
+	/* get result */
+	if (priv->response == GTK_RESPONSE_CANCEL) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "calibration was cancelled");
+		ret = FALSE;
+		goto out;
+	}
+	if (priv->response == GTK_RESPONSE_REJECT) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "command failed to run successfully");
+		ret = FALSE;
+		goto out;
+	}
+out:
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	g_strfreev (argv);
+	return ret;
+}
+
+/**
+ * gcm_calibrate_scanner_generate_profile:
+ **/
+static gboolean
+gcm_calibrate_scanner_generate_profile (GcmCalibrate *calibrate, GError **error)
+{
+	gboolean ret = TRUE;
+	GcmCalibratePrivate *priv = calibrate->priv;
+	gchar **argv = NULL;
+	GDate *date;
+	gchar *manufacturer = NULL;
+	gchar *model = NULL;
+	gchar *description_tmp = NULL;
+	gchar *description = NULL;
+	gchar *copyright = NULL;
+	GPtrArray *array = NULL;
+
+	/* create date and set it to now */
+	date = g_date_new ();
+	g_date_set_time_t (date, time (NULL));
+
+	/* get model */
+	model = g_strdup ("Generic profile model");
+
+	/* get description */
+	description_tmp = g_strdup ("Generic profile description");
+
+        /* TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated" */
+	description = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", _("Custom"), description_tmp, date->year, date->month, date->day);
+
+	/* get manufacturer */
+	manufacturer = g_strdup ("Generic profile manufacturer");
+
+	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" */
+	copyright = g_strdup_printf ("%s %04i %s", _("Copyright (c)"), date->year, g_get_real_name ());
+
+	/* argument array */
+	array = g_ptr_array_new_with_free_func (g_free);
+
+	/* setup the command */
+	g_ptr_array_add (array, g_strdup ("-v"));
+	g_ptr_array_add (array, g_strdup_printf ("-A%s", manufacturer));
+	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
+	g_ptr_array_add (array, g_strdup_printf ("-D%s", description));
+	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
+	g_ptr_array_add (array, g_strdup ("-qm"));
+//	g_ptr_array_add (array, g_strdup ("-as"));
+	g_ptr_array_add (array, g_strdup ("scanner"));
+	argv = gcm_utils_ptr_array_to_strv (array);
+	gcm_calibrate_debug_argv ("colprof", argv);
+
+	/* start up the command */
+	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), "colprof", argv, NULL, GCM_CALIBRATE_TEMP_DIR, FALSE, FALSE, FALSE);
+
+	/* TRANSLATORS: title, a profile is a ICC file */
+	gcm_calibrate_set_title (calibrate, _("Generating the profile"));
+	/* TRANSLATORS: dialog message */
+	gcm_calibrate_set_message (calibrate, _("Generating the ICC color profile that can be used with this scanner."));
+
+	/* wait until finished */
+	g_main_loop_run (priv->loop);
+
+	/* get result */
+	if (priv->response == GTK_RESPONSE_CANCEL) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "calibration was cancelled");
+		ret = FALSE;
+		goto out;
+	}
+	if (priv->response == GTK_RESPONSE_REJECT) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "command failed to run successfully");
+		ret = FALSE;
+		goto out;
+	}
+out:
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	g_date_free (date);
+	g_free (manufacturer);
+	g_free (model);
+	g_free (description_tmp);
+	g_free (description);
+	g_free (copyright);
+	g_strfreev (argv);
+	return ret;
+}
+
+/**
  * gcm_calibrate_display:
  **/
 gboolean
@@ -694,6 +884,18 @@ gcm_calibrate_task (GcmCalibrate *calibrate, GcmCalibrateTask task, GError **err
 		ret = gcm_calibrate_display_generate_profile (calibrate, error);
 		goto out;
 	}
+	if (task == GCM_CALIBRATE_TASK_SCANNER_COPY) {
+		ret = gcm_calibrate_scanner_copy (calibrate, error);
+		goto out;
+	}
+	if (task == GCM_CALIBRATE_TASK_SCANNER_MEASURE) {
+		ret = gcm_calibrate_scanner_measure (calibrate, error);
+		goto out;
+	}
+	if (task == GCM_CALIBRATE_TASK_SCANNER_GENERATE_PROFILE) {
+		ret = gcm_calibrate_scanner_generate_profile (calibrate, error);
+		goto out;
+	}
 out:
 	return ret;
 }
@@ -710,14 +912,14 @@ gcm_calibrate_finish (GcmCalibrate *calibrate, GError **error)
 
 	/* remove all the temp files */
 	for (i=0; exts[i] != NULL; i++) {
-		filename = g_strdup_printf ("/tmp/%s.%s", calibrate->priv->basename, exts[i]);
+		filename = g_strdup_printf ("%s/%s.%s", GCM_CALIBRATE_TEMP_DIR, calibrate->priv->basename, exts[i]);
 		egg_debug ("removing %s", filename);
 		g_unlink (filename);
 		g_free (filename);
 	}
 
 	/* get the finished icc file */
-	filename = g_strdup_printf ("/tmp/%s.icc", calibrate->priv->basename);
+	filename = g_strdup_printf ("%s/%s.icc", GCM_CALIBRATE_TEMP_DIR, calibrate->priv->basename);
 
 	/* we never finished all the steps */
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
@@ -769,6 +971,12 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 		break;
 	case PROP_OUTPUT_NAME:
 		g_value_set_string (value, priv->output_name);
+		break;
+	case PROP_FILENAME_SOURCE:
+		g_value_set_string (value, priv->filename_source);
+		break;
+	case PROP_FILENAME_REFERENCE:
+		g_value_set_string (value, priv->filename_reference);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -851,6 +1059,14 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 		priv->output_name = g_strdup (g_value_get_string (value));
 		gcm_calibrate_guess_type (calibrate);
 		break;
+	case PROP_FILENAME_SOURCE:
+		g_free (priv->filename_source);
+		priv->filename_source = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_FILENAME_REFERENCE:
+		g_free (priv->filename_reference);
+		priv->filename_reference = g_strdup (g_value_get_string (value));
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -893,6 +1109,22 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_OUTPUT_NAME, pspec);
 
+	/**
+	 * GcmCalibrate:filename-source:
+	 */
+	pspec = g_param_spec_string ("filename-source", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_FILENAME_SOURCE, pspec);
+
+	/**
+	 * GcmCalibrate:filename-reference:
+	 */
+	pspec = g_param_spec_string ("filename-reference", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_FILENAME_REFERENCE, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmCalibratePrivate));
 }
 
@@ -909,6 +1141,8 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 
 	calibrate->priv = GCM_CALIBRATE_GET_PRIVATE (calibrate);
 	calibrate->priv->output_name = NULL;
+	calibrate->priv->filename_source = NULL;
+	calibrate->priv->filename_reference = NULL;
 	calibrate->priv->basename = NULL;
 	calibrate->priv->child_pid = -1;
 	calibrate->priv->loop = g_main_loop_new (NULL, FALSE);
@@ -978,6 +1212,8 @@ gcm_calibrate_finalize (GObject *object)
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
 	gtk_widget_hide (widget);
 
+	g_free (priv->filename_source);
+	g_free (priv->filename_reference);
 	g_free (priv->output_name);
 	g_free (priv->basename);
 	g_main_loop_unref (priv->loop);
