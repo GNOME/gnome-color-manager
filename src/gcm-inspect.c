@@ -99,11 +99,12 @@ gcm_inspect_show_x11_atoms (void)
 	if (!ret) {
 		egg_warning ("failed to get XServer profile data: %s", error->message);
 		g_error_free (error);
-		goto out;
+		/* non-fatal */
+		error = NULL;
+	} else {
+		/* TRANSLATORS: the root window of all the screens */
+		gcm_inspect_print_data_info (_("Root window profile (deprecated):"), data, length);
 	}
-
-	/* TRANSLATORS: the root window of all the screens */
-	gcm_inspect_print_data_info (_("Root window profile (deprecated):"), data, length);
 
 	/* get screen */
 	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
