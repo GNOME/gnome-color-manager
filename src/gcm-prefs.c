@@ -41,6 +41,7 @@ static GtkListStore *list_store_devices = NULL;
 static GcmDevice *current_device = NULL;
 static GnomeRRScreen *rr_screen = NULL;
 static GPtrArray *profiles_array = NULL;
+static GPtrArray *profiles_array_in_combo = NULL;
 static GUdevClient *client = NULL;
 static GcmClient *gcm_client = NULL;
 static gboolean setting_up_device = FALSE;
@@ -348,8 +349,9 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	GtkWindow *window;
 	gchar *filename = NULL;
 	guint i;
-	const gchar *name;
+	gchar *name;
 	gchar *destination = NULL;
+	GcmProfile *profile;
 
 	/* get the type */
 	g_object_get (current_device,
@@ -400,19 +402,40 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* find an existing profile of this name */
-	for (i=0; i<profiles_array->len; i++) {
-		name = g_ptr_array_index (profiles_array, i);
+	for (i=0; i<profiles_array_in_combo->len; i++) {
+		profile = g_ptr_array_index (profiles_array, i);
+		g_object_get (profile,
+			      "filename", &name,
+			      NULL);
 		if (g_strcmp0 (name, destination) == 0) {
 			egg_debug ("found existing profile: %s", destination);
+			g_free (name);
 			break;
 		}
+		g_free (name);
 	}
 
 	/* we didn't find an existing profile */
-	if (i == profiles_array->len) {
+	if (i == profiles_array_in_combo->len) {
 		egg_debug ("adding: %s", destination);
-		g_ptr_array_add (profiles_array, g_strdup (destination));
-		i = profiles_array->len - 1;
+
+		/* create a new instance */
+		profile = gcm_profile_new ();
+
+		/* parse the new file */
+		ret = gcm_profile_parse (profile, destination, &error);
+		if (!ret) {
+			egg_warning ("failed to calibrate: %s", error->message);
+			g_error_free (error);
+			g_object_unref (profile);
+			goto out;
+		}
+
+		/* add to arrays */
+		g_ptr_array_add (profiles_array, g_object_ref (profile));
+		g_ptr_array_add (profiles_array_in_combo, g_object_ref (profile));
+		i = profiles_array_in_combo->len - 1;
+		g_object_unref (profile);
 	}
 
 	/* set the new profile and save config */
@@ -601,6 +624,61 @@ out:
 }
 
 /**
+ * gcm_prefs_add_profiles_suitable_for_devices:
+ **/
+static void
+gcm_prefs_add_profiles_suitable_for_devices (GcmDeviceType type)
+{
+	GtkTreeModel *combo_model;
+	GtkWidget *widget;
+	guint i;
+	gchar *displayname;
+	GcmProfile *profile;
+	GcmProfileType profile_type;
+	GcmProfileType profile_type_tmp;
+
+	/* get the correct profile type for the device type */
+	switch (type) {
+	case GCM_DEVICE_TYPE_DISPLAY:
+		profile_type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
+		break;
+	case GCM_DEVICE_TYPE_CAMERA:
+	case GCM_DEVICE_TYPE_SCANNER:
+		profile_type = GCM_PROFILE_TYPE_INPUT_DEVICE;
+		break;
+	case GCM_DEVICE_TYPE_PRINTER:
+		profile_type = GCM_PROFILE_TYPE_OUTPUT_DEVICE;
+		break;
+	default:
+		egg_warning ("unknown type: %i", type);
+		profile_type = GCM_PROFILE_TYPE_UNKNOWN;
+	}
+
+	/* clear existing entries */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
+	combo_model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
+	gtk_list_store_clear (GTK_LIST_STORE (combo_model));
+	g_ptr_array_set_size (profiles_array_in_combo, 0);
+
+	/* add profiles of the right type */
+	for (i=0; i<profiles_array->len; i++) {
+		profile = g_ptr_array_index (profiles_array, i);
+		g_object_get (profile,
+			      "description", &displayname,
+			      "type", &profile_type_tmp,
+			      NULL);
+		if (profile_type_tmp == profile_type) {
+			g_ptr_array_add (profiles_array_in_combo, g_object_ref (profile));
+			gtk_combo_box_append_text (GTK_COMBO_BOX (widget), displayname);
+		}
+		g_free (displayname);
+	}
+
+	/* add a clear entry */
+	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("None"));
+}
+
+/**
  * gcm_prefs_devices_treeview_clicked_cb:
  **/
 static void
@@ -608,15 +686,17 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
-	gchar *profile = NULL;
+	GcmProfile *profile;
+	gchar *profile_filename = NULL;
 	GtkWidget *widget;
 	gfloat localgamma;
 	gfloat brightness;
 	gfloat contrast;
-	const gchar *filename;
+	gchar *filename;
 	guint i;
 	gchar *id;
 	GcmDeviceType type;
+	gboolean ret = FALSE;
 
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -629,7 +709,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 			    GPM_DEVICES_COLUMN_ID, &id,
 			    -1);
 
-	/* show transaction_id */
+	/* we have a new device */
 	egg_debug ("selected device is: %s", id);
 	if (current_device != NULL)
 		g_object_unref (current_device);
@@ -653,8 +733,11 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 		gtk_widget_set_sensitive (widget, TRUE);
 	}
 
+	/* add profiles of the right type */
+	gcm_prefs_add_profiles_suitable_for_devices (type);
+
 	g_object_get (current_device,
-		      "profile", &profile,
+		      "profile", &profile_filename,
 		      "gamma", &localgamma,
 		      "brightness", &brightness,
 		      "contrast", &contrast,
@@ -671,19 +754,30 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 	setting_up_device = FALSE;
 
 	/* set correct profile */
-	if (profile == NULL) {
+	if (profile_filename == NULL) {
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), profiles_array->len);
 	} else {
-		profiles_array = gcm_utils_get_profile_filenames ();
-		for (i=0; i<profiles_array->len; i++) {
-			filename = g_ptr_array_index (profiles_array, i);
-			if (g_strcmp0 (filename, profile) == 0) {
+		for (i=0; i<profiles_array_in_combo->len; i++) {
+			profile = g_ptr_array_index (profiles_array_in_combo, i);
+			g_object_get (profile,
+				      "filename", &filename,
+				      NULL);
+			if (g_strcmp0 (filename, profile_filename) == 0) {
 				widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
 				gtk_combo_box_set_active (GTK_COMBO_BOX (widget), i);
+				g_free (filename);
+				ret = TRUE;
 				break;
 			}
+			g_free (filename);
 		}
+	}
+
+	/* failed to find profile in combobox */
+	if (!ret) {
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
+		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), profiles_array_in_combo->len);
 	}
 
 	/* make sure selectable */
@@ -698,7 +792,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 	gcm_prefs_set_calibrate_button_sensitivity ();
 
 	g_free (id);
-	g_free (profile);
+	g_free (profile_filename);
 }
 
 /**
@@ -775,15 +869,15 @@ gcm_prefs_add_profiles (GtkWidget *widget)
 {
 	const gchar *filename;
 	guint i;
-	gchar *displayname;
 	GcmProfile *profile;
 	gboolean ret;
 	GError *error = NULL;
+	GPtrArray *filename_array;
 
 	/* get profiles */
-	profiles_array = gcm_utils_get_profile_filenames ();
-	for (i=0; i<profiles_array->len; i++) {
-		filename = g_ptr_array_index (profiles_array, i);
+	filename_array = gcm_utils_get_profile_filenames ();
+	for (i=0; i<filename_array->len; i++) {
+		filename = g_ptr_array_index (filename_array, i);
 
 		/* parse the profile name */
 		profile = gcm_profile_new ();
@@ -795,25 +889,12 @@ gcm_prefs_add_profiles (GtkWidget *widget)
 			continue;
 		}
 
-		/* get text to use in the combobox */
-		g_object_get (profile,
-			      "description", &displayname,
-			      NULL);
-
-		/* there's nothing sensible to display */
-		if (displayname == NULL || displayname[0] == '\0') {
-			g_free (displayname);
-			displayname = g_path_get_basename (filename);
-		}
-
-		/* add the entry */
-		gtk_combo_box_append_text (GTK_COMBO_BOX (widget), displayname);
-		g_free (displayname);
+		/* add to array */
+		g_ptr_array_add (profiles_array, g_object_ref (profile));
 		g_object_unref (profile);
 	}
 
-	/* add a clear entry */
-	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("None"));
+	g_ptr_array_unref (filename_array);
 }
 
 /**
@@ -860,15 +941,16 @@ gcm_prefs_profile_type_to_text (GcmProfileType type)
 static void
 gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 {
-	guint active;
+	gint active;
 	gchar *copyright = NULL;
 	gchar *vendor = NULL;
 	gchar *profile_old = NULL;
-	const gchar *filename = NULL;
+	gchar *filename = NULL;
 	gboolean ret;
 	GError *error = NULL;
 	GcmProfile *profile = NULL;
 	gboolean changed;
+
 	GcmDeviceType type;
 	GcmProfileType profile_type = GCM_PROFILE_TYPE_UNKNOWN;
 	const gchar *profile_type_text;
@@ -880,8 +962,17 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	if (current_device == NULL)
 		return;
 
-	if (active < profiles_array->len)
-		filename = g_ptr_array_index (profiles_array, active);
+	if (active == -1)
+		return;
+
+	/* get profile */
+	if (active < (gint) profiles_array_in_combo->len)
+		profile = g_ptr_array_index (profiles_array_in_combo, active);
+	if (profile != NULL) {
+		g_object_get (profile,
+			      "filename", &filename,
+			      NULL);
+	}
 
 	/* see if it's changed */
 	g_object_get (current_device,
@@ -991,6 +1082,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 out:
 	if (profile != NULL)
 		g_object_unref (profile);
+	g_free (filename);
 	g_free (copyright);
 	g_free (vendor);
 }
@@ -1376,6 +1468,8 @@ main (int argc, char **argv)
 	/* add columns to the tree view */
 	gcm_prefs_add_devices_columns (GTK_TREE_VIEW (widget));
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
+	profiles_array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	profiles_array_in_combo = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 
 	main_window = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_prefs"));
 
@@ -1548,6 +1642,8 @@ out:
 		g_object_unref (builder);
 	if (profiles_array != NULL)
 		g_ptr_array_unref (profiles_array);
+	if (profiles_array_in_combo != NULL)
+		g_ptr_array_unref (profiles_array_in_combo);
 	if (gcm_client != NULL)
 		g_object_unref (gcm_client);
 	return retval;
