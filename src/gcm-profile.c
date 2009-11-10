@@ -120,6 +120,7 @@ struct _GcmProfilePrivate
 	gboolean			 loaded;
 	guint				 profile_type;
 	gchar				*description;
+	gchar				*filename;
 	gchar				*copyright;
 	gchar				*vendor;
 	gboolean			 has_mlut;
@@ -141,6 +142,7 @@ enum {
 	PROP_COPYRIGHT,
 	PROP_VENDOR,
 	PROP_DESCRIPTION,
+	PROP_FILENAME,
 	PROP_TYPE,
 	PROP_LAST
 };
@@ -654,12 +656,17 @@ gcm_profile_parse (GcmProfile *profile, const gchar *filename, GError **error)
 	gboolean ret;
 	gsize length;
 	GError *error_local = NULL;
+	GcmProfilePrivate *priv = profile->priv;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
 	g_return_val_if_fail (filename != NULL, FALSE);
 	g_return_val_if_fail (profile->priv->loaded == FALSE, FALSE);
 
 	egg_debug ("loading '%s'", filename);
+
+	/* save */
+	g_free (priv->filename);
+	priv->filename = g_strdup (filename);
 
 	/* load files */
 	ret = g_file_get_contents (filename, &data, &length, &error_local);
@@ -865,6 +872,9 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_DESCRIPTION:
 		g_value_set_string (value, priv->description);
 		break;
+	case PROP_FILENAME:
+		g_value_set_string (value, priv->filename);
+		break;
 	case PROP_TYPE:
 		g_value_set_uint (value, priv->profile_type);
 		break;
@@ -924,6 +934,14 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	g_object_class_install_property (object_class, PROP_DESCRIPTION, pspec);
 
 	/**
+	 * GcmProfile:filename:
+	 */
+	pspec = g_param_spec_string ("filename", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_FILENAME, pspec);
+
+	/**
 	 * GcmProfile:type:
 	 */
 	pspec = g_param_spec_uint ("type", NULL, NULL,
@@ -958,6 +976,8 @@ gcm_profile_finalize (GObject *object)
 	GcmProfilePrivate *priv = profile->priv;
 
 	g_free (priv->copyright);
+	g_free (priv->description);
+	g_free (priv->filename);
 	g_free (priv->vendor);
 	g_free (priv->vcgt_data);
 	g_free (priv->mlut_data);
