@@ -26,8 +26,12 @@
 
 #include "gcm-device.h"
 
-#define GCM_STOCK_ICON		"gnome-color-manager"
-#define GCM_PROFILE_PATH	"/.color/icc"
+#define GCM_STOCK_ICON				"gnome-color-manager"
+#define GCM_PROFILE_PATH			"/.color/icc"
+
+#define GCM_SETTINGS_DEFAULT_GAMMA		"/apps/gnome-color-manager/default_gamma"
+#define GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION	"/apps/gnome-color-manager/global_display_correction"
+#define GCM_SETTINGS_SET_ICC_PROFILE_ATOM	"/apps/gnome-color-manager/set_icc_profile_atom"
 
 gboolean	 gcm_utils_set_gamma_for_device		(GcmDevice		*device,
 							 GError			**error);

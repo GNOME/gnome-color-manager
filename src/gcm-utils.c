@@ -227,6 +227,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	gchar *id = NULL;
 	guint size;
 	gboolean use_global;
+	gboolean use_atom;
 	gboolean leftmost_screen = FALSE;
 	GcmDeviceType type;
 	GnomeRRScreen *rr_screen = NULL;
@@ -281,7 +282,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	clut = gcm_clut_new ();
 
 	/* only set the CLUT if we're not seting the atom */
-	use_global = gconf_client_get_bool (gconf_client, "/apps/gnome-color-manager/global_display_correction", NULL);
+	use_global = gconf_client_get_bool (gconf_client, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION, NULL);
 	if (use_global) {
 		g_object_set (clut,
 			      "profile", profile,
@@ -315,7 +316,8 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	leftmost_screen = (x == 0 && y == 0);
 
 	/* either remove the atoms or set them */
-	if (use_global || profile == NULL) {
+	use_atom = gconf_client_get_bool (gconf_client, GCM_SETTINGS_SET_ICC_PROFILE_ATOM, NULL);
+	if (!use_atom || profile == NULL) {
 
 		/* remove the output atom if there's nothing to show */
 		ret = gcm_xserver_remove_output_profile (xserver, output_name, error);

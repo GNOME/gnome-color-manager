@@ -25,7 +25,19 @@
       <default>true</default>
       <locale name="C">
         <short>If the display should be globally corrected or left to applications.</short>
-        <long>If set to TRUE then the video LUT is set with the display profile and applications will have nothing to read from __ICC_PROFILE</long>
+        <long>If set to TRUE then the video LUT is set with the display profile</long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gnome-color-manager/set_icc_profile_atom</key>
+      <applyto>/apps/gnome-color-manager/set_icc_profile_atom</applyto>
+      <owner>gnome-color-manager</owner>
+      <type>bool</type>
+      <default>true</default>
+      <locale name="C">
+        <short>Set the _ICC_PROFILE atom for applications.</short>
+        <long>If set to TRUE then the __ICC_PROFILE atom will be set, which applications use to convert true color to screen color.</long>
       </locale>
     </schema>
 

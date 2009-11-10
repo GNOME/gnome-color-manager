@@ -245,7 +245,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		gcm_prefs_calibrate_scanner (calib);
 		break;
 	default:
-		egg_error ("calibration not supported for this device");
+		egg_warning ("calibration not supported for this device");
 		goto out;
 	}
 
@@ -1139,15 +1139,23 @@ static void
 gcm_prefs_radio_cb (GtkWidget *widget, gpointer user_data)
 {
 	const gchar *name;
-	gboolean ret = FALSE;
+	gboolean use_global = FALSE;
+	gboolean use_atom = FALSE;
 
 	/* find out what button was pressed */
 	name = gtk_widget_get_name (widget);
-	if (g_strcmp0 (name, "radiobutton_ouput_global") == 0)
-		ret = TRUE;
+	if (g_strcmp0 (name, "radiobutton_ouput_both") == 0) {
+		use_global = TRUE;
+		use_atom = TRUE;
+	} else if (g_strcmp0 (name, "radiobutton_ouput_global") == 0) {
+		use_global = TRUE;
+	} else if (g_strcmp0 (name, "radiobutton_ouput_atom") == 0) {
+		use_atom = TRUE;
+	}
 
 	/* save new preference */
-	gconf_client_set_bool (gconf_client, "/apps/gnome-color-manager/global_display_correction", ret, NULL);
+	gconf_client_set_bool (gconf_client, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION, use_global, NULL);
+	gconf_client_set_bool (gconf_client, GCM_SETTINGS_SET_ICC_PROFILE_ATOM, use_atom, NULL);
 
 	/* set the new setting */
 	g_idle_add ((GSourceFunc) gcm_prefs_reset_devices_idle_cb, NULL);
@@ -1168,7 +1176,8 @@ main (int argc, char **argv)
 	guint xid = 0;
 	GError *error = NULL;
 	GMainLoop *loop;
-	gboolean ret;
+	gboolean use_global;
+	gboolean use_atom;
 	GtkTreeSelection *selection;
 	const gchar *subsystems[] = {"usb", NULL};
 	GtkWidget *info_bar_label;
@@ -1354,12 +1363,19 @@ main (int argc, char **argv)
 
 	/* setup defaults */
 	gconf_client = gconf_client_get_default ();
-	ret = gconf_client_get_bool (gconf_client, "/apps/gnome-color-manager/global_display_correction", NULL);
-	if (ret) {
+	use_global = gconf_client_get_bool (gconf_client, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION, NULL);
+	use_atom = gconf_client_get_bool (gconf_client, GCM_SETTINGS_SET_ICC_PROFILE_ATOM, NULL);
+	if (use_global && use_atom) {
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_both"));
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
+	} else if (use_global) {
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_global"));
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
-	} else {
+	} else if (use_atom) {
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_atom"));
+		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
+	} else {
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_disable"));
 		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
 	}
 
@@ -1368,6 +1384,12 @@ main (int argc, char **argv)
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_radio_cb), NULL);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_atom"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_prefs_radio_cb), NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_both"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_prefs_radio_cb), NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_disable"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_radio_cb), NULL);
 

@@ -444,6 +444,20 @@
                     <property name="orientation">vertical</property>
                     <property name="spacing">3</property>
                     <child>
+                      <object class="GtkRadioButton" id="radiobutton_ouput_disable">
+                        <property name="label" translatable="yes">Do not enable display correction</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="draw_indicator">True</property>
+                        <property name="group">radiobutton_ouput_global</property>
+                      </object>
+                      <packing>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
                       <object class="GtkRadioButton" id="radiobutton_ouput_global">
                         <property name="label" translatable="yes">Apply _global display correction</property>
                         <property name="visible">True</property>
@@ -454,12 +468,12 @@
                         <property name="draw_indicator">True</property>
                       </object>
                       <packing>
-                        <property name="position">0</property>
+                        <property name="position">1</property>
                       </packing>
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="radiobutton_ouput_atom">
-                        <property name="label" translatable="yes">_Use profile when viewing images</property>
+                        <property name="label" translatable="yes">_Set profile only for color managed applications</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -468,7 +482,21 @@
                         <property name="group">radiobutton_ouput_global</property>
                       </object>
                       <packing>
-                        <property name="position">1</property>
+                        <property name="position">2</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkRadioButton" id="radiobutton_ouput_both">
+                        <property name="label" translatable="yes">Do global correction and set profile for color managed applications</property>
+                        <property name="visible">True</property>
+                        <property name="can_focus">True</property>
+                        <property name="receives_default">False</property>
+                        <property name="use_underline">True</property>
+                        <property name="draw_indicator">True</property>
+                        <property name="group">radiobutton_ouput_global</property>
+                      </object>
+                      <packing>
+                        <property name="position">3</property>
                       </packing>
                     </child>
                   </object>

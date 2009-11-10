@@ -35,6 +35,7 @@
 #include <gconf/gconf-client.h>
 
 #include "gcm-clut.h"
+#include "gcm-utils.h"
 #include "gcm-profile.h"
 
 #include "egg-debug.h"
@@ -418,7 +419,7 @@ gcm_clut_init (GcmClut *clut)
 	clut->priv->array = g_ptr_array_new_with_free_func (g_free);
 	clut->priv->profile = NULL;
 	clut->priv->gconf_client = gconf_client_get_default ();
-	clut->priv->gamma = gconf_client_get_float (clut->priv->gconf_client, "/apps/gnome-color-manager/default_gamma", NULL);
+	clut->priv->gamma = gconf_client_get_float (clut->priv->gconf_client, GCM_SETTINGS_DEFAULT_GAMMA, NULL);
 	if (clut->priv->gamma < 0.1f) {
 		egg_warning ("failed to get setup parameters");
 		clut->priv->gamma = 1.0f;
