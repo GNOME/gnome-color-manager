@@ -286,7 +286,7 @@ gcm_prefs_calibrate_scanner_get_reference_data (void)
 static gboolean
 gcm_prefs_calibrate_scanner (GcmCalibrate *calib)
 {
-	gboolean ret;
+	gboolean ret = FALSE;
 	GError *error = NULL;
 	gchar *scanned_image = NULL;
 	gchar *reference_data = NULL;

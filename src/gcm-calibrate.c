@@ -227,6 +227,7 @@ gcm_calibrate_display_setup (GcmCalibrate *calibrate, GError **error)
 
 	/* this wasn't previously set */
 	if (!priv->is_lcd && !priv->is_crt) {
+		widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
 		dialog = gtk_message_dialog_new (GTK_WINDOW(widget), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL,
 						 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
 						 _("Could not auto-detect CRT or LCD"));
@@ -714,12 +715,8 @@ gcm_calibrate_scanner_measure (GcmCalibrate *calibrate, GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibratePrivate *priv = calibrate->priv;
-	gchar type;
 	gchar **argv = NULL;
 	GPtrArray *array = NULL;
-
-	/* get l-cd or c-rt */
-	type = gcm_calibrate_get_display_type (calibrate);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);

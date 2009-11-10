@@ -302,8 +302,8 @@ gcm_client_get_output_name (GnomeRROutput *output)
 	GString *string;
 	GcmEdid *edid = NULL;
 	gboolean ret;
-	guint width;
-	guint height;
+	guint width = 0;
+	guint height = 0;
 
 	/* blank */
 	string = g_string_new ("");
@@ -388,8 +388,8 @@ gcm_client_get_output_id (GnomeRROutput *output)
 	GString *string;
 	GcmEdid *edid = NULL;
 	gboolean ret;
-	guint width;
-	guint height;
+	guint width = 0;
+	guint height = 0;
 
 	/* blank */
 	string = g_string_new ("");
