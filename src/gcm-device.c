@@ -228,10 +228,15 @@ gcm_device_load (GcmDevice *device, GError **error)
 	/* load this */
 	ret = gcm_device_load_from_profile (device, &error_local);
 	if (!ret) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to load from config: %s", error_local->message);
+
+		/* just print a warning, this is not fatal */
+		egg_warning ("failed to load profile %s: %s", device->priv->profile, error_local->message);
 		g_error_free (error_local);
-		goto out;
+
+		/* recover as the file might have been corrupted */
+		g_free (device->priv->profile);
+		device->priv->profile = NULL;
+		ret = TRUE;
 	}
 out:
 	g_free (filename);

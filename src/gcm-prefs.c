@@ -221,6 +221,7 @@ gcm_prefs_calibrate_scanner_get_scanned_profile (void)
 	/* setup the filter */
 	filter = gtk_file_filter_new ();
 	gtk_file_filter_add_mime_type (filter, "image/tiff");
+	gtk_file_filter_add_mime_type (filter, "application/x-it87_2");
 	/* TRANSLATORS: filter name on the file->open dialog */
 	gtk_file_filter_set_name (filter, _("Supported images files"));
 	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
@@ -884,12 +885,12 @@ gcm_prefs_add_profiles (GtkWidget *widget)
 		if (!ret) {
 			egg_warning ("failed to add profile: %s", error->message);
 			g_error_free (error);
-			g_object_unref (profile);
-			continue;
+			/* not fatal */
+			error = NULL;
+		} else {
+			/* add to array */
+			g_ptr_array_add (profiles_array, g_object_ref (profile));
 		}
-
-		/* add to array */
-		g_ptr_array_add (profiles_array, g_object_ref (profile));
 		g_object_unref (profile);
 	}
 
