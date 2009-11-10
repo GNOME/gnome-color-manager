@@ -7,6 +7,7 @@ DOC_INCLUDES =
 DOC_FIGURES =					\
 	figures/gcm-adjust.png			\
 	figures/gcm-basic.png			\
+	figures/gcm-scanner.png			\
 	figures/gcm-calibrate-default.png	\
 	figures/gcm-calibrate-drawing.png	\
 	figures/gcm-import.png
