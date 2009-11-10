@@ -527,7 +527,6 @@ gcm_prefs_add_devices_columns (GtkTreeView *treeview)
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
 
-
 /**
  * gcm_prefs_has_hardware_device_attached:
  **/
@@ -950,7 +949,6 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	GError *error = NULL;
 	GcmProfile *profile = NULL;
 	gboolean changed;
-
 	GcmDeviceType type;
 	GcmProfileType profile_type = GCM_PROFILE_TYPE_UNKNOWN;
 	const gchar *profile_type_text;
@@ -962,6 +960,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	if (current_device == NULL)
 		return;
 
+	/* no selection */
 	if (active == -1)
 		return;
 
@@ -1524,8 +1523,6 @@ main (int argc, char **argv)
 //			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), NULL);
 	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), "Perceptual");
 	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
-
-
 
 	/* set ranges */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
