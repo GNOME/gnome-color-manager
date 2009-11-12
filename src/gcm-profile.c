@@ -492,6 +492,23 @@ gcm_parser_load_icc_trc (GcmProfile *profile, const gchar *data, gsize offset, g
 }
 
 /**
+ * gcm_profile_ensure_printable:
+ **/
+static void
+gcm_profile_ensure_printable (gchar *data)
+{
+	guint i;
+	guint idx = 0;
+	for (i=0; data[i] != '\0'; i++) {
+		if (g_ascii_isalnum (data[i]) ||
+		    g_ascii_ispunct (data[i]) ||
+		    data[i] == ' ')
+			data[idx++] = data[i];
+	}
+	data[idx] = '\0';
+}
+
+/**
  * gcm_profile_parse_data:
  **/
 gboolean
@@ -646,6 +663,11 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 			priv->description = _("Missing description");
 		}
 	}
+
+	/* Ensure this is displayable */
+	gcm_profile_ensure_printable (priv->description);
+	gcm_profile_ensure_printable (priv->copyright);
+	gcm_profile_ensure_printable (priv->vendor);
 
 	/* success */
 	ret = TRUE;
