@@ -499,6 +499,9 @@ gcm_profile_ensure_printable (gchar *data)
 {
 	guint i;
 	guint idx = 0;
+
+	g_return_if_fail (data != NULL);
+
 	for (i=0; data[i] != '\0'; i++) {
 		if (g_ascii_isalnum (data[i]) ||
 		    g_ascii_ispunct (data[i]) ||
@@ -665,9 +668,12 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 	}
 
 	/* Ensure this is displayable */
-	gcm_profile_ensure_printable (priv->description);
-	gcm_profile_ensure_printable (priv->copyright);
-	gcm_profile_ensure_printable (priv->vendor);
+	if (priv->description != NULL)
+		gcm_profile_ensure_printable (priv->description);
+	if (priv->copyright != NULL)
+		gcm_profile_ensure_printable (priv->copyright);
+	if (priv->vendor != NULL)
+		gcm_profile_ensure_printable (priv->vendor);
 
 	/* success */
 	ret = TRUE;
