@@ -55,6 +55,9 @@ struct _GcmDevicePrivate
 	gfloat				 contrast;
 	GcmDeviceType			 type;
 	gchar				*id;
+	gchar				*serial;
+	gchar				*manufacturer;
+	gchar				*model;
 	gchar				*profile_filename;
 	gchar				*profile_description;
 	gchar				*title;
@@ -69,6 +72,9 @@ enum {
 	PROP_0,
 	PROP_TYPE,
 	PROP_ID,
+	PROP_SERIAL,
+	PROP_MODEL,
+	PROP_MANUFACTURER,
 	PROP_GAMMA,
 	PROP_BRIGHTNESS,
 	PROP_CONTRAST,
@@ -354,6 +360,15 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_ID:
 		g_value_set_string (value, priv->id);
 		break;
+	case PROP_SERIAL:
+		g_value_set_string (value, priv->serial);
+		break;
+	case PROP_MODEL:
+		g_value_set_string (value, priv->model);
+		break;
+	case PROP_MANUFACTURER:
+		g_value_set_string (value, priv->manufacturer);
+		break;
 	case PROP_GAMMA:
 		g_value_set_float (value, priv->gamma);
 		break;
@@ -406,6 +421,18 @@ gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GP
 	case PROP_ID:
 		g_free (priv->id);
 		priv->id = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_SERIAL:
+		g_free (priv->serial);
+		priv->serial = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_MODEL:
+		g_free (priv->model);
+		priv->model = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_MANUFACTURER:
+		g_free (priv->manufacturer);
+		priv->manufacturer = g_strdup (g_value_get_string (value));
 		break;
 	case PROP_TITLE:
 		g_free (priv->title);
@@ -465,6 +492,30 @@ gcm_device_class_init (GcmDeviceClass *klass)
 				     NULL,
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_ID, pspec);
+
+	/**
+	 * GcmCalibrate:serial:
+	 */
+	pspec = g_param_spec_string ("serial", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_SERIAL, pspec);
+
+	/**
+	 * GcmCalibrate:model:
+	 */
+	pspec = g_param_spec_string ("model", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_MODEL, pspec);
+
+	/**
+	 * GcmCalibrate:manufacturer:
+	 */
+	pspec = g_param_spec_string ("manufacturer", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_MANUFACTURER, pspec);
 
 	/**
 	 * GcmDevice:gamma:
@@ -556,6 +607,10 @@ static void
 gcm_device_init (GcmDevice *device)
 {
 	device->priv = GCM_DEVICE_GET_PRIVATE (device);
+	device->priv->id = NULL;
+	device->priv->serial = NULL;
+	device->priv->manufacturer = NULL;
+	device->priv->model = NULL;
 	device->priv->native_device_xrandr = NULL;
 	device->priv->native_device_sysfs = NULL;
 	device->priv->profile_filename = NULL;
@@ -583,6 +638,9 @@ gcm_device_finalize (GObject *object)
 	g_free (priv->profile_vendor);
 	g_free (priv->title);
 	g_free (priv->id);
+	g_free (priv->serial);
+	g_free (priv->manufacturer);
+	g_free (priv->model);
 	g_free (priv->native_device_xrandr);
 	g_free (priv->native_device_sysfs);
 	g_object_unref (priv->gconf_client);
