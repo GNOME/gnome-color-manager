@@ -39,7 +39,6 @@
 #include <libgnomeui/gnome-rr.h>
 
 #include "gcm-calibrate.h"
-#include "gcm-edid.h"
 #include "gcm-utils.h"
 
 #include "egg-debug.h"
@@ -62,17 +61,23 @@ struct _GcmCalibratePrivate
 	gchar				*filename_source;
 	gchar				*filename_reference;
 	gchar				*basename;
+	gchar				*manufacturer;
+	gchar				*model;
+	gchar				*description;
 	GMainLoop			*loop;
 	GtkWidget			*terminal;
 	GtkBuilder			*builder;
 	pid_t				 child_pid;
 	GtkResponseType			 response;
 	GnomeRRScreen			*rr_screen;
-	GcmEdid				*edid;
 };
 
 enum {
 	PROP_0,
+	PROP_BASENAME,
+	PROP_MODEL,
+	PROP_DESCRIPTION,
+	PROP_MANUFACTURER,
 	PROP_IS_LCD,
 	PROP_IS_CRT,
 	PROP_OUTPUT_NAME,
@@ -318,9 +323,11 @@ gcm_calibrate_display_neutralise (GcmCalibrate *calibrate, GError **error)
 	gchar **argv = NULL;
 	GtkWidget *widget;
 	GnomeRROutput *output;
-	const guint8 *data;
 	GPtrArray *array = NULL;
 	gint x, y;
+
+	g_return_val_if_fail (priv->basename != NULL, FALSE);
+	g_return_val_if_fail (priv->output_name != NULL, FALSE);
 
 	/* match up the output name with the device number defined by dispcal */
 	priv->display = gcm_calibrate_get_display (priv->output_name, error);
@@ -335,32 +342,8 @@ gcm_calibrate_display_neutralise (GcmCalibrate *calibrate, GError **error)
 		goto out;
 	}
 
-	/* get edid */
-	data = gnome_rr_output_get_edid_data (output);
-	if (data == NULL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to get EDID for %s", priv->output_name);
-		goto out;
-	}
-
-	/* parse edid */
-	ret = gcm_edid_parse (priv->edid, data, error);
-	if (!ret)
-		goto out;
-
 	/* get l-cd or c-rt */
 	type = gcm_calibrate_get_display_type (calibrate);
-
-	/* get a filename based on the serial number */
-	g_object_get (priv->edid, "serial-number", &priv->basename, NULL);
-	if (priv->basename == NULL)
-		g_object_get (priv->edid, "monitor-name", &priv->basename, NULL);
-	if (priv->basename == NULL)
-		g_object_get (priv->edid, "ascii-string", &priv->basename, NULL);
-	if (priv->basename == NULL)
-		g_object_get (priv->edid, "vendor-name", &priv->basename, NULL);
-	if (priv->basename == NULL)
-		priv->basename = g_strdup ("custom");
 
 	/* make a suitable filename */
 	gcm_utils_alphanum_lcase (priv->basename);
@@ -462,6 +445,8 @@ gcm_calibrate_display_generate_patches (GcmCalibrate *calibrate, GError **error)
 	gchar **argv = NULL;
 	GPtrArray *array = NULL;
 
+	g_return_val_if_fail (priv->basename != NULL, FALSE);
+
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
 
@@ -517,6 +502,8 @@ gcm_calibrate_display_draw_and_measure (GcmCalibrate *calibrate, GError **error)
 	gchar type;
 	gchar **argv = NULL;
 	GPtrArray *array = NULL;
+
+	g_return_val_if_fail (priv->basename != NULL, FALSE);
 
 	/* get l-cd or c-rt */
 	type = gcm_calibrate_get_display_type (calibrate);
@@ -577,40 +564,22 @@ gcm_calibrate_display_generate_profile (GcmCalibrate *calibrate, GError **error)
 	GcmCalibratePrivate *priv = calibrate->priv;
 	gchar **argv = NULL;
 	GDate *date;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
-	gchar *description_tmp = NULL;
-	gchar *description = NULL;
 	gchar *copyright = NULL;
+	gchar *description = NULL;
 	GPtrArray *array = NULL;
+	GtkWidget *widget;
+
+	g_return_val_if_fail (priv->basename != NULL, FALSE);
+	g_return_val_if_fail (priv->description != NULL, FALSE);
+	g_return_val_if_fail (priv->manufacturer != NULL, FALSE);
+	g_return_val_if_fail (priv->model != NULL, FALSE);
 
 	/* create date and set it to now */
 	date = g_date_new ();
 	g_date_set_time_t (date, time (NULL));
 
-	/* get model */
-	g_object_get (priv->edid, "monitor-name", &model, NULL);
-	if (model == NULL)
-		g_object_get (priv->edid, "ascii-string", &model, NULL);
-	if (model == NULL)
-		model = g_strdup ("unknown model");
-
-	/* get description */
-	g_object_get (priv->edid, "ascii-string", &description_tmp, NULL);
-	if (description_tmp == NULL)
-		g_object_get (priv->edid, "monitor-name", &description_tmp, NULL);
-	if (description_tmp == NULL)
-		description_tmp = g_strdup ("calibrated monitor");
-
         /* TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated" */
-	description = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", _("Custom"), description_tmp, date->year, date->month, date->day);
-
-	/* get manufacturer */
-	g_object_get (priv->edid, "vendor-name", &manufacturer, NULL);
-	if (manufacturer == NULL)
-		g_object_get (priv->edid, "ascii-string", &manufacturer, NULL);
-	if (manufacturer == NULL)
-		manufacturer = g_strdup ("unknown manufacturer");
+	description = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", _("Custom"), priv->description, date->year, date->month, date->day);
 
 	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" */
 	copyright = g_strdup_printf ("%s %04i %s", _("Copyright (c)"), date->year, g_get_real_name ());
@@ -620,8 +589,8 @@ gcm_calibrate_display_generate_profile (GcmCalibrate *calibrate, GError **error)
 
 	/* setup the command */
 	g_ptr_array_add (array, g_strdup ("-v"));
-	g_ptr_array_add (array, g_strdup_printf ("-A%s", manufacturer));
-	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
+	g_ptr_array_add (array, g_strdup_printf ("-A%s", priv->manufacturer));
+	g_ptr_array_add (array, g_strdup_printf ("-M%s", priv->model));
 	g_ptr_array_add (array, g_strdup_printf ("-D%s", description));
 	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
 	g_ptr_array_add (array, g_strdup ("-qm"));
@@ -663,9 +632,6 @@ out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
 	g_date_free (date);
-	g_free (manufacturer);
-	g_free (model);
-	g_free (description_tmp);
 	g_free (description);
 	g_free (copyright);
 	g_strfreev (argv);
@@ -682,18 +648,19 @@ gcm_calibrate_scanner_copy (GcmCalibrate *calibrate, GError **error)
 	gchar *scanner = NULL;
 	gchar *it8cht = NULL;
 	gchar *it8ref = NULL;
+	gchar *filename = NULL;
 	GcmCalibratePrivate *priv = calibrate->priv;
+
+	g_return_val_if_fail (priv->basename != NULL, FALSE);
 
 	/* TRANSLATORS: title, a profile is a ICC file */
 	gcm_calibrate_set_title (calibrate, _("Copying files"));
 	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (calibrate, _("Copying source image, chart data and CIE reference values."));
 
-	/* setup generic basename */
-	calibrate->priv->basename = g_strdup ("scanner");
-
 	/* build filenames */
-	scanner = g_build_filename (GCM_CALIBRATE_TEMP_DIR, "scanner.tif", NULL);
+	filename = g_strdup_printf ("%s.tif", priv->basename);
+	scanner = g_build_filename (GCM_CALIBRATE_TEMP_DIR, filename, NULL);
 	it8cht = g_build_filename (GCM_CALIBRATE_TEMP_DIR, "it8.cht", NULL);
 	it8ref = g_build_filename (GCM_CALIBRATE_TEMP_DIR, "it8ref.txt", NULL);
 
@@ -708,6 +675,7 @@ gcm_calibrate_scanner_copy (GcmCalibrate *calibrate, GError **error)
 	if (!ret)
 		goto out;
 out:
+	g_free (filename);
 	g_free (scanner);
 	g_free (it8cht);
 	g_free (it8ref);
@@ -724,13 +692,15 @@ gcm_calibrate_scanner_measure (GcmCalibrate *calibrate, GError **error)
 	GcmCalibratePrivate *priv = calibrate->priv;
 	gchar **argv = NULL;
 	GPtrArray *array = NULL;
+	gchar *filename = NULL;
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
+	filename = g_strdup_printf ("%s.tif", priv->basename);
 
 	/* setup the command */
 	g_ptr_array_add (array, g_strdup ("-v"));
-	g_ptr_array_add (array, g_strdup ("scanner.tif"));
+	g_ptr_array_add (array, g_strdup (filename));
 	g_ptr_array_add (array, g_strdup ("it8.cht"));
 	g_ptr_array_add (array, g_strdup ("it8ref.txt"));
 	argv = gcm_utils_ptr_array_to_strv (array);
@@ -762,6 +732,7 @@ gcm_calibrate_scanner_measure (GcmCalibrate *calibrate, GError **error)
 		goto out;
 	}
 out:
+	g_free (filename);
 	if (array != NULL)
 		g_ptr_array_unref (array);
 	g_strfreev (argv);
@@ -778,28 +749,22 @@ gcm_calibrate_scanner_generate_profile (GcmCalibrate *calibrate, GError **error)
 	GcmCalibratePrivate *priv = calibrate->priv;
 	gchar **argv = NULL;
 	GDate *date;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
 	gchar *description_tmp = NULL;
 	gchar *description = NULL;
 	gchar *copyright = NULL;
 	GPtrArray *array = NULL;
 
+	g_return_val_if_fail (priv->basename != NULL, FALSE);
+	g_return_val_if_fail (priv->description != NULL, FALSE);
+	g_return_val_if_fail (priv->manufacturer != NULL, FALSE);
+	g_return_val_if_fail (priv->model != NULL, FALSE);
+
 	/* create date and set it to now */
 	date = g_date_new ();
 	g_date_set_time_t (date, time (NULL));
 
-	/* get model */
-	model = g_strdup ("Generic profile model");
-
-	/* get description */
-	description_tmp = g_strdup ("Generic profile description");
-
         /* TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated" */
-	description = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", _("Custom"), description_tmp, date->year, date->month, date->day);
-
-	/* get manufacturer */
-	manufacturer = g_strdup ("Generic profile manufacturer");
+	description = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", _("Custom"), priv->description, date->year, date->month, date->day);
 
 	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" */
 	copyright = g_strdup_printf ("%s %04i %s", _("Copyright (c)"), date->year, g_get_real_name ());
@@ -809,13 +774,13 @@ gcm_calibrate_scanner_generate_profile (GcmCalibrate *calibrate, GError **error)
 
 	/* setup the command */
 	g_ptr_array_add (array, g_strdup ("-v"));
-	g_ptr_array_add (array, g_strdup_printf ("-A%s", manufacturer));
-	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
+	g_ptr_array_add (array, g_strdup_printf ("-A%s", priv->manufacturer));
+	g_ptr_array_add (array, g_strdup_printf ("-M%s", priv->model));
 	g_ptr_array_add (array, g_strdup_printf ("-D%s", description));
 	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
 	g_ptr_array_add (array, g_strdup ("-qm"));
 //	g_ptr_array_add (array, g_strdup ("-as"));
-	g_ptr_array_add (array, g_strdup ("scanner"));
+	g_ptr_array_add (array, g_strdup (priv->basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_debug_argv ("colprof", argv);
 
@@ -848,10 +813,7 @@ out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
 	g_date_free (date);
-	g_free (manufacturer);
-	g_free (model);
 	g_free (description_tmp);
-	g_free (description);
 	g_free (copyright);
 	g_strfreev (argv);
 	return ret;
@@ -991,6 +953,18 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 	case PROP_FILENAME_REFERENCE:
 		g_value_set_string (value, priv->filename_reference);
 		break;
+	case PROP_BASENAME:
+		g_value_set_string (value, priv->basename);
+		break;
+	case PROP_MODEL:
+		g_value_set_string (value, priv->model);
+		break;
+	case PROP_DESCRIPTION:
+		g_value_set_string (value, priv->description);
+		break;
+	case PROP_MANUFACTURER:
+		g_value_set_string (value, priv->manufacturer);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -1080,6 +1054,22 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 		g_free (priv->filename_reference);
 		priv->filename_reference = g_strdup (g_value_get_string (value));
 		break;
+	case PROP_BASENAME:
+		g_free (priv->basename);
+		priv->basename = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_MODEL:
+		g_free (priv->model);
+		priv->model = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_DESCRIPTION:
+		g_free (priv->description);
+		priv->description = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_MANUFACTURER:
+		g_free (priv->manufacturer);
+		priv->manufacturer = g_strdup (g_value_get_string (value));
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -1138,6 +1128,38 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_FILENAME_REFERENCE, pspec);
 
+	/**
+	 * GcmCalibrate:basename:
+	 */
+	pspec = g_param_spec_string ("basename", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_BASENAME, pspec);
+
+	/**
+	 * GcmCalibrate:model:
+	 */
+	pspec = g_param_spec_string ("model", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_MODEL, pspec);
+
+	/**
+	 * GcmCalibrate:description:
+	 */
+	pspec = g_param_spec_string ("description", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_DESCRIPTION, pspec);
+
+	/**
+	 * GcmCalibrate:manufacturer:
+	 */
+	pspec = g_param_spec_string ("manufacturer", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_MANUFACTURER, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmCalibratePrivate));
 }
 
@@ -1157,6 +1179,9 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->filename_source = NULL;
 	calibrate->priv->filename_reference = NULL;
 	calibrate->priv->basename = NULL;
+	calibrate->priv->manufacturer = NULL;
+	calibrate->priv->model = NULL;
+	calibrate->priv->description = NULL;
 	calibrate->priv->child_pid = -1;
 	calibrate->priv->loop = g_main_loop_new (NULL, FALSE);
 
@@ -1176,9 +1201,6 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 		g_error_free (error);
 		return;
 	}
-
-	/* get edid parser */
-	calibrate->priv->edid = gcm_edid_new ();
 
 	/* set icon */
 	main_window = GTK_WIDGET (gtk_builder_get_object (calibrate->priv->builder, "dialog_calibrate"));
@@ -1229,9 +1251,11 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->filename_reference);
 	g_free (priv->output_name);
 	g_free (priv->basename);
+	g_free (priv->manufacturer);
+	g_free (priv->model);
+	g_free (priv->description);
 	g_main_loop_unref (priv->loop);
 	g_object_unref (priv->builder);
-	g_object_unref (priv->edid);
 	gnome_rr_screen_destroy (priv->rr_screen);
 
 	G_OBJECT_CLASS (gcm_calibrate_parent_class)->finalize (object);
