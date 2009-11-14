@@ -85,8 +85,6 @@ gcm_prefs_help_cb (GtkWidget *widget, gpointer data)
 	gcm_gnome_help ("preferences");
 }
 
-#include "gcm-edid.h"
-
 /**
  * gcm_prefs_calibrate_display:
  **/
@@ -98,9 +96,6 @@ gcm_prefs_calibrate_display (GcmCalibrate *calib)
 	GError *error = NULL;
 	gchar *output_name = NULL;
 	guint percentage = G_MAXUINT;
-	GnomeRROutput *output;
-	const guint8 *data;
-	GcmEdid *edid = NULL;
 	gchar *basename = NULL;
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
@@ -109,6 +104,10 @@ gcm_prefs_calibrate_display (GcmCalibrate *calib)
 	/* get the device */
 	g_object_get (current_device,
 		      "native-device-xrandr", &output_name,
+		      "serial", &basename,
+		      "manufacturer", &manufacturer,
+		      "model", &model,
+		      "title", &description,
 		      NULL);
 	if (output_name == NULL) {
 		egg_warning ("failed to get output");
@@ -117,55 +116,22 @@ gcm_prefs_calibrate_display (GcmCalibrate *calib)
 
 	/* create new helper objects */
 	brightness = gcm_brightness_new ();
-	edid = gcm_edid_new ();
-
-	/* get the device */
-	output = gnome_rr_screen_get_output_by_name (rr_screen, output_name);
-	if (output == NULL)
-		goto out;
-
-	/* get edid */
-	data = gnome_rr_output_get_edid_data (output);
-	if (data == NULL)
-		goto out;
-
-	/* parse edid */
-	ret = gcm_edid_parse (edid, data, &error);
-	if (!ret) {
-		egg_warning ("failed to get brightness: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
 
 	/* get a filename based on the serial number */
-	g_object_get (edid, "serial-number", &basename, NULL);
 	if (basename == NULL)
-		g_object_get (edid, "monitor-name", &basename, NULL);
-	if (basename == NULL)
-		g_object_get (edid, "ascii-string", &basename, NULL);
-	if (basename == NULL)
-		g_object_get (edid, "vendor-name", &basename, NULL);
+		g_object_get (current_device, "id", &basename, NULL);
 	if (basename == NULL)
 		basename = g_strdup ("custom");
 
 	/* get model */
-	g_object_get (edid, "monitor-name", &model, NULL);
-	if (model == NULL)
-		g_object_get (edid, "ascii-string", &model, NULL);
 	if (model == NULL)
 		model = g_strdup ("unknown model");
 
 	/* get description */
-	g_object_get (edid, "ascii-string", &description, NULL);
-	if (description == NULL)
-		g_object_get (edid, "monitor-name", &description, NULL);
 	if (description == NULL)
 		description = g_strdup ("calibrated monitor");
 
 	/* get manufacturer */
-	g_object_get (edid, "vendor-name", &manufacturer, NULL);
-	if (manufacturer == NULL)
-		g_object_get (edid, "ascii-string", &manufacturer, NULL);
 	if (manufacturer == NULL)
 		manufacturer = g_strdup ("unknown manufacturer");
 
@@ -253,8 +219,6 @@ finish_calibrate:
 		}
 	}
 out:
-	if (edid != NULL)
-		g_object_unref (edid);
 	if (brightness != NULL)
 		g_object_unref (brightness);
 	g_free (output_name);
@@ -369,9 +333,9 @@ gcm_prefs_calibrate_scanner (GcmCalibrate *calib)
 	/* get the device */
 	g_object_get (current_device,
 		      "id", &basename,
-		      "vendor", &manufacturer,
-		      "description", &model,
-		      "vendor", &manufacturer,
+		      "model", &model,
+		      "title", &description,
+		      "manufacturer", &manufacturer,
 		      NULL);
 	if (basename == NULL) {
 		egg_warning ("failed to get device id");
