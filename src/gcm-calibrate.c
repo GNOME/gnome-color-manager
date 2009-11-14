@@ -634,6 +634,10 @@ gcm_calibrate_display_generate_profile (GcmCalibrate *calibrate, GError **error)
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
 	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), "colprof", argv, NULL, GCM_CALIBRATE_TEMP_DIR, FALSE, FALSE, FALSE);
 
+	/* no need for an okay button */
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "button_ok"));
+	gtk_widget_hide (widget);
+
 	/* TRANSLATORS: title, a profile is a ICC file */
 	gcm_calibrate_set_title (calibrate, _("Generating the profile"));
 	/* TRANSLATORS: dialog message */
@@ -676,7 +680,7 @@ gcm_calibrate_scanner_copy (GcmCalibrate *calibrate, GError **error)
 {
 	gboolean ret;
 	gchar *scanner = NULL;
-	gchar *it8src = NULL;
+	gchar *it8cht = NULL;
 	gchar *it8ref = NULL;
 	GcmCalibratePrivate *priv = calibrate->priv;
 
@@ -685,16 +689,19 @@ gcm_calibrate_scanner_copy (GcmCalibrate *calibrate, GError **error)
 	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (calibrate, _("Copying source image, chart data and CIE reference values."));
 
+	/* setup generic basename */
+	calibrate->priv->basename = g_strdup ("scanner");
+
 	/* build filenames */
 	scanner = g_build_filename (GCM_CALIBRATE_TEMP_DIR, "scanner.tif", NULL);
-	it8src = g_build_filename (GCM_CALIBRATE_TEMP_DIR, "it8.cht", NULL);
+	it8cht = g_build_filename (GCM_CALIBRATE_TEMP_DIR, "it8.cht", NULL);
 	it8ref = g_build_filename (GCM_CALIBRATE_TEMP_DIR, "it8ref.txt", NULL);
 
 	/* copy all files to /tmp as argyllcms doesn't cope well with paths */
-	ret = gcm_utils_mkdir_and_copy ("/usr/share/color/argyll/ref/it8.cht", scanner, error);
+	ret = gcm_utils_mkdir_and_copy ("/usr/share/color/argyll/ref/it8.cht", it8cht, error);
 	if (!ret)
 		goto out;
-	ret = gcm_utils_mkdir_and_copy (priv->filename_source, it8src, error);
+	ret = gcm_utils_mkdir_and_copy (priv->filename_source, scanner, error);
 	if (!ret)
 		goto out;
 	ret = gcm_utils_mkdir_and_copy (priv->filename_reference, it8ref, error);
@@ -702,7 +709,7 @@ gcm_calibrate_scanner_copy (GcmCalibrate *calibrate, GError **error)
 		goto out;
 out:
 	g_free (scanner);
-	g_free (it8src);
+	g_free (it8cht);
 	g_free (it8ref);
 	return ret;
 }
@@ -905,11 +912,20 @@ gcm_calibrate_finish (GcmCalibrate *calibrate, GError **error)
 {
 	gchar *filename;
 	guint i;
-	const gchar *exts[] = {"cal", "ti1", "ti3", NULL};
+	const gchar *exts[] = {"cal", "ti1", "ti3", "tif", NULL};
+	const gchar *filenames[] = {"it8.cht", "it8ref.txt1", NULL};
 
 	/* remove all the temp files */
 	for (i=0; exts[i] != NULL; i++) {
 		filename = g_strdup_printf ("%s/%s.%s", GCM_CALIBRATE_TEMP_DIR, calibrate->priv->basename, exts[i]);
+		egg_debug ("removing %s", filename);
+		g_unlink (filename);
+		g_free (filename);
+	}
+
+	/* remove all the temp files */
+	for (i=0; filenames[i] != NULL; i++) {
+		filename = g_strdup_printf ("%s/%s", GCM_CALIBRATE_TEMP_DIR, filenames[i]);
 		egg_debug ("removing %s", filename);
 		g_unlink (filename);
 		g_free (filename);

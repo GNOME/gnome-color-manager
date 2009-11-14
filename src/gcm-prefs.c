@@ -225,7 +225,7 @@ gcm_prefs_calibrate_scanner_get_scanned_profile (void)
 	/* TRANSLATORS: filter name on the file->open dialog */
 	gtk_file_filter_set_name (filter, _("Supported images files"));
 	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
-	g_object_unref (filter);
+//	g_object_unref (filter);
 
 	/* did user choose file */
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
@@ -268,7 +268,7 @@ gcm_prefs_calibrate_scanner_get_reference_data (void)
 	/* TRANSLATORS: filter name on the file->open dialog */
 	gtk_file_filter_set_name (filter, _("CIE values"));
 	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
-	g_object_unref (filter);
+//	g_object_unref (filter);
 
 	/* did user choose file */
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
