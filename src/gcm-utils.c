@@ -240,7 +240,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	g_object_get (device,
 		      "id", &id,
 		      "type", &type,
-		      "profile", &profile,
+		      "profile-filename", &profile,
 		      "gamma", &gamma,
 		      "brightness", &brightness,
 		      "contrast", &contrast,

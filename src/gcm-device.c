@@ -55,11 +55,11 @@ struct _GcmDevicePrivate
 	gfloat				 contrast;
 	GcmDeviceType			 type;
 	gchar				*id;
-	gchar				*profile;
-	gchar				*description;
+	gchar				*profile_filename;
+	gchar				*profile_description;
 	gchar				*title;
-	gchar				*copyright;
-	gchar				*vendor;
+	gchar				*profile_copyright;
+	gchar				*profile_vendor;
 	GConfClient			*gconf_client;
 	gchar				*native_device_xrandr;
 	gchar				*native_device_sysfs;
@@ -72,10 +72,10 @@ enum {
 	PROP_GAMMA,
 	PROP_BRIGHTNESS,
 	PROP_CONTRAST,
-	PROP_PROFILE,
-	PROP_COPYRIGHT,
-	PROP_VENDOR,
-	PROP_DESCRIPTION,
+	PROP_PROFILE_FILENAME,
+	PROP_PROFILE_COPYRIGHT,
+	PROP_PROFILE_VENDOR,
+	PROP_PROFILE_DESCRIPTION,
 	PROP_TITLE,
 	PROP_NATIVE_DEVICE_XRANDR,
 	PROP_NATIVE_DEVICE_SYSFS,
@@ -111,23 +111,23 @@ gcm_device_load_from_profile (GcmDevice *device, GError **error)
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
 
 	/* no profile to load */
-	if (device->priv->profile == NULL) {
-		g_free (device->priv->copyright);
-		g_free (device->priv->vendor);
-		g_free (device->priv->description);
-		device->priv->copyright = NULL;
-		device->priv->vendor = NULL;
-		device->priv->description = NULL;
+	if (device->priv->profile_filename == NULL) {
+		g_free (device->priv->profile_copyright);
+		g_free (device->priv->profile_vendor);
+		g_free (device->priv->profile_description);
+		device->priv->profile_copyright = NULL;
+		device->priv->profile_vendor = NULL;
+		device->priv->profile_description = NULL;
 		goto out;
 	}
 
 	/* load the profile if it's set */
-	if (device->priv->profile != NULL) {
+	if (device->priv->profile_filename != NULL) {
 
 		/* if the profile was deleted */
-		ret = g_file_test (device->priv->profile, G_FILE_TEST_EXISTS);
+		ret = g_file_test (device->priv->profile_filename, G_FILE_TEST_EXISTS);
 		if (!ret) {
-			egg_warning ("the file was deleted and can't be loaded: %s", device->priv->profile);
+			egg_warning ("the file was deleted and can't be loaded: %s", device->priv->profile_filename);
 			/* this is not fatal */
 			ret = TRUE;
 			goto out;
@@ -135,7 +135,7 @@ gcm_device_load_from_profile (GcmDevice *device, GError **error)
 
 		/* create new profile instance */
 		profile = gcm_profile_new ();
-		ret = gcm_profile_parse (profile, device->priv->profile, &error_local);
+		ret = gcm_profile_parse (profile, device->priv->profile_filename, &error_local);
 		if (!ret) {
 			if (error != NULL)
 				*error = g_error_new (1, 0, "failed to set from profile: %s", error_local->message);
@@ -143,14 +143,14 @@ gcm_device_load_from_profile (GcmDevice *device, GError **error)
 			goto out;
 		}
 
-		/* copy the description */
-		g_free (device->priv->copyright);
-		g_free (device->priv->vendor);
-		g_free (device->priv->description);
+		/* copy the profile_description */
+		g_free (device->priv->profile_copyright);
+		g_free (device->priv->profile_vendor);
+		g_free (device->priv->profile_description);
 		g_object_get (profile,
-			      "copyright", &device->priv->copyright,
-			      "vendor", &device->priv->vendor,
-			      "description", &device->priv->description,
+			      "copyright", &device->priv->profile_copyright,
+			      "vendor", &device->priv->profile_vendor,
+			      "description", &device->priv->profile_description,
 			      NULL);
 	}
 out:
@@ -205,8 +205,8 @@ gcm_device_load (GcmDevice *device, GError **error)
 	}
 
 	/* load data */
-	g_free (device->priv->profile);
-	device->priv->profile = g_key_file_get_string (file, device->priv->id, "profile", NULL);
+	g_free (device->priv->profile_filename);
+	device->priv->profile_filename = g_key_file_get_string (file, device->priv->id, "profile", NULL);
 	device->priv->gamma = g_key_file_get_double (file, device->priv->id, "gamma", &error_local);
 	if (error_local != NULL) {
 		device->priv->gamma = gconf_client_get_float (device->priv->gconf_client, "/apps/gnome-color-manager/default_gamma", NULL);
@@ -230,12 +230,12 @@ gcm_device_load (GcmDevice *device, GError **error)
 	if (!ret) {
 
 		/* just print a warning, this is not fatal */
-		egg_warning ("failed to load profile %s: %s", device->priv->profile, error_local->message);
+		egg_warning ("failed to load profile %s: %s", device->priv->profile_filename, error_local->message);
 		g_error_free (error_local);
 
 		/* recover as the file might have been corrupted */
-		g_free (device->priv->profile);
-		device->priv->profile = NULL;
+		g_free (device->priv->profile_filename);
+		device->priv->profile_filename = NULL;
 		ret = TRUE;
 	}
 out:
@@ -302,10 +302,10 @@ gcm_device_save (GcmDevice *device, GError **error)
 	}
 
 	/* save data */
-	if (device->priv->profile == NULL)
+	if (device->priv->profile_filename == NULL)
 		g_key_file_remove_key (keyfile, device->priv->id, "profile", NULL);
 	else
-		g_key_file_set_string (keyfile, device->priv->id, "profile", device->priv->profile);
+		g_key_file_set_string (keyfile, device->priv->id, "profile", device->priv->profile_filename);
 	g_key_file_set_double (keyfile, device->priv->id, "gamma", device->priv->gamma);
 	g_key_file_set_double (keyfile, device->priv->id, "brightness", device->priv->brightness);
 	g_key_file_set_double (keyfile, device->priv->id, "contrast", device->priv->contrast);
@@ -363,17 +363,17 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_CONTRAST:
 		g_value_set_float (value, priv->contrast);
 		break;
-	case PROP_PROFILE:
-		g_value_set_string (value, priv->profile);
+	case PROP_PROFILE_FILENAME:
+		g_value_set_string (value, priv->profile_filename);
 		break;
-	case PROP_COPYRIGHT:
-		g_value_set_string (value, priv->copyright);
+	case PROP_PROFILE_COPYRIGHT:
+		g_value_set_string (value, priv->profile_copyright);
 		break;
-	case PROP_VENDOR:
-		g_value_set_string (value, priv->vendor);
+	case PROP_PROFILE_VENDOR:
+		g_value_set_string (value, priv->profile_vendor);
 		break;
-	case PROP_DESCRIPTION:
-		g_value_set_string (value, priv->description);
+	case PROP_PROFILE_DESCRIPTION:
+		g_value_set_string (value, priv->profile_description);
 		break;
 	case PROP_TITLE:
 		g_value_set_string (value, priv->title);
@@ -411,9 +411,9 @@ gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GP
 		g_free (priv->title);
 		priv->title = g_strdup (g_value_get_string (value));
 		break;
-	case PROP_PROFILE:
-		g_free (priv->profile);
-		priv->profile = g_strdup (g_value_get_string (value));
+	case PROP_PROFILE_FILENAME:
+		g_free (priv->profile_filename);
+		priv->profile_filename = g_strdup (g_value_get_string (value));
 		break;
 	case PROP_GAMMA:
 		priv->gamma = g_value_get_float (value);
@@ -491,28 +491,36 @@ gcm_device_class_init (GcmDeviceClass *klass)
 	g_object_class_install_property (object_class, PROP_CONTRAST, pspec);
 
 	/**
-	 * GcmDevice:copyright:
+	 * GcmDevice:profile-filename:
 	 */
-	pspec = g_param_spec_string ("copyright", NULL, NULL,
+	pspec = g_param_spec_string ("profile-filename", NULL, NULL,
 				     NULL,
-				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_COPYRIGHT, pspec);
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_PROFILE_FILENAME, pspec);
 
 	/**
-	 * GcmDevice:vendor:
+	 * GcmDevice:profile-copyright:
 	 */
-	pspec = g_param_spec_string ("vendor", NULL, NULL,
+	pspec = g_param_spec_string ("profile-copyright", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_VENDOR, pspec);
+	g_object_class_install_property (object_class, PROP_PROFILE_COPYRIGHT, pspec);
 
 	/**
-	 * GcmDevice:description:
+	 * GcmDevice:profile-vendor:
 	 */
-	pspec = g_param_spec_string ("description", NULL, NULL,
+	pspec = g_param_spec_string ("profile-vendor", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_DESCRIPTION, pspec);
+	g_object_class_install_property (object_class, PROP_PROFILE_VENDOR, pspec);
+
+	/**
+	 * GcmDevice:profile-description:
+	 */
+	pspec = g_param_spec_string ("profile-description", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_PROFILE_DESCRIPTION, pspec);
 
 	/**
 	 * GcmDevice:title:
@@ -521,14 +529,6 @@ gcm_device_class_init (GcmDeviceClass *klass)
 				     NULL,
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_TITLE, pspec);
-
-	/**
-	 * GcmDevice:profile:
-	 */
-	pspec = g_param_spec_string ("profile", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_PROFILE, pspec);
 
 	/**
 	 * GcmDevice:native-device-xrandr:
@@ -558,7 +558,7 @@ gcm_device_init (GcmDevice *device)
 	device->priv = GCM_DEVICE_GET_PRIVATE (device);
 	device->priv->native_device_xrandr = NULL;
 	device->priv->native_device_sysfs = NULL;
-	device->priv->profile = NULL;
+	device->priv->profile_filename = NULL;
 	device->priv->gconf_client = gconf_client_get_default ();
 	device->priv->gamma = gconf_client_get_float (device->priv->gconf_client, "/apps/gnome-color-manager/default_gamma", NULL);
 	if (device->priv->gamma < 0.1f) {
@@ -578,9 +578,9 @@ gcm_device_finalize (GObject *object)
 	GcmDevice *device = GCM_DEVICE (object);
 	GcmDevicePrivate *priv = device->priv;
 
-	g_free (priv->description);
-	g_free (priv->copyright);
-	g_free (priv->vendor);
+	g_free (priv->profile_description);
+	g_free (priv->profile_copyright);
+	g_free (priv->profile_vendor);
 	g_free (priv->title);
 	g_free (priv->id);
 	g_free (priv->native_device_xrandr);

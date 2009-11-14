@@ -841,7 +841,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 	gcm_prefs_add_profiles_suitable_for_devices (type);
 
 	g_object_get (current_device,
-		      "profile", &profile_filename,
+		      "profile-filename", &profile_filename,
 		      "gamma", &localgamma,
 		      "brightness", &brightness,
 		      "contrast", &contrast,
@@ -1080,7 +1080,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 
 	/* see if it's changed */
 	g_object_get (current_device,
-		      "profile", &profile_old,
+		      "profile-filename", &profile_old,
 		      "type", &type,
 		      NULL);
 	egg_debug ("old: %s, new:%s", profile_old, filename);
@@ -1089,7 +1089,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	/* set new profile */
 	if (changed) {
 		g_object_set (current_device,
-			      "profile", filename,
+			      "profile-filename", filename,
 			      NULL);
 	}
 
