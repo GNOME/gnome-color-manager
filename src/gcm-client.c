@@ -480,16 +480,6 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 		goto out;
 	}
 
-	/* parse the EDID to get a crtc-specific name, not an output specific name */
-	data = gnome_rr_output_get_edid_data (output);
-	if (data == NULL)
-		goto out;
-	ret = gcm_edid_parse (priv->edid, data, NULL);
-	if (!ret) {
-		egg_warning ("failed to parse edid");
-		goto out;
-	}
-
 	/* get details */
 	id = gcm_client_get_id_for_xrandr_device (client, output);
 
@@ -501,12 +491,22 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 		goto out;
 	}
 
-	/* get data about the display */
-	g_object_get (priv->edid,
-		      "monitor-name", &model,
-		      "vendor-name", &manufacturer,
-		      "serial-number", &serial,
-		      NULL);
+	/* parse the EDID to get a crtc-specific name, not an output specific name */
+	data = gnome_rr_output_get_edid_data (output);
+	if (data != NULL) {
+		ret = gcm_edid_parse (priv->edid, data, NULL);
+		if (!ret) {
+			egg_warning ("failed to parse edid");
+			goto out;
+		}
+
+		/* get data about the display */
+		g_object_get (priv->edid,
+			      "monitor-name", &model,
+			      "vendor-name", &manufacturer,
+			      "serial-number", &serial,
+			      NULL);
+	}
 
 	/* add new device */
 	device = gcm_device_new ();
