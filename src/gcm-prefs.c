@@ -342,6 +342,14 @@ gcm_prefs_calibrate_scanner (GcmCalibrate *calib)
 		goto out;
 	}
 
+	/* step 0 */
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_SCANNER_SETUP, &error);
+	if (!ret) {
+		egg_warning ("failed to setup: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
 	/* get scanned image */
 	scanned_image = gcm_prefs_calibrate_scanner_get_scanned_profile ();
 	if (scanned_image == NULL)

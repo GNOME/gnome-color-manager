@@ -639,6 +639,55 @@ out:
 }
 
 /**
+ * gcm_calibrate_scanner_setup:
+ **/
+static gboolean
+gcm_calibrate_scanner_setup (GcmCalibrate *calibrate, GError **error)
+{
+	gboolean ret = TRUE;
+	GString *string = NULL;
+	GcmCalibratePrivate *priv = calibrate->priv;
+
+	string = g_string_new ("");
+
+	/* TRANSLATORS: title, a profile is a ICC file */
+	gcm_calibrate_set_title (calibrate, _("Setting up scanner"));
+
+	/* TRANSLATORS: dialog message, preface */
+	g_string_append_printf (string, "%s\n", _("Before calibrating the scanner, you have to manually scan a reference image and save it as a TIFF image file."));
+
+	/* TRANSLATORS: dialog message, preface */
+	g_string_append_printf (string, "%s\n", _("Ensure that the contrast and brightness is not changed and color correction profiles are not applied."));
+
+	/* TRANSLATORS: dialog message, suffix */
+	g_string_append_printf (string, "%s\n", _("The scanner glass should have been cleaned prior to scanning and the output file resolution should be at least 200dpi."));
+
+	/* TRANSLATORS: dialog message, suffix */
+	g_string_append_printf (string, "\n%s\n", _("For best results, the reference image should also be less than two years old."));
+
+	/* TRANSLATORS: dialog question */
+	g_string_append_printf (string, "\n%s", _("Do you have a scanned TIFF file of a IT8.7/2 reference image?"));
+
+	/* set the message */
+	gcm_calibrate_set_message (calibrate, string->str);
+
+	/* wait until user selects okay or closes window */
+	g_main_loop_run (priv->loop);
+
+	/* get result */
+	if (priv->response != GTK_RESPONSE_OK) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "user did not follow calibration steps");
+		ret = FALSE;
+		goto out;
+	}
+out:
+	if (string != NULL)
+		g_string_free (string, TRUE);
+	return ret;
+}
+
+/**
  * gcm_calibrate_scanner_copy:
  **/
 static gboolean
@@ -848,6 +897,10 @@ gcm_calibrate_task (GcmCalibrate *calibrate, GcmCalibrateTask task, GError **err
 	}
 	if (task == GCM_CALIBRATE_TASK_DISPLAY_GENERATE_PROFILE) {
 		ret = gcm_calibrate_display_generate_profile (calibrate, error);
+		goto out;
+	}
+	if (task == GCM_CALIBRATE_TASK_SCANNER_SETUP) {
+		ret = gcm_calibrate_scanner_setup (calibrate, error);
 		goto out;
 	}
 	if (task == GCM_CALIBRATE_TASK_SCANNER_COPY) {
