@@ -927,36 +927,54 @@ gcm_calibrate_finish (GcmCalibrate *calibrate, GError **error)
 {
 	gchar *filename;
 	guint i;
+	gboolean ret;
 	const gchar *exts[] = {"cal", "ti1", "ti3", "tif", NULL};
 	const gchar *filenames[] = {"it8.cht", "it8ref.txt", NULL};
+	GcmCalibratePrivate *priv = calibrate->priv;
 
 	/* remove all the temp files */
-	for (i=0; exts[i] != NULL; i++) {
-		filename = g_strdup_printf ("%s/%s.%s", GCM_CALIBRATE_TEMP_DIR, calibrate->priv->basename, exts[i]);
-		egg_debug ("removing %s", filename);
-		g_unlink (filename);
-		g_free (filename);
+	if (priv->basename != NULL) {
+		for (i=0; exts[i] != NULL; i++) {
+			filename = g_strdup_printf ("%s/%s.%s", GCM_CALIBRATE_TEMP_DIR, priv->basename, exts[i]);
+			ret = g_file_test (filename, G_FILE_TEST_IS_REGULAR);
+			if (ret) {
+				egg_debug ("removing %s", filename);
+				g_unlink (filename);
+			}
+			g_free (filename);
+		}
 	}
 
 	/* remove all the temp files */
 	for (i=0; filenames[i] != NULL; i++) {
 		filename = g_strdup_printf ("%s/%s", GCM_CALIBRATE_TEMP_DIR, filenames[i]);
-		egg_debug ("removing %s", filename);
-		g_unlink (filename);
+		ret = g_file_test (filename, G_FILE_TEST_IS_REGULAR);
+		if (ret) {
+			egg_debug ("removing %s", filename);
+			g_unlink (filename);
+		}
 		g_free (filename);
 	}
 
+	/* we can't have finished with success */
+	if (priv->basename == NULL) {
+		filename = NULL;
+		if (error != NULL)
+			*error = g_error_new (1, 0, "profile was not generated");
+		goto out;
+	}
+
 	/* get the finished icc file */
-	filename = g_strdup_printf ("%s/%s.icc", GCM_CALIBRATE_TEMP_DIR, calibrate->priv->basename);
+	filename = g_strdup_printf ("%s/%s.icc", GCM_CALIBRATE_TEMP_DIR, priv->basename);
 
 	/* we never finished all the steps */
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
 		g_free (filename);
 		filename = NULL;
 		if (error != NULL)
-			*error = g_error_new (1, 0, "Could not find completed profile");
+			*error = g_error_new (1, 0, "could not find completed profile");
 	}
-
+out:
 	return filename;
 }
 
