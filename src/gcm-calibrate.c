@@ -928,7 +928,7 @@ gcm_calibrate_finish (GcmCalibrate *calibrate, GError **error)
 	gchar *filename;
 	guint i;
 	const gchar *exts[] = {"cal", "ti1", "ti3", "tif", NULL};
-	const gchar *filenames[] = {"it8.cht", "it8ref.txt1", NULL};
+	const gchar *filenames[] = {"it8.cht", "it8ref.txt", NULL};
 
 	/* remove all the temp files */
 	for (i=0; exts[i] != NULL; i++) {
