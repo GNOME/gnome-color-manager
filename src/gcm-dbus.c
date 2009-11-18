@@ -170,7 +170,7 @@ gcm_dbus_init (GcmDbus *dbus)
 	dbus->priv->timer = g_timer_new ();
 
 	/* get all devices */
-	ret = gcm_client_coldplug (dbus->priv->client, &error);
+	ret = gcm_client_add_connected (dbus->priv->client, &error);
 	if (!ret) {
 		egg_warning ("failed to coldplug: %s", error->message);
 		g_error_free (error);

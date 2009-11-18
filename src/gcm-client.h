@@ -63,7 +63,9 @@ GcmClient	*gcm_client_new					(void);
 
 GcmDevice	*gcm_client_get_device_by_id			(GcmClient		*client,
 								 const gchar		*id);
-gboolean	 gcm_client_coldplug				(GcmClient		*client,
+gboolean	 gcm_client_add_connected			(GcmClient		*client,
+								 GError			**error);
+gboolean	 gcm_client_add_saved				(GcmClient		*client,
 								 GError			**error);
 GPtrArray	*gcm_client_get_devices				(GcmClient		*client);
 

@@ -1291,6 +1291,43 @@ gcm_prefs_add_device_type (GcmDevice *device)
 	g_string_free (string, TRUE);
 }
 
+
+/**
+ * gcm_prefs_remove_device:
+ **/
+static void
+gcm_prefs_remove_device (GcmDevice *gcm_device)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	const gchar *id;
+	gchar *id_tmp;
+	gboolean ret;
+
+	/* remove */
+	id = gcm_device_get_id (gcm_device);
+	egg_debug ("removing: %s", id);
+
+	/* get first element */
+	model = GTK_TREE_MODEL (list_store_devices);
+	ret = gtk_tree_model_get_iter_first (model, &iter);
+	if (!ret)
+		return;
+
+	/* get the other elements */
+	do {
+		gtk_tree_model_get (model, &iter,
+				    GPM_DEVICES_COLUMN_ID, &id_tmp,
+				    -1);
+		if (g_strcmp0 (id_tmp, id) == 0) {
+			gtk_list_store_remove (GTK_LIST_STORE(model), &iter);
+			g_free (id_tmp);
+			break;
+		}
+		g_free (id_tmp);
+	} while (gtk_tree_model_iter_next (model, &iter));
+}
+
 /**
  * gcm_prefs_added_idle_cb:
  **/
@@ -1301,6 +1338,9 @@ gcm_prefs_added_idle_cb (GcmDevice *device)
 	GtkTreePath *path;
 	GtkWidget *widget;
 	egg_debug ("added: %s", gcm_device_get_id (device));
+
+	/* remove the saved device if it's already there */
+	gcm_prefs_remove_device (device);
 
 	/* get the type of the device */
 	g_object_get (device,
@@ -1346,34 +1386,10 @@ gcm_prefs_added_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user
 static void
 gcm_prefs_removed_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user_data)
 {
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	const gchar *id;
-	gchar *id_tmp;
-	gboolean ret;
+	gcm_prefs_remove_device (gcm_device);
 
-	/* remove */
-	id = gcm_device_get_id (gcm_device);
-	egg_debug ("removed: %s", id);
-
-	/* get first element */
-	model = GTK_TREE_MODEL (list_store_devices);
-	ret = gtk_tree_model_get_iter_first (model, &iter);
-	if (!ret)
-		return;
-
-	/* get the other elements */
-	do {
-		gtk_tree_model_get (model, &iter,
-				    GPM_DEVICES_COLUMN_ID, &id_tmp,
-				    -1);
-		if (g_strcmp0 (id_tmp, id) == 0) {
-			gtk_list_store_remove (GTK_LIST_STORE(model), &iter);
-			g_free (id_tmp);
-			break;
-		}
-		g_free (id_tmp);
-	} while (gtk_tree_model_iter_next (model, &iter));
+	/* ensure this device is re-added if it's been saved */
+	gcm_client_add_saved (gcm_client, NULL);
 }
 
 /**
@@ -1392,8 +1408,16 @@ gcm_prefs_startup_idle_cb (gpointer user_data)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
 	gcm_prefs_add_profiles (widget);
 
-	/* coldplug devices */
-	ret = gcm_client_coldplug (gcm_client, &error);
+	/* coldplug plugged in devices */
+	ret = gcm_client_add_connected (gcm_client, &error);
+	if (!ret) {
+		egg_warning ("failed to coldplug: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* coldplug saved devices */
+	ret = gcm_client_add_saved (gcm_client, &error);
 	if (!ret) {
 		egg_warning ("failed to coldplug: %s", error->message);
 		g_error_free (error);
