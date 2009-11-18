@@ -51,6 +51,7 @@ static void     gcm_device_finalize	(GObject     *object);
  **/
 struct _GcmDevicePrivate
 {
+	gboolean			 connected;
 	gfloat				 gamma;
 	gfloat				 brightness;
 	gfloat				 contrast;
@@ -73,6 +74,7 @@ enum {
 	PROP_0,
 	PROP_TYPE,
 	PROP_ID,
+	PROP_CONNECTED,
 	PROP_SERIAL,
 	PROP_MODEL,
 	PROP_MANUFACTURER,
@@ -400,6 +402,9 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_ID:
 		g_value_set_string (value, priv->id);
 		break;
+	case PROP_CONNECTED:
+		g_value_set_boolean (value, priv->connected);
+		break;
 	case PROP_SERIAL:
 		g_value_set_string (value, priv->serial);
 		break;
@@ -461,6 +466,9 @@ gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GP
 	case PROP_ID:
 		g_free (priv->id);
 		priv->id = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_CONNECTED:
+		priv->connected = g_value_get_boolean (value);
 		break;
 	case PROP_SERIAL:
 		g_free (priv->serial);
@@ -532,6 +540,14 @@ gcm_device_class_init (GcmDeviceClass *klass)
 				     NULL,
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_ID, pspec);
+
+	/**
+	 * GcmDevice:connected:
+	 */
+	pspec = g_param_spec_boolean ("connected", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_CONNECTED, pspec);
 
 	/**
 	 * GcmCalibrate:serial:

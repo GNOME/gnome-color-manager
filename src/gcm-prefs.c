@@ -1248,38 +1248,47 @@ gcm_prefs_add_device_type (GcmDevice *device)
 {
 	GtkTreeIter iter;
 	gchar *title;
-	gchar *title_tmp;
+	GString *string;
 	gchar *id;
 	GcmDeviceType type;
 	const gchar *icon_name;
+	gboolean connected;
 
 	/* get details */
 	g_object_get (device,
 		      "id", &id,
-		      "title", &title_tmp,
+		      "connected", &connected,
+		      "title", &title,
 		      "type", &type,
 		      NULL);
 
 	/* get icon */
 	icon_name = gcm_prefs_device_type_to_icon_name (type);
 
+	/* create a title for the device */
+	string = g_string_new (title);
+
+	/* italic for non-connected devices */
+	if (!connected) {
+		/* TRANSLATORS: this is where the device has been setup but is not connected */
+		g_string_append_printf (string, " <i>[%s]</i>", _("Currently disconnected"));
+	}
+
 	/* use a different title for stuff that won't work yet */
-	if (type == GCM_DEVICE_TYPE_DISPLAY) {
-		title = g_strdup (title_tmp);
-	} else {
+	if (type != GCM_DEVICE_TYPE_DISPLAY) {
 		/* TRANSLATORS: this is where the required software has not been written yet */
-		title = g_strdup_printf ("%s\n(%s)", title_tmp, _("No software support"));
+		g_string_append_printf (string, "\n(%s)", _("No software support"));
 	}
 
 	/* add to list */
 	gtk_list_store_append (list_store_devices, &iter);
 	gtk_list_store_set (list_store_devices, &iter,
 			    GPM_DEVICES_COLUMN_ID, id,
-			    GPM_DEVICES_COLUMN_TITLE, title,
+			    GPM_DEVICES_COLUMN_TITLE, string->str,
 			    GPM_DEVICES_COLUMN_ICON, icon_name, -1);
 	g_free (id);
 	g_free (title);
-	g_free (title_tmp);
+	g_string_free (string, TRUE);
 }
 
 /**
