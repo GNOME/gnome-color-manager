@@ -1167,6 +1167,7 @@ out:
 	if (profile != NULL)
 		g_object_unref (profile);
 	g_free (filename);
+	g_free (profile_old);
 	g_free (copyright);
 	g_free (vendor);
 }

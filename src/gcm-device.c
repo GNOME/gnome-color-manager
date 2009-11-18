@@ -282,7 +282,7 @@ gcm_device_save (GcmDevice *device, GError **error)
 {
 	GKeyFile *keyfile = NULL;
 	gboolean ret;
-	gchar *data;
+	gchar *data = NULL;
 	gchar *dirname;
 	GFile *file = NULL;
 	gchar *filename = NULL;
@@ -377,6 +377,7 @@ gcm_device_save (GcmDevice *device, GError **error)
 		goto out;
 	}
 out:
+	g_free (data);
 	g_free (filename);
 	g_free (dirname);
 	if (file != NULL)

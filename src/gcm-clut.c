@@ -437,6 +437,8 @@ gcm_clut_finalize (GObject *object)
 	GcmClut *clut = GCM_CLUT (object);
 	GcmClutPrivate *priv = clut->priv;
 
+	g_free (clut->priv->copyright);
+	g_free (clut->priv->description);
 	g_free (clut->priv->profile);
 	g_free (clut->priv->id);
 	g_ptr_array_unref (priv->array);
