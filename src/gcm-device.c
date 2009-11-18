@@ -312,9 +312,24 @@ gcm_device_save (GcmDevice *device, GError **error)
 		g_key_file_remove_key (keyfile, device->priv->id, "profile", NULL);
 	else
 		g_key_file_set_string (keyfile, device->priv->id, "profile", device->priv->profile_filename);
-	g_key_file_set_double (keyfile, device->priv->id, "gamma", device->priv->gamma);
-	g_key_file_set_double (keyfile, device->priv->id, "brightness", device->priv->brightness);
-	g_key_file_set_double (keyfile, device->priv->id, "contrast", device->priv->contrast);
+
+	/* only save gamma if not the default */
+	if (device->priv->gamma > 0.99 && device->priv->gamma < 1.01)
+		g_key_file_remove_key (keyfile, device->priv->id, "gamma", NULL);
+	else
+		g_key_file_set_double (keyfile, device->priv->id, "gamma", device->priv->gamma);
+
+	/* only save brightness if not the default */
+	if (device->priv->brightness > -0.01 && device->priv->brightness < 0.01)
+		g_key_file_remove_key (keyfile, device->priv->id, "brightness", NULL);
+	else
+		g_key_file_set_double (keyfile, device->priv->id, "brightness", device->priv->brightness);
+
+	/* only save contrast if not the default */
+	if (device->priv->contrast > 99.9 && device->priv->contrast < 100.1)
+		g_key_file_remove_key (keyfile, device->priv->id, "contrast", NULL);
+	else
+		g_key_file_set_double (keyfile, device->priv->id, "contrast", device->priv->contrast);
 
 	/* convert to string */
 	data = g_key_file_to_data (keyfile, NULL, &error_local);
