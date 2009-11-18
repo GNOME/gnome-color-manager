@@ -656,15 +656,23 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 	gboolean ret = FALSE;
 	GtkWidget *widget;
 	GcmDeviceType type;
+	gboolean connected;
 
 	/* no device selected */
 	if (current_device == NULL)
 		goto out;
 
-	/* are we a display */
+	/* get current device properties */
 	g_object_get (current_device,
 		      "type", &type,
+		      "connected", &connected,
 		      NULL);
+
+	/* are we disconnected */
+	if (!connected)
+		goto out;
+
+	/* are we a display */
 	if (type == GCM_DEVICE_TYPE_DISPLAY) {
 
 		/* find if ArgyllCMS is installed */
