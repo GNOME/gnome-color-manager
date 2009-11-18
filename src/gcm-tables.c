@@ -98,6 +98,8 @@ gcm_tables_get_pnp_id (GcmTables *tables, const gchar *pnp_id, GError **error)
 		/* parse into lines */
 		split = g_strsplit (data, "\n", -1);
 		for (i=0; split[i] != NULL; i++) {
+			if (split[i][0] == '\0')
+				continue;
 			split[i][3] = '\0';
 			g_hash_table_insert (priv->pnp_table, g_strdup (split[i]), g_strdup (&split[i][4]));
 		}
