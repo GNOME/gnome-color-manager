@@ -352,6 +352,10 @@ gcm_device_save (GcmDevice *device, GError **error)
 	else
 		g_key_file_set_double (keyfile, device->priv->id, "contrast", device->priv->contrast);
 
+	/* save other properties we'll need if we add this device offline */
+	g_key_file_set_string (keyfile, device->priv->id, "title", device->priv->title);
+	g_key_file_set_string (keyfile, device->priv->id, "type", gcm_device_type_to_text (device->priv->type));
+
 	/* convert to string */
 	data = g_key_file_to_data (keyfile, NULL, &error_local);
 	if (data == NULL) {
