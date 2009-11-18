@@ -45,6 +45,7 @@ gboolean	 gcm_gnome_help				(const gchar		*link_id);
 gboolean	 gcm_utils_output_is_lcd_internal	(const gchar		*output_name);
 gboolean	 gcm_utils_output_is_lcd		(const gchar		*output_name);
 void		 gcm_utils_alphanum_lcase		(gchar			*string);
+gchar		*gcm_utils_get_default_config_location	(void);
 
 #endif /* __GCM_UTILS_H */
 

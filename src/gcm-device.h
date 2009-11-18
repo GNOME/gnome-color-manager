@@ -55,6 +55,7 @@ struct _GcmDeviceClass
 };
 
 typedef enum {
+	GCM_DEVICE_TYPE_UNKNOWN,
 	GCM_DEVICE_TYPE_DISPLAY,
 	GCM_DEVICE_TYPE_SCANNER,
 	GCM_DEVICE_TYPE_PRINTER,
@@ -69,6 +70,8 @@ gboolean	 gcm_device_load			(GcmDevice		*device,
 							 GError			**error);
 gboolean	 gcm_device_save			(GcmDevice		*device,
 							 GError			**error);
+GcmDeviceType	 gcm_device_type_from_text		(const gchar		*type);
+const gchar	*gcm_device_type_to_text		(GcmDeviceType		 type);
 
 G_END_DECLS
 

@@ -36,6 +36,7 @@
 
 #include "gcm-device.h"
 #include "gcm-profile.h"
+#include "gcm-utils.h"
 
 #include "egg-debug.h"
 
@@ -91,17 +92,37 @@ enum {
 G_DEFINE_TYPE (GcmDevice, gcm_device, G_TYPE_OBJECT)
 
 /**
- * gcm_device_get_default_config_location:
+ * gcm_device_type_from_text:
  **/
-static gchar *
-gcm_device_get_default_config_location (void)
+GcmDeviceType
+gcm_device_type_from_text (const gchar *type)
 {
-	gchar *filename;
+	if (g_strcmp0 (type, "display") == 0)
+		return GCM_DEVICE_TYPE_DISPLAY;
+	if (g_strcmp0 (type, "scanner") == 0)
+		return GCM_DEVICE_TYPE_SCANNER;
+	if (g_strcmp0 (type, "printer") == 0)
+		return GCM_DEVICE_TYPE_PRINTER;
+	if (g_strcmp0 (type, "camera") == 0)
+		return GCM_DEVICE_TYPE_CAMERA;
+	return GCM_DEVICE_TYPE_UNKNOWN;
+}
 
-	/* create default path */
-	filename = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "config.dat", NULL);
-
-	return filename;
+/**
+ * gcm_device_type_to_text:
+ **/
+const gchar *
+gcm_device_type_to_text (GcmDeviceType type)
+{
+	if (type == GCM_DEVICE_TYPE_DISPLAY)
+		return "display";
+	if (type == GCM_DEVICE_TYPE_SCANNER)
+		return "scanner";
+	if (type == GCM_DEVICE_TYPE_PRINTER)
+		return "printer";
+	if (type == GCM_DEVICE_TYPE_CAMERA)
+		return "camera";
+	return "unknown";
 }
 
 /**
@@ -190,7 +211,7 @@ gcm_device_load (GcmDevice *device, GError **error)
 	g_return_val_if_fail (device->priv->id != NULL, FALSE);
 
 	/* get default config */
-	filename = gcm_device_get_default_config_location ();
+	filename = gcm_utils_get_default_config_location ();
 
 	/* check we have a config, or is this first start */
 	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
@@ -269,7 +290,7 @@ gcm_device_save (GcmDevice *device, GError **error)
 	g_return_val_if_fail (device->priv->id != NULL, FALSE);
 
 	/* get default config */
-	filename = gcm_device_get_default_config_location ();
+	filename = gcm_utils_get_default_config_location ();
 
 	/* directory exists? */
 	dirname = g_path_get_dirname (filename);

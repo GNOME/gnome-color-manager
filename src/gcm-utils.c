@@ -572,4 +572,17 @@ gcm_utils_alphanum_lcase (gchar *data)
 	}
 }
 
+/**
+ * gcm_utils_get_default_config_location:
+ **/
+gchar *
+gcm_utils_get_default_config_location (void)
+{
+	gchar *filename;
+
+	/* create default path */
+	filename = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "config.dat", NULL);
+
+	return filename;
+}
 
