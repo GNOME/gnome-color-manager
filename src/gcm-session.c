@@ -110,7 +110,6 @@ gcm_session_check_idle_cb (GcmDbus *dbus)
 int
 main (int argc, char *argv[])
 {
-	gboolean verbose = FALSE;
 	gboolean no_timed_exit = FALSE;
 	GcmDbus *dbus = NULL;
 	GOptionContext *context;
@@ -120,8 +119,6 @@ main (int argc, char *argv[])
 	DBusGConnection *connection;
 
 	const GOptionEntry options[] = {
-		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
-		  _("Show extra debugging information"), NULL },
 		{ "no-timed-exit", '\0', 0, G_OPTION_ARG_NONE, &no_timed_exit,
 		  _("Do not exit after the request has been processed"), NULL },
 		{ NULL}
@@ -140,7 +137,7 @@ main (int argc, char *argv[])
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
 
-	egg_debug_init (verbose);
+	egg_debug_init (&argc, &argv);
 	gtk_init (&argc, &argv);
 
 	/* create new objects */

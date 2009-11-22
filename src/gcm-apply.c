@@ -35,7 +35,6 @@ int
 main (int argc, char **argv)
 {
 	gboolean ret;
-	gboolean verbose = FALSE;
 	guint retval = 0;
 	GError *error = NULL;
 	GOptionContext *context;
@@ -46,19 +45,16 @@ main (int argc, char **argv)
 	GcmDeviceType type;
 
 	const GOptionEntry options[] = {
-		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
-			"Show extra debugging information", NULL },
 		{ NULL}
 	};
 
 	gtk_init (&argc, &argv);
+	egg_debug_init (&argc, &argv);
 
 	context = g_option_context_new ("gnome-color-manager apply program");
 	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
-
-	egg_debug_init (verbose);
 
 	/* get devices */
 	client = gcm_client_new ();

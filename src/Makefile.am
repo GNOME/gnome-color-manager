@@ -14,11 +14,7 @@ INCLUDES =						\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 		\
 	-DVERSION="\"$(VERSION)\"" 			\
 	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"		\
-	-DGCM_DATA=\"$(pkgdatadir)\"			\
-	-DEGG_LOG_FILE=\""$(GCM_LOG_DIR)/gcm"\"		\
-	-DEGG_VERBOSE="\"GCM_VERBOSE\""			\
-	-DEGG_LOGGING="\"GCM_LOGGING\""			\
-	-DEGG_CONSOLE="\"GCM_CONSOLE\""
+	-DGCM_DATA=\"$(pkgdatadir)\"
 
 noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\

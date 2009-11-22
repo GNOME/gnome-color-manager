@@ -1519,7 +1519,6 @@ gcm_prefs_radio_cb (GtkWidget *widget, gpointer user_data)
 int
 main (int argc, char **argv)
 {
-	gboolean verbose = FALSE;
 	guint retval = 0;
 	GOptionContext *context;
 	GtkWidget *main_window;
@@ -1535,8 +1534,6 @@ main (int argc, char **argv)
 	GtkWidget *info_bar_label;
 
 	const GOptionEntry options[] = {
-		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
-		  _("Show extra debugging information"), NULL },
 		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
 		  /* TRANSLATORS: we can make this modal (stay on top of) another window */
 		  _("Set the parent window to make this modal"), NULL },
@@ -1544,13 +1541,12 @@ main (int argc, char **argv)
 	};
 
 	gtk_init (&argc, &argv);
+	egg_debug_init (&argc, &argv);
 
 	context = g_option_context_new ("gnome-color-manager prefs program");
 	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
-
-	egg_debug_init (verbose);
 
 	/* block in a loop */
 	loop = g_main_loop_new (NULL, FALSE);
@@ -1770,6 +1766,7 @@ out:
 		g_ptr_array_unref (profiles_array_in_combo);
 	if (gcm_client != NULL)
 		g_object_unref (gcm_client);
+	egg_debug_free ();
 	return retval;
 }
 

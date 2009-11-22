@@ -208,7 +208,6 @@ out:
 int
 main (int argc, char **argv)
 {
-	gboolean verbose = FALSE;
 	gboolean x11 = FALSE;
 	gboolean dump = FALSE;
 	gchar *sysfs_path = NULL;
@@ -216,9 +215,6 @@ main (int argc, char **argv)
 	GOptionContext *context;
 
 	const GOptionEntry options[] = {
-		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
-			/* TRANSLATORS: command line option */
-			_("Show extra debugging information"), NULL },
 		{ "x11", 'x', 0, G_OPTION_ARG_NONE, &x11,
 			/* TRANSLATORS: command line option */
 			_("Show X11 properties"), NULL },
@@ -232,13 +228,12 @@ main (int argc, char **argv)
 	};
 
 	gtk_init (&argc, &argv);
+	egg_debug_init (&argc, &argv);
 
 	context = g_option_context_new ("gnome-color-manager inspect program");
 	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
-
-	egg_debug_init (verbose);
 
 	if (x11 || dump)
 		gcm_inspect_show_x11_atoms ();

@@ -35,7 +35,6 @@ int
 main (int argc, char **argv)
 {
 	gboolean ret;
-	gboolean verbose = FALSE;
 	gchar *copyright = NULL;
 	gchar *description = NULL;
 	gchar *destination = NULL;
@@ -49,8 +48,6 @@ main (int argc, char **argv)
 	GtkResponseType response;
 
 	const GOptionEntry options[] = {
-		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
-			"Show extra debugging information", NULL },
 		{ G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &files,
 		  /* TRANSLATORS: command line option: a list of catalogs to install */
 		  _("ICC profile to install"), NULL },
@@ -58,13 +55,12 @@ main (int argc, char **argv)
 	};
 
 	gtk_init (&argc, &argv);
+	egg_debug_init (&argc, &argv);
 
 	context = g_option_context_new ("gnome-color-manager import program");
 	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
-
-	egg_debug_init (verbose);
 
 	/* nothing sent */
 	if (files == NULL) {

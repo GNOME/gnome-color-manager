@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2007-2008 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2007-2009 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -58,18 +58,73 @@
 #define CONSOLE_CYAN		36
 #define CONSOLE_WHITE		37
 
-static gint fd = -1;
+static gint _fd = -1;
+static gboolean _verbose = FALSE;
+static gboolean _console = FALSE;
+static gchar *_debug_filename = NULL;
+static gboolean _initialized = FALSE;
+static gchar **_modules = NULL;
+static gchar **_functions = NULL;
 
 /**
- * pk_set_console_mode:
+ * egg_debug_filter_module:
+ **/
+static gboolean
+egg_debug_filter_module (const gchar *filename)
+{
+	gchar *module;
+	guint i;
+	gboolean ret = FALSE;
+
+	/* nothing filtering */
+	if (_modules == NULL)
+		return FALSE;
+
+	/* are we in the filter list */
+	module = g_strdup (filename);
+	g_strdelimit (module, ".", '\0');
+	for (i=0; _modules[i] != NULL; i++) {
+		if (g_strcmp0 (_modules[i], module) == 0) {
+			ret = TRUE;
+			break;
+		}
+	}
+	return ret;
+}
+
+/**
+ * egg_debug_filter_function:
+ **/
+static gboolean
+egg_debug_filter_function (const gchar *function)
+{
+	guint i;
+	gboolean ret = FALSE;
+
+	/* nothing filtering */
+	if (_functions == NULL)
+		return FALSE;
+
+	/* are we in the filter list */
+	for (i=0; _functions[i] != NULL; i++) {
+		if (g_str_has_prefix (function, _functions[i])) {
+			ret = TRUE;
+			break;
+		}
+	}
+	return ret;
+}
+
+/**
+ * egg_debug_set_console_mode:
  **/
 static void
-pk_set_console_mode (guint console_code)
+egg_debug_set_console_mode (guint console_code)
 {
 	gchar command[13];
 
 	/* don't put extra commands into logs */
-	if (!egg_debug_is_console ())
+	if (!_console)
 		return;
 
 	/* Command is the control command to the terminal */
@@ -92,48 +147,50 @@ egg_debug_backtrace (void)
 	call_stack_size = backtrace (call_stack, G_N_ELEMENTS (call_stack));
 	symbols = backtrace_symbols (call_stack, call_stack_size);
 	if (symbols != NULL) {
-		pk_set_console_mode (CONSOLE_RED);
+		egg_debug_set_console_mode (CONSOLE_RED);
 		g_print ("Traceback:\n");
 		while (i < call_stack_size) {
 			g_print ("\t%s\n", symbols[i]);
 			i++;
 		}
-		pk_set_console_mode (CONSOLE_RESET);
+		egg_debug_set_console_mode (CONSOLE_RESET);
 		free (symbols);
 	}
 #endif
 }
 
 /**
- * pk_log_line:
+ * egg_debug_log_line:
  **/
 static void
-pk_log_line (const gchar *buffer)
+egg_debug_log_line (const gchar *buffer)
 {
 	ssize_t count;
+
 	/* open a file */
-	if (fd == -1) {
+	if (_fd == -1) {
 		/* ITS4: ignore, /var/log/foo is owned by root, and this is just debug text */
-		fd = open (EGG_LOG_FILE, O_WRONLY|O_APPEND|O_CREAT, 0777);
-		if (fd == -1)
-			g_error ("could not open log: '%s'", EGG_LOG_FILE);
+		_fd = open (_debug_filename, O_WRONLY|O_APPEND|O_CREAT, 0777);
+		if (_fd == -1)
+			g_error ("could not open log: '%s'", _debug_filename);
 	}
 
 	/* ITS4: ignore, debug text always NULL terminated */
-	count = write (fd, buffer, strlen (buffer));
+	count = write (_fd, buffer, strlen (buffer));
 	if (count == -1)
 		g_warning ("could not write %s", buffer);
+
 	/* newline */
-	count = write (fd, "\n", 1);
+	count = write (_fd, "\n", 1);
 	if (count == -1)
 		g_warning ("could not write newline");
 }
 
 /**
- * pk_print_line:
+ * egg_debug_print_line:
  **/
 static void
-pk_print_line (const gchar *func, const gchar *file, const int line, const gchar *buffer, guint color)
+egg_debug_print_line (const gchar *func, const gchar *file, const int line, const gchar *buffer, guint color)
 {
 	gchar *str_time;
 	gchar *header;
@@ -148,18 +205,18 @@ pk_print_line (const gchar *func, const gchar *file, const int line, const gchar
 	g_free (str_time);
 
 	/* always in light green */
-	pk_set_console_mode (CONSOLE_GREEN);
+	egg_debug_set_console_mode (CONSOLE_GREEN);
 	printf ("%s\n", header);
 
 	/* different colors according to the severity */
-	pk_set_console_mode (color);
+	egg_debug_set_console_mode (color);
 	printf (" - %s\n", buffer);
-	pk_set_console_mode (CONSOLE_RESET);
+	egg_debug_set_console_mode (CONSOLE_RESET);
 
 	/* log to a file */
-	if (egg_debug_is_logging ()) {
-		pk_log_line (header);
-		pk_log_line (buffer);
+	if (_debug_filename != NULL) {
+		egg_debug_log_line (header);
+		egg_debug_log_line (buffer);
 	}
 
 	/* flush this output, as we need to debug */
@@ -177,16 +234,16 @@ egg_debug_real (const gchar *func, const gchar *file, const int line, const gcha
 	va_list args;
 	gchar *buffer = NULL;
 
-	if (!egg_debug_enabled ())
+	if (!_verbose && !egg_debug_filter_module (file) && !egg_debug_filter_function (func))
 		return;
 
 	va_start (args, format);
 	g_vasprintf (&buffer, format, args);
 	va_end (args);
 
-	pk_print_line (func, file, line, buffer, CONSOLE_BLUE);
+	egg_debug_print_line (func, file, line, buffer, CONSOLE_BLUE);
 
-	g_free(buffer);
+	g_free (buffer);
 }
 
 /**
@@ -198,7 +255,7 @@ egg_warning_real (const gchar *func, const gchar *file, const int line, const gc
 	va_list args;
 	gchar *buffer = NULL;
 
-	if (!egg_debug_enabled ())
+	if (!_verbose && !egg_debug_filter_module (file) && !egg_debug_filter_function (func))
 		return;
 
 	va_start (args, format);
@@ -206,11 +263,11 @@ egg_warning_real (const gchar *func, const gchar *file, const int line, const gc
 	va_end (args);
 
 	/* do extra stuff for a warning */
-	if (!egg_debug_is_console ())
+	if (!_console)
 		printf ("*** WARNING ***\n");
-	pk_print_line (func, file, line, buffer, CONSOLE_RED);
+	egg_debug_print_line (func, file, line, buffer, CONSOLE_RED);
 
-	g_free(buffer);
+	g_free (buffer);
 }
 
 /**
@@ -227,10 +284,10 @@ egg_error_real (const gchar *func, const gchar *file, const int line, const gcha
 	va_end (args);
 
 	/* do extra stuff for a warning */
-	if (!egg_debug_is_console ())
+	if (!_console)
 		printf ("*** ERROR ***\n");
-	pk_print_line (func, file, line, buffer, CONSOLE_RED);
-	g_free(buffer);
+	egg_debug_print_line (func, file, line, buffer, CONSOLE_RED);
+	g_free (buffer);
 
 	/* we want to fix this! */
 	egg_debug_backtrace ();
@@ -239,75 +296,112 @@ egg_error_real (const gchar *func, const gchar *file, const int line, const gcha
 }
 
 /**
- * egg_debug_enabled:
+ * egg_debug_is_verbose:
  *
  * Returns: TRUE if we have debugging enabled
  **/
 gboolean
-egg_debug_enabled (void)
+egg_debug_is_verbose (void)
 {
-	const gchar *env;
-	env = g_getenv (EGG_VERBOSE);
-	return (g_strcmp0 (env, "1") == 0);
-}
-
-/**
- * egg_debug_is_logging:
- *
- * Returns: TRUE if we have logging enabled
- **/
-gboolean
-egg_debug_is_logging (void)
-{
-	const gchar *env;
-	env = g_getenv (EGG_LOGGING);
-	return (g_strcmp0 (env, "1") == 0);
-}
-
-/**
- * egg_debug_is_console:
- *
- * Returns: TRUE if we have debugging enabled
- **/
-gboolean
-egg_debug_is_console (void)
-{
-	const gchar *env;
-	env = g_getenv (EGG_CONSOLE);
-	return (g_strcmp0 (env, "1") == 0);
-}
-
-/**
- * egg_debug_set_logging:
- **/
-void
-egg_debug_set_logging (gboolean enabled)
-{
-	if (enabled)
-		g_setenv (EGG_LOGGING, "1", TRUE);
-	else
-		g_setenv (EGG_LOGGING, "0", TRUE);
-
-	if (egg_debug_is_logging ())
-		egg_debug ("logging to %s", EGG_LOG_FILE);
+	return _verbose;
 }
 
 /**
  * egg_debug_init:
- * @debug: If we should print out verbose logging
+ * @argc: a pointer to the number of command line arguments.
+ * @argv: a pointer to the array of command line arguments.
+ *
+ * Parses command line arguments.
+ *
+ * Any arguments used are removed from the array and
+ * @argc and @argv are updated accordingly.
+ *
+ * Return value: %TRUE if initialization succeeded, otherwise %FALSE.
+ **/
+gboolean
+egg_debug_init (gint *argc, gchar ***argv)
+{
+	GOptionContext *option_context;
+	GOptionGroup *group;
+	GError *error = NULL;
+	gboolean verbose = FALSE;
+	gchar *debug_filename = NULL;
+	gchar **modules = NULL;
+	gchar **functions = NULL;
+	const GOptionEntry main_entries[] = {
+		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
+		  /* TRANSLATORS: turn on all debugging */
+		  _("Show debugging information for all files"), NULL },
+		{ NULL}
+	};
+	const GOptionEntry debug_entries[] = {
+		{ "debug-modules", '\0', 0, G_OPTION_ARG_STRING_ARRAY, &modules,
+		  /* TRANSLATORS: a list of modules to debug */
+		  _("Debug these specific modules"), NULL },
+		{ "debug-functions", '\0', 0, G_OPTION_ARG_STRING_ARRAY, &functions,
+		  /* TRANSLATORS: a list of functions to debug */
+		  _("Debug these specific functions"), NULL },
+		{ "debug-filename", '\0', 0, G_OPTION_ARG_STRING, &debug_filename,
+		  /* TRANSLATORS: save to a log */
+		  _("Log debugging data to a file"), NULL },
+		{ NULL}
+	};
+
+	/* already initialized */
+	if (_initialized)
+		return TRUE;
+
+	option_context = g_option_context_new (NULL);
+	g_option_context_set_ignore_unknown_options (option_context, TRUE);
+	g_option_context_set_help_enabled (option_context, TRUE);
+
+	/* create a new group */
+	group = g_option_group_new ("debug", "Detailed debugging", "Show all debugging options", NULL, NULL);
+	g_option_group_add_entries (group, debug_entries);
+
+	/* only add one main entry */
+	g_option_context_add_main_entries (option_context, main_entries, NULL);
+	g_option_context_add_group (option_context, group);
+	if (!g_option_context_parse (option_context, argc, argv, &error)) {
+		g_warning ("%s", error->message);
+		g_error_free (error);
+	}
+
+	/* set options */
+	_debug_filename = g_strdup (debug_filename);
+	_verbose = verbose;
+	_initialized = TRUE;
+	_modules = g_strdupv (modules);
+	_functions = g_strdupv (functions);
+	_console = (isatty (fileno (stdout)) == 1);
+	egg_debug ("Verbose debugging %i (on console %i)", _verbose, _console);
+
+	g_option_context_free (option_context);
+	g_free (debug_filename);
+	g_strfreev (modules);
+	g_strfreev (functions);
+	return TRUE;
+}
+
+/**
+ * egg_debug_free:
  **/
 void
-egg_debug_init (gboolean debug)
+egg_debug_free (void)
 {
-	/* check if we are on console */
-	if (isatty (fileno (stdout)) == 1)
-		g_setenv (EGG_CONSOLE, "1", FALSE);
-	else
-		g_setenv (EGG_CONSOLE, "0", FALSE);
-	if (debug)
-		g_setenv (EGG_VERBOSE, "1", FALSE);
-	else
-		g_setenv (EGG_VERBOSE, "0", FALSE);
-	egg_debug ("Verbose debugging %i (on console %i)%s", egg_debug_enabled (), egg_debug_is_console (), EGG_VERBOSE);
+	if (!_initialized)
+		return;
+
+	/* close file */
+	if (_fd != -1)
+		close (_fd);
+
+	/* free memory */
+	g_free (_debug_filename);
+	g_strfreev (_modules);
+	g_strfreev (_functions);
+
+	/* can not re-init */
+	_initialized = FALSE;
 }
 
