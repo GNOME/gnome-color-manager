@@ -890,27 +890,35 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 	gchar *title;
 	gchar *id;
 	gboolean ret;
+	gboolean connected;
 	GError *error = NULL;
 
 	/* get details */
 	g_object_get (device,
 		      "id", &id,
+		      "connected", &connected,
 		      "title", &title_tmp,
 		      NULL);
 
-	/* set the gamma on the device */
-	ret = gcm_utils_set_gamma_for_device (device, &error);
-	if (!ret) {
-		egg_warning ("failed to set output gamma: %s", error->message);
-		g_error_free (error);
-	}
+	/* italic for non-connected devices */
+	if (connected) {
+		/* set the gamma on the device */
+		ret = gcm_utils_set_gamma_for_device (device, &error);
+		if (!ret) {
+			egg_warning ("failed to set output gamma: %s", error->message);
+			g_error_free (error);
+		}
 
-	/* use a different title if we have crap xorg drivers */
-	if (ret) {
-		title = g_strdup (title_tmp);
+		/* use a different title if we have crap xorg drivers */
+		if (ret) {
+			title = g_strdup (title_tmp);
+		} else {
+			/* TRANSLATORS: this is where an output is not settable, but we are showing it in the UI */
+			title = g_strdup_printf ("%s\n(%s)", title_tmp, _("No hardware support"));
+		}
 	} else {
-		/* TRANSLATORS: this is where an output is not settable, but we are showing it in the UI */
-		title = g_strdup_printf ("%s\n(%s)", title_tmp, _("No hardware support"));
+		/* TRANSLATORS: this is where the device has been setup but is not connected */
+		title = g_strdup_printf ("%s <i>[%s]</i>", title_tmp, _("disconnected"));
 	}
 
 	/* add to list */
@@ -1280,7 +1288,7 @@ gcm_prefs_add_device_type (GcmDevice *device)
 	/* italic for non-connected devices */
 	if (!connected) {
 		/* TRANSLATORS: this is where the device has been setup but is not connected */
-		g_string_append_printf (string, " <i>[%s]</i>", _("Currently disconnected"));
+		g_string_append_printf (string, " <i>[%s]</i>", _("disconnected"));
 	}
 
 	/* use a different title for stuff that won't work yet */

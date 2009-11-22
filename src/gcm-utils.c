@@ -254,6 +254,13 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 		goto out;
 	}
 
+	/* should be set for display types */
+	if (output_name == NULL) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "no output name for display: %s", id);
+		goto out;
+	}
+
 	/* check we have an output */
 	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, error);
 	if (rr_screen == NULL)
