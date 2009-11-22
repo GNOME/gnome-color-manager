@@ -606,7 +606,7 @@ static void
 gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const gchar *id)
 {
 	gchar *title;
-	gchar *type_text;
+	gchar *type_text = NULL;
 	GcmDeviceType type;
 	GcmDevice *device = NULL;
 	gboolean ret;
