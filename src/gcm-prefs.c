@@ -1541,10 +1541,11 @@ main (int argc, char **argv)
 	};
 
 	gtk_init (&argc, &argv);
-	egg_debug_init (&argc, &argv);
 
 	context = g_option_context_new ("gnome-color-manager prefs program");
 	g_option_context_add_main_entries (context, options, NULL);
+	g_option_context_add_group (context, egg_debug_get_option_group ());
+	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
 
@@ -1766,7 +1767,6 @@ out:
 		g_ptr_array_unref (profiles_array_in_combo);
 	if (gcm_client != NULL)
 		g_object_unref (gcm_client);
-	egg_debug_free ();
 	return retval;
 }
 

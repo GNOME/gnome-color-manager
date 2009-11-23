@@ -63,8 +63,10 @@ static gboolean _verbose = FALSE;
 static gboolean _console = FALSE;
 static gchar *_log_filename = NULL;
 static gboolean _initialized = FALSE;
-static GPtrArray *_modules = NULL;
-static GPtrArray *_functions = NULL;
+static GPtrArray *_modules_array = NULL;
+static GPtrArray *_functions_array = NULL;
+static gchar **_modules = NULL;
+static gchar **_functions = NULL;
 
 /**
  * egg_debug_filter_module:
@@ -78,14 +80,14 @@ egg_debug_filter_module (const gchar *filename)
 	gboolean ret = FALSE;
 
 	/* nothing filtering */
-	if (_modules == NULL)
+	if (_modules_array == NULL)
 		return FALSE;
 
 	/* are we in the filter list */
 	module = g_strdup (filename);
 	g_strdelimit (module, ".", '\0');
-	for (i=0; i<_modules->len; i++) {
-		module_tmp = g_ptr_array_index (_modules, i);
+	for (i=0; i<_modules_array->len; i++) {
+		module_tmp = g_ptr_array_index (_modules_array, i);
 		if (g_strcmp0 (module_tmp, module) == 0) {
 			ret = TRUE;
 			break;
@@ -105,12 +107,12 @@ egg_debug_filter_function (const gchar *function)
 	gboolean ret = FALSE;
 
 	/* nothing filtering */
-	if (_functions == NULL)
+	if (_functions_array == NULL)
 		return FALSE;
 
 	/* are we in the filter list */
-	for (i=0; i<_functions->len; i++) {
-		function_tmp = g_ptr_array_index (_functions, i);
+	for (i=0; i<_functions_array->len; i++) {
+		function_tmp = g_ptr_array_index (_functions_array, i);
 		if (g_str_has_prefix (function, function_tmp)) {
 			ret = TRUE;
 			break;
@@ -350,86 +352,34 @@ out:
 }
 
 /**
- * egg_debug_init:
- * @argc: a pointer to the number of command line arguments.
- * @argv: a pointer to the array of command line arguments.
- *
- * Parses command line arguments.
- *
- * Any arguments used are removed from the array and
- * @argc and @argv are updated accordingly.
- *
- * Return value: %TRUE if initialization succeeded, otherwise %FALSE.
- **/
-gboolean
-egg_debug_init (gint *argc, gchar ***argv)
+ * egg_debug_pre_parse_hook:
+ */
+static gboolean
+egg_debug_pre_parse_hook (GOptionContext *context, GOptionGroup *group, gpointer data, GError **error)
 {
-	GOptionContext *option_context;
-	GOptionGroup *group;
-	GError *error = NULL;
-	gboolean verbose = FALSE;
-	gchar *log_filename = NULL;
-	gchar **modules = NULL;
-	gchar **functions = NULL;
+	const gchar *env_string;
 	const GOptionEntry main_entries[] = {
-		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &verbose,
+		{ "verbose", 'v', 0, G_OPTION_ARG_NONE, &_verbose,
 		  /* TRANSLATORS: turn on all debugging */
-		  _("Show debugging information for all files"), NULL },
-		{ NULL}
-	};
-	const GOptionEntry debug_entries[] = {
-		{ "debug-modules", '\0', 0, G_OPTION_ARG_STRING_ARRAY, &modules,
-		  /* TRANSLATORS: a list of modules to debug */
-		  _("Debug these specific modules"), NULL },
-		{ "debug-functions", '\0', 0, G_OPTION_ARG_STRING_ARRAY, &functions,
-		  /* TRANSLATORS: a list of functions to debug */
-		  _("Debug these specific functions"), NULL },
-		{ "debug-log-filename", '\0', 0, G_OPTION_ARG_STRING, &log_filename,
-		  /* TRANSLATORS: save to a log */
-		  _("Log debugging data to a file"), NULL },
+		  N_("Show debugging information for all files"), NULL },
 		{ NULL}
 	};
 
-	/* already initialized */
-	if (_initialized)
-		return TRUE;
+	/* global variable */
+	env_string = g_getenv ("VERBOSE");
+	if (env_string != NULL)
+		_verbose = TRUE;
 
-	option_context = g_option_context_new (NULL);
-	g_option_context_set_ignore_unknown_options (option_context, TRUE);
-	g_option_context_set_help_enabled (option_context, TRUE);
+	/* add main entry */
+	g_option_context_add_main_entries (context, main_entries, NULL);
 
-	/* create a new group */
-	group = g_option_group_new ("debug", "Detailed debugging", "Show all debugging options", NULL, NULL);
-	g_option_group_add_entries (group, debug_entries);
-
-	/* only add one main entry */
-	g_option_context_add_main_entries (option_context, main_entries, NULL);
-	g_option_context_add_group (option_context, group);
-	if (!g_option_context_parse (option_context, argc, argv, &error)) {
-		g_warning ("%s", error->message);
-		g_error_free (error);
-	}
-
-	/* set options */
-	_log_filename = g_strdup (log_filename);
-	_verbose = verbose;
-	_initialized = TRUE;
-	_modules = egg_debug_strv_split_to_ptr_array (modules);
-	_functions = egg_debug_strv_split_to_ptr_array (functions);
-	_console = (isatty (fileno (stdout)) == 1);
-	egg_debug ("Verbose debugging %i (on console %i)", _verbose, _console);
-
-	g_option_context_free (option_context);
-	g_free (log_filename);
-	g_strfreev (modules);
-	g_strfreev (functions);
 	return TRUE;
 }
 
 /**
  * egg_debug_free:
  **/
-void
+static void
 egg_debug_free (void)
 {
 	if (!_initialized)
@@ -441,10 +391,92 @@ egg_debug_free (void)
 
 	/* free memory */
 	g_free (_log_filename);
-	g_ptr_array_unref (_modules);
-	g_ptr_array_unref (_functions);
+	if (_modules_array != NULL)
+		g_ptr_array_unref (_modules_array);
+	if (_functions_array != NULL)
+		g_ptr_array_unref (_functions_array);
+	g_strfreev (_modules);
+	g_strfreev (_functions);
 
 	/* can not re-init */
 	_initialized = FALSE;
+}
+
+/**
+ * egg_debug_post_parse_hook:
+ */
+static gboolean
+egg_debug_post_parse_hook (GOptionContext *context, GOptionGroup *group, gpointer data, GError **error)
+{
+	_initialized = TRUE;
+	_modules_array = egg_debug_strv_split_to_ptr_array (_modules);
+	_functions_array = egg_debug_strv_split_to_ptr_array (_functions);
+	_console = (isatty (fileno (stdout)) == 1);
+	egg_debug ("Verbose debugging %i (on console %i)", _verbose, _console);
+
+	/* run this function on cleanup */
+	atexit (egg_debug_free);
+
+	return TRUE;
+}
+
+/**
+ * egg_debug_get_option_group:
+ *
+ * Returns a #GOptionGroup for the commandline arguments recognized
+ * by debugging. You should add this group to your #GOptionContext
+ * with g_option_context_add_group(), if you are using
+ * g_option_context_parse() to parse your commandline arguments.
+ *
+ * Returns: a #GOptionGroup for the commandline arguments
+ */
+GOptionGroup *
+egg_debug_get_option_group (void)
+{
+	GOptionGroup *group;
+	const GOptionEntry debug_entries[] = {
+		{ "debug-modules", '\0', 0, G_OPTION_ARG_STRING_ARRAY, &_modules,
+		  /* TRANSLATORS: a list of modules to debug */
+		  N_("Debug these specific modules"), NULL },
+		{ "debug-functions", '\0', 0, G_OPTION_ARG_STRING_ARRAY, &_functions,
+		  /* TRANSLATORS: a list of functions to debug */
+		  N_("Debug these specific functions"), NULL },
+		{ "debug-log-filename", '\0', 0, G_OPTION_ARG_STRING, &_log_filename,
+		  /* TRANSLATORS: save to a log */
+		  N_("Log debugging data to a file"), NULL },
+		{ NULL}
+	};
+
+	group = g_option_group_new ("debug", _("Debugging Options"), _("Show debugging options"), NULL, NULL);
+	g_option_group_set_parse_hooks (group, egg_debug_pre_parse_hook, egg_debug_post_parse_hook);
+	g_option_group_add_entries (group, debug_entries);
+	return group;
+}
+
+/**
+ * egg_debug_init:
+ * @argc: a pointer to the number of command line arguments.
+ * @argv: a pointer to the array of command line arguments.
+ *
+ * Parses command line arguments.
+ *
+ * Return value: %TRUE if initialization succeeded, otherwise %FALSE.
+ **/
+gboolean
+egg_debug_init (gint *argc, gchar ***argv)
+{
+	GOptionContext *context;
+
+	/* already initialized */
+	if (_initialized)
+		return TRUE;
+
+	context = g_option_context_new (NULL);
+	g_option_context_set_ignore_unknown_options (context, TRUE);
+	g_option_context_add_group (context, egg_debug_get_option_group ());
+	g_option_context_parse (context, argc, argv, NULL);
+	g_option_context_free (context);
+
+	return TRUE;
 }
 
