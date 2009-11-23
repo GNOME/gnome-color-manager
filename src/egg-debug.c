@@ -61,10 +61,10 @@
 static gint _fd = -1;
 static gboolean _verbose = FALSE;
 static gboolean _console = FALSE;
-static gchar *_debug_filename = NULL;
+static gchar *_log_filename = NULL;
 static gboolean _initialized = FALSE;
-static gchar **_modules = NULL;
-static gchar **_functions = NULL;
+static GPtrArray *_modules = NULL;
+static GPtrArray *_functions = NULL;
 
 /**
  * egg_debug_filter_module:
@@ -73,6 +73,7 @@ static gboolean
 egg_debug_filter_module (const gchar *filename)
 {
 	gchar *module;
+	const gchar *module_tmp;
 	guint i;
 	gboolean ret = FALSE;
 
@@ -83,8 +84,9 @@ egg_debug_filter_module (const gchar *filename)
 	/* are we in the filter list */
 	module = g_strdup (filename);
 	g_strdelimit (module, ".", '\0');
-	for (i=0; _modules[i] != NULL; i++) {
-		if (g_strcmp0 (_modules[i], module) == 0) {
+	for (i=0; i<_modules->len; i++) {
+		module_tmp = g_ptr_array_index (_modules, i);
+		if (g_strcmp0 (module_tmp, module) == 0) {
 			ret = TRUE;
 			break;
 		}
@@ -99,6 +101,7 @@ static gboolean
 egg_debug_filter_function (const gchar *function)
 {
 	guint i;
+	const gchar *function_tmp;
 	gboolean ret = FALSE;
 
 	/* nothing filtering */
@@ -106,8 +109,9 @@ egg_debug_filter_function (const gchar *function)
 		return FALSE;
 
 	/* are we in the filter list */
-	for (i=0; _functions[i] != NULL; i++) {
-		if (g_str_has_prefix (function, _functions[i])) {
+	for (i=0; i<_functions->len; i++) {
+		function_tmp = g_ptr_array_index (_functions, i);
+		if (g_str_has_prefix (function, function_tmp)) {
 			ret = TRUE;
 			break;
 		}
@@ -170,9 +174,9 @@ egg_debug_log_line (const gchar *buffer)
 	/* open a file */
 	if (_fd == -1) {
 		/* ITS4: ignore, /var/log/foo is owned by root, and this is just debug text */
-		_fd = open (_debug_filename, O_WRONLY|O_APPEND|O_CREAT, 0777);
+		_fd = open (_log_filename, O_WRONLY|O_APPEND|O_CREAT, 0777);
 		if (_fd == -1)
-			g_error ("could not open log: '%s'", _debug_filename);
+			g_error ("could not open log: '%s'", _log_filename);
 	}
 
 	/* ITS4: ignore, debug text always NULL terminated */
@@ -214,7 +218,7 @@ egg_debug_print_line (const gchar *func, const gchar *file, const int line, cons
 	egg_debug_set_console_mode (CONSOLE_RESET);
 
 	/* log to a file */
-	if (_debug_filename != NULL) {
+	if (_log_filename != NULL) {
 		egg_debug_log_line (header);
 		egg_debug_log_line (buffer);
 	}
@@ -307,6 +311,45 @@ egg_debug_is_verbose (void)
 }
 
 /**
+ * egg_debug_set_log_filename:
+ **/
+void
+egg_debug_set_log_filename (const gchar *filename)
+{
+	g_free (_log_filename);
+	_log_filename = g_strdup (filename);
+}
+
+/**
+ * egg_debug_strv_split_to_ptr_array:
+ **/
+static GPtrArray *
+egg_debug_strv_split_to_ptr_array (gchar **modules)
+{
+	GPtrArray *array = NULL;
+	guint i, j;
+	gchar **split;
+
+	/* nothing */
+	if (modules == NULL)
+		goto out;
+
+	/* create array of strings */
+	array = g_ptr_array_new_with_free_func (g_free);
+
+	/* parse each --debug-foo option */
+	for (i=0; modules[i] != NULL; i++) {
+		/* use a comma to delimit multiple entries */
+		split = g_strsplit (modules[i], ",", -1);
+		for (j=0; split[j] != NULL; j++)
+			g_ptr_array_add (array, g_strdup (split[j]));
+		g_strfreev (split);
+	}
+out:
+	return array;
+}
+
+/**
  * egg_debug_init:
  * @argc: a pointer to the number of command line arguments.
  * @argv: a pointer to the array of command line arguments.
@@ -325,7 +368,7 @@ egg_debug_init (gint *argc, gchar ***argv)
 	GOptionGroup *group;
 	GError *error = NULL;
 	gboolean verbose = FALSE;
-	gchar *debug_filename = NULL;
+	gchar *log_filename = NULL;
 	gchar **modules = NULL;
 	gchar **functions = NULL;
 	const GOptionEntry main_entries[] = {
@@ -341,7 +384,7 @@ egg_debug_init (gint *argc, gchar ***argv)
 		{ "debug-functions", '\0', 0, G_OPTION_ARG_STRING_ARRAY, &functions,
 		  /* TRANSLATORS: a list of functions to debug */
 		  _("Debug these specific functions"), NULL },
-		{ "debug-filename", '\0', 0, G_OPTION_ARG_STRING, &debug_filename,
+		{ "debug-log-filename", '\0', 0, G_OPTION_ARG_STRING, &log_filename,
 		  /* TRANSLATORS: save to a log */
 		  _("Log debugging data to a file"), NULL },
 		{ NULL}
@@ -368,16 +411,16 @@ egg_debug_init (gint *argc, gchar ***argv)
 	}
 
 	/* set options */
-	_debug_filename = g_strdup (debug_filename);
+	_log_filename = g_strdup (log_filename);
 	_verbose = verbose;
 	_initialized = TRUE;
-	_modules = g_strdupv (modules);
-	_functions = g_strdupv (functions);
+	_modules = egg_debug_strv_split_to_ptr_array (modules);
+	_functions = egg_debug_strv_split_to_ptr_array (functions);
 	_console = (isatty (fileno (stdout)) == 1);
 	egg_debug ("Verbose debugging %i (on console %i)", _verbose, _console);
 
 	g_option_context_free (option_context);
-	g_free (debug_filename);
+	g_free (log_filename);
 	g_strfreev (modules);
 	g_strfreev (functions);
 	return TRUE;
@@ -397,9 +440,9 @@ egg_debug_free (void)
 		close (_fd);
 
 	/* free memory */
-	g_free (_debug_filename);
-	g_strfreev (_modules);
-	g_strfreev (_functions);
+	g_free (_log_filename);
+	g_ptr_array_unref (_modules);
+	g_ptr_array_unref (_functions);
 
 	/* can not re-init */
 	_initialized = FALSE;

@@ -64,6 +64,7 @@ gboolean	egg_debug_init			(gint		*argc,
 void		egg_debug_free			(void);
 gboolean	egg_debug_is_verbose		(void);
 void		egg_debug_backtrace		(void);
+void		egg_debug_set_log_filename	(const gchar	*filename);
 void		egg_debug_real			(const gchar	*func,
 						 const gchar	*file,
 						 gint		 line,
