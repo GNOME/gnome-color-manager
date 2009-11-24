@@ -271,7 +271,7 @@ gcm_calibrate_display_setup (GcmCalibrate *calibrate, GError **error)
 		g_string_append_printf (string, "%s\n", _("Before calibrating the display, it is recommended to configure your display with the following settings to get optimal results."));
 
 		/* TRANSLATORS: dialog message, preface */
-		g_string_append_printf (string, "%s\n\n", _("You may want to consult the owners manual for your display on how to achieve these settings."));
+		g_string_append_printf (string, "%s\n\n", _("You may want to consult the owner's manual for your display on how to achieve these settings."));
 
 		/* TRANSLATORS: dialog message, bullet item */
 		g_string_append_printf (string, "• %s\n", _("Reset your display to the factory defaults."));
