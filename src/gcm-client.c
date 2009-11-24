@@ -723,6 +723,80 @@ out:
 }
 
 /**
+ * gcm_client_delete_device:
+ **/
+gboolean
+gcm_client_delete_device (GcmClient *client, GcmDevice *device, GError **error)
+{
+	gboolean ret = FALSE;
+	gchar *id = NULL;
+	gchar *data = NULL;
+	gchar *filename = NULL;
+	GKeyFile *keyfile = NULL;
+	gboolean connected;
+
+	g_return_val_if_fail (GCM_IS_CLIENT (client), FALSE);
+	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
+
+	/* check removable */
+	g_object_get (device,
+		      "connected", &connected,
+		      "id", &id,
+		      NULL);
+	if (connected) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "device is still connected");
+		goto out;
+	}
+
+	/* try to remove from array */
+	ret = g_ptr_array_remove (client->priv->array, device);
+	if (!ret) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "not found in device array");
+		goto out;
+	}
+
+	/* get the config file */
+	filename = gcm_utils_get_default_config_location ();
+	egg_debug ("removing %s from %s", id, filename);
+
+	/* load the config file */
+	keyfile = g_key_file_new ();
+	ret = g_key_file_load_from_file (keyfile, filename, G_KEY_FILE_NONE, error);
+	if (!ret)
+		goto out;
+
+	/* remove from the config file */
+	g_key_file_remove_group (keyfile, id, error);
+	if (!ret)
+		goto out;
+
+	/* convert to string */
+	data = g_key_file_to_data (keyfile, NULL, error);
+	if (data == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+
+	/* save contents */
+	ret = g_file_set_contents (filename, data, -1, error);
+	if (!ret)
+		goto out;
+
+	/* emit a signal */
+	egg_debug ("emit removed: %s", id);
+	g_signal_emit (client, signals[SIGNAL_REMOVED], 0, device);
+out:
+	g_free (id);
+	g_free (data);
+	g_free (filename);
+	if (keyfile != NULL)
+		g_key_file_free (keyfile);
+	return ret;
+}
+
+/**
  * gcm_client_get_property:
  **/
 static void

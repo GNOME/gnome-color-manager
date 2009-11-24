@@ -529,6 +529,23 @@ out:
 }
 
 /**
+ * gcm_prefs_delete_cb:
+ **/
+static void
+gcm_prefs_delete_cb (GtkWidget *widget, gpointer data)
+{
+	gboolean ret;
+	GError *error = NULL;
+
+	/* try to delete device */
+	ret = gcm_client_delete_device (gcm_client, current_device, &error);
+	if (!ret) {
+		egg_warning ("failed to delete: %s", error->message);
+		g_error_free (error);
+	}
+}
+
+/**
  * gcm_prefs_reset_cb:
  **/
 static void
@@ -776,6 +793,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 	gfloat localgamma;
 	gfloat brightness;
 	gfloat contrast;
+	gboolean connected;
 	gchar *filename;
 	guint i;
 	gchar *id;
@@ -825,6 +843,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 		      "gamma", &localgamma,
 		      "brightness", &brightness,
 		      "contrast", &contrast,
+		      "connected", &connected,
 		      NULL);
 
 	/* set adjustments */
@@ -871,6 +890,10 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean dat
 	gtk_widget_set_sensitive (widget, TRUE);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_profile"));
 	gtk_widget_set_sensitive (widget, TRUE);
+
+	/* can we delete this device? */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_delete"));
+	gtk_widget_set_sensitive (widget, !connected);
 
 	/* can this device calibrate */
 	gcm_prefs_set_calibrate_button_sensitivity ();
@@ -1046,14 +1069,12 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	GcmProfileType profile_type = GCM_PROFILE_TYPE_UNKNOWN;
 	const gchar *profile_type_text;
 
-	active = gtk_combo_box_get_active (GTK_COMBO_BOX(widget));
-	egg_debug ("now %i", active);
-
 	/* no devices */
 	if (current_device == NULL)
 		return;
 
 	/* no selection */
+	active = gtk_combo_box_get_active (GTK_COMBO_BOX(widget));
 	if (active == -1)
 		return;
 
@@ -1403,10 +1424,34 @@ gcm_prefs_added_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user
 static void
 gcm_prefs_removed_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user_data)
 {
+	gboolean connected;
+	GtkTreeIter iter;
+	GtkTreeSelection *selection;
+	GtkWidget *widget;
+	gboolean ret;
+
+	/* remove from the UI */
 	gcm_prefs_remove_device (gcm_device);
 
+	/* get device properties */
+	g_object_get (gcm_device,
+		      "connected", &connected,
+		      NULL);
+
 	/* ensure this device is re-added if it's been saved */
-	gcm_client_add_saved (gcm_client, NULL);
+	if (connected)
+		gcm_client_add_saved (gcm_client, NULL);
+
+	/* select the first device */
+	ret = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (list_store_devices), &iter);
+	if (!ret)
+		return;
+
+	/* click it */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
+	gtk_tree_view_set_model (GTK_TREE_VIEW (widget), GTK_TREE_MODEL (list_store_devices));
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	gtk_tree_selection_select_iter (selection, &iter);
 }
 
 /**
@@ -1418,8 +1463,6 @@ gcm_prefs_startup_idle_cb (gpointer user_data)
 	GtkWidget *widget;
 	gboolean ret;
 	GError *error = NULL;
-
-	egg_warning ("idle add");
 
 	/* add profiles we can find */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
@@ -1611,6 +1654,9 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_reset_cb), NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_delete"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_prefs_delete_cb), NULL);
 	gtk_widget_set_sensitive (widget, FALSE);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
 	g_signal_connect (widget, "clicked",
