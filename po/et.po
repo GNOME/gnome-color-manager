@@ -9,7 +9,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager\n"
 "POT-Creation-Date: 2009-11-24 11:30+0000\n"
-"PO-Revision-Date: 2009-11-24 22:25+0300\n"
+"PO-Revision-Date: 2009-11-24 23:22+0300\n"
 "Last-Translator: Mattias Põldaru <mahfiaz gmail com>\n"
 "Language-Team: Gnome Estonian Translation Team <gnome-et@linux.ee>\n"
 "MIME-Version: 1.0\n"
@@ -30,13 +30,13 @@ msgid "Load device color profiles"
 msgstr "Seadme värviprofiilide laadimine"
 
 msgid "ICC Profile Installer"
-msgstr "ICC-profiili paigaldaja"
+msgstr "ICC-profiilide paigaldaja"
 
 msgid "ICC profile installer"
-msgstr "ICC-profiili paigaldaja"
+msgstr "ICC-profiilide paigaldaja"
 
 msgid "Install ICC profiles"
-msgstr "ICC-profiili paigaldamine"
+msgstr "ICC-profiilide paigaldamine"
 
 msgid "Color Profiles"
 msgstr "Värviprofiilid"
@@ -46,7 +46,7 @@ msgstr "ICC-värviprofiilide haldus"
 
 #. Radio buttons in the prefs dialog
 msgid "Apply _global display correction"
-msgstr "Kuvaparandus määratakse _üleüldiselt"
+msgstr "Ül_dise värvusparanduse rakendamine"
 
 msgid "Brightness:"
 msgstr "Heledus:"
@@ -76,12 +76,12 @@ msgstr "Kuva:"
 #. Radio buttons in the prefs dialog
 msgid "Do global correction and set profile for color managed applications"
 msgstr ""
-"Värvusparandust teostatakse globaalselt ja määratakse hallatud rakenduste "
-"jaoks värviprofiil"
+"Üldise värvusparanduse rakendamine, värvihalduse toega rakendustele "
+"määratakse värviprofiil"
 
 #. Radio buttons in the prefs dialog
 msgid "Do not enable display correction"
-msgstr "Kuvaparandust ei rakendata"
+msgstr "Värvusparandust ei rakendata"
 
 #. Settings that users don't normally have to touch
 msgid "Fine tuning:"
@@ -103,7 +103,7 @@ msgstr "Renderdamisviis:"
 
 #. Technical color word for softproof rendering intent
 msgid "Softproof:"
-msgstr "Värvuskontroll:"
+msgstr "Väljundvaade:"
 
 #. The manufacturer of the profile
 msgid "Vendor:"
@@ -123,7 +123,7 @@ msgstr "_Lähtesta"
 
 #. Radio buttons in the prefs dialog
 msgid "_Set profile only for color managed applications"
-msgstr "_Profiil määratakse ainult värvihaldusega rakendustele"
+msgstr "_Värviprofiil määratakse ainult värvihalduse toega rakendustele"
 
 msgid ""
 "Gamma is adjusted to affect the color of the attached monitor. Traditionally "
@@ -132,32 +132,34 @@ msgid ""
 "long time, but now use the same value as Microsoft. Microsoft has always "
 "used a value of 2.2."
 msgstr ""
-"Gamma väärtus mõjutab ühendatud monitori kuvatavaid värve. "
-"Tradistiooniliselt on Linux kasutanud gamma väärtus 1.0, kuid selliselt "
-"paistavad monitorid hallid, võrreldes Windows XP või OSX-iga. Apple on "
-"traditsiooniliselt kasutanud väärtust 1.8, kuid nüüd kasutab sama väärtust "
-"kui Microsoft. Microsoft on alati kasutanud väärtust 2.2."
+"Gamma väärtus mõjutab monitori kuvatavaid värve. Tradistiooniliselt on Linux "
+"kasutanud gamma väärtust 1.0, kuid selliselt paistavad monitorid hallid, "
+"võrreldes Windows XP või OSX-iga. Apple on traditsiooniliselt kasutanud "
+"väärtust 1.8, kuid nüüd kasutab sama väärtust kui Microsoft. Microsoft on "
+"alati kasutanud väärtust 2.2."
 
 msgid ""
 "If set to TRUE then the __ICC_PROFILE atom will be set, which applications "
 "use to convert true color to screen color."
 msgstr ""
 "Kui TÕENE, määratakse __ICC_PROFILE, mida rakendused saavad kasutada "
-"tõeliste värvide teisendamisel ekraanivärvidesse."
+"loomutruude värvide teisendamisel ekraanivärvidesse."
 
 msgid "If set to TRUE then the video LUT is set with the display profile"
 msgstr "Kui tõene, määratakse video LUT-ile kuvaprofiil"
 
 msgid "If the display should be globally corrected or left to applications."
-msgstr "Kas kuvarit tuleks parandada globaalselt või jätta see rakendustele."
+msgstr ""
+"Kas monitori värviparandus peaks olema üldine või tuleks see jätta "
+"rakendustele."
 
 msgid "Set the _ICC_PROFILE atom for applications."
 msgstr "Rakenduste jaoks _ICC_PROFILE määramine."
 
 msgid "The default gamma to use for monitors with no previous selection."
 msgstr ""
-"Vaikimisi gamma väärtus, mida kasutatakse monitoridel, millele pole muud "
-"gammat määratud."
+"Vaikimisi gamma väärtus, mida kasutatakse monitoridel, millele pole gammat "
+"määratud."
 
 #. TRANSLATORS: turn on all debugging
 msgid "Show debugging information for all files"
@@ -165,11 +167,11 @@ msgstr "Silumisteavet kuvatakse kõigile failidele"
 
 #. TRANSLATORS: a list of modules to debug
 msgid "Debug these specific modules"
-msgstr "Nende määratud moodulite silumine"
+msgstr "Määratud moodulite silumine"
 
 #. TRANSLATORS: a list of functions to debug
 msgid "Debug these specific functions"
-msgstr "Nende määratud funktsioonide silumine"
+msgstr "Määratud funktsioonide silumine"
 
 #. TRANSLATORS: save to a log
 msgid "Log debugging data to a file"
@@ -198,48 +200,47 @@ msgid ""
 "Please indicate if the screen you are trying to profile is a CRT (old type) "
 "or a LCD (digital flat panel)."
 msgstr ""
-"Palun määra, kas ekraan, mida üritad profileerida, on CRT (harilik kuvar) "
-"või LCD (õhuke paneel)."
+"Palun määra, kas ekraan, mida üritad profileerida, on CRT (harilik "
+"katoodkuvar) või LCD (õhuke vedelkristallpaneel)."
 
 #. TRANSLATORS: button, Liquid Crystal Display
 msgid "LCD"
-msgstr "LCD (vedelkristall)"
+msgstr "LCD"
 
 #. TRANSLATORS: button, Cathode Ray Tube
 msgid "CRT"
-msgstr "CRT (katoodtoru)"
+msgstr "CRT"
 
 #. TRANSLATORS: dialog message, preface
 msgid ""
 "Before calibrating the display, it is recommended to configure your display "
 "with the following settings to get optimal results."
 msgstr ""
-"Enne kuvari kalibreerimist on optimaalsete tulemuste saavutamiseks "
-"soovitatav kuvar seadistada järgmiste sätetega."
+"Enne monitori kalibreerimist on optimaalsete tulemuste saavutamiseks "
+"soovitatav monitor seadistada järgmiste sätetega."
 
 #. TRANSLATORS: dialog message, preface
 msgid ""
 "You may want to consult the owners manual for your display on how to achieve "
 "these settings."
 msgstr ""
-"Sa võid konsulteerida oma kuvari kasutajakäsiraamatuga, et saavutada "
-"selliseid sätteid."
+"Sa võid uurida oma monitori kasutusjuhendist, kuidas neid sätteid määrata."
 
 #. TRANSLATORS: dialog message, bullet item
 msgid "Reset your display to the factory defaults."
-msgstr "Kuva lähtestamine tehase vaikesätetele."
+msgstr "Monitori lähtestamine tehase vaikesätetele."
 
 #. TRANSLATORS: dialog message, bullet item
 msgid "Disable dynamic contrast if your display has this feature."
 msgstr ""
-"Dünaamilise kontrastsuse keelamine, kui sinu kuvaril on selline võimalus."
+"Dünaamilise kontrastsuse keelamine, kui sinu monitoril on selline võimalus."
 
 #. TRANSLATORS: dialog message, bullet item
 msgid ""
 "Configure your display with custom color settings and ensure the RGB "
 "channels are set to the same values."
 msgstr ""
-"Seadista kuva kohandatud värvisätetega ja veendu, et RGB-kanalitele on "
+"Seadista monitor kohandatud värvisätetega ja veendu, et RGB-kanalitele on "
 "määratud samad väärtused."
 
 #. TRANSLATORS: dialog message, addition to bullet item
@@ -250,26 +251,26 @@ msgstr ""
 #. TRANSLATORS: dialog message, bullet item
 msgid ""
 "Adjust the display brightness to a comfortable level for prolonged viewing."
-msgstr "Määra pikaajalisel vaatamisel mugav kuva heleduse tase."
+msgstr "Määra pikaajalisel vaatamisel mugav monitori heleduse tase."
 
 #. TRANSLATORS: dialog message, suffix
 msgid ""
 "For best results, the display should have been powered for at least 15 "
 "minutes before starting the calibration."
 msgstr ""
-"Parimate tulemuste saavutamiseks peaks kuvar olema enne kalibreerimise "
+"Parimate tulemuste saavutamiseks peaks monitor olema enne kalibreerimise "
 "algust töötanud vähemalt 15 minutit."
 
 #. TRANSLATORS: title, device is a hardware color calibration sensor
 msgid "Please attach device"
-msgstr "Palun ühenda seade"
+msgstr "Palun paigalda seade"
 
 #. TRANSLATORS: dialog message, ask user to attach device
 msgid ""
 "Please attach the hardware device to the center of the screen on the gray "
 "square."
 msgstr ""
-"Palun ühenda kalibreerimisseade ekraani keskel asuva halli ruudu kohale."
+"Palun kinnita kalibreerimisseade ekraani keskel asuva halli ruudu kohale."
 
 #. TRANSLATORS: title, default paramters needed to calibrate
 msgid "Getting default parameters"
@@ -281,7 +282,7 @@ msgid ""
 "screen and measuring them with the hardware device."
 msgstr ""
 "See eelkalibreerib, kuvades ekraanil värvilisi ja halle kujundeid ning "
-"mõõtes neid raudvaralise seadmega."
+"mõõtes neid kalibreerimisseadmega."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
 msgid "Generating the patches"
@@ -356,7 +357,7 @@ msgstr ""
 
 #. TRANSLATORS: dialog question
 msgid "Do you have a scanned TIFF file of a IT8.7/2 reference image?"
-msgstr "Kas sa oled skaneerinud TIFF-faili IT8.7/2 testtahvlist?"
+msgstr "Kas sa oled skaneerinud IT8.7/2 testtahvli TIFF-faili?"
 
 #. TRANSLATORS: title, a profile is a ICC file
 msgid "Copying files"
