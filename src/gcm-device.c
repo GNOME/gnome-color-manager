@@ -227,9 +227,10 @@ gcm_device_load (GcmDevice *device, GError **error)
 	file = g_key_file_new ();
 	ret = g_key_file_load_from_file (file, filename, G_KEY_FILE_NONE, &error_local);
 	if (!ret) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to load from file: %s", error_local->message);
+		/* not fatal */
+		egg_warning ("failed to load from file: %s", error_local->message);
 		g_error_free (error_local);
+		ret = TRUE;
 		goto out;
 	}
 
@@ -324,10 +325,16 @@ gcm_device_save (GcmDevice *device, GError **error)
 	keyfile = g_key_file_new ();
 	ret = g_key_file_load_from_file (keyfile, filename, G_KEY_FILE_NONE, &error_local);
 	if (!ret) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to load existing config: %s", error_local->message);
-		g_error_free (error_local);
-		goto out;
+		/* empty or corrupt */
+		if (error_local->code == G_KEY_FILE_ERROR_PARSE) {
+			/* ignore */
+			g_clear_error (&error_local);
+		} else {
+			if (error != NULL)
+				*error = g_error_new (1, 0, "failed to load existing config: %s", error_local->message);
+			g_error_free (error_local);
+			goto out;
+		}
 	}
 
 	/* save data */
