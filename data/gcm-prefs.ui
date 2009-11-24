@@ -63,7 +63,7 @@
                         <child>
                           <object class="GtkLabel" id="label_profile">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Color Profile:</property>
+                            <property name="label" translatable="yes" comments="Section heading for device profile settings">Color Profile:</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
                             </attributes>
@@ -104,7 +104,7 @@
                                 <child>
                                   <object class="GtkLabel" id="label_title_vendor">
                                     <property name="visible">True</property>
-                                    <property name="label" translatable="yes">Vendor:</property>
+                                    <property name="label" translatable="yes" comments="The manufacturer of the profile">Vendor:</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -119,7 +119,7 @@
                                 <child>
                                   <object class="GtkLabel" id="label_title_copyright">
                                     <property name="visible">True</property>
-                                    <property name="label" translatable="yes">License:</property>
+                                    <property name="label" translatable="yes" comments="The licence of the profile, normally non-free">License:</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -182,7 +182,7 @@
                                 <child>
                                   <object class="GtkLabel" id="label_title_type">
                                     <property name="visible">True</property>
-                                    <property name="label" translatable="yes">Profile type:</property>
+                                    <property name="label" translatable="yes" comments="The type of profile, e.g. display, scanner, etc.">Profile type:</property>
                                   </object>
                                   <packing>
                                     <property name="expand">False</property>
@@ -346,7 +346,7 @@
                         <child type="label">
                           <object class="GtkLabel" id="label4">
                             <property name="visible">True</property>
-                            <property name="label" translatable="yes">Fine tuning:</property>
+                            <property name="label" translatable="yes" comments="Settings that users don't normally have to touch">Fine tuning:</property>
                             <attributes>
                               <attribute name="weight" value="bold"/>
                             </attributes>
@@ -364,7 +364,7 @@
                         <property name="spacing">6</property>
                         <child>
                           <object class="GtkButton" id="button_delete">
-                            <property name="label" translatable="yes">_Delete</property>
+                            <property name="label" translatable="yes" comments="This is a button to delete the saved device">_Delete</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
@@ -378,7 +378,7 @@
                         </child>
                         <child>
                           <object class="GtkButton" id="button_calibrate">
-                            <property name="label" translatable="yes">_Calibrate</property>
+                            <property name="label" translatable="yes" comments="This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image">_Calibrate</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
@@ -391,7 +391,7 @@
                         </child>
                         <child>
                           <object class="GtkButton" id="button_reset">
-                            <property name="label" translatable="yes">_Reset to defaults</property>
+                            <property name="label" translatable="yes" comments="This resets the device to it's defaults, and removes any user tweaked settings.">_Reset to defaults</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
@@ -419,7 +419,7 @@
             <child type="tab">
               <object class="GtkLabel" id="label_devices">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Devices</property>
+                <property name="label" translatable="yes" comments="Tab title, currently connected or saved devices">Devices</property>
               </object>
               <packing>
                 <property name="tab_fill">False</property>
@@ -460,7 +460,7 @@
                     <property name="spacing">3</property>
                     <child>
                       <object class="GtkRadioButton" id="radiobutton_ouput_disable">
-                        <property name="label" translatable="yes">Do not enable display correction</property>
+                        <property name="label" translatable="yes" comments="Radio buttons in the prefs dialog">Do not enable display correction</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -474,7 +474,7 @@
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="radiobutton_ouput_global">
-                        <property name="label" translatable="yes">Apply _global display correction</property>
+                        <property name="label" translatable="yes" comments="Radio buttons in the prefs dialog">Apply _global display correction</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -488,7 +488,7 @@
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="radiobutton_ouput_atom">
-                        <property name="label" translatable="yes">_Set profile only for color managed applications</property>
+                        <property name="label" translatable="yes" comments="Radio buttons in the prefs dialog">_Set profile only for color managed applications</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -502,7 +502,7 @@
                     </child>
                     <child>
                       <object class="GtkRadioButton" id="radiobutton_ouput_both">
-                        <property name="label" translatable="yes">Do global correction and set profile for color managed applications</property>
+                        <property name="label" translatable="yes" comments="Radio buttons in the prefs dialog">Do global correction and set profile for color managed applications</property>
                         <property name="visible">True</property>
                         <property name="can_focus">True</property>
                         <property name="receives_default">False</property>
@@ -558,7 +558,7 @@
                             <child>
                               <object class="GtkLabel" id="label_rendering_display">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes">Display:</property>
+                                <property name="label" translatable="yes" comments="What mode to use for display rendering intent">Display:</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -597,7 +597,7 @@
                             <child>
                               <object class="GtkLabel" id="label_rendering_softproof">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes">Softproof:</property>
+                                <property name="label" translatable="yes" comments="Technical color word for softproof rendering intent">Softproof:</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -640,7 +640,7 @@
             <child type="tab">
               <object class="GtkLabel" id="label_defaults">
                 <property name="visible">True</property>
-                <property name="label" translatable="yes">Defaults</property>
+                <property name="label" translatable="yes" comments="Tab title, system wide defaults to use">Defaults</property>
               </object>
               <packing>
                 <property name="position">1</property>
