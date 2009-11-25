@@ -147,6 +147,15 @@ gcm_prefs_calibrate_display (GcmCalibrate *calib)
 		      "manufacturer", manufacturer,
 		      NULL);
 
+	/* step 0 */
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DISPLAY_SETUP, &error);
+	if (!ret) {
+		egg_warning ("failed to calibrate: %s", error->message);
+		g_error_free (error);
+		goto finish_calibrate;
+	}
+
+
 	/* if we are an internal LCD, we need to set the brightness to maximum */
 	ret = gcm_utils_output_is_lcd_internal (output_name);
 	if (ret) {
