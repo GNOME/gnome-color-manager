@@ -24,6 +24,7 @@
 #include <glib/gi18n.h>
 #include <dbus/dbus-glib.h>
 #include <gtk/gtk.h>
+#include <locale.h>
 
 #include "egg-debug.h"
 #include "gcm-dbus.h"
@@ -123,6 +124,12 @@ main (int argc, char *argv[])
 		  _("Do not exit after the request has been processed"), NULL },
 		{ NULL}
 	};
+
+	setlocale (LC_ALL, "");
+
+	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
 
 	if (! g_thread_supported ())
 		g_thread_init (NULL);

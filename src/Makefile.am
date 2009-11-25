@@ -13,7 +13,7 @@ INCLUDES =						\
 	-DBINDIR=\"$(bindir)\"			 	\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 		\
 	-DVERSION="\"$(VERSION)\"" 			\
-	-DPACKAGE_LOCALE_DIR=\"$(localedir)\"		\
+	-DLOCALEDIR=\""$(localedir)"\"			\
 	-DGCM_DATA=\"$(pkgdatadir)\"
 
 noinst_LIBRARIES = libgcmshared.a
