@@ -15,6 +15,34 @@
     </doc:doc>
 
     <!--*****************************************************************************************-->
+    <property name="OutputIntent" type="s" access="read">
+      <doc:doc>
+        <doc:description>
+          <doc:para>
+            The rendering itent for the output.
+          </doc:para>
+          <doc:list>
+            <doc:item>
+              <doc:term>perceptual</doc:term><doc:definition>Perceptual</doc:definition>
+            </doc:item>
+            <doc:item>
+              <doc:term>rel-colormetric</doc:term><doc:definition>Relative colormetric</doc:definition>
+            </doc:item>
+            <doc:item>
+              <doc:term>saturation</doc:term><doc:definition>Saturation</doc:definition>
+            </doc:item>
+            <doc:item>
+              <doc:term>abs-colormetric</doc:term><doc:definition>Absolute colormetric</doc:definition>
+            </doc:item>
+            <doc:item>
+              <doc:term>disabled</doc:term><doc:definition>Disabled</doc:definition>
+            </doc:item>
+          </doc:list>
+        </doc:description>
+      </doc:doc>
+    </property>
+
+    <!--*****************************************************************************************-->
     <method name="GetProfilesForDevice">
       <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
       <doc:doc>
@@ -52,6 +80,18 @@
         </doc:doc>
       </arg>
     </method>
+
+    <!-- ************************************************************ -->
+    <signal name="Changed">
+      <doc:doc>
+        <doc:description>
+          <doc:para>
+            Some value on the interface has changed.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+    </signal>
+
   </interface>
 </node>
 

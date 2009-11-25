@@ -185,9 +185,6 @@ gcm_inspect_show_profiles_for_device (const gchar *sysfs_path)
 		goto out;
 	}
 
-	if (profiles == NULL)
-		egg_error ("moo");
-
 	/* no entries */
 	if (profiles[0] == NULL) {
 		/* TRANSLATORS: no rofile has been asigned to this device */
@@ -200,6 +197,65 @@ gcm_inspect_show_profiles_for_device (const gchar *sysfs_path)
 	for (i=0; profiles[i] != NULL; i++)
 		g_print ("%i.\t%s\n", i+1, profiles[i]);
 out:
+	g_object_unref (proxy);
+	g_strfreev (profiles);
+	return ret;
+}
+
+/**
+ * gcm_inspect_get_properties_collect_cb:
+ **/
+static void
+gcm_inspect_get_properties_collect_cb (const char *key, const GValue *value, gpointer user_data)
+{
+	if (g_strcmp0 (key, "OutputIntent") == 0) {
+		/* TRANSLATORS: this is the rendering intent of the output */
+		g_print ("%s %s\n", _("Rendering intent (output):"), g_value_get_string (value));
+	} else {
+		egg_warning ("unhandled property '%s'", key);
+	}
+}
+
+/**
+ * gcm_inspect_get_properties:
+ **/
+static gboolean
+gcm_inspect_get_properties (void)
+{
+	gboolean ret;
+	DBusGConnection *connection;
+	DBusGProxy *proxy;
+	GError *error = NULL;
+	gchar **profiles = NULL;
+	GHashTable *hash;
+
+	/* get a session bus connection */
+	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
+
+	/* connect to the interface */
+	proxy = dbus_g_proxy_new_for_name (connection,
+					   "org.gnome.ColorManager",
+					   "/org/gnome/ColorManager",
+					   "org.freedesktop.DBus.Properties");
+
+	/* execute sync method */
+	ret = dbus_g_proxy_call (proxy, "GetAll", &error,
+				 G_TYPE_STRING, "org.gnome.ColorManager",
+				 G_TYPE_INVALID,
+				 dbus_g_type_get_map ("GHashTable", G_TYPE_STRING, G_TYPE_VALUE), &hash,
+				 G_TYPE_INVALID);
+	if (!ret) {
+		egg_warning ("failed: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* process results */
+	if (hash != NULL)
+		g_hash_table_foreach (hash, (GHFunc) gcm_inspect_get_properties_collect_cb, NULL);
+out:
+	if (hash != NULL)
+		g_hash_table_unref (hash);
 	g_object_unref (proxy);
 	g_strfreev (profiles);
 	return ret;
@@ -221,7 +277,7 @@ main (int argc, char **argv)
 		{ "x11", 'x', 0, G_OPTION_ARG_NONE, &x11,
 			/* TRANSLATORS: command line option */
 			_("Show X11 properties"), NULL },
-		{ "device", 'v', 0, G_OPTION_ARG_FILENAME, &sysfs_path,
+		{ "device", '\0', 0, G_OPTION_ARG_FILENAME, &sysfs_path,
 			/* TRANSLATORS: command line option */
 			_("Get the profiles for a specific device"), NULL },
 		{ "dump", 'd', 0, G_OPTION_ARG_NONE, &dump,
@@ -249,6 +305,8 @@ main (int argc, char **argv)
 		gcm_inspect_show_x11_atoms ();
 	if (sysfs_path != NULL)
 		gcm_inspect_show_profiles_for_device (sysfs_path);
+	if (dump)
+		gcm_inspect_get_properties ();
 
 	g_free (sysfs_path);
 	return retval;

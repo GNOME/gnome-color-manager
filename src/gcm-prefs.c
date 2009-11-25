@@ -1569,6 +1569,43 @@ gcm_prefs_radio_cb (GtkWidget *widget, gpointer user_data)
 }
 
 /**
+ * gcm_prefs_renderer_combo_changed_cb:
+ **/
+static void
+gcm_prefs_renderer_combo_changed_cb (GtkWidget *widget, gpointer data)
+{
+	gint active;
+	/* no selection */
+	active = gtk_combo_box_get_active (GTK_COMBO_BOX(widget));
+	if (active == -1)
+		return;
+	//TODO: need to save to GConf
+	egg_warning ("changed to %i", active);
+}
+
+/**
+ * gcm_prefs_setup_rendering_combobox:
+ **/
+static void
+gcm_prefs_setup_rendering_combobox (GtkWidget *widget)
+{
+	/* TRANSLATORS: rendering intent: you probably want to google this */
+	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("Perceptual"));
+
+	/* TRANSLATORS: rendering intent: you probably want to google this */
+	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("Relative colormetric"));
+
+	/* TRANSLATORS: rendering intent: you probably want to google this */
+	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("Saturation"));
+
+	/* TRANSLATORS: rendering intent: you probably want to google this */
+	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("Absolute colormetric"));
+
+	/* TRANSLATORS: rendering intent: you probably want to google this */
+	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("Disable soft proofing"));
+}
+
+/**
  * main:
  **/
 int
@@ -1693,33 +1730,25 @@ main (int argc, char **argv)
 	gcm_prefs_set_combo_simple_text (widget);
 	gtk_widget_set_sensitive (widget, FALSE);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), NULL);
+			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), NULL);
 
 	/* setup rendering lists */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_rendering_display"));
 	gcm_prefs_set_combo_simple_text (widget);
 	gtk_widget_set_sensitive (widget, FALSE);
-//	g_signal_connect (G_OBJECT (widget), "changed",
-//			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), NULL);
-	/* TRANSLATORS: rendering intent: you probably want to google this */
-	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("Perceptual"));
-	/* TRANSLATORS: rendering intent: you probably want to google this */
-	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("Relative colormetric"));
-	/* TRANSLATORS: rendering intent: you probably want to google this */
-	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("Saturation"));
-	/* TRANSLATORS: rendering intent: you probably want to google this */
-	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("Absolute colormetric"));
-	/* TRANSLATORS: rendering intent: you probably want to google this */
-	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("Disable soft proofing"));
-
+	gcm_prefs_setup_rendering_combobox (widget);
+	g_signal_connect (G_OBJECT (widget), "changed",
+			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), NULL);
+	//TODO: need to get from GConf
 	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_rendering_softproof"));
 	gcm_prefs_set_combo_simple_text (widget);
 	gtk_widget_set_sensitive (widget, FALSE);
-//	g_signal_connect (G_OBJECT (widget), "changed",
-//			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), NULL);
-	gtk_combo_box_append_text (GTK_COMBO_BOX (widget), _("Perceptual"));
+	gcm_prefs_setup_rendering_combobox (widget);
+	g_signal_connect (G_OBJECT (widget), "changed",
+			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), NULL);
+	//TODO: need to get from GConf
 	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 
 	/* set ranges */

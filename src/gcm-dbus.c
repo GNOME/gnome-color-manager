@@ -27,6 +27,7 @@
 
 #include "egg-debug.h"
 
+#include "gcm-utils.h"
 #include "gcm-dbus.h"
 #include "gcm-client.h"
 
@@ -39,7 +40,21 @@ struct GcmDbusPrivate
 	GConfClient		*gconf_client;
 	GcmClient		*client;
 	GTimer			*timer;
+	gchar			*output_intent;
 };
+
+enum {
+	PROP_0,
+	PROP_OUTPUT_INTENT,
+	PROP_LAST
+};
+
+enum {
+	SIGNAL_CHANGED,
+	SIGNAL_LAST,
+};
+
+static guint signals[SIGNAL_LAST] = { 0 };
 
 G_DEFINE_TYPE (GcmDbus, gcm_dbus, G_TYPE_OBJECT)
 
@@ -75,6 +90,46 @@ gcm_dbus_error_get_type (void)
 		etype = g_enum_register_static ("GcmDbusError", values);
 	}
 	return etype;
+}
+
+
+/**
+ * gcm_dbus_get_property:
+ **/
+static void
+gcm_dbus_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+{
+	GcmDbus *dbus = GCM_DBUS (object);
+	switch (prop_id) {
+	case PROP_OUTPUT_INTENT:
+		g_value_set_string (value, dbus->priv->output_intent);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+
+	/* reset time */
+	g_timer_reset (dbus->priv->timer);
+}
+
+/**
+ * gcm_dbus_set_property:
+ **/
+static void
+gcm_dbus_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
+{
+	GcmDbus *dbus = GCM_DBUS (object);
+
+	switch (prop_id) {
+	case PROP_OUTPUT_INTENT:
+		g_free (dbus->priv->output_intent);
+		dbus->priv->output_intent = g_strdup (g_value_get_string (value));
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
 }
 
 /**
@@ -151,7 +206,39 @@ gcm_dbus_class_init (GcmDbusClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	object_class->finalize = gcm_dbus_finalize;
+	object_class->get_property = gcm_dbus_get_property;
+	object_class->set_property = gcm_dbus_set_property;
 	g_type_class_add_private (klass, sizeof (GcmDbusPrivate));
+
+	signals[SIGNAL_CHANGED] =
+		g_signal_new ("changed",
+			      G_OBJECT_CLASS_TYPE (klass),
+			      G_SIGNAL_RUN_LAST | G_SIGNAL_DETAILED,
+			      0, NULL, NULL,
+			      g_cclosure_marshal_VOID__VOID,
+			      G_TYPE_NONE, 0);
+
+	/**
+	 * GcmDbus:output-intent:
+	 */
+	g_object_class_install_property (object_class,
+					 PROP_OUTPUT_INTENT,
+					 g_param_spec_string ("output-intent",
+							      NULL, NULL,
+							      NULL,
+							      G_PARAM_READABLE));
+}
+
+/**
+ * gcm_dbus_gconf_key_changed_cb:
+ *
+ * We might have to do things when the gconf keys change; do them here.
+ **/
+static void
+gcm_dbus_gconf_key_changed_cb (GConfClient *client, guint cnxn_id, GConfEntry *entry, GcmDbus *dbus)
+{
+	/* just emit signal */
+	g_signal_emit (dbus, signals[SIGNAL_CHANGED], 0);
 }
 
 /**
@@ -168,6 +255,23 @@ gcm_dbus_init (GcmDbus *dbus)
 	dbus->priv->gconf_client = gconf_client_get_default ();
 	dbus->priv->client = gcm_client_new ();
 	dbus->priv->timer = g_timer_new ();
+
+	/* notify on changes */
+	gconf_client_notify_add (dbus->priv->gconf_client, GCM_SETTINGS_DIR,
+				 (GConfClientNotifyFunc) gcm_dbus_gconf_key_changed_cb,
+				 dbus, NULL, NULL);
+
+	/* coldplug */
+	dbus->priv->output_intent = gconf_client_get_string (dbus->priv->gconf_client, GCM_SETTINGS_OUTPUT_INTENT, &error);
+	if (dbus->priv->output_intent == NULL) {
+		if (error != NULL) {
+			egg_warning ("failed to get intent: %s", error->message);
+			g_clear_error (&error);
+		}
+
+		/* set defaults as GConf isn't sure */
+		dbus->priv->output_intent = g_strdup ("disabled");
+	}
 
 	/* get all devices */
 	ret = gcm_client_add_connected (dbus->priv->client, &error);
@@ -189,6 +293,7 @@ gcm_dbus_finalize (GObject *object)
 
 	dbus = GCM_DBUS (object);
 	g_return_if_fail (dbus->priv != NULL);
+	g_free (dbus->priv->output_intent);
 	g_object_unref (dbus->priv->client);
 	g_object_unref (dbus->priv->gconf_client);
 	g_timer_destroy (dbus->priv->timer);
