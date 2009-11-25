@@ -317,7 +317,7 @@ out:
 static gboolean
 gcm_calibrate_display_neutralise (GcmCalibrate *calibrate, GError **error)
 {
-	gboolean ret = FALSE;
+	gboolean ret = TRUE;
 	GcmCalibratePrivate *priv = calibrate->priv;
 	gchar type;
 	gchar **argv = NULL;
@@ -331,14 +331,17 @@ gcm_calibrate_display_neutralise (GcmCalibrate *calibrate, GError **error)
 
 	/* match up the output name with the device number defined by dispcal */
 	priv->display = gcm_calibrate_get_display (priv->output_name, error);
-	if (priv->display == G_MAXUINT)
+	if (priv->display == G_MAXUINT) {
+		ret = FALSE;
 		goto out;
+	}
 
 	/* get the device */
 	output = gnome_rr_screen_get_output_by_name (priv->rr_screen, priv->output_name);
 	if (output == NULL) {
 		if (error != NULL)
 			*error = g_error_new (1, 0, "failed to get output for %s", priv->output_name);
+		ret = FALSE;
 		goto out;
 	}
 
