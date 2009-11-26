@@ -1729,7 +1729,7 @@ main (int argc, char **argv)
 	gcm_prefs_set_combo_simple_text (widget);
 	gtk_widget_set_sensitive (widget, FALSE);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), NULL);
+			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), NULL);
 
 	/* setup rendering lists */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_rendering_display"));
@@ -1746,7 +1746,7 @@ main (int argc, char **argv)
 	gtk_widget_set_sensitive (widget, FALSE);
 	gcm_prefs_setup_rendering_combobox (widget);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), NULL);
+			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), NULL);
 	//TODO: need to get from GConf
 	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 
