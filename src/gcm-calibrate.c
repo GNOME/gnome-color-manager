@@ -323,15 +323,15 @@ gcm_calibrate_get_tool_filename (const gchar *command, GError **error)
 	gboolean ret;
 	gchar *filename;
 
-	/* test original argyllcms name */
-	filename = g_strdup_printf ("/usr/bin/%s", command);
+	/* try the debian filename */
+	filename = g_strdup_printf ("/usr/bin/argyll-%s", command);
 	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
 	if (ret)
 		goto out;
 
-	/* try the debian one */
+	/* try the original argyllcms filename */
 	g_free (filename);
-	filename = g_strdup_printf ("/usr/bin/argyll-%s", command);
+	filename = g_strdup_printf ("/usr/bin/%s", command);
 	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
 	if (ret)
 		goto out;
