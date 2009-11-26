@@ -438,6 +438,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	gchar *filename = NULL;
 	guint i;
 	gchar *name;
+	gchar *displayname = NULL;
 	gchar *destination = NULL;
 	GcmProfile *profile;
 
@@ -519,6 +520,12 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 			goto out;
 		}
 
+		/* add an entry to the combobox */
+		g_object_get (profile,
+			      "description", &displayname,
+			      NULL);
+		gtk_combo_box_append_text (GTK_COMBO_BOX (widget), displayname);
+
 		/* add to arrays */
 		g_ptr_array_add (profiles_array, g_object_ref (profile));
 		g_ptr_array_add (profiles_array_in_combo, g_object_ref (profile));
@@ -535,6 +542,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 out:
 	g_free (filename);
 	g_free (destination);
+	g_free (displayname);
 	if (calib != NULL)
 		g_object_unref (calib);
 }
