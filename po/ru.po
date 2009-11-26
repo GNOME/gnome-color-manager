@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2009-11-26 01:06+0300\n"
-"PO-Revision-Date: 2009-11-26 01:07+0300\n"
+"PO-Revision-Date: 2009-11-27 00:23+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: GNOME Russian <gnome-cyr@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -200,42 +200,42 @@ msgstr "Показать параметры отладки"
 #. TRANSLATORS: title, hardware refers to a calibration device
 #: ../src/gcm-calibrate.c:201
 msgid "Setup hardware"
-msgstr "Настроить калибровщик"
+msgstr "Настройка измерительного устройства"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:203
 msgid "Setting up hardware device for use..."
-msgstr ""
+msgstr "Выполняется настройка измерительного устройства..."
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
 #: ../src/gcm-calibrate.c:238
 msgid "Could not auto-detect CRT or LCD"
-msgstr "Не удалось автоматически определить ЭЛТ или ЖК"
+msgstr "Не удалось автоматически определить тип экрана"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:241
 msgid "Please indicate if the screen you are trying to profile is a CRT (old type) or a LCD (digital flat panel)."
-msgstr ""
+msgstr "Укажите тип экрана монитора, который собираетесь откалибровать и профилировать: ЭЛТ (электронно-лучевая трубка) или ЖК (жидко-кристаллический)."
 
 #. TRANSLATORS: button, Liquid Crystal Display
 #: ../src/gcm-calibrate.c:244
 msgid "LCD"
-msgstr "LCD"
+msgstr "ЖК"
 
 #. TRANSLATORS: button, Cathode Ray Tube
 #: ../src/gcm-calibrate.c:246
 msgid "CRT"
-msgstr "CRT"
+msgstr "ЭЛТ"
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate.c:271
 msgid "Before calibrating the display, it is recommended to configure your display with the following settings to get optimal results."
-msgstr ""
+msgstr "Перед созданием профиля рекомендуется откалибровать монитор, т.е. привести его в определённое типовое состояние."
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate.c:274
 msgid "You may want to consult the owner's manual for your display on how to achieve these settings."
-msgstr "Вероятно, вам необходимо прочитать руководство пользователя к монитору, чтобы узнать, как именно настроить монитор."
+msgstr "Вероятно, вам необходимо прочитать руководство пользователя к монитору, чтобы узнать, как именно настроить монитор. В целом, необходимо сделать следующее:"
 
 #. TRANSLATORS: dialog message, bullet item
 #: ../src/gcm-calibrate.c:277
@@ -250,22 +250,22 @@ msgstr "Отключить динамический контраст, если �
 #. TRANSLATORS: dialog message, bullet item
 #: ../src/gcm-calibrate.c:283
 msgid "Configure your display with custom color settings and ensure the RGB channels are set to the same values."
-msgstr ""
+msgstr "Вручную изменить параметры цвета, установив одинаковое значение каналов RGB."
 
 #. TRANSLATORS: dialog message, addition to bullet item
 #: ../src/gcm-calibrate.c:286
 msgid "If custom color is not available then use a 6500K color temperature."
-msgstr ""
+msgstr "Если это невозможно, следует установить цветовую температуру 6500К."
 
 #. TRANSLATORS: dialog message, bullet item
 #: ../src/gcm-calibrate.c:289
 msgid "Adjust the display brightness to a comfortable level for prolonged viewing."
-msgstr "Скорректируйте яркость монитора до уровня, комфортного для длительной работы"
+msgstr "Скорректировать яркость монитора до уровня, комфортного для длительной работы."
 
 #. TRANSLATORS: dialog message, suffix
 #: ../src/gcm-calibrate.c:292
 msgid "For best results, the display should have been powered for at least 15 minutes before starting the calibration."
-msgstr ""
+msgstr "Для получения качественного результата необходимо, чтобы монитор был включён не менее 15 минут."
 
 #. TRANSLATORS: title, device is a hardware color calibration sensor
 #: ../src/gcm-calibrate.c:377
@@ -280,12 +280,12 @@ msgstr "Разместите измерительное устройство в 
 #. TRANSLATORS: title, default paramters needed to calibrate
 #: ../src/gcm-calibrate.c:400
 msgid "Getting default parameters"
-msgstr ""
+msgstr "Получение типовых параметров"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:402
 msgid "This pre-calibrates the screen by sending colored and gray patches to your screen and measuring them with the hardware device."
-msgstr ""
+msgstr "Будет выполнено предварительное профилирование монитора, путём отправки на него цветных и серых квадратов с последующим их измерением."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
 #: ../src/gcm-calibrate.c:467
@@ -363,7 +363,7 @@ msgstr ""
 #. TRANSLATORS: title, a profile is a ICC file
 #: ../src/gcm-calibrate.c:706
 msgid "Copying files"
-msgstr ""
+msgstr "Копирование файлов"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:708
@@ -526,7 +526,7 @@ msgstr "Аппаратное обеспечение не поддерживае�
 #: ../src/gcm-prefs.c:956
 #: ../src/gcm-prefs.c:1324
 msgid "disconnected"
-msgstr ""
+msgstr "отключено"
 
 #. TRANSLATORS: this the ICC profile type
 #: ../src/gcm-prefs.c:1035
@@ -566,7 +566,7 @@ msgstr "Именованный цвет"
 #. TRANSLATORS: this the ICC profile type
 #: ../src/gcm-prefs.c:1062
 msgid "Unknown"
-msgstr ""
+msgstr "Неизвестен"
 
 #. TRANSLATORS: this is where the required software has not been written yet
 #: ../src/gcm-prefs.c:1330
