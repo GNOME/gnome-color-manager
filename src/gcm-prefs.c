@@ -155,7 +155,6 @@ gcm_prefs_calibrate_display (GcmCalibrate *calib)
 		goto finish_calibrate;
 	}
 
-
 	/* if we are an internal LCD, we need to set the brightness to maximum */
 	ret = gcm_utils_output_is_lcd_internal (output_name);
 	if (ret) {
@@ -1580,7 +1579,7 @@ gcm_prefs_renderer_combo_changed_cb (GtkWidget *widget, gpointer data)
 	if (active == -1)
 		return;
 	//TODO: need to save to GConf
-	egg_warning ("changed to %i", active);
+	egg_debug ("changed rendering intent to %i", active);
 }
 
 /**
