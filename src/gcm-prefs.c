@@ -59,6 +59,8 @@ enum {
 	GPM_DEVICES_COLUMN_LAST
 };
 
+static void gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer userdata);
+
 /**
  * gcm_prefs_close_cb:
  **/
@@ -438,9 +440,9 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	gchar *filename = NULL;
 	guint i;
 	gchar *name;
-	gchar *displayname = NULL;
 	gchar *destination = NULL;
 	GcmProfile *profile;
+	GtkTreeSelection *selection;
 
 	/* get the type */
 	g_object_get (current_device,
@@ -508,6 +510,17 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	if (i == profiles_array_in_combo->len) {
 		egg_debug ("adding: %s", destination);
 
+		/* set this default */
+		g_object_set (current_device,
+			      "profile-filename", destination,
+			      NULL);
+		ret = gcm_device_save (current_device, &error);
+		if (!ret) {
+			egg_warning ("failed to save default: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
+
 		/* create a new instance */
 		profile = gcm_profile_new ();
 
@@ -520,29 +533,21 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 			goto out;
 		}
 
-		/* add an entry to the combobox */
-		g_object_get (profile,
-			      "description", &displayname,
-			      NULL);
-		gtk_combo_box_append_text (GTK_COMBO_BOX (widget), displayname);
-
 		/* add to arrays */
 		g_ptr_array_add (profiles_array, g_object_ref (profile));
-		g_ptr_array_add (profiles_array_in_combo, g_object_ref (profile));
-		i = profiles_array_in_combo->len - 1;
 		g_object_unref (profile);
 	}
 
-	/* set the new profile and save config */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
-	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), i);
+	/* re-get all the profiles for this device */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	gcm_prefs_devices_treeview_clicked_cb (selection, NULL);
 
 	/* remove temporary file */
 	g_unlink (filename);
 out:
 	g_free (filename);
 	g_free (destination);
-	g_free (displayname);
 	if (calib != NULL)
 		g_object_unref (calib);
 }
@@ -802,7 +807,7 @@ gcm_prefs_add_profiles_suitable_for_devices (GcmDeviceType type)
  * gcm_prefs_devices_treeview_clicked_cb:
  **/
 static void
-gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gboolean data)
+gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer userdata)
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
