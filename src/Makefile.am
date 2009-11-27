@@ -40,14 +40,32 @@ libgcmshared_a_SOURCES =				\
 libgcmshared_a_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
+noinst_PROGRAMS =					\
+	gcm-inspect					\
+	gcm-dump-edid
+
+gcm_dump_edid_SOURCES =					\
+	gcm-dump-edid.c
+
+gcm_dump_edid_LDADD =					\
+	libgcmshared.a					\
+	$(GLIB_LIBS)					\
+	$(GNOMEDESKTOP_LIBS)				\
+	$(GCONF_LIBS)					\
+	$(GUDEV_LIBS)					\
+	$(XORG_LIBS)					\
+	$(DBUS_GLIB_LIBS)				\
+	$(GTK_LIBS)
+
+gcm_dump_edid_CFLAGS =					\
+	$(WARNINGFLAGS_C)
+
+
 bin_PROGRAMS =						\
 	gcm-apply					\
 	gcm-prefs					\
 	gcm-session					\
 	gcm-import
-
-noinst_PROGRAMS =					\
-	gcm-inspect
 
 gcm_inspect_SOURCES =					\
 	gcm-inspect.c
