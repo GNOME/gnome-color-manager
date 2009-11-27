@@ -76,9 +76,10 @@ enum {
 
 G_DEFINE_TYPE (GcmEdid, gcm_edid, G_TYPE_OBJECT)
 
-#define GCM_EDID_OFFSET_GAMMA				0x17
 #define GCM_EDID_OFFSET_PNPID				0x08
+#define GCM_EDID_OFFSET_SERIAL				0x0c
 #define GCM_EDID_OFFSET_SIZE				0x15
+#define GCM_EDID_OFFSET_GAMMA				0x17
 #define GCM_EDID_OFFSET_DATA_BLOCKS			0x36
 #define GCM_EDID_OFFSET_LAST_BLOCK			0x6c
 
@@ -98,6 +99,7 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 	gboolean ret = TRUE;
 	guint i;
 	GcmEdidPrivate *priv = edid->priv;
+	guint32 serial;
 
 	g_return_val_if_fail (GCM_IS_EDID (edid), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
@@ -130,6 +132,14 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 	priv->pnp_id[2] = 'A' + (data[GCM_EDID_OFFSET_PNPID+1] & 0x1f) - 1;
 	egg_debug ("PNPID: %s", priv->pnp_id);
 
+	/* maybe there isn't a ASCII serial number descriptor, so use this instead */
+	serial = (guint32) data[GCM_EDID_OFFSET_SERIAL+0];
+	serial += (guint32) data[GCM_EDID_OFFSET_SERIAL+1] * 0x100;
+	serial += (guint32) data[GCM_EDID_OFFSET_SERIAL+2] * 0x10000;
+	serial += (guint32) data[GCM_EDID_OFFSET_SERIAL+3] * 0x1000000;
+	priv->serial_number = g_strdup_printf ("%" G_GUINT32_FORMAT, serial);
+	egg_debug ("Serial: %s", priv->serial_number);
+
 	/* get the size */
 	priv->width = data[GCM_EDID_OFFSET_SIZE+0];
 	priv->height = data[GCM_EDID_OFFSET_SIZE+1];
@@ -158,15 +168,19 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 			continue;
 
 		/* any useful blocks? */
-		if (data[i+3] == GCM_DESCRIPTOR_DISPLAY_PRODUCT_NAME)
+		if (data[i+3] == GCM_DESCRIPTOR_DISPLAY_PRODUCT_NAME) {
 			priv->monitor_name = g_strdup ((const gchar *) &data[i+5]);
-		else if (data[i+3] == GCM_DESCRIPTOR_DISPLAY_PRODUCT_SERIAL_NUMBER)
+			egg_debug ("[extended EDID block] monitor name: %s", priv->monitor_name);
+		} else if (data[i+3] == GCM_DESCRIPTOR_DISPLAY_PRODUCT_SERIAL_NUMBER) {
+			g_free (priv->serial_number);
 			priv->serial_number = g_strdup ((const gchar *) &data[i+5]);
-		else if (data[i+3] == GCM_DESCRIPTOR_COLOR_MANAGEMENT_DATA)
+			egg_debug ("[extended EDID block] serial number: %s", priv->serial_number);
+		} else if (data[i+3] == GCM_DESCRIPTOR_COLOR_MANAGEMENT_DATA) {
 			egg_warning ("failing to parse color management data");
-		else if (data[i+3] == GCM_DESCRIPTOR_ALPHANUMERIC_DATA_STRING)
+		} else if (data[i+3] == GCM_DESCRIPTOR_ALPHANUMERIC_DATA_STRING) {
 			priv->ascii_string = g_strdup ((const gchar *) &data[i+5]);
-		else if (data[i+3] == GCM_DESCRIPTOR_COLOR_POINT) {
+			egg_debug ("[extended EDID block] ascii string: %s", priv->ascii_string);
+		} else if (data[i+3] == GCM_DESCRIPTOR_COLOR_POINT) {
 			if (data[i+3+9] != 0xff) {
 				egg_debug ("extended EDID block(1) which contains a better gamma value");
 				priv->gamma = ((gfloat) data[i+3+9] / 100) + 1;
@@ -378,10 +392,133 @@ gcm_edid_new (void)
 #ifdef EGG_TEST
 #include "egg-test.h"
 
+typedef struct {
+	const gchar *monitor_name;
+	const gchar *vendor_name;
+	const gchar *serial_number;
+	const gchar *ascii_string;
+	const gchar *pnp_id;
+	guint width;
+	guint height;
+	gfloat gamma;
+} GcmEdidTestData;
+
+void
+gcm_edid_test_parse_edid_file (EggTest *test, GcmEdid *edid, const gchar *datafile, GcmEdidTestData *test_data)
+{
+	gchar *filename;
+	gchar *monitor_name;
+	gchar *vendor_name;
+	gchar *serial_number;
+	gchar *ascii_string;
+	gchar *pnp_id;
+	gchar *data;
+	guint width;
+	guint height;
+	gfloat gamma;
+	gboolean ret;
+	GError *error = NULL;
+
+	/************************************************************/
+	egg_test_title (test, "get filename of data file");
+	filename = egg_test_get_data_file (datafile);
+	ret = g_file_get_contents (filename, &data, NULL, &error);
+	if (ret)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to load: %s", error->message);
+
+	/************************************************************/
+	egg_test_title (test, "parse an example edid block");
+	ret = gcm_edid_parse (edid, data, &error);
+	if (ret)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to parse: %s", error->message);
+
+	g_object_get (edid,
+		      "monitor-name", &monitor_name,
+		      "vendor-name", &vendor_name,
+		      "serial-number", &serial_number,
+		      "ascii-string", &ascii_string,
+		      "pnp-id", &pnp_id,
+		      "width", &width,
+		      "height", &height,
+		      "gamma", &gamma,
+		      NULL);
+
+	/************************************************************/
+	egg_test_title (test, "check monitor name for %s", datafile);
+	if (g_strcmp0 (monitor_name, test_data->monitor_name) == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s, expecting: %s", monitor_name, test_data->monitor_name);
+
+	/************************************************************/
+	egg_test_title (test, "check vendor name for %s", datafile);
+	if (g_strcmp0 (vendor_name, test_data->vendor_name) == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s, expecting: %s", vendor_name, test_data->vendor_name);
+
+	/************************************************************/
+	egg_test_title (test, "check serial number for %s", datafile);
+	if (g_strcmp0 (serial_number, test_data->serial_number) == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s, expecting: %s", serial_number, test_data->serial_number);
+
+	/************************************************************/
+	egg_test_title (test, "check ascii string for %s", datafile);
+	if (g_strcmp0 (ascii_string, test_data->ascii_string) == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s, expecting: %s", ascii_string, test_data->ascii_string);
+
+	/************************************************************/
+	egg_test_title (test, "check pnp id for %s", datafile);
+	if (g_strcmp0 (pnp_id, test_data->pnp_id) == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s, expecting: %s", pnp_id, test_data->pnp_id);
+
+	/************************************************************/
+	egg_test_title (test, "check height for %s", datafile);
+	if (height == test_data->height)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %i, expecting: %i", height, test_data->height);
+
+	/************************************************************/
+	egg_test_title (test, "check width for %s", datafile);
+	if (width == test_data->width)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %i, expecting: %i", width, test_data->width);
+
+	/************************************************************/
+	egg_test_title (test, "check gamma for %s", datafile);
+	if (gamma > (test_data->gamma - 0.01) && gamma < (test_data->gamma + 0.01))
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %f, expecting: %f", gamma, test_data->gamma);
+
+	g_free (monitor_name);
+	g_free (vendor_name);
+	g_free (serial_number);
+	g_free (ascii_string);
+	g_free (pnp_id);
+	g_free (data);
+	g_free (filename);
+}
+
 void
 gcm_edid_test (EggTest *test)
 {
 	GcmEdid *edid;
+	gboolean ret;
+	GError *error = NULL;
+	GcmEdidTestData test_data;
 
 	if (!egg_test_start (test, "GcmEdid"))
 		return;
@@ -391,15 +528,28 @@ gcm_edid_test (EggTest *test)
 	edid = gcm_edid_new ();
 	egg_test_assert (test, edid != NULL);
 
-#if 0
-	/************************************************************/
-	egg_test_title (test, "parse an example edid");
-	ret = gcm_edid_parse (edid, &error);
-	if (!ret)
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "failed to parse: %s", error->message);
-#endif
+	/* LG 21" LCD panel */
+	test_data.monitor_name = "L225W";
+	test_data.vendor_name = "Goldstar Company Ltd";
+	test_data.serial_number = "34398";
+	test_data.ascii_string = NULL;
+	test_data.pnp_id = "GSM";
+	test_data.height = 30;
+	test_data.width = 47;
+	test_data.gamma = 2.2f;
+	gcm_edid_test_parse_edid_file (test, edid, "LG-L225W-External.bin", &test_data);
+
+	/* Lenovo T61 Intel Panel */
+	test_data.monitor_name = NULL;
+	test_data.vendor_name = "IBM France";
+	test_data.serial_number = "0";
+	test_data.ascii_string = "LTN154P2-L05";
+	test_data.pnp_id = "IBM";
+	test_data.height = 21;
+	test_data.width = 33;
+	test_data.gamma = 2.2f;
+	gcm_edid_test_parse_edid_file (test, edid, "Lenovo-T61-Internal.bin", &test_data);
+
 	g_object_unref (edid);
 
 	egg_test_end (test);

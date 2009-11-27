@@ -1,4 +1,5 @@
 SUBDIRS = 						\
+	tests						\
 	icons						\
 	profiles
 
