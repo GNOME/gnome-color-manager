@@ -163,6 +163,7 @@ gcm_self_test_SOURCES =					\
 	gcm-self-test.c					\
 	gcm-edid.c					\
 	gcm-tables.c					\
+	gcm-utils.c					\
 	egg-test.h					\
 	egg-test.c					\
 	$(NULL)

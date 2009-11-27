@@ -587,9 +587,88 @@ gcm_utils_get_default_config_location (void)
 {
 	gchar *filename;
 
+#ifdef EGG_TEST
+	filename = g_strdup ("/tmp/config.dat");
+#else
 	/* create default path */
 	filename = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "config.dat", NULL);
+#endif
 
 	return filename;
 }
+
+/***************************************************************************
+ ***                          MAKE CHECK TESTS                           ***
+ ***************************************************************************/
+#ifdef EGG_TEST
+#include "egg-test.h"
+
+void
+gcm_utils_test (EggTest *test)
+{
+	gboolean ret;
+	GError *error = NULL;
+	GPtrArray *array;
+	gchar *filename;
+
+	if (!egg_test_start (test, "GcmUtils"))
+		return;
+
+	/************************************************************/
+	egg_test_title (test, "get profile filenames");
+	array = gcm_utils_get_profile_filenames ();
+	egg_test_assert (test, array->len > 1);
+	g_ptr_array_unref (array);
+
+	/************************************************************/
+	egg_test_title (test, "get filename of data file");
+	filename = gcm_utils_get_profile_destination ("dave.icc");
+	if (g_str_has_suffix (filename, "/.color/icc/dave.icc"))
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to get filename: %s", filename);
+	g_free (filename);
+
+	/************************************************************/
+	egg_test_title (test, "detect LVDS panels");
+	ret = gcm_utils_output_is_lcd_internal ("LVDS1");
+	egg_test_assert (test, ret);
+
+	/************************************************************/
+	egg_test_title (test, "detect external panels");
+	ret = gcm_utils_output_is_lcd_internal ("DVI1");
+	egg_test_assert (test, !ret);
+
+	/************************************************************/
+	egg_test_title (test, "detect LCD panels");
+	ret = gcm_utils_output_is_lcd ("LVDS1");
+	egg_test_assert (test, ret);
+
+	/************************************************************/
+	egg_test_title (test, "detect LCD panels (2)");
+	ret = gcm_utils_output_is_lcd ("DVI1");
+	egg_test_assert (test, ret);
+
+	/************************************************************/
+	egg_test_title (test, "Make sensible filename");
+	filename = g_strdup ("Hello\n\rWorld!");
+	gcm_utils_alphanum_lcase (filename);
+	if (g_strcmp0 (filename, "hello__world_") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to get filename: %s", filename);
+	g_free (filename);
+
+	/************************************************************/
+	egg_test_title (test, "get default config location (when in make check)");
+	filename = gcm_utils_get_default_config_location ();
+	if (g_strcmp0 (filename, "/tmp/config.dat") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to get correct config location: %s", filename);
+	g_free (filename);
+
+	egg_test_end (test);
+}
+#endif
 
