@@ -241,10 +241,10 @@ out:
 }
 
 /**
- * gcm_prefs_calibrate_scanner_get_scanned_profile:
+ * gcm_prefs_calibrate_device_get_scanned_profile:
  **/
 static gchar *
-gcm_prefs_calibrate_scanner_get_scanned_profile (void)
+gcm_prefs_calibrate_device_get_scanned_profile (void)
 {
 	gchar *filename = NULL;
 	GtkWindow *window;
@@ -284,10 +284,10 @@ gcm_prefs_calibrate_scanner_get_scanned_profile (void)
 }
 
 /**
- * gcm_prefs_calibrate_scanner_get_reference_data:
+ * gcm_prefs_calibrate_device_get_reference_data:
  **/
 static gchar *
-gcm_prefs_calibrate_scanner_get_reference_data (void)
+gcm_prefs_calibrate_device_get_reference_data (void)
 {
 	gchar *filename = NULL;
 	GtkWindow *window;
@@ -327,10 +327,10 @@ gcm_prefs_calibrate_scanner_get_reference_data (void)
 }
 
 /**
- * gcm_prefs_calibrate_scanner:
+ * gcm_prefs_calibrate_device:
  **/
 static gboolean
-gcm_prefs_calibrate_scanner (GcmCalibrate *calib)
+gcm_prefs_calibrate_device (GcmCalibrate *calib)
 {
 	gboolean ret = FALSE;
 	GError *error = NULL;
@@ -354,7 +354,7 @@ gcm_prefs_calibrate_scanner (GcmCalibrate *calib)
 	}
 
 	/* step 0 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_SCANNER_SETUP, &error);
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DEVICE_SETUP, &error);
 	if (!ret) {
 		egg_warning ("failed to setup: %s", error->message);
 		g_error_free (error);
@@ -362,12 +362,12 @@ gcm_prefs_calibrate_scanner (GcmCalibrate *calib)
 	}
 
 	/* get scanned image */
-	scanned_image = gcm_prefs_calibrate_scanner_get_scanned_profile ();
+	scanned_image = gcm_prefs_calibrate_device_get_scanned_profile ();
 	if (scanned_image == NULL)
 		goto out;
 
 	/* get reference data */
-	reference_data = gcm_prefs_calibrate_scanner_get_reference_data ();
+	reference_data = gcm_prefs_calibrate_device_get_reference_data ();
 	if (reference_data == NULL)
 		goto out;
 
@@ -392,7 +392,7 @@ gcm_prefs_calibrate_scanner (GcmCalibrate *calib)
 		      NULL);
 
 	/* step 1 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_SCANNER_COPY, &error);
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DEVICE_COPY, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
@@ -400,7 +400,7 @@ gcm_prefs_calibrate_scanner (GcmCalibrate *calib)
 	}
 
 	/* step 2 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_SCANNER_MEASURE, &error);
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DEVICE_MEASURE, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
@@ -408,7 +408,7 @@ gcm_prefs_calibrate_scanner (GcmCalibrate *calib)
 	}
 
 	/* step 3 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_SCANNER_GENERATE_PROFILE, &error);
+	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DEVICE_GENERATE_PROFILE, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
@@ -466,7 +466,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		break;
 	case GCM_DEVICE_TYPE_SCANNER:
 	case GCM_DEVICE_TYPE_CAMERA:
-		gcm_prefs_calibrate_scanner (calib);
+		gcm_prefs_calibrate_device (calib);
 		break;
 	default:
 		egg_warning ("calibration not supported for this device");

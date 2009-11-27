@@ -713,10 +713,10 @@ out:
 }
 
 /**
- * gcm_calibrate_scanner_setup:
+ * gcm_calibrate_device_setup:
  **/
 static gboolean
-gcm_calibrate_scanner_setup (GcmCalibrate *calibrate, GError **error)
+gcm_calibrate_device_setup (GcmCalibrate *calibrate, GError **error)
 {
 	gboolean ret = TRUE;
 	GString *string = NULL;
@@ -725,16 +725,16 @@ gcm_calibrate_scanner_setup (GcmCalibrate *calibrate, GError **error)
 	string = g_string_new ("");
 
 	/* TRANSLATORS: title, a profile is a ICC file */
-	gcm_calibrate_set_title (calibrate, _("Setting up scanner"));
+	gcm_calibrate_set_title (calibrate, _("Setting up device"));
 
 	/* TRANSLATORS: dialog message, preface */
-	g_string_append_printf (string, "%s\n", _("Before calibrating the scanner, you have to manually scan a reference image and save it as a TIFF image file."));
+	g_string_append_printf (string, "%s\n", _("Before calibrating the device, you have to manually acquire a reference image and save it as a TIFF image file."));
 
 	/* TRANSLATORS: dialog message, preface */
 	g_string_append_printf (string, "%s\n", _("Ensure that the contrast and brightness is not changed and color correction profiles are not applied."));
 
 	/* TRANSLATORS: dialog message, suffix */
-	g_string_append_printf (string, "%s\n", _("The scanner glass should have been cleaned prior to scanning and the output file resolution should be at least 200dpi."));
+	g_string_append_printf (string, "%s\n", _("The device sensor should have been cleaned prior to scanning and the output file resolution should be at least 200dpi."));
 
 	/* TRANSLATORS: dialog message, suffix */
 	g_string_append_printf (string, "\n%s\n", _("For best results, the reference image should also be less than two years old."));
@@ -762,13 +762,13 @@ out:
 }
 
 /**
- * gcm_calibrate_scanner_copy:
+ * gcm_calibrate_device_copy:
  **/
 static gboolean
-gcm_calibrate_scanner_copy (GcmCalibrate *calibrate, GError **error)
+gcm_calibrate_device_copy (GcmCalibrate *calibrate, GError **error)
 {
 	gboolean ret;
-	gchar *scanner = NULL;
+	gchar *device = NULL;
 	gchar *it8cht = NULL;
 	gchar *it8ref = NULL;
 	gchar *filename = NULL;
@@ -783,7 +783,7 @@ gcm_calibrate_scanner_copy (GcmCalibrate *calibrate, GError **error)
 
 	/* build filenames */
 	filename = g_strdup_printf ("%s.tif", priv->basename);
-	scanner = g_build_filename (GCM_CALIBRATE_TEMP_DIR, filename, NULL);
+	device = g_build_filename (GCM_CALIBRATE_TEMP_DIR, filename, NULL);
 	it8cht = g_build_filename (GCM_CALIBRATE_TEMP_DIR, "it8.cht", NULL);
 	it8ref = g_build_filename (GCM_CALIBRATE_TEMP_DIR, "it8ref.txt", NULL);
 
@@ -791,7 +791,7 @@ gcm_calibrate_scanner_copy (GcmCalibrate *calibrate, GError **error)
 	ret = gcm_utils_mkdir_and_copy ("/usr/share/color/argyll/ref/it8.cht", it8cht, error);
 	if (!ret)
 		goto out;
-	ret = gcm_utils_mkdir_and_copy (priv->filename_source, scanner, error);
+	ret = gcm_utils_mkdir_and_copy (priv->filename_source, device, error);
 	if (!ret)
 		goto out;
 	ret = gcm_utils_mkdir_and_copy (priv->filename_reference, it8ref, error);
@@ -799,17 +799,17 @@ gcm_calibrate_scanner_copy (GcmCalibrate *calibrate, GError **error)
 		goto out;
 out:
 	g_free (filename);
-	g_free (scanner);
+	g_free (device);
 	g_free (it8cht);
 	g_free (it8ref);
 	return ret;
 }
 
 /**
- * gcm_calibrate_scanner_measure:
+ * gcm_calibrate_device_measure:
  **/
 static gboolean
-gcm_calibrate_scanner_measure (GcmCalibrate *calibrate, GError **error)
+gcm_calibrate_device_measure (GcmCalibrate *calibrate, GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibratePrivate *priv = calibrate->priv;
@@ -872,10 +872,10 @@ out:
 }
 
 /**
- * gcm_calibrate_scanner_generate_profile:
+ * gcm_calibrate_device_generate_profile:
  **/
 static gboolean
-gcm_calibrate_scanner_generate_profile (GcmCalibrate *calibrate, GError **error)
+gcm_calibrate_device_generate_profile (GcmCalibrate *calibrate, GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibratePrivate *priv = calibrate->priv;
@@ -931,7 +931,7 @@ gcm_calibrate_scanner_generate_profile (GcmCalibrate *calibrate, GError **error)
 	/* TRANSLATORS: title, a profile is a ICC file */
 	gcm_calibrate_set_title (calibrate, _("Generating the profile"));
 	/* TRANSLATORS: dialog message */
-	gcm_calibrate_set_message (calibrate, _("Generating the ICC color profile that can be used with this scanner."));
+	gcm_calibrate_set_message (calibrate, _("Generating the ICC color profile that can be used with this device."));
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -992,20 +992,20 @@ gcm_calibrate_task (GcmCalibrate *calibrate, GcmCalibrateTask task, GError **err
 		ret = gcm_calibrate_display_generate_profile (calibrate, error);
 		goto out;
 	}
-	if (task == GCM_CALIBRATE_TASK_SCANNER_SETUP) {
-		ret = gcm_calibrate_scanner_setup (calibrate, error);
+	if (task == GCM_CALIBRATE_TASK_DEVICE_SETUP) {
+		ret = gcm_calibrate_device_setup (calibrate, error);
 		goto out;
 	}
-	if (task == GCM_CALIBRATE_TASK_SCANNER_COPY) {
-		ret = gcm_calibrate_scanner_copy (calibrate, error);
+	if (task == GCM_CALIBRATE_TASK_DEVICE_COPY) {
+		ret = gcm_calibrate_device_copy (calibrate, error);
 		goto out;
 	}
-	if (task == GCM_CALIBRATE_TASK_SCANNER_MEASURE) {
-		ret = gcm_calibrate_scanner_measure (calibrate, error);
+	if (task == GCM_CALIBRATE_TASK_DEVICE_MEASURE) {
+		ret = gcm_calibrate_device_measure (calibrate, error);
 		goto out;
 	}
-	if (task == GCM_CALIBRATE_TASK_SCANNER_GENERATE_PROFILE) {
-		ret = gcm_calibrate_scanner_generate_profile (calibrate, error);
+	if (task == GCM_CALIBRATE_TASK_DEVICE_GENERATE_PROFILE) {
+		ret = gcm_calibrate_device_generate_profile (calibrate, error);
 		goto out;
 	}
 out:
