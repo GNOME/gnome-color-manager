@@ -185,14 +185,45 @@ gcm_tables_class_init (GcmTablesClass *klass)
 }
 
 /**
+ * gcm_tables_set_default_data_dir:
+ **/
+static gboolean
+gcm_tables_set_default_data_dir (GcmTables *tables)
+{
+	gboolean ret;
+
+	/* shipped in hwdata, e.g. Red Hat */
+	ret = g_file_test ("/usr/share/hwdata/pnp.ids", G_FILE_TEST_EXISTS);
+	if (ret) {
+		tables->priv->data_dir = g_strdup ("/usr/share/hwdata");
+		goto out;
+	}
+
+	/* shipped in pnputils, e.g. Debian */
+	ret = g_file_test ("/usr/share/misc/pnp.ids", G_FILE_TEST_EXISTS);
+	if (ret) {
+		tables->priv->data_dir = g_strdup ("/usr/share/misc");
+		goto out;
+	}
+
+	/* need to install package? */
+	egg_warning ("cannot find pnp.ids");
+out:
+	return ret;
+}
+
+/**
  * gcm_tables_init:
  **/
 static void
 gcm_tables_init (GcmTables *tables)
 {
 	tables->priv = GCM_TABLES_GET_PRIVATE (tables);
-	tables->priv->data_dir = g_strdup ("/usr/share/hwdata");
+	tables->priv->data_dir = NULL;
 	tables->priv->pnp_table = g_hash_table_new_full (g_str_hash, g_str_equal, (GDestroyNotify) g_free, (GDestroyNotify) g_free);
+
+	/* the default location differs on debian and other distros */
+	gcm_tables_set_default_data_dir (tables);
 }
 
 /**
@@ -222,4 +253,67 @@ gcm_tables_new (void)
 	tables = g_object_new (GCM_TYPE_TABLES, NULL);
 	return GCM_TABLES (tables);
 }
+
+/***************************************************************************
+ ***                          MAKE CHECK TESTS                           ***
+ ***************************************************************************/
+#ifdef EGG_TEST
+#include "egg-test.h"
+
+void
+gcm_tables_test (EggTest *test)
+{
+	GcmTables *tables;
+	gboolean ret;
+	GError *error = NULL;
+	gchar *vendor;
+
+	if (!egg_test_start (test, "GcmTables"))
+		return;
+
+	/************************************************************/
+	egg_test_title (test, "get a tables object");
+	tables = gcm_tables_new ();
+	egg_test_assert (test, tables != NULL);
+
+	/************************************************************/
+	egg_test_title (test, "check pnp id 'IBM'");
+	vendor = gcm_tables_get_pnp_id (tables, "IBM", &error);
+	if (vendor == NULL)
+		egg_test_failed (test, "failed to get value: %s", error->message);
+	if (g_strcmp0 (vendor, "IBM France") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", vendor);
+	g_free (vendor);
+
+	/************************************************************/
+	egg_test_title (test, "check pnp id 'MIL'");
+	vendor = gcm_tables_get_pnp_id (tables, "MIL", &error);
+	if (vendor == NULL)
+		egg_test_failed (test, "failed to get value: %s", error->message);
+	if (g_strcmp0 (vendor, "Marconi Instruments Ltd") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", vendor);
+	g_free (vendor);
+
+	/************************************************************/
+	egg_test_title (test, "check pnp id 'XXX'");
+	vendor = gcm_tables_get_pnp_id (tables, "XXX", &error);
+	if (vendor == NULL) {
+		if (error == NULL)
+			egg_test_failed (test, "failed to get value and no error set");
+		g_clear_error (&error);
+		egg_test_success (test, NULL);
+	} else {
+		egg_test_failed (test, "vendor should not exist");
+	}
+	g_free (vendor);
+
+	g_object_unref (tables);
+
+	egg_test_end (test);
+}
+#endif
 

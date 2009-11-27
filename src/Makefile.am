@@ -162,6 +162,7 @@ check_PROGRAMS =					\
 gcm_self_test_SOURCES =					\
 	gcm-self-test.c					\
 	gcm-edid.c					\
+	gcm-tables.c					\
 	egg-test.h					\
 	egg-test.c					\
 	$(NULL)
