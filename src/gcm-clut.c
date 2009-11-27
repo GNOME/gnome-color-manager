@@ -191,6 +191,7 @@ gcm_clut_get_array (GcmClut *clut)
 
 	min = clut->priv->brightness / 100.0f;
 	max = (1.0f - min) * (clut->priv->contrast / 100.0f) + min;
+	egg_debug ("min=%f,max=%f", min, max);
 	custom_gamma = clut->priv->gamma;
 
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -198,7 +199,7 @@ gcm_clut_get_array (GcmClut *clut)
 		/* generate a dummy gamma */
 		egg_debug ("falling back to dummy gamma");
 		for (i=0; i<clut->priv->size; i++) {
-			value = (i * 0xffff) / clut->priv->size;
+			value = (i * 0xffff) / (clut->priv->size - 1);
 			data = g_new0 (GcmClutData, 1);
 			data->red = gcm_clut_get_adjusted_value (value, min, max, custom_gamma);
 			data->green = gcm_clut_get_adjusted_value (value, min, max, custom_gamma);
@@ -405,4 +406,121 @@ gcm_clut_new (void)
 	clut = g_object_new (GCM_TYPE_CLUT, NULL);
 	return GCM_CLUT (clut);
 }
+
+/***************************************************************************
+ ***                          MAKE CHECK TESTS                           ***
+ ***************************************************************************/
+#ifdef EGG_TEST
+#include "egg-test.h"
+
+void
+gcm_clut_test (EggTest *test)
+{
+	GcmClut *clut;
+	gboolean ret;
+	GError *error = NULL;
+	GPtrArray *array;
+	const GcmClutData *data;
+
+	if (!egg_test_start (test, "GcmClut"))
+		return;
+
+	/************************************************************/
+	egg_test_title (test, "get a clut object");
+	clut = gcm_clut_new ();
+	egg_test_assert (test, clut != NULL);
+
+	/* set some initial properties */
+	g_object_set (clut,
+		      "size", 3,
+		      "contrast", 100.0f,
+		      "brightness", 0.0f,
+		      NULL);
+
+	/************************************************************/
+	egg_test_title (test, "get array");
+	array = gcm_clut_get_array (clut);
+	if (array->len == 3)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid size: %i", array->len);
+
+	/************************************************************/
+	egg_test_title (test, "check values for reset array");
+	data = g_ptr_array_index (array, 0);
+	if (data->red != 0 && data->green != 0 && data->blue != 0)
+		egg_test_failed (test, "invalid data [0]: %i, %i, %i", data->red, data->green, data->blue);
+	data = g_ptr_array_index (array, 1);
+	if (data->red != 32767 && data->green != 32767 && data->blue != 32767)
+		egg_test_failed (test, "invalid data [1]: %i, %i, %i", data->red, data->green, data->blue);
+	data = g_ptr_array_index (array, 2);
+	if (data->red != 65535 && data->green != 65535 && data->blue != 65535)
+		egg_test_failed (test, "invalid data [2]: %i, %i, %i", data->red, data->green, data->blue);
+	egg_test_success (test, NULL);
+
+	g_ptr_array_unref (array);
+
+	/* set some initial properties */
+	g_object_set (clut,
+		      "contrast", 99.0f,
+		      "brightness", 0.0f,
+		      NULL);
+
+	/************************************************************/
+	egg_test_title (test, "get array");
+	array = gcm_clut_get_array (clut);
+	if (array->len == 3)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid size: %i", array->len);
+
+	/************************************************************/
+	egg_test_title (test, "check values for contrast adjusted array");
+	data = g_ptr_array_index (array, 0);
+	if (data->red != 0 && data->green != 0 && data->blue != 0)
+		egg_test_failed (test, "invalid data [0]: %i, %i, %i", data->red, data->green, data->blue);
+	data = g_ptr_array_index (array, 1);
+	if (data->red != 32439 && data->green != 32439 && data->blue != 32439)
+		egg_test_failed (test, "invalid data [1]: %i, %i, %i", data->red, data->green, data->blue);
+	data = g_ptr_array_index (array, 2);
+	if (data->red != 64879 && data->green != 64879 && data->blue != 64879)
+		egg_test_failed (test, "invalid data [2]: %i, %i, %i", data->red, data->green, data->blue);
+	egg_test_success (test, NULL);
+
+	g_ptr_array_unref (array);
+
+	/* set some initial properties */
+	g_object_set (clut,
+		      "contrast", 100.0f,
+		      "brightness", 1.0f,
+		      NULL);
+
+	/************************************************************/
+	egg_test_title (test, "get array");
+	array = gcm_clut_get_array (clut);
+	if (array->len == 3)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid size: %i", array->len);
+
+	/************************************************************/
+	egg_test_title (test, "check values for brightness adjusted array");
+	data = g_ptr_array_index (array, 0);
+	if (data->red != 655 && data->green != 655 && data->blue != 655)
+		egg_test_failed (test, "invalid data [0]: %i, %i, %i", data->red, data->green, data->blue);
+	data = g_ptr_array_index (array, 1);
+	if (data->red != 33094 && data->green != 33094 && data->blue != 33094)
+		egg_test_failed (test, "invalid data [1]: %i, %i, %i", data->red, data->green, data->blue);
+	data = g_ptr_array_index (array, 2);
+	if (data->red != 65535 && data->green != 65535 && data->blue != 65535)
+		egg_test_failed (test, "invalid data [2]: %i, %i, %i", data->red, data->green, data->blue);
+	egg_test_success (test, NULL);
+
+	g_ptr_array_unref (array);
+
+	g_object_unref (clut);
+
+	egg_test_end (test);
+}
+#endif
 
