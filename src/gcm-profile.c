@@ -91,6 +91,10 @@ static void     gcm_profile_finalize	(GObject     *object);
 #define GCM_MLUT_GREEN			0x200
 #define GCM_MLUT_BLUE			0x400
 
+#define GCM_DESC_RECORD_SIZE		0x08
+#define GCM_DESC_RECORD_TEXT		0x0c
+#define GCM_TEXT_RECORD_TEXT		0x08
+
 #define GCM_VCGT_ID			0x00
 #define GCM_VCGT_DUMMY			0x04
 #define GCM_VCGT_GAMMA_TYPE		0x08
@@ -124,6 +128,7 @@ struct _GcmProfilePrivate
 	gchar				*filename;
 	gchar				*copyright;
 	gchar				*vendor;
+	gchar				*model;
 	gboolean			 has_mlut;
 	gboolean			 has_vcgt_formula;
 	gboolean			 has_vcgt_table;
@@ -142,6 +147,7 @@ enum {
 	PROP_0,
 	PROP_COPYRIGHT,
 	PROP_VENDOR,
+	PROP_MODEL,
 	PROP_DESCRIPTION,
 	PROP_FILENAME,
 	PROP_TYPE,
@@ -512,6 +518,44 @@ gcm_profile_ensure_printable (gchar *data)
 }
 
 /**
+ * gcm_profile_parse_multi_localized_unicode:
+ **/
+static gchar *
+gcm_profile_parse_multi_localized_unicode (GcmProfile *profile, const gchar *data, gsize offset)
+{
+	gint i;
+	gboolean ret;
+	gchar *text = NULL;
+	guint record_size;
+
+	/* check we are not a localized tag */
+	ret = (memcmp (&data[offset], "desc", 4) == 0);
+	if (ret) {
+		record_size = gcm_parser_unencode_32 (data, offset + GCM_DESC_RECORD_SIZE);
+		text = g_strndup (&data[offset+GCM_DESC_RECORD_TEXT], record_size);
+		goto out;
+	}
+
+	/* check we are not a localized tag */
+	ret = (memcmp (&data[offset], "text", 4) == 0);
+	if (ret) {
+		text = g_strdup (&data[offset+GCM_TEXT_RECORD_TEXT]);
+		goto out;
+	}
+
+	/* an unrecognised tag */
+	for (i=0x0; i<0x1c; i++) {
+		egg_warning ("unrecognised text tag");
+		if (data[offset+i] >= 'A' && data[offset+i] <= 'z')
+			egg_debug ("%i\t%c (%i)", i, data[offset+i], data[offset+i]);
+		else
+			egg_debug ("%i\t  (%i)", i, data[offset+i]);
+	}
+out:
+	return text;
+}
+
+/**
  * gcm_profile_parse_data:
  **/
 gboolean
@@ -604,20 +648,20 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 			egg_debug ("named tag %x [%s] is present at %u with size %u", tag_id, tag_description, offset, tag_size);
 
 		if (tag_id == GCM_TAG_ID_PROFILE_DESCRIPTION) {
-			egg_debug ("found DESC: %s", data+tag_offset+12);
-			profile->priv->description = g_strdup (data+tag_offset+12);
+			profile->priv->description = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
+			egg_debug ("found DESC: %s", profile->priv->description);
 		}
 		if (tag_id == GCM_TAG_ID_COPYRIGHT) {
-			egg_debug ("found COPYRIGHT: %s", data+tag_offset+8);
-			profile->priv->copyright = g_strdup (data+tag_offset+8);
+			profile->priv->copyright = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
+			egg_debug ("found COPYRIGHT: %s", profile->priv->copyright);
 		}
 		if (tag_id == GCM_TAG_ID_DEVICE_MFG_DESC) {
-			egg_debug ("found VENDOR: %s", data+tag_offset+12);
-			profile->priv->vendor = g_strdup (data+tag_offset+12);
+			profile->priv->vendor = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
+			egg_debug ("found VENDOR: %s", profile->priv->vendor);
 		}
 		if (tag_id == GCM_TAG_ID_DEVICE_MODEL_DESC) {
-			egg_debug ("found MODEL: %s", data+tag_offset+12);
-//			profile->priv->model = g_strdup (data+tag_offset+12);
+			profile->priv->model = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
+			egg_debug ("found MODEL: %s", profile->priv->model);
 		}
 		if (tag_id == GCM_TAG_ID_MLUT) {
 			egg_debug ("found MLUT which is a fixed size block");
@@ -681,6 +725,8 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		gcm_profile_ensure_printable (priv->copyright);
 	if (priv->vendor != NULL)
 		gcm_profile_ensure_printable (priv->vendor);
+	if (priv->model != NULL)
+		gcm_profile_ensure_printable (priv->model);
 
 	/* success */
 	ret = TRUE;
@@ -917,6 +963,9 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_VENDOR:
 		g_value_set_string (value, priv->vendor);
 		break;
+	case PROP_MODEL:
+		g_value_set_string (value, priv->model);
+		break;
 	case PROP_DESCRIPTION:
 		g_value_set_string (value, priv->description);
 		break;
@@ -974,6 +1023,14 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	g_object_class_install_property (object_class, PROP_VENDOR, pspec);
 
 	/**
+	 * GcmProfile:model:
+	 */
+	pspec = g_param_spec_string ("model", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_MODEL, pspec);
+
+	/**
 	 * GcmProfile:description:
 	 */
 	pspec = g_param_spec_string ("description", NULL, NULL,
@@ -1027,6 +1084,7 @@ gcm_profile_finalize (GObject *object)
 	g_free (priv->description);
 	g_free (priv->filename);
 	g_free (priv->vendor);
+	g_free (priv->model);
 	g_free (priv->vcgt_data);
 	g_free (priv->mlut_data);
 	g_free (priv->trc_data);
@@ -1056,6 +1114,7 @@ gcm_profile_new (void)
 typedef struct {
 	const gchar *copyright;
 	const gchar *vendor;
+	const gchar *model;
 	const gchar *description;
 	GcmProfileType type;
 } GcmProfileTestData;
@@ -1067,6 +1126,7 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 	gchar *filename_tmp;
 	gchar *copyright;
 	gchar *vendor;
+	gchar *model;
 	gchar *description;
 	gchar *ascii_string;
 	gchar *pnp_id;
@@ -1100,6 +1160,7 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 	g_object_get (profile,
 		      "copyright", &copyright,
 		      "vendor", &vendor,
+		      "model", &model,
 		      "description", &description,
 		      "filename", &filename_tmp,
 		      "type", &type,
@@ -1127,6 +1188,13 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 		egg_test_failed (test, "invalid value: %s, expecting: %s", vendor, test_data->vendor);
 
 	/************************************************************/
+	egg_test_title (test, "check model for %s", datafile);
+	if (g_strcmp0 (model, test_data->model) == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s, expecting: %s", model, test_data->model);
+
+	/************************************************************/
 	egg_test_title (test, "check description for %s", datafile);
 	if (g_strcmp0 (description, test_data->description) == 0)
 		egg_test_success (test, NULL);
@@ -1143,6 +1211,7 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 	g_object_unref (profile);
 	g_free (copyright);
 	g_free (vendor);
+	g_free (model);
 	g_free (description);
 	g_free (data);
 	g_free (filename);
@@ -1160,6 +1229,7 @@ gcm_profile_test (EggTest *test)
 	/* bluish test */
 	test_data.copyright = "Copyright (c) 1998 Hewlett-Packard Company";
 	test_data.vendor = "IEC http://www.iec.ch";
+	test_data.model = "IEC 61966-2.1 Default RGB colour space - sRGB";
 	test_data.description = "bluish test";
 	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
 	gcm_profile_test_parse_file (test, "bluish.icc", &test_data);
@@ -1167,6 +1237,7 @@ gcm_profile_test (EggTest *test)
 	/* Adobe test */
 	test_data.copyright = "Copyright (c) 1998 Hewlett-Packard Company Modified using Adobe Gamma";
 	test_data.vendor = "IEC http://www.iec.ch";
+	test_data.model = "IEC 61966-2.1 Default RGB colour space - sRGB";
 	test_data.description = "ADOBEGAMMA-Test";
 	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
 	gcm_profile_test_parse_file (test, "AdobeGammaTest.icm", &test_data);
