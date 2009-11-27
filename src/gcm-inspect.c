@@ -114,6 +114,7 @@ gcm_inspect_show_x11_atoms (void)
 	if (rr_screen == NULL) {
 		ret = FALSE;
 		egg_warning ("failed to get rr screen: %s", error->message);
+		g_error_free (error);
 		goto out;
 	}
 
