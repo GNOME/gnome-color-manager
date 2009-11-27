@@ -82,6 +82,7 @@ G_DEFINE_TYPE (GcmEdid, gcm_edid, G_TYPE_OBJECT)
 #define GCM_EDID_OFFSET_GAMMA				0x17
 #define GCM_EDID_OFFSET_DATA_BLOCKS			0x36
 #define GCM_EDID_OFFSET_LAST_BLOCK			0x6c
+#define GCM_EDID_OFFSET_EXTENSION_BLOCK_COUNT		0x7e
 
 #define GCM_DESCRIPTOR_DISPLAY_PRODUCT_NAME		0xfc
 #define GCM_DESCRIPTOR_DISPLAY_PRODUCT_SERIAL_NUMBER	0xff
@@ -100,6 +101,7 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 	guint i;
 	GcmEdidPrivate *priv = edid->priv;
 	guint32 serial;
+	guint extension_blocks;
 
 	g_return_val_if_fail (GCM_IS_EDID (edid), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
@@ -193,6 +195,11 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 			}
 		}
 	}
+
+	/* extension blocks */
+	extension_blocks = data[GCM_EDID_OFFSET_EXTENSION_BLOCK_COUNT];
+	if (extension_blocks > 0)
+		egg_warning ("%i extension blocks to parse", extension_blocks);
 
 	/* remove embedded newlines */
 	if (priv->monitor_name != NULL)
