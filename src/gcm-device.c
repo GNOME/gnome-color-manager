@@ -362,7 +362,8 @@ gcm_device_save (GcmDevice *device, GError **error)
 		g_key_file_set_double (keyfile, device->priv->id, "contrast", device->priv->contrast);
 
 	/* save other properties we'll need if we add this device offline */
-	g_key_file_set_string (keyfile, device->priv->id, "title", device->priv->title);
+	if (device->priv->title != NULL)
+		g_key_file_set_string (keyfile, device->priv->id, "title", device->priv->title);
 	g_key_file_set_string (keyfile, device->priv->id, "type", gcm_device_type_to_text (device->priv->type));
 
 	/* convert to string */
@@ -724,4 +725,171 @@ gcm_device_new (void)
 	device = g_object_new (GCM_TYPE_DEVICE, NULL);
 	return GCM_DEVICE (device);
 }
+
+/***************************************************************************
+ ***                          MAKE CHECK TESTS                           ***
+ ***************************************************************************/
+#ifdef EGG_TEST
+#include "egg-test.h"
+
+void
+gcm_device_test (EggTest *test)
+{
+	GcmDevice *device;
+	gboolean ret;
+	GError *error = NULL;
+	gchar *filename;
+	gchar *profile;
+	gchar *data;
+	const gchar *type;
+	GcmDeviceType type_enum;
+
+	if (!egg_test_start (test, "GcmDevice"))
+		return;
+
+	/************************************************************/
+	egg_test_title (test, "get a device object");
+	device = gcm_device_new ();
+	egg_test_assert (test, device != NULL);
+
+	/************************************************************/
+	egg_test_title (test, "convert to recognised enum");
+	type_enum = gcm_device_type_from_text ("scanner");
+	egg_test_assert (test, (type_enum == GCM_DEVICE_TYPE_SCANNER));
+
+	/************************************************************/
+	egg_test_title (test, "convert to unrecognised enum");
+	type_enum = gcm_device_type_from_text ("xxx");
+	egg_test_assert (test, (type_enum == GCM_DEVICE_TYPE_UNKNOWN));
+
+	/************************************************************/
+	egg_test_title (test, "convert from recognised enum");
+	type = gcm_device_type_to_text (GCM_DEVICE_TYPE_SCANNER);
+	if (g_strcmp0 (type, "scanner") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", type);
+
+	/************************************************************/
+	egg_test_title (test, "convert from unrecognised enum");
+	type = gcm_device_type_to_text (GCM_DEVICE_TYPE_UNKNOWN);
+	if (g_strcmp0 (type, "unknown") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", type);
+
+	/* set some properties */
+	g_object_set (device,
+		      "type", GCM_DEVICE_TYPE_SCANNER,
+		      "id", "sysfs_dummy_device",
+		      "connected", TRUE,
+		      "serial", "0123456789",
+		      NULL);
+
+	/************************************************************/
+	egg_test_title (test, "get id");
+	type = gcm_device_get_id (device);
+	if (g_strcmp0 (type, "sysfs_dummy_device") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid id: %s", type);
+
+	/* ensure the file is nuked */
+	filename = gcm_utils_get_default_config_location ();
+	g_unlink (filename);
+
+	/************************************************************/
+	egg_test_title (test, "load from missing file");
+	ret = gcm_device_load (device, &error);
+	if (ret)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to load: %s", error->message);
+
+	/* get some properties */
+	g_object_get (device,
+		      "profile-filename", &profile,
+		      NULL);
+
+	/************************************************************/
+	egg_test_title (test, "get profile filename");
+	if (g_strcmp0 (profile, NULL) == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid profile: %s", profile);
+	g_free (profile);
+
+	/* empty file that exists */
+	g_file_set_contents (filename, "", -1, NULL);
+
+	/************************************************************/
+	egg_test_title (test, "load from empty file");
+	ret = gcm_device_load (device, &error);
+	if (ret)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to load: %s", error->message);
+
+	/* set default file */
+	g_file_set_contents (filename, "[sysfs_dummy_device]\ntitle=Canon - CanoScan\ntype=scanner\nprofile=/srv/sysfs_canon_canoscan.icc\n", -1, NULL);
+
+	/************************************************************/
+	egg_test_title (test, "load from configured file");
+	ret = gcm_device_load (device, &error);
+	if (ret)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to load: %s", error->message);
+
+	/* get some properties */
+	g_object_get (device,
+		      "profile-filename", &profile,
+		      NULL);
+
+	/************************************************************/
+	egg_test_title (test, "get profile filename");
+	if (g_strcmp0 (profile, "/srv/sysfs_canon_canoscan.icc") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid profile: %s", profile);
+	g_free (profile);
+
+	/* set some properties */
+	g_object_set (device,
+		      "profile-filename", "/srv/sysfs_canon_canoscan.icc",
+		      NULL);
+
+	/* ensure the file is nuked, again */
+	g_unlink (filename);
+
+	/************************************************************/
+	egg_test_title (test, "save to empty file");
+	ret = gcm_device_save (device, &error);
+	if (ret)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to load: %s", error->message);
+
+	/************************************************************/
+	egg_test_title (test, "get contents of saved file");
+	ret = g_file_get_contents (filename, &data, NULL, NULL);
+	egg_test_assert (test, ret);
+
+	/************************************************************/
+	egg_test_title (test, "check data");
+	if (g_strcmp0 (data, "\n[sysfs_dummy_device]\nprofile=/srv/sysfs_canon_canoscan.icc\ntype=scanner\n") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid data: %s", data);
+	g_free (data);
+
+	/* ensure the file is nuked, in case we are running in distcheck */
+	g_unlink (filename);
+
+	g_object_unref (device);
+	g_free (filename);
+
+	egg_test_end (test);
+}
+#endif
 

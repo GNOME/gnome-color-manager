@@ -27,6 +27,7 @@
 void gcm_edid_test (EggTest *test);
 void gcm_tables_test (EggTest *test);
 void gcm_utils_test (EggTest *test);
+void gcm_device_test (EggTest *test);
 
 int
 main (int argc, char **argv)
@@ -43,6 +44,7 @@ main (int argc, char **argv)
 	gcm_edid_test (test);
 	gcm_tables_test (test);
 	gcm_utils_test (test);
+	gcm_device_test (test);
 
 	return (egg_test_finish (test));
 }
