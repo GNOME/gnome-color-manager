@@ -1040,3 +1040,131 @@ gcm_profile_new (void)
 	return GCM_PROFILE (profile);
 }
 
+/***************************************************************************
+ ***                          MAKE CHECK TESTS                           ***
+ ***************************************************************************/
+#ifdef EGG_TEST
+#include "egg-test.h"
+
+typedef struct {
+	const gchar *copyright;
+	const gchar *vendor;
+	const gchar *description;
+	GcmProfileType type;
+} GcmProfileTestData;
+
+void
+gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTestData *test_data)
+{
+	gchar *filename;
+	gchar *filename_tmp;
+	gchar *copyright;
+	gchar *vendor;
+	gchar *description;
+	gchar *ascii_string;
+	gchar *pnp_id;
+	gchar *data;
+	guint width;
+	guint type;
+	gfloat gamma;
+	gboolean ret;
+	GError *error = NULL;
+	GcmProfile *profile;
+
+	/************************************************************/
+	egg_test_title (test, "get a profile object");
+	profile = gcm_profile_new ();
+	egg_test_assert (test, profile != NULL);
+
+	/************************************************************/
+	egg_test_title (test, "get filename of data file");
+	filename = egg_test_get_data_file (datafile);
+	egg_test_assert (test, (filename != NULL));
+
+	/************************************************************/
+	egg_test_title (test, "load ICC file");
+	ret = gcm_profile_parse (profile, filename, &error);
+	if (ret)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to parse: %s", error->message);
+
+	/* get some properties */
+	g_object_get (profile,
+		      "copyright", &copyright,
+		      "vendor", &vendor,
+		      "description", &description,
+		      "filename", &filename_tmp,
+		      "type", &type,
+		      NULL);
+
+	/************************************************************/
+	egg_test_title (test, "check filename for %s", datafile);
+	if (g_strcmp0 (filename, filename_tmp) == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s, expecting: %s", filename, filename_tmp);
+
+	/************************************************************/
+	egg_test_title (test, "check copyright for %s", datafile);
+	if (g_strcmp0 (copyright, test_data->copyright) == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s, expecting: %s", copyright, test_data->copyright);
+
+	/************************************************************/
+	egg_test_title (test, "check vendor for %s", datafile);
+	if (g_strcmp0 (vendor, test_data->vendor) == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s, expecting: %s", vendor, test_data->vendor);
+
+	/************************************************************/
+	egg_test_title (test, "check description for %s", datafile);
+	if (g_strcmp0 (description, test_data->description) == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s, expecting: %s", description, test_data->description);
+
+	/************************************************************/
+	egg_test_title (test, "check type for %s", datafile);
+	if (type == test_data->type)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %i, expecting: %i", type, test_data->type);
+
+	g_object_unref (profile);
+	g_free (copyright);
+	g_free (vendor);
+	g_free (description);
+	g_free (data);
+	g_free (filename);
+	g_free (filename_tmp);
+}
+
+void
+gcm_profile_test (EggTest *test)
+{
+	GcmProfileTestData test_data;
+
+	if (!egg_test_start (test, "GcmProfile"))
+		return;
+
+	/* bluish test */
+	test_data.copyright = "Copyright (c) 1998 Hewlett-Packard Company";
+	test_data.vendor = "IEC http://www.iec.ch";
+	test_data.description = "bluish test";
+	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
+	gcm_profile_test_parse_file (test, "bluish.icc", &test_data);
+
+	/* Adobe test */
+	test_data.copyright = "Copyright (c) 1998 Hewlett-Packard Company Modified using Adobe Gamma";
+	test_data.vendor = "IEC http://www.iec.ch";
+	test_data.description = "ADOBEGAMMA-Test";
+	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
+	gcm_profile_test_parse_file (test, "AdobeGammaTest.icm", &test_data);
+
+	egg_test_end (test);
+}
+#endif
+
