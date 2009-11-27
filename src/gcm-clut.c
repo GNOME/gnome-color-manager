@@ -56,10 +56,7 @@ struct _GcmClutPrivate
 	gfloat				 gamma;
 	gfloat				 brightness;
 	gfloat				 contrast;
-	gchar				*id;
 	gchar				*profile;
-	gchar				*description;
-	gchar				*copyright;
 	GConfClient			*gconf_client;
 };
 
@@ -110,13 +107,7 @@ gcm_clut_reset (GcmClut *clut)
 {
 	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
 
-	/* remove old data */
-	g_free (clut->priv->copyright);
-	g_free (clut->priv->description);
-
 	/* setup nothing */
-	clut->priv->copyright = NULL;
-	clut->priv->description = NULL;
 	g_ptr_array_set_size (clut->priv->array, 0);
 	return TRUE;
 }
@@ -157,14 +148,6 @@ gcm_clut_load_from_profile (GcmClut *clut, GError **error)
 	data = gcm_profile_generate (profile, clut->priv->size);
 	if (data != NULL)
 		gcm_clut_set_from_data (clut, data, clut->priv->size);
-
-	/* copy the description */
-	g_free (clut->priv->copyright);
-	g_free (clut->priv->description);
-	g_object_get (profile,
-		      "copyright", &clut->priv->copyright,
-		      "description", &clut->priv->description,
-		      NULL);
 out:
 	if (profile != NULL)
 		g_object_unref (profile);
@@ -267,9 +250,6 @@ gcm_clut_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 	case PROP_SIZE:
 		g_value_set_uint (value, priv->size);
 		break;
-	case PROP_ID:
-		g_value_set_string (value, priv->id);
-		break;
 	case PROP_GAMMA:
 		g_value_set_float (value, priv->gamma);
 		break;
@@ -281,12 +261,6 @@ gcm_clut_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 		break;
 	case PROP_PROFILE:
 		g_value_set_string (value, priv->profile);
-		break;
-	case PROP_COPYRIGHT:
-		g_value_set_string (value, priv->copyright);
-		break;
-	case PROP_DESCRIPTION:
-		g_value_set_string (value, priv->description);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -306,10 +280,6 @@ gcm_clut_set_property (GObject *object, guint prop_id, const GValue *value, GPar
 	switch (prop_id) {
 	case PROP_SIZE:
 		priv->size = g_value_get_uint (value);
-		break;
-	case PROP_ID:
-		g_free (priv->id);
-		priv->id = g_strdup (g_value_get_string (value));
 		break;
 	case PROP_PROFILE:
 		g_free (priv->profile);
@@ -351,14 +321,6 @@ gcm_clut_class_init (GcmClutClass *klass)
 	g_object_class_install_property (object_class, PROP_SIZE, pspec);
 
 	/**
-	 * GcmClut:id:
-	 */
-	pspec = g_param_spec_string ("id", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_ID, pspec);
-
-	/**
 	 * GcmClut:gamma:
 	 */
 	pspec = g_param_spec_float ("gamma", NULL, NULL,
@@ -381,22 +343,6 @@ gcm_clut_class_init (GcmClutClass *klass)
 				    0.0, G_MAXFLOAT, 1.03,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CONTRAST, pspec);
-
-	/**
-	 * GcmClut:copyright:
-	 */
-	pspec = g_param_spec_string ("copyright", NULL, NULL,
-				     NULL,
-				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_COPYRIGHT, pspec);
-
-	/**
-	 * GcmClut:description:
-	 */
-	pspec = g_param_spec_string ("description", NULL, NULL,
-				     NULL,
-				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_DESCRIPTION, pspec);
 
 	/**
 	 * GcmClut:profile:
@@ -440,10 +386,7 @@ gcm_clut_finalize (GObject *object)
 	GcmClut *clut = GCM_CLUT (object);
 	GcmClutPrivate *priv = clut->priv;
 
-	g_free (clut->priv->copyright);
-	g_free (clut->priv->description);
 	g_free (clut->priv->profile);
-	g_free (clut->priv->id);
 	g_ptr_array_unref (priv->array);
 	g_object_unref (clut->priv->gconf_client);
 

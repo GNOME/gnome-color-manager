@@ -64,10 +64,6 @@ GType		 gcm_clut_get_type		  	(void);
 GcmClut		*gcm_clut_new				(void);
 gboolean	 gcm_clut_load_from_profile		(GcmClut		*clut,
 							 GError			**error);
-gboolean	 gcm_clut_load_from_config		(GcmClut		*clut,
-							 GError			**error);
-gboolean	 gcm_clut_save_to_config		(GcmClut		*clut,
-							 GError			**error);
 GPtrArray	*gcm_clut_get_array			(GcmClut		*clut);
 gboolean	 gcm_clut_reset				(GcmClut		*clut);
 void		 gcm_clut_print				(GcmClut		*clut);
