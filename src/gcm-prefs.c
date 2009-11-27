@@ -882,6 +882,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 
 	/* set correct profile */
 	if (profile_filename == NULL) {
+		egg_debug ("no profile selected");
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), profiles_array->len);
 	} else {
@@ -903,6 +904,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 
 	/* failed to find profile in combobox */
 	if (!ret) {
+		egg_warning ("failed to find profile: %s", profile_filename);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), profiles_array_in_combo->len);
 	}

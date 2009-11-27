@@ -415,15 +415,18 @@ gcm_clut_class_init (GcmClutClass *klass)
 static void
 gcm_clut_init (GcmClut *clut)
 {
+	GError *error = NULL;
 	clut->priv = GCM_CLUT_GET_PRIVATE (clut);
 	clut->priv->array = g_ptr_array_new_with_free_func (g_free);
 	clut->priv->profile = NULL;
 	clut->priv->gconf_client = gconf_client_get_default ();
-	clut->priv->gamma = gconf_client_get_float (clut->priv->gconf_client, GCM_SETTINGS_DEFAULT_GAMMA, NULL);
-	if (clut->priv->gamma < 0.1f) {
-		egg_warning ("failed to get setup parameters");
-		clut->priv->gamma = 1.0f;
+	clut->priv->gamma = gconf_client_get_float (clut->priv->gconf_client, GCM_SETTINGS_DEFAULT_GAMMA, &error);
+	if (error != NULL) {
+		egg_warning ("failed to get setup parameters: %s", error->message);
+		g_error_free (error);
 	}
+	if (clut->priv->gamma < 0.01)
+		clut->priv->gamma = 1.0f;
 	clut->priv->brightness = 0.0f;
 	clut->priv->contrast = 100.f;
 }

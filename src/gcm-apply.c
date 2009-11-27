@@ -83,6 +83,7 @@ main (int argc, char **argv)
 			continue;
 
 		/* set gamma for device */
+		egg_debug ("setting %s gamma", gcm_device_get_id (device));
 		ret = gcm_utils_set_gamma_for_device (device, &error);
 		if (!ret) {
 			retval = 1;

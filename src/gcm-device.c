@@ -671,6 +671,7 @@ gcm_device_class_init (GcmDeviceClass *klass)
 static void
 gcm_device_init (GcmDevice *device)
 {
+	GError *error = NULL;
 	device->priv = GCM_DEVICE_GET_PRIVATE (device);
 	device->priv->id = NULL;
 	device->priv->serial = NULL;
@@ -680,11 +681,13 @@ gcm_device_init (GcmDevice *device)
 	device->priv->native_device_sysfs = NULL;
 	device->priv->profile_filename = NULL;
 	device->priv->gconf_client = gconf_client_get_default ();
-	device->priv->gamma = gconf_client_get_float (device->priv->gconf_client, "/apps/gnome-color-manager/default_gamma", NULL);
-	if (device->priv->gamma < 0.1f) {
-		egg_warning ("failed to get setup parameters");
-		device->priv->gamma = 1.0f;
+	device->priv->gamma = gconf_client_get_float (device->priv->gconf_client, GCM_SETTINGS_DEFAULT_GAMMA, &error);
+	if (error != NULL) {
+		egg_warning ("failed to get setup parameters: %s", error->message);
+		g_error_free (error);
 	}
+	if (device->priv->gamma < 0.01)
+		device->priv->gamma = 1.0f;
 	device->priv->brightness = 0.0f;
 	device->priv->contrast = 100.f;
 }

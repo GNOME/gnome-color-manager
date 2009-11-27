@@ -590,11 +590,18 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 	egg_debug ("number of tags: %i", num_tags);
 
 	for (i=0; i<num_tags; i++) {
+		const gchar *tag_description;
 		offset = GCM_TAG_WIDTH * i;
 		tag_id = gcm_parser_unencode_32 (data, GCM_BODY + offset + GCM_TAG_ID);
 		tag_offset = gcm_parser_unencode_32 (data, GCM_BODY + offset + GCM_TAG_OFFSET);
 		tag_size = gcm_parser_unencode_32 (data, GCM_BODY + offset + GCM_TAG_SIZE);
-		egg_debug ("tag %x (%s) is present at %u with size %u", tag_id, gcm_prefs_get_tag_description (tag_id), offset, tag_size);
+
+		/* get description */
+		tag_description = gcm_prefs_get_tag_description (tag_id);
+		if (tag_description == NULL)
+			egg_debug ("unknown tag %x is present at %u with size %u", tag_id, offset, tag_size);
+		else
+			egg_debug ("named tag %x [%s] is present at %u with size %u", tag_id, tag_description, offset, tag_size);
 
 		if (tag_id == GCM_TAG_ID_PROFILE_DESCRIPTION) {
 			egg_debug ("found DESC: %s", data+tag_offset+12);
