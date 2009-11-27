@@ -241,3 +241,66 @@ gcm_brightness_new (void)
 	return GCM_BRIGHTNESS (brightness);
 }
 
+/***************************************************************************
+ ***                          MAKE CHECK TESTS                           ***
+ ***************************************************************************/
+#ifdef EGG_TEST
+#include "egg-test.h"
+
+void
+gcm_brightness_test (EggTest *test)
+{
+	GcmBrightness *brightness;
+	gboolean ret;
+	GError *error = NULL;
+	guint orig_percentage;
+	guint percentage;
+
+	if (!egg_test_start (test, "GcmBrightness"))
+		return;
+
+	/************************************************************/
+	egg_test_title (test, "get a brightness object");
+	brightness = gcm_brightness_new ();
+	egg_test_assert (test, brightness != NULL);
+
+	/************************************************************/
+	egg_test_title (test, "get original brightness");
+	ret = gcm_brightness_get_percentage (brightness, &orig_percentage, &error);
+	if (ret)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to get brightness: %s", error->message);
+
+	/************************************************************/
+	egg_test_title (test, "set the new brightness");
+	ret = gcm_brightness_set_percentage (brightness, 10, &error);
+	if (ret)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to set brightness: %s", error->message);
+
+	/************************************************************/
+	egg_test_title (test, "get the new brightness");
+	ret = gcm_brightness_get_percentage (brightness, &percentage, &error);
+	if (!ret)
+		egg_test_failed (test, "failed to get brightness: %s", error->message);
+	else if (percentage < 5 || percentage > 15)
+		egg_test_failed (test, "percentage was not set: %i", percentage);
+	else
+		egg_test_success (test, NULL);
+
+	/************************************************************/
+	egg_test_title (test, "set back original brightness");
+	ret = gcm_brightness_set_percentage (brightness, orig_percentage, &error);
+	if (ret)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to set brightness: %s", error->message);
+
+	g_object_unref (brightness);
+
+	egg_test_end (test);
+}
+#endif
+

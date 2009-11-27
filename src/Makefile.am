@@ -166,6 +166,7 @@ gcm_self_test_SOURCES =					\
 	gcm-utils.c					\
 	gcm-device.c					\
 	gcm-profile.c					\
+	gcm-brightness.c				\
 	egg-test.h					\
 	egg-test.c					\
 	$(NULL)
