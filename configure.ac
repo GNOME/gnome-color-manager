@@ -184,6 +184,16 @@ if test x$enable_hardware_detection = xyes; then
 fi
 
 dnl ---------------------------------------------------------------------------
+dnl - Build self tests
+dnl ---------------------------------------------------------------------------
+AC_ARG_ENABLE(tests, AS_HELP_STRING([--enable-tests],[enable unit test code]),
+	      enable_tests=$enableval,enable_tests=yes)
+AM_CONDITIONAL(EGG_BUILD_TESTS, test x$enable_tests = xyes)
+if test x$enable_tests = xyes; then
+	AC_DEFINE(EGG_BUILD_TESTS,1,[Build test code])
+fi
+
+dnl ---------------------------------------------------------------------------
 dnl - Makefiles, etc.
 dnl ---------------------------------------------------------------------------
 AC_OUTPUT([
@@ -214,6 +224,7 @@ echo "
         cflags:                    ${CFLAGS}
         cppflags:                  ${CPPFLAGS}
         hardware auto-detection:   ${enable_hardware_detection}
+        building unit tests:       ${enable_tests}
         gconf-schema dir:          $GCONF_SCHEMA_FILE_DIR
 "
 

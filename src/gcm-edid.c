@@ -372,3 +372,37 @@ gcm_edid_new (void)
 	return GCM_EDID (edid);
 }
 
+/***************************************************************************
+ ***                          MAKE CHECK TESTS                           ***
+ ***************************************************************************/
+#ifdef EGG_TEST
+#include "egg-test.h"
+
+void
+gcm_edid_test (EggTest *test)
+{
+	GcmEdid *edid;
+
+	if (!egg_test_start (test, "GcmEdid"))
+		return;
+
+	/************************************************************/
+	egg_test_title (test, "get a edid object");
+	edid = gcm_edid_new ();
+	egg_test_assert (test, edid != NULL);
+
+#if 0
+	/************************************************************/
+	egg_test_title (test, "parse an example edid");
+	ret = gcm_edid_parse (edid, &error);
+	if (!ret)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to parse: %s", error->message);
+#endif
+	g_object_unref (edid);
+
+	egg_test_end (test);
+}
+#endif
+

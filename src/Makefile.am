@@ -154,6 +154,35 @@ gcm_session_LDADD =					\
 gcm_session_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
+if EGG_BUILD_TESTS
+
+check_PROGRAMS =					\
+	gcm-self-test
+
+gcm_self_test_SOURCES =					\
+	gcm-self-test.c					\
+	gcm-edid.c					\
+	egg-test.h					\
+	egg-test.c					\
+	$(NULL)
+
+gcm_self_test_LDADD =					\
+	libgcmshared.a					\
+	$(GLIB_LIBS)					\
+	$(GNOMEDESKTOP_LIBS)				\
+	$(UNIQUE_LIBS)					\
+	$(GCONF_LIBS)					\
+	$(GUDEV_LIBS)					\
+	$(DBUS_GLIB_LIBS)				\
+	$(XORG_LIBS)					\
+	$(GTK_LIBS)
+
+gcm_self_test_CFLAGS = -DEGG_TEST $(AM_CFLAGS)
+
+TESTS = gcm-self-test
+
+endif
+
 org.gnome.ColorManager.h: org.gnome.ColorManager.xml
 	$(LIBTOOL) --mode=execute dbus-binding-tool	\
 		--prefix=gcm_dbus			\
