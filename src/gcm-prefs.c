@@ -91,6 +91,46 @@ gcm_prefs_help_cb (GtkWidget *widget, gpointer data)
 }
 
 /**
+ * gcm_prefs_calibrate_get_basename:
+ **/
+static gchar *
+gcm_prefs_calibrate_get_basename (GcmDevice *device)
+{
+	gchar *serial = NULL;
+	gchar *manufacturer = NULL;
+	gchar *model = NULL;
+	GDate *date = NULL;
+	GString *basename;
+
+	/* get device properties */
+	g_object_get (device,
+		      "serial", &serial,
+		      "manufacturer", &manufacturer,
+		      "model", &model,
+		      NULL);
+
+	/* create date and set it to now */
+	date = g_date_new ();
+	g_date_set_time_t (date, time (NULL));
+
+	/* form basename */
+	basename = g_string_new ("gcm");
+	if (manufacturer != NULL)
+		g_string_append_printf (basename, "_%s", manufacturer);
+	if (model != NULL)
+		g_string_append_printf (basename, "_%s", model);
+	if (serial != NULL)
+		g_string_append_printf (basename, "_%s", serial);
+	g_string_append_printf (basename, "_%04i-%02i-%02i", date->year, date->month, date->day);
+
+	g_date_free (date);
+	g_free (serial);
+	g_free (manufacturer);
+	g_free (model);
+	return g_string_free (basename, FALSE);
+}
+
+/**
  * gcm_prefs_calibrate_display:
  **/
 static gboolean
@@ -123,10 +163,7 @@ gcm_prefs_calibrate_display (GcmCalibrate *calib)
 	brightness = gcm_brightness_new ();
 
 	/* get a filename based on the serial number */
-	if (basename == NULL)
-		g_object_get (current_device, "id", &basename, NULL);
-	if (basename == NULL)
-		basename = g_strdup ("custom");
+	basename = gcm_prefs_calibrate_get_basename (current_device);
 
 	/* get model */
 	if (model == NULL)
@@ -345,15 +382,10 @@ gcm_prefs_calibrate_device (GcmCalibrate *calib)
 
 	/* get the device */
 	g_object_get (current_device,
-		      "id", &basename,
 		      "model", &model,
 		      "title", &description,
 		      "manufacturer", &manufacturer,
 		      NULL);
-	if (basename == NULL) {
-		egg_warning ("failed to get device id");
-		goto out;
-	}
 
 	/* step 0 */
 	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DEVICE_SETUP, &error);
@@ -374,8 +406,7 @@ gcm_prefs_calibrate_device (GcmCalibrate *calib)
 		goto out;
 
 	/* ensure we have data */
-	if (basename == NULL)
-		basename = g_strdup ("scanner");
+	basename = gcm_prefs_calibrate_get_basename (current_device);
 	if (manufacturer == NULL)
 		manufacturer = g_strdup ("Generic vendor");
 	if (model == NULL)
