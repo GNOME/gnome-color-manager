@@ -139,8 +139,10 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 	serial += (guint32) data[GCM_EDID_OFFSET_SERIAL+1] * 0x100;
 	serial += (guint32) data[GCM_EDID_OFFSET_SERIAL+2] * 0x10000;
 	serial += (guint32) data[GCM_EDID_OFFSET_SERIAL+3] * 0x1000000;
-	priv->serial_number = g_strdup_printf ("%" G_GUINT32_FORMAT, serial);
-	egg_debug ("Serial: %s", priv->serial_number);
+	if (serial > 0) {
+		priv->serial_number = g_strdup_printf ("%" G_GUINT32_FORMAT, serial);
+		egg_debug ("Serial: %s", priv->serial_number);
+	}
 
 	/* get the size */
 	priv->width = data[GCM_EDID_OFFSET_SIZE+0];
