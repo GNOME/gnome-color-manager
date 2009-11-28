@@ -192,9 +192,9 @@ gcm_client_gudev_add_type (GcmClient *client, GUdevDevice *udev_device, GcmDevic
 	GError *error = NULL;
 	const gchar *sysfs_path;
 	GcmClientPrivate *priv = client->priv;
-	const gchar *serial;
-	const gchar *manufacturer;
-	const gchar *model;
+	gchar *serial = NULL;
+	gchar *manufacturer = NULL;
+	gchar *model = NULL;
 
 	/* add new device */
 	id = gcm_client_get_id_for_udev_device (udev_device);
@@ -217,9 +217,24 @@ gcm_client_gudev_add_type (GcmClient *client, GUdevDevice *udev_device, GcmDevic
 
 	/* create device */
 	device = gcm_device_new ();
-	manufacturer = g_udev_device_get_property (udev_device, "ID_VENDOR");
-	model = g_udev_device_get_property (udev_device, "ID_MODEL");
-	serial = g_udev_device_get_property (udev_device, "ID_SERIAL");
+	manufacturer = g_strdup (g_udev_device_get_property (udev_device, "ID_VENDOR"));
+	model = g_strdup (g_udev_device_get_property (udev_device, "ID_MODEL"));
+	serial = g_strdup (g_udev_device_get_property (udev_device, "ID_SERIAL"));
+
+	/* get rid of underscores */
+	if (manufacturer != NULL) {
+		g_strdelimit (manufacturer, "_", ' ');
+		g_strchomp (manufacturer);
+	}
+	if (model != NULL) {
+		g_strdelimit (model, "_", ' ');
+		g_strchomp (model);
+	}
+	if (serial != NULL) {
+		g_strdelimit (serial, "_", ' ');
+		g_strchomp (serial);
+	}
+
 	g_object_set (device,
 		      "type", type,
 		      "id", id,
@@ -248,6 +263,9 @@ gcm_client_gudev_add_type (GcmClient *client, GUdevDevice *udev_device, GcmDevic
 out:
 	if (device != NULL)
 		g_object_unref (device);
+	g_free (serial);
+	g_free (manufacturer);
+	g_free (model);
 	g_free (id);
 	g_free (title);
 }
