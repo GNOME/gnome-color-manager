@@ -1815,6 +1815,12 @@ main (int argc, char **argv)
 	gtk_widget_hide (widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_profile"));
 	gtk_widget_set_sensitive (widget, FALSE);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_manufacturer"));
+	gtk_widget_hide (widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_model"));
+	gtk_widget_hide (widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_serial"));
+	gtk_widget_hide (widget);
 
 	/* setup icc profiles list */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
