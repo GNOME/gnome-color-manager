@@ -91,6 +91,24 @@ gcm_prefs_help_cb (GtkWidget *widget, gpointer data)
 }
 
 /**
+ * gcm_prefs_get_time:
+ **/
+static gchar *
+gcm_prefs_get_time (void)
+{
+	gchar *text;
+	time_t c_time;
+
+	/* get the time now */
+	time (&c_time);
+	text = g_new0 (gchar, 255);
+
+	/* format text */
+	strftime (text, 254, "%H-%M-%S", localtime (&c_time));
+	return text;
+}
+
+/**
  * gcm_prefs_calibrate_get_basename:
  **/
 static gchar *
@@ -99,6 +117,7 @@ gcm_prefs_calibrate_get_basename (GcmDevice *device)
 	gchar *serial = NULL;
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
+	gchar *timespec = NULL;
 	GDate *date = NULL;
 	GString *basename;
 
@@ -112,6 +131,7 @@ gcm_prefs_calibrate_get_basename (GcmDevice *device)
 	/* create date and set it to now */
 	date = g_date_new ();
 	g_date_set_time_t (date, time (NULL));
+	timespec = gcm_prefs_get_time ();
 
 	/* form basename */
 	basename = g_string_new ("gcm");
@@ -122,11 +142,13 @@ gcm_prefs_calibrate_get_basename (GcmDevice *device)
 	if (serial != NULL)
 		g_string_append_printf (basename, "_%s", serial);
 	g_string_append_printf (basename, "_%04i-%02i-%02i", date->year, date->month, date->day);
+	g_string_append_printf (basename, "_%s", timespec);
 
 	g_date_free (date);
 	g_free (serial);
 	g_free (manufacturer);
 	g_free (model);
+	g_free (timespec);
 	return g_string_free (basename, FALSE);
 }
 
