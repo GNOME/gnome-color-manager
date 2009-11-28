@@ -876,6 +876,9 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	gchar *id;
 	GcmDeviceType type;
 	gboolean ret = FALSE;
+	gchar *device_serial = NULL;
+	gchar *device_model = NULL;
+	gchar *device_manufacturer = NULL;
 
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -921,7 +924,36 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 		      "brightness", &brightness,
 		      "contrast", &contrast,
 		      "connected", &connected,
+		      "serial", &device_serial,
+		      "model", &device_model,
+		      "manufacturer", &device_manufacturer,
 		      NULL);
+
+	/* set device labels */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_serial"));
+	if (device_serial != NULL) {
+		gtk_widget_show (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_serial"));
+		gtk_label_set_label (GTK_LABEL (widget), device_serial);
+	} else {
+		gtk_widget_hide (widget);
+	}
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_model"));
+	if (device_model != NULL) {
+		gtk_widget_show (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_model"));
+		gtk_label_set_label (GTK_LABEL (widget), device_model);
+	} else {
+		gtk_widget_hide (widget);
+	}
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_manufacturer"));
+	if (device_manufacturer != NULL) {
+		gtk_widget_show (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_manufacturer"));
+		gtk_label_set_label (GTK_LABEL (widget), device_manufacturer);
+	} else {
+		gtk_widget_hide (widget);
+	}
 
 	/* set adjustments */
 	setting_up_device = TRUE;
@@ -977,6 +1009,9 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	/* can this device calibrate */
 	gcm_prefs_set_calibrate_button_sensitivity ();
 
+	g_free (device_serial);
+	g_free (device_model);
+	g_free (device_manufacturer);
 	g_free (id);
 	g_free (profile_filename);
 }
@@ -1199,54 +1234,41 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* set type */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_type"));
 	if (profile_type == GCM_PROFILE_TYPE_UNKNOWN) {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_type"));
-		gtk_widget_hide (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_type"));
 		gtk_widget_hide (widget);
 	} else {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_type"));
 		gtk_widget_show (widget);
-		profile_type_text = gcm_prefs_profile_type_to_text (profile_type);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_type"));
+		profile_type_text = gcm_prefs_profile_type_to_text (profile_type);
 		gtk_label_set_label (GTK_LABEL (widget), profile_type_text);
-		gtk_widget_show (widget);
 	}
 
 	/* set new descriptions */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_copyright"));
 	if (copyright == NULL) {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_copyright"));
-		gtk_widget_hide (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_copyright"));
 		gtk_widget_hide (widget);
 	} else {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_copyright"));
 		gtk_widget_show (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_copyright"));
 		gtk_label_set_label (GTK_LABEL(widget), copyright);
-		gtk_widget_show (widget);
 	}
 
 	/* set new descriptions */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_vendor"));
 	if (vendor == NULL) {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_vendor"));
-		gtk_widget_hide (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_vendor"));
 		gtk_widget_hide (widget);
 	} else {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_title_vendor"));
 		gtk_widget_show (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_vendor"));
 		gtk_label_set_label (GTK_LABEL(widget), vendor);
-		gtk_widget_show (widget);
 	}
 
 	/* set new descriptions */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_details"));
 	if (copyright == NULL && vendor == NULL && profile_type == GCM_PROFILE_TYPE_UNKNOWN) {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "table_details"));
 		gtk_widget_hide (widget);
 	} else {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "table_details"));
 		gtk_widget_show (widget);
 	}
 
@@ -1691,6 +1713,8 @@ main (int argc, char **argv)
 	GtkTreeSelection *selection;
 	const gchar *subsystems[] = {"usb", NULL};
 	GtkWidget *info_bar_label;
+	GtkSizeGroup *size_group = NULL;
+	GtkSizeGroup *size_group2 = NULL;
 
 	const GOptionEntry options[] = {
 		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
@@ -1787,7 +1811,7 @@ main (int argc, char **argv)
 	gtk_widget_set_sensitive (widget, FALSE);
 
 	/* hide widgets by default */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "table_details"));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_details"));
 	gtk_widget_hide (widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_profile"));
 	gtk_widget_set_sensitive (widget, FALSE);
@@ -1832,6 +1856,36 @@ main (int argc, char **argv)
 	/* set ranges */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
 	gtk_range_set_range (GTK_RANGE (widget), 1.0f, 100.0f);
+
+	/* set alignment */
+	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox5"));
+	gtk_size_group_add_widget (size_group, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox10"));
+	gtk_size_group_add_widget (size_group, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox6"));
+	gtk_size_group_add_widget (size_group, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox21"));
+	gtk_size_group_add_widget (size_group, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox22"));
+	gtk_size_group_add_widget (size_group, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox23"));
+	gtk_size_group_add_widget (size_group, widget);
+
+	/* set alignment */
+	size_group2 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox24"));
+	gtk_size_group_add_widget (size_group2, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox25"));
+	gtk_size_group_add_widget (size_group2, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox26"));
+	gtk_size_group_add_widget (size_group2, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox11"));
+	gtk_size_group_add_widget (size_group2, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox12"));
+	gtk_size_group_add_widget (size_group2, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox18"));
+	gtk_size_group_add_widget (size_group2, widget);
 
 	/* get screen */
 	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
@@ -1921,6 +1975,10 @@ main (int argc, char **argv)
 out:
 	g_object_unref (unique_app);
 	g_main_loop_unref (loop);
+	if (size_group != NULL)
+		g_object_unref (size_group);
+	if (size_group2 != NULL)
+		g_object_unref (size_group2);
 	if (current_device != NULL)
 		g_object_unref (current_device);
 	if (rr_screen != NULL)

@@ -237,6 +237,12 @@ gcm_device_load (GcmDevice *device, GError **error)
 	/* load data */
 	g_free (device->priv->profile_filename);
 	device->priv->profile_filename = g_key_file_get_string (file, device->priv->id, "profile", NULL);
+	if (device->priv->serial == NULL)
+		device->priv->serial = g_key_file_get_string (file, device->priv->id, "serial", NULL);
+	if (device->priv->model == NULL)
+		device->priv->model = g_key_file_get_string (file, device->priv->id, "model", NULL);
+	if (device->priv->manufacturer == NULL)
+		device->priv->manufacturer = g_key_file_get_string (file, device->priv->id, "manufacturer", NULL);
 	device->priv->gamma = g_key_file_get_double (file, device->priv->id, "gamma", &error_local);
 	if (error_local != NULL) {
 		device->priv->gamma = gconf_client_get_float (device->priv->gconf_client, "/apps/gnome-color-manager/default_gamma", NULL);
@@ -342,6 +348,20 @@ gcm_device_save (GcmDevice *device, GError **error)
 		g_key_file_remove_key (keyfile, device->priv->id, "profile", NULL);
 	else
 		g_key_file_set_string (keyfile, device->priv->id, "profile", device->priv->profile_filename);
+
+	/* save device specific data */
+	if (device->priv->serial == NULL)
+		g_key_file_remove_key (keyfile, device->priv->id, "serial", NULL);
+	else
+		g_key_file_set_string (keyfile, device->priv->id, "serial", device->priv->serial);
+	if (device->priv->model == NULL)
+		g_key_file_remove_key (keyfile, device->priv->id, "model", NULL);
+	else
+		g_key_file_set_string (keyfile, device->priv->id, "model", device->priv->model);
+	if (device->priv->manufacturer == NULL)
+		g_key_file_remove_key (keyfile, device->priv->id, "manufacturer", NULL);
+	else
+		g_key_file_set_string (keyfile, device->priv->id, "manufacturer", device->priv->manufacturer);
 
 	/* only save gamma if not the default */
 	if (device->priv->gamma > 0.99 && device->priv->gamma < 1.01)
