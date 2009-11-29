@@ -802,7 +802,7 @@ gcm_prefs_reset_cb (GtkWidget *widget, gpointer data)
 	setting_up_device = FALSE;
 	/* we only want one save, not three */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
-	gtk_range_set_value (GTK_RANGE (widget), 100.0f);
+	gtk_range_set_value (GTK_RANGE (widget), 1.0f);
 }
 
 /**
@@ -1500,8 +1500,8 @@ gcm_prefs_slider_changed_cb (GtkRange *range, gpointer *user_data)
 
 	g_object_set (current_device,
 		      "gamma", localgamma,
-		      "brightness", brightness,
-		      "contrast", contrast,
+		      "brightness", brightness * 100.0f,
+		      "contrast", contrast * 100.0f,
 		      NULL);
 
 	/* save new profile */
@@ -2034,11 +2034,13 @@ main (int argc, char **argv)
 
 	/* set ranges */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_brightness"));
-	gtk_range_set_range (GTK_RANGE (widget), 0.0f, 99.0f);
+	gtk_range_set_range (GTK_RANGE (widget), 0.0f, 0.9f);
+//	gtk_scale_add_mark (GTK_SCALE (widget), 0.0f, GTK_POS_TOP, "");
 
 	/* set ranges */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
-	gtk_range_set_range (GTK_RANGE (widget), 1.0f, 100.0f);
+	gtk_range_set_range (GTK_RANGE (widget), 0.1f, 1.0f);
+//	gtk_scale_add_mark (GTK_SCALE (widget), 1.0f, GTK_POS_TOP, "");
 
 	/* set alignment */
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
