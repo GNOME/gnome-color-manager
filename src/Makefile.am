@@ -26,6 +26,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-clut.h					\
 	gcm-edid.c					\
 	gcm-edid.h					\
+	gcm-dmi.c					\
+	gcm-dmi.h					\
 	gcm-tables.c					\
 	gcm-tables.h					\
 	gcm-xserver.c					\
@@ -168,6 +170,7 @@ gcm_self_test_SOURCES =					\
 	gcm-profile.c					\
 	gcm-brightness.c				\
 	gcm-clut.c					\
+	gcm-dmi.c					\
 	egg-test.h					\
 	egg-test.c					\
 	$(NULL)
