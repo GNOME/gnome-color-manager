@@ -38,6 +38,7 @@
 #include "gcm-client.h"
 #include "gcm-utils.h"
 #include "gcm-edid.h"
+#include "gcm-dmi.h"
 
 #include "egg-debug.h"
 
@@ -57,6 +58,7 @@ struct _GcmClientPrivate
 	GUdevClient			*gudev_client;
 	GnomeRRScreen			*rr_screen;
 	GcmEdid				*edid;
+	GcmDmi				*dmi;
 };
 
 enum {
@@ -360,31 +362,40 @@ gcm_client_get_output_name (GcmClient *client, GnomeRROutput *output)
 	if (!ret)
 		goto out;
 
-	/* find the best option */
-	g_object_get (priv->edid,
-		      "width", &width,
-		      "height", &height,
-		      "monitor-name", &name,
-		      "vendor-name", &vendor,
-		      NULL);
+	/* this is an internal panel, use the DMI data */
+	output_name = gnome_rr_output_get_name (output);
+	ret = gcm_utils_output_is_lcd_internal (output_name);
+	if (ret) {
+		/* find the machine details */
+		g_object_get (priv->dmi,
+			      "product-name", &name,
+			      "product-version", &vendor,
+			      NULL);
+
+		/* TRANSLATORS: this is the name of the internal panel */
+		output_name = _("Laptop LCD");
+	} else {
+		/* find the panel details */
+		g_object_get (priv->edid,
+			      "monitor-name", &name,
+			      "vendor-name", &vendor,
+			      NULL);
+	}
 
 	/* prepend vendor if available */
 	if (vendor != NULL && name != NULL)
 		g_string_append_printf (string, "%s - %s", vendor, name);
 	else if (name != NULL)
-		g_string_append_printf (string, "%s", name);
+		g_string_append (string, name);
+	else
+		g_string_append (string, output_name);
 
 out:
-	/* fallback to the output name */
-	if (string->len == 0) {
-		output_name = gnome_rr_output_get_name (output);
-		ret = gcm_utils_output_is_lcd_internal (output_name);
-		if (ret) {
-			/* TRANSLATORS: this is the name of the internal panel */
-			output_name = _("Laptop LCD");
-		}
-		g_string_append (string, output_name);
-	}
+	/* find the best option */
+	g_object_get (priv->edid,
+		      "width", &width,
+		      "height", &height,
+		      NULL);
 
 	/* append size if available */
 	if (width != 0 && height != 0) {
@@ -394,7 +405,7 @@ out:
 		diag = sqrtf ((powf (width,2)) + (powf (height, 2)));
 
 		/* print it in inches */
-		g_string_append_printf (string, " %i\"", (guint) ((gfloat) diag * 0.393700787f));
+		g_string_append_printf (string, " (%i\")", (guint) ((gfloat) diag * 0.393700787f));
 	}
 
 	g_free (name);
@@ -545,10 +556,18 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 			      NULL);
 	}
 
+	/* refine data if it's missing */
+	output_name = gnome_rr_output_get_name (output);
+	ret = gcm_utils_output_is_lcd_internal (output_name);
+	if (ret && model == NULL) {
+		g_object_get (priv->dmi,
+			      "product-version", &model,
+			      NULL);
+	}
+
 	/* add new device */
 	device = gcm_device_new ();
 	title = gcm_client_get_output_name (client, output);
-	output_name = gnome_rr_output_get_name (output);
 	g_object_set (device,
 		      "type", GCM_DEVICE_TYPE_DISPLAY,
 		      "id", id,
@@ -909,6 +928,7 @@ gcm_client_init (GcmClient *client)
 	client->priv->display_name = NULL;
 	client->priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	client->priv->edid = gcm_edid_new ();
+	client->priv->dmi = gcm_dmi_new ();
 
 	/* use GUdev to find devices */
 	client->priv->gudev_client = g_udev_client_new (subsystems);
@@ -936,6 +956,7 @@ gcm_client_finalize (GObject *object)
 	g_ptr_array_unref (priv->array);
 	g_object_unref (priv->gudev_client);
 	g_object_unref (priv->edid);
+	g_object_unref (priv->dmi);
 	gnome_rr_screen_destroy (priv->rr_screen);
 
 	G_OBJECT_CLASS (gcm_client_parent_class)->finalize (object);
