@@ -405,7 +405,7 @@ out:
 		diag = sqrtf ((powf (width,2)) + (powf (height, 2)));
 
 		/* print it in inches */
-		g_string_append_printf (string, " (%i\")", (guint) ((gfloat) diag * 0.393700787f));
+		g_string_append_printf (string, " - %i\"", (guint) ((gfloat) diag * 0.393700787f));
 	}
 
 	g_free (name);

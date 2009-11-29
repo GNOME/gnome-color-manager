@@ -480,6 +480,172 @@ out:
 }
 
 /**
+ * gcm_prefs_profile_delete_cb:
+ **/
+static void
+gcm_prefs_profile_delete_cb (GtkWidget *widget, gpointer data)
+{
+	GtkWidget *dialog;
+	GtkResponseType response;
+	GtkWindow *window;
+	gint retval;
+	gchar *filename = NULL;
+	gchar *filename_tmp;
+	GcmProfile *profile;
+	GtkTreeSelection *selection;
+	guint i;
+
+	/* ask the user to confirm */
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL,
+					 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
+					 _("Permanently delete profile?"));
+	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+						  /* TRANSLATORS: dialog message */
+						  _("Are you sure you want to remove this profile from your system permanently?"));
+	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+	/* TRANSLATORS: button, delete a profile */
+	gtk_dialog_add_button (GTK_DIALOG (dialog), _("Delete"), GTK_RESPONSE_YES);
+	response = gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+	if (response != GTK_RESPONSE_YES)
+		goto out;
+
+	/* get device data */
+	g_object_get (current_device,
+		      "profile-filename", &filename,
+		      NULL);
+
+	/* try to remove file */
+	retval = g_unlink (filename);
+	if (retval != 0)
+		goto out;
+
+	/* find an existing profile of this name */
+	for (i=0; i<profiles_array->len; i++) {
+		profile = g_ptr_array_index (profiles_array, i);
+		g_object_get (profile,
+			      "filename", &filename_tmp,
+			      NULL);
+		if (g_strcmp0 (filename, filename_tmp) == 0) {
+			egg_debug ("found existing profile: %s", filename);
+			g_ptr_array_remove (profiles_array, profile);
+		}
+		g_free (filename_tmp);
+	}
+
+	/* re-get all the profiles for this device */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	gcm_prefs_devices_treeview_clicked_cb (selection, NULL);
+out:
+	g_free (filename);
+}
+
+/**
+ * gcm_prefs_calibrate_device_get_icc_profile:
+ **/
+static gchar *
+gcm_prefs_calibrate_device_get_icc_profile (void)
+{
+	gchar *filename = NULL;
+	GtkWindow *window;
+	GtkWidget *dialog;
+	GtkFileFilter *filter;
+
+	/* create new dialog */
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	/* TRANSLATORS: dialog for file->open dialog */
+	dialog = gtk_file_chooser_dialog_new (_("Select ICC profile file"), window,
+					       GTK_FILE_CHOOSER_ACTION_OPEN,
+					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					      NULL);
+	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), g_get_home_dir ());
+	gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER(dialog), FALSE);
+
+	/* setup the filter */
+	filter = gtk_file_filter_new ();
+	gtk_file_filter_add_mime_type (filter, "application/vnd.iccprofile");
+	/* TRANSLATORS: filter name on the file->open dialog */
+	gtk_file_filter_set_name (filter, _("Supported ICC profiles"));
+	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
+//	g_object_unref (filter);
+
+	/* did user choose file */
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(dialog));
+
+	/* we're done */
+	gtk_widget_destroy (dialog);
+
+	/* or NULL for missing */
+	return filename;
+}
+
+/**
+ * gcm_prefs_profile_import_cb:
+ **/
+static void
+gcm_prefs_profile_import_cb (GtkWidget *widget, gpointer data)
+{
+	gchar *filename;
+	GtkWidget *dialog;
+	GError *error = NULL;
+	gchar *destination = NULL;
+	GtkWindow *window;
+	GcmProfile *profile = NULL;
+	GtkTreeSelection *selection;
+	gboolean ret;
+
+	/* get new file */
+	filename = gcm_prefs_calibrate_device_get_icc_profile ();
+	if (filename == NULL)
+		goto out;
+
+	/* copy icc file to ~/.color/icc */
+	destination = gcm_utils_get_profile_destination (filename);
+	ret = gcm_utils_mkdir_and_copy (filename, destination, &error);
+	if (!ret) {
+		/* TRANSLATORS: could not read file */
+		window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Failed to copy file"));
+		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", error->message);
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		g_error_free (error);
+		gtk_widget_destroy (dialog);
+		goto out;
+	}
+
+	/* add new profile */
+	profile = gcm_profile_new ();
+
+	/* parse the new file */
+	ret = gcm_profile_parse (profile, destination, &error);
+	if (!ret) {
+		egg_warning ("failed to parse: %s", error->message);
+		g_error_free (error);
+		g_object_unref (profile);
+		goto out;
+	}
+
+	/* add to arrays */
+	g_ptr_array_add (profiles_array, g_object_ref (profile));
+
+	/* re-get all the profiles for this device */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	gcm_prefs_devices_treeview_clicked_cb (selection, NULL);
+out:
+	if (profile != NULL)
+		g_object_unref (profile);
+	g_free (filename);
+	g_free (destination);
+}
+
+/**
  * gcm_prefs_calibrate_cb:
  **/
 static void
@@ -546,7 +712,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* find an existing profile of this name */
-	for (i=0; i<profiles_array_in_combo->len; i++) {
+	for (i=0; i<profiles_array->len; i++) {
 		profile = g_ptr_array_index (profiles_array, i);
 		g_object_get (profile,
 			      "filename", &name,
@@ -560,7 +726,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* we didn't find an existing profile */
-	if (i == profiles_array_in_combo->len) {
+	if (i == profiles_array->len) {
 		egg_debug ("adding: %s", destination);
 
 		/* set this default */
@@ -1272,6 +1438,11 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 		gtk_widget_show (widget);
 	}
 
+	/* set delete sensitivity */
+	ret = (filename != NULL && g_str_has_prefix (filename, "/home/"));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_delete"));
+	gtk_widget_set_sensitive (widget, ret);
+
 	/* only save and set if changed */
 	if (changed) {
 
@@ -1807,6 +1978,12 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_calibrate_cb), NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_delete"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_prefs_profile_delete_cb), NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_import"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_prefs_profile_import_cb), NULL);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
 	gtk_widget_set_sensitive (widget, FALSE);
 
