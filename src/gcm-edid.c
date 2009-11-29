@@ -557,7 +557,7 @@ gcm_edid_test (EggTest *test)
 	/* Lenovo T61 Intel Panel */
 	test_data.monitor_name = NULL;
 	test_data.vendor_name = "IBM France";
-	test_data.serial_number = "0";
+	test_data.serial_number = NULL;
 	test_data.ascii_string = "LTN154P2-L05";
 	test_data.pnp_id = "IBM";
 	test_data.height = 21;

@@ -900,7 +900,7 @@ gcm_device_test (EggTest *test)
 
 	/************************************************************/
 	egg_test_title (test, "check data");
-	if (g_strcmp0 (data, "\n[sysfs_dummy_device]\nprofile=/srv/sysfs_canon_canoscan.icc\ntype=scanner\n") == 0)
+	if (g_strcmp0 (data, "\n[sysfs_dummy_device]\nprofile=/srv/sysfs_canon_canoscan.icc\nserial=0123456789\ntype=scanner\n") == 0)
 		egg_test_success (test, NULL);
 	else
 		egg_test_failed (test, "invalid data: %s", data);
