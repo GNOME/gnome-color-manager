@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-11-29 06:58+0300\n"
-"PO-Revision-Date: 2009-11-29 15:01+0300\n"
+"POT-Creation-Date: 2009-11-30 02:39+0300\n"
+"PO-Revision-Date: 2009-11-30 02:48+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: GNOME Russian <gnome-cyr@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -72,96 +72,104 @@ msgstr "Контраст:"
 msgid "Defaults"
 msgstr "По умолчанию"
 
+#: ../data/gcm-prefs.ui.h:10
+msgid "Delete profile"
+msgstr "Удалить профиль"
+
 #. Section heading for device settings
-#: ../data/gcm-prefs.ui.h:11
+#: ../data/gcm-prefs.ui.h:12
 msgid "Device:"
 msgstr "Устройство:"
 
 #. Tab title, currently connected or saved devices
-#: ../data/gcm-prefs.ui.h:13
+#: ../data/gcm-prefs.ui.h:14
 msgid "Devices"
 msgstr "Устройства"
 
 #. What mode to use for display rendering intent
-#: ../data/gcm-prefs.ui.h:15
+#: ../data/gcm-prefs.ui.h:16
 msgid "Display:"
 msgstr "Монитор"
 
 #. Radio buttons in the prefs dialog
-#: ../data/gcm-prefs.ui.h:17
+#: ../data/gcm-prefs.ui.h:18
 msgid "Do global correction and set profile for color managed applications"
 msgstr "_Выполнять коррекцию цвета глобально и устанавливать профиль для цветоуправляемых приложений"
 
 #. Radio buttons in the prefs dialog
-#: ../data/gcm-prefs.ui.h:19
+#: ../data/gcm-prefs.ui.h:20
 msgid "Do not enable display correction"
 msgstr "Не выполнять коррекцию цвета"
 
 #. Settings that users don't normally have to touch
-#: ../data/gcm-prefs.ui.h:21
+#: ../data/gcm-prefs.ui.h:22
 msgid "Fine tuning:"
 msgstr "Уточнение параметров"
 
-#: ../data/gcm-prefs.ui.h:22
+#: ../data/gcm-prefs.ui.h:23
 msgid "Gamma:"
 msgstr "Гамма:"
 
 #. The licence of the profile, normally non-free
-#: ../data/gcm-prefs.ui.h:24
+#: ../data/gcm-prefs.ui.h:25
 msgid "License:"
 msgstr "Лицензия:"
 
 #. The manufacturer of the device
-#: ../data/gcm-prefs.ui.h:26
+#: ../data/gcm-prefs.ui.h:27
 msgid "Manufacturer:"
 msgstr "Производитель:"
 
 #. The model of the device
-#: ../data/gcm-prefs.ui.h:28
+#: ../data/gcm-prefs.ui.h:29
 msgid "Model:"
 msgstr "Модель:"
 
 #. The type of profile, e.g. display, scanner, etc.
-#: ../data/gcm-prefs.ui.h:30
+#: ../data/gcm-prefs.ui.h:31
 msgid "Profile type:"
 msgstr "Тип профиля:"
 
-#: ../data/gcm-prefs.ui.h:31
+#: ../data/gcm-prefs.ui.h:32
 msgid "Rendering intent:"
 msgstr "Цветопередача"
 
 #. The serial number of the device
-#: ../data/gcm-prefs.ui.h:33
+#: ../data/gcm-prefs.ui.h:34
 msgid "Serial number:"
 msgstr "Серийный номер:"
 
 #. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:35
+#: ../data/gcm-prefs.ui.h:36
 msgid "Softproof:"
 msgstr "Цветопроба:"
 
 #. The manufacturer of the profile
-#: ../data/gcm-prefs.ui.h:37
+#: ../data/gcm-prefs.ui.h:38
 msgid "Vendor:"
 msgstr "Производитель:"
 
 #. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
-#: ../data/gcm-prefs.ui.h:39
-msgid "_Calibrate device"
-msgstr "От_калибровать"
+#: ../data/gcm-prefs.ui.h:40
+msgid "_Create profile"
+msgstr "_Создать профиль"
 
 #. This is a button to delete the saved device
-#: ../data/gcm-prefs.ui.h:41
+#: ../data/gcm-prefs.ui.h:42
 msgid "_Delete device"
-msgstr "_Удалить"
+msgstr "_Удалить устройство"
+
+#: ../data/gcm-prefs.ui.h:43
+msgid "_Import profile"
+msgstr "_Импортировать профиль"
 
 #. This resets the device to it's defaults, and removes any user tweaked settings.
-#: ../data/gcm-prefs.ui.h:43
+#: ../data/gcm-prefs.ui.h:45
 msgid "_Reset to defaults"
 msgstr "С_бросить"
 
 #. Radio buttons in the prefs dialog
-#: ../data/gcm-prefs.ui.h:45
+#: ../data/gcm-prefs.ui.h:47
 msgid "_Set profile only for color managed applications"
 msgstr "_Устанавливать профиль только для цветоуправляемых приложений"
 
@@ -412,7 +420,7 @@ msgid "Generating the ICC color profile that can be used with this device."
 msgstr "Создаётся цветовой профиль для использования с этим монитором."
 
 #. TRANSLATORS: this is the name of the internal panel
-#: ../src/gcm-client.c:384
+#: ../src/gcm-client.c:376
 msgid "Laptop LCD"
 msgstr ""
 
@@ -520,6 +528,7 @@ msgstr "Установить"
 
 #. TRANSLATORS: could not read file
 #: ../src/gcm-import.c:150
+#: ../src/gcm-prefs.c:613
 msgid "Failed to copy file"
 msgstr "Не удалось скопировать файл"
 
@@ -543,99 +552,124 @@ msgstr ""
 msgid "CIE values"
 msgstr "Значения CIE"
 
+#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#: ../src/gcm-prefs.c:502
+msgid "Permanently delete profile?"
+msgstr "Удалить профиль навсегда?"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-prefs.c:505
+msgid "Are you sure you want to remove this profile from your system permanently?"
+msgstr "Вы действительно хотите удалить этот профиль из системы навсегда?"
+
+#. TRANSLATORS: button, delete a profile
+#: ../src/gcm-prefs.c:508
+msgid "Delete"
+msgstr "Удалить"
+
+#. TRANSLATORS: dialog for file->open dialog
+#: ../src/gcm-prefs.c:559
+msgid "Select ICC profile file"
+msgstr "Выберите цветовой профиль"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: ../src/gcm-prefs.c:572
+msgid "Supported ICC profiles"
+msgstr "Поддерживаемые цветовые профили"
+
 #. add a clear entry
-#: ../src/gcm-prefs.c:856
+#: ../src/gcm-prefs.c:1022
 msgid "None"
 msgstr "Нет"
 
 #. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/gcm-prefs.c:1054
+#: ../src/gcm-prefs.c:1220
 msgid "No hardware support"
 msgstr "Аппаратное обеспечение не поддерживается"
 
 #. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/gcm-prefs.c:1058
-#: ../src/gcm-prefs.c:1413
+#: ../src/gcm-prefs.c:1224
+#: ../src/gcm-prefs.c:1584
 msgid "disconnected"
 msgstr "отключено"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1137
+#: ../src/gcm-prefs.c:1303
 msgid "Input device"
 msgstr "Устройство ввода"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1141
+#: ../src/gcm-prefs.c:1307
 msgid "Display device"
 msgstr "Устройство отображения"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1145
+#: ../src/gcm-prefs.c:1311
 msgid "Output device"
 msgstr "Устройство вывода"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1149
+#: ../src/gcm-prefs.c:1315
 msgid "Devicelink"
 msgstr ""
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1153
+#: ../src/gcm-prefs.c:1319
 msgid "Colorspace conversion"
 msgstr "Преобразование цветового пространства"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1157
+#: ../src/gcm-prefs.c:1323
 msgid "Abstract"
 msgstr "Абстрактный"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1161
+#: ../src/gcm-prefs.c:1327
 msgid "Named color"
 msgstr "Именованный цвет"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1164
+#: ../src/gcm-prefs.c:1330
 msgid "Unknown"
 msgstr "Неизвестен"
 
 #. TRANSLATORS: this is where the required software has not been written yet
-#: ../src/gcm-prefs.c:1419
+#: ../src/gcm-prefs.c:1590
 msgid "No software support"
 msgstr "Нет поддержки в программном обеспечении"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:1682
+#: ../src/gcm-prefs.c:1853
 msgid "Perceptual"
 msgstr "Воспринимаемая"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:1685
+#: ../src/gcm-prefs.c:1856
 msgid "Relative colormetric"
 msgstr "Относительная колориметрическая"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:1688
+#: ../src/gcm-prefs.c:1859
 msgid "Saturation"
 msgstr "Насыщенная"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:1691
+#: ../src/gcm-prefs.c:1862
 msgid "Absolute colormetric"
 msgstr "Абсолютная колориметрическая"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:1694
+#: ../src/gcm-prefs.c:1865
 msgid "Disable soft proofing"
 msgstr "Отключить программную цветопробу"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-prefs.c:1722
+#: ../src/gcm-prefs.c:1893
 msgid "Set the parent window to make this modal"
 msgstr ""
 
 #. TRANSLATORS: this is displayed while the devices are being probed
-#: ../src/gcm-prefs.c:1918
+#: ../src/gcm-prefs.c:2095
 msgid "Loading list of devices..."
 msgstr "Загружается список устройств..."
 
@@ -657,6 +691,8 @@ msgstr "Управление цветом"
 msgid "Color Management DBus Service"
 msgstr "Служба D-BUS для управления цветом"
 
+#~ msgid "_Calibrate device"
+#~ msgstr "От_калибровать"
 #~ msgid "Generating the ICC color profile that can be used with this scanner."
 #~ msgstr "Создаётся цветовой профиль для использования с этим сканером."
 #~ msgid "Message"
