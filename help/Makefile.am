@@ -12,5 +12,5 @@ DOC_FIGURES =					\
 	figures/gcm-calibrate-drawing.png	\
 	figures/gcm-import.png
 
-DOC_LINGUAS = id
+DOC_LINGUAS = id ru
 
