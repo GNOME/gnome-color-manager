@@ -20,6 +20,8 @@ noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\
 	egg-debug.c					\
 	egg-debug.h					\
+	gcm-xyz.c					\
+	gcm-xyz.h					\
 	gcm-utils.c					\
 	gcm-utils.h					\
 	gcm-clut.c					\
@@ -173,6 +175,7 @@ gcm_self_test_SOURCES =					\
 	gcm-brightness.c				\
 	gcm-clut.c					\
 	gcm-dmi.c					\
+	gcm-xyz.c					\
 	gcm-cie-widget.c				\
 	egg-test.h					\
 	egg-test.c					\

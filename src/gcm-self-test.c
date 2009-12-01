@@ -32,6 +32,7 @@ void gcm_profile_test (EggTest *test);
 void gcm_brightness_test (EggTest *test);
 void gcm_clut_test (EggTest *test);
 void gcm_dmi_test (EggTest *test);
+void gcm_xyz_test (EggTest *test);
 void gcm_cie_widget_test (EggTest *test);
 
 int
@@ -54,6 +55,7 @@ main (int argc, char **argv)
 	gcm_brightness_test (test);
 	gcm_clut_test (test);
 	gcm_dmi_test (test);
+	gcm_xyz_test (test);
 	gcm_cie_widget_test (test);
 
 	return (egg_test_finish (test));
