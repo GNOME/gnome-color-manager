@@ -32,6 +32,7 @@ void gcm_profile_test (EggTest *test);
 void gcm_brightness_test (EggTest *test);
 void gcm_clut_test (EggTest *test);
 void gcm_dmi_test (EggTest *test);
+void gcm_cie_widget_test (EggTest *test);
 
 int
 main (int argc, char **argv)
@@ -40,7 +41,7 @@ main (int argc, char **argv)
 
 	if (! g_thread_supported ())
 		g_thread_init (NULL);
-	g_type_init ();
+	gtk_init (&argc, &argv);
 	test = egg_test_init ();
 	egg_debug_init (&argc, &argv);
 
@@ -53,6 +54,7 @@ main (int argc, char **argv)
 	gcm_brightness_test (test);
 	gcm_clut_test (test);
 	gcm_dmi_test (test);
+	gcm_cie_widget_test (test);
 
 	return (egg_test_finish (test));
 }

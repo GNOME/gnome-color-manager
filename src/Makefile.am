@@ -120,6 +120,8 @@ gcm_prefs_SOURCES =					\
 	gcm-calibrate.h					\
 	gcm-brightness.c				\
 	gcm-brightness.h				\
+	gcm-cie-widget.c				\
+	gcm-cie-widget.h				\
 	gcm-prefs.c
 
 gcm_prefs_LDADD =					\
@@ -171,6 +173,7 @@ gcm_self_test_SOURCES =					\
 	gcm-brightness.c				\
 	gcm-clut.c					\
 	gcm-dmi.c					\
+	gcm-cie-widget.c				\
 	egg-test.h					\
 	egg-test.c					\
 	$(NULL)
