@@ -661,7 +661,7 @@ gcm_cie_widget_draw_grid (GcmCieWidget *cie, cairo_t *cr)
  * gcm_cie_widget_map_from_display:
  **/
 static void
-gcm_cie_widget_map_from_display (GcmCieWidget *cie, guint x, guint y, guint *x_retval, guint *y_retval)
+gcm_cie_widget_map_from_display (GcmCieWidget *cie, gfloat x, gfloat y, gfloat *x_retval, gfloat *y_retval)
 {
 	GcmCieWidgetPrivate *priv = cie->priv;
 	*x_retval = x + priv->x_offset;
@@ -672,7 +672,7 @@ gcm_cie_widget_map_from_display (GcmCieWidget *cie, guint x, guint y, guint *x_r
  * gcm_cie_widget_map_to_display:
  **/
 static void
-gcm_cie_widget_map_to_display (GcmCieWidget *cie, guint x, guint y, guint *x_retval, guint *y_retval)
+gcm_cie_widget_map_to_display (GcmCieWidget *cie, gfloat x, gfloat y, gfloat *x_retval, gfloat *y_retval)
 {
 	GcmCieWidgetPrivate *priv = cie->priv;
 	*x_retval = x - priv->x_offset;
@@ -684,7 +684,7 @@ gcm_cie_widget_map_to_display (GcmCieWidget *cie, guint x, guint y, guint *x_ret
  **/
 static void
 gcm_cie_widget_compute_monochrome_color_location (GcmCieWidget *cie, gdouble wave_length,
-						  guint *x_retval, guint *y_retval)
+						  gfloat *x_retval, gfloat *y_retval)
 {
 	guint ix = wave_length - 380;
 	const gdouble px = spectral_chromaticity[ix][0];
@@ -701,7 +701,7 @@ gcm_cie_widget_compute_monochrome_color_location (GcmCieWidget *cie, gdouble wav
  * gcm_cie_widget_save_point:
  **/
 static void
-gcm_cie_widget_save_point (GcmCieWidget *cie, const guint y, const guint value)
+gcm_cie_widget_save_point (GcmCieWidget *cie, const guint y, const gfloat value)
 {
 	GcmCieWidgetBufferItem *item;
 	GcmCieWidgetPrivate *priv = cie->priv;
@@ -724,13 +724,13 @@ gcm_cie_widget_save_point (GcmCieWidget *cie, const guint y, const guint value)
  * gcm_cie_widget_add_point:
  **/
 static void
-gcm_cie_widget_add_point (GcmCieWidget *cie, guint icx, guint icy, guint icx_last, guint icy_last)
+gcm_cie_widget_add_point (GcmCieWidget *cie, gfloat icx, gfloat icy, gfloat icx_last, gfloat icy_last)
 {
 	gfloat grad;
-	guint i;
-	gint dy, dx;
+	gfloat i;
+	gfloat dy, dx;
 	gfloat c;
-	gint x;
+	gfloat x;
 
 	/* nothing to plot */
 	if (icx > cie->priv->chart_width)
@@ -761,11 +761,11 @@ gcm_cie_widget_add_point (GcmCieWidget *cie, guint icx, guint icy, guint icx_las
 	grad = ((gfloat) dy) / ((gfloat) dx);
 	c = icy - (grad * (gfloat) icx);
 	for (i=icy; i<=icy_last; i++) {
-		x = (gint) (((gfloat) (i - c)) / grad);
+		x = (i - c) / grad;
 		gcm_cie_widget_save_point (cie, i, x);
 	}
 	for (i=icy_last; i<=icy; i++) {
-		x = (gint) (((gfloat) (i - c)) / grad);
+		x = (i - c) / grad;
 		gcm_cie_widget_save_point (cie, i, x);
 	}
 }
@@ -777,8 +777,8 @@ static void
 gcm_cie_widget_get_min_max_tongue (GcmCieWidget *cie)
 {
 	guint wavelength;
-	guint icx, icy;
-	guint icx_last, icy_last;
+	gfloat icx, icy;
+	gfloat icx_last, icy_last;
 	GcmCieWidgetBufferItem *item;
 	guint i;
 	GcmCieWidgetPrivate *priv = cie->priv;
@@ -813,8 +813,8 @@ static void
 gcm_cie_widget_draw_tongue_outline (GcmCieWidget *cie, cairo_t *cr)
 {
 	guint wavelength;
-	guint icx, icy;
-	guint icx_last, icy_last;
+	gfloat icx, icy;
+	gfloat icx_last, icy_last;
 
 	cairo_save (cr);
 	cairo_set_line_width (cr, 2.0f);
@@ -979,15 +979,12 @@ gcm_cie_widget_gamma_correct_rgb (GcmCieWidget *cie,
 
 /**
  * gcm_cie_widget_draw_line:
- *
- * Draw the data line onto the cie with a big green line. We should already
- * limit the data to < ~100 values, so this shouldn't take too long.
  **/
 static void
 gcm_cie_widget_draw_line (GcmCieWidget *cie, cairo_t *cr)
 {
-	guint x, y;
-	guint x_scaled, y_scaled;
+	gfloat x, y;
+	gfloat x_scaled, y_scaled;
 	GcmCieWidgetPrivate *priv = cie->priv;
 	GcmCieWidgetBufferItem *item;
 
@@ -998,7 +995,7 @@ gcm_cie_widget_draw_line (GcmCieWidget *cie, cairo_t *cr)
 	for (y = 0; y < priv->chart_height; ++y) {
 
 		/* get buffer data to se if there's any point rendering this line */
-		item = g_ptr_array_index (priv->tongue_buffer, y);
+		item = g_ptr_array_index (priv->tongue_buffer, (guint)y);
 		if (!item->valid)
 			continue;
 
@@ -1042,7 +1039,9 @@ gcm_cie_widget_draw_line (GcmCieWidget *cie, cairo_t *cr)
 			b = mx * jb;
 
 			cairo_set_source_rgb (cr, r, g, b);
-			cairo_rectangle (cr, x, y, 1, 1);
+			/* convert to an integer to avoid antialiasing, which
+			 * speeds things up significantly */
+			cairo_rectangle (cr, (guint)x, (guint)y, 1, 1);
 			cairo_fill (cr);
 		}
 	}
