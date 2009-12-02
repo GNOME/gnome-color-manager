@@ -36,6 +36,7 @@
 #include "egg-debug.h"
 
 #include "gcm-profile.h"
+#include "gcm-xyz.h"
 
 static void     gcm_profile_finalize	(GObject     *object);
 
@@ -141,6 +142,11 @@ struct _GcmProfilePrivate
 	GcmClutData			*mlut_data;
 	guint				 mlut_data_size;
 	gboolean			 adobe_gamma_workaround;
+	GcmXyz				*white_point;
+	GcmXyz				*black_point;
+	GcmXyz				*luminance_red;
+	GcmXyz				*luminance_green;
+	GcmXyz				*luminance_blue;
 };
 
 enum {
@@ -151,6 +157,10 @@ enum {
 	PROP_DESCRIPTION,
 	PROP_FILENAME,
 	PROP_TYPE,
+	PROP_WHITE_POINT,
+	PROP_LUMINANCE_RED,
+	PROP_LUMINANCE_GREEN,
+	PROP_LUMINANCE_BLUE,
 	PROP_LAST
 };
 
@@ -556,6 +566,56 @@ out:
 }
 
 /**
+ * gcm_parser_s15_fixed_16_number_to_float:
+ **/
+static gfloat
+gcm_parser_s15_fixed_16_number_to_float (gint32 data)
+{
+	gfloat retval;
+
+	/* s15Fixed16Number has 16 fractional bits */
+	retval = (gfloat) data / 0x10000;
+	return retval;
+}
+
+/**
+ * gcm_parser_load_icc_xyz_type:
+ **/
+static gboolean
+gcm_parser_load_icc_xyz_type (GcmProfile *profile, const gchar *data, gsize offset, GcmXyz *xyz)
+{
+	gboolean ret;
+	guint value;
+	gfloat x;
+	gfloat y;
+	gfloat z;
+
+	/* check we are not a localized tag */
+	ret = (memcmp (&data[offset], "XYZ ", 4) == 0);
+	if (!ret) {
+		egg_warning ("not an XYZ type");
+		goto out;
+	}
+
+	/* just get the first entry in each matrix */
+	value = gcm_parser_unencode_32 (data, offset + 8 + 0);
+	x = gcm_parser_s15_fixed_16_number_to_float (value);
+	value = gcm_parser_unencode_32 (data, offset + 8 + 4);
+	y = gcm_parser_s15_fixed_16_number_to_float (value);
+	value = gcm_parser_unencode_32 (data, offset + 8 + 8);
+	z = gcm_parser_s15_fixed_16_number_to_float (value);
+
+	/* set data */
+	g_object_set (xyz,
+		      "cie-x", x,
+		      "cie-y", y,
+		      "cie-z", z,
+		      NULL);
+out:
+	return ret;
+}
+
+/**
  * gcm_profile_parse_data:
  **/
 gboolean
@@ -585,12 +645,9 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		goto out;
 	}
 
-	/* ensure this is a icc file */
-	if (data[GCM_SIGNATURE+0] != 'a' ||
-	    data[GCM_SIGNATURE+1] != 'c' ||
-	    data[GCM_SIGNATURE+2] != 's' ||
-	    data[GCM_SIGNATURE+3] != 'p') {
-
+	/* check we are not a localized tag */
+	ret = (memcmp (&data[GCM_SIGNATURE], "acsp", 4) == 0);
+	if (!ret) {
 		/* copy the 4 bytes of the invalid signature, with a '\0' byte */
 		signature = g_new0 (gchar, 5);
 		for (i=0; i<5; i++)
@@ -702,6 +759,46 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 			ret = gcm_parser_load_icc_trc (profile, data, tag_offset, 2);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load trc");
+				goto out;
+			}
+		}
+		if (tag_id == GCM_TAG_ID_MEDIA_WHITE_POINT) {
+			egg_debug ("found media white point");
+			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, profile->priv->white_point);
+			if (!ret) {
+				*error = g_error_new (1, 0, "failed to load white point");
+				goto out;
+			}
+		}
+		if (tag_id == GCM_TAG_ID_MEDIA_BLACK_POINT) {
+			egg_debug ("found media black point");
+			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, profile->priv->black_point);
+			if (!ret) {
+				*error = g_error_new (1, 0, "failed to load white point");
+				goto out;
+			}
+		}
+		if (tag_id == GCM_TAG_ID_RED_MATRIX_COLUMN) {
+			egg_debug ("found red matrix column");
+			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, profile->priv->luminance_red);
+			if (!ret) {
+				*error = g_error_new (1, 0, "failed to load red matrix");
+				goto out;
+			}
+		}
+		if (tag_id == GCM_TAG_ID_GREEN_MATRIX_COLUMN) {
+			egg_debug ("found green matrix column");
+			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, profile->priv->luminance_green);
+			if (!ret) {
+				*error = g_error_new (1, 0, "failed to load green matrix");
+				goto out;
+			}
+		}
+		if (tag_id == GCM_TAG_ID_BLUE_MATRIX_COLUMN) {
+			egg_debug ("found blue matrix column");
+			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, profile->priv->luminance_blue);
+			if (!ret) {
+				*error = g_error_new (1, 0, "failed to load blue matrix");
 				goto out;
 			}
 		}
@@ -975,6 +1072,18 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_TYPE:
 		g_value_set_uint (value, priv->profile_type);
 		break;
+	case PROP_WHITE_POINT:
+		g_value_set_object (value, priv->white_point);
+		break;
+	case PROP_LUMINANCE_RED:
+		g_value_set_object (value, priv->luminance_red);
+		break;
+	case PROP_LUMINANCE_GREEN:
+		g_value_set_object (value, priv->luminance_green);
+		break;
+	case PROP_LUMINANCE_BLUE:
+		g_value_set_object (value, priv->luminance_blue);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -1054,6 +1163,38 @@ gcm_profile_class_init (GcmProfileClass *klass)
 				   G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_TYPE, pspec);
 
+	/**
+	 * GcmProfile:white-point:
+	 */
+	pspec = g_param_spec_object ("white-point", NULL, NULL,
+				     GCM_TYPE_XYZ,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_WHITE_POINT, pspec);
+
+	/**
+	 * GcmProfile:luminance-red:
+	 */
+	pspec = g_param_spec_object ("luminance-red", NULL, NULL,
+				     GCM_TYPE_XYZ,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_LUMINANCE_RED, pspec);
+
+	/**
+	 * GcmProfile:luminance-green:
+	 */
+	pspec = g_param_spec_object ("luminance-green", NULL, NULL,
+				     GCM_TYPE_XYZ,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_LUMINANCE_GREEN, pspec);
+
+	/**
+	 * GcmProfile:luminance-blue:
+	 */
+	pspec = g_param_spec_object ("luminance-blue", NULL, NULL,
+				     GCM_TYPE_XYZ,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_LUMINANCE_BLUE, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmProfilePrivate));
 }
 
@@ -1069,6 +1210,11 @@ gcm_profile_init (GcmProfile *profile)
 	profile->priv->trc_data = NULL;
 	profile->priv->adobe_gamma_workaround = FALSE;
 	profile->priv->profile_type = GCM_PROFILE_TYPE_UNKNOWN;
+	profile->priv->white_point = gcm_xyz_new ();
+	profile->priv->black_point = gcm_xyz_new ();
+	profile->priv->luminance_red = gcm_xyz_new ();
+	profile->priv->luminance_green = gcm_xyz_new ();
+	profile->priv->luminance_blue = gcm_xyz_new ();
 }
 
 /**
@@ -1088,6 +1234,11 @@ gcm_profile_finalize (GObject *object)
 	g_free (priv->vcgt_data);
 	g_free (priv->mlut_data);
 	g_free (priv->trc_data);
+	g_object_unref (profile->priv->white_point);
+	g_object_unref (profile->priv->black_point);
+	g_object_unref (profile->priv->luminance_red);
+	g_object_unref (profile->priv->luminance_green);
+	g_object_unref (profile->priv->luminance_blue);
 
 	G_OBJECT_CLASS (gcm_profile_parent_class)->finalize (object);
 }
@@ -1117,6 +1268,7 @@ typedef struct {
 	const gchar *model;
 	const gchar *description;
 	GcmProfileType type;
+	gfloat luminance;
 } GcmProfileTestData;
 
 void
@@ -1137,6 +1289,8 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 	gboolean ret;
 	GError *error = NULL;
 	GcmProfile *profile;
+	GcmXyz *xyz;
+	gfloat luminance;
 
 	/************************************************************/
 	egg_test_title (test, "get a profile object");
@@ -1208,6 +1362,18 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 	else
 		egg_test_failed (test, "invalid value: %i, expecting: %i", type, test_data->type);
 
+	/************************************************************/
+	egg_test_title (test, "check luminance red %s", datafile);
+	g_object_get (profile,
+		      "luminance-red", &xyz,
+		      NULL);
+	luminance = gcm_xyz_get_x (xyz);
+	if (fabs (luminance - test_data->luminance) < 0.001)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %f, expecting: %f", luminance, test_data->luminance);
+
+	g_object_unref (xyz);
 	g_object_unref (profile);
 	g_free (copyright);
 	g_free (vendor);
@@ -1222,9 +1388,38 @@ void
 gcm_profile_test (EggTest *test)
 {
 	GcmProfileTestData test_data;
+	gfloat fp;
+	gfloat expected;
 
 	if (!egg_test_start (test, "GcmProfile"))
 		return;
+
+	/************************************************************/
+	egg_test_title (test, "convert s15 fixed 16 number [1]");
+	fp = gcm_parser_s15_fixed_16_number_to_float (0x80000000);
+	expected = -32768.0;
+	if (fp == expected)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %f, expecting: %f", fp, expected);
+
+	/************************************************************/
+	egg_test_title (test, "convert s15 fixed 16 number [2]");
+	fp = gcm_parser_s15_fixed_16_number_to_float (0x0);
+	expected = 0.0;
+	if (fp == expected)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %f, expecting: %f", fp, expected);
+
+	/************************************************************/
+	egg_test_title (test, "convert s15 fixed 16 number [3]");
+	fp = gcm_parser_s15_fixed_16_number_to_float (0x10000);
+	expected = 1.0;
+	if (fp == expected)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %f, expecting: %f", fp, expected);
 
 	/* bluish test */
 	test_data.copyright = "Copyright (c) 1998 Hewlett-Packard Company";
@@ -1232,6 +1427,7 @@ gcm_profile_test (EggTest *test)
 	test_data.model = "IEC 61966-2.1 Default RGB colour space - sRGB";
 	test_data.description = "bluish test";
 	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
+	test_data.luminance = 0.648454;
 	gcm_profile_test_parse_file (test, "bluish.icc", &test_data);
 
 	/* Adobe test */
@@ -1240,6 +1436,7 @@ gcm_profile_test (EggTest *test)
 	test_data.model = "IEC 61966-2.1 Default RGB colour space - sRGB";
 	test_data.description = "ADOBEGAMMA-Test";
 	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
+	test_data.luminance = 0.648446;
 	gcm_profile_test_parse_file (test, "AdobeGammaTest.icm", &test_data);
 
 	egg_test_end (test);
