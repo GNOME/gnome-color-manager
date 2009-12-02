@@ -125,6 +125,7 @@ struct _GcmProfilePrivate
 {
 	gboolean			 loaded;
 	guint				 profile_type;
+	guint				 size;
 	gchar				*description;
 	gchar				*filename;
 	gchar				*copyright;
@@ -157,6 +158,7 @@ enum {
 	PROP_DESCRIPTION,
 	PROP_FILENAME,
 	PROP_TYPE,
+	PROP_SIZE,
 	PROP_WHITE_POINT,
 	PROP_LUMINANCE_RED,
 	PROP_LUMINANCE_GREEN,
@@ -825,6 +827,9 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 	if (priv->model != NULL)
 		gcm_profile_ensure_printable (priv->model);
 
+	/* save the length */
+	priv->size = length;
+
 	/* success */
 	ret = TRUE;
 
@@ -845,7 +850,7 @@ gcm_profile_parse (GcmProfile *profile, const gchar *filename, GError **error)
 {
 	gchar *data = NULL;
 	gboolean ret;
-	gsize length;
+	guint length;
 	GError *error_local = NULL;
 	GcmProfilePrivate *priv = profile->priv;
 
@@ -1072,6 +1077,9 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_TYPE:
 		g_value_set_uint (value, priv->profile_type);
 		break;
+	case PROP_SIZE:
+		g_value_set_uint (value, priv->size);
+		break;
 	case PROP_WHITE_POINT:
 		g_value_set_object (value, priv->white_point);
 		break;
@@ -1162,6 +1170,14 @@ gcm_profile_class_init (GcmProfileClass *klass)
 				   0, G_MAXUINT, 0,
 				   G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_TYPE, pspec);
+
+	/**
+	 * GcmProfile:size:
+	 */
+	pspec = g_param_spec_uint ("size", NULL, NULL,
+				   0, G_MAXUINT, 0,
+				   G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_SIZE, pspec);
 
 	/**
 	 * GcmProfile:white-point:
