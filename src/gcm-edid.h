@@ -56,6 +56,7 @@ struct _GcmEdidClass
 
 GType		 gcm_edid_get_type		  	(void);
 GcmEdid		*gcm_edid_new				(void);
+void		 gcm_edid_reset				(GcmEdid		*edid);
 gboolean	 gcm_edid_parse				(GcmEdid		*edid,
 							 const guint8		*data,
 							 GError			**error);

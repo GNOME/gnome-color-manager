@@ -92,6 +92,35 @@ G_DEFINE_TYPE (GcmEdid, gcm_edid, G_TYPE_OBJECT)
 
 
 /**
+ * gcm_edid_reset:
+ **/
+void
+gcm_edid_reset (GcmEdid *edid)
+{
+	GcmEdidPrivate *priv = edid->priv;
+
+	g_return_if_fail (GCM_IS_EDID (edid));
+
+	/* free old data */
+	g_free (priv->monitor_name);
+	g_free (priv->vendor_name);
+	g_free (priv->serial_number);
+	g_free (priv->ascii_string);
+
+	/* do not deallocate, just blank */
+	priv->pnp_id[0] = '\0';
+
+	/* set to default values */
+	priv->monitor_name = NULL;
+	priv->vendor_name = NULL;
+	priv->serial_number = NULL;
+	priv->ascii_string = NULL;
+	priv->width = 0;
+	priv->height = 0;
+	priv->gamma = 0.0f;
+}
+
+/**
  * gcm_edid_parse:
  **/
 gboolean
@@ -115,14 +144,7 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 	}
 
 	/* free old data */
-	g_free (priv->monitor_name);
-	g_free (priv->vendor_name);
-	g_free (priv->serial_number);
-	g_free (priv->ascii_string);
-	priv->monitor_name = NULL;
-	priv->vendor_name = NULL;
-	priv->serial_number = NULL;
-	priv->ascii_string = NULL;
+	gcm_edid_reset (edid);
 
 	/* decode the PNP ID from three 5 bit words packed into 2 bytes
 	 * /--08--\/--09--\
