@@ -1141,14 +1141,26 @@ gcm_cie_widget_new (void)
 #ifdef EGG_TEST
 #include "egg-test.h"
 
+#include "gcm-profile.h"
+#include "gcm-xyz.h"
+
 void
 gcm_cie_widget_test (EggTest *test)
 {
 	GtkWidget *widget;
+	GtkWidget *image;
 	GtkWidget *dialog;
 	GtkWidget *vbox;
 	gboolean ret;
 	GError *error = NULL;
+	GcmProfile *profile;
+	GcmXyz *white;
+	GcmXyz *red;
+	GcmXyz *green;
+	GcmXyz *blue;
+	gint response;
+	gchar *filename_profile;
+	gchar *filename_image;
 
 	if (!egg_test_start (test, "GcmCieWidget"))
 		return;
@@ -1158,16 +1170,62 @@ gcm_cie_widget_test (EggTest *test)
 	widget = gcm_cie_widget_new ();
 	egg_test_assert (test, widget != NULL);
 
+	/************************************************************/
+	egg_test_title (test, "get filename of image file");
+	filename_image = egg_test_get_data_file ("cie-widget.png");
+	egg_test_assert (test, (filename_image != NULL));
+
+	/************************************************************/
+	egg_test_title (test, "get filename of data file");
+	filename_profile = egg_test_get_data_file ("bluish.icc");
+	egg_test_assert (test, (filename_profile != NULL));
+
+	profile = gcm_profile_new ();
+	gcm_profile_parse (profile, filename_profile, NULL);
+	g_object_get (profile,
+		      "white-point", &white,
+		      "luminance-red", &red,
+		      "luminance-green", &green,
+		      "luminance-blue", &blue,
+		      NULL);
+
+	g_object_set (widget,
+		      "red-x", gcm_xyz_get_x (red),
+		      "red-y", gcm_xyz_get_y (red),
+		      "green-x", gcm_xyz_get_x (green),
+		      "green-y", gcm_xyz_get_y (green),
+		      "blue-x", gcm_xyz_get_x (blue),
+		      "blue-y", gcm_xyz_get_y (blue),
+		      "white-x", gcm_xyz_get_x (white),
+		      "white-y", gcm_xyz_get_y (white),
+		      NULL);
+
 	/* show in a dialog as an example */
-	dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, "CIE widget");
+	dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "Does CIE widget match\nthe picture below?");
+	image = gtk_image_new_from_file (filename_image);
 	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 	gtk_box_pack_end (GTK_BOX(vbox), widget, TRUE, TRUE, 12);
-	gtk_widget_set_size_request (widget, 200, 200);
+	gtk_box_pack_end (GTK_BOX(vbox), image, TRUE, TRUE, 12);
+	gtk_widget_set_size_request (widget, 300, 300);
 	gtk_window_set_resizable (GTK_WINDOW (dialog), TRUE);
 	gtk_widget_show (widget);
+	gtk_widget_show (image);
 
-	gtk_dialog_run (GTK_DIALOG (dialog));
+	response = gtk_dialog_run (GTK_DIALOG (dialog));
+
+	/************************************************************/
+	egg_test_title (test, "plotted as expected?");
+	egg_test_assert (test, (response == GTK_RESPONSE_YES));
+
 	gtk_widget_destroy (dialog);
+
+	g_object_unref (profile);
+	g_object_unref (white);
+	g_object_unref (red);
+	g_object_unref (green);
+	g_object_unref (blue);
+	g_free (filename_profile);
+	g_free (filename_image);
 
 	egg_test_end (test);
 }

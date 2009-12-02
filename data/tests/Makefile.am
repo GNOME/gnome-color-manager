@@ -1,4 +1,5 @@
 TEST_FILES =						\
+	cie-widget.png					\
 	Lenovo-T61-Internal.bin				\
 	LG-L225W-External.bin
 
