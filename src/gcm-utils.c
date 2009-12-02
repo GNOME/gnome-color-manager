@@ -588,10 +588,10 @@ gcm_utils_get_default_config_location (void)
 	gchar *filename;
 
 #ifdef EGG_TEST
-	filename = g_strdup ("/tmp/config.dat");
+	filename = g_strdup ("/tmp/device-profiles.conf");
 #else
 	/* create default path */
-	filename = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "config.dat", NULL);
+	filename = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "device-profiles.conf", NULL);
 #endif
 
 	return filename;
@@ -662,7 +662,7 @@ gcm_utils_test (EggTest *test)
 	/************************************************************/
 	egg_test_title (test, "get default config location (when in make check)");
 	filename = gcm_utils_get_default_config_location ();
-	if (g_strcmp0 (filename, "/tmp/config.dat") == 0)
+	if (g_strcmp0 (filename, "/tmp/device-profiles.conf") == 0)
 		egg_test_success (test, NULL);
 	else
 		egg_test_failed (test, "failed to get correct config location: %s", filename);
