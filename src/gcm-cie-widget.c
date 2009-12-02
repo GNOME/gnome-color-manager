@@ -978,6 +978,97 @@ gcm_cie_widget_gamma_correct_rgb (GcmCieWidget *cie,
 }
 
 /**
+ * gcm_cie_widget_offset_to_display:
+ **/
+static void
+gcm_cie_widget_offset_to_display (GcmCieWidget *cie, gfloat x, gfloat y, gfloat *x_retval, gfloat *y_retval)
+{
+	GcmCieWidgetPrivate *priv = cie->priv;
+	*x_retval = priv->chart_width * x + priv->x_offset;
+	*y_retval = priv->chart_height * (1.0f-y) - priv->y_offset;
+}
+
+/**
+ * gcm_cie_widget_draw_gamut_outline:
+ **/
+static void
+gcm_cie_widget_draw_gamut_outline (GcmCieWidget *cie, cairo_t *cr)
+{
+	gfloat wx;
+	gfloat wy;
+	GcmCieWidgetPrivate *priv = cie->priv;
+
+	cairo_save (cr);
+
+	cairo_set_line_width (cr, 0.9f);
+	cairo_set_source_rgb (cr, 0.0f, 0.0f, 0.0f);
+
+	gcm_cie_widget_offset_to_display (cie, priv->red_x, priv->red_y, &wx, &wy);
+	cairo_move_to (cr, wx, wy);
+
+	gcm_cie_widget_offset_to_display (cie, priv->green_x, priv->green_y, &wx, &wy);
+	cairo_line_to (cr, wx, wy);
+
+	gcm_cie_widget_offset_to_display (cie, priv->blue_x, priv->blue_y, &wx, &wy);
+	cairo_line_to (cr, wx, wy);
+
+	cairo_close_path (cr);
+	cairo_stroke (cr);
+
+	cairo_restore (cr);
+}
+
+/**
+ * gcm_cie_widget_draw_white_point_cross:
+ **/
+static void
+gcm_cie_widget_draw_white_point_cross (GcmCieWidget *cie, cairo_t *cr)
+{
+	gfloat wx;
+	gfloat wy;
+	gfloat size;
+	gfloat gap;
+	GcmCieWidgetPrivate *priv = cie->priv;
+
+	cairo_save (cr);
+
+	/* scale the cross according the the widget size */
+	size = priv->chart_width / 35.0f;
+	gap = size / 2.0f;
+
+	cairo_set_line_width (cr, 1.0f);
+	cairo_set_source_rgb (cr, 0.0f, 0.0f, 0.0f);
+
+	gcm_cie_widget_offset_to_display (cie, priv->white_x, priv->white_y, &wx, &wy);
+
+	/* don't antialias the cross */
+	wx = (gint) wx + 0.5f;
+	wy = (gint) wy + 0.5f;
+
+	/* left */
+	cairo_move_to (cr, wx - gap, wy);
+	cairo_line_to (cr, wx - gap - size, wy);
+	cairo_stroke (cr);
+
+	/* right */
+	cairo_move_to (cr, wx + gap, wy);
+	cairo_line_to (cr, wx + gap + size, wy);
+	cairo_stroke (cr);
+
+	/* top */
+	cairo_move_to (cr, wx, wy - gap);
+	cairo_line_to (cr, wx, wy - gap - size);
+	cairo_stroke (cr);
+
+	/* bottom */
+	cairo_move_to (cr, wx, wy + gap);
+	cairo_line_to (cr, wx, wy + gap + size);
+	cairo_stroke (cr);
+
+	cairo_restore (cr);
+}
+
+/**
  * gcm_cie_widget_draw_line:
  **/
 static void
@@ -1048,8 +1139,10 @@ gcm_cie_widget_draw_line (GcmCieWidget *cie, cairo_t *cr)
 
 	cairo_restore (cr);
 
-	/* overdraw line with nice antialiasing */
+	/* overdraw lines with nice antialiasing */
 	gcm_cie_widget_draw_tongue_outline (cie, cr);
+	gcm_cie_widget_draw_gamut_outline (cie, cr);
+	gcm_cie_widget_draw_white_point_cross (cie, cr);
 }
 
 /**
