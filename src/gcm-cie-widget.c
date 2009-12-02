@@ -1004,17 +1004,23 @@ gcm_cie_widget_draw_gamut_outline (GcmCieWidget *cie, cairo_t *cr)
 	cairo_set_source_rgb (cr, 0.0f, 0.0f, 0.0f);
 
 	gcm_cie_widget_offset_to_display (cie, priv->red_x, priv->red_y, &wx, &wy);
+	if (wx < 0 || wy < 0)
+		goto out;
 	cairo_move_to (cr, wx, wy);
 
 	gcm_cie_widget_offset_to_display (cie, priv->green_x, priv->green_y, &wx, &wy);
+	if (wx < 0 || wy < 0)
+		goto out;
 	cairo_line_to (cr, wx, wy);
 
 	gcm_cie_widget_offset_to_display (cie, priv->blue_x, priv->blue_y, &wx, &wy);
+	if (wx < 0 || wy < 0)
+		goto out;
 	cairo_line_to (cr, wx, wy);
 
 	cairo_close_path (cr);
 	cairo_stroke (cr);
-
+out:
 	cairo_restore (cr);
 }
 
