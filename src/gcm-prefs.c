@@ -43,6 +43,7 @@
 
 static GtkBuilder *builder = NULL;
 static GtkListStore *list_store_devices = NULL;
+static GtkListStore *list_store_profiles = NULL;
 static GcmDevice *current_device = NULL;
 static GnomeRRScreen *rr_screen = NULL;
 static GPtrArray *profiles_array = NULL;
@@ -60,6 +61,14 @@ enum {
 	GPM_DEVICES_COLUMN_ICON,
 	GPM_DEVICES_COLUMN_TITLE,
 	GPM_DEVICES_COLUMN_LAST
+};
+
+enum {
+	GPM_PROFILES_COLUMN_ID,
+	GPM_PROFILES_COLUMN_ICON,
+	GPM_PROFILES_COLUMN_TITLE,
+	GPM_PROFILES_COLUMN_PROFILE,
+	GPM_PROFILES_COLUMN_LAST
 };
 
 static void gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer userdata);
@@ -483,6 +492,62 @@ out:
 }
 
 /**
+ * gcm_prefs_profile_type_to_icon_name:
+ **/
+static const gchar *
+gcm_prefs_profile_type_to_icon_name (GcmProfileType type)
+{
+	if (type == GCM_PROFILE_TYPE_DISPLAY_DEVICE)
+		return "video-display";
+	if (type == GCM_PROFILE_TYPE_INPUT_DEVICE)
+		return "scanner";
+	if (type == GCM_PROFILE_TYPE_OUTPUT_DEVICE)
+		return "printer";
+	return "image-missing";
+}
+
+/**
+ * gcm_prefs_update_profile_list:
+ **/
+static void
+gcm_prefs_update_profile_list (void)
+{
+	GtkTreeIter iter;
+	gchar *description;
+	const gchar *icon_name;
+	GcmProfileType profile_type = GCM_PROFILE_TYPE_UNKNOWN;
+	GcmProfile *profile;
+	guint i;
+	gchar *filename = NULL;
+
+	egg_debug ("updating profile list");
+
+	/* clear existing list */
+	gtk_list_store_clear (list_store_profiles);
+
+	/* update each list */
+	for (i=0; i<profiles_array->len; i++) {
+		profile = g_ptr_array_index (profiles_array, i);
+		g_object_get (profile,
+			      "description", &description,
+			      "type", &profile_type,
+			      NULL);
+
+		egg_debug ("add %s to profiles list", filename);
+		icon_name = gcm_prefs_profile_type_to_icon_name (profile_type);
+		gtk_list_store_append (list_store_profiles, &iter);
+		gtk_list_store_set (list_store_profiles, &iter,
+				    GPM_PROFILES_COLUMN_ID, filename,
+				    GPM_PROFILES_COLUMN_TITLE, description,
+				    GPM_PROFILES_COLUMN_ICON, icon_name,
+				    GPM_PROFILES_COLUMN_PROFILE, profile,
+				    -1);
+
+		g_free (description);
+	}
+}
+
+/**
  * gcm_prefs_profile_delete_cb:
  **/
 static void
@@ -493,10 +558,10 @@ gcm_prefs_profile_delete_cb (GtkWidget *widget, gpointer data)
 	GtkWindow *window;
 	gint retval;
 	gchar *filename = NULL;
-	gchar *filename_tmp;
 	GcmProfile *profile;
 	GtkTreeSelection *selection;
-	guint i;
+	GtkTreeModel *model;
+	GtkTreeIter iter;
 
 	/* ask the user to confirm */
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
@@ -514,9 +579,22 @@ gcm_prefs_profile_delete_cb (GtkWidget *widget, gpointer data)
 	if (response != GTK_RESPONSE_YES)
 		goto out;
 
+	/* get the selected row */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_profiles"));
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+		egg_debug ("no row selected");
+		goto out;
+	}
+
+	/* get profile */
+	gtk_tree_model_get (model, &iter,
+			    GPM_PROFILES_COLUMN_PROFILE, &profile,
+			    -1);
+
 	/* get device data */
-	g_object_get (current_device,
-		      "profile-filename", &filename,
+	g_object_get (profile,
+		      "filename", &filename,
 		      NULL);
 
 	/* try to remove file */
@@ -525,17 +603,10 @@ gcm_prefs_profile_delete_cb (GtkWidget *widget, gpointer data)
 		goto out;
 
 	/* find an existing profile of this name */
-	for (i=0; i<profiles_array->len; i++) {
-		profile = g_ptr_array_index (profiles_array, i);
-		g_object_get (profile,
-			      "filename", &filename_tmp,
-			      NULL);
-		if (g_strcmp0 (filename, filename_tmp) == 0) {
-			egg_debug ("found existing profile: %s", filename);
-			g_ptr_array_remove (profiles_array, profile);
-		}
-		g_free (filename_tmp);
-	}
+	g_ptr_array_remove (profiles_array, profile);
+
+	/* update list of profiles */
+	gcm_prefs_update_profile_list ();
 
 	/* re-get all the profiles for this device */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
@@ -636,6 +707,9 @@ gcm_prefs_profile_import_cb (GtkWidget *widget, gpointer data)
 
 	/* add to arrays */
 	g_ptr_array_add (profiles_array, g_object_ref (profile));
+
+	/* update list of profiles */
+	gcm_prefs_update_profile_list ();
 
 	/* re-get all the profiles for this device */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
@@ -757,6 +831,10 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 
 		/* add to arrays */
 		g_ptr_array_add (profiles_array, g_object_ref (profile));
+
+		/* update list of profiles */
+		gcm_prefs_update_profile_list ();
+
 		g_object_unref (profile);
 	}
 
@@ -863,6 +941,32 @@ gcm_prefs_add_devices_columns (GtkTreeView *treeview)
 							   "markup", GPM_DEVICES_COLUMN_TITLE, NULL);
 	gtk_tree_view_column_set_sort_column_id (column, GPM_DEVICES_COLUMN_TITLE);
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store_devices), GPM_DEVICES_COLUMN_ID, GTK_SORT_ASCENDING);
+	gtk_tree_view_append_column (treeview, column);
+	gtk_tree_view_column_set_expand (column, TRUE);
+}
+
+/**
+ * gcm_prefs_add_profiles_columns:
+ **/
+static void
+gcm_prefs_add_profiles_columns (GtkTreeView *treeview)
+{
+	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
+
+	/* image */
+	renderer = gtk_cell_renderer_pixbuf_new ();
+	g_object_set (renderer, "stock-size", GTK_ICON_SIZE_DND, NULL);
+	column = gtk_tree_view_column_new_with_attributes ("", renderer,
+							   "icon-name", GPM_PROFILES_COLUMN_ICON, NULL);
+	gtk_tree_view_append_column (treeview, column);
+
+	/* column for text */
+	renderer = gtk_cell_renderer_text_new ();
+	column = gtk_tree_view_column_new_with_attributes ("", renderer,
+							   "markup", GPM_PROFILES_COLUMN_TITLE, NULL);
+	gtk_tree_view_column_set_sort_column_id (column, GPM_PROFILES_COLUMN_TITLE);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store_profiles), GPM_PROFILES_COLUMN_ID, GTK_SORT_ASCENDING);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
@@ -1076,7 +1180,6 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
 		gtk_widget_set_sensitive (widget, FALSE);
 	} else {
-
 		/* show more UI */
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
 		gtk_widget_set_sensitive (widget, TRUE);
@@ -1123,6 +1226,8 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	} else {
 		gtk_widget_hide (widget);
 	}
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_device_details"));
+	gtk_widget_show (widget);
 
 	/* set adjustments */
 	setting_up_device = TRUE;
@@ -1183,6 +1288,173 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	g_free (device_manufacturer);
 	g_free (id);
 	g_free (profile_filename);
+}
+
+
+/**
+ * gcm_prefs_profile_type_to_text:
+ **/
+static gchar *
+gcm_prefs_profile_type_to_text (GcmProfileType type)
+{
+	if (type == GCM_PROFILE_TYPE_INPUT_DEVICE) {
+		/* TRANSLATORS: this the ICC profile type */
+		return _("Input device");
+	}
+	if (type == GCM_PROFILE_TYPE_DISPLAY_DEVICE) {
+		/* TRANSLATORS: this the ICC profile type */
+		return _("Display device");
+	}
+	if (type == GCM_PROFILE_TYPE_OUTPUT_DEVICE) {
+		/* TRANSLATORS: this the ICC profile type */
+		return _("Output device");
+	}
+	if (type == GCM_PROFILE_TYPE_DEVICELINK) {
+		/* TRANSLATORS: this the ICC profile type */
+		return _("Devicelink");
+	}
+	if (type == GCM_PROFILE_TYPE_COLORSPACE_CONVERSION) {
+		/* TRANSLATORS: this the ICC profile type */
+		return _("Colorspace conversion");
+	}
+	if (type == GCM_PROFILE_TYPE_ABSTRACT) {
+		/* TRANSLATORS: this the ICC profile type */
+		return _("Abstract");
+	}
+	if (type == GCM_PROFILE_TYPE_NAMED_COLOUR) {
+		/* TRANSLATORS: this the ICC profile type */
+		return _("Named color");
+	}
+	/* TRANSLATORS: this the ICC profile type */
+	return _("Unknown");
+}
+
+/**
+ * gcm_prefs_profiles_treeview_clicked_cb:
+ **/
+static void
+gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer userdata)
+{
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	GtkWidget *widget;
+	GcmProfile *profile;
+	GcmXyz *white;
+	GcmXyz *red;
+	GcmXyz *green;
+	GcmXyz *blue;
+	gchar *copyright = NULL;
+	gchar *vendor = NULL;
+	gchar *filename = NULL;
+	gchar *size_text = NULL;
+	GcmProfileType profile_type = GCM_PROFILE_TYPE_UNKNOWN;
+	const gchar *profile_type_text;
+	gboolean ret;
+	guint size;
+
+	/* This will only work in single or browse selection mode! */
+	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+		egg_debug ("no row selected");
+		return;
+	}
+
+	/* get profile */
+	gtk_tree_model_get (model, &iter,
+			    GPM_PROFILES_COLUMN_PROFILE, &profile,
+			    -1);
+
+	/* get the new details from the profile */
+	g_object_get (profile,
+		      "filename", &filename,
+		      "size", &size,
+		      "copyright", &copyright,
+		      "vendor", &vendor,
+		      "type", &profile_type,
+		      "white-point", &white,
+		      "luminance-red", &red,
+		      "luminance-green", &green,
+		      "luminance-blue", &blue,
+		      NULL);
+
+	g_object_set (cie_widget,
+		      "red-x", gcm_xyz_get_x (red),
+		      "red-y", gcm_xyz_get_y (red),
+		      "green-x", gcm_xyz_get_x (green),
+		      "green-y", gcm_xyz_get_y (green),
+		      "blue-x", gcm_xyz_get_x (blue),
+		      "blue-y", gcm_xyz_get_y (blue),
+		      "white-x", gcm_xyz_get_x (white),
+		      "white-y", gcm_xyz_get_y (white),
+		      NULL);
+
+	/* ensure showing */
+	gtk_widget_show (cie_widget);
+
+	/* set type */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_type"));
+	if (profile_type == GCM_PROFILE_TYPE_UNKNOWN) {
+		gtk_widget_hide (widget);
+	} else {
+		gtk_widget_show (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_type"));
+		profile_type_text = gcm_prefs_profile_type_to_text (profile_type);
+		gtk_label_set_label (GTK_LABEL (widget), profile_type_text);
+	}
+
+	/* set type */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_size"));
+	if (size == 0) {
+		gtk_widget_hide (widget);
+	} else {
+		gtk_widget_show (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_size"));
+		size_text = g_format_size_for_display (size);
+		gtk_label_set_label (GTK_LABEL (widget), size_text);
+	}
+
+	/* set new descriptions */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_copyright"));
+	if (copyright == NULL) {
+		gtk_widget_hide (widget);
+	} else {
+		gtk_widget_show (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_copyright"));
+		gtk_label_set_label (GTK_LABEL(widget), copyright);
+	}
+
+	/* set new descriptions */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_vendor"));
+	if (vendor == NULL) {
+		gtk_widget_hide (widget);
+	} else {
+		gtk_widget_show (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_vendor"));
+		gtk_label_set_label (GTK_LABEL(widget), vendor);
+	}
+
+	/* set new descriptions */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profiles_details"));
+	if (copyright == NULL && vendor == NULL && profile_type == GCM_PROFILE_TYPE_UNKNOWN) {
+		gtk_widget_hide (widget);
+	} else {
+		gtk_widget_show (widget);
+	}
+
+	/* set delete sensitivity */
+	ret = (filename != NULL && g_str_has_prefix (filename, "/home/"));
+	egg_debug ("filename: %s", filename);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_delete"));
+	gtk_widget_set_sensitive (widget, ret);
+
+	g_object_unref (white);
+	g_object_unref (red);
+	g_object_unref (green);
+	g_object_unref (blue);
+	g_free (size_text);
+	g_free (filename);
+	g_free (copyright);
+	g_free (vendor);
+
 }
 
 /**
@@ -1296,52 +1568,12 @@ gcm_prefs_add_profiles (GtkWidget *widget)
 }
 
 /**
- * gcm_prefs_profile_type_to_text:
- **/
-static gchar *
-gcm_prefs_profile_type_to_text (GcmProfileType type)
-{
-	if (type == GCM_PROFILE_TYPE_INPUT_DEVICE) {
-		/* TRANSLATORS: this the ICC profile type */
-		return _("Input device");
-	}
-	if (type == GCM_PROFILE_TYPE_DISPLAY_DEVICE) {
-		/* TRANSLATORS: this the ICC profile type */
-		return _("Display device");
-	}
-	if (type == GCM_PROFILE_TYPE_OUTPUT_DEVICE) {
-		/* TRANSLATORS: this the ICC profile type */
-		return _("Output device");
-	}
-	if (type == GCM_PROFILE_TYPE_DEVICELINK) {
-		/* TRANSLATORS: this the ICC profile type */
-		return _("Devicelink");
-	}
-	if (type == GCM_PROFILE_TYPE_COLORSPACE_CONVERSION) {
-		/* TRANSLATORS: this the ICC profile type */
-		return _("Colorspace conversion");
-	}
-	if (type == GCM_PROFILE_TYPE_ABSTRACT) {
-		/* TRANSLATORS: this the ICC profile type */
-		return _("Abstract");
-	}
-	if (type == GCM_PROFILE_TYPE_NAMED_COLOUR) {
-		/* TRANSLATORS: this the ICC profile type */
-		return _("Named color");
-	}
-	/* TRANSLATORS: this the ICC profile type */
-	return _("Unknown");
-}
-
-/**
  * gcm_prefs_profile_combo_changed_cb:
  **/
 static void
 gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 {
 	gint active;
-	gchar *copyright = NULL;
-	gchar *vendor = NULL;
 	gchar *profile_old = NULL;
 	gchar *filename = NULL;
 	gboolean ret;
@@ -1349,8 +1581,6 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	GcmProfile *profile = NULL;
 	gboolean changed;
 	GcmDeviceType type;
-	GcmProfileType profile_type = GCM_PROFILE_TYPE_UNKNOWN;
-	const gchar *profile_type_text;
 
 	/* no devices */
 	if (current_device == NULL)
@@ -1383,106 +1613,6 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 		g_object_set (current_device,
 			      "profile-filename", filename,
 			      NULL);
-	}
-
-	/* get new data */
-	if (filename != NULL) {
-		profile = gcm_profile_new ();
-		ret = gcm_profile_parse (profile, filename, &error);
-		if (!ret) {
-			egg_warning ("failed to load profile: %s", error->message);
-			g_error_free (error);
-			goto out;
-		}
-		/* get the new details from the profile */
-		g_object_get (profile,
-			      "copyright", &copyright,
-			      "vendor", &vendor,
-			      "type", &profile_type,
-			      NULL);
-
-{
-	GcmXyz *white;
-	GcmXyz *red;
-	GcmXyz *green;
-	GcmXyz *blue;
-
-	g_object_get (profile,
-		      "white-point", &white,
-		      "luminance-red", &red,
-		      "luminance-green", &green,
-		      "luminance-blue", &blue,
-		      NULL);
-
-	g_object_set (cie_widget,
-		      "red-x", gcm_xyz_get_x (red),
-		      "red-y", gcm_xyz_get_y (red),
-		      "green-x", gcm_xyz_get_x (green),
-		      "green-y", gcm_xyz_get_y (green),
-		      "blue-x", gcm_xyz_get_x (blue),
-		      "blue-y", gcm_xyz_get_y (blue),
-		      "white-x", gcm_xyz_get_x (white),
-		      "white-y", gcm_xyz_get_y (white),
-		      NULL);
-
-	g_object_unref (white);
-	g_object_unref (red);
-	g_object_unref (green);
-	g_object_unref (blue);
-
-}
-
-		gtk_widget_show (cie_widget);
-	} else {
-		gtk_widget_hide (cie_widget);
-	}
-
-	/* set type */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_type"));
-	if (profile_type == GCM_PROFILE_TYPE_UNKNOWN) {
-		gtk_widget_hide (widget);
-	} else {
-		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_type"));
-		profile_type_text = gcm_prefs_profile_type_to_text (profile_type);
-		gtk_label_set_label (GTK_LABEL (widget), profile_type_text);
-	}
-
-	/* set new descriptions */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_copyright"));
-	if (copyright == NULL) {
-		gtk_widget_hide (widget);
-	} else {
-		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_copyright"));
-		gtk_label_set_label (GTK_LABEL(widget), copyright);
-	}
-
-	/* set new descriptions */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_vendor"));
-	if (vendor == NULL) {
-		gtk_widget_hide (widget);
-	} else {
-		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_vendor"));
-		gtk_label_set_label (GTK_LABEL(widget), vendor);
-	}
-
-	/* set new descriptions */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_details"));
-	if (copyright == NULL && vendor == NULL && profile_type == GCM_PROFILE_TYPE_UNKNOWN) {
-		gtk_widget_hide (widget);
-	} else {
-		gtk_widget_show (widget);
-	}
-
-	/* set delete sensitivity */
-	ret = (filename != NULL && g_str_has_prefix (filename, "/home/"));
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_delete"));
-	gtk_widget_set_sensitive (widget, ret);
-
-	/* only save and set if changed */
-	if (changed) {
 
 		/* save new profile */
 		ret = gcm_device_save (current_device, &error);
@@ -1503,12 +1633,8 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 		}
 	}
 out:
-	if (profile != NULL)
-		g_object_unref (profile);
 	g_free (filename);
 	g_free (profile_old);
-	g_free (copyright);
-	g_free (vendor);
 }
 
 /**
@@ -1771,12 +1897,17 @@ static gboolean
 gcm_prefs_startup_idle_cb (gpointer user_data)
 {
 	GtkWidget *widget;
+	GtkTreeSelection *selection;
+	GtkTreePath *path;
 	gboolean ret;
 	GError *error = NULL;
 
 	/* add profiles we can find */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
 	gcm_prefs_add_profiles (widget);
+
+	/* update list of profiles */
+	gcm_prefs_update_profile_list ();
 
 	/* coldplug plugged in devices */
 	ret = gcm_client_add_connected (gcm_client, &error);
@@ -1793,6 +1924,13 @@ gcm_prefs_startup_idle_cb (gpointer user_data)
 		g_error_free (error);
 		goto out;
 	}
+
+	/* select a profile to display */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_profiles"));
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	path = gtk_tree_path_new_from_string ("0");
+	gtk_tree_selection_select_path (selection, path);
+	gtk_tree_path_free (path);
 
 	/* set calibrate button sensitivity */
 	gcm_prefs_set_calibrate_button_sensitivity ();
@@ -1976,9 +2114,11 @@ main (int argc, char **argv)
 
 	/* create list stores */
 	list_store_devices = gtk_list_store_new (GPM_DEVICES_COLUMN_LAST, G_TYPE_STRING,
-						 G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+						 G_TYPE_STRING, G_TYPE_STRING);
+	list_store_profiles = gtk_list_store_new (GPM_PROFILES_COLUMN_LAST, G_TYPE_STRING,
+						  G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 
-	/* create transaction_id tree view */
+	/* create device tree view */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
 	gtk_tree_view_set_model (GTK_TREE_VIEW (widget),
 				 GTK_TREE_MODEL (list_store_devices));
@@ -1989,6 +2129,20 @@ main (int argc, char **argv)
 	/* add columns to the tree view */
 	gcm_prefs_add_devices_columns (GTK_TREE_VIEW (widget));
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
+
+	/* create profile tree view */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_profiles"));
+	gtk_tree_view_set_model (GTK_TREE_VIEW (widget),
+				 GTK_TREE_MODEL (list_store_profiles));
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	g_signal_connect (selection, "changed",
+			  G_CALLBACK (gcm_prefs_profiles_treeview_clicked_cb), NULL);
+
+	/* add columns to the tree view */
+	gcm_prefs_add_profiles_columns (GTK_TREE_VIEW (widget));
+	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
+
+	/* track in seporate arrays */
 	profiles_array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	profiles_array_in_combo = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 
@@ -2026,7 +2180,7 @@ main (int argc, char **argv)
 	gtk_widget_set_sensitive (widget, FALSE);
 
 	/* hide widgets by default */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_details"));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_device_details"));
 	gtk_widget_hide (widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_profile"));
 	gtk_widget_set_sensitive (widget, FALSE);
@@ -2080,7 +2234,7 @@ main (int argc, char **argv)
 	gtk_range_set_range (GTK_RANGE (widget), 0.1f, 1.0f);
 //	gtk_scale_add_mark (GTK_SCALE (widget), 1.0f, GTK_POS_TOP, "");
 
-	/* set alignment */
+	/* set alignment for left */
 	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox5"));
 	gtk_size_group_add_widget (size_group, widget);
@@ -2094,8 +2248,10 @@ main (int argc, char **argv)
 	gtk_size_group_add_widget (size_group, widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox23"));
 	gtk_size_group_add_widget (size_group, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox30"));
+	gtk_size_group_add_widget (size_group, widget);
 
-	/* set alignment */
+	/* set alignment for right */
 	size_group2 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox24"));
 	gtk_size_group_add_widget (size_group2, widget);
@@ -2108,6 +2264,8 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox12"));
 	gtk_size_group_add_widget (size_group2, widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox18"));
+	gtk_size_group_add_widget (size_group2, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox31"));
 	gtk_size_group_add_widget (size_group2, widget);
 
 	/* get screen */
@@ -2130,9 +2288,10 @@ main (int argc, char **argv)
 
 	/* use cie widget */
 	cie_widget = gcm_cie_widget_new ();
-	gtk_widget_set_size_request (cie_widget, 100, 100);
+	gtk_widget_set_size_request (cie_widget, 200, 200);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_cie_widget"));
 	gtk_box_pack_start (GTK_BOX(widget), cie_widget, TRUE, TRUE, 0);
+	gtk_box_reorder_child (GTK_BOX(widget), cie_widget, 0);
 
 	/* use infobar */
 	info_bar = gtk_info_bar_new ();
