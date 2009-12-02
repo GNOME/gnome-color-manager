@@ -30,6 +30,8 @@
 
 #include "gcm-profile.h"
 #include "gcm-utils.h"
+#include "gcm-xyz.h"
+#include "gcm-cie-widget.h"
 
 /**
  * main:
@@ -49,6 +51,12 @@ main (int argc, char **argv)
 	GString *string = NULL;
 	GtkWidget *dialog;
 	GtkResponseType response;
+	GtkWidget *vbox;
+	GtkWidget *cie_widget = NULL;
+	GcmXyz *white = NULL;
+	GcmXyz *red = NULL;
+	GcmXyz *green = NULL;
+	GcmXyz *blue = NULL;
 
 	const GOptionEntry options[] = {
 		{ G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &files,
@@ -101,7 +109,15 @@ main (int argc, char **argv)
 	g_object_get (profile,
 		      "description", &description,
 		      "copyright", &copyright,
+		      "white-point", &white,
+		      "luminance-red", &red,
+		      "luminance-green", &green,
+		      "luminance-blue", &blue,
 		      NULL);
+
+	/* use CIE widget */
+	cie_widget = gcm_cie_widget_new ();
+	gtk_widget_set_size_request (cie_widget, 200, 200);
 
 	/* check file does't already exist */
 	destination = gcm_utils_get_profile_destination (files[0]);
@@ -111,6 +127,13 @@ main (int argc, char **argv)
 		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, _("ICC profile already installed"));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s\n%s", description, copyright);
+
+		/* add cie widget */
+		vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+		gtk_box_pack_end (GTK_BOX(vbox), cie_widget, TRUE, TRUE, 12);
+		gtk_widget_show (cie_widget);
+
+		gtk_window_set_resizable (GTK_WINDOW (dialog), TRUE);
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 		goto out;
@@ -136,6 +159,13 @@ main (int argc, char **argv)
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
 	/* TRANSLATORS: button text */
 	gtk_dialog_add_button (GTK_DIALOG (dialog), _("Install"), GTK_RESPONSE_OK);
+
+	/* add cie widget */
+	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+	gtk_box_pack_end (GTK_BOX(vbox), cie_widget, TRUE, TRUE, 12);
+	gtk_widget_show (cie_widget);
+
+	gtk_window_set_resizable (GTK_WINDOW (dialog), TRUE);
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
 
@@ -164,6 +194,14 @@ main (int argc, char **argv)
 		goto out;
 	}
 out:
+	if (white != NULL)
+		g_object_unref (white);
+	if (red != NULL)
+		g_object_unref (red);
+	if (green != NULL)
+		g_object_unref (green);
+	if (blue != NULL)
+		g_object_unref (blue);
 	if (string != NULL)
 		g_string_free (string, TRUE);
 	if (profile != NULL)

@@ -38,6 +38,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-client.h					\
 	gcm-device.c					\
 	gcm-device.h					\
+	gcm-cie-widget.c				\
+	gcm-cie-widget.h				\
 	gcm-profile.c					\
 	gcm-profile.h
 
@@ -122,8 +124,6 @@ gcm_prefs_SOURCES =					\
 	gcm-calibrate.h					\
 	gcm-brightness.c				\
 	gcm-brightness.h				\
-	gcm-cie-widget.c				\
-	gcm-cie-widget.h				\
 	gcm-prefs.c
 
 gcm_prefs_LDADD =					\

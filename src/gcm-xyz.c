@@ -185,7 +185,7 @@ gcm_xyz_class_init (GcmXyzClass *klass)
 	 * GcmXyz:cie-x:
 	 */
 	pspec = g_param_spec_float ("cie-x", NULL, NULL,
-				    0.0f, G_MAXFLOAT, 0.0f,
+				    -G_MAXFLOAT, G_MAXFLOAT, 0.0f,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CIE_X, pspec);
 
@@ -193,7 +193,7 @@ gcm_xyz_class_init (GcmXyzClass *klass)
 	 * GcmXyz:cie-y:
 	 */
 	pspec = g_param_spec_float ("cie-y", NULL, NULL,
-				    0.0f, G_MAXFLOAT, 0.0f,
+				    -G_MAXFLOAT, G_MAXFLOAT, 0.0f,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CIE_Y, pspec);
 
@@ -201,7 +201,7 @@ gcm_xyz_class_init (GcmXyzClass *klass)
 	 * GcmXyz:cie-z:
 	 */
 	pspec = g_param_spec_float ("cie-z", NULL, NULL,
-				    0.0f, G_MAXFLOAT, 0.0f,
+				    -G_MAXFLOAT, G_MAXFLOAT, 0.0f,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CIE_Z, pspec);
 
