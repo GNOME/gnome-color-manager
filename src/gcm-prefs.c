@@ -38,6 +38,8 @@
 #include "gcm-calibrate.h"
 #include "gcm-brightness.h"
 #include "gcm-client.h"
+#include "gcm-xyz.h"
+#include "gcm-cie-widget.h"
 
 static GtkBuilder *builder = NULL;
 static GtkListStore *list_store_devices = NULL;
@@ -49,6 +51,7 @@ static GUdevClient *client = NULL;
 static GcmClient *gcm_client = NULL;
 static gboolean setting_up_device = FALSE;
 static GtkWidget *info_bar = NULL;
+static GtkWidget *cie_widget = NULL;
 static guint loading_refcount = 0;
 static GConfClient *gconf_client = NULL;
 
@@ -1397,6 +1400,41 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 			      "vendor", &vendor,
 			      "type", &profile_type,
 			      NULL);
+
+{
+	GcmXyz *white;
+	GcmXyz *red;
+	GcmXyz *green;
+	GcmXyz *blue;
+
+	g_object_get (profile,
+		      "white-point", &white,
+		      "luminance-red", &red,
+		      "luminance-green", &green,
+		      "luminance-blue", &blue,
+		      NULL);
+
+	g_object_set (cie_widget,
+		      "red-x", gcm_xyz_get_x (red),
+		      "red-y", gcm_xyz_get_y (red),
+		      "green-x", gcm_xyz_get_x (green),
+		      "green-y", gcm_xyz_get_y (green),
+		      "blue-x", gcm_xyz_get_x (blue),
+		      "blue-y", gcm_xyz_get_y (blue),
+		      "white-x", gcm_xyz_get_x (white),
+		      "white-y", gcm_xyz_get_y (white),
+		      NULL);
+
+	g_object_unref (white);
+	g_object_unref (red);
+	g_object_unref (green);
+	g_object_unref (blue);
+
+}
+
+		gtk_widget_show (cie_widget);
+	} else {
+		gtk_widget_hide (cie_widget);
 	}
 
 	/* set type */
@@ -2089,6 +2127,12 @@ main (int argc, char **argv)
 		egg_debug ("Setting xid %i", xid);
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), xid);
 	}
+
+	/* use cie widget */
+	cie_widget = gcm_cie_widget_new ();
+	gtk_widget_set_size_request (cie_widget, 100, 100);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_cie_widget"));
+	gtk_box_pack_start (GTK_BOX(widget), cie_widget, TRUE, TRUE, 0);
 
 	/* use infobar */
 	info_bar = gtk_info_bar_new ();
