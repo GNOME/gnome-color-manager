@@ -527,6 +527,7 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
 	const guint8 *data;
+	gboolean connected;
 	GcmClientPrivate *priv = client->priv;
 
 	/* if nothing connected then ignore */
@@ -534,16 +535,6 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 	if (!ret) {
 		egg_debug ("%s is not connected", gnome_rr_output_get_name (output));
 		goto out;
-	}
-
-	/* get details */
-	id = gcm_client_get_id_for_xrandr_device (client, output);
-
-	/* we might have a previous saved device with this ID, in which case nuke it */
-	device = gcm_client_get_device_by_id (client, id);
-	if (device != NULL) {
-		g_ptr_array_remove (client->priv->array, device);
-		g_object_unref (device);
 	}
 
 	/* parse the EDID to get a crtc-specific name, not an output specific name */
@@ -554,14 +545,47 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 			egg_warning ("failed to parse edid");
 			goto out;
 		}
-
-		/* get data about the display */
-		g_object_get (priv->edid,
-			      "monitor-name", &model,
-			      "vendor-name", &manufacturer,
-			      "serial-number", &serial,
-			      NULL);
+	} else {
+		/* reset, as not available */
+		gcm_edid_reset (priv->edid);
 	}
+
+	/* get details */
+	id = gcm_client_get_id_for_xrandr_device (client, output);
+	egg_debug ("asking to add %s", id);
+
+	/* we might have a previous saved device with this ID, in which case nuke it */
+	device = gcm_client_get_device_by_id (client, id);
+	if (device != NULL) {
+
+		/* old device not connected */
+		g_object_get (device,
+			      "connected", &connected,
+			      NULL);
+
+		/* this is just a dupe */
+		if (connected) {
+			egg_debug ("ignoring dupe");
+			goto out;
+		}
+
+		/* remove from the array */
+		g_ptr_array_remove (client->priv->array, device);
+
+		/* emit a signal */
+		egg_debug ("emit removed: %s (unconnected device that has just been connected)", id);
+		g_signal_emit (client, signals[SIGNAL_REMOVED], 0, device);
+
+		/* unref our copy */
+		g_object_unref (device);
+	}
+
+	/* get data about the display */
+	g_object_get (priv->edid,
+		      "monitor-name", &model,
+		      "vendor-name", &manufacturer,
+		      "serial-number", &serial,
+		      NULL);
 
 	/* refine data if it's missing */
 	output_name = gnome_rr_output_get_name (output);
