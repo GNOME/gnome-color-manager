@@ -80,9 +80,18 @@ gcm_dmi_get_data (const gchar *filename)
 		g_error_free (error);
 	}
 
-	/* get rid of the newline */
-	if (data != NULL)
-		g_strdelimit (data, "\n", '\0');
+	/* process the random chars and trailing spaces */
+	if (data != NULL) {
+		g_strdelimit (data, "\t_", ' ');
+		g_strdelimit (data, "\n\r", '\0');
+		g_strchomp (data);
+	}
+
+	/* don't return an empty string */
+	if (data != NULL && data[0] == '\0') {
+		g_free (data);
+		data = NULL;
+	}
 
 	return data;
 }
