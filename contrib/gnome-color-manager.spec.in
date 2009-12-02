@@ -1,7 +1,7 @@
-%define gtk2_version			2.16.0
-%define dbus_glib_version		0.73
-%define unique_version			1.0.0
-%define alphatag			#ALPHATAG#
+%define gtk2_version                    2.16.0
+%define dbus_glib_version               0.73
+%define unique_version                  1.0.0
+%define alphatag                        #ALPHATAG#
 
 %{!?python_sitelib: %define python_sitelib %(python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
@@ -15,13 +15,12 @@ URL:       http://projects.gnome.org/gnome-color-manager/
 Source0:   http://download.gnome.org/sources/gnome-color-manager/2.29/%{name}-%{version}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 
-Requires:  glib2 >= %{glib2_version}
 Requires:  gtk2 >= %{gtk2_version}
 Requires:  gnome-icon-theme
 Requires:  unique >= %{unique_version}
 Requires:  shared-mime-info
 Requires:  dbus-glib >= %{dbus_glib_version}
-Requires:  dbus-x11 >= %{dbus_version}
+Requires:  dbus-x11
 Requires:  vte
 Requires:  argyllcms
 Requires(post):   scrollkeeper
@@ -30,7 +29,6 @@ Requires(post):   GConf2
 Requires(preun):  GConf2
 Requires(postun): scrollkeeper
 
-BuildRequires: glib2-devel >= %{glib2_version}
 BuildRequires: gtk2-devel >= %{gtk2_version}
 BuildRequires: scrollkeeper
 BuildRequires: gnome-doc-utils >= 0.3.2
