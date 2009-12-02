@@ -210,7 +210,14 @@ gcm_client_gudev_add_type (GcmClient *client, GUdevDevice *udev_device, GcmDevic
 	/* we might have a previous saved device with this ID, in which case nuke it */
 	device = gcm_client_get_device_by_id (client, id);
 	if (device != NULL) {
+		/* remove from the array */
 		g_ptr_array_remove (client->priv->array, device);
+
+		/* emit a signal */
+		egg_debug ("emit removed: %s", id);
+		g_signal_emit (client, signals[SIGNAL_REMOVED], 0, device);
+
+		/* unref our copy */
 		g_object_unref (device);
 	}
 
