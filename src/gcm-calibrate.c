@@ -661,7 +661,7 @@ gcm_calibrate_display_generate_profile (GcmCalibrate *calibrate, GError **error)
 
 	/* setup the command */
 	g_ptr_array_add (array, g_strdup ("-v"));
-	g_ptr_array_add (array, g_strdup_printf ("-A%s", g_get_real_name ()));
+	g_ptr_array_add (array, g_strdup_printf ("-A%s", priv->manufacturer));
 	g_ptr_array_add (array, g_strdup_printf ("-M%s", priv->model));
 	g_ptr_array_add (array, g_strdup_printf ("-D%s", description));
 	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
