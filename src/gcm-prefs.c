@@ -1898,23 +1898,41 @@ gcm_prefs_removed_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer us
 }
 
 /**
- * gcm_prefs_startup_idle_cb:
+ * gcm_prefs_startup_phase2_idle_cb:
  **/
 static gboolean
-gcm_prefs_startup_idle_cb (gpointer user_data)
+gcm_prefs_startup_phase2_idle_cb (gpointer user_data)
 {
 	GtkWidget *widget;
 	GtkTreeSelection *selection;
 	GtkTreePath *path;
+
+	/* update list of profiles */
+	gcm_prefs_update_profile_list ();
+
+	/* select a profile to display */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_profiles"));
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	path = gtk_tree_path_new_from_string ("0");
+	gtk_tree_selection_select_path (selection, path);
+	gtk_tree_path_free (path);
+
+	return FALSE;
+}
+
+/**
+ * gcm_prefs_startup_phase1_idle_cb:
+ **/
+static gboolean
+gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
+{
+	GtkWidget *widget;
 	gboolean ret;
 	GError *error = NULL;
 
 	/* add profiles we can find */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
 	gcm_prefs_add_profiles (widget);
-
-	/* update list of profiles */
-	gcm_prefs_update_profile_list ();
 
 	/* coldplug plugged in devices */
 	ret = gcm_client_add_connected (gcm_client, &error);
@@ -1932,15 +1950,12 @@ gcm_prefs_startup_idle_cb (gpointer user_data)
 		goto out;
 	}
 
-	/* select a profile to display */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_profiles"));
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
-	path = gtk_tree_path_new_from_string ("0");
-	gtk_tree_selection_select_path (selection, path);
-	gtk_tree_path_free (path);
-
 	/* set calibrate button sensitivity */
 	gcm_prefs_set_calibrate_button_sensitivity ();
+
+	/* start phase 2 of the startup */
+	g_idle_add ((GSourceFunc) gcm_prefs_startup_phase2_idle_cb, NULL);
+
 out:
 	return FALSE;
 }
@@ -2366,7 +2381,7 @@ main (int argc, char **argv)
 			  G_CALLBACK (gcm_prefs_radio_cb), NULL);
 
 	/* do all this after the window has been set up */
-	g_idle_add (gcm_prefs_startup_idle_cb, NULL);
+	g_idle_add (gcm_prefs_startup_phase1_idle_cb, NULL);
 
 	/* wait */
 	g_main_loop_run (loop);
