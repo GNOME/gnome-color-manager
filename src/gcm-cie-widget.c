@@ -626,10 +626,10 @@ static void
 gcm_cie_widget_draw_grid (GcmCieWidget *cie, cairo_t *cr)
 {
 	guint i;
-	gfloat b;
+	gdouble b;
 	gdouble dotted[] = {1., 2.};
-	gfloat divwidth  = (gfloat)cie->priv->chart_width / 10.0f;
-	gfloat divheight = (gfloat)cie->priv->chart_height / 10.0f;
+	gdouble divwidth  = (gdouble)cie->priv->chart_width / 10.0f;
+	gdouble divheight = (gdouble)cie->priv->chart_height / 10.0f;
 
 	cairo_save (cr);
 	cairo_set_line_width (cr, 1);
@@ -638,7 +638,7 @@ gcm_cie_widget_draw_grid (GcmCieWidget *cie, cairo_t *cr)
 	/* do vertical lines */
 	cairo_set_source_rgb (cr, 0.1, 0.1, 0.1);
 	for (i=1; i<10; i++) {
-		b = ((gfloat) i * divwidth);
+		b = ((gdouble) i * divwidth);
 		cairo_move_to (cr, (gint)b + 0.5f, 0);
 		cairo_line_to (cr, (gint)b + 0.5f, cie->priv->chart_height);
 		cairo_stroke (cr);
@@ -646,7 +646,7 @@ gcm_cie_widget_draw_grid (GcmCieWidget *cie, cairo_t *cr)
 
 	/* do horizontal lines */
 	for (i=1; i<10; i++) {
-		b = ((gfloat) i * divheight);
+		b = ((gdouble) i * divheight);
 		cairo_move_to (cr, 0, (gint)b + 0.5f);
 		cairo_line_to (cr, cie->priv->chart_width, (int)b + 0.5f);
 		cairo_stroke (cr);
@@ -656,25 +656,27 @@ gcm_cie_widget_draw_grid (GcmCieWidget *cie, cairo_t *cr)
 }
 
 /**
- * gcm_cie_widget_map_from_display:
- **/
-static void
-gcm_cie_widget_map_from_display (GcmCieWidget *cie, gfloat x, gfloat y, gfloat *x_retval, gfloat *y_retval)
-{
-	GcmCieWidgetPrivate *priv = cie->priv;
-	*x_retval = x + priv->x_offset;
-	*y_retval = y - priv->y_offset;
-}
-
-/**
  * gcm_cie_widget_map_to_display:
  **/
 static void
-gcm_cie_widget_map_to_display (GcmCieWidget *cie, gfloat x, gfloat y, gfloat *x_retval, gfloat *y_retval)
+gcm_cie_widget_map_to_display (GcmCieWidget *cie, gdouble x, gdouble y, gdouble *x_retval, gdouble *y_retval)
 {
 	GcmCieWidgetPrivate *priv = cie->priv;
-	*x_retval = x - priv->x_offset;
-	*y_retval = y + priv->y_offset;
+
+	*x_retval = (x * (priv->chart_width - 1)) + priv->x_offset;
+	*y_retval = ((priv->chart_height - 1) - y * (priv->chart_height - 1)) - priv->y_offset;
+}
+
+/**
+ * gcm_cie_widget_map_from_display:
+ **/
+static void
+gcm_cie_widget_map_from_display (GcmCieWidget *cie, gdouble x, gdouble y, gdouble *x_retval, gdouble *y_retval)
+{
+	GcmCieWidgetPrivate *priv = cie->priv;
+
+	*x_retval = ((gdouble) x - priv->x_offset) / (priv->chart_width - 1);
+	*y_retval = 1.0 - ((gdouble) y + priv->y_offset) / (priv->chart_height - 1);
 }
 
 /**
@@ -682,24 +684,21 @@ gcm_cie_widget_map_to_display (GcmCieWidget *cie, gfloat x, gfloat y, gfloat *x_
  **/
 static void
 gcm_cie_widget_compute_monochrome_color_location (GcmCieWidget *cie, gdouble wave_length,
-						  gfloat *x_retval, gfloat *y_retval)
+						  gdouble *x_retval, gdouble *y_retval)
 {
 	guint ix = wave_length - 380;
 	const gdouble px = spectral_chromaticity[ix][0];
 	const gdouble py = spectral_chromaticity[ix][1];
-	GcmCieWidgetPrivate *priv = cie->priv;
 
-	*x_retval = px * (priv->chart_width - 1);
-	*y_retval = (priv->chart_height - 1) - py * (priv->chart_height - 1);
-
-	gcm_cie_widget_map_from_display (cie, *x_retval, *y_retval, x_retval, y_retval);
+	/* convert to screen co-ordinates */
+	gcm_cie_widget_map_to_display (cie, px, py, x_retval, y_retval);
 }
 
 /**
  * gcm_cie_widget_save_point:
  **/
 static void
-gcm_cie_widget_save_point (GcmCieWidget *cie, const guint y, const gfloat value)
+gcm_cie_widget_save_point (GcmCieWidget *cie, const guint y, const gdouble value)
 {
 	GcmCieWidgetBufferItem *item;
 	GcmCieWidgetPrivate *priv = cie->priv;
@@ -722,13 +721,13 @@ gcm_cie_widget_save_point (GcmCieWidget *cie, const guint y, const gfloat value)
  * gcm_cie_widget_add_point:
  **/
 static void
-gcm_cie_widget_add_point (GcmCieWidget *cie, gfloat icx, gfloat icy, gfloat icx_last, gfloat icy_last)
+gcm_cie_widget_add_point (GcmCieWidget *cie, gdouble icx, gdouble icy, gdouble icx_last, gdouble icy_last)
 {
-	gfloat grad;
-	gfloat i;
-	gfloat dy, dx;
-	gfloat c;
-	gfloat x;
+	gdouble grad;
+	gdouble i;
+	gdouble dy, dx;
+	gdouble c;
+	gdouble x;
 
 	/* nothing to plot */
 	if (icx > cie->priv->chart_width)
@@ -756,8 +755,8 @@ gcm_cie_widget_add_point (GcmCieWidget *cie, gfloat icx, gfloat icy, gfloat icx_
 	/* plot on the buffer */
 	dy = icy - icy_last;
 	dx = icx - icx_last;
-	grad = ((gfloat) dy) / ((gfloat) dx);
-	c = icy - (grad * (gfloat) icx);
+	grad = ((gdouble) dy) / ((gdouble) dx);
+	c = icy - (grad * (gdouble) icx);
 	for (i=icy; i<=icy_last; i++) {
 		x = (i - c) / grad;
 		gcm_cie_widget_save_point (cie, i, x);
@@ -775,8 +774,8 @@ static void
 gcm_cie_widget_get_min_max_tongue (GcmCieWidget *cie)
 {
 	guint wavelength;
-	gfloat icx, icy;
-	gfloat icx_last, icy_last;
+	gdouble icx, icy;
+	gdouble icx_last, icy_last;
 	GcmCieWidgetBufferItem *item;
 	guint i;
 	GcmCieWidgetPrivate *priv = cie->priv;
@@ -811,8 +810,8 @@ static void
 gcm_cie_widget_draw_tongue_outline (GcmCieWidget *cie, cairo_t *cr)
 {
 	guint wavelength;
-	gfloat icx, icy;
-	gfloat icx_last, icy_last;
+	gdouble icx, icy;
+	gdouble icx_last, icy_last;
 
 	cairo_save (cr);
 	cairo_set_line_width (cr, 2.0f);
@@ -976,24 +975,13 @@ gcm_cie_widget_gamma_correct_rgb (GcmCieWidget *cie,
 }
 
 /**
- * gcm_cie_widget_offset_to_display:
- **/
-static void
-gcm_cie_widget_offset_to_display (GcmCieWidget *cie, gfloat x, gfloat y, gfloat *x_retval, gfloat *y_retval)
-{
-	GcmCieWidgetPrivate *priv = cie->priv;
-	*x_retval = priv->chart_width * x + priv->x_offset;
-	*y_retval = priv->chart_height * (1.0f-y) - priv->y_offset;
-}
-
-/**
  * gcm_cie_widget_draw_gamut_outline:
  **/
 static void
 gcm_cie_widget_draw_gamut_outline (GcmCieWidget *cie, cairo_t *cr)
 {
-	gfloat wx;
-	gfloat wy;
+	gdouble wx;
+	gdouble wy;
 	GcmCieWidgetPrivate *priv = cie->priv;
 
 	cairo_save (cr);
@@ -1001,17 +989,17 @@ gcm_cie_widget_draw_gamut_outline (GcmCieWidget *cie, cairo_t *cr)
 	cairo_set_line_width (cr, 0.9f);
 	cairo_set_source_rgb (cr, 0.0f, 0.0f, 0.0f);
 
-	gcm_cie_widget_offset_to_display (cie, priv->red_x, priv->red_y, &wx, &wy);
+	gcm_cie_widget_map_to_display (cie, priv->red_x, priv->red_y, &wx, &wy);
 	if (wx < 0 || wy < 0)
 		goto out;
 	cairo_move_to (cr, wx, wy);
 
-	gcm_cie_widget_offset_to_display (cie, priv->green_x, priv->green_y, &wx, &wy);
+	gcm_cie_widget_map_to_display (cie, priv->green_x, priv->green_y, &wx, &wy);
 	if (wx < 0 || wy < 0)
 		goto out;
 	cairo_line_to (cr, wx, wy);
 
-	gcm_cie_widget_offset_to_display (cie, priv->blue_x, priv->blue_y, &wx, &wy);
+	gcm_cie_widget_map_to_display (cie, priv->blue_x, priv->blue_y, &wx, &wy);
 	if (wx < 0 || wy < 0)
 		goto out;
 	cairo_line_to (cr, wx, wy);
@@ -1028,10 +1016,10 @@ out:
 static void
 gcm_cie_widget_draw_white_point_cross (GcmCieWidget *cie, cairo_t *cr)
 {
-	gfloat wx;
-	gfloat wy;
-	gfloat size;
-	gfloat gap;
+	gdouble wx;
+	gdouble wy;
+	gdouble size;
+	gdouble gap;
 	GcmCieWidgetPrivate *priv = cie->priv;
 
 	cairo_save (cr);
@@ -1048,7 +1036,7 @@ gcm_cie_widget_draw_white_point_cross (GcmCieWidget *cie, cairo_t *cr)
 	else
 		cairo_set_source_rgb (cr, 0.0f, 0.0f, 0.0f);
 
-	gcm_cie_widget_offset_to_display (cie, priv->white_x, priv->white_y, &wx, &wy);
+	gcm_cie_widget_map_to_display (cie, priv->white_x, priv->white_y, &wx, &wy);
 
 	/* don't antialias the cross */
 	wx = (gint) wx + 0.5f;
@@ -1083,8 +1071,7 @@ gcm_cie_widget_draw_white_point_cross (GcmCieWidget *cie, cairo_t *cr)
 static void
 gcm_cie_widget_draw_line (GcmCieWidget *cie, cairo_t *cr)
 {
-	gfloat x, y;
-	gfloat x_scaled, y_scaled;
+	gdouble x, y;
 	GcmCieWidgetPrivate *priv = cie->priv;
 	GcmCieWidgetBufferItem *item;
 
@@ -1107,10 +1094,7 @@ gcm_cie_widget_draw_line (GcmCieWidget *cie, cairo_t *cr)
 			gdouble jmax;
 
 			/* scale for display */
-			gcm_cie_widget_map_to_display (cie, x, y, &x_scaled, &y_scaled);
-
-			cx = ((gdouble) x_scaled) / (priv->chart_width - 1);
-			cy = 1.0 - ((gdouble) y_scaled) / (priv->chart_height - 1);
+			gcm_cie_widget_map_from_display (cie, x, y, &cx, &cy);
 			cz = 1.0 - (cx + cy);
 
 			gcm_cie_widget_xyz_to_rgb (cie, cx, cy, cz, &jr, &jg, &jb);
