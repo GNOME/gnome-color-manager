@@ -580,6 +580,30 @@ gcm_utils_alphanum_lcase (gchar *data)
 }
 
 /**
+ * gcm_utils_ensure_sensible_filename:
+ **/
+void
+gcm_utils_ensure_sensible_filename (gchar *data)
+{
+	guint i;
+
+	g_return_if_fail (data != NULL);
+
+	/* replace unsafe chars, and make lowercase */
+	for (i=0; data[i] != '\0'; i++) {
+		if (data[i] != ' ' &&
+		    data[i] != '-' &&
+		    data[i] != '(' &&
+		    data[i] != ')' &&
+		    data[i] != '[' &&
+		    data[i] != ']' &&
+		    data[i] != ',' &&
+		    !g_ascii_isalnum (data[i]))
+			data[i] = '_';
+	}
+}
+
+/**
  * gcm_utils_get_default_config_location:
  **/
 gchar *
@@ -650,10 +674,20 @@ gcm_utils_test (EggTest *test)
 	egg_test_assert (test, ret);
 
 	/************************************************************/
-	egg_test_title (test, "Make sensible filename");
+	egg_test_title (test, "Make sensible id");
 	filename = g_strdup ("Hello\n\rWorld!");
 	gcm_utils_alphanum_lcase (filename);
 	if (g_strcmp0 (filename, "hello__world_") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to get filename: %s", filename);
+	g_free (filename);
+
+	/************************************************************/
+	egg_test_title (test, "Make sensible filename");
+	filename = g_strdup ("Hel lo\n\rWo-(r)ld!");
+	gcm_utils_ensure_sensible_filename (filename);
+	if (g_strcmp0 (filename, "Hel lo__Wo-(r)ld_") == 0)
 		egg_test_success (test, NULL);
 	else
 		egg_test_failed (test, "failed to get filename: %s", filename);

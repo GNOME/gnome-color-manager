@@ -391,7 +391,7 @@ gcm_calibrate_display_neutralise (GcmCalibrate *calibrate, GError **error)
 	type = gcm_calibrate_get_display_type (calibrate);
 
 	/* make a suitable filename */
-	gcm_utils_alphanum_lcase (priv->basename);
+	gcm_utils_ensure_sensible_filename (priv->basename);
 	egg_debug ("using filename basename of %s", priv->basename);
 
 	/* argument array */
