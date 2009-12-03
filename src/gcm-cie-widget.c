@@ -29,6 +29,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+#include "gcm-xyz.h"
 #include "gcm-cie-widget.h"
 
 #include "egg-debug.h"
@@ -400,14 +401,11 @@ enum
 {
 	PROP_0,
 	PROP_USE_GRID,
-	PROP_RED_X,
-	PROP_RED_Y,
-	PROP_GREEN_X,
-	PROP_GREEN_Y,
-	PROP_BLUE_X,
-	PROP_BLUE_Y,
-	PROP_WHITE_X,
-	PROP_WHITE_Y,
+	PROP_RED,
+	PROP_GREEN,
+	PROP_BLUE,
+	PROP_WHITE,
+	PROP_LAST
 };
 
 /**
@@ -420,30 +418,6 @@ dkp_cie_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec 
 	switch (prop_id) {
 	case PROP_USE_GRID:
 		g_value_set_boolean (value, cie->priv->use_grid);
-		break;
-	case PROP_RED_X:
-		g_value_set_double (value, cie->priv->red_x);
-		break;
-	case PROP_RED_Y:
-		g_value_set_double (value, cie->priv->red_y);
-		break;
-	case PROP_GREEN_X:
-		g_value_set_double (value, cie->priv->green_x);
-		break;
-	case PROP_GREEN_Y:
-		g_value_set_double (value, cie->priv->green_y);
-		break;
-	case PROP_BLUE_X:
-		g_value_set_double (value, cie->priv->blue_x);
-		break;
-	case PROP_BLUE_Y:
-		g_value_set_double (value, cie->priv->blue_y);
-		break;
-	case PROP_WHITE_X:
-		g_value_set_double (value, cie->priv->white_x);
-		break;
-	case PROP_WHITE_Y:
-		g_value_set_double (value, cie->priv->white_y);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -458,34 +432,31 @@ static void
 dkp_cie_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	GcmCieWidget *cie = GCM_CIE_WIDGET (object);
+	GcmXyz *xyz;
 
 	switch (prop_id) {
 	case PROP_USE_GRID:
 		cie->priv->use_grid = g_value_get_boolean (value);
 		break;
-	case PROP_RED_X:
-		cie->priv->red_x = g_value_get_double (value);
+	case PROP_RED:
+		xyz = g_value_get_object (value);
+		cie->priv->red_x = gcm_xyz_get_x (xyz);
+		cie->priv->red_y = gcm_xyz_get_y (xyz);
 		break;
-	case PROP_RED_Y:
-		cie->priv->red_y = g_value_get_double (value);
+	case PROP_GREEN:
+		xyz = g_value_get_object (value);
+		cie->priv->green_x = gcm_xyz_get_x (xyz);
+		cie->priv->green_y = gcm_xyz_get_y (xyz);
 		break;
-	case PROP_GREEN_X:
-		cie->priv->green_x = g_value_get_double (value);
+	case PROP_BLUE:
+		xyz = g_value_get_object (value);
+		cie->priv->blue_x = gcm_xyz_get_x (xyz);
+		cie->priv->blue_y = gcm_xyz_get_y (xyz);
 		break;
-	case PROP_GREEN_Y:
-		cie->priv->green_y = g_value_get_double (value);
-		break;
-	case PROP_BLUE_X:
-		cie->priv->blue_x = g_value_get_double (value);
-		break;
-	case PROP_BLUE_Y:
-		cie->priv->blue_y = g_value_get_double (value);
-		break;
-	case PROP_WHITE_X:
-		cie->priv->white_x = g_value_get_double (value);
-		break;
-	case PROP_WHITE_Y:
-		cie->priv->white_y = g_value_get_double (value);
+	case PROP_WHITE:
+		xyz = g_value_get_object (value);
+		cie->priv->white_x = gcm_xyz_get_x (xyz);
+		cie->priv->white_y = gcm_xyz_get_y (xyz);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -520,45 +491,25 @@ gcm_cie_widget_class_init (GcmCieWidgetClass *class)
 							       TRUE,
 							       G_PARAM_READWRITE));
 	g_object_class_install_property (object_class,
-					 PROP_RED_X,
-					 g_param_spec_double ("red-x", NULL, NULL,
-							      -G_MAXDOUBLE, G_MAXDOUBLE, 0.0f,
-							      G_PARAM_READWRITE));
+					 PROP_RED,
+					 g_param_spec_object ("red", NULL, NULL,
+							      GCM_TYPE_XYZ,
+							      G_PARAM_WRITABLE));
 	g_object_class_install_property (object_class,
-					 PROP_RED_Y,
-					 g_param_spec_double ("red-y", NULL, NULL,
-							      -G_MAXDOUBLE, G_MAXDOUBLE, 0.0f,
-							      G_PARAM_READWRITE));
+					 PROP_GREEN,
+					 g_param_spec_object ("green", NULL, NULL,
+							      GCM_TYPE_XYZ,
+							      G_PARAM_WRITABLE));
 	g_object_class_install_property (object_class,
-					 PROP_GREEN_X,
-					 g_param_spec_double ("green-x", NULL, NULL,
-							      -G_MAXDOUBLE, G_MAXDOUBLE, 0.0f,
-							      G_PARAM_READWRITE));
+					 PROP_BLUE,
+					 g_param_spec_object ("blue", NULL, NULL,
+							      GCM_TYPE_XYZ,
+							      G_PARAM_WRITABLE));
 	g_object_class_install_property (object_class,
-					 PROP_GREEN_Y,
-					 g_param_spec_double ("green-y", NULL, NULL,
-							      -G_MAXDOUBLE, G_MAXDOUBLE, 0.0f,
-							      G_PARAM_READWRITE));
-	g_object_class_install_property (object_class,
-					 PROP_BLUE_X,
-					 g_param_spec_double ("blue-x", NULL, NULL,
-							      -G_MAXDOUBLE, G_MAXDOUBLE, 0.0f,
-							      G_PARAM_READWRITE));
-	g_object_class_install_property (object_class,
-					 PROP_BLUE_Y,
-					 g_param_spec_double ("blue-y", NULL, NULL,
-							      -G_MAXDOUBLE, G_MAXDOUBLE, 0.0f,
-							      G_PARAM_READWRITE));
-	g_object_class_install_property (object_class,
-					 PROP_WHITE_X,
-					 g_param_spec_double ("white-x", NULL, NULL,
-							      -G_MAXDOUBLE, G_MAXDOUBLE, 0.0f,
-							      G_PARAM_READWRITE));
-	g_object_class_install_property (object_class,
-					 PROP_WHITE_Y,
-					 g_param_spec_double ("white-y", NULL, NULL,
-							      -G_MAXDOUBLE, G_MAXDOUBLE, 0.0f,
-							      G_PARAM_READWRITE));
+					 PROP_WHITE,
+					 g_param_spec_object ("white", NULL, NULL,
+							      GCM_TYPE_XYZ,
+							      G_PARAM_WRITABLE));
 }
 
 /**
@@ -572,10 +523,6 @@ gcm_cie_widget_init (GcmCieWidget *cie)
 	PangoFontDescription *desc;
 
 	cie->priv = GCM_CIE_WIDGET_GET_PRIVATE (cie);
-	cie->priv->red_x = 0;
-	cie->priv->red_y = 0;
-	cie->priv->blue_x = 0;
-	cie->priv->blue_y = 0;
 	cie->priv->use_grid = TRUE;
 	cie->priv->tongue_buffer = g_ptr_array_new_with_free_func (g_free);
 
@@ -1278,14 +1225,10 @@ gcm_cie_widget_test (EggTest *test)
 		      NULL);
 
 	g_object_set (widget,
-		      "red-x", gcm_xyz_get_x (red),
-		      "red-y", gcm_xyz_get_y (red),
-		      "green-x", gcm_xyz_get_x (green),
-		      "green-y", gcm_xyz_get_y (green),
-		      "blue-x", gcm_xyz_get_x (blue),
-		      "blue-y", gcm_xyz_get_y (blue),
-		      "white-x", gcm_xyz_get_x (white),
-		      "white-y", gcm_xyz_get_y (white),
+		      "red", red,
+		      "green", green,
+		      "blue", blue,
+		      "white", white,
 		      NULL);
 
 	/* show in a dialog as an example */

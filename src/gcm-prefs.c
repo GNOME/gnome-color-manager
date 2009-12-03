@@ -1440,14 +1440,10 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 		      NULL);
 
 	g_object_set (cie_widget,
-		      "red-x", gcm_xyz_get_x (red),
-		      "red-y", gcm_xyz_get_y (red),
-		      "green-x", gcm_xyz_get_x (green),
-		      "green-y", gcm_xyz_get_y (green),
-		      "blue-x", gcm_xyz_get_x (blue),
-		      "blue-y", gcm_xyz_get_y (blue),
-		      "white-x", gcm_xyz_get_x (white),
-		      "white-y", gcm_xyz_get_y (white),
+		      "white", white,
+		      "red", red,
+		      "green", green,
+		      "blue", blue,
 		      NULL);
 
 	/* ensure showing */
