@@ -1043,7 +1043,12 @@ gcm_cie_widget_draw_white_point_cross (GcmCieWidget *cie, cairo_t *cr)
 	gap = size / 2.0f;
 
 	cairo_set_line_width (cr, 1.0f);
-	cairo_set_source_rgb (cr, 0.0f, 0.0f, 0.0f);
+
+	/* choose color of cross */
+	if (priv->red_x < 0.001 && priv->green_x < 0.001 && priv->blue_x < 0.001)
+		cairo_set_source_rgb (cr, 1.0f, 1.0f, 1.0f);
+	else
+		cairo_set_source_rgb (cr, 0.0f, 0.0f, 0.0f);
 
 	gcm_cie_widget_offset_to_display (cie, priv->white_x, priv->white_y, &wx, &wy);
 
