@@ -146,15 +146,18 @@ gcm_prefs_calibrate_get_basename (GcmDevice *device)
 	timespec = gcm_prefs_get_time ();
 
 	/* form basename */
-	basename = g_string_new ("gcm");
+	basename = g_string_new ("GCM");
 	if (manufacturer != NULL)
-		g_string_append_printf (basename, "_%s", manufacturer);
+		g_string_append_printf (basename, " - %s", manufacturer);
 	if (model != NULL)
-		g_string_append_printf (basename, "_%s", model);
+		g_string_append_printf (basename, " - %s", model);
 	if (serial != NULL)
-		g_string_append_printf (basename, "_%s", serial);
-	g_string_append_printf (basename, "_%04i-%02i-%02i", date->year, date->month, date->day);
-	g_string_append_printf (basename, "_%s", timespec);
+		g_string_append_printf (basename, " - %s", serial);
+	g_string_append_printf (basename, " (%04i-%02i-%02i)", date->year, date->month, date->day);
+
+	/* maybe configure in GConf? */
+	if (0)
+		g_string_append_printf (basename, " [%s]", timespec);
 
 	g_date_free (date);
 	g_free (serial);
@@ -442,7 +445,7 @@ gcm_prefs_calibrate_device (GcmCalibrate *calib)
 	/* ensure we have data */
 	basename = gcm_prefs_calibrate_get_basename (current_device);
 	if (manufacturer == NULL)
-		manufacturer = g_strdup ("Generic vendor");
+		manufacturer = g_strdup ("Generic manufacturer");
 	if (model == NULL)
 		model = g_strdup ("Generic model");
 	if (description == NULL)
@@ -531,6 +534,7 @@ gcm_prefs_update_profile_list (void)
 		g_object_get (profile,
 			      "description", &description,
 			      "type", &profile_type,
+			      "filename", &filename,
 			      NULL);
 
 		egg_debug ("add %s to profiles list", filename);
@@ -543,6 +547,7 @@ gcm_prefs_update_profile_list (void)
 				    GPM_PROFILES_COLUMN_PROFILE, profile,
 				    -1);
 
+		g_free (filename);
 		g_free (description);
 	}
 }
@@ -1343,8 +1348,9 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	GcmXyz *red;
 	GcmXyz *green;
 	GcmXyz *blue;
-	gchar *copyright = NULL;
-	gchar *vendor = NULL;
+	gchar *profile_copyright = NULL;
+	gchar *profile_manufacturer = NULL;
+	gchar *profile_model = NULL;
 	gchar *filename = NULL;
 	gchar *basename = NULL;
 	gchar *size_text = NULL;
@@ -1368,8 +1374,9 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	g_object_get (profile,
 		      "filename", &filename,
 		      "size", &size,
-		      "copyright", &copyright,
-		      "vendor", &vendor,
+		      "copyright", &profile_copyright,
+		      "manufacturer", &profile_manufacturer,
+		      "model", &profile_model,
 		      "type", &profile_type,
 		      "white-point", &white,
 		      "luminance-red", &red,
@@ -1418,32 +1425,34 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 		gtk_label_set_label (GTK_LABEL (widget), size_text);
 	}
 
-	/* set new descriptions */
+	/* set new copyright */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_copyright"));
-	if (copyright == NULL) {
+	if (profile_copyright == NULL) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_copyright"));
-		gtk_label_set_label (GTK_LABEL(widget), copyright);
+		gtk_label_set_label (GTK_LABEL(widget), profile_copyright);
 	}
 
-	/* set new descriptions */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_vendor"));
-	if (vendor == NULL) {
+	/* set new manufacturer */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_profile_manufacturer"));
+	if (profile_manufacturer == NULL) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_vendor"));
-		gtk_label_set_label (GTK_LABEL(widget), vendor);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_profile_manufacturer"));
+		gtk_label_set_label (GTK_LABEL(widget), profile_manufacturer);
 	}
 
-	/* set new descriptions */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profiles_details"));
-	if (copyright == NULL && vendor == NULL && profile_type == GCM_PROFILE_TYPE_UNKNOWN) {
+	/* set new model */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_profile_model"));
+	if (profile_model == NULL) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_profile_model"));
+		gtk_label_set_label (GTK_LABEL(widget), profile_model);
 	}
 
 	/* set delete sensitivity */
@@ -1459,9 +1468,9 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	g_free (size_text);
 	g_free (filename);
 	g_free (basename);
-	g_free (copyright);
-	g_free (vendor);
-
+	g_free (profile_copyright);
+	g_free (profile_manufacturer);
+	g_free (profile_model);
 }
 
 /**
@@ -2274,6 +2283,8 @@ main (int argc, char **argv)
 	gtk_size_group_add_widget (size_group, widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox32"));
 	gtk_size_group_add_widget (size_group, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox34"));
+	gtk_size_group_add_widget (size_group, widget);
 
 	/* set alignment for right */
 	size_group2 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
@@ -2292,6 +2303,8 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox31"));
 	gtk_size_group_add_widget (size_group2, widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox33"));
+	gtk_size_group_add_widget (size_group2, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox35"));
 	gtk_size_group_add_widget (size_group2, widget);
 
 	/* get screen */

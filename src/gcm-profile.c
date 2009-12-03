@@ -129,7 +129,7 @@ struct _GcmProfilePrivate
 	gchar				*description;
 	gchar				*filename;
 	gchar				*copyright;
-	gchar				*vendor;
+	gchar				*manufacturer;
 	gchar				*model;
 	gboolean			 has_mlut;
 	gboolean			 has_vcgt_formula;
@@ -153,7 +153,7 @@ struct _GcmProfilePrivate
 enum {
 	PROP_0,
 	PROP_COPYRIGHT,
-	PROP_VENDOR,
+	PROP_MANUFACTURER,
 	PROP_MODEL,
 	PROP_DESCRIPTION,
 	PROP_FILENAME,
@@ -715,8 +715,8 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 			egg_debug ("found COPYRIGHT: %s", profile->priv->copyright);
 		}
 		if (tag_id == GCM_TAG_ID_DEVICE_MFG_DESC) {
-			profile->priv->vendor = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
-			egg_debug ("found VENDOR: %s", profile->priv->vendor);
+			profile->priv->manufacturer = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
+			egg_debug ("found MANUFACTURER: %s", profile->priv->manufacturer);
 		}
 		if (tag_id == GCM_TAG_ID_DEVICE_MODEL_DESC) {
 			profile->priv->model = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
@@ -822,8 +822,8 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		gcm_profile_ensure_printable (priv->description);
 	if (priv->copyright != NULL)
 		gcm_profile_ensure_printable (priv->copyright);
-	if (priv->vendor != NULL)
-		gcm_profile_ensure_printable (priv->vendor);
+	if (priv->manufacturer != NULL)
+		gcm_profile_ensure_printable (priv->manufacturer);
 	if (priv->model != NULL)
 		gcm_profile_ensure_printable (priv->model);
 
@@ -1062,8 +1062,8 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_COPYRIGHT:
 		g_value_set_string (value, priv->copyright);
 		break;
-	case PROP_VENDOR:
-		g_value_set_string (value, priv->vendor);
+	case PROP_MANUFACTURER:
+		g_value_set_string (value, priv->manufacturer);
 		break;
 	case PROP_MODEL:
 		g_value_set_string (value, priv->model);
@@ -1132,12 +1132,12 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	g_object_class_install_property (object_class, PROP_COPYRIGHT, pspec);
 
 	/**
-	 * GcmProfile:vendor:
+	 * GcmProfile:manufacturer:
 	 */
-	pspec = g_param_spec_string ("vendor", NULL, NULL,
+	pspec = g_param_spec_string ("manufacturer", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_VENDOR, pspec);
+	g_object_class_install_property (object_class, PROP_MANUFACTURER, pspec);
 
 	/**
 	 * GcmProfile:model:
@@ -1245,7 +1245,7 @@ gcm_profile_finalize (GObject *object)
 	g_free (priv->copyright);
 	g_free (priv->description);
 	g_free (priv->filename);
-	g_free (priv->vendor);
+	g_free (priv->manufacturer);
 	g_free (priv->model);
 	g_free (priv->vcgt_data);
 	g_free (priv->mlut_data);
@@ -1280,7 +1280,7 @@ gcm_profile_new (void)
 
 typedef struct {
 	const gchar *copyright;
-	const gchar *vendor;
+	const gchar *manufacturer;
 	const gchar *model;
 	const gchar *description;
 	GcmProfileType type;
@@ -1293,7 +1293,7 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 	gchar *filename;
 	gchar *filename_tmp;
 	gchar *copyright;
-	gchar *vendor;
+	gchar *manufacturer;
 	gchar *model;
 	gchar *description;
 	gchar *ascii_string;
@@ -1329,7 +1329,7 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 	/* get some properties */
 	g_object_get (profile,
 		      "copyright", &copyright,
-		      "vendor", &vendor,
+		      "manufacturer", &manufacturer,
 		      "model", &model,
 		      "description", &description,
 		      "filename", &filename_tmp,
@@ -1351,11 +1351,11 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 		egg_test_failed (test, "invalid value: %s, expecting: %s", copyright, test_data->copyright);
 
 	/************************************************************/
-	egg_test_title (test, "check vendor for %s", datafile);
-	if (g_strcmp0 (vendor, test_data->vendor) == 0)
+	egg_test_title (test, "check manufacturer for %s", datafile);
+	if (g_strcmp0 (manufacturer, test_data->manufacturer) == 0)
 		egg_test_success (test, NULL);
 	else
-		egg_test_failed (test, "invalid value: %s, expecting: %s", vendor, test_data->vendor);
+		egg_test_failed (test, "invalid value: %s, expecting: %s", manufacturer, test_data->manufacturer);
 
 	/************************************************************/
 	egg_test_title (test, "check model for %s", datafile);
@@ -1392,7 +1392,7 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 	g_object_unref (xyz);
 	g_object_unref (profile);
 	g_free (copyright);
-	g_free (vendor);
+	g_free (manufacturer);
 	g_free (model);
 	g_free (description);
 	g_free (data);
@@ -1439,7 +1439,7 @@ gcm_profile_test (EggTest *test)
 
 	/* bluish test */
 	test_data.copyright = "Copyright (c) 1998 Hewlett-Packard Company";
-	test_data.vendor = "IEC http://www.iec.ch";
+	test_data.manufacturer = "IEC http://www.iec.ch";
 	test_data.model = "IEC 61966-2.1 Default RGB colour space - sRGB";
 	test_data.description = "bluish test";
 	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
@@ -1448,7 +1448,7 @@ gcm_profile_test (EggTest *test)
 
 	/* Adobe test */
 	test_data.copyright = "Copyright (c) 1998 Hewlett-Packard Company Modified using Adobe Gamma";
-	test_data.vendor = "IEC http://www.iec.ch";
+	test_data.manufacturer = "IEC http://www.iec.ch";
 	test_data.model = "IEC 61966-2.1 Default RGB colour space - sRGB";
 	test_data.description = "ADOBEGAMMA-Test";
 	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;

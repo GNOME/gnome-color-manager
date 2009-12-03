@@ -644,16 +644,16 @@
                                         <property name="visible">True</property>
                                         <property name="orientation">vertical</property>
                                         <child>
-                                          <object class="GtkHBox" id="hbox_vendor">
+                                          <object class="GtkHBox" id="hbox_profile_manufacturer">
                                             <property name="visible">True</property>
                                             <property name="spacing">9</property>
                                             <child>
                                               <object class="GtkHBox" id="hbox5">
                                                 <property name="visible">True</property>
                                                 <child>
-                                                  <object class="GtkLabel" id="label_title_vendor">
+                                                  <object class="GtkLabel" id="label_title_profile_manufacturer">
                                                     <property name="visible">True</property>
-                                                    <property name="label" translatable="yes" comments="The manufacturer of the profile">Vendor:</property>
+                                                    <property name="label" translatable="yes" comments="The manufacturer of the profile">Device manufacturer:</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -670,9 +670,9 @@
                                               <object class="GtkHBox" id="hbox11">
                                                 <property name="visible">True</property>
                                                 <child>
-                                                  <object class="GtkLabel" id="label_vendor">
+                                                  <object class="GtkLabel" id="label_profile_manufacturer">
                                                     <property name="visible">True</property>
-                                                    <property name="label">vendor</property>
+                                                    <property name="label">manufacturer</property>
                                                     <property name="use_markup">True</property>
                                                     <property name="wrap">True</property>
                                                   </object>
@@ -692,6 +692,57 @@
                                             <property name="fill">False</property>
                                             <property name="padding">3</property>
                                             <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkHBox" id="hbox_profile_model">
+                                            <property name="visible">True</property>
+                                            <property name="spacing">9</property>
+                                            <child>
+                                              <object class="GtkHBox" id="hbox34">
+                                                <property name="visible">True</property>
+                                                <child>
+                                                  <object class="GtkLabel" id="label_title_profile_model">
+                                                    <property name="visible">True</property>
+                                                    <property name="label" translatable="yes" comments="The manufacturer of the profile">Device model:</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="position">0</property>
+                                                  </packing>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkHBox" id="hbox35">
+                                                <property name="visible">True</property>
+                                                <child>
+                                                  <object class="GtkLabel" id="label_profile_model">
+                                                    <property name="visible">True</property>
+                                                    <property name="label">model</property>
+                                                    <property name="use_markup">True</property>
+                                                    <property name="wrap">True</property>
+                                                  </object>
+                                                  <packing>
+                                                    <property name="expand">False</property>
+                                                    <property name="position">0</property>
+                                                  </packing>
+                                                </child>
+                                              </object>
+                                              <packing>
+                                                <property name="position">1</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="expand">False</property>
+                                            <property name="fill">False</property>
+                                            <property name="padding">3</property>
+                                            <property name="position">1</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -742,7 +793,7 @@
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
                                             <property name="padding">3</property>
-                                            <property name="position">1</property>
+                                            <property name="position">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -793,7 +844,7 @@
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
                                             <property name="padding">3</property>
-                                            <property name="position">2</property>
+                                            <property name="position">3</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -844,7 +895,7 @@
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
                                             <property name="padding">3</property>
-                                            <property name="position">3</property>
+                                            <property name="position">4</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -895,7 +946,7 @@
                                             <property name="expand">False</property>
                                             <property name="fill">False</property>
                                             <property name="padding">3</property>
-                                            <property name="position">4</property>
+                                            <property name="position">5</property>
                                           </packing>
                                         </child>
                                       </object>
