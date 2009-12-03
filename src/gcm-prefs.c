@@ -1346,6 +1346,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	gchar *copyright = NULL;
 	gchar *vendor = NULL;
 	gchar *filename = NULL;
+	gchar *basename = NULL;
 	gchar *size_text = NULL;
 	GcmProfileType profile_type = GCM_PROFILE_TYPE_UNKNOWN;
 	const gchar *profile_type_text;
@@ -1401,7 +1402,12 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 		gtk_label_set_label (GTK_LABEL (widget), profile_type_text);
 	}
 
-	/* set type */
+	/* set basename */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_filename"));
+	basename = g_path_get_basename (filename);
+	gtk_label_set_label (GTK_LABEL (widget), basename);
+
+	/* set size */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_size"));
 	if (size == 0) {
 		gtk_widget_hide (widget);
@@ -1452,6 +1458,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	g_object_unref (blue);
 	g_free (size_text);
 	g_free (filename);
+	g_free (basename);
 	g_free (copyright);
 	g_free (vendor);
 
@@ -2250,6 +2257,8 @@ main (int argc, char **argv)
 	gtk_size_group_add_widget (size_group, widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox30"));
 	gtk_size_group_add_widget (size_group, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox32"));
+	gtk_size_group_add_widget (size_group, widget);
 
 	/* set alignment for right */
 	size_group2 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
@@ -2266,6 +2275,8 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox18"));
 	gtk_size_group_add_widget (size_group2, widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox31"));
+	gtk_size_group_add_widget (size_group2, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox33"));
 	gtk_size_group_add_widget (size_group2, widget);
 
 	/* get screen */
