@@ -44,6 +44,7 @@ static void     gcm_profile_finalize	(GObject     *object);
 
 #define GCM_HEADER			0x00
 #define GCM_TYPE			0x0c
+#define GCM_CREATION_DATE_TIME		0x18
 #define GCM_SIGNATURE			0x24
 #define GCM_NUMTAGS			0x80
 #define GCM_BODY			0x84
@@ -131,6 +132,7 @@ struct _GcmProfilePrivate
 	gchar				*copyright;
 	gchar				*manufacturer;
 	gchar				*model;
+	gchar				*datetime;
 	gboolean			 has_mlut;
 	gboolean			 has_vcgt_formula;
 	gboolean			 has_vcgt_table;
@@ -155,6 +157,7 @@ enum {
 	PROP_COPYRIGHT,
 	PROP_MANUFACTURER,
 	PROP_MODEL,
+	PROP_DATETIME,
 	PROP_DESCRIPTION,
 	PROP_FILENAME,
 	PROP_TYPE,
@@ -618,6 +621,96 @@ out:
 }
 
 /**
+ * gcm_parser_get_month:
+ **/
+static const gchar *
+gcm_parser_get_month (guint idx)
+{
+	if (idx == 1) {
+		/* TRANSLATORS: the month */
+		return _("January");
+	}
+	if (idx == 2) {
+		/* TRANSLATORS: the month */
+		return _("February");
+	}
+	if (idx == 3) {
+		/* TRANSLATORS: the month */
+		return _("March");
+	}
+	if (idx == 4) {
+		/* TRANSLATORS: the month */
+		return _("April");
+	}
+	if (idx == 5) {
+		/* TRANSLATORS: the month */
+		return _("May");
+	}
+	if (idx == 6) {
+		/* TRANSLATORS: the month */
+		return _("June");
+	}
+	if (idx == 7) {
+		/* TRANSLATORS: the month */
+		return _("July");
+	}
+	if (idx == 8) {
+		/* TRANSLATORS: the month */
+		return _("August");
+	}
+	if (idx == 9) {
+		/* TRANSLATORS: the month (my birthday) */
+		return _("September");
+	}
+	if (idx == 10) {
+		/* TRANSLATORS: the month */
+		return _("October");
+	}
+	if (idx == 11) {
+		/* TRANSLATORS: the month */
+		return _("November");
+	}
+	if (idx == 12) {
+		/* TRANSLATORS: the month */
+		return _("December");
+	}
+	return NULL;
+}
+
+/**
+ * gcm_parser_get_date_time:
+ **/
+static gchar *
+gcm_parser_get_date_time (const gchar *data, gsize offset)
+{
+	guint years;	/* 0..1 */
+	guint months;	/* 2..3 */
+	guint days;	/* 4..5 */
+	guint hours;	/* 6..7 */
+	guint minutes;	/* 8..9 */
+	guint seconds;	/* 10..11 */
+	const gchar *month_text;
+	gchar *text = NULL;
+
+	years = gcm_parser_unencode_16 (data, offset + 0x00);
+	months = gcm_parser_unencode_16 (data, offset + 0x02);
+	days = gcm_parser_unencode_16 (data, offset + 0x04);
+	hours = gcm_parser_unencode_16 (data, offset + 0x06);
+	minutes = gcm_parser_unencode_16 (data, offset + 0x08);
+	seconds = gcm_parser_unencode_16 (data, offset + 0x0a);
+
+	/* invalid / unknown */
+	if (years == 0)
+		goto out;
+
+	/* TRANSLATORS: please re-arrange: days, months (in text), years, hours, minutes, seconds */
+	month_text = gcm_parser_get_month (months);
+	text = g_strdup_printf ("%i %s %04i, %02i:%02i:%02i", days, month_text, years, hours, minutes, seconds);
+out:
+	return text;
+}
+
+/**
  * gcm_profile_parse_data:
  **/
 gboolean
@@ -636,9 +729,9 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
-	g_return_val_if_fail (profile->priv->loaded == FALSE, FALSE);
+	g_return_val_if_fail (priv->loaded == FALSE, FALSE);
 
-	profile->priv->loaded = TRUE;
+	priv->loaded = TRUE;
 
 	/* ensure we have the header */
 	if (length < 0x84) {
@@ -664,29 +757,34 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 	profile_type = gcm_parser_unencode_32 (data, GCM_TYPE);
 	switch (profile_type) {
 	case GCM_PROFILE_CLASS_INPUT_DEVICE:
-		profile->priv->profile_type = GCM_PROFILE_TYPE_INPUT_DEVICE;
+		priv->profile_type = GCM_PROFILE_TYPE_INPUT_DEVICE;
 		break;
 	case GCM_PROFILE_CLASS_DISPLAY_DEVICE:
-		profile->priv->profile_type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
+		priv->profile_type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
 		break;
 	case GCM_PROFILE_CLASS_OUTPUT_DEVICE:
-		profile->priv->profile_type = GCM_PROFILE_TYPE_OUTPUT_DEVICE;
+		priv->profile_type = GCM_PROFILE_TYPE_OUTPUT_DEVICE;
 		break;
 	case GCM_PROFILE_CLASS_DEVICELINK:
-		profile->priv->profile_type = GCM_PROFILE_TYPE_DEVICELINK;
+		priv->profile_type = GCM_PROFILE_TYPE_DEVICELINK;
 		break;
 	case GCM_PROFILE_CLASS_COLORSPACE_CONVERSION:
-		profile->priv->profile_type = GCM_PROFILE_TYPE_COLORSPACE_CONVERSION;
+		priv->profile_type = GCM_PROFILE_TYPE_COLORSPACE_CONVERSION;
 		break;
 	case GCM_PROFILE_CLASS_ABSTRACT:
-		profile->priv->profile_type = GCM_PROFILE_TYPE_ABSTRACT;
+		priv->profile_type = GCM_PROFILE_TYPE_ABSTRACT;
 		break;
 	case GCM_PROFILE_CLASS_NAMED_COLOUR:
-		profile->priv->profile_type = GCM_PROFILE_TYPE_NAMED_COLOUR;
+		priv->profile_type = GCM_PROFILE_TYPE_NAMED_COLOUR;
 		break;
 	default:
-		profile->priv->profile_type = GCM_PROFILE_TYPE_UNKNOWN;
+		priv->profile_type = GCM_PROFILE_TYPE_UNKNOWN;
 	}
+
+	/* get the profile created time and date */
+	priv->datetime = gcm_parser_get_date_time (data, GCM_CREATION_DATE_TIME);
+	if (priv->datetime != NULL)
+		egg_debug ("created: %s", priv->datetime);
 
 	/* get the number of tags in the file */
 	num_tags = gcm_parser_unencode_32 (data, GCM_NUMTAGS);
@@ -707,20 +805,20 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 			egg_debug ("named tag %x [%s] is present at %u with size %u", tag_id, tag_description, offset, tag_size);
 
 		if (tag_id == GCM_TAG_ID_PROFILE_DESCRIPTION) {
-			profile->priv->description = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
-			egg_debug ("found DESC: %s", profile->priv->description);
+			priv->description = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
+			egg_debug ("found DESC: %s", priv->description);
 		}
 		if (tag_id == GCM_TAG_ID_COPYRIGHT) {
-			profile->priv->copyright = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
-			egg_debug ("found COPYRIGHT: %s", profile->priv->copyright);
+			priv->copyright = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
+			egg_debug ("found COPYRIGHT: %s", priv->copyright);
 		}
 		if (tag_id == GCM_TAG_ID_DEVICE_MFG_DESC) {
-			profile->priv->manufacturer = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
-			egg_debug ("found MANUFACTURER: %s", profile->priv->manufacturer);
+			priv->manufacturer = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
+			egg_debug ("found MANUFACTURER: %s", priv->manufacturer);
 		}
 		if (tag_id == GCM_TAG_ID_DEVICE_MODEL_DESC) {
-			profile->priv->model = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
-			egg_debug ("found MODEL: %s", profile->priv->model);
+			priv->model = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
+			egg_debug ("found MODEL: %s", priv->model);
 		}
 		if (tag_id == GCM_TAG_ID_MLUT) {
 			egg_debug ("found MLUT which is a fixed size block");
@@ -733,7 +831,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		if (tag_id == GCM_TAG_ID_VCGT) {
 			egg_debug ("found VCGT");
 			if (tag_size == 1584)
-				profile->priv->adobe_gamma_workaround = TRUE;
+				priv->adobe_gamma_workaround = TRUE;
 			ret = gcm_parser_load_icc_vcgt (profile, data, tag_offset);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load vcgt");
@@ -766,7 +864,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		}
 		if (tag_id == GCM_TAG_ID_MEDIA_WHITE_POINT) {
 			egg_debug ("found media white point");
-			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, profile->priv->white_point);
+			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, priv->white_point);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load white point");
 				goto out;
@@ -774,7 +872,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		}
 		if (tag_id == GCM_TAG_ID_MEDIA_BLACK_POINT) {
 			egg_debug ("found media black point");
-			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, profile->priv->black_point);
+			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, priv->black_point);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load white point");
 				goto out;
@@ -782,7 +880,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		}
 		if (tag_id == GCM_TAG_ID_RED_MATRIX_COLUMN) {
 			egg_debug ("found red matrix column");
-			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, profile->priv->luminance_red);
+			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, priv->luminance_red);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load red matrix");
 				goto out;
@@ -790,7 +888,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		}
 		if (tag_id == GCM_TAG_ID_GREEN_MATRIX_COLUMN) {
 			egg_debug ("found green matrix column");
-			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, profile->priv->luminance_green);
+			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, priv->luminance_green);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load green matrix");
 				goto out;
@@ -798,7 +896,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		}
 		if (tag_id == GCM_TAG_ID_BLUE_MATRIX_COLUMN) {
 			egg_debug ("found blue matrix column");
-			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, profile->priv->luminance_blue);
+			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, priv->luminance_blue);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load blue matrix");
 				goto out;
@@ -833,11 +931,11 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 	/* success */
 	ret = TRUE;
 
-	egg_debug ("Has MLUT:         %s", profile->priv->has_mlut ? "YES" : "NO");
-	egg_debug ("Has VCGT formula: %s", profile->priv->has_vcgt_formula ? "YES" : "NO");
-	egg_debug ("Has VCGT table:   %s", profile->priv->has_vcgt_table ? "YES" : "NO");
-	egg_debug ("Has curve table:  %s", profile->priv->has_curve_table ? "YES" : "NO");
-	egg_debug ("Has fixed gamma:  %s", profile->priv->has_curve_fixed ? "YES" : "NO");
+	egg_debug ("Has MLUT:         %s", priv->has_mlut ? "YES" : "NO");
+	egg_debug ("Has VCGT formula: %s", priv->has_vcgt_formula ? "YES" : "NO");
+	egg_debug ("Has VCGT table:   %s", priv->has_vcgt_table ? "YES" : "NO");
+	egg_debug ("Has curve table:  %s", priv->has_curve_table ? "YES" : "NO");
+	egg_debug ("Has fixed gamma:  %s", priv->has_curve_fixed ? "YES" : "NO");
 out:
 	return ret;
 }
@@ -856,7 +954,7 @@ gcm_profile_parse (GcmProfile *profile, const gchar *filename, GError **error)
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
 	g_return_val_if_fail (filename != NULL, FALSE);
-	g_return_val_if_fail (profile->priv->loaded == FALSE, FALSE);
+	g_return_val_if_fail (priv->loaded == FALSE, FALSE);
 
 	egg_debug ("loading '%s'", filename);
 
@@ -1068,6 +1166,9 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_MODEL:
 		g_value_set_string (value, priv->model);
 		break;
+	case PROP_DATETIME:
+		g_value_set_string (value, priv->datetime);
+		break;
 	case PROP_DESCRIPTION:
 		g_value_set_string (value, priv->description);
 		break;
@@ -1146,6 +1247,14 @@ gcm_profile_class_init (GcmProfileClass *klass)
 				     NULL,
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_MODEL, pspec);
+
+	/**
+	 * GcmProfile:datetime:
+	 */
+	pspec = g_param_spec_string ("datetime", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_DATETIME, pspec);
 
 	/**
 	 * GcmProfile:description:
@@ -1247,14 +1356,15 @@ gcm_profile_finalize (GObject *object)
 	g_free (priv->filename);
 	g_free (priv->manufacturer);
 	g_free (priv->model);
+	g_free (priv->datetime);
 	g_free (priv->vcgt_data);
 	g_free (priv->mlut_data);
 	g_free (priv->trc_data);
-	g_object_unref (profile->priv->white_point);
-	g_object_unref (profile->priv->black_point);
-	g_object_unref (profile->priv->luminance_red);
-	g_object_unref (profile->priv->luminance_green);
-	g_object_unref (profile->priv->luminance_blue);
+	g_object_unref (priv->white_point);
+	g_object_unref (priv->black_point);
+	g_object_unref (priv->luminance_red);
+	g_object_unref (priv->luminance_green);
+	g_object_unref (priv->luminance_blue);
 
 	G_OBJECT_CLASS (gcm_profile_parent_class)->finalize (object);
 }
@@ -1282,6 +1392,7 @@ typedef struct {
 	const gchar *copyright;
 	const gchar *manufacturer;
 	const gchar *model;
+	const gchar *datetime;
 	const gchar *description;
 	GcmProfileType type;
 	gfloat luminance;
@@ -1295,6 +1406,7 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 	gchar *copyright;
 	gchar *manufacturer;
 	gchar *model;
+	gchar *datetime;
 	gchar *description;
 	gchar *ascii_string;
 	gchar *pnp_id;
@@ -1331,6 +1443,7 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 		      "copyright", &copyright,
 		      "manufacturer", &manufacturer,
 		      "model", &model,
+		      "datetime", &datetime,
 		      "description", &description,
 		      "filename", &filename_tmp,
 		      "type", &type,
@@ -1365,6 +1478,13 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 		egg_test_failed (test, "invalid value: %s, expecting: %s", model, test_data->model);
 
 	/************************************************************/
+	egg_test_title (test, "check datetime for %s", datafile);
+	if (g_strcmp0 (datetime, test_data->datetime) == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s, expecting: %s", datetime, test_data->datetime);
+
+	/************************************************************/
 	egg_test_title (test, "check description for %s", datafile);
 	if (g_strcmp0 (description, test_data->description) == 0)
 		egg_test_success (test, NULL);
@@ -1394,6 +1514,7 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 	g_free (copyright);
 	g_free (manufacturer);
 	g_free (model);
+	g_free (datetime);
 	g_free (description);
 	g_free (data);
 	g_free (filename);
@@ -1444,6 +1565,7 @@ gcm_profile_test (EggTest *test)
 	test_data.description = "bluish test";
 	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
 	test_data.luminance = 0.648454;
+	test_data.datetime = "9 February 1998, 06:49:00";
 	gcm_profile_test_parse_file (test, "bluish.icc", &test_data);
 
 	/* Adobe test */
@@ -1453,6 +1575,7 @@ gcm_profile_test (EggTest *test)
 	test_data.description = "ADOBEGAMMA-Test";
 	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
 	test_data.luminance = 0.648446;
+	test_data.datetime = "16 August 2005, 21:49:54";
 	gcm_profile_test_parse_file (test, "AdobeGammaTest.icm", &test_data);
 
 	egg_test_end (test);
