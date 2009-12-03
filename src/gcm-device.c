@@ -61,10 +61,7 @@ struct _GcmDevicePrivate
 	gchar				*manufacturer;
 	gchar				*model;
 	gchar				*profile_filename;
-	gchar				*profile_description;
 	gchar				*title;
-	gchar				*profile_copyright;
-	gchar				*profile_vendor;
 	GConfClient			*gconf_client;
 	gchar				*native_device_xrandr;
 	gchar				*native_device_sysfs;
@@ -82,9 +79,6 @@ enum {
 	PROP_BRIGHTNESS,
 	PROP_CONTRAST,
 	PROP_PROFILE_FILENAME,
-	PROP_PROFILE_COPYRIGHT,
-	PROP_PROFILE_VENDOR,
-	PROP_PROFILE_DESCRIPTION,
 	PROP_TITLE,
 	PROP_NATIVE_DEVICE_XRANDR,
 	PROP_NATIVE_DEVICE_SYSFS,
@@ -134,21 +128,12 @@ static gboolean
 gcm_device_load_from_profile (GcmDevice *device, GError **error)
 {
 	gboolean ret = TRUE;
-	GcmProfile *profile = NULL;
-	GError *error_local = NULL;
 
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
 
 	/* no profile to load */
-	if (device->priv->profile_filename == NULL) {
-		g_free (device->priv->profile_copyright);
-		g_free (device->priv->profile_vendor);
-		g_free (device->priv->profile_description);
-		device->priv->profile_copyright = NULL;
-		device->priv->profile_vendor = NULL;
-		device->priv->profile_description = NULL;
+	if (device->priv->profile_filename == NULL)
 		goto out;
-	}
 
 	/* load the profile if it's set */
 	if (device->priv->profile_filename != NULL) {
@@ -161,30 +146,8 @@ gcm_device_load_from_profile (GcmDevice *device, GError **error)
 			ret = TRUE;
 			goto out;
 		}
-
-		/* create new profile instance */
-		profile = gcm_profile_new ();
-		ret = gcm_profile_parse (profile, device->priv->profile_filename, &error_local);
-		if (!ret) {
-			if (error != NULL)
-				*error = g_error_new (1, 0, "failed to set from profile: %s", error_local->message);
-			g_error_free (error_local);
-			goto out;
-		}
-
-		/* copy the profile_description */
-		g_free (device->priv->profile_copyright);
-		g_free (device->priv->profile_vendor);
-		g_free (device->priv->profile_description);
-		g_object_get (profile,
-			      "copyright", &device->priv->profile_copyright,
-			      "vendor", &device->priv->profile_vendor,
-			      "description", &device->priv->profile_description,
-			      NULL);
 	}
 out:
-	if (profile != NULL)
-		g_object_unref (profile);
 	return ret;
 }
 
@@ -455,15 +418,6 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_PROFILE_FILENAME:
 		g_value_set_string (value, priv->profile_filename);
 		break;
-	case PROP_PROFILE_COPYRIGHT:
-		g_value_set_string (value, priv->profile_copyright);
-		break;
-	case PROP_PROFILE_VENDOR:
-		g_value_set_string (value, priv->profile_vendor);
-		break;
-	case PROP_PROFILE_DESCRIPTION:
-		g_value_set_string (value, priv->profile_description);
-		break;
 	case PROP_TITLE:
 		g_value_set_string (value, priv->title);
 		break;
@@ -635,30 +589,6 @@ gcm_device_class_init (GcmDeviceClass *klass)
 	g_object_class_install_property (object_class, PROP_PROFILE_FILENAME, pspec);
 
 	/**
-	 * GcmDevice:profile-copyright:
-	 */
-	pspec = g_param_spec_string ("profile-copyright", NULL, NULL,
-				     NULL,
-				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_PROFILE_COPYRIGHT, pspec);
-
-	/**
-	 * GcmDevice:profile-vendor:
-	 */
-	pspec = g_param_spec_string ("profile-vendor", NULL, NULL,
-				     NULL,
-				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_PROFILE_VENDOR, pspec);
-
-	/**
-	 * GcmDevice:profile-description:
-	 */
-	pspec = g_param_spec_string ("profile-description", NULL, NULL,
-				     NULL,
-				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_PROFILE_DESCRIPTION, pspec);
-
-	/**
 	 * GcmDevice:title:
 	 */
 	pspec = g_param_spec_string ("title", NULL, NULL,
@@ -721,9 +651,6 @@ gcm_device_finalize (GObject *object)
 	GcmDevice *device = GCM_DEVICE (object);
 	GcmDevicePrivate *priv = device->priv;
 
-	g_free (priv->profile_description);
-	g_free (priv->profile_copyright);
-	g_free (priv->profile_vendor);
 	g_free (priv->title);
 	g_free (priv->id);
 	g_free (priv->serial);
