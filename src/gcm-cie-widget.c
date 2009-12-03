@@ -577,8 +577,6 @@ gcm_cie_widget_init (GcmCieWidget *cie)
 	cie->priv->blue_x = 0;
 	cie->priv->blue_y = 0;
 	cie->priv->use_grid = TRUE;
-	cie->priv->x_offset = 20.0f;
-	cie->priv->y_offset = 10.0f;
 	cie->priv->tongue_buffer = g_ptr_array_new_with_free_func (g_free);
 
 	/* default is CIE REC 709 */
@@ -1194,6 +1192,8 @@ gcm_cie_widget_draw_cie (GtkWidget *cie_widget, cairo_t *cr)
 	gtk_widget_get_allocation (cie_widget, &allocation);
 	cie->priv->chart_height = allocation.height;
 	cie->priv->chart_width = allocation.width;
+	cie->priv->x_offset = cie->priv->chart_width / 18.0f;
+	cie->priv->y_offset = cie->priv->chart_height / 20.0f;
 
 	/* cie background */
 	gcm_cie_widget_draw_bounding_box (cr, 0, 0, cie->priv->chart_width, cie->priv->chart_height);
