@@ -44,6 +44,7 @@ static void     gcm_profile_finalize	(GObject     *object);
 
 #define GCM_HEADER			0x00
 #define GCM_TYPE			0x0c
+#define GCM_COLORSPACE			0x10
 #define GCM_CREATION_DATE_TIME		0x18
 #define GCM_SIGNATURE			0x24
 #define GCM_NUMTAGS			0x80
@@ -126,6 +127,7 @@ struct _GcmProfilePrivate
 {
 	gboolean			 loaded;
 	guint				 profile_type;
+	guint				 colorspace;
 	guint				 size;
 	gchar				*description;
 	gchar				*filename;
@@ -161,6 +163,7 @@ enum {
 	PROP_DESCRIPTION,
 	PROP_FILENAME,
 	PROP_TYPE,
+	PROP_COLORSPACE,
 	PROP_SIZE,
 	PROP_WHITE_POINT,
 	PROP_LUMINANCE_RED,
@@ -711,6 +714,50 @@ out:
 }
 
 /**
+ * gcm_profile_get_colorspace:
+ **/
+static GcmProfileColorspace
+gcm_profile_get_colorspace (const gchar *data, gsize offset)
+{
+	gboolean ret;
+
+	/* test each common signature */
+	ret = (memcmp (&data[offset], "XYZ ", 4) == 0);
+	if (ret)
+		return GCM_PROFILE_COLORSPACE_XYZ;
+	ret = (memcmp (&data[offset], "Lab ", 4) == 0);
+	if (ret)
+		return GCM_PROFILE_COLORSPACE_LAB;
+	ret = (memcmp (&data[offset], "Luv ", 4) == 0);
+	if (ret)
+		return GCM_PROFILE_COLORSPACE_LUV;
+	ret = (memcmp (&data[offset], "YCbr", 4) == 0);
+	if (ret)
+		return GCM_PROFILE_COLORSPACE_YCBCR;
+	ret = (memcmp (&data[offset], "Yxy ", 4) == 0);
+	if (ret)
+		return GCM_PROFILE_COLORSPACE_YXY;
+	ret = (memcmp (&data[offset], "RGB ", 4) == 0);
+	if (ret)
+		return GCM_PROFILE_COLORSPACE_RGB;
+	ret = (memcmp (&data[offset], "GRAY", 4) == 0);
+	if (ret)
+		return GCM_PROFILE_COLORSPACE_GRAY;
+	ret = (memcmp (&data[offset], "HSV ", 4) == 0);
+	if (ret)
+		return GCM_PROFILE_COLORSPACE_HSV;
+	ret = (memcmp (&data[offset], "CMYK", 4) == 0);
+	if (ret)
+		return GCM_PROFILE_COLORSPACE_CMYK;
+	ret = (memcmp (&data[offset], "CMY ", 4) == 0);
+	if (ret)
+		return GCM_PROFILE_COLORSPACE_CMY;
+
+	/* bugger */
+	return GCM_PROFILE_COLORSPACE_UNKNOWN;
+}
+
+/**
  * gcm_profile_parse_data:
  **/
 gboolean
@@ -780,6 +827,9 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 	default:
 		priv->profile_type = GCM_PROFILE_TYPE_UNKNOWN;
 	}
+
+	/* get colorspace */
+	priv->colorspace = gcm_profile_get_colorspace (data, GCM_COLORSPACE);
 
 	/* get the profile created time and date */
 	priv->datetime = gcm_parser_get_date_time (data, GCM_CREATION_DATE_TIME);
@@ -1178,6 +1228,9 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_TYPE:
 		g_value_set_uint (value, priv->profile_type);
 		break;
+	case PROP_COLORSPACE:
+		g_value_set_uint (value, priv->colorspace);
+		break;
 	case PROP_SIZE:
 		g_value_set_uint (value, priv->size);
 		break;
@@ -1281,6 +1334,14 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	g_object_class_install_property (object_class, PROP_TYPE, pspec);
 
 	/**
+	 * GcmProfile:colorspace:
+	 */
+	pspec = g_param_spec_uint ("colorspace", NULL, NULL,
+				   0, G_MAXUINT, 0,
+				   G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_COLORSPACE, pspec);
+
+	/**
 	 * GcmProfile:size:
 	 */
 	pspec = g_param_spec_uint ("size", NULL, NULL,
@@ -1335,6 +1396,7 @@ gcm_profile_init (GcmProfile *profile)
 	profile->priv->trc_data = NULL;
 	profile->priv->adobe_gamma_workaround = FALSE;
 	profile->priv->profile_type = GCM_PROFILE_TYPE_UNKNOWN;
+	profile->priv->colorspace = GCM_PROFILE_COLORSPACE_UNKNOWN;
 	profile->priv->white_point = gcm_xyz_new ();
 	profile->priv->black_point = gcm_xyz_new ();
 	profile->priv->luminance_red = gcm_xyz_new ();
@@ -1395,6 +1457,7 @@ typedef struct {
 	const gchar *datetime;
 	const gchar *description;
 	GcmProfileType type;
+	GcmProfileColorspace colorspace;
 	gfloat luminance;
 } GcmProfileTestData;
 
@@ -1413,6 +1476,7 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 	gchar *data;
 	guint width;
 	guint type;
+	guint colorspace;
 	gfloat gamma;
 	gboolean ret;
 	GError *error = NULL;
@@ -1447,6 +1511,7 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 		      "description", &description,
 		      "filename", &filename_tmp,
 		      "type", &type,
+		      "colorspace", &colorspace,
 		      NULL);
 
 	/************************************************************/
@@ -1497,6 +1562,13 @@ gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTes
 		egg_test_success (test, NULL);
 	else
 		egg_test_failed (test, "invalid value: %i, expecting: %i", type, test_data->type);
+
+	/************************************************************/
+	egg_test_title (test, "check colorspace for %s", datafile);
+	if (colorspace == test_data->colorspace)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %i, expecting: %i", colorspace, test_data->colorspace);
 
 	/************************************************************/
 	egg_test_title (test, "check luminance red %s", datafile);
@@ -1564,6 +1636,7 @@ gcm_profile_test (EggTest *test)
 	test_data.model = "IEC 61966-2.1 Default RGB colour space - sRGB";
 	test_data.description = "bluish test";
 	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
+	test_data.colorspace = GCM_PROFILE_COLORSPACE_RGB;
 	test_data.luminance = 0.648454;
 	test_data.datetime = "9 February 1998, 06:49:00";
 	gcm_profile_test_parse_file (test, "bluish.icc", &test_data);
@@ -1574,6 +1647,7 @@ gcm_profile_test (EggTest *test)
 	test_data.model = "IEC 61966-2.1 Default RGB colour space - sRGB";
 	test_data.description = "ADOBEGAMMA-Test";
 	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
+	test_data.colorspace = GCM_PROFILE_COLORSPACE_RGB;
 	test_data.luminance = 0.648446;
 	test_data.datetime = "16 August 2005, 21:49:54";
 	gcm_profile_test_parse_file (test, "AdobeGammaTest.icm", &test_data);
