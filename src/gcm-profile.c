@@ -865,7 +865,7 @@ gcm_profile_parse (GcmProfile *profile, const gchar *filename, GError **error)
 	priv->filename = g_strdup (filename);
 
 	/* load files */
-	ret = g_file_get_contents (filename, &data, &length, &error_local);
+	ret = g_file_get_contents (filename, &data, (gsize *) &length, &error_local);
 	if (!ret) {
 		if (error != NULL)
 			*error = g_error_new (1, 0, "failed to load profile: %s", error_local->message);
