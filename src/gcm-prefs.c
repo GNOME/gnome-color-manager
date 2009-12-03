@@ -1335,6 +1335,56 @@ gcm_prefs_profile_type_to_text (GcmProfileType type)
 }
 
 /**
+ * gcm_prefs_profile_colorspace_to_text:
+ **/
+static gchar *
+gcm_prefs_profile_colorspace_to_text (GcmProfileType type)
+{
+	if (type == GCM_PROFILE_COLORSPACE_XYZ) {
+		/* TRANSLATORS: this the ICC colorspace type */
+		return _("XYZ");
+	}
+	if (type == GCM_PROFILE_COLORSPACE_LAB) {
+		/* TRANSLATORS: this the ICC colorspace type */
+		return _("LAB");
+	}
+	if (type == GCM_PROFILE_COLORSPACE_LUV) {
+		/* TRANSLATORS: this the ICC colorspace type */
+		return _("LUV");
+	}
+	if (type == GCM_PROFILE_COLORSPACE_YCBCR) {
+		/* TRANSLATORS: this the ICC colorspace type */
+		return _("YCbCr");
+	}
+	if (type == GCM_PROFILE_COLORSPACE_YXY) {
+		/* TRANSLATORS: this the ICC colorspace type */
+		return _("Yxy");
+	}
+	if (type == GCM_PROFILE_COLORSPACE_RGB) {
+		/* TRANSLATORS: this the ICC colorspace type */
+		return _("RGB");
+	}
+	if (type == GCM_PROFILE_COLORSPACE_GRAY) {
+		/* TRANSLATORS: this the ICC colorspace type */
+		return _("Gray");
+	}
+	if (type == GCM_PROFILE_COLORSPACE_HSV) {
+		/* TRANSLATORS: this the ICC colorspace type */
+		return _("HSV");
+	}
+	if (type == GCM_PROFILE_COLORSPACE_CMYK) {
+		/* TRANSLATORS: this the ICC colorspace type */
+		return _("CMYK");
+	}
+	if (type == GCM_PROFILE_COLORSPACE_CMY) {
+		/* TRANSLATORS: this the ICC colorspace type */
+		return _("CMY");
+	}
+	/* TRANSLATORS: this the ICC colorspace type */
+	return _("Unknown");
+}
+
+/**
  * gcm_prefs_profiles_treeview_clicked_cb:
  **/
 static void
@@ -1351,11 +1401,14 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	gchar *profile_copyright = NULL;
 	gchar *profile_manufacturer = NULL;
 	gchar *profile_model = NULL;
+	gchar *profile_datetime = NULL;
 	gchar *filename = NULL;
 	gchar *basename = NULL;
 	gchar *size_text = NULL;
-	GcmProfileType profile_type = GCM_PROFILE_TYPE_UNKNOWN;
+	GcmProfileType profile_type;
+	GcmProfileColorspace profile_colorspace;
 	const gchar *profile_type_text;
+	const gchar *profile_colorspace_text;
 	gboolean ret;
 	guint size;
 
@@ -1377,7 +1430,9 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 		      "copyright", &profile_copyright,
 		      "manufacturer", &profile_manufacturer,
 		      "model", &profile_model,
+		      "datetime", &profile_datetime,
 		      "type", &profile_type,
+		      "colorspace", &profile_colorspace,
 		      "white-point", &white,
 		      "luminance-red", &red,
 		      "luminance-green", &green,
@@ -1407,6 +1462,17 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_type"));
 		profile_type_text = gcm_prefs_profile_type_to_text (profile_type);
 		gtk_label_set_label (GTK_LABEL (widget), profile_type_text);
+	}
+
+	/* set colorspace */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_colorspace"));
+	if (profile_colorspace == GCM_PROFILE_COLORSPACE_UNKNOWN) {
+		gtk_widget_hide (widget);
+	} else {
+		gtk_widget_show (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_colorspace"));
+		profile_colorspace_text = gcm_prefs_profile_colorspace_to_text (profile_colorspace);
+		gtk_label_set_label (GTK_LABEL (widget), profile_colorspace_text);
 	}
 
 	/* set basename */
@@ -1455,6 +1521,16 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 		gtk_label_set_label (GTK_LABEL(widget), profile_model);
 	}
 
+	/* set new datetime */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_datetime"));
+	if (profile_datetime == NULL) {
+		gtk_widget_hide (widget);
+	} else {
+		gtk_widget_show (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_datetime"));
+		gtk_label_set_label (GTK_LABEL(widget), profile_datetime);
+	}
+
 	/* set delete sensitivity */
 	ret = (filename != NULL && g_str_has_prefix (filename, "/home/"));
 	egg_debug ("filename: %s", filename);
@@ -1471,6 +1547,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	g_free (profile_copyright);
 	g_free (profile_manufacturer);
 	g_free (profile_model);
+	g_free (profile_datetime);
 }
 
 /**
@@ -2285,6 +2362,10 @@ main (int argc, char **argv)
 	gtk_size_group_add_widget (size_group, widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox34"));
 	gtk_size_group_add_widget (size_group, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox36"));
+	gtk_size_group_add_widget (size_group, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox39"));
+	gtk_size_group_add_widget (size_group, widget);
 
 	/* set alignment for right */
 	size_group2 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
@@ -2305,6 +2386,10 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox33"));
 	gtk_size_group_add_widget (size_group2, widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox35"));
+	gtk_size_group_add_widget (size_group2, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox37"));
+	gtk_size_group_add_widget (size_group2, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox40"));
 	gtk_size_group_add_widget (size_group2, widget);
 
 	/* get screen */
