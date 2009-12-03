@@ -533,6 +533,9 @@ gcm_profile_ensure_printable (gchar *data)
 			data[idx++] = data[i];
 	}
 	data[idx] = '\0';
+
+	/* broken profiles have _ instead of spaces */
+	g_strdelimit (data, "_", ' ');
 }
 
 /**
