@@ -564,6 +564,20 @@ gcm_profile_parse_multi_localized_unicode (GcmProfile *profile, const gchar *dat
 		goto out;
 	}
 
+	/* correct broken profiles, seen in ISOuncoatedyellowish.icc : FIXME: why is the offset one off? */
+	ret = (memcmp (&data[offset+1], "text", 4) == 0);
+	if (ret) {
+		text = gcm_profile_parse_multi_localized_unicode (profile, data, offset+1);
+		goto out;
+	}
+
+	/* correct broken profiles, seen in ISOuncoatedyellowish.icc : FIXME: why is the offset one off? */
+	ret = (memcmp (&data[offset+1], "desc", 4) == 0);
+	if (ret) {
+		text = gcm_profile_parse_multi_localized_unicode (profile, data, offset+1);
+		goto out;
+	}
+
 	/* an unrecognised tag */
 	for (i=0x0; i<0x1c; i++) {
 		egg_warning ("unrecognised text tag");
