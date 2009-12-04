@@ -91,6 +91,8 @@ gboolean	 gcm_profile_parse_data			(GcmProfile	*profile,
 							 GError		**error);
 GcmClutData	*gcm_profile_generate			(GcmProfile	*profile,
 							 guint		 size);
+const gchar	*gcm_profile_type_to_text		(GcmProfileType	 type);
+const gchar	*gcm_profile_colorspace_to_text		(GcmProfileColorspace type);
 
 G_END_DECLS
 

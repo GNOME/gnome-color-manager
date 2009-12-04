@@ -1330,7 +1330,7 @@ gcm_prefs_profile_type_to_text (GcmProfileType type)
  * gcm_prefs_profile_colorspace_to_text:
  **/
 static gchar *
-gcm_prefs_profile_colorspace_to_text (GcmProfileType type)
+gcm_prefs_profile_colorspace_to_text (GcmProfileColorspace type)
 {
 	if (type == GCM_PROFILE_COLORSPACE_XYZ) {
 		/* TRANSLATORS: this the ICC colorspace type */

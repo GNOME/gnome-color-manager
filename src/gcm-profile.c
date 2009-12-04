@@ -1203,6 +1203,58 @@ out:
 }
 
 /**
+ * gcm_profile_type_to_text:
+ **/
+const gchar *
+gcm_profile_type_to_text (GcmProfileType type)
+{
+	if (type == GCM_PROFILE_TYPE_INPUT_DEVICE)
+		return "input-device";
+	if (type == GCM_PROFILE_TYPE_DISPLAY_DEVICE)
+		return "display-device";
+	if (type == GCM_PROFILE_TYPE_OUTPUT_DEVICE)
+		return "output-device";
+	if (type == GCM_PROFILE_TYPE_DEVICELINK)
+		return "devicelink";
+	if (type == GCM_PROFILE_TYPE_COLORSPACE_CONVERSION)
+		return "colorspace-conversion";
+	if (type == GCM_PROFILE_TYPE_ABSTRACT)
+		return "abstract";
+	if (type == GCM_PROFILE_TYPE_NAMED_COLOUR)
+		return "named-color";
+	return "unknown";
+}
+
+/**
+ * gcm_profile_colorspace_to_text:
+ **/
+const gchar *
+gcm_profile_colorspace_to_text (GcmProfileColorspace type)
+{
+	if (type == GCM_PROFILE_COLORSPACE_XYZ)
+		return "xyz";
+	if (type == GCM_PROFILE_COLORSPACE_LAB)
+		return "lab";
+	if (type == GCM_PROFILE_COLORSPACE_LUV)
+		return "luv";
+	if (type == GCM_PROFILE_COLORSPACE_YCBCR)
+		return "ycbcr";
+	if (type == GCM_PROFILE_COLORSPACE_YXY)
+		return "yxy";
+	if (type == GCM_PROFILE_COLORSPACE_RGB)
+		return "rgb";
+	if (type == GCM_PROFILE_COLORSPACE_GRAY)
+		return "gray";
+	if (type == GCM_PROFILE_COLORSPACE_HSV)
+		return "hsv";
+	if (type == GCM_PROFILE_COLORSPACE_CMYK)
+		return "cmyk";
+	if (type == GCM_PROFILE_COLORSPACE_CMY)
+		return "cmy";
+	return "unknown";
+}
+
+/**
  * gcm_profile_get_property:
  **/
 static void
