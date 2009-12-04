@@ -118,6 +118,12 @@ main (int argc, char **argv)
 	/* use CIE widget */
 	cie_widget = gcm_cie_widget_new ();
 	gtk_widget_set_size_request (cie_widget, 200, 200);
+	g_object_set (cie_widget,
+		      "white", white,
+		      "red", red,
+		      "green", green,
+		      "blue", blue,
+		      NULL);
 
 	/* check file does't already exist */
 	destination = gcm_utils_get_profile_destination (files[0]);
