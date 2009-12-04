@@ -1318,7 +1318,7 @@ gcm_prefs_profile_type_to_text (GcmProfileType type)
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Abstract");
 	}
-	if (type == GCM_PROFILE_TYPE_NAMED_COLOUR) {
+	if (type == GCM_PROFILE_TYPE_NAMED_COLOR) {
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Named color");
 	}

@@ -85,7 +85,7 @@ static void     gcm_profile_finalize	(GObject     *object);
 #define GCM_PROFILE_CLASS_DEVICELINK		0x6c696e6b
 #define GCM_PROFILE_CLASS_COLORSPACE_CONVERSION	0x73706163
 #define GCM_PROFILE_CLASS_ABSTRACT		0x61627374
-#define GCM_PROFILE_CLASS_NAMED_COLOUR		0x6e6d636c
+#define GCM_PROFILE_CLASS_NAMED_COLOR		0x6e6d636c
 
 #define GCM_TRC_SIZE			0x08
 #define GCM_TRC_DATA			0x0c
@@ -840,8 +840,8 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 	case GCM_PROFILE_CLASS_ABSTRACT:
 		priv->profile_type = GCM_PROFILE_TYPE_ABSTRACT;
 		break;
-	case GCM_PROFILE_CLASS_NAMED_COLOUR:
-		priv->profile_type = GCM_PROFILE_TYPE_NAMED_COLOUR;
+	case GCM_PROFILE_CLASS_NAMED_COLOR:
+		priv->profile_type = GCM_PROFILE_TYPE_NAMED_COLOR;
 		break;
 	default:
 		priv->profile_type = GCM_PROFILE_TYPE_UNKNOWN;
@@ -1234,7 +1234,7 @@ gcm_profile_type_to_text (GcmProfileType type)
 		return "colorspace-conversion";
 	if (type == GCM_PROFILE_TYPE_ABSTRACT)
 		return "abstract";
-	if (type == GCM_PROFILE_TYPE_NAMED_COLOUR)
+	if (type == GCM_PROFILE_TYPE_NAMED_COLOR)
 		return "named-color";
 	return "unknown";
 }

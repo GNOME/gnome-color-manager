@@ -21,10 +21,10 @@
 
 /**
  * SECTION:gcm-clut
- * @short_description: Colour lookup table object
+ * @short_description: Color lookup table object
  *
- * This object represents a colour lookup table that is useful to manipulating
- * gamma values in a trivial RGB colour space.
+ * This object represents a color lookup table that is useful to manipulating
+ * gamma values in a trivial RGB color space.
  */
 
 #include "config.h"
