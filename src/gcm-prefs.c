@@ -647,6 +647,13 @@ gcm_prefs_calibrate_device_get_icc_profile (void)
 	/* setup the filter */
 	filter = gtk_file_filter_new ();
 	gtk_file_filter_add_mime_type (filter, "application/vnd.iccprofile");
+
+	/* we can remove this when we depend on a new shared-mime-info */
+	gtk_file_filter_add_pattern (filter, "*.icc");
+	gtk_file_filter_add_pattern (filter, "*.icm");
+	gtk_file_filter_add_pattern (filter, "*.ICC");
+	gtk_file_filter_add_pattern (filter, "*.ICM");
+
 	/* TRANSLATORS: filter name on the file->open dialog */
 	gtk_file_filter_set_name (filter, _("Supported ICC profiles"));
 	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
