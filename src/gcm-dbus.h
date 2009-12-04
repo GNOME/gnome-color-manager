@@ -68,6 +68,10 @@ void		 gcm_dbus_get_profiles_for_device	(GcmDbus	*dbus,
 							 const gchar	*sysfs_path,
 							 const gchar	*options,
 							 DBusGMethodInvocation *context);
+void		 gcm_dbus_get_profiles_for_type		(GcmDbus	*dbus,
+							 const gchar	*type,
+							 const gchar	*options,
+							 DBusGMethodInvocation *context);
 
 G_END_DECLS
 

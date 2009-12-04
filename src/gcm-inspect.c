@@ -221,7 +221,89 @@ gcm_inspect_show_profiles_for_device (const gchar *sysfs_path)
 		g_value_unset (gv);
 
 		/* done */
-		g_print ("%i.\t%s\t%s\n", i+1, title, profile);
+		g_print ("%i.\t%s\n\t%s\n", i+1, title, profile);
+		g_value_array_free (gva);
+		g_free (title);
+		g_free (profile);
+	}
+out:
+	if (profile_data_array != NULL)
+		g_ptr_array_free (profile_data_array, TRUE);
+	g_object_unref (proxy);
+	return ret;
+}
+
+/**
+ * gcm_inspect_show_profiles_for_type:
+ **/
+static gboolean
+gcm_inspect_show_profiles_for_type (const gchar *type)
+{
+	gboolean ret;
+	DBusGConnection *connection;
+	DBusGProxy *proxy;
+	GError *error = NULL;
+	gchar *title;
+	gchar *profile;
+	guint i;
+	GType custom_g_type_string_string;
+	GPtrArray *profile_data_array = NULL;
+	GValueArray *gva;
+	GValue *gv;
+
+	/* get a session bus connection */
+	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
+
+	/* connect to the interface */
+	proxy = dbus_g_proxy_new_for_name (connection,
+					   "org.gnome.ColorManager",
+					   "/org/gnome/ColorManager",
+					   "org.gnome.ColorManager");
+
+	/* create a specialized type, because dbus-glib sucks monkey balls */
+	custom_g_type_string_string = dbus_g_type_get_collection ("GPtrArray",
+					dbus_g_type_get_struct("GValueArray",
+						G_TYPE_STRING,
+						G_TYPE_STRING,
+						G_TYPE_INVALID));
+
+	/* execute sync method */
+	ret = dbus_g_proxy_call (proxy, "GetProfilesForType", &error,
+				 G_TYPE_STRING, type,
+				 G_TYPE_STRING, "",
+				 G_TYPE_INVALID,
+				 custom_g_type_string_string, &profile_data_array,
+				 G_TYPE_INVALID);
+	if (!ret) {
+		egg_warning ("failed: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* no data */
+	if (profile_data_array->len == 0) {
+		/* TRANSLATORS: no rofile has been asigned to this device type */
+		g_print ("%s\n", _("There are no ICC profiles for this device type"));
+		goto out;
+	}
+
+	/* TRANSLATORS: this is a list of profiles suitable for the device */
+	g_print ("%s %s\n", _("Suitable profiles for:"), type);
+
+	/* list each entry */
+	for (i=0; i<profile_data_array->len; i++) {
+		gva = (GValueArray *) g_ptr_array_index (profile_data_array, i);
+		/* 0 */
+		gv = g_value_array_get_nth (gva, 0);
+		title = g_value_dup_string (gv);
+		g_value_unset (gv);
+		/* 1 */
+		gv = g_value_array_get_nth (gva, 1);
+		profile = g_value_dup_string (gv);
+		g_value_unset (gv);
+
+		/* done */
+		g_print ("%i.\t%s\n\t%s\n", i+1, title, profile);
 		g_value_array_free (gva);
 		g_free (title);
 		g_free (profile);
@@ -301,6 +383,8 @@ main (int argc, char **argv)
 	gboolean x11 = FALSE;
 	gboolean dump = FALSE;
 	gchar *sysfs_path = NULL;
+	gchar *type = NULL;
+	GcmDeviceType type_enum;
 	guint retval = 0;
 	GOptionContext *context;
 
@@ -311,6 +395,9 @@ main (int argc, char **argv)
 		{ "device", '\0', 0, G_OPTION_ARG_FILENAME, &sysfs_path,
 			/* TRANSLATORS: command line option */
 			_("Get the profiles for a specific device"), NULL },
+		{ "type", '\0', 0, G_OPTION_ARG_FILENAME, &type,
+			/* TRANSLATORS: command line option */
+			_("Get the profiles for a specific device type"), NULL },
 		{ "dump", 'd', 0, G_OPTION_ARG_NONE, &dump,
 			/* TRANSLATORS: command line option */
 			_("Dump all details about this system"), NULL },
@@ -336,10 +423,21 @@ main (int argc, char **argv)
 		gcm_inspect_show_x11_atoms ();
 	if (sysfs_path != NULL)
 		gcm_inspect_show_profiles_for_device (sysfs_path);
+	if (type != NULL) {
+		type_enum = gcm_device_type_from_text (type);
+		if (type_enum == GCM_DEVICE_TYPE_UNKNOWN) {
+			/* TRANSLATORS: this is when the user does --type=mickeymouse */
+			g_print ("%s\n", _("Device type not recognised"));
+		} else {
+			/* show device profiles */
+			gcm_inspect_show_profiles_for_type (type);
+		}
+	}
 	if (dump)
 		gcm_inspect_get_properties ();
 
 	g_free (sysfs_path);
+	g_free (type);
 	return retval;
 }
 

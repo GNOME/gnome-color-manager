@@ -148,49 +148,23 @@ gcm_dbus_get_idle_time (GcmDbus	*dbus)
 #define GCM_DBUS_STRUCT_STRING_STRING (dbus_g_type_get_struct ("GValueArray", G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INVALID))
 
 /**
- * gcm_dbus_get_title_for_profile:
- **/
-static gchar *
-gcm_dbus_get_title_for_profile (GcmDbus *dbus, const gchar *filename)
-{
-	GcmProfile *profile;
-	GError *error = NULL;
-	gboolean ret;
-	gchar *title = NULL;
-
-	/* open and parse filename */
-	profile = gcm_profile_new ();
-	ret = gcm_profile_parse (profile, filename, &error);
-	if (!ret) {
-		egg_warning ("failed to parse %s: %s", filename, error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* get the title */
-	g_object_get (profile,
-		      "description", &title,
-		      NULL);
-out:
-	g_object_unref (profile);
-	return title;
-}
-
-/**
  * gcm_dbus_get_profiles_for_device_internal:
  **/
 static GPtrArray *
 gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *sysfs_path)
 {
-	guint i;
+	gboolean ret;
+	gchar *filename;
 	gchar *sysfs_path_tmp;
-	gchar *profile;
-	GPtrArray *array;
+	guint i;
 	GcmDevice *device;
+	GcmProfile *profile;
+	GError *error = NULL;
+	GPtrArray *array;
 	GPtrArray *array_devices;
 
 	/* create a temp array */
-	array = g_ptr_array_new_with_free_func (g_free);
+	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 
 	/* get list */
 	array_devices = gcm_client_get_devices (dbus->priv->client);
@@ -210,11 +184,78 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *sysfs_pat
 		egg_debug ("comparing %s with %s", sysfs_path_tmp, sysfs_path);
 		if (g_strcmp0 (sysfs_path_tmp, sysfs_path) == 0) {
 			g_object_get (device,
-				      "profile-filename", &profile,
+				      "profile-filename", &filename,
 				      NULL);
-			g_ptr_array_add (array, profile);
+
+			/* open and parse filename */
+			profile = gcm_profile_new ();
+			ret = gcm_profile_parse (profile, filename, &error);
+			if (!ret) {
+				egg_warning ("failed to parse %s: %s", filename, error->message);
+				g_clear_error (&error);
+			} else {
+				g_ptr_array_add (array, g_object_ref (profile));
+			}
+
+			/* unref */
+			g_object_unref (profile);
+			g_free (filename);
 		}
 		g_free (sysfs_path_tmp);
+	}
+
+	/* unref list of devices */
+	g_ptr_array_unref (array_devices);
+	return array;
+}
+
+/**
+ * gcm_dbus_get_profiles_for_type_internal:
+ **/
+static GPtrArray *
+gcm_dbus_get_profiles_for_type_internal (GcmDbus *dbus, GcmDeviceType type)
+{
+	const gchar *filename;
+	gboolean ret;
+	guint i;
+	GcmProfile *profile;
+	GcmProfileType profile_type;
+	GcmProfileType type_tmp;
+	GError *error = NULL;
+	GPtrArray *array;
+	GPtrArray *array_devices;
+
+	/* create a temp array */
+	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+
+	/* get the correct profile type for the device type */
+	profile_type = gcm_utils_device_type_to_profile_type (type);
+
+	/* get list */
+	array_devices = gcm_utils_get_profile_filenames ();
+	for (i=0; i<array_devices->len; i++) {
+		filename = g_ptr_array_index (array_devices, i);
+
+		/* open and parse filename */
+		profile = gcm_profile_new ();
+		ret = gcm_profile_parse (profile, filename, &error);
+		if (!ret) {
+			egg_warning ("failed to parse %s: %s", filename, error->message);
+			g_clear_error (&error);
+		} else {
+			/* get the native path of this device */
+			g_object_get (profile,
+				      "type", &type_tmp,
+				      NULL);
+
+			/* compare what we have against what we were given */
+			egg_debug ("comparing %i with %i", type_tmp, profile_type);
+			if (type_tmp == profile_type)
+				g_ptr_array_add (array, g_object_ref (profile));
+		}
+
+		/* unref */
+		g_object_unref (profile);
 	}
 
 	/* unref list of devices */
@@ -229,8 +270,9 @@ void
 gcm_dbus_get_profiles_for_device (GcmDbus *dbus, const gchar *sysfs_path, const gchar *options, DBusGMethodInvocation *context)
 {
 	GPtrArray *array_profiles;
-	const gchar *profile;
+	GcmProfile *profile;
 	gchar *title;
+	gchar *filename;
 	guint i;
 	GPtrArray *array_structs;
 	GValue *value;
@@ -243,15 +285,73 @@ gcm_dbus_get_profiles_for_device (GcmDbus *dbus, const gchar *sysfs_path, const 
 	/* copy data to dbus struct */
 	array_structs = g_ptr_array_sized_new (array_profiles->len);
 	for (i=0; i<array_profiles->len; i++) {
-		profile = (const gchar *) g_ptr_array_index (array_profiles, i);
-		title = gcm_dbus_get_title_for_profile (dbus, profile);
+		profile = (GcmProfile *) g_ptr_array_index (array_profiles, i);
+
+		/* get the data */
+		g_object_get (profile,
+			      "description", &title,
+			      "filename", &filename,
+			      NULL);
+
 		value = g_new0 (GValue, 1);
 		g_value_init (value, GCM_DBUS_STRUCT_STRING_STRING);
 		g_value_take_boxed (value, dbus_g_type_specialized_construct (GCM_DBUS_STRUCT_STRING_STRING));
-		dbus_g_type_struct_set (value, 0, title, 1, profile, -1);
+		dbus_g_type_struct_set (value, 0, title, 1, filename, -1);
 		g_ptr_array_add (array_structs, g_value_get_boxed (value));
 		g_free (value);
 		g_free (title);
+		g_free (filename);
+	}
+
+	/* return profiles */
+	dbus_g_method_return (context, array_structs);
+
+	/* reset time */
+	g_timer_reset (dbus->priv->timer);
+
+	g_ptr_array_unref (array_profiles);
+}
+
+/**
+ * gcm_dbus_get_profiles_for_type:
+ **/
+void
+gcm_dbus_get_profiles_for_type (GcmDbus *dbus, const gchar *type, const gchar *options, DBusGMethodInvocation *context)
+{
+	GPtrArray *array_profiles;
+	GcmProfile *profile;
+	gchar *title;
+	gchar *filename;
+	guint i;
+	GPtrArray *array_structs;
+	GValue *value;
+	GcmDeviceType type_enum;
+
+	egg_debug ("getting profiles for %s", type);
+
+	/* get array of profile filenames */
+	type_enum = gcm_device_type_from_text (type);
+	array_profiles = gcm_dbus_get_profiles_for_type_internal (dbus, type_enum);
+
+	/* copy data to dbus struct */
+	array_structs = g_ptr_array_sized_new (array_profiles->len);
+	for (i=0; i<array_profiles->len; i++) {
+		profile = (GcmProfile *) g_ptr_array_index (array_profiles, i);
+
+		/* get the data */
+		g_object_get (profile,
+			      "description", &title,
+			      "filename", &filename,
+			      NULL);
+
+		value = g_new0 (GValue, 1);
+		g_value_init (value, GCM_DBUS_STRUCT_STRING_STRING);
+		g_value_take_boxed (value, dbus_g_type_specialized_construct (GCM_DBUS_STRUCT_STRING_STRING));
+		dbus_g_type_struct_set (value, 0, title, 1, filename, -1);
+		g_ptr_array_add (array_structs, g_value_get_boxed (value));
+		g_free (value);
+		g_free (title);
+		g_free (filename);
 	}
 
 	/* return profiles */
