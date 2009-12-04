@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-04 18:14+0300\n"
-"PO-Revision-Date: 2009-12-04 18:29+0300\n"
+"POT-Creation-Date: 2009-12-04 18:31+0300\n"
+"PO-Revision-Date: 2009-12-04 19:55+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: GNOME Russian <gnome-cyr@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -126,12 +126,12 @@ msgstr "_Выполнять коррекцию цвета глобально и 
 msgid "Do not enable display correction"
 msgstr "Не выполнять коррекцию цвета"
 
-#. The type of profile, e.g. display, scanner, etc.
+#. The basename (the last section of the filename) of the profile
 #: ../data/gcm-prefs.ui.h:32
 msgid "File name:"
 msgstr "Имя файла:"
 
-#. The type of profile, e.g. display, scanner, etc.
+#. The file size in bytes of the profile
 #: ../data/gcm-prefs.ui.h:34
 msgid "File size:"
 msgstr "Размер файла:"
@@ -497,9 +497,8 @@ msgstr "Подходящие профили для:"
 
 #. TRANSLATORS: no rofile has been asigned to this device type
 #: ../src/gcm-inspect.c:286
-#, fuzzy
 msgid "There are no ICC profiles for this device type"
-msgstr "Для этого устройства нет цветовых профилей"
+msgstr "Для этого типа устройств нет цветовых профилей"
 
 #. TRANSLATORS: this is the rendering intent of the output
 #: ../src/gcm-inspect.c:326
@@ -580,7 +579,7 @@ msgstr "Установить"
 
 #. TRANSLATORS: could not read file
 #: ../src/gcm-import.c:180
-#: ../src/gcm-prefs.c:692
+#: ../src/gcm-prefs.c:699
 msgid "Failed to copy file"
 msgstr "Не удалось скопировать файл"
 
@@ -625,155 +624,155 @@ msgid "Select ICC profile file"
 msgstr "Выберите цветовой профиль"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-prefs.c:651
+#: ../src/gcm-prefs.c:658
 msgid "Supported ICC profiles"
 msgstr "Поддерживаемые цветовые профили"
 
 #. add a clear entry
-#: ../src/gcm-prefs.c:1120
+#: ../src/gcm-prefs.c:1127
 msgid "None"
 msgstr "Нет"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1292
+#: ../src/gcm-prefs.c:1299
 msgid "Input device"
 msgstr "Устройство ввода"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1296
+#: ../src/gcm-prefs.c:1303
 msgid "Display device"
 msgstr "Устройство отображения"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1300
+#: ../src/gcm-prefs.c:1307
 msgid "Output device"
 msgstr "Устройство вывода"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1304
+#: ../src/gcm-prefs.c:1311
 msgid "Devicelink"
 msgstr ""
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1308
+#: ../src/gcm-prefs.c:1315
 msgid "Colorspace conversion"
 msgstr "Преобразование цветового пространства"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1312
+#: ../src/gcm-prefs.c:1319
 msgid "Abstract"
 msgstr "Абстрактный"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1316
+#: ../src/gcm-prefs.c:1323
 msgid "Named color"
 msgstr "Именованный цвет"
 
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1319
-#: ../src/gcm-prefs.c:1369
+#: ../src/gcm-prefs.c:1326
+#: ../src/gcm-prefs.c:1376
 msgid "Unknown"
 msgstr "Неизвестен"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1330
+#: ../src/gcm-prefs.c:1337
 msgid "XYZ"
 msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1334
+#: ../src/gcm-prefs.c:1341
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1338
+#: ../src/gcm-prefs.c:1345
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1342
+#: ../src/gcm-prefs.c:1349
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1346
+#: ../src/gcm-prefs.c:1353
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1350
+#: ../src/gcm-prefs.c:1357
 msgid "RGB"
 msgstr "RGB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1354
+#: ../src/gcm-prefs.c:1361
 msgid "Gray"
 msgstr "Gray"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1358
+#: ../src/gcm-prefs.c:1365
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1362
+#: ../src/gcm-prefs.c:1369
 msgid "CMYK"
 msgstr "CMYK"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1366
+#: ../src/gcm-prefs.c:1373
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/gcm-prefs.c:1569
+#: ../src/gcm-prefs.c:1576
 msgid "No hardware support"
 msgstr "Аппаратное обеспечение не поддерживается"
 
 #. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/gcm-prefs.c:1573
-#: ../src/gcm-prefs.c:1822
+#: ../src/gcm-prefs.c:1580
+#: ../src/gcm-prefs.c:1829
 msgid "disconnected"
 msgstr "отключено"
 
 #. TRANSLATORS: this is where the required software has not been written yet
-#: ../src/gcm-prefs.c:1828
+#: ../src/gcm-prefs.c:1835
 msgid "No software support"
 msgstr "Нет поддержки в программном обеспечении"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:2118
+#: ../src/gcm-prefs.c:2125
 msgid "Perceptual"
 msgstr "Воспринимаемая"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:2121
+#: ../src/gcm-prefs.c:2128
 msgid "Relative colormetric"
 msgstr "Относительная колориметрическая"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:2124
+#: ../src/gcm-prefs.c:2131
 msgid "Saturation"
 msgstr "Насыщенная"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:2127
+#: ../src/gcm-prefs.c:2134
 msgid "Absolute colormetric"
 msgstr "Абсолютная колориметрическая"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:2130
+#: ../src/gcm-prefs.c:2137
 msgid "Disable soft proofing"
 msgstr "Отключить программную цветопробу"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-prefs.c:2158
+#: ../src/gcm-prefs.c:2166
 msgid "Set the parent window to make this modal"
 msgstr ""
 
 #. TRANSLATORS: this is displayed while the devices are being probed
-#: ../src/gcm-prefs.c:2405
+#: ../src/gcm-prefs.c:2421
 msgid "Loading list of devices..."
 msgstr "Загружается список устройств..."
 
@@ -837,8 +836,14 @@ msgstr "ноября"
 msgid "December"
 msgstr "декабря"
 
+#. TRANSLATORS: please re-arrange: days, months (in text), years, hours, minutes, seconds
+#: ../src/gcm-profile.c:716
+#, c-format
+msgid "%i %s %04i, %02i:%02i:%02i"
+msgstr "%i %s %04i, %02i:%02i:%02i"
+
 #. TRANSLATORS: this is where the ICC profile has no description
-#: ../src/gcm-profile.c:967
+#: ../src/gcm-profile.c:969
 msgid "Missing description"
 msgstr "Описание отсутствует"
 
