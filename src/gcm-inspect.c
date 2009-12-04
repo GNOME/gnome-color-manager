@@ -412,7 +412,8 @@ main (int argc, char **argv)
 
 	gtk_init (&argc, &argv);
 
-	context = g_option_context_new ("gnome-color-manager inspect program");
+	/* TRANSLATORS: just dumps the EDID to disk */
+	context = g_option_context_new (_("EDID inspect program"));
 	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_add_group (context, egg_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
