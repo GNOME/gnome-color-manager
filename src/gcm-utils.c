@@ -621,6 +621,31 @@ gcm_utils_get_default_config_location (void)
 	return filename;
 }
 
+/**
+ * gcm_utils_device_type_to_profile_type:
+ **/
+GcmProfileType
+gcm_utils_device_type_to_profile_type (GcmDeviceType type)
+{
+	GcmProfileType profile_type;
+	switch (type) {
+	case GCM_DEVICE_TYPE_DISPLAY:
+		profile_type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
+		break;
+	case GCM_DEVICE_TYPE_CAMERA:
+	case GCM_DEVICE_TYPE_SCANNER:
+		profile_type = GCM_PROFILE_TYPE_INPUT_DEVICE;
+		break;
+	case GCM_DEVICE_TYPE_PRINTER:
+		profile_type = GCM_PROFILE_TYPE_OUTPUT_DEVICE;
+		break;
+	default:
+		egg_warning ("unknown type: %i", type);
+		profile_type = GCM_PROFILE_TYPE_UNKNOWN;
+	}
+	return profile_type;
+}
+
 /***************************************************************************
  ***                          MAKE CHECK TESTS                           ***
  ***************************************************************************/
@@ -634,6 +659,8 @@ gcm_utils_test (EggTest *test)
 	GError *error = NULL;
 	GPtrArray *array;
 	gchar *filename;
+	GcmProfileType profile_type;
+	GcmDeviceType device_type;
 
 	if (!egg_test_start (test, "GcmUtils"))
 		return;
@@ -701,6 +728,16 @@ gcm_utils_test (EggTest *test)
 	else
 		egg_test_failed (test, "failed to get correct config location: %s", filename);
 	g_free (filename);
+
+	/************************************************************/
+	egg_test_title (test, "convert valid device type to profile type");
+	profile_type = gcm_utils_device_type_to_profile_type (GCM_DEVICE_TYPE_SCANNER);
+	egg_test_assert (test, (profile_type == GCM_PROFILE_TYPE_INPUT_DEVICE));
+
+	/************************************************************/
+	egg_test_title (test, "convert invalid device type to profile type");
+	profile_type = gcm_utils_device_type_to_profile_type (GCM_DEVICE_TYPE_UNKNOWN);
+	egg_test_assert (test, (profile_type == GCM_PROFILE_TYPE_UNKNOWN));
 
 	egg_test_end (test);
 }

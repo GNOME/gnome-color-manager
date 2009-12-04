@@ -1094,21 +1094,7 @@ gcm_prefs_add_profiles_suitable_for_devices (GcmDeviceType type)
 	GcmProfileType profile_type_tmp;
 
 	/* get the correct profile type for the device type */
-	switch (type) {
-	case GCM_DEVICE_TYPE_DISPLAY:
-		profile_type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
-		break;
-	case GCM_DEVICE_TYPE_CAMERA:
-	case GCM_DEVICE_TYPE_SCANNER:
-		profile_type = GCM_PROFILE_TYPE_INPUT_DEVICE;
-		break;
-	case GCM_DEVICE_TYPE_PRINTER:
-		profile_type = GCM_PROFILE_TYPE_OUTPUT_DEVICE;
-		break;
-	default:
-		egg_warning ("unknown type: %i", type);
-		profile_type = GCM_PROFILE_TYPE_UNKNOWN;
-	}
+	profile_type = gcm_utils_device_type_to_profile_type (type);
 
 	/* clear existing entries */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
@@ -1294,7 +1280,6 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	g_free (id);
 	g_free (profile_filename);
 }
-
 
 /**
  * gcm_prefs_profile_type_to_text:

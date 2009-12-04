@@ -25,6 +25,7 @@
 #include <glib-object.h>
 
 #include "gcm-device.h"
+#include "gcm-profile.h"
 
 #define GCM_STOCK_ICON				"gnome-color-manager"
 #define GCM_PROFILE_PATH			"/.color/icc"
@@ -49,6 +50,7 @@ gboolean	 gcm_utils_output_is_lcd		(const gchar		*output_name);
 void		 gcm_utils_alphanum_lcase		(gchar			*string);
 void		 gcm_utils_ensure_sensible_filename	(gchar			*string);
 gchar		*gcm_utils_get_default_config_location	(void);
+GcmProfileType	 gcm_utils_device_type_to_profile_type	(GcmDeviceType		 type);
 
 #endif /* __GCM_UTILS_H */
 
