@@ -709,9 +709,11 @@ gcm_parser_get_date_time (const gchar *data, gsize offset)
 	if (years == 0)
 		goto out;
 
-	/* TRANSLATORS: please re-arrange: days, months (in text), years, hours, minutes, seconds */
+	/* write the month as a word to avoid locale confusion */
 	month_text = gcm_parser_get_month (months);
-	text = g_strdup_printf ("%i %s %04i, %02i:%02i:%02i", days, month_text, years, hours, minutes, seconds);
+
+	/* TRANSLATORS: please re-arrange: days, months (in text), years, hours, minutes, seconds */
+	text = g_strdup_printf (_("%i %s %04i, %02i:%02i:%02i"), days, month_text, years, hours, minutes, seconds);
 out:
 	return text;
 }
