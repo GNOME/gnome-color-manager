@@ -304,7 +304,14 @@ gcm_client_gudev_add (GcmClient *client, GUdevDevice *udev_device)
 	/* only matches cameras with gphoto drivers */
 	value = g_udev_device_get_property (udev_device, "ID_GPHOTO2");
 	if (value != NULL) {
-		egg_debug ("found camera device: %s", g_udev_device_get_sysfs_path (udev_device));
+		egg_debug ("found gphoto camera device: %s", g_udev_device_get_sysfs_path (udev_device));
+		gcm_client_gudev_add_type (client, udev_device, GCM_DEVICE_TYPE_CAMERA);
+	}
+
+	/* only matches cameras with v4l devices */
+	value = g_udev_device_get_property (udev_device, "ID_V4L_PRODUCT");
+	if (value != NULL) {
+		egg_debug ("found v4l camera device: %s", g_udev_device_get_sysfs_path (udev_device));
 		gcm_client_gudev_add_type (client, udev_device, GCM_DEVICE_TYPE_CAMERA);
 	}
 }
@@ -334,6 +341,13 @@ gcm_client_add_connected_devices_usb (GcmClient *client, GError **error)
 
 	/* get all USB devices */
 	devices = g_udev_client_query_by_subsystem (priv->gudev_client, "usb");
+	for (l = devices; l != NULL; l = l->next) {
+		udev_device = l->data;
+		gcm_client_gudev_add (client, udev_device);
+	}
+
+	/* get all video4linux devices */
+	devices = g_udev_client_query_by_subsystem (priv->gudev_client, "video4linux");
 	for (l = devices; l != NULL; l = l->next) {
 		udev_device = l->data;
 		gcm_client_gudev_add (client, udev_device);
@@ -953,7 +967,7 @@ static void
 gcm_client_init (GcmClient *client)
 {
 	GError *error = NULL;
-	const gchar *subsystems[] = {"usb", NULL};
+	const gchar *subsystems[] = {"usb", "video4linux", NULL};
 
 	client->priv = GCM_CLIENT_GET_PRIVATE (client);
 	client->priv->display_name = NULL;
