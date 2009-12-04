@@ -48,6 +48,7 @@ libgcmshared_a_CFLAGS =					\
 
 noinst_PROGRAMS =					\
 	gcm-inspect					\
+	gcm-dump-profile				\
 	gcm-dump-edid
 
 gcm_dump_edid_SOURCES =					\
@@ -66,6 +67,21 @@ gcm_dump_edid_LDADD =					\
 gcm_dump_edid_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
+gcm_dump_profile_SOURCES =				\
+	gcm-dump-profile.c
+
+gcm_dump_profile_LDADD =				\
+	libgcmshared.a					\
+	$(GLIB_LIBS)					\
+	$(GNOMEDESKTOP_LIBS)				\
+	$(GCONF_LIBS)					\
+	$(GUDEV_LIBS)					\
+	$(XORG_LIBS)					\
+	$(DBUS_GLIB_LIBS)				\
+	$(GTK_LIBS)
+
+gcm_dump_profile_CFLAGS =				\
+	$(WARNINGFLAGS_C)
 
 bin_PROGRAMS =						\
 	gcm-apply					\
