@@ -2151,6 +2151,7 @@ main (int argc, char **argv)
 	GtkWidget *info_bar_label;
 	GtkSizeGroup *size_group = NULL;
 	GtkSizeGroup *size_group2 = NULL;
+	GdkScreen *screen;
 
 	const GOptionEntry options[] = {
 		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
@@ -2393,10 +2394,18 @@ main (int argc, char **argv)
 
 	/* use cie widget */
 	cie_widget = gcm_cie_widget_new ();
-	gtk_widget_set_size_request (cie_widget, 200, 200);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_cie_widget"));
 	gtk_box_pack_start (GTK_BOX(widget), cie_widget, TRUE, TRUE, 0);
 	gtk_box_reorder_child (GTK_BOX(widget), cie_widget, 0);
+
+	/* do we set a default size to make the window larger? */
+	screen = gdk_screen_get_default ();
+	if (gdk_screen_get_width (screen) < 10240 ||
+	    gdk_screen_get_height (screen) < 768) {
+		gtk_widget_set_size_request (cie_widget, 50, 50);
+	} else {
+		gtk_widget_set_size_request (cie_widget, 200, 200);
+	}
 
 	/* use infobar */
 	info_bar = gtk_info_bar_new ();
