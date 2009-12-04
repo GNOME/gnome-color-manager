@@ -2407,7 +2407,7 @@ main (int argc, char **argv)
 
 	/* do we set a default size to make the window larger? */
 	screen = gdk_screen_get_default ();
-	if (gdk_screen_get_width (screen) < 10240 ||
+	if (gdk_screen_get_width (screen) < 1024 ||
 	    gdk_screen_get_height (screen) < 768) {
 		gtk_widget_set_size_request (cie_widget, 50, 50);
 	} else {
