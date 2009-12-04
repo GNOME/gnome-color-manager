@@ -161,8 +161,13 @@ gcm_inspect_show_profiles_for_device (const gchar *sysfs_path)
 	DBusGConnection *connection;
 	DBusGProxy *proxy;
 	GError *error = NULL;
-	gchar **profiles = NULL;
+	gchar *title;
+	gchar *profile;
 	guint i;
+	GType custom_g_type_string_string;
+	GPtrArray *profile_data_array = NULL;
+	GValueArray *gva;
+	GValue *gv;
 
 	/* get a session bus connection */
 	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
@@ -173,12 +178,19 @@ gcm_inspect_show_profiles_for_device (const gchar *sysfs_path)
 					   "/org/gnome/ColorManager",
 					   "org.gnome.ColorManager");
 
+	/* create a specialized type, because dbus-glib sucks monkey balls */
+	custom_g_type_string_string = dbus_g_type_get_collection ("GPtrArray",
+					dbus_g_type_get_struct("GValueArray",
+						G_TYPE_STRING,
+						G_TYPE_STRING,
+						G_TYPE_INVALID));
+
 	/* execute sync method */
 	ret = dbus_g_proxy_call (proxy, "GetProfilesForDevice", &error,
 				 G_TYPE_STRING, sysfs_path,
 				 G_TYPE_STRING, "",
 				 G_TYPE_INVALID,
-				 G_TYPE_STRV, &profiles,
+				 custom_g_type_string_string, &profile_data_array,
 				 G_TYPE_INVALID);
 	if (!ret) {
 		egg_warning ("failed: %s", error->message);
@@ -186,8 +198,8 @@ gcm_inspect_show_profiles_for_device (const gchar *sysfs_path)
 		goto out;
 	}
 
-	/* no entries */
-	if (profiles[0] == NULL) {
+	/* no data */
+	if (profile_data_array->len == 0) {
 		/* TRANSLATORS: no rofile has been asigned to this device */
 		g_print ("%s\n", _("There are no ICC profiles for this device"));
 		goto out;
@@ -195,11 +207,29 @@ gcm_inspect_show_profiles_for_device (const gchar *sysfs_path)
 
 	/* TRANSLATORS: this is a list of profiles suitable for the device */
 	g_print ("%s %s\n", _("Suitable profiles for:"), sysfs_path);
-	for (i=0; profiles[i] != NULL; i++)
-		g_print ("%i.\t%s\n", i+1, profiles[i]);
+
+	/* list each entry */
+	for (i=0; i<profile_data_array->len; i++) {
+		gva = (GValueArray *) g_ptr_array_index (profile_data_array, i);
+		/* 0 */
+		gv = g_value_array_get_nth (gva, 0);
+		title = g_value_dup_string (gv);
+		g_value_unset (gv);
+		/* 1 */
+		gv = g_value_array_get_nth (gva, 1);
+		profile = g_value_dup_string (gv);
+		g_value_unset (gv);
+
+		/* done */
+		g_print ("%i.\t%s\t%s\n", i+1, title, profile);
+		g_value_array_free (gva);
+		g_free (title);
+		g_free (profile);
+	}
 out:
+	if (profile_data_array != NULL)
+		g_ptr_array_free (profile_data_array, TRUE);
 	g_object_unref (proxy);
-	g_strfreev (profiles);
 	return ret;
 }
 

@@ -30,6 +30,7 @@
 #include "gcm-utils.h"
 #include "gcm-dbus.h"
 #include "gcm-client.h"
+#include "gcm-profile.h"
 
 static void     gcm_dbus_finalize	(GObject	*object);
 
@@ -144,27 +145,57 @@ gcm_dbus_get_idle_time (GcmDbus	*dbus)
 	return idle;
 }
 
+#define GCM_DBUS_STRUCT_STRING_STRING (dbus_g_type_get_struct ("GValueArray", G_TYPE_STRING, G_TYPE_STRING, G_TYPE_INVALID))
+
 /**
- * gcm_dbus_get_profiles_for_device:
+ * gcm_dbus_get_title_for_profile:
  **/
-void
-gcm_dbus_get_profiles_for_device (GcmDbus *dbus, const gchar *sysfs_path, const gchar *options, DBusGMethodInvocation *context)
+static gchar *
+gcm_dbus_get_title_for_profile (GcmDbus *dbus, const gchar *filename)
 {
+	GcmProfile *profile;
+	GError *error = NULL;
+	gboolean ret;
+	gchar *title = NULL;
+
+	/* open and parse filename */
+	profile = gcm_profile_new ();
+	ret = gcm_profile_parse (profile, filename, &error);
+	if (!ret) {
+		egg_warning ("failed to parse %s: %s", filename, error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* get the title */
+	g_object_get (profile,
+		      "description", &title,
+		      NULL);
+out:
+	g_object_unref (profile);
+	return title;
+}
+
+/**
+ * gcm_dbus_get_profiles_for_device_internal:
+ **/
+static GPtrArray *
+gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *sysfs_path)
+{
+	guint i;
+	gchar *sysfs_path_tmp;
+	gchar *profile;
 	GPtrArray *array;
 	GcmDevice *device;
-	gchar **profiles;
-	gchar *sysfs_path_tmp;
-	guint i;
+	GPtrArray *array_devices;
 
-	egg_debug ("getting profiles for %s", sysfs_path);
-
-	/* for now, hardcode one profile per device */
-	profiles = g_new0 (gchar *, 2);
+	/* create a temp array */
+	array = g_ptr_array_new_with_free_func (g_free);
 
 	/* get list */
-	array = gcm_client_get_devices (dbus->priv->client);
-	for (i=0; i<array->len; i++) {
-		device = g_ptr_array_index (array, i);
+	array_devices = gcm_client_get_devices (dbus->priv->client);
+	for (i=0; i<array_devices->len; i++) {
+		device = g_ptr_array_index (array_devices, i);
 
 		/* get the native path of this device */
 		g_object_get (device,
@@ -179,22 +210,57 @@ gcm_dbus_get_profiles_for_device (GcmDbus *dbus, const gchar *sysfs_path, const 
 		egg_debug ("comparing %s with %s", sysfs_path_tmp, sysfs_path);
 		if (g_strcmp0 (sysfs_path_tmp, sysfs_path) == 0) {
 			g_object_get (device,
-				      "profile", &profiles[0],
+				      "profile-filename", &profile,
 				      NULL);
-			g_free (sysfs_path_tmp);
-			break;
+			g_ptr_array_add (array, profile);
 		}
 		g_free (sysfs_path_tmp);
 	}
 
+	/* unref list of devices */
+	g_ptr_array_unref (array_devices);
+	return array;
+}
+
+/**
+ * gcm_dbus_get_profiles_for_device:
+ **/
+void
+gcm_dbus_get_profiles_for_device (GcmDbus *dbus, const gchar *sysfs_path, const gchar *options, DBusGMethodInvocation *context)
+{
+	GPtrArray *array_profiles;
+	const gchar *profile;
+	gchar *title;
+	guint i;
+	GPtrArray *array_structs;
+	GValue *value;
+
+	egg_debug ("getting profiles for %s", sysfs_path);
+
+	/* get array of profile filenames */
+	array_profiles = gcm_dbus_get_profiles_for_device_internal (dbus, sysfs_path);
+
+	/* copy data to dbus struct */
+	array_structs = g_ptr_array_sized_new (array_profiles->len);
+	for (i=0; i<array_profiles->len; i++) {
+		profile = (const gchar *) g_ptr_array_index (array_profiles, i);
+		title = gcm_dbus_get_title_for_profile (dbus, profile);
+		value = g_new0 (GValue, 1);
+		g_value_init (value, GCM_DBUS_STRUCT_STRING_STRING);
+		g_value_take_boxed (value, dbus_g_type_specialized_construct (GCM_DBUS_STRUCT_STRING_STRING));
+		dbus_g_type_struct_set (value, 0, title, 1, profile, -1);
+		g_ptr_array_add (array_structs, g_value_get_boxed (value));
+		g_free (value);
+		g_free (title);
+	}
+
 	/* return profiles */
-	dbus_g_method_return (context, profiles);
+	dbus_g_method_return (context, array_structs);
 
 	/* reset time */
 	g_timer_reset (dbus->priv->timer);
 
-	g_strfreev (profiles);
-	g_ptr_array_unref (array);
+	g_ptr_array_unref (array_profiles);
 }
 
 /**
