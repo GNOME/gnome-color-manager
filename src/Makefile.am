@@ -46,10 +46,14 @@ libgcmshared_a_SOURCES =				\
 libgcmshared_a_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
-noinst_PROGRAMS =					\
+bin_PROGRAMS =						\
 	gcm-inspect					\
 	gcm-dump-profile				\
-	gcm-dump-edid
+	gcm-dump-edid					\
+	gcm-apply					\
+	gcm-prefs					\
+	gcm-session					\
+	gcm-import
 
 gcm_dump_edid_SOURCES =					\
 	gcm-dump-edid.c
@@ -82,12 +86,6 @@ gcm_dump_profile_LDADD =				\
 
 gcm_dump_profile_CFLAGS =				\
 	$(WARNINGFLAGS_C)
-
-bin_PROGRAMS =						\
-	gcm-apply					\
-	gcm-prefs					\
-	gcm-session					\
-	gcm-import
 
 gcm_inspect_SOURCES =					\
 	gcm-inspect.c
