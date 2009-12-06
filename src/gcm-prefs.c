@@ -58,6 +58,7 @@ static GConfClient *gconf_client = NULL;
 
 enum {
 	GPM_DEVICES_COLUMN_ID,
+	GPM_DEVICES_COLUMN_SORT,
 	GPM_DEVICES_COLUMN_ICON,
 	GPM_DEVICES_COLUMN_TITLE,
 	GPM_DEVICES_COLUMN_LAST
@@ -65,6 +66,7 @@ enum {
 
 enum {
 	GPM_PROFILES_COLUMN_ID,
+	GPM_PROFILES_COLUMN_SORT,
 	GPM_PROFILES_COLUMN_ICON,
 	GPM_PROFILES_COLUMN_TITLE,
 	GPM_PROFILES_COLUMN_PROFILE,
@@ -510,6 +512,21 @@ gcm_prefs_profile_type_to_icon_name (GcmProfileType type)
 }
 
 /**
+ * gcm_prefs_profile_get_sort_string:
+ **/
+static const gchar *
+gcm_prefs_profile_get_sort_string (GcmProfileType type)
+{
+	if (type == GCM_PROFILE_TYPE_DISPLAY_DEVICE)
+		return "1";
+	if (type == GCM_PROFILE_TYPE_INPUT_DEVICE)
+		return "2";
+	if (type == GCM_PROFILE_TYPE_OUTPUT_DEVICE)
+		return "3";
+	return "4";
+}
+
+/**
  * gcm_prefs_update_profile_list:
  **/
 static void
@@ -522,6 +539,7 @@ gcm_prefs_update_profile_list (void)
 	GcmProfile *profile;
 	guint i;
 	gchar *filename = NULL;
+	gchar *sort = NULL;
 
 	egg_debug ("updating profile list");
 
@@ -540,13 +558,17 @@ gcm_prefs_update_profile_list (void)
 		egg_debug ("add %s to profiles list", filename);
 		icon_name = gcm_prefs_profile_type_to_icon_name (profile_type);
 		gtk_list_store_append (list_store_profiles, &iter);
+		sort = g_strdup_printf ("%s%s", description,
+					gcm_prefs_profile_get_sort_string (profile_type));
 		gtk_list_store_set (list_store_profiles, &iter,
 				    GPM_PROFILES_COLUMN_ID, filename,
+				    GPM_PROFILES_COLUMN_SORT, sort,
 				    GPM_PROFILES_COLUMN_TITLE, description,
 				    GPM_PROFILES_COLUMN_ICON, icon_name,
 				    GPM_PROFILES_COLUMN_PROFILE, profile,
 				    -1);
 
+		g_free (sort);
 		g_free (filename);
 		g_free (description);
 	}
@@ -951,8 +973,8 @@ gcm_prefs_add_devices_columns (GtkTreeView *treeview)
 	renderer = gtk_cell_renderer_text_new ();
 	column = gtk_tree_view_column_new_with_attributes ("", renderer,
 							   "markup", GPM_DEVICES_COLUMN_TITLE, NULL);
-	gtk_tree_view_column_set_sort_column_id (column, GPM_DEVICES_COLUMN_TITLE);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store_devices), GPM_DEVICES_COLUMN_ID, GTK_SORT_ASCENDING);
+	gtk_tree_view_column_set_sort_column_id (column, GPM_DEVICES_COLUMN_SORT);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store_devices), GPM_DEVICES_COLUMN_SORT, GTK_SORT_ASCENDING);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
@@ -977,8 +999,8 @@ gcm_prefs_add_profiles_columns (GtkTreeView *treeview)
 	renderer = gtk_cell_renderer_text_new ();
 	column = gtk_tree_view_column_new_with_attributes ("", renderer,
 							   "markup", GPM_PROFILES_COLUMN_TITLE, NULL);
-	gtk_tree_view_column_set_sort_column_id (column, GPM_PROFILES_COLUMN_TITLE);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store_profiles), GPM_PROFILES_COLUMN_ID, GTK_SORT_ASCENDING);
+	gtk_tree_view_column_set_sort_column_id (column, GPM_PROFILES_COLUMN_SORT);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store_profiles), GPM_PROFILES_COLUMN_SORT, GTK_SORT_ASCENDING);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
@@ -1539,6 +1561,23 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 }
 
 /**
+ * gcm_device_type_to_text:
+ **/
+static const gchar *
+gcm_prefs_device_type_to_text (GcmDeviceType type)
+{
+	if (type == GCM_DEVICE_TYPE_DISPLAY)
+		return "1";
+	if (type == GCM_DEVICE_TYPE_SCANNER)
+		return "2";
+	if (type == GCM_DEVICE_TYPE_CAMERA)
+		return "3";
+	if (type == GCM_DEVICE_TYPE_PRINTER)
+		return "4";
+	return "5";
+}
+
+/**
  * gcm_prefs_add_device_xrandr:
  **/
 static void
@@ -1547,6 +1586,7 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 	GtkTreeIter iter;
 	gchar *title_tmp;
 	gchar *title;
+	gchar *sort = NULL;
 	gchar *id;
 	gboolean ret;
 	gboolean connected;
@@ -1580,14 +1620,21 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 		title = g_strdup_printf ("%s <i>[%s]</i>", title_tmp, _("disconnected"));
 	}
 
+	/* create sort order */
+	sort = g_strdup_printf ("%s%s",
+				gcm_prefs_device_type_to_text (GCM_DEVICE_TYPE_DISPLAY),
+				title);
+
 	/* add to list */
 	egg_debug ("add %s to device list", id);
 	gtk_list_store_append (list_store_devices, &iter);
 	gtk_list_store_set (list_store_devices, &iter,
 			    GPM_DEVICES_COLUMN_ID, id,
+			    GPM_DEVICES_COLUMN_SORT, sort,
 			    GPM_DEVICES_COLUMN_TITLE, title,
 			    GPM_DEVICES_COLUMN_ICON, "video-display", -1);
 	g_free (id);
+	g_free (sort);
 	g_free (title_tmp);
 	g_free (title);
 }
@@ -1805,6 +1852,7 @@ gcm_prefs_add_device_type (GcmDevice *device)
 	gchar *title;
 	GString *string;
 	gchar *id;
+	gchar *sort = NULL;
 	GcmDeviceType type;
 	const gchar *icon_name;
 	gboolean connected;
@@ -1835,14 +1883,21 @@ gcm_prefs_add_device_type (GcmDevice *device)
 		g_string_append_printf (string, "\n(%s)", _("No software support"));
 	}
 
+	/* create sort order */
+	sort = g_strdup_printf ("%s%s",
+				gcm_prefs_device_type_to_text (type),
+				string->str);
+
 	/* add to list */
 	gtk_list_store_append (list_store_devices, &iter);
 	gtk_list_store_set (list_store_devices, &iter,
 			    GPM_DEVICES_COLUMN_ID, id,
+			    GPM_DEVICES_COLUMN_SORT, sort,
 			    GPM_DEVICES_COLUMN_TITLE, string->str,
 			    GPM_DEVICES_COLUMN_ICON, icon_name, -1);
 	g_free (id);
 	g_free (title);
+	g_free (sort);
 	g_string_free (string, TRUE);
 }
 
@@ -2210,9 +2265,9 @@ main (int argc, char **argv)
 			  G_CALLBACK (gcm_prefs_uevent_cb), NULL);
 
 	/* create list stores */
-	list_store_devices = gtk_list_store_new (GPM_DEVICES_COLUMN_LAST, G_TYPE_STRING,
+	list_store_devices = gtk_list_store_new (GPM_DEVICES_COLUMN_LAST, G_TYPE_STRING, G_TYPE_STRING,
 						 G_TYPE_STRING, G_TYPE_STRING);
-	list_store_profiles = gtk_list_store_new (GPM_PROFILES_COLUMN_LAST, G_TYPE_STRING,
+	list_store_profiles = gtk_list_store_new (GPM_PROFILES_COLUMN_LAST, G_TYPE_STRING, G_TYPE_STRING,
 						  G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
 
 	/* create device tree view */
