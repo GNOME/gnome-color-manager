@@ -724,7 +724,7 @@ gcm_calibrate_device_setup (GcmCalibrate *calibrate, GError **error)
 
 	string = g_string_new ("");
 
-	/* TRANSLATORS: title, a profile is a ICC file */
+	/* TRANSLATORS: title, we're setting up the device ready for calibration */
 	gcm_calibrate_set_title (calibrate, _("Setting up device"));
 
 	/* TRANSLATORS: dialog message, preface */
