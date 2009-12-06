@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-04 18:31+0300\n"
-"PO-Revision-Date: 2009-12-04 19:55+0300\n"
+"POT-Creation-Date: 2009-12-06 12:08+0300\n"
+"PO-Revision-Date: 2009-12-06 13:22+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: GNOME Russian <gnome-cyr@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -226,7 +226,7 @@ msgstr ""
 
 #: ../data/gnome-color-manager.schemas.in.h:5
 msgid "Set the _ICC_PROFILE atom for applications."
-msgstr ""
+msgstr "Установить атом _ICC_PROFILE для приложений"
 
 #: ../data/gnome-color-manager.schemas.in.h:6
 msgid "The default gamma to use for monitors with no previous selection."
@@ -234,7 +234,7 @@ msgstr ""
 
 #: ../data/gnome-color-manager.schemas.in.h:7
 msgid "The output intent to use, e.g. 'perceptual'."
-msgstr ""
+msgstr "Тип цветопередачи вывода, например, воспринимаемая."
 
 #. TRANSLATORS: turn on all debugging
 #: ../src/egg-debug.c:388
@@ -357,28 +357,28 @@ msgstr "Будет выполнено предварительное профи�
 #. TRANSLATORS: title, patches are specific colours used in calibration
 #: ../src/gcm-calibrate.c:521
 msgid "Generating the patches"
-msgstr ""
+msgstr "Выполняется создание полей"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:523
 msgid "Generating the patches that will be measured with the hardware device."
-msgstr ""
+msgstr "Выполняется создание полей, которые затем будут измерены устройством измерения."
 
 #. TRANSLATORS: title, drawing means painting to the screen
 #: ../src/gcm-calibrate.c:593
 msgid "Drawing the patches"
-msgstr ""
+msgstr "Выполняется отрисовка полей"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:595
 msgid "Drawing the generated patches to the screen, which will then be measured by the hardware device."
-msgstr ""
+msgstr "Выполняется отрисовка на экране полей, которые затем будут измерены устройством измерения."
 
 #. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated"
 #: ../src/gcm-calibrate.c:654
 #: ../src/gcm-calibrate.c:907
 msgid "Custom"
-msgstr ""
+msgstr "Созданный пользователем"
 
 #. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands"
 #: ../src/gcm-calibrate.c:657
@@ -406,7 +406,7 @@ msgstr "Выполняется настройка измерительного �
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate.c:731
 msgid "Before calibrating the device, you have to manually acquire a reference image and save it as a TIFF image file."
-msgstr ""
+msgstr "Перед профилирование устройства вам необходимо самостоятельно получить изображение мишени и сохранить его в формате TIFF."
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate.c:734
@@ -416,17 +416,17 @@ msgstr "Убедитесь в том, что контраст и яркость 
 #. TRANSLATORS: dialog message, suffix
 #: ../src/gcm-calibrate.c:737
 msgid "The device sensor should have been cleaned prior to scanning and the output file resolution should be at least 200dpi."
-msgstr ""
+msgstr "Сенсор устройства должен быть очищен перед сканированием, а разрешение конечного файла должно быть не менее 200dpi."
 
 #. TRANSLATORS: dialog message, suffix
 #: ../src/gcm-calibrate.c:740
 msgid "For best results, the reference image should also be less than two years old."
-msgstr ""
+msgstr "По возможности используйте мишень, которая не старше двух лет."
 
 #. TRANSLATORS: dialog question
 #: ../src/gcm-calibrate.c:743
 msgid "Do you have a scanned TIFF file of a IT8.7/2 reference image?"
-msgstr ""
+msgstr "У вас есть скан мишени IT8.7/2 в формате TIFF?"
 
 #. TRANSLATORS: title, a profile is a ICC file
 #: ../src/gcm-calibrate.c:780
@@ -441,18 +441,17 @@ msgstr ""
 #. TRANSLATORS: title, drawing means painting to the screen
 #: ../src/gcm-calibrate.c:845
 msgid "Measuring the patches"
-msgstr ""
+msgstr "Выполняется измерение полей"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:847
 msgid "Detecting the reference patches and measuring them."
-msgstr ""
+msgstr "Выполняется определение и измерение полей мишени"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:934
-#, fuzzy
 msgid "Generating the ICC color profile that can be used with this device."
-msgstr "Создаётся цветовой профиль для использования с этим монитором."
+msgstr "Создаётся цветовой профиль для использования с этим устройством"
 
 #. TRANSLATORS: this is the name of the internal panel
 #: ../src/gcm-client.c:397
@@ -513,22 +512,27 @@ msgstr "Показать свойства X11"
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:397
 msgid "Get the profiles for a specific device"
-msgstr ""
+msgstr "Получить профили для определённого устройства"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:400
 msgid "Get the profiles for a specific device type"
-msgstr ""
+msgstr "Получить профили для определённого типа устройств"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:403
 msgid "Dump all details about this system"
 msgstr "Сбросить все подробности об этой системе"
 
+#. TRANSLATORS: just dumps the EDID to disk
+#: ../src/gcm-inspect.c:416
+msgid "EDID inspect program"
+msgstr "Инспектор EDID"
+
 #. TRANSLATORS: this is when the user does --type=mickeymouse
-#: ../src/gcm-inspect.c:430
+#: ../src/gcm-inspect.c:431
 msgid "Device type not recognised"
-msgstr ""
+msgstr "Тип устройства не опознан"
 
 #. TRANSLATORS: command line option: a list of catalogs to install
 #: ../src/gcm-import.c:64
@@ -552,33 +556,33 @@ msgid "Failed to parse file: %s"
 msgstr "Не удалось разобрать файл: %s"
 
 #. TRANSLATORS: color profile already been installed
-#: ../src/gcm-import.c:127
+#: ../src/gcm-import.c:133
 msgid "ICC profile already installed"
 msgstr "Цветовой профиль уже установлен"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:146
+#: ../src/gcm-import.c:152
 #, c-format
 msgid "Import ICC color profile %s?"
 msgstr "Импортировать цветовой профиль %s?"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:149
+#: ../src/gcm-import.c:155
 msgid "Import ICC color profile?"
 msgstr "Импортировать профиль ICC?"
 
 #. ask confirmation
-#: ../src/gcm-import.c:157
+#: ../src/gcm-import.c:163
 msgid "Import ICC profile"
 msgstr "Импорт цветового профиля"
 
 #. TRANSLATORS: button text
-#: ../src/gcm-import.c:161
+#: ../src/gcm-import.c:167
 msgid "Install"
 msgstr "Установить"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-import.c:180
+#: ../src/gcm-import.c:186
 #: ../src/gcm-prefs.c:699
 msgid "Failed to copy file"
 msgstr "Не удалось скопировать файл"
@@ -586,7 +590,7 @@ msgstr "Не удалось скопировать файл"
 #. TRANSLATORS: dialog for file->open dialog
 #: ../src/gcm-prefs.c:333
 msgid "Select scanned reference file"
-msgstr ""
+msgstr "Выберите скан мишени"
 
 #. TRANSLATORS: filter name on the file->open dialog
 #: ../src/gcm-prefs.c:347
@@ -596,7 +600,7 @@ msgstr "Поддерживаемые файлы изображений"
 #. TRANSLATORS: dialog for file->open dialog
 #: ../src/gcm-prefs.c:376
 msgid "Select CIE reference values file"
-msgstr ""
+msgstr "Выберите файл со ссылочными значениями CIE"
 
 #. TRANSLATORS: filter name on the file->open dialog
 #: ../src/gcm-prefs.c:390
@@ -777,73 +781,73 @@ msgid "Loading list of devices..."
 msgstr "Загружается список устройств..."
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:637
+#: ../src/gcm-profile.c:651
 msgid "January"
 msgstr "января"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:641
+#: ../src/gcm-profile.c:655
 msgid "February"
 msgstr "февраля"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:645
+#: ../src/gcm-profile.c:659
 msgid "March"
 msgstr "марта"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:649
+#: ../src/gcm-profile.c:663
 msgid "April"
 msgstr "апреля"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:653
+#: ../src/gcm-profile.c:667
 msgid "May"
 msgstr "мая"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:657
+#: ../src/gcm-profile.c:671
 msgid "June"
 msgstr "июня"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:661
+#: ../src/gcm-profile.c:675
 msgid "July"
 msgstr "июля"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:665
+#: ../src/gcm-profile.c:679
 msgid "August"
 msgstr "августа"
 
 #. TRANSLATORS: the month (my birthday)
-#: ../src/gcm-profile.c:669
+#: ../src/gcm-profile.c:683
 msgid "September"
 msgstr "сентября"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:673
+#: ../src/gcm-profile.c:687
 msgid "October"
 msgstr "октября"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:677
+#: ../src/gcm-profile.c:691
 msgid "November"
 msgstr "ноября"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:681
+#: ../src/gcm-profile.c:695
 msgid "December"
 msgstr "декабря"
 
 #. TRANSLATORS: please re-arrange: days, months (in text), years, hours, minutes, seconds
-#: ../src/gcm-profile.c:716
+#: ../src/gcm-profile.c:730
 #, c-format
 msgid "%i %s %04i, %02i:%02i:%02i"
 msgstr "%i %s %04i, %02i:%02i:%02i"
 
 #. TRANSLATORS: this is where the ICC profile has no description
-#: ../src/gcm-profile.c:969
+#: ../src/gcm-profile.c:983
 msgid "Missing description"
 msgstr "Описание отсутствует"
 
@@ -859,6 +863,16 @@ msgstr "Управление цветом"
 #: ../src/gcm-session.c:142
 msgid "Color Management DBus Service"
 msgstr "Служба D-BUS для управления цветом"
+
+#. TRANSLATORS: command line option: a list of files to install
+#: ../src/gcm-dump-profile.c:110
+msgid "Profiles to view"
+msgstr "Просматриваемые профили"
+
+#. TRANSLATORS: this just dumps the profile to the screen
+#: ../src/gcm-dump-profile.c:123
+msgid "Profile dump program"
+msgstr ""
 
 #~ msgid "Vendor:"
 #~ msgstr "Производитель:"
