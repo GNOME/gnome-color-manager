@@ -340,7 +340,7 @@ gcm_inspect_get_properties (void)
 	DBusGProxy *proxy;
 	GError *error = NULL;
 	gchar **profiles = NULL;
-	GHashTable *hash;
+	GHashTable *hash = NULL;
 
 	/* get a session bus connection */
 	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
