@@ -558,8 +558,9 @@ gcm_prefs_update_profile_list (void)
 		egg_debug ("add %s to profiles list", filename);
 		icon_name = gcm_prefs_profile_type_to_icon_name (profile_type);
 		gtk_list_store_append (list_store_profiles, &iter);
-		sort = g_strdup_printf ("%s%s", description,
-					gcm_prefs_profile_get_sort_string (profile_type));
+		sort = g_strdup_printf ("%s%s",
+					gcm_prefs_profile_get_sort_string (profile_type),
+					description);
 		gtk_list_store_set (list_store_profiles, &iter,
 				    GPM_PROFILES_COLUMN_ID, filename,
 				    GPM_PROFILES_COLUMN_SORT, sort,
