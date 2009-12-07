@@ -1,2 +1,64 @@
-No news yet.
+Version 2.29.1
+~~~~~~~~~~~~~~
+Released: 2009-12-07
+
+* Translations
+ - Add Russian translation (Alexandre Prokoudine)
+ - Add British English translation (Bruce Cowan)
+ - Add Indonesian translation (Andika Triwidada)
+ - Add French translation (Claude Paroz)
+ - Add Swedish translation (Daniel Nylander)
+ - Add Brazilian Portuguese translation (Flamarion Jorge)
+ - Add Lithuanian translation (Gintautas Miliauskas)
+ - Add German translation (Hendrik Brandt)
+ - Add Danish translation (Joe Hansen)
+ - Add Spanish translation (Jorge González)
+ - Add Norwegian bokmål translation (Kjartan Maraas)
+ - Add Thai translation (Phondanai Khanti)
+ - Add Polish translation (Piotr Drąg)
+ - Add Estonian translation (Priit Laes, Mattias Põldaru)
+ - Add Tamil translation (vasudeven)
+ - Add Russian user guide translation (Alexandre Prokoudine)
+ - Add Indonesian user guide translation (Andika Triwidada)
+
+* New Features:
+ - Add gcm-import, a helper to allow double clicking on ICC profiles to import
+   them (Richard Hughes)
+ - Add gcm-prefs, a utility to assign profiles to devices, examine profiles, and
+   set session-wide defaults (Richard Hughes)
+ - Add gcm-session, a dbus-activated session daemon for applications to get the
+   profiles for a device, or device class and to get session-wide defaults.
+   It exits when no longer used to save resources. (Richard Hughes)
+ - Add gcm-self-test, a self test framework that tests GCM functionality (Richard Hughes)
+ - Add gcm-apply, a simple utility to just set (or reset) display profiles (Richard Hughes)
+ - Add gcm-inspect, a debugging utility to inspect the profiles set in the
+   session (Richard Hughes)
+ - Add gcm-dump-edid, a utility to dump the EDID to disk for debugging (Richard Hughes)
+ - Add gcm-dump-profile, a utility to dump the ICC profile to the screen (Richard Hughes)
+ - Add some simple man pages and help document (Richard Hughes)
+ - Add ArgyllCMS support to generate device profiles (Richard Hughes)
+ - Add color calibration hardware auto-detection (Richard Hughes)
+ - Add code to set the _ICC_PROFILE atom per-output and also per-screen (Richard Hughes)
+ - Add some pre-calibration steps for external displays (Pascal de Bruijn)
+ - Add hardware support for gphoto supported cameras (Richard Hughes)
+ - Add hardware support for SANE suppoerted scanners (Richard Hughes)
+ - Add hardware support for video4linux supported video devices (Richard Hughes)
+ - Add hardware support for XRandR supported displays (Richard Hughes)
+ - Add hardware support for hplip supported printers (Richard Hughes)
+ - Add CIE widget to display visual data about different profiles (Richard Hughes)
+ - Use the system DMI data to better itentify internal LCD panels (Richard Hughes)
+ - Parse the EDID to get a better device description for displays (Richard Hughes)
+ - Make the list orders predictable by setting a sort string (Richard Hughes)
+
+* Bugfix:
+ - Use XDG directory to store data (Baptiste Mille-Mathias)
+ - Remove markup from GTKBuilder translatable strings (Claude Paroz)
+ - Update bluish.icc title (Lars Tore Gustavsen, Pascal de Bruijn)
+ - Enable adding xrandr devices with no EDID (Martin Szulecki)
+ - Avoid reporting a (false) failure on first import (Stephane Delcroix)
+ - Fix the message-received cb signature (Stephane Delcroix)
+ - Fix up numerous small bugs prior to first release (Richard Hughes)
+ - Look for the debian-named argyllcms binaries first (Richard Hughes)
+ - Set the brightness to 100% on internal LCD panels before we generate a
+   output profile (Richard Hughes)
 
