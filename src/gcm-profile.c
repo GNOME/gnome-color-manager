@@ -1705,7 +1705,7 @@ gcm_profile_test (EggTest *test)
 	test_data.copyright = "Copyright (c) 1998 Hewlett-Packard Company";
 	test_data.manufacturer = "IEC http://www.iec.ch";
 	test_data.model = "IEC 61966-2.1 Default RGB colour space - sRGB";
-	test_data.description = "bluish test";
+	test_data.description = "Blueish Test";
 	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
 	test_data.colorspace = GCM_PROFILE_COLORSPACE_RGB;
 	test_data.luminance = 0.648454;
