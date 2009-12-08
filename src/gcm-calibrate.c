@@ -650,8 +650,8 @@ gcm_calibrate_display_generate_profile (GcmCalibrate *calibrate, GError **error)
 	date = g_date_new ();
 	g_date_set_time_t (date, time (NULL));
 
-        /* TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated" */
-	description = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", _("Custom"), priv->description, date->year, date->month, date->day);
+        /* this is the formattted custom profile description. It can't be translated as we need 7-bit ASCII */
+	description = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", "Custom", priv->description, date->year, date->month, date->day);
 
 	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" */
 	copyright = g_strdup_printf ("%s %04i %s", _("Copyright (c)"), date->year, g_get_real_name ());
