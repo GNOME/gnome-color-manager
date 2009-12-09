@@ -175,35 +175,35 @@ enum {
 G_DEFINE_TYPE (GcmProfile, gcm_profile, G_TYPE_OBJECT)
 
 /**
- * gcm_parser_unencode_32:
+ * gcm_parser_decode_32:
  **/
 static guint
-gcm_parser_unencode_32 (const gchar *data, gsize offset)
+gcm_parser_decode_32 (const gchar *data)
 {
 	guint retval;
-	retval = (data[offset+0] << 0) + (data[offset+1] << 8) + (data[offset+2] << 16) + (data[offset+3] << 24);
+	retval = (*(data + 0) << 0) + (*(data + 1) << 8) + (*(data + 2) << 16) + (*(data + 3) << 24);
 	return GUINT32_FROM_BE (retval);
 }
 
 /**
- * gcm_parser_unencode_16:
+ * gcm_parser_decode_16:
  **/
 static guint
-gcm_parser_unencode_16 (const gchar *data, gsize offset)
+gcm_parser_decode_16 (const gchar *data)
 {
 	guint retval;
-	retval = (data[offset+0] << 0) + (data[offset+1] << 8);
+	retval = (*(data + 0) << 0) + (*(data + 1) << 8);
 	return GUINT16_FROM_BE (retval);
 }
 
 /**
- * gcm_parser_unencode_8:
+ * gcm_parser_decode_8:
  **/
 static guint
-gcm_parser_unencode_8 (const gchar *data, gsize offset)
+gcm_parser_decode_8 (const gchar *data)
 {
 	guint retval;
-	retval = (data[offset+0] << 0);
+	retval = (*data << 0);
 	return GUINT16_FROM_BE (retval);
 }
 
@@ -262,7 +262,7 @@ gcm_prefs_get_tag_description (guint tag)
  * gcm_parser_load_icc_mlut:
  **/
 static gboolean
-gcm_parser_load_icc_mlut (GcmProfile *profile, const gchar *data, gsize offset)
+gcm_parser_load_icc_mlut (GcmProfile *profile, const gchar *data, guint size)
 {
 	gboolean ret = TRUE;
 	guint i;
@@ -273,11 +273,11 @@ gcm_parser_load_icc_mlut (GcmProfile *profile, const gchar *data, gsize offset)
 	mlut_data = profile->priv->mlut_data;
 
 	for (i=0; i<256; i++)
-		mlut_data[i].red = gcm_parser_unencode_16 (data, offset + GCM_MLUT_RED + i*2);
+		mlut_data[i].red = gcm_parser_decode_16 (data + GCM_MLUT_RED + i*2);
 	for (i=0; i<256; i++)
-		mlut_data[i].green = gcm_parser_unencode_16 (data, offset + GCM_MLUT_GREEN + i*2);
+		mlut_data[i].green = gcm_parser_decode_16 (data + GCM_MLUT_GREEN + i*2);
 	for (i=0; i<256; i++)
-		mlut_data[i].blue = gcm_parser_unencode_16 (data, offset + GCM_MLUT_BLUE + i*2);
+		mlut_data[i].blue = gcm_parser_decode_16 (data + GCM_MLUT_BLUE + i*2);
 
 	/* save datatype */
 	profile->priv->has_mlut = TRUE;
@@ -288,7 +288,7 @@ gcm_parser_load_icc_mlut (GcmProfile *profile, const gchar *data, gsize offset)
  * gcm_parser_load_icc_vcgt_formula:
  **/
 static gboolean
-gcm_parser_load_icc_vcgt_formula (GcmProfile *profile, const gchar *data, gsize offset)
+gcm_parser_load_icc_vcgt_formula (GcmProfile *profile, const gchar *data, guint size)
 {
 	gboolean ret = FALSE;
 	GcmClutData *vcgt_data;
@@ -300,17 +300,17 @@ gcm_parser_load_icc_vcgt_formula (GcmProfile *profile, const gchar *data, gsize 
 	vcgt_data = profile->priv->vcgt_data;
 
 	/* read in block of data */
-	vcgt_data[0].red = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_GAMMA_RED);
-	vcgt_data[0].green = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_GAMMA_GREEN);
-	vcgt_data[0].blue = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_GAMMA_BLUE);
+	vcgt_data[0].red = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_GAMMA_RED);
+	vcgt_data[0].green = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_GAMMA_GREEN);
+	vcgt_data[0].blue = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_GAMMA_BLUE);
 
-	vcgt_data[1].red = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_MIN_RED);
-	vcgt_data[1].green = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_MIN_GREEN);
-	vcgt_data[1].blue = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_MIN_BLUE);
+	vcgt_data[1].red = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_MIN_RED);
+	vcgt_data[1].green = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_MIN_GREEN);
+	vcgt_data[1].blue = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_MIN_BLUE);
 
-	vcgt_data[2].red = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_MAX_RED);
-	vcgt_data[2].green = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_MAX_GREEN);
-	vcgt_data[2].blue = gcm_parser_unencode_32 (data, offset + GCM_VCGT_FORMULA_MAX_BLUE);
+	vcgt_data[2].red = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_MAX_RED);
+	vcgt_data[2].green = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_MAX_GREEN);
+	vcgt_data[2].blue = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_MAX_BLUE);
 
 	/* check if valid */
 	if (vcgt_data[0].red / 65536.0 > 5.0 || vcgt_data[0].green / 65536.0 > 5.0 || vcgt_data[0].blue / 65536.0 > 5.0) {
@@ -338,7 +338,7 @@ out:
  * gcm_parser_load_icc_vcgt_table:
  **/
 static gboolean
-gcm_parser_load_icc_vcgt_table (GcmProfile *profile, const gchar *data, gsize offset)
+gcm_parser_load_icc_vcgt_table (GcmProfile *profile, const gchar *data, guint size)
 {
 	gboolean ret = TRUE;
 	guint num_channels = 0;
@@ -349,9 +349,9 @@ gcm_parser_load_icc_vcgt_table (GcmProfile *profile, const gchar *data, gsize of
 
 	egg_debug ("loading a table encoded gamma table");
 
-	num_channels = gcm_parser_unencode_16 (data, offset + GCM_VCGT_TABLE_NUM_CHANNELS);
-	num_entries = gcm_parser_unencode_16 (data, offset + GCM_VCGT_TABLE_NUM_ENTRIES);
-	entry_size = gcm_parser_unencode_16 (data, offset + GCM_VCGT_TABLE_NUM_SIZE);
+	num_channels = gcm_parser_decode_16 (data + GCM_VCGT_TABLE_NUM_CHANNELS);
+	num_entries = gcm_parser_decode_16 (data + GCM_VCGT_TABLE_NUM_ENTRIES);
+	entry_size = gcm_parser_decode_16 (data + GCM_VCGT_TABLE_NUM_SIZE);
 
 	/* work-around for AdobeGamma-Profiles (taken from xcalib) */
 	if (profile->priv->adobe_gamma_workaround) {
@@ -368,33 +368,35 @@ gcm_parser_load_icc_vcgt_table (GcmProfile *profile, const gchar *data, gsize of
 	/* only able to parse RGB data */
 	if (num_channels != 3) {
 		egg_warning ("cannot parse non RGB entries");
+		ret = FALSE;
 		goto out;
 	}
 
 	/* bigger than will fit in 16 bits? */
 	if (entry_size > 2) {
 		egg_warning ("cannot parse large entries");
+		ret = FALSE;
 		goto out;
 	}
 
 	/* allocate ramp, plus one entry for extrapolation */
-	profile->priv->vcgt_data = g_new0 (GcmClutData, num_entries+1);
+	profile->priv->vcgt_data = g_new0 (GcmClutData, num_entries + 1);
 	vcgt_data = profile->priv->vcgt_data;
 
 	if (entry_size == 1) {
 		for (i=0; i<num_entries; i++)
-			vcgt_data[i].red = gcm_parser_unencode_8 (data, offset + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 0) + i);
+			vcgt_data[i].red = gcm_parser_decode_8 (data + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 0) + i);
 		for (i=0; i<num_entries; i++)
-			vcgt_data[i].green = gcm_parser_unencode_8 (data, offset + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 1) + i);
+			vcgt_data[i].green = gcm_parser_decode_8 (data + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 1) + i);
 		for (i=0; i<num_entries; i++)
-			vcgt_data[i].blue = gcm_parser_unencode_8 (data, offset + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 2) + i);
+			vcgt_data[i].blue = gcm_parser_decode_8 (data + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 2) + i);
 	} else {
 		for (i=0; i<num_entries; i++)
-			vcgt_data[i].red = gcm_parser_unencode_16 (data, offset + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 0) + (i*2));
+			vcgt_data[i].red = gcm_parser_decode_16 (data + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 0) + (i*2));
 		for (i=0; i<num_entries; i++)
-			vcgt_data[i].green = gcm_parser_unencode_16 (data, offset + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 2) + (i*2));
+			vcgt_data[i].green = gcm_parser_decode_16 (data + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 2) + (i*2));
 		for (i=0; i<num_entries; i++)
-			vcgt_data[i].blue = gcm_parser_unencode_16 (data, offset + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 4) + (i*2));
+			vcgt_data[i].blue = gcm_parser_decode_16 (data + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 4) + (i*2));
 	}
 
 	/* save datatype */
@@ -408,27 +410,27 @@ out:
  * gcm_parser_load_icc_vcgt:
  **/
 static gboolean
-gcm_parser_load_icc_vcgt (GcmProfile *profile, const gchar *data, gsize offset)
+gcm_parser_load_icc_vcgt (GcmProfile *profile, const gchar *data, guint size)
 {
 	gboolean ret = FALSE;
 	guint tag_id;
 	guint gamma_type;
 
 	/* check we have a VCGT block */
-	tag_id = gcm_parser_unencode_32 (data, offset);
+	tag_id = gcm_parser_decode_32 (data);
 	if (tag_id != GCM_TAG_ID_VCGT) {
 		egg_warning ("invalid content of table vcgt, starting with %x", tag_id);
 		goto out;
 	}
 
 	/* check what type of gamma encoding we have */
-	gamma_type = gcm_parser_unencode_32 (data, offset + GCM_VCGT_GAMMA_TYPE);
+	gamma_type = gcm_parser_decode_32 (data + GCM_VCGT_GAMMA_TYPE);
 	if (gamma_type == 0) {
-		ret = gcm_parser_load_icc_vcgt_table (profile, data, offset + GCM_VCGT_GAMMA_DATA);
+		ret = gcm_parser_load_icc_vcgt_table (profile, data + GCM_VCGT_GAMMA_DATA, size);
 		goto out;
 	}
 	if (gamma_type == 1) {
-		ret = gcm_parser_load_icc_vcgt_formula (profile, data, offset + GCM_VCGT_GAMMA_DATA);
+		ret = gcm_parser_load_icc_vcgt_formula (profile, data + GCM_VCGT_GAMMA_DATA, size);
 		goto out;
 	}
 
@@ -442,7 +444,7 @@ out:
  * gcm_parser_load_icc_trc_curve:
  **/
 static gboolean
-gcm_parser_load_icc_trc_curve (GcmProfile *profile, const gchar *data, gsize offset, guint color)
+gcm_parser_load_icc_trc_curve (GcmProfile *profile, const gchar *data, guint size, guint color)
 {
 	gboolean ret = TRUE;
 	guint num_entries;
@@ -450,11 +452,11 @@ gcm_parser_load_icc_trc_curve (GcmProfile *profile, const gchar *data, gsize off
 	guint value;
 	GcmClutData *trc_data;
 
-	num_entries = gcm_parser_unencode_32 (data, offset+GCM_TRC_SIZE);
+	num_entries = gcm_parser_decode_32 (data + GCM_TRC_SIZE);
 
 	/* create ramp */
 	if (profile->priv->trc_data == NULL) {
-		profile->priv->trc_data = g_new0 (GcmClutData, num_entries+1);
+		profile->priv->trc_data = g_new0 (GcmClutData, num_entries + 1);
 		profile->priv->trc_data_size = num_entries;
 		egg_debug ("creating array of size %i", num_entries);
 	}
@@ -469,7 +471,7 @@ gcm_parser_load_icc_trc_curve (GcmProfile *profile, const gchar *data, gsize off
 
 		/* load in data */
 		for (i=0; i<num_entries; i++) {
-			value = gcm_parser_unencode_16 (data, offset+GCM_TRC_DATA+(i*2));
+			value = gcm_parser_decode_16 (data + GCM_TRC_DATA + (i*2));
 			if (color == 0)
 				trc_data[i].red = value;
 			if (color == 1)
@@ -481,7 +483,7 @@ gcm_parser_load_icc_trc_curve (GcmProfile *profile, const gchar *data, gsize off
 		/* save datatype */
 		profile->priv->has_curve_table = TRUE;
 	} else {
-		value = gcm_parser_unencode_8 (data, offset+GCM_TRC_DATA);
+		value = gcm_parser_decode_8 (data + GCM_TRC_DATA);
 		if (color == 0)
 			trc_data[i].red = value;
 		if (color == 1)
@@ -499,14 +501,14 @@ gcm_parser_load_icc_trc_curve (GcmProfile *profile, const gchar *data, gsize off
  * gcm_parser_load_icc_trc:
  **/
 static gboolean
-gcm_parser_load_icc_trc (GcmProfile *profile, const gchar *data, gsize offset, guint color)
+gcm_parser_load_icc_trc (GcmProfile *profile, const gchar *data, guint size, guint color)
 {
 	gboolean ret = FALSE;
 	guint type;
-	type = gcm_parser_unencode_32 (data, offset);
+	type = gcm_parser_decode_32 (data);
 
 	if (type == GCM_TRC_TYPE_CURVE) {
-		ret = gcm_parser_load_icc_trc_curve (profile, data, offset, color);
+		ret = gcm_parser_load_icc_trc_curve (profile, data, size, color);
 	} else if (type == GCM_TRC_TYPE_PARAMETRIC_CURVE) {
 //		ret = gcm_parser_load_icc_trc_parametric_curve (profile, data, offset, color);
 		egg_warning ("contains a parametric curve, FIXME");
@@ -575,7 +577,7 @@ out:
  * gcm_profile_parse_multi_localized_unicode:
  **/
 static gchar *
-gcm_profile_parse_multi_localized_unicode (GcmProfile *profile, const gchar *data, gsize offset)
+gcm_profile_parse_multi_localized_unicode (GcmProfile *profile, const gchar *data, guint size)
 {
 	guint i;
 	gboolean ret;
@@ -586,63 +588,66 @@ gcm_profile_parse_multi_localized_unicode (GcmProfile *profile, const gchar *dat
 	guint offset_name;
 
 	/* check we are not a localized tag */
-	ret = (memcmp (&data[offset], "desc", 4) == 0);
+	ret = (memcmp (data, "desc", 4) == 0);
 	if (ret) {
-		record_size = gcm_parser_unencode_32 (data, offset + GCM_DESC_RECORD_SIZE);
-		text = g_strndup (&data[offset+GCM_DESC_RECORD_TEXT], record_size);
+		record_size = gcm_parser_decode_32 (data + GCM_DESC_RECORD_SIZE);
+		text = g_strndup (&data[GCM_DESC_RECORD_TEXT], record_size);
 		goto out;
 	}
 
 	/* check we are not a localized tag */
-	ret = (memcmp (&data[offset], "text", 4) == 0);
+	ret = (memcmp (data, "text", 4) == 0);
 	if (ret) {
-		text = g_strdup (&data[offset+GCM_TEXT_RECORD_TEXT]);
+		text = g_strdup (&data[GCM_TEXT_RECORD_TEXT]);
 		goto out;
 	}
 
 	/* check we are not a localized tag */
-	ret = (memcmp (&data[offset], "mluc", 4) == 0);
+	ret = (memcmp (data, "mluc", 4) == 0);
 	if (ret) {
-		names_size = gcm_parser_unencode_32 (data, offset + 8);
+		names_size = gcm_parser_decode_32 (data + 8);
 		if (names_size != 1) {
 			/* there is more than one language encoded */
 			egg_warning ("more than one item of data in MLUC (names size: %i), using first one", names_size);
 		}
-		record_size = gcm_parser_unencode_32 (data, offset + 12);
-		len = gcm_parser_unencode_32 (data, offset + 20);
-		offset_name = gcm_parser_unencode_32 (data, offset + 24);
-		text = gcm_profile_utf16be_to_locale (data+offset+offset_name, len);
+		record_size = gcm_parser_decode_32 (data + 12);
+		len = gcm_parser_decode_32 (data + 20);
+		offset_name = gcm_parser_decode_32 (data + 24);
+		text = gcm_profile_utf16be_to_locale (data + offset_name, len);
 		goto out;
 	}
 
 	/* correct broken profiles, seen in ISOuncoatedyellowish.icc : FIXME: why is the offset one off? */
-	ret = (memcmp (&data[offset+1], "text", 4) == 0);
+	ret = (memcmp (data + 1, "text", 4) == 0);
 	if (ret) {
-		text = gcm_profile_parse_multi_localized_unicode (profile, data, offset+1);
+		egg_warning ("correcting invalid profile");
+		text = gcm_profile_parse_multi_localized_unicode (profile, data + 1, size);
 		goto out;
 	}
 
 	/* correct broken profiles, seen in ISOuncoatedyellowish.icc : FIXME: why is the offset one off? */
-	ret = (memcmp (&data[offset+1], "desc", 4) == 0);
+	ret = (memcmp (data + 1, "desc", 4) == 0);
 	if (ret) {
-		text = gcm_profile_parse_multi_localized_unicode (profile, data, offset+1);
+		egg_warning ("correcting invalid profile");
+		text = gcm_profile_parse_multi_localized_unicode (profile, data + 1, size);
 		goto out;
 	}
 
 	/* correct broken profiles, seen in sRGB_v4_ICC_preference.icc : FIXME: why is the offset one off? */
-	ret = (memcmp (&data[offset+1], "mluc", 4) == 0);
+	ret = (memcmp (data + 1, "mluc", 4) == 0);
 	if (ret) {
-		text = gcm_profile_parse_multi_localized_unicode (profile, data, offset+1);
+		egg_warning ("correcting invalid profile");
+		text = gcm_profile_parse_multi_localized_unicode (profile, data + 1, size);
 		goto out;
 	}
 
 	/* an unrecognised tag */
 	for (i=0x0; i<0x1c; i++) {
 		egg_warning ("unrecognised text tag");
-		if (data[offset+i] >= 'A' && data[offset+i] <= 'z')
-			egg_debug ("%i\t%c (%i)", i, data[offset+i], data[offset+i]);
+		if (data[i] >= 'A' && data[i] <= 'z')
+			egg_debug ("%i\t%c (%i)", i, data[i], data[i]);
 		else
-			egg_debug ("%i\t  (%i)", i, data[offset+i]);
+			egg_debug ("%i\t  (%i)", i, data[i]);
 	}
 out:
 	return text;
@@ -665,7 +670,7 @@ gcm_parser_s15_fixed_16_number_to_float (gint32 data)
  * gcm_parser_load_icc_xyz_type:
  **/
 static gboolean
-gcm_parser_load_icc_xyz_type (GcmProfile *profile, const gchar *data, gsize offset, GcmXyz *xyz)
+gcm_parser_load_icc_xyz_type (GcmProfile *profile, const gchar *data, guint size, GcmXyz *xyz)
 {
 	gboolean ret;
 	guint value;
@@ -675,26 +680,27 @@ gcm_parser_load_icc_xyz_type (GcmProfile *profile, const gchar *data, gsize offs
 	gchar *type;
 
 	/* correct broken profiles, seen in sRGB_v4_ICC_preference.icc : FIXME: why is the offset one off? */
-	ret = (memcmp (&data[offset+1], "XYZ ", 4) == 0);
+	ret = (memcmp (data + 1, "XYZ ", 4) == 0);
 	if (ret) {
-		ret = gcm_parser_load_icc_xyz_type (profile, data, offset+1, xyz);
+		egg_warning ("correcting invalid profile");
+		ret = gcm_parser_load_icc_xyz_type (profile, data + 1, size, xyz);
 		goto out;
 	}
 
 	/* check we are not a localized tag */
-	ret = (memcmp (&data[offset], "XYZ ", 4) == 0);
+	ret = (memcmp (data, "XYZ ", 4) == 0);
 	if (!ret) {
-		type = g_strndup (&data[offset], 4);
+		type = g_strndup (data, 4);
 		egg_warning ("not an XYZ type: '%s'", type);
 		goto out;
 	}
 
 	/* just get the first entry in each matrix */
-	value = gcm_parser_unencode_32 (data, offset + 8 + 0);
+	value = gcm_parser_decode_32 (data + 8 + 0);
 	x = gcm_parser_s15_fixed_16_number_to_float (value);
-	value = gcm_parser_unencode_32 (data, offset + 8 + 4);
+	value = gcm_parser_decode_32 (data + 8 + 4);
 	y = gcm_parser_s15_fixed_16_number_to_float (value);
-	value = gcm_parser_unencode_32 (data, offset + 8 + 8);
+	value = gcm_parser_decode_32 (data + 8 + 8);
 	z = gcm_parser_s15_fixed_16_number_to_float (value);
 
 	/* set data */
@@ -768,7 +774,7 @@ gcm_parser_get_month (guint idx)
  * gcm_parser_get_date_time:
  **/
 static gchar *
-gcm_parser_get_date_time (const gchar *data, gsize offset)
+gcm_parser_get_date_time (const gchar *data)
 {
 	guint years;	/* 0..1 */
 	guint months;	/* 2..3 */
@@ -779,12 +785,12 @@ gcm_parser_get_date_time (const gchar *data, gsize offset)
 	const gchar *month_text;
 	gchar *text = NULL;
 
-	years = gcm_parser_unencode_16 (data, offset + 0x00);
-	months = gcm_parser_unencode_16 (data, offset + 0x02);
-	days = gcm_parser_unencode_16 (data, offset + 0x04);
-	hours = gcm_parser_unencode_16 (data, offset + 0x06);
-	minutes = gcm_parser_unencode_16 (data, offset + 0x08);
-	seconds = gcm_parser_unencode_16 (data, offset + 0x0a);
+	years = gcm_parser_decode_16 (data + 0x00);
+	months = gcm_parser_decode_16 (data + 0x02);
+	days = gcm_parser_decode_16 (data + 0x04);
+	hours = gcm_parser_decode_16 (data + 0x06);
+	minutes = gcm_parser_decode_16 (data + 0x08);
+	seconds = gcm_parser_decode_16 (data + 0x0a);
 
 	/* invalid / unknown */
 	if (years == 0)
@@ -803,39 +809,39 @@ out:
  * gcm_profile_get_colorspace:
  **/
 static GcmProfileColorspace
-gcm_profile_get_colorspace (const gchar *data, gsize offset)
+gcm_profile_get_colorspace (const gchar *data)
 {
 	gboolean ret;
 
 	/* test each common signature */
-	ret = (memcmp (&data[offset], "XYZ ", 4) == 0);
+	ret = (memcmp (data, "XYZ ", 4) == 0);
 	if (ret)
 		return GCM_PROFILE_COLORSPACE_XYZ;
-	ret = (memcmp (&data[offset], "Lab ", 4) == 0);
+	ret = (memcmp (data, "Lab ", 4) == 0);
 	if (ret)
 		return GCM_PROFILE_COLORSPACE_LAB;
-	ret = (memcmp (&data[offset], "Luv ", 4) == 0);
+	ret = (memcmp (data, "Luv ", 4) == 0);
 	if (ret)
 		return GCM_PROFILE_COLORSPACE_LUV;
-	ret = (memcmp (&data[offset], "YCbr", 4) == 0);
+	ret = (memcmp (data, "YCbr", 4) == 0);
 	if (ret)
 		return GCM_PROFILE_COLORSPACE_YCBCR;
-	ret = (memcmp (&data[offset], "Yxy ", 4) == 0);
+	ret = (memcmp (data, "Yxy ", 4) == 0);
 	if (ret)
 		return GCM_PROFILE_COLORSPACE_YXY;
-	ret = (memcmp (&data[offset], "RGB ", 4) == 0);
+	ret = (memcmp (data, "RGB ", 4) == 0);
 	if (ret)
 		return GCM_PROFILE_COLORSPACE_RGB;
-	ret = (memcmp (&data[offset], "GRAY", 4) == 0);
+	ret = (memcmp (data, "GRAY", 4) == 0);
 	if (ret)
 		return GCM_PROFILE_COLORSPACE_GRAY;
-	ret = (memcmp (&data[offset], "HSV ", 4) == 0);
+	ret = (memcmp (data, "HSV ", 4) == 0);
 	if (ret)
 		return GCM_PROFILE_COLORSPACE_HSV;
-	ret = (memcmp (&data[offset], "CMYK", 4) == 0);
+	ret = (memcmp (data, "CMYK", 4) == 0);
 	if (ret)
 		return GCM_PROFILE_COLORSPACE_CMYK;
-	ret = (memcmp (&data[offset], "CMY ", 4) == 0);
+	ret = (memcmp (data, "CMY ", 4) == 0);
 	if (ret)
 		return GCM_PROFILE_COLORSPACE_CMY;
 
@@ -879,7 +885,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		/* copy the 4 bytes of the invalid signature, with a '\0' byte */
 		signature = g_new0 (gchar, 5);
 		for (i=0; i<5; i++)
-			signature[i] = data[GCM_SIGNATURE+i];
+			signature[i] = data[GCM_SIGNATURE + i];
 		if (error != NULL)
 			*error = g_error_new (1, 0, "not an ICC profile, signature is '%s', expecting 'acsp'", signature);
 		g_free (signature);
@@ -887,7 +893,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 	}
 
 	/* get the profile type */
-	profile_type = gcm_parser_unencode_32 (data, GCM_TYPE);
+	profile_type = gcm_parser_decode_32 (data + GCM_TYPE);
 	switch (profile_type) {
 	case GCM_PROFILE_CLASS_INPUT_DEVICE:
 		priv->profile_type = GCM_PROFILE_TYPE_INPUT_DEVICE;
@@ -915,23 +921,23 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 	}
 
 	/* get colorspace */
-	priv->colorspace = gcm_profile_get_colorspace (data, GCM_COLORSPACE);
+	priv->colorspace = gcm_profile_get_colorspace (data + GCM_COLORSPACE);
 
 	/* get the profile created time and date */
-	priv->datetime = gcm_parser_get_date_time (data, GCM_CREATION_DATE_TIME);
+	priv->datetime = gcm_parser_get_date_time (data + GCM_CREATION_DATE_TIME);
 	if (priv->datetime != NULL)
 		egg_debug ("created: %s", priv->datetime);
 
 	/* get the number of tags in the file */
-	num_tags = gcm_parser_unencode_32 (data, GCM_NUMTAGS);
+	num_tags = gcm_parser_decode_32 (data + GCM_NUMTAGS);
 	egg_debug ("number of tags: %i", num_tags);
 
 	for (i=0; i<num_tags; i++) {
 		const gchar *tag_description;
 		offset = GCM_TAG_WIDTH * i;
-		tag_id = gcm_parser_unencode_32 (data, GCM_BODY + offset + GCM_TAG_ID);
-		tag_offset = gcm_parser_unencode_32 (data, GCM_BODY + offset + GCM_TAG_OFFSET);
-		tag_size = gcm_parser_unencode_32 (data, GCM_BODY + offset + GCM_TAG_SIZE);
+		tag_id = gcm_parser_decode_32 (data + GCM_BODY + offset + GCM_TAG_ID);
+		tag_offset = gcm_parser_decode_32 (data + GCM_BODY + offset + GCM_TAG_OFFSET);
+		tag_size = gcm_parser_decode_32 (data + GCM_BODY + offset + GCM_TAG_SIZE);
 
 		/* get description */
 		tag_description = gcm_prefs_get_tag_description (tag_id);
@@ -941,24 +947,24 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 			egg_debug ("named tag %x [%s] is present at %u with size %u", tag_id, tag_description, offset, tag_size);
 
 		if (tag_id == GCM_TAG_ID_PROFILE_DESCRIPTION) {
-			priv->description = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
+			priv->description = gcm_profile_parse_multi_localized_unicode (profile, data + tag_offset, tag_size);
 			egg_debug ("found DESC: %s", priv->description);
 		}
 		if (tag_id == GCM_TAG_ID_COPYRIGHT) {
-			priv->copyright = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
+			priv->copyright = gcm_profile_parse_multi_localized_unicode (profile, data + tag_offset, tag_size);
 			egg_debug ("found COPYRIGHT: %s", priv->copyright);
 		}
 		if (tag_id == GCM_TAG_ID_DEVICE_MFG_DESC) {
-			priv->manufacturer = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
+			priv->manufacturer = gcm_profile_parse_multi_localized_unicode (profile, data + tag_offset, tag_size);
 			egg_debug ("found MANUFACTURER: %s", priv->manufacturer);
 		}
 		if (tag_id == GCM_TAG_ID_DEVICE_MODEL_DESC) {
-			priv->model = gcm_profile_parse_multi_localized_unicode (profile, data, tag_offset);
+			priv->model = gcm_profile_parse_multi_localized_unicode (profile, data + tag_offset, tag_size);
 			egg_debug ("found MODEL: %s", priv->model);
 		}
 		if (tag_id == GCM_TAG_ID_MLUT) {
 			egg_debug ("found MLUT which is a fixed size block");
-			ret = gcm_parser_load_icc_mlut (profile, data, tag_offset);
+			ret = gcm_parser_load_icc_mlut (profile, data + tag_offset, tag_size);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load mlut");
 				goto out;
@@ -968,7 +974,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 			egg_debug ("found VCGT");
 			if (tag_size == 1584)
 				priv->adobe_gamma_workaround = TRUE;
-			ret = gcm_parser_load_icc_vcgt (profile, data, tag_offset);
+			ret = gcm_parser_load_icc_vcgt (profile, data + tag_offset, tag_size);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load vcgt");
 				goto out;
@@ -976,7 +982,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		}
 		if (tag_id == GCM_TAG_ID_RED_TRC) {
 			egg_debug ("found TRC (red)");
-			ret = gcm_parser_load_icc_trc (profile, data, tag_offset, 0);
+			ret = gcm_parser_load_icc_trc (profile, data + tag_offset, tag_size, 0);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load trc");
 				goto out;
@@ -984,7 +990,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		}
 		if (tag_id == GCM_TAG_ID_GREEN_TRC) {
 			egg_debug ("found TRC (green)");
-			ret = gcm_parser_load_icc_trc (profile, data, tag_offset, 1);
+			ret = gcm_parser_load_icc_trc (profile, data + tag_offset, tag_size, 1);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load trc");
 				goto out;
@@ -992,7 +998,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		}
 		if (tag_id == GCM_TAG_ID_BLUE_TRC) {
 			egg_debug ("found TRC (blue)");
-			ret = gcm_parser_load_icc_trc (profile, data, tag_offset, 2);
+			ret = gcm_parser_load_icc_trc (profile, data + tag_offset, tag_size, 2);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load trc");
 				goto out;
@@ -1000,7 +1006,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		}
 		if (tag_id == GCM_TAG_ID_MEDIA_WHITE_POINT) {
 			egg_debug ("found media white point");
-			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, priv->white_point);
+			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->white_point);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load white point");
 				goto out;
@@ -1008,7 +1014,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		}
 		if (tag_id == GCM_TAG_ID_MEDIA_BLACK_POINT) {
 			egg_debug ("found media black point");
-			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, priv->black_point);
+			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->black_point);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load white point");
 				goto out;
@@ -1016,7 +1022,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		}
 		if (tag_id == GCM_TAG_ID_RED_MATRIX_COLUMN) {
 			egg_debug ("found red matrix column");
-			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, priv->luminance_red);
+			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->luminance_red);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load red matrix");
 				goto out;
@@ -1024,7 +1030,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		}
 		if (tag_id == GCM_TAG_ID_GREEN_MATRIX_COLUMN) {
 			egg_debug ("found green matrix column");
-			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, priv->luminance_green);
+			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->luminance_green);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load green matrix");
 				goto out;
@@ -1032,7 +1038,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		}
 		if (tag_id == GCM_TAG_ID_BLUE_MATRIX_COLUMN) {
 			egg_debug ("found blue matrix column");
-			ret = gcm_parser_load_icc_xyz_type (profile, data, tag_offset, priv->luminance_blue);
+			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->luminance_blue);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load blue matrix");
 				goto out;
@@ -1215,9 +1221,9 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 		/* interpolate */
 		for (i=0; i<num_entries; i++) {
 			for (j = 0; j<ratio; j++) {
-				gamma_data[i*ratio+j].red = (vcgt_data[i].red * (ratio-j) + vcgt_data[i+1].red * j) / ratio;
-				gamma_data[i*ratio+j].green = (vcgt_data[i].green * (ratio-j) + vcgt_data[i+1].green * j) / ratio;
-				gamma_data[i*ratio+j].blue = (vcgt_data[i].blue * (ratio-j) + vcgt_data[i+1].blue * j) / ratio;
+				gamma_data[i*ratio + j].red = (vcgt_data[i].red * (ratio-j) + vcgt_data[i + 1].red * j) / ratio;
+				gamma_data[i*ratio + j].green = (vcgt_data[i].green * (ratio-j) + vcgt_data[i + 1].green * j) / ratio;
+				gamma_data[i*ratio + j].blue = (vcgt_data[i].blue * (ratio-j) + vcgt_data[i + 1].blue * j) / ratio;
 			}
 		}
 		goto out;
@@ -1254,9 +1260,9 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 		for (i=0; i<size; i++) {
 			idx = floor(i*inverse_ratio);
 			frac = (i*inverse_ratio) - idx;
-			gamma_data[i].red = trc_data[idx].red * (1.0f-frac) + trc_data[idx+1].red * frac;
-			gamma_data[i].green = trc_data[idx].green * (1.0f-frac) + trc_data[idx+1].green * frac;
-			gamma_data[i].blue = trc_data[idx].blue * (1.0f-frac) + trc_data[idx+1].blue * frac;
+			gamma_data[i].red = trc_data[idx].red * (1.0f-frac) + trc_data[idx + 1].red * frac;
+			gamma_data[i].green = trc_data[idx].green * (1.0f-frac) + trc_data[idx + 1].green * frac;
+			gamma_data[i].blue = trc_data[idx].blue * (1.0f-frac) + trc_data[idx + 1].blue * frac;
 		}
 		goto out;
 	}
