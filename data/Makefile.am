@@ -1,7 +1,6 @@
 SUBDIRS = 						\
 	tests						\
-	icons						\
-	profiles
+	icons
 
 @INTLTOOL_SCHEMAS_RULE@
 schemadir = $(sysconfdir)/gconf/schemas
