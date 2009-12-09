@@ -539,15 +539,51 @@ gcm_profile_ensure_printable (gchar *data)
 }
 
 /**
+ * gcm_profile_utf16be_to_locale:
+ *
+ * Convert ICC encoded UTF-16BE into a string the user can understand
+ **/
+static gchar *
+gcm_profile_utf16be_to_locale (const gchar *text, guint size)
+{
+	gsize items_written;
+	gchar *text_utf8 = NULL;
+	gchar *text_locale = NULL;
+	GError *error = NULL;
+
+	/* convert from ICC text encoding to UTF-8 */
+	text_utf8 = g_convert (text, size, "UTF-8", "UTF-16BE", NULL, &items_written, &error);
+	if (text_utf8 == NULL) {
+		egg_warning ("failed to convert to UTF-8: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* convert from UTF-8 to the users locale*/
+	text_locale = g_locale_from_utf8 (text_utf8, items_written, NULL, NULL, &error);
+	if (text_locale == NULL) {
+		egg_warning ("failed to convert to locale: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+out:
+	g_free (text_utf8);
+	return text_locale;
+}
+
+/**
  * gcm_profile_parse_multi_localized_unicode:
  **/
 static gchar *
 gcm_profile_parse_multi_localized_unicode (GcmProfile *profile, const gchar *data, gsize offset)
 {
-	gint i;
+	guint i;
 	gboolean ret;
 	gchar *text = NULL;
 	guint record_size;
+	guint names_size;
+	guint len;
+	guint offset_name;
 
 	/* check we are not a localized tag */
 	ret = (memcmp (&data[offset], "desc", 4) == 0);
@@ -561,6 +597,21 @@ gcm_profile_parse_multi_localized_unicode (GcmProfile *profile, const gchar *dat
 	ret = (memcmp (&data[offset], "text", 4) == 0);
 	if (ret) {
 		text = g_strdup (&data[offset+GCM_TEXT_RECORD_TEXT]);
+		goto out;
+	}
+
+	/* check we are not a localized tag */
+	ret = (memcmp (&data[offset], "mluc", 4) == 0);
+	if (ret) {
+		names_size = gcm_parser_unencode_32 (data, offset + 8);
+		if (names_size != 1) {
+			/* there is more than one language encoded */
+			egg_warning ("more than one item of data in MLUC (names size: %i), using first one", names_size);
+		}
+		record_size = gcm_parser_unencode_32 (data, offset + 12);
+		len = gcm_parser_unencode_32 (data, offset + 20);
+		offset_name = gcm_parser_unencode_32 (data, offset + 24);
+		text = gcm_profile_utf16be_to_locale (data+offset+offset_name, len);
 		goto out;
 	}
 
