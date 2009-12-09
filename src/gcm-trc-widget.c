@@ -37,12 +37,11 @@ G_DEFINE_TYPE (GcmTrcWidget, gcm_trc_widget, GTK_TYPE_DRAWING_AREA);
 struct GcmTrcWidgetPrivate
 {
 	gboolean		 use_grid;
+	GcmClut			*clut;
 	guint			 chart_width;
 	guint			 chart_height;
 	cairo_t			*cr;
 	PangoLayout		*layout;
-	GPtrArray		*clut_data;
-	GcmClutData		*data;
 	guint			 x_offset;
 	guint			 y_offset;
 };
@@ -54,10 +53,7 @@ enum
 {
 	PROP_0,
 	PROP_USE_GRID,
-	PROP_RED,
-	PROP_GREEN,
-	PROP_BLUE,
-	PROP_WHITE,
+	PROP_CLUT,
 	PROP_LAST
 };
 
@@ -89,6 +85,11 @@ dkp_trc_set_property (GObject *object, guint prop_id, const GValue *value, GPara
 	switch (prop_id) {
 	case PROP_USE_GRID:
 		trc->priv->use_grid = g_value_get_boolean (value);
+		break;
+	case PROP_CLUT:
+		if (trc->priv->clut != NULL)
+			g_object_unref (trc->priv->clut);
+		trc->priv->clut = g_value_dup_object (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -123,9 +124,9 @@ gcm_trc_widget_class_init (GcmTrcWidgetClass *class)
 							       TRUE,
 							       G_PARAM_READWRITE));
 	g_object_class_install_property (object_class,
-					 PROP_RED,
-					 g_param_spec_object ("red", NULL, NULL,
-							      G_TYPE_OBJECT,
+					 PROP_CLUT,
+					 g_param_spec_object ("clut", NULL, NULL,
+							      GCM_TYPE_CLUT,
 							      G_PARAM_WRITABLE));
 }
 
@@ -141,7 +142,7 @@ gcm_trc_widget_init (GcmTrcWidget *trc)
 
 	trc->priv = GCM_TRC_WIDGET_GET_PRIVATE (trc);
 	trc->priv->use_grid = TRUE;
-	trc->priv->clut_data = g_ptr_array_new_with_free_func (g_free);
+	trc->priv->clut = NULL;
 
 	/* do pango stuff */
 	fontmap = pango_cairo_font_map_get_default ();
@@ -166,7 +167,8 @@ gcm_trc_widget_finalize (GObject *object)
 	context = pango_layout_get_context (trc->priv->layout);
 	g_object_unref (trc->priv->layout);
 	g_object_unref (context);
-	g_ptr_array_unref (trc->priv->clut_data);
+	if (trc->priv->clut != NULL)
+		g_object_unref (trc->priv->clut);
 	G_OBJECT_CLASS (gcm_trc_widget_parent_class)->finalize (object);
 }
 
@@ -221,18 +223,6 @@ gcm_trc_widget_map_to_display (GcmTrcWidget *trc, gdouble x, gdouble y, gdouble 
 }
 
 /**
- * gcm_trc_widget_map_from_display:
- **/
-static void
-gcm_trc_widget_map_from_display (GcmTrcWidget *trc, gdouble x, gdouble y, gdouble *x_retval, gdouble *y_retval)
-{
-	GcmTrcWidgetPrivate *priv = trc->priv;
-
-	*x_retval = ((gdouble) x - priv->x_offset) / (priv->chart_width - 1);
-	*y_retval = 1.0 - ((gdouble) y + priv->y_offset) / (priv->chart_height - 1);
-}
-
-/**
  * gcm_trc_widget_draw_line:
  **/
 static void
@@ -240,20 +230,28 @@ gcm_trc_widget_draw_line (GcmTrcWidget *trc, cairo_t *cr)
 {
 	gdouble wx, wy;
 	GcmTrcWidgetPrivate *priv = trc->priv;
-	GcmClutData tmp;
+	GPtrArray *array;
+	GcmClutData *tmp;
 	gfloat i;
 	gfloat value;
-	const gfloat size = 256.0f;
+	gfloat size;
+
+	/* nothing set yet */
+	if (priv->clut == NULL)
+		return;
+
+	/* get data */
+	array = gcm_clut_get_array (priv->clut);
+	size = array->len;
 
 	cairo_save (cr);
-
 
 	/* do red */
 	cairo_set_line_width (cr, 3);
 	cairo_set_source_rgb (cr, 0.5f, 0.0f, 0.0f);
 	for (i=0; i<size; i++) {
-		tmp = priv->data[(guint)i];
-		value = tmp.red/65536.0f;
+		tmp = g_ptr_array_index (array, (guint) i);
+		value = tmp->red/65536.0f;
 		gcm_trc_widget_map_to_display (trc, i/size, value, &wx, &wy);
 		if (i == 0)
 			cairo_move_to (cr, wx, wy);
@@ -269,8 +267,8 @@ gcm_trc_widget_draw_line (GcmTrcWidget *trc, cairo_t *cr)
 	cairo_set_line_width (cr, 3);
 	cairo_set_source_rgb (cr, 0.0f, 0.5f, 0.0f);
 	for (i=0; i<size; i++) {
-		tmp = priv->data[(guint)i];
-		value = tmp.green/65536.0f;
+		tmp = g_ptr_array_index (array, (guint) i);
+		value = tmp->green/65536.0f;
 		gcm_trc_widget_map_to_display (trc, i/size, value, &wx, &wy);
 		if (i == 0)
 			cairo_move_to (cr, wx, wy);
@@ -286,8 +284,8 @@ gcm_trc_widget_draw_line (GcmTrcWidget *trc, cairo_t *cr)
 	cairo_set_line_width (cr, 3);
 	cairo_set_source_rgb (cr, 0.0f, 0.0f, 0.5f);
 	for (i=0; i<size; i++) {
-		tmp = priv->data[(guint)i];
-		value = tmp.blue/65536.0f;
+		tmp = g_ptr_array_index (array, (guint) i);
+		value = tmp->blue/65536.0f;
 		gcm_trc_widget_map_to_display (trc, i/size, value, &wx, &wy);
 		if (i == 0)
 			cairo_move_to (cr, wx, wy);
@@ -298,6 +296,8 @@ gcm_trc_widget_draw_line (GcmTrcWidget *trc, cairo_t *cr)
 	cairo_set_line_width (cr, 2);
 	cairo_set_source_rgb (cr, 0.0f, 0.0f, 1.0f);
 	cairo_stroke (cr);
+
+	g_ptr_array_unref (array);
 
 	cairo_restore (cr);
 }
@@ -393,9 +393,6 @@ gcm_trc_widget_new (void)
 #ifdef EGG_TEST
 #include "egg-test.h"
 
-#include "gcm-profile.h"
-#include "gcm-xyz.h"
-
 void
 gcm_trc_widget_test (EggTest *test)
 {
@@ -405,7 +402,7 @@ gcm_trc_widget_test (EggTest *test)
 	GtkWidget *vbox;
 	gboolean ret;
 	GError *error = NULL;
-	GcmProfile *profile;
+	GcmClut *clut;
 	gint response;
 	gchar *filename_profile;
 	gchar *filename_image;
@@ -429,10 +426,15 @@ gcm_trc_widget_test (EggTest *test)
 	filename_profile = egg_test_get_data_file ("AdobeGammaTest.icm");
 	egg_test_assert (test, (filename_profile != NULL));
 
-	profile = gcm_profile_new ();
-	gcm_profile_parse (profile, filename_profile, NULL);
+	clut = gcm_clut_new ();
+	g_object_set (clut,
+		      "size", 256,
+		      NULL);
 
-	((GcmTrcWidget*)widget)->priv->data = gcm_profile_generate (profile, 256);
+	gcm_clut_load_from_profile (clut, filename_profile, NULL);
+	g_object_set (widget,
+		      "clut", clut,
+		      NULL);
 
 	/* show in a dialog as an example */
 	dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "Does TRC widget match\nthe picture below?");
@@ -453,7 +455,7 @@ gcm_trc_widget_test (EggTest *test)
 
 	gtk_widget_destroy (dialog);
 
-	g_object_unref (profile);
+	g_object_unref (clut);
 	g_free (filename_profile);
 	g_free (filename_image);
 

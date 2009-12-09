@@ -56,7 +56,6 @@ struct _GcmClutPrivate
 	gfloat				 gamma;
 	gfloat				 brightness;
 	gfloat				 contrast;
-	gchar				*profile;
 	GConfClient			*gconf_client;
 };
 
@@ -67,7 +66,6 @@ enum {
 	PROP_GAMMA,
 	PROP_BRIGHTNESS,
 	PROP_CONTRAST,
-	PROP_PROFILE,
 	PROP_COPYRIGHT,
 	PROP_DESCRIPTION,
 	PROP_LAST
@@ -116,7 +114,7 @@ gcm_clut_reset (GcmClut *clut)
  * gcm_clut_load_from_profile:
  **/
 gboolean
-gcm_clut_load_from_profile (GcmClut *clut, GError **error)
+gcm_clut_load_from_profile (GcmClut *clut, const gchar *filename, GError **error)
 {
 	gboolean ret = TRUE;
 	GcmProfile *profile = NULL;
@@ -124,19 +122,13 @@ gcm_clut_load_from_profile (GcmClut *clut, GError **error)
 	GError *error_local = NULL;
 
 	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
-
-	/* no profile to load */
-	if (clut->priv->profile == NULL) {
-		egg_debug ("no profile to load");
-		gcm_clut_reset (clut);
-		goto out;
-	}
+	g_return_val_if_fail (filename != NULL, FALSE);
 
 	/* create new profile instance */
 	profile = gcm_profile_new ();
 
 	/* load the profile */
-	ret = gcm_profile_parse (profile, clut->priv->profile, &error_local);
+	ret = gcm_profile_parse (profile, filename, &error_local);
 	if (!ret) {
 		if (error != NULL)
 			*error = g_error_new (1, 0, "failed to set from profile: %s", error_local->message);
@@ -260,9 +252,6 @@ gcm_clut_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 	case PROP_CONTRAST:
 		g_value_set_float (value, priv->contrast);
 		break;
-	case PROP_PROFILE:
-		g_value_set_string (value, priv->profile);
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -281,10 +270,6 @@ gcm_clut_set_property (GObject *object, guint prop_id, const GValue *value, GPar
 	switch (prop_id) {
 	case PROP_SIZE:
 		priv->size = g_value_get_uint (value);
-		break;
-	case PROP_PROFILE:
-		g_free (priv->profile);
-		priv->profile = g_strdup (g_value_get_string (value));
 		break;
 	case PROP_GAMMA:
 		priv->gamma = g_value_get_float (value);
@@ -345,14 +330,6 @@ gcm_clut_class_init (GcmClutClass *klass)
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CONTRAST, pspec);
 
-	/**
-	 * GcmClut:profile:
-	 */
-	pspec = g_param_spec_string ("profile", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_PROFILE, pspec);
-
 	g_type_class_add_private (klass, sizeof (GcmClutPrivate));
 }
 
@@ -365,7 +342,6 @@ gcm_clut_init (GcmClut *clut)
 	GError *error = NULL;
 	clut->priv = GCM_CLUT_GET_PRIVATE (clut);
 	clut->priv->array = g_ptr_array_new_with_free_func (g_free);
-	clut->priv->profile = NULL;
 	clut->priv->gconf_client = gconf_client_get_default ();
 	clut->priv->gamma = gconf_client_get_float (clut->priv->gconf_client, GCM_SETTINGS_DEFAULT_GAMMA, &error);
 	if (error != NULL) {
@@ -387,7 +363,6 @@ gcm_clut_finalize (GObject *object)
 	GcmClut *clut = GCM_CLUT (object);
 	GcmClutPrivate *priv = clut->priv;
 
-	g_free (clut->priv->profile);
 	g_ptr_array_unref (priv->array);
 	g_object_unref (clut->priv->gconf_client);
 

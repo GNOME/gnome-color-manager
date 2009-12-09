@@ -40,6 +40,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-device.h					\
 	gcm-cie-widget.c				\
 	gcm-cie-widget.h				\
+	gcm-trc-widget.c				\
+	gcm-trc-widget.h				\
 	gcm-profile.c					\
 	gcm-profile.h
 
@@ -192,7 +194,6 @@ gcm_self_test_SOURCES =					\
 	gcm-xyz.c					\
 	gcm-cie-widget.c				\
 	gcm-trc-widget.c				\
-	gcm-trc-widget.h				\
 	egg-test.h					\
 	egg-test.c					\
 	$(NULL)

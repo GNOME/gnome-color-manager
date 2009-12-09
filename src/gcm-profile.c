@@ -1227,21 +1227,6 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 	mlut_data = profile->priv->mlut_data;
 	trc_data = profile->priv->trc_data;
 
-	if (profile->priv->has_mlut) {
-
-		/* create new output array */
-		gamma_data = g_new0 (GcmClutData, size);
-
-		/* roughly interpolate table */
-		ratio = (guint) (256 / (size));
-		for (i = 0; i<size; i++) {
-			gamma_data[i].red = mlut_data[ratio*i].red;
-			gamma_data[i].green = mlut_data[ratio*i].green;
-			gamma_data[i].blue = mlut_data[ratio*i].blue;
-		}
-		goto out;
-	}
-
 	if (profile->priv->has_vcgt_formula) {
 
 		/* create new output array */
@@ -1263,6 +1248,21 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 			gamma_data[i].green = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_green) * (max_green - min_green) + min_green);
 			gamma_data[i].blue = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_blue) * (max_blue - min_blue) + min_blue);
 		}
+	}
+
+	if (profile->priv->has_mlut) {
+
+		/* create new output array */
+		gamma_data = g_new0 (GcmClutData, size);
+
+		/* roughly interpolate table */
+		ratio = (guint) (256 / (size));
+		for (i = 0; i<size; i++) {
+			gamma_data[i].red = mlut_data[ratio*i].red;
+			gamma_data[i].green = mlut_data[ratio*i].green;
+			gamma_data[i].blue = mlut_data[ratio*i].blue;
+		}
+		goto out;
 	}
 
 	if (profile->priv->has_vcgt_table) {

@@ -292,7 +292,6 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	use_global = gconf_client_get_bool (gconf_client, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION, NULL);
 	if (use_global) {
 		g_object_set (clut,
-			      "profile", profile,
 			      "gamma", gamma,
 			      "brightness", brightness,
 			      "contrast", contrast,
@@ -300,7 +299,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 			      NULL);
 
 		/* load this new profile */
-		ret = gcm_clut_load_from_profile (clut, error);
+		ret = gcm_clut_load_from_profile (clut, profile, error);
 		if (!ret)
 			goto out;
 	} else {
