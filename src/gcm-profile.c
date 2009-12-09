@@ -78,6 +78,12 @@ static void     gcm_profile_finalize	(GObject     *object);
 #define GCM_TRC_TYPE_CURVE			0x63757276
 #define GCM_TRC_TYPE_PARAMETRIC_CURVE		0x70617261
 #define	GCM_TAG_ID_COLORANT_TABLE		0x636C7274
+#define	GCM_TAG_ID_B_TO_A0			0x42324130
+#define	GCM_TAG_ID_B_TO_A1			0x42324131
+#define	GCM_TAG_ID_B_TO_A2			0x42324132
+#define	GCM_TAG_ID_A_TO_B0			0x41324230
+#define	GCM_TAG_ID_A_TO_B1			0x41324231
+#define	GCM_TAG_ID_A_TO_B2			0x41324232
 
 #define GCM_PROFILE_CLASS_INPUT_DEVICE		0x73636e72
 #define GCM_PROFILE_CLASS_DISPLAY_DEVICE	0x6d6e7472
@@ -208,6 +214,20 @@ gcm_parser_decode_8 (const gchar *data)
 }
 
 /**
+ * gcm_parser_is_tag:
+ **/
+static gboolean
+gcm_parser_is_tag (const gchar *data)
+{
+	guint i;
+	for (i=0; i<4; i++) {
+		if (!g_ascii_isalnum (data[i]))
+			return FALSE;
+	}
+	return TRUE;
+}
+
+/**
  * gcm_prefs_get_tag_description:
  **/
 static const gchar *
@@ -255,6 +275,18 @@ gcm_prefs_get_tag_description (guint tag)
 		return "calibrationDateTime";
 	if (tag == GCM_TAG_ID_COLORANT_TABLE)
 		return "colorantTable";
+	if (tag == GCM_TAG_ID_B_TO_A0)
+		return "BToA0";
+	if (tag == GCM_TAG_ID_B_TO_A1)
+		return "BToA1";
+	if (tag == GCM_TAG_ID_B_TO_A2)
+		return "BToA2";
+	if (tag == GCM_TAG_ID_A_TO_B0)
+		return "AToB0";
+	if (tag == GCM_TAG_ID_A_TO_B1)
+		return "AToB1";
+	if (tag == GCM_TAG_ID_A_TO_B2)
+		return "AToB2";
 	return NULL;
 }
 
@@ -818,6 +850,65 @@ gcm_profile_get_colorspace (const gchar *data)
 }
 
 /**
+ * gcm_profile_fix_offset:
+ **/
+static guint
+gcm_profile_fix_offset (const gchar *data, guint tag_offset)
+{
+	gint offset_padding_error;
+	guint fixed_offset = 0;
+	gint j;
+	gchar print;
+	gboolean ret;
+
+	/* correct broken offsets that do not align tags on a 4 byte boundary */
+	offset_padding_error = tag_offset % 4;
+	if (offset_padding_error == 0) {
+		fixed_offset = tag_offset;
+		goto out;
+	}
+
+	/* bytestream is one byte offset */
+	ret = gcm_parser_is_tag (data + tag_offset + 1);
+	if (ret) {
+		fixed_offset = tag_offset + 1;
+		egg_debug ("tag_offset is %i which is not on a 4-byte boundary, correcting by 1 byte", tag_offset);
+		goto out;
+	}
+
+	/* bytesteam aligns to the next segment */
+	ret = gcm_parser_is_tag (data + tag_offset + offset_padding_error);
+	if (ret) {
+		fixed_offset = tag_offset + offset_padding_error;
+		egg_debug ("tag_offset is %i which is not on a 4-byte boundary, correcting by %i bytes", tag_offset, offset_padding_error);
+		goto out;
+	}
+
+	/* print around the offset for debugging */
+	for (j=-12; j<12; j++) {
+		print = *(data + tag_offset + j);
+		if (!g_ascii_isalnum (print))
+			print = '?';
+		g_print ("%c", print);
+	}
+	g_print ("\n");
+
+	/* mark the zero point */
+	for (j=-12; j<12; j++) {
+		if (j == 0)
+			g_print ("^");
+		else
+			g_print (" ");
+	}
+	g_print ("\n");
+
+	/* could not repair */
+	egg_warning ("tag_offset is 0x%x which is not on a 4-byte boundary, could not repair offset", tag_offset);
+out:
+	return fixed_offset;
+}
+
+/**
  * gcm_profile_parse_data:
  **/
 gboolean
@@ -830,7 +921,6 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 	guint offset;
 	guint tag_size;
 	guint tag_offset;
-	guint offset_padding_error;
 	gchar *signature;
 	guint32 profile_type;
 	GcmProfilePrivate *priv = profile->priv;
@@ -908,21 +998,21 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		tag_offset = gcm_parser_decode_32 (data + GCM_BODY + offset + GCM_TAG_OFFSET);
 		tag_size = gcm_parser_decode_32 (data + GCM_BODY + offset + GCM_TAG_SIZE);
 
-		/* get description */
+		/* print description */
 		tag_description = gcm_prefs_get_tag_description (tag_id);
-
-		/* correct broken profiles that do not align tags on a 4 byte boundary */
-		offset_padding_error = tag_offset % 4;
-		if (offset_padding_error != 0) {
-			egg_warning ("%s tag_offset is %i which is not on a 4-byte boundary, correcting by %i bytes", tag_description, tag_offset, offset_padding_error);
-			tag_offset += offset_padding_error;
-		}
-
-		/* print for debugging */
 		if (tag_description == NULL)
-			egg_debug ("unknown tag %x is present at %u with size %u", tag_id, offset, tag_size);
+			egg_debug ("unknown tag %x is present at 0x%x with size %u", tag_id, tag_offset, tag_size);
 		else
-			egg_debug ("named tag %x [%s] is present at %u with size %u", tag_id, tag_description, offset, tag_size);
+			egg_debug ("named tag %x [%s] is present at 0x%x with size %u", tag_id, tag_description, tag_offset, tag_size);
+
+		/* correct broken profiles */
+		tag_offset = gcm_profile_fix_offset (data, tag_offset);
+		if (tag_offset == 0) {
+			//*error = g_error_new (1, 0, "failed to parse profile, as tag offset for %s could not be corrected", tag_description);
+			//goto out;
+			egg_debug ("skipping %s tag as cannot be corrected", tag_description);
+			continue;
+		}
 
 		if (tag_id == GCM_TAG_ID_PROFILE_DESCRIPTION) {
 			priv->description = gcm_profile_parse_multi_localized_unicode (profile, data + tag_offset, tag_size);
@@ -1721,6 +1811,7 @@ gcm_profile_test (EggTest *test)
 	GcmProfileTestData test_data;
 	gfloat fp;
 	gfloat expected;
+	gboolean ret;
 
 	if (!egg_test_start (test, "GcmProfile"))
 		return;
@@ -1751,6 +1842,16 @@ gcm_profile_test (EggTest *test)
 		egg_test_success (test, NULL);
 	else
 		egg_test_failed (test, "invalid value: %f, expecting: %f", fp, expected);
+
+	/************************************************************/
+	egg_test_title (test, "test repair tag okay");
+	ret = gcm_parser_is_tag ("AtoB");
+	egg_test_assert (test, ret);
+
+	/************************************************************/
+	egg_test_title (test, "test repair tag offset");
+	ret = gcm_parser_is_tag ("toB");
+	egg_test_assert (test, !ret);
 
 	/* bluish test */
 	test_data.copyright = "Copyright (c) 1998 Hewlett-Packard Company";
