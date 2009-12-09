@@ -629,6 +629,13 @@ gcm_profile_parse_multi_localized_unicode (GcmProfile *profile, const gchar *dat
 		goto out;
 	}
 
+	/* correct broken profiles, seen in sRGB_v4_ICC_preference.icc : FIXME: why is the offset one off? */
+	ret = (memcmp (&data[offset+1], "mluc", 4) == 0);
+	if (ret) {
+		text = gcm_profile_parse_multi_localized_unicode (profile, data, offset+1);
+		goto out;
+	}
+
 	/* an unrecognised tag */
 	for (i=0x0; i<0x1c; i++) {
 		egg_warning ("unrecognised text tag");
@@ -665,11 +672,20 @@ gcm_parser_load_icc_xyz_type (GcmProfile *profile, const gchar *data, gsize offs
 	gfloat x;
 	gfloat y;
 	gfloat z;
+	gchar *type;
+
+	/* correct broken profiles, seen in sRGB_v4_ICC_preference.icc : FIXME: why is the offset one off? */
+	ret = (memcmp (&data[offset+1], "XYZ ", 4) == 0);
+	if (ret) {
+		ret = gcm_parser_load_icc_xyz_type (profile, data, offset+1, xyz);
+		goto out;
+	}
 
 	/* check we are not a localized tag */
 	ret = (memcmp (&data[offset], "XYZ ", 4) == 0);
 	if (!ret) {
-		egg_warning ("not an XYZ type");
+		type = g_strndup (&data[offset], 4);
+		egg_warning ("not an XYZ type: '%s'", type);
 		goto out;
 	}
 
