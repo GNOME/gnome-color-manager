@@ -50,14 +50,16 @@ static void     gcm_dmi_finalize	(GObject     *object);
  **/
 struct _GcmDmiPrivate
 {
-	gchar				*product_name;
-	gchar				*product_version;
+	gchar				*name;
+	gchar				*version;
+	gchar				*vendor;
 };
 
 enum {
 	PROP_0,
-	PROP_PRODUCT_NAME,
-	PROP_PRODUCT_VERSION,
+	PROP_NAME,
+	PROP_VERSION,
+	PROP_VENDOR,
 	PROP_LAST
 };
 
@@ -106,15 +108,30 @@ gcm_dmi_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec 
 	GcmDmiPrivate *priv = dmi->priv;
 
 	switch (prop_id) {
-	case PROP_PRODUCT_NAME:
-		if (priv->product_name == NULL)
-			priv->product_name = gcm_dmi_get_data ("/sys/class/dmi/id/product_name");
-		g_value_set_string (value, priv->product_name);
+	case PROP_NAME:
+		if (priv->name == NULL)
+			priv->name = gcm_dmi_get_data ("/sys/class/dmi/id/product_name");
+		if (priv->name == NULL)
+			priv->name = gcm_dmi_get_data ("/sys/class/dmi/id/board_name");
+		g_value_set_string (value, priv->name);
 		break;
-	case PROP_PRODUCT_VERSION:
-		if (priv->product_version == NULL)
-			priv->product_version = gcm_dmi_get_data ("/sys/class/dmi/id/product_version");
-		g_value_set_string (value, priv->product_version);
+	case PROP_VERSION:
+		if (priv->version == NULL)
+			priv->version = gcm_dmi_get_data ("/sys/class/dmi/id/product_version");
+		if (priv->version == NULL)
+			priv->version = gcm_dmi_get_data ("/sys/class/dmi/id/chassis_version");
+		if (priv->version == NULL)
+			priv->version = gcm_dmi_get_data ("/sys/class/dmi/id/board_version");
+		g_value_set_string (value, priv->version);
+		break;
+	case PROP_VENDOR:
+		if (priv->vendor == NULL)
+			priv->vendor = gcm_dmi_get_data ("/sys/class/dmi/id/sys_vendor");
+		if (priv->vendor == NULL)
+			priv->vendor = gcm_dmi_get_data ("/sys/class/dmi/id/chassis_vendor");
+		if (priv->vendor == NULL)
+			priv->vendor = gcm_dmi_get_data ("/sys/class/dmi/id/board_vendor");
+		g_value_set_string (value, priv->vendor);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -148,20 +165,28 @@ gcm_dmi_class_init (GcmDmiClass *klass)
 	object_class->set_property = gcm_dmi_set_property;
 
 	/**
-	 * GcmDmi:product-name:
+	 * GcmDmi:name:
 	 */
-	pspec = g_param_spec_string ("product-name", NULL, NULL,
+	pspec = g_param_spec_string ("name", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_PRODUCT_NAME, pspec);
+	g_object_class_install_property (object_class, PROP_NAME, pspec);
 
 	/**
-	 * GcmDmi:product-version:
+	 * GcmDmi:version:
 	 */
-	pspec = g_param_spec_string ("product-version", NULL, NULL,
+	pspec = g_param_spec_string ("version", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_PRODUCT_VERSION, pspec);
+	g_object_class_install_property (object_class, PROP_VERSION, pspec);
+
+	/**
+	 * GcmDmi:vendor:
+	 */
+	pspec = g_param_spec_string ("vendor", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_VENDOR, pspec);
 
 	g_type_class_add_private (klass, sizeof (GcmDmiPrivate));
 }
@@ -173,8 +198,9 @@ static void
 gcm_dmi_init (GcmDmi *dmi)
 {
 	dmi->priv = GCM_DMI_GET_PRIVATE (dmi);
-	dmi->priv->product_name = NULL;
-	dmi->priv->product_version = NULL;
+	dmi->priv->name = NULL;
+	dmi->priv->version = NULL;
+	dmi->priv->vendor = NULL;
 }
 
 /**
@@ -186,8 +212,9 @@ gcm_dmi_finalize (GObject *object)
 	GcmDmi *dmi = GCM_DMI (object);
 	GcmDmiPrivate *priv = dmi->priv;
 
-	g_free (priv->product_name);
-	g_free (priv->product_version);
+	g_free (priv->name);
+	g_free (priv->version);
+	g_free (priv->vendor);
 
 	G_OBJECT_CLASS (gcm_dmi_parent_class)->finalize (object);
 }
@@ -215,8 +242,9 @@ void
 gcm_dmi_test (EggTest *test)
 {
 	GcmDmi *dmi;
-	gchar *product_name = NULL;
-	gchar *product_version = NULL;
+	gchar *name = NULL;
+	gchar *version = NULL;
+	gchar *vendor = NULL;
 
 	if (!egg_test_start (test, "GcmDmi"))
 		return;
@@ -228,20 +256,26 @@ gcm_dmi_test (EggTest *test)
 
 	/* get data */
 	g_object_get (dmi,
-		      "product-name", &product_name,
-		      "product-version", &product_version,
+		      "name", &name,
+		      "version", &version,
+		      "vendor", &vendor,
 		      NULL);
 
 	/************************************************************/
-	egg_test_title (test, "got name");
-	egg_test_assert (test, product_name != NULL);
+	egg_test_title (test, "got name: %s", name);
+	egg_test_assert (test, name != NULL);
 
 	/************************************************************/
-	egg_test_title (test, "got version");
-	egg_test_assert (test, product_version != NULL);
+	egg_test_title (test, "got version: %s", version);
+	egg_test_assert (test, version != NULL);
 
-	g_free (product_name);
-	g_free (product_version);
+	/************************************************************/
+	egg_test_title (test, "got vendor: %s", vendor);
+	egg_test_assert (test, vendor != NULL);
+
+	g_free (name);
+	g_free (version);
+	g_free (vendor);
 
 	g_object_unref (dmi);
 

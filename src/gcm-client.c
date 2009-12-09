@@ -389,8 +389,8 @@ gcm_client_get_output_name (GcmClient *client, GnomeRROutput *output)
 	if (ret) {
 		/* find the machine details */
 		g_object_get (priv->dmi,
-			      "product-name", &name,
-			      "product-version", &vendor,
+			      "name", &name,
+			      "vendor", &vendor,
 			      NULL);
 
 		/* TRANSLATORS: this is the name of the internal panel */
