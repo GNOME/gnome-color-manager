@@ -606,7 +606,7 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 	ret = gcm_utils_output_is_lcd_internal (output_name);
 	if (ret && model == NULL) {
 		g_object_get (priv->dmi,
-			      "product-version", &model,
+			      "version", &model,
 			      NULL);
 	}
 
