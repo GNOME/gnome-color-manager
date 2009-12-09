@@ -220,9 +220,14 @@ static gboolean
 gcm_parser_is_tag (const gchar *data)
 {
 	guint i;
+	gboolean ret;
 	for (i=0; i<4; i++) {
-		if (!g_ascii_isalnum (data[i]))
-			return FALSE;
+		ret = g_ascii_isalnum (data[i]);
+		if (ret)
+			continue;
+		if (i == 3 && data[i] == 32)
+			continue;
+		return FALSE;
 	}
 	return TRUE;
 }
@@ -858,7 +863,7 @@ gcm_profile_fix_offset (const gchar *data, guint tag_offset)
 	gint offset_padding_error;
 	guint fixed_offset = 0;
 	gint j;
-	gchar print;
+	guchar print;
 	gboolean ret;
 
 	/* correct broken offsets that do not align tags on a 4 byte boundary */
@@ -889,16 +894,23 @@ gcm_profile_fix_offset (const gchar *data, guint tag_offset)
 		print = *(data + tag_offset + j);
 		if (!g_ascii_isalnum (print))
 			print = '?';
-		g_print ("%c", print);
+		g_print (" %c ", print);
 	}
 	g_print ("\n");
 
 	/* mark the zero point */
 	for (j=-12; j<12; j++) {
 		if (j == 0)
-			g_print ("^");
+			g_print (" ^ ");
 		else
-			g_print (" ");
+			g_print ("   ");
+	}
+	g_print ("\n");
+
+	/* print the values */
+	for (j=-12; j<12; j++) {
+		print = *(data + tag_offset + j);
+		g_print ("%02x ", print);
 	}
 	g_print ("\n");
 
@@ -1008,10 +1020,8 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 		/* correct broken profiles */
 		tag_offset = gcm_profile_fix_offset (data, tag_offset);
 		if (tag_offset == 0) {
-			//*error = g_error_new (1, 0, "failed to parse profile, as tag offset for %s could not be corrected", tag_description);
-			//goto out;
-			egg_debug ("skipping %s tag as cannot be corrected", tag_description);
-			continue;
+			*error = g_error_new (1, 0, "failed to parse profile, as tag offset for %s could not be corrected", tag_description);
+			goto out;
 		}
 
 		if (tag_id == GCM_TAG_ID_PROFILE_DESCRIPTION) {
@@ -1812,6 +1822,7 @@ gcm_profile_test (EggTest *test)
 	gfloat fp;
 	gfloat expected;
 	gboolean ret;
+	const gchar temp[5] = {0x6d, 0x42, 0x41, 0x20, 0x00};
 
 	if (!egg_test_start (test, "GcmProfile"))
 		return;
@@ -1850,8 +1861,13 @@ gcm_profile_test (EggTest *test)
 
 	/************************************************************/
 	egg_test_title (test, "test repair tag offset");
-	ret = gcm_parser_is_tag ("toB");
+	ret = gcm_parser_is_tag ("Ato");
 	egg_test_assert (test, !ret);
+
+	/************************************************************/
+	egg_test_title (test, "test repair tag okay (three chars)");
+	ret = gcm_parser_is_tag (temp);
+	egg_test_assert (test, ret);
 
 	/* bluish test */
 	test_data.copyright = "Copyright (c) 1998 Hewlett-Packard Company";
