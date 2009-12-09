@@ -508,6 +508,8 @@ gcm_prefs_profile_type_to_icon_name (GcmProfileType type)
 		return "scanner";
 	if (type == GCM_PROFILE_TYPE_OUTPUT_DEVICE)
 		return "printer";
+	if (type == GCM_PROFILE_TYPE_COLORSPACE_CONVERSION)
+		return "view-refresh";
 	return "image-missing";
 }
 
