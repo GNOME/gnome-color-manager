@@ -191,6 +191,8 @@ gcm_self_test_SOURCES =					\
 	gcm-dmi.c					\
 	gcm-xyz.c					\
 	gcm-cie-widget.c				\
+	gcm-trc-widget.c				\
+	gcm-trc-widget.h				\
 	egg-test.h					\
 	egg-test.c					\
 	$(NULL)
