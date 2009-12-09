@@ -617,30 +617,6 @@ gcm_profile_parse_multi_localized_unicode (GcmProfile *profile, const gchar *dat
 		goto out;
 	}
 
-	/* correct broken profiles, seen in ISOuncoatedyellowish.icc : FIXME: why is the offset one off? */
-	ret = (memcmp (data + 1, "text", 4) == 0);
-	if (ret) {
-		egg_warning ("correcting invalid profile");
-		text = gcm_profile_parse_multi_localized_unicode (profile, data + 1, size);
-		goto out;
-	}
-
-	/* correct broken profiles, seen in ISOuncoatedyellowish.icc : FIXME: why is the offset one off? */
-	ret = (memcmp (data + 1, "desc", 4) == 0);
-	if (ret) {
-		egg_warning ("correcting invalid profile");
-		text = gcm_profile_parse_multi_localized_unicode (profile, data + 1, size);
-		goto out;
-	}
-
-	/* correct broken profiles, seen in sRGB_v4_ICC_preference.icc : FIXME: why is the offset one off? */
-	ret = (memcmp (data + 1, "mluc", 4) == 0);
-	if (ret) {
-		egg_warning ("correcting invalid profile");
-		text = gcm_profile_parse_multi_localized_unicode (profile, data + 1, size);
-		goto out;
-	}
-
 	/* an unrecognised tag */
 	for (i=0x0; i<0x1c; i++) {
 		egg_warning ("unrecognised text tag");
@@ -678,14 +654,6 @@ gcm_parser_load_icc_xyz_type (GcmProfile *profile, const gchar *data, guint size
 	gfloat y;
 	gfloat z;
 	gchar *type;
-
-	/* correct broken profiles, seen in sRGB_v4_ICC_preference.icc : FIXME: why is the offset one off? */
-	ret = (memcmp (data + 1, "XYZ ", 4) == 0);
-	if (ret) {
-		egg_warning ("correcting invalid profile");
-		ret = gcm_parser_load_icc_xyz_type (profile, data + 1, size, xyz);
-		goto out;
-	}
 
 	/* check we are not a localized tag */
 	ret = (memcmp (data, "XYZ ", 4) == 0);
@@ -862,6 +830,7 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 	guint offset;
 	guint tag_size;
 	guint tag_offset;
+	guint offset_padding_error;
 	gchar *signature;
 	guint32 profile_type;
 	GcmProfilePrivate *priv = profile->priv;
@@ -941,6 +910,15 @@ gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GE
 
 		/* get description */
 		tag_description = gcm_prefs_get_tag_description (tag_id);
+
+		/* correct broken profiles that do not align tags on a 4 byte boundary */
+		offset_padding_error = tag_offset % 4;
+		if (offset_padding_error != 0) {
+			egg_warning ("%s tag_offset is %i which is not on a 4-byte boundary, correcting by %i bytes", tag_description, tag_offset, offset_padding_error);
+			tag_offset += offset_padding_error;
+		}
+
+		/* print for debugging */
 		if (tag_description == NULL)
 			egg_debug ("unknown tag %x is present at %u with size %u", tag_id, offset, tag_size);
 		else
