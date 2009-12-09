@@ -202,7 +202,6 @@ src/Makefile
 help/Makefile
 man/Makefile
 data/Makefile
-data/profiles/Makefile
 data/tests/Makefile
 data/icons/Makefile
 data/icons/16x16/Makefile

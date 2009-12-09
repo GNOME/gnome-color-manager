@@ -23,6 +23,7 @@ Requires:  dbus-glib >= %{dbus_glib_version}
 Requires:  dbus-x11
 Requires:  vte
 Requires:  argyllcms
+Requires:  shared-color-profiles
 Requires(post):   scrollkeeper
 Requires(pre):    GConf2
 Requires(post):   GConf2
@@ -109,8 +110,6 @@ update-mime-database %{_datadir}/mime &> /dev/null || :
 %doc AUTHORS COPYING NEWS README
 %{_bindir}/gcm-*
 %dir %{_datadir}/gnome-color-manager
-%dir %{_datadir}/gnome-color-manager/profiles
-%{_datadir}/gnome-color-manager/profiles/*.ic?
 %{_datadir}/gnome-color-manager/gcm-*.ui
 %{_datadir}/man/man1/*.1.gz
 %{_datadir}/gnome/help/gnome-color-manager
