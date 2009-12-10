@@ -287,6 +287,9 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 
 	/* create CLUT */
 	clut = gcm_clut_new ();
+	g_object_set (clut,
+		      "size", size,
+		      NULL);
 
 	/* only set the CLUT if we're not seting the atom */
 	use_global = gconf_client_get_bool (gconf_client, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION, NULL);
@@ -295,18 +298,14 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 			      "gamma", gamma,
 			      "brightness", brightness,
 			      "contrast", contrast,
-			      "size", size,
 			      NULL);
 
 		/* load this new profile */
-		ret = gcm_clut_load_from_profile (clut, profile, error);
-		if (!ret)
-			goto out;
-	} else {
-		/* we're using a dummy clut */
-		g_object_set (clut,
-			      "size", size,
-			      NULL);
+		if (profile != NULL) {
+			ret = gcm_clut_load_from_profile (clut, profile, error);
+			if (!ret)
+				goto out;
+		}
 	}
 
 	/* actually set the gamma */
