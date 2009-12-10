@@ -44,8 +44,6 @@ static void     gcm_profile_finalize	(GObject     *object);
 
 #define GCM_PROFILE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_PROFILE, GcmProfilePrivate))
 
-#define GCM_HEADER			0x00
-#define GCM_SIGNATURE			0x24
 #define GCM_NUMTAGS			0x80
 #define GCM_BODY			0x84
 
@@ -541,7 +539,6 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	guint offset;
 	guint tag_size;
 	guint tag_offset;
-	gchar *signature;
 	icProfileClassSignature profile_class;
 	icColorSpaceSignature color_space;
 	GcmProfilePrivate *priv = profile->priv;
@@ -554,26 +551,6 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	g_return_val_if_fail (priv->loaded == FALSE, FALSE);
 
 	priv->loaded = TRUE;
-
-	/* ensure we have the header */
-	if (length < 0x84) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "profile was not valid (file size too small)");
-		goto out;
-	}
-
-	/* check we are not a localized tag */
-	ret = (memcmp (&data[GCM_SIGNATURE], "acsp", 4) == 0);
-	if (!ret) {
-		/* copy the 4 bytes of the invalid signature, with a '\0' byte */
-		signature = g_new0 (gchar, 5);
-		for (i=0; i<5; i++)
-			signature[i] = data[GCM_SIGNATURE + i];
-		if (error != NULL)
-			*error = g_error_new (1, 0, "not an ICC profile, signature is '%s', expecting 'acsp'", signature);
-		g_free (signature);
-		goto out;
-	}
 
 	/* load profile into lcms */
 	priv->lcms_profile = cmsOpenProfileFromMem ((LPVOID)data, length);
