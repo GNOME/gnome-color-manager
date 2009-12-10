@@ -616,59 +616,6 @@ out:
 }
 
 /**
- * gcm_parser_s15_fixed_16_number_to_float:
- **/
-static gfloat
-gcm_parser_s15_fixed_16_number_to_float (gint32 data)
-{
-	gfloat retval;
-
-	/* s15Fixed16Number has 16 fractional bits */
-	retval = (gfloat) data / 0x10000;
-	return retval;
-}
-
-/**
- * gcm_parser_load_icc_xyz_type:
- **/
-static gboolean
-gcm_parser_load_icc_xyz_type (GcmProfile *profile, const guint8 *data, guint size, GcmXyz *xyz)
-{
-	gboolean ret;
-	guint value;
-	gfloat x;
-	gfloat y;
-	gfloat z;
-	gchar *type;
-
-	/* check we are not a localized tag */
-	ret = (memcmp (data, "XYZ ", 4) == 0);
-	if (!ret) {
-		type = g_strndup ((const gchar*)data, 4);
-		egg_warning ("not an XYZ type: '%s'", type);
-		g_free (type);
-		goto out;
-	}
-
-	/* just get the first entry in each matrix */
-	value = gcm_parser_decode_32 (data + 8 + 0);
-	x = gcm_parser_s15_fixed_16_number_to_float (value);
-	value = gcm_parser_decode_32 (data + 8 + 4);
-	y = gcm_parser_s15_fixed_16_number_to_float (value);
-	value = gcm_parser_decode_32 (data + 8 + 8);
-	z = gcm_parser_s15_fixed_16_number_to_float (value);
-
-	/* set data */
-	g_object_set (xyz,
-		      "cie-x", x,
-		      "cie-y", y,
-		      "cie-z", z,
-		      NULL);
-out:
-	return ret;
-}
-
-/**
  * gcm_parser_get_date_time:
  **/
 static gchar *
@@ -713,6 +660,8 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	icProfileClassSignature profile_class;
 	icColorSpaceSignature color_space;
 	GcmProfilePrivate *priv = profile->priv;
+	cmsCIEXYZ cie_xyz;
+	cmsCIEXYZTRIPLE cie_illum;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
@@ -745,6 +694,57 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	if (priv->lcms_profile == NULL) {
 		*error = g_error_new (1, 0, "failed to load: not an ICC profile");
 		goto out;
+	}
+
+	/* get white point */
+	ret = cmsTakeMediaWhitePoint (&cie_xyz, priv->lcms_profile);
+	if (ret) {
+		g_object_set (priv->white_point,
+			      "cie-x", cie_xyz.X,
+			      "cie-y", cie_xyz.Y,
+			      "cie-z", cie_xyz.Z,
+			      NULL);
+	} else {
+		gcm_xyz_clear (priv->white_point);
+		egg_warning ("failed to get white point");
+	}
+
+	/* get black point */
+	ret = cmsTakeMediaBlackPoint (&cie_xyz, priv->lcms_profile);
+	if (ret) {
+		g_object_set (priv->black_point,
+			      "cie-x", cie_xyz.X,
+			      "cie-y", cie_xyz.Y,
+			      "cie-z", cie_xyz.Z,
+			      NULL);
+	} else {
+		gcm_xyz_clear (priv->black_point);
+		egg_warning ("failed to get black point");
+	}
+
+	/* get primary illuminants */
+	ret = cmsTakeColorants (&cie_illum, priv->lcms_profile);
+	if (ret) {
+		g_object_set (priv->luminance_red,
+			      "cie-x", cie_illum.Red.X,
+			      "cie-y", cie_illum.Red.Y,
+			      "cie-z", cie_illum.Red.Z,
+			      NULL);
+		g_object_set (priv->luminance_green,
+			      "cie-x", cie_illum.Green.X,
+			      "cie-y", cie_illum.Green.Y,
+			      "cie-z", cie_illum.Green.Z,
+			      NULL);
+		g_object_set (priv->luminance_blue,
+			      "cie-x", cie_illum.Blue.X,
+			      "cie-y", cie_illum.Blue.Y,
+			      "cie-z", cie_illum.Blue.Z,
+			      NULL);
+	} else {
+		gcm_xyz_clear (priv->luminance_red);
+		gcm_xyz_clear (priv->luminance_green);
+		gcm_xyz_clear (priv->luminance_blue);
+		egg_debug ("failed to get luminance values");
 	}
 
 	/* get the profile type */
@@ -890,46 +890,6 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 			ret = gcm_parser_load_icc_trc (profile, data + tag_offset, tag_size, 2);
 			if (!ret) {
 				*error = g_error_new (1, 0, "failed to load trc");
-				goto out;
-			}
-		}
-		if (tag_id == icSigMediaWhitePointTag) {
-			egg_debug ("found media white point");
-			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->white_point);
-			if (!ret) {
-				*error = g_error_new (1, 0, "failed to load white point");
-				goto out;
-			}
-		}
-		if (tag_id == icSigMediaBlackPointTag) {
-			egg_debug ("found media black point");
-			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->black_point);
-			if (!ret) {
-				*error = g_error_new (1, 0, "failed to load white point");
-				goto out;
-			}
-		}
-		if (tag_id == icSigRedColorantTag) {
-			egg_debug ("found red matrix column");
-			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->luminance_red);
-			if (!ret) {
-				*error = g_error_new (1, 0, "failed to load red matrix");
-				goto out;
-			}
-		}
-		if (tag_id == icSigGreenColorantTag) {
-			egg_debug ("found green matrix column");
-			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->luminance_green);
-			if (!ret) {
-				*error = g_error_new (1, 0, "failed to load green matrix");
-				goto out;
-			}
-		}
-		if (tag_id == icSigBlueColorantTag) {
-			egg_debug ("found blue matrix column");
-			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->luminance_blue);
-			if (!ret) {
-				*error = g_error_new (1, 0, "failed to load blue matrix");
 				goto out;
 			}
 		}
@@ -1659,33 +1619,6 @@ gcm_profile_test (EggTest *test)
 
 	if (!egg_test_start (test, "GcmProfile"))
 		return;
-
-	/************************************************************/
-	egg_test_title (test, "convert s15 fixed 16 number [1]");
-	fp = gcm_parser_s15_fixed_16_number_to_float (0x80000000);
-	expected = -32768.0;
-	if (fp == expected)
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "invalid value: %f, expecting: %f", fp, expected);
-
-	/************************************************************/
-	egg_test_title (test, "convert s15 fixed 16 number [2]");
-	fp = gcm_parser_s15_fixed_16_number_to_float (0x0);
-	expected = 0.0;
-	if (fp == expected)
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "invalid value: %f, expecting: %f", fp, expected);
-
-	/************************************************************/
-	egg_test_title (test, "convert s15 fixed 16 number [3]");
-	fp = gcm_parser_s15_fixed_16_number_to_float (0x10000);
-	expected = 1.0;
-	if (fp == expected)
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "invalid value: %f, expecting: %f", fp, expected);
 
 	/* bluish test */
 	test_data.copyright = "Copyright (c) 1998 Hewlett-Packard Company";
