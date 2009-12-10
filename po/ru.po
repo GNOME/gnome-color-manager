@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-12-07 17:46+0300\n"
-"PO-Revision-Date: 2009-12-07 19:03+0300\n"
+"POT-Creation-Date: 2009-12-10 16:31+0300\n"
+"PO-Revision-Date: 2009-12-10 16:38+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: GNOME Russian <gnome-cyr@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -54,10 +54,10 @@ msgstr "Выполнять коррекцию цвета _глобально"
 msgid "Brightness:"
 msgstr "Яркость:"
 
-#. Section heading for device profile settings
+#. Technical color word for softproof rendering intent
 #: ../data/gcm-prefs.ui.h:5
-msgid "CIE Diagram:"
-msgstr "Диаграмма CIE:"
+msgid "CMYK:"
+msgstr "CMYK:"
 
 #. Section heading for device profile settings
 #: ../data/gcm-prefs.ui.h:7
@@ -160,51 +160,65 @@ msgstr "Производитель:"
 msgid "Model:"
 msgstr "Модель:"
 
-#. The type of profile, e.g. display, scanner, etc.
+#. Section heading for CIE and TRC graphs
 #: ../data/gcm-prefs.ui.h:45
+msgid "Profile Graphs:"
+msgstr "Диаграммы профиля:"
+
+#. The type of profile, e.g. display, scanner, etc.
+#: ../data/gcm-prefs.ui.h:47
 msgid "Profile type:"
 msgstr "Тип профиля:"
 
 #. Tab title, currently installed profiles
-#: ../data/gcm-prefs.ui.h:47
+#: ../data/gcm-prefs.ui.h:49
 msgid "Profiles"
 msgstr "Профили"
 
-#: ../data/gcm-prefs.ui.h:48
+#. What mode to use for display rendering intent
+#: ../data/gcm-prefs.ui.h:51
+msgid "RGB:"
+msgstr "RGB:"
+
+#: ../data/gcm-prefs.ui.h:52
 msgid "Rendering intent:"
 msgstr "Цветопередача"
 
 #. The serial number of the device
-#: ../data/gcm-prefs.ui.h:50
+#: ../data/gcm-prefs.ui.h:54
 msgid "Serial number:"
 msgstr "Серийный номер:"
 
 #. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:52
+#: ../data/gcm-prefs.ui.h:56
 msgid "Softproof:"
 msgstr "Цветопроба:"
 
+#: ../data/gcm-prefs.ui.h:57
+msgid "Working spaces:"
+msgstr "Рабочие цветовые пространства:"
+
 #. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
-#: ../data/gcm-prefs.ui.h:54
+#: ../data/gcm-prefs.ui.h:59
 msgid "_Create profile for device"
 msgstr "_Создать профиль для устройства"
 
 #. This is a button to delete the saved device
-#: ../data/gcm-prefs.ui.h:56
+#: ../data/gcm-prefs.ui.h:61
 msgid "_Delete device"
 msgstr "_Удалить устройство"
 
-#: ../data/gcm-prefs.ui.h:57
+#: ../data/gcm-prefs.ui.h:62
 msgid "_Import profile"
 msgstr "_Импортировать профиль"
 
 #. This resets the device to it's defaults, and removes any user tweaked settings.
-#: ../data/gcm-prefs.ui.h:59
+#: ../data/gcm-prefs.ui.h:64
 msgid "_Reset to defaults"
 msgstr "С_бросить"
 
 #. Radio buttons in the prefs dialog
-#: ../data/gcm-prefs.ui.h:61
+#: ../data/gcm-prefs.ui.h:66
 msgid "_Set profile only for color managed applications"
 msgstr "_Устанавливать профиль только для цветоуправляемых приложений"
 
@@ -374,12 +388,6 @@ msgstr "Выполняется отрисовка полей"
 msgid "Drawing the generated patches to the screen, which will then be measured by the hardware device."
 msgstr "Выполняется отрисовка на экране полей, которые затем будут измерены устройством измерения."
 
-#. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated"
-#: ../src/gcm-calibrate.c:654
-#: ../src/gcm-calibrate.c:907
-msgid "Custom"
-msgstr "Созданный пользователем"
-
 #. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands"
 #: ../src/gcm-calibrate.c:657
 #: ../src/gcm-calibrate.c:910
@@ -446,6 +454,11 @@ msgstr "Выполняется измерение полей"
 #: ../src/gcm-calibrate.c:847
 msgid "Detecting the reference patches and measuring them."
 msgstr "Выполняется определение и измерение полей мишени"
+
+#. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated"
+#: ../src/gcm-calibrate.c:907
+msgid "Custom"
+msgstr "Созданный пользователем"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:934
@@ -582,271 +595,271 @@ msgstr "Установить"
 
 #. TRANSLATORS: could not read file
 #: ../src/gcm-import.c:186
-#: ../src/gcm-prefs.c:722
+#: ../src/gcm-prefs.c:726
 msgid "Failed to copy file"
 msgstr "Не удалось скопировать файл"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-prefs.c:335
+#: ../src/gcm-prefs.c:337
 msgid "Select scanned reference file"
 msgstr "Выберите скан мишени"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-prefs.c:349
+#: ../src/gcm-prefs.c:351
 msgid "Supported images files"
 msgstr "Поддерживаемые файлы изображений"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-prefs.c:378
+#: ../src/gcm-prefs.c:380
 msgid "Select CIE reference values file"
 msgstr "Выберите файл со ссылочными значениями CIE"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-prefs.c:392
+#: ../src/gcm-prefs.c:394
 msgid "CIE values"
 msgstr "Значения CIE"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-prefs.c:598
+#: ../src/gcm-prefs.c:602
 msgid "Permanently delete profile?"
 msgstr "Удалить профиль навсегда?"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-prefs.c:601
+#: ../src/gcm-prefs.c:605
 msgid "Are you sure you want to remove this profile from your system permanently?"
 msgstr "Вы действительно хотите удалить этот профиль из системы навсегда?"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-prefs.c:604
+#: ../src/gcm-prefs.c:608
 msgid "Delete"
 msgstr "Удалить"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-prefs.c:661
+#: ../src/gcm-prefs.c:665
 msgid "Select ICC profile file"
 msgstr "Выберите цветовой профиль"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-prefs.c:681
+#: ../src/gcm-prefs.c:685
 msgid "Supported ICC profiles"
 msgstr "Поддерживаемые цветовые профили"
 
 #. add a clear entry
-#: ../src/gcm-prefs.c:1150
+#: ../src/gcm-prefs.c:1154
 msgid "None"
 msgstr "Нет"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1322
+#: ../src/gcm-prefs.c:1326
 msgid "Input device"
 msgstr "Устройство ввода"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1326
+#: ../src/gcm-prefs.c:1330
 msgid "Display device"
 msgstr "Устройство отображения"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1330
+#: ../src/gcm-prefs.c:1334
 msgid "Output device"
 msgstr "Устройство вывода"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1334
+#: ../src/gcm-prefs.c:1338
 msgid "Devicelink"
 msgstr ""
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1338
+#: ../src/gcm-prefs.c:1342
 msgid "Colorspace conversion"
 msgstr "Преобразование цветового пространства"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1342
+#: ../src/gcm-prefs.c:1346
 msgid "Abstract"
 msgstr "Абстрактный"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1346
+#: ../src/gcm-prefs.c:1350
 msgid "Named color"
 msgstr "Именованный цвет"
 
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1349
-#: ../src/gcm-prefs.c:1399
+#: ../src/gcm-prefs.c:1353
+#: ../src/gcm-prefs.c:1403
 msgid "Unknown"
 msgstr "Неизвестен"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1360
+#: ../src/gcm-prefs.c:1364
 msgid "XYZ"
 msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1364
+#: ../src/gcm-prefs.c:1368
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1368
+#: ../src/gcm-prefs.c:1372
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1372
+#: ../src/gcm-prefs.c:1376
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1376
+#: ../src/gcm-prefs.c:1380
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1380
+#: ../src/gcm-prefs.c:1384
 msgid "RGB"
 msgstr "RGB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1384
+#: ../src/gcm-prefs.c:1388
 msgid "Gray"
 msgstr "Gray"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1388
+#: ../src/gcm-prefs.c:1392
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1392
+#: ../src/gcm-prefs.c:1396
 msgid "CMYK"
 msgstr "CMYK"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1396
+#: ../src/gcm-prefs.c:1400
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/gcm-prefs.c:1617
+#: ../src/gcm-prefs.c:1639
 msgid "No hardware support"
 msgstr "Аппаратное обеспечение не поддерживается"
 
 #. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/gcm-prefs.c:1621
-#: ../src/gcm-prefs.c:1878
+#: ../src/gcm-prefs.c:1643
+#: ../src/gcm-prefs.c:1900
 msgid "disconnected"
 msgstr "отключено"
 
 #. TRANSLATORS: this is where the required software has not been written yet
-#: ../src/gcm-prefs.c:1884
+#: ../src/gcm-prefs.c:1906
 msgid "No software support"
 msgstr "Нет поддержки в программном обеспечении"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:2181
+#: ../src/gcm-prefs.c:2218
 msgid "Perceptual"
 msgstr "Воспринимаемая"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:2184
+#: ../src/gcm-prefs.c:2221
 msgid "Relative colormetric"
 msgstr "Относительная колориметрическая"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:2187
+#: ../src/gcm-prefs.c:2224
 msgid "Saturation"
 msgstr "Насыщенная"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:2190
+#: ../src/gcm-prefs.c:2227
 msgid "Absolute colormetric"
 msgstr "Абсолютная колориметрическая"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:2193
+#: ../src/gcm-prefs.c:2230
 msgid "Disable soft proofing"
 msgstr "Отключить программную цветопробу"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-prefs.c:2222
+#: ../src/gcm-prefs.c:2269
 msgid "Set the parent window to make this modal"
 msgstr ""
 
 #. TRANSLATORS: this is displayed while the devices are being probed
-#: ../src/gcm-prefs.c:2477
+#: ../src/gcm-prefs.c:2550
 msgid "Loading list of devices..."
 msgstr "Загружается список устройств..."
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:651
+#: ../src/gcm-profile.c:730
 msgid "January"
 msgstr "января"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:655
+#: ../src/gcm-profile.c:734
 msgid "February"
 msgstr "февраля"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:659
+#: ../src/gcm-profile.c:738
 msgid "March"
 msgstr "марта"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:663
+#: ../src/gcm-profile.c:742
 msgid "April"
 msgstr "апреля"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:667
+#: ../src/gcm-profile.c:746
 msgid "May"
 msgstr "мая"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:671
+#: ../src/gcm-profile.c:750
 msgid "June"
 msgstr "июня"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:675
+#: ../src/gcm-profile.c:754
 msgid "July"
 msgstr "июля"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:679
+#: ../src/gcm-profile.c:758
 msgid "August"
 msgstr "августа"
 
 #. TRANSLATORS: the month (my birthday)
-#: ../src/gcm-profile.c:683
+#: ../src/gcm-profile.c:762
 msgid "September"
 msgstr "сентября"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:687
+#: ../src/gcm-profile.c:766
 msgid "October"
 msgstr "октября"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:691
+#: ../src/gcm-profile.c:770
 msgid "November"
 msgstr "ноября"
 
 #. TRANSLATORS: the month
-#: ../src/gcm-profile.c:695
+#: ../src/gcm-profile.c:774
 msgid "December"
 msgstr "декабря"
 
 #. TRANSLATORS: please re-arrange: days, months (in text), years, hours, minutes, seconds
-#: ../src/gcm-profile.c:730
+#: ../src/gcm-profile.c:809
 #, c-format
 msgid "%i %s %04i, %02i:%02i:%02i"
 msgstr "%i %s %04i, %02i:%02i:%02i"
 
 #. TRANSLATORS: this is where the ICC profile has no description
-#: ../src/gcm-profile.c:983
+#: ../src/gcm-profile.c:1143
 msgid "Missing description"
 msgstr "Описание отсутствует"
 
@@ -873,6 +886,8 @@ msgstr "Просматриваемые профили"
 msgid "Profile dump program"
 msgstr ""
 
+#~ msgid "CIE Diagram:"
+#~ msgstr "Диаграмма CIE:"
 #~ msgid "Vendor:"
 #~ msgstr "Производитель:"
 #~ msgid "_Calibrate device"
