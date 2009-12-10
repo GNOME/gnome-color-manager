@@ -58,7 +58,7 @@ static void     gcm_profile_finalize	(GObject     *object);
 
 #define icSigVideoCartGammaTableTag		0x76636774
 #define icSigMachineLookUpTableTag		0x6d4c5554
-#define	GCM_TAG_ID_COLORANT_TABLE		0x636C7274
+#define	GCM_TAG_ID_COLORANT_TABLE		0x636c7274
 #define GCM_TRC_TYPE_PARAMETRIC_CURVE		0x70617261
 
 #define GCM_TRC_SIZE			0x08
@@ -566,31 +566,31 @@ static gchar *
 gcm_profile_parse_multi_localized_unicode (GcmProfile *profile, const guint8 *data, guint size)
 {
 	guint i;
-	gboolean ret;
 	gchar *text = NULL;
 	guint record_size;
 	guint names_size;
 	guint len;
 	guint offset_name;
+	guint32 type;
+
+	/* get type */
+	type = gcm_parser_decode_32 (data);
 
 	/* check we are not a localized tag */
-	ret = (memcmp (data, "desc", 4) == 0);
-	if (ret) {
+	if (type == icSigTextDescriptionType) {
 		record_size = gcm_parser_decode_32 (data + GCM_DESC_RECORD_SIZE);
 		text = g_strndup ((const gchar*)&data[GCM_DESC_RECORD_TEXT], record_size);
 		goto out;
 	}
 
 	/* check we are not a localized tag */
-	ret = (memcmp (data, "text", 4) == 0);
-	if (ret) {
+	if (type == icSigTextType) {
 		text = g_strdup ((const gchar*)&data[GCM_TEXT_RECORD_TEXT]);
 		goto out;
 	}
 
 	/* check we are not a localized tag */
-	ret = (memcmp (data, "mluc", 4) == 0);
-	if (ret) {
+	if (type == icSigMultiLocalizedUnicodeType) {
 		names_size = gcm_parser_decode_32 (data + 8);
 		if (names_size != 1) {
 			/* there is more than one language encoded */
