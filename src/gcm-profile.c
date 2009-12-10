@@ -45,7 +45,6 @@ static void     gcm_profile_finalize	(GObject     *object);
 #define GCM_PROFILE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_PROFILE, GcmProfilePrivate))
 
 #define GCM_HEADER			0x00
-#define GCM_CREATION_DATE_TIME		0x18
 #define GCM_SIGNATURE			0x24
 #define GCM_NUMTAGS			0x80
 #define GCM_BODY			0x84
@@ -616,34 +615,6 @@ out:
 }
 
 /**
- * gcm_parser_get_date_time:
- **/
-static gchar *
-gcm_parser_get_date_time (const guint8 *data)
-{
-	guint years;	/* 0..1 */
-	guint months;	/* 2..3 */
-	guint days;	/* 4..5 */
-	guint hours;	/* 6..7 */
-	guint minutes;	/* 8..9 */
-	guint seconds;	/* 10..11 */
-
-	years = gcm_parser_decode_16 (data + 0x00);
-	months = gcm_parser_decode_16 (data + 0x02);
-	days = gcm_parser_decode_16 (data + 0x04);
-	hours = gcm_parser_decode_16 (data + 0x06);
-	minutes = gcm_parser_decode_16 (data + 0x08);
-	seconds = gcm_parser_decode_16 (data + 0x0a);
-
-	/* invalid / unknown */
-	if (years == 0)
-		return NULL;
-
-	/* localise */
-	return gcm_utils_format_date_time (years, months, days, hours, minutes, seconds);
-}
-
-/**
  * gcm_profile_parse_data:
  **/
 gboolean
@@ -662,6 +633,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	GcmProfilePrivate *priv = profile->priv;
 	cmsCIEXYZ cie_xyz;
 	cmsCIEXYZTRIPLE cie_illum;
+	struct tm created;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
@@ -747,6 +719,11 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 		egg_debug ("failed to get luminance values");
 	}
 
+	/* get the profile created time and date */
+	ret = cmsTakeCreationDateTime (&created, priv->lcms_profile);
+	if (ret)
+		priv->datetime = gcm_utils_format_date_time (1900+created.tm_year, created.tm_mon+1, created.tm_mday, created.tm_hour, created.tm_min, created.tm_sec);
+
 	/* get the profile type */
 	profile_class = cmsGetDeviceClass (priv->lcms_profile);
 	switch (profile_class) {
@@ -811,11 +788,6 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	default:
 		priv->colorspace = GCM_PROFILE_COLORSPACE_UNKNOWN;
 	}
-
-	/* get the profile created time and date */
-	priv->datetime = gcm_parser_get_date_time (data + GCM_CREATION_DATE_TIME);
-	if (priv->datetime != NULL)
-		egg_debug ("created: %s", priv->datetime);
 
 	/* get the number of tags in the file */
 	num_tags = gcm_parser_decode_32 (data + GCM_NUMTAGS);
