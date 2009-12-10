@@ -184,7 +184,7 @@ G_DEFINE_TYPE (GcmProfile, gcm_profile, G_TYPE_OBJECT)
  * gcm_parser_decode_32:
  **/
 static guint
-gcm_parser_decode_32 (const gchar *data)
+gcm_parser_decode_32 (const guint8 *data)
 {
 	guint retval;
 	retval = (*(data + 0) << 0) + (*(data + 1) << 8) + (*(data + 2) << 16) + (*(data + 3) << 24);
@@ -195,7 +195,7 @@ gcm_parser_decode_32 (const gchar *data)
  * gcm_parser_decode_16:
  **/
 static guint
-gcm_parser_decode_16 (const gchar *data)
+gcm_parser_decode_16 (const guint8 *data)
 {
 	guint retval;
 	retval = (*(data + 0) << 0) + (*(data + 1) << 8);
@@ -206,7 +206,7 @@ gcm_parser_decode_16 (const gchar *data)
  * gcm_parser_decode_8:
  **/
 static guint
-gcm_parser_decode_8 (const gchar *data)
+gcm_parser_decode_8 (const guint8 *data)
 {
 	guint retval;
 	retval = (*data << 0);
@@ -217,7 +217,7 @@ gcm_parser_decode_8 (const gchar *data)
  * gcm_parser_is_tag:
  **/
 static gboolean
-gcm_parser_is_tag (const gchar *data)
+gcm_parser_is_tag (const guint8 *data)
 {
 	guint i;
 	gboolean ret;
@@ -299,7 +299,7 @@ gcm_prefs_get_tag_description (guint tag)
  * gcm_parser_load_icc_mlut:
  **/
 static gboolean
-gcm_parser_load_icc_mlut (GcmProfile *profile, const gchar *data, guint size)
+gcm_parser_load_icc_mlut (GcmProfile *profile, const guint8 *data, guint size)
 {
 	gboolean ret = TRUE;
 	guint i;
@@ -325,7 +325,7 @@ gcm_parser_load_icc_mlut (GcmProfile *profile, const gchar *data, guint size)
  * gcm_parser_load_icc_vcgt_formula:
  **/
 static gboolean
-gcm_parser_load_icc_vcgt_formula (GcmProfile *profile, const gchar *data, guint size)
+gcm_parser_load_icc_vcgt_formula (GcmProfile *profile, const guint8 *data, guint size)
 {
 	gboolean ret = FALSE;
 	GcmClutData *vcgt_data;
@@ -375,7 +375,7 @@ out:
  * gcm_parser_load_icc_vcgt_table:
  **/
 static gboolean
-gcm_parser_load_icc_vcgt_table (GcmProfile *profile, const gchar *data, guint size)
+gcm_parser_load_icc_vcgt_table (GcmProfile *profile, const guint8 *data, guint size)
 {
 	gboolean ret = TRUE;
 	guint num_channels = 0;
@@ -447,7 +447,7 @@ out:
  * gcm_parser_load_icc_vcgt:
  **/
 static gboolean
-gcm_parser_load_icc_vcgt (GcmProfile *profile, const gchar *data, guint size)
+gcm_parser_load_icc_vcgt (GcmProfile *profile, const guint8 *data, guint size)
 {
 	gboolean ret = FALSE;
 	guint tag_id;
@@ -481,7 +481,7 @@ out:
  * gcm_parser_load_icc_trc_curve:
  **/
 static gboolean
-gcm_parser_load_icc_trc_curve (GcmProfile *profile, const gchar *data, guint size, guint color)
+gcm_parser_load_icc_trc_curve (GcmProfile *profile, const guint8 *data, guint size, guint color)
 {
 	gboolean ret = TRUE;
 	guint num_entries;
@@ -538,7 +538,7 @@ gcm_parser_load_icc_trc_curve (GcmProfile *profile, const gchar *data, guint siz
  * gcm_parser_load_icc_trc:
  **/
 static gboolean
-gcm_parser_load_icc_trc (GcmProfile *profile, const gchar *data, guint size, guint color)
+gcm_parser_load_icc_trc (GcmProfile *profile, const guint8 *data, guint size, guint color)
 {
 	gboolean ret = FALSE;
 	guint type;
@@ -583,7 +583,7 @@ gcm_profile_ensure_printable (gchar *data)
  * Convert ICC encoded UTF-16BE into a string the user can understand
  **/
 static gchar *
-gcm_profile_utf16be_to_locale (const gchar *text, guint size)
+gcm_profile_utf16be_to_locale (const guint8 *text, guint size)
 {
 	gsize items_written;
 	gchar *text_utf8 = NULL;
@@ -591,7 +591,7 @@ gcm_profile_utf16be_to_locale (const gchar *text, guint size)
 	GError *error = NULL;
 
 	/* convert from ICC text encoding to UTF-8 */
-	text_utf8 = g_convert (text, size, "UTF-8", "UTF-16BE", NULL, &items_written, &error);
+	text_utf8 = g_convert ((const gchar*)text, size, "UTF-8", "UTF-16BE", NULL, &items_written, &error);
 	if (text_utf8 == NULL) {
 		egg_warning ("failed to convert to UTF-8: %s", error->message);
 		g_error_free (error);
@@ -614,7 +614,7 @@ out:
  * gcm_profile_parse_multi_localized_unicode:
  **/
 static gchar *
-gcm_profile_parse_multi_localized_unicode (GcmProfile *profile, const gchar *data, guint size)
+gcm_profile_parse_multi_localized_unicode (GcmProfile *profile, const guint8 *data, guint size)
 {
 	guint i;
 	gboolean ret;
@@ -628,14 +628,14 @@ gcm_profile_parse_multi_localized_unicode (GcmProfile *profile, const gchar *dat
 	ret = (memcmp (data, "desc", 4) == 0);
 	if (ret) {
 		record_size = gcm_parser_decode_32 (data + GCM_DESC_RECORD_SIZE);
-		text = g_strndup (&data[GCM_DESC_RECORD_TEXT], record_size);
+		text = g_strndup ((const gchar*)&data[GCM_DESC_RECORD_TEXT], record_size);
 		goto out;
 	}
 
 	/* check we are not a localized tag */
 	ret = (memcmp (data, "text", 4) == 0);
 	if (ret) {
-		text = g_strdup (&data[GCM_TEXT_RECORD_TEXT]);
+		text = g_strdup ((const gchar*)&data[GCM_TEXT_RECORD_TEXT]);
 		goto out;
 	}
 
@@ -683,7 +683,7 @@ gcm_parser_s15_fixed_16_number_to_float (gint32 data)
  * gcm_parser_load_icc_xyz_type:
  **/
 static gboolean
-gcm_parser_load_icc_xyz_type (GcmProfile *profile, const gchar *data, guint size, GcmXyz *xyz)
+gcm_parser_load_icc_xyz_type (GcmProfile *profile, const guint8 *data, guint size, GcmXyz *xyz)
 {
 	gboolean ret;
 	guint value;
@@ -695,8 +695,9 @@ gcm_parser_load_icc_xyz_type (GcmProfile *profile, const gchar *data, guint size
 	/* check we are not a localized tag */
 	ret = (memcmp (data, "XYZ ", 4) == 0);
 	if (!ret) {
-		type = g_strndup (data, 4);
+		type = g_strndup ((const gchar*)data, 4);
 		egg_warning ("not an XYZ type: '%s'", type);
+		g_free (type);
 		goto out;
 	}
 
@@ -779,7 +780,7 @@ gcm_parser_get_month (guint idx)
  * gcm_parser_get_date_time:
  **/
 static gchar *
-gcm_parser_get_date_time (const gchar *data)
+gcm_parser_get_date_time (const guint8 *data)
 {
 	guint years;	/* 0..1 */
 	guint months;	/* 2..3 */
@@ -814,7 +815,7 @@ out:
  * gcm_profile_get_colorspace:
  **/
 static GcmProfileColorspace
-gcm_profile_get_colorspace (const gchar *data)
+gcm_profile_get_colorspace (const guint8 *data)
 {
 	gboolean ret;
 
@@ -858,12 +859,12 @@ gcm_profile_get_colorspace (const gchar *data)
  * gcm_profile_fix_offset:
  **/
 static guint
-gcm_profile_fix_offset (const gchar *data, guint tag_offset)
+gcm_profile_fix_offset (const guint8 *data, guint tag_offset)
 {
 	gint offset_padding_error;
 	guint fixed_offset = 0;
 	gint j;
-	guchar print;
+	guint8 print;
 	gboolean ret;
 
 	/* correct broken offsets that do not align tags on a 4 byte boundary */
@@ -932,7 +933,7 @@ out:
  * gcm_profile_parse_data:
  **/
 gboolean
-gcm_profile_parse_data (GcmProfile *profile, const gchar *data, gsize length, GError **error)
+gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, GError **error)
 {
 	gboolean ret = FALSE;
 	guint num_tags;
@@ -1200,7 +1201,7 @@ gcm_profile_parse (GcmProfile *profile, const gchar *filename, GError **error)
 	}
 
 	/* parse the data */
-	ret = gcm_profile_parse_data (profile, data, length, error);
+	ret = gcm_profile_parse_data (profile, (const guint8*)data, length, error);
 	if (!ret)
 		goto out;
 out:
@@ -1696,7 +1697,7 @@ typedef struct {
 } GcmProfileTestData;
 
 void
-gcm_profile_test_parse_file (EggTest *test, const gchar *datafile, GcmProfileTestData *test_data)
+gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTestData *test_data)
 {
 	gchar *filename;
 	gchar *filename_tmp;

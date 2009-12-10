@@ -86,7 +86,7 @@ gboolean	 gcm_profile_parse			(GcmProfile	*profile,
 							 const gchar	*filename,
 							 GError		**error);
 gboolean	 gcm_profile_parse_data			(GcmProfile	*profile,
-							 const gchar	*data,
+							 const guint8	*data,
 							 gsize		 length,
 							 GError		**error);
 GcmClut		*gcm_profile_generate			(GcmProfile	*profile,

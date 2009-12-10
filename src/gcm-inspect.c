@@ -47,7 +47,7 @@ gcm_inspect_print_data_info (const gchar *title, const guint8 *data, gsize lengt
 
 	/* parse the data */
 	profile = gcm_profile_new ();
-	ret = gcm_profile_parse_data (profile, (const gchar *) data, length, &error);
+	ret = gcm_profile_parse_data (profile, data, length, &error);
 	if (!ret) {
 		egg_warning ("failed to parse data: %s", error->message);
 		g_error_free (error);
