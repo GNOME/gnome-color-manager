@@ -45,8 +45,6 @@ static void     gcm_profile_finalize	(GObject     *object);
 #define GCM_PROFILE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_PROFILE, GcmProfilePrivate))
 
 #define GCM_HEADER			0x00
-#define GCM_TYPE			0x0c
-#define GCM_COLORSPACE			0x10
 #define GCM_CREATION_DATE_TIME		0x18
 #define GCM_SIGNATURE			0x24
 #define GCM_NUMTAGS			0x80
@@ -712,8 +710,8 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	guint tag_size;
 	guint tag_offset;
 	gchar *signature;
-	guint32 profile_class;
-	guint32 color_space;
+	icProfileClassSignature profile_class;
+	icColorSpaceSignature color_space;
 	GcmProfilePrivate *priv = profile->priv;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
@@ -750,7 +748,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	}
 
 	/* get the profile type */
-	profile_class = gcm_parser_decode_32 (data + GCM_TYPE);
+	profile_class = cmsGetDeviceClass (priv->lcms_profile);
 	switch (profile_class) {
 	case icSigInputClass:
 		priv->profile_type = GCM_PROFILE_TYPE_INPUT_DEVICE;
@@ -778,7 +776,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	}
 
 	/* get colorspace */
-	color_space = gcm_parser_decode_32 (data + GCM_COLORSPACE);
+	color_space = cmsGetColorSpace (priv->lcms_profile);
 	switch (color_space) {
 	case icSigXYZData:
 		priv->colorspace = GCM_PROFILE_COLORSPACE_XYZ;
