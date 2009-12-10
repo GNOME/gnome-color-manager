@@ -587,6 +587,46 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 
 	/* get primary illuminants */
 	ret = cmsTakeColorants (&cie_illum, priv->lcms_profile);
+
+	/* geting the illuminants failed, try running it through the profile */
+	if (!ret) {
+		cmsHPROFILE xyz_profile;
+		cmsHTRANSFORM transform;
+		gdouble rgb_values[3];
+
+		/* create a transform from profile to XYZ */
+		xyz_profile = cmsCreateXYZProfile ();
+		transform = cmsCreateTransform (priv->lcms_profile, TYPE_RGB_DBL, xyz_profile, TYPE_XYZ_DBL, INTENT_PERCEPTUAL, 0);
+		if (transform != NULL) {
+
+			/* red */
+			rgb_values[0] = 1.0;
+			rgb_values[1] = 0.0;
+			rgb_values[2] = 0.0;
+			cmsDoTransform (transform, rgb_values, &cie_illum.Red, 1);
+
+			/* green */
+			rgb_values[0] = 0.0;
+			rgb_values[1] = 1.0;
+			rgb_values[2] = 0.0;
+			cmsDoTransform (transform, rgb_values, &cie_illum.Green, 1);
+
+			/* blue */
+			rgb_values[0] = 0.0;
+			rgb_values[1] = 0.0;
+			rgb_values[2] = 1.0;
+			cmsDoTransform (transform, rgb_values, &cie_illum.Blue, 1);
+
+			/* we're done */
+			cmsDeleteTransform (transform);
+			ret = TRUE;
+		}
+
+		/* no more need for the output profile */
+		cmsCloseProfile (xyz_profile);
+	}
+
+	/* we've got valid values */
 	if (ret) {
 		g_object_set (priv->luminance_red,
 			      "cie-x", cie_illum.Red.X,
