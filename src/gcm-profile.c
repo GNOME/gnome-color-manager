@@ -115,6 +115,7 @@ struct _GcmProfilePrivate
 	gboolean			 has_vcgt_table;
 	gboolean			 has_curve_table;
 	gboolean			 has_curve_fixed;
+	cmsHPROFILE			 lcms_profile;
 	GcmClutData			*trc_data;
 	guint				 trc_data_size;
 	GcmClutData			*vcgt_data;
@@ -741,6 +742,13 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 		goto out;
 	}
 
+	/* load profile into lcms */
+	priv->lcms_profile = cmsOpenProfileFromMem ((LPVOID)data, length);
+	if (priv->lcms_profile == NULL) {
+		*error = g_error_new (1, 0, "failed to load: not an ICC profile");
+		goto out;
+	}
+
 	/* get the profile type */
 	profile_class = gcm_parser_decode_32 (data + GCM_TYPE);
 	switch (profile_class) {
@@ -1229,6 +1237,16 @@ gcm_profile_colorspace_to_text (GcmProfileColorspace type)
 }
 
 /**
+ * gcm_profile_lcms_error_cb:
+ **/
+static int
+gcm_profile_lcms_error_cb (int ErrorCode, const char *ErrorText)
+{
+	egg_warning ("LCMS error %i: %s", ErrorCode, ErrorText);
+	return LCMS_ERRC_WARNING;
+}
+
+/**
  * gcm_profile_get_property:
  **/
 static void
@@ -1433,6 +1451,11 @@ gcm_profile_init (GcmProfile *profile)
 	profile->priv->luminance_red = gcm_xyz_new ();
 	profile->priv->luminance_green = gcm_xyz_new ();
 	profile->priv->luminance_blue = gcm_xyz_new ();
+
+	/* setup LCMS */
+	cmsSetErrorHandler (gcm_profile_lcms_error_cb);
+	cmsErrorAction (LCMS_ERROR_SHOW);
+	cmsSetLanguage ("en", "US");
 }
 
 /**
@@ -1443,6 +1466,9 @@ gcm_profile_finalize (GObject *object)
 {
 	GcmProfile *profile = GCM_PROFILE (object);
 	GcmProfilePrivate *priv = profile->priv;
+
+	if (priv->lcms_profile != NULL)
+		cmsCloseProfile (priv->lcms_profile);
 
 	g_free (priv->copyright);
 	g_free (priv->description);
