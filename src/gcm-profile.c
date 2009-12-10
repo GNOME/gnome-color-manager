@@ -37,6 +37,7 @@
 #include "egg-debug.h"
 
 #include "gcm-profile.h"
+#include "gcm-utils.h"
 #include "gcm-xyz.h"
 
 static void     gcm_profile_finalize	(GObject     *object);
@@ -669,63 +670,6 @@ out:
 }
 
 /**
- * gcm_parser_get_month:
- **/
-static const gchar *
-gcm_parser_get_month (guint idx)
-{
-	if (idx == 1) {
-		/* TRANSLATORS: the month */
-		return _("January");
-	}
-	if (idx == 2) {
-		/* TRANSLATORS: the month */
-		return _("February");
-	}
-	if (idx == 3) {
-		/* TRANSLATORS: the month */
-		return _("March");
-	}
-	if (idx == 4) {
-		/* TRANSLATORS: the month */
-		return _("April");
-	}
-	if (idx == 5) {
-		/* TRANSLATORS: the month */
-		return _("May");
-	}
-	if (idx == 6) {
-		/* TRANSLATORS: the month */
-		return _("June");
-	}
-	if (idx == 7) {
-		/* TRANSLATORS: the month */
-		return _("July");
-	}
-	if (idx == 8) {
-		/* TRANSLATORS: the month */
-		return _("August");
-	}
-	if (idx == 9) {
-		/* TRANSLATORS: the month (my birthday) */
-		return _("September");
-	}
-	if (idx == 10) {
-		/* TRANSLATORS: the month */
-		return _("October");
-	}
-	if (idx == 11) {
-		/* TRANSLATORS: the month */
-		return _("November");
-	}
-	if (idx == 12) {
-		/* TRANSLATORS: the month */
-		return _("December");
-	}
-	return NULL;
-}
-
-/**
  * gcm_parser_get_date_time:
  **/
 static gchar *
@@ -737,8 +681,6 @@ gcm_parser_get_date_time (const guint8 *data)
 	guint hours;	/* 6..7 */
 	guint minutes;	/* 8..9 */
 	guint seconds;	/* 10..11 */
-	const gchar *month_text;
-	gchar *text = NULL;
 
 	years = gcm_parser_decode_16 (data + 0x00);
 	months = gcm_parser_decode_16 (data + 0x02);
@@ -749,15 +691,10 @@ gcm_parser_get_date_time (const guint8 *data)
 
 	/* invalid / unknown */
 	if (years == 0)
-		goto out;
+		return NULL;
 
-	/* write the month as a word to avoid locale confusion */
-	month_text = gcm_parser_get_month (months);
-
-	/* TRANSLATORS: please re-arrange: days, months (in text), years, hours, minutes, seconds */
-	text = g_strdup_printf (_("%i %s %04i, %02i:%02i:%02i"), days, month_text, years, hours, minutes, seconds);
-out:
-	return text;
+	/* localise */
+	return gcm_utils_format_date_time (years, months, days, hours, minutes, seconds);
 }
 
 /**
