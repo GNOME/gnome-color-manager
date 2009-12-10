@@ -1431,6 +1431,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	const gchar *profile_colorspace_text;
 	gboolean ret;
 	guint size;
+	guint filesize;
 
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -1446,7 +1447,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	/* get the new details from the profile */
 	g_object_get (profile,
 		      "filename", &filename,
-		      "size", &size,
+		      "size", &filesize,
 		      "copyright", &profile_copyright,
 		      "manufacturer", &profile_manufacturer,
 		      "model", &profile_model,
@@ -1514,12 +1515,12 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 
 	/* set size */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_size"));
-	if (size == 0) {
+	if (filesize == 0) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_size"));
-		size_text = g_format_size_for_display (size);
+		size_text = g_format_size_for_display (filesize);
 		gtk_label_set_label (GTK_LABEL (widget), size_text);
 	}
 
