@@ -1274,18 +1274,18 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 
 	if (profile->priv->has_vcgt_formula) {
 
+		gamma_red = (gfloat) vcgt_data[0].red / 65536.0;
+		gamma_green = (gfloat) vcgt_data[0].green / 65536.0;
+		gamma_blue = (gfloat) vcgt_data[0].blue / 65536.0;
+		min_red = (gfloat) vcgt_data[1].red / 65536.0;
+		min_green = (gfloat) vcgt_data[1].green / 65536.0;
+		min_blue = (gfloat) vcgt_data[1].blue / 65536.0;
+		max_red = (gfloat) vcgt_data[2].red / 65536.0;
+		max_green = (gfloat) vcgt_data[2].green / 65536.0;
+		max_blue = (gfloat) vcgt_data[2].blue / 65536.0;
+
 		/* create mapping of desired size */
 		for (i=0; i<size; i++) {
-			gamma_red = (gfloat) vcgt_data[0].red / 65536.0;
-			gamma_green = (gfloat) vcgt_data[0].green / 65536.0;
-			gamma_blue = (gfloat) vcgt_data[0].blue / 65536.0;
-			min_red = (gfloat) vcgt_data[1].red / 65536.0;
-			min_green = (gfloat) vcgt_data[1].green / 65536.0;
-			min_blue = (gfloat) vcgt_data[1].blue / 65536.0;
-			max_red = (gfloat) vcgt_data[2].red / 65536.0;
-			max_green = (gfloat) vcgt_data[2].green / 65536.0;
-			max_blue = (gfloat) vcgt_data[2].blue / 65536.0;
-
 			/* add a point */
 			tmp = g_new0 (GcmClutData, 1);
 			tmp->red = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_red) * (max_red - min_red) + min_red);
@@ -1293,6 +1293,7 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 			tmp->blue = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_blue) * (max_blue - min_blue) + min_blue);
 			g_ptr_array_add (array, tmp);
 		}
+		goto out;
 	}
 
 	if (profile->priv->has_mlut) {
@@ -1363,7 +1364,7 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 	}
 
 	/* bugger */
-	egg_warning ("no LUT to generate");
+	egg_debug ("no LUT to generate");
 out:
 	gcm_clut_set_source_array (clut, array);
 	g_ptr_array_unref (array);
