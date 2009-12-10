@@ -236,10 +236,14 @@ gcm_trc_widget_draw_line (GcmTrcWidget *trc, cairo_t *cr)
 	gfloat i;
 	gfloat value;
 	gfloat size;
+	gfloat linewidth;
 
 	/* nothing set yet */
 	if (priv->clut == NULL)
 		return;
+
+	/* set according to widget width */
+	linewidth = priv->chart_width / 250.0f;
 
 	/* get data */
 	array = gcm_clut_get_array (priv->clut);
@@ -248,41 +252,41 @@ gcm_trc_widget_draw_line (GcmTrcWidget *trc, cairo_t *cr)
 	cairo_save (cr);
 
 	/* do red */
-	cairo_set_line_width (cr, 3);
+	cairo_set_line_width (cr, linewidth + 1.0f);
 	cairo_set_source_rgb (cr, 0.5f, 0.0f, 0.0f);
 	for (i=0; i<size; i++) {
 		tmp = g_ptr_array_index (array, (guint) i);
 		value = tmp->red/65536.0f;
 		gcm_trc_widget_map_to_display (trc, i/size, value, &wx, &wy);
 		if (i == 0)
-			cairo_move_to (cr, wx, wy);
+			cairo_move_to (cr, wx, wy+1);
 		else
-			cairo_line_to (cr, wx, wy);
+			cairo_line_to (cr, wx, wy+1);
 	}
 	cairo_stroke_preserve (cr);
-	cairo_set_line_width (cr, 2);
+	cairo_set_line_width (cr, linewidth);
 	cairo_set_source_rgb (cr, 1.0f, 0.0f, 0.0f);
 	cairo_stroke (cr);
 
 	/* do green */
-	cairo_set_line_width (cr, 3);
+	cairo_set_line_width (cr, linewidth + 1.0f);
 	cairo_set_source_rgb (cr, 0.0f, 0.5f, 0.0f);
 	for (i=0; i<size; i++) {
 		tmp = g_ptr_array_index (array, (guint) i);
 		value = tmp->green/65536.0f;
 		gcm_trc_widget_map_to_display (trc, i/size, value, &wx, &wy);
 		if (i == 0)
-			cairo_move_to (cr, wx, wy);
+			cairo_move_to (cr, wx, wy-1);
 		else
-			cairo_line_to (cr, wx, wy);
+			cairo_line_to (cr, wx, wy-1);
 	}
 	cairo_stroke_preserve (cr);
-	cairo_set_line_width (cr, 2);
+	cairo_set_line_width (cr, linewidth);
 	cairo_set_source_rgb (cr, 0.0f, 1.0f, 0.0f);
 	cairo_stroke (cr);
 
 	/* do blue */
-	cairo_set_line_width (cr, 3);
+	cairo_set_line_width (cr, linewidth + 1.0f);
 	cairo_set_source_rgb (cr, 0.0f, 0.0f, 0.5f);
 	for (i=0; i<size; i++) {
 		tmp = g_ptr_array_index (array, (guint) i);
@@ -294,7 +298,7 @@ gcm_trc_widget_draw_line (GcmTrcWidget *trc, cairo_t *cr)
 			cairo_line_to (cr, wx, wy);
 	}
 	cairo_stroke_preserve (cr);
-	cairo_set_line_width (cr, 2);
+	cairo_set_line_width (cr, linewidth);
 	cairo_set_source_rgb (cr, 0.0f, 0.0f, 1.0f);
 	cairo_stroke (cr);
 
