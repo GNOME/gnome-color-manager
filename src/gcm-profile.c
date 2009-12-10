@@ -182,25 +182,6 @@ gcm_parser_decode_8 (const guint8 *data)
 }
 
 /**
- * gcm_parser_is_tag:
- **/
-static gboolean
-gcm_parser_is_tag (const guint8 *data)
-{
-	guint i;
-	gboolean ret;
-	for (i=0; i<4; i++) {
-		ret = g_ascii_isalnum (data[i]);
-		if (ret)
-			continue;
-		if (i == 3 && data[i] == 32)
-			continue;
-		return FALSE;
-	}
-	return TRUE;
-}
-
-/**
  * gcm_prefs_get_tag_description:
  **/
 static const gchar *
@@ -824,80 +805,6 @@ gcm_profile_get_colorspace (const guint8 *data)
 }
 
 /**
- * gcm_profile_fix_offset:
- **/
-static guint
-gcm_profile_fix_offset (const guint8 *data, guint tag_offset)
-{
-	gint offset_padding_error;
-	guint fixed_offset = 0;
-	gint j;
-	guint8 print;
-	gboolean ret;
-
-	/* correct broken offsets that do not align tags on a 4 byte boundary */
-	offset_padding_error = tag_offset % 4;
-	if (offset_padding_error == 0) {
-		fixed_offset = tag_offset;
-		goto out;
-	}
-
-	/* offset seems to be valid after all */
-	ret = gcm_parser_is_tag (data + tag_offset);
-	if (ret) {
-		fixed_offset = tag_offset;
-		egg_debug ("tag_offset is %02x which is not on a 4-byte boundary, but it seems to be valid", tag_offset);
-		goto out;
-	}
-
-	/* bytestream is one byte offset */
-	ret = gcm_parser_is_tag (data + tag_offset + 1);
-	if (ret) {
-		fixed_offset = tag_offset + 1;
-		egg_debug ("tag_offset is %02x which is not on a 4-byte boundary, correcting by 1 byte", tag_offset);
-		goto out;
-	}
-
-	/* bytesteam aligns to the next segment */
-	ret = gcm_parser_is_tag (data + tag_offset + offset_padding_error);
-	if (ret) {
-		fixed_offset = tag_offset + offset_padding_error;
-		egg_debug ("tag_offset is %02x which is not on a 4-byte boundary, correcting by %i bytes", tag_offset, offset_padding_error);
-		goto out;
-	}
-
-	/* print around the offset for debugging */
-	for (j=-12; j<12; j++) {
-		print = *(data + tag_offset + j);
-		if (!g_ascii_isalnum (print))
-			print = '?';
-		g_print (" %c ", print);
-	}
-	g_print ("\n");
-
-	/* mark the zero point */
-	for (j=-12; j<12; j++) {
-		if (j == 0)
-			g_print (" ^ ");
-		else
-			g_print ("   ");
-	}
-	g_print ("\n");
-
-	/* print the values */
-	for (j=-12; j<12; j++) {
-		print = *(data + tag_offset + j);
-		g_print ("%02x ", print);
-	}
-	g_print ("\n");
-
-	/* could not repair */
-	egg_warning ("tag_offset is 0x%x which is not on a 4-byte boundary, could not repair offset", tag_offset);
-out:
-	return fixed_offset;
-}
-
-/**
  * gcm_profile_parse_data:
  **/
 gboolean
@@ -993,13 +900,6 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 			egg_debug ("unknown tag %x is present at 0x%x with size %u", tag_id, tag_offset, tag_size);
 		else
 			egg_debug ("named tag %x [%s] is present at 0x%x with size %u", tag_id, tag_description, tag_offset, tag_size);
-
-		/* correct broken profiles */
-		tag_offset = gcm_profile_fix_offset (data, tag_offset);
-		if (tag_offset == 0) {
-			*error = g_error_new (1, 0, "failed to parse profile, as tag offset for %s could not be corrected", tag_description);
-			goto out;
-		}
 
 		if (tag_id == icSigProfileDescriptionTag) {
 			priv->description = gcm_profile_parse_multi_localized_unicode (profile, data + tag_offset, tag_size);
@@ -1834,21 +1734,6 @@ gcm_profile_test (EggTest *test)
 		egg_test_success (test, NULL);
 	else
 		egg_test_failed (test, "invalid value: %f, expecting: %f", fp, expected);
-
-	/************************************************************/
-	egg_test_title (test, "test repair tag okay");
-	ret = gcm_parser_is_tag ("AtoB");
-	egg_test_assert (test, ret);
-
-	/************************************************************/
-	egg_test_title (test, "test repair tag offset");
-	ret = gcm_parser_is_tag ("Ato");
-	egg_test_assert (test, !ret);
-
-	/************************************************************/
-	egg_test_title (test, "test repair tag okay (three chars)");
-	ret = gcm_parser_is_tag (temp);
-	egg_test_assert (test, ret);
 
 	/* bluish test */
 	test_data.copyright = "Copyright (c) 1998 Hewlett-Packard Company";
