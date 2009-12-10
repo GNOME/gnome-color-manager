@@ -22,6 +22,7 @@ Requires:  shared-mime-info
 Requires:  dbus-glib >= %{dbus_glib_version}
 Requires:  dbus-x11
 Requires:  vte
+Requires:  lcms
 Requires:  argyllcms
 Requires:  shared-color-profiles
 Requires(post):   scrollkeeper
@@ -45,6 +46,7 @@ BuildRequires: dbus-glib-devel >= %{dbus_glib_version}
 BuildRequires: libXxf86vm-devel
 BuildRequires: libXrandr-devel
 BuildRequires: gnome-desktop-devel
+BuildRequires: lcms-devel
 
 %description
 gnome-color-manager is a session framework that makes it easy to manage, install
