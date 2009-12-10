@@ -32,6 +32,7 @@
 #include <glib-object.h>
 #include <glib/gi18n.h>
 #include <math.h>
+#include <lcms.h>
 
 #include "egg-debug.h"
 
@@ -55,43 +56,10 @@ static void     gcm_profile_finalize	(GObject     *object);
 #define GCM_TAG_SIZE			0x08
 #define GCM_TAG_WIDTH			0x0c
 
-#define GCM_TAG_ID_COPYRIGHT			0x63707274
-#define GCM_TAG_ID_PROFILE_DESCRIPTION		0x64657363
-#define GCM_TAG_ID_VCGT				0x76636774
-#define GCM_TAG_ID_MLUT				0x6d4c5554
-#define	GCM_TAG_ID_DEVICE_MFG_DESC		0x646d6e64
-#define	GCM_TAG_ID_DEVICE_MODEL_DESC		0x646d6464
-#define	GCM_TAG_ID_VIEWING_COND_DESC		0x76756564
-#define	GCM_TAG_ID_VIEWING_CONDITIONS		0x76696577
-#define	GCM_TAG_ID_LUMINANCE			0x6c756d69
-#define	GCM_TAG_ID_MEASUREMENT			0x6d656173
-#define	GCM_TAG_ID_RED_MATRIX_COLUMN		0x7258595a
-#define	GCM_TAG_ID_GREEN_MATRIX_COLUMN		0x6758595a
-#define	GCM_TAG_ID_BLUE_MATRIX_COLUMN		0x6258595a
-#define	GCM_TAG_ID_RED_TRC			0x72545243
-#define	GCM_TAG_ID_GREEN_TRC			0x67545243
-#define	GCM_TAG_ID_BLUE_TRC			0x62545243
-#define	GCM_TAG_ID_MEDIA_WHITE_POINT		0x77747074
-#define	GCM_TAG_ID_MEDIA_BLACK_POINT		0x626b7074
-#define	GCM_TAG_ID_TECHNOLOGY			0x74656368
-#define	GCM_TAG_ID_CALIBRATION_DATE_TIME	0x63616C74
-#define GCM_TRC_TYPE_CURVE			0x63757276
-#define GCM_TRC_TYPE_PARAMETRIC_CURVE		0x70617261
+#define icSigVideoCartGammaTableTag		0x76636774
+#define icSigMachineLookUpTableTag		0x6d4c5554
 #define	GCM_TAG_ID_COLORANT_TABLE		0x636C7274
-#define	GCM_TAG_ID_B_TO_A0			0x42324130
-#define	GCM_TAG_ID_B_TO_A1			0x42324131
-#define	GCM_TAG_ID_B_TO_A2			0x42324132
-#define	GCM_TAG_ID_A_TO_B0			0x41324230
-#define	GCM_TAG_ID_A_TO_B1			0x41324231
-#define	GCM_TAG_ID_A_TO_B2			0x41324232
-
-#define GCM_PROFILE_CLASS_INPUT_DEVICE		0x73636e72
-#define GCM_PROFILE_CLASS_DISPLAY_DEVICE	0x6d6e7472
-#define GCM_PROFILE_CLASS_OUTPUT_DEVICE		0x70727472
-#define GCM_PROFILE_CLASS_DEVICELINK		0x6c696e6b
-#define GCM_PROFILE_CLASS_COLORSPACE_CONVERSION	0x73706163
-#define GCM_PROFILE_CLASS_ABSTRACT		0x61627374
-#define GCM_PROFILE_CLASS_NAMED_COLOR		0x6e6d636c
+#define GCM_TRC_TYPE_PARAMETRIC_CURVE		0x70617261
 
 #define GCM_TRC_SIZE			0x08
 #define GCM_TRC_DATA			0x0c
@@ -238,59 +206,59 @@ gcm_parser_is_tag (const guint8 *data)
 static const gchar *
 gcm_prefs_get_tag_description (guint tag)
 {
-	if (tag == GCM_TAG_ID_PROFILE_DESCRIPTION)
+	if (tag == icSigProfileDescriptionTag)
 		return "profileDescription";
-	if (tag == GCM_TAG_ID_VCGT)
-		return "x-vcgt";
-	if (tag == GCM_TAG_ID_MLUT)
-		return "x-mlut";
-	if (tag == GCM_TAG_ID_DEVICE_MFG_DESC)
+	if (tag == icSigVideoCartGammaTableTag)
+		return "videoCartGammaTable";
+	if (tag == icSigMachineLookUpTableTag)
+		return "massiveLookUpTable";
+	if (tag == icSigDeviceMfgDescTag)
 		return "deviceMfgDesc";
-	if (tag == GCM_TAG_ID_DEVICE_MODEL_DESC)
+	if (tag == icSigDeviceModelDescTag)
 		return "deviceModelDesc";
-	if (tag == GCM_TAG_ID_VIEWING_COND_DESC)
+	if (tag == icSigViewingCondDescTag)
 		return "viewingCondDesc";
-	if (tag == GCM_TAG_ID_VIEWING_CONDITIONS)
+	if (tag == icSigViewingConditionsTag)
 		return "viewingConditions";
-	if (tag == GCM_TAG_ID_LUMINANCE)
+	if (tag == icSigLuminanceTag)
 		return "luminance";
-	if (tag == GCM_TAG_ID_MEASUREMENT)
+	if (tag == icSigMeasurementTag)
 		return "measurement";
-	if (tag == GCM_TAG_ID_RED_MATRIX_COLUMN)
+	if (tag == icSigRedColorantTag)
 		return "redMatrixColumn";
-	if (tag == GCM_TAG_ID_GREEN_MATRIX_COLUMN)
+	if (tag == icSigGreenColorantTag)
 		return "greenMatrixColumn";
-	if (tag == GCM_TAG_ID_BLUE_MATRIX_COLUMN)
+	if (tag == icSigBlueColorantTag)
 		return "blueMatrixColumn";
-	if (tag == GCM_TAG_ID_RED_TRC)
+	if (tag == icSigRedTRCTag)
 		return "redTRC";
-	if (tag == GCM_TAG_ID_GREEN_TRC)
+	if (tag == icSigGreenTRCTag)
 		return "greenTRC";
-	if (tag == GCM_TAG_ID_BLUE_TRC)
+	if (tag == icSigBlueTRCTag)
 		return "blueTRC";
-	if (tag == GCM_TAG_ID_MEDIA_WHITE_POINT)
+	if (tag == icSigMediaWhitePointTag)
 		return "mediaWhitePoint";
-	if (tag == GCM_TAG_ID_MEDIA_BLACK_POINT)
+	if (tag == icSigMediaBlackPointTag)
 		return "mediaBlackPoint";
-	if (tag == GCM_TAG_ID_TECHNOLOGY)
+	if (tag == icSigTechnologyTag)
 		return "technology";
-	if (tag == GCM_TAG_ID_COPYRIGHT)
+	if (tag == icSigCopyrightTag)
 		return "copyright";
-	if (tag == GCM_TAG_ID_CALIBRATION_DATE_TIME)
+	if (tag == icSigCalibrationDateTimeTag)
 		return "calibrationDateTime";
 	if (tag == GCM_TAG_ID_COLORANT_TABLE)
 		return "colorantTable";
-	if (tag == GCM_TAG_ID_B_TO_A0)
+	if (tag == icSigBToA0Tag)
 		return "BToA0";
-	if (tag == GCM_TAG_ID_B_TO_A1)
+	if (tag == icSigBToA1Tag)
 		return "BToA1";
-	if (tag == GCM_TAG_ID_B_TO_A2)
+	if (tag == icSigBToA2Tag)
 		return "BToA2";
-	if (tag == GCM_TAG_ID_A_TO_B0)
+	if (tag == icSigAToB0Tag)
 		return "AToB0";
-	if (tag == GCM_TAG_ID_A_TO_B1)
+	if (tag == icSigAToB1Tag)
 		return "AToB1";
-	if (tag == GCM_TAG_ID_A_TO_B2)
+	if (tag == icSigAToB2Tag)
 		return "AToB2";
 	return NULL;
 }
@@ -455,7 +423,7 @@ gcm_parser_load_icc_vcgt (GcmProfile *profile, const guint8 *data, guint size)
 
 	/* check we have a VCGT block */
 	tag_id = gcm_parser_decode_32 (data);
-	if (tag_id != GCM_TAG_ID_VCGT) {
+	if (tag_id != icSigVideoCartGammaTableTag) {
 		egg_warning ("invalid content of table vcgt, starting with %x", tag_id);
 		goto out;
 	}
@@ -544,7 +512,7 @@ gcm_parser_load_icc_trc (GcmProfile *profile, const guint8 *data, guint size, gu
 	guint type;
 	type = gcm_parser_decode_32 (data);
 
-	if (type == GCM_TRC_TYPE_CURVE) {
+	if (type == icSigCurveType) {
 		ret = gcm_parser_load_icc_trc_curve (profile, data, size, color);
 	} else if (type == GCM_TRC_TYPE_PARAMETRIC_CURVE) {
 //		ret = gcm_parser_load_icc_trc_parametric_curve (profile, data, offset, color);
@@ -975,25 +943,25 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	/* get the profile type */
 	profile_type = gcm_parser_decode_32 (data + GCM_TYPE);
 	switch (profile_type) {
-	case GCM_PROFILE_CLASS_INPUT_DEVICE:
+	case icSigInputClass:
 		priv->profile_type = GCM_PROFILE_TYPE_INPUT_DEVICE;
 		break;
-	case GCM_PROFILE_CLASS_DISPLAY_DEVICE:
+	case icSigDisplayClass:
 		priv->profile_type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
 		break;
-	case GCM_PROFILE_CLASS_OUTPUT_DEVICE:
+	case icSigOutputClass:
 		priv->profile_type = GCM_PROFILE_TYPE_OUTPUT_DEVICE;
 		break;
-	case GCM_PROFILE_CLASS_DEVICELINK:
+	case icSigLinkClass:
 		priv->profile_type = GCM_PROFILE_TYPE_DEVICELINK;
 		break;
-	case GCM_PROFILE_CLASS_COLORSPACE_CONVERSION:
+	case icSigColorSpaceClass:
 		priv->profile_type = GCM_PROFILE_TYPE_COLORSPACE_CONVERSION;
 		break;
-	case GCM_PROFILE_CLASS_ABSTRACT:
+	case icSigAbstractClass:
 		priv->profile_type = GCM_PROFILE_TYPE_ABSTRACT;
 		break;
-	case GCM_PROFILE_CLASS_NAMED_COLOR:
+	case icSigNamedColorClass:
 		priv->profile_type = GCM_PROFILE_TYPE_NAMED_COLOR;
 		break;
 	default:
@@ -1033,23 +1001,23 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 			goto out;
 		}
 
-		if (tag_id == GCM_TAG_ID_PROFILE_DESCRIPTION) {
+		if (tag_id == icSigProfileDescriptionTag) {
 			priv->description = gcm_profile_parse_multi_localized_unicode (profile, data + tag_offset, tag_size);
 			egg_debug ("found DESC: %s", priv->description);
 		}
-		if (tag_id == GCM_TAG_ID_COPYRIGHT) {
+		if (tag_id == icSigCopyrightTag) {
 			priv->copyright = gcm_profile_parse_multi_localized_unicode (profile, data + tag_offset, tag_size);
 			egg_debug ("found COPYRIGHT: %s", priv->copyright);
 		}
-		if (tag_id == GCM_TAG_ID_DEVICE_MFG_DESC) {
+		if (tag_id == icSigDeviceMfgDescTag) {
 			priv->manufacturer = gcm_profile_parse_multi_localized_unicode (profile, data + tag_offset, tag_size);
 			egg_debug ("found MANUFACTURER: %s", priv->manufacturer);
 		}
-		if (tag_id == GCM_TAG_ID_DEVICE_MODEL_DESC) {
+		if (tag_id == icSigDeviceModelDescTag) {
 			priv->model = gcm_profile_parse_multi_localized_unicode (profile, data + tag_offset, tag_size);
 			egg_debug ("found MODEL: %s", priv->model);
 		}
-		if (tag_id == GCM_TAG_ID_MLUT) {
+		if (tag_id == icSigMachineLookUpTableTag) {
 			egg_debug ("found MLUT which is a fixed size block");
 			ret = gcm_parser_load_icc_mlut (profile, data + tag_offset, tag_size);
 			if (!ret) {
@@ -1057,7 +1025,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 				goto out;
 			}
 		}
-		if (tag_id == GCM_TAG_ID_VCGT) {
+		if (tag_id == icSigVideoCartGammaTableTag) {
 			egg_debug ("found VCGT");
 			if (tag_size == 1584)
 				priv->adobe_gamma_workaround = TRUE;
@@ -1067,7 +1035,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 				goto out;
 			}
 		}
-		if (tag_id == GCM_TAG_ID_RED_TRC) {
+		if (tag_id == icSigRedTRCTag) {
 			egg_debug ("found TRC (red)");
 			ret = gcm_parser_load_icc_trc (profile, data + tag_offset, tag_size, 0);
 			if (!ret) {
@@ -1075,7 +1043,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 				goto out;
 			}
 		}
-		if (tag_id == GCM_TAG_ID_GREEN_TRC) {
+		if (tag_id == icSigGreenTRCTag) {
 			egg_debug ("found TRC (green)");
 			ret = gcm_parser_load_icc_trc (profile, data + tag_offset, tag_size, 1);
 			if (!ret) {
@@ -1083,7 +1051,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 				goto out;
 			}
 		}
-		if (tag_id == GCM_TAG_ID_BLUE_TRC) {
+		if (tag_id == icSigBlueTRCTag) {
 			egg_debug ("found TRC (blue)");
 			ret = gcm_parser_load_icc_trc (profile, data + tag_offset, tag_size, 2);
 			if (!ret) {
@@ -1091,7 +1059,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 				goto out;
 			}
 		}
-		if (tag_id == GCM_TAG_ID_MEDIA_WHITE_POINT) {
+		if (tag_id == icSigMediaWhitePointTag) {
 			egg_debug ("found media white point");
 			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->white_point);
 			if (!ret) {
@@ -1099,7 +1067,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 				goto out;
 			}
 		}
-		if (tag_id == GCM_TAG_ID_MEDIA_BLACK_POINT) {
+		if (tag_id == icSigMediaBlackPointTag) {
 			egg_debug ("found media black point");
 			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->black_point);
 			if (!ret) {
@@ -1107,7 +1075,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 				goto out;
 			}
 		}
-		if (tag_id == GCM_TAG_ID_RED_MATRIX_COLUMN) {
+		if (tag_id == icSigRedColorantTag) {
 			egg_debug ("found red matrix column");
 			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->luminance_red);
 			if (!ret) {
@@ -1115,7 +1083,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 				goto out;
 			}
 		}
-		if (tag_id == GCM_TAG_ID_GREEN_MATRIX_COLUMN) {
+		if (tag_id == icSigGreenColorantTag) {
 			egg_debug ("found green matrix column");
 			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->luminance_green);
 			if (!ret) {
@@ -1123,7 +1091,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 				goto out;
 			}
 		}
-		if (tag_id == GCM_TAG_ID_BLUE_MATRIX_COLUMN) {
+		if (tag_id == icSigBlueColorantTag) {
 			egg_debug ("found blue matrix column");
 			ret = gcm_parser_load_icc_xyz_type (profile, data + tag_offset, tag_size, priv->luminance_blue);
 			if (!ret) {
