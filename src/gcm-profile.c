@@ -56,11 +56,6 @@ static void     gcm_profile_finalize	(GObject     *object);
 
 #define icSigVideoCartGammaTableTag		0x76636774
 #define icSigMachineLookUpTableTag		0x6d4c5554
-#define	GCM_TAG_ID_COLORANT_TABLE		0x636c7274
-#define GCM_TRC_TYPE_PARAMETRIC_CURVE		0x70617261
-
-#define GCM_TRC_SIZE			0x08
-#define GCM_TRC_DATA			0x0c
 
 #define GCM_MLUT_RED			0x000
 #define GCM_MLUT_GREEN			0x200
@@ -110,11 +105,7 @@ struct _GcmProfilePrivate
 	gboolean			 has_mlut;
 	gboolean			 has_vcgt_formula;
 	gboolean			 has_vcgt_table;
-	gboolean			 has_curve_table;
-	gboolean			 has_curve_fixed;
 	cmsHPROFILE			 lcms_profile;
-	GcmClutData			*trc_data;
-	guint				 trc_data_size;
 	GcmClutData			*vcgt_data;
 	guint				 vcgt_data_size;
 	GcmClutData			*mlut_data;
@@ -226,7 +217,7 @@ gcm_prefs_get_tag_description (guint tag)
 		return "copyright";
 	if (tag == icSigCalibrationDateTimeTag)
 		return "calibrationDateTime";
-	if (tag == GCM_TAG_ID_COLORANT_TABLE)
+	if (tag == icSigColorantTableTag)
 		return "colorantTable";
 	if (tag == icSigBToA0Tag)
 		return "BToA0";
@@ -422,83 +413,6 @@ gcm_parser_load_icc_vcgt (GcmProfile *profile, const guint8 *data, guint size)
 	/* we didn't understand the encoding */
 	egg_warning ("gamma type encoding not recognised");
 out:
-	return ret;
-}
-
-/**
- * gcm_parser_load_icc_trc_curve:
- **/
-static gboolean
-gcm_parser_load_icc_trc_curve (GcmProfile *profile, const guint8 *data, guint size, guint color)
-{
-	gboolean ret = TRUE;
-	guint num_entries;
-	guint i = 0;
-	guint value;
-	GcmClutData *trc_data;
-
-	num_entries = gcm_parser_decode_32 (data + GCM_TRC_SIZE);
-
-	/* create ramp */
-	if (profile->priv->trc_data == NULL) {
-		profile->priv->trc_data = g_new0 (GcmClutData, num_entries + 1);
-		profile->priv->trc_data_size = num_entries;
-		egg_debug ("creating array of size %i", num_entries);
-	}
-
-	/* load data */
-	trc_data = profile->priv->trc_data;
-
-	/* save datatype */
-	egg_debug ("curve size %i", num_entries);
-	profile->priv->trc_data_size = num_entries;
-	if (num_entries > 1) {
-
-		/* load in data */
-		for (i=0; i<num_entries; i++) {
-			value = gcm_parser_decode_16 (data + GCM_TRC_DATA + (i*2));
-			if (color == 0)
-				trc_data[i].red = value;
-			if (color == 1)
-				trc_data[i].green = value;
-			if (color == 2)
-				trc_data[i].blue = value;
-		}
-
-		/* save datatype */
-		profile->priv->has_curve_table = TRUE;
-	} else {
-		value = gcm_parser_decode_8 (data + GCM_TRC_DATA);
-		if (color == 0)
-			trc_data[i].red = value;
-		if (color == 1)
-			trc_data[i].green = value;
-		if (color == 2)
-			trc_data[i].blue = value;
-
-		/* save datatype */
-		profile->priv->has_curve_fixed = TRUE;
-	}
-	return ret;
-}
-
-/**
- * gcm_parser_load_icc_trc:
- **/
-static gboolean
-gcm_parser_load_icc_trc (GcmProfile *profile, const guint8 *data, guint size, guint color)
-{
-	gboolean ret = FALSE;
-	guint type;
-	type = gcm_parser_decode_32 (data);
-
-	if (type == icSigCurveType) {
-		ret = gcm_parser_load_icc_trc_curve (profile, data, size, color);
-	} else if (type == GCM_TRC_TYPE_PARAMETRIC_CURVE) {
-//		ret = gcm_parser_load_icc_trc_parametric_curve (profile, data, offset, color);
-		egg_warning ("contains a parametric curve, FIXME");
-		ret = TRUE;
-	}
 	return ret;
 }
 
@@ -841,30 +755,6 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 				goto out;
 			}
 		}
-		if (tag_id == icSigRedTRCTag) {
-			egg_debug ("found TRC (red)");
-			ret = gcm_parser_load_icc_trc (profile, data + tag_offset, tag_size, 0);
-			if (!ret) {
-				*error = g_error_new (1, 0, "failed to load trc");
-				goto out;
-			}
-		}
-		if (tag_id == icSigGreenTRCTag) {
-			egg_debug ("found TRC (green)");
-			ret = gcm_parser_load_icc_trc (profile, data + tag_offset, tag_size, 1);
-			if (!ret) {
-				*error = g_error_new (1, 0, "failed to load trc");
-				goto out;
-			}
-		}
-		if (tag_id == icSigBlueTRCTag) {
-			egg_debug ("found TRC (blue)");
-			ret = gcm_parser_load_icc_trc (profile, data + tag_offset, tag_size, 2);
-			if (!ret) {
-				*error = g_error_new (1, 0, "failed to load trc");
-				goto out;
-			}
-		}
 	}
 
 	/* there's nothing sensible to display */
@@ -897,8 +787,6 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	egg_debug ("Has MLUT:         %s", priv->has_mlut ? "YES" : "NO");
 	egg_debug ("Has VCGT formula: %s", priv->has_vcgt_formula ? "YES" : "NO");
 	egg_debug ("Has VCGT table:   %s", priv->has_vcgt_table ? "YES" : "NO");
-	egg_debug ("Has curve table:  %s", priv->has_curve_table ? "YES" : "NO");
-	egg_debug ("Has fixed gamma:  %s", priv->has_curve_fixed ? "YES" : "NO");
 out:
 	return ret;
 }
@@ -956,7 +844,6 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 	GcmClutData *tmp;
 	GcmClutData *vcgt_data;
 	GcmClutData *mlut_data;
-	GcmClutData *trc_data;
 	gfloat gamma_red, min_red, max_red;
 	gfloat gamma_green, min_green, max_green;
 	gfloat gamma_blue, min_blue, max_blue;
@@ -973,7 +860,6 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 	/* reduce dereferences */
 	vcgt_data = profile->priv->vcgt_data;
 	mlut_data = profile->priv->mlut_data;
-	trc_data = profile->priv->trc_data;
 
 	/* create new output array */
 	clut = gcm_clut_new ();
@@ -1049,58 +935,6 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 			tmp->red = mlut_data[ratio*i].red;
 			tmp->green = mlut_data[ratio*i].green;
 			tmp->blue = mlut_data[ratio*i].blue;
-			g_ptr_array_add (array, tmp);
-		}
-		goto out;
-	}
-
-	if (profile->priv->has_curve_table) {
-
-		/* simply subsample if the LUT is smaller than the number of entries in the file */
-		num_entries = profile->priv->trc_data_size;
-		if (num_entries >= size) {
-			ratio = (guint) (num_entries / size);
-			for (i=0; i<size; i++) {
-				/* add a point */
-				tmp = g_new0 (GcmClutData, 1);
-				tmp->red = trc_data[ratio*i].red;
-				tmp->green = trc_data[ratio*i].green;
-				tmp->blue = trc_data[ratio*i].blue;
-				g_ptr_array_add (array, tmp);
-			}
-			goto out;
-		}
-
-		/* LUT is bigger than number of entries, so interpolate */
-		inverse_ratio = (gfloat) num_entries / size;
-		trc_data[num_entries].red = 0xffff;
-		trc_data[num_entries].green = 0xffff;
-		trc_data[num_entries].blue = 0xffff;
-
-		/* interpolate */
-		for (i=0; i<size; i++) {
-			idx = floor(i*inverse_ratio);
-			frac = (i*inverse_ratio) - idx;
-			tmp = g_new0 (GcmClutData, 1);
-			tmp->red = trc_data[idx].red * (1.0f-frac) + trc_data[idx + 1].red * frac;
-			tmp->green = trc_data[idx].green * (1.0f-frac) + trc_data[idx + 1].green * frac;
-			tmp->blue = trc_data[idx].blue * (1.0f-frac) + trc_data[idx + 1].blue * frac;
-			g_ptr_array_add (array, tmp);
-		}
-		goto out;
-	}
-
-	if (profile->priv->has_curve_fixed) {
-
-		/* use a simple y=x^gamma formula */
-		for (i=0; i<size; i++) {
-			gfloat part;
-			part = (gfloat) i / (gfloat) size;
-			/* add a point */
-			tmp = g_new0 (GcmClutData, 1);
-			tmp->red = pow (part, (gfloat) trc_data[0].red / 256.0f) * 65000.f;
-			tmp->green = pow (part, (gfloat) trc_data[0].green / 256.0f) * 65000.f;
-			tmp->blue = pow (part, (gfloat) trc_data[0].blue / 256.0f) * 65000.f;
 			g_ptr_array_add (array, tmp);
 		}
 		goto out;
@@ -1372,7 +1206,6 @@ gcm_profile_init (GcmProfile *profile)
 	profile->priv = GCM_PROFILE_GET_PRIVATE (profile);
 	profile->priv->vcgt_data = NULL;
 	profile->priv->mlut_data = NULL;
-	profile->priv->trc_data = NULL;
 	profile->priv->adobe_gamma_workaround = FALSE;
 	profile->priv->profile_type = GCM_PROFILE_TYPE_UNKNOWN;
 	profile->priv->colorspace = GCM_PROFILE_COLORSPACE_UNKNOWN;
@@ -1408,7 +1241,6 @@ gcm_profile_finalize (GObject *object)
 	g_free (priv->datetime);
 	g_free (priv->vcgt_data);
 	g_free (priv->mlut_data);
-	g_free (priv->trc_data);
 	g_object_unref (priv->white_point);
 	g_object_unref (priv->black_point);
 	g_object_unref (priv->luminance_red);
