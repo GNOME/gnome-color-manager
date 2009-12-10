@@ -163,7 +163,6 @@ gcm_clut_get_array (GcmClut *clut)
 	gfloat custom_gamma;
 
 	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
-	g_return_val_if_fail (clut->priv->size != 0, FALSE);
 	g_return_val_if_fail (clut->priv->gamma != 0, FALSE);
 
 	min = clut->priv->brightness / 100.0f;

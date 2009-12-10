@@ -40,6 +40,7 @@
 #include "gcm-client.h"
 #include "gcm-xyz.h"
 #include "gcm-cie-widget.h"
+#include "gcm-trc-widget.h"
 
 static GtkBuilder *builder = NULL;
 static GtkListStore *list_store_devices = NULL;
@@ -53,6 +54,7 @@ static GcmClient *gcm_client = NULL;
 static gboolean setting_up_device = FALSE;
 static GtkWidget *info_bar = NULL;
 static GtkWidget *cie_widget = NULL;
+static GtkWidget *trc_widget = NULL;
 static guint loading_refcount = 0;
 static GConfClient *gconf_client = NULL;
 
@@ -1411,6 +1413,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	GtkTreeIter iter;
 	GtkWidget *widget;
 	GcmProfile *profile;
+	GcmClut *clut;
 	GcmXyz *white;
 	GcmXyz *red;
 	GcmXyz *green;
@@ -1462,6 +1465,22 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 		      "green", green,
 		      "blue", blue,
 		      NULL);
+
+	/* get CLUT for profile */
+	clut = gcm_profile_generate (profile, 256);
+	g_object_get (clut,
+		      "size", &size,
+		      NULL);
+
+	/* only show if there is useful information */
+	if (size > 0) {
+		g_object_set (trc_widget,
+			      "clut", clut,
+			      NULL);
+		gtk_widget_show (trc_widget);
+	} else {
+		gtk_widget_hide (trc_widget);
+	}
 
 	/* ensure showing */
 	gtk_widget_show (cie_widget);
@@ -1554,6 +1573,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	g_object_unref (red);
 	g_object_unref (green);
 	g_object_unref (blue);
+	g_object_unref (clut);
 	g_free (size_text);
 	g_free (filename);
 	g_free (basename);
@@ -2506,13 +2526,21 @@ main (int argc, char **argv)
 	gtk_box_pack_start (GTK_BOX(widget), cie_widget, TRUE, TRUE, 0);
 	gtk_box_reorder_child (GTK_BOX(widget), cie_widget, 0);
 
+	/* use trc widget */
+	trc_widget = gcm_trc_widget_new ();
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_trc_widget"));
+	gtk_box_pack_start (GTK_BOX(widget), trc_widget, TRUE, TRUE, 0);
+	gtk_box_reorder_child (GTK_BOX(widget), trc_widget, 0);
+
 	/* do we set a default size to make the window larger? */
 	screen = gdk_screen_get_default ();
 	if (gdk_screen_get_width (screen) < 1024 ||
 	    gdk_screen_get_height (screen) < 768) {
 		gtk_widget_set_size_request (cie_widget, 50, 50);
+		gtk_widget_set_size_request (trc_widget, 50, 50);
 	} else {
 		gtk_widget_set_size_request (cie_widget, 200, 200);
+		gtk_widget_set_size_request (trc_widget, 200, 200);
 	}
 
 	/* use infobar */
