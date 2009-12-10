@@ -873,11 +873,19 @@ gcm_profile_fix_offset (const gchar *data, guint tag_offset)
 		goto out;
 	}
 
+	/* offset seems to be valid after all */
+	ret = gcm_parser_is_tag (data + tag_offset);
+	if (ret) {
+		fixed_offset = tag_offset;
+		egg_debug ("tag_offset is %02x which is not on a 4-byte boundary, but it seems to be valid", tag_offset);
+		goto out;
+	}
+
 	/* bytestream is one byte offset */
 	ret = gcm_parser_is_tag (data + tag_offset + 1);
 	if (ret) {
 		fixed_offset = tag_offset + 1;
-		egg_debug ("tag_offset is %i which is not on a 4-byte boundary, correcting by 1 byte", tag_offset);
+		egg_debug ("tag_offset is %02x which is not on a 4-byte boundary, correcting by 1 byte", tag_offset);
 		goto out;
 	}
 
@@ -885,7 +893,7 @@ gcm_profile_fix_offset (const gchar *data, guint tag_offset)
 	ret = gcm_parser_is_tag (data + tag_offset + offset_padding_error);
 	if (ret) {
 		fixed_offset = tag_offset + offset_padding_error;
-		egg_debug ("tag_offset is %i which is not on a 4-byte boundary, correcting by %i bytes", tag_offset, offset_padding_error);
+		egg_debug ("tag_offset is %02x which is not on a 4-byte boundary, correcting by %i bytes", tag_offset, offset_padding_error);
 		goto out;
 	}
 
