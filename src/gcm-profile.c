@@ -761,50 +761,6 @@ out:
 }
 
 /**
- * gcm_profile_get_colorspace:
- **/
-static GcmProfileColorspace
-gcm_profile_get_colorspace (const guint8 *data)
-{
-	gboolean ret;
-
-	/* test each common signature */
-	ret = (memcmp (data, "XYZ ", 4) == 0);
-	if (ret)
-		return GCM_PROFILE_COLORSPACE_XYZ;
-	ret = (memcmp (data, "Lab ", 4) == 0);
-	if (ret)
-		return GCM_PROFILE_COLORSPACE_LAB;
-	ret = (memcmp (data, "Luv ", 4) == 0);
-	if (ret)
-		return GCM_PROFILE_COLORSPACE_LUV;
-	ret = (memcmp (data, "YCbr", 4) == 0);
-	if (ret)
-		return GCM_PROFILE_COLORSPACE_YCBCR;
-	ret = (memcmp (data, "Yxy ", 4) == 0);
-	if (ret)
-		return GCM_PROFILE_COLORSPACE_YXY;
-	ret = (memcmp (data, "RGB ", 4) == 0);
-	if (ret)
-		return GCM_PROFILE_COLORSPACE_RGB;
-	ret = (memcmp (data, "GRAY", 4) == 0);
-	if (ret)
-		return GCM_PROFILE_COLORSPACE_GRAY;
-	ret = (memcmp (data, "HSV ", 4) == 0);
-	if (ret)
-		return GCM_PROFILE_COLORSPACE_HSV;
-	ret = (memcmp (data, "CMYK", 4) == 0);
-	if (ret)
-		return GCM_PROFILE_COLORSPACE_CMYK;
-	ret = (memcmp (data, "CMY ", 4) == 0);
-	if (ret)
-		return GCM_PROFILE_COLORSPACE_CMY;
-
-	/* bugger */
-	return GCM_PROFILE_COLORSPACE_UNKNOWN;
-}
-
-/**
  * gcm_profile_parse_data:
  **/
 gboolean
@@ -818,7 +774,8 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	guint tag_size;
 	guint tag_offset;
 	gchar *signature;
-	guint32 profile_type;
+	guint32 profile_class;
+	guint32 color_space;
 	GcmProfilePrivate *priv = profile->priv;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
@@ -848,8 +805,8 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	}
 
 	/* get the profile type */
-	profile_type = gcm_parser_decode_32 (data + GCM_TYPE);
-	switch (profile_type) {
+	profile_class = gcm_parser_decode_32 (data + GCM_TYPE);
+	switch (profile_class) {
 	case icSigInputClass:
 		priv->profile_type = GCM_PROFILE_TYPE_INPUT_DEVICE;
 		break;
@@ -876,7 +833,41 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	}
 
 	/* get colorspace */
-	priv->colorspace = gcm_profile_get_colorspace (data + GCM_COLORSPACE);
+	color_space = gcm_parser_decode_32 (data + GCM_COLORSPACE);
+	switch (color_space) {
+	case icSigXYZData:
+		priv->colorspace = GCM_PROFILE_COLORSPACE_XYZ;
+		break;
+	case icSigLabData:
+		priv->colorspace = GCM_PROFILE_COLORSPACE_LAB;
+		break;
+	case icSigLuvData:
+		priv->colorspace = GCM_PROFILE_COLORSPACE_LUV;
+		break;
+	case icSigYCbCrData:
+		priv->colorspace = GCM_PROFILE_COLORSPACE_YCBCR;
+		break;
+	case icSigYxyData:
+		priv->colorspace = GCM_PROFILE_COLORSPACE_YXY;
+		break;
+	case icSigRgbData:
+		priv->colorspace = GCM_PROFILE_COLORSPACE_RGB;
+		break;
+	case icSigGrayData:
+		priv->colorspace = GCM_PROFILE_COLORSPACE_GRAY;
+		break;
+	case icSigHsvData:
+		priv->colorspace = GCM_PROFILE_COLORSPACE_HSV;
+		break;
+	case icSigCmykData:
+		priv->colorspace = GCM_PROFILE_COLORSPACE_CMYK;
+		break;
+	case icSigCmyData:
+		priv->colorspace = GCM_PROFILE_COLORSPACE_CMY;
+		break;
+	default:
+		priv->colorspace = GCM_PROFILE_COLORSPACE_UNKNOWN;
+	}
 
 	/* get the profile created time and date */
 	priv->datetime = gcm_parser_get_date_time (data + GCM_CREATION_DATE_TIME);
