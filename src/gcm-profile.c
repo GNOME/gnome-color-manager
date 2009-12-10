@@ -1205,12 +1205,12 @@ out:
  *
  * Free with g_free();
  **/
-GcmClutData *
+GcmClut *
 gcm_profile_generate (GcmProfile *profile, guint size)
 {
-	guint i, j;
+	guint i;
 	guint ratio;
-	GcmClutData *gamma_data = NULL;
+	GcmClutData *tmp;
 	GcmClutData *vcgt_data;
 	GcmClutData *mlut_data;
 	GcmClutData *trc_data;
@@ -1218,6 +1218,11 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 	gfloat gamma_green, min_green, max_green;
 	gfloat gamma_blue, min_blue, max_blue;
 	guint num_entries;
+	GcmClut *clut;
+	GPtrArray *array;
+	gfloat inverse_ratio;
+	guint idx;
+	gfloat frac;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
 	g_return_val_if_fail (size != 0, FALSE);
@@ -1227,13 +1232,50 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 	mlut_data = profile->priv->mlut_data;
 	trc_data = profile->priv->trc_data;
 
+	/* create new output array */
+	clut = gcm_clut_new ();
+	array = g_ptr_array_new_with_free_func (g_free);
+
+	if (profile->priv->has_vcgt_table) {
+
+		/* simply subsample if the LUT is smaller than the number of entries in the file */
+		num_entries = profile->priv->vcgt_data_size;
+		if (num_entries >= size) {
+			ratio = (guint) (num_entries / size);
+			for (i=0; i<size; i++) {
+				/* add a point */
+				tmp = g_new0 (GcmClutData, 1);
+				tmp->red = vcgt_data[ratio*i].red;
+				tmp->green = vcgt_data[ratio*i].green;
+				tmp->blue = vcgt_data[ratio*i].blue;
+				g_ptr_array_add (array, tmp);
+			}
+			goto out;
+		}
+
+		/* LUT is bigger than number of entries, so interpolate */
+		inverse_ratio = (gfloat) num_entries / size;
+		vcgt_data[num_entries].red = 0xffff;
+		vcgt_data[num_entries].green = 0xffff;
+		vcgt_data[num_entries].blue = 0xffff;
+
+		/* interpolate */
+		for (i=0; i<size; i++) {
+			idx = floor(i*inverse_ratio);
+			frac = (i*inverse_ratio) - idx;
+			tmp = g_new0 (GcmClutData, 1);
+			tmp->red = vcgt_data[idx].red * (1.0f-frac) + vcgt_data[idx + 1].red * frac;
+			tmp->green = vcgt_data[idx].green * (1.0f-frac) + vcgt_data[idx + 1].green * frac;
+			tmp->blue = vcgt_data[idx].blue * (1.0f-frac) + vcgt_data[idx + 1].blue * frac;
+			g_ptr_array_add (array, tmp);
+		}
+		goto out;
+	}
+
 	if (profile->priv->has_vcgt_formula) {
 
-		/* create new output array */
-		gamma_data = g_new0 (GcmClutData, size);
-
 		/* create mapping of desired size */
-		for (i = 0; i<size; i++) {
+		for (i=0; i<size; i++) {
 			gamma_red = (gfloat) vcgt_data[0].red / 65536.0;
 			gamma_green = (gfloat) vcgt_data[0].green / 65536.0;
 			gamma_blue = (gfloat) vcgt_data[0].blue / 65536.0;
@@ -1244,86 +1286,43 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 			max_green = (gfloat) vcgt_data[2].green / 65536.0;
 			max_blue = (gfloat) vcgt_data[2].blue / 65536.0;
 
-			gamma_data[i].red = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_red) * (max_red - min_red) + min_red);
-			gamma_data[i].green = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_green) * (max_green - min_green) + min_green);
-			gamma_data[i].blue = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_blue) * (max_blue - min_blue) + min_blue);
+			/* add a point */
+			tmp = g_new0 (GcmClutData, 1);
+			tmp->red = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_red) * (max_red - min_red) + min_red);
+			tmp->green = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_green) * (max_green - min_green) + min_green);
+			tmp->blue = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_blue) * (max_blue - min_blue) + min_blue);
+			g_ptr_array_add (array, tmp);
 		}
 	}
 
 	if (profile->priv->has_mlut) {
 
-		/* create new output array */
-		gamma_data = g_new0 (GcmClutData, size);
-
 		/* roughly interpolate table */
 		ratio = (guint) (256 / (size));
-		for (i = 0; i<size; i++) {
-			gamma_data[i].red = mlut_data[ratio*i].red;
-			gamma_data[i].green = mlut_data[ratio*i].green;
-			gamma_data[i].blue = mlut_data[ratio*i].blue;
-		}
-		goto out;
-	}
-
-	if (profile->priv->has_vcgt_table) {
-
-		/* create new output array */
-		gamma_data = g_new0 (GcmClutData, size);
-
-		/* simply subsample if the LUT is smaller than the number of entries in the file */
-		num_entries = profile->priv->vcgt_data_size;
-		if (num_entries >= size) {
-			ratio = (guint) (num_entries / size);
-			for (i=0; i<size; i++) {
-				gamma_data[i].red = vcgt_data[ratio*i].red;
-				gamma_data[i].green = vcgt_data[ratio*i].green;
-				gamma_data[i].blue = vcgt_data[ratio*i].blue;
-			}
-			goto out;
-		}
-
-		/* add extrapolated upper limit to the arrays - handle overflow */
-		ratio = (guint) (size / num_entries);
-		vcgt_data[num_entries].red = (vcgt_data[num_entries-1].red + (vcgt_data[num_entries-1].red - vcgt_data[num_entries-2].red)) & 0xffff;
-		if (vcgt_data[num_entries].red < 0x4000)
-			vcgt_data[num_entries].red = 0xffff;
-
-		vcgt_data[num_entries].green = (vcgt_data[num_entries-1].green + (vcgt_data[num_entries-1].green - vcgt_data[num_entries-2].green)) & 0xffff;
-		if (vcgt_data[num_entries].green < 0x4000)
-			vcgt_data[num_entries].green = 0xffff;
-
-		vcgt_data[num_entries].blue = (vcgt_data[num_entries-1].blue + (vcgt_data[num_entries-1].blue - vcgt_data[num_entries-2].blue)) & 0xffff;
-		if (vcgt_data[num_entries].blue < 0x4000)
-			vcgt_data[num_entries].blue = 0xffff;
-
-		/* interpolate */
-		for (i=0; i<num_entries; i++) {
-			for (j = 0; j<ratio; j++) {
-				gamma_data[i*ratio + j].red = (vcgt_data[i].red * (ratio-j) + vcgt_data[i + 1].red * j) / ratio;
-				gamma_data[i*ratio + j].green = (vcgt_data[i].green * (ratio-j) + vcgt_data[i + 1].green * j) / ratio;
-				gamma_data[i*ratio + j].blue = (vcgt_data[i].blue * (ratio-j) + vcgt_data[i + 1].blue * j) / ratio;
-			}
+		for (i=0; i<size; i++) {
+			/* add a point */
+			tmp = g_new0 (GcmClutData, 1);
+			tmp->red = mlut_data[ratio*i].red;
+			tmp->green = mlut_data[ratio*i].green;
+			tmp->blue = mlut_data[ratio*i].blue;
+			g_ptr_array_add (array, tmp);
 		}
 		goto out;
 	}
 
 	if (profile->priv->has_curve_table) {
 
-		gfloat inverse_ratio;
-		guint idx;
-		gfloat frac;
-
-		/* create new output array */
-		gamma_data = g_new0 (GcmClutData, size);
-
 		/* simply subsample if the LUT is smaller than the number of entries in the file */
 		num_entries = profile->priv->trc_data_size;
 		if (num_entries >= size) {
 			ratio = (guint) (num_entries / size);
 			for (i=0; i<size; i++) {
-				gamma_data[i].red = trc_data[ratio*i].red;
-				gamma_data[i].green = trc_data[ratio*i].green;
-				gamma_data[i].blue = trc_data[ratio*i].blue;
+				/* add a point */
+				tmp = g_new0 (GcmClutData, 1);
+				tmp->red = trc_data[ratio*i].red;
+				tmp->green = trc_data[ratio*i].green;
+				tmp->blue = trc_data[ratio*i].blue;
+				g_ptr_array_add (array, tmp);
 			}
 			goto out;
 		}
@@ -1338,25 +1337,27 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 		for (i=0; i<size; i++) {
 			idx = floor(i*inverse_ratio);
 			frac = (i*inverse_ratio) - idx;
-			gamma_data[i].red = trc_data[idx].red * (1.0f-frac) + trc_data[idx + 1].red * frac;
-			gamma_data[i].green = trc_data[idx].green * (1.0f-frac) + trc_data[idx + 1].green * frac;
-			gamma_data[i].blue = trc_data[idx].blue * (1.0f-frac) + trc_data[idx + 1].blue * frac;
+			tmp = g_new0 (GcmClutData, 1);
+			tmp->red = trc_data[idx].red * (1.0f-frac) + trc_data[idx + 1].red * frac;
+			tmp->green = trc_data[idx].green * (1.0f-frac) + trc_data[idx + 1].green * frac;
+			tmp->blue = trc_data[idx].blue * (1.0f-frac) + trc_data[idx + 1].blue * frac;
+			g_ptr_array_add (array, tmp);
 		}
 		goto out;
 	}
 
 	if (profile->priv->has_curve_fixed) {
 
-		/* create new output array */
-		gamma_data = g_new0 (GcmClutData, size);
-
 		/* use a simple y=x^gamma formula */
 		for (i=0; i<size; i++) {
 			gfloat part;
 			part = (gfloat) i / (gfloat) size;
-			gamma_data[i].red = pow (part, (gfloat) trc_data[0].red / 256.0f) * 65000.f;
-			gamma_data[i].green = pow (part, (gfloat) trc_data[0].green / 256.0f) * 65000.f;
-			gamma_data[i].blue = pow (part, (gfloat) trc_data[0].blue / 256.0f) * 65000.f;
+			/* add a point */
+			tmp = g_new0 (GcmClutData, 1);
+			tmp->red = pow (part, (gfloat) trc_data[0].red / 256.0f) * 65000.f;
+			tmp->green = pow (part, (gfloat) trc_data[0].green / 256.0f) * 65000.f;
+			tmp->blue = pow (part, (gfloat) trc_data[0].blue / 256.0f) * 65000.f;
+			g_ptr_array_add (array, tmp);
 		}
 		goto out;
 	}
@@ -1364,7 +1365,9 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 	/* bugger */
 	egg_warning ("no LUT to generate");
 out:
-	return gamma_data;
+	gcm_clut_set_source_array (clut, array);
+	g_ptr_array_unref (array);
+	return clut;
 }
 
 /**

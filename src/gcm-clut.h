@@ -62,10 +62,9 @@ typedef struct {
 
 GType		 gcm_clut_get_type		  	(void);
 GcmClut		*gcm_clut_new				(void);
-gboolean	 gcm_clut_load_from_profile		(GcmClut		*clut,
-							 const gchar		*filename,
-							 GError			**error);
 GPtrArray	*gcm_clut_get_array			(GcmClut		*clut);
+gboolean	 gcm_clut_set_source_array		(GcmClut		*clut,
+							 GPtrArray		*array);
 gboolean	 gcm_clut_reset				(GcmClut		*clut);
 void		 gcm_clut_print				(GcmClut		*clut);
 

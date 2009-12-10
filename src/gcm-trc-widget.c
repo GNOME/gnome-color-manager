@@ -26,6 +26,7 @@
 #include <math.h>
 
 #include "gcm-clut.h"
+#include "gcm-profile.h"
 #include "gcm-trc-widget.h"
 
 #include "egg-debug.h"
@@ -403,6 +404,7 @@ gcm_trc_widget_test (EggTest *test)
 	gboolean ret;
 	GError *error = NULL;
 	GcmClut *clut;
+	GcmProfile *profile;
 	gint response;
 	gchar *filename_profile;
 	gchar *filename_image;
@@ -426,12 +428,9 @@ gcm_trc_widget_test (EggTest *test)
 	filename_profile = egg_test_get_data_file ("AdobeGammaTest.icm");
 	egg_test_assert (test, (filename_profile != NULL));
 
-	clut = gcm_clut_new ();
-	g_object_set (clut,
-		      "size", 256,
-		      NULL);
-
-	gcm_clut_load_from_profile (clut, filename_profile, NULL);
+	profile = gcm_profile_new ();
+	gcm_profile_parse (profile, filename_profile, NULL);
+	clut = gcm_profile_generate (profile, 256);
 	g_object_set (widget,
 		      "clut", clut,
 		      NULL);
@@ -456,6 +455,7 @@ gcm_trc_widget_test (EggTest *test)
 	gtk_widget_destroy (dialog);
 
 	g_object_unref (clut);
+	g_object_unref (profile);
 	g_free (filename_profile);
 	g_free (filename_image);
 

@@ -215,11 +215,12 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 {
 	gboolean ret = FALSE;
 	GcmClut *clut = NULL;
+	GcmProfile *profile = NULL;
 	GcmXserver *xserver = NULL;
 	GnomeRRCrtc *crtc;
 	GnomeRROutput *output;
 	gint x, y;
-	gchar *profile = NULL;
+	gchar *filename = NULL;
 	gfloat gamma;
 	gfloat brightness;
 	gfloat contrast;
@@ -240,7 +241,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	g_object_get (device,
 		      "id", &id,
 		      "type", &type,
-		      "profile-filename", &profile,
+		      "profile-filename", &filename,
 		      "gamma", &gamma,
 		      "brightness", &brightness,
 		      "contrast", &contrast,
@@ -285,27 +286,32 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	if (size == 0)
 		goto out;
 
-	/* create CLUT */
-	clut = gcm_clut_new ();
-	g_object_set (clut,
-		      "size", size,
-		      NULL);
-
 	/* only set the CLUT if we're not seting the atom */
 	use_global = gconf_client_get_bool (gconf_client, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION, NULL);
+	if (use_global && filename != NULL) {
+		/* create dummy CLUT */
+		profile = gcm_profile_new ();
+		ret = gcm_profile_parse (profile, filename, error);
+		if (!ret)
+			goto out;
+
+		/* create a CLUT from the profile */
+		clut = gcm_profile_generate (profile, size);
+	} else {
+		/* create dummy CLUT */
+		clut = gcm_clut_new ();
+		g_object_set (clut,
+			      "size", size,
+			      NULL);
+	}
+
+	/* do fine adjustment */
 	if (use_global) {
 		g_object_set (clut,
 			      "gamma", gamma,
 			      "brightness", brightness,
 			      "contrast", contrast,
 			      NULL);
-
-		/* load this new profile */
-		if (profile != NULL) {
-			ret = gcm_clut_load_from_profile (clut, profile, error);
-			if (!ret)
-				goto out;
-		}
 	}
 
 	/* actually set the gamma */
@@ -322,7 +328,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 
 	/* either remove the atoms or set them */
 	use_atom = gconf_client_get_bool (gconf_client, GCM_SETTINGS_SET_ICC_PROFILE_ATOM, NULL);
-	if (!use_atom || profile == NULL) {
+	if (!use_atom || filename == NULL) {
 
 		/* remove the output atom if there's nothing to show */
 		ret = gcm_xserver_remove_output_profile (xserver, output_name, error);
@@ -337,20 +343,20 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 		}
 	} else {
 		/* set the per-output and per screen profile atoms */
-		ret = gcm_xserver_set_output_profile (xserver, output_name, profile, error);
+		ret = gcm_xserver_set_output_profile (xserver, output_name, filename, error);
 		if (!ret)
 			goto out;
 
 		/* primary screen */
 		if (leftmost_screen) {
-			ret = gcm_xserver_set_root_window_profile (xserver, profile, error);
+			ret = gcm_xserver_set_root_window_profile (xserver, filename, error);
 			if (!ret)
 				goto out;
 		}
 	}
 out:
 	g_free (id);
-	g_free (profile);
+	g_free (filename);
 	g_free (output_name);
 	if (gconf_client != NULL)
 		g_object_unref (gconf_client);
@@ -358,6 +364,8 @@ out:
 		gnome_rr_screen_destroy (rr_screen);
 	if (clut != NULL)
 		g_object_unref (clut);
+	if (profile != NULL)
+		g_object_unref (profile);
 	if (xserver != NULL)
 		g_object_unref (xserver);
 	return ret;

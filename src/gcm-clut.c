@@ -36,7 +36,6 @@
 
 #include "gcm-clut.h"
 #include "gcm-utils.h"
-#include "gcm-profile.h"
 
 #include "egg-debug.h"
 
@@ -73,11 +72,12 @@ enum {
 
 G_DEFINE_TYPE (GcmClut, gcm_clut, G_TYPE_OBJECT)
 
+#if 0
 /**
- * gcm_clut_set_from_data:
+ * gcm_clut_set_source_data:
  **/
 static gboolean
-gcm_clut_set_from_data (GcmClut *clut, const GcmClutData *data, guint size)
+gcm_clut_set_source_data (GcmClut *clut, const GcmClutData *data, guint size)
 {
 	guint i;
 	GcmClutData *tmp;
@@ -96,6 +96,28 @@ gcm_clut_set_from_data (GcmClut *clut, const GcmClutData *data, guint size)
 
 	return TRUE;
 }
+#endif
+
+/**
+ * gcm_clut_set_source_array:
+ **/
+gboolean
+gcm_clut_set_source_array (GcmClut *clut, GPtrArray *array)
+{
+	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
+	g_return_val_if_fail (array != NULL, FALSE);
+
+	/* just take a reference */
+	if (clut->priv->array != NULL)
+		g_ptr_array_unref (clut->priv->array);
+	clut->priv->array = g_ptr_array_ref (array);
+
+	/* set size from input array */
+	clut->priv->size = array->len;
+
+	/* all okay */
+	return TRUE;
+}
 
 /**
  * gcm_clut_reset:
@@ -108,43 +130,6 @@ gcm_clut_reset (GcmClut *clut)
 	/* setup nothing */
 	g_ptr_array_set_size (clut->priv->array, 0);
 	return TRUE;
-}
-
-/**
- * gcm_clut_load_from_profile:
- **/
-gboolean
-gcm_clut_load_from_profile (GcmClut *clut, const gchar *filename, GError **error)
-{
-	gboolean ret = TRUE;
-	GcmProfile *profile = NULL;
-	GcmClutData *data = NULL;
-	GError *error_local = NULL;
-
-	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
-	g_return_val_if_fail (filename != NULL, FALSE);
-
-	/* create new profile instance */
-	profile = gcm_profile_new ();
-
-	/* load the profile */
-	ret = gcm_profile_parse (profile, filename, &error_local);
-	if (!ret) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to set from profile: %s", error_local->message);
-		g_error_free (error_local);
-		goto out;
-	}
-
-	/* generate the data */
-	data = gcm_profile_generate (profile, clut->priv->size);
-	if (data != NULL)
-		gcm_clut_set_from_data (clut, data, clut->priv->size);
-out:
-	if (profile != NULL)
-		g_object_unref (profile);
-	g_free (data);
-	return ret;
 }
 
 /**
