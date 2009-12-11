@@ -545,6 +545,8 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	cmsCIEXYZ cie_xyz;
 	cmsCIEXYZTRIPLE cie_illum;
 	struct tm created;
+	cmsHPROFILE xyz_profile;
+	cmsHTRANSFORM transform;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
@@ -584,76 +586,6 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 		gcm_xyz_clear (priv->black_point);
 		egg_warning ("failed to get black point");
 	}
-
-	/* get primary illuminants */
-	ret = cmsTakeColorants (&cie_illum, priv->lcms_profile);
-
-	/* geting the illuminants failed, try running it through the profile */
-	if (!ret) {
-		cmsHPROFILE xyz_profile;
-		cmsHTRANSFORM transform;
-		gdouble rgb_values[3];
-
-		/* create a transform from profile to XYZ */
-		xyz_profile = cmsCreateXYZProfile ();
-		transform = cmsCreateTransform (priv->lcms_profile, TYPE_RGB_DBL, xyz_profile, TYPE_XYZ_DBL, INTENT_PERCEPTUAL, 0);
-		if (transform != NULL) {
-
-			/* red */
-			rgb_values[0] = 1.0;
-			rgb_values[1] = 0.0;
-			rgb_values[2] = 0.0;
-			cmsDoTransform (transform, rgb_values, &cie_illum.Red, 1);
-
-			/* green */
-			rgb_values[0] = 0.0;
-			rgb_values[1] = 1.0;
-			rgb_values[2] = 0.0;
-			cmsDoTransform (transform, rgb_values, &cie_illum.Green, 1);
-
-			/* blue */
-			rgb_values[0] = 0.0;
-			rgb_values[1] = 0.0;
-			rgb_values[2] = 1.0;
-			cmsDoTransform (transform, rgb_values, &cie_illum.Blue, 1);
-
-			/* we're done */
-			cmsDeleteTransform (transform);
-			ret = TRUE;
-		}
-
-		/* no more need for the output profile */
-		cmsCloseProfile (xyz_profile);
-	}
-
-	/* we've got valid values */
-	if (ret) {
-		g_object_set (priv->luminance_red,
-			      "cie-x", cie_illum.Red.X,
-			      "cie-y", cie_illum.Red.Y,
-			      "cie-z", cie_illum.Red.Z,
-			      NULL);
-		g_object_set (priv->luminance_green,
-			      "cie-x", cie_illum.Green.X,
-			      "cie-y", cie_illum.Green.Y,
-			      "cie-z", cie_illum.Green.Z,
-			      NULL);
-		g_object_set (priv->luminance_blue,
-			      "cie-x", cie_illum.Blue.X,
-			      "cie-y", cie_illum.Blue.Y,
-			      "cie-z", cie_illum.Blue.Z,
-			      NULL);
-	} else {
-		gcm_xyz_clear (priv->luminance_red);
-		gcm_xyz_clear (priv->luminance_green);
-		gcm_xyz_clear (priv->luminance_blue);
-		egg_debug ("failed to get luminance values");
-	}
-
-	/* get the profile created time and date */
-	ret = cmsTakeCreationDateTime (&created, priv->lcms_profile);
-	if (ret)
-		priv->datetime = gcm_utils_format_date_time (1900+created.tm_year, created.tm_mon+1, created.tm_mday, created.tm_hour, created.tm_min, created.tm_sec);
 
 	/* get the profile type */
 	profile_class = cmsGetDeviceClass (priv->lcms_profile);
@@ -719,6 +651,74 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	default:
 		priv->colorspace = GCM_PROFILE_COLORSPACE_UNKNOWN;
 	}
+
+	/* get primary illuminants */
+	ret = cmsTakeColorants (&cie_illum, priv->lcms_profile);
+
+	/* geting the illuminants failed, try running it through the profile */
+	if (!ret && color_space == icSigRgbData) {
+		gdouble rgb_values[3];
+
+		/* create a transform from profile to XYZ */
+		xyz_profile = cmsCreateXYZProfile ();
+		transform = cmsCreateTransform (priv->lcms_profile, TYPE_RGB_DBL, xyz_profile, TYPE_XYZ_DBL, INTENT_PERCEPTUAL, 0);
+		if (transform != NULL) {
+
+			/* red */
+			rgb_values[0] = 1.0;
+			rgb_values[1] = 0.0;
+			rgb_values[2] = 0.0;
+			cmsDoTransform (transform, rgb_values, &cie_illum.Red, 1);
+
+			/* green */
+			rgb_values[0] = 0.0;
+			rgb_values[1] = 1.0;
+			rgb_values[2] = 0.0;
+			cmsDoTransform (transform, rgb_values, &cie_illum.Green, 1);
+
+			/* blue */
+			rgb_values[0] = 0.0;
+			rgb_values[1] = 0.0;
+			rgb_values[2] = 1.0;
+			cmsDoTransform (transform, rgb_values, &cie_illum.Blue, 1);
+
+			/* we're done */
+			cmsDeleteTransform (transform);
+			ret = TRUE;
+		}
+
+		/* no more need for the output profile */
+		cmsCloseProfile (xyz_profile);
+	}
+
+	/* we've got valid values */
+	if (ret) {
+		g_object_set (priv->luminance_red,
+			      "cie-x", cie_illum.Red.X,
+			      "cie-y", cie_illum.Red.Y,
+			      "cie-z", cie_illum.Red.Z,
+			      NULL);
+		g_object_set (priv->luminance_green,
+			      "cie-x", cie_illum.Green.X,
+			      "cie-y", cie_illum.Green.Y,
+			      "cie-z", cie_illum.Green.Z,
+			      NULL);
+		g_object_set (priv->luminance_blue,
+			      "cie-x", cie_illum.Blue.X,
+			      "cie-y", cie_illum.Blue.Y,
+			      "cie-z", cie_illum.Blue.Z,
+			      NULL);
+	} else {
+		gcm_xyz_clear (priv->luminance_red);
+		gcm_xyz_clear (priv->luminance_green);
+		gcm_xyz_clear (priv->luminance_blue);
+		egg_debug ("failed to get luminance values");
+	}
+
+	/* get the profile created time and date */
+	ret = cmsTakeCreationDateTime (&created, priv->lcms_profile);
+	if (ret)
+		priv->datetime = gcm_utils_format_date_time (1900+created.tm_year, created.tm_mon+1, created.tm_mday, created.tm_hour, created.tm_min, created.tm_sec);
 
 	/* get the number of tags in the file */
 	num_tags = gcm_parser_decode_32 (data + GCM_NUMTAGS);
