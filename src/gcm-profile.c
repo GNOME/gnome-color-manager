@@ -718,7 +718,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	/* get the profile created time and date */
 	ret = cmsTakeCreationDateTime (&created, priv->lcms_profile);
 	if (ret)
-		priv->datetime = gcm_utils_format_date_time (1900+created.tm_year, created.tm_mon+1, created.tm_mday, created.tm_hour, created.tm_min, created.tm_sec);
+		priv->datetime = gcm_utils_format_date_time (&created);
 
 	/* get the number of tags in the file */
 	num_tags = gcm_parser_decode_32 (data + GCM_NUMTAGS);

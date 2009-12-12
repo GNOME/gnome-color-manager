@@ -649,78 +649,18 @@ gcm_utils_device_type_to_profile_type (GcmDeviceType type)
 	return profile_type;
 }
 
-
-/**
- * gcm_utils_month_to_localized_text:
- **/
-static const gchar *
-gcm_utils_month_to_localized_text (guint idx)
-{
-	if (idx == 1) {
-		/* TRANSLATORS: the month */
-		return _("January");
-	}
-	if (idx == 2) {
-		/* TRANSLATORS: the month */
-		return _("February");
-	}
-	if (idx == 3) {
-		/* TRANSLATORS: the month */
-		return _("March");
-	}
-	if (idx == 4) {
-		/* TRANSLATORS: the month */
-		return _("April");
-	}
-	if (idx == 5) {
-		/* TRANSLATORS: the month */
-		return _("May");
-	}
-	if (idx == 6) {
-		/* TRANSLATORS: the month */
-		return _("June");
-	}
-	if (idx == 7) {
-		/* TRANSLATORS: the month */
-		return _("July");
-	}
-	if (idx == 8) {
-		/* TRANSLATORS: the month */
-		return _("August");
-	}
-	if (idx == 9) {
-		/* TRANSLATORS: the month (my birthday) */
-		return _("September");
-	}
-	if (idx == 10) {
-		/* TRANSLATORS: the month */
-		return _("October");
-	}
-	if (idx == 11) {
-		/* TRANSLATORS: the month */
-		return _("November");
-	}
-	if (idx == 12) {
-		/* TRANSLATORS: the month */
-		return _("December");
-	}
-	return NULL;
-}
-
 /**
  * gcm_utils_format_date_time:
  **/
 gchar *
-gcm_utils_format_date_time (guint years, guint months, guint days,
-			    guint hours, guint minutes, guint seconds)
+gcm_utils_format_date_time (const struct tm *created)
 {
-	const gchar *month_text;
+	gchar buffer[256];
 
-	/* write the month as a word to avoid locale confusion */
-	month_text = gcm_utils_month_to_localized_text (months);
+	/* TRANSLATORS: this is the profile creation date strftime format */
+	strftime (buffer, sizeof(buffer), _("%e %B %Y, %H:%M:%S"), created);
 
-	/* TRANSLATORS: please re-arrange: days, months (in text), years, hours, minutes, seconds */
-	return g_strdup_printf (_("%i %s %04i, %02i:%02i:%02i"), days, month_text, years, hours, minutes, seconds);
+	return g_strdup (g_strchug (buffer));
 }
 
 /***************************************************************************
