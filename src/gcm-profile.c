@@ -1005,7 +1005,7 @@ gcm_profile_generate_curve (GcmProfile *profile, guint size)
 
 		/* create input array */
 		values_in = g_new0 (gdouble, size * 3 * component_width);
-		divamount = 1.0f / (gfloat) size;
+		divamount = 1.0f / (gfloat) (size - 1);
 		for (i=0; i<size; i++) {
 			divadd = divamount * (gfloat) i;
 

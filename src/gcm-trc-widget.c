@@ -257,7 +257,7 @@ gcm_trc_widget_draw_line (GcmTrcWidget *trc, cairo_t *cr)
 	for (i=0; i<size; i++) {
 		tmp = g_ptr_array_index (array, (guint) i);
 		value = tmp->red/65536.0f;
-		gcm_trc_widget_map_to_display (trc, i/size, value, &wx, &wy);
+		gcm_trc_widget_map_to_display (trc, i/(size-1), value, &wx, &wy);
 		if (i == 0)
 			cairo_move_to (cr, wx, wy+1);
 		else
@@ -274,7 +274,7 @@ gcm_trc_widget_draw_line (GcmTrcWidget *trc, cairo_t *cr)
 	for (i=0; i<size; i++) {
 		tmp = g_ptr_array_index (array, (guint) i);
 		value = tmp->green/65536.0f;
-		gcm_trc_widget_map_to_display (trc, i/size, value, &wx, &wy);
+		gcm_trc_widget_map_to_display (trc, i/(size-1), value, &wx, &wy);
 		if (i == 0)
 			cairo_move_to (cr, wx, wy-1);
 		else
@@ -291,7 +291,7 @@ gcm_trc_widget_draw_line (GcmTrcWidget *trc, cairo_t *cr)
 	for (i=0; i<size; i++) {
 		tmp = g_ptr_array_index (array, (guint) i);
 		value = tmp->blue/65536.0f;
-		gcm_trc_widget_map_to_display (trc, i/size, value, &wx, &wy);
+		gcm_trc_widget_map_to_display (trc, i/(size-1), value, &wx, &wy);
 		if (i == 0)
 			cairo_move_to (cr, wx, wy);
 		else
