@@ -296,7 +296,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 			goto out;
 
 		/* create a CLUT from the profile */
-		clut = gcm_profile_generate (profile, size);
+		clut = gcm_profile_generate_vcgt (profile, size);
 	} else {
 		/* create dummy CLUT */
 		clut = gcm_clut_new ();

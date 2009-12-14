@@ -434,7 +434,7 @@ gcm_trc_widget_test (EggTest *test)
 
 	profile = gcm_profile_new ();
 	gcm_profile_parse (profile, filename_profile, NULL);
-	clut = gcm_profile_generate (profile, 256);
+	clut = gcm_profile_generate_vcgt (profile, 256);
 	g_object_set (widget,
 		      "clut", clut,
 		      NULL);

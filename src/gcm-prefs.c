@@ -1413,7 +1413,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	GtkTreeIter iter;
 	GtkWidget *widget;
 	GcmProfile *profile;
-	GcmClut *clut;
+	GcmClut *clut = NULL;
 	GcmXyz *white;
 	GcmXyz *red;
 	GcmXyz *green;
@@ -1430,7 +1430,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	const gchar *profile_type_text;
 	const gchar *profile_colorspace_text;
 	gboolean ret;
-	guint size;
+	guint size = 0;
 	guint filesize;
 
 	/* This will only work in single or browse selection mode! */
@@ -1467,11 +1467,15 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 		      "blue", blue,
 		      NULL);
 
-	/* get CLUT for profile */
-	clut = gcm_profile_generate (profile, 256);
-	g_object_get (clut,
-		      "size", &size,
-		      NULL);
+	/* get curve data */
+	clut = gcm_profile_generate_curve (profile, 256);
+
+	/* get size */
+	if (clut != NULL) {
+		g_object_get (clut,
+			      "size", &size,
+			      NULL);
+	}
 
 	/* only show if there is useful information */
 	if (size > 0) {
@@ -1570,11 +1574,12 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_delete"));
 	gtk_widget_set_sensitive (widget, ret);
 
+	if (clut != NULL)
+		g_object_unref (clut);
 	g_object_unref (white);
 	g_object_unref (red);
 	g_object_unref (green);
 	g_object_unref (blue);
-	g_object_unref (clut);
 	g_free (size_text);
 	g_free (filename);
 	g_free (basename);

@@ -849,12 +849,12 @@ out:
 }
 
 /**
- * gcm_profile_generate:
+ * gcm_profile_generate_vcgt:
  *
- * Free with g_free();
+ * Free with g_object_unref();
  **/
 GcmClut *
-gcm_profile_generate (GcmProfile *profile, guint size)
+gcm_profile_generate_vcgt (GcmProfile *profile, guint size)
 {
 	guint i;
 	guint ratio;
@@ -865,8 +865,8 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 	gfloat gamma_green, min_green, max_green;
 	gfloat gamma_blue, min_blue, max_blue;
 	guint num_entries;
-	GcmClut *clut;
-	GPtrArray *array;
+	GcmClut *clut = NULL;
+	GPtrArray *array = NULL;
 	gfloat inverse_ratio;
 	guint idx;
 	gfloat frac;
@@ -878,11 +878,10 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 	vcgt_data = profile->priv->vcgt_data;
 	mlut_data = profile->priv->mlut_data;
 
-	/* create new output array */
-	clut = gcm_clut_new ();
-	array = g_ptr_array_new_with_free_func (g_free);
-
 	if (profile->priv->has_vcgt_table) {
+
+		/* create array */
+		array = g_ptr_array_new_with_free_func (g_free);
 
 		/* simply subsample if the LUT is smaller than the number of entries in the file */
 		num_entries = profile->priv->vcgt_data_size;
@@ -920,6 +919,9 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 
 	if (profile->priv->has_vcgt_formula) {
 
+		/* create array */
+		array = g_ptr_array_new_with_free_func (g_free);
+
 		gamma_red = (gfloat) vcgt_data[0].red / 65536.0;
 		gamma_green = (gfloat) vcgt_data[0].green / 65536.0;
 		gamma_blue = (gfloat) vcgt_data[0].blue / 65536.0;
@@ -944,6 +946,9 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 
 	if (profile->priv->has_mlut) {
 
+		/* create array */
+		array = g_ptr_array_new_with_free_func (g_free);
+
 		/* roughly interpolate table */
 		ratio = (guint) (256 / (size));
 		for (i=0; i<size; i++) {
@@ -960,8 +965,105 @@ gcm_profile_generate (GcmProfile *profile, guint size)
 	/* bugger */
 	egg_debug ("no LUT to generate");
 out:
-	gcm_clut_set_source_array (clut, array);
-	g_ptr_array_unref (array);
+	if (array != NULL) {
+		/* create new output array */
+		clut = gcm_clut_new ();
+		gcm_clut_set_source_array (clut, array);
+		g_ptr_array_unref (array);
+	}
+	return clut;
+}
+
+/**
+ * gcm_profile_generate_curve:
+ *
+ * Free with g_object_unref();
+ **/
+GcmClut *
+gcm_profile_generate_curve (GcmProfile *profile, guint size)
+{
+	GcmClut *clut = NULL;
+	gdouble *values_in = NULL;
+	gdouble *values_out = NULL;
+	guint i;
+	GcmClutData *data;
+	GPtrArray *array = NULL;
+	gfloat divamount;
+	gfloat divadd;
+	guint component_width;
+	cmsHPROFILE srgb_profile = NULL;
+	cmsHTRANSFORM transform = NULL;
+	GcmProfilePrivate *priv = profile->priv;
+	guint type;
+
+	/* run through the profile */
+	if (priv->colorspace == GCM_PROFILE_COLORSPACE_RGB) {
+
+		/* RGB */
+		component_width = 3;
+		type = TYPE_RGB_DBL;
+
+		/* create input array */
+		values_in = g_new0 (gdouble, size * 3 * component_width);
+		divamount = 1.0f / (gfloat) size;
+		for (i=0; i<size; i++) {
+			divadd = divamount * (gfloat) i;
+
+			/* red component */
+			values_in[(i * 3 * component_width)+0] = divadd;
+			values_in[(i * 3 * component_width)+1] = 0.0f;
+			values_in[(i * 3 * component_width)+2] = 0.0f;
+
+			/* green component */
+			values_in[(i * 3 * component_width)+3] = 0.0f;
+			values_in[(i * 3 * component_width)+4] = divadd;
+			values_in[(i * 3 * component_width)+5] = 0.0f;
+
+			/* blue component */
+			values_in[(i * 3 * component_width)+6] = 0.0f;
+			values_in[(i * 3 * component_width)+7] = 0.0f;
+			values_in[(i * 3 * component_width)+8] = divadd;
+		}
+	}
+
+	/* do each transform */
+	if (values_in != NULL) {
+		/* create output array */
+		values_out = g_new0 (gdouble, size * 3 * component_width);
+
+		/* create a transform from profile to sRGB */
+		srgb_profile = cmsCreate_sRGBProfile ();
+		transform = cmsCreateTransform (priv->lcms_profile, type, srgb_profile, TYPE_RGB_DBL, INTENT_PERCEPTUAL, 0);
+		if (transform == NULL)
+			goto out;
+
+		/* do transform */
+		cmsDoTransform (transform, values_in, values_out, size * 3);
+
+		/* create output array */
+		array = g_ptr_array_new_with_free_func (g_free);
+
+		for (i=0; i<size; i++) {
+			data = g_new0 (GcmClutData, 1);
+
+			data->red = values_out[(i * 3 * component_width)+0] * (gfloat) 0xffff;
+			data->green = values_out[(i * 3 * component_width)+4] * (gfloat) 0xffff;
+			data->blue = values_out[(i * 3 * component_width)+8] * (gfloat) 0xffff;
+			g_ptr_array_add (array, data);
+		}
+		clut = gcm_clut_new ();
+		gcm_clut_set_source_array (clut, array);
+	}
+
+out:
+	g_free (values_in);
+	g_free (values_out);
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	if (transform != NULL)
+		cmsDeleteTransform (transform);
+	if (srgb_profile != NULL)
+		cmsCloseProfile (srgb_profile);
 	return clut;
 }
 
