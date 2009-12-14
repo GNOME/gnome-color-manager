@@ -55,9 +55,9 @@ struct _GcmClutClass
 };
 
 typedef struct {
-	guint	 red;
-	guint	 green;
-	guint	 blue;
+	guint32		 red;
+	guint32		 green;
+	guint32		 blue;
 } GcmClutData;
 
 GType		 gcm_clut_get_type		  	(void);
