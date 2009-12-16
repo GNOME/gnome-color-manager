@@ -49,6 +49,11 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 	guint32 xid = 0;
 	gchar **packages = NULL;
 
+#ifndef GCM_USE_PACKAGEKIT
+	egg_warning ("cannot install %s: this package was not compiled with --enable-packagekit", package_name);
+	return FALSE;
+#endif
+
 	/* get xid of this window */
 	if (window != NULL)
 		xid = gdk_x11_drawable_get_xid (gtk_widget_get_window (GTK_WIDGET(window)));

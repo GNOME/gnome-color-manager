@@ -188,6 +188,16 @@ if test x$enable_hardware_detection = xyes; then
 fi
 
 dnl ---------------------------------------------------------------------------
+dnl - Use PackageKit to install missing tools
+dnl ---------------------------------------------------------------------------
+AC_ARG_ENABLE(packagekit, AS_HELP_STRING([--enable-packagekit],[enable PackageKit integration]),
+	      enable_packagekit=$enableval,enable_packagekit=yes)
+AM_CONDITIONAL(GCM_USE_PACKAGEKIT, test x$enable_packagekit = xyes)
+if test x$enable_packagekit = xyes; then
+	AC_DEFINE(GCM_USE_PACKAGEKIT,1,[Build hardware autodetection])
+fi
+
+dnl ---------------------------------------------------------------------------
 dnl - Build self tests
 dnl ---------------------------------------------------------------------------
 AC_ARG_ENABLE(tests, AS_HELP_STRING([--enable-tests],[enable unit test code]),
@@ -229,6 +239,7 @@ echo "
         cflags:                    ${CFLAGS}
         cppflags:                  ${CPPFLAGS}
         hardware auto-detection:   ${enable_hardware_detection}
+        PackageKit integration:    ${enable_packagekit}
         building unit tests:       ${enable_tests}
         gconf-schema dir:          $GCONF_SCHEMA_FILE_DIR
 "

@@ -430,6 +430,7 @@ gcm_prefs_calibrate_device (GcmCalibrate *calib)
 	/* install shared-color-targets package */
 	has_shared_targets = g_file_test ("/usr/share/shared-color-targets", G_FILE_TEST_IS_DIR);
 	if (!has_shared_targets) {
+#ifdef GCM_USE_PACKAGEKIT
 		GtkWindow *window;
 		GtkWidget *dialog;
 		GtkResponseType response;
@@ -463,6 +464,9 @@ gcm_prefs_calibrate_device (GcmCalibrate *calib)
 		if (response == GTK_RESPONSE_YES)
 			has_shared_targets = gcm_utils_install_package (GCM_PREFS_PACKAGE_NAME_SHARED_COLOR_TARGETS, window);
 		g_string_free (string, TRUE);
+#else
+		egg_warning ("cannot install: this package was not compiled with --enable-packagekit");
+#endif
 	}
 
 	/* get the device */
@@ -823,6 +827,11 @@ gcm_prefs_ensure_argyllcms_installed (void)
 	ret = g_file_test ("/usr/bin/dispcal", G_FILE_TEST_EXISTS);
 	if (ret)
 		goto out;
+
+#ifndef GCM_USE_PACKAGEKIT
+	egg_warning ("cannot install: this package was not compiled with --enable-packagekit");
+	goto out;
+#endif
 
 	/* ask the user to confirm */
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
