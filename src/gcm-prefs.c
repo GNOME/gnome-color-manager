@@ -42,6 +42,10 @@
 #include "gcm-cie-widget.h"
 #include "gcm-trc-widget.h"
 
+/* DISTROS: you will have to patch if you have changed the name of these packages */
+#define GCM_PREFS_PACKAGE_NAME_SHARED_COLOR_TARGETS	"shared-color-targets"
+#define GCM_PREFS_PACKAGE_NAME_ARGYLLCMS		"argyllcms"
+
 static GtkBuilder *builder = NULL;
 static GtkListStore *list_store_devices = NULL;
 static GtkListStore *list_store_profiles = NULL;
@@ -438,13 +442,13 @@ gcm_prefs_calibrate_device (GcmCalibrate *calib)
 						 _("Install missing files?"));
 		string = g_string_new ("");
 		/* TRANSLATORS: dialog message saying the color targets are not installed */
-		g_string_append_printf (string, "%s\n", _("Common IT8 color target files are not installed on this computer."));
+		g_string_append_printf (string, "%s ", _("Common IT8 color target files are not installed on this computer."));
 		/* TRANSLATORS: dialog message saying the color targets are not installed */
 		g_string_append_printf (string, "%s\n\n", _("Color target files are needed to convert the image to a color profile."));
 		/* TRANSLATORS: dialog message, asking if it's okay to install them */
 		g_string_append_printf (string, "%s\n\n", _("Do you want them to be automatically installed?"));
 		/* TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package */
-		g_string_append_printf (string, "%s", _("If you have already have the required IT8 file then you can skip this step."));
+		g_string_append_printf (string, "%s", _("If you have already have the correct IT8 file then you can skip this step."));
 
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
@@ -457,7 +461,7 @@ gcm_prefs_calibrate_device (GcmCalibrate *calib)
 
 		/* only install if the user wanted to */
 		if (response == GTK_RESPONSE_YES)
-			has_shared_targets = gcm_utils_install_package ("shared-color-targets", window);
+			has_shared_targets = gcm_utils_install_package (GCM_PREFS_PACKAGE_NAME_SHARED_COLOR_TARGETS, window);
 		g_string_free (string, TRUE);
 	}
 
@@ -804,6 +808,58 @@ out:
 }
 
 /**
+ * gcm_prefs_ensure_argyllcms_installed:
+ **/
+static gboolean
+gcm_prefs_ensure_argyllcms_installed (void)
+{
+	gboolean ret;
+	GtkWindow *window;
+	GtkWidget *dialog;
+	GtkResponseType response;
+	GString *string = NULL;
+
+	/* find whether argyllcms is installed using a tool which should exist */
+	ret = g_file_test ("/usr/bin/dispcal", G_FILE_TEST_EXISTS);
+	if (ret)
+		goto out;
+
+	/* ask the user to confirm */
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
+					 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
+					 _("Install missing calibration software?"));
+
+	string = g_string_new ("");
+	/* TRANSLATORS: dialog message saying the argyllcms is not installed */
+	g_string_append_printf (string, "%s\n", _("Calibration software is not installed on this computer."));
+	/* TRANSLATORS: dialog message saying the color targets are not installed */
+	g_string_append_printf (string, "%s\n\n", _("These tools are required to build color profiles for devices."));
+	/* TRANSLATORS: dialog message, asking if it's okay to install it */
+	g_string_append_printf (string, "%s", _("Do you want them to be automatically installed?"));
+
+	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
+	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+	/* TRANSLATORS: button, install a package */
+	gtk_dialog_add_button (GTK_DIALOG (dialog), _("Install"), GTK_RESPONSE_YES);
+	/* TRANSLATORS: button, skip installing a package */
+	gtk_dialog_add_button (GTK_DIALOG (dialog), _("Do not install"), GTK_RESPONSE_CANCEL);
+	response = gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+
+	/* only install if the user wanted to */
+	if (response != GTK_RESPONSE_YES)
+		goto out;
+
+	/* do the install */
+	ret = gcm_utils_install_package (GCM_PREFS_PACKAGE_NAME_ARGYLLCMS, window);
+out:
+	if (string != NULL)
+		g_string_free (string, TRUE);
+	return ret;
+}
+
+/**
  * gcm_prefs_calibrate_cb:
  **/
 static void
@@ -820,6 +876,11 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	gchar *destination = NULL;
 	GcmProfile *profile;
 	GtkTreeSelection *selection;
+
+	/* ensure argyllcms is installed */
+	ret = gcm_prefs_ensure_argyllcms_installed ();
+	if (!ret)
+		goto out;
 
 	/* get the type */
 	g_object_get (current_device,
@@ -1080,22 +1141,6 @@ gcm_prefs_has_hardware_device_attached (void)
 }
 
 /**
- * gcm_prefs_has_argyllcms_installed:
- **/
-static gboolean
-gcm_prefs_has_argyllcms_installed (void)
-{
-	gboolean ret;
-
-	/* find whether argyllcms is installed using a tool which should exist */
-	ret = g_file_test ("/usr/bin/dispcal", G_FILE_TEST_EXISTS);
-	if (!ret)
-		egg_debug ("ArgyllCMS not installed");
-
-	return ret;
-}
-
-/**
  * gcm_prefs_set_calibrate_button_sensitivity:
  **/
 static void
@@ -1123,11 +1168,6 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 	/* are we a display */
 	if (type == GCM_DEVICE_TYPE_DISPLAY) {
 
-		/* find if ArgyllCMS is installed */
-		ret = gcm_prefs_has_argyllcms_installed ();
-		if (!ret)
-			goto out;
-
 		/* find whether we have hardware installed */
 		ret = gcm_prefs_has_hardware_device_attached ();
 #ifndef GCM_HARDWARE_DETECTION
@@ -1136,11 +1176,6 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 #endif
 	} else if (type == GCM_DEVICE_TYPE_SCANNER ||
 		   type == GCM_DEVICE_TYPE_CAMERA) {
-
-		/* find if ArgyllCMS is installed */
-		ret = gcm_prefs_has_argyllcms_installed ();
-		if (!ret)
-			goto out;
 
 		/* TODO: find out if we can scan using gnome-scan */
 		ret = TRUE;
