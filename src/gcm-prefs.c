@@ -324,7 +324,7 @@ out:
  * gcm_prefs_calibrate_device_get_scanned_profile:
  **/
 static gchar *
-gcm_prefs_calibrate_device_get_scanned_profile (void)
+gcm_prefs_calibrate_device_get_scanned_profile (const gchar *directory)
 {
 	gchar *filename = NULL;
 	GtkWindow *window;
@@ -340,7 +340,7 @@ gcm_prefs_calibrate_device_get_scanned_profile (void)
 					       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 					      NULL);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), "/tmp");
+	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), directory);
 	gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER(dialog), FALSE);
 
 	/* setup the filter */
@@ -367,7 +367,7 @@ gcm_prefs_calibrate_device_get_scanned_profile (void)
  * gcm_prefs_calibrate_device_get_reference_data:
  **/
 static gchar *
-gcm_prefs_calibrate_device_get_reference_data (void)
+gcm_prefs_calibrate_device_get_reference_data (const gchar *directory)
 {
 	gchar *filename = NULL;
 	GtkWindow *window;
@@ -383,7 +383,7 @@ gcm_prefs_calibrate_device_get_reference_data (void)
 					       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 					      NULL);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), "/media");
+	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), directory);
 	gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER(dialog), FALSE);
 
 	/* setup the filter */
@@ -413,6 +413,7 @@ static gboolean
 gcm_prefs_calibrate_device (GcmCalibrate *calib)
 {
 	gboolean ret = FALSE;
+	gboolean has_shared_targets;
 	GError *error = NULL;
 	gchar *scanned_image = NULL;
 	gchar *reference_data = NULL;
@@ -420,6 +421,45 @@ gcm_prefs_calibrate_device (GcmCalibrate *calib)
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
 	gchar *description = NULL;
+	const gchar *directory;
+
+	/* install shared-color-targets package */
+	has_shared_targets = g_file_test ("/usr/share/shared-color-targets", G_FILE_TEST_IS_DIR);
+	if (!has_shared_targets) {
+		GtkWindow *window;
+		GtkWidget *dialog;
+		GtkResponseType response;
+		GString *string;
+
+		/* ask the user to confirm */
+		window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+		dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
+						 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
+						 _("Install missing files?"));
+		string = g_string_new ("");
+		/* TRANSLATORS: dialog message saying the color targets are not installed */
+		g_string_append_printf (string, "%s\n", _("Common IT8 color target files are not installed on this computer."));
+		/* TRANSLATORS: dialog message saying the color targets are not installed */
+		g_string_append_printf (string, "%s\n\n", _("Color target files are needed to convert the image to a color profile."));
+		/* TRANSLATORS: dialog message, asking if it's okay to install them */
+		g_string_append_printf (string, "%s\n\n", _("Do you want them to be automatically installed?"));
+		/* TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package */
+		g_string_append_printf (string, "%s", _("If you have already have the required IT8 file then you can skip this step."));
+
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
+		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+		/* TRANSLATORS: button, install a package */
+		gtk_dialog_add_button (GTK_DIALOG (dialog), _("Install"), GTK_RESPONSE_YES);
+		/* TRANSLATORS: button, skip installing a package */
+		gtk_dialog_add_button (GTK_DIALOG (dialog), _("Do not install"), GTK_RESPONSE_CANCEL);
+		response = gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+
+		/* only install if the user wanted to */
+		if (response == GTK_RESPONSE_YES)
+			has_shared_targets = gcm_utils_install_package ("shared-color-targets", window);
+		g_string_free (string, TRUE);
+	}
 
 	/* get the device */
 	g_object_get (current_device,
@@ -437,12 +477,14 @@ gcm_prefs_calibrate_device (GcmCalibrate *calib)
 	}
 
 	/* get scanned image */
-	scanned_image = gcm_prefs_calibrate_device_get_scanned_profile ();
+	directory = g_get_home_dir ();
+	scanned_image = gcm_prefs_calibrate_device_get_scanned_profile (directory);
 	if (scanned_image == NULL)
 		goto out;
 
 	/* get reference data */
-	reference_data = gcm_prefs_calibrate_device_get_reference_data ();
+	directory = has_shared_targets ? "/usr/share/color/targets" : "/media";
+	reference_data = gcm_prefs_calibrate_device_get_reference_data (directory);
 	if (reference_data == NULL)
 		goto out;
 
