@@ -120,6 +120,7 @@ gcm_apply_LDADD =					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
+	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)
 
 gcm_apply_CFLAGS =					\
@@ -136,6 +137,7 @@ gcm_import_LDADD =					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
+	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)
 
 gcm_import_CFLAGS =					\

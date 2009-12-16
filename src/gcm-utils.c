@@ -28,12 +28,59 @@
 #include <X11/extensions/Xrandr.h>
 #include <X11/extensions/xf86vmode.h>
 #include <gconf/gconf-client.h>
+#include <dbus/dbus-glib.h>
 
 #include "gcm-utils.h"
 #include "gcm-clut.h"
 #include "gcm-xserver.h"
 
 #include "egg-debug.h"
+
+/**
+ * gcm_utils_install_package:
+ **/
+gboolean
+gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
+{
+	DBusGConnection *connection;
+	DBusGProxy *proxy;
+	GError *error = NULL;
+	gboolean ret;
+	guint32 xid = 0;
+	gchar **packages = NULL;
+
+	/* get xid of this window */
+	if (window != NULL)
+		xid = gdk_x11_drawable_get_xid (gtk_widget_get_window (GTK_WIDGET(window)));
+
+	/* we're expecting an array of packages */
+	packages = g_strsplit (package_name, "|", 1);
+
+	/* get a session bus connection */
+	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
+
+	/* connect to PackageKit */
+	proxy = dbus_g_proxy_new_for_name (connection,
+					   "org.freedesktop.PackageKit",
+					   "/org/freedesktop/PackageKit",
+					   "org.freedesktop.PackageKit.Modify");
+
+	/* execute sync method */
+	ret = dbus_g_proxy_call (proxy, "InstallPackageNames", &error,
+				 G_TYPE_UINT, xid,
+				 G_TYPE_STRV, packages,
+				 G_TYPE_STRING, "hide-confirm-search,hide-finished",
+				 G_TYPE_INVALID, G_TYPE_INVALID);
+	if (!ret) {
+		egg_warning ("failed to install package: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+out:
+	g_object_unref (proxy);
+	g_strfreev (packages);
+	return ret;
+}
 
 /**
  * gcm_utils_output_is_lcd_internal:

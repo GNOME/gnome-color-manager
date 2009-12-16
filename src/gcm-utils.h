@@ -23,6 +23,7 @@
 #define __GCM_UTILS_H
 
 #include <glib-object.h>
+#include <gtk/gtk.h>
 
 #include "gcm-device.h"
 #include "gcm-profile.h"
@@ -52,6 +53,8 @@ void		 gcm_utils_ensure_sensible_filename	(gchar			*string);
 gchar		*gcm_utils_get_default_config_location	(void);
 GcmProfileType	 gcm_utils_device_type_to_profile_type	(GcmDeviceType		 type);
 gchar		*gcm_utils_format_date_time		(const struct tm	*created);
+gboolean	 gcm_utils_install_package		(const gchar		*package_name,
+							 GtkWindow		*window);
 
 #endif /* __GCM_UTILS_H */
 
