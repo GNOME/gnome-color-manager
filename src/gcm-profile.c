@@ -527,6 +527,43 @@ out:
 }
 
 /**
+ * gcm_profile_ensure_sane_length:
+ **/
+static void
+gcm_profile_ensure_sane_length (gchar *text, guint max_length)
+{
+	guint i;
+	guint len;
+
+	/* get length */
+	len = strlen (text);
+
+	/* check we have room for ellipsis */
+	if (len <= max_length - 4)
+		return;
+
+	/* already correct len */
+	if (len == max_length)
+		return;
+
+	/* truncate, finding prior word break */
+	for (i=max_length-1; i>0; i--) {
+		if (text[i] == ' ')
+			break;
+	}
+
+	/* one long string with no spaces */
+	if (i == 0)
+		i = max_length - 3;
+
+	/* ellipsis */
+	text[i+0] = '.';
+	text[i+1] = '.';
+	text[i+2] = '.';
+	text[i+3] = '\0';
+}
+
+/**
  * gcm_profile_parse_data:
  **/
 gboolean
@@ -794,6 +831,10 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 		gcm_profile_ensure_printable (priv->manufacturer);
 	if (priv->model != NULL)
 		gcm_profile_ensure_printable (priv->model);
+
+	/* some profiles have _really_ long titles - Microsoft, I'm looking at you... */
+	if (priv->description != NULL)
+		gcm_profile_ensure_sane_length (priv->description, 80);
 
 	/* save the length */
 	priv->size = length;
@@ -1539,9 +1580,70 @@ gcm_profile_test (EggTest *test)
 	gfloat expected;
 	gboolean ret;
 	const gchar temp[5] = {0x6d, 0x42, 0x41, 0x20, 0x00};
+	gchar *text;
 
 	if (!egg_test_start (test, "GcmProfile"))
 		return;
+
+	/************************************************************/
+	egg_test_title (test, "check strip printable");
+	text = g_strdup ("1\r34 67_90");
+	gcm_profile_ensure_printable (text);
+	if (g_strcmp0 (text, "134 67 90") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", text);
+	g_free (text);
+
+	/************************************************************/
+	egg_test_title (test, "check sane length high");
+	text = g_strdup ("1234 67890");
+	gcm_profile_ensure_sane_length (text, 1024);
+	if (g_strcmp0 (text, "1234 67890") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", text);
+	g_free (text);
+
+	/************************************************************/
+	egg_test_title (test, "check sane length limit");
+	text = g_strdup ("1234 67890");
+	gcm_profile_ensure_sane_length (text, 10);
+	if (g_strcmp0 (text, "1234 67890") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", text);
+	g_free (text);
+
+	/************************************************************/
+	egg_test_title (test, "check sane length truncate");
+	text = g_strdup ("1234 67890");
+	gcm_profile_ensure_sane_length (text, 8);
+	if (g_strcmp0 (text, "1234...") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", text);
+	g_free (text);
+
+	/************************************************************/
+	egg_test_title (test, "check sane length no spaces");
+	text = g_strdup ("1234 67890");
+	gcm_profile_ensure_sane_length (text, 4);
+	if (g_strcmp0 (text, "1...") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", text);
+	g_free (text);
+
+	/************************************************************/
+	egg_test_title (test, "check sane length no data");
+	text = g_strdup ("");
+	gcm_profile_ensure_sane_length (text, 4);
+	if (g_strcmp0 (text, "") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", text);
+	g_free (text);
 
 	/* bluish test */
 	test_data.copyright = "Copyright (c) 1998 Hewlett-Packard Company";
