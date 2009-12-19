@@ -435,24 +435,22 @@ out:
 }
 
 /**
- * gcm_client_get_output_id:
- *
- * Return value: the output name, free with g_free().
+ * gcm_client_get_id_for_xrandr_device:
  **/
 static gchar *
-gcm_client_get_output_id (GcmClient *client, GnomeRROutput *output)
+gcm_client_get_id_for_xrandr_device (GcmClient *client, GnomeRROutput *output)
 {
 	const gchar *output_name;
 	gchar *name = NULL;
 	gchar *vendor = NULL;
+	gchar *ascii = NULL;
+	gchar *serial = NULL;
 	GString *string;
 	gboolean ret;
-	guint width = 0;
-	guint height = 0;
 	GcmClientPrivate *priv = client->priv;
 
 	/* blank */
-	string = g_string_new ("");
+	string = g_string_new ("xrandr");
 
 	/* if nothing connected then fall back to the connector name */
 	ret = gnome_rr_output_is_connected (output);
@@ -461,27 +459,24 @@ gcm_client_get_output_id (GcmClient *client, GnomeRROutput *output)
 
 	/* find the best option */
 	g_object_get (priv->edid,
-		      "width", &width,
-		      "height", &height,
 		      "monitor-name", &name,
 		      "vendor-name", &vendor,
+		      "ascii-string", &ascii,
+		      "serial-number", &serial,
 		      NULL);
 
-	/* find the best option */
-	if (name == NULL)
-		g_object_get (priv->edid, "ascii-string", &name, NULL);
-	if (name == NULL)
-		g_object_get (priv->edid, "serial-number", &name, NULL);
-
-	/* prepend vendor if available */
-	if (vendor != NULL && name != NULL)
-		g_string_append_printf (string, "%s - %s", vendor, name);
-	else if (name != NULL)
-		g_string_append_printf (string, "%s", name);
-
+	/* append data if available */
+	if (vendor != NULL)
+		g_string_append_printf (string, "_%s", vendor);
+	if (name != NULL)
+		g_string_append_printf (string, "_%s", name);
+	if (ascii != NULL)
+		g_string_append_printf (string, "_%s", ascii);
+	if (serial != NULL)
+		g_string_append_printf (string, "_%s", serial);
 out:
 	/* fallback to the output name */
-	if (string->len == 0) {
+	if (string->len == 6) {
 		output_name = gnome_rr_output_get_name (output);
 		ret = gcm_utils_output_is_lcd_internal (output_name);
 		if (ret)
@@ -489,40 +484,14 @@ out:
 		g_string_append (string, output_name);
 	}
 
-	/* append size if available */
-	if (width != 0 && height != 0) {
-		guint diag;
-
-		/* calculate the dialgonal using Pythagorean theorem */
-		diag = sqrtf ((powf (width,2)) + (powf (height, 2)));
-
-		/* print it in inches */
-		g_string_append_printf (string, " %i", (guint) ((gfloat) diag * 0.393700787f));
-	}
+	/* replace unsafe chars */
+	gcm_utils_alphanum_lcase (string->str);
 
 	g_free (name);
 	g_free (vendor);
+	g_free (ascii);
+	g_free (serial);
 	return g_string_free (string, FALSE);
-}
-
-/**
- * gcm_client_get_id_for_xrandr_device:
- **/
-static gchar *
-gcm_client_get_id_for_xrandr_device (GcmClient *client, GnomeRROutput *output)
-{
-	gchar *id;
-	gchar *name;
-
-	/* get id */
-	name = gcm_client_get_output_id (client, output);
-	id = g_strdup_printf ("xrandr_%s", name);
-
-	/* replace unsafe chars */
-	gcm_utils_alphanum_lcase (id);
-
-	g_free (name);
-	return id;
 }
 
 /**
