@@ -59,6 +59,7 @@ main (int argc, char **argv)
 	gcm_xyz_test (test);
 	gcm_trc_widget_test (test);
 	gcm_cie_widget_test (test);
+	gcm_gamma_widget_test (test);
 
 	return (egg_test_finish (test));
 }
