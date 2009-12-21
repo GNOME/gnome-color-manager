@@ -146,8 +146,10 @@ gcm_import_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_prefs_SOURCES =					\
-	gcm-calibrate.c					\
-	gcm-calibrate.h					\
+	gcm-calibrate-argyll.c				\
+	gcm-calibrate-argyll.h				\
+	gcm-calibrate-manual.c				\
+	gcm-calibrate-manual.h				\
 	gcm-brightness.c				\
 	gcm-brightness.h				\
 	gcm-prefs.c
@@ -208,7 +210,6 @@ gcm_self_test_SOURCES =					\
 	gcm-trc-widget.c				\
 	gcm-gamma-widget.c				\
 	gcm-calibrate-manual.c				\
-	gcm-calibrate-manual.h				\
 	egg-test.h					\
 	egg-test.c					\
 	$(NULL)

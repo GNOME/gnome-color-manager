@@ -35,8 +35,7 @@
 
 #include "gcm-utils.h"
 #include "gcm-profile.h"
-#include "gcm-calibrate.h"
-#include "gcm-brightness.h"
+#include "gcm-calibrate-argyll.h"
 #include "gcm-client.h"
 #include "gcm-xyz.h"
 #include "gcm-cie-widget.h"
@@ -179,17 +178,16 @@ gcm_prefs_calibrate_get_basename (GcmDevice *device)
  * gcm_prefs_calibrate_display:
  **/
 static gboolean
-gcm_prefs_calibrate_display (GcmCalibrate *calib)
+gcm_prefs_calibrate_display (GcmCalibrateArgyll *calibrate)
 {
-	GcmBrightness *brightness = NULL;
 	gboolean ret = FALSE;
 	GError *error = NULL;
 	gchar *output_name = NULL;
-	guint percentage = G_MAXUINT;
 	gchar *basename = NULL;
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
 	gchar *description = NULL;
+	GtkWindow *window;
 
 	/* get the device */
 	g_object_get (current_device,
@@ -203,9 +201,6 @@ gcm_prefs_calibrate_display (GcmCalibrate *calib)
 		egg_warning ("failed to get output");
 		goto out;
 	}
-
-	/* create new helper objects */
-	brightness = gcm_brightness_new ();
 
 	/* get a filename based on the serial number */
 	basename = gcm_prefs_calibrate_get_basename (current_device);
@@ -223,7 +218,7 @@ gcm_prefs_calibrate_display (GcmCalibrate *calib)
 		manufacturer = g_strdup ("unknown manufacturer");
 
 	/* set the proper output name */
-	g_object_set (calib,
+	g_object_set (calibrate,
 		      "output-name", output_name,
 		      "basename", basename,
 		      "model", model,
@@ -231,69 +226,15 @@ gcm_prefs_calibrate_display (GcmCalibrate *calib)
 		      "manufacturer", manufacturer,
 		      NULL);
 
-	/* step 0 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DISPLAY_SETUP, &error);
+
+	/* run each task in order */
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	ret = gcm_calibrate_argyll_display (calibrate, window, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
-		goto finish_calibrate;
 	}
 
-	/* if we are an internal LCD, we need to set the brightness to maximum */
-	ret = gcm_utils_output_is_lcd_internal (output_name);
-	if (ret) {
-		/* get the old brightness so we can restore state */
-		ret = gcm_brightness_get_percentage (brightness, &percentage, &error);
-		if (!ret) {
-			egg_warning ("failed to get brightness: %s", error->message);
-			g_error_free (error);
-			/* not fatal */
-			error = NULL;
-		}
-
-		/* set the new brightness */
-		ret = gcm_brightness_set_percentage (brightness, 100, &error);
-		if (!ret) {
-			egg_warning ("failed to set brightness: %s", error->message);
-			g_error_free (error);
-			/* not fatal */
-			error = NULL;
-		}
-	}
-
-	/* step 1 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DISPLAY_NEUTRALISE, &error);
-	if (!ret) {
-		egg_warning ("failed to calibrate: %s", error->message);
-		g_error_free (error);
-		goto finish_calibrate;
-	}
-
-	/* step 2 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DISPLAY_GENERATE_PATCHES, &error);
-	if (!ret) {
-		egg_warning ("failed to calibrate: %s", error->message);
-		g_error_free (error);
-		goto finish_calibrate;
-	}
-
-	/* step 3 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DISPLAY_DRAW_AND_MEASURE, &error);
-	if (!ret) {
-		egg_warning ("failed to calibrate: %s", error->message);
-		g_error_free (error);
-		goto finish_calibrate;
-	}
-
-	/* step 4 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DISPLAY_GENERATE_PROFILE, &error);
-	if (!ret) {
-		egg_warning ("failed to calibrate: %s", error->message);
-		g_error_free (error);
-		goto finish_calibrate;
-	}
-
-finish_calibrate:
 	/* need to set the gamma back to the default after calibration */
 	error = NULL;
 	ret = gcm_utils_set_gamma_for_device (current_device, &error);
@@ -302,20 +243,7 @@ finish_calibrate:
 		g_error_free (error);
 	}
 
-	/* restore brightness */
-	if (percentage != G_MAXUINT) {
-		/* set the new brightness */
-		ret = gcm_brightness_set_percentage (brightness, percentage, &error);
-		if (!ret) {
-			egg_warning ("failed to restore brightness: %s", error->message);
-			g_error_free (error);
-			/* not fatal */
-			error = NULL;
-		}
-	}
 out:
-	if (brightness != NULL)
-		g_object_unref (brightness);
 	g_free (output_name);
 	g_free (basename);
 	g_free (manufacturer);
@@ -414,7 +342,7 @@ gcm_prefs_calibrate_device_get_reference_data (const gchar *directory)
  * gcm_prefs_calibrate_device:
  **/
 static gboolean
-gcm_prefs_calibrate_device (GcmCalibrate *calib)
+gcm_prefs_calibrate_device (GcmCalibrateArgyll *calibrate)
 {
 	gboolean ret = FALSE;
 	gboolean has_shared_targets;
@@ -426,18 +354,19 @@ gcm_prefs_calibrate_device (GcmCalibrate *calib)
 	gchar *model = NULL;
 	gchar *description = NULL;
 	const gchar *directory;
+	GtkWindow *window;
+
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
 
 	/* install shared-color-targets package */
 	has_shared_targets = g_file_test ("/usr/share/shared-color-targets", G_FILE_TEST_IS_DIR);
 	if (!has_shared_targets) {
 #ifdef GCM_USE_PACKAGEKIT
-		GtkWindow *window;
 		GtkWidget *dialog;
 		GtkResponseType response;
 		GString *string;
 
 		/* ask the user to confirm */
-		window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
 		dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
 						 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
 						 _("Install missing files?"));
@@ -476,14 +405,6 @@ gcm_prefs_calibrate_device (GcmCalibrate *calib)
 		      "manufacturer", &manufacturer,
 		      NULL);
 
-	/* step 0 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DEVICE_SETUP, &error);
-	if (!ret) {
-		egg_warning ("failed to setup: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
 	/* get scanned image */
 	directory = g_get_home_dir ();
 	scanned_image = gcm_prefs_calibrate_device_get_scanned_profile (directory);
@@ -506,7 +427,7 @@ gcm_prefs_calibrate_device (GcmCalibrate *calib)
 		description = g_strdup ("Generic scanner");
 
 	/* set the calibration parameters */
-	g_object_set (calib,
+	g_object_set (calibrate,
 		      "basename", basename,
 		      "model", model,
 		      "description", description,
@@ -515,24 +436,8 @@ gcm_prefs_calibrate_device (GcmCalibrate *calib)
 		      "filename-reference", reference_data,
 		      NULL);
 
-	/* step 1 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DEVICE_COPY, &error);
-	if (!ret) {
-		egg_warning ("failed to calibrate: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* step 2 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DEVICE_MEASURE, &error);
-	if (!ret) {
-		egg_warning ("failed to calibrate: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* step 3 */
-	ret = gcm_calibrate_task (calib, GCM_CALIBRATE_TASK_DEVICE_GENERATE_PROFILE, &error);
+	/* do each step */
+	ret = gcm_calibrate_argyll_device (calibrate, window, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
@@ -874,11 +779,10 @@ out:
 static void
 gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 {
-	GcmCalibrate *calib = NULL;
+	GcmCalibrateArgyll *calibrate = NULL;
 	GcmDeviceType type;
 	gboolean ret;
 	GError *error = NULL;
-	GtkWindow *window;
 	gchar *filename = NULL;
 	guint i;
 	gchar *name;
@@ -897,38 +801,30 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		      NULL);
 
 	/* create new calibration object */
-	calib = gcm_calibrate_new ();
-
-	/* run each task in order */
-	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
-	ret = gcm_calibrate_setup (calib, window, &error);
-	if (!ret) {
-		egg_warning ("failed to setup: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
+	calibrate = gcm_calibrate_argyll_new ();
 
 	/* choose the correct type of calibration */
 	switch (type) {
 	case GCM_DEVICE_TYPE_DISPLAY:
-		gcm_prefs_calibrate_display (calib);
+		ret = gcm_prefs_calibrate_display (calibrate);
 		break;
 	case GCM_DEVICE_TYPE_SCANNER:
 	case GCM_DEVICE_TYPE_CAMERA:
-		gcm_prefs_calibrate_device (calib);
+		ret = gcm_prefs_calibrate_device (calibrate);
 		break;
 	default:
 		egg_warning ("calibration not supported for this device");
 		goto out;
 	}
 
-	/* finish */
-	filename = gcm_calibrate_finish (calib, &error);
-	if (filename == NULL) {
-		egg_warning ("failed to finish calibrate: %s", error->message);
-		g_error_free (error);
+	/* we failed to calibrate */
+	if (!ret)
 		goto out;
-	}
+
+	/* finish */
+	g_object_get (calibrate,
+		      "filename-result", &filename,
+		      NULL);
 
 	/* copy the ICC file to the proper location */
 	destination = gcm_utils_get_profile_destination (filename);
@@ -999,8 +895,8 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 out:
 	g_free (filename);
 	g_free (destination);
-	if (calib != NULL)
-		g_object_unref (calib);
+	if (calibrate != NULL)
+		g_object_unref (calibrate);
 }
 
 /**

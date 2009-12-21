@@ -544,7 +544,6 @@ gcm_calibrate_manual_init (GcmCalibrateManual *calibrate)
 	GtkWidget *widget;
 	GError *error = NULL;
 	GcmCalibrateManualPrivate *priv;
-	guint i;
 	gint retval;
 
 	priv = calibrate->priv = GCM_CALIBRATE_MANUAL_GET_PRIVATE (calibrate);
