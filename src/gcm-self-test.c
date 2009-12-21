@@ -35,6 +35,7 @@ void gcm_dmi_test (EggTest *test);
 void gcm_xyz_test (EggTest *test);
 void gcm_cie_widget_test (EggTest *test);
 void gcm_trc_widget_test (EggTest *test);
+void gcm_calibrate_manual_test (EggTest *test);
 
 int
 main (int argc, char **argv)
@@ -60,6 +61,7 @@ main (int argc, char **argv)
 	gcm_trc_widget_test (test);
 	gcm_cie_widget_test (test);
 	gcm_gamma_widget_test (test);
+	gcm_calibrate_manual_test (test);
 
 	return (egg_test_finish (test));
 }

@@ -207,6 +207,8 @@ gcm_self_test_SOURCES =					\
 	gcm-cie-widget.c				\
 	gcm-trc-widget.c				\
 	gcm-gamma-widget.c				\
+	gcm-calibrate-manual.c				\
+	gcm-calibrate-manual.h				\
 	egg-test.h					\
 	egg-test.c					\
 	$(NULL)
