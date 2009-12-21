@@ -228,7 +228,7 @@ gcm_calibrate_manual_setup_page (GcmCalibrateManual *calibrate, guint page)
 
 		widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "label_title"));
 		/* TRANSLATORS: dialog title */
-		title = g_strdup_printf (_("Create first table point %i/%i"), priv->current_gamma+1, priv->calibration_steps);
+		title = g_strdup_printf (_("Create table item %i/%i"), priv->current_gamma+1, priv->calibration_steps);
 		gtk_label_set_label (GTK_LABEL(widget), title);
 
 		widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "button_next"));
@@ -315,16 +315,30 @@ gcm_calibrate_manual_setup_page (GcmCalibrateManual *calibrate, guint page)
 		guint i;
 
 		array = g_ptr_array_new_with_free_func (g_free);
-		for (i=0; i<priv->calibration_steps; i++) {
+
+		/* add the zero point */
+		data = g_new0 (GcmClutData, 1);
+		g_ptr_array_add (array, data);
+
+		/* do each */
+		for (i=1; i<priv->calibration_steps; i++) {
 			data = g_new0 (GcmClutData, 1);
-			data->red = priv->profile_red[i] * (gdouble) 0xffff;
-			data->green = priv->profile_green[i] * (gdouble) 0xffff;
-			data->blue = priv->profile_blue[i] * (gdouble) 0xffff;
+			data->red = ((priv->profile_red[i-1] + priv->profile_red[i]) / 2.0f) * (gdouble) 0xffff;
+			data->green = ((priv->profile_green[i-1] + priv->profile_green[i]) / 2.0f) * (gdouble) 0xffff;
+			data->blue = ((priv->profile_blue[i-1] + priv->profile_blue[i]) / 2.0f) * (gdouble) 0xffff;
 			g_ptr_array_add (array, data);
 		}
 
+		/* add the last point */
+		data = g_new0 (GcmClutData, 1);
+		data->red = 0xffff;
+		data->green = 0xffff;
+		data->blue = 0xffff;
+		g_ptr_array_add (array, data);
+
 		clut = gcm_clut_new ();
 		gcm_clut_set_source_array (clut, array);
+		gcm_clut_print (clut);
 
 		g_object_set (priv->trc_widget, "clut", clut, NULL);
 		g_object_unref (clut);
