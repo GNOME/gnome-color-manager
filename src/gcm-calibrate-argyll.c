@@ -944,6 +944,7 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 		ret = FALSE;
 		if (error != NULL)
 			*error = g_error_new (1, 0, "could not find completed profile");
+		goto out;
 	}
 
 	/* success */
