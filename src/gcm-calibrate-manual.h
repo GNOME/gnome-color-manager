@@ -25,6 +25,8 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
+#include "gcm-calibrate.h"
+
 G_BEGIN_DECLS
 
 #define GCM_TYPE_CALIBRATE_MANUAL		(gcm_calibrate_manual_get_type ())
@@ -40,13 +42,13 @@ typedef struct _GcmCalibrateManualClass		GcmCalibrateManualClass;
 
 struct _GcmCalibrateManual
 {
-	 GObject			 parent;
+	 GcmCalibrate			 parent;
 	 GcmCalibrateManualPrivate	*priv;
 };
 
 struct _GcmCalibrateManualClass
 {
-	GObjectClass	parent_class;
+	GcmCalibrateClass	parent_class;
 	/* padding for future expansion */
 	void (*_gcm_reserved1) (void);
 	void (*_gcm_reserved2) (void);
@@ -57,9 +59,6 @@ struct _GcmCalibrateManualClass
 
 GType			 gcm_calibrate_manual_get_type		 (void);
 GcmCalibrateManual	*gcm_calibrate_manual_new		 (void);
-gboolean		 gcm_calibrate_manual_display		 (GcmCalibrateManual	*calibrate,
-								  GtkWindow		*window,
-								  GError		**error);
 
 G_END_DECLS
 

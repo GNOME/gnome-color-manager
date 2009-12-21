@@ -178,9 +178,10 @@ gcm_prefs_calibrate_get_basename (GcmDevice *device)
  * gcm_prefs_calibrate_display:
  **/
 static gboolean
-gcm_prefs_calibrate_display (GcmCalibrateArgyll *calibrate)
+gcm_prefs_calibrate_display (GcmCalibrate *calibrate)
 {
 	gboolean ret = FALSE;
+	gboolean ret_tmp;
 	GError *error = NULL;
 	gchar *output_name = NULL;
 	gchar *basename = NULL;
@@ -229,21 +230,21 @@ gcm_prefs_calibrate_display (GcmCalibrateArgyll *calibrate)
 
 	/* run each task in order */
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
-	ret = gcm_calibrate_argyll_display (calibrate, window, &error);
+	ret = gcm_calibrate_display (calibrate, window, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
+		goto out;
 	}
-
+out:
 	/* need to set the gamma back to the default after calibration */
 	error = NULL;
-	ret = gcm_utils_set_gamma_for_device (current_device, &error);
-	if (!ret) {
+	ret_tmp = gcm_utils_set_gamma_for_device (current_device, &error);
+	if (!ret_tmp) {
 		egg_warning ("failed to set output gamma: %s", error->message);
 		g_error_free (error);
 	}
 
-out:
 	g_free (output_name);
 	g_free (basename);
 	g_free (manufacturer);
@@ -342,7 +343,7 @@ gcm_prefs_calibrate_device_get_reference_data (const gchar *directory)
  * gcm_prefs_calibrate_device:
  **/
 static gboolean
-gcm_prefs_calibrate_device (GcmCalibrateArgyll *calibrate)
+gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 {
 	gboolean ret = FALSE;
 	gboolean has_shared_targets;
@@ -437,7 +438,7 @@ gcm_prefs_calibrate_device (GcmCalibrateArgyll *calibrate)
 		      NULL);
 
 	/* do each step */
-	ret = gcm_calibrate_argyll_device (calibrate, window, &error);
+	ret = gcm_calibrate_device (calibrate, window, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
@@ -779,7 +780,7 @@ out:
 static void
 gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 {
-	GcmCalibrateArgyll *calibrate = NULL;
+	GcmCalibrate *calibrate = NULL;
 	GcmDeviceType type;
 	gboolean ret;
 	GError *error = NULL;
@@ -801,7 +802,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		      NULL);
 
 	/* create new calibration object */
-	calibrate = gcm_calibrate_argyll_new ();
+	calibrate = GCM_CALIBRATE(gcm_calibrate_argyll_new ());
 
 	/* choose the correct type of calibration */
 	switch (type) {

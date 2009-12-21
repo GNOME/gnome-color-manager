@@ -96,6 +96,7 @@ out:
 gboolean
 gcm_utils_output_is_lcd_internal (const gchar *output_name)
 {
+	g_return_val_if_fail (output_name != NULL, FALSE);
 	if (g_strstr_len (output_name, -1, "LVDS") != NULL)
 		return TRUE;
 	if (g_strstr_len (output_name, -1, "lvds") != NULL)
@@ -112,6 +113,7 @@ gcm_utils_output_is_lcd_internal (const gchar *output_name)
 gboolean
 gcm_utils_output_is_lcd (const gchar *output_name)
 {
+	g_return_val_if_fail (output_name != NULL, FALSE);
 	if (gcm_utils_output_is_lcd_internal (output_name))
 		return TRUE;
 	if (g_strstr_len (output_name, -1, "DVI") != NULL)

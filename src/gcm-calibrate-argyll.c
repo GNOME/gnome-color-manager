@@ -40,7 +40,6 @@
 
 #include "gcm-calibrate-argyll.h"
 #include "gcm-utils.h"
-#include "gcm-brightness.h"
 
 #include "egg-debug.h"
 
@@ -55,17 +54,7 @@ static void     gcm_calibrate_argyll_finalize	(GObject     *object);
  **/
 struct _GcmCalibrateArgyllPrivate
 {
-	gboolean			 is_lcd;
-	gboolean			 is_crt;
 	guint				 display;
-	gchar				*output_name;
-	gchar				*filename_source;
-	gchar				*filename_reference;
-	gchar				*filename_result;
-	gchar				*basename;
-	gchar				*manufacturer;
-	gchar				*model;
-	gchar				*description;
 	GMainLoop			*loop;
 	GtkWidget			*terminal;
 	GtkBuilder			*builder;
@@ -76,20 +65,10 @@ struct _GcmCalibrateArgyllPrivate
 
 enum {
 	PROP_0,
-	PROP_BASENAME,
-	PROP_MODEL,
-	PROP_DESCRIPTION,
-	PROP_MANUFACTURER,
-	PROP_IS_LCD,
-	PROP_IS_CRT,
-	PROP_OUTPUT_NAME,
-	PROP_FILENAME_SOURCE,
-	PROP_FILENAME_REFERENCE,
-	PROP_FILENAME_RESULT,
 	PROP_LAST
 };
 
-G_DEFINE_TYPE (GcmCalibrateArgyll, gcm_calibrate_argyll, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GcmCalibrateArgyll, gcm_calibrate_argyll, GCM_TYPE_CALIBRATE)
 
 /* assume this is writable by users */
 #define GCM_CALIBRATE_ARGYLL_TEMP_DIR		"/tmp"
@@ -142,10 +121,18 @@ out:
 static gchar
 gcm_calibrate_argyll_get_display_type (GcmCalibrateArgyll *calibrate_argyll)
 {
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-	if (priv->is_lcd)
+	gboolean is_lcd;
+	gboolean is_crt;
+//	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+
+	g_object_get (calibrate_argyll,
+		      "is-lcd", &is_lcd,
+		      "is-crt", &is_crt,
+		      NULL);
+
+	if (is_lcd)
 		return 'l';
-	if (priv->is_crt)
+	if (is_crt)
 		return 'c';
 	return '\0';
 }
@@ -197,103 +184,6 @@ gcm_calibrate_argyll_debug_argv (const gchar *program, gchar **argv)
 }
 
 /**
- * gcm_calibrate_argyll_display_setup:
- **/
-static gboolean
-gcm_calibrate_argyll_display_setup (GcmCalibrateArgyll *calibrate_argyll, GError **error)
-{
-	gboolean ret = TRUE;
-	GtkWidget *dialog;
-	GtkResponseType response;
-	GString *string = NULL;
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-	GtkWidget *widget;
-
-	/* this wasn't previously set */
-	if (!priv->is_lcd && !priv->is_crt) {
-		widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
-		dialog = gtk_message_dialog_new (GTK_WINDOW(widget), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL,
-						 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
-						 _("Could not auto-detect CRT or LCD"));
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-							  /* TRANSLATORS: dialog message */
-							  _("Please indicate if the screen you are trying to profile is a CRT (old type) or a LCD (digital flat panel)."));
-		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-		/* TRANSLATORS: button, Liquid Crystal Display */
-		gtk_dialog_add_button (GTK_DIALOG (dialog), _("LCD"), GTK_RESPONSE_YES);
-		/* TRANSLATORS: button, Cathode Ray Tube */
-		gtk_dialog_add_button (GTK_DIALOG (dialog), _("CRT"), GTK_RESPONSE_NO);
-		response = gtk_dialog_run (GTK_DIALOG (dialog));
-		gtk_widget_destroy (dialog);
-		if (response == GTK_RESPONSE_YES) {
-			g_object_set (calibrate_argyll,
-				      "is-lcd", TRUE,
-				      NULL);
-		} else if (response == GTK_RESPONSE_NO) {
-			g_object_set (calibrate_argyll,
-				      "is-crt", TRUE,
-				      NULL);
-		} else {
-			if (error != NULL)
-				*error = g_error_new (1, 0, "user did not choose crt or lcd");
-			ret = FALSE;
-			goto out;
-		}
-	}
-
-	/* show a warning for external monitors */
-	ret = gcm_utils_output_is_lcd_internal (priv->output_name);
-	if (!ret) {
-		string = g_string_new ("");
-
-		/* TRANSLATORS: dialog message, preface */
-		g_string_append_printf (string, "%s\n", _("Before calibrating the display, it is recommended to configure your display with the following settings to get optimal results."));
-
-		/* TRANSLATORS: dialog message, preface */
-		g_string_append_printf (string, "%s\n\n", _("You may want to consult the owner's manual for your display on how to achieve these settings."));
-
-		/* TRANSLATORS: dialog message, bullet item */
-		g_string_append_printf (string, "• %s\n", _("Reset your display to the factory defaults."));
-
-		/* TRANSLATORS: dialog message, bullet item */
-		g_string_append_printf (string, "• %s\n", _("Disable dynamic contrast if your display has this feature."));
-
-		/* TRANSLATORS: dialog message, bullet item */
-		g_string_append_printf (string, "• %s", _("Configure your display with custom color settings and ensure the RGB channels are set to the same values."));
-
-		/* TRANSLATORS: dialog message, addition to bullet item */
-		g_string_append_printf (string, " %s\n", _("If custom color is not available then use a 6500K color temperature."));
-
-		/* TRANSLATORS: dialog message, bullet item */
-		g_string_append_printf (string, "• %s\n", _("Adjust the display brightness to a comfortable level for prolonged viewing."));
-
-		/* TRANSLATORS: dialog message, suffix */
-		g_string_append_printf (string, "\n%s\n", _("For best results, the display should have been powered for at least 15 minutes before starting the calibration."));
-
-		/* set the message */
-		gcm_calibrate_argyll_set_message (calibrate_argyll, string->str);
-
-		/* wait until user selects okay or closes window */
-		g_main_loop_run (priv->loop);
-
-		/* get result */
-		if (priv->response != GTK_RESPONSE_OK) {
-			if (error != NULL)
-				*error = g_error_new (1, 0, "user follow calibration steps");
-			ret = FALSE;
-			goto out;
-		}
-	}
-
-	/* success */
-	ret = TRUE;
-out:
-	if (string != NULL)
-		g_string_free (string, TRUE);
-	return ret;
-}
-
-/**
  * gcm_calibrate_argyll_get_tool_filename:
  **/
 static gchar *
@@ -339,9 +229,14 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	GnomeRROutput *output;
 	GPtrArray *array = NULL;
 	gint x, y;
+	gchar *basename = NULL;
+	gchar *output_name = NULL;
 
-	g_return_val_if_fail (priv->basename != NULL, FALSE);
-	g_return_val_if_fail (priv->output_name != NULL, FALSE);
+	/* get shared data */
+	g_object_get (calibrate_argyll,
+		      "basename", &basename,
+		      "output-name", &output_name,
+		      NULL);
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("dispcal", error);
@@ -351,17 +246,17 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	}
 
 	/* match up the output name with the device number defined by dispcal */
-	priv->display = gcm_calibrate_argyll_get_display (priv->output_name, error);
+	priv->display = gcm_calibrate_argyll_get_display (output_name, error);
 	if (priv->display == G_MAXUINT) {
 		ret = FALSE;
 		goto out;
 	}
 
 	/* get the device */
-	output = gnome_rr_screen_get_output_by_name (priv->rr_screen, priv->output_name);
+	output = gnome_rr_screen_get_output_by_name (priv->rr_screen, output_name);
 	if (output == NULL) {
 		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to get output for %s", priv->output_name);
+			*error = g_error_new (1, 0, "failed to get output for %s", output_name);
 		ret = FALSE;
 		goto out;
 	}
@@ -370,8 +265,8 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	type = gcm_calibrate_argyll_get_display_type (calibrate_argyll);
 
 	/* make a suitable filename */
-	gcm_utils_ensure_sensible_filename (priv->basename);
-	egg_debug ("using filename basename of %s", priv->basename);
+	gcm_utils_ensure_sensible_filename (basename);
+	egg_debug ("using filename basename of %s", basename);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -383,7 +278,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	g_ptr_array_add (array, g_strdup_printf ("-d%i", priv->display));
 	g_ptr_array_add (array, g_strdup_printf ("-y%c", type));
 //	g_ptr_array_add (array, g_strdup ("-p 0.8,0.5,1.0"));
-	g_ptr_array_add (array, g_strdup (priv->basename));
+	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
 
@@ -444,6 +339,8 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
+	g_free (basename);
+	g_free (output_name);
 	g_free (command);
 	g_strfreev (argv);
 	return ret;
@@ -470,8 +367,12 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	gchar *command = NULL;
 	gchar **argv = NULL;
 	GPtrArray *array = NULL;
+	gchar *basename = NULL;
 
-	g_return_val_if_fail (priv->basename != NULL, FALSE);
+	/* get shared data */
+	g_object_get (calibrate_argyll,
+		      "basename", &basename,
+		      NULL);
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("targen", error);
@@ -487,7 +388,7 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	g_ptr_array_add (array, g_strdup ("-v"));
 	g_ptr_array_add (array, g_strdup ("-d3"));
 	g_ptr_array_add (array, g_strdup ("-f250"));
-	g_ptr_array_add (array, g_strdup (priv->basename));
+	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
 
@@ -520,6 +421,7 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
+	g_free (basename);
 	g_free (command);
 	g_strfreev (argv);
 	return ret;
@@ -537,8 +439,12 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	gchar *command = NULL;
 	gchar **argv = NULL;
 	GPtrArray *array = NULL;
+	gchar *basename = NULL;
 
-	g_return_val_if_fail (priv->basename != NULL, FALSE);
+	/* get shared data */
+	g_object_get (calibrate_argyll,
+		      "basename", &basename,
+		      NULL);
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("dispread", error);
@@ -558,8 +464,8 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	g_ptr_array_add (array, g_strdup_printf ("-d%i", priv->display));
 	g_ptr_array_add (array, g_strdup_printf ("-y%c", type));
 	g_ptr_array_add (array, g_strdup ("-k"));
-	g_ptr_array_add (array, g_strdup_printf ("%s.cal", priv->basename));
-	g_ptr_array_add (array, g_strdup (priv->basename));
+	g_ptr_array_add (array, g_strdup_printf ("%s.cal", basename));
+	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
 
@@ -592,6 +498,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
+	g_free (basename);
 	g_free (command);
 	g_strfreev (argv);
 	return ret;
@@ -608,15 +515,22 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	gchar **argv = NULL;
 	GDate *date = NULL;
 	gchar *copyright = NULL;
-	gchar *description = NULL;
+	gchar *description_new = NULL;
 	gchar *command = NULL;
+	gchar *basename = NULL;
+	gchar *description = NULL;
+	gchar *manufacturer = NULL;
+	gchar *model = NULL;
 	GPtrArray *array = NULL;
 	GtkWidget *widget;
 
-	g_return_val_if_fail (priv->basename != NULL, FALSE);
-	g_return_val_if_fail (priv->description != NULL, FALSE);
-	g_return_val_if_fail (priv->manufacturer != NULL, FALSE);
-	g_return_val_if_fail (priv->model != NULL, FALSE);
+	/* get shared data */
+	g_object_get (calibrate_argyll,
+		      "basename", &basename,
+		      "description", &description,
+		      "manufacturer", &manufacturer,
+		      "model", &model,
+		      NULL);
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("colprof", error);
@@ -630,7 +544,7 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	g_date_set_time_t (date, time (NULL));
 
         /* this is the formattted custom profile description. It can't be translated as we need 7-bit ASCII */
-	description = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", "Custom", priv->description, date->year, date->month, date->day);
+	description_new = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", "Custom", description, date->year, date->month, date->day);
 
 	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" */
 	copyright = g_strdup_printf ("%s %04i %s", _("Copyright (c)"), date->year, g_get_real_name ());
@@ -640,13 +554,13 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 
 	/* setup the command */
 	g_ptr_array_add (array, g_strdup ("-v"));
-	g_ptr_array_add (array, g_strdup_printf ("-A%s", priv->manufacturer));
-	g_ptr_array_add (array, g_strdup_printf ("-M%s", priv->model));
-	g_ptr_array_add (array, g_strdup_printf ("-D%s", description));
+	g_ptr_array_add (array, g_strdup_printf ("-A%s", manufacturer));
+	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
+	g_ptr_array_add (array, g_strdup_printf ("-D%s", description_new));
 	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
 	g_ptr_array_add (array, g_strdup ("-qm"));
 	g_ptr_array_add (array, g_strdup ("-as"));
-	g_ptr_array_add (array, g_strdup (priv->basename));
+	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
 
@@ -684,8 +598,12 @@ out:
 		g_ptr_array_unref (array);
 	if (date != NULL)
 		g_date_free (date);
+	g_free (basename);
 	g_free (command);
+	g_free (manufacturer);
+	g_free (model);
 	g_free (description);
+	g_free (description_new);
 	g_free (copyright);
 	g_strfreev (argv);
 	return ret;
@@ -751,9 +669,16 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 	gchar *it8cht = NULL;
 	gchar *it8ref = NULL;
 	gchar *filename = NULL;
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	gchar *basename = NULL;
+	gchar *filename_source = NULL;
+	gchar *filename_reference = NULL;
 
-	g_return_val_if_fail (priv->basename != NULL, FALSE);
+	/* get shared data */
+	g_object_get (calibrate_argyll,
+		      "basename", &basename,
+		      "filename-source", &filename_source,
+		      "filename-reference", &filename_reference,
+		      NULL);
 
 	/* TRANSLATORS: title, a profile is a ICC file */
 	gcm_calibrate_argyll_set_title (calibrate_argyll, _("Copying files"));
@@ -761,7 +686,7 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 	gcm_calibrate_argyll_set_message (calibrate_argyll, _("Copying source image, chart data and CIE reference values."));
 
 	/* build filenames */
-	filename = g_strdup_printf ("%s.tif", priv->basename);
+	filename = g_strdup_printf ("%s.tif", basename);
 	device = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, filename, NULL);
 	it8cht = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "it8.cht", NULL);
 	it8ref = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "it8ref.txt", NULL);
@@ -770,14 +695,17 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 	ret = gcm_utils_mkdir_and_copy ("/usr/share/color/argyll/ref/it8.cht", it8cht, error);
 	if (!ret)
 		goto out;
-	ret = gcm_utils_mkdir_and_copy (priv->filename_source, device, error);
+	ret = gcm_utils_mkdir_and_copy (filename_source, device, error);
 	if (!ret)
 		goto out;
-	ret = gcm_utils_mkdir_and_copy (priv->filename_reference, it8ref, error);
+	ret = gcm_utils_mkdir_and_copy (filename_reference, it8ref, error);
 	if (!ret)
 		goto out;
 out:
+	g_free (basename);
 	g_free (filename);
+	g_free (filename_source);
+	g_free (filename_reference);
 	g_free (device);
 	g_free (it8cht);
 	g_free (it8ref);
@@ -796,6 +724,12 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 	GPtrArray *array = NULL;
 	gchar *filename = NULL;
 	gchar *command = NULL;
+	gchar *basename = NULL;
+
+	/* get shared data */
+	g_object_get (calibrate_argyll,
+		      "basename", &basename,
+		      NULL);
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("scanin", error);
@@ -806,7 +740,7 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
-	filename = g_strdup_printf ("%s.tif", priv->basename);
+	filename = g_strdup_printf ("%s.tif", basename);
 
 	/* setup the command */
 	g_ptr_array_add (array, g_strdup ("-v"));
@@ -844,6 +778,7 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 out:
 	g_free (filename);
 	g_free (command);
+	g_free (basename);
 	if (array != NULL)
 		g_ptr_array_unref (array);
 	g_strfreev (argv);
@@ -865,11 +800,17 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	gchar *copyright = NULL;
 	GPtrArray *array = NULL;
 	gchar *command = NULL;
+	gchar *basename = NULL;
+	gchar *manufacturer = NULL;
+	gchar *model = NULL;
 
-	g_return_val_if_fail (priv->basename != NULL, FALSE);
-	g_return_val_if_fail (priv->description != NULL, FALSE);
-	g_return_val_if_fail (priv->manufacturer != NULL, FALSE);
-	g_return_val_if_fail (priv->model != NULL, FALSE);
+	/* get shared data */
+	g_object_get (calibrate_argyll,
+		      "basename", &basename,
+		      "description", &description,
+		      "manufacturer", &manufacturer,
+		      "model", &model,
+		      NULL);
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("colprof", error);
@@ -883,7 +824,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	g_date_set_time_t (date, time (NULL));
 
         /* TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated" */
-	description = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", _("Custom"), priv->description, date->year, date->month, date->day);
+	description_tmp = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", _("Custom"), description, date->year, date->month, date->day);
 
 	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" */
 	copyright = g_strdup_printf ("%s %04i %s", _("Copyright (c)"), date->year, g_get_real_name ());
@@ -893,13 +834,13 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 
 	/* setup the command */
 	g_ptr_array_add (array, g_strdup ("-v"));
-	g_ptr_array_add (array, g_strdup_printf ("-A%s", priv->manufacturer));
-	g_ptr_array_add (array, g_strdup_printf ("-M%s", priv->model));
-	g_ptr_array_add (array, g_strdup_printf ("-D%s", description));
+	g_ptr_array_add (array, g_strdup_printf ("-A%s", manufacturer));
+	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
+	g_ptr_array_add (array, g_strdup_printf ("-D%s", description_tmp));
 	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
 	g_ptr_array_add (array, g_strdup ("-qm"));
 //	g_ptr_array_add (array, g_strdup ("-as"));
-	g_ptr_array_add (array, g_strdup (priv->basename));
+	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
 
@@ -935,6 +876,10 @@ out:
 		g_date_free (date);
 	g_free (description_tmp);
 	g_free (copyright);
+	g_free (basename);
+	g_free (manufacturer);
+	g_free (model);
+	g_free (description);
 	g_free (command);
 	g_strfreev (argv);
 	return ret;
@@ -952,12 +897,17 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 	gboolean ret;
 	const gchar *exts[] = {"cal", "ti1", "ti3", "tif", NULL};
 	const gchar *filenames[] = {"it8.cht", "it8ref.txt", NULL};
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	gchar *basename = NULL;
+
+	/* get shared data */
+	g_object_get (calibrate_argyll,
+		      "basename", &basename,
+		      NULL);
 
 	/* remove all the temp files */
-	if (priv->basename != NULL) {
+	if (basename != NULL) {
 		for (i=0; exts[i] != NULL; i++) {
-			filename_tmp = g_strdup_printf ("%s/%s.%s", GCM_CALIBRATE_ARGYLL_TEMP_DIR, priv->basename, exts[i]);
+			filename_tmp = g_strdup_printf ("%s/%s.%s", GCM_CALIBRATE_ARGYLL_TEMP_DIR, basename, exts[i]);
 			ret = g_file_test (filename_tmp, G_FILE_TEST_IS_REGULAR);
 			if (ret) {
 				egg_debug ("removing %s", filename_tmp);
@@ -979,7 +929,7 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 	}
 
 	/* we can't have finished with success */
-	if (priv->basename == NULL) {
+	if (basename == NULL) {
 		ret = FALSE;
 		if (error != NULL)
 			*error = g_error_new (1, 0, "profile was not generated");
@@ -987,7 +937,7 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 	}
 
 	/* get the finished icc file */
-	filename = g_strdup_printf ("%s/%s.icc", GCM_CALIBRATE_ARGYLL_TEMP_DIR, priv->basename);
+	filename = g_strdup_printf ("%s/%s.icc", GCM_CALIBRATE_ARGYLL_TEMP_DIR, basename);
 
 	/* we never finished all the steps */
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
@@ -1002,6 +952,7 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 		      NULL);
 	ret = TRUE;
 out:
+	g_free (basename);
 	g_free (filename);
 	return ret;
 }
@@ -1009,15 +960,13 @@ out:
 /**
  * gcm_calibrate_argyll_display:
  **/
-gboolean
-gcm_calibrate_argyll_display (GcmCalibrateArgyll *calibrate_argyll, GtkWindow *window, GError **error)
+static gboolean
+gcm_calibrate_argyll_display (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 {
 	GtkWidget *widget;
+	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 	gboolean ret;
-	GcmBrightness *brightness = NULL;
-	guint percentage = G_MAXUINT;
-	GError *error_tmp = NULL;
 
 	/* show main UI */
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
@@ -1030,36 +979,6 @@ gcm_calibrate_argyll_display (GcmCalibrateArgyll *calibrate_argyll, GtkWindow *w
 
 	/* TRANSLATORS: dialog message */
 	gcm_calibrate_argyll_set_message (calibrate_argyll, _("Setting up display device for use..."));
-
-	/* create new helper objects */
-	brightness = gcm_brightness_new ();
-
-	/* if we are an internal LCD, we need to set the brightness to maximum */
-	ret = gcm_utils_output_is_lcd_internal (priv->output_name);
-	if (ret) {
-		/* get the old brightness so we can restore state */
-		ret = gcm_brightness_get_percentage (brightness, &percentage, &error_tmp);
-		if (!ret) {
-			egg_warning ("failed to get brightness: %s", error_tmp->message);
-			g_error_free (error_tmp);
-			/* not fatal */
-			error_tmp = NULL;
-		}
-
-		/* set the new brightness */
-		ret = gcm_brightness_set_percentage (brightness, 100, &error_tmp);
-		if (!ret) {
-			egg_warning ("failed to set brightness: %s", error_tmp->message);
-			g_error_free (error_tmp);
-			/* not fatal */
-			error_tmp = NULL;
-		}
-	}
-
-	/* step 1 */
-	ret = gcm_calibrate_argyll_display_setup (calibrate_argyll, error);
-	if (!ret)
-		goto out;
 
 	/* step 1 */
 	ret = gcm_calibrate_argyll_display_neutralise (calibrate_argyll, error);
@@ -1086,31 +1005,17 @@ gcm_calibrate_argyll_display (GcmCalibrateArgyll *calibrate_argyll, GtkWindow *w
 	if (!ret)
 		goto out;
 out:
-	/* restore brightness */
-	if (percentage != G_MAXUINT) {
-		/* set the new brightness */
-		ret = gcm_brightness_set_percentage (brightness, percentage, &error_tmp);
-		if (!ret) {
-			egg_warning ("failed to restore brightness: %s", error_tmp->message);
-			g_error_free (error_tmp);
-			/* not fatal */
-			error = NULL;
-		}
-	}
-
-	if (brightness != NULL)
-		g_object_unref (brightness);
-
 	return ret;
 }
 
 /**
  * gcm_calibrate_argyll_device:
  **/
-gboolean
-gcm_calibrate_argyll_device (GcmCalibrateArgyll *calibrate_argyll, GtkWindow *window, GError **error)
+static gboolean
+gcm_calibrate_argyll_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 {
 	GtkWidget *widget;
+	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 	gboolean ret;
 
@@ -1181,66 +1086,12 @@ gcm_calibrate_argyll_exit_cb (VteTerminal *terminal, GcmCalibrateArgyll *calibra
 static void
 gcm_calibrate_argyll_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
-	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL (object);
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-
 	switch (prop_id) {
-	case PROP_IS_LCD:
-		g_value_set_boolean (value, priv->is_lcd);
-		break;
-	case PROP_IS_CRT:
-		g_value_set_boolean (value, priv->is_crt);
-		break;
-	case PROP_OUTPUT_NAME:
-		g_value_set_string (value, priv->output_name);
-		break;
-	case PROP_FILENAME_SOURCE:
-		g_value_set_string (value, priv->filename_source);
-		break;
-	case PROP_FILENAME_REFERENCE:
-		g_value_set_string (value, priv->filename_reference);
-		break;
-	case PROP_FILENAME_RESULT:
-		g_value_set_string (value, priv->filename_result);
-		break;
-	case PROP_BASENAME:
-		g_value_set_string (value, priv->basename);
-		break;
-	case PROP_MODEL:
-		g_value_set_string (value, priv->model);
-		break;
-	case PROP_DESCRIPTION:
-		g_value_set_string (value, priv->description);
-		break;
-	case PROP_MANUFACTURER:
-		g_value_set_string (value, priv->manufacturer);
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
 	}
 }
-
-/**
- * gcm_calibrate_argyll_guess_type:
- **/
-static void
-gcm_calibrate_argyll_guess_type (GcmCalibrateArgyll *calibrate_argyll)
-{
-	gboolean ret;
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-
-	/* guess based on the output name */
-	ret = gcm_utils_output_is_lcd (priv->output_name);
-	if (ret) {
-		priv->is_lcd = TRUE;
-		priv->is_crt = FALSE;
-	} else {
-		priv->is_lcd = FALSE;
-		priv->is_crt = FALSE;
-	}
-}
-
 
 /**
  * gcm_calibrate_argyll_cancel_cb:
@@ -1281,49 +1132,7 @@ gcm_calibrate_argyll_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmCal
 static void
 gcm_calibrate_argyll_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL (object);
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-
 	switch (prop_id) {
-	case PROP_IS_LCD:
-		priv->is_lcd = g_value_get_boolean (value);
-		break;
-	case PROP_IS_CRT:
-		priv->is_crt = g_value_get_boolean (value);
-		break;
-	case PROP_OUTPUT_NAME:
-		g_free (priv->output_name);
-		priv->output_name = g_strdup (g_value_get_string (value));
-		gcm_calibrate_argyll_guess_type (calibrate_argyll);
-		break;
-	case PROP_FILENAME_SOURCE:
-		g_free (priv->filename_source);
-		priv->filename_source = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_FILENAME_REFERENCE:
-		g_free (priv->filename_reference);
-		priv->filename_reference = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_FILENAME_RESULT:
-		g_free (priv->filename_result);
-		priv->filename_result = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_BASENAME:
-		g_free (priv->basename);
-		priv->basename = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_MODEL:
-		g_free (priv->model);
-		priv->model = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_DESCRIPTION:
-		g_free (priv->description);
-		priv->description = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_MANUFACTURER:
-		g_free (priv->manufacturer);
-		priv->manufacturer = g_strdup (g_value_get_string (value));
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -1336,91 +1145,15 @@ gcm_calibrate_argyll_set_property (GObject *object, guint prop_id, const GValue 
 static void
 gcm_calibrate_argyll_class_init (GcmCalibrateArgyllClass *klass)
 {
-	GParamSpec *pspec;
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
+	GcmCalibrateClass *parent_class = GCM_CALIBRATE_CLASS (klass);
 	object_class->finalize = gcm_calibrate_argyll_finalize;
 	object_class->get_property = gcm_calibrate_argyll_get_property;
 	object_class->set_property = gcm_calibrate_argyll_set_property;
 
-	/**
-	 * GcmCalibrateArgyll:is-lcd:
-	 */
-	pspec = g_param_spec_boolean ("is-lcd", NULL, NULL,
-				      FALSE,
-				      G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_IS_LCD, pspec);
-
-	/**
-	 * GcmCalibrateArgyll:is-crt:
-	 */
-	pspec = g_param_spec_boolean ("is-crt", NULL, NULL,
-				      FALSE,
-				      G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_IS_CRT, pspec);
-
-	/**
-	 * GcmCalibrateArgyll:output-name:
-	 */
-	pspec = g_param_spec_string ("output-name", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_OUTPUT_NAME, pspec);
-
-	/**
-	 * GcmCalibrateArgyll:filename-source:
-	 */
-	pspec = g_param_spec_string ("filename-source", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_FILENAME_SOURCE, pspec);
-
-	/**
-	 * GcmCalibrateArgyll:filename-reference:
-	 */
-	pspec = g_param_spec_string ("filename-reference", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_FILENAME_REFERENCE, pspec);
-
-	/**
-	 * GcmCalibrateArgyll:filename-result:
-	 */
-	pspec = g_param_spec_string ("filename-result", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_FILENAME_RESULT, pspec);
-
-	/**
-	 * GcmCalibrateArgyll:basename:
-	 */
-	pspec = g_param_spec_string ("basename", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_BASENAME, pspec);
-
-	/**
-	 * GcmCalibrateArgyll:model:
-	 */
-	pspec = g_param_spec_string ("model", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_MODEL, pspec);
-
-	/**
-	 * GcmCalibrateArgyll:description:
-	 */
-	pspec = g_param_spec_string ("description", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_DESCRIPTION, pspec);
-
-	/**
-	 * GcmCalibrateArgyll:manufacturer:
-	 */
-	pspec = g_param_spec_string ("manufacturer", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_MANUFACTURER, pspec);
+	/* setup klass links */
+	parent_class->calibrate_display = gcm_calibrate_argyll_display;
+	parent_class->calibrate_device = gcm_calibrate_argyll_device;
 
 	g_type_class_add_private (klass, sizeof (GcmCalibrateArgyllPrivate));
 }
@@ -1437,14 +1170,6 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 	GtkWidget *main_window;
 
 	calibrate_argyll->priv = GCM_CALIBRATE_ARGYLL_GET_PRIVATE (calibrate_argyll);
-	calibrate_argyll->priv->output_name = NULL;
-	calibrate_argyll->priv->filename_source = NULL;
-	calibrate_argyll->priv->filename_reference = NULL;
-	calibrate_argyll->priv->filename_result = NULL;
-	calibrate_argyll->priv->basename = NULL;
-	calibrate_argyll->priv->manufacturer = NULL;
-	calibrate_argyll->priv->model = NULL;
-	calibrate_argyll->priv->description = NULL;
 	calibrate_argyll->priv->child_pid = -1;
 	calibrate_argyll->priv->loop = g_main_loop_new (NULL, FALSE);
 
@@ -1510,14 +1235,6 @@ gcm_calibrate_argyll_finalize (GObject *object)
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
 	gtk_widget_hide (widget);
 
-	g_free (priv->filename_source);
-	g_free (priv->filename_reference);
-	g_free (priv->filename_result);
-	g_free (priv->output_name);
-	g_free (priv->basename);
-	g_free (priv->manufacturer);
-	g_free (priv->model);
-	g_free (priv->description);
 	g_main_loop_unref (priv->loop);
 	g_object_unref (priv->builder);
 	gnome_rr_screen_destroy (priv->rr_screen);

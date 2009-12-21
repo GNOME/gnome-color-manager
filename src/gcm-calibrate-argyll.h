@@ -23,6 +23,9 @@
 #define __GCM_CALIBRATE_ARGYLL_H
 
 #include <glib-object.h>
+#include <gtk/gtk.h>
+
+#include "gcm-calibrate.h"
 
 G_BEGIN_DECLS
 
@@ -39,13 +42,13 @@ typedef struct _GcmCalibrateArgyllClass		GcmCalibrateArgyllClass;
 
 struct _GcmCalibrateArgyll
 {
-	 GObject				 parent;
+	 GcmCalibrate				 parent;
 	 GcmCalibrateArgyllPrivate		*priv;
 };
 
 struct _GcmCalibrateArgyllClass
 {
-	GObjectClass	parent_class;
+	GcmCalibrateClass	parent_class;
 	/* padding for future expansion */
 	void (*_gcm_reserved1) (void);
 	void (*_gcm_reserved2) (void);
@@ -56,12 +59,6 @@ struct _GcmCalibrateArgyllClass
 
 GType		 	 gcm_calibrate_argyll_get_type		(void);
 GcmCalibrateArgyll	*gcm_calibrate_argyll_new		(void);
-gboolean	 	 gcm_calibrate_argyll_display		(GcmCalibrateArgyll	*calibrate_argyll,
-								 GtkWindow		*window,
-								 GError			**error);
-gboolean		 gcm_calibrate_argyll_device		(GcmCalibrateArgyll	*calibrate_argyll,
-								 GtkWindow		*window,
-								 GError			**error);
 
 G_END_DECLS
 

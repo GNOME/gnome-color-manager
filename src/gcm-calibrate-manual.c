@@ -82,7 +82,7 @@ enum {
 	GCM_CALIBRATE_MANUAL_PAGE_LAST
 };
 
-G_DEFINE_TYPE (GcmCalibrateManual, gcm_calibrate_manual, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GcmCalibrateManual, gcm_calibrate_manual, GCM_TYPE_CALIBRATE)
 
 
 /**
@@ -433,12 +433,12 @@ gcm_calibrate_manual_apply_cb (GtkWidget *widget, GcmCalibrateManual *calibrate)
 /**
  * gcm_calibrate_manual_display:
  **/
-gboolean
-gcm_calibrate_manual_display (GcmCalibrateManual *calibrate, GtkWindow *window, GError **error)
+static gboolean
+gcm_calibrate_manual_display (GcmCalibrate *calibrate_, GtkWindow *window, GError **error)
 {
 	GtkWidget *widget;
 	guint i;
-
+	GcmCalibrateManual *calibrate = GCM_CALIBRATE_MANUAL(calibrate_);
 	GcmCalibrateManualPrivate *priv = calibrate->priv;
 	egg_debug ("calibrate_display in %i steps", priv->calibration_steps);
 
@@ -520,9 +520,13 @@ gcm_calibrate_manual_class_init (GcmCalibrateManualClass *klass)
 {
 	GParamSpec *pspec;
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
+	GcmCalibrateClass *parent_class = GCM_CALIBRATE_CLASS (klass);
 	object_class->finalize = gcm_calibrate_manual_finalize;
 	object_class->get_property = gcm_calibrate_manual_get_property;
 	object_class->set_property = gcm_calibrate_manual_set_property;
+
+	/* setup klass links */
+	parent_class->calibrate_display = gcm_calibrate_manual_display;
 
 	/**
 	 * GcmCalibrateManual:calibration-steps:
@@ -678,10 +682,18 @@ gcm_calibrate_manual_test (EggTest *test)
 	calibrate = gcm_calibrate_manual_new ();
 	egg_test_assert (test, calibrate != NULL);
 
+	/* set to avoid a critical warning */
+	g_object_set (calibrate,
+		      "output-name", "lvds1",
+		      NULL);
+
 	/************************************************************/
 	egg_test_title (test, "calibrate display manually");
-	ret = gcm_calibrate_manual_display (calibrate, NULL, &error);
-	egg_test_assert (test, ret);
+	ret = gcm_calibrate_display (GCM_CALIBRATE(calibrate), NULL, &error);
+	if (ret)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "error: %s", error->message);
 
 	g_object_unref (calibrate);
 
