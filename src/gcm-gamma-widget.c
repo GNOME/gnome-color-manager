@@ -42,8 +42,6 @@ struct GcmGammaWidgetPrivate
 	guint			 chart_width;
 	guint			 chart_height;
 	cairo_t			*cr;
-	guint			 x_offset;
-	guint			 y_offset;
 };
 
 static gboolean gcm_gamma_widget_expose (GtkWidget *gamma, GdkEventExpose *event);
@@ -291,21 +289,19 @@ gcm_gamma_widget_draw (GtkWidget *gamma_widget, cairo_t *cr)
 	g_return_if_fail (gama != NULL);
 	g_return_if_fail (GCM_IS_GAMMA_WIDGET (gama));
 
-	cairo_save (cr);
-
 	/* make size adjustment */
 	gtk_widget_get_allocation (gamma_widget, &allocation);
+	if (allocation.height <= 5 || allocation.width <= 5)
+		return;
+
+	/* save */
 	gama->priv->chart_height = ((guint) (allocation.height / 2) * 2) - 1;
 	gama->priv->chart_width = allocation.width;
-	gama->priv->x_offset = 1;
-	gama->priv->y_offset = 1;
 
 	/* gamma background */
 	gcm_gamma_widget_draw_bounding_box (cr, 0, 0, gama->priv->chart_width, gama->priv->chart_height);
 	gcm_gamma_widget_draw_lines (gama, cr);
 	gcm_gamma_widget_draw_box (gama, cr);
-
-	cairo_restore (cr);
 }
 
 /**
