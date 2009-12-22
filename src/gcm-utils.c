@@ -404,7 +404,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	use_global = gconf_client_get_bool (gconf_client, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION, NULL);
 	if (use_global && filename != NULL) {
 		/* create dummy CLUT */
-		profile = gcm_profile_new ();
+		profile = gcm_profile_default_new ();
 		ret = gcm_profile_parse (profile, filename, error);
 		if (!ret)
 			goto out;

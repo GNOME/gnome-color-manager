@@ -188,7 +188,7 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *sysfs_pat
 				      NULL);
 
 			/* open and parse filename */
-			profile = gcm_profile_new ();
+			profile = gcm_profile_default_new ();
 			ret = gcm_profile_parse (profile, filename, &error);
 			if (!ret) {
 				egg_warning ("failed to parse %s: %s", filename, error->message);
@@ -237,7 +237,7 @@ gcm_dbus_get_profiles_for_type_internal (GcmDbus *dbus, GcmDeviceType type)
 		filename = g_ptr_array_index (array_devices, i);
 
 		/* open and parse filename */
-		profile = gcm_profile_new ();
+		profile = gcm_profile_default_new ();
 		ret = gcm_profile_parse (profile, filename, &error);
 		if (!ret) {
 			egg_warning ("failed to parse %s: %s", filename, error->message);

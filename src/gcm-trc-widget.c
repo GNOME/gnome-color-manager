@@ -432,7 +432,7 @@ gcm_trc_widget_test (EggTest *test)
 	filename_profile = egg_test_get_data_file ("AdobeGammaTest.icm");
 	egg_test_assert (test, (filename_profile != NULL));
 
-	profile = gcm_profile_new ();
+	profile = gcm_profile_default_new ();
 	gcm_profile_parse (profile, filename_profile, NULL);
 	clut = gcm_profile_generate_vcgt (profile, 256);
 	g_object_set (widget,

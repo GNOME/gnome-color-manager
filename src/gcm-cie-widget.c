@@ -1215,7 +1215,7 @@ gcm_cie_widget_test (EggTest *test)
 	filename_profile = egg_test_get_data_file ("bluish.icc");
 	egg_test_assert (test, (filename_profile != NULL));
 
-	profile = gcm_profile_new ();
+	profile = gcm_profile_default_new ();
 	gcm_profile_parse (profile, filename_profile, NULL);
 	g_object_get (profile,
 		      "white-point", &white,

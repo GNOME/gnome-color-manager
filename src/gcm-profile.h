@@ -46,7 +46,16 @@ struct _GcmProfile
 
 struct _GcmProfileClass
 {
-	GObjectClass	parent_class;
+	GObjectClass	 parent_class;
+	gboolean	 (*parse_data)		(GcmProfile	*profile,
+						 const guint8	*data,
+						 gsize		 length,
+						 GError		**error);
+	GcmClut		*(*generate_vcgt)	(GcmProfile	*profile,
+						 guint		 size);
+	GcmClut		*(*generate_curve)	(GcmProfile	*profile,
+						 guint		 size);
+
 	/* padding for future expansion */
 	void (*_gcm_reserved1) (void);
 	void (*_gcm_reserved2) (void);
@@ -82,6 +91,7 @@ typedef enum {
 
 GType		 gcm_profile_get_type		  	(void);
 GcmProfile	*gcm_profile_new			(void);
+GcmProfile	*gcm_profile_default_new		(void);
 gboolean	 gcm_profile_parse			(GcmProfile	*profile,
 							 const gchar	*filename,
 							 GError		**error);

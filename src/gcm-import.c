@@ -91,7 +91,7 @@ main (int argc, char **argv)
 	}
 
 	/* load profile */
-	profile = gcm_profile_new ();
+	profile = gcm_profile_default_new ();
 	ret = gcm_profile_parse (profile, files[0], &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */
