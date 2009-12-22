@@ -55,6 +55,9 @@ GcmProfileType	 gcm_utils_device_type_to_profile_type	(GcmDeviceType		 type);
 gchar		*gcm_utils_format_date_time		(const struct tm	*created);
 gboolean	 gcm_utils_install_package		(const gchar		*package_name,
 							 GtkWindow		*window);
+void		 gcm_utils_ensure_sane_length		(gchar			*text,
+							 guint			 max_length);
+void		 gcm_utils_ensure_printable		(gchar			*text);
 
 #endif /* __GCM_UTILS_H */
 
