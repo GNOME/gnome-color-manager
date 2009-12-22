@@ -279,7 +279,6 @@ gcm_prefs_calibrate_device_get_scanned_profile (const gchar *directory)
 	/* setup the filter */
 	filter = gtk_file_filter_new ();
 	gtk_file_filter_add_mime_type (filter, "image/tiff");
-	gtk_file_filter_add_mime_type (filter, "application/x-it87_2");
 	/* TRANSLATORS: filter name on the file->open dialog */
 	gtk_file_filter_set_name (filter, _("Supported images files"));
 	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
@@ -321,8 +320,14 @@ gcm_prefs_calibrate_device_get_reference_data (const gchar *directory)
 
 	/* setup the filter */
 	filter = gtk_file_filter_new ();
+	gtk_file_filter_add_mime_type (filter, "application/x-it87");
+
+	/* we can remove this when we depend on a new shared-mime-info */
 	gtk_file_filter_add_pattern (filter, "*.txt");
 	gtk_file_filter_add_pattern (filter, "*.TXT");
+	gtk_file_filter_add_pattern (filter, "*.it8");
+	gtk_file_filter_add_pattern (filter, "*.IT8");
+
 	/* TRANSLATORS: filter name on the file->open dialog */
 	gtk_file_filter_set_name (filter, _("CIE values"));
 	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
