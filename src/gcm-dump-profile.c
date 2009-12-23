@@ -48,7 +48,7 @@ gcm_dump_profile_filename (const gchar *filename)
 	gchar *datetime = NULL;
 
 	/* parse profile */
-	profile = gcm_profile_new ();
+	profile = gcm_profile_default_new ();
 	ret = gcm_profile_parse (profile, filename, &error);
 	if (!ret) {
 		egg_warning ("failed to parse: %s", error->message);

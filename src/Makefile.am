@@ -47,6 +47,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-trc-widget.h				\
 	gcm-gamma-widget.c				\
 	gcm-gamma-widget.h				\
+	gcm-profile-lcms1.c				\
+	gcm-profile-lcms1.h				\
 	gcm-profile.c					\
 	gcm-profile.h
 
@@ -206,6 +208,7 @@ gcm_self_test_SOURCES =					\
 	gcm-utils.c					\
 	gcm-device.c					\
 	gcm-profile.c					\
+	gcm-profile-lcms1.c				\
 	gcm-brightness.c				\
 	gcm-clut.c					\
 	gcm-dmi.c					\

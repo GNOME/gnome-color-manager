@@ -124,6 +124,66 @@ gcm_utils_output_is_lcd (const gchar *output_name)
 }
 
 /**
+ * gcm_utils_ensure_sane_length:
+ **/
+void
+gcm_utils_ensure_sane_length (gchar *text, guint max_length)
+{
+	guint i;
+	guint len;
+
+	/* get length */
+	len = strlen (text);
+
+	/* check we have room for ellipsis */
+	if (len <= max_length - 4)
+		return;
+
+	/* already correct len */
+	if (len == max_length)
+		return;
+
+	/* truncate, finding prior word break */
+	for (i=max_length-1; i>0; i--) {
+		if (text[i] == ' ')
+			break;
+	}
+
+	/* one long string with no spaces */
+	if (i == 0)
+		i = max_length - 3;
+
+	/* ellipsis */
+	text[i+0] = '.';
+	text[i+1] = '.';
+	text[i+2] = '.';
+	text[i+3] = '\0';
+}
+
+/**
+ * gcm_utils_ensure_printable:
+ **/
+void
+gcm_utils_ensure_printable (gchar *text)
+{
+	guint i;
+	guint idx = 0;
+
+	g_return_if_fail (text != NULL);
+
+	for (i=0; text[i] != '\0'; i++) {
+		if (g_ascii_isalnum (text[i]) ||
+		    g_ascii_ispunct (text[i]) ||
+		    text[i] == ' ')
+			text[idx++] = text[i];
+	}
+	text[idx] = '\0';
+
+	/* broken profiles have _ instead of spaces */
+	g_strdelimit (text, "_", ' ');
+}
+
+/**
  * gcm_utils_get_gamma_size_fallback:
  **/
 static guint
@@ -344,7 +404,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	use_global = gconf_client_get_bool (gconf_client, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION, NULL);
 	if (use_global && filename != NULL) {
 		/* create dummy CLUT */
-		profile = gcm_profile_new ();
+		profile = gcm_profile_default_new ();
 		ret = gcm_profile_parse (profile, filename, error);
 		if (!ret)
 			goto out;
@@ -729,6 +789,7 @@ gcm_utils_test (EggTest *test)
 	gboolean ret;
 	GError *error = NULL;
 	GPtrArray *array;
+	gchar *text;
 	gchar *filename;
 	GcmProfileType profile_type;
 	GcmDeviceType device_type;
@@ -790,6 +851,66 @@ gcm_utils_test (EggTest *test)
 	else
 		egg_test_failed (test, "failed to get filename: %s", filename);
 	g_free (filename);
+
+	/************************************************************/
+	egg_test_title (test, "check strip printable");
+	text = g_strdup ("1\r34 67_90");
+	gcm_utils_ensure_printable (text);
+	if (g_strcmp0 (text, "134 67 90") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", text);
+	g_free (text);
+
+	/************************************************************/
+	egg_test_title (test, "check sane length high");
+	text = g_strdup ("1234 67890");
+	gcm_utils_ensure_sane_length (text, 1024);
+	if (g_strcmp0 (text, "1234 67890") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", text);
+	g_free (text);
+
+	/************************************************************/
+	egg_test_title (test, "check sane length limit");
+	text = g_strdup ("1234 67890");
+	gcm_utils_ensure_sane_length (text, 10);
+	if (g_strcmp0 (text, "1234 67890") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", text);
+	g_free (text);
+
+	/************************************************************/
+	egg_test_title (test, "check sane length truncate");
+	text = g_strdup ("1234 67890");
+	gcm_utils_ensure_sane_length (text, 8);
+	if (g_strcmp0 (text, "1234...") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", text);
+	g_free (text);
+
+	/************************************************************/
+	egg_test_title (test, "check sane length no spaces");
+	text = g_strdup ("1234 67890");
+	gcm_utils_ensure_sane_length (text, 4);
+	if (g_strcmp0 (text, "1...") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", text);
+	g_free (text);
+
+	/************************************************************/
+	egg_test_title (test, "check sane length no data");
+	text = g_strdup ("");
+	gcm_utils_ensure_sane_length (text, 4);
+	if (g_strcmp0 (text, "") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "invalid value: %s", text);
+	g_free (text);
 
 	/************************************************************/
 	egg_test_title (test, "get default config location (when in make check)");

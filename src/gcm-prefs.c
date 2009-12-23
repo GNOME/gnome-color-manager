@@ -714,7 +714,7 @@ gcm_prefs_profile_import_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* add new profile */
-	profile = gcm_profile_new ();
+	profile = gcm_profile_default_new ();
 
 	/* parse the new file */
 	ret = gcm_profile_parse (profile, destination, &error);
@@ -891,7 +891,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		}
 
 		/* create a new instance */
-		profile = gcm_profile_new ();
+		profile = gcm_profile_default_new ();
 
 		/* parse the new file */
 		ret = gcm_profile_parse (profile, destination, &error);
@@ -1690,7 +1690,7 @@ gcm_prefs_add_profiles (GtkWidget *widget)
 		filename = g_ptr_array_index (filename_array, i);
 
 		/* parse the profile name */
-		profile = gcm_profile_new ();
+		profile = gcm_profile_default_new ();
 		ret = gcm_profile_parse (profile, filename, &error);
 		if (!ret) {
 			egg_warning ("failed to add profile: %s", error->message);
