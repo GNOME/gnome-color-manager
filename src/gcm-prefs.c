@@ -188,6 +188,7 @@ gcm_prefs_calibrate_display (GcmCalibrate *calibrate)
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
 	gchar *description = NULL;
+	gchar *device = NULL;
 	GtkWindow *window;
 
 	/* get the device */
@@ -207,16 +208,30 @@ gcm_prefs_calibrate_display (GcmCalibrate *calibrate)
 	basename = gcm_prefs_calibrate_get_basename (current_device);
 
 	/* get model */
-	if (model == NULL)
-		model = g_strdup ("unknown model");
+	if (model == NULL) {
+		/* TRANSLATORS: this is saved in the profile */
+		model = g_strdup (_("Unknown model"));
+	}
 
 	/* get description */
-	if (description == NULL)
-		description = g_strdup ("calibrated monitor");
+	if (description == NULL) {
+		/* TRANSLATORS: this is saved in the profile */
+		description = g_strdup (_("Unknown display"));
+	}
 
 	/* get manufacturer */
-	if (manufacturer == NULL)
-		manufacturer = g_strdup ("unknown manufacturer");
+	if (manufacturer == NULL) {
+		/* TRANSLATORS: this is saved in the profile */
+		manufacturer = g_strdup (_("Unknown manufacturer"));
+	}
+
+	// TODO: get calibration device model
+
+	/* get device */
+	if (device == NULL) {
+		/* TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated */
+		device = g_strdup (_("Custom"));
+	}
 
 	/* set the proper output name */
 	g_object_set (calibrate,
@@ -225,8 +240,8 @@ gcm_prefs_calibrate_display (GcmCalibrate *calibrate)
 		      "model", model,
 		      "description", description,
 		      "manufacturer", manufacturer,
+		      "device", device,
 		      NULL);
-
 
 	/* run each task in order */
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
@@ -245,6 +260,7 @@ out:
 		g_error_free (error);
 	}
 
+	g_free (device);
 	g_free (output_name);
 	g_free (basename);
 	g_free (manufacturer);

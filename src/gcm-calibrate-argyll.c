@@ -803,6 +803,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	gchar *basename = NULL;
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
+	gchar *device = NULL;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
@@ -810,6 +811,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 		      "description", &description,
 		      "manufacturer", &manufacturer,
 		      "model", &model,
+		      "device", &device,
 		      NULL);
 
 	/* get correct name of the command */
@@ -823,8 +825,8 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	date = g_date_new ();
 	g_date_set_time_t (date, time (NULL));
 
-        /* TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated" */
-	description_tmp = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", _("Custom"), description, date->year, date->month, date->day);
+        /* create a long description */
+	description_tmp = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", device, description, date->year, date->month, date->day);
 
 	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" */
 	copyright = g_strdup_printf ("%s %04i %s", _("Copyright (c)"), date->year, g_get_real_name ());
@@ -881,6 +883,7 @@ out:
 	g_free (model);
 	g_free (description);
 	g_free (command);
+	g_free (device);
 	g_strfreev (argv);
 	return ret;
 }

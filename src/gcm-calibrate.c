@@ -58,6 +58,7 @@ struct _GcmCalibratePrivate
 	gchar				*manufacturer;
 	gchar				*model;
 	gchar				*description;
+	gchar				*device;
 };
 
 enum {
@@ -65,6 +66,7 @@ enum {
 	PROP_BASENAME,
 	PROP_MODEL,
 	PROP_DESCRIPTION,
+	PROP_DEVICE,
 	PROP_MANUFACTURER,
 	PROP_IS_LCD,
 	PROP_IS_CRT,
@@ -291,6 +293,9 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 	case PROP_DESCRIPTION:
 		g_value_set_string (value, priv->description);
 		break;
+	case PROP_DEVICE:
+		g_value_set_string (value, priv->device);
+		break;
 	case PROP_MANUFACTURER:
 		g_value_set_string (value, priv->manufacturer);
 		break;
@@ -364,6 +369,10 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 	case PROP_DESCRIPTION:
 		g_free (priv->description);
 		priv->description = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_DEVICE:
+		g_free (priv->device);
+		priv->device = g_strdup (g_value_get_string (value));
 		break;
 	case PROP_MANUFACTURER:
 		g_free (priv->manufacturer);
@@ -460,6 +469,14 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 	g_object_class_install_property (object_class, PROP_DESCRIPTION, pspec);
 
 	/**
+	 * GcmCalibrate:device:
+	 */
+	pspec = g_param_spec_string ("device", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_DEVICE, pspec);
+
+	/**
 	 * GcmCalibrate:manufacturer:
 	 */
 	pspec = g_param_spec_string ("manufacturer", NULL, NULL,
@@ -485,6 +502,7 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->manufacturer = NULL;
 	calibrate->priv->model = NULL;
 	calibrate->priv->description = NULL;
+	calibrate->priv->device = NULL;
 }
 
 /**
@@ -504,6 +522,7 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->manufacturer);
 	g_free (priv->model);
 	g_free (priv->description);
+	g_free (priv->device);
 
 	G_OBJECT_CLASS (gcm_calibrate_parent_class)->finalize (object);
 }
