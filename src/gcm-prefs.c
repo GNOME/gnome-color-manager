@@ -852,6 +852,12 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		      "filename-result", &filename,
 		      NULL);
 
+	/* failed to get profile */
+	if (filename == NULL) {
+		egg_warning ("failed to get filename from calibration");
+		goto out;
+	}
+
 	/* copy the ICC file to the proper location */
 	destination = gcm_utils_get_profile_destination (filename);
 	ret = gcm_utils_mkdir_and_copy (filename, destination, &error);

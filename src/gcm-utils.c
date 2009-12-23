@@ -49,6 +49,8 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 	guint32 xid = 0;
 	gchar **packages = NULL;
 
+	g_return_val_if_fail (package_name != NULL, FALSE);
+
 #ifndef GCM_USE_PACKAGEKIT
 	egg_warning ("cannot install %s: this package was not compiled with --enable-packagekit", package_name);
 	return FALSE;
@@ -131,6 +133,8 @@ gcm_utils_ensure_sane_length (gchar *text, guint max_length)
 {
 	guint i;
 	guint len;
+
+	g_return_if_fail (text != NULL);
 
 	/* get length */
 	len = strlen (text);
@@ -347,6 +351,8 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	GcmDeviceType type;
 	GnomeRRScreen *rr_screen = NULL;
 	GConfClient *gconf_client = NULL;
+
+	g_return_val_if_fail (device != NULL, FALSE);
 
 	/* use gconf to decide to set LUT or set ATOMs */
 	gconf_client = gconf_client_get_default ();
@@ -573,6 +579,9 @@ gcm_utils_mkdir_and_copy (const gchar *source, const gchar *destination, GError 
 	GFile *destfile;
 	GFile *destpath;
 
+	g_return_val_if_fail (source != NULL, FALSE);
+	g_return_val_if_fail (destination != NULL, FALSE);
+
 	/* setup paths */
 	sourcefile = g_file_new_for_path (source);
 	path = g_path_get_dirname (destination);
@@ -608,6 +617,8 @@ gcm_utils_get_profile_destination (const gchar *filename)
 {
 	gchar *basename;
 	gchar *destination;
+
+	g_return_val_if_fail (filename != NULL, NULL);
 
 	/* get destination filename for this source file */
 	basename = g_path_get_basename (filename);
