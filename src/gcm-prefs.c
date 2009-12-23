@@ -33,13 +33,14 @@
 
 #include "egg-debug.h"
 
-#include "gcm-utils.h"
-#include "gcm-profile.h"
 #include "gcm-calibrate-argyll.h"
-#include "gcm-client.h"
-#include "gcm-xyz.h"
 #include "gcm-cie-widget.h"
+#include "gcm-client.h"
+#include "gcm-color-device.h"
+#include "gcm-profile.h"
 #include "gcm-trc-widget.h"
+#include "gcm-utils.h"
+#include "gcm-xyz.h"
 
 /* DISTROS: you will have to patch if you have changed the name of these packages */
 #define GCM_PREFS_PACKAGE_NAME_SHARED_COLOR_TARGETS	"shared-color-targets"
@@ -52,8 +53,8 @@ static GcmDevice *current_device = NULL;
 static GnomeRRScreen *rr_screen = NULL;
 static GPtrArray *profiles_array = NULL;
 static GPtrArray *profiles_array_in_combo = NULL;
-static GUdevClient *client = NULL;
 static GcmClient *gcm_client = NULL;
+static GcmColorDevice *color_device = NULL;
 static gboolean setting_up_device = FALSE;
 static GtkWidget *info_bar = NULL;
 static GtkWidget *cie_widget = NULL;
@@ -225,9 +226,12 @@ gcm_prefs_calibrate_display (GcmCalibrate *calibrate)
 		manufacturer = g_strdup (_("Unknown manufacturer"));
 	}
 
-	// TODO: get calibration device model
+	/* get calibration device model */
+	g_object_get (color_device,
+		      "model", &device,
+		      NULL);
 
-	/* get device */
+	/* get device, harder */
 	if (device == NULL) {
 		/* TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated */
 		device = g_strdup (_("Custom"));
@@ -1041,33 +1045,6 @@ gcm_prefs_add_profiles_columns (GtkTreeView *treeview)
 }
 
 /**
- * gcm_prefs_has_hardware_device_attached:
- **/
-static gboolean
-gcm_prefs_has_hardware_device_attached (void)
-{
-	GList *devices;
-	GList *l;
-	GUdevDevice *device;
-	gboolean ret = FALSE;
-
-	/* get all USB devices */
-	devices = g_udev_client_query_by_subsystem (client, "usb");
-	for (l = devices; l != NULL; l = l->next) {
-		device = l->data;
-		ret = g_udev_device_get_property_as_boolean (device, "COLOR_MEASUREMENT_DEVICE");
-		if (ret) {
-			egg_debug ("found color management device: %s", g_udev_device_get_sysfs_path (device));
-			break;
-		}
-	}
-
-	g_list_foreach (devices, (GFunc) g_object_unref, NULL);
-	g_list_free (devices);
-	return ret;
-}
-
-/**
  * gcm_prefs_set_calibrate_button_sensitivity:
  **/
 static void
@@ -1096,7 +1073,9 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 	if (type == GCM_DEVICE_TYPE_DISPLAY) {
 
 		/* find whether we have hardware installed */
-		ret = gcm_prefs_has_hardware_device_attached ();
+		g_object_get (color_device,
+			      "present", &ret,
+			      NULL);
 #ifndef GCM_HARDWARE_DETECTION
 		egg_debug ("overriding device presence %i with TRUE", ret);
 		ret = TRUE;
@@ -1849,12 +1828,11 @@ out:
 }
 
 /**
- * gcm_prefs_uevent_cb:
+ * gcm_prefs_color_device_changed_cb:
  **/
 static void
-gcm_prefs_uevent_cb (GUdevClient *client_, const gchar *action, GUdevDevice *device, gpointer user_data)
+gcm_prefs_color_device_changed_cb (GcmColorDevice *_color_device, gpointer user_data)
 {
-	egg_debug ("uevent %s", action);
 	gcm_prefs_set_calibrate_button_sensitivity ();
 }
 
@@ -2267,7 +2245,6 @@ main (int argc, char **argv)
 	gboolean use_global;
 	gboolean use_atom;
 	GtkTreeSelection *selection;
-	const gchar *subsystems[] = {"usb", NULL};
 	GtkWidget *info_bar_label;
 	GtkSizeGroup *size_group = NULL;
 	GtkSizeGroup *size_group2 = NULL;
@@ -2316,11 +2293,6 @@ main (int argc, char **argv)
 		g_error_free (error);
 		goto out;
 	}
-
-	/* use GUdev to find the calibration device */
-	client = g_udev_client_new (subsystems);
-	g_signal_connect (client, "uevent",
-			  G_CALLBACK (gcm_prefs_uevent_cb), NULL);
 
 	/* create list stores */
 	list_store_devices = gtk_list_store_new (GPM_DEVICES_COLUMN_LAST, G_TYPE_STRING, G_TYPE_STRING,
@@ -2524,6 +2496,10 @@ main (int argc, char **argv)
 	g_signal_connect (gcm_client, "added", G_CALLBACK (gcm_prefs_added_cb), NULL);
 	g_signal_connect (gcm_client, "removed", G_CALLBACK (gcm_prefs_removed_cb), NULL);
 
+	/* use the color device */
+	color_device = gcm_color_device_new ();
+	g_signal_connect (color_device, "changed", G_CALLBACK (gcm_prefs_color_device_changed_cb), NULL);
+
 	/* set the parent window if it is specified */
 	if (xid != 0) {
 		egg_debug ("Setting xid %i", xid);
@@ -2629,10 +2605,10 @@ out:
 		g_object_unref (size_group2);
 	if (current_device != NULL)
 		g_object_unref (current_device);
+	if (color_device != NULL)
+		g_object_unref (color_device);
 	if (rr_screen != NULL)
 		gnome_rr_screen_destroy (rr_screen);
-	if (client != NULL)
-		g_object_unref (client);
 	if (gconf_client != NULL)
 		g_object_unref (gconf_client);
 	if (builder != NULL)
