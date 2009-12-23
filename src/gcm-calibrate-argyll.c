@@ -318,7 +318,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	/* TRANSLATORS: title, default paramters needed to calibrate_argyll */
 	gcm_calibrate_argyll_set_title (calibrate_argyll, _("Getting default parameters"));
 	/* TRANSLATORS: dialog message */
-	gcm_calibrate_argyll_set_message (calibrate_argyll, _("This pre-calibrate_argylls the screen by sending colored and gray patches to your screen and measuring them with the hardware device."));
+	gcm_calibrate_argyll_set_message (calibrate_argyll, _("This pre-calibrates the screen by sending colored and gray patches to your screen and measuring them with the hardware device."));
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
