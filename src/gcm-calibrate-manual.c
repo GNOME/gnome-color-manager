@@ -365,7 +365,7 @@ gcm_calibrate_manual_setup_page (GcmCalibrateManual *calibrate, guint page)
 		gtk_widget_show (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "label_text1"));
 		/* TRANSLATORS: message text */
-		gtk_label_set_label (GTK_LABEL(widget), _("This display is now calibrated. You can change the currrent profile using the Color Profiles program."));
+		gtk_label_set_label (GTK_LABEL(widget), _("This display is now calibrated. You can change the current profile using the Color Profiles program."));
 		widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "hbox_text2"));
 		gtk_widget_hide (widget);
 		goto out;

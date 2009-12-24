@@ -783,7 +783,7 @@ gcm_utils_format_date_time (const struct tm *created)
 	gchar buffer[256];
 
 	/* TRANSLATORS: this is the profile creation date strftime format */
-	strftime (buffer, sizeof(buffer), _("%e %B %Y, %H:%M:%S"), created);
+	strftime (buffer, sizeof(buffer), _("%B %e %Y, %I:%M:%S %p"), created);
 
 	return g_strdup (g_strchug (buffer));
 }

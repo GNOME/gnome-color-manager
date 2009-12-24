@@ -428,7 +428,7 @@ main (int argc, char **argv)
 		type_enum = gcm_device_type_from_text (type);
 		if (type_enum == GCM_DEVICE_TYPE_UNKNOWN) {
 			/* TRANSLATORS: this is when the user does --type=mickeymouse */
-			g_print ("%s\n", _("Device type not recognised"));
+			g_print ("%s\n", _("Device type not recognized"));
 		} else {
 			/* show device profiles */
 			gcm_inspect_show_profiles_for_type (type);
