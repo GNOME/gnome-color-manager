@@ -87,6 +87,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 {
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
 	gboolean ret = TRUE;
+	gboolean ret_tmp;
 	GtkWidget *dialog;
 	GtkResponseType response;
 	GString *string = NULL;
@@ -218,8 +219,8 @@ out:
 	/* restore brightness */
 	if (percentage != G_MAXUINT) {
 		/* set the new brightness */
-		ret = gcm_brightness_set_percentage (brightness, percentage, &error_tmp);
-		if (!ret) {
+		ret_tmp = gcm_brightness_set_percentage (brightness, percentage, &error_tmp);
+		if (!ret_tmp) {
 			egg_warning ("failed to restore brightness: %s", error_tmp->message);
 			g_error_free (error_tmp);
 			/* not fatal */
