@@ -365,6 +365,44 @@ gcm_prefs_calibrate_device_get_reference_data (const gchar *directory)
 }
 
 /**
+ * gcm_prefs_get_device_for_it8_file:
+ **/
+static gchar *
+gcm_prefs_get_device_for_it8_file (const gchar *filename)
+{
+	gchar *contents = NULL;
+	gchar **lines = NULL;
+	gchar *device = NULL;
+	gboolean ret;
+	GError *error = NULL;
+	guint i;
+
+	/* get contents */
+	ret = g_file_get_contents (filename, &contents, NULL, &error);
+	if (!ret) {
+		egg_warning ("failed to get contents: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* split */
+	lines = g_strsplit (contents, "\n", 15);
+	for (i=0; lines[i] != NULL; i++) {
+		if (!g_str_has_prefix (lines[i], "ORIGINATOR"))
+			continue;
+
+		/* copy, without the header or double quotes */
+		device = g_strdup (lines[i]+12);
+		g_strdelimit (device, "\"", '\0');
+		break;
+	}
+out:
+	g_free (contents);
+	g_strfreev (lines);
+	return device;
+}
+
+/**
  * gcm_prefs_calibrate_device:
  **/
 static gboolean
@@ -379,6 +417,7 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
 	gchar *description = NULL;
+	gchar *device = NULL;
 	const gchar *directory;
 	GtkWindow *window;
 
@@ -452,6 +491,11 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	if (description == NULL)
 		description = g_strdup ("Generic scanner");
 
+	/* use the ORIGINATOR in the it8 file */
+	device = gcm_prefs_get_device_for_it8_file (reference_data);
+	if (device == NULL)
+		device = g_strdup ("IT8.7");
+
 	/* set the calibration parameters */
 	g_object_set (calibrate,
 		      "basename", basename,
@@ -460,6 +504,7 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 		      "manufacturer", manufacturer,
 		      "filename-source", scanned_image,
 		      "filename-reference", reference_data,
+		      "device", device,
 		      NULL);
 
 	/* do each step */
@@ -470,6 +515,7 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 		goto out;
 	}
 out:
+	g_free (device);
 	g_free (basename);
 	g_free (manufacturer);
 	g_free (model);
