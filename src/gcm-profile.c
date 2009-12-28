@@ -752,7 +752,7 @@ gcm_profile_test (EggTest *test)
 	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
 	test_data.colorspace = GCM_PROFILE_COLORSPACE_RGB;
 	test_data.luminance = 0.648454;
-	test_data.datetime = "9 February 1998, 06:49:00";
+	test_data.datetime = "February  9 1998, 06:49:00 AM";
 	gcm_profile_test_parse_file (test, "bluish.icc", &test_data);
 
 	/* Adobe test */
@@ -763,7 +763,7 @@ gcm_profile_test (EggTest *test)
 	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
 	test_data.colorspace = GCM_PROFILE_COLORSPACE_RGB;
 	test_data.luminance = 0.648446;
-	test_data.datetime = "16 August 2005, 21:49:54";
+	test_data.datetime = "August 16 2005, 09:49:54 PM";
 	gcm_profile_test_parse_file (test, "AdobeGammaTest.icm", &test_data);
 
 	egg_test_end (test);
