@@ -362,6 +362,7 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 	case PROP_BASENAME:
 		g_free (priv->basename);
 		priv->basename = g_strdup (g_value_get_string (value));
+		gcm_utils_ensure_sensible_filename (priv->basename);
 		break;
 	case PROP_MODEL:
 		g_free (priv->model);
