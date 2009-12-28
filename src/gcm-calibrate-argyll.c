@@ -271,10 +271,6 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	/* get l-cd or c-rt */
 	type = gcm_calibrate_argyll_get_display_type (calibrate_argyll);
 
-	/* make a suitable filename */
-	gcm_utils_ensure_sensible_filename (basename);
-	egg_debug ("using filename basename of %s", basename);
-
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
 
