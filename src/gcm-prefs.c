@@ -2190,29 +2190,36 @@ gcm_prefs_reset_devices_idle_cb (gpointer user_data)
 }
 
 /**
- * gcm_prefs_radio_cb:
+ * gcm_prefs_checkbutton_global_cb:
  **/
 static void
-gcm_prefs_radio_cb (GtkWidget *widget, gpointer user_data)
+gcm_prefs_checkbutton_global_cb (GtkWidget *widget, gpointer user_data)
 {
-	const gchar *name;
-	gboolean use_global = FALSE;
-	gboolean use_atom = FALSE;
+	gboolean ret;
 
-	/* find out what button was pressed */
-	name = gtk_widget_get_name (widget);
-	if (g_strcmp0 (name, "radiobutton_ouput_both") == 0) {
-		use_global = TRUE;
-		use_atom = TRUE;
-	} else if (g_strcmp0 (name, "radiobutton_ouput_global") == 0) {
-		use_global = TRUE;
-	} else if (g_strcmp0 (name, "radiobutton_ouput_atom") == 0) {
-		use_atom = TRUE;
-	}
+	/* get state */
+	ret = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(widget));
 
 	/* save new preference */
-	gconf_client_set_bool (gconf_client, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION, use_global, NULL);
-	gconf_client_set_bool (gconf_client, GCM_SETTINGS_SET_ICC_PROFILE_ATOM, use_atom, NULL);
+	gconf_client_set_bool (gconf_client, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION, ret, NULL);
+
+	/* set the new setting */
+	g_idle_add ((GSourceFunc) gcm_prefs_reset_devices_idle_cb, NULL);
+}
+
+/**
+ * gcm_prefs_checkbutton_profile_cb:
+ **/
+static void
+gcm_prefs_checkbutton_profile_cb (GtkWidget *widget, gpointer user_data)
+{
+	gboolean ret;
+
+	/* get state */
+	ret = gtk_toggle_button_get_active (GTK_TOGGLE_BUTTON(widget));
+
+	/* save new preference */
+	gconf_client_set_bool (gconf_client, GCM_SETTINGS_SET_ICC_PROFILE_ATOM, ret, NULL);
 
 	/* set the new setting */
 	g_idle_add ((GSourceFunc) gcm_prefs_reset_devices_idle_cb, NULL);
@@ -2614,33 +2621,14 @@ main (int argc, char **argv)
 	gconf_client = gconf_client_get_default ();
 	use_global = gconf_client_get_bool (gconf_client, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION, NULL);
 	use_atom = gconf_client_get_bool (gconf_client, GCM_SETTINGS_SET_ICC_PROFILE_ATOM, NULL);
-	if (use_global && use_atom) {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_both"));
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
-	} else if (use_global) {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_global"));
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
-	} else if (use_atom) {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_atom"));
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
-	} else {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_disable"));
-		gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
-	}
-
-	/* now connect radiobuttons */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_global"));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "checkbutton_display"));
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), use_global);
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_radio_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_atom"));
+			  G_CALLBACK (gcm_prefs_checkbutton_global_cb), NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "checkbutton_profile"));
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), use_atom);
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_radio_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_both"));
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_radio_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "radiobutton_ouput_disable"));
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_radio_cb), NULL);
+			  G_CALLBACK (gcm_prefs_checkbutton_profile_cb), NULL);
 
 	/* do all this after the window has been set up */
 	g_idle_add (gcm_prefs_startup_phase1_idle_cb, NULL);

@@ -81,7 +81,7 @@
                                 <child>
                                   <object class="GtkLabel" id="label_device">
                                     <property name="visible">True</property>
-                                    <property name="label" translatable="yes" comments="Section heading for device settings">Device:</property>
+                                    <property name="label" translatable="yes" comments="Section heading for device settings">Device</property>
                                     <attributes>
                                       <attribute name="weight" value="bold"/>
                                     </attributes>
@@ -139,6 +139,7 @@
                                                   <object class="GtkLabel" id="label_manufacturer">
                                                     <property name="visible">True</property>
                                                     <property name="label">manufacturer</property>
+                                                    <property name="selectable">True</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -185,6 +186,7 @@
                                                   <object class="GtkLabel" id="label_model">
                                                     <property name="visible">True</property>
                                                     <property name="label">model</property>
+                                                    <property name="selectable">True</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -231,6 +233,7 @@
                                                   <object class="GtkLabel" id="label_serial">
                                                     <property name="visible">True</property>
                                                     <property name="label">serial</property>
+                                                    <property name="selectable">True</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -278,7 +281,7 @@
                                 <child>
                                   <object class="GtkLabel" id="label_profile">
                                     <property name="visible">True</property>
-                                    <property name="label" translatable="yes" comments="Section heading for device profile settings">Color Profile:</property>
+                                    <property name="label" translatable="yes" comments="Section heading for device profile settings">Color Profile</property>
                                     <attributes>
                                       <attribute name="weight" value="bold"/>
                                     </attributes>
@@ -477,7 +480,7 @@
                             <child type="label">
                               <object class="GtkLabel" id="label4">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes" comments="Settings that users don't normally have to touch">Fine tuning:</property>
+                                <property name="label" translatable="yes" comments="Settings that users don't normally have to touch">Fine tuning</property>
                                 <attributes>
                                   <attribute name="weight" value="bold"/>
                                 </attributes>
@@ -500,16 +503,16 @@
                         <property name="spacing">6</property>
                         <child>
                           <object class="GtkButton" id="button_calibrate">
-                            <property name="label" translatable="yes" comments="This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image">_Create profile for device</property>
+                            <property name="label" translatable="yes" comments="This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image">Create _profile for device</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Create a color profile for the selected device</property>
                             <property name="use_underline">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
-                            <property name="pack_type">end</property>
-                            <property name="position">1</property>
+                            <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
@@ -518,13 +521,13 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Remove disconnected hardware from the device list</property>
                             <property name="use_underline">True</property>
                           </object>
                           <packing>
                             <property name="expand">False</property>
                             <property name="fill">False</property>
-                            <property name="pack_type">end</property>
-                            <property name="position">0</property>
+                            <property name="position">1</property>
                           </packing>
                         </child>
                       </object>
@@ -614,7 +617,7 @@
                                 <child>
                                   <object class="GtkLabel" id="label_profile1">
                                     <property name="visible">True</property>
-                                    <property name="label" translatable="yes" comments="Section heading for device profile settings">Color Profile:</property>
+                                    <property name="label" translatable="yes" comments="Section heading for device profile settings">Color Profile</property>
                                     <attributes>
                                       <attribute name="weight" value="bold"/>
                                     </attributes>
@@ -675,6 +678,7 @@
                                                     <property name="label">input</property>
                                                     <property name="use_markup">True</property>
                                                     <property name="wrap">True</property>
+                                                    <property name="selectable">True</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -726,6 +730,7 @@
                                                     <property name="label">colorspace</property>
                                                     <property name="use_markup">True</property>
                                                     <property name="wrap">True</property>
+                                                    <property name="selectable">True</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -777,6 +782,7 @@
                                                     <property name="label">datetime</property>
                                                     <property name="use_markup">True</property>
                                                     <property name="wrap">True</property>
+                                                    <property name="selectable">True</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -828,6 +834,7 @@
                                                     <property name="label">manufacturer</property>
                                                     <property name="use_markup">True</property>
                                                     <property name="wrap">True</property>
+                                                    <property name="selectable">True</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -879,6 +886,7 @@
                                                     <property name="label">model</property>
                                                     <property name="use_markup">True</property>
                                                     <property name="wrap">True</property>
+                                                    <property name="selectable">True</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -930,6 +938,7 @@
                                                     <property name="label">non-free</property>
                                                     <property name="use_markup">True</property>
                                                     <property name="wrap">True</property>
+                                                    <property name="selectable">True</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -981,6 +990,7 @@
                                                     <property name="label">input</property>
                                                     <property name="use_markup">True</property>
                                                     <property name="wrap">True</property>
+                                                    <property name="selectable">True</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -1032,6 +1042,7 @@
                                                     <property name="label">filename</property>
                                                     <property name="use_markup">True</property>
                                                     <property name="wrap">True</property>
+                                                    <property name="selectable">True</property>
                                                   </object>
                                                   <packing>
                                                     <property name="expand">False</property>
@@ -1075,7 +1086,7 @@
                                     <child>
                                       <object class="GtkLabel" id="label_cie_title">
                                         <property name="visible">True</property>
-                                        <property name="label" translatable="yes" comments="Section heading for CIE and TRC graphs">Profile Graphs:</property>
+                                        <property name="label" translatable="yes" comments="Section heading for CIE and TRC graphs">Profile Graphs</property>
                                         <attributes>
                                           <attribute name="weight" value="bold"/>
                                         </attributes>
@@ -1180,6 +1191,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Import a color profile</property>
                             <property name="use_underline">True</property>
                           </object>
                           <packing>
@@ -1189,10 +1201,11 @@
                         </child>
                         <child>
                           <object class="GtkButton" id="button_profile_delete">
-                            <property name="label" translatable="yes">Delete profile</property>
+                            <property name="label" translatable="yes">_Delete profile</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="tooltip_text" translatable="yes">Permanently delete the selected profile</property>
                             <property name="use_underline">True</property>
                           </object>
                           <packing>
@@ -1239,7 +1252,7 @@
                     <child>
                       <object class="GtkLabel" id="label1">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Display:</property>
+                        <property name="label" translatable="yes">Display</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -1265,59 +1278,31 @@
                         <property name="orientation">vertical</property>
                         <property name="spacing">3</property>
                         <child>
-                          <object class="GtkRadioButton" id="radiobutton_ouput_disable">
-                            <property name="label" translatable="yes" comments="Radio buttons in the prefs dialog">Do not enable display correction</property>
+                          <object class="GtkCheckButton" id="checkbutton_display">
+                            <property name="label" translatable="yes">_Apply display correction</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">Applies global correction to all windows</property>
                             <property name="use_underline">True</property>
                             <property name="draw_indicator">True</property>
-                            <property name="group">radiobutton_ouput_global</property>
                           </object>
                           <packing>
                             <property name="position">0</property>
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkRadioButton" id="radiobutton_ouput_global">
-                            <property name="label" translatable="yes" comments="Radio buttons in the prefs dialog">Apply _global display correction</property>
+                          <object class="GtkCheckButton" id="checkbutton_profile">
+                            <property name="label" translatable="yes">_Set profile for color managed applications</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">False</property>
+                            <property name="tooltip_text" translatable="yes">Inform color-aware applications that a videocard gamma profile has been set</property>
                             <property name="use_underline">True</property>
-                            <property name="active">True</property>
                             <property name="draw_indicator">True</property>
                           </object>
                           <packing>
                             <property name="position">1</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkRadioButton" id="radiobutton_ouput_atom">
-                            <property name="label" translatable="yes" comments="Radio buttons in the prefs dialog">_Set profile only for color managed applications</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="draw_indicator">True</property>
-                            <property name="group">radiobutton_ouput_global</property>
-                          </object>
-                          <packing>
-                            <property name="position">2</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkRadioButton" id="radiobutton_ouput_both">
-                            <property name="label" translatable="yes" comments="Radio buttons in the prefs dialog">Do global correction and set profile for color managed applications</property>
-                            <property name="visible">True</property>
-                            <property name="can_focus">True</property>
-                            <property name="receives_default">False</property>
-                            <property name="use_underline">True</property>
-                            <property name="draw_indicator">True</property>
-                            <property name="group">radiobutton_ouput_global</property>
-                          </object>
-                          <packing>
-                            <property name="position">3</property>
                           </packing>
                         </child>
                       </object>
@@ -1334,7 +1319,7 @@
                     <child>
                       <object class="GtkLabel" id="label5">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Working spaces:</property>
+                        <property name="label" translatable="yes">Working space</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
@@ -1452,7 +1437,7 @@
                     <child>
                       <object class="GtkLabel" id="label2">
                         <property name="visible">True</property>
-                        <property name="label" translatable="yes">Rendering intent:</property>
+                        <property name="label" translatable="yes">Rendering intent</property>
                         <attributes>
                           <attribute name="weight" value="bold"/>
                         </attributes>
