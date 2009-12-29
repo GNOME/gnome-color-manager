@@ -40,6 +40,24 @@
  * gcm_utils_install_package:
  **/
 gboolean
+gcm_utils_is_icc_profile (const gchar *filename)
+{
+	/* TODO: use the mime data if we have a new enought s-m-i */
+	if (g_str_has_suffix (filename, ".icc"))
+		return TRUE;
+	if (g_str_has_suffix (filename, ".icm"))
+		return TRUE;
+	if (g_str_has_suffix (filename, ".ICC"))
+		return TRUE;
+	if (g_str_has_suffix (filename, ".ICM"))
+		return TRUE;
+	return FALSE;
+}
+
+/**
+ * gcm_utils_install_package:
+ **/
+gboolean
 gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 {
 	DBusGConnection *connection;

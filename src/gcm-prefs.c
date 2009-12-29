@@ -92,6 +92,15 @@ gcm_prefs_close_cb (GtkWidget *widget, gpointer data)
 }
 
 /**
+ * gcm_prefs_help_cb:
+ **/
+static void
+gcm_prefs_help_cb (GtkWidget *widget, gpointer data)
+{
+	gcm_gnome_help ("preferences");
+}
+
+/**
  * gcm_prefs_delete_event_cb:
  **/
 static gboolean
@@ -99,15 +108,6 @@ gcm_prefs_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
 {
 	gcm_prefs_close_cb (widget, data);
 	return FALSE;
-}
-
-/**
- * gcm_prefs_help_cb:
- **/
-static void
-gcm_prefs_help_cb (GtkWidget *widget, gpointer data)
-{
-	gcm_gnome_help ("preferences");
 }
 
 /**
@@ -725,12 +725,12 @@ gcm_prefs_calibrate_device_get_icc_profile (void)
 }
 
 /**
- * gcm_prefs_profile_import_cb:
+ * gcm_prefs_profile_import:
  **/
-static void
-gcm_prefs_profile_import_cb (GtkWidget *widget, gpointer data)
+static gboolean
+gcm_prefs_profile_import (const gchar *filename)
 {
-	gchar *filename;
+	GtkWidget *widget;
 	GtkWidget *dialog;
 	GError *error = NULL;
 	gchar *destination = NULL;
@@ -738,11 +738,6 @@ gcm_prefs_profile_import_cb (GtkWidget *widget, gpointer data)
 	GcmProfile *profile = NULL;
 	GtkTreeSelection *selection;
 	gboolean ret;
-
-	/* get new file */
-	filename = gcm_prefs_calibrate_device_get_icc_profile ();
-	if (filename == NULL)
-		goto out;
 
 	/* copy icc file to ~/.color/icc */
 	destination = gcm_utils_get_profile_destination (filename);
@@ -784,8 +779,101 @@ gcm_prefs_profile_import_cb (GtkWidget *widget, gpointer data)
 out:
 	if (profile != NULL)
 		g_object_unref (profile);
-	g_free (filename);
 	g_free (destination);
+	return ret;
+}
+
+/**
+ * gcm_prefs_profile_import_uri:
+ **/
+static gboolean
+gcm_prefs_profile_import_uri (const gchar *uri)
+{
+	GFile *file;
+	gchar *path;
+	gboolean ret = FALSE;
+
+	/* resolve */
+	file = g_file_new_for_uri (uri);
+	path = g_file_get_path (file);
+	if (path == NULL) {
+		egg_warning ("failed to get path: %s", uri);
+		goto out;
+	}
+
+	/* import */
+	ret = gcm_prefs_profile_import (path);
+out:
+	g_free (path);
+	g_object_unref (file);
+	return ret;
+}
+
+/**
+ * gcm_prefs_profile_import_cb:
+ **/
+static void
+gcm_prefs_profile_import_cb (GtkWidget *widget, gpointer data)
+{
+	gchar *filename;
+
+	/* get new file */
+	filename = gcm_prefs_calibrate_device_get_icc_profile ();
+	if (filename == NULL)
+		goto out;
+
+	/* import this */
+	gcm_prefs_profile_import (filename);
+
+out:
+	g_free (filename);
+}
+
+/**
+ * gcm_prefs_drag_data_received_cb:
+ **/
+static void
+gcm_prefs_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint _time, gpointer user_data)
+{
+	const guchar *filename;
+	gchar **filenames = NULL;
+	guint i;
+	gboolean ret;
+
+	/* get filenames */
+	filename = gtk_selection_data_get_data (data);
+	if (filename == NULL) {
+		gtk_drag_finish (context, FALSE, FALSE, _time);
+		goto out;
+	}
+
+	/* import this */
+	egg_debug ("dropped: %p (%s)", data, filename);
+
+	/* split, as multiple drag targets are accepted */
+	filenames = g_strsplit_set ((const gchar *)filename, "\r\n", -1);
+	for (i=0; filenames[i]!=NULL; i++) {
+
+		/* check this is an ICC profile */
+		ret = gcm_utils_is_icc_profile (filenames[i]);
+		if (!ret) {
+			egg_debug ("%s is not a ICC profile", filenames[i]);
+			gtk_drag_finish (context, FALSE, FALSE, _time);
+			goto out;
+		}
+
+		/* try to import it */
+		ret = gcm_prefs_profile_import_uri (filenames[i]);
+		if (!ret) {
+			egg_debug ("%s did not import correctly", filenames[i]);
+			gtk_drag_finish (context, FALSE, FALSE, _time);
+			goto out;
+		}
+	}
+
+	gtk_drag_finish (context, TRUE, FALSE, _time);
+out:
+	g_strfreev (filenames);
 }
 
 /**
@@ -2288,6 +2376,23 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 }
 
 /**
+ * gcm_prefs_setup_drag_and_drop:
+ **/
+static void
+gcm_prefs_setup_drag_and_drop (GtkWidget *widget)
+{
+	GtkTargetEntry entry;
+
+	/* setup a dummy entry */
+	entry.target = g_strdup ("text/plain");
+	entry.flags = GTK_TARGET_OTHER_APP;
+	entry.info = 0;
+
+	gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_ALL, &entry, 1, GDK_ACTION_MOVE | GDK_ACTION_COPY);
+	g_free (entry.target);
+}
+
+/**
  * main:
  **/
 int
@@ -2394,6 +2499,9 @@ main (int argc, char **argv)
 	gtk_window_set_icon_name (GTK_WINDOW (main_window), GCM_STOCK_ICON);
 	g_signal_connect (main_window, "delete_event",
 			  G_CALLBACK (gcm_prefs_delete_event_cb), loop);
+	g_signal_connect (main_window, "drag-data-received",
+			  G_CALLBACK (gcm_prefs_drag_data_received_cb), loop);
+	gcm_prefs_setup_drag_and_drop (GTK_WIDGET(main_window));
 
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_close"));
 	g_signal_connect (widget, "clicked",
