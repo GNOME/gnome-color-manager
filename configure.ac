@@ -41,6 +41,14 @@ if test x$enable_strict != xno; then
 	fi
 fi
 
+# udev rules go in /lib, not /usr/lib
+if test "$prefix" = "/usr" -o "$prefix" = "/usr/local" ; then
+  slashlibdir=/lib
+else
+  slashlibdir=$prefix/lib
+fi
+AC_SUBST(slashlibdir)
+
 dnl ---------------------------------------------------------------------------
 dnl - Extra verbose warning switches
 dnl ---------------------------------------------------------------------------
@@ -215,6 +223,7 @@ Makefile
 src/Makefile
 help/Makefile
 man/Makefile
+rules/Makefile
 data/Makefile
 data/tests/Makefile
 data/icons/Makefile

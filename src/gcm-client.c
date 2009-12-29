@@ -287,32 +287,12 @@ gcm_client_gudev_add (GcmClient *client, GUdevDevice *udev_device)
 {
 	const gchar *value;
 
-	/* only matches HP printers, need to expand to all of CUPS printers */
-	value = g_udev_device_get_property (udev_device, "ID_HPLIP");
+	/* matches our udev rules, which we can change without recompiling */
+	value = g_udev_device_get_property (udev_device, "GCM_DEVICE");
 	if (value != NULL) {
-		egg_debug ("found printer device: %s", g_udev_device_get_sysfs_path (udev_device));
-		gcm_client_gudev_add_type (client, udev_device, GCM_DEVICE_TYPE_PRINTER);
-	}
-
-	/* sane is slightly odd in a lowercase property, and "yes" as a value rather than "1" */
-	value = g_udev_device_get_property (udev_device, "libsane_matched");
-	if (value != NULL) {
-		egg_debug ("found scanner device: %s", g_udev_device_get_sysfs_path (udev_device));
-		gcm_client_gudev_add_type (client, udev_device, GCM_DEVICE_TYPE_SCANNER);
-	}
-
-	/* only matches cameras with gphoto drivers */
-	value = g_udev_device_get_property (udev_device, "ID_GPHOTO2");
-	if (value != NULL) {
-		egg_debug ("found gphoto camera device: %s", g_udev_device_get_sysfs_path (udev_device));
-		gcm_client_gudev_add_type (client, udev_device, GCM_DEVICE_TYPE_CAMERA);
-	}
-
-	/* only matches cameras with v4l devices */
-	value = g_udev_device_get_property (udev_device, "ID_V4L_PRODUCT");
-	if (value != NULL) {
-		egg_debug ("found v4l camera device: %s", g_udev_device_get_sysfs_path (udev_device));
-		gcm_client_gudev_add_type (client, udev_device, GCM_DEVICE_TYPE_CAMERA);
+		value = g_udev_device_get_property (udev_device, "GCM_TYPE");
+		egg_debug ("found %s device: %s", value, g_udev_device_get_sysfs_path (udev_device));
+		gcm_client_gudev_add_type (client, udev_device, gcm_device_type_from_text (value));
 	}
 }
 

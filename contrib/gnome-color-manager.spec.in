@@ -21,6 +21,7 @@ Requires:  unique >= %{unique_version}
 Requires:  shared-mime-info
 Requires:  dbus-glib >= %{dbus_glib_version}
 Requires:  dbus-x11
+Requires:  udev
 Requires:  vte
 Requires:  lcms
 Requires:  PackageKit
@@ -110,6 +111,7 @@ update-mime-database %{_datadir}/mime &> /dev/null || :
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING NEWS README
+/lib/udev/rules.d/*.rules
 %{_bindir}/gcm-*
 %dir %{_datadir}/gnome-color-manager
 %{_datadir}/gnome-color-manager/gcm-*.ui

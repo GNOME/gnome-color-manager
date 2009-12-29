@@ -3,6 +3,7 @@ SUBDIRS = 						\
 	help						\
 	man						\
 	data						\
+	rules						\
 	src
 
 snapshot:
