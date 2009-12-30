@@ -37,7 +37,52 @@
 #include "egg-debug.h"
 
 /**
- * gcm_utils_install_package:
+ * gcm_utils_linkify:
+ **/
+gchar *
+gcm_utils_linkify (const gchar *text)
+{
+	guint i;
+	guint j = 0;
+	gboolean ret;
+	GString *string;
+
+	/* find and replace links */
+	string = g_string_new ("");
+	for (i=0;; i++) {
+
+		/* find the start of a link */
+		ret = g_str_has_prefix (&text[i], "http://");
+		if (ret) {
+			egg_debug ("dump from %i to %i", j, i);
+			g_string_append_len (string, text+j, i-j);
+			for (j=i;; j++) {
+				/* find the end of the link, or the end of the string */
+				if (text[j] == '\0' ||
+				    text[j] == ' ') {
+					egg_debug ("link is from %i to %i", i, j);
+					g_string_append (string, "<a href=\"");
+					g_string_append_len (string, text+i, j-i);
+					g_string_append (string, "\">");
+					g_string_append_len (string, text+i, j-i);
+					g_string_append (string, "</a>");
+					break;
+				}
+			}
+		}
+
+		/* end of the string, dump what's left */
+		if (text[i] == '\0') {
+			egg_debug ("dump from %i to %i", j, i);
+			g_string_append_len (string, text+j, i-j);
+			break;
+		}
+	}
+	return g_string_free (string, FALSE);
+}
+
+/**
+ * gcm_utils_is_icc_profile:
  **/
 gboolean
 gcm_utils_is_icc_profile (const gchar *filename)
@@ -857,6 +902,17 @@ gcm_utils_test (EggTest *test)
 
 	if (!egg_test_start (test, "GcmUtils"))
 		return;
+
+	/************************************************************/
+	egg_test_title (test, "Linkify text");
+	text = gcm_utils_linkify ("http://www.dave.org is text http://www.hughsie.com that needs to be linked to http://www.bbc.co.uk really");
+	if (g_strcmp0 (text, "<a href=\"http://www.dave.org\">http://www.dave.org</a> is text "
+			     "<a href=\"http://www.hughsie.com\">http://www.hughsie.com</a> that needs to be linked to "
+			     "<a href=\"http://www.bbc.co.uk\">http://www.bbc.co.uk</a> really") == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to linkify text: %s", text);
+	g_free (text);
 
 	/************************************************************/
 	egg_test_title (test, "get profile filenames");

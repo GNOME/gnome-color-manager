@@ -1545,6 +1545,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	gchar *profile_manufacturer = NULL;
 	gchar *profile_model = NULL;
 	gchar *profile_datetime = NULL;
+	gchar *temp;
 	gchar *filename = NULL;
 	gchar *basename = NULL;
 	gchar *size_text = NULL;
@@ -1658,7 +1659,9 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	} else {
 		gtk_widget_show (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_copyright"));
-		gtk_label_set_label (GTK_LABEL(widget), profile_copyright);
+		temp = gcm_utils_linkify (profile_copyright);
+		gtk_label_set_label (GTK_LABEL (widget), temp);
+		g_free (temp);
 	}
 
 	/* set new manufacturer */
@@ -1668,7 +1671,9 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	} else {
 		gtk_widget_show (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_profile_manufacturer"));
-		gtk_label_set_label (GTK_LABEL(widget), profile_manufacturer);
+		temp = gcm_utils_linkify (profile_manufacturer);
+		gtk_label_set_label (GTK_LABEL (widget), temp);
+		g_free (temp);
 	}
 
 	/* set new model */

@@ -59,6 +59,7 @@ void		 gcm_utils_ensure_sane_length		(gchar			*text,
 							 guint			 max_length);
 void		 gcm_utils_ensure_printable		(gchar			*text);
 gboolean	 gcm_utils_is_icc_profile		(const gchar		*filename);
+gchar		*gcm_utils_linkify			(const gchar		*text);
 
 #endif /* __GCM_UTILS_H */
 
