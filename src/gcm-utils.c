@@ -42,16 +42,48 @@
 gboolean
 gcm_utils_is_icc_profile (const gchar *filename)
 {
-	/* TODO: use the mime data if we have a new enought s-m-i */
-	if (g_str_has_suffix (filename, ".icc"))
-		return TRUE;
-	if (g_str_has_suffix (filename, ".icm"))
-		return TRUE;
-	if (g_str_has_suffix (filename, ".ICC"))
-		return TRUE;
-	if (g_str_has_suffix (filename, ".ICM"))
-		return TRUE;
-	return FALSE;
+	GFile *file;
+	GFileInfo *info;
+	const gchar *type;
+	GError *error = NULL;
+	gboolean ret = FALSE;
+
+	/* get content type for file */
+	file = g_file_new_for_path (filename);
+	info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE, G_FILE_QUERY_INFO_NONE, NULL, &error);
+	if (info != NULL) {
+		type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
+		if (g_strcmp0 (type, "application/vnd.iccprofile") == 0) {
+			ret = TRUE;
+			goto out;
+		}
+	} else {
+		egg_warning ("failed to get content type of %s: %s", filename, error->message);
+		g_error_free (error);
+	}
+
+	/* fall back if we have not got a new enought s-m-i */
+	if (g_str_has_suffix (filename, ".icc")) {
+		ret = TRUE;
+		goto out;
+	}
+	if (g_str_has_suffix (filename, ".icm")) {
+		ret = TRUE;
+		goto out;
+	}
+	if (g_str_has_suffix (filename, ".ICC")) {
+		ret = TRUE;
+		goto out;
+	}
+	if (g_str_has_suffix (filename, ".ICM")) {
+		ret = TRUE;
+		goto out;
+	}
+out:
+	if (info != NULL)
+		g_object_unref (info);
+	g_object_unref (file);
+	return ret;
 }
 
 /**
@@ -839,6 +871,13 @@ gcm_utils_test (EggTest *test)
 		egg_test_success (test, NULL);
 	else
 		egg_test_failed (test, "failed to get filename: %s", filename);
+	g_free (filename);
+
+	/************************************************************/
+	egg_test_title (test, "check is icc profile");
+	filename = egg_test_get_data_file ("bluish.icc");
+	ret = gcm_utils_is_icc_profile (filename);
+	egg_test_assert (test, ret);
 	g_free (filename);
 
 	/************************************************************/
