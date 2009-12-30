@@ -1556,6 +1556,8 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	gboolean ret;
 	guint size = 0;
 	guint filesize;
+	gfloat x;
+	gboolean show_section = FALSE;
 
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -1584,12 +1586,20 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 		      "luminance-blue", &blue,
 		      NULL);
 
-	g_object_set (cie_widget,
-		      "white", white,
-		      "red", red,
-		      "green", green,
-		      "blue", blue,
-		      NULL);
+	/* check we have enough data for the CIE widget */
+	x = gcm_xyz_get_x (red);
+	if (x > 0.001) {
+		g_object_set (cie_widget,
+			      "white", white,
+			      "red", red,
+			      "green", green,
+			      "blue", blue,
+			      NULL);
+		gtk_widget_show (cie_widget);
+		show_section = TRUE;
+	} else {
+		gtk_widget_hide (cie_widget);
+	}
 
 	/* get curve data */
 	clut = gcm_profile_generate_curve (profile, 256);
@@ -1607,12 +1617,10 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 			      "clut", clut,
 			      NULL);
 		gtk_widget_show (trc_widget);
+		show_section = TRUE;
 	} else {
 		gtk_widget_hide (trc_widget);
 	}
-
-	/* ensure showing */
-	gtk_widget_show (cie_widget);
 
 	/* set type */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_type"));
@@ -1701,6 +1709,10 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	egg_debug ("filename: %s", filename);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_delete"));
 	gtk_widget_set_sensitive (widget, ret);
+
+	/* should we show the pane at all */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profile_graphs"));
+	gtk_widget_set_visible (widget, show_section);
 
 	if (clut != NULL)
 		g_object_unref (clut);
