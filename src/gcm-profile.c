@@ -580,7 +580,7 @@ GcmProfile *
 gcm_profile_default_new (void)
 {
 	GcmProfile *profile = NULL;
-#if 1
+#ifdef GCM_HAVE_LCMS
 	profile = GCM_PROFILE (gcm_profile_lcms1_new ());
 #endif
 	return profile;

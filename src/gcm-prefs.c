@@ -192,6 +192,10 @@ gcm_prefs_calibrate_display (GcmCalibrate *calibrate)
 	gchar *device = NULL;
 	GtkWindow *window;
 
+	/* no device */
+	if (current_device == NULL)
+		goto out;
+
 	/* get the device */
 	g_object_get (current_device,
 		      "native-device-xrandr", &output_name,
@@ -762,7 +766,6 @@ gcm_prefs_profile_import (const gchar *filename)
 	if (!ret) {
 		egg_warning ("failed to parse: %s", error->message);
 		g_error_free (error);
-		g_object_unref (profile);
 		goto out;
 	}
 
@@ -1294,7 +1297,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	gboolean connected;
 	gchar *filename;
 	guint i;
-	gchar *id;
+	gchar *id = NULL;
 	GcmDeviceType type;
 	gboolean ret = FALSE;
 	gchar *device_serial = NULL;
@@ -1304,7 +1307,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		egg_debug ("no row selected");
-		return;
+		goto out;
 	}
 
 	/* get id */
@@ -1314,9 +1317,13 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 
 	/* we have a new device */
 	egg_debug ("selected device is: %s", id);
-	if (current_device != NULL)
+	if (current_device != NULL) {
 		g_object_unref (current_device);
+		current_device = NULL;
+	}
 	current_device = gcm_client_get_device_by_id (gcm_client, id);
+	if (current_device == NULL)
+		goto out;
 	g_object_get (current_device,
 		      "type", &type,
 		      NULL);
@@ -1430,7 +1437,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 
 	/* can this device calibrate */
 	gcm_prefs_set_calibrate_button_sensitivity ();
-
+out:
 	g_free (device_serial);
 	g_free (device_model);
 	g_free (device_manufacturer);
