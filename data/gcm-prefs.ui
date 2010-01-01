@@ -1606,6 +1606,21 @@
               </packing>
             </child>
             <child>
+              <object class="GtkButton" id="button_default">
+                <property name="label" translatable="yes">_Set default</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="tooltip_text" translatable="yes">Save these profiles for all users</property>
+                <property name="use_underline">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+            <child>
               <object class="GtkButton" id="button_close">
                 <property name="label">gtk-close</property>
                 <property name="visible">True</property>
@@ -1616,7 +1631,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">1</property>
+                <property name="position">2</property>
               </packing>
             </child>
           </object>
@@ -1630,6 +1645,7 @@
     </child>
     <action-widgets>
       <action-widget response="0">button_help</action-widget>
+      <action-widget response="0">button_default</action-widget>
       <action-widget response="0">button_close</action-widget>
     </action-widgets>
   </object>

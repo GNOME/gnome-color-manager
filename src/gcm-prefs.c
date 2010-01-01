@@ -92,6 +92,77 @@ gcm_prefs_close_cb (GtkWidget *widget, gpointer data)
 }
 
 /**
+ * gcm_prefs_set_default:
+ **/
+static gboolean
+gcm_prefs_set_default (GcmDevice *device)
+{
+	GError *error = NULL;
+	gboolean ret;
+	gchar *cmdline = NULL;
+	gchar *filename = NULL;
+	gchar *id = NULL;
+	const gchar *install_cmd = "/usr/sbin/gcm-install-system-wide";
+
+	/* get device properties */
+	g_object_get (device,
+		      "profile-filename", &filename,
+		      "id", &id,
+		      NULL);
+
+	/* nothing set */
+	if (filename == NULL)
+		goto out;
+
+	/* run using PolicyKit */
+	cmdline = g_strdup_printf ("pkexec %s --id %s \"%s\"", install_cmd, id, filename);
+	egg_debug ("running: %s", cmdline);
+	ret = g_spawn_command_line_sync (cmdline, NULL, NULL, NULL, &error);
+	if (!ret) {
+		egg_warning ("failed to set default: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+out:
+	g_free (id);
+	g_free (cmdline);
+	g_free (filename);
+	return ret;
+}
+
+/**
+ * gcm_prefs_default_cb:
+ **/
+static void
+gcm_prefs_default_cb (GtkWidget *widget, gpointer data)
+{
+	GPtrArray *array = NULL;
+	GcmDevice *device;
+	GcmDeviceType type;
+	gboolean ret;
+	guint i;
+
+	/* set for each output */
+	array = gcm_client_get_devices (gcm_client);
+	for (i=0; i<array->len; i++) {
+		device = g_ptr_array_index (array, i);
+		g_object_get (device,
+			      "type", &type,
+			      NULL);
+
+		/* not a xrandr panel */
+		if (type != GCM_DEVICE_TYPE_DISPLAY)
+			continue;
+
+		/* set for this device */
+		ret = gcm_prefs_set_default (device);
+		if (!ret)
+			break;
+	}
+	g_ptr_array_unref (array);
+}
+
+/**
  * gcm_prefs_help_cb:
  **/
 static void
@@ -2530,6 +2601,9 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_close"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_close_cb), loop);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_default"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_prefs_default_cb), loop);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_help"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_help_cb), NULL);
