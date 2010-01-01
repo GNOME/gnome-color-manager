@@ -1,8 +1,9 @@
 SUBDIRS = 						\
-	po						\
+	data						\
 	help						\
 	man						\
-	data						\
+	po						\
+	policy						\
 	rules						\
 	src
 

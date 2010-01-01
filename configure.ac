@@ -221,12 +221,7 @@ dnl - Makefiles, etc.
 dnl ---------------------------------------------------------------------------
 AC_OUTPUT([
 Makefile
-src/Makefile
-help/Makefile
-man/Makefile
-rules/Makefile
 data/Makefile
-data/tests/Makefile
 data/icons/Makefile
 data/icons/16x16/Makefile
 data/icons/22x22/Makefile
@@ -235,7 +230,13 @@ data/icons/32x32/Makefile
 data/icons/48x48/Makefile
 data/icons/64x64/Makefile
 data/icons/scalable/Makefile
+data/tests/Makefile
+help/Makefile
+man/Makefile
+policy/Makefile
 po/Makefile.in
+rules/Makefile
+src/Makefile
 ])
 
 dnl ==========================================================================

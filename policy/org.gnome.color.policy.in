@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE policyconfig PUBLIC
+ "-//freedesktop//DTD PolicyKit Policy Configuration 1.0//EN"
+ "http://www.freedesktop.org/standards/PolicyKit/1.0/policyconfig.dtd">
+<policyconfig>
+
+  <!--
+    Policy definitions for GNOME Color Manager system-wide actions.
+    Copyright (c) 2009 Richard Hughes <richard@hughsie.com>
+  -->
+
+  <vendor>GNOME Color Manager</vendor>
+  <vendor_url>http://www.gnome.org/projects/gnome-color-manager/</vendor_url>
+  <icon_name>application-vnd.iccprofile</icon_name>
+
+  <action id="org.gnome.color.install-system-wide">
+    <!-- SECURITY:
+          - Normal users require admin authentication to install files system
+            wide to apply color profiles for sessions that have not explicitly
+            chosen profiles to apply.
+          - This should not be set to 'yes' as unprivileged users could then
+            set a profile set to all-white or all-black and thus make the
+            other sessions unusable.
+     -->
+    <_description>Reload a device</_description>
+    <_message>Authentication is required to install the color profile for all users</_message>
+    <icon_name>application-vnd.iccprofile</icon_name>
+    <defaults>
+      <allow_any>no</allow_any>
+      <allow_inactive>no</allow_inactive>
+      <allow_active>auth_admin_keep</allow_active>
+    </defaults>
+    <annotate key="org.freedesktop.policykit.exec.path">/usr/sbin/gcm-install-system-wide</annotate>
+  </action>
+
+</policyconfig>
+
