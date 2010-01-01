@@ -15,6 +15,7 @@ INCLUDES =						\
 	-DSYSCONFDIR=\""$(sysconfdir)"\" 		\
 	-DVERSION="\"$(VERSION)\"" 			\
 	-DLOCALEDIR=\""$(localedir)"\"			\
+	-DGCM_SYSTEM_PROFILES_DIR="\"$(GCM_SYSTEM_PROFILES_DIR)"\" \
 	-DGCM_DATA=\"$(pkgdatadir)\"
 
 noinst_LIBRARIES = libgcmshared.a
@@ -57,6 +58,9 @@ libgcmshared_a_SOURCES =				\
 libgcmshared_a_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
+sbin_PROGRAMS =						\
+	gcm-install-system-wide
+
 bin_PROGRAMS =						\
 	gcm-inspect					\
 	gcm-dump-profile				\
@@ -65,6 +69,15 @@ bin_PROGRAMS =						\
 	gcm-prefs					\
 	gcm-session					\
 	gcm-import
+
+gcm_install_system_wide_SOURCES =			\
+	gcm-install-system-wide.c
+
+gcm_install_system_wide_LDADD =				\
+	$(GLIB_LIBS)
+
+gcm_install_system_wide_CFLAGS =			\
+	$(WARNINGFLAGS_C)
 
 gcm_dump_edid_SOURCES =					\
 	gcm-dump-edid.c
@@ -249,6 +262,11 @@ org.gnome.ColorManager.h: org.gnome.ColorManager.xml
 		--mode=glib-server			\
 		--output=org.gnome.ColorManager.h	\
 		$(srcdir)/org.gnome.ColorManager.xml
+
+install-data-hook:
+	if test -w $(DESTDIR)$(prefix)/; then \
+		mkdir -p $(DESTDIR)$(GCM_SYSTEM_PROFILES_DIR); \
+	fi
 
 clean-local:
 	rm -f *~

@@ -24,6 +24,7 @@ Requires:  dbus-x11
 Requires:  udev
 Requires:  vte
 Requires:  lcms
+Requires:  polkit
 Requires:  PackageKit
 Requires:  shared-color-profiles
 Requires(post):   scrollkeeper
@@ -125,6 +126,10 @@ update-mime-database %{_datadir}/mime &> /dev/null || :
 %{_datadir}/applications/gcm-import.desktop
 %{_sysconfdir}/xdg/autostart/*.desktop
 %{_datadir}/dbus-1/services/org.gnome.ColorManager.service
+%{_sbindir}/gcm-install-system-wide
+%{_datadir}/polkit-1/actions/org.gnome.color.policy
+# this is probably better in a shared package
+%dir %{_localstatedir}/lib/color
 
 %changelog
 * #LONGDATE# Richard Hughes <richard@hughsie.com> #VERSION#-0.#BUILD##ALPHATAG#
