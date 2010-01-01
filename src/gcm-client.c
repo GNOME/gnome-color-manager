@@ -658,6 +658,7 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 		      "id", id,
 		      "connected", FALSE,
 		      "title", title,
+		      "saved", TRUE,
 		      NULL);
 
 	/* load the device */
@@ -721,6 +722,9 @@ gcm_client_add_saved (GcmClient *client, GError **error)
 			gcm_client_add_unconnected_device (client, keyfile, groups[i]);
 		} else {
 			egg_debug ("found already added %s", groups[i]);
+			g_object_set (device,
+				      "saved", TRUE,
+				      NULL);
 		}
 	}
 out:
@@ -814,6 +818,11 @@ gcm_client_delete_device (GcmClient *client, GcmDevice *device, GError **error)
 	ret = g_file_set_contents (filename, data, -1, error);
 	if (!ret)
 		goto out;
+
+	/* update status */
+	g_object_set (device,
+		      "saved", FALSE,
+		      NULL);
 
 	/* emit a signal */
 	egg_debug ("emit removed: %s", id);

@@ -52,6 +52,7 @@ static void     gcm_device_finalize	(GObject     *object);
 struct _GcmDevicePrivate
 {
 	gboolean			 connected;
+	gboolean			 saved;
 	gfloat				 gamma;
 	gfloat				 brightness;
 	gfloat				 contrast;
@@ -72,6 +73,7 @@ enum {
 	PROP_TYPE,
 	PROP_ID,
 	PROP_CONNECTED,
+	PROP_SAVED,
 	PROP_SERIAL,
 	PROP_MODEL,
 	PROP_MANUFACTURER,
@@ -196,6 +198,20 @@ gcm_device_load (GcmDevice *device, GError **error)
 		ret = TRUE;
 		goto out;
 	}
+
+	/* has key */
+	ret = g_key_file_has_group (file, device->priv->id);
+	if (!ret) {
+		/* not fatal */
+		egg_warning ("failed to find parameters for %s", device->priv->id);
+		ret = TRUE;
+		goto out;
+	}
+
+	/* we are backed by a keyfile */
+	g_object_set (device,
+		      "saved", TRUE,
+		      NULL);
 
 	/* load data */
 	g_free (device->priv->profile_filename);
@@ -367,6 +383,11 @@ gcm_device_save (GcmDevice *device, GError **error)
 		g_error_free (error_local);
 		goto out;
 	}
+
+	/* update status */
+	g_object_set (device,
+		      "saved", TRUE,
+		      NULL);
 out:
 	g_free (data);
 	g_free (filename);
@@ -396,6 +417,9 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 		break;
 	case PROP_CONNECTED:
 		g_value_set_boolean (value, priv->connected);
+		break;
+	case PROP_SAVED:
+		g_value_set_boolean (value, priv->saved);
 		break;
 	case PROP_SERIAL:
 		g_value_set_string (value, priv->serial);
@@ -452,6 +476,9 @@ gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GP
 		break;
 	case PROP_CONNECTED:
 		priv->connected = g_value_get_boolean (value);
+		break;
+	case PROP_SAVED:
+		priv->saved = g_value_get_boolean (value);
 		break;
 	case PROP_SERIAL:
 		g_free (priv->serial);
@@ -531,6 +558,14 @@ gcm_device_class_init (GcmDeviceClass *klass)
 				      FALSE,
 				      G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CONNECTED, pspec);
+
+	/**
+	 * GcmDevice:saved:
+	 */
+	pspec = g_param_spec_boolean ("saved", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_SAVED, pspec);
 
 	/**
 	 * GcmCalibrate:serial:
@@ -624,6 +659,8 @@ gcm_device_init (GcmDevice *device)
 	GError *error = NULL;
 	device->priv = GCM_DEVICE_GET_PRIVATE (device);
 	device->priv->id = NULL;
+	device->priv->saved = FALSE;
+	device->priv->connected = FALSE;
 	device->priv->serial = NULL;
 	device->priv->manufacturer = NULL;
 	device->priv->model = NULL;
