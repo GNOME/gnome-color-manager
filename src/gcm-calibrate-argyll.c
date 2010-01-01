@@ -95,6 +95,12 @@ gcm_calibrate_argyll_get_display (const gchar *output_name, GError **error)
 	/* split it into lines */
 	split = g_strsplit (data, "\n", -1);
 	for (i=0; split[i] != NULL; i++) {
+		if (g_strstr_len (split[i], -1, "XRandR 1.2 is faulty") != NULL) {
+			ret = FALSE;
+			if (error != NULL)
+				*error = g_error_new (1, 0, "failed to match display as RandR is faulty");
+			goto out;
+		}
 		name = g_strdup (split[i]);
 		g_strdelimit (name, " ", '\0');
 		if (g_strcmp0 (output_name, &name[26]) == 0) {
@@ -106,8 +112,10 @@ gcm_calibrate_argyll_get_display (const gchar *output_name, GError **error)
 
 	/* nothing found */
 	if (display == G_MAXUINT) {
+		ret = FALSE;
 		if (error != NULL)
 			*error = g_error_new (1, 0, "failed to match display");
+		goto out;
 	}
 out:
 	g_free (data);
@@ -123,7 +131,6 @@ gcm_calibrate_argyll_get_display_type (GcmCalibrateArgyll *calibrate_argyll)
 {
 	gboolean is_lcd;
 	gboolean is_crt;
-//	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
 	g_object_get (calibrate_argyll,
 		      "is-lcd", &is_lcd,
