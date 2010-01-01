@@ -253,6 +253,8 @@ gcm_image_notify_pixbuf_cb (GObject *object, GParamSpec *pspec, GcmImage *image)
 
 	/* check */
 	pixbuf = gtk_image_get_pixbuf (GTK_IMAGE(image));
+	if (pixbuf == NULL)
+		goto out;
 	applied = g_object_get_data (G_OBJECT(pixbuf), "cms-converted-pixbuf");
 	if (applied != NULL) {
 		egg_debug ("already copied and converted pixbuf, use gcm_image_cms_convert_pixbuf() instead");
@@ -272,6 +274,7 @@ gcm_image_notify_pixbuf_cb (GObject *object, GParamSpec *pspec, GcmImage *image)
 		g_object_set_data (G_OBJECT(pixbuf), "cms-converted-pixbuf", (gpointer)"true");
 	}
 out:
+	/* we do not own the pixbuf */
 	return;
 }
 
