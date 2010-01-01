@@ -98,7 +98,7 @@ static gboolean
 gcm_prefs_set_default (GcmDevice *device)
 {
 	GError *error = NULL;
-	gboolean ret;
+	gboolean ret = FALSE;
 	gchar *cmdline = NULL;
 	gchar *filename = NULL;
 	gchar *id = NULL;
@@ -111,8 +111,10 @@ gcm_prefs_set_default (GcmDevice *device)
 		      NULL);
 
 	/* nothing set */
-	if (filename == NULL)
+	if (filename == NULL) {
+		egg_debug ("no filename for %s", id);
 		goto out;
+	}
 
 	/* run using PolicyKit */
 	cmdline = g_strdup_printf ("pkexec %s --id %s \"%s\"", install_cmd, id, filename);
