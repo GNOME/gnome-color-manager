@@ -434,12 +434,14 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	GnomeRROutput *output;
 	gint x, y;
 	gchar *filename = NULL;
+	gchar *filename_systemwide = NULL;
 	gfloat gamma;
 	gfloat brightness;
 	gfloat contrast;
 	gchar *output_name;
 	gchar *id = NULL;
 	guint size;
+	gboolean saved;
 	gboolean use_global;
 	gboolean use_atom;
 	gboolean leftmost_screen = FALSE;
@@ -456,6 +458,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	g_object_get (device,
 		      "id", &id,
 		      "type", &type,
+		      "saved", &saved,
 		      "profile-filename", &filename,
 		      "gamma", &gamma,
 		      "brightness", &brightness,
@@ -475,6 +478,16 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 		if (error != NULL)
 			*error = g_error_new (1, 0, "no output name for display: %s", id);
 		goto out;
+	}
+
+	/* if not saved, try to find default filename */
+	if (!saved && filename == NULL) {
+		filename_systemwide = g_strdup_printf ("%s/%s.icc", GCM_SYSTEM_PROFILES_DIR, id);
+		ret = g_file_test (filename_systemwide, G_FILE_TEST_EXISTS);
+		if (ret) {
+			egg_error ("using systemwide %s as profile", filename_systemwide);
+			filename = g_strdup (filename_systemwide);
+		}
 	}
 
 	/* check we have an output */
@@ -572,6 +585,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 out:
 	g_free (id);
 	g_free (filename);
+	g_free (filename_systemwide);
 	g_free (output_name);
 	if (gconf_client != NULL)
 		g_object_unref (gconf_client);
