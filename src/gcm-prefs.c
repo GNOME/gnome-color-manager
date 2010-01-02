@@ -102,7 +102,7 @@ gcm_prefs_set_default (GcmDevice *device)
 	gchar *cmdline = NULL;
 	gchar *filename = NULL;
 	gchar *id = NULL;
-	const gchar *install_cmd = "/usr/sbin/gcm-install-system-wide";
+	gchar *install_cmd = NULL;
 
 	/* get device properties */
 	g_object_get (device,
@@ -117,6 +117,7 @@ gcm_prefs_set_default (GcmDevice *device)
 	}
 
 	/* run using PolicyKit */
+	install_cmd = g_build_filename (SBINDIR, "gcm-install-system-wide", NULL);
 	cmdline = g_strdup_printf ("pkexec %s --id %s \"%s\"", install_cmd, id, filename);
 	egg_debug ("running: %s", cmdline);
 	ret = g_spawn_command_line_sync (cmdline, NULL, NULL, NULL, &error);
@@ -127,6 +128,7 @@ gcm_prefs_set_default (GcmDevice *device)
 	}
 out:
 	g_free (id);
+	g_free (install_cmd);
 	g_free (cmdline);
 	g_free (filename);
 	return ret;

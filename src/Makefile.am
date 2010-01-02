@@ -11,9 +11,10 @@ INCLUDES =						\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
 	$(GUDEV_CFLAGS)					\
-	-DBINDIR=\"$(bindir)\"			 	\
-	-DSYSCONFDIR=\""$(sysconfdir)"\" 		\
-	-DVERSION="\"$(VERSION)\"" 			\
+	-DBINDIR=\"$(bindir)\"				\
+	-DSBINDIR=\"$(sbindir)\"			\
+	-DSYSCONFDIR=\""$(sysconfdir)"\"		\
+	-DVERSION="\"$(VERSION)\""			\
 	-DLOCALEDIR=\""$(localedir)"\"			\
 	-DGCM_SYSTEM_PROFILES_DIR="\"$(GCM_SYSTEM_PROFILES_DIR)"\" \
 	-DGCM_DATA=\"$(pkgdatadir)\"
@@ -274,12 +275,12 @@ clean-local:
 CLEANFILES = $(BUILT_SOURCES)
 
 MAINTAINERCLEANFILES =					\
-	*~			      			\
+	*~						\
 	Makefile.in
 
 EXTRA_DIST =						\
 	org.gnome.ColorManager.xml
 
-BUILT_SOURCES = 					\
+BUILT_SOURCES =						\
 	org.gnome.ColorManager.h
 
