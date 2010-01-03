@@ -1795,6 +1795,8 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	/* should we show the pane at all */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profile_graphs"));
 	gtk_widget_set_visible (widget, show_section);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profile_info"));
+	gtk_widget_set_visible (widget, TRUE);
 
 	if (clut != NULL)
 		g_object_unref (clut);
@@ -2624,11 +2626,18 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_delete"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_profile_delete_cb), NULL);
+	gtk_widget_set_sensitive (widget, FALSE);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_import"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_profile_import_cb), NULL);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
 	gtk_widget_set_sensitive (widget, FALSE);
+
+	/* hidden until a profile is selected */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profile_graphs"));
+	gtk_widget_set_visible (widget, FALSE);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profile_info"));
+	gtk_widget_set_visible (widget, FALSE);
 
 	/* hide widgets by default */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_device_details"));
