@@ -749,6 +749,8 @@ gcm_prefs_profile_delete_cb (GtkWidget *widget, gpointer data)
 	/* re-get all the profiles for this device */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	if (selection == NULL)
+		goto out;
 	gcm_prefs_devices_treeview_clicked_cb (selection, NULL);
 out:
 	g_free (filename);
@@ -853,6 +855,8 @@ gcm_prefs_profile_import (const gchar *filename)
 	/* re-get all the profiles for this device */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	if (selection == NULL)
+		goto out;
 	gcm_prefs_devices_treeview_clicked_cb (selection, NULL);
 out:
 	if (profile != NULL)
