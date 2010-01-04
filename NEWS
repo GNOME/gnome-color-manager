@@ -1,3 +1,51 @@
+Version 2.29.2
+~~~~~~~~~~~~~~
+Released: 2010-01-04
+
+* Translations
+ - Added German help translation (Christian Kirbach)
+ - Added Slovenian translation (Matej Urbančič)
+ - Added Spanish translation (Jorge González)
+ - Updated Brazilian Portuguese translation (Flamarion Jorge)
+ - Updated British English translation (Bruce Cowan)
+ - Updated Danish translation (Joe Hansen)
+ - Updated French translation (Claude Paroz)
+ - Updated German translation (Christian Kirbach)
+ - Updated German translation (Mario Blättermann)
+ - Updated Russian translation (Alexandre Prokoudine)
+ - Updated Slovenian translation (Andrej Žnidaršič)
+
+* New Features:
+ - Add two elements in the UI, for RGB and CMYK working spaces (Richard Hughes)
+ - Add a TRC curve to the profile display (Richard Hughes)
+ - Add LCMS as a hard build-time dependency (Richard Hughes)
+ - Add PackageKit integration so we can install shared-color-targets (Richard Hughes)
+ - Offer to install ArgyllCMS if it is not installed, and the user wants to calibrate (Richard Hughes)
+ - Add a simple GcmImage class that makes embedded color profiles 'just work' (Richard Hughes)
+ - Import ICC profiles when dragged and dropped on the prefs capplet (Richard Hughes)
+ - Linkify the copyright and manufacturer strings in the profile dialog (Richard Hughes)
+ - Add a PolicyKit rule for the system-wide profiles install (Richard Hughes)
+ - Load the system-wide default if it has been installed (Richard Hughes)
+
+* Bugfix:
+ - Fix the reference file import filter (Pascal de Bruijn)
+ - Also evaluate /usr/local/bin when searching for Argyll tools. Fixes #605552 (Pascal de Bruijn)
+ - Add an icon for a colorspace conversion profile (Richard Hughes)
+ - Fix the help file installation so that yelp recognizes our help file (Richard Hughes)
+ - Do not install the demo ICC files, and instead depend on the shared-color-profiles package (Richard Hughes)
+ - Fix using profiles with VCGT formulas encoded in them (Richard Hughes)
+ - If getting the illuminants failed, try running it through the profile (Richard Hughes)
+ - Use strftime rather than our own hand-rolled function (Richard Hughes)
+ - Show the TRC curves in the UI, rather than the vcgt curves (Richard Hughes)
+ - Make gcm-dump-edid more useful by showing parsed data if available (Richard Hughes)
+ - Use as much of the EDID as we can when generating device IDs. Fixes #605013 (Richard Hughes)
+ - Add an experimental user-calibrate wizard, which the user can use when there is no calibration hardware available (Richard Hughes)
+ - Use the hardware calibration device in the profile name. Fixes #605259 (Richard Hughes)
+ - Sanitize the basename in GcmCalibrate when set. Fixes #605348 (Richard Hughes)
+ - Use the ORIGINATOR tag in the it8 file to specify a device prefix for the device calibration. Fixes #605259 (Richard Hughes)
+ - Move the device matching from a hard-coded list to a set of udev rules (Richard Hughes)
+ - Properly detect broken dispcal output. Fixes #605838 (Richard Hughes)
+
 Version 2.29.1
 ~~~~~~~~~~~~~~
 Released: 2009-12-07

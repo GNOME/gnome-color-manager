@@ -2,7 +2,7 @@ PackageKit Release Notes
 
 1. Write NEWS entries for gnome-color-manager in the same format as usual.
 
-git shortlog GNOME_COLOR_MANAGER_2_29_1.. | grep -i -v trivial | grep -v Merge > NEWS.new
+git shortlog GNOME_COLOR_MANAGER_2_29_1.. | grep -i -v trivial | grep -v Merge | uniq > NEWS.new
 
 3. Commit changes in gnome-color-manager git:
 
