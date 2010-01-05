@@ -517,7 +517,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	/* only set the CLUT if we're not seting the atom */
 	use_global = gconf_client_get_bool (gconf_client, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION, NULL);
 	if (use_global && filename != NULL) {
-		/* create dummy CLUT */
+		/* create CLUT */
 		profile = gcm_profile_default_new ();
 		ret = gcm_profile_parse (profile, filename, error);
 		if (!ret)
@@ -525,8 +525,10 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 
 		/* create a CLUT from the profile */
 		clut = gcm_profile_generate_vcgt (profile, size);
-	} else {
-		/* create dummy CLUT */
+	}
+
+	/* create dummy CLUT if we failed */
+	if (clut == NULL) {
 		clut = gcm_clut_new ();
 		g_object_set (clut,
 			      "size", size,
