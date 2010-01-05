@@ -53,6 +53,30 @@
       </locale>
     </schema>
 
+    <schema>
+      <key>/schemas/apps/gnome-color-manager/colorspace_rgb</key>
+      <applyto>/apps/gnome-color-manager/colorspace_rgb</applyto>
+      <owner>gnome-color-manager</owner>
+      <type>string</type>
+      <default>perceptual</default>
+      <locale name="C">
+        <short>The default RGB profile.</short>
+        <long>The RGB profile filename to be used by applications by default.</long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gnome-color-manager/colorspace_cmyk</key>
+      <applyto>/apps/gnome-color-manager/colorspace_cmyk</applyto>
+      <owner>gnome-color-manager</owner>
+      <type>string</type>
+      <default>perceptual</default>
+      <locale name="C">
+        <short>The default CMYK profile.</short>
+        <long>The CMYK profile filename to be used by applications by default.</long>
+      </locale>
+    </schema>
+
   </schemalist>
 </gconfschemafile>
 
