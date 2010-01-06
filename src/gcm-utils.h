@@ -72,12 +72,9 @@ void		 gcm_utils_ensure_sane_length		(gchar			*text,
 void		 gcm_utils_ensure_printable		(gchar			*text);
 gboolean	 gcm_utils_is_icc_profile		(const gchar		*filename);
 gchar		*gcm_utils_linkify			(const gchar		*text);
-GcmRenderingIntent
-gcm_rendering_intent_from_text (const gchar *intent);
-const gchar *
-gcm_rendering_intent_to_localized_text (GcmRenderingIntent intent);
-const gchar *
-gcm_rendering_intent_to_text (GcmRenderingIntent intent);
+GcmRenderingIntent gcm_rendering_intent_from_text	(const gchar		*intent);
+const gchar	*gcm_rendering_intent_to_localized_text	(GcmRenderingIntent	 intent);
+const gchar	*gcm_rendering_intent_to_text		(GcmRenderingIntent	 intent);
 
 #endif /* __GCM_UTILS_H */
 
