@@ -42,14 +42,26 @@
     </schema>
 
     <schema>
-      <key>/schemas/apps/gnome-color-manager/output_intent</key>
-      <applyto>/apps/gnome-color-manager/output_intent</applyto>
+      <key>/schemas/apps/gnome-color-manager/rendering_intent_display</key>
+      <applyto>/apps/gnome-color-manager/rendering_intent_display</applyto>
       <owner>gnome-color-manager</owner>
       <type>string</type>
       <default>perceptual</default>
       <locale name="C">
-        <short>The output intent to use, e.g. 'perceptual'.</short>
-        <long>The output intent to use, e.g. 'perceptual'.</long>
+        <short>The rendering intent to use for the display, e.g. 'perceptual'.</short>
+        <long>The rendering intent to use for the display, e.g. 'perceptual'.</long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gnome-color-manager/rendering_intent_softproof</key>
+      <applyto>/apps/gnome-color-manager/rendering_intent_softproof</applyto>
+      <owner>gnome-color-manager</owner>
+      <type>string</type>
+      <default>perceptual</default>
+      <locale name="C">
+        <short>The rendering intent to use for softproofs, e.g. 'perceptual'.</short>
+        <long>The rendering intent to use for softproofs, e.g. 'perceptual'.</long>
       </locale>
     </schema>
 
@@ -58,7 +70,7 @@
       <applyto>/apps/gnome-color-manager/colorspace_rgb</applyto>
       <owner>gnome-color-manager</owner>
       <type>string</type>
-      <default>perceptual</default>
+      <default>/usr/share/color/icc/Argyll/sRGB.icm</default>
       <locale name="C">
         <short>The default RGB profile.</short>
         <long>The RGB profile filename to be used by applications by default.</long>
@@ -70,7 +82,7 @@
       <applyto>/apps/gnome-color-manager/colorspace_cmyk</applyto>
       <owner>gnome-color-manager</owner>
       <type>string</type>
-      <default>perceptual</default>
+      <default></default>
       <locale name="C">
         <short>The default CMYK profile.</short>
         <long>The CMYK profile filename to be used by applications by default.</long>

@@ -41,12 +41,14 @@ struct GcmDbusPrivate
 	GConfClient		*gconf_client;
 	GcmClient		*client;
 	GTimer			*timer;
-	gchar			*output_intent;
+	gchar			*rendering_intent_display;
+	gchar			*rendering_intent_softproof;
 };
 
 enum {
 	PROP_0,
-	PROP_OUTPUT_INTENT,
+	PROP_RENDERING_INTENT_DISPLAY,
+	PROP_RENDERING_INTENT_SOFTPROOF,
 	PROP_LAST
 };
 
@@ -102,8 +104,11 @@ gcm_dbus_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 {
 	GcmDbus *dbus = GCM_DBUS (object);
 	switch (prop_id) {
-	case PROP_OUTPUT_INTENT:
-		g_value_set_string (value, dbus->priv->output_intent);
+	case PROP_RENDERING_INTENT_DISPLAY:
+		g_value_set_string (value, dbus->priv->rendering_intent_display);
+		break;
+	case PROP_RENDERING_INTENT_SOFTPROOF:
+		g_value_set_string (value, dbus->priv->rendering_intent_softproof);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -123,9 +128,13 @@ gcm_dbus_set_property (GObject *object, guint prop_id, const GValue *value, GPar
 	GcmDbus *dbus = GCM_DBUS (object);
 
 	switch (prop_id) {
-	case PROP_OUTPUT_INTENT:
-		g_free (dbus->priv->output_intent);
-		dbus->priv->output_intent = g_strdup (g_value_get_string (value));
+	case PROP_RENDERING_INTENT_DISPLAY:
+		g_free (dbus->priv->rendering_intent_display);
+		dbus->priv->rendering_intent_display = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_RENDERING_INTENT_SOFTPROOF:
+		g_free (dbus->priv->rendering_intent_softproof);
+		dbus->priv->rendering_intent_softproof = g_strdup (g_value_get_string (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -385,11 +394,21 @@ gcm_dbus_class_init (GcmDbusClass *klass)
 			      G_TYPE_NONE, 0);
 
 	/**
-	 * GcmDbus:output-intent:
+	 * GcmDbus:rendering-intent-display:
 	 */
 	g_object_class_install_property (object_class,
-					 PROP_OUTPUT_INTENT,
-					 g_param_spec_string ("output-intent",
+					 PROP_RENDERING_INTENT_DISPLAY,
+					 g_param_spec_string ("rendering-intent-display",
+							      NULL, NULL,
+							      NULL,
+							      G_PARAM_READABLE));
+
+	/**
+	 * GcmDbus:rendering-intent-softproof:
+	 */
+	g_object_class_install_property (object_class,
+					 PROP_RENDERING_INTENT_SOFTPROOF,
+					 g_param_spec_string ("rendering-intent-softproof",
 							      NULL, NULL,
 							      NULL,
 							      G_PARAM_READABLE));
@@ -428,15 +447,27 @@ gcm_dbus_init (GcmDbus *dbus)
 				 dbus, NULL, NULL);
 
 	/* coldplug */
-	dbus->priv->output_intent = gconf_client_get_string (dbus->priv->gconf_client, GCM_SETTINGS_OUTPUT_INTENT, &error);
-	if (dbus->priv->output_intent == NULL) {
+	dbus->priv->rendering_intent_display = gconf_client_get_string (dbus->priv->gconf_client, GCM_SETTINGS_RENDERING_INTENT_DISPLAY, &error);
+	if (dbus->priv->rendering_intent_display == NULL) {
 		if (error != NULL) {
 			egg_warning ("failed to get intent: %s", error->message);
 			g_clear_error (&error);
 		}
 
 		/* set defaults as GConf isn't sure */
-		dbus->priv->output_intent = g_strdup ("disabled");
+		dbus->priv->rendering_intent_display = g_strdup ("unknown");
+	}
+
+	/* coldplug */
+	dbus->priv->rendering_intent_softproof = gconf_client_get_string (dbus->priv->gconf_client, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF, &error);
+	if (dbus->priv->rendering_intent_softproof == NULL) {
+		if (error != NULL) {
+			egg_warning ("failed to get intent: %s", error->message);
+			g_clear_error (&error);
+		}
+
+		/* set defaults as GConf isn't sure */
+		dbus->priv->rendering_intent_softproof = g_strdup ("unknown");
 	}
 
 	/* get all devices */
@@ -459,7 +490,8 @@ gcm_dbus_finalize (GObject *object)
 
 	dbus = GCM_DBUS (object);
 	g_return_if_fail (dbus->priv != NULL);
-	g_free (dbus->priv->output_intent);
+	g_free (dbus->priv->rendering_intent_display);
+	g_free (dbus->priv->rendering_intent_softproof);
 	g_object_unref (dbus->priv->client);
 	g_object_unref (dbus->priv->gconf_client);
 	g_timer_destroy (dbus->priv->timer);

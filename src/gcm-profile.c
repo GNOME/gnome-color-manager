@@ -50,8 +50,8 @@ static void     gcm_profile_finalize	(GObject     *object);
  **/
 struct _GcmProfilePrivate
 {
-	guint				 profile_type;
-	guint				 colorspace;
+	GcmProfileType			 profile_type;
+	GcmProfileColorspace		 colorspace;
 	guint				 size;
 	gboolean			 has_vcgt;
 	gchar				*description;

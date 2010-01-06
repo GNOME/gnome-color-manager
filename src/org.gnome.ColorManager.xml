@@ -15,29 +15,37 @@
     </doc:doc>
 
     <!--*****************************************************************************************-->
-    <property name="OutputIntent" type="s" access="read">
+    <property name="RenderingIntentDisplay" type="s" access="read">
       <doc:doc>
         <doc:description>
           <doc:para>
-            The rendering itent for the output.
+            The rendering intent for the display.
           </doc:para>
           <doc:list>
             <doc:item>
               <doc:term>perceptual</doc:term><doc:definition>Perceptual</doc:definition>
             </doc:item>
             <doc:item>
-              <doc:term>rel-colormetric</doc:term><doc:definition>Relative colormetric</doc:definition>
+              <doc:term>relative-colormetric</doc:term><doc:definition>Relative colormetric</doc:definition>
             </doc:item>
             <doc:item>
               <doc:term>saturation</doc:term><doc:definition>Saturation</doc:definition>
             </doc:item>
             <doc:item>
-              <doc:term>abs-colormetric</doc:term><doc:definition>Absolute colormetric</doc:definition>
-            </doc:item>
-            <doc:item>
-              <doc:term>disabled</doc:term><doc:definition>Disabled</doc:definition>
+              <doc:term>absolute-colormetric</doc:term><doc:definition>Absolute colormetric</doc:definition>
             </doc:item>
           </doc:list>
+        </doc:description>
+      </doc:doc>
+    </property>
+
+    <!--*****************************************************************************************-->
+    <property name="RenderingIntentSoftproof" type="s" access="read">
+      <doc:doc>
+        <doc:description>
+          <doc:para>
+            The rendering intent for softproofing.
+          </doc:para>
         </doc:description>
       </doc:doc>
     </property>

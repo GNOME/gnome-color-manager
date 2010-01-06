@@ -35,7 +35,19 @@
 #define GCM_SETTINGS_DEFAULT_GAMMA		"/apps/gnome-color-manager/default_gamma"
 #define GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION	"/apps/gnome-color-manager/global_display_correction"
 #define GCM_SETTINGS_SET_ICC_PROFILE_ATOM	"/apps/gnome-color-manager/set_icc_profile_atom"
-#define GCM_SETTINGS_OUTPUT_INTENT		"/apps/gnome-color-manager/output_intent"
+#define GCM_SETTINGS_RENDERING_INTENT_DISPLAY	"/apps/gnome-color-manager/rendering_intent_display"
+#define GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF	"/apps/gnome-color-manager/rendering_intent_softproof"
+#define GCM_SETTINGS_COLORSPACE_RGB		"/apps/gnome-color-manager/colorspace_rgb"
+#define GCM_SETTINGS_COLORSPACE_CMYK		"/apps/gnome-color-manager/colorspace_cmyk"
+
+typedef enum {
+	GCM_RENDERING_INTENT_UNKNOWN,
+	GCM_RENDERING_INTENT_PERCEPTUAL,
+	GCM_RENDERING_INTENT_RELATIVE_COLORMETRIC,
+	GCM_RENDERING_INTENT_SATURATION,
+	GCM_RENDERING_INTENT_ABSOLUTE_COLORMETRIC,
+	GCM_RENDERING_INTENT_LAST
+} GcmRenderingIntent;
 
 gboolean	 gcm_utils_set_gamma_for_device		(GcmDevice		*device,
 							 GError			**error);
@@ -60,6 +72,12 @@ void		 gcm_utils_ensure_sane_length		(gchar			*text,
 void		 gcm_utils_ensure_printable		(gchar			*text);
 gboolean	 gcm_utils_is_icc_profile		(const gchar		*filename);
 gchar		*gcm_utils_linkify			(const gchar		*text);
+GcmRenderingIntent
+gcm_rendering_intent_from_text (const gchar *intent);
+const gchar *
+gcm_rendering_intent_to_localized_text (GcmRenderingIntent intent);
+const gchar *
+gcm_rendering_intent_to_text (GcmRenderingIntent intent);
 
 #endif /* __GCM_UTILS_H */
 

@@ -899,6 +899,65 @@ gcm_utils_format_date_time (const struct tm *created)
 	return g_strdup (g_strchug (buffer));
 }
 
+/**
+ * gcm_rendering_intent_to_text:
+ **/
+const gchar *
+gcm_rendering_intent_to_text (GcmRenderingIntent intent)
+{
+	if (intent == GCM_RENDERING_INTENT_PERCEPTUAL)
+		return "perceptual";
+	if (intent == GCM_RENDERING_INTENT_RELATIVE_COLORMETRIC)
+		return "relative-colormetric";
+	if (intent == GCM_RENDERING_INTENT_SATURATION)
+		return "saturation";
+	if (intent == GCM_RENDERING_INTENT_ABSOLUTE_COLORMETRIC)
+		return "absolute-colormetric";
+	return "unknown";
+}
+
+/**
+ * gcm_rendering_intent_to_localized_text:
+ **/
+const gchar *
+gcm_rendering_intent_to_localized_text (GcmRenderingIntent intent)
+{
+	if (intent == GCM_RENDERING_INTENT_PERCEPTUAL) {
+		/* TRANSLATORS: rendering intent: you probably want to google this */
+		return _("Perceptual");
+	}
+	if (intent == GCM_RENDERING_INTENT_RELATIVE_COLORMETRIC) {
+		/* TRANSLATORS: rendering intent: you probably want to google this */
+		return _("Relative colormetric");
+	}
+	if (intent == GCM_RENDERING_INTENT_SATURATION) {
+		/* TRANSLATORS: rendering intent: you probably want to google this */
+		return _("Saturation");
+	}
+	if (intent == GCM_RENDERING_INTENT_ABSOLUTE_COLORMETRIC) {
+		/* TRANSLATORS: rendering intent: you probably want to google this */
+		return _("Absolute colormetric");
+	}
+	return "unknown";
+}
+
+/**
+ * gcm_rendering_intent_from_text:
+ **/
+GcmRenderingIntent
+gcm_rendering_intent_from_text (const gchar *intent)
+{
+	if (g_strcmp0 (intent, "perceptual") == 0)
+		return GCM_RENDERING_INTENT_PERCEPTUAL;
+	if (g_strcmp0 (intent, "relative-colormetric") == 0)
+		return GCM_RENDERING_INTENT_RELATIVE_COLORMETRIC;
+	if (g_strcmp0 (intent, "saturation") == 0)
+		return GCM_RENDERING_INTENT_SATURATION;
+	if (g_strcmp0 (intent, "absolute-colormetric") == 0)
+		return GCM_RENDERING_INTENT_ABSOLUTE_COLORMETRIC;
+	return GCM_RENDERING_INTENT_UNKNOWN;
+}
+
 /***************************************************************************
  ***                          MAKE CHECK TESTS                           ***
  ***************************************************************************/
