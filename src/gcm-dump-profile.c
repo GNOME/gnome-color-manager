@@ -85,7 +85,6 @@ gcm_dump_profile_filename (const gchar *filename)
 		g_print ("Model:\t%s\n", model);
 	if (datetime != NULL)
 		g_print ("Created:\t%s\n", datetime);
-gcm_profile_save (profile, "/tmp/moo.icc", NULL);
 out:
 	g_object_unref (profile);
 	g_free (description);
