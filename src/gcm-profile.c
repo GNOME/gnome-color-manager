@@ -155,6 +155,36 @@ out:
 }
 
 /**
+ * gcm_profile_save:
+ **/
+gboolean
+gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
+{
+	gboolean ret = FALSE;
+	GcmProfilePrivate *priv = profile->priv;
+	GcmProfileClass *klass = GCM_PROFILE_GET_CLASS (profile);
+
+	/* not loaded */
+	if (priv->size == 0) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "not loaded");
+		goto out;
+	}
+
+	/* do we have support */
+	if (klass->save == NULL) {
+		if (error != NULL)
+			*error = g_error_new (1, 0, "no support");
+		goto out;
+	}
+
+	/* proxy */
+	ret = klass->save (profile, filename, error);
+out:
+	return ret;
+}
+
+/**
  * gcm_profile_generate_vcgt:
  *
  * Free with g_object_unref();

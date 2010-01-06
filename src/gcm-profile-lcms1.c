@@ -409,6 +409,18 @@ out:
 }
 
 /**
+ * gcm_profile_lcms1_save:
+ **/
+static gboolean
+gcm_profile_lcms1_save (GcmProfile *profile, const gchar *filename, GError **error)
+{
+	GcmProfileLcms1 *profile_lcms1 = GCM_PROFILE_LCMS1 (profile);
+	GcmProfileLcms1Private *priv = profile_lcms1->priv;
+	_cmsSaveProfile (priv->lcms_profile, filename);
+	return TRUE;
+}
+
+/**
  * gcm_profile_lcms1_parse_data:
  **/
 static gboolean
@@ -959,6 +971,7 @@ gcm_profile_lcms1_class_init (GcmProfileLcms1Class *klass)
 	object_class->finalize = gcm_profile_lcms1_finalize;
 
 	parent_class->parse_data = gcm_profile_lcms1_parse_data;
+	parent_class->save = gcm_profile_lcms1_save;
 	parent_class->generate_vcgt = gcm_profile_lcms1_generate_vcgt;
 	parent_class->generate_curve = gcm_profile_lcms1_generate_curve;
 

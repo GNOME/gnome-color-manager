@@ -51,6 +51,9 @@ struct _GcmProfileClass
 						 const guint8	*data,
 						 gsize		 length,
 						 GError		**error);
+	gboolean	 (*save)		(GcmProfile	*profile,
+						 const gchar	*filename,
+						 GError		**error);
 	GcmClut		*(*generate_vcgt)	(GcmProfile	*profile,
 						 guint		 size);
 	GcmClut		*(*generate_curve)	(GcmProfile	*profile,
@@ -100,6 +103,9 @@ gboolean	 gcm_profile_parse			(GcmProfile	*profile,
 gboolean	 gcm_profile_parse_data			(GcmProfile	*profile,
 							 const guint8	*data,
 							 gsize		 length,
+							 GError		**error);
+gboolean	 gcm_profile_save			(GcmProfile	*profile,
+							 const gchar	*filename,
 							 GError		**error);
 GcmClut		*gcm_profile_generate_vcgt		(GcmProfile	*profile,
 							 guint		 size);
