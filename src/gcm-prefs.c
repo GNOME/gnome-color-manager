@@ -2355,9 +2355,15 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmProfileColorspace colorspa
 	GcmProfile *profile;
 	guint i;
 	gchar *filename;
+	gchar *description;
 	GcmProfileColorspace colorspace_tmp;
 	guint added_count = 0;
 	gboolean has_vcgt;
+	const gchar *search = "RGB";
+
+	/* search is a way to reduce to number of profiles */
+	if (colorspace == GCM_PROFILE_COLORSPACE_CMYK)
+		search = "CMYK";
 
 	/* update each list */
 	for (i=0; i<profiles_array->len; i++) {
@@ -2365,11 +2371,14 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmProfileColorspace colorspa
 		g_object_get (profile,
 			      "has-vcgt", &has_vcgt,
 			      "filename", &filename,
+			      "description", &description,
 			      "colorspace", &colorspace_tmp,
 			      NULL);
 
 		/* only for correct type */
-		if (!has_vcgt && colorspace == colorspace_tmp) {
+		if (!has_vcgt &&
+		    colorspace == colorspace_tmp &&
+		    g_strstr_len (description, -1, search) != NULL) {
 			gcm_prefs_combobox_add_profile (widget, profile);
 
 			/* set active option */
@@ -2378,6 +2387,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmProfileColorspace colorspa
 			added_count++;
 		}
 		g_free (filename);
+		g_free (description);
 	}
 }
 
