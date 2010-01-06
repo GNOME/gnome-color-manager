@@ -321,9 +321,18 @@ out:
 static void
 gcm_inspect_get_properties_collect_cb (const char *key, const GValue *value, gpointer user_data)
 {
-	if (g_strcmp0 (key, "OutputIntent") == 0) {
+	if (g_strcmp0 (key, "RenderingIntentDisplay") == 0) {
 		/* TRANSLATORS: this is the rendering intent of the output */
-		g_print ("%s %s\n", _("Rendering intent (output):"), g_value_get_string (value));
+		g_print ("%s %s\n", _("Rendering intent (display):"), g_value_get_string (value));
+	} else if (g_strcmp0 (key, "RenderingIntentSoftproof") == 0) {
+		/* TRANSLATORS: this is the rendering intent of the printer */
+		g_print ("%s %s\n", _("Rendering intent (softproof):"), g_value_get_string (value));
+	} else if (g_strcmp0 (key, "ColorspaceRgb") == 0) {
+		/* TRANSLATORS: this is filename of the default colorspace */
+		g_print ("%s %s\n", _("RGB Colorspace:"), g_value_get_string (value));
+	} else if (g_strcmp0 (key, "ColorspaceCmyk") == 0) {
+		/* TRANSLATORS: this is filename of the default colorspace */
+		g_print ("%s %s\n", _("CMYK Colorspace:"), g_value_get_string (value));
 	} else {
 		egg_warning ("unhandled property '%s'", key);
 	}

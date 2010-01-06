@@ -43,12 +43,16 @@ struct GcmDbusPrivate
 	GTimer			*timer;
 	gchar			*rendering_intent_display;
 	gchar			*rendering_intent_softproof;
+	gchar			*colorspace_rgb;
+	gchar			*colorspace_cmyk;
 };
 
 enum {
 	PROP_0,
 	PROP_RENDERING_INTENT_DISPLAY,
 	PROP_RENDERING_INTENT_SOFTPROOF,
+	PROP_COLORSPACE_RGB,
+	PROP_COLORSPACE_CMYK,
 	PROP_LAST
 };
 
@@ -107,6 +111,12 @@ gcm_dbus_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 	case PROP_RENDERING_INTENT_DISPLAY:
 		g_value_set_string (value, dbus->priv->rendering_intent_display);
 		break;
+	case PROP_COLORSPACE_RGB:
+		g_value_set_string (value, dbus->priv->colorspace_rgb);
+		break;
+	case PROP_COLORSPACE_CMYK:
+		g_value_set_string (value, dbus->priv->colorspace_cmyk);
+		break;
 	case PROP_RENDERING_INTENT_SOFTPROOF:
 		g_value_set_string (value, dbus->priv->rendering_intent_softproof);
 		break;
@@ -125,17 +135,7 @@ gcm_dbus_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 static void
 gcm_dbus_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-	GcmDbus *dbus = GCM_DBUS (object);
-
 	switch (prop_id) {
-	case PROP_RENDERING_INTENT_DISPLAY:
-		g_free (dbus->priv->rendering_intent_display);
-		dbus->priv->rendering_intent_display = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_RENDERING_INTENT_SOFTPROOF:
-		g_free (dbus->priv->rendering_intent_softproof);
-		dbus->priv->rendering_intent_softproof = g_strdup (g_value_get_string (value));
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -412,6 +412,24 @@ gcm_dbus_class_init (GcmDbusClass *klass)
 							      NULL, NULL,
 							      NULL,
 							      G_PARAM_READABLE));
+	/**
+	 * GcmDbus:colorspace-rgb:
+	 */
+	g_object_class_install_property (object_class,
+					 PROP_COLORSPACE_RGB,
+					 g_param_spec_string ("colorspace-rgb",
+							      NULL, NULL,
+							      NULL,
+							      G_PARAM_READABLE));
+	/**
+	 * GcmDbus:colorspace-cmyk:
+	 */
+	g_object_class_install_property (object_class,
+					 PROP_COLORSPACE_CMYK,
+					 g_param_spec_string ("colorspace-cmyk",
+							      NULL, NULL,
+							      NULL,
+							      G_PARAM_READABLE));
 }
 
 /**
@@ -447,28 +465,10 @@ gcm_dbus_init (GcmDbus *dbus)
 				 dbus, NULL, NULL);
 
 	/* coldplug */
-	dbus->priv->rendering_intent_display = gconf_client_get_string (dbus->priv->gconf_client, GCM_SETTINGS_RENDERING_INTENT_DISPLAY, &error);
-	if (dbus->priv->rendering_intent_display == NULL) {
-		if (error != NULL) {
-			egg_warning ("failed to get intent: %s", error->message);
-			g_clear_error (&error);
-		}
-
-		/* set defaults as GConf isn't sure */
-		dbus->priv->rendering_intent_display = g_strdup ("unknown");
-	}
-
-	/* coldplug */
-	dbus->priv->rendering_intent_softproof = gconf_client_get_string (dbus->priv->gconf_client, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF, &error);
-	if (dbus->priv->rendering_intent_softproof == NULL) {
-		if (error != NULL) {
-			egg_warning ("failed to get intent: %s", error->message);
-			g_clear_error (&error);
-		}
-
-		/* set defaults as GConf isn't sure */
-		dbus->priv->rendering_intent_softproof = g_strdup ("unknown");
-	}
+	dbus->priv->rendering_intent_display = gconf_client_get_string (dbus->priv->gconf_client, GCM_SETTINGS_RENDERING_INTENT_DISPLAY, NULL);
+	dbus->priv->rendering_intent_softproof = gconf_client_get_string (dbus->priv->gconf_client, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF, NULL);
+	dbus->priv->colorspace_rgb = gconf_client_get_string (dbus->priv->gconf_client, GCM_SETTINGS_COLORSPACE_RGB, NULL);
+	dbus->priv->colorspace_cmyk = gconf_client_get_string (dbus->priv->gconf_client, GCM_SETTINGS_COLORSPACE_CMYK, NULL);
 
 	/* get all devices */
 	ret = gcm_client_add_connected (dbus->priv->client, &error);
@@ -492,6 +492,8 @@ gcm_dbus_finalize (GObject *object)
 	g_return_if_fail (dbus->priv != NULL);
 	g_free (dbus->priv->rendering_intent_display);
 	g_free (dbus->priv->rendering_intent_softproof);
+	g_free (dbus->priv->colorspace_rgb);
+	g_free (dbus->priv->colorspace_cmyk);
 	g_object_unref (dbus->priv->client);
 	g_object_unref (dbus->priv->gconf_client);
 	g_timer_destroy (dbus->priv->timer);
