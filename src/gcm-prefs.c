@@ -1667,6 +1667,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	const gchar *profile_type_text;
 	const gchar *profile_colorspace_text;
 	gboolean ret;
+	gboolean has_vcgt;
 	guint size = 0;
 	guint filesize;
 	gfloat x;
@@ -1687,6 +1688,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	g_object_get (profile,
 		      "filename", &filename,
 		      "size", &filesize,
+		      "has-vcgt", &has_vcgt,
 		      "copyright", &profile_copyright,
 		      "manufacturer", &profile_manufacturer,
 		      "model", &profile_model,
@@ -1755,6 +1757,16 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_colorspace"));
 		profile_colorspace_text = gcm_prefs_profile_colorspace_to_text (profile_colorspace);
 		gtk_label_set_label (GTK_LABEL (widget), profile_colorspace_text);
+	}
+
+	/* set vcgt */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_vcgt"));
+	gtk_widget_set_visible (widget, (profile_type == GCM_PROFILE_TYPE_DISPLAY_DEVICE));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_vcgt"));
+	if (has_vcgt) {
+		gtk_label_set_label (GTK_LABEL (widget), _("Yes"));
+	} else {
+		gtk_label_set_label (GTK_LABEL (widget), _("No"));
 	}
 
 	/* set basename */
@@ -2826,6 +2838,8 @@ main (int argc, char **argv)
 	gtk_size_group_add_widget (size_group, widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox39"));
 	gtk_size_group_add_widget (size_group, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox48"));
+	gtk_size_group_add_widget (size_group, widget);
 
 	/* set alignment for right */
 	size_group2 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
@@ -2850,6 +2864,8 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox37"));
 	gtk_size_group_add_widget (size_group2, widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox40"));
+	gtk_size_group_add_widget (size_group2, widget);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox49"));
 	gtk_size_group_add_widget (size_group2, widget);
 
 	/* get screen */
