@@ -1363,6 +1363,44 @@ out:
 }
 
 /**
+ * gcm_prefs_is_profile_suitable_for_device_type:
+ **/
+static gboolean
+gcm_prefs_is_profile_suitable_for_device_type (GcmProfile *profile, GcmDeviceType type)
+{
+	GcmProfileType profile_type_tmp;
+	GcmProfileType profile_type;
+	GcmProfileColorspace colorspace;
+	gboolean has_vcgt;
+	gboolean ret = FALSE;
+
+	/* get properties */
+	g_object_get (profile,
+		      "type", &profile_type_tmp,
+		      "colorspace", &colorspace,
+		      "has-vcgt", &has_vcgt,
+		      NULL);
+
+	/* ignore LAB profiles */
+	if (colorspace == GCM_PROFILE_COLORSPACE_LAB)
+		goto out;
+
+	/* not the correct type */
+	profile_type = gcm_utils_device_type_to_profile_type (type);
+	if (profile_type_tmp != profile_type)
+		goto out;
+
+	/* no VCGT for a display (is a crap profile) */
+	if (profile_type_tmp == GCM_PROFILE_TYPE_DISPLAY_DEVICE && !has_vcgt)
+		goto out;
+
+	/* success */
+	ret = TRUE;
+out:
+	return ret;
+}
+
+/**
  * gcm_prefs_add_profiles_suitable_for_devices:
  **/
 static void
@@ -1372,13 +1410,9 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, GcmDeviceType ty
 	guint i;
 	guint added_count = 0;
 	gchar *filename;
-	gboolean ret = FALSE;
+	gboolean ret;
+	gboolean set_active = FALSE;
 	GcmProfile *profile;
-	GcmProfileType profile_type;
-	GcmProfileType profile_type_tmp;
-
-	/* get the correct profile type for the device type */
-	profile_type = gcm_utils_device_type_to_profile_type (type);
 
 	/* clear existing entries */
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
@@ -1387,32 +1421,33 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, GcmDeviceType ty
 	/* add profiles of the right type */
 	for (i=0; i<profiles_array->len; i++) {
 		profile = g_ptr_array_index (profiles_array, i);
-		g_object_get (profile,
-			      "type", &profile_type_tmp,
-			      "filename", &filename,
-			      NULL);
-		/* only add correct types */
-		if (profile_type_tmp == profile_type) {
 
+		/* only add correct types */
+		ret = gcm_prefs_is_profile_suitable_for_device_type (profile, type);
+		if (ret) {
 			/* add */
 			gcm_prefs_combobox_add_profile (widget, profile);
 
 			/* set active option */
+			g_object_get (profile,
+				      "filename", &filename,
+				      NULL);
 			if (g_strcmp0 (filename, profile_filename) == 0) {
 				gtk_combo_box_set_active (GTK_COMBO_BOX (widget), added_count);
-				ret = TRUE;
+				set_active = TRUE;
 			}
+			g_free (filename);
+
+			/* keep a list so we can set active correctly */
 			added_count++;
 		}
-		g_free (filename);
 	}
 
 	/* add a clear entry */
 	gcm_prefs_combobox_add_profile (widget, NULL);
-	added_count++;
 
 	/* select 'None' if there was no match */
-	if (!ret) {
+	if (!set_active) {
 		egg_warning ("no match for %s", profile_filename);
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), added_count);
 	}
