@@ -53,6 +53,7 @@ struct _GcmProfilePrivate
 	guint				 profile_type;
 	guint				 colorspace;
 	guint				 size;
+	gboolean			 has_vcgt;
 	gchar				*description;
 	gchar				*filename;
 	gchar				*copyright;
@@ -77,6 +78,7 @@ enum {
 	PROP_TYPE,
 	PROP_COLORSPACE,
 	PROP_SIZE,
+	PROP_HAS_VCGT,
 	PROP_WHITE_POINT,
 	PROP_BLACK_POINT,
 	PROP_LUMINANCE_RED,
@@ -283,6 +285,9 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_SIZE:
 		g_value_set_uint (value, priv->size);
 		break;
+	case PROP_HAS_VCGT:
+		g_value_set_boolean (value, priv->has_vcgt);
+		break;
 	case PROP_WHITE_POINT:
 		g_value_set_object (value, priv->white_point);
 		break;
@@ -369,6 +374,9 @@ gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, G
 		break;
 	case PROP_SIZE:
 		priv->size = g_value_get_uint (value);
+		break;
+	case PROP_HAS_VCGT:
+		priv->has_vcgt = g_value_get_boolean (value);
 		break;
 	case PROP_WHITE_POINT:
 		priv->white_point = g_value_dup_object (value);
@@ -474,6 +482,14 @@ gcm_profile_class_init (GcmProfileClass *klass)
 				   0, G_MAXUINT, 0,
 				   G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_SIZE, pspec);
+
+	/**
+	 * GcmProfile:has-vcgt:
+	 */
+	pspec = g_param_spec_boolean ("has-vcgt", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_HAS_VCGT, pspec);
 
 	/**
 	 * GcmProfile:white-point:

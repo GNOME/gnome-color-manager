@@ -699,6 +699,11 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 	/* success */
 	ret = TRUE;
 
+	/* set properties */
+	g_object_set (profile,
+		      "has-vcgt", priv->has_vcgt_formula || priv->has_vcgt_table,
+		      NULL);
+
 	egg_debug ("Has MLUT:         %s", priv->has_mlut ? "YES" : "NO");
 	egg_debug ("Has VCGT formula: %s", priv->has_vcgt_formula ? "YES" : "NO");
 	egg_debug ("Has VCGT table:   %s", priv->has_vcgt_table ? "YES" : "NO");

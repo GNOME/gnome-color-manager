@@ -41,6 +41,7 @@ gcm_dump_profile_filename (const gchar *filename)
 	guint profile_type;
 	guint colorspace;
 	guint size;
+	gboolean has_vcgt;
 	gchar *description = NULL;
 	gchar *copyright = NULL;
 	gchar *manufacturer = NULL;
@@ -61,6 +62,7 @@ gcm_dump_profile_filename (const gchar *filename)
 		      "type", &profile_type,
 		      "colorspace", &colorspace,
 		      "size", &size,
+		      "has-vcgt", &has_vcgt,
 		      "description", &description,
 		      "copyright", &copyright,
 		      "manufacturer", &manufacturer,
@@ -72,6 +74,7 @@ gcm_dump_profile_filename (const gchar *filename)
 	g_print ("Type:\t%s\n", gcm_profile_type_to_text (profile_type));
 	g_print ("Colorspace:\t%s\n", gcm_profile_colorspace_to_text (colorspace));
 	g_print ("Size:\t%i bytes\n", size);
+	g_print ("Has VCGT:\t%s\n", has_vcgt ? "Yes" : "No");
 	if (description != NULL)
 		g_print ("Description:\t%s\n", description);
 	if (copyright != NULL)
