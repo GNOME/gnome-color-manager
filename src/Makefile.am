@@ -65,6 +65,7 @@ sbin_PROGRAMS =						\
 bin_PROGRAMS =						\
 	gcm-inspect					\
 	gcm-dump-profile				\
+	gcm-fix-profile					\
 	gcm-dump-edid					\
 	gcm-apply					\
 	gcm-prefs					\
@@ -112,6 +113,17 @@ gcm_dump_profile_LDADD =				\
 	$(GTK_LIBS)
 
 gcm_dump_profile_CFLAGS =				\
+	$(WARNINGFLAGS_C)
+
+gcm_fix_profile_SOURCES =				\
+	gcm-fix-profile.c
+
+gcm_fix_profile_LDADD =					\
+	$(GLIB_LIBS)					\
+	$(LCMS_LIBS)					\
+	$(GTK_LIBS)
+
+gcm_fix_profile_CFLAGS =				\
 	$(WARNINGFLAGS_C)
 
 gcm_inspect_SOURCES =					\

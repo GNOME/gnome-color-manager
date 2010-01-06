@@ -392,10 +392,10 @@ main (int argc, char **argv)
 		{ "x11", 'x', 0, G_OPTION_ARG_NONE, &x11,
 			/* TRANSLATORS: command line option */
 			_("Show X11 properties"), NULL },
-		{ "device", '\0', 0, G_OPTION_ARG_FILENAME, &sysfs_path,
+		{ "device", '\0', 0, G_OPTION_ARG_STRING, &sysfs_path,
 			/* TRANSLATORS: command line option */
 			_("Get the profiles for a specific device"), NULL },
-		{ "type", '\0', 0, G_OPTION_ARG_FILENAME, &type,
+		{ "type", '\0', 0, G_OPTION_ARG_STRING, &type,
 			/* TRANSLATORS: command line option */
 			_("Get the profiles for a specific device type"), NULL },
 		{ "dump", 'd', 0, G_OPTION_ARG_NONE, &dump,

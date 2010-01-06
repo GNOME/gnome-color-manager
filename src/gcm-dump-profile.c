@@ -85,7 +85,7 @@ gcm_dump_profile_filename (const gchar *filename)
 		g_print ("Model:\t%s\n", model);
 	if (datetime != NULL)
 		g_print ("Created:\t%s\n", datetime);
-
+gcm_profile_save (profile, "/tmp/moo.icc", NULL);
 out:
 	g_object_unref (profile);
 	g_free (description);
@@ -123,7 +123,7 @@ main (int argc, char **argv)
 	gtk_init (&argc, &argv);
 
 	/* TRANSLATORS: this just dumps the profile to the screen */
-	context = g_option_context_new (_("Profile dump program"));
+	context = g_option_context_new (_("ICC profile dump program"));
 	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_add_group (context, egg_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
