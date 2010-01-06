@@ -1266,6 +1266,11 @@ gcm_prefs_add_devices_columns (GtkTreeView *treeview)
 
 	/* column for text */
 	renderer = gtk_cell_renderer_text_new ();
+	g_object_set (renderer,
+		      "ellipsize", PANGO_ELLIPSIZE_END,
+		      "wrap-mode", PANGO_WRAP_WORD_CHAR,
+		      "width-chars", 40,
+		      NULL);
 	column = gtk_tree_view_column_new_with_attributes ("", renderer,
 							   "markup", GCM_DEVICES_COLUMN_TITLE, NULL);
 	gtk_tree_view_column_set_sort_column_id (column, GCM_DEVICES_COLUMN_SORT);
@@ -1292,6 +1297,11 @@ gcm_prefs_add_profiles_columns (GtkTreeView *treeview)
 
 	/* column for text */
 	renderer = gtk_cell_renderer_text_new ();
+	g_object_set (renderer,
+		      "ellipsize", PANGO_ELLIPSIZE_END,
+		      "wrap-mode", PANGO_WRAP_WORD_CHAR,
+		      "width-chars", 50,
+		      NULL);
 	column = gtk_tree_view_column_new_with_attributes ("", renderer,
 							   "markup", GCM_PROFILES_COLUMN_TITLE, NULL);
 	gtk_tree_view_column_set_sort_column_id (column, GCM_PROFILES_COLUMN_SORT);
@@ -1919,16 +1929,21 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 static void
 gcm_prefs_set_combo_simple_text (GtkWidget *combo_box)
 {
-	GtkCellRenderer *cell;
+	GtkCellRenderer *renderer;
 	GtkListStore *store;
 
 	store = gtk_list_store_new (2, G_TYPE_STRING, GCM_TYPE_PROFILE);
 	gtk_combo_box_set_model (GTK_COMBO_BOX (combo_box), GTK_TREE_MODEL (store));
 	g_object_unref (store);
 
-	cell = gtk_cell_renderer_text_new ();
-	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), cell, TRUE);
-	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), cell,
+	renderer = gtk_cell_renderer_text_new ();
+	g_object_set (renderer,
+		      "ellipsize", PANGO_ELLIPSIZE_END,
+		      "wrap-mode", PANGO_WRAP_WORD_CHAR,
+		      "width-chars", 60,
+		      NULL);
+	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, TRUE);
+	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
 					"text", GCM_PREFS_COMBO_COLUMN_TEXT,
 					NULL);
 }
@@ -2150,13 +2165,7 @@ gcm_prefs_add_device_type (GcmDevice *device)
 	/* italic for non-connected devices */
 	if (!connected) {
 		/* TRANSLATORS: this is where the device has been setup but is not connected */
-		g_string_append_printf (string, " <i>[%s]</i>", _("disconnected"));
-	}
-
-	/* use a different title for stuff that won't work yet */
-	if (type != GCM_DEVICE_TYPE_DISPLAY) {
-		/* TRANSLATORS: this is where the required software has not been written yet */
-		g_string_append_printf (string, "\n(%s)", _("No software support"));
+		g_string_append_printf (string, "\n<i>[%s]</i>", _("disconnected"));
 	}
 
 	/* create sort order */
@@ -2903,7 +2912,6 @@ main (int argc, char **argv)
 	gtk_box_pack_start (GTK_BOX(widget), info_bar, FALSE, FALSE, 0);
 
 	/* show main UI */
-	gtk_window_set_default_size (GTK_WINDOW (main_window), 700, 280);
 	gtk_widget_show (main_window);
 
 	/* connect up sliders */

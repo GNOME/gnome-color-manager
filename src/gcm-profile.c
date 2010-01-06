@@ -347,10 +347,6 @@ gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, G
 		if (priv->description != NULL)
 			gcm_utils_ensure_printable (priv->description);
 
-		/* some profile_lcms1s have _really_ long titles - Microsoft, I'm looking at you... */
-		if (priv->description != NULL)
-			gcm_utils_ensure_sane_length (priv->description, 80);
-
 		/* there's nothing sensible to display */
 		if (priv->description == NULL || priv->description[0] == '\0') {
 			g_free (priv->description);
