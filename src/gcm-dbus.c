@@ -31,6 +31,7 @@
 #include "gcm-dbus.h"
 #include "gcm-client.h"
 #include "gcm-profile.h"
+#include "gcm-profile-store.h"
 
 static void     gcm_dbus_finalize	(GObject	*object);
 
@@ -40,6 +41,7 @@ struct GcmDbusPrivate
 {
 	GConfClient		*gconf_client;
 	GcmClient		*client;
+	GcmProfileStore		*profile_store;
 	GTimer			*timer;
 	gchar			*rendering_intent_display;
 	gchar			*rendering_intent_softproof;
@@ -224,15 +226,12 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *sysfs_pat
 static GPtrArray *
 gcm_dbus_get_profiles_for_type_internal (GcmDbus *dbus, GcmDeviceType type)
 {
-	const gchar *filename;
-	gboolean ret;
 	guint i;
 	GcmProfile *profile;
 	GcmProfileType profile_type;
 	GcmProfileType type_tmp;
-	GError *error = NULL;
 	GPtrArray *array;
-	GPtrArray *array_devices;
+	GPtrArray *profile_array;
 
 	/* create a temp array */
 	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -241,34 +240,23 @@ gcm_dbus_get_profiles_for_type_internal (GcmDbus *dbus, GcmDeviceType type)
 	profile_type = gcm_utils_device_type_to_profile_type (type);
 
 	/* get list */
-	array_devices = gcm_utils_get_profile_filenames ();
-	for (i=0; i<array_devices->len; i++) {
-		filename = g_ptr_array_index (array_devices, i);
+	profile_array = gcm_profile_store_get_array (dbus->priv->profile_store);
+	for (i=0; i<profile_array->len; i++) {
+		profile = g_ptr_array_index (profile_array, i);
 
-		/* open and parse filename */
-		profile = gcm_profile_default_new ();
-		ret = gcm_profile_parse (profile, filename, &error);
-		if (!ret) {
-			egg_warning ("failed to parse %s: %s", filename, error->message);
-			g_clear_error (&error);
-		} else {
-			/* get the native path of this device */
-			g_object_get (profile,
-				      "type", &type_tmp,
-				      NULL);
+		/* get the native path of this device */
+		g_object_get (profile,
+			      "type", &type_tmp,
+			      NULL);
 
-			/* compare what we have against what we were given */
-			egg_debug ("comparing %i with %i", type_tmp, profile_type);
-			if (type_tmp == profile_type)
-				g_ptr_array_add (array, g_object_ref (profile));
-		}
-
-		/* unref */
-		g_object_unref (profile);
+		/* compare what we have against what we were given */
+		egg_debug ("comparing %i with %i", type_tmp, profile_type);
+		if (type_tmp == profile_type)
+			g_ptr_array_add (array, g_object_ref (profile));
 	}
 
-	/* unref list of devices */
-	g_ptr_array_unref (array_devices);
+	/* unref profile list */
+	g_ptr_array_unref (profile_array);
 	return array;
 }
 
@@ -457,6 +445,7 @@ gcm_dbus_init (GcmDbus *dbus)
 	dbus->priv = GCM_DBUS_GET_PRIVATE (dbus);
 	dbus->priv->gconf_client = gconf_client_get_default ();
 	dbus->priv->client = gcm_client_new ();
+	dbus->priv->profile_store = gcm_profile_store_new ();
 	dbus->priv->timer = g_timer_new ();
 
 	/* notify on changes */
@@ -495,6 +484,7 @@ gcm_dbus_finalize (GObject *object)
 	g_free (dbus->priv->colorspace_rgb);
 	g_free (dbus->priv->colorspace_cmyk);
 	g_object_unref (dbus->priv->client);
+	g_object_unref (dbus->priv->profile_store);
 	g_object_unref (dbus->priv->gconf_client);
 	g_timer_destroy (dbus->priv->timer);
 
