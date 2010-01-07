@@ -54,13 +54,11 @@ gcm_utils_linkify (const gchar *text)
 		/* find the start of a link */
 		ret = g_str_has_prefix (&text[i], "http://");
 		if (ret) {
-			egg_debug ("dump from %i to %i", j, i);
 			g_string_append_len (string, text+j, i-j);
 			for (j=i;; j++) {
 				/* find the end of the link, or the end of the string */
 				if (text[j] == '\0' ||
 				    text[j] == ' ') {
-					egg_debug ("link is from %i to %i", i, j);
 					g_string_append (string, "<a href=\"");
 					g_string_append_len (string, text+i, j-i);
 					g_string_append (string, "\">");
@@ -73,7 +71,6 @@ gcm_utils_linkify (const gchar *text)
 
 		/* end of the string, dump what's left */
 		if (text[i] == '\0') {
-			egg_debug ("dump from %i to %i", j, i);
 			g_string_append_len (string, text+j, i-j);
 			break;
 		}
