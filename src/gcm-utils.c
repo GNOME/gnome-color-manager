@@ -561,82 +561,6 @@ out:
 }
 
 /**
- * gcm_utils_get_profile_filenames_for_directory:
- **/
-static gboolean
-gcm_utils_get_profile_filenames_for_directory (GPtrArray *array, const gchar *directory)
-{
-	GDir *dir;
-	GError *error = NULL;
-	gboolean ret = TRUE;
-	const gchar *name;
-	gchar *full_path;
-
-	/* get contents */
-	dir = g_dir_open (directory, 0, &error);
-	if (dir == NULL) {
-		egg_debug ("failed to open: %s", error->message);
-		g_error_free (error);
-		ret = FALSE;
-		goto out;
-	}
-
-	/* process entire list */
-	do {
-		name = g_dir_read_name (dir);
-		if (name == NULL)
-			break;
-
-		/* make the compete path */
-		full_path = g_build_filename (directory, name, NULL);
-		if (g_file_test (full_path, G_FILE_TEST_IS_DIR)) {
-			egg_debug ("recursing to %s", full_path);
-			gcm_utils_get_profile_filenames_for_directory (array, full_path);
-		} else if (g_str_has_suffix (name, ".icc") ||
-			   g_str_has_suffix (name, ".icm") ||
-			   g_str_has_suffix (name, ".ICC") ||
-			   g_str_has_suffix (name, ".ICM")) {
-			/* add to array */
-			g_ptr_array_add (array, g_strdup (full_path));
-		} else {
-			/* invalid file */
-			egg_debug ("not recognised as ICC profile: %s", full_path);
-		}
-		g_free (full_path);
-	} while (TRUE);
-out:
-	if (dir != NULL)
-		g_dir_close (dir);
-	return ret;
-}
-
-/**
- * gcm_utils_get_profile_filenames:
- *
- * Return value, an array of strings, free with g_ptr_array_unref()
- **/
-GPtrArray *
-gcm_utils_get_profile_filenames (void)
-{
-	GPtrArray *array;
-	gchar *user;
-
-	/* create output array */
-	array = g_ptr_array_new_with_free_func (g_free);
-
-	/* get systemwide profiles */
-	gcm_utils_get_profile_filenames_for_directory (array, "/usr/share/color/icc");
-	gcm_utils_get_profile_filenames_for_directory (array, "/usr/local/share/color/icc");
-
-	/* get per-user profiles */
-	user = g_build_filename (g_get_home_dir (), "/.color/icc", NULL);
-	gcm_utils_get_profile_filenames_for_directory (array, user);
-	g_free (user);
-
-	return array;
-}
-
-/**
  * gcm_utils_mkdir_and_copy:
  **/
 gboolean
@@ -946,12 +870,6 @@ gcm_utils_test (EggTest *test)
 	else
 		egg_test_failed (test, "failed to linkify text: %s", text);
 	g_free (text);
-
-	/************************************************************/
-	egg_test_title (test, "get profile filenames");
-	array = gcm_utils_get_profile_filenames ();
-	egg_test_assert (test, array->len > 1);
-	g_ptr_array_unref (array);
 
 	/************************************************************/
 	egg_test_title (test, "get filename of data file");

@@ -38,6 +38,7 @@
 #include "gcm-client.h"
 #include "gcm-color-device.h"
 #include "gcm-profile.h"
+#include "gcm-profile-store.h"
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
 #include "gcm-xyz.h"
@@ -51,7 +52,7 @@ static GtkListStore *list_store_devices = NULL;
 static GtkListStore *list_store_profiles = NULL;
 static GcmDevice *current_device = NULL;
 static GnomeRRScreen *rr_screen = NULL;
-static GPtrArray *profiles_array = NULL;
+static GcmProfileStore *profile_store = NULL;
 static GcmClient *gcm_client = NULL;
 static GcmColorDevice *color_device = NULL;
 static gboolean setting_up_device = FALSE;
@@ -684,15 +685,19 @@ gcm_prefs_update_profile_list (void)
 	guint i;
 	gchar *filename = NULL;
 	gchar *sort = NULL;
+	GPtrArray *profile_array = NULL;
 
 	egg_debug ("updating profile list");
+
+	/* get new list */
+	profile_array = gcm_profile_store_get_array (profile_store);
 
 	/* clear existing list */
 	gtk_list_store_clear (list_store_profiles);
 
 	/* update each list */
-	for (i=0; i<profiles_array->len; i++) {
-		profile = g_ptr_array_index (profiles_array, i);
+	for (i=0; i<profile_array->len; i++) {
+		profile = g_ptr_array_index (profile_array, i);
 		g_object_get (profile,
 			      "description", &description,
 			      "type", &profile_type,
@@ -717,6 +722,8 @@ gcm_prefs_update_profile_list (void)
 		g_free (filename);
 		g_free (description);
 	}
+	if (profile_array != NULL)
+		g_ptr_array_unref (profile_array);
 }
 
 /**
@@ -773,19 +780,6 @@ gcm_prefs_profile_delete_cb (GtkWidget *widget, gpointer data)
 	retval = g_unlink (filename);
 	if (retval != 0)
 		goto out;
-
-	/* find an existing profile of this name */
-	g_ptr_array_remove (profiles_array, profile);
-
-	/* update list of profiles */
-	gcm_prefs_update_profile_list ();
-
-	/* re-get all the profiles for this device */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
-	if (selection == NULL)
-		goto out;
-	gcm_prefs_devices_treeview_clicked_cb (selection, NULL);
 out:
 	g_free (filename);
 }
@@ -845,13 +839,10 @@ gcm_prefs_calibrate_device_get_icc_profile (void)
 static gboolean
 gcm_prefs_profile_import (const gchar *filename)
 {
-	GtkWidget *widget;
 	GtkWidget *dialog;
 	GError *error = NULL;
 	gchar *destination = NULL;
 	GtkWindow *window;
-	GcmProfile *profile = NULL;
-	GtkTreeSelection *selection;
 	gboolean ret;
 
 	/* copy icc file to ~/.color/icc */
@@ -868,33 +859,7 @@ gcm_prefs_profile_import (const gchar *filename)
 		gtk_widget_destroy (dialog);
 		goto out;
 	}
-
-	/* add new profile */
-	profile = gcm_profile_default_new ();
-
-	/* parse the new file */
-	ret = gcm_profile_parse (profile, destination, &error);
-	if (!ret) {
-		egg_warning ("failed to parse: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* add to arrays */
-	g_ptr_array_add (profiles_array, g_object_ref (profile));
-
-	/* update list of profiles */
-	gcm_prefs_update_profile_list ();
-
-	/* re-get all the profiles for this device */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
-	if (selection == NULL)
-		goto out;
-	gcm_prefs_devices_treeview_clicked_cb (selection, NULL);
 out:
-	if (profile != NULL)
-		g_object_unref (profile);
 	g_free (destination);
 	return ret;
 }
@@ -1064,7 +1029,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	gchar *name;
 	gchar *destination = NULL;
 	GcmProfile *profile;
-	GtkTreeSelection *selection;
+	GPtrArray *profile_array = NULL;
 
 	/* ensure argyllcms is installed */
 	ret = gcm_prefs_ensure_argyllcms_installed ();
@@ -1117,9 +1082,12 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		goto out;
 	}
 
+	/* get new list */
+	profile_array = gcm_profile_store_get_array (profile_store);
+
 	/* find an existing profile of this name */
-	for (i=0; i<profiles_array->len; i++) {
-		profile = g_ptr_array_index (profiles_array, i);
+	for (i=0; i<profile_array->len; i++) {
+		profile = g_ptr_array_index (profile_array, i);
 		g_object_get (profile,
 			      "filename", &name,
 			      NULL);
@@ -1132,7 +1100,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* we didn't find an existing profile */
-	if (i == profiles_array->len) {
+	if (i == profile_array->len) {
 		egg_debug ("adding: %s", destination);
 
 		/* set this default */
@@ -1145,38 +1113,15 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 			g_error_free (error);
 			goto out;
 		}
-
-		/* create a new instance */
-		profile = gcm_profile_default_new ();
-
-		/* parse the new file */
-		ret = gcm_profile_parse (profile, destination, &error);
-		if (!ret) {
-			egg_warning ("failed to calibrate: %s", error->message);
-			g_error_free (error);
-			g_object_unref (profile);
-			goto out;
-		}
-
-		/* add to arrays */
-		g_ptr_array_add (profiles_array, g_object_ref (profile));
-
-		/* update list of profiles */
-		gcm_prefs_update_profile_list ();
-
-		g_object_unref (profile);
 	}
-
-	/* re-get all the profiles for this device */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
-	gcm_prefs_devices_treeview_clicked_cb (selection, NULL);
 
 	/* remove temporary file */
 	g_unlink (filename);
 out:
 	g_free (filename);
 	g_free (destination);
+	if (profile_array != NULL)
+		g_ptr_array_unref (profile_array);
 	if (calibrate != NULL)
 		g_object_unref (calibrate);
 }
@@ -1413,14 +1358,18 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, GcmDeviceType ty
 	gboolean ret;
 	gboolean set_active = FALSE;
 	GcmProfile *profile;
+	GPtrArray *profile_array = NULL;
 
 	/* clear existing entries */
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
 	gtk_list_store_clear (GTK_LIST_STORE (model));
 
+	/* get new list */
+	profile_array = gcm_profile_store_get_array (profile_store);
+
 	/* add profiles of the right type */
-	for (i=0; i<profiles_array->len; i++) {
-		profile = g_ptr_array_index (profiles_array, i);
+	for (i=0; i<profile_array->len; i++) {
+		profile = g_ptr_array_index (profile_array, i);
 
 		/* only add correct types */
 		ret = gcm_prefs_is_profile_suitable_for_device_type (profile, type);
@@ -1451,6 +1400,8 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, GcmDeviceType ty
 		egg_warning ("no match for %s", profile_filename);
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), added_count);
 	}
+	if (profile_array != NULL)
+		g_ptr_array_unref (profile_array);
 }
 
 /**
@@ -1996,42 +1947,6 @@ gcm_prefs_set_combo_simple_text (GtkWidget *combo_box)
 }
 
 /**
- * gcm_prefs_add_profiles:
- **/
-static void
-gcm_prefs_add_profiles (GtkWidget *widget)
-{
-	const gchar *filename;
-	guint i;
-	GcmProfile *profile;
-	gboolean ret;
-	GError *error = NULL;
-	GPtrArray *filename_array;
-
-	/* get profiles */
-	filename_array = gcm_utils_get_profile_filenames ();
-	for (i=0; i<filename_array->len; i++) {
-		filename = g_ptr_array_index (filename_array, i);
-
-		/* parse the profile name */
-		profile = gcm_profile_default_new ();
-		ret = gcm_profile_parse (profile, filename, &error);
-		if (!ret) {
-			egg_warning ("failed to add profile: %s", error->message);
-			g_error_free (error);
-			/* not fatal */
-			error = NULL;
-		} else {
-			/* add to array */
-			g_ptr_array_add (profiles_array, g_object_ref (profile));
-		}
-		g_object_unref (profile);
-	}
-
-	g_ptr_array_unref (filename_array);
-}
-
-/**
  * gcm_prefs_profile_combo_changed_cb:
  **/
 static void
@@ -2395,14 +2310,18 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmProfileColorspace colorspa
 	guint added_count = 0;
 	gboolean has_vcgt;
 	const gchar *search = "RGB";
+	GPtrArray *profile_array = NULL;
 
 	/* search is a way to reduce to number of profiles */
 	if (colorspace == GCM_PROFILE_COLORSPACE_CMYK)
 		search = "CMYK";
 
+	/* get new list */
+	profile_array = gcm_profile_store_get_array (profile_store);
+
 	/* update each list */
-	for (i=0; i<profiles_array->len; i++) {
-		profile = g_ptr_array_index (profiles_array, i);
+	for (i=0; i<profile_array->len; i++) {
+		profile = g_ptr_array_index (profile_array, i);
 		g_object_get (profile,
 			      "has-vcgt", &has_vcgt,
 			      "filename", &filename,
@@ -2424,6 +2343,8 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmProfileColorspace colorspa
 		g_free (filename);
 		g_free (description);
 	}
+	if (profile_array != NULL)
+		g_ptr_array_unref (profile_array);
 }
 
 /**
@@ -2522,10 +2443,6 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	gchar *colorspace_cmyk;
 	gchar *intent_display;
 	gchar *intent_softproof;
-
-	/* add profiles we can find */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
-	gcm_prefs_add_profiles (widget);
 
 	/* setup RGB combobox */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_space_rgb"));
@@ -2679,6 +2596,26 @@ gcm_prefs_setup_drag_and_drop (GtkWidget *widget)
 }
 
 /**
+ * gcm_prefs_profile_store_changed_cb:
+ **/
+static void
+gcm_prefs_profile_store_changed_cb (GcmProfileStore *_profile_store, gpointer user_data)
+{
+	GtkTreeSelection *selection;
+	GtkWidget *widget;
+
+	/* clear and update the profile list */
+	gcm_prefs_update_profile_list ();
+
+	/* re-get all the profiles for this device */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	if (selection == NULL)
+		return;
+	g_signal_emit_by_name (selection, "changed", NULL);
+}
+
+/**
  * main:
  **/
 int
@@ -2744,6 +2681,10 @@ main (int argc, char **argv)
 		goto out;
 	}
 
+	/* maintain a list of profiles */
+	profile_store = gcm_profile_store_new ();
+	g_signal_connect (profile_store, "changed", G_CALLBACK(gcm_prefs_profile_store_changed_cb), NULL);
+
 	/* create list stores */
 	list_store_devices = gtk_list_store_new (GCM_DEVICES_COLUMN_LAST, G_TYPE_STRING, G_TYPE_STRING,
 						 G_TYPE_STRING, G_TYPE_STRING);
@@ -2773,9 +2714,6 @@ main (int argc, char **argv)
 	/* add columns to the tree view */
 	gcm_prefs_add_profiles_columns (GTK_TREE_VIEW (widget));
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
-
-	/* track in seporate arrays */
-	profiles_array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 
 	main_window = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_prefs"));
 
@@ -3022,8 +2960,8 @@ out:
 		g_object_unref (gconf_client);
 	if (builder != NULL)
 		g_object_unref (builder);
-	if (profiles_array != NULL)
-		g_ptr_array_unref (profiles_array);
+	if (profile_store != NULL)
+		g_object_unref (profile_store);
 	if (gcm_client != NULL)
 		g_object_unref (gcm_client);
 	return retval;
