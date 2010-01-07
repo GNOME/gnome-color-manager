@@ -50,6 +50,7 @@ struct _GcmProfileStoreClass
 	GObjectClass	parent_class;
 	void		(* added)			(GcmProfile		*profile);
 	void		(* removed)			(GcmProfile		*profile);
+	void		(* changed)			(void);
 	/* padding for future expansion */
 	void (*_gcm_reserved1) (void);
 	void (*_gcm_reserved2) (void);

@@ -59,6 +59,7 @@ struct _GcmProfileStorePrivate
 enum {
 	SIGNAL_ADDED,
 	SIGNAL_REMOVED,
+	SIGNAL_CHANGED,
 	SIGNAL_LAST
 };
 
@@ -195,8 +196,9 @@ gcm_profile_store_add_profile (GcmProfileStore *profile_store, const gchar *file
 	g_signal_connect (profile, "notify::filename", G_CALLBACK(gcm_profile_store_notify_filename_cb), profile_store);
 
 	/* emit a signal */
-	egg_debug ("emit added: %s", filename);
+	egg_debug ("emit added (and changed): %s", filename);
 	g_signal_emit (profile_store, signals[SIGNAL_ADDED], 0, profile);
+	g_signal_emit (profile_store, signals[SIGNAL_CHANGED], 0);
 out:
 	if (profile != NULL)
 		g_object_unref (profile);
@@ -337,7 +339,6 @@ gcm_profile_store_class_init (GcmProfileStoreClass *klass)
 			      G_STRUCT_OFFSET (GcmProfileStoreClass, added),
 			      NULL, NULL, g_cclosure_marshal_VOID__OBJECT,
 			      G_TYPE_NONE, 1, G_TYPE_OBJECT);
-
 	/**
 	 * GcmProfileStore::removed
 	 **/
@@ -347,6 +348,15 @@ gcm_profile_store_class_init (GcmProfileStoreClass *klass)
 			      G_STRUCT_OFFSET (GcmProfileStoreClass, removed),
 			      NULL, NULL, g_cclosure_marshal_VOID__OBJECT,
 			      G_TYPE_NONE, 1, G_TYPE_OBJECT);
+	/**
+	 * GcmProfileStore::changed
+	 **/
+	signals[SIGNAL_CHANGED] =
+		g_signal_new ("changed",
+			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (GcmProfileStoreClass, changed),
+			      NULL, NULL, g_cclosure_marshal_VOID__VOID,
+			      G_TYPE_NONE, 0);
 
 	g_type_class_add_private (klass, sizeof (GcmProfileStorePrivate));
 }
