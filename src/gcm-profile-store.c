@@ -153,12 +153,13 @@ gcm_profile_store_notify_filename_cb (GcmProfile *profile, GParamSpec *pspec, Gc
 		      "description", &description,
 		      NULL);
 
-	/* emit a signal */
-	egg_debug ("emit removed: %s", description);
-	g_signal_emit (profile_store, signals[SIGNAL_REMOVED], 0, profile);
-
 	/* remove from list */
 	g_ptr_array_remove (priv->profile_array, profile);
+
+	/* emit a signal */
+	egg_debug ("emit removed (and changed): %s", description);
+	g_signal_emit (profile_store, signals[SIGNAL_REMOVED], 0, profile);
+	g_signal_emit (profile_store, signals[SIGNAL_CHANGED], 0);
 
 	g_free (description);
 }
