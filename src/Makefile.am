@@ -51,6 +51,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-trc-widget.h				\
 	gcm-gamma-widget.c				\
 	gcm-gamma-widget.h				\
+	gcm-profile-store.c				\
+	gcm-profile-store.h				\
 	gcm-profile-lcms1.c				\
 	gcm-profile-lcms1.h				\
 	gcm-profile.c					\
