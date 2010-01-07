@@ -31,6 +31,7 @@
 
 #include <glib-object.h>
 #include <glib/gi18n.h>
+#include <gio/gio.h>
 
 #include "egg-debug.h"
 
@@ -56,6 +57,7 @@ struct _GcmProfilePrivate
 	gboolean			 has_vcgt;
 	gchar				*description;
 	gchar				*filename;
+	GFileMonitor			*monitor;
 	gchar				*copyright;
 	gchar				*manufacturer;
 	gchar				*model;
@@ -125,16 +127,11 @@ gcm_profile_parse (GcmProfile *profile, const gchar *filename, GError **error)
 	gboolean ret;
 	guint length;
 	GError *error_local = NULL;
-	GcmProfilePrivate *priv = profile->priv;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
 	g_return_val_if_fail (filename != NULL, FALSE);
 
 	egg_debug ("loading '%s'", filename);
-
-	/* save */
-	g_free (priv->filename);
-	priv->filename = g_strdup (filename);
 
 	/* load files */
 	ret = g_file_get_contents (filename, &data, (gsize *) &length, &error_local);
@@ -149,6 +146,11 @@ gcm_profile_parse (GcmProfile *profile, const gchar *filename, GError **error)
 	ret = gcm_profile_parse_data (profile, (const guint8*)data, length, error);
 	if (!ret)
 		goto out;
+
+	/* save */
+	g_object_set (profile,
+		      "filename", filename,
+		      NULL);
 out:
 	g_free (data);
 	return ret;
@@ -279,6 +281,27 @@ gcm_profile_colorspace_to_text (GcmProfileColorspace type)
 }
 
 /**
+ * gcm_profile_file_monitor_changed_cb:
+ **/
+static void
+gcm_profile_file_monitor_changed_cb (GFileMonitor *monitor, GFile *file, GFile *other_file, GFileMonitorEvent event_type, GcmProfile *profile)
+{
+	GcmProfilePrivate *priv = profile->priv;
+
+	/* ony care about deleted events */
+	if (event_type != G_FILE_MONITOR_EVENT_DELETED)
+		goto out;
+
+	/* just rescan everything */
+	egg_debug ("%s deleted, clearing filename", priv->filename);
+	g_object_set (profile,
+		      "filename", NULL,
+		      NULL);
+out:
+	return;
+}
+
+/**
  * gcm_profile_get_property:
  **/
 static void
@@ -347,6 +370,7 @@ gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, G
 {
 	GcmProfile *profile = GCM_PROFILE (object);
 	GcmProfilePrivate *priv = profile->priv;
+	GFile *file;
 
 	switch (prop_id) {
 	case PROP_COPYRIGHT:
@@ -391,6 +415,21 @@ gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, G
 	case PROP_FILENAME:
 		g_free (priv->filename);
 		priv->filename = g_strdup (g_value_get_string (value));
+
+		/* unref old instance */
+		if (priv->monitor != NULL) {
+			g_object_unref (priv->monitor);
+			priv->monitor = NULL;
+		}
+
+		/* setup watch on new profile */
+		if (priv->filename != NULL) {
+			file = g_file_new_for_path (priv->filename);
+			priv->monitor = g_file_monitor_file (file, G_FILE_MONITOR_NONE, NULL, NULL);
+			if (priv->monitor != NULL)
+				g_signal_connect (priv->monitor, "changed", G_CALLBACK(gcm_profile_file_monitor_changed_cb), profile);
+			g_object_unref (file);
+		}
 		break;
 	case PROP_TYPE:
 		priv->profile_type = g_value_get_uint (value);
@@ -567,6 +606,7 @@ static void
 gcm_profile_init (GcmProfile *profile)
 {
 	profile->priv = GCM_PROFILE_GET_PRIVATE (profile);
+	profile->priv->monitor = NULL;
 	profile->priv->profile_type = GCM_PROFILE_TYPE_UNKNOWN;
 	profile->priv->colorspace = GCM_PROFILE_COLORSPACE_UNKNOWN;
 	profile->priv->white_point = gcm_xyz_new ();
@@ -596,6 +636,8 @@ gcm_profile_finalize (GObject *object)
 	g_object_unref (priv->luminance_red);
 	g_object_unref (priv->luminance_green);
 	g_object_unref (priv->luminance_blue);
+	if (priv->monitor != NULL)
+		g_object_unref (priv->monitor);
 
 	G_OBJECT_CLASS (gcm_profile_parent_class)->finalize (object);
 }
