@@ -1,5 +1,6 @@
 INCLUDES =						\
 	$(GLIB_CFLAGS)					\
+	$(X11_CFLAGS)					\
 	$(GTK_CFLAGS)					\
 	$(GNOMEDESKTOP_CFLAGS)				\
 	$(UNIQUE_CFLAGS)				\
@@ -89,13 +90,15 @@ gcm_dump_edid_SOURCES =					\
 gcm_dump_edid_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
+	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
-	$(GTK_LIBS)
+	$(GTK_LIBS)					\
+	-lm
 
 gcm_dump_edid_CFLAGS =					\
 	$(WARNINGFLAGS_C)
@@ -106,13 +109,15 @@ gcm_dump_profile_SOURCES =				\
 gcm_dump_profile_LDADD =				\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
+	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
-	$(GTK_LIBS)
+	$(GTK_LIBS)					\
+	-lm
 
 gcm_dump_profile_CFLAGS =				\
 	$(WARNINGFLAGS_C)
@@ -122,8 +127,10 @@ gcm_fix_profile_SOURCES =				\
 
 gcm_fix_profile_LDADD =					\
 	$(GLIB_LIBS)					\
+	$(X11_LIBS)					\
 	$(LCMS_LIBS)					\
-	$(GTK_LIBS)
+	$(GTK_LIBS)					\
+	-lm
 
 gcm_fix_profile_CFLAGS =				\
 	$(WARNINGFLAGS_C)
@@ -134,13 +141,15 @@ gcm_inspect_SOURCES =					\
 gcm_inspect_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
+	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
-	$(GTK_LIBS)
+	$(GTK_LIBS)					\
+	-lm
 
 gcm_inspect_CFLAGS =					\
 	$(WARNINGFLAGS_C)
@@ -151,13 +160,15 @@ gcm_apply_SOURCES =					\
 gcm_apply_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
+	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
-	$(GTK_LIBS)
+	$(GTK_LIBS)					\
+	-lm
 
 gcm_apply_CFLAGS =					\
 	$(WARNINGFLAGS_C)
@@ -168,13 +179,15 @@ gcm_import_SOURCES =					\
 gcm_import_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
+	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
-	$(GTK_LIBS)
+	$(GTK_LIBS)					\
+	-lm
 
 gcm_import_CFLAGS =					\
 	$(WARNINGFLAGS_C)
@@ -193,6 +206,7 @@ gcm_prefs_SOURCES =					\
 gcm_prefs_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
+	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(UNIQUE_LIBS)					\
 	$(GCONF_LIBS)					\
@@ -201,7 +215,8 @@ gcm_prefs_LDADD =					\
 	$(LCMS_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
 	$(XORG_LIBS)					\
-	$(GTK_LIBS)
+	$(GTK_LIBS)					\
+	-lm
 
 gcm_prefs_CFLAGS =					\
 	$(WARNINGFLAGS_C)
@@ -214,6 +229,7 @@ gcm_session_SOURCES =					\
 gcm_session_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
+	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(UNIQUE_LIBS)					\
 	$(GCONF_LIBS)					\
@@ -221,7 +237,8 @@ gcm_session_LDADD =					\
 	$(LCMS_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
 	$(XORG_LIBS)					\
-	$(GTK_LIBS)
+	$(GTK_LIBS)					\
+	-lm
 
 gcm_session_CFLAGS =					\
 	$(WARNINGFLAGS_C)
@@ -256,6 +273,7 @@ gcm_self_test_SOURCES =					\
 gcm_self_test_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
+	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(UNIQUE_LIBS)					\
 	$(GCONF_LIBS)					\
@@ -263,7 +281,8 @@ gcm_self_test_LDADD =					\
 	$(LCMS_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
 	$(XORG_LIBS)					\
-	$(GTK_LIBS)
+	$(GTK_LIBS)					\
+	-lm
 
 gcm_self_test_CFLAGS = -DEGG_TEST $(AM_CFLAGS)
 
