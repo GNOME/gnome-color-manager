@@ -206,6 +206,13 @@ gcm_tables_set_default_data_dir (GcmTables *tables)
 		goto out;
 	}
 
+	/* fallback from gnome-desktop */
+	ret = g_file_test ("/usr/share/libgnome-desktop/pnp.ids", G_FILE_TEST_EXISTS);
+	if (ret) {
+		tables->priv->data_dir = g_strdup ("/usr/share/libgnome-desktop");
+		goto out;
+	}
+
 	/* need to install package? */
 	egg_warning ("cannot find pnp.ids");
 out:
