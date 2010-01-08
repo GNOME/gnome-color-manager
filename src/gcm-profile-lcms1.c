@@ -24,7 +24,7 @@
  * @short_description: A parser object that understands the ICC profile data format.
  *
  * This object is a simple parser for the ICC binary profile data. If only understands
- * a subset of the ICC profile_lcms1, just enought to get some metadata and the LUT.
+ * a subset of the ICC profile, just enought to get some metadata and the LUT.
  */
 
 #include "config.h"
