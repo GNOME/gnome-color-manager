@@ -353,6 +353,7 @@ gcm_client_get_output_name (GcmClient *client, GnomeRROutput *output)
 	gboolean ret;
 	guint width = 0;
 	guint height = 0;
+	const guint8 *data;
 	GcmClientPrivate *priv = client->priv;
 
 	/* blank */
@@ -362,6 +363,19 @@ gcm_client_get_output_name (GcmClient *client, GnomeRROutput *output)
 	ret = gnome_rr_output_is_connected (output);
 	if (!ret)
 		goto out;
+
+	/* parse the EDID to get a crtc-specific name, not an output specific name */
+	data = gnome_rr_output_get_edid_data (output);
+	if (data != NULL) {
+		ret = gcm_edid_parse (priv->edid, data, NULL);
+		if (!ret) {
+			egg_warning ("failed to parse edid");
+			goto out;
+		}
+	} else {
+		/* reset, as not available */
+		gcm_edid_reset (priv->edid);
+	}
 
 	/* this is an internal panel, use the DMI data */
 	output_name = gnome_rr_output_get_name (output);
@@ -425,6 +439,7 @@ gcm_client_get_id_for_xrandr_device (GcmClient *client, GnomeRROutput *output)
 	gchar *vendor = NULL;
 	gchar *ascii = NULL;
 	gchar *serial = NULL;
+	const guint8 *data;
 	GString *string;
 	gboolean ret;
 	GcmClientPrivate *priv = client->priv;
@@ -436,6 +451,19 @@ gcm_client_get_id_for_xrandr_device (GcmClient *client, GnomeRROutput *output)
 	ret = gnome_rr_output_is_connected (output);
 	if (!ret)
 		goto out;
+
+	/* parse the EDID to get a crtc-specific name, not an output specific name */
+	data = gnome_rr_output_get_edid_data (output);
+	if (data != NULL) {
+		ret = gcm_edid_parse (priv->edid, data, NULL);
+		if (!ret) {
+			egg_warning ("failed to parse edid");
+			goto out;
+		}
+	} else {
+		/* reset, as not available */
+		gcm_edid_reset (priv->edid);
+	}
 
 	/* find the best option */
 	g_object_get (priv->edid,
@@ -472,6 +500,123 @@ out:
 	g_free (ascii);
 	g_free (serial);
 	return g_string_free (string, FALSE);
+}
+
+/**
+ * gcm_client_get_device_by_window_covered:
+ **/
+static gfloat
+gcm_client_get_device_by_window_covered (gint x, gint y, gint width, gint height,
+				         gint window_x, gint window_y, gint window_width, gint window_height)
+{
+	gfloat covered = 0.0f;
+	gint overlap_x;
+	gint overlap_y;
+
+	/* to the right of the window */
+	if (window_x > x + width)
+		goto out;
+	if (window_y > y + height)
+		goto out;
+
+	/* to the left of the window */
+	if (window_x + window_width < x)
+		goto out;
+	if (window_y + window_height < y)
+		goto out;
+
+	/* get the overlaps */
+	overlap_x = MIN((window_x + window_width - x), width) - MAX(window_x - x, 0);
+	overlap_y = MIN((window_y + window_height - y), height) - MAX(window_y - y, 0);
+
+	/* not in this window */
+	if (overlap_x <= 0)
+		goto out;
+	if (overlap_y <= 0)
+		goto out;
+
+	/* get the coverage */
+	covered = (gfloat) (overlap_x * overlap_y) / (gfloat) (window_width * window_height);
+	egg_debug ("overlap_x=%i,overlap_y=%i,covered=%f", overlap_x, overlap_y, covered);
+out:
+	return covered;
+}
+
+/**
+ * gcm_client_get_device_by_window:
+ **/
+GcmDevice *
+gcm_client_get_device_by_window (GcmClient *client, GdkWindow *window)
+{
+	gfloat covered;
+	gfloat covered_max = 0.0f;
+	gint window_width, window_height;
+	gint window_x, window_y;
+	gint x, y;
+	guint i;
+	guint len = 0;
+	guint width, height;
+	GnomeRRMode *mode;
+	GnomeRROutput *output_best = NULL;
+	GnomeRROutput **outputs;
+	GcmDevice *device = NULL;
+	gchar *id = NULL;
+
+	/* get the window parameters, in root co-ordinates */
+	gdk_window_get_origin (window, &window_x, &window_y);
+	gdk_drawable_get_size (GDK_DRAWABLE(window), &window_width, &window_height);
+
+	/* get list of updates */
+	outputs = gnome_rr_screen_list_outputs (client->priv->rr_screen);
+
+	/* find length */
+	for (i=0; outputs[i] != NULL; i++)
+		len++;
+
+	/* go through each option */
+	for (i=0; i<len; i++) {
+
+		/* not interesting */
+		if (!gnome_rr_output_is_connected (outputs[i]))
+			continue;
+
+		/* get details about the output */
+		gnome_rr_output_get_position (outputs[i], &x, &y);
+		mode = gnome_rr_output_get_current_mode (outputs[i]);
+		width = gnome_rr_mode_get_width (mode);
+		height = gnome_rr_mode_get_height (mode);
+		egg_debug ("%s: %ix%i -> %ix%i (%ix%i -> %ix%i)", gnome_rr_output_get_name (outputs[i]),
+			   x, y, x+width, y+height,
+			   window_x, window_y, window_x+window_width, window_y+window_height);
+
+		/* get the fraction of how much the window is covered */
+		covered = gcm_client_get_device_by_window_covered (x, y, width, height,
+								   window_x, window_y, window_width, window_height);
+
+		/* keep a running total of which one is best */
+		if (covered > 0.01f && covered > covered_max) {
+			output_best = outputs[i];
+
+			/* optimize */
+			if (covered > 0.99) {
+				egg_debug ("all in one window, no need to search other windows");
+				goto out;
+			}
+
+			/* keep looking */
+			covered_max = covered;
+			egg_debug ("personal best of %f for %s", covered, gnome_rr_output_get_name (output_best));
+		}
+	}
+out:
+	/* if we found an output, get the device */
+	if (output_best != NULL) {
+		id = gcm_client_get_id_for_xrandr_device (client, output_best);
+		egg_debug ("id: %s", id);
+		device = gcm_client_get_device_by_id (client, id);
+	}
+	g_free (id);
+	return device;
 }
 
 /**

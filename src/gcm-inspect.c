@@ -193,7 +193,8 @@ gcm_inspect_show_profiles_for_device (const gchar *sysfs_path)
 				 custom_g_type_string_string, &profile_data_array,
 				 G_TYPE_INVALID);
 	if (!ret) {
-		egg_warning ("failed: %s", error->message);
+		/* TRANSLATORS: the DBus method failed */
+		g_print ("%s: %s\n", _("The request failed"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -230,6 +231,56 @@ out:
 	if (profile_data_array != NULL)
 		g_ptr_array_free (profile_data_array, TRUE);
 	g_object_unref (proxy);
+	return ret;
+}
+
+/**
+ * gcm_inspect_show_profile_for_window:
+ **/
+static gboolean
+gcm_inspect_show_profile_for_window (guint xid)
+{
+	gboolean ret;
+	DBusGConnection *connection;
+	DBusGProxy *proxy;
+	GError *error = NULL;
+	gchar *profile = NULL;
+
+	/* get a session bus connection */
+	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
+
+	/* connect to the interface */
+	proxy = dbus_g_proxy_new_for_name (connection,
+					   "org.gnome.ColorManager",
+					   "/org/gnome/ColorManager",
+					   "org.gnome.ColorManager");
+
+	/* execute sync method */
+	ret = dbus_g_proxy_call (proxy, "GetProfileForWindow", &error,
+				 G_TYPE_UINT, xid,
+				 G_TYPE_INVALID,
+				 G_TYPE_STRING, &profile,
+				 G_TYPE_INVALID);
+	if (!ret) {
+		/* TRANSLATORS: the DBus method failed */
+		g_print ("%s: %s\n", _("The request failed"), error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* no data */
+	if (profile == NULL) {
+		/* TRANSLATORS: no profile has been asigned to this window */
+		g_print ("%s\n", _("There are no ICC profiles for this window"));
+		goto out;
+	}
+
+	/* TRANSLATORS: this is a list of profiles suitable for the device */
+	g_print ("%s %i\n", _("Suitable profiles for:"), xid);
+	g_print ("1.\t%s\n\t%s\n", "this is a title", profile);
+out:
+	g_object_unref (proxy);
+	g_free (profile);
 	return ret;
 }
 
@@ -275,7 +326,8 @@ gcm_inspect_show_profiles_for_type (const gchar *type)
 				 custom_g_type_string_string, &profile_data_array,
 				 G_TYPE_INVALID);
 	if (!ret) {
-		egg_warning ("failed: %s", error->message);
+		/* TRANSLATORS: the DBus method failed */
+		g_print ("%s: %s\n", _("The request failed"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -367,7 +419,8 @@ gcm_inspect_get_properties (void)
 				 dbus_g_type_get_map ("GHashTable", G_TYPE_STRING, G_TYPE_VALUE), &hash,
 				 G_TYPE_INVALID);
 	if (!ret) {
-		egg_warning ("failed: %s", error->message);
+		/* TRANSLATORS: the DBus method failed */
+		g_print ("%s: %s\n", _("The request failed"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -391,6 +444,7 @@ main (int argc, char **argv)
 {
 	gboolean x11 = FALSE;
 	gboolean dump = FALSE;
+	guint xid = 0;
 	gchar *sysfs_path = NULL;
 	gchar *type = NULL;
 	GcmDeviceType type_enum;
@@ -404,6 +458,9 @@ main (int argc, char **argv)
 		{ "device", '\0', 0, G_OPTION_ARG_STRING, &sysfs_path,
 			/* TRANSLATORS: command line option */
 			_("Get the profiles for a specific device"), NULL },
+		{ "xid", '\0', 0, G_OPTION_ARG_INT, &xid,
+			/* TRANSLATORS: command line option */
+			_("Get the profile for a specific window"), NULL },
 		{ "type", '\0', 0, G_OPTION_ARG_STRING, &type,
 			/* TRANSLATORS: command line option */
 			_("Get the profiles for a specific device type"), NULL },
@@ -433,6 +490,8 @@ main (int argc, char **argv)
 		gcm_inspect_show_x11_atoms ();
 	if (sysfs_path != NULL)
 		gcm_inspect_show_profiles_for_device (sysfs_path);
+	if (xid != 0)
+		gcm_inspect_show_profile_for_window (xid);
 	if (type != NULL) {
 		type_enum = gcm_device_type_from_text (type);
 		if (type_enum == GCM_DEVICE_TYPE_UNKNOWN) {

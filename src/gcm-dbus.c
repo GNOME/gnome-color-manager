@@ -361,6 +361,59 @@ gcm_dbus_get_profiles_for_type (GcmDbus *dbus, const gchar *type, const gchar *o
 }
 
 /**
+ * gcm_dbus_get_profile_for_window:
+ **/
+void
+gcm_dbus_get_profile_for_window (GcmDbus *dbus, guint xid, DBusGMethodInvocation *context)
+{
+	GError *error;
+	GcmDevice *device;
+	GdkWindow *window;
+	gchar *filename = NULL;
+
+	egg_debug ("getting profile for %i", xid);
+
+	/* get window for xid */
+	window = gdk_window_foreign_new (xid);
+	if (window == NULL) {
+		error = g_error_new (1, 0, "failed to find window with xid %i", xid);
+		dbus_g_method_return_error (context, error);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* get device for this window */
+	device = gcm_client_get_device_by_window (dbus->priv->client, window);
+	if (device == NULL) {
+		error = g_error_new (1, 0, "no device found for xid %i", xid);
+		dbus_g_method_return_error (context, error);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* get the data */
+	g_object_get (device,
+		      "profile-filename", &filename,
+		      NULL);
+	if (filename == NULL) {
+		error = g_error_new (1, 0, "no profiles found for xid %i", xid);
+		dbus_g_method_return_error (context, error);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* return profiles */
+	dbus_g_method_return (context, filename);
+
+out:
+	/* reset time */
+	g_timer_reset (dbus->priv->timer);
+	if (window != NULL)
+		g_object_unref (window);
+	g_free (filename);
+}
+
+/**
  * gcm_dbus_class_init:
  * @klass: The GcmDbusClass
  **/

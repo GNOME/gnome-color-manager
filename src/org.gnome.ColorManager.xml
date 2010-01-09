@@ -150,6 +150,38 @@
       </arg>
     </method>
 
+    <!--*****************************************************************************************-->
+    <method name="GetProfileForWindow">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <doc:doc>
+        <doc:description>
+          <doc:para>
+            Gets the profile for a window. In the case where the window overlaps
+            two different outputs, then the profile with the greatest percentage
+            area is used.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+      <arg type="u" name="xid" direction="in">
+        <doc:doc>
+          <doc:summary>
+            <doc:para>
+              A window XID.
+            </doc:para>
+          </doc:summary>
+        </doc:doc>
+      </arg>
+      <arg type="s" name="profile" direction="out">
+        <doc:doc>
+          <doc:summary>
+            <doc:para>
+              A profile filename that is should be used for the display.
+            </doc:para>
+          </doc:summary>
+        </doc:doc>
+      </arg>
+    </method>
+
     <!-- ************************************************************ -->
     <signal name="Changed">
       <doc:doc>
