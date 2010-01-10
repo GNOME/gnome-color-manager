@@ -2345,6 +2345,12 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmProfileColorspace colorspa
 	}
 	if (profile_array != NULL)
 		g_ptr_array_unref (profile_array);
+	if (added_count == 0) {
+		/* TRANSLATORS: this is when there are no profiles that can be used */
+		gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("No profiles available"));
+		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), added_count);
+		gtk_widget_set_sensitive (widget, FALSE);
+	}
 }
 
 /**
