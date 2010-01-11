@@ -2309,6 +2309,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmProfileColorspace colorspa
 	GcmProfileColorspace colorspace_tmp;
 	guint added_count = 0;
 	gboolean has_vcgt;
+	gchar *text = NULL;
 	const gchar *search = "RGB";
 	GPtrArray *profile_array = NULL;
 
@@ -2346,11 +2347,13 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmProfileColorspace colorspa
 	if (profile_array != NULL)
 		g_ptr_array_unref (profile_array);
 	if (added_count == 0) {
-		/* TRANSLATORS: this is when there are no profiles that can be used */
-		gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("No profiles available"));
+		/* TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK" */
+		text = g_strdup_printf (_("No %s color spaces available"), search);
+		gtk_combo_box_append_text (GTK_COMBO_BOX(widget), text);
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), added_count);
 		gtk_widget_set_sensitive (widget, FALSE);
 	}
+	g_free (text);
 }
 
 /**
