@@ -34,6 +34,24 @@
 #include "gcm-cie-widget.h"
 
 /**
+ * gcm_import_add_cie_widget:
+ **/
+static void
+gcm_import_add_cie_widget (GtkDialog *dialog, GtkWidget *cie_widget)
+{
+	GtkWidget *aspect;
+	GtkWidget *vbox;
+
+	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+	aspect = gtk_aspect_frame_new (NULL, 0.0f, 0.0f, 1.0f, FALSE);
+	gtk_frame_set_shadow_type (GTK_FRAME(aspect), GTK_SHADOW_NONE);
+	gtk_container_add (GTK_CONTAINER(aspect), cie_widget);
+	gtk_box_pack_end (GTK_BOX(vbox), aspect, TRUE, TRUE, 12);
+	gtk_widget_show (cie_widget);
+	gtk_widget_show (aspect);
+}
+
+/**
  * main:
  **/
 int
@@ -51,7 +69,6 @@ main (int argc, char **argv)
 	GString *string = NULL;
 	GtkWidget *dialog;
 	GtkResponseType response;
-	GtkWidget *vbox;
 	GtkWidget *cie_widget = NULL;
 	GcmXyz *white = NULL;
 	GcmXyz *red = NULL;
@@ -119,6 +136,8 @@ main (int argc, char **argv)
 	cie_widget = gcm_cie_widget_new ();
 	gtk_widget_set_size_request (cie_widget, 200, 200);
 	g_object_set (cie_widget,
+		      "use-grid", FALSE,
+		      "use-whitepoint", FALSE,
 		      "white", white,
 		      "red", red,
 		      "green", green,
@@ -135,9 +154,7 @@ main (int argc, char **argv)
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s\n%s", description, copyright);
 
 		/* add cie widget */
-		vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-		gtk_box_pack_end (GTK_BOX(vbox), cie_widget, TRUE, TRUE, 12);
-		gtk_widget_show (cie_widget);
+		gcm_import_add_cie_widget (GTK_DIALOG(dialog), cie_widget);
 
 		gtk_window_set_resizable (GTK_WINDOW (dialog), TRUE);
 		gtk_dialog_run (GTK_DIALOG (dialog));
@@ -167,9 +184,7 @@ main (int argc, char **argv)
 	gtk_dialog_add_button (GTK_DIALOG (dialog), _("Install"), GTK_RESPONSE_OK);
 
 	/* add cie widget */
-	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-	gtk_box_pack_end (GTK_BOX(vbox), cie_widget, TRUE, TRUE, 12);
-	gtk_widget_show (cie_widget);
+	gcm_import_add_cie_widget (GTK_DIALOG(dialog), cie_widget);
 
 	gtk_window_set_resizable (GTK_WINDOW (dialog), TRUE);
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
