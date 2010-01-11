@@ -2333,7 +2333,8 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmProfileColorspace colorspa
 		/* only for correct type */
 		if (!has_vcgt &&
 		    colorspace == colorspace_tmp &&
-		    g_strstr_len (description, -1, search) != NULL) {
+		    (colorspace == GCM_PROFILE_COLORSPACE_CMYK ||
+		     g_strstr_len (description, -1, search) != NULL)) {
 			gcm_prefs_combobox_add_profile (widget, profile);
 
 			/* set active option */
