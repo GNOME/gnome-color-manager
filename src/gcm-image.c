@@ -46,6 +46,7 @@ static void     gcm_image_finalize	(GObject     *object);
  **/
 struct _GcmImagePrivate
 {
+	gboolean			 has_embedded_icc_profile;
 	gboolean			 use_embedded_icc_profile;
 	gchar				*output_icc_profile;
 	GdkPixbuf			*original_pixbuf;
@@ -53,6 +54,7 @@ struct _GcmImagePrivate
 
 enum {
 	PROP_0,
+	PROP_HAS_EMBEDDED_ICC_PROFILE,
 	PROP_USE_EMBEDDED_ICC_PROFILE,
 	PROP_OUTPUT_ICC_PROFILE,
 	PROP_LAST
@@ -205,6 +207,11 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 	/* get profile from pixbuf */
 	pixbuf_cms = gtk_image_get_pixbuf (GTK_IMAGE(image));
 	icc_profile_base64 = gdk_pixbuf_get_option (pixbuf_cms, "icc-profile");
+
+	/* set the boolean property */
+	priv->use_embedded_icc_profile = (icc_profile_base64 != NULL);
+
+	/* just exit, and have no color management done */
 	if (icc_profile_base64 == NULL) {
 		egg_debug ("not a color managed image");
 		goto out;
@@ -288,6 +295,9 @@ gcm_image_get_property (GObject *object, guint prop_id, GValue *value, GParamSpe
 	GcmImagePrivate *priv = image->priv;
 
 	switch (prop_id) {
+	case PROP_HAS_EMBEDDED_ICC_PROFILE:
+		g_value_set_boolean (value, priv->has_embedded_icc_profile);
+		break;
 	case PROP_USE_EMBEDDED_ICC_PROFILE:
 		g_value_set_boolean (value, priv->use_embedded_icc_profile);
 		break;
@@ -338,6 +348,14 @@ gcm_image_class_init (GcmImageClass *klass)
 	object_class->set_property = gcm_image_set_property;
 
 	/**
+	 * GcmImage:has-embedded-icc-profile:
+	 */
+	pspec = g_param_spec_boolean ("has-embedded-icc-profile", NULL, NULL,
+				      TRUE,
+				      G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_HAS_EMBEDDED_ICC_PROFILE, pspec);
+
+	/**
 	 * GcmImage:use-embedded-icc-profile:
 	 */
 	pspec = g_param_spec_boolean ("use-embedded-icc-profile", NULL, NULL,
@@ -366,6 +384,7 @@ gcm_image_init (GcmImage *image)
 
 	priv = image->priv = GCM_IMAGE_GET_PRIVATE (image);
 
+	priv->has_embedded_icc_profile = FALSE;
 	priv->use_embedded_icc_profile = TRUE;
 	priv->original_pixbuf = NULL;
 
