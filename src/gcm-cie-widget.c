@@ -41,6 +41,7 @@ G_DEFINE_TYPE (GcmCieWidget, gcm_cie_widget, GTK_TYPE_DRAWING_AREA);
 struct GcmCieWidgetPrivate
 {
 	gboolean		 use_grid;
+	gboolean		 use_whitepoint;
 	guint			 chart_width;
 	guint			 chart_height;
 	cairo_t			*cr;
@@ -401,6 +402,7 @@ enum
 {
 	PROP_0,
 	PROP_USE_GRID,
+	PROP_USE_WHITEPOINT,
 	PROP_RED,
 	PROP_GREEN,
 	PROP_BLUE,
@@ -418,6 +420,9 @@ dkp_cie_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec 
 	switch (prop_id) {
 	case PROP_USE_GRID:
 		g_value_set_boolean (value, cie->priv->use_grid);
+		break;
+	case PROP_USE_WHITEPOINT:
+		g_value_set_boolean (value, cie->priv->use_whitepoint);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -437,6 +442,9 @@ dkp_cie_set_property (GObject *object, guint prop_id, const GValue *value, GPara
 	switch (prop_id) {
 	case PROP_USE_GRID:
 		cie->priv->use_grid = g_value_get_boolean (value);
+		break;
+	case PROP_USE_WHITEPOINT:
+		cie->priv->use_whitepoint = g_value_get_boolean (value);
 		break;
 	case PROP_RED:
 		xyz = g_value_get_object (value);
@@ -491,6 +499,11 @@ gcm_cie_widget_class_init (GcmCieWidgetClass *class)
 							       TRUE,
 							       G_PARAM_READWRITE));
 	g_object_class_install_property (object_class,
+					 PROP_USE_WHITEPOINT,
+					 g_param_spec_boolean ("use-whitepoint", NULL, NULL,
+							       TRUE,
+							       G_PARAM_READWRITE));
+	g_object_class_install_property (object_class,
 					 PROP_RED,
 					 g_param_spec_object ("red", NULL, NULL,
 							      GCM_TYPE_XYZ,
@@ -524,6 +537,7 @@ gcm_cie_widget_init (GcmCieWidget *cie)
 
 	cie->priv = GCM_CIE_WIDGET_GET_PRIVATE (cie);
 	cie->priv->use_grid = TRUE;
+	cie->priv->use_whitepoint = TRUE;
 	cie->priv->tongue_buffer = g_ptr_array_new_with_free_func (g_free);
 
 	/* default is CIE REC 709 */
@@ -1082,7 +1096,6 @@ gcm_cie_widget_draw_line (GcmCieWidget *cie, cairo_t *cr)
 	/* overdraw lines with nice antialiasing */
 	gcm_cie_widget_draw_tongue_outline (cie, cr);
 	gcm_cie_widget_draw_gamut_outline (cie, cr);
-	gcm_cie_widget_draw_white_point_cross (cie, cr);
 }
 
 /**
@@ -1132,6 +1145,9 @@ gcm_cie_widget_draw_cie (GtkWidget *cie_widget, cairo_t *cr)
 		gcm_cie_widget_draw_grid (cie, cr);
 
 	gcm_cie_widget_draw_line (cie, cr);
+
+	if (cie->priv->use_whitepoint)
+		gcm_cie_widget_draw_white_point_cross (cie, cr);
 
 	cairo_restore (cr);
 }
