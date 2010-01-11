@@ -49,6 +49,7 @@ struct _GcmImagePrivate
 	gboolean			 has_embedded_icc_profile;
 	gboolean			 use_embedded_icc_profile;
 	gchar				*output_icc_profile;
+	gchar				*input_icc_profile;
 	GdkPixbuf			*original_pixbuf;
 };
 
@@ -57,6 +58,7 @@ enum {
 	PROP_HAS_EMBEDDED_ICC_PROFILE,
 	PROP_USE_EMBEDDED_ICC_PROFILE,
 	PROP_OUTPUT_ICC_PROFILE,
+	PROP_INPUT_ICC_PROFILE,
 	PROP_LAST
 };
 
@@ -304,6 +306,9 @@ gcm_image_get_property (GObject *object, guint prop_id, GValue *value, GParamSpe
 	case PROP_OUTPUT_ICC_PROFILE:
 		g_value_set_string (value, priv->output_icc_profile);
 		break;
+	case PROP_INPUT_ICC_PROFILE:
+		g_value_set_string (value, priv->input_icc_profile);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -327,6 +332,11 @@ gcm_image_set_property (GObject *object, guint prop_id, const GValue *value, GPa
 	case PROP_OUTPUT_ICC_PROFILE:
 		g_free (priv->output_icc_profile);
 		priv->output_icc_profile = g_strdup (g_value_get_string (value));
+		gcm_image_cms_convert_pixbuf (image);
+		break;
+	case PROP_INPUT_ICC_PROFILE:
+		g_free (priv->input_icc_profile);
+		priv->input_icc_profile = g_strdup (g_value_get_string (value));
 		gcm_image_cms_convert_pixbuf (image);
 		break;
 	default:
@@ -371,6 +381,14 @@ gcm_image_class_init (GcmImageClass *klass)
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_OUTPUT_ICC_PROFILE, pspec);
 
+	/**
+	 * GcmImage:input-icc-profile:
+	 */
+	pspec = g_param_spec_string ("input-icc-profile", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_INPUT_ICC_PROFILE, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmImagePrivate));
 }
 
@@ -404,6 +422,8 @@ gcm_image_finalize (GObject *object)
 
 	if (priv->original_pixbuf != NULL)
 		g_object_unref (priv->original_pixbuf);
+	g_free (priv->output_icc_profile);
+	g_free (priv->input_icc_profile);
 
 	G_OBJECT_CLASS (gcm_image_parent_class)->finalize (object);
 }
