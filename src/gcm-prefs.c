@@ -2429,15 +2429,21 @@ static void
 gcm_prefs_setup_rendering_combobox (GtkWidget *widget, const gchar *intent)
 {
 	guint i;
+	gboolean ret = FALSE;
 	const gchar *text;
 
 	for (i=1; i<GCM_RENDERING_INTENT_LAST; i++) {
 		text = gcm_rendering_intent_to_localized_text (i);
 		gtk_combo_box_append_text (GTK_COMBO_BOX (widget), text);
 		text = gcm_rendering_intent_to_text (i);
-		if (g_strcmp0 (text, intent) == 0)
+		if (g_strcmp0 (text, intent) == 0) {
+			ret = TRUE;
 			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), i-1);
+		}
 	}
+	/* nothing matches, just set the first option */
+	if (!ret)
+		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 }
 
 /**
