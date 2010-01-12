@@ -67,33 +67,6 @@ struct _GcmProfileClass
 	void (*_gcm_reserved5) (void);
 };
 
-typedef enum {
-	GCM_PROFILE_TYPE_UNKNOWN,
-	GCM_PROFILE_TYPE_INPUT_DEVICE,
-	GCM_PROFILE_TYPE_DISPLAY_DEVICE,
-	GCM_PROFILE_TYPE_OUTPUT_DEVICE,
-	GCM_PROFILE_TYPE_DEVICELINK,
-	GCM_PROFILE_TYPE_COLORSPACE_CONVERSION,
-	GCM_PROFILE_TYPE_ABSTRACT,
-	GCM_PROFILE_TYPE_NAMED_COLOR,
-	GCM_PROFILE_TYPE_LAST
-} GcmProfileType;
-
-typedef enum {
-	GCM_PROFILE_COLORSPACE_UNKNOWN,
-	GCM_PROFILE_COLORSPACE_XYZ,
-	GCM_PROFILE_COLORSPACE_LAB,
-	GCM_PROFILE_COLORSPACE_LUV,
-	GCM_PROFILE_COLORSPACE_YCBCR,
-	GCM_PROFILE_COLORSPACE_YXY,
-	GCM_PROFILE_COLORSPACE_RGB,
-	GCM_PROFILE_COLORSPACE_GRAY,
-	GCM_PROFILE_COLORSPACE_HSV,
-	GCM_PROFILE_COLORSPACE_CMYK,
-	GCM_PROFILE_COLORSPACE_CMY,
-	GCM_PROFILE_COLORSPACE_LAST
-} GcmProfileColorspace;
-
 GType		 gcm_profile_get_type		  	(void);
 GcmProfile	*gcm_profile_new			(void);
 GcmProfile	*gcm_profile_default_new		(void);
@@ -111,8 +84,6 @@ GcmClut		*gcm_profile_generate_vcgt		(GcmProfile	*profile,
 							 guint		 size);
 GcmClut		*gcm_profile_generate_curve		(GcmProfile	*profile,
 							 guint		 size);
-const gchar	*gcm_profile_type_to_text		(GcmProfileType	 type);
-const gchar	*gcm_profile_colorspace_to_text		(GcmProfileColorspace type);
 
 G_END_DECLS
 

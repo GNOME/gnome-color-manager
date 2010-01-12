@@ -29,10 +29,6 @@
 #include "config.h"
 
 #include <glib-object.h>
-//#include <math.h>
-//#include <string.h>
-//#include <gio/gio.h>
-//#include <stdlib.h>
 #include <dbus/dbus-glib.h>
 
 #include "gcm-brightness.h"

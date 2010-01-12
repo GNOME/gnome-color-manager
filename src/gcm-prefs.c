@@ -177,7 +177,7 @@ gcm_prefs_default_cb (GtkWidget *widget, gpointer data)
 {
 	GPtrArray *array = NULL;
 	GcmDevice *device;
-	GcmDeviceType type;
+	GcmDeviceTypeEnum type;
 	gboolean ret;
 	guint i;
 
@@ -190,7 +190,7 @@ gcm_prefs_default_cb (GtkWidget *widget, gpointer data)
 			      NULL);
 
 		/* not a xrandr panel */
-		if (type != GCM_DEVICE_TYPE_DISPLAY)
+		if (type != GCM_DEVICE_TYPE_ENUM_DISPLAY)
 			continue;
 
 		/* set for this device */
@@ -643,15 +643,15 @@ out:
  * gcm_prefs_profile_type_to_icon_name:
  **/
 static const gchar *
-gcm_prefs_profile_type_to_icon_name (GcmProfileType type)
+gcm_prefs_profile_type_to_icon_name (GcmProfileTypeEnum type)
 {
-	if (type == GCM_PROFILE_TYPE_DISPLAY_DEVICE)
+	if (type == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE)
 		return "video-display";
-	if (type == GCM_PROFILE_TYPE_INPUT_DEVICE)
+	if (type == GCM_PROFILE_TYPE_ENUM_INPUT_DEVICE)
 		return "scanner";
-	if (type == GCM_PROFILE_TYPE_OUTPUT_DEVICE)
+	if (type == GCM_PROFILE_TYPE_ENUM_OUTPUT_DEVICE)
 		return "printer";
-	if (type == GCM_PROFILE_TYPE_COLORSPACE_CONVERSION)
+	if (type == GCM_PROFILE_TYPE_ENUM_COLORSPACE_CONVERSION)
 		return "view-refresh";
 	return "image-missing";
 }
@@ -660,13 +660,13 @@ gcm_prefs_profile_type_to_icon_name (GcmProfileType type)
  * gcm_prefs_profile_get_sort_string:
  **/
 static const gchar *
-gcm_prefs_profile_get_sort_string (GcmProfileType type)
+gcm_prefs_profile_get_sort_string (GcmProfileTypeEnum type)
 {
-	if (type == GCM_PROFILE_TYPE_DISPLAY_DEVICE)
+	if (type == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE)
 		return "1";
-	if (type == GCM_PROFILE_TYPE_INPUT_DEVICE)
+	if (type == GCM_PROFILE_TYPE_ENUM_INPUT_DEVICE)
 		return "2";
-	if (type == GCM_PROFILE_TYPE_OUTPUT_DEVICE)
+	if (type == GCM_PROFILE_TYPE_ENUM_OUTPUT_DEVICE)
 		return "3";
 	return "4";
 }
@@ -680,7 +680,7 @@ gcm_prefs_update_profile_list (void)
 	GtkTreeIter iter;
 	gchar *description;
 	const gchar *icon_name;
-	GcmProfileType profile_type = GCM_PROFILE_TYPE_UNKNOWN;
+	GcmProfileTypeEnum profile_type = GCM_PROFILE_TYPE_ENUM_UNKNOWN;
 	GcmProfile *profile;
 	guint i;
 	gchar *filename = NULL;
@@ -1021,7 +1021,7 @@ static void
 gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 {
 	GcmCalibrate *calibrate = NULL;
-	GcmDeviceType type;
+	GcmDeviceTypeEnum type;
 	gboolean ret;
 	GError *error = NULL;
 	gchar *filename = NULL;
@@ -1046,11 +1046,11 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 
 	/* choose the correct type of calibration */
 	switch (type) {
-	case GCM_DEVICE_TYPE_DISPLAY:
+	case GCM_DEVICE_TYPE_ENUM_DISPLAY:
 		ret = gcm_prefs_calibrate_display (calibrate);
 		break;
-	case GCM_DEVICE_TYPE_SCANNER:
-	case GCM_DEVICE_TYPE_CAMERA:
+	case GCM_DEVICE_TYPE_ENUM_SCANNER:
+	case GCM_DEVICE_TYPE_ENUM_CAMERA:
 		ret = gcm_prefs_calibrate_device (calibrate);
 		break;
 	default:
@@ -1263,7 +1263,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 {
 	gboolean ret = FALSE;
 	GtkWidget *widget;
-	GcmDeviceType type;
+	GcmDeviceTypeEnum type;
 	gboolean connected;
 
 	/* no device selected */
@@ -1281,7 +1281,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		goto out;
 
 	/* are we a display */
-	if (type == GCM_DEVICE_TYPE_DISPLAY) {
+	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
 
 		/* find whether we have hardware installed */
 		g_object_get (color_device,
@@ -1291,8 +1291,8 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		egg_debug ("overriding device presence %i with TRUE", ret);
 		ret = TRUE;
 #endif
-	} else if (type == GCM_DEVICE_TYPE_SCANNER ||
-		   type == GCM_DEVICE_TYPE_CAMERA) {
+	} else if (type == GCM_DEVICE_TYPE_ENUM_SCANNER ||
+		   type == GCM_DEVICE_TYPE_ENUM_CAMERA) {
 
 		/* TODO: find out if we can scan using gnome-scan */
 		ret = TRUE;
@@ -1311,11 +1311,11 @@ out:
  * gcm_prefs_is_profile_suitable_for_device_type:
  **/
 static gboolean
-gcm_prefs_is_profile_suitable_for_device_type (GcmProfile *profile, GcmDeviceType type)
+gcm_prefs_is_profile_suitable_for_device_type (GcmProfile *profile, GcmDeviceTypeEnum type)
 {
-	GcmProfileType profile_type_tmp;
-	GcmProfileType profile_type;
-	GcmProfileColorspace colorspace;
+	GcmProfileTypeEnum profile_type_tmp;
+	GcmProfileTypeEnum profile_type;
+	GcmColorspaceEnum colorspace;
 	gboolean has_vcgt;
 	gboolean ret = FALSE;
 
@@ -1327,7 +1327,7 @@ gcm_prefs_is_profile_suitable_for_device_type (GcmProfile *profile, GcmDeviceTyp
 		      NULL);
 
 	/* ignore LAB profiles */
-	if (colorspace == GCM_PROFILE_COLORSPACE_LAB)
+	if (colorspace == GCM_COLORSPACE_ENUM_LAB)
 		goto out;
 
 	/* not the correct type */
@@ -1336,7 +1336,7 @@ gcm_prefs_is_profile_suitable_for_device_type (GcmProfile *profile, GcmDeviceTyp
 		goto out;
 
 	/* no VCGT for a display (is a crap profile) */
-	if (profile_type_tmp == GCM_PROFILE_TYPE_DISPLAY_DEVICE && !has_vcgt)
+	if (profile_type_tmp == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE && !has_vcgt)
 		goto out;
 
 	/* success */
@@ -1349,7 +1349,7 @@ out:
  * gcm_prefs_add_profiles_suitable_for_devices:
  **/
 static void
-gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, GcmDeviceType type, const gchar *profile_filename)
+gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, GcmDeviceTypeEnum type, const gchar *profile_filename)
 {
 	GtkTreeModel *model;
 	guint i;
@@ -1419,7 +1419,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	gfloat contrast;
 	gboolean connected;
 	gchar *id = NULL;
-	GcmDeviceType type;
+	GcmDeviceTypeEnum type;
 	gchar *device_serial = NULL;
 	gchar *device_model = NULL;
 	gchar *device_manufacturer = NULL;
@@ -1449,7 +1449,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 		      NULL);
 
 	/* not a xrandr device */
-	if (type != GCM_DEVICE_TYPE_DISPLAY) {
+	if (type != GCM_DEVICE_TYPE_ENUM_DISPLAY) {
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
 		gtk_widget_set_sensitive (widget, FALSE);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
@@ -1538,36 +1538,36 @@ out:
 }
 
 /**
- * gcm_prefs_profile_type_to_text:
+ * gcm_prefs_profile_type_to_string:
  **/
 static gchar *
-gcm_prefs_profile_type_to_text (GcmProfileType type)
+gcm_prefs_profile_type_to_string (GcmProfileTypeEnum type)
 {
-	if (type == GCM_PROFILE_TYPE_INPUT_DEVICE) {
+	if (type == GCM_PROFILE_TYPE_ENUM_INPUT_DEVICE) {
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Input device");
 	}
-	if (type == GCM_PROFILE_TYPE_DISPLAY_DEVICE) {
+	if (type == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE) {
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Display device");
 	}
-	if (type == GCM_PROFILE_TYPE_OUTPUT_DEVICE) {
+	if (type == GCM_PROFILE_TYPE_ENUM_OUTPUT_DEVICE) {
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Output device");
 	}
-	if (type == GCM_PROFILE_TYPE_DEVICELINK) {
+	if (type == GCM_PROFILE_TYPE_ENUM_DEVICELINK) {
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Devicelink");
 	}
-	if (type == GCM_PROFILE_TYPE_COLORSPACE_CONVERSION) {
+	if (type == GCM_PROFILE_TYPE_ENUM_COLORSPACE_CONVERSION) {
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Colorspace conversion");
 	}
-	if (type == GCM_PROFILE_TYPE_ABSTRACT) {
+	if (type == GCM_PROFILE_TYPE_ENUM_ABSTRACT) {
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Abstract");
 	}
-	if (type == GCM_PROFILE_TYPE_NAMED_COLOR) {
+	if (type == GCM_PROFILE_TYPE_ENUM_NAMED_COLOR) {
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Named color");
 	}
@@ -1576,48 +1576,48 @@ gcm_prefs_profile_type_to_text (GcmProfileType type)
 }
 
 /**
- * gcm_prefs_profile_colorspace_to_text:
+ * gcm_prefs_profile_colorspace_to_string:
  **/
 static gchar *
-gcm_prefs_profile_colorspace_to_text (GcmProfileColorspace type)
+gcm_prefs_profile_colorspace_to_string (GcmColorspaceEnum type)
 {
-	if (type == GCM_PROFILE_COLORSPACE_XYZ) {
+	if (type == GCM_COLORSPACE_ENUM_XYZ) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("XYZ");
 	}
-	if (type == GCM_PROFILE_COLORSPACE_LAB) {
+	if (type == GCM_COLORSPACE_ENUM_LAB) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("LAB");
 	}
-	if (type == GCM_PROFILE_COLORSPACE_LUV) {
+	if (type == GCM_COLORSPACE_ENUM_LUV) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("LUV");
 	}
-	if (type == GCM_PROFILE_COLORSPACE_YCBCR) {
+	if (type == GCM_COLORSPACE_ENUM_YCBCR) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("YCbCr");
 	}
-	if (type == GCM_PROFILE_COLORSPACE_YXY) {
+	if (type == GCM_COLORSPACE_ENUM_YXY) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("Yxy");
 	}
-	if (type == GCM_PROFILE_COLORSPACE_RGB) {
+	if (type == GCM_COLORSPACE_ENUM_RGB) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("RGB");
 	}
-	if (type == GCM_PROFILE_COLORSPACE_GRAY) {
+	if (type == GCM_COLORSPACE_ENUM_GRAY) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("Gray");
 	}
-	if (type == GCM_PROFILE_COLORSPACE_HSV) {
+	if (type == GCM_COLORSPACE_ENUM_HSV) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("HSV");
 	}
-	if (type == GCM_PROFILE_COLORSPACE_CMYK) {
+	if (type == GCM_COLORSPACE_ENUM_CMYK) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("CMYK");
 	}
-	if (type == GCM_PROFILE_COLORSPACE_CMY) {
+	if (type == GCM_COLORSPACE_ENUM_CMY) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("CMY");
 	}
@@ -1648,8 +1648,8 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	gchar *filename = NULL;
 	gchar *basename = NULL;
 	gchar *size_text = NULL;
-	GcmProfileType profile_type;
-	GcmProfileColorspace profile_colorspace;
+	GcmProfileTypeEnum profile_type;
+	GcmColorspaceEnum profile_colorspace;
 	const gchar *profile_type_text;
 	const gchar *profile_colorspace_text;
 	gboolean ret;
@@ -1725,29 +1725,29 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 
 	/* set type */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_type"));
-	if (profile_type == GCM_PROFILE_TYPE_UNKNOWN) {
+	if (profile_type == GCM_PROFILE_TYPE_ENUM_UNKNOWN) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_type"));
-		profile_type_text = gcm_prefs_profile_type_to_text (profile_type);
+		profile_type_text = gcm_prefs_profile_type_to_string (profile_type);
 		gtk_label_set_label (GTK_LABEL (widget), profile_type_text);
 	}
 
 	/* set colorspace */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_colorspace"));
-	if (profile_colorspace == GCM_PROFILE_COLORSPACE_UNKNOWN) {
+	if (profile_colorspace == GCM_COLORSPACE_ENUM_UNKNOWN) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_colorspace"));
-		profile_colorspace_text = gcm_prefs_profile_colorspace_to_text (profile_colorspace);
+		profile_colorspace_text = gcm_prefs_profile_colorspace_to_string (profile_colorspace);
 		gtk_label_set_label (GTK_LABEL (widget), profile_colorspace_text);
 	}
 
 	/* set vcgt */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_vcgt"));
-	gtk_widget_set_visible (widget, (profile_type == GCM_PROFILE_TYPE_DISPLAY_DEVICE));
+	gtk_widget_set_visible (widget, (profile_type == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE));
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_vcgt"));
 	if (has_vcgt) {
 		gtk_label_set_label (GTK_LABEL (widget), _("Yes"));
@@ -1843,18 +1843,18 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 }
 
 /**
- * gcm_device_type_to_text:
+ * gcm_device_type_enum_to_string:
  **/
 static const gchar *
-gcm_prefs_device_type_to_text (GcmDeviceType type)
+gcm_prefs_device_type_to_string (GcmDeviceTypeEnum type)
 {
-	if (type == GCM_DEVICE_TYPE_DISPLAY)
+	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY)
 		return "1";
-	if (type == GCM_DEVICE_TYPE_SCANNER)
+	if (type == GCM_DEVICE_TYPE_ENUM_SCANNER)
 		return "2";
-	if (type == GCM_DEVICE_TYPE_CAMERA)
+	if (type == GCM_DEVICE_TYPE_ENUM_CAMERA)
 		return "3";
-	if (type == GCM_DEVICE_TYPE_PRINTER)
+	if (type == GCM_DEVICE_TYPE_ENUM_PRINTER)
 		return "4";
 	return "5";
 }
@@ -1904,7 +1904,7 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 
 	/* create sort order */
 	sort = g_strdup_printf ("%s%s",
-				gcm_prefs_device_type_to_text (GCM_DEVICE_TYPE_DISPLAY),
+				gcm_prefs_device_type_to_string (GCM_DEVICE_TYPE_ENUM_DISPLAY),
 				title);
 
 	/* add to list */
@@ -1958,7 +1958,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	GError *error = NULL;
 	GcmProfile *profile = NULL;
 	gboolean changed;
-	GcmDeviceType type;
+	GcmDeviceTypeEnum type;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 
@@ -2005,7 +2005,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 		}
 
 		/* set the gamma for display types */
-		if (type == GCM_DEVICE_TYPE_DISPLAY) {
+		if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
 			ret = gcm_utils_set_gamma_for_device (current_device, &error);
 			if (!ret) {
 				egg_warning ("failed to set output gamma: %s", error->message);
@@ -2082,15 +2082,15 @@ gcm_prefs_color_device_changed_cb (GcmColorDevice *_color_device, gpointer user_
  * gcm_prefs_device_type_to_icon_name:
  **/
 static const gchar *
-gcm_prefs_device_type_to_icon_name (GcmDeviceType type)
+gcm_prefs_device_type_to_icon_name (GcmDeviceTypeEnum type)
 {
-	if (type == GCM_DEVICE_TYPE_DISPLAY)
+	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY)
 		return "video-display";
-	if (type == GCM_DEVICE_TYPE_SCANNER)
+	if (type == GCM_DEVICE_TYPE_ENUM_SCANNER)
 		return "scanner";
-	if (type == GCM_DEVICE_TYPE_PRINTER)
+	if (type == GCM_DEVICE_TYPE_ENUM_PRINTER)
 		return "printer";
-	if (type == GCM_DEVICE_TYPE_CAMERA)
+	if (type == GCM_DEVICE_TYPE_ENUM_CAMERA)
 		return "camera-photo";
 	return "image-missing";
 }
@@ -2106,7 +2106,7 @@ gcm_prefs_add_device_type (GcmDevice *device)
 	GString *string;
 	gchar *id;
 	gchar *sort = NULL;
-	GcmDeviceType type;
+	GcmDeviceTypeEnum type;
 	const gchar *icon_name;
 	gboolean connected;
 
@@ -2132,7 +2132,7 @@ gcm_prefs_add_device_type (GcmDevice *device)
 
 	/* create sort order */
 	sort = g_strdup_printf ("%s%s",
-				gcm_prefs_device_type_to_text (type),
+				gcm_prefs_device_type_to_string (type),
 				string->str);
 
 	/* add to list */
@@ -2191,7 +2191,7 @@ gcm_prefs_remove_device (GcmDevice *gcm_device)
 static gboolean
 gcm_prefs_added_idle_cb (GcmDevice *device)
 {
-	GcmDeviceType type;
+	GcmDeviceTypeEnum type;
 	GtkTreePath *path;
 	GtkWidget *widget;
 	egg_debug ("added: %s", gcm_device_get_id (device));
@@ -2205,7 +2205,7 @@ gcm_prefs_added_idle_cb (GcmDevice *device)
 		      NULL);
 
 	/* add the device */
-	if (type == GCM_DEVICE_TYPE_DISPLAY)
+	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY)
 		gcm_prefs_add_device_xrandr (device);
 	else
 		gcm_prefs_add_device_type (device);
@@ -2300,13 +2300,13 @@ gcm_prefs_startup_phase2_idle_cb (gpointer user_data)
  * gcm_prefs_setup_space_combobox:
  **/
 static void
-gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmProfileColorspace colorspace, const gchar *profile_filename)
+gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspaceEnum colorspace, const gchar *profile_filename)
 {
 	GcmProfile *profile;
 	guint i;
 	gchar *filename;
 	gchar *description;
-	GcmProfileColorspace colorspace_tmp;
+	GcmColorspaceEnum colorspace_tmp;
 	guint added_count = 0;
 	gboolean has_vcgt;
 	gchar *text = NULL;
@@ -2314,7 +2314,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmProfileColorspace colorspa
 	GPtrArray *profile_array = NULL;
 
 	/* search is a way to reduce to number of profiles */
-	if (colorspace == GCM_PROFILE_COLORSPACE_CMYK)
+	if (colorspace == GCM_COLORSPACE_ENUM_CMYK)
 		search = "CMYK";
 
 	/* get new list */
@@ -2333,7 +2333,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmProfileColorspace colorspa
 		/* only for correct type */
 		if (!has_vcgt &&
 		    colorspace == colorspace_tmp &&
-		    (colorspace == GCM_PROFILE_COLORSPACE_CMYK ||
+		    (colorspace == GCM_COLORSPACE_ENUM_CMYK ||
 		     g_strstr_len (description, -1, search) != NULL)) {
 			gcm_prefs_combobox_add_profile (widget, profile);
 
@@ -2417,7 +2417,7 @@ gcm_prefs_renderer_combo_changed_cb (GtkWidget *widget, gpointer data)
 		gconf_key = GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF;
 
 	/* save to GConf */
-	value = gcm_rendering_intent_to_text (active+1);
+	value = gcm_intent_enum_to_string (active+1);
 	egg_debug ("changed rendering intent to %s", value);
 	gconf_client_set_string (gconf_client, gconf_key, value, NULL);
 }
@@ -2432,10 +2432,10 @@ gcm_prefs_setup_rendering_combobox (GtkWidget *widget, const gchar *intent)
 	gboolean ret = FALSE;
 	const gchar *text;
 
-	for (i=1; i<GCM_RENDERING_INTENT_LAST; i++) {
-		text = gcm_rendering_intent_to_localized_text (i);
+	for (i=1; i<GCM_INTENT_ENUM_LAST; i++) {
+		text = gcm_intent_enum_to_localized_text (i);
 		gtk_combo_box_append_text (GTK_COMBO_BOX (widget), text);
-		text = gcm_rendering_intent_to_text (i);
+		text = gcm_intent_enum_to_string (i);
 		if (g_strcmp0 (text, intent) == 0) {
 			ret = TRUE;
 			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), i-1);
@@ -2464,7 +2464,7 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_space_rgb"));
 	colorspace_rgb = gconf_client_get_string (gconf_client, GCM_SETTINGS_COLORSPACE_RGB, NULL);
 	gcm_prefs_set_combo_simple_text (widget);
-	gcm_prefs_setup_space_combobox (widget, GCM_PROFILE_COLORSPACE_RGB, colorspace_rgb);
+	gcm_prefs_setup_space_combobox (widget, GCM_COLORSPACE_ENUM_RGB, colorspace_rgb);
 	g_signal_connect (G_OBJECT (widget), "changed",
 			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), NULL);
 
@@ -2472,7 +2472,7 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_space_cmyk"));
 	colorspace_cmyk = gconf_client_get_string (gconf_client, GCM_SETTINGS_COLORSPACE_CMYK, NULL);
 	gcm_prefs_set_combo_simple_text (widget);
-	gcm_prefs_setup_space_combobox (widget, GCM_PROFILE_COLORSPACE_CMYK, colorspace_cmyk);
+	gcm_prefs_setup_space_combobox (widget, GCM_COLORSPACE_ENUM_CMYK, colorspace_cmyk);
 	g_signal_connect (G_OBJECT (widget), "changed",
 			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), (gpointer) "cmyk");
 
@@ -2529,7 +2529,7 @@ gcm_prefs_reset_devices_idle_cb (gpointer user_data)
 {
 	GPtrArray *array = NULL;
 	GcmDevice *device;
-	GcmDeviceType type;
+	GcmDeviceTypeEnum type;
 	GError *error = NULL;
 	gboolean ret;
 	guint i;
@@ -2543,7 +2543,7 @@ gcm_prefs_reset_devices_idle_cb (gpointer user_data)
 			      NULL);
 
 		/* not a xrandr panel */
-		if (type != GCM_DEVICE_TYPE_DISPLAY)
+		if (type != GCM_DEVICE_TYPE_ENUM_DISPLAY)
 			continue;
 
 		/* set gamma for device */

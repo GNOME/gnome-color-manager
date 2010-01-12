@@ -56,7 +56,7 @@ struct _GcmDevicePrivate
 	gfloat				 gamma;
 	gfloat				 brightness;
 	gfloat				 contrast;
-	GcmDeviceType			 type;
+	GcmDeviceTypeEnum		 type;
 	gchar				*id;
 	gchar				*serial;
 	gchar				*manufacturer;
@@ -90,35 +90,35 @@ enum {
 G_DEFINE_TYPE (GcmDevice, gcm_device, G_TYPE_OBJECT)
 
 /**
- * gcm_device_type_from_text:
+ * gcm_device_type_enum_from_string:
  **/
-GcmDeviceType
-gcm_device_type_from_text (const gchar *type)
+GcmDeviceTypeEnum
+gcm_device_type_enum_from_string (const gchar *type)
 {
 	if (g_strcmp0 (type, "display") == 0)
-		return GCM_DEVICE_TYPE_DISPLAY;
+		return GCM_DEVICE_TYPE_ENUM_DISPLAY;
 	if (g_strcmp0 (type, "scanner") == 0)
-		return GCM_DEVICE_TYPE_SCANNER;
+		return GCM_DEVICE_TYPE_ENUM_SCANNER;
 	if (g_strcmp0 (type, "printer") == 0)
-		return GCM_DEVICE_TYPE_PRINTER;
+		return GCM_DEVICE_TYPE_ENUM_PRINTER;
 	if (g_strcmp0 (type, "camera") == 0)
-		return GCM_DEVICE_TYPE_CAMERA;
-	return GCM_DEVICE_TYPE_UNKNOWN;
+		return GCM_DEVICE_TYPE_ENUM_CAMERA;
+	return GCM_DEVICE_TYPE_ENUM_UNKNOWN;
 }
 
 /**
- * gcm_device_type_to_text:
+ * gcm_device_type_enum_to_string:
  **/
 const gchar *
-gcm_device_type_to_text (GcmDeviceType type)
+gcm_device_type_enum_to_string (GcmDeviceTypeEnum type)
 {
-	if (type == GCM_DEVICE_TYPE_DISPLAY)
+	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY)
 		return "display";
-	if (type == GCM_DEVICE_TYPE_SCANNER)
+	if (type == GCM_DEVICE_TYPE_ENUM_SCANNER)
 		return "scanner";
-	if (type == GCM_DEVICE_TYPE_PRINTER)
+	if (type == GCM_DEVICE_TYPE_ENUM_PRINTER)
 		return "printer";
-	if (type == GCM_DEVICE_TYPE_CAMERA)
+	if (type == GCM_DEVICE_TYPE_ENUM_CAMERA)
 		return "camera";
 	return "unknown";
 }
@@ -363,7 +363,7 @@ gcm_device_save (GcmDevice *device, GError **error)
 	/* save other properties we'll need if we add this device offline */
 	if (device->priv->title != NULL)
 		g_key_file_set_string (keyfile, device->priv->id, "title", device->priv->title);
-	g_key_file_set_string (keyfile, device->priv->id, "type", gcm_device_type_to_text (device->priv->type));
+	g_key_file_set_string (keyfile, device->priv->id, "type", gcm_device_type_enum_to_string (device->priv->type));
 
 	/* convert to string */
 	data = g_key_file_to_data (keyfile, NULL, &error_local);
@@ -729,7 +729,7 @@ gcm_device_test (EggTest *test)
 	gchar *profile;
 	gchar *data;
 	const gchar *type;
-	GcmDeviceType type_enum;
+	GcmDeviceTypeEnum type_enum;
 
 	if (!egg_test_start (test, "GcmDevice"))
 		return;
@@ -741,17 +741,17 @@ gcm_device_test (EggTest *test)
 
 	/************************************************************/
 	egg_test_title (test, "convert to recognised enum");
-	type_enum = gcm_device_type_from_text ("scanner");
-	egg_test_assert (test, (type_enum == GCM_DEVICE_TYPE_SCANNER));
+	type_enum = gcm_device_type_enum_from_string ("scanner");
+	egg_test_assert (test, (type_enum == GCM_DEVICE_TYPE_ENUM_SCANNER));
 
 	/************************************************************/
 	egg_test_title (test, "convert to unrecognised enum");
-	type_enum = gcm_device_type_from_text ("xxx");
-	egg_test_assert (test, (type_enum == GCM_DEVICE_TYPE_UNKNOWN));
+	type_enum = gcm_device_type_enum_from_string ("xxx");
+	egg_test_assert (test, (type_enum == GCM_DEVICE_TYPE_ENUM_UNKNOWN));
 
 	/************************************************************/
 	egg_test_title (test, "convert from recognised enum");
-	type = gcm_device_type_to_text (GCM_DEVICE_TYPE_SCANNER);
+	type = gcm_device_type_enum_to_string (GCM_DEVICE_TYPE_ENUM_SCANNER);
 	if (g_strcmp0 (type, "scanner") == 0)
 		egg_test_success (test, NULL);
 	else
@@ -759,7 +759,7 @@ gcm_device_test (EggTest *test)
 
 	/************************************************************/
 	egg_test_title (test, "convert from unrecognised enum");
-	type = gcm_device_type_to_text (GCM_DEVICE_TYPE_UNKNOWN);
+	type = gcm_device_type_enum_to_string (GCM_DEVICE_TYPE_ENUM_UNKNOWN);
 	if (g_strcmp0 (type, "unknown") == 0)
 		egg_test_success (test, NULL);
 	else
@@ -767,7 +767,7 @@ gcm_device_test (EggTest *test)
 
 	/* set some properties */
 	g_object_set (device,
-		      "type", GCM_DEVICE_TYPE_SCANNER,
+		      "type", GCM_DEVICE_TYPE_ENUM_SCANNER,
 		      "id", "sysfs_dummy_device",
 		      "connected", TRUE,
 		      "serial", "0123456789",

@@ -27,6 +27,7 @@
 
 #include "egg-debug.h"
 
+#include "gcm-enum.h"
 #include "gcm-profile.h"
 
 /**
@@ -71,8 +72,8 @@ gcm_dump_profile_filename (const gchar *filename)
 		      NULL);
 
 	/* print what we know */
-	g_print ("Type:\t%s\n", gcm_profile_type_to_text (profile_type));
-	g_print ("Colorspace:\t%s\n", gcm_profile_colorspace_to_text (colorspace));
+	g_print ("Type:\t%s\n", gcm_profile_type_enum_to_string (profile_type));
+	g_print ("Colorspace:\t%s\n", gcm_colorspace_enum_to_string (colorspace));
 	g_print ("Size:\t%i bytes\n", size);
 	g_print ("Has VCGT:\t%s\n", has_vcgt ? "Yes" : "No");
 	if (description != NULL)

@@ -185,7 +185,7 @@ out:
  * gcm_client_gudev_add_type:
  **/
 static void
-gcm_client_gudev_add_type (GcmClient *client, GUdevDevice *udev_device, GcmDeviceType type)
+gcm_client_gudev_add_type (GcmClient *client, GUdevDevice *udev_device, GcmDeviceTypeEnum type)
 {
 	gchar *title;
 	GcmDevice *device = NULL;
@@ -292,7 +292,7 @@ gcm_client_gudev_add (GcmClient *client, GUdevDevice *udev_device)
 	if (value != NULL) {
 		value = g_udev_device_get_property (udev_device, "GCM_TYPE");
 		egg_debug ("found %s device: %s", value, g_udev_device_get_sysfs_path (udev_device));
-		gcm_client_gudev_add_type (client, udev_device, gcm_device_type_from_text (value));
+		gcm_client_gudev_add_type (client, udev_device, gcm_device_type_enum_from_string (value));
 	}
 }
 
@@ -708,7 +708,7 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 	device = gcm_device_new ();
 	title = gcm_client_get_output_name (client, output);
 	g_object_set (device,
-		      "type", GCM_DEVICE_TYPE_DISPLAY,
+		      "type", GCM_DEVICE_TYPE_ENUM_DISPLAY,
 		      "id", id,
 		      "connected", TRUE,
 		      "serial", serial,
@@ -783,7 +783,7 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 {
 	gchar *title;
 	gchar *type_text = NULL;
-	GcmDeviceType type;
+	GcmDeviceTypeEnum type;
 	GcmDevice *device = NULL;
 	gboolean ret;
 	GError *error = NULL;
@@ -794,7 +794,7 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 	if (title == NULL)
 		goto out;
 	type_text = g_key_file_get_string (keyfile, id, "type", NULL);
-	type = gcm_device_type_from_text (type_text);
+	type = gcm_device_type_enum_from_string (type_text);
 
 	/* create device */
 	device = gcm_device_new ();

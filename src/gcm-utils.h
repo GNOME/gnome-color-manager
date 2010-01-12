@@ -27,6 +27,7 @@
 
 #include "gcm-device.h"
 #include "gcm-profile.h"
+#include "gcm-enum.h"
 
 #define GCM_STOCK_ICON				"gnome-color-manager"
 #define GCM_PROFILE_PATH			"/.color/icc"
@@ -39,15 +40,6 @@
 #define GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF	"/apps/gnome-color-manager/rendering_intent_softproof"
 #define GCM_SETTINGS_COLORSPACE_RGB		"/apps/gnome-color-manager/colorspace_rgb"
 #define GCM_SETTINGS_COLORSPACE_CMYK		"/apps/gnome-color-manager/colorspace_cmyk"
-
-typedef enum {
-	GCM_RENDERING_INTENT_UNKNOWN,
-	GCM_RENDERING_INTENT_PERCEPTUAL,
-	GCM_RENDERING_INTENT_RELATIVE_COLORMETRIC,
-	GCM_RENDERING_INTENT_SATURATION,
-	GCM_RENDERING_INTENT_ABSOLUTE_COLORMETRIC,
-	GCM_RENDERING_INTENT_LAST
-} GcmRenderingIntent;
 
 gboolean	 gcm_utils_set_gamma_for_device		(GcmDevice		*device,
 							 GError			**error);
@@ -63,18 +55,14 @@ gboolean	 gcm_utils_output_is_lcd		(const gchar		*output_name);
 void		 gcm_utils_alphanum_lcase		(gchar			*string);
 void		 gcm_utils_ensure_sensible_filename	(gchar			*string);
 gchar		*gcm_utils_get_default_config_location	(void);
-GcmProfileType	 gcm_utils_device_type_to_profile_type	(GcmDeviceType		 type);
+GcmProfileTypeEnum  gcm_utils_device_type_to_profile_type (GcmDeviceTypeEnum	 type);
 gchar		*gcm_utils_format_date_time		(const struct tm	*created);
 gboolean	 gcm_utils_install_package		(const gchar		*package_name,
 							 GtkWindow		*window);
-void		 gcm_utils_ensure_sane_length		(gchar			*text,
-							 guint			 max_length);
 void		 gcm_utils_ensure_printable		(gchar			*text);
 gboolean	 gcm_utils_is_icc_profile		(const gchar		*filename);
 gchar		*gcm_utils_linkify			(const gchar		*text);
-GcmRenderingIntent gcm_rendering_intent_from_text	(const gchar		*intent);
-const gchar	*gcm_rendering_intent_to_localized_text	(GcmRenderingIntent	 intent);
-const gchar	*gcm_rendering_intent_to_text		(GcmRenderingIntent	 intent);
+const gchar	*gcm_intent_enum_to_localized_text	(GcmIntentEnum	 intent);
 
 #endif /* __GCM_UTILS_H */
 

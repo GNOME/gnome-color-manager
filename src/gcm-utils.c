@@ -403,7 +403,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	gboolean use_global;
 	gboolean use_atom;
 	gboolean leftmost_screen = FALSE;
-	GcmDeviceType type;
+	GcmDeviceTypeEnum type;
 	GnomeRRScreen *rr_screen = NULL;
 	GConfClient *gconf_client = NULL;
 
@@ -425,7 +425,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 		      NULL);
 
 	/* do no set the gamma for non-display types */
-	if (type != GCM_DEVICE_TYPE_DISPLAY) {
+	if (type != GCM_DEVICE_TYPE_ENUM_DISPLAY) {
 		if (error != NULL)
 			*error = g_error_new (1, 0, "not a display: %s", id);
 		goto out;
@@ -745,24 +745,24 @@ gcm_utils_get_default_config_location (void)
 /**
  * gcm_utils_device_type_to_profile_type:
  **/
-GcmProfileType
-gcm_utils_device_type_to_profile_type (GcmDeviceType type)
+GcmProfileTypeEnum
+gcm_utils_device_type_to_profile_type (GcmDeviceTypeEnum type)
 {
-	GcmProfileType profile_type;
+	GcmProfileTypeEnum profile_type;
 	switch (type) {
-	case GCM_DEVICE_TYPE_DISPLAY:
-		profile_type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
+	case GCM_DEVICE_TYPE_ENUM_DISPLAY:
+		profile_type = GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE;
 		break;
-	case GCM_DEVICE_TYPE_CAMERA:
-	case GCM_DEVICE_TYPE_SCANNER:
-		profile_type = GCM_PROFILE_TYPE_INPUT_DEVICE;
+	case GCM_DEVICE_TYPE_ENUM_CAMERA:
+	case GCM_DEVICE_TYPE_ENUM_SCANNER:
+		profile_type = GCM_PROFILE_TYPE_ENUM_INPUT_DEVICE;
 		break;
-	case GCM_DEVICE_TYPE_PRINTER:
-		profile_type = GCM_PROFILE_TYPE_OUTPUT_DEVICE;
+	case GCM_DEVICE_TYPE_ENUM_PRINTER:
+		profile_type = GCM_PROFILE_TYPE_ENUM_OUTPUT_DEVICE;
 		break;
 	default:
 		egg_warning ("unknown type: %i", type);
-		profile_type = GCM_PROFILE_TYPE_UNKNOWN;
+		profile_type = GCM_PROFILE_TYPE_ENUM_UNKNOWN;
 	}
 	return profile_type;
 }
@@ -782,62 +782,28 @@ gcm_utils_format_date_time (const struct tm *created)
 }
 
 /**
- * gcm_rendering_intent_to_text:
+ * gcm_intent_enum_to_localized_text:
  **/
 const gchar *
-gcm_rendering_intent_to_text (GcmRenderingIntent intent)
+gcm_intent_enum_to_localized_text (GcmIntentEnum intent)
 {
-	if (intent == GCM_RENDERING_INTENT_PERCEPTUAL)
-		return "perceptual";
-	if (intent == GCM_RENDERING_INTENT_RELATIVE_COLORMETRIC)
-		return "relative-colormetric";
-	if (intent == GCM_RENDERING_INTENT_SATURATION)
-		return "saturation";
-	if (intent == GCM_RENDERING_INTENT_ABSOLUTE_COLORMETRIC)
-		return "absolute-colormetric";
-	return "unknown";
-}
-
-/**
- * gcm_rendering_intent_to_localized_text:
- **/
-const gchar *
-gcm_rendering_intent_to_localized_text (GcmRenderingIntent intent)
-{
-	if (intent == GCM_RENDERING_INTENT_PERCEPTUAL) {
+	if (intent == GCM_INTENT_ENUM_PERCEPTUAL) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Perceptual");
 	}
-	if (intent == GCM_RENDERING_INTENT_RELATIVE_COLORMETRIC) {
+	if (intent == GCM_INTENT_ENUM_RELATIVE_COLORMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Relative colormetric");
 	}
-	if (intent == GCM_RENDERING_INTENT_SATURATION) {
+	if (intent == GCM_INTENT_ENUM_SATURATION) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Saturation");
 	}
-	if (intent == GCM_RENDERING_INTENT_ABSOLUTE_COLORMETRIC) {
+	if (intent == GCM_INTENT_ENUM_ABSOLUTE_COLORMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Absolute colormetric");
 	}
 	return "unknown";
-}
-
-/**
- * gcm_rendering_intent_from_text:
- **/
-GcmRenderingIntent
-gcm_rendering_intent_from_text (const gchar *intent)
-{
-	if (g_strcmp0 (intent, "perceptual") == 0)
-		return GCM_RENDERING_INTENT_PERCEPTUAL;
-	if (g_strcmp0 (intent, "relative-colormetric") == 0)
-		return GCM_RENDERING_INTENT_RELATIVE_COLORMETRIC;
-	if (g_strcmp0 (intent, "saturation") == 0)
-		return GCM_RENDERING_INTENT_SATURATION;
-	if (g_strcmp0 (intent, "absolute-colormetric") == 0)
-		return GCM_RENDERING_INTENT_ABSOLUTE_COLORMETRIC;
-	return GCM_RENDERING_INTENT_UNKNOWN;
 }
 
 /***************************************************************************
@@ -854,8 +820,8 @@ gcm_utils_test (EggTest *test)
 	GPtrArray *array;
 	gchar *text;
 	gchar *filename;
-	GcmProfileType profile_type;
-	GcmDeviceType device_type;
+	GcmProfileTypeEnum profile_type;
+	GcmDeviceTypeEnum device_type;
 
 	if (!egg_test_start (test, "GcmUtils"))
 		return;
@@ -948,13 +914,13 @@ gcm_utils_test (EggTest *test)
 
 	/************************************************************/
 	egg_test_title (test, "convert valid device type to profile type");
-	profile_type = gcm_utils_device_type_to_profile_type (GCM_DEVICE_TYPE_SCANNER);
-	egg_test_assert (test, (profile_type == GCM_PROFILE_TYPE_INPUT_DEVICE));
+	profile_type = gcm_utils_device_type_to_profile_type (GCM_DEVICE_TYPE_ENUM_SCANNER);
+	egg_test_assert (test, (profile_type == GCM_PROFILE_TYPE_ENUM_INPUT_DEVICE));
 
 	/************************************************************/
 	egg_test_title (test, "convert invalid device type to profile type");
-	profile_type = gcm_utils_device_type_to_profile_type (GCM_DEVICE_TYPE_UNKNOWN);
-	egg_test_assert (test, (profile_type == GCM_PROFILE_TYPE_UNKNOWN));
+	profile_type = gcm_utils_device_type_to_profile_type (GCM_DEVICE_TYPE_ENUM_UNKNOWN);
+	egg_test_assert (test, (profile_type == GCM_PROFILE_TYPE_ENUM_UNKNOWN));
 
 	egg_test_end (test);
 }

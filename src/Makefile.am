@@ -30,6 +30,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-xyz.h					\
 	gcm-utils.c					\
 	gcm-utils.h					\
+	gcm-enum.c					\
+	gcm-enum.h					\
 	gcm-clut.c					\
 	gcm-clut.h					\
 	gcm-edid.c					\

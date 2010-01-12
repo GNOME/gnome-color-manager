@@ -51,8 +51,8 @@ static void     gcm_profile_finalize	(GObject     *object);
  **/
 struct _GcmProfilePrivate
 {
-	GcmProfileType			 profile_type;
-	GcmProfileColorspace		 colorspace;
+	GcmProfileTypeEnum		 profile_type;
+	GcmColorspaceEnum		 colorspace;
 	guint				 size;
 	gboolean			 has_vcgt;
 	gchar				*description;
@@ -226,58 +226,6 @@ gcm_profile_generate_curve (GcmProfile *profile, guint size)
 	clut = klass->generate_curve (profile, size);
 out:
 	return clut;
-}
-
-/**
- * gcm_profile_type_to_text:
- **/
-const gchar *
-gcm_profile_type_to_text (GcmProfileType type)
-{
-	if (type == GCM_PROFILE_TYPE_INPUT_DEVICE)
-		return "input-device";
-	if (type == GCM_PROFILE_TYPE_DISPLAY_DEVICE)
-		return "display-device";
-	if (type == GCM_PROFILE_TYPE_OUTPUT_DEVICE)
-		return "output-device";
-	if (type == GCM_PROFILE_TYPE_DEVICELINK)
-		return "devicelink";
-	if (type == GCM_PROFILE_TYPE_COLORSPACE_CONVERSION)
-		return "colorspace-conversion";
-	if (type == GCM_PROFILE_TYPE_ABSTRACT)
-		return "abstract";
-	if (type == GCM_PROFILE_TYPE_NAMED_COLOR)
-		return "named-color";
-	return "unknown";
-}
-
-/**
- * gcm_profile_colorspace_to_text:
- **/
-const gchar *
-gcm_profile_colorspace_to_text (GcmProfileColorspace type)
-{
-	if (type == GCM_PROFILE_COLORSPACE_XYZ)
-		return "xyz";
-	if (type == GCM_PROFILE_COLORSPACE_LAB)
-		return "lab";
-	if (type == GCM_PROFILE_COLORSPACE_LUV)
-		return "luv";
-	if (type == GCM_PROFILE_COLORSPACE_YCBCR)
-		return "ycbcr";
-	if (type == GCM_PROFILE_COLORSPACE_YXY)
-		return "yxy";
-	if (type == GCM_PROFILE_COLORSPACE_RGB)
-		return "rgb";
-	if (type == GCM_PROFILE_COLORSPACE_GRAY)
-		return "gray";
-	if (type == GCM_PROFILE_COLORSPACE_HSV)
-		return "hsv";
-	if (type == GCM_PROFILE_COLORSPACE_CMYK)
-		return "cmyk";
-	if (type == GCM_PROFILE_COLORSPACE_CMY)
-		return "cmy";
-	return "unknown";
 }
 
 /**
@@ -607,8 +555,8 @@ gcm_profile_init (GcmProfile *profile)
 {
 	profile->priv = GCM_PROFILE_GET_PRIVATE (profile);
 	profile->priv->monitor = NULL;
-	profile->priv->profile_type = GCM_PROFILE_TYPE_UNKNOWN;
-	profile->priv->colorspace = GCM_PROFILE_COLORSPACE_UNKNOWN;
+	profile->priv->profile_type = GCM_PROFILE_TYPE_ENUM_UNKNOWN;
+	profile->priv->colorspace = GCM_COLORSPACE_ENUM_UNKNOWN;
 	profile->priv->white_point = gcm_xyz_new ();
 	profile->priv->black_point = gcm_xyz_new ();
 	profile->priv->luminance_red = gcm_xyz_new ();
@@ -683,8 +631,8 @@ typedef struct {
 	const gchar *model;
 	const gchar *datetime;
 	const gchar *description;
-	GcmProfileType type;
-	GcmProfileColorspace colorspace;
+	GcmProfileTypeEnum type;
+	GcmColorspaceEnum colorspace;
 	gfloat luminance;
 } GcmProfileTestData;
 
@@ -833,8 +781,8 @@ gcm_profile_test (EggTest *test)
 	test_data.manufacturer = "IEC http://www.iec.ch";
 	test_data.model = "IEC 61966-2.1 Default RGB colour space - sRGB";
 	test_data.description = "Blueish Test";
-	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
-	test_data.colorspace = GCM_PROFILE_COLORSPACE_RGB;
+	test_data.type = GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE;
+	test_data.colorspace = GCM_COLORSPACE_ENUM_RGB;
 	test_data.luminance = 0.648454;
 	test_data.datetime = "February  9 1998, 06:49:00 AM";
 	gcm_profile_test_parse_file (test, "bluish.icc", &test_data);
@@ -844,8 +792,8 @@ gcm_profile_test (EggTest *test)
 	test_data.manufacturer = "IEC http://www.iec.ch";
 	test_data.model = "IEC 61966-2.1 Default RGB colour space - sRGB";
 	test_data.description = "ADOBEGAMMA-Test";
-	test_data.type = GCM_PROFILE_TYPE_DISPLAY_DEVICE;
-	test_data.colorspace = GCM_PROFILE_COLORSPACE_RGB;
+	test_data.type = GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE;
+	test_data.colorspace = GCM_COLORSPACE_ENUM_RGB;
 	test_data.luminance = 0.648446;
 	test_data.datetime = "August 16 2005, 09:49:54 PM";
 	gcm_profile_test_parse_file (test, "AdobeGammaTest.icm", &test_data);

@@ -224,12 +224,12 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *sysfs_pat
  * gcm_dbus_get_profiles_for_type_internal:
  **/
 static GPtrArray *
-gcm_dbus_get_profiles_for_type_internal (GcmDbus *dbus, GcmDeviceType type)
+gcm_dbus_get_profiles_for_type_internal (GcmDbus *dbus, GcmDeviceTypeEnum type)
 {
 	guint i;
 	GcmProfile *profile;
-	GcmProfileType profile_type;
-	GcmProfileType type_tmp;
+	GcmProfileTypeEnum profile_type;
+	GcmProfileTypeEnum type_tmp;
 	GPtrArray *array;
 	GPtrArray *profile_array;
 
@@ -322,12 +322,12 @@ gcm_dbus_get_profiles_for_type (GcmDbus *dbus, const gchar *type, const gchar *o
 	guint i;
 	GPtrArray *array_structs;
 	GValue *value;
-	GcmDeviceType type_enum;
+	GcmDeviceTypeEnum type_enum;
 
 	egg_debug ("getting profiles for %s", type);
 
 	/* get array of profile filenames */
-	type_enum = gcm_device_type_from_text (type);
+	type_enum = gcm_device_type_enum_from_string (type);
 	array_profiles = gcm_dbus_get_profiles_for_type_internal (dbus, type_enum);
 
 	/* copy data to dbus struct */

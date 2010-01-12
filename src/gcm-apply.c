@@ -45,7 +45,7 @@ main (int argc, char **argv)
 	guint i;
 	GcmClient *client = NULL;
 	GcmDevice *device;
-	GcmDeviceType type;
+	GcmDeviceTypeEnum type;
 
 	setlocale (LC_ALL, "");
 
@@ -79,7 +79,7 @@ main (int argc, char **argv)
 			      NULL);
 
 		/* not a xrandr panel */
-		if (type != GCM_DEVICE_TYPE_DISPLAY)
+		if (type != GCM_DEVICE_TYPE_ENUM_DISPLAY)
 			continue;
 
 		/* set gamma for device */
