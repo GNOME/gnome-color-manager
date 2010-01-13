@@ -487,7 +487,7 @@ gcm_image_test (EggTest *test)
 	GError *error = NULL;
 	gint response;
 	gchar *filename_widget;
-	gchar *fiename_test;
+	gchar *filename_test;
 	gchar *profile_base64;
 
 	if (!egg_test_start (test, "GcmImage"))
@@ -504,12 +504,12 @@ gcm_image_test (EggTest *test)
 
 	/************************************************************/
 	egg_test_title (test, "get filename of image file");
-	fiename_test = egg_test_get_data_file ("image-widget-good.png");
-	egg_test_assert (test, (fiename_test != NULL));
+	filename_test = egg_test_get_data_file ("image-widget-good.png");
+	egg_test_assert (test, (filename_test != NULL));
 
 	/* show in a dialog as an example */
 	dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "Does color-corrected image match\nthe picture below?");
-	image_test = gtk_image_new_from_file (fiename_test);
+	image_test = gtk_image_new_from_file (filename_test);
 	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 	gtk_box_pack_end (GTK_BOX(vbox), GTK_WIDGET(image), TRUE, TRUE, 12);
 	gtk_box_pack_end (GTK_BOX(vbox), image_test, TRUE, TRUE, 12);
@@ -522,25 +522,25 @@ gcm_image_test (EggTest *test)
 		      "use-embedded-icc-profile", TRUE,
 		      "output-icc-profile", NULL,
 		      NULL);
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
-	g_free (fiename_test);
 
 	/************************************************************/
 	egg_test_title (test, "converted as expected?");
+	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	egg_test_assert (test, (response == GTK_RESPONSE_YES));
+	g_free (filename_test);
 
 	/************************************************************/
-	fiename_test = egg_test_get_data_file ("image-widget-nonembed.png");
-	gtk_image_set_from_file (GTK_IMAGE(image_test), fiename_test);
+	filename_test = egg_test_get_data_file ("image-widget-nonembed.png");
+	gtk_image_set_from_file (GTK_IMAGE(image_test), filename_test);
 	g_object_set (image,
 		      "use-embedded-icc-profile", FALSE,
 		      NULL);
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
-	g_free (fiename_test);
 
 	/************************************************************/
 	egg_test_title (test, "converted as expected?");
+	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	egg_test_assert (test, (response == GTK_RESPONSE_YES));
+	g_free (filename_test);
 
 	/************************************************************/
 	egg_test_title (test, "get dummy display profile");
@@ -548,19 +548,18 @@ gcm_image_test (EggTest *test)
 	egg_test_assert (test, (profile_base64 != NULL));
 
 	/************************************************************/
-	fiename_test = egg_test_get_data_file ("image-widget-output.png");
-	gtk_image_set_from_file (GTK_IMAGE(image_test), fiename_test);
+	filename_test = egg_test_get_data_file ("image-widget-output.png");
+	gtk_image_set_from_file (GTK_IMAGE(image_test), filename_test);
 	g_object_set (image,
 		      "use-embedded-icc-profile", TRUE,
 		      "output-icc-profile", profile_base64,
 		      NULL);
 
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
-	g_free (fiename_test);
-
 	/************************************************************/
 	egg_test_title (test, "converted as expected?");
+	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	egg_test_assert (test, (response == GTK_RESPONSE_YES));
+	g_free (filename_test);
 
 	gtk_widget_destroy (dialog);
 
