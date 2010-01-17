@@ -77,8 +77,7 @@ gcm_brightness_set_percentage (GcmBrightness *brightness, guint percentage, GErr
 
 	/* are we connected */
 	if (priv->proxy == NULL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "not connected to gnome-power-manager");
+		g_set_error_literal (error, 1, 0, "not connected to gnome-power-manager");
 		goto out;
 	}
 
@@ -106,8 +105,7 @@ gcm_brightness_get_percentage (GcmBrightness *brightness, guint *percentage, GEr
 
 	/* are we connected */
 	if (priv->proxy == NULL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "not connected to gnome-power-manager");
+		g_set_error_literal (error, 1, 0, "not connected to gnome-power-manager");
 		goto out;
 	}
 

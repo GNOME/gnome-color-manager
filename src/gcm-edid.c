@@ -137,8 +137,7 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 
 	/* check header */
 	if (data[0] != 0x00 || data[1] != 0xff) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to parse header");
+		g_set_error_literal (error, 1, 0, "failed to parse header");
 		ret = FALSE;
 		goto out;
 	}

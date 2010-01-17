@@ -84,8 +84,7 @@ gcm_tables_get_pnp_id (GcmTables *tables, const gchar *pnp_id, GError **error)
 		filename = g_build_filename (priv->data_dir, "pnp.ids", NULL);
 		ret = g_file_test (filename, G_FILE_TEST_EXISTS);
 		if (!ret) {
-			if (error != NULL)
-				*error = g_error_new (1, 0, "could not load %s", filename);
+			g_set_error (error, 1, 0, "could not load %s", filename);
 			goto out;
 		}
 
@@ -108,8 +107,7 @@ gcm_tables_get_pnp_id (GcmTables *tables, const gchar *pnp_id, GError **error)
 	/* look this up in the table */
 	found = g_hash_table_lookup (priv->pnp_table, pnp_id);
 	if (found == NULL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "could not find %s", pnp_id);
+		g_set_error (error, 1, 0, "could not find %s", pnp_id);
 		goto out;
 	}
 

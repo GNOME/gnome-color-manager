@@ -106,8 +106,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 
 	/* do we have support */
 	if (klass->parse_data == NULL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "no support");
+		g_set_error_literal (error, 1, 0, "no support");
 		goto out;
 	}
 
@@ -136,8 +135,7 @@ gcm_profile_parse (GcmProfile *profile, const gchar *filename, GError **error)
 	/* load files */
 	ret = g_file_get_contents (filename, &data, (gsize *) &length, &error_local);
 	if (!ret) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to load profile: %s", error_local->message);
+		g_set_error (error, 1, 0, "failed to load profile: %s", error_local->message);
 		g_error_free (error_local);
 		goto out;
 	}
@@ -168,15 +166,13 @@ gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
 
 	/* not loaded */
 	if (priv->size == 0) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "not loaded");
+		g_set_error_literal (error, 1, 0, "not loaded");
 		goto out;
 	}
 
 	/* do we have support */
 	if (klass->save == NULL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "no support");
+		g_set_error_literal (error, 1, 0, "no support");
 		goto out;
 	}
 

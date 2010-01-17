@@ -287,8 +287,7 @@ gcm_device_save (GcmDevice *device, GError **error)
 		file = g_file_new_for_path (dirname);
 		ret = g_file_make_directory_with_parents (file, NULL, &error_local);
 		if (!ret) {
-			if (error != NULL)
-				*error = g_error_new (1, 0, "failed to create config directory: %s", error_local->message);
+			g_set_error (error, 1, 0, "failed to create config directory: %s", error_local->message);
 			g_error_free (error_local);
 			goto out;
 		}
@@ -299,8 +298,7 @@ gcm_device_save (GcmDevice *device, GError **error)
 	if (!ret) {
 		ret = g_file_set_contents (filename, "#created today", -1, &error_local);
 		if (!ret) {
-			if (error != NULL)
-				*error = g_error_new (1, 0, "failed to create dummy header: %s", error_local->message);
+			g_set_error (error, 1, 0, "failed to create dummy header: %s", error_local->message);
 			g_error_free (error_local);
 			goto out;
 		}
@@ -315,8 +313,7 @@ gcm_device_save (GcmDevice *device, GError **error)
 			/* ignore */
 			g_clear_error (&error_local);
 		} else {
-			if (error != NULL)
-				*error = g_error_new (1, 0, "failed to load existing config: %s", error_local->message);
+			g_set_error (error, 1, 0, "failed to load existing config: %s", error_local->message);
 			g_error_free (error_local);
 			goto out;
 		}
@@ -369,8 +366,7 @@ gcm_device_save (GcmDevice *device, GError **error)
 	data = g_key_file_to_data (keyfile, NULL, &error_local);
 	if (data == NULL) {
 		ret = FALSE;
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to convert config: %s", error_local->message);
+		g_set_error (error, 1, 0, "failed to convert config: %s", error_local->message);
 		g_error_free (error_local);
 		goto out;
 	}
@@ -378,8 +374,7 @@ gcm_device_save (GcmDevice *device, GError **error)
 	/* save contents */
 	ret = g_file_set_contents (filename, data, -1, &error_local);
 	if (!ret) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to save config: %s", error_local->message);
+		g_set_error (error, 1, 0, "failed to save config: %s", error_local->message);
 		g_error_free (error_local);
 		goto out;
 	}

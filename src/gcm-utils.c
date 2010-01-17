@@ -286,8 +286,7 @@ gcm_utils_get_gamma_size (GnomeRRCrtc *crtc, GError **error)
 
 	/* no size, or X popped an error */
 	if (size == 0) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to get gamma size");
+		g_set_error_literal (error, 1, 0, "failed to get gamma size");
 		goto out;
 	}
 out:
@@ -330,16 +329,14 @@ gcm_utils_set_gamma_for_crtc (GnomeRRCrtc *crtc, GcmClut *clut, GError **error)
 	array = gcm_clut_get_array (clut);
 	if (array == NULL) {
 		ret = FALSE;
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to get CLUT data");
+		g_set_error_literal (error, 1, 0, "failed to get CLUT data");
 		goto out;
 	}
 
 	/* no length? */
 	if (array->len == 0) {
 		ret = FALSE;
-		if (error != NULL)
-			*error = g_error_new (1, 0, "no data in the CLUT array");
+		g_set_error_literal (error, 1, 0, "no data in the CLUT array");
 		goto out;
 	}
 
@@ -363,8 +360,7 @@ gcm_utils_set_gamma_for_crtc (GnomeRRCrtc *crtc, GcmClut *clut, GError **error)
 		/* some drivers support Xrandr 1.2, not 1.3 */
 		ret = gcm_utils_set_gamma_fallback (gamma, array->len);
 		if (!ret) {
-			if (error != NULL)
-				*error = g_error_new (1, 0, "failed to set crtc gamma %p (%i) on %i", gamma, array->len, id);
+			g_set_error (error, 1, 0, "failed to set crtc gamma %p (%i) on %i", gamma, array->len, id);
 			goto out;
 		}
 	}
@@ -426,15 +422,13 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 
 	/* do no set the gamma for non-display types */
 	if (type != GCM_DEVICE_TYPE_ENUM_DISPLAY) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "not a display: %s", id);
+		g_set_error (error, 1, 0, "not a display: %s", id);
 		goto out;
 	}
 
 	/* should be set for display types */
 	if (output_name == NULL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "no output name for display: %s", id);
+		g_set_error (error, 1, 0, "no output name for display: %s", id);
 		goto out;
 	}
 
@@ -454,16 +448,14 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 		goto out;
 	output = gnome_rr_screen_get_output_by_name (rr_screen, output_name);
 	if (output == NULL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "no output for device: %s [%s]", id, output_name);
+		g_set_error (error, 1, 0, "no output for device: %s [%s]", id, output_name);
 		goto out;
 	}
 
 	/* get crtc size */
 	crtc = gnome_rr_output_get_crtc (output);
 	if (crtc == NULL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to get crtc for device: %s", id);
+		g_set_error (error, 1, 0, "failed to get crtc for device: %s", id);
 		goto out;
 	}
 

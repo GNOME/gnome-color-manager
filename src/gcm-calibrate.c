@@ -99,16 +99,14 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	/* coldplug source */
 	if (priv->output_name == NULL) {
 		ret = FALSE;
-		if (error != NULL)
-			*error = g_error_new (1, 0, "no output name set");
+		g_set_error_literal (error, 1, 0, "no output name set");
 		goto out;
 	}
 
 	/* coldplug source */
 	if (klass->calibrate_display == NULL) {
 		ret = FALSE;
-		if (error != NULL)
-			*error = g_error_new (1, 0, "no support");
+		g_set_error_literal (error, 1, 0, "no support");
 		goto out;
 	}
 
@@ -136,8 +134,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 				      "is-crt", TRUE,
 				      NULL);
 		} else {
-			if (error != NULL)
-				*error = g_error_new (1, 0, "user did not choose crt or lcd");
+			g_set_error_literal (error, 1, 0, "user did not choose crt or lcd");
 			ret = FALSE;
 			goto out;
 		}
@@ -181,8 +178,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 		response = gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 		if (response != GTK_RESPONSE_OK) {
-			if (error != NULL)
-				*error = g_error_new (1, 0, "user did not follow calibration steps");
+			g_set_error_literal (error, 1, 0, "user did not follow calibration steps");
 			ret = FALSE;
 			goto out;
 		}
@@ -246,8 +242,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 
 	/* coldplug source */
 	if (klass->calibrate_device == NULL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "no support");
+		g_set_error_literal (error, 1, 0, "no support");
 		goto out;
 	}
 

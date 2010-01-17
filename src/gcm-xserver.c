@@ -108,15 +108,13 @@ gcm_xserver_get_root_window_profile_data (GcmXserver *xserver, guint8 **data, gs
 
 	/* did the call fail */
 	if (rc != Success) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to get %s atom with rc %i", atom_name, rc);
+		g_set_error (error, 1, 0, "failed to get %s atom with rc %i", atom_name, rc);
 		goto out;
 	}
 
 	/* was nothing found */
 	if (nitems == 0) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "%s atom has not been set", atom_name);
+		g_set_error (error, 1, 0, "%s atom has not been set", atom_name);
 		goto out;
 	}
 
@@ -209,8 +207,7 @@ gcm_xserver_set_root_window_profile_data (GcmXserver *xserver, const guint8 *dat
 
 	/* did the call fail */
 	if (rc != Success) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to set %s atom with rc %i", atom_name, rc);
+		g_set_error (error, 1, 0, "failed to set %s atom with rc %i", atom_name, rc);
 		goto out;
 	}
 
@@ -257,8 +254,7 @@ gcm_xserver_remove_root_window_profile (GcmXserver *xserver, GError **error)
 	/* did the call fail */
 	if (rc != Success) {
 		ret = FALSE;
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to delete %s root window atom with rc %i", atom_name, rc);
+		g_set_error (error, 1, 0, "failed to delete %s root window atom with rc %i", atom_name, rc);
 		goto out;
 	}
 out:
@@ -317,22 +313,19 @@ gcm_xserver_get_output_profile_data (GcmXserver *xserver, const gchar *output_na
 
 	/* we failed to match any outputs */
 	if (rc == -1) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to match adaptor %s", output_name);
+		g_set_error (error, 1, 0, "failed to match adaptor %s", output_name);
 		goto out;
 	}
 
 	/* did the call fail */
 	if (rc != Success) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to get %s atom with rc %i", atom_name, rc);
+		g_set_error (error, 1, 0, "failed to get %s atom with rc %i", atom_name, rc);
 		goto out;
 	}
 
 	/* was nothing found */
 	if (nitems == 0) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "%s atom has not been set", atom_name);
+		g_set_error (error, 1, 0, "%s atom has not been set", atom_name);
 		goto out;
 	}
 
@@ -436,8 +429,7 @@ gcm_xserver_set_output_profile_data (GcmXserver *xserver, const gchar *output_na
 
 	/* did the call fail */
 	if (rc != Success) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to set output %s atom with rc %i", atom_name, rc);
+		g_set_error (error, 1, 0, "failed to set output %s atom with rc %i", atom_name, rc);
 		goto out;
 	}
 
@@ -491,8 +483,7 @@ gcm_xserver_remove_output_profile (GcmXserver *xserver, const gchar *output_name
 
 	/* did the call fail */
 	if (rc != Success) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to remove output %s atom with rc %i", atom_name, rc);
+		g_set_error (error, 1, 0, "failed to remove output %s atom with rc %i", atom_name, rc);
 		goto out;
 	}
 

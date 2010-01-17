@@ -97,8 +97,7 @@ gcm_calibrate_argyll_get_display (const gchar *output_name, GError **error)
 	for (i=0; split[i] != NULL; i++) {
 		if (g_strstr_len (split[i], -1, "XRandR 1.2 is faulty") != NULL) {
 			ret = FALSE;
-			if (error != NULL)
-				*error = g_error_new (1, 0, "failed to match display as RandR is faulty");
+			g_set_error_literal (error, 1, 0, "failed to match display as RandR is faulty");
 			goto out;
 		}
 		name = g_strdup (split[i]);
@@ -113,8 +112,7 @@ gcm_calibrate_argyll_get_display (const gchar *output_name, GError **error)
 	/* nothing found */
 	if (display == G_MAXUINT) {
 		ret = FALSE;
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to match display");
+		g_set_error_literal (error, 1, 0, "failed to match display");
 		goto out;
 	}
 out:
@@ -222,8 +220,7 @@ gcm_calibrate_argyll_get_tool_filename (const gchar *command, GError **error)
 	/* eek */
 	g_free (filename);
 	filename = NULL;
-	if (error != NULL)
-		*error = g_error_new (1, 0, "failed to get filename for %s", command);
+	g_set_error (error, 1, 0, "failed to get filename for %s", command);
 out:
 	return filename;
 }
@@ -269,8 +266,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	/* get the device */
 	output = gnome_rr_screen_get_output_by_name (priv->rr_screen, output_name);
 	if (output == NULL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to get output for %s", output_name);
+		g_set_error (error, 1, 0, "failed to get output for %s", output_name);
 		ret = FALSE;
 		goto out;
 	}
@@ -316,8 +312,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	/* get result */
 	if (priv->response == GTK_RESPONSE_CANCEL) {
 		vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), "Q", 1);
-		if (error != NULL)
-			*error = g_error_new (1, 0, "user did not attach hardware device");
+		g_set_error_literal (error, 1, 0, "user did not attach hardware device");
 		ret = FALSE;
 		goto out;
 	}
@@ -335,14 +330,12 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 
 	/* get result */
 	if (priv->response == GTK_RESPONSE_CANCEL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "calibration was cancelled");
+		g_set_error_literal (error, 1, 0, "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "command failed to run successfully");
+		g_set_error_literal (error, 1, 0, "command failed to run successfully");
 		ret = FALSE;
 		goto out;
 	}
@@ -417,14 +410,12 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 
 	/* get result */
 	if (priv->response == GTK_RESPONSE_CANCEL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "calibration was cancelled");
+		g_set_error_literal (error, 1, 0, "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "command failed to run successfully");
+		g_set_error_literal (error, 1, 0, "command failed to run successfully");
 		ret = FALSE;
 		goto out;
 	}
@@ -494,14 +485,12 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 
 	/* get result */
 	if (priv->response == GTK_RESPONSE_CANCEL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "calibration was cancelled");
+		g_set_error_literal (error, 1, 0, "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "command failed to run successfully");
+		g_set_error_literal (error, 1, 0, "command failed to run successfully");
 		ret = FALSE;
 		goto out;
 	}
@@ -594,14 +583,12 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 
 	/* get result */
 	if (priv->response == GTK_RESPONSE_CANCEL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "calibration was cancelled");
+		g_set_error_literal (error, 1, 0, "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "command failed to run successfully");
+		g_set_error_literal (error, 1, 0, "command failed to run successfully");
 		ret = FALSE;
 		goto out;
 	}
@@ -660,8 +647,7 @@ gcm_calibrate_argyll_device_setup (GcmCalibrateArgyll *calibrate_argyll, GError 
 
 	/* get result */
 	if (priv->response != GTK_RESPONSE_OK) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "user did not follow calibration steps");
+		g_set_error_literal (error, 1, 0, "user did not follow calibration steps");
 		ret = FALSE;
 		goto out;
 	}
@@ -777,14 +763,12 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 
 	/* get result */
 	if (priv->response == GTK_RESPONSE_CANCEL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "calibration was cancelled");
+		g_set_error_literal (error, 1, 0, "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "command failed to run successfully");
+		g_set_error_literal (error, 1, 0, "command failed to run successfully");
 		ret = FALSE;
 		goto out;
 	}
@@ -873,14 +857,12 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 
 	/* get result */
 	if (priv->response == GTK_RESPONSE_CANCEL) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "calibration was cancelled");
+		g_set_error_literal (error, 1, 0, "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "command failed to run successfully");
+		g_set_error_literal (error, 1, 0, "command failed to run successfully");
 		ret = FALSE;
 		goto out;
 	}
@@ -947,8 +929,7 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 	/* we can't have finished with success */
 	if (basename == NULL) {
 		ret = FALSE;
-		if (error != NULL)
-			*error = g_error_new (1, 0, "profile was not generated");
+		g_set_error_literal (error, 1, 0, "profile was not generated");
 		goto out;
 	}
 
@@ -958,8 +939,7 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 	/* we never finished all the steps */
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
 		ret = FALSE;
-		if (error != NULL)
-			*error = g_error_new (1, 0, "could not find completed profile");
+		g_set_error_literal (error, 1, 0, "could not find completed profile");
 		goto out;
 	}
 

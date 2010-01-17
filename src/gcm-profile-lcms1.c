@@ -456,7 +456,7 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 	/* load profile into lcms */
 	priv->lcms_profile = cmsOpenProfileFromMem ((LPVOID)data, length);
 	if (priv->lcms_profile == NULL) {
-		*error = g_error_new (1, 0, "failed to load: not an ICC profile_lcms1");
+		g_set_error_literal (error, 1, 0, "failed to load: not an ICC profile");
 		goto out;
 	}
 
@@ -692,7 +692,7 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 			egg_debug ("found MLUT which is a fixed size block");
 			ret = gcm_parser_load_icc_mlut (profile_lcms1, data + tag_offset, tag_size);
 			if (!ret) {
-				*error = g_error_new (1, 0, "failed to load mlut");
+				g_set_error_literal (error, 1, 0, "failed to load mlut");
 				goto out;
 			}
 		}
@@ -702,7 +702,7 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 				priv->adobe_gamma_workaround = TRUE;
 			ret = gcm_parser_load_icc_vcgt (profile_lcms1, data + tag_offset, tag_size);
 			if (!ret) {
-				*error = g_error_new (1, 0, "failed to load vcgt");
+				g_set_error_literal (error, 1, 0, "failed to load vcgt");
 				goto out;
 			}
 		}

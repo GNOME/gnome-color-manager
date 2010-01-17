@@ -854,8 +854,7 @@ gcm_client_add_saved (GcmClient *client, GError **error)
 	groups = g_key_file_get_groups (keyfile, NULL);
 	if (groups == NULL) {
 		ret = FALSE;
-		if (error != NULL)
-			*error = g_error_new (1, 0, "failed to get groups");
+		g_set_error_literal (error, 1, 0, "failed to get groups");
 		goto out;
 	}
 
@@ -924,16 +923,14 @@ gcm_client_delete_device (GcmClient *client, GcmDevice *device, GError **error)
 		      "id", &id,
 		      NULL);
 	if (connected) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "device is still connected");
+		g_set_error_literal (error, 1, 0, "device is still connected");
 		goto out;
 	}
 
 	/* try to remove from array */
 	ret = g_ptr_array_remove (client->priv->array, device);
 	if (!ret) {
-		if (error != NULL)
-			*error = g_error_new (1, 0, "not found in device array");
+		g_set_error_literal (error, 1, 0, "not found in device array");
 		goto out;
 	}
 
