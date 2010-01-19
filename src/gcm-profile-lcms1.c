@@ -666,7 +666,7 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 		tag_size = gcm_parser_decode_32 (data + GCM_BODY + offset + GCM_TAG_SIZE);
 
 		/* print tag */
-		egg_debug ("tag %x is present at 0x%x with size %u", tag_id, tag_offset, tag_size);
+//		egg_debug ("tag %x is present at 0x%x with size %u", tag_id, tag_offset, tag_size);
 
 		if (tag_id == icSigProfileDescriptionTag) {
 			text = gcm_profile_lcms1_parse_multi_localized_unicode (profile_lcms1, data + tag_offset, tag_size);
