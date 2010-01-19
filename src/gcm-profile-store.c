@@ -331,7 +331,7 @@ gcm_profile_store_add_profiles_from_mounted_volume (GcmProfileStore *profile_sto
 		goto out;
 	}
 	type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE);
-	egg_warning ("filesystem mounted on %s has type %s", path_root, type);
+	egg_debug ("filesystem mounted on %s has type %s", path_root, type);
 
 	/* only scan hfs volumes for OSX */
 	if (g_strcmp0 (type, "hfs") == 0) {
