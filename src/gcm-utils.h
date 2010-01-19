@@ -40,6 +40,7 @@
 #define GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF	"/apps/gnome-color-manager/rendering_intent_softproof"
 #define GCM_SETTINGS_COLORSPACE_RGB		"/apps/gnome-color-manager/colorspace_rgb"
 #define GCM_SETTINGS_COLORSPACE_CMYK		"/apps/gnome-color-manager/colorspace_cmyk"
+#define GCM_SETTINGS_USE_PROFILES_FROM_VOLUMES	"/apps/gnome-color-manager/use_profiles_from_volumes"
 
 gboolean	 gcm_utils_set_gamma_for_device		(GcmDevice		*device,
 							 GError			**error);
