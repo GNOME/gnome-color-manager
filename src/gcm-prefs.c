@@ -51,7 +51,6 @@ static GtkBuilder *builder = NULL;
 static GtkListStore *list_store_devices = NULL;
 static GtkListStore *list_store_profiles = NULL;
 static GcmDevice *current_device = NULL;
-static GnomeRRScreen *rr_screen = NULL;
 static GcmProfileStore *profile_store = NULL;
 static GcmClient *gcm_client = NULL;
 static GcmColorDevice *color_device = NULL;
@@ -2867,13 +2866,6 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox49"));
 	gtk_size_group_add_widget (size_group2, widget);
 
-	/* get screen */
-	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
-	if (rr_screen == NULL) {
-		egg_warning ("failed to get rr screen: %s", error->message);
-		goto out;
-	}
-
 	/* use a device client array */
 	gcm_client = gcm_client_new ();
 	g_signal_connect (gcm_client, "added", G_CALLBACK (gcm_prefs_added_cb), NULL);
@@ -2970,8 +2962,6 @@ out:
 		g_object_unref (current_device);
 	if (color_device != NULL)
 		g_object_unref (color_device);
-	if (rr_screen != NULL)
-		gnome_rr_screen_destroy (rr_screen);
 	if (gconf_client != NULL)
 		g_object_unref (gconf_client);
 	if (builder != NULL)
