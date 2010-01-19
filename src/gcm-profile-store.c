@@ -315,8 +315,13 @@ gcm_profile_store_add_profiles (GcmProfileStore *profile_store)
 	gcm_profile_store_add_profiles_for_path (profile_store, "/usr/share/color/icc");
 	gcm_profile_store_add_profiles_for_path (profile_store, "/usr/local/share/color/icc");
 
-	/* get per-user profiles */
-	user = g_build_filename (g_get_home_dir (), "/.color/icc", NULL);
+	/* get Linux per-user profiles */
+	user = g_build_filename (g_get_home_dir (), ".color", "icc", NULL);
+	gcm_profile_store_add_profiles_for_path (profile_store, user);
+	g_free (user);
+
+	/* get OSX per-user profiles */
+	user = g_build_filename (g_get_home_dir (), "Library", "ColorSync", "Profiles", NULL);
 	gcm_profile_store_add_profiles_for_path (profile_store, user);
 	g_free (user);
 }
