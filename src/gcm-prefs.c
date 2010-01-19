@@ -1821,7 +1821,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	gtk_widget_set_sensitive (widget, ret);
 
 	/* should we show the pane at all */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profile_graphs"));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_profile_graphs"));
 	gtk_widget_set_visible (widget, show_section);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profile_info"));
 	gtk_widget_set_visible (widget, TRUE);
@@ -2779,7 +2779,7 @@ main (int argc, char **argv)
 	gtk_widget_set_sensitive (widget, FALSE);
 
 	/* hidden until a profile is selected */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profile_graphs"));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_profile_graphs"));
 	gtk_widget_set_visible (widget, FALSE);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profile_info"));
 	gtk_widget_set_visible (widget, FALSE);
@@ -2927,6 +2927,7 @@ main (int argc, char **argv)
 	gtk_box_pack_start (GTK_BOX(widget), info_bar, FALSE, FALSE, 0);
 
 	/* show main UI */
+	gtk_window_set_default_size (GTK_WINDOW(main_window), 1000, 450);
 	gtk_widget_show (main_window);
 
 	/* connect up sliders */

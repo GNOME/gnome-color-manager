@@ -1125,6 +1125,7 @@
                                                         <property name="label">filename</property>
                                                         <property name="use_markup">True</property>
                                                         <property name="wrap">True</property>
+                                                        <property name="wrap_mode">word-char</property>
                                                         <property name="selectable">True</property>
                                                       </object>
                                                       <packing>
@@ -1134,6 +1135,7 @@
                                                     </child>
                                                   </object>
                                                   <packing>
+                                                    <property name="expand">False</property>
                                                     <property name="position">1</property>
                                                   </packing>
                                                 </child>
@@ -1164,32 +1166,9 @@
                               </packing>
                             </child>
                             <child>
-                              <object class="GtkVBox" id="vbox_profile_graphs">
+                              <object class="GtkExpander" id="expander_profile_graphs">
                                 <property name="visible">True</property>
-                                <property name="orientation">vertical</property>
-                                <property name="spacing">6</property>
-                                <child>
-                                  <object class="GtkHBox" id="hbox3">
-                                    <property name="visible">True</property>
-                                    <child>
-                                      <object class="GtkLabel" id="label_cie_title">
-                                        <property name="visible">True</property>
-                                        <property name="label" translatable="yes" comments="Section heading for CIE and TRC graphs">Profile Graphs</property>
-                                        <attributes>
-                                          <attribute name="weight" value="bold"/>
-                                        </attributes>
-                                      </object>
-                                      <packing>
-                                        <property name="expand">False</property>
-                                        <property name="position">0</property>
-                                      </packing>
-                                    </child>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
+                                <property name="can_focus">True</property>
                                 <child>
                                   <object class="GtkAlignment" id="alignment6">
                                     <property name="visible">True</property>
@@ -1252,15 +1231,20 @@
                                       </object>
                                     </child>
                                   </object>
-                                  <packing>
-                                    <property name="expand">False</property>
-                                    <property name="fill">False</property>
-                                    <property name="position">1</property>
-                                  </packing>
+                                </child>
+                                <child type="label">
+                                  <object class="GtkLabel" id="label7">
+                                    <property name="visible">True</property>
+                                    <property name="label" translatable="yes">Profile Graphs</property>
+                                    <attributes>
+                                      <attribute name="weight" value="bold"/>
+                                    </attributes>
+                                  </object>
                                 </child>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
+                                <property name="fill">False</property>
                                 <property name="position">1</property>
                               </packing>
                             </child>
