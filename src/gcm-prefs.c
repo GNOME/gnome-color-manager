@@ -81,8 +81,16 @@ enum {
 enum {
 	GCM_PREFS_COMBO_COLUMN_TEXT,
 	GCM_PREFS_COMBO_COLUMN_PROFILE,
+	GCM_PREFS_COMBO_COLUMN_TYPE,
 	GCM_PREFS_COMBO_COLUMN_LAST
 };
+
+typedef enum {
+	GCM_PREFS_ENTRY_TYPE_PROFILE,
+	GCM_PREFS_ENTRY_TYPE_NONE,
+	GCM_PREFS_ENTRY_TYPE_IMPORT,
+	GCM_PREFS_ENTRY_TYPE_LAST
+} GcmPrefsEntryType;
 
 static void gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer userdata);
 
@@ -143,15 +151,19 @@ out:
  * gcm_prefs_combobox_add_profile:
  **/
 static void
-gcm_prefs_combobox_add_profile (GtkWidget *widget, GcmProfile *profile)
+gcm_prefs_combobox_add_profile (GtkWidget *widget, GcmProfile *profile, GcmPrefsEntryType entry_type)
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	gchar *description;
 
 	/* use description */
-	if (profile == NULL) {
+	if (entry_type == GCM_PREFS_ENTRY_TYPE_NONE) {
+		/* TRANSLATORS: this is where no profile is selected */
 		description = g_strdup (_("None"));
+	} else if (entry_type == GCM_PREFS_ENTRY_TYPE_IMPORT) {
+		/* TRANSLATORS: this is where the user can click and import a profile */
+		description = g_strdup (_("Other profile..."));
 	} else {
 		g_object_get (profile,
 			      "description", &description,
@@ -164,6 +176,7 @@ gcm_prefs_combobox_add_profile (GtkWidget *widget, GcmProfile *profile)
 	gtk_list_store_set (GTK_LIST_STORE(model), &iter,
 			    GCM_PREFS_COMBO_COLUMN_TEXT, description,
 			    GCM_PREFS_COMBO_COLUMN_PROFILE, profile,
+			    GCM_PREFS_COMBO_COLUMN_TYPE, entry_type,
 			    -1);
 	g_free (description);
 }
@@ -784,10 +797,10 @@ out:
 }
 
 /**
- * gcm_prefs_calibrate_device_get_icc_profile:
+ * gcm_prefs_file_chooser_get_icc_profile:
  **/
 static gchar *
-gcm_prefs_calibrate_device_get_icc_profile (void)
+gcm_prefs_file_chooser_get_icc_profile (void)
 {
 	gchar *filename = NULL;
 	GtkWindow *window;
@@ -898,7 +911,7 @@ gcm_prefs_profile_import_cb (GtkWidget *widget, gpointer data)
 	gchar *filename;
 
 	/* get new file */
-	filename = gcm_prefs_calibrate_device_get_icc_profile ();
+	filename = gcm_prefs_file_chooser_get_icc_profile ();
 	if (filename == NULL)
 		goto out;
 
@@ -1364,7 +1377,7 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, GcmDeviceTypeEnu
 	gtk_list_store_clear (GTK_LIST_STORE (model));
 
 	/* add a 'None' entry */
-	gcm_prefs_combobox_add_profile (widget, NULL);
+	gcm_prefs_combobox_add_profile (widget, NULL, GCM_PREFS_ENTRY_TYPE_NONE);
 
 	/* get new list */
 	profile_array = gcm_profile_store_get_array (profile_store);
@@ -1377,7 +1390,7 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, GcmDeviceTypeEnu
 		ret = gcm_prefs_is_profile_suitable_for_device_type (profile, type);
 		if (ret) {
 			/* add */
-			gcm_prefs_combobox_add_profile (widget, profile);
+			gcm_prefs_combobox_add_profile (widget, profile, GCM_PREFS_ENTRY_TYPE_PROFILE);
 
 			/* set active option */
 			g_object_get (profile,
@@ -1393,6 +1406,9 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, GcmDeviceTypeEnu
 			added_count++;
 		}
 	}
+
+	/* add a import entry */
+	gcm_prefs_combobox_add_profile (widget, NULL, GCM_PREFS_ENTRY_TYPE_IMPORT);
 
 	/* select 'None' if there was no match */
 	if (!set_active) {
@@ -1929,7 +1945,7 @@ gcm_prefs_set_combo_simple_text (GtkWidget *combo_box)
 	GtkCellRenderer *renderer;
 	GtkListStore *store;
 
-	store = gtk_list_store_new (2, G_TYPE_STRING, GCM_TYPE_PROFILE);
+	store = gtk_list_store_new (3, G_TYPE_STRING, GCM_TYPE_PROFILE, G_TYPE_UINT);
 	gtk_combo_box_set_model (GTK_COMBO_BOX (combo_box), GTK_TREE_MODEL (store));
 	g_object_unref (store);
 
@@ -1960,6 +1976,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	GcmDeviceTypeEnum type;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
+	GcmPrefsEntryType entry_type;
 
 	/* no devices */
 	if (current_device == NULL)
@@ -1970,12 +1987,26 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	if (!ret)
 		return;
 
-	/* get profile */
+	/* get entry */
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX(widget));
 	gtk_tree_model_get (model, &iter,
 			    GCM_PREFS_COMBO_COLUMN_PROFILE, &profile,
+			    GCM_PREFS_COMBO_COLUMN_TYPE, &entry_type,
 			    -1);
-	if (profile != NULL) {
+
+	/* import */
+	if (entry_type == GCM_PREFS_ENTRY_TYPE_IMPORT) {
+		filename = gcm_prefs_file_chooser_get_icc_profile ();
+		if (filename == NULL) {
+			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
+			goto out;
+		}
+		gcm_prefs_profile_import (filename);
+		goto out;
+	}
+
+	/* get profile filename */
+	if (entry_type == GCM_PREFS_ENTRY_TYPE_PROFILE) {
 		g_object_get (profile,
 			      "filename", &filename,
 			      NULL);
@@ -2334,7 +2365,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspaceEnum colorspace,
 		    colorspace == colorspace_tmp &&
 		    (colorspace == GCM_COLORSPACE_ENUM_CMYK ||
 		     g_strstr_len (description, -1, search) != NULL)) {
-			gcm_prefs_combobox_add_profile (widget, profile);
+			gcm_prefs_combobox_add_profile (widget, profile, GCM_PREFS_ENTRY_TYPE_PROFILE);
 
 			/* set active option */
 			if (g_strcmp0 (filename, profile_filename) == 0)
