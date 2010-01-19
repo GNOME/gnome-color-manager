@@ -31,6 +31,7 @@
 #include <dbus/dbus-glib.h>
 
 #include "gcm-utils.h"
+#include "gcm-screen.h"
 #include "gcm-clut.h"
 #include "gcm-xserver.h"
 
@@ -400,7 +401,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	gboolean use_atom;
 	gboolean leftmost_screen = FALSE;
 	GcmDeviceTypeEnum type;
-	GnomeRRScreen *rr_screen = NULL;
+	GcmScreen *screen = NULL;
 	GConfClient *gconf_client = NULL;
 
 	g_return_val_if_fail (device != NULL, FALSE);
@@ -443,14 +444,10 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 	}
 
 	/* check we have an output */
-	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, error);
-	if (rr_screen == NULL)
+	screen = gcm_screen_new ();
+	output = gcm_screen_get_output_by_name (screen, output_name, error);
+	if (output == NULL)
 		goto out;
-	output = gnome_rr_screen_get_output_by_name (rr_screen, output_name);
-	if (output == NULL) {
-		g_set_error (error, 1, 0, "no output for device: %s [%s]", id, output_name);
-		goto out;
-	}
 
 	/* get crtc size */
 	crtc = gnome_rr_output_get_crtc (output);
@@ -541,8 +538,8 @@ out:
 	g_free (output_name);
 	if (gconf_client != NULL)
 		g_object_unref (gconf_client);
-	if (rr_screen != NULL)
-		gnome_rr_screen_destroy (rr_screen);
+	if (screen != NULL)
+		g_object_unref (screen);
 	if (clut != NULL)
 		g_object_unref (clut);
 	if (profile != NULL)

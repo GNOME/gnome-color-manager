@@ -36,6 +36,7 @@
 #include <math.h>
 
 #include "gcm-client.h"
+#include "gcm-screen.h"
 #include "gcm-utils.h"
 #include "gcm-edid.h"
 #include "gcm-dmi.h"
@@ -45,6 +46,8 @@
 static void     gcm_client_finalize	(GObject     *object);
 
 #define GCM_CLIENT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_CLIENT, GcmClientPrivate))
+
+static void gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output);
 
 /**
  * GcmClientPrivate:
@@ -56,7 +59,7 @@ struct _GcmClientPrivate
 	gchar				*display_name;
 	GPtrArray			*array;
 	GUdevClient			*gudev_client;
-	GnomeRRScreen			*rr_screen;
+	GcmScreen			*screen;
 	GcmEdid				*edid;
 	GcmDmi				*dmi;
 };
@@ -567,7 +570,9 @@ gcm_client_get_device_by_window (GcmClient *client, GdkWindow *window)
 	gdk_drawable_get_size (GDK_DRAWABLE(window), &window_width, &window_height);
 
 	/* get list of updates */
-	outputs = gnome_rr_screen_list_outputs (client->priv->rr_screen);
+	outputs = gcm_screen_get_outputs (client->priv->screen, NULL);
+	if (outputs == NULL)
+		goto out;
 
 	/* find length */
 	for (i=0; outputs[i] != NULL; i++)
@@ -743,23 +748,6 @@ out:
 }
 
 /**
- * gcm_client_randr_event_cb:
- **/
-static void
-gcm_client_randr_event_cb (GnomeRRScreen *screen, GcmClient *client)
-{
-	GnomeRROutput **outputs;
-	guint i;
-
-	egg_debug ("screens may have changed");
-
-	/* replug devices */
-	outputs = gnome_rr_screen_list_outputs (client->priv->rr_screen);
-	for (i=0; outputs[i] != NULL; i++)
-		gcm_client_xrandr_add (client, outputs[i]);
-}
-
-/**
  * gcm_client_add_connected_devices_xrandr:
  **/
 static gboolean
@@ -769,7 +757,9 @@ gcm_client_add_connected_devices_xrandr (GcmClient *client, GError **error)
 	guint i;
 	GcmClientPrivate *priv = client->priv;
 
-	outputs = gnome_rr_screen_list_outputs (priv->rr_screen);
+	outputs = gcm_screen_get_outputs (priv->screen, error);
+	if (outputs == NULL)
+		return FALSE;
 	for (i=0; outputs[i] != NULL; i++)
 		gcm_client_xrandr_add (client, outputs[i]);
 	return TRUE;
@@ -1018,6 +1008,23 @@ gcm_client_set_property (GObject *object, guint prop_id, const GValue *value, GP
 }
 
 /**
+ * gcm_client_randr_event_cb:
+ **/
+static void
+gcm_client_randr_event_cb (GcmScreen *screen, GcmClient *client)
+{
+	GnomeRROutput **outputs;
+	guint i;
+
+	egg_debug ("screens may have changed");
+
+	/* replug devices */
+	outputs = gcm_screen_get_outputs (screen, NULL);
+	for (i=0; outputs[i] != NULL; i++)
+		gcm_client_xrandr_add (client, outputs[i]);
+}
+
+/**
  * gcm_client_class_init:
  **/
 static void
@@ -1066,7 +1073,6 @@ gcm_client_class_init (GcmClientClass *klass)
 static void
 gcm_client_init (GcmClient *client)
 {
-	GError *error = NULL;
 	const gchar *subsystems[] = {"usb", "video4linux", NULL};
 
 	client->priv = GCM_CLIENT_GET_PRIVATE (client);
@@ -1074,18 +1080,14 @@ gcm_client_init (GcmClient *client)
 	client->priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	client->priv->edid = gcm_edid_new ();
 	client->priv->dmi = gcm_dmi_new ();
+	client->priv->screen = gcm_screen_new ();
+	g_signal_connect (client->priv->screen, "outputs-changed",
+			  G_CALLBACK (gcm_client_randr_event_cb), client);
 
 	/* use GUdev to find devices */
 	client->priv->gudev_client = g_udev_client_new (subsystems);
 	g_signal_connect (client->priv->gudev_client, "uevent",
 			  G_CALLBACK (gcm_client_uevent_cb), client);
-
-	/* get screen */
-	client->priv->rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), (GnomeRRScreenChanged) gcm_client_randr_event_cb, client, &error);
-	if (client->priv->rr_screen == NULL) {
-		egg_error ("failed to get rr screen: %s", error->message);
-		g_error_free (error);
-	}
 }
 
 /**
@@ -1102,7 +1104,7 @@ gcm_client_finalize (GObject *object)
 	g_object_unref (priv->gudev_client);
 	g_object_unref (priv->edid);
 	g_object_unref (priv->dmi);
-	gnome_rr_screen_destroy (priv->rr_screen);
+	g_object_unref (priv->screen);
 
 	G_OBJECT_CLASS (gcm_client_parent_class)->finalize (object);
 }

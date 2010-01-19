@@ -32,6 +32,7 @@
 #include "gcm-utils.h"
 #include "gcm-profile.h"
 #include "gcm-xserver.h"
+#include "gcm-screen.h"
 
 /**
  * gcm_inspect_print_data_info:
@@ -89,7 +90,7 @@ gcm_inspect_show_x11_atoms (void)
 	GcmXserver *xserver = NULL;
 	GnomeRROutput **outputs;
 	guint i;
-	GnomeRRScreen *rr_screen = NULL;
+	GcmScreen *screen = NULL;
 	const gchar *output_name;
 	gchar *title;
 	GError *error = NULL;
@@ -109,17 +110,15 @@ gcm_inspect_show_x11_atoms (void)
 		gcm_inspect_print_data_info (_("Root window profile (deprecated):"), data, length);
 	}
 
-	/* get screen */
-	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
-	if (rr_screen == NULL) {
+	/* coldplug devices */
+	screen = gcm_screen_new ();
+	outputs = gcm_screen_get_outputs (screen, &error);
+	if (outputs == NULL) {
 		ret = FALSE;
-		egg_warning ("failed to get rr screen: %s", error->message);
+		egg_warning ("failed to get outputs: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
-
-	/* coldplug devices */
-	outputs = gnome_rr_screen_list_outputs (rr_screen);
 	for (i=0; outputs[i] != NULL; i++) {
 
 		/* get output name */
@@ -144,8 +143,8 @@ gcm_inspect_show_x11_atoms (void)
 	}
 out:
 	g_free (data);
-	if (rr_screen != NULL)
-		gnome_rr_screen_destroy (rr_screen);
+	if (screen != NULL)
+		g_object_unref (screen);
 	if (xserver != NULL)
 		g_object_unref (xserver);
 	return ret;

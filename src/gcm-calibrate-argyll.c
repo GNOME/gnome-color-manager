@@ -40,6 +40,7 @@
 
 #include "gcm-calibrate-argyll.h"
 #include "gcm-utils.h"
+#include "gcm-screen.h"
 
 #include "egg-debug.h"
 
@@ -60,7 +61,7 @@ struct _GcmCalibrateArgyllPrivate
 	GtkBuilder			*builder;
 	pid_t				 child_pid;
 	GtkResponseType			 response;
-	GnomeRRScreen			*rr_screen;
+	GcmScreen			*screen;
 };
 
 enum {
@@ -264,9 +265,8 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	}
 
 	/* get the device */
-	output = gnome_rr_screen_get_output_by_name (priv->rr_screen, output_name);
+	output = gcm_screen_get_output_by_name (priv->screen, output_name, error);
 	if (output == NULL) {
-		g_set_error (error, 1, 0, "failed to get output for %s", output_name);
 		ret = FALSE;
 		goto out;
 	}
@@ -1180,12 +1180,7 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 	}
 
 	/* get screen */
-	calibrate_argyll->priv->rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
-	if (calibrate_argyll->priv->rr_screen == NULL) {
-		egg_warning ("failed to get rr screen: %s", error->message);
-		g_error_free (error);
-		return;
-	}
+	calibrate_argyll->priv->screen = gcm_screen_new ();
 
 	/* set icon */
 	main_window = GTK_WIDGET (gtk_builder_get_object (calibrate_argyll->priv->builder, "dialog_calibrate"));
@@ -1234,7 +1229,7 @@ gcm_calibrate_argyll_finalize (GObject *object)
 
 	g_main_loop_unref (priv->loop);
 	g_object_unref (priv->builder);
-	gnome_rr_screen_destroy (priv->rr_screen);
+	g_object_unref (priv->screen);
 
 	G_OBJECT_CLASS (gcm_calibrate_argyll_parent_class)->finalize (object);
 }

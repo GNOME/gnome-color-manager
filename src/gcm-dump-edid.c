@@ -29,6 +29,7 @@
 #include "egg-debug.h"
 
 #include "gcm-utils.h"
+#include "gcm-screen.h"
 #include "gcm-edid.h"
 
 /**
@@ -134,7 +135,7 @@ main (int argc, char **argv)
 	guint retval = 0;
 	GError *error = NULL;
 	GnomeRROutput **outputs;
-	GnomeRRScreen *rr_screen = NULL;
+	GcmScreen *screen = NULL;
 	GOptionContext *context;
 
 	const GOptionEntry options[] = {
@@ -169,16 +170,14 @@ main (int argc, char **argv)
 		goto out;
 	}
 
-	/* get screen */
-	rr_screen = gnome_rr_screen_new (gdk_screen_get_default (), NULL, NULL, &error);
-	if (rr_screen == NULL) {
-		egg_warning ("failed to get rr screen: %s", error->message);
+	/* coldplug devices */
+	screen = gcm_screen_new ();
+	outputs = gcm_screen_get_outputs (screen, &error);
+	if (screen == NULL) {
+		egg_warning ("failed to get outputs: %s", error->message);
 		retval = 1;
 		goto out;
 	}
-
-	/* coldplug devices */
-	outputs = gnome_rr_screen_list_outputs (rr_screen);
 	for (i=0; outputs[i] != NULL; i++) {
 
 		/* only try to get edid if connected */
@@ -216,8 +215,8 @@ main (int argc, char **argv)
 	}
 out:
 	g_strfreev (files);
-	if (rr_screen != NULL)
-		gnome_rr_screen_destroy (rr_screen);
+	if (screen != NULL)
+		g_object_unref (screen);
 	return retval;
 }
 
