@@ -1352,7 +1352,7 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, GcmDeviceTypeEnu
 {
 	GtkTreeModel *model;
 	guint i;
-	guint added_count = 0;
+	guint added_count = 1;
 	gchar *filename;
 	gboolean ret;
 	gboolean set_active = FALSE;
@@ -1362,6 +1362,9 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, GcmDeviceTypeEnu
 	/* clear existing entries */
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
 	gtk_list_store_clear (GTK_LIST_STORE (model));
+
+	/* add a 'None' entry */
+	gcm_prefs_combobox_add_profile (widget, NULL);
 
 	/* get new list */
 	profile_array = gcm_profile_store_get_array (profile_store);
@@ -1391,13 +1394,10 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, GcmDeviceTypeEnu
 		}
 	}
 
-	/* add a clear entry */
-	gcm_prefs_combobox_add_profile (widget, NULL);
-
 	/* select 'None' if there was no match */
 	if (!set_active) {
 		egg_warning ("no match for %s", profile_filename);
-		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), added_count);
+		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 	}
 	if (profile_array != NULL)
 		g_ptr_array_unref (profile_array);
