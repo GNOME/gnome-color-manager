@@ -304,26 +304,80 @@ out:
 }
 
 /**
+ * gcm_profile_store_add_profiles_from_mounted_volumes:
+ **/
+static void
+gcm_profile_store_add_profiles_from_mounted_volumes (GcmProfileStore *profile_store)
+{
+	GVolumeMonitor *volume_monitor;
+	GMount *mount;
+	GFile *root;
+	GList *mounts, *l;
+	gchar *path;
+	gchar *path_root;
+
+	volume_monitor = g_volume_monitor_get ();
+	mounts = g_volume_monitor_get_mounts (volume_monitor);
+	for (l = mounts; l != NULL; l = l->next) {
+		mount = l->data;
+		root = g_mount_get_root (mount);
+		path_root = g_file_get_path (root);
+
+		/* FIXME: only scan hsfplus volumes for osx, and fat32 and ntfs for windows */
+		if (path_root != NULL) {
+
+			/* OSX */
+			path = g_build_filename (path_root, "Library", "ColorSync", "Profiles", "Displays", NULL);
+			gcm_profile_store_add_profiles_for_path (profile_store, path);
+			g_free (path);
+
+			/* Windows XP */
+			path = g_build_filename (path_root, "Windows", "system32", "spool", "drivers", "color", NULL);
+			gcm_profile_store_add_profiles_for_path (profile_store, path);
+			g_free (path);
+
+			/* Windows 2000 */
+			path = g_build_filename (path_root, "Winnt", "system32", "spool", "drivers", "color", NULL);
+			gcm_profile_store_add_profiles_for_path (profile_store, path);
+			g_free (path);
+
+			/* Windows 98 and ME */
+			path = g_build_filename (path_root, "Windows", "System", "Color", NULL);
+			gcm_profile_store_add_profiles_for_path (profile_store, path);
+			g_free (path);
+		}
+		g_free (path_root);
+		g_object_unref (root);
+		g_object_unref (mount);
+	}
+	g_list_free (mounts);
+}
+
+/**
  * gcm_profile_store_add_profiles:
  **/
 static void
 gcm_profile_store_add_profiles (GcmProfileStore *profile_store)
 {
-	gchar *user;
+	gchar *path;
 
-	/* get systemwide profiles */
+	/* get OSX and Linux system-wide profiles */
 	gcm_profile_store_add_profiles_for_path (profile_store, "/usr/share/color/icc");
 	gcm_profile_store_add_profiles_for_path (profile_store, "/usr/local/share/color/icc");
+	gcm_profile_store_add_profiles_for_path (profile_store, "/Library/ColorSync/Profiles/Displays");
+
+	/* get OSX and Windows system-wide profiles when using Linux */
+	gcm_profile_store_add_profiles_from_mounted_volumes (profile_store);
 
 	/* get Linux per-user profiles */
-	user = g_build_filename (g_get_home_dir (), ".color", "icc", NULL);
-	gcm_profile_store_add_profiles_for_path (profile_store, user);
-	g_free (user);
+	path = g_build_filename (g_get_home_dir (), ".color", "icc", NULL);
+	gcm_profile_store_add_profiles_for_path (profile_store, path);
+	g_free (path);
 
 	/* get OSX per-user profiles */
-	user = g_build_filename (g_get_home_dir (), "Library", "ColorSync", "Profiles", NULL);
-	gcm_profile_store_add_profiles_for_path (profile_store, user);
-	g_free (user);
+	path = g_build_filename (g_get_home_dir (), "Library", "ColorSync", "Profiles", NULL);
+	gcm_profile_store_add_profiles_for_path (profile_store, path);
+	g_free (path);
 }
 
 /**
