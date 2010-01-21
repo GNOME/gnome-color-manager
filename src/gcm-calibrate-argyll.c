@@ -62,6 +62,8 @@ struct _GcmCalibrateArgyllPrivate
 	pid_t				 child_pid;
 	GtkResponseType			 response;
 	GcmScreen			*screen;
+	glong				 vte_previous_row;
+	glong				 vte_previous_col;
 };
 
 enum {
@@ -1078,6 +1080,75 @@ gcm_calibrate_argyll_exit_cb (VteTerminal *terminal, GcmCalibrateArgyll *calibra
 }
 
 /**
+ * gcm_calibrate_argyll_process_output_cmd:
+ **/
+static void
+gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, const gchar *line)
+{
+	if (g_strcmp0 (line, "Place instrument on test window.") == 0 ||
+	    g_strcmp0 (line, "The instrument can be removed from the screen.") == 0) {
+		egg_debug ("VTE: interaction required: %s", line);
+		goto out;
+	}
+	if (g_str_has_suffix (line, "any other key to continue:")) {
+		egg_debug ("VTE: interaction required, should be sent when the use clicks");
+		goto out;
+	}
+	egg_warning ("VTE: could not screenscrape: %s", line);
+out:
+	return;
+}
+
+/**
+ * gcm_calibrate_argyll_selection_func_cb:
+ **/
+static gboolean
+gcm_calibrate_argyll_selection_func_cb (VteTerminal *terminal, glong column, glong row, gpointer data)
+{
+	/* just select everything */
+	return TRUE;
+}
+
+/**
+ * gcm_calibrate_argyll_cursor_moved_cb:
+ **/
+static void
+gcm_calibrate_argyll_cursor_moved_cb (VteTerminal *terminal, GcmCalibrateArgyll *calibrate_argyll)
+{
+	gchar *output;
+	gchar **split;
+	guint i;
+	glong row;
+	glong col;
+	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+
+	/* select the text we've got since last time */
+	vte_terminal_get_cursor_position (terminal, &col, &row);
+	output = vte_terminal_get_text_range (terminal,
+					      priv->vte_previous_row,
+					      priv->vte_previous_col,
+					      row, col,
+					      gcm_calibrate_argyll_selection_func_cb,
+					      calibrate_argyll,
+					      NULL);
+	egg_debug ("raw output: '%s'", output);
+	split = g_strsplit (output, "\n", -1);
+	for (i=0; split[i] != NULL; i++) {
+		g_strchomp (split[i]);
+		if (split[i][0] == '\0')
+			continue;
+		gcm_calibrate_argyll_process_output_cmd (calibrate_argyll, split[i]);
+	}
+
+	/* save, so we don't re-process old text */
+	priv->vte_previous_row = row;
+	priv->vte_previous_col = col;
+
+	g_free (output);
+	g_strfreev (split);
+}
+
+/**
  * gcm_calibrate_argyll_get_property:
  **/
 static void
@@ -1169,6 +1240,8 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 	calibrate_argyll->priv = GCM_CALIBRATE_ARGYLL_GET_PRIVATE (calibrate_argyll);
 	calibrate_argyll->priv->child_pid = -1;
 	calibrate_argyll->priv->loop = g_main_loop_new (NULL, FALSE);
+	calibrate_argyll->priv->vte_previous_row = 0;
+	calibrate_argyll->priv->vte_previous_col = 0;
 
 	/* get UI */
 	calibrate_argyll->priv->builder = gtk_builder_new ();
@@ -1197,9 +1270,12 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 
 	/* add vte widget */
 	calibrate_argyll->priv->terminal = vte_terminal_new ();
-	vte_terminal_set_size (VTE_TERMINAL(calibrate_argyll->priv->terminal), 40, 10);
+	vte_terminal_set_size (VTE_TERMINAL(calibrate_argyll->priv->terminal), 80, 10);
 	g_signal_connect (calibrate_argyll->priv->terminal, "child-exited",
 			  G_CALLBACK (gcm_calibrate_argyll_exit_cb), calibrate_argyll);
+	g_signal_connect (calibrate_argyll->priv->terminal, "cursor-moved",
+			  G_CALLBACK (gcm_calibrate_argyll_cursor_moved_cb), calibrate_argyll);
+
 	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_argyll->priv->builder, "vbox_details"));
 	gtk_box_pack_end (GTK_BOX(widget), calibrate_argyll->priv->terminal, TRUE, TRUE, 6);
 }
