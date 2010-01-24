@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <vte/vte.h>
-#include <libgnomeui/gnome-rr.h>
+#include <gconf/gconf-client.h>
 
 #include "gcm-calibrate-argyll.h"
 #include "gcm-utils.h"
@@ -48,6 +48,13 @@ static void     gcm_calibrate_argyll_finalize	(GObject     *object);
 
 #define GCM_CALIBRATE_ARGYLL_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_CALIBRATE_ARGYLL, GcmCalibrateArgyllPrivate))
 
+typedef enum {
+	GCM_CALIBRATE_ARGYLL_PRECISION_SHORT,
+	GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL,
+	GCM_CALIBRATE_ARGYLL_PRECISION_LONG,
+	GCM_CALIBRATE_ARGYLL_PRECISION_LAST
+} GcmCalibrateArgyllPrecision;
+
 /**
  * GcmCalibrateArgyllPrivate:
  *
@@ -56,6 +63,8 @@ static void     gcm_calibrate_argyll_finalize	(GObject     *object);
 struct _GcmCalibrateArgyllPrivate
 {
 	guint				 display;
+	GConfClient			*gconf_client;
+	GcmCalibrateArgyllPrecision	 precision;
 	GMainLoop			*loop;
 	GtkWidget			*terminal;
 	GtkBuilder			*builder;
@@ -75,6 +84,52 @@ G_DEFINE_TYPE (GcmCalibrateArgyll, gcm_calibrate_argyll, GCM_TYPE_CALIBRATE)
 
 /* assume this is writable by users */
 #define GCM_CALIBRATE_ARGYLL_TEMP_DIR		"/tmp"
+
+/**
+ * gcm_calibrate_argyll_precision_from_string:
+ **/
+static GcmCalibrateArgyllPrecision
+gcm_calibrate_argyll_precision_from_string (const gchar *string)
+{
+	if (g_strcmp0 (string, "short") == 0)
+		return GCM_CALIBRATE_ARGYLL_PRECISION_SHORT;
+	if (g_strcmp0 (string, "normal") == 0)
+		return GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL;
+	if (g_strcmp0 (string, "long") == 0)
+		return GCM_CALIBRATE_ARGYLL_PRECISION_LONG;
+	egg_warning ("failed to convert to precision: %s", string);
+	return GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL;
+}
+
+/**
+ * gcm_calibrate_argyll_precision_to_quality_arg:
+ **/
+static const gchar *
+gcm_calibrate_argyll_precision_to_quality_arg (GcmCalibrateArgyllPrecision precision)
+{
+	if (precision == GCM_CALIBRATE_ARGYLL_PRECISION_SHORT)
+		return "-ql";
+	if (precision == GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL)
+		return "-qm";
+	if (precision == GCM_CALIBRATE_ARGYLL_PRECISION_LONG)
+		return "-qh";
+	return NULL;
+}
+
+/**
+ * gcm_calibrate_argyll_precision_to_patches_arg:
+ **/
+static const gchar *
+gcm_calibrate_argyll_precision_to_patches_arg (GcmCalibrateArgyllPrecision precision)
+{
+	if (precision == GCM_CALIBRATE_ARGYLL_PRECISION_SHORT)
+		return "-f100";
+	if (precision == GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL)
+		return "-f250";
+	if (precision == GCM_CALIBRATE_ARGYLL_PRECISION_LONG)
+		return "-f500";
+	return NULL;
+}
 
 /**
  * gcm_calibrate_argyll_get_display:
@@ -392,7 +447,7 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	/* setup the command */
 	g_ptr_array_add (array, g_strdup ("-v9"));
 	g_ptr_array_add (array, g_strdup ("-d3"));
-	g_ptr_array_add (array, g_strdup ("-f250"));
+	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_precision_to_patches_arg (priv->precision)));
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
@@ -561,7 +616,7 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
 	g_ptr_array_add (array, g_strdup_printf ("-D%s", description_new));
 	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
-	g_ptr_array_add (array, g_strdup ("-qm"));
+	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_precision_to_quality_arg (priv->precision)));
 	g_ptr_array_add (array, g_strdup ("-as"));
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
@@ -839,7 +894,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
 	g_ptr_array_add (array, g_strdup_printf ("-D%s", description_tmp));
 	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
-	g_ptr_array_add (array, g_strdup ("-qm"));
+	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_precision_to_quality_arg (priv->precision)));
 //	g_ptr_array_add (array, g_strdup ("-as"));
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
@@ -1236,6 +1291,7 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 	GError *error = NULL;
 	GtkWidget *widget;
 	GtkWidget *main_window;
+	gchar *precision;
 
 	calibrate_argyll->priv = GCM_CALIBRATE_ARGYLL_GET_PRIVATE (calibrate_argyll);
 	calibrate_argyll->priv->child_pid = -1;
@@ -1251,6 +1307,9 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 		g_error_free (error);
 		return;
 	}
+
+	/* use GConf to get defaults */
+	calibrate_argyll->priv->gconf_client = gconf_client_get_default ();
 
 	/* get screen */
 	calibrate_argyll->priv->screen = gcm_screen_new ();
@@ -1278,6 +1337,11 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 
 	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_argyll->priv->builder, "vbox_details"));
 	gtk_box_pack_end (GTK_BOX(widget), calibrate_argyll->priv->terminal, TRUE, TRUE, 6);
+
+	/* get default precision */
+	precision = gconf_client_get_string (calibrate_argyll->priv->gconf_client, GCM_SETTINGS_CALIBRATION_LENGTH, NULL);
+	calibrate_argyll->priv->precision = gcm_calibrate_argyll_precision_from_string (precision);
+	g_free (precision);
 }
 
 /**
@@ -1306,6 +1370,7 @@ gcm_calibrate_argyll_finalize (GObject *object)
 	g_main_loop_unref (priv->loop);
 	g_object_unref (priv->builder);
 	g_object_unref (priv->screen);
+	g_object_unref (priv->gconf_client);
 
 	G_OBJECT_CLASS (gcm_calibrate_argyll_parent_class)->finalize (object);
 }
