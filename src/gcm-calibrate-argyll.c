@@ -73,6 +73,8 @@ struct _GcmCalibrateArgyllPrivate
 	GcmScreen			*screen;
 	glong				 vte_previous_row;
 	glong				 vte_previous_col;
+	gchar				*cached_title;
+	gchar				*cached_message;
 };
 
 enum {
@@ -210,6 +212,12 @@ gcm_calibrate_argyll_set_title (GcmCalibrateArgyll *calibrate_argyll, const gcha
 	GtkWidget *widget;
 	gchar *text;
 
+	/* save in case we need to reuse */
+	if (title != priv->cached_title) {
+		g_free (priv->cached_title);
+		priv->cached_title = g_strdup (title);
+	}
+
 	/* set the text */
 	text = g_strdup_printf ("<big><b>%s</b></big>", title);
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "label_title"));
@@ -226,6 +234,12 @@ gcm_calibrate_argyll_set_message (GcmCalibrateArgyll *calibrate_argyll, const gc
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 	GtkWidget *widget;
 	gchar *text;
+
+	/* save in case we need to reuse */
+	if (title != priv->cached_message) {
+		g_free (priv->cached_message);
+		priv->cached_message = g_strdup (title);
+	}
 
 	/* set the text */
 	text = g_strdup_printf ("%s", title);
@@ -1298,6 +1312,8 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 	calibrate_argyll->priv->loop = g_main_loop_new (NULL, FALSE);
 	calibrate_argyll->priv->vte_previous_row = 0;
 	calibrate_argyll->priv->vte_previous_col = 0;
+	calibrate_argyll->priv->cached_title = NULL;
+	calibrate_argyll->priv->cached_message = NULL;
 
 	/* get UI */
 	calibrate_argyll->priv->builder = gtk_builder_new ();
@@ -1371,6 +1387,8 @@ gcm_calibrate_argyll_finalize (GObject *object)
 	g_object_unref (priv->builder);
 	g_object_unref (priv->screen);
 	g_object_unref (priv->gconf_client);
+	g_free (priv->cached_title);
+	g_free (priv->cached_message);
 
 	G_OBJECT_CLASS (gcm_calibrate_argyll_parent_class)->finalize (object);
 }
