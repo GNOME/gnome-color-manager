@@ -20,7 +20,7 @@
  */
 
 /**
- * SECTION:gcm-calibrate_argyll
+ * SECTION:gcm-calibrate-argyll
  * @short_description: Calibration object
  *
  * This object allows calibration functionality using ArgyllCMS.
