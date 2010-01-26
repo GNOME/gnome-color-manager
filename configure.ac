@@ -1,9 +1,9 @@
-AC_PREREQ(2.52)
+AC_PREREQ(2.65)
 
-AC_INIT(gnome-color-manager, 2.29.3)
+AC_INIT([gnome-color-manager],[2.29.3][http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager])
 AC_CONFIG_SRCDIR(src)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
 # enable nice build output on automake1.11
@@ -11,7 +11,7 @@ m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 AC_PROG_CC
 AC_PROG_INSTALL
-AM_PROG_LIBTOOL
+LT_INIT
 AM_PROG_CC_C_O
 IT_PROG_INTLTOOL([0.35.0])
 
@@ -24,16 +24,13 @@ GTK_DOC_CHECK(1.9)
 dnl ---------------------------------------------------------------------------
 dnl - Use strict options (default enabled for devs, disabled in releases)
 dnl ---------------------------------------------------------------------------
-
-dnl if .git directory is present, considering we are working in the repository
 if test -d ".git"; then
 	default_strict=yes
 else
 	default_strict=no
 fi
 
-AC_ARG_ENABLE(strict, AC_HELP_STRING([--enable-strict],
-					[Enable strict compilation options]), enable_strict=$enableval,
+AC_ARG_ENABLE(strict, AS_HELP_STRING([--enable-strict],[Enable strict compilation options]), enable_strict=$enableval,
 					enable_strict=$default_strict)
 if test x$enable_strict != xno; then
 	if test "$GCC" = "yes"; then
@@ -225,7 +222,7 @@ AC_SUBST(GCM_SYSTEM_PROFILES_DIR, "\$(localstatedir)/lib/color")
 dnl ---------------------------------------------------------------------------
 dnl - Makefiles, etc.
 dnl ---------------------------------------------------------------------------
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 data/Makefile
 data/icons/Makefile
@@ -244,6 +241,7 @@ po/Makefile.in
 rules/Makefile
 src/Makefile
 ])
+AC_OUTPUT
 
 dnl ==========================================================================
 echo "
