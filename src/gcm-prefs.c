@@ -546,22 +546,23 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	gchar *device = NULL;
 	const gchar *directory;
 	GtkWindow *window;
+	GString *string;
+	GtkResponseType response;
+	GtkWidget *dialog;
+	const gchar *title;
 
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	string = g_string_new ("");
 
 	/* install shared-color-targets package */
 	has_shared_targets = g_file_test ("/usr/share/shared-color-targets", G_FILE_TEST_IS_DIR);
 	if (!has_shared_targets) {
 #ifdef GCM_USE_PACKAGEKIT
-		GtkWidget *dialog;
-		GtkResponseType response;
-		GString *string;
-
 		/* ask the user to confirm */
 		dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
 						 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
 						 _("Install missing files?"));
-		string = g_string_new ("");
+
 		/* TRANSLATORS: dialog message saying the color targets are not installed */
 		g_string_append_printf (string, "%s ", _("Common IT8 color target files are not installed on this computer."));
 		/* TRANSLATORS: dialog message saying the color targets are not installed */
@@ -583,11 +584,41 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 		/* only install if the user wanted to */
 		if (response == GTK_RESPONSE_YES)
 			has_shared_targets = gcm_utils_install_package (GCM_PREFS_PACKAGE_NAME_SHARED_COLOR_TARGETS, window);
-		g_string_free (string, TRUE);
 #else
 		egg_warning ("cannot install: this package was not compiled with --enable-packagekit");
 #endif
 	}
+
+	/* TRANSLATORS: title, we're setting up the device ready for calibration */
+	title = _("Setting up device");
+	g_string_set_size (string, 0);
+
+	/* TRANSLATORS: dialog message, preface */
+	g_string_append_printf (string, "%s\n", _("Before calibrating the device, you have to manually acquire a reference image and save it as a TIFF image file."));
+
+	/* TRANSLATORS: dialog message, preface */
+	g_string_append_printf (string, "%s\n", _("Ensure that the contrast and brightness is not changed and color correction profiles are not applied."));
+
+	/* TRANSLATORS: dialog message, suffix */
+	g_string_append_printf (string, "%s\n", _("The device sensor should have been cleaned prior to scanning and the output file resolution should be at least 200dpi."));
+
+	/* TRANSLATORS: dialog message, suffix */
+	g_string_append_printf (string, "\n%s\n", _("For best results, the reference image should also be less than two years old."));
+
+	/* TRANSLATORS: dialog question */
+	g_string_append_printf (string, "\n%s", _("Do you have a scanned TIFF file of a IT8.7/2 reference image?"));
+
+	/* ask the user to confirm */
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL, "%s", title);
+	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
+	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+	/* TRANSLATORS: button, confirm the user has a file */
+	gtk_dialog_add_button (GTK_DIALOG (dialog), _("I have already scanned in a file"), GTK_RESPONSE_YES);
+	response = gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+	if (response != GTK_RESPONSE_YES)
+		goto out;
 
 	/* get the device */
 	g_object_get (current_device,
@@ -641,6 +672,8 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 		goto out;
 	}
 out:
+	if (string != NULL)
+		g_string_free (string, TRUE);
 	g_free (device);
 	g_free (basename);
 	g_free (manufacturer);

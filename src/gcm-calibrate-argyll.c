@@ -698,60 +698,6 @@ out:
 }
 
 /**
- * gcm_calibrate_argyll_device_setup:
- **/
-static gboolean
-gcm_calibrate_argyll_device_setup (GcmCalibrateArgyll *calibrate_argyll, GError **error)
-{
-	gboolean ret = TRUE;
-	GString *string = NULL;
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-	const gchar *title;
-
-	string = g_string_new ("");
-
-	/* TRANSLATORS: title, we're setting up the device ready for calibration */
-	title = _("Setting up device");
-
-	/* TRANSLATORS: dialog message, preface */
-	g_string_append_printf (string, "%s\n", _("Before calibrating the device, you have to manually acquire a reference image and save it as a TIFF image file."));
-
-	/* TRANSLATORS: dialog message, preface */
-	g_string_append_printf (string, "%s\n", _("Ensure that the contrast and brightness is not changed and color correction profiles are not applied."));
-
-	/* TRANSLATORS: dialog message, suffix */
-	g_string_append_printf (string, "%s\n", _("The device sensor should have been cleaned prior to scanning and the output file resolution should be at least 200dpi."));
-
-	/* TRANSLATORS: dialog message, suffix */
-	g_string_append_printf (string, "\n%s\n", _("For best results, the reference image should also be less than two years old."));
-
-	/* TRANSLATORS: dialog question */
-	g_string_append_printf (string, "\n%s", _("Do you have a scanned TIFF file of a IT8.7/2 reference image?"));
-
-	/* set the message */
-
-	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, string->str);
-
-	/* set state */
-	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_LOOP;
-
-	/* wait until finished */
-	g_main_loop_run (priv->loop);
-
-	/* get result */
-	if (priv->response != GTK_RESPONSE_OK) {
-		g_set_error_literal (error, 1, 0, "user did not follow calibration steps");
-		ret = FALSE;
-		goto out;
-	}
-out:
-	if (string != NULL)
-		g_string_free (string, TRUE);
-	return ret;
-}
-
-/**
  * gcm_calibrate_argyll_device_copy:
  **/
 static gboolean
@@ -1148,11 +1094,6 @@ gcm_calibrate_argyll_device (GcmCalibrate *calibrate, GtkWindow *window, GError 
 
 	/* push new messages into the UI */
 	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message);
-
-	/* step 0 */
-	ret = gcm_calibrate_argyll_device_setup (calibrate_argyll, error);
-	if (!ret)
-		goto out;
 
 	/* step 1 */
 	ret = gcm_calibrate_argyll_device_copy (calibrate_argyll, error);
