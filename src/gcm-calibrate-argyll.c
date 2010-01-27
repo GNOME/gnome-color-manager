@@ -1370,11 +1370,14 @@ gcm_calibrate_argyll_ok_cb (GtkWidget *widget, GcmCalibrateArgyll *calibrate_arg
 	if (priv->state == GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN) {
 		vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), " ", 1);
 		gcm_calibrate_argyll_pop_dialog (calibrate_argyll);
+		priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 	}
 
 	/* clear loop if waiting */
-	if (priv->state == GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_LOOP)
+	if (priv->state == GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_LOOP) {
 		g_main_loop_quit (priv->loop);
+		priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
+	}
 
 	priv->response = GTK_RESPONSE_OK;
 	gtk_widget_hide (widget);
