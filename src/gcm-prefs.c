@@ -2521,30 +2521,19 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	g_signal_connect (G_OBJECT (widget), "changed",
 			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), (gpointer) "softproof");
 
-	/* coldplug saved devices */
-	ret = gcm_client_add_saved (gcm_client, &error);
-	if (!ret) {
-		egg_warning ("failed to coldplug: %s", error->message);
-		g_error_free (error);
-		error = NULL;
-		/* do not fail */
-	}
-
 	/* coldplug plugged in devices */
 	ret = gcm_client_add_connected (gcm_client, &error);
 	if (!ret) {
-		egg_warning ("failed to coldplug: %s", error->message);
+		egg_warning ("failed to add connected devices: %s", error->message);
 		g_error_free (error);
-		error = NULL;
 		goto out;
 	}
 
 	/* coldplug saved devices */
 	ret = gcm_client_add_saved (gcm_client, &error);
 	if (!ret) {
-		egg_warning ("failed to coldplug: %s", error->message);
-		g_error_free (error);
-		error = NULL;
+		egg_warning ("failed to add saved devices: %s", error->message);
+		g_clear_error (&error);
 		/* do not fail */
 	}
 
