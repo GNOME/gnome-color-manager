@@ -171,7 +171,6 @@ gcm_calibrate_argyll_get_display (const gchar *output_name, GError **error)
 	split = g_strsplit (data, "\n", -1);
 	for (i=0; split[i] != NULL; i++) {
 		if (g_strstr_len (split[i], -1, "XRandR 1.2 is faulty") != NULL) {
-			ret = FALSE;
 			g_set_error_literal (error, 1, 0, "failed to match display as RandR is faulty");
 			goto out;
 		}
@@ -186,7 +185,6 @@ gcm_calibrate_argyll_get_display (const gchar *output_name, GError **error)
 
 	/* nothing found */
 	if (display == G_MAXUINT) {
-		ret = FALSE;
 		g_set_error_literal (error, 1, 0, "failed to match display");
 		goto out;
 	}
