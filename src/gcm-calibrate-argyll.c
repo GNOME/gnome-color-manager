@@ -63,6 +63,12 @@ typedef enum {
 	GCM_CALIBRATE_ARGYLL_STATE_LAST
 } GcmCalibrateArgyllState;
 
+typedef struct {
+	gchar		*title;
+	gchar		*message;
+	gboolean	 show_okay;
+} GcmCalibrateArgyllDialog;
+
 /**
  * GcmCalibrateArgyllPrivate:
  *
@@ -81,8 +87,7 @@ struct _GcmCalibrateArgyllPrivate
 	GcmScreen			*screen;
 	glong				 vte_previous_row;
 	glong				 vte_previous_col;
-	GPtrArray			*cached_titles;
-	GPtrArray			*cached_messages;
+	GPtrArray			*cached_dialogs;
 	gboolean			 already_on_window;
 	GcmCalibrateArgyllState		 state;
 };
@@ -213,18 +218,33 @@ gcm_calibrate_argyll_get_display_type (GcmCalibrateArgyll *calibrate_argyll)
 }
 
 /**
+ * gcm_calibrate_argyll_dialog_free:
+ **/
+static void
+gcm_calibrate_argyll_dialog_free (GcmCalibrateArgyllDialog *dialog)
+{
+	g_free (dialog->title);
+	g_free (dialog->message);
+	g_free (dialog);
+}
+
+/**
  * gcm_calibrate_argyll_set_dialog:
  **/
 static void
-gcm_calibrate_argyll_set_dialog (GcmCalibrateArgyll *calibrate_argyll, const gchar *title, const gchar *message)
+gcm_calibrate_argyll_set_dialog (GcmCalibrateArgyll *calibrate_argyll, const gchar *title, const gchar *message, gboolean show_okay)
 {
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 	GtkWidget *widget;
 	gchar *text;
+	GcmCalibrateArgyllDialog *dialog;
 
 	/* save in case we need to reuse */
-	g_ptr_array_add (priv->cached_titles, g_strdup (title));
-	g_ptr_array_add (priv->cached_messages, g_strdup (message));
+	dialog = g_new0 (GcmCalibrateArgyllDialog, 1);
+	dialog->title = g_strdup (title);
+	dialog->message = g_strdup (message);
+	dialog->show_okay = show_okay;
+	g_ptr_array_add (priv->cached_dialogs, dialog);
 
 	/* set the text */
 	text = g_strdup_printf ("<big><b>%s</b></big>", title);
@@ -235,6 +255,10 @@ gcm_calibrate_argyll_set_dialog (GcmCalibrateArgyll *calibrate_argyll, const gch
 	/* set the text */
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "label_message"));
 	gtk_label_set_markup (GTK_LABEL(widget), message);
+
+	/* show the okay button */
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "button_ok"));
+	gtk_widget_set_visible (widget, show_okay);
 }
 
 /**
@@ -246,32 +270,33 @@ gcm_calibrate_argyll_pop_dialog (GcmCalibrateArgyll *calibrate_argyll)
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 	GtkWidget *widget;
 	gchar *text;
-	const gchar *title;
-	const gchar *message;
 	guint len;
+	GcmCalibrateArgyllDialog *dialog;
 
 	/* save in case we need to reuse */
-	len = priv->cached_titles->len;
+	len = priv->cached_dialogs->len;
 	if (len < 2) {
 		egg_warning ("cannot pop dialog as nothing to recover");
 		return;
 	}
-	title = g_ptr_array_index (priv->cached_titles, len-2);
-	message = g_ptr_array_index (priv->cached_messages, len-2);
+	dialog = g_ptr_array_index (priv->cached_dialogs, len-2);
 
 	/* set the text */
-	text = g_strdup_printf ("<big><b>%s</b></big>", title);
+	text = g_strdup_printf ("<big><b>%s</b></big>", dialog->title);
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "label_title"));
 	gtk_label_set_markup (GTK_LABEL(widget), text);
 	g_free (text);
 
 	/* set the text */
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "label_message"));
-	gtk_label_set_markup (GTK_LABEL(widget), message);
+	gtk_label_set_markup (GTK_LABEL(widget), dialog->message);
+
+	/* show the okay button */
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "button_ok"));
+	gtk_widget_set_visible (widget, dialog->show_okay);
 
 	/* remove from the stack */
-	g_ptr_array_remove_index (priv->cached_titles, len-1);
-	g_ptr_array_remove_index (priv->cached_messages, len-1);
+	g_ptr_array_remove_index (priv->cached_dialogs, len-1);
 }
 
 /**
@@ -386,7 +411,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	message = _("This pre-calibrates the screen by sending colored and gray patches to your screen and measuring them with the hardware device.");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -464,7 +489,7 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	message = _("Generating the patches that will be measured with the hardware device.");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -542,7 +567,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	message = _("Drawing the generated patches to the screen, which will then be measured by the hardware device.");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -604,7 +629,6 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	gchar *device = NULL;
 	gchar *model = NULL;
 	GPtrArray *array = NULL;
-	GtkWidget *widget;
 	const gchar *title;
 	const gchar *message;
 
@@ -634,17 +658,13 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" */
 	copyright = g_strdup_printf ("%s %04i %s", _("Copyright (c)"), date->year, g_get_real_name ());
 
-	/* no need for an okay button */
-	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "button_ok"));
-	gtk_widget_hide (widget);
-
 	/* TRANSLATORS: title, a profile is a ICC file */
 	title = _("Generating the profile");
 	/* TRANSLATORS: dialog message */
 	message = _("Generating the ICC color profile that can be used with this screen.");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -727,7 +747,7 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 	message = _("Copying source image, chart data and CIE reference values.");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
 
 	/* build filenames */
 	filename = g_strdup_printf ("%s.tif", basename);
@@ -783,7 +803,7 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 	message = _("Detecting the reference patches and measuring them.");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("scanin", error);
@@ -887,7 +907,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	message = _("Generating the ICC color profile that can be used with this device.");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -1037,7 +1057,7 @@ gcm_calibrate_argyll_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 	message = _("Setting up display device for use...");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
 
 	/* step 1 */
 	ret = gcm_calibrate_argyll_display_neutralise (calibrate_argyll, error);
@@ -1093,7 +1113,7 @@ gcm_calibrate_argyll_device (GcmCalibrate *calibrate, GtkWindow *window, GError 
 	message = _("Setting up device for use...");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
 
 	/* step 1 */
 	ret = gcm_calibrate_argyll_device_copy (calibrate_argyll, error);
@@ -1160,6 +1180,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 {
 	const gchar *title;
 	const gchar *message;
+	gchar *found;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
 	/* attach device */
@@ -1183,7 +1204,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		egg_debug ("blocking waiting for user input: %s", title);
 
 		/* push new messages into the UI */
-		gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message);
+		gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, TRUE);
 
 		/* set state */
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN,
@@ -1207,7 +1228,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		egg_debug ("blocking waiting for user input: %s", title);
 
 		/* push new messages into the UI */
-		gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message);
+		gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, TRUE);
 
 		/* set state */
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
@@ -1223,6 +1244,25 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	    g_strcmp0 (line, "The instrument can be removed from the screen.") == 0 ||
 	    g_str_has_suffix (line, "key to continue:")) {
 		egg_debug ("VTE: ignore: %s", line);
+		goto out;
+	}
+
+	/* error */
+	found = g_strstr_len (line, -1, "Error - ");
+	if (found != NULL) {
+
+		/* TRANSLATORS: title, the calibration failed */
+		title = _("Calibration error");
+
+		/* push new messages into the UI */
+		gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, found+8, TRUE);
+		egg_debug ("VTE: error: %s", found+8);
+
+		/* set state */
+		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_LOOP;
+
+		/* wait until finished */
+		g_main_loop_run (priv->loop);
 		goto out;
 	}
 
@@ -1397,8 +1437,7 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 	calibrate_argyll->priv->loop = g_main_loop_new (NULL, FALSE);
 	calibrate_argyll->priv->vte_previous_row = 0;
 	calibrate_argyll->priv->vte_previous_col = 0;
-	calibrate_argyll->priv->cached_titles = g_ptr_array_new_with_free_func (g_free);
-	calibrate_argyll->priv->cached_messages = g_ptr_array_new_with_free_func (g_free);
+	calibrate_argyll->priv->cached_dialogs = g_ptr_array_new_with_free_func ((GDestroyNotify)gcm_calibrate_argyll_dialog_free);
 	calibrate_argyll->priv->already_on_window = FALSE;
 	calibrate_argyll->priv->state = GCM_CALIBRATE_ARGYLL_STATE_IDLE;
 
@@ -1474,8 +1513,7 @@ gcm_calibrate_argyll_finalize (GObject *object)
 	g_object_unref (priv->builder);
 	g_object_unref (priv->screen);
 	g_object_unref (priv->gconf_client);
-	g_ptr_array_unref (priv->cached_titles);
-	g_ptr_array_unref (priv->cached_messages);
+	g_ptr_array_unref (priv->cached_dialogs);
 
 	G_OBJECT_CLASS (gcm_calibrate_argyll_parent_class)->finalize (object);
 }
