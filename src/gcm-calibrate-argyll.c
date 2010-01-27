@@ -1342,12 +1342,16 @@ gcm_calibrate_argyll_cancel_cb (GtkWidget *widget, GcmCalibrateArgyll *calibrate
 	priv->response = GTK_RESPONSE_CANCEL;
 
 	/* send input if waiting */
-	if (priv->state == GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN)
+	if (priv->state == GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN) {
 		vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), "Q", 1);
+		priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
+	}
 
 	/* clear loop if waiting */
-	if (priv->state == GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_LOOP)
+	if (priv->state == GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_LOOP) {
 		g_main_loop_quit (priv->loop);
+		priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
+	}
 
 	/* stop loop */
 	if (g_main_loop_is_running (priv->loop))
