@@ -2526,6 +2526,7 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	if (!ret) {
 		egg_warning ("failed to coldplug: %s", error->message);
 		g_error_free (error);
+		error = NULL;
 		/* do not fail */
 	}
 
@@ -2534,6 +2535,7 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	if (!ret) {
 		egg_warning ("failed to coldplug: %s", error->message);
 		g_error_free (error);
+		error = NULL;
 		goto out;
 	}
 
@@ -2542,6 +2544,7 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	if (!ret) {
 		egg_warning ("failed to coldplug: %s", error->message);
 		g_error_free (error);
+		error = NULL;
 		/* do not fail */
 	}
 
