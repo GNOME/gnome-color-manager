@@ -42,6 +42,7 @@
 #define GCM_SETTINGS_COLORSPACE_CMYK		"/apps/gnome-color-manager/colorspace_cmyk"
 #define GCM_SETTINGS_USE_PROFILES_FROM_VOLUMES	"/apps/gnome-color-manager/use_profiles_from_volumes"
 #define GCM_SETTINGS_CALIBRATION_LENGTH		"/apps/gnome-color-manager/calibration_length"
+#define GCM_SETTINGS_SHOW_FINE_TUNING		"/apps/gnome-color-manager/show_fine_tuning"
 
 gboolean	 gcm_utils_set_gamma_for_device		(GcmDevice		*device,
 							 GError			**error);

@@ -12,7 +12,7 @@
         <long>
           Gamma is adjusted to affect the color of the attached monitor.
           Traditionally Linux has used a gamma value of 1.0, but this makes
-          monitors look washed out compared Windows XP or OSX.
+          monitors look washed out compared Windows XP or OS X.
           Apple traditionally used a value of 1.8 for a long time, but now use
           the same value as Microsoft.
           Microsoft has always used a value of 2.2.</long>
@@ -43,7 +43,8 @@
           If set to TRUE then external disks are searched for device ICC profiles
           at startup, for instance looking in the OSX library folder or
           Windows XP system folders.
-          This may increase startup time if disks need to be spun-up to be searched.
+          This may increase start-up time if disks need to be spun-up to be
+          searched.
         </long>
       </locale>
     </schema>
@@ -59,6 +60,22 @@
         <long>
           If set to TRUE then the __ICC_PROFILE atom will be set, which
           applications use to convert true color to screen color.
+        </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gnome-color-manager/show_fine_tuning</key>
+      <applyto>/apps/gnome-color-manager/show_fine_tuning</applyto>
+      <owner>gnome-color-manager</owner>
+      <type>bool</type>
+      <default>false</default>
+      <locale name="C">
+        <short>Show the fine tuning controls for display devices.</short>
+        <long>
+          If set to TRUE then the fine tuning controls are visible. This allows
+          the user to change the display profile outside of what the ICC profile
+          suggests and is only recommended for advanced users.
         </long>
       </locale>
     </schema>
@@ -95,7 +112,7 @@
       <default>/usr/share/color/icc/Argyll/sRGB.icm</default>
       <locale name="C">
         <short>The default RGB profile.</short>
-        <long>The RGB profile filename to be used by applications by default.</long>
+        <long>The RGB profile file name to be used by applications by default.</long>
       </locale>
     </schema>
 
@@ -107,7 +124,7 @@
       <default>/usr/share/color/icc/Fogra27L.icc</default>
       <locale name="C">
         <short>The default CMYK profile.</short>
-        <long>The CMYK profile filename to be used by applications by default.</long>
+        <long>The CMYK profile file name to be used by applications by default.</long>
       </locale>
     </schema>
 

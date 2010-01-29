@@ -1498,13 +1498,13 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 
 	/* not a xrandr device */
 	if (type != GCM_DEVICE_TYPE_ENUM_DISPLAY) {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_fine_tuning"));
 		gtk_widget_set_sensitive (widget, FALSE);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
 		gtk_widget_set_sensitive (widget, FALSE);
 	} else {
 		/* show more UI */
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_fine_tuning"));
 		gtk_widget_set_sensitive (widget, TRUE);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
 		gtk_widget_set_sensitive (widget, TRUE);
@@ -2523,6 +2523,11 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	gchar *intent_display;
 	gchar *intent_softproof;
 
+	/* do we show the fine tuning box */
+	ret = gconf_client_get_bool (gconf_client, GCM_SETTINGS_SHOW_FINE_TUNING, NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_fine_tuning"));
+	gtk_widget_set_visible (widget, ret);
+
 	/* setup RGB combobox */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_space_rgb"));
 	colorspace_rgb = gconf_client_get_string (gconf_client, GCM_SETTINGS_COLORSPACE_RGB, NULL);
@@ -2831,7 +2836,7 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_import"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_profile_import_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander1"));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_fine_tuning"));
 	gtk_widget_set_sensitive (widget, FALSE);
 
 	/* hidden until a profile is selected */
