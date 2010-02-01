@@ -1380,9 +1380,11 @@ gcm_prefs_is_profile_suitable_for_device_type (GcmProfile *profile, GcmDeviceTyp
 	if (profile_type_tmp != profile_type)
 		goto out;
 
+#if 0
 	/* no VCGT for a display (is a crap profile) */
 	if (profile_type_tmp == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE && !has_vcgt)
 		goto out;
+#endif
 
 	/* success */
 	ret = TRUE;

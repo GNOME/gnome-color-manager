@@ -1,3 +1,45 @@
+Version 2.29.3
+~~~~~~~~~~~~~~
+Released: 2010-02-01
+
+* Translations
+ - Added Italian translation (Francesco Groccia)
+ - Updated Danish translation (Joe Hansen)
+ - Updated French translation (Claude Paroz)
+ - Updated German translation (Mario Blättermann)
+ - Updated Norwegian bokmål translation (Kjartan Maraas)
+ - Updated Portuguese translation (António Lima)
+ - Updated Russian translation (Alexandre Prokoudine)
+ - Updated Slovenian translation (Andrej Žnidaršič)
+ - Updated Swedish translation (Daniel Nylander)
+
+* New Features:
+ - Enable the rendering intent and default colorspace UI elements (Richard Hughes)
+ - Show whether the ICC profile has a VCGT tag in the UI (Richard Hughes)
+ - Filter out non RGB and CMYK color space profiles from the combo-boxes using a heuristic (Richard Hughes)
+ - Add a new DBus method GetProfileForWindow which can return a profile for a supplied XID (Richard Hughes)
+ - Add some new text and tooltips to the prefs dialog (Richard Hughes)
+ - Add per-user OSX ICC profiles at startup (Richard Hughes)
+ - Add OSX and Windows ICC profiles if they exist from mounted volumes. Fixes #607390 (Richard Hughes)
+ - Add a device profile entry of 'Other profile...' to be able to easily import a profile. Fixes #607389 (Richard Hughes)
+ - Add a precision GConf variable to control the time a calibration takes. Fixes #605558 (Richard Hughes)
+ - Screenscrape the Argyll output to better support other hardware devices. Fixes #605558 (Richard Hughes)
+ - Do not show the 'Fine tuning' expander by default, and have configuration in GConf (Richard Hughes)
+
+* Bugfix:
+ - Zero out GErrors after freeing. Fixes crash (Christian Hergert)
+ - Add gnome-desktop path as fallback for pci.ids (Frederic Crozat)
+ - Do not generate an error if a display profile does not have CLUT data (Richard Hughes)
+ - Add gcm-fix-profile to load and then re-save existing profiles using lcms (Richard Hughes)
+ - Fix compile when using an ld that defaults to --as-needed (Richard Hughes)
+ - Do not allow the colorspace combobox to be zero sized. Fixes #606484 (Richard Hughes)
+ - Make gcm-prefs a normal dialog rather than a modal dialog (Richard Hughes)
+ - Only scan ICC locations with hfs partition types for OSX and msdos/NTFS types for Windows (Richard Hughes)
+ - Make gcm-prefs startup a few hundred ms quicker by not loading the list of screens (Richard Hughes)
+ - Cache gnome_rr_screen_new and take 0.7 seconds off the start time (Richard Hughes)
+ - Don't resize the window on startup. Fixes #607391 (Richard Hughes)
+ - Update the Free Software Foundation address (Richard Hughes)
+
 Version 2.29.2
 ~~~~~~~~~~~~~~
 Released: 2010-01-04
