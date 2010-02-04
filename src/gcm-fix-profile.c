@@ -29,7 +29,7 @@
  * gcm_fix_profile_filename:
  */
 static void
-gcm_fix_profile_filename (const gchar *filename, const gchar *description)
+gcm_fix_profile_filename (const gchar *filename, const gchar *description, const gchar *copyright, const gchar *model, const gchar *manufacturer)
 {
 	cmsHPROFILE lcms_profile;
 	lcms_profile = cmsOpenProfileFromFile (filename, "rw");
@@ -37,6 +37,12 @@ gcm_fix_profile_filename (const gchar *filename, const gchar *description)
 		return;
 	if (description != NULL)
 		_cmsAddTextTag (lcms_profile, icSigProfileDescriptionTag, description);
+	if (copyright != NULL)
+		_cmsAddTextTag (lcms_profile, icSigCopyrightTag, copyright);
+	if (model != NULL)
+		_cmsAddTextTag (lcms_profile, icSigDeviceModelDescTag, model);
+	if (manufacturer != NULL)
+		_cmsAddTextTag (lcms_profile, icSigDeviceMfgDescTag, manufacturer);
 	_cmsSaveProfile (lcms_profile, filename);
 	cmsCloseProfile (lcms_profile);
 }
@@ -62,11 +68,23 @@ main (int argc, char **argv)
 	GOptionContext *context;
 	gchar **files = NULL;
 	gchar *description = NULL;
+	gchar *copyright = NULL;
+	gchar *model = NULL;
+	gchar *manufacturer = NULL;
 
 	const GOptionEntry options[] = {
-		{ "desc", '\0', 0, G_OPTION_ARG_STRING, &description,
+		{ "description", 'd', 0, G_OPTION_ARG_STRING, &description,
 		  /* TRANSLATORS: command line option */
 		  _("The description for the profile"), NULL },
+		{ "copyright", 'c', 0, G_OPTION_ARG_STRING, &copyright,
+		  /* TRANSLATORS: command line option */
+		  _("The copyright for the profile"), NULL },
+		{ "model", 'm', 0, G_OPTION_ARG_STRING, &model,
+		  /* TRANSLATORS: command line option */
+		  _("The model for the profile"), NULL },
+		{ "manufacturer", 'n', 0, G_OPTION_ARG_STRING, &manufacturer,
+		  /* TRANSLATORS: command line option */
+		  _("The manufacturer for the profile"), NULL },
 		{ G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &files,
 		  /* TRANSLATORS: command line option: a list of icc files to fix */
 		  _("Profiles to fix"), NULL },
@@ -96,9 +114,12 @@ main (int argc, char **argv)
 
 	/* show each profile */
 	for (i=0; files[i] != NULL; i++)
-		gcm_fix_profile_filename (files[i], description);
+		gcm_fix_profile_filename (files[i], description, copyright, model, manufacturer);
 out:
 	g_free (description);
+	g_free (copyright);
+	g_free (model);
+	g_free (manufacturer);
 	g_strfreev (files);
 	return retval;
 }
