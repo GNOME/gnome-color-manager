@@ -155,6 +155,21 @@ PKG_CHECK_MODULES(X11, x11)
 AC_SUBST(X11_CFLAGS)
 AC_SUBST(X11_LIBS)
 
+dnl **** Check for cups ****
+AC_SUBST(CUPS_CFLAGS,"")
+AC_SUBST(CUPS_LIBS,"")
+ac_save_CPPFLAGS="$CPPFLAGS"
+ac_cups_cflags=`cups-config --cflags 2>/dev/null`
+ac_cups_libs=`cups-config --ldflags 2>/dev/null`
+CPPFLAGS="$CPPFLAGS $ac_cups_cflags"
+AC_CHECK_HEADERS(cups/cups.h,
+    [AC_CHECK_LIB(cups,cupsGetDefault,
+		  [
+			CUPS_CFLAGS="$ac_cups_cflags"
+			CUPS_LIBS="-lcups $ac_cups_libs"
+		  ],,[$ac_cups_libs])])
+CPPFLAGS="$ac_save_CPPFLAGS"
+
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
 AM_GCONF_SOURCE_2
 

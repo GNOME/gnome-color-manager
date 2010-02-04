@@ -8,6 +8,7 @@ INCLUDES =						\
 	$(VTE_CFLAGS)					\
 	$(LCMS_CFLAGS)					\
 	$(XORG_CFLAGS)					\
+	$(CUPS_CFLAGS)					\
 	$(DBUS_GLIB_CFLAGS)				\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
@@ -102,6 +103,7 @@ gcm_dump_edid_LDADD =					\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
+	$(CUPS_LIBS)					\
 	-lm
 
 gcm_dump_edid_CFLAGS =					\
@@ -121,6 +123,7 @@ gcm_dump_profile_LDADD =				\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
+	$(CUPS_LIBS)					\
 	-lm
 
 gcm_dump_profile_CFLAGS =				\
@@ -134,6 +137,7 @@ gcm_fix_profile_LDADD =					\
 	$(X11_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(GTK_LIBS)					\
+	$(CUPS_LIBS)					\
 	-lm
 
 gcm_fix_profile_CFLAGS =				\
@@ -153,6 +157,7 @@ gcm_inspect_LDADD =					\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
+	$(CUPS_LIBS)					\
 	-lm
 
 gcm_inspect_CFLAGS =					\
@@ -172,6 +177,7 @@ gcm_apply_LDADD =					\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
+	$(CUPS_LIBS)					\
 	-lm
 
 gcm_apply_CFLAGS =					\
@@ -191,6 +197,7 @@ gcm_import_LDADD =					\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
+	$(CUPS_LIBS)					\
 	-lm
 
 gcm_import_CFLAGS =					\
@@ -220,6 +227,7 @@ gcm_prefs_LDADD =					\
 	$(DBUS_GLIB_LIBS)				\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
+	$(CUPS_LIBS)					\
 	-lm
 
 gcm_prefs_CFLAGS =					\
@@ -242,6 +250,7 @@ gcm_session_LDADD =					\
 	$(DBUS_GLIB_LIBS)				\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
+	$(CUPS_LIBS)					\
 	-lm
 
 gcm_session_CFLAGS =					\
@@ -286,6 +295,7 @@ gcm_self_test_LDADD =					\
 	$(DBUS_GLIB_LIBS)				\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
+	$(CUPS_LIBS)					\
 	-lm
 
 gcm_self_test_CFLAGS = -DEGG_TEST $(AM_CFLAGS)
