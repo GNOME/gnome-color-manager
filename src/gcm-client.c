@@ -36,6 +36,9 @@
 #include <math.h>
 
 #include "gcm-client.h"
+#include "gcm-device-xrandr.h"
+#include "gcm-device-sysfs.h"
+#include "gcm-device-cups.h"
 #include "gcm-screen.h"
 #include "gcm-utils.h"
 #include "gcm-edid.h"
@@ -228,7 +231,7 @@ gcm_client_gudev_add_type (GcmClient *client, GUdevDevice *udev_device, GcmDevic
 	sysfs_path = g_udev_device_get_sysfs_path (udev_device);
 
 	/* create device */
-	device = gcm_device_new ();
+	device = gcm_device_sysfs_new ();
 	manufacturer = g_strdup (g_udev_device_get_property (udev_device, "ID_VENDOR"));
 	model = g_strdup (g_udev_device_get_property (udev_device, "ID_MODEL"));
 	serial = g_strdup (g_udev_device_get_property (udev_device, "ID_SERIAL"));
@@ -255,7 +258,7 @@ gcm_client_gudev_add_type (GcmClient *client, GUdevDevice *udev_device, GcmDevic
 		      "model", model,
 		      "manufacturer", manufacturer,
 		      "title", title,
-		      "native-device-sysfs", sysfs_path,
+		      "native-device", sysfs_path,
 		      NULL);
 
 	/* load the device */
@@ -710,7 +713,7 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 	}
 
 	/* add new device */
-	device = gcm_device_new ();
+	device = gcm_device_xrandr_new ();
 	title = gcm_client_get_output_name (client, output);
 	g_object_set (device,
 		      "type", GCM_DEVICE_TYPE_ENUM_DISPLAY,
@@ -720,7 +723,7 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 		      "model", model,
 		      "manufacturer", manufacturer,
 		      "title", title,
-		      "native-device-xrandr", output_name,
+		      "native-device", output_name,
 		      NULL);
 
 	/* load the device */

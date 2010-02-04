@@ -418,7 +418,7 @@ gcm_utils_set_gamma_for_device (GcmDevice *device, GError **error)
 		      "gamma", &gamma,
 		      "brightness", &brightness,
 		      "contrast", &contrast,
-		      "native-device-xrandr", &output_name,
+		      "native-device", &output_name,
 		      NULL);
 
 	/* do no set the gamma for non-display types */

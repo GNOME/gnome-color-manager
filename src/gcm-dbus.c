@@ -184,7 +184,7 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *sysfs_pat
 
 		/* get the native path of this device */
 		g_object_get (device,
-			      "native-device-sysfs", &sysfs_path_tmp,
+			      "native-device", &sysfs_path_tmp,
 			      NULL);
 
 		/* wrong type of device */

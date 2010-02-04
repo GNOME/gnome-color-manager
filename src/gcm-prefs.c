@@ -320,7 +320,7 @@ gcm_prefs_calibrate_display (GcmCalibrate *calibrate)
 
 	/* get the device */
 	g_object_get (current_device,
-		      "native-device-xrandr", &output_name,
+		      "native-device", &output_name,
 		      "serial", &basename,
 		      "manufacturer", &manufacturer,
 		      "model", &model,

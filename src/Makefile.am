@@ -51,6 +51,12 @@ libgcmshared_a_SOURCES =				\
 	gcm-color-device.h				\
 	gcm-device.c					\
 	gcm-device.h					\
+	gcm-device-xrandr.c				\
+	gcm-device-xrandr.h				\
+	gcm-device-sysfs.c				\
+	gcm-device-sysfs.h				\
+	gcm-device-cups.c				\
+	gcm-device-cups.h				\
 	gcm-cie-widget.c				\
 	gcm-cie-widget.h				\
 	gcm-trc-widget.c				\

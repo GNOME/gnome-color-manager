@@ -29,10 +29,7 @@
 #include "config.h"
 
 #include <glib-object.h>
-#include <math.h>
-#include <gio/gio.h>
 #include <gconf/gconf-client.h>
-#include <libgnomeui/gnome-rr.h>
 
 #include "gcm-device.h"
 #include "gcm-profile.h"
@@ -64,8 +61,6 @@ struct _GcmDevicePrivate
 	gchar				*profile_filename;
 	gchar				*title;
 	GConfClient			*gconf_client;
-	gchar				*native_device_xrandr;
-	gchar				*native_device_sysfs;
 };
 
 enum {
@@ -82,7 +77,6 @@ enum {
 	PROP_CONTRAST,
 	PROP_PROFILE_FILENAME,
 	PROP_TITLE,
-	PROP_NATIVE_DEVICE_XRANDR,
 	PROP_NATIVE_DEVICE_SYSFS,
 	PROP_LAST
 };
@@ -440,12 +434,6 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_TITLE:
 		g_value_set_string (value, priv->title);
 		break;
-	case PROP_NATIVE_DEVICE_XRANDR:
-		g_value_set_string (value, priv->native_device_xrandr);
-		break;
-	case PROP_NATIVE_DEVICE_SYSFS:
-		g_value_set_string (value, priv->native_device_sysfs);
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -503,14 +491,6 @@ gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GP
 		break;
 	case PROP_CONTRAST:
 		priv->contrast = g_value_get_float (value);
-		break;
-	case PROP_NATIVE_DEVICE_XRANDR:
-		g_free (priv->native_device_xrandr);
-		priv->native_device_xrandr = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_NATIVE_DEVICE_SYSFS:
-		g_free (priv->native_device_sysfs);
-		priv->native_device_sysfs = g_strdup (g_value_get_string (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -626,22 +606,6 @@ gcm_device_class_init (GcmDeviceClass *klass)
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_TITLE, pspec);
 
-	/**
-	 * GcmDevice:native-device-xrandr:
-	 */
-	pspec = g_param_spec_string ("native-device-xrandr", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_NATIVE_DEVICE_XRANDR, pspec);
-
-	/**
-	 * GcmDevice:native-device-sysfs:
-	 */
-	pspec = g_param_spec_string ("native-device-sysfs", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_NATIVE_DEVICE_SYSFS, pspec);
-
 	g_type_class_add_private (klass, sizeof (GcmDevicePrivate));
 }
 
@@ -659,8 +623,6 @@ gcm_device_init (GcmDevice *device)
 	device->priv->serial = NULL;
 	device->priv->manufacturer = NULL;
 	device->priv->model = NULL;
-	device->priv->native_device_xrandr = NULL;
-	device->priv->native_device_sysfs = NULL;
 	device->priv->profile_filename = NULL;
 	device->priv->gconf_client = gconf_client_get_default ();
 	device->priv->gamma = gconf_client_get_float (device->priv->gconf_client, GCM_SETTINGS_DEFAULT_GAMMA, &error);
@@ -688,8 +650,6 @@ gcm_device_finalize (GObject *object)
 	g_free (priv->serial);
 	g_free (priv->manufacturer);
 	g_free (priv->model);
-	g_free (priv->native_device_xrandr);
-	g_free (priv->native_device_sysfs);
 	g_object_unref (priv->gconf_client);
 
 	G_OBJECT_CLASS (gcm_device_parent_class)->finalize (object);
@@ -714,6 +674,8 @@ gcm_device_new (void)
 #ifdef EGG_TEST
 #include "egg-test.h"
 
+#include "gcm-device-sysfs.h"
+
 void
 gcm_device_test (EggTest *test)
 {
@@ -731,7 +693,7 @@ gcm_device_test (EggTest *test)
 
 	/************************************************************/
 	egg_test_title (test, "get a device object");
-	device = gcm_device_new ();
+	device = gcm_device_sysfs_new ();
 	egg_test_assert (test, device != NULL);
 
 	/************************************************************/
