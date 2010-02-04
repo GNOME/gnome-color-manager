@@ -53,8 +53,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-device.h					\
 	gcm-device-xrandr.c				\
 	gcm-device-xrandr.h				\
-	gcm-device-sysfs.c				\
-	gcm-device-sysfs.h				\
+	gcm-device-udev.c				\
+	gcm-device-udev.h				\
 	gcm-device-cups.c				\
 	gcm-device-cups.h				\
 	gcm-cie-widget.c				\

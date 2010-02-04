@@ -36,7 +36,7 @@
 
 #include "gcm-client.h"
 #include "gcm-device-xrandr.h"
-#include "gcm-device-sysfs.h"
+#include "gcm-device-udev.h"
 #include "gcm-device-cups.h"
 #include "gcm-screen.h"
 #include "gcm-utils.h"
@@ -183,78 +183,43 @@ out:
 }
 
 /**
- * gcm_client_gudev_add_type:
+ * gcm_client_gudev_add:
  **/
 static void
-gcm_client_gudev_add_type (GcmClient *client, GUdevDevice *udev_device, GcmDeviceTypeEnum type)
+gcm_client_gudev_add (GcmClient *client, GUdevDevice *udev_device)
 {
-	gchar *title;
 	GcmDevice *device = NULL;
-	gchar *id;
+	GcmDevice *device_tmp = NULL;
 	gboolean ret;
+	const gchar *value;
 	GError *error = NULL;
-	const gchar *sysfs_path;
 	GcmClientPrivate *priv = client->priv;
-	gchar *serial = NULL;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
 
-	/* add new device */
-	id = gcm_client_get_id_for_udev_device (udev_device);
-	title = g_strdup_printf ("%s - %s",
-				g_udev_device_get_property (udev_device, "ID_VENDOR"),
-				g_udev_device_get_property (udev_device, "ID_MODEL"));
+	/* matches our udev rules, which we can change without recompiling */
+	value = g_udev_device_get_property (udev_device, "GCM_DEVICE");
+	if (value == NULL)
+		goto out;
 
-	/* turn space delimiters into spaces */
-	g_strdelimit (title, "_", ' ');
+	/* create new device */
+	device = gcm_device_udev_new ();
+	ret = gcm_device_udev_set_from_device (device, udev_device, &error);
+	if (!ret) {
+		egg_debug ("failed to set for device: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	/* we might have a previous saved device with this ID, in which case nuke it */
-	device = gcm_client_get_device_by_id (client, id);
-	if (device != NULL) {
+	device_tmp = gcm_client_get_device_by_id (client, gcm_device_get_id (device));
+	if (device_tmp != NULL) {
+
 		/* remove from the array */
-		g_ptr_array_remove (client->priv->array, device);
+		g_ptr_array_remove (client->priv->array, device_tmp);
 
 		/* emit a signal */
-		egg_debug ("emit removed: %s", id);
-		g_signal_emit (client, signals[SIGNAL_REMOVED], 0, device);
-
-		/* unref our copy */
-		g_object_unref (device);
+		egg_debug ("emit removed: %s", gcm_device_get_id (device));
+		g_signal_emit (client, signals[SIGNAL_REMOVED], 0, device_tmp);
 	}
-
-	/* get sysfs path */
-	sysfs_path = g_udev_device_get_sysfs_path (udev_device);
-
-	/* create device */
-	device = gcm_device_sysfs_new ();
-	manufacturer = g_strdup (g_udev_device_get_property (udev_device, "ID_VENDOR"));
-	model = g_strdup (g_udev_device_get_property (udev_device, "ID_MODEL"));
-	serial = g_strdup (g_udev_device_get_property (udev_device, "ID_SERIAL"));
-
-	/* get rid of underscores */
-	if (manufacturer != NULL) {
-		g_strdelimit (manufacturer, "_", ' ');
-		g_strchomp (manufacturer);
-	}
-	if (model != NULL) {
-		g_strdelimit (model, "_", ' ');
-		g_strchomp (model);
-	}
-	if (serial != NULL) {
-		g_strdelimit (serial, "_", ' ');
-		g_strchomp (serial);
-	}
-
-	g_object_set (device,
-		      "type", type,
-		      "id", id,
-		      "connected", TRUE,
-		      "serial", serial,
-		      "model", model,
-		      "manufacturer", manufacturer,
-		      "title", title,
-		      "native-device", sysfs_path,
-		      NULL);
 
 	/* load the device */
 	ret = gcm_device_load (device, &error);
@@ -268,33 +233,13 @@ gcm_client_gudev_add_type (GcmClient *client, GUdevDevice *udev_device, GcmDevic
 	g_ptr_array_add (priv->array, g_object_ref (device));
 
 	/* signal the addition */
-	egg_debug ("emit: added %s to device list", id);
+	egg_debug ("emit: added %s to device list", gcm_device_get_id (device));
 	g_signal_emit (client, signals[SIGNAL_ADDED], 0, device);
 out:
 	if (device != NULL)
 		g_object_unref (device);
-	g_free (serial);
-	g_free (manufacturer);
-	g_free (model);
-	g_free (id);
-	g_free (title);
-}
-
-/**
- * gcm_client_gudev_add:
- **/
-static void
-gcm_client_gudev_add (GcmClient *client, GUdevDevice *udev_device)
-{
-	const gchar *value;
-
-	/* matches our udev rules, which we can change without recompiling */
-	value = g_udev_device_get_property (udev_device, "GCM_DEVICE");
-	if (value != NULL) {
-		value = g_udev_device_get_property (udev_device, "GCM_TYPE");
-		egg_debug ("found %s device: %s", value, g_udev_device_get_sysfs_path (udev_device));
-		gcm_client_gudev_add_type (client, udev_device, gcm_device_type_enum_from_string (value));
-	}
+	if (device_tmp != NULL)
+		g_object_unref (device_tmp);
 }
 
 /**
@@ -510,9 +455,6 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 		/* emit a signal */
 		egg_debug ("emit removed: %s (unconnected device that has just been connected)", gcm_device_get_id (device_tmp));
 		g_signal_emit (client, signals[SIGNAL_REMOVED], 0, device_tmp);
-
-		/* unref our copy */
-		g_object_unref (device_tmp);
 	}
 
 	/* load the device */

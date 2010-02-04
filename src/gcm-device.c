@@ -77,7 +77,7 @@ enum {
 	PROP_CONTRAST,
 	PROP_PROFILE_FILENAME,
 	PROP_TITLE,
-	PROP_NATIVE_DEVICE_SYSFS,
+	PROP_NATIVE_DEVICE_UDEV,
 	PROP_LAST
 };
 
@@ -674,7 +674,7 @@ gcm_device_new (void)
 #ifdef EGG_TEST
 #include "egg-test.h"
 
-#include "gcm-device-sysfs.h"
+#include "gcm-device-udev.h"
 
 void
 gcm_device_test (EggTest *test)
@@ -693,7 +693,7 @@ gcm_device_test (EggTest *test)
 
 	/************************************************************/
 	egg_test_title (test, "get a device object");
-	device = gcm_device_sysfs_new ();
+	device = gcm_device_udev_new ();
 	egg_test_assert (test, device != NULL);
 
 	/************************************************************/

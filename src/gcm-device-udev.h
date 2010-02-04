@@ -19,41 +19,42 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __GCM_DEVICE_SYSFS_H
-#define __GCM_DEVICE_SYSFS_H
+#ifndef __GCM_DEVICE_UDEV_H
+#define __GCM_DEVICE_UDEV_H
 
 #include <glib-object.h>
+#include <gudev/gudev.h>
 
 #include "gcm-device.h"
 
 G_BEGIN_DECLS
 
-#define GCM_TYPE_DEVICE_SYSFS		(gcm_device_sysfs_get_type ())
-#define GCM_DEVICE_SYSFS(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), GCM_TYPE_DEVICE_SYSFS, GcmDeviceSysfs))
-#define GCM_IS_DEVICE_SYSFS(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), GCM_TYPE_DEVICE_SYSFS))
+#define GCM_TYPE_DEVICE_UDEV		(gcm_device_udev_get_type ())
+#define GCM_DEVICE_UDEV(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), GCM_TYPE_DEVICE_UDEV, GcmDeviceUdev))
+#define GCM_IS_DEVICE_UDEV(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), GCM_TYPE_DEVICE_UDEV))
 
-typedef struct _GcmDeviceSysfsPrivate	GcmDeviceSysfsPrivate;
-typedef struct _GcmDeviceSysfs		GcmDeviceSysfs;
-typedef struct _GcmDeviceSysfsClass	GcmDeviceSysfsClass;
+typedef struct _GcmDeviceUdevPrivate	GcmDeviceUdevPrivate;
+typedef struct _GcmDeviceUdev		GcmDeviceUdev;
+typedef struct _GcmDeviceUdevClass	GcmDeviceUdevClass;
 
-struct _GcmDeviceSysfs
+struct _GcmDeviceUdev
 {
 	 GcmDevice			 parent;
-	 GcmDeviceSysfsPrivate		*priv;
+	 GcmDeviceUdevPrivate		*priv;
 };
 
-struct _GcmDeviceSysfsClass
+struct _GcmDeviceUdevClass
 {
 	GcmDeviceClass	parent_class;
 };
 
-GType		 gcm_device_sysfs_get_type		  	(void);
-GcmDevice	*gcm_device_sysfs_new				(void);
-gboolean	 gcm_device_sysfs_set_from_instance		(GcmDevice	*device,
-								 gpointer	 instance,
+GType		 gcm_device_udev_get_type		  	(void);
+GcmDevice	*gcm_device_udev_new				(void);
+gboolean	 gcm_device_udev_set_from_device		(GcmDevice	*device,
+								 GUdevDevice	*udev_device,
 								 GError		**error);
 
 G_END_DECLS
 
-#endif /* __GCM_DEVICE_SYSFS_H */
+#endif /* __GCM_DEVICE_UDEV_H */
 
