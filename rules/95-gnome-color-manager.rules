@@ -7,9 +7,6 @@
 # the Free Software Foundation; either version 2 of the License, or
 # (at your option) any later version.
 
-# HP Printers
-SUBSYSTEM=="usb", ENV{ID_HPLIP}!="", ENV{GCM_DEVICE}="1", ENV{GCM_TYPE}="printer"
-
 # USB SANE scanners
 SUBSYSTEM=="usb", ENV{libsane_matched}!="", ENV{GCM_DEVICE}="1", ENV{GCM_TYPE}="scanner"
 

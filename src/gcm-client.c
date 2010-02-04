@@ -33,6 +33,7 @@
 #include <glib-object.h>
 #include <gudev/gudev.h>
 #include <libgnomeui/gnome-rr.h>
+#include <cups/cups.h>
 
 #include "gcm-client.h"
 #include "gcm-device-xrandr.h"
@@ -60,6 +61,7 @@ struct _GcmClientPrivate
 	GPtrArray			*array;
 	GUdevClient			*gudev_client;
 	GcmScreen			*screen;
+	http_t				*http;
 };
 
 enum {
@@ -255,10 +257,10 @@ gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevic
 }
 
 /**
- * gcm_client_add_connected_devices_usb:
+ * gcm_client_add_connected_devices_udev:
  **/
 static gboolean
-gcm_client_add_connected_devices_usb (GcmClient *client, GError **error)
+gcm_client_add_connected_devices_udev (GcmClient *client, GError **error)
 {
 	GList *devices;
 	GList *l;
@@ -497,6 +499,66 @@ gcm_client_add_connected_devices_xrandr (GcmClient *client, GError **error)
 }
 
 /**
+ * gcm_client_cups_add:
+ **/
+static void
+gcm_client_cups_add (GcmClient *client, cups_dest_t dest)
+{
+	gboolean ret;
+	GError *error = NULL;
+	GcmDevice *device = NULL;
+	GcmClientPrivate *priv = client->priv;
+
+	/* create new device */
+	device = gcm_device_xrandr_new ();
+	ret = gcm_device_cups_set_from_dest (device, priv->http, dest, &error);
+	if (!ret) {
+		egg_debug ("failed to set for output: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* load the device */
+	ret = gcm_device_load (device, &error);
+	if (!ret) {
+		egg_warning ("failed to load: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* add to the array */
+	g_ptr_array_add (priv->array, g_object_ref (device));
+
+	/* signal the addition */
+	egg_debug ("emit: added %s to device list", gcm_device_get_id (device));
+	g_signal_emit (client, signals[SIGNAL_ADDED], 0, device);
+out:
+	if (device != NULL)
+		g_object_unref (device);
+}
+
+/**
+ * gcm_client_add_connected_devices_cups:
+ **/
+static gboolean
+gcm_client_add_connected_devices_cups (GcmClient *client, GError **error)
+{
+	gint num_dests;
+	cups_dest_t *dests;
+	gint i;
+	GcmClientPrivate *priv = client->priv;
+
+	num_dests = cupsGetDests2 (priv->http, &dests);
+	egg_debug ("got %i printers", num_dests);
+
+	/* get printers on the local server */
+	for (i = 0; i < num_dests; i++)
+		gcm_client_cups_add (client, dests[i]);
+	cupsFreeDests (num_dests, dests);
+	return TRUE;
+}
+
+/**
  * gcm_client_add_unconnected_device:
  **/
 static void
@@ -609,13 +671,18 @@ gcm_client_add_connected (GcmClient *client, GError **error)
 
 	g_return_val_if_fail (GCM_IS_CLIENT (client), FALSE);
 
-	/* usb */
-	ret = gcm_client_add_connected_devices_usb (client, error);
+	/* udev */
+	ret = gcm_client_add_connected_devices_udev (client, error);
 	if (!ret)
 		goto out;
 
-	/* xorg */
+	/* xrandr */
 	ret = gcm_client_add_connected_devices_xrandr (client, error);
+	if (!ret)
+		goto out;
+
+	/* cups */
+	ret = gcm_client_add_connected_devices_cups (client, error);
 	if (!ret)
 		goto out;
 out:
@@ -817,6 +884,12 @@ gcm_client_init (GcmClient *client)
 	client->priv->gudev_client = g_udev_client_new (subsystems);
 	g_signal_connect (client->priv->gudev_client, "uevent",
 			  G_CALLBACK (gcm_client_uevent_cb), client);
+
+	/* for CUPS */
+	httpInitialize();
+
+	/* should be okay for localhost */
+	client->priv->http = httpConnectEncrypt (cupsServer (), ippPort (), cupsEncryption ());
 }
 
 /**
@@ -832,6 +905,7 @@ gcm_client_finalize (GObject *object)
 	g_ptr_array_unref (priv->array);
 	g_object_unref (priv->gudev_client);
 	g_object_unref (priv->screen);
+	httpClose (priv->http);
 
 	G_OBJECT_CLASS (gcm_client_parent_class)->finalize (object);
 }

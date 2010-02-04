@@ -26,6 +26,8 @@
 #include <cups/ppd.h>
 
 #include "gcm-device-cups.h"
+#include "gcm-enum.h"
+#include "gcm-utils.h"
 
 #include "egg-debug.h"
 
@@ -52,11 +54,91 @@ enum {
 G_DEFINE_TYPE (GcmDeviceCups, gcm_device_cups, GCM_TYPE_DEVICE)
 
 /**
- * gcm_device_cups_set_from_instance:
+ * gcm_device_cups_set_from_dest:
  **/
 gboolean
-gcm_device_cups_set_from_instance (GcmDevice *device, gpointer instance, GError **error)
+gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest, GError **error)
 {
+	gint i;
+	ppd_file_t *ppd_file;
+	const gchar *ppd_file_location;
+	gchar *id = NULL;
+	gchar *device_id = NULL;
+	gchar *title = NULL;
+	gchar *serial = NULL;
+	gchar *manufacturer = NULL;
+	gchar *model = NULL;
+	GcmColorspaceEnum colorspace = GCM_COLORSPACE_ENUM_UNKNOWN;
+
+	egg_debug ("name: %s", dest.name);
+	egg_debug ("instance: %s", dest.instance);
+	egg_debug ("num_options: %i", dest.num_options);
+
+	ppd_file_location = cupsGetPPD2 (http, dest.name);
+	ppd_file = ppdOpenFile (ppd_file_location);
+
+	egg_debug ("ppd_file_location=%s", ppd_file_location);
+
+	for (i = 0; i < ppd_file->num_attrs; i++) {
+		const gchar *keyword;
+		const gchar *value;
+
+		/* get the keyword and value */
+		keyword = ppd_file->attrs[i]->name;
+		value = ppd_file->attrs[i]->value;
+
+		/* ignore some */
+		if (g_strcmp0 (keyword, "Font") == 0)
+			continue;
+		if (g_strcmp0 (keyword, "Product") == 0)
+			continue;
+		if (g_strcmp0 (keyword, "ParamCustomPageSize") == 0)
+			continue;
+
+		/* check to see if there is anything interesting */
+		if (g_strcmp0 (keyword, "Manufacturer") == 0) {
+			manufacturer = g_strdup (value);
+		} else if (g_strcmp0 (keyword, "ModelName") == 0) {
+			model = g_strdup (value);
+		} else if (g_strcmp0 (keyword, "ShortNickName") == 0) {
+			title = g_strdup (value);
+		} else if (g_strcmp0 (keyword, "1284DeviceID") == 0) {
+			device_id = g_strdup (value);
+		} else if (g_strcmp0 (keyword, "DefaultColorSpace") == 0) {
+			if (g_strcmp0 (value, "RGB") == 0)
+				colorspace = GCM_COLORSPACE_ENUM_RGB;
+			else if (g_strcmp0 (value, "CMYK") == 0)
+				colorspace = GCM_COLORSPACE_ENUM_CMYK;
+			else
+				egg_warning ("colorspace not recognised: %s", value);
+		}
+
+		egg_debug ("keyword: %s, value: %s, spec: %s", keyword, value, ppd_file->attrs[i]->spec);
+	}
+
+	/* convert device_id 'MFG:HP;MDL:deskjet d1300 series;DES:deskjet d1300 series;' to suitable id */
+	id = g_strdup_printf ("cups_%s", device_id);
+	gcm_utils_alphanum_lcase (id);
+
+	g_object_set (device,
+		      "type", GCM_DEVICE_TYPE_ENUM_PRINTER,
+		      "colorspace", colorspace,
+		      "id", id,
+		      "connected", TRUE,
+//		      "serial", serial,
+		      "model", model,
+		      "manufacturer", manufacturer,
+		      "title", title,
+		      "native-device", device_id,
+		      NULL);
+
+	g_free (serial);
+	g_free (manufacturer);
+	g_free (model);
+	g_free (id);
+	g_free (device_id);
+	g_free (title);
+	ppdClose (ppd_file);
 	return TRUE;
 }
 

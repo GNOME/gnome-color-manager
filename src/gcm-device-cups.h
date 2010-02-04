@@ -23,6 +23,7 @@
 #define __GCM_DEVICE_CUPS_H
 
 #include <glib-object.h>
+#include <cups/cups.h>
 
 #include "gcm-device.h"
 
@@ -49,8 +50,9 @@ struct _GcmDeviceCupsClass
 
 GType		 gcm_device_cups_get_type		  	(void);
 GcmDevice	*gcm_device_cups_new				(void);
-gboolean	 gcm_device_cups_set_from_instance		(GcmDevice	*device,
-								 gpointer	 instance,
+gboolean	 gcm_device_cups_set_from_dest			(GcmDevice	*device,
+								 http_t		*http,
+								 cups_dest_t	 dest,
 								 GError		**error);
 
 G_END_DECLS
