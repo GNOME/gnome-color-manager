@@ -44,9 +44,6 @@
 #define GCM_SETTINGS_CALIBRATION_LENGTH		"/apps/gnome-color-manager/calibration_length"
 #define GCM_SETTINGS_SHOW_FINE_TUNING		"/apps/gnome-color-manager/show_fine_tuning"
 
-gboolean	 gcm_utils_set_gamma_for_device		(GcmDevice		*device,
-							 GError			**error);
-GPtrArray	*gcm_utils_get_profile_filenames	(void);
 gboolean	 gcm_utils_mkdir_and_copy		(const gchar		*source,
 							 const gchar		*destination,
 							 GError			**error);

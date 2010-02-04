@@ -30,6 +30,7 @@
 
 #include "gcm-utils.h"
 #include "gcm-client.h"
+#include "gcm-device-xrandr.h"
 
 /**
  * main:
@@ -84,7 +85,7 @@ main (int argc, char **argv)
 
 		/* set gamma for device */
 		egg_debug ("setting %s gamma", gcm_device_get_id (device));
-		ret = gcm_utils_set_gamma_for_device (device, &error);
+		ret = gcm_device_xrandr_set_gamma (GCM_DEVICE_XRANDR (device), &error);
 		if (!ret) {
 			retval = 1;
 			egg_warning ("failed to set gamma: %s", error->message);

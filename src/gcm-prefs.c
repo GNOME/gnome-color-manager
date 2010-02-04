@@ -37,6 +37,7 @@
 #include "gcm-cie-widget.h"
 #include "gcm-client.h"
 #include "gcm-color-device.h"
+#include "gcm-device-xrandr.h"
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
 #include "gcm-trc-widget.h"
@@ -384,7 +385,7 @@ gcm_prefs_calibrate_display (GcmCalibrate *calibrate)
 out:
 	/* need to set the gamma back to the default after calibration */
 	error = NULL;
-	ret_tmp = gcm_utils_set_gamma_for_device (current_device, &error);
+	ret_tmp = gcm_device_xrandr_set_gamma (GCM_DEVICE_XRANDR (current_device), &error);
 	if (!ret_tmp) {
 		egg_warning ("failed to set output gamma: %s", error->message);
 		g_error_free (error);
@@ -1934,7 +1935,7 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 	/* italic for non-connected devices */
 	if (connected) {
 		/* set the gamma on the device */
-		ret = gcm_utils_set_gamma_for_device (device, &error);
+		ret = gcm_device_xrandr_set_gamma (GCM_DEVICE_XRANDR (device), &error);
 		if (!ret) {
 			egg_warning ("failed to set output gamma: %s", error->message);
 			g_error_free (error);
@@ -2071,7 +2072,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 
 		/* set the gamma for display types */
 		if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
-			ret = gcm_utils_set_gamma_for_device (current_device, &error);
+			ret = gcm_device_xrandr_set_gamma (GCM_DEVICE_XRANDR (current_device), &error);
 			if (!ret) {
 				egg_warning ("failed to set output gamma: %s", error->message);
 				g_error_free (error);
@@ -2124,7 +2125,7 @@ gcm_prefs_slider_changed_cb (GtkRange *range, gpointer *user_data)
 	}
 
 	/* actually set the new profile */
-	ret = gcm_utils_set_gamma_for_device (current_device, &error);
+	ret = gcm_device_xrandr_set_gamma (GCM_DEVICE_XRANDR (current_device), &error);
 	if (!ret) {
 		egg_warning ("failed to set output gamma: %s", error->message);
 		g_error_free (error);
@@ -2617,7 +2618,7 @@ gcm_prefs_reset_devices_idle_cb (gpointer user_data)
 			continue;
 
 		/* set gamma for device */
-		ret = gcm_utils_set_gamma_for_device (device, &error);
+		ret = gcm_device_xrandr_set_gamma (GCM_DEVICE_XRANDR (device), &error);
 		if (!ret) {
 			egg_warning ("failed to set gamma: %s", error->message);
 			g_error_free (error);

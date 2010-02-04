@@ -23,11 +23,19 @@
 
 #include <glib-object.h>
 #include <math.h>
+#include <libgnomeui/gnome-rr.h>
+#include <X11/extensions/Xrandr.h>
+#include <X11/extensions/xf86vmode.h>
+#include <gconf/gconf-client.h>
+#include <gdk/gdkx.h>
 
 #include "gcm-device-xrandr.h"
 #include "gcm-edid.h"
 #include "gcm-dmi.h"
 #include "gcm-utils.h"
+#include "gcm-xserver.h"
+#include "gcm-screen.h"
+#include "gcm-clut.h"
 
 #include "egg-debug.h"
 
@@ -43,8 +51,12 @@ static void     gcm_device_xrandr_finalize	(GObject     *object);
 struct _GcmDeviceXrandrPrivate
 {
 	gchar				*native_device;
+	guint				 gamma_size;
 	GcmEdid				*edid;
 	GcmDmi				*dmi;
+	GConfClient			*gconf_client;
+	GcmXserver			*xserver;
+	GcmScreen			*screen;
 };
 
 enum {
@@ -71,7 +83,6 @@ gcm_device_xrandr_get_output_name (GcmDeviceXrandr *device_xrandr, GnomeRROutput
 	gboolean ret;
 	guint width = 0;
 	guint height = 0;
-	const guint8 *data;
 	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
 
 	/* blank */
@@ -81,19 +92,6 @@ gcm_device_xrandr_get_output_name (GcmDeviceXrandr *device_xrandr, GnomeRROutput
 	ret = gnome_rr_output_is_connected (output);
 	if (!ret)
 		goto out;
-
-	/* parse the EDID to get a crtc-specific name, not an output specific name */
-	data = gnome_rr_output_get_edid_data (output);
-	if (data != NULL) {
-		ret = gcm_edid_parse (priv->edid, data, NULL);
-		if (!ret) {
-			egg_warning ("failed to parse edid");
-			goto out;
-		}
-	} else {
-		/* reset, as not available */
-		gcm_edid_reset (priv->edid);
-	}
 
 	/* this is an internal panel, use the DMI data */
 	output_name = gnome_rr_output_get_name (output);
@@ -157,7 +155,6 @@ gcm_device_xrandr_get_id_for_xrandr_device (GcmDeviceXrandr *device_xrandr, Gnom
 	gchar *vendor = NULL;
 	gchar *ascii = NULL;
 	gchar *serial = NULL;
-	const guint8 *data;
 	GString *string;
 	gboolean ret;
 	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
@@ -169,19 +166,6 @@ gcm_device_xrandr_get_id_for_xrandr_device (GcmDeviceXrandr *device_xrandr, Gnom
 	ret = gnome_rr_output_is_connected (output);
 	if (!ret)
 		goto out;
-
-	/* parse the EDID to get a crtc-specific name, not an output specific name */
-	data = gnome_rr_output_get_edid_data (output);
-	if (data != NULL) {
-		ret = gcm_edid_parse (priv->edid, data, NULL);
-		if (!ret) {
-			egg_warning ("failed to parse edid");
-			goto out;
-		}
-	} else {
-		/* reset, as not available */
-		gcm_edid_reset (priv->edid);
-	}
 
 	/* find the best option */
 	g_object_get (priv->edid,
@@ -292,6 +276,308 @@ out:
 	return ret;
 }
 
+
+/**
+ * gcm_device_xrandr_get_gamma_size_fallback:
+ **/
+static guint
+gcm_device_xrandr_get_gamma_size_fallback (void)
+{
+	guint size;
+	Bool rc;
+
+	/* this is per-screen, not per output which is less than ideal */
+	gdk_error_trap_push ();
+	egg_warning ("using PER-SCREEN gamma tables as driver is not XRANDR 1.3 compliant");
+	rc = XF86VidModeGetGammaRampSize (GDK_DISPLAY(), gdk_x11_get_default_screen (), (int*) &size);
+	gdk_error_trap_pop ();
+	if (!rc)
+		size = 0;
+
+	return size;
+}
+
+/**
+ * gcm_device_xrandr_get_gamma_size:
+ *
+ * Return value: the gamma size, or 0 if error;
+ **/
+static guint
+gcm_device_xrandr_get_gamma_size (GcmDeviceXrandr *device_xrandr, GnomeRRCrtc *crtc, GError **error)
+{
+	guint id;
+	guint size;
+	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
+
+	/* use cached value */
+	if (priv->gamma_size > 0)
+		return priv->gamma_size;
+
+	/* get id that X recognises */
+	id = gnome_rr_crtc_get_id (crtc);
+
+	/* get the value, and catch errors */
+	gdk_error_trap_push ();
+	size = XRRGetCrtcGammaSize (GDK_DISPLAY(), id);
+	if (gdk_error_trap_pop ())
+		size = 0;
+
+	/* some drivers support Xrandr 1.2, not 1.3 */
+	if (size == 0)
+		size = gcm_device_xrandr_get_gamma_size_fallback ();
+
+	/* no size, or X popped an error */
+	if (size == 0) {
+		g_set_error_literal (error, 1, 0, "failed to get gamma size");
+		goto out;
+	}
+
+	/* save value as this will not change */
+	priv->gamma_size = size;
+out:
+	return size;
+}
+
+/**
+ * gcm_device_xrandr_set_gamma_fallback:
+ **/
+static gboolean
+gcm_device_xrandr_set_gamma_fallback (XRRCrtcGamma *crtc_gamma, guint size)
+{
+	Bool rc;
+
+	/* this is per-screen, not per output which is less than ideal */
+	gdk_error_trap_push ();
+	egg_warning ("using PER-SCREEN gamma tables as driver is not XRANDR 1.3 compliant");
+	rc = XF86VidModeSetGammaRamp (GDK_DISPLAY(), gdk_x11_get_default_screen (), size, crtc_gamma->red, crtc_gamma->green, crtc_gamma->blue);
+	gdk_error_trap_pop ();
+
+	return rc;
+}
+
+/**
+ * gcm_device_xrandr_set_gamma_for_crtc:
+ *
+ * Return value: %TRUE for success;
+ **/
+static gboolean
+gcm_device_xrandr_set_gamma_for_crtc (GcmDeviceXrandr *device_xrandr, GnomeRRCrtc *crtc, GcmClut *clut, GError **error)
+{
+	guint id;
+	gboolean ret = TRUE;
+	GPtrArray *array = NULL;
+	XRRCrtcGamma *crtc_gamma = NULL;
+	guint i;
+	GcmClutData *data;
+
+	/* get data */
+	array = gcm_clut_get_array (clut);
+	if (array == NULL) {
+		ret = FALSE;
+		g_set_error_literal (error, 1, 0, "failed to get CLUT data");
+		goto out;
+	}
+
+	/* no length? */
+	if (array->len == 0) {
+		ret = FALSE;
+		g_set_error_literal (error, 1, 0, "no data in the CLUT array");
+		goto out;
+	}
+
+	/* convert to a type X understands */
+	crtc_gamma = XRRAllocGamma (array->len);
+	for (i=0; i<array->len; i++) {
+		data = g_ptr_array_index (array, i);
+		crtc_gamma->red[i] = data->red;
+		crtc_gamma->green[i] = data->green;
+		crtc_gamma->blue[i] = data->blue;
+	}
+
+	/* get id that X recognises */
+	id = gnome_rr_crtc_get_id (crtc);
+
+	/* get the value, and catch errors */
+	gdk_error_trap_push ();
+	XRRSetCrtcGamma (GDK_DISPLAY(), id, crtc_gamma);
+	gdk_flush ();
+	if (gdk_error_trap_pop ()) {
+		/* some drivers support Xrandr 1.2, not 1.3 */
+		ret = gcm_device_xrandr_set_gamma_fallback (crtc_gamma, array->len);
+		if (!ret) {
+			g_set_error (error, 1, 0, "failed to set crtc gamma %p (%i) on %i", crtc_gamma, array->len, id);
+			goto out;
+		}
+	}
+out:
+	if (crtc_gamma != NULL)
+		XRRFreeGamma (crtc_gamma);
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	return ret;
+}
+
+/**
+ * gcm_device_xrandr_set_gamma:
+ *
+ * Return value: %TRUE for success;
+ **/
+gboolean
+gcm_device_xrandr_set_gamma (GcmDeviceXrandr *device_xrandr, GError **error)
+{
+	gboolean ret = FALSE;
+	GcmClut *clut = NULL;
+	GcmProfile *profile = NULL;
+	GnomeRRCrtc *crtc;
+	GnomeRROutput *output;
+	gint x, y;
+	gchar *filename = NULL;
+	gchar *filename_systemwide = NULL;
+	gfloat gamma_adjust;
+	gfloat brightness;
+	gfloat contrast;
+	gchar *output_name;
+	gchar *id = NULL;
+	guint size;
+	gboolean saved;
+	gboolean use_global;
+	gboolean use_atom;
+	gboolean leftmost_screen = FALSE;
+	GcmDeviceTypeEnum type;
+	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
+
+	g_return_val_if_fail (device_xrandr != NULL, FALSE);
+
+	/* get details about the device */
+	g_object_get (device_xrandr,
+		      "id", &id,
+		      "type", &type,
+		      "saved", &saved,
+		      "profile-filename", &filename,
+		      "gamma", &gamma_adjust,
+		      "brightness", &brightness,
+		      "contrast", &contrast,
+		      "native-device", &output_name,
+		      NULL);
+
+	/* do no set the gamma for non-display types */
+	if (type != GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+		g_set_error (error, 1, 0, "not a display: %s", id);
+		goto out;
+	}
+
+	/* should be set for display types */
+	if (output_name == NULL) {
+		g_set_error (error, 1, 0, "no output name for display: %s", id);
+		goto out;
+	}
+
+	/* if not saved, try to find default filename */
+	if (!saved && filename == NULL) {
+		filename_systemwide = g_strdup_printf ("%s/%s.icc", GCM_SYSTEM_PROFILES_DIR, id);
+		ret = g_file_test (filename_systemwide, G_FILE_TEST_EXISTS);
+		if (ret) {
+			egg_error ("using systemwide %s as profile", filename_systemwide);
+			filename = g_strdup (filename_systemwide);
+		}
+	}
+
+	/* check we have an output */
+	output = gcm_screen_get_output_by_name (priv->screen, output_name, error);
+	if (output == NULL)
+		goto out;
+
+	/* get crtc size */
+	crtc = gnome_rr_output_get_crtc (output);
+	if (crtc == NULL) {
+		g_set_error (error, 1, 0, "failed to get crtc for device: %s", id);
+		goto out;
+	}
+
+	/* get gamma table size */
+	size = gcm_device_xrandr_get_gamma_size (device_xrandr, crtc, error);
+	if (size == 0)
+		goto out;
+
+	/* only set the CLUT if we're not seting the atom */
+	use_global = gconf_client_get_bool (priv->gconf_client, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION, NULL);
+	if (use_global && filename != NULL) {
+		/* create CLUT */
+		profile = gcm_profile_default_new ();
+		ret = gcm_profile_parse (profile, filename, error);
+		if (!ret)
+			goto out;
+
+		/* create a CLUT from the profile */
+		clut = gcm_profile_generate_vcgt (profile, size);
+	}
+
+	/* create dummy CLUT if we failed */
+	if (clut == NULL) {
+		clut = gcm_clut_new ();
+		g_object_set (clut,
+			      "size", size,
+			      NULL);
+	}
+
+	/* do fine adjustment */
+	if (use_global) {
+		g_object_set (clut,
+			      "gamma", gamma_adjust,
+			      "brightness", brightness,
+			      "contrast", contrast,
+			      NULL);
+	}
+
+	/* actually set the gamma */
+	ret = gcm_device_xrandr_set_gamma_for_crtc (device_xrandr, crtc, clut, error);
+	if (!ret)
+		goto out;
+
+	/* is the monitor our primary monitor */
+	gnome_rr_output_get_position (output, &x, &y);
+	leftmost_screen = (x == 0 && y == 0);
+
+	/* either remove the atoms or set them */
+	use_atom = gconf_client_get_bool (priv->gconf_client, GCM_SETTINGS_SET_ICC_PROFILE_ATOM, NULL);
+	if (!use_atom || filename == NULL) {
+
+		/* remove the output atom if there's nothing to show */
+		ret = gcm_xserver_remove_output_profile (priv->xserver, output_name, error);
+		if (!ret)
+			goto out;
+
+		/* primary screen */
+		if (leftmost_screen) {
+			ret = gcm_xserver_remove_root_window_profile (priv->xserver, error);
+			if (!ret)
+				goto out;
+		}
+	} else {
+		/* set the per-output and per screen profile atoms */
+		ret = gcm_xserver_set_output_profile (priv->xserver, output_name, filename, error);
+		if (!ret)
+			goto out;
+
+		/* primary screen */
+		if (leftmost_screen) {
+			ret = gcm_xserver_set_root_window_profile (priv->xserver, filename, error);
+			if (!ret)
+				goto out;
+		}
+	}
+out:
+	g_free (id);
+	g_free (filename);
+	g_free (filename_systemwide);
+	g_free (output_name);
+	if (clut != NULL)
+		g_object_unref (clut);
+	if (profile != NULL)
+		g_object_unref (profile);
+	return ret;
+}
+
 /**
  * gcm_device_xrandr_get_property:
  **/
@@ -363,8 +649,12 @@ gcm_device_xrandr_init (GcmDeviceXrandr *device_xrandr)
 {
 	device_xrandr->priv = GCM_DEVICE_XRANDR_GET_PRIVATE (device_xrandr);
 	device_xrandr->priv->native_device = NULL;
+	device_xrandr->priv->gamma_size = 0;
 	device_xrandr->priv->edid = gcm_edid_new ();
 	device_xrandr->priv->dmi = gcm_dmi_new ();
+	device_xrandr->priv->gconf_client = gconf_client_get_default ();
+	device_xrandr->priv->screen = gcm_screen_new ();
+	device_xrandr->priv->xserver = gcm_xserver_new ();
 }
 
 /**
@@ -379,6 +669,9 @@ gcm_device_xrandr_finalize (GObject *object)
 	g_free (priv->native_device);
 	g_object_unref (priv->edid);
 	g_object_unref (priv->dmi);
+	g_object_unref (priv->gconf_client);
+	g_object_unref (priv->screen);
+	g_object_unref (priv->xserver);
 
 	G_OBJECT_CLASS (gcm_device_xrandr_parent_class)->finalize (object);
 }

@@ -48,11 +48,13 @@ struct _GcmDeviceXrandrClass
 	GcmDeviceClass	parent_class;
 };
 
-GType		 gcm_device_xrandr_get_type		  	(void);
-GcmDevice	*gcm_device_xrandr_new				(void);
-gboolean	 gcm_device_xrandr_set_from_output		(GcmDevice	*device,
-								 GnomeRROutput	*output,
-								 GError		**error);
+GType		 gcm_device_xrandr_get_type		(void);
+GcmDevice	*gcm_device_xrandr_new			(void);
+gboolean	 gcm_device_xrandr_set_from_output	(GcmDevice		*device,
+							 GnomeRROutput		*output,
+							 GError			**error);
+gboolean	 gcm_device_xrandr_set_gamma		(GcmDeviceXrandr	*device_xrandr,
+							 GError			**error);
 
 G_END_DECLS
 
