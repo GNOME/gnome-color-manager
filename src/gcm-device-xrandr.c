@@ -274,6 +274,7 @@ gcm_device_xrandr_set_from_output (GcmDevice *device, GnomeRROutput *output, GEr
 	title = gcm_device_xrandr_get_output_name (GCM_DEVICE_XRANDR(device), output);
 	g_object_set (device,
 		      "type", GCM_DEVICE_TYPE_ENUM_DISPLAY,
+		      "colorspace", GCM_COLORSPACE_ENUM_RGB,
 		      "id", id,
 		      "connected", TRUE,
 		      "serial", serial,

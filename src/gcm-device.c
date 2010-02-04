@@ -61,6 +61,7 @@ struct _GcmDevicePrivate
 	gchar				*profile_filename;
 	gchar				*title;
 	GConfClient			*gconf_client;
+	GcmColorspaceEnum		 colorspace;
 };
 
 enum {
@@ -77,7 +78,7 @@ enum {
 	PROP_CONTRAST,
 	PROP_PROFILE_FILENAME,
 	PROP_TITLE,
-	PROP_NATIVE_DEVICE_UDEV,
+	PROP_COLORSPACE,
 	PROP_LAST
 };
 
@@ -434,6 +435,9 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_TITLE:
 		g_value_set_string (value, priv->title);
 		break;
+	case PROP_COLORSPACE:
+		g_value_set_uint (value, priv->colorspace);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -491,6 +495,9 @@ gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GP
 		break;
 	case PROP_CONTRAST:
 		priv->contrast = g_value_get_float (value);
+		break;
+	case PROP_COLORSPACE:
+		priv->colorspace = g_value_get_uint (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -606,6 +613,14 @@ gcm_device_class_init (GcmDeviceClass *klass)
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_TITLE, pspec);
 
+	/**
+	 * GcmDevice:colorspace:
+	 */
+	pspec = g_param_spec_uint ("colorspace", NULL, NULL,
+				   0, GCM_COLORSPACE_ENUM_LAST, GCM_COLORSPACE_ENUM_UNKNOWN,
+				   G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_COLORSPACE, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmDevicePrivate));
 }
 
@@ -634,6 +649,7 @@ gcm_device_init (GcmDevice *device)
 		device->priv->gamma = 1.0f;
 	device->priv->brightness = 0.0f;
 	device->priv->contrast = 100.f;
+	device->priv->colorspace = GCM_COLORSPACE_ENUM_UNKNOWN;
 }
 
 /**

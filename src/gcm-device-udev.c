@@ -120,6 +120,7 @@ gcm_device_udev_set_from_device (GcmDevice *device, GUdevDevice *udev_device, GE
 
 	g_object_set (device,
 		      "type", type,
+		      "colorspace", GCM_COLORSPACE_ENUM_RGB,
 		      "id", id,
 		      "connected", TRUE,
 		      "serial", serial,
