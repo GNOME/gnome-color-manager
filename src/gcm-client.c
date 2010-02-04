@@ -33,7 +33,6 @@
 #include <glib-object.h>
 #include <gudev/gudev.h>
 #include <libgnomeui/gnome-rr.h>
-#include <math.h>
 
 #include "gcm-client.h"
 #include "gcm-device-xrandr.h"
@@ -41,8 +40,6 @@
 #include "gcm-device-cups.h"
 #include "gcm-screen.h"
 #include "gcm-utils.h"
-#include "gcm-edid.h"
-#include "gcm-dmi.h"
 
 #include "egg-debug.h"
 
@@ -63,8 +60,6 @@ struct _GcmClientPrivate
 	GPtrArray			*array;
 	GUdevClient			*gudev_client;
 	GcmScreen			*screen;
-	GcmEdid				*edid;
-	GcmDmi				*dmi;
 };
 
 enum {
@@ -345,170 +340,6 @@ gcm_client_add_connected_devices_usb (GcmClient *client, GError **error)
 }
 
 /**
- * gcm_client_get_output_name:
- *
- * Return value: the output name, free with g_free().
- **/
-static gchar *
-gcm_client_get_output_name (GcmClient *client, GnomeRROutput *output)
-{
-	const gchar *output_name;
-	gchar *name = NULL;
-	gchar *vendor = NULL;
-	GString *string;
-	gboolean ret;
-	guint width = 0;
-	guint height = 0;
-	const guint8 *data;
-	GcmClientPrivate *priv = client->priv;
-
-	/* blank */
-	string = g_string_new ("");
-
-	/* if nothing connected then fall back to the connector name */
-	ret = gnome_rr_output_is_connected (output);
-	if (!ret)
-		goto out;
-
-	/* parse the EDID to get a crtc-specific name, not an output specific name */
-	data = gnome_rr_output_get_edid_data (output);
-	if (data != NULL) {
-		ret = gcm_edid_parse (priv->edid, data, NULL);
-		if (!ret) {
-			egg_warning ("failed to parse edid");
-			goto out;
-		}
-	} else {
-		/* reset, as not available */
-		gcm_edid_reset (priv->edid);
-	}
-
-	/* this is an internal panel, use the DMI data */
-	output_name = gnome_rr_output_get_name (output);
-	ret = gcm_utils_output_is_lcd_internal (output_name);
-	if (ret) {
-		/* find the machine details */
-		g_object_get (priv->dmi,
-			      "name", &name,
-			      "vendor", &vendor,
-			      NULL);
-
-		/* TRANSLATORS: this is the name of the internal panel */
-		output_name = _("Laptop LCD");
-	} else {
-		/* find the panel details */
-		g_object_get (priv->edid,
-			      "monitor-name", &name,
-			      "vendor-name", &vendor,
-			      NULL);
-	}
-
-	/* prepend vendor if available */
-	if (vendor != NULL && name != NULL)
-		g_string_append_printf (string, "%s - %s", vendor, name);
-	else if (name != NULL)
-		g_string_append (string, name);
-	else
-		g_string_append (string, output_name);
-
-out:
-	/* find the best option */
-	g_object_get (priv->edid,
-		      "width", &width,
-		      "height", &height,
-		      NULL);
-
-	/* append size if available */
-	if (width != 0 && height != 0) {
-		gfloat diag;
-
-		/* calculate the dialgonal using Pythagorean theorem */
-		diag = sqrtf ((powf (width,2)) + (powf (height, 2)));
-
-		/* print it in inches */
-		g_string_append_printf (string, " - %i\"", (guint) ((diag * 0.393700787f) + 0.5f));
-	}
-
-	g_free (name);
-	g_free (vendor);
-	return g_string_free (string, FALSE);
-}
-
-/**
- * gcm_client_get_id_for_xrandr_device:
- **/
-static gchar *
-gcm_client_get_id_for_xrandr_device (GcmClient *client, GnomeRROutput *output)
-{
-	const gchar *output_name;
-	gchar *name = NULL;
-	gchar *vendor = NULL;
-	gchar *ascii = NULL;
-	gchar *serial = NULL;
-	const guint8 *data;
-	GString *string;
-	gboolean ret;
-	GcmClientPrivate *priv = client->priv;
-
-	/* blank */
-	string = g_string_new ("xrandr");
-
-	/* if nothing connected then fall back to the connector name */
-	ret = gnome_rr_output_is_connected (output);
-	if (!ret)
-		goto out;
-
-	/* parse the EDID to get a crtc-specific name, not an output specific name */
-	data = gnome_rr_output_get_edid_data (output);
-	if (data != NULL) {
-		ret = gcm_edid_parse (priv->edid, data, NULL);
-		if (!ret) {
-			egg_warning ("failed to parse edid");
-			goto out;
-		}
-	} else {
-		/* reset, as not available */
-		gcm_edid_reset (priv->edid);
-	}
-
-	/* find the best option */
-	g_object_get (priv->edid,
-		      "monitor-name", &name,
-		      "vendor-name", &vendor,
-		      "ascii-string", &ascii,
-		      "serial-number", &serial,
-		      NULL);
-
-	/* append data if available */
-	if (vendor != NULL)
-		g_string_append_printf (string, "_%s", vendor);
-	if (name != NULL)
-		g_string_append_printf (string, "_%s", name);
-	if (ascii != NULL)
-		g_string_append_printf (string, "_%s", ascii);
-	if (serial != NULL)
-		g_string_append_printf (string, "_%s", serial);
-out:
-	/* fallback to the output name */
-	if (string->len == 6) {
-		output_name = gnome_rr_output_get_name (output);
-		ret = gcm_utils_output_is_lcd_internal (output_name);
-		if (ret)
-			output_name = "LVDS";
-		g_string_append (string, output_name);
-	}
-
-	/* replace unsafe chars */
-	gcm_utils_alphanum_lcase (string->str);
-
-	g_free (name);
-	g_free (vendor);
-	g_free (ascii);
-	g_free (serial);
-	return g_string_free (string, FALSE);
-}
-
-/**
  * gcm_client_get_device_by_window_covered:
  **/
 static gfloat
@@ -619,9 +450,11 @@ gcm_client_get_device_by_window (GcmClient *client, GdkWindow *window)
 out:
 	/* if we found an output, get the device */
 	if (output_best != NULL) {
-		id = gcm_client_get_id_for_xrandr_device (client, output_best);
-		egg_debug ("id: %s", id);
-		device = gcm_client_get_device_by_id (client, id);
+		GcmDevice *device_tmp;
+		device_tmp = gcm_device_xrandr_new ();
+		gcm_device_xrandr_set_from_output (device_tmp, output_best, NULL);
+		device = gcm_client_get_device_by_id (client, gcm_device_get_id (device_tmp));
+		g_free (device_tmp);
 	}
 	g_free (id);
 	return device;
@@ -633,17 +466,11 @@ out:
 static void
 gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 {
-	gchar *title = NULL;
-	gchar *id = NULL;
 	gboolean ret;
-	GcmDevice *device = NULL;
-	GError *error = NULL;
-	const gchar *output_name;
-	gchar *serial = NULL;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
-	const guint8 *data;
 	gboolean connected;
+	GError *error = NULL;
+	GcmDevice *device = NULL;
+	GcmDevice *device_tmp = NULL;
 	GcmClientPrivate *priv = client->priv;
 
 	/* if nothing connected then ignore */
@@ -653,29 +480,21 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 		goto out;
 	}
 
-	/* parse the EDID to get a crtc-specific name, not an output specific name */
-	data = gnome_rr_output_get_edid_data (output);
-	if (data != NULL) {
-		ret = gcm_edid_parse (priv->edid, data, NULL);
-		if (!ret) {
-			egg_warning ("failed to parse edid");
-			goto out;
-		}
-	} else {
-		/* reset, as not available */
-		gcm_edid_reset (priv->edid);
+	/* create new device */
+	device = gcm_device_xrandr_new ();
+	ret = gcm_device_xrandr_set_from_output (device, output, &error);
+	if (!ret) {
+		egg_debug ("failed to set for output: %s", error->message);
+		g_error_free (error);
+		goto out;
 	}
 
-	/* get details */
-	id = gcm_client_get_id_for_xrandr_device (client, output);
-	egg_debug ("asking to add %s", id);
-
 	/* we might have a previous saved device with this ID, in which case nuke it */
-	device = gcm_client_get_device_by_id (client, id);
-	if (device != NULL) {
+	device_tmp = gcm_client_get_device_by_id (client, gcm_device_get_id (device));
+	if (device_tmp != NULL) {
 
 		/* old device not connected */
-		g_object_get (device,
+		g_object_get (device_tmp,
 			      "connected", &connected,
 			      NULL);
 
@@ -686,45 +505,15 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 		}
 
 		/* remove from the array */
-		g_ptr_array_remove (client->priv->array, device);
+		g_ptr_array_remove (client->priv->array, device_tmp);
 
 		/* emit a signal */
-		egg_debug ("emit removed: %s (unconnected device that has just been connected)", id);
-		g_signal_emit (client, signals[SIGNAL_REMOVED], 0, device);
+		egg_debug ("emit removed: %s (unconnected device that has just been connected)", gcm_device_get_id (device_tmp));
+		g_signal_emit (client, signals[SIGNAL_REMOVED], 0, device_tmp);
 
 		/* unref our copy */
-		g_object_unref (device);
+		g_object_unref (device_tmp);
 	}
-
-	/* get data about the display */
-	g_object_get (priv->edid,
-		      "monitor-name", &model,
-		      "vendor-name", &manufacturer,
-		      "serial-number", &serial,
-		      NULL);
-
-	/* refine data if it's missing */
-	output_name = gnome_rr_output_get_name (output);
-	ret = gcm_utils_output_is_lcd_internal (output_name);
-	if (ret && model == NULL) {
-		g_object_get (priv->dmi,
-			      "version", &model,
-			      NULL);
-	}
-
-	/* add new device */
-	device = gcm_device_xrandr_new ();
-	title = gcm_client_get_output_name (client, output);
-	g_object_set (device,
-		      "type", GCM_DEVICE_TYPE_ENUM_DISPLAY,
-		      "id", id,
-		      "connected", TRUE,
-		      "serial", serial,
-		      "model", model,
-		      "manufacturer", manufacturer,
-		      "title", title,
-		      "native-device", output_name,
-		      NULL);
 
 	/* load the device */
 	ret = gcm_device_load (device, &error);
@@ -738,16 +527,13 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 	g_ptr_array_add (priv->array, g_object_ref (device));
 
 	/* signal the addition */
-	egg_debug ("emit: added %s to device list", id);
+	egg_debug ("emit: added %s to device list", gcm_device_get_id (device));
 	g_signal_emit (client, signals[SIGNAL_ADDED], 0, device);
 out:
 	if (device != NULL)
 		g_object_unref (device);
-	g_free (id);
-	g_free (serial);
-	g_free (manufacturer);
-	g_free (model);
-	g_free (title);
+	if (device_tmp != NULL)
+		g_object_unref (device_tmp);
 }
 
 /**
@@ -1081,8 +867,6 @@ gcm_client_init (GcmClient *client)
 	client->priv = GCM_CLIENT_GET_PRIVATE (client);
 	client->priv->display_name = NULL;
 	client->priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
-	client->priv->edid = gcm_edid_new ();
-	client->priv->dmi = gcm_dmi_new ();
 	client->priv->screen = gcm_screen_new ();
 	g_signal_connect (client->priv->screen, "outputs-changed",
 			  G_CALLBACK (gcm_client_randr_event_cb), client);
@@ -1105,8 +889,6 @@ gcm_client_finalize (GObject *object)
 	g_free (priv->display_name);
 	g_ptr_array_unref (priv->array);
 	g_object_unref (priv->gudev_client);
-	g_object_unref (priv->edid);
-	g_object_unref (priv->dmi);
 	g_object_unref (priv->screen);
 
 	G_OBJECT_CLASS (gcm_client_parent_class)->finalize (object);

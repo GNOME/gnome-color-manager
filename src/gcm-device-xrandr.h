@@ -23,6 +23,7 @@
 #define __GCM_DEVICE_XRANDR_H
 
 #include <glib-object.h>
+#include <libgnomeui/gnome-rr.h>
 
 #include "gcm-device.h"
 
@@ -49,8 +50,8 @@ struct _GcmDeviceXrandrClass
 
 GType		 gcm_device_xrandr_get_type		  	(void);
 GcmDevice	*gcm_device_xrandr_new				(void);
-gboolean	 gcm_device_xrandr_set_from_instance		(GcmDevice	*device,
-								 gpointer	 instance,
+gboolean	 gcm_device_xrandr_set_from_output		(GcmDevice	*device,
+								 GnomeRROutput	*output,
 								 GError		**error);
 
 G_END_DECLS

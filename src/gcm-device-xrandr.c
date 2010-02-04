@@ -22,8 +22,12 @@
 #include "config.h"
 
 #include <glib-object.h>
+#include <math.h>
 
 #include "gcm-device-xrandr.h"
+#include "gcm-edid.h"
+#include "gcm-dmi.h"
+#include "gcm-utils.h"
 
 #include "egg-debug.h"
 
@@ -39,6 +43,8 @@ static void     gcm_device_xrandr_finalize	(GObject     *object);
 struct _GcmDeviceXrandrPrivate
 {
 	gchar				*native_device;
+	GcmEdid				*edid;
+	GcmDmi				*dmi;
 };
 
 enum {
@@ -49,13 +55,240 @@ enum {
 
 G_DEFINE_TYPE (GcmDeviceXrandr, gcm_device_xrandr, GCM_TYPE_DEVICE)
 
+
 /**
- * gcm_device_xrandr_set_from_instance:
+ * gcm_device_xrandr_get_output_name:
+ *
+ * Return value: the output name, free with g_free().
+ **/
+static gchar *
+gcm_device_xrandr_get_output_name (GcmDeviceXrandr *device_xrandr, GnomeRROutput *output)
+{
+	const gchar *output_name;
+	gchar *name = NULL;
+	gchar *vendor = NULL;
+	GString *string;
+	gboolean ret;
+	guint width = 0;
+	guint height = 0;
+	const guint8 *data;
+	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
+
+	/* blank */
+	string = g_string_new ("");
+
+	/* if nothing connected then fall back to the connector name */
+	ret = gnome_rr_output_is_connected (output);
+	if (!ret)
+		goto out;
+
+	/* parse the EDID to get a crtc-specific name, not an output specific name */
+	data = gnome_rr_output_get_edid_data (output);
+	if (data != NULL) {
+		ret = gcm_edid_parse (priv->edid, data, NULL);
+		if (!ret) {
+			egg_warning ("failed to parse edid");
+			goto out;
+		}
+	} else {
+		/* reset, as not available */
+		gcm_edid_reset (priv->edid);
+	}
+
+	/* this is an internal panel, use the DMI data */
+	output_name = gnome_rr_output_get_name (output);
+	ret = gcm_utils_output_is_lcd_internal (output_name);
+	if (ret) {
+		/* find the machine details */
+		g_object_get (priv->dmi,
+			      "name", &name,
+			      "vendor", &vendor,
+			      NULL);
+
+		/* TRANSLATORS: this is the name of the internal panel */
+		output_name = _("Laptop LCD");
+	} else {
+		/* find the panel details */
+		g_object_get (priv->edid,
+			      "monitor-name", &name,
+			      "vendor-name", &vendor,
+			      NULL);
+	}
+
+	/* prepend vendor if available */
+	if (vendor != NULL && name != NULL)
+		g_string_append_printf (string, "%s - %s", vendor, name);
+	else if (name != NULL)
+		g_string_append (string, name);
+	else
+		g_string_append (string, output_name);
+
+out:
+	/* find the best option */
+	g_object_get (priv->edid,
+		      "width", &width,
+		      "height", &height,
+		      NULL);
+
+	/* append size if available */
+	if (width != 0 && height != 0) {
+		gfloat diag;
+
+		/* calculate the dialgonal using Pythagorean theorem */
+		diag = sqrtf ((powf (width,2)) + (powf (height, 2)));
+
+		/* print it in inches */
+		g_string_append_printf (string, " - %i\"", (guint) ((diag * 0.393700787f) + 0.5f));
+	}
+
+	g_free (name);
+	g_free (vendor);
+	return g_string_free (string, FALSE);
+}
+
+/**
+ * gcm_device_xrandr_get_id_for_xrandr_device:
+ **/
+static gchar *
+gcm_device_xrandr_get_id_for_xrandr_device (GcmDeviceXrandr *device_xrandr, GnomeRROutput *output)
+{
+	const gchar *output_name;
+	gchar *name = NULL;
+	gchar *vendor = NULL;
+	gchar *ascii = NULL;
+	gchar *serial = NULL;
+	const guint8 *data;
+	GString *string;
+	gboolean ret;
+	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
+
+	/* blank */
+	string = g_string_new ("xrandr");
+
+	/* if nothing connected then fall back to the connector name */
+	ret = gnome_rr_output_is_connected (output);
+	if (!ret)
+		goto out;
+
+	/* parse the EDID to get a crtc-specific name, not an output specific name */
+	data = gnome_rr_output_get_edid_data (output);
+	if (data != NULL) {
+		ret = gcm_edid_parse (priv->edid, data, NULL);
+		if (!ret) {
+			egg_warning ("failed to parse edid");
+			goto out;
+		}
+	} else {
+		/* reset, as not available */
+		gcm_edid_reset (priv->edid);
+	}
+
+	/* find the best option */
+	g_object_get (priv->edid,
+		      "monitor-name", &name,
+		      "vendor-name", &vendor,
+		      "ascii-string", &ascii,
+		      "serial-number", &serial,
+		      NULL);
+
+	/* append data if available */
+	if (vendor != NULL)
+		g_string_append_printf (string, "_%s", vendor);
+	if (name != NULL)
+		g_string_append_printf (string, "_%s", name);
+	if (ascii != NULL)
+		g_string_append_printf (string, "_%s", ascii);
+	if (serial != NULL)
+		g_string_append_printf (string, "_%s", serial);
+out:
+	/* fallback to the output name */
+	if (string->len == 6) {
+		output_name = gnome_rr_output_get_name (output);
+		ret = gcm_utils_output_is_lcd_internal (output_name);
+		if (ret)
+			output_name = "LVDS";
+		g_string_append (string, output_name);
+	}
+
+	/* replace unsafe chars */
+	gcm_utils_alphanum_lcase (string->str);
+
+	g_free (name);
+	g_free (vendor);
+	g_free (ascii);
+	g_free (serial);
+	return g_string_free (string, FALSE);
+}
+
+/**
+ * gcm_device_xrandr_set_from_output:
  **/
 gboolean
-gcm_device_xrandr_set_from_instance (GcmDevice *device, gpointer instance, GError **error)
+gcm_device_xrandr_set_from_output (GcmDevice *device, GnomeRROutput *output, GError **error)
 {
-	return TRUE;
+	gchar *title = NULL;
+	gchar *id = NULL;
+	gboolean ret = TRUE;
+	gboolean lcd_internal;
+	const gchar *output_name;
+	gchar *serial = NULL;
+	gchar *manufacturer = NULL;
+	gchar *model = NULL;
+	const guint8 *data;
+	GcmDeviceXrandrPrivate *priv = GCM_DEVICE_XRANDR(device)->priv;
+
+	/* parse the EDID to get a crtc-specific name, not an output specific name */
+	data = gnome_rr_output_get_edid_data (output);
+	if (data != NULL) {
+		ret = gcm_edid_parse (priv->edid, data, NULL);
+		if (!ret) {
+			g_set_error (error, 1, 0, "failed to parse edid");
+			goto out;
+		}
+	} else {
+		/* reset, as not available */
+		gcm_edid_reset (priv->edid);
+	}
+
+	/* get details */
+	id = gcm_device_xrandr_get_id_for_xrandr_device (GCM_DEVICE_XRANDR(device), output);
+	egg_debug ("asking to add %s", id);
+
+	/* get data about the display */
+	g_object_get (priv->edid,
+		      "monitor-name", &model,
+		      "vendor-name", &manufacturer,
+		      "serial-number", &serial,
+		      NULL);
+
+	/* refine data if it's missing */
+	output_name = gnome_rr_output_get_name (output);
+	lcd_internal = gcm_utils_output_is_lcd_internal (output_name);
+	if (lcd_internal && model == NULL) {
+		g_object_get (priv->dmi,
+			      "version", &model,
+			      NULL);
+	}
+
+	/* add new device */
+	title = gcm_device_xrandr_get_output_name (GCM_DEVICE_XRANDR(device), output);
+	g_object_set (device,
+		      "type", GCM_DEVICE_TYPE_ENUM_DISPLAY,
+		      "id", id,
+		      "connected", TRUE,
+		      "serial", serial,
+		      "model", model,
+		      "manufacturer", manufacturer,
+		      "title", title,
+		      "native-device", output_name,
+		      NULL);
+out:
+	g_free (id);
+	g_free (serial);
+	g_free (manufacturer);
+	g_free (model);
+	g_free (title);
+	return ret;
 }
 
 /**
@@ -129,6 +362,8 @@ gcm_device_xrandr_init (GcmDeviceXrandr *device_xrandr)
 {
 	device_xrandr->priv = GCM_DEVICE_XRANDR_GET_PRIVATE (device_xrandr);
 	device_xrandr->priv->native_device = NULL;
+	device_xrandr->priv->edid = gcm_edid_new ();
+	device_xrandr->priv->dmi = gcm_dmi_new ();
 }
 
 /**
@@ -141,6 +376,8 @@ gcm_device_xrandr_finalize (GObject *object)
 	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
 
 	g_free (priv->native_device);
+	g_object_unref (priv->edid);
+	g_object_unref (priv->dmi);
 
 	G_OBJECT_CLASS (gcm_device_xrandr_parent_class)->finalize (object);
 }
