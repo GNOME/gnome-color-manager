@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2010 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -25,9 +25,9 @@
 #include <locale.h>
 #include <lcms.h>
 
-/**
+/*
  * gcm_fix_profile_filename:
- **/
+ */
 static void
 gcm_fix_profile_filename (const gchar *filename, const gchar *description)
 {
@@ -41,9 +41,19 @@ gcm_fix_profile_filename (const gchar *filename, const gchar *description)
 	cmsCloseProfile (lcms_profile);
 }
 
-/**
+/*
+ * gcm_fix_profile_lcms_error_cb:
+ */
+static int
+gcm_fix_profile_lcms_error_cb (int ErrorCode, const char *ErrorText)
+{
+	g_warning ("LCMS error %i: %s", ErrorCode, ErrorText);
+	return LCMS_ERRC_WARNING;
+}
+
+/*
  * main:
- **/
+ */
 int
 main (int argc, char **argv)
 {
@@ -78,6 +88,11 @@ main (int argc, char **argv)
 	/* nothing specified */
 	if (files == NULL)
 		goto out;
+
+	/* setup LCMS */
+	cmsSetErrorHandler (gcm_fix_profile_lcms_error_cb);
+	cmsErrorAction (LCMS_ERROR_SHOW);
+	cmsSetLanguage ("en", "US");
 
 	/* show each profile */
 	for (i=0; files[i] != NULL; i++)
