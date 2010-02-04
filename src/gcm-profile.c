@@ -352,7 +352,7 @@ gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, G
 				priv->description = g_path_get_basename (priv->filename);
 			} else {
 				/* TRANSLATORS: this is where the ICC profile_lcms1 has no description */
-				priv->description = _("Missing description");
+				priv->description = g_strdup (_("Missing description"));
 			}
 		}
 		break;
