@@ -68,6 +68,7 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 	gchar *serial = NULL;
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
+	gchar *profile_filename = NULL;
 	GcmColorspaceEnum colorspace = GCM_COLORSPACE_ENUM_UNKNOWN;
 
 	egg_debug ("name: %s", dest.name);
@@ -111,6 +112,10 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 				colorspace = GCM_COLORSPACE_ENUM_CMYK;
 			else
 				egg_warning ("colorspace not recognised: %s", value);
+		} else if (g_strcmp0 (keyword, "cupsICCProfile") == 0) {
+			/* FIXME: possibly map from http://localhost:port/profiles/dave.icc to ~/.icc/color/dave.icc */
+			profile_filename = g_strdup (value);
+			egg_warning ("remap %s?", profile_filename);
 		}
 
 		egg_debug ("keyword: %s, value: %s, spec: %s", keyword, value, ppd_file->attrs[i]->spec);
@@ -130,9 +135,11 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 		      "manufacturer", manufacturer,
 		      "title", title,
 		      "native-device", device_id,
+		      "profile-filename", profile_filename,
 		      NULL);
 
 	g_free (serial);
+	g_free (profile_filename);
 	g_free (manufacturer);
 	g_free (model);
 	g_free (id);
