@@ -1354,30 +1354,37 @@ out:
 }
 
 /**
- * gcm_prefs_is_profile_suitable_for_device_type:
+ * gcm_prefs_is_profile_suitable_for_device:
  **/
 static gboolean
-gcm_prefs_is_profile_suitable_for_device_type (GcmProfile *profile, GcmDeviceTypeEnum type)
+gcm_prefs_is_profile_suitable_for_device (GcmProfile *profile, GcmDevice *device)
 {
 	GcmProfileTypeEnum profile_type_tmp;
 	GcmProfileTypeEnum profile_type;
-	GcmColorspaceEnum colorspace;
+	GcmColorspaceEnum profile_colorspace;
+	GcmColorspaceEnum device_colorspace;
 	gboolean has_vcgt;
 	gboolean ret = FALSE;
+	GcmDeviceTypeEnum device_type;
+
+	g_object_get (device,
+		      "type", &device_type,
+		      "colorspace", &device_colorspace,
+		      NULL);
 
 	/* get properties */
 	g_object_get (profile,
 		      "type", &profile_type_tmp,
-		      "colorspace", &colorspace,
+		      "colorspace", &profile_colorspace,
 		      "has-vcgt", &has_vcgt,
 		      NULL);
 
-	/* ignore LAB profiles */
-	if (colorspace == GCM_COLORSPACE_ENUM_LAB)
+	/* not the right colorspace */
+	if (device_colorspace != profile_colorspace)
 		goto out;
 
 	/* not the correct type */
-	profile_type = gcm_utils_device_type_to_profile_type (type);
+	profile_type = gcm_utils_device_type_to_profile_type (device_type);
 	if (profile_type_tmp != profile_type)
 		goto out;
 
@@ -1397,7 +1404,7 @@ out:
  * gcm_prefs_add_profiles_suitable_for_devices:
  **/
 static void
-gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, GcmDeviceTypeEnum type, const gchar *profile_filename)
+gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, const gchar *profile_filename)
 {
 	GtkTreeModel *model;
 	guint i;
@@ -1423,7 +1430,7 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, GcmDeviceTypeEnu
 		profile = g_ptr_array_index (profile_array, i);
 
 		/* only add correct types */
-		ret = gcm_prefs_is_profile_suitable_for_device_type (profile, type);
+		ret = gcm_prefs_is_profile_suitable_for_device (profile, current_device);
 		if (ret) {
 			/* add */
 			gcm_prefs_combobox_add_profile (widget, profile, GCM_PREFS_ENTRY_TYPE_PROFILE);
@@ -1564,7 +1571,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 
 	/* add profiles of the right type */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
-	gcm_prefs_add_profiles_suitable_for_devices (widget, type, profile_filename);
+	gcm_prefs_add_profiles_suitable_for_devices (widget, profile_filename);
 
 	/* make sure selectable */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
