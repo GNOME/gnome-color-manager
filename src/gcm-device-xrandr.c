@@ -467,7 +467,7 @@ gcm_device_xrandr_set_gamma (GcmDeviceXrandr *device_xrandr, GError **error)
 	}
 
 	/* should be set for display types */
-	if (output_name == NULL) {
+	if (output_name == NULL || output_name[0] == '\0') {
 		g_set_error (error, 1, 0, "no output name for display: %s", id);
 		goto out;
 	}

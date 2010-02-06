@@ -580,7 +580,10 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 	type = gcm_device_type_enum_from_string (type_text);
 
 	/* create device */
-	device = gcm_device_new ();
+	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY)
+		device = gcm_device_xrandr_new ();
+	else
+		device = gcm_device_new ();
 	g_object_set (device,
 		      "type", type,
 		      "id", id,

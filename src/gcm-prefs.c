@@ -1932,6 +1932,12 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 	gboolean connected;
 	GError *error = NULL;
 
+	/* sanity check */
+	if (!GCM_IS_DEVICE_XRANDR (device)) {
+		egg_warning ("not a xrandr device");
+		goto out;
+	}
+
 	/* get details */
 	g_object_get (device,
 		      "id", &id,
@@ -1973,6 +1979,7 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 			    GCM_DEVICES_COLUMN_SORT, sort,
 			    GCM_DEVICES_COLUMN_TITLE, title,
 			    GCM_DEVICES_COLUMN_ICON, "video-display", -1);
+out:
 	g_free (id);
 	g_free (sort);
 	g_free (title_tmp);
