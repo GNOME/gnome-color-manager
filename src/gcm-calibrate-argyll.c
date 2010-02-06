@@ -1240,6 +1240,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	    g_strcmp0 (line, "Calibration complete") == 0 ||
 	    g_strcmp0 (line, "or hit Esc or Q to abort:") == 0 ||
 	    g_strcmp0 (line, "The instrument can be removed from the screen.") == 0 ||
+	    g_strstr_len (line, -1, "User Aborted") != NULL ||
 	    g_str_has_suffix (line, "key to continue:")) {
 		egg_debug ("VTE: ignore: %s", line);
 		goto out;
