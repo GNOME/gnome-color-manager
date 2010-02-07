@@ -530,6 +530,118 @@ out:
 }
 
 /**
+ * gcm_prefs_reference_kind_to_localised_string:
+ **/
+static const gchar *
+gcm_prefs_reference_kind_to_localised_string (GcmCalibrateArgyllReferenceKind kind)
+{
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_CMP_DIGITAL_TARGET_3) {
+		/* TRANSLATORS: this is probably a brand name */
+		return _("CMP Digital Target 3");
+	}
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_CMP_DT_003) {
+		/* TRANSLATORS: this is probably a brand name */
+		return _("CMP DT 003");
+	}
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER) {
+		/* TRANSLATORS: this is probably a brand name */
+		return _("Color Checker");
+	}
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER_DC) {
+		/* TRANSLATORS: this is probably a brand name */
+		return _("Color Checker DC");
+	}
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER_SG) {
+		/* TRANSLATORS: this is probably a brand name */
+		return _("Color Checker SG");
+	}
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_HUTCHCOLOR) {
+		/* TRANSLATORS: this is probably a brand name */
+		return _("Hutchcolor");
+	}
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_I1_RGB_SCAN_1_4) {
+		/* TRANSLATORS: this is probably a brand name */
+		return _("i1 RGB Scan 1.4");
+	}
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_IT8) {
+		/* TRANSLATORS: this is probably a brand name */
+		return _("IT8");
+	}
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_LASER_SOFT_DC_PRO) {
+		/* TRANSLATORS: this is probably a brand name */
+		return _("Laser Soft DC Pro");
+	}
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_QPCARD_201) {
+		/* TRANSLATORS: this is probably a brand name */
+		return _("QPcard 201");
+	}
+	return NULL;
+}
+
+/**
+ * gcm_prefs_get_reference_kind:
+ **/
+static GcmCalibrateArgyllReferenceKind
+gcm_prefs_get_reference_kind ()
+{
+	GtkWindow *window;
+	GtkResponseType response;
+	GtkWidget *dialog;
+	GtkWidget *vbox;
+	GtkWidget *combo_box;
+	const gchar *title;
+	const gchar *message;
+	guint i;
+	GcmCalibrateArgyllReferenceKind reference_kind = GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_UNKNOWN;
+
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+
+	/* TRANSLATORS: this is the window title for when the user selects the chart type. A chart is a type of reference image the user has purchased. */
+	title = _("Please select chart type");
+
+	/* TRANSLATORS: this is the message body for the chart selection */
+	message = _("Please select the chart type which corresponds to your reference file.");
+
+	dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL, "%s", title);
+	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", message);
+	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+	/* TRANSLATORS: button, confirm the chart type */
+	gtk_dialog_add_button (GTK_DIALOG (dialog), _("Use this type"), GTK_RESPONSE_YES);
+
+	/* create the combobox */
+	combo_box = gtk_combo_box_new_text ();
+
+	/* add the list of charts */
+	for (i = 0; i < GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_UNKNOWN; i++) {
+		gtk_combo_box_append_text (GTK_COMBO_BOX (combo_box),
+					   gcm_prefs_reference_kind_to_localised_string (i));
+	}
+
+	/* use IT8 by default */
+	gtk_combo_box_set_active (GTK_COMBO_BOX (combo_box), GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_IT8);
+
+	/* pack it */
+	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+	gtk_box_pack_end (GTK_BOX(vbox), combo_box, TRUE, TRUE, 12);
+	gtk_widget_show (combo_box);
+
+	/* run the dialog */
+	response = gtk_dialog_run (GTK_DIALOG (dialog));
+
+	/* not sorted so we can just use the index */
+	reference_kind = gtk_combo_box_get_active (GTK_COMBO_BOX (combo_box));
+
+	/* nuke the UI */
+	gtk_widget_destroy (dialog);
+	if (response != GTK_RESPONSE_YES) {
+		reference_kind = GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_UNKNOWN;
+		goto out;
+	}
+out:
+	return reference_kind;
+}
+
+/**
  * gcm_prefs_calibrate_device:
  **/
 static gboolean
@@ -551,6 +663,7 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	GtkResponseType response;
 	GtkWidget *dialog;
 	const gchar *title;
+	GcmCalibrateArgyllReferenceKind reference_kind;
 
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
 	string = g_string_new ("");
@@ -607,7 +720,7 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	g_string_append_printf (string, "\n%s\n", _("For best results, the reference image should also be less than two years old."));
 
 	/* TRANSLATORS: dialog question */
-	g_string_append_printf (string, "\n%s", _("Do you have a scanned TIFF file of a IT8.7/2 reference image?"));
+	g_string_append_printf (string, "\n%s", _("Do you have a scanned TIFF file of the reference image?"));
 
 	/* ask the user to confirm */
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
@@ -639,6 +752,14 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	reference_data = gcm_prefs_calibrate_device_get_reference_data (directory);
 	if (reference_data == NULL)
 		goto out;
+
+	/* set the reference kind */
+	reference_kind = gcm_prefs_get_reference_kind ();
+	if (reference_kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_UNKNOWN) {
+		ret = FALSE;
+		goto out;
+	}
+	gcm_calibrate_argyll_set_reference_kind (GCM_CALIBRATE_ARGYLL (calibrate), reference_kind);
 
 	/* ensure we have data */
 	basename = gcm_prefs_calibrate_get_basename (current_device);

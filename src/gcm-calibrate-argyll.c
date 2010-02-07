@@ -90,6 +90,7 @@ struct _GcmCalibrateArgyllPrivate
 	GPtrArray			*cached_dialogs;
 	gboolean			 already_on_window;
 	GcmCalibrateArgyllState		 state;
+	GcmCalibrateArgyllReferenceKind	 reference_kind;
 };
 
 enum {
@@ -716,6 +717,45 @@ out:
 }
 
 /**
+ * gcm_calibrate_argyll_reference_kind_to_filename:
+ **/
+static const gchar *
+gcm_calibrate_argyll_reference_kind_to_filename (GcmCalibrateArgyllReferenceKind kind)
+{
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_CMP_DIGITAL_TARGET_3)
+		return "CMP_Digital_Target-3.cht";
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_CMP_DT_003)
+		return "CMP_DT_003.cht";
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER)
+		return "ColorChecker.cht";
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER_DC)
+		return "ColorCheckerDC.cht";
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER_SG)
+		return "ColorCheckerSG.cht";
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_HUTCHCOLOR)
+		return "Hutchcolor.cht";
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_I1_RGB_SCAN_1_4)
+		return "i1_RGB_Scan_1.4.cht";
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_IT8)
+		return "it8.cht";
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_LASER_SOFT_DC_PRO)
+		return "LaserSoftDCPro.cht";
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_QPCARD_201)
+		return "QPcard_201.cht";
+	return NULL;
+}
+
+/**
+ * gcm_calibrate_argyll_set_reference_kind:
+ **/
+void
+gcm_calibrate_argyll_set_reference_kind (GcmCalibrateArgyll *calibrate_argyll,
+					 GcmCalibrateArgyllReferenceKind reference_kind)
+{
+	calibrate_argyll->priv->reference_kind = reference_kind;
+}
+
+/**
  * gcm_calibrate_argyll_device_copy:
  **/
 static gboolean
@@ -723,14 +763,17 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 {
 	gboolean ret;
 	gchar *device = NULL;
-	gchar *it8cht = NULL;
-	gchar *it8ref = NULL;
+	gchar *dest_cht = NULL;
+	gchar *dest_ref = NULL;
 	gchar *filename = NULL;
+	gchar *filename_cht = NULL;
 	gchar *basename = NULL;
 	gchar *filename_source = NULL;
 	gchar *filename_reference = NULL;
 	const gchar *title;
 	const gchar *message;
+	const gchar *filename_tmp;
+	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
@@ -750,27 +793,30 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 	/* build filenames */
 	filename = g_strdup_printf ("%s.tif", basename);
 	device = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, filename, NULL);
-	it8cht = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "scanin.cht", NULL);
-	it8ref = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "scanin-ref.txt", NULL);
+	dest_cht = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "scanin.cht", NULL);
+	dest_ref = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "scanin-ref.txt", NULL);
 
 	/* copy all files to /tmp as argyllcms doesn't cope well with paths */
-	ret = gcm_utils_mkdir_and_copy ("/usr/share/color/argyll/ref/it8.cht", it8cht, error);
+	filename_tmp = gcm_calibrate_argyll_reference_kind_to_filename (priv->reference_kind);
+	filename_cht = g_build_filename ("/usr/share/color/argyll/ref", filename_tmp, NULL);
+	ret = gcm_utils_mkdir_and_copy (filename_cht, dest_cht, error);
 	if (!ret)
 		goto out;
 	ret = gcm_utils_mkdir_and_copy (filename_source, device, error);
 	if (!ret)
 		goto out;
-	ret = gcm_utils_mkdir_and_copy (filename_reference, it8ref, error);
+	ret = gcm_utils_mkdir_and_copy (filename_reference, dest_ref, error);
 	if (!ret)
 		goto out;
 out:
 	g_free (basename);
 	g_free (filename);
+	g_free (filename_cht);
 	g_free (filename_source);
 	g_free (filename_reference);
 	g_free (device);
-	g_free (it8cht);
-	g_free (it8ref);
+	g_free (dest_cht);
+	g_free (dest_ref);
 	return ret;
 }
 
@@ -1446,6 +1492,7 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 	calibrate_argyll->priv->cached_dialogs = g_ptr_array_new_with_free_func ((GDestroyNotify)gcm_calibrate_argyll_dialog_free);
 	calibrate_argyll->priv->already_on_window = FALSE;
 	calibrate_argyll->priv->state = GCM_CALIBRATE_ARGYLL_STATE_IDLE;
+	calibrate_argyll->priv->reference_kind = GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_UNKNOWN;
 
 	/* get UI */
 	calibrate_argyll->priv->builder = gtk_builder_new ();

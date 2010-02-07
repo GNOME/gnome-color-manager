@@ -57,8 +57,24 @@ struct _GcmCalibrateArgyllClass
 	void (*_gcm_reserved5) (void);
 };
 
-GType		 	 gcm_calibrate_argyll_get_type		(void);
-GcmCalibrateArgyll	*gcm_calibrate_argyll_new		(void);
+typedef enum {
+	GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_CMP_DIGITAL_TARGET_3,
+	GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_CMP_DT_003,
+	GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER,
+	GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER_DC,
+	GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER_SG,
+	GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_HUTCHCOLOR,
+	GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_I1_RGB_SCAN_1_4,
+	GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_IT8,
+	GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_LASER_SOFT_DC_PRO,
+	GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_QPCARD_201,
+	GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_UNKNOWN
+} GcmCalibrateArgyllReferenceKind;
+
+GType		 	 gcm_calibrate_argyll_get_type			(void);
+GcmCalibrateArgyll	*gcm_calibrate_argyll_new			(void);
+void			 gcm_calibrate_argyll_set_reference_kind	(GcmCalibrateArgyll	*calibrate_argyll,
+									 GcmCalibrateArgyllReferenceKind reference_kind);
 
 G_END_DECLS
 
