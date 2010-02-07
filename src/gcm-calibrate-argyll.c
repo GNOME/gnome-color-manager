@@ -750,8 +750,8 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 	/* build filenames */
 	filename = g_strdup_printf ("%s.tif", basename);
 	device = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, filename, NULL);
-	it8cht = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "it8.cht", NULL);
-	it8ref = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "it8ref.txt", NULL);
+	it8cht = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "scanin.cht", NULL);
+	it8ref = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "scanin-ref.txt", NULL);
 
 	/* copy all files to /tmp as argyllcms doesn't cope well with paths */
 	ret = gcm_utils_mkdir_and_copy ("/usr/share/color/argyll/ref/it8.cht", it8cht, error);
@@ -817,8 +817,8 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 	/* setup the command */
 	g_ptr_array_add (array, g_strdup ("-v9"));
 	g_ptr_array_add (array, g_strdup (filename));
-	g_ptr_array_add (array, g_strdup ("it8.cht"));
-	g_ptr_array_add (array, g_strdup ("it8ref.txt"));
+	g_ptr_array_add (array, g_strdup ("scanin.cht"));
+	g_ptr_array_add (array, g_strdup ("scanin-ref.txt"));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
 
@@ -969,7 +969,7 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 	guint i;
 	gboolean ret;
 	const gchar *exts[] = {"cal", "ti1", "ti3", "tif", NULL};
-	const gchar *filenames[] = {"it8.cht", "it8ref.txt", NULL};
+	const gchar *filenames[] = {"scanin.cht", "scanin-ref.txt", NULL};
 	gchar *basename = NULL;
 
 	/* get shared data */
