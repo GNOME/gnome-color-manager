@@ -590,6 +590,7 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 		      "connected", FALSE,
 		      "title", title,
 		      "saved", TRUE,
+		      "colorspace", GCM_COLORSPACE_ENUM_RGB, //FIXME: should get from config file
 		      NULL);
 
 	/* load the device */
