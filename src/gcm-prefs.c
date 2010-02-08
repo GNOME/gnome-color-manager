@@ -591,7 +591,7 @@ gcm_prefs_reference_kind_to_image_filename (GcmCalibrateArgyllReferenceKind kind
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER)
 		return NULL;
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER_DC)
-		return NULL;
+		return "ColorCheckerDC.png";
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER_SG)
 		return NULL;
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_HUTCHCOLOR)
