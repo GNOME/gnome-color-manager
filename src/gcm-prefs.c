@@ -565,7 +565,7 @@ gcm_prefs_reference_kind_to_localised_string (GcmCalibrateArgyllReferenceKind ki
 	}
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_IT8) {
 		/* TRANSLATORS: this is probably a brand name */
-		return _("IT8");
+		return _("IT8.7/2");
 	}
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_LASER_SOFT_DC_PRO) {
 		/* TRANSLATORS: this is probably a brand name */
@@ -585,11 +585,11 @@ static const gchar *
 gcm_prefs_reference_kind_to_image_filename (GcmCalibrateArgyllReferenceKind kind)
 {
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_CMP_DIGITAL_TARGET_3)
-		return NULL;
+		return "CMP-DigitalTarget3.png";
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_CMP_DT_003)
 		return NULL;
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER)
-		return NULL;
+		return "ColorChecker24.png";
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER_DC)
 		return "ColorCheckerDC.png";
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER_SG)
@@ -599,7 +599,7 @@ gcm_prefs_reference_kind_to_image_filename (GcmCalibrateArgyllReferenceKind kind
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_I1_RGB_SCAN_1_4)
 		return NULL;
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_IT8)
-		return "it8.png";
+		return "IT872.png";
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_LASER_SOFT_DC_PRO)
 		return NULL;
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_QPCARD_201)
@@ -663,7 +663,7 @@ gcm_prefs_get_reference_kind ()
 
 	/* use image to display a picture of the target */
 	image = gtk_image_new ();
-	gtk_widget_set_size_request (image, 100, 200);
+	gtk_widget_set_size_request (image, 200, 140);
 
 	/* create the combobox */
 	combo_box = gtk_combo_box_new_text ();
@@ -739,13 +739,13 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 						 _("Install missing files?"));
 
 		/* TRANSLATORS: dialog message saying the color targets are not installed */
-		g_string_append_printf (string, "%s ", _("Common IT8 color target files are not installed on this computer."));
+		g_string_append_printf (string, "%s ", _("Common color target files are not installed on this computer."));
 		/* TRANSLATORS: dialog message saying the color targets are not installed */
 		g_string_append_printf (string, "%s\n\n", _("Color target files are needed to convert the image to a color profile."));
 		/* TRANSLATORS: dialog message, asking if it's okay to install them */
 		g_string_append_printf (string, "%s\n\n", _("Do you want them to be automatically installed?"));
 		/* TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package */
-		g_string_append_printf (string, "%s", _("If you have already have the correct IT8 file then you can skip this step."));
+		g_string_append_printf (string, "%s", _("If you have already have the correct file then you can skip this step."));
 
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
