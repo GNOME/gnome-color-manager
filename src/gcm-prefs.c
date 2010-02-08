@@ -802,6 +802,14 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 		      "manufacturer", &manufacturer,
 		      NULL);
 
+	/* set the reference kind */
+	reference_kind = gcm_prefs_get_reference_kind ();
+	if (reference_kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_UNKNOWN) {
+		ret = FALSE;
+		goto out;
+	}
+	gcm_calibrate_argyll_set_reference_kind (GCM_CALIBRATE_ARGYLL (calibrate), reference_kind);
+
 	/* get scanned image */
 	directory = g_get_home_dir ();
 	scanned_image = gcm_prefs_calibrate_device_get_scanned_profile (directory);
@@ -813,14 +821,6 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	reference_data = gcm_prefs_calibrate_device_get_reference_data (directory);
 	if (reference_data == NULL)
 		goto out;
-
-	/* set the reference kind */
-	reference_kind = gcm_prefs_get_reference_kind ();
-	if (reference_kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_UNKNOWN) {
-		ret = FALSE;
-		goto out;
-	}
-	gcm_calibrate_argyll_set_reference_kind (GCM_CALIBRATE_ARGYLL (calibrate), reference_kind);
 
 	/* ensure we have data */
 	basename = gcm_prefs_calibrate_get_basename (current_device);
