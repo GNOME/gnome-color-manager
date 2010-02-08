@@ -1299,8 +1299,15 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		/* TRANSLATORS: title, the calibration failed */
 		title = _("Calibration error");
 
+		if (g_strstr_len (line, -1, "No PLD firmware pattern is available") != NULL) {
+			/* TRANSLATORS: message, no firmware is available */
+			message = _("No firmware is installed for this device.");
+		} else {
+			message = found + 8;
+		}
+
 		/* push new messages into the UI */
-		gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, found+8, TRUE);
+		gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, TRUE);
 		egg_debug ("VTE: error: %s", found+8);
 
 		/* set state */
