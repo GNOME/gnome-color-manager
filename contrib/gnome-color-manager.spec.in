@@ -118,6 +118,8 @@ update-mime-database %{_datadir}/mime &> /dev/null || :
 %{_bindir}/gcm-*
 %dir %{_datadir}/gnome-color-manager
 %{_datadir}/gnome-color-manager/gcm-*.ui
+%dir %{_datadir}/gnome-color-manager/targets
+%{_datadir}/gnome-color-manager/targets/*.png
 %{_datadir}/man/man1/*.1.gz
 %{_datadir}/gnome/help/gnome-color-manager
 %{_datadir}/omf/gnome-color-manager
@@ -130,6 +132,7 @@ update-mime-database %{_datadir}/mime &> /dev/null || :
 %{_datadir}/dbus-1/services/org.gnome.ColorManager.service
 %{_sbindir}/gcm-install-system-wide
 %{_datadir}/polkit-1/actions/org.gnome.color.policy
+
 # this is probably better in a shared package
 %dir %{_localstatedir}/lib/color
 
