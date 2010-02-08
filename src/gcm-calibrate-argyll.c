@@ -120,16 +120,24 @@ gcm_calibrate_argyll_precision_from_string (const gchar *string)
 }
 
 /**
- * gcm_calibrate_argyll_precision_to_quality_arg:
+ * gcm_calibrate_argyll_get_quality_arg:
  **/
 static const gchar *
-gcm_calibrate_argyll_precision_to_quality_arg (GcmCalibrateArgyllPrecision precision)
+gcm_calibrate_argyll_get_quality_arg (GcmCalibrateArgyll *calibrate_argyll)
 {
-	if (precision == GCM_CALIBRATE_ARGYLL_PRECISION_SHORT)
+	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+
+	/* these have such low patch count, we only can do low quality */
+	if (priv->reference_kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER ||
+	    priv->reference_kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_QPCARD_201)
 		return "-ql";
-	if (precision == GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL)
+
+	/* get the default precision */
+	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_SHORT)
+		return "-ql";
+	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL)
 		return "-qm";
-	if (precision == GCM_CALIBRATE_ARGYLL_PRECISION_LONG)
+	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_LONG)
 		return "-qh";
 	return "-qm";
 }
@@ -674,7 +682,7 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
 	g_ptr_array_add (array, g_strdup_printf ("-D%s", description_new));
 	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
-	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_precision_to_quality_arg (priv->precision)));
+	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_get_quality_arg (calibrate_argyll)));
 	g_ptr_array_add (array, g_strdup ("-as"));
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
@@ -962,8 +970,13 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
 	g_ptr_array_add (array, g_strdup_printf ("-D%s", description_tmp));
 	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
-	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_precision_to_quality_arg (priv->precision)));
-//	g_ptr_array_add (array, g_strdup ("-as"));
+	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_get_quality_arg (calibrate_argyll)));
+
+	/* check whether the target is a low patch count target and generate low quality single shaper profile */
+	if (priv->reference_kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER ||
+	    priv->reference_kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_QPCARD_201)
+		g_ptr_array_add (array, g_strdup ("-aS"));
+
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
