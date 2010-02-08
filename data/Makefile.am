@@ -1,5 +1,6 @@
 SUBDIRS = 						\
 	tests						\
+	targets						\
 	icons
 
 @INTLTOOL_SCHEMAS_RULE@

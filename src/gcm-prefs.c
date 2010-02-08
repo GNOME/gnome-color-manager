@@ -579,6 +579,58 @@ gcm_prefs_reference_kind_to_localised_string (GcmCalibrateArgyllReferenceKind ki
 }
 
 /**
+ * gcm_prefs_reference_kind_to_image_filename:
+ **/
+static const gchar *
+gcm_prefs_reference_kind_to_image_filename (GcmCalibrateArgyllReferenceKind kind)
+{
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_CMP_DIGITAL_TARGET_3)
+		return NULL;
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_CMP_DT_003)
+		return NULL;
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER)
+		return NULL;
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER_DC)
+		return NULL;
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER_SG)
+		return NULL;
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_HUTCHCOLOR)
+		return NULL;
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_I1_RGB_SCAN_1_4)
+		return NULL;
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_IT8)
+		return "it8.png";
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_LASER_SOFT_DC_PRO)
+		return NULL;
+	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_QPCARD_201)
+		return NULL;
+	return NULL;
+}
+
+/**
+ * gcm_prefs_reference_kind_combobox_cb:
+ **/
+static void
+gcm_prefs_reference_kind_combobox_cb (GtkComboBox *combo_box, GtkImage *image)
+{
+	GcmCalibrateArgyllReferenceKind reference_kind;
+	const gchar *filename;
+	gchar *path;
+
+	/* not sorted so we can just use the index */
+	reference_kind = gtk_combo_box_get_active (GTK_COMBO_BOX (combo_box));
+	filename = gcm_prefs_reference_kind_to_image_filename (reference_kind);
+
+	/* fallback */
+	if (filename == NULL)
+		filename = "unknown.png";
+
+	path = g_build_filename (GCM_DATA, "targets", filename, NULL);
+	gtk_image_set_from_file (GTK_IMAGE (image), path);
+	g_free (path);
+}
+
+/**
  * gcm_prefs_get_reference_kind:
  **/
 static GcmCalibrateArgyllReferenceKind
@@ -589,6 +641,7 @@ gcm_prefs_get_reference_kind ()
 	GtkWidget *dialog;
 	GtkWidget *vbox;
 	GtkWidget *combo_box;
+	GtkWidget *image;
 	const gchar *title;
 	const gchar *message;
 	guint i;
@@ -608,8 +661,13 @@ gcm_prefs_get_reference_kind ()
 	/* TRANSLATORS: button, confirm the chart type */
 	gtk_dialog_add_button (GTK_DIALOG (dialog), _("Use this type"), GTK_RESPONSE_YES);
 
+	/* use image to display a picture of the target */
+	image = gtk_image_new ();
+	gtk_widget_set_size_request (image, 100, 200);
+
 	/* create the combobox */
 	combo_box = gtk_combo_box_new_text ();
+	g_signal_connect (combo_box, "changed", G_CALLBACK (gcm_prefs_reference_kind_combobox_cb), image);
 
 	/* add the list of charts */
 	for (i = 0; i < GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_UNKNOWN; i++) {
@@ -622,8 +680,11 @@ gcm_prefs_get_reference_kind ()
 
 	/* pack it */
 	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-	gtk_box_pack_end (GTK_BOX(vbox), combo_box, TRUE, TRUE, 12);
+
+	gtk_box_pack_start (GTK_BOX(vbox), image, TRUE, TRUE, 6);
+	gtk_box_pack_start (GTK_BOX(vbox), combo_box, TRUE, TRUE, 6);
 	gtk_widget_show (combo_box);
+	gtk_widget_show (image);
 
 	/* run the dialog */
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
