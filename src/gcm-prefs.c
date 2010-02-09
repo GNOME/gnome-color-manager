@@ -603,7 +603,7 @@ gcm_prefs_reference_kind_to_image_filename (GcmCalibrateArgyllReferenceKind kind
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_LASER_SOFT_DC_PRO)
 		return NULL;
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_QPCARD_201)
-		return NULL;
+		return "QPcard_201.png";
 	return NULL;
 }
 
