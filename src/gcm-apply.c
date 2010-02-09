@@ -79,12 +79,8 @@ main (int argc, char **argv)
 			      "type", &type,
 			      NULL);
 
-		/* not a xrandr panel */
-		if (type != GCM_DEVICE_TYPE_ENUM_DISPLAY)
-			continue;
-
 		/* set gamma for device */
-		egg_debug ("setting %s gamma", gcm_device_get_id (device));
+		egg_debug ("setting profiles on device: %s", gcm_device_get_id (device));
 		ret = gcm_device_apply (device, &error);
 		if (!ret) {
 			retval = 1;

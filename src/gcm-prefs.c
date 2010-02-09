@@ -387,7 +387,7 @@ out:
 	error = NULL;
 	ret_tmp = gcm_device_apply (current_device, &error);
 	if (!ret_tmp) {
-		egg_warning ("failed to set output gamma: %s", error->message);
+		egg_warning ("failed to apply profile: %s", error->message);
 		g_error_free (error);
 	}
 
@@ -2133,7 +2133,7 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 		/* set the gamma on the device */
 		ret = gcm_device_apply (device, &error);
 		if (!ret) {
-			egg_warning ("failed to set output gamma: %s", error->message);
+			egg_warning ("failed to apply profile: %s", error->message);
 			g_error_free (error);
 		}
 
@@ -2267,14 +2267,12 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 			goto out;
 		}
 
-		/* set the gamma for display types */
-		if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
-			ret = gcm_device_apply (current_device, &error);
-			if (!ret) {
-				egg_warning ("failed to set output gamma: %s", error->message);
-				g_error_free (error);
-				goto out;
-			}
+		/* set the profile */
+		ret = gcm_device_apply (current_device, &error);
+		if (!ret) {
+			egg_warning ("failed to apply profile: %s", error->message);
+			g_error_free (error);
+			goto out;
 		}
 	}
 out:
@@ -2324,7 +2322,7 @@ gcm_prefs_slider_changed_cb (GtkRange *range, gpointer *user_data)
 	/* actually set the new profile */
 	ret = gcm_device_apply (current_device, &error);
 	if (!ret) {
-		egg_warning ("failed to set output gamma: %s", error->message);
+		egg_warning ("failed to apply profile: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -2797,7 +2795,6 @@ gcm_prefs_reset_devices_idle_cb (gpointer user_data)
 {
 	GPtrArray *array = NULL;
 	GcmDevice *device;
-	GcmDeviceTypeEnum type;
 	GError *error = NULL;
 	gboolean ret;
 	guint i;
@@ -2806,18 +2803,11 @@ gcm_prefs_reset_devices_idle_cb (gpointer user_data)
 	array = gcm_client_get_devices (gcm_client);
 	for (i=0; i<array->len; i++) {
 		device = g_ptr_array_index (array, i);
-		g_object_get (device,
-			      "type", &type,
-			      NULL);
-
-		/* not a xrandr panel */
-		if (type != GCM_DEVICE_TYPE_ENUM_DISPLAY)
-			continue;
 
 		/* set gamma for device */
 		ret = gcm_device_apply (device, &error);
 		if (!ret) {
-			egg_warning ("failed to set gamma: %s", error->message);
+			egg_warning ("failed to set profile: %s", error->message);
 			g_error_free (error);
 			break;
 		}
