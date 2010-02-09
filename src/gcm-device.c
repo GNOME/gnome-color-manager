@@ -198,7 +198,7 @@ gcm_device_load (GcmDevice *device, GError **error)
 	ret = g_key_file_has_group (file, device->priv->id);
 	if (!ret) {
 		/* not fatal */
-		egg_warning ("failed to find parameters for %s", device->priv->id);
+		egg_debug ("failed to find saved parameters for %s", device->priv->id);
 		ret = TRUE;
 		goto out;
 	}
