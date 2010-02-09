@@ -1637,7 +1637,8 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, const gchar *pro
 
 	/* select 'None' if there was no match */
 	if (!set_active) {
-		egg_warning ("no match for %s", profile_filename);
+		if (profile_filename != NULL)
+			egg_warning ("no match for %s", profile_filename);
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 	}
 	if (profile_array != NULL)
