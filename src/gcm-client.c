@@ -510,7 +510,7 @@ gcm_client_cups_add (GcmClient *client, cups_dest_t dest)
 	GcmClientPrivate *priv = client->priv;
 
 	/* create new device */
-	device = gcm_device_xrandr_new ();
+	device = gcm_device_cups_new ();
 	ret = gcm_device_cups_set_from_dest (device, priv->http, dest, &error);
 	if (!ret) {
 		egg_debug ("failed to set for output: %s", error->message);
