@@ -390,6 +390,27 @@ out:
 }
 
 /**
+ * gcm_device_apply:
+ **/
+gboolean
+gcm_device_apply (GcmDevice *device, GError **error)
+{
+	gboolean ret = FALSE;
+	GcmDeviceClass *klass = GCM_DEVICE_GET_CLASS (device);
+
+	/* no support */
+	if (klass->apply == NULL) {
+		g_set_error (error, 1, 0, "no klass support");
+		goto out;
+	}
+
+	/* run the callback */
+	ret = klass->apply (device, error);
+out:
+	return ret;
+}
+
+/**
  * gcm_device_get_property:
  **/
 static void

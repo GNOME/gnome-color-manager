@@ -46,6 +46,8 @@ struct _GcmDevice
 struct _GcmDeviceClass
 {
 	GObjectClass	parent_class;
+	gboolean	 (*apply)			(GcmDevice		*device,
+							 GError			**error);
 	/* padding for future expansion */
 	void (*_gcm_reserved1) (void);
 	void (*_gcm_reserved2) (void);
@@ -59,6 +61,8 @@ const gchar	*gcm_device_get_id			(GcmDevice		*device);
 gboolean	 gcm_device_load			(GcmDevice		*device,
 							 GError			**error);
 gboolean	 gcm_device_save			(GcmDevice		*device,
+							 GError			**error);
+gboolean	 gcm_device_apply			(GcmDevice		*device,
 							 GError			**error);
 
 G_END_DECLS
