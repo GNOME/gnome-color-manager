@@ -235,43 +235,60 @@ gcm_utils_ensure_printable (gchar *text)
 }
 
 /**
+ * gcm_utils_mkdir_for_filename:
+ **/
+gboolean
+gcm_utils_mkdir_for_filename (const gchar *filename, GError **error)
+{
+	gboolean ret;
+	GFile *file;
+	GFile *parent_dir;
+
+	file = g_file_new_for_path (filename);
+	parent_dir = g_file_get_parent (file);
+
+	/* ensure desination exists */
+	ret = g_file_test (g_file_get_path (parent_dir), G_FILE_TEST_EXISTS);
+	if (!ret) {
+		ret = g_file_make_directory_with_parents  (parent_dir, NULL, error);
+		if (!ret)
+			goto out;
+	}
+out:
+	g_object_unref (file);
+	g_object_unref (parent_dir);
+	return ret;
+}
+
+/**
  * gcm_utils_mkdir_and_copy:
  **/
 gboolean
 gcm_utils_mkdir_and_copy (const gchar *source, const gchar *destination, GError **error)
 {
 	gboolean ret;
-	gchar *path;
 	GFile *sourcefile;
 	GFile *destfile;
-	GFile *destpath;
 
 	g_return_val_if_fail (source != NULL, FALSE);
 	g_return_val_if_fail (destination != NULL, FALSE);
 
 	/* setup paths */
 	sourcefile = g_file_new_for_path (source);
-	path = g_path_get_dirname (destination);
-	destpath = g_file_new_for_path (path);
 	destfile = g_file_new_for_path (destination);
 
-	/* ensure desination exists */
-	ret = g_file_test (path, G_FILE_TEST_EXISTS);
-	if (!ret) {
-		ret = g_file_make_directory_with_parents  (destpath, NULL, error);
-		if (!ret)
-			goto out;
-	}
+	/* create directory */
+	ret = gcm_utils_mkdir_for_filename (destination, error);
+	if (!ret)
+		goto out;
 
 	/* do the copy */
-	egg_debug ("copying from %s to %s", source, path);
+	egg_debug ("copying from %s to %s", source, destination);
 	ret = g_file_copy (sourcefile, destfile, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, error);
 	if (!ret)
 		goto out;
 out:
-	g_free (path);
 	g_object_unref (sourcefile);
-	g_object_unref (destpath);
 	g_object_unref (destfile);
 	return ret;
 }
