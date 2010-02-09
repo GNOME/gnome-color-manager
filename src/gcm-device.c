@@ -395,12 +395,12 @@ out:
 gboolean
 gcm_device_apply (GcmDevice *device, GError **error)
 {
-	gboolean ret = FALSE;
+	gboolean ret = TRUE;
 	GcmDeviceClass *klass = GCM_DEVICE_GET_CLASS (device);
 
 	/* no support */
 	if (klass->apply == NULL) {
-		g_set_error (error, 1, 0, "no klass support");
+		egg_debug ("no klass support for %s", device->priv->id);
 		goto out;
 	}
 
