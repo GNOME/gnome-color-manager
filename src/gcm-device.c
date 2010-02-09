@@ -671,19 +671,6 @@ gcm_device_finalize (GObject *object)
 	G_OBJECT_CLASS (gcm_device_parent_class)->finalize (object);
 }
 
-/**
- * gcm_device_new:
- *
- * Return value: a new GcmDevice object.
- **/
-GcmDevice *
-gcm_device_new (void)
-{
-	GcmDevice *device;
-	device = g_object_new (GCM_TYPE_DEVICE, NULL);
-	return GCM_DEVICE (device);
-}
-
 /***************************************************************************
  ***                          MAKE CHECK TESTS                           ***
  ***************************************************************************/

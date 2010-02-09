@@ -578,12 +578,26 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 		goto out;
 	type_text = g_key_file_get_string (keyfile, id, "type", NULL);
 	type = gcm_device_type_enum_from_string (type_text);
+	if (type == GCM_DEVICE_TYPE_ENUM_UNKNOWN)
+		goto out;
+
+	/* create device or specified type */
+	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+		device = gcm_device_xrandr_new ();
+	} else if (type == GCM_DEVICE_TYPE_ENUM_PRINTER) {
+		device = gcm_device_cups_new ();
+	} else if (type == GCM_DEVICE_TYPE_ENUM_CAMERA) {
+		/* FIXME: use GPhoto? */
+		device = gcm_device_udev_new ();
+	} else if (type == GCM_DEVICE_TYPE_ENUM_SCANNER) {
+		/* FIXME: use SANE? */
+		device = gcm_device_udev_new ();
+	} else {
+		egg_warning ("device type internal error");
+		goto out;
+	}
 
 	/* create device */
-	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY)
-		device = gcm_device_xrandr_new ();
-	else
-		device = gcm_device_new ();
 	g_object_set (device,
 		      "type", type,
 		      "id", id,

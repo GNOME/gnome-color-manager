@@ -55,7 +55,6 @@ struct _GcmDeviceClass
 };
 
 GType		 gcm_device_get_type		  	(void);
-GcmDevice	*gcm_device_new				(void);
 const gchar	*gcm_device_get_id			(GcmDevice		*device);
 gboolean	 gcm_device_load			(GcmDevice		*device,
 							 GError			**error);
