@@ -85,7 +85,7 @@ main (int argc, char **argv)
 
 		/* set gamma for device */
 		egg_debug ("setting %s gamma", gcm_device_get_id (device));
-		ret = gcm_device_xrandr_set_gamma (GCM_DEVICE_XRANDR (device), &error);
+		ret = gcm_device_apply (device, &error);
 		if (!ret) {
 			retval = 1;
 			egg_warning ("failed to set gamma: %s", error->message);

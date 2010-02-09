@@ -339,10 +339,10 @@ out:
 }
 
 /**
- * gcm_device_xrandr_set_gamma_fallback:
+ * gcm_device_xrandr_apply_fallback:
  **/
 static gboolean
-gcm_device_xrandr_set_gamma_fallback (XRRCrtcGamma *crtc_gamma, guint size)
+gcm_device_xrandr_apply_fallback (XRRCrtcGamma *crtc_gamma, guint size)
 {
 	Bool rc;
 
@@ -356,12 +356,12 @@ gcm_device_xrandr_set_gamma_fallback (XRRCrtcGamma *crtc_gamma, guint size)
 }
 
 /**
- * gcm_device_xrandr_set_gamma_for_crtc:
+ * gcm_device_xrandr_apply_for_crtc:
  *
  * Return value: %TRUE for success;
  **/
 static gboolean
-gcm_device_xrandr_set_gamma_for_crtc (GcmDeviceXrandr *device_xrandr, GnomeRRCrtc *crtc, GcmClut *clut, GError **error)
+gcm_device_xrandr_apply_for_crtc (GcmDeviceXrandr *device_xrandr, GnomeRRCrtc *crtc, GcmClut *clut, GError **error)
 {
 	guint id;
 	gboolean ret = TRUE;
@@ -403,7 +403,7 @@ gcm_device_xrandr_set_gamma_for_crtc (GcmDeviceXrandr *device_xrandr, GnomeRRCrt
 	gdk_flush ();
 	if (gdk_error_trap_pop ()) {
 		/* some drivers support Xrandr 1.2, not 1.3 */
-		ret = gcm_device_xrandr_set_gamma_fallback (crtc_gamma, array->len);
+		ret = gcm_device_xrandr_apply_fallback (crtc_gamma, array->len);
 		if (!ret) {
 			g_set_error (error, 1, 0, "failed to set crtc gamma %p (%i) on %i", crtc_gamma, array->len, id);
 			goto out;
@@ -418,12 +418,12 @@ out:
 }
 
 /**
- * gcm_device_xrandr_set_gamma:
+ * gcm_device_xrandr_apply:
  *
  * Return value: %TRUE for success;
  **/
-gboolean
-gcm_device_xrandr_set_gamma (GcmDeviceXrandr *device_xrandr, GError **error)
+static gboolean
+gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 {
 	gboolean ret = FALSE;
 	GcmClut *clut = NULL;
@@ -444,9 +444,8 @@ gcm_device_xrandr_set_gamma (GcmDeviceXrandr *device_xrandr, GError **error)
 	gboolean use_atom;
 	gboolean leftmost_screen = FALSE;
 	GcmDeviceTypeEnum type;
+	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (device);
 	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
-
-	g_return_val_if_fail (device_xrandr != NULL, FALSE);
 
 	/* get details about the device */
 	g_object_get (device_xrandr,
@@ -530,7 +529,7 @@ gcm_device_xrandr_set_gamma (GcmDeviceXrandr *device_xrandr, GError **error)
 	}
 
 	/* actually set the gamma */
-	ret = gcm_device_xrandr_set_gamma_for_crtc (device_xrandr, crtc, clut, error);
+	ret = gcm_device_xrandr_apply_for_crtc (device_xrandr, crtc, clut, error);
 	if (!ret)
 		goto out;
 
@@ -625,10 +624,13 @@ gcm_device_xrandr_class_init (GcmDeviceXrandrClass *klass)
 {
 	GParamSpec *pspec;
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
+	GcmDeviceClass *device_class = GCM_DEVICE_CLASS (klass);
+
 	object_class->finalize = gcm_device_xrandr_finalize;
 	object_class->get_property = gcm_device_xrandr_get_property;
 	object_class->set_property = gcm_device_xrandr_set_property;
 
+	device_class->apply = gcm_device_xrandr_apply;
 
 	/**
 	 * GcmDeviceXrandr:native-device:
