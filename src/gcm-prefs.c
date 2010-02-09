@@ -1504,12 +1504,12 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		      "connected", &connected,
 		      NULL);
 
-	/* are we disconnected */
-	if (!connected)
-		goto out;
-
 	/* are we a display */
 	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+
+		/* are we disconnected */
+		if (!connected)
+			goto out;
 
 		/* find whether we have hardware installed */
 		g_object_get (color_device,
