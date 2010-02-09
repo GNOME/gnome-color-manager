@@ -1,4 +1,4 @@
-AC_PREREQ(2.65)
+AC_PREREQ(2.63)
 
 AC_INIT([gnome-color-manager],[2.29.4],[http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager])
 AC_CONFIG_SRCDIR(src)
