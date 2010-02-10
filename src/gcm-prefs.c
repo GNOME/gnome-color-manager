@@ -597,7 +597,7 @@ gcm_prefs_reference_kind_to_image_filename (GcmCalibrateArgyllReferenceKind kind
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_HUTCHCOLOR)
 		return NULL;
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_I1_RGB_SCAN_1_4)
-		return NULL;
+		return "i1_RGB_Scan_14.png";
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_IT8)
 		return "IT872.png";
 	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_LASER_SOFT_DC_PRO)
