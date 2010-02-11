@@ -2,6 +2,7 @@ targetsdir = $(datadir)/gnome-color-manager/targets
 targets_DATA =					\
 	unknown.png				\
 	ColorCheckerDC.png			\
+	ColorCheckerSG.png			\
 	ColorChecker24.png			\
 	CMP-DigitalTarget3.png			\
 	QPcard_201.png				\
