@@ -62,11 +62,16 @@ struct _GcmClientPrivate
 	GUdevClient			*gudev_client;
 	GcmScreen			*screen;
 	http_t				*http;
+	gboolean			 loading;
+	guint				 loading_refcount;
+	gboolean			 use_threads;
 };
 
 enum {
 	PROP_0,
 	PROP_DISPLAY_NAME,
+	PROP_LOADING,
+	PROP_USE_THREADS,
 	PROP_LAST
 };
 
@@ -79,6 +84,43 @@ enum {
 static guint signals[SIGNAL_LAST] = { 0 };
 
 G_DEFINE_TYPE (GcmClient, gcm_client, G_TYPE_OBJECT)
+
+/**
+ * gcm_client_set_use_threads:
+ **/
+void
+gcm_client_set_use_threads (GcmClient *client, gboolean use_threads)
+{
+	client->priv->use_threads = use_threads;
+	g_object_notify (G_OBJECT (client), "use-threads");
+}
+
+/**
+ * gcm_client_set_loading:
+ **/
+static void
+gcm_client_set_loading (GcmClient *client, gboolean ret)
+{
+	client->priv->loading = ret;
+	g_object_notify (G_OBJECT (client), "loading");
+	egg_debug ("loading: %i", ret);
+}
+
+/**
+ * gcm_client_done_loading:
+ **/
+static void
+gcm_client_done_loading (GcmClient *client)
+{
+	static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+
+	/* decrement refcount, with a lock */
+	g_static_mutex_lock (&mutex);
+	client->priv->loading_refcount--;
+	if (client->priv->loading_refcount == 0)
+		gcm_client_set_loading (client, FALSE);
+	g_static_mutex_unlock (&mutex);
+}
 
 /**
  * gcm_client_get_devices:
@@ -283,7 +325,20 @@ gcm_client_add_connected_devices_udev (GcmClient *client, GError **error)
 
 	g_list_foreach (devices, (GFunc) g_object_unref, NULL);
 	g_list_free (devices);
+
+	/* inform the UI */
+	gcm_client_done_loading (client);
 	return TRUE;
+}
+
+/**
+ * gcm_client_add_connected_devices_udev_thrd:
+ **/
+static gpointer
+gcm_client_add_connected_devices_udev_thrd (GcmClient *client)
+{
+	gcm_client_add_connected_devices_udev (client, NULL);
+	return NULL;
 }
 
 /**
@@ -555,7 +610,20 @@ gcm_client_add_connected_devices_cups (GcmClient *client, GError **error)
 	for (i = 0; i < num_dests; i++)
 		gcm_client_cups_add (client, dests[i]);
 	cupsFreeDests (num_dests, dests);
+
+	/* inform the UI */
+	gcm_client_done_loading (client);
 	return TRUE;
+}
+
+/**
+ * gcm_client_add_connected_devices_cups_thrd:
+ **/
+static gpointer
+gcm_client_add_connected_devices_cups_thrd (GcmClient *client)
+{
+	gcm_client_add_connected_devices_cups (client, NULL);
+	return NULL;
 }
 
 /**
@@ -686,23 +754,40 @@ gboolean
 gcm_client_add_connected (GcmClient *client, GError **error)
 {
 	gboolean ret;
+	GThread *thread;
 
 	g_return_val_if_fail (GCM_IS_CLIENT (client), FALSE);
 
-	/* udev */
-	ret = gcm_client_add_connected_devices_udev (client, error);
-	if (!ret)
-		goto out;
-
-	/* xrandr */
+	/* XRandR */
 	ret = gcm_client_add_connected_devices_xrandr (client, error);
 	if (!ret)
 		goto out;
 
-	/* cups */
-	ret = gcm_client_add_connected_devices_cups (client, error);
-	if (!ret)
-		goto out;
+	/* inform UI if we are loading devces still */
+	client->priv->loading_refcount = 2;
+	gcm_client_set_loading (client, TRUE);
+
+	/* UDEV */
+	if (client->priv->use_threads) {
+		thread = g_thread_create ((GThreadFunc) gcm_client_add_connected_devices_udev_thrd, client, FALSE, error);
+		if (thread == NULL)
+			goto out;
+	} else {
+		ret = gcm_client_add_connected_devices_udev (client, error);
+		if (!ret)
+			goto out;
+	}
+
+	/* CUPS */
+	if (client->priv->use_threads) {
+		thread = g_thread_create ((GThreadFunc) gcm_client_add_connected_devices_cups_thrd, client, FALSE, error);
+		if (thread == NULL)
+			goto out;
+	} else {
+		ret = gcm_client_add_connected_devices_cups (client, error);
+		if (!ret)
+			goto out;
+	}
 out:
 	return ret;
 }
@@ -797,6 +882,12 @@ gcm_client_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_DISPLAY_NAME:
 		g_value_set_string (value, priv->display_name);
 		break;
+	case PROP_LOADING:
+		g_value_set_boolean (value, priv->loading);
+		break;
+	case PROP_USE_THREADS:
+		g_value_set_boolean (value, priv->use_threads);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -816,6 +907,9 @@ gcm_client_set_property (GObject *object, guint prop_id, const GValue *value, GP
 	case PROP_DISPLAY_NAME:
 		g_free (priv->display_name);
 		priv->display_name = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_USE_THREADS:
+		priv->use_threads = g_value_get_boolean (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -861,6 +955,22 @@ gcm_client_class_init (GcmClientClass *klass)
 	g_object_class_install_property (object_class, PROP_DISPLAY_NAME, pspec);
 
 	/**
+	 * GcmClient:loading:
+	 */
+	pspec = g_param_spec_boolean ("loading", NULL, NULL,
+				      TRUE,
+				      G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_LOADING, pspec);
+
+	/**
+	 * GcmClient:use-threads:
+	 */
+	pspec = g_param_spec_boolean ("use-threads", NULL, NULL,
+				      TRUE,
+				      G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_USE_THREADS, pspec);
+
+	/**
 	 * GcmClient::added
 	 **/
 	signals[SIGNAL_ADDED] =
@@ -893,6 +1003,8 @@ gcm_client_init (GcmClient *client)
 
 	client->priv = GCM_CLIENT_GET_PRIVATE (client);
 	client->priv->display_name = NULL;
+	client->priv->loading_refcount = 0;
+	client->priv->use_threads = FALSE;
 	client->priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	client->priv->screen = gcm_screen_new ();
 	g_signal_connect (client->priv->screen, "outputs-changed",

@@ -59,7 +59,6 @@ static gboolean setting_up_device = FALSE;
 static GtkWidget *info_bar = NULL;
 static GtkWidget *cie_widget = NULL;
 static GtkWidget *trc_widget = NULL;
-static guint loading_refcount = 0;
 static GConfClient *gconf_client = NULL;
 
 enum {
@@ -2453,8 +2452,6 @@ static gboolean
 gcm_prefs_added_idle_cb (GcmDevice *device)
 {
 	GcmDeviceTypeEnum type;
-	GtkTreePath *path;
-	GtkWidget *widget;
 	egg_debug ("added: %s", gcm_device_get_id (device));
 
 	/* remove the saved device if it's already there */
@@ -2471,17 +2468,6 @@ gcm_prefs_added_idle_cb (GcmDevice *device)
 	else
 		gcm_prefs_add_device_type (device);
 
-	/* clear loading widget */
-	if (--loading_refcount == 0) {
-		gtk_widget_hide (info_bar);
-
-		/* set the cursor on the first device */
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
-		path = gtk_tree_path_new_from_string ("0");
-		gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
-		gtk_tree_path_free (path);
-	}
-
 	/* unref the instance */
 	g_object_unref (device);
 	return FALSE;
@@ -2493,9 +2479,7 @@ gcm_prefs_added_idle_cb (GcmDevice *device)
 static void
 gcm_prefs_added_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user_data)
 {
-	gtk_widget_show (info_bar);
 	g_idle_add ((GSourceFunc) gcm_prefs_added_idle_cb, g_object_ref (gcm_device));
-	loading_refcount++;
 }
 
 /**
@@ -2890,6 +2874,35 @@ gcm_prefs_profile_store_changed_cb (GcmProfileStore *_profile_store, gpointer us
 }
 
 /**
+ * gcm_prefs_client_notify_loading_cb:
+ **/
+static void
+gcm_prefs_client_notify_loading_cb (GcmClient *client, GParamSpec *pspec, gpointer data)
+{
+	gboolean loading;
+	GtkTreePath *path;
+	GtkWidget *widget;
+
+	/* get the new state */
+	g_object_get (client, "loading", &loading, NULL);
+
+	/*if loading show the bar */
+	if (loading) {
+		gtk_widget_show (info_bar);
+		return;
+	}
+
+	/* otherwise clear the loading widget */
+	gtk_widget_hide (info_bar);
+
+	/* set the cursor on the first device */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
+	path = gtk_tree_path_new_from_string ("0");
+	gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
+	gtk_tree_path_free (path);
+}
+
+/**
  * main:
  **/
 int
@@ -3127,8 +3140,11 @@ main (int argc, char **argv)
 
 	/* use a device client array */
 	gcm_client = gcm_client_new ();
+	gcm_client_set_use_threads (gcm_client, TRUE);
 	g_signal_connect (gcm_client, "added", G_CALLBACK (gcm_prefs_added_cb), NULL);
 	g_signal_connect (gcm_client, "removed", G_CALLBACK (gcm_prefs_removed_cb), NULL);
+	g_signal_connect (gcm_client, "notify::loading",
+			  G_CALLBACK (gcm_prefs_client_notify_loading_cb), NULL);
 
 	/* use the color device */
 	color_device = gcm_color_device_new ();

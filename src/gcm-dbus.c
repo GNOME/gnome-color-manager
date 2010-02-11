@@ -498,6 +498,7 @@ gcm_dbus_init (GcmDbus *dbus)
 	dbus->priv = GCM_DBUS_GET_PRIVATE (dbus);
 	dbus->priv->gconf_client = gconf_client_get_default ();
 	dbus->priv->client = gcm_client_new ();
+	gcm_client_set_use_threads (dbus->priv->client, TRUE);
 	dbus->priv->profile_store = gcm_profile_store_new ();
 	dbus->priv->timer = g_timer_new ();
 
