@@ -60,6 +60,7 @@ struct _GcmCalibratePrivate
 	gchar				*manufacturer;
 	gchar				*model;
 	gchar				*description;
+	gchar				*serial;
 	gchar				*device;
 };
 
@@ -101,10 +102,10 @@ gcm_calibrate_get_time (void)
 }
 
 /**
- * gcm_calibrate_get_basename_for_device:
+ * gcm_calibrate_set_basename:
  **/
-static gchar *
-gcm_calibrate_get_basename_for_device (GcmDevice *device)
+static void
+gcm_calibrate_set_basename (GcmCalibrate *calibrate)
 {
 	gchar *serial = NULL;
 	gchar *manufacturer = NULL;
@@ -114,7 +115,7 @@ gcm_calibrate_get_basename_for_device (GcmDevice *device)
 	GString *basename;
 
 	/* get device properties */
-	g_object_get (device,
+	g_object_get (calibrate,
 		      "serial", &serial,
 		      "manufacturer", &manufacturer,
 		      "model", &model,
@@ -139,12 +140,15 @@ gcm_calibrate_get_basename_for_device (GcmDevice *device)
 	if (0)
 		g_string_append_printf (basename, " [%s]", timespec);
 
+	/* save this */
+	g_object_set (calibrate, "basename", basename->str, NULL);
+
 	g_date_free (date);
 	g_free (serial);
 	g_free (manufacturer);
 	g_free (model);
 	g_free (timespec);
-	return g_string_free (basename, FALSE);
+	g_string_free (basename, TRUE);
 }
 
 /**
@@ -155,19 +159,17 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 {
 	gboolean ret = TRUE;
 	gchar *native_device = NULL;
-	gchar *basename = NULL;
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
 	gchar *description = NULL;
-	gchar *hardware_device = NULL;
+	gchar *serial = NULL;
 	GcmDeviceTypeEnum type;
-	GcmCalibratePrivate *priv = calibrate->priv;
 
 	/* get the device */
 	g_object_get (device,
 		      "native-device", &native_device,
 		      "type", &type,
-//		      "serial", &basename,
+		      "serial", &serial,
 		      "model", &model,
 		      "title", &description,
 		      "manufacturer", &manufacturer,
@@ -177,9 +179,6 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 		ret = FALSE;
 		goto out;
 	}
-
-	/* get a filename based on the serial number */
-	basename = gcm_calibrate_get_basename_for_device (device);
 
 	/* get model */
 	if (model == NULL) {
@@ -201,39 +200,29 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 
 	/* set the proper output name */
 	g_object_set (calibrate,
-		      "basename", basename,
 		      "model", model,
 		      "description", description,
 		      "manufacturer", manufacturer,
+		      "serial", serial,
 		      NULL);
+
+	/* get a filename based on calibration attributes we've just set */
+	gcm_calibrate_set_basename (calibrate);
 
 	/* display specific properties */
 	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
-
-		/* get calibration device model */
-		g_object_get (priv->color_device,
-			      "model", &hardware_device,
-			      NULL);
-
-		/* get device, harder */
-		if (hardware_device == NULL) {
-			/* TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated */
-			hardware_device = g_strdup (_("Custom"));
-		}
-
 		g_object_set (calibrate,
 			      "output-name", native_device,
-			      "device", hardware_device,
 			      NULL);
 	}
 
 out:
 	g_free (device);
 	g_free (native_device);
-	g_free (basename);
 	g_free (manufacturer);
 	g_free (model);
 	g_free (description);
+	g_free (serial);
 	return ret;
 }
 
@@ -245,6 +234,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 {
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
 	gboolean ret = TRUE;
+	gchar *hardware_device = NULL;
 	gboolean ret_tmp;
 	GtkWidget *dialog;
 	GtkResponseType response;
@@ -267,6 +257,23 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 		g_set_error_literal (error, 1, 0, "no support");
 		goto out;
 	}
+
+	/* get calibration device model */
+	g_object_get (priv->color_device,
+		      "model", &hardware_device,
+		      NULL);
+
+	/* get device, harder */
+	if (hardware_device == NULL) {
+		/* TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated */
+		hardware_device = g_strdup (_("Custom"));
+	}
+
+	/* set display specific properties */
+	g_object_set (calibrate,
+		      "device", hardware_device,
+		      NULL);
+
 
 	/* this wasn't previously set */
 	if (!priv->is_lcd && !priv->is_crt) {
@@ -386,6 +393,7 @@ out:
 		g_object_unref (brightness);
 	if (string != NULL)
 		g_string_free (string, TRUE);
+	g_free (hardware_device);
 	return ret;
 }
 
@@ -658,6 +666,7 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->model = NULL;
 	calibrate->priv->description = NULL;
 	calibrate->priv->device = NULL;
+	calibrate->priv->serial = NULL;
 	calibrate->priv->color_device = gcm_color_device_new ();
 }
 
@@ -679,6 +688,7 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->model);
 	g_free (priv->description);
 	g_free (priv->device);
+	g_free (priv->serial);
 	g_object_unref (priv->color_device);
 
 	G_OBJECT_CLASS (gcm_calibrate_parent_class)->finalize (object);

@@ -275,10 +275,10 @@ out:
 }
 
 /**
- * gcm_prefs_calibrate_device_get_scanned_profile:
+ * gcm_prefs_calibrate_device_get_reference_image:
  **/
 static gchar *
-gcm_prefs_calibrate_device_get_scanned_profile (const gchar *directory)
+gcm_prefs_calibrate_device_get_reference_image (const gchar *directory)
 {
 	gchar *filename = NULL;
 	GtkWindow *window;
@@ -288,7 +288,7 @@ gcm_prefs_calibrate_device_get_scanned_profile (const gchar *directory)
 	/* create new dialog */
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
 	/* TRANSLATORS: dialog for file->open dialog */
-	dialog = gtk_file_chooser_dialog_new (_("Select scanned reference file"), window,
+	dialog = gtk_file_chooser_dialog_new (_("Select reference image"), window,
 					       GTK_FILE_CHOOSER_ACTION_OPEN,
 					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
@@ -675,7 +675,7 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 
 	/* get scanned image */
 	directory = g_get_home_dir ();
-	scanned_image = gcm_prefs_calibrate_device_get_scanned_profile (directory);
+	scanned_image = gcm_prefs_calibrate_device_get_reference_image (directory);
 	if (scanned_image == NULL)
 		goto out;
 
@@ -684,14 +684,6 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	reference_data = gcm_prefs_calibrate_device_get_reference_data (directory);
 	if (reference_data == NULL)
 		goto out;
-
-	/* set defaults from device */
-	ret = gcm_calibrate_set_from_device (calibrate, current_device, &error);
-	if (!ret) {
-		egg_warning ("failed to calibrate: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
 
 	/* use the ORIGINATOR in the it8 file */
 	device = gcm_prefs_get_device_for_it8_file (reference_data);
@@ -704,6 +696,14 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 		      "filename-reference", reference_data,
 		      "device", device,
 		      NULL);
+
+	/* set defaults from device */
+	ret = gcm_calibrate_set_from_device (calibrate, current_device, &error);
+	if (!ret) {
+		egg_warning ("failed to calibrate: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	/* do each step */
 	ret = gcm_calibrate_device (calibrate, window, &error);
