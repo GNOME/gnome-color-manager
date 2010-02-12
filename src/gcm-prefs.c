@@ -1540,10 +1540,10 @@ static void
 gcm_prefs_add_device_xrandr (GcmDevice *device)
 {
 	GtkTreeIter iter;
-	gchar *title_tmp;
-	gchar *title;
+	gchar *title_tmp = NULL;
+	gchar *title = NULL;
 	gchar *sort = NULL;
-	gchar *id;
+	gchar *id = NULL;
 	gboolean ret;
 	gboolean connected;
 	GError *error = NULL;
