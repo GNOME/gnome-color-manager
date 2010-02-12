@@ -273,7 +273,7 @@ gcm_calibrate_set_from_exif (GcmCalibrate *calibrate, const gchar *filename, GEr
 	TIFFGetField (tiff,TIFFTAG_CAMERASERIALNUMBER, &serial);
 
 	/* we failed to get data */
-	if (manufacturer == NULL && model == NULL) {
+	if (manufacturer == NULL || model == NULL) {
 		g_set_error (error, 1, 0, "failed to get EXIF data from TIFF");
 		ret = FALSE;
 		goto out;
@@ -282,13 +282,16 @@ gcm_calibrate_set_from_exif (GcmCalibrate *calibrate, const gchar *filename, GEr
 	/* do the best we can */
 	description = g_strdup_printf ("%s - %s", manufacturer, model);
 
-	/* set the proper values */
-	g_object_set (calibrate,
-		      "model", model,
-		      "description", description,
-		      "manufacturer", manufacturer,
-		      "serial", serial,
-		      NULL);
+	/* only set what we've got, don't nuke perfectly good device data */
+	if (model != NULL)
+		g_object_set (calibrate, "model", model, NULL);
+	if (description != NULL)
+		g_object_set (calibrate, "description", description, NULL);
+	if (manufacturer != NULL)
+		g_object_set (calibrate, "manufacturer", manufacturer, NULL);
+	if (serial != NULL)
+		g_object_set (calibrate, "serial", serial, NULL);
+
 out:
 	g_free (description);
 	TIFFClose (tiff);
@@ -769,7 +772,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 {
 	gboolean ret = FALSE;
 	gboolean has_shared_targets;
-	gchar *scanned_image = NULL;
+	gchar *reference_image = NULL;
 	gchar *reference_data = NULL;
 	gchar *device = NULL;
 	const gchar *directory;
@@ -860,12 +863,15 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 
 	/* get scanned image */
 	directory = g_get_home_dir ();
-	scanned_image = gcm_calibrate_device_get_reference_image (directory, window);
-	if (scanned_image == NULL) {
+	reference_image = gcm_calibrate_device_get_reference_image (directory, window);
+	if (reference_image == NULL) {
 		g_set_error_literal (error, 1, 0, "could not get reference image");
 		ret = FALSE;
 		goto out;
 	}
+
+	/* use the exif data if there is any present */
+	gcm_calibrate_set_from_exif (calibrate, reference_image, NULL);
 
 	/* get reference data */
 	directory = has_shared_targets ? "/usr/share/color/targets" : "/media";
@@ -883,7 +889,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 
 	/* set the calibration parameters */
 	g_object_set (calibrate,
-		      "filename-source", scanned_image,
+		      "filename-source", reference_image,
 		      "filename-reference", reference_data,
 		      "device", device,
 		      NULL);
@@ -900,7 +906,7 @@ out:
 	if (string != NULL)
 		g_string_free (string, TRUE);
 	g_free (device);
-	g_free (scanned_image);
+	g_free (reference_image);
 	g_free (reference_data);
 	return ret;
 }
