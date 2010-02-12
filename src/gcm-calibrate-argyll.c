@@ -90,7 +90,6 @@ struct _GcmCalibrateArgyllPrivate
 	GPtrArray			*cached_dialogs;
 	gboolean			 already_on_window;
 	GcmCalibrateArgyllState		 state;
-	GcmCalibrateArgyllReferenceKind	 reference_kind;
 };
 
 enum {
@@ -126,10 +125,16 @@ static const gchar *
 gcm_calibrate_argyll_get_quality_arg (GcmCalibrateArgyll *calibrate_argyll)
 {
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	GcmCalibrateReferenceKind reference_kind;
+
+	/* get kind */
+	g_object_get (calibrate_argyll,
+		      "reference-kind", &reference_kind,
+		      NULL);
 
 	/* these have such low patch count, we only can do low quality */
-	if (priv->reference_kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER ||
-	    priv->reference_kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_QPCARD_201)
+	if (reference_kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER ||
+	    reference_kind == GCM_CALIBRATE_REFERENCE_KIND_QPCARD_201)
 		return "-ql";
 
 	/* get the default precision */
@@ -727,39 +732,29 @@ out:
  * gcm_calibrate_argyll_reference_kind_to_filename:
  **/
 static const gchar *
-gcm_calibrate_argyll_reference_kind_to_filename (GcmCalibrateArgyllReferenceKind kind)
+gcm_calibrate_argyll_reference_kind_to_filename (GcmCalibrateReferenceKind kind)
 {
-	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_CMP_DIGITAL_TARGET_3)
+	if (kind == GCM_CALIBRATE_REFERENCE_KIND_CMP_DIGITAL_TARGET_3)
 		return "CMP_Digital_Target-3.cht";
-	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_CMP_DT_003)
+	if (kind == GCM_CALIBRATE_REFERENCE_KIND_CMP_DT_003)
 		return "CMP_DT_003.cht";
-	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER)
+	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER)
 		return "ColorChecker.cht";
-	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER_DC)
+	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER_DC)
 		return "ColorCheckerDC.cht";
-	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER_SG)
+	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER_SG)
 		return "ColorCheckerSG.cht";
-	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_HUTCHCOLOR)
+	if (kind == GCM_CALIBRATE_REFERENCE_KIND_HUTCHCOLOR)
 		return "Hutchcolor.cht";
-	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_I1_RGB_SCAN_1_4)
+	if (kind == GCM_CALIBRATE_REFERENCE_KIND_I1_RGB_SCAN_1_4)
 		return "i1_RGB_Scan_1.4.cht";
-	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_IT8)
+	if (kind == GCM_CALIBRATE_REFERENCE_KIND_IT8)
 		return "it8.cht";
-	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_LASER_SOFT_DC_PRO)
+	if (kind == GCM_CALIBRATE_REFERENCE_KIND_LASER_SOFT_DC_PRO)
 		return "LaserSoftDCPro.cht";
-	if (kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_QPCARD_201)
+	if (kind == GCM_CALIBRATE_REFERENCE_KIND_QPCARD_201)
 		return "QPcard_201.cht";
 	return NULL;
-}
-
-/**
- * gcm_calibrate_argyll_set_reference_kind:
- **/
-void
-gcm_calibrate_argyll_set_reference_kind (GcmCalibrateArgyll *calibrate_argyll,
-					 GcmCalibrateArgyllReferenceKind reference_kind)
-{
-	calibrate_argyll->priv->reference_kind = reference_kind;
 }
 
 /**
@@ -780,11 +775,12 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 	const gchar *title;
 	const gchar *message;
 	const gchar *filename_tmp;
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	GcmCalibrateReferenceKind reference_kind;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "reference-kind", &reference_kind,
 		      "filename-source", &filename_source,
 		      "filename-reference", &filename_reference,
 		      NULL);
@@ -804,7 +800,7 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 	dest_ref = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "scanin-ref.txt", NULL);
 
 	/* copy all files to /tmp as argyllcms doesn't cope well with paths */
-	filename_tmp = gcm_calibrate_argyll_reference_kind_to_filename (priv->reference_kind);
+	filename_tmp = gcm_calibrate_argyll_reference_kind_to_filename (reference_kind);
 	filename_cht = g_build_filename ("/usr/share/color/argyll/ref", filename_tmp, NULL);
 	ret = gcm_utils_mkdir_and_copy (filename_cht, dest_cht, error);
 	if (!ret)
@@ -925,10 +921,12 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	gchar *device = NULL;
 	const gchar *title;
 	const gchar *message;
+	GcmCalibrateReferenceKind reference_kind;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "reference-kind", &reference_kind,
 		      "device", &device,
 		      NULL);
 
@@ -974,8 +972,8 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_get_quality_arg (calibrate_argyll)));
 
 	/* check whether the target is a low patch count target and generate low quality single shaper profile */
-	if (priv->reference_kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_COLOR_CHECKER ||
-	    priv->reference_kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_QPCARD_201)
+	if (reference_kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER ||
+	    reference_kind == GCM_CALIBRATE_REFERENCE_KIND_QPCARD_201)
 		g_ptr_array_add (array, g_strdup ("-aS"));
 
 	g_ptr_array_add (array, g_strdup (basename));
@@ -1510,7 +1508,6 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 	calibrate_argyll->priv->cached_dialogs = g_ptr_array_new_with_free_func ((GDestroyNotify)gcm_calibrate_argyll_dialog_free);
 	calibrate_argyll->priv->already_on_window = FALSE;
 	calibrate_argyll->priv->state = GCM_CALIBRATE_ARGYLL_STATE_IDLE;
-	calibrate_argyll->priv->reference_kind = GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_UNKNOWN;
 
 	/* get UI */
 	calibrate_argyll->priv->builder = gtk_builder_new ();

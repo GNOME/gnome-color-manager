@@ -44,6 +44,10 @@
 #define GCM_SETTINGS_CALIBRATION_LENGTH		"/apps/gnome-color-manager/calibration_length"
 #define GCM_SETTINGS_SHOW_FINE_TUNING		"/apps/gnome-color-manager/show_fine_tuning"
 
+/* DISTROS: you will have to patch if you have changed the name of these packages */
+#define GCM_PREFS_PACKAGE_NAME_SHARED_COLOR_TARGETS	"shared-color-targets"
+#define GCM_PREFS_PACKAGE_NAME_ARGYLLCMS		"argyllcms"
+
 gboolean	 gcm_utils_mkdir_for_filename		(const gchar		*filename,
 							 GError			**error);
 gboolean	 gcm_utils_mkdir_and_copy		(const gchar		*source,
