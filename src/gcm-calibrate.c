@@ -871,7 +871,9 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	}
 
 	/* use the exif data if there is any present */
-	gcm_calibrate_set_from_exif (calibrate, reference_image, NULL);
+	ret = gcm_calibrate_set_from_exif (calibrate, reference_image, NULL);
+	if (!ret)
+		egg_debug ("no EXIF data, so using device attributes");
 
 	/* get reference data */
 	directory = has_shared_targets ? "/usr/share/color/targets" : "/media";
