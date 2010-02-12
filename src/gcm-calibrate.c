@@ -34,6 +34,7 @@
 #include "gcm-calibrate.h"
 #include "gcm-utils.h"
 #include "gcm-brightness.h"
+#include "gcm-color-device.h"
 
 #include "egg-debug.h"
 
@@ -48,6 +49,7 @@ static void     gcm_calibrate_finalize	(GObject     *object);
  **/
 struct _GcmCalibratePrivate
 {
+	GcmColorDevice			*color_device;
 	gboolean			 is_lcd;
 	gboolean			 is_crt;
 	gchar				*output_name;
@@ -78,6 +80,162 @@ enum {
 };
 
 G_DEFINE_TYPE (GcmCalibrate, gcm_calibrate, G_TYPE_OBJECT)
+
+
+/**
+ * gcm_calibrate_get_time:
+ **/
+static gchar *
+gcm_calibrate_get_time (void)
+{
+	gchar *text;
+	time_t c_time;
+
+	/* get the time now */
+	time (&c_time);
+	text = g_new0 (gchar, 255);
+
+	/* format text */
+	strftime (text, 254, "%H-%M-%S", localtime (&c_time));
+	return text;
+}
+
+/**
+ * gcm_calibrate_get_basename_for_device:
+ **/
+static gchar *
+gcm_calibrate_get_basename_for_device (GcmDevice *device)
+{
+	gchar *serial = NULL;
+	gchar *manufacturer = NULL;
+	gchar *model = NULL;
+	gchar *timespec = NULL;
+	GDate *date = NULL;
+	GString *basename;
+
+	/* get device properties */
+	g_object_get (device,
+		      "serial", &serial,
+		      "manufacturer", &manufacturer,
+		      "model", &model,
+		      NULL);
+
+	/* create date and set it to now */
+	date = g_date_new ();
+	g_date_set_time_t (date, time (NULL));
+	timespec = gcm_calibrate_get_time ();
+
+	/* form basename */
+	basename = g_string_new ("GCM");
+	if (manufacturer != NULL)
+		g_string_append_printf (basename, " - %s", manufacturer);
+	if (model != NULL)
+		g_string_append_printf (basename, " - %s", model);
+	if (serial != NULL)
+		g_string_append_printf (basename, " - %s", serial);
+	g_string_append_printf (basename, " (%04i-%02i-%02i)", date->year, date->month, date->day);
+
+	/* maybe configure in GConf? */
+	if (0)
+		g_string_append_printf (basename, " [%s]", timespec);
+
+	g_date_free (date);
+	g_free (serial);
+	g_free (manufacturer);
+	g_free (model);
+	g_free (timespec);
+	return g_string_free (basename, FALSE);
+}
+
+/**
+ * gcm_calibrate_set_from_device:
+ **/
+gboolean
+gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GError **error)
+{
+	gboolean ret = TRUE;
+	gchar *native_device = NULL;
+	gchar *basename = NULL;
+	gchar *manufacturer = NULL;
+	gchar *model = NULL;
+	gchar *description = NULL;
+	gchar *hardware_device = NULL;
+	GcmDeviceTypeEnum type;
+	GcmCalibratePrivate *priv = calibrate->priv;
+
+	/* get the device */
+	g_object_get (device,
+		      "native-device", &native_device,
+		      "type", &type,
+//		      "serial", &basename,
+		      "model", &model,
+		      "title", &description,
+		      "manufacturer", &manufacturer,
+		      NULL);
+	if (native_device == NULL) {
+		g_set_error (error, 1, 0, "failed to get output");
+		ret = FALSE;
+		goto out;
+	}
+
+	/* get a filename based on the serial number */
+	basename = gcm_calibrate_get_basename_for_device (device);
+
+	/* get model */
+	if (model == NULL) {
+		/* TRANSLATORS: this is saved in the profile */
+		model = g_strdup (_("Unknown model"));
+	}
+
+	/* get description */
+	if (description == NULL) {
+		/* TRANSLATORS: this is saved in the profile */
+		description = g_strdup (_("Unknown device"));
+	}
+
+	/* get manufacturer */
+	if (manufacturer == NULL) {
+		/* TRANSLATORS: this is saved in the profile */
+		manufacturer = g_strdup (_("Unknown manufacturer"));
+	}
+
+	/* set the proper output name */
+	g_object_set (calibrate,
+		      "basename", basename,
+		      "model", model,
+		      "description", description,
+		      "manufacturer", manufacturer,
+		      NULL);
+
+	/* display specific properties */
+	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+
+		/* get calibration device model */
+		g_object_get (priv->color_device,
+			      "model", &hardware_device,
+			      NULL);
+
+		/* get device, harder */
+		if (hardware_device == NULL) {
+			/* TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated */
+			hardware_device = g_strdup (_("Custom"));
+		}
+
+		g_object_set (calibrate,
+			      "output-name", native_device,
+			      "device", hardware_device,
+			      NULL);
+	}
+
+out:
+	g_free (device);
+	g_free (native_device);
+	g_free (basename);
+	g_free (manufacturer);
+	g_free (model);
+	g_free (description);
+	return ret;
+}
 
 /**
  * gcm_calibrate_display:
@@ -500,6 +658,7 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->model = NULL;
 	calibrate->priv->description = NULL;
 	calibrate->priv->device = NULL;
+	calibrate->priv->color_device = gcm_color_device_new ();
 }
 
 /**
@@ -520,6 +679,7 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->model);
 	g_free (priv->description);
 	g_free (priv->device);
+	g_object_unref (priv->color_device);
 
 	G_OBJECT_CLASS (gcm_calibrate_parent_class)->finalize (object);
 }

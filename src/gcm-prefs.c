@@ -233,71 +233,6 @@ gcm_prefs_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
 }
 
 /**
- * gcm_prefs_get_time:
- **/
-static gchar *
-gcm_prefs_get_time (void)
-{
-	gchar *text;
-	time_t c_time;
-
-	/* get the time now */
-	time (&c_time);
-	text = g_new0 (gchar, 255);
-
-	/* format text */
-	strftime (text, 254, "%H-%M-%S", localtime (&c_time));
-	return text;
-}
-
-/**
- * gcm_prefs_calibrate_get_basename:
- **/
-static gchar *
-gcm_prefs_calibrate_get_basename (GcmDevice *device)
-{
-	gchar *serial = NULL;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
-	gchar *timespec = NULL;
-	GDate *date = NULL;
-	GString *basename;
-
-	/* get device properties */
-	g_object_get (device,
-		      "serial", &serial,
-		      "manufacturer", &manufacturer,
-		      "model", &model,
-		      NULL);
-
-	/* create date and set it to now */
-	date = g_date_new ();
-	g_date_set_time_t (date, time (NULL));
-	timespec = gcm_prefs_get_time ();
-
-	/* form basename */
-	basename = g_string_new ("GCM");
-	if (manufacturer != NULL)
-		g_string_append_printf (basename, " - %s", manufacturer);
-	if (model != NULL)
-		g_string_append_printf (basename, " - %s", model);
-	if (serial != NULL)
-		g_string_append_printf (basename, " - %s", serial);
-	g_string_append_printf (basename, " (%04i-%02i-%02i)", date->year, date->month, date->day);
-
-	/* maybe configure in GConf? */
-	if (0)
-		g_string_append_printf (basename, " [%s]", timespec);
-
-	g_date_free (date);
-	g_free (serial);
-	g_free (manufacturer);
-	g_free (model);
-	g_free (timespec);
-	return g_string_free (basename, FALSE);
-}
-
-/**
  * gcm_prefs_calibrate_display:
  **/
 static gboolean
@@ -306,72 +241,19 @@ gcm_prefs_calibrate_display (GcmCalibrate *calibrate)
 	gboolean ret = FALSE;
 	gboolean ret_tmp;
 	GError *error = NULL;
-	gchar *output_name = NULL;
-	gchar *basename = NULL;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
-	gchar *description = NULL;
-	gchar *device = NULL;
 	GtkWindow *window;
 
 	/* no device */
 	if (current_device == NULL)
 		goto out;
 
-	/* get the device */
-	g_object_get (current_device,
-		      "native-device", &output_name,
-		      "serial", &basename,
-		      "manufacturer", &manufacturer,
-		      "model", &model,
-		      "title", &description,
-		      NULL);
-	if (output_name == NULL) {
-		egg_warning ("failed to get output");
+	/* set properties from the device */
+	ret = gcm_calibrate_set_from_device (calibrate, current_device, &error);
+	if (!ret) {
+		egg_warning ("failed to calibrate: %s", error->message);
+		g_error_free (error);
 		goto out;
 	}
-
-	/* get a filename based on the serial number */
-	basename = gcm_prefs_calibrate_get_basename (current_device);
-
-	/* get model */
-	if (model == NULL) {
-		/* TRANSLATORS: this is saved in the profile */
-		model = g_strdup (_("Unknown model"));
-	}
-
-	/* get description */
-	if (description == NULL) {
-		/* TRANSLATORS: this is saved in the profile */
-		description = g_strdup (_("Unknown display"));
-	}
-
-	/* get manufacturer */
-	if (manufacturer == NULL) {
-		/* TRANSLATORS: this is saved in the profile */
-		manufacturer = g_strdup (_("Unknown manufacturer"));
-	}
-
-	/* get calibration device model */
-	g_object_get (color_device,
-		      "model", &device,
-		      NULL);
-
-	/* get device, harder */
-	if (device == NULL) {
-		/* TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated */
-		device = g_strdup (_("Custom"));
-	}
-
-	/* set the proper output name */
-	g_object_set (calibrate,
-		      "output-name", output_name,
-		      "basename", basename,
-		      "model", model,
-		      "description", description,
-		      "manufacturer", manufacturer,
-		      "device", device,
-		      NULL);
 
 	/* run each task in order */
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
@@ -389,13 +271,6 @@ out:
 		egg_warning ("failed to apply profile: %s", error->message);
 		g_error_free (error);
 	}
-
-	g_free (device);
-	g_free (output_name);
-	g_free (basename);
-	g_free (manufacturer);
-	g_free (model);
-	g_free (description);
 	return ret;
 }
 
@@ -712,10 +587,6 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	GError *error = NULL;
 	gchar *scanned_image = NULL;
 	gchar *reference_data = NULL;
-	gchar *basename = NULL;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
-	gchar *description = NULL;
 	gchar *device = NULL;
 	const gchar *directory;
 	GtkWindow *window;
@@ -794,13 +665,6 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	if (response != GTK_RESPONSE_YES)
 		goto out;
 
-	/* get the device */
-	g_object_get (current_device,
-		      "model", &model,
-		      "title", &description,
-		      "manufacturer", &manufacturer,
-		      NULL);
-
 	/* set the reference kind */
 	reference_kind = gcm_prefs_get_reference_kind ();
 	if (reference_kind == GCM_CALIBRATE_ARGYLL_REFERENCE_KIND_UNKNOWN) {
@@ -821,14 +685,13 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	if (reference_data == NULL)
 		goto out;
 
-	/* ensure we have data */
-	basename = gcm_prefs_calibrate_get_basename (current_device);
-	if (manufacturer == NULL)
-		manufacturer = g_strdup ("Generic manufacturer");
-	if (model == NULL)
-		model = g_strdup ("Generic model");
-	if (description == NULL)
-		description = g_strdup ("Generic scanner");
+	/* set defaults from device */
+	ret = gcm_calibrate_set_from_device (calibrate, current_device, &error);
+	if (!ret) {
+		egg_warning ("failed to calibrate: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	/* use the ORIGINATOR in the it8 file */
 	device = gcm_prefs_get_device_for_it8_file (reference_data);
@@ -837,10 +700,6 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 
 	/* set the calibration parameters */
 	g_object_set (calibrate,
-		      "basename", basename,
-		      "model", model,
-		      "description", description,
-		      "manufacturer", manufacturer,
 		      "filename-source", scanned_image,
 		      "filename-reference", reference_data,
 		      "device", device,
@@ -857,10 +716,6 @@ out:
 	if (string != NULL)
 		g_string_free (string, TRUE);
 	g_free (device);
-	g_free (basename);
-	g_free (manufacturer);
-	g_free (model);
-	g_free (description);
 	g_free (scanned_image);
 	g_free (reference_data);
 	return ret;

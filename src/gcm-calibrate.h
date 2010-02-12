@@ -24,6 +24,8 @@
 
 #include <glib-object.h>
 
+#include "gcm-device.h"
+
 G_BEGIN_DECLS
 
 #define GCM_TYPE_CALIBRATE		(gcm_calibrate_get_type ())
@@ -68,6 +70,9 @@ gboolean	 gcm_calibrate_display			(GcmCalibrate	*calibrate,
 							 GError		**error);
 gboolean	 gcm_calibrate_device			(GcmCalibrate	*calibrate,
 							 GtkWindow	*window,
+							 GError		**error);
+gboolean	 gcm_calibrate_set_from_device		(GcmCalibrate	*calibrate,
+							 GcmDevice	*device,
 							 GError		**error);
 
 G_END_DECLS
