@@ -974,7 +974,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	/* check whether the target is a low patch count target and generate low quality single shaper profile */
 	if (reference_kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER ||
 	    reference_kind == GCM_CALIBRATE_REFERENCE_KIND_QPCARD_201)
-		g_ptr_array_add (array, g_strdup ("-aS"));
+		g_ptr_array_add (array, g_strdup ("-aG"));
 
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
