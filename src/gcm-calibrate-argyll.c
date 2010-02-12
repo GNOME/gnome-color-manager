@@ -631,10 +631,10 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	gchar *description_new = NULL;
 	gchar *command = NULL;
 	gchar *basename = NULL;
-	gchar *description = NULL;
-	gchar *manufacturer = NULL;
+	const gchar *description = NULL;
+	const gchar *manufacturer = NULL;
+	const gchar *model = NULL;
 	gchar *device = NULL;
-	gchar *model = NULL;
 	GPtrArray *array = NULL;
 	const gchar *title;
 	const gchar *message;
@@ -642,11 +642,13 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
-		      "description", &description,
-		      "manufacturer", &manufacturer,
-		      "model", &model,
 		      "device", &device,
 		      NULL);
+
+	/* get, returning fallbacks if nothing was set */
+	model = gcm_calibrate_get_model_fallback (GCM_CALIBRATE (calibrate_argyll));
+	manufacturer = gcm_calibrate_get_manufacturer_fallback (GCM_CALIBRATE (calibrate_argyll));
+	description = gcm_calibrate_get_description_fallback (GCM_CALIBRATE (calibrate_argyll));
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("colprof", error);
@@ -714,9 +716,6 @@ out:
 		g_date_free (date);
 	g_free (basename);
 	g_free (command);
-	g_free (manufacturer);
-	g_free (model);
-	g_free (description);
 	g_free (description_new);
 	g_free (device);
 	g_free (copyright);
@@ -916,13 +915,13 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	gchar **argv = NULL;
 	GDate *date = NULL;
 	gchar *description_tmp = NULL;
-	gchar *description = NULL;
+	const gchar *description;
 	gchar *copyright = NULL;
 	GPtrArray *array = NULL;
 	gchar *command = NULL;
 	gchar *basename = NULL;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
+	const gchar *manufacturer;
+	const gchar *model;
 	gchar *device = NULL;
 	const gchar *title;
 	const gchar *message;
@@ -930,11 +929,13 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
-		      "description", &description,
-		      "manufacturer", &manufacturer,
-		      "model", &model,
 		      "device", &device,
 		      NULL);
+
+	/* get, returning fallbacks if nothing was set */
+	model = gcm_calibrate_get_model_fallback (GCM_CALIBRATE (calibrate_argyll));
+	manufacturer = gcm_calibrate_get_manufacturer_fallback (GCM_CALIBRATE (calibrate_argyll));
+	description = gcm_calibrate_get_description_fallback (GCM_CALIBRATE (calibrate_argyll));
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("colprof", error);
@@ -1008,9 +1009,6 @@ out:
 	g_free (description_tmp);
 	g_free (copyright);
 	g_free (basename);
-	g_free (manufacturer);
-	g_free (model);
-	g_free (description);
 	g_free (command);
 	g_free (device);
 	g_strfreev (argv);

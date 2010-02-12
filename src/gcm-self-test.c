@@ -36,6 +36,7 @@ void gcm_dmi_test (EggTest *test);
 void gcm_xyz_test (EggTest *test);
 void gcm_cie_widget_test (EggTest *test);
 void gcm_trc_widget_test (EggTest *test);
+void gcm_calibrate_test (EggTest *test);
 void gcm_calibrate_manual_test (EggTest *test);
 
 int
@@ -50,6 +51,7 @@ main (int argc, char **argv)
 	egg_debug_init (&argc, &argv);
 
 	/* components */
+	gcm_calibrate_test (test);
 	gcm_edid_test (test);
 	gcm_tables_test (test);
 	gcm_utils_test (test);

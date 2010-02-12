@@ -30,6 +30,8 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#include <tiff.h>
+#include <tiffio.h>
 
 #include "gcm-calibrate.h"
 #include "gcm-utils.h"
@@ -69,6 +71,7 @@ enum {
 	PROP_BASENAME,
 	PROP_MODEL,
 	PROP_DESCRIPTION,
+	PROP_SERIAL,
 	PROP_DEVICE,
 	PROP_MANUFACTURER,
 	PROP_IS_LCD,
@@ -82,6 +85,47 @@ enum {
 
 G_DEFINE_TYPE (GcmCalibrate, gcm_calibrate, G_TYPE_OBJECT)
 
+/**
+ * gcm_calibrate_get_model_fallback:
+ **/
+const gchar *
+gcm_calibrate_get_model_fallback (GcmCalibrate *calibrate)
+{
+	GcmCalibratePrivate *priv = calibrate->priv;
+	if (priv->model != NULL)
+		return priv->model;
+
+	/* TRANSLATORS: this is saved in the profile */
+	return _("Unknown model");
+}
+
+/**
+ * gcm_calibrate_get_description_fallback:
+ **/
+const gchar *
+gcm_calibrate_get_description_fallback (GcmCalibrate *calibrate)
+{
+	GcmCalibratePrivate *priv = calibrate->priv;
+	if (priv->description != NULL)
+		return priv->description;
+
+	/* TRANSLATORS: this is saved in the profile */
+	return _("Unknown description");
+}
+
+/**
+ * gcm_calibrate_get_manufacturer_fallback:
+ **/
+const gchar *
+gcm_calibrate_get_manufacturer_fallback (GcmCalibrate *calibrate)
+{
+	GcmCalibratePrivate *priv = calibrate->priv;
+	if (priv->manufacturer != NULL)
+		return priv->manufacturer;
+
+	/* TRANSLATORS: this is saved in the profile */
+	return _("Unknown manufacturer");
+}
 
 /**
  * gcm_calibrate_get_time:
@@ -174,31 +218,8 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 		      "title", &description,
 		      "manufacturer", &manufacturer,
 		      NULL);
-	if (native_device == NULL) {
-		g_set_error (error, 1, 0, "failed to get output");
-		ret = FALSE;
-		goto out;
-	}
 
-	/* get model */
-	if (model == NULL) {
-		/* TRANSLATORS: this is saved in the profile */
-		model = g_strdup (_("Unknown model"));
-	}
-
-	/* get description */
-	if (description == NULL) {
-		/* TRANSLATORS: this is saved in the profile */
-		description = g_strdup (_("Unknown device"));
-	}
-
-	/* get manufacturer */
-	if (manufacturer == NULL) {
-		/* TRANSLATORS: this is saved in the profile */
-		manufacturer = g_strdup (_("Unknown manufacturer"));
-	}
-
-	/* set the proper output name */
+	/* set the proper values */
 	g_object_set (calibrate,
 		      "model", model,
 		      "description", description,
@@ -211,18 +232,64 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 
 	/* display specific properties */
 	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+		if (native_device == NULL) {
+			g_set_error (error, 1, 0, "failed to get output");
+			ret = FALSE;
+			goto out;
+		}
 		g_object_set (calibrate,
 			      "output-name", native_device,
 			      NULL);
 	}
 
 out:
-	g_free (device);
 	g_free (native_device);
 	g_free (manufacturer);
 	g_free (model);
 	g_free (description);
 	g_free (serial);
+	return ret;
+}
+
+/**
+ * gcm_calibrate_set_from_exif:
+ **/
+gboolean
+gcm_calibrate_set_from_exif (GcmCalibrate *calibrate, const gchar *filename, GError **error)
+{
+	const gchar *manufacturer = NULL;
+	const gchar *model = NULL;
+	gchar *description = NULL;
+	const gchar *serial = NULL;
+	TIFF *tiff;
+	gboolean ret = TRUE;
+
+	/* open file */
+	tiff = TIFFOpen (filename, "r");
+	TIFFGetField (tiff,TIFFTAG_MAKE, &manufacturer);
+	TIFFGetField (tiff,TIFFTAG_MODEL, &model);
+	TIFFGetField (tiff,TIFFTAG_CAMERASERIALNUMBER, &serial);
+
+	/* we failed to get data */
+	if (manufacturer == NULL && model == NULL) {
+		g_set_error (error, 1, 0, "failed to get EXIF data from TIFF");
+		ret = FALSE;
+		goto out;
+	}
+
+	/* do the best we can */
+	description = g_strdup_printf ("%s - %s", manufacturer, model);
+
+	/* set the proper values */
+	g_object_set (calibrate,
+		      "model", model,
+		      "description", description,
+		      "manufacturer", manufacturer,
+		      "serial", serial,
+		      NULL);
+out:
+	g_free (description);
+	TIFFClose (tiff);
 	return ret;
 }
 
@@ -455,6 +522,9 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 	case PROP_DESCRIPTION:
 		g_value_set_string (value, priv->description);
 		break;
+	case PROP_SERIAL:
+		g_value_set_string (value, priv->serial);
+		break;
 	case PROP_DEVICE:
 		g_value_set_string (value, priv->device);
 		break;
@@ -532,6 +602,10 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 	case PROP_DESCRIPTION:
 		g_free (priv->description);
 		priv->description = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_SERIAL:
+		g_free (priv->serial);
+		priv->serial = g_strdup (g_value_get_string (value));
 		break;
 	case PROP_DEVICE:
 		g_free (priv->device);
@@ -632,6 +706,14 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 	g_object_class_install_property (object_class, PROP_DESCRIPTION, pspec);
 
 	/**
+	 * GcmCalibrate:serial:
+	 */
+	pspec = g_param_spec_string ("serial", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_SERIAL, pspec);
+
+	/**
 	 * GcmCalibrate:device:
 	 */
 	pspec = g_param_spec_string ("device", NULL, NULL,
@@ -706,4 +788,46 @@ gcm_calibrate_new (void)
 	calibrate = g_object_new (GCM_TYPE_CALIBRATE, NULL);
 	return GCM_CALIBRATE (calibrate);
 }
+
+/***************************************************************************
+ ***                          MAKE CHECK TESTS                           ***
+ ***************************************************************************/
+#ifdef EGG_TEST
+#include "egg-test.h"
+
+void
+gcm_calibrate_test (EggTest *test)
+{
+	GcmCalibrate *calibrate;
+	gboolean ret;
+	GError *error = NULL;
+	gchar *filename;
+
+	if (!egg_test_start (test, "GcmCalibrate"))
+		return;
+
+	/************************************************************/
+	egg_test_title (test, "get a calibrate object");
+	calibrate = gcm_calibrate_new ();
+	egg_test_assert (test, calibrate != NULL);
+
+	/************************************************************/
+	egg_test_title (test, "calibrate display manually");
+	filename = egg_test_get_data_file ("test.tif");
+	ret = gcm_calibrate_set_from_exif (GCM_CALIBRATE(calibrate), filename, &error);
+	if (!ret)
+		egg_test_failed (test, "error: %s", error->message);
+	else if (g_strcmp0 (gcm_calibrate_get_model_fallback (calibrate), "NIKON D60") != 0)
+		egg_test_failed (test, "got model: %s", gcm_calibrate_get_model_fallback (calibrate));
+	else if (g_strcmp0 (gcm_calibrate_get_manufacturer_fallback (calibrate), "NIKON CORPORATION") != 0)
+		egg_test_failed (test, "got manufacturer: %s", gcm_calibrate_get_manufacturer_fallback (calibrate));
+	else
+		egg_test_success (test, NULL);
+
+	g_object_unref (calibrate);
+	g_free (filename);
+
+	egg_test_end (test);
+}
+#endif
 
