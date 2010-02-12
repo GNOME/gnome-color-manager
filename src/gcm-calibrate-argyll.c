@@ -865,6 +865,8 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 
 	/* setup the command */
 	g_ptr_array_add (array, g_strdup ("-v9"));
+	g_ptr_array_add (array, g_strdup ("-p"));
+	g_ptr_array_add (array, g_strdup ("-a"));
 	g_ptr_array_add (array, g_strdup (filename));
 	g_ptr_array_add (array, g_strdup ("scanin.cht"));
 	g_ptr_array_add (array, g_strdup ("scanin-ref.txt"));
