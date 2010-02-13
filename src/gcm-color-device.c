@@ -50,6 +50,7 @@ struct _GcmColorDevicePrivate
 	gchar				*vendor;
 	gchar				*model;
 	GUdevClient			*client;
+	GcmColorDeviceKind		 device_kind;
 };
 
 enum {
@@ -57,6 +58,7 @@ enum {
 	PROP_PRESENT,
 	PROP_VENDOR,
 	PROP_MODEL,
+	PROP_DEVICE_KIND,
 	PROP_LAST
 };
 
@@ -88,6 +90,9 @@ gcm_color_device_get_property (GObject *object, guint prop_id, GValue *value, GP
 	case PROP_MODEL:
 		g_value_set_string (value, priv->model);
 		break;
+	case PROP_DEVICE_KIND:
+		g_value_set_uint (value, priv->device_kind);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -100,21 +105,7 @@ gcm_color_device_get_property (GObject *object, guint prop_id, GValue *value, GP
 static void
 gcm_color_device_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
-	GcmColorDevice *color_device = GCM_COLOR_DEVICE (object);
-	GcmColorDevicePrivate *priv = color_device->priv;
-
 	switch (prop_id) {
-	case PROP_PRESENT:
-		priv->present = g_value_get_boolean (value);
-		break;
-	case PROP_VENDOR:
-		g_free (priv->vendor);
-		priv->vendor = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_MODEL:
-		g_free (priv->model);
-		priv->model = g_strdup (g_value_get_string (value));
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -138,7 +129,7 @@ gcm_color_device_class_init (GcmColorDeviceClass *klass)
 	 */
 	pspec = g_param_spec_boolean ("present", NULL, NULL,
 				      FALSE,
-				      G_PARAM_READWRITE);
+				      G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_PRESENT, pspec);
 
 	/**
@@ -146,7 +137,7 @@ gcm_color_device_class_init (GcmColorDeviceClass *klass)
 	 */
 	pspec = g_param_spec_string ("vendor", NULL, NULL,
 				     NULL,
-				     G_PARAM_READWRITE);
+				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_VENDOR, pspec);
 
 	/**
@@ -154,8 +145,16 @@ gcm_color_device_class_init (GcmColorDeviceClass *klass)
 	 */
 	pspec = g_param_spec_string ("model", NULL, NULL,
 				     NULL,
-				     G_PARAM_READWRITE);
+				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_MODEL, pspec);
+
+	/**
+	 * GcmColorDevice:device-kind:
+	 */
+	pspec = g_param_spec_uint ("device-kind", NULL, NULL,
+				   0, G_MAXUINT, GCM_COLOR_DEVICE_KIND_UNKNOWN,
+				   G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_DEVICE_KIND, pspec);
 
 	/**
 	 * GcmColorDevice::added:
@@ -196,6 +195,16 @@ gcm_color_device_device_add (GcmColorDevice *color_device, GUdevDevice *device)
 	/* model */
 	g_free (priv->model);
 	priv->model = g_strdup (g_udev_device_get_property (device, "ID_MODEL_FROM_DATABASE"));
+
+	/* try to get type */
+	if (g_strcmp0 (priv->model, "HueyXXX") == 0) {
+		priv->device_kind = GCM_COLOR_DEVICE_KIND_HUEY;
+	} else if (g_strcmp0 (priv->model, "MunkiXXX") == 0) {
+		priv->device_kind = GCM_COLOR_DEVICE_KIND_COLOR_MUNKI;
+	} else {
+		egg_warning ("Failed to recognise color device: %s", priv->model);
+		priv->device_kind = GCM_COLOR_DEVICE_KIND_UNKNOWN;
+	}
 
 	/* signal the addition */
 	egg_debug ("emit: changed");
@@ -288,6 +297,7 @@ gcm_color_device_init (GcmColorDevice *color_device)
 	color_device->priv = GCM_COLOR_DEVICE_GET_PRIVATE (color_device);
 	color_device->priv->vendor = NULL;
 	color_device->priv->model = NULL;
+	color_device->priv->device_kind = GCM_COLOR_DEVICE_KIND_UNKNOWN;
 
 	/* use GUdev to find the calibration device */
 	color_device->priv->client = g_udev_client_new (subsystems);

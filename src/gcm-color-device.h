@@ -55,6 +55,12 @@ struct _GcmColorDeviceClass
 	void (*_gcm_reserved5) (void);
 };
 
+typedef enum {
+	GCM_COLOR_DEVICE_KIND_HUEY,
+	GCM_COLOR_DEVICE_KIND_COLOR_MUNKI,
+	GCM_COLOR_DEVICE_KIND_UNKNOWN
+} GcmColorDeviceKind;
+
 GType		 gcm_color_device_get_type		(void);
 GcmColorDevice	*gcm_color_device_new			(void);
 
