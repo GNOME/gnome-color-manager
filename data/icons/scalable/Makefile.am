@@ -3,9 +3,14 @@ size = scalable
 context = apps
 
 iconsdir = $(themedir)/$(size)/$(context)
-
-icons_DATA = 			  	\
+icons_DATA = 		 		\
 	gnome-color-manager.svg
+
+appiconsdir = $(datadir)/gnome-color-manager/icons
+appicons_DATA = 	 		\
+	lcd.svg	  			\
+	crt.svg 			\
+	projector.svg
 
 install-data-hook:
 	mkdir -p $(DESTDIR)$(DATADIR)/icons/hicolor/$(size)/mimetypes;
