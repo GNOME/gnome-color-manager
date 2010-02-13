@@ -77,6 +77,13 @@ typedef enum {
 	GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN
 } GcmCalibrateReferenceKind;
 
+typedef enum {
+	GCM_CALIBRATE_DEVICE_KIND_CRT,
+	GCM_CALIBRATE_DEVICE_KIND_LCD,
+	GCM_CALIBRATE_DEVICE_KIND_PROJECTOR,
+	GCM_CALIBRATE_DEVICE_KIND_UNKNOWN
+} GcmCalibrateDeviceKind;
+
 GType		 gcm_calibrate_get_type			(void);
 GcmCalibrate	*gcm_calibrate_new			(void);
 gboolean	 gcm_calibrate_display			(GcmCalibrate	*calibrate,

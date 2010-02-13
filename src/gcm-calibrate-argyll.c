@@ -214,18 +214,18 @@ out:
 static gchar
 gcm_calibrate_argyll_get_display_type (GcmCalibrateArgyll *calibrate_argyll)
 {
-	gboolean is_lcd;
-	gboolean is_crt;
+	GcmCalibrateDeviceKind device_kind;
 
 	g_object_get (calibrate_argyll,
-		      "is-lcd", &is_lcd,
-		      "is-crt", &is_crt,
+		      "device-kind", &device_kind,
 		      NULL);
 
-	if (is_lcd)
+	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_LCD)
 		return 'l';
-	if (is_crt)
+	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_CRT)
 		return 'c';
+	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_PROJECTOR)
+		return 'p';
 	return '\0';
 }
 

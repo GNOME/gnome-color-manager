@@ -53,8 +53,7 @@ struct _GcmCalibratePrivate
 {
 	GcmColorDevice			*color_device;
 	GcmCalibrateReferenceKind	 reference_kind;
-	gboolean			 is_lcd;
-	gboolean			 is_crt;
+	GcmCalibrateDeviceKind		 device_kind;
 	gchar				*output_name;
 	gchar				*filename_source;
 	gchar				*filename_reference;
@@ -65,6 +64,7 @@ struct _GcmCalibratePrivate
 	gchar				*description;
 	gchar				*serial;
 	gchar				*device;
+	GtkDialog			*dialog_tmp;
 };
 
 enum {
@@ -75,9 +75,8 @@ enum {
 	PROP_SERIAL,
 	PROP_DEVICE,
 	PROP_MANUFACTURER,
-	PROP_IS_LCD,
-	PROP_IS_CRT,
 	PROP_REFERENCE_KIND,
+	PROP_DEVICE_KIND,
 	PROP_OUTPUT_NAME,
 	PROP_FILENAME_SOURCE,
 	PROP_FILENAME_REFERENCE,
@@ -299,6 +298,139 @@ out:
 }
 
 /**
+ * gcm_calibrate_create_large_button:
+ **/
+static GtkWidget *
+gcm_calibrate_create_large_button (const gchar *filename, const gchar *title)
+{
+	GtkWidget *vbox;
+	GtkWidget *image;
+	GtkWidget *label;
+	GError *error = NULL;
+	GtkIconTheme *icon_theme;
+	GdkPixbuf *pixbuf;
+
+	/* pack label into a vbox */
+	vbox = gtk_vbox_new (FALSE, 3);
+	label = gtk_label_new (title);
+	gtk_box_pack_end (GTK_BOX(vbox), label, TRUE, TRUE, 3);
+	gtk_widget_show (label);
+
+	/* image widget */
+	icon_theme = gtk_icon_theme_get_default ();
+	pixbuf = gtk_icon_theme_load_icon (icon_theme, filename, 150, 0, &error);
+	if (pixbuf == NULL) {
+		egg_warning ("failed to load: %s", error->message);
+		goto out;
+	}
+	image = gtk_image_new_from_pixbuf (pixbuf);
+	gtk_box_pack_end (GTK_BOX(vbox), image, TRUE, TRUE, 3);
+	gtk_widget_show (image);
+out:
+	gtk_widget_show (vbox);
+	return vbox;
+}
+
+/**
+ * gcm_calibrate_button_clicked_lcd_cb:
+ **/
+static void
+gcm_calibrate_button_clicked_lcd_cb (GtkWidget *widget, GcmCalibrate *calibrate)
+{
+	calibrate->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_LCD;
+	gtk_dialog_response (calibrate->priv->dialog_tmp, GTK_RESPONSE_OK);
+}
+
+/**
+ * gcm_calibrate_button_clicked_crt_cb:
+ **/
+static void
+gcm_calibrate_button_clicked_crt_cb (GtkWidget *widget, GcmCalibrate *calibrate)
+{
+	calibrate->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_CRT;
+	gtk_dialog_response (calibrate->priv->dialog_tmp, GTK_RESPONSE_OK);
+}
+
+/**
+ * gcm_calibrate_button_clicked_projector_cb:
+ **/
+static void
+gcm_calibrate_button_clicked_projector_cb (GtkWidget *widget, GcmCalibrate *calibrate)
+{
+	calibrate->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_PROJECTOR;
+	gtk_dialog_response (calibrate->priv->dialog_tmp, GTK_RESPONSE_OK);
+}
+
+/**
+ * gcm_calibrate_get_display_type:
+ **/
+static gboolean
+gcm_calibrate_get_display_type (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
+{
+	gboolean ret = TRUE;
+	GtkWidget *vbox;
+	GtkWidget *hbox;
+	GtkWidget *dialog;
+	GtkWidget *image;
+	GtkWidget *widget;
+	GtkResponseType response;
+
+	dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL,
+					 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
+					 _("Could not detect screen type"));
+	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+						  /* TRANSLATORS: dialog message */
+						  _("Please indicate if the screen you are trying to profile is a LCD, CRT or a projector."));
+	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+
+	/* pack it */
+	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
+	hbox = gtk_hbox_new (FALSE, 3);
+
+	/* TRANSLATORS: device type */
+	image = gcm_calibrate_create_large_button ("lcd", _("LCD"));
+	widget = gtk_button_new ();
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_calibrate_button_clicked_lcd_cb), calibrate);
+	gtk_container_add (GTK_CONTAINER (widget), image);
+	gtk_box_pack_start (GTK_BOX(hbox), widget, TRUE, TRUE, 3);
+	gtk_widget_show (widget);
+
+	/* TRANSLATORS: device type */
+	image = gcm_calibrate_create_large_button ("crt", _("CRT"));
+	widget = gtk_button_new ();
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_calibrate_button_clicked_crt_cb), calibrate);
+	gtk_container_add (GTK_CONTAINER (widget), image);
+	gtk_box_pack_start (GTK_BOX(hbox), widget, TRUE, TRUE, 3);
+	gtk_widget_show (widget);
+
+	/* TRANSLATORS: device type */
+	image = gcm_calibrate_create_large_button ("projector", _("Projector"));
+	widget = gtk_button_new ();
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_calibrate_button_clicked_projector_cb), calibrate);
+	gtk_container_add (GTK_CONTAINER (widget), image);
+	gtk_box_pack_start (GTK_BOX(hbox), widget, TRUE, TRUE, 3);
+	gtk_widget_show (widget);
+
+	gtk_widget_show (hbox);
+	gtk_box_pack_start (GTK_BOX(vbox), hbox, TRUE, TRUE, 3);
+
+	/* save this so we can call async */
+	calibrate->priv->dialog_tmp = GTK_DIALOG (dialog);
+	response = gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+	if (response != GTK_RESPONSE_OK) {
+		g_set_error_literal (error, 1, 0, "user did not choose crt or lcd");
+		ret = FALSE;
+		goto out;
+	}
+out:
+	return ret;
+}
+
+/**
  * gcm_calibrate_display:
  **/
 gboolean
@@ -309,10 +441,10 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	gchar *hardware_device = NULL;
 	gboolean ret_tmp;
 	GtkWidget *dialog;
-	GtkResponseType response;
 	GString *string = NULL;
 	GcmBrightness *brightness = NULL;
 	guint percentage = G_MAXUINT;
+	GtkResponseType response;
 	GError *error_tmp = NULL;
 	GcmCalibratePrivate *priv = calibrate->priv;
 
@@ -348,33 +480,10 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 
 
 	/* this wasn't previously set */
-	if (!priv->is_lcd && !priv->is_crt) {
-		dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL,
-						 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
-						 _("Could not auto-detect CRT or LCD"));
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-							  /* TRANSLATORS: dialog message */
-							  _("Please indicate if the screen you are trying to profile is a CRT (old type) or a LCD (digital flat panel)."));
-		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-		/* TRANSLATORS: button, Liquid Crystal Display */
-		gtk_dialog_add_button (GTK_DIALOG (dialog), _("LCD"), GTK_RESPONSE_YES);
-		/* TRANSLATORS: button, Cathode Ray Tube */
-		gtk_dialog_add_button (GTK_DIALOG (dialog), _("CRT"), GTK_RESPONSE_NO);
-		response = gtk_dialog_run (GTK_DIALOG (dialog));
-		gtk_widget_destroy (dialog);
-		if (response == GTK_RESPONSE_YES) {
-			g_object_set (calibrate,
-				      "is-lcd", TRUE,
-				      NULL);
-		} else if (response == GTK_RESPONSE_NO) {
-			g_object_set (calibrate,
-				      "is-crt", TRUE,
-				      NULL);
-		} else {
-			g_set_error_literal (error, 1, 0, "user did not choose crt or lcd");
-			ret = FALSE;
+	if (priv->device_kind == GCM_CALIBRATE_DEVICE_KIND_UNKNOWN) {
+		ret = gcm_calibrate_get_display_type (calibrate, window, error);
+		if (!ret)
 			goto out;
-		}
 	}
 
 	/* show a warning for external monitors */
@@ -923,14 +1032,11 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 	GcmCalibratePrivate *priv = calibrate->priv;
 
 	switch (prop_id) {
-	case PROP_IS_LCD:
-		g_value_set_boolean (value, priv->is_lcd);
-		break;
-	case PROP_IS_CRT:
-		g_value_set_boolean (value, priv->is_crt);
-		break;
 	case PROP_REFERENCE_KIND:
 		g_value_set_boolean (value, priv->reference_kind);
+		break;
+	case PROP_DEVICE_KIND:
+		g_value_set_boolean (value, priv->device_kind);
 		break;
 	case PROP_OUTPUT_NAME:
 		g_value_set_string (value, priv->output_name);
@@ -978,14 +1084,9 @@ gcm_calibrate_guess_type (GcmCalibrate *calibrate)
 	GcmCalibratePrivate *priv = calibrate->priv;
 
 	/* guess based on the output name */
-	ret = gcm_utils_output_is_lcd (priv->output_name);
-	if (ret) {
-		priv->is_lcd = TRUE;
-		priv->is_crt = FALSE;
-	} else {
-		priv->is_lcd = FALSE;
-		priv->is_crt = FALSE;
-	}
+	ret = gcm_utils_output_is_lcd_internal (priv->output_name);
+	if (ret)
+		priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_LCD;
 }
 
 /**
@@ -998,12 +1099,6 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 	GcmCalibratePrivate *priv = calibrate->priv;
 
 	switch (prop_id) {
-	case PROP_IS_LCD:
-		priv->is_lcd = g_value_get_boolean (value);
-		break;
-	case PROP_IS_CRT:
-		priv->is_crt = g_value_get_boolean (value);
-		break;
 	case PROP_OUTPUT_NAME:
 		g_free (priv->output_name);
 		priv->output_name = g_strdup (g_value_get_string (value));
@@ -1065,28 +1160,20 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 	object_class->set_property = gcm_calibrate_set_property;
 
 	/**
-	 * GcmCalibrate:is-lcd:
-	 */
-	pspec = g_param_spec_boolean ("is-lcd", NULL, NULL,
-				      FALSE,
-				      G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_IS_LCD, pspec);
-
-	/**
-	 * GcmCalibrate:is-crt:
-	 */
-	pspec = g_param_spec_boolean ("is-crt", NULL, NULL,
-				      FALSE,
-				      G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_IS_CRT, pspec);
-
-	/**
 	 * GcmCalibrate:reference-kind:
 	 */
 	pspec = g_param_spec_uint ("reference-kind", NULL, NULL,
 				   0, G_MAXUINT, 0,
 				   G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_REFERENCE_KIND, pspec);
+
+	/**
+	 * GcmCalibrate:device-kind:
+	 */
+	pspec = g_param_spec_uint ("device-kind", NULL, NULL,
+				   0, G_MAXUINT, 0,
+				   G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_DEVICE_KIND, pspec);
 
 	/**
 	 * GcmCalibrate:output-name:
@@ -1188,6 +1275,8 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->description = NULL;
 	calibrate->priv->device = NULL;
 	calibrate->priv->serial = NULL;
+	calibrate->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_UNKNOWN;
+	calibrate->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
 	calibrate->priv->color_device = gcm_color_device_new ();
 }
 

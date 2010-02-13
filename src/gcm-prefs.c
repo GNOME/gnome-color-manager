@@ -2402,6 +2402,10 @@ main (int argc, char **argv)
 		goto out;
 	}
 
+	/* add application specific icons to search path */
+	gtk_icon_theme_append_search_path (gtk_icon_theme_get_default (),
+	                                   GCM_DATA G_DIR_SEPARATOR_S "icons");
+
 	/* maintain a list of profiles */
 	profile_store = gcm_profile_store_new ();
 	g_signal_connect (profile_store, "changed", G_CALLBACK(gcm_prefs_profile_store_changed_cb), NULL);
