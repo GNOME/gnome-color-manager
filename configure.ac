@@ -254,6 +254,7 @@ data/icons/64x64/Makefile
 data/icons/scalable/Makefile
 data/tests/Makefile
 data/targets/Makefile
+data/figures/Makefile
 help/Makefile
 man/Makefile
 policy/Makefile
