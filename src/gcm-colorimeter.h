@@ -26,7 +26,7 @@
 
 G_BEGIN_DECLS
 
-#define GCM_TYPE_COLORIMETER		(gcm_color_device_get_type ())
+#define GCM_TYPE_COLORIMETER		(gcm_colorimeter_get_type ())
 #define GCM_COLORIMETER(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), GCM_TYPE_COLORIMETER, GcmColorimeter))
 #define GCM_COLORIMETER_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), GCM_TYPE_COLORIMETER, GcmColorimeterClass))
 #define GCM_IS_COLORIMETER(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), GCM_TYPE_COLORIMETER))
@@ -61,8 +61,14 @@ typedef enum {
 	GCM_COLORIMETER_KIND_UNKNOWN
 } GcmColorimeterKind;
 
-GType		 gcm_color_device_get_type		(void);
-GcmColorimeter	*gcm_color_device_new			(void);
+GType			 gcm_colorimeter_get_type		(void);
+GcmColorimeter		*gcm_colorimeter_new			(void);
+
+/* accessors */
+const gchar		*gcm_colorimeter_get_model		(GcmColorimeter	*colorimeter);
+const gchar		*gcm_colorimeter_get_vendor		(GcmColorimeter	*colorimeter);
+gboolean		 gcm_colorimeter_get_present		(GcmColorimeter	*colorimeter);
+GcmColorimeterKind	 gcm_colorimeter_get_kind		(GcmColorimeter	*colorimeter);
 
 G_END_DECLS
 

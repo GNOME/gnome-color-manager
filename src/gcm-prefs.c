@@ -50,7 +50,7 @@ static GtkListStore *list_store_profiles = NULL;
 static GcmDevice *current_device = NULL;
 static GcmProfileStore *profile_store = NULL;
 static GcmClient *gcm_client = NULL;
-static GcmColorimeter *color_device = NULL;
+static GcmColorimeter *colorimeter = NULL;
 static gboolean setting_up_device = FALSE;
 static GtkWidget *info_bar = NULL;
 static GtkWidget *cie_widget = NULL;
@@ -945,9 +945,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 			goto out;
 
 		/* find whether we have hardware installed */
-		g_object_get (color_device,
-			      "present", &ret,
-			      NULL);
+		ret = gcm_colorimeter_get_present (colorimeter);
 #ifndef GCM_HARDWARE_DETECTION
 		egg_debug ("overriding device presence %i with TRUE", ret);
 		ret = TRUE;
@@ -1764,10 +1762,10 @@ out:
 }
 
 /**
- * gcm_prefs_color_device_changed_cb:
+ * gcm_prefs_colorimeter_changed_cb:
  **/
 static void
-gcm_prefs_color_device_changed_cb (GcmColorimeter *_color_device, gpointer user_data)
+gcm_prefs_colorimeter_changed_cb (GcmColorimeter *_colorimeter, gpointer user_data)
 {
 	gcm_prefs_set_calibrate_button_sensitivity ();
 }
@@ -2585,8 +2583,8 @@ main (int argc, char **argv)
 			  G_CALLBACK (gcm_prefs_client_notify_loading_cb), NULL);
 
 	/* use the color device */
-	color_device = gcm_color_device_new ();
-	g_signal_connect (color_device, "changed", G_CALLBACK (gcm_prefs_color_device_changed_cb), NULL);
+	colorimeter = gcm_colorimeter_new ();
+	g_signal_connect (colorimeter, "changed", G_CALLBACK (gcm_prefs_colorimeter_changed_cb), NULL);
 
 	/* set the parent window if it is specified */
 	if (xid != 0) {
@@ -2674,8 +2672,8 @@ out:
 		g_object_unref (size_group2);
 	if (current_device != NULL)
 		g_object_unref (current_device);
-	if (color_device != NULL)
-		g_object_unref (color_device);
+	if (colorimeter != NULL)
+		g_object_unref (colorimeter);
 	if (gconf_client != NULL)
 		g_object_unref (gconf_client);
 	if (builder != NULL)
