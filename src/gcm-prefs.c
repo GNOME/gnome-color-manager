@@ -2306,14 +2306,30 @@ gcm_prefs_profile_store_changed_cb (GcmProfileStore *_profile_store, gpointer us
 }
 
 /**
+ * gcm_prefs_select_first_device_idle_cb:
+ **/
+static gboolean
+gcm_prefs_select_first_device_idle_cb (gpointer data)
+{
+	GtkTreePath *path;
+	GtkWidget *widget;
+
+	/* set the cursor on the first device */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
+	path = gtk_tree_path_new_from_string ("0");
+	gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
+	gtk_tree_path_free (path);
+
+	return FALSE;
+}
+
+/**
  * gcm_prefs_client_notify_loading_cb:
  **/
 static void
 gcm_prefs_client_notify_loading_cb (GcmClient *client, GParamSpec *pspec, gpointer data)
 {
 	gboolean loading;
-	GtkTreePath *path;
-	GtkWidget *widget;
 
 	/* get the new state */
 	g_object_get (client, "loading", &loading, NULL);
@@ -2327,11 +2343,8 @@ gcm_prefs_client_notify_loading_cb (GcmClient *client, GParamSpec *pspec, gpoint
 	/* otherwise clear the loading widget */
 	gtk_widget_hide (info_bar);
 
-	/* set the cursor on the first device */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
-	path = gtk_tree_path_new_from_string ("0");
-	gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
-	gtk_tree_path_free (path);
+	/* idle callback */
+	g_idle_add (gcm_prefs_select_first_device_idle_cb, NULL);
 }
 
 /**
