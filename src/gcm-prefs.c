@@ -36,7 +36,7 @@
 #include "gcm-calibrate-argyll.h"
 #include "gcm-cie-widget.h"
 #include "gcm-client.h"
-#include "gcm-color-device.h"
+#include "gcm-colorimeter.h"
 #include "gcm-device-xrandr.h"
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
@@ -50,7 +50,7 @@ static GtkListStore *list_store_profiles = NULL;
 static GcmDevice *current_device = NULL;
 static GcmProfileStore *profile_store = NULL;
 static GcmClient *gcm_client = NULL;
-static GcmColorDevice *color_device = NULL;
+static GcmColorimeter *color_device = NULL;
 static gboolean setting_up_device = FALSE;
 static GtkWidget *info_bar = NULL;
 static GtkWidget *cie_widget = NULL;
@@ -1767,7 +1767,7 @@ out:
  * gcm_prefs_color_device_changed_cb:
  **/
 static void
-gcm_prefs_color_device_changed_cb (GcmColorDevice *_color_device, gpointer user_data)
+gcm_prefs_color_device_changed_cb (GcmColorimeter *_color_device, gpointer user_data)
 {
 	gcm_prefs_set_calibrate_button_sensitivity ();
 }

@@ -36,7 +36,7 @@
 #include "gcm-calibrate.h"
 #include "gcm-utils.h"
 #include "gcm-brightness.h"
-#include "gcm-color-device.h"
+#include "gcm-colorimeter.h"
 
 #include "egg-debug.h"
 
@@ -51,7 +51,7 @@ static void     gcm_calibrate_finalize	(GObject     *object);
  **/
 struct _GcmCalibratePrivate
 {
-	GcmColorDevice			*color_device;
+	GcmColorimeter			*color_device;
 	GcmCalibrateReferenceKind	 reference_kind;
 	GcmCalibrateDeviceKind		 device_kind;
 	gchar				*output_name;

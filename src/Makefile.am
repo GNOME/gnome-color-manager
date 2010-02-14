@@ -48,8 +48,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-xserver.h					\
 	gcm-client.c					\
 	gcm-client.h					\
-	gcm-color-device.c				\
-	gcm-color-device.h				\
+	gcm-colorimeter.c				\
+	gcm-colorimeter.h				\
 	gcm-device.c					\
 	gcm-device.h					\
 	gcm-device-xrandr.c				\

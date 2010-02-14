@@ -19,31 +19,31 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __GCM_COLOR_DEVICE_H
-#define __GCM_COLOR_DEVICE_H
+#ifndef __GCM_COLORIMETER_H
+#define __GCM_COLORIMETER_H
 
 #include <glib-object.h>
 
 G_BEGIN_DECLS
 
-#define GCM_TYPE_COLOR_DEVICE		(gcm_color_device_get_type ())
-#define GCM_COLOR_DEVICE(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), GCM_TYPE_COLOR_DEVICE, GcmColorDevice))
-#define GCM_COLOR_DEVICE_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), GCM_TYPE_COLOR_DEVICE, GcmColorDeviceClass))
-#define GCM_IS_COLOR_DEVICE(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), GCM_TYPE_COLOR_DEVICE))
-#define GCM_IS_COLOR_DEVICE_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), GCM_TYPE_COLOR_DEVICE))
-#define GCM_COLOR_DEVICE_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), GCM_TYPE_COLOR_DEVICE, GcmColorDeviceClass))
+#define GCM_TYPE_COLORIMETER		(gcm_color_device_get_type ())
+#define GCM_COLORIMETER(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), GCM_TYPE_COLORIMETER, GcmColorimeter))
+#define GCM_COLORIMETER_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), GCM_TYPE_COLORIMETER, GcmColorimeterClass))
+#define GCM_IS_COLORIMETER(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), GCM_TYPE_COLORIMETER))
+#define GCM_IS_COLORIMETER_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), GCM_TYPE_COLORIMETER))
+#define GCM_COLORIMETER_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), GCM_TYPE_COLORIMETER, GcmColorimeterClass))
 
-typedef struct _GcmColorDevicePrivate	GcmColorDevicePrivate;
-typedef struct _GcmColorDevice		GcmColorDevice;
-typedef struct _GcmColorDeviceClass	GcmColorDeviceClass;
+typedef struct _GcmColorimeterPrivate	GcmColorimeterPrivate;
+typedef struct _GcmColorimeter		GcmColorimeter;
+typedef struct _GcmColorimeterClass	GcmColorimeterClass;
 
-struct _GcmColorDevice
+struct _GcmColorimeter
 {
 	 GObject			 parent;
-	 GcmColorDevicePrivate		*priv;
+	 GcmColorimeterPrivate		*priv;
 };
 
-struct _GcmColorDeviceClass
+struct _GcmColorimeterClass
 {
 	GObjectClass	parent_class;
 	void		(* changed)			(void);
@@ -56,15 +56,15 @@ struct _GcmColorDeviceClass
 };
 
 typedef enum {
-	GCM_COLOR_DEVICE_KIND_HUEY,
-	GCM_COLOR_DEVICE_KIND_COLOR_MUNKI,
-	GCM_COLOR_DEVICE_KIND_UNKNOWN
-} GcmColorDeviceKind;
+	GCM_COLORIMETER_KIND_HUEY,
+	GCM_COLORIMETER_KIND_COLOR_MUNKI,
+	GCM_COLORIMETER_KIND_UNKNOWN
+} GcmColorimeterKind;
 
 GType		 gcm_color_device_get_type		(void);
-GcmColorDevice	*gcm_color_device_new			(void);
+GcmColorimeter	*gcm_color_device_new			(void);
 
 G_END_DECLS
 
-#endif /* __GCM_COLOR_DEVICE_H */
+#endif /* __GCM_COLORIMETER_H */
 
