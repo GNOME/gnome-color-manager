@@ -39,6 +39,7 @@
 #include <gconf/gconf-client.h>
 
 #include "gcm-calibrate-argyll.h"
+#include "gcm-colorimeter.h"
 #include "gcm-utils.h"
 #include "gcm-screen.h"
 
@@ -66,6 +67,7 @@ typedef enum {
 typedef struct {
 	gchar		*title;
 	gchar		*message;
+	gchar		*filename;
 	gboolean	 show_okay;
 } GcmCalibrateArgyllDialog;
 
@@ -163,6 +165,36 @@ gcm_calibrate_argyll_precision_to_patches_arg (GcmCalibrateArgyllPrecision preci
 }
 
 /**
+ * gcm_calibrate_argyll_get_colorimeter_image_attach:
+ **/
+static const gchar *
+gcm_calibrate_argyll_get_colorimeter_image_attach (GcmCalibrateArgyll *calibrate_argyll)
+{
+	GcmColorimeterKind colorimeter_kind;
+
+	g_object_get (calibrate_argyll, "colorimeter-kind", &colorimeter_kind, NULL);
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_HUEY)
+		return "huey-attach.svg";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI)
+		return "munki-attach.svg";
+	return NULL;
+}
+
+/**
+ * gcm_calibrate_argyll_get_colorimeter_image_calibrate:
+ **/
+static const gchar *
+gcm_calibrate_argyll_get_colorimeter_image_calibrate (GcmCalibrateArgyll *calibrate_argyll)
+{
+	GcmColorimeterKind colorimeter_kind;
+
+	g_object_get (calibrate_argyll, "colorimeter-kind", &colorimeter_kind, NULL);
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI)
+		return "munki-calibrate.svg";
+	return NULL;
+}
+
+/**
  * gcm_calibrate_argyll_get_display:
  **/
 static guint
@@ -237,6 +269,7 @@ gcm_calibrate_argyll_dialog_free (GcmCalibrateArgyllDialog *dialog)
 {
 	g_free (dialog->title);
 	g_free (dialog->message);
+	g_free (dialog->filename);
 	g_free (dialog);
 }
 
@@ -244,17 +277,25 @@ gcm_calibrate_argyll_dialog_free (GcmCalibrateArgyllDialog *dialog)
  * gcm_calibrate_argyll_set_dialog:
  **/
 static void
-gcm_calibrate_argyll_set_dialog (GcmCalibrateArgyll *calibrate_argyll, const gchar *title, const gchar *message, gboolean show_okay)
+gcm_calibrate_argyll_set_dialog (GcmCalibrateArgyll *calibrate_argyll,
+				 const gchar *title,
+				 const gchar *message,
+				 const gchar *image_filename,
+				 gboolean show_okay)
 {
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 	GtkWidget *widget;
 	gchar *text;
+	gchar *filename = NULL;
+	GdkPixbuf *pixbuf;
+	GError *error = NULL;
 	GcmCalibrateArgyllDialog *dialog;
 
 	/* save in case we need to reuse */
 	dialog = g_new0 (GcmCalibrateArgyllDialog, 1);
 	dialog->title = g_strdup (title);
 	dialog->message = g_strdup (message);
+	dialog->filename = g_strdup (image_filename);
 	dialog->show_okay = show_okay;
 	g_ptr_array_add (priv->cached_dialogs, dialog);
 
@@ -263,6 +304,24 @@ gcm_calibrate_argyll_set_dialog (GcmCalibrateArgyll *calibrate_argyll, const gch
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "label_title"));
 	gtk_label_set_markup (GTK_LABEL(widget), text);
 	g_free (text);
+
+	/* set the image */
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "image_figure"));
+	if (image_filename != NULL) {
+		filename = g_build_filename (GCM_DATA, "icons", image_filename, NULL);
+		pixbuf = gdk_pixbuf_new_from_file_at_size (filename, 200, 400, &error);
+		if (pixbuf == NULL) {
+			egg_warning ("failed to load image: %s", error->message);
+			g_error_free (error);
+			gtk_widget_hide (widget);
+		} else {
+			gtk_image_set_from_pixbuf (GTK_IMAGE (widget), pixbuf);
+			gtk_widget_show (widget);
+		}
+		g_free (filename);
+	} else {
+		gtk_widget_hide (widget);
+	}
 
 	/* set the text */
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "label_message"));
@@ -423,7 +482,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	message = _("This pre-calibrates the screen by sending colored and gray patches to your screen and measuring them with the hardware device.");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, NULL, FALSE);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -501,7 +560,7 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	message = _("Generating the patches that will be measured with the hardware device.");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, NULL, FALSE);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -579,7 +638,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	message = _("Drawing the generated patches to the screen, which will then be measured by the hardware device.");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, NULL, FALSE);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -678,7 +737,7 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	message = _("Generating the ICC color profile that can be used with this screen.");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, NULL, FALSE);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -791,7 +850,7 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 	message = _("Copying source image, chart data and CIE reference values.");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, NULL, FALSE);
 
 	/* build filenames */
 	filename = g_strdup_printf ("%s.tif", basename);
@@ -850,7 +909,7 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 	message = _("Detecting the reference patches and measuring them.");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, NULL, FALSE);
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("scanin", error);
@@ -960,7 +1019,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	message = _("Generating the ICC color profile that can be used with this device.");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, NULL, FALSE);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -1112,7 +1171,7 @@ gcm_calibrate_argyll_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 	message = _("Setting up display device for use...");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, NULL, FALSE);
 
 	/* step 1 */
 	ret = gcm_calibrate_argyll_display_neutralise (calibrate_argyll, error);
@@ -1168,7 +1227,7 @@ gcm_calibrate_argyll_device (GcmCalibrate *calibrate, GtkWindow *window, GError 
 	message = _("Setting up device for use...");
 
 	/* push new messages into the UI */
-	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, FALSE);
+	gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, NULL, FALSE);
 
 	/* step 1 */
 	ret = gcm_calibrate_argyll_device_copy (calibrate_argyll, error);
@@ -1235,6 +1294,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 {
 	const gchar *title;
 	const gchar *message;
+	const gchar *filename;
 	gchar *found;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
@@ -1252,14 +1312,23 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		/* TRANSLATORS: title, device is a hardware color calibration sensor */
 		title = _("Please attach device");
 
-		/* TRANSLATORS: dialog message, ask user to attach device */
-		message = _("Please attach the hardware device to the center of the screen on the gray square.");
+		/* get the image, if we have one */
+		filename = gcm_calibrate_argyll_get_colorimeter_image_attach (calibrate_argyll);
+
+		/* different messages with or without image */
+		if (filename != NULL) {
+			/* TRANSLATORS: dialog message, ask user to attach device, and there's an example image */
+			message = _("Please attach the hardware device to the center of the screen on the gray square like the image below.");
+		} else {
+			/* TRANSLATORS: dialog message, ask user to attach device */
+			message = _("Please attach the hardware device to the center of the screen on the gray square.");
+		}
 
 		/* block for a response */
 		egg_debug ("blocking waiting for user input: %s", title);
 
 		/* push new messages into the UI */
-		gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, TRUE);
+		gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, filename, TRUE);
 
 		/* set state */
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN,
@@ -1276,14 +1345,22 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		/* TRANSLATORS: title, device is a hardware color calibration sensor */
 		title = _("Please configure device");
 
-		/* TRANSLATORS: this is when the user has to change a setting on the sensor */
-		message = _("Please set the device to calibration mode.");
-
 		/* block for a response */
 		egg_debug ("blocking waiting for user input: %s", title);
 
+		/* get the image, if we have one */
+		filename = gcm_calibrate_argyll_get_colorimeter_image_calibrate (calibrate_argyll);
+
+		if (filename != NULL) {
+			/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
+			message = _("Please set the device to calibration mode like the image below.");
+		} else {
+			/* TRANSLATORS: this is when the user has to change a setting on the sensor */
+			message = _("Please set the device to calibration mode.");
+		}
+
 		/* push new messages into the UI */
-		gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, TRUE);
+		gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, filename, TRUE);
 
 		/* set state */
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
@@ -1318,7 +1395,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		}
 
 		/* push new messages into the UI */
-		gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, TRUE);
+		gcm_calibrate_argyll_set_dialog (calibrate_argyll, title, message, NULL, TRUE);
 		egg_debug ("VTE: error: %s", found+8);
 
 		/* set state */

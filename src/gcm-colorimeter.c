@@ -233,12 +233,12 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 	priv->model = g_strdup (g_udev_device_get_property (device, "ID_MODEL_FROM_DATABASE"));
 
 	/* try to get type */
-	if (g_strcmp0 (priv->model, "HueyXXX") == 0) {
+	if (g_strcmp0 (priv->model, "Huey") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_HUEY;
 	} else if (g_strcmp0 (priv->model, "MunkiXXX") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_COLOR_MUNKI;
 	} else {
-		egg_warning ("Failed to recognise color device: %s", priv->model);
+		egg_warning ("Failed to recognise color device, please report to the mailing list: %s", priv->model);
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;
 	}
 

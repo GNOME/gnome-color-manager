@@ -1032,13 +1032,13 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 
 	switch (prop_id) {
 	case PROP_REFERENCE_KIND:
-		g_value_set_boolean (value, priv->reference_kind);
+		g_value_set_uint (value, priv->reference_kind);
 		break;
 	case PROP_DEVICE_KIND:
-		g_value_set_boolean (value, priv->device_kind);
+		g_value_set_uint (value, priv->device_kind);
 		break;
 	case PROP_COLORIMETER_KIND:
-		g_value_set_boolean (value, priv->colorimeter_kind);
+		g_value_set_uint (value, priv->colorimeter_kind);
 		break;
 	case PROP_OUTPUT_NAME:
 		g_value_set_string (value, priv->output_name);
