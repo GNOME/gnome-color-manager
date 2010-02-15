@@ -39,6 +39,7 @@
 #include "gcm-device-xrandr.h"
 #include "gcm-device-udev.h"
 #include "gcm-device-cups.h"
+#include "gcm-device-sane.h"
 #include "gcm-screen.h"
 #include "gcm-utils.h"
 
@@ -658,8 +659,7 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 		/* FIXME: use GPhoto? */
 		device = gcm_device_udev_new ();
 	} else if (type == GCM_DEVICE_TYPE_ENUM_SCANNER) {
-		/* FIXME: use SANE? */
-		device = gcm_device_udev_new ();
+		device = gcm_device_sane_new ();
 	} else {
 		egg_warning ("device type internal error");
 		goto out;
