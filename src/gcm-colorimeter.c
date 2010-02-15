@@ -237,6 +237,8 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_HUEY;
 	} else if (g_strcmp0 (priv->model, "MunkiXXX") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_COLOR_MUNKI;
+	} else if (g_strcmp0 (priv->model, "SpyderXXX") == 0) {
+		priv->colorimeter_kind = GCM_COLORIMETER_KIND_SPYDER;
 	} else {
 		egg_warning ("Failed to recognise color device, please report to the mailing list: %s", priv->model);
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;

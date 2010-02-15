@@ -177,6 +177,8 @@ gcm_calibrate_argyll_get_colorimeter_image_attach (GcmCalibrateArgyll *calibrate
 		return "huey-attach.svg";
 	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI)
 		return "munki-attach.svg";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_SPYDER)
+		return "spyder-attach.svg";
 	return NULL;
 }
 
