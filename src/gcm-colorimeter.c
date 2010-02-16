@@ -30,6 +30,7 @@
 
 #include <glib/gi18n.h>
 #include <gudev/gudev.h>
+#include <gtk/gtk.h>
 
 #include "gcm-colorimeter.h"
 
@@ -213,6 +214,7 @@ static gboolean
 gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 {
 	gboolean ret;
+	GtkWidget *dialog;
 	GcmColorimeterPrivate *priv = colorimeter->priv;
 
 	/* interesting device? */
@@ -240,7 +242,22 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 	} else if (g_strcmp0 (priv->model, "SpyderXXX") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_SPYDER;
 	} else {
-		egg_warning ("Failed to recognise color device, please report to the mailing list: %s", priv->model);
+		egg_warning ("Failed to recognise color device: %s", priv->model);
+
+		/* show dialog, in order to help the project */
+		dialog = gtk_message_dialog_new (NULL,
+						 GTK_DIALOG_MODAL,
+						 GTK_MESSAGE_INFO,
+						 GTK_BUTTONS_OK,
+						 /* TRANSLATORS: this is when the device is not recognised */
+						 _("Colorimeter not recognised"));
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+							  "Could not recognise device '%s'. "
+							  "It should work okay, but if you want to help the project, "
+							  "please visit %s and supply the required information.",
+							  priv->model, "http://live.gnome.org/GnomeColorManager/Help");
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;
 	}
 
