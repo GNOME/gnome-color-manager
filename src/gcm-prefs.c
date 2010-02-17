@@ -52,7 +52,8 @@ static GcmProfileStore *profile_store = NULL;
 static GcmClient *gcm_client = NULL;
 static GcmColorimeter *colorimeter = NULL;
 static gboolean setting_up_device = FALSE;
-static GtkWidget *info_bar = NULL;
+static GtkWidget *info_bar_loading = NULL;
+static GtkWidget *info_bar_vcgt = NULL;
 static GtkWidget *cie_widget = NULL;
 static GtkWidget *trc_widget = NULL;
 static GConfClient *gconf_client = NULL;
@@ -976,7 +977,6 @@ gcm_prefs_is_profile_suitable_for_device (GcmProfile *profile, GcmDevice *device
 	GcmProfileTypeEnum profile_type;
 	GcmColorspaceEnum profile_colorspace;
 	GcmColorspaceEnum device_colorspace;
-	gboolean has_vcgt;
 	gboolean ret = FALSE;
 	GcmDeviceTypeEnum device_type;
 
@@ -989,7 +989,6 @@ gcm_prefs_is_profile_suitable_for_device (GcmProfile *profile, GcmDevice *device
 	g_object_get (profile,
 		      "type", &profile_type_tmp,
 		      "colorspace", &profile_colorspace,
-		      "has-vcgt", &has_vcgt,
 		      NULL);
 
 	/* not the right colorspace */
@@ -1000,12 +999,6 @@ gcm_prefs_is_profile_suitable_for_device (GcmProfile *profile, GcmDevice *device
 	profile_type = gcm_utils_device_type_to_profile_type (device_type);
 	if (profile_type_tmp != profile_type)
 		goto out;
-
-#if 0
-	/* no VCGT for a display (is a crap profile) */
-	if (profile_type_tmp == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE && !has_vcgt)
-		goto out;
-#endif
 
 	/* success */
 	ret = TRUE;
@@ -1638,9 +1631,11 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	GcmProfile *profile = NULL;
 	gboolean changed;
 	GcmDeviceTypeEnum type;
+	GcmProfileTypeEnum profile_type;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GcmPrefsEntryType entry_type;
+	gboolean has_vcgt;
 
 	/* no devices */
 	if (current_device == NULL)
@@ -1673,7 +1668,16 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	if (entry_type == GCM_PREFS_ENTRY_TYPE_PROFILE) {
 		g_object_get (profile,
 			      "filename", &filename,
+			      "has-vcgt", &has_vcgt,
+			      "type", &profile_type,
 			      NULL);
+
+		/* show a warning if the profile is crap */
+		if (profile_type == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE && !has_vcgt) {
+			gtk_widget_show (info_bar_vcgt);
+		} else {
+			gtk_widget_hide (info_bar_vcgt);
+		}
 	}
 
 	/* see if it's changed */
@@ -2336,12 +2340,12 @@ gcm_prefs_client_notify_loading_cb (GcmClient *client, GParamSpec *pspec, gpoint
 
 	/*if loading show the bar */
 	if (loading) {
-		gtk_widget_show (info_bar);
+		gtk_widget_show (info_bar_loading);
 		return;
 	}
 
 	/* otherwise clear the loading widget */
-	gtk_widget_hide (info_bar);
+	gtk_widget_hide (info_bar_loading);
 
 	/* idle callback */
 	g_idle_add (gcm_prefs_select_first_device_idle_cb, NULL);
@@ -2364,7 +2368,8 @@ main (int argc, char **argv)
 	gboolean use_global;
 	gboolean use_atom;
 	GtkTreeSelection *selection;
-	GtkWidget *info_bar_label;
+	GtkWidget *info_bar_loading_label;
+	GtkWidget *info_bar_vcgt_label;
 	GtkSizeGroup *size_group = NULL;
 	GtkSizeGroup *size_group2 = NULL;
 	GdkScreen *screen;
@@ -2629,18 +2634,30 @@ main (int argc, char **argv)
 	}
 
 	/* use infobar */
-	info_bar = gtk_info_bar_new ();
+	info_bar_loading = gtk_info_bar_new ();
+	info_bar_vcgt = gtk_info_bar_new ();
 
 	/* TRANSLATORS: this is displayed while the devices are being probed */
-	info_bar_label = gtk_label_new (_("Loading list of devices..."));
-	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar), GTK_MESSAGE_INFO);
-	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar));
-	gtk_container_add (GTK_CONTAINER(widget), info_bar_label);
-	gtk_widget_show (info_bar_label);
+	info_bar_loading_label = gtk_label_new (_("Loading list of devices..."));
+	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar_loading), GTK_MESSAGE_INFO);
+	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar_loading));
+	gtk_container_add (GTK_CONTAINER(widget), info_bar_loading_label);
+	gtk_widget_show (info_bar_loading_label);
+
+	/* TRANSLATORS: this is displayed when the profile is crap */
+	info_bar_vcgt_label = gtk_label_new (_("Profile does not contain display correction information..."));
+	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar_vcgt), GTK_MESSAGE_WARNING);
+	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar_vcgt));
+	gtk_container_add (GTK_CONTAINER(widget), info_bar_vcgt_label);
+	gtk_widget_show (info_bar_vcgt_label);
 
 	/* add infobar to devices pane */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_devices"));
-	gtk_box_pack_start (GTK_BOX(widget), info_bar, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX(widget), info_bar_loading, FALSE, FALSE, 0);
+
+	/* add infobar to devices pane */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_sections"));
+	gtk_box_pack_start (GTK_BOX(widget), info_bar_vcgt, FALSE, FALSE, 0);
 
 	/* show main UI */
 	gtk_window_set_default_size (GTK_WINDOW(main_window), 1000, 450);
