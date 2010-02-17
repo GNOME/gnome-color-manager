@@ -237,7 +237,7 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 	/* try to get type */
 	if (g_strcmp0 (priv->model, "Huey") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_HUEY;
-	} else if (g_strcmp0 (priv->model, "MunkiXXX") == 0) {
+	} else if (g_strcmp0 (priv->model, "ColorMunki") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_COLOR_MUNKI;
 	} else if (g_strcmp0 (priv->model, "SpyderXXX") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_SPYDER;
