@@ -16,3 +16,6 @@ SUBSYSTEM=="usb", ENV{ID_GPHOTO2}!="", ENV{GCM_DEVICE}="1", ENV{GCM_TYPE}="camer
 # video cameras
 SUBSYSTEM=="video4linux", ENV{ID_V4L_PRODUCT}!="", ENV{GCM_DEVICE}="1", ENV{GCM_TYPE}="camera"
 
+# ensure we set ID_MODEL_FROM_DATABASE and ID_VENDOR_FROM_DATABASE
+SUBSYSTEM=="usb", ENV{COLOR_MEASUREMENT_DEVICE}=="*?", IMPORT{program}="usb-db %p"
+
