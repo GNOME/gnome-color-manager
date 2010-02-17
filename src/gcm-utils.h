@@ -50,6 +50,8 @@
 
 gboolean	 gcm_utils_mkdir_for_filename		(const gchar		*filename,
 							 GError			**error);
+gboolean	 gcm_utils_mkdir_with_parents		(const gchar		*filename,
+							 GError			**error);
 gboolean	 gcm_utils_mkdir_and_copy		(const gchar		*source,
 							 const gchar		*destination,
 							 GError			**error);

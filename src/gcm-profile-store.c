@@ -413,6 +413,7 @@ gcm_profile_store_add_profiles (GcmProfileStore *profile_store)
 
 	/* get Linux per-user profiles */
 	path = g_build_filename (g_get_home_dir (), ".color", "icc", NULL);
+	gcm_utils_mkdir_with_parents (path, NULL);
 	gcm_profile_store_add_profiles_for_path (profile_store, path);
 	g_free (path);
 
