@@ -773,7 +773,7 @@ gcm_calibrate_reference_kind_to_thumbnail_image_filename (GcmCalibrateReferenceK
 	if (kind == GCM_CALIBRATE_REFERENCE_KIND_IT8)
 		return "IT872.png";
 	if (kind == GCM_CALIBRATE_REFERENCE_KIND_LASER_SOFT_DC_PRO)
-		return NULL;
+		return "LaserSoftDCPro.png";
 	if (kind == GCM_CALIBRATE_REFERENCE_KIND_QPCARD_201)
 		return "QPcard_201.png";
 	return NULL;
