@@ -909,7 +909,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 		/* TRANSLATORS: dialog message, asking if it's okay to install them */
 		g_string_append_printf (string, "%s\n\n", _("Do you want them to be automatically installed?"));
 		/* TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package */
-		g_string_append_printf (string, "%s", _("If you have already have the correct file then you can skip this step."));
+		g_string_append_printf (string, "%s", _("If you already have the correct file, you can skip this step."));
 
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
