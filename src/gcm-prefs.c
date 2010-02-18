@@ -1672,7 +1672,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 			      NULL);
 
 		/* show a warning if the profile is crap */
-		if (profile_type == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE && !has_vcgt) {
+		if (profile_type == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE && !has_vcgt && filename != NULL) {
 			gtk_widget_show (info_bar_vcgt);
 		} else {
 			gtk_widget_hide (info_bar_vcgt);
