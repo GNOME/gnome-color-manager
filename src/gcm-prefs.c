@@ -1628,7 +1628,6 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	GcmProfile *profile = NULL;
 	gboolean changed;
 	GcmDeviceTypeEnum type;
-	GcmProfileTypeEnum profile_type;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GcmPrefsEntryType entry_type;
@@ -1669,20 +1668,26 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 		}
 	}
 
+	/* get the device type */
+	g_object_get (current_device,
+		      "type", &type,
+		      NULL);
+
 	/* get profile filename */
 	if (entry_type == GCM_PREFS_ENTRY_TYPE_PROFILE) {
 		g_object_get (profile,
 			      "filename", &filename,
 			      "has-vcgt", &has_vcgt,
-			      "type", &profile_type,
 			      NULL);
 
 		/* show a warning if the profile is crap */
-		if (profile_type == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE && !has_vcgt && filename != NULL) {
+		if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY && !has_vcgt && filename != NULL) {
 			gtk_widget_show (info_bar_vcgt);
 		} else {
 			gtk_widget_hide (info_bar_vcgt);
 		}
+	} else {
+		gtk_widget_hide (info_bar_vcgt);
 	}
 
 	/* see if it's changed */
