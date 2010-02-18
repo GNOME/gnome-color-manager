@@ -406,6 +406,7 @@ gcm_profile_store_add_profiles (GcmProfileStore *profile_store)
 {
 	gchar *path;
 	gboolean ret;
+	GError *error;
 	GcmProfileStorePrivate *priv = profile_store->priv;
 
 	/* get OSX and Linux system-wide profiles */
@@ -420,8 +421,13 @@ gcm_profile_store_add_profiles (GcmProfileStore *profile_store)
 
 	/* get Linux per-user profiles */
 	path = g_build_filename (g_get_home_dir (), ".color", "icc", NULL);
-	gcm_utils_mkdir_with_parents (path, NULL);
-	gcm_profile_store_add_profiles_for_path (profile_store, path);
+	ret = gcm_utils_mkdir_with_parents (path, &error);
+	if (!ret) {
+		egg_error ("failed to create directory on startup: %s", error->message);
+		g_error_free (error);
+	} else {
+		gcm_profile_store_add_profiles_for_path (profile_store, path);
+	}
 	g_free (path);
 
 	/* get OSX per-user profiles */
