@@ -957,18 +957,18 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	g_string_append_printf (string, "\n%s\n", _("For best results, the reference image should also be less than two years old."));
 
 	/* TRANSLATORS: dialog question */
-	g_string_append_printf (string, "\n%s", _("Do you have a scanned TIFF file of the reference image?"));
+	g_string_append_printf (string, "\n%s", _("Do you have a TIFF file of the reference image?"));
 
 	/* ask the user to confirm */
 	dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL, "%s", title);
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 	/* TRANSLATORS: button, confirm the user has a file */
-	gtk_dialog_add_button (GTK_DIALOG (dialog), _("I have already scanned in a file"), GTK_RESPONSE_YES);
+	gtk_dialog_add_button (GTK_DIALOG (dialog), _("I have a reference file"), GTK_RESPONSE_YES);
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
 	if (response != GTK_RESPONSE_YES) {
-		g_set_error_literal (error, 1, 0, "user has not scanned in file");
+		g_set_error_literal (error, 1, 0, "user has not got a file");
 		ret = FALSE;
 		goto out;
 	}
