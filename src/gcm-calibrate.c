@@ -37,6 +37,7 @@
 #include "gcm-utils.h"
 #include "gcm-brightness.h"
 #include "gcm-colorimeter.h"
+#include "gcm-calibrate-dialog.h"
 
 #include "egg-debug.h"
 
@@ -55,6 +56,7 @@ struct _GcmCalibratePrivate
 	GcmCalibrateReferenceKind	 reference_kind;
 	GcmCalibrateDeviceKind		 device_kind;
 	GcmColorimeterKind		 colorimeter_kind;
+	GcmCalibrateDialog		*calibrate_dialog;
 	gchar				*output_name;
 	gchar				*filename_source;
 	gchar				*filename_reference;
@@ -65,7 +67,6 @@ struct _GcmCalibratePrivate
 	gchar				*description;
 	gchar				*serial;
 	gchar				*device;
-	GtkDialog			*dialog_tmp;
 };
 
 enum {
@@ -300,134 +301,38 @@ out:
 }
 
 /**
- * gcm_calibrate_create_large_button:
- **/
-static GtkWidget *
-gcm_calibrate_create_large_button (const gchar *filename, const gchar *title)
-{
-	GtkWidget *vbox;
-	GtkWidget *image;
-	GtkWidget *label;
-	GError *error = NULL;
-	GtkIconTheme *icon_theme;
-	GdkPixbuf *pixbuf;
-
-	/* pack label into a vbox */
-	vbox = gtk_vbox_new (FALSE, 3);
-	label = gtk_label_new (title);
-	gtk_box_pack_end (GTK_BOX(vbox), label, TRUE, TRUE, 3);
-	gtk_widget_show (label);
-
-	/* image widget */
-	icon_theme = gtk_icon_theme_get_default ();
-	pixbuf = gtk_icon_theme_load_icon (icon_theme, filename, 150, 0, &error);
-	if (pixbuf == NULL) {
-		egg_warning ("failed to load: %s", error->message);
-		goto out;
-	}
-	image = gtk_image_new_from_pixbuf (pixbuf);
-	gtk_box_pack_end (GTK_BOX(vbox), image, TRUE, TRUE, 3);
-	gtk_widget_show (image);
-out:
-	gtk_widget_show (vbox);
-	return vbox;
-}
-
-/**
- * gcm_calibrate_button_clicked_lcd_cb:
- **/
-static void
-gcm_calibrate_button_clicked_lcd_cb (GtkWidget *widget, GcmCalibrate *calibrate)
-{
-	calibrate->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_LCD;
-	gtk_dialog_response (calibrate->priv->dialog_tmp, GTK_RESPONSE_OK);
-}
-
-/**
- * gcm_calibrate_button_clicked_crt_cb:
- **/
-static void
-gcm_calibrate_button_clicked_crt_cb (GtkWidget *widget, GcmCalibrate *calibrate)
-{
-	calibrate->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_CRT;
-	gtk_dialog_response (calibrate->priv->dialog_tmp, GTK_RESPONSE_OK);
-}
-
-/**
- * gcm_calibrate_button_clicked_projector_cb:
- **/
-static void
-gcm_calibrate_button_clicked_projector_cb (GtkWidget *widget, GcmCalibrate *calibrate)
-{
-	calibrate->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_PROJECTOR;
-	gtk_dialog_response (calibrate->priv->dialog_tmp, GTK_RESPONSE_OK);
-}
-
-/**
  * gcm_calibrate_get_display_type:
  **/
 static gboolean
 gcm_calibrate_get_display_type (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 {
 	gboolean ret = TRUE;
-	GtkWidget *vbox;
-	GtkWidget *hbox;
-	GtkWidget *dialog;
-	GtkWidget *image;
-	GtkWidget *widget;
+	const gchar *title;
+	const gchar *message;
 	GtkResponseType response;
+	GcmCalibratePrivate *priv = calibrate->priv;
 
-	dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL,
-					 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
-					 _("Could not detect screen type"));
-	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-						  /* TRANSLATORS: dialog message */
-						  _("Please indicate if the screen you are trying to profile is a LCD, CRT or a projector."));
-	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+	/* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
+	title = _("Could not detect screen type");
 
-	/* pack it */
-	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-	hbox = gtk_hbox_new (FALSE, 3);
+	/* TRANSLATORS: dialog message */
+	message = _("Please indicate if the screen you are trying to profile is a LCD, CRT or a projector.");
 
-	/* TRANSLATORS: device type */
-	image = gcm_calibrate_create_large_button ("lcd", _("LCD"));
-	widget = gtk_button_new ();
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_calibrate_button_clicked_lcd_cb), calibrate);
-	gtk_container_add (GTK_CONTAINER (widget), image);
-	gtk_box_pack_start (GTK_BOX(hbox), widget, TRUE, TRUE, 3);
-	gtk_widget_show (widget);
-
-	/* TRANSLATORS: device type */
-	image = gcm_calibrate_create_large_button ("crt", _("CRT"));
-	widget = gtk_button_new ();
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_calibrate_button_clicked_crt_cb), calibrate);
-	gtk_container_add (GTK_CONTAINER (widget), image);
-	gtk_box_pack_start (GTK_BOX(hbox), widget, TRUE, TRUE, 3);
-	gtk_widget_show (widget);
-
-	/* TRANSLATORS: device type */
-	image = gcm_calibrate_create_large_button ("projector", _("Projector"));
-	widget = gtk_button_new ();
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_calibrate_button_clicked_projector_cb), calibrate);
-	gtk_container_add (GTK_CONTAINER (widget), image);
-	gtk_box_pack_start (GTK_BOX(hbox), widget, TRUE, TRUE, 3);
-	gtk_widget_show (widget);
-
-	gtk_widget_show (hbox);
-	gtk_box_pack_start (GTK_BOX(vbox), hbox, TRUE, TRUE, 3);
-
-	/* save this so we can call async */
-	calibrate->priv->dialog_tmp = GTK_DIALOG (dialog);
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
-	gtk_widget_destroy (dialog);
+	/* show the ui */
+	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
+	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_DISPLAY_TYPE, title, message);
+	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
+	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
+	response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
 	if (response != GTK_RESPONSE_OK) {
+		gcm_calibrate_dialog_hide (priv->calibrate_dialog);
 		g_set_error_literal (error, 1, 0, "user did not choose crt or lcd");
 		ret = FALSE;
 		goto out;
 	}
+
+	/* copy */
+	g_object_get (priv->calibrate_dialog, "device-kind", &priv->device_kind, NULL);
 out:
 	return ret;
 }
@@ -442,7 +347,6 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	gboolean ret = TRUE;
 	const gchar *hardware_device;
 	gboolean ret_tmp;
-	GtkWidget *dialog;
 	GString *string = NULL;
 	GcmBrightness *brightness = NULL;
 	guint percentage = G_MAXUINT;
@@ -477,7 +381,6 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	g_object_set (calibrate,
 		      "device", hardware_device,
 		      NULL);
-
 
 	/* this wasn't previously set */
 	if (priv->device_kind == GCM_CALIBRATE_DEVICE_KIND_UNKNOWN) {
@@ -515,15 +418,14 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 		/* TRANSLATORS: dialog message, suffix */
 		g_string_append_printf (string, "\n%s\n", _("For best results, the display should have been powered for at least 15 minutes before starting the calibration."));
 
-
-		dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_OK_CANCEL,
-						 /* TRANSLATORS: window title */
-						 _("Display setup"));
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
-		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-		response = gtk_dialog_run (GTK_DIALOG (dialog));
-		gtk_widget_destroy (dialog);
+		/* TRANSLATORS: window title */
+		gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
+		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, _("Display setup"), string->str);
+		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
+		response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
 		if (response != GTK_RESPONSE_OK) {
+			gcm_calibrate_dialog_hide (priv->calibrate_dialog);
 			g_set_error_literal (error, 1, 0, "user did not follow calibration steps");
 			ret = FALSE;
 			goto out;
@@ -714,177 +616,6 @@ out:
 }
 
 /**
- * gcm_calibrate_reference_kind_to_localised_string:
- **/
-static const gchar *
-gcm_calibrate_reference_kind_to_localised_string (GcmCalibrateReferenceKind kind)
-{
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_CMP_DIGITAL_TARGET_3) {
-		/* TRANSLATORS: this is probably a brand name */
-		return _("CMP Digital Target 3");
-	}
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_CMP_DT_003) {
-		/* TRANSLATORS: this is probably a brand name */
-		return _("CMP DT 003");
-	}
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER) {
-		/* TRANSLATORS: this is probably a brand name */
-		return _("Color Checker");
-	}
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER_DC) {
-		/* TRANSLATORS: this is probably a brand name */
-		return _("Color Checker DC");
-	}
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER_SG) {
-		/* TRANSLATORS: this is probably a brand name */
-		return _("Color Checker SG");
-	}
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_HUTCHCOLOR) {
-		/* TRANSLATORS: this is probably a brand name */
-		return _("Hutchcolor");
-	}
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_I1_RGB_SCAN_1_4) {
-		/* TRANSLATORS: this is probably a brand name */
-		return _("i1 RGB Scan 1.4");
-	}
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_IT8) {
-		/* TRANSLATORS: this is probably a brand name */
-		return _("IT8.7/2");
-	}
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_LASER_SOFT_DC_PRO) {
-		/* TRANSLATORS: this is probably a brand name */
-		return _("Laser Soft DC Pro");
-	}
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_QPCARD_201) {
-		/* TRANSLATORS: this is probably a brand name */
-		return _("QPcard 201");
-	}
-	return NULL;
-}
-
-/**
- * gcm_calibrate_reference_kind_to_thumbnail_image_filename:
- **/
-static const gchar *
-gcm_calibrate_reference_kind_to_thumbnail_image_filename (GcmCalibrateReferenceKind kind)
-{
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_CMP_DIGITAL_TARGET_3)
-		return "CMP-DigitalTarget3.png";
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_CMP_DT_003)
-		return NULL;
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER)
-		return "ColorChecker24.png";
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER_DC)
-		return "ColorCheckerDC.png";
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER_SG)
-		return "ColorCheckerSG.png";
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_HUTCHCOLOR)
-		return NULL;
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_I1_RGB_SCAN_1_4)
-		return "i1_RGB_Scan_14.png";
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_IT8)
-		return "IT872.png";
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_LASER_SOFT_DC_PRO)
-		return "LaserSoftDCPro.png";
-	if (kind == GCM_CALIBRATE_REFERENCE_KIND_QPCARD_201)
-		return "QPcard_201.png";
-	return NULL;
-}
-
-/**
- * gcm_calibrate_reference_kind_combobox_cb:
- **/
-static void
-gcm_calibrate_reference_kind_combobox_cb (GtkComboBox *combo_box, GtkImage *image)
-{
-	GcmCalibrateReferenceKind reference_kind;
-	const gchar *filename;
-	gchar *path;
-
-	/* not sorted so we can just use the index */
-	reference_kind = gtk_combo_box_get_active (GTK_COMBO_BOX (combo_box));
-	filename = gcm_calibrate_reference_kind_to_thumbnail_image_filename (reference_kind);
-
-	/* fallback */
-	if (filename == NULL)
-		filename = "unknown.png";
-
-	path = g_build_filename (GCM_DATA, "targets", filename, NULL);
-	gtk_image_set_from_file (GTK_IMAGE (image), path);
-	g_free (path);
-}
-
-/**
- * gcm_calibrate_get_reference_kind:
- **/
-static GcmCalibrateReferenceKind
-gcm_calibrate_get_reference_kind (GtkWindow *window)
-{
-	GtkResponseType response;
-	GtkWidget *dialog;
-	GtkWidget *vbox;
-	GtkWidget *combo_box;
-	GtkWidget *image;
-	const gchar *title;
-	const gchar *message;
-	guint i;
-	GcmCalibrateReferenceKind reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
-
-	/* TRANSLATORS: this is the window title for when the user selects the chart type.
-	                A chart is a type of reference image the user has purchased. */
-	title = _("Please select chart type");
-
-	/* TRANSLATORS: this is the message body for the chart selection */
-	message = _("Please select the chart type which corresponds to your reference file.");
-
-	dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL, "%s", title);
-	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", message);
-	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-	/* TRANSLATORS: button, confirm the chart type */
-	gtk_dialog_add_button (GTK_DIALOG (dialog), _("Use this type"), GTK_RESPONSE_YES);
-
-	/* use image to display a picture of the target */
-	image = gtk_image_new ();
-	gtk_widget_set_size_request (image, 200, 140);
-
-	/* create the combobox */
-	combo_box = gtk_combo_box_new_text ();
-	g_signal_connect (combo_box, "changed", G_CALLBACK (gcm_calibrate_reference_kind_combobox_cb), image);
-
-	/* add the list of charts */
-	for (i = 0; i < GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN; i++) {
-		gtk_combo_box_append_text (GTK_COMBO_BOX (combo_box),
-					   gcm_calibrate_reference_kind_to_localised_string (i));
-	}
-
-	/* use IT8 by default */
-	gtk_combo_box_set_active (GTK_COMBO_BOX (combo_box), GCM_CALIBRATE_REFERENCE_KIND_IT8);
-
-	/* pack it */
-	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-
-	gtk_box_pack_start (GTK_BOX(vbox), image, TRUE, TRUE, 6);
-	gtk_box_pack_start (GTK_BOX(vbox), combo_box, TRUE, TRUE, 6);
-	gtk_widget_show (combo_box);
-	gtk_widget_show (image);
-
-	/* run the dialog */
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
-
-	/* not sorted so we can just use the index */
-	reference_kind = gtk_combo_box_get_active (GTK_COMBO_BOX (combo_box));
-
-	/* nuke the UI */
-	gtk_widget_destroy (dialog);
-	if (response != GTK_RESPONSE_YES) {
-		reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
-		goto out;
-	}
-out:
-	return reference_kind;
-}
-
-/**
  * gcm_calibrate_device:
  **/
 gboolean
@@ -940,12 +671,13 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 #endif
 	}
 
-	/* TRANSLATORS: title, we're setting up the device ready for calibration */
-	title = _("Setting up device");
+	/* TRANSLATORS: this is the window title for when the user selects the chart type.
+	                A chart is a type of reference image the user has purchased. */
+	title = _("Please select chart type");
 	g_string_set_size (string, 0);
 
 	/* TRANSLATORS: dialog message, preface */
-	g_string_append_printf (string, "%s\n", _("Before calibrating the device, you have to manually acquire a reference image and save it as a TIFF image file."));
+	g_string_append_printf (string, "%s\n", _("Before calibrating the device, you have to manually capture an image of a calibrated target and save it as a TIFF image file."));
 
 	/* TRANSLATORS: dialog message, preface */
 	g_string_append_printf (string, "%s\n", _("Ensure that the contrast and brightness is not changed and color correction profiles are not applied."));
@@ -954,35 +686,29 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	g_string_append_printf (string, "%s\n", _("The device sensor should have been cleaned prior to scanning and the output file resolution should be at least 200dpi."));
 
 	/* TRANSLATORS: dialog message, suffix */
-	g_string_append_printf (string, "\n%s\n", _("For best results, the reference image should also be less than two years old."));
+	g_string_append_printf (string, "\n%s\n", _("For best results, the reference target should also be less than two years old."));
 
-	/* TRANSLATORS: dialog question */
-	g_string_append_printf (string, "\n%s", _("Do you have a TIFF file of the reference image?"));
+	/* TRANSLATORS: this is the message body for the chart selection */
+	g_string_append_printf (string, "\n%s\n", _("Please select the chart type which corresponds to your reference file."));
 
-	/* ask the user to confirm */
-	dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL, "%s", title);
-	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
-	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-	/* TRANSLATORS: button, confirm the user has a file */
-	gtk_dialog_add_button (GTK_DIALOG (dialog), _("I have a reference file"), GTK_RESPONSE_YES);
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
-	gtk_widget_destroy (dialog);
-	if (response != GTK_RESPONSE_YES) {
-		g_set_error_literal (error, 1, 0, "user has not got a file");
+	/* push new messages into the UI */
+	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_TARGET_TYPE, title, string->str);
+	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
+	response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
+	if (response != GTK_RESPONSE_OK) {
+		gcm_calibrate_dialog_hide (priv->calibrate_dialog);
+		g_set_error_literal (error, 1, 0, "user did not choose chart type");
 		ret = FALSE;
 		goto out;
 	}
 
-	/* set the reference kind */
-	priv->reference_kind = gcm_calibrate_get_reference_kind (window);
-	if (priv->reference_kind == GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN) {
-		g_set_error_literal (error, 1, 0, "could not get reference kind");
-		ret = FALSE;
-		goto out;
-	}
+	/* copy */
+	g_object_get (priv->calibrate_dialog, "reference-kind", &priv->reference_kind, NULL);
 
 	/* get scanned image */
 	directory = g_get_home_dir ();
+	window = gcm_calibrate_dialog_get_window (priv->calibrate_dialog);
 	reference_image = gcm_calibrate_device_get_reference_image (directory, window);
 	if (reference_image == NULL) {
 		g_set_error_literal (error, 1, 0, "could not get reference image");
@@ -1310,6 +1036,7 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_UNKNOWN;
 	calibrate->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
 	calibrate->priv->colorimeter = gcm_colorimeter_new ();
+	calibrate->priv->calibrate_dialog = gcm_calibrate_dialog_new ();
 
 	/* coldplug, and watch for changes */
 	calibrate->priv->colorimeter_kind = gcm_colorimeter_get_kind (calibrate->priv->colorimeter);
@@ -1336,6 +1063,7 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->device);
 	g_free (priv->serial);
 	g_object_unref (priv->colorimeter);
+	g_object_unref (priv->calibrate_dialog);
 
 	G_OBJECT_CLASS (gcm_calibrate_parent_class)->finalize (object);
 }

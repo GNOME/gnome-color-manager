@@ -219,6 +219,8 @@ gcm_prefs_SOURCES =					\
 	gcm-calibrate-argyll.h				\
 	gcm-calibrate-manual.c				\
 	gcm-calibrate-manual.h				\
+	gcm-calibrate-dialog.c				\
+	gcm-calibrate-dialog.h				\
 	gcm-brightness.c				\
 	gcm-brightness.h				\
 	gcm-prefs.c
