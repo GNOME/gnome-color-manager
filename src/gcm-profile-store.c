@@ -222,7 +222,7 @@ gcm_profile_store_file_monitor_changed_cb (GFileMonitor *monitor, GFile *file, G
 
 	/* just rescan everything */
 	path = g_file_get_path (file);
-	if (g_str_has_prefix (path, ".goutputstream")) {
+	if (g_strrstr (path, ".goutputstream") != NULL) {
 		egg_debug ("ignoring gvfs temporary file");
 		goto out;
 	}
