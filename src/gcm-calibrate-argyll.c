@@ -1399,6 +1399,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	    g_strcmp0 (line, "or hit Esc or Q to abort:") == 0 ||
 	    g_strcmp0 (line, "The instrument can be removed from the screen.") == 0 ||
 	    g_strstr_len (line, -1, "User Aborted") != NULL ||
+	    g_str_has_prefix (line, "Perspective correction factors") ||
 	    g_str_has_suffix (line, "key to continue:")) {
 		egg_debug ("VTE: ignore: %s", line);
 		goto out;
@@ -1414,6 +1415,9 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		if (g_strstr_len (line, -1, "No PLD firmware pattern is available") != NULL) {
 			/* TRANSLATORS: message, no firmware is available */
 			message = _("No firmware is installed for this device.");
+		} else if (g_strstr_len (line, -1, "Pattern match wasn't good enough") != NULL) {
+			/* TRANSLATORS: message, the image wasn't good enough */
+			message = _("The pattern match wasn't good enough. Ensure you have the correct type of target selected.");
 		} else {
 			message = found + 8;
 		}
