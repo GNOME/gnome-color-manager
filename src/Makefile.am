@@ -32,6 +32,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-screen.h					\
 	gcm-xyz.c					\
 	gcm-xyz.h					\
+	gcm-print.c					\
+	gcm-print.h					\
 	gcm-utils.c					\
 	gcm-utils.h					\
 	gcm-enum.c					\
