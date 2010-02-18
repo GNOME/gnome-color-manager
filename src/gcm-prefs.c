@@ -483,7 +483,13 @@ gcm_prefs_file_chooser_get_icc_profile (void)
 	/* TRANSLATORS: filter name on the file->open dialog */
 	gtk_file_filter_set_name (filter, _("Supported ICC profiles"));
 	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
-//	g_object_unref (filter);
+
+	/* setup the all files filter */
+	filter = gtk_file_filter_new ();
+	gtk_file_filter_add_pattern (filter, "*");
+	/* TRANSLATORS: filter name on the file->open dialog */
+	gtk_file_filter_set_name (filter, _("All files"));
+	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
 
 	/* did user choose file */
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)

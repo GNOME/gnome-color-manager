@@ -604,7 +604,13 @@ gcm_calibrate_device_get_reference_image (const gchar *directory, GtkWindow *win
 	/* TRANSLATORS: filter name on the file->open dialog */
 	gtk_file_filter_set_name (filter, _("Supported images files"));
 	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
-//	g_object_unref (filter);
+
+	/* setup the all files filter */
+	filter = gtk_file_filter_new ();
+	gtk_file_filter_add_pattern (filter, "*");
+	/* TRANSLATORS: filter name on the file->open dialog */
+	gtk_file_filter_set_name (filter, _("All files"));
+	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
 
 	/* did user choose file */
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
@@ -650,7 +656,13 @@ gcm_calibrate_device_get_reference_data (const gchar *directory, GtkWindow *wind
 	/* TRANSLATORS: filter name on the file->open dialog */
 	gtk_file_filter_set_name (filter, _("CIE values"));
 	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
-//	g_object_unref (filter);
+
+	/* setup the all files filter */
+	filter = gtk_file_filter_new ();
+	gtk_file_filter_add_pattern (filter, "*");
+	/* TRANSLATORS: filter name on the file->open dialog */
+	gtk_file_filter_set_name (filter, _("All files"));
+	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
 
 	/* did user choose file */
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
