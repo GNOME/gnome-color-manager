@@ -927,12 +927,19 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 {
 	gboolean ret = FALSE;
 	GtkWidget *widget;
+	const gchar *tooltip;
 	GcmDeviceTypeEnum type;
 	gboolean connected;
 
+	/* TRANSLATORS: this is when the button is sensitive */
+	tooltip = _("Create a color profile for the selected device");
+
 	/* no device selected */
-	if (current_device == NULL)
+	if (current_device == NULL) {
+		/* TRANSLATORS: this is when the button is insensitive */
+		tooltip = _("Cannot calibrate: No device is selected");
 		goto out;
+	}
 
 	/* get current device properties */
 	g_object_get (current_device,
@@ -944,8 +951,11 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
 
 		/* are we disconnected */
-		if (!connected)
+		if (!connected) {
+			/* TRANSLATORS: this is when the button is insensitive */
+			tooltip = _("Cannot calibrate: The device is not connected");
 			goto out;
+		}
 
 		/* find whether we have hardware installed */
 		ret = gcm_colorimeter_get_present (colorimeter);
@@ -953,6 +963,10 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		egg_debug ("overriding device presence %i with TRUE", ret);
 		ret = TRUE;
 #endif
+		if (!ret) {
+			/* TRANSLATORS: this is when the button is insensitive */
+			tooltip = _("Cannot calibrate: The colorimeter is not plugged in");
+		}
 	} else if (type == GCM_DEVICE_TYPE_ENUM_SCANNER ||
 		   type == GCM_DEVICE_TYPE_ENUM_CAMERA) {
 
@@ -960,12 +974,13 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		ret = TRUE;
 	} else {
 
-		/* we can't calibrate this type of device */
-		ret = FALSE;
+		/* TRANSLATORS: this is when the button is insensitive */
+		tooltip = _("Cannot calibrate this type of device");
 	}
 out:
-	/* disable the button if no supported hardware is found */
+	/* control the tooltip and sensitivity of the button */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
+	gtk_widget_set_tooltip_text (widget, tooltip);
 	gtk_widget_set_sensitive (widget, ret);
 }
 
