@@ -247,7 +247,10 @@ gcm_profile_store_add_profiles_for_path (GcmProfileStore *profile_store, const g
 	if (g_file_test (path, G_FILE_TEST_IS_REGULAR)) {
 
 		/* check the file actually is a profile */
-		ret = gcm_utils_is_icc_profile (path);
+		file = g_file_new_for_path (path);
+		ret = gcm_utils_is_icc_profile (file);
+		g_object_unref (file);
+		file = NULL;
 		if (ret) {
 			gcm_profile_store_add_profile (profile_store, path);
 			goto out;

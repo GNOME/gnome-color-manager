@@ -60,7 +60,7 @@ main (int argc, char **argv)
 	gboolean ret;
 	gchar *copyright = NULL;
 	gchar *description = NULL;
-	gchar *destination = NULL;
+	GFile *destination = NULL;
 	gchar **files = NULL;
 	guint retval = 1;
 	GcmProfile *profile = NULL;
@@ -74,6 +74,7 @@ main (int argc, char **argv)
 	GcmXyz *red = NULL;
 	GcmXyz *green = NULL;
 	GcmXyz *blue = NULL;
+	GFile *file = NULL;
 
 	const GOptionEntry options[] = {
 		{ G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &files,
@@ -145,8 +146,9 @@ main (int argc, char **argv)
 		      NULL);
 
 	/* check file does't already exist */
-	destination = gcm_utils_get_profile_destination (files[0]);
-	ret = g_file_test (destination, G_FILE_TEST_EXISTS);
+	file = g_file_new_for_path (files[0]);
+	destination = gcm_utils_get_profile_destination (file);
+	ret = g_file_query_exists (destination, NULL);
 	if (ret) {
 		/* TRANSLATORS: color profile already been installed */
 		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, _("ICC profile already installed"));
@@ -195,7 +197,7 @@ main (int argc, char **argv)
 		goto out;
 
 	/* copy icc file to ~/.color/icc */
-	ret = gcm_utils_mkdir_and_copy (files[0], destination, &error);
+	ret = gcm_utils_mkdir_and_copy (file, destination, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */
 		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Failed to copy file"));
@@ -215,6 +217,8 @@ main (int argc, char **argv)
 		goto out;
 	}
 out:
+	if (file != NULL)
+		g_object_unref (file);
 	if (white != NULL)
 		g_object_unref (white);
 	if (red != NULL)
@@ -227,7 +231,8 @@ out:
 		g_string_free (string, TRUE);
 	if (profile != NULL)
 		g_object_unref (profile);
-	g_free (destination);
+	if (destination != NULL)
+		g_object_unref (destination);
 	g_free (description);
 	g_free (copyright);
 	g_strfreev (files);

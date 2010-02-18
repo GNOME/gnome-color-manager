@@ -76,16 +76,16 @@ gcm_utils_linkify (const gchar *text)
  * gcm_utils_is_icc_profile:
  **/
 gboolean
-gcm_utils_is_icc_profile (const gchar *filename)
+gcm_utils_is_icc_profile (GFile *file)
 {
-	GFile *file;
 	GFileInfo *info;
 	const gchar *type;
 	GError *error = NULL;
 	gboolean ret = FALSE;
+	gchar *filename = NULL;
 
 	/* get content type for file */
-	file = g_file_new_for_path (filename);
+	filename = g_file_get_path (file);
 	info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE, G_FILE_QUERY_INFO_NONE, NULL, &error);
 	if (info != NULL) {
 		type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
@@ -118,7 +118,7 @@ gcm_utils_is_icc_profile (const gchar *filename)
 out:
 	if (info != NULL)
 		g_object_unref (info);
-	g_object_unref (file);
+	g_free (filename);
 	return ret;
 }
 
@@ -246,7 +246,7 @@ gcm_utils_mkdir_with_parents (const gchar *filename, GError **error)
 	/* ensure desination exists */
 	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
 	if (!ret) {
-		file = g_file_new_for_path (filename);
+		file = g_file_new_for_uri (filename);
 		ret = g_file_make_directory_with_parents  (file, NULL, error);
 		if (!ret)
 			goto out;
@@ -267,7 +267,7 @@ gcm_utils_mkdir_for_filename (const gchar *filename, GError **error)
 	GFile *file;
 	GFile *parent_dir;
 
-	file = g_file_new_for_path (filename);
+	file = g_file_new_for_uri (filename);
 	parent_dir = g_file_get_parent (file);
 
 	/* ensure desination exists */
@@ -287,52 +287,53 @@ out:
  * gcm_utils_mkdir_and_copy:
  **/
 gboolean
-gcm_utils_mkdir_and_copy (const gchar *source, const gchar *destination, GError **error)
+gcm_utils_mkdir_and_copy (GFile *source, GFile *destination, GError **error)
 {
 	gboolean ret;
-	GFile *sourcefile;
-	GFile *destfile;
+	GFile *parent;
 
 	g_return_val_if_fail (source != NULL, FALSE);
 	g_return_val_if_fail (destination != NULL, FALSE);
 
-	/* setup paths */
-	sourcefile = g_file_new_for_path (source);
-	destfile = g_file_new_for_path (destination);
+	/* get parent */
+	parent = g_file_get_parent (destination);
 
 	/* create directory */
-	ret = gcm_utils_mkdir_for_filename (destination, error);
-	if (!ret)
-		goto out;
+	if (!g_file_query_exists (parent, NULL)) {
+		ret = g_file_make_directory_with_parents (parent, NULL, error);
+		if (!ret)
+			goto out;
+	}
 
 	/* do the copy */
-	egg_debug ("copying from %s to %s", source, destination);
-	ret = g_file_copy (sourcefile, destfile, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, error);
+	ret = g_file_copy (source, destination, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, error);
 	if (!ret)
 		goto out;
 out:
-	g_object_unref (sourcefile);
-	g_object_unref (destfile);
+	g_object_unref (parent);
 	return ret;
 }
 
 /**
  * gcm_utils_get_profile_destination:
  **/
-gchar *
-gcm_utils_get_profile_destination (const gchar *filename)
+GFile *
+gcm_utils_get_profile_destination (GFile *file)
 {
 	gchar *basename;
 	gchar *destination;
+	GFile *dest;
 
-	g_return_val_if_fail (filename != NULL, NULL);
+	g_return_val_if_fail (file != NULL, NULL);
 
 	/* get destination filename for this source file */
-	basename = g_path_get_basename (filename);
+	basename = g_file_get_basename (file);
 	destination = g_build_filename (g_get_home_dir (), GCM_PROFILE_PATH, basename, NULL);
+	dest = g_file_new_for_path (destination);
 
 	g_free (basename);
-	return destination;
+	g_free (destination);
+	return dest;
 }
 
 /**

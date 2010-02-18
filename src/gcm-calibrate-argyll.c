@@ -826,13 +826,19 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 {
 	gboolean ret;
 	gchar *device = NULL;
-	gchar *dest_cht = NULL;
-	gchar *dest_ref = NULL;
+	gchar *destination_cht = NULL;
+	gchar *destination_ref = NULL;
 	gchar *filename = NULL;
-	gchar *filename_cht = NULL;
 	gchar *basename = NULL;
+	gchar *filename_cht = NULL;
 	gchar *filename_source = NULL;
 	gchar *filename_reference = NULL;
+	GFile *file_cht = NULL;
+	GFile *file_source = NULL;
+	GFile *file_reference = NULL;
+	GFile *dest_cht = NULL;
+	GFile *dest_source = NULL;
+	GFile *dest_reference = NULL;
 	const gchar *title;
 	const gchar *message;
 	const gchar *filename_tmp;
@@ -857,19 +863,29 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 	/* build filenames */
 	filename = g_strdup_printf ("%s.tif", basename);
 	device = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, filename, NULL);
-	dest_cht = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "scanin.cht", NULL);
-	dest_ref = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "scanin-ref.txt", NULL);
+	destination_cht = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "scanin.cht", NULL);
+	destination_ref = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "scanin-ref.txt", NULL);
 
 	/* copy all files to /tmp as argyllcms doesn't cope well with paths */
 	filename_tmp = gcm_calibrate_argyll_reference_kind_to_filename (reference_kind);
 	filename_cht = g_build_filename ("/usr/share/color/argyll/ref", filename_tmp, NULL);
-	ret = gcm_utils_mkdir_and_copy (filename_cht, dest_cht, error);
+
+	/* convert to GFile */
+	file_cht = g_file_new_for_path (filename_cht);
+	file_source = g_file_new_for_path (filename_source);
+	file_reference = g_file_new_for_path (filename_reference);
+	dest_cht = g_file_new_for_path (destination_cht);
+	dest_source = g_file_new_for_path (device);
+	dest_reference = g_file_new_for_path (destination_ref);
+
+	/* do the copy */
+	ret = gcm_utils_mkdir_and_copy (file_cht, dest_cht, error);
 	if (!ret)
 		goto out;
-	ret = gcm_utils_mkdir_and_copy (filename_source, device, error);
+	ret = gcm_utils_mkdir_and_copy (file_source, dest_source, error);
 	if (!ret)
 		goto out;
-	ret = gcm_utils_mkdir_and_copy (filename_reference, dest_ref, error);
+	ret = gcm_utils_mkdir_and_copy (file_reference, dest_reference, error);
 	if (!ret)
 		goto out;
 out:
@@ -879,8 +895,14 @@ out:
 	g_free (filename_source);
 	g_free (filename_reference);
 	g_free (device);
-	g_free (dest_cht);
-	g_free (dest_ref);
+	g_free (destination_cht);
+	g_free (destination_ref);
+	g_object_unref (file_cht);
+	g_object_unref (file_source);
+	g_object_unref (file_reference);
+	g_object_unref (dest_cht);
+	g_object_unref (dest_source);
+	g_object_unref (dest_reference);
 	return ret;
 }
 

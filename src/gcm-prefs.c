@@ -449,12 +449,12 @@ out:
 /**
  * gcm_prefs_file_chooser_get_icc_profile:
  **/
-static gchar *
+static GFile *
 gcm_prefs_file_chooser_get_icc_profile (void)
 {
-	gchar *filename = NULL;
 	GtkWindow *window;
 	GtkWidget *dialog;
+	GFile *file = NULL;
 	GtkFileFilter *filter;
 
 	/* create new dialog */
@@ -468,6 +468,7 @@ gcm_prefs_file_chooser_get_icc_profile (void)
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), g_get_home_dir ());
 	gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER(dialog), FALSE);
+	gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER(dialog), FALSE);
 
 	/* setup the filter */
 	filter = gtk_file_filter_new ();
@@ -486,30 +487,30 @@ gcm_prefs_file_chooser_get_icc_profile (void)
 
 	/* did user choose file */
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
-		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(dialog));
+		file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER(dialog));
 
 	/* we're done */
 	gtk_widget_destroy (dialog);
 
 	/* or NULL for missing */
-	return filename;
+	return file;
 }
 
 /**
- * gcm_prefs_profile_import:
+ * gcm_prefs_profile_import_file:
  **/
 static gboolean
-gcm_prefs_profile_import (const gchar *filename)
+gcm_prefs_profile_import_file (GFile *file)
 {
+	gboolean ret = FALSE;
 	GtkWidget *dialog;
 	GError *error = NULL;
-	gchar *destination = NULL;
+	GFile *destination = NULL;
 	GtkWindow *window;
-	gboolean ret;
 
 	/* copy icc file to ~/.color/icc */
-	destination = gcm_utils_get_profile_destination (filename);
-	ret = gcm_utils_mkdir_and_copy (filename, destination, &error);
+	destination = gcm_utils_get_profile_destination (file);
+	ret = gcm_utils_mkdir_and_copy (file, destination, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */
 		window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
@@ -522,33 +523,7 @@ gcm_prefs_profile_import (const gchar *filename)
 		goto out;
 	}
 out:
-	g_free (destination);
-	return ret;
-}
-
-/**
- * gcm_prefs_profile_import_uri:
- **/
-static gboolean
-gcm_prefs_profile_import_uri (const gchar *uri)
-{
-	GFile *file;
-	gchar *path;
-	gboolean ret = FALSE;
-
-	/* resolve */
-	file = g_file_new_for_uri (uri);
-	path = g_file_get_path (file);
-	if (path == NULL) {
-		egg_warning ("failed to get path: %s", uri);
-		goto out;
-	}
-
-	/* import */
-	ret = gcm_prefs_profile_import (path);
-out:
-	g_free (path);
-	g_object_unref (file);
+	g_object_unref (destination);
 	return ret;
 }
 
@@ -558,18 +533,20 @@ out:
 static void
 gcm_prefs_profile_import_cb (GtkWidget *widget, gpointer data)
 {
-	gchar *filename;
+	GFile *file;
 
 	/* get new file */
-	filename = gcm_prefs_file_chooser_get_icc_profile ();
-	if (filename == NULL)
+	file = gcm_prefs_file_chooser_get_icc_profile ();
+	if (file == NULL) {
+		egg_warning ("failed to get filename");
 		goto out;
+	}
 
 	/* import this */
-	gcm_prefs_profile_import (filename);
-
+	gcm_prefs_profile_import_file (file);
 out:
-	g_free (filename);
+	if (file != NULL)
+		g_object_unref (file);
 }
 
 /**
@@ -580,6 +557,7 @@ gcm_prefs_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gin
 {
 	const guchar *filename;
 	gchar **filenames = NULL;
+	GFile *file = NULL;
 	guint i;
 	gboolean ret;
 
@@ -598,7 +576,8 @@ gcm_prefs_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gin
 	for (i=0; filenames[i]!=NULL; i++) {
 
 		/* check this is an ICC profile */
-		ret = gcm_utils_is_icc_profile (filenames[i]);
+		file = g_file_new_for_path (filenames[i]);
+		ret = gcm_utils_is_icc_profile (file);
 		if (!ret) {
 			egg_debug ("%s is not a ICC profile", filenames[i]);
 			gtk_drag_finish (context, FALSE, FALSE, _time);
@@ -606,16 +585,20 @@ gcm_prefs_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gin
 		}
 
 		/* try to import it */
-		ret = gcm_prefs_profile_import_uri (filenames[i]);
+		ret = gcm_prefs_profile_import_file (file);
 		if (!ret) {
 			egg_debug ("%s did not import correctly", filenames[i]);
 			gtk_drag_finish (context, FALSE, FALSE, _time);
 			goto out;
 		}
+		g_object_unref (file);
+		file = NULL;
 	}
 
 	gtk_drag_finish (context, TRUE, FALSE, _time);
 out:
+	if (file != NULL)
+		g_object_unref (file);
 	g_strfreev (filenames);
 }
 
@@ -689,9 +672,11 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	gchar *filename = NULL;
 	guint i;
 	gchar *name;
-	gchar *destination = NULL;
 	GcmProfile *profile;
 	GPtrArray *profile_array = NULL;
+	GFile *file = NULL;
+	GFile *dest = NULL;
+	gchar *destination = NULL;
 
 	/* ensure argyllcms is installed */
 	ret = gcm_prefs_ensure_argyllcms_installed ();
@@ -736,8 +721,9 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* copy the ICC file to the proper location */
-	destination = gcm_utils_get_profile_destination (filename);
-	ret = gcm_utils_mkdir_and_copy (filename, destination, &error);
+	file = g_file_new_for_path (filename);
+	dest = gcm_utils_get_profile_destination (file);
+	ret = gcm_utils_mkdir_and_copy (file, dest, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
@@ -748,6 +734,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	profile_array = gcm_profile_store_get_array (profile_store);
 
 	/* find an existing profile of this name */
+	destination = g_file_get_path (dest);
 	for (i=0; i<profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
 		g_object_get (profile,
@@ -786,6 +773,10 @@ out:
 		g_ptr_array_unref (profile_array);
 	if (calibrate != NULL)
 		g_object_unref (calibrate);
+	if (file != NULL)
+		g_object_unref (file);
+	if (dest != NULL)
+		g_object_unref (dest);
 }
 
 /**
@@ -1625,7 +1616,7 @@ static void
 gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 {
 	gchar *profile_old = NULL;
-	gchar *filename = NULL;
+	GFile *file = NULL;
 	gboolean ret;
 	GError *error = NULL;
 	GcmProfile *profile = NULL;
@@ -1636,6 +1627,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	GtkTreeModel *model;
 	GcmPrefsEntryType entry_type;
 	gboolean has_vcgt;
+	gchar *filename = NULL;
 
 	/* no devices */
 	if (current_device == NULL)
@@ -1655,13 +1647,20 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 
 	/* import */
 	if (entry_type == GCM_PREFS_ENTRY_TYPE_IMPORT) {
-		filename = gcm_prefs_file_chooser_get_icc_profile ();
-		if (filename == NULL) {
+		file = gcm_prefs_file_chooser_get_icc_profile ();
+		if (file == NULL) {
+			egg_warning ("failed to get ICC file");
 			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 			goto out;
 		}
-		gcm_prefs_profile_import (filename);
-		goto out;
+		ret = gcm_prefs_profile_import_file (file);
+		if (!ret) {
+			gchar *uri;
+			uri = g_file_get_uri (file);
+			egg_debug ("%s did not import correctly", uri);
+			g_free (uri);
+			goto out;
+		}
 	}
 
 	/* get profile filename */
@@ -1711,8 +1710,10 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 		}
 	}
 out:
-	g_free (filename);
+	if (file != NULL)
+		g_object_unref (file);
 	g_free (profile_old);
+	g_free (filename);
 }
 
 /**
