@@ -85,7 +85,9 @@ gcm_utils_is_icc_profile (GFile *file)
 	gchar *filename = NULL;
 
 	/* get content type for file */
-	filename = g_file_get_path (file);
+	filename = g_file_get_uri (file);
+	if (filename == NULL)
+		filename = g_file_get_path (file);
 	info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE, G_FILE_QUERY_INFO_NONE, NULL, &error);
 	if (info != NULL) {
 		type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);

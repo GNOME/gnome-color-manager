@@ -586,7 +586,7 @@ gcm_prefs_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gin
 			continue;
 
 		/* check this is an ICC profile */
-		file = g_file_new_for_path (filenames[i]);
+		file = g_file_new_for_uri (filenames[i]);
 		ret = gcm_utils_is_icc_profile (file);
 		if (!ret) {
 			egg_debug ("%s is not a ICC profile", filenames[i]);
