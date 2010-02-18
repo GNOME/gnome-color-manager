@@ -222,6 +222,10 @@ gcm_profile_store_file_monitor_changed_cb (GFileMonitor *monitor, GFile *file, G
 
 	/* just rescan everything */
 	path = g_file_get_path (file);
+	if (g_str_has_prefix (path, ".goutputstream")) {
+		egg_debug ("ignoring gvfs temporary file");
+		goto out;
+	}
 	egg_debug ("%s was added, rescanning everything", path);
 	gcm_profile_store_add_profiles (profile_store);
 out:
