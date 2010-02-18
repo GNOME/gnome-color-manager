@@ -60,7 +60,8 @@ gboolean
 gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest, GError **error)
 {
 	gint i;
-	ppd_file_t *ppd_file;
+	gboolean ret = TRUE;
+	ppd_file_t *ppd_file = NULL;
 	const gchar *ppd_file_location;
 	gchar *id = NULL;
 	gchar *device_id = NULL;
@@ -74,6 +75,13 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 	egg_debug ("name: %s", dest.name);
 	egg_debug ("instance: %s", dest.instance);
 	egg_debug ("num_options: %i", dest.num_options);
+
+	/* don't add Cups-PDF devices */
+	if (g_strcmp0 (dest.name, "Cups-PDF") == 0) {
+		g_set_error (error, 1, 0, "Not adding PDF device");
+		ret = FALSE;
+		goto out;
+	}
 
 	ppd_file_location = cupsGetPPD2 (http, dest.name);
 	ppd_file = ppdOpenFile (ppd_file_location);
@@ -137,7 +145,7 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 		      "native-device", device_id,
 		      "profile-filename", profile_filename,
 		      NULL);
-
+out:
 	g_free (serial);
 	g_free (profile_filename);
 	g_free (manufacturer);
@@ -145,8 +153,9 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 	g_free (id);
 	g_free (device_id);
 	g_free (title);
-	ppdClose (ppd_file);
-	return TRUE;
+	if (ppd_file != NULL)
+		ppdClose (ppd_file);
+	return ret;
 }
 
 /**
