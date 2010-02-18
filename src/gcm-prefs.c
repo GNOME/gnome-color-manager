@@ -581,6 +581,10 @@ gcm_prefs_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gin
 	filenames = g_strsplit_set ((const gchar *)filename, "\r\n", -1);
 	for (i=0; filenames[i]!=NULL; i++) {
 
+		/* blank entry */
+		if (filenames[i][0] == '\0')
+			continue;
+
 		/* check this is an ICC profile */
 		file = g_file_new_for_path (filenames[i]);
 		ret = gcm_utils_is_icc_profile (file);
