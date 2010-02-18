@@ -537,6 +537,8 @@ gcm_utils_test (EggTest *test)
 	gchar *filename;
 	GcmProfileTypeEnum profile_type;
 	GcmDeviceTypeEnum device_type;
+	GFile *file;
+	GFile *dest;
 
 	if (!egg_test_start (test, "GcmUtils"))
 		return;
@@ -554,18 +556,24 @@ gcm_utils_test (EggTest *test)
 
 	/************************************************************/
 	egg_test_title (test, "get filename of data file");
-	filename = gcm_utils_get_profile_destination ("dave.icc");
+	file = g_file_new_for_path ("dave.icc");
+	dest = gcm_utils_get_profile_destination (file);
+	filename = g_file_get_path (dest);
 	if (g_str_has_suffix (filename, "/.color/icc/dave.icc"))
 		egg_test_success (test, NULL);
 	else
 		egg_test_failed (test, "failed to get filename: %s", filename);
 	g_free (filename);
+	g_object_unref (file);
+	g_object_unref (dest);
 
 	/************************************************************/
 	egg_test_title (test, "check is icc profile");
 	filename = egg_test_get_data_file ("bluish.icc");
-	ret = gcm_utils_is_icc_profile (filename);
+	file = g_file_new_for_path (filename);
+	ret = gcm_utils_is_icc_profile (file);
 	egg_test_assert (test, ret);
+	g_object_unref (file);
 	g_free (filename);
 
 	/************************************************************/
