@@ -1684,6 +1684,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 {
 	gchar *profile_old = NULL;
 	GFile *file = NULL;
+	GFile *dest = NULL;
 	gboolean ret;
 	GError *error = NULL;
 	GcmProfile *profile = NULL;
@@ -1727,6 +1728,10 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 			g_free (uri);
 			goto out;
 		}
+
+		/* now use the new profile as the device default */
+		dest = gcm_utils_get_profile_destination (file);
+		filename = g_file_get_path (dest);
 	}
 
 	/* get the device type */
@@ -1784,6 +1789,8 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 out:
 	if (file != NULL)
 		g_object_unref (file);
+	if (dest != NULL)
+		g_object_unref (dest);
 	g_free (profile_old);
 	g_free (filename);
 }
