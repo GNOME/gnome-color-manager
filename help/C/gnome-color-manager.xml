@@ -121,29 +121,52 @@
   </indexterm>
 
   <para>
-    The &app; is a session framework that makes it easy to manage, install
-    and generate color profiles in the <systemitem>GNOME desktop</systemitem>.
+    The &app; is a framework that helps the user generate, install and manage 
+    device color on a <systemitem>GNOME desktop</systemitem>. It does this to 
+    help a user match color across all devices. This gives a consistent color 
+    to an image or document, wherever it is output.  
   </para>
+  <para>
+    The &app; communicates the selected profiles to aware applications, 
+    maintaining the color across applications.
+  </para>
+  <para>
+    The &app; uses <ulink url="http://www.color.org" type="http">
+    International Color Consortium</ulink> (ICC) profiles to map device
+    color characteristics onto a standard color space used by the 
+    <systemitem>GNOME desktop</systemitem>.  
+  </para>
+  <warning>
+    &app; should NOT be used to alter the appearance of your desktop. 
+    The Appearance preference tool lets you configure various aspects
+    of how your desktop looks. 
+  </warning>
 
 </section>
 
 <section id="using">
   <title>Usage</title>
   <para>
-    <application>&app;</application> is usually started at GNOME startup, but
-    you can manually start <application>&app;</application> by doing:
+    <application>&app;</application> is usually started at GNOME start-up, but
+    you can manually start <application>&app;</application> using:
   </para>
-  <variablelist>
-    <varlistentry>
-      <term>Command line</term>
-      <listitem>
-    	<para>
-    	  Type <command>gcm-apply --verbose</command>,
-          then press <keycap>Return</keycap>:
-        </para>
-      </listitem>
-    </varlistentry>
-  </variablelist>
+  <screen>
+    <prompt>bash$ </prompt><userinput>gcm-apply <parameter>--verbose</parameter></userinput> 
+  </screen>
+  <para>
+    <application>&app;</application> preferences dialog can be started from 
+    the GNOME Preferences Menu, but you can start this using:
+  </para>
+  <screen>
+    <prompt>bash$ </prompt><userinput>gcm-prefs <parameter>--verbose</parameter></userinput> 
+  </screen>
+  <para>
+    ICC profiles should be imported into the <application>&app;</application> 
+    by selecting a file in a nautilus window. You can import the file using:
+  </para>
+  <screen>
+    <prompt>bash$ </prompt><userinput>gcm-import <filename><![CDATA[<filepath>]]></filename></userinput> 
+  </screen>
 </section>
 
 <section id="import">
