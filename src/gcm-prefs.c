@@ -2492,6 +2492,18 @@ gcm_prefs_client_notify_loading_cb (GcmClient *client, GParamSpec *pspec, gpoint
 }
 
 /**
+ * gcm_prefs_info_bar_response_cb:
+ **/
+static void
+gcm_prefs_info_bar_response_cb (GtkDialog *dialog, GtkResponseType response, gpointer user_data)
+{
+	if (response == GTK_RESPONSE_HELP) {
+		/* open the help file in the right place */
+		gcm_gnome_help ("faq-missing-vcgt");
+	}
+}
+
+/**
  * main:
  **/
 int
@@ -2776,6 +2788,11 @@ main (int argc, char **argv)
 	/* use infobar */
 	info_bar_loading = gtk_info_bar_new ();
 	info_bar_vcgt = gtk_info_bar_new ();
+	g_signal_connect (info_bar_vcgt, "response",
+			  G_CALLBACK (gcm_prefs_info_bar_response_cb), NULL);
+
+	/* TRANSLATORS: button for more details about the vcgt failure */
+	gtk_info_bar_add_button (GTK_INFO_BAR(info_bar_vcgt), _("More information"), GTK_RESPONSE_HELP);
 
 	/* TRANSLATORS: this is displayed while the devices are being probed */
 	info_bar_loading_label = gtk_label_new (_("Loading list of devices..."));
