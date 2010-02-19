@@ -92,6 +92,23 @@ typedef enum {
 static void gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer userdata);
 
 /**
+ * gcm_prefs_error_dialog:
+ **/
+static void
+gcm_prefs_error_dialog (const gchar *title, const gchar *message)
+{
+	GtkWindow *window;
+	GtkWidget *dialog;
+
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	dialog = gtk_message_dialog_new (window, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s", title);
+	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", message);
+	gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+}
+
+/**
  * gcm_prefs_close_cb:
  **/
 static void
@@ -132,7 +149,8 @@ gcm_prefs_set_default (GcmDevice *device)
 	egg_debug ("running: %s", cmdline);
 	ret = g_spawn_command_line_sync (cmdline, NULL, NULL, NULL, &error);
 	if (!ret) {
-		egg_warning ("failed to set default: %s", error->message);
+		/* TRANSLATORS: could not save for all users */
+		gcm_prefs_error_dialog (_("Failed to save defaults for all users"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -503,23 +521,6 @@ gcm_prefs_file_chooser_get_icc_profile (void)
 }
 
 /**
- * gcm_prefs_error_dialog:
- **/
-static void
-gcm_prefs_error_dialog (const gchar *title, const gchar *message)
-{
-	GtkWindow *window;
-	GtkWidget *dialog;
-
-	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
-	dialog = gtk_message_dialog_new (window, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s", title);
-	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", message);
-	gtk_dialog_run (GTK_DIALOG (dialog));
-	gtk_widget_destroy (dialog);
-}
-
-/**
  * gcm_prefs_profile_import_file:
  **/
 static gboolean
@@ -812,7 +813,8 @@ gcm_prefs_delete_cb (GtkWidget *widget, gpointer data)
 	/* try to delete device */
 	ret = gcm_client_delete_device (gcm_client, current_device, &error);
 	if (!ret) {
-		egg_warning ("failed to delete: %s", error->message);
+		/* TRANSLATORS: could not read file */
+		gcm_prefs_error_dialog (_("Failed to delete file"), error->message);
 		g_error_free (error);
 	}
 }
