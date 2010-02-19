@@ -291,6 +291,7 @@ gcm_self_test_SOURCES =					\
 	gcm-gamma-widget.c				\
 	gcm-calibrate.c					\
 	gcm-calibrate-manual.c				\
+	gcm-calibrate-dialog.c				\
 	egg-test.h					\
 	egg-test.c					\
 	$(NULL)

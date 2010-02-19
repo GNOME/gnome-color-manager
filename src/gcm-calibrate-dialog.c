@@ -718,9 +718,8 @@ void
 gcm_calibrate_dialog_test (EggTest *test)
 {
 	GcmCalibrateDialog *calibrate_dialog;
-	gboolean ret;
-	GError *error = NULL;
-	gchar *filename;
+//	gboolean ret;
+//	GError *error = NULL;
 
 	if (!egg_test_start (test, "GcmCalibrateDialog"))
 		return;
@@ -730,21 +729,7 @@ gcm_calibrate_dialog_test (EggTest *test)
 	calibrate_dialog = gcm_calibrate_dialog_new ();
 	egg_test_assert (test, calibrate_dialog != NULL);
 
-	/************************************************************/
-	egg_test_title (test, "calibrate_dialog display manually");
-	filename = egg_test_get_data_file ("test.tif");
-	ret = gcm_calibrate_dialog_set_from_exif (GCM_CALIBRATE_DIALOG(calibrate_dialog), filename, &error);
-	if (!ret)
-		egg_test_failed (test, "error: %s", error->message);
-	else if (g_strcmp0 (gcm_calibrate_dialog_get_model_fallback (calibrate_dialog), "NIKON D60") != 0)
-		egg_test_failed (test, "got model: %s", gcm_calibrate_dialog_get_model_fallback (calibrate_dialog));
-	else if (g_strcmp0 (gcm_calibrate_dialog_get_manufacturer_fallback (calibrate_dialog), "NIKON CORPORATION") != 0)
-		egg_test_failed (test, "got manufacturer: %s", gcm_calibrate_dialog_get_manufacturer_fallback (calibrate_dialog));
-	else
-		egg_test_success (test, NULL);
-
 	g_object_unref (calibrate_dialog);
-	g_free (filename);
 
 	egg_test_end (test);
 }
