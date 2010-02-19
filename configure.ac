@@ -171,8 +171,12 @@ AC_CHECK_HEADERS(cups/cups.h,
 		  [
 			CUPS_CFLAGS="$ac_cups_cflags"
 			CUPS_LIBS="-lcups $ac_cups_libs"
+			HAVE_CUPS="yes"
 		  ],,[$ac_cups_libs])])
 CPPFLAGS="$ac_save_CPPFLAGS"
+if test "x$HAVE_CUPS" != "xyes"; then
+	AC_MSG_ERROR([CUPS is required for gnome-color-manager])
+fi
 
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
 AM_GCONF_SOURCE_2
