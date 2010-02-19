@@ -503,29 +503,39 @@ gcm_prefs_file_chooser_get_icc_profile (void)
 }
 
 /**
+ * gcm_prefs_error_dialog:
+ **/
+static void
+gcm_prefs_error_dialog (const gchar *title, const gchar *message)
+{
+	GtkWindow *window;
+	GtkWidget *dialog;
+
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	dialog = gtk_message_dialog_new (window, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s", title);
+	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", message);
+	gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+}
+
+/**
  * gcm_prefs_profile_import_file:
  **/
 static gboolean
 gcm_prefs_profile_import_file (GFile *file)
 {
 	gboolean ret = FALSE;
-	GtkWidget *dialog;
 	GError *error = NULL;
 	GFile *destination = NULL;
-	GtkWindow *window;
 
 	/* copy icc file to ~/.color/icc */
 	destination = gcm_utils_get_profile_destination (file);
 	ret = gcm_utils_mkdir_and_copy (file, destination, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */
-		window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
-		dialog = gtk_message_dialog_new (window, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Failed to copy file"));
-		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", error->message);
-		gtk_dialog_run (GTK_DIALOG (dialog));
+		gcm_prefs_error_dialog (_("Failed to copy file"), error->message);
 		g_error_free (error);
-		gtk_widget_destroy (dialog);
 		goto out;
 	}
 out:
@@ -1688,6 +1698,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	gboolean ret;
 	GError *error = NULL;
 	GcmProfile *profile = NULL;
+	GcmProfile *profile_tmp = NULL;
 	gboolean changed;
 	GcmDeviceTypeEnum type;
 	GtkTreeIter iter;
@@ -1720,9 +1731,40 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 			goto out;
 		}
+
+		/* check the file is suitable */
+		profile_tmp = gcm_profile_default_new ();
+		filename = g_file_get_path (file);
+
+		//TODO gcm_profile_parse() needs to take a GFile as we can't do this on GVFS mounts
+		if (filename != NULL) {
+			ret = gcm_profile_parse (profile_tmp, filename, &error);
+			if (!ret) {
+				/* set to 'None' */
+				gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
+
+				egg_warning ("failed to parse ICC file: %s", error->message);
+				g_error_free (error);
+				goto out;
+			}
+			ret = gcm_prefs_is_profile_suitable_for_device (profile_tmp, current_device);
+			if (!ret) {
+				/* set to 'None' */
+				gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
+
+				/* TRANSLATORS: the profile was of the wrong sort for this device */
+				gcm_prefs_error_dialog (_("Could not import profile"), _("The profile was of the wrong type for this device"));
+				goto out;
+			}
+		}
+
+		/* actually set this as the default */
 		ret = gcm_prefs_profile_import_file (file);
 		if (!ret) {
 			gchar *uri;
+			/* set to 'None' */
+			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
+
 			uri = g_file_get_uri (file);
 			egg_debug ("%s did not import correctly", uri);
 			g_free (uri);
@@ -1791,6 +1833,8 @@ out:
 		g_object_unref (file);
 	if (dest != NULL)
 		g_object_unref (dest);
+	if (profile_tmp != NULL)
+		g_object_unref (profile_tmp);
 	g_free (profile_old);
 	g_free (filename);
 }
