@@ -393,7 +393,10 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		g_set_error_literal (error, 1, 0, "command failed to run successfully");
+		gchar *vte_text;
+		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
+		g_set_error (error, 1, 0, "command failed to run successfully: %s", vte_text);
+		g_free (vte_text);
 		ret = FALSE;
 		goto out;
 	}
@@ -470,7 +473,10 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		g_set_error_literal (error, 1, 0, "command failed to run successfully");
+		gchar *vte_text;
+		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
+		g_set_error (error, 1, 0, "command failed to run successfully: %s", vte_text);
+		g_free (vte_text);
 		ret = FALSE;
 		goto out;
 	}
@@ -552,7 +558,10 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		g_set_error_literal (error, 1, 0, "command failed to run successfully");
+		gchar *vte_text;
+		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
+		g_set_error (error, 1, 0, "command failed to run successfully: %s", vte_text);
+		g_free (vte_text);
 		ret = FALSE;
 		goto out;
 	}
@@ -655,10 +664,14 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		g_set_error_literal (error, 1, 0, "command failed to run successfully");
+		gchar *vte_text;
+		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
+		g_set_error (error, 1, 0, "command failed to run successfully: %s", vte_text);
+		g_free (vte_text);
 		ret = FALSE;
 		goto out;
 	}
+
 out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
@@ -861,7 +874,10 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		g_set_error_literal (error, 1, 0, "command failed to run successfully");
+		gchar *vte_text;
+		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
+		g_set_error (error, 1, 0, "command failed to run successfully: %s", vte_text);
+		g_free (vte_text);
 		ret = FALSE;
 		goto out;
 	}
@@ -972,7 +988,10 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		g_set_error_literal (error, 1, 0, "command failed to run successfully");
+		gchar *vte_text;
+		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
+		g_set_error (error, 1, 0, "command failed to run successfully: %s", vte_text);
+		g_free (vte_text);
 		ret = FALSE;
 		goto out;
 	}
