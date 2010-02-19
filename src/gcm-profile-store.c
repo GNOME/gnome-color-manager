@@ -177,6 +177,7 @@ gcm_profile_store_add_profile (GcmProfileStore *profile_store, const gchar *file
 	gboolean ret = FALSE;
 	GcmProfile *profile = NULL;
 	GError *error = NULL;
+	GFile *file = NULL;
 	GcmProfileStorePrivate *priv = profile_store->priv;
 
 	/* already added? */
@@ -186,7 +187,8 @@ gcm_profile_store_add_profile (GcmProfileStore *profile_store, const gchar *file
 
 	/* parse the profile name */
 	profile = gcm_profile_default_new ();
-	ret = gcm_profile_parse (profile, filename, &error);
+	file = g_file_new_for_path (filename);
+	ret = gcm_profile_parse (profile, file, &error);
 	if (!ret) {
 		egg_warning ("failed to add profile '%s': %s", filename, error->message);
 		g_error_free (error);
@@ -203,6 +205,8 @@ gcm_profile_store_add_profile (GcmProfileStore *profile_store, const gchar *file
 	g_signal_emit (profile_store, signals[SIGNAL_ADDED], 0, profile);
 	g_signal_emit (profile_store, signals[SIGNAL_CHANGED], 0);
 out:
+	if (file != NULL)
+		g_object_unref (file);
 	if (profile != NULL)
 		g_object_unref (profile);
 	return ret;

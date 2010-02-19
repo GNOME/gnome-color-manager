@@ -1212,6 +1212,7 @@ gcm_cie_widget_test (EggTest *test)
 	gint response;
 	gchar *filename_profile;
 	gchar *filename_image;
+	GFile *file = NULL;
 
 	if (!egg_test_start (test, "GcmCieWidget"))
 		return;
@@ -1232,13 +1233,15 @@ gcm_cie_widget_test (EggTest *test)
 	egg_test_assert (test, (filename_profile != NULL));
 
 	profile = gcm_profile_default_new ();
-	gcm_profile_parse (profile, filename_profile, NULL);
+	file = g_file_new_for_path (filename_profile);
+	gcm_profile_parse (profile, file, NULL);
 	g_object_get (profile,
 		      "white-point", &white,
 		      "luminance-red", &red,
 		      "luminance-green", &green,
 		      "luminance-blue", &blue,
 		      NULL);
+	g_object_unref (file);
 
 	g_object_set (widget,
 		      "red", red,

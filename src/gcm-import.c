@@ -61,6 +61,7 @@ main (int argc, char **argv)
 	gchar *copyright = NULL;
 	gchar *description = NULL;
 	GFile *destination = NULL;
+	GFile *file = NULL;
 	gchar **files = NULL;
 	guint retval = 1;
 	GcmProfile *profile = NULL;
@@ -74,7 +75,6 @@ main (int argc, char **argv)
 	GcmXyz *red = NULL;
 	GcmXyz *green = NULL;
 	GcmXyz *blue = NULL;
-	GFile *file = NULL;
 
 	const GOptionEntry options[] = {
 		{ G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &files,
@@ -110,7 +110,8 @@ main (int argc, char **argv)
 
 	/* load profile */
 	profile = gcm_profile_default_new ();
-	ret = gcm_profile_parse (profile, files[0], &error);
+	file = g_file_new_for_path (files[0]);
+	ret = gcm_profile_parse (profile, file, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */
 		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Failed to open ICC profile"));
@@ -146,7 +147,6 @@ main (int argc, char **argv)
 		      NULL);
 
 	/* check file does't already exist */
-	file = g_file_new_for_path (files[0]);
 	destination = gcm_utils_get_profile_destination (file);
 	ret = g_file_query_exists (destination, NULL);
 	if (ret) {

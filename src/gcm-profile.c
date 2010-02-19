@@ -120,20 +120,19 @@ out:
  * gcm_profile_parse:
  **/
 gboolean
-gcm_profile_parse (GcmProfile *profile, const gchar *filename, GError **error)
+gcm_profile_parse (GcmProfile *profile, GFile *file, GError **error)
 {
 	gchar *data = NULL;
 	gboolean ret;
 	guint length;
+	gchar *filename = NULL;
 	GError *error_local = NULL;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
-	g_return_val_if_fail (filename != NULL, FALSE);
-
-	egg_debug ("loading '%s'", filename);
+	g_return_val_if_fail (file != NULL, FALSE);
 
 	/* load files */
-	ret = g_file_get_contents (filename, &data, (gsize *) &length, &error_local);
+	ret = g_file_load_contents (file, NULL, &data, (gsize *) &length, NULL, &error_local);
 	if (!ret) {
 		g_set_error (error, 1, 0, "failed to load profile: %s", error_local->message);
 		g_error_free (error_local);
@@ -146,10 +145,12 @@ gcm_profile_parse (GcmProfile *profile, const gchar *filename, GError **error)
 		goto out;
 
 	/* save */
+	filename = g_file_get_path (file);
 	g_object_set (profile,
 		      "filename", filename,
 		      NULL);
 out:
+	g_free (filename);
 	g_free (data);
 	return ret;
 }
@@ -654,6 +655,7 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 	GcmProfile *profile_lcms1;
 	GcmXyz *xyz;
 	gfloat luminance;
+	GFile *file;
 
 	/************************************************************/
 	egg_test_title (test, "get a profile_lcms1 object");
@@ -667,11 +669,13 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 
 	/************************************************************/
 	egg_test_title (test, "load ICC file");
-	ret = gcm_profile_parse (profile_lcms1, filename, &error);
+	file = g_file_new_for_path (filename);
+	ret = gcm_profile_parse (profile_lcms1, file, &error);
 	if (ret)
 		egg_test_success (test, NULL);
 	else
 		egg_test_failed (test, "failed to parse: %s", error->message);
+	g_object_unref (file);
 
 	/* get some properties */
 	g_object_get (profile_lcms1,
@@ -684,13 +688,6 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 		      "type", &type,
 		      "colorspace", &colorspace,
 		      NULL);
-
-	/************************************************************/
-	egg_test_title (test, "check filename for %s", datafile);
-	if (g_strcmp0 (filename, filename_tmp) == 0)
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "invalid value: %s, expecting: %s", filename, filename_tmp);
 
 	/************************************************************/
 	egg_test_title (test, "check copyright for %s", datafile);

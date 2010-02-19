@@ -1735,27 +1735,23 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 		/* check the file is suitable */
 		profile_tmp = gcm_profile_default_new ();
 		filename = g_file_get_path (file);
+		ret = gcm_profile_parse (profile_tmp, file, &error);
+		if (!ret) {
+			/* set to 'None' */
+			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 
-		//TODO gcm_profile_parse() needs to take a GFile as we can't do this on GVFS mounts
-		if (filename != NULL) {
-			ret = gcm_profile_parse (profile_tmp, filename, &error);
-			if (!ret) {
-				/* set to 'None' */
-				gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
+			egg_warning ("failed to parse ICC file: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
+		ret = gcm_prefs_is_profile_suitable_for_device (profile_tmp, current_device);
+		if (!ret) {
+			/* set to 'None' */
+			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 
-				egg_warning ("failed to parse ICC file: %s", error->message);
-				g_error_free (error);
-				goto out;
-			}
-			ret = gcm_prefs_is_profile_suitable_for_device (profile_tmp, current_device);
-			if (!ret) {
-				/* set to 'None' */
-				gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
-
-				/* TRANSLATORS: the profile was of the wrong sort for this device */
-				gcm_prefs_error_dialog (_("Could not import profile"), _("The profile was of the wrong type for this device"));
-				goto out;
-			}
+			/* TRANSLATORS: the profile was of the wrong sort for this device */
+			gcm_prefs_error_dialog (_("Could not import profile"), _("The profile was of the wrong type for this device"));
+			goto out;
 		}
 
 		/* actually set this as the default */

@@ -23,6 +23,8 @@
 #define __GCM_PROFILE_H
 
 #include <glib-object.h>
+#include <gio/gio.h>
+
 #include "gcm-clut.h"
 
 G_BEGIN_DECLS
@@ -71,7 +73,7 @@ GType		 gcm_profile_get_type		  	(void);
 GcmProfile	*gcm_profile_new			(void);
 GcmProfile	*gcm_profile_default_new		(void);
 gboolean	 gcm_profile_parse			(GcmProfile	*profile,
-							 const gchar	*filename,
+							 GFile		*file,
 							 GError		**error);
 gboolean	 gcm_profile_parse_data			(GcmProfile	*profile,
 							 const guint8	*data,

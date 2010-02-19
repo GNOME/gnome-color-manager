@@ -453,6 +453,7 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	gboolean use_global;
 	gboolean use_atom;
 	gboolean leftmost_screen = FALSE;
+	GFile *file = NULL;
 	GcmDeviceTypeEnum type;
 	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (device);
 	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
@@ -513,7 +514,9 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	if (use_global && filename != NULL) {
 		/* create CLUT */
 		profile = gcm_profile_default_new ();
-		ret = gcm_profile_parse (profile, filename, error);
+		file = g_file_new_for_path (filename);
+		ret = gcm_profile_parse (profile, file, error);
+		g_object_unref (file);
 		if (!ret)
 			goto out;
 
