@@ -155,7 +155,10 @@ PKG_CHECK_MODULES(X11, x11)
 AC_SUBST(X11_CFLAGS)
 AC_SUBST(X11_LIBS)
 
-AC_CHECK_LIB(tiff, TIFFReadRGBAImageOriented)
+AC_CHECK_LIB(tiff, TIFFReadRGBAImageOriented, HAVE_TIFF="yes")
+if test "x$HAVE_TIFF" != "xyes"; then
+	AC_MSG_ERROR([libtiff-devel is required for gnome-color-manager])
+fi
 AC_SUBST(TIFF_CFLAGS)
 AC_SUBST(TIFF_LIBS)
 
@@ -175,7 +178,7 @@ AC_CHECK_HEADERS(cups/cups.h,
 		  ],,[$ac_cups_libs])])
 CPPFLAGS="$ac_save_CPPFLAGS"
 if test "x$HAVE_CUPS" != "xyes"; then
-	AC_MSG_ERROR([CUPS is required for gnome-color-manager])
+	AC_MSG_ERROR([cups-devel is required for gnome-color-manager])
 fi
 
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
