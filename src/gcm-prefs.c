@@ -1124,6 +1124,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	gfloat contrast;
 	gboolean connected;
 	gchar *id = NULL;
+	gboolean ret;
 	GcmDeviceTypeEnum type;
 	gchar *device_serial = NULL;
 	gchar *device_model = NULL;
@@ -1165,6 +1166,23 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 		gtk_widget_set_sensitive (widget, TRUE);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
 		gtk_widget_set_sensitive (widget, TRUE);
+	}
+
+	/* show broken devices */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_problems"));
+	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+		g_object_get (current_device,
+			      "xrandr-fallback", &ret,
+			      NULL);
+		if (ret) {
+			/* TRANSLATORS: this is when the user is using a binary blob */
+			gtk_label_set_label (GTK_LABEL (widget), _("Per-device settings not supported. Check your display driver."));
+			gtk_widget_show (widget);
+		} else {
+			gtk_widget_hide (widget);
+		}
+	} else {
+		gtk_widget_hide (widget);
 	}
 
 	g_object_get (current_device,
