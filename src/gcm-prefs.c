@@ -478,10 +478,10 @@ gcm_prefs_file_chooser_get_icc_profile (void)
 	/* create new dialog */
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
 	/* TRANSLATORS: dialog for file->open dialog */
-	dialog = gtk_file_chooser_dialog_new (_("Select ICC profile file"), window,
+	dialog = gtk_file_chooser_dialog_new (_("Select ICC Profile File"), window,
 					       GTK_FILE_CHOOSER_ACTION_OPEN,
 					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					       _("Import"), GTK_RESPONSE_ACCEPT,
 					      NULL);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), g_get_home_dir ());
