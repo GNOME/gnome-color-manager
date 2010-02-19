@@ -48,6 +48,9 @@ static void     gcm_colorimeter_finalize	(GObject     *object);
 struct _GcmColorimeterPrivate
 {
 	gboolean			 present;
+	gboolean			 supports_display;
+	gboolean			 supports_projector;
+	gboolean			 supports_printer;
 	gchar				*vendor;
 	gchar				*model;
 	GUdevClient			*client;
@@ -60,6 +63,9 @@ enum {
 	PROP_VENDOR,
 	PROP_MODEL,
 	PROP_COLORIMETER_KIND,
+	PROP_SUPPORTS_DISPLAY,
+	PROP_SUPPORTS_PROJECTOR,
+	PROP_SUPPORTS_PRINTER,
 	PROP_LAST
 };
 
@@ -100,6 +106,33 @@ gcm_colorimeter_get_present (GcmColorimeter *colorimeter)
 }
 
 /**
+ * gcm_colorimeter_supports_display:
+ **/
+gboolean
+gcm_colorimeter_supports_display (GcmColorimeter *colorimeter)
+{
+	return colorimeter->priv->supports_display;
+}
+
+/**
+ * gcm_colorimeter_supports_projector:
+ **/
+gboolean
+gcm_colorimeter_supports_projector (GcmColorimeter *colorimeter)
+{
+	return colorimeter->priv->supports_projector;
+}
+
+/**
+ * gcm_colorimeter_supports_printer:
+ **/
+gboolean
+gcm_colorimeter_supports_printer (GcmColorimeter *colorimeter)
+{
+	return colorimeter->priv->supports_printer;
+}
+
+/**
  * gcm_colorimeter_get_kind:
  **/
 GcmColorimeterKind
@@ -129,6 +162,15 @@ gcm_colorimeter_get_property (GObject *object, guint prop_id, GValue *value, GPa
 		break;
 	case PROP_COLORIMETER_KIND:
 		g_value_set_uint (value, priv->colorimeter_kind);
+		break;
+	case PROP_SUPPORTS_DISPLAY:
+		g_value_set_uint (value, priv->supports_display);
+		break;
+	case PROP_SUPPORTS_PROJECTOR:
+		g_value_set_uint (value, priv->supports_projector);
+		break;
+	case PROP_SUPPORTS_PRINTER:
+		g_value_set_uint (value, priv->supports_printer);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -194,6 +236,31 @@ gcm_colorimeter_class_init (GcmColorimeterClass *klass)
 	g_object_class_install_property (object_class, PROP_COLORIMETER_KIND, pspec);
 
 	/**
+	 * GcmColorimeter:supports-display:
+	 */
+	pspec = g_param_spec_boolean ("supports-display", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_SUPPORTS_DISPLAY, pspec);
+
+	/**
+	 * GcmColorimeter:supports-projector:
+	 */
+	pspec = g_param_spec_boolean ("supports-projector", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_SUPPORTS_PROJECTOR, pspec);
+
+
+	/**
+	 * GcmColorimeter:supports-printer:
+	 */
+	pspec = g_param_spec_boolean ("supports-printer", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_SUPPORTS_PRINTER, pspec);
+
+	/**
 	 * GcmColorimeter::added:
 	 **/
 	signals[SIGNAL_CHANGED] =
@@ -218,7 +285,7 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 	GcmColorimeterPrivate *priv = colorimeter->priv;
 
 	/* interesting device? */
-	ret = g_udev_device_get_property_as_boolean (device, "COLOR_MEASUREMENT_DEVICE");
+	ret = g_udev_device_get_property_as_boolean (device, "GCM_COLORIMETER");
 	if (!ret)
 		goto out;
 
@@ -233,6 +300,11 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 	/* model */
 	g_free (priv->model);
 	priv->model = g_strdup (g_udev_device_get_property (device, "ID_MODEL_FROM_DATABASE"));
+
+	/* device support */
+	priv->supports_display = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_DISPLAY");
+	priv->supports_projector = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PROJECTOR");
+	priv->supports_printer = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PRINTER");
 
 	/* try to get type */
 	if (g_strcmp0 (priv->model, "Huey") == 0) {
@@ -278,13 +350,16 @@ gcm_colorimeter_device_remove (GcmColorimeter *colorimeter, GUdevDevice *device)
 	GcmColorimeterPrivate *priv = colorimeter->priv;
 
 	/* interesting device? */
-	ret = g_udev_device_get_property_as_boolean (device, "COLOR_MEASUREMENT_DEVICE");
+	ret = g_udev_device_get_property_as_boolean (device, "GCM_COLORIMETER");
 	if (!ret)
 		goto out;
 
 	/* get data */
 	egg_debug ("removing color management device: %s", g_udev_device_get_sysfs_path (device));
 	priv->present = FALSE;
+	priv->supports_display = FALSE;
+	priv->supports_projector = FALSE;
+	priv->supports_printer = FALSE;
 
 	/* vendor */
 	g_free (priv->vendor);

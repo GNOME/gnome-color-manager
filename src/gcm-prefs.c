@@ -966,12 +966,35 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot calibrate: The colorimeter is not plugged in");
+			goto out;
 		}
 	} else if (type == GCM_DEVICE_TYPE_ENUM_SCANNER ||
 		   type == GCM_DEVICE_TYPE_ENUM_CAMERA) {
 
 		/* TODO: find out if we can scan using gnome-scan */
 		ret = TRUE;
+
+	} else if (type == GCM_DEVICE_TYPE_ENUM_PRINTER) {
+
+		/* find whether we have hardware installed */
+		ret = gcm_colorimeter_get_present (colorimeter);
+		if (!ret) {
+			/* TRANSLATORS: this is when the button is insensitive */
+			tooltip = _("Cannot calibrate: The colorimeter is not plugged in");
+			goto out;
+		}
+
+		/* find whether we have hardware installed */
+		ret = gcm_colorimeter_supports_printer (colorimeter);
+		if (!ret) {
+			/* TRANSLATORS: this is when the button is insensitive */
+			tooltip = _("Cannot calibrate: The colorimeter does not support printer profiling");
+			goto out;
+		}
+
+		/* TRANSLATORS: this is when the button is insensitive */
+		tooltip = _("Cannot calibrate this type of device (although support is planned)");
+
 	} else {
 
 		/* TRANSLATORS: this is when the button is insensitive */

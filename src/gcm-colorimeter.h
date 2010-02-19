@@ -70,6 +70,9 @@ const gchar		*gcm_colorimeter_get_model		(GcmColorimeter	*colorimeter);
 const gchar		*gcm_colorimeter_get_vendor		(GcmColorimeter	*colorimeter);
 gboolean		 gcm_colorimeter_get_present		(GcmColorimeter	*colorimeter);
 GcmColorimeterKind	 gcm_colorimeter_get_kind		(GcmColorimeter	*colorimeter);
+gboolean		 gcm_colorimeter_supports_display	(GcmColorimeter *colorimeter);
+gboolean		 gcm_colorimeter_supports_projector	(GcmColorimeter *colorimeter);
+gboolean		 gcm_colorimeter_supports_printer	(GcmColorimeter *colorimeter);
 
 G_END_DECLS
 

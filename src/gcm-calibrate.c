@@ -333,6 +333,28 @@ gcm_calibrate_get_display_type (GcmCalibrate *calibrate, GtkWindow *window, GErr
 
 	/* copy */
 	g_object_get (priv->calibrate_dialog, "device-kind", &priv->device_kind, NULL);
+
+	/* can this device support projectors? */
+	if (priv->device_kind == GCM_CALIBRATE_DEVICE_KIND_PROJECTOR &&
+	    !gcm_colorimeter_supports_projector (priv->colorimeter)) {
+		/* TRANSLATORS: title, the hardware calibration device does not support projectors */
+		title = _("Could not calibrate using this colorimeter device");
+
+		/* TRANSLATORS: dialog message */
+		message = _("This colorimeter device is not designed to support profiling projectors.");
+
+		/* ask the user again */
+		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
+		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
+		response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
+		if (response != GTK_RESPONSE_OK) {
+			gcm_calibrate_dialog_hide (priv->calibrate_dialog);
+			g_set_error_literal (error, 1, 0, "hardware not capable of profiling a projector");
+			ret = FALSE;
+			goto out;
+		}
+	}
 out:
 	return ret;
 }
