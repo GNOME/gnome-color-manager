@@ -2736,8 +2736,8 @@ main (int argc, char **argv)
 	gtk_widget_show (info_bar_loading_label);
 
 	/* TRANSLATORS: this is displayed when the profile is crap */
-	info_bar_vcgt_label = gtk_label_new (_("Profile does not contain display correction information..."));
-	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar_vcgt), GTK_MESSAGE_WARNING);
+	info_bar_vcgt_label = gtk_label_new (_("This profile does not have the information required for whole-screen color correction"));
+	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar_vcgt), GTK_MESSAGE_INFO);
 	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar_vcgt));
 	gtk_container_add (GTK_CONTAINER(widget), info_bar_vcgt_label);
 	gtk_widget_show (info_bar_vcgt_label);
