@@ -121,6 +121,10 @@ gcm_device_xrandr_get_output_name (GcmDeviceXrandr *device_xrandr, GnomeRROutput
 	else
 		g_string_append (string, output_name);
 
+	/* don't show 'default' even if the nvidia binary blog is craptastic */
+	if (g_strcmp0 (string->str, "default") == 0)
+		g_string_assign (string, "Unknown Monitor");
+
 out:
 	/* find the best option */
 	g_object_get (priv->edid,
