@@ -172,22 +172,22 @@ gcm_profile_store_notify_filename_cb (GcmProfile *profile, GParamSpec *pspec, Gc
  * gcm_profile_store_add_profile:
  **/
 static gboolean
-gcm_profile_store_add_profile (GcmProfileStore *profile_store, const gchar *filename)
+gcm_profile_store_add_profile (GcmProfileStore *profile_store, GFile *file)
 {
 	gboolean ret = FALSE;
 	GcmProfile *profile = NULL;
 	GError *error = NULL;
-	GFile *file = NULL;
+	gchar *filename = NULL;
 	GcmProfileStorePrivate *priv = profile_store->priv;
 
 	/* already added? */
+	filename = g_file_get_path (file);
 	profile = gcm_profile_store_get_by_filename (profile_store, filename);
 	if (profile != NULL)
 		goto out;
 
 	/* parse the profile name */
 	profile = gcm_profile_default_new ();
-	file = g_file_new_for_path (filename);
 	ret = gcm_profile_parse (profile, file, &error);
 	if (!ret) {
 		egg_warning ("failed to add profile '%s': %s", filename, error->message);
@@ -205,8 +205,7 @@ gcm_profile_store_add_profile (GcmProfileStore *profile_store, const gchar *file
 	g_signal_emit (profile_store, signals[SIGNAL_ADDED], 0, profile);
 	g_signal_emit (profile_store, signals[SIGNAL_CHANGED], 0);
 out:
-	if (file != NULL)
-		g_object_unref (file);
+	g_free (filename);
 	if (profile != NULL)
 		g_object_unref (profile);
 	return ret;
@@ -257,10 +256,8 @@ gcm_profile_store_add_profiles_for_path (GcmProfileStore *profile_store, const g
 		/* check the file actually is a profile */
 		file = g_file_new_for_path (path);
 		ret = gcm_utils_is_icc_profile (file);
-		g_object_unref (file);
-		file = NULL;
 		if (ret) {
-			gcm_profile_store_add_profile (profile_store, path);
+			gcm_profile_store_add_profile (profile_store, file);
 			goto out;
 		}
 
