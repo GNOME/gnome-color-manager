@@ -155,7 +155,10 @@ PKG_CHECK_MODULES(X11, x11)
 AC_SUBST(X11_CFLAGS)
 AC_SUBST(X11_LIBS)
 
-AC_CHECK_LIB(tiff, TIFFReadRGBAImageOriented, HAVE_TIFF="yes")
+AC_CHECK_LIB(tiff, TIFFReadRGBAImageOriented,
+	     TIFF_CFLAGS=""
+	     TIFF_LIBS="-ltiff"
+	     HAVE_TIFF="yes")
 if test "x$HAVE_TIFF" != "xyes"; then
 	AC_MSG_ERROR([libtiff-devel is required for gnome-color-manager])
 fi
