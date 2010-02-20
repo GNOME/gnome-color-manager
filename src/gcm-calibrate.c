@@ -651,7 +651,9 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	const gchar *directory;
 	GString *string;
 	GtkResponseType response;
+#ifdef GCM_USE_PACKAGEKIT
 	GtkWidget *dialog;
+#endif
 	const gchar *title;
 	GcmCalibratePrivate *priv = calibrate->priv;
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
