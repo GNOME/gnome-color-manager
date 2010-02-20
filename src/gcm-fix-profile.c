@@ -75,16 +75,16 @@ main (int argc, char **argv)
 	const GOptionEntry options[] = {
 		{ "description", 'd', 0, G_OPTION_ARG_STRING, &description,
 		  /* TRANSLATORS: command line option */
-		  _("The description for the profile"), NULL },
+		  _("The description of the profile"), NULL },
 		{ "copyright", 'c', 0, G_OPTION_ARG_STRING, &copyright,
 		  /* TRANSLATORS: command line option */
-		  _("The copyright for the profile"), NULL },
+		  _("The copyright of the profile"), NULL },
 		{ "model", 'm', 0, G_OPTION_ARG_STRING, &model,
 		  /* TRANSLATORS: command line option */
-		  _("The model for the profile"), NULL },
+		  _("The model of the profile"), NULL },
 		{ "manufacturer", 'n', 0, G_OPTION_ARG_STRING, &manufacturer,
 		  /* TRANSLATORS: command line option */
-		  _("The manufacturer for the profile"), NULL },
+		  _("The manufacturer of the profile"), NULL },
 		{ G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &files,
 		  /* TRANSLATORS: command line option: a list of icc files to fix */
 		  _("Profiles to fix"), NULL },

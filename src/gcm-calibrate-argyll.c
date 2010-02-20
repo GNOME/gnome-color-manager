@@ -621,7 +621,7 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
         /* get description */
 	description_new = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", device, description, date->year, date->month, date->day);
 
-	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" */
+	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" - YOU NEED TO STICK TO ASCII */
 	copyright = g_strdup_printf ("%s %04i %s", _("Copyright (c)"), date->year, g_get_real_name ());
 
 	/* TRANSLATORS: title, a profile is a ICC file */
@@ -1096,7 +1096,7 @@ gcm_calibrate_argyll_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 	title = _("Set up display");
 
 	/* TRANSLATORS: dialog message */
-	message = _("Setting up display device for use...");
+	message = _("Setting up display device for use…");
 
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
@@ -1147,7 +1147,7 @@ gcm_calibrate_argyll_device (GcmCalibrate *calibrate, GtkWindow *window, GError 
 	title = _("Set up device");
 
 	/* TRANSLATORS: dialog message */
-	message = _("Setting up device for use...");
+	message = _("Setting up device for use…");
 
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);

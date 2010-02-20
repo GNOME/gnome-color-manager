@@ -178,7 +178,7 @@ gcm_prefs_combobox_add_profile (GtkWidget *widget, GcmProfile *profile, GcmPrefs
 		description = g_strdup (_("None"));
 	} else if (entry_type == GCM_PREFS_ENTRY_TYPE_IMPORT) {
 		/* TRANSLATORS: this is where the user can click and import a profile */
-		description = g_strdup (_("Other profile..."));
+		description = g_strdup (_("Other profile…"));
 	} else {
 		g_object_get (profile,
 			      "description", &description,
@@ -1486,8 +1486,10 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	gtk_widget_set_visible (widget, (profile_type == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE));
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_vcgt"));
 	if (has_vcgt) {
+		/* TRANSLATORS: if the device has a VCGT profile */
 		gtk_label_set_label (GTK_LABEL (widget), _("Yes"));
 	} else {
+		/* TRANSLATORS: if the device has a VCGT profile */
 		gtk_label_set_label (GTK_LABEL (widget), _("No"));
 	}
 
@@ -2796,14 +2798,14 @@ main (int argc, char **argv)
 	gtk_info_bar_add_button (GTK_INFO_BAR(info_bar_vcgt), _("More information"), GTK_RESPONSE_HELP);
 
 	/* TRANSLATORS: this is displayed while the devices are being probed */
-	info_bar_loading_label = gtk_label_new (_("Loading list of devices..."));
+	info_bar_loading_label = gtk_label_new (_("Loading list of devices…"));
 	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar_loading), GTK_MESSAGE_INFO);
 	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar_loading));
 	gtk_container_add (GTK_CONTAINER(widget), info_bar_loading_label);
 	gtk_widget_show (info_bar_loading_label);
 
 	/* TRANSLATORS: this is displayed when the profile is crap */
-	info_bar_vcgt_label = gtk_label_new (_("This profile does not have the information required for whole-screen color correction"));
+	info_bar_vcgt_label = gtk_label_new (_("This profile does not have the information required for whole-screen color correction."));
 	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar_vcgt), GTK_MESSAGE_INFO);
 	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar_vcgt));
 	gtk_container_add (GTK_CONTAINER(widget), info_bar_vcgt_label);

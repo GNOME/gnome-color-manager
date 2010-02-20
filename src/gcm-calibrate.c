@@ -704,7 +704,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	g_string_append_printf (string, "%s\n", _("Before calibrating the device, you have to manually capture an image of a calibrated target and save it as a TIFF image file."));
 
 	/* TRANSLATORS: dialog message, preface */
-	g_string_append_printf (string, "%s\n", _("Ensure that the contrast and brightness is not changed and color correction profiles are not applied."));
+	g_string_append_printf (string, "%s\n", _("Ensure that the contrast and brightness are not changed and color correction profiles are not applied."));
 
 	/* TRANSLATORS: dialog message, suffix */
 	g_string_append_printf (string, "%s\n", _("The device sensor should have been cleaned prior to scanning and the output file resolution should be at least 200dpi."));
