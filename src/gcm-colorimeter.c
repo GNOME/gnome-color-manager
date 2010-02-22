@@ -33,6 +33,7 @@
 #include <gtk/gtk.h>
 
 #include "gcm-colorimeter.h"
+#include "gcm-utils.h"
 
 #include "egg-debug.h"
 
@@ -55,6 +56,7 @@ struct _GcmColorimeterPrivate
 	gchar				*model;
 	GUdevClient			*client;
 	GcmColorimeterKind		 colorimeter_kind;
+	gboolean			 shown_warning;
 };
 
 enum {
@@ -312,47 +314,55 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 	priv->supports_printer = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PRINTER");
 
 	/* try to get type */
-	if (g_strcmp0 (priv->model, "Huey") == 0) {
+	if (g_ascii_strcasecmp (priv->model, "Huey") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_HUEY;
-	} else if (g_strcmp0 (priv->model, "ColorMunki") == 0) {
+	} else if (g_ascii_strcasecmp (priv->model, "ColorMunki") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_COLOR_MUNKI;
-	} else if (g_strcmp0 (priv->model, "SpyderXXX") == 0) {
+	} else if (g_ascii_strcasecmp (priv->model, "SpyderXXX") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_SPYDER;
 	} else if (priv->model != NULL) {
 		egg_warning ("Failed to recognise color device: %s", priv->model);
 
 		/* show dialog, in order to help the project */
-		dialog = gtk_message_dialog_new (NULL,
-						 GTK_DIALOG_MODAL,
-						 GTK_MESSAGE_INFO,
-						 GTK_BUTTONS_OK,
-						 /* TRANSLATORS: this is when the device is not recognised */
-						 _("Colorimeter not recognised"));
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-							  "Could not recognise device '%s'. "
-							  "It should work okay, but if you want to help the project, "
-							  "please visit %s and supply the required information.",
-							  priv->model, "http://live.gnome.org/GnomeColorManager/Help");
-		gtk_dialog_run (GTK_DIALOG (dialog));
-		gtk_widget_destroy (dialog);
+		if (!priv->shown_warning) {
+			dialog = gtk_message_dialog_new (NULL,
+							 GTK_DIALOG_MODAL,
+							 GTK_MESSAGE_INFO,
+							 GTK_BUTTONS_OK,
+							 /* TRANSLATORS: this is when the device is not recognised */
+							 _("Colorimeter not recognised"));
+			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+								  "Could not recognise attached colorimeter device '%s'. "
+								  "It should work okay, but if you want to help the project, "
+								  "please visit %s and supply the required information.",
+								  priv->model, "http://live.gnome.org/GnomeColorManager/Help");
+			gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+			gtk_dialog_run (GTK_DIALOG (dialog));
+			gtk_widget_destroy (dialog);
+			priv->shown_warning = TRUE;
+		}
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;
 	} else {
 		egg_warning ("Failed to recognise color device");
 
 		/* show dialog, in order to help the project */
-		dialog = gtk_message_dialog_new (NULL,
-						 GTK_DIALOG_MODAL,
-						 GTK_MESSAGE_INFO,
-						 GTK_BUTTONS_OK,
-						 /* TRANSLATORS: this is when the device is not recognised */
-						 _("Colorimeter not registered"));
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-							  "The device has not been registered in usb.ids. "
-							  "It should work okay, but if you want to help the project, "
-							  "please visit %s and supply the required information.",
-							  "http://live.gnome.org/GnomeColorManager/Help");
-		gtk_dialog_run (GTK_DIALOG (dialog));
-		gtk_widget_destroy (dialog);
+			if (!priv->shown_warning) {
+			dialog = gtk_message_dialog_new (NULL,
+							 GTK_DIALOG_MODAL,
+							 GTK_MESSAGE_INFO,
+							 GTK_BUTTONS_OK,
+							 /* TRANSLATORS: this is when the device is not recognised */
+							 _("Colorimeter not registered"));
+			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+								  "The attached colorimeter device has not been registered in usb.ids. "
+								  "It should work okay, but if you want to help the project, "
+								  "please visit %s and supply the required information.",
+								  "http://live.gnome.org/GnomeColorManager/Help");
+			gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+			gtk_dialog_run (GTK_DIALOG (dialog));
+			gtk_widget_destroy (dialog);
+			priv->shown_warning = TRUE;
+		}
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;
 	}
 
@@ -450,6 +460,7 @@ gcm_colorimeter_init (GcmColorimeter *colorimeter)
 	colorimeter->priv = GCM_COLORIMETER_GET_PRIVATE (colorimeter);
 	colorimeter->priv->vendor = NULL;
 	colorimeter->priv->model = NULL;
+	colorimeter->priv->shown_warning = FALSE;
 	colorimeter->priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;
 
 	/* use GUdev to find the calibration device */
