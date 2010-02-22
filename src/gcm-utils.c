@@ -160,6 +160,9 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 					   "/org/freedesktop/PackageKit",
 					   "org.freedesktop.PackageKit.Modify");
 
+	/* set timeout */
+	dbus_g_proxy_set_default_timeout (proxy, G_MAXINT);
+
 	/* execute sync method */
 	ret = dbus_g_proxy_call (proxy, "InstallPackageNames", &error,
 				 G_TYPE_UINT, xid,
