@@ -57,6 +57,7 @@ struct _GcmCalibratePrivate
 	GcmCalibrateDeviceKind		 device_kind;
 	GcmColorimeterKind		 colorimeter_kind;
 	GcmCalibrateDialog		*calibrate_dialog;
+	GcmDeviceTypeEnum		 device_type;
 	gchar				*output_name;
 	gchar				*filename_source;
 	gchar				*filename_reference;
@@ -79,6 +80,7 @@ enum {
 	PROP_MANUFACTURER,
 	PROP_REFERENCE_KIND,
 	PROP_DEVICE_KIND,
+	PROP_DEVICE_TYPE,
 	PROP_COLORIMETER_KIND,
 	PROP_OUTPUT_NAME,
 	PROP_FILENAME_SOURCE,
@@ -225,6 +227,7 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 
 	/* set the proper values */
 	g_object_set (calibrate,
+		      "device-type", type,
 		      "model", model,
 		      "description", description,
 		      "manufacturer", manufacturer,
@@ -724,11 +727,20 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	/* TRANSLATORS: dialog message, preface */
 	g_string_append_printf (string, "%s\n", _("Before calibrating the device, you have to manually capture an image of a calibrated target and save it as a TIFF image file."));
 
-	/* TRANSLATORS: dialog message, preface */
-	g_string_append_printf (string, "%s\n", _("Ensure that the contrast and brightness are not changed and color correction profiles are not applied."));
+	/* scanner specific options */
+	if (priv->device_type == GCM_DEVICE_TYPE_ENUM_SCANNER) {
+		/* TRANSLATORS: dialog message, preface */
+		g_string_append_printf (string, "%s\n", _("Ensure that the contrast and brightness are not changed and color correction profiles are not applied."));
 
-	/* TRANSLATORS: dialog message, suffix */
-	g_string_append_printf (string, "%s\n", _("The device sensor should have been cleaned prior to scanning and the output file resolution should be at least 200dpi."));
+		/* TRANSLATORS: dialog message, suffix */
+		g_string_append_printf (string, "%s\n", _("The device sensor should have been cleaned prior to scanning and the output file resolution should be at least 200dpi."));
+	}
+
+	/* camera specific options */
+	if (priv->device_type == GCM_DEVICE_TYPE_ENUM_CAMERA) {
+		/* TRANSLATORS: dialog message, preface */
+		g_string_append_printf (string, "%s\n", _("Ensure that the white-balance has not been modified by the camera and that the lens is clean."));
+	}
 
 	/* TRANSLATORS: dialog message, suffix */
 	g_string_append_printf (string, "\n%s\n", _("For best results, the reference target should also be less than two years old."));
@@ -831,6 +843,9 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 		break;
 	case PROP_DEVICE_KIND:
 		g_value_set_uint (value, priv->device_kind);
+		break;
+	case PROP_DEVICE_TYPE:
+		g_value_set_uint (value, priv->device_type);
 		break;
 	case PROP_COLORIMETER_KIND:
 		g_value_set_uint (value, priv->colorimeter_kind);
@@ -948,6 +963,9 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 		g_free (priv->manufacturer);
 		priv->manufacturer = g_strdup (g_value_get_string (value));
 		break;
+	case PROP_DEVICE_TYPE:
+		priv->device_type = g_value_get_uint (value);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -981,6 +999,14 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 				   0, G_MAXUINT, 0,
 				   G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_DEVICE_KIND, pspec);
+
+	/**
+	 * GcmCalibrate:device-type:
+	 */
+	pspec = g_param_spec_uint ("device-type", NULL, NULL,
+				   0, G_MAXUINT, 0,
+				   G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_DEVICE_TYPE, pspec);
 
 	/**
 	 * GcmCalibrate:colorimeter-kind:
