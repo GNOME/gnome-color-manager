@@ -55,13 +55,19 @@ struct _GcmPrintClass
 	void (*_gcm_reserved5) (void);
 };
 
+
+typedef GPtrArray	*(*GcmPrintRenderCb)		(GcmPrint		*print,
+							 GtkPageSetup		*page_setup,
+							 gpointer		 user_data,
+							 GError			**error);
+
 GType			 gcm_print_get_type		(void);
 GcmPrint		*gcm_print_new			(void);
-
-gboolean		 gcm_print_images		(GcmPrint	*print,
-							 GtkWindow	*window,
-							 GPtrArray	*filenames,
-							 GError		**error);
+gboolean		 gcm_print_with_render_callback	(GcmPrint		*print,
+							 GtkWindow		*window,
+							 GcmPrintRenderCb	 render_callback,
+							 gpointer		 user_data,
+							 GError			**error);
 
 G_END_DECLS
 

@@ -53,8 +53,10 @@ G_DEFINE_TYPE (GcmPrint, gcm_print, G_TYPE_OBJECT)
 
 /* temporary object so we can pass state */
 typedef struct {
-	GcmPrint *print;
-	GPtrArray *filenames;
+	GcmPrint		*print;
+	GPtrArray		*filenames;
+	GcmPrintRenderCb	 render_callback;
+	gpointer		 user_data;
 } GcmPrintTask;
 
 /**
@@ -77,8 +79,25 @@ gcm_print_class_init (GcmPrintClass *klass)
 static void
 gcm_print_begin_print_cb (GtkPrintOperation *operation, GtkPrintContext *context, GcmPrintTask *task)
 {
+	GtkPageSetup *page_setup;
+	GError *error = NULL;
+
+	/* get the page details */
+	page_setup = gtk_print_context_get_page_setup (context);
+
+	/* get the list of files */
+	task->filenames = task->render_callback (task->print, page_setup, task->user_data, &error);
+	if (task->filenames == NULL) {
+		egg_warning ("failed to render pages: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* setting the page count */
 	egg_debug ("setting %i pages", task->filenames->len);
 	gtk_print_operation_set_n_pages (operation, task->filenames->len);
+out:
+	return;
 }
 
 /**
@@ -101,7 +120,7 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 	height = gtk_print_context_get_height (context);
 	cr = gtk_print_context_get_cairo_context (context);
 
-	/* load pixbuf */
+	/* load pixbuf, which we've already prepared */
 	filename = g_ptr_array_index (task->filenames, page_nr);
 	pixbuf = gdk_pixbuf_new_from_file_at_scale (filename, width, height, FALSE, &error);
 	if (pixbuf == NULL) {
@@ -119,10 +138,10 @@ out:
 }
 
 /**
- * gcm_print_images:
+ * gcm_print_with_render_callback:
  **/
 gboolean
-gcm_print_images (GcmPrint *print, GtkWindow *window, GPtrArray *filenames, GError **error)
+gcm_print_with_render_callback (GcmPrint *print, GtkWindow *window, GcmPrintRenderCb render_callback, gpointer user_data, GError **error)
 {
 	GcmPrintPrivate *priv = print->priv;
 	gboolean ret = TRUE;
@@ -132,8 +151,9 @@ gcm_print_images (GcmPrint *print, GtkWindow *window, GPtrArray *filenames, GErr
 
 	/* create temp object */
 	task = g_new0 (GcmPrintTask, 1);
-	task->print = print;
-	task->filenames = filenames;
+	task->print = g_object_ref (print);
+	task->render_callback = render_callback;
+	task->user_data = user_data;
 
 	/* create new instance */
 	operation = gtk_print_operation_new ();
@@ -161,6 +181,11 @@ gcm_print_images (GcmPrint *print, GtkWindow *window, GPtrArray *filenames, GErr
 		goto out;
 	}
 out:
+	if (task->filenames != NULL)
+		g_ptr_array_unref (task->filenames);
+	if (task->print != NULL)
+		g_object_unref (task->print);
+	g_free (task);
 	g_object_unref (operation);
 	return TRUE;
 }
@@ -208,13 +233,22 @@ gcm_print_new (void)
 #ifdef EGG_TEST
 #include "egg-test.h"
 
+static GPtrArray *
+gcm_print_test_render_cb (GcmPrint *print,  GtkPageSetup *page_setup, gpointer user_data, GError **error)
+{
+	GPtrArray *filenames;
+	filenames = g_ptr_array_new_with_free_func (g_free);
+	g_ptr_array_add (filenames, g_strdup ("/home/hughsie/Desktop/DSC_2182.tif"));
+	g_ptr_array_add (filenames, g_strdup ("/home/hughsie/Desktop/DSC_2182-2.tif"));
+	return filenames;
+}
+
 void
 gcm_print_test (EggTest *test)
 {
 	gboolean ret;
 	GError *error = NULL;
 	GcmPrint *print;
-	GPtrArray *filenames;
 
 	if (!egg_test_start (test, "GcmPrint"))
 		return;
@@ -223,17 +257,14 @@ gcm_print_test (EggTest *test)
 
 	/************************************************************/
 	egg_test_title (test, "try to print");
-	filenames = g_ptr_array_new_with_free_func (g_free);
-	g_ptr_array_add (filenames, g_strdup ("/home/hughsie/Desktop/DSC_2182.tif"));
-	g_ptr_array_add (filenames, g_strdup ("/home/hughsie/Desktop/DSC_2182-2.tif"));
-	ret = gcm_print_images (print, NULL, filenames, &error);
+	ret = gcm_print_with_render_callback (print, NULL, gcm_print_test_render_cb, test, &error);
 	if (ret)
 		egg_test_success (test, NULL);
 	else
 		egg_test_failed (test, "failed to print: %s", error->message);
-	g_ptr_array_unref (filenames);
 
 	g_object_unref (print);
+	egg_test_end (test);
 }
 #endif
 
