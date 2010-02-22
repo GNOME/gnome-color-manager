@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager.help.master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-02-19 16:10+0000\n"
-"PO-Revision-Date: 2010-02-19 18:47+0100\n"
+"POT-Creation-Date: 2010-02-22 13:43+0000\n"
+"PO-Revision-Date: 2010-02-22 23:07+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -32,14 +32,14 @@ msgstr "@@image: 'figures/gcm-basic.png'; md5=2341688974dc94a026330d66e2d2b193"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
-#: C/gnome-color-manager.xml:238(None)
+#: C/gnome-color-manager.xml:283(None)
 msgid "@@image: 'figures/gcm-adjust.png'; md5=5cde9fc4e9d23b4b753ba5afceb12114"
 msgstr ""
 "@@image: 'figures/gcm-adjust.png'; md5=5cde9fc4e9d23b4b753ba5afceb12114"
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
-#: C/gnome-color-manager.xml:255(None)
+#: C/gnome-color-manager.xml:338(None)
 msgid ""
 "@@image: 'figures/gcm-scanner.png'; md5=7b634191ede46f7b7c7af2f987270c49"
 msgstr ""
@@ -47,7 +47,7 @@ msgstr ""
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
-#: C/gnome-color-manager.xml:279(None)
+#: C/gnome-color-manager.xml:362(None)
 msgid ""
 "@@image: 'figures/gcm-calibrate-default.png'; "
 "md5=21815551aae222d703032db710598b70"
@@ -57,7 +57,7 @@ msgstr ""
 
 #. When image changes, this message will be marked fuzzy or untranslated for you.
 #. It doesn't matter what you translate it to: it's not used at all.
-#: C/gnome-color-manager.xml:291(None)
+#: C/gnome-color-manager.xml:374(None)
 msgid ""
 "@@image: 'figures/gcm-calibrate-drawing.png'; "
 "md5=8fcee7383b49c1d2fd487f5e9b6beb25"
@@ -395,8 +395,8 @@ msgid "The preferences window allows you to control:"
 msgstr "La ventana de preferencias le permite controlar:"
 
 #: C/gnome-color-manager.xml:206(para)
-msgid "The monitor profile."
-msgstr "El perfil del monitor."
+msgid "A device profile."
+msgstr "El perfil del dispositivo."
 
 #: C/gnome-color-manager.xml:211(para)
 msgid "The gamma, brightness and contrast."
@@ -410,35 +410,122 @@ msgstr "Preferencias básicas"
 msgid "GNOME Color Manager basic tab"
 msgstr "Solapa básica del Gestor de color de GNOME"
 
-#: C/gnome-color-manager.xml:232(title)
+#: C/gnome-color-manager.xml:233(para)
+msgid "Select the device."
+msgstr "El dispositivo seleccionado."
+
+#: C/gnome-color-manager.xml:238(para)
+msgid ""
+"Select the required profile from the list in the color profile drop down box."
+msgstr ""
+"Seleccione el perfil requerido de la lista desplegable de perfiles de color."
+
+#: C/gnome-color-manager.xml:249(para)
+msgid "Select \"Other profile...\""
+msgstr "Seleccione «Otro perfil...»"
+
+#: C/gnome-color-manager.xml:254(para)
+msgid "Find the ICC profile file using the GNOME Open File dialog presented."
+msgstr ""
+"Busque el archivo de perfil ICC usando el diálogo presentado Abrir archivo "
+"de GNOME."
+
+#: C/gnome-color-manager.xml:260(para)
+msgid "Press the Open button on the dialog."
+msgstr "En el diálogo, pulse el botón Abrir."
+
+#: C/gnome-color-manager.xml:245(para)
+msgid "If the required profile is not in the list then <placeholder-1/>"
+msgstr "Si el perfil requerido no está en la lista, entonces <placeholder-1/>"
+
+#: C/gnome-color-manager.xml:268(para)
+msgid ""
+"If the profile is invalid then the profile selected for the device will not "
+"alter. Messages may be shown."
+msgstr ""
+"Si el perfil no es válido entonces no se modificará el perfil seleccionado "
+"para el dispositivo. Se mostrarán mensajes."
+
+#: C/gnome-color-manager.xml:229(para)
+msgid ""
+"To alter a profile for a device. <placeholder-1/><placeholder-2/"
+"><placeholder-3/>"
+msgstr ""
+"Para modificar el perfil para un dispositivo. <placeholder-1/><placeholder-2/"
+"><placeholder-3/>"
+
+#: C/gnome-color-manager.xml:277(title)
 msgid "Advanced Preferences"
 msgstr "Preferencias avanzadas"
 
-#: C/gnome-color-manager.xml:234(title)
+#: C/gnome-color-manager.xml:279(title)
 msgid "GNOME Color Manager advanced tab"
 msgstr "Solapa avanzada del Gestor de color de GNOME"
 
-#: C/gnome-color-manager.xml:243(para)
+#: C/gnome-color-manager.xml:288(para)
 msgid "This allows you to adjust a calibrated or generated profile."
 msgstr "Le permite ajustar un perfil calibrado o  generado."
 
-#: C/gnome-color-manager.xml:249(title)
+#: C/gnome-color-manager.xml:292(para)
+msgid ""
+"The Fine Tuning Option is only available if you configure GConf to enable it "
+"( <menuchoice><guimenu>apps</guimenu><guisubmenu>gnome-color-manager</"
+"guisubmenu><guimenuitem>show-fine-tuning</guimenuitem></menuchoice>)."
+msgstr ""
+
+#: C/gnome-color-manager.xml:302(para)
+msgid ""
+"CRT monitors have native gamma around 2.4 - 2.5 and LCD monitors usually "
+"emulate the same value."
+msgstr ""
+
+#: C/gnome-color-manager.xml:306(para)
+msgid ""
+"Traditionally, Linux and MS Windows operating systems use image encoding of "
+"1/2.2 and do not apply any gamma adjustment to the image or video card LUT. "
+"Therefore the overall gamma is expected to be around 1.1 (which is useful to "
+"allow for dim viewing conditions at home environment)."
+msgstr ""
+
+#: C/gnome-color-manager.xml:313(para)
+msgid ""
+"Apple used to use image encoding gamma close to 1/1.8 to naturally match the "
+"native gamma of printing devices (and therefore internally applied gamma "
+"adjustment of 1/1.45 before displaying images on monitor so that the images "
+"displayed correctly)."
+msgstr ""
+
+#: C/gnome-color-manager.xml:319(para)
+msgid ""
+"Nonetheless, since OS X (v10.6 Snow Leopard) the default image encoding "
+"gamma has also the value of 1/2.2 to meet the requirements of consumer "
+"imaging industry."
+msgstr ""
+
+#: C/gnome-color-manager.xml:324(para)
+msgid ""
+"Before fine tuning the gamma in GNOME Color Manager, you should know what "
+"your monitor native gamma is, what display gamma you want to reach and then "
+"do the math yourself."
+msgstr ""
+
+#: C/gnome-color-manager.xml:332(title)
 msgid "Profile viewer"
 msgstr "Visor de perfiles"
 
-#: C/gnome-color-manager.xml:251(title)
+#: C/gnome-color-manager.xml:334(title)
 msgid "GNOME Color Manager profiles tab"
 msgstr "Solapa de perfiles del Gestor de color de GNOME"
 
-#: C/gnome-color-manager.xml:260(para)
+#: C/gnome-color-manager.xml:343(para)
 msgid "This allows you to view details about installed profiles."
 msgstr "Esto le permite ver los detalles acerca de los perfiles instalados."
 
-#: C/gnome-color-manager.xml:266(title)
+#: C/gnome-color-manager.xml:349(title)
 msgid "Calibration"
 msgstr "Calibración"
 
-#: C/gnome-color-manager.xml:267(para)
+#: C/gnome-color-manager.xml:350(para)
 msgid ""
 "<application>GNOME Color Manager</application> can generate ICC profiles "
 "with supported hardware colorimeter devices."
@@ -446,29 +533,29 @@ msgstr ""
 "El <application>Gestor de color de GNOME</application> puede generar "
 "perfiles ICC con dispositivos hardware de colorímetros soportados."
 
-#: C/gnome-color-manager.xml:273(title)
+#: C/gnome-color-manager.xml:356(title)
 msgid "The first stage of calibration, which takes a few minutes."
 msgstr "La primera etapa del calibrado, que lleva unos pocos minutos."
 
-#: C/gnome-color-manager.xml:285(title)
+#: C/gnome-color-manager.xml:368(title)
 msgid "The final stage of calibration, which can take over 15 minutes."
 msgstr "La parte final del calibrado, que puede llevar más de 15 minutos."
 
-#: C/gnome-color-manager.xml:300(title)
+#: C/gnome-color-manager.xml:383(title)
 msgid "Frequently asked questions"
 msgstr "Preguntas más frecuentes"
 
-#: C/gnome-color-manager.xml:301(para)
+#: C/gnome-color-manager.xml:384(para)
 msgid "This section list questions frequently asked about color management"
 msgstr ""
 "Esta sección lista las preguntas más frecuentes acerca de la gestión del "
 "color"
 
-#: C/gnome-color-manager.xml:304(title)
+#: C/gnome-color-manager.xml:387(title)
 msgid "Missing information for whole-screen calibration"
 msgstr "Falta información acerca de la calibración de la pantalla completa"
 
-#: C/gnome-color-manager.xml:305(para)
+#: C/gnome-color-manager.xml:388(para)
 msgid ""
 "Unfortunately, many vendor-supplied ICC profiles do not include the "
 "information required for whole-screen color correction. These profiles can "
@@ -481,7 +568,7 @@ msgstr ""
 "compensación de color, pero no verá todos los colores del cambio de su "
 "pantalla."
 
-#: C/gnome-color-manager.xml:311(para)
+#: C/gnome-color-manager.xml:394(para)
 msgid ""
 "In order to create a full profile, you will need to use a special "
 "calibration device called a colorimeter."
@@ -489,11 +576,106 @@ msgstr ""
 "Para poder crear un perfil completo deberá usar un dispositivo de "
 "calibración especial llamado colorímetro."
 
-#: C/gnome-color-manager.xml:319(title)
+#: C/gnome-color-manager.xml:401(title)
+msgid "What colorimeter devices are supported?"
+msgstr "¿Qué dispositivos de colorímetro están soportados?"
+
+#: C/gnome-color-manager.xml:402(para)
+msgid ""
+"GNOME Color Manager relies on ArgyllCMS to support measurement devices. Thus "
+"the following display calibrators are supported:"
+msgstr ""
+
+#: C/gnome-color-manager.xml:408(para)
+msgid "Gretag-Macbeth Eye-One Pro"
+msgstr "Gretag-Macbeth Eye-One Pro"
+
+#: C/gnome-color-manager.xml:413(para)
+msgid "Gretag-Macbeth Eye-One Monitor"
+msgstr "Gretag-Macbeth Eye-One Monitor"
+
+#: C/gnome-color-manager.xml:418(para)
+msgid "Gretag-Macbeth Eye-One Display 1, 2 или LT"
+msgstr "Gretag-Macbeth Eye-One Display 1, 2 или LT"
+
+#: C/gnome-color-manager.xml:423(para)
+msgid "X-Rite ColorMunki"
+msgstr "X-Rite ColorMunki"
+
+#: C/gnome-color-manager.xml:428(para)
+msgid "Pantone Huey"
+msgstr "Pantone Huey"
+
+#: C/gnome-color-manager.xml:433(para)
+msgid "MonacoOPTIX"
+msgstr "MonacoOPTIX"
+
+#: C/gnome-color-manager.xml:438(para)
+msgid "ColorVision Spyder 2 and 3"
+msgstr "ColorVision Spyder 2 y 3"
+
+#: C/gnome-color-manager.xml:443(para)
+msgid "Colorimètre HCFR"
+msgstr "Colorimètre HCFR"
+
+#: C/gnome-color-manager.xml:450(title)
+msgid "What target types are supported?"
+msgstr "¿Qué tipos de objetivos están soportados?"
+
+#: C/gnome-color-manager.xml:451(para)
+#| msgid "GNOME Color Manager profiles tab"
+msgid "GNOME Color Manager supports the following types of targets:"
+msgstr "El Gestor de color de GNOME soporta los siguientes tipos de objetivos:"
+
+#: C/gnome-color-manager.xml:456(para)
+msgid "CMP DigitalTarget"
+msgstr "CMP DigitalTarget"
+
+#: C/gnome-color-manager.xml:461(para)
+msgid "ColorChecker 24"
+msgstr "ColorChecker 24"
+
+#: C/gnome-color-manager.xml:466(para)
+msgid "ColorChecker DC"
+msgstr "ColorChecker DC"
+
+#: C/gnome-color-manager.xml:471(para)
+msgid "ColorChecker SG"
+msgstr "ColorChecker SG"
+
+#: C/gnome-color-manager.xml:476(para)
+msgid "i1 RGB Scan 14"
+msgstr "i1 RGB Scan 14"
+
+#: C/gnome-color-manager.xml:481(para)
+msgid "LaserSoft DC Pro"
+msgstr "LaserSoft DC Pro"
+
+#: C/gnome-color-manager.xml:486(para)
+msgid "QPcard 201"
+msgstr "QPcard 201"
+
+#: C/gnome-color-manager.xml:491(para)
+msgid "IT8.7/2"
+msgstr "IT8.7/2"
+
+#: C/gnome-color-manager.xml:498(title)
+msgid "Where do I purchase targets from?"
+msgstr "¿Dónde compro objetivos?"
+
+#: C/gnome-color-manager.xml:499(para)
+msgid ""
+"You can purchase targets from well-known vendors like KODAK, X-Rite and "
+"LaserSoft in various online shops. Alternatively you can buy targets from "
+"<ulink url=\"http://www.targets.coloraid.de/\" type=\"http\">Wolf Faust</"
+"ulink> at a very fair price."
+msgstr ""
+
+#: C/gnome-color-manager.xml:509(title)
 msgid "About"
 msgstr "Acerca de"
 
-#: C/gnome-color-manager.xml:320(para)
+#: C/gnome-color-manager.xml:510(para)
 msgid ""
 "GNOME Color Manager was written by Richard Hughes <email>richard@hughsie."
 "com</email>. To find more information about GNOME Color Manager, please "
@@ -506,7 +688,7 @@ msgstr ""
 "\" type=\"http\">página web del <application>Gestor de color de GNOME</"
 "application></ulink>."
 
-#: C/gnome-color-manager.xml:326(para)
+#: C/gnome-color-manager.xml:516(para)
 msgid ""
 "To report a bug or make a suggestion regarding this application or this "
 "manual, follow the directions at the <ulink url=\"http://projects.gnome.org/"
@@ -518,7 +700,7 @@ msgstr ""
 "projects.gnome.org/gnome-color-manager/bugs.html\" type=\"http\">página de "
 "errores del <application>Gestor de color de GNOME</application></ulink>."
 
-#: C/gnome-color-manager.xml:332(para)
+#: C/gnome-color-manager.xml:522(para)
 msgid ""
 "This program is distributed under the terms of the GNU General Public "
 "license as published by the Free Software Foundation; either version 2 of "
@@ -538,6 +720,9 @@ msgstr ""
 #: C/gnome-color-manager.xml:0(None)
 msgid "translator-credits"
 msgstr "Jorge González <jorgegonz@svn.gnome.org>, 2009-2010"
+
+#~ msgid "The monitor profile."
+#~ msgstr "El perfil del monitor."
 
 #~ msgid ""
 #~ "The GNOME Color Manager is a session framework that makes it easy to "
