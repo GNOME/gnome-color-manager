@@ -297,10 +297,14 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 	/* vendor */
 	g_free (priv->vendor);
 	priv->vendor = g_strdup (g_udev_device_get_property (device, "ID_VENDOR_FROM_DATABASE"));
+	if (priv->vendor == NULL)
+		priv->vendor = g_strdup (g_udev_device_get_sysfs_attr (device, "manufacturer"));
 
 	/* model */
 	g_free (priv->model);
 	priv->model = g_strdup (g_udev_device_get_property (device, "ID_MODEL_FROM_DATABASE"));
+	if (priv->model == NULL)
+		priv->model = g_strdup (g_udev_device_get_sysfs_attr (device, "product"));
 
 	/* device support */
 	priv->supports_display = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_DISPLAY");
