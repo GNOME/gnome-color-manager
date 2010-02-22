@@ -75,6 +75,7 @@ enum {
 };
 
 static guint signals[SIGNAL_LAST] = { 0 };
+static gpointer gcm_colorimeter_object = NULL;
 
 G_DEFINE_TYPE (GcmColorimeter, gcm_colorimeter, G_TYPE_OBJECT)
 
@@ -480,8 +481,12 @@ gcm_colorimeter_finalize (GObject *object)
 GcmColorimeter *
 gcm_colorimeter_new (void)
 {
-	GcmColorimeter *colorimeter;
-	colorimeter = g_object_new (GCM_TYPE_COLORIMETER, NULL);
-	return GCM_COLORIMETER (colorimeter);
+	if (gcm_colorimeter_object != NULL) {
+		g_object_ref (gcm_colorimeter_object);
+	} else {
+		gcm_colorimeter_object = g_object_new (GCM_TYPE_COLORIMETER, NULL);
+		g_object_add_weak_pointer (gcm_colorimeter_object, &gcm_colorimeter_object);
+	}
+	return GCM_COLORIMETER (gcm_colorimeter_object);
 }
 
