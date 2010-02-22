@@ -701,10 +701,10 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-		/* TRANSLATORS: button, install a package */
-		gtk_dialog_add_button (GTK_DIALOG (dialog), _("Install"), GTK_RESPONSE_YES);
 		/* TRANSLATORS: button, skip installing a package */
 		gtk_dialog_add_button (GTK_DIALOG (dialog), _("Do not install"), GTK_RESPONSE_CANCEL);
+		/* TRANSLATORS: button, install a package */
+		gtk_dialog_add_button (GTK_DIALOG (dialog), _("Install"), GTK_RESPONSE_YES);
 		response = gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 
