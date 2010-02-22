@@ -66,6 +66,8 @@ enum {
 	PROP_LAST
 };
 
+static gpointer gcm_xserver_object = NULL;
+
 G_DEFINE_TYPE (GcmXserver, gcm_xserver, G_TYPE_OBJECT)
 
 /**
@@ -595,8 +597,12 @@ gcm_xserver_finalize (GObject *object)
 GcmXserver *
 gcm_xserver_new (void)
 {
-	GcmXserver *xserver;
-	xserver = g_object_new (GCM_TYPE_XSERVER, NULL);
-	return GCM_XSERVER (xserver);
+	if (gcm_xserver_object != NULL) {
+		g_object_ref (gcm_xserver_object);
+	} else {
+		gcm_xserver_object = g_object_new (GCM_TYPE_XSERVER, NULL);
+		g_object_add_weak_pointer (gcm_xserver_object, &gcm_xserver_object);
+	}
+	return GCM_XSERVER (gcm_xserver_object);
 }
 
