@@ -190,6 +190,20 @@ gcm_calibrate_argyll_get_colorimeter_image_calibrate (GcmCalibrateArgyll *calibr
 }
 
 /**
+ * gcm_calibrate_argyll_get_colorimeter_image_screen:
+ **/
+static const gchar *
+gcm_calibrate_argyll_get_colorimeter_image_screen (GcmCalibrateArgyll *calibrate_argyll)
+{
+	GcmColorimeterKind colorimeter_kind;
+
+	g_object_get (calibrate_argyll, "colorimeter-kind", &colorimeter_kind, NULL);
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI)
+		return "munki-screen.svg";
+	return NULL;
+}
+
+/**
  * gcm_calibrate_argyll_get_display:
  **/
 static guint
@@ -1349,11 +1363,46 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		goto out;
 	}
 
+	/* set to calibrate */
+	if (g_strcmp0 (line, "(Sensor should be in surface position)") == 0) {
+		egg_debug ("VTE: interaction required, set to surface");
+
+		/* TRANSLATORS: title, device is a hardware color calibration sensor */
+		title = _("Please configure device");
+
+		/* block for a response */
+		egg_debug ("blocking waiting for user input: %s", title);
+
+		/* get the image, if we have one */
+		filename = gcm_calibrate_argyll_get_colorimeter_image_screen (calibrate_argyll);
+
+		if (filename != NULL) {
+			/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
+			message = _("Please set the device to screen mode like the image below.");
+		} else {
+			/* TRANSLATORS: this is when the user has to change a setting on the sensor */
+			message = _("Please set the device to screen mode.");
+		}
+
+		/* push new messages into the UI */
+		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+		gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
+		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+
+		/* set state */
+		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
+		goto out;
+	}
+
 	/* lines we're ignoring */
 	if (g_strcmp0 (line, "Q") == 0 ||
 	    g_strcmp0 (line, "Sample read stopped at user request!") == 0 ||
 	    g_strcmp0 (line, "Hit Esc or Q to give up, any other key to retry:") == 0 ||
+	    g_strcmp0 (line, "Correct position then hit Esc or Q to give up, any other key to retry:") == 0 ||
 	    g_strcmp0 (line, "Calibration complete") == 0 ||
+	    g_strcmp0 (line, "Spot read failed due to the sensor being in the wrong position") == 0 ||
+	    g_strcmp0 (line, "and then hit any key to continue,") == 0 ||
 	    g_strcmp0 (line, "or hit Esc or Q to abort:") == 0 ||
 	    g_strcmp0 (line, "The instrument can be removed from the screen.") == 0 ||
 	    g_strstr_len (line, -1, "User Aborted") != NULL ||
@@ -1376,6 +1425,9 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		} else if (g_strstr_len (line, -1, "Pattern match wasn't good enough") != NULL) {
 			/* TRANSLATORS: message, the image wasn't good enough */
 			message = _("The pattern match wasn't good enough. Ensure you have the correct type of target selected.");
+		} else if (g_strstr_len (line, -1, "Aprox. fwd matrix unexpectedly singular") != NULL) {
+			/* TRANSLATORS: message, the sensor got no readings */
+			message = _("The colorimeter got no valid readings. Please ensure the aperture is fully open.");
 		} else {
 			message = found + 8;
 		}
