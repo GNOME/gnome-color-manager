@@ -24,6 +24,7 @@
 #include <egg-debug.h>
 
 /* prototypes */
+void gcm_print_test (EggTest *test);
 void gcm_edid_test (EggTest *test);
 void gcm_image_test (EggTest *test);
 void gcm_tables_test (EggTest *test);
@@ -51,6 +52,7 @@ main (int argc, char **argv)
 	egg_debug_init (&argc, &argv);
 
 	/* components */
+	gcm_print_test (test);
 	gcm_calibrate_test (test);
 	gcm_edid_test (test);
 	gcm_tables_test (test);

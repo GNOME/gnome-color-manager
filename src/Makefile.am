@@ -295,6 +295,7 @@ gcm_self_test_SOURCES =					\
 	gcm-gamma-widget.c				\
 	gcm-calibrate.c					\
 	gcm-calibrate-manual.c				\
+	gcm-print.c					\
 	gcm-calibrate-dialog.c				\
 	egg-test.h					\
 	egg-test.c					\
@@ -313,6 +314,7 @@ gcm_self_test_LDADD =					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(TIFF_LIBS)					\
 	-lm
 
 gcm_self_test_CFLAGS = -DEGG_TEST $(AM_CFLAGS)

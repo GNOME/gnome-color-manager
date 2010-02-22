@@ -46,54 +46,16 @@ static void     gcm_print_finalize	(GObject     *object);
  **/
 struct _GcmPrintPrivate
 {
-	gboolean			 present;
-	gchar				*vendor;
 	GtkPrintSettings		*settings;
-};
-
-enum {
-	PROP_0,
-	PROP_PRESENT,
-	PROP_VENDOR,
-	PROP_LAST
 };
 
 G_DEFINE_TYPE (GcmPrint, gcm_print, G_TYPE_OBJECT)
 
-/**
- * gcm_print_get_property:
- **/
-static void
-gcm_print_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
-{
-	GcmPrint *print = GCM_PRINT (object);
-	GcmPrintPrivate *priv = print->priv;
-
-	switch (prop_id) {
-	case PROP_PRESENT:
-		g_value_set_boolean (value, priv->present);
-		break;
-	case PROP_VENDOR:
-		g_value_set_string (value, priv->vendor);
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-/**
- * gcm_print_set_property:
- **/
-static void
-gcm_print_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
-{
-	switch (prop_id) {
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
+/* temporary object so we can pass state */
+typedef struct {
+	GcmPrint *print;
+	GPtrArray *filenames;
+} GcmPrintTask;
 
 /**
  * gcm_print_class_init:
@@ -101,42 +63,22 @@ gcm_print_set_property (GObject *object, guint prop_id, const GValue *value, GPa
 static void
 gcm_print_class_init (GcmPrintClass *klass)
 {
-	GParamSpec *pspec;
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	object_class->finalize = gcm_print_finalize;
-	object_class->get_property = gcm_print_get_property;
-	object_class->set_property = gcm_print_set_property;
-
-	/**
-	 * GcmPrint:present:
-	 */
-	pspec = g_param_spec_boolean ("present", NULL, NULL,
-				      FALSE,
-				      G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_PRESENT, pspec);
-
-	/**
-	 * GcmPrint:vendor:
-	 */
-	pspec = g_param_spec_string ("vendor", NULL, NULL,
-				     NULL,
-				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_VENDOR, pspec);
-
 	g_type_class_add_private (klass, sizeof (GcmPrintPrivate));
 }
 
 /**
  * gcm_print_begin_print_cb:
  *
- * Emitted after the user has finished changing print settings in the dialog, before the actual rendering starts.
- * A typical use for ::begin-print is to use the parameters from the GtkPrintContext and paginate the document accordingly,
- * and then set the number of pages with gtk_print_operation_set_n_pages().
+ * Emitted after the user has finished changing print settings in the dialog,
+ * before the actual rendering starts.
  **/
 static void
-gcm_print_begin_print_cb (GtkPrintOperation *operation, GtkPrintContext *context, GcmPrint *print)
+gcm_print_begin_print_cb (GtkPrintOperation *operation, GtkPrintContext *context, GcmPrintTask *task)
 {
-	gtk_print_operation_set_n_pages (operation, 5);
+	egg_debug ("setting %i pages", task->filenames->len);
+	gtk_print_operation_set_n_pages (operation, task->filenames->len);
 }
 
 /**
@@ -145,31 +87,35 @@ gcm_print_begin_print_cb (GtkPrintOperation *operation, GtkPrintContext *context
  * Emitted for every page that is printed. The signal handler must render the page onto the cairo context
  **/
 static void
-gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, gint page_nr, GcmPrint *print)
+gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, gint page_nr, GcmPrintTask *task)
 {
 	cairo_t *cr;
 	gdouble width = 0.0f;
 	gdouble height = 0.0f;
-	gint stride = 0;
-	cairo_surface_t *surface;
-	unsigned char *data = NULL;
+	GError *error = NULL;
+	const gchar *filename;
+	GdkPixbuf *pixbuf = NULL;
 
-	gtk_print_operation_set_use_full_page (operation, TRUE);
+	/* get the size of the page in _pixels_ */
 	width = gtk_print_context_get_width (context);
 	height = gtk_print_context_get_height (context);
 	cr = gtk_print_context_get_cairo_context (context);
 
-//	gdk_cairo_set_source_pixbuf (cr, const GdkPixbuf *pixbuf, 0, 0);
+	/* load pixbuf */
+	filename = g_ptr_array_index (task->filenames, page_nr);
+	pixbuf = gdk_pixbuf_new_from_file_at_scale (filename, width, height, FALSE, &error);
+	if (pixbuf == NULL) {
+		egg_warning ("failed to load image: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
-	//stride = cairo_format_stride_for_width (format, width);
-	//data = malloc (stride * height);
-
-	surface = cairo_image_surface_create_for_data (data, CAIRO_FORMAT_RGB24, width, height, stride);
-
-	cairo_set_source_surface (cr, surface, 0, 0);
-
-	cairo_surface_destroy (surface);
-
+	/* set the pixmap */
+	gdk_cairo_set_source_pixbuf (cr, pixbuf, 0, 0);
+	cairo_paint (cr);
+out:
+	if (pixbuf != NULL)
+		g_object_unref (pixbuf);
 }
 
 /**
@@ -178,23 +124,25 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 gboolean
 gcm_print_images (GcmPrint *print, GtkWindow *window, GPtrArray *filenames, GError **error)
 {
-	GtkPrintOperation *operation;
-	GtkPrintOperationResult res;
 	GcmPrintPrivate *priv = print->priv;
 	gboolean ret = TRUE;
+	GcmPrintTask *task;
+	GtkPrintOperation *operation;
+	GtkPrintOperationResult res;
 
-	/* set some common settings */
-	gtk_print_settings_set_n_copies (priv->settings, 1);
-	gtk_print_settings_set_number_up (priv->settings, 1);
-	gtk_print_settings_set_orientation (priv->settings, GTK_PAGE_ORIENTATION_PORTRAIT);
-	gtk_print_settings_set_quality (priv->settings, GTK_PRINT_QUALITY_HIGH);
-	gtk_print_settings_set_use_color (priv->settings, TRUE);
+	/* create temp object */
+	task = g_new0 (GcmPrintTask, 1);
+	task->print = print;
+	task->filenames = filenames;
 
 	/* create new instance */
 	operation = gtk_print_operation_new ();
 	gtk_print_operation_set_print_settings (operation, priv->settings);
-	g_signal_connect (operation, "begin-print", G_CALLBACK (gcm_print_begin_print_cb), print);
-	g_signal_connect (operation, "draw-page", G_CALLBACK (gcm_print_draw_page_cb), print);
+	g_signal_connect (operation, "begin-print", G_CALLBACK (gcm_print_begin_print_cb), task);
+	g_signal_connect (operation, "draw-page", G_CALLBACK (gcm_print_draw_page_cb), task);
+
+	/* we want this to be as big as possible, modulo page margins */
+	gtk_print_operation_set_use_full_page (operation, TRUE);
 
 	/* do the print UI */
 	res = gtk_print_operation_run (operation,
@@ -224,7 +172,6 @@ static void
 gcm_print_init (GcmPrint *print)
 {
 	print->priv = GCM_PRINT_GET_PRIVATE (print);
-	print->priv->vendor = NULL;
 	print->priv->settings = gtk_print_settings_new ();
 }
 
@@ -237,8 +184,7 @@ gcm_print_finalize (GObject *object)
 	GcmPrint *print = GCM_PRINT (object);
 	GcmPrintPrivate *priv = print->priv;
 
-	g_free (priv->vendor);
-	g_object_unref (print->priv->settings);
+	g_object_unref (priv->settings);
 
 	G_OBJECT_CLASS (gcm_print_parent_class)->finalize (object);
 }
@@ -255,4 +201,39 @@ gcm_print_new (void)
 	print = g_object_new (GCM_TYPE_PRINT, NULL);
 	return GCM_PRINT (print);
 }
+
+/***************************************************************************
+ ***                          MAKE CHECK TESTS                           ***
+ ***************************************************************************/
+#ifdef EGG_TEST
+#include "egg-test.h"
+
+void
+gcm_print_test (EggTest *test)
+{
+	gboolean ret;
+	GError *error = NULL;
+	GcmPrint *print;
+	GPtrArray *filenames;
+
+	if (!egg_test_start (test, "GcmPrint"))
+		return;
+
+	print = gcm_print_new ();
+
+	/************************************************************/
+	egg_test_title (test, "try to print");
+	filenames = g_ptr_array_new_with_free_func (g_free);
+	g_ptr_array_add (filenames, g_strdup ("/home/hughsie/Desktop/DSC_2182.tif"));
+	g_ptr_array_add (filenames, g_strdup ("/home/hughsie/Desktop/DSC_2182-2.tif"));
+	ret = gcm_print_images (print, NULL, filenames, &error);
+	if (ret)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "failed to print: %s", error->message);
+	g_ptr_array_unref (filenames);
+
+	g_object_unref (print);
+}
+#endif
 
