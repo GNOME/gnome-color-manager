@@ -313,7 +313,7 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_COLOR_MUNKI;
 	} else if (g_strcmp0 (priv->model, "SpyderXXX") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_SPYDER;
-	} else {
+	} else if (priv->model != NULL) {
 		egg_warning ("Failed to recognise color device: %s", priv->model);
 
 		/* show dialog, in order to help the project */
@@ -328,6 +328,24 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 							  "It should work okay, but if you want to help the project, "
 							  "please visit %s and supply the required information.",
 							  priv->model, "http://live.gnome.org/GnomeColorManager/Help");
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+		priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;
+	} else {
+		egg_warning ("Failed to recognise color device");
+
+		/* show dialog, in order to help the project */
+		dialog = gtk_message_dialog_new (NULL,
+						 GTK_DIALOG_MODAL,
+						 GTK_MESSAGE_INFO,
+						 GTK_BUTTONS_OK,
+						 /* TRANSLATORS: this is when the device is not recognised */
+						 _("Colorimeter not registered"));
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+							  "The device has not been registered in usb.ids. "
+							  "It should work okay, but if you want to help the project, "
+							  "please visit %s and supply the required information.",
+							  "http://live.gnome.org/GnomeColorManager/Help");
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;
