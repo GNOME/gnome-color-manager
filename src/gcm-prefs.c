@@ -30,6 +30,7 @@
 #include <libgnomeui/gnome-rr.h>
 #include <gconf/gconf-client.h>
 #include <locale.h>
+#include <canberra-gtk.h>
 
 #include "egg-debug.h"
 
@@ -793,6 +794,14 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 
 	/* remove temporary file */
 	g_unlink (filename);
+
+	/* play sound from the naming spec */
+	ca_context_play (ca_gtk_context_get (), 0,
+			 CA_PROP_EVENT_ID, "complete",
+			 /* TRANSLATORS: this is the application name for libcanberra */
+			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+			 /* TRANSLATORS: this is the sound description */
+			 CA_PROP_EVENT_DESCRIPTION, _("Calibration completed"), NULL);
 out:
 	g_free (filename);
 	g_free (destination);
@@ -1900,6 +1909,29 @@ out:
 static void
 gcm_prefs_colorimeter_changed_cb (GcmColorimeter *_colorimeter, gpointer user_data)
 {
+	gboolean present;
+	const gchar *event_id;
+	const gchar *message;
+
+	present = gcm_colorimeter_get_present (_colorimeter);
+
+	if (present) {
+		/* TRANSLATORS: this is a sound description */
+		message = _("Device added");
+		event_id = "device-added";
+	} else {
+		/* TRANSLATORS: this is a sound description */
+		message = _("Device removed");
+		event_id = "device-removed";
+	}
+
+	/* play sound from the naming spec */
+	ca_context_play (ca_gtk_context_get (), 0,
+			 CA_PROP_EVENT_ID, event_id,
+			 /* TRANSLATORS: this is the application name for libcanberra */
+			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+			 CA_PROP_EVENT_DESCRIPTION, message, NULL);
+
 	gcm_prefs_set_calibrate_button_sensitivity ();
 }
 

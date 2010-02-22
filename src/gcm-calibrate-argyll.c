@@ -37,6 +37,7 @@
 #include <gtk/gtk.h>
 #include <vte/vte.h>
 #include <gconf/gconf-client.h>
+#include <canberra-gtk.h>
 
 #include "gcm-calibrate-argyll.h"
 #include "gcm-colorimeter.h"
@@ -1326,6 +1327,13 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		/* set state */
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN,
 
+		/* play sound from the naming spec */
+		ca_context_play (ca_gtk_context_get (), 0,
+				 CA_PROP_EVENT_ID, "dialog-information",
+				 /* TRANSLATORS: this is the application name for libcanberra */
+				 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+				 CA_PROP_EVENT_DESCRIPTION, message, NULL);
+
 		/* save as we know the device is on the screen now */
 		priv->already_on_window = TRUE;
 		goto out;
@@ -1358,6 +1366,13 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
 		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
 
+		/* play sound from the naming spec */
+		ca_context_play (ca_gtk_context_get (), 0,
+				 CA_PROP_EVENT_ID, "dialog-information",
+				 /* TRANSLATORS: this is the application name for libcanberra */
+				 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+				 CA_PROP_EVENT_DESCRIPTION, message, NULL);
+
 		/* set state */
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
 		goto out;
@@ -1389,6 +1404,13 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
 		gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
 		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+
+		/* play sound from the naming spec */
+		ca_context_play (ca_gtk_context_get (), 0,
+				 CA_PROP_EVENT_ID, "dialog-information",
+				 /* TRANSLATORS: this is the application name for libcanberra */
+				 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+				 CA_PROP_EVENT_DESCRIPTION, message, NULL);
 
 		/* set state */
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
@@ -1440,6 +1462,13 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 
 		/* set state */
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_LOOP;
+
+		/* play sound from the naming spec */
+		ca_context_play (ca_gtk_context_get (), 0,
+				 CA_PROP_EVENT_ID, "dialog-warning",
+				 /* TRANSLATORS: this is the application name for libcanberra */
+				 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+				 CA_PROP_EVENT_DESCRIPTION, message, NULL);
 
 		/* wait until finished */
 		g_main_loop_run (priv->loop);

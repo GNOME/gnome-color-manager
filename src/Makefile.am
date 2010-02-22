@@ -10,6 +10,7 @@ INCLUDES =						\
 	$(XORG_CFLAGS)					\
 	$(CUPS_CFLAGS)					\
 	$(TIFF_CFLAGS)					\
+	$(CANBERRA_CFLAGS)				\
 	$(DBUS_GLIB_CFLAGS)				\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
@@ -240,6 +241,7 @@ gcm_prefs_LDADD =					\
 	$(GTK_LIBS)					\
 	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
+	$(CANBERRA_LIBS)				\
 	-lm
 
 gcm_prefs_CFLAGS =					\
