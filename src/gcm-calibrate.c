@@ -662,6 +662,30 @@ out:
 }
 
 /**
+ * gcm_calibrate_printer:
+ **/
+gboolean
+gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
+{
+	gboolean ret = FALSE;
+	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
+
+	/* coldplug source */
+	if (klass->calibrate_printer == NULL) {
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_INTERNAL,
+				     "no klass support");
+		goto out;
+	}
+
+	/* proxy */
+	ret = klass->calibrate_printer (calibrate, window, error);
+out:
+	return ret;
+}
+
+/**
  * gcm_calibrate_device:
  **/
 gboolean

@@ -314,7 +314,42 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	if (!ret) {
 		if (error->code != GCM_CALIBRATE_ERROR_USER_ABORT) {
 			/* TRANSLATORS: could not calibrate */
-			gcm_prefs_error_dialog (_("Failed to calibrate"), error->message);
+			gcm_prefs_error_dialog (_("Failed to calibrate device"), error->message);
+		} else {
+			egg_warning ("failed to calibrate: %s", error->message);
+		}
+		g_error_free (error);
+		goto out;
+	}
+out:
+	return ret;
+}
+
+/**
+ * gcm_prefs_calibrate_printer:
+ **/
+static gboolean
+gcm_prefs_calibrate_printer (GcmCalibrate *calibrate)
+{
+	gboolean ret = FALSE;
+	GError *error = NULL;
+	GtkWindow *window;
+
+	/* set defaults from device */
+	ret = gcm_calibrate_set_from_device (calibrate, current_device, &error);
+	if (!ret) {
+		egg_warning ("failed to calibrate: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* do each step */
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	ret = gcm_calibrate_printer (calibrate, window, &error);
+	if (!ret) {
+		if (error->code != GCM_CALIBRATE_ERROR_USER_ABORT) {
+			/* TRANSLATORS: could not calibrate */
+			gcm_prefs_error_dialog (_("Failed to calibrate printer"), error->message);
 		} else {
 			egg_warning ("failed to calibrate: %s", error->message);
 		}
@@ -728,6 +763,9 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	case GCM_DEVICE_TYPE_ENUM_CAMERA:
 		ret = gcm_prefs_calibrate_device (calibrate);
 		break;
+	case GCM_DEVICE_TYPE_ENUM_PRINTER:
+		ret = gcm_prefs_calibrate_printer (calibrate);
+		break;
 	default:
 		egg_warning ("calibration not supported for this device");
 		goto out;
@@ -1017,9 +1055,6 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 			tooltip = _("Cannot calibrate: The colorimeter does not support printer profiling");
 			goto out;
 		}
-
-		/* TRANSLATORS: this is when the button is insensitive */
-		tooltip = _("Cannot calibrate this type of device (although support is planned)");
 
 	} else {
 

@@ -43,6 +43,7 @@
 #include "gcm-colorimeter.h"
 #include "gcm-utils.h"
 #include "gcm-screen.h"
+#include "gcm-print.h"
 #include "gcm-calibrate-dialog.h"
 
 #include "egg-debug.h"
@@ -454,10 +455,12 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	gchar *basename = NULL;
 	const gchar *title;
 	const gchar *message;
+	GcmDeviceTypeEnum device_type;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "device-type", &device_type,
 		      NULL);
 
 	/* get correct name of the command */
@@ -482,7 +485,16 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 
 	/* setup the command */
 	g_ptr_array_add (array, g_strdup ("-v9"));
-	g_ptr_array_add (array, g_strdup ("-d3"));
+	if (device_type == GCM_DEVICE_TYPE_ENUM_PRINTER) {
+		/* print RGB */
+		g_ptr_array_add (array, g_strdup ("-d2"));
+
+		/* Grey axis RGB steps */
+		g_ptr_array_add (array, g_strdup ("-g20"));
+	} else {
+		/* video RGB */
+		g_ptr_array_add (array, g_strdup ("-d3"));
+	}
 	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_precision_to_patches_arg (priv->precision)));
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
@@ -1198,6 +1210,35 @@ out:
 }
 
 /**
+ * gcm_calibrate_argyll_printer:
+ **/
+static gboolean
+gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
+{
+	gboolean ret;
+	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
+//	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+
+	/* need to ask if we are printing now, or using old data */
+
+	/* step 1 */
+	ret = gcm_calibrate_argyll_display_generate_patches (calibrate_argyll, error);
+	if (!ret)
+		goto out;
+
+// printtarg -v -i CM -h -t 300 -p A4 test
+// chartread -v test
+// colprof -v -A "bla" -M "bla" -D "bla" -C "bla"  -a l -q m test
+
+	/* step 4 */
+	ret = gcm_calibrate_argyll_device_generate_profile (calibrate_argyll, error);
+	if (!ret)
+		goto out;
+out:
+	return ret;
+}
+
+/**
  * gcm_calibrate_argyll_device:
  **/
 static gboolean
@@ -1624,6 +1665,7 @@ gcm_calibrate_argyll_class_init (GcmCalibrateArgyllClass *klass)
 	/* setup klass links */
 	parent_class->calibrate_display = gcm_calibrate_argyll_display;
 	parent_class->calibrate_device = gcm_calibrate_argyll_device;
+	parent_class->calibrate_printer = gcm_calibrate_argyll_printer;
 
 	g_type_class_add_private (klass, sizeof (GcmCalibrateArgyllPrivate));
 }
