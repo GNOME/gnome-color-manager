@@ -695,7 +695,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 		/* TRANSLATORS: dialog message saying the color targets are not installed */
 		g_string_append_printf (string, "%s\n\n", _("Color target files are needed to convert the image to a color profile."));
 		/* TRANSLATORS: dialog message, asking if it's okay to install them */
-		g_string_append_printf (string, "%s\n\n", _("Do you want them to be automatically installed?"));
+		g_string_append_printf (string, "%s\n\n", _("Do you want them to be installed?"));
 		/* TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package */
 		g_string_append_printf (string, "%s", _("If you already have the correct file, you can skip this step."));
 
