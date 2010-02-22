@@ -96,7 +96,9 @@ gcm_calibrate_manual_close_cb (GtkWidget *widget, GcmCalibrateManual *calibrate)
 	/* we closed */
 	priv->ret = FALSE;
 	if (priv->error != NULL)
-		*(priv->error) = g_error_new (1, 0, "user closed window");
+		*(priv->error) = g_error_new (GCM_CALIBRATE_ERROR,
+					      GCM_CALIBRATE_ERROR_USER_ABORT,
+					      "user closed window");
 
 	/* we're done */
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
@@ -212,7 +214,7 @@ gcm_calibrate_manual_setup_page (GcmCalibrateManual *calibrate, guint page)
 		gtk_widget_show (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "label_text1"));
 		/* TRANSLATORS: message text */
-		gtk_label_set_label (GTK_LABEL(widget), _("This dialog will calibrate your display and create a custom ICC profile. "
+		gtk_label_set_label (GTK_LABEL(widget), _("This dialog will help calibrate your display and create a custom ICC profile. "
 							  "Display calibration will involve several steps so that an accurate profile can be obtained. "
 							  "It should only take a few minutes."));
 		widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "hbox_text2"));

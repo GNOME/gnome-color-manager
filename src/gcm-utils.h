@@ -50,10 +50,12 @@
 
 gboolean	 gcm_utils_mkdir_for_filename		(const gchar		*filename,
 							 GError			**error);
-gboolean	 gcm_utils_mkdir_and_copy		(const gchar		*source,
-							 const gchar		*destination,
+gboolean	 gcm_utils_mkdir_with_parents		(const gchar		*filename,
 							 GError			**error);
-gchar		*gcm_utils_get_profile_destination	(const gchar		*filename);
+gboolean	 gcm_utils_mkdir_and_copy		(GFile			*source,
+							 GFile			*destination,
+							 GError			**error);
+GFile		*gcm_utils_get_profile_destination	(GFile			*file);
 gchar		**gcm_utils_ptr_array_to_strv		(GPtrArray		*array);
 gboolean	 gcm_gnome_help				(const gchar		*link_id);
 gboolean	 gcm_utils_output_is_lcd_internal	(const gchar		*output_name);
@@ -66,7 +68,7 @@ gchar		*gcm_utils_format_date_time		(const struct tm	*created);
 gboolean	 gcm_utils_install_package		(const gchar		*package_name,
 							 GtkWindow		*window);
 void		 gcm_utils_ensure_printable		(gchar			*text);
-gboolean	 gcm_utils_is_icc_profile		(const gchar		*filename);
+gboolean	 gcm_utils_is_icc_profile		(GFile			*file);
 gchar		*gcm_utils_linkify			(const gchar		*text);
 const gchar	*gcm_intent_enum_to_localized_text	(GcmIntentEnum	 intent);
 

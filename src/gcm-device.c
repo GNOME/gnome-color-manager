@@ -687,6 +687,7 @@ gcm_device_finalize (GObject *object)
 	g_free (priv->serial);
 	g_free (priv->manufacturer);
 	g_free (priv->model);
+	g_free (priv->profile_filename);
 	g_object_unref (priv->gconf_client);
 
 	G_OBJECT_CLASS (gcm_device_parent_class)->finalize (object);

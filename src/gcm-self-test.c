@@ -65,7 +65,7 @@ main (int argc, char **argv)
 	gcm_cie_widget_test (test);
 	gcm_gamma_widget_test (test);
 	gcm_image_test (test);
-	gcm_calibrate_manual_test (test);
+//	gcm_calibrate_manual_test (test);
 
 	return (egg_test_finish (test));
 }

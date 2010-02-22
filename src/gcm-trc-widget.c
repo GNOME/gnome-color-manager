@@ -413,6 +413,7 @@ gcm_trc_widget_test (EggTest *test)
 	gchar *filename_profile;
 	gchar *filename_image;
 	GcmClutData *data;
+	GFile *file;
 
 	if (!egg_test_start (test, "GcmTrcWidget"))
 		return;
@@ -433,11 +434,13 @@ gcm_trc_widget_test (EggTest *test)
 	egg_test_assert (test, (filename_profile != NULL));
 
 	profile = gcm_profile_default_new ();
-	gcm_profile_parse (profile, filename_profile, NULL);
+	file = g_file_new_for_path (filename_profile);
+	gcm_profile_parse (profile, file, NULL);
 	clut = gcm_profile_generate_vcgt (profile, 256);
 	g_object_set (widget,
 		      "clut", clut,
 		      NULL);
+	g_object_unref (file);
 
 	/* show in a dialog as an example */
 	dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "Does TRC widget match\nthe picture below?");

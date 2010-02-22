@@ -48,10 +48,12 @@ gcm_dump_profile_filename (const gchar *filename)
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
 	gchar *datetime = NULL;
+	GFile *file = NULL;
 
 	/* parse profile */
 	profile = gcm_profile_default_new ();
-	ret = gcm_profile_parse (profile, filename, &error);
+	file = g_file_new_for_path (filename);
+	ret = gcm_profile_parse (profile, file, &error);
 	if (!ret) {
 		egg_warning ("failed to parse: %s", error->message);
 		g_error_free (error);
@@ -87,6 +89,8 @@ gcm_dump_profile_filename (const gchar *filename)
 	if (datetime != NULL)
 		g_print ("Created:\t%s\n", datetime);
 out:
+	if (file != NULL)
+		g_object_unref (file);
 	g_object_unref (profile);
 	g_free (description);
 	g_free (copyright);

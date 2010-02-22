@@ -105,6 +105,7 @@ GCONF_REQUIRED=0.22
 UNIQUE_REQUIRED=1.0.0
 VTE_REQUIRED=0.22.2
 DBUS_GLIB_REQUIRED=0.73
+CANBERRA_REQUIRED=0.10
 
 dnl ---------------------------------------------------------------------------
 dnl - Check library dependencies
@@ -155,7 +156,17 @@ PKG_CHECK_MODULES(X11, x11)
 AC_SUBST(X11_CFLAGS)
 AC_SUBST(X11_LIBS)
 
-AC_CHECK_LIB(tiff, TIFFReadRGBAImageOriented)
+PKG_CHECK_MODULES(CANBERRA, libcanberra-gtk >= $CANBERRA_REQUIRED)
+AC_SUBST(CANBERRA_CFLAGS)
+AC_SUBST(CANBERRA_LIBS)
+
+AC_CHECK_LIB(tiff, TIFFReadRGBAImageOriented,
+	     TIFF_CFLAGS=""
+	     TIFF_LIBS="-ltiff"
+	     HAVE_TIFF="yes")
+if test "x$HAVE_TIFF" != "xyes"; then
+	AC_MSG_ERROR([libtiff-devel is required for gnome-color-manager])
+fi
 AC_SUBST(TIFF_CFLAGS)
 AC_SUBST(TIFF_LIBS)
 
@@ -171,8 +182,12 @@ AC_CHECK_HEADERS(cups/cups.h,
 		  [
 			CUPS_CFLAGS="$ac_cups_cflags"
 			CUPS_LIBS="-lcups $ac_cups_libs"
+			HAVE_CUPS="yes"
 		  ],,[$ac_cups_libs])])
 CPPFLAGS="$ac_save_CPPFLAGS"
+if test "x$HAVE_CUPS" != "xyes"; then
+	AC_MSG_ERROR([cups-devel is required for gnome-color-manager])
+fi
 
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
 AM_GCONF_SOURCE_2

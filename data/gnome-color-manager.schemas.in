@@ -8,7 +8,7 @@
       <type>float</type>
       <default>1.0</default>
       <locale name="C">
-        <short>The default gamma to use for monitors with no previous selection.</short>
+        <short>The default gamma to use for monitors with no previous value set.</short>
         <long>
           Gamma is adjusted to affect the color of the attached monitor.
           Traditionally Linux has used a gamma value of 1.0, but this makes
@@ -26,7 +26,7 @@
       <type>bool</type>
       <default>true</default>
       <locale name="C">
-        <short>If the display should be globally corrected or left to applications.</short>
+        <short>Whether the display should be globally corrected or left to applications.</short>
         <long>If set to TRUE then the video LUT is set with the display profile</long>
       </locale>
     </schema>
@@ -38,12 +38,12 @@
       <type>bool</type>
       <default>true</default>
       <locale name="C">
-        <short>If ICC profiles should be loaded from external disks.</short>
+        <short>Whether ICC profiles should be loaded from external disks.</short>
         <long>
           If set to TRUE then external disks are searched for device ICC profiles
           at startup, for instance looking in the OSX library folder or
           Windows XP system folders.
-          This may increase start-up time if disks need to be spun-up to be
+          This may increase startup time if disks need to be spun up to be
           searched.
         </long>
       </locale>
@@ -112,7 +112,7 @@
       <default>/usr/share/color/icc/Argyll/sRGB.icm</default>
       <locale name="C">
         <short>The default RGB profile.</short>
-        <long>The RGB profile file name to be used by applications by default.</long>
+        <long>The RGB profile filename to be used by applications by default.</long>
       </locale>
     </schema>
 
@@ -124,7 +124,7 @@
       <default>/usr/share/color/icc/Fogra27L.icc</default>
       <locale name="C">
         <short>The default CMYK profile.</short>
-        <long>The CMYK profile file name to be used by applications by default.</long>
+        <long>The CMYK profile filename to be used by applications by default.</long>
       </locale>
     </schema>
 

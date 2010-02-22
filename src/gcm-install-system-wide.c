@@ -57,7 +57,7 @@ main (gint argc, gchar *argv[])
 	const GOptionEntry options[] = {
 		{ "id", '\0', 0, G_OPTION_ARG_STRING, &id,
 		   /* command line argument, the ID of the device */
-		  _("Device ID, e.g. xrandr_ibm_france_ltn154p2_l05"), NULL },
+		  _("Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"), NULL },
 		{ G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &filenames,
 		  /* TRANSLATORS: command line option: a list of files to install */
 		  _("ICC profile to install"), NULL },

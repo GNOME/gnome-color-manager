@@ -55,6 +55,8 @@ enum {
 	PROP_LAST
 };
 
+static gpointer gcm_tables_object = NULL;
+
 G_DEFINE_TYPE (GcmTables, gcm_tables, G_TYPE_OBJECT)
 
 /**
@@ -254,9 +256,13 @@ gcm_tables_finalize (GObject *object)
 GcmTables *
 gcm_tables_new (void)
 {
-	GcmTables *tables;
-	tables = g_object_new (GCM_TYPE_TABLES, NULL);
-	return GCM_TABLES (tables);
+	if (gcm_tables_object != NULL) {
+		g_object_ref (gcm_tables_object);
+	} else {
+		gcm_tables_object = g_object_new (GCM_TYPE_TABLES, NULL);
+		g_object_add_weak_pointer (gcm_tables_object, &gcm_tables_object);
+	}
+	return GCM_TABLES (gcm_tables_object);
 }
 
 /***************************************************************************

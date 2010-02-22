@@ -30,8 +30,10 @@
 
 #include <glib/gi18n.h>
 #include <gudev/gudev.h>
+#include <gtk/gtk.h>
 
 #include "gcm-colorimeter.h"
+#include "gcm-utils.h"
 
 #include "egg-debug.h"
 
@@ -47,10 +49,14 @@ static void     gcm_colorimeter_finalize	(GObject     *object);
 struct _GcmColorimeterPrivate
 {
 	gboolean			 present;
+	gboolean			 supports_display;
+	gboolean			 supports_projector;
+	gboolean			 supports_printer;
 	gchar				*vendor;
 	gchar				*model;
 	GUdevClient			*client;
 	GcmColorimeterKind		 colorimeter_kind;
+	gboolean			 shown_warning;
 };
 
 enum {
@@ -59,6 +65,9 @@ enum {
 	PROP_VENDOR,
 	PROP_MODEL,
 	PROP_COLORIMETER_KIND,
+	PROP_SUPPORTS_DISPLAY,
+	PROP_SUPPORTS_PROJECTOR,
+	PROP_SUPPORTS_PRINTER,
 	PROP_LAST
 };
 
@@ -68,6 +77,7 @@ enum {
 };
 
 static guint signals[SIGNAL_LAST] = { 0 };
+static gpointer gcm_colorimeter_object = NULL;
 
 G_DEFINE_TYPE (GcmColorimeter, gcm_colorimeter, G_TYPE_OBJECT)
 
@@ -96,6 +106,33 @@ gboolean
 gcm_colorimeter_get_present (GcmColorimeter *colorimeter)
 {
 	return colorimeter->priv->present;
+}
+
+/**
+ * gcm_colorimeter_supports_display:
+ **/
+gboolean
+gcm_colorimeter_supports_display (GcmColorimeter *colorimeter)
+{
+	return colorimeter->priv->supports_display;
+}
+
+/**
+ * gcm_colorimeter_supports_projector:
+ **/
+gboolean
+gcm_colorimeter_supports_projector (GcmColorimeter *colorimeter)
+{
+	return colorimeter->priv->supports_projector;
+}
+
+/**
+ * gcm_colorimeter_supports_printer:
+ **/
+gboolean
+gcm_colorimeter_supports_printer (GcmColorimeter *colorimeter)
+{
+	return colorimeter->priv->supports_printer;
 }
 
 /**
@@ -128,6 +165,15 @@ gcm_colorimeter_get_property (GObject *object, guint prop_id, GValue *value, GPa
 		break;
 	case PROP_COLORIMETER_KIND:
 		g_value_set_uint (value, priv->colorimeter_kind);
+		break;
+	case PROP_SUPPORTS_DISPLAY:
+		g_value_set_uint (value, priv->supports_display);
+		break;
+	case PROP_SUPPORTS_PROJECTOR:
+		g_value_set_uint (value, priv->supports_projector);
+		break;
+	case PROP_SUPPORTS_PRINTER:
+		g_value_set_uint (value, priv->supports_printer);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -193,6 +239,31 @@ gcm_colorimeter_class_init (GcmColorimeterClass *klass)
 	g_object_class_install_property (object_class, PROP_COLORIMETER_KIND, pspec);
 
 	/**
+	 * GcmColorimeter:supports-display:
+	 */
+	pspec = g_param_spec_boolean ("supports-display", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_SUPPORTS_DISPLAY, pspec);
+
+	/**
+	 * GcmColorimeter:supports-projector:
+	 */
+	pspec = g_param_spec_boolean ("supports-projector", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_SUPPORTS_PROJECTOR, pspec);
+
+
+	/**
+	 * GcmColorimeter:supports-printer:
+	 */
+	pspec = g_param_spec_boolean ("supports-printer", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_SUPPORTS_PRINTER, pspec);
+
+	/**
 	 * GcmColorimeter::added:
 	 **/
 	signals[SIGNAL_CHANGED] =
@@ -213,10 +284,11 @@ static gboolean
 gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 {
 	gboolean ret;
+	GtkWidget *dialog;
 	GcmColorimeterPrivate *priv = colorimeter->priv;
 
 	/* interesting device? */
-	ret = g_udev_device_get_property_as_boolean (device, "COLOR_MEASUREMENT_DEVICE");
+	ret = g_udev_device_get_property_as_boolean (device, "GCM_COLORIMETER");
 	if (!ret)
 		goto out;
 
@@ -227,20 +299,70 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 	/* vendor */
 	g_free (priv->vendor);
 	priv->vendor = g_strdup (g_udev_device_get_property (device, "ID_VENDOR_FROM_DATABASE"));
+	if (priv->vendor == NULL)
+		priv->vendor = g_strdup (g_udev_device_get_sysfs_attr (device, "manufacturer"));
 
 	/* model */
 	g_free (priv->model);
 	priv->model = g_strdup (g_udev_device_get_property (device, "ID_MODEL_FROM_DATABASE"));
+	if (priv->model == NULL)
+		priv->model = g_strdup (g_udev_device_get_sysfs_attr (device, "product"));
+
+	/* device support */
+	priv->supports_display = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_DISPLAY");
+	priv->supports_projector = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PROJECTOR");
+	priv->supports_printer = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PRINTER");
 
 	/* try to get type */
-	if (g_strcmp0 (priv->model, "Huey") == 0) {
+	if (g_ascii_strcasecmp (priv->model, "Huey") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_HUEY;
-	} else if (g_strcmp0 (priv->model, "MunkiXXX") == 0) {
+	} else if (g_ascii_strcasecmp (priv->model, "ColorMunki") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_COLOR_MUNKI;
-	} else if (g_strcmp0 (priv->model, "SpyderXXX") == 0) {
+	} else if (g_ascii_strcasecmp (priv->model, "SpyderXXX") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_SPYDER;
+	} else if (priv->model != NULL) {
+		egg_warning ("Failed to recognise color device: %s", priv->model);
+
+		/* show dialog, in order to help the project */
+		if (!priv->shown_warning) {
+			dialog = gtk_message_dialog_new (NULL,
+							 GTK_DIALOG_MODAL,
+							 GTK_MESSAGE_INFO,
+							 GTK_BUTTONS_OK,
+							 /* TRANSLATORS: this is when the device is not recognised */
+							 _("Colorimeter not recognised"));
+			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+								  "Could not recognise attached colorimeter device '%s'. "
+								  "It should work okay, but if you want to help the project, "
+								  "please visit %s and supply the required information.",
+								  priv->model, "http://live.gnome.org/GnomeColorManager/Help");
+			gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+			gtk_dialog_run (GTK_DIALOG (dialog));
+			gtk_widget_destroy (dialog);
+			priv->shown_warning = TRUE;
+		}
+		priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;
 	} else {
-		egg_warning ("Failed to recognise color device, please report to the mailing list: %s", priv->model);
+		egg_warning ("Failed to recognise color device");
+
+		/* show dialog, in order to help the project */
+			if (!priv->shown_warning) {
+			dialog = gtk_message_dialog_new (NULL,
+							 GTK_DIALOG_MODAL,
+							 GTK_MESSAGE_INFO,
+							 GTK_BUTTONS_OK,
+							 /* TRANSLATORS: this is when the device is not recognised */
+							 _("Colorimeter not registered"));
+			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+								  "The attached colorimeter device has not been registered in usb.ids. "
+								  "It should work okay, but if you want to help the project, "
+								  "please visit %s and supply the required information.",
+								  "http://live.gnome.org/GnomeColorManager/Help");
+			gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+			gtk_dialog_run (GTK_DIALOG (dialog));
+			gtk_widget_destroy (dialog);
+			priv->shown_warning = TRUE;
+		}
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;
 	}
 
@@ -261,13 +383,16 @@ gcm_colorimeter_device_remove (GcmColorimeter *colorimeter, GUdevDevice *device)
 	GcmColorimeterPrivate *priv = colorimeter->priv;
 
 	/* interesting device? */
-	ret = g_udev_device_get_property_as_boolean (device, "COLOR_MEASUREMENT_DEVICE");
+	ret = g_udev_device_get_property_as_boolean (device, "GCM_COLORIMETER");
 	if (!ret)
 		goto out;
 
 	/* get data */
 	egg_debug ("removing color management device: %s", g_udev_device_get_sysfs_path (device));
 	priv->present = FALSE;
+	priv->supports_display = FALSE;
+	priv->supports_projector = FALSE;
+	priv->supports_printer = FALSE;
 
 	/* vendor */
 	g_free (priv->vendor);
@@ -335,6 +460,7 @@ gcm_colorimeter_init (GcmColorimeter *colorimeter)
 	colorimeter->priv = GCM_COLORIMETER_GET_PRIVATE (colorimeter);
 	colorimeter->priv->vendor = NULL;
 	colorimeter->priv->model = NULL;
+	colorimeter->priv->shown_warning = FALSE;
 	colorimeter->priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;
 
 	/* use GUdev to find the calibration device */
@@ -370,8 +496,12 @@ gcm_colorimeter_finalize (GObject *object)
 GcmColorimeter *
 gcm_colorimeter_new (void)
 {
-	GcmColorimeter *colorimeter;
-	colorimeter = g_object_new (GCM_TYPE_COLORIMETER, NULL);
-	return GCM_COLORIMETER (colorimeter);
+	if (gcm_colorimeter_object != NULL) {
+		g_object_ref (gcm_colorimeter_object);
+	} else {
+		gcm_colorimeter_object = g_object_new (GCM_TYPE_COLORIMETER, NULL);
+		g_object_add_weak_pointer (gcm_colorimeter_object, &gcm_colorimeter_object);
+	}
+	return GCM_COLORIMETER (gcm_colorimeter_object);
 }
 

@@ -76,16 +76,18 @@ gcm_utils_linkify (const gchar *text)
  * gcm_utils_is_icc_profile:
  **/
 gboolean
-gcm_utils_is_icc_profile (const gchar *filename)
+gcm_utils_is_icc_profile (GFile *file)
 {
-	GFile *file;
 	GFileInfo *info;
 	const gchar *type;
 	GError *error = NULL;
 	gboolean ret = FALSE;
+	gchar *filename = NULL;
 
 	/* get content type for file */
-	file = g_file_new_for_path (filename);
+	filename = g_file_get_uri (file);
+	if (filename == NULL)
+		filename = g_file_get_path (file);
 	info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE, G_FILE_QUERY_INFO_NONE, NULL, &error);
 	if (info != NULL) {
 		type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
@@ -118,7 +120,7 @@ gcm_utils_is_icc_profile (const gchar *filename)
 out:
 	if (info != NULL)
 		g_object_unref (info);
-	g_object_unref (file);
+	g_free (filename);
 	return ret;
 }
 
@@ -157,6 +159,9 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 					   "org.freedesktop.PackageKit",
 					   "/org/freedesktop/PackageKit",
 					   "org.freedesktop.PackageKit.Modify");
+
+	/* set timeout */
+	dbus_g_proxy_set_default_timeout (proxy, G_MAXINT);
 
 	/* execute sync method */
 	ret = dbus_g_proxy_call (proxy, "InstallPackageNames", &error,
@@ -235,6 +240,29 @@ gcm_utils_ensure_printable (gchar *text)
 }
 
 /**
+ * gcm_utils_mkdir_with_parents:
+ **/
+gboolean
+gcm_utils_mkdir_with_parents (const gchar *filename, GError **error)
+{
+	gboolean ret;
+	GFile *file = NULL;
+
+	/* ensure desination exists */
+	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
+	if (!ret) {
+		file = g_file_new_for_path (filename);
+		ret = g_file_make_directory_with_parents (file, NULL, error);
+		if (!ret)
+			goto out;
+	}
+out:
+	if (file != NULL)
+		g_object_unref (file);
+	return ret;
+}
+
+/**
  * gcm_utils_mkdir_for_filename:
  **/
 gboolean
@@ -244,7 +272,7 @@ gcm_utils_mkdir_for_filename (const gchar *filename, GError **error)
 	GFile *file;
 	GFile *parent_dir;
 
-	file = g_file_new_for_path (filename);
+	file = g_file_new_for_uri (filename);
 	parent_dir = g_file_get_parent (file);
 
 	/* ensure desination exists */
@@ -264,52 +292,53 @@ out:
  * gcm_utils_mkdir_and_copy:
  **/
 gboolean
-gcm_utils_mkdir_and_copy (const gchar *source, const gchar *destination, GError **error)
+gcm_utils_mkdir_and_copy (GFile *source, GFile *destination, GError **error)
 {
 	gboolean ret;
-	GFile *sourcefile;
-	GFile *destfile;
+	GFile *parent;
 
 	g_return_val_if_fail (source != NULL, FALSE);
 	g_return_val_if_fail (destination != NULL, FALSE);
 
-	/* setup paths */
-	sourcefile = g_file_new_for_path (source);
-	destfile = g_file_new_for_path (destination);
+	/* get parent */
+	parent = g_file_get_parent (destination);
 
 	/* create directory */
-	ret = gcm_utils_mkdir_for_filename (destination, error);
-	if (!ret)
-		goto out;
+	if (!g_file_query_exists (parent, NULL)) {
+		ret = g_file_make_directory_with_parents (parent, NULL, error);
+		if (!ret)
+			goto out;
+	}
 
 	/* do the copy */
-	egg_debug ("copying from %s to %s", source, destination);
-	ret = g_file_copy (sourcefile, destfile, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, error);
+	ret = g_file_copy (source, destination, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, error);
 	if (!ret)
 		goto out;
 out:
-	g_object_unref (sourcefile);
-	g_object_unref (destfile);
+	g_object_unref (parent);
 	return ret;
 }
 
 /**
  * gcm_utils_get_profile_destination:
  **/
-gchar *
-gcm_utils_get_profile_destination (const gchar *filename)
+GFile *
+gcm_utils_get_profile_destination (GFile *file)
 {
 	gchar *basename;
 	gchar *destination;
+	GFile *dest;
 
-	g_return_val_if_fail (filename != NULL, NULL);
+	g_return_val_if_fail (file != NULL, NULL);
 
 	/* get destination filename for this source file */
-	basename = g_path_get_basename (filename);
+	basename = g_file_get_basename (file);
 	destination = g_build_filename (g_get_home_dir (), GCM_PROFILE_PATH, basename, NULL);
+	dest = g_file_new_for_path (destination);
 
 	g_free (basename);
-	return destination;
+	g_free (destination);
+	return dest;
 }
 
 /**
@@ -513,6 +542,8 @@ gcm_utils_test (EggTest *test)
 	gchar *filename;
 	GcmProfileTypeEnum profile_type;
 	GcmDeviceTypeEnum device_type;
+	GFile *file;
+	GFile *dest;
 
 	if (!egg_test_start (test, "GcmUtils"))
 		return;
@@ -530,18 +561,24 @@ gcm_utils_test (EggTest *test)
 
 	/************************************************************/
 	egg_test_title (test, "get filename of data file");
-	filename = gcm_utils_get_profile_destination ("dave.icc");
+	file = g_file_new_for_path ("dave.icc");
+	dest = gcm_utils_get_profile_destination (file);
+	filename = g_file_get_path (dest);
 	if (g_str_has_suffix (filename, "/.color/icc/dave.icc"))
 		egg_test_success (test, NULL);
 	else
 		egg_test_failed (test, "failed to get filename: %s", filename);
 	g_free (filename);
+	g_object_unref (file);
+	g_object_unref (dest);
 
 	/************************************************************/
 	egg_test_title (test, "check is icc profile");
 	filename = egg_test_get_data_file ("bluish.icc");
-	ret = gcm_utils_is_icc_profile (filename);
+	file = g_file_new_for_path (filename);
+	ret = gcm_utils_is_icc_profile (file);
 	egg_test_assert (test, ret);
+	g_object_unref (file);
 	g_free (filename);
 
 	/************************************************************/

@@ -4,7 +4,7 @@
   <!-- interface-naming-policy project-wide -->
   <object class="GtkDialog" id="dialog_prefs">
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Color management</property>
+    <property name="title" translatable="yes">Color Management</property>
     <property name="icon_name">preferences-system</property>
     <property name="type_hint">normal</property>
     <property name="has_separator">False</property>
@@ -61,11 +61,10 @@
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkButton" id="button_calibrate">
-                                    <property name="label" translatable="yes" comments="This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image">Create _profile for device</property>
+                                    <property name="label" translatable="yes" comments="This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image">Create _Profile for Device</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Create a color profile for the selected device</property>
                                     <property name="use_underline">True</property>
                                   </object>
                                   <packing>
@@ -75,7 +74,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="button_delete">
-                                    <property name="label" translatable="yes" comments="This is a button to delete the saved device">_Delete device</property>
+                                    <property name="label" translatable="yes" comments="This is a button to delete the saved device">_Delete Device</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -290,6 +289,25 @@
                                           <packing>
                                             <property name="padding">3</property>
                                             <property name="position">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkHBox" id="hbox3">
+                                            <property name="visible">True</property>
+                                            <child>
+                                              <object class="GtkLabel" id="label_problems">
+                                                <property name="visible">True</property>
+                                                <property name="label">problems</property>
+                                                <property name="selectable">True</property>
+                                              </object>
+                                              <packing>
+                                                <property name="expand">False</property>
+                                                <property name="position">0</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                          <packing>
+                                            <property name="position">3</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -588,11 +606,11 @@
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkButton" id="button_profile_import">
-                                    <property name="label" translatable="yes">_Import profile</property>
+                                    <property name="label" translatable="yes">_Import Profile</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
-                                    <property name="tooltip_text" translatable="yes">Import a ICC file from another location</property>
+                                    <property name="tooltip_text" translatable="yes">Import an ICC file from another location</property>
                                     <property name="use_underline">True</property>
                                   </object>
                                   <packing>
@@ -602,7 +620,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="button_profile_delete">
-                                    <property name="label" translatable="yes">_Delete profile</property>
+                                    <property name="label" translatable="yes">_Delete Profile</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -1108,7 +1126,7 @@
                                                     <child>
                                                       <object class="GtkLabel" id="label_title_filename">
                                                         <property name="visible">True</property>
-                                                        <property name="label" translatable="yes" comments="The basename (the last section of the filename) of the profile">File name:</property>
+                                                        <property name="label" translatable="yes" comments="The basename (the last section of the filename) of the profile">Filename:</property>
                                                       </object>
                                                       <packing>
                                                         <property name="expand">False</property>

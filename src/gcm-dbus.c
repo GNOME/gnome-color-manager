@@ -170,6 +170,7 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *sysfs_pat
 	guint i;
 	GcmDevice *device;
 	GcmProfile *profile;
+	GFile *file;
 	GError *error = NULL;
 	GPtrArray *array;
 	GPtrArray *array_devices;
@@ -200,7 +201,8 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *sysfs_pat
 
 			/* open and parse filename */
 			profile = gcm_profile_default_new ();
-			ret = gcm_profile_parse (profile, filename, &error);
+			file = g_file_new_for_path (filename);
+			ret = gcm_profile_parse (profile, file, &error);
 			if (!ret) {
 				egg_warning ("failed to parse %s: %s", filename, error->message);
 				g_clear_error (&error);
@@ -209,6 +211,7 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *sysfs_pat
 			}
 
 			/* unref */
+			g_object_unref (file);
 			g_object_unref (profile);
 			g_free (filename);
 		}

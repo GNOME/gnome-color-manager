@@ -57,11 +57,13 @@ struct _GcmDeviceXrandrPrivate
 	GConfClient			*gconf_client;
 	GcmXserver			*xserver;
 	GcmScreen			*screen;
+	gboolean			 xrandr_fallback;
 };
 
 enum {
 	PROP_0,
 	PROP_NATIVE_DEVICE,
+	PROP_XRANDR_FALLBACK,
 	PROP_LAST
 };
 
@@ -120,6 +122,10 @@ gcm_device_xrandr_get_output_name (GcmDeviceXrandr *device_xrandr, GnomeRROutput
 		g_string_append (string, name);
 	else
 		g_string_append (string, output_name);
+
+	/* don't show 'default' even if the nvidia binary blog is craptastic */
+	if (g_strcmp0 (string->str, "default") == 0)
+		g_string_assign (string, "Unknown Monitor");
 
 out:
 	/* find the best option */
@@ -323,8 +329,12 @@ gcm_device_xrandr_get_gamma_size (GcmDeviceXrandr *device_xrandr, GnomeRRCrtc *c
 		size = 0;
 
 	/* some drivers support Xrandr 1.2, not 1.3 */
-	if (size == 0)
+	if (size == 0) {
+		priv->xrandr_fallback = TRUE;
 		size = gcm_device_xrandr_get_gamma_size_fallback ();
+	} else {
+		priv->xrandr_fallback = FALSE;
+	}
 
 	/* no size, or X popped an error */
 	if (size == 0) {
@@ -443,6 +453,7 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	gboolean use_global;
 	gboolean use_atom;
 	gboolean leftmost_screen = FALSE;
+	GFile *file = NULL;
 	GcmDeviceTypeEnum type;
 	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (device);
 	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
@@ -503,7 +514,9 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	if (use_global && filename != NULL) {
 		/* create CLUT */
 		profile = gcm_profile_default_new ();
-		ret = gcm_profile_parse (profile, filename, error);
+		file = g_file_new_for_path (filename);
+		ret = gcm_profile_parse (profile, file, error);
+		g_object_unref (file);
 		if (!ret)
 			goto out;
 
@@ -590,6 +603,9 @@ gcm_device_xrandr_get_property (GObject *object, guint prop_id, GValue *value, G
 	case PROP_NATIVE_DEVICE:
 		g_value_set_string (value, priv->native_device);
 		break;
+	case PROP_XRANDR_FALLBACK:
+		g_value_set_boolean (value, priv->xrandr_fallback);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -640,6 +656,14 @@ gcm_device_xrandr_class_init (GcmDeviceXrandrClass *klass)
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_NATIVE_DEVICE, pspec);
 
+	/**
+	 * GcmDeviceXrandr:xrandr-fallback:
+	 */
+	pspec = g_param_spec_boolean ("xrandr-fallback", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_XRANDR_FALLBACK, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmDeviceXrandrPrivate));
 }
 
@@ -651,6 +675,7 @@ gcm_device_xrandr_init (GcmDeviceXrandr *device_xrandr)
 {
 	device_xrandr->priv = GCM_DEVICE_XRANDR_GET_PRIVATE (device_xrandr);
 	device_xrandr->priv->native_device = NULL;
+	device_xrandr->priv->xrandr_fallback = FALSE;
 	device_xrandr->priv->gamma_size = 0;
 	device_xrandr->priv->edid = gcm_edid_new ();
 	device_xrandr->priv->dmi = gcm_dmi_new ();

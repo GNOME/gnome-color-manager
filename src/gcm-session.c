@@ -139,7 +139,7 @@ main (int argc, char *argv[])
 	/* TRANSLATORS: program name, a session wide daemon to watch for updates and changing system state */
 	g_set_application_name (_("Color Management"));
 	context = g_option_context_new (NULL);
-	g_option_context_set_summary (context, _("Color Management DBus Service"));
+	g_option_context_set_summary (context, _("Color Management D-Bus Service"));
 	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_add_group (context, egg_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));

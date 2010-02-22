@@ -10,6 +10,7 @@ INCLUDES =						\
 	$(XORG_CFLAGS)					\
 	$(CUPS_CFLAGS)					\
 	$(TIFF_CFLAGS)					\
+	$(CANBERRA_CFLAGS)				\
 	$(DBUS_GLIB_CFLAGS)				\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
@@ -32,6 +33,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-screen.h					\
 	gcm-xyz.c					\
 	gcm-xyz.h					\
+	gcm-print.c					\
+	gcm-print.h					\
 	gcm-utils.c					\
 	gcm-utils.h					\
 	gcm-enum.c					\
@@ -219,6 +222,8 @@ gcm_prefs_SOURCES =					\
 	gcm-calibrate-argyll.h				\
 	gcm-calibrate-manual.c				\
 	gcm-calibrate-manual.h				\
+	gcm-calibrate-dialog.c				\
+	gcm-calibrate-dialog.h				\
 	gcm-brightness.c				\
 	gcm-brightness.h				\
 	gcm-prefs.c
@@ -238,6 +243,7 @@ gcm_prefs_LDADD =					\
 	$(GTK_LIBS)					\
 	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
+	$(CANBERRA_LIBS)				\
 	-lm
 
 gcm_prefs_CFLAGS =					\
@@ -289,6 +295,7 @@ gcm_self_test_SOURCES =					\
 	gcm-gamma-widget.c				\
 	gcm-calibrate.c					\
 	gcm-calibrate-manual.c				\
+	gcm-calibrate-dialog.c				\
 	egg-test.h					\
 	egg-test.c					\
 	$(NULL)

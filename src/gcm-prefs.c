@@ -30,6 +30,7 @@
 #include <libgnomeui/gnome-rr.h>
 #include <gconf/gconf-client.h>
 #include <locale.h>
+#include <canberra-gtk.h>
 
 #include "egg-debug.h"
 
@@ -52,7 +53,8 @@ static GcmProfileStore *profile_store = NULL;
 static GcmClient *gcm_client = NULL;
 static GcmColorimeter *colorimeter = NULL;
 static gboolean setting_up_device = FALSE;
-static GtkWidget *info_bar = NULL;
+static GtkWidget *info_bar_loading = NULL;
+static GtkWidget *info_bar_vcgt = NULL;
 static GtkWidget *cie_widget = NULL;
 static GtkWidget *trc_widget = NULL;
 static GConfClient *gconf_client = NULL;
@@ -89,6 +91,23 @@ typedef enum {
 } GcmPrefsEntryType;
 
 static void gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer userdata);
+
+/**
+ * gcm_prefs_error_dialog:
+ **/
+static void
+gcm_prefs_error_dialog (const gchar *title, const gchar *message)
+{
+	GtkWindow *window;
+	GtkWidget *dialog;
+
+	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	dialog = gtk_message_dialog_new (window, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s", title);
+	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", message);
+	gtk_dialog_run (GTK_DIALOG (dialog));
+	gtk_widget_destroy (dialog);
+}
 
 /**
  * gcm_prefs_close_cb:
@@ -131,7 +150,8 @@ gcm_prefs_set_default (GcmDevice *device)
 	egg_debug ("running: %s", cmdline);
 	ret = g_spawn_command_line_sync (cmdline, NULL, NULL, NULL, &error);
 	if (!ret) {
-		egg_warning ("failed to set default: %s", error->message);
+		/* TRANSLATORS: could not save for all users */
+		gcm_prefs_error_dialog (_("Failed to save defaults for all users"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -159,7 +179,7 @@ gcm_prefs_combobox_add_profile (GtkWidget *widget, GcmProfile *profile, GcmPrefs
 		description = g_strdup (_("None"));
 	} else if (entry_type == GCM_PREFS_ENTRY_TYPE_IMPORT) {
 		/* TRANSLATORS: this is where the user can click and import a profile */
-		description = g_strdup (_("Other profile..."));
+		description = g_strdup (_("Other profile…"));
 	} else {
 		g_object_get (profile,
 			      "description", &description,
@@ -292,7 +312,12 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
 	ret = gcm_calibrate_device (calibrate, window, &error);
 	if (!ret) {
-		egg_warning ("failed to calibrate: %s", error->message);
+		if (error->code != GCM_CALIBRATE_ERROR_USER_ABORT) {
+			/* TRANSLATORS: could not calibrate */
+			gcm_prefs_error_dialog (_("Failed to calibrate"), error->message);
+		} else {
+			egg_warning ("failed to calibrate: %s", error->message);
+		}
 		g_error_free (error);
 		goto out;
 	}
@@ -448,25 +473,26 @@ out:
 /**
  * gcm_prefs_file_chooser_get_icc_profile:
  **/
-static gchar *
+static GFile *
 gcm_prefs_file_chooser_get_icc_profile (void)
 {
-	gchar *filename = NULL;
 	GtkWindow *window;
 	GtkWidget *dialog;
+	GFile *file = NULL;
 	GtkFileFilter *filter;
 
 	/* create new dialog */
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
 	/* TRANSLATORS: dialog for file->open dialog */
-	dialog = gtk_file_chooser_dialog_new (_("Select ICC profile file"), window,
+	dialog = gtk_file_chooser_dialog_new (_("Select ICC Profile File"), window,
 					       GTK_FILE_CHOOSER_ACTION_OPEN,
 					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					       _("Import"), GTK_RESPONSE_ACCEPT,
 					      NULL);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), g_get_home_dir ());
 	gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER(dialog), FALSE);
+	gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER(dialog), FALSE);
 
 	/* setup the filter */
 	filter = gtk_file_filter_new ();
@@ -481,73 +507,46 @@ gcm_prefs_file_chooser_get_icc_profile (void)
 	/* TRANSLATORS: filter name on the file->open dialog */
 	gtk_file_filter_set_name (filter, _("Supported ICC profiles"));
 	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
-//	g_object_unref (filter);
+
+	/* setup the all files filter */
+	filter = gtk_file_filter_new ();
+	gtk_file_filter_add_pattern (filter, "*");
+	/* TRANSLATORS: filter name on the file->open dialog */
+	gtk_file_filter_set_name (filter, _("All files"));
+	gtk_file_chooser_add_filter (GTK_FILE_CHOOSER(dialog), filter);
 
 	/* did user choose file */
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
-		filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(dialog));
+		file = gtk_file_chooser_get_file (GTK_FILE_CHOOSER(dialog));
 
 	/* we're done */
 	gtk_widget_destroy (dialog);
 
 	/* or NULL for missing */
-	return filename;
+	return file;
 }
 
 /**
- * gcm_prefs_profile_import:
+ * gcm_prefs_profile_import_file:
  **/
 static gboolean
-gcm_prefs_profile_import (const gchar *filename)
+gcm_prefs_profile_import_file (GFile *file)
 {
-	GtkWidget *dialog;
+	gboolean ret = FALSE;
 	GError *error = NULL;
-	gchar *destination = NULL;
-	GtkWindow *window;
-	gboolean ret;
+	GFile *destination = NULL;
 
 	/* copy icc file to ~/.color/icc */
-	destination = gcm_utils_get_profile_destination (filename);
-	ret = gcm_utils_mkdir_and_copy (filename, destination, &error);
+	destination = gcm_utils_get_profile_destination (file);
+	ret = gcm_utils_mkdir_and_copy (file, destination, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */
-		window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
-		dialog = gtk_message_dialog_new (window, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Failed to copy file"));
-		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", error->message);
-		gtk_dialog_run (GTK_DIALOG (dialog));
+		gcm_prefs_error_dialog (_("Failed to copy file"), error->message);
 		g_error_free (error);
-		gtk_widget_destroy (dialog);
 		goto out;
 	}
 out:
-	g_free (destination);
-	return ret;
-}
-
-/**
- * gcm_prefs_profile_import_uri:
- **/
-static gboolean
-gcm_prefs_profile_import_uri (const gchar *uri)
-{
-	GFile *file;
-	gchar *path;
-	gboolean ret = FALSE;
-
-	/* resolve */
-	file = g_file_new_for_uri (uri);
-	path = g_file_get_path (file);
-	if (path == NULL) {
-		egg_warning ("failed to get path: %s", uri);
-		goto out;
-	}
-
-	/* import */
-	ret = gcm_prefs_profile_import (path);
-out:
-	g_free (path);
-	g_object_unref (file);
+	g_object_unref (destination);
 	return ret;
 }
 
@@ -557,18 +556,20 @@ out:
 static void
 gcm_prefs_profile_import_cb (GtkWidget *widget, gpointer data)
 {
-	gchar *filename;
+	GFile *file;
 
 	/* get new file */
-	filename = gcm_prefs_file_chooser_get_icc_profile ();
-	if (filename == NULL)
+	file = gcm_prefs_file_chooser_get_icc_profile ();
+	if (file == NULL) {
+		egg_warning ("failed to get filename");
 		goto out;
+	}
 
 	/* import this */
-	gcm_prefs_profile_import (filename);
-
+	gcm_prefs_profile_import_file (file);
 out:
-	g_free (filename);
+	if (file != NULL)
+		g_object_unref (file);
 }
 
 /**
@@ -579,6 +580,7 @@ gcm_prefs_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gin
 {
 	const guchar *filename;
 	gchar **filenames = NULL;
+	GFile *file = NULL;
 	guint i;
 	gboolean ret;
 
@@ -596,8 +598,14 @@ gcm_prefs_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gin
 	filenames = g_strsplit_set ((const gchar *)filename, "\r\n", -1);
 	for (i=0; filenames[i]!=NULL; i++) {
 
+		/* blank entry */
+		if (filenames[i][0] == '\0')
+			continue;
+
 		/* check this is an ICC profile */
-		ret = gcm_utils_is_icc_profile (filenames[i]);
+		egg_debug ("trying to import %s", filenames[i]);
+		file = g_file_new_for_uri (filenames[i]);
+		ret = gcm_utils_is_icc_profile (file);
 		if (!ret) {
 			egg_debug ("%s is not a ICC profile", filenames[i]);
 			gtk_drag_finish (context, FALSE, FALSE, _time);
@@ -605,16 +613,20 @@ gcm_prefs_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gin
 		}
 
 		/* try to import it */
-		ret = gcm_prefs_profile_import_uri (filenames[i]);
+		ret = gcm_prefs_profile_import_file (file);
 		if (!ret) {
 			egg_debug ("%s did not import correctly", filenames[i]);
 			gtk_drag_finish (context, FALSE, FALSE, _time);
 			goto out;
 		}
+		g_object_unref (file);
+		file = NULL;
 	}
 
 	gtk_drag_finish (context, TRUE, FALSE, _time);
 out:
+	if (file != NULL)
+		g_object_unref (file);
 	g_strfreev (filenames);
 }
 
@@ -688,9 +700,11 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	gchar *filename = NULL;
 	guint i;
 	gchar *name;
-	gchar *destination = NULL;
 	GcmProfile *profile;
 	GPtrArray *profile_array = NULL;
+	GFile *file = NULL;
+	GFile *dest = NULL;
+	gchar *destination = NULL;
 
 	/* ensure argyllcms is installed */
 	ret = gcm_prefs_ensure_argyllcms_installed ();
@@ -735,8 +749,9 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* copy the ICC file to the proper location */
-	destination = gcm_utils_get_profile_destination (filename);
-	ret = gcm_utils_mkdir_and_copy (filename, destination, &error);
+	file = g_file_new_for_path (filename);
+	dest = gcm_utils_get_profile_destination (file);
+	ret = gcm_utils_mkdir_and_copy (file, dest, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
@@ -747,6 +762,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	profile_array = gcm_profile_store_get_array (profile_store);
 
 	/* find an existing profile of this name */
+	destination = g_file_get_path (dest);
 	for (i=0; i<profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
 		g_object_get (profile,
@@ -778,6 +794,14 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 
 	/* remove temporary file */
 	g_unlink (filename);
+
+	/* play sound from the naming spec */
+	ca_context_play (ca_gtk_context_get (), 0,
+			 CA_PROP_EVENT_ID, "complete",
+			 /* TRANSLATORS: this is the application name for libcanberra */
+			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+			 /* TRANSLATORS: this is the sound description */
+			 CA_PROP_EVENT_DESCRIPTION, _("Calibration completed"), NULL);
 out:
 	g_free (filename);
 	g_free (destination);
@@ -785,6 +809,10 @@ out:
 		g_ptr_array_unref (profile_array);
 	if (calibrate != NULL)
 		g_object_unref (calibrate);
+	if (file != NULL)
+		g_object_unref (file);
+	if (dest != NULL)
+		g_object_unref (dest);
 }
 
 /**
@@ -799,7 +827,8 @@ gcm_prefs_delete_cb (GtkWidget *widget, gpointer data)
 	/* try to delete device */
 	ret = gcm_client_delete_device (gcm_client, current_device, &error);
 	if (!ret) {
-		egg_warning ("failed to delete: %s", error->message);
+		/* TRANSLATORS: could not read file */
+		gcm_prefs_error_dialog (_("Failed to delete file"), error->message);
 		g_error_free (error);
 	}
 }
@@ -924,12 +953,19 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 {
 	gboolean ret = FALSE;
 	GtkWidget *widget;
+	const gchar *tooltip;
 	GcmDeviceTypeEnum type;
 	gboolean connected;
 
+	/* TRANSLATORS: this is when the button is sensitive */
+	tooltip = _("Create a color profile for the selected device");
+
 	/* no device selected */
-	if (current_device == NULL)
+	if (current_device == NULL) {
+		/* TRANSLATORS: this is when the button is insensitive */
+		tooltip = _("Cannot calibrate: No device is selected");
 		goto out;
+	}
 
 	/* get current device properties */
 	g_object_get (current_device,
@@ -941,8 +977,11 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
 
 		/* are we disconnected */
-		if (!connected)
+		if (!connected) {
+			/* TRANSLATORS: this is when the button is insensitive */
+			tooltip = _("Cannot calibrate: The device is not connected");
 			goto out;
+		}
 
 		/* find whether we have hardware installed */
 		ret = gcm_colorimeter_get_present (colorimeter);
@@ -950,19 +989,47 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		egg_debug ("overriding device presence %i with TRUE", ret);
 		ret = TRUE;
 #endif
+		if (!ret) {
+			/* TRANSLATORS: this is when the button is insensitive */
+			tooltip = _("Cannot calibrate: The colorimeter is not plugged in");
+			goto out;
+		}
 	} else if (type == GCM_DEVICE_TYPE_ENUM_SCANNER ||
 		   type == GCM_DEVICE_TYPE_ENUM_CAMERA) {
 
 		/* TODO: find out if we can scan using gnome-scan */
 		ret = TRUE;
+
+	} else if (type == GCM_DEVICE_TYPE_ENUM_PRINTER) {
+
+		/* find whether we have hardware installed */
+		ret = gcm_colorimeter_get_present (colorimeter);
+		if (!ret) {
+			/* TRANSLATORS: this is when the button is insensitive */
+			tooltip = _("Cannot calibrate: The colorimeter is not plugged in");
+			goto out;
+		}
+
+		/* find whether we have hardware installed */
+		ret = gcm_colorimeter_supports_printer (colorimeter);
+		if (!ret) {
+			/* TRANSLATORS: this is when the button is insensitive */
+			tooltip = _("Cannot calibrate: The colorimeter does not support printer profiling");
+			goto out;
+		}
+
+		/* TRANSLATORS: this is when the button is insensitive */
+		tooltip = _("Cannot calibrate this type of device (although support is planned)");
+
 	} else {
 
-		/* we can't calibrate this type of device */
-		ret = FALSE;
+		/* TRANSLATORS: this is when the button is insensitive */
+		tooltip = _("Cannot calibrate this type of device");
 	}
 out:
-	/* disable the button if no supported hardware is found */
+	/* control the tooltip and sensitivity of the button */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
+	gtk_widget_set_tooltip_text (widget, tooltip);
 	gtk_widget_set_sensitive (widget, ret);
 }
 
@@ -976,7 +1043,6 @@ gcm_prefs_is_profile_suitable_for_device (GcmProfile *profile, GcmDevice *device
 	GcmProfileTypeEnum profile_type;
 	GcmColorspaceEnum profile_colorspace;
 	GcmColorspaceEnum device_colorspace;
-	gboolean has_vcgt;
 	gboolean ret = FALSE;
 	GcmDeviceTypeEnum device_type;
 
@@ -989,7 +1055,6 @@ gcm_prefs_is_profile_suitable_for_device (GcmProfile *profile, GcmDevice *device
 	g_object_get (profile,
 		      "type", &profile_type_tmp,
 		      "colorspace", &profile_colorspace,
-		      "has-vcgt", &has_vcgt,
 		      NULL);
 
 	/* not the right colorspace */
@@ -1000,12 +1065,6 @@ gcm_prefs_is_profile_suitable_for_device (GcmProfile *profile, GcmDevice *device
 	profile_type = gcm_utils_device_type_to_profile_type (device_type);
 	if (profile_type_tmp != profile_type)
 		goto out;
-
-#if 0
-	/* no VCGT for a display (is a crap profile) */
-	if (profile_type_tmp == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE && !has_vcgt)
-		goto out;
-#endif
 
 	/* success */
 	ret = TRUE;
@@ -1091,6 +1150,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	gfloat contrast;
 	gboolean connected;
 	gchar *id = NULL;
+	gboolean ret;
 	GcmDeviceTypeEnum type;
 	gchar *device_serial = NULL;
 	gchar *device_model = NULL;
@@ -1132,6 +1192,23 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 		gtk_widget_set_sensitive (widget, TRUE);
 		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
 		gtk_widget_set_sensitive (widget, TRUE);
+	}
+
+	/* show broken devices */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_problems"));
+	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+		g_object_get (current_device,
+			      "xrandr-fallback", &ret,
+			      NULL);
+		if (ret) {
+			/* TRANSLATORS: this is when the user is using a binary blob */
+			gtk_label_set_label (GTK_LABEL (widget), _("Per-device settings not supported. Check your display driver."));
+			gtk_widget_show (widget);
+		} else {
+			gtk_widget_hide (widget);
+		}
+	} else {
+		gtk_widget_hide (widget);
 	}
 
 	g_object_get (current_device,
@@ -1422,8 +1499,10 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	gtk_widget_set_visible (widget, (profile_type == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE));
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_vcgt"));
 	if (has_vcgt) {
+		/* TRANSLATORS: if the device has a VCGT profile */
 		gtk_label_set_label (GTK_LABEL (widget), _("Yes"));
 	} else {
+		/* TRANSLATORS: if the device has a VCGT profile */
 		gtk_label_set_label (GTK_LABEL (widget), _("No"));
 	}
 
@@ -1632,15 +1711,19 @@ static void
 gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 {
 	gchar *profile_old = NULL;
-	gchar *filename = NULL;
+	GFile *file = NULL;
+	GFile *dest = NULL;
 	gboolean ret;
 	GError *error = NULL;
 	GcmProfile *profile = NULL;
+	GcmProfile *profile_tmp = NULL;
 	gboolean changed;
 	GcmDeviceTypeEnum type;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GcmPrefsEntryType entry_type;
+	gboolean has_vcgt;
+	gchar *filename = NULL;
 
 	/* no devices */
 	if (current_device == NULL)
@@ -1660,20 +1743,73 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 
 	/* import */
 	if (entry_type == GCM_PREFS_ENTRY_TYPE_IMPORT) {
-		filename = gcm_prefs_file_chooser_get_icc_profile ();
-		if (filename == NULL) {
+		file = gcm_prefs_file_chooser_get_icc_profile ();
+		if (file == NULL) {
+			egg_warning ("failed to get ICC file");
 			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 			goto out;
 		}
-		gcm_prefs_profile_import (filename);
-		goto out;
+
+		/* check the file is suitable */
+		profile_tmp = gcm_profile_default_new ();
+		filename = g_file_get_path (file);
+		ret = gcm_profile_parse (profile_tmp, file, &error);
+		if (!ret) {
+			/* set to 'None' */
+			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
+
+			egg_warning ("failed to parse ICC file: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
+		ret = gcm_prefs_is_profile_suitable_for_device (profile_tmp, current_device);
+		if (!ret) {
+			/* set to 'None' */
+			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
+
+			/* TRANSLATORS: the profile was of the wrong sort for this device */
+			gcm_prefs_error_dialog (_("Could not import profile"), _("The profile was of the wrong type for this device"));
+			goto out;
+		}
+
+		/* actually set this as the default */
+		ret = gcm_prefs_profile_import_file (file);
+		if (!ret) {
+			gchar *uri;
+			/* set to 'None' */
+			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
+
+			uri = g_file_get_uri (file);
+			egg_debug ("%s did not import correctly", uri);
+			g_free (uri);
+			goto out;
+		}
+
+		/* now use the new profile as the device default */
+		dest = gcm_utils_get_profile_destination (file);
+		filename = g_file_get_path (dest);
 	}
+
+	/* get the device type */
+	g_object_get (current_device,
+		      "type", &type,
+		      NULL);
 
 	/* get profile filename */
 	if (entry_type == GCM_PREFS_ENTRY_TYPE_PROFILE) {
 		g_object_get (profile,
 			      "filename", &filename,
+			      "has-vcgt", &has_vcgt,
 			      NULL);
+
+		/* show a warning if the profile is crap */
+		if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY && !has_vcgt && filename != NULL) {
+			gtk_widget_show (info_bar_vcgt);
+		} else {
+			gtk_widget_hide (info_bar_vcgt);
+		}
+	} else {
+		gtk_widget_hide (info_bar_vcgt);
 	}
 
 	/* see if it's changed */
@@ -1707,8 +1843,14 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 		}
 	}
 out:
-	g_free (filename);
+	if (file != NULL)
+		g_object_unref (file);
+	if (dest != NULL)
+		g_object_unref (dest);
+	if (profile_tmp != NULL)
+		g_object_unref (profile_tmp);
 	g_free (profile_old);
+	g_free (filename);
 }
 
 /**
@@ -1767,6 +1909,29 @@ out:
 static void
 gcm_prefs_colorimeter_changed_cb (GcmColorimeter *_colorimeter, gpointer user_data)
 {
+	gboolean present;
+	const gchar *event_id;
+	const gchar *message;
+
+	present = gcm_colorimeter_get_present (_colorimeter);
+
+	if (present) {
+		/* TRANSLATORS: this is a sound description */
+		message = _("Device added");
+		event_id = "device-added";
+	} else {
+		/* TRANSLATORS: this is a sound description */
+		message = _("Device removed");
+		event_id = "device-removed";
+	}
+
+	/* play sound from the naming spec */
+	ca_context_play (ca_gtk_context_get (), 0,
+			 CA_PROP_EVENT_ID, event_id,
+			 /* TRANSLATORS: this is the application name for libcanberra */
+			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+			 CA_PROP_EVENT_DESCRIPTION, message, NULL);
+
 	gcm_prefs_set_calibrate_button_sensitivity ();
 }
 
@@ -1974,6 +2139,23 @@ gcm_prefs_startup_phase2_idle_cb (gpointer user_data)
 }
 
 /**
+ * gcm_prefs_colorspace_to_localised_string:
+ **/
+static const gchar *
+gcm_prefs_colorspace_to_localised_string (GcmColorspaceEnum colorspace)
+{
+	if (colorspace == GCM_COLORSPACE_ENUM_RGB) {
+		/* TRANSLATORS: this is the colorspace, e.g. red, green, blue */
+		return _("RGB");
+	}
+	if (colorspace == GCM_COLORSPACE_ENUM_CMYK) {
+		/* TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black */
+		return _("CMYK");
+	}
+	return NULL;
+}
+
+/**
  * gcm_prefs_setup_space_combobox:
  **/
 static void
@@ -2026,7 +2208,8 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspaceEnum colorspace,
 		g_ptr_array_unref (profile_array);
 	if (added_count == 0) {
 		/* TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK" */
-		text = g_strdup_printf (_("No %s color spaces available"), search);
+		text = g_strdup_printf (_("No %s color spaces available"),
+					gcm_prefs_colorspace_to_localised_string (colorspace));
 		gtk_combo_box_append_text (GTK_COMBO_BOX(widget), text);
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), added_count);
 		gtk_widget_set_sensitive (widget, FALSE);
@@ -2336,15 +2519,27 @@ gcm_prefs_client_notify_loading_cb (GcmClient *client, GParamSpec *pspec, gpoint
 
 	/*if loading show the bar */
 	if (loading) {
-		gtk_widget_show (info_bar);
+		gtk_widget_show (info_bar_loading);
 		return;
 	}
 
 	/* otherwise clear the loading widget */
-	gtk_widget_hide (info_bar);
+	gtk_widget_hide (info_bar_loading);
 
 	/* idle callback */
 	g_idle_add (gcm_prefs_select_first_device_idle_cb, NULL);
+}
+
+/**
+ * gcm_prefs_info_bar_response_cb:
+ **/
+static void
+gcm_prefs_info_bar_response_cb (GtkDialog *dialog, GtkResponseType response, gpointer user_data)
+{
+	if (response == GTK_RESPONSE_HELP) {
+		/* open the help file in the right place */
+		gcm_gnome_help ("faq-missing-vcgt");
+	}
 }
 
 /**
@@ -2364,7 +2559,8 @@ main (int argc, char **argv)
 	gboolean use_global;
 	gboolean use_atom;
 	GtkTreeSelection *selection;
-	GtkWidget *info_bar_label;
+	GtkWidget *info_bar_loading_label;
+	GtkWidget *info_bar_vcgt_label;
 	GtkSizeGroup *size_group = NULL;
 	GtkSizeGroup *size_group2 = NULL;
 	GdkScreen *screen;
@@ -2629,18 +2825,35 @@ main (int argc, char **argv)
 	}
 
 	/* use infobar */
-	info_bar = gtk_info_bar_new ();
+	info_bar_loading = gtk_info_bar_new ();
+	info_bar_vcgt = gtk_info_bar_new ();
+	g_signal_connect (info_bar_vcgt, "response",
+			  G_CALLBACK (gcm_prefs_info_bar_response_cb), NULL);
+
+	/* TRANSLATORS: button for more details about the vcgt failure */
+	gtk_info_bar_add_button (GTK_INFO_BAR(info_bar_vcgt), _("More information"), GTK_RESPONSE_HELP);
 
 	/* TRANSLATORS: this is displayed while the devices are being probed */
-	info_bar_label = gtk_label_new (_("Loading list of devices..."));
-	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar), GTK_MESSAGE_INFO);
-	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar));
-	gtk_container_add (GTK_CONTAINER(widget), info_bar_label);
-	gtk_widget_show (info_bar_label);
+	info_bar_loading_label = gtk_label_new (_("Loading list of devices…"));
+	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar_loading), GTK_MESSAGE_INFO);
+	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar_loading));
+	gtk_container_add (GTK_CONTAINER(widget), info_bar_loading_label);
+	gtk_widget_show (info_bar_loading_label);
+
+	/* TRANSLATORS: this is displayed when the profile is crap */
+	info_bar_vcgt_label = gtk_label_new (_("This profile does not have the information required for whole-screen color correction."));
+	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar_vcgt), GTK_MESSAGE_INFO);
+	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar_vcgt));
+	gtk_container_add (GTK_CONTAINER(widget), info_bar_vcgt_label);
+	gtk_widget_show (info_bar_vcgt_label);
 
 	/* add infobar to devices pane */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_devices"));
-	gtk_box_pack_start (GTK_BOX(widget), info_bar, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX(widget), info_bar_loading, FALSE, FALSE, 0);
+
+	/* add infobar to devices pane */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_sections"));
+	gtk_box_pack_start (GTK_BOX(widget), info_bar_vcgt, FALSE, FALSE, 0);
 
 	/* show main UI */
 	gtk_window_set_default_size (GTK_WINDOW(main_window), 1000, 450);

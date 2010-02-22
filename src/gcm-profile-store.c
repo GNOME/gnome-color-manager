@@ -172,21 +172,23 @@ gcm_profile_store_notify_filename_cb (GcmProfile *profile, GParamSpec *pspec, Gc
  * gcm_profile_store_add_profile:
  **/
 static gboolean
-gcm_profile_store_add_profile (GcmProfileStore *profile_store, const gchar *filename)
+gcm_profile_store_add_profile (GcmProfileStore *profile_store, GFile *file)
 {
 	gboolean ret = FALSE;
 	GcmProfile *profile = NULL;
 	GError *error = NULL;
+	gchar *filename = NULL;
 	GcmProfileStorePrivate *priv = profile_store->priv;
 
 	/* already added? */
+	filename = g_file_get_path (file);
 	profile = gcm_profile_store_get_by_filename (profile_store, filename);
 	if (profile != NULL)
 		goto out;
 
 	/* parse the profile name */
 	profile = gcm_profile_default_new ();
-	ret = gcm_profile_parse (profile, filename, &error);
+	ret = gcm_profile_parse (profile, file, &error);
 	if (!ret) {
 		egg_warning ("failed to add profile '%s': %s", filename, error->message);
 		g_error_free (error);
@@ -203,6 +205,7 @@ gcm_profile_store_add_profile (GcmProfileStore *profile_store, const gchar *file
 	g_signal_emit (profile_store, signals[SIGNAL_ADDED], 0, profile);
 	g_signal_emit (profile_store, signals[SIGNAL_CHANGED], 0);
 out:
+	g_free (filename);
 	if (profile != NULL)
 		g_object_unref (profile);
 	return ret;
@@ -222,6 +225,10 @@ gcm_profile_store_file_monitor_changed_cb (GFileMonitor *monitor, GFile *file, G
 
 	/* just rescan everything */
 	path = g_file_get_path (file);
+	if (g_strrstr (path, ".goutputstream") != NULL) {
+		egg_debug ("ignoring gvfs temporary file");
+		goto out;
+	}
 	egg_debug ("%s was added, rescanning everything", path);
 	gcm_profile_store_add_profiles (profile_store);
 out:
@@ -247,9 +254,10 @@ gcm_profile_store_add_profiles_for_path (GcmProfileStore *profile_store, const g
 	if (g_file_test (path, G_FILE_TEST_IS_REGULAR)) {
 
 		/* check the file actually is a profile */
-		ret = gcm_utils_is_icc_profile (path);
+		file = g_file_new_for_path (path);
+		ret = gcm_utils_is_icc_profile (file);
 		if (ret) {
-			gcm_profile_store_add_profile (profile_store, path);
+			gcm_profile_store_add_profile (profile_store, file);
 			goto out;
 		}
 
@@ -399,6 +407,7 @@ gcm_profile_store_add_profiles (GcmProfileStore *profile_store)
 {
 	gchar *path;
 	gboolean ret;
+	GError *error;
 	GcmProfileStorePrivate *priv = profile_store->priv;
 
 	/* get OSX and Linux system-wide profiles */
@@ -413,7 +422,13 @@ gcm_profile_store_add_profiles (GcmProfileStore *profile_store)
 
 	/* get Linux per-user profiles */
 	path = g_build_filename (g_get_home_dir (), ".color", "icc", NULL);
-	gcm_profile_store_add_profiles_for_path (profile_store, path);
+	ret = gcm_utils_mkdir_with_parents (path, &error);
+	if (!ret) {
+		egg_error ("failed to create directory on startup: %s", error->message);
+		g_error_free (error);
+	} else {
+		gcm_profile_store_add_profiles_for_path (profile_store, path);
+	}
 	g_free (path);
 
 	/* get OSX per-user profiles */

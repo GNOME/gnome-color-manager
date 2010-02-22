@@ -63,6 +63,8 @@ enum {
 	PROP_LAST
 };
 
+static gpointer gcm_dmi_object = NULL;
+
 G_DEFINE_TYPE (GcmDmi, gcm_dmi, G_TYPE_OBJECT)
 
 /**
@@ -227,9 +229,13 @@ gcm_dmi_finalize (GObject *object)
 GcmDmi *
 gcm_dmi_new (void)
 {
-	GcmDmi *dmi;
-	dmi = g_object_new (GCM_TYPE_DMI, NULL);
-	return GCM_DMI (dmi);
+	if (gcm_dmi_object != NULL) {
+		g_object_ref (gcm_dmi_object);
+	} else {
+		gcm_dmi_object = g_object_new (GCM_TYPE_DMI, NULL);
+		g_object_add_weak_pointer (gcm_dmi_object, &gcm_dmi_object);
+	}
+	return GCM_DMI (gcm_dmi_object);
 }
 
 /***************************************************************************
