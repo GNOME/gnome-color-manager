@@ -212,7 +212,10 @@ gcm_calibrate_argyll_get_display (const gchar *output_name, GError **error)
 	split = g_strsplit (data, "\n", -1);
 	for (i=0; split[i] != NULL; i++) {
 		if (g_strstr_len (split[i], -1, "XRandR 1.2 is faulty") != NULL) {
-			g_set_error_literal (error, 1, 0, "failed to match display as RandR is faulty");
+			g_set_error_literal (error,
+					     GCM_CALIBRATE_ERROR,
+					     GCM_CALIBRATE_ERROR_INTERNAL,
+					     "failed to match display as RandR is faulty");
 			goto out;
 		}
 		name = g_strdup (split[i]);
@@ -226,7 +229,10 @@ gcm_calibrate_argyll_get_display (const gchar *output_name, GError **error)
 
 	/* nothing found */
 	if (display == G_MAXUINT) {
-		g_set_error_literal (error, 1, 0, "failed to match display");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_INTERNAL,
+				     "failed to match display");
 		goto out;
 	}
 out:
@@ -300,7 +306,10 @@ gcm_calibrate_argyll_get_tool_filename (const gchar *command, GError **error)
 	/* eek */
 	g_free (filename);
 	filename = NULL;
-	g_set_error (error, 1, 0, "failed to get filename for %s", command);
+	g_set_error (error,
+		     GCM_CALIBRATE_ERROR,
+		     GCM_CALIBRATE_ERROR_INTERNAL,
+		     "failed to get filename for %s", command);
 out:
 	return filename;
 }
@@ -388,14 +397,20 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 
 	/* get result */
 	if (priv->response == GTK_RESPONSE_CANCEL) {
-		g_set_error_literal (error, 1, 0, "calibration was cancelled");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
-		g_set_error (error, 1, 0, "command failed to run successfully: %s", vte_text);
+		g_set_error (error,
+			     GCM_CALIBRATE_ERROR,
+			     GCM_CALIBRATE_ERROR_INTERNAL,
+			     "command failed to run successfully: %s", vte_text);
 		g_free (vte_text);
 		ret = FALSE;
 		goto out;
@@ -468,14 +483,20 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 
 	/* get result */
 	if (priv->response == GTK_RESPONSE_CANCEL) {
-		g_set_error_literal (error, 1, 0, "calibration was cancelled");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
-		g_set_error (error, 1, 0, "command failed to run successfully: %s", vte_text);
+		g_set_error (error,
+			     GCM_CALIBRATE_ERROR,
+			     GCM_CALIBRATE_ERROR_INTERNAL,
+			     "command failed to run successfully: %s", vte_text);
 		g_free (vte_text);
 		ret = FALSE;
 		goto out;
@@ -553,14 +574,20 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 
 	/* get result */
 	if (priv->response == GTK_RESPONSE_CANCEL) {
-		g_set_error_literal (error, 1, 0, "calibration was cancelled");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
-		g_set_error (error, 1, 0, "command failed to run successfully: %s", vte_text);
+		g_set_error (error,
+			     GCM_CALIBRATE_ERROR,
+			     GCM_CALIBRATE_ERROR_INTERNAL,
+			     "command failed to run successfully: %s", vte_text);
 		g_free (vte_text);
 		ret = FALSE;
 		goto out;
@@ -659,14 +686,20 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 
 	/* get result */
 	if (priv->response == GTK_RESPONSE_CANCEL) {
-		g_set_error_literal (error, 1, 0, "calibration was cancelled");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
-		g_set_error (error, 1, 0, "command failed to run successfully: %s", vte_text);
+		g_set_error (error,
+			     GCM_CALIBRATE_ERROR,
+			     GCM_CALIBRATE_ERROR_INTERNAL,
+			     "command failed to run successfully: %s", vte_text);
 		g_free (vte_text);
 		ret = FALSE;
 		goto out;
@@ -869,14 +902,20 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 
 	/* get result */
 	if (priv->response == GTK_RESPONSE_CANCEL) {
-		g_set_error_literal (error, 1, 0, "calibration was cancelled");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
-		g_set_error (error, 1, 0, "command failed to run successfully: %s", vte_text);
+		g_set_error (error,
+			     GCM_CALIBRATE_ERROR,
+			     GCM_CALIBRATE_ERROR_INTERNAL,
+			     "command failed to run successfully: %s", vte_text);
 		g_free (vte_text);
 		ret = FALSE;
 		goto out;
@@ -983,14 +1022,20 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 
 	/* get result */
 	if (priv->response == GTK_RESPONSE_CANCEL) {
-		g_set_error_literal (error, 1, 0, "calibration was cancelled");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "calibration was cancelled");
 		ret = FALSE;
 		goto out;
 	}
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
-		g_set_error (error, 1, 0, "command failed to run successfully: %s", vte_text);
+		g_set_error (error,
+			     GCM_CALIBRATE_ERROR,
+			     GCM_CALIBRATE_ERROR_INTERNAL,
+			     "command failed to run successfully: %s", vte_text);
 		g_free (vte_text);
 		ret = FALSE;
 		goto out;
@@ -1055,7 +1100,10 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 	/* we can't have finished with success */
 	if (basename == NULL) {
 		ret = FALSE;
-		g_set_error_literal (error, 1, 0, "profile was not generated");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_INTERNAL,
+				     "profile was not generated");
 		goto out;
 	}
 
@@ -1065,7 +1113,10 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 	/* we never finished all the steps */
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
 		ret = FALSE;
-		g_set_error_literal (error, 1, 0, "could not find completed profile");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_INTERNAL,
+				     "could not find completed profile");
 		goto out;
 	}
 

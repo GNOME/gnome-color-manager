@@ -311,8 +311,12 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
 	ret = gcm_calibrate_device (calibrate, window, &error);
 	if (!ret) {
-		/* TRANSLATORS: could not calibrate */
-		gcm_prefs_error_dialog (_("Failed to calibrate"), error->message);
+		if (error->code != GCM_CALIBRATE_ERROR_USER_ABORT) {
+			/* TRANSLATORS: could not calibrate */
+			gcm_prefs_error_dialog (_("Failed to calibrate"), error->message);
+		} else {
+			egg_warning ("failed to calibrate: %s", error->message);
+		}
 		g_error_free (error);
 		goto out;
 	}

@@ -237,7 +237,10 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 	/* display specific properties */
 	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
 		if (native_device == NULL) {
-			g_set_error (error, 1, 0, "failed to get output");
+			g_set_error (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_INTERNAL,
+				     "failed to get output");
 			ret = FALSE;
 			goto out;
 		}
@@ -276,7 +279,10 @@ gcm_calibrate_set_from_exif (GcmCalibrate *calibrate, const gchar *filename, GEr
 
 	/* we failed to get data */
 	if (manufacturer == NULL || model == NULL) {
-		g_set_error (error, 1, 0, "failed to get EXIF data from TIFF");
+		g_set_error (error,
+			     GCM_CALIBRATE_ERROR,
+			     GCM_CALIBRATE_ERROR_NO_DATA,
+			     "failed to get EXIF data from TIFF");
 		ret = FALSE;
 		goto out;
 	}
@@ -326,7 +332,10 @@ gcm_calibrate_get_display_type (GcmCalibrate *calibrate, GtkWindow *window, GErr
 	response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
 	if (response != GTK_RESPONSE_OK) {
 		gcm_calibrate_dialog_hide (priv->calibrate_dialog);
-		g_set_error_literal (error, 1, 0, "user did not choose crt or lcd");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "user did not choose crt or lcd");
 		ret = FALSE;
 		goto out;
 	}
@@ -350,7 +359,10 @@ gcm_calibrate_get_display_type (GcmCalibrate *calibrate, GtkWindow *window, GErr
 		response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
 		if (response != GTK_RESPONSE_OK) {
 			gcm_calibrate_dialog_hide (priv->calibrate_dialog);
-			g_set_error_literal (error, 1, 0, "hardware not capable of profiling a projector");
+			g_set_error_literal (error,
+					     GCM_CALIBRATE_ERROR,
+					     GCM_CALIBRATE_ERROR_NO_SUPPORT,
+					     "hardware not capable of profiling a projector");
 			ret = FALSE;
 			goto out;
 		}
@@ -379,14 +391,20 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	/* coldplug source */
 	if (priv->output_name == NULL) {
 		ret = FALSE;
-		g_set_error_literal (error, 1, 0, "no output name set");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_INTERNAL,
+				     "no output name set");
 		goto out;
 	}
 
 	/* coldplug source */
 	if (klass->calibrate_display == NULL) {
 		ret = FALSE;
-		g_set_error_literal (error, 1, 0, "no support");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_INTERNAL,
+				     "no klass support");
 		goto out;
 	}
 
@@ -448,7 +466,10 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 		response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
 		if (response != GTK_RESPONSE_OK) {
 			gcm_calibrate_dialog_hide (priv->calibrate_dialog);
-			g_set_error_literal (error, 1, 0, "user did not follow calibration steps");
+			g_set_error_literal (error,
+					     GCM_CALIBRATE_ERROR,
+					     GCM_CALIBRATE_ERROR_USER_ABORT,
+					     "user did not follow calibration steps");
 			ret = FALSE;
 			goto out;
 		}
@@ -722,7 +743,10 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
 	if (response != GTK_RESPONSE_OK) {
 		gcm_calibrate_dialog_hide (priv->calibrate_dialog);
-		g_set_error_literal (error, 1, 0, "user did not choose chart type");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "user did not choose chart type");
 		ret = FALSE;
 		goto out;
 	}
@@ -735,7 +759,10 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	window = gcm_calibrate_dialog_get_window (priv->calibrate_dialog);
 	reference_image = gcm_calibrate_device_get_reference_image (directory, window);
 	if (reference_image == NULL) {
-		g_set_error_literal (error, 1, 0, "could not get reference image");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "could not get reference image");
 		ret = FALSE;
 		goto out;
 	}
@@ -749,7 +776,10 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	directory = has_shared_targets ? "/usr/share/color/targets" : "/media";
 	reference_data = gcm_calibrate_device_get_reference_data (directory, window);
 	if (reference_data == NULL) {
-		g_set_error_literal (error, 1, 0, "could not get reference target");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "could not get reference target");
 		ret = FALSE;
 		goto out;
 	}
@@ -768,7 +798,10 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 
 	/* coldplug source */
 	if (klass->calibrate_device == NULL) {
-		g_set_error_literal (error, 1, 0, "no support");
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_INTERNAL,
+				     "no klass support");
 		goto out;
 	}
 

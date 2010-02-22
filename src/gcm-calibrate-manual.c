@@ -96,7 +96,9 @@ gcm_calibrate_manual_close_cb (GtkWidget *widget, GcmCalibrateManual *calibrate)
 	/* we closed */
 	priv->ret = FALSE;
 	if (priv->error != NULL)
-		*(priv->error) = g_error_new (1, 0, "user closed window");
+		*(priv->error) = g_error_new (GCM_CALIBRATE_ERROR,
+					      GCM_CALIBRATE_ERROR_USER_ABORT,
+					      "user closed window");
 
 	/* we're done */
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
