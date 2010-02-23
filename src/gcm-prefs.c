@@ -994,6 +994,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 	const gchar *tooltip;
 	GcmDeviceTypeEnum type;
 	gboolean connected;
+	gboolean xrandr_fallback;
 
 	/* TRANSLATORS: this is when the button is sensitive */
 	tooltip = _("Create a color profile for the selected device");
@@ -1018,6 +1019,16 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		if (!connected) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot calibrate: The device is not connected");
+			goto out;
+		}
+
+		/* are we not XRandR 1.3 compat */
+		g_object_get (current_device,
+			      "xrandr_fallback", &xrandr_fallback,
+			      NULL);
+		if (xrandr_fallback) {
+			/* TRANSLATORS: this is when the button is insensitive */
+			tooltip = _("Cannot calibrate: The display driver does not support XRandR 1.3");
 			goto out;
 		}
 
