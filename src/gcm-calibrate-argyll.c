@@ -1737,6 +1737,9 @@ gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 	gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
 	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
 
+	/* TRANSLATORS: button text */
+	gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Continue"));
+
 	/* set state */
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN,
 
@@ -1787,6 +1790,9 @@ gcm_calibrate_argyll_interaction_calibrate (GcmCalibrateArgyll *calibrate_argyll
 	gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
 	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
 
+	/* TRANSLATORS: button text */
+	gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Continue"));
+
 	/* play sound from the naming spec */
 	ca_context_play (ca_gtk_context_get (), 0,
 			 CA_PROP_EVENT_ID, "dialog-information",
@@ -1835,6 +1841,9 @@ gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 	gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
 	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
 
+	/* TRANSLATORS: button text */
+	gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Continue"));
+
 	/* play sound from the naming spec */
 	ca_context_play (ca_gtk_context_get (), 0,
 			 CA_PROP_EVENT_ID, "dialog-information",
@@ -1881,6 +1890,34 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		goto out;
 	}
 
+	/* something went wrong with a measurement */
+	if (g_strstr_len (line, -1, "Measurement misread") != NULL) {
+		/* TRANSLATORS: title, the calibration failed */
+		title = _("Calibration error");
+
+		/* TRANSLATORS: message, the sample was not read correctly */
+		message = _("The sample could not be read at this time.");
+
+		/* push new messages into the UI */
+		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+
+		/* TRANSLATORS: button text */
+		gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Try again"));
+
+		/* set state */
+		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
+
+		/* play sound from the naming spec */
+		ca_context_play (ca_gtk_context_get (), 0,
+				 CA_PROP_EVENT_ID, "dialog-warning",
+				 /* TRANSLATORS: this is the application name for libcanberra */
+				 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+				 CA_PROP_EVENT_DESCRIPTION, message, NULL);
+		goto out;
+	}
+
 	/* lines we're ignoring */
 	if (g_strcmp0 (line, "Q") == 0 ||
 	    g_strcmp0 (line, "Sample read stopped at user request!") == 0 ||
@@ -1911,7 +1948,8 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		} else if (g_strstr_len (line, -1, "Pattern match wasn't good enough") != NULL) {
 			/* TRANSLATORS: message, the image wasn't good enough */
 			message = _("The pattern match wasn't good enough. Ensure you have the correct type of target selected.");
-		} else if (g_strstr_len (line, -1, "Aprox. fwd matrix unexpectedly singular") != NULL) {
+		} else if (g_strstr_len (line, -1, "Aprox. fwd matrix unexpectedly singular") != NULL ||
+			   g_strstr_len (line, -1, "Inverting aprox. fwd matrix failed") != NULL) {
 			/* TRANSLATORS: message, the sensor got no readings */
 			message = _("The colorimeter got no valid readings. Please ensure the aperture is fully open.");
 		} else if (g_strstr_len (line, -1, "Device or resource busy") != NULL) {
@@ -1923,8 +1961,9 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 
 		/* push new messages into the UI */
 		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
-		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
 		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+
 		egg_debug ("VTE: error: %s", found+8);
 
 		/* set state */

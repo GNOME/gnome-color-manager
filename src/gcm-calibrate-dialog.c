@@ -278,6 +278,20 @@ gcm_calibrate_dialog_run (GcmCalibrateDialog *calibrate_dialog)
 }
 
 /**
+ * gcm_calibrate_set_button_ok_id:
+ **/
+void
+gcm_calibrate_dialog_set_button_ok_id (GcmCalibrateDialog *calibrate_dialog, const gchar *button_id)
+{
+	GtkWidget *widget;
+	GcmCalibrateDialogPrivate *priv = calibrate_dialog->priv;
+
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "button_ok"));
+	gtk_button_set_label (GTK_BUTTON (widget), button_id);
+	gtk_button_set_use_stock (GTK_BUTTON (widget), g_str_has_prefix (button_id, "gtk-"));
+}
+
+/**
  * gcm_calibrate_dialog_show:
  **/
 void
@@ -314,6 +328,7 @@ gcm_calibrate_dialog_show (GcmCalibrateDialog		*calibrate_dialog,
 	gcm_calibrate_dialog_set_show_expander (calibrate_dialog, FALSE);
 	gcm_calibrate_dialog_set_show_button_ok (calibrate_dialog, FALSE);
 	gcm_calibrate_dialog_set_image_filename_private (calibrate_dialog, NULL);
+	gcm_calibrate_dialog_set_button_ok_id (calibrate_dialog, GTK_STOCK_OK);
 
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "label_title"));
 	gtk_label_set_label (GTK_LABEL (widget), title);

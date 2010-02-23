@@ -77,6 +77,8 @@ void			 gcm_calibrate_dialog_set_show_expander	(GcmCalibrateDialog	*calibrate_di
 								 gboolean		 visible);
 void			 gcm_calibrate_dialog_set_show_button_ok (GcmCalibrateDialog	*calibrate_dialog,
 								 gboolean		 visible);
+void			 gcm_calibrate_dialog_set_button_ok_id	(GcmCalibrateDialog	*calibrate_dialog,
+								 const gchar		*button_id);
 void			 gcm_calibrate_dialog_set_image_filename (GcmCalibrateDialog	*calibrate_dialog,
 								 const gchar		*image_filename);
 void			 gcm_calibrate_dialog_pop		(GcmCalibrateDialog	*calibrate_dialog);
