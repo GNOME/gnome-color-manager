@@ -49,6 +49,13 @@ struct _GcmPrintPrivate
 	GtkPrintSettings		*settings;
 };
 
+enum {
+	SIGNAL_STATUS_CHANGED,
+	SIGNAL_LAST
+};
+
+static guint signals[SIGNAL_LAST] = { 0 };
+
 G_DEFINE_TYPE (GcmPrint, gcm_print, G_TYPE_OBJECT)
 
 /* temporary object so we can pass state */
@@ -57,6 +64,8 @@ typedef struct {
 	GPtrArray		*filenames;
 	GcmPrintRenderCb	 render_callback;
 	gpointer		 user_data;
+	GMainLoop		*loop;
+	gboolean		 aborted;
 } GcmPrintTask;
 
 /**
@@ -67,6 +76,17 @@ gcm_print_class_init (GcmPrintClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	object_class->finalize = gcm_print_finalize;
+
+	/**
+	 * GcmPrint::status-changed:
+	 **/
+	signals[SIGNAL_STATUS_CHANGED] =
+		g_signal_new ("status-changed",
+			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (GcmPrintClass, status_changed),
+			      NULL, NULL, g_cclosure_marshal_VOID__UINT,
+			      G_TYPE_NONE, 1, G_TYPE_UINT);
+
 	g_type_class_add_private (klass, sizeof (GcmPrintPrivate));
 }
 
@@ -126,6 +146,7 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 	if (pixbuf == NULL) {
 		egg_warning ("failed to load image: %s", error->message);
 		g_error_free (error);
+		gtk_print_operation_cancel (operation);
 		goto out;
 	}
 
@@ -135,6 +156,49 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 out:
 	if (pixbuf != NULL)
 		g_object_unref (pixbuf);
+}
+
+/**
+ * gcm_print_loop_quit_idle_cb:
+ **/
+static gboolean
+gcm_print_loop_quit_idle_cb (GcmPrintTask *task)
+{
+	g_main_loop_quit (task->loop);
+	return FALSE;
+}
+
+/**
+ * gcm_print_status_changed_cb:
+ **/
+static void
+gcm_print_status_changed_cb (GtkPrintOperation *operation, GcmPrintTask *task)
+{
+	GtkPrintStatus status;
+
+	/* signal the status change */
+	status = gtk_print_operation_get_status (operation);
+	egg_debug ("emit: status-changed: %i", status);
+	g_signal_emit (task->print, signals[SIGNAL_STATUS_CHANGED], 0, status);
+
+	/* done? */
+	if (status == GTK_PRINT_STATUS_FINISHED) {
+		egg_debug ("printing finished");
+		g_idle_add ((GSourceFunc) gcm_print_loop_quit_idle_cb, task);
+	} else if (status == GTK_PRINT_STATUS_FINISHED_ABORTED) {
+		egg_warning ("printing aborted");
+		task->aborted = TRUE;
+		g_main_loop_quit (task->loop);
+	}
+}
+
+/**
+ * gcm_print_done_cb:
+ **/
+static void
+gcm_print_done_cb (GtkPrintOperation *operation, GtkPrintOperationResult result, GcmPrintTask *task)
+{
+	egg_debug ("we're done rendering...");
 }
 
 /**
@@ -154,15 +218,27 @@ gcm_print_with_render_callback (GcmPrint *print, GtkWindow *window, GcmPrintRend
 	task->print = g_object_ref (print);
 	task->render_callback = render_callback;
 	task->user_data = user_data;
+	task->loop = g_main_loop_new (NULL, FALSE);
 
 	/* create new instance */
 	operation = gtk_print_operation_new ();
 	gtk_print_operation_set_print_settings (operation, priv->settings);
 	g_signal_connect (operation, "begin-print", G_CALLBACK (gcm_print_begin_print_cb), task);
 	g_signal_connect (operation, "draw-page", G_CALLBACK (gcm_print_draw_page_cb), task);
+	g_signal_connect (operation, "status-changed", G_CALLBACK (gcm_print_status_changed_cb), task);
+	g_signal_connect (operation, "done", G_CALLBACK (gcm_print_done_cb), task);
 
 	/* we want this to be as big as possible, modulo page margins */
 	gtk_print_operation_set_use_full_page (operation, TRUE);
+
+	/* don't show status, we've got it covered */
+	gtk_print_operation_set_show_progress (operation, FALSE);
+
+	/* don't support selection */
+	gtk_print_operation_set_support_selection (operation, FALSE);
+
+	/* track status even when spooled */
+	gtk_print_operation_set_track_print_status (operation, TRUE);
 
 	/* do the print UI */
 	res = gtk_print_operation_run (operation,
@@ -180,14 +256,26 @@ gcm_print_with_render_callback (GcmPrint *print, GtkWindow *window, GcmPrintRend
 		ret = FALSE;
 		goto out;
 	}
+
+	/* wait for finished or abort */
+	g_main_loop_run (task->loop);
+
+	/* we failed */
+	if (task->aborted) {
+		g_set_error (error, 1, 0, "printing was aborted");
+		ret = FALSE;
+		goto out;
+	}
 out:
 	if (task->filenames != NULL)
 		g_ptr_array_unref (task->filenames);
 	if (task->print != NULL)
 		g_object_unref (task->print);
+	if (task->loop != NULL)
+		g_main_loop_unref (task->loop);
 	g_free (task);
 	g_object_unref (operation);
-	return TRUE;
+	return ret;
 }
 
 /**

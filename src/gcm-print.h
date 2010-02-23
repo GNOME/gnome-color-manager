@@ -46,13 +46,7 @@ struct _GcmPrint
 struct _GcmPrintClass
 {
 	GObjectClass	parent_class;
-	void		(* changed)			(void);
-	/* padding for future expansion */
-	void (*_gcm_reserved1) (void);
-	void (*_gcm_reserved2) (void);
-	void (*_gcm_reserved3) (void);
-	void (*_gcm_reserved4) (void);
-	void (*_gcm_reserved5) (void);
+	void		(* status_changed)		(GtkPrintStatus status);
 };
 
 
