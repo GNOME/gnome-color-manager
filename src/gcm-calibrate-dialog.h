@@ -70,6 +70,8 @@ void			 gcm_calibrate_dialog_show		(GcmCalibrateDialog	*calibrate_dialog,
 								 GcmCalibrateDialogTab	 tab,
 								 const gchar		*title,
 								 const gchar		*message);
+void			 gcm_calibrate_dialog_set_move_window	(GcmCalibrateDialog	*calibrate_dialog,
+								 gboolean		 move_window);
 void			 gcm_calibrate_dialog_set_show_expander	(GcmCalibrateDialog	*calibrate_dialog,
 								 gboolean		 visible);
 void			 gcm_calibrate_dialog_set_show_button_ok (GcmCalibrateDialog	*calibrate_dialog,

@@ -55,6 +55,7 @@ struct _GcmCalibrateDialogPrivate
 	GcmCalibrateReferenceKind	 reference_kind;
 	GtkResponseType			 response;
 	GMainLoop			*loop;
+	gboolean			 move_window;
 };
 
 enum {
@@ -291,9 +292,11 @@ gcm_calibrate_dialog_show (GcmCalibrateDialog		*calibrate_dialog,
 
 	/* move the dialog out of the way, so the grey square doesn't cover it */
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
-	gtk_window_get_position (GTK_WINDOW (widget), &x, &y);
-	egg_debug ("currently at %i,%i, moving left", x, y);
-	gtk_window_move (GTK_WINDOW (widget), 10, y);
+	if (calibrate_dialog->priv->move_window) {
+		gtk_window_get_position (GTK_WINDOW (widget), &x, &y);
+		egg_debug ("currently at %i,%i, moving left", x, y);
+		gtk_window_move (GTK_WINDOW (widget), 10, y);
+	}
 
 	gtk_widget_show (widget);
 }
@@ -403,14 +406,23 @@ gcm_calibrate_dialog_set_show_expander (GcmCalibrateDialog *calibrate_dialog, gb
 }
 
 /**
+ * gcm_calibrate_dialog_set_move_window:
+ **/
+void
+gcm_calibrate_dialog_set_move_window (GcmCalibrateDialog *calibrate_dialog, gboolean move_window)
+{
+	calibrate_dialog->priv->move_window = move_window;
+}
+
+/**
  * gcm_calibrate_dialog_delete_event_cb:
  **/
-//static gboolean
-//gcm_calibrate_dialog_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmCalibrateArgyll *calibrate_argyll)
-//{
-//	gcm_calibrate_dialog_cancel_cb (widget, calibrate_argyll);
-//	return FALSE;
-//}
+static gboolean
+gcm_calibrate_dialog_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmCalibrateDialog *calibrate_dialog)
+{
+	gcm_calibrate_dialog_emit_response (calibrate_dialog, GTK_RESPONSE_CANCEL);
+	return FALSE;
+}
 
 /**
  * gcm_calibrate_dialog_reference_kind_to_thumbnail_image_filename:
@@ -626,6 +638,7 @@ gcm_calibrate_dialog_init (GcmCalibrateDialog *calibrate_dialog)
 
 	calibrate_dialog->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_UNKNOWN;
 	calibrate_dialog->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
+	calibrate_dialog->priv->move_window = FALSE;
 	calibrate_dialog->priv->loop = g_main_loop_new (NULL, FALSE);
 	calibrate_dialog->priv->cached_dialogs = g_ptr_array_new_with_free_func ((GDestroyNotify)gcm_calibrate_dialog_dialog_free);
 
@@ -637,6 +650,9 @@ gcm_calibrate_dialog_init (GcmCalibrateDialog *calibrate_dialog)
 		g_error_free (error);
 	}
 
+	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "dialog_calibrate"));
+	g_signal_connect (widget, "delete_event",
+			  G_CALLBACK (gcm_calibrate_dialog_delete_event_cb), calibrate_dialog);
 	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "button_lcd"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_calibrate_dialog_button_clicked_lcd_cb), calibrate_dialog);
@@ -658,9 +674,6 @@ gcm_calibrate_dialog_init (GcmCalibrateDialog *calibrate_dialog)
 	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "combobox_target"));
 	gcm_calibrate_dialog_setup_combo_simple_text (widget);
 	g_signal_connect (widget, "changed", G_CALLBACK (gcm_calibrate_dialog_reference_kind_combobox_cb), calibrate_dialog);
-
-//	g_signal_connect (main_window, "delete_event",
-//			  G_CALLBACK (gcm_calibrate_dialog_delete_event_cb), calibrate_argyll);
 
 	/* add the list of charts */
 	for (i = 0; i < GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN; i++) {

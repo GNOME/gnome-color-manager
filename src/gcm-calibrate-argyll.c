@@ -1255,6 +1255,10 @@ gcm_calibrate_argyll_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 	const gchar *title;
 	const gchar *message;
 
+	/* set modal windows up correctly */
+	gcm_calibrate_dialog_set_move_window (priv->calibrate_dialog, TRUE);
+	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
+
 	/* TRANSLATORS: title, hardware refers to a calibration device */
 	title = _("Set up display");
 
@@ -1496,6 +1500,7 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 	/* need to ask if we are printing now, or using old data */
 
 	/* set modal windows up correctly */
+	gcm_calibrate_dialog_set_move_window (priv->calibrate_dialog, FALSE);
 	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
 
 	/* step 1 */
@@ -1555,6 +1560,10 @@ gcm_calibrate_argyll_device (GcmCalibrate *calibrate, GtkWindow *window, GError 
 	gboolean ret;
 	const gchar *title;
 	const gchar *message;
+
+	/* set modal windows up correctly */
+	gcm_calibrate_dialog_set_move_window (priv->calibrate_dialog, FALSE);
+	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
 
 	/* TRANSLATORS: title, hardware refers to a calibration device */
 	title = _("Set up device");
