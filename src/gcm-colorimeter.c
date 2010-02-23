@@ -264,7 +264,7 @@ gcm_colorimeter_class_init (GcmColorimeterClass *klass)
 	g_object_class_install_property (object_class, PROP_SUPPORTS_PRINTER, pspec);
 
 	/**
-	 * GcmColorimeter::added:
+	 * GcmColorimeter::changed:
 	 **/
 	signals[SIGNAL_CHANGED] =
 		g_signal_new ("changed",
