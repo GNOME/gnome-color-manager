@@ -12,6 +12,7 @@ DOC_FIGURES =					\
 	figures/gcm-calibrate-drawing.png	\
 	figures/gcm-print-mode.png		\
 	figures/gcm-screen-type.png		\
+	figures/gcm-device-configure.png	\
 	figures/gcm-import.png
 
 DOC_LINGUAS = cs de es id ru
