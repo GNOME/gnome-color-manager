@@ -385,14 +385,20 @@ static gboolean
 gcm_calibrate_set_working_path (GcmCalibrate *calibrate, GError **error)
 {
 	gboolean ret = FALSE;
+	gchar *timespec = NULL;
+	gchar *folder = NULL;
 	GcmCalibratePrivate *priv = calibrate->priv;
 
 	/* remove old value */
 	g_free (priv->working_path);
 
-	/* use the basename */
-	priv->working_path = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "calibration", priv->basename, NULL);
+	/* use the basename and the timespec */
+	timespec = gcm_calibrate_get_time ();
+	folder = g_strjoin (" - ", priv->basename, timespec, NULL);
+	priv->working_path = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "calibration", folder, NULL);
 	ret = gcm_utils_mkdir_with_parents (priv->working_path, error);
+	g_free (timespec);
+	g_free (folder);
 	return ret;
 }
 
