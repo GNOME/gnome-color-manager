@@ -195,9 +195,9 @@ gcm_print_status_changed_cb (GtkPrintOperation *operation, GcmPrintTask *task)
 		egg_debug ("printing finished");
 		g_idle_add ((GSourceFunc) gcm_print_loop_quit_idle_cb, task);
 	} else if (status == GTK_PRINT_STATUS_FINISHED_ABORTED) {
-		egg_warning ("printing aborted");
 		task->aborted = TRUE;
-		g_main_loop_quit (task->loop);
+		egg_debug ("printing aborted");
+		g_idle_add ((GSourceFunc) gcm_print_loop_quit_idle_cb, task);
 	}
 }
 
