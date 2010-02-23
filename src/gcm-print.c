@@ -131,6 +131,8 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 	cairo_t *cr;
 	gdouble width = 0.0f;
 	gdouble height = 0.0f;
+	gdouble offset_x;
+	gdouble offset_y;
 	GError *error = NULL;
 	const gchar *filename;
 	GdkPixbuf *pixbuf = NULL;
@@ -150,8 +152,15 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 		goto out;
 	}
 
+	/* center image */
+	offset_x = (width - gdk_pixbuf_get_width (pixbuf)) / 2;
+	offset_y = (height - gdk_pixbuf_get_height (pixbuf)) / 2;
+
+	egg_debug ("surface=%.0fx%.0f, pixbuf=%ix%i", width, height, gdk_pixbuf_get_width (pixbuf), gdk_pixbuf_get_height (pixbuf));
+	egg_debug ("offset_x=%f,offset_y=%f", offset_x, offset_y);
+
 	/* set the pixmap */
-	gdk_cairo_set_source_pixbuf (cr, pixbuf, 0, 0);
+	gdk_cairo_set_source_pixbuf (cr, pixbuf, offset_x, offset_y);
 	cairo_paint (cr);
 out:
 	if (pixbuf != NULL)
