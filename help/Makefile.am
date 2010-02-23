@@ -10,6 +10,8 @@ DOC_FIGURES =					\
 	figures/gcm-scanner.png			\
 	figures/gcm-calibrate-default.png	\
 	figures/gcm-calibrate-drawing.png	\
+	figures/gcm-print-mode.png		\
+	figures/gcm-screen-type.png		\
 	figures/gcm-import.png
 
 DOC_LINGUAS = cs de es id ru
