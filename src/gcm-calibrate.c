@@ -379,6 +379,24 @@ out:
 }
 
 /**
+ * gcm_calibrate_set_working_path:
+ **/
+static gboolean
+gcm_calibrate_set_working_path (GcmCalibrate *calibrate, GError **error)
+{
+	gboolean ret = FALSE;
+	GcmCalibratePrivate *priv = calibrate->priv;
+
+	/* remove old value */
+	g_free (priv->working_path);
+
+	/* use the basename */
+	priv->working_path = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "calibration", priv->basename, NULL);
+	ret = gcm_utils_mkdir_with_parents (priv->working_path, error);
+	return ret;
+}
+
+/**
  * gcm_calibrate_display:
  **/
 gboolean
@@ -404,6 +422,11 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 				     "no output name set");
 		goto out;
 	}
+
+	/* set the per-profile filename */
+	ret = gcm_calibrate_set_working_path (calibrate, error);
+	if (!ret)
+		goto out;
 
 	/* coldplug source */
 	if (klass->calibrate_display == NULL) {
@@ -666,6 +689,42 @@ out:
 }
 
 /**
+ * gcm_calibrate_file_chooser_get_working_path:
+ **/
+static gchar *
+gcm_calibrate_file_chooser_get_working_path (GcmCalibrate *calibrate, GtkWindow *window)
+{
+	GtkWidget *dialog;
+	gchar *current_folder;
+	gchar *working_path = NULL;
+
+	/* start in the correct place */
+	current_folder = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "calibration", NULL);
+
+	/* TRANSLATORS: dialog for file->open dialog */
+	dialog = gtk_file_chooser_dialog_new (_("Select ICC Profile File"), window,
+					       GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
+					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+					       _("Open"), GTK_RESPONSE_ACCEPT,
+					      NULL);
+	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), current_folder);
+	gtk_file_chooser_set_create_folders (GTK_FILE_CHOOSER(dialog), FALSE);
+	gtk_file_chooser_set_local_only (GTK_FILE_CHOOSER(dialog), FALSE);
+
+	/* did user choose file */
+	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
+		working_path = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER(dialog));
+
+	/* we're done */
+	gtk_widget_destroy (dialog);
+
+	/* or NULL for missing */
+	g_free (current_folder);
+	return working_path;
+}
+
+/**
  * gcm_calibrate_printer:
  **/
 gboolean
@@ -674,6 +733,7 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	gboolean ret = FALSE;
 	const gchar *title;
 	const gchar *message;
+	GtkWindow *window_tmp;
 	GtkResponseType response;
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
 	GcmCalibratePrivate *priv = calibrate->priv;
@@ -701,6 +761,30 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 
 	/* copy */
 	g_object_get (priv->calibrate_dialog, "print-kind", &priv->print_kind, NULL);
+
+	if (priv->print_kind != GCM_CALIBRATE_PRINT_KIND_ANALYSE) {
+		/* set the per-profile filename */
+		ret = gcm_calibrate_set_working_path (calibrate, error);
+		if (!ret)
+			goto out;
+	} else {
+
+		/* remove previously set value (if any) */
+		g_free (priv->working_path);
+		priv->working_path = NULL;
+
+		/* get from the user */
+		window_tmp = gcm_calibrate_dialog_get_window (priv->calibrate_dialog);
+		priv->working_path = gcm_calibrate_file_chooser_get_working_path (calibrate, window_tmp);
+		if (priv->working_path == NULL) {
+			g_set_error_literal (error,
+					     GCM_CALIBRATE_ERROR,
+					     GCM_CALIBRATE_ERROR_USER_ABORT,
+					     "user did not choose folder");
+			ret = FALSE;
+			goto out;
+		}
+	}
 
 	/* coldplug source */
 	if (klass->calibrate_printer == NULL) {
@@ -863,6 +947,11 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 		      "filename-reference", reference_data,
 		      "device", device,
 		      NULL);
+
+	/* set the per-profile filename */
+	ret = gcm_calibrate_set_working_path (calibrate, error);
+	if (!ret)
+		goto out;
 
 	/* coldplug source */
 	if (klass->calibrate_device == NULL) {

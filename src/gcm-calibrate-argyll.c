@@ -350,6 +350,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "working-path", &working_path,
 		      "output-name", &output_name,
 		      NULL);
 
@@ -461,6 +462,7 @@ gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll, G
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "working-path", &working_path,
 		      NULL);
 
 	/* get correct name of the command */
@@ -547,6 +549,7 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "working-path", &working_path,
 		      "device-type", &device_type,
 		      NULL);
 
@@ -644,6 +647,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
+		      "working-path", &working_path,
 		      "basename", &basename,
 		      NULL);
 
@@ -744,6 +748,7 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "working-path", &working_path,
 		      "device", &device,
 		      NULL);
 
@@ -899,6 +904,7 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "working-path", &working_path,
 		      "reference-kind", &reference_kind,
 		      "filename-source", &filename_source,
 		      "filename-reference", &filename_reference,
@@ -981,6 +987,7 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "working-path", &working_path,
 		      NULL);
 
 	/* TRANSLATORS: title, drawing means painting to the screen */
@@ -1080,6 +1087,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "working-path", &working_path,
 		      "reference-kind", &reference_kind,
 		      "device", &device,
 		      NULL);
@@ -1197,6 +1205,7 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "working-path", &working_path,
 		      NULL);
 
 	/* remove all the temp files */
@@ -1362,6 +1371,7 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "working-path", &working_path,
 		      "colorimeter-kind", &colorimeter_kind,
 		      NULL);
 
@@ -1465,6 +1475,7 @@ gcm_calibrate_argyll_render_cb (GcmPrint *print, GtkPageSetup *page_setup, GcmCa
 	/* get shared data */
 	g_object_get (calibrate,
 		      "basename", &basename,
+		      "working-path", &working_path,
 		      NULL);
 
 	paper_size = gtk_page_setup_get_paper_size (page_setup);
@@ -1475,8 +1486,6 @@ gcm_calibrate_argyll_render_cb (GcmPrint *print, GtkPageSetup *page_setup, GcmCa
 	ret = gcm_calibrate_argyll_display_generate_targets (GCM_CALIBRATE_ARGYLL (calibrate), width, height, error);
 	if (!ret)
 		goto out;
-
-	//FIXME: we need a temp directory, not just the root of tmp
 
 	/* list files */
 	dir = g_dir_open (working_path, 0, error);
@@ -1510,6 +1519,8 @@ static gboolean
 gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 {
 	gboolean ret;
+	gchar *cmdline = NULL;
+	gchar *working_path = NULL;
 	const gchar *title;
 	const gchar *message;
 	GtkResponseType response;
@@ -1520,6 +1531,7 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 	/* need to ask if we are printing now, or using old data */
 	g_object_get (calibrate,
 		      "print-kind", &print_kind,
+		      "working-path", &working_path,
 		      NULL);
 
 	/* set modal windows up correctly */
@@ -1538,7 +1550,6 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 	if (print_kind == GCM_CALIBRATE_PRINT_KIND_LOCAL ||
 	    print_kind == GCM_CALIBRATE_PRINT_KIND_GENERATE) {
 		window = gcm_calibrate_dialog_get_window (priv->calibrate_dialog);
-		//TODO: we need to send a temp directory
 		ret = gcm_print_with_render_callback (priv->print, window, (GcmPrintRenderCb) gcm_calibrate_argyll_render_cb, calibrate, error);
 		if (!ret)
 			goto out;
@@ -1546,17 +1557,9 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 
 	/* we're done */
 	if (print_kind == GCM_CALIBRATE_PRINT_KIND_GENERATE) {
-		egg_warning ("we need to open the directory we're using");
-		goto out;
-	}
-
-	/* we're done */
-	if (print_kind == GCM_CALIBRATE_PRINT_KIND_ANALYSE) {
-		g_set_error_literal (error,
-				     GCM_CALIBRATE_ERROR,
-				     GCM_CALIBRATE_ERROR_USER_ABORT,
-				     "FIXME: need to show file chooser");
-		ret = FALSE;
+		cmdline = g_strdup_printf ("nautilus \"%s\"", working_path);
+		egg_debug ("we need to open the directory we're using: %s", cmdline);
+		ret = g_spawn_command_line_async (cmdline, error);
 		goto out;
 	}
 
@@ -1595,6 +1598,8 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 	if (!ret)
 		goto out;
 out:
+	g_free (cmdline);
+	g_free (working_path);
 	return ret;
 }
 
