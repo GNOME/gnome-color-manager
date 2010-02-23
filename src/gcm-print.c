@@ -142,7 +142,7 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 
 	/* load pixbuf, which we've already prepared */
 	filename = g_ptr_array_index (task->filenames, page_nr);
-	pixbuf = gdk_pixbuf_new_from_file_at_scale (filename, width, height, FALSE, &error);
+	pixbuf = gdk_pixbuf_new_from_file_at_scale (filename, width, height, TRUE, &error);
 	if (pixbuf == NULL) {
 		egg_warning ("failed to load image: %s", error->message);
 		g_error_free (error);
