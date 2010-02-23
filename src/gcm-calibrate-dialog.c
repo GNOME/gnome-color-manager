@@ -52,6 +52,7 @@ struct _GcmCalibrateDialogPrivate
 	GPtrArray			*cached_dialogs;
 	GtkBuilder			*builder;
 	GcmCalibrateDeviceKind		 device_kind;
+	GcmCalibratePrintKind		 print_kind;
 	GcmCalibrateReferenceKind	 reference_kind;
 	GtkResponseType			 response;
 	GMainLoop			*loop;
@@ -66,6 +67,7 @@ enum {
 enum {
 	PROP_0,
 	PROP_DEVICE_KIND,
+	PROP_PRINT_KIND,
 	PROP_REFERENCE_KIND,
 	PROP_LAST
 };
@@ -124,6 +126,36 @@ static void
 gcm_calibrate_dialog_button_clicked_projector_cb (GtkWidget *widget, GcmCalibrateDialog *calibrate_dialog)
 {
 	calibrate_dialog->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_PROJECTOR;
+	gcm_calibrate_dialog_emit_response (calibrate_dialog, GTK_RESPONSE_OK);
+}
+
+/**
+ * gcm_calibrate_dialog_button_clicked_print_local_cb:
+ **/
+static void
+gcm_calibrate_dialog_button_clicked_print_local_cb (GtkWidget *widget, GcmCalibrateDialog *calibrate_dialog)
+{
+	calibrate_dialog->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_LOCAL;
+	gcm_calibrate_dialog_emit_response (calibrate_dialog, GTK_RESPONSE_OK);
+}
+
+/**
+ * gcm_calibrate_dialog_button_clicked_print_generate_cb:
+ **/
+static void
+gcm_calibrate_dialog_button_clicked_print_generate_cb (GtkWidget *widget, GcmCalibrateDialog *calibrate_dialog)
+{
+	calibrate_dialog->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_GENERATE;
+	gcm_calibrate_dialog_emit_response (calibrate_dialog, GTK_RESPONSE_OK);
+}
+
+/**
+ * gcm_calibrate_dialog_button_clicked_print_analyse_cb:
+ **/
+static void
+gcm_calibrate_dialog_button_clicked_print_analyse_cb (GtkWidget *widget, GcmCalibrateDialog *calibrate_dialog)
+{
+	calibrate_dialog->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_ANALYSE;
 	gcm_calibrate_dialog_emit_response (calibrate_dialog, GTK_RESPONSE_OK);
 }
 
@@ -274,6 +306,8 @@ gcm_calibrate_dialog_show (GcmCalibrateDialog		*calibrate_dialog,
 	gtk_widget_set_visible (widget, (tab == GCM_CALIBRATE_DIALOG_TAB_MANUAL));
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "vbox_generic"));
 	gtk_widget_set_visible (widget, (tab == GCM_CALIBRATE_DIALOG_TAB_GENERIC));
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "vbox_print_mode"));
+	gtk_widget_set_visible (widget, (tab == GCM_CALIBRATE_DIALOG_TAB_PRINT_MODE));
 
 	/* reset */
 	gcm_calibrate_dialog_set_image_filename (calibrate_dialog, NULL);
@@ -563,6 +597,9 @@ gcm_calibrate_dialog_get_property (GObject *object, guint prop_id, GValue *value
 	case PROP_DEVICE_KIND:
 		g_value_set_uint (value, priv->device_kind);
 		break;
+	case PROP_PRINT_KIND:
+		g_value_set_uint (value, priv->print_kind);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -611,6 +648,14 @@ gcm_calibrate_dialog_class_init (GcmCalibrateDialogClass *klass)
 	g_object_class_install_property (object_class, PROP_DEVICE_KIND, pspec);
 
 	/**
+	 * GcmCalibrateDialog:print-kind:
+	 */
+	pspec = g_param_spec_uint ("print-kind", NULL, NULL,
+				   0, G_MAXUINT, 0,
+				   G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_PRINT_KIND, pspec);
+
+	/**
 	 * GcmCalibrateDialog::response:
 	 **/
 	signals[SIGNAL_RESPONSE] =
@@ -637,6 +682,7 @@ gcm_calibrate_dialog_init (GcmCalibrateDialog *calibrate_dialog)
 	calibrate_dialog->priv = GCM_CALIBRATE_DIALOG_GET_PRIVATE (calibrate_dialog);
 
 	calibrate_dialog->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_UNKNOWN;
+	calibrate_dialog->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_UNKNOWN;
 	calibrate_dialog->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
 	calibrate_dialog->priv->move_window = FALSE;
 	calibrate_dialog->priv->loop = g_main_loop_new (NULL, FALSE);
@@ -668,6 +714,16 @@ gcm_calibrate_dialog_init (GcmCalibrateDialog *calibrate_dialog)
 	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "button_ok"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_calibrate_dialog_button_clicked_ok_cb), calibrate_dialog);
+	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "button_print_local"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_calibrate_dialog_button_clicked_print_local_cb), calibrate_dialog);
+	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "button_print_generate"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_calibrate_dialog_button_clicked_print_generate_cb), calibrate_dialog);
+	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "button_print_analyse"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_calibrate_dialog_button_clicked_print_analyse_cb), calibrate_dialog);
+
 	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "image_target"));
 	gtk_widget_set_size_request (widget, 200, 140);
 

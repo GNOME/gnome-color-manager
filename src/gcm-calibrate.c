@@ -55,6 +55,7 @@ struct _GcmCalibratePrivate
 	GcmColorimeter			*colorimeter;
 	GcmCalibrateReferenceKind	 reference_kind;
 	GcmCalibrateDeviceKind		 device_kind;
+	GcmCalibratePrintKind		 print_kind;
 	GcmColorimeterKind		 colorimeter_kind;
 	GcmCalibrateDialog		*calibrate_dialog;
 	GcmDeviceTypeEnum		 device_type;
@@ -80,6 +81,7 @@ enum {
 	PROP_MANUFACTURER,
 	PROP_REFERENCE_KIND,
 	PROP_DEVICE_KIND,
+	PROP_PRINT_KIND,
 	PROP_DEVICE_TYPE,
 	PROP_COLORIMETER_KIND,
 	PROP_OUTPUT_NAME,
@@ -668,7 +670,35 @@ gboolean
 gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 {
 	gboolean ret = FALSE;
+	const gchar *title;
+	const gchar *message;
+	GtkResponseType response;
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
+	GcmCalibratePrivate *priv = calibrate->priv;
+
+	/* TRANSLATORS: title, you can profile all at once, or in steps */
+	title = _("Please choose a profiling mode");
+
+	/* TRANSLATORS: dialog message */
+	message = _("Please indicate if you want to profile a local printer, generate some reference images, or to process some reference images.");
+
+	/* push new messages into the UI */
+	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_PRINT_MODE, title, message);
+	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
+	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
+	response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
+	if (response != GTK_RESPONSE_OK) {
+		gcm_calibrate_dialog_hide (priv->calibrate_dialog);
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "user did not choose print mode");
+		ret = FALSE;
+		goto out;
+	}
+
+	/* copy */
+	g_object_get (priv->calibrate_dialog, "print-kind", &priv->print_kind, NULL);
 
 	/* coldplug source */
 	if (klass->calibrate_printer == NULL) {
@@ -868,6 +898,9 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 	case PROP_DEVICE_KIND:
 		g_value_set_uint (value, priv->device_kind);
 		break;
+	case PROP_PRINT_KIND:
+		g_value_set_uint (value, priv->print_kind);
+		break;
 	case PROP_DEVICE_TYPE:
 		g_value_set_uint (value, priv->device_type);
 		break;
@@ -1025,6 +1058,14 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 	g_object_class_install_property (object_class, PROP_DEVICE_KIND, pspec);
 
 	/**
+	 * GcmCalibrate:print-kind:
+	 */
+	pspec = g_param_spec_uint ("print-kind", NULL, NULL,
+				   0, G_MAXUINT, 0,
+				   G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_PRINT_KIND, pspec);
+
+	/**
 	 * GcmCalibrate:device-type:
 	 */
 	pspec = g_param_spec_uint ("device-type", NULL, NULL,
@@ -1141,6 +1182,7 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->device = NULL;
 	calibrate->priv->serial = NULL;
 	calibrate->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_UNKNOWN;
+	calibrate->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_UNKNOWN;
 	calibrate->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
 	calibrate->priv->colorimeter = gcm_colorimeter_new ();
 	calibrate->priv->calibrate_dialog = gcm_calibrate_dialog_new ();

@@ -1494,46 +1494,76 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 	const gchar *title;
 	const gchar *message;
 	GtkResponseType response;
+	GcmCalibratePrintKind print_kind;
 	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
 	/* need to ask if we are printing now, or using old data */
+	g_object_get (calibrate,
+		      "print-kind", &print_kind,
+		      NULL);
 
 	/* set modal windows up correctly */
 	gcm_calibrate_dialog_set_move_window (priv->calibrate_dialog, FALSE);
 	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
 
 	/* step 1 */
-	ret = gcm_calibrate_argyll_display_generate_patches (calibrate_argyll, error);
-	if (!ret)
-		goto out;
+	if (print_kind == GCM_CALIBRATE_PRINT_KIND_LOCAL ||
+	    print_kind == GCM_CALIBRATE_PRINT_KIND_GENERATE) {
+		ret = gcm_calibrate_argyll_display_generate_patches (calibrate_argyll, error);
+		if (!ret)
+			goto out;
+	}
 
 	/* print */
-	window = gcm_calibrate_dialog_get_window (priv->calibrate_dialog);
-	ret = gcm_print_with_render_callback (priv->print, window, (GcmPrintRenderCb) gcm_calibrate_argyll_render_cb, calibrate, error);
-	if (!ret)
+	if (print_kind == GCM_CALIBRATE_PRINT_KIND_LOCAL ||
+	    print_kind == GCM_CALIBRATE_PRINT_KIND_GENERATE) {
+		window = gcm_calibrate_dialog_get_window (priv->calibrate_dialog);
+		//TODO: we need to send a temp directory
+		ret = gcm_print_with_render_callback (priv->print, window, (GcmPrintRenderCb) gcm_calibrate_argyll_render_cb, calibrate, error);
+		if (!ret)
+			goto out;
+	}
+
+	/* we're done */
+	if (print_kind == GCM_CALIBRATE_PRINT_KIND_GENERATE) {
+		egg_warning ("we need to open the directory we're using");
 		goto out;
+	}
 
-	/* TRANSLATORS: title, patches are specific colours used in calibration */
-	title = _("Wait for the ink to dry");
-
-	/* TRANSLATORS: dialog message */
-	message = _("Please wait a few minutes for the ink to dry. Profiling damp ink will produce a poor profile and may damage your calibration device.");
-
-	/* push new messages into the UI */
-	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
-	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
-	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
-	gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, "clock.svg");
-	response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
-	if (response != GTK_RESPONSE_OK) {
-		gcm_calibrate_dialog_hide (priv->calibrate_dialog);
+	/* we're done */
+	if (print_kind == GCM_CALIBRATE_PRINT_KIND_ANALYSE) {
 		g_set_error_literal (error,
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_USER_ABORT,
-				     "user did not wait for ink to dry");
+				     "FIXME: need to show file chooser");
 		ret = FALSE;
 		goto out;
+	}
+
+	/* wait */
+	if (print_kind == GCM_CALIBRATE_PRINT_KIND_LOCAL) {
+		/* TRANSLATORS: title, patches are specific colours used in calibration */
+		title = _("Wait for the ink to dry");
+
+		/* TRANSLATORS: dialog message */
+		message = _("Please wait a few minutes for the ink to dry. Profiling damp ink will produce a poor profile and may damage your calibration device.");
+
+		/* push new messages into the UI */
+		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
+		gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, "clock.svg");
+		response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
+		if (response != GTK_RESPONSE_OK) {
+			gcm_calibrate_dialog_hide (priv->calibrate_dialog);
+			g_set_error_literal (error,
+					     GCM_CALIBRATE_ERROR,
+					     GCM_CALIBRATE_ERROR_USER_ABORT,
+					     "user did not wait for ink to dry");
+			ret = FALSE;
+			goto out;
+		}
 	}
 
 	/* step 3 */

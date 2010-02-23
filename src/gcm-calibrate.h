@@ -98,6 +98,13 @@ typedef enum {
 	GCM_CALIBRATE_DEVICE_KIND_UNKNOWN
 } GcmCalibrateDeviceKind;
 
+typedef enum {
+	GCM_CALIBRATE_PRINT_KIND_LOCAL,
+	GCM_CALIBRATE_PRINT_KIND_GENERATE,
+	GCM_CALIBRATE_PRINT_KIND_ANALYSE,
+	GCM_CALIBRATE_PRINT_KIND_UNKNOWN
+} GcmCalibratePrintKind;
+
 GType		 gcm_calibrate_get_type			(void);
 GcmCalibrate	*gcm_calibrate_new			(void);
 gboolean	 gcm_calibrate_display			(GcmCalibrate	*calibrate,
