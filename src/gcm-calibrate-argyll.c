@@ -97,9 +97,6 @@ enum {
 
 G_DEFINE_TYPE (GcmCalibrateArgyll, gcm_calibrate_argyll, GCM_TYPE_CALIBRATE)
 
-/* assume this is writable by users */
-#define GCM_CALIBRATE_ARGYLL_TEMP_DIR		"/tmp"
-
 /**
  * gcm_calibrate_argyll_precision_from_string:
  **/
@@ -345,6 +342,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	GnomeRROutput *output;
 	GPtrArray *array = NULL;
 	gchar *basename = NULL;
+	gchar *working_path = NULL;
 	gchar *output_name = NULL;
 	const gchar *title;
 	const gchar *message;
@@ -407,7 +405,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	/* start up the command */
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
-	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, GCM_CALIBRATE_ARGYLL_TEMP_DIR, FALSE, FALSE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, working_path, FALSE, FALSE, FALSE);
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -435,6 +433,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
+	g_free (working_path);
 	g_free (basename);
 	g_free (output_name);
 	g_free (command);
@@ -455,6 +454,7 @@ gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll, G
 	gchar **argv = NULL;
 	GPtrArray *array = NULL;
 	gchar *basename = NULL;
+	gchar *working_path = NULL;
 	const gchar *title;
 	const gchar *message;
 
@@ -492,7 +492,7 @@ gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll, G
 	/* start up the command */
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
-	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, GCM_CALIBRATE_ARGYLL_TEMP_DIR, FALSE, FALSE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, working_path, FALSE, FALSE, FALSE);
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -520,6 +520,7 @@ gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll, G
 out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
+	g_free (working_path);
 	g_free (basename);
 	g_free (command);
 	g_strfreev (argv);
@@ -538,6 +539,7 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	gchar **argv = NULL;
 	GPtrArray *array = NULL;
 	gchar *basename = NULL;
+	gchar *working_path = NULL;
 	const gchar *title;
 	const gchar *message;
 	GcmDeviceTypeEnum device_type;
@@ -588,7 +590,7 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	/* start up the command */
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
-	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, GCM_CALIBRATE_ARGYLL_TEMP_DIR, FALSE, FALSE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, working_path, FALSE, FALSE, FALSE);
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -616,6 +618,7 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
+	g_free (working_path);
 	g_free (basename);
 	g_free (command);
 	g_strfreev (argv);
@@ -635,6 +638,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	gchar **argv = NULL;
 	GPtrArray *array = NULL;
 	gchar *basename = NULL;
+	gchar *working_path = NULL;
 	const gchar *title;
 	const gchar *message;
 
@@ -679,7 +683,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	/* start up the command */
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
-	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, GCM_CALIBRATE_ARGYLL_TEMP_DIR, FALSE, FALSE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, working_path, FALSE, FALSE, FALSE);
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -707,6 +711,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
+	g_free (working_path);
 	g_free (basename);
 	g_free (command);
 	g_strfreev (argv);
@@ -727,6 +732,7 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	gchar *description_new = NULL;
 	gchar *command = NULL;
 	gchar *basename = NULL;
+	gchar *working_path = NULL;
 	const gchar *description = NULL;
 	const gchar *manufacturer = NULL;
 	const gchar *model = NULL;
@@ -791,7 +797,7 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	/* start up the command */
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
-	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, GCM_CALIBRATE_ARGYLL_TEMP_DIR, FALSE, FALSE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, working_path, FALSE, FALSE, FALSE);
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -822,6 +828,7 @@ out:
 		g_ptr_array_unref (array);
 	if (date != NULL)
 		g_date_free (date);
+	g_free (working_path);
 	g_free (basename);
 	g_free (command);
 	g_free (description_new);
@@ -882,6 +889,7 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 	GFile *dest_cht = NULL;
 	GFile *dest_source = NULL;
 	GFile *dest_reference = NULL;
+	gchar *working_path = NULL;
 	const gchar *title;
 	const gchar *message;
 	const gchar *filename_tmp;
@@ -908,9 +916,9 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 
 	/* build filenames */
 	filename = g_strdup_printf ("%s.tif", basename);
-	device = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, filename, NULL);
-	destination_cht = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "scanin.cht", NULL);
-	destination_ref = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, "scanin-ref.txt", NULL);
+	device = g_build_filename (working_path, filename, NULL);
+	destination_cht = g_build_filename (working_path, "scanin.cht", NULL);
+	destination_ref = g_build_filename (working_path, "scanin-ref.txt", NULL);
 
 	/* copy all files to /tmp as argyllcms doesn't cope well with paths */
 	filename_tmp = gcm_calibrate_argyll_reference_kind_to_filename (reference_kind);
@@ -935,6 +943,7 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 	if (!ret)
 		goto out;
 out:
+	g_free (working_path);
 	g_free (basename);
 	g_free (filename);
 	g_free (filename_cht);
@@ -965,6 +974,7 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 	gchar *filename = NULL;
 	gchar *command = NULL;
 	gchar *basename = NULL;
+	gchar *working_path = NULL;
 	const gchar *title;
 	const gchar *message;
 
@@ -1007,7 +1017,7 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 	/* start up the command */
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
-	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, GCM_CALIBRATE_ARGYLL_TEMP_DIR, FALSE, FALSE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, working_path, FALSE, FALSE, FALSE);
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -1033,6 +1043,7 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 		goto out;
 	}
 out:
+	g_free (working_path);
 	g_free (filename);
 	g_free (command);
 	g_free (basename);
@@ -1061,6 +1072,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	const gchar *manufacturer;
 	const gchar *model;
 	gchar *device = NULL;
+	gchar *working_path = NULL;
 	const gchar *title;
 	const gchar *message;
 	GcmCalibrateReferenceKind reference_kind;
@@ -1127,7 +1139,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	/* start up the command */
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
-	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, GCM_CALIBRATE_ARGYLL_TEMP_DIR, FALSE, FALSE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, working_path, FALSE, FALSE, FALSE);
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -1157,6 +1169,7 @@ out:
 		g_ptr_array_unref (array);
 	if (date != NULL)
 		g_date_free (date);
+	g_free (working_path);
 	g_free (description_tmp);
 	g_free (copyright);
 	g_free (basename);
@@ -1179,6 +1192,7 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 	const gchar *exts[] = {"cal", "ti1", "ti3", "tif", NULL};
 	const gchar *filenames[] = {"scanin.cht", "scanin-ref.txt", NULL};
 	gchar *basename = NULL;
+	gchar *working_path = NULL;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
@@ -1188,7 +1202,7 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 	/* remove all the temp files */
 	if (basename != NULL) {
 		for (i=0; exts[i] != NULL; i++) {
-			filename_tmp = g_strdup_printf ("%s/%s.%s", GCM_CALIBRATE_ARGYLL_TEMP_DIR, basename, exts[i]);
+			filename_tmp = g_strdup_printf ("%s/%s.%s", working_path, basename, exts[i]);
 			ret = g_file_test (filename_tmp, G_FILE_TEST_IS_REGULAR);
 			if (ret) {
 				egg_debug ("removing %s", filename_tmp);
@@ -1200,7 +1214,7 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 
 	/* remove all the temp files */
 	for (i=0; filenames[i] != NULL; i++) {
-		filename_tmp = g_strdup_printf ("%s/%s", GCM_CALIBRATE_ARGYLL_TEMP_DIR, filenames[i]);
+		filename_tmp = g_strdup_printf ("%s/%s", working_path, filenames[i]);
 		ret = g_file_test (filename_tmp, G_FILE_TEST_IS_REGULAR);
 		if (ret) {
 			egg_debug ("removing %s", filename_tmp);
@@ -1220,7 +1234,7 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 	}
 
 	/* get the finished icc file */
-	filename = g_strdup_printf ("%s/%s.icc", GCM_CALIBRATE_ARGYLL_TEMP_DIR, basename);
+	filename = g_strdup_printf ("%s/%s.icc", working_path, basename);
 
 	/* we never finished all the steps */
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
@@ -1238,6 +1252,7 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 		      NULL);
 	ret = TRUE;
 out:
+	g_free (working_path);
 	g_free (basename);
 	g_free (filename);
 	return ret;
@@ -1339,6 +1354,7 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 	gchar **argv = NULL;
 	GPtrArray *array = NULL;
 	gchar *basename = NULL;
+	gchar *working_path = NULL;
 	const gchar *title;
 	const gchar *message;
 	GcmColorimeterKind colorimeter_kind;
@@ -1395,7 +1411,7 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 	/* start up the command */
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
-	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, GCM_CALIBRATE_ARGYLL_TEMP_DIR, FALSE, FALSE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, working_path, FALSE, FALSE, FALSE);
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -1423,6 +1439,7 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
+	g_free (working_path);
 	g_free (basename);
 	g_free (command);
 	g_strfreev (argv);
@@ -1443,6 +1460,7 @@ gcm_calibrate_argyll_render_cb (GcmPrint *print, GtkPageSetup *page_setup, GcmCa
 	const gchar *filename;
 	gchar *basename = NULL;
 	gchar *filename_tmp;
+	gchar *working_path = NULL;
 
 	/* get shared data */
 	g_object_get (calibrate,
@@ -1461,7 +1479,7 @@ gcm_calibrate_argyll_render_cb (GcmPrint *print, GtkPageSetup *page_setup, GcmCa
 	//FIXME: we need a temp directory, not just the root of tmp
 
 	/* list files */
-	dir = g_dir_open (GCM_CALIBRATE_ARGYLL_TEMP_DIR, 0, error);
+	dir = g_dir_open (working_path, 0, error);
 	if (dir == NULL)
 		goto out;
 
@@ -1471,13 +1489,14 @@ gcm_calibrate_argyll_render_cb (GcmPrint *print, GtkPageSetup *page_setup, GcmCa
 	while (filename != NULL) {
 		if (g_str_has_prefix (filename, basename) &&
 		    g_str_has_suffix (filename, ".tif")) {
-			filename_tmp = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, filename, NULL);
+			filename_tmp = g_build_filename (working_path, filename, NULL);
 			egg_debug ("add print page %s", filename_tmp);
 			g_ptr_array_add (array, filename_tmp);
 		}
 		filename = g_dir_read_name (dir);
 	}
 out:
+	g_free (working_path);
 	g_free (basename);
 	if (dir != NULL)
 		g_dir_close (dir);

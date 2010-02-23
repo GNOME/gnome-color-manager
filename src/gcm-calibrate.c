@@ -69,6 +69,7 @@ struct _GcmCalibratePrivate
 	gchar				*description;
 	gchar				*serial;
 	gchar				*device;
+	gchar				*working_path;
 };
 
 enum {
@@ -88,6 +89,7 @@ enum {
 	PROP_FILENAME_SOURCE,
 	PROP_FILENAME_REFERENCE,
 	PROP_FILENAME_RESULT,
+	PROP_WORKING_PATH,
 	PROP_LAST
 };
 
@@ -937,6 +939,9 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 	case PROP_MANUFACTURER:
 		g_value_set_string (value, priv->manufacturer);
 		break;
+	case PROP_WORKING_PATH:
+		g_value_set_string (value, priv->working_path);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -1022,6 +1027,10 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 		break;
 	case PROP_DEVICE_TYPE:
 		priv->device_type = g_value_get_uint (value);
+		break;
+	case PROP_WORKING_PATH:
+		g_free (priv->working_path);
+		priv->working_path = g_strdup (g_value_get_string (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1161,6 +1170,14 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_MANUFACTURER, pspec);
 
+	/**
+	 * GcmCalibrate:working-path:
+	 */
+	pspec = g_param_spec_string ("working-path", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_WORKING_PATH, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmCalibratePrivate));
 }
 
@@ -1181,11 +1198,15 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->description = NULL;
 	calibrate->priv->device = NULL;
 	calibrate->priv->serial = NULL;
+	calibrate->priv->working_path = NULL;
 	calibrate->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_UNKNOWN;
 	calibrate->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_UNKNOWN;
 	calibrate->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
 	calibrate->priv->colorimeter = gcm_colorimeter_new ();
 	calibrate->priv->calibrate_dialog = gcm_calibrate_dialog_new ();
+
+	// FIXME: this has to be per-run specific
+	calibrate->priv->working_path = g_strdup ("/tmp");
 
 	/* coldplug, and watch for changes */
 	calibrate->priv->colorimeter_kind = gcm_colorimeter_get_kind (calibrate->priv->colorimeter);
@@ -1211,6 +1232,7 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->description);
 	g_free (priv->device);
 	g_free (priv->serial);
+	g_free (priv->working_path);
 	g_object_unref (priv->colorimeter);
 	g_signal_handlers_disconnect_by_func (calibrate->priv->colorimeter, G_CALLBACK (gcm_prefs_colorimeter_changed_cb), calibrate);
 	g_object_unref (priv->calibrate_dialog);
