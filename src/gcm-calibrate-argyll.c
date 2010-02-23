@@ -87,6 +87,7 @@ struct _GcmCalibrateArgyllPrivate
 	glong				 vte_previous_col;
 	gboolean			 already_on_window;
 	GcmCalibrateArgyllState		 state;
+	GcmPrint			*print;
 };
 
 enum {
@@ -436,6 +437,90 @@ out:
 		g_ptr_array_unref (array);
 	g_free (basename);
 	g_free (output_name);
+	g_free (command);
+	g_strfreev (argv);
+	return ret;
+}
+
+
+/**
+ * gcm_calibrate_argyll_display_read_chart:
+ **/
+static gboolean
+gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+{
+	gboolean ret = TRUE;
+	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	gchar *command = NULL;
+	gchar **argv = NULL;
+	GPtrArray *array = NULL;
+	gchar *basename = NULL;
+	const gchar *title;
+	const gchar *message;
+
+	/* get shared data */
+	g_object_get (calibrate_argyll,
+		      "basename", &basename,
+		      NULL);
+
+	/* get correct name of the command */
+	command = gcm_calibrate_argyll_get_tool_filename ("chartread", error);
+	if (command == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+
+	/* TRANSLATORS: title, patches are specific colours used in calibration */
+	title = _("Reading the patches");
+	/* TRANSLATORS: dialog message */
+	message = _("Reading the patches using the hardware device.");
+
+	/* push new messages into the UI */
+	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
+	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+
+	/* argument array */
+	array = g_ptr_array_new_with_free_func (g_free);
+
+	/* setup the command */
+	g_ptr_array_add (array, g_strdup ("-v9"));
+	g_ptr_array_add (array, g_strdup (basename));
+	argv = gcm_utils_ptr_array_to_strv (array);
+	gcm_calibrate_argyll_debug_argv (command, argv);
+
+	/* start up the command */
+	priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
+	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, GCM_CALIBRATE_ARGYLL_TEMP_DIR, FALSE, FALSE, FALSE);
+
+	/* wait until finished */
+	g_main_loop_run (priv->loop);
+
+	/* get result */
+	if (priv->response == GTK_RESPONSE_CANCEL) {
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "calibration was cancelled");
+		ret = FALSE;
+		goto out;
+	}
+	if (priv->response == GTK_RESPONSE_REJECT) {
+		gchar *vte_text;
+		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
+		g_set_error (error,
+			     GCM_CALIBRATE_ERROR,
+			     GCM_CALIBRATE_ERROR_INTERNAL,
+			     "command failed to run successfully: %s", vte_text);
+		g_free (vte_text);
+		ret = FALSE;
+		goto out;
+	}
+out:
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	g_free (basename);
 	g_free (command);
 	g_strfreev (argv);
 	return ret;
@@ -1210,25 +1295,246 @@ out:
 }
 
 /**
+ * gcm_calibrate_argyll_get_colorimeter_target:
+ **/
+static const gchar *
+gcm_calibrate_argyll_get_colorimeter_target (GcmCalibrateArgyll *calibrate_argyll)
+{
+	GcmColorimeterKind colorimeter_kind;
+
+	g_object_get (calibrate_argyll,
+		      "colorimeter-kind", &colorimeter_kind,
+		      NULL);
+
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_DTP20)
+		return "20";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_DTP22)
+		return "22";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_DTP41)
+		return "41";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_DTP51)
+		return "51";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_SPECTRO_SCAN)
+		return "SS";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_I1_PRO)
+		return "i1";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI)
+		return "CM";
+	return NULL;
+}
+
+/**
+ * gcm_calibrate_argyll_display_generate_targets:
+ **/
+static gboolean
+gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_argyll, gdouble width, gdouble height, GError **error)
+{
+	gboolean ret = TRUE;
+	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	gchar *command = NULL;
+	gchar **argv = NULL;
+	GPtrArray *array = NULL;
+	gchar *basename = NULL;
+	const gchar *title;
+	const gchar *message;
+	GcmColorimeterKind colorimeter_kind;
+
+	/* get shared data */
+	g_object_get (calibrate_argyll,
+		      "basename", &basename,
+		      "colorimeter-kind", &colorimeter_kind,
+		      NULL);
+
+	/* get correct name of the command */
+	command = gcm_calibrate_argyll_get_tool_filename ("printtarg", error);
+	if (command == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+
+	/* TRANSLATORS: title, patches are specific colors used in calibration */
+	title = _("Printing patches");
+
+	/* TRANSLATORS: dialog message */
+	message = _("Rendering the patches for the selected paper and ink.");
+
+	/* push new messages into the UI */
+	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
+	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+
+	/* argument array */
+	array = g_ptr_array_new_with_free_func (g_free);
+
+	/* setup the command */
+	g_ptr_array_add (array, g_strdup ("-v"));
+
+	/* target instrument */
+	g_ptr_array_add (array, g_strdup_printf ("-i%s", gcm_calibrate_argyll_get_colorimeter_target (calibrate_argyll)));
+
+	/* use double density */
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI ||
+	    colorimeter_kind == GCM_COLORIMETER_KIND_SPECTRO_SCAN) {
+		g_ptr_array_add (array, g_strdup ("-h"));
+	}
+
+	/* 8 bit TIFF 300 dpi */
+	g_ptr_array_add (array, g_strdup ("-t300"));
+
+	/* paper size */
+	g_ptr_array_add (array, g_strdup_printf ("-p%ix%i", (gint) width, (gint) height));
+
+	g_ptr_array_add (array, g_strdup (basename));
+	argv = gcm_utils_ptr_array_to_strv (array);
+	gcm_calibrate_argyll_debug_argv (command, argv);
+
+	/* start up the command */
+	priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
+	vte_terminal_reset (VTE_TERMINAL(priv->terminal), TRUE, FALSE);
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal), command, argv, NULL, GCM_CALIBRATE_ARGYLL_TEMP_DIR, FALSE, FALSE, FALSE);
+
+	/* wait until finished */
+	g_main_loop_run (priv->loop);
+
+	/* get result */
+	if (priv->response == GTK_RESPONSE_CANCEL) {
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "target generation was cancelled");
+		ret = FALSE;
+		goto out;
+	}
+	if (priv->response == GTK_RESPONSE_REJECT) {
+		gchar *vte_text;
+		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
+		g_set_error (error,
+			     GCM_CALIBRATE_ERROR,
+			     GCM_CALIBRATE_ERROR_INTERNAL,
+			     "command failed to run successfully: %s", vte_text);
+		g_free (vte_text);
+		ret = FALSE;
+		goto out;
+	}
+out:
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	g_free (basename);
+	g_free (command);
+	g_strfreev (argv);
+	return ret;
+}
+
+/**
+ * gcm_calibrate_argyll_render_cb:
+ **/
+static GPtrArray *
+gcm_calibrate_argyll_render_cb (GcmPrint *print, GtkPageSetup *page_setup, GcmCalibrate *calibrate, GError **error)
+{
+	gboolean ret = TRUE;
+	GPtrArray *array = NULL;
+	gdouble width, height;
+	GtkPaperSize *paper_size;
+	GDir *dir = NULL;
+	const gchar *filename;
+	gchar *basename = NULL;
+	gchar *filename_tmp;
+
+	/* get shared data */
+	g_object_get (calibrate,
+		      "basename", &basename,
+		      NULL);
+
+	paper_size = gtk_page_setup_get_paper_size (page_setup);
+	width = gtk_paper_size_get_width (paper_size, GTK_UNIT_MM);
+	height = gtk_paper_size_get_height (paper_size, GTK_UNIT_MM);
+
+	/* generate the tiff files */
+	ret = gcm_calibrate_argyll_display_generate_targets (GCM_CALIBRATE_ARGYLL (calibrate), width, height, error);
+	if (!ret)
+		goto out;
+
+	//FIXME: we need a temp directory, not just the root of tmp
+
+	/* list files */
+	dir = g_dir_open (GCM_CALIBRATE_ARGYLL_TEMP_DIR, 0, error);
+	if (dir == NULL)
+		goto out;
+
+	/* read in each file */
+	array = g_ptr_array_new_with_free_func (g_free);
+	filename = g_dir_read_name (dir);
+	while (filename != NULL) {
+		if (g_str_has_prefix (filename, basename) &&
+		    g_str_has_suffix (filename, ".tif")) {
+			filename_tmp = g_build_filename (GCM_CALIBRATE_ARGYLL_TEMP_DIR, filename, NULL);
+			egg_debug ("add print page %s", filename_tmp);
+			g_ptr_array_add (array, filename_tmp);
+		}
+		filename = g_dir_read_name (dir);
+	}
+out:
+	g_free (basename);
+	if (dir != NULL)
+		g_dir_close (dir);
+	return array;
+}
+
+/**
  * gcm_calibrate_argyll_printer:
  **/
 static gboolean
 gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 {
 	gboolean ret;
+	const gchar *title;
+	const gchar *message;
+	GtkResponseType response;
 	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
-//	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
 	/* need to ask if we are printing now, or using old data */
+
+	/* set modal windows up correctly */
+	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
 
 	/* step 1 */
 	ret = gcm_calibrate_argyll_display_generate_patches (calibrate_argyll, error);
 	if (!ret)
 		goto out;
 
-// printtarg -v -i CM -h -t 300 -p A4 test
-// chartread -v test
-// colprof -v -A "bla" -M "bla" -D "bla" -C "bla"  -a l -q m test
+	/* print */
+	window = gcm_calibrate_dialog_get_window (priv->calibrate_dialog);
+	ret = gcm_print_with_render_callback (priv->print, window, (GcmPrintRenderCb) gcm_calibrate_argyll_render_cb, calibrate, error);
+	if (!ret)
+		goto out;
+
+	/* TRANSLATORS: title, patches are specific colours used in calibration */
+	title = _("Wait for the ink to dry");
+
+	/* TRANSLATORS: dialog message */
+	message = _("Please wait a few minutes for the ink to dry. Profiling damp ink will produce a poor profile and may damage your calibration device.");
+
+	/* push new messages into the UI */
+	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
+	gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, "clock.svg");
+	response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
+	if (response != GTK_RESPONSE_OK) {
+		gcm_calibrate_dialog_hide (priv->calibrate_dialog);
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "user did not wait for ink to dry");
+		ret = FALSE;
+		goto out;
+	}
+
+	/* step 3 */
+	ret = gcm_calibrate_argyll_display_read_chart (calibrate_argyll, error);
+	if (!ret)
+		goto out;
 
 	/* step 4 */
 	ret = gcm_calibrate_argyll_device_generate_profile (calibrate_argyll, error);
@@ -1625,6 +1931,58 @@ out:
 }
 
 /**
+ * gcm_calibrate_argyll_status_changed_cb:
+ **/
+static void
+gcm_calibrate_argyll_status_changed_cb (GcmPrint *print, GtkPrintStatus status, GcmCalibrateArgyll *calibrate_argyll)
+{
+	const gchar *title;
+	const gchar *message = NULL;
+	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+
+	/* TRANSLATORS: title, printing reference files to media */
+	title = _("Printing");
+
+	switch (status) {
+	case GTK_PRINT_STATUS_INITIAL:
+	case GTK_PRINT_STATUS_PREPARING:
+	case GTK_PRINT_STATUS_GENERATING_DATA:
+		/* TRANSLATORS: dialog message */
+		message = _("Preparing the data for the printer.");
+		break;
+	case GTK_PRINT_STATUS_SENDING_DATA:
+	case GTK_PRINT_STATUS_PENDING:
+	case GTK_PRINT_STATUS_PENDING_ISSUE:
+		/* TRANSLATORS: dialog message */
+		message = _("Sending the targets to the printer.");
+		break;
+	case GTK_PRINT_STATUS_PRINTING:
+		/* TRANSLATORS: dialog message */
+		message = _("Printing the targets...");
+		break;
+	case GTK_PRINT_STATUS_FINISHED:
+		/* TRANSLATORS: dialog message */
+		message = _("The printing has finished.");
+		break;
+	case GTK_PRINT_STATUS_FINISHED_ABORTED:
+		/* TRANSLATORS: dialog message */
+		message = _("The print was aborted.");
+		break;
+	default:
+		break;
+	}
+
+	/* not a translated message */
+	if (message == NULL)
+		return;
+
+	/* push new messages into the UI */
+	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
+	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
+}
+
+/**
  * gcm_calibrate_argyll_get_property:
  **/
 static void
@@ -1685,6 +2043,9 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 	calibrate_argyll->priv->vte_previous_col = 0;
 	calibrate_argyll->priv->already_on_window = FALSE;
 	calibrate_argyll->priv->state = GCM_CALIBRATE_ARGYLL_STATE_IDLE;
+	calibrate_argyll->priv->print = gcm_print_new ();
+	g_signal_connect (calibrate_argyll->priv->print, "status-changed",
+			  G_CALLBACK (gcm_calibrate_argyll_status_changed_cb), calibrate_argyll);
 	calibrate_argyll->priv->calibrate_dialog = gcm_calibrate_dialog_new ();
 	g_signal_connect (calibrate_argyll->priv->calibrate_dialog, "response",
 			  G_CALLBACK (gcm_calibrate_argyll_response_cb), calibrate_argyll);
@@ -1736,6 +2097,7 @@ gcm_calibrate_argyll_finalize (GObject *object)
 	g_object_unref (priv->screen);
 	g_object_unref (priv->gconf_client);
 	g_object_unref (priv->calibrate_dialog);
+	g_object_unref (priv->print);
 
 	G_OBJECT_CLASS (gcm_calibrate_argyll_parent_class)->finalize (object);
 }
