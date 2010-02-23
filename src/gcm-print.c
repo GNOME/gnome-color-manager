@@ -131,11 +131,11 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 	cairo_t *cr;
 	gdouble width = 0.0f;
 	gdouble height = 0.0f;
-	gdouble offset_x;
-	gdouble offset_y;
 	GError *error = NULL;
 	const gchar *filename;
 	GdkPixbuf *pixbuf = NULL;
+	cairo_surface_t *surface = NULL;
+	gdouble scale;
 
 	/* get the size of the page in _pixels_ */
 	width = gtk_print_context_get_width (context);
@@ -144,7 +144,7 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 
 	/* load pixbuf, which we've already prepared */
 	filename = g_ptr_array_index (task->filenames, page_nr);
-	pixbuf = gdk_pixbuf_new_from_file_at_scale (filename, width, height, TRUE, &error);
+	pixbuf = gdk_pixbuf_new_from_file (filename, &error);
 	if (pixbuf == NULL) {
 		egg_warning ("failed to load image: %s", error->message);
 		g_error_free (error);
@@ -152,17 +152,24 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 		goto out;
 	}
 
-	/* center image */
-	offset_x = (width - gdk_pixbuf_get_width (pixbuf)) / 2;
-	offset_y = (height - gdk_pixbuf_get_height (pixbuf)) / 2;
+	/* create a surface of the pixmap */
+	surface = cairo_image_surface_create_for_data (gdk_pixbuf_get_pixels (pixbuf),
+						       CAIRO_FORMAT_RGB24,
+						       gdk_pixbuf_get_width (pixbuf),
+						       gdk_pixbuf_get_height (pixbuf),
+						       gdk_pixbuf_get_rowstride (pixbuf));
 
-	egg_debug ("surface=%.0fx%.0f, pixbuf=%ix%i", width, height, gdk_pixbuf_get_width (pixbuf), gdk_pixbuf_get_height (pixbuf));
-	egg_debug ("offset_x=%f,offset_y=%f", offset_x, offset_y);
+	/* scale image to fill the page, but preserve aspect */
+	scale = MIN (width / gdk_pixbuf_get_width (pixbuf), height / gdk_pixbuf_get_height (pixbuf));
+	egg_debug ("surface=%.0fx%.0f, pixbuf=%ix%i (scale=%f)", width, height, gdk_pixbuf_get_width (pixbuf), gdk_pixbuf_get_height (pixbuf), scale);
+	cairo_scale (cr, scale, scale);
 
-	/* set the pixmap */
-	gdk_cairo_set_source_pixbuf (cr, pixbuf, offset_x, offset_y);
+	/* blit to the context */
+	cairo_set_source_surface (cr, surface, 0, 0);
 	cairo_paint (cr);
 out:
+	if (surface != NULL)
+		cairo_surface_destroy (surface);
 	if (pixbuf != NULL)
 		g_object_unref (pixbuf);
 }
@@ -248,6 +255,9 @@ gcm_print_with_render_callback (GcmPrint *print, GtkWindow *window, GcmPrintRend
 
 	/* track status even when spooled */
 	gtk_print_operation_set_track_print_status (operation, TRUE);
+
+	/* we want to be able to use custom page sizes */
+	gtk_print_operation_set_embed_page_setup (operation, TRUE);
 
 	/* do the print UI */
 	res = gtk_print_operation_run (operation,
