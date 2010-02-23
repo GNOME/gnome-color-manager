@@ -238,7 +238,7 @@ gcm_print_with_render_callback (GcmPrint *print, GtkWindow *window, GcmPrintRend
 	g_signal_connect (operation, "done", G_CALLBACK (gcm_print_done_cb), task);
 
 	/* we want this to be as big as possible, modulo page margins */
-	gtk_print_operation_set_use_full_page (operation, TRUE);
+	gtk_print_operation_set_use_full_page (operation, FALSE);
 
 	/* don't show status, we've got it covered */
 	gtk_print_operation_set_show_progress (operation, FALSE);
