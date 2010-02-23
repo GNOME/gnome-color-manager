@@ -1597,6 +1597,14 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 	ret = gcm_calibrate_argyll_device_generate_profile (calibrate_argyll, error);
 	if (!ret)
 		goto out;
+
+	/* only delete state if we are doing a local printer */
+	if (print_kind == GCM_CALIBRATE_PRINT_KIND_LOCAL) {
+		/* step 5 */
+		ret = gcm_calibrate_argyll_finish (calibrate_argyll, error);
+		if (!ret)
+			goto out;
+	}
 out:
 	g_free (cmdline);
 	g_free (working_path);
