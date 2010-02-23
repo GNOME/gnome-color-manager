@@ -1634,6 +1634,160 @@ gcm_calibrate_argyll_timeout_cb (GcmCalibrateArgyll *calibrate_argyll)
 }
 
 /**
+ * gcm_calibrate_argyll_interaction_attach:
+ **/
+static void
+gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
+{
+	const gchar *title;
+	const gchar *message;
+	const gchar *filename;
+	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+
+	/* different tools assume the device is not on the screen */
+	if (priv->already_on_window) {
+		egg_debug ("VTE: already on screen so faking keypress");
+		g_timeout_add_seconds (1, (GSourceFunc) gcm_calibrate_argyll_timeout_cb, calibrate_argyll);
+		goto out;
+	}
+
+	/* TRANSLATORS: title, device is a hardware color calibration sensor */
+	title = _("Please attach device");
+
+	/* get the image, if we have one */
+	filename = gcm_calibrate_argyll_get_colorimeter_image_attach (calibrate_argyll);
+
+	/* different messages with or without image */
+	if (filename != NULL) {
+		/* TRANSLATORS: dialog message, ask user to attach device, and there's an example image */
+		message = _("Please attach the hardware device to the center of the screen on the gray square like the image below.");
+	} else {
+		/* TRANSLATORS: dialog message, ask user to attach device */
+		message = _("Please attach the hardware device to the center of the screen on the gray square.");
+	}
+
+	/* block for a response */
+	egg_debug ("blocking waiting for user input: %s", title);
+
+	/* push new messages into the UI */
+	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+	gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
+	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
+
+	/* set state */
+	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN,
+
+	/* play sound from the naming spec */
+	ca_context_play (ca_gtk_context_get (), 0,
+			 CA_PROP_EVENT_ID, "dialog-information",
+			 /* TRANSLATORS: this is the application name for libcanberra */
+			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+			 CA_PROP_EVENT_DESCRIPTION, message, NULL);
+
+	/* save as we know the device is on the screen now */
+	priv->already_on_window = TRUE;
+out:
+	return;
+}
+
+/**
+ * gcm_calibrate_argyll_interaction_calibrate:
+ **/
+static void
+gcm_calibrate_argyll_interaction_calibrate (GcmCalibrateArgyll *calibrate_argyll)
+{
+	const gchar *title;
+	const gchar *message;
+	const gchar *filename;
+	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+
+	/* TRANSLATORS: title, device is a hardware color calibration sensor */
+	title = _("Please configure device");
+
+	/* block for a response */
+	egg_debug ("blocking waiting for user input: %s", title);
+
+	/* get the image, if we have one */
+	filename = gcm_calibrate_argyll_get_colorimeter_image_calibrate (calibrate_argyll);
+
+	if (filename != NULL) {
+		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
+		message = _("Please set the device to calibration mode like the image below.");
+	} else {
+		/* TRANSLATORS: this is when the user has to change a setting on the sensor */
+		message = _("Please set the device to calibration mode.");
+	}
+
+	/* push new messages into the UI */
+	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+	gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
+	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+
+	/* play sound from the naming spec */
+	ca_context_play (ca_gtk_context_get (), 0,
+			 CA_PROP_EVENT_ID, "dialog-information",
+			 /* TRANSLATORS: this is the application name for libcanberra */
+			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+			 CA_PROP_EVENT_DESCRIPTION, message, NULL);
+
+	/* assume it's no longer on the window */
+	priv->already_on_window = FALSE;
+
+	/* set state */
+	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
+}
+
+/**
+ * gcm_calibrate_argyll_interaction_surface:
+ **/
+static void
+gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
+{
+	const gchar *title;
+	const gchar *message;
+	const gchar *filename;
+	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+
+	/* TRANSLATORS: title, device is a hardware color calibration sensor */
+	title = _("Please configure device");
+
+	/* block for a response */
+	egg_debug ("blocking waiting for user input: %s", title);
+
+	/* get the image, if we have one */
+	filename = gcm_calibrate_argyll_get_colorimeter_image_screen (calibrate_argyll);
+
+	if (filename != NULL) {
+		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
+		message = _("Please set the device to screen mode like the image below, and ensure it is attached to the screen.");
+	} else {
+		/* TRANSLATORS: this is when the user has to change a setting on the sensor */
+		message = _("Please set the device to screen mode, and ensure it is attached to the screen.");
+	}
+
+	/* push new messages into the UI */
+	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+	gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
+	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+
+	/* play sound from the naming spec */
+	ca_context_play (ca_gtk_context_get (), 0,
+			 CA_PROP_EVENT_ID, "dialog-information",
+			 /* TRANSLATORS: this is the application name for libcanberra */
+			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+			 CA_PROP_EVENT_DESCRIPTION, message, NULL);
+
+	/* assume it's no longer on the window */
+	priv->already_on_window = FALSE;
+
+	/* set state */
+	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
+}
+
+/**
  * gcm_calibrate_argyll_process_output_cmd:
  **/
 static void
@@ -1641,135 +1795,27 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 {
 	const gchar *title;
 	const gchar *message;
-	const gchar *filename;
 	gchar *found;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
 	/* attach device */
 	if (g_strcmp0 (line, "Place instrument on test window.") == 0) {
 		egg_debug ("VTE: interaction required: %s", line);
-
-		/* different tools assume the device is not on the screen */
-		if (priv->already_on_window) {
-			egg_debug ("VTE: already on screen so faking keypress");
-			g_timeout_add_seconds (1, (GSourceFunc) gcm_calibrate_argyll_timeout_cb, calibrate_argyll);
-			goto out;
-		}
-
-		/* TRANSLATORS: title, device is a hardware color calibration sensor */
-		title = _("Please attach device");
-
-		/* get the image, if we have one */
-		filename = gcm_calibrate_argyll_get_colorimeter_image_attach (calibrate_argyll);
-
-		/* different messages with or without image */
-		if (filename != NULL) {
-			/* TRANSLATORS: dialog message, ask user to attach device, and there's an example image */
-			message = _("Please attach the hardware device to the center of the screen on the gray square like the image below.");
-		} else {
-			/* TRANSLATORS: dialog message, ask user to attach device */
-			message = _("Please attach the hardware device to the center of the screen on the gray square.");
-		}
-
-		/* block for a response */
-		egg_debug ("blocking waiting for user input: %s", title);
-
-		/* push new messages into the UI */
-		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
-		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
-		gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
-		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
-
-		/* set state */
-		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN,
-
-		/* play sound from the naming spec */
-		ca_context_play (ca_gtk_context_get (), 0,
-				 CA_PROP_EVENT_ID, "dialog-information",
-				 /* TRANSLATORS: this is the application name for libcanberra */
-				 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
-				 CA_PROP_EVENT_DESCRIPTION, message, NULL);
-
-		/* save as we know the device is on the screen now */
-		priv->already_on_window = TRUE;
+		gcm_calibrate_argyll_interaction_attach (calibrate_argyll);
 		goto out;
 	}
 
 	/* set to calibrate */
 	if (g_strcmp0 (line, "Set instrument sensor to calibration position,") == 0) {
 		egg_debug ("VTE: interaction required, set to calibrate");
-
-		/* TRANSLATORS: title, device is a hardware color calibration sensor */
-		title = _("Please configure device");
-
-		/* block for a response */
-		egg_debug ("blocking waiting for user input: %s", title);
-
-		/* get the image, if we have one */
-		filename = gcm_calibrate_argyll_get_colorimeter_image_calibrate (calibrate_argyll);
-
-		if (filename != NULL) {
-			/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
-			message = _("Please set the device to calibration mode like the image below.");
-		} else {
-			/* TRANSLATORS: this is when the user has to change a setting on the sensor */
-			message = _("Please set the device to calibration mode.");
-		}
-
-		/* push new messages into the UI */
-		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
-		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
-		gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
-		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
-
-		/* play sound from the naming spec */
-		ca_context_play (ca_gtk_context_get (), 0,
-				 CA_PROP_EVENT_ID, "dialog-information",
-				 /* TRANSLATORS: this is the application name for libcanberra */
-				 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
-				 CA_PROP_EVENT_DESCRIPTION, message, NULL);
-
-		/* set state */
-		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
+		gcm_calibrate_argyll_interaction_calibrate (calibrate_argyll);
 		goto out;
 	}
 
 	/* set to calibrate */
 	if (g_strcmp0 (line, "(Sensor should be in surface position)") == 0) {
 		egg_debug ("VTE: interaction required, set to surface");
-
-		/* TRANSLATORS: title, device is a hardware color calibration sensor */
-		title = _("Please configure device");
-
-		/* block for a response */
-		egg_debug ("blocking waiting for user input: %s", title);
-
-		/* get the image, if we have one */
-		filename = gcm_calibrate_argyll_get_colorimeter_image_screen (calibrate_argyll);
-
-		if (filename != NULL) {
-			/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
-			message = _("Please set the device to screen mode like the image below.");
-		} else {
-			/* TRANSLATORS: this is when the user has to change a setting on the sensor */
-			message = _("Please set the device to screen mode.");
-		}
-
-		/* push new messages into the UI */
-		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
-		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
-		gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
-		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
-
-		/* play sound from the naming spec */
-		ca_context_play (ca_gtk_context_get (), 0,
-				 CA_PROP_EVENT_ID, "dialog-information",
-				 /* TRANSLATORS: this is the application name for libcanberra */
-				 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
-				 CA_PROP_EVENT_DESCRIPTION, message, NULL);
-
-		/* set state */
-		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
+		gcm_calibrate_argyll_interaction_surface (calibrate_argyll);
 		goto out;
 	}
 
@@ -1806,6 +1852,9 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		} else if (g_strstr_len (line, -1, "Aprox. fwd matrix unexpectedly singular") != NULL) {
 			/* TRANSLATORS: message, the sensor got no readings */
 			message = _("The colorimeter got no valid readings. Please ensure the aperture is fully open.");
+		} else if (g_strstr_len (line, -1, "Device or resource busy") != NULL) {
+			/* TRANSLATORS: message, the colorimeter has got confused */
+			message = _("The colorimeter device is busy and is not starting up. Please remove the USB plug and re-insert before trying to use this device.");
 		} else {
 			message = found + 8;
 		}
