@@ -94,6 +94,8 @@ gcm_inspect_show_x11_atoms (void)
 	const gchar *output_name;
 	gchar *title;
 	GError *error = NULL;
+	guint major;
+	guint minor;
 
 	/* setup object to access X */
 	xserver = gcm_xserver_new ();
@@ -107,7 +109,19 @@ gcm_inspect_show_x11_atoms (void)
 		error = NULL;
 	} else {
 		/* TRANSLATORS: the root window of all the screens */
-		gcm_inspect_print_data_info (_("Root window profile (deprecated):"), data, length);
+		gcm_inspect_print_data_info (_("Root window profile:"), data, length);
+	}
+
+	/* get profile from XServer */
+	ret = gcm_xserver_get_protocol_version (xserver, &major, &minor, &error);
+	if (!ret) {
+		egg_warning ("failed to get XServer protocol version: %s", error->message);
+		g_error_free (error);
+		/* non-fatal */
+		error = NULL;
+	} else {
+		/* TRANSLATORS: the root window of all the screens */
+		g_print ("%s %i.%i\n", _("Root window protocol version:"), major, minor);
 	}
 
 	/* coldplug devices */

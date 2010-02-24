@@ -220,6 +220,161 @@ out:
 }
 
 /**
+ * gcm_xserver_set_protocol_version:
+ * @xserver: a valid %GcmXserver instance
+ * @major: the major version
+ * @minor: the minor version
+ * @error: a %GError that is set in the result of an error, or %NULL
+ * Return value: %TRUE for success.
+ *
+ * Sets the ICC Profiles in X supported version to the XServer.
+ **/
+gboolean
+gcm_xserver_set_protocol_version (GcmXserver *xserver, guint major, guint minor, GError **error)
+{
+	gboolean ret = FALSE;
+	const gchar *atom_name;
+	gint rc;
+	Atom atom = None;
+	guint data;
+	GcmXserverPrivate *priv = xserver->priv;
+
+	g_return_val_if_fail (GCM_IS_XSERVER (xserver), FALSE);
+
+	/* get the atom name */
+	atom_name = "_ICC_PROFILE_IN_X_VERSION";
+	data = major * 100 + minor * 1;
+
+	/* get the value */
+	gdk_error_trap_push ();
+	atom = gdk_x11_get_xatom_by_name_for_display (priv->display_gdk, atom_name);
+	rc = XChangeProperty (priv->display, priv->window, atom, XA_CARDINAL, 8, PropModeReplace, (unsigned char*) &data, 1);
+	gdk_error_trap_pop ();
+
+	/* for some reason this fails with BadRequest, but actually sets the value */
+	if (rc == BadRequest)
+		rc = Success;
+
+	/* did the call fail */
+	if (rc != Success) {
+		g_set_error (error, 1, 0, "failed to set %s atom with rc %i", atom_name, rc);
+		goto out;
+	}
+
+	/* success */
+	ret = TRUE;
+out:
+	return ret;
+}
+
+/**
+ * gcm_xserver_remove_protocol_version:
+ * @xserver: a valid %GcmXserver instance
+ * @error: a %GError that is set in the result of an error, or %NULL
+ * Return value: %TRUE for success.
+ *
+ * Removes the ICC profile version data from the XServer.
+ **/
+gboolean
+gcm_xserver_remove_protocol_version (GcmXserver *xserver, GError **error)
+{
+	const gchar *atom_name;
+	Atom atom = None;
+	gint rc;
+	gboolean ret = TRUE;
+	GcmXserverPrivate *priv = xserver->priv;
+
+	g_return_val_if_fail (GCM_IS_XSERVER (xserver), FALSE);
+
+	egg_debug ("removing root window ICC profile atom");
+
+	/* get the atom name */
+	atom_name = "_ICC_PROFILE_IN_X_VERSION";
+
+	/* get the value */
+	gdk_error_trap_push ();
+	atom = gdk_x11_get_xatom_by_name_for_display (priv->display_gdk, atom_name);
+	rc = XDeleteProperty(priv->display, priv->window, atom);
+	gdk_error_trap_pop ();
+
+	/* this fails with BadRequest if the atom was not set */
+	if (rc == BadRequest)
+		rc = Success;
+
+	/* did the call fail */
+	if (rc != Success) {
+		ret = FALSE;
+		g_set_error (error, 1, 0, "failed to delete %s root window atom with rc %i", atom_name, rc);
+		goto out;
+	}
+out:
+	return ret;
+}
+
+/**
+ * gcm_xserver_get_protocol_version:
+ *
+ * @xserver: a valid %GcmXserver instance
+ * @major: the major version
+ * @minor: the minor version
+ * @error: a %GError that is set in the result of an error, or %NULL
+ * Return value: %TRUE for success.
+ *
+ * Gets the ICC profile data from the XServer.
+ **/
+gboolean
+gcm_xserver_get_protocol_version (GcmXserver *xserver, guint *major, guint *minor, GError **error)
+{
+	gboolean ret = FALSE;
+	const gchar *atom_name;
+	gchar *data_tmp;
+	gint format;
+	gint rc;
+	gulong bytes_after;
+	gulong nitems;
+	Atom atom = None;
+	Atom type;
+	GcmXserverPrivate *priv = xserver->priv;
+
+	g_return_val_if_fail (GCM_IS_XSERVER (xserver), FALSE);
+	g_return_val_if_fail (major != NULL, FALSE);
+	g_return_val_if_fail (minor != NULL, FALSE);
+
+	/* get the atom name */
+	atom_name = "_ICC_PROFILE_IN_X_VERSION";
+
+	/* get the value */
+	gdk_error_trap_push ();
+	atom = gdk_x11_get_xatom_by_name_for_display (priv->display_gdk, atom_name);
+	rc = XGetWindowProperty (priv->display, priv->window, atom, 0, G_MAXLONG, False, XA_CARDINAL,
+				 &type, &format, &nitems, &bytes_after, (unsigned char **) &data_tmp);
+	gdk_error_trap_pop ();
+
+	/* did the call fail */
+	if (rc != Success) {
+		g_set_error (error, 1, 0, "failed to get %s atom with rc %i", atom_name, rc);
+		goto out;
+	}
+
+	/* was nothing found */
+	if (nitems == 0) {
+		g_set_error (error, 1, 0, "%s atom has not been set", atom_name);
+		goto out;
+	}
+
+	/* set total */
+	*major = (guint) data_tmp[0] / 100;
+	*minor = (guint) data_tmp[0] % 100;
+
+	/* success */
+	ret = TRUE;
+out:
+	if (data_tmp != NULL)
+		XFree (data_tmp);
+	return ret;
+}
+
+/**
  * gcm_xserver_remove_root_window_profile:
  * @xserver: a valid %GcmXserver instance
  * @error: a %GError that is set in the result of an error, or %NULL

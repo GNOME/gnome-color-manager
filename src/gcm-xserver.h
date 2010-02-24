@@ -71,6 +71,16 @@ gboolean	 gcm_xserver_set_root_window_profile		(GcmXserver		*xserver,
 								 GError			**error);
 gboolean	 gcm_xserver_remove_root_window_profile		(GcmXserver		*xserver,
 								 GError			**error);
+gboolean	 gcm_xserver_set_protocol_version		(GcmXserver		*xserver,
+								 guint			 major,
+								 guint			 minor,
+								 GError			**error);
+gboolean	 gcm_xserver_remove_protocol_version		(GcmXserver		*xserver,
+								 GError			**error);
+gboolean	 gcm_xserver_get_protocol_version		(GcmXserver		*xserver,
+								 guint			*major,
+								 guint			*minor,
+								 GError			**error);
 
 /* per output */
 gboolean	 gcm_xserver_get_output_profile_data		(GcmXserver		*xserver,

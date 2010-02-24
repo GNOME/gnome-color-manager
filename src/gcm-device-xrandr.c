@@ -69,6 +69,8 @@ enum {
 
 G_DEFINE_TYPE (GcmDeviceXrandr, gcm_device_xrandr, GCM_TYPE_DEVICE)
 
+#define GCM_ICC_PROFILE_IN_X_VERSION_MAJOR	0
+#define GCM_ICC_PROFILE_IN_X_VERSION_MINOR	3
 
 /**
  * gcm_device_xrandr_get_output_name:
@@ -564,6 +566,9 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 			ret = gcm_xserver_remove_root_window_profile (priv->xserver, error);
 			if (!ret)
 				goto out;
+			ret = gcm_xserver_remove_protocol_version (priv->xserver, error);
+			if (!ret)
+				goto out;
 		}
 	} else {
 		/* set the per-output and per screen profile atoms */
@@ -574,6 +579,12 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 		/* primary screen */
 		if (leftmost_screen) {
 			ret = gcm_xserver_set_root_window_profile (priv->xserver, filename, error);
+			if (!ret)
+				goto out;
+			ret = gcm_xserver_set_protocol_version (priv->xserver,
+								GCM_ICC_PROFILE_IN_X_VERSION_MAJOR,
+								GCM_ICC_PROFILE_IN_X_VERSION_MINOR,
+								error);
 			if (!ret)
 				goto out;
 		}
