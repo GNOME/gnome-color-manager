@@ -635,6 +635,8 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 {
 	gchar *title;
 	gchar *type_text = NULL;
+	gchar *colorspace_text = NULL;
+	GcmColorspaceEnum colorspace;
 	GcmDeviceTypeEnum type;
 	GcmDevice *device = NULL;
 	gboolean ret;
@@ -649,6 +651,15 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 	type = gcm_device_type_enum_from_string (type_text);
 	if (type == GCM_DEVICE_TYPE_ENUM_UNKNOWN)
 		goto out;
+
+	/* get colorspace */
+	colorspace_text = g_key_file_get_string (keyfile, id, "colorspace", NULL);
+	if (colorspace_text == NULL) {
+		egg_warning ("legacy device %i, falling back to RGB", id);
+		colorspace = GCM_COLORSPACE_ENUM_RGB;
+	} else {
+		colorspace = gcm_colorspace_enum_from_string (colorspace_text);
+	}
 
 	/* create device or specified type */
 	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
@@ -672,7 +683,7 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 		      "connected", FALSE,
 		      "title", title,
 		      "saved", TRUE,
-		      "colorspace", GCM_COLORSPACE_ENUM_RGB, //FIXME: should get from config file
+		      "colorspace", colorspace,
 		      NULL);
 
 	/* load the device */
@@ -693,6 +704,7 @@ out:
 	if (device != NULL)
 		g_object_unref (device);
 	g_free (type_text);
+	g_free (colorspace_text);
 	g_free (title);
 }
 

@@ -357,6 +357,9 @@ gcm_device_save (GcmDevice *device, GError **error)
 		g_key_file_set_string (keyfile, device->priv->id, "title", device->priv->title);
 	g_key_file_set_string (keyfile, device->priv->id, "type", gcm_device_type_enum_to_string (device->priv->type));
 
+	/* add colorspace */
+	g_key_file_set_string (keyfile, device->priv->id, "colorspace", gcm_colorspace_enum_to_string (device->priv->colorspace));
+
 	/* convert to string */
 	data = g_key_file_to_data (keyfile, NULL, &error_local);
 	if (data == NULL) {
