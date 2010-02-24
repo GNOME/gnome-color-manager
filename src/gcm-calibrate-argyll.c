@@ -1619,6 +1619,29 @@ out:
 }
 
 /**
+ * gcm_calibrate_argyll_get_paper_size:
+ **/
+static GtkPaperSize *
+gcm_calibrate_argyll_get_paper_size (GcmCalibrate *calibrate, GtkWindow *window)
+{
+	GtkPrintSettings *settings;
+	GtkPageSetup *page_setup;
+	GtkPaperSize *paper_size = NULL;
+
+	/* find out the paper size */
+	settings = gtk_print_settings_new ();
+	page_setup = gtk_print_run_page_setup_dialog (window, NULL, settings);
+	if (page_setup == NULL)
+		goto out;
+
+	/* get paper size */
+	paper_size = gtk_page_setup_get_paper_size (page_setup);
+out:
+	g_object_unref (settings);
+	return paper_size;
+}
+
+/**
  * gcm_calibrate_argyll_printer:
  **/
 static gboolean
@@ -1629,8 +1652,10 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 	gchar *filename = NULL;
 	gchar *working_path = NULL;
 	gchar *basename = NULL;
+	GtkPaperSize *paper_size;
 	const gchar *title;
 	const gchar *message;
+	gdouble width, height;
 	GtkResponseType response;
 	GcmCalibratePrintKind print_kind;
 	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
@@ -1656,16 +1681,26 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 	}
 
 	/* print */
-	if (print_kind == GCM_CALIBRATE_PRINT_KIND_LOCAL ||
-	    print_kind == GCM_CALIBRATE_PRINT_KIND_GENERATE) {
+	if (print_kind == GCM_CALIBRATE_PRINT_KIND_LOCAL) {
 		window = gcm_calibrate_dialog_get_window (priv->calibrate_dialog);
 		ret = gcm_print_with_render_callback (priv->print, window, (GcmPrintRenderCb) gcm_calibrate_argyll_render_cb, calibrate, error);
 		if (!ret)
 			goto out;
 	}
 
-	/* we're done */
+	/* page setup, and then we're done */
 	if (print_kind == GCM_CALIBRATE_PRINT_KIND_GENERATE) {
+
+		/* get the paper size */
+		paper_size = gcm_calibrate_argyll_get_paper_size (calibrate, window);
+		width = gtk_paper_size_get_width (paper_size, GTK_UNIT_MM);
+		height = gtk_paper_size_get_height (paper_size, GTK_UNIT_MM);
+
+		/* generate the tiff files */
+		ret = gcm_calibrate_argyll_display_generate_targets (GCM_CALIBRATE_ARGYLL (calibrate), width, height, error);
+		if (!ret)
+			goto out;
+
 		cmdline = g_strdup_printf ("nautilus \"%s\"", working_path);
 		egg_debug ("we need to open the directory we're using: %s", cmdline);
 		ret = g_spawn_command_line_async (cmdline, error);
