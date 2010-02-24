@@ -49,6 +49,7 @@ static void     gcm_device_finalize	(GObject     *object);
 struct _GcmDevicePrivate
 {
 	gboolean			 connected;
+	gboolean			 virtual;
 	gboolean			 saved;
 	gfloat				 gamma;
 	gfloat				 brightness;
@@ -69,6 +70,7 @@ enum {
 	PROP_TYPE,
 	PROP_ID,
 	PROP_CONNECTED,
+	PROP_VIRTUAL,
 	PROP_SAVED,
 	PROP_SERIAL,
 	PROP_MODEL,
@@ -432,6 +434,9 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_CONNECTED:
 		g_value_set_boolean (value, priv->connected);
 		break;
+	case PROP_VIRTUAL:
+		g_value_set_boolean (value, priv->virtual);
+		break;
 	case PROP_SAVED:
 		g_value_set_boolean (value, priv->saved);
 		break;
@@ -487,6 +492,9 @@ gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GP
 		break;
 	case PROP_CONNECTED:
 		priv->connected = g_value_get_boolean (value);
+		break;
+	case PROP_VIRTUAL:
+		priv->virtual = g_value_get_boolean (value);
 		break;
 	case PROP_SAVED:
 		priv->saved = g_value_get_boolean (value);
@@ -564,6 +572,14 @@ gcm_device_class_init (GcmDeviceClass *klass)
 				      FALSE,
 				      G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CONNECTED, pspec);
+
+	/**
+	 * GcmDevice:virtual:
+	 */
+	pspec = g_param_spec_boolean ("virtual", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_VIRTUAL, pspec);
 
 	/**
 	 * GcmDevice:saved:
@@ -659,6 +675,7 @@ gcm_device_init (GcmDevice *device)
 	device->priv->id = NULL;
 	device->priv->saved = FALSE;
 	device->priv->connected = FALSE;
+	device->priv->virtual = FALSE;
 	device->priv->serial = NULL;
 	device->priv->manufacturer = NULL;
 	device->priv->model = NULL;
@@ -755,6 +772,7 @@ gcm_device_test (EggTest *test)
 		      "type", GCM_DEVICE_TYPE_ENUM_SCANNER,
 		      "id", "sysfs_dummy_device",
 		      "connected", TRUE,
+		      "virtual", FALSE,
 		      "serial", "0123456789",
 		      NULL);
 
