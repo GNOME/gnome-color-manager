@@ -73,6 +73,7 @@ GcmIntentEnum		 gcm_intent_enum_from_string		(const gchar		*intent);
 const gchar		*gcm_intent_enum_to_string		(GcmIntentEnum		 intent);
 const gchar		*gcm_profile_type_enum_to_string	(GcmProfileTypeEnum	 profile_type);
 const gchar		*gcm_colorspace_enum_to_string		(GcmColorspaceEnum	 colorspace);
+GcmColorspaceEnum	 gcm_colorspace_enum_from_string	(const gchar		*colorspace);
 GcmDeviceTypeEnum	 gcm_device_type_enum_from_string	(const gchar		*type);
 const gchar		*gcm_device_type_enum_to_string		(GcmDeviceTypeEnum	 type);
 

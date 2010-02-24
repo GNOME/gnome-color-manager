@@ -111,3 +111,32 @@ gcm_colorspace_enum_to_string (GcmColorspaceEnum type)
 	return "unknown";
 }
 
+/**
+ * gcm_colorspace_enum_from_string:
+ **/
+GcmColorspaceEnum
+gcm_colorspace_enum_from_string (const gchar *colorspace)
+{
+	if (g_strcmp0 (colorspace, "xyz") == 0)
+		return GCM_COLORSPACE_ENUM_XYZ;
+	if (g_strcmp0 (colorspace, "lab") == 0)
+		return GCM_COLORSPACE_ENUM_LAB;
+	if (g_strcmp0 (colorspace, "luv") == 0)
+		return GCM_COLORSPACE_ENUM_LUV;
+	if (g_strcmp0 (colorspace, "ycbcr") == 0)
+		return GCM_COLORSPACE_ENUM_YCBCR;
+	if (g_strcmp0 (colorspace, "yxy") == 0)
+		return GCM_COLORSPACE_ENUM_YXY;
+	if (g_strcmp0 (colorspace, "rgb") == 0)
+		return GCM_COLORSPACE_ENUM_RGB;
+	if (g_strcmp0 (colorspace, "gray") == 0)
+		return GCM_COLORSPACE_ENUM_GRAY;
+	if (g_strcmp0 (colorspace, "hsv") == 0)
+		return GCM_COLORSPACE_ENUM_HSV;
+	if (g_strcmp0 (colorspace, "cmyk") == 0)
+		return GCM_COLORSPACE_ENUM_CMYK;
+	if (g_strcmp0 (colorspace, "cmy") == 0)
+		return GCM_COLORSPACE_ENUM_CMY;
+	return GCM_COLORSPACE_ENUM_UNKNOWN;
+}
+
