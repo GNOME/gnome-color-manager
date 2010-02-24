@@ -88,6 +88,7 @@ struct _GcmCalibrateArgyllPrivate
 	gboolean			 already_on_window;
 	GcmCalibrateArgyllState		 state;
 	GcmPrint			*print;
+	const gchar			*argyllcms_ok;
 };
 
 enum {
@@ -1763,6 +1764,7 @@ gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 	gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Continue"));
 
 	/* set state */
+	priv->argyllcms_ok = " ";
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN,
 
 	/* play sound from the naming spec */
@@ -1826,6 +1828,7 @@ gcm_calibrate_argyll_interaction_calibrate (GcmCalibrateArgyll *calibrate_argyll
 	priv->already_on_window = FALSE;
 
 	/* set state */
+	priv->argyllcms_ok = " ";
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
 }
 
@@ -1877,24 +1880,32 @@ gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 	priv->already_on_window = FALSE;
 
 	/* set state */
+	priv->argyllcms_ok = " ";
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
 }
 
 /**
  * gcm_calibrate_argyll_process_output_cmd:
+ *
+ * Return value: if FALSE then abort processing input
  **/
-static void
+static gboolean
 gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, const gchar *line)
 {
 	const gchar *title;
+	gchar *title_str = NULL;
 	const gchar *message;
+	const gchar *filename;
+	GString *string = NULL;
 	gchar *found;
+	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
 	/* attach device */
 	if (g_strcmp0 (line, "Place instrument on test window.") == 0) {
 		egg_debug ("VTE: interaction required: %s", line);
 		gcm_calibrate_argyll_interaction_attach (calibrate_argyll);
+		ret = FALSE;
 		goto out;
 	}
 
@@ -1902,6 +1913,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	if (g_strcmp0 (line, "Set instrument sensor to calibration position,") == 0) {
 		egg_debug ("VTE: interaction required, set to calibrate");
 		gcm_calibrate_argyll_interaction_calibrate (calibrate_argyll);
+		ret = FALSE;
 		goto out;
 	}
 
@@ -1909,6 +1921,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	if (g_strcmp0 (line, "(Sensor should be in surface position)") == 0) {
 		egg_debug ("VTE: interaction required, set to surface");
 		gcm_calibrate_argyll_interaction_surface (calibrate_argyll);
+		ret = FALSE;
 		goto out;
 	}
 
@@ -1929,6 +1942,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Try again"));
 
 		/* set state */
+		priv->argyllcms_ok = " ";
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
 
 		/* play sound from the naming spec */
@@ -2003,10 +2017,109 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		goto out;
 	}
 
+	/* all done */
+	found = g_strstr_len (line, -1, "(All rows read)");
+	if (found != NULL) {
+		vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), "d", 1);
+		goto out;
+	}
+
+	/* reading strip */
+	if (g_str_has_prefix (line, "Strip read failed due to misread")) {
+		/* TRANSLATORS: dialog title */
+		title = _("Reading target");
+
+		/* TRANSLATORS: message, no firmware is available */
+		message = _("Failed to read the strip correctly.");
+
+		/* push new messages into the UI */
+		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+
+		/* TRANSLATORS: button text */
+		gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Retry"));
+
+		/* set state */
+		priv->argyllcms_ok = " ";
+		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
+
+		/* play sound from the naming spec */
+		ca_context_play (ca_gtk_context_get (), 0,
+				 CA_PROP_EVENT_ID, "dialog-warning",
+				 /* TRANSLATORS: this is the application name for libcanberra */
+				 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+				 CA_PROP_EVENT_DESCRIPTION, message, NULL);
+		goto out;
+	}
+
+	/* reading strip */
+	if (g_str_has_prefix (line, "(Warning) Seem to have read strip pass ")) {
+
+		/* TRANSLATORS: dialog title, where %s is a letter like 'A' */
+		title_str = g_strdup_printf (_("Read strip %c rather than %c!"), line[39], line[39+14]);
+
+		string = g_string_new ("");
+
+		/* TRANSLATORS: dialog message, just follow the hardware instructions */
+		g_string_append (string, _("It looks like you've measured the wrong strip."));
+		g_string_append (string, "\n\n");
+
+		/* TRANSLATORS: dialog message, just follow the hardware instructions */
+		g_string_append (string, _("If you've really measured the right one, it's okay, it could just be unusual paper."));
+		g_string_append (string, "\n\n");
+
+		/* push new messages into the UI */
+		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title_str, string->str);
+		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+
+		/* TRANSLATORS: button */
+		gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Use anyway"));
+
+		/* set state */
+		priv->argyllcms_ok = "\n";
+		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
+		goto out;
+	}
+
+	/* reading strip */
+	if (g_str_has_prefix (line, "Ready to read strip pass ")) {
+
+		/* TRANSLATORS: dialog title, where %s is a letter like 'A' */
+		title_str = g_strdup_printf (_("Ready to read strip %s"), line+25);
+
+		string = g_string_new ("");
+
+		/* TRANSLATORS: dialog message, just follow the hardware instructions */
+		g_string_append (string, _("Place the colorimeter on the area of white next to the letter and click and hold the measure switch."));
+		g_string_append (string, "\n\n");
+
+		/* TRANSLATORS: dialog message, just follow the hardware instructions */
+		g_string_append (string, _("Slowly scan the target line from left to right and release the switch when you get to the end of the page."));
+		g_string_append (string, "\n\n");
+
+		/* TRANSLATORS: dialog message, just follow the hardware instructions */
+		g_string_append (string, _("If you make a mistake just release the switch and you'll get a chance to try again."));
+
+		/* get the image, if we have one */
+		filename = "argyll-target.png";
+
+		/* push new messages into the UI */
+		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title_str, string->str);
+		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
+		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+		gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
+		goto out;
+	}
+
 	/* report a warning so friendly people report bugs */
 	egg_warning ("VTE: could not screenscrape: %s", line);
 out:
-	return;
+	g_free (title_str);
+	if (string != NULL)
+		g_string_free (string, TRUE);
+	return ret;
 }
 
 /**
@@ -2030,6 +2143,7 @@ gcm_calibrate_argyll_cursor_moved_cb (VteTerminal *terminal, GcmCalibrateArgyll 
 	guint i;
 	glong row;
 	glong col;
+	gboolean ret;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
 	/* select the text we've got since last time */
@@ -2046,7 +2160,9 @@ gcm_calibrate_argyll_cursor_moved_cb (VteTerminal *terminal, GcmCalibrateArgyll 
 		g_strchomp (split[i]);
 		if (split[i][0] == '\0')
 			continue;
-		gcm_calibrate_argyll_process_output_cmd (calibrate_argyll, split[i]);
+		ret = gcm_calibrate_argyll_process_output_cmd (calibrate_argyll, split[i]);
+		if (!ret)
+			break;
 	}
 
 	/* save, so we don't re-process old text */
@@ -2073,7 +2189,8 @@ gcm_calibrate_argyll_response_cb (GtkWidget *widget, GtkResponseType response, G
 
 		/* send input if waiting */
 		if (priv->state == GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN) {
-			vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), " ", 1);
+			egg_debug ("sending '%s' to argyll", priv->argyllcms_ok);
+			vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), priv->argyllcms_ok, 1);
 			gcm_calibrate_dialog_pop (priv->calibrate_dialog);
 			priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 		}
@@ -2092,6 +2209,7 @@ gcm_calibrate_argyll_response_cb (GtkWidget *widget, GtkResponseType response, G
 
 		/* send input if waiting */
 		if (priv->state == GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN) {
+			egg_debug ("sending 'Q' to argyll");
 			vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), "Q", 1);
 			priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 		}
