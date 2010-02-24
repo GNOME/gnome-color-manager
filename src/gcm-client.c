@@ -837,7 +837,8 @@ gcm_client_add_device (GcmClient *client, GcmDevice *device, GError **error)
 	/* look to see if device already exists */
 	device_tmp = gcm_client_get_device_by_id (client, id);
 	if (device_tmp != NULL) {
-		g_set_error_literal (error, 1, 0, "already found in device array");
+		/* TRANSLATORS: error message */
+		g_set_error_literal (error, 1, 0, _("This device already exists"));
 		goto out;
 	}
 
