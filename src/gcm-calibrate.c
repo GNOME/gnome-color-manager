@@ -221,7 +221,6 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 
 	/* get the device */
 	g_object_get (device,
-		      "native-device", &native_device,
 		      "type", &type,
 		      "serial", &serial,
 		      "model", &model,
@@ -243,6 +242,9 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 
 	/* display specific properties */
 	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+		g_object_get (device,
+			      "native-device", &native_device,
+			      NULL);
 		if (native_device == NULL) {
 			g_set_error (error,
 				     GCM_CALIBRATE_ERROR,
