@@ -1211,12 +1211,62 @@ out:
 }
 
 /**
- * gcm_calibrate_argyll_finish:
+ * gcm_calibrate_argyll_set_filename_result:
  **/
 static gboolean
-gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+gcm_calibrate_argyll_set_filename_result (GcmCalibrateArgyll *calibrate_argyll, GError **error)
 {
 	gchar *filename = NULL;
+	gboolean ret = TRUE;
+	gchar *basename = NULL;
+	gchar *working_path = NULL;
+
+	/* get shared data */
+	g_object_get (calibrate_argyll,
+		      "basename", &basename,
+		      "working-path", &working_path,
+		      NULL);
+
+	/* we can't have finished with success */
+	if (basename == NULL) {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_INTERNAL,
+				     "profile was not generated");
+		goto out;
+	}
+
+	/* get the finished icc file */
+	filename = g_strdup_printf ("%s/%s.icc", working_path, basename);
+
+	/* we never finished all the steps */
+	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_INTERNAL,
+				     "could not find completed profile");
+		goto out;
+	}
+
+	/* success */
+	g_object_set (calibrate_argyll,
+		      "filename-result", filename,
+		      NULL);
+out:
+	g_free (working_path);
+	g_free (basename);
+	g_free (filename);
+	return ret;
+}
+
+/**
+ * gcm_calibrate_argyll_remove_temp_files:
+ **/
+static gboolean
+gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+{
 	gchar *filename_tmp;
 	guint i;
 	gboolean ret;
@@ -1255,38 +1305,11 @@ gcm_calibrate_argyll_finish (GcmCalibrateArgyll *calibrate_argyll, GError **erro
 		g_free (filename_tmp);
 	}
 
-	/* we can't have finished with success */
-	if (basename == NULL) {
-		ret = FALSE;
-		g_set_error_literal (error,
-				     GCM_CALIBRATE_ERROR,
-				     GCM_CALIBRATE_ERROR_INTERNAL,
-				     "profile was not generated");
-		goto out;
-	}
-
-	/* get the finished icc file */
-	filename = g_strdup_printf ("%s/%s.icc", working_path, basename);
-
-	/* we never finished all the steps */
-	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
-		ret = FALSE;
-		g_set_error_literal (error,
-				     GCM_CALIBRATE_ERROR,
-				     GCM_CALIBRATE_ERROR_INTERNAL,
-				     "could not find completed profile");
-		goto out;
-	}
-
 	/* success */
-	g_object_set (calibrate_argyll,
-		      "filename-result", filename,
-		      NULL);
 	ret = TRUE;
-out:
+
 	g_free (working_path);
 	g_free (basename);
-	g_free (filename);
 	return ret;
 }
 
@@ -1338,7 +1361,12 @@ gcm_calibrate_argyll_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 		goto out;
 
 	/* step 5 */
-	ret = gcm_calibrate_argyll_finish (calibrate_argyll, error);
+	ret = gcm_calibrate_argyll_remove_temp_files (calibrate_argyll, error);
+	if (!ret)
+		goto out;
+
+	/* step 6 */
+	ret = gcm_calibrate_argyll_set_filename_result (calibrate_argyll, error);
 	if (!ret)
 		goto out;
 out:
@@ -1536,6 +1564,61 @@ out:
 }
 
 /**
+ * gcm_calibrate_argyll_set_device_from_ti2:
+ **/
+static gboolean
+gcm_calibrate_argyll_set_device_from_ti2 (GcmCalibrate *calibrate, const gchar *filename, GError **error)
+{
+	gboolean ret;
+	gchar *contents = NULL;
+	gchar *device = NULL;
+	const gchar *device_ptr = NULL;
+	gchar **lines = NULL;
+	gint i;
+
+	/* get the contents of the file */
+	ret = g_file_get_contents (filename, &contents, NULL, error);
+	if (!ret)
+		goto out;
+
+	/* find the data */
+	lines = g_strsplit (contents, "\n", -1);
+	for (i=0; lines[i] != NULL; i++) {
+		if (g_str_has_prefix (lines[i], "TARGET_INSTRUMENT")) {
+			device = g_strdup (lines[i] + 18);
+			g_strdelimit (device, "\"", ' ');
+			g_strstrip (device);
+			break;
+		}
+	}
+
+	/* set the calibration model */
+	if (device == NULL) {
+		g_set_error (error,
+			     GCM_CALIBRATE_ERROR,
+			     GCM_CALIBRATE_ERROR_USER_ABORT,
+			     "cannot find TARGET_INSTRUMENT in %s", filename);
+		ret = FALSE;
+		goto out;
+	}
+
+	/* remove vendor prefix */
+	if (g_str_has_prefix (device, "X-Rite "))
+		device_ptr = device + 7;
+
+	/* set for calibration */
+	egg_debug ("setting device to '%s'", device_ptr);
+	g_object_set (calibrate,
+		      "device", device_ptr,
+		      NULL);
+out:
+	g_free (device);
+	g_free (contents);
+	g_strfreev (lines);
+	return ret;
+}
+
+/**
  * gcm_calibrate_argyll_printer:
  **/
 static gboolean
@@ -1543,7 +1626,9 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 {
 	gboolean ret;
 	gchar *cmdline = NULL;
+	gchar *filename = NULL;
 	gchar *working_path = NULL;
+	gchar *basename = NULL;
 	const gchar *title;
 	const gchar *message;
 	GtkResponseType response;
@@ -1553,6 +1638,7 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 
 	/* need to ask if we are printing now, or using old data */
 	g_object_get (calibrate,
+		      "basename", &basename,
 		      "print-kind", &print_kind,
 		      "working-path", &working_path,
 		      NULL);
@@ -1611,6 +1697,23 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 		}
 	}
 
+	/* we need to read the ti2 file to set the device used for calibration */
+	if (print_kind == GCM_CALIBRATE_PRINT_KIND_ANALYSE) {
+		filename = g_strdup_printf ("%s/%s.ti2", working_path, basename);
+		ret = g_file_test (filename, G_FILE_TEST_EXISTS);
+		if (!ret) {
+			gcm_calibrate_dialog_hide (priv->calibrate_dialog);
+			g_set_error (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "cannot find %s", filename);
+			goto out;
+		}
+		ret = gcm_calibrate_argyll_set_device_from_ti2 (calibrate, filename, error);
+		if (!ret)
+			goto out;
+	}
+
 	/* step 3 */
 	ret = gcm_calibrate_argyll_display_read_chart (calibrate_argyll, error);
 	if (!ret)
@@ -1624,11 +1727,18 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 	/* only delete state if we are doing a local printer */
 	if (print_kind == GCM_CALIBRATE_PRINT_KIND_LOCAL) {
 		/* step 5 */
-		ret = gcm_calibrate_argyll_finish (calibrate_argyll, error);
+		ret = gcm_calibrate_argyll_remove_temp_files (calibrate_argyll, error);
 		if (!ret)
 			goto out;
 	}
+
+	/* step 6 */
+	ret = gcm_calibrate_argyll_set_filename_result (calibrate_argyll, error);
+	if (!ret)
+		goto out;
 out:
+	g_free (filename);
+	g_free (basename);
 	g_free (cmdline);
 	g_free (working_path);
 	return ret;
@@ -1677,7 +1787,12 @@ gcm_calibrate_argyll_device (GcmCalibrate *calibrate, GtkWindow *window, GError 
 		goto out;
 
 	/* step 4 */
-	ret = gcm_calibrate_argyll_finish (calibrate_argyll, error);
+	ret = gcm_calibrate_argyll_remove_temp_files (calibrate_argyll, error);
+	if (!ret)
+		goto out;
+
+	/* step 5 */
+	ret = gcm_calibrate_argyll_set_filename_result (calibrate_argyll, error);
 	if (!ret)
 		goto out;
 out:
