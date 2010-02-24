@@ -362,6 +362,10 @@ gcm_device_save (GcmDevice *device, GError **error)
 	/* add colorspace */
 	g_key_file_set_string (keyfile, device->priv->id, "colorspace", gcm_colorspace_enum_to_string (device->priv->colorspace));
 
+	/* add virtual */
+	if (device->priv->virtual)
+		g_key_file_set_boolean (keyfile, device->priv->id, "virtual", TRUE);
+
 	/* convert to string */
 	data = g_key_file_to_data (keyfile, NULL, &error_local);
 	if (data == NULL) {

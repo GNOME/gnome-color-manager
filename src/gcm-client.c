@@ -40,6 +40,7 @@
 #include "gcm-device-udev.h"
 #include "gcm-device-cups.h"
 #include "gcm-device-sane.h"
+#include "gcm-device-virtual.h"
 #include "gcm-screen.h"
 #include "gcm-utils.h"
 
@@ -640,6 +641,7 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 	GcmDeviceTypeEnum type;
 	GcmDevice *device = NULL;
 	gboolean ret;
+	gboolean virtual;
 	GError *error = NULL;
 	GcmClientPrivate *priv = client->priv;
 
@@ -647,6 +649,7 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 	title = g_key_file_get_string (keyfile, id, "title", NULL);
 	if (title == NULL)
 		goto out;
+	virtual = g_key_file_get_boolean (keyfile, id, "virtual", NULL);
 	type_text = g_key_file_get_string (keyfile, id, "type", NULL);
 	type = gcm_device_type_enum_from_string (type_text);
 	if (type == GCM_DEVICE_TYPE_ENUM_UNKNOWN)
@@ -655,14 +658,16 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 	/* get colorspace */
 	colorspace_text = g_key_file_get_string (keyfile, id, "colorspace", NULL);
 	if (colorspace_text == NULL) {
-		egg_warning ("legacy device %i, falling back to RGB", id);
+		egg_warning ("legacy device %s, falling back to RGB", id);
 		colorspace = GCM_COLORSPACE_ENUM_RGB;
 	} else {
 		colorspace = gcm_colorspace_enum_from_string (colorspace_text);
 	}
 
 	/* create device or specified type */
-	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+	if (virtual) {
+		device = gcm_device_virtual_new ();
+	} else if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
 		device = gcm_device_xrandr_new ();
 	} else if (type == GCM_DEVICE_TYPE_ENUM_PRINTER) {
 		device = gcm_device_cups_new ();
@@ -683,6 +688,7 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 		      "connected", FALSE,
 		      "title", title,
 		      "saved", TRUE,
+		      "virtual", virtual,
 		      "colorspace", colorspace,
 		      NULL);
 
