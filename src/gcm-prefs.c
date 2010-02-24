@@ -39,6 +39,7 @@
 #include "gcm-client.h"
 #include "gcm-colorimeter.h"
 #include "gcm-device-xrandr.h"
+#include "gcm-device-virtual.h"
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
 #include "gcm-trc-widget.h"
@@ -851,6 +852,97 @@ out:
 		g_object_unref (file);
 	if (dest != NULL)
 		g_object_unref (dest);
+}
+
+/**
+ * gcm_prefs_device_add_cb:
+ **/
+static void
+gcm_prefs_device_add_cb (GtkWidget *widget, gpointer data)
+{
+	/* show ui */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_virtual"));
+	gtk_widget_show (widget);
+
+	/* clear entries */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_model"));
+	gtk_entry_set_text (GTK_ENTRY (widget), "");
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_manufacturer"));
+	gtk_entry_set_text (GTK_ENTRY (widget), "");
+}
+
+/**
+ * gcm_prefs_button_virtual_add_cb:
+ **/
+static void
+gcm_prefs_button_virtual_add_cb (GtkWidget *widget, gpointer data)
+{
+	GcmDeviceTypeEnum device_type;
+	GcmDevice *device;
+	const gchar *model;
+	const gchar *manufacturer;
+	gboolean ret;
+	GError *error = NULL;
+
+	/* get device details */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_virtual_type"));
+	device_type = gtk_combo_box_get_active (GTK_COMBO_BOX(widget)) + 2;
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_model"));
+	model = gtk_entry_get_text (GTK_ENTRY (widget));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_manufacturer"));
+	manufacturer = gtk_entry_get_text (GTK_ENTRY (widget));
+
+	/* create device */
+	device = gcm_device_virtual_new	();
+	ret = gcm_device_virtual_create_from_params (GCM_DEVICE_VIRTUAL (device), device_type, model, manufacturer, GCM_COLORSPACE_ENUM_RGB);
+	if (!ret) {
+		/* TRANSLATORS: could not add virtual device */
+		gcm_prefs_error_dialog (_("Failed to create virtual device"), NULL);
+		goto out;
+	}
+
+	/* save what we've got */
+	ret = gcm_device_save (device, &error);
+	if (!ret) {
+		/* TRANSLATORS: could not add virtual device */
+		gcm_prefs_error_dialog (_("Failed to save virtual device"), error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* add to the device list */
+	ret = gcm_client_add_device (gcm_client, device, &error);
+	if (!ret) {
+		/* TRANSLATORS: could not add virtual device */
+		gcm_prefs_error_dialog (_("Failed to add virtual device"), error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+out:
+	/* we're done */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_virtual"));
+	gtk_widget_hide (widget);
+}
+
+/**
+ * gcm_prefs_button_virtual_cancel_cb:
+ **/
+static void
+gcm_prefs_button_virtual_cancel_cb (GtkWidget *widget, gpointer data)
+{
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_virtual"));
+	gtk_widget_hide (widget);
+}
+
+/**
+ * gcm_prefs_virtual_delete_event_cb:
+ **/
+static gboolean
+gcm_prefs_virtual_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
+{
+	gcm_prefs_button_virtual_cancel_cb (widget, data);
+	return TRUE;
 }
 
 /**
@@ -2591,6 +2683,67 @@ gcm_prefs_info_bar_response_cb (GtkDialog *dialog, GtkResponseType response, gpo
 }
 
 /**
+ * gcm_device_type_enum_to_localised_string:
+ **/
+static const gchar *
+gcm_device_type_enum_to_localised_string (GcmDeviceTypeEnum device_type)
+{
+	if (device_type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+		/* TRANSLATORS: device type */
+		return _("Display");
+	}
+	if (device_type == GCM_DEVICE_TYPE_ENUM_SCANNER) {
+		/* TRANSLATORS: device type */
+		return _("Scanner");
+	}
+	if (device_type == GCM_DEVICE_TYPE_ENUM_PRINTER) {
+		/* TRANSLATORS: device type */
+		return _("Printer");
+	}
+	if (device_type == GCM_DEVICE_TYPE_ENUM_CAMERA) {
+		/* TRANSLATORS: device type */
+		return _("Camera");
+	}
+	return NULL;
+}
+
+/**
+ * gcm_prefs_setup_virtual_combobox:
+ **/
+static void
+gcm_prefs_setup_virtual_combobox (GtkWidget *widget)
+{
+	guint i;
+	const gchar *text;
+
+	for (i=GCM_DEVICE_TYPE_ENUM_SCANNER; i<GCM_DEVICE_TYPE_ENUM_LAST; i++) {
+		text = gcm_device_type_enum_to_localised_string (i);
+		gtk_combo_box_append_text (GTK_COMBO_BOX(widget), text);
+	}
+	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), GCM_DEVICE_TYPE_ENUM_PRINTER - 2);
+}
+
+/**
+ * gpk_update_viewer_notify_network_state_cb:
+ **/
+static void
+gcm_prefs_button_virtual_entry_changed_cb (GtkEntry *entry, GParamSpec *pspec, gpointer user_data)
+{
+	const gchar *model;
+	const gchar *manufacturer;
+	GtkWidget *widget;
+
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_model"));
+	model = gtk_entry_get_text (GTK_ENTRY (widget));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_manufacturer"));
+	manufacturer = gtk_entry_get_text (GTK_ENTRY (widget));
+
+	/* only set the add button sensitive if both sections have text */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_virtual_add"));
+	gtk_widget_set_sensitive (widget, (model != NULL && model[0] != '\0' && manufacturer != NULL && manufacturer[0] != '\0'));
+}
+
+/**
  * main:
  **/
 int
@@ -2722,6 +2875,9 @@ main (int argc, char **argv)
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_delete_cb), NULL);
 	gtk_widget_set_sensitive (widget, FALSE);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_device_add"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_prefs_device_add_cb), NULL);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_calibrate_cb), NULL);
@@ -2752,6 +2908,35 @@ main (int argc, char **argv)
 	gtk_widget_hide (widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_serial"));
 	gtk_widget_hide (widget);
+
+	/* set up virtual device */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_virtual"));
+	gtk_window_set_icon_name (GTK_WINDOW (widget), GCM_STOCK_ICON);
+	gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (main_window));
+	gtk_window_set_modal (GTK_WINDOW (widget), TRUE);
+	g_signal_connect (widget, "delete-event",
+			  G_CALLBACK (gcm_prefs_virtual_delete_event_cb), NULL);
+
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_virtual_add"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_prefs_button_virtual_add_cb), NULL);
+	gtk_widget_set_sensitive (widget, FALSE);
+
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_virtual_cancel"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_prefs_button_virtual_cancel_cb), NULL);
+
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_virtual_type"));
+	gcm_prefs_set_combo_simple_text (widget);
+	gcm_prefs_setup_virtual_combobox (widget);
+
+	/* disable the add button if nothing in either box */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_model"));
+	g_signal_connect (widget, "notify::text",
+			  G_CALLBACK (gcm_prefs_button_virtual_entry_changed_cb), NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_manufacturer"));
+	g_signal_connect (widget, "notify::text",
+			  G_CALLBACK (gcm_prefs_button_virtual_entry_changed_cb), NULL);
 
 	/* setup icc profiles list */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
