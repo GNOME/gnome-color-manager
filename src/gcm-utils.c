@@ -268,23 +268,38 @@ out:
 gboolean
 gcm_utils_mkdir_for_filename (const gchar *filename, GError **error)
 {
-	gboolean ret;
+	gboolean ret = FALSE;
 	GFile *file;
-	GFile *parent_dir;
+	GFile *parent_dir = NULL;
 
+	/* get a file from the URI / path */
 	file = g_file_new_for_uri (filename);
+	if (file == NULL)
+		file = g_file_new_for_path (filename);
+	if (file == NULL) {
+		g_set_error (error, 1, 0, "could not resolve file for %s", filename);
+		goto out;
+	}
+
+	/* get parent */
 	parent_dir = g_file_get_parent (file);
+	if (parent_dir == NULL) {
+		g_set_error (error, 1, 0, "could not get parent dir %s", filename);
+		goto out;
+	}
 
 	/* ensure desination exists */
-	ret = g_file_test (g_file_get_path (parent_dir), G_FILE_TEST_EXISTS);
+	ret = g_file_query_exists (parent_dir, NULL);
 	if (!ret) {
-		ret = g_file_make_directory_with_parents  (parent_dir, NULL, error);
+		ret = g_file_make_directory_with_parents (parent_dir, NULL, error);
 		if (!ret)
 			goto out;
 	}
 out:
-	g_object_unref (file);
-	g_object_unref (parent_dir);
+	if (file != NULL)
+		g_object_unref (file);
+	if (parent_dir != NULL)
+		g_object_unref (parent_dir);
 	return ret;
 }
 
