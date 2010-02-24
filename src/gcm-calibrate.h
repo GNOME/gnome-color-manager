@@ -125,6 +125,7 @@ gboolean	 gcm_calibrate_set_from_exif		(GcmCalibrate	*calibrate,
 const gchar	*gcm_calibrate_get_model_fallback	(GcmCalibrate	*calibrate);
 const gchar	*gcm_calibrate_get_description_fallback	(GcmCalibrate	*calibrate);
 const gchar	*gcm_calibrate_get_manufacturer_fallback (GcmCalibrate	*calibrate);
+const gchar	*gcm_calibrate_get_device_fallback	(GcmCalibrate	*calibrate);
 
 G_END_DECLS
 

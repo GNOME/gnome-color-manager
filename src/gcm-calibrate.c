@@ -138,6 +138,20 @@ gcm_calibrate_get_manufacturer_fallback (GcmCalibrate *calibrate)
 }
 
 /**
+ * gcm_calibrate_get_device_fallback:
+ **/
+const gchar *
+gcm_calibrate_get_device_fallback (GcmCalibrate *calibrate)
+{
+	GcmCalibratePrivate *priv = calibrate->priv;
+	if (priv->device != NULL)
+		return priv->device;
+
+	/* TRANSLATORS: this is saved in the profile */
+	return _("Unknown device");
+}
+
+/**
  * gcm_calibrate_get_time:
  **/
 static gchar *

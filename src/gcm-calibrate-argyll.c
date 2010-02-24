@@ -1101,7 +1101,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	gchar *basename = NULL;
 	const gchar *manufacturer;
 	const gchar *model;
-	gchar *device = NULL;
+	const gchar *device;
 	gchar *working_path = NULL;
 	const gchar *title;
 	const gchar *message;
@@ -1112,13 +1112,13 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 		      "basename", &basename,
 		      "working-path", &working_path,
 		      "reference-kind", &reference_kind,
-		      "device", &device,
 		      NULL);
 
 	/* get, returning fallbacks if nothing was set */
 	model = gcm_calibrate_get_model_fallback (GCM_CALIBRATE (calibrate_argyll));
 	manufacturer = gcm_calibrate_get_manufacturer_fallback (GCM_CALIBRATE (calibrate_argyll));
 	description = gcm_calibrate_get_description_fallback (GCM_CALIBRATE (calibrate_argyll));
+	device = gcm_calibrate_get_device_fallback (GCM_CALIBRATE (calibrate_argyll));
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("colprof", error);
@@ -1205,7 +1205,6 @@ out:
 	g_free (copyright);
 	g_free (basename);
 	g_free (command);
-	g_free (device);
 	g_strfreev (argv);
 	return ret;
 }
