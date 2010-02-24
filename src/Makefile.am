@@ -63,6 +63,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-device-cups.h				\
 	gcm-device-sane.c				\
 	gcm-device-sane.h				\
+	gcm-device-virtual.c				\
+	gcm-device-virtual.h				\
 	gcm-cie-widget.c				\
 	gcm-cie-widget.h				\
 	gcm-trc-widget.c				\
