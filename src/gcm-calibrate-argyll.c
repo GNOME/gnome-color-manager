@@ -1425,10 +1425,10 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 	g_ptr_array_add (array, g_strdup_printf ("-i%s", gcm_calibrate_argyll_get_colorimeter_target (calibrate_argyll)));
 
 	/* use double density */
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI ||
-	    colorimeter_kind == GCM_COLORIMETER_KIND_SPECTRO_SCAN) {
-		g_ptr_array_add (array, g_strdup ("-h"));
-	}
+//	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI ||
+//	    colorimeter_kind == GCM_COLORIMETER_KIND_SPECTRO_SCAN) {
+//		g_ptr_array_add (array, g_strdup ("-h"));
+//	}
 
 	/* 8 bit TIFF 300 dpi */
 	g_ptr_array_add (array, g_strdup ("-t300"));
