@@ -2012,11 +2012,13 @@ gcm_prefs_add_device_type (GcmDevice *device)
 	GcmDeviceTypeEnum type;
 	const gchar *icon_name;
 	gboolean connected;
+	gboolean virtual;
 
 	/* get details */
 	g_object_get (device,
 		      "id", &id,
 		      "connected", &connected,
+		      "virtual", &virtual,
 		      "title", &title,
 		      "type", &type,
 		      NULL);
@@ -2028,7 +2030,7 @@ gcm_prefs_add_device_type (GcmDevice *device)
 	string = g_string_new (title);
 
 	/* italic for non-connected devices */
-	if (!connected) {
+	if (!connected && !virtual) {
 		/* TRANSLATORS: this is where the device has been setup but is not connected */
 		g_string_append_printf (string, "\n<i>[%s]</i>", _("disconnected"));
 	}
