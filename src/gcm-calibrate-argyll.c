@@ -143,18 +143,35 @@ gcm_calibrate_argyll_get_quality_arg (GcmCalibrateArgyll *calibrate_argyll)
 }
 
 /**
- * gcm_calibrate_argyll_precision_to_patches_arg:
+ * gcm_calibrate_argyll_display_get_patches_arg:
  **/
 static const gchar *
-gcm_calibrate_argyll_precision_to_patches_arg (GcmCalibrateArgyllPrecision precision)
+gcm_calibrate_argyll_display_get_patches_arg (GcmCalibrateArgyll *calibrate_argyll)
 {
-	if (precision == GCM_CALIBRATE_ARGYLL_PRECISION_SHORT)
+	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_SHORT)
 		return "-f100";
-	if (precision == GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL)
+	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL)
 		return "-f250";
-	if (precision == GCM_CALIBRATE_ARGYLL_PRECISION_LONG)
+	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_LONG)
 		return "-f500";
 	return "-f250";
+}
+
+/**
+ * gcm_calibrate_argyll_printer_get_patches_arg:
+ **/
+static const gchar *
+gcm_calibrate_argyll_printer_get_patches_arg (GcmCalibrateArgyll *calibrate_argyll)
+{
+	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_SHORT)
+		return "-f90";
+	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL)
+		return "-f180";
+	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_LONG)
+		return "-f360";
+	return "-f210";
 }
 
 /**
@@ -585,7 +602,13 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 		/* video RGB */
 		g_ptr_array_add (array, g_strdup ("-d3"));
 	}
-	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_precision_to_patches_arg (priv->precision)));
+
+	/* get number of patches */
+	if (device_type == GCM_DEVICE_TYPE_ENUM_DISPLAY)
+		g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_display_get_patches_arg (calibrate_argyll)));
+	else if (device_type == GCM_DEVICE_TYPE_ENUM_PRINTER)
+		g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_printer_get_patches_arg (calibrate_argyll)));
+
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
