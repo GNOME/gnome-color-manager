@@ -906,7 +906,7 @@ gcm_client_delete_device (GcmClient *client, GcmDevice *device, GError **error)
 		goto out;
 
 	/* remove from the config file */
-	g_key_file_remove_group (keyfile, id, error);
+	ret = g_key_file_remove_group (keyfile, id, error);
 	if (!ret)
 		goto out;
 
