@@ -1,7 +1,9 @@
 figuresdir = $(datadir)/gnome-color-manager/icons
 figures_DATA = 	 			\
 	clock.svg			\
-	argyll-target.png		\
+	scan-target.svg			\
+	scan-target-good.svg		\
+	scan-target-bad.svg		\
 	huey-attach.svg			\
 	spyder-attach.svg		\
 	munki-ambient.svg		\

@@ -2045,7 +2045,6 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	const gchar *title;
 	gchar *title_str = NULL;
 	const gchar *message;
-	const gchar *filename;
 	GString *string = NULL;
 	gchar *found;
 	gboolean ret = TRUE;
@@ -2170,6 +2169,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	/* all done */
 	found = g_strstr_len (line, -1, "(All rows read)");
 	if (found != NULL) {
+		gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, "scan-target-good.svg");
 		vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), "d", 1);
 		goto out;
 	}
@@ -2186,6 +2186,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
 		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
 		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+		gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, "scan-target-bad.svg");
 
 		/* TRANSLATORS: button text */
 		gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Retry"));
@@ -2223,6 +2224,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title_str, string->str);
 		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
 		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+		gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, "scan-target-bad.svg");
 
 		/* TRANSLATORS: button */
 		gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Use anyway"));
@@ -2249,17 +2251,18 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		g_string_append (string, _("Slowly scan the target line from left to right and release the switch when you get to the end of the page."));
 		g_string_append (string, "\n\n");
 
+		/* TRANSLATORS: dialog message, the sensor has to be above the line */
+		g_string_append (string, _("Ensure the center of the device is properly aligned with the row you are trying to measure."));
+		g_string_append (string, "\n\n");
+
 		/* TRANSLATORS: dialog message, just follow the hardware instructions */
 		g_string_append (string, _("If you make a mistake just release the switch and you'll get a chance to try again."));
-
-		/* get the image, if we have one */
-		filename = "argyll-target.png";
 
 		/* push new messages into the UI */
 		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title_str, string->str);
 		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
 		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
-		gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
+		gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, "scan-target.svg");
 		goto out;
 	}
 
