@@ -3064,7 +3064,7 @@ main (int argc, char **argv)
 			  G_CALLBACK (gcm_prefs_info_bar_response_cb), NULL);
 
 	/* TRANSLATORS: button for more details about the vcgt failure */
-	gtk_info_bar_add_button (GTK_INFO_BAR(info_bar_vcgt), _("More information"), GTK_RESPONSE_HELP);
+	gtk_info_bar_add_button (GTK_INFO_BAR(info_bar_vcgt), _("More Information"), GTK_RESPONSE_HELP);
 
 	/* TRANSLATORS: this is displayed while the devices are being probed */
 	info_bar_loading_label = gtk_label_new (_("Loading list of devices…"));
