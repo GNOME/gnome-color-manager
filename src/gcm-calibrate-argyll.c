@@ -144,35 +144,50 @@ gcm_calibrate_argyll_get_quality_arg (GcmCalibrateArgyll *calibrate_argyll)
 }
 
 /**
- * gcm_calibrate_argyll_display_get_patches_arg:
+ * gcm_calibrate_argyll_display_get_patches:
  **/
-static const gchar *
-gcm_calibrate_argyll_display_get_patches_arg (GcmCalibrateArgyll *calibrate_argyll)
+static guint
+gcm_calibrate_argyll_display_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 {
+	guint patches = 250;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+
 	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_SHORT)
-		return "-f100";
-	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL)
-		return "-f250";
-	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_LONG)
-		return "-f500";
-	return "-f250";
+		patches = 100;
+	else if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL)
+		patches = 250;
+	else if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_LONG)
+		patches = 500;
+	return patches;
 }
 
 /**
- * gcm_calibrate_argyll_printer_get_patches_arg:
+ * gcm_calibrate_argyll_printer_get_patches:
  **/
-static const gchar *
-gcm_calibrate_argyll_printer_get_patches_arg (GcmCalibrateArgyll *calibrate_argyll)
+static guint
+gcm_calibrate_argyll_printer_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 {
+	guint patches = 180;
+	GcmColorimeterKind colorimeter_kind;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+
+	/* we care about the type */
+	g_object_get (calibrate_argyll, "colorimeter-kind", &colorimeter_kind, NULL);
+
 	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_SHORT)
-		return "-f90";
-	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL)
-		return "-f180";
-	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_LONG)
-		return "-f360";
-	return "-f210";
+		patches = 90;
+	else if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL)
+		patches = 180;
+	else if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_LONG)
+		patches = 360;
+
+	/* using double density, so we can double the patch count */
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI ||
+	    colorimeter_kind == GCM_COLORIMETER_KIND_SPECTRO_SCAN) {
+		patches *= 2;
+	}
+
+	return patches;
 }
 
 /**
@@ -606,9 +621,9 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 
 	/* get number of patches */
 	if (device_type == GCM_DEVICE_TYPE_ENUM_DISPLAY)
-		g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_display_get_patches_arg (calibrate_argyll)));
+		g_ptr_array_add (array, g_strdup_printf ("-f%i", gcm_calibrate_argyll_display_get_patches (calibrate_argyll)));
 	else if (device_type == GCM_DEVICE_TYPE_ENUM_PRINTER)
-		g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_printer_get_patches_arg (calibrate_argyll)));
+		g_ptr_array_add (array, g_strdup_printf ("-f%i", gcm_calibrate_argyll_printer_get_patches (calibrate_argyll)));
 
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
@@ -1454,10 +1469,10 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 	g_ptr_array_add (array, g_strdup_printf ("-i%s", gcm_calibrate_argyll_get_colorimeter_target (calibrate_argyll)));
 
 	/* use double density */
-//	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI ||
-//	    colorimeter_kind == GCM_COLORIMETER_KIND_SPECTRO_SCAN) {
-//		g_ptr_array_add (array, g_strdup ("-h"));
-//	}
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI ||
+	    colorimeter_kind == GCM_COLORIMETER_KIND_SPECTRO_SCAN) {
+		g_ptr_array_add (array, g_strdup ("-h"));
+	}
 
 	/* 8 bit TIFF 300 dpi */
 	g_ptr_array_add (array, g_strdup ("-t300"));
