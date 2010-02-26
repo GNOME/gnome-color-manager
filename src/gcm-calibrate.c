@@ -755,6 +755,7 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	gboolean ret = FALSE;
 	const gchar *title;
 	const gchar *message;
+	gchar *ptr;
 	GtkWindow *window_tmp;
 	GtkResponseType response;
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
@@ -806,6 +807,15 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 			ret = FALSE;
 			goto out;
 		}
+
+		/* reprogram the basename */
+		g_free (priv->basename);
+		priv->basename = g_path_get_basename (priv->working_path);
+
+		/* remove the timespec */
+		ptr = g_strrstr (priv->basename, " - ");
+		if (ptr != NULL)
+			ptr[0] = '\0';
 	}
 
 	/* coldplug source */

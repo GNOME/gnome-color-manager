@@ -1611,7 +1611,7 @@ gcm_calibrate_argyll_set_device_from_ti2 (GcmCalibrate *calibrate, const gchar *
 	if (device == NULL) {
 		g_set_error (error,
 			     GCM_CALIBRATE_ERROR,
-			     GCM_CALIBRATE_ERROR_USER_ABORT,
+			     GCM_CALIBRATE_ERROR_NO_DATA,
 			     "cannot find TARGET_INSTRUMENT in %s", filename);
 		ret = FALSE;
 		goto out;
@@ -1755,7 +1755,7 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 			gcm_calibrate_dialog_hide (priv->calibrate_dialog);
 			g_set_error (error,
 				     GCM_CALIBRATE_ERROR,
-				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     GCM_CALIBRATE_ERROR_NO_DATA,
 				     "cannot find %s", filename);
 			goto out;
 		}
