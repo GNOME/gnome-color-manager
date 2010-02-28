@@ -1126,10 +1126,6 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 
 		/* find whether we have hardware installed */
 		ret = gcm_colorimeter_get_present (colorimeter);
-#ifndef GCM_HARDWARE_DETECTION
-		egg_debug ("overriding device presence %i with TRUE", ret);
-		ret = TRUE;
-#endif
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot calibrate: The colorimeter is not plugged in");

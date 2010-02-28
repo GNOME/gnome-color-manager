@@ -222,24 +222,13 @@ fi
 AM_CONDITIONAL(HAVE_DOCBOOK2MAN, [test "$DOCBOOK2MAN" != "no"])
 
 dnl ---------------------------------------------------------------------------
-dnl - Autodetect the hardware device
-dnl - This requires 55-Argyll.rules to set COLOR_MEASUREMENT_DEVICE
-dnl ---------------------------------------------------------------------------
-AC_ARG_ENABLE(hardware_detection, AS_HELP_STRING([--enable-hardware-detection],[enable hardware auto-detection (requires fixed argyllcms)]),
-	      enable_hardware_detection=$enableval,enable_hardware_detection=yes)
-AM_CONDITIONAL(GCM_HARDWARE_DETECTION, test x$enable_hardware_detection = xyes)
-if test x$enable_hardware_detection = xyes; then
-	AC_DEFINE(GCM_HARDWARE_DETECTION,1,[Build hardware autodetection])
-fi
-
-dnl ---------------------------------------------------------------------------
 dnl - Use PackageKit to install missing tools
 dnl ---------------------------------------------------------------------------
 AC_ARG_ENABLE(packagekit, AS_HELP_STRING([--enable-packagekit],[enable PackageKit integration]),
 	      enable_packagekit=$enableval,enable_packagekit=yes)
 AM_CONDITIONAL(GCM_USE_PACKAGEKIT, test x$enable_packagekit = xyes)
 if test x$enable_packagekit = xyes; then
-	AC_DEFINE(GCM_USE_PACKAGEKIT,1,[Build hardware autodetection])
+	AC_DEFINE(GCM_USE_PACKAGEKIT,1,[Use PackageKit for installing packages])
 fi
 
 dnl ---------------------------------------------------------------------------
