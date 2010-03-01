@@ -345,7 +345,7 @@ gcm_calibrate_get_display_type (GcmCalibrate *calibrate, GtkWindow *window, GErr
 	title = _("Could not detect screen type");
 
 	/* TRANSLATORS: dialog message */
-	message = _("Please indicate if the screen you are trying to profile is a LCD, CRT or a projector.");
+	message = _("Please indicate if the screen you are trying to profile is an LCD, CRT or a projector.");
 
 	/* show the ui */
 	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
@@ -765,7 +765,7 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	title = _("Please choose a profiling mode");
 
 	/* TRANSLATORS: dialog message */
-	message = _("Please indicate if you want to profile a local printer, generate some reference images, or to process some reference images.");
+	message = _("Please indicate if you want to profile a local printer, generate some reference images, or process some reference images.");
 
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_PRINT_MODE, title, message);
