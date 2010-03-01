@@ -84,9 +84,16 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 	}
 
 	ppd_file_location = cupsGetPPD2 (http, dest.name);
-	ppd_file = ppdOpenFile (ppd_file_location);
-
 	egg_debug ("ppd_file_location=%s", ppd_file_location);
+
+	/* don't add devices without PPD */
+	if (ppd_file_location == NULL) {
+		g_set_error (error, 1, 0, "Not adding device without PPD");
+		ret = FALSE;
+		goto out;	
+	}
+
+	ppd_file = ppdOpenFile (ppd_file_location);
 
 	for (i = 0; i < ppd_file->num_attrs; i++) {
 		const gchar *keyword;
