@@ -1,3 +1,73 @@
+Version 2.29.4
+~~~~~~~~~~~~~~
+Released: 2010-03-01
+
+* Translations
+ - Add Czech help translation (Milan Knizek)
+ - Add Czech translation (Milan Knížek)
+ - Update Czech translation (Marek Černocký)
+ - Updated French translation (Claude Paroz)
+ - Updated German doc translation (Mario Blättermann)
+ - Updated German translation (Mario Blättermann)
+ - Updated Lithuanian translation (Aurimas Černius)
+ - Updated Norwegian bokmål translation (Kjartan Maraas)
+ - Updated Russian translation (Alexandre Prokoudine)
+ - Updated Slovenian translation (Andrej Žnidaršič)
+ - Updated Spanish translation (Jorge González)
+ - Updated Swedish translation (Daniel Nylander)
+
+* New Features:
+ - Add a thumbnail image of the ColorCheckerDC (Graeme Gill)
+ - Add ColorCheckerSG thumbnail (Hening Betterman)
+ - Add LaserSoftDCPro thumbnail (Jorg Rosenkranz)
+ - Add printer profiling support using argyllcms and GtkPrint (Richard Hughes)
+ - Add some device type icons (Frédéric Bellaiche, Sebastian Kraft)
+ - Add support for sending calibration images to print shops (Richard Hughes)
+ - Add four more target thumbnails (Pascal de Bruijn)
+ - Allow UDEV and CUPS coldplug to be done multi-threaded (Richard Hughes)
+ - Allow virtual devices to be added to the device list (Richard Hughes)
+ - Automatically use the EXIF data if available from TIFF files when calibrating devices. Fixes #609444 (Richard Hughes)
+ - Conform to ICC Profiles in X Specification 0.3 (Richard Hughes)
+ - Detect printers by connecting to CUPS rather than scraping the HPLIP properties (Richard Hughes)
+ - Enable half-height targets for the ColorMunki, and double the patch counts for this hardware (Richard Hughes)
+ - Make users do the legwork when there is an unrecognised colorimeter (Richard Hughes)
+ - Play sounds using libcanberra when user interaction is required (Richard Hughes)
+ - Properly support projectors in the UI, and in the argyllcms wrapper (Richard Hughes)
+ - Remove GCM_HARDWARE_DETECTION as we're now shipping our own udev rules (Richard Hughes)
+ - Save the device colorspace in the config file so we can set profiles when not connected (Richard Hughes)
+ - Set a tooltip explaining why the calibrate button is insensitive (Richard Hughes)
+ - Set per-user xsane global and device settings when we have assigned a scanner profile (Richard Hughes)
+ - Show a GtkInfoBar warning if the profile has no vcgt table. Fixes #610287 (Richard Hughes)
+ - Support other types of reference file other than IT8 (Richard Hughes)
+ - Three FAQ entries out of five suggested filled in (Alexandre Prokoudine)
+ - Update Help Preferences Text (Paul Finnigan)
+
+* Bugfix:
+ - Add an 'All files' option on the file choosers. Fixes #610288 (Richard Hughes)
+ - Add AC_PROG_RANLIB to configure. Fixes #610771 (Richard Hughes)
+ - Add a list of colorimeters as we'll need this if argyllcms is not installed. Fixes rh#566414 (Richard Hughes)
+ - Ask for the chart type first before we ask for calibration files (Pascal de Bruijn)
+ - Capitalization fix for 'More Information' button (Michael Monreal)
+ - Correct help Intro and Usage (Paul Finnigan)
+ - Do low quality calibration when using targets with a low number of patches (Pascal de Bruijn)
+ - Do not allow devices to be assigned profiles in different colorspaces from native (Richard Hughes)
+ - Do not make the display calibration button sensitive (with tooltip) if we are using < XRandR 1.3 drivers. Fixes #610846 (Richard Hughes)
+ - Do not show the display as 'default' even when using the binary blob (Richard Hughes)
+ - Don't add Cups-PDF devices to the device list (Richard Hughes)
+ - Ensure ~/.color/icc exists at startup. Fixes #566275 (Richard Hughes)
+ - Ensure we set ID_MODEL_FROM_DATABASE and ID_VENDOR_FROM_DATABASE even if we're using old versions of argyllcms (Richard Hughes)
+ - Fix segfault when the profile has no description (Richard Hughes)
+ - Have scanin compensate for perspective distortion (Pascal de Bruijn)
+ - HIG string and capitalization fixes (Michael Monreal)
+ - Only require the device to be present if it is a display type (Richard Hughes)
+ - Read the ti2 file for the calibration model if we are analysing existing targets (Richard Hughes)
+ - Replace ColorCheckerSG with a newly processed one (Pascal de Bruijn)
+ - Replace colprof -aS with -aG (Pascal de Bruijn)
+ - Set the colorspace on unconnected devices to avoid getting no profiles in the list (Richard Hughes)
+ - Show a label in the device section when the user is using a xrandr-fallback driver. Fixes rh#566606 (Richard Hughes)
+ - Support colorimeter devices that need to change mode in the middle of the calibration (Richard Hughes)
+ - Use GFile internally so we can support importing profiles from gvfs mount points. Fixes #610285 (Richard Hughes)
+
 Version 2.29.3
 ~~~~~~~~~~~~~~
 Released: 2010-02-01
