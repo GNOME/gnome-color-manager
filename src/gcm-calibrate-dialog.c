@@ -150,12 +150,12 @@ gcm_calibrate_dialog_button_clicked_print_generate_cb (GtkWidget *widget, GcmCal
 }
 
 /**
- * gcm_calibrate_dialog_button_clicked_print_analyse_cb:
+ * gcm_calibrate_dialog_button_clicked_print_analyze_cb:
  **/
 static void
-gcm_calibrate_dialog_button_clicked_print_analyse_cb (GtkWidget *widget, GcmCalibrateDialog *calibrate_dialog)
+gcm_calibrate_dialog_button_clicked_print_analyze_cb (GtkWidget *widget, GcmCalibrateDialog *calibrate_dialog)
 {
-	calibrate_dialog->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_ANALYSE;
+	calibrate_dialog->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_ANALYZE;
 	gcm_calibrate_dialog_emit_response (calibrate_dialog, GTK_RESPONSE_OK);
 }
 
@@ -735,9 +735,9 @@ gcm_calibrate_dialog_init (GcmCalibrateDialog *calibrate_dialog)
 	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "button_print_generate"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_calibrate_dialog_button_clicked_print_generate_cb), calibrate_dialog);
-	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "button_print_analyse"));
+	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "button_print_analyze"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_calibrate_dialog_button_clicked_print_analyse_cb), calibrate_dialog);
+			  G_CALLBACK (gcm_calibrate_dialog_button_clicked_print_analyze_cb), calibrate_dialog);
 
 	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "image_target"));
 	gtk_widget_set_size_request (widget, 200, 140);

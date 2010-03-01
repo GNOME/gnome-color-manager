@@ -785,7 +785,7 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	/* copy */
 	g_object_get (priv->calibrate_dialog, "print-kind", &priv->print_kind, NULL);
 
-	if (priv->print_kind != GCM_CALIBRATE_PRINT_KIND_ANALYSE) {
+	if (priv->print_kind != GCM_CALIBRATE_PRINT_KIND_ANALYZE) {
 		/* set the per-profile filename */
 		ret = gcm_calibrate_set_working_path (calibrate, error);
 		if (!ret)

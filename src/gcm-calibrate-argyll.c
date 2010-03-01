@@ -1748,7 +1748,7 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 	}
 
 	/* we need to read the ti2 file to set the device used for calibration */
-	if (print_kind == GCM_CALIBRATE_PRINT_KIND_ANALYSE) {
+	if (print_kind == GCM_CALIBRATE_PRINT_KIND_ANALYZE) {
 		filename = g_strdup_printf ("%s/%s.ti2", working_path, basename);
 		ret = g_file_test (filename, G_FILE_TEST_EXISTS);
 		if (!ret) {
