@@ -1354,8 +1354,8 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->device);
 	g_free (priv->serial);
 	g_free (priv->working_path);
-	g_object_unref (priv->colorimeter);
 	g_signal_handlers_disconnect_by_func (calibrate->priv->colorimeter, G_CALLBACK (gcm_prefs_colorimeter_changed_cb), calibrate);
+	g_object_unref (priv->colorimeter);
 	g_object_unref (priv->calibrate_dialog);
 
 	G_OBJECT_CLASS (gcm_calibrate_parent_class)->finalize (object);

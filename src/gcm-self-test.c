@@ -52,7 +52,6 @@ main (int argc, char **argv)
 	egg_debug_init (&argc, &argv);
 
 	/* components */
-	gcm_print_test (test);
 	gcm_calibrate_test (test);
 	gcm_edid_test (test);
 	gcm_tables_test (test);
@@ -67,6 +66,7 @@ main (int argc, char **argv)
 	gcm_cie_widget_test (test);
 	gcm_gamma_widget_test (test);
 	gcm_image_test (test);
+	gcm_print_test (test);
 //	gcm_calibrate_manual_test (test);
 
 	return (egg_test_finish (test));

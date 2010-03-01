@@ -66,6 +66,7 @@ typedef struct {
 	gpointer		 user_data;
 	GMainLoop		*loop;
 	gboolean		 aborted;
+	GError			*error;
 } GcmPrintTask;
 
 /**
@@ -100,16 +101,14 @@ static void
 gcm_print_begin_print_cb (GtkPrintOperation *operation, GtkPrintContext *context, GcmPrintTask *task)
 {
 	GtkPageSetup *page_setup;
-	GError *error = NULL;
 
 	/* get the page details */
 	page_setup = gtk_print_context_get_page_setup (context);
 
 	/* get the list of files */
-	task->filenames = task->render_callback (task->print, page_setup, task->user_data, &error);
+	task->filenames = task->render_callback (task->print, page_setup, task->user_data, &task->error);
 	if (task->filenames == NULL) {
-		egg_warning ("failed to render pages: %s", error->message);
-		g_error_free (error);
+		gtk_print_operation_cancel (operation);
 		goto out;
 	}
 
@@ -131,7 +130,6 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 	cairo_t *cr;
 	gdouble width = 0.0f;
 	gdouble height = 0.0f;
-	GError *error = NULL;
 	const gchar *filename;
 	GdkPixbuf *pixbuf = NULL;
 	cairo_surface_t *surface = NULL;
@@ -144,10 +142,8 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 
 	/* load pixbuf, which we've already prepared */
 	filename = g_ptr_array_index (task->filenames, page_nr);
-	pixbuf = gdk_pixbuf_new_from_file (filename, &error);
+	pixbuf = gdk_pixbuf_new_from_file (filename, &task->error);
 	if (pixbuf == NULL) {
-		egg_warning ("failed to load image: %s", error->message);
-		g_error_free (error);
 		gtk_print_operation_cancel (operation);
 		goto out;
 	}
@@ -203,6 +199,11 @@ gcm_print_status_changed_cb (GtkPrintOperation *operation, GcmPrintTask *task)
 		g_idle_add ((GSourceFunc) gcm_print_loop_quit_idle_cb, task);
 	} else if (status == GTK_PRINT_STATUS_FINISHED_ABORTED) {
 		task->aborted = TRUE;
+
+		/* we failed, and didn't set an error */
+		if (task->error == NULL)
+			g_set_error (&task->error, 1, 0, "printing was aborted, and no error was set");
+
 		egg_debug ("printing aborted");
 		g_idle_add ((GSourceFunc) gcm_print_loop_quit_idle_cb, task);
 	}
@@ -279,11 +280,10 @@ gcm_print_with_render_callback (GcmPrint *print, GtkWindow *window, GcmPrintRend
 	/* wait for finished or abort */
 	g_main_loop_run (task->loop);
 
-	/* we failed */
-	if (task->aborted) {
-		g_set_error (error, 1, 0, "printing was aborted");
+	/* pass on error */
+	if (task->error != NULL) {
+		g_set_error_literal (error, 1, 0, task->error->message);
 		ret = FALSE;
-		goto out;
 	}
 out:
 	if (task->filenames != NULL)
@@ -292,6 +292,8 @@ out:
 		g_object_unref (task->print);
 	if (task->loop != NULL)
 		g_main_loop_unref (task->loop);
+	if (task->error != NULL)
+		g_error_free (task->error);
 	g_free (task);
 	g_object_unref (operation);
 	return ret;
@@ -345,8 +347,8 @@ gcm_print_test_render_cb (GcmPrint *print,  GtkPageSetup *page_setup, gpointer u
 {
 	GPtrArray *filenames;
 	filenames = g_ptr_array_new_with_free_func (g_free);
-	g_ptr_array_add (filenames, g_strdup ("/home/hughsie/Desktop/DSC_2182.tif"));
-	g_ptr_array_add (filenames, g_strdup ("/home/hughsie/Desktop/DSC_2182-2.tif"));
+	g_ptr_array_add (filenames, egg_test_get_data_file ("image-widget-nonembed.png"));
+	g_ptr_array_add (filenames, egg_test_get_data_file ("image-widget-good.png"));
 	return filenames;
 }
 
