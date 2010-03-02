@@ -1,6 +1,9 @@
 figuresdir = $(datadir)/gnome-color-manager/icons
 figures_DATA = 	 			\
 	clock.svg			\
+	calibration-short.svg		\
+	calibration-normal.svg		\
+	calibration-long.svg		\
 	scan-target.svg			\
 	scan-target-good.svg		\
 	scan-target-bad.svg		\
