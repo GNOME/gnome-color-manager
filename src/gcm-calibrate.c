@@ -847,6 +847,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	const gchar *directory;
 	GString *string;
 	GtkResponseType response;
+	GtkWindow *window_tmp;
 #ifdef GCM_USE_PACKAGEKIT
 	GtkWidget *dialog;
 #endif
@@ -940,8 +941,8 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 
 	/* get scanned image */
 	directory = g_get_home_dir ();
-	window = gcm_calibrate_dialog_get_window (priv->calibrate_dialog);
-	reference_image = gcm_calibrate_device_get_reference_image (directory, window);
+	window_tmp = gcm_calibrate_dialog_get_window (priv->calibrate_dialog);
+	reference_image = gcm_calibrate_device_get_reference_image (directory, window_tmp);
 	if (reference_image == NULL) {
 		g_set_error_literal (error,
 				     GCM_CALIBRATE_ERROR,
@@ -958,7 +959,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 
 	/* get reference data */
 	directory = has_shared_targets ? "/usr/share/color/targets" : "/media";
-	reference_data = gcm_calibrate_device_get_reference_data (directory, window);
+	reference_data = gcm_calibrate_device_get_reference_data (directory, window_tmp);
 	if (reference_data == NULL) {
 		g_set_error_literal (error,
 				     GCM_CALIBRATE_ERROR,
