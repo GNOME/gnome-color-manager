@@ -246,11 +246,20 @@ gcm_calibrate_dialog_set_window	(GcmCalibrateDialog *calibrate_dialog, GtkWindow
 {
 	GtkWidget *widget;
 	GcmCalibrateDialogPrivate *priv = calibrate_dialog->priv;
-	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
 
-	/* run dialog */
-	if (window != NULL)
-		gtk_window_set_transient_for (GTK_WINDOW (widget), window);
+	/* do nothing, we can't unparent */
+	if (window == NULL)
+		return;
+
+	/* ensure it's not the same thing */
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
+	if (GTK_WINDOW (widget) == window) {
+		egg_warning ("trying to set parent to self!");
+		return;
+	}
+
+	/* make modal */
+	gtk_window_set_transient_for (GTK_WINDOW (widget), window);
 }
 
 /**
