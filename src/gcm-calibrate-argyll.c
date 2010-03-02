@@ -2183,6 +2183,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	const gchar *message;
 	GString *string = NULL;
 	gchar *found;
+	gchar **split = NULL;
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
@@ -2343,8 +2344,12 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	/* reading strip */
 	if (g_str_has_prefix (line, "(Warning) Seem to have read strip pass ")) {
 
+		/* find the strip we read, and the one we wanted */
+		split = g_strsplit (line, " ", -1);
+		g_strdelimit (split[10], "!", '\0');
+
 		/* TRANSLATORS: dialog title, where %s is a letter like 'A' */
-		title_str = g_strdup_printf (_("Read strip %c rather than %c!"), line[39], line[39+14]);
+		title_str = g_strdup_printf (_("Read strip %s rather than %s!"), split[7], split[10]);
 
 		string = g_string_new ("");
 
@@ -2406,6 +2411,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	egg_warning ("VTE: could not screenscrape: %s", line);
 out:
 	g_free (title_str);
+	g_strfreev (split);
 	if (string != NULL)
 		g_string_free (string, TRUE);
 	return ret;
