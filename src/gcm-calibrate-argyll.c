@@ -36,7 +36,6 @@
 #include <stdlib.h>
 #include <gtk/gtk.h>
 #include <vte/vte.h>
-#include <gconf/gconf-client.h>
 #include <canberra-gtk.h>
 
 #include "gcm-calibrate-argyll.h"
@@ -51,13 +50,6 @@
 static void     gcm_calibrate_argyll_finalize	(GObject     *object);
 
 #define GCM_CALIBRATE_ARGYLL_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_CALIBRATE_ARGYLL, GcmCalibrateArgyllPrivate))
-
-typedef enum {
-	GCM_CALIBRATE_ARGYLL_PRECISION_SHORT,
-	GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL,
-	GCM_CALIBRATE_ARGYLL_PRECISION_LONG,
-	GCM_CALIBRATE_ARGYLL_PRECISION_LAST
-} GcmCalibrateArgyllPrecision;
 
 typedef enum {
 	GCM_CALIBRATE_ARGYLL_STATE_IDLE,
@@ -75,8 +67,6 @@ typedef enum {
 struct _GcmCalibrateArgyllPrivate
 {
 	guint				 display;
-	GConfClient			*gconf_client;
-	GcmCalibrateArgyllPrecision	 precision;
 	GMainLoop			*loop;
 	GtkWidget			*terminal;
 	GcmCalibrateDialog		*calibrate_dialog;
@@ -99,33 +89,18 @@ enum {
 G_DEFINE_TYPE (GcmCalibrateArgyll, gcm_calibrate_argyll, GCM_TYPE_CALIBRATE)
 
 /**
- * gcm_calibrate_argyll_precision_from_string:
- **/
-static GcmCalibrateArgyllPrecision
-gcm_calibrate_argyll_precision_from_string (const gchar *string)
-{
-	if (g_strcmp0 (string, "short") == 0)
-		return GCM_CALIBRATE_ARGYLL_PRECISION_SHORT;
-	if (g_strcmp0 (string, "normal") == 0)
-		return GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL;
-	if (g_strcmp0 (string, "long") == 0)
-		return GCM_CALIBRATE_ARGYLL_PRECISION_LONG;
-	egg_warning ("failed to convert to precision: %s", string);
-	return GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL;
-}
-
-/**
  * gcm_calibrate_argyll_get_quality_arg:
  **/
 static const gchar *
 gcm_calibrate_argyll_get_quality_arg (GcmCalibrateArgyll *calibrate_argyll)
 {
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 	GcmCalibrateReferenceKind reference_kind;
+	GcmCalibratePrecision precision;
 
 	/* get kind */
 	g_object_get (calibrate_argyll,
 		      "reference-kind", &reference_kind,
+		      "precision", &precision,
 		      NULL);
 
 	/* these have such low patch count, we only can do low quality */
@@ -134,11 +109,11 @@ gcm_calibrate_argyll_get_quality_arg (GcmCalibrateArgyll *calibrate_argyll)
 		return "-ql";
 
 	/* get the default precision */
-	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_SHORT)
+	if (precision == GCM_CALIBRATE_PRECISION_SHORT)
 		return "-ql";
-	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL)
+	if (precision == GCM_CALIBRATE_PRECISION_NORMAL)
 		return "-qm";
-	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_LONG)
+	if (precision == GCM_CALIBRATE_PRECISION_LONG)
 		return "-qh";
 	return "-qm";
 }
@@ -150,13 +125,18 @@ static guint
 gcm_calibrate_argyll_display_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 {
 	guint patches = 250;
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	GcmCalibratePrecision precision;
 
-	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_SHORT)
+	/* get kind */
+	g_object_get (calibrate_argyll,
+		      "precision", &precision,
+		      NULL);
+
+	if (precision == GCM_CALIBRATE_PRECISION_SHORT)
 		patches = 100;
-	else if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL)
+	else if (precision == GCM_CALIBRATE_PRECISION_NORMAL)
 		patches = 250;
-	else if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_LONG)
+	else if (precision == GCM_CALIBRATE_PRECISION_LONG)
 		patches = 500;
 	return patches;
 }
@@ -169,16 +149,19 @@ gcm_calibrate_argyll_printer_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 {
 	guint patches = 180;
 	GcmColorimeterKind colorimeter_kind;
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	GcmCalibratePrecision precision;
 
 	/* we care about the type */
-	g_object_get (calibrate_argyll, "colorimeter-kind", &colorimeter_kind, NULL);
+	g_object_get (calibrate_argyll,
+		      "colorimeter-kind", &colorimeter_kind,
+		      "precision", &precision,
+		      NULL);
 
-	if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_SHORT)
+	if (precision == GCM_CALIBRATE_PRECISION_SHORT)
 		patches = 90;
-	else if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_NORMAL)
+	else if (precision == GCM_CALIBRATE_PRECISION_NORMAL)
 		patches = 180;
-	else if (priv->precision == GCM_CALIBRATE_ARGYLL_PRECISION_LONG)
+	else if (precision == GCM_CALIBRATE_PRECISION_LONG)
 		patches = 360;
 
 	/* using double density, so we can double the patch count */
@@ -2639,8 +2622,6 @@ gcm_calibrate_argyll_class_init (GcmCalibrateArgyllClass *klass)
 static void
 gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 {
-	gchar *precision;
-
 	calibrate_argyll->priv = GCM_CALIBRATE_ARGYLL_GET_PRIVATE (calibrate_argyll);
 	calibrate_argyll->priv->child_pid = -1;
 	calibrate_argyll->priv->loop = g_main_loop_new (NULL, FALSE);
@@ -2655,9 +2636,6 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 	g_signal_connect (calibrate_argyll->priv->calibrate_dialog, "response",
 			  G_CALLBACK (gcm_calibrate_argyll_response_cb), calibrate_argyll);
 
-	/* use GConf to get defaults */
-	calibrate_argyll->priv->gconf_client = gconf_client_get_default ();
-
 	/* get screen */
 	calibrate_argyll->priv->screen = gcm_screen_new ();
 
@@ -2670,11 +2648,6 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 			  G_CALLBACK (gcm_calibrate_argyll_cursor_moved_cb), calibrate_argyll);
 	gcm_calibrate_dialog_pack_details (calibrate_argyll->priv->calibrate_dialog,
 					   calibrate_argyll->priv->terminal);
-
-	/* get default precision */
-	precision = gconf_client_get_string (calibrate_argyll->priv->gconf_client, GCM_SETTINGS_CALIBRATION_LENGTH, NULL);
-	calibrate_argyll->priv->precision = gcm_calibrate_argyll_precision_from_string (precision);
-	g_free (precision);
 }
 
 /**
@@ -2700,7 +2673,6 @@ gcm_calibrate_argyll_finalize (GObject *object)
 
 	g_main_loop_unref (priv->loop);
 	g_object_unref (priv->screen);
-	g_object_unref (priv->gconf_client);
 	g_object_unref (priv->calibrate_dialog);
 	g_object_unref (priv->print);
 

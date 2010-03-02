@@ -105,6 +105,13 @@ typedef enum {
 	GCM_CALIBRATE_PRINT_KIND_UNKNOWN
 } GcmCalibratePrintKind;
 
+typedef enum {
+	GCM_CALIBRATE_PRECISION_SHORT,
+	GCM_CALIBRATE_PRECISION_NORMAL,
+	GCM_CALIBRATE_PRECISION_LONG,
+	GCM_CALIBRATE_PRECISION_UNKNOWN
+} GcmCalibratePrecision;
+
 GType		 gcm_calibrate_get_type			(void);
 GcmCalibrate	*gcm_calibrate_new			(void);
 gboolean	 gcm_calibrate_display			(GcmCalibrate	*calibrate,

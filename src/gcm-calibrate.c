@@ -32,6 +32,7 @@
 #include <gtk/gtk.h>
 #include <tiff.h>
 #include <tiffio.h>
+#include <gconf/gconf-client.h>
 
 #include "gcm-calibrate.h"
 #include "gcm-utils.h"
@@ -56,6 +57,7 @@ struct _GcmCalibratePrivate
 	GcmCalibrateReferenceKind	 reference_kind;
 	GcmCalibrateDeviceKind		 device_kind;
 	GcmCalibratePrintKind		 print_kind;
+	GcmCalibratePrecision		 precision;
 	GcmColorimeterKind		 colorimeter_kind;
 	GcmCalibrateDialog		*calibrate_dialog;
 	GcmDeviceTypeEnum		 device_type;
@@ -70,6 +72,7 @@ struct _GcmCalibratePrivate
 	gchar				*serial;
 	gchar				*device;
 	gchar				*working_path;
+	GConfClient			*gconf_client;
 };
 
 enum {
@@ -90,6 +93,7 @@ enum {
 	PROP_FILENAME_REFERENCE,
 	PROP_FILENAME_RESULT,
 	PROP_WORKING_PATH,
+	PROP_PRECISION,
 	PROP_LAST
 };
 
@@ -834,6 +838,78 @@ out:
 }
 
 /**
+ * gcm_calibrate_get_precision:
+ **/
+static GcmCalibratePrecision
+gcm_calibrate_get_precision (GcmCalibrate *calibrate, GError **error)
+{
+	GcmCalibratePrecision precision = GCM_CALIBRATE_PRECISION_UNKNOWN;
+	const gchar *title;
+	GString *string;
+	GtkResponseType response;
+	GcmCalibratePrivate *priv = calibrate->priv;
+
+	string = g_string_new ("");
+
+	/* TRANSLATORS: dialog title */
+	title = _("Choose the precision of the profile");
+
+	/* TRANSLATORS: dialog message, suffix */
+	g_string_append_printf (string, "%s\n", _("Please choose the calibration precision."));
+
+	/* TRANSLATORS: this is the message body for the chart selection */
+	g_string_append_printf (string, "\n%s", _("Short profiles are quick and easy, long profiles take longer to complete but are more accurate."));
+
+	/* printer specific options */
+	if (priv->device_type == GCM_DEVICE_TYPE_ENUM_PRINTER) {
+		/* TRANSLATORS: dialog message, preface */
+		g_string_append_printf (string, "\n%s", _("The long calibration also uses up much more paper and ink."));
+	}
+
+	/* TRANSLATORS: this is the message body for the chart selection */
+	g_string_append_printf (string, "\n\n%s", _("For a typical color workflow, a normal precision profile is sufficient."));
+
+	/* push new messages into the UI */
+	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_PRECISION, title, string->str);
+	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
+	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
+	response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
+	if (response != GTK_RESPONSE_OK) {
+		gcm_calibrate_dialog_hide (priv->calibrate_dialog);
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "user did not choose precision type and ask is specified in GConf");
+		goto out;
+	}
+
+	/* copy */
+	g_object_get (priv->calibrate_dialog, "precision", &precision, NULL);
+out:
+	if (string != NULL)
+		g_string_free (string, TRUE);
+	return precision;
+}
+
+/**
+ * gcm_calibrate_precision_from_string:
+ **/
+static GcmCalibratePrecision
+gcm_calibrate_precision_from_string (const gchar *string)
+{
+	if (g_strcmp0 (string, "short") == 0)
+		return GCM_CALIBRATE_PRECISION_SHORT;
+	if (g_strcmp0 (string, "normal") == 0)
+		return GCM_CALIBRATE_PRECISION_NORMAL;
+	if (g_strcmp0 (string, "long") == 0)
+		return GCM_CALIBRATE_PRECISION_LONG;
+	if (g_strcmp0 (string, "ask") == 0)
+		return GCM_CALIBRATE_PRECISION_UNKNOWN;
+	egg_warning ("failed to convert to precision: %s", string);
+	return GCM_CALIBRATE_PRECISION_UNKNOWN;
+}
+
+/**
  * gcm_calibrate_device:
  **/
 gboolean
@@ -848,6 +924,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	GString *string;
 	GtkResponseType response;
 	GtkWindow *window_tmp;
+	gchar *precision = NULL;
 #ifdef GCM_USE_PACKAGEKIT
 	GtkWidget *dialog;
 #endif
@@ -922,6 +999,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	g_string_append_printf (string, "\n%s\n", _("Please select the chart type which corresponds to your reference file."));
 
 	/* push new messages into the UI */
+	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
 	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_TARGET_TYPE, title, string->str);
 	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
 	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
@@ -938,6 +1016,17 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 
 	/* copy */
 	g_object_get (priv->calibrate_dialog, "reference-kind", &priv->reference_kind, NULL);
+
+	/* get default precision */
+	precision = gconf_client_get_string (priv->gconf_client, GCM_SETTINGS_CALIBRATION_LENGTH, NULL);
+	priv->precision = gcm_calibrate_precision_from_string (precision);
+	if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
+		priv->precision = gcm_calibrate_get_precision (calibrate, error);
+		if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
+			ret = FALSE;
+			goto out;
+		}
+	}
 
 	/* get scanned image */
 	directory = g_get_home_dir ();
@@ -1000,6 +1089,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 out:
 	if (string != NULL)
 		g_string_free (string, TRUE);
+	g_free (precision);
 	g_free (device);
 	g_free (reference_image);
 	g_free (reference_data);
@@ -1063,6 +1153,9 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 		break;
 	case PROP_WORKING_PATH:
 		g_value_set_string (value, priv->working_path);
+		break;
+	case PROP_PRECISION:
+		g_value_set_uint (value, priv->precision);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1300,6 +1393,14 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_WORKING_PATH, pspec);
 
+	/**
+	 * GcmCalibrate:precision:
+	 */
+	pspec = g_param_spec_uint ("precision", NULL, NULL,
+				   0, G_MAXUINT, 0,
+				   G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_PRECISION, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmCalibratePrivate));
 }
 
@@ -1324,11 +1425,15 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_UNKNOWN;
 	calibrate->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_UNKNOWN;
 	calibrate->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
+	calibrate->priv->precision = GCM_CALIBRATE_PRECISION_UNKNOWN;
 	calibrate->priv->colorimeter = gcm_colorimeter_new ();
 	calibrate->priv->calibrate_dialog = gcm_calibrate_dialog_new ();
 
 	// FIXME: this has to be per-run specific
 	calibrate->priv->working_path = g_strdup ("/tmp");
+
+	/* use GConf to get defaults */
+	calibrate->priv->gconf_client = gconf_client_get_default ();
 
 	/* coldplug, and watch for changes */
 	calibrate->priv->colorimeter_kind = gcm_colorimeter_get_kind (calibrate->priv->colorimeter);
@@ -1358,6 +1463,7 @@ gcm_calibrate_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (calibrate->priv->colorimeter, G_CALLBACK (gcm_prefs_colorimeter_changed_cb), calibrate);
 	g_object_unref (priv->colorimeter);
 	g_object_unref (priv->calibrate_dialog);
+	g_object_unref (priv->gconf_client);
 
 	G_OBJECT_CLASS (gcm_calibrate_parent_class)->finalize (object);
 }

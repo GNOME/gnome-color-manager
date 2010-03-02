@@ -54,6 +54,7 @@ struct _GcmCalibrateDialogPrivate
 	GcmCalibrateDeviceKind		 device_kind;
 	GcmCalibratePrintKind		 print_kind;
 	GcmCalibrateReferenceKind	 reference_kind;
+	GcmCalibratePrecision		 precision;
 	GtkResponseType			 response;
 	GMainLoop			*loop;
 	gboolean			 move_window;
@@ -69,6 +70,7 @@ enum {
 	PROP_DEVICE_KIND,
 	PROP_PRINT_KIND,
 	PROP_REFERENCE_KIND,
+	PROP_PRECISION,
 	PROP_LAST
 };
 
@@ -156,6 +158,36 @@ static void
 gcm_calibrate_dialog_button_clicked_print_analyze_cb (GtkWidget *widget, GcmCalibrateDialog *calibrate_dialog)
 {
 	calibrate_dialog->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_ANALYZE;
+	gcm_calibrate_dialog_emit_response (calibrate_dialog, GTK_RESPONSE_OK);
+}
+
+/**
+ * gcm_calibrate_dialog_button_clicked_precision_short_cb:
+ **/
+static void
+gcm_calibrate_dialog_button_clicked_precision_short_cb (GtkWidget *widget, GcmCalibrateDialog *calibrate_dialog)
+{
+	calibrate_dialog->priv->precision = GCM_CALIBRATE_PRECISION_SHORT;
+	gcm_calibrate_dialog_emit_response (calibrate_dialog, GTK_RESPONSE_OK);
+}
+
+/**
+ * gcm_calibrate_dialog_button_clicked_precision_normal_cb:
+ **/
+static void
+gcm_calibrate_dialog_button_clicked_precision_normal_cb (GtkWidget *widget, GcmCalibrateDialog *calibrate_dialog)
+{
+	calibrate_dialog->priv->precision = GCM_CALIBRATE_PRECISION_NORMAL;
+	gcm_calibrate_dialog_emit_response (calibrate_dialog, GTK_RESPONSE_OK);
+}
+
+/**
+ * gcm_calibrate_dialog_button_clicked_precision_long_cb:
+ **/
+static void
+gcm_calibrate_dialog_button_clicked_precision_long_cb (GtkWidget *widget, GcmCalibrateDialog *calibrate_dialog)
+{
+	calibrate_dialog->priv->precision = GCM_CALIBRATE_PRECISION_LONG;
 	gcm_calibrate_dialog_emit_response (calibrate_dialog, GTK_RESPONSE_OK);
 }
 
@@ -331,6 +363,8 @@ gcm_calibrate_dialog_show (GcmCalibrateDialog		*calibrate_dialog,
 	gtk_widget_set_visible (widget, (tab == GCM_CALIBRATE_DIALOG_TAB_GENERIC));
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "vbox_print_mode"));
 	gtk_widget_set_visible (widget, (tab == GCM_CALIBRATE_DIALOG_TAB_PRINT_MODE));
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "vbox_precision"));
+	gtk_widget_set_visible (widget, (tab == GCM_CALIBRATE_DIALOG_TAB_PRECISION));
 
 	/* reset */
 	gcm_calibrate_dialog_set_image_filename (calibrate_dialog, NULL);
@@ -624,6 +658,9 @@ gcm_calibrate_dialog_get_property (GObject *object, guint prop_id, GValue *value
 	case PROP_PRINT_KIND:
 		g_value_set_uint (value, priv->print_kind);
 		break;
+	case PROP_PRECISION:
+		g_value_set_uint (value, priv->precision);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -680,6 +717,14 @@ gcm_calibrate_dialog_class_init (GcmCalibrateDialogClass *klass)
 	g_object_class_install_property (object_class, PROP_PRINT_KIND, pspec);
 
 	/**
+	 * GcmCalibrateDialog:precision:
+	 */
+	pspec = g_param_spec_uint ("precision", NULL, NULL,
+				   0, G_MAXUINT, 0,
+				   G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_PRECISION, pspec);
+
+	/**
 	 * GcmCalibrateDialog::response:
 	 **/
 	signals[SIGNAL_RESPONSE] =
@@ -708,6 +753,7 @@ gcm_calibrate_dialog_init (GcmCalibrateDialog *calibrate_dialog)
 	calibrate_dialog->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_UNKNOWN;
 	calibrate_dialog->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_UNKNOWN;
 	calibrate_dialog->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
+	calibrate_dialog->priv->precision = GCM_CALIBRATE_PRECISION_UNKNOWN;
 	calibrate_dialog->priv->move_window = FALSE;
 	calibrate_dialog->priv->loop = g_main_loop_new (NULL, FALSE);
 	calibrate_dialog->priv->cached_dialogs = g_ptr_array_new_with_free_func ((GDestroyNotify)gcm_calibrate_dialog_dialog_free);
@@ -747,6 +793,15 @@ gcm_calibrate_dialog_init (GcmCalibrateDialog *calibrate_dialog)
 	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "button_print_analyze"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_calibrate_dialog_button_clicked_print_analyze_cb), calibrate_dialog);
+	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "button_precision_short"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_calibrate_dialog_button_clicked_precision_short_cb), calibrate_dialog);
+	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "button_precision_normal"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_calibrate_dialog_button_clicked_precision_normal_cb), calibrate_dialog);
+	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "button_precision_long"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_calibrate_dialog_button_clicked_precision_long_cb), calibrate_dialog);
 
 	widget = GTK_WIDGET (gtk_builder_get_object (calibrate_dialog->priv->builder, "image_target"));
 	gtk_widget_set_size_request (widget, 200, 140);
