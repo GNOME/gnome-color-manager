@@ -1795,6 +1795,139 @@ out:
 }
 
 /**
+ * gcm_calibrate_argyll_pixbuf_remove_alpha:
+ **/
+static GdkPixbuf *
+gcm_calibrate_argyll_pixbuf_remove_alpha (const GdkPixbuf *pixbuf)
+{
+	GdkPixbuf *new_pixbuf = NULL;
+	gint x, y;
+	guchar *src, *dest;
+
+	/* already no alpha */
+	if (!gdk_pixbuf_get_has_alpha (pixbuf)) {
+		new_pixbuf = gdk_pixbuf_copy (pixbuf);
+		goto out;
+	}
+
+	/* create new image, and copy RGB */
+	new_pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8,
+				     gdk_pixbuf_get_width (pixbuf),
+				     gdk_pixbuf_get_height (pixbuf));
+	for (y = 0; y < gdk_pixbuf_get_height (pixbuf); y++) {
+		src = gdk_pixbuf_get_pixels (pixbuf) + y * gdk_pixbuf_get_rowstride (pixbuf);
+		dest = gdk_pixbuf_get_pixels (new_pixbuf) + y * gdk_pixbuf_get_rowstride (new_pixbuf);
+
+		/* copy RGB from RGBA */
+		for (x = 0; x < gdk_pixbuf_get_width (pixbuf); x++) {
+			dest[0] = src[0];
+			dest[1] = src[1];
+			dest[2] = src[2];
+			src += 4;
+			dest += 3;
+		}
+	}
+out:
+	return new_pixbuf;
+}
+
+/**
+ * gcm_calibrate_argyll_check_and_remove_alpha:
+ **/
+static gboolean
+gcm_calibrate_argyll_check_and_remove_alpha (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+{
+	gboolean ret = TRUE;
+	GdkPixbuf *pixbuf = NULL;
+	GdkPixbuf *pixbuf_new = NULL;
+	gchar *reference_image = NULL;
+	gchar *basename = NULL;
+	gchar *working_path = NULL;
+	gchar *filename = NULL;
+	const gchar *title;
+	GString *string = NULL;
+	GtkResponseType response;
+	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+
+	/* get shared data */
+	g_object_get (calibrate_argyll,
+		      "basename", &basename,
+		      "working-path", &working_path,
+		      NULL);
+
+	/* get copied filename */
+	filename = g_strdup_printf ("%s.tif", basename);
+	reference_image = g_build_filename (working_path, filename, NULL);
+
+	/* check to see if the file has any alpha channel */
+	pixbuf = gdk_pixbuf_new_from_file (reference_image, error);
+	if (pixbuf == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+
+	/* plain RGB */
+	if (!gdk_pixbuf_get_has_alpha (pixbuf))
+		goto out;
+
+	/* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
+	title = _("Image is not suitable without conversion");
+
+	/* TRANSLATORS: dialog message */
+	string = g_string_new (_("The image supplied contains an alpha channel which the calibration tools do not understand."));
+	g_string_append (string, "\n\n");
+
+	/* TRANSLATORS: dialog message */
+	g_string_append (string, _("It is normally safe to convert the image, although you should ensure that the generated profile is valid."));
+
+	/* push new messages into the UI */
+	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, string->str);
+	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
+	/* TRANSLATORS: button text to convert the RGBA image into RGB */
+	gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Convert"));
+	response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
+	if (response != GTK_RESPONSE_OK) {
+		gcm_calibrate_dialog_hide (priv->calibrate_dialog);
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "user did not convert RGBA into RGB");
+		ret = FALSE;
+		goto out;
+	}
+
+	/* remove the alpha channel */
+	pixbuf_new = gcm_calibrate_argyll_pixbuf_remove_alpha (pixbuf);
+	if (pixbuf_new == NULL) {
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_INTERNAL,
+				     "failed to remove alpha channel");
+		ret = FALSE;
+		goto out;
+	}
+
+	/* save */
+	ret = gdk_pixbuf_save (pixbuf_new, reference_image, "tiff", error, NULL);
+	if (!ret)
+		goto out;
+
+out:
+	g_free (working_path);
+	g_free (filename);
+	g_free (basename);
+	g_free (reference_image);
+	if (string != NULL)
+		g_string_free (string, TRUE);
+	if (pixbuf != NULL)
+		g_object_unref (pixbuf);
+	if (pixbuf_new != NULL)
+		g_object_unref (pixbuf_new);
+	return ret;
+}
+
+/**
  * gcm_calibrate_argyll_device:
  **/
 static gboolean
@@ -1823,6 +1956,11 @@ gcm_calibrate_argyll_device (GcmCalibrate *calibrate, GtkWindow *window, GError 
 
 	/* step 1 */
 	ret = gcm_calibrate_argyll_device_copy (calibrate_argyll, error);
+	if (!ret)
+		goto out;
+
+	/* step 1.5 */
+	ret = gcm_calibrate_argyll_check_and_remove_alpha (calibrate_argyll, error);
 	if (!ret)
 		goto out;
 
