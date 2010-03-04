@@ -59,6 +59,6 @@ ATTRS{idVendor}=="085c", ATTRS{idProduct}=="0300", ENV{GCM_COLORIMETER}="1", ENV
 ATTRS{idVendor}=="0971", ATTRS{idProduct}=="2005", ENV{GCM_COLORIMETER}="1", ENV{GCM_TYPE_DISPLAY}="1"
 
 # color calibration device
-ENV{GCM_COLORIMETER}=="*?", ENV{ACL_MANAGE}="1", IMPORT{program}="usb-db %p"
+ENV{GCM_COLORIMETER}=="*?", IMPORT{program}="usb-db %p"
 
 LABEL="gcm_rules_end"
