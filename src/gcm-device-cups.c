@@ -90,10 +90,16 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 	if (ppd_file_location == NULL) {
 		g_set_error (error, 1, 0, "Not adding device without PPD");
 		ret = FALSE;
-		goto out;	
+		goto out;
 	}
 
+	/* try to open PPD file */
 	ppd_file = ppdOpenFile (ppd_file_location);
+	if (ppd_file == NULL) {
+		g_set_error (error, 1, 0, "PPD open file failed");
+		ret = FALSE;
+		goto out;
+	}
 
 	for (i = 0; i < ppd_file->num_attrs; i++) {
 		const gchar *keyword;
