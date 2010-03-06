@@ -300,11 +300,15 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 	g_free (priv->vendor);
 	priv->vendor = g_strdup (g_udev_device_get_property (device, "ID_VENDOR_FROM_DATABASE"));
 	if (priv->vendor == NULL)
+		priv->vendor = g_strdup (g_udev_device_get_property (device, "ID_VENDOR"));
+	if (priv->vendor == NULL)
 		priv->vendor = g_strdup (g_udev_device_get_sysfs_attr (device, "manufacturer"));
 
 	/* model */
 	g_free (priv->model);
 	priv->model = g_strdup (g_udev_device_get_property (device, "ID_MODEL_FROM_DATABASE"));
+	if (priv->model == NULL)
+		priv->model = g_strdup (g_udev_device_get_property (device, "ID_MODEL"));
 	if (priv->model == NULL)
 		priv->model = g_strdup (g_udev_device_get_sysfs_attr (device, "product"));
 
@@ -314,11 +318,11 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 	priv->supports_printer = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PRINTER");
 
 	/* try to get type */
-	if (g_ascii_strcasecmp (priv->model, "Huey") == 0) {
+	if (priv->model != NULL && g_ascii_strcasecmp (priv->model, "Huey") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_HUEY;
-	} else if (g_ascii_strcasecmp (priv->model, "ColorMunki") == 0) {
+	} else if (priv->model != NULL && g_ascii_strcasecmp (priv->model, "ColorMunki") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_COLOR_MUNKI;
-	} else if (g_ascii_strcasecmp (priv->model, "Monitor Spyder") == 0) {
+	} else if (priv->model != NULL && g_ascii_strcasecmp (priv->model, "Monitor Spyder") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_SPYDER;
 	} else if (priv->model != NULL) {
 		egg_warning ("Failed to recognise color device: %s", priv->model);
