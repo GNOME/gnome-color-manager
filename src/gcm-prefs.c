@@ -81,6 +81,7 @@ enum {
 	GCM_PREFS_COMBO_COLUMN_TEXT,
 	GCM_PREFS_COMBO_COLUMN_PROFILE,
 	GCM_PREFS_COMBO_COLUMN_TYPE,
+	GCM_PREFS_COMBO_COLUMN_SORTABLE,
 	GCM_PREFS_COMBO_COLUMN_LAST
 };
 
@@ -168,34 +169,44 @@ out:
  * gcm_prefs_combobox_add_profile:
  **/
 static void
-gcm_prefs_combobox_add_profile (GtkWidget *widget, GcmProfile *profile, GcmPrefsEntryType entry_type)
+gcm_prefs_combobox_add_profile (GtkWidget *widget, GcmProfile *profile, GcmPrefsEntryType entry_type, GtkTreeIter *iter)
 {
 	GtkTreeModel *model;
-	GtkTreeIter iter;
+	GtkTreeIter iter_tmp;
 	gchar *description;
+	gchar *sortable;
+
+	/* iter is optional */
+	if (iter == NULL)
+		iter = &iter_tmp;
 
 	/* use description */
 	if (entry_type == GCM_PREFS_ENTRY_TYPE_NONE) {
 		/* TRANSLATORS: this is where no profile is selected */
 		description = g_strdup (_("None"));
+		sortable = g_strdup ("1");
 	} else if (entry_type == GCM_PREFS_ENTRY_TYPE_IMPORT) {
 		/* TRANSLATORS: this is where the user can click and import a profile */
 		description = g_strdup (_("Other profile…"));
+		sortable = g_strdup ("9");
 	} else {
 		g_object_get (profile,
 			      "description", &description,
 			      NULL);
+		sortable = g_strdup_printf ("5%s", description);
 	}
 
 	/* also add profile */
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX(widget));
-	gtk_list_store_append (GTK_LIST_STORE(model), &iter);
-	gtk_list_store_set (GTK_LIST_STORE(model), &iter,
+	gtk_list_store_append (GTK_LIST_STORE(model), iter);
+	gtk_list_store_set (GTK_LIST_STORE(model), iter,
 			    GCM_PREFS_COMBO_COLUMN_TEXT, description,
 			    GCM_PREFS_COMBO_COLUMN_PROFILE, profile,
 			    GCM_PREFS_COMBO_COLUMN_TYPE, entry_type,
+			    GCM_PREFS_COMBO_COLUMN_SORTABLE, sortable,
 			    -1);
 	g_free (description);
+	g_free (sortable);
 }
 
 /**
@@ -1214,19 +1225,19 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, const gchar *pro
 {
 	GtkTreeModel *model;
 	guint i;
-	guint added_count = 1;
 	gchar *filename;
 	gboolean ret;
 	gboolean set_active = FALSE;
 	GcmProfile *profile;
 	GPtrArray *profile_array = NULL;
+	GtkTreeIter iter;
 
 	/* clear existing entries */
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
 	gtk_list_store_clear (GTK_LIST_STORE (model));
 
 	/* add a 'None' entry */
-	gcm_prefs_combobox_add_profile (widget, NULL, GCM_PREFS_ENTRY_TYPE_NONE);
+	gcm_prefs_combobox_add_profile (widget, NULL, GCM_PREFS_ENTRY_TYPE_NONE, NULL);
 
 	/* get new list */
 	profile_array = gcm_profile_store_get_array (profile_store);
@@ -1239,25 +1250,23 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, const gchar *pro
 		ret = gcm_prefs_is_profile_suitable_for_device (profile, current_device);
 		if (ret) {
 			/* add */
-			gcm_prefs_combobox_add_profile (widget, profile, GCM_PREFS_ENTRY_TYPE_PROFILE);
+			gcm_prefs_combobox_add_profile (widget, profile, GCM_PREFS_ENTRY_TYPE_PROFILE, &iter);
 
 			/* set active option */
 			g_object_get (profile,
 				      "filename", &filename,
 				      NULL);
 			if (g_strcmp0 (filename, profile_filename) == 0) {
-				gtk_combo_box_set_active (GTK_COMBO_BOX (widget), added_count);
+				//FIXME: does not work for sorted lists
+				gtk_combo_box_set_active_iter (GTK_COMBO_BOX (widget), &iter);
 				set_active = TRUE;
 			}
 			g_free (filename);
-
-			/* keep a list so we can set active correctly */
-			added_count++;
 		}
 	}
 
 	/* add a import entry */
-	gcm_prefs_combobox_add_profile (widget, NULL, GCM_PREFS_ENTRY_TYPE_IMPORT);
+	gcm_prefs_combobox_add_profile (widget, NULL, GCM_PREFS_ENTRY_TYPE_IMPORT, NULL);
 
 	/* select 'None' if there was no match */
 	if (!set_active) {
@@ -1822,7 +1831,8 @@ gcm_prefs_set_combo_simple_text (GtkWidget *combo_box)
 	GtkCellRenderer *renderer;
 	GtkListStore *store;
 
-	store = gtk_list_store_new (3, G_TYPE_STRING, GCM_TYPE_PROFILE, G_TYPE_UINT);
+	store = gtk_list_store_new (4, G_TYPE_STRING, GCM_TYPE_PROFILE, G_TYPE_UINT, G_TYPE_STRING);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), GCM_PREFS_COMBO_COLUMN_SORTABLE, GTK_SORT_ASCENDING);
 	gtk_combo_box_set_model (GTK_COMBO_BOX (combo_box), GTK_TREE_MODEL (store));
 	g_object_unref (store);
 
@@ -2302,11 +2312,12 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspaceEnum colorspace,
 	gchar *filename;
 	gchar *description;
 	GcmColorspaceEnum colorspace_tmp;
-	guint added_count = 0;
+	gboolean has_profile = FALSE;
 	gboolean has_vcgt;
 	gchar *text = NULL;
 	const gchar *search = "RGB";
 	GPtrArray *profile_array = NULL;
+	GtkTreeIter iter;
 
 	/* search is a way to reduce to number of profiles */
 	if (colorspace == GCM_COLORSPACE_ENUM_CMYK)
@@ -2330,26 +2341,26 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspaceEnum colorspace,
 		    colorspace == colorspace_tmp &&
 		    (colorspace == GCM_COLORSPACE_ENUM_CMYK ||
 		     g_strstr_len (description, -1, search) != NULL)) {
-			gcm_prefs_combobox_add_profile (widget, profile, GCM_PREFS_ENTRY_TYPE_PROFILE);
+			gcm_prefs_combobox_add_profile (widget, profile, GCM_PREFS_ENTRY_TYPE_PROFILE, &iter);
 
 			/* set active option */
 			if (g_strcmp0 (filename, profile_filename) == 0)
-				gtk_combo_box_set_active (GTK_COMBO_BOX (widget), added_count);
-			added_count++;
+				gtk_combo_box_set_active_iter (GTK_COMBO_BOX (widget), &iter);
+			has_profile = TRUE;
 		}
 		g_free (filename);
 		g_free (description);
 	}
-	if (profile_array != NULL)
-		g_ptr_array_unref (profile_array);
-	if (added_count == 0) {
+	if (!has_profile) {
 		/* TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK" */
 		text = g_strdup_printf (_("No %s color spaces available"),
 					gcm_prefs_colorspace_to_localised_string (colorspace));
 		gtk_combo_box_append_text (GTK_COMBO_BOX(widget), text);
-		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), added_count);
+		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 		gtk_widget_set_sensitive (widget, FALSE);
 	}
+	if (profile_array != NULL)
+		g_ptr_array_unref (profile_array);
 	g_free (text);
 }
 
