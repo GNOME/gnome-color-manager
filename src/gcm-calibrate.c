@@ -100,6 +100,24 @@ enum {
 G_DEFINE_TYPE (GcmCalibrate, gcm_calibrate, G_TYPE_OBJECT)
 
 /**
+ * gcm_calibrate_precision_from_string:
+ **/
+static GcmCalibratePrecision
+gcm_calibrate_precision_from_string (const gchar *string)
+{
+	if (g_strcmp0 (string, "short") == 0)
+		return GCM_CALIBRATE_PRECISION_SHORT;
+	if (g_strcmp0 (string, "normal") == 0)
+		return GCM_CALIBRATE_PRECISION_NORMAL;
+	if (g_strcmp0 (string, "long") == 0)
+		return GCM_CALIBRATE_PRECISION_LONG;
+	if (g_strcmp0 (string, "ask") == 0)
+		return GCM_CALIBRATE_PRECISION_UNKNOWN;
+	egg_warning ("failed to convert to precision: %s", string);
+	return GCM_CALIBRATE_PRECISION_UNKNOWN;
+}
+
+/**
  * gcm_calibrate_get_model_fallback:
  **/
 const gchar *
@@ -422,6 +440,67 @@ gcm_calibrate_set_working_path (GcmCalibrate *calibrate, GError **error)
 	return ret;
 }
 
+
+/**
+ * gcm_calibrate_get_precision:
+ **/
+static GcmCalibratePrecision
+gcm_calibrate_get_precision (GcmCalibrate *calibrate, GError **error)
+{
+	GcmCalibratePrecision precision = GCM_CALIBRATE_PRECISION_UNKNOWN;
+	const gchar *title;
+	GString *string;
+	GtkResponseType response;
+	GcmCalibratePrivate *priv = calibrate->priv;
+
+	string = g_string_new ("");
+
+	/* TRANSLATORS: dialog title */
+	title = _("Choose the precision of the profile");
+
+	/* TRANSLATORS: dialog message, suffix */
+	g_string_append_printf (string, "%s\n", _("Please choose the profile precision."));
+
+	/* TRANSLATORS: this is the message body for the chart selection */
+	g_string_append_printf (string, "\n\n%s", _("For a typical workflow, a normal precision profile is sufficient."));
+
+	/* TRANSLATORS: this is the message body for the chart selection */
+	g_string_append_printf (string, "\n%s", _("High precision profiles provide higher accuracy in color matching. Correspondingly, low precision profiles result in lower quality."));
+
+	/* printer specific options */
+	if (priv->device_type == GCM_DEVICE_TYPE_ENUM_PRINTER) {
+		/* TRANSLATORS: dialog message, preface */
+		g_string_append_printf (string, "\n%s", _("The high precision profiles also require more paper and time for reading the color swatches."));
+	}
+
+	/* display specific options */
+	if (priv->device_type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+		/* TRANSLATORS: dialog message, preface */
+		g_string_append_printf (string, "\n%s", _("The high precision profiles also require more time for reading the color swatches."));
+	}
+
+	/* push new messages into the UI */
+	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_PRECISION, title, string->str);
+	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
+	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
+	response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
+	if (response != GTK_RESPONSE_OK) {
+		gcm_calibrate_dialog_hide (priv->calibrate_dialog);
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_USER_ABORT,
+				     "user did not choose precision type and ask is specified in GConf");
+		goto out;
+	}
+
+	/* copy */
+	g_object_get (priv->calibrate_dialog, "precision", &precision, NULL);
+out:
+	if (string != NULL)
+		g_string_free (string, TRUE);
+	return precision;
+}
+
 /**
  * gcm_calibrate_display:
  **/
@@ -437,6 +516,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	guint percentage = G_MAXUINT;
 	GtkResponseType response;
 	GError *error_tmp = NULL;
+	gchar *precision = NULL;
 	GcmCalibratePrivate *priv = calibrate->priv;
 
 	/* coldplug source */
@@ -483,6 +563,17 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 		ret = gcm_calibrate_get_display_type (calibrate, window, error);
 		if (!ret)
 			goto out;
+	}
+
+	/* get default precision */
+	precision = gconf_client_get_string (priv->gconf_client, GCM_SETTINGS_CALIBRATION_LENGTH, NULL);
+	priv->precision = gcm_calibrate_precision_from_string (precision);
+	if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
+		priv->precision = gcm_calibrate_get_precision (calibrate, error);
+		if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
+			ret = FALSE;
+			goto out;
+		}
 	}
 
 	/* show a warning for external monitors */
@@ -575,6 +666,7 @@ out:
 		g_object_unref (brightness);
 	if (string != NULL)
 		g_string_free (string, TRUE);
+	g_free (precision);
 	return ret;
 }
 
@@ -762,6 +854,7 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	gchar *ptr;
 	GtkWindow *window_tmp;
 	GtkResponseType response;
+	gchar *precision = NULL;
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
 	GcmCalibratePrivate *priv = calibrate->priv;
 
@@ -784,6 +877,17 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 				     "user did not choose print mode");
 		ret = FALSE;
 		goto out;
+	}
+
+	/* get default precision */
+	precision = gconf_client_get_string (priv->gconf_client, GCM_SETTINGS_CALIBRATION_LENGTH, NULL);
+	priv->precision = gcm_calibrate_precision_from_string (precision);
+	if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
+		priv->precision = gcm_calibrate_get_precision (calibrate, error);
+		if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
+			ret = FALSE;
+			goto out;
+		}
 	}
 
 	/* copy */
@@ -834,85 +938,8 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	/* proxy */
 	ret = klass->calibrate_printer (calibrate, window, error);
 out:
+	g_free (precision);
 	return ret;
-}
-
-/**
- * gcm_calibrate_get_precision:
- **/
-static GcmCalibratePrecision
-gcm_calibrate_get_precision (GcmCalibrate *calibrate, GError **error)
-{
-	GcmCalibratePrecision precision = GCM_CALIBRATE_PRECISION_UNKNOWN;
-	const gchar *title;
-	GString *string;
-	GtkResponseType response;
-	GcmCalibratePrivate *priv = calibrate->priv;
-
-	string = g_string_new ("");
-
-	/* TRANSLATORS: dialog title */
-	title = _("Choose the precision of the profile");
-
-	/* TRANSLATORS: dialog message, suffix */
-	g_string_append_printf (string, "%s\n", _("Please choose the profile precision."));
-
-	/* TRANSLATORS: this is the message body for the chart selection */
-	g_string_append_printf (string, "\n\n%s", _("For a typical workflow, a normal precision profile is sufficient."));
-
-	/* TRANSLATORS: this is the message body for the chart selection */
-	g_string_append_printf (string, "\n%s", _("High precision profiles provide higher accuracy in color matching. Correspondingly, low precision profiles result in lower quality."));
-
-	/* printer specific options */
-	if (priv->device_type == GCM_DEVICE_TYPE_ENUM_PRINTER) {
-		/* TRANSLATORS: dialog message, preface */
-		g_string_append_printf (string, "\n%s", _("The high precision profiles also require more paper and time for reading the color swatches."));
-	}
-
-	/* display specific options */
-	if (priv->device_type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
-		/* TRANSLATORS: dialog message, preface */
-		g_string_append_printf (string, "\n%s", _("The high precision profiles also require more time for reading the color swatches."));
-	}
-
-	/* push new messages into the UI */
-	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_PRECISION, title, string->str);
-	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
-	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
-	response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
-	if (response != GTK_RESPONSE_OK) {
-		gcm_calibrate_dialog_hide (priv->calibrate_dialog);
-		g_set_error_literal (error,
-				     GCM_CALIBRATE_ERROR,
-				     GCM_CALIBRATE_ERROR_USER_ABORT,
-				     "user did not choose precision type and ask is specified in GConf");
-		goto out;
-	}
-
-	/* copy */
-	g_object_get (priv->calibrate_dialog, "precision", &precision, NULL);
-out:
-	if (string != NULL)
-		g_string_free (string, TRUE);
-	return precision;
-}
-
-/**
- * gcm_calibrate_precision_from_string:
- **/
-static GcmCalibratePrecision
-gcm_calibrate_precision_from_string (const gchar *string)
-{
-	if (g_strcmp0 (string, "short") == 0)
-		return GCM_CALIBRATE_PRECISION_SHORT;
-	if (g_strcmp0 (string, "normal") == 0)
-		return GCM_CALIBRATE_PRECISION_NORMAL;
-	if (g_strcmp0 (string, "long") == 0)
-		return GCM_CALIBRATE_PRECISION_LONG;
-	if (g_strcmp0 (string, "ask") == 0)
-		return GCM_CALIBRATE_PRECISION_UNKNOWN;
-	egg_warning ("failed to convert to precision: %s", string);
-	return GCM_CALIBRATE_PRECISION_UNKNOWN;
 }
 
 /**
