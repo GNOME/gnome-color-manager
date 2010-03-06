@@ -128,10 +128,10 @@ main (int argc, char **argv)
 	g_object_get (profile,
 		      "description", &description,
 		      "copyright", &copyright,
-		      "white-point", &white,
-		      "luminance-red", &red,
-		      "luminance-green", &green,
-		      "luminance-blue", &blue,
+		      "white", &white,
+		      "red", &red,
+		      "green", &green,
+		      "blue", &blue,
 		      NULL);
 
 	/* use CIE widget */

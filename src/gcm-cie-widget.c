@@ -1236,10 +1236,10 @@ gcm_cie_widget_test (EggTest *test)
 	file = g_file_new_for_path (filename_profile);
 	gcm_profile_parse (profile, file, NULL);
 	g_object_get (profile,
-		      "white-point", &white,
-		      "luminance-red", &red,
-		      "luminance-green", &green,
-		      "luminance-blue", &blue,
+		      "white", &white,
+		      "red", &red,
+		      "green", &green,
+		      "blue", &blue,
 		      NULL);
 	g_object_unref (file);
 

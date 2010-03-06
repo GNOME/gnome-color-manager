@@ -62,11 +62,11 @@ struct _GcmProfilePrivate
 	gchar				*manufacturer;
 	gchar				*model;
 	gchar				*datetime;
-	GcmXyz				*white_point;
-	GcmXyz				*black_point;
-	GcmXyz				*luminance_red;
-	GcmXyz				*luminance_green;
-	GcmXyz				*luminance_blue;
+	GcmXyz				*white;
+	GcmXyz				*black;
+	GcmXyz				*red;
+	GcmXyz				*green;
+	GcmXyz				*blue;
 };
 
 enum {
@@ -81,11 +81,11 @@ enum {
 	PROP_COLORSPACE,
 	PROP_SIZE,
 	PROP_HAS_VCGT,
-	PROP_WHITE_POINT,
-	PROP_BLACK_POINT,
-	PROP_LUMINANCE_RED,
-	PROP_LUMINANCE_GREEN,
-	PROP_LUMINANCE_BLUE,
+	PROP_WHITE,
+	PROP_BLACK,
+	PROP_RED,
+	PROP_GREEN,
+	PROP_BLUE,
 	PROP_LAST
 };
 
@@ -286,20 +286,20 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_HAS_VCGT:
 		g_value_set_boolean (value, priv->has_vcgt);
 		break;
-	case PROP_WHITE_POINT:
-		g_value_set_object (value, priv->white_point);
+	case PROP_WHITE:
+		g_value_set_object (value, priv->white);
 		break;
-	case PROP_BLACK_POINT:
-		g_value_set_object (value, priv->black_point);
+	case PROP_BLACK:
+		g_value_set_object (value, priv->black);
 		break;
-	case PROP_LUMINANCE_RED:
-		g_value_set_object (value, priv->luminance_red);
+	case PROP_RED:
+		g_value_set_object (value, priv->red);
 		break;
-	case PROP_LUMINANCE_GREEN:
-		g_value_set_object (value, priv->luminance_green);
+	case PROP_GREEN:
+		g_value_set_object (value, priv->green);
 		break;
-	case PROP_LUMINANCE_BLUE:
-		g_value_set_object (value, priv->luminance_blue);
+	case PROP_BLUE:
+		g_value_set_object (value, priv->blue);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -388,20 +388,20 @@ gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, G
 	case PROP_HAS_VCGT:
 		priv->has_vcgt = g_value_get_boolean (value);
 		break;
-	case PROP_WHITE_POINT:
-		priv->white_point = g_value_dup_object (value);
+	case PROP_WHITE:
+		priv->white = g_value_dup_object (value);
 		break;
-	case PROP_BLACK_POINT:
-		priv->black_point = g_value_dup_object (value);
+	case PROP_BLACK:
+		priv->black = g_value_dup_object (value);
 		break;
-	case PROP_LUMINANCE_RED:
-		priv->luminance_red = g_value_dup_object (value);
+	case PROP_RED:
+		priv->red = g_value_dup_object (value);
 		break;
-	case PROP_LUMINANCE_GREEN:
-		priv->luminance_green = g_value_dup_object (value);
+	case PROP_GREEN:
+		priv->green = g_value_dup_object (value);
 		break;
-	case PROP_LUMINANCE_BLUE:
-		priv->luminance_blue = g_value_dup_object (value);
+	case PROP_BLUE:
+		priv->blue = g_value_dup_object (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -502,44 +502,44 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	g_object_class_install_property (object_class, PROP_HAS_VCGT, pspec);
 
 	/**
-	 * GcmProfile:white-point:
+	 * GcmProfile:white:
 	 */
-	pspec = g_param_spec_object ("white-point", NULL, NULL,
+	pspec = g_param_spec_object ("white", NULL, NULL,
 				     GCM_TYPE_XYZ,
 				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_WHITE_POINT, pspec);
+	g_object_class_install_property (object_class, PROP_WHITE, pspec);
 
 	/**
-	 * GcmProfile:black-point:
+	 * GcmProfile:black:
 	 */
-	pspec = g_param_spec_object ("black-point", NULL, NULL,
+	pspec = g_param_spec_object ("black", NULL, NULL,
 				     GCM_TYPE_XYZ,
 				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_BLACK_POINT, pspec);
+	g_object_class_install_property (object_class, PROP_BLACK, pspec);
 
 	/**
-	 * GcmProfile:luminance-red:
+	 * GcmProfile:red:
 	 */
-	pspec = g_param_spec_object ("luminance-red", NULL, NULL,
+	pspec = g_param_spec_object ("red", NULL, NULL,
 				     GCM_TYPE_XYZ,
 				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_LUMINANCE_RED, pspec);
+	g_object_class_install_property (object_class, PROP_RED, pspec);
 
 	/**
-	 * GcmProfile:luminance-green:
+	 * GcmProfile:green:
 	 */
-	pspec = g_param_spec_object ("luminance-green", NULL, NULL,
+	pspec = g_param_spec_object ("green", NULL, NULL,
 				     GCM_TYPE_XYZ,
 				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_LUMINANCE_GREEN, pspec);
+	g_object_class_install_property (object_class, PROP_GREEN, pspec);
 
 	/**
-	 * GcmProfile:luminance-blue:
+	 * GcmProfile:blue:
 	 */
-	pspec = g_param_spec_object ("luminance-blue", NULL, NULL,
+	pspec = g_param_spec_object ("blue", NULL, NULL,
 				     GCM_TYPE_XYZ,
 				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_LUMINANCE_BLUE, pspec);
+	g_object_class_install_property (object_class, PROP_BLUE, pspec);
 
 	g_type_class_add_private (klass, sizeof (GcmProfilePrivate));
 }
@@ -554,11 +554,11 @@ gcm_profile_init (GcmProfile *profile)
 	profile->priv->monitor = NULL;
 	profile->priv->profile_type = GCM_PROFILE_TYPE_ENUM_UNKNOWN;
 	profile->priv->colorspace = GCM_COLORSPACE_ENUM_UNKNOWN;
-	profile->priv->white_point = gcm_xyz_new ();
-	profile->priv->black_point = gcm_xyz_new ();
-	profile->priv->luminance_red = gcm_xyz_new ();
-	profile->priv->luminance_green = gcm_xyz_new ();
-	profile->priv->luminance_blue = gcm_xyz_new ();
+	profile->priv->white = gcm_xyz_new ();
+	profile->priv->black = gcm_xyz_new ();
+	profile->priv->red = gcm_xyz_new ();
+	profile->priv->green = gcm_xyz_new ();
+	profile->priv->blue = gcm_xyz_new ();
 }
 
 /**
@@ -576,11 +576,11 @@ gcm_profile_finalize (GObject *object)
 	g_free (priv->manufacturer);
 	g_free (priv->model);
 	g_free (priv->datetime);
-	g_object_unref (priv->white_point);
-	g_object_unref (priv->black_point);
-	g_object_unref (priv->luminance_red);
-	g_object_unref (priv->luminance_green);
-	g_object_unref (priv->luminance_blue);
+	g_object_unref (priv->white);
+	g_object_unref (priv->black);
+	g_object_unref (priv->red);
+	g_object_unref (priv->green);
+	g_object_unref (priv->blue);
 	if (priv->monitor != NULL)
 		g_object_unref (priv->monitor);
 
@@ -741,7 +741,7 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 	/************************************************************/
 	egg_test_title (test, "check luminance red %s", datafile);
 	g_object_get (profile_lcms1,
-		      "luminance-red", &xyz,
+		      "red", &xyz,
 		      NULL);
 	luminance = gcm_xyz_get_x (xyz);
 	if (fabs (luminance - test_data->luminance) < 0.001)

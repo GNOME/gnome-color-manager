@@ -470,7 +470,7 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 			      "cie-z", cie_xyz.Z,
 			      NULL);
 		g_object_set (profile,
-			      "white-point", xyz,
+			      "white", xyz,
 			      NULL);
 		g_object_unref (xyz);
 	} else {
@@ -487,7 +487,7 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 			      "cie-z", cie_xyz.Z,
 			      NULL);
 		g_object_set (profile,
-			      "black-point", xyz,
+			      "black", xyz,
 			      NULL);
 		g_object_unref (xyz);
 	} else {
@@ -614,7 +614,7 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 			      "cie-z", cie_illum.Red.Z,
 			      NULL);
 		g_object_set (profile,
-			      "luminance_red", xyz,
+			      "red", xyz,
 			      NULL);
 		g_object_unref (xyz);
 
@@ -626,7 +626,7 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 			      "cie-z", cie_illum.Green.Z,
 			      NULL);
 		g_object_set (profile,
-			      "luminance-green", xyz,
+			      "green", xyz,
 			      NULL);
 		g_object_unref (xyz);
 
@@ -638,7 +638,7 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 			      "cie-z", cie_illum.Blue.Z,
 			      NULL);
 		g_object_set (profile,
-			      "luminance-blue", xyz,
+			      "blue", xyz,
 			      NULL);
 		g_object_unref (xyz);
 	} else {

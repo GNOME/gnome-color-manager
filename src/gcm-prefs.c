@@ -1573,10 +1573,10 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 		      "datetime", &profile_datetime,
 		      "type", &profile_type,
 		      "colorspace", &profile_colorspace,
-		      "white-point", &white,
-		      "luminance-red", &red,
-		      "luminance-green", &green,
-		      "luminance-blue", &blue,
+		      "white", &white,
+		      "red", &red,
+		      "green", &green,
+		      "blue", &blue,
 		      NULL);
 
 	/* check we have enough data for the CIE widget */
