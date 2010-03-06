@@ -855,19 +855,19 @@ gcm_calibrate_get_precision (GcmCalibrate *calibrate, GError **error)
 	title = _("Choose the precision of the profile");
 
 	/* TRANSLATORS: dialog message, suffix */
-	g_string_append_printf (string, "%s\n", _("Please choose the calibration precision."));
+	g_string_append_printf (string, "%s\n", _("Please choose the profile precision."));
 
 	/* TRANSLATORS: this is the message body for the chart selection */
-	g_string_append_printf (string, "\n%s", _("Short profiles are quick and easy, long profiles take longer to complete but are more accurate."));
+	g_string_append_printf (string, "\n\n%s", _("For a typical workflow, a normal precision profile is sufficient."));
+
+	/* TRANSLATORS: this is the message body for the chart selection */
+	g_string_append_printf (string, "\n%s", _("High precision profiles provide higher accuracy in color matching. Correspondingly, low precision profiles result in lower quality."));
 
 	/* printer specific options */
 	if (priv->device_type == GCM_DEVICE_TYPE_ENUM_PRINTER) {
 		/* TRANSLATORS: dialog message, preface */
-		g_string_append_printf (string, "\n%s", _("The long calibration also uses up much more paper and ink."));
+		g_string_append_printf (string, "\n%s", _("The high precision profiles also require more paper and time for reading the color swatches."));
 	}
-
-	/* TRANSLATORS: this is the message body for the chart selection */
-	g_string_append_printf (string, "\n\n%s", _("For a typical color workflow, a normal precision profile is sufficient."));
 
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_PRECISION, title, string->str);
