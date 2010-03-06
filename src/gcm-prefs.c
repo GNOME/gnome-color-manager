@@ -1799,7 +1799,7 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 		}
 	} else {
 		/* TRANSLATORS: this is where the device has been setup but is not connected */
-		title = g_strdup_printf ("%s <i>[%s]</i>", title_tmp, _("disconnected"));
+		title = g_strdup_printf ("%s\n<i>[%s]</i>", title_tmp, _("disconnected"));
 	}
 
 	/* create sort order */
