@@ -869,6 +869,12 @@ gcm_calibrate_get_precision (GcmCalibrate *calibrate, GError **error)
 		g_string_append_printf (string, "\n%s", _("The high precision profiles also require more paper and time for reading the color swatches."));
 	}
 
+	/* display specific options */
+	if (priv->device_type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+		/* TRANSLATORS: dialog message, preface */
+		g_string_append_printf (string, "\n%s", _("The high precision profiles also require more time for reading the color swatches."));
+	}
+
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_PRECISION, title, string->str);
 	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
