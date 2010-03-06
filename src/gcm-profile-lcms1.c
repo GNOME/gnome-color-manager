@@ -314,7 +314,7 @@ gcm_parser_load_icc_vcgt (GcmProfileLcms1 *profile_lcms1, const guint8 *data, gu
 	}
 
 	/* we didn't understand the encoding */
-	egg_warning ("gamma type encoding not recognised");
+	egg_warning ("gamma type encoding not recognized");
 out:
 	return ret;
 }
@@ -396,9 +396,9 @@ gcm_profile_lcms1_parse_multi_localized_unicode (GcmProfileLcms1 *profile_lcms1,
 		goto out;
 	}
 
-	/* an unrecognised tag */
+	/* an unrecognized tag */
 	for (i=0x0; i<0x1c; i++) {
-		egg_warning ("unrecognised text tag");
+		egg_warning ("unrecognized text tag");
 		if (data[i] >= 'A' && data[i] <= 'z')
 			egg_debug ("%i\t%c (%i)", i, data[i], data[i]);
 		else

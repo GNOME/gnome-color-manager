@@ -325,7 +325,7 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 	} else if (priv->model != NULL && g_ascii_strcasecmp (priv->model, "Monitor Spyder") == 0) {
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_SPYDER;
 	} else if (priv->model != NULL) {
-		egg_warning ("Failed to recognise color device: %s", priv->model);
+		egg_warning ("Failed to recognize color device: %s", priv->model);
 
 		/* show dialog, in order to help the project */
 		if (!priv->shown_warning) {
@@ -333,10 +333,10 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 							 GTK_DIALOG_MODAL,
 							 GTK_MESSAGE_INFO,
 							 GTK_BUTTONS_OK,
-							 /* TRANSLATORS: this is when the device is not recognised */
-							 _("Measuring instrument not recognised"));
+							 /* TRANSLATORS: this is when the device is not recognized */
+							 _("Measuring instrument not recognized"));
 			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-								  "Could not recognise attached measuring instrument '%s'. "
+								  "Could not recognize attached measuring instrument '%s'. "
 								  "It should work okay, but if you want to help the project, "
 								  "please visit %s and supply the required information.",
 								  priv->model, "http://live.gnome.org/GnomeColorManager/Help");
@@ -347,7 +347,7 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 		}
 		priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;
 	} else {
-		egg_warning ("Failed to recognise color device");
+		egg_warning ("Failed to recognize color device");
 
 		/* show dialog, in order to help the project */
 			if (!priv->shown_warning) {
@@ -355,7 +355,7 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 							 GTK_DIALOG_MODAL,
 							 GTK_MESSAGE_INFO,
 							 GTK_BUTTONS_OK,
-							 /* TRANSLATORS: this is when the device is not recognised */
+							 /* TRANSLATORS: this is when the device is not recognized */
 							 _("Measuring instrument not registered"));
 			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
 								  "The attached measuring devicer device has not been registered in usb.ids. "

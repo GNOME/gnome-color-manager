@@ -746,17 +746,17 @@ gcm_device_test (EggTest *test)
 	egg_test_assert (test, device != NULL);
 
 	/************************************************************/
-	egg_test_title (test, "convert to recognised enum");
+	egg_test_title (test, "convert to recognized enum");
 	type_enum = gcm_device_type_enum_from_string ("scanner");
 	egg_test_assert (test, (type_enum == GCM_DEVICE_TYPE_ENUM_SCANNER));
 
 	/************************************************************/
-	egg_test_title (test, "convert to unrecognised enum");
+	egg_test_title (test, "convert to unrecognized enum");
 	type_enum = gcm_device_type_enum_from_string ("xxx");
 	egg_test_assert (test, (type_enum == GCM_DEVICE_TYPE_ENUM_UNKNOWN));
 
 	/************************************************************/
-	egg_test_title (test, "convert from recognised enum");
+	egg_test_title (test, "convert from recognized enum");
 	type = gcm_device_type_enum_to_string (GCM_DEVICE_TYPE_ENUM_SCANNER);
 	if (g_strcmp0 (type, "scanner") == 0)
 		egg_test_success (test, NULL);
@@ -764,7 +764,7 @@ gcm_device_test (EggTest *test)
 		egg_test_failed (test, "invalid value: %s", type);
 
 	/************************************************************/
-	egg_test_title (test, "convert from unrecognised enum");
+	egg_test_title (test, "convert from unrecognized enum");
 	type = gcm_device_type_enum_to_string (GCM_DEVICE_TYPE_ENUM_UNKNOWN);
 	if (g_strcmp0 (type, "unknown") == 0)
 		egg_test_success (test, NULL);

@@ -321,7 +321,7 @@ gcm_device_xrandr_get_gamma_size (GcmDeviceXrandr *device_xrandr, GnomeRRCrtc *c
 	if (priv->gamma_size > 0)
 		return priv->gamma_size;
 
-	/* get id that X recognises */
+	/* get id that X recognizes */
 	id = gnome_rr_crtc_get_id (crtc);
 
 	/* get the value, and catch errors */
@@ -406,7 +406,7 @@ gcm_device_xrandr_apply_for_crtc (GcmDeviceXrandr *device_xrandr, GnomeRRCrtc *c
 		crtc_gamma->blue[i] = data->blue;
 	}
 
-	/* get id that X recognises */
+	/* get id that X recognizes */
 	id = gnome_rr_crtc_get_id (crtc);
 
 	/* get the value, and catch errors */

@@ -262,7 +262,7 @@ gcm_profile_store_add_profiles_for_path (GcmProfileStore *profile_store, const g
 		}
 
 		/* invalid file */
-		egg_debug ("not recognised as ICC profile: %s", path);
+		egg_debug ("not recognized as ICC profile: %s", path);
 		goto out;
 	}
 

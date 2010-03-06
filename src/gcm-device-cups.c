@@ -132,7 +132,7 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 			else if (g_strcmp0 (value, "CMYK") == 0)
 				colorspace = GCM_COLORSPACE_ENUM_CMYK;
 			else
-				egg_warning ("colorspace not recognised: %s", value);
+				egg_warning ("colorspace not recognized: %s", value);
 		} else if (g_strcmp0 (keyword, "cupsICCProfile") == 0) {
 			/* FIXME: possibly map from http://localhost:port/profiles/dave.icc to ~/.icc/color/dave.icc */
 			profile_filename = g_strdup (value);
