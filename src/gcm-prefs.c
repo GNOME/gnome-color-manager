@@ -703,11 +703,11 @@ gcm_prefs_ensure_argyllcms_installed (void)
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
 	dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
 					 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
-					 _("Install missing calibration software?"));
+					 _("Install missing calibration and profiling software?"));
 
 	string = g_string_new ("");
 	/* TRANSLATORS: dialog message saying the argyllcms is not installed */
-	g_string_append_printf (string, "%s\n", _("Calibration software is not installed on this computer."));
+	g_string_append_printf (string, "%s\n", _("Calibration and profiling software is not installed on this computer."));
 	/* TRANSLATORS: dialog message saying the color targets are not installed */
 	g_string_append_printf (string, "%s\n\n", _("These tools are required to build color profiles for devices."));
 	/* TRANSLATORS: dialog message, asking if it's okay to install it */
@@ -779,7 +779,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		ret = gcm_prefs_calibrate_printer (calibrate);
 		break;
 	default:
-		egg_warning ("calibration not supported for this device");
+		egg_warning ("calibration and/or profiling not supported for this device");
 		goto out;
 	}
 
@@ -851,7 +851,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 			 /* TRANSLATORS: this is the application name for libcanberra */
 			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
 			 /* TRANSLATORS: this is the sound description */
-			 CA_PROP_EVENT_DESCRIPTION, _("Calibration completed"), NULL);
+			 CA_PROP_EVENT_DESCRIPTION, _("Profiling completed"), NULL);
 out:
 	g_free (filename);
 	g_free (destination);
@@ -1105,7 +1105,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 	/* no device selected */
 	if (current_device == NULL) {
 		/* TRANSLATORS: this is when the button is insensitive */
-		tooltip = _("Cannot calibrate: No device is selected");
+		tooltip = _("Cannot profile: No device is selected");
 		goto out;
 	}
 
@@ -1139,7 +1139,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		ret = gcm_colorimeter_get_present (colorimeter);
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
-			tooltip = _("Cannot calibrate: The colorimeter is not plugged in");
+			tooltip = _("Cannot calibrate: The measuring instrument is not plugged in");
 			goto out;
 		}
 	} else if (type == GCM_DEVICE_TYPE_ENUM_SCANNER ||
@@ -1154,7 +1154,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		ret = gcm_colorimeter_get_present (colorimeter);
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
-			tooltip = _("Cannot calibrate: The colorimeter is not plugged in");
+			tooltip = _("Cannot profile: The measuring instrument is not plugged in");
 			goto out;
 		}
 
@@ -1162,14 +1162,14 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		ret = gcm_colorimeter_supports_printer (colorimeter);
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
-			tooltip = _("Cannot calibrate: The colorimeter does not support printer profiling");
+			tooltip = _("Cannot profile: The measuring instrument does not support printer profiling");
 			goto out;
 		}
 
 	} else {
 
 		/* TRANSLATORS: this is when the button is insensitive */
-		tooltip = _("Cannot calibrate this type of device");
+		tooltip = _("Cannot profile this type of device");
 	}
 out:
 	/* control the tooltip and sensitivity of the button */

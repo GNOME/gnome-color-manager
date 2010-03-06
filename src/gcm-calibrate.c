@@ -374,10 +374,10 @@ gcm_calibrate_get_display_type (GcmCalibrate *calibrate, GtkWindow *window, GErr
 	if (priv->device_kind == GCM_CALIBRATE_DEVICE_KIND_PROJECTOR &&
 	    !gcm_colorimeter_supports_projector (priv->colorimeter)) {
 		/* TRANSLATORS: title, the hardware calibration device does not support projectors */
-		title = _("Could not calibrate using this colorimeter device");
+		title = _("Could not calibrate and profile using this color measuring instrument");
 
 		/* TRANSLATORS: dialog message */
-		message = _("This colorimeter device is not designed to support profiling projectors.");
+		message = _("This color measuring instrument is not designed to support calibration and profiling projectors.");
 
 		/* ask the user again */
 		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
@@ -975,7 +975,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	g_string_set_size (string, 0);
 
 	/* TRANSLATORS: dialog message, preface */
-	g_string_append_printf (string, "%s\n", _("Before calibrating the device, you have to manually capture an image of a calibrated target and save it as a TIFF image file."));
+	g_string_append_printf (string, "%s\n", _("Before profiling the device, you have to manually capture an image of a calibrated target and save it as a TIFF image file."));
 
 	/* scanner specific options */
 	if (priv->device_type == GCM_DEVICE_TYPE_ENUM_SCANNER) {

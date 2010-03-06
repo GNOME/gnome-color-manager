@@ -330,9 +330,9 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 							 GTK_MESSAGE_INFO,
 							 GTK_BUTTONS_OK,
 							 /* TRANSLATORS: this is when the device is not recognised */
-							 _("Colorimeter not recognised"));
+							 _("Measuring instrument not recognised"));
 			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-								  "Could not recognise attached colorimeter device '%s'. "
+								  "Could not recognise attached measuring instrument '%s'. "
 								  "It should work okay, but if you want to help the project, "
 								  "please visit %s and supply the required information.",
 								  priv->model, "http://live.gnome.org/GnomeColorManager/Help");
@@ -352,9 +352,9 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 							 GTK_MESSAGE_INFO,
 							 GTK_BUTTONS_OK,
 							 /* TRANSLATORS: this is when the device is not recognised */
-							 _("Colorimeter not registered"));
+							 _("Measuring instrument not registered"));
 			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-								  "The attached colorimeter device has not been registered in usb.ids. "
+								  "The attached measuring devicer device has not been registered in usb.ids. "
 								  "It should work okay, but if you want to help the project, "
 								  "please visit %s and supply the required information.",
 								  "http://live.gnome.org/GnomeColorManager/Help");

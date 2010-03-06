@@ -491,7 +491,7 @@ gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll, G
 	/* TRANSLATORS: title, patches are specific colours used in calibration */
 	title = _("Reading the patches");
 	/* TRANSLATORS: dialog message */
-	message = _("Reading the patches using the hardware device.");
+	message = _("Reading the patches using the color measuring instrument.");
 
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
@@ -579,7 +579,7 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	/* TRANSLATORS: title, patches are specific colours used in calibration */
 	title = _("Generating the patches");
 	/* TRANSLATORS: dialog message */
-	message = _("Generating the patches that will be measured with the hardware device.");
+	message = _("Generating the patches that will be measured with the color instrument.");
 
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
@@ -1605,7 +1605,7 @@ gcm_calibrate_argyll_set_device_from_ti2 (GcmCalibrate *calibrate, const gchar *
 		device_ptr = device + 7;
 
 	/* set for calibration */
-	egg_debug ("setting device to '%s'", device_ptr);
+	egg_debug ("setting instrument to '%s'", device_ptr);
 	g_object_set (calibrate,
 		      "device", device_ptr,
 		      NULL);
@@ -1711,7 +1711,7 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 		title = _("Wait for the ink to dry");
 
 		/* TRANSLATORS: dialog message */
-		message = _("Please wait a few minutes for the ink to dry. Profiling damp ink will produce a poor profile and may damage your calibration device.");
+		message = _("Please wait a few minutes for the ink to dry. Profiling damp ink will produce a poor profile and may damage your color measuring instrument.");
 
 		/* push new messages into the UI */
 		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
@@ -1857,7 +1857,7 @@ gcm_calibrate_argyll_check_and_remove_alpha (GcmCalibrateArgyll *calibrate_argyl
 	title = _("Image is not suitable without conversion");
 
 	/* TRANSLATORS: dialog message */
-	string = g_string_new (_("The image supplied contains an alpha channel which the calibration tools do not understand."));
+	string = g_string_new (_("The supplied image contains an alpha channel which the profiling tools do not understand."));
 	g_string_append (string, "\n\n");
 
 	/* TRANSLATORS: dialog message */
@@ -1926,11 +1926,11 @@ gcm_calibrate_argyll_device (GcmCalibrate *calibrate, GtkWindow *window, GError 
 	gcm_calibrate_dialog_set_move_window (priv->calibrate_dialog, FALSE);
 	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
 
-	/* TRANSLATORS: title, hardware refers to a calibration device */
-	title = _("Set up device");
+	/* TRANSLATORS: title, instrument refers to a calibration device */
+	title = _("Set up instrument");
 
 	/* TRANSLATORS: dialog message */
-	message = _("Setting up device for use…");
+	message = _("Setting up the instrument for use…");
 
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
@@ -2022,8 +2022,8 @@ gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 		goto out;
 	}
 
-	/* TRANSLATORS: title, device is a hardware color calibration sensor */
-	title = _("Please attach device");
+	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
+	title = _("Please attach instrument");
 
 	/* get the image, if we have one */
 	filename = gcm_calibrate_argyll_get_colorimeter_image_attach (calibrate_argyll);
@@ -2031,10 +2031,10 @@ gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 	/* different messages with or without image */
 	if (filename != NULL) {
 		/* TRANSLATORS: dialog message, ask user to attach device, and there's an example image */
-		message = _("Please attach the hardware device to the center of the screen on the gray square like the image below.");
+		message = _("Please attach the measuring instrument to the center of the screen on the gray square like the image below.");
 	} else {
 		/* TRANSLATORS: dialog message, ask user to attach device */
-		message = _("Please attach the hardware device to the center of the screen on the gray square.");
+		message = _("Please attach the measuring instrument to the center of the screen on the gray square.");
 	}
 
 	/* block for a response */
@@ -2077,8 +2077,8 @@ gcm_calibrate_argyll_interaction_calibrate (GcmCalibrateArgyll *calibrate_argyll
 	const gchar *filename;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
-	/* TRANSLATORS: title, device is a hardware color calibration sensor */
-	title = _("Please configure device");
+	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
+	title = _("Please configure instrument");
 
 	/* block for a response */
 	egg_debug ("blocking waiting for user input: %s", title);
@@ -2088,10 +2088,10 @@ gcm_calibrate_argyll_interaction_calibrate (GcmCalibrateArgyll *calibrate_argyll
 
 	if (filename != NULL) {
 		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
-		message = _("Please set the device to calibration mode like the image below.");
+		message = _("Please set the measuring instrument to calibration mode like the image below.");
 	} else {
 		/* TRANSLATORS: this is when the user has to change a setting on the sensor */
-		message = _("Please set the device to calibration mode.");
+		message = _("Please set the measuring instrument to calibration mode.");
 	}
 
 	/* push new messages into the UI */
@@ -2129,8 +2129,8 @@ gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 	const gchar *filename;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
-	/* TRANSLATORS: title, device is a hardware color calibration sensor */
-	title = _("Please configure device");
+	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
+	title = _("Please configure instrument");
 
 	/* block for a response */
 	egg_debug ("blocking waiting for user input: %s", title);
@@ -2140,10 +2140,10 @@ gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 
 	if (filename != NULL) {
 		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
-		message = _("Please set the device to screen mode like the image below, and ensure it is attached to the screen.");
+		message = _("Please set the measuring instrument to screen mode like the image below, and ensure it is attached to the screen.");
 	} else {
 		/* TRANSLATORS: this is when the user has to change a setting on the sensor */
-		message = _("Please set the device to screen mode, and ensure it is attached to the screen.");
+		message = _("Please set the measuring instrument to screen mode, and ensure it is attached to the screen.");
 	}
 
 	/* push new messages into the UI */
@@ -2266,17 +2266,17 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 
 		if (g_strstr_len (line, -1, "No PLD firmware pattern is available") != NULL) {
 			/* TRANSLATORS: message, no firmware is available */
-			message = _("No firmware is installed for this device.");
+			message = _("No firmware is installed for this instrument.");
 		} else if (g_strstr_len (line, -1, "Pattern match wasn't good enough") != NULL) {
 			/* TRANSLATORS: message, the image wasn't good enough */
 			message = _("The pattern match wasn't good enough. Ensure you have the correct type of target selected.");
 		} else if (g_strstr_len (line, -1, "Aprox. fwd matrix unexpectedly singular") != NULL ||
 			   g_strstr_len (line, -1, "Inverting aprox. fwd matrix failed") != NULL) {
 			/* TRANSLATORS: message, the sensor got no readings */
-			message = _("The colorimeter got no valid readings. Please ensure the aperture is fully open.");
+			message = _("The measuring instrument got no valid readings. Please ensure the aperture is fully open.");
 		} else if (g_strstr_len (line, -1, "Device or resource busy") != NULL) {
 			/* TRANSLATORS: message, the colorimeter has got confused */
-			message = _("The colorimeter device is busy and is not starting up. Please remove the USB plug and re-insert before trying to use this device.");
+			message = _("The measuring instrument is busy and is not starting up. Please remove the USB plug and re-insert before trying to use this device.");
 		} else {
 			message = found + 8;
 		}
