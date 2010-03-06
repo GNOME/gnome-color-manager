@@ -121,6 +121,43 @@ gcm_edid_reset (GcmEdid *edid)
 }
 
 /**
+ * gcm_edid_get_bit:
+ *
+ * Originally Copyright Soren Sandmann <sandmann@redhat.com>
+ **/
+static gint
+gcm_edid_get_bit (gint in, gint bit)
+{
+	return (in & (1 << bit)) >> bit;
+}
+
+/**
+ * gcm_edid_get_bits:
+ **/
+static gint
+gcm_edid_get_bits (gint in, gint begin, gint end)
+{
+	gint mask = (1 << (end - begin + 1)) - 1;
+
+	return (in >> begin) & mask;
+}
+
+/**
+ * gcm_edid_decode_fraction:
+ **/
+static gdouble
+gcm_edid_decode_fraction (gint high, gint low)
+{
+	gdouble result = 0.0;
+	gint i;
+
+	high = (high << 2) | low;
+	for (i = 0; i < 10; ++i)
+		result += gcm_edid_get_bit (high, i) * pow (2, i - 10);
+	return result;
+}
+
+/**
  * gcm_edid_parse:
  **/
 gboolean
@@ -131,6 +168,7 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 	GcmEdidPrivate *priv = edid->priv;
 	guint32 serial;
 	guint extension_blocks;
+	gdouble x, y;
 
 	g_return_val_if_fail (GCM_IS_EDID (edid), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
@@ -183,6 +221,26 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 		priv->gamma = ((gfloat) data[GCM_EDID_OFFSET_GAMMA] / 100) + 1;
 		egg_debug ("gamma is reported as %f", priv->gamma);
 	}
+
+	/* get color red */
+	x = gcm_edid_decode_fraction (data[0x1b], gcm_edid_get_bits (data[0x19], 6, 7));
+	y = gcm_edid_decode_fraction (data[0x1c], gcm_edid_get_bits (data[0x19], 5, 4));
+	egg_debug ("red x=%f,y=%f", x, y);
+
+	/* get color green */
+	x = gcm_edid_decode_fraction (data[0x1d], gcm_edid_get_bits (data[0x19], 2, 3));
+	y = gcm_edid_decode_fraction (data[0x1e], gcm_edid_get_bits (data[0x19], 0, 1));
+	egg_debug ("green x=%f,y=%f", x, y);
+
+	/* get color blue */
+	x = gcm_edid_decode_fraction (data[0x1f], gcm_edid_get_bits (data[0x1a], 6, 7));
+	y = gcm_edid_decode_fraction (data[0x20], gcm_edid_get_bits (data[0x1a], 4, 5));
+	egg_debug ("blue x=%f,y=%f", x, y);
+
+	/* get color white */
+	x = gcm_edid_decode_fraction (data[0x21], gcm_edid_get_bits (data[0x1a], 2, 3));
+	y = gcm_edid_decode_fraction (data[0x22], gcm_edid_get_bits (data[0x1a], 0, 1));
+	egg_debug ("white x=%f,y=%f", x, y);
 
 	/* parse EDID data */
 	for (i=GCM_EDID_OFFSET_DATA_BLOCKS; i <= GCM_EDID_OFFSET_LAST_BLOCK; i+=18) {
