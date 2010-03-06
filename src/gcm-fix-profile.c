@@ -25,26 +25,54 @@
 #include <locale.h>
 #include <lcms.h>
 
+static gint lcms_error_code = 0;
+
 /*
  * gcm_fix_profile_filename:
  */
-static void
+static gboolean
 gcm_fix_profile_filename (const gchar *filename, const gchar *description, const gchar *copyright, const gchar *model, const gchar *manufacturer)
 {
+	gboolean ret = TRUE;
 	cmsHPROFILE lcms_profile;
-	lcms_profile = cmsOpenProfileFromFile (filename, "rw");
-	if (lcms_profile == NULL)
-		return;
-	if (description != NULL)
-		_cmsAddTextTag (lcms_profile, icSigProfileDescriptionTag, description);
-	if (copyright != NULL)
-		_cmsAddTextTag (lcms_profile, icSigCopyrightTag, copyright);
-	if (model != NULL)
-		_cmsAddTextTag (lcms_profile, icSigDeviceModelDescTag, model);
-	if (manufacturer != NULL)
-		_cmsAddTextTag (lcms_profile, icSigDeviceMfgDescTag, manufacturer);
+	lcms_profile = cmsOpenProfileFromFile (filename, "r");
+	if (lcms_profile == NULL || lcms_error_code != 0) {
+		ret = FALSE;
+		goto out;
+	}
+	if (description != NULL) {
+		ret = _cmsAddTextTag (lcms_profile, icSigProfileDescriptionTag, description);
+		if (!ret || lcms_error_code != 0) {
+			g_warning ("failed to write description");
+			goto out;
+		}
+	}
+	if (copyright != NULL) {
+		ret = _cmsAddTextTag (lcms_profile, icSigCopyrightTag, copyright);
+		if (!ret || lcms_error_code != 0) {
+			g_warning ("failed to write copyright");
+			goto out;
+		}
+	}
+	if (model != NULL) {
+		ret = _cmsAddTextTag (lcms_profile, icSigDeviceModelDescTag, model);
+		if (!ret || lcms_error_code != 0) {
+			g_warning ("failed to write model");
+			goto out;
+		}
+	}
+	if (manufacturer != NULL) {
+		ret = _cmsAddTextTag (lcms_profile, icSigDeviceMfgDescTag, manufacturer);
+		if (!ret || lcms_error_code != 0) {
+			g_warning ("failed to write manufacturer");
+			goto out;
+		}
+	}
 	_cmsSaveProfile (lcms_profile, filename);
-	cmsCloseProfile (lcms_profile);
+out:
+	if (lcms_profile != NULL)
+		cmsCloseProfile (lcms_profile);
+	return ret;
 }
 
 /*
@@ -54,6 +82,10 @@ static int
 gcm_fix_profile_lcms_error_cb (int ErrorCode, const char *ErrorText)
 {
 	g_warning ("LCMS error %i: %s", ErrorCode, ErrorText);
+
+	/* copy this sytemwide */
+	lcms_error_code = ErrorCode;
+
 	return LCMS_ERRC_WARNING;
 }
 
@@ -65,6 +97,7 @@ main (int argc, char **argv)
 {
 	guint i;
 	guint retval = 0;
+	gboolean ret;
 	GOptionContext *context;
 	gchar **files = NULL;
 	gchar *description = NULL;
@@ -112,9 +145,14 @@ main (int argc, char **argv)
 	cmsErrorAction (LCMS_ERROR_SHOW);
 	cmsSetLanguage ("en", "US");
 
-	/* show each profile */
-	for (i=0; files[i] != NULL; i++)
-		gcm_fix_profile_filename (files[i], description, copyright, model, manufacturer);
+	/* fix each profile */
+	for (i=0; files[i] != NULL; i++) {
+		ret = gcm_fix_profile_filename (files[i], description, copyright, model, manufacturer);
+		if (!ret) {
+			retval = 1;
+			goto out;
+		}
+	}
 out:
 	g_free (description);
 	g_free (copyright);
