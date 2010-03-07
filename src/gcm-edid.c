@@ -158,6 +158,36 @@ gcm_edid_decode_fraction (gint high, gint low)
 }
 
 /**
+ * gcm_edid_parse_string:
+ *
+ * This is always 12 bytes, but we can't guarantee it's null terminated
+ * or not junk.
+ *
+ * Return value: the sane text, or %NULL, use g_free() to unref.
+ **/
+static gchar *
+gcm_edid_parse_string (const guint8 *data)
+{
+	gchar *text;
+
+	/* copy 12 bytes */
+	text = g_strndup ((const gchar *) data, 12);
+
+	/* remove insane newline chars */
+	g_strdelimit (text, "\n\r", '\0');
+
+	/* remove spaces */
+	g_strchomp (text);
+
+	/* nothing left? */
+	if (text[0] == '\0') {
+		g_free (text);
+		text = NULL;
+	}
+	return text;
+}
+
+/**
  * gcm_edid_parse:
  **/
 gboolean
@@ -169,6 +199,7 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 	guint32 serial;
 	guint extension_blocks;
 	gdouble x, y;
+	gchar *tmp;
 
 	g_return_val_if_fail (GCM_IS_EDID (edid), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
@@ -252,17 +283,25 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 
 		/* any useful blocks? */
 		if (data[i+3] == GCM_DESCRIPTOR_DISPLAY_PRODUCT_NAME) {
-			priv->monitor_name = g_strndup ((const gchar *) &data[i+5], 12);
-			egg_debug ("[extended EDID block] monitor name: %s", priv->monitor_name);
+			tmp = gcm_edid_parse_string (&data[i+5]);
+			if (tmp != NULL) {
+				g_free (priv->monitor_name);
+				priv->monitor_name = tmp;
+			}
 		} else if (data[i+3] == GCM_DESCRIPTOR_DISPLAY_PRODUCT_SERIAL_NUMBER) {
-			g_free (priv->serial_number);
-			priv->serial_number = g_strndup ((const gchar *) &data[i+5], 12);
-			egg_debug ("[extended EDID block] serial number: %s", priv->serial_number);
+			tmp = gcm_edid_parse_string (&data[i+5]);
+			if (tmp != NULL) {
+				g_free (priv->serial_number);
+				priv->serial_number = tmp;
+			}
 		} else if (data[i+3] == GCM_DESCRIPTOR_COLOR_MANAGEMENT_DATA) {
 			egg_warning ("failing to parse color management data");
 		} else if (data[i+3] == GCM_DESCRIPTOR_ALPHANUMERIC_DATA_STRING) {
-			priv->ascii_string = g_strndup ((const gchar *) &data[i+5], 12);
-			egg_debug ("[extended EDID block] ascii string: %s", priv->ascii_string);
+			tmp = gcm_edid_parse_string (&data[i+5]);
+			if (tmp != NULL) {
+				g_free (priv->ascii_string);
+				priv->ascii_string = tmp;
+			}
 		} else if (data[i+3] == GCM_DESCRIPTOR_COLOR_POINT) {
 			if (data[i+3+9] != 0xff) {
 				egg_debug ("extended EDID block(1) which contains a better gamma value");
@@ -282,19 +321,10 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 	if (extension_blocks > 0)
 		egg_warning ("%i extension blocks to parse", extension_blocks);
 
-	/* remove embedded newlines */
-	if (priv->monitor_name != NULL) {
-		g_strchomp (priv->monitor_name);
-		g_strdelimit (priv->monitor_name, "\n\r", '\0');
-	}
-	if (priv->serial_number != NULL) {
-		g_strchomp (priv->serial_number);
-		g_strdelimit (priv->serial_number, "\n\r", '\0');
-	}
-	if (priv->ascii_string != NULL) {
-		g_strchomp (priv->ascii_string);
-		g_strdelimit (priv->ascii_string, "\n\r", '\0');
-	}
+	/* print what we've got */
+	egg_debug ("monitor name: %s", priv->monitor_name);
+	egg_debug ("serial number: %s", priv->serial_number);
+	egg_debug ("ascii string: %s", priv->ascii_string);
 out:
 	return ret;
 }
