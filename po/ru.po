@@ -2,8 +2,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-07 04:10+0300\n"
-"PO-Revision-Date: 2010-03-08 18:07+0300\n"
+"POT-Creation-Date: 2010-03-08 18:21+0300\n"
+"PO-Revision-Date: 2010-03-08 18:40+0300\n"
 "Last-Translator: Alexandre Prokoudine <alexandre.prokoudine@gmail.com>\n"
 "Language-Team: GNOME Russian <gnome-cyr@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -49,7 +49,7 @@ msgid "If set to TRUE then external disks are searched for device ICC profiles a
 msgstr ""
 
 #: ../data/gnome-color-manager.schemas.in.h:3
-msgid "If set to TRUE then the __ICC_PROFILE atom will be set, which applications use to convert true color to screen color."
+msgid "If set to TRUE then the __ICC_PROFILE hint will be set, which applications use to convert true color to screen color."
 msgstr ""
 
 #: ../data/gnome-color-manager.schemas.in.h:4
@@ -61,7 +61,8 @@ msgid "If set to TRUE then the video LUT is set with the display profile"
 msgstr ""
 
 #: ../data/gnome-color-manager.schemas.in.h:6
-msgid "Set the _ICC_PROFILE atom for applications."
+#, fuzzy
+msgid "Set the _ICC_PROFILE hint for applications."
 msgstr "Установить атом _ICC_PROFILE для приложений"
 
 #: ../data/gnome-color-manager.schemas.in.h:7
@@ -431,7 +432,7 @@ msgstr ""
 #. TRANSLATORS: dialog message, just follow the hardware instructions
 #: ../src/gcm-calibrate-argyll.c:2357
 msgid "It looks like you've measured the wrong strip."
-msgstr ""
+msgstr "Похоже, что вы замерили не ту полоску."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
 #: ../src/gcm-calibrate-argyll.c:2361
@@ -447,7 +448,7 @@ msgstr "Всё равно использовать"
 #: ../src/gcm-calibrate-argyll.c:2383
 #, c-format
 msgid "Ready to read strip %s"
-msgstr ""
+msgstr "Готов считать полоску %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
 #: ../src/gcm-calibrate-argyll.c:2388
@@ -488,7 +489,7 @@ msgstr "Мишени отправляются на принтер..."
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:2555
 msgid "Printing the targets..."
-msgstr "Выполняется печать мишени..."
+msgstr "Выполняется печать мишеней..."
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:2559
@@ -559,17 +560,17 @@ msgstr "Для типового рабочего процесса обычной
 #. TRANSLATORS: this is the message body for the chart selection
 #: ../src/gcm-calibrate.c:468
 msgid "High precision profiles provide higher accuracy in color matching. Correspondingly, low precision profiles result in lower quality."
-msgstr ""
+msgstr "Высокоточные профили обеспечивают большее качество. Соответственно, менее точные профили обеспечивают менее высокое качество."
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate.c:473
 msgid "The high precision profiles also require more paper and time for reading the color swatches."
-msgstr ""
+msgstr "Для создания высокоточных профилей также нужно больше бумаги, и на их создание затрачивается больше времени."
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate.c:479
 msgid "The high precision profiles also require more time for reading the color swatches."
-msgstr ""
+msgstr "На создание высокоточных профилей также затрачивается больше времени."
 
 #. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated
 #: ../src/gcm-calibrate.c:553
@@ -715,7 +716,6 @@ msgstr "Выберите тип мишени"
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate.c:1011
-#, fuzzy
 msgid "Before profiling the device, you have to manually capture an image of a calibrated target and save it as a TIFF image file."
 msgstr "Перед профилированием устройства вам необходимо самостоятельно получить изображение мишени и сохранить его в файле формата TIFF."
 
@@ -795,38 +795,54 @@ msgid "QPcard 201"
 msgstr "QPcard 201"
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:198
+#: ../src/gcm-calibrate-manual.c:200
 msgid "Introduction to display calibration"
 msgstr "Введение в калибровку монитора"
 
-#. TRANSLATORS: message text
-#: ../src/gcm-calibrate-manual.c:217
-msgid "This dialog will help calibrate your display and create a custom ICC profile. The calibration will involve several steps so that an accurate profile can be obtained. It should only take a few minutes."
+#. TRANSLATORS: message text, an ICC profile is a file that characterizes the device
+#: ../src/gcm-calibrate-manual.c:222
+msgid "This dialog will help calibrate your display and create a custom ICC profile."
 msgstr ""
 
-#. TRANSLATORS: message text
-#: ../src/gcm-calibrate-manual.c:224
-msgid "It may help to sit back from the screen or squint at the calibration widgets in order to accurately match the colors. You can also repeat the calibration steps as many times as you want."
+#. TRANSLATORS: message text, telling the user they are in for the long haul
+#: ../src/gcm-calibrate-manual.c:225
+msgid "The calibration will involve several steps so that an accurate profile can be obtained."
+msgstr ""
+
+#. TRANSLATORS: message text, this is a lie. It will take more than a few minutes, but we don't want to scare the hapless user
+#: ../src/gcm-calibrate-manual.c:228
+msgid "It should only take a few minutes."
+msgstr "Это займёт всего пару минут."
+
+#. TRANSLATORS: message text, when you're comparing colors, it helps if the image is a bit out of focus otherwise the
+#. * fovea (center bit of the eye) tries to 'pick out' a colour, rather than take the average reading
+#: ../src/gcm-calibrate-manual.c:239
+msgid "It may help to sit further from the screen or to squint at the calibration images in order to accurately compare the colors."
+msgstr ""
+
+#. TRANSLATORS: message text, tell the use that they can go back and forwards, as the human eye sucks
+#: ../src/gcm-calibrate-manual.c:242
+msgid "You can repeat the calibration steps as many times as you want."
 msgstr ""
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:233
+#: ../src/gcm-calibrate-manual.c:254
 #, c-format
 msgid "Create table item %i/%i"
 msgstr ""
 
 #. TRANSLATORS: message text
-#: ../src/gcm-calibrate-manual.c:254
+#: ../src/gcm-calibrate-manual.c:275
 msgid "Please try to match up the gray square with the surrounding alternating bars. You should match the brightness first, and then if required change the color tint so it looks plain gray."
 msgstr ""
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:351
+#: ../src/gcm-calibrate-manual.c:372
 msgid "Summary"
 msgstr "Сводка"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-calibrate-manual.c:370
+#: ../src/gcm-calibrate-manual.c:391
 msgid "This display is now calibrated. You can change the current profile using the Color Profiles program."
 msgstr "Профилирование этого монитора успешно завершено. Вы можете изменить текущий профиль в апплете управления цветовыми профилями."
 
@@ -1585,7 +1601,7 @@ msgstr "Низкая"
 #. The length of the translation
 #: ../data/gcm-calibrate.ui.h:16
 msgid "Normal"
-msgstr "Обычный"
+msgstr "Обычная"
 
 #: ../data/gcm-calibrate.ui.h:17
 msgid "Profile Attached Printer"
