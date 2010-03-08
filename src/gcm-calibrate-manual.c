@@ -190,6 +190,8 @@ gcm_calibrate_manual_setup_page (GcmCalibrateManual *calibrate, guint page)
 	gdouble ave;
 	gchar *title = NULL;
 	gdouble div;
+	GString *string_title = NULL;
+	GString *string_msg = NULL;
 	GcmCalibrateManualPrivate *priv = calibrate->priv;
 
 	if (page == GCM_CALIBRATE_MANUAL_PAGE_INTRO) {
@@ -212,17 +214,36 @@ gcm_calibrate_manual_setup_page (GcmCalibrateManual *calibrate, guint page)
 		gtk_widget_hide (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "hbox_text1"));
 		gtk_widget_show (widget);
+
+		string_msg = g_string_new ("");
+		string_title = g_string_new ("");
+
+		/* TRANSLATORS: message text, an ICC profile is a file that characterizes the device */
+		g_string_append_printf (string_msg, "%s ", _("This dialog will help calibrate your display and create a custom ICC profile."));
+
+		/* TRANSLATORS: message text, telling the user they are in for the long haul */
+		g_string_append_printf (string_msg, "%s ", _("The calibration will involve several steps so that an accurate profile can be obtained."));
+
+		/* TRANSLATORS: message text, this is a lie. It will take more than a few minutes, but we don't want to scare the hapless user */
+		g_string_append_printf (string_msg, "%s", _("It should only take a few minutes."));
+
+		/* set the message */
 		widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "label_text1"));
-		/* TRANSLATORS: message text */
-		gtk_label_set_label (GTK_LABEL(widget), _("This dialog will help calibrate your display and create a custom ICC profile. "
-							  "The calibration will involve several steps so that an accurate profile can be obtained. "
-							  "It should only take a few minutes."));
+		gtk_label_set_label (GTK_LABEL(widget), string_msg->str);
+
 		widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "hbox_text2"));
 		gtk_widget_show (widget);
+
+		/* TRANSLATORS: message text, when you're comparing colors, it helps if the image is a bit out of focus otherwise the
+		 * fovea (center bit of the eye) tries to 'pick out' a colour, rather than take the average reading */
+		g_string_append_printf (string_title, "%s ", _("It may help to sit further from the screen or to squint at the calibration images in order to accurately compare the colors."));
+
+		/* TRANSLATORS: message text, tell the use that they can go back and forwards, as the human eye sucks */
+		g_string_append_printf (string_title, "%s", _("You can repeat the calibration steps as many times as you want."));
+
+		/* set the message */
 		widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "label_text2"));
-		/* TRANSLATORS: message text */
-		gtk_label_set_label (GTK_LABEL(widget), _("It may help to sit back from the screen or squint at the calibration widgets in order to accurately match the colors. "
-							  "You can also repeat the calibration steps as many times as you want."));
+		gtk_label_set_label (GTK_LABEL(widget), string_title->str);
 		goto out;
 	}
 
@@ -375,6 +396,10 @@ gcm_calibrate_manual_setup_page (GcmCalibrateManual *calibrate, guint page)
 
 	egg_warning ("oops - no page");
 out:
+	if (string_title != NULL)
+		g_string_free (string_title, TRUE);
+	if (string_msg != NULL)
+		g_string_free (string_msg, TRUE);
 	g_free (title);
 	priv->current_page = page;
 }
