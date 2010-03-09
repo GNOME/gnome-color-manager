@@ -525,7 +525,7 @@ gcm_calibrate_dialog_reference_kind_to_thumbnail_image_filename (GcmCalibrateRef
 	if (kind == GCM_CALIBRATE_REFERENCE_KIND_CMP_DIGITAL_TARGET_3)
 		return "CMP-DigitalTarget3.png";
 	if (kind == GCM_CALIBRATE_REFERENCE_KIND_CMP_DT_003)
-		return NULL;
+		return "CMP_DT_003.png";
 	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER)
 		return "ColorChecker24.png";
 	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER_DC)
