@@ -1640,6 +1640,69 @@ out:
 }
 
 /**
+ * gcm_calibrate_argyll_printer_convert_jpeg:
+ **/
+static gboolean
+gcm_calibrate_argyll_printer_convert_jpeg (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+{
+	GDir *dir;
+	const gchar *filename;
+	gchar *filename_tiff;
+	gchar *filename_jpg;
+	guint len;
+	gboolean ret = TRUE;
+	gchar *working_path = NULL;
+	GdkPixbuf *pixbuf;
+
+	/* need to ask if we are printing now, or using old data */
+	g_object_get (calibrate_argyll,
+		      "working-path", &working_path,
+		      NULL);
+
+	dir = g_dir_open (working_path, 0, error);
+	if (dir == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+
+	filename = g_dir_read_name (dir);
+	while (filename != NULL) {
+		if (g_str_has_suffix (filename, ".tif")) {
+
+			/* get both files */
+			filename_tiff = g_build_filename (working_path, filename, NULL);
+			filename_jpg = g_strdup (filename_tiff);
+
+			/* replace ending */
+			len = strlen (filename_jpg);
+			g_strlcpy (filename_jpg+len-4, ".jpg", 5);
+
+			/* convert from tiff to jpg */
+			egg_debug ("convert %s to %s", filename_tiff, filename_jpg);
+			pixbuf = gdk_pixbuf_new_from_file (filename_tiff, error);
+			if (pixbuf == NULL) {
+				ret = FALSE;
+				goto out;
+			}
+
+			/* try to save new file */
+			ret = gdk_pixbuf_save (pixbuf, filename_jpg, "jpeg", error, "quality", "100", NULL);
+			if (!ret)
+				goto out;
+			g_object_unref (pixbuf);
+			g_free (filename_tiff);
+			g_free (filename_jpg);
+		}
+		filename = g_dir_read_name (dir);
+	}
+out:
+	if (dir != NULL)
+		g_dir_close (dir);
+	g_free (working_path);
+	return ret;
+}
+
+/**
  * gcm_calibrate_argyll_printer:
  **/
 static gboolean
@@ -1696,6 +1759,11 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 
 		/* generate the tiff files */
 		ret = gcm_calibrate_argyll_display_generate_targets (GCM_CALIBRATE_ARGYLL (calibrate), width, height, error);
+		if (!ret)
+			goto out;
+
+		/* convert to jpegs */
+		ret = gcm_calibrate_argyll_printer_convert_jpeg (GCM_CALIBRATE_ARGYLL (calibrate), error);
 		if (!ret)
 			goto out;
 
