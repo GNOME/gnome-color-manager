@@ -2474,7 +2474,11 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 
 	/* setup RGB combobox */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_space_rgb"));
-	colorspace_rgb = gconf_client_get_string (gconf_client, GCM_SETTINGS_COLORSPACE_RGB, NULL);
+	colorspace_rgb = gconf_client_get_string (gconf_client, GCM_SETTINGS_COLORSPACE_RGB, &error);
+	if (colorspace_rgb == NULL) {
+		egg_warning ("failed to get configuration value: %s", error->message);
+		g_clear_error (&error);
+	}
 	gcm_prefs_set_combo_simple_text (widget);
 	gcm_prefs_setup_space_combobox (widget, GCM_COLORSPACE_ENUM_RGB, colorspace_rgb);
 	g_signal_connect (G_OBJECT (widget), "changed",
@@ -2483,6 +2487,10 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	/* setup CMYK combobox */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_space_cmyk"));
 	colorspace_cmyk = gconf_client_get_string (gconf_client, GCM_SETTINGS_COLORSPACE_CMYK, NULL);
+	if (colorspace_cmyk == NULL) {
+		egg_warning ("failed to get configuration value: %s", error->message);
+		g_clear_error (&error);
+	}
 	gcm_prefs_set_combo_simple_text (widget);
 	gcm_prefs_setup_space_combobox (widget, GCM_COLORSPACE_ENUM_CMYK, colorspace_cmyk);
 	g_signal_connect (G_OBJECT (widget), "changed",
@@ -2492,6 +2500,10 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_rendering_display"));
 	gcm_prefs_set_combo_simple_text (widget);
 	intent_display = gconf_client_get_string (gconf_client, GCM_SETTINGS_RENDERING_INTENT_DISPLAY, NULL);
+	if (intent_display == NULL) {
+		egg_warning ("failed to get configuration value: %s", error->message);
+		g_clear_error (&error);
+	}
 	gcm_prefs_setup_rendering_combobox (widget, intent_display);
 	g_signal_connect (G_OBJECT (widget), "changed",
 			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), NULL);
@@ -2499,6 +2511,10 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_rendering_softproof"));
 	gcm_prefs_set_combo_simple_text (widget);
 	intent_softproof = gconf_client_get_string (gconf_client, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF, NULL);
+	if (intent_softproof == NULL) {
+		egg_warning ("failed to get configuration value: %s", error->message);
+		g_clear_error (&error);
+	}
 	gcm_prefs_setup_rendering_combobox (widget, intent_softproof);
 	g_signal_connect (G_OBJECT (widget), "changed",
 			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), (gpointer) "softproof");
