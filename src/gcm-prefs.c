@@ -1344,7 +1344,9 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 			      "xrandr-fallback", &ret,
 			      NULL);
 		if (ret) {
-			/* TRANSLATORS: this is when the user is using a binary blob */
+			/* TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
+			 * Whilst this does not matter if you only have one monitor attached, it means you
+			 * can't color correct additional monitors or projectors. */
 			gtk_label_set_label (GTK_LABEL (widget), _("Per-device settings not supported. Check your display driver."));
 			gtk_widget_show (widget);
 		} else {

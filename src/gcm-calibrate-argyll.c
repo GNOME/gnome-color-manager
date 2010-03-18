@@ -1921,7 +1921,7 @@ gcm_calibrate_argyll_check_and_remove_alpha (GcmCalibrateArgyll *calibrate_argyl
 	if (!gdk_pixbuf_get_has_alpha (pixbuf))
 		goto out;
 
-	/* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
+	/* TRANSLATORS: the supplied image contains an alpha channel which we have to strip out */
 	title = _("Image is not suitable without conversion");
 
 	/* TRANSLATORS: dialog message */
