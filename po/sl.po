@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager\n"
-"POT-Creation-Date: 2010-03-11 16:42+0000\n"
-"PO-Revision-Date: 2010-03-12 16:07+0100\n"
+"POT-Creation-Date: 2010-03-18 08:55+0000\n"
+"PO-Revision-Date: 2010-03-20 17:08+0100\n"
 "Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <gnome-si@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -277,7 +277,7 @@ msgstr "Počakajte da se črnilo posuši"
 msgid "Please wait a few minutes for the ink to dry. Profiling damp ink will produce a poor profile and may damage your color measuring instrument."
 msgstr "Počakajte nekaj minut, da se črnilo posuši. Profiliranje vlažnega črnila bo proizvedlo slab profil in lahko poškoduje vašo napravo za merjenje barve."
 
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#. TRANSLATORS: the supplied image contains an alpha channel which we have to strip out
 #: ../src/gcm-calibrate-argyll.c:1925
 msgid "Image is not suitable without conversion"
 msgstr "Slika ni primerna brez pretvorbe"
@@ -337,7 +337,7 @@ msgstr "Nadaljuj"
 #: ../src/gcm-calibrate-argyll.c:2366
 #: ../src/gcm-calibrate-argyll.c:2407
 #: ../src/gcm-prefs.c:852
-#: ../src/gcm-prefs.c:2076
+#: ../src/gcm-prefs.c:2078
 msgid "GNOME Color Manager"
 msgstr "Upravljalnik barv GNOME"
 
@@ -969,7 +969,7 @@ msgstr "Program za popravljanje ICC profilov"
 #. TRANSLATORS: command line option: a list of catalogs to install
 #. TRANSLATORS: command line option: a list of files to install
 #: ../src/gcm-import.c:83
-#: ../src/gcm-install-system-wide.c:63
+#: ../src/gcm-install-system-wide.c:126
 msgid "ICC profile to install"
 msgstr "Profil ICC za namestitev"
 
@@ -1132,42 +1132,72 @@ msgid "Device type not recognized"
 msgstr "Vrsta naprave ni prepoznana"
 
 #. command line argument, the ID of the device
-#: ../src/gcm-install-system-wide.c:60
+#: ../src/gcm-install-system-wide.c:123
 msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
 msgstr "ID naprave, na primer 'xrandr_ibm_france_ltn154p2_l05'"
 
 #. TRANSLATORS: tool that is used when copying profiles system-wide
-#: ../src/gcm-install-system-wide.c:78
+#: ../src/gcm-install-system-wide.c:141
 msgid "GNOME Color Manager ICC profile system-wide installer"
 msgstr "GNOME upravljalnik barv - sistemski namestilnik profilov ICC"
 
 #. TRANSLATORS: user did not specify a valid filename
-#: ../src/gcm-install-system-wide.c:86
+#: ../src/gcm-install-system-wide.c:149
 msgid "You need to specify exactly one ICC profile filename"
 msgstr "Določiti je treba natanko eno ime profila ICC"
 
 #. TRANSLATORS: user did not specify a valid device ID
-#: ../src/gcm-install-system-wide.c:94
+#: ../src/gcm-install-system-wide.c:157
 msgid "You need to specify exactly one device ID"
 msgstr "Določiti je treba natanko en ID naprave"
 
+#. TRANSLATORS: user did not specify a valid device ID
+#: ../src/gcm-install-system-wide.c:166
+msgid "The device ID has invalid characters"
+msgstr "ID naprave vsebuje neveljavne znake"
+
 #. TRANSLATORS: only able to install profiles as root
-#: ../src/gcm-install-system-wide.c:104
+#: ../src/gcm-install-system-wide.c:176
 msgid "This program can only be used by the root user"
 msgstr "Ta program lahko uporablja le skrbnik"
 
+#. TRANSLATORS: only able to install profiles with an absolute path
+#: ../src/gcm-install-system-wide.c:185
+msgid "The source filename must be absolute"
+msgstr "Ime izvorne datoteke mora biti absolutno"
+
 #. TRANSLATORS: error details
-#: ../src/gcm-install-system-wide.c:114
+#: ../src/gcm-install-system-wide.c:196
 msgid "Failed to get content type"
 msgstr "Pridobivanje vsebine naprave je spodletelo"
 
 #. TRANSLATORS: the content type is the detected type of file
-#: ../src/gcm-install-system-wide.c:124
+#: ../src/gcm-install-system-wide.c:206
 msgid "Content type was incorrect"
 msgstr "Vrsta vsebine je bila napačna"
 
+#. TRANSLATORS: the program must never be directly run
+#: ../src/gcm-install-system-wide.c:215
+msgid "This program must only be run through pkexec"
+msgstr "Ta program je lahko zagnan le skozi pkexec"
+
+#. TRANSLATORS: PolicyKit has gone all insane on us, and we refuse to parse junk
+#: ../src/gcm-install-system-wide.c:224
+msgid "PKEXEC_UID must be set to an integer value"
+msgstr "PKEXEC_UID mora biti nastavljena na celoštevilčno vrednost"
+
+#. TRANSLATORS: we are complaining that a file must be really owned by the user who called this program
+#: ../src/gcm-install-system-wide.c:233
+msgid "The ICC profile must be owned by you"
+msgstr "Biti morate lastniki profila ICC"
+
+#. TRANSLATORS: only able to install profiles with an absolute path
+#: ../src/gcm-install-system-wide.c:246
+msgid "The destination filename must be absolute"
+msgstr "Ime ciljne datoteke mora biti absolutno"
+
 #. TRANSLATORS: error details
-#: ../src/gcm-install-system-wide.c:137
+#: ../src/gcm-install-system-wide.c:256
 msgid "Failed to copy"
 msgstr "Kopiranje je spodletelo"
 
@@ -1305,193 +1335,195 @@ msgstr "Ni mogoče profilirati: Merilna naprava ne podpira profiliranja tiskalni
 msgid "Cannot profile this type of device"
 msgstr "Te vrste naprave ni mogoče profilirati"
 
-#. TRANSLATORS: this is when the user is using a binary blob
-#: ../src/gcm-prefs.c:1348
+#. TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
+#. * Whilst this does not matter if you only have one monitor attached, it means you
+#. * can't color correct additional monitors or projectors.
+#: ../src/gcm-prefs.c:1350
 msgid "Per-device settings not supported. Check your display driver."
 msgstr "Nastavitve za napravo niso podprte. Preverite gonilnik vašega zaslona."
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1440
+#: ../src/gcm-prefs.c:1442
 msgid "Input device"
 msgstr "Vhodna naprava"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1444
+#: ../src/gcm-prefs.c:1446
 msgid "Display device"
 msgstr "Naprava zaslona"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1448
+#: ../src/gcm-prefs.c:1450
 msgid "Output device"
 msgstr "Odvodna naprava"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1452
+#: ../src/gcm-prefs.c:1454
 msgid "Devicelink"
 msgstr "Povezava naprave"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1456
+#: ../src/gcm-prefs.c:1458
 msgid "Colorspace conversion"
 msgstr "Pretvorba barvnega prostora"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1460
+#: ../src/gcm-prefs.c:1462
 msgid "Abstract"
 msgstr "Izvleček"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1464
+#: ../src/gcm-prefs.c:1466
 msgid "Named color"
 msgstr "Imenovana barva"
 
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1467
-#: ../src/gcm-prefs.c:1517
+#: ../src/gcm-prefs.c:1469
+#: ../src/gcm-prefs.c:1519
 msgid "Unknown"
 msgstr "Neznana"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1478
+#: ../src/gcm-prefs.c:1480
 msgid "XYZ"
 msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1482
+#: ../src/gcm-prefs.c:1484
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1486
+#: ../src/gcm-prefs.c:1488
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1490
+#: ../src/gcm-prefs.c:1492
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1494
+#: ../src/gcm-prefs.c:1496
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#: ../src/gcm-prefs.c:1498
-#: ../src/gcm-prefs.c:2295
+#: ../src/gcm-prefs.c:1500
+#: ../src/gcm-prefs.c:2297
 #: ../data/gcm-prefs.ui.h:59
 msgid "RGB"
 msgstr "RGB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1502
+#: ../src/gcm-prefs.c:1504
 msgid "Gray"
 msgstr "Siva"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1506
+#: ../src/gcm-prefs.c:1508
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
-#: ../src/gcm-prefs.c:1510
-#: ../src/gcm-prefs.c:2299
+#: ../src/gcm-prefs.c:1512
+#: ../src/gcm-prefs.c:2301
 #: ../data/gcm-prefs.ui.h:5
 msgid "CMYK"
 msgstr "CMYK"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1514
+#: ../src/gcm-prefs.c:1516
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-prefs.c:1646
+#: ../src/gcm-prefs.c:1648
 msgid "Yes"
 msgstr "Da"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-prefs.c:1649
+#: ../src/gcm-prefs.c:1651
 msgid "No"
 msgstr "Ne"
 
 #. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/gcm-prefs.c:1798
+#: ../src/gcm-prefs.c:1800
 msgid "No hardware support"
 msgstr "Ni strojne podpore"
 
 #. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/gcm-prefs.c:1802
-#: ../src/gcm-prefs.c:2133
+#: ../src/gcm-prefs.c:1804
+#: ../src/gcm-prefs.c:2135
 msgid "disconnected"
 msgstr "prekinjena povezava"
 
 #. TRANSLATORS: the profile was of the wrong sort for this device
-#: ../src/gcm-prefs.c:1915
+#: ../src/gcm-prefs.c:1917
 msgid "Could not import profile"
 msgstr "Profila ni mogoče uvoziti"
 
-#: ../src/gcm-prefs.c:1915
+#: ../src/gcm-prefs.c:1917
 msgid "The profile was of the wrong type for this device"
 msgstr "Profil je bil napačne vrste za to napravo"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:2064
+#: ../src/gcm-prefs.c:2066
 msgid "Device added"
 msgstr "Naprava je dodana"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:2068
+#: ../src/gcm-prefs.c:2070
 msgid "Device removed"
 msgstr "Naprava je odstranjena"
 
 #. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
-#: ../src/gcm-prefs.c:2356
+#: ../src/gcm-prefs.c:2358
 #, c-format
 msgid "No %s color spaces available"
 msgstr "Barvni prostori %s niso na voljo"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2700
+#: ../src/gcm-prefs.c:2718
 #: ../data/gcm-prefs.ui.h:32
 msgid "Display"
 msgstr "Zaslon"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2704
+#: ../src/gcm-prefs.c:2722
 msgid "Scanner"
 msgstr "Optični bralnik"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2708
+#: ../src/gcm-prefs.c:2726
 msgid "Printer"
 msgstr "Tiskalnik"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2712
+#: ../src/gcm-prefs.c:2730
 msgid "Camera"
 msgstr "Fotoaparat"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-prefs.c:2779
+#: ../src/gcm-prefs.c:2797
 msgid "Set the parent window to make this modal"
 msgstr "Določi glavno okno kot vedno na vrhu"
 
 #. TRANSLATORS: button for more details about the vcgt failure
-#: ../src/gcm-prefs.c:3074
+#: ../src/gcm-prefs.c:3092
 msgid "More Information"
 msgstr "Več podrobnosti"
 
 #. TRANSLATORS: this is displayed while the devices are being probed
-#: ../src/gcm-prefs.c:3077
+#: ../src/gcm-prefs.c:3095
 msgid "Loading list of devices…"
 msgstr "Nalaganje seznama naprav ..."
 
 #. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/gcm-prefs.c:3084
+#: ../src/gcm-prefs.c:3102
 msgid "This profile does not have the information required for whole-screen color correction."
 msgstr "Ta profil nima zahtevanih podatkov za popravljanje barve celega zaslona."
 
