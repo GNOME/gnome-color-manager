@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-10 13:54+0100\n"
-"PO-Revision-Date: 2010-03-10 13:54+0100\n"
+"POT-Creation-Date: 2010-03-21 19:17+0100\n"
+"PO-Revision-Date: 2010-03-19 13:13+0100\n"
 "Last-Translator: Tomasz Dominikowski <dominikowski@gmail.com>\n"
 "Language-Team: Polish <gnomepl@aviary.pl>\n"
 "MIME-Version: 1.0\n"
@@ -338,7 +338,7 @@ msgstr ""
 "tuszu spowoduje powstanie błędnego profilu i może uszkodzić urządzenie do "
 "mierzenia kolorów."
 
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#. TRANSLATORS: the supplied image contains an alpha channel which we have to strip out
 #: ../src/gcm-calibrate-argyll.c:1925
 msgid "Image is not suitable without conversion"
 msgstr "Obraz nie jest odpowiedni bez przekształcenia"
@@ -409,7 +409,7 @@ msgstr "Kontynuuj"
 #: ../src/gcm-calibrate-argyll.c:2128 ../src/gcm-calibrate-argyll.c:2178
 #: ../src/gcm-calibrate-argyll.c:2230 ../src/gcm-calibrate-argyll.c:2306
 #: ../src/gcm-calibrate-argyll.c:2366 ../src/gcm-calibrate-argyll.c:2407
-#: ../src/gcm-prefs.c:852 ../src/gcm-prefs.c:2076
+#: ../src/gcm-prefs.c:852 ../src/gcm-prefs.c:2078
 msgid "GNOME Color Manager"
 msgstr "Menedżer kolorów dla środowiska GNOME"
 
@@ -1158,7 +1158,7 @@ msgstr "Program do naprawiania profilów ICC"
 
 #. TRANSLATORS: command line option: a list of catalogs to install
 #. TRANSLATORS: command line option: a list of files to install
-#: ../src/gcm-import.c:83 ../src/gcm-install-system-wide.c:63
+#: ../src/gcm-import.c:83 ../src/gcm-install-system-wide.c:126
 msgid "ICC profile to install"
 msgstr "Profil ICC do zainstalowania"
 
@@ -1316,42 +1316,72 @@ msgid "Device type not recognized"
 msgstr "Nierozpoznany typ urządzenia"
 
 #. command line argument, the ID of the device
-#: ../src/gcm-install-system-wide.c:60
+#: ../src/gcm-install-system-wide.c:123
 msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
 msgstr "Identyfikator urządzenia, np. \"xrandr_ibm_france_ltn154p2_l05\""
 
 #. TRANSLATORS: tool that is used when copying profiles system-wide
-#: ../src/gcm-install-system-wide.c:78
+#: ../src/gcm-install-system-wide.c:141
 msgid "GNOME Color Manager ICC profile system-wide installer"
 msgstr "Instalator systemowych profilów ICC Menedżera kolorów środowiska GNOME"
 
 #. TRANSLATORS: user did not specify a valid filename
-#: ../src/gcm-install-system-wide.c:86
+#: ../src/gcm-install-system-wide.c:149
 msgid "You need to specify exactly one ICC profile filename"
 msgstr "Należy podać dokładnie jedną nazwę pliku profilu ICC"
 
 #. TRANSLATORS: user did not specify a valid device ID
-#: ../src/gcm-install-system-wide.c:94
+#: ../src/gcm-install-system-wide.c:157
 msgid "You need to specify exactly one device ID"
 msgstr "Należy podać dokładnie jeden identyfikator urządzenia"
 
+#. TRANSLATORS: user did not specify a valid device ID
+#: ../src/gcm-install-system-wide.c:166
+msgid "The device ID has invalid characters"
+msgstr "Identyfikator urządzenia posiada nieprawidłowe znaki"
+
 #. TRANSLATORS: only able to install profiles as root
-#: ../src/gcm-install-system-wide.c:104
+#: ../src/gcm-install-system-wide.c:176
 msgid "This program can only be used by the root user"
 msgstr "Ten program może być używany tylko przez użytkownika root"
 
+#. TRANSLATORS: only able to install profiles with an absolute path
+#: ../src/gcm-install-system-wide.c:185
+msgid "The source filename must be absolute"
+msgstr "Nazwa pliku źródłowego musi być bezwzględna"
+
 #. TRANSLATORS: error details
-#: ../src/gcm-install-system-wide.c:114
+#: ../src/gcm-install-system-wide.c:196
 msgid "Failed to get content type"
 msgstr "Uzyskanie typu zawartości się nie powiodło"
 
 #. TRANSLATORS: the content type is the detected type of file
-#: ../src/gcm-install-system-wide.c:124
+#: ../src/gcm-install-system-wide.c:206
 msgid "Content type was incorrect"
 msgstr "Typ zawartości był niepoprawny"
 
+#. TRANSLATORS: the program must never be directly run
+#: ../src/gcm-install-system-wide.c:215
+msgid "This program must only be run through pkexec"
+msgstr "Ten program może być wykonywany tylko przez pkexec"
+
+#. TRANSLATORS: PolicyKit has gone all insane on us, and we refuse to parse junk
+#: ../src/gcm-install-system-wide.c:224
+msgid "PKEXEC_UID must be set to an integer value"
+msgstr "Zmienna PKEXEC_UID musi być ustawiona na wartość całkowitą"
+
+#. TRANSLATORS: we are complaining that a file must be really owned by the user who called this program
+#: ../src/gcm-install-system-wide.c:233
+msgid "The ICC profile must be owned by you"
+msgstr "Użytkownik musi być właścicielem pliku profilu ICC"
+
+#. TRANSLATORS: only able to install profiles with an absolute path
+#: ../src/gcm-install-system-wide.c:246
+msgid "The destination filename must be absolute"
+msgstr "Nazwa pliku docelowego musi być bezwzględna"
+
 #. TRANSLATORS: error details
-#: ../src/gcm-install-system-wide.c:137
+#: ../src/gcm-install-system-wide.c:256
 msgid "Failed to copy"
 msgstr "Skopiowanie się nie powiodło"
 
@@ -1496,188 +1526,190 @@ msgstr ""
 msgid "Cannot profile this type of device"
 msgstr "Nie można profilować tego typu urządzenia"
 
-#. TRANSLATORS: this is when the user is using a binary blob
-#: ../src/gcm-prefs.c:1348
+#. TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
+#. * Whilst this does not matter if you only have one monitor attached, it means you
+#. * can't color correct additional monitors or projectors.
+#: ../src/gcm-prefs.c:1350
 msgid "Per-device settings not supported. Check your display driver."
 msgstr ""
 "Ustawienia dla każdego urządzenia z osobna nie są obsługiwane. Proszę "
 "sprawdzić sterownik ekranu."
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1440
+#: ../src/gcm-prefs.c:1442
 msgid "Input device"
 msgstr "Urządzenie wejściowe"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1444
+#: ../src/gcm-prefs.c:1446
 msgid "Display device"
 msgstr "Urządzenie ekranu"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1448
+#: ../src/gcm-prefs.c:1450
 msgid "Output device"
 msgstr "Urządzenie wyjściowe"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1452
+#: ../src/gcm-prefs.c:1454
 msgid "Devicelink"
 msgstr "Łącze urządzenia"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1456
+#: ../src/gcm-prefs.c:1458
 msgid "Colorspace conversion"
 msgstr "Przekształcenie przestrzeni kolorów"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1460
+#: ../src/gcm-prefs.c:1462
 msgid "Abstract"
 msgstr "Abstrakcyjny"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1464
+#: ../src/gcm-prefs.c:1466
 msgid "Named color"
 msgstr "Nazwany kolor"
 
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1467 ../src/gcm-prefs.c:1517
+#: ../src/gcm-prefs.c:1469 ../src/gcm-prefs.c:1519
 msgid "Unknown"
 msgstr "Nieznany"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1478
+#: ../src/gcm-prefs.c:1480
 msgid "XYZ"
 msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1482
+#: ../src/gcm-prefs.c:1484
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1486
+#: ../src/gcm-prefs.c:1488
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1490
+#: ../src/gcm-prefs.c:1492
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1494
+#: ../src/gcm-prefs.c:1496
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#: ../src/gcm-prefs.c:1498 ../src/gcm-prefs.c:2295 ../data/gcm-prefs.ui.h:59
+#: ../src/gcm-prefs.c:1500 ../src/gcm-prefs.c:2297 ../data/gcm-prefs.ui.h:59
 msgid "RGB"
 msgstr "RGB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1502
+#: ../src/gcm-prefs.c:1504
 msgid "Gray"
 msgstr "Szary"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1506
+#: ../src/gcm-prefs.c:1508
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
-#: ../src/gcm-prefs.c:1510 ../src/gcm-prefs.c:2299 ../data/gcm-prefs.ui.h:5
+#: ../src/gcm-prefs.c:1512 ../src/gcm-prefs.c:2301 ../data/gcm-prefs.ui.h:5
 msgid "CMYK"
 msgstr "CMYK"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1514
+#: ../src/gcm-prefs.c:1516
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-prefs.c:1646
+#: ../src/gcm-prefs.c:1648
 msgid "Yes"
 msgstr "Tak"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-prefs.c:1649
+#: ../src/gcm-prefs.c:1651
 msgid "No"
 msgstr "Nie"
 
 #. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/gcm-prefs.c:1798
+#: ../src/gcm-prefs.c:1800
 msgid "No hardware support"
 msgstr "Brak obsługi sprzętu"
 
 #. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/gcm-prefs.c:1802 ../src/gcm-prefs.c:2133
+#: ../src/gcm-prefs.c:1804 ../src/gcm-prefs.c:2135
 msgid "disconnected"
 msgstr "rozłączono"
 
 #. TRANSLATORS: the profile was of the wrong sort for this device
-#: ../src/gcm-prefs.c:1915
+#: ../src/gcm-prefs.c:1917
 msgid "Could not import profile"
 msgstr "Nie można zaimportować profilu"
 
-#: ../src/gcm-prefs.c:1915
+#: ../src/gcm-prefs.c:1917
 msgid "The profile was of the wrong type for this device"
 msgstr "Profil był błędnego typu dla tego urządzenia"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:2064
+#: ../src/gcm-prefs.c:2066
 msgid "Device added"
 msgstr "Dodano urządzenie"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:2068
+#: ../src/gcm-prefs.c:2070
 msgid "Device removed"
 msgstr "Usunięto urządzenie"
 
 #. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
-#: ../src/gcm-prefs.c:2356
+#: ../src/gcm-prefs.c:2358
 #, c-format
 msgid "No %s color spaces available"
 msgstr "Brak dostępnej przestrzeni kolorów %s"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2700 ../data/gcm-prefs.ui.h:32
+#: ../src/gcm-prefs.c:2718 ../data/gcm-prefs.ui.h:32
 msgid "Display"
 msgstr "Ekran"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2704
+#: ../src/gcm-prefs.c:2722
 msgid "Scanner"
 msgstr "Skaner"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2708
+#: ../src/gcm-prefs.c:2726
 msgid "Printer"
 msgstr "Drukarka"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2712
+#: ../src/gcm-prefs.c:2730
 msgid "Camera"
 msgstr "Aparat"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-prefs.c:2779
+#: ../src/gcm-prefs.c:2797
 msgid "Set the parent window to make this modal"
 msgstr "Ustawienie okna nadrzędnego, aby to było modalne"
 
 #. TRANSLATORS: button for more details about the vcgt failure
-#: ../src/gcm-prefs.c:3074
+#: ../src/gcm-prefs.c:3092
 msgid "More Information"
 msgstr "Więcej informacji"
 
 #. TRANSLATORS: this is displayed while the devices are being probed
-#: ../src/gcm-prefs.c:3077
+#: ../src/gcm-prefs.c:3095
 msgid "Loading list of devices…"
 msgstr "Wczytywanie listy urządzeń…"
 
 #. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/gcm-prefs.c:3084
+#: ../src/gcm-prefs.c:3102
 msgid ""
 "This profile does not have the information required for whole-screen color "
 "correction."
