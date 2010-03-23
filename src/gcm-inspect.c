@@ -248,6 +248,52 @@ out:
 }
 
 /**
+ * gcm_inspect_show_profiles_for_devices:
+ **/
+static gboolean
+gcm_inspect_show_profiles_for_devices (void)
+{
+	gboolean ret;
+	DBusGConnection *connection;
+	DBusGProxy *proxy;
+	GError *error = NULL;
+	guint i;
+	gchar **devices = NULL;
+
+	/* get a session bus connection */
+	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
+
+	/* connect to the interface */
+	proxy = dbus_g_proxy_new_for_name (connection,
+					   "org.gnome.ColorManager",
+					   "/org/gnome/ColorManager",
+					   "org.gnome.ColorManager");
+
+	/* execute sync method */
+	ret = dbus_g_proxy_call (proxy, "GetDevices", &error,
+				 G_TYPE_INVALID,
+				 G_TYPE_STRV, &devices,
+				 G_TYPE_INVALID);
+	if (!ret) {
+		/* TRANSLATORS: the DBus method failed */
+		g_print ("%s: %s\n", _("The request failed"), error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* print each device */
+	for (i=0; devices[i] != NULL; i++) {
+		ret = gcm_inspect_show_profiles_for_device (devices[i]);
+		if (!ret)
+			goto out;
+	}
+out:
+	g_object_unref (proxy);
+	g_strfreev (devices);
+	return ret;
+}
+
+/**
  * gcm_inspect_show_profile_for_window:
  **/
 static gboolean
@@ -515,8 +561,10 @@ main (int argc, char **argv)
 			gcm_inspect_show_profiles_for_type (type);
 		}
 	}
-	if (dump)
+	if (dump) {
 		gcm_inspect_get_properties ();
+		gcm_inspect_show_profiles_for_devices ();
+	}
 
 	g_free (device_id);
 	g_free (type);
