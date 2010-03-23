@@ -9,6 +9,7 @@ INCLUDES =						\
 	$(LCMS_CFLAGS)					\
 	$(XORG_CFLAGS)					\
 	$(CUPS_CFLAGS)					\
+	$(SANE_CFLAGS)					\
 	$(TIFF_CFLAGS)					\
 	$(CANBERRA_CFLAGS)				\
 	$(DBUS_GLIB_CFLAGS)				\
@@ -117,6 +118,7 @@ gcm_dump_edid_LDADD =					\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
+	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	-lm
 
@@ -137,6 +139,7 @@ gcm_dump_profile_LDADD =				\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
+	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	-lm
 
@@ -151,6 +154,7 @@ gcm_fix_profile_LDADD =					\
 	$(X11_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(GTK_LIBS)					\
+	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	-lm
 
@@ -171,6 +175,7 @@ gcm_inspect_LDADD =					\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
+	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	-lm
 
@@ -191,6 +196,7 @@ gcm_apply_LDADD =					\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
+	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	-lm
 
@@ -211,6 +217,7 @@ gcm_import_LDADD =					\
 	$(XORG_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
+	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	-lm
 
@@ -243,6 +250,7 @@ gcm_prefs_LDADD =					\
 	$(DBUS_GLIB_LIBS)				\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
+	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(CANBERRA_LIBS)				\
@@ -268,6 +276,7 @@ gcm_session_LDADD =					\
 	$(DBUS_GLIB_LIBS)				\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
+	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	-lm
 
@@ -315,6 +324,7 @@ gcm_self_test_LDADD =					\
 	$(DBUS_GLIB_LIBS)				\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
+	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
 	-lm

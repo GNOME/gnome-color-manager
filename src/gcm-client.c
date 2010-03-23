@@ -34,6 +34,7 @@
 #include <gudev/gudev.h>
 #include <libgnomeui/gnome-rr.h>
 #include <cups/cups.h>
+#include <sane/sane.h>
 
 #include "gcm-client.h"
 #include "gcm-device-xrandr.h"
@@ -629,6 +630,81 @@ gcm_client_add_connected_devices_cups_thrd (GcmClient *client)
 }
 
 /**
+ * gcm_client_sane_add:
+ **/
+static void
+gcm_client_sane_add (GcmClient *client, const SANE_Device *sane_device)
+{
+	gboolean ret;
+	GError *error = NULL;
+	GcmDevice *device = NULL;
+	GcmClientPrivate *priv = client->priv;
+
+	/* create new device */
+	device = gcm_device_sane_new ();
+	ret = gcm_device_sane_set_from_device (device, sane_device, &error);
+	if (!ret) {
+		egg_debug ("failed to set for output: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* load the device */
+	ret = gcm_device_load (device, &error);
+	if (!ret) {
+		egg_warning ("failed to load: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* add to the array */
+	g_ptr_array_add (priv->array, g_object_ref (device));
+
+	/* signal the addition */
+	egg_debug ("emit: added %s to device list", gcm_device_get_id (device));
+	g_signal_emit (client, signals[SIGNAL_ADDED], 0, device);
+out:
+	if (device != NULL)
+		g_object_unref (device);
+}
+
+/**
+ * gcm_client_add_connected_devices_sane:
+ **/
+static gboolean
+gcm_client_add_connected_devices_sane (GcmClient *client, GError **error)
+{
+	gint i;
+	SANE_Status status;
+	const SANE_Device **device_list;
+
+	/* get scanners on the local server */
+	status = sane_get_devices (&device_list, FALSE);
+	if (status != SANE_STATUS_GOOD) {
+		egg_warning ("failed to get devices from SANE: %s", sane_strstatus (status));
+		goto out;
+	}
+
+	/* add them */
+	for (i=0; device_list[i] != NULL; i++)
+		gcm_client_sane_add (client, device_list[i]);
+out:
+	/* inform the UI */
+	gcm_client_done_loading (client);
+	return TRUE;
+}
+
+/**
+ * gcm_client_add_connected_devices_sane_thrd:
+ **/
+static gpointer
+gcm_client_add_connected_devices_sane_thrd (GcmClient *client)
+{
+	gcm_client_add_connected_devices_sane (client, NULL);
+	return NULL;
+}
+
+/**
  * gcm_client_add_unconnected_device:
  **/
 static void
@@ -782,7 +858,7 @@ gcm_client_add_connected (GcmClient *client, GError **error)
 		goto out;
 
 	/* inform UI if we are loading devces still */
-	client->priv->loading_refcount = 2;
+	client->priv->loading_refcount = 3;
 	gcm_client_set_loading (client, TRUE);
 
 	/* UDEV */
@@ -803,6 +879,17 @@ gcm_client_add_connected (GcmClient *client, GError **error)
 			goto out;
 	} else {
 		ret = gcm_client_add_connected_devices_cups (client, error);
+		if (!ret)
+			goto out;
+	}
+
+	/* SANE */
+	if (client->priv->use_threads) {
+		thread = g_thread_create ((GThreadFunc) gcm_client_add_connected_devices_sane_thrd, client, FALSE, error);
+		if (thread == NULL)
+			goto out;
+	} else {
+		ret = gcm_client_add_connected_devices_sane (client, error);
 		if (!ret)
 			goto out;
 	}
@@ -1071,6 +1158,7 @@ static void
 gcm_client_init (GcmClient *client)
 {
 	const gchar *subsystems[] = {"usb", "video4linux", NULL};
+	SANE_Status status;
 
 	client->priv = GCM_CLIENT_GET_PRIVATE (client);
 	client->priv->display_name = NULL;
@@ -1088,6 +1176,11 @@ gcm_client_init (GcmClient *client)
 
 	/* for CUPS */
 	httpInitialize();
+
+	/* for SANE */
+	status = sane_init (NULL, NULL);
+	if (status != SANE_STATUS_GOOD)
+		egg_warning ("failed to init SANE: %s", sane_strstatus (status));
 
 	/* should be okay for localhost */
 	client->priv->http = httpConnectEncrypt (cupsServer (), ippPort (), cupsEncryption ());
@@ -1107,6 +1200,7 @@ gcm_client_finalize (GObject *object)
 	g_object_unref (priv->gudev_client);
 	g_object_unref (priv->screen);
 	httpClose (priv->http);
+	sane_exit ();
 
 	G_OBJECT_CLASS (gcm_client_parent_class)->finalize (object);
 }

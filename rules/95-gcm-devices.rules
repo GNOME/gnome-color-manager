@@ -14,9 +14,6 @@
 #  GCM_DEVICE		(Can be assinged a profile)
 #  GCM_TYPE		(The type of device)
 
-# USB SANE scanners
-SUBSYSTEM=="usb", ENV{libsane_matched}!="", ENV{GCM_DEVICE}="1", ENV{GCM_TYPE}="scanner"
-
 # Cameras with gphoto drivers
 SUBSYSTEM=="usb", ENV{ID_GPHOTO2}!="", ENV{GCM_DEVICE}="1", ENV{GCM_TYPE}="camera"
 

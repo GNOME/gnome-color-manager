@@ -23,8 +23,9 @@
 #define __GCM_DEVICE_SANE_H
 
 #include <glib-object.h>
+#include <sane/sane.h>
 
-#include "gcm-device-udev.h"
+#include "gcm-device.h"
 
 G_BEGIN_DECLS
 
@@ -38,17 +39,20 @@ typedef struct _GcmDeviceSaneClass	GcmDeviceSaneClass;
 
 struct _GcmDeviceSane
 {
-	 GcmDeviceUdev			 parent;
+	 GcmDevice			 parent;
 	 GcmDeviceSanePrivate		*priv;
 };
 
 struct _GcmDeviceSaneClass
 {
-	GcmDeviceUdevClass		 parent_class;
+	GcmDeviceClass			 parent_class;
 };
 
 GType		 gcm_device_sane_get_type		  	(void);
 GcmDevice	*gcm_device_sane_new				(void);
+gboolean	 gcm_device_sane_set_from_device		(GcmDevice	*device,
+								 const SANE_Device *sane_device,
+								 GError		**error);
 
 G_END_DECLS
 

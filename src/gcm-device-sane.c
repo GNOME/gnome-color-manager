@@ -22,12 +22,15 @@
 #include "config.h"
 
 #include <glib-object.h>
+#include <sane/sane.h>
 
 #include "gcm-device-sane.h"
 #include "gcm-enum.h"
 #include "gcm-utils.h"
 
 #include "egg-debug.h"
+
+static void     gcm_device_sane_finalize	(GObject     *object);
 
 #define GCM_DEVICE_SANE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_DEVICE_SANE, GcmDeviceSanePrivate))
 
@@ -43,10 +46,11 @@ struct _GcmDeviceSanePrivate
 
 enum {
 	PROP_0,
+	PROP_NATIVE_DEVICE,
 	PROP_LAST
 };
 
-G_DEFINE_TYPE (GcmDeviceSane, gcm_device_sane, GCM_TYPE_DEVICE_UDEV)
+G_DEFINE_TYPE (GcmDeviceSane, gcm_device_sane, GCM_TYPE_DEVICE)
 
 typedef struct {
 	gchar	*key;
@@ -155,6 +159,51 @@ gcm_device_sane_set_key_pair_value (GPtrArray *array, const gchar *key, const gc
 	g_ptr_array_add (array, key_pair);
 out:
 	return;
+}
+
+/**
+ * gcm_device_sane_set_from_device:
+ **/
+gboolean
+gcm_device_sane_set_from_device (GcmDevice *device, const SANE_Device *sane_device, GError **error)
+{
+	gchar *id = NULL;
+	gchar *manufacturer = NULL;
+	gchar *model = NULL;
+	gchar *title = NULL;
+
+	egg_debug ("name=%s", sane_device->name);
+	egg_debug ("vendor=%s", sane_device->vendor);
+	egg_debug ("model=%s", sane_device->model);
+	egg_debug ("type=%s", sane_device->type);
+
+	/* convert device_id 'plustek:libusb:004:002' to suitable id */
+	id = g_strdup_printf ("sane_%s", sane_device->name);
+	gcm_utils_alphanum_lcase (id);
+
+	/* make safe strings */
+	manufacturer = g_strdup (sane_device->vendor);
+	model = g_strdup (sane_device->model);
+	title = g_strdup_printf ("%s - %s", manufacturer, model);
+
+	/* set properties on device */
+	g_object_set (device,
+		      "type", GCM_DEVICE_TYPE_ENUM_SCANNER,
+		      "colorspace", GCM_COLORSPACE_ENUM_RGB,
+		      "id", id,
+		      "connected", TRUE,
+//		      "serial", serial,
+		      "model", model,
+		      "manufacturer", manufacturer,
+		      "title", title,
+		      "native-device", sane_device->name,
+		      NULL);
+
+	g_free (manufacturer);
+	g_free (model);
+	g_free (id);
+	g_free (title);
+	return TRUE;
 }
 
 /**
@@ -299,13 +348,68 @@ out:
 }
 
 /**
+ * gcm_device_sane_get_property:
+ **/
+static void
+gcm_device_sane_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+{
+	GcmDeviceSane *device_sane = GCM_DEVICE_SANE (object);
+	GcmDeviceSanePrivate *priv = device_sane->priv;
+
+	switch (prop_id) {
+	case PROP_NATIVE_DEVICE:
+		g_value_set_string (value, priv->native_device);
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+/**
+ * gcm_device_sane_set_property:
+ **/
+static void
+gcm_device_sane_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
+{
+	GcmDeviceSane *device_sane = GCM_DEVICE_SANE (object);
+	GcmDeviceSanePrivate *priv = device_sane->priv;
+
+	switch (prop_id) {
+	case PROP_NATIVE_DEVICE:
+		g_free (priv->native_device);
+		priv->native_device = g_strdup (g_value_get_string (value));
+		break;
+	default:
+		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
+		break;
+	}
+}
+
+/**
  * gcm_device_sane_class_init:
  **/
 static void
 gcm_device_sane_class_init (GcmDeviceSaneClass *klass)
 {
+	GParamSpec *pspec;
+	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	GcmDeviceClass *device_class = GCM_DEVICE_CLASS (klass);
+
+	object_class->finalize = gcm_device_sane_finalize;
+	object_class->get_property = gcm_device_sane_get_property;
+	object_class->set_property = gcm_device_sane_set_property;
+
 	device_class->apply = gcm_device_sane_apply;
+
+	/**
+	 * GcmDeviceSane:native-device:
+	 */
+	pspec = g_param_spec_string ("native-device", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_NATIVE_DEVICE, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmDeviceSanePrivate));
 }
 
@@ -316,6 +420,21 @@ static void
 gcm_device_sane_init (GcmDeviceSane *device_sane)
 {
 	device_sane->priv = GCM_DEVICE_SANE_GET_PRIVATE (device_sane);
+	device_sane->priv->native_device = NULL;
+}
+
+/**
+ * gcm_device_sane_finalize:
+ **/
+static void
+gcm_device_sane_finalize (GObject *object)
+{
+	GcmDeviceSane *device_sane = GCM_DEVICE_SANE (object);
+	GcmDeviceSanePrivate *priv = device_sane->priv;
+
+	g_free (priv->native_device);
+
+	G_OBJECT_CLASS (gcm_device_sane_parent_class)->finalize (object);
 }
 
 /**
