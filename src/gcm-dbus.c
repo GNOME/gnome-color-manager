@@ -194,6 +194,7 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *device_id
 	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 
 	/* get list */
+	egg_debug ("query=%s [%s] %i", device_id_with_prefix, device_id, use_native_device);
 	array_devices = gcm_client_get_devices (dbus->priv->client);
 	for (i=0; i<array_devices->len; i++) {
 		device = g_ptr_array_index (array_devices, i);
@@ -219,6 +220,12 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *device_id
 			g_object_get (device,
 				      "profile-filename", &filename,
 				      NULL);
+
+			/* we have a profile? */
+			if (filename == NULL) {
+				egg_warning ("%s does not have a profile set", device_id);
+				continue;
+			}
 
 			/* open and parse filename */
 			profile = gcm_profile_default_new ();
