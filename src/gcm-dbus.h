@@ -65,7 +65,7 @@ guint		 gcm_dbus_get_idle_time			(GcmDbus	*dbus);
 
 /* org.gnome.ColorManager */
 void		 gcm_dbus_get_profiles_for_device	(GcmDbus	*dbus,
-							 const gchar	*sysfs_path,
+							 const gchar	*device_id,
 							 const gchar	*options,
 							 DBusGMethodInvocation *context);
 void		 gcm_dbus_get_profiles_for_type		(GcmDbus	*dbus,
@@ -74,6 +74,8 @@ void		 gcm_dbus_get_profiles_for_type		(GcmDbus	*dbus,
 							 DBusGMethodInvocation *context);
 void		 gcm_dbus_get_profile_for_window	(GcmDbus	*dbus,
 							 guint		 xid,
+							 DBusGMethodInvocation *context);
+void		 gcm_dbus_get_devices			(GcmDbus	*dbus,
 							 DBusGMethodInvocation *context);
 
 G_END_DECLS

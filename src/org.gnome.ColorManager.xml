@@ -82,11 +82,12 @@
           </doc:para>
         </doc:description>
       </doc:doc>
-      <arg type="s" name="sysfs_path" direction="in">
+      <arg type="s" name="device_id" direction="in">
         <doc:doc>
           <doc:summary>
             <doc:para>
-              A sysfs path, e.g. <doc:tt>/sys/class/usb/hiddev0</doc:tt>
+              A device ID which can be a sysfs path, e.g. <doc:tt>sysfs:/sys/class/usb/hiddev0</doc:tt>
+              or a raw device ID, e.g. <doc:tt>xrandr_ibm_france_ltn154p2_l05</doc:tt>.
             </doc:para>
           </doc:summary>
         </doc:doc>
@@ -125,7 +126,8 @@
         <doc:doc>
           <doc:summary>
             <doc:para>
-              A device type, e.g. <doc:tt>scanner</doc:tt>, <doc:tt>display</doc:tt>, <doc:tt>printer</doc:tt> or <doc:tt>camera</doc:tt>.
+              A device type, e.g. <doc:tt>scanner</doc:tt>, <doc:tt>display</doc:tt>,
+              <doc:tt>printer</doc:tt> or <doc:tt>camera</doc:tt>.
             </doc:para>
           </doc:summary>
         </doc:doc>
@@ -176,6 +178,27 @@
           <doc:summary>
             <doc:para>
               A profile filename that is should be used for the display.
+            </doc:para>
+          </doc:summary>
+        </doc:doc>
+      </arg>
+    </method>
+
+    <!--*****************************************************************************************-->
+    <method name="GetDevices">
+      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+      <doc:doc>
+        <doc:description>
+          <doc:para>
+            Gets a list of all the devices which have assigned color profiles.
+          </doc:para>
+        </doc:description>
+      </doc:doc>
+      <arg type="as" name="devices" direction="out">
+        <doc:doc>
+          <doc:summary>
+            <doc:para>
+              An array of device IDs, e.g. <doc:tt>['xrandr_ibm_france_ltn154p2_l05']</doc:tt>.
             </doc:para>
           </doc:summary>
         </doc:doc>

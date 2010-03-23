@@ -168,7 +168,7 @@ out:
  * gcm_inspect_show_profiles_for_device:
  **/
 static gboolean
-gcm_inspect_show_profiles_for_device (const gchar *sysfs_path)
+gcm_inspect_show_profiles_for_device (const gchar *device_id)
 {
 	gboolean ret;
 	DBusGConnection *connection;
@@ -200,7 +200,7 @@ gcm_inspect_show_profiles_for_device (const gchar *sysfs_path)
 
 	/* execute sync method */
 	ret = dbus_g_proxy_call (proxy, "GetProfilesForDevice", &error,
-				 G_TYPE_STRING, sysfs_path,
+				 G_TYPE_STRING, device_id,
 				 G_TYPE_STRING, "",
 				 G_TYPE_INVALID,
 				 custom_g_type_string_string, &profile_data_array,
@@ -220,7 +220,7 @@ gcm_inspect_show_profiles_for_device (const gchar *sysfs_path)
 	}
 
 	/* TRANSLATORS: this is a list of profiles suitable for the device */
-	g_print ("%s %s\n", _("Suitable profiles for:"), sysfs_path);
+	g_print ("%s %s\n", _("Suitable profiles for:"), device_id);
 
 	/* list each entry */
 	for (i=0; i<profile_data_array->len; i++) {
@@ -458,7 +458,7 @@ main (int argc, char **argv)
 	gboolean x11 = FALSE;
 	gboolean dump = FALSE;
 	guint xid = 0;
-	gchar *sysfs_path = NULL;
+	gchar *device_id = NULL;
 	gchar *type = NULL;
 	GcmDeviceTypeEnum type_enum;
 	guint retval = 0;
@@ -468,7 +468,7 @@ main (int argc, char **argv)
 		{ "x11", 'x', 0, G_OPTION_ARG_NONE, &x11,
 			/* TRANSLATORS: command line option */
 			_("Show X11 properties"), NULL },
-		{ "device", '\0', 0, G_OPTION_ARG_STRING, &sysfs_path,
+		{ "device", '\0', 0, G_OPTION_ARG_STRING, &device_id,
 			/* TRANSLATORS: command line option */
 			_("Get the profiles for a specific device"), NULL },
 		{ "xid", '\0', 0, G_OPTION_ARG_INT, &xid,
@@ -501,8 +501,8 @@ main (int argc, char **argv)
 
 	if (x11 || dump)
 		gcm_inspect_show_x11_atoms ();
-	if (sysfs_path != NULL)
-		gcm_inspect_show_profiles_for_device (sysfs_path);
+	if (device_id != NULL)
+		gcm_inspect_show_profiles_for_device (device_id);
 	if (xid != 0)
 		gcm_inspect_show_profile_for_window (xid);
 	if (type != NULL) {
@@ -518,7 +518,7 @@ main (int argc, char **argv)
 	if (dump)
 		gcm_inspect_get_properties ();
 
-	g_free (sysfs_path);
+	g_free (device_id);
 	g_free (type);
 	return retval;
 }

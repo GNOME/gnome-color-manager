@@ -162,18 +162,33 @@ gcm_dbus_get_idle_time (GcmDbus	*dbus)
  * gcm_dbus_get_profiles_for_device_internal:
  **/
 static GPtrArray *
-gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *sysfs_path)
+gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *device_id_with_prefix)
 {
 	gboolean ret;
 	gchar *filename;
-	gchar *sysfs_path_tmp;
+	const gchar *device_id;
+	gchar *device_id_tmp;
 	guint i;
+	gboolean use_native_device = FALSE;
 	GcmDevice *device;
 	GcmProfile *profile;
 	GFile *file;
 	GError *error = NULL;
 	GPtrArray *array;
 	GPtrArray *array_devices;
+
+	/* strip the prefix, if there is any */
+	device_id = g_strstr_len (device_id_with_prefix, -1, ":");
+	if (device_id == NULL) {
+		device_id = device_id_with_prefix;
+	} else {
+		device_id++;
+		use_native_device = TRUE;
+	}
+
+	/* use the sysfs path to be backwards compatible */
+	if (g_str_has_prefix (device_id_with_prefix, "/"))
+		use_native_device = TRUE;
 
 	/* create a temp array */
 	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -183,18 +198,24 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *sysfs_pat
 	for (i=0; i<array_devices->len; i++) {
 		device = g_ptr_array_index (array_devices, i);
 
-		/* get the native path of this device */
-		g_object_get (device,
-			      "native-device", &sysfs_path_tmp,
-			      NULL);
+		/* get the id for this device */
+		if (use_native_device) {
+			g_object_get (device,
+				      "native-device", &device_id_tmp,
+				      NULL);
+		} else {
+			g_object_get (device,
+				      "id", &device_id_tmp,
+				      NULL);
+		}
 
 		/* wrong type of device */
-		if (sysfs_path_tmp == NULL)
+		if (device_id_tmp == NULL)
 			continue;
 
 		/* compare what we have against what we were given */
-		egg_debug ("comparing %s with %s", sysfs_path_tmp, sysfs_path);
-		if (g_strcmp0 (sysfs_path_tmp, sysfs_path) == 0) {
+		egg_debug ("comparing %s with %s", device_id_tmp, device_id);
+		if (g_strcmp0 (device_id_tmp, device_id) == 0) {
 			g_object_get (device,
 				      "profile-filename", &filename,
 				      NULL);
@@ -215,7 +236,7 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *sysfs_pat
 			g_object_unref (profile);
 			g_free (filename);
 		}
-		g_free (sysfs_path_tmp);
+		g_free (device_id_tmp);
 	}
 
 	/* unref list of devices */
@@ -264,10 +285,42 @@ gcm_dbus_get_profiles_for_type_internal (GcmDbus *dbus, GcmDeviceTypeEnum type)
 }
 
 /**
+ * gcm_dbus_get_devices:
+ **/
+void
+gcm_dbus_get_devices (GcmDbus *dbus, DBusGMethodInvocation *context)
+{
+	GcmDevice *device;
+	guint i;
+	gchar **devices;
+	GPtrArray *array;
+
+	egg_debug ("getting list of devices");
+
+	/* copy the device id */
+	array = gcm_client_get_devices (dbus->priv->client);
+	devices = g_new0 (gchar *, array->len + 1);
+	for (i=0; i<array->len; i++) {
+		device = g_ptr_array_index (array, i);
+		devices[i] = g_strdup (gcm_device_get_id (device));
+	}
+
+	/* return devices */
+	dbus_g_method_return (context, devices);
+
+	/* reset time */
+	g_timer_reset (dbus->priv->timer);
+
+	/* unref list of devices */
+	g_strfreev (devices);
+	g_ptr_array_unref (array);
+}
+
+/**
  * gcm_dbus_get_profiles_for_device:
  **/
 void
-gcm_dbus_get_profiles_for_device (GcmDbus *dbus, const gchar *sysfs_path, const gchar *options, DBusGMethodInvocation *context)
+gcm_dbus_get_profiles_for_device (GcmDbus *dbus, const gchar *device_id, const gchar *options, DBusGMethodInvocation *context)
 {
 	GPtrArray *array_profiles;
 	GcmProfile *profile;
@@ -277,10 +330,10 @@ gcm_dbus_get_profiles_for_device (GcmDbus *dbus, const gchar *sysfs_path, const 
 	GPtrArray *array_structs;
 	GValue *value;
 
-	egg_debug ("getting profiles for %s", sysfs_path);
+	egg_debug ("getting profiles for %s", device_id);
 
 	/* get array of profile filenames */
-	array_profiles = gcm_dbus_get_profiles_for_device_internal (dbus, sysfs_path);
+	array_profiles = gcm_dbus_get_profiles_for_device_internal (dbus, device_id);
 
 	/* copy data to dbus struct */
 	array_structs = g_ptr_array_sized_new (array_profiles->len);
