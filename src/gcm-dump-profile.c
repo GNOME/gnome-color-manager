@@ -43,11 +43,11 @@ gcm_dump_profile_filename (const gchar *filename)
 	guint colorspace;
 	guint size;
 	gboolean has_vcgt;
-	gchar *description = NULL;
-	gchar *copyright = NULL;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
-	gchar *datetime = NULL;
+	const gchar *description;
+	const gchar *copyright;
+	const gchar *manufacturer;
+	const gchar *model;
+	const gchar *datetime;
 	GFile *file = NULL;
 
 	/* parse profile */
@@ -60,43 +60,34 @@ gcm_dump_profile_filename (const gchar *filename)
 		goto out;
 	}
 
-	/* get data */
-	g_object_get (profile,
-		      "kind", &profile_kind,
-		      "colorspace", &colorspace,
-		      "size", &size,
-		      "has-vcgt", &has_vcgt,
-		      "description", &description,
-		      "copyright", &copyright,
-		      "manufacturer", &manufacturer,
-		      "model", &model,
-		      "datetime", &datetime,
-		      NULL);
-
 	/* print what we know */
+	profile_kind = gcm_profile_get_kind (profile);
 	g_print ("Kind:\t%s\n", gcm_profile_kind_to_string (profile_kind));
+	colorspace = gcm_profile_get_colorspace (profile);
 	g_print ("Colorspace:\t%s\n", gcm_colorspace_to_string (colorspace));
+	size = gcm_profile_get_size (profile);
 	g_print ("Size:\t%i bytes\n", size);
+	has_vcgt = gcm_profile_get_has_vcgt (profile);
 	g_print ("Has VCGT:\t%s\n", has_vcgt ? "Yes" : "No");
+	description = gcm_profile_get_description (profile);
 	if (description != NULL)
 		g_print ("Description:\t%s\n", description);
+	copyright = gcm_profile_get_copyright (profile);
 	if (copyright != NULL)
 		g_print ("Copyright:\t%s\n", copyright);
+	manufacturer = gcm_profile_get_manufacturer (profile);
 	if (manufacturer != NULL)
 		g_print ("Manufacturer:\t%s\n", manufacturer);
+	model = gcm_profile_get_model (profile);
 	if (model != NULL)
 		g_print ("Model:\t%s\n", model);
+	datetime = gcm_profile_get_datetime (profile);
 	if (datetime != NULL)
 		g_print ("Created:\t%s\n", datetime);
 out:
 	if (file != NULL)
 		g_object_unref (file);
 	g_object_unref (profile);
-	g_free (description);
-	g_free (copyright);
-	g_free (manufacturer);
-	g_free (model);
-	g_free (datetime);
 	return ret;
 }
 

@@ -119,7 +119,7 @@ gcm_profile_store_get_by_filename (GcmProfileStore *profile_store, const gchar *
 	guint i;
 	GcmProfile *profile = NULL;
 	GcmProfile *profile_tmp;
-	gchar *filename_tmp;
+	const gchar *filename_tmp;
 	GcmProfileStorePrivate *priv = profile_store->priv;
 
 	g_return_val_if_fail (GCM_IS_PROFILE_STORE (profile_store), NULL);
@@ -128,17 +128,12 @@ gcm_profile_store_get_by_filename (GcmProfileStore *profile_store, const gchar *
 	/* find profile */
 	for (i=0; i<priv->profile_array->len; i++) {
 		profile_tmp = g_ptr_array_index (priv->profile_array, i);
-		g_object_get (profile_tmp,
-			      "filename", &filename_tmp,
-			      NULL);
+		filename_tmp = gcm_profile_get_filename (profile_tmp);
 		if (g_strcmp0 (filename, filename_tmp) == 0) {
 			profile = g_object_ref (profile_tmp);
-			g_free (filename_tmp);
 			goto out;
 		}
-		g_free (filename_tmp);
 	}
-
 out:
 	return profile;
 }
@@ -149,23 +144,17 @@ out:
 static void
 gcm_profile_store_notify_filename_cb (GcmProfile *profile, GParamSpec *pspec, GcmProfileStore *profile_store)
 {
-	gchar *description;
+	const gchar *description;
 	GcmProfileStorePrivate *priv = profile_store->priv;
-
-	/* get data, as the filename is no longer valid */
-	g_object_get (profile,
-		      "description", &description,
-		      NULL);
 
 	/* remove from list */
 	g_ptr_array_remove (priv->profile_array, profile);
 
 	/* emit a signal */
+	description = gcm_profile_get_description (profile);
 	egg_debug ("emit removed (and changed): %s", description);
 	g_signal_emit (profile_store, signals[SIGNAL_REMOVED], 0, profile);
 	g_signal_emit (profile_store, signals[SIGNAL_CHANGED], 0);
-
-	g_free (description);
 }
 
 /**

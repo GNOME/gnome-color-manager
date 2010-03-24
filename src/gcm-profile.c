@@ -51,13 +51,12 @@ static void     gcm_profile_finalize	(GObject     *object);
  **/
 struct _GcmProfilePrivate
 {
-	GcmProfileKind		 profile_kind;
+	GcmProfileKind		 kind;
 	GcmColorspace		 colorspace;
 	guint			 size;
 	gboolean		 has_vcgt;
 	gchar			*description;
 	gchar			*filename;
-	GFileMonitor		*monitor;
 	gchar			*copyright;
 	gchar			*manufacturer;
 	gchar			*model;
@@ -67,6 +66,7 @@ struct _GcmProfilePrivate
 	GcmXyz			*red;
 	GcmXyz			*green;
 	GcmXyz			*blue;
+	GFileMonitor		*monitor;
 };
 
 enum {
@@ -90,6 +90,285 @@ enum {
 };
 
 G_DEFINE_TYPE (GcmProfile, gcm_profile, G_TYPE_OBJECT)
+
+static void gcm_profile_file_monitor_changed_cb (GFileMonitor *monitor, GFile *file, GFile *other_file, GFileMonitorEvent event_type, GcmProfile *profile);
+
+/**
+ * gcm_profile_get_description:
+ **/
+const gchar *
+gcm_profile_get_description (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+	return profile->priv->description;
+}
+
+/**
+ * gcm_profile_set_description:
+ **/
+void
+gcm_profile_set_description (GcmProfile *profile, const gchar *description)
+{
+	GcmProfilePrivate *priv = profile->priv;
+	g_return_if_fail (GCM_IS_PROFILE (profile));
+
+	g_free (priv->description);
+	priv->description = g_strdup (description);
+
+	if (priv->description != NULL)
+		gcm_utils_ensure_printable (priv->description);
+
+	/* there's nothing sensible to display */
+	if (priv->description == NULL || priv->description[0] == '\0') {
+		g_free (priv->description);
+		if (priv->filename != NULL) {
+			priv->description = g_path_get_basename (priv->filename);
+		} else {
+			/* TRANSLATORS: this is where the ICC profile_lcms1 has no description */
+			priv->description = g_strdup (_("Missing description"));
+		}
+	}
+	g_object_notify (G_OBJECT (profile), "description");
+}
+
+
+/**
+ * gcm_profile_get_filename:
+ **/
+const gchar *
+gcm_profile_get_filename (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+	return profile->priv->filename;
+}
+
+/**
+ * gcm_profile_set_filename:
+ **/
+void
+gcm_profile_set_filename (GcmProfile *profile, const gchar *filename)
+{
+	GcmProfilePrivate *priv = profile->priv;
+	GFile *file;
+
+	g_return_if_fail (GCM_IS_PROFILE (profile));
+
+	g_free (priv->filename);
+	priv->filename = g_strdup (filename);
+
+	/* unref old instance */
+	if (priv->monitor != NULL) {
+		g_object_unref (priv->monitor);
+		priv->monitor = NULL;
+	}
+
+	/* setup watch on new profile */
+	if (priv->filename != NULL) {
+		file = g_file_new_for_path (priv->filename);
+		priv->monitor = g_file_monitor_file (file, G_FILE_MONITOR_NONE, NULL, NULL);
+		if (priv->monitor != NULL)
+			g_signal_connect (priv->monitor, "changed", G_CALLBACK(gcm_profile_file_monitor_changed_cb), profile);
+		g_object_unref (file);
+	}
+	g_object_notify (G_OBJECT (profile), "filename");
+}
+
+
+/**
+ * gcm_profile_get_copyright:
+ **/
+const gchar *
+gcm_profile_get_copyright (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+	return profile->priv->copyright;
+}
+
+/**
+ * gcm_profile_set_copyright:
+ **/
+void
+gcm_profile_set_copyright (GcmProfile *profile, const gchar *copyright)
+{
+	GcmProfilePrivate *priv = profile->priv;
+
+	g_return_if_fail (GCM_IS_PROFILE (profile));
+
+	g_free (priv->copyright);
+	priv->copyright = g_strdup (copyright);
+	if (priv->copyright != NULL)
+		gcm_utils_ensure_printable (priv->copyright);
+	g_object_notify (G_OBJECT (profile), "copyright");
+}
+
+
+/**
+ * gcm_profile_get_model:
+ **/
+const gchar *
+gcm_profile_get_model (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+	return profile->priv->model;
+}
+
+/**
+ * gcm_profile_set_model:
+ **/
+void
+gcm_profile_set_model (GcmProfile *profile, const gchar *model)
+{
+	GcmProfilePrivate *priv = profile->priv;
+
+	g_return_if_fail (GCM_IS_PROFILE (profile));
+
+	g_free (priv->model);
+	priv->model = g_strdup (model);
+	if (priv->model != NULL)
+		gcm_utils_ensure_printable (priv->model);
+	g_object_notify (G_OBJECT (profile), "model");
+}
+
+/**
+ * gcm_profile_get_manufacturer:
+ **/
+const gchar *
+gcm_profile_get_manufacturer (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+	return profile->priv->manufacturer;
+}
+
+/**
+ * gcm_profile_set_manufacturer:
+ **/
+void
+gcm_profile_set_manufacturer (GcmProfile *profile, const gchar *manufacturer)
+{
+	GcmProfilePrivate *priv = profile->priv;
+
+	g_return_if_fail (GCM_IS_PROFILE (profile));
+
+	g_free (priv->manufacturer);
+	priv->manufacturer = g_strdup (manufacturer);
+	if (priv->manufacturer != NULL)
+		gcm_utils_ensure_printable (priv->manufacturer);
+	g_object_notify (G_OBJECT (profile), "manufacturer");
+}
+
+
+/**
+ * gcm_profile_get_datetime:
+ **/
+const gchar *
+gcm_profile_get_datetime (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+	return profile->priv->datetime;
+}
+
+/**
+ * gcm_profile_set_datetime:
+ **/
+void
+gcm_profile_set_datetime (GcmProfile *profile, const gchar *datetime)
+{
+	GcmProfilePrivate *priv = profile->priv;
+
+	g_return_if_fail (GCM_IS_PROFILE (profile));
+
+	g_free (priv->datetime);
+	priv->datetime = g_strdup (datetime);
+	g_object_notify (G_OBJECT (profile), "datetime");
+}
+
+
+/**
+ * gcm_profile_get_size:
+ **/
+guint
+gcm_profile_get_size (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), 0);
+	return profile->priv->size;
+}
+
+/**
+ * gcm_profile_set_size:
+ **/
+void
+gcm_profile_set_size (GcmProfile *profile, guint size)
+{
+	g_return_if_fail (GCM_IS_PROFILE (profile));
+	profile->priv->size = size;
+	g_object_notify (G_OBJECT (profile), "size");
+}
+
+
+/**
+ * gcm_profile_get_kind:
+ **/
+GcmProfileKind
+gcm_profile_get_kind (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), GCM_PROFILE_KIND_UNKNOWN);
+	return profile->priv->kind;
+}
+
+/**
+ * gcm_profile_set_kind:
+ **/
+void
+gcm_profile_set_kind (GcmProfile *profile, GcmProfileKind kind)
+{
+	g_return_if_fail (GCM_IS_PROFILE (profile));
+	profile->priv->kind = kind;
+	g_object_notify (G_OBJECT (profile), "kind");
+}
+
+
+/**
+ * gcm_profile_get_colorspace:
+ **/
+GcmColorspace
+gcm_profile_get_colorspace (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), GCM_COLORSPACE_UNKNOWN);
+	return profile->priv->colorspace;
+}
+
+/**
+ * gcm_profile_set_colorspace:
+ **/
+void
+gcm_profile_set_colorspace (GcmProfile *profile, GcmColorspace colorspace)
+{
+	g_return_if_fail (GCM_IS_PROFILE (profile));
+	profile->priv->colorspace = colorspace;
+	g_object_notify (G_OBJECT (profile), "colorspace");
+}
+
+
+/**
+ * gcm_profile_get_has_vcgt:
+ **/
+gboolean
+gcm_profile_get_has_vcgt (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
+	return profile->priv->has_vcgt;
+}
+
+/**
+ * gcm_profile_set_has_vcgt:
+ **/
+void
+gcm_profile_set_has_vcgt (GcmProfile *profile, gboolean has_vcgt)
+{
+	g_return_if_fail (GCM_IS_PROFILE (profile));
+	profile->priv->has_vcgt = has_vcgt;
+	g_object_notify (G_OBJECT (profile), "has_vcgt");
+}
 
 /**
  * gcm_profile_parse_data:
@@ -146,9 +425,7 @@ gcm_profile_parse (GcmProfile *profile, GFile *file, GError **error)
 
 	/* save */
 	filename = g_file_get_path (file);
-	g_object_set (profile,
-		      "filename", filename,
-		      NULL);
+	gcm_profile_set_filename (profile, filename);
 out:
 	g_free (filename);
 	g_free (data);
@@ -239,9 +516,7 @@ gcm_profile_file_monitor_changed_cb (GFileMonitor *monitor, GFile *file, GFile *
 
 	/* just rescan everything */
 	egg_debug ("%s deleted, clearing filename", priv->filename);
-	g_object_set (profile,
-		      "filename", NULL,
-		      NULL);
+	gcm_profile_set_filename (profile, NULL);
 out:
 	return;
 }
@@ -275,7 +550,7 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 		g_value_set_string (value, priv->filename);
 		break;
 	case PROP_KIND:
-		g_value_set_uint (value, priv->profile_kind);
+		g_value_set_uint (value, priv->kind);
 		break;
 	case PROP_COLORSPACE:
 		g_value_set_uint (value, priv->colorspace);
@@ -315,78 +590,37 @@ gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, G
 {
 	GcmProfile *profile = GCM_PROFILE (object);
 	GcmProfilePrivate *priv = profile->priv;
-	GFile *file;
 
 	switch (prop_id) {
 	case PROP_COPYRIGHT:
-		g_free (priv->copyright);
-		priv->copyright = g_strdup (g_value_get_string (value));
-		if (priv->copyright != NULL)
-			gcm_utils_ensure_printable (priv->copyright);
+		gcm_profile_set_copyright (profile, g_value_get_string (value));
 		break;
 	case PROP_MANUFACTURER:
-		g_free (priv->manufacturer);
-		priv->manufacturer = g_strdup (g_value_get_string (value));
-		if (priv->manufacturer != NULL)
-			gcm_utils_ensure_printable (priv->manufacturer);
+		gcm_profile_set_manufacturer (profile, g_value_get_string (value));
 		break;
 	case PROP_MODEL:
-		g_free (priv->model);
-		priv->model = g_strdup (g_value_get_string (value));
-		if (priv->model != NULL)
-			gcm_utils_ensure_printable (priv->model);
+		gcm_profile_set_model (profile, g_value_get_string (value));
 		break;
 	case PROP_DATETIME:
-		g_free (priv->datetime);
-		priv->datetime = g_strdup (g_value_get_string (value));
+		gcm_profile_set_datetime (profile, g_value_get_string (value));
 		break;
 	case PROP_DESCRIPTION:
-		g_free (priv->description);
-		priv->description = g_strdup (g_value_get_string (value));
-		if (priv->description != NULL)
-			gcm_utils_ensure_printable (priv->description);
-
-		/* there's nothing sensible to display */
-		if (priv->description == NULL || priv->description[0] == '\0') {
-			g_free (priv->description);
-			if (priv->filename != NULL) {
-				priv->description = g_path_get_basename (priv->filename);
-			} else {
-				/* TRANSLATORS: this is where the ICC profile_lcms1 has no description */
-				priv->description = g_strdup (_("Missing description"));
-			}
-		}
+		gcm_profile_set_description (profile, g_value_get_string (value));
 		break;
 	case PROP_FILENAME:
-		g_free (priv->filename);
-		priv->filename = g_strdup (g_value_get_string (value));
-
-		/* unref old instance */
-		if (priv->monitor != NULL) {
-			g_object_unref (priv->monitor);
-			priv->monitor = NULL;
-		}
-
-		/* setup watch on new profile */
-		if (priv->filename != NULL) {
-			file = g_file_new_for_path (priv->filename);
-			priv->monitor = g_file_monitor_file (file, G_FILE_MONITOR_NONE, NULL, NULL);
-			if (priv->monitor != NULL)
-				g_signal_connect (priv->monitor, "changed", G_CALLBACK(gcm_profile_file_monitor_changed_cb), profile);
-			g_object_unref (file);
-		}
+		gcm_profile_set_filename (profile, g_value_get_string (value));
 		break;
 	case PROP_KIND:
-		priv->profile_kind = g_value_get_uint (value);
+		gcm_profile_set_kind (profile, g_value_get_uint (value));
 		break;
 	case PROP_COLORSPACE:
-		priv->colorspace = g_value_get_uint (value);
+		gcm_profile_set_colorspace (profile, g_value_get_uint (value));
 		break;
 	case PROP_SIZE:
-		priv->size = g_value_get_uint (value);
+		gcm_profile_set_size (profile, g_value_get_uint (value));
 		break;
 	case PROP_HAS_VCGT:
-		priv->has_vcgt = g_value_get_boolean (value);
+		gcm_profile_set_has_vcgt (profile, g_value_get_boolean (value));
 		break;
 	case PROP_WHITE:
 		priv->white = g_value_dup_object (value);
@@ -552,7 +786,7 @@ gcm_profile_init (GcmProfile *profile)
 {
 	profile->priv = GCM_PROFILE_GET_PRIVATE (profile);
 	profile->priv->monitor = NULL;
-	profile->priv->profile_kind = GCM_PROFILE_KIND_UNKNOWN;
+	profile->priv->kind = GCM_PROFILE_KIND_UNKNOWN;
 	profile->priv->colorspace = GCM_COLORSPACE_UNKNOWN;
 	profile->priv->white = gcm_xyz_new ();
 	profile->priv->black = gcm_xyz_new ();

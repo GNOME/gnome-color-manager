@@ -268,13 +268,8 @@ gcm_dbus_get_profiles_for_kind_internal (GcmDbus *dbus, GcmDeviceKind kind)
 	for (i=0; i<profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
 
-		/* get the native path of this device */
-		g_object_get (profile,
-			      "kind", &kind_tmp,
-			      NULL);
-
 		/* compare what we have against what we were given */
-		egg_debug ("comparing %i with %i", kind_tmp, profile_kind);
+		kind_tmp = gcm_profile_get_kind (profile);
 		if (kind_tmp == profile_kind)
 			g_ptr_array_add (array, g_object_ref (profile));
 	}
@@ -324,8 +319,8 @@ gcm_dbus_get_profiles_for_device (GcmDbus *dbus, const gchar *device_id, const g
 {
 	GPtrArray *array_profiles;
 	GcmProfile *profile;
-	gchar *title;
-	gchar *filename;
+	const gchar *title;
+	const gchar *filename;
 	guint i;
 	GPtrArray *array_structs;
 	GValue *value;
@@ -340,20 +335,14 @@ gcm_dbus_get_profiles_for_device (GcmDbus *dbus, const gchar *device_id, const g
 	for (i=0; i<array_profiles->len; i++) {
 		profile = (GcmProfile *) g_ptr_array_index (array_profiles, i);
 
-		/* get the data */
-		g_object_get (profile,
-			      "description", &title,
-			      "filename", &filename,
-			      NULL);
-
 		value = g_new0 (GValue, 1);
 		g_value_init (value, GCM_DBUS_STRUCT_STRING_STRING);
 		g_value_take_boxed (value, dbus_g_type_specialized_construct (GCM_DBUS_STRUCT_STRING_STRING));
+		title = gcm_profile_get_description (profile);
+		filename = gcm_profile_get_filename (profile);
 		dbus_g_type_struct_set (value, 0, title, 1, filename, -1);
 		g_ptr_array_add (array_structs, g_value_get_boxed (value));
 		g_free (value);
-		g_free (title);
-		g_free (filename);
 	}
 
 	/* return profiles */
@@ -373,8 +362,8 @@ gcm_dbus_get_profiles_for_type (GcmDbus *dbus, const gchar *kind, const gchar *o
 {
 	GPtrArray *array_profiles;
 	GcmProfile *profile;
-	gchar *title;
-	gchar *filename;
+	const gchar *title;
+	const gchar *filename;
 	guint i;
 	GPtrArray *array_structs;
 	GValue *value;
@@ -392,19 +381,14 @@ gcm_dbus_get_profiles_for_type (GcmDbus *dbus, const gchar *kind, const gchar *o
 		profile = (GcmProfile *) g_ptr_array_index (array_profiles, i);
 
 		/* get the data */
-		g_object_get (profile,
-			      "description", &title,
-			      "filename", &filename,
-			      NULL);
-
 		value = g_new0 (GValue, 1);
 		g_value_init (value, GCM_DBUS_STRUCT_STRING_STRING);
 		g_value_take_boxed (value, dbus_g_type_specialized_construct (GCM_DBUS_STRUCT_STRING_STRING));
+		title = gcm_profile_get_description (profile);
+		filename = gcm_profile_get_filename (profile);
 		dbus_g_type_struct_set (value, 0, title, 1, filename, -1);
 		g_ptr_array_add (array_structs, g_value_get_boxed (value));
 		g_free (value);
-		g_free (title);
-		g_free (filename);
 	}
 
 	/* return profiles */

@@ -521,9 +521,7 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 	default:
 		profile_kind = GCM_PROFILE_KIND_UNKNOWN;
 	}
-	g_object_set (profile,
-		      "kind", profile_kind,
-		      NULL);
+	gcm_profile_set_kind (profile, profile_kind);
 
 	/* get colorspace */
 	color_space = cmsGetColorSpace (priv->lcms_profile);
@@ -561,9 +559,7 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 	default:
 		colorspace = GCM_COLORSPACE_UNKNOWN;
 	}
-	g_object_set (profile,
-		      "colorspace", colorspace,
-		      NULL);
+	gcm_profile_set_colorspace (profile, colorspace);
 
 	/* get primary illuminants */
 	ret = cmsTakeColorants (&cie_illum, priv->lcms_profile);
@@ -649,9 +645,7 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 	ret = cmsTakeCreationDateTime (&created, priv->lcms_profile);
 	if (ret) {
 		text = gcm_utils_format_date_time (&created);
-		g_object_set (profile,
-			      "datetime", text,
-			      NULL);
+		gcm_profile_set_datetime (profile, text);
 		g_free (text);
 	}
 
@@ -670,22 +664,22 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 
 		if (tag_id == icSigProfileDescriptionTag) {
 			text = gcm_profile_lcms1_parse_multi_localized_unicode (profile_lcms1, data + tag_offset, tag_size);
-			g_object_set (profile, "description", text, NULL);
+			gcm_profile_set_description (profile, text);
 			g_free (text);
 		}
 		if (tag_id == icSigCopyrightTag) {
 			text = gcm_profile_lcms1_parse_multi_localized_unicode (profile_lcms1, data + tag_offset, tag_size);
-			g_object_set (profile, "copyright", text, NULL);
+			gcm_profile_set_copyright (profile, text);
 			g_free (text);
 		}
 		if (tag_id == icSigDeviceMfgDescTag) {
 			text = gcm_profile_lcms1_parse_multi_localized_unicode (profile_lcms1, data + tag_offset, tag_size);
-			g_object_set (profile, "manufacturer", text, NULL);
+			gcm_profile_set_manufacturer (profile, text);
 			g_free (text);
 		}
 		if (tag_id == icSigDeviceModelDescTag) {
 			text = gcm_profile_lcms1_parse_multi_localized_unicode (profile_lcms1, data + tag_offset, tag_size);
-			g_object_set (profile, "model", text, NULL);
+			gcm_profile_set_model (profile, text);
 			g_free (text);
 		}
 		if (tag_id == icSigMachineLookUpTableTag) {
@@ -712,9 +706,7 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 	ret = TRUE;
 
 	/* set properties */
-	g_object_set (profile,
-		      "has-vcgt", priv->has_vcgt_formula || priv->has_vcgt_table,
-		      NULL);
+	gcm_profile_set_has_vcgt (profile, priv->has_vcgt_formula || priv->has_vcgt_table);
 
 	egg_debug ("Has MLUT:         %s", priv->has_mlut ? "YES" : "NO");
 	egg_debug ("Has VCGT formula: %s", priv->has_vcgt_formula ? "YES" : "NO");
@@ -874,12 +866,8 @@ gcm_profile_lcms1_generate_curve (GcmProfile *profile, guint size)
 	GcmProfileLcms1 *profile_lcms1 = GCM_PROFILE_LCMS1 (profile);
 	GcmProfileLcms1Private *priv = profile_lcms1->priv;
 
-	/* get data */
-	g_object_get (profile,
-		      "colorspace", &colorspace,
-		      NULL);
-
-	/* run through the profile_lcms1 */
+	/* run through the profile */
+	colorspace = gcm_profile_get_colorspace (profile);
 	if (colorspace == GCM_COLORSPACE_RGB) {
 
 		/* RGB */

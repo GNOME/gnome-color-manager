@@ -58,8 +58,8 @@ int
 main (int argc, char **argv)
 {
 	gboolean ret;
-	gchar *copyright = NULL;
-	gchar *description = NULL;
+	const gchar *copyright;
+	const gchar *description;
 	GFile *destination = NULL;
 	GFile *file = NULL;
 	gchar **files = NULL;
@@ -126,10 +126,10 @@ main (int argc, char **argv)
 	}
 
 	/* get data */
+	description = gcm_profile_get_description (profile);
+	copyright = gcm_profile_get_copyright (profile);
+	colorspace = gcm_profile_get_colorspace (profile);
 	g_object_get (profile,
-		      "description", &description,
-		      "copyright", &copyright,
-		      "colorspace", &colorspace,
 		      "white", &white,
 		      "red", &red,
 		      "green", &green,
@@ -239,8 +239,6 @@ out:
 		g_object_unref (profile);
 	if (destination != NULL)
 		g_object_unref (destination);
-	g_free (description);
-	g_free (copyright);
 	g_strfreev (files);
 	return retval;
 }

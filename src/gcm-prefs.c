@@ -167,7 +167,7 @@ gcm_prefs_combobox_add_profile (GtkWidget *widget, GcmProfile *profile, GcmPrefs
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter_tmp;
-	gchar *description;
+	const gchar *description;
 	gchar *sortable;
 
 	/* iter is optional */
@@ -177,16 +177,14 @@ gcm_prefs_combobox_add_profile (GtkWidget *widget, GcmProfile *profile, GcmPrefs
 	/* use description */
 	if (entry_type == GCM_PREFS_ENTRY_TYPE_NONE) {
 		/* TRANSLATORS: this is where no profile is selected */
-		description = g_strdup (_("None"));
+		description = _("None");
 		sortable = g_strdup ("1");
 	} else if (entry_type == GCM_PREFS_ENTRY_TYPE_IMPORT) {
 		/* TRANSLATORS: this is where the user can click and import a profile */
-		description = g_strdup (_("Other profile…"));
+		description = _("Other profile…");
 		sortable = g_strdup ("9");
 	} else {
-		g_object_get (profile,
-			      "description", &description,
-			      NULL);
+		description = gcm_profile_get_description (profile);
 		sortable = g_strdup_printf ("5%s", description);
 	}
 
@@ -199,7 +197,6 @@ gcm_prefs_combobox_add_profile (GtkWidget *widget, GcmProfile *profile, GcmPrefs
 			    GCM_PREFS_COMBO_COLUMN_TYPE, entry_type,
 			    GCM_PREFS_COMBO_COLUMN_SORTABLE, sortable,
 			    -1);
-	g_free (description);
 	g_free (sortable);
 }
 
@@ -403,12 +400,12 @@ static void
 gcm_prefs_update_profile_list (void)
 {
 	GtkTreeIter iter;
-	gchar *description;
+	const gchar *description;
 	const gchar *icon_name;
 	GcmProfileKind profile_kind = GCM_PROFILE_KIND_UNKNOWN;
 	GcmProfile *profile;
 	guint i;
-	gchar *filename = NULL;
+	const gchar *filename = NULL;
 	gchar *sort = NULL;
 	GPtrArray *profile_array = NULL;
 
@@ -423,18 +420,16 @@ gcm_prefs_update_profile_list (void)
 	/* update each list */
 	for (i=0; i<profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
-		g_object_get (profile,
-			      "description", &description,
-			      "kind", &profile_kind,
-			      "filename", &filename,
-			      NULL);
 
-		egg_debug ("add %s to profiles list", filename);
+		profile_kind = gcm_profile_get_kind (profile);
 		icon_name = gcm_prefs_profile_kind_to_icon_name (profile_kind);
 		gtk_list_store_append (list_store_profiles, &iter);
+		description = gcm_profile_get_description (profile);
 		sort = g_strdup_printf ("%s%s",
 					gcm_prefs_profile_get_sort_string (profile_kind),
 					description);
+		filename = gcm_profile_get_filename (profile);
+		egg_debug ("add %s to profiles list", filename);
 		gtk_list_store_set (list_store_profiles, &iter,
 				    GCM_PROFILES_COLUMN_ID, filename,
 				    GCM_PROFILES_COLUMN_SORT, sort,
@@ -444,8 +439,6 @@ gcm_prefs_update_profile_list (void)
 				    -1);
 
 		g_free (sort);
-		g_free (filename);
-		g_free (description);
 	}
 	if (profile_array != NULL)
 		g_ptr_array_unref (profile_array);
@@ -461,7 +454,7 @@ gcm_prefs_profile_delete_cb (GtkWidget *widget, gpointer data)
 	GtkResponseType response;
 	GtkWindow *window;
 	gint retval;
-	gchar *filename = NULL;
+	const gchar *filename;
 	GcmProfile *profile;
 	GtkTreeSelection *selection;
 	GtkTreeModel *model;
@@ -496,17 +489,13 @@ gcm_prefs_profile_delete_cb (GtkWidget *widget, gpointer data)
 			    GCM_PROFILES_COLUMN_PROFILE, &profile,
 			    -1);
 
-	/* get device data */
-	g_object_get (profile,
-		      "filename", &filename,
-		      NULL);
-
 	/* try to remove file */
+	filename = gcm_profile_get_filename (profile);
 	retval = g_unlink (filename);
 	if (retval != 0)
 		goto out;
 out:
-	g_free (filename);
+	return;
 }
 
 /**
@@ -738,7 +727,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	GError *error = NULL;
 	gchar *filename = NULL;
 	guint i;
-	gchar *name;
+	const gchar *name;
 	GcmProfile *profile;
 	GPtrArray *profile_array = NULL;
 	GFile *file = NULL;
@@ -803,15 +792,11 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	destination = g_file_get_path (dest);
 	for (i=0; i<profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
-		g_object_get (profile,
-			      "filename", &name,
-			      NULL);
+		name = gcm_profile_get_filename (profile);
 		if (g_strcmp0 (name, destination) == 0) {
 			egg_debug ("found existing profile: %s", destination);
-			g_free (name);
 			break;
 		}
-		g_free (name);
 	}
 
 	/* we didn't find an existing profile */
@@ -1173,19 +1158,15 @@ gcm_prefs_is_profile_suitable_for_device (GcmProfile *profile, GcmDevice *device
 	gboolean ret = FALSE;
 	GcmDeviceKind device_kind;
 
-	/* get properties */
-	g_object_get (profile,
-		      "kind", &profile_kind_tmp,
-		      "colorspace", &profile_colorspace,
-		      NULL);
-
 	/* not the right colorspace */
 	device_colorspace = gcm_device_get_colorspace (device);
+	profile_colorspace = gcm_profile_get_colorspace (profile);
 	if (device_colorspace != profile_colorspace)
 		goto out;
 
 	/* not the correct kind */
 	device_kind = gcm_device_get_kind (device);
+	profile_kind_tmp = gcm_profile_get_kind (profile);
 	profile_kind = gcm_utils_device_kind_to_profile_kind (device_kind);
 	if (profile_kind_tmp != profile_kind)
 		goto out;
@@ -1204,7 +1185,7 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, const gchar *pro
 {
 	GtkTreeModel *model;
 	guint i;
-	gchar *filename;
+	const gchar *filename;
 	gboolean ret;
 	gboolean set_active = FALSE;
 	GcmProfile *profile;
@@ -1232,15 +1213,12 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, const gchar *pro
 			gcm_prefs_combobox_add_profile (widget, profile, GCM_PREFS_ENTRY_TYPE_PROFILE, &iter);
 
 			/* set active option */
-			g_object_get (profile,
-				      "filename", &filename,
-				      NULL);
+			filename = gcm_profile_get_filename (profile);
 			if (g_strcmp0 (filename, profile_filename) == 0) {
 				//FIXME: does not work for sorted lists
 				gtk_combo_box_set_active_iter (GTK_COMBO_BOX (widget), &iter);
 				set_active = TRUE;
 			}
-			g_free (filename);
 		}
 	}
 
@@ -1502,12 +1480,12 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	GcmXyz *red;
 	GcmXyz *green;
 	GcmXyz *blue;
-	gchar *profile_copyright = NULL;
-	gchar *profile_manufacturer = NULL;
-	gchar *profile_model = NULL;
-	gchar *profile_datetime = NULL;
+	const gchar *profile_copyright;
+	const gchar *profile_manufacturer;
+	const gchar *profile_model ;
+	const gchar *profile_datetime;
 	gchar *temp;
-	gchar *filename = NULL;
+	const gchar *filename;
 	gchar *basename = NULL;
 	gchar *size_text = NULL;
 	GcmProfileKind profile_kind;
@@ -1534,15 +1512,6 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 
 	/* get the new details from the profile */
 	g_object_get (profile,
-		      "filename", &filename,
-		      "size", &filesize,
-		      "has-vcgt", &has_vcgt,
-		      "copyright", &profile_copyright,
-		      "manufacturer", &profile_manufacturer,
-		      "model", &profile_model,
-		      "datetime", &profile_datetime,
-		      "kind", &profile_kind,
-		      "colorspace", &profile_colorspace,
 		      "white", &white,
 		      "red", &red,
 		      "green", &green,
@@ -1587,6 +1556,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 
 	/* set kind */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_type"));
+	profile_kind = gcm_profile_get_kind (profile);
 	if (profile_kind == GCM_PROFILE_KIND_UNKNOWN) {
 		gtk_widget_hide (widget);
 	} else {
@@ -1598,6 +1568,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 
 	/* set colorspace */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_colorspace"));
+	profile_colorspace = gcm_profile_get_colorspace (profile);
 	if (profile_colorspace == GCM_COLORSPACE_UNKNOWN) {
 		gtk_widget_hide (widget);
 	} else {
@@ -1611,6 +1582,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_vcgt"));
 	gtk_widget_set_visible (widget, (profile_kind == GCM_PROFILE_KIND_DISPLAY_DEVICE));
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_vcgt"));
+	has_vcgt = gcm_profile_get_has_vcgt (profile);
 	if (has_vcgt) {
 		/* TRANSLATORS: if the device has a VCGT profile */
 		gtk_label_set_label (GTK_LABEL (widget), _("Yes"));
@@ -1620,12 +1592,14 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	}
 
 	/* set basename */
+	filename = gcm_profile_get_filename (profile);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_filename"));
 	basename = g_path_get_basename (filename);
 	gtk_label_set_label (GTK_LABEL (widget), basename);
 
 	/* set size */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_size"));
+	filesize = gcm_profile_get_size (profile);
 	if (filesize == 0) {
 		gtk_widget_hide (widget);
 	} else {
@@ -1637,6 +1611,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 
 	/* set new copyright */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_copyright"));
+	profile_copyright = gcm_profile_get_copyright (profile);
 	if (profile_copyright == NULL) {
 		gtk_widget_hide (widget);
 	} else {
@@ -1649,6 +1624,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 
 	/* set new manufacturer */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_profile_manufacturer"));
+	profile_manufacturer = gcm_profile_get_manufacturer (profile);
 	if (profile_manufacturer == NULL) {
 		gtk_widget_hide (widget);
 	} else {
@@ -1661,6 +1637,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 
 	/* set new model */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_profile_model"));
+	profile_model = gcm_profile_get_model (profile);
 	if (profile_model == NULL) {
 		gtk_widget_hide (widget);
 	} else {
@@ -1671,6 +1648,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 
 	/* set new datetime */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_datetime"));
+	profile_datetime = gcm_profile_get_datetime (profile);
 	if (profile_datetime == NULL) {
 		gtk_widget_hide (widget);
 	} else {
@@ -1698,12 +1676,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	g_object_unref (green);
 	g_object_unref (blue);
 	g_free (size_text);
-	g_free (filename);
 	g_free (basename);
-	g_free (profile_copyright);
-	g_free (profile_manufacturer);
-	g_free (profile_model);
-	g_free (profile_datetime);
 }
 
 /**
@@ -1903,12 +1876,10 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 
 	/* get profile filename */
 	if (entry_type == GCM_PREFS_ENTRY_TYPE_PROFILE) {
-		g_object_get (profile,
-			      "filename", &filename,
-			      "has-vcgt", &has_vcgt,
-			      NULL);
 
 		/* show a warning if the profile is crap */
+		filename = g_strdup (gcm_profile_get_filename (profile));
+		has_vcgt = gcm_profile_get_has_vcgt (profile);
 		if (kind == GCM_DEVICE_KIND_DISPLAY && !has_vcgt && filename != NULL) {
 			gtk_widget_show (info_bar_vcgt);
 		} else {
@@ -1952,7 +1923,6 @@ out:
 		g_object_unref (dest);
 	if (profile_tmp != NULL)
 		g_object_unref (profile_tmp);
-	g_free (filename);
 }
 
 /**
@@ -2269,8 +2239,8 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspace colorspace, con
 {
 	GcmProfile *profile;
 	guint i;
-	gchar *filename;
-	gchar *description;
+	const gchar *filename;
+	const gchar *description;
 	GcmColorspace colorspace_tmp;
 	gboolean has_profile = FALSE;
 	gboolean has_vcgt;
@@ -2289,14 +2259,11 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspace colorspace, con
 	/* update each list */
 	for (i=0; i<profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
-		g_object_get (profile,
-			      "has-vcgt", &has_vcgt,
-			      "filename", &filename,
-			      "description", &description,
-			      "colorspace", &colorspace_tmp,
-			      NULL);
 
 		/* only for correct kind */
+		description = gcm_profile_get_description (profile);
+		has_vcgt = gcm_profile_get_has_vcgt (profile);
+		colorspace_tmp = gcm_profile_get_colorspace (profile);
 		if (!has_vcgt &&
 		    colorspace == colorspace_tmp &&
 		    (colorspace == GCM_COLORSPACE_CMYK ||
@@ -2304,12 +2271,11 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspace colorspace, con
 			gcm_prefs_combobox_add_profile (widget, profile, GCM_PREFS_ENTRY_TYPE_PROFILE, &iter);
 
 			/* set active option */
+			filename = gcm_profile_get_filename (profile);
 			if (g_strcmp0 (filename, profile_filename) == 0)
 				gtk_combo_box_set_active_iter (GTK_COMBO_BOX (widget), &iter);
 			has_profile = TRUE;
 		}
-		g_free (filename);
-		g_free (description);
 	}
 	if (!has_profile) {
 		/* TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK" */
@@ -2332,7 +2298,7 @@ gcm_prefs_space_combo_changed_cb (GtkWidget *widget, gpointer data)
 {
 	gboolean ret;
 	GtkTreeIter iter;
-	gchar *filename = NULL;
+	const gchar *filename;
 	GtkTreeModel *model;
 	GcmProfile *profile = NULL;
 	const gchar *gconf_key = GCM_SETTINGS_COLORSPACE_RGB;
@@ -2349,19 +2315,16 @@ gcm_prefs_space_combo_changed_cb (GtkWidget *widget, gpointer data)
 			    -1);
 	if (profile == NULL)
 		goto out;
-	g_object_get (profile,
-		      "filename", &filename,
-		      NULL);
 
 	if (data != NULL)
 		gconf_key = GCM_SETTINGS_COLORSPACE_CMYK;
 
+	filename = gcm_profile_get_filename (profile);
 	egg_debug ("changed working space %s", filename);
 	gconf_client_set_string (gconf_client, gconf_key, filename, NULL);
 out:
 	if (profile != NULL)
 		g_object_unref (profile);
-	g_free (filename);
 }
 
 

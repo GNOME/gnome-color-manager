@@ -40,8 +40,6 @@
 static gboolean
 gcm_inspect_print_data_info (const gchar *title, const guint8 *data, gsize length)
 {
-	gchar *description = NULL;
-	gchar *copyright = NULL;
 	GcmProfile *profile = NULL;
 	GError *error = NULL;
 	gboolean ret;
@@ -55,23 +53,15 @@ gcm_inspect_print_data_info (const gchar *title, const guint8 *data, gsize lengt
 		goto out;
 	}
 
-	/* print some interesting facts about the profile */
-	g_object_get (profile,
-		      "description", &description,
-		      "copyright", &copyright,
-		      NULL);
-
 	/* print title */
 	g_print ("%s\n", title);
 
 	/* TRANSLATORS: this is the ICC profile description stored in an atom in the XServer */
-	g_print (" - %s %s\n", _("Description:"), description);
+	g_print (" - %s %s\n", _("Description:"), gcm_profile_get_description (profile));
 
 	/* TRANSLATORS: this is the ICC profile copyright */
-	g_print (" - %s %s\n", _("Copyright:"), copyright);
+	g_print (" - %s %s\n", _("Copyright:"), gcm_profile_get_copyright (profile));
 out:
-	g_free (copyright);
-	g_free (description);
 	if (profile != NULL)
 		g_object_unref (profile);
 	return ret;
