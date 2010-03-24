@@ -440,10 +440,10 @@ gcm_colorimeter_coldplug (GcmColorimeter *colorimeter)
 }
 
 /**
- * gcm_prefs_uevent_cb:
+ * gcm_colorimeter_uevent_cb:
  **/
 static void
-gcm_prefs_uevent_cb (GUdevClient *client, const gchar *action, GUdevDevice *device, GcmColorimeter *colorimeter)
+gcm_colorimeter_uevent_cb (GUdevClient *client, const gchar *action, GUdevDevice *device, GcmColorimeter *colorimeter)
 {
 	egg_debug ("uevent %s", action);
 	if (g_strcmp0 (action, "add") == 0) {
@@ -470,7 +470,7 @@ gcm_colorimeter_init (GcmColorimeter *colorimeter)
 	/* use GUdev to find the calibration device */
 	colorimeter->priv->client = g_udev_client_new (subsystems);
 	g_signal_connect (colorimeter->priv->client, "uevent",
-			  G_CALLBACK (gcm_prefs_uevent_cb), colorimeter);
+			  G_CALLBACK (gcm_colorimeter_uevent_cb), colorimeter);
 
 	/* coldplug */
 	gcm_colorimeter_coldplug (colorimeter);
