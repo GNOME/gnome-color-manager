@@ -124,7 +124,7 @@ gcm_profile_parse (GcmProfile *profile, GFile *file, GError **error)
 {
 	gchar *data = NULL;
 	gboolean ret;
-	guint length;
+	gsize length;
 	gchar *filename = NULL;
 	GError *error_local = NULL;
 
@@ -132,7 +132,7 @@ gcm_profile_parse (GcmProfile *profile, GFile *file, GError **error)
 	g_return_val_if_fail (file != NULL, FALSE);
 
 	/* load files */
-	ret = g_file_load_contents (file, NULL, &data, (gsize *) &length, NULL, &error_local);
+	ret = g_file_load_contents (file, NULL, &data, &length, NULL, &error_local);
 	if (!ret) {
 		g_set_error (error, 1, 0, "failed to load profile: %s", error_local->message);
 		g_error_free (error_local);
