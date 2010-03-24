@@ -51,6 +51,7 @@ struct _GcmClientClass
 	GObjectClass	parent_class;
 	void		(* added)				(GcmDevice	*device);
 	void		(* removed)				(GcmDevice	*device);
+	void		(* changed)				(GcmDevice	*device);
 	/* padding for future expansion */
 	void (*_gcm_reserved1) (void);
 	void (*_gcm_reserved2) (void);

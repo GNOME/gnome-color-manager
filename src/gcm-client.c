@@ -24,7 +24,7 @@
  * @short_description: Client object to hold an array of devices.
  *
  * This object holds an array of %GcmDevices, and watches both udev and xorg
- * for changes. If a device is added or removed then a signal is fired.
+ * for changes. If a device is added, removed or changed then a signal is fired.
  */
 
 #include "config.h"
@@ -81,6 +81,7 @@ enum {
 enum {
 	SIGNAL_ADDED,
 	SIGNAL_REMOVED,
+	SIGNAL_CHANGED,
 	SIGNAL_LAST
 };
 
@@ -174,6 +175,17 @@ gcm_client_get_device_by_id (GcmClient *client, const gchar *id)
 	}
 
 	return device;
+}
+
+/**
+ * gcm_client_device_changed_cb:
+ **/
+static void
+gcm_client_device_changed_cb (GcmDevice *device, GcmClient *client)
+{
+	/* emit a signal */
+	egg_debug ("emit changed: %s", gcm_device_get_id (device));
+	g_signal_emit (client, signals[SIGNAL_CHANGED], 0, device);
 }
 
 /**
@@ -282,6 +294,9 @@ gcm_client_gudev_add (GcmClient *client, GUdevDevice *udev_device)
 	/* signal the addition */
 	egg_debug ("emit: added %s to device list", gcm_device_get_id (device));
 	g_signal_emit (client, signals[SIGNAL_ADDED], 0, device);
+
+	/* connect to the changed signal */
+	g_signal_connect (device, "changed", G_CALLBACK (gcm_client_device_changed_cb), client);
 out:
 	if (device != NULL)
 		g_object_unref (device);
@@ -531,6 +546,9 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 	/* signal the addition */
 	egg_debug ("emit: added %s to device list", gcm_device_get_id (device));
 	g_signal_emit (client, signals[SIGNAL_ADDED], 0, device);
+
+	/* connect to the changed signal */
+	g_signal_connect (device, "changed", G_CALLBACK (gcm_client_device_changed_cb), client);
 out:
 	if (device != NULL)
 		g_object_unref (device);
@@ -590,6 +608,9 @@ gcm_client_cups_add (GcmClient *client, cups_dest_t dest)
 	/* signal the addition */
 	egg_debug ("emit: added %s to device list", gcm_device_get_id (device));
 	g_signal_emit (client, signals[SIGNAL_ADDED], 0, device);
+
+	/* connect to the changed signal */
+	g_signal_connect (device, "changed", G_CALLBACK (gcm_client_device_changed_cb), client);
 out:
 	if (device != NULL)
 		g_object_unref (device);
@@ -663,6 +684,9 @@ gcm_client_sane_add (GcmClient *client, const SANE_Device *sane_device)
 	/* signal the addition */
 	egg_debug ("emit: added %s to device list", gcm_device_get_id (device));
 	g_signal_emit (client, signals[SIGNAL_ADDED], 0, device);
+
+	/* connect to the changed signal */
+	g_signal_connect (device, "changed", G_CALLBACK (gcm_client_device_changed_cb), client);
 out:
 	if (device != NULL)
 		g_object_unref (device);
@@ -782,6 +806,9 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 	/* signal the addition */
 	egg_debug ("emit: added %s to device list", id);
 	g_signal_emit (client, signals[SIGNAL_ADDED], 0, device);
+
+	/* connect to the changed signal */
+	g_signal_connect (device, "changed", G_CALLBACK (gcm_client_device_changed_cb), client);
 out:
 	if (device != NULL)
 		g_object_unref (device);
@@ -940,6 +967,9 @@ gcm_client_add_device (GcmClient *client, GcmDevice *device, GError **error)
 	/* emit a signal */
 	egg_debug ("emit added: %s", id);
 	g_signal_emit (client, signals[SIGNAL_ADDED], 0, device);
+
+	/* connect to the changed signal */
+	g_signal_connect (device, "changed", G_CALLBACK (gcm_client_device_changed_cb), client);
 
 	/* all okay */
 	ret = TRUE;
@@ -1145,6 +1175,16 @@ gcm_client_class_init (GcmClientClass *klass)
 		g_signal_new ("removed",
 			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (GcmClientClass, removed),
+			      NULL, NULL, g_cclosure_marshal_VOID__OBJECT,
+			      G_TYPE_NONE, 1, G_TYPE_OBJECT);
+
+	/**
+	 * GcmClient::changed
+	 **/
+	signals[SIGNAL_CHANGED] =
+		g_signal_new ("changed",
+			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (GcmClientClass, changed),
 			      NULL, NULL, g_cclosure_marshal_VOID__OBJECT,
 			      G_TYPE_NONE, 1, G_TYPE_OBJECT);
 
