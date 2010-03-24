@@ -99,8 +99,8 @@ static gchar *
 gcm_device_xrandr_get_output_name (GcmDeviceXrandr *device_xrandr, GnomeRROutput *output)
 {
 	const gchar *output_name;
-	gchar *name = NULL;
-	gchar *vendor = NULL;
+	const gchar *name;
+	const gchar *vendor;
 	GString *string;
 	gboolean ret;
 	guint width = 0;
@@ -120,19 +120,15 @@ gcm_device_xrandr_get_output_name (GcmDeviceXrandr *device_xrandr, GnomeRROutput
 	ret = gcm_utils_output_is_lcd_internal (output_name);
 	if (ret) {
 		/* find the machine details */
-		g_object_get (priv->dmi,
-			      "name", &name,
-			      "vendor", &vendor,
-			      NULL);
+		name = gcm_dmi_get_name (priv->dmi);
+		vendor = gcm_dmi_get_vendor (priv->dmi);
 
 		/* TRANSLATORS: this is the name of the internal panel */
 		output_name = _("Laptop LCD");
 	} else {
 		/* find the panel details */
-		g_object_get (priv->edid,
-			      "monitor-name", &name,
-			      "vendor-name", &vendor,
-			      NULL);
+		name = gcm_edid_get_monitor_name (priv->edid);
+		vendor = gcm_edid_get_vendor_name (priv->edid);
 	}
 
 	/* prepend vendor if available */
@@ -148,13 +144,9 @@ gcm_device_xrandr_get_output_name (GcmDeviceXrandr *device_xrandr, GnomeRROutput
 		g_string_assign (string, "Unknown Monitor");
 
 out:
-	/* find the best option */
-	g_object_get (priv->edid,
-		      "width", &width,
-		      "height", &height,
-		      NULL);
-
 	/* append size if available */
+	width = gcm_edid_get_width (priv->edid);
+	height = gcm_edid_get_height (priv->edid);
 	if (width != 0 && height != 0) {
 		gfloat diag;
 
@@ -165,8 +157,6 @@ out:
 		g_string_append_printf (string, " - %i\"", (guint) ((diag * 0.393700787f) + 0.5f));
 	}
 
-	g_free (name);
-	g_free (vendor);
 	return g_string_free (string, FALSE);
 }
 
@@ -177,10 +167,10 @@ static gchar *
 gcm_device_xrandr_get_id_for_xrandr_device (GcmDeviceXrandr *device_xrandr, GnomeRROutput *output)
 {
 	const gchar *output_name;
-	gchar *name = NULL;
-	gchar *vendor = NULL;
-	gchar *ascii = NULL;
-	gchar *serial = NULL;
+	const gchar *name;
+	const gchar *vendor;
+	const gchar *ascii;
+	const gchar *serial;
 	GString *string;
 	gboolean ret;
 	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
@@ -193,21 +183,17 @@ gcm_device_xrandr_get_id_for_xrandr_device (GcmDeviceXrandr *device_xrandr, Gnom
 	if (!ret)
 		goto out;
 
-	/* find the best option */
-	g_object_get (priv->edid,
-		      "monitor-name", &name,
-		      "vendor-name", &vendor,
-		      "ascii-string", &ascii,
-		      "serial-number", &serial,
-		      NULL);
-
 	/* append data if available */
+	vendor = gcm_edid_get_vendor_name (priv->edid);
 	if (vendor != NULL)
 		g_string_append_printf (string, "_%s", vendor);
+	name = gcm_edid_get_monitor_name (priv->edid);
 	if (name != NULL)
 		g_string_append_printf (string, "_%s", name);
+	ascii = gcm_edid_get_ascii_string (priv->edid);
 	if (ascii != NULL)
 		g_string_append_printf (string, "_%s", ascii);
+	serial = gcm_edid_get_serial_number (priv->edid);
 	if (serial != NULL)
 		g_string_append_printf (string, "_%s", serial);
 out:
@@ -222,11 +208,6 @@ out:
 
 	/* replace unsafe chars */
 	gcm_utils_alphanum_lcase (string->str);
-
-	g_free (name);
-	g_free (vendor);
-	g_free (ascii);
-	g_free (serial);
 	return g_string_free (string, FALSE);
 }
 
@@ -241,9 +222,9 @@ gcm_device_xrandr_set_from_output (GcmDevice *device, GnomeRROutput *output, GEr
 	gboolean ret = TRUE;
 	gboolean lcd_internal;
 	const gchar *output_name;
-	gchar *serial = NULL;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
+	const gchar *serial;
+	const gchar *manufacturer;
+	const gchar *model;
 	const guint8 *data;
 	GcmDeviceXrandrPrivate *priv = GCM_DEVICE_XRANDR(device)->priv;
 
@@ -265,20 +246,15 @@ gcm_device_xrandr_set_from_output (GcmDevice *device, GnomeRROutput *output, GEr
 	egg_debug ("asking to add %s", id);
 
 	/* get data about the display */
-	g_object_get (priv->edid,
-		      "monitor-name", &model,
-		      "vendor-name", &manufacturer,
-		      "serial-number", &serial,
-		      NULL);
+	model = gcm_edid_get_monitor_name (priv->edid);
+	manufacturer = gcm_edid_get_vendor_name (priv->edid);
+	serial = gcm_edid_get_serial_number (priv->edid);
 
 	/* refine data if it's missing */
 	output_name = gnome_rr_output_get_name (output);
 	lcd_internal = gcm_utils_output_is_lcd_internal (output_name);
-	if (lcd_internal && model == NULL) {
-		g_object_get (priv->dmi,
-			      "version", &model,
-			      NULL);
-	}
+	if (lcd_internal && model == NULL)
+		model = gcm_dmi_get_version (priv->dmi);
 
 	/* add new device */
 	title = gcm_device_xrandr_get_output_name (GCM_DEVICE_XRANDR(device), output);
@@ -295,9 +271,6 @@ gcm_device_xrandr_set_from_output (GcmDevice *device, GnomeRROutput *output, GEr
 		      NULL);
 out:
 	g_free (id);
-	g_free (serial);
-	g_free (manufacturer);
-	g_free (model);
 	g_free (title);
 	return ret;
 }

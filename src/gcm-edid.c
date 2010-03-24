@@ -92,6 +92,90 @@ G_DEFINE_TYPE (GcmEdid, gcm_edid, G_TYPE_OBJECT)
 
 
 /**
+ * gcm_edid_get_monitor_name:
+ **/
+const gchar *
+gcm_edid_get_monitor_name (GcmEdid *edid)
+{
+	g_return_val_if_fail (GCM_IS_EDID (edid), NULL);
+	return edid->priv->monitor_name;
+}
+
+/**
+ * gcm_edid_get_vendor_name:
+ **/
+const gchar *
+gcm_edid_get_vendor_name (GcmEdid *edid)
+{
+	GcmEdidPrivate *priv = edid->priv;
+	g_return_val_if_fail (GCM_IS_EDID (edid), NULL);
+
+	if (priv->vendor_name == NULL)
+		priv->vendor_name = gcm_tables_get_pnp_id (priv->tables, priv->pnp_id, NULL);
+	return priv->vendor_name;
+}
+
+/**
+ * gcm_edid_get_serial_number:
+ **/
+const gchar *
+gcm_edid_get_serial_number (GcmEdid *edid)
+{
+	g_return_val_if_fail (GCM_IS_EDID (edid), NULL);
+	return edid->priv->serial_number;
+}
+
+/**
+ * gcm_edid_get_ascii_string:
+ **/
+const gchar *
+gcm_edid_get_ascii_string (GcmEdid *edid)
+{
+	g_return_val_if_fail (GCM_IS_EDID (edid), NULL);
+	return edid->priv->ascii_string;
+}
+
+/**
+ * gcm_edid_get_pnp_id:
+ **/
+const gchar *
+gcm_edid_get_pnp_id (GcmEdid *edid)
+{
+	g_return_val_if_fail (GCM_IS_EDID (edid), NULL);
+	return edid->priv->pnp_id;
+}
+
+/**
+ * gcm_edid_get_width:
+ **/
+guint
+gcm_edid_get_width (GcmEdid *edid)
+{
+	g_return_val_if_fail (GCM_IS_EDID (edid), 0);
+	return edid->priv->width;
+}
+
+/**
+ * gcm_edid_get_height:
+ **/
+guint
+gcm_edid_get_height (GcmEdid *edid)
+{
+	g_return_val_if_fail (GCM_IS_EDID (edid), 0);
+	return edid->priv->height;
+}
+
+/**
+ * gcm_edid_get_gamma:
+ **/
+gfloat
+gcm_edid_get_gamma (GcmEdid *edid)
+{
+	g_return_val_if_fail (GCM_IS_EDID (edid), 0.0f);
+	return edid->priv->gamma;
+}
+
+/**
  * gcm_edid_reset:
  **/
 void
@@ -343,9 +427,7 @@ gcm_edid_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 		g_value_set_string (value, priv->monitor_name);
 		break;
 	case PROP_VENDOR_NAME:
-		if (priv->vendor_name == NULL)
-			priv->vendor_name = gcm_tables_get_pnp_id (priv->tables, priv->pnp_id, NULL);
-		g_value_set_string (value, priv->vendor_name);
+		g_value_set_string (value, gcm_edid_get_vendor_name (edid));
 		break;
 	case PROP_SERIAL_NUMBER:
 		g_value_set_string (value, priv->serial_number);
@@ -531,11 +613,11 @@ void
 gcm_edid_test_parse_edid_file (EggTest *test, GcmEdid *edid, const gchar *datafile, GcmEdidTestData *test_data)
 {
 	gchar *filename;
-	gchar *monitor_name;
-	gchar *vendor_name;
-	gchar *serial_number;
-	gchar *ascii_string;
-	gchar *pnp_id;
+	const gchar *monitor_name;
+	const gchar *vendor_name;
+	const gchar *serial_number;
+	const gchar *ascii_string;
+	const gchar *pnp_id;
 	gchar *data;
 	guint width;
 	guint height;
@@ -560,19 +642,9 @@ gcm_edid_test_parse_edid_file (EggTest *test, GcmEdid *edid, const gchar *datafi
 	else
 		egg_test_failed (test, "failed to parse: %s", error->message);
 
-	g_object_get (edid,
-		      "monitor-name", &monitor_name,
-		      "vendor-name", &vendor_name,
-		      "serial-number", &serial_number,
-		      "ascii-string", &ascii_string,
-		      "pnp-id", &pnp_id,
-		      "width", &width,
-		      "height", &height,
-		      "gamma", &gamma,
-		      NULL);
-
 	/************************************************************/
 	egg_test_title (test, "check monitor name for %s", datafile);
+	monitor_name = gcm_edid_get_monitor_name (edid);
 	if (g_strcmp0 (monitor_name, test_data->monitor_name) == 0)
 		egg_test_success (test, NULL);
 	else
@@ -580,6 +652,7 @@ gcm_edid_test_parse_edid_file (EggTest *test, GcmEdid *edid, const gchar *datafi
 
 	/************************************************************/
 	egg_test_title (test, "check vendor name for %s", datafile);
+	vendor_name = gcm_edid_get_vendor_name (edid);
 	if (g_strcmp0 (vendor_name, test_data->vendor_name) == 0)
 		egg_test_success (test, NULL);
 	else
@@ -587,6 +660,7 @@ gcm_edid_test_parse_edid_file (EggTest *test, GcmEdid *edid, const gchar *datafi
 
 	/************************************************************/
 	egg_test_title (test, "check serial number for %s", datafile);
+	serial_number = gcm_edid_get_serial_number (edid);
 	if (g_strcmp0 (serial_number, test_data->serial_number) == 0)
 		egg_test_success (test, NULL);
 	else
@@ -594,6 +668,7 @@ gcm_edid_test_parse_edid_file (EggTest *test, GcmEdid *edid, const gchar *datafi
 
 	/************************************************************/
 	egg_test_title (test, "check ascii string for %s", datafile);
+	ascii_string = gcm_edid_get_ascii_string (edid);
 	if (g_strcmp0 (ascii_string, test_data->ascii_string) == 0)
 		egg_test_success (test, NULL);
 	else
@@ -601,6 +676,7 @@ gcm_edid_test_parse_edid_file (EggTest *test, GcmEdid *edid, const gchar *datafi
 
 	/************************************************************/
 	egg_test_title (test, "check pnp id for %s", datafile);
+	pnp_id = gcm_edid_get_pnp_id (edid);
 	if (g_strcmp0 (pnp_id, test_data->pnp_id) == 0)
 		egg_test_success (test, NULL);
 	else
@@ -608,6 +684,7 @@ gcm_edid_test_parse_edid_file (EggTest *test, GcmEdid *edid, const gchar *datafi
 
 	/************************************************************/
 	egg_test_title (test, "check height for %s", datafile);
+	height = gcm_edid_get_height (edid);
 	if (height == test_data->height)
 		egg_test_success (test, NULL);
 	else
@@ -615,6 +692,7 @@ gcm_edid_test_parse_edid_file (EggTest *test, GcmEdid *edid, const gchar *datafi
 
 	/************************************************************/
 	egg_test_title (test, "check width for %s", datafile);
+	width = gcm_edid_get_width (edid);
 	if (width == test_data->width)
 		egg_test_success (test, NULL);
 	else
@@ -622,17 +700,12 @@ gcm_edid_test_parse_edid_file (EggTest *test, GcmEdid *edid, const gchar *datafi
 
 	/************************************************************/
 	egg_test_title (test, "check gamma for %s", datafile);
+	gamma = gcm_edid_get_gamma (edid);
 	if (gamma > (test_data->gamma - 0.01) && gamma < (test_data->gamma + 0.01))
 		egg_test_success (test, NULL);
 	else
 		egg_test_failed (test, "invalid value: %f, expecting: %f", gamma, test_data->gamma);
 
-	g_free (monitor_name);
-	g_free (vendor_name);
-	g_free (serial_number);
-	g_free (ascii_string);
-	g_free (pnp_id);
-	g_free (data);
 	g_free (filename);
 }
 

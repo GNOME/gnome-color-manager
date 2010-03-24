@@ -60,6 +60,14 @@ void		 gcm_edid_reset				(GcmEdid		*edid);
 gboolean	 gcm_edid_parse				(GcmEdid		*edid,
 							 const guint8		*data,
 							 GError			**error);
+const gchar	*gcm_edid_get_monitor_name		(GcmEdid		*edid);
+const gchar	*gcm_edid_get_vendor_name		(GcmEdid		*edid);
+const gchar	*gcm_edid_get_serial_number		(GcmEdid		*edid);
+const gchar	*gcm_edid_get_ascii_string		(GcmEdid		*edid);
+const gchar	*gcm_edid_get_pnp_id			(GcmEdid		*edid);
+guint		 gcm_edid_get_width			(GcmEdid		*edid);
+guint		 gcm_edid_get_height			(GcmEdid		*edid);
+gfloat		 gcm_edid_get_gamma			(GcmEdid		*edid);
 
 G_END_DECLS
 

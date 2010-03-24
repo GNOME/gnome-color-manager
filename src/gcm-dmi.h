@@ -56,6 +56,9 @@ struct _GcmDmiClass
 
 GType		 gcm_dmi_get_type		  	(void);
 GcmDmi		*gcm_dmi_new				(void);
+const gchar	*gcm_dmi_get_name			(GcmDmi		*dmi);
+const gchar	*gcm_dmi_get_version			(GcmDmi		*dmi);
+const gchar	*gcm_dmi_get_vendor			(GcmDmi		*dmi);
 
 G_END_DECLS
 

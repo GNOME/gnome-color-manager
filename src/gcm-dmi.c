@@ -100,6 +100,59 @@ gcm_dmi_get_data (const gchar *filename)
 	return data;
 }
 
+
+/**
+ * gcm_dmi_get_name:
+ **/
+const gchar *
+gcm_dmi_get_name (GcmDmi *dmi)
+{
+	GcmDmiPrivate *priv = dmi->priv;
+	g_return_val_if_fail (GCM_IS_DMI (dmi), NULL);
+
+	if (priv->name == NULL)
+		priv->name = gcm_dmi_get_data ("/sys/class/dmi/id/product_name");
+	if (priv->name == NULL)
+		priv->name = gcm_dmi_get_data ("/sys/class/dmi/id/board_name");
+	return priv->name;
+}
+
+/**
+ * gcm_dmi_get_version:
+ **/
+const gchar *
+gcm_dmi_get_version (GcmDmi *dmi)
+{
+	GcmDmiPrivate *priv = dmi->priv;
+	g_return_val_if_fail (GCM_IS_DMI (dmi), NULL);
+
+	if (priv->version == NULL)
+		priv->version = gcm_dmi_get_data ("/sys/class/dmi/id/product_version");
+	if (priv->version == NULL)
+		priv->version = gcm_dmi_get_data ("/sys/class/dmi/id/chassis_version");
+	if (priv->version == NULL)
+		priv->version = gcm_dmi_get_data ("/sys/class/dmi/id/board_version");
+	return priv->version;
+}
+
+/**
+ * gcm_dmi_get_vendor:
+ **/
+const gchar *
+gcm_dmi_get_vendor (GcmDmi *dmi)
+{
+	GcmDmiPrivate *priv = dmi->priv;
+	g_return_val_if_fail (GCM_IS_DMI (dmi), NULL);
+
+	if (priv->vendor == NULL)
+		priv->vendor = gcm_dmi_get_data ("/sys/class/dmi/id/sys_vendor");
+	if (priv->vendor == NULL)
+		priv->vendor = gcm_dmi_get_data ("/sys/class/dmi/id/chassis_vendor");
+	if (priv->vendor == NULL)
+		priv->vendor = gcm_dmi_get_data ("/sys/class/dmi/id/board_vendor");
+	return priv->vendor;
+}
+
 /**
  * gcm_dmi_get_property:
  **/
@@ -107,33 +160,16 @@ static void
 gcm_dmi_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
 	GcmDmi *dmi = GCM_DMI (object);
-	GcmDmiPrivate *priv = dmi->priv;
 
 	switch (prop_id) {
 	case PROP_NAME:
-		if (priv->name == NULL)
-			priv->name = gcm_dmi_get_data ("/sys/class/dmi/id/product_name");
-		if (priv->name == NULL)
-			priv->name = gcm_dmi_get_data ("/sys/class/dmi/id/board_name");
-		g_value_set_string (value, priv->name);
+		g_value_set_string (value, gcm_dmi_get_name (dmi));
 		break;
 	case PROP_VERSION:
-		if (priv->version == NULL)
-			priv->version = gcm_dmi_get_data ("/sys/class/dmi/id/product_version");
-		if (priv->version == NULL)
-			priv->version = gcm_dmi_get_data ("/sys/class/dmi/id/chassis_version");
-		if (priv->version == NULL)
-			priv->version = gcm_dmi_get_data ("/sys/class/dmi/id/board_version");
-		g_value_set_string (value, priv->version);
+		g_value_set_string (value, gcm_dmi_get_version (dmi));
 		break;
 	case PROP_VENDOR:
-		if (priv->vendor == NULL)
-			priv->vendor = gcm_dmi_get_data ("/sys/class/dmi/id/sys_vendor");
-		if (priv->vendor == NULL)
-			priv->vendor = gcm_dmi_get_data ("/sys/class/dmi/id/chassis_vendor");
-		if (priv->vendor == NULL)
-			priv->vendor = gcm_dmi_get_data ("/sys/class/dmi/id/board_vendor");
-		g_value_set_string (value, priv->vendor);
+		g_value_set_string (value, gcm_dmi_get_vendor (dmi));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -248,9 +284,9 @@ void
 gcm_dmi_test (EggTest *test)
 {
 	GcmDmi *dmi;
-	gchar *name = NULL;
-	gchar *version = NULL;
-	gchar *vendor = NULL;
+	const gchar *name;
+	const gchar *version;
+	const gchar *vendor;
 
 	if (!egg_test_start (test, "GcmDmi"))
 		return;
@@ -260,28 +296,20 @@ gcm_dmi_test (EggTest *test)
 	dmi = gcm_dmi_new ();
 	egg_test_assert (test, dmi != NULL);
 
-	/* get data */
-	g_object_get (dmi,
-		      "name", &name,
-		      "version", &version,
-		      "vendor", &vendor,
-		      NULL);
-
 	/************************************************************/
 	egg_test_title (test, "got name: %s", name);
+	name = gcm_dmi_get_name (dmi);
 	egg_test_assert (test, name != NULL);
 
 	/************************************************************/
 	egg_test_title (test, "got version: %s", version);
+	version = gcm_dmi_get_version (dmi);
 	egg_test_assert (test, version != NULL);
 
 	/************************************************************/
 	egg_test_title (test, "got vendor: %s", vendor);
+	vendor = gcm_dmi_get_vendor (dmi);
 	egg_test_assert (test, vendor != NULL);
-
-	g_free (name);
-	g_free (version);
-	g_free (vendor);
 
 	g_object_unref (dmi);
 
