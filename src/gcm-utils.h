@@ -63,14 +63,14 @@ gboolean	 gcm_utils_output_is_lcd		(const gchar		*output_name);
 void		 gcm_utils_alphanum_lcase		(gchar			*string);
 void		 gcm_utils_ensure_sensible_filename	(gchar			*string);
 gchar		*gcm_utils_get_default_config_location	(void);
-GcmProfileTypeEnum  gcm_utils_device_type_to_profile_type (GcmDeviceTypeEnum	 type);
+GcmProfileKind	 gcm_utils_device_kind_to_profile_kind	(GcmDeviceKind		 kind);
 gchar		*gcm_utils_format_date_time		(const struct tm	*created);
 gboolean	 gcm_utils_install_package		(const gchar		*package_name,
 							 GtkWindow		*window);
 void		 gcm_utils_ensure_printable		(gchar			*text);
 gboolean	 gcm_utils_is_icc_profile		(GFile			*file);
 gchar		*gcm_utils_linkify			(const gchar		*text);
-const gchar	*gcm_intent_enum_to_localized_text	(GcmIntentEnum	 intent);
+const gchar	*gcm_intent_to_localized_text	(GcmIntent	 intent);
 
 #endif /* __GCM_UTILS_H */
 

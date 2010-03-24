@@ -478,28 +478,28 @@ gcm_utils_get_default_config_location (void)
 }
 
 /**
- * gcm_utils_device_type_to_profile_type:
+ * gcm_utils_device_kind_to_profile_kind:
  **/
-GcmProfileTypeEnum
-gcm_utils_device_type_to_profile_type (GcmDeviceTypeEnum type)
+GcmProfileKind
+gcm_utils_device_kind_to_profile_kind (GcmDeviceKind kind)
 {
-	GcmProfileTypeEnum profile_type;
-	switch (type) {
-	case GCM_DEVICE_TYPE_ENUM_DISPLAY:
-		profile_type = GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE;
+	GcmProfileKind profile_kind;
+	switch (kind) {
+	case GCM_DEVICE_KIND_DISPLAY:
+		profile_kind = GCM_PROFILE_KIND_DISPLAY_DEVICE;
 		break;
-	case GCM_DEVICE_TYPE_ENUM_CAMERA:
-	case GCM_DEVICE_TYPE_ENUM_SCANNER:
-		profile_type = GCM_PROFILE_TYPE_ENUM_INPUT_DEVICE;
+	case GCM_DEVICE_KIND_CAMERA:
+	case GCM_DEVICE_KIND_SCANNER:
+		profile_kind = GCM_PROFILE_KIND_INPUT_DEVICE;
 		break;
-	case GCM_DEVICE_TYPE_ENUM_PRINTER:
-		profile_type = GCM_PROFILE_TYPE_ENUM_OUTPUT_DEVICE;
+	case GCM_DEVICE_KIND_PRINTER:
+		profile_kind = GCM_PROFILE_KIND_OUTPUT_DEVICE;
 		break;
 	default:
-		egg_warning ("unknown type: %i", type);
-		profile_type = GCM_PROFILE_TYPE_ENUM_UNKNOWN;
+		egg_warning ("unknown kind: %i", kind);
+		profile_kind = GCM_PROFILE_KIND_UNKNOWN;
 	}
-	return profile_type;
+	return profile_kind;
 }
 
 /**
@@ -517,24 +517,24 @@ gcm_utils_format_date_time (const struct tm *created)
 }
 
 /**
- * gcm_intent_enum_to_localized_text:
+ * gcm_intent_to_localized_text:
  **/
 const gchar *
-gcm_intent_enum_to_localized_text (GcmIntentEnum intent)
+gcm_intent_to_localized_text (GcmIntent intent)
 {
-	if (intent == GCM_INTENT_ENUM_PERCEPTUAL) {
+	if (intent == GCM_INTENT_PERCEPTUAL) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Perceptual");
 	}
-	if (intent == GCM_INTENT_ENUM_RELATIVE_COLORMETRIC) {
+	if (intent == GCM_INTENT_RELATIVE_COLORMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Relative colormetric");
 	}
-	if (intent == GCM_INTENT_ENUM_SATURATION) {
+	if (intent == GCM_INTENT_SATURATION) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Saturation");
 	}
-	if (intent == GCM_INTENT_ENUM_ABSOLUTE_COLORMETRIC) {
+	if (intent == GCM_INTENT_ABSOLUTE_COLORMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Absolute colormetric");
 	}
@@ -555,8 +555,8 @@ gcm_utils_test (EggTest *test)
 	GPtrArray *array;
 	gchar *text;
 	gchar *filename;
-	GcmProfileTypeEnum profile_type;
-	GcmDeviceTypeEnum device_type;
+	GcmProfileKind profile_kind;
+	GcmDeviceKind device_kind;
 	GFile *file;
 	GFile *dest;
 
@@ -656,14 +656,14 @@ gcm_utils_test (EggTest *test)
 	g_free (filename);
 
 	/************************************************************/
-	egg_test_title (test, "convert valid device type to profile type");
-	profile_type = gcm_utils_device_type_to_profile_type (GCM_DEVICE_TYPE_ENUM_SCANNER);
-	egg_test_assert (test, (profile_type == GCM_PROFILE_TYPE_ENUM_INPUT_DEVICE));
+	egg_test_title (test, "convert valid device kind to profile kind");
+	profile_kind = gcm_utils_device_kind_to_profile_kind (GCM_DEVICE_KIND_SCANNER);
+	egg_test_assert (test, (profile_kind == GCM_PROFILE_KIND_INPUT_DEVICE));
 
 	/************************************************************/
-	egg_test_title (test, "convert invalid device type to profile type");
-	profile_type = gcm_utils_device_type_to_profile_type (GCM_DEVICE_TYPE_ENUM_UNKNOWN);
-	egg_test_assert (test, (profile_type == GCM_PROFILE_TYPE_ENUM_UNKNOWN));
+	egg_test_title (test, "convert invalid device kind to profile kind");
+	profile_kind = gcm_utils_device_kind_to_profile_kind (GCM_DEVICE_KIND_UNKNOWN);
+	egg_test_assert (test, (profile_kind == GCM_PROFILE_KIND_UNKNOWN));
 
 	egg_test_end (test);
 }

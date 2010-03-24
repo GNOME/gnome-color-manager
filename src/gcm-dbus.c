@@ -207,7 +207,7 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *device_id
 			device_id_tmp = gcm_device_get_id (device);
 		}
 
-		/* wrong type of device */
+		/* wrong kind of device */
 		if (device_id_tmp == NULL)
 			continue;
 
@@ -245,23 +245,23 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *device_id
 }
 
 /**
- * gcm_dbus_get_profiles_for_type_internal:
+ * gcm_dbus_get_profiles_for_kind_internal:
  **/
 static GPtrArray *
-gcm_dbus_get_profiles_for_type_internal (GcmDbus *dbus, GcmDeviceTypeEnum type)
+gcm_dbus_get_profiles_for_kind_internal (GcmDbus *dbus, GcmDeviceKind kind)
 {
 	guint i;
 	GcmProfile *profile;
-	GcmProfileTypeEnum profile_type;
-	GcmProfileTypeEnum type_tmp;
+	GcmProfileKind profile_kind;
+	GcmProfileKind kind_tmp;
 	GPtrArray *array;
 	GPtrArray *profile_array;
 
 	/* create a temp array */
 	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 
-	/* get the correct profile type for the device type */
-	profile_type = gcm_utils_device_type_to_profile_type (type);
+	/* get the correct profile kind for the device kind */
+	profile_kind = gcm_utils_device_kind_to_profile_kind (kind);
 
 	/* get list */
 	profile_array = gcm_profile_store_get_array (dbus->priv->profile_store);
@@ -270,12 +270,12 @@ gcm_dbus_get_profiles_for_type_internal (GcmDbus *dbus, GcmDeviceTypeEnum type)
 
 		/* get the native path of this device */
 		g_object_get (profile,
-			      "type", &type_tmp,
+			      "kind", &kind_tmp,
 			      NULL);
 
 		/* compare what we have against what we were given */
-		egg_debug ("comparing %i with %i", type_tmp, profile_type);
-		if (type_tmp == profile_type)
+		egg_debug ("comparing %i with %i", kind_tmp, profile_kind);
+		if (kind_tmp == profile_kind)
 			g_ptr_array_add (array, g_object_ref (profile));
 	}
 
@@ -369,7 +369,7 @@ gcm_dbus_get_profiles_for_device (GcmDbus *dbus, const gchar *device_id, const g
  * gcm_dbus_get_profiles_for_type:
  **/
 void
-gcm_dbus_get_profiles_for_type (GcmDbus *dbus, const gchar *type, const gchar *options, DBusGMethodInvocation *context)
+gcm_dbus_get_profiles_for_type (GcmDbus *dbus, const gchar *kind, const gchar *options, DBusGMethodInvocation *context)
 {
 	GPtrArray *array_profiles;
 	GcmProfile *profile;
@@ -378,13 +378,13 @@ gcm_dbus_get_profiles_for_type (GcmDbus *dbus, const gchar *type, const gchar *o
 	guint i;
 	GPtrArray *array_structs;
 	GValue *value;
-	GcmDeviceTypeEnum type_enum;
+	GcmDeviceKind kind_enum;
 
-	egg_debug ("getting profiles for %s", type);
+	egg_debug ("getting profiles for %s", kind);
 
 	/* get array of profile filenames */
-	type_enum = gcm_device_type_enum_from_string (type);
-	array_profiles = gcm_dbus_get_profiles_for_type_internal (dbus, type_enum);
+	kind_enum = gcm_device_kind_from_string (kind);
+	array_profiles = gcm_dbus_get_profiles_for_kind_internal (dbus, kind_enum);
 
 	/* copy data to dbus struct */
 	array_structs = g_ptr_array_sized_new (array_profiles->len);

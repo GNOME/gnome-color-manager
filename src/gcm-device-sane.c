@@ -188,8 +188,8 @@ gcm_device_sane_set_from_device (GcmDevice *device, const SANE_Device *sane_devi
 
 	/* set properties on device */
 	g_object_set (device,
-		      "type", GCM_DEVICE_TYPE_ENUM_SCANNER,
-		      "colorspace", GCM_COLORSPACE_ENUM_RGB,
+		      "kind", GCM_DEVICE_KIND_SCANNER,
+		      "colorspace", GCM_COLORSPACE_RGB,
 		      "id", id,
 		      "connected", TRUE,
 //		      "serial", serial,

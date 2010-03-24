@@ -26,117 +26,117 @@
 #include "gcm-enum.h"
 
 /**
- * gcm_intent_enum_to_string:
+ * gcm_intent_to_string:
  **/
 const gchar *
-gcm_intent_enum_to_string (GcmIntentEnum intent)
+gcm_intent_to_string (GcmIntent intent)
 {
-	if (intent == GCM_INTENT_ENUM_PERCEPTUAL)
+	if (intent == GCM_INTENT_PERCEPTUAL)
 		return "perceptual";
-	if (intent == GCM_INTENT_ENUM_RELATIVE_COLORMETRIC)
+	if (intent == GCM_INTENT_RELATIVE_COLORMETRIC)
 		return "relative-colormetric";
-	if (intent == GCM_INTENT_ENUM_SATURATION)
+	if (intent == GCM_INTENT_SATURATION)
 		return "saturation";
-	if (intent == GCM_INTENT_ENUM_ABSOLUTE_COLORMETRIC)
+	if (intent == GCM_INTENT_ABSOLUTE_COLORMETRIC)
 		return "absolute-colormetric";
 	return "unknown";
 }
 
 /**
- * gcm_intent_enum_from_string:
+ * gcm_intent_from_string:
  **/
-GcmIntentEnum
-gcm_intent_enum_from_string (const gchar *intent)
+GcmIntent
+gcm_intent_from_string (const gchar *intent)
 {
 	if (g_strcmp0 (intent, "perceptual") == 0)
-		return GCM_INTENT_ENUM_PERCEPTUAL;
+		return GCM_INTENT_PERCEPTUAL;
 	if (g_strcmp0 (intent, "relative-colormetric") == 0)
-		return GCM_INTENT_ENUM_RELATIVE_COLORMETRIC;
+		return GCM_INTENT_RELATIVE_COLORMETRIC;
 	if (g_strcmp0 (intent, "saturation") == 0)
-		return GCM_INTENT_ENUM_SATURATION;
+		return GCM_INTENT_SATURATION;
 	if (g_strcmp0 (intent, "absolute-colormetric") == 0)
-		return GCM_INTENT_ENUM_ABSOLUTE_COLORMETRIC;
-	return GCM_INTENT_ENUM_UNKNOWN;
+		return GCM_INTENT_ABSOLUTE_COLORMETRIC;
+	return GCM_INTENT_UNKNOWN;
 }
 
 /**
- * gcm_profile_type_enum_to_string:
+ * gcm_profile_kind_to_string:
  **/
 const gchar *
-gcm_profile_type_enum_to_string (GcmProfileTypeEnum type)
+gcm_profile_kind_to_string (GcmProfileKind kind)
 {
-	if (type == GCM_PROFILE_TYPE_ENUM_INPUT_DEVICE)
+	if (kind == GCM_PROFILE_KIND_INPUT_DEVICE)
 		return "input-device";
-	if (type == GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE)
+	if (kind == GCM_PROFILE_KIND_DISPLAY_DEVICE)
 		return "display-device";
-	if (type == GCM_PROFILE_TYPE_ENUM_OUTPUT_DEVICE)
+	if (kind == GCM_PROFILE_KIND_OUTPUT_DEVICE)
 		return "output-device";
-	if (type == GCM_PROFILE_TYPE_ENUM_DEVICELINK)
+	if (kind == GCM_PROFILE_KIND_DEVICELINK)
 		return "devicelink";
-	if (type == GCM_PROFILE_TYPE_ENUM_COLORSPACE_CONVERSION)
+	if (kind == GCM_PROFILE_KIND_COLORSPACE_CONVERSION)
 		return "colorspace-conversion";
-	if (type == GCM_PROFILE_TYPE_ENUM_ABSTRACT)
+	if (kind == GCM_PROFILE_KIND_ABSTRACT)
 		return "abstract";
-	if (type == GCM_PROFILE_TYPE_ENUM_NAMED_COLOR)
+	if (kind == GCM_PROFILE_KIND_NAMED_COLOR)
 		return "named-color";
 	return "unknown";
 }
 
 /**
- * gcm_colorspace_enum_to_string:
+ * gcm_colorspace_to_string:
  **/
 const gchar *
-gcm_colorspace_enum_to_string (GcmColorspaceEnum type)
+gcm_colorspace_to_string (GcmColorspace colorspace)
 {
-	if (type == GCM_COLORSPACE_ENUM_XYZ)
+	if (colorspace == GCM_COLORSPACE_XYZ)
 		return "xyz";
-	if (type == GCM_COLORSPACE_ENUM_LAB)
+	if (colorspace == GCM_COLORSPACE_LAB)
 		return "lab";
-	if (type == GCM_COLORSPACE_ENUM_LUV)
+	if (colorspace == GCM_COLORSPACE_LUV)
 		return "luv";
-	if (type == GCM_COLORSPACE_ENUM_YCBCR)
+	if (colorspace == GCM_COLORSPACE_YCBCR)
 		return "ycbcr";
-	if (type == GCM_COLORSPACE_ENUM_YXY)
+	if (colorspace == GCM_COLORSPACE_YXY)
 		return "yxy";
-	if (type == GCM_COLORSPACE_ENUM_RGB)
+	if (colorspace == GCM_COLORSPACE_RGB)
 		return "rgb";
-	if (type == GCM_COLORSPACE_ENUM_GRAY)
+	if (colorspace == GCM_COLORSPACE_GRAY)
 		return "gray";
-	if (type == GCM_COLORSPACE_ENUM_HSV)
+	if (colorspace == GCM_COLORSPACE_HSV)
 		return "hsv";
-	if (type == GCM_COLORSPACE_ENUM_CMYK)
+	if (colorspace == GCM_COLORSPACE_CMYK)
 		return "cmyk";
-	if (type == GCM_COLORSPACE_ENUM_CMY)
+	if (colorspace == GCM_COLORSPACE_CMY)
 		return "cmy";
 	return "unknown";
 }
 
 /**
- * gcm_colorspace_enum_from_string:
+ * gcm_colorspace_from_string:
  **/
-GcmColorspaceEnum
-gcm_colorspace_enum_from_string (const gchar *colorspace)
+GcmColorspace
+gcm_colorspace_from_string (const gchar *colorspace)
 {
 	if (g_strcmp0 (colorspace, "xyz") == 0)
-		return GCM_COLORSPACE_ENUM_XYZ;
+		return GCM_COLORSPACE_XYZ;
 	if (g_strcmp0 (colorspace, "lab") == 0)
-		return GCM_COLORSPACE_ENUM_LAB;
+		return GCM_COLORSPACE_LAB;
 	if (g_strcmp0 (colorspace, "luv") == 0)
-		return GCM_COLORSPACE_ENUM_LUV;
+		return GCM_COLORSPACE_LUV;
 	if (g_strcmp0 (colorspace, "ycbcr") == 0)
-		return GCM_COLORSPACE_ENUM_YCBCR;
+		return GCM_COLORSPACE_YCBCR;
 	if (g_strcmp0 (colorspace, "yxy") == 0)
-		return GCM_COLORSPACE_ENUM_YXY;
+		return GCM_COLORSPACE_YXY;
 	if (g_strcmp0 (colorspace, "rgb") == 0)
-		return GCM_COLORSPACE_ENUM_RGB;
+		return GCM_COLORSPACE_RGB;
 	if (g_strcmp0 (colorspace, "gray") == 0)
-		return GCM_COLORSPACE_ENUM_GRAY;
+		return GCM_COLORSPACE_GRAY;
 	if (g_strcmp0 (colorspace, "hsv") == 0)
-		return GCM_COLORSPACE_ENUM_HSV;
+		return GCM_COLORSPACE_HSV;
 	if (g_strcmp0 (colorspace, "cmyk") == 0)
-		return GCM_COLORSPACE_ENUM_CMYK;
+		return GCM_COLORSPACE_CMYK;
 	if (g_strcmp0 (colorspace, "cmy") == 0)
-		return GCM_COLORSPACE_ENUM_CMY;
-	return GCM_COLORSPACE_ENUM_UNKNOWN;
+		return GCM_COLORSPACE_CMY;
+	return GCM_COLORSPACE_UNKNOWN;
 }
 

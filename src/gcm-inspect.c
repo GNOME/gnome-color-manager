@@ -506,7 +506,7 @@ main (int argc, char **argv)
 	guint xid = 0;
 	gchar *device_id = NULL;
 	gchar *type = NULL;
-	GcmDeviceTypeEnum type_enum;
+	GcmDeviceKind kind_enum;
 	guint retval = 0;
 	GOptionContext *context;
 
@@ -552,8 +552,8 @@ main (int argc, char **argv)
 	if (xid != 0)
 		gcm_inspect_show_profile_for_window (xid);
 	if (type != NULL) {
-		type_enum = gcm_device_type_enum_from_string (type);
-		if (type_enum == GCM_DEVICE_TYPE_ENUM_UNKNOWN) {
+		kind_enum = gcm_device_kind_from_string (type);
+		if (kind_enum == GCM_DEVICE_KIND_UNKNOWN) {
 			/* TRANSLATORS: this is when the user does --type=mickeymouse */
 			g_print ("%s\n", _("Device type not recognized"));
 		} else {

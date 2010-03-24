@@ -70,7 +70,7 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
 	gchar *profile_filename = NULL;
-	GcmColorspaceEnum colorspace = GCM_COLORSPACE_ENUM_UNKNOWN;
+	GcmColorspace colorspace = GCM_COLORSPACE_UNKNOWN;
 
 	egg_debug ("name: %s", dest.name);
 	egg_debug ("instance: %s", dest.instance);
@@ -128,9 +128,9 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 			device_id = g_strdup (value);
 		} else if (g_strcmp0 (keyword, "DefaultColorSpace") == 0) {
 			if (g_strcmp0 (value, "RGB") == 0)
-				colorspace = GCM_COLORSPACE_ENUM_RGB;
+				colorspace = GCM_COLORSPACE_RGB;
 			else if (g_strcmp0 (value, "CMYK") == 0)
-				colorspace = GCM_COLORSPACE_ENUM_CMYK;
+				colorspace = GCM_COLORSPACE_CMYK;
 			else
 				egg_warning ("colorspace not recognized: %s", value);
 		} else if (g_strcmp0 (keyword, "cupsICCProfile") == 0) {
@@ -147,7 +147,7 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 	gcm_utils_alphanum_lcase (id);
 
 	g_object_set (device,
-		      "type", GCM_DEVICE_TYPE_ENUM_PRINTER,
+		      "kind", GCM_DEVICE_KIND_PRINTER,
 		      "colorspace", colorspace,
 		      "id", id,
 // FIXME: find out from CUPS if the printer is connected

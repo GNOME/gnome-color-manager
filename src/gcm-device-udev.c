@@ -79,13 +79,13 @@ gcm_device_udev_set_from_device (GcmDevice *device, GUdevDevice *udev_device, GE
 	gchar *serial = NULL;
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
-	GcmDeviceTypeEnum type;
+	GcmDeviceKind kind;
 	const gchar *value;
 	const gchar *sysfs_path;
 
 	/* matches our udev rules, which we can change without recompiling */
 	value = g_udev_device_get_property (udev_device, "GCM_TYPE");
-	type = gcm_device_type_enum_from_string (value);
+	kind = gcm_device_kind_from_string (value);
 
 	/* add new device */
 	id = gcm_device_udev_get_id_for_udev_device (udev_device);
@@ -119,8 +119,8 @@ gcm_device_udev_set_from_device (GcmDevice *device, GUdevDevice *udev_device, GE
 	}
 
 	g_object_set (device,
-		      "type", type,
-		      "colorspace", GCM_COLORSPACE_ENUM_RGB,
+		      "kind", kind,
+		      "colorspace", GCM_COLORSPACE_RGB,
 		      "id", id,
 		      "connected", TRUE,
 		      "serial", serial,

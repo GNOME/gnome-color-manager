@@ -68,9 +68,9 @@ gboolean		 gcm_device_apply			(GcmDevice	*device,
 								 GError		**error);
 
 /* accessors */
-GcmDeviceTypeEnum	 gcm_device_get_kind			(GcmDevice	*device);
+GcmDeviceKind	 gcm_device_get_kind			(GcmDevice	*device);
 void			 gcm_device_set_kind			(GcmDevice	*device,
-								 GcmDeviceTypeEnum kind);
+								 GcmDeviceKind kind);
 gboolean		 gcm_device_get_connected		(GcmDevice	*device);
 void			 gcm_device_set_connected		(GcmDevice	*device,
 								 gboolean	 connected);
@@ -89,9 +89,9 @@ void			 gcm_device_set_brightness		(GcmDevice	*device,
 gfloat			 gcm_device_get_contrast		(GcmDevice	*device);
 void			 gcm_device_set_contrast		(GcmDevice	*device,
 								 gfloat		 contrast);
-GcmColorspaceEnum	 gcm_device_get_colorspace		(GcmDevice	*device);
+GcmColorspace	 gcm_device_get_colorspace		(GcmDevice	*device);
 void			 gcm_device_set_colorspace		(GcmDevice	*device,
-								 GcmColorspaceEnum colorspace);
+								 GcmColorspace colorspace);
 const gchar		*gcm_device_get_id			(GcmDevice	*device);
 void			 gcm_device_set_id			(GcmDevice	*device,
 								 const gchar 	*id);

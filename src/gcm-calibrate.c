@@ -56,12 +56,12 @@ struct _GcmCalibratePrivate
 {
 	GcmColorimeter			*colorimeter;
 	GcmCalibrateReferenceKind	 reference_kind;
-	GcmCalibrateDeviceKind		 device_kind;
+	GcmCalibrateDeviceKind		 calibrate_device_kind;
 	GcmCalibratePrintKind		 print_kind;
 	GcmCalibratePrecision		 precision;
 	GcmColorimeterKind		 colorimeter_kind;
 	GcmCalibrateDialog		*calibrate_dialog;
-	GcmDeviceTypeEnum		 device_type;
+	GcmDeviceKind			 device_kind;
 	gchar				*output_name;
 	gchar				*filename_source;
 	gchar				*filename_reference;
@@ -85,9 +85,9 @@ enum {
 	PROP_DEVICE,
 	PROP_MANUFACTURER,
 	PROP_REFERENCE_KIND,
-	PROP_DEVICE_KIND,
+	PROP_CALIBRATE_DEVICE_KIND,
 	PROP_PRINT_KIND,
-	PROP_DEVICE_TYPE,
+	PROP_DEVICE_KIND,
 	PROP_COLORIMETER_KIND,
 	PROP_OUTPUT_NAME,
 	PROP_FILENAME_SOURCE,
@@ -254,10 +254,10 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 	const gchar *model = NULL;
 	const gchar *description = NULL;
 	const gchar *serial = NULL;
-	GcmDeviceTypeEnum type;
+	GcmDeviceKind kind;
 
 	/* get the device */
-	type = gcm_device_get_kind (device);
+	kind = gcm_device_get_kind (device);
 	serial = gcm_device_get_serial (device);
 	model = gcm_device_get_model (device);
 	description = gcm_device_get_title (device);
@@ -265,7 +265,7 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 
 	/* set the proper values */
 	g_object_set (calibrate,
-		      "device-type", type,
+		      "device-kind", kind,
 		      "model", model,
 		      "description", description,
 		      "manufacturer", manufacturer,
@@ -276,7 +276,7 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 	gcm_calibrate_set_basename (calibrate);
 
 	/* display specific properties */
-	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+	if (kind == GCM_DEVICE_KIND_DISPLAY) {
 		native_device = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
 		if (native_device == NULL) {
 			g_set_error (error,
@@ -344,10 +344,10 @@ out:
 }
 
 /**
- * gcm_calibrate_get_display_type:
+ * gcm_calibrate_get_display_kind:
  **/
 static gboolean
-gcm_calibrate_get_display_type (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
+gcm_calibrate_get_display_kind (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 {
 	gboolean ret = TRUE;
 	const gchar *title;
@@ -378,10 +378,10 @@ gcm_calibrate_get_display_type (GcmCalibrate *calibrate, GtkWindow *window, GErr
 	}
 
 	/* copy */
-	g_object_get (priv->calibrate_dialog, "device-kind", &priv->device_kind, NULL);
+	g_object_get (priv->calibrate_dialog, "device-kind", &priv->calibrate_device_kind, NULL);
 
 	/* can this device support projectors? */
-	if (priv->device_kind == GCM_CALIBRATE_DEVICE_KIND_PROJECTOR &&
+	if (priv->calibrate_device_kind == GCM_CALIBRATE_DEVICE_KIND_PROJECTOR &&
 	    !gcm_colorimeter_supports_projector (priv->colorimeter)) {
 		/* TRANSLATORS: title, the hardware calibration device does not support projectors */
 		title = _("Could not calibrate and profile using this color measuring instrument");
@@ -460,13 +460,13 @@ gcm_calibrate_get_precision (GcmCalibrate *calibrate, GError **error)
 	g_string_append_printf (string, "\n%s", _("High precision profiles provide higher accuracy in color matching. Correspondingly, low precision profiles result in lower quality."));
 
 	/* printer specific options */
-	if (priv->device_type == GCM_DEVICE_TYPE_ENUM_PRINTER) {
+	if (priv->device_kind == GCM_DEVICE_KIND_PRINTER) {
 		/* TRANSLATORS: dialog message, preface */
 		g_string_append_printf (string, "\n%s", _("The high precision profiles also require more paper and time for reading the color swatches."));
 	}
 
 	/* display specific options */
-	if (priv->device_type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+	if (priv->device_kind == GCM_DEVICE_KIND_DISPLAY) {
 		/* TRANSLATORS: dialog message, preface */
 		g_string_append_printf (string, "\n%s", _("The high precision profiles also require more time for reading the color swatches."));
 	}
@@ -551,8 +551,8 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 		      NULL);
 
 	/* this wasn't previously set */
-	if (priv->device_kind == GCM_CALIBRATE_DEVICE_KIND_UNKNOWN) {
-		ret = gcm_calibrate_get_display_type (calibrate, window, error);
+	if (priv->calibrate_device_kind == GCM_CALIBRATE_DEVICE_KIND_UNKNOWN) {
+		ret = gcm_calibrate_get_display_kind (calibrate, window, error);
 		if (!ret)
 			goto out;
 	}
@@ -1003,7 +1003,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	g_string_append_printf (string, "%s\n", _("Before profiling the device, you have to manually capture an image of a calibrated target and save it as a TIFF image file."));
 
 	/* scanner specific options */
-	if (priv->device_type == GCM_DEVICE_TYPE_ENUM_SCANNER) {
+	if (priv->device_kind == GCM_DEVICE_KIND_SCANNER) {
 		/* TRANSLATORS: dialog message, preface */
 		g_string_append_printf (string, "%s\n", _("Ensure that the contrast and brightness are not changed and color correction profiles are not applied."));
 
@@ -1012,7 +1012,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	}
 
 	/* camera specific options */
-	if (priv->device_type == GCM_DEVICE_TYPE_ENUM_CAMERA) {
+	if (priv->device_kind == GCM_DEVICE_KIND_CAMERA) {
 		/* TRANSLATORS: dialog message, preface */
 		g_string_append_printf (string, "%s\n", _("Ensure that the white-balance has not been modified by the camera and that the lens is clean."));
 	}
@@ -1140,8 +1140,8 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 	case PROP_PRINT_KIND:
 		g_value_set_uint (value, priv->print_kind);
 		break;
-	case PROP_DEVICE_TYPE:
-		g_value_set_uint (value, priv->device_type);
+	case PROP_CALIBRATE_DEVICE_KIND:
+		g_value_set_uint (value, priv->calibrate_device_kind);
 		break;
 	case PROP_COLORIMETER_KIND:
 		g_value_set_uint (value, priv->colorimeter_kind);
@@ -1189,10 +1189,10 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 }
 
 /**
- * gcm_calibrate_guess_type:
+ * gcm_calibrate_guess_kind:
  **/
 static void
-gcm_calibrate_guess_type (GcmCalibrate *calibrate)
+gcm_calibrate_guess_kind (GcmCalibrate *calibrate)
 {
 	gboolean ret;
 	GcmCalibratePrivate *priv = calibrate->priv;
@@ -1200,7 +1200,7 @@ gcm_calibrate_guess_type (GcmCalibrate *calibrate)
 	/* guess based on the output name */
 	ret = gcm_utils_output_is_lcd_internal (priv->output_name);
 	if (ret)
-		priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_LCD;
+		priv->calibrate_device_kind = GCM_CALIBRATE_DEVICE_KIND_LCD;
 }
 
 /**
@@ -1226,7 +1226,7 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 	case PROP_OUTPUT_NAME:
 		g_free (priv->output_name);
 		priv->output_name = g_strdup (g_value_get_string (value));
-		gcm_calibrate_guess_type (calibrate);
+		gcm_calibrate_guess_kind (calibrate);
 		break;
 	case PROP_FILENAME_SOURCE:
 		g_free (priv->filename_source);
@@ -1265,8 +1265,8 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 		g_free (priv->manufacturer);
 		priv->manufacturer = g_strdup (g_value_get_string (value));
 		break;
-	case PROP_DEVICE_TYPE:
-		priv->device_type = g_value_get_uint (value);
+	case PROP_DEVICE_KIND:
+		priv->device_kind = g_value_get_uint (value);
 		break;
 	case PROP_WORKING_PATH:
 		g_free (priv->working_path);
@@ -1299,12 +1299,12 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 	g_object_class_install_property (object_class, PROP_REFERENCE_KIND, pspec);
 
 	/**
-	 * GcmCalibrate:device-kind:
+	 * GcmCalibrate:calibrate-device-kind:
 	 */
-	pspec = g_param_spec_uint ("device-kind", NULL, NULL,
+	pspec = g_param_spec_uint ("calibrate-device-kind", NULL, NULL,
 				   0, G_MAXUINT, 0,
 				   G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_DEVICE_KIND, pspec);
+	g_object_class_install_property (object_class, PROP_CALIBRATE_DEVICE_KIND, pspec);
 
 	/**
 	 * GcmCalibrate:print-kind:
@@ -1315,12 +1315,12 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 	g_object_class_install_property (object_class, PROP_PRINT_KIND, pspec);
 
 	/**
-	 * GcmCalibrate:device-type:
+	 * GcmCalibrate:device-kind:
 	 */
-	pspec = g_param_spec_uint ("device-type", NULL, NULL,
+	pspec = g_param_spec_uint ("device-kind", NULL, NULL,
 				   0, G_MAXUINT, 0,
 				   G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_DEVICE_TYPE, pspec);
+	g_object_class_install_property (object_class, PROP_DEVICE_KIND, pspec);
 
 	/**
 	 * GcmCalibrate:colorimeter-kind:
@@ -1447,7 +1447,7 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->device = NULL;
 	calibrate->priv->serial = NULL;
 	calibrate->priv->working_path = NULL;
-	calibrate->priv->device_kind = GCM_CALIBRATE_DEVICE_KIND_UNKNOWN;
+	calibrate->priv->calibrate_device_kind = GCM_CALIBRATE_DEVICE_KIND_UNKNOWN;
 	calibrate->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_UNKNOWN;
 	calibrate->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
 	calibrate->priv->precision = GCM_CALIBRATE_PRECISION_UNKNOWN;

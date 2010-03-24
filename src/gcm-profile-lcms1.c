@@ -435,8 +435,8 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 	guint tag_offset;
 	icProfileClassSignature profile_class;
 	icColorSpaceSignature color_space;
-	GcmColorspaceEnum colorspace;
-	GcmProfileTypeEnum profile_type;
+	GcmColorspace colorspace;
+	GcmProfileKind profile_kind;
 	cmsCIEXYZ cie_xyz;
 	cmsCIEXYZTRIPLE cie_illum;
 	struct tm created;
@@ -494,72 +494,72 @@ gcm_profile_lcms1_parse_data (GcmProfile *profile, const guint8 *data, gsize len
 		egg_warning ("failed to get black point");
 	}
 
-	/* get the profile_lcms1 type */
+	/* get the profile kind */
 	profile_class = cmsGetDeviceClass (priv->lcms_profile);
 	switch (profile_class) {
 	case icSigInputClass:
-		profile_type = GCM_PROFILE_TYPE_ENUM_INPUT_DEVICE;
+		profile_kind = GCM_PROFILE_KIND_INPUT_DEVICE;
 		break;
 	case icSigDisplayClass:
-		profile_type = GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE;
+		profile_kind = GCM_PROFILE_KIND_DISPLAY_DEVICE;
 		break;
 	case icSigOutputClass:
-		profile_type = GCM_PROFILE_TYPE_ENUM_OUTPUT_DEVICE;
+		profile_kind = GCM_PROFILE_KIND_OUTPUT_DEVICE;
 		break;
 	case icSigLinkClass:
-		profile_type = GCM_PROFILE_TYPE_ENUM_DEVICELINK;
+		profile_kind = GCM_PROFILE_KIND_DEVICELINK;
 		break;
 	case icSigColorSpaceClass:
-		profile_type = GCM_PROFILE_TYPE_ENUM_COLORSPACE_CONVERSION;
+		profile_kind = GCM_PROFILE_KIND_COLORSPACE_CONVERSION;
 		break;
 	case icSigAbstractClass:
-		profile_type = GCM_PROFILE_TYPE_ENUM_ABSTRACT;
+		profile_kind = GCM_PROFILE_KIND_ABSTRACT;
 		break;
 	case icSigNamedColorClass:
-		profile_type = GCM_PROFILE_TYPE_ENUM_NAMED_COLOR;
+		profile_kind = GCM_PROFILE_KIND_NAMED_COLOR;
 		break;
 	default:
-		profile_type = GCM_PROFILE_TYPE_ENUM_UNKNOWN;
+		profile_kind = GCM_PROFILE_KIND_UNKNOWN;
 	}
 	g_object_set (profile,
-		      "type", profile_type,
+		      "kind", profile_kind,
 		      NULL);
 
 	/* get colorspace */
 	color_space = cmsGetColorSpace (priv->lcms_profile);
 	switch (color_space) {
 	case icSigXYZData:
-		colorspace = GCM_COLORSPACE_ENUM_XYZ;
+		colorspace = GCM_COLORSPACE_XYZ;
 		break;
 	case icSigLabData:
-		colorspace = GCM_COLORSPACE_ENUM_LAB;
+		colorspace = GCM_COLORSPACE_LAB;
 		break;
 	case icSigLuvData:
-		colorspace = GCM_COLORSPACE_ENUM_LUV;
+		colorspace = GCM_COLORSPACE_LUV;
 		break;
 	case icSigYCbCrData:
-		colorspace = GCM_COLORSPACE_ENUM_YCBCR;
+		colorspace = GCM_COLORSPACE_YCBCR;
 		break;
 	case icSigYxyData:
-		colorspace = GCM_COLORSPACE_ENUM_YXY;
+		colorspace = GCM_COLORSPACE_YXY;
 		break;
 	case icSigRgbData:
-		colorspace = GCM_COLORSPACE_ENUM_RGB;
+		colorspace = GCM_COLORSPACE_RGB;
 		break;
 	case icSigGrayData:
-		colorspace = GCM_COLORSPACE_ENUM_GRAY;
+		colorspace = GCM_COLORSPACE_GRAY;
 		break;
 	case icSigHsvData:
-		colorspace = GCM_COLORSPACE_ENUM_HSV;
+		colorspace = GCM_COLORSPACE_HSV;
 		break;
 	case icSigCmykData:
-		colorspace = GCM_COLORSPACE_ENUM_CMYK;
+		colorspace = GCM_COLORSPACE_CMYK;
 		break;
 	case icSigCmyData:
-		colorspace = GCM_COLORSPACE_ENUM_CMY;
+		colorspace = GCM_COLORSPACE_CMY;
 		break;
 	default:
-		colorspace = GCM_COLORSPACE_ENUM_UNKNOWN;
+		colorspace = GCM_COLORSPACE_UNKNOWN;
 	}
 	g_object_set (profile,
 		      "colorspace", colorspace,
@@ -870,7 +870,7 @@ gcm_profile_lcms1_generate_curve (GcmProfile *profile, guint size)
 	cmsHPROFILE srgb_profile_lcms1 = NULL;
 	cmsHTRANSFORM transform = NULL;
 	guint type;
-	GcmColorspaceEnum colorspace;
+	GcmColorspace colorspace;
 	GcmProfileLcms1 *profile_lcms1 = GCM_PROFILE_LCMS1 (profile);
 	GcmProfileLcms1Private *priv = profile_lcms1->priv;
 
@@ -880,7 +880,7 @@ gcm_profile_lcms1_generate_curve (GcmProfile *profile, guint size)
 		      NULL);
 
 	/* run through the profile_lcms1 */
-	if (colorspace == GCM_COLORSPACE_ENUM_RGB) {
+	if (colorspace == GCM_COLORSPACE_RGB) {
 
 		/* RGB */
 		component_width = 3;

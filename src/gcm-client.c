@@ -362,7 +362,7 @@ gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevic
 			/* set all scanners as disconnected */
 			for (i=0; i<priv->array->len; i++) {
 				device_tmp = g_ptr_array_index (priv->array, i);
-				if (gcm_device_get_kind (device_tmp) == GCM_DEVICE_TYPE_ENUM_SCANNER)
+				if (gcm_device_get_kind (device_tmp) == GCM_DEVICE_KIND_SCANNER)
 					gcm_device_set_connected (device_tmp, FALSE);
 			}
 
@@ -816,10 +816,10 @@ static void
 gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const gchar *id)
 {
 	gchar *title;
-	gchar *type_text = NULL;
+	gchar *kind_text = NULL;
 	gchar *colorspace_text = NULL;
-	GcmColorspaceEnum colorspace;
-	GcmDeviceTypeEnum type;
+	GcmColorspace colorspace;
+	GcmDeviceKind kind;
 	GcmDevice *device = NULL;
 	gboolean ret;
 	gboolean virtual;
@@ -831,40 +831,40 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 	if (title == NULL)
 		goto out;
 	virtual = g_key_file_get_boolean (keyfile, id, "virtual", NULL);
-	type_text = g_key_file_get_string (keyfile, id, "type", NULL);
-	type = gcm_device_type_enum_from_string (type_text);
-	if (type == GCM_DEVICE_TYPE_ENUM_UNKNOWN)
+	kind_text = g_key_file_get_string (keyfile, id, "type", NULL);
+	kind = gcm_device_kind_from_string (kind_text);
+	if (kind == GCM_DEVICE_KIND_UNKNOWN)
 		goto out;
 
 	/* get colorspace */
 	colorspace_text = g_key_file_get_string (keyfile, id, "colorspace", NULL);
 	if (colorspace_text == NULL) {
 		egg_warning ("legacy device %s, falling back to RGB", id);
-		colorspace = GCM_COLORSPACE_ENUM_RGB;
+		colorspace = GCM_COLORSPACE_RGB;
 	} else {
-		colorspace = gcm_colorspace_enum_from_string (colorspace_text);
+		colorspace = gcm_colorspace_from_string (colorspace_text);
 	}
 
-	/* create device or specified type */
+	/* create device of specified type */
 	if (virtual) {
 		device = gcm_device_virtual_new ();
-	} else if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+	} else if (kind == GCM_DEVICE_KIND_DISPLAY) {
 		device = gcm_device_xrandr_new ();
-	} else if (type == GCM_DEVICE_TYPE_ENUM_PRINTER) {
+	} else if (kind == GCM_DEVICE_KIND_PRINTER) {
 		device = gcm_device_cups_new ();
-	} else if (type == GCM_DEVICE_TYPE_ENUM_CAMERA) {
+	} else if (kind == GCM_DEVICE_KIND_CAMERA) {
 		/* FIXME: use GPhoto? */
 		device = gcm_device_udev_new ();
-	} else if (type == GCM_DEVICE_TYPE_ENUM_SCANNER) {
+	} else if (kind == GCM_DEVICE_KIND_SCANNER) {
 		device = gcm_device_sane_new ();
 	} else {
-		egg_warning ("device type internal error");
+		egg_warning ("device kind internal error");
 		goto out;
 	}
 
 	/* create device */
 	g_object_set (device,
-		      "type", type,
+		      "kind", kind,
 		      "id", id,
 		      "connected", FALSE,
 		      "title", title,
@@ -893,7 +893,7 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 out:
 	if (device != NULL)
 		g_object_unref (device);
-	g_free (type_text);
+	g_free (kind_text);
 	g_free (colorspace_text);
 	g_free (title);
 }

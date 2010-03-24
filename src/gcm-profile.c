@@ -51,22 +51,22 @@ static void     gcm_profile_finalize	(GObject     *object);
  **/
 struct _GcmProfilePrivate
 {
-	GcmProfileTypeEnum		 profile_type;
-	GcmColorspaceEnum		 colorspace;
-	guint				 size;
-	gboolean			 has_vcgt;
-	gchar				*description;
-	gchar				*filename;
-	GFileMonitor			*monitor;
-	gchar				*copyright;
-	gchar				*manufacturer;
-	gchar				*model;
-	gchar				*datetime;
-	GcmXyz				*white;
-	GcmXyz				*black;
-	GcmXyz				*red;
-	GcmXyz				*green;
-	GcmXyz				*blue;
+	GcmProfileKind		 profile_kind;
+	GcmColorspace		 colorspace;
+	guint			 size;
+	gboolean		 has_vcgt;
+	gchar			*description;
+	gchar			*filename;
+	GFileMonitor		*monitor;
+	gchar			*copyright;
+	gchar			*manufacturer;
+	gchar			*model;
+	gchar			*datetime;
+	GcmXyz			*white;
+	GcmXyz			*black;
+	GcmXyz			*red;
+	GcmXyz			*green;
+	GcmXyz			*blue;
 };
 
 enum {
@@ -77,7 +77,7 @@ enum {
 	PROP_DATETIME,
 	PROP_DESCRIPTION,
 	PROP_FILENAME,
-	PROP_TYPE,
+	PROP_KIND,
 	PROP_COLORSPACE,
 	PROP_SIZE,
 	PROP_HAS_VCGT,
@@ -274,8 +274,8 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_FILENAME:
 		g_value_set_string (value, priv->filename);
 		break;
-	case PROP_TYPE:
-		g_value_set_uint (value, priv->profile_type);
+	case PROP_KIND:
+		g_value_set_uint (value, priv->profile_kind);
 		break;
 	case PROP_COLORSPACE:
 		g_value_set_uint (value, priv->colorspace);
@@ -376,8 +376,8 @@ gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, G
 			g_object_unref (file);
 		}
 		break;
-	case PROP_TYPE:
-		priv->profile_type = g_value_get_uint (value);
+	case PROP_KIND:
+		priv->profile_kind = g_value_get_uint (value);
 		break;
 	case PROP_COLORSPACE:
 		priv->colorspace = g_value_get_uint (value);
@@ -470,12 +470,12 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	g_object_class_install_property (object_class, PROP_FILENAME, pspec);
 
 	/**
-	 * GcmProfile:type:
+	 * GcmProfile:kind:
 	 */
-	pspec = g_param_spec_uint ("type", NULL, NULL,
+	pspec = g_param_spec_uint ("kind", NULL, NULL,
 				   0, G_MAXUINT, 0,
 				   G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_TYPE, pspec);
+	g_object_class_install_property (object_class, PROP_KIND, pspec);
 
 	/**
 	 * GcmProfile:colorspace:
@@ -552,8 +552,8 @@ gcm_profile_init (GcmProfile *profile)
 {
 	profile->priv = GCM_PROFILE_GET_PRIVATE (profile);
 	profile->priv->monitor = NULL;
-	profile->priv->profile_type = GCM_PROFILE_TYPE_ENUM_UNKNOWN;
-	profile->priv->colorspace = GCM_COLORSPACE_ENUM_UNKNOWN;
+	profile->priv->profile_kind = GCM_PROFILE_KIND_UNKNOWN;
+	profile->priv->colorspace = GCM_COLORSPACE_UNKNOWN;
 	profile->priv->white = gcm_xyz_new ();
 	profile->priv->black = gcm_xyz_new ();
 	profile->priv->red = gcm_xyz_new ();
@@ -628,8 +628,8 @@ typedef struct {
 	const gchar *model;
 	const gchar *datetime;
 	const gchar *description;
-	GcmProfileTypeEnum type;
-	GcmColorspaceEnum colorspace;
+	GcmProfileKind kind;
+	GcmColorspace colorspace;
 	gfloat luminance;
 } GcmProfileTestData;
 
@@ -647,7 +647,7 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 	gchar *pnp_id;
 	gchar *data;
 	guint width;
-	guint type;
+	guint kind;
 	guint colorspace;
 	gfloat gamma;
 	gboolean ret;
@@ -685,7 +685,7 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 		      "datetime", &datetime,
 		      "description", &description,
 		      "filename", &filename_tmp,
-		      "type", &type,
+		      "kind", &kind,
 		      "colorspace", &colorspace,
 		      NULL);
 
@@ -725,11 +725,11 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 		egg_test_failed (test, "invalid value: %s, expecting: %s", description, test_data->description);
 
 	/************************************************************/
-	egg_test_title (test, "check type for %s", datafile);
-	if (type == test_data->type)
+	egg_test_title (test, "check kind for %s", datafile);
+	if (kind == test_data->kind)
 		egg_test_success (test, NULL);
 	else
-		egg_test_failed (test, "invalid value: %i, expecting: %i", type, test_data->type);
+		egg_test_failed (test, "invalid value: %i, expecting: %i", kind, test_data->kind);
 
 	/************************************************************/
 	egg_test_title (test, "check colorspace for %s", datafile);
@@ -774,8 +774,8 @@ gcm_profile_test (EggTest *test)
 	test_data.manufacturer = "IEC http://www.iec.ch";
 	test_data.model = "IEC 61966-2.1 Default RGB colour space - sRGB";
 	test_data.description = "Blueish Test";
-	test_data.type = GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE;
-	test_data.colorspace = GCM_COLORSPACE_ENUM_RGB;
+	test_data.kind = GCM_PROFILE_KIND_DISPLAY_DEVICE;
+	test_data.colorspace = GCM_COLORSPACE_RGB;
 	test_data.luminance = 0.648454;
 	test_data.datetime = "February  9 1998, 06:49:00 AM";
 	gcm_profile_test_parse_file (test, "bluish.icc", &test_data);
@@ -785,8 +785,8 @@ gcm_profile_test (EggTest *test)
 	test_data.manufacturer = "IEC http://www.iec.ch";
 	test_data.model = "IEC 61966-2.1 Default RGB colour space - sRGB";
 	test_data.description = "ADOBEGAMMA-Test";
-	test_data.type = GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE;
-	test_data.colorspace = GCM_COLORSPACE_ENUM_RGB;
+	test_data.kind = GCM_PROFILE_KIND_DISPLAY_DEVICE;
+	test_data.colorspace = GCM_COLORSPACE_RGB;
 	test_data.luminance = 0.648446;
 	test_data.datetime = "August 16 2005, 09:49:54 PM";
 	gcm_profile_test_parse_file (test, "AdobeGammaTest.icm", &test_data);

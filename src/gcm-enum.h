@@ -25,57 +25,57 @@
 #include <glib/gi18n.h>
 
 typedef enum {
-	GCM_INTENT_ENUM_UNKNOWN,
-	GCM_INTENT_ENUM_PERCEPTUAL,
-	GCM_INTENT_ENUM_RELATIVE_COLORMETRIC,
-	GCM_INTENT_ENUM_SATURATION,
-	GCM_INTENT_ENUM_ABSOLUTE_COLORMETRIC,
-	GCM_INTENT_ENUM_LAST
-} GcmIntentEnum;
+	GCM_INTENT_UNKNOWN,
+	GCM_INTENT_PERCEPTUAL,
+	GCM_INTENT_RELATIVE_COLORMETRIC,
+	GCM_INTENT_SATURATION,
+	GCM_INTENT_ABSOLUTE_COLORMETRIC,
+	GCM_INTENT_LAST
+} GcmIntent;
 
 typedef enum {
-	GCM_PROFILE_TYPE_ENUM_UNKNOWN,
-	GCM_PROFILE_TYPE_ENUM_INPUT_DEVICE,
-	GCM_PROFILE_TYPE_ENUM_DISPLAY_DEVICE,
-	GCM_PROFILE_TYPE_ENUM_OUTPUT_DEVICE,
-	GCM_PROFILE_TYPE_ENUM_DEVICELINK,
-	GCM_PROFILE_TYPE_ENUM_COLORSPACE_CONVERSION,
-	GCM_PROFILE_TYPE_ENUM_ABSTRACT,
-	GCM_PROFILE_TYPE_ENUM_NAMED_COLOR,
-	GCM_PROFILE_TYPE_ENUM_LAST
-} GcmProfileTypeEnum;
+	GCM_PROFILE_KIND_UNKNOWN,
+	GCM_PROFILE_KIND_INPUT_DEVICE,
+	GCM_PROFILE_KIND_DISPLAY_DEVICE,
+	GCM_PROFILE_KIND_OUTPUT_DEVICE,
+	GCM_PROFILE_KIND_DEVICELINK,
+	GCM_PROFILE_KIND_COLORSPACE_CONVERSION,
+	GCM_PROFILE_KIND_ABSTRACT,
+	GCM_PROFILE_KIND_NAMED_COLOR,
+	GCM_PROFILE_KIND_LAST
+} GcmProfileKind;
 
 typedef enum {
-	GCM_COLORSPACE_ENUM_UNKNOWN,
-	GCM_COLORSPACE_ENUM_XYZ,
-	GCM_COLORSPACE_ENUM_LAB,
-	GCM_COLORSPACE_ENUM_LUV,
-	GCM_COLORSPACE_ENUM_YCBCR,
-	GCM_COLORSPACE_ENUM_YXY,
-	GCM_COLORSPACE_ENUM_RGB,
-	GCM_COLORSPACE_ENUM_GRAY,
-	GCM_COLORSPACE_ENUM_HSV,
-	GCM_COLORSPACE_ENUM_CMYK,
-	GCM_COLORSPACE_ENUM_CMY,
-	GCM_COLORSPACE_ENUM_LAST
-} GcmColorspaceEnum;
+	GCM_COLORSPACE_UNKNOWN,
+	GCM_COLORSPACE_XYZ,
+	GCM_COLORSPACE_LAB,
+	GCM_COLORSPACE_LUV,
+	GCM_COLORSPACE_YCBCR,
+	GCM_COLORSPACE_YXY,
+	GCM_COLORSPACE_RGB,
+	GCM_COLORSPACE_GRAY,
+	GCM_COLORSPACE_HSV,
+	GCM_COLORSPACE_CMYK,
+	GCM_COLORSPACE_CMY,
+	GCM_COLORSPACE_LAST
+} GcmColorspace;
 
 typedef enum {
-	GCM_DEVICE_TYPE_ENUM_UNKNOWN,
-	GCM_DEVICE_TYPE_ENUM_DISPLAY,
-	GCM_DEVICE_TYPE_ENUM_SCANNER,
-	GCM_DEVICE_TYPE_ENUM_PRINTER,
-	GCM_DEVICE_TYPE_ENUM_CAMERA,
-	GCM_DEVICE_TYPE_ENUM_LAST
-} GcmDeviceTypeEnum;
+	GCM_DEVICE_KIND_UNKNOWN,
+	GCM_DEVICE_KIND_DISPLAY,
+	GCM_DEVICE_KIND_SCANNER,
+	GCM_DEVICE_KIND_PRINTER,
+	GCM_DEVICE_KIND_CAMERA,
+	GCM_DEVICE_KIND_LAST
+} GcmDeviceKind;
 
-GcmIntentEnum		 gcm_intent_enum_from_string		(const gchar		*intent);
-const gchar		*gcm_intent_enum_to_string		(GcmIntentEnum		 intent);
-const gchar		*gcm_profile_type_enum_to_string	(GcmProfileTypeEnum	 profile_type);
-const gchar		*gcm_colorspace_enum_to_string		(GcmColorspaceEnum	 colorspace);
-GcmColorspaceEnum	 gcm_colorspace_enum_from_string	(const gchar		*colorspace);
-GcmDeviceTypeEnum	 gcm_device_type_enum_from_string	(const gchar		*type);
-const gchar		*gcm_device_type_enum_to_string		(GcmDeviceTypeEnum	 type);
+GcmIntent	 gcm_intent_from_string			(const gchar		*intent);
+const gchar	*gcm_intent_to_string			(GcmIntent		 intent);
+const gchar	*gcm_profile_kind_to_string		(GcmProfileKind		 profile_kind);
+const gchar	*gcm_colorspace_to_string		(GcmColorspace		 colorspace);
+GcmColorspace	 gcm_colorspace_from_string		(const gchar		*colorspace);
+GcmDeviceKind	 gcm_device_kind_from_string		(const gchar		*kind);
+const gchar	*gcm_device_kind_to_string		(GcmDeviceKind		 kind);
 
 #endif /* __GCM_ENUM_H */
 

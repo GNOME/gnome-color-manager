@@ -38,10 +38,10 @@ G_DEFINE_TYPE (GcmDeviceVirtual, gcm_device_virtual, GCM_TYPE_DEVICE)
  **/
 gboolean
 gcm_device_virtual_create_from_params (GcmDeviceVirtual *device_virtual,
-				       GcmDeviceTypeEnum device_type,
+				       GcmDeviceKind	 device_kind,
 				       const gchar      *model,
 				       const gchar      *manufacturer,
-				       GcmColorspaceEnum colorspace)
+				       GcmColorspace	 colorspace)
 {
 	gchar *id;
 	gchar *title;
@@ -55,7 +55,7 @@ gcm_device_virtual_create_from_params (GcmDeviceVirtual *device_virtual,
 	egg_debug ("adding %s '%s'", id, title);
 	g_object_set (device_virtual,
 		      "connected", FALSE,
-		      "type", device_type,
+		      "kind", device_kind,
 		      "id", id,
 		      "manufacturer", manufacturer,
 		      "model", model,

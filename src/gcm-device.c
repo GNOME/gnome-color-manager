@@ -48,27 +48,27 @@ static void     gcm_device_finalize	(GObject     *object);
  **/
 struct _GcmDevicePrivate
 {
-	gboolean			 connected;
-	gboolean			 virtual;
-	gboolean			 saved;
-	gfloat				 gamma;
-	gfloat				 brightness;
-	gfloat				 contrast;
-	GcmDeviceTypeEnum		 type;
-	gchar				*id;
-	gchar				*serial;
-	gchar				*manufacturer;
-	gchar				*model;
-	gchar				*profile_filename;
-	gchar				*title;
-	GConfClient			*gconf_client;
-	GcmColorspaceEnum		 colorspace;
-	guint				 changed_id;
+	gboolean		 connected;
+	gboolean		 virtual;
+	gboolean		 saved;
+	gfloat			 gamma;
+	gfloat			 brightness;
+	gfloat			 contrast;
+	GcmDeviceKind		 kind;
+	gchar			*id;
+	gchar			*serial;
+	gchar			*manufacturer;
+	gchar			*model;
+	gchar			*profile_filename;
+	gchar			*title;
+	GConfClient		*gconf_client;
+	GcmColorspace		 colorspace;
+	guint			 changed_id;
 };
 
 enum {
 	PROP_0,
-	PROP_TYPE,
+	PROP_KIND,
 	PROP_ID,
 	PROP_CONNECTED,
 	PROP_VIRTUAL,
@@ -136,35 +136,35 @@ out:
 }
 
 /**
- * gcm_device_type_enum_from_string:
+ * gcm_device_kind_from_string:
  **/
-GcmDeviceTypeEnum
-gcm_device_type_enum_from_string (const gchar *type)
+GcmDeviceKind
+gcm_device_kind_from_string (const gchar *kind)
 {
-	if (g_strcmp0 (type, "display") == 0)
-		return GCM_DEVICE_TYPE_ENUM_DISPLAY;
-	if (g_strcmp0 (type, "scanner") == 0)
-		return GCM_DEVICE_TYPE_ENUM_SCANNER;
-	if (g_strcmp0 (type, "printer") == 0)
-		return GCM_DEVICE_TYPE_ENUM_PRINTER;
-	if (g_strcmp0 (type, "camera") == 0)
-		return GCM_DEVICE_TYPE_ENUM_CAMERA;
-	return GCM_DEVICE_TYPE_ENUM_UNKNOWN;
+	if (g_strcmp0 (kind, "display") == 0)
+		return GCM_DEVICE_KIND_DISPLAY;
+	if (g_strcmp0 (kind, "scanner") == 0)
+		return GCM_DEVICE_KIND_SCANNER;
+	if (g_strcmp0 (kind, "printer") == 0)
+		return GCM_DEVICE_KIND_PRINTER;
+	if (g_strcmp0 (kind, "camera") == 0)
+		return GCM_DEVICE_KIND_CAMERA;
+	return GCM_DEVICE_KIND_UNKNOWN;
 }
 
 /**
- * gcm_device_type_enum_to_string:
+ * gcm_device_kind_to_string:
  **/
 const gchar *
-gcm_device_type_enum_to_string (GcmDeviceTypeEnum type)
+gcm_device_kind_to_string (GcmDeviceKind kind)
 {
-	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY)
+	if (kind == GCM_DEVICE_KIND_DISPLAY)
 		return "display";
-	if (type == GCM_DEVICE_TYPE_ENUM_SCANNER)
+	if (kind == GCM_DEVICE_KIND_SCANNER)
 		return "scanner";
-	if (type == GCM_DEVICE_TYPE_ENUM_PRINTER)
+	if (kind == GCM_DEVICE_KIND_PRINTER)
 		return "printer";
-	if (type == GCM_DEVICE_TYPE_ENUM_CAMERA)
+	if (kind == GCM_DEVICE_KIND_CAMERA)
 		return "camera";
 	return "unknown";
 }
@@ -202,22 +202,22 @@ out:
 /**
  * gcm_device_get_kind:
  **/
-GcmDeviceTypeEnum
+GcmDeviceKind
 gcm_device_get_kind (GcmDevice *device)
 {
-	g_return_val_if_fail (GCM_IS_DEVICE (device), GCM_DEVICE_TYPE_ENUM_UNKNOWN);
-	return device->priv->type;
+	g_return_val_if_fail (GCM_IS_DEVICE (device), GCM_DEVICE_KIND_UNKNOWN);
+	return device->priv->kind;
 }
 
 /**
  * gcm_device_set_kind:
  **/
 void
-gcm_device_set_kind (GcmDevice *device, GcmDeviceTypeEnum kind)
+gcm_device_set_kind (GcmDevice *device, GcmDeviceKind kind)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
-	if (device->priv->type != kind) {
-		device->priv->type = kind;
+	if (device->priv->kind != kind) {
+		device->priv->kind = kind;
 		gcm_device_changed (device);
 	}
 }
@@ -353,10 +353,10 @@ gcm_device_set_contrast (GcmDevice *device, gfloat contrast)
 /**
  * gcm_device_get_colorspace:
  **/
-GcmColorspaceEnum
+GcmColorspace
 gcm_device_get_colorspace (GcmDevice *device)
 {
-	g_return_val_if_fail (GCM_IS_DEVICE (device), GCM_COLORSPACE_ENUM_UNKNOWN);
+	g_return_val_if_fail (GCM_IS_DEVICE (device), GCM_COLORSPACE_UNKNOWN);
 	return device->priv->colorspace;
 }
 
@@ -364,7 +364,7 @@ gcm_device_get_colorspace (GcmDevice *device)
  * gcm_device_set_colorspace:
  **/
 void
-gcm_device_set_colorspace (GcmDevice *device, GcmColorspaceEnum colorspace)
+gcm_device_set_colorspace (GcmDevice *device, GcmColorspace colorspace)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	device->priv->colorspace = colorspace;
@@ -698,10 +698,10 @@ gcm_device_save (GcmDevice *device, GError **error)
 	/* save other properties we'll need if we add this device offline */
 	if (device->priv->title != NULL)
 		g_key_file_set_string (keyfile, device->priv->id, "title", device->priv->title);
-	g_key_file_set_string (keyfile, device->priv->id, "type", gcm_device_type_enum_to_string (device->priv->type));
+	g_key_file_set_string (keyfile, device->priv->id, "type", gcm_device_kind_to_string (device->priv->kind));
 
 	/* add colorspace */
-	g_key_file_set_string (keyfile, device->priv->id, "colorspace", gcm_colorspace_enum_to_string (device->priv->colorspace));
+	g_key_file_set_string (keyfile, device->priv->id, "colorspace", gcm_colorspace_to_string (device->priv->colorspace));
 
 	/* add virtual */
 	if (device->priv->virtual)
@@ -768,8 +768,8 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	GcmDevicePrivate *priv = device->priv;
 
 	switch (prop_id) {
-	case PROP_TYPE:
-		g_value_set_uint (value, priv->type);
+	case PROP_KIND:
+		g_value_set_uint (value, priv->kind);
 		break;
 	case PROP_ID:
 		g_value_set_string (value, priv->id);
@@ -825,7 +825,7 @@ gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GP
 	GcmDevice *device = GCM_DEVICE (object);
 
 	switch (prop_id) {
-	case PROP_TYPE:
+	case PROP_KIND:
 		gcm_device_set_kind (device, g_value_get_uint (value));
 		break;
 	case PROP_ID:
@@ -886,12 +886,12 @@ gcm_device_class_init (GcmDeviceClass *klass)
 	object_class->set_property = gcm_device_set_property;
 
 	/**
-	 * GcmDevice:type:
+	 * GcmDevice:kind:
 	 */
-	pspec = g_param_spec_uint ("type", NULL, NULL,
+	pspec = g_param_spec_uint ("kind", NULL, NULL,
 				   0, G_MAXUINT, 0,
 				   G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_TYPE, pspec);
+	g_object_class_install_property (object_class, PROP_KIND, pspec);
 
 	/**
 	 * GcmDevice:id:
@@ -993,7 +993,7 @@ gcm_device_class_init (GcmDeviceClass *klass)
 	 * GcmDevice:colorspace:
 	 */
 	pspec = g_param_spec_uint ("colorspace", NULL, NULL,
-				   0, GCM_COLORSPACE_ENUM_LAST, GCM_COLORSPACE_ENUM_UNKNOWN,
+				   0, GCM_COLORSPACE_LAST, GCM_COLORSPACE_UNKNOWN,
 				   G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_COLORSPACE, pspec);
 
@@ -1037,7 +1037,7 @@ gcm_device_init (GcmDevice *device)
 		device->priv->gamma = 1.0f;
 	device->priv->brightness = 0.0f;
 	device->priv->contrast = 100.f;
-	device->priv->colorspace = GCM_COLORSPACE_ENUM_UNKNOWN;
+	device->priv->colorspace = GCM_COLORSPACE_UNKNOWN;
 }
 
 /**
@@ -1092,8 +1092,8 @@ gcm_device_test (EggTest *test)
 	const gchar *filename;
 	const gchar *profile;
 	gchar *data;
-	const gchar *type;
-	GcmDeviceTypeEnum type_enum;
+	const gchar *kind;
+	GcmDeviceKind kind_enum;
 
 	if (!egg_test_start (test, "GcmDevice"))
 		return;
@@ -1115,38 +1115,38 @@ gcm_device_test (EggTest *test)
 
 	/************************************************************/
 	egg_test_title (test, "convert to recognized enum");
-	type_enum = gcm_device_type_enum_from_string ("scanner");
-	egg_test_assert (test, (type_enum == GCM_DEVICE_TYPE_ENUM_SCANNER));
+	kind_enum = gcm_device_kind_from_string ("scanner");
+	egg_test_assert (test, (kind_enum == GCM_DEVICE_KIND_SCANNER));
 
 	/************************************************************/
 	egg_test_title (test, "convert to unrecognized enum");
-	type_enum = gcm_device_type_enum_from_string ("xxx");
-	egg_test_assert (test, (type_enum == GCM_DEVICE_TYPE_ENUM_UNKNOWN));
+	kind_enum = gcm_device_kind_from_string ("xxx");
+	egg_test_assert (test, (kind_enum == GCM_DEVICE_KIND_UNKNOWN));
 
 	/************************************************************/
 	egg_test_title (test, "convert from recognized enum");
-	type = gcm_device_type_enum_to_string (GCM_DEVICE_TYPE_ENUM_SCANNER);
-	if (g_strcmp0 (type, "scanner") == 0)
+	kind = gcm_device_kind_to_string (GCM_DEVICE_KIND_SCANNER);
+	if (g_strcmp0 (kind, "scanner") == 0)
 		egg_test_success (test, NULL);
 	else
-		egg_test_failed (test, "invalid value: %s", type);
+		egg_test_failed (test, "invalid value: %s", kind);
 
 	/************************************************************/
 	egg_test_title (test, "convert from unrecognized enum");
-	type = gcm_device_type_enum_to_string (GCM_DEVICE_TYPE_ENUM_UNKNOWN);
-	if (g_strcmp0 (type, "unknown") == 0)
+	kind = gcm_device_kind_to_string (GCM_DEVICE_KIND_UNKNOWN);
+	if (g_strcmp0 (kind, "unknown") == 0)
 		egg_test_success (test, NULL);
 	else
-		egg_test_failed (test, "invalid value: %s", type);
+		egg_test_failed (test, "invalid value: %s", kind);
 
 	/* set some properties */
 	g_object_set (device,
-		      "type", GCM_DEVICE_TYPE_ENUM_SCANNER,
+		      "kind", GCM_DEVICE_KIND_SCANNER,
 		      "id", "sysfs_dummy_device",
 		      "connected", FALSE,
 		      "virtual", FALSE,
 		      "serial", "0123456789",
-		      "colorspace", GCM_COLORSPACE_ENUM_RGB,
+		      "colorspace", GCM_COLORSPACE_RGB,
 		      NULL);
 
 	/************************************************************/
@@ -1174,11 +1174,11 @@ gcm_device_test (EggTest *test)
 
 	/************************************************************/
 	egg_test_title (test, "get id");
-	type = gcm_device_get_id (device);
-	if (g_strcmp0 (type, "sysfs_dummy_device") == 0)
+	kind = gcm_device_get_id (device);
+	if (g_strcmp0 (kind, "sysfs_dummy_device") == 0)
 		egg_test_success (test, NULL);
 	else
-		egg_test_failed (test, "invalid id: %s", type);
+		egg_test_failed (test, "invalid id: %s", kind);
 
 	/* ensure the file is nuked */
 	filename = gcm_utils_get_default_config_location ();

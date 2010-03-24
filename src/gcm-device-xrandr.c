@@ -82,6 +82,15 @@ gcm_device_xrandr_get_native_device (GcmDeviceXrandr *device_xrandr)
 }
 
 /**
+ * gcm_device_xrandr_get_native_device:
+ **/
+gboolean
+gcm_device_xrandr_get_fallback (GcmDeviceXrandr *device_xrandr)
+{
+	return device_xrandr->priv->xrandr_fallback;
+}
+
+/**
  * gcm_device_xrandr_get_output_name:
  *
  * Return value: the output name, free with g_free().
@@ -274,8 +283,8 @@ gcm_device_xrandr_set_from_output (GcmDevice *device, GnomeRROutput *output, GEr
 	/* add new device */
 	title = gcm_device_xrandr_get_output_name (GCM_DEVICE_XRANDR(device), output);
 	g_object_set (device,
-		      "type", GCM_DEVICE_TYPE_ENUM_DISPLAY,
-		      "colorspace", GCM_COLORSPACE_ENUM_RGB,
+		      "kind", GCM_DEVICE_KIND_DISPLAY,
+		      "colorspace", GCM_COLORSPACE_RGB,
 		      "id", id,
 		      "connected", TRUE,
 		      "serial", serial,
@@ -465,14 +474,14 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	gboolean use_atom;
 	gboolean leftmost_screen = FALSE;
 	GFile *file = NULL;
-	GcmDeviceTypeEnum type;
+	GcmDeviceKind kind;
 	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (device);
 	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
 
 	/* do no set the gamma for non-display types */
 	id = gcm_device_get_id (device);
-	type = gcm_device_get_kind (device);
-	if (type != GCM_DEVICE_TYPE_ENUM_DISPLAY) {
+	kind = gcm_device_get_kind (device);
+	if (kind != GCM_DEVICE_KIND_DISPLAY) {
 		g_set_error (error, 1, 0, "not a display: %s", id);
 		goto out;
 	}

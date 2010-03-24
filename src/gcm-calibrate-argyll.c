@@ -151,7 +151,7 @@ gcm_calibrate_argyll_printer_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 	GcmColorimeterKind colorimeter_kind;
 	GcmCalibratePrecision precision;
 
-	/* we care about the type */
+	/* we care about the kind */
 	g_object_get (calibrate_argyll,
 		      "colorimeter-kind", &colorimeter_kind,
 		      "precision", &precision,
@@ -272,15 +272,15 @@ out:
 }
 
 /**
- * gcm_calibrate_argyll_get_display_type:
+ * gcm_calibrate_argyll_get_display_kind:
  **/
 static gchar
-gcm_calibrate_argyll_get_display_type (GcmCalibrateArgyll *calibrate_argyll)
+gcm_calibrate_argyll_get_display_kind (GcmCalibrateArgyll *calibrate_argyll)
 {
 	GcmCalibrateDeviceKind device_kind;
 
 	g_object_get (calibrate_argyll,
-		      "device-kind", &device_kind,
+		      "calibrate-device-kind", &device_kind,
 		      NULL);
 
 	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_LCD)
@@ -352,7 +352,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 {
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-	gchar type;
+	gchar kind;
 	gchar *command = NULL;
 	gchar **argv = NULL;
 	GnomeRROutput *output;
@@ -392,7 +392,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	}
 
 	/* get l-cd or c-rt */
-	type = gcm_calibrate_argyll_get_display_type (calibrate_argyll);
+	kind = gcm_calibrate_argyll_get_display_kind (calibrate_argyll);
 
 	/* TRANSLATORS: title, default paramters needed to calibrate_argyll */
 	title = _("Getting default parameters");
@@ -413,7 +413,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	g_ptr_array_add (array, g_strdup ("-ql"));
 	g_ptr_array_add (array, g_strdup ("-m"));
 	g_ptr_array_add (array, g_strdup_printf ("-d%i", priv->display));
-	g_ptr_array_add (array, g_strdup_printf ("-y%c", type));
+	g_ptr_array_add (array, g_strdup_printf ("-y%c", kind));
 //	g_ptr_array_add (array, g_strdup ("-p 0.8,0.5,1.0"));
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
@@ -560,13 +560,13 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	gchar *working_path = NULL;
 	const gchar *title;
 	const gchar *message;
-	GcmDeviceTypeEnum device_type;
+	GcmDeviceKind device_kind;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
 		      "working-path", &working_path,
-		      "device-type", &device_type,
+		      "device-kind", &device_kind,
 		      NULL);
 
 	/* get correct name of the command */
@@ -591,7 +591,7 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 
 	/* setup the command */
 	g_ptr_array_add (array, g_strdup ("-v9"));
-	if (device_type == GCM_DEVICE_TYPE_ENUM_PRINTER) {
+	if (device_kind == GCM_DEVICE_KIND_PRINTER) {
 		/* print RGB */
 		g_ptr_array_add (array, g_strdup ("-d2"));
 
@@ -603,9 +603,9 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	}
 
 	/* get number of patches */
-	if (device_type == GCM_DEVICE_TYPE_ENUM_DISPLAY)
+	if (device_kind == GCM_DEVICE_KIND_DISPLAY)
 		g_ptr_array_add (array, g_strdup_printf ("-f%i", gcm_calibrate_argyll_display_get_patches (calibrate_argyll)));
-	else if (device_type == GCM_DEVICE_TYPE_ENUM_PRINTER)
+	else if (device_kind == GCM_DEVICE_KIND_PRINTER)
 		g_ptr_array_add (array, g_strdup_printf ("-f%i", gcm_calibrate_argyll_printer_get_patches (calibrate_argyll)));
 
 	g_ptr_array_add (array, g_strdup (basename));
@@ -658,7 +658,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 {
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-	gchar type;
+	gchar kind;
 	gchar *command = NULL;
 	gchar **argv = NULL;
 	GPtrArray *array = NULL;
@@ -681,7 +681,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	}
 
 	/* get l-cd or c-rt */
-	type = gcm_calibrate_argyll_get_display_type (calibrate_argyll);
+	kind = gcm_calibrate_argyll_get_display_kind (calibrate_argyll);
 
 	/* TRANSLATORS: title, drawing means painting to the screen */
 	title = _("Drawing the patches");
@@ -699,7 +699,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	/* setup the command */
 	g_ptr_array_add (array, g_strdup ("-v9"));
 	g_ptr_array_add (array, g_strdup_printf ("-d%i", priv->display));
-	g_ptr_array_add (array, g_strdup_printf ("-y%c", type));
+	g_ptr_array_add (array, g_strdup_printf ("-y%c", kind));
 	g_ptr_array_add (array, g_strdup ("-k"));
 	g_ptr_array_add (array, g_strdup_printf ("%s.cal", basename));
 	g_ptr_array_add (array, g_strdup (basename));

@@ -39,7 +39,7 @@ gcm_dump_profile_filename (const gchar *filename)
 	gboolean ret;
 	GError *error = NULL;
 	GcmProfile *profile;
-	guint profile_type;
+	guint profile_kind;
 	guint colorspace;
 	guint size;
 	gboolean has_vcgt;
@@ -62,7 +62,7 @@ gcm_dump_profile_filename (const gchar *filename)
 
 	/* get data */
 	g_object_get (profile,
-		      "type", &profile_type,
+		      "kind", &profile_kind,
 		      "colorspace", &colorspace,
 		      "size", &size,
 		      "has-vcgt", &has_vcgt,
@@ -74,8 +74,8 @@ gcm_dump_profile_filename (const gchar *filename)
 		      NULL);
 
 	/* print what we know */
-	g_print ("Type:\t%s\n", gcm_profile_type_enum_to_string (profile_type));
-	g_print ("Colorspace:\t%s\n", gcm_colorspace_enum_to_string (colorspace));
+	g_print ("Kind:\t%s\n", gcm_profile_kind_to_string (profile_kind));
+	g_print ("Colorspace:\t%s\n", gcm_colorspace_to_string (colorspace));
 	g_print ("Size:\t%i bytes\n", size);
 	g_print ("Has VCGT:\t%s\n", has_vcgt ? "Yes" : "No");
 	if (description != NULL)
