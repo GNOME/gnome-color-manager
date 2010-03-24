@@ -216,8 +216,10 @@ void
 gcm_device_set_kind (GcmDevice *device, GcmDeviceTypeEnum kind)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
-	device->priv->type = kind;
-	gcm_device_changed (device);
+	if (device->priv->type != kind) {
+		device->priv->type = kind;
+		gcm_device_changed (device);
+	}
 }
 
 /**
@@ -237,8 +239,10 @@ void
 gcm_device_set_connected (GcmDevice *device, gboolean connected)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
-	device->priv->connected = connected;
-	gcm_device_changed (device);
+	if (device->priv->connected != connected) {
+		device->priv->connected = connected;
+		gcm_device_changed (device);
+	}
 }
 
 /**
