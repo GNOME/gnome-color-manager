@@ -94,6 +94,8 @@ static guint signals[SIGNAL_LAST] = { 0 };
 
 G_DEFINE_TYPE (GcmDevice, gcm_device, G_TYPE_OBJECT)
 
+#define GCM_DEVICE_CHANGED_SUPRESS_TIMEOUT	10	/* ms */
+
 /**
  * gcm_device_changed_cb:
  **/
@@ -113,12 +115,24 @@ gcm_device_changed_cb (GcmDevice *device)
 static void
 gcm_device_changed (GcmDevice *device)
 {
+	static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+
+	/* lock */
+	g_static_mutex_lock (&mutex);
+
 	/* already queued, so ignoring */
 	if (device->priv->changed_id != 0)
-		return;
+		goto out;
 
 	/* adding to queue */
-	device->priv->changed_id = g_idle_add ((GSourceFunc) gcm_device_changed_cb, device);
+	device->priv->changed_id = g_timeout_add_full (G_PRIORITY_DEFAULT_IDLE,
+						       GCM_DEVICE_CHANGED_SUPRESS_TIMEOUT,
+						       (GSourceFunc) gcm_device_changed_cb,
+						       g_object_ref (device),
+						       (GDestroyNotify) g_object_unref);
+out:
+	/* unlock */
+	g_static_mutex_unlock (&mutex);
 }
 
 /**
