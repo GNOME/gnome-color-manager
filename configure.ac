@@ -112,50 +112,16 @@ dnl ---------------------------------------------------------------------------
 dnl - Check library dependencies
 dnl ---------------------------------------------------------------------------
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 gthread-2.0 gio-2.0)
-AC_SUBST(GLIB_CFLAGS)
-AC_SUBST(GLIB_LIBS)
-
 PKG_CHECK_MODULES(XORG, xxf86vm xrandr)
-AC_SUBST(XORG_CFLAGS)
-AC_SUBST(XORG_LIBS)
-
 PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED)
-AC_SUBST(GTK_CFLAGS)
-AC_SUBST(GTK_LIBS)
-
 PKG_CHECK_MODULES(GNOMEDESKTOP, gnome-desktop-2.0 >= $GNOMEDESKTOP_REQUIRED)
-AC_SUBST(GNOMEDESKTOP_CFLAGS)
-AC_SUBST(GNOMEDESKTOP_LIBS)
-
-PKG_CHECK_MODULES(GCONF, \
- gconf-2.0 >= $GCONF_REQUIRED)
-AC_SUBST(GCONF_CFLAGS)
-AC_SUBST(GCONF_LIBS)
-
+PKG_CHECK_MODULES(GCONF, gconf-2.0 >= $GCONF_REQUIRED)
 PKG_CHECK_MODULES(UNIQUE, unique-1.0 >= $UNIQUE_REQUIRED)
-AC_SUBST(UNIQUE_CFLAGS)
-AC_SUBST(UNIQUE_LIBS)
-
 PKG_CHECK_MODULES(VTE, vte >= $VTE_REQUIRED)
-AC_SUBST(VTE_CFLAGS)
-AC_SUBST(VTE_LIBS)
-
 PKG_CHECK_MODULES(GUDEV, gudev-1.0)
-AC_SUBST(GUDEV_CFLAGS)
-AC_SUBST(GUDEV_LIBS)
-
 PKG_CHECK_MODULES(LCMS, lcms)
-AC_SUBST(LCMS_CFLAGS)
-AC_SUBST(LCMS_LIBS)
-AC_DEFINE(GCM_HAVE_LCMS,1,[we have LCMS support])
-
 PKG_CHECK_MODULES(DBUS_GLIB, dbus-glib-1 >= $DBUS_GLIB_REQUIRED)
-AC_SUBST(DBUS_GLIB_CFLAGS)
-AC_SUBST(DBUS_GLIB_LIBS)
-
 PKG_CHECK_MODULES(X11, x11)
-AC_SUBST(X11_CFLAGS)
-AC_SUBST(X11_LIBS)
 
 PKG_CHECK_MODULES(SANE, sane-backends, has_sane=yes, has_sane=no)
 if test $has_sane = "no"; then
@@ -165,13 +131,11 @@ if test $has_sane = "no"; then
 	fi
 	SANE_CFLAGS=""
 	SANE_LIBS="-lsane"
+	AC_SUBST(SANE_CFLAGS)
+	AC_SUBST(SANE_LIBS)
 fi
-AC_SUBST(SANE_CFLAGS)
-AC_SUBST(SANE_LIBS)
 
 PKG_CHECK_MODULES(CANBERRA, libcanberra-gtk >= $CANBERRA_REQUIRED)
-AC_SUBST(CANBERRA_CFLAGS)
-AC_SUBST(CANBERRA_LIBS)
 
 AC_CHECK_LIB(tiff, TIFFReadRGBAImageOriented,
 	     TIFF_CFLAGS=""
@@ -291,7 +255,6 @@ echo "
         compiler:                  ${CC}
         cflags:                    ${CFLAGS}
         cppflags:                  ${CPPFLAGS}
-        hardware auto-detection:   ${enable_hardware_detection}
         PackageKit integration:    ${enable_packagekit}
         building unit tests:       ${enable_tests}
         gconf-schema dir:          $GCONF_SCHEMA_FILE_DIR
