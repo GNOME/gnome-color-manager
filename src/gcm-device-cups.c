@@ -150,6 +150,7 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 		      "type", GCM_DEVICE_TYPE_ENUM_PRINTER,
 		      "colorspace", colorspace,
 		      "id", id,
+// FIXME: find out from CUPS if the printer is connected
 		      "connected", TRUE,
 //		      "serial", serial,
 		      "model", model,
