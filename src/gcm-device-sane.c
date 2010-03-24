@@ -178,7 +178,7 @@ gcm_device_sane_set_from_device (GcmDevice *device, const SANE_Device *sane_devi
 	egg_debug ("type=%s", sane_device->type);
 
 	/* convert device_id 'plustek:libusb:004:002' to suitable id */
-	id = g_strdup_printf ("sane_%s", sane_device->name);
+	id = g_strdup_printf ("sane_%s", sane_device->model);
 	gcm_utils_alphanum_lcase (id);
 
 	/* make safe strings */
