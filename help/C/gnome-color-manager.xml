@@ -11,7 +11,7 @@
 <!--
       (Do not remove this comment block.)
   Template Maintained by the GNOME Documentation Project:
-	  http://developer.gnome.org/projects/gdp
+    http://developer.gnome.org/projects/gdp
   Template version: 2.0 beta
   Template last modified Feb 12, 2002
 -->
@@ -59,7 +59,7 @@
       <author role="maintainer">
         <firstname>Richard</firstname>
         <surname>Hughes</surname>
-	<email>richard@hughsie.com</email>
+        <email>richard@hughsie.com</email>
       </author>
 <!-- This is appropriate place for other contributors: translators,
       maintainers,  etc. Commented out by default.
@@ -94,7 +94,7 @@
         To report a bug or make a suggestion regarding the &app; application or
         this manual, follow the directions in the
         <ulink url="http://projects.gnome.org/gnome-color-manager/bugs.html"
-	  type="http">&application; Contact Page</ulink>.
+               type="http">&application; Contact Page</ulink>.
       </para>
 <!-- Translators may also add here feedback address for translations -->
     </legalnotice>
@@ -124,7 +124,7 @@
     The &app; is a framework that helps the user generate, install and manage
     device colors on a <systemitem>GNOME desktop</systemitem>. It does this to
     help a user match color across all devices. This gives a consistent color
-    to an image or document, wherever it is output. 
+    to an image or document, wherever it is output.
   </para>
   <para>
     The &app; communicates the selected profiles to color-aware applications,
@@ -134,7 +134,7 @@
     The &app; uses <ulink url="http://www.color.org" type="http">
     International Color Consortium</ulink> (ICC) profiles to map device
     color characteristics onto a standard color space used by the
-    <systemitem>GNOME desktop</systemitem>. 
+    <systemitem>GNOME desktop</systemitem>.
   </para>
   <warning>
     <para>
@@ -439,6 +439,61 @@
   <title>Frequently asked questions</title>
   <para>This section list questions frequently asked about color management</para>
 
+  <section id="faq-calibration-and-characterization">
+    <title>What's the difference between calibration and characterization?</title>
+    <para>
+      Many people are initially confused about the difference between calibration
+      and characterization.
+      Calibration is the process of modifying the color behavior of a device.
+      This is typically done using two mechanisms:
+      <orderedlist>
+        <listitem>
+          <para>
+            Changing controls or internal settings that it has.
+          </para>
+        </listitem>
+        <listitem>
+          <para>
+            Applying curves to its color channels.
+          </para>
+        </listitem>
+      </orderedlist>
+    </para>
+    <para>
+      The idea of calibration is to put a device is a defined state with regard
+      to its color response.
+      Often this is used as a day to day means of maintaining reproducible behavior.
+      Typically calibration will be stored in device or systems specific file
+      formats that record the device settings or per-channel calibration curves.
+    </para>
+    <para>
+      Characterization (or profiling) is <emphasis>recording</emphasis> the way
+      a device reproduces or responds to color.
+      Typically the result is stored in a device ICC profile.
+      Such a profile does not in itself modify color in any way.
+      It allows a system such as a CMM (Color Management Module) or a color aware
+      application to modify color when combined with another device profile.
+      Only by knowing the characteristics of two devices, can a way of
+      transferring color from one device representation to another be achieved.
+    </para>
+    <tip>
+      <para>
+        Note that a characterization (profile) will only be valid for a device
+        if it is in the same state of calibration as it was when it was
+        characterized.
+      </para>
+    </tip>
+    <para>
+      In the case of display profiles there is some additional confusion because
+      often the calibration information is stored in the profile for convenience.
+      By convention it is stored in a tag called the <type>vcgt</type> tag.
+      Although it is stored in the profile, none of the normal ICC based tools
+      or applications are aware of it, or do anything with it.
+      Similarly, typical display calibration tools and applications will not be
+      aware of, or do anything with the ICC characterization (profile) information.
+    </para>
+  </section>
+
   <section id="faq-missing-vcgt">
     <title>Missing information for whole-screen color correction</title>
     <para>
@@ -457,8 +512,8 @@
   <section id="faq-supported-colorimeters">
     <title>Which color measuring instruments are supported?</title>
     <para>
-      GNOME Color Manager relies on ArgyllCMS to support color instruments. 
-		Thus the following display measuring instruments are supported:
+      GNOME Color Manager relies on ArgyllCMS to support color instruments.
+      Thus the following display measuring instruments are supported:
     </para>
     <itemizedlist>
       <listitem>
@@ -559,10 +614,10 @@
   <section id="faq-where-to-purchase-targets">
     <title>Where do I purchase targets from?</title>
     <para>
-      You can purchase targets from well-known vendors like KODAK, X-Rite 
-		and LaserSoft in various online shops. Alternatively you can buy 
-		targets from <ulink url="http://www.targets.coloraid.de/" type="http">Wolf Faust</ulink> 
-		at a very fair price.
+      You can purchase targets from well-known vendors like KODAK, X-Rite
+      and LaserSoft in various online shops. Alternatively you can buy
+      targets from <ulink url="http://www.targets.coloraid.de/" type="http">Wolf Faust</ulink>
+      at a very fair price.
     </para>
   </section>
 </section>
