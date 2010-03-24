@@ -275,18 +275,17 @@ gcm_device_sane_apply_device (GcmDeviceSane *device_sane, GError **error)
 	gboolean ret = FALSE;
 	gchar *filename = NULL;
 	gchar *device_filename = NULL;
-	gchar *profile_filename = NULL;
+	const gchar *profile_filename = NULL;
 	gchar *profile_filename_quoted = NULL;
 	GPtrArray *array;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
+	const gchar *manufacturer = NULL;
+	const gchar *model = NULL;
+	GcmDevice *device = GCM_DEVICE (device_sane);
 
 	/* get properties from device */
-	g_object_get (device_sane,
-		      "model", &model,
-		      "manufacturer", &manufacturer,
-		      "profile-filename", &profile_filename,
-		      NULL);
+	model = gcm_device_get_model (device);
+	manufacturer = gcm_device_get_manufacturer (device);
+	profile_filename = gcm_device_get_profile_filename (device);
 	profile_filename_quoted = g_strdup_printf ("\"%s\"", profile_filename);
 
 	device_filename = g_strdup_printf ("%s:%s.drc", manufacturer, model);
@@ -316,11 +315,8 @@ gcm_device_sane_apply_device (GcmDeviceSane *device_sane, GError **error)
 out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
-	g_free (manufacturer);
-	g_free (model);
 	g_free (filename);
 	g_free (device_filename);
-	g_free (profile_filename);
 	return ret;
 }
 

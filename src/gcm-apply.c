@@ -46,7 +46,6 @@ main (int argc, char **argv)
 	guint i;
 	GcmClient *client = NULL;
 	GcmDevice *device;
-	GcmDeviceTypeEnum type;
 
 	setlocale (LC_ALL, "");
 
@@ -75,9 +74,6 @@ main (int argc, char **argv)
 	array = gcm_client_get_devices (client);
 	for (i=0; i<array->len; i++) {
 		device = g_ptr_array_index (array, i);
-		g_object_get (device,
-			      "type", &type,
-			      NULL);
 
 		/* set gamma for device */
 		egg_debug ("setting profiles on device: %s", gcm_device_get_id (device));

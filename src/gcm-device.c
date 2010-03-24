@@ -1089,8 +1089,8 @@ gcm_device_test (EggTest *test)
 	GcmDevice *device;
 	gboolean ret;
 	GError *error = NULL;
-	gchar *filename;
-	gchar *profile;
+	const gchar *filename;
+	const gchar *profile;
 	gchar *data;
 	const gchar *type;
 	GcmDeviceTypeEnum type_enum;
@@ -1193,9 +1193,7 @@ gcm_device_test (EggTest *test)
 		egg_test_failed (test, "failed to load: %s", error->message);
 
 	/* get some properties */
-	g_object_get (device,
-		      "profile-filename", &profile,
-		      NULL);
+	profile = gcm_device_get_profile_filename (device);
 
 	/************************************************************/
 	egg_test_title (test, "get profile filename");
@@ -1203,7 +1201,6 @@ gcm_device_test (EggTest *test)
 		egg_test_success (test, NULL);
 	else
 		egg_test_failed (test, "invalid profile: %s", profile);
-	g_free (profile);
 
 	/* empty file that exists */
 	g_file_set_contents (filename, "", -1, NULL);
@@ -1228,9 +1225,7 @@ gcm_device_test (EggTest *test)
 		egg_test_failed (test, "failed to load: %s", error->message);
 
 	/* get some properties */
-	g_object_get (device,
-		      "profile-filename", &profile,
-		      NULL);
+	profile = gcm_device_get_profile_filename (device);
 
 	/************************************************************/
 	egg_test_loop_wait (test, 100);
@@ -1249,12 +1244,9 @@ gcm_device_test (EggTest *test)
 		egg_test_success (test, NULL);
 	else
 		egg_test_failed (test, "invalid profile: %s", profile);
-	g_free (profile);
 
 	/* set some properties */
-	g_object_set (device,
-		      "profile-filename", "/srv/sysfs_canon_canoscan.icc",
-		      NULL);
+	gcm_device_set_profile_filename (device, "/srv/sysfs_canon_canoscan.icc");
 
 	/* ensure the file is nuked, again */
 	g_unlink (filename);
@@ -1284,7 +1276,6 @@ gcm_device_test (EggTest *test)
 	g_unlink (filename);
 
 	g_object_unref (device);
-	g_free (filename);
 
 	egg_test_end (test);
 }

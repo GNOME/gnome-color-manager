@@ -35,6 +35,7 @@
 #include <gconf/gconf-client.h>
 
 #include "gcm-calibrate.h"
+#include "gcm-device-xrandr.h"
 #include "gcm-utils.h"
 #include "gcm-brightness.h"
 #include "gcm-colorimeter.h"
@@ -248,21 +249,19 @@ gboolean
 gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GError **error)
 {
 	gboolean ret = TRUE;
-	gchar *native_device = NULL;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
-	gchar *description = NULL;
-	gchar *serial = NULL;
+	const gchar *native_device = NULL;
+	const gchar *manufacturer = NULL;
+	const gchar *model = NULL;
+	const gchar *description = NULL;
+	const gchar *serial = NULL;
 	GcmDeviceTypeEnum type;
 
 	/* get the device */
-	g_object_get (device,
-		      "type", &type,
-		      "serial", &serial,
-		      "model", &model,
-		      "title", &description,
-		      "manufacturer", &manufacturer,
-		      NULL);
+	type = gcm_device_get_kind (device);
+	serial = gcm_device_get_serial (device);
+	model = gcm_device_get_model (device);
+	description = gcm_device_get_title (device);
+	manufacturer = gcm_device_get_manufacturer (device);
 
 	/* set the proper values */
 	g_object_set (calibrate,
@@ -278,9 +277,7 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 
 	/* display specific properties */
 	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY) {
-		g_object_get (device,
-			      "native-device", &native_device,
-			      NULL);
+		native_device = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
 		if (native_device == NULL) {
 			g_set_error (error,
 				     GCM_CALIBRATE_ERROR,
@@ -295,11 +292,6 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 	}
 
 out:
-	g_free (native_device);
-	g_free (manufacturer);
-	g_free (model);
-	g_free (description);
-	g_free (serial);
 	return ret;
 }
 

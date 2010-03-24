@@ -73,6 +73,15 @@ G_DEFINE_TYPE (GcmDeviceXrandr, gcm_device_xrandr, GCM_TYPE_DEVICE)
 #define GCM_ICC_PROFILE_IN_X_VERSION_MINOR	3
 
 /**
+ * gcm_device_xrandr_get_native_device:
+ **/
+const gchar *
+gcm_device_xrandr_get_native_device (GcmDeviceXrandr *device_xrandr)
+{
+	return device_xrandr->priv->native_device;
+}
+
+/**
  * gcm_device_xrandr_get_output_name:
  *
  * Return value: the output name, free with g_free().
@@ -443,13 +452,13 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	GnomeRRCrtc *crtc;
 	GnomeRROutput *output;
 	gint x, y;
-	gchar *filename = NULL;
+	const gchar *filename;
 	gchar *filename_systemwide = NULL;
 	gfloat gamma_adjust;
 	gfloat brightness;
 	gfloat contrast;
-	gchar *output_name;
-	gchar *id = NULL;
+	const gchar *output_name;
+	const gchar *id;
 	guint size;
 	gboolean saved;
 	gboolean use_global;
@@ -460,31 +469,24 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (device);
 	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
 
-	/* get details about the device */
-	g_object_get (device_xrandr,
-		      "id", &id,
-		      "type", &type,
-		      "saved", &saved,
-		      "profile-filename", &filename,
-		      "gamma", &gamma_adjust,
-		      "brightness", &brightness,
-		      "contrast", &contrast,
-		      "native-device", &output_name,
-		      NULL);
-
 	/* do no set the gamma for non-display types */
+	id = gcm_device_get_id (device);
+	type = gcm_device_get_kind (device);
 	if (type != GCM_DEVICE_TYPE_ENUM_DISPLAY) {
 		g_set_error (error, 1, 0, "not a display: %s", id);
 		goto out;
 	}
 
 	/* should be set for display types */
+	output_name = gcm_device_xrandr_get_native_device (device_xrandr);
 	if (output_name == NULL || output_name[0] == '\0') {
 		g_set_error (error, 1, 0, "no output name for display: %s", id);
 		goto out;
 	}
 
 	/* if not saved, try to find default filename */
+	saved = gcm_device_get_saved (device);
+	filename = gcm_device_get_profile_filename (device);
 	if (!saved && filename == NULL) {
 		filename_systemwide = g_strdup_printf ("%s/%s.icc", GCM_SYSTEM_PROFILES_DIR, id);
 		ret = g_file_test (filename_systemwide, G_FILE_TEST_EXISTS);
@@ -536,6 +538,9 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 
 	/* do fine adjustment */
 	if (use_global) {
+		gamma_adjust = gcm_device_get_gamma (device);
+		brightness = gcm_device_get_brightness (device);
+		contrast = gcm_device_get_contrast (device);
 		g_object_set (clut,
 			      "gamma", gamma_adjust,
 			      "brightness", brightness,
@@ -590,10 +595,7 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 		}
 	}
 out:
-	g_free (id);
-	g_free (filename);
 	g_free (filename_systemwide);
-	g_free (output_name);
 	if (clut != NULL)
 		g_object_unref (clut);
 	if (profile != NULL)

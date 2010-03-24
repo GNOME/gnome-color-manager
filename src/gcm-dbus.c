@@ -29,6 +29,7 @@
 
 #include "gcm-utils.h"
 #include "gcm-dbus.h"
+#include "gcm-device-xrandr.h"
 #include "gcm-client.h"
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
@@ -165,9 +166,9 @@ static GPtrArray *
 gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *device_id_with_prefix)
 {
 	gboolean ret;
-	gchar *filename;
+	const gchar *filename;
 	const gchar *device_id;
-	gchar *device_id_tmp;
+	const gchar *device_id_tmp;
 	guint i;
 	gboolean use_native_device = FALSE;
 	GcmDevice *device;
@@ -200,14 +201,10 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *device_id
 		device = g_ptr_array_index (array_devices, i);
 
 		/* get the id for this device */
-		if (use_native_device) {
-			g_object_get (device,
-				      "native-device", &device_id_tmp,
-				      NULL);
+		if (use_native_device && GCM_IS_DEVICE_XRANDR (device)) {
+			device_id_tmp = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
 		} else {
-			g_object_get (device,
-				      "id", &device_id_tmp,
-				      NULL);
+			device_id_tmp = gcm_device_get_id (device);
 		}
 
 		/* wrong type of device */
@@ -217,11 +214,9 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *device_id
 		/* compare what we have against what we were given */
 		egg_debug ("comparing %s with %s", device_id_tmp, device_id);
 		if (g_strcmp0 (device_id_tmp, device_id) == 0) {
-			g_object_get (device,
-				      "profile-filename", &filename,
-				      NULL);
 
 			/* we have a profile? */
+			filename = gcm_device_get_profile_filename (device);
 			if (filename == NULL) {
 				egg_warning ("%s does not have a profile set", device_id);
 				continue;
@@ -241,9 +236,7 @@ gcm_dbus_get_profiles_for_device_internal (GcmDbus *dbus, const gchar *device_id
 			/* unref */
 			g_object_unref (file);
 			g_object_unref (profile);
-			g_free (filename);
 		}
-		g_free (device_id_tmp);
 	}
 
 	/* unref list of devices */
@@ -432,7 +425,7 @@ gcm_dbus_get_profile_for_window (GcmDbus *dbus, guint xid, DBusGMethodInvocation
 	GError *error;
 	GcmDevice *device;
 	GdkWindow *window;
-	gchar *filename = NULL;
+	const gchar *filename;
 
 	egg_debug ("getting profile for %i", xid);
 
@@ -455,9 +448,7 @@ gcm_dbus_get_profile_for_window (GcmDbus *dbus, guint xid, DBusGMethodInvocation
 	}
 
 	/* get the data */
-	g_object_get (device,
-		      "profile-filename", &filename,
-		      NULL);
+	filename = gcm_device_get_profile_filename (device);
 	if (filename == NULL) {
 		error = g_error_new (1, 0, "no profiles found for xid %i", xid);
 		dbus_g_method_return_error (context, error);
@@ -473,7 +464,6 @@ out:
 	g_timer_reset (dbus->priv->timer);
 	if (window != NULL)
 		g_object_unref (window);
-	g_free (filename);
 }
 
 /**

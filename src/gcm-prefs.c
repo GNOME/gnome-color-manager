@@ -130,17 +130,13 @@ gcm_prefs_set_default (GcmDevice *device)
 	GError *error = NULL;
 	gboolean ret = FALSE;
 	gchar *cmdline = NULL;
-	gchar *filename = NULL;
-	gchar *id = NULL;
+	const gchar *filename;
+	const gchar *id;
 	gchar *install_cmd = NULL;
 
-	/* get device properties */
-	g_object_get (device,
-		      "profile-filename", &filename,
-		      "id", &id,
-		      NULL);
-
 	/* nothing set */
+	id = gcm_device_get_id (device);
+	filename = gcm_device_get_profile_filename (device);
 	if (filename == NULL) {
 		egg_debug ("no filename for %s", id);
 		goto out;
@@ -158,10 +154,8 @@ gcm_prefs_set_default (GcmDevice *device)
 		goto out;
 	}
 out:
-	g_free (id);
 	g_free (install_cmd);
 	g_free (cmdline);
-	g_free (filename);
 	return ret;
 }
 
@@ -225,11 +219,9 @@ gcm_prefs_default_cb (GtkWidget *widget, gpointer data)
 	array = gcm_client_get_devices (gcm_client);
 	for (i=0; i<array->len; i++) {
 		device = g_ptr_array_index (array, i);
-		g_object_get (device,
-			      "type", &type,
-			      NULL);
 
 		/* not a xrandr panel */
+		type = gcm_device_get_kind (device);
 		if (type != GCM_DEVICE_TYPE_ENUM_DISPLAY)
 			continue;
 
@@ -1191,11 +1183,6 @@ gcm_prefs_is_profile_suitable_for_device (GcmProfile *profile, GcmDevice *device
 	gboolean ret = FALSE;
 	GcmDeviceTypeEnum device_type;
 
-	g_object_get (device,
-		      "type", &device_type,
-		      "colorspace", &device_colorspace,
-		      NULL);
-
 	/* get properties */
 	g_object_get (profile,
 		      "type", &profile_type_tmp,
@@ -1203,10 +1190,12 @@ gcm_prefs_is_profile_suitable_for_device (GcmProfile *profile, GcmDevice *device
 		      NULL);
 
 	/* not the right colorspace */
+	device_colorspace = gcm_device_get_colorspace (device);
 	if (device_colorspace != profile_colorspace)
 		goto out;
 
 	/* not the correct type */
+	device_type = gcm_device_get_kind (device);
 	profile_type = gcm_utils_device_type_to_profile_type (device_type);
 	if (profile_type_tmp != profile_type)
 		goto out;
@@ -1762,10 +1751,10 @@ static void
 gcm_prefs_add_device_xrandr (GcmDevice *device)
 {
 	GtkTreeIter iter;
-	gchar *title_tmp = NULL;
+	const gchar *title_tmp;
 	gchar *title = NULL;
 	gchar *sort = NULL;
-	gchar *id = NULL;
+	const gchar *id;
 	gboolean ret;
 	gboolean connected;
 	GError *error = NULL;
@@ -1776,14 +1765,9 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 		goto out;
 	}
 
-	/* get details */
-	g_object_get (device,
-		      "id", &id,
-		      "connected", &connected,
-		      "title", &title_tmp,
-		      NULL);
-
 	/* italic for non-connected devices */
+	connected = gcm_device_get_connected (device);
+	title_tmp = gcm_device_get_title (device);
 	if (connected) {
 		/* set the gamma on the device */
 		ret = gcm_device_apply (device, &error);
@@ -1810,6 +1794,7 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 				title);
 
 	/* add to list */
+	id = gcm_device_get_id (device);
 	egg_debug ("add %s to device list", id);
 	gtk_list_store_append (list_store_devices, &iter);
 	gtk_list_store_set (list_store_devices, &iter,
@@ -1818,9 +1803,7 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 			    GCM_DEVICES_COLUMN_TITLE, title,
 			    GCM_DEVICES_COLUMN_ICON, "video-display", -1);
 out:
-	g_free (id);
 	g_free (sort);
-	g_free (title_tmp);
 	g_free (title);
 }
 
@@ -2105,31 +2088,26 @@ static void
 gcm_prefs_add_device_type (GcmDevice *device)
 {
 	GtkTreeIter iter;
-	gchar *title;
+	const gchar *title;
 	GString *string;
-	gchar *id;
+	const gchar *id;
 	gchar *sort = NULL;
 	GcmDeviceTypeEnum type;
 	const gchar *icon_name;
 	gboolean connected;
 	gboolean virtual;
 
-	/* get details */
-	g_object_get (device,
-		      "id", &id,
-		      "connected", &connected,
-		      "virtual", &virtual,
-		      "title", &title,
-		      "type", &type,
-		      NULL);
-
 	/* get icon */
+	type = gcm_device_get_kind (device);
 	icon_name = gcm_prefs_device_type_to_icon_name (type);
 
 	/* create a title for the device */
+	title = gcm_device_get_title (device);
 	string = g_string_new (title);
 
 	/* italic for non-connected devices */
+	connected = gcm_device_get_connected (device);
+	virtual = gcm_device_get_virtual (device);
 	if (!connected && !virtual) {
 		/* TRANSLATORS: this is where the device has been setup but is not connected */
 		g_string_append_printf (string, "\n<i>[%s]</i>", _("disconnected"));
@@ -2141,14 +2119,13 @@ gcm_prefs_add_device_type (GcmDevice *device)
 				string->str);
 
 	/* add to list */
+	id = gcm_device_get_id (device);
 	gtk_list_store_append (list_store_devices, &iter);
 	gtk_list_store_set (list_store_devices, &iter,
 			    GCM_DEVICES_COLUMN_ID, id,
 			    GCM_DEVICES_COLUMN_SORT, sort,
 			    GCM_DEVICES_COLUMN_TITLE, string->str,
 			    GCM_DEVICES_COLUMN_ICON, icon_name, -1);
-	g_free (id);
-	g_free (title);
 	g_free (sort);
 	g_string_free (string, TRUE);
 }
@@ -2205,12 +2182,8 @@ gcm_prefs_added_idle_cb (GcmDevice *device)
 	/* remove the saved device if it's already there */
 	gcm_prefs_remove_device (device);
 
-	/* get the type of the device */
-	g_object_get (device,
-		      "type", &type,
-		      NULL);
-
 	/* add the device */
+	type = gcm_device_get_kind (device);
 	if (type == GCM_DEVICE_TYPE_ENUM_DISPLAY)
 		gcm_prefs_add_device_xrandr (device);
 	else

@@ -937,9 +937,7 @@ gcm_client_add_saved (GcmClient *client, GError **error)
 			gcm_client_add_unconnected_device (client, keyfile, groups[i]);
 		} else {
 			egg_debug ("found already added %s", groups[i]);
-			g_object_set (device,
-				      "saved", TRUE,
-				      NULL);
+			gcm_device_set_saved (device, TRUE);
 		}
 	}
 out:
@@ -1012,7 +1010,7 @@ gboolean
 gcm_client_add_device (GcmClient *client, GcmDevice *device, GError **error)
 {
 	gboolean ret = FALSE;
-	gchar *id = NULL;
+	const gchar *id;
 	gboolean virtual;
 	GcmDevice *device_tmp = NULL;
 
@@ -1020,16 +1018,14 @@ gcm_client_add_device (GcmClient *client, GcmDevice *device, GError **error)
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
 
 	/* check removable */
-	g_object_get (device,
-		      "virtual", &virtual,
-		      "id", &id,
-		      NULL);
+	virtual = gcm_device_get_virtual (device);
 	if (!virtual) {
 		g_set_error_literal (error, 1, 0, "cannot add non-virtual devices");
 		goto out;
 	}
 
 	/* look to see if device already exists */
+	id = gcm_device_get_id (device);
 	device_tmp = gcm_client_get_device_by_id (client, id);
 	if (device_tmp != NULL) {
 		/* TRANSLATORS: error message */
@@ -1041,9 +1037,7 @@ gcm_client_add_device (GcmClient *client, GcmDevice *device, GError **error)
 	g_ptr_array_add (client->priv->array, g_object_ref (device));
 
 	/* update status */
-	g_object_set (device,
-		      "saved", FALSE,
-		      NULL);
+	gcm_device_set_saved (device, FALSE);
 
 	/* emit a signal */
 	egg_debug ("emit added: %s", id);
@@ -1055,7 +1049,6 @@ gcm_client_add_device (GcmClient *client, GcmDevice *device, GError **error)
 	/* all okay */
 	ret = TRUE;
 out:
-	g_free (id);
 	if (device_tmp != NULL)
 		g_object_unref (device_tmp);
 	return ret;
@@ -1126,9 +1119,7 @@ gcm_client_delete_device (GcmClient *client, GcmDevice *device, GError **error)
 		goto out;
 
 	/* update status */
-	g_object_set (device,
-		      "saved", FALSE,
-		      NULL);
+	gcm_device_set_saved (device, FALSE);
 
 not_saved:
 	/* emit a signal */
