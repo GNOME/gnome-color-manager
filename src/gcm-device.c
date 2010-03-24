@@ -63,6 +63,7 @@ struct _GcmDevicePrivate
 	gchar				*title;
 	GConfClient			*gconf_client;
 	GcmColorspaceEnum		 colorspace;
+	guint				 changed_id;
 };
 
 enum {
@@ -84,7 +85,41 @@ enum {
 	PROP_LAST
 };
 
+enum {
+	SIGNAL_CHANGED,
+	SIGNAL_LAST
+};
+
+static guint signals[SIGNAL_LAST] = { 0 };
+
 G_DEFINE_TYPE (GcmDevice, gcm_device, G_TYPE_OBJECT)
+
+/**
+ * gcm_device_changed_cb:
+ **/
+static gboolean
+gcm_device_changed_cb (GcmDevice *device)
+{
+	/* emit a signal */
+	egg_debug ("emit changed: %s", gcm_device_get_id (device));
+	g_signal_emit (device, signals[SIGNAL_CHANGED], 0);
+	device->priv->changed_id = 0;
+	return FALSE;
+}
+
+/**
+ * gcm_device_changed:
+ **/
+static void
+gcm_device_changed (GcmDevice *device)
+{
+	/* already queued, so ignoring */
+	if (device->priv->changed_id != 0)
+		return;
+
+	/* adding to queue */
+	device->priv->changed_id = g_idle_add ((GSourceFunc) gcm_device_changed_cb, device);
+}
 
 /**
  * gcm_device_type_enum_from_string:
@@ -168,6 +203,7 @@ gcm_device_set_kind (GcmDevice *device, GcmDeviceTypeEnum kind)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	device->priv->type = kind;
+	gcm_device_changed (device);
 }
 
 /**
@@ -188,6 +224,7 @@ gcm_device_set_connected (GcmDevice *device, gboolean connected)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	device->priv->connected = connected;
+	gcm_device_changed (device);
 }
 
 /**
@@ -208,6 +245,7 @@ gcm_device_set_virtual (GcmDevice *device, gboolean virtual)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	device->priv->virtual = virtual;
+	gcm_device_changed (device);
 }
 
 /**
@@ -228,6 +266,7 @@ gcm_device_set_saved (GcmDevice *device, gboolean saved)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	device->priv->saved = saved;
+	gcm_device_changed (device);
 }
 
 /**
@@ -248,6 +287,7 @@ gcm_device_set_gamma (GcmDevice *device, gfloat gamma)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	device->priv->gamma = gamma;
+	gcm_device_changed (device);
 }
 
 /**
@@ -268,6 +308,7 @@ gcm_device_set_brightness (GcmDevice *device, gfloat brightness)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	device->priv->brightness = brightness;
+	gcm_device_changed (device);
 }
 
 /**
@@ -288,6 +329,7 @@ gcm_device_set_contrast (GcmDevice *device, gfloat contrast)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	device->priv->contrast = contrast;
+	gcm_device_changed (device);
 }
 
 /**
@@ -308,6 +350,7 @@ gcm_device_set_colorspace (GcmDevice *device, GcmColorspaceEnum colorspace)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	device->priv->colorspace = colorspace;
+	gcm_device_changed (device);
 }
 
 /**
@@ -329,6 +372,7 @@ gcm_device_set_id (GcmDevice *device, const gchar *id)
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	g_free (device->priv->id);
 	device->priv->id = g_strdup (id);
+	gcm_device_changed (device);
 }
 
 /**
@@ -350,6 +394,7 @@ gcm_device_set_serial (GcmDevice *device, const gchar *serial)
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	g_free (device->priv->serial);
 	device->priv->serial = g_strdup (serial);
+	gcm_device_changed (device);
 }
 
 /**
@@ -371,6 +416,7 @@ gcm_device_set_manufacturer (GcmDevice *device, const gchar *manufacturer)
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	g_free (device->priv->manufacturer);
 	device->priv->manufacturer = g_strdup (manufacturer);
+	gcm_device_changed (device);
 }
 
 /**
@@ -392,6 +438,7 @@ gcm_device_set_model (GcmDevice *device, const gchar *model)
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	g_free (device->priv->model);
 	device->priv->model = g_strdup (model);
+	gcm_device_changed (device);
 }
 
 /**
@@ -413,6 +460,7 @@ gcm_device_set_title (GcmDevice *device, const gchar *title)
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	g_free (device->priv->title);
 	device->priv->title = g_strdup (title);
+	gcm_device_changed (device);
 }
 
 /**
@@ -434,6 +482,7 @@ gcm_device_set_profile_filename (GcmDevice *device, const gchar *profile_filenam
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	g_free (device->priv->profile_filename);
 	device->priv->profile_filename = g_strdup (profile_filename);
+	gcm_device_changed (device);
 }
 
 /**
@@ -930,6 +979,16 @@ gcm_device_class_init (GcmDeviceClass *klass)
 				   G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_COLORSPACE, pspec);
 
+	/**
+	 * GcmDevice::changed:
+	 **/
+	signals[SIGNAL_CHANGED] =
+		g_signal_new ("changed",
+			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (GcmDeviceClass, changed),
+			      NULL, NULL, g_cclosure_marshal_VOID__VOID,
+			      G_TYPE_NONE, 0);
+
 	g_type_class_add_private (klass, sizeof (GcmDevicePrivate));
 }
 
@@ -941,6 +1000,7 @@ gcm_device_init (GcmDevice *device)
 {
 	GError *error = NULL;
 	device->priv = GCM_DEVICE_GET_PRIVATE (device);
+	device->priv->changed_id = 0;
 	device->priv->id = NULL;
 	device->priv->saved = FALSE;
 	device->priv->connected = FALSE;
@@ -970,6 +1030,10 @@ gcm_device_finalize (GObject *object)
 {
 	GcmDevice *device = GCM_DEVICE (object);
 	GcmDevicePrivate *priv = device->priv;
+
+	/* remove any pending signal */
+	if (device->priv->changed_id != 0)
+		g_source_remove (device->priv->changed_id);
 
 	g_free (priv->title);
 	g_free (priv->id);

@@ -48,6 +48,7 @@ struct _GcmDevice
 struct _GcmDeviceClass
 {
 	GObjectClass	parent_class;
+	void		 (*changed)			(GcmDevice		*device);
 	gboolean	 (*apply)			(GcmDevice		*device,
 							 GError			**error);
 	/* padding for future expansion */
