@@ -1072,6 +1072,17 @@ gcm_device_finalize (GObject *object)
 
 #include "gcm-device-udev.h"
 
+static guint _changes = 0;
+
+static void
+gcm_device_test_changed_cb (GcmDevice *device, EggTest *test)
+{
+	egg_debug ("emit changed: %s", gcm_device_get_id (device));
+	_changes++;
+
+	egg_test_loop_quit (test);
+}
+
 void
 gcm_device_test (EggTest *test)
 {
@@ -1091,6 +1102,16 @@ gcm_device_test (EggTest *test)
 	egg_test_title (test, "get a device object");
 	device = gcm_device_udev_new ();
 	egg_test_assert (test, device != NULL);
+
+	/* connect to the changed signal */
+	g_signal_connect (device, "changed", G_CALLBACK (gcm_device_test_changed_cb), test);
+
+	/************************************************************/
+	egg_test_title (test, "correct number of changed signals");
+	if (_changes == 0)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "changes: %i", _changes);
 
 	/************************************************************/
 	egg_test_title (test, "convert to recognized enum");
@@ -1122,11 +1143,34 @@ gcm_device_test (EggTest *test)
 	g_object_set (device,
 		      "type", GCM_DEVICE_TYPE_ENUM_SCANNER,
 		      "id", "sysfs_dummy_device",
-		      "connected", TRUE,
+		      "connected", FALSE,
 		      "virtual", FALSE,
 		      "serial", "0123456789",
 		      "colorspace", GCM_COLORSPACE_ENUM_RGB,
 		      NULL);
+
+	/************************************************************/
+	egg_test_loop_wait (test, 100);
+	egg_test_loop_check (test);
+
+	/************************************************************/
+	egg_test_title (test, "correct number of changed signals");
+	if (_changes == 1)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "changes: %i", _changes);
+
+	/************************************************************/
+	gcm_device_set_connected (device, TRUE);
+	egg_test_loop_wait (test, 100);
+	egg_test_loop_check (test);
+
+	/************************************************************/
+	egg_test_title (test, "correct number of changed signals");
+	if (_changes == 2)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "changes: %i", _changes);
 
 	/************************************************************/
 	egg_test_title (test, "get id");
@@ -1187,6 +1231,17 @@ gcm_device_test (EggTest *test)
 	g_object_get (device,
 		      "profile-filename", &profile,
 		      NULL);
+
+	/************************************************************/
+	egg_test_loop_wait (test, 100);
+	egg_test_loop_check (test);
+
+	/************************************************************/
+	egg_test_title (test, "correct number of changed signals");
+	if (_changes == 3)
+		egg_test_success (test, NULL);
+	else
+		egg_test_failed (test, "changes: %i", _changes);
 
 	/************************************************************/
 	egg_test_title (test, "get profile filename");
