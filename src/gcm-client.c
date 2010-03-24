@@ -702,10 +702,20 @@ gcm_client_add_connected_devices_sane (GcmClient *client, GError **error)
 	SANE_Status status;
 	const SANE_Device **device_list;
 
+	/* force sane to drop it's cache of devices -- yes, it is that crap */
+	sane_exit ();
+	sane_init (NULL, NULL);
+
 	/* get scanners on the local server */
 	status = sane_get_devices (&device_list, FALSE);
 	if (status != SANE_STATUS_GOOD) {
 		egg_warning ("failed to get devices from SANE: %s", sane_strstatus (status));
+		goto out;
+	}
+
+	/* nothing */
+	if (device_list == NULL || device_list[0] == NULL) {
+		egg_debug ("no devices to add");
 		goto out;
 	}
 
