@@ -151,6 +151,166 @@ out:
 }
 
 /**
+ * gcm_device_get_kind:
+ **/
+GcmDeviceTypeEnum
+gcm_device_get_kind (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), GCM_DEVICE_TYPE_ENUM_UNKNOWN);
+	return device->priv->type;
+}
+
+/**
+ * gcm_device_set_kind:
+ **/
+void
+gcm_device_set_kind (GcmDevice *device, GcmDeviceTypeEnum kind)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	device->priv->type = kind;
+}
+
+/**
+ * gcm_device_get_connected:
+ **/
+gboolean
+gcm_device_get_connected (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
+	return device->priv->connected;
+}
+
+/**
+ * gcm_device_set_connected:
+ **/
+void
+gcm_device_set_connected (GcmDevice *device, gboolean connected)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	device->priv->connected = connected;
+}
+
+/**
+ * gcm_device_get_virtual:
+ **/
+gboolean
+gcm_device_get_virtual (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
+	return device->priv->virtual;
+}
+
+/**
+ * gcm_device_set_virtual:
+ **/
+void
+gcm_device_set_virtual (GcmDevice *device, gboolean virtual)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	device->priv->virtual = virtual;
+}
+
+/**
+ * gcm_device_get_saved:
+ **/
+gboolean
+gcm_device_get_saved (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
+	return device->priv->saved;
+}
+
+/**
+ * gcm_device_set_saved:
+ **/
+void
+gcm_device_set_saved (GcmDevice *device, gboolean saved)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	device->priv->saved = saved;
+}
+
+/**
+ * gcm_device_get_gamma:
+ **/
+gfloat
+gcm_device_get_gamma (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), 0.0f);
+	return device->priv->gamma;
+}
+
+/**
+ * gcm_device_set_gamma:
+ **/
+void
+gcm_device_set_gamma (GcmDevice *device, gfloat gamma)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	device->priv->gamma = gamma;
+}
+
+/**
+ * gcm_device_get_brightness:
+ **/
+gfloat
+gcm_device_get_brightness (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), 0.0f);
+	return device->priv->brightness;
+}
+
+/**
+ * gcm_device_set_brightness:
+ **/
+void
+gcm_device_set_brightness (GcmDevice *device, gfloat brightness)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	device->priv->brightness = brightness;
+}
+
+/**
+ * gcm_device_get_contrast:
+ **/
+gfloat
+gcm_device_get_contrast (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), 0.0f);
+	return device->priv->contrast;
+}
+
+/**
+ * gcm_device_set_contrast:
+ **/
+void
+gcm_device_set_contrast (GcmDevice *device, gfloat contrast)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	device->priv->contrast = contrast;
+}
+
+/**
+ * gcm_device_get_colorspace:
+ **/
+GcmColorspaceEnum
+gcm_device_get_colorspace (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), GCM_COLORSPACE_ENUM_UNKNOWN);
+	return device->priv->colorspace;
+}
+
+/**
+ * gcm_device_set_colorspace:
+ **/
+void
+gcm_device_set_colorspace (GcmDevice *device, GcmColorspaceEnum colorspace)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	device->priv->colorspace = colorspace;
+}
+
+/**
  * gcm_device_get_id:
  **/
 const gchar *
@@ -158,6 +318,122 @@ gcm_device_get_id (GcmDevice *device)
 {
 	g_return_val_if_fail (GCM_IS_DEVICE (device), NULL);
 	return device->priv->id;
+}
+
+/**
+ * gcm_device_set_id:
+ **/
+void
+gcm_device_set_id (GcmDevice *device, const gchar *id)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	g_free (device->priv->id);
+	device->priv->id = g_strdup (id);
+}
+
+/**
+ * gcm_device_get_serial:
+ **/
+const gchar *
+gcm_device_get_serial (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), NULL);
+	return device->priv->serial;
+}
+
+/**
+ * gcm_device_set_serial:
+ **/
+void
+gcm_device_set_serial (GcmDevice *device, const gchar *serial)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	g_free (device->priv->serial);
+	device->priv->serial = g_strdup (serial);
+}
+
+/**
+ * gcm_device_get_manufacturer:
+ **/
+const gchar *
+gcm_device_get_manufacturer (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), NULL);
+	return device->priv->manufacturer;
+}
+
+/**
+ * gcm_device_set_manufacturer:
+ **/
+void
+gcm_device_set_manufacturer (GcmDevice *device, const gchar *manufacturer)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	g_free (device->priv->manufacturer);
+	device->priv->manufacturer = g_strdup (manufacturer);
+}
+
+/**
+ * gcm_device_get_model:
+ **/
+const gchar *
+gcm_device_get_model (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), NULL);
+	return device->priv->model;
+}
+
+/**
+ * gcm_device_set_model:
+ **/
+void
+gcm_device_set_model (GcmDevice *device, const gchar *model)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	g_free (device->priv->model);
+	device->priv->model = g_strdup (model);
+}
+
+/**
+ * gcm_device_get_title:
+ **/
+const gchar *
+gcm_device_get_title (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), NULL);
+	return device->priv->title;
+}
+
+/**
+ * gcm_device_set_title:
+ **/
+void
+gcm_device_set_title (GcmDevice *device, const gchar *title)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	g_free (device->priv->title);
+	device->priv->title = g_strdup (title);
+}
+
+/**
+ * gcm_device_get_profile_filename:
+ **/
+const gchar *
+gcm_device_get_profile_filename (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), NULL);
+	return device->priv->profile_filename;
+}
+
+/**
+ * gcm_device_set_profile_filename:
+ **/
+void
+gcm_device_set_profile_filename (GcmDevice *device, const gchar *profile_filename)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	g_free (device->priv->profile_filename);
+	device->priv->profile_filename = g_strdup (profile_filename);
 }
 
 /**
@@ -206,9 +482,7 @@ gcm_device_load (GcmDevice *device, GError **error)
 	}
 
 	/* we are backed by a keyfile */
-	g_object_set (device,
-		      "saved", TRUE,
-		      NULL);
+	gcm_device_set_saved (device, TRUE);
 
 	/* load data */
 	g_free (device->priv->profile_filename);
@@ -384,9 +658,7 @@ gcm_device_save (GcmDevice *device, GError **error)
 	}
 
 	/* update status */
-	g_object_set (device,
-		      "saved", TRUE,
-		      NULL);
+	gcm_device_set_saved (device, TRUE);
 out:
 	g_free (data);
 	g_free (filename);
@@ -484,56 +756,49 @@ static void
 gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	GcmDevice *device = GCM_DEVICE (object);
-	GcmDevicePrivate *priv = device->priv;
 
 	switch (prop_id) {
 	case PROP_TYPE:
-		priv->type = g_value_get_uint (value);
+		gcm_device_set_kind (device, g_value_get_uint (value));
 		break;
 	case PROP_ID:
-		g_free (priv->id);
-		priv->id = g_strdup (g_value_get_string (value));
+		gcm_device_set_id (device, g_value_get_string (value));
 		break;
 	case PROP_CONNECTED:
-		priv->connected = g_value_get_boolean (value);
+		gcm_device_set_connected (device, g_value_get_boolean (value));
 		break;
 	case PROP_VIRTUAL:
-		priv->virtual = g_value_get_boolean (value);
+		gcm_device_set_virtual (device, g_value_get_boolean (value));
 		break;
 	case PROP_SAVED:
-		priv->saved = g_value_get_boolean (value);
+		gcm_device_set_saved (device, g_value_get_boolean (value));
 		break;
 	case PROP_SERIAL:
-		g_free (priv->serial);
-		priv->serial = g_strdup (g_value_get_string (value));
+		gcm_device_set_serial (device, g_value_get_string (value));
 		break;
 	case PROP_MODEL:
-		g_free (priv->model);
-		priv->model = g_strdup (g_value_get_string (value));
+		gcm_device_set_model (device, g_value_get_string (value));
 		break;
 	case PROP_MANUFACTURER:
-		g_free (priv->manufacturer);
-		priv->manufacturer = g_strdup (g_value_get_string (value));
+		gcm_device_set_manufacturer (device, g_value_get_string (value));
 		break;
 	case PROP_TITLE:
-		g_free (priv->title);
-		priv->title = g_strdup (g_value_get_string (value));
+		gcm_device_set_title (device, g_value_get_string (value));
 		break;
 	case PROP_PROFILE_FILENAME:
-		g_free (priv->profile_filename);
-		priv->profile_filename = g_strdup (g_value_get_string (value));
+		gcm_device_set_profile_filename (device, g_value_get_string (value));
 		break;
 	case PROP_GAMMA:
-		priv->gamma = g_value_get_float (value);
+		gcm_device_set_gamma (device, g_value_get_float (value));
 		break;
 	case PROP_BRIGHTNESS:
-		priv->brightness = g_value_get_float (value);
+		gcm_device_set_brightness (device, g_value_get_float (value));
 		break;
 	case PROP_CONTRAST:
-		priv->contrast = g_value_get_float (value);
+		gcm_device_set_contrast (device, g_value_get_float (value));
 		break;
 	case PROP_COLORSPACE:
-		priv->colorspace = g_value_get_uint (value);
+		gcm_device_set_colorspace (device, g_value_get_uint (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
