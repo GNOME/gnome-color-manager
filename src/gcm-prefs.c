@@ -2168,7 +2168,8 @@ gcm_prefs_remove_device (GcmDevice *gcm_device)
 
 	/* remove */
 	id = gcm_device_get_id (gcm_device);
-	egg_debug ("removing: %s", id);
+	egg_debug ("removing: %s (connected: %i)", id,
+		   gcm_device_get_connected (gcm_device));
 
 	/* get first element */
 	model = GTK_TREE_MODEL (list_store_devices);
@@ -2197,7 +2198,9 @@ static gboolean
 gcm_prefs_added_idle_cb (GcmDevice *device)
 {
 	GcmDeviceTypeEnum type;
-	egg_debug ("added: %s", gcm_device_get_id (device));
+	egg_debug ("added: %s (connected: %i)",
+		   gcm_device_get_id (device),
+		   gcm_device_get_connected (device));
 
 	/* remove the saved device if it's already there */
 	gcm_prefs_remove_device (device);
@@ -2223,6 +2226,15 @@ gcm_prefs_added_idle_cb (GcmDevice *device)
  **/
 static void
 gcm_prefs_added_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user_data)
+{
+	g_idle_add ((GSourceFunc) gcm_prefs_added_idle_cb, g_object_ref (gcm_device));
+}
+
+/**
+ * gcm_prefs_changed_cb:
+ **/
+static void
+gcm_prefs_changed_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user_data)
 {
 	g_idle_add ((GSourceFunc) gcm_prefs_added_idle_cb, g_object_ref (gcm_device));
 }
@@ -3046,6 +3058,7 @@ main (int argc, char **argv)
 	gcm_client_set_use_threads (gcm_client, TRUE);
 	g_signal_connect (gcm_client, "added", G_CALLBACK (gcm_prefs_added_cb), NULL);
 	g_signal_connect (gcm_client, "removed", G_CALLBACK (gcm_prefs_removed_cb), NULL);
+	g_signal_connect (gcm_client, "changed", G_CALLBACK (gcm_prefs_changed_cb), NULL);
 	g_signal_connect (gcm_client, "notify::loading",
 			  G_CALLBACK (gcm_prefs_client_notify_loading_cb), NULL);
 
