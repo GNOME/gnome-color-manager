@@ -987,20 +987,18 @@ gboolean
 gcm_client_delete_device (GcmClient *client, GcmDevice *device, GError **error)
 {
 	gboolean ret = FALSE;
-	gchar *id = NULL;
+	const gchar *id;
 	gchar *data = NULL;
 	gchar *filename = NULL;
 	GKeyFile *keyfile = NULL;
+	gboolean saved;
 	gboolean connected;
 
 	g_return_val_if_fail (GCM_IS_CLIENT (client), FALSE);
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
 
-	/* check removable */
-	g_object_get (device,
-		      "connected", &connected,
-		      "id", &id,
-		      NULL);
+	/* check device is not connected */
+	connected = gcm_device_get_connected (device);
 	if (connected) {
 		g_set_error_literal (error, 1, 0, "device is still connected");
 		goto out;
@@ -1012,6 +1010,12 @@ gcm_client_delete_device (GcmClient *client, GcmDevice *device, GError **error)
 		g_set_error_literal (error, 1, 0, "not found in device array");
 		goto out;
 	}
+
+	/* check device is saved */
+	id = gcm_device_get_id (device);
+	saved = gcm_device_get_saved (device);
+	if (!saved)
+		goto not_saved;
 
 	/* get the config file */
 	filename = gcm_utils_get_default_config_location ();
@@ -1045,11 +1049,11 @@ gcm_client_delete_device (GcmClient *client, GcmDevice *device, GError **error)
 		      "saved", FALSE,
 		      NULL);
 
+not_saved:
 	/* emit a signal */
 	egg_debug ("emit removed: %s", id);
 	g_signal_emit (client, signals[SIGNAL_REMOVED], 0, device);
 out:
-	g_free (id);
 	g_free (data);
 	g_free (filename);
 	if (keyfile != NULL)
