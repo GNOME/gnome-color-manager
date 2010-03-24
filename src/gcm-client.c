@@ -52,6 +52,8 @@ static void     gcm_client_finalize	(GObject     *object);
 #define GCM_CLIENT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_CLIENT, GcmClientPrivate))
 
 static void gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output);
+static gboolean gcm_client_add_connected_devices_sane (GcmClient *client, GError **error);
+static gpointer gcm_client_add_connected_devices_sane_thrd (GcmClient *client);
 
 /**
  * GcmClientPrivate:
@@ -88,6 +90,8 @@ enum {
 static guint signals[SIGNAL_LAST] = { 0 };
 
 G_DEFINE_TYPE (GcmClient, gcm_client, G_TYPE_OBJECT)
+
+#define	GCM_CLIENT_SANE_REMOVED_TIMEOUT		200	/* ms */
 
 /**
  * gcm_client_set_use_threads:
@@ -209,47 +213,44 @@ gcm_client_get_id_for_udev_device (GUdevDevice *udev_device)
 /**
  * gcm_client_gudev_remove:
  **/
-static void
+static gboolean
 gcm_client_gudev_remove (GcmClient *client, GUdevDevice *udev_device)
 {
 	GcmDevice *device;
 	gchar *id;
-	gboolean ret;
-	GcmClientPrivate *priv = client->priv;
+	gboolean ret = FALSE;
 
 	/* generate id */
 	id = gcm_client_get_id_for_udev_device (udev_device);
 
 	/* do we have a device that matches */
 	device = gcm_client_get_device_by_id (client, id);
-	if (device == NULL)
-		goto out;
-
-	/* remove device first as we hold a reference to it */
-	ret = g_ptr_array_remove (priv->array, device);
-	if (!ret) {
-		egg_warning ("failed to remove %s", id);
+	if (device == NULL) {
+		egg_debug ("no match for %s", id);
 		goto out;
 	}
 
-	/* emit a signal */
-	egg_debug ("emit removed: %s", id);
-	g_signal_emit (client, signals[SIGNAL_REMOVED], 0, device);
+	/* set disconnected */
+	gcm_device_set_connected (device, FALSE);
+
+	/* success */
+	ret = TRUE;
 out:
 	if (device != NULL)
 		g_object_unref (device);
 	g_free (id);
+	return ret;
 }
 
 /**
  * gcm_client_gudev_add:
  **/
-static void
+static gboolean
 gcm_client_gudev_add (GcmClient *client, GUdevDevice *udev_device)
 {
 	GcmDevice *device = NULL;
 	GcmDevice *device_tmp = NULL;
-	gboolean ret;
+	gboolean ret = FALSE;
 	const gchar *value;
 	GError *error = NULL;
 	GcmClientPrivate *priv = client->priv;
@@ -271,13 +272,10 @@ gcm_client_gudev_add (GcmClient *client, GUdevDevice *udev_device)
 	/* we might have a previous saved device with this ID, in which case nuke it */
 	device_tmp = gcm_client_get_device_by_id (client, gcm_device_get_id (device));
 	if (device_tmp != NULL) {
-
-		/* remove from the array */
-		g_ptr_array_remove (client->priv->array, device_tmp);
-
-		/* emit a signal */
-		egg_debug ("emit removed: %s", gcm_device_get_id (device));
-		g_signal_emit (client, signals[SIGNAL_REMOVED], 0, device_tmp);
+		/* already disconnected device now connected */
+		g_object_unref (device);
+		device = g_object_ref (device_tmp);
+		gcm_device_set_connected (device, TRUE);
 	}
 
 	/* load the device */
@@ -302,6 +300,42 @@ out:
 		g_object_unref (device);
 	if (device_tmp != NULL)
 		g_object_unref (device_tmp);
+	return ret;
+}
+
+/**
+ * gcm_client_sane_refresh_cb:
+ **/
+static gboolean
+gcm_client_sane_refresh_cb (GcmClient *client)
+{
+	gboolean ret;
+	GError *error = NULL;
+	GThread *thread;
+
+	/* inform UI if we are loading devices still */
+	client->priv->loading_refcount = 1;
+	gcm_client_set_loading (client, TRUE);
+
+	/* rescan */
+	egg_debug ("rescanning sane");
+	if (client->priv->use_threads) {
+		thread = g_thread_create ((GThreadFunc) gcm_client_add_connected_devices_sane_thrd, client, FALSE, &error);
+		if (thread == NULL) {
+			egg_debug ("failed to rescan sane devices: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
+	} else {
+		ret = gcm_client_add_connected_devices_sane (client, &error);
+		if (!ret) {
+			egg_debug ("failed to rescan sane devices: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
+	}
+out:
+	return FALSE;
 }
 
 /**
@@ -310,10 +344,42 @@ out:
 static void
 gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevice *udev_device, GcmClient *client)
 {
-	if (g_strcmp0 (action, "remove") == 0)
-		gcm_client_gudev_remove (client, udev_device);
-	else if (g_strcmp0 (action, "add") == 0)
-		gcm_client_gudev_add (client, udev_device);
+	gboolean ret;
+	const gchar *value;
+	GcmDevice *device_tmp;
+	guint i;
+	GcmClientPrivate *priv = client->priv;
+
+	if (g_strcmp0 (action, "remove") == 0) {
+		ret = gcm_client_gudev_remove (client, udev_device);
+		if (ret)
+			egg_debug ("removed %s", g_udev_device_get_sysfs_path (udev_device));
+
+		/* we need to remove scanner devices */
+		value = g_udev_device_get_property (udev_device, "GCM_RESCAN");
+		if (g_strcmp0 (value, "scanner") == 0) {
+
+			/* set all scanners as disconnected */
+			for (i=0; i<priv->array->len; i++) {
+				device_tmp = g_ptr_array_index (priv->array, i);
+				if (gcm_device_get_kind (device_tmp) == GCM_DEVICE_TYPE_ENUM_SCANNER)
+					gcm_device_set_connected (device_tmp, FALSE);
+			}
+
+			/* find any others that might still be connected */
+			g_timeout_add (GCM_CLIENT_SANE_REMOVED_TIMEOUT, (GSourceFunc) gcm_client_sane_refresh_cb, client);
+		}
+
+	} else if (g_strcmp0 (action, "add") == 0) {
+		ret = gcm_client_gudev_add (client, udev_device);
+		if (ret)
+			egg_debug ("added %s", g_udev_device_get_sysfs_path (udev_device));
+
+		/* we need to rescan scanner devices */
+		value = g_udev_device_get_property (udev_device, "GCM_RESCAN");
+		if (g_strcmp0 (value, "scanner") == 0)
+			g_timeout_add (GCM_CLIENT_SANE_REMOVED_TIMEOUT, (GSourceFunc) gcm_client_sane_refresh_cb, client);
+	}
 }
 
 /**
@@ -346,6 +412,7 @@ gcm_client_add_connected_devices_udev (GcmClient *client, GError **error)
 
 	/* inform the UI */
 	gcm_client_done_loading (client);
+
 	return TRUE;
 }
 
@@ -509,27 +576,20 @@ gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
 		goto out;
 	}
 
-	/* we might have a previous saved device with this ID, in which case nuke it */
+	/* we might have a previous saved device with this ID, in which use that instead */
 	device_tmp = gcm_client_get_device_by_id (client, gcm_device_get_id (device));
 	if (device_tmp != NULL) {
 
-		/* old device not connected */
-		g_object_get (device_tmp,
-			      "connected", &connected,
-			      NULL);
-
 		/* this is just a dupe */
+		connected = gcm_device_get_connected (device_tmp);
 		if (connected) {
 			egg_debug ("ignoring dupe");
 			goto out;
 		}
 
-		/* remove from the array */
-		g_ptr_array_remove (client->priv->array, device_tmp);
-
-		/* emit a signal */
-		egg_debug ("emit removed: %s (unconnected device that has just been connected)", gcm_device_get_id (device_tmp));
-		g_signal_emit (client, signals[SIGNAL_REMOVED], 0, device_tmp);
+		/* use original device */
+		g_object_unref (device);
+		device = g_object_ref (device_tmp);
 	}
 
 	/* load the device */
@@ -659,6 +719,7 @@ gcm_client_sane_add (GcmClient *client, const SANE_Device *sane_device)
 	gboolean ret;
 	GError *error = NULL;
 	GcmDevice *device = NULL;
+	GcmDevice *device_tmp = NULL;
 	GcmClientPrivate *priv = client->priv;
 
 	/* create new device */
@@ -668,6 +729,14 @@ gcm_client_sane_add (GcmClient *client, const SANE_Device *sane_device)
 		egg_debug ("failed to set for output: %s", error->message);
 		g_error_free (error);
 		goto out;
+	}
+
+	/* we might have a previous saved device with this ID, in which use that instead */
+	device_tmp = gcm_client_get_device_by_id (client, gcm_device_get_id (device));
+	if (device_tmp != NULL) {
+		gcm_device_set_connected (device_tmp, TRUE);
+		g_object_unref (device);
+		device = g_object_ref (device_tmp);
 	}
 
 	/* load the device */
@@ -690,6 +759,8 @@ gcm_client_sane_add (GcmClient *client, const SANE_Device *sane_device)
 out:
 	if (device != NULL)
 		g_object_unref (device);
+	if (device_tmp != NULL)
+		g_object_unref (device_tmp);
 }
 
 /**
@@ -894,7 +965,7 @@ gcm_client_add_connected (GcmClient *client, GError **error)
 	if (!ret)
 		goto out;
 
-	/* inform UI if we are loading devces still */
+	/* inform UI if we are loading devices still */
 	client->priv->loading_refcount = 3;
 	gcm_client_set_loading (client, TRUE);
 
