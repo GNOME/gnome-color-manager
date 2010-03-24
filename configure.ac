@@ -157,7 +157,15 @@ PKG_CHECK_MODULES(X11, x11)
 AC_SUBST(X11_CFLAGS)
 AC_SUBST(X11_LIBS)
 
-PKG_CHECK_MODULES(SANE, sane-backends)
+PKG_CHECK_MODULES(SANE, sane-backends, has_sane=yes, has_sane=no)
+if test $has_sane = "no"; then
+	AC_CHECK_HEADER(sane/sane.h, has_sane=yes, has_sane=no)
+	if test $has_sane = "no"; then
+		AC_MSG_ERROR([Cannot fine SANE])
+	fi
+	SANE_CFLAGS=""
+	SANE_LIBS="-lsane"
+fi
 AC_SUBST(SANE_CFLAGS)
 AC_SUBST(SANE_LIBS)
 
