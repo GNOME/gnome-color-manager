@@ -195,6 +195,15 @@ gcm_calibrate_get_time (void)
 }
 
 /**
+ * gcm_calibrate_get_filename_result:
+ **/
+const gchar *
+gcm_calibrate_get_filename_result (GcmCalibrate *calibrate)
+{
+	return calibrate->priv->filename_result;
+}
+
+/**
  * gcm_calibrate_set_basename:
  **/
 static void

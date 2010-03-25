@@ -148,6 +148,22 @@ gcm_client_get_devices (GcmClient *client)
 }
 
 /**
+ * gcm_client_get_loading:
+ *
+ * @client: a valid %GcmClient instance
+ *
+ * Gets the loading status.
+ *
+ * Return value: %TRUE if the object is still loading devices
+ **/
+gboolean
+gcm_client_get_loading (GcmClient *client)
+{
+	g_return_val_if_fail (GCM_IS_CLIENT (client), FALSE);
+	return client->priv->loading;
+}
+
+/**
  * gcm_client_get_device_by_id:
  *
  * @client: a valid %GcmClient instance

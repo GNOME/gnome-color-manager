@@ -868,16 +868,14 @@ typedef struct {
 void
 gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTestData *test_data)
 {
-	gchar *filename;
-	gchar *filename_tmp;
-	gchar *copyright;
-	gchar *manufacturer;
-	gchar *model;
-	gchar *datetime;
-	gchar *description;
-	gchar *ascii_string;
-	gchar *pnp_id;
-	gchar *data;
+	gchar *filename = NULL;
+	const gchar *copyright;
+	const gchar *manufacturer;
+	const gchar *model;
+	const gchar *datetime;
+	const gchar *description;
+	const gchar *ascii_string;
+	const gchar *pnp_id;
 	guint width;
 	guint kind;
 	guint colorspace;
@@ -909,20 +907,9 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 		egg_test_failed (test, "failed to parse: %s", error->message);
 	g_object_unref (file);
 
-	/* get some properties */
-	g_object_get (profile_lcms1,
-		      "copyright", &copyright,
-		      "manufacturer", &manufacturer,
-		      "model", &model,
-		      "datetime", &datetime,
-		      "description", &description,
-		      "filename", &filename_tmp,
-		      "kind", &kind,
-		      "colorspace", &colorspace,
-		      NULL);
-
 	/************************************************************/
 	egg_test_title (test, "check copyright for %s", datafile);
+	copyright = gcm_profile_get_copyright (profile_lcms1);
 	if (g_strcmp0 (copyright, test_data->copyright) == 0)
 		egg_test_success (test, NULL);
 	else
@@ -930,6 +917,7 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 
 	/************************************************************/
 	egg_test_title (test, "check manufacturer for %s", datafile);
+	manufacturer = gcm_profile_get_manufacturer (profile_lcms1);
 	if (g_strcmp0 (manufacturer, test_data->manufacturer) == 0)
 		egg_test_success (test, NULL);
 	else
@@ -937,6 +925,7 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 
 	/************************************************************/
 	egg_test_title (test, "check model for %s", datafile);
+	model = gcm_profile_get_model (profile_lcms1);
 	if (g_strcmp0 (model, test_data->model) == 0)
 		egg_test_success (test, NULL);
 	else
@@ -944,6 +933,7 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 
 	/************************************************************/
 	egg_test_title (test, "check datetime for %s", datafile);
+	datetime = gcm_profile_get_datetime (profile_lcms1);
 	if (g_strcmp0 (datetime, test_data->datetime) == 0)
 		egg_test_success (test, NULL);
 	else
@@ -951,6 +941,7 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 
 	/************************************************************/
 	egg_test_title (test, "check description for %s", datafile);
+	description = gcm_profile_get_description (profile_lcms1);
 	if (g_strcmp0 (description, test_data->description) == 0)
 		egg_test_success (test, NULL);
 	else
@@ -958,6 +949,7 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 
 	/************************************************************/
 	egg_test_title (test, "check kind for %s", datafile);
+	kind = gcm_profile_get_kind (profile_lcms1);
 	if (kind == test_data->kind)
 		egg_test_success (test, NULL);
 	else
@@ -965,6 +957,7 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 
 	/************************************************************/
 	egg_test_title (test, "check colorspace for %s", datafile);
+	colorspace = gcm_profile_get_colorspace (profile_lcms1);
 	if (colorspace == test_data->colorspace)
 		egg_test_success (test, NULL);
 	else
@@ -983,14 +976,7 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 
 	g_object_unref (xyz);
 	g_object_unref (profile_lcms1);
-	g_free (copyright);
-	g_free (manufacturer);
-	g_free (model);
-	g_free (datetime);
-	g_free (description);
-	g_free (data);
 	g_free (filename);
-	g_free (filename_tmp);
 }
 
 void

@@ -38,11 +38,11 @@
 static gboolean
 gcm_dump_edid_filename (const gchar *filename)
 {
-	gchar *monitor_name = NULL;
-	gchar *vendor_name = NULL;
-	gchar *serial_number = NULL;
-	gchar *ascii_string = NULL;
-	gchar *pnp_id = NULL;
+	const gchar *monitor_name;
+	const gchar *vendor_name;
+	const gchar *serial_number;
+	const gchar *ascii_string;
+	const gchar *pnp_id;
 	gchar *data = NULL;
 	guint width;
 	guint height;
@@ -68,42 +68,39 @@ gcm_dump_edid_filename (const gchar *filename)
 		goto out;
 	}
 
-	g_object_get (edid,
-		      "monitor-name", &monitor_name,
-		      "vendor-name", &vendor_name,
-		      "serial-number", &serial_number,
-		      "ascii-string", &ascii_string,
-		      "pnp-id", &pnp_id,
-		      "width", &width,
-		      "height", &height,
-		      "gamma", &gamma,
-		      NULL);
-
 	/* print data */
+	monitor_name = gcm_edid_get_monitor_name (edid);
 	if (monitor_name != NULL) {
 		/* TRANSLATORS: this is debugging output for the supplied EDID file */
 		g_print ("  %s: %s\n", _("Monitor name"), monitor_name);
 	}
+	vendor_name = gcm_edid_get_vendor_name (edid);
 	if (vendor_name != NULL) {
 		/* TRANSLATORS: this is debugging output for the supplied EDID file */
 		g_print ("  %s: %s\n", _("Vendor name"), vendor_name);
 	}
+	serial_number = gcm_edid_get_serial_number (edid);
 	if (serial_number != NULL) {
 		/* TRANSLATORS: this is debugging output for the supplied EDID file */
 		g_print ("  %s: %s\n", _("Serial number"), serial_number);
 	}
+	ascii_string = gcm_edid_get_ascii_string (edid);
 	if (ascii_string != NULL) {
 		/* TRANSLATORS: this is debugging output for the supplied EDID file */
 		g_print ("  %s: %s\n", _("Text string"), ascii_string);
 	}
+	pnp_id = gcm_edid_get_pnp_id (edid);
 	if (pnp_id != NULL) {
 		/* TRANSLATORS: this is debugging output for the supplied EDID file */
 		g_print ("  %s: %s\n", _("PNP identifier"), pnp_id);
 	}
+	width = gcm_edid_get_width (edid);
+	height = gcm_edid_get_height (edid);
 	if (width != 0) {
 		/* TRANSLATORS: this is debugging output for the supplied EDID file */
 		g_print ("  %s: %ix%i\n", _("Size"), width, height);
 	}
+	gamma = gcm_edid_get_gamma (edid);
 	if (gamma > 0.0f) {
 		/* TRANSLATORS: this is debugging output for the supplied EDID file */
 		g_print ("  %s: %f\n", _("Gamma"), gamma);
@@ -111,11 +108,6 @@ gcm_dump_edid_filename (const gchar *filename)
 out:
 	if (edid != NULL)
 		g_object_unref (edid);
-	g_free (monitor_name);
-	g_free (vendor_name);
-	g_free (serial_number);
-	g_free (ascii_string);
-	g_free (pnp_id);
 	g_free (data);
 	return ret;
 }

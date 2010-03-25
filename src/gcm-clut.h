@@ -67,6 +67,7 @@ gboolean	 gcm_clut_set_source_array		(GcmClut		*clut,
 							 GPtrArray		*array);
 gboolean	 gcm_clut_reset				(GcmClut		*clut);
 void		 gcm_clut_print				(GcmClut		*clut);
+guint		 gcm_clut_get_size			(GcmClut		*clut);
 
 G_END_DECLS
 

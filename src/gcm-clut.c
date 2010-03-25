@@ -148,6 +148,15 @@ gcm_clut_get_adjusted_value (guint value, gfloat min, gfloat max, gfloat custom_
 }
 
 /**
+ * gcm_clut_get_size:
+ **/
+guint
+gcm_clut_get_size (GcmClut *clut)
+{
+	return clut->priv->size;
+}
+
+/**
  * gcm_clut_get_array:
  **/
 GPtrArray *

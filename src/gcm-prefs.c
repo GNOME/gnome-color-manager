@@ -725,7 +725,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	GcmDeviceKind kind;
 	gboolean ret;
 	GError *error = NULL;
-	gchar *filename = NULL;
+	const gchar *filename;
 	guint i;
 	const gchar *name;
 	GcmProfile *profile;
@@ -764,12 +764,8 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	if (!ret)
 		goto out;
 
-	/* finish */
-	g_object_get (calibrate,
-		      "filename-result", &filename,
-		      NULL);
-
 	/* failed to get profile */
+	filename = gcm_calibrate_get_filename_result (calibrate);
 	if (filename == NULL) {
 		egg_warning ("failed to get filename from calibration");
 		goto out;
@@ -804,9 +800,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		egg_debug ("adding: %s", destination);
 
 		/* set this default */
-		g_object_set (current_device,
-			      "profile-filename", destination,
-			      NULL);
+		gcm_device_set_profile_filename (current_device, destination);
 		ret = gcm_device_save (current_device, &error);
 		if (!ret) {
 			egg_warning ("failed to save default: %s", error->message);
@@ -826,7 +820,6 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 			 /* TRANSLATORS: this is the sound description */
 			 CA_PROP_EVENT_DESCRIPTION, _("Profiling completed"), NULL);
 out:
-	g_free (filename);
 	g_free (destination);
 	if (profile_array != NULL)
 		g_ptr_array_unref (profile_array);
@@ -1536,14 +1529,8 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	/* get curve data */
 	clut = gcm_profile_generate_curve (profile, 256);
 
-	/* get size */
-	if (clut != NULL) {
-		g_object_get (clut,
-			      "size", &size,
-			      NULL);
-	}
-
 	/* only show if there is useful information */
+	size = gcm_clut_get_size (clut);
 	if (size > 0) {
 		g_object_set (trc_widget,
 			      "clut", clut,
@@ -1896,11 +1883,9 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 
 	/* set new profile */
 	if (changed) {
-		g_object_set (current_device,
-			      "profile-filename", filename,
-			      NULL);
 
 		/* save new profile */
+		gcm_device_set_profile_filename (current_device, filename);
 		ret = gcm_device_save (current_device, &error);
 		if (!ret) {
 			egg_warning ("failed to save config: %s", error->message);
@@ -1950,11 +1935,9 @@ gcm_prefs_slider_changed_cb (GtkRange *range, gpointer *user_data)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
 	contrast = gtk_range_get_value (GTK_RANGE (widget));
 
-	g_object_set (current_device,
-		      "gamma", localgamma,
-		      "brightness", brightness * 100.0f,
-		      "contrast", contrast * 100.0f,
-		      NULL);
+	gcm_device_set_gamma (current_device, localgamma);
+	gcm_device_set_brightness (current_device, brightness * 100.0f);
+	gcm_device_set_contrast (current_device, contrast * 100.0f);
 
 	/* save new profile */
 	ret = gcm_device_save (current_device, &error);
@@ -2170,12 +2153,8 @@ gcm_prefs_removed_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer us
 	/* remove from the UI */
 	gcm_prefs_remove_device (gcm_device);
 
-	/* get device properties */
-	g_object_get (gcm_device,
-		      "connected", &connected,
-		      NULL);
-
 	/* ensure this device is re-added if it's been saved */
+	connected = gcm_device_get_connected (gcm_device);
 	if (connected)
 		gcm_client_add_saved (gcm_client, NULL);
 
@@ -2600,10 +2579,8 @@ gcm_prefs_client_notify_loading_cb (GcmClient *client, GParamSpec *pspec, gpoint
 {
 	gboolean loading;
 
-	/* get the new state */
-	g_object_get (client, "loading", &loading, NULL);
-
 	/*if loading show the bar */
+	loading = gcm_client_get_loading (client);
 	if (loading) {
 		gtk_widget_show (info_bar_loading);
 		return;
