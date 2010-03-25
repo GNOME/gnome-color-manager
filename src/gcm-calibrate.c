@@ -259,6 +259,7 @@ gcm_calibrate_set_basename (GcmCalibrate *calibrate)
 gboolean
 gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GError **error)
 {
+	gboolean lcd_internal;
 	gboolean ret = TRUE;
 	const gchar *native_device = NULL;
 	const gchar *manufacturer = NULL;
@@ -278,8 +279,8 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 	/* if we're a laptop, maybe use the dmi data instead */
 	if (kind == GCM_DEVICE_KIND_DISPLAY) {
 		native_device = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
-		ret = gcm_utils_output_is_lcd_internal (native_device);
-		if (ret) {
+		lcd_internal = gcm_utils_output_is_lcd_internal (native_device);
+		if (lcd_internal) {
 			model = gcm_dmi_get_name (priv->dmi);
 			manufacturer = gcm_dmi_get_vendor (priv->dmi);
 		}
