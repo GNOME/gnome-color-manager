@@ -110,6 +110,7 @@ void			 gcm_device_set_title			(GcmDevice	*device,
 const gchar		*gcm_device_get_profile_filename	(GcmDevice	*device);
 void			 gcm_device_set_profile_filename	(GcmDevice	*device,
 								 const gchar 	*profile_filename);
+glong			 gcm_device_get_modified_time		(GcmDevice	*device);
 
 G_END_DECLS
 

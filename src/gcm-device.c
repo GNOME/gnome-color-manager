@@ -64,6 +64,7 @@ struct _GcmDevicePrivate
 	GConfClient		*gconf_client;
 	GcmColorspace		 colorspace;
 	guint			 changed_id;
+	glong			 modified_time;
 };
 
 enum {
@@ -176,20 +177,21 @@ static gboolean
 gcm_device_load_from_profile (GcmDevice *device, GError **error)
 {
 	gboolean ret = TRUE;
+	GcmDevicePrivate *priv = device->priv;
 
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
 
 	/* no profile to load */
-	if (device->priv->profile_filename == NULL)
+	if (priv->profile_filename == NULL)
 		goto out;
 
 	/* load the profile if it's set */
-	if (device->priv->profile_filename != NULL) {
+	if (priv->profile_filename != NULL) {
 
 		/* if the profile was deleted */
-		ret = g_file_test (device->priv->profile_filename, G_FILE_TEST_EXISTS);
+		ret = g_file_test (priv->profile_filename, G_FILE_TEST_EXISTS);
 		if (!ret) {
-			egg_warning ("the file was deleted and can't be loaded: %s", device->priv->profile_filename);
+			egg_warning ("the file was deleted and can't be loaded: %s", priv->profile_filename);
 			/* this is not fatal */
 			ret = TRUE;
 			goto out;
@@ -504,6 +506,16 @@ gcm_device_set_profile_filename (GcmDevice *device, const gchar *profile_filenam
 }
 
 /**
+ * gcm_device_get_modified_time:
+ **/
+glong
+gcm_device_get_modified_time (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), 0);
+	return device->priv->modified_time;
+}
+
+/**
  * gcm_device_load:
  **/
 gboolean
@@ -513,9 +525,12 @@ gcm_device_load (GcmDevice *device, GError **error)
 	GKeyFile *file = NULL;
 	GError *error_local = NULL;
 	gchar *filename = NULL;
+	GTimeVal timeval;
+	gchar *iso_date = NULL;
+	GcmDevicePrivate *priv = device->priv;
 
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
-	g_return_val_if_fail (device->priv->id != NULL, FALSE);
+	g_return_val_if_fail (priv->id != NULL, FALSE);
 
 	/* get default config */
 	filename = gcm_utils_get_default_config_location ();
@@ -540,10 +555,10 @@ gcm_device_load (GcmDevice *device, GError **error)
 	}
 
 	/* has key */
-	ret = g_key_file_has_group (file, device->priv->id);
+	ret = g_key_file_has_group (file, priv->id);
 	if (!ret) {
 		/* not fatal */
-		egg_debug ("failed to find saved parameters for %s", device->priv->id);
+		egg_debug ("failed to find saved parameters for %s", priv->id);
 		ret = TRUE;
 		goto out;
 	}
@@ -552,46 +567,61 @@ gcm_device_load (GcmDevice *device, GError **error)
 	gcm_device_set_saved (device, TRUE);
 
 	/* load data */
-	g_free (device->priv->profile_filename);
-	device->priv->profile_filename = g_key_file_get_string (file, device->priv->id, "profile", NULL);
-	if (device->priv->serial == NULL)
-		device->priv->serial = g_key_file_get_string (file, device->priv->id, "serial", NULL);
-	if (device->priv->model == NULL)
-		device->priv->model = g_key_file_get_string (file, device->priv->id, "model", NULL);
-	if (device->priv->manufacturer == NULL)
-		device->priv->manufacturer = g_key_file_get_string (file, device->priv->id, "manufacturer", NULL);
-	device->priv->gamma = g_key_file_get_double (file, device->priv->id, "gamma", &error_local);
+	g_free (priv->profile_filename);
+	priv->profile_filename = g_key_file_get_string (file, priv->id, "profile", NULL);
+	if (priv->serial == NULL)
+		priv->serial = g_key_file_get_string (file, priv->id, "serial", NULL);
+	if (priv->model == NULL)
+		priv->model = g_key_file_get_string (file, priv->id, "model", NULL);
+	if (priv->manufacturer == NULL)
+		priv->manufacturer = g_key_file_get_string (file, priv->id, "manufacturer", NULL);
+	priv->gamma = g_key_file_get_double (file, priv->id, "gamma", &error_local);
 	if (error_local != NULL) {
-		device->priv->gamma = gconf_client_get_float (device->priv->gconf_client, "/apps/gnome-color-manager/default_gamma", NULL);
-		if (device->priv->gamma < 0.1f)
-			device->priv->gamma = 1.0f;
+		priv->gamma = gconf_client_get_float (priv->gconf_client, "/apps/gnome-color-manager/default_gamma", NULL);
+		if (priv->gamma < 0.1f)
+			priv->gamma = 1.0f;
 		g_clear_error (&error_local);
 	}
-	device->priv->brightness = g_key_file_get_double (file, device->priv->id, "brightness", &error_local);
+	priv->brightness = g_key_file_get_double (file, priv->id, "brightness", &error_local);
 	if (error_local != NULL) {
-		device->priv->brightness = 0.0f;
+		priv->brightness = 0.0f;
 		g_clear_error (&error_local);
 	}
-	device->priv->contrast = g_key_file_get_double (file, device->priv->id, "contrast", &error_local);
+	priv->contrast = g_key_file_get_double (file, priv->id, "contrast", &error_local);
 	if (error_local != NULL) {
-		device->priv->contrast = 100.0f;
+		priv->contrast = 100.0f;
 		g_clear_error (&error_local);
 	}
+
+	/* get modified time */
+	iso_date = g_key_file_get_string (file, priv->id, "modified", NULL);
+	if (iso_date != NULL) {
+		ret = g_time_val_from_iso8601 (iso_date, &timeval);
+		if (!ret) {
+			egg_warning ("failed to parse: %s", iso_date);
+			g_get_current_time (&timeval);
+		}
+	} else {
+		/* just use the current time */
+		g_get_current_time (&timeval);
+	}
+	priv->modified_time = timeval.tv_sec;
 
 	/* load this */
 	ret = gcm_device_load_from_profile (device, &error_local);
 	if (!ret) {
 
 		/* just print a warning, this is not fatal */
-		egg_warning ("failed to load profile %s: %s", device->priv->profile_filename, error_local->message);
+		egg_warning ("failed to load profile %s: %s", priv->profile_filename, error_local->message);
 		g_error_free (error_local);
 
 		/* recover as the file might have been corrupted */
-		g_free (device->priv->profile_filename);
-		device->priv->profile_filename = NULL;
+		g_free (priv->profile_filename);
+		priv->profile_filename = NULL;
 		ret = TRUE;
 	}
 out:
+	g_free (iso_date);
 	g_free (filename);
 	if (file != NULL)
 		g_key_file_free (file);
@@ -613,9 +643,10 @@ gcm_device_save (GcmDevice *device, GError **error)
 	gchar *timespec = NULL;
 	GError *error_local = NULL;
 	GTimeVal timeval;
+	GcmDevicePrivate *priv = device->priv;
 
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
-	g_return_val_if_fail (device->priv->id != NULL, FALSE);
+	g_return_val_if_fail (priv->id != NULL, FALSE);
 
 	/* get default config */
 	filename = gcm_utils_get_default_config_location ();
@@ -664,62 +695,62 @@ gcm_device_save (GcmDevice *device, GError **error)
 	timespec = g_time_val_to_iso8601 (&timeval);
 
 	/* the device does not have a created date and time */
-	ret = g_key_file_has_key (keyfile, device->priv->id, "created", NULL);
+	ret = g_key_file_has_key (keyfile, priv->id, "created", NULL);
 	if (!ret)
-		g_key_file_set_string (keyfile, device->priv->id, "created", timespec);
+		g_key_file_set_string (keyfile, priv->id, "created", timespec);
 
 	/* add modified date */
-	g_key_file_set_string (keyfile, device->priv->id, "modified", timespec);
+	g_key_file_set_string (keyfile, priv->id, "modified", timespec);
 
 	/* save data */
-	if (device->priv->profile_filename == NULL)
-		g_key_file_remove_key (keyfile, device->priv->id, "profile", NULL);
+	if (priv->profile_filename == NULL)
+		g_key_file_remove_key (keyfile, priv->id, "profile", NULL);
 	else
-		g_key_file_set_string (keyfile, device->priv->id, "profile", device->priv->profile_filename);
+		g_key_file_set_string (keyfile, priv->id, "profile", priv->profile_filename);
 
 	/* save device specific data */
-	if (device->priv->serial == NULL)
-		g_key_file_remove_key (keyfile, device->priv->id, "serial", NULL);
+	if (priv->serial == NULL)
+		g_key_file_remove_key (keyfile, priv->id, "serial", NULL);
 	else
-		g_key_file_set_string (keyfile, device->priv->id, "serial", device->priv->serial);
-	if (device->priv->model == NULL)
-		g_key_file_remove_key (keyfile, device->priv->id, "model", NULL);
+		g_key_file_set_string (keyfile, priv->id, "serial", priv->serial);
+	if (priv->model == NULL)
+		g_key_file_remove_key (keyfile, priv->id, "model", NULL);
 	else
-		g_key_file_set_string (keyfile, device->priv->id, "model", device->priv->model);
-	if (device->priv->manufacturer == NULL)
-		g_key_file_remove_key (keyfile, device->priv->id, "manufacturer", NULL);
+		g_key_file_set_string (keyfile, priv->id, "model", priv->model);
+	if (priv->manufacturer == NULL)
+		g_key_file_remove_key (keyfile, priv->id, "manufacturer", NULL);
 	else
-		g_key_file_set_string (keyfile, device->priv->id, "manufacturer", device->priv->manufacturer);
+		g_key_file_set_string (keyfile, priv->id, "manufacturer", priv->manufacturer);
 
 	/* only save gamma if not the default */
-	if (device->priv->gamma > 0.99 && device->priv->gamma < 1.01)
-		g_key_file_remove_key (keyfile, device->priv->id, "gamma", NULL);
+	if (priv->gamma > 0.99 && priv->gamma < 1.01)
+		g_key_file_remove_key (keyfile, priv->id, "gamma", NULL);
 	else
-		g_key_file_set_double (keyfile, device->priv->id, "gamma", device->priv->gamma);
+		g_key_file_set_double (keyfile, priv->id, "gamma", priv->gamma);
 
 	/* only save brightness if not the default */
-	if (device->priv->brightness > -0.01 && device->priv->brightness < 0.01)
-		g_key_file_remove_key (keyfile, device->priv->id, "brightness", NULL);
+	if (priv->brightness > -0.01 && priv->brightness < 0.01)
+		g_key_file_remove_key (keyfile, priv->id, "brightness", NULL);
 	else
-		g_key_file_set_double (keyfile, device->priv->id, "brightness", device->priv->brightness);
+		g_key_file_set_double (keyfile, priv->id, "brightness", priv->brightness);
 
 	/* only save contrast if not the default */
-	if (device->priv->contrast > 99.9 && device->priv->contrast < 100.1)
-		g_key_file_remove_key (keyfile, device->priv->id, "contrast", NULL);
+	if (priv->contrast > 99.9 && priv->contrast < 100.1)
+		g_key_file_remove_key (keyfile, priv->id, "contrast", NULL);
 	else
-		g_key_file_set_double (keyfile, device->priv->id, "contrast", device->priv->contrast);
+		g_key_file_set_double (keyfile, priv->id, "contrast", priv->contrast);
 
 	/* save other properties we'll need if we add this device offline */
-	if (device->priv->title != NULL)
-		g_key_file_set_string (keyfile, device->priv->id, "title", device->priv->title);
-	g_key_file_set_string (keyfile, device->priv->id, "type", gcm_device_kind_to_string (device->priv->kind));
+	if (priv->title != NULL)
+		g_key_file_set_string (keyfile, priv->id, "title", priv->title);
+	g_key_file_set_string (keyfile, priv->id, "type", gcm_device_kind_to_string (priv->kind));
 
 	/* add colorspace */
-	g_key_file_set_string (keyfile, device->priv->id, "colorspace", gcm_colorspace_to_string (device->priv->colorspace));
+	g_key_file_set_string (keyfile, priv->id, "colorspace", gcm_colorspace_to_string (priv->colorspace));
 
 	/* add virtual */
-	if (device->priv->virtual)
-		g_key_file_set_boolean (keyfile, device->priv->id, "virtual", TRUE);
+	if (priv->virtual)
+		g_key_file_set_boolean (keyfile, priv->id, "virtual", TRUE);
 
 	/* convert to string */
 	data = g_key_file_to_data (keyfile, NULL, &error_local);
@@ -1042,6 +1073,7 @@ gcm_device_init (GcmDevice *device)
 	device->priv->manufacturer = NULL;
 	device->priv->model = NULL;
 	device->priv->profile_filename = NULL;
+	device->priv->modified_time = 0;
 	device->priv->gconf_client = gconf_client_get_default ();
 	device->priv->gamma = gconf_client_get_float (device->priv->gconf_client, GCM_SETTINGS_DEFAULT_GAMMA, &error);
 	if (error != NULL) {
@@ -1065,8 +1097,8 @@ gcm_device_finalize (GObject *object)
 	GcmDevicePrivate *priv = device->priv;
 
 	/* remove any pending signal */
-	if (device->priv->changed_id != 0)
-		g_source_remove (device->priv->changed_id);
+	if (priv->changed_id != 0)
+		g_source_remove (priv->changed_id);
 
 	g_free (priv->title);
 	g_free (priv->id);
