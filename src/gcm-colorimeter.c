@@ -276,6 +276,59 @@ gcm_colorimeter_class_init (GcmColorimeterClass *klass)
 	g_type_class_add_private (klass, sizeof (GcmColorimeterPrivate));
 }
 
+/**
+ * gcm_colorimeter_kind_to_string:
+ **/
+const gchar *
+gcm_colorimeter_kind_to_string (GcmColorimeterKind colorimeter_kind)
+{
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_HUEY)
+		return "huey";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI)
+		return "color-munki";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_SPYDER)
+		return "spyder";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_DTP20)
+		return "dtp20";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_DTP22)
+		return "dtp22";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_DTP41)
+		return "dtp41";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_DTP51)
+		return "dtp51";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_SPECTRO_SCAN)
+		return "spectro-scan";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_I1_PRO)
+		return "i1-pro";
+	return "unknown";
+}
+
+/**
+ * gcm_colorimeter_kind_from_string:
+ **/
+GcmColorimeterKind
+gcm_colorimeter_kind_from_string (const gchar *colorimeter_kind)
+{
+	if (g_strcmp0 (colorimeter_kind, "huey") == 0)
+		return GCM_COLORIMETER_KIND_HUEY;
+	if (g_strcmp0 (colorimeter_kind, "color-munki") == 0)
+		return GCM_COLORIMETER_KIND_COLOR_MUNKI;
+	if (g_strcmp0 (colorimeter_kind, "spyder") == 0)
+		return GCM_COLORIMETER_KIND_SPYDER;
+	if (g_strcmp0 (colorimeter_kind, "dtp20") == 0)
+		return GCM_COLORIMETER_KIND_DTP20;
+	if (g_strcmp0 (colorimeter_kind, "dtp22") == 0)
+		return GCM_COLORIMETER_KIND_DTP22;
+	if (g_strcmp0 (colorimeter_kind, "dtp41") == 0)
+		return GCM_COLORIMETER_KIND_DTP41;
+	if (g_strcmp0 (colorimeter_kind, "dtp51") == 0)
+		return GCM_COLORIMETER_KIND_DTP51;
+	if (g_strcmp0 (colorimeter_kind, "spectro-scan") == 0)
+		return GCM_COLORIMETER_KIND_SPECTRO_SCAN;
+	if (g_strcmp0 (colorimeter_kind, "i1-pro") == 0)
+		return GCM_COLORIMETER_KIND_I1_PRO;
+	return GCM_COLORIMETER_KIND_UNKNOWN;
+}
 
 /**
  * gcm_colorimeter_device_add:
@@ -285,6 +338,7 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 {
 	gboolean ret;
 	GtkWidget *dialog;
+	const gchar *kind_str;
 	GcmColorimeterPrivate *priv = colorimeter->priv;
 
 	/* interesting device? */
@@ -318,13 +372,9 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 	priv->supports_printer = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PRINTER");
 
 	/* try to get type */
-	if (priv->model != NULL && g_ascii_strcasecmp (priv->model, "Huey") == 0) {
-		priv->colorimeter_kind = GCM_COLORIMETER_KIND_HUEY;
-	} else if (priv->model != NULL && g_ascii_strcasecmp (priv->model, "ColorMunki") == 0) {
-		priv->colorimeter_kind = GCM_COLORIMETER_KIND_COLOR_MUNKI;
-	} else if (priv->model != NULL && g_ascii_strcasecmp (priv->model, "Monitor Spyder") == 0) {
-		priv->colorimeter_kind = GCM_COLORIMETER_KIND_SPYDER;
-	} else if (priv->model != NULL) {
+	kind_str = g_udev_device_get_property (device, "GCM_KIND");
+	priv->colorimeter_kind = gcm_colorimeter_kind_from_string (kind_str);
+	if (priv->colorimeter_kind == GCM_COLORIMETER_KIND_UNKNOWN) {
 		egg_warning ("Failed to recognize color device: %s", priv->model);
 
 		/* show dialog, in order to help the project */
@@ -340,28 +390,6 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 								  "It should work okay, but if you want to help the project, "
 								  "please visit %s and supply the required information.",
 								  priv->model, "http://live.gnome.org/GnomeColorManager/Help");
-			gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-			gtk_dialog_run (GTK_DIALOG (dialog));
-			gtk_widget_destroy (dialog);
-			priv->shown_warning = TRUE;
-		}
-		priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;
-	} else {
-		egg_warning ("Failed to recognize color device");
-
-		/* show dialog, in order to help the project */
-			if (!priv->shown_warning) {
-			dialog = gtk_message_dialog_new (NULL,
-							 GTK_DIALOG_MODAL,
-							 GTK_MESSAGE_INFO,
-							 GTK_BUTTONS_OK,
-							 /* TRANSLATORS: this is when the device is not recognized */
-							 _("Measuring instrument not registered"));
-			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-								  "The attached measuring devicer device has not been registered in usb.ids. "
-								  "It should work okay, but if you want to help the project, "
-								  "please visit %s and supply the required information.",
-								  "http://live.gnome.org/GnomeColorManager/Help");
 			gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 			gtk_dialog_run (GTK_DIALOG (dialog));
 			gtk_widget_destroy (dialog);
