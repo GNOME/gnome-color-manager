@@ -610,7 +610,9 @@ gcm_device_save (GcmDevice *device, GError **error)
 	gchar *dirname;
 	GFile *file = NULL;
 	gchar *filename = NULL;
+	gchar *timespec = NULL;
 	GError *error_local = NULL;
+	GTimeVal timeval;
 
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
 	g_return_val_if_fail (device->priv->id != NULL, FALSE);
@@ -656,6 +658,18 @@ gcm_device_save (GcmDevice *device, GError **error)
 			goto out;
 		}
 	}
+
+	/* get current date and time */
+	g_get_current_time (&timeval);
+	timespec = g_time_val_to_iso8601 (&timeval);
+
+	/* the device does not have a created date and time */
+	ret = g_key_file_has_key (keyfile, device->priv->id, "created", NULL);
+	if (!ret)
+		g_key_file_set_string (keyfile, device->priv->id, "created", timespec);
+
+	/* add modified date */
+	g_key_file_set_string (keyfile, device->priv->id, "modified", timespec);
 
 	/* save data */
 	if (device->priv->profile_filename == NULL)
@@ -727,6 +741,7 @@ gcm_device_save (GcmDevice *device, GError **error)
 	/* update status */
 	gcm_device_set_saved (device, TRUE);
 out:
+	g_free (timespec);
 	g_free (data);
 	g_free (filename);
 	g_free (dirname);
