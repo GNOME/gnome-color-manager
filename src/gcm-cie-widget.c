@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2006-2009 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2006-2010 Richard Hughes <richard@hughsie.com>
  *
  * Color conversion algorithms taken from ppmcie:
  *   Copyright (C) 1999 John Walker <kelvin@fourmilab.ch>
