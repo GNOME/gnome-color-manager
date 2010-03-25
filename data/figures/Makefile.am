@@ -7,6 +7,7 @@ figures_DATA = 	 			\
 	scan-target.svg			\
 	scan-target-good.svg		\
 	scan-target-bad.svg		\
+	i1-attach.svg			\
 	huey-attach.svg			\
 	hcfr-attach.svg			\
 	spyder-attach.svg		\

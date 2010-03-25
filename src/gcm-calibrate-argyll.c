@@ -190,6 +190,8 @@ gcm_calibrate_argyll_get_colorimeter_image_attach (GcmCalibrateArgyll *calibrate
 		return "spyder-attach.svg";
 	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLORIMTRE_HCFR)
 		return "hcfr-attach.svg";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_I1_PRO)
+		return "i1-attach.svg";
 	return NULL;
 }
 
