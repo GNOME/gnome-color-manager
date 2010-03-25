@@ -1308,6 +1308,14 @@ gcm_client_finalize (GObject *object)
 {
 	GcmClient *client = GCM_CLIENT (object);
 	GcmClientPrivate *priv = client->priv;
+	GcmDevice *device;
+	guint i;
+
+	/* do not respond to changed events */
+	for (i=0; i<priv->array->len; i++) {
+		device = g_ptr_array_index (priv->array, i);
+		g_signal_handlers_disconnect_by_func (device, G_CALLBACK (gcm_client_device_changed_cb), client);
+	}
 
 	g_free (priv->display_name);
 	g_ptr_array_unref (priv->array);
