@@ -67,7 +67,7 @@ GcmDevice	*gcm_client_get_device_by_id			(GcmClient		*client,
 								 const gchar		*id);
 GcmDevice	*gcm_client_get_device_by_window		(GcmClient		*client,
 								 GdkWindow		*window);
-gboolean	 gcm_client_add_device				(GcmClient		*client,
+gboolean	 gcm_client_add_virtual_device			(GcmClient		*client,
 								 GcmDevice		*device,
 								 GError			**error);
 gboolean	 gcm_client_delete_device			(GcmClient		*client,

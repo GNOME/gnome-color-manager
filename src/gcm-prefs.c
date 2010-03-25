@@ -895,7 +895,7 @@ gcm_prefs_button_virtual_add_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* add to the device list */
-	ret = gcm_client_add_device (gcm_client, device, &error);
+	ret = gcm_client_add_virtual_device (gcm_client, device, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not add virtual device */
 		gcm_prefs_error_dialog (_("Failed to add virtual device"), error->message);

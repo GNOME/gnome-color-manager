@@ -1002,10 +1002,10 @@ out:
 }
 
 /**
- * gcm_client_add_device:
+ * gcm_client_add_virtual_device:
  **/
 gboolean
-gcm_client_add_device (GcmClient *client, GcmDevice *device, GError **error)
+gcm_client_add_virtual_device (GcmClient *client, GcmDevice *device, GError **error)
 {
 	gboolean ret = FALSE;
 	const gchar *id;
