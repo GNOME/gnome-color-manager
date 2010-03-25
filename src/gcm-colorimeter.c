@@ -300,6 +300,8 @@ gcm_colorimeter_kind_to_string (GcmColorimeterKind colorimeter_kind)
 		return "spectro-scan";
 	if (colorimeter_kind == GCM_COLORIMETER_KIND_I1_PRO)
 		return "i1-pro";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLORIMTRE_HCFR)
+		return "colorimtre-hcfr";
 	return "unknown";
 }
 
@@ -327,6 +329,8 @@ gcm_colorimeter_kind_from_string (const gchar *colorimeter_kind)
 		return GCM_COLORIMETER_KIND_SPECTRO_SCAN;
 	if (g_strcmp0 (colorimeter_kind, "i1-pro") == 0)
 		return GCM_COLORIMETER_KIND_I1_PRO;
+	if (g_strcmp0 (colorimeter_kind, "colorimtre-hcfr") == 0)
+		return GCM_COLORIMETER_KIND_COLORIMTRE_HCFR;
 	return GCM_COLORIMETER_KIND_UNKNOWN;
 }
 

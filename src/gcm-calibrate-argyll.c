@@ -188,6 +188,8 @@ gcm_calibrate_argyll_get_colorimeter_image_attach (GcmCalibrateArgyll *calibrate
 		return "munki-attach.svg";
 	if (colorimeter_kind == GCM_COLORIMETER_KIND_SPYDER)
 		return "spyder-attach.svg";
+	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLORIMTRE_HCFR)
+		return "hcfr-attach.svg";
 	return NULL;
 }
 

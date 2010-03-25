@@ -8,6 +8,7 @@ figures_DATA = 	 			\
 	scan-target-good.svg		\
 	scan-target-bad.svg		\
 	huey-attach.svg			\
+	hcfr-attach.svg			\
 	spyder-attach.svg		\
 	munki-ambient.svg		\
 	munki-attach.svg		\
