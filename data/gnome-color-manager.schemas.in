@@ -146,6 +146,36 @@
       </locale>
     </schema>
 
+    <schema>
+      <key>/schemas/apps/gnome-color-manager/recalibrate_display_threshold</key>
+      <applyto>/apps/gnome-color-manager/recalibrate_display_threshold</applyto>
+      <owner>gnome-color-manager</owner>
+      <type>int</type>
+      <default>15552000</default>
+      <locale name="C">
+        <short>The duration between sending notifications to recalibrate a display.</short>
+        <long>
+          This is the number of seconds in between notifying the user to
+          recalibrate each display device. Set to 0 to disable the notification.
+        </long>
+      </locale>
+    </schema>
+
+    <schema>
+      <key>/schemas/apps/gnome-color-manager/recalibrate_printer_threshold</key>
+      <applyto>/apps/gnome-color-manager/recalibrate_printer_threshold</applyto>
+      <owner>gnome-color-manager</owner>
+      <type>int</type>
+      <default>2592000</default>
+      <locale name="C">
+        <short>The duration between sending notifications to recalibrate a printer.</short>
+        <long>
+          This is the number of seconds in between notifying the user to
+          recalibrate each printer device. Set to 0 to disable the notification.
+        </long>
+      </locale>
+    </schema>
+
   </schemalist>
 </gconfschemafile>
 
