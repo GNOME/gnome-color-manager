@@ -202,7 +202,7 @@ gcm_session_notify_device (GcmDevice *device)
 
 	/* check if we need to notify */
 	since = timeval.tv_sec - gcm_device_get_modified_time (device);
-	if (threshold > since || TRUE)
+	if (threshold > since)
 		gcm_session_notify_recalibrate (title, message, kind);
 	g_free (message);
 }
