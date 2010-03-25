@@ -35,6 +35,7 @@
 #include <gconf/gconf-client.h>
 
 #include "gcm-calibrate.h"
+#include "gcm-dmi.h"
 #include "gcm-device-xrandr.h"
 #include "gcm-utils.h"
 #include "gcm-brightness.h"
@@ -54,6 +55,7 @@ static void     gcm_calibrate_finalize	(GObject     *object);
  **/
 struct _GcmCalibratePrivate
 {
+	GcmDmi				*dmi;
 	GcmColorimeter			*colorimeter;
 	GcmCalibrateReferenceKind	 reference_kind;
 	GcmCalibrateDeviceKind		 calibrate_device_kind;
@@ -255,6 +257,7 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 	const gchar *description = NULL;
 	const gchar *serial = NULL;
 	GcmDeviceKind kind;
+	GcmCalibratePrivate *priv = calibrate->priv;
 
 	/* get the device */
 	kind = gcm_device_get_kind (device);
@@ -262,6 +265,16 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 	model = gcm_device_get_model (device);
 	description = gcm_device_get_title (device);
 	manufacturer = gcm_device_get_manufacturer (device);
+
+	/* if we're a laptop, maybe use the dmi data instead */
+	if (kind == GCM_DEVICE_KIND_DISPLAY) {
+		native_device = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
+		ret = gcm_utils_output_is_lcd_internal (native_device);
+		if (ret) {
+			model = gcm_dmi_get_name (priv->dmi);
+			manufacturer = gcm_dmi_get_vendor (priv->dmi);
+		}
+	}
 
 	/* set the proper values */
 	g_object_set (calibrate,
@@ -1452,6 +1465,7 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
 	calibrate->priv->precision = GCM_CALIBRATE_PRECISION_UNKNOWN;
 	calibrate->priv->colorimeter = gcm_colorimeter_new ();
+	calibrate->priv->dmi = gcm_dmi_new ();
 	calibrate->priv->calibrate_dialog = gcm_calibrate_dialog_new ();
 
 	// FIXME: this has to be per-run specific
@@ -1487,6 +1501,7 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->working_path);
 	g_signal_handlers_disconnect_by_func (calibrate->priv->colorimeter, G_CALLBACK (gcm_prefs_colorimeter_changed_cb), calibrate);
 	g_object_unref (priv->colorimeter);
+	g_object_unref (priv->dmi);
 	g_object_unref (priv->calibrate_dialog);
 	g_object_unref (priv->gconf_client);
 
