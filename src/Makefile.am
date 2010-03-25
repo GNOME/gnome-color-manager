@@ -278,6 +278,7 @@ gcm_session_LDADD =					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
+	$(NOTIFY_LIBS)					\
 	$(CUPS_LIBS)					\
 	-lm
 
