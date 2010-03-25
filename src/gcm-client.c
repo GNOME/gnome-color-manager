@@ -88,6 +88,7 @@ enum {
 };
 
 static guint signals[SIGNAL_LAST] = { 0 };
+static gpointer gcm_client_object = NULL;
 
 G_DEFINE_TYPE (GcmClient, gcm_client, G_TYPE_OBJECT)
 
@@ -1335,8 +1336,12 @@ gcm_client_finalize (GObject *object)
 GcmClient *
 gcm_client_new (void)
 {
-	GcmClient *client;
-	client = g_object_new (GCM_TYPE_CLIENT, NULL);
-	return GCM_CLIENT (client);
+	if (gcm_client_object != NULL) {
+		g_object_ref (gcm_client_object);
+	} else {
+		gcm_client_object = g_object_new (GCM_TYPE_CLIENT, NULL);
+		g_object_add_weak_pointer (gcm_client_object, &gcm_client_object);
+	}
+	return GCM_CLIENT (gcm_client_object);
 }
 
