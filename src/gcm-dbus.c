@@ -523,6 +523,16 @@ gcm_dbus_gconf_key_changed_cb (GConfClient *client, guint cnxn_id, GConfEntry *e
 }
 
 /**
+ * gcm_dbus_client_changed_cb:
+ **/
+static void
+gcm_dbus_client_changed_cb (GcmClient *client, GcmDevice *device, GcmDbus *dbus)
+{
+	/* just emit signal */
+	g_signal_emit (dbus, signals[SIGNAL_CHANGED], 0);
+}
+
+/**
  * gcm_dbus_init:
  * @dbus: This class instance
  **/
@@ -535,6 +545,10 @@ gcm_dbus_init (GcmDbus *dbus)
 	dbus->priv = GCM_DBUS_GET_PRIVATE (dbus);
 	dbus->priv->gconf_client = gconf_client_get_default ();
 	dbus->priv->client = gcm_client_new ();
+	g_signal_connect (dbus->priv->client, "added", G_CALLBACK (gcm_dbus_client_changed_cb), dbus);
+	g_signal_connect (dbus->priv->client, "removed", G_CALLBACK (gcm_dbus_client_changed_cb), dbus);
+	g_signal_connect (dbus->priv->client, "changed", G_CALLBACK (gcm_dbus_client_changed_cb), dbus);
+
 	gcm_client_set_use_threads (dbus->priv->client, TRUE);
 	dbus->priv->profile_store = gcm_profile_store_new ();
 	dbus->priv->timer = g_timer_new ();
