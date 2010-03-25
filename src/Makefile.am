@@ -11,6 +11,7 @@ INCLUDES =						\
 	$(CUPS_CFLAGS)					\
 	$(SANE_CFLAGS)					\
 	$(TIFF_CFLAGS)					\
+	$(NOTIFY_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
 	$(DBUS_GLIB_CFLAGS)				\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\

@@ -122,6 +122,7 @@ PKG_CHECK_MODULES(GUDEV, gudev-1.0)
 PKG_CHECK_MODULES(LCMS, lcms)
 PKG_CHECK_MODULES(DBUS_GLIB, dbus-glib-1 >= $DBUS_GLIB_REQUIRED)
 PKG_CHECK_MODULES(X11, x11)
+PKG_CHECK_MODULES(NOTIFY, libnotify)
 
 PKG_CHECK_MODULES(SANE, sane-backends, has_sane=yes, has_sane=no)
 if test $has_sane = "no"; then
