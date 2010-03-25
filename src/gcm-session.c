@@ -169,7 +169,7 @@ gcm_session_notify_recalibrate (const gchar *title, const gchar *message, GcmDev
 static void
 gcm_session_notify_device (GcmDevice *device)
 {
-	const gchar *message;
+	gchar *message;
 	const gchar *title;
 	GcmDeviceKind kind;
 	glong since;
@@ -190,20 +190,21 @@ gcm_session_notify_device (GcmDevice *device)
 		threshold = gconf_client_get_int (gconf_client, GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD, NULL);
 
 		/* TRANSLATORS: this is when the display has not been recalibrated in a while */
-		message = _("The display attached to this computer should be recalibrated soon.");
+		message = g_strdup_printf (_("The display '%s' should be recalibrated soon."), gcm_device_get_title (device));
 	} else {
 
 		/* get from GConf */
 		threshold = gconf_client_get_int (gconf_client, GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD, NULL);
 
 		/* TRANSLATORS: this is when the printer has not been recalibrated in a while */
-		message = _("The printer attached to this computer should be recalibrated soon.");
+		message = g_strdup_printf (_("The printer '%s' should be recalibrated soon."), gcm_device_get_title (device));
 	}
 
 	/* check if we need to notify */
 	since = timeval.tv_sec - gcm_device_get_modified_time (device);
 	if (threshold > since || TRUE)
 		gcm_session_notify_recalibrate (title, message, kind);
+	g_free (message);
 }
 
 /**
