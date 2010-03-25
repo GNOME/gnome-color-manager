@@ -484,7 +484,6 @@ gcm_client_get_device_by_window (GcmClient *client, GdkWindow *window)
 	GnomeRROutput *output_best = NULL;
 	GnomeRROutput **outputs;
 	GcmDevice *device = NULL;
-	gchar *id = NULL;
 
 	/* get the window parameters, in root co-ordinates */
 	gdk_window_get_origin (window, &window_x, &window_y);
@@ -541,9 +540,8 @@ out:
 		device_tmp = gcm_device_xrandr_new ();
 		gcm_device_xrandr_set_from_output (device_tmp, output_best, NULL);
 		device = gcm_client_get_device_by_id (client, gcm_device_get_id (device_tmp));
-		g_free (device_tmp);
+		g_object_unref (device_tmp);
 	}
-	g_free (id);
 	return device;
 }
 
