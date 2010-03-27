@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager.help.master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-03-06 21:23+0000\n"
-"PO-Revision-Date: 2010-03-09 20:33+0100\n"
+"POT-Creation-Date: 2010-03-24 12:39+0000\n"
+"PO-Revision-Date: 2010-03-27 13:56+0100\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -284,12 +284,6 @@ msgid "Manual"
 msgstr "Manual"
 
 #: C/gnome-color-manager.xml:123(para)
-#| msgid ""
-#| "The GNOME Color Manager is a framework that helps the user generate, "
-#| "install and manage device color on a <systemitem>GNOME desktop</"
-#| "systemitem>. It does this to help a user match color across all devices. "
-#| "This gives a consistent color to an image or document, wherever it is "
-#| "output."
 msgid ""
 "The GNOME Color Manager is a framework that helps the user generate, install "
 "and manage device colors on a <systemitem>GNOME desktop</systemitem>. It "
@@ -303,9 +297,6 @@ msgstr ""
 "color consistente a una imagen o documento, independientemente de la salida."
 
 #: C/gnome-color-manager.xml:129(para)
-#| msgid ""
-#| "The GNOME Color Manager communicates the selected profiles to aware "
-#| "applications, maintaining the color across applications."
 msgid ""
 "The GNOME Color Manager communicates the selected profiles to color-aware "
 "applications, maintaining the color across applications."
@@ -380,10 +371,6 @@ msgid "gcm-prefs <placeholder-1/>"
 msgstr "gcm-prefs <placeholder-1/>"
 
 #: C/gnome-color-manager.xml:165(para)
-#| msgid ""
-#| "ICC profiles should be imported into the <application>GNOME Color "
-#| "Manager</application> by selecting a file in a nautilus window. You can "
-#| "import the file using:"
 msgid ""
 "ICC profiles should be imported into the <application>GNOME Color Manager</"
 "application> by selecting a file in a nautilus window. You can also import "
@@ -403,9 +390,6 @@ msgid "Importing profiles"
 msgstr "Importar perfiles"
 
 #: C/gnome-color-manager.xml:176(para)
-#| msgid ""
-#| "<application>GNOME Color Manager</application> installs a program to "
-#| "install profiles by simply double clicking on them."
 msgid ""
 "<application>GNOME Color Manager</application> includes a program to install "
 "profiles by simply double clicking on them."
@@ -418,7 +402,6 @@ msgid "Import a ICC profile"
 msgstr "Importar un perfil ICC"
 
 #: C/gnome-color-manager.xml:184(title)
-#| msgid "GNOME Color Manager dialog after double clicking a ICC or ICM file"
 msgid "GNOME Color Manager dialog after double clicking an ICC or ICM file"
 msgstr ""
 "El diálogo del Gestor de color de GNOME después de pulsar dos veces sobre un "
@@ -507,7 +490,6 @@ msgid "GNOME Color Manager advanced tab"
 msgstr "Solapa avanzada del Gestor de color de GNOME"
 
 #: C/gnome-color-manager.xml:290(para)
-#| msgid "This allows you to adjust a calibrated or generated profile."
 msgid "This allows you to adjust a calibrated device or generated profile."
 msgstr "Le permite ajustar un dispositivo calibrado o un perfil generado."
 
@@ -588,14 +570,10 @@ msgid "This allows you to view details about installed profiles."
 msgstr "Esto le permite ver los detalles acerca de los perfiles instalados."
 
 #: C/gnome-color-manager.xml:351(title)
-#| msgid "Calibration"
 msgid "Calibration and profiling"
 msgstr "Calibración y perfilado"
 
 #: C/gnome-color-manager.xml:352(para)
-#| msgid ""
-#| "<application>GNOME Color Manager</application> can generate ICC profiles "
-#| "with supported hardware colorimeter devices."
 msgid ""
 "<application>GNOME Color Manager</application> can generate ICC profiles "
 "with supported color measuring instruments."
@@ -604,12 +582,10 @@ msgstr ""
 "perfiles ICC con instrumentos de medición de color soportados."
 
 #: C/gnome-color-manager.xml:358(title)
-#| msgid "The first stage of calibration, which takes a few minutes."
 msgid "The first stage is calibration, which takes a few minutes."
 msgstr "La primera etapa es el calibrado, que lleva unos pocos minutos."
 
 #: C/gnome-color-manager.xml:370(title)
-#| msgid "The final stage of calibration, which can take over 15 minutes."
 msgid ""
 "The final stage is profiling (characterization), which can take over 15 "
 "minutes."
@@ -630,7 +606,6 @@ msgstr ""
 "nuevo el instrumento en la pantalla después de cambiar cualquier ajuste."
 
 #: C/gnome-color-manager.xml:391(title)
-#| msgid "GNOME Color Manager Device Configure Dialog"
 msgid "GNOME Color Manager Instrument Configure Dialog"
 msgstr "Diálogo de configuración de instrumentos del Gestor de color de GNOME"
 
@@ -678,12 +653,96 @@ msgstr ""
 "color"
 
 #: C/gnome-color-manager.xml:443(title)
-#| msgid "Missing information for whole-screen calibration"
+msgid "What's the difference between calibration and characterization?"
+msgstr "¿Cuál es la diferencia entre calibración y caracterización?"
+
+#: C/gnome-color-manager.xml:451(para)
+msgid "Changing controls or internal settings that it has."
+msgstr "Cambiar los controles o ajustes internos que tiene."
+
+#: C/gnome-color-manager.xml:456(para)
+msgid "Applying curves to its color channels."
+msgstr "Aplicar curvas a sus canales de colores."
+
+#: C/gnome-color-manager.xml:444(para)
+msgid ""
+"Many people are initially confused about the difference between calibration "
+"and characterization. Calibration is the process of modifying the color "
+"behavior of a device. This is typically done using two mechanisms: "
+"<placeholder-1/>"
+msgstr ""
+"Mucha gente se confunde al principio con la diferencia entre calibración y "
+"caracterización. La calibración es el proceso de modificar el comportamiento "
+"de color de un dispositivo. Esto generalmente se hace a través de dos "
+"mecanismos: <placeholder-1/>"
+
+#: C/gnome-color-manager.xml:462(para)
+msgid ""
+"The idea of calibration is to put a device is a defined state with regard to "
+"its color response. Often this is used as a day to day means of maintaining "
+"reproducible behavior. Typically calibration will be stored in device or "
+"systems specific file formats that record the device settings or per-channel "
+"calibration curves."
+msgstr ""
+"La idea de la calibración es dejar un dispositivo en un estado definido "
+"recordando su respuesta al color. A menudo esto se usa para mantener un "
+"comportamiento reproducible en el día a día. Generalmente la calibración se "
+"almacena en formatos de archivo específicos para el dispositivo o sistema "
+"que guardan la información de configuración del dispositivo o las curvas de "
+"calibración por canal."
+
+#: C/gnome-color-manager.xml:469(para)
+msgid ""
+"Characterization (or profiling) is <emphasis>recording</emphasis> the way a "
+"device reproduces or responds to color. Typically the result is stored in a "
+"device ICC profile. Such a profile does not in itself modify color in any "
+"way. It allows a system such as a CMM (Color Management Module) or a color "
+"aware application to modify color when combined with another device profile. "
+"Only by knowing the characteristics of two devices, can a way of "
+"transferring color from one device representation to another be achieved."
+msgstr ""
+"La caracterización, o perfilado, es <emphasis>grabar</emphasis> la forma en "
+"la que un dispositivo reproduce o responde a un color. Generalmente el "
+"resultado se almacena en un perfil ICC de dispositivo. Tal perfil no "
+"modifica por si mismo de ninguna manera el color. Permite al sistema, tal "
+"como a CMM (módulo de gestión de color) o a una aplicación consciente del "
+"color, modificar el color al combinarlo con otro perfil de dispositivo. Sólo "
+"sabiendo las características de los dos dispositivos se puede lograr una "
+"transferencia de color desde la representación en un dispositivo a otro."
+
+#: C/gnome-color-manager.xml:480(para)
+msgid ""
+"Note that a characterization (profile) will only be valid for a device if it "
+"is in the same state of calibration as it was when it was characterized."
+msgstr ""
+"Note que una perfil de caracterización sólo será válida para un dispositivo "
+"si está en el mismo estado de calibración que estaba cuando se caracterizó."
+
+#: C/gnome-color-manager.xml:486(para)
+msgid ""
+"In the case of display profiles there is some additional confusion because "
+"often the calibration information is stored in the profile for convenience. "
+"By convention it is stored in a tag called the <type>vcgt</type> tag. "
+"Although it is stored in the profile, none of the normal ICC based tools or "
+"applications are aware of it, or do anything with it. Similarly, typical "
+"display calibration tools and applications will not be aware of, or do "
+"anything with the ICC characterization (profile) information."
+msgstr ""
+"En el caso de los perfiles de pantalla existe una confusión adicional "
+"porque, a menudo, la información de calibración se almacena en el perfil por "
+"conveniencia. Por convención, se almacena en una etiqueta llamada "
+"<type>vcgt</type>. Aunque se almacene en el perfil, ninguna de las "
+"herramientas basadas en ICC o aplicaciones son conscientes de ello. De forma "
+"similar, las herramientas típicas de calibración de pantallas y aplicaciones "
+"no serán conscientes de ello, ni realizaran ninguna acción con la "
+"información de caracterización (perfilado) ICC."
+
+#: C/gnome-color-manager.xml:498(title)
 msgid "Missing information for whole-screen color correction"
 msgstr ""
 "Falta información para la corrección de color de de la pantalla completa"
 
-#: C/gnome-color-manager.xml:444(para)
+#: C/gnome-color-manager.xml:499(para)
 msgid ""
 "Unfortunately, many vendor-supplied ICC profiles do not include the "
 "information required for whole-screen color correction. These profiles can "
@@ -696,10 +755,7 @@ msgstr ""
 "compensación de color, pero no verá todos los colores del cambio de su "
 "pantalla."
 
-#: C/gnome-color-manager.xml:450(para)
-#| msgid ""
-#| "In order to create a full profile, you will need to use a special "
-#| "calibration device called a colorimeter."
+#: C/gnome-color-manager.xml:505(para)
 msgid ""
 "In order to create a display profile, which includes both calibration and "
 "characterisation data, you will need to use a special color measuring "
@@ -709,15 +765,11 @@ msgstr ""
 "calibración como de caracterización, deberá usar un instrumento de medición "
 "de color especial llamado colorímetro o bien un espectrómetro."
 
-#: C/gnome-color-manager.xml:458(title)
-#| msgid "What colorimeter devices are supported?"
+#: C/gnome-color-manager.xml:513(title)
 msgid "Which color measuring instruments are supported?"
 msgstr "¿Qué instrumentos de medición están soportados?"
 
-#: C/gnome-color-manager.xml:459(para)
-#| msgid ""
-#| "GNOME Color Manager relies on ArgyllCMS to support measurement devices. "
-#| "Thus the following display calibrators are supported:"
+#: C/gnome-color-manager.xml:514(para)
 msgid ""
 "GNOME Color Manager relies on ArgyllCMS to support color instruments. Thus "
 "the following display measuring instruments are supported:"
@@ -725,96 +777,87 @@ msgstr ""
 "El Gestor de color de GNOME depende de ArgyIICMS para soportar instrumentos "
 "de color. Por eso los siguientes dispositivos de medición están soportados:"
 
-#: C/gnome-color-manager.xml:465(para)
-#| msgid "Gretag-Macbeth Eye-One Pro"
+#: C/gnome-color-manager.xml:520(para)
 msgid "Gretag-Macbeth Eye-One Pro (spectrometer)"
 msgstr "Gretag-Macbeth Eye-One Pro (espectrómetro)"
 
-#: C/gnome-color-manager.xml:470(para)
-#| msgid "Gretag-Macbeth Eye-One Monitor"
+#: C/gnome-color-manager.xml:525(para)
 msgid "Gretag-Macbeth Eye-One Monitor (spectrometer)"
 msgstr "Gretag-Macbeth Eye-One Monitor (espectrómetro)"
 
-#: C/gnome-color-manager.xml:475(para)
-#| msgid "Gretag-Macbeth Eye-One Display 1, 2 или LT"
+#: C/gnome-color-manager.xml:530(para)
 msgid "Gretag-Macbeth Eye-One Display 1, 2 or LT (colorimeter)"
 msgstr "Gretag-Macbeth Eye-One Display 1, 2 o LT (colorímetro)"
 
-#: C/gnome-color-manager.xml:480(para)
+#: C/gnome-color-manager.xml:535(para)
 msgid "X-Rite ColorMunki Design or Photo (spectrometer)"
 msgstr "X-Rite ColorMunki Design o Photo (espectrómetro)"
 
-#: C/gnome-color-manager.xml:485(para)
-#| msgid "X-Rite ColorMunki"
+#: C/gnome-color-manager.xml:540(para)
 msgid "X-Rite ColorMunki Create (colorimeter)"
 msgstr "X-Rite ColorMunki Create (colorímetro)"
 
-#: C/gnome-color-manager.xml:490(para)
-#| msgid "Pantone Huey"
+#: C/gnome-color-manager.xml:545(para)
 msgid "Pantone Huey (colorimeter)"
 msgstr "Pantone Huey (colorímetro)"
 
-#: C/gnome-color-manager.xml:495(para)
-#| msgid "MonacoOPTIX"
+#: C/gnome-color-manager.xml:550(para)
 msgid "MonacoOPTIX (colorimeter)"
 msgstr "MonacoOPTIX (colorímetro)"
 
-#: C/gnome-color-manager.xml:500(para)
-#| msgid "ColorVision Spyder 2 and 3"
+#: C/gnome-color-manager.xml:555(para)
 msgid "ColorVision Spyder 2 and 3 (colorimeter)"
 msgstr "ColorVision Spyder 2 y 3 (colorímetro)"
 
-#: C/gnome-color-manager.xml:505(para)
-#| msgid "Colorimètre HCFR"
+#: C/gnome-color-manager.xml:560(para)
 msgid "Colorimètre HCFR (colorimeter)"
 msgstr "Colorimètre HCFR (colorímetro)"
 
-#: C/gnome-color-manager.xml:512(title)
-#| msgid "What target types are supported?"
+#: C/gnome-color-manager.xml:567(title)
 msgid "Which target types are supported?"
 msgstr "¿Qué tipos de objetivos están soportados?"
 
-#: C/gnome-color-manager.xml:513(para)
+#: C/gnome-color-manager.xml:568(para)
 msgid "GNOME Color Manager supports the following types of targets:"
 msgstr "El Gestor de color de GNOME soporta los siguientes tipos de objetivos:"
 
-#: C/gnome-color-manager.xml:518(para)
+#: C/gnome-color-manager.xml:573(para)
 msgid "CMP DigitalTarget"
 msgstr "CMP DigitalTarget"
 
-#: C/gnome-color-manager.xml:523(para)
+#: C/gnome-color-manager.xml:578(para)
 msgid "ColorChecker 24"
 msgstr "ColorChecker 24"
 
-#: C/gnome-color-manager.xml:528(para)
+#: C/gnome-color-manager.xml:583(para)
 msgid "ColorChecker DC"
 msgstr "ColorChecker DC"
 
-#: C/gnome-color-manager.xml:533(para)
+#: C/gnome-color-manager.xml:588(para)
 msgid "ColorChecker SG"
 msgstr "ColorChecker SG"
 
-#: C/gnome-color-manager.xml:538(para)
+#: C/gnome-color-manager.xml:593(para)
 msgid "i1 RGB Scan 14"
 msgstr "i1 RGB Scan 14"
 
-#: C/gnome-color-manager.xml:543(para)
+#: C/gnome-color-manager.xml:598(para)
 msgid "LaserSoft DC Pro"
 msgstr "LaserSoft DC Pro"
 
-#: C/gnome-color-manager.xml:548(para)
+#: C/gnome-color-manager.xml:603(para)
 msgid "QPcard 201"
 msgstr "QPcard 201"
 
-#: C/gnome-color-manager.xml:553(para)
+#: C/gnome-color-manager.xml:608(para)
 msgid "IT8.7/2"
 msgstr "IT8.7/2"
 
-#: C/gnome-color-manager.xml:560(title)
+#: C/gnome-color-manager.xml:615(title)
 msgid "Where do I purchase targets from?"
 msgstr "¿Dónde compro objetivos?"
 
-#: C/gnome-color-manager.xml:561(para)
+#: C/gnome-color-manager.xml:616(para)
 msgid ""
 "You can purchase targets from well-known vendors like KODAK, X-Rite and "
 "LaserSoft in various online shops. Alternatively you can buy targets from "
@@ -826,11 +869,11 @@ msgstr ""
 "objetivos en <ulink url=\"http://www.targets.coloraid.de/\" type=\"http"
 "\">Wolf Faust</ulink> a muy buen precio."
 
-#: C/gnome-color-manager.xml:571(title)
+#: C/gnome-color-manager.xml:626(title)
 msgid "About"
 msgstr "Acerca de"
 
-#: C/gnome-color-manager.xml:572(para)
+#: C/gnome-color-manager.xml:627(para)
 msgid ""
 "GNOME Color Manager was written by Richard Hughes <email>richard@hughsie."
 "com</email>. To find more information about GNOME Color Manager, please "
@@ -843,7 +886,7 @@ msgstr ""
 "\" type=\"http\">página web del <application>Gestor de color de GNOME</"
 "application></ulink>."
 
-#: C/gnome-color-manager.xml:578(para)
+#: C/gnome-color-manager.xml:633(para)
 msgid ""
 "To report a bug or make a suggestion regarding this application or this "
 "manual, follow the directions at the <ulink url=\"http://projects.gnome.org/"
@@ -855,7 +898,7 @@ msgstr ""
 "projects.gnome.org/gnome-color-manager/bugs.html\" type=\"http\">página de "
 "errores del <application>Gestor de color de GNOME</application></ulink>."
 
-#: C/gnome-color-manager.xml:584(para)
+#: C/gnome-color-manager.xml:639(para)
 msgid ""
 "This program is distributed under the terms of the GNU General Public "
 "license as published by the Free Software Foundation; either version 2 of "
