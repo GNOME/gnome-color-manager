@@ -1,3 +1,59 @@
+Version 2.30.0
+~~~~~~~~~~~~~~
+Released: 2010-03-29
+
+* Translations
+ - Add Simplified Chinese translation (Eleanor Chen)
+ - Update Czech translation (Milan Knížek)
+ - Updated German doc translation (Mario Blättermann)
+ - Updated German translation (Christian Kirbach)
+ - Updated German translation (Mario Blättermann)
+ - Updated Lithuanian translation (Gintautas Miliauskas)
+ - Updated Norwegian bokmål translation (Kjartan Maraas)
+ - Updated Polish translation (Piotr Drąg)
+ - Updated Portuguese translation (António Lima)
+ - Updated Russian translation (Alexandre Prokoudine)
+ - Updated Slovenian translation (Andrej Žnidaršič)
+ - Updated Spanish translation (Jorge González)
+
+* New Features:
+ - Add a 'created' and 'modified' key to each device in the config file (Richard Hughes)
+ - Add a DBus method GetDevices() and relax the checks in GetProfilesForDevice() to also take a device ID (Richard Hughes)
+ - Add an entry to the FAQ to explain the difference between calibration and characterization (Richard Hughes)
+ - Add a notification when devices with profiles need recalibrating (Richard Hughes)
+ - Add CMP DT 003 target image submitted by Guy Kloss (Pascal de Bruijn)
+ - Add images of the Colorimtre HCFR (Richard Hughes)
+ - Add images of the i1 Pro (Richard Hughes)
+ - Add info regarding high precision for display profiling (Milan Knížek)
+ - Allow the user to choose the calibration precision using an interactive dialog (Richard Hughes)
+ - Convert the .tiff files to .jpeg if we are creating a print profile (Richard Hughes)
+ - Do not rely on usb.ids, but instead encode the colorimeter type in the udev rules (Richard Hughes)
+ - Emit ::changed on the public DBus interface when devices are added or removed (Richard Hughes)
+ - For laptops, use the DMI data to contruct the calibration filename (Richard Hughes)
+ - Make sure the profile comboboxes are alphabetically sorted (Richard Hughes)
+ - Show each device setting when we use gcm-inspect --dump (Richard Hughes)
+ - Use libsane to get our scanners, which means remote devices are now supported (Richard Hughes)
+ - When devices are connected and disconnected, do not remove then add them, just change the state (Richard Hughes)
+
+* Bugfix:
+ - Check and correct TIFF image files with alpha channels before using them in argyllcms. Fixes rh#569564 (Richard Hughes)
+ - Correct terminology in help file (Milan Knížek)
+ - Correct use of calibrate/profile and replace device by instrument (Milan Knížek)
+ - Do not crash attempting to add cups printers without PPD file (Martin Szulecki)
+ - Do not crash the DBus service if a device does not have a profile set and it is included in a query (Richard Hughes)
+ - Do not crash when GetProfileForWindow() succeeds in finding a window (Richard Hughes)
+ - Do not use ACL_MANAGE, udev is already doing this for us (Richard Hughes)
+ - Fix "cast increases required alignment of target type" [ia64] (Kamal Mostafa)
+ - Fix up some translatable messages. Fixes #612111 (Richard Hughes)
+ - Fix wrong word in data/gnome-color-manager.schemas.in. Fixes #612105 (Christian Kirbach)
+ - If there are any lcms warnings in gcm-fix-profile, do not attempt to re-save the profile (Richard Hughes)
+ - Make gcm-install-system-wide a little more paranoid from users that might want to be horrible (Richard Hughes)
+ - Parse the EDID more carefully to not overwrite the model with junk for an invalid entry. Fixes #155410 (Richard Hughes)
+ - Prevent a segfault if ppdOpenFile() fails for whatever reason (Richard Hughes)
+ - Update profiling precision wording (Milan Knížek)
+ - Use the model name for the SANE id, the 'name' attribute depends on the USB port used (Richard Hughes)
+ - Warn if GConf is not set correctly when setting up the dialog (Richard Hughes)
+
 Version 2.29.4
 ~~~~~~~~~~~~~~
 Released: 2010-03-01
