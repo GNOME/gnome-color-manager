@@ -52,6 +52,7 @@ struct _GcmColorimeterPrivate
 	gboolean			 supports_display;
 	gboolean			 supports_projector;
 	gboolean			 supports_printer;
+	gboolean			 supports_spot;
 	gchar				*vendor;
 	gchar				*model;
 	GUdevClient			*client;
@@ -68,6 +69,7 @@ enum {
 	PROP_SUPPORTS_DISPLAY,
 	PROP_SUPPORTS_PROJECTOR,
 	PROP_SUPPORTS_PRINTER,
+	PROP_SUPPORTS_SPOT,
 	PROP_LAST
 };
 
@@ -136,6 +138,15 @@ gcm_colorimeter_supports_printer (GcmColorimeter *colorimeter)
 }
 
 /**
+ * gcm_colorimeter_supports_spot:
+ **/
+gboolean
+gcm_colorimeter_supports_spot (GcmColorimeter *colorimeter)
+{
+	return colorimeter->priv->supports_spot;
+}
+
+/**
  * gcm_colorimeter_get_kind:
  **/
 GcmColorimeterKind
@@ -174,6 +185,9 @@ gcm_colorimeter_get_property (GObject *object, guint prop_id, GValue *value, GPa
 		break;
 	case PROP_SUPPORTS_PRINTER:
 		g_value_set_uint (value, priv->supports_printer);
+		break;
+	case PROP_SUPPORTS_SPOT:
+		g_value_set_uint (value, priv->supports_spot);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -262,6 +276,14 @@ gcm_colorimeter_class_init (GcmColorimeterClass *klass)
 				      FALSE,
 				      G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_SUPPORTS_PRINTER, pspec);
+
+	/**
+	 * GcmColorimeter:supports-spot:
+	 */
+	pspec = g_param_spec_boolean ("supports-spot", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_SUPPORTS_SPOT, pspec);
 
 	/**
 	 * GcmColorimeter::changed:
@@ -374,6 +396,7 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 	priv->supports_display = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_DISPLAY");
 	priv->supports_projector = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PROJECTOR");
 	priv->supports_printer = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PRINTER");
+	priv->supports_spot = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_SPOT");
 
 	/* try to get type */
 	kind_str = g_udev_device_get_property (device, "GCM_KIND");
@@ -429,6 +452,7 @@ gcm_colorimeter_device_remove (GcmColorimeter *colorimeter, GUdevDevice *device)
 	priv->supports_display = FALSE;
 	priv->supports_projector = FALSE;
 	priv->supports_printer = FALSE;
+	priv->supports_spot = FALSE;
 
 	/* vendor */
 	g_free (priv->vendor);
