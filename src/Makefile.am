@@ -78,7 +78,17 @@ libgcmshared_a_SOURCES =				\
 	gcm-profile-lcms1.c				\
 	gcm-profile-lcms1.h				\
 	gcm-profile.c					\
-	gcm-profile.h
+	gcm-profile.h					\
+	gcm-calibrate.c					\
+	gcm-calibrate.h					\
+	gcm-calibrate-argyll.c				\
+	gcm-calibrate-argyll.h				\
+	gcm-calibrate-manual.c				\
+	gcm-calibrate-manual.h				\
+	gcm-calibrate-dialog.c				\
+	gcm-calibrate-dialog.h				\
+	gcm-brightness.c				\
+	gcm-brightness.h
 
 libgcmshared_a_CFLAGS =					\
 	$(WARNINGFLAGS_C)
@@ -95,6 +105,9 @@ bin_PROGRAMS =						\
 	gcm-prefs					\
 	gcm-session					\
 	gcm-import
+
+noinst_PROGRAMS = 					\
+	gcm-picker
 
 gcm_install_system_wide_SOURCES =			\
 	gcm-install-system-wide.c
@@ -226,16 +239,6 @@ gcm_import_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_prefs_SOURCES =					\
-	gcm-calibrate.c					\
-	gcm-calibrate.h					\
-	gcm-calibrate-argyll.c				\
-	gcm-calibrate-argyll.h				\
-	gcm-calibrate-manual.c				\
-	gcm-calibrate-manual.h				\
-	gcm-calibrate-dialog.c				\
-	gcm-calibrate-dialog.h				\
-	gcm-brightness.c				\
-	gcm-brightness.h				\
 	gcm-prefs.c
 
 gcm_prefs_LDADD =					\
@@ -258,6 +261,31 @@ gcm_prefs_LDADD =					\
 	-lm
 
 gcm_prefs_CFLAGS =					\
+	$(WARNINGFLAGS_C)
+
+gcm_picker_SOURCES =					\
+	gcm-picker.c
+
+gcm_picker_LDADD =					\
+	libgcmshared.a					\
+	$(GLIB_LIBS)					\
+	$(X11_LIBS)					\
+	$(GNOMEDESKTOP_LIBS)				\
+	$(UNIQUE_LIBS)					\
+	$(GCONF_LIBS)					\
+	$(VTE_LIBS)					\
+	$(GUDEV_LIBS)					\
+	$(LCMS_LIBS)					\
+	$(DBUS_GLIB_LIBS)				\
+	$(XORG_LIBS)					\
+	$(GTK_LIBS)					\
+	$(SANE_LIBS)					\
+	$(CUPS_LIBS)					\
+	$(TIFF_LIBS)					\
+	$(CANBERRA_LIBS)				\
+	-lm
+
+gcm_picker_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_session_SOURCES =					\
