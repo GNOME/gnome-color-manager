@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager\n"
-"POT-Creation-Date: 2010-03-27 12:57+0000\n"
-"PO-Revision-Date: 2010-03-28 15:14+0100\n"
+"POT-Creation-Date: 2010-04-01 15:01+0000\n"
+"PO-Revision-Date: 2010-04-03 07:37+0100\n"
 "Last-Translator: Andrej Žnidaršič <andrej.znidarsic@gmail.com>\n"
 "Language-Team: Slovenian <gnome-si@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../data/gcm-apply.desktop.in.h:1
 msgid "Applies device profile settings at session startup"
-msgstr "Uporabi nastavitve profila naprave ob zagonu seje"
+msgstr "Uveljavi nastavitve profila naprave ob zagonu seje"
 
 #: ../data/gcm-apply.desktop.in.h:2
 msgid "Load device color profiles"
@@ -861,7 +861,7 @@ msgid "This device already exists"
 msgstr "Ta naprava že obstaja"
 
 #. TRANSLATORS: this is when the device is not recognized
-#: ../src/gcm-colorimeter.c:391
+#: ../src/gcm-colorimeter.c:414
 msgid "Measuring instrument not recognized"
 msgstr "Merilna naprava ni prepoznana"
 
@@ -1213,6 +1213,27 @@ msgstr "Ime ciljne datoteke mora biti absolutno"
 msgid "Failed to copy"
 msgstr "Kopiranje je spodletelo"
 
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
+#: ../src/gcm-picker.c:153
+msgid "The attached colorimeter is not capable of reading a spot color."
+msgstr "Priklopljeni kolorimeter ni zmožen branja točke barve."
+
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
+#: ../src/gcm-picker.c:156
+msgid "No colorimeter is attached."
+msgstr "Ni priklopljenih kolorimetrov."
+
+#. TRANSLATORS: we can make this modal (stay on top of) another window
+#: ../src/gcm-picker.c:229
+#: ../src/gcm-prefs.c:2695
+msgid "Set the parent window to make this modal"
+msgstr "Določi glavno okno kot vedno na vrhu"
+
+#. TRANSLATORS: tool that is used to pick colors
+#: ../src/gcm-picker.c:244
+msgid "GNOME Color Manager Color Picker"
+msgstr "Izbirnik barv upravljalnika barv GNOME"
+
 #. TRANSLATORS: could not save for all users
 #: ../src/gcm-prefs.c:152
 msgid "Failed to save defaults for all users"
@@ -1519,11 +1540,6 @@ msgstr "Tiskalnik"
 msgid "Camera"
 msgstr "Fotoaparat"
 
-#. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-prefs.c:2695
-msgid "Set the parent window to make this modal"
-msgstr "Določi glavno okno kot vedno na vrhu"
-
 #. TRANSLATORS: button for more details about the vcgt failure
 #: ../src/gcm-prefs.c:2991
 msgid "More Information"
@@ -1684,6 +1700,38 @@ msgstr "Rdeča:"
 msgid "precision"
 msgstr "natančnost"
 
+#: ../data/gcm-picker.ui.h:1
+msgid "Color Picker"
+msgstr "Izbirnik barv"
+
+#. The profile colorspace, e.g. RGB
+#: ../data/gcm-picker.ui.h:2
+#: ../data/gcm-prefs.ui.h:13
+msgid "Colorspace:"
+msgstr "Barvni prostor:"
+
+#: ../data/gcm-picker.ui.h:3
+msgid "LAB:"
+msgstr "LAB:"
+
+#. What mode to use for display rendering intent
+#: ../data/gcm-picker.ui.h:4
+#: ../data/gcm-prefs.ui.h:61
+msgid "RGB:"
+msgstr "RGB:"
+
+#: ../data/gcm-picker.ui.h:5
+msgid "Results"
+msgstr "Rezultati"
+
+#: ../data/gcm-picker.ui.h:6
+msgid "XYZ:"
+msgstr "XYZ:"
+
+#: ../data/gcm-picker.ui.h:7
+msgid "_Measure"
+msgstr "_Izmeri"
+
 #: ../data/gcm-prefs.ui.h:1
 msgid "A working space is the range of colors that can be encoded into an image."
 msgstr "Delovni prostor je obseg barv, ki ga je mogoče kodirati v sliko."
@@ -1703,17 +1751,12 @@ msgstr "CMYK:"
 
 #: ../data/gcm-prefs.ui.h:8
 msgid "Close this dialog"
-msgstr "Zapri to pogovorno okno"
+msgstr "Zapri pogovorno okno"
 
 #. Section heading for device profile settings
 #: ../data/gcm-prefs.ui.h:11
 msgid "Color Profile"
 msgstr "Barvni profil"
-
-#. The profile colorspace, e.g. RGB
-#: ../data/gcm-prefs.ui.h:13
-msgid "Colorspace:"
-msgstr "Barvni prostor:"
 
 #: ../data/gcm-prefs.ui.h:14
 msgid "Contrast:"
@@ -1839,11 +1882,6 @@ msgstr "Profili"
 #: ../data/gcm-prefs.ui.h:58
 msgid "Program the video card with the adjusted color values so all windows are color corrected"
 msgstr "Programiranje video kartice s prilagojenimi barvnimi vrednostmi, tako da so vsa okna barvno pravilna"
-
-#. What mode to use for display rendering intent
-#: ../data/gcm-prefs.ui.h:61
-msgid "RGB:"
-msgstr "RGB:"
 
 #: ../data/gcm-prefs.ui.h:62
 msgid "Rendering intent"
