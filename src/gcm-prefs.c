@@ -1530,7 +1530,8 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	clut = gcm_profile_generate_curve (profile, 256);
 
 	/* only show if there is useful information */
-	size = gcm_clut_get_size (clut);
+	if (clut != NULL)
+		size = gcm_clut_get_size (clut);
 	if (size > 0) {
 		g_object_set (trc_widget,
 			      "clut", clut,
