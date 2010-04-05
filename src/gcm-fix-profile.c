@@ -35,8 +35,20 @@ gcm_fix_profile_filename (const gchar *filename, const gchar *description, const
 {
 	gboolean ret = TRUE;
 	cmsHPROFILE lcms_profile;
-	lcms_profile = cmsOpenProfileFromFile (filename, "r");
+	gchar *data = NULL;
+	gsize len;
+	GError *error = NULL;
+
+	ret = g_file_get_contents (filename, &data, &len, &error);
+	if (!ret) {
+		g_warning ("failed to open profile: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	lcms_profile = cmsOpenProfileFromMem (data, len);
 	if (lcms_profile == NULL || lcms_error_code != 0) {
+		g_warning ("failed to open profile");
 		ret = FALSE;
 		goto out;
 	}
@@ -72,6 +84,7 @@ gcm_fix_profile_filename (const gchar *filename, const gchar *description, const
 out:
 	if (lcms_profile != NULL)
 		cmsCloseProfile (lcms_profile);
+	g_free (data);
 	return ret;
 }
 
