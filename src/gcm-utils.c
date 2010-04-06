@@ -181,6 +181,54 @@ out:
 }
 
 /**
+ * gcm_utils_is_package_installed:
+ **/
+gboolean
+gcm_utils_is_package_installed (const gchar *package_name)
+{
+	DBusGConnection *connection;
+	DBusGProxy *proxy;
+	GError *error = NULL;
+	gboolean ret;
+	gboolean installed = TRUE;
+
+	g_return_val_if_fail (package_name != NULL, FALSE);
+
+#ifndef GCM_USE_PACKAGEKIT
+	egg_warning ("cannot query %s: this package was not compiled with --enable-packagekit", package_name);
+	return TRUE;
+#endif
+
+	/* get a session bus connection */
+	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
+
+	/* connect to PackageKit */
+	proxy = dbus_g_proxy_new_for_name (connection,
+					   "org.freedesktop.PackageKit",
+					   "/org/freedesktop/PackageKit",
+					   "org.freedesktop.PackageKit.Query");
+
+	/* set timeout */
+	dbus_g_proxy_set_default_timeout (proxy, G_MAXINT);
+
+	/* execute sync method */
+	ret = dbus_g_proxy_call (proxy, "IsInstalled", &error,
+				 G_TYPE_STRING, package_name,
+				 G_TYPE_STRING, "timeout=5",
+				 G_TYPE_INVALID,
+				 G_TYPE_BOOLEAN, &installed,
+				 G_TYPE_INVALID);
+	if (!ret) {
+		egg_warning ("failed to get installed status: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+out:
+	g_object_unref (proxy);
+	return installed;
+}
+
+/**
  * gcm_utils_output_is_lcd_internal:
  * @output_name: the output name
  *

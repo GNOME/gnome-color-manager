@@ -56,6 +56,7 @@ static GcmColorimeter *colorimeter = NULL;
 static gboolean setting_up_device = FALSE;
 static GtkWidget *info_bar_loading = NULL;
 static GtkWidget *info_bar_vcgt = NULL;
+static GtkWidget *info_bar_profiles = NULL;
 static GtkWidget *cie_widget = NULL;
 static GtkWidget *trc_widget = NULL;
 static GConfClient *gconf_client = NULL;
@@ -2180,6 +2181,7 @@ gcm_prefs_startup_phase2_idle_cb (gpointer user_data)
 	GtkWidget *widget;
 	GtkTreeSelection *selection;
 	GtkTreePath *path;
+	gboolean ret;
 
 	/* update list of profiles */
 	gcm_prefs_update_profile_list ();
@@ -2190,6 +2192,11 @@ gcm_prefs_startup_phase2_idle_cb (gpointer user_data)
 	path = gtk_tree_path_new_from_string ("0");
 	gtk_tree_selection_select_path (selection, path);
 	gtk_tree_path_free (path);
+
+	/* do we show the shared-color-profiles-extra installer? */
+	egg_debug ("getting installed");
+	ret = gcm_utils_is_package_installed (GCM_PREFS_PACKAGE_NAME_COLOR_PROFILES_EXTRA);
+	gtk_widget_set_visible (info_bar_profiles, !ret);
 
 	return FALSE;
 }
@@ -2600,9 +2607,19 @@ gcm_prefs_client_notify_loading_cb (GcmClient *client, GParamSpec *pspec, gpoint
 static void
 gcm_prefs_info_bar_response_cb (GtkDialog *dialog, GtkResponseType response, gpointer user_data)
 {
+	GtkWindow *window;
+	gboolean ret;
+
 	if (response == GTK_RESPONSE_HELP) {
 		/* open the help file in the right place */
 		gcm_gnome_help ("faq-missing-vcgt");
+
+	} else if (response == GTK_RESPONSE_APPLY) {
+		/* install the extra profiles */
+		window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+		ret = gcm_utils_install_package (GCM_PREFS_PACKAGE_NAME_COLOR_PROFILES_EXTRA, window);
+		if (ret)
+			gtk_widget_hide (info_bar_profiles);
 	}
 }
 
@@ -2686,6 +2703,7 @@ main (int argc, char **argv)
 	GtkTreeSelection *selection;
 	GtkWidget *info_bar_loading_label;
 	GtkWidget *info_bar_vcgt_label;
+	GtkWidget *info_bar_profiles_label;
 	GtkSizeGroup *size_group = NULL;
 	GtkSizeGroup *size_group2 = NULL;
 	GdkScreen *screen;
@@ -2987,9 +3005,15 @@ main (int argc, char **argv)
 	info_bar_vcgt = gtk_info_bar_new ();
 	g_signal_connect (info_bar_vcgt, "response",
 			  G_CALLBACK (gcm_prefs_info_bar_response_cb), NULL);
+	info_bar_profiles = gtk_info_bar_new ();
+	g_signal_connect (info_bar_profiles, "response",
+			  G_CALLBACK (gcm_prefs_info_bar_response_cb), NULL);
 
 	/* TRANSLATORS: button for more details about the vcgt failure */
 	gtk_info_bar_add_button (GTK_INFO_BAR(info_bar_vcgt), _("More Information"), GTK_RESPONSE_HELP);
+
+	/* TRANSLATORS: button to install extra profiles */
+	gtk_info_bar_add_button (GTK_INFO_BAR(info_bar_profiles), _("Install now"), GTK_RESPONSE_APPLY);
 
 	/* TRANSLATORS: this is displayed while the devices are being probed */
 	info_bar_loading_label = gtk_label_new (_("Loading list of devices…"));
@@ -3005,6 +3029,13 @@ main (int argc, char **argv)
 	gtk_container_add (GTK_CONTAINER(widget), info_bar_vcgt_label);
 	gtk_widget_show (info_bar_vcgt_label);
 
+	/* TRANSLATORS: this is displayed when the profile is crap */
+	info_bar_profiles_label = gtk_label_new (_("More color profiles could be automatically installed."));
+	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar_profiles), GTK_MESSAGE_INFO);
+	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar_profiles));
+	gtk_container_add (GTK_CONTAINER(widget), info_bar_profiles_label);
+	gtk_widget_show (info_bar_profiles_label);
+
 	/* add infobar to devices pane */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_devices"));
 	gtk_box_pack_start (GTK_BOX(widget), info_bar_loading, FALSE, FALSE, 0);
@@ -3012,6 +3043,10 @@ main (int argc, char **argv)
 	/* add infobar to devices pane */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_sections"));
 	gtk_box_pack_start (GTK_BOX(widget), info_bar_vcgt, FALSE, FALSE, 0);
+
+	/* add infobar to defaults pane */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox3"));
+	gtk_box_pack_start (GTK_BOX(widget), info_bar_profiles, TRUE, FALSE, 0);
 
 	/* show main UI */
 	gtk_window_set_default_size (GTK_WINDOW(main_window), 1000, 450);
