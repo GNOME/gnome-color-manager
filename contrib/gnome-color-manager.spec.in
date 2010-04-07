@@ -77,7 +77,7 @@ update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-mime-database %{_datadir}/mime &> /dev/null || :
 
 %pre
-gconf_schema_prepare gnome-color-manager
+%gconf_schema_prepare gnome-color-manager
 
 %preun
 %gconf_schema_remove gnome-color-manager
