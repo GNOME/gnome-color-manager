@@ -685,22 +685,20 @@ gcm_prefs_ensure_argyllcms_installed (void)
 	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
 	dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
 					 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
-					 _("Install missing calibration and profiling software?"));
+					 _("Install calibration and profiling software?"));
 
 	string = g_string_new ("");
 	/* TRANSLATORS: dialog message saying the argyllcms is not installed */
-	g_string_append_printf (string, "%s\n", _("Calibration and profiling software is not installed on this computer."));
+	g_string_append_printf (string, "%s\n", _("Calibration and profiling software is not installed."));
 	/* TRANSLATORS: dialog message saying the color targets are not installed */
-	g_string_append_printf (string, "%s\n\n", _("These tools are required to build color profiles for devices."));
-	/* TRANSLATORS: dialog message, asking if it's okay to install it */
-	g_string_append_printf (string, "%s", _("Do you want them to be automatically installed?"));
+	g_string_append_printf (string, "%s", _("These tools are required to build color profiles for devices."));
 
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-	/* TRANSLATORS: button, install a package */
-	gtk_dialog_add_button (GTK_DIALOG (dialog), _("Install"), GTK_RESPONSE_YES);
 	/* TRANSLATORS: button, skip installing a package */
 	gtk_dialog_add_button (GTK_DIALOG (dialog), _("Do not install"), GTK_RESPONSE_CANCEL);
+	/* TRANSLATORS: button, install a package */
+	gtk_dialog_add_button (GTK_DIALOG (dialog), _("Install"), GTK_RESPONSE_YES);
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
 
