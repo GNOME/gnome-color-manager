@@ -2968,6 +2968,7 @@ main (int argc, char **argv)
 
 	/* TRANSLATORS: this is displayed when the profile is crap */
 	info_bar_vcgt_label = gtk_label_new (_("This profile does not have the information required for whole-screen color correction."));
+	gtk_label_set_line_wrap (GTK_LABEL (info_bar_vcgt_label), TRUE);
 	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar_vcgt), GTK_MESSAGE_INFO);
 	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar_vcgt));
 	gtk_container_add (GTK_CONTAINER(widget), info_bar_vcgt_label);
@@ -2975,6 +2976,7 @@ main (int argc, char **argv)
 
 	/* TRANSLATORS: this is displayed when the profile is crap */
 	info_bar_profiles_label = gtk_label_new (_("More color profiles could be automatically installed."));
+	gtk_label_set_line_wrap (GTK_LABEL (info_bar_profiles_label), TRUE);
 	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar_profiles), GTK_MESSAGE_INFO);
 	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar_profiles));
 	gtk_container_add (GTK_CONTAINER(widget), info_bar_profiles_label);
