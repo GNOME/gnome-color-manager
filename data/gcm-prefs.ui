@@ -168,7 +168,7 @@
                                         <child>
                                           <object class="GtkHBox" id="hbox_manufacturer">
                                             <property name="visible">True</property>
-                                            <property name="spacing">6</property>
+                                            <property name="spacing">12</property>
                                             <child>
                                               <object class="GtkHBox" id="hbox21">
                                                 <property name="visible">True</property>
@@ -184,6 +184,7 @@
                                                 </child>
                                               </object>
                                               <packing>
+                                                <property name="expand">False</property>
                                                 <property name="position">0</property>
                                               </packing>
                                             </child>
@@ -215,7 +216,7 @@
                                         <child>
                                           <object class="GtkHBox" id="hbox_model">
                                             <property name="visible">True</property>
-                                            <property name="spacing">6</property>
+                                            <property name="spacing">12</property>
                                             <child>
                                               <object class="GtkHBox" id="hbox22">
                                                 <property name="visible">True</property>
@@ -231,6 +232,7 @@
                                                 </child>
                                               </object>
                                               <packing>
+                                                <property name="expand">False</property>
                                                 <property name="position">0</property>
                                               </packing>
                                             </child>
@@ -262,7 +264,7 @@
                                         <child>
                                           <object class="GtkHBox" id="hbox_serial">
                                             <property name="visible">True</property>
-                                            <property name="spacing">6</property>
+                                            <property name="spacing">12</property>
                                             <child>
                                               <object class="GtkHBox" id="hbox23">
                                                 <property name="visible">True</property>
@@ -278,6 +280,7 @@
                                                 </child>
                                               </object>
                                               <packing>
+                                                <property name="expand">False</property>
                                                 <property name="position">0</property>
                                               </packing>
                                             </child>
@@ -312,7 +315,7 @@
                                             <child>
                                               <object class="GtkLabel" id="label_problems">
                                                 <property name="visible">True</property>
-                                                <property name="label">problems</property>
+                                                <property name="label">Problems</property>
                                                 <property name="selectable">True</property>
                                               </object>
                                               <packing>
@@ -718,7 +721,7 @@
                                             <child>
                                               <object class="GtkHBox" id="hbox_type">
                                                 <property name="visible">True</property>
-                                                <property name="spacing">9</property>
+                                                <property name="spacing">12</property>
                                                 <child>
                                                   <object class="GtkHBox" id="hbox6">
                                                     <property name="visible">True</property>
@@ -770,7 +773,7 @@
                                             <child>
                                               <object class="GtkHBox" id="hbox_colorspace">
                                                 <property name="visible">True</property>
-                                                <property name="spacing">9</property>
+                                                <property name="spacing">12</property>
                                                 <child>
                                                   <object class="GtkHBox" id="hbox39">
                                                     <property name="visible">True</property>
@@ -822,7 +825,7 @@
                                             <child>
                                               <object class="GtkHBox" id="hbox_datetime">
                                                 <property name="visible">True</property>
-                                                <property name="spacing">9</property>
+                                                <property name="spacing">12</property>
                                                 <child>
                                                   <object class="GtkHBox" id="hbox36">
                                                     <property name="visible">True</property>
@@ -874,7 +877,7 @@
                                             <child>
                                               <object class="GtkHBox" id="hbox_profile_manufacturer">
                                                 <property name="visible">True</property>
-                                                <property name="spacing">9</property>
+                                                <property name="spacing">12</property>
                                                 <child>
                                                   <object class="GtkHBox" id="hbox5">
                                                     <property name="visible">True</property>
@@ -926,7 +929,7 @@
                                             <child>
                                               <object class="GtkHBox" id="hbox_profile_model">
                                                 <property name="visible">True</property>
-                                                <property name="spacing">9</property>
+                                                <property name="spacing">12</property>
                                                 <child>
                                                   <object class="GtkHBox" id="hbox34">
                                                     <property name="visible">True</property>
@@ -978,7 +981,7 @@
                                             <child>
                                               <object class="GtkHBox" id="hbox_vcgt">
                                                 <property name="visible">True</property>
-                                                <property name="spacing">9</property>
+                                                <property name="spacing">12</property>
                                                 <child>
                                                   <object class="GtkHBox" id="hbox48">
                                                     <property name="visible">True</property>
@@ -1030,7 +1033,7 @@
                                             <child>
                                               <object class="GtkHBox" id="hbox_copyright">
                                                 <property name="visible">True</property>
-                                                <property name="spacing">9</property>
+                                                <property name="spacing">12</property>
                                                 <child>
                                                   <object class="GtkHBox" id="hbox10">
                                                     <property name="visible">True</property>
@@ -1082,7 +1085,7 @@
                                             <child>
                                               <object class="GtkHBox" id="hbox_size">
                                                 <property name="visible">True</property>
-                                                <property name="spacing">9</property>
+                                                <property name="spacing">12</property>
                                                 <child>
                                                   <object class="GtkHBox" id="hbox30">
                                                     <property name="visible">True</property>
@@ -1134,7 +1137,7 @@
                                             <child>
                                               <object class="GtkHBox" id="hbox_filename">
                                                 <property name="visible">True</property>
-                                                <property name="spacing">9</property>
+                                                <property name="spacing">12</property>
                                                 <child>
                                                   <object class="GtkHBox" id="hbox32">
                                                     <property name="visible">True</property>
@@ -1962,6 +1965,26 @@
       <widget name="hbox46"/>
       <widget name="hbox15"/>
       <widget name="hbox17"/>
+    </widgets>
+  </object>
+  <object class="GtkSizeGroup" id="sizegroup_devices">
+    <widgets>
+      <widget name="hbox21"/>
+      <widget name="hbox22"/>
+      <widget name="hbox23"/>
+    </widgets>
+  </object>
+  <object class="GtkSizeGroup" id="sizegroup_profiles">
+    <widgets>
+      <widget name="hbox6"/>
+      <widget name="hbox39"/>
+      <widget name="hbox36"/>
+      <widget name="hbox5"/>
+      <widget name="hbox34"/>
+      <widget name="hbox48"/>
+      <widget name="hbox10"/>
+      <widget name="hbox30"/>
+      <widget name="hbox32"/>
     </widgets>
   </object>
 </interface>

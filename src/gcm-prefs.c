@@ -2704,8 +2704,6 @@ main (int argc, char **argv)
 	GtkWidget *info_bar_loading_label;
 	GtkWidget *info_bar_vcgt_label;
 	GtkWidget *info_bar_profiles_label;
-	GtkSizeGroup *size_group = NULL;
-	GtkSizeGroup *size_group2 = NULL;
 	GdkScreen *screen;
 
 	const GOptionEntry options[] = {
@@ -2904,60 +2902,6 @@ main (int argc, char **argv)
 	gtk_range_set_range (GTK_RANGE (widget), 0.1f, 1.0f);
 //	gtk_scale_add_mark (GTK_SCALE (widget), 1.0f, GTK_POS_TOP, "");
 
-	/* set alignment for left */
-	size_group = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox5"));
-	gtk_size_group_add_widget (size_group, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox10"));
-	gtk_size_group_add_widget (size_group, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox6"));
-	gtk_size_group_add_widget (size_group, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox21"));
-	gtk_size_group_add_widget (size_group, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox22"));
-	gtk_size_group_add_widget (size_group, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox23"));
-	gtk_size_group_add_widget (size_group, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox30"));
-	gtk_size_group_add_widget (size_group, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox32"));
-	gtk_size_group_add_widget (size_group, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox34"));
-	gtk_size_group_add_widget (size_group, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox36"));
-	gtk_size_group_add_widget (size_group, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox39"));
-	gtk_size_group_add_widget (size_group, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox48"));
-	gtk_size_group_add_widget (size_group, widget);
-
-	/* set alignment for right */
-	size_group2 = gtk_size_group_new (GTK_SIZE_GROUP_HORIZONTAL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox24"));
-	gtk_size_group_add_widget (size_group2, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox25"));
-	gtk_size_group_add_widget (size_group2, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox26"));
-	gtk_size_group_add_widget (size_group2, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox11"));
-	gtk_size_group_add_widget (size_group2, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox12"));
-	gtk_size_group_add_widget (size_group2, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox18"));
-	gtk_size_group_add_widget (size_group2, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox31"));
-	gtk_size_group_add_widget (size_group2, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox33"));
-	gtk_size_group_add_widget (size_group2, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox35"));
-	gtk_size_group_add_widget (size_group2, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox37"));
-	gtk_size_group_add_widget (size_group2, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox40"));
-	gtk_size_group_add_widget (size_group2, widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox49"));
-	gtk_size_group_add_widget (size_group2, widget);
-
 	/* use a device client array */
 	gcm_client = gcm_client_new ();
 	gcm_client_set_use_threads (gcm_client, TRUE);
@@ -3085,10 +3029,6 @@ main (int argc, char **argv)
 out:
 	g_object_unref (unique_app);
 	g_main_loop_unref (loop);
-	if (size_group != NULL)
-		g_object_unref (size_group);
-	if (size_group2 != NULL)
-		g_object_unref (size_group2);
 	if (current_device != NULL)
 		g_object_unref (current_device);
 	if (colorimeter != NULL)
