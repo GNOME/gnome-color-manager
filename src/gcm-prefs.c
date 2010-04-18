@@ -2995,7 +2995,6 @@ main (int argc, char **argv)
 	gtk_box_pack_start (GTK_BOX(widget), info_bar_profiles, TRUE, FALSE, 0);
 
 	/* show main UI */
-	gtk_window_set_default_size (GTK_WINDOW(main_window), 1000, 450);
 	gtk_widget_show (main_window);
 
 	/* connect up sliders */
