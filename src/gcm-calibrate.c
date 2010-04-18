@@ -471,27 +471,18 @@ gcm_calibrate_get_precision (GcmCalibrate *calibrate, GError **error)
 	string = g_string_new ("");
 
 	/* TRANSLATORS: dialog title */
-	title = _("Choose the precision of the profile");
-
-	/* TRANSLATORS: dialog message, suffix */
-	g_string_append_printf (string, "%s\n", _("Please choose the profile precision."));
+	title = _("Profile Precision");
 
 	/* TRANSLATORS: this is the message body for the chart selection */
-	g_string_append_printf (string, "\n\n%s", _("For a typical workflow, a normal precision profile is sufficient."));
+	g_string_append (string, _("A higher precision profile provides higher accuracy in color matching but requires more time for reading the color patches."));
 
 	/* TRANSLATORS: this is the message body for the chart selection */
-	g_string_append_printf (string, "\n%s", _("High precision profiles provide higher accuracy in color matching. Correspondingly, low precision profiles result in lower quality."));
+	g_string_append_printf (string, "\n%s", _("For a typical workflow, a normal precision profile is sufficient."));
 
 	/* printer specific options */
 	if (priv->device_kind == GCM_DEVICE_KIND_PRINTER) {
 		/* TRANSLATORS: dialog message, preface */
-		g_string_append_printf (string, "\n%s", _("The high precision profiles also require more paper and time for reading the color swatches."));
-	}
-
-	/* display specific options */
-	if (priv->device_kind == GCM_DEVICE_KIND_DISPLAY) {
-		/* TRANSLATORS: dialog message, preface */
-		g_string_append_printf (string, "\n%s", _("The high precision profiles also require more time for reading the color swatches."));
+		g_string_append_printf (string, "\n%s", _("The high precision profile also requires more paper and printer ink."));
 	}
 
 	/* push new messages into the UI */
