@@ -32,7 +32,6 @@
 #include <glib-object.h>
 #include <math.h>
 #include <gio/gio.h>
-#include <gconf/gconf-client.h>
 
 #include "gcm-clut.h"
 #include "gcm-utils.h"
@@ -52,10 +51,10 @@ struct _GcmClutPrivate
 {
 	GPtrArray 			*array;
 	guint				 size;
-	gfloat				 gamma;
-	gfloat				 brightness;
-	gfloat				 contrast;
-	GConfClient			*gconf_client;
+	gdouble				 gamma;
+	gdouble				 brightness;
+	gdouble				 contrast;
+	GSettings			*settings;
 };
 
 enum {
@@ -136,14 +135,14 @@ gcm_clut_reset (GcmClut *clut)
  * gcm_clut_get_adjusted_value:
  **/
 static guint
-gcm_clut_get_adjusted_value (guint value, gfloat min, gfloat max, gfloat custom_gamma)
+gcm_clut_get_adjusted_value (guint value, gdouble min, gdouble max, gdouble custom_gamma)
 {
 	guint retval;
 
 	/* optimise for the common case */
 	if (min < 0.01f && max > 0.99f && custom_gamma > 0.99 && custom_gamma < 1.01)
 		return value;
-	retval = 65536.0f * ((powf (((gfloat)value/65536.0f), custom_gamma) * (max - min)) + min);
+	retval = 65536.0f * ((powf (((gdouble)value/65536.0f), custom_gamma) * (max - min)) + min);
 	return retval;
 }
 
@@ -167,9 +166,9 @@ gcm_clut_get_array (GcmClut *clut)
 	guint value;
 	const GcmClutData *tmp;
 	GcmClutData *data;
-	gfloat min;
-	gfloat max;
-	gfloat custom_gamma;
+	gdouble min;
+	gdouble max;
+	gdouble custom_gamma;
 
 	g_return_val_if_fail (GCM_IS_CLUT (clut), FALSE);
 	g_return_val_if_fail (clut->priv->gamma != 0, FALSE);
@@ -237,13 +236,13 @@ gcm_clut_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 		g_value_set_uint (value, priv->size);
 		break;
 	case PROP_GAMMA:
-		g_value_set_float (value, priv->gamma);
+		g_value_set_double (value, priv->gamma);
 		break;
 	case PROP_BRIGHTNESS:
-		g_value_set_float (value, priv->brightness);
+		g_value_set_double (value, priv->brightness);
 		break;
 	case PROP_CONTRAST:
-		g_value_set_float (value, priv->contrast);
+		g_value_set_double (value, priv->contrast);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -265,13 +264,13 @@ gcm_clut_set_property (GObject *object, guint prop_id, const GValue *value, GPar
 		priv->size = g_value_get_uint (value);
 		break;
 	case PROP_GAMMA:
-		priv->gamma = g_value_get_float (value);
+		priv->gamma = g_value_get_double (value);
 		break;
 	case PROP_BRIGHTNESS:
-		priv->brightness = g_value_get_float (value);
+		priv->brightness = g_value_get_double (value);
 		break;
 	case PROP_CONTRAST:
-		priv->contrast = g_value_get_float (value);
+		priv->contrast = g_value_get_double (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -302,25 +301,25 @@ gcm_clut_class_init (GcmClutClass *klass)
 	/**
 	 * GcmClut:gamma:
 	 */
-	pspec = g_param_spec_float ("gamma", NULL, NULL,
-				    0.0, G_MAXFLOAT, 1.01,
-				    G_PARAM_READWRITE);
+	pspec = g_param_spec_double ("gamma", NULL, NULL,
+				     0.0, G_MAXDOUBLE, 1.01,
+				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_GAMMA, pspec);
 
 	/**
 	 * GcmClut:brightness:
 	 */
-	pspec = g_param_spec_float ("brightness", NULL, NULL,
-				    0.0, G_MAXFLOAT, 1.02,
-				    G_PARAM_READWRITE);
+	pspec = g_param_spec_double ("brightness", NULL, NULL,
+				     0.0, G_MAXDOUBLE, 1.02,
+				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_BRIGHTNESS, pspec);
 
 	/**
 	 * GcmClut:contrast:
 	 */
-	pspec = g_param_spec_float ("contrast", NULL, NULL,
-				    0.0, G_MAXFLOAT, 1.03,
-				    G_PARAM_READWRITE);
+	pspec = g_param_spec_double ("contrast", NULL, NULL,
+				     0.0, G_MAXDOUBLE, 1.03,
+				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CONTRAST, pspec);
 
 	g_type_class_add_private (klass, sizeof (GcmClutPrivate));
@@ -332,15 +331,10 @@ gcm_clut_class_init (GcmClutClass *klass)
 static void
 gcm_clut_init (GcmClut *clut)
 {
-	GError *error = NULL;
 	clut->priv = GCM_CLUT_GET_PRIVATE (clut);
 	clut->priv->array = g_ptr_array_new_with_free_func (g_free);
-	clut->priv->gconf_client = gconf_client_get_default ();
-	clut->priv->gamma = gconf_client_get_float (clut->priv->gconf_client, GCM_SETTINGS_DEFAULT_GAMMA, &error);
-	if (error != NULL) {
-		egg_warning ("failed to get setup parameters: %s", error->message);
-		g_error_free (error);
-	}
+	clut->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
+	clut->priv->gamma = g_settings_get_double (clut->priv->settings, GCM_SETTINGS_DEFAULT_GAMMA);
 	if (clut->priv->gamma < 0.01)
 		clut->priv->gamma = 1.0f;
 	clut->priv->brightness = 0.0f;
@@ -357,7 +351,7 @@ gcm_clut_finalize (GObject *object)
 	GcmClutPrivate *priv = clut->priv;
 
 	g_ptr_array_unref (priv->array);
-	g_object_unref (clut->priv->gconf_client);
+	g_object_unref (clut->priv->settings);
 
 	G_OBJECT_CLASS (gcm_clut_parent_class)->finalize (object);
 }

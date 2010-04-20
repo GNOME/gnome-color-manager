@@ -23,7 +23,6 @@
 
 #include <glib/gi18n.h>
 #include <dbus/dbus-glib.h>
-#include <gconf/gconf-client.h>
 
 #include "egg-debug.h"
 
@@ -40,7 +39,7 @@ static void     gcm_dbus_finalize	(GObject	*object);
 
 struct GcmDbusPrivate
 {
-	GConfClient		*gconf_client;
+	GSettings		*settings;
 	GcmClient		*client;
 	GcmProfileStore		*profile_store;
 	GTimer			*timer;
@@ -511,12 +510,12 @@ gcm_dbus_class_init (GcmDbusClass *klass)
 }
 
 /**
- * gcm_dbus_gconf_key_changed_cb:
+ * gcm_dbus_key_changed_cb:
  *
- * We might have to do things when the gconf keys change; do them here.
+ * We might have to do things when the keys change; do them here.
  **/
 static void
-gcm_dbus_gconf_key_changed_cb (GConfClient *client, guint cnxn_id, GConfEntry *entry, GcmDbus *dbus)
+gcm_dbus_key_changed_cb (GSettings *settings, const gchar *key, GcmDbus *dbus)
 {
 	/* just emit signal */
 	g_signal_emit (dbus, signals[SIGNAL_CHANGED], 0);
@@ -543,7 +542,9 @@ gcm_dbus_init (GcmDbus *dbus)
 	GError *error = NULL;
 
 	dbus->priv = GCM_DBUS_GET_PRIVATE (dbus);
-	dbus->priv->gconf_client = gconf_client_get_default ();
+	dbus->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
+	g_signal_connect (dbus->priv->settings, "changed", G_CALLBACK (gcm_dbus_key_changed_cb), dbus);
+
 	dbus->priv->client = gcm_client_new ();
 	g_signal_connect (dbus->priv->client, "added", G_CALLBACK (gcm_dbus_client_changed_cb), dbus);
 	g_signal_connect (dbus->priv->client, "removed", G_CALLBACK (gcm_dbus_client_changed_cb), dbus);
@@ -553,16 +554,11 @@ gcm_dbus_init (GcmDbus *dbus)
 	dbus->priv->profile_store = gcm_profile_store_new ();
 	dbus->priv->timer = g_timer_new ();
 
-	/* notify on changes */
-	gconf_client_notify_add (dbus->priv->gconf_client, GCM_SETTINGS_DIR,
-				 (GConfClientNotifyFunc) gcm_dbus_gconf_key_changed_cb,
-				 dbus, NULL, NULL);
-
 	/* coldplug */
-	dbus->priv->rendering_intent_display = gconf_client_get_string (dbus->priv->gconf_client, GCM_SETTINGS_RENDERING_INTENT_DISPLAY, NULL);
-	dbus->priv->rendering_intent_softproof = gconf_client_get_string (dbus->priv->gconf_client, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF, NULL);
-	dbus->priv->colorspace_rgb = gconf_client_get_string (dbus->priv->gconf_client, GCM_SETTINGS_COLORSPACE_RGB, NULL);
-	dbus->priv->colorspace_cmyk = gconf_client_get_string (dbus->priv->gconf_client, GCM_SETTINGS_COLORSPACE_CMYK, NULL);
+	dbus->priv->rendering_intent_display = g_settings_get_string (dbus->priv->settings, GCM_SETTINGS_RENDERING_INTENT_DISPLAY);
+	dbus->priv->rendering_intent_softproof = g_settings_get_string (dbus->priv->settings, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF);
+	dbus->priv->colorspace_rgb = g_settings_get_string (dbus->priv->settings, GCM_SETTINGS_COLORSPACE_RGB);
+	dbus->priv->colorspace_cmyk = g_settings_get_string (dbus->priv->settings, GCM_SETTINGS_COLORSPACE_CMYK);
 
 	/* get all devices */
 	ret = gcm_client_add_connected (dbus->priv->client, &error);
@@ -590,7 +586,7 @@ gcm_dbus_finalize (GObject *object)
 	g_free (dbus->priv->colorspace_cmyk);
 	g_object_unref (dbus->priv->client);
 	g_object_unref (dbus->priv->profile_store);
-	g_object_unref (dbus->priv->gconf_client);
+	g_object_unref (dbus->priv->settings);
 	g_timer_destroy (dbus->priv->timer);
 
 	G_OBJECT_CLASS (gcm_dbus_parent_class)->finalize (object);

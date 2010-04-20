@@ -26,7 +26,6 @@
 #include <libgnomeui/gnome-rr.h>
 #include <X11/extensions/Xrandr.h>
 #include <X11/extensions/xf86vmode.h>
-#include <gconf/gconf-client.h>
 #include <gdk/gdkx.h>
 
 #include "gcm-device-xrandr.h"
@@ -54,7 +53,7 @@ struct _GcmDeviceXrandrPrivate
 	guint				 gamma_size;
 	GcmEdid				*edid;
 	GcmDmi				*dmi;
-	GConfClient			*gconf_client;
+	GSettings			*settings;
 	GcmXserver			*xserver;
 	GcmScreen			*screen;
 	gboolean			 xrandr_fallback;
@@ -496,7 +495,7 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 		goto out;
 
 	/* only set the CLUT if we're not seting the atom */
-	use_global = gconf_client_get_bool (priv->gconf_client, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION, NULL);
+	use_global = g_settings_get_boolean (priv->settings, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION);
 	if (use_global && filename != NULL) {
 		/* create CLUT */
 		profile = gcm_profile_default_new ();
@@ -540,7 +539,7 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	leftmost_screen = (x == 0 && y == 0);
 
 	/* either remove the atoms or set them */
-	use_atom = gconf_client_get_bool (priv->gconf_client, GCM_SETTINGS_SET_ICC_PROFILE_ATOM, NULL);
+	use_atom = g_settings_get_boolean (priv->settings, GCM_SETTINGS_SET_ICC_PROFILE_ATOM);
 	if (!use_atom || filename == NULL) {
 
 		/* remove the output atom if there's nothing to show */
@@ -674,7 +673,7 @@ gcm_device_xrandr_init (GcmDeviceXrandr *device_xrandr)
 	device_xrandr->priv->gamma_size = 0;
 	device_xrandr->priv->edid = gcm_edid_new ();
 	device_xrandr->priv->dmi = gcm_dmi_new ();
-	device_xrandr->priv->gconf_client = gconf_client_get_default ();
+	device_xrandr->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 	device_xrandr->priv->screen = gcm_screen_new ();
 	device_xrandr->priv->xserver = gcm_xserver_new ();
 }
@@ -691,7 +690,7 @@ gcm_device_xrandr_finalize (GObject *object)
 	g_free (priv->native_device);
 	g_object_unref (priv->edid);
 	g_object_unref (priv->dmi);
-	g_object_unref (priv->gconf_client);
+	g_object_unref (priv->settings);
 	g_object_unref (priv->screen);
 	g_object_unref (priv->xserver);
 

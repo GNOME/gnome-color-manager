@@ -32,7 +32,6 @@
 #include <gtk/gtk.h>
 #include <tiff.h>
 #include <tiffio.h>
-#include <gconf/gconf-client.h>
 
 #include "gcm-calibrate.h"
 #include "gcm-dmi.h"
@@ -75,7 +74,7 @@ struct _GcmCalibratePrivate
 	gchar				*serial;
 	gchar				*device;
 	gchar				*working_path;
-	GConfClient			*gconf_client;
+	GSettings			*settings;
 };
 
 enum {
@@ -238,7 +237,7 @@ gcm_calibrate_set_basename (GcmCalibrate *calibrate)
 		g_string_append_printf (basename, " - %s", serial);
 	g_string_append_printf (basename, " (%04i-%02i-%02i)", date->year, date->month, date->day);
 
-	/* maybe configure in GConf? */
+	/* maybe configure in GSettings? */
 	if (0)
 		g_string_append_printf (basename, " [%s]", timespec);
 
@@ -495,7 +494,7 @@ gcm_calibrate_get_precision (GcmCalibrate *calibrate, GError **error)
 		g_set_error_literal (error,
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_USER_ABORT,
-				     "user did not choose precision type and ask is specified in GConf");
+				     "user did not choose precision type and ask is specified in GSettings");
 		goto out;
 	}
 
@@ -572,7 +571,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	}
 
 	/* get default precision */
-	precision = gconf_client_get_string (priv->gconf_client, GCM_SETTINGS_CALIBRATION_LENGTH, NULL);
+	precision = g_settings_get_string (priv->settings, GCM_SETTINGS_CALIBRATION_LENGTH);
 	priv->precision = gcm_calibrate_precision_from_string (precision);
 	if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
 		priv->precision = gcm_calibrate_get_precision (calibrate, error);
@@ -886,7 +885,7 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	}
 
 	/* get default precision */
-	precision = gconf_client_get_string (priv->gconf_client, GCM_SETTINGS_CALIBRATION_LENGTH, NULL);
+	precision = g_settings_get_string (priv->settings, GCM_SETTINGS_CALIBRATION_LENGTH);
 	priv->precision = gcm_calibrate_precision_from_string (precision);
 	if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
 		priv->precision = gcm_calibrate_get_precision (calibrate, error);
@@ -1057,7 +1056,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	g_object_get (priv->calibrate_dialog, "reference-kind", &priv->reference_kind, NULL);
 
 	/* get default precision */
-	precision = gconf_client_get_string (priv->gconf_client, GCM_SETTINGS_CALIBRATION_LENGTH, NULL);
+	precision = g_settings_get_string (priv->settings, GCM_SETTINGS_CALIBRATION_LENGTH);
 	priv->precision = gcm_calibrate_precision_from_string (precision);
 	if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
 		priv->precision = gcm_calibrate_get_precision (calibrate, error);
@@ -1472,8 +1471,8 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	// FIXME: this has to be per-run specific
 	calibrate->priv->working_path = g_strdup ("/tmp");
 
-	/* use GConf to get defaults */
-	calibrate->priv->gconf_client = gconf_client_get_default ();
+	/* use GSettings to get defaults */
+	calibrate->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 
 	/* coldplug, and watch for changes */
 	calibrate->priv->colorimeter_kind = gcm_colorimeter_get_kind (calibrate->priv->colorimeter);
@@ -1504,7 +1503,7 @@ gcm_calibrate_finalize (GObject *object)
 	g_object_unref (priv->colorimeter);
 	g_object_unref (priv->dmi);
 	g_object_unref (priv->calibrate_dialog);
-	g_object_unref (priv->gconf_client);
+	g_object_unref (priv->settings);
 
 	G_OBJECT_CLASS (gcm_calibrate_parent_class)->finalize (object);
 }

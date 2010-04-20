@@ -95,6 +95,7 @@ AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE(GETTEXT_PACKAGE, "AC_PACKAGE_NAME", [foo])
 
 AM_GLIB_GNU_GETTEXT
+GLIB_GSETTINGS
 
 dnl ---------------------------------------------------------------------------
 dnl - Library dependencies
@@ -102,16 +103,17 @@ dnl ---------------------------------------------------------------------------
 GLIB_REQUIRED=2.14.0
 GTK_REQUIRED=2.14.0
 GNOMEDESKTOP_REQUIRED=2.14.0
-GCONF_REQUIRED=0.22
+GCONF_REQUIRED=2.31.1
 UNIQUE_REQUIRED=1.0.0
 VTE_REQUIRED=0.22.2
 DBUS_GLIB_REQUIRED=0.73
 CANBERRA_REQUIRED=0.10
+GIO_REQUIRED=2.25.0
 
 dnl ---------------------------------------------------------------------------
 dnl - Check library dependencies
 dnl ---------------------------------------------------------------------------
-PKG_CHECK_MODULES(GLIB, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 gthread-2.0 gio-2.0)
+PKG_CHECK_MODULES(GLIB, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 gthread-2.0 gio-2.0 >= $GIO_REQUIRED)
 PKG_CHECK_MODULES(XORG, xxf86vm xrandr)
 PKG_CHECK_MODULES(GTK, gtk+-2.0 >= $GTK_REQUIRED)
 PKG_CHECK_MODULES(GNOMEDESKTOP, gnome-desktop-2.0 >= $GNOMEDESKTOP_REQUIRED)
@@ -169,6 +171,8 @@ fi
 
 AC_PATH_PROG(GCONFTOOL, gconftool-2)
 AM_GCONF_SOURCE_2
+AC_SUBST(gsettingsupdateschemacache,
+	`pkg-config --variable gsettingsupdateschemacache gio-2.0`)
 
 dnl ---------------------------------------------------------------------------
 dnl - Make paths available for source files

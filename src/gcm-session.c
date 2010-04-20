@@ -25,7 +25,6 @@
 #include <dbus/dbus-glib.h>
 #include <gtk/gtk.h>
 #include <locale.h>
-#include <gconf/gconf-client.h>
 #include <libnotify/notify.h>
 
 #include "egg-debug.h"
@@ -36,7 +35,7 @@
 #include "org.gnome.ColorManager.h"
 
 static GMainLoop *loop = NULL;
-static GConfClient *gconf_client = NULL;
+static GSettings *settings = NULL;
 
 #define GCM_DBUS_SERVICE		"org.gnome.ColorManager"
 #define GCM_DBUS_INTERFACE		"org.gnome.ColorManager"
@@ -122,9 +121,9 @@ gcm_session_notify_cb (NotifyNotification *notification, gchar *action, gpointer
 	GError *error = NULL;
 
 	if (g_strcmp0 (action, "display") == 0) {
-		gconf_client_set_int (gconf_client, GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD, 0, NULL);
+		g_settings_set_int (settings, GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD, 0);
 	} else if (g_strcmp0 (action, "printer") == 0) {
-		gconf_client_set_int (gconf_client, GCM_SETTINGS_RECALIBRATE_PRINTER_THRESHOLD, 0, NULL);
+		g_settings_set_int (settings, GCM_SETTINGS_RECALIBRATE_PRINTER_THRESHOLD, 0);
 	} else if (g_strcmp0 (action, "recalibrate") == 0) {
 		ret = g_spawn_command_line_async ("gcm-prefs", &error);
 		if (!ret) {
@@ -186,15 +185,15 @@ gcm_session_notify_device (GcmDevice *device)
 	kind = gcm_device_get_kind (device);
 	if (kind == GCM_DEVICE_KIND_DISPLAY) {
 
-		/* get from GConf */
-		threshold = gconf_client_get_int (gconf_client, GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD, NULL);
+		/* get from GSettings */
+		threshold = g_settings_get_int (settings, GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD);
 
 		/* TRANSLATORS: this is when the display has not been recalibrated in a while */
 		message = g_strdup_printf (_("The display '%s' should be recalibrated soon."), gcm_device_get_title (device));
 	} else {
 
-		/* get from GConf */
-		threshold = gconf_client_get_int (gconf_client, GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD, NULL);
+		/* get from GSettings */
+		threshold = g_settings_get_int (settings, GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD);
 
 		/* TRANSLATORS: this is when the printer has not been recalibrated in a while */
 		message = g_strdup_printf (_("The printer '%s' should be recalibrated soon."), gcm_device_get_title (device));
@@ -270,6 +269,9 @@ main (int argc, char *argv[])
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
+	/* use GSettings until dconf is ready */
+	g_setenv ("GSETTINGS_BACKEND", "gconf", FALSE);
+
 	if (! g_thread_supported ())
 		g_thread_init (NULL);
 	dbus_g_thread_init ();
@@ -289,7 +291,7 @@ main (int argc, char *argv[])
 	gtk_init (&argc, &argv);
 
 	/* get the settings */
-	gconf_client = gconf_client_get_default ();
+	settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 
 	/* monitor devices as they are added */
 	client = gcm_client_new ();
@@ -323,7 +325,7 @@ main (int argc, char *argv[])
 	/* wait */
 	g_main_loop_run (loop);
 out:
-	g_object_unref (gconf_client);
+	g_object_unref (settings);
 	g_object_unref (client);
 	g_main_loop_unref (loop);
 	g_object_unref (dbus);

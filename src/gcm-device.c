@@ -29,7 +29,6 @@
 #include "config.h"
 
 #include <glib-object.h>
-#include <gconf/gconf-client.h>
 
 #include "gcm-device.h"
 #include "gcm-profile.h"
@@ -61,7 +60,7 @@ struct _GcmDevicePrivate
 	gchar			*model;
 	gchar			*profile_filename;
 	gchar			*title;
-	GConfClient		*gconf_client;
+	GSettings		*settings;
 	GcmColorspace		 colorspace;
 	guint			 changed_id;
 	glong			 modified_time;
@@ -577,7 +576,7 @@ gcm_device_load (GcmDevice *device, GError **error)
 		priv->manufacturer = g_key_file_get_string (file, priv->id, "manufacturer", NULL);
 	priv->gamma = g_key_file_get_double (file, priv->id, "gamma", &error_local);
 	if (error_local != NULL) {
-		priv->gamma = gconf_client_get_float (priv->gconf_client, "/apps/gnome-color-manager/default_gamma", NULL);
+		priv->gamma = g_settings_get_double (priv->settings, "default_gamma");
 		if (priv->gamma < 0.1f)
 			priv->gamma = 1.0f;
 		g_clear_error (&error_local);
@@ -1062,7 +1061,6 @@ gcm_device_class_init (GcmDeviceClass *klass)
 static void
 gcm_device_init (GcmDevice *device)
 {
-	GError *error = NULL;
 	device->priv = GCM_DEVICE_GET_PRIVATE (device);
 	device->priv->changed_id = 0;
 	device->priv->id = NULL;
@@ -1074,12 +1072,8 @@ gcm_device_init (GcmDevice *device)
 	device->priv->model = NULL;
 	device->priv->profile_filename = NULL;
 	device->priv->modified_time = 0;
-	device->priv->gconf_client = gconf_client_get_default ();
-	device->priv->gamma = gconf_client_get_float (device->priv->gconf_client, GCM_SETTINGS_DEFAULT_GAMMA, &error);
-	if (error != NULL) {
-		egg_warning ("failed to get setup parameters: %s", error->message);
-		g_error_free (error);
-	}
+	device->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
+	device->priv->gamma = g_settings_get_double (device->priv->settings, GCM_SETTINGS_DEFAULT_GAMMA);
 	if (device->priv->gamma < 0.01)
 		device->priv->gamma = 1.0f;
 	device->priv->brightness = 0.0f;
@@ -1106,7 +1100,7 @@ gcm_device_finalize (GObject *object)
 	g_free (priv->manufacturer);
 	g_free (priv->model);
 	g_free (priv->profile_filename);
-	g_object_unref (priv->gconf_client);
+	g_object_unref (priv->settings);
 
 	G_OBJECT_CLASS (gcm_device_parent_class)->finalize (object);
 }

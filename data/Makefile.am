@@ -28,6 +28,16 @@ service_DATA     = $(service_in_files:.service.in=.service)
 $(service_DATA): $(service_in_files) Makefile
 	@sed -e "s|\@servicedir\@|$(bindir)|" $< > $@
 
+gsettingsschema_DATA = org.gnome.ColorManager.gschema.xml
+gsettingsschemadir = $(datadir)/glib-2.0/schemas
+org.gnome.ColorManager.gschema.xml: gnome-color-manager.schemas
+	gsettings-schema-convert --force --gconf --xml --schema-id $(@:.gschema.xml=) $< -o $@
+if GSETTINGS_SCHEMAS_INSTALL
+# --allow-any-name should be removed once the move from gconf is complete
+install-data-hook:
+	$(GLIB_COMPILE_SCHEMAS) --allow-any-name $(DESTDIR)$(gsettingsschemadir)
+endif
+
 pkgdata_DATA =						\
 	gcm-calibrate.ui				\
 	gcm-spawn.ui					\
@@ -55,6 +65,9 @@ endif
 
 clean-local :
 	rm -f *~
+
+CLEANFILES =						\
+	$(gsettingsschema_DATA)
 
 DISTCLEANFILES =					\
 	org.gnome.ColorManager.service			\

@@ -42,6 +42,8 @@ BuildRequires: sane-backends-devel
 BuildRequires: libtiff-devel
 BuildRequires: libcanberra-devel
 BuildRequires: libnotify-devel
+BuildRequires: glib2-devel >= 2.25.1
+BuildRequires: GConf2-devel >= 2.31.1
 
 %description
 gnome-color-manager is a session framework that makes it easy to manage, install
@@ -76,6 +78,7 @@ if [ -x /usr/bin/gtk-update-icon-cache ]; then
 fi
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-mime-database %{_datadir}/mime &> /dev/null || :
+glib-compile-schemas --allow-any-name %{_datadir}/glib-2.0/schemas
 
 %pre
 %gconf_schema_prepare gnome-color-manager
@@ -90,6 +93,7 @@ if [ -x /usr/bin/gtk-update-icon-cache ]; then
 fi
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-mime-database %{_datadir}/mime &> /dev/null || :
+glib-compile-schemas --allow-any-name %{_datadir}/glib-2.0/schemas
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
@@ -115,6 +119,7 @@ update-mime-database %{_datadir}/mime &> /dev/null || :
 %{_datadir}/dbus-1/services/org.gnome.ColorManager.service
 %{_sbindir}/gcm-install-system-wide
 %{_datadir}/polkit-1/actions/org.gnome.color.policy
+%{_datadir}/glib-2.0/schemas/org.gnome.ColorManager.gschema.xml
 
 # this is probably better in a shared package
 %dir %{_localstatedir}/lib/color

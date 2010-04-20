@@ -4,7 +4,6 @@ INCLUDES =						\
 	$(GTK_CFLAGS)					\
 	$(GNOMEDESKTOP_CFLAGS)				\
 	$(UNIQUE_CFLAGS)				\
-	$(GCONF_CFLAGS)					\
 	$(VTE_CFLAGS)					\
 	$(LCMS_CFLAGS)					\
 	$(XORG_CFLAGS)					\
@@ -126,7 +125,6 @@ gcm_dump_edid_LDADD =					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
-	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
@@ -147,7 +145,6 @@ gcm_dump_profile_LDADD =				\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
-	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
@@ -183,7 +180,6 @@ gcm_inspect_LDADD =					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
-	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
@@ -204,7 +200,6 @@ gcm_apply_LDADD =					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
-	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
@@ -225,7 +220,6 @@ gcm_import_LDADD =					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
-	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
@@ -247,7 +241,6 @@ gcm_prefs_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(UNIQUE_LIBS)					\
-	$(GCONF_LIBS)					\
 	$(VTE_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
@@ -272,7 +265,6 @@ gcm_picker_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(UNIQUE_LIBS)					\
-	$(GCONF_LIBS)					\
 	$(VTE_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
@@ -299,7 +291,6 @@ gcm_session_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(UNIQUE_LIBS)					\
-	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
@@ -348,7 +339,6 @@ gcm_self_test_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(UNIQUE_LIBS)					\
-	$(GCONF_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(DBUS_GLIB_LIBS)				\
