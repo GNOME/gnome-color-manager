@@ -58,6 +58,9 @@ struct _GcmCalibrateClass
 	gboolean	 (*calibrate_printer)		(GcmCalibrate	*calibrate,
 							 GtkWindow	*window,
 							 GError		**error);
+	gboolean	 (*calibrate_spotread)		(GcmCalibrate	*calibrate,
+							 GtkWindow	*window,
+							 GError		**error);
 	/* padding for future expansion */
 	void (*_gcm_reserved1) (void);
 	void (*_gcm_reserved2) (void);
@@ -121,6 +124,9 @@ gboolean	 gcm_calibrate_device			(GcmCalibrate	*calibrate,
 							 GtkWindow	*window,
 							 GError		**error);
 gboolean	 gcm_calibrate_printer			(GcmCalibrate	*calibrate,
+							 GtkWindow	*window,
+							 GError		**error);
+gboolean	 gcm_calibrate_spotread			(GcmCalibrate	*calibrate,
 							 GtkWindow	*window,
 							 GError		**error);
 gboolean	 gcm_calibrate_set_from_device		(GcmCalibrate	*calibrate,
