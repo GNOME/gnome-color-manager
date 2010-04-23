@@ -76,6 +76,7 @@ struct _GcmCalibrateArgyllPrivate
 	glong				 vte_previous_row;
 	glong				 vte_previous_col;
 	gboolean			 already_on_window;
+	gboolean			 done_calibrate;
 	GcmCalibrateArgyllState		 state;
 	GcmPrint			*print;
 	const gchar			*argyllcms_ok;
@@ -552,6 +553,8 @@ gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll, G
 
 	/* setup the command */
 	g_ptr_array_add (array, g_strdup ("-v9"));
+	if (priv->done_calibrate)
+		g_ptr_array_add (array, g_strdup ("-N"));
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
@@ -2253,6 +2256,9 @@ gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 	/* assume it's no longer on the window */
 	priv->already_on_window = FALSE;
 
+	/* assume it was done correctly */
+	priv->done_calibrate = TRUE;
+
 	/* set state */
 	priv->argyllcms_ok = " ";
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
@@ -2694,6 +2700,7 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 	calibrate_argyll->priv->vte_previous_row = 0;
 	calibrate_argyll->priv->vte_previous_col = 0;
 	calibrate_argyll->priv->already_on_window = FALSE;
+	calibrate_argyll->priv->done_calibrate = FALSE;
 	calibrate_argyll->priv->state = GCM_CALIBRATE_ARGYLL_STATE_IDLE;
 	calibrate_argyll->priv->print = gcm_print_new ();
 	g_signal_connect (calibrate_argyll->priv->print, "status-changed",
