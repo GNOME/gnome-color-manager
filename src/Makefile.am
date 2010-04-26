@@ -63,8 +63,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-device-udev.h				\
 	gcm-device-cups.c				\
 	gcm-device-cups.h				\
-	gcm-device-sane.c				\
-	gcm-device-sane.h				\
 	gcm-device-virtual.c				\
 	gcm-device-virtual.h				\
 	gcm-cie-widget.c				\
@@ -89,6 +87,10 @@ libgcmshared_a_SOURCES =				\
 	gcm-calibrate-dialog.h				\
 	gcm-brightness.c				\
 	gcm-brightness.h
+
+libgcmshared_a_SOURCES +=				\
+	gcm-device-sane.c				\
+	gcm-device-sane.h
 
 libgcmshared_a_CFLAGS =					\
 	$(WARNINGFLAGS_C)

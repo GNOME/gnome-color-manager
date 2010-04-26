@@ -34,13 +34,18 @@
 #include <gudev/gudev.h>
 #include <libgnomeui/gnome-rr.h>
 #include <cups/cups.h>
-#include <sane/sane.h>
+
+#ifdef GCM_USE_SANE
+ #include <sane/sane.h>
+#endif
 
 #include "gcm-client.h"
 #include "gcm-device-xrandr.h"
 #include "gcm-device-udev.h"
 #include "gcm-device-cups.h"
-#include "gcm-device-sane.h"
+#ifdef GCM_USE_SANE
+ #include "gcm-device-sane.h"
+#endif
 #include "gcm-device-virtual.h"
 #include "gcm-screen.h"
 #include "gcm-utils.h"
@@ -52,8 +57,11 @@ static void     gcm_client_finalize	(GObject     *object);
 #define GCM_CLIENT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_CLIENT, GcmClientPrivate))
 
 static void gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output);
+
+#ifdef GCM_USE_SANE
 static gboolean gcm_client_add_connected_devices_sane (GcmClient *client, GError **error);
 static gpointer gcm_client_add_connected_devices_sane_thrd (GcmClient *client);
+#endif
 
 /**
  * GcmClientPrivate:
@@ -320,6 +328,7 @@ out:
 	return ret;
 }
 
+#ifdef GCM_USE_SANE
 /**
  * gcm_client_sane_refresh_cb:
  **/
@@ -354,6 +363,7 @@ gcm_client_sane_refresh_cb (GcmClient *client)
 out:
 	return FALSE;
 }
+#endif
 
 /**
  * gcm_client_uevent_cb:
@@ -362,16 +372,19 @@ static void
 gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevice *udev_device, GcmClient *client)
 {
 	gboolean ret;
+#ifdef GCM_USE_SANE
 	const gchar *value;
 	GcmDevice *device_tmp;
 	guint i;
 	GcmClientPrivate *priv = client->priv;
+#endif
 
 	if (g_strcmp0 (action, "remove") == 0) {
 		ret = gcm_client_gudev_remove (client, udev_device);
 		if (ret)
 			egg_debug ("removed %s", g_udev_device_get_sysfs_path (udev_device));
 
+#ifdef GCM_USE_SANE
 		/* we need to remove scanner devices */
 		value = g_udev_device_get_property (udev_device, "GCM_RESCAN");
 		if (g_strcmp0 (value, "scanner") == 0) {
@@ -386,16 +399,19 @@ gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevic
 			/* find any others that might still be connected */
 			g_timeout_add (GCM_CLIENT_SANE_REMOVED_TIMEOUT, (GSourceFunc) gcm_client_sane_refresh_cb, client);
 		}
+#endif
 
 	} else if (g_strcmp0 (action, "add") == 0) {
 		ret = gcm_client_gudev_add (client, udev_device);
 		if (ret)
 			egg_debug ("added %s", g_udev_device_get_sysfs_path (udev_device));
 
+#ifdef GCM_USE_SANE
 		/* we need to rescan scanner devices */
 		value = g_udev_device_get_property (udev_device, "GCM_RESCAN");
 		if (g_strcmp0 (value, "scanner") == 0)
 			g_timeout_add (GCM_CLIENT_SANE_REMOVED_TIMEOUT, (GSourceFunc) gcm_client_sane_refresh_cb, client);
+#endif
 	}
 }
 
@@ -725,6 +741,7 @@ gcm_client_add_connected_devices_cups_thrd (GcmClient *client)
 	return NULL;
 }
 
+#ifdef GCM_USE_SANE
 /**
  * gcm_client_sane_add:
  **/
@@ -823,6 +840,7 @@ gcm_client_add_connected_devices_sane_thrd (GcmClient *client)
 	gcm_client_add_connected_devices_sane (client, NULL);
 	return NULL;
 }
+#endif
 
 /**
  * gcm_client_add_unconnected_device:
@@ -870,8 +888,10 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 	} else if (kind == GCM_DEVICE_KIND_CAMERA) {
 		/* FIXME: use GPhoto? */
 		device = gcm_device_udev_new ();
+#ifdef GCM_USE_SANE
 	} else if (kind == GCM_DEVICE_KIND_SCANNER) {
 		device = gcm_device_sane_new ();
+#endif
 	} else {
 		egg_warning ("device kind internal error");
 		goto out;
@@ -979,7 +999,10 @@ gcm_client_add_connected (GcmClient *client, GError **error)
 		goto out;
 
 	/* inform UI if we are loading devices still */
-	client->priv->loading_refcount = 3;
+	client->priv->loading_refcount = 2;
+#ifdef GCM_USE_SANE
+	client->priv->loading_refcount++;
+#endif
 	gcm_client_set_loading (client, TRUE);
 
 	/* UDEV */
@@ -1004,6 +1027,7 @@ gcm_client_add_connected (GcmClient *client, GError **error)
 			goto out;
 	}
 
+#ifdef GCM_USE_SANE
 	/* SANE */
 	if (client->priv->use_threads) {
 		thread = g_thread_create ((GThreadFunc) gcm_client_add_connected_devices_sane_thrd, client, FALSE, error);
@@ -1014,6 +1038,7 @@ gcm_client_add_connected (GcmClient *client, GError **error)
 		if (!ret)
 			goto out;
 	}
+#endif
 out:
 	return ret;
 }
@@ -1289,7 +1314,9 @@ static void
 gcm_client_init (GcmClient *client)
 {
 	const gchar *subsystems[] = {"usb", "video4linux", NULL};
+#ifdef GCM_USE_SANE
 	SANE_Status status;
+#endif
 
 	client->priv = GCM_CLIENT_GET_PRIVATE (client);
 	client->priv->display_name = NULL;
@@ -1308,10 +1335,12 @@ gcm_client_init (GcmClient *client)
 	/* for CUPS */
 	httpInitialize();
 
+#ifdef GCM_USE_SANE
 	/* for SANE */
 	status = sane_init (NULL, NULL);
 	if (status != SANE_STATUS_GOOD)
 		egg_warning ("failed to init SANE: %s", sane_strstatus (status));
+#endif
 
 	/* should be okay for localhost */
 	client->priv->http = httpConnectEncrypt (cupsServer (), ippPort (), cupsEncryption ());
@@ -1339,7 +1368,9 @@ gcm_client_finalize (GObject *object)
 	g_object_unref (priv->gudev_client);
 	g_object_unref (priv->screen);
 	httpClose (priv->http);
+#ifdef GCM_USE_SANE
 	sane_exit ();
+#endif
 
 	G_OBJECT_CLASS (gcm_client_parent_class)->finalize (object);
 }
