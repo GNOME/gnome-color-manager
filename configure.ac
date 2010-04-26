@@ -1,6 +1,6 @@
 AC_PREREQ(2.63)
 
-AC_INIT([gnome-color-manager],[2.30.1],[http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager])
+AC_INIT([gnome-color-manager],[2.30.2],[http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager])
 AC_CONFIG_SRCDIR(src)
 AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
 AC_CONFIG_HEADERS([config.h])
