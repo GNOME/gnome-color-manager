@@ -4,7 +4,7 @@
   <!-- interface-naming-policy project-wide -->
   <object class="GtkDialog" id="dialog_picker">
     <property name="border_width">5</property>
-    <property name="title" translatable="yes">Color Picker</property>
+    <property name="title" translatable="yes" comments="Window title, where the user can pick spot colors using a measuring device">Color Picker</property>
     <property name="icon_name">gnome-color-manager</property>
     <property name="type_hint">dialog</property>
     <property name="has_separator">False</property>
@@ -33,7 +33,7 @@
                 </child>
                 <child>
                   <object class="GtkButton" id="button_measure">
-                    <property name="label" translatable="yes">_Measure</property>
+                    <property name="label" translatable="yes" comments="Button text, to get a single sample of color">_Measure</property>
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
@@ -73,7 +73,7 @@
                             <child>
                               <object class="GtkLabel" id="label_xyz_title">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes">XYZ:</property>
+                                <property name="label" translatable="yes" comments="the color representation">XYZ:</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -116,7 +116,7 @@
                             <child>
                               <object class="GtkLabel" id="label_lab_title">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes">LAB:</property>
+                                <property name="label" translatable="yes" comments="Lab is the color representation and D50 is the white point">Lab (D50):</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -159,7 +159,7 @@
                             <child>
                               <object class="GtkLabel" id="label_colorspace">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes">Colorspace:</property>
+                                <property name="label" translatable="yes" comments="This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB">Colorspace:</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -199,7 +199,7 @@
                             <child>
                               <object class="GtkLabel" id="label_rgb_title">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes">RGB:</property>
+                                <property name="label" translatable="yes" comments="These are the values of the chosen color in Red, Green, Blue encoding">RGB:</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -237,7 +237,7 @@
                 <child type="label">
                   <object class="GtkLabel" id="label1">
                     <property name="visible">True</property>
-                    <property name="label" translatable="yes">Results</property>
+                    <property name="label" translatable="yes" comments="Expander title, the results from the color picker">Results</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
                     </attributes>
