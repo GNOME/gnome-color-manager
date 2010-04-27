@@ -19,6 +19,7 @@ INCLUDES =						\
 	$(GUDEV_CFLAGS)					\
 	-DBINDIR=\"$(bindir)\"				\
 	-DSBINDIR=\"$(sbindir)\"			\
+	-DDATADIR=\"$(datadir)\"			\
 	-DSYSCONFDIR=\""$(sysconfdir)"\"		\
 	-DVERSION="\"$(VERSION)\""			\
 	-DLOCALEDIR=\""$(localedir)"\"			\
