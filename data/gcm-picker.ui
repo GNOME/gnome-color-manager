@@ -64,49 +64,6 @@
                     <property name="orientation">vertical</property>
                     <property name="spacing">6</property>
                     <child>
-                      <object class="GtkHBox" id="hbox_lab">
-                        <property name="visible">True</property>
-                        <property name="spacing">12</property>
-                        <child>
-                          <object class="GtkHBox" id="hbox_lab_align">
-                            <property name="visible">True</property>
-                            <child>
-                              <object class="GtkLabel" id="label_lab_title">
-                                <property name="visible">True</property>
-                                <property name="label" translatable="yes">LAB:</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="label_lab">
-                            <property name="visible">True</property>
-                            <property name="selectable">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">0</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkHBox" id="hbox_xyz">
                         <property name="visible">True</property>
                         <property name="spacing">12</property>
@@ -133,6 +90,49 @@
                         </child>
                         <child>
                           <object class="GtkLabel" id="label_xyz">
+                            <property name="visible">True</property>
+                            <property name="selectable">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">0</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkHBox" id="hbox_lab">
+                        <property name="visible">True</property>
+                        <property name="spacing">12</property>
+                        <child>
+                          <object class="GtkHBox" id="hbox_lab_align">
+                            <property name="visible">True</property>
+                            <child>
+                              <object class="GtkLabel" id="label_lab_title">
+                                <property name="visible">True</property>
+                                <property name="label" translatable="yes">LAB:</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label_lab">
                             <property name="visible">True</property>
                             <property name="selectable">True</property>
                           </object>
@@ -303,10 +303,10 @@
   </object>
   <object class="GtkSizeGroup" id="sizegroup_titles">
     <widgets>
-      <widget name="hbox_lab_align"/>
-      <widget name="hbox_xyz_align"/>
-      <widget name="hbox_colorspace_align"/>
       <widget name="hbox_rgb_align"/>
+      <widget name="hbox_colorspace_align"/>
+      <widget name="hbox_xyz_align"/>
+      <widget name="hbox_lab_align"/>
     </widgets>
   </object>
 </interface>
