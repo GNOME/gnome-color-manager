@@ -2206,23 +2206,6 @@ gcm_prefs_startup_phase2_idle_cb (gpointer user_data)
 }
 
 /**
- * gcm_prefs_colorspace_to_localised_string:
- **/
-static const gchar *
-gcm_prefs_colorspace_to_localised_string (GcmColorspace colorspace)
-{
-	if (colorspace == GCM_COLORSPACE_RGB) {
-		/* TRANSLATORS: this is the colorspace, e.g. red, green, blue */
-		return _("RGB");
-	}
-	if (colorspace == GCM_COLORSPACE_CMYK) {
-		/* TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black */
-		return _("CMYK");
-	}
-	return NULL;
-}
-
-/**
  * gcm_prefs_setup_space_combobox:
  **/
 static void
@@ -2266,7 +2249,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspace colorspace, con
 	if (!has_profile) {
 		/* TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK" */
 		text = g_strdup_printf (_("No %s color spaces available"),
-					gcm_prefs_colorspace_to_localised_string (colorspace));
+					gcm_colorspace_to_localised_string (colorspace));
 		gtk_combo_box_append_text (GTK_COMBO_BOX(widget), text);
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 		gtk_widget_set_sensitive (widget, FALSE);

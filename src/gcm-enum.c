@@ -112,6 +112,23 @@ gcm_colorspace_to_string (GcmColorspace colorspace)
 }
 
 /**
+ * gcm_colorspace_to_localised_string:
+ **/
+const gchar *
+gcm_colorspace_to_localised_string (GcmColorspace colorspace)
+{
+	if (colorspace == GCM_COLORSPACE_RGB) {
+		/* TRANSLATORS: this is the colorspace, e.g. red, green, blue */
+		return _("RGB");
+	}
+	if (colorspace == GCM_COLORSPACE_CMYK) {
+		/* TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black */
+		return _("CMYK");
+	}
+	return NULL;
+}
+
+/**
  * gcm_colorspace_from_string:
  **/
 GcmColorspace
