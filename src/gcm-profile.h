@@ -117,6 +117,7 @@ void		 gcm_profile_set_colorspace		(GcmProfile	*profile,
 gboolean	 gcm_profile_get_has_vcgt		(GcmProfile	*profile);
 void		 gcm_profile_set_has_vcgt		(GcmProfile	*profile,
 							 gboolean	 has_vcgt);
+gboolean	 gcm_profile_has_colorspace_description	(GcmProfile	*profile);
 
 G_END_DECLS
 
