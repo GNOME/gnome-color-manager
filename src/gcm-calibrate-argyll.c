@@ -43,6 +43,7 @@
 #include "gcm-utils.h"
 #include "gcm-screen.h"
 #include "gcm-print.h"
+#include "gcm-xyz.h"
 #include "gcm-calibrate-dialog.h"
 
 #include "egg-debug.h"
@@ -80,6 +81,7 @@ struct _GcmCalibrateArgyllPrivate
 	GcmCalibrateArgyllState		 state;
 	GcmPrint			*print;
 	const gchar			*argyllcms_ok;
+	gboolean			 done_spot_read;
 };
 
 enum {
@@ -1407,15 +1409,18 @@ gcm_calibrate_argyll_spotread_read_chart (GcmCalibrateArgyll *calibrate_argyll, 
 		goto out;
 	}
 
-	/* TRANSLATORS: title, patches are specific colours used in calibration */
-	title = _("Reading the patches");
+	/* TRANSLATORS: title, setting up the photospectromiter */
+	title = _("Setting up device");
 	/* TRANSLATORS: dialog message */
-	message = _("Reading the patches using the color measuring instrument.");
+	message = _("Setting up the device to read a spot color…");
 
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
 	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
 	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+
+	/* reset flag so we exit after the single spotread */
+	priv->done_spot_read = FALSE;
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -1475,23 +1480,10 @@ gcm_calibrate_argyll_spotread (GcmCalibrate *calibrate, GtkWindow *window, GErro
 	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 	gboolean ret;
-	const gchar *title;
-	const gchar *message;
 
 	/* set modal windows up correctly */
-	gcm_calibrate_dialog_set_move_window (priv->calibrate_dialog, TRUE);
+	gcm_calibrate_dialog_set_move_window (priv->calibrate_dialog, FALSE);
 	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
-
-	/* TRANSLATORS: title, color spot is the color we are trying to measure */
-	title = _("Sampling the color spot");
-
-	/* TRANSLATORS: dialog message */
-	message = _("Setting up display device for use…");
-
-	/* push new messages into the UI */
-	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
-	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
-	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
 
 	/* step 3 */
 	ret = gcm_calibrate_argyll_spotread_read_chart (calibrate_argyll, error);
@@ -2346,10 +2338,10 @@ gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 
 	if (filename != NULL) {
 		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
-		message = _("Please set the measuring instrument to screen mode like the image below, and ensure it is attached to the screen.");
+		message = _("Please set the measuring instrument to screen mode like the image below.");
 	} else {
 		/* TRANSLATORS: this is when the user has to change a setting on the sensor */
-		message = _("Please set the measuring instrument to screen mode, and ensure it is attached to the screen.");
+		message = _("Please set the measuring instrument to screen mode.");
 	}
 
 	/* push new messages into the UI */
@@ -2460,6 +2452,27 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	    g_str_has_prefix (line, "Perspective correction factors") ||
 	    g_str_has_suffix (line, "key to continue:")) {
 		egg_debug ("VTE: ignore: %s", line);
+		goto out;
+	}
+
+	/* spot read result */
+	found = g_strstr_len (line, -1, "Result is XYZ");
+	if (found != NULL) {
+		GcmXyz *xyz;
+		egg_warning ("line=%s", line);
+		split = g_strsplit (line, " ", -1);
+		xyz = gcm_xyz_new ();
+		g_object_set (xyz,
+			      "cie-x", g_ascii_strtod (split[4], NULL),
+			      "cie-y", g_ascii_strtod (split[5], NULL),
+			      "cie-z", g_ascii_strtod (split[6], NULL),
+			      NULL);
+		g_object_set (calibrate_argyll,
+			      "xyz", xyz,
+			      NULL);
+		priv->done_spot_read = TRUE;
+		gcm_calibrate_dialog_response (priv->calibrate_dialog, GTK_RESPONSE_CANCEL);
+		g_object_unref (xyz);
 		goto out;
 	}
 
@@ -2578,6 +2591,38 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 
 		/* set state */
 		priv->argyllcms_ok = "\n";
+		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
+		goto out;
+	}
+
+	/* reading spot */
+	if (g_str_has_prefix (line, "Place instrument on spot to be measured")) {
+		if (!priv->done_spot_read)
+			vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), " ", 1);
+		gcm_calibrate_dialog_hide (priv->calibrate_dialog);
+		goto out;
+	}
+
+
+	/* reading strip */
+	if (g_str_has_prefix (line, "Spot read failed due to misread")) {
+
+		/* TRANSLATORS: title, the calibration failed */
+		title = _("Device Error");
+
+		/* TRANSLATORS: message, the sample was not read correctly */
+		message = _("The device could not measure the color spot correctly.");
+
+		/* push new messages into the UI */
+		gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
+
+		/* TRANSLATORS: button */
+		gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Retry"));
+
+		/* set state */
+		priv->argyllcms_ok = " ";
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
 		goto out;
 	}
@@ -2720,6 +2765,9 @@ gcm_calibrate_argyll_response_cb (GtkWidget *widget, GtkResponseType response, G
 			g_main_loop_quit (priv->loop);
 			priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 		}
+
+		/* hide the window */
+		gcm_calibrate_dialog_hide (priv->calibrate_dialog);
 
 		/* stop loop */
 		if (g_main_loop_is_running (priv->loop))

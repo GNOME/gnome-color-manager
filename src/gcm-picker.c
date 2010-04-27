@@ -29,15 +29,19 @@
 #include <locale.h>
 #include <gtk/gtk.h>
 #include <unique/unique.h>
+#include <lcms.h>
 
 #include "egg-debug.h"
 
 #include "gcm-colorimeter.h"
+#include "gcm-calibrate-argyll.h"
 #include "gcm-utils.h"
+#include "gcm-xyz.h"
 
 static GtkBuilder *builder = NULL;
 static GtkWidget *info_bar_hardware = NULL;
 static GtkWidget *info_bar_hardware_label = NULL;
+static GcmCalibrate *calibrate = NULL;
 
 /**
  * gcm_picker_set_pixbuf_color:
@@ -62,7 +66,6 @@ gcm_picker_set_pixbuf_color (GdkPixbuf *pixbuf, gchar red, gchar green, gchar bl
 			p[0] = red;
 			p[1] = green;
 			p[2] = blue;
-//			p[3] = alpha;
 		}
 	}
 }
@@ -73,34 +76,113 @@ gcm_picker_set_pixbuf_color (GdkPixbuf *pixbuf, gchar red, gchar green, gchar bl
 static void
 gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 {
+	GtkWindow *window;
+	gboolean ret;
+	GError *error = NULL;
+
+	/* get value */
+	window = GTK_WINDOW (gtk_builder_get_object (builder, "dialog_picker"));
+	ret = gcm_calibrate_spotread (calibrate, window, &error);
+	if (!ret) {
+		egg_warning ("failed to get spot color: %s", error->message);
+		g_error_free (error);
+	}
+}
+
+#define TYPE_XYZ_DBL2        (COLORSPACE_SH(PT_XYZ)|CHANNELS_SH(3)|BYTES_SH(sizeof(gdouble)))
+
+/**
+ * gpk_update_viewer_notify_network_state_cb:
+ **/
+static void
+gcm_picker_xyz_notify_cb (GcmCalibrate *calibrate_, GParamSpec *pspec, gpointer user_data)
+{
+	GcmXyz *xyz = NULL;
 	GtkImage *image;
 	GtkLabel *label;
-	GdkPixbuf *pixbuf;
+	GdkPixbuf *pixbuf = NULL;
+	GtkWidget *widget;
+	gdouble color_xyz[3];
+	guint8 color_rgb[3];
+	gdouble color_lab[3];
+	gchar *text_xyz = NULL;
+	gchar *text_lab = NULL;
+	gchar *text_rgb = NULL;
+	cmsHPROFILE profile_xyz;
+	cmsHPROFILE profile_rgb;
+	cmsHPROFILE profile_lab;
+	cmsHTRANSFORM transform_rgb;
+	cmsHTRANSFORM transform_lab;
+
+	/* get new value */
+	g_object_get (calibrate, "xyz", &xyz, NULL);
+
+	/* create new pixbuf of the right size */
 	image = GTK_IMAGE (gtk_builder_get_object (builder, "image_preview"));
-	pixbuf = gtk_image_get_pixbuf (image);
-	if (pixbuf == NULL) {
-		pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 200, 200);
-		gtk_image_set_from_pixbuf (image, pixbuf);
-	}
+	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 200, 200);
 
-	gcm_picker_set_pixbuf_color (pixbuf, 254, 128, 0);
+	/* get values */
+	g_object_get (xyz,
+		      "cie-x", &color_xyz[0],
+		      "cie-y", &color_xyz[1],
+		      "cie-z", &color_xyz[2],
+		      NULL);
 
-	/* set LAB */
-	label = GTK_LABEL (gtk_builder_get_object (builder, "label_lab"));
-	gtk_label_set_label (label, "1, 2, 3");
+	/* lcms scales these for some reason */
+	color_xyz[0] /= 100.0f;
+	color_xyz[1] /= 100.0f;
+	color_xyz[2] /= 100.0f;
+
+	/* get profiles */
+	profile_xyz = cmsCreateXYZProfile ();
+	profile_rgb = cmsCreate_sRGBProfile ();
+	profile_lab = cmsCreateLabProfile (cmsD50_xyY ());
+
+	/* create transform_rgb */
+	transform_rgb = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL2, profile_rgb, TYPE_RGB_8, INTENT_PERCEPTUAL, 0);
+	transform_lab = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL2, profile_lab, TYPE_Lab_DBL, INTENT_PERCEPTUAL, 0);
+
+	cmsDoTransform (transform_rgb, color_xyz, color_rgb, 1);
+	cmsDoTransform (transform_lab, color_xyz, color_lab, 1);
+
+	/* destroy lcms state */
+	cmsDeleteTransform (transform_rgb);
+	cmsDeleteTransform (transform_lab);
+	cmsCloseProfile (profile_xyz);
+	cmsCloseProfile (profile_rgb);
+	cmsCloseProfile (profile_lab);
 
 	/* set XYZ */
 	label = GTK_LABEL (gtk_builder_get_object (builder, "label_xyz"));
-	gtk_label_set_label (label, "1, 2, 3");
+	text_xyz = g_strdup_printf ("%.3f, %.3f, %.3f", color_xyz[0], color_xyz[1], color_xyz[2]);
+	gtk_label_set_label (label, text_xyz);
+
+	/* set LAB */
+	label = GTK_LABEL (gtk_builder_get_object (builder, "label_lab"));
+	text_lab = g_strdup_printf ("%.3f, %.3f, %.3f", color_lab[0], color_lab[1], color_lab[2]);
+	gtk_label_set_label (label, text_lab);
 
 	/* set RGB */
 	label = GTK_LABEL (gtk_builder_get_object (builder, "label_rgb"));
-	gtk_label_set_label (label, "1, 2, 3");
+	text_rgb = g_strdup_printf ("%i, %i, %i", color_rgb[0], color_rgb[1], color_rgb[2]);
+	gtk_label_set_label (label, text_rgb);
+	gcm_picker_set_pixbuf_color (pixbuf, color_rgb[0], color_rgb[1], color_rgb[2]);
 
 	/* set XYZ */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_results"));
 	gtk_expander_set_expanded (GTK_EXPANDER (widget), TRUE);
 
+	/* set image */
+	image = GTK_IMAGE (gtk_builder_get_object (builder, "image_preview"));
+	gtk_image_set_from_pixbuf (image, pixbuf);
+
+	g_free (text_xyz);
+	g_free (text_lab);
+	g_free (text_rgb);
+	if (xyz != NULL)
+		g_object_unref (xyz);
+	if (pixbuf != NULL)
+		g_object_unref (pixbuf);
 }
 
 /**
@@ -206,6 +288,16 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
 	gdk_window_set_transient_for (our_window, parent_window);
 }
 
+/*
+ * gcm_picker_lcms_error_cb:
+ */
+static gint
+gcm_picker_lcms_error_cb (gint error_code, const gchar *error_text)
+{
+	egg_warning ("LCMS error %i: %s", error_code, error_text);
+	return LCMS_ERRC_WARNING;
+}
+
 /**
  * main:
  **/
@@ -215,7 +307,6 @@ main (int argc, char *argv[])
 	GOptionContext *context;
 	guint retval = 0;
 	GError *error = NULL;
-//	gboolean ret = FALSE;
 	GMainLoop *loop;
 	GtkWidget *main_window;
 	GtkWidget *widget;
@@ -238,6 +329,11 @@ main (int argc, char *argv[])
 
 	/* setup type system */
 	g_type_init ();
+
+	/* setup LCMS */
+	cmsSetErrorHandler (gcm_picker_lcms_error_cb);
+	cmsErrorAction (LCMS_ERROR_SHOW);
+	cmsSetLanguage ("en", "US");
 
 	context = g_option_context_new (NULL);
 	/* TRANSLATORS: tool that is used to pick colors */
@@ -305,6 +401,11 @@ main (int argc, char *argv[])
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), xid);
 	}
 
+	/* use argyll */
+	calibrate = GCM_CALIBRATE (gcm_calibrate_argyll_new ());
+	g_signal_connect (calibrate, "notify::xyz",
+			  G_CALLBACK (gcm_picker_xyz_notify_cb), NULL);
+
 	/* use an info bar if there is no device, or the wrong device */
 	info_bar_hardware = gtk_info_bar_new ();
 	info_bar_hardware_label = gtk_label_new (NULL);
@@ -328,6 +429,8 @@ out:
 	g_object_unref (unique_app);
 	if (colorimeter != NULL)
 		g_object_unref (colorimeter);
+	if (calibrate != NULL)
+		g_object_unref (calibrate);
 	if (builder != NULL)
 		g_object_unref (builder);
 	g_main_loop_unref (loop);
