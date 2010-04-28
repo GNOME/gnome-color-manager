@@ -107,10 +107,8 @@ bin_PROGRAMS =						\
 	gcm-apply					\
 	gcm-prefs					\
 	gcm-session					\
+	gcm-picker					\
 	gcm-import
-
-noinst_PROGRAMS = 					\
-	gcm-picker
 
 gcm_install_system_wide_SOURCES =			\
 	gcm-install-system-wide.c
