@@ -1391,14 +1391,12 @@ gcm_calibrate_argyll_spotread_read_chart (GcmCalibrateArgyll *calibrate_argyll, 
 	gchar *command = NULL;
 	gchar **argv = NULL;
 	GPtrArray *array = NULL;
-	gchar *basename = NULL;
 	gchar *working_path = NULL;
 	const gchar *title;
 	const gchar *message;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
-		      "basename", &basename,
 		      "working-path", &working_path,
 		      NULL);
 
@@ -1429,7 +1427,6 @@ gcm_calibrate_argyll_spotread_read_chart (GcmCalibrateArgyll *calibrate_argyll, 
 	g_ptr_array_add (array, g_strdup ("-v9"));
 	if (priv->done_calibrate)
 		g_ptr_array_add (array, g_strdup ("-N"));
-	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
 
@@ -1465,7 +1462,6 @@ out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
 	g_free (working_path);
-	g_free (basename);
 	g_free (command);
 	g_strfreev (argv);
 	return ret;
