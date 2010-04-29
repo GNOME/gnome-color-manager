@@ -416,7 +416,8 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	array = g_ptr_array_new_with_free_func (g_free);
 
 	/* setup the command */
-	g_ptr_array_add (array, g_strdup ("-v9"));
+	g_ptr_array_add (array, g_strdup (command));
+	g_ptr_array_add (array, g_strdup ("-v"));
 	g_ptr_array_add (array, g_strdup ("-ql"));
 	g_ptr_array_add (array, g_strdup ("-m"));
 	g_ptr_array_add (array, g_strdup_printf ("-d%i", priv->display));
@@ -509,7 +510,8 @@ gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll, G
 	array = g_ptr_array_new_with_free_func (g_free);
 
 	/* setup the command */
-	g_ptr_array_add (array, g_strdup ("-v9"));
+	g_ptr_array_add (array, g_strdup (command));
+	g_ptr_array_add (array, g_strdup ("-v"));
 	if (priv->done_calibrate)
 		g_ptr_array_add (array, g_strdup ("-N"));
 	g_ptr_array_add (array, g_strdup (basename));
@@ -599,7 +601,8 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	array = g_ptr_array_new_with_free_func (g_free);
 
 	/* setup the command */
-	g_ptr_array_add (array, g_strdup ("-v9"));
+	g_ptr_array_add (array, g_strdup (command));
+	g_ptr_array_add (array, g_strdup ("-v"));
 	if (device_kind == GCM_DEVICE_KIND_PRINTER) {
 		/* print RGB */
 		g_ptr_array_add (array, g_strdup ("-d2"));
@@ -706,7 +709,8 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	array = g_ptr_array_new_with_free_func (g_free);
 
 	/* setup the command */
-	g_ptr_array_add (array, g_strdup ("-v9"));
+	g_ptr_array_add (array, g_strdup (command));
+	g_ptr_array_add (array, g_strdup ("-v"));
 	g_ptr_array_add (array, g_strdup_printf ("-d%i", priv->display));
 	g_ptr_array_add (array, g_strdup_printf ("-y%c", kind));
 	g_ptr_array_add (array, g_strdup ("-k"));
@@ -819,7 +823,8 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	array = g_ptr_array_new_with_free_func (g_free);
 
 	/* setup the command */
-	g_ptr_array_add (array, g_strdup ("-v9"));
+	g_ptr_array_add (array, g_strdup (command));
+	g_ptr_array_add (array, g_strdup ("-v"));
 	g_ptr_array_add (array, g_strdup_printf ("-A%s", manufacturer));
 	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
 	g_ptr_array_add (array, g_strdup_printf ("-D%s", description_new));
@@ -1043,7 +1048,8 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 	filename = g_strdup_printf ("%s.tif", basename);
 
 	/* setup the command */
-	g_ptr_array_add (array, g_strdup ("-v9"));
+	g_ptr_array_add (array, g_strdup (command));
+	g_ptr_array_add (array, g_strdup ("-v"));
 	g_ptr_array_add (array, g_strdup ("-p"));
 	g_ptr_array_add (array, g_strdup ("-a"));
 	g_ptr_array_add (array, g_strdup (filename));
@@ -1159,7 +1165,8 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	array = g_ptr_array_new_with_free_func (g_free);
 
 	/* setup the command */
-	g_ptr_array_add (array, g_strdup ("-v9"));
+	g_ptr_array_add (array, g_strdup (command));
+	g_ptr_array_add (array, g_strdup ("-v"));
 	g_ptr_array_add (array, g_strdup_printf ("-A%s", manufacturer));
 	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
 	g_ptr_array_add (array, g_strdup_printf ("-D%s", description_tmp));
@@ -1424,7 +1431,8 @@ gcm_calibrate_argyll_spotread_read_chart (GcmCalibrateArgyll *calibrate_argyll, 
 	array = g_ptr_array_new_with_free_func (g_free);
 
 	/* setup the command */
-	g_ptr_array_add (array, g_strdup ("-v9"));
+	g_ptr_array_add (array, g_strdup (command));
+	g_ptr_array_add (array, g_strdup ("-v"));
 	if (priv->done_calibrate)
 		g_ptr_array_add (array, g_strdup ("-N"));
 	argv = gcm_utils_ptr_array_to_strv (array);
@@ -1569,6 +1577,7 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 	array = g_ptr_array_new_with_free_func (g_free);
 
 	/* setup the command */
+	g_ptr_array_add (array, g_strdup (command));
 	g_ptr_array_add (array, g_strdup ("-v"));
 
 	/* target instrument */
