@@ -63,7 +63,7 @@ main (int argc, char **argv)
 
 	/* get devices */
 	client = gcm_client_new ();
-	ret = gcm_client_add_connected (client, &error);
+	ret = gcm_client_add_connected (client, GCM_CLIENT_COLDPLUG_XRANDR, &error);
 	if (!ret) {
 		egg_warning ("failed to get devices: %s", error->message);
 		g_error_free (error);

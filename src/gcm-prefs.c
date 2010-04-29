@@ -2412,7 +2412,7 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), (gpointer) "softproof");
 
 	/* coldplug plugged in devices */
-	ret = gcm_client_add_connected (gcm_client, &error);
+	ret = gcm_client_add_connected (gcm_client, GCM_CLIENT_COLDPLUG_ALL, &error);
 	if (!ret) {
 		egg_warning ("failed to add connected devices: %s", error->message);
 		g_error_free (error);
