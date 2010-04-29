@@ -132,6 +132,22 @@ gcm_client_done_loading (GcmClient *client)
 }
 
 /**
+ * gcm_client_add_loading:
+ **/
+static void
+gcm_client_add_loading (GcmClient *client)
+{
+	static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
+
+	/* decrement refcount, with a lock */
+	g_static_mutex_lock (&mutex);
+	client->priv->loading_refcount++;
+	if (client->priv->loading_refcount > 0)
+		gcm_client_set_loading (client, TRUE);
+	g_static_mutex_unlock (&mutex);
+}
+
+/**
  * gcm_client_get_devices:
  *
  * @client: a valid %GcmClient instance
@@ -646,6 +662,10 @@ gcm_client_add_connected_devices_xrandr (GcmClient *client, GError **error)
 		return FALSE;
 	for (i=0; outputs[i] != NULL; i++)
 		gcm_client_xrandr_add (client, outputs[i]);
+
+	/* inform the UI */
+	gcm_client_done_loading (client);
+
 	return TRUE;
 }
 
@@ -966,53 +986,68 @@ out:
  * gcm_client_add_connected:
  **/
 gboolean
-gcm_client_add_connected (GcmClient *client, GError **error)
+gcm_client_add_connected (GcmClient *client, GcmClientColdplug coldplug, GError **error)
 {
 	gboolean ret;
 	GThread *thread;
 
 	g_return_val_if_fail (GCM_IS_CLIENT (client), FALSE);
 
+	/* reset */
+	client->priv->loading_refcount = 0;
+
 	/* XRandR */
-	ret = gcm_client_add_connected_devices_xrandr (client, error);
-	if (!ret)
-		goto out;
-
-	/* inform UI if we are loading devices still */
-	client->priv->loading_refcount = 3;
-	gcm_client_set_loading (client, TRUE);
-
-	/* UDEV */
-	if (client->priv->use_threads) {
-		thread = g_thread_create ((GThreadFunc) gcm_client_add_connected_devices_udev_thrd, client, FALSE, error);
-		if (thread == NULL)
-			goto out;
-	} else {
-		ret = gcm_client_add_connected_devices_udev (client, error);
+	if (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_XRANDR) {
+		gcm_client_add_loading (client);
+		egg_debug ("adding devices of type XRandR");
+		ret = gcm_client_add_connected_devices_xrandr (client, error);
 		if (!ret)
 			goto out;
+	}
+
+	/* UDEV */
+	if (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_UDEV) {
+		gcm_client_add_loading (client);
+		egg_debug ("adding devices of type UDEV");
+		if (client->priv->use_threads) {
+			thread = g_thread_create ((GThreadFunc) gcm_client_add_connected_devices_udev_thrd, client, FALSE, error);
+			if (thread == NULL)
+				goto out;
+		} else {
+			ret = gcm_client_add_connected_devices_udev (client, error);
+			if (!ret)
+				goto out;
+		}
 	}
 
 	/* CUPS */
-	if (client->priv->use_threads) {
-		thread = g_thread_create ((GThreadFunc) gcm_client_add_connected_devices_cups_thrd, client, FALSE, error);
-		if (thread == NULL)
-			goto out;
-	} else {
-		ret = gcm_client_add_connected_devices_cups (client, error);
-		if (!ret)
-			goto out;
+	if (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_CUPS) {
+		gcm_client_add_loading (client);
+		egg_debug ("adding devices of type CUPS");
+		if (client->priv->use_threads) {
+			thread = g_thread_create ((GThreadFunc) gcm_client_add_connected_devices_cups_thrd, client, FALSE, error);
+			if (thread == NULL)
+				goto out;
+		} else {
+			ret = gcm_client_add_connected_devices_cups (client, error);
+			if (!ret)
+				goto out;
+		}
 	}
 
 	/* SANE */
-	if (client->priv->use_threads) {
-		thread = g_thread_create ((GThreadFunc) gcm_client_add_connected_devices_sane_thrd, client, FALSE, error);
-		if (thread == NULL)
-			goto out;
-	} else {
-		ret = gcm_client_add_connected_devices_sane (client, error);
-		if (!ret)
-			goto out;
+	if (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_SANE) {
+		gcm_client_add_loading (client);
+		egg_debug ("adding devices of type SANE");
+		if (client->priv->use_threads) {
+			thread = g_thread_create ((GThreadFunc) gcm_client_add_connected_devices_sane_thrd, client, FALSE, error);
+			if (thread == NULL)
+				goto out;
+		} else {
+			ret = gcm_client_add_connected_devices_sane (client, error);
+			if (!ret)
+				goto out;
+		}
 	}
 out:
 	return ret;
