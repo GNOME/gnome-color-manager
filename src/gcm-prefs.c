@@ -1088,7 +1088,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		connected = gcm_device_get_connected (current_device);
 		if (!connected) {
 			/* TRANSLATORS: this is when the button is insensitive */
-			tooltip = _("Cannot calibrate: The device is not connected");
+			tooltip = _("Cannot calibrate: The display device is not connected");
 			goto out;
 		}
 
