@@ -2378,7 +2378,7 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	/* setup RGB combobox */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_space_rgb"));
 	colorspace_rgb = gconf_client_get_string (gconf_client, GCM_SETTINGS_COLORSPACE_RGB, &error);
-	if (colorspace_rgb == NULL) {
+	if (colorspace_rgb == NULL && error != NULL) {
 		egg_warning ("failed to get configuration value: %s", error->message);
 		g_clear_error (&error);
 	}
@@ -2390,7 +2390,7 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	/* setup CMYK combobox */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_space_cmyk"));
 	colorspace_cmyk = gconf_client_get_string (gconf_client, GCM_SETTINGS_COLORSPACE_CMYK, NULL);
-	if (colorspace_cmyk == NULL) {
+	if (colorspace_cmyk == NULL && error != NULL) {
 		egg_warning ("failed to get configuration value: %s", error->message);
 		g_clear_error (&error);
 	}
@@ -2402,8 +2402,8 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	/* setup rendering lists */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_rendering_display"));
 	gcm_prefs_set_combo_simple_text (widget);
-	intent_display = gconf_client_get_string (gconf_client, GCM_SETTINGS_RENDERING_INTENT_DISPLAY, NULL);
-	if (intent_display == NULL) {
+	intent_display = gconf_client_get_string (gconf_client, GCM_SETTINGS_RENDERING_INTENT_DISPLAY, &error);
+	if (intent_display == NULL && error != NULL) {
 		egg_warning ("failed to get configuration value: %s", error->message);
 		g_clear_error (&error);
 	}
@@ -2413,8 +2413,8 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_rendering_softproof"));
 	gcm_prefs_set_combo_simple_text (widget);
-	intent_softproof = gconf_client_get_string (gconf_client, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF, NULL);
-	if (intent_softproof == NULL) {
+	intent_softproof = gconf_client_get_string (gconf_client, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF, &error);
+	if (intent_softproof == NULL && error != NULL) {
 		egg_warning ("failed to get configuration value: %s", error->message);
 		g_clear_error (&error);
 	}
