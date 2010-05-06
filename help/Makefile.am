@@ -13,6 +13,7 @@ DOC_FIGURES =					\
 	figures/gcm-print-mode.png		\
 	figures/gcm-screen-type.png		\
 	figures/gcm-device-configure.png	\
+	figures/gcm-set-default.png		\
 	figures/gcm-import.png
 
 DOC_LINGUAS = cs de es id ru
