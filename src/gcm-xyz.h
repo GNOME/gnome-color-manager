@@ -56,9 +56,9 @@ struct _GcmXyzClass
 
 GType		 gcm_xyz_get_type		  	(void);
 GcmXyz		*gcm_xyz_new				(void);
-gfloat		 gcm_xyz_get_x				(GcmXyz		*xyz);
-gfloat		 gcm_xyz_get_y				(GcmXyz		*xyz);
-gfloat		 gcm_xyz_get_z				(GcmXyz		*xyz);
+gdouble		 gcm_xyz_get_x				(GcmXyz		*xyz);
+gdouble		 gcm_xyz_get_y				(GcmXyz		*xyz);
+gdouble		 gcm_xyz_get_z				(GcmXyz		*xyz);
 void		 gcm_xyz_print				(GcmXyz		*xyz);
 void		 gcm_xyz_clear				(GcmXyz		*xyz);
 

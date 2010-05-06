@@ -1,8 +1,8 @@
 AC_PREREQ(2.63)
 
-AC_INIT([gnome-color-manager],[2.31.1],[http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager])
+AC_INIT([gnome-color-manager],[2.31.2],[http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager])
 AC_CONFIG_SRCDIR(src)
-AM_INIT_AUTOMAKE(AC_PACKAGE_NAME, AC_PACKAGE_VERSION)
+AM_INIT_AUTOMAKE([1.9 tar-ustar dist-bzip2])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -105,7 +105,7 @@ GTK_REQUIRED=2.14.0
 GNOMEDESKTOP_REQUIRED=2.14.0
 GCONF_REQUIRED=2.31.1
 UNIQUE_REQUIRED=1.0.0
-VTE_REQUIRED=0.22.2
+VTE_REQUIRED=0.25.1
 DBUS_GLIB_REQUIRED=0.73
 CANBERRA_REQUIRED=0.10
 GIO_REQUIRED=2.25.0
@@ -126,16 +126,25 @@ PKG_CHECK_MODULES(DBUS_GLIB, dbus-glib-1 >= $DBUS_GLIB_REQUIRED)
 PKG_CHECK_MODULES(X11, x11)
 PKG_CHECK_MODULES(NOTIFY, libnotify)
 
-PKG_CHECK_MODULES(SANE, sane-backends, has_sane=yes, has_sane=no)
-if test $has_sane = "no"; then
-	AC_CHECK_HEADER(sane/sane.h, has_sane=yes, has_sane=no)
+AC_ARG_ENABLE(sane, AS_HELP_STRING([--enable-sane],[Enable SANE support for scanner support]), enable_sane=$enableval,
+				   enable_sane=yes)
+dnl **** Check for SANE ****
+if test x$enable_sane != xno; then
+	PKG_CHECK_MODULES(SANE, sane-backends, has_sane=yes, has_sane=no)
 	if test $has_sane = "no"; then
-		AC_MSG_ERROR([Cannot fine SANE])
+		AC_CHECK_HEADER(sane/sane.h, has_sane=yes, has_sane=no)
+		if test $has_sane = "no"; then
+			AC_MSG_ERROR([Cannot fine SANE])
+		fi
+		SANE_CFLAGS=""
+		SANE_LIBS="-lsane"
+		AC_SUBST(SANE_CFLAGS)
+		AC_SUBST(SANE_LIBS)
 	fi
-	SANE_CFLAGS=""
-	SANE_LIBS="-lsane"
-	AC_SUBST(SANE_CFLAGS)
-	AC_SUBST(SANE_LIBS)
+fi
+AM_CONDITIONAL(GCM_USE_SANE, test x$enable_sane = xyes)
+if test x$enable_sane = xyes; then
+	AC_DEFINE(GCM_USE_SANE,1,[Use SANE support for detecting scanners])
 fi
 
 PKG_CHECK_MODULES(CANBERRA, libcanberra-gtk >= $CANBERRA_REQUIRED)
@@ -262,6 +271,7 @@ echo "
         cflags:                    ${CFLAGS}
         cppflags:                  ${CPPFLAGS}
         PackageKit integration:    ${enable_packagekit}
+        SANE support:              ${enable_sane}
         building unit tests:       ${enable_tests}
         gconf-schema dir:          $GCONF_SCHEMA_FILE_DIR
 "

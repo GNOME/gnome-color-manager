@@ -58,6 +58,9 @@ struct _GcmCalibrateClass
 	gboolean	 (*calibrate_printer)		(GcmCalibrate	*calibrate,
 							 GtkWindow	*window,
 							 GError		**error);
+	gboolean	 (*calibrate_spotread)		(GcmCalibrate	*calibrate,
+							 GtkWindow	*window,
+							 GError		**error);
 	/* padding for future expansion */
 	void (*_gcm_reserved1) (void);
 	void (*_gcm_reserved2) (void);
@@ -123,6 +126,9 @@ gboolean	 gcm_calibrate_device			(GcmCalibrate	*calibrate,
 gboolean	 gcm_calibrate_printer			(GcmCalibrate	*calibrate,
 							 GtkWindow	*window,
 							 GError		**error);
+gboolean	 gcm_calibrate_spotread			(GcmCalibrate	*calibrate,
+							 GtkWindow	*window,
+							 GError		**error);
 gboolean	 gcm_calibrate_set_from_device		(GcmCalibrate	*calibrate,
 							 GcmDevice	*device,
 							 GError		**error);
@@ -134,6 +140,7 @@ const gchar	*gcm_calibrate_get_description_fallback	(GcmCalibrate	*calibrate);
 const gchar	*gcm_calibrate_get_manufacturer_fallback (GcmCalibrate	*calibrate);
 const gchar	*gcm_calibrate_get_device_fallback	(GcmCalibrate	*calibrate);
 const gchar	*gcm_calibrate_get_filename_result	(GcmCalibrate	*calibrate);
+const gchar	*gcm_calibrate_get_working_path		(GcmCalibrate	*calibrate);
 
 G_END_DECLS
 

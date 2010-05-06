@@ -85,6 +85,8 @@ void			 gcm_calibrate_dialog_set_image_filename (GcmCalibrateDialog	*calibrate_d
 void			 gcm_calibrate_dialog_pop		(GcmCalibrateDialog	*calibrate_dialog);
 void			 gcm_calibrate_dialog_hide		(GcmCalibrateDialog	*calibrate_dialog);
 GtkResponseType		 gcm_calibrate_dialog_run		(GcmCalibrateDialog	*calibrate_dialog);
+void			 gcm_calibrate_dialog_response		(GcmCalibrateDialog	*calibrate_dialog,
+								 GtkResponseType	 response_type);
 GtkWindow		*gcm_calibrate_dialog_get_window	(GcmCalibrateDialog	*calibrate_dialog);
 void			 gcm_calibrate_dialog_pack_details	(GcmCalibrateDialog	*calibrate_dialog,
 								 GtkWidget		*widget);

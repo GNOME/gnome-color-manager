@@ -1087,7 +1087,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		connected = gcm_device_get_connected (current_device);
 		if (!connected) {
 			/* TRANSLATORS: this is when the button is insensitive */
-			tooltip = _("Cannot calibrate: The device is not connected");
+			tooltip = _("Cannot calibrate: The display device is not connected");
 			goto out;
 		}
 
@@ -1252,6 +1252,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	const gchar *device_serial = NULL;
 	const gchar *device_model = NULL;
 	const gchar *device_manufacturer = NULL;
+	const gchar *eisa_id = NULL;
 
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -1336,6 +1337,18 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	}
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_device_details"));
 	gtk_widget_show (widget);
+
+	/* get display specific properties */
+	if (kind == GCM_DEVICE_KIND_DISPLAY)
+		eisa_id = gcm_device_xrandr_get_eisa_id (GCM_DEVICE_XRANDR (current_device));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_eisa"));
+	if (eisa_id != NULL) {
+		gtk_widget_show (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_eisa"));
+		gtk_label_set_label (GTK_LABEL (widget), eisa_id);
+	} else {
+		gtk_widget_hide (widget);
+	}
 
 	/* set adjustments */
 	setting_up_device = TRUE;
@@ -2205,23 +2218,6 @@ gcm_prefs_startup_phase2_idle_cb (gpointer user_data)
 }
 
 /**
- * gcm_prefs_colorspace_to_localised_string:
- **/
-static const gchar *
-gcm_prefs_colorspace_to_localised_string (GcmColorspace colorspace)
-{
-	if (colorspace == GCM_COLORSPACE_RGB) {
-		/* TRANSLATORS: this is the colorspace, e.g. red, green, blue */
-		return _("RGB");
-	}
-	if (colorspace == GCM_COLORSPACE_CMYK) {
-		/* TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black */
-		return _("CMYK");
-	}
-	return NULL;
-}
-
-/**
  * gcm_prefs_setup_space_combobox:
  **/
 static void
@@ -2230,18 +2226,13 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspace colorspace, con
 	GcmProfile *profile;
 	guint i;
 	const gchar *filename;
-	const gchar *description;
 	GcmColorspace colorspace_tmp;
 	gboolean has_profile = FALSE;
 	gboolean has_vcgt;
+	gboolean has_colorspace_description;
 	gchar *text = NULL;
-	const gchar *search = "RGB";
 	GPtrArray *profile_array = NULL;
 	GtkTreeIter iter;
-
-	/* search is a way to reduce to number of profiles */
-	if (colorspace == GCM_COLORSPACE_CMYK)
-		search = "CMYK";
 
 	/* get new list */
 	profile_array = gcm_profile_store_get_array (profile_store);
@@ -2251,13 +2242,13 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspace colorspace, con
 		profile = g_ptr_array_index (profile_array, i);
 
 		/* only for correct kind */
-		description = gcm_profile_get_description (profile);
 		has_vcgt = gcm_profile_get_has_vcgt (profile);
+		has_colorspace_description = gcm_profile_has_colorspace_description (profile);
 		colorspace_tmp = gcm_profile_get_colorspace (profile);
 		if (!has_vcgt &&
 		    colorspace == colorspace_tmp &&
 		    (colorspace == GCM_COLORSPACE_CMYK ||
-		     g_strstr_len (description, -1, search) != NULL)) {
+		     has_colorspace_description)) {
 			gcm_prefs_combobox_add_profile (widget, profile, GCM_PREFS_ENTRY_TYPE_PROFILE, &iter);
 
 			/* set active option */
@@ -2270,7 +2261,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspace colorspace, con
 	if (!has_profile) {
 		/* TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK" */
 		text = g_strdup_printf (_("No %s color spaces available"),
-					gcm_prefs_colorspace_to_localised_string (colorspace));
+					gcm_colorspace_to_localised_string (colorspace));
 		gtk_combo_box_append_text (GTK_COMBO_BOX(widget), text);
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 		gtk_widget_set_sensitive (widget, FALSE);
@@ -2412,7 +2403,7 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), (gpointer) "softproof");
 
 	/* coldplug plugged in devices */
-	ret = gcm_client_add_connected (gcm_client, &error);
+	ret = gcm_client_add_connected (gcm_client, GCM_CLIENT_COLDPLUG_ALL, &error);
 	if (!ret) {
 		egg_warning ("failed to add connected devices: %s", error->message);
 		g_error_free (error);

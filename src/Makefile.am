@@ -18,6 +18,7 @@ INCLUDES =						\
 	$(GUDEV_CFLAGS)					\
 	-DBINDIR=\"$(bindir)\"				\
 	-DSBINDIR=\"$(sbindir)\"			\
+	-DDATADIR=\"$(datadir)\"			\
 	-DSYSCONFDIR=\""$(sysconfdir)"\"		\
 	-DVERSION="\"$(VERSION)\""			\
 	-DLOCALEDIR=\""$(localedir)"\"			\
@@ -62,8 +63,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-device-udev.h				\
 	gcm-device-cups.c				\
 	gcm-device-cups.h				\
-	gcm-device-sane.c				\
-	gcm-device-sane.h				\
 	gcm-device-virtual.c				\
 	gcm-device-virtual.h				\
 	gcm-cie-widget.c				\
@@ -89,6 +88,10 @@ libgcmshared_a_SOURCES =				\
 	gcm-brightness.c				\
 	gcm-brightness.h
 
+libgcmshared_a_SOURCES +=				\
+	gcm-device-sane.c				\
+	gcm-device-sane.h
+
 libgcmshared_a_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
@@ -103,10 +106,8 @@ bin_PROGRAMS =						\
 	gcm-apply					\
 	gcm-prefs					\
 	gcm-session					\
+	gcm-picker					\
 	gcm-import
-
-noinst_PROGRAMS = 					\
-	gcm-picker
 
 gcm_install_system_wide_SOURCES =			\
 	gcm-install-system-wide.c

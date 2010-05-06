@@ -62,7 +62,7 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 	gint i;
 	gboolean ret = TRUE;
 	ppd_file_t *ppd_file = NULL;
-	const gchar *ppd_file_location;
+	const gchar *ppd_file_location = NULL;
 	gchar *id = NULL;
 	gchar *device_id = NULL;
 	gchar *title = NULL;
@@ -167,8 +167,10 @@ out:
 	g_free (id);
 	g_free (device_id);
 	g_free (title);
-	if (ppd_file != NULL)
+	if (ppd_file != NULL) {
 		ppdClose (ppd_file);
+		unlink (ppd_file_location);
+	}
 	return ret;
 }
 

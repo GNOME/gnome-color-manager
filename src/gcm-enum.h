@@ -73,6 +73,7 @@ GcmIntent	 gcm_intent_from_string			(const gchar		*intent);
 const gchar	*gcm_intent_to_string			(GcmIntent		 intent);
 const gchar	*gcm_profile_kind_to_string		(GcmProfileKind		 profile_kind);
 const gchar	*gcm_colorspace_to_string		(GcmColorspace		 colorspace);
+const gchar	*gcm_colorspace_to_localised_string	(GcmColorspace	 colorspace);
 GcmColorspace	 gcm_colorspace_from_string		(const gchar		*colorspace);
 GcmDeviceKind	 gcm_device_kind_from_string		(const gchar		*kind);
 const gchar	*gcm_device_kind_to_string		(GcmDeviceKind		 kind);

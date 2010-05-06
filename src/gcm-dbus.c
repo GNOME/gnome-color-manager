@@ -561,7 +561,7 @@ gcm_dbus_init (GcmDbus *dbus)
 	dbus->priv->colorspace_cmyk = g_settings_get_string (dbus->priv->settings, GCM_SETTINGS_COLORSPACE_CMYK);
 
 	/* get all devices */
-	ret = gcm_client_add_connected (dbus->priv->client, &error);
+	ret = gcm_client_add_connected (dbus->priv->client, GCM_CLIENT_COLDPLUG_ALL, &error);
 	if (!ret) {
 		egg_warning ("failed to coldplug: %s", error->message);
 		g_error_free (error);

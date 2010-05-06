@@ -60,6 +60,15 @@ struct _GcmClientClass
 	void (*_gcm_reserved5) (void);
 };
 
+typedef enum {
+	GCM_CLIENT_COLDPLUG_ALL		= 0x00,
+	GCM_CLIENT_COLDPLUG_XRANDR	= 0x01,
+	GCM_CLIENT_COLDPLUG_CUPS	= 0x02,
+	GCM_CLIENT_COLDPLUG_SANE	= 0x04,
+	GCM_CLIENT_COLDPLUG_UDEV	= 0x08,
+	GCM_CLIENT_COLDPLUG_LAST,
+} GcmClientColdplug;
+
 GType		 gcm_client_get_type		  		(void);
 GcmClient	*gcm_client_new					(void);
 
@@ -74,6 +83,7 @@ gboolean	 gcm_client_delete_device			(GcmClient		*client,
 								 GcmDevice		*device,
 								 GError			**error);
 gboolean	 gcm_client_add_connected			(GcmClient		*client,
+								 GcmClientColdplug	 coldplug,
 								 GError			**error);
 gboolean	 gcm_client_add_saved				(GcmClient		*client,
 								 GError			**error);

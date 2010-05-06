@@ -143,6 +143,28 @@ gcm_profile_get_filename (GcmProfile *profile)
 }
 
 /**
+ * gcm_profile_has_colorspace_description:
+ *
+ * Return value: if the description mentions the profile colorspace explicity,
+ * e.g. "Adobe RGB" for %GCM_COLORSPACE_RGB.
+ **/
+gboolean
+gcm_profile_has_colorspace_description (GcmProfile *profile)
+{
+	GcmProfilePrivate *priv = profile->priv;
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
+
+	/* for each profile type */
+	if (priv->colorspace == GCM_COLORSPACE_RGB)
+		return (g_strstr_len (priv->description, -1, "RGB") != NULL);
+	if (priv->colorspace == GCM_COLORSPACE_CMYK)
+		return (g_strstr_len (priv->description, -1, "CMYK") != NULL);
+
+	/* nothing */
+	return FALSE;
+}
+
+/**
  * gcm_profile_set_filename:
  **/
 void
@@ -874,7 +896,7 @@ gcm_profile_test_parse_file (EggTest *test, const guint8 *datafile, GcmProfileTe
 	const gchar *model;
 	const gchar *datetime;
 	const gchar *description;
-	const gchar *ascii_string;
+	const gchar *eisa_id;
 	const gchar *pnp_id;
 	guint width;
 	guint kind;

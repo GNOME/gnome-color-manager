@@ -54,6 +54,7 @@ gboolean	 gcm_device_xrandr_set_from_output	(GcmDevice		*device,
 							 GnomeRROutput		*output,
 							 GError			**error);
 const gchar	*gcm_device_xrandr_get_native_device	(GcmDeviceXrandr	*device_xrandr);
+const gchar	*gcm_device_xrandr_get_eisa_id		(GcmDeviceXrandr	*device_xrandr);
 gboolean	 gcm_device_xrandr_get_fallback		(GcmDeviceXrandr	*device_xrandr);
 
 G_END_DECLS

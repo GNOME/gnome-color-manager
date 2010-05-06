@@ -46,9 +46,9 @@ static void     gcm_xyz_finalize	(GObject     *object);
  **/
 struct _GcmXyzPrivate
 {
-	gfloat				 cie_x;
-	gfloat				 cie_y;
-	gfloat				 cie_z;
+	gdouble				 cie_x;
+	gdouble				 cie_y;
+	gdouble				 cie_z;
 };
 
 enum {
@@ -86,7 +86,7 @@ gcm_xyz_clear (GcmXyz *xyz)
 /**
  * gcm_xyz_get_x:
  **/
-gfloat
+gdouble
 gcm_xyz_get_x (GcmXyz *xyz)
 {
 	GcmXyzPrivate *priv = xyz->priv;
@@ -98,7 +98,7 @@ gcm_xyz_get_x (GcmXyz *xyz)
 /**
  * gcm_xyz_get_y:
  **/
-gfloat
+gdouble
 gcm_xyz_get_y (GcmXyz *xyz)
 {
 	GcmXyzPrivate *priv = xyz->priv;
@@ -110,7 +110,7 @@ gcm_xyz_get_y (GcmXyz *xyz)
 /**
  * gcm_xyz_get_z:
  **/
-gfloat
+gdouble
 gcm_xyz_get_z (GcmXyz *xyz)
 {
 	GcmXyzPrivate *priv = xyz->priv;
@@ -130,13 +130,13 @@ gcm_xyz_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec 
 
 	switch (prop_id) {
 	case PROP_CIE_X:
-		g_value_set_float (value, priv->cie_x);
+		g_value_set_double (value, priv->cie_x);
 		break;
 	case PROP_CIE_Y:
-		g_value_set_float (value, priv->cie_y);
+		g_value_set_double (value, priv->cie_y);
 		break;
 	case PROP_CIE_Z:
-		g_value_set_float (value, priv->cie_z);
+		g_value_set_double (value, priv->cie_z);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -155,13 +155,16 @@ gcm_xyz_set_property (GObject *object, guint prop_id, const GValue *value, GPara
 
 	switch (prop_id) {
 	case PROP_CIE_X:
-		priv->cie_x = g_value_get_float (value);
+		priv->cie_x = g_value_get_double (value);
+		egg_debug ("CIE x now %f", priv->cie_x);
 		break;
 	case PROP_CIE_Y:
-		priv->cie_y = g_value_get_float (value);
+		priv->cie_y = g_value_get_double (value);
+		egg_debug ("CIE y now %f", priv->cie_y);
 		break;
 	case PROP_CIE_Z:
-		priv->cie_z = g_value_get_float (value);
+		priv->cie_z = g_value_get_double (value);
+		egg_debug ("CIE z now %f", priv->cie_z);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -184,25 +187,25 @@ gcm_xyz_class_init (GcmXyzClass *klass)
 	/**
 	 * GcmXyz:cie-x:
 	 */
-	pspec = g_param_spec_float ("cie-x", NULL, NULL,
-				    -G_MAXFLOAT, G_MAXFLOAT, 0.0f,
-				    G_PARAM_READWRITE);
+	pspec = g_param_spec_double ("cie-x", NULL, NULL,
+				     -G_MAXDOUBLE, G_MAXDOUBLE, 0.0f,
+				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CIE_X, pspec);
 
 	/**
 	 * GcmXyz:cie-y:
 	 */
-	pspec = g_param_spec_float ("cie-y", NULL, NULL,
-				    -G_MAXFLOAT, G_MAXFLOAT, 0.0f,
-				    G_PARAM_READWRITE);
+	pspec = g_param_spec_double ("cie-y", NULL, NULL,
+				     -G_MAXDOUBLE, G_MAXDOUBLE, 0.0f,
+				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CIE_Y, pspec);
 
 	/**
 	 * GcmXyz:cie-z:
 	 */
-	pspec = g_param_spec_float ("cie-z", NULL, NULL,
-				    -G_MAXFLOAT, G_MAXFLOAT, 0.0f,
-				    G_PARAM_READWRITE);
+	pspec = g_param_spec_double ("cie-z", NULL, NULL,
+				     -G_MAXDOUBLE, G_MAXDOUBLE, 0.0f,
+				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_CIE_Z, pspec);
 
 	g_type_class_add_private (klass, sizeof (GcmXyzPrivate));
@@ -252,7 +255,7 @@ void
 gcm_xyz_test (EggTest *test)
 {
 	GcmXyz *xyz;
-	gfloat value;
+	gdouble value;
 
 	if (!egg_test_start (test, "GcmXyz"))
 		return;

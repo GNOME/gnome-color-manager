@@ -34,6 +34,7 @@
 #include <tiffio.h>
 
 #include "gcm-calibrate.h"
+#include "gcm-xyz.h"
 #include "gcm-dmi.h"
 #include "gcm-device-xrandr.h"
 #include "gcm-utils.h"
@@ -63,6 +64,7 @@ struct _GcmCalibratePrivate
 	GcmColorimeterKind		 colorimeter_kind;
 	GcmCalibrateDialog		*calibrate_dialog;
 	GcmDeviceKind			 device_kind;
+	GcmXyz				*xyz;
 	gchar				*output_name;
 	gchar				*filename_source;
 	gchar				*filename_reference;
@@ -96,6 +98,7 @@ enum {
 	PROP_FILENAME_RESULT,
 	PROP_WORKING_PATH,
 	PROP_PRECISION,
+	PROP_XYZ,
 	PROP_LAST
 };
 
@@ -200,6 +203,15 @@ const gchar *
 gcm_calibrate_get_filename_result (GcmCalibrate *calibrate)
 {
 	return calibrate->priv->filename_result;
+}
+
+/**
+ * gcm_calibrate_get_working_path:
+ **/
+const gchar *
+gcm_calibrate_get_working_path (GcmCalibrate *calibrate)
+{
+	return calibrate->priv->working_path;
 }
 
 /**
@@ -504,6 +516,36 @@ out:
 	if (string != NULL)
 		g_string_free (string, TRUE);
 	return precision;
+}
+
+/**
+ * gcm_calibrate_spotread:
+ **/
+gboolean
+gcm_calibrate_spotread (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
+{
+	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
+	gboolean ret;
+
+	/* set the per-profile filename */
+	ret = gcm_calibrate_set_working_path (calibrate, error);
+	if (!ret)
+		goto out;
+
+	/* coldplug source */
+	if (klass->calibrate_spotread == NULL) {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_INTERNAL,
+				     "no klass support");
+		goto out;
+	}
+
+	/* proxy */
+	ret = klass->calibrate_spotread (calibrate, window, error);
+out:
+	return ret;
 }
 
 /**
@@ -1195,6 +1237,9 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 	case PROP_PRECISION:
 		g_value_set_uint (value, priv->precision);
 		break;
+	case PROP_XYZ:
+		g_value_set_object (value, priv->xyz);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -1284,6 +1329,11 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 	case PROP_WORKING_PATH:
 		g_free (priv->working_path);
 		priv->working_path = g_strdup (g_value_get_string (value));
+		break;
+	case PROP_XYZ:
+		if (priv->xyz != NULL)
+			g_object_unref (priv->xyz);
+		priv->xyz = g_value_dup_object (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1439,6 +1489,14 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 				   G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_PRECISION, pspec);
 
+	/**
+	 * GcmCalibrate:xyz:
+	 */
+	pspec = g_param_spec_object ("xyz", NULL, NULL,
+				     GCM_TYPE_XYZ,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_XYZ, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmCalibratePrivate));
 }
 
@@ -1459,6 +1517,7 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->description = NULL;
 	calibrate->priv->device = NULL;
 	calibrate->priv->serial = NULL;
+	calibrate->priv->xyz = gcm_xyz_new ();
 	calibrate->priv->working_path = NULL;
 	calibrate->priv->calibrate_device_kind = GCM_CALIBRATE_DEVICE_KIND_UNKNOWN;
 	calibrate->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_UNKNOWN;
@@ -1500,6 +1559,8 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->serial);
 	g_free (priv->working_path);
 	g_signal_handlers_disconnect_by_func (calibrate->priv->colorimeter, G_CALLBACK (gcm_prefs_colorimeter_changed_cb), calibrate);
+	if (priv->xyz != NULL)
+		g_object_unref (priv->xyz);
 	g_object_unref (priv->colorimeter);
 	g_object_unref (priv->dmi);
 	g_object_unref (priv->calibrate_dialog);
