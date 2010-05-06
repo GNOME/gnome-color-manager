@@ -207,6 +207,15 @@ gcm_calibrate_get_filename_result (GcmCalibrate *calibrate)
 }
 
 /**
+ * gcm_calibrate_get_working_path:
+ **/
+const gchar *
+gcm_calibrate_get_working_path (GcmCalibrate *calibrate)
+{
+	return calibrate->priv->working_path;
+}
+
+/**
  * gcm_calibrate_set_basename:
  **/
 static void
