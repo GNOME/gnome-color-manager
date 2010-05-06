@@ -1253,6 +1253,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	const gchar *device_serial = NULL;
 	const gchar *device_model = NULL;
 	const gchar *device_manufacturer = NULL;
+	const gchar *eisa_id = NULL;
 
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -1337,6 +1338,18 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	}
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_device_details"));
 	gtk_widget_show (widget);
+
+	/* get display specific properties */
+	if (kind == GCM_DEVICE_KIND_DISPLAY)
+		eisa_id = gcm_device_xrandr_get_eisa_id (GCM_DEVICE_XRANDR (current_device));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_eisa"));
+	if (eisa_id != NULL) {
+		gtk_widget_show (widget);
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_eisa"));
+		gtk_label_set_label (GTK_LABEL (widget), eisa_id);
+	} else {
+		gtk_widget_hide (widget);
+	}
 
 	/* set adjustments */
 	setting_up_device = TRUE;

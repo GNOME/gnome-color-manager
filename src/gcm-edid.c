@@ -53,7 +53,7 @@ struct _GcmEdidPrivate
 	gchar				*monitor_name;
 	gchar				*vendor_name;
 	gchar				*serial_number;
-	gchar				*ascii_string;
+	gchar				*eisa_id;
 	gchar				*pnp_id;
 	guint				 width;
 	guint				 height;
@@ -66,7 +66,7 @@ enum {
 	PROP_MONITOR_NAME,
 	PROP_VENDOR_NAME,
 	PROP_SERIAL_NUMBER,
-	PROP_ASCII_STRING,
+	PROP_EISA_ID,
 	PROP_GAMMA,
 	PROP_PNP_ID,
 	PROP_WIDTH,
@@ -126,13 +126,13 @@ gcm_edid_get_serial_number (GcmEdid *edid)
 }
 
 /**
- * gcm_edid_get_ascii_string:
+ * gcm_edid_get_eisa_id:
  **/
 const gchar *
-gcm_edid_get_ascii_string (GcmEdid *edid)
+gcm_edid_get_eisa_id (GcmEdid *edid)
 {
 	g_return_val_if_fail (GCM_IS_EDID (edid), NULL);
-	return edid->priv->ascii_string;
+	return edid->priv->eisa_id;
 }
 
 /**
@@ -189,7 +189,7 @@ gcm_edid_reset (GcmEdid *edid)
 	g_free (priv->monitor_name);
 	g_free (priv->vendor_name);
 	g_free (priv->serial_number);
-	g_free (priv->ascii_string);
+	g_free (priv->eisa_id);
 
 	/* do not deallocate, just blank */
 	priv->pnp_id[0] = '\0';
@@ -198,7 +198,7 @@ gcm_edid_reset (GcmEdid *edid)
 	priv->monitor_name = NULL;
 	priv->vendor_name = NULL;
 	priv->serial_number = NULL;
-	priv->ascii_string = NULL;
+	priv->eisa_id = NULL;
 	priv->width = 0;
 	priv->height = 0;
 	priv->gamma = 0.0f;
@@ -383,8 +383,8 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 		} else if (data[i+3] == GCM_DESCRIPTOR_ALPHANUMERIC_DATA_STRING) {
 			tmp = gcm_edid_parse_string (&data[i+5]);
 			if (tmp != NULL) {
-				g_free (priv->ascii_string);
-				priv->ascii_string = tmp;
+				g_free (priv->eisa_id);
+				priv->eisa_id = tmp;
 			}
 		} else if (data[i+3] == GCM_DESCRIPTOR_COLOR_POINT) {
 			if (data[i+3+9] != 0xff) {
@@ -408,7 +408,7 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
 	/* print what we've got */
 	egg_debug ("monitor name: %s", priv->monitor_name);
 	egg_debug ("serial number: %s", priv->serial_number);
-	egg_debug ("ascii string: %s", priv->ascii_string);
+	egg_debug ("ascii string: %s", priv->eisa_id);
 out:
 	return ret;
 }
@@ -432,8 +432,8 @@ gcm_edid_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 	case PROP_SERIAL_NUMBER:
 		g_value_set_string (value, priv->serial_number);
 		break;
-	case PROP_ASCII_STRING:
-		g_value_set_string (value, priv->ascii_string);
+	case PROP_EISA_ID:
+		g_value_set_string (value, priv->eisa_id);
 		break;
 	case PROP_GAMMA:
 		g_value_set_float (value, priv->gamma);
@@ -503,12 +503,12 @@ gcm_edid_class_init (GcmEdidClass *klass)
 	g_object_class_install_property (object_class, PROP_SERIAL_NUMBER, pspec);
 
 	/**
-	 * GcmEdid:ascii-string:
+	 * GcmEdid:eisa-id:
 	 */
-	pspec = g_param_spec_string ("ascii-string", NULL, NULL,
+	pspec = g_param_spec_string ("eisa-id", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_ASCII_STRING, pspec);
+	g_object_class_install_property (object_class, PROP_EISA_ID, pspec);
 
 	/**
 	 * GcmEdid:gamma:
@@ -555,7 +555,7 @@ gcm_edid_init (GcmEdid *edid)
 	edid->priv->monitor_name = NULL;
 	edid->priv->vendor_name = NULL;
 	edid->priv->serial_number = NULL;
-	edid->priv->ascii_string = NULL;
+	edid->priv->eisa_id = NULL;
 	edid->priv->tables = gcm_tables_new ();
 	edid->priv->pnp_id = g_new0 (gchar, 4);
 }
@@ -572,7 +572,7 @@ gcm_edid_finalize (GObject *object)
 	g_free (priv->monitor_name);
 	g_free (priv->vendor_name);
 	g_free (priv->serial_number);
-	g_free (priv->ascii_string);
+	g_free (priv->eisa_id);
 	g_free (priv->pnp_id);
 	g_object_unref (priv->tables);
 
@@ -602,7 +602,7 @@ typedef struct {
 	const gchar *monitor_name;
 	const gchar *vendor_name;
 	const gchar *serial_number;
-	const gchar *ascii_string;
+	const gchar *eisa_id;
 	const gchar *pnp_id;
 	guint width;
 	guint height;
@@ -616,7 +616,7 @@ gcm_edid_test_parse_edid_file (EggTest *test, GcmEdid *edid, const gchar *datafi
 	const gchar *monitor_name;
 	const gchar *vendor_name;
 	const gchar *serial_number;
-	const gchar *ascii_string;
+	const gchar *eisa_id;
 	const gchar *pnp_id;
 	gchar *data;
 	guint width;
@@ -668,11 +668,11 @@ gcm_edid_test_parse_edid_file (EggTest *test, GcmEdid *edid, const gchar *datafi
 
 	/************************************************************/
 	egg_test_title (test, "check ascii string for %s", datafile);
-	ascii_string = gcm_edid_get_ascii_string (edid);
-	if (g_strcmp0 (ascii_string, test_data->ascii_string) == 0)
+	eisa_id = gcm_edid_get_eisa_id (edid);
+	if (g_strcmp0 (eisa_id, test_data->eisa_id) == 0)
 		egg_test_success (test, NULL);
 	else
-		egg_test_failed (test, "invalid value: %s, expecting: %s", ascii_string, test_data->ascii_string);
+		egg_test_failed (test, "invalid value: %s, expecting: %s", eisa_id, test_data->eisa_id);
 
 	/************************************************************/
 	egg_test_title (test, "check pnp id for %s", datafile);
@@ -729,7 +729,7 @@ gcm_edid_test (EggTest *test)
 	test_data.monitor_name = "L225W";
 	test_data.vendor_name = "Goldstar Company Ltd";
 	test_data.serial_number = "34398";
-	test_data.ascii_string = NULL;
+	test_data.eisa_id = NULL;
 	test_data.pnp_id = "GSM";
 	test_data.height = 30;
 	test_data.width = 47;
@@ -740,7 +740,7 @@ gcm_edid_test (EggTest *test)
 	test_data.monitor_name = NULL;
 	test_data.vendor_name = "IBM France";
 	test_data.serial_number = NULL;
-	test_data.ascii_string = "LTN154P2-L05";
+	test_data.eisa_id = "LTN154P2-L05";
 	test_data.pnp_id = "IBM";
 	test_data.height = 21;
 	test_data.width = 33;
