@@ -1,3 +1,39 @@
+Version 2.31.1
+~~~~~~~~~~~~~~
+Released: 2010-05-06
+
+* Translations
+ - Added Japanese translation (Ryo Fujita)
+ - Added Punjabi Translation (A S Alam)
+ - Added Ukrainian translation (Maxim V. Dziumanenko)
+ - Updated British English translation (Bruce Cowan)
+ - Updated German translation (Mario Blättermann)
+ - Updated Italian translation (Francesco Groccia)
+ - Updated Lithuanian translation (Aurimas Černius)
+ - Updated Norwegian bokmål translation (Kjartan Maraas)
+ - Updated Polish translation (Piotr Drąg)
+ - Updated Portuguese translation (António Lima)
+ - Updated Slovenian translation (Andrej Žnidaršič)
+ - Updated Spanish translation (Jorge González)
+
+* New Features:
+ - Use a new application icon (Hylke Bons)
+ - Add an experimental gcm-picker program to read spot colors (Richard Hughes)
+ - Show much more detail in the color picker UI and allow the user to choose a RGB colorspace (Richard Hughes)
+ - Show the EISA ID in the devices tab. Fixes rh#581837 (Richard Hughes)
+
+* Bugfix:
+ - Clean up the temporary file created by cupsGetPPD2(). Fixes rh#582202 (Tim Waugh)
+ - Do not connect to sane in gcm-apply, we only need XRandR devices. Fixes rh#585723 (Richard Hughes)
+ - Do not explode when viewing the details of a CMYK profile (Richard Hughes)
+ - Do not rely on an argyllcms specially patched to fix the arg[0] problem (Richard Hughes)
+ - Don't prompt the user to calibrate the device again if we are re-using the GcmCalibrate instance (Richard Hughes)
+ - Fix up the argyll install dialog. Fixes #616106 (Richard Hughes)
+ - Fix up the profile precision dialog. Fixes #583398 (Richard Hughes)
+ - Make gcm-fix-profile open the profile from memory, as then we can catch common access permission errors (Richard Hughes)
+ - Make SANE support configurable at compile time. Fixes #616826 (Richard Hughes)
+ - Offer to install shared-color-profiles-extra if it is not yet installed (Richard Hughes)
+
 Version 2.30.0
 ~~~~~~~~~~~~~~
 Released: 2010-03-29
