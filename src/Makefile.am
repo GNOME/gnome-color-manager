@@ -312,26 +312,6 @@ check_PROGRAMS =					\
 
 gcm_self_test_SOURCES =					\
 	gcm-self-test.c					\
-	gcm-edid.c					\
-	gcm-tables.c					\
-	gcm-utils.c					\
-	gcm-device.c					\
-	gcm-profile.c					\
-	gcm-profile-lcms1.c				\
-	gcm-brightness.c				\
-	gcm-clut.c					\
-	gcm-dmi.c					\
-	gcm-xyz.c					\
-	gcm-image.c					\
-	gcm-cie-widget.c				\
-	gcm-trc-widget.c				\
-	gcm-gamma-widget.c				\
-	gcm-calibrate.c					\
-	gcm-calibrate-manual.c				\
-	gcm-print.c					\
-	gcm-calibrate-dialog.c				\
-	egg-test.h					\
-	egg-test.c					\
 	$(NULL)
 
 gcm_self_test_LDADD =					\
@@ -350,7 +330,7 @@ gcm_self_test_LDADD =					\
 	$(TIFF_LIBS)					\
 	-lm
 
-gcm_self_test_CFLAGS = -DEGG_TEST $(AM_CFLAGS)
+gcm_self_test_CFLAGS = $(AM_CFLAGS) $(WARNINGFLAGS_C)
 
 TESTS = gcm-self-test
 

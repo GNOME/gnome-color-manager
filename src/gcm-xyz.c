@@ -35,8 +35,6 @@
 
 #include "egg-debug.h"
 
-static void     gcm_xyz_finalize	(GObject     *object);
-
 #define GCM_XYZ_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_XYZ, GcmXyzPrivate))
 
 /**
@@ -180,7 +178,6 @@ gcm_xyz_class_init (GcmXyzClass *klass)
 {
 	GParamSpec *pspec;
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-	object_class->finalize = gcm_xyz_finalize;
 	object_class->get_property = gcm_xyz_get_property;
 	object_class->set_property = gcm_xyz_set_property;
 
@@ -221,18 +218,6 @@ gcm_xyz_init (GcmXyz *xyz)
 }
 
 /**
- * gcm_xyz_finalize:
- **/
-static void
-gcm_xyz_finalize (GObject *object)
-{
-//	GcmXyz *xyz = GCM_XYZ (object);
-//	GcmXyzPrivate *priv = xyz->priv;
-
-	G_OBJECT_CLASS (gcm_xyz_parent_class)->finalize (object);
-}
-
-/**
  * gcm_xyz_new:
  *
  * Return value: a new GcmXyz object.
@@ -244,69 +229,4 @@ gcm_xyz_new (void)
 	xyz = g_object_new (GCM_TYPE_XYZ, NULL);
 	return GCM_XYZ (xyz);
 }
-
-/***************************************************************************
- ***                          MAKE CHECK TESTS                           ***
- ***************************************************************************/
-#ifdef EGG_TEST
-#include "egg-test.h"
-
-void
-gcm_xyz_test (EggTest *test)
-{
-	GcmXyz *xyz;
-	gdouble value;
-
-	if (!egg_test_start (test, "GcmXyz"))
-		return;
-
-	/************************************************************/
-	egg_test_title (test, "get a xyz object");
-	xyz = gcm_xyz_new ();
-	egg_test_assert (test, xyz != NULL);
-
-	/************************************************************/
-	egg_test_title (test, "get x value (when nothing set)");
-	value = gcm_xyz_get_x (xyz);
-	if (fabs (value - 0.0f) < 0.001f)
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "failed to get value, got: %f", value);
-
-	/* set dummy values */
-	g_object_set (xyz,
-		      "cie-x", 0.125,
-		      "cie-y", 0.25,
-		      "cie-z", 0.5,
-		      NULL);
-
-	/************************************************************/
-	egg_test_title (test, "get x value");
-	value = gcm_xyz_get_x (xyz);
-	if (fabs (value - 0.142857143f) < 0.001f)
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "failed to get value, got: %f", value);
-
-	/************************************************************/
-	egg_test_title (test, "get y value");
-	value = gcm_xyz_get_y (xyz);
-	if (fabs (value - 0.285714286f) < 0.001f)
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "failed to get value, got: %f", value);
-
-	/************************************************************/
-	egg_test_title (test, "get z value");
-	value = gcm_xyz_get_z (xyz);
-	if (fabs (value - 0.571428571f) < 0.001f)
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "failed to get value, got: %f", value);
-
-	g_object_unref (xyz);
-
-	egg_test_end (test);
-}
-#endif
 

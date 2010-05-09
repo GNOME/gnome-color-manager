@@ -515,13 +515,14 @@ gcm_utils_get_default_config_location (void)
 {
 	gchar *filename;
 
-#ifdef EGG_TEST
-	filename = g_strdup ("/tmp/device-profiles.conf");
-#else
+	if (g_getenv ("GCM_TEST") != NULL) {
+		filename = g_strdup ("/tmp/device-profiles.conf");
+		goto out;
+	}
+
 	/* create default path */
 	filename = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "device-profiles.conf", NULL);
-#endif
-
+out:
 	return filename;
 }
 
@@ -588,132 +589,4 @@ gcm_intent_to_localized_text (GcmIntent intent)
 	}
 	return "unknown";
 }
-
-/***************************************************************************
- ***                          MAKE CHECK TESTS                           ***
- ***************************************************************************/
-#ifdef EGG_TEST
-#include "egg-test.h"
-
-void
-gcm_utils_test (EggTest *test)
-{
-	gboolean ret;
-	GError *error = NULL;
-	GPtrArray *array;
-	gchar *text;
-	gchar *filename;
-	GcmProfileKind profile_kind;
-	GcmDeviceKind device_kind;
-	GFile *file;
-	GFile *dest;
-
-	if (!egg_test_start (test, "GcmUtils"))
-		return;
-
-	/************************************************************/
-	egg_test_title (test, "Linkify text");
-	text = gcm_utils_linkify ("http://www.dave.org is text http://www.hughsie.com that needs to be linked to http://www.bbc.co.uk really");
-	if (g_strcmp0 (text, "<a href=\"http://www.dave.org\">http://www.dave.org</a> is text "
-			     "<a href=\"http://www.hughsie.com\">http://www.hughsie.com</a> that needs to be linked to "
-			     "<a href=\"http://www.bbc.co.uk\">http://www.bbc.co.uk</a> really") == 0)
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "failed to linkify text: %s", text);
-	g_free (text);
-
-	/************************************************************/
-	egg_test_title (test, "get filename of data file");
-	file = g_file_new_for_path ("dave.icc");
-	dest = gcm_utils_get_profile_destination (file);
-	filename = g_file_get_path (dest);
-	if (g_str_has_suffix (filename, "/.color/icc/dave.icc"))
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "failed to get filename: %s", filename);
-	g_free (filename);
-	g_object_unref (file);
-	g_object_unref (dest);
-
-	/************************************************************/
-	egg_test_title (test, "check is icc profile");
-	filename = egg_test_get_data_file ("bluish.icc");
-	file = g_file_new_for_path (filename);
-	ret = gcm_utils_is_icc_profile (file);
-	egg_test_assert (test, ret);
-	g_object_unref (file);
-	g_free (filename);
-
-	/************************************************************/
-	egg_test_title (test, "detect LVDS panels");
-	ret = gcm_utils_output_is_lcd_internal ("LVDS1");
-	egg_test_assert (test, ret);
-
-	/************************************************************/
-	egg_test_title (test, "detect external panels");
-	ret = gcm_utils_output_is_lcd_internal ("DVI1");
-	egg_test_assert (test, !ret);
-
-	/************************************************************/
-	egg_test_title (test, "detect LCD panels");
-	ret = gcm_utils_output_is_lcd ("LVDS1");
-	egg_test_assert (test, ret);
-
-	/************************************************************/
-	egg_test_title (test, "detect LCD panels (2)");
-	ret = gcm_utils_output_is_lcd ("DVI1");
-	egg_test_assert (test, ret);
-
-	/************************************************************/
-	egg_test_title (test, "Make sensible id");
-	filename = g_strdup ("Hello\n\rWorld!");
-	gcm_utils_alphanum_lcase (filename);
-	if (g_strcmp0 (filename, "hello__world_") == 0)
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "failed to get filename: %s", filename);
-	g_free (filename);
-
-	/************************************************************/
-	egg_test_title (test, "Make sensible filename");
-	filename = g_strdup ("Hel lo\n\rWo-(r)ld!");
-	gcm_utils_ensure_sensible_filename (filename);
-	if (g_strcmp0 (filename, "Hel lo__Wo-(r)ld_") == 0)
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "failed to get filename: %s", filename);
-	g_free (filename);
-
-	/************************************************************/
-	egg_test_title (test, "check strip printable");
-	text = g_strdup ("1\r34 67_90");
-	gcm_utils_ensure_printable (text);
-	if (g_strcmp0 (text, "134 67 90") == 0)
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "invalid value: %s", text);
-	g_free (text);
-
-	/************************************************************/
-	egg_test_title (test, "get default config location (when in make check)");
-	filename = gcm_utils_get_default_config_location ();
-	if (g_strcmp0 (filename, "/tmp/device-profiles.conf") == 0)
-		egg_test_success (test, NULL);
-	else
-		egg_test_failed (test, "failed to get correct config location: %s", filename);
-	g_free (filename);
-
-	/************************************************************/
-	egg_test_title (test, "convert valid device kind to profile kind");
-	profile_kind = gcm_utils_device_kind_to_profile_kind (GCM_DEVICE_KIND_SCANNER);
-	egg_test_assert (test, (profile_kind == GCM_PROFILE_KIND_INPUT_DEVICE));
-
-	/************************************************************/
-	egg_test_title (test, "convert invalid device kind to profile kind");
-	profile_kind = gcm_utils_device_kind_to_profile_kind (GCM_DEVICE_KIND_UNKNOWN);
-	egg_test_assert (test, (profile_kind == GCM_PROFILE_KIND_UNKNOWN));
-
-	egg_test_end (test);
-}
-#endif
 

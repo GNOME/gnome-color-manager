@@ -856,30 +856,3 @@ gcm_calibrate_dialog_new (void)
 	return GCM_CALIBRATE_DIALOG (gcm_calibrate_dialog_object);
 }
 
-/***************************************************************************
- ***                          MAKE CHECK TESTS                           ***
- ***************************************************************************/
-#ifdef EGG_TEST
-#include "egg-test.h"
-
-void
-gcm_calibrate_dialog_test (EggTest *test)
-{
-	GcmCalibrateDialog *calibrate_dialog;
-//	gboolean ret;
-//	GError *error = NULL;
-
-	if (!egg_test_start (test, "GcmCalibrateDialog"))
-		return;
-
-	/************************************************************/
-	egg_test_title (test, "get a calibrate_dialog object");
-	calibrate_dialog = gcm_calibrate_dialog_new ();
-	egg_test_assert (test, calibrate_dialog != NULL);
-
-	g_object_unref (calibrate_dialog);
-
-	egg_test_end (test);
-}
-#endif
-

@@ -23,6 +23,7 @@
 #define __GCM_CALIBRATE_H
 
 #include <glib-object.h>
+#include <gtk/gtk.h>
 
 #include "gcm-device.h"
 
