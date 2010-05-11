@@ -70,6 +70,8 @@ struct _GcmClientPrivate
 	gboolean			 loading;
 	guint				 loading_refcount;
 	gboolean			 use_threads;
+	gboolean			 init_cups;
+	gboolean			 init_sane;
 };
 
 enum {
@@ -722,6 +724,14 @@ gcm_client_add_connected_devices_cups (GcmClient *client, GError **error)
 	gint i;
 	GcmClientPrivate *priv = client->priv;
 
+	/* initialize */
+	if (!client->priv->init_cups) {
+		httpInitialize();
+		/* should be okay for localhost */
+		client->priv->http = httpConnectEncrypt (cupsServer (), ippPort (), cupsEncryption ());
+		client->priv->init_cups = TRUE;
+	}
+
 	num_dests = cupsGetDests2 (priv->http, &dests);
 	egg_debug ("got %i printers", num_dests);
 
@@ -805,17 +815,28 @@ static gboolean
 gcm_client_add_connected_devices_sane (GcmClient *client, GError **error)
 {
 	gint i;
+	gboolean ret = TRUE;
 	SANE_Status status;
 	const SANE_Device **device_list;
 
 	/* force sane to drop it's cache of devices -- yes, it is that crap */
-	sane_exit ();
-	sane_init (NULL, NULL);
+	if (client->priv->init_sane) {
+		sane_exit ();
+		client->priv->init_sane = FALSE;
+	}
+	status = sane_init (NULL, NULL);
+	if (status != SANE_STATUS_GOOD) {
+		ret = FALSE;
+		g_set_error (error, 1, 0, "failed to init SANE: %s", sane_strstatus (status));
+		goto out;
+	}
+	client->priv->init_sane = TRUE;
 
 	/* get scanners on the local server */
 	status = sane_get_devices (&device_list, FALSE);
 	if (status != SANE_STATUS_GOOD) {
-		egg_warning ("failed to get devices from SANE: %s", sane_strstatus (status));
+		ret = FALSE;
+		g_set_error (error, 1, 0, "failed to get devices from SANE: %s", sane_strstatus (status));
 		goto out;
 	}
 
@@ -831,7 +852,7 @@ gcm_client_add_connected_devices_sane (GcmClient *client, GError **error)
 out:
 	/* inform the UI */
 	gcm_client_done_loading (client);
-	return TRUE;
+	return ret;
 }
 
 /**
@@ -1324,12 +1345,13 @@ static void
 gcm_client_init (GcmClient *client)
 {
 	const gchar *subsystems[] = {"usb", "video4linux", NULL};
-	SANE_Status status;
 
 	client->priv = GCM_CLIENT_GET_PRIVATE (client);
 	client->priv->display_name = NULL;
 	client->priv->loading_refcount = 0;
 	client->priv->use_threads = FALSE;
+	client->priv->init_cups = FALSE;
+	client->priv->init_sane = FALSE;
 	client->priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	client->priv->screen = gcm_screen_new ();
 	g_signal_connect (client->priv->screen, "outputs-changed",
@@ -1339,17 +1361,6 @@ gcm_client_init (GcmClient *client)
 	client->priv->gudev_client = g_udev_client_new (subsystems);
 	g_signal_connect (client->priv->gudev_client, "uevent",
 			  G_CALLBACK (gcm_client_uevent_cb), client);
-
-	/* for CUPS */
-	httpInitialize();
-
-	/* for SANE */
-	status = sane_init (NULL, NULL);
-	if (status != SANE_STATUS_GOOD)
-		egg_warning ("failed to init SANE: %s", sane_strstatus (status));
-
-	/* should be okay for localhost */
-	client->priv->http = httpConnectEncrypt (cupsServer (), ippPort (), cupsEncryption ());
 }
 
 /**
@@ -1373,8 +1384,10 @@ gcm_client_finalize (GObject *object)
 	g_ptr_array_unref (priv->array);
 	g_object_unref (priv->gudev_client);
 	g_object_unref (priv->screen);
-	httpClose (priv->http);
-	sane_exit ();
+	if (client->priv->init_cups)
+		httpClose (priv->http);
+	if (client->priv->init_sane)
+		sane_exit ();
 
 	G_OBJECT_CLASS (gcm_client_parent_class)->finalize (object);
 }
