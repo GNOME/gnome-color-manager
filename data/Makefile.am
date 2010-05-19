@@ -28,6 +28,7 @@ service_DATA     = $(service_in_files:.service.in=.service)
 $(service_DATA): $(service_in_files) Makefile
 	@sed -e "s|\@servicedir\@|$(bindir)|" $< > $@
 
+#@GSETTINGS_RULES@
 gsettingsschema_DATA = org.gnome.ColorManager.gschema.xml
 gsettingsschemadir = $(datadir)/glib-2.0/schemas
 org.gnome.ColorManager.gschema.xml: gnome-color-manager.schemas
