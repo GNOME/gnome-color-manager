@@ -628,8 +628,8 @@ gcm_test_exif_func (void)
 	g_assert_cmpstr (gcm_exif_get_manufacturer (exif), ==, "NIKON CORPORATION");
 	g_assert_cmpstr (gcm_exif_get_serial (exif), ==, NULL);
 
-	/* PNG */
-	filename = gcm_test_get_data_file ("test.png");
+	/* JPG */
+	filename = gcm_test_get_data_file ("test.jpg");
 	ret = gcm_exif_parse (exif, filename, &error);
 	g_free (filename);
 	g_assert_no_error (error);
@@ -638,8 +638,8 @@ gcm_test_exif_func (void)
 	g_assert_cmpstr (gcm_exif_get_manufacturer (exif), ==, "NIKON CORPORATION");
 	g_assert_cmpstr (gcm_exif_get_serial (exif), ==, NULL);
 
-	/* JPG */
-	filename = gcm_test_get_data_file ("test.jpg");
+	/* PNG */
+	filename = gcm_test_get_data_file ("test.png");
 	ret = gcm_exif_parse (exif, filename, &error);
 	g_free (filename);
 	g_assert_no_error (error);

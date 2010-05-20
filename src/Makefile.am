@@ -10,6 +10,7 @@ INCLUDES =						\
 	$(CUPS_CFLAGS)					\
 	$(SANE_CFLAGS)					\
 	$(TIFF_CFLAGS)					\
+	$(EXIF_CFLAGS)					\
 	$(NOTIFY_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
 	$(DBUS_GLIB_CFLAGS)				\
@@ -253,6 +254,7 @@ gcm_prefs_LDADD =					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
+	$(EXIF_LIBS)					\
 	$(CANBERRA_LIBS)				\
 	-lm
 
@@ -277,6 +279,7 @@ gcm_picker_LDADD =					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
+	$(EXIF_LIBS)					\
 	$(CANBERRA_LIBS)				\
 	-lm
 
@@ -330,6 +333,7 @@ gcm_self_test_LDADD =					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
+	$(EXIF_LIBS)					\
 	-lm
 
 gcm_self_test_CFLAGS = $(AM_CFLAGS) $(WARNINGFLAGS_C)

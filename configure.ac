@@ -147,6 +147,7 @@ fi
 
 PKG_CHECK_MODULES(CANBERRA, libcanberra-gtk >= $CANBERRA_REQUIRED)
 
+PKG_CHECK_MODULES(EXIF, libexif)
 AC_CHECK_LIB(tiff, TIFFReadRGBAImageOriented,
 	     TIFF_CFLAGS=""
 	     TIFF_LIBS="-ltiff"

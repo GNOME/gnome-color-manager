@@ -51,6 +51,7 @@ struct _GcmExifClass
 typedef enum
 {
 	GCM_EXIF_ERROR_NO_DATA,
+	GCM_EXIF_ERROR_NO_SUPPORT,
 	GCM_EXIF_ERROR_INTERNAL
 } GcmExifError;
 
