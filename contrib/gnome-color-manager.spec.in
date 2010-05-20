@@ -16,10 +16,8 @@ Requires:  shared-mime-info
 Requires:  shared-color-profiles
 Requires:  yelp
 Requires:  dconf
+Requires:  GConf2 >= 2.31.1
 Requires(post):   scrollkeeper
-Requires(pre):    GConf2
-Requires(post):   GConf2
-Requires(preun):  GConf2
 Requires(postun): scrollkeeper
 
 BuildRequires: gtk2-devel >= 2.16.0
@@ -44,7 +42,6 @@ BuildRequires: libtiff-devel
 BuildRequires: libcanberra-devel
 BuildRequires: libnotify-devel
 BuildRequires: glib2-devel >= 2.25.1
-BuildRequires: GConf2-devel >= 2.31.1
 
 %description
 gnome-color-manager is a session framework that makes it easy to manage, install
@@ -72,29 +69,22 @@ done
 rm -rf $RPM_BUILD_ROOT
 
 %post
-%gconf_schema_upgrade gnome-color-manager
-touch --no-create %{_datadir}/icons/hicolor
-if [ -x /usr/bin/gtk-update-icon-cache ]; then
-    gtk-update-icon-cache -q %{_datadir}/icons/hicolor &> /dev/null || :
-fi
+touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-mime-database %{_datadir}/mime &> /dev/null || :
-glib-compile-schemas --allow-any-name %{_datadir}/glib-2.0/schemas
-
-%pre
-%gconf_schema_prepare gnome-color-manager
-
-%preun
-%gconf_schema_remove gnome-color-manager
+glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 
 %postun
-touch --no-create %{_datadir}/icons/hicolor
-if [ -x /usr/bin/gtk-update-icon-cache ]; then
-    gtk-update-icon-cache -q %{_datadir}/icons/hicolor &> /dev/null || :
+if [ $1 -eq 0 ] ; then
+    touch --no-create %{_datadir}/icons/hicolor &>/dev/null
+    gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
 fi
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-mime-database %{_datadir}/mime &> /dev/null || :
-glib-compile-schemas --allow-any-name %{_datadir}/glib-2.0/schemas
+glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
+
+%posttrans
+gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
@@ -107,20 +97,19 @@ glib-compile-schemas --allow-any-name %{_datadir}/glib-2.0/schemas
 %dir %{_datadir}/gnome-color-manager/icons
 %{_datadir}/gnome-color-manager/targets/*.png
 %{_datadir}/gnome-color-manager/icons/*.svg
-#%{_datadir}/gnome-color-manager/icons/*.png
 %{_datadir}/man/man1/*.1.gz
 %{_datadir}/gnome/help/gnome-color-manager
 %{_datadir}/omf/gnome-color-manager
 %{_datadir}/icons/hicolor/*/*/*.png
 %{_datadir}/icons/hicolor/scalable/*/*.svg*
-%config(noreplace) %{_sysconfdir}/gconf/schemas/*.schemas
 %{_datadir}/applications/gcm-prefs.desktop
 %{_datadir}/applications/gcm-import.desktop
 %{_sysconfdir}/xdg/autostart/*.desktop
 %{_datadir}/dbus-1/services/org.gnome.ColorManager.service
 %{_sbindir}/gcm-install-system-wide
 %{_datadir}/polkit-1/actions/org.gnome.color.policy
-%{_datadir}/glib-2.0/schemas/org.gnome.ColorManager.gschema.xml
+%{_datadir}/glib-2.0/schemas/org.gnome.color-manager.gschema.xml
+%{_datadir}/GConf/gsettings/org.gnome.color-manager.gschema.migrate
 
 # this is probably better in a shared package
 %dir %{_localstatedir}/lib/color
