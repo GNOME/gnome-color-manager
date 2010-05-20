@@ -4,6 +4,9 @@ SUBDIRS = 						\
 	figures						\
 	icons
 
+migrationdir = $(datadir)/GConf/gsettings
+dist_migration_DATA = org.gnome.color-manager.gschema.migrate
+
 @INTLTOOL_DESKTOP_RULE@
 desktopdir = $(datadir)/applications
 desktop_in_files =					\
