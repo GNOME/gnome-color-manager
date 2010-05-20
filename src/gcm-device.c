@@ -576,7 +576,7 @@ gcm_device_load (GcmDevice *device, GError **error)
 		priv->manufacturer = g_key_file_get_string (file, priv->id, "manufacturer", NULL);
 	priv->gamma = g_key_file_get_double (file, priv->id, "gamma", &error_local);
 	if (error_local != NULL) {
-		priv->gamma = g_settings_get_double (priv->settings, "default_gamma");
+		priv->gamma = g_settings_get_double (priv->settings, GCM_SETTINGS_DEFAULT_GAMMA);
 		if (priv->gamma < 0.1f)
 			priv->gamma = 1.0f;
 		g_clear_error (&error_local);
