@@ -269,9 +269,6 @@ main (int argc, char *argv[])
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
-	/* use GSettings until dconf is ready */
-	g_setenv ("GSETTINGS_BACKEND", "gconf", FALSE);
-
 	if (! g_thread_supported ())
 		g_thread_init (NULL);
 	dbus_g_thread_init ();

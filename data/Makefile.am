@@ -4,11 +4,6 @@ SUBDIRS = 						\
 	figures						\
 	icons
 
-@INTLTOOL_SCHEMAS_RULE@
-schemadir = $(sysconfdir)/gconf/schemas
-schema_in_files = gnome-color-manager.schemas.in
-schema_DATA = $(schema_in_files:.schemas.in=.schemas)
-
 @INTLTOOL_DESKTOP_RULE@
 desktopdir = $(datadir)/applications
 desktop_in_files =					\
@@ -28,16 +23,8 @@ service_DATA     = $(service_in_files:.service.in=.service)
 $(service_DATA): $(service_in_files) Makefile
 	@sed -e "s|\@servicedir\@|$(bindir)|" $< > $@
 
-#@GSETTINGS_RULES@
-gsettingsschema_DATA = org.gnome.ColorManager.gschema.xml
-gsettingsschemadir = $(datadir)/glib-2.0/schemas
-org.gnome.ColorManager.gschema.xml: gnome-color-manager.schemas
-	gsettings-schema-convert --force --gconf --xml --schema-id $(@:.gschema.xml=) $< -o $@
-if GSETTINGS_SCHEMAS_INSTALL
-# --allow-any-name should be removed once the move from gconf is complete
-install-data-hook:
-	$(GLIB_COMPILE_SCHEMAS) --allow-any-name $(DESTDIR)$(gsettingsschemadir)
-endif
+@GSETTINGS_RULES@
+gsettings_SCHEMAS = org.gnome.color-manager.gschema.xml
 
 pkgdata_DATA =						\
 	gcm-calibrate.ui				\
@@ -46,33 +33,17 @@ pkgdata_DATA =						\
 	gcm-prefs.ui
 
 EXTRA_DIST =						\
-	$(schema_in_files)				\
+	$(gsettings_SCHEMAS)				\
 	$(service_in_files)				\
 	$(autostart_in_files)				\
 	$(desktop_in_files)				\
 	$(pkgdata_DATA)
 
-if GCONF_SCHEMAS_INSTALL
-install-data-local:
-	-GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) \
-	$(GCONFTOOL) --makefile-install-rule $(schema_DATA)
-endif
-
-if GCONF_SCHEMAS_INSTALL
-uninstall-local:
-	-GCONF_CONFIG_SOURCE=$(GCONF_SCHEMA_CONFIG_SOURCE) \
-	$(GCONFTOOL) --makefile-uninstall-rule $(schema_DATA)
-endif
-
 clean-local :
 	rm -f *~
 
-CLEANFILES =						\
-	$(gsettingsschema_DATA)
-
 DISTCLEANFILES =					\
 	org.gnome.ColorManager.service			\
-	gnome-color-manager.schemas			\
 	gcm-apply.desktop				\
 	gcm-prefs.desktop				\
 	gcm-import.desktop

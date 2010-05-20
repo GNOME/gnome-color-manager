@@ -2664,9 +2664,6 @@ main (int argc, char **argv)
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
-	/* use GSettings until dconf is ready */
-	g_setenv ("GSETTINGS_BACKEND", "gconf", FALSE);
-
 	gtk_init (&argc, &argv);
 
 	context = g_option_context_new ("gnome-color-manager prefs program");
