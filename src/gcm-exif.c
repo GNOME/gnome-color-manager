@@ -91,7 +91,7 @@ gcm_exif_parse_tiff (GcmExif *exif, const gchar *filename, GError **error)
 		g_set_error (error,
 			     GCM_EXIF_ERROR,
 			     GCM_EXIF_ERROR_NO_DATA,
-			     "failed to get EXIF data from TIFF");
+			     "Failed to get EXIF data from TIFF");
 		ret = FALSE;
 		goto out;
 	}
@@ -178,7 +178,7 @@ gcm_exif_parse_jpeg (GcmExif *exif, const gchar *filename, GError **error)
 		g_set_error (error,
 			     GCM_EXIF_ERROR,
 			     GCM_EXIF_ERROR_NO_DATA,
-			     "failed to get EXIF data from TIFF");
+			     "Failed to get EXIF data from JPEG");
 		ret = FALSE;
 		goto out;
 	}
@@ -236,7 +236,7 @@ gcm_exif_parse (GcmExif *exif, GFile *file, GError **error)
 	g_set_error (error,
 		     GCM_EXIF_ERROR,
 		     GCM_EXIF_ERROR_NO_SUPPORT,
-		     "no support for %s content type", content_type);
+		     "No support for %s content type", content_type);
 out:
 	g_free (filename);
 	if (info != NULL)
