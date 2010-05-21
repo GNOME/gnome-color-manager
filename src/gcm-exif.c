@@ -269,21 +269,6 @@ gcm_exif_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 	}
 }
 
-#if 0
-/**
- * gcm_exif_set_property:
- **/
-static void
-gcm_exif_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
-{
-	switch (prop_id) {
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-#endif
-
 /**
  * gcm_exif_class_init:
  **/
@@ -294,7 +279,6 @@ gcm_exif_class_init (GcmExifClass *klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	object_class->finalize = gcm_exif_finalize;
 	object_class->get_property = gcm_exif_get_property;
-//	object_class->set_property = gcm_exif_set_property;
 
 	/**
 	 * GcmExif:manufacturer:
