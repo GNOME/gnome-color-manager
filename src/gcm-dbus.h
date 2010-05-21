@@ -72,6 +72,10 @@ void		 gcm_dbus_get_profiles_for_type		(GcmDbus	*dbus,
 							 const gchar	*type,
 							 const gchar	*options,
 							 DBusGMethodInvocation *context);
+void		 gcm_dbus_get_profiles_for_file		(GcmDbus	*dbus,
+							 const gchar	*filename,
+							 const gchar	*options,
+							 DBusGMethodInvocation *context);
 void		 gcm_dbus_get_profile_for_window	(GcmDbus	*dbus,
 							 guint		 xid,
 							 DBusGMethodInvocation *context);

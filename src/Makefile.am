@@ -302,6 +302,8 @@ gcm_session_LDADD =					\
 	$(DBUS_GLIB_LIBS)				\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
+	$(TIFF_LIBS)					\
+	$(EXIF_LIBS)					\
 	$(SANE_LIBS)					\
 	$(NOTIFY_LIBS)					\
 	$(CUPS_LIBS)					\
