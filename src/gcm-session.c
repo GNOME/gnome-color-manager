@@ -212,6 +212,7 @@ gcm_session_added_cb (GcmClient *client, GcmDevice *device, gpointer user_data)
 	GcmDeviceKind kind;
 	const gchar *profile;
 	gchar *basename = NULL;
+	gboolean allow_notifications;
 
 	/* check we care */
 	kind = gcm_device_get_kind (device);
@@ -232,6 +233,11 @@ gcm_session_added_cb (GcmClient *client, GcmDevice *device, gpointer user_data)
 		egg_debug ("not a GCM profile for %s: %s", gcm_device_get_id (device), profile);
 		goto out;
 	}
+
+	/* do we allow notifications */
+	allow_notifications = g_settings_get_boolean (settings, GCM_SETTINGS_SHOW_NOTIFICATIONS);
+	if (!allow_notifications)
+		goto out;
 
 	/* handle device */
 	gcm_session_notify_device (device);
