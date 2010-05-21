@@ -39,6 +39,7 @@
 #include "gcm-colorimeter.h"
 #include "gcm-device-xrandr.h"
 #include "gcm-device-virtual.h"
+#include "gcm-exif.h"
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
 #include "gcm-trc-widget.h"
@@ -661,6 +662,99 @@ out:
 }
 
 /**
+ * gcm_prefs_virtual_set_from_file:
+ **/
+static gboolean
+gcm_prefs_virtual_set_from_file (GFile *file)
+{
+	gboolean ret;
+	GcmExif *exif;
+	GError *error = NULL;
+	const gchar *model;
+	const gchar *manufacturer;
+	GtkWidget *widget;
+
+	/* parse file */
+	exif = gcm_exif_new ();
+	ret = gcm_exif_parse (exif, file, &error);
+	if (!ret) {
+		egg_warning ("failed to parse file: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* set model and manufacturer */
+	model = gcm_exif_get_model (exif);
+	if (model != NULL) {
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_model"));
+		gtk_entry_set_text (GTK_ENTRY (widget), model);
+	}
+	manufacturer = gcm_exif_get_manufacturer (exif);
+	if (manufacturer != NULL) {
+		widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_manufacturer"));
+		gtk_entry_set_text (GTK_ENTRY (widget), manufacturer);
+	}
+
+	/* set type */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_virtual_type"));
+	gtk_combo_box_set_active (GTK_COMBO_BOX(widget), GCM_DEVICE_KIND_CAMERA - 2);
+out:
+	g_object_unref (exif);
+	return ret;
+}
+
+/**
+ * gcm_prefs_virtual_drag_data_received_cb:
+ **/
+static void
+gcm_prefs_virtual_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gint x, gint y,
+					 GtkSelectionData *data, guint _time, gpointer user_data)
+{
+	const guchar *filename;
+	gchar **filenames = NULL;
+	GFile *file = NULL;
+	guint i;
+	gboolean ret;
+
+	/* get filenames */
+	filename = gtk_selection_data_get_data (data);
+	if (filename == NULL) {
+		gtk_drag_finish (context, FALSE, FALSE, _time);
+		goto out;
+	}
+
+	/* import this */
+	egg_debug ("dropped: %p (%s)", data, filename);
+
+	/* split, as multiple drag targets are accepted */
+	filenames = g_strsplit_set ((const gchar *)filename, "\r\n", -1);
+	for (i=0; filenames[i]!=NULL; i++) {
+
+		/* blank entry */
+		if (filenames[i][0] == '\0')
+			continue;
+
+		/* check this is an ICC profile */
+		egg_debug ("trying to set %s", filenames[i]);
+		file = g_file_new_for_uri (filenames[i]);
+		ret = gcm_prefs_virtual_set_from_file (file);
+		if (!ret) {
+			egg_debug ("%s did not set from file correctly", filenames[i]);
+			gtk_drag_finish (context, FALSE, FALSE, _time);
+			goto out;
+		}
+		g_object_unref (file);
+		file = NULL;
+	}
+
+	gtk_drag_finish (context, TRUE, FALSE, _time);
+out:
+	if (file != NULL)
+		g_object_unref (file);
+	g_strfreev (filenames);
+}
+
+/**
  * gcm_prefs_ensure_argyllcms_installed:
  **/
 static gboolean
@@ -842,6 +936,8 @@ gcm_prefs_device_add_cb (GtkWidget *widget, gpointer data)
 	gtk_widget_show (widget);
 
 	/* clear entries */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_virtual_type"));
+	gtk_combo_box_set_active (GTK_COMBO_BOX(widget), 0);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_model"));
 	gtk_entry_set_text (GTK_ENTRY (widget), "");
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_manufacturer"));
@@ -2801,6 +2897,9 @@ main (int argc, char **argv)
 	gtk_window_set_modal (GTK_WINDOW (widget), TRUE);
 	g_signal_connect (widget, "delete-event",
 			  G_CALLBACK (gcm_prefs_virtual_delete_event_cb), NULL);
+	g_signal_connect (widget, "drag-data-received",
+			  G_CALLBACK (gcm_prefs_virtual_drag_data_received_cb), NULL);
+	gcm_prefs_setup_drag_and_drop (widget);
 
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_virtual_add"));
 	g_signal_connect (widget, "clicked",
