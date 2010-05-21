@@ -51,6 +51,7 @@ struct _GcmExifPrivate
 	gchar				*manufacturer;
 	gchar				*model;
 	gchar				*serial;
+	GcmDeviceKind			 device_kind;
 };
 
 enum {
@@ -58,6 +59,7 @@ enum {
 	PROP_MANUFACTURER,
 	PROP_MODEL,
 	PROP_SERIAL,
+	PROP_DEVICE_KIND,
 	PROP_LAST
 };
 
@@ -73,6 +75,8 @@ gcm_exif_parse_tiff (GcmExif *exif, const gchar *filename, GError **error)
 	const gchar *manufacturer = NULL;
 	const gchar *model = NULL;
 	const gchar *serial = NULL;
+	const gchar *temp = NULL;
+	GcmDeviceKind device_kind = GCM_DEVICE_KIND_UNKNOWN;
 	TIFF *tiff;
 	GcmExifPrivate *priv = exif->priv;
 
@@ -92,6 +96,18 @@ gcm_exif_parse_tiff (GcmExif *exif, const gchar *filename, GError **error)
 		goto out;
 	}
 
+	/* these are all camera specific values */
+	TIFFGetField (tiff,EXIFTAG_FNUMBER, &temp);
+	if (temp != NULL)
+		device_kind = GCM_DEVICE_KIND_CAMERA;
+	TIFFGetField (tiff,TIFFTAG_LENSINFO, &temp);
+	if (temp != NULL)
+		device_kind = GCM_DEVICE_KIND_CAMERA;
+
+	/* crappy fallback */
+	if (g_str_has_prefix (manufacturer, "NIKON"))
+		device_kind = GCM_DEVICE_KIND_CAMERA;
+
 	/* free old versions */
 	g_free (priv->manufacturer);
 	g_free (priv->model);
@@ -101,6 +117,7 @@ gcm_exif_parse_tiff (GcmExif *exif, const gchar *filename, GError **error)
 	priv->manufacturer = g_strdup (manufacturer);
 	priv->model = g_strdup (model);
 	priv->serial = g_strdup (serial);
+	priv->device_kind = device_kind;
 out:
 	TIFFClose (tiff);
 	return ret;
@@ -116,6 +133,7 @@ gcm_exif_parse_jpeg (GcmExif *exif, const gchar *filename, GError **error)
 	GcmExifPrivate *priv = exif->priv;
 	ExifData *ed = NULL;
 	ExifEntry *entry;
+	GcmDeviceKind device_kind = GCM_DEVICE_KIND_UNKNOWN;
 	gchar make[1024] = { '\0' };
 	gchar model[1024] = { '\0' };
 
@@ -144,6 +162,17 @@ gcm_exif_parse_jpeg (GcmExif *exif, const gchar *filename, GError **error)
 		g_strchomp (model);
 	}
 
+	/* these are all camera specific values */
+	entry = exif_content_get_entry (ed->ifd[EXIF_IFD_EXIF], EXIF_TAG_FNUMBER);
+	if (entry != NULL)
+		device_kind = GCM_DEVICE_KIND_CAMERA;
+	entry = exif_content_get_entry (ed->ifd[EXIF_IFD_EXIF], EXIF_TAG_SHUTTER_SPEED_VALUE);
+	if (entry != NULL)
+		device_kind = GCM_DEVICE_KIND_CAMERA;
+	entry = exif_content_get_entry (ed->ifd[EXIF_IFD_EXIF], EXIF_TAG_FLASH);
+	if (entry != NULL)
+		device_kind = GCM_DEVICE_KIND_CAMERA;
+
 	/* we failed to get data */
 	if (make == NULL || model == NULL) {
 		g_set_error (error,
@@ -163,6 +192,7 @@ gcm_exif_parse_jpeg (GcmExif *exif, const gchar *filename, GError **error)
 	priv->manufacturer = g_strdup (make);
 	priv->model = g_strdup (model);
 	priv->serial = NULL;
+	priv->device_kind = device_kind;
 out:
 	if (ed != NULL)
 		exif_data_unref (ed);
@@ -245,6 +275,16 @@ gcm_exif_get_serial (GcmExif *exif)
 }
 
 /**
+ * gcm_exif_get_device_kind:
+ **/
+GcmDeviceKind
+gcm_exif_get_device_kind (GcmExif *exif)
+{
+	g_return_val_if_fail (GCM_IS_EXIF (exif), GCM_DEVICE_KIND_UNKNOWN);
+	return exif->priv->device_kind;
+}
+
+/**
  * gcm_exif_get_property:
  **/
 static void
@@ -262,6 +302,9 @@ gcm_exif_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 		break;
 	case PROP_SERIAL:
 		g_value_set_string (value, priv->serial);
+		break;
+	case PROP_DEVICE_KIND:
+		g_value_set_uint (value, priv->device_kind);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -304,6 +347,14 @@ gcm_exif_class_init (GcmExifClass *klass)
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_SERIAL, pspec);
 
+	/**
+	 * GcmExif:device-kind:
+	 */
+	pspec = g_param_spec_uint ("device-kind", NULL, NULL,
+				   0, G_MAXUINT, GCM_DEVICE_KIND_UNKNOWN,
+				   G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_DEVICE_KIND, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmExifPrivate));
 }
 
@@ -317,6 +368,7 @@ gcm_exif_init (GcmExif *exif)
 	exif->priv->manufacturer = NULL;
 	exif->priv->model = NULL;
 	exif->priv->serial = NULL;
+	exif->priv->device_kind = GCM_DEVICE_KIND_CAMERA;
 }
 
 /**
