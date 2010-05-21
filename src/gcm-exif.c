@@ -29,6 +29,7 @@
 #include "config.h"
 
 #include <glib-object.h>
+#include <gio/gio.h>
 #include <tiff.h>
 #include <tiffio.h>
 #include <libexif/exif-data.h>
@@ -166,16 +167,27 @@ gboolean
 gcm_exif_parse (GcmExif *exif, const gchar *filename, GError **error)
 {
 	gboolean ret = FALSE;
+	GFile *file = NULL;
+	GFileInfo *info = NULL;
+	const gchar *content_type;
 
 	g_return_val_if_fail (GCM_IS_EXIF (exif), FALSE);
 	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
-	//FIXME: get type, not extension
-	if (g_str_has_suffix (filename, "tif")) {
+	/* check exists */
+	file = g_file_new_for_path (filename);
+	info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
+				  G_FILE_QUERY_INFO_NONE, NULL, error);
+	if (info == NULL)
+		goto out;
+
+	/* get EXIF data in different ways depending on content type */
+	content_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
+	if (g_strcmp0 (content_type, "image/tiff") == 0) {
 		ret = gcm_exif_parse_tiff (exif, filename, error);
 		goto out;
 	}
-	if (g_str_has_suffix (filename, "jpg")) {
+	if (g_strcmp0 (content_type, "image/jpeg") == 0) {
 		ret = gcm_exif_parse_jpeg (exif, filename, error);
 		goto out;
 	}
@@ -184,8 +196,11 @@ gcm_exif_parse (GcmExif *exif, const gchar *filename, GError **error)
 	g_set_error (error,
 		     GCM_EXIF_ERROR,
 		     GCM_EXIF_ERROR_NO_SUPPORT,
-		     "no support for %s filetype", filename);
+		     "no support for %s content type", content_type);
 out:
+	g_object_unref (file);
+	if (info != NULL)
+		g_object_unref (info);
 	return ret;
 }
 

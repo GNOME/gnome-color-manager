@@ -642,11 +642,8 @@ gcm_test_exif_func (void)
 	filename = gcm_test_get_data_file ("test.png");
 	ret = gcm_exif_parse (exif, filename, &error);
 	g_free (filename);
-	g_assert_no_error (error);
-	g_assert (ret);
-	g_assert_cmpstr (gcm_exif_get_model (exif), ==, "NIKON D60");
-	g_assert_cmpstr (gcm_exif_get_manufacturer (exif), ==, "NIKON CORPORATION");
-	g_assert_cmpstr (gcm_exif_get_serial (exif), ==, NULL);
+	g_assert_error (error, GCM_EXIF_ERROR, GCM_EXIF_ERROR_NO_SUPPORT);
+	g_assert (!ret);
 
 	g_object_unref (exif);
 }
