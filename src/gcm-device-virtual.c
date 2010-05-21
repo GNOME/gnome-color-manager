@@ -49,7 +49,7 @@ gcm_device_virtual_create_from_params (GcmDeviceVirtual *device_virtual,
 
 	/* make some stuff up */
 	title = g_strdup_printf ("%s - %s", manufacturer, model);
-	id = g_strdup_printf ("%s_%s", manufacturer, model);
+	id = g_strdup_printf ("virtual_%s_%s_%s", manufacturer, model, serial);
 	gcm_utils_alphanum_lcase (id);
 
 	/* create the device */
