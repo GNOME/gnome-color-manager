@@ -23,6 +23,7 @@
 #define __GCM_EXIF_H
 
 #include <glib-object.h>
+#include <gio/gio.h>
 
 G_BEGIN_DECLS
 
@@ -65,7 +66,7 @@ const gchar	*gcm_exif_get_manufacturer		(GcmExif	*exif);
 const gchar	*gcm_exif_get_model			(GcmExif	*exif);
 const gchar	*gcm_exif_get_serial			(GcmExif	*exif);
 gboolean	 gcm_exif_parse				(GcmExif	*exif,
-							 const gchar	*filename,
+							 GFile		*file,
 							 GError		**error);
 
 G_END_DECLS

@@ -340,10 +340,12 @@ gcm_calibrate_set_from_exif (GcmCalibrate *calibrate, const gchar *filename, GEr
 	gchar *description = NULL;
 	gboolean ret;
 	GcmExif *exif;
+	GFile *file;
 
 	/* parse file */
 	exif = gcm_exif_new ();
-	ret = gcm_exif_parse (exif, filename, error);
+	file = g_file_new_for_path (filename);
+	ret = gcm_exif_parse (exif, file, error);
 	if (!ret)
 		goto out;
 
@@ -366,6 +368,7 @@ gcm_calibrate_set_from_exif (GcmCalibrate *calibrate, const gchar *filename, GEr
 		g_object_set (calibrate, "serial", serial, NULL);
 
 out:
+	g_object_unref (file);
 	g_object_unref (exif);
 	g_free (description);
 	return ret;
