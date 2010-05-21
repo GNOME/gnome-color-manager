@@ -37,9 +37,6 @@
 static GMainLoop *loop = NULL;
 static GSettings *settings = NULL;
 
-#define GCM_DBUS_SERVICE		"org.gnome.ColorManager"
-#define GCM_DBUS_INTERFACE		"org.gnome.ColorManager"
-#define GCM_DBUS_PATH			"/org/gnome/ColorManager"
 #define GCM_SESSION_IDLE_EXIT		60 /* seconds */
 #define GCM_SESSION_NOTIFY_TIMEOUT	30000 /* ms */
 

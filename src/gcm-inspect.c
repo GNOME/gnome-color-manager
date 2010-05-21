@@ -24,7 +24,6 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <libgnomeui/gnome-rr.h>
-#include <dbus/dbus-glib.h>
 #include <locale.h>
 
 #include "egg-debug.h"
@@ -160,51 +159,46 @@ out:
 static gboolean
 gcm_inspect_show_profiles_for_device (const gchar *device_id)
 {
-	gboolean ret;
-	DBusGConnection *connection;
-	DBusGProxy *proxy;
+	gboolean ret = FALSE;
+	const gchar *description;
+	const gchar *filename;
+	guint i = 0;
+	GDBusConnection *connection;
 	GError *error = NULL;
-	gchar *title;
-	gchar *profile;
-	guint i;
-	GType custom_g_type_string_string;
-	GPtrArray *profile_data_array = NULL;
-	GValueArray *gva;
-	GValue *gv;
+	GVariant *args;
+	GVariant *response = NULL;
+	GVariantIter *iter = NULL;
 
 	/* get a session bus connection */
-	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
-
-	/* connect to the interface */
-	proxy = dbus_g_proxy_new_for_name (connection,
-					   "org.gnome.ColorManager",
-					   "/org/gnome/ColorManager",
-					   "org.gnome.ColorManager");
-
-	/* create a specialized type, because dbus-glib sucks monkey balls */
-	custom_g_type_string_string = dbus_g_type_get_collection ("GPtrArray",
-					dbus_g_type_get_struct("GValueArray",
-						G_TYPE_STRING,
-						G_TYPE_STRING,
-						G_TYPE_INVALID));
+	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
+	if (connection == NULL) {
+		/* TRANSLATORS: no DBus session bus */
+		g_print ("%s: %s\n", _("Failed to connect to session bus"), error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	/* execute sync method */
-	ret = dbus_g_proxy_call (proxy, "GetProfilesForDevice", &error,
-				 G_TYPE_STRING, device_id,
-				 G_TYPE_STRING, "",
-				 G_TYPE_INVALID,
-				 custom_g_type_string_string, &profile_data_array,
-				 G_TYPE_INVALID);
-	if (!ret) {
+	args = g_variant_new ("(ss)", device_id, ""),
+	response = g_dbus_connection_call_sync (connection,
+						GCM_DBUS_SERVICE,
+						GCM_DBUS_PATH,
+						GCM_DBUS_INTERFACE,
+						"GetProfilesForDevice",
+						args,
+						G_DBUS_CALL_FLAGS_NONE,
+						-1, NULL, &error);
+	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
 		g_print ("%s: %s\n", _("The request failed"), error->message);
 		g_error_free (error);
 		goto out;
 	}
 
-	/* no data */
-	if (profile_data_array->len == 0) {
-		/* TRANSLATORS: no rofile has been asigned to this device */
+	/* unpack the array */
+	g_variant_get (response, "(a(ss))", &iter);
+	if (g_variant_iter_n_children (iter) == 0) {
+		/* TRANSLATORS: no profile has been asigned to this device */
 		g_print ("%s\n", _("There are no ICC profiles for this device"));
 		goto out;
 	}
@@ -212,28 +206,17 @@ gcm_inspect_show_profiles_for_device (const gchar *device_id)
 	/* TRANSLATORS: this is a list of profiles suitable for the device */
 	g_print ("%s %s\n", _("Suitable profiles for:"), device_id);
 
-	/* list each entry */
-	for (i=0; i<profile_data_array->len; i++) {
-		gva = (GValueArray *) g_ptr_array_index (profile_data_array, i);
-		/* 0 */
-		gv = g_value_array_get_nth (gva, 0);
-		title = g_value_dup_string (gv);
-		g_value_unset (gv);
-		/* 1 */
-		gv = g_value_array_get_nth (gva, 1);
-		profile = g_value_dup_string (gv);
-		g_value_unset (gv);
+	/* for each entry in the array */
+	while (g_variant_iter_loop (iter, "(ss)", &filename, &description))
+		g_print ("%i.\t%s\n\t%s\n", ++i, description, filename);
 
-		/* done */
-		g_print ("%i.\t%s\n\t%s\n", i+1, title, profile);
-		g_value_array_free (gva);
-		g_free (title);
-		g_free (profile);
-	}
+	/* success */
+	ret = TRUE;
 out:
-	if (profile_data_array != NULL)
-		g_ptr_array_free (profile_data_array, TRUE);
-	g_object_unref (proxy);
+	if (iter != NULL)
+		g_variant_iter_free (iter);
+	if (response != NULL)
+		g_variant_unref (response);
 	return ret;
 }
 
@@ -243,28 +226,33 @@ out:
 static gboolean
 gcm_inspect_show_profiles_for_devices (void)
 {
-	gboolean ret;
-	DBusGConnection *connection;
-	DBusGProxy *proxy;
+	gboolean ret = FALSE;
+	GDBusConnection *connection;
 	GError *error = NULL;
 	guint i;
-	gchar **devices = NULL;
+	const gchar **devices = NULL;
+	GVariant *response = NULL;
+	GVariant *response_child = NULL;
 
 	/* get a session bus connection */
-	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
-
-	/* connect to the interface */
-	proxy = dbus_g_proxy_new_for_name (connection,
-					   "org.gnome.ColorManager",
-					   "/org/gnome/ColorManager",
-					   "org.gnome.ColorManager");
+	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
+	if (connection == NULL) {
+		/* TRANSLATORS: no DBus session bus */
+		g_print ("%s: %s\n", _("Failed to connect to session bus"), error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	/* execute sync method */
-	ret = dbus_g_proxy_call (proxy, "GetDevices", &error,
-				 G_TYPE_INVALID,
-				 G_TYPE_STRV, &devices,
-				 G_TYPE_INVALID);
-	if (!ret) {
+	response = g_dbus_connection_call_sync (connection,
+						GCM_DBUS_SERVICE,
+						GCM_DBUS_PATH,
+						GCM_DBUS_INTERFACE,
+						"GetDevices",
+						NULL,
+						G_DBUS_CALL_FLAGS_NONE,
+						-1, NULL, &error);
+	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
 		g_print ("%s: %s\n", _("The request failed"), error->message);
 		g_error_free (error);
@@ -272,14 +260,22 @@ gcm_inspect_show_profiles_for_devices (void)
 	}
 
 	/* print each device */
+	response_child = g_variant_get_child_value (response, 0);
+	devices = g_variant_get_strv (response_child, NULL);
 	for (i=0; devices[i] != NULL; i++) {
 		ret = gcm_inspect_show_profiles_for_device (devices[i]);
 		if (!ret)
 			goto out;
 	}
+
+	/* success */
+	ret = TRUE;
 out:
-	g_object_unref (proxy);
-	g_strfreev (devices);
+	g_free (devices);
+	if (response != NULL)
+		g_variant_unref (response);
+	if (response_child != NULL)
+		g_variant_unref (response_child);
 	return ret;
 }
 
@@ -289,33 +285,44 @@ out:
 static gboolean
 gcm_inspect_show_profile_for_window (guint xid)
 {
-	gboolean ret;
-	DBusGConnection *connection;
-	DBusGProxy *proxy;
+	gboolean ret = FALSE;
+	GDBusConnection *connection;
 	GError *error = NULL;
-	gchar *profile = NULL;
+	const gchar *profile;
+	GVariant *args;
+	GVariant *response = NULL;
+	GVariant *response_child = NULL;
+	GVariantIter *iter = NULL;
 
 	/* get a session bus connection */
-	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
-
-	/* connect to the interface */
-	proxy = dbus_g_proxy_new_for_name (connection,
-					   "org.gnome.ColorManager",
-					   "/org/gnome/ColorManager",
-					   "org.gnome.ColorManager");
+	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
+	if (connection == NULL) {
+		/* TRANSLATORS: no DBus session bus */
+		g_print ("%s: %s\n", _("Failed to connect to session bus"), error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	/* execute sync method */
-	ret = dbus_g_proxy_call (proxy, "GetProfileForWindow", &error,
-				 G_TYPE_UINT, xid,
-				 G_TYPE_INVALID,
-				 G_TYPE_STRING, &profile,
-				 G_TYPE_INVALID);
-	if (!ret) {
+	args = g_variant_new ("(u)", xid),
+	response = g_dbus_connection_call_sync (connection,
+						GCM_DBUS_SERVICE,
+						GCM_DBUS_PATH,
+						GCM_DBUS_INTERFACE,
+						"GetProfileForWindow",
+						args,
+						G_DBUS_CALL_FLAGS_NONE,
+						-1, NULL, &error);
+	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
 		g_print ("%s: %s\n", _("The request failed"), error->message);
 		g_error_free (error);
 		goto out;
 	}
+
+	/* print each device */
+	response_child = g_variant_get_child_value (response, 0);
+	profile = g_variant_get_string (response_child, NULL);
 
 	/* no data */
 	if (profile == NULL) {
@@ -327,9 +334,14 @@ gcm_inspect_show_profile_for_window (guint xid)
 	/* TRANSLATORS: this is a list of profiles suitable for the device */
 	g_print ("%s %i\n", _("Suitable profiles for:"), xid);
 	g_print ("1.\t%s\n\t%s\n", "this is a title", profile);
+
+	/* success */
+	ret = TRUE;
 out:
-	g_object_unref (proxy);
-	g_free (profile);
+	if (iter != NULL)
+		g_variant_iter_free (iter);
+	if (response != NULL)
+		g_variant_unref (response);
 	return ret;
 }
 
@@ -339,51 +351,46 @@ out:
 static gboolean
 gcm_inspect_show_profiles_for_type (const gchar *type)
 {
-	gboolean ret;
-	DBusGConnection *connection;
-	DBusGProxy *proxy;
+	gboolean ret = FALSE;
+	GDBusConnection *connection;
 	GError *error = NULL;
-	gchar *title;
-	gchar *profile;
+	const gchar *filename;
+	const gchar *description;
 	guint i;
-	GType custom_g_type_string_string;
-	GPtrArray *profile_data_array = NULL;
-	GValueArray *gva;
-	GValue *gv;
+	GVariant *args;
+	GVariant *response = NULL;
+	GVariantIter *iter = NULL;
 
 	/* get a session bus connection */
-	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
-
-	/* connect to the interface */
-	proxy = dbus_g_proxy_new_for_name (connection,
-					   "org.gnome.ColorManager",
-					   "/org/gnome/ColorManager",
-					   "org.gnome.ColorManager");
-
-	/* create a specialized type, because dbus-glib sucks monkey balls */
-	custom_g_type_string_string = dbus_g_type_get_collection ("GPtrArray",
-					dbus_g_type_get_struct("GValueArray",
-						G_TYPE_STRING,
-						G_TYPE_STRING,
-						G_TYPE_INVALID));
+	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
+	if (connection == NULL) {
+		/* TRANSLATORS: no DBus session bus */
+		g_print ("%s: %s\n", _("Failed to connect to session bus"), error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	/* execute sync method */
-	ret = dbus_g_proxy_call (proxy, "GetProfilesForType", &error,
-				 G_TYPE_STRING, type,
-				 G_TYPE_STRING, "",
-				 G_TYPE_INVALID,
-				 custom_g_type_string_string, &profile_data_array,
-				 G_TYPE_INVALID);
-	if (!ret) {
+	args = g_variant_new ("(ss)", type, ""),
+	response = g_dbus_connection_call_sync (connection,
+						GCM_DBUS_SERVICE,
+						GCM_DBUS_PATH,
+						GCM_DBUS_INTERFACE,
+						"GetProfilesForType",
+						args,
+						G_DBUS_CALL_FLAGS_NONE,
+						-1, NULL, &error);
+	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
 		g_print ("%s: %s\n", _("The request failed"), error->message);
 		g_error_free (error);
 		goto out;
 	}
 
-	/* no data */
-	if (profile_data_array->len == 0) {
-		/* TRANSLATORS: no rofile has been asigned to this device type */
+	/* unpack the array */
+	g_variant_get (response, "(a(ss))", &iter);
+	if (g_variant_iter_n_children (iter) == 0) {
+		/* TRANSLATORS: no profile has been asigned to this device */
 		g_print ("%s\n", _("There are no ICC profiles for this device type"));
 		goto out;
 	}
@@ -391,52 +398,74 @@ gcm_inspect_show_profiles_for_type (const gchar *type)
 	/* TRANSLATORS: this is a list of profiles suitable for the device */
 	g_print ("%s %s\n", _("Suitable profiles for:"), type);
 
-	/* list each entry */
-	for (i=0; i<profile_data_array->len; i++) {
-		gva = (GValueArray *) g_ptr_array_index (profile_data_array, i);
-		/* 0 */
-		gv = g_value_array_get_nth (gva, 0);
-		title = g_value_dup_string (gv);
-		g_value_unset (gv);
-		/* 1 */
-		gv = g_value_array_get_nth (gva, 1);
-		profile = g_value_dup_string (gv);
-		g_value_unset (gv);
+	/* for each entry in the array */
+	while (g_variant_iter_loop (iter, "(ss)", &filename, &description))
+		g_print ("%i.\t%s\n\t%s\n", ++i, description, filename);
 
-		/* done */
-		g_print ("%i.\t%s\n\t%s\n", i+1, title, profile);
-		g_value_array_free (gva);
-		g_free (title);
-		g_free (profile);
-	}
+	/* success */
+	ret = TRUE;
 out:
-	if (profile_data_array != NULL)
-		g_ptr_array_free (profile_data_array, TRUE);
-	g_object_unref (proxy);
+	if (iter != NULL)
+		g_variant_iter_free (iter);
+	if (response != NULL)
+		g_variant_unref (response);
 	return ret;
 }
 
 /**
- * gcm_inspect_get_properties_collect_cb:
+ * gcm_inspect_proxy_appeared_cb:
  **/
 static void
-gcm_inspect_get_properties_collect_cb (const char *key, const GValue *value, gpointer user_data)
+gcm_inspect_proxy_appeared_cb (GDBusConnection *connection,
+                               const gchar *name,
+                               const gchar *name_owner,
+                               GDBusProxy *proxy,
+                               GMainLoop *loop)
 {
-	if (g_strcmp0 (key, "RenderingIntentDisplay") == 0) {
+	GVariant *result;
+
+	/* get rendering intents */
+	result = g_dbus_proxy_get_cached_property (proxy, "RenderingIntentDisplay");
+	if (result != NULL) {
 		/* TRANSLATORS: this is the rendering intent of the output */
-		g_print ("%s %s\n", _("Rendering intent (display):"), g_value_get_string (value));
-	} else if (g_strcmp0 (key, "RenderingIntentSoftproof") == 0) {
-		/* TRANSLATORS: this is the rendering intent of the printer */
-		g_print ("%s %s\n", _("Rendering intent (softproof):"), g_value_get_string (value));
-	} else if (g_strcmp0 (key, "ColorspaceRgb") == 0) {
-		/* TRANSLATORS: this is filename of the default colorspace */
-		g_print ("%s %s\n", _("RGB Colorspace:"), g_value_get_string (value));
-	} else if (g_strcmp0 (key, "ColorspaceCmyk") == 0) {
-		/* TRANSLATORS: this is filename of the default colorspace */
-		g_print ("%s %s\n", _("CMYK Colorspace:"), g_value_get_string (value));
-	} else {
-		egg_warning ("unhandled property '%s'", key);
+		g_print ("%s:\t%s\n", _("Rendering intent (display)"), g_variant_get_string (result, NULL));
+		g_variant_unref (result);
 	}
+	result = g_dbus_proxy_get_cached_property (proxy, "RenderingIntentSoftproof");
+	if (result != NULL) {
+		/* TRANSLATORS: this is the rendering intent of the printer */
+		g_print ("%s:\t%s\n", _("Rendering intent (softproof)"), g_variant_get_string (result, NULL));
+		g_variant_unref (result);
+	}
+
+	/* get colorspaces */
+	result = g_dbus_proxy_get_cached_property (proxy, "RenderingIntentDisplay");
+	if (result != NULL) {
+		/* TRANSLATORS: this is the rendering intent of the output */
+		g_print ("%s:\t%s\n", _("RGB Colorspace"), g_variant_get_string (result, NULL));
+		g_variant_unref (result);
+	}
+	result = g_dbus_proxy_get_cached_property (proxy, "RenderingIntentSoftproof");
+	if (result != NULL) {
+		/* TRANSLATORS: this is the rendering intent of the printer */
+		g_print ("%s:\t%s\n", _("CMYK Colorspace"), g_variant_get_string (result, NULL));
+		g_variant_unref (result);
+	}
+
+	g_main_loop_quit (loop);
+}
+
+/**
+ * gcm_inspect_proxy_vanished_cb:
+ **/
+static void
+gcm_inspect_proxy_vanished_cb (GDBusConnection *connection,
+                               const gchar *name,
+                               GMainLoop *loop)
+{
+	/* TRANSLATORS: the DBus method failed */
+	g_print ("%s\n", _("The request failed"));
+	g_main_loop_quit (loop);
 }
 
 /**
@@ -445,44 +474,24 @@ gcm_inspect_get_properties_collect_cb (const char *key, const GValue *value, gpo
 static gboolean
 gcm_inspect_get_properties (void)
 {
-	gboolean ret;
-	DBusGConnection *connection;
-	DBusGProxy *proxy;
-	GError *error = NULL;
-	gchar **profiles = NULL;
-	GHashTable *hash = NULL;
+	guint proxy_id;
+	GMainLoop *loop = NULL;
 
-	/* get a session bus connection */
-	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
-
-	/* connect to the interface */
-	proxy = dbus_g_proxy_new_for_name (connection,
-					   "org.gnome.ColorManager",
-					   "/org/gnome/ColorManager",
-					   "org.freedesktop.DBus.Properties");
-
-	/* execute sync method */
-	ret = dbus_g_proxy_call (proxy, "GetAll", &error,
-				 G_TYPE_STRING, "org.gnome.ColorManager",
-				 G_TYPE_INVALID,
-				 dbus_g_type_get_map ("GHashTable", G_TYPE_STRING, G_TYPE_VALUE), &hash,
-				 G_TYPE_INVALID);
-	if (!ret) {
-		/* TRANSLATORS: the DBus method failed */
-		g_print ("%s: %s\n", _("The request failed"), error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* process results */
-	if (hash != NULL)
-		g_hash_table_foreach (hash, (GHFunc) gcm_inspect_get_properties_collect_cb, NULL);
-out:
-	if (hash != NULL)
-		g_hash_table_unref (hash);
-	g_object_unref (proxy);
-	g_strfreev (profiles);
-	return ret;
+	loop = g_main_loop_new (NULL, FALSE);
+	proxy_id = g_bus_watch_proxy (G_BUS_TYPE_SESSION,
+				      GCM_DBUS_SERVICE,
+				      G_BUS_NAME_WATCHER_FLAGS_AUTO_START,
+				      GCM_DBUS_PATH,
+				      GCM_DBUS_INTERFACE,
+				      G_TYPE_DBUS_PROXY,
+				      G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS,
+				      (GBusProxyAppearedCallback) gcm_inspect_proxy_appeared_cb,
+				      (GBusProxyVanishedCallback) gcm_inspect_proxy_vanished_cb,
+				      loop, /* user_data */
+				      NULL); /* user_data_free_func */
+	g_main_loop_run (loop);
+	g_bus_unwatch_proxy (proxy_id);
+	return TRUE;
 }
 
 /**
