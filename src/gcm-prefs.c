@@ -620,7 +620,7 @@ gcm_prefs_profile_add_virtual_file (GFile *file)
 						     gcm_exif_get_device_kind (exif),
 						     gcm_exif_get_model (exif),
 						     gcm_exif_get_manufacturer (exif),
-						     /* FIXME: serial?! */
+						     gcm_exif_get_serial (exif),
 						     GCM_COLORSPACE_RGB);
 	if (!ret) {
 		/* TRANSLATORS: could not add virtual device */
@@ -1030,7 +1030,9 @@ gcm_prefs_button_virtual_add_cb (GtkWidget *widget, gpointer data)
 
 	/* create device */
 	device = gcm_device_virtual_new	();
-	ret = gcm_device_virtual_create_from_params (GCM_DEVICE_VIRTUAL (device), device_kind, model, manufacturer, GCM_COLORSPACE_RGB);
+	ret = gcm_device_virtual_create_from_params (GCM_DEVICE_VIRTUAL (device),
+						     device_kind, model, manufacturer,
+						     NULL, GCM_COLORSPACE_RGB);
 	if (!ret) {
 		/* TRANSLATORS: could not add virtual device */
 		gcm_prefs_error_dialog (_("Failed to create virtual device"), NULL);
