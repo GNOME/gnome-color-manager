@@ -93,6 +93,11 @@ gcm_exif_parse_tiff (GcmExif *exif, const gchar *filename, GError **error)
 		goto out;
 	}
 
+	/* free old versions */
+	g_free (priv->manufacturer);
+	g_free (priv->model);
+	g_free (priv->serial);
+
 	/* create copies for ourselves */
 	priv->manufacturer = g_strdup (manufacturer);
 	priv->model = g_strdup (model);
@@ -149,6 +154,11 @@ gcm_exif_parse_jpeg (GcmExif *exif, const gchar *filename, GError **error)
 		ret = FALSE;
 		goto out;
 	}
+
+	/* free old versions */
+	g_free (priv->manufacturer);
+	g_free (priv->model);
+	g_free (priv->serial);
 
 	/* create copies for ourselves */
 	priv->manufacturer = g_strdup (make);
