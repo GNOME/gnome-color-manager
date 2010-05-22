@@ -521,7 +521,7 @@ gcm_utils_get_default_config_location (void)
 	}
 
 	/* create default path */
-	filename = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "device-profiles.conf", NULL);
+	filename = g_build_filename (g_get_user_config_dir (), "color", "device-profiles.conf", NULL);
 out:
 	return filename;
 }
