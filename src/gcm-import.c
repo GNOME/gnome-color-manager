@@ -202,7 +202,7 @@ main (int argc, char **argv)
 	if (response != GTK_RESPONSE_OK)
 		goto out;
 
-	/* copy icc file to ~/.color/icc */
+	/* copy icc file to users profile path */
 	ret = gcm_utils_mkdir_and_copy (file, destination, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */

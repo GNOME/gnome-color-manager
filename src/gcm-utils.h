@@ -30,7 +30,6 @@
 #include "gcm-enum.h"
 
 #define GCM_STOCK_ICON					"gnome-color-manager"
-#define GCM_PROFILE_PATH				"/.color/icc"
 #define GCM_DBUS_SERVICE				"org.gnome.ColorManager"
 #define GCM_DBUS_INTERFACE				"org.gnome.ColorManager"
 #define GCM_DBUS_PATH					"/org/gnome/ColorManager"

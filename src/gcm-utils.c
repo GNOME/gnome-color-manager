@@ -396,7 +396,7 @@ gcm_utils_get_profile_destination (GFile *file)
 
 	/* get destination filename for this source file */
 	basename = g_file_get_basename (file);
-	destination = g_build_filename (g_get_home_dir (), GCM_PROFILE_PATH, basename, NULL);
+	destination = g_build_filename (g_get_user_data_dir (), "icc", basename, NULL);
 	dest = g_file_new_for_path (destination);
 
 	g_free (basename);

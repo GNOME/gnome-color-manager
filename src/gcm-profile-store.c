@@ -409,7 +409,7 @@ gcm_profile_store_add_profiles (GcmProfileStore *profile_store)
 		gcm_profile_store_add_profiles_from_mounted_volumes (profile_store);
 
 	/* get Linux per-user profiles */
-	path = g_build_filename (g_get_home_dir (), ".color", "icc", NULL);
+	path = g_build_filename (g_get_user_data_dir (), "icc", NULL);
 	ret = gcm_utils_mkdir_with_parents (path, &error);
 	if (!ret) {
 		egg_error ("failed to create directory on startup: %s", error->message);
@@ -417,6 +417,11 @@ gcm_profile_store_add_profiles (GcmProfileStore *profile_store)
 	} else {
 		gcm_profile_store_add_profiles_for_path (profile_store, path);
 	}
+	g_free (path);
+
+	/* get per-user profiles from obsolete location */
+	path = g_build_filename (g_get_home_dir (), ".color", "icc", NULL);
+	gcm_profile_store_add_profiles_for_path (profile_store, path);
 	g_free (path);
 
 	/* get OSX per-user profiles */
