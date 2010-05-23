@@ -73,6 +73,7 @@ struct _GcmClientPrivate
 	gchar				*display_name;
 	GPtrArray			*array;
 	GUdevClient			*gudev_client;
+	GSettings			*settings;
 	GcmScreen			*screen;
 	http_t				*http;
 	gboolean			 loading;
@@ -975,6 +976,68 @@ out:
 }
 
 /**
+ * gcm_client_possibly_migrate_config_file:
+ *
+ * Copy the configuration file from ~/.config/gnome-color-manager to ~/.config/color
+ **/
+static gboolean
+gcm_client_possibly_migrate_config_file (GcmClient *client)
+{
+	gchar *dest = NULL;
+	gchar *source = NULL;
+	GFile *gdest = NULL;
+	GFile *gsource = NULL;
+	gboolean ret = FALSE;
+	gboolean done_migration;
+	GError *error = NULL;
+
+	/* have we already attempted this (check first to avoid stating a file */
+	done_migration = g_settings_get_boolean (client->priv->settings, GCM_SETTINGS_DONE_MIGRATION);
+	if (done_migration)
+		goto out;
+
+	/* create default path */
+	source = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "device-profiles.conf", NULL);
+	gsource = g_file_new_for_path (source);
+
+	/* no old profile */
+	ret = g_file_query_exists (gsource, NULL);
+	if (!ret) {
+		g_settings_set_boolean (client->priv->settings, GCM_SETTINGS_DONE_MIGRATION, TRUE);
+		goto out;
+	}
+
+	/* ensure new root exists */
+	dest = gcm_utils_get_default_config_location ();
+	ret = gcm_utils_mkdir_for_filename (dest, &error);
+	if (!ret) {
+		egg_warning ("failed to create new tree: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* copy to new root */
+	gdest = g_file_new_for_path (dest);
+	ret = g_file_copy (gsource, gdest, G_FILE_COPY_NONE, NULL, NULL, NULL, &error);
+	if (!ret) {
+		egg_warning ("failed to copy: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* do not attempt to migrate this again */
+	g_settings_set_boolean (client->priv->settings, GCM_SETTINGS_DONE_MIGRATION, TRUE);
+out:
+	g_free (source);
+	g_free (dest);
+	if (gsource != NULL)
+		g_object_unref (gsource);
+	if (gdest != NULL)
+		g_object_unref (gdest);
+	return ret;
+}
+
+/**
  * gcm_client_add_saved:
  **/
 gboolean
@@ -986,6 +1049,9 @@ gcm_client_add_saved (GcmClient *client, GError **error)
 	gchar **groups = NULL;
 	guint i;
 	GcmDevice *device;
+
+	/* copy from old location */
+	gcm_client_possibly_migrate_config_file (client);
 
 	/* get the config file */
 	filename = gcm_utils_get_default_config_location ();
@@ -1033,6 +1099,9 @@ gcm_client_add_connected (GcmClient *client, GcmClientColdplug coldplug, GError 
 	GThread *thread;
 
 	g_return_val_if_fail (GCM_IS_CLIENT (client), FALSE);
+
+	/* copy from old location */
+	gcm_client_possibly_migrate_config_file (client);
 
 	/* reset */
 	client->priv->loading_refcount = 0;
@@ -1374,6 +1443,7 @@ gcm_client_init (GcmClient *client)
 	client->priv->use_threads = FALSE;
 	client->priv->init_cups = FALSE;
 	client->priv->init_sane = FALSE;
+	client->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 	client->priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	client->priv->screen = gcm_screen_new ();
 	g_signal_connect (client->priv->screen, "outputs-changed",
@@ -1406,6 +1476,7 @@ gcm_client_finalize (GObject *object)
 	g_ptr_array_unref (priv->array);
 	g_object_unref (priv->gudev_client);
 	g_object_unref (priv->screen);
+	g_object_unref (priv->settings);
 	if (client->priv->init_cups)
 		httpClose (priv->http);
 #ifdef GCM_USE_SANE
