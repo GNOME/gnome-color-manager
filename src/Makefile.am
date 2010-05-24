@@ -11,6 +11,7 @@ INCLUDES =						\
 	$(SANE_CFLAGS)					\
 	$(TIFF_CFLAGS)					\
 	$(EXIF_CFLAGS)					\
+	$(EXIV_CFLAGS)					\
 	$(NOTIFY_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
 	$(DBUS_GLIB_CFLAGS)				\
@@ -18,6 +19,7 @@ INCLUDES =						\
 	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
 	$(GUDEV_CFLAGS)					\
 	-DBINDIR=\"$(bindir)\"				\
+	-DLIBEXECDIR=\"$(libexecdir)\"			\
 	-DSBINDIR=\"$(sbindir)\"			\
 	-DDATADIR=\"$(datadir)\"			\
 	-DSYSCONFDIR=\""$(sysconfdir)"\"		\
@@ -111,6 +113,12 @@ bin_PROGRAMS =						\
 	gcm-session					\
 	gcm-picker					\
 	gcm-import
+
+if GCM_USE_EXIV
+libexec_PROGRAMS = gcm-helper-exiv
+gcm_helper_exiv_SOURCES = gcm-helper-exiv.cpp
+gcm_helper_exiv_LDADD = $(EXIV_LIBS)
+endif
 
 gcm_install_system_wide_SOURCES =			\
 	gcm-install-system-wide.c

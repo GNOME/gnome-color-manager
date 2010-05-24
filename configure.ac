@@ -10,6 +10,7 @@ AC_CONFIG_MACRO_DIR([m4])
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
 AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_INSTALL
 AC_PROG_RANLIB
 LT_INIT
@@ -145,6 +146,17 @@ if test x$enable_sane = xyes; then
 	AC_DEFINE(GCM_USE_SANE,1,[Use SANE support for detecting scanners])
 fi
 
+AC_ARG_ENABLE(exiv, AS_HELP_STRING([--enable-exiv],[Enable EXIV support for RAW support]), enable_exiv=$enableval,
+				   enable_exiv=yes)
+dnl **** Check for EXIV ****
+if test x$enable_exiv != xno; then
+	PKG_CHECK_MODULES(EXIV, exiv2)
+fi
+AM_CONDITIONAL(GCM_USE_EXIV, test x$enable_exiv = xyes)
+if test x$enable_exiv = xyes; then
+	AC_DEFINE(GCM_USE_EXIV,1,[Use EXIV support for detecting scanners])
+fi
+
 PKG_CHECK_MODULES(CANBERRA, libcanberra-gtk >= $CANBERRA_REQUIRED)
 
 PKG_CHECK_MODULES(EXIF, libexif)
@@ -269,6 +281,7 @@ echo "
         cppflags:                  ${CPPFLAGS}
         PackageKit integration:    ${enable_packagekit}
         SANE support:              ${enable_sane}
+        RAW support:               ${enable_exiv}
         building unit tests:       ${enable_tests}
 "
 

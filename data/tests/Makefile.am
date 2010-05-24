@@ -2,6 +2,7 @@ TEST_FILES =						\
 	test.tif					\
 	test.png					\
 	test.jpg					\
+	test.kdc					\
 	cie-widget.png					\
 	gamma-widget.png				\
 	ibm-t61.icc					\

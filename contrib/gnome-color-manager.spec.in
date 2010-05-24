@@ -40,6 +40,7 @@ BuildRequires: cups-devel
 BuildRequires: sane-backends-devel
 BuildRequires: libtiff-devel
 BuildRequires: libexif-devel
+BuildRequires: exiv2-devel
 BuildRequires: libcanberra-devel
 BuildRequires: libnotify-devel
 BuildRequires: glib2-devel >= 2.25.1
@@ -92,6 +93,7 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
 %doc AUTHORS COPYING NEWS README
 /lib/udev/rules.d/*.rules
 %{_bindir}/gcm-*
+%{_libexecdir}/*
 %dir %{_datadir}/gnome-color-manager
 %{_datadir}/gnome-color-manager/gcm-*.ui
 %dir %{_datadir}/gnome-color-manager/targets
