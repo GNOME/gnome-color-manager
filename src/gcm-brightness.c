@@ -29,7 +29,7 @@
 #include "config.h"
 
 #include <glib-object.h>
-#include <dbus/dbus-glib.h>
+#include <gio/gio.h>
 
 #include "gcm-brightness.h"
 
@@ -47,8 +47,7 @@ static void     gcm_brightness_finalize	(GObject     *object);
 struct _GcmBrightnessPrivate
 {
 	guint				 percentage;
-	DBusGProxy			*proxy;
-	DBusGConnection			*connection;
+	GDBusConnection			*connection;
 };
 
 enum {
@@ -71,24 +70,40 @@ gcm_brightness_set_percentage (GcmBrightness *brightness, guint percentage, GErr
 {
 	GcmBrightnessPrivate *priv = brightness->priv;
 	gboolean ret = FALSE;
+	GVariant *args = NULL;
+	GVariant *response = NULL;
 
 	g_return_val_if_fail (GCM_IS_BRIGHTNESS (brightness), FALSE);
 	g_return_val_if_fail (percentage <= 100, FALSE);
 
-	/* are we connected */
-	if (priv->proxy == NULL) {
-		g_set_error_literal (error, 1, 0, "not connected to gnome-power-manager");
-		goto out;
+	/* get a session bus connection */
+	if (priv->connection == NULL) {
+		priv->connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, error);
+		if (priv->connection == NULL)
+			goto out;
 	}
 
-	/* set the brightness */
-	ret = dbus_g_proxy_call (priv->proxy, "SetBrightness", error,
-				 G_TYPE_UINT, percentage,
-				 G_TYPE_INVALID,
-				 G_TYPE_INVALID);
-	if (!ret)
+	/* execute sync method */
+	args = g_variant_new ("(u)", percentage),
+	response = g_dbus_connection_call_sync (priv->connection,
+						GPM_DBUS_SERVICE,
+						GPM_DBUS_PATH_BACKLIGHT,
+						GPM_DBUS_INTERFACE_BACKLIGHT,
+						"SetBrightness",
+						args,
+						NULL,
+						G_DBUS_CALL_FLAGS_NONE,
+						-1, NULL, error);
+	if (response == NULL)
 		goto out;
+
+	/* success */
+	ret = TRUE;
 out:
+	if (args != NULL)
+		g_variant_unref (args);
+	if (response != NULL)
+		g_variant_unref (response);
 	return ret;
 }
 
@@ -100,27 +115,42 @@ gcm_brightness_get_percentage (GcmBrightness *brightness, guint *percentage, GEr
 {
 	GcmBrightnessPrivate *priv = brightness->priv;
 	gboolean ret = FALSE;
+	GVariant *response = NULL;
 
 	g_return_val_if_fail (GCM_IS_BRIGHTNESS (brightness), FALSE);
 
-	/* are we connected */
-	if (priv->proxy == NULL) {
-		g_set_error_literal (error, 1, 0, "not connected to gnome-power-manager");
-		goto out;
+	/* get a session bus connection */
+	if (priv->connection == NULL) {
+		priv->connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, error);
+		if (priv->connection == NULL)
+			goto out;
 	}
 
-	/* get the brightness */
-	ret = dbus_g_proxy_call (priv->proxy, "GetBrightness", error,
-				 G_TYPE_INVALID,
-				 G_TYPE_UINT, &priv->percentage,
-				 G_TYPE_INVALID);
-	if (!ret)
+	/* execute sync method */
+	response = g_dbus_connection_call_sync (priv->connection,
+						GPM_DBUS_SERVICE,
+						GPM_DBUS_PATH_BACKLIGHT,
+						GPM_DBUS_INTERFACE_BACKLIGHT,
+						"GetBrightness",
+						NULL,
+						G_VARIANT_TYPE ("(u)"),
+						G_DBUS_CALL_FLAGS_NONE,
+						-1, NULL, error);
+	if (response == NULL)
 		goto out;
+
+	/* get the brightness */
+	g_variant_get (response, "(u)", &priv->percentage);
 
 	/* copy if set */
 	if (percentage != NULL)
 		*percentage = priv->percentage;
+
+	/* success */
+	ret = TRUE;
 out:
+	if (response != NULL)
+		g_variant_unref (response);
 	return ret;
 }
 
@@ -185,26 +215,8 @@ gcm_brightness_class_init (GcmBrightnessClass *klass)
 static void
 gcm_brightness_init (GcmBrightness *brightness)
 {
-	GError *error = NULL;
-
 	brightness->priv = GCM_BRIGHTNESS_GET_PRIVATE (brightness);
 	brightness->priv->percentage = 0;
-
-	/* get a session connection */
-	brightness->priv->connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
-	if (brightness->priv->connection == NULL) {
-		egg_warning ("Could not connect to DBUS daemon: %s", error->message);
-		g_error_free (error);
-		return;
-	}
-
-	/* get a proxy to gnome-power-manager */
-	brightness->priv->proxy = dbus_g_proxy_new_for_name_owner (brightness->priv->connection,
-								   GPM_DBUS_SERVICE, GPM_DBUS_PATH_BACKLIGHT, GPM_DBUS_INTERFACE_BACKLIGHT, &error);
-	if (brightness->priv->proxy == NULL) {
-		egg_warning ("Cannot connect, maybe gnome-power-manager is not running: %s\n", error->message);
-		g_error_free (error);
-	}
 }
 
 /**
@@ -216,8 +228,8 @@ gcm_brightness_finalize (GObject *object)
 	GcmBrightness *brightness = GCM_BRIGHTNESS (object);
 	GcmBrightnessPrivate *priv = brightness->priv;
 
-	if (priv->proxy != NULL)
-		g_object_unref (priv->proxy);
+	if (priv->connection != NULL)
+		g_object_unref (priv->connection);
 
 	G_OBJECT_CLASS (gcm_brightness_parent_class)->finalize (object);
 }
