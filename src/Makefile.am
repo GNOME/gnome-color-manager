@@ -28,7 +28,7 @@ INCLUDES =						\
 	-DGCM_DATA=\"$(pkgdatadir)\"
 
 introspectiondir = $(datadir)/dbus-1/interfaces
-introspection_DATA = org.gnome.ColorManager.xml
+dist_introspection_DATA = org.gnome.ColorManager.xml
 
 noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\
