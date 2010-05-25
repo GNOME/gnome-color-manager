@@ -728,6 +728,7 @@ main (int argc, char *argv[])
 	gboolean ret;
 	guint retval = 1;
 	guint owner_id = 0;
+	guint poll_id = 0;
 	GFile *file = NULL;
 	gchar *introspection_data = NULL;
 
@@ -812,9 +813,13 @@ main (int argc, char *argv[])
 				   gcm_session_on_name_lost,
 				   NULL, NULL);
 
-	/* only timeout if we have specified iton the command line */
-	if (!no_timed_exit)
-		g_timeout_add_seconds (5, (GSourceFunc) gcm_session_check_idle_cb, NULL);
+	/* only timeout if we have specified it on the command line */
+	if (!no_timed_exit) {
+		poll_id = g_timeout_add_seconds (5, (GSourceFunc) gcm_session_check_idle_cb, NULL);
+#if GLIB_CHECK_VERSION(2,25,8)
+		g_source_set_name_by_id (poll_id, "[GcmSession] inactivity checker");
+#endif
+	}
 
 	/* wait */
 	g_main_loop_run (loop);
@@ -823,6 +828,8 @@ main (int argc, char *argv[])
 	retval = 0;
 out:
 	g_free (introspection_data);
+	if (poll_id != 0)
+		g_source_remove (poll_id);
 	if (file != NULL)
 		g_object_unref (file);
 	if (owner_id > 0)

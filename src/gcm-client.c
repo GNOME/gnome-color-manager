@@ -81,6 +81,7 @@ struct _GcmClientPrivate
 	gboolean			 use_threads;
 	gboolean			 init_cups;
 	gboolean			 init_sane;
+	guint				 refresh_id;
 };
 
 enum {
@@ -442,7 +443,14 @@ gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevic
 			}
 
 			/* find any others that might still be connected */
-			g_timeout_add (GCM_CLIENT_SANE_REMOVED_TIMEOUT, (GSourceFunc) gcm_client_sane_refresh_cb, client);
+			if (priv->refresh_id != 0)
+				g_source_remove (priv->refresh_id);
+			priv->refresh_id = g_timeout_add (GCM_CLIENT_SANE_REMOVED_TIMEOUT,
+							  (GSourceFunc) gcm_client_sane_refresh_cb,
+							  client);
+#if GLIB_CHECK_VERSION(2,25,8)
+			g_source_set_name_by_id (priv->refresh_id, "[GcmClient] refresh due to device remove");
+#endif
 		}
 #endif
 
@@ -454,8 +462,16 @@ gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevic
 #ifdef GCM_USE_SANE
 		/* we need to rescan scanner devices */
 		value = g_udev_device_get_property (udev_device, "GCM_RESCAN");
-		if (g_strcmp0 (value, "scanner") == 0)
-			g_timeout_add (GCM_CLIENT_SANE_REMOVED_TIMEOUT, (GSourceFunc) gcm_client_sane_refresh_cb, client);
+		if (g_strcmp0 (value, "scanner") == 0) {
+			if (priv->refresh_id != 0)
+				g_source_remove (priv->refresh_id);
+			priv->refresh_id = g_timeout_add (GCM_CLIENT_SANE_REMOVED_TIMEOUT,
+							  (GSourceFunc) gcm_client_sane_refresh_cb,
+							  client);
+#if GLIB_CHECK_VERSION(2,25,8)
+			g_source_set_name_by_id (priv->refresh_id, "[GcmClient] refresh due to device add");
+#endif
+		}
 #endif
 	}
 }
@@ -1419,6 +1435,10 @@ gcm_client_finalize (GObject *object)
 	GcmClientPrivate *priv = client->priv;
 	GcmDevice *device;
 	guint i;
+
+	/* disconnect anything that's about to fire */
+	if (priv->refresh_id != 0)
+		g_source_remove (priv->refresh_id);
 
 	/* do not respond to changed events */
 	for (i=0; i<priv->array->len; i++) {

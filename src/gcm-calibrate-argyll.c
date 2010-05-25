@@ -84,6 +84,7 @@ struct _GcmCalibrateArgyllPrivate
 	GcmPrint			*print;
 	const gchar			*argyllcms_ok;
 	gboolean			 done_spot_read;
+	guint				 keypress_id;
 };
 
 enum {
@@ -2234,7 +2235,12 @@ gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 	/* different tools assume the device is not on the screen */
 	if (priv->already_on_window) {
 		egg_debug ("VTE: already on screen so faking keypress");
-		g_timeout_add_seconds (1, (GSourceFunc) gcm_calibrate_argyll_timeout_cb, calibrate_argyll);
+		priv->keypress_id = g_timeout_add_seconds (1,
+							   (GSourceFunc) gcm_calibrate_argyll_timeout_cb,
+							   calibrate_argyll);
+#if GLIB_CHECK_VERSION(2,25,8)
+		g_source_set_name_by_id (priv->keypress_id, "[GcmCalibrateArgyll] keypress faker");
+#endif
 		goto out;
 	}
 
@@ -2953,6 +2959,9 @@ gcm_calibrate_argyll_finalize (GObject *object)
 
 	/* hide */
 	gcm_calibrate_dialog_hide (priv->calibrate_dialog);
+
+	if (priv->keypress_id != 0)
+		g_source_remove (priv->keypress_id);
 
 	g_main_loop_unref (priv->loop);
 	g_object_unref (priv->screen);

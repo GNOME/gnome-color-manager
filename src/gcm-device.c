@@ -130,6 +130,9 @@ gcm_device_changed (GcmDevice *device)
 						       (GSourceFunc) gcm_device_changed_cb,
 						       g_object_ref (device),
 						       (GDestroyNotify) g_object_unref);
+#if GLIB_CHECK_VERSION(2,25,8)
+	g_source_set_name_by_id (device->priv->changed_id, "[GcmDevice] device changed");
+#endif
 out:
 	/* unlock */
 	g_static_mutex_unlock (&mutex);
