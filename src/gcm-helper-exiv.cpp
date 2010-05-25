@@ -80,7 +80,6 @@ main (int argc, char* const argv[])
 		std::cout << "Failed to load: " << e << "\n";
 		retval = -1;
 	}
-out:
 	return retval;
 }
 

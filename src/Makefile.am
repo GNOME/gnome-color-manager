@@ -120,6 +120,7 @@ if GCM_USE_EXIV
 libexec_PROGRAMS = gcm-helper-exiv
 gcm_helper_exiv_SOURCES = gcm-helper-exiv.cpp
 gcm_helper_exiv_LDADD = $(EXIV_LIBS)
+gcm_helper_exiv_CXXFLAGS = -Wall
 endif
 
 gcm_install_system_wide_SOURCES =			\
