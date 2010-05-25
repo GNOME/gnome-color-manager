@@ -14,7 +14,6 @@ INCLUDES =						\
 	$(EXIV_CFLAGS)					\
 	$(NOTIFY_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
-	$(DBUS_GLIB_CFLAGS)				\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
 	$(GUDEV_CFLAGS)					\
@@ -27,6 +26,9 @@ INCLUDES =						\
 	-DLOCALEDIR=\""$(localedir)"\"			\
 	-DGCM_SYSTEM_PROFILES_DIR="\"$(GCM_SYSTEM_PROFILES_DIR)"\" \
 	-DGCM_DATA=\"$(pkgdatadir)\"
+
+introspectiondir = $(datadir)/dbus-1/interfaces
+introspection_DATA = org.gnome.ColorManager.xml
 
 noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\
@@ -140,7 +142,6 @@ gcm_dump_edid_LDADD =					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
-	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
@@ -160,7 +161,6 @@ gcm_dump_profile_LDADD =				\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
-	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
@@ -195,7 +195,6 @@ gcm_inspect_LDADD =					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
-	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
@@ -215,7 +214,6 @@ gcm_apply_LDADD =					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
-	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
@@ -235,7 +233,6 @@ gcm_import_LDADD =					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
-	$(DBUS_GLIB_LIBS)				\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
@@ -256,7 +253,6 @@ gcm_prefs_LDADD =					\
 	$(VTE_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
-	$(DBUS_GLIB_LIBS)				\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
@@ -281,7 +277,6 @@ gcm_picker_LDADD =					\
 	$(VTE_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
-	$(DBUS_GLIB_LIBS)				\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
@@ -295,8 +290,6 @@ gcm_picker_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_session_SOURCES =					\
-	gcm-dbus.c					\
-	gcm-dbus.h					\
 	gcm-session.c
 
 gcm_session_LDADD =					\
@@ -307,7 +300,6 @@ gcm_session_LDADD =					\
 	$(UNIQUE_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
-	$(DBUS_GLIB_LIBS)				\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(TIFF_LIBS)					\
@@ -337,7 +329,6 @@ gcm_self_test_LDADD =					\
 	$(UNIQUE_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
-	$(DBUS_GLIB_LIBS)				\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
@@ -352,13 +343,6 @@ TESTS = gcm-self-test
 
 endif
 
-org.gnome.ColorManager.h: org.gnome.ColorManager.xml
-	$(LIBTOOL) --mode=execute dbus-binding-tool	\
-		--prefix=gcm_dbus			\
-		--mode=glib-server			\
-		--output=org.gnome.ColorManager.h	\
-		$(srcdir)/org.gnome.ColorManager.xml
-
 install-data-hook:
 	if test -w $(DESTDIR)$(prefix)/; then \
 		mkdir -p $(DESTDIR)$(GCM_SYSTEM_PROFILES_DIR); \
@@ -372,10 +356,4 @@ CLEANFILES = $(BUILT_SOURCES)
 MAINTAINERCLEANFILES =					\
 	*~						\
 	Makefile.in
-
-EXTRA_DIST =						\
-	org.gnome.ColorManager.xml
-
-BUILT_SOURCES =						\
-	org.gnome.ColorManager.h
 

@@ -22,83 +22,42 @@
 #include "config.h"
 
 #include <glib/gi18n.h>
-#include <dbus/dbus-glib.h>
 #include <gtk/gtk.h>
 #include <locale.h>
 #include <libnotify/notify.h>
 
 #include "egg-debug.h"
-#include "gcm-dbus.h"
+
 #include "gcm-client.h"
+#include "gcm-device-xrandr.h"
+#include "gcm-exif.h"
 #include "gcm-device.h"
 #include "gcm-utils.h"
-#include "org.gnome.ColorManager.h"
+#include "gcm-client.h"
+#include "gcm-profile-store.h"
 
 static GMainLoop *loop = NULL;
 static GSettings *settings = NULL;
+static GDBusNodeInfo *introspection = NULL;
+static GcmClient *client = NULL;
+static GcmProfileStore *profile_store = NULL;
+static GTimer *timer = NULL;
+static GDBusConnection *connection = NULL;
 
 #define GCM_SESSION_IDLE_EXIT		60 /* seconds */
 #define GCM_SESSION_NOTIFY_TIMEOUT	30000 /* ms */
 
 /**
- * gcm_session_object_register:
- * @connection: What we want to register to
- * @object: The GObject we want to register
- *
- * Return value: success
- **/
-static gboolean
-gcm_session_object_register (DBusGConnection *connection, GObject *object)
-{
-	DBusGProxy *bus_proxy = NULL;
-	GError *error = NULL;
-	guint request_name_result;
-	gboolean ret;
-
-	/* connect to the bus */
-	bus_proxy = dbus_g_proxy_new_for_name (connection, DBUS_SERVICE_DBUS,
-					       DBUS_PATH_DBUS, DBUS_INTERFACE_DBUS);
-
-	/* get our name */
-	ret = dbus_g_proxy_call (bus_proxy, "RequestName", &error,
-				 G_TYPE_STRING, GCM_DBUS_SERVICE,
-				 G_TYPE_UINT, DBUS_NAME_FLAG_ALLOW_REPLACEMENT |
-					      DBUS_NAME_FLAG_REPLACE_EXISTING |
-					      DBUS_NAME_FLAG_DO_NOT_QUEUE,
-				 G_TYPE_INVALID,
-				 G_TYPE_UINT, &request_name_result,
-				 G_TYPE_INVALID);
-	if (ret == FALSE) {
-		/* abort as the DBUS method failed */
-		egg_warning ("RequestName failed: %s", error->message);
-		g_error_free (error);
-		return FALSE;
-	}
-
-	/* free the bus_proxy */
-	g_object_unref (G_OBJECT (bus_proxy));
-
-	/* already running */
-	if (request_name_result != DBUS_REQUEST_NAME_REPLY_PRIMARY_OWNER)
-		return FALSE;
-
-	dbus_g_object_type_install_info (GCM_TYPE_DBUS, &dbus_glib_gcm_dbus_object_info);
-	dbus_g_error_domain_register (GCM_DBUS_ERROR, NULL, GCM_DBUS_TYPE_ERROR);
-	dbus_g_connection_register_g_object (connection, GCM_DBUS_PATH, object);
-
-	return TRUE;
-}
-
-/**
  * gcm_session_check_idle_cb:
  **/
 static gboolean
-gcm_session_check_idle_cb (GcmDbus *dbus)
+gcm_session_check_idle_cb (gpointer user_data)
 {
 	guint idle;
 
 	/* get the idle time */
-	idle = gcm_dbus_get_idle_time (dbus);
+	idle = (guint) g_timer_elapsed (timer, NULL);
+	egg_debug ("we've been idle for %is", idle);
 	if (idle > GCM_SESSION_IDLE_EXIT) {
 		egg_debug ("exiting loop as idle");
 		g_main_loop_quit (loop);
@@ -207,7 +166,7 @@ gcm_session_notify_device (GcmDevice *device)
  * gcm_session_added_cb:
  **/
 static void
-gcm_session_added_cb (GcmClient *client, GcmDevice *device, gpointer user_data)
+gcm_session_added_cb (GcmClient *client_, GcmDevice *device, gpointer user_data)
 {
 	GcmDeviceKind kind;
 	const gchar *profile;
@@ -246,19 +205,531 @@ out:
 }
 
 /**
+ * gcm_session_get_profile_for_window:
+ **/
+static const gchar *
+gcm_session_get_profile_for_window (guint xid, GError **error)
+{
+	GcmDevice *device;
+	GdkWindow *window;
+	const gchar *filename = NULL;
+
+	egg_debug ("getting profile for %i", xid);
+
+	/* get window for xid */
+	window = gdk_window_foreign_new (xid);
+	if (window == NULL) {
+		g_set_error (error, 1, 0, "failed to find window with xid %i", xid);
+		goto out;
+	}
+
+	/* get device for this window */
+	device = gcm_client_get_device_by_window (client, window);
+	if (device == NULL) {
+		g_set_error (error, 1, 0, "no device found for xid %i", xid);
+		goto out;
+	}
+
+	/* get the data */
+	filename = gcm_device_get_profile_filename (device);
+	if (filename == NULL) {
+		g_set_error (error, 1, 0, "no profiles found for xid %i", xid);
+		goto out;
+	}
+out:
+	if (window != NULL)
+		g_object_unref (window);
+	return filename;
+}
+
+/**
+ * gcm_session_get_profiles_for_kind:
+ **/
+static GPtrArray *
+gcm_session_get_profiles_for_kind (GcmDeviceKind kind, GError **error)
+{
+	guint i;
+	GcmProfile *profile;
+	GcmProfileKind profile_kind;
+	GcmProfileKind kind_tmp;
+	GPtrArray *array;
+	GPtrArray *profile_array;
+
+	/* create a temp array */
+	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+
+	/* get the correct profile kind for the device kind */
+	profile_kind = gcm_utils_device_kind_to_profile_kind (kind);
+
+	/* get list */
+	profile_array = gcm_profile_store_get_array (profile_store);
+	for (i=0; i<profile_array->len; i++) {
+		profile = g_ptr_array_index (profile_array, i);
+
+		/* compare what we have against what we were given */
+		kind_tmp = gcm_profile_get_kind (profile);
+		if (kind_tmp == profile_kind)
+			g_ptr_array_add (array, g_object_ref (profile));
+	}
+
+	/* unref profile list */
+	g_ptr_array_unref (profile_array);
+	return array;
+}
+
+/**
+ * gcm_session_variant_from_profile_array:
+ **/
+static GVariant *
+gcm_session_variant_from_profile_array (GPtrArray *array)
+{
+	guint i;
+	GcmProfile *profile;
+	GVariantBuilder *builder;
+	GVariant *value;
+
+	/* create builder */
+	builder = g_variant_builder_new (G_VARIANT_TYPE_ARRAY);
+
+	/* add each tuple to the array */
+	for (i=0; i<array->len; i++) {
+		profile = g_ptr_array_index (array, i);
+		g_variant_builder_add (builder, "(ss)",
+				       gcm_profile_get_filename (profile),
+				       gcm_profile_get_description (profile));
+	}
+
+	value = g_variant_builder_end (builder);
+	g_variant_builder_unref (builder);
+	return value;
+}
+
+/**
+ * gcm_session_get_profiles_for_file:
+ **/
+static GPtrArray *
+gcm_session_get_profiles_for_file (const gchar *filename, GError **error)
+{
+	guint i;
+	gboolean ret;
+	GcmExif *exif;
+	GcmDevice *device;
+	GPtrArray *array = NULL;
+	GPtrArray *array_devices;
+	GFile *file;
+	GFile *file_tmp;
+	GcmProfile *profile;
+	GError *error_local = NULL;
+
+	/* get file type */
+	exif = gcm_exif_new ();
+	file = g_file_new_for_path (filename);
+	ret = gcm_exif_parse (exif, file, error);
+	if (!ret)
+		goto out;
+
+	/* create a temp array */
+	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+
+	/* get list */
+	egg_debug ("query=%s", filename);
+	array_devices = gcm_client_get_devices (client);
+	for (i=0; i<array_devices->len; i++) {
+		device = g_ptr_array_index (array_devices, i);
+
+		/* match up critical parts */
+		if (g_strcmp0 (gcm_device_get_manufacturer (device), gcm_exif_get_manufacturer (exif)) == 0 &&
+		    g_strcmp0 (gcm_device_get_model (device), gcm_exif_get_model (exif)) == 0 &&
+		    g_strcmp0 (gcm_device_get_serial (device), gcm_exif_get_serial (exif)) == 0) {
+
+			/* we have a profile? */
+			filename = gcm_device_get_profile_filename (device);
+			if (filename == NULL) {
+				egg_warning ("%s does not have a profile set", gcm_device_get_id (device));
+				continue;
+			}
+
+			/* open and parse filename */
+			profile = gcm_profile_default_new ();
+			file_tmp = g_file_new_for_path (filename);
+			ret = gcm_profile_parse (profile, file_tmp, &error_local);
+			if (!ret) {
+				egg_warning ("failed to parse %s: %s", filename, error_local->message);
+				g_clear_error (&error_local);
+			} else {
+				g_ptr_array_add (array, g_object_ref (profile));
+			}
+
+			/* unref */
+			g_object_unref (file_tmp);
+			g_object_unref (profile);
+		}
+	}
+
+	/* unref list of devices */
+	g_ptr_array_unref (array_devices);
+out:
+	g_object_unref (file);
+	g_object_unref (exif);
+	return array;
+}
+
+/**
+ * gcm_session_get_profiles_for_device:
+ **/
+static GPtrArray *
+gcm_session_get_profiles_for_device (const gchar *device_id_with_prefix, GError **error)
+{
+	gboolean ret;
+	const gchar *filename;
+	const gchar *device_id;
+	const gchar *device_id_tmp;
+	guint i;
+	gboolean use_native_device = FALSE;
+	GcmDevice *device;
+	GcmProfile *profile;
+	GFile *file;
+	GError *error_local = NULL;
+	GPtrArray *array;
+	GPtrArray *array_devices;
+
+	/* strip the prefix, if there is any */
+	device_id = g_strstr_len (device_id_with_prefix, -1, ":");
+	if (device_id == NULL) {
+		device_id = device_id_with_prefix;
+	} else {
+		device_id++;
+		use_native_device = TRUE;
+	}
+
+	/* use the sysfs path to be backwards compatible */
+	if (g_str_has_prefix (device_id_with_prefix, "/"))
+		use_native_device = TRUE;
+
+	/* create a temp array */
+	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+
+	/* get list */
+	egg_debug ("query=%s [%s] %i", device_id_with_prefix, device_id, use_native_device);
+	array_devices = gcm_client_get_devices (client);
+	for (i=0; i<array_devices->len; i++) {
+		device = g_ptr_array_index (array_devices, i);
+
+		/* get the id for this device */
+		if (use_native_device && GCM_IS_DEVICE_XRANDR (device)) {
+			device_id_tmp = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
+		} else {
+			device_id_tmp = gcm_device_get_id (device);
+		}
+
+		/* wrong kind of device */
+		if (device_id_tmp == NULL)
+			continue;
+
+		/* compare what we have against what we were given */
+		egg_debug ("comparing %s with %s", device_id_tmp, device_id);
+		if (g_strcmp0 (device_id_tmp, device_id) == 0) {
+
+			/* we have a profile? */
+			filename = gcm_device_get_profile_filename (device);
+			if (filename == NULL) {
+				egg_warning ("%s does not have a profile set", device_id);
+				continue;
+			}
+
+			/* open and parse filename */
+			profile = gcm_profile_default_new ();
+			file = g_file_new_for_path (filename);
+			ret = gcm_profile_parse (profile, file, &error_local);
+			if (!ret) {
+				egg_warning ("failed to parse %s: %s", filename, error_local->message);
+				g_clear_error (&error_local);
+			} else {
+				g_ptr_array_add (array, g_object_ref (profile));
+			}
+
+			/* unref */
+			g_object_unref (file);
+			g_object_unref (profile);
+		}
+	}
+
+	/* unref list of devices */
+	g_ptr_array_unref (array_devices);
+	return array;
+}
+
+/**
+ * gcm_session_handle_method_call:
+ **/
+static void
+gcm_session_handle_method_call (GDBusConnection *connection_, const gchar *sender,
+				const gchar *object_path, const gchar *interface_name,
+				const gchar *method_name, GVariant *parameters,
+				GDBusMethodInvocation *invocation, gpointer user_data)
+{
+	GVariant *tuple = NULL;
+	GVariant *value = NULL;
+	guint xid;
+	gchar *device_id = NULL;
+	gchar *filename = NULL;
+	gchar *hints = NULL;
+	gchar *type = NULL;
+	GPtrArray *array = NULL;
+	gchar **devices = NULL;
+	GcmDevice *device;
+	GError *error = NULL;
+	const gchar *profile_filename;
+	guint i;
+
+	/* return 'as' */
+	if (g_strcmp0 (method_name, "GetDevices") == 0) {
+
+		/* copy the device id */
+		array = gcm_client_get_devices (client);
+		devices = g_new0 (gchar *, array->len + 1);
+		for (i=0; i<array->len; i++) {
+			device = g_ptr_array_index (array, i);
+			devices[i] = g_strdup (gcm_device_get_id (device));
+		}
+
+		/* format the value */
+		value = g_variant_new_strv ((const gchar * const *) devices, -1);
+		tuple = g_variant_new_tuple (&value, 1);
+		g_dbus_method_invocation_return_value (invocation, tuple);
+		goto out;
+	}
+
+	/* return 's' */
+	if (g_strcmp0 (method_name, "GetProfileForWindow") == 0) {
+		g_variant_get (parameters, "(u)", &xid);
+
+		/* get the profile for a window */
+		profile_filename = gcm_session_get_profile_for_window (xid, &error);
+		if (profile_filename == NULL) {
+			g_dbus_method_invocation_return_dbus_error (invocation,
+								    "org.gnome.ColorManager.Failed",
+								    error->message);
+			g_error_free (error);
+			goto out;
+		}
+
+		/* format the value */
+		value = g_variant_new_string (profile_filename);
+		tuple = g_variant_new_tuple (&value, 1);
+		g_dbus_method_invocation_return_value (invocation, tuple);
+		goto out;
+	}
+
+	/* return 'a(ss)' */
+	if (g_strcmp0 (method_name, "GetProfilesForDevice") == 0) {
+		g_variant_get (parameters, "(ss)", &device_id, &hints);
+
+		/* get array of profile filenames */
+		array = gcm_session_get_profiles_for_device (device_id, &error);
+		if (array == NULL) {
+			g_dbus_method_invocation_return_dbus_error (invocation,
+								    "org.gnome.ColorManager.Failed",
+								    error->message);
+			g_error_free (error);
+			goto out;
+		}
+
+		/* format the value */
+		value = gcm_session_variant_from_profile_array (array);
+		tuple = g_variant_new_tuple (&value, 1);
+		g_dbus_method_invocation_return_value (invocation, tuple);
+		goto out;
+	}
+
+	/* return 'a(ss)' */
+	if (g_strcmp0 (method_name, "GetProfilesForType") == 0) {
+		g_variant_get (parameters, "(ss)", &type, &hints);
+
+		/* get array of profiles */
+		array = gcm_session_get_profiles_for_kind (gcm_device_kind_from_string (type), &error);
+		if (array == NULL) {
+			g_dbus_method_invocation_return_dbus_error (invocation,
+								    "org.gnome.ColorManager.Failed",
+								    error->message);
+			g_error_free (error);
+			goto out;
+		}
+
+		/* format the value */
+		value = gcm_session_variant_from_profile_array (array);
+		tuple = g_variant_new_tuple (&value, 1);
+		g_dbus_method_invocation_return_value (invocation, tuple);
+		goto out;
+	}
+
+	/* return 'a(ss)' */
+	if (g_strcmp0 (method_name, "GetProfilesForFile") == 0) {
+		g_variant_get (parameters, "(ss)", &filename, &hints);
+
+		/* get array of profile filenames */
+		array = gcm_session_get_profiles_for_file (device_id, &error);
+		if (array == NULL) {
+			g_dbus_method_invocation_return_dbus_error (invocation,
+								    "org.gnome.ColorManager.Failed",
+								    error->message);
+			g_error_free (error);
+			goto out;
+		}
+
+		/* format the value */
+		value = gcm_session_variant_from_profile_array (array);
+		tuple = g_variant_new_tuple (&value, 1);
+		g_dbus_method_invocation_return_value (invocation, tuple);
+		goto out;
+	}
+out:
+	/* reset time */
+	g_timer_reset (timer);
+
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	if (tuple != NULL)
+		g_variant_unref (tuple);
+	if (value != NULL)
+		g_variant_unref (value);
+	g_free (device_id);
+	g_free (type);
+	g_free (filename);
+	g_free (hints);
+	g_strfreev (devices);
+	return;
+}
+
+/**
+ * gcm_session_handle_get_property:
+ **/
+static GVariant *
+gcm_session_handle_get_property (GDBusConnection *connection_, const gchar *sender,
+				 const gchar *object_path, const gchar *interface_name,
+				 const gchar *property_name, GError **error,
+				 gpointer user_data)
+{
+	GVariant *retval = NULL;
+
+	if (g_strcmp0 (property_name, "RenderingIntentDisplay") == 0) {
+		retval = g_settings_get_value (settings, GCM_SETTINGS_RENDERING_INTENT_DISPLAY);
+	} else if (g_strcmp0 (property_name, "RenderingIntentSoftproof") == 0) {
+		retval = g_settings_get_value (settings, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF);
+	} else if (g_strcmp0 (property_name, "ColorspaceRgb") == 0) {
+		retval = g_settings_get_value (settings, GCM_SETTINGS_COLORSPACE_RGB);
+	} else if (g_strcmp0 (property_name, "ColorspaceCmyk") == 0) {
+		retval = g_settings_get_value (settings, GCM_SETTINGS_COLORSPACE_CMYK);
+	}
+
+	/* reset time */
+	g_timer_reset (timer);
+
+	return retval;
+}
+
+/**
+ * gcm_session_on_bus_acquired:
+ **/
+static void
+gcm_session_on_bus_acquired (GDBusConnection *connection_, const gchar *name, gpointer user_data)
+{
+	guint registration_id;
+	static const GDBusInterfaceVTable interface_vtable = {
+		gcm_session_handle_method_call,
+		gcm_session_handle_get_property,
+		NULL
+	};
+
+	registration_id = g_dbus_connection_register_object (connection_,
+							     GCM_DBUS_PATH,
+							     introspection->interfaces[0],
+							     &interface_vtable,
+							     NULL,  /* user_data */
+							     NULL,  /* user_data_free_func */
+							     NULL); /* GError** */
+	g_assert (registration_id > 0);
+}
+
+/**
+ * gcm_session_on_name_acquired:
+ **/
+static void
+gcm_session_on_name_acquired (GDBusConnection *connection_, const gchar *name, gpointer user_data)
+{
+	egg_debug ("acquired name: %s", name);
+	connection = g_object_ref (connection_);
+}
+
+/**
+ * gcm_session_on_name_lost:
+ **/
+static void
+gcm_session_on_name_lost (GDBusConnection *connection_, const gchar *name, gpointer user_data)
+{
+	egg_debug ("lost name: %s", name);
+	g_main_loop_quit (loop);
+}
+
+/**
+ * gcm_session_emit_changed:
+ **/
+static void
+gcm_session_emit_changed (void)
+{
+	gboolean ret;
+	GError *error = NULL;
+
+	/* check we are connected */
+	if (connection == NULL)
+		return;
+
+	/* just emit signal */
+	ret = g_dbus_connection_emit_signal (connection,
+					     NULL,
+					     GCM_DBUS_PATH,
+					     GCM_DBUS_INTERFACE,
+					     "Changed",
+					     NULL,
+					     &error);
+	if (!ret) {
+		egg_warning ("failed to emit signal: %s", error->message);
+		g_error_free (error);
+	}
+}
+
+/**
+ * gcm_session_key_changed_cb:
+ **/
+static void
+gcm_session_key_changed_cb (GSettings *settings_, const gchar *key, gpointer user_data)
+{
+	gcm_session_emit_changed ();
+}
+
+/**
+ * gcm_session_client_changed_cb:
+ **/
+static void
+gcm_session_client_changed_cb (GcmClient *client_, GcmDevice *device, gpointer user_data)
+{
+	gcm_session_emit_changed ();
+}
+
+/**
  * main:
  **/
 int
 main (int argc, char *argv[])
 {
 	gboolean no_timed_exit = FALSE;
-	GcmDbus *dbus = NULL;
 	GOptionContext *context;
 	GError *error = NULL;
 	gboolean ret;
-	guint retval = 0;
-	DBusGConnection *connection;
-	GcmClient *client = NULL;
+	guint retval = 1;
+	guint owner_id = 0;
+	GFile *file = NULL;
+	gchar *introspection_data = NULL;
 
 	const GOptionEntry options[] = {
 		{ "no-timed-exit", '\0', 0, G_OPTION_ARG_NONE, &no_timed_exit,
@@ -274,7 +745,6 @@ main (int argc, char *argv[])
 
 	if (! g_thread_supported ())
 		g_thread_init (NULL);
-	dbus_g_thread_init ();
 	g_type_init ();
 	notify_init ("gnome-color-manager");
 
@@ -292,43 +762,89 @@ main (int argc, char *argv[])
 
 	/* get the settings */
 	settings = g_settings_new (GCM_SETTINGS_SCHEMA);
+	g_signal_connect (settings, "changed", G_CALLBACK (gcm_session_key_changed_cb), NULL);
 
 	/* monitor devices as they are added */
 	client = gcm_client_new ();
+	gcm_client_set_use_threads (client, TRUE);
 	g_signal_connect (client, "added", G_CALLBACK (gcm_session_added_cb), NULL);
+	g_signal_connect (client, "added", G_CALLBACK (gcm_session_client_changed_cb), NULL);
+	g_signal_connect (client, "removed", G_CALLBACK (gcm_session_client_changed_cb), NULL);
+	g_signal_connect (client, "changed", G_CALLBACK (gcm_session_client_changed_cb), NULL);
+
+	/* have access to all profiles */
+	profile_store = gcm_profile_store_new ();
+	timer = g_timer_new ();
+
+	/* get all saved devices */
+	ret = gcm_client_add_saved (client, &error);
+	if (!ret) {
+		egg_warning ("failed to add saved devices: %s", error->message);
+		g_clear_error (&error);
+		/* non-fatal */
+	}
+
+	/* get all connected devices */
+	ret = gcm_client_add_connected (client, GCM_CLIENT_COLDPLUG_ALL, &error);
+	if (!ret) {
+		egg_warning ("failed to coldplug: %s", error->message);
+		g_error_free (error);
+	}
 
 	/* create new objects */
-	dbus = gcm_dbus_new ();
 	loop = g_main_loop_new (NULL, FALSE);
 
-	/* get the bus */
-	connection = dbus_g_bus_get (DBUS_BUS_SESSION, &error);
-	if (error) {
-		egg_warning ("%s", error->message);
+	/* load introspection from file */
+	file = g_file_new_for_path (DATADIR "/dbus-1/interfaces/org.gnome.ColorManager.xml");
+	ret = g_file_load_contents (file, NULL, &introspection_data, NULL, NULL, &error);
+	if (!ret) {
+		egg_warning ("failed to load introspection: %s", error->message);
 		g_error_free (error);
-		retval = 1;
 		goto out;
 	}
 
-	/* try to register */
-	ret = gcm_session_object_register (connection, G_OBJECT (dbus));
-	if (!ret) {
-		egg_warning ("failed to replace running instance.");
-		retval = 1;
+	/* build introspection from XML */
+	introspection = g_dbus_node_info_new_for_xml (introspection_data, &error);
+	if (introspection == NULL) {
+		egg_warning ("failed to load introspection: %s", error->message);
+		g_error_free (error);
 		goto out;
 	}
+
+	/* own the object */
+	owner_id = g_bus_own_name (G_BUS_TYPE_SESSION,
+				   GCM_DBUS_SERVICE,
+				   G_BUS_NAME_OWNER_FLAGS_NONE,
+				   gcm_session_on_bus_acquired,
+				   gcm_session_on_name_acquired,
+				   gcm_session_on_name_lost,
+				   NULL, NULL);
 
 	/* only timeout if we have specified iton the command line */
 	if (!no_timed_exit)
-		g_timeout_add_seconds (5, (GSourceFunc) gcm_session_check_idle_cb, dbus);
+		g_timeout_add_seconds (5, (GSourceFunc) gcm_session_check_idle_cb, NULL);
 
 	/* wait */
 	g_main_loop_run (loop);
+
+	/* success */
+	retval = 0;
 out:
+	g_free (introspection_data);
+	if (file != NULL)
+		g_object_unref (file);
+	if (owner_id > 0)
+		g_bus_unown_name (owner_id);
+	if (profile_store != NULL)
+		g_object_unref (profile_store);
+	if (timer != NULL)
+		g_timer_destroy (timer);
+	if (connection != NULL)
+		g_object_unref (connection);
+	g_dbus_node_info_unref (introspection);
 	g_object_unref (settings);
 	g_object_unref (client);
 	g_main_loop_unref (loop);
-	g_object_unref (dbus);
 	return retval;
 }
 

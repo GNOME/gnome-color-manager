@@ -1,11 +1,8 @@
 <!DOCTYPE node PUBLIC
-"-//freedesktop//DTD D-BUS Object Introspection 1.0//EN"
-"http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd" [
-  <!ENTITY ERROR_GENERAL "org.gnome.ColorManager.Denied">
-]>
-<node name="/" xmlns:doc="http://www.freedesktop.org/dbus/1.0/doc.dtd">
-
-  <interface name="org.gnome.ColorManager">
+'-//freedesktop//DTD D-BUS Object Introspection 1.0//EN'
+'http://www.freedesktop.org/standards/dbus/1.0/introspect.dtd'>
+<node>
+  <interface name='org.gnome.ColorManager'>
     <doc:doc>
       <doc:description>
         <doc:para>
@@ -15,7 +12,7 @@
     </doc:doc>
 
     <!--*****************************************************************************************-->
-    <property name="RenderingIntentDisplay" type="s" access="read">
+    <property name='RenderingIntentDisplay' type='s' access='read'>
       <doc:doc>
         <doc:description>
           <doc:para>
@@ -40,7 +37,7 @@
     </property>
 
     <!--*****************************************************************************************-->
-    <property name="RenderingIntentSoftproof" type="s" access="read">
+    <property name='RenderingIntentSoftproof' type='s' access='read'>
       <doc:doc>
         <doc:description>
           <doc:para>
@@ -51,7 +48,7 @@
     </property>
 
     <!--*****************************************************************************************-->
-    <property name="ColorspaceRgb" type="s" access="read">
+    <property name='ColorspaceRgb' type='s' access='read'>
       <doc:doc>
         <doc:description>
           <doc:para>
@@ -62,7 +59,7 @@
     </property>
 
     <!--*****************************************************************************************-->
-    <property name="ColorspaceCmyk" type="s" access="read">
+    <property name='ColorspaceCmyk' type='s' access='read'>
       <doc:doc>
         <doc:description>
           <doc:para>
@@ -73,8 +70,8 @@
     </property>
 
     <!--*****************************************************************************************-->
-    <method name="GetProfilesForDevice">
-      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+    <method name='GetProfilesForDevice'>
+      <annotation name='org.freedesktop.DBus.GLib.Async' value=''/>
       <doc:doc>
         <doc:description>
           <doc:para>
@@ -82,7 +79,7 @@
           </doc:para>
         </doc:description>
       </doc:doc>
-      <arg type="s" name="device_id" direction="in">
+      <arg type='s' name='device_id' direction='in'>
         <doc:doc>
           <doc:summary>
             <doc:para>
@@ -92,7 +89,7 @@
           </doc:summary>
         </doc:doc>
       </arg>
-      <arg type="s" name="options" direction="in">
+      <arg type='s' name='options' direction='in'>
         <doc:doc>
           <doc:summary>
             <doc:para>
@@ -101,7 +98,7 @@
           </doc:summary>
         </doc:doc>
       </arg>
-      <arg type="a(ss)" name="profiles" direction="out">
+      <arg type='a(ss)' name='profiles' direction='out'>
         <doc:doc>
           <doc:summary>
             <doc:para>
@@ -113,8 +110,8 @@
     </method>
 
     <!--*****************************************************************************************-->
-    <method name="GetProfilesForType">
-      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+    <method name='GetProfilesForType'>
+      <annotation name='org.freedesktop.DBus.GLib.Async' value=''/>
       <doc:doc>
         <doc:description>
           <doc:para>
@@ -122,7 +119,7 @@
           </doc:para>
         </doc:description>
       </doc:doc>
-      <arg type="s" name="type" direction="in">
+      <arg type='s' name='type' direction='in'>
         <doc:doc>
           <doc:summary>
             <doc:para>
@@ -132,7 +129,7 @@
           </doc:summary>
         </doc:doc>
       </arg>
-      <arg type="s" name="options" direction="in">
+      <arg type='s' name='options' direction='in'>
         <doc:doc>
           <doc:summary>
             <doc:para>
@@ -141,7 +138,7 @@
           </doc:summary>
         </doc:doc>
       </arg>
-      <arg type="a(ss)" name="profiles" direction="out">
+      <arg type='a(ss)' name='profiles' direction='out'>
         <doc:doc>
           <doc:summary>
             <doc:para>
@@ -153,8 +150,8 @@
     </method>
 
     <!--*****************************************************************************************-->
-    <method name="GetProfilesForFile">
-      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+    <method name='GetProfilesForFile'>
+      <annotation name='org.freedesktop.DBus.GLib.Async' value=''/>
       <doc:doc>
         <doc:description>
           <doc:para>
@@ -162,7 +159,7 @@
           </doc:para>
         </doc:description>
       </doc:doc>
-      <arg type="s" name="filename" direction="in">
+      <arg type='s' name='filename' direction='in'>
         <doc:doc>
           <doc:summary>
             <doc:para>
@@ -171,7 +168,7 @@
           </doc:summary>
         </doc:doc>
       </arg>
-      <arg type="s" name="options" direction="in">
+      <arg type='s' name='options' direction='in'>
         <doc:doc>
           <doc:summary>
             <doc:para>
@@ -180,7 +177,7 @@
           </doc:summary>
         </doc:doc>
       </arg>
-      <arg type="a(ss)" name="profiles" direction="out">
+      <arg type='a(ss)' name='profiles' direction='out'>
         <doc:doc>
           <doc:summary>
             <doc:para>
@@ -192,8 +189,8 @@
     </method>
 
     <!--*****************************************************************************************-->
-    <method name="GetProfileForWindow">
-      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+    <method name='GetProfileForWindow'>
+      <annotation name='org.freedesktop.DBus.GLib.Async' value=''/>
       <doc:doc>
         <doc:description>
           <doc:para>
@@ -203,7 +200,7 @@
           </doc:para>
         </doc:description>
       </doc:doc>
-      <arg type="u" name="xid" direction="in">
+      <arg type='u' name='xid' direction='in'>
         <doc:doc>
           <doc:summary>
             <doc:para>
@@ -212,7 +209,7 @@
           </doc:summary>
         </doc:doc>
       </arg>
-      <arg type="s" name="profile" direction="out">
+      <arg type='s' name='profile' direction='out'>
         <doc:doc>
           <doc:summary>
             <doc:para>
@@ -224,8 +221,8 @@
     </method>
 
     <!--*****************************************************************************************-->
-    <method name="GetDevices">
-      <annotation name="org.freedesktop.DBus.GLib.Async" value=""/>
+    <method name='GetDevices'>
+      <annotation name='org.freedesktop.DBus.GLib.Async' value=''/>
       <doc:doc>
         <doc:description>
           <doc:para>
@@ -233,7 +230,7 @@
           </doc:para>
         </doc:description>
       </doc:doc>
-      <arg type="as" name="devices" direction="out">
+      <arg type='as' name='devices' direction='out'>
         <doc:doc>
           <doc:summary>
             <doc:para>
@@ -245,7 +242,7 @@
     </method>
 
     <!-- ************************************************************ -->
-    <signal name="Changed">
+    <signal name='Changed'>
       <doc:doc>
         <doc:description>
           <doc:para>
