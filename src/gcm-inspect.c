@@ -186,6 +186,7 @@ gcm_inspect_show_profiles_for_device (const gchar *device_id)
 						GCM_DBUS_INTERFACE,
 						"GetProfilesForDevice",
 						args,
+						G_VARIANT_TYPE ("(a(ss))"),
 						G_DBUS_CALL_FLAGS_NONE,
 						-1, NULL, &error);
 	if (response == NULL) {
@@ -254,6 +255,7 @@ gcm_inspect_show_profiles_for_file (const gchar *filename)
 						GCM_DBUS_INTERFACE,
 						"GetProfilesForFile",
 						args,
+						G_VARIANT_TYPE ("(a(ss))"),
 						G_DBUS_CALL_FLAGS_NONE,
 						-1, NULL, &error);
 	if (response == NULL) {
@@ -320,6 +322,7 @@ gcm_inspect_show_profiles_for_devices (void)
 						GCM_DBUS_INTERFACE,
 						"GetDevices",
 						NULL,
+						G_VARIANT_TYPE ("(as)"),
 						G_DBUS_CALL_FLAGS_NONE,
 						-1, NULL, &error);
 	if (response == NULL) {
@@ -381,6 +384,7 @@ gcm_inspect_show_profile_for_window (guint xid)
 						GCM_DBUS_INTERFACE,
 						"GetProfileForWindow",
 						args,
+						G_VARIANT_TYPE ("(s)"),
 						G_DBUS_CALL_FLAGS_NONE,
 						-1, NULL, &error);
 	if (response == NULL) {
@@ -450,6 +454,7 @@ gcm_inspect_show_profiles_for_type (const gchar *type)
 						GCM_DBUS_INTERFACE,
 						"GetProfilesForType",
 						args,
+						G_VARIANT_TYPE ("(a(ss))"),
 						G_DBUS_CALL_FLAGS_NONE,
 						-1, NULL, &error);
 	if (response == NULL) {
