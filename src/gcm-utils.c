@@ -23,12 +23,16 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
-#include <dbus/dbus-glib.h>
 #include <gdk/gdkx.h>
 
 #include "gcm-utils.h"
 
 #include "egg-debug.h"
+
+#define PK_DBUS_SERVICE					"org.freedesktop.PackageKit"
+#define PK_DBUS_PATH					"/org/freedesktop/PackageKit"
+#define PK_DBUS_INTERFACE_QUERY				"org.freedesktop.PackageKit.Query"
+#define PK_DBUS_INTERFACE_MODIFY			"org.freedesktop.PackageKit.Modify"
 
 /**
  * gcm_utils_linkify:
@@ -130,8 +134,10 @@ out:
 gboolean
 gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 {
-	DBusGConnection *connection;
-	DBusGProxy *proxy;
+	GDBusConnection *connection;
+	GVariant *args = NULL;
+	GVariant *response = NULL;
+	GVariantBuilder *builder = NULL;
 	GError *error = NULL;
 	gboolean ret;
 	guint32 xid = 0;
@@ -152,30 +158,44 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 	packages = g_strsplit (package_name, "|", 1);
 
 	/* get a session bus connection */
-	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
+	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
+	if (connection == NULL) {
+		/* TRANSLATORS: no DBus session bus */
+		g_print ("%s: %s\n", _("Failed to connect to session bus"), error->message);
+		g_error_free (error);
+		goto out;
+	}
 
-	/* connect to PackageKit */
-	proxy = dbus_g_proxy_new_for_name (connection,
-					   "org.freedesktop.PackageKit",
-					   "/org/freedesktop/PackageKit",
-					   "org.freedesktop.PackageKit.Modify");
-
-	/* set timeout */
-	dbus_g_proxy_set_default_timeout (proxy, G_MAXINT);
+	/* create arguments */
+	builder = g_variant_builder_new (G_VARIANT_TYPE ("(uass)"));
+	g_variant_builder_add_value (builder, g_variant_new_uint32 (xid));
+	g_variant_builder_add_value (builder, g_variant_new_strv ((const gchar * const *)packages, -1));
+	g_variant_builder_add_value (builder, g_variant_new_string ("hide-confirm-search,hide-finished"));
+	args = g_variant_builder_end (builder);
 
 	/* execute sync method */
-	ret = dbus_g_proxy_call (proxy, "InstallPackageNames", &error,
-				 G_TYPE_UINT, xid,
-				 G_TYPE_STRV, packages,
-				 G_TYPE_STRING, "hide-confirm-search,hide-finished",
-				 G_TYPE_INVALID, G_TYPE_INVALID);
-	if (!ret) {
-		egg_warning ("failed to install package: %s", error->message);
+	response = g_dbus_connection_call_sync (connection,
+						PK_DBUS_SERVICE,
+						PK_DBUS_PATH,
+						PK_DBUS_INTERFACE_MODIFY,
+						"InstallPackageNames",
+						args,
+						G_VARIANT_TYPE ("(b)"),
+						G_DBUS_CALL_FLAGS_NONE,
+						G_MAXINT, NULL, &error);
+	if (response == NULL) {
+		/* TRANSLATORS: the DBus method failed */
+		egg_warning ("%s: %s\n", _("The request failed"), error->message);
 		g_error_free (error);
 		goto out;
 	}
 out:
-	g_object_unref (proxy);
+	if (builder != NULL)
+		g_variant_builder_unref (builder);
+	if (args != NULL)
+		g_variant_unref (args);
+	if (response != NULL)
+		g_variant_unref (response);
 	g_strfreev (packages);
 	return ret;
 }
@@ -186,10 +206,10 @@ out:
 gboolean
 gcm_utils_is_package_installed (const gchar *package_name)
 {
-	DBusGConnection *connection;
-	DBusGProxy *proxy;
+	GDBusConnection *connection;
+	GVariant *args = NULL;
+	GVariant *response = NULL;
 	GError *error = NULL;
-	gboolean ret;
 	gboolean installed = TRUE;
 
 	g_return_val_if_fail (package_name != NULL, FALSE);
@@ -200,31 +220,39 @@ gcm_utils_is_package_installed (const gchar *package_name)
 #endif
 
 	/* get a session bus connection */
-	connection = dbus_g_bus_get (DBUS_BUS_SESSION, NULL);
-
-	/* connect to PackageKit */
-	proxy = dbus_g_proxy_new_for_name (connection,
-					   "org.freedesktop.PackageKit",
-					   "/org/freedesktop/PackageKit",
-					   "org.freedesktop.PackageKit.Query");
-
-	/* set timeout */
-	dbus_g_proxy_set_default_timeout (proxy, G_MAXINT);
-
-	/* execute sync method */
-	ret = dbus_g_proxy_call (proxy, "IsInstalled", &error,
-				 G_TYPE_STRING, package_name,
-				 G_TYPE_STRING, "timeout=5",
-				 G_TYPE_INVALID,
-				 G_TYPE_BOOLEAN, &installed,
-				 G_TYPE_INVALID);
-	if (!ret) {
-		egg_warning ("failed to get installed status: %s", error->message);
+	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
+	if (connection == NULL) {
+		/* TRANSLATORS: no DBus session bus */
+		g_print ("%s: %s\n", _("Failed to connect to session bus"), error->message);
 		g_error_free (error);
 		goto out;
 	}
+
+	/* execute sync method */
+	args = g_variant_new ("(ss)", package_name, "timeout=5");
+	response = g_dbus_connection_call_sync (connection,
+						PK_DBUS_SERVICE,
+						PK_DBUS_PATH,
+						PK_DBUS_INTERFACE_QUERY,
+						"IsInstalled",
+						args,
+						G_VARIANT_TYPE ("(b)"),
+						G_DBUS_CALL_FLAGS_NONE,
+						G_MAXINT, NULL, &error);
+	if (response == NULL) {
+		/* TRANSLATORS: the DBus method failed */
+		egg_warning ("%s: %s\n", _("The request failed"), error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* get value */
+	g_variant_get (response, "(b)", &installed);
 out:
-	g_object_unref (proxy);
+	if (args != NULL)
+		g_variant_unref (args);
+	if (response != NULL)
+		g_variant_unref (response);
 	return installed;
 }
 
