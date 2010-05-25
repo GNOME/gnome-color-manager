@@ -776,16 +776,8 @@ main (int argc, char *argv[])
 	profile_store = gcm_profile_store_new ();
 	timer = g_timer_new ();
 
-	/* get all saved devices */
-	ret = gcm_client_add_saved (client, &error);
-	if (!ret) {
-		egg_warning ("failed to add saved devices: %s", error->message);
-		g_clear_error (&error);
-		/* non-fatal */
-	}
-
 	/* get all connected devices */
-	ret = gcm_client_add_connected (client, GCM_CLIENT_COLDPLUG_ALL, &error);
+	ret = gcm_client_coldplug (client, GCM_CLIENT_COLDPLUG_ALL, &error);
 	if (!ret) {
 		egg_warning ("failed to coldplug: %s", error->message);
 		g_error_free (error);

@@ -638,7 +638,7 @@ gcm_prefs_profile_add_virtual_file (GFile *file)
 	}
 
 	/* add to the device list */
-	ret = gcm_client_add_virtual_device (gcm_client, device, &error);
+	ret = gcm_client_add_device (gcm_client, device, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not add virtual device */
 		gcm_prefs_error_dialog (_("Failed to add virtual device"), error->message);
@@ -1049,7 +1049,7 @@ gcm_prefs_button_virtual_add_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* add to the device list */
-	ret = gcm_client_add_virtual_device (gcm_client, device, &error);
+	ret = gcm_client_add_device (gcm_client, device, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not add virtual device */
 		gcm_prefs_error_dialog (_("Failed to add virtual device"), error->message);
@@ -2280,9 +2280,10 @@ static gboolean
 gcm_prefs_added_idle_cb (GcmDevice *device)
 {
 	GcmDeviceKind kind;
-	egg_debug ("added: %s (connected: %i)",
+	egg_debug ("added: %s (connected: %i, saved: %i)",
 		   gcm_device_get_id (device),
-		   gcm_device_get_connected (device));
+		   gcm_device_get_connected (device),
+		   gcm_device_get_saved (device));
 
 	/* remove the saved device if it's already there */
 	gcm_prefs_remove_device (device);
@@ -2314,6 +2315,12 @@ gcm_prefs_added_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user
 static void
 gcm_prefs_changed_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user_data)
 {
+	/* no not re-add to the ui if we just deleted this */
+	if (!gcm_device_get_connected (gcm_device) &&
+	    !gcm_device_get_saved (gcm_device)) {
+		egg_warning ("ignoring uninteresting device: %s", gcm_device_get_id (gcm_device));
+		return;
+	}
 	g_idle_add ((GSourceFunc) gcm_prefs_added_idle_cb, g_object_ref (gcm_device));
 }
 
@@ -2335,7 +2342,7 @@ gcm_prefs_removed_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer us
 	/* ensure this device is re-added if it's been saved */
 	connected = gcm_device_get_connected (gcm_device);
 	if (connected)
-		gcm_client_add_saved (gcm_client, NULL);
+		gcm_client_coldplug (gcm_client, GCM_CLIENT_COLDPLUG_SAVED, NULL);
 
 	/* select the first device */
 	ret = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (list_store_devices), &iter);
@@ -2564,19 +2571,11 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), (gpointer) "softproof");
 
 	/* coldplug plugged in devices */
-	ret = gcm_client_add_connected (gcm_client, GCM_CLIENT_COLDPLUG_ALL, &error);
+	ret = gcm_client_coldplug (gcm_client, GCM_CLIENT_COLDPLUG_ALL, &error);
 	if (!ret) {
 		egg_warning ("failed to add connected devices: %s", error->message);
 		g_error_free (error);
 		goto out;
-	}
-
-	/* coldplug saved devices */
-	ret = gcm_client_add_saved (gcm_client, &error);
-	if (!ret) {
-		egg_warning ("failed to add saved devices: %s", error->message);
-		g_clear_error (&error);
-		/* do not fail */
 	}
 
 	/* set calibrate button sensitivity */

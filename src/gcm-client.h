@@ -66,6 +66,7 @@ typedef enum {
 	GCM_CLIENT_COLDPLUG_CUPS	= 0x02,
 	GCM_CLIENT_COLDPLUG_SANE	= 0x04,
 	GCM_CLIENT_COLDPLUG_UDEV	= 0x08,
+	GCM_CLIENT_COLDPLUG_SAVED	= 0x10,
 	GCM_CLIENT_COLDPLUG_LAST,
 } GcmClientColdplug;
 
@@ -76,16 +77,17 @@ GcmDevice	*gcm_client_get_device_by_id			(GcmClient		*client,
 								 const gchar		*id);
 GcmDevice	*gcm_client_get_device_by_window		(GcmClient		*client,
 								 GdkWindow		*window);
-gboolean	 gcm_client_add_virtual_device			(GcmClient		*client,
+gboolean	 gcm_client_add_device				(GcmClient		*client,
+								 GcmDevice		*device,
+								 GError			**error);
+gboolean	 gcm_client_remove_device			(GcmClient		*client,
 								 GcmDevice		*device,
 								 GError			**error);
 gboolean	 gcm_client_delete_device			(GcmClient		*client,
 								 GcmDevice		*device,
 								 GError			**error);
-gboolean	 gcm_client_add_connected			(GcmClient		*client,
+gboolean	 gcm_client_coldplug				(GcmClient		*client,
 								 GcmClientColdplug	 coldplug,
-								 GError			**error);
-gboolean	 gcm_client_add_saved				(GcmClient		*client,
 								 GError			**error);
 GPtrArray	*gcm_client_get_devices				(GcmClient		*client);
 void		 gcm_client_set_use_threads			(GcmClient		*client,
