@@ -360,6 +360,7 @@ static gboolean
 gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll, gchar **argv, GError **error)
 {
 	gboolean ret;
+	const gchar *envp[] = { "ARGYLL_NOT_INTERACTIVE", NULL };
 	const gchar *working_directory;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
@@ -372,7 +373,7 @@ gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll, gchar *
 	ret = vte_terminal_fork_command_full (VTE_TERMINAL(priv->terminal),
 					      VTE_PTY_DEFAULT,
 					      working_directory,
-					      argv, NULL,
+					      argv, (gchar**)envp,
 #ifdef FIXED_ARGYLL
 					      0,
 #else
