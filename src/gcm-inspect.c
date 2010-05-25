@@ -165,7 +165,7 @@ gcm_inspect_show_profiles_for_device (const gchar *device_id)
 	guint i = 0;
 	GDBusConnection *connection;
 	GError *error = NULL;
-	GVariant *args;
+	GVariant *args = NULL;
 	GVariant *response = NULL;
 	GVariantIter *iter = NULL;
 
@@ -215,6 +215,8 @@ gcm_inspect_show_profiles_for_device (const gchar *device_id)
 out:
 	if (iter != NULL)
 		g_variant_iter_free (iter);
+	if (args != NULL)
+		g_variant_unref (args);
 	if (response != NULL)
 		g_variant_unref (response);
 	return ret;
@@ -231,7 +233,7 @@ gcm_inspect_show_profiles_for_file (const gchar *filename)
 	guint i = 0;
 	GDBusConnection *connection;
 	GError *error = NULL;
-	GVariant *args;
+	GVariant *args = NULL;
 	GVariant *response = NULL;
 	GVariantIter *iter = NULL;
 
@@ -281,6 +283,8 @@ gcm_inspect_show_profiles_for_file (const gchar *filename)
 out:
 	if (iter != NULL)
 		g_variant_iter_free (iter);
+	if (args != NULL)
+		g_variant_unref (args);
 	if (response != NULL)
 		g_variant_unref (response);
 	return ret;
@@ -355,7 +359,7 @@ gcm_inspect_show_profile_for_window (guint xid)
 	GDBusConnection *connection;
 	GError *error = NULL;
 	const gchar *profile;
-	GVariant *args;
+	GVariant *args = NULL;
 	GVariant *response = NULL;
 	GVariant *response_child = NULL;
 	GVariantIter *iter = NULL;
@@ -406,6 +410,8 @@ gcm_inspect_show_profile_for_window (guint xid)
 out:
 	if (iter != NULL)
 		g_variant_iter_free (iter);
+	if (args != NULL)
+		g_variant_unref (args);
 	if (response != NULL)
 		g_variant_unref (response);
 	return ret;
@@ -423,7 +429,7 @@ gcm_inspect_show_profiles_for_type (const gchar *type)
 	const gchar *filename;
 	const gchar *description;
 	guint i;
-	GVariant *args;
+	GVariant *args = NULL;
 	GVariant *response = NULL;
 	GVariantIter *iter = NULL;
 
@@ -473,6 +479,8 @@ gcm_inspect_show_profiles_for_type (const gchar *type)
 out:
 	if (iter != NULL)
 		g_variant_iter_free (iter);
+	if (args != NULL)
+		g_variant_unref (args);
 	if (response != NULL)
 		g_variant_unref (response);
 	return ret;
