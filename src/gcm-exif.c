@@ -213,7 +213,7 @@ gcm_exif_parse_exiv (GcmExif *exif, const gchar *filename, GError **error)
 	gchar **split = NULL;
 	GcmExifPrivate *priv = exif->priv;
 
-	command_line = g_strdup_printf (LIBEXECDIR "/gcm-helper-exiv %s", filename);
+	command_line = g_strdup_printf (LIBEXECDIR "/gcm-helper-exiv \"%s\"", filename);
 	ret = g_spawn_command_line_sync (command_line, &standard_output, NULL, &exit_status, error);
 	if (!ret)
 		goto out;
