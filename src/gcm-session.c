@@ -180,7 +180,7 @@ gcm_session_added_cb (GcmClient *client_, GcmDevice *device, gpointer user_data)
 		return;
 
 	/* ensure we have a profile */
-	profile = gcm_device_get_profile_filename (device);
+	profile = gcm_device_get_default_profile_filename (device);
 	if (profile == NULL) {
 		egg_debug ("no profile set for %s", gcm_device_get_id (device));
 		goto out;
@@ -231,7 +231,7 @@ gcm_session_get_profile_for_window (guint xid, GError **error)
 	}
 
 	/* get the data */
-	filename = gcm_device_get_profile_filename (device);
+	filename = gcm_device_get_default_profile_filename (device);
 	if (filename == NULL) {
 		g_set_error (error, 1, 0, "no profiles found for xid %i", xid);
 		goto out;
@@ -342,8 +342,8 @@ gcm_session_get_profiles_for_file (const gchar *filename, GError **error)
 		    g_strcmp0 (gcm_device_get_model (device), gcm_exif_get_model (exif)) == 0 &&
 		    g_strcmp0 (gcm_device_get_serial (device), gcm_exif_get_serial (exif)) == 0) {
 
-			/* we have a profile? */
-			filename = gcm_device_get_profile_filename (device);
+			/* TODO: get an array of GcmProfiles */
+			filename = gcm_device_get_default_profile_filename (device);
 			if (filename == NULL) {
 				egg_warning ("%s does not have a profile set", gcm_device_get_id (device));
 				continue;
@@ -430,8 +430,8 @@ gcm_session_get_profiles_for_device (const gchar *device_id_with_prefix, GError 
 		egg_debug ("comparing %s with %s", device_id_tmp, device_id);
 		if (g_strcmp0 (device_id_tmp, device_id) == 0) {
 
-			/* we have a profile? */
-			filename = gcm_device_get_profile_filename (device);
+			/* TODO: get an array of GcmProfiles */
+			filename = gcm_device_get_default_profile_filename (device);
 			if (filename == NULL) {
 				egg_warning ("%s does not have a profile set", device_id);
 				continue;

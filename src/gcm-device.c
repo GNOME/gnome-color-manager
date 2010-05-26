@@ -58,7 +58,7 @@ struct _GcmDevicePrivate
 	gchar			*serial;
 	gchar			*manufacturer;
 	gchar			*model;
-	gchar			*profile_filename;
+	gchar			**profile_filenames;
 	gchar			*title;
 	GSettings		*settings;
 	GcmColorspace		 colorspace;
@@ -173,10 +173,10 @@ gcm_device_kind_to_string (GcmDeviceKind kind)
 }
 
 /**
- * gcm_device_load_from_profile:
+ * gcm_device_load_from_default_profile:
  **/
 static gboolean
-gcm_device_load_from_profile (GcmDevice *device, GError **error)
+gcm_device_load_from_default_profile (GcmDevice *device, GError **error)
 {
 	gboolean ret = TRUE;
 	GcmDevicePrivate *priv = device->priv;
@@ -184,16 +184,16 @@ gcm_device_load_from_profile (GcmDevice *device, GError **error)
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
 
 	/* no profile to load */
-	if (priv->profile_filename == NULL)
+	if (priv->profile_filenames == NULL)
 		goto out;
 
 	/* load the profile if it's set */
-	if (priv->profile_filename != NULL) {
+	if (priv->profile_filenames != NULL) {
 
 		/* if the profile was deleted */
-		ret = g_file_test (priv->profile_filename, G_FILE_TEST_EXISTS);
+		ret = g_file_test (priv->profile_filenames[0], G_FILE_TEST_EXISTS);
 		if (!ret) {
-			egg_warning ("the file was deleted and can't be loaded: %s", priv->profile_filename);
+			egg_warning ("the file was deleted and can't be loaded: %s", priv->profile_filenames[0]);
 			/* this is not fatal */
 			ret = TRUE;
 			goto out;
@@ -486,24 +486,52 @@ gcm_device_set_title (GcmDevice *device, const gchar *title)
 }
 
 /**
- * gcm_device_get_profile_filename:
+ * gcm_device_get_profile_filenames:
+ *
+ * Return value: the filenames. Do not free this value
  **/
-const gchar *
-gcm_device_get_profile_filename (GcmDevice *device)
+gchar **
+gcm_device_get_profile_filenames (GcmDevice *device)
 {
 	g_return_val_if_fail (GCM_IS_DEVICE (device), NULL);
-	return device->priv->profile_filename;
+	return device->priv->profile_filenames;
 }
 
 /**
- * gcm_device_set_profile_filename:
+ * gcm_device_set_profile_filenames:
  **/
 void
-gcm_device_set_profile_filename (GcmDevice *device, const gchar *profile_filename)
+gcm_device_set_profile_filenames (GcmDevice *device, gchar **profile_filenames)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
-	g_free (device->priv->profile_filename);
-	device->priv->profile_filename = g_strdup (profile_filename);
+	g_strfreev (device->priv->profile_filenames);
+	device->priv->profile_filenames = g_strdupv (profile_filenames);
+	gcm_device_changed (device);
+}
+
+/**
+ * gcm_device_get_default_profile_filename:
+ **/
+const gchar *
+gcm_device_get_default_profile_filename (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), NULL);
+	if (device->priv->profile_filenames == NULL)
+		return NULL;
+	return device->priv->profile_filenames[0];
+}
+
+/**
+ * gcm_device_set_default_profile_filename:
+ **/
+void
+gcm_device_set_default_profile_filename (GcmDevice *device, const gchar *profile_filename)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	g_strfreev (device->priv->profile_filenames);
+
+	/* FIXME: don't just nuke the list */
+	device->priv->profile_filenames = g_strsplit (profile_filename, ";", 1);
 	gcm_device_changed (device);
 }
 
@@ -569,8 +597,8 @@ gcm_device_load (GcmDevice *device, GError **error)
 	gcm_device_set_saved (device, TRUE);
 
 	/* load data */
-	g_free (priv->profile_filename);
-	priv->profile_filename = g_key_file_get_string (file, priv->id, "profile", NULL);
+	g_strfreev (priv->profile_filenames);
+	priv->profile_filenames = g_key_file_get_string_list (file, priv->id, "profile", NULL, NULL);
 	if (priv->serial == NULL)
 		priv->serial = g_key_file_get_string (file, priv->id, "serial", NULL);
 	if (priv->model == NULL)
@@ -610,16 +638,16 @@ gcm_device_load (GcmDevice *device, GError **error)
 	priv->modified_time = timeval.tv_sec;
 
 	/* load this */
-	ret = gcm_device_load_from_profile (device, &error_local);
+	ret = gcm_device_load_from_default_profile (device, &error_local);
 	if (!ret) {
 
 		/* just print a warning, this is not fatal */
-		egg_warning ("failed to load profile %s: %s", priv->profile_filename, error_local->message);
+		egg_warning ("failed to load profile %s: %s", priv->profile_filenames[0], error_local->message);
 		g_error_free (error_local);
 
 		/* recover as the file might have been corrupted */
-		g_free (priv->profile_filename);
-		priv->profile_filename = NULL;
+		g_strfreev (priv->profile_filenames);
+		priv->profile_filenames = NULL;
 		ret = TRUE;
 	}
 out:
@@ -705,10 +733,12 @@ gcm_device_save (GcmDevice *device, GError **error)
 	g_key_file_set_string (keyfile, priv->id, "modified", timespec);
 
 	/* save data */
-	if (priv->profile_filename == NULL)
+	if (priv->profile_filenames == NULL)
 		g_key_file_remove_key (keyfile, priv->id, "profile", NULL);
 	else
-		g_key_file_set_string (keyfile, priv->id, "profile", priv->profile_filename);
+		g_key_file_set_string_list (keyfile, priv->id, "profile",
+					    (const gchar * const*) priv->profile_filenames,
+					    g_strv_length (priv->profile_filenames));
 
 	/* save device specific data */
 	if (priv->serial == NULL)
@@ -850,7 +880,7 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 		g_value_set_float (value, priv->contrast);
 		break;
 	case PROP_PROFILE_FILENAME:
-		g_value_set_string (value, priv->profile_filename);
+		g_value_set_boxed (value, priv->profile_filenames);
 		break;
 	case PROP_TITLE:
 		g_value_set_string (value, priv->title);
@@ -901,7 +931,7 @@ gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GP
 		gcm_device_set_title (device, g_value_get_string (value));
 		break;
 	case PROP_PROFILE_FILENAME:
-		gcm_device_set_profile_filename (device, g_value_get_string (value));
+		gcm_device_set_profile_filenames (device, (gchar**)g_value_get_boxed (value));
 		break;
 	case PROP_GAMMA:
 		gcm_device_set_gamma (device, g_value_get_float (value));
@@ -1024,9 +1054,9 @@ gcm_device_class_init (GcmDeviceClass *klass)
 	/**
 	 * GcmDevice:profile-filename:
 	 */
-	pspec = g_param_spec_string ("profile-filename", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
+	pspec = g_param_spec_boxed ("profile-filename", NULL, NULL,
+				    G_TYPE_STRV,
+				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_PROFILE_FILENAME, pspec);
 
 	/**
@@ -1073,7 +1103,7 @@ gcm_device_init (GcmDevice *device)
 	device->priv->serial = NULL;
 	device->priv->manufacturer = NULL;
 	device->priv->model = NULL;
-	device->priv->profile_filename = NULL;
+	device->priv->profile_filenames = NULL;
 	device->priv->modified_time = 0;
 	device->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 	device->priv->gamma = g_settings_get_double (device->priv->settings, GCM_SETTINGS_DEFAULT_GAMMA);
@@ -1102,7 +1132,7 @@ gcm_device_finalize (GObject *object)
 	g_free (priv->serial);
 	g_free (priv->manufacturer);
 	g_free (priv->model);
-	g_free (priv->profile_filename);
+	g_strfreev (priv->profile_filenames);
 	g_object_unref (priv->settings);
 
 	G_OBJECT_CLASS (gcm_device_parent_class)->finalize (object);

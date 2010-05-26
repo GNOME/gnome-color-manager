@@ -285,7 +285,7 @@ gcm_device_sane_apply_device (GcmDeviceSane *device_sane, GError **error)
 	/* get properties from device */
 	model = gcm_device_get_model (device);
 	manufacturer = gcm_device_get_manufacturer (device);
-	profile_filename = gcm_device_get_profile_filename (device);
+	profile_filename = gcm_device_get_default_profile_filename (device);
 	profile_filename_quoted = g_strdup_printf ("\"%s\"", profile_filename);
 
 	device_filename = g_strdup_printf ("%s:%s.drc", manufacturer, model);

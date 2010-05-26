@@ -139,7 +139,7 @@ gcm_prefs_set_default (GcmDevice *device)
 
 	/* nothing set */
 	id = gcm_device_get_id (device);
-	filename = gcm_device_get_profile_filename (device);
+	filename = gcm_device_get_default_profile_filename (device);
 	if (filename == NULL) {
 		egg_debug ("no filename for %s", id);
 		goto out;
@@ -956,7 +956,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		egg_debug ("adding: %s", destination);
 
 		/* set this default */
-		gcm_device_set_profile_filename (current_device, destination);
+		gcm_device_set_default_profile_filename (current_device, destination);
 		ret = gcm_device_save (current_device, &error);
 		if (!ret) {
 			egg_warning ("failed to save default: %s", error->message);
@@ -1525,7 +1525,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 
 	/* add profiles of the right kind */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
-	profile_filename = gcm_device_get_profile_filename (current_device);
+	profile_filename = gcm_device_get_default_profile_filename (current_device);
 	gcm_prefs_add_profiles_suitable_for_devices (widget, profile_filename);
 
 	/* make sure selectable */
@@ -2055,7 +2055,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* see if it's changed */
-	profile_old = gcm_device_get_profile_filename (current_device);
+	profile_old = gcm_device_get_default_profile_filename (current_device);
 	egg_debug ("old: %s, new:%s", profile_old, filename);
 	changed = ((g_strcmp0 (profile_old, filename) != 0));
 
@@ -2063,7 +2063,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	if (changed) {
 
 		/* save new profile */
-		gcm_device_set_profile_filename (current_device, filename);
+		gcm_device_set_default_profile_filename (current_device, filename);
 		ret = gcm_device_save (current_device, &error);
 		if (!ret) {
 			egg_warning ("failed to save config: %s", error->message);

@@ -349,6 +349,7 @@ gcm_test_device_func (void)
 	GError *error = NULL;
 	gchar *filename;
 	const gchar *profile;
+	gchar **profiles;
 	gchar *data;
 	gchar **split;
 
@@ -398,7 +399,7 @@ gcm_test_device_func (void)
 	g_assert_no_error (error);
 	g_assert (ret);
 
-	g_assert_cmpstr (gcm_device_get_profile_filename (device), ==, NULL);
+	g_assert_cmpstr (gcm_device_get_default_profile_filename (device), ==, NULL);
 
 	/* empty file that exists */
 	g_file_set_contents (filename, "", -1, NULL);
@@ -413,24 +414,28 @@ gcm_test_device_func (void)
 			     "[sysfs_dummy_device]\n"
 			     "title=Canon - CanoScan\n"
 			     "type=scanner\n"
-			     "profile=/srv/sysfs_canon_canoscan.icc\n", -1, NULL);
+			     "profile=/srv/sysfs_canon_canoscan.icc;/home/generic.icc\n", -1, NULL);
 
 	ret = gcm_device_load (device, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
-	/* get some properties */
-	profile = gcm_device_get_profile_filename (device);
 
 	g_main_loop_run (_loop);
 	/* TODO: time out of loop */
 
 	g_assert_cmpint (_changes, ==, 3);
 
+	/* get some properties */
+	profile = gcm_device_get_default_profile_filename (device);
 	g_assert_cmpstr (profile, ==, "/srv/sysfs_canon_canoscan.icc");
+	profiles = gcm_device_get_profile_filenames (device);
+	g_assert_cmpstr (profiles[0], ==, "/srv/sysfs_canon_canoscan.icc");
+	g_assert_cmpstr (profiles[1], ==, "/home/generic.icc");
+	g_assert_cmpstr (profiles[2], ==, NULL);
 
 	/* set some properties */
-	gcm_device_set_profile_filename (device, "/srv/sysfs_canon_canoscan.icc");
+	gcm_device_set_default_profile_filename (device, "/srv/sysfs_canon_canoscan.icc");
 
 	/* ensure the file is nuked, again */
 	g_unlink (filename);
@@ -445,7 +450,7 @@ gcm_test_device_func (void)
 
 	split = g_strsplit (data, "\n", -1);
 	g_assert_cmpstr (split[1], ==, "[sysfs_dummy_device]");
-	g_assert_cmpstr (split[4], ==, "profile=/srv/sysfs_canon_canoscan.icc");
+	g_assert_cmpstr (split[4], ==, "profile=/srv/sysfs_canon_canoscan.icc;");
 	g_assert_cmpstr (split[5], ==, "serial=0123456789");
 	g_assert_cmpstr (split[6], ==, "type=scanner");
 	g_assert_cmpstr (split[7], ==, "colorspace=rgb");
@@ -1096,7 +1101,7 @@ gcm_test_client_func (void)
 	device = g_ptr_array_index (array, 0);
 	g_assert_cmpstr (gcm_device_get_id (device), ==, "xrandr_goldstar");
 	g_assert_cmpstr (gcm_device_get_title (device), ==, "Goldstar");
-	g_assert_cmpstr (gcm_device_get_profile_filename (device), ==, "dave.icc");
+	g_assert_cmpstr (gcm_device_get_default_profile_filename (device), ==, "dave.icc");
 	g_assert (gcm_device_get_saved (device));
 	g_assert (!gcm_device_get_connected (device));
 	g_assert (GCM_IS_DEVICE_XRANDR (device));
@@ -1116,7 +1121,7 @@ gcm_test_client_func (void)
 	device = g_ptr_array_index (array, 0);
 	g_assert_cmpstr (gcm_device_get_id (device), ==, "xrandr_goldstar");
 	g_assert_cmpstr (gcm_device_get_title (device), ==, "Slightly different");
-	g_assert_cmpstr (gcm_device_get_profile_filename (device), ==, "dave.icc");
+	g_assert_cmpstr (gcm_device_get_default_profile_filename (device), ==, "dave.icc");
 	g_assert (gcm_device_get_saved (device));
 	g_assert (gcm_device_get_connected (device));
 	g_assert (GCM_IS_DEVICE_UDEV (device));
