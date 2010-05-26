@@ -477,15 +477,20 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 		goto out;
 	}
 
-	/* if not saved, try to find default filename */
+	/* if not saved, try to find default profile */
 	saved = gcm_device_get_saved (device);
-	filename = gcm_device_get_default_profile_filename (device);
-	if (!saved && filename == NULL) {
+	profile = gcm_device_get_default_profile (device);
+	if (!saved && profile == NULL) {
 		filename_systemwide = g_strdup_printf ("%s/%s.icc", GCM_SYSTEM_PROFILES_DIR, id);
 		ret = g_file_test (filename_systemwide, G_FILE_TEST_EXISTS);
 		if (ret) {
-			egg_error ("using systemwide %s as profile", filename_systemwide);
-			filename = g_strdup (filename_systemwide);
+			egg_debug ("using systemwide %s as profile", filename_systemwide);
+			profile = gcm_profile_default_new ();
+			file = g_file_new_for_path (filename_systemwide);
+			ret = gcm_profile_parse (profile, file, error);
+			g_object_unref (file);
+			if (!ret)
+				goto out;
 		}
 	}
 
@@ -508,18 +513,8 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 
 	/* only set the CLUT if we're not seting the atom */
 	use_global = g_settings_get_boolean (priv->settings, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION);
-	if (use_global && filename != NULL) {
-		/* create CLUT */
-		profile = gcm_profile_default_new ();
-		file = g_file_new_for_path (filename);
-		ret = gcm_profile_parse (profile, file, error);
-		g_object_unref (file);
-		if (!ret)
-			goto out;
-
-		/* create a CLUT from the profile */
+	if (use_global && profile != NULL)
 		clut = gcm_profile_generate_vcgt (profile, size);
-	}
 
 	/* create dummy CLUT if we failed */
 	if (clut == NULL) {
@@ -552,7 +547,7 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 
 	/* either remove the atoms or set them */
 	use_atom = g_settings_get_boolean (priv->settings, GCM_SETTINGS_SET_ICC_PROFILE_ATOM);
-	if (!use_atom || filename == NULL) {
+	if (!use_atom || profile == NULL) {
 
 		/* remove the output atom if there's nothing to show */
 		ret = gcm_xserver_remove_output_profile (priv->xserver, output_name, error);
@@ -570,6 +565,7 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 		}
 	} else {
 		/* set the per-output and per screen profile atoms */
+		filename = gcm_profile_get_filename (profile);
 		ret = gcm_xserver_set_output_profile (priv->xserver, output_name, filename, error);
 		if (!ret)
 			goto out;

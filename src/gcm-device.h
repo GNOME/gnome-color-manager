@@ -25,6 +25,7 @@
 #include <glib-object.h>
 
 #include "gcm-enum.h"
+#include "gcm-profile.h"
 
 G_BEGIN_DECLS
 
@@ -113,6 +114,7 @@ void			 gcm_device_set_profiles		(GcmDevice	*device,
 glong			 gcm_device_get_modified_time		(GcmDevice	*device);
 
 /* helpers */
+GcmProfile		*gcm_device_get_default_profile		(GcmDevice	*device);
 const gchar		*gcm_device_get_default_profile_filename (GcmDevice	*device);
 void			 gcm_device_set_default_profile_filename (GcmDevice	*device,
 								 const gchar 	*profile_filename);
