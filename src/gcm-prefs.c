@@ -1206,7 +1206,13 @@ gcm_prefs_assign_remove_cb (GtkWidget *widget, gpointer data)
 		if (ret) {
 			gtk_list_store_set (list_store_assign, &iter,
 					    GCM_ASSIGN_COLUMN_IS_DEFAULT, TRUE,
+					    GCM_ASSIGN_COLUMN_SORT, "0",
 					    -1);
+			do {
+				gtk_list_store_set (list_store_assign, &iter,
+						    GCM_ASSIGN_COLUMN_SORT, "1",
+						    -1);
+			} while (gtk_tree_model_iter_next (model, &iter));
 		}
 	}
 
@@ -1380,7 +1386,7 @@ gcm_prefs_button_assign_ok_cb (GtkWidget *widget, gpointer data)
 	gtk_list_store_append (list_store_assign, &iter);
 	gtk_list_store_set (list_store_assign, &iter,
 			    GCM_ASSIGN_COLUMN_PROFILE, profile,
-			    GCM_ASSIGN_COLUMN_SORT, "1",
+			    GCM_ASSIGN_COLUMN_SORT, is_default ? "0" : "1",
 			    GCM_ASSIGN_COLUMN_IS_DEFAULT, is_default,
 			    -1);
 
@@ -1790,7 +1796,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 		gtk_list_store_append (list_store_assign, &iter);
 		gtk_list_store_set (list_store_assign, &iter,
 				    GCM_ASSIGN_COLUMN_PROFILE, profile,
-				    GCM_ASSIGN_COLUMN_SORT, "0",
+				    GCM_ASSIGN_COLUMN_SORT, (i == 0) ? "0" : "1",
 				    GCM_ASSIGN_COLUMN_IS_DEFAULT, (i == 0),
 				    -1);
 	}
