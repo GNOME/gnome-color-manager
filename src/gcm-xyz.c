@@ -154,15 +154,12 @@ gcm_xyz_set_property (GObject *object, guint prop_id, const GValue *value, GPara
 	switch (prop_id) {
 	case PROP_CIE_X:
 		priv->cie_x = g_value_get_double (value);
-		egg_debug ("CIE x now %f", priv->cie_x);
 		break;
 	case PROP_CIE_Y:
 		priv->cie_y = g_value_get_double (value);
-		egg_debug ("CIE y now %f", priv->cie_y);
 		break;
 	case PROP_CIE_Z:
 		priv->cie_z = g_value_get_double (value);
-		egg_debug ("CIE z now %f", priv->cie_z);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
