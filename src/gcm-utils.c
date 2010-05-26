@@ -139,7 +139,7 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 	GVariant *response = NULL;
 	GVariantBuilder *builder = NULL;
 	GError *error = NULL;
-	gboolean ret;
+	gboolean ret = FALSE;
 	guint32 xid = 0;
 	gchar **packages = NULL;
 
@@ -147,7 +147,7 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 
 #ifndef GCM_USE_PACKAGEKIT
 	egg_warning ("cannot install %s: this package was not compiled with --enable-packagekit", package_name);
-	return FALSE;
+	goto out;
 #endif
 
 	/* get xid of this window */
@@ -189,6 +189,9 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 		g_error_free (error);
 		goto out;
 	}
+
+	/* success */
+	ret = TRUE;
 out:
 	if (builder != NULL)
 		g_variant_builder_unref (builder);

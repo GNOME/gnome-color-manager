@@ -430,9 +430,9 @@ gcm_inspect_show_profiles_for_type (const gchar *type)
 	gboolean ret = FALSE;
 	GDBusConnection *connection;
 	GError *error = NULL;
-	const gchar *filename;
-	const gchar *description;
-	guint i;
+	const gchar *filename = NULL;
+	const gchar *description = NULL;
+	guint i = 0;
 	GVariant *args = NULL;
 	GVariant *response = NULL;
 	GVariantIter *iter = NULL;

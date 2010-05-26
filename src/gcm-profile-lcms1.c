@@ -381,7 +381,6 @@ gcm_profile_lcms1_parse_multi_localized_unicode (GcmProfileLcms1 *profile_lcms1,
 			/* there is more than one language encoded */
 			egg_warning ("more than one item of data in MLUC (names size: %i), using first one", names_size);
 		}
-		record_size = gcm_parser_decode_32 (data + 12);
 		len = gcm_parser_decode_32 (data + 20);
 		offset_name = gcm_parser_decode_32 (data + 24);
 		text = gcm_profile_lcms1_utf16be_to_locale (data + offset_name, len);

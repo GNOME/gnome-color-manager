@@ -359,7 +359,7 @@ gcm_session_get_profiles_for_device (const gchar *device_id_with_prefix, GError 
 	guint i;
 	gboolean use_native_device = FALSE;
 	GcmDevice *device;
-	GPtrArray *array;
+	GPtrArray *array = NULL;
 	GPtrArray *array_devices;
 
 	/* strip the prefix, if there is any */

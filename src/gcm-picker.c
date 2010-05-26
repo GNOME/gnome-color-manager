@@ -132,7 +132,6 @@ gcm_picker_refresh_results (void)
 	g_object_get (calibrate, "xyz", &xyz, NULL);
 
 	/* create new pixbuf of the right size */
-	image = GTK_IMAGE (gtk_builder_get_object (builder, "image_preview"));
 	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 200, 200);
 
 	/* get values */
@@ -467,7 +466,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 	if (!has_profile) {
 		/* TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK" */
 		text = g_strdup_printf (_("No %s color spaces available"),
-					gcm_colorspace_to_localised_string (colorspace));
+					gcm_colorspace_to_localised_string (GCM_COLORSPACE_RGB));
 		gtk_combo_box_append_text (GTK_COMBO_BOX(widget), text);
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 		gtk_widget_set_sensitive (widget, FALSE);

@@ -2286,7 +2286,6 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GcmPrefsEntryType entry_type;
-	gchar *filename = NULL;
 
 	/* no devices */
 	if (current_device == NULL)
@@ -2312,28 +2311,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 			goto out;
 		}
 
-		/* check the file is suitable */
-		profile = gcm_profile_default_new ();
-		filename = g_file_get_path (file);
-		ret = gcm_profile_parse (profile, file, &error);
-		if (!ret) {
-			/* set to first entry */
-			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
-			egg_warning ("failed to parse ICC file: %s", error->message);
-			g_error_free (error);
-			goto out;
-		}
-		ret = gcm_prefs_is_profile_suitable_for_device (profile, current_device);
-		if (!ret) {
-			/* set to 'None' */
-			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
-
-			/* TRANSLATORS: the profile was of the wrong sort for this device */
-			gcm_prefs_error_dialog (_("Could not import profile"), _("The profile was of the wrong type for this device"));
-			goto out;
-		}
-
-		/* actually set this as the default */
+		/* import this */
 		ret = gcm_prefs_profile_import_file (file);
 		if (!ret) {
 			gchar *uri;
@@ -2346,9 +2324,29 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 			goto out;
 		}
 
-		/* now use the new profile as the device default */
+		/* get an object of the destination */
 		dest = gcm_utils_get_profile_destination (file);
-		filename = g_file_get_path (dest);
+		profile = gcm_profile_default_new ();
+		ret = gcm_profile_parse (profile, dest, &error);
+		if (!ret) {
+			/* set to first entry */
+			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
+			egg_warning ("failed to parse ICC file: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
+
+		/* check the file is suitable */
+		ret = gcm_prefs_is_profile_suitable_for_device (profile, current_device);
+		if (!ret) {
+			/* set to 'None' */
+			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
+
+			/* TRANSLATORS: the profile was of the wrong sort for this device */
+			gcm_prefs_error_dialog (_("Could not import profile"),
+						_("The profile was of the wrong type for this device"));
+			goto out;
+		}
 
 		/* add to combobox */
 		gtk_list_store_append (GTK_LIST_STORE(model), &iter);
