@@ -480,6 +480,8 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	/* if not saved, try to find default profile */
 	saved = gcm_device_get_saved (device);
 	profile = gcm_device_get_default_profile (device);
+	if (profile != NULL)
+		g_object_ref (profile);
 	if (!saved && profile == NULL) {
 		filename_systemwide = g_strdup_printf ("%s/%s.icc", GCM_SYSTEM_PROFILES_DIR, id);
 		ret = g_file_test (filename_systemwide, G_FILE_TEST_EXISTS);
