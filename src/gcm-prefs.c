@@ -2953,11 +2953,8 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_serial"));
 	gtk_widget_hide (widget);
 
-	/* set up virtual device */
+	/* set up virtual dialog */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_virtual"));
-	gtk_window_set_icon_name (GTK_WINDOW (widget), GCM_STOCK_ICON);
-	gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (main_window));
-	gtk_window_set_modal (GTK_WINDOW (widget), TRUE);
 	g_signal_connect (widget, "delete-event",
 			  G_CALLBACK (gcm_prefs_virtual_delete_event_cb), NULL);
 	g_signal_connect (widget, "drag-data-received",
