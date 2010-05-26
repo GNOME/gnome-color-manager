@@ -157,8 +157,9 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 		      "manufacturer", manufacturer,
 		      "title", title,
 		      "native-device", device_id,
-		      "profile-filename", profile_filename,
 		      NULL);
+	if (profile_filename != NULL)
+		gcm_device_set_default_profile_filename (device, profile_filename);
 out:
 	g_free (serial);
 	g_free (profile_filename);

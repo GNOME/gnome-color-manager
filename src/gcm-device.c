@@ -1122,9 +1122,9 @@ gcm_device_class_init (GcmDeviceClass *klass)
 	g_object_class_install_property (object_class, PROP_CONTRAST, pspec);
 
 	/**
-	 * GcmDevice:profile-filename:
+	 * GcmDevice:profiles:
 	 */
-	pspec = g_param_spec_pointer ("profile-filename", NULL, NULL,
+	pspec = g_param_spec_pointer ("profiles", NULL, NULL,
 				      G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_PROFILES, pspec);
 
