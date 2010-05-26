@@ -107,9 +107,9 @@ void			 gcm_device_set_model			(GcmDevice	*device,
 const gchar		*gcm_device_get_title			(GcmDevice	*device);
 void			 gcm_device_set_title			(GcmDevice	*device,
 								 const gchar 	*title);
-gchar			**gcm_device_get_profile_filenames	(GcmDevice	*device);
-void			 gcm_device_set_profile_filenames	(GcmDevice	*device,
-								 gchar 		**profile_filenames);
+GPtrArray		*gcm_device_get_profiles		(GcmDevice	*device);
+void			 gcm_device_set_profiles		(GcmDevice	*device,
+								 GPtrArray	*profiles);
 glong			 gcm_device_get_modified_time		(GcmDevice	*device);
 
 /* helpers */

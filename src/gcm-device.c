@@ -58,7 +58,7 @@ struct _GcmDevicePrivate
 	gchar			*serial;
 	gchar			*manufacturer;
 	gchar			*model;
-	gchar			**profile_filenames;
+	GPtrArray		*profiles;
 	gchar			*title;
 	GSettings		*settings;
 	GcmColorspace		 colorspace;
@@ -79,7 +79,7 @@ enum {
 	PROP_GAMMA,
 	PROP_BRIGHTNESS,
 	PROP_CONTRAST,
-	PROP_PROFILE_FILENAME,
+	PROP_PROFILES,
 	PROP_TITLE,
 	PROP_COLORSPACE,
 	PROP_LAST
@@ -179,25 +179,23 @@ static gboolean
 gcm_device_load_from_default_profile (GcmDevice *device, GError **error)
 {
 	gboolean ret = TRUE;
+	GcmProfile *profile;
 	GcmDevicePrivate *priv = device->priv;
 
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
 
 	/* no profile to load */
-	if (priv->profile_filenames == NULL)
+	if (priv->profiles->len == 0)
 		goto out;
 
-	/* load the profile if it's set */
-	if (priv->profile_filenames != NULL) {
-
-		/* if the profile was deleted */
-		ret = g_file_test (priv->profile_filenames[0], G_FILE_TEST_EXISTS);
-		if (!ret) {
-			egg_warning ("the file was deleted and can't be loaded: %s", priv->profile_filenames[0]);
-			/* this is not fatal */
-			ret = TRUE;
-			goto out;
-		}
+	/* if the profile was deleted */
+	profile = g_ptr_array_index (priv->profiles, 0);
+	ret = g_file_test (gcm_profile_get_filename (profile), G_FILE_TEST_EXISTS);
+	if (!ret) {
+		egg_warning ("the file was deleted and can't be loaded: %s", gcm_profile_get_filename (profile));
+		/* this is not fatal */
+		ret = TRUE;
+		goto out;
 	}
 out:
 	return ret;
@@ -486,26 +484,28 @@ gcm_device_set_title (GcmDevice *device, const gchar *title)
 }
 
 /**
- * gcm_device_get_profile_filenames:
+ * gcm_device_get_profiles:
  *
- * Return value: the filenames. Do not free this value
+ * Return value: the profiles. Do not unref this value
  **/
-gchar **
-gcm_device_get_profile_filenames (GcmDevice *device)
+GPtrArray *
+gcm_device_get_profiles (GcmDevice *device)
 {
 	g_return_val_if_fail (GCM_IS_DEVICE (device), NULL);
-	return device->priv->profile_filenames;
+	return device->priv->profiles;
 }
 
 /**
- * gcm_device_set_profile_filenames:
+ * gcm_device_set_profiles:
  **/
 void
-gcm_device_set_profile_filenames (GcmDevice *device, gchar **profile_filenames)
+gcm_device_set_profiles (GcmDevice *device, GPtrArray *profiles)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
-	g_strfreev (device->priv->profile_filenames);
-	device->priv->profile_filenames = g_strdupv (profile_filenames);
+	g_return_if_fail (profiles != NULL);
+
+	g_ptr_array_unref (device->priv->profiles);
+	device->priv->profiles = g_ptr_array_ref (profiles);
 	gcm_device_changed (device);
 }
 
@@ -515,10 +515,12 @@ gcm_device_set_profile_filenames (GcmDevice *device, gchar **profile_filenames)
 const gchar *
 gcm_device_get_default_profile_filename (GcmDevice *device)
 {
+	GcmProfile *profile;
 	g_return_val_if_fail (GCM_IS_DEVICE (device), NULL);
-	if (device->priv->profile_filenames == NULL)
+	if (device->priv->profiles->len == 0)
 		return NULL;
-	return device->priv->profile_filenames[0];
+	profile = g_ptr_array_index (device->priv->profiles, 0);
+	return gcm_profile_get_filename (profile);
 }
 
 /**
@@ -527,12 +529,34 @@ gcm_device_get_default_profile_filename (GcmDevice *device)
 void
 gcm_device_set_default_profile_filename (GcmDevice *device, const gchar *profile_filename)
 {
+	GcmProfile *profile;
+	GPtrArray *array;
+	gboolean ret;
+	GFile *file;
+	GError *error = NULL;
+
 	g_return_if_fail (GCM_IS_DEVICE (device));
-	g_strfreev (device->priv->profile_filenames);
+
+	/* create new list */
+	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	profile = gcm_profile_default_new ();
+
+	/* TODO: parse here? */
+	file = g_file_new_for_path (profile_filename);
+	ret = gcm_profile_parse (profile, file, &error);
+	if (!ret) {
+		egg_warning ("failed to parse: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	/* FIXME: don't just nuke the list */
-	device->priv->profile_filenames = g_strsplit (profile_filename, ";", 1);
-	gcm_device_changed (device);
+	g_ptr_array_add (array, g_object_ref (profile));
+	gcm_device_set_profiles (device, array);
+out:
+	g_ptr_array_unref (array);
+	g_object_unref (profile);
+	g_object_unref (file);
 }
 
 /**
@@ -557,6 +581,10 @@ gcm_device_load (GcmDevice *device, GError **error)
 	gchar *filename = NULL;
 	GTimeVal timeval;
 	gchar *iso_date = NULL;
+	gchar **profile_filenames = NULL;
+	guint i;
+	GcmProfile *profile;
+	GFile *file_tmp;
 	GcmDevicePrivate *priv = device->priv;
 
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
@@ -597,8 +625,24 @@ gcm_device_load (GcmDevice *device, GError **error)
 	gcm_device_set_saved (device, TRUE);
 
 	/* load data */
-	g_strfreev (priv->profile_filenames);
-	priv->profile_filenames = g_key_file_get_string_list (file, priv->id, "profile", NULL, NULL);
+	g_ptr_array_set_size (priv->profiles, 0);
+
+	/* parse filenames to object, skipping entries that fail to parse */
+	profile_filenames = g_key_file_get_string_list (file, priv->id, "profile", NULL, NULL);
+	for (i=0; profile_filenames[i] != NULL; i++) {
+		file_tmp = g_file_new_for_path (profile_filenames[i]);
+		profile = gcm_profile_default_new ();
+		ret = gcm_profile_parse (profile, file_tmp, &error_local);
+		if (ret) {
+			g_ptr_array_add (priv->profiles, g_object_ref (profile));
+		} else {
+			egg_warning ("failed to parse %s: %s", profile_filenames[i], error_local->message);
+			g_clear_error (&error_local);
+		}
+		g_object_unref (profile);
+		g_object_unref (file_tmp);
+	}
+
 	if (priv->serial == NULL)
 		priv->serial = g_key_file_get_string (file, priv->id, "serial", NULL);
 	if (priv->model == NULL)
@@ -642,15 +686,15 @@ gcm_device_load (GcmDevice *device, GError **error)
 	if (!ret) {
 
 		/* just print a warning, this is not fatal */
-		egg_warning ("failed to load profile %s: %s", priv->profile_filenames[0], error_local->message);
+		egg_warning ("failed to load profile %s", error_local->message);
 		g_error_free (error_local);
 
 		/* recover as the file might have been corrupted */
-		g_strfreev (priv->profile_filenames);
-		priv->profile_filenames = NULL;
+		g_ptr_array_set_size (priv->profiles, 0);
 		ret = TRUE;
 	}
 out:
+	g_strfreev (profile_filenames);
 	g_free (iso_date);
 	g_free (filename);
 	if (file != NULL)
@@ -665,14 +709,17 @@ gboolean
 gcm_device_save (GcmDevice *device, GError **error)
 {
 	GKeyFile *keyfile = NULL;
+	guint i;
 	gboolean ret;
 	gchar *data = NULL;
 	gchar *dirname;
 	GFile *file = NULL;
 	gchar *filename = NULL;
 	gchar *timespec = NULL;
+	gchar **profile_filenames;
 	GError *error_local = NULL;
 	GTimeVal timeval;
+	GcmProfile *profile;
 	GcmDevicePrivate *priv = device->priv;
 
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
@@ -733,12 +780,19 @@ gcm_device_save (GcmDevice *device, GError **error)
 	g_key_file_set_string (keyfile, priv->id, "modified", timespec);
 
 	/* save data */
-	if (priv->profile_filenames == NULL)
+	if (priv->profiles->len == 0)
 		g_key_file_remove_key (keyfile, priv->id, "profile", NULL);
-	else
+	else {
+		profile_filenames = g_new0 (gchar *, priv->profiles->len + 1);
+		for (i=0; i<priv->profiles->len; i++) {
+			profile = g_ptr_array_index (priv->profiles, i);
+			profile_filenames[i] = g_strdup (gcm_profile_get_filename (profile));
+		}
 		g_key_file_set_string_list (keyfile, priv->id, "profile",
-					    (const gchar * const*) priv->profile_filenames,
-					    g_strv_length (priv->profile_filenames));
+					    (const gchar * const*) profile_filenames,
+					    priv->profiles->len);
+		g_strfreev (profile_filenames);
+	}
 
 	/* save device specific data */
 	if (priv->serial == NULL)
@@ -879,8 +933,8 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_CONTRAST:
 		g_value_set_float (value, priv->contrast);
 		break;
-	case PROP_PROFILE_FILENAME:
-		g_value_set_boxed (value, priv->profile_filenames);
+	case PROP_PROFILES:
+		g_value_set_pointer (value, priv->profiles);
 		break;
 	case PROP_TITLE:
 		g_value_set_string (value, priv->title);
@@ -930,8 +984,8 @@ gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GP
 	case PROP_TITLE:
 		gcm_device_set_title (device, g_value_get_string (value));
 		break;
-	case PROP_PROFILE_FILENAME:
-		gcm_device_set_profile_filenames (device, (gchar**)g_value_get_boxed (value));
+	case PROP_PROFILES:
+		gcm_device_set_profiles (device, g_value_get_pointer (value));
 		break;
 	case PROP_GAMMA:
 		gcm_device_set_gamma (device, g_value_get_float (value));
@@ -1054,10 +1108,9 @@ gcm_device_class_init (GcmDeviceClass *klass)
 	/**
 	 * GcmDevice:profile-filename:
 	 */
-	pspec = g_param_spec_boxed ("profile-filename", NULL, NULL,
-				    G_TYPE_STRV,
-				    G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_PROFILE_FILENAME, pspec);
+	pspec = g_param_spec_pointer ("profile-filename", NULL, NULL,
+				      G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_PROFILES, pspec);
 
 	/**
 	 * GcmDevice:title:
@@ -1103,7 +1156,7 @@ gcm_device_init (GcmDevice *device)
 	device->priv->serial = NULL;
 	device->priv->manufacturer = NULL;
 	device->priv->model = NULL;
-	device->priv->profile_filenames = NULL;
+	device->priv->profiles = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	device->priv->modified_time = 0;
 	device->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 	device->priv->gamma = g_settings_get_double (device->priv->settings, GCM_SETTINGS_DEFAULT_GAMMA);
@@ -1132,7 +1185,7 @@ gcm_device_finalize (GObject *object)
 	g_free (priv->serial);
 	g_free (priv->manufacturer);
 	g_free (priv->model);
-	g_strfreev (priv->profile_filenames);
+	g_ptr_array_unref (priv->profiles);
 	g_object_unref (priv->settings);
 
 	G_OBJECT_CLASS (gcm_device_parent_class)->finalize (object);
