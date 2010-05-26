@@ -2,6 +2,7 @@
 <interface>
   <requires lib="gtk+" version="2.16"/>
   <!-- interface-naming-policy project-wide -->
+  <object class="GtkListStore" id="liststore1"/>
   <object class="GtkDialog" id="dialog_prefs">
     <property name="border_width">5</property>
     <property name="title" translatable="yes">Color Management</property>
@@ -62,7 +63,7 @@
                                 <property name="spacing">6</property>
                                 <child>
                                   <object class="GtkButton" id="button_device_add">
-                                    <property name="label" translatable="yes" comments="This is a button to add a virtual device">_Add device&#x2026;</property>
+                                    <property name="label" translatable="yes" comments="This is a button to add a virtual device">Add d_evice&#x2026;</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -77,7 +78,7 @@
                                 </child>
                                 <child>
                                   <object class="GtkButton" id="button_delete">
-                                    <property name="label" translatable="yes" comments="This is a button to delete the saved or virtual device">Remove device</property>
+                                    <property name="label" translatable="yes" comments="This is a button to delete the saved or virtual device">Remove de_vice</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
                                     <property name="receives_default">True</property>
@@ -124,7 +125,7 @@
                                 <child>
                                   <object class="GtkLabel" id="label_profile">
                                     <property name="visible">True</property>
-                                    <property name="label" translatable="yes" comments="Section heading for device profile settings">Color Profile</property>
+                                    <property name="label" translatable="yes" comments="Section heading for device profile settings">Color Profiles</property>
                                     <attributes>
                                       <attribute name="weight" value="bold"/>
                                     </attributes>
@@ -145,21 +146,22 @@
                                 <property name="visible">True</property>
                                 <property name="left_padding">12</property>
                                 <child>
-                                  <object class="GtkHBox" id="hbox29">
+                                  <object class="GtkHBox" id="hbox_assign">
                                     <property name="visible">True</property>
-                                    <property name="spacing">9</property>
+                                    <property name="spacing">6</property>
                                     <child>
-                                      <object class="GtkVBox" id="vbox5">
+                                      <object class="GtkScrolledWindow" id="scrolledwindow_assign">
                                         <property name="visible">True</property>
-                                        <property name="orientation">vertical</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="hscrollbar_policy">automatic</property>
+                                        <property name="vscrollbar_policy">automatic</property>
+                                        <property name="shadow_type">in</property>
                                         <child>
-                                          <object class="GtkComboBox" id="combobox_profile">
+                                          <object class="GtkTreeView" id="treeview_assign">
                                             <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="headers_visible">False</property>
                                           </object>
-                                          <packing>
-                                            <property name="expand">False</property>
-                                            <property name="position">0</property>
-                                          </packing>
                                         </child>
                                       </object>
                                       <packing>
@@ -167,12 +169,60 @@
                                       </packing>
                                     </child>
                                     <child>
-                                      <object class="GtkButton" id="button_calibrate">
-                                        <property name="label" translatable="yes" comments="This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image">Create _Profile</property>
+                                      <object class="GtkHBox" id="hbox55">
                                         <property name="visible">True</property>
-                                        <property name="can_focus">True</property>
-                                        <property name="receives_default">True</property>
-                                        <property name="use_underline">True</property>
+                                        <property name="orientation">vertical</property>
+                                        <property name="spacing">6</property>
+                                        <child>
+                                          <object class="GtkButton" id="button_assign_add">
+                                            <property name="label">gtk-add</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="use_stock">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="position">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="button_assign_remove">
+                                            <property name="label">gtk-remove</property>
+                                            <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="use_stock">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="position">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="button_calibrate">
+                                            <property name="label" translatable="yes" comments="This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image">Create _Profile</property>
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="use_underline">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="position">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkButton" id="button_assign_make_default">
+                                            <property name="label" translatable="yes" comments="Makes the profile the default for the device">_Make Default</property>
+                                            <property name="visible">True</property>
+                                            <property name="sensitive">False</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="receives_default">True</property>
+                                            <property name="use_underline">True</property>
+                                          </object>
+                                          <packing>
+                                            <property name="position">3</property>
+                                          </packing>
+                                        </child>
                                       </object>
                                       <packing>
                                         <property name="expand">False</property>
@@ -475,7 +525,6 @@
                                 <child>
                                   <object class="GtkVBox" id="vbox10">
                                     <property name="visible">True</property>
-                                    <property name="orientation">vertical</property>
                                     <property name="spacing">3</property>
                                     <child>
                                       <object class="GtkTable" id="table1">
@@ -591,7 +640,7 @@
                                         <property name="visible">True</property>
                                         <child>
                                           <object class="GtkButton" id="button_reset">
-                                            <property name="label" translatable="yes" comments="This resets the device to it's defaults, and removes any user tweaked settings.">_Reset to defaults</property>
+                                            <property name="label" translatable="yes" comments="This resets the device to it's defaults, and removes any user tweaked settings.">Rese_t</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
@@ -691,7 +740,7 @@
                             </child>
                             <child>
                               <object class="GtkButton" id="button_profile_delete">
-                                <property name="label" translatable="yes">Remove</property>
+                                <property name="label" translatable="yes">_Remove</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
@@ -1416,7 +1465,7 @@
                             </child>
                             <child>
                               <object class="GtkCheckButton" id="checkbutton_profile">
-                                <property name="label" translatable="yes">_Set profile for color managed applications</property>
+                                <property name="label" translatable="yes">Set profile for _color managed applications</property>
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">False</property>
@@ -1718,7 +1767,7 @@
             </child>
             <child>
               <object class="GtkButton" id="button_default">
-                <property name="label" translatable="yes">_Make Default</property>
+                <property name="label" translatable="yes" comments="This is when the settings are set for all users, unless they have per-user settings themselves">_Set System Default</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
@@ -2045,47 +2094,120 @@
       <action-widget response="0">button_virtual_add</action-widget>
     </action-widgets>
   </object>
+  <object class="GtkDialog" id="dialog_assign">
+    <property name="border_width">5</property>
+    <property name="title"> </property>
+    <property name="modal">True</property>
+    <property name="window_position">center-on-parent</property>
+    <property name="destroy_with_parent">True</property>
+    <property name="icon_name">gnome-color-manager</property>
+    <property name="type_hint">dialog</property>
+    <property name="skip_taskbar_hint">True</property>
+    <property name="skip_pager_hint">True</property>
+    <property name="transient_for">dialog_prefs</property>
+    <property name="has_separator">False</property>
+    <child internal-child="vbox">
+      <object class="GtkVBox" id="dialog-vbox3">
+        <property name="visible">True</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child>
+          <object class="GtkComboBox" id="combobox_profile">
+            <property name="visible">True</property>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child internal-child="action_area">
+          <object class="GtkHButtonBox" id="dialog-action_area3">
+            <property name="visible">True</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button_assign_cancel">
+                <property name="label">gtk-cancel</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+                <property name="secondary">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button_assign_ok">
+                <property name="label">gtk-add</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">False</property>
+            <property name="pack_type">end</property>
+            <property name="position">0</property>
+          </packing>
+        </child>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="0">button_assign_cancel</action-widget>
+      <action-widget response="0">button_assign_ok</action-widget>
+    </action-widgets>
+  </object>
   <object class="GtkSizeGroup" id="sizegroup_lists">
     <widgets>
-      <widget name="scrolledwindow2"/>
       <widget name="scrolledwindow1"/>
+      <widget name="scrolledwindow2"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="sizegroup_defaults">
     <widgets>
-      <widget name="hbox17"/>
-      <widget name="hbox15"/>
-      <widget name="hbox46"/>
       <widget name="hbox43"/>
+      <widget name="hbox46"/>
+      <widget name="hbox15"/>
+      <widget name="hbox17"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="sizegroup_devices">
     <widgets>
-      <widget name="hbox53"/>
-      <widget name="hbox23"/>
-      <widget name="hbox22"/>
       <widget name="hbox21"/>
+      <widget name="hbox22"/>
+      <widget name="hbox23"/>
+      <widget name="hbox53"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="sizegroup_profiles">
     <widgets>
-      <widget name="hbox33"/>
-      <widget name="hbox31"/>
-      <widget name="hbox12"/>
-      <widget name="hbox48"/>
-      <widget name="hbox34"/>
-      <widget name="hbox10"/>
-      <widget name="hbox36"/>
-      <widget name="hbox39"/>
       <widget name="hbox6"/>
+      <widget name="hbox39"/>
+      <widget name="hbox36"/>
+      <widget name="hbox10"/>
+      <widget name="hbox34"/>
+      <widget name="hbox48"/>
+      <widget name="hbox12"/>
+      <widget name="hbox31"/>
+      <widget name="hbox33"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="sizegroup_combos">
     <widgets>
-      <widget name="combobox_space_rgb"/>
-      <widget name="combobox_space_cmyk"/>
-      <widget name="combobox_rendering_display"/>
       <widget name="combobox_rendering_softproof"/>
+      <widget name="combobox_rendering_display"/>
+      <widget name="combobox_space_cmyk"/>
+      <widget name="combobox_space_rgb"/>
     </widgets>
   </object>
 </interface>
