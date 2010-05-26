@@ -33,6 +33,7 @@
 
 #include "egg-debug.h"
 
+#include "gcm-cell-renderer-profile.h"
 #include "gcm-calibrate-argyll.h"
 #include "gcm-cie-widget.h"
 #include "gcm-client.h"
@@ -73,7 +74,6 @@ enum {
 	GCM_PROFILES_COLUMN_ID,
 	GCM_PROFILES_COLUMN_SORT,
 	GCM_PROFILES_COLUMN_ICON,
-	GCM_PROFILES_COLUMN_TITLE,
 	GCM_PROFILES_COLUMN_PROFILE,
 	GCM_PROFILES_COLUMN_LAST
 };
@@ -436,7 +436,6 @@ gcm_prefs_update_profile_list (void)
 		gtk_list_store_set (list_store_profiles, &iter,
 				    GCM_PROFILES_COLUMN_ID, filename,
 				    GCM_PROFILES_COLUMN_SORT, sort,
-				    GCM_PROFILES_COLUMN_TITLE, description,
 				    GCM_PROFILES_COLUMN_ICON, icon_name,
 				    GCM_PROFILES_COLUMN_PROFILE, profile,
 				    -1);
@@ -1204,13 +1203,13 @@ gcm_prefs_add_profiles_columns (GtkTreeView *treeview)
 	gtk_widget_set_size_request (GTK_WIDGET (treeview), GCM_PREFS_TREEVIEW_WIDTH, -1);
 
 	/* column for text */
-	renderer = gtk_cell_renderer_text_new ();
+	renderer = gcm_cell_renderer_profile_new ();
 	g_object_set (renderer,
 		      "wrap-mode", PANGO_WRAP_WORD,
 		      "wrap-width", GCM_PREFS_TREEVIEW_WIDTH - 62,
 		      NULL);
 	column = gtk_tree_view_column_new_with_attributes ("", renderer,
-							   "markup", GCM_PROFILES_COLUMN_TITLE, NULL);
+							   "profile", GCM_PROFILES_COLUMN_PROFILE, NULL);
 	gtk_tree_view_column_set_sort_column_id (column, GCM_PROFILES_COLUMN_SORT);
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store_profiles), GCM_PROFILES_COLUMN_SORT, GTK_SORT_ASCENDING);
 	gtk_tree_view_append_column (treeview, column);
@@ -2866,8 +2865,8 @@ main (int argc, char **argv)
 	/* create list stores */
 	list_store_devices = gtk_list_store_new (GCM_DEVICES_COLUMN_LAST, G_TYPE_STRING, G_TYPE_STRING,
 						 G_TYPE_STRING, G_TYPE_STRING);
-	list_store_profiles = gtk_list_store_new (GCM_PROFILES_COLUMN_LAST, G_TYPE_STRING, G_TYPE_STRING,
-						  G_TYPE_STRING, G_TYPE_STRING, G_TYPE_POINTER);
+	list_store_profiles = gtk_list_store_new (GCM_PROFILES_COLUMN_LAST, G_TYPE_STRING,
+						  G_TYPE_STRING, G_TYPE_STRING, GCM_TYPE_PROFILE);
 
 	/* create device tree view */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));

@@ -243,6 +243,8 @@ gcm_import_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_prefs_SOURCES =					\
+	gcm-cell-renderer-profile.c			\
+	gcm-cell-renderer-profile.h			\
 	gcm-prefs.c
 
 gcm_prefs_LDADD =					\
