@@ -643,18 +643,20 @@ gcm_device_load (GcmDevice *device, GError **error)
 
 	/* parse filenames to object, skipping entries that fail to parse */
 	profile_filenames = g_key_file_get_string_list (file, priv->id, "profile", NULL, NULL);
-	for (i=0; profile_filenames[i] != NULL; i++) {
-		file_tmp = g_file_new_for_path (profile_filenames[i]);
-		profile = gcm_profile_default_new ();
-		ret = gcm_profile_parse (profile, file_tmp, &error_local);
-		if (ret) {
-			g_ptr_array_add (priv->profiles, g_object_ref (profile));
-		} else {
-			egg_warning ("failed to parse %s: %s", profile_filenames[i], error_local->message);
-			g_clear_error (&error_local);
+	if (profile_filenames != NULL) {
+		for (i=0; profile_filenames[i] != NULL; i++) {
+			file_tmp = g_file_new_for_path (profile_filenames[i]);
+			profile = gcm_profile_default_new ();
+			ret = gcm_profile_parse (profile, file_tmp, &error_local);
+			if (ret) {
+				g_ptr_array_add (priv->profiles, g_object_ref (profile));
+			} else {
+				egg_warning ("failed to parse %s: %s", profile_filenames[i], error_local->message);
+				g_clear_error (&error_local);
+			}
+			g_object_unref (profile);
+			g_object_unref (file_tmp);
 		}
-		g_object_unref (profile);
-		g_object_unref (file_tmp);
 	}
 
 	if (priv->serial == NULL)
