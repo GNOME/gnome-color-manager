@@ -3196,6 +3196,7 @@ main (int argc, char **argv)
 	/* add columns to the tree view */
 	gcm_prefs_add_assign_columns (GTK_TREE_VIEW (widget));
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
+	gtk_tree_view_set_reorderable (GTK_TREE_VIEW (widget), TRUE);
 
 	main_window = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_prefs"));
 
