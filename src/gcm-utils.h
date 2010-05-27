@@ -83,6 +83,7 @@ void		 gcm_utils_ensure_printable		(gchar			*text);
 gboolean	 gcm_utils_is_icc_profile		(GFile			*file);
 gchar		*gcm_utils_linkify			(const gchar		*text);
 const gchar	*gcm_intent_to_localized_text		(GcmIntent	 intent);
+const gchar	*gcm_intent_to_localized_description	(GcmIntent	 intent);
 
 #endif /* __GCM_UTILS_H */
 

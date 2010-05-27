@@ -608,7 +608,7 @@ gcm_intent_to_localized_text (GcmIntent intent)
 	}
 	if (intent == GCM_INTENT_RELATIVE_COLORMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
-		return _("Relative colormetric");
+		return _("Relative");
 	}
 	if (intent == GCM_INTENT_SATURATION) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
@@ -616,7 +616,32 @@ gcm_intent_to_localized_text (GcmIntent intent)
 	}
 	if (intent == GCM_INTENT_ABSOLUTE_COLORMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
-		return _("Absolute colormetric");
+		return _("Absolute");
+	}
+	return "unknown";
+}
+
+/**
+ * gcm_intent_to_localized_description:
+ **/
+const gchar *
+gcm_intent_to_localized_description (GcmIntent intent)
+{
+	if (intent == GCM_INTENT_PERCEPTUAL) {
+		/* TRANSLATORS: rendering intent: you probably want to google this */
+		return _("High quality photography");
+	}
+	if (intent == GCM_INTENT_RELATIVE_COLORMETRIC) {
+		/* TRANSLATORS: rendering intent: you probably want to google this */
+		return _("Precise color matching");
+	}
+	if (intent == GCM_INTENT_SATURATION) {
+		/* TRANSLATORS: rendering intent: you probably want to google this */
+		return _("Graphs and presentations");
+	}
+	if (intent == GCM_INTENT_ABSOLUTE_COLORMETRIC) {
+		/* TRANSLATORS: rendering intent: you probably want to google this */
+		return _("Proofing devices");
 	}
 	return "unknown";
 }
