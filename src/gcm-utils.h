@@ -46,10 +46,12 @@
 #define GCM_SETTINGS_CALIBRATION_LENGTH			"calibration-length"
 #define GCM_SETTINGS_SHOW_FINE_TUNING			"show-fine-tuning"
 #define GCM_SETTINGS_SHOW_NOTIFICATIONS			"show-notifications"
-#define GCM_SETTINGS_DONE_MIGRATION			"done-migration"
-
+#define GCM_SETTINGS_MIGRATE_CONFIG_VERSION		"migrate-config-version"
 #define GCM_SETTINGS_RECALIBRATE_PRINTER_THRESHOLD	"recalibrate-printer-threshold"
 #define GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD	"recalibrate-display-threshold"
+
+#define GCM_CONFIG_VERSION_ORIGINAL			0
+#define GCM_CONFIG_VERSION_SHARED_SPEC			1
 
 /* DISTROS: you will have to patch if you have changed the name of these packages */
 #define GCM_PREFS_PACKAGE_NAME_SHARED_COLOR_TARGETS	"shared-color-targets"

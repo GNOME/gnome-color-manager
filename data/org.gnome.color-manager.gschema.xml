@@ -65,10 +65,10 @@
       <summary>The duration between sending notifications to recalibrate a printer</summary>
       <description>This is the number of seconds in between notifying the user to recalibrate each printer device. Set to 0 to disable the notification.</description>
     </key>
-    <key name="done-migration" type="b">
-      <default>false</default>
+    <key name="migrate-config-version" type="i">
+      <default>0</default>
       <summary>If the data migration has been done</summary>
-      <description>This is set to TRUE when the data migration does not need to be attempted.</description>
+      <description>This is incremented to the latest config version if the config file has been migrated.</description>
     </key>
   </schema>
 </schemalist>
