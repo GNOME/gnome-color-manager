@@ -178,6 +178,7 @@
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Add a color profile to be used for this device</property>
                                             <property name="use_stock">True</property>
                                           </object>
                                           <packing>
@@ -191,6 +192,7 @@
                                             <property name="sensitive">False</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Remove a color profile for this device</property>
                                             <property name="use_stock">True</property>
                                           </object>
                                           <packing>
@@ -203,6 +205,7 @@
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Create a profile for the device</property>
                                             <property name="use_underline">True</property>
                                           </object>
                                           <packing>
@@ -216,6 +219,7 @@
                                             <property name="sensitive">False</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Make the selected profile the default profile</property>
                                             <property name="use_underline">True</property>
                                           </object>
                                           <packing>
@@ -643,6 +647,7 @@
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
                                             <property name="receives_default">True</property>
+                                            <property name="tooltip_text" translatable="yes">Reset the sliders to thier default values</property>
                                             <property name="use_underline">True</property>
                                           </object>
                                           <packing>
@@ -730,6 +735,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Add a new color profile</property>
                                 <property name="use_underline">True</property>
                               </object>
                               <packing>
@@ -743,6 +749,7 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">True</property>
                                 <property name="receives_default">True</property>
+                                <property name="tooltip_text" translatable="yes">Delete this profile</property>
                                 <property name="use_underline">True</property>
                               </object>
                               <packing>
@@ -2237,45 +2244,45 @@
   </object>
   <object class="GtkSizeGroup" id="sizegroup_lists">
     <widgets>
-      <widget name="scrolledwindow1"/>
       <widget name="scrolledwindow2"/>
+      <widget name="scrolledwindow1"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="sizegroup_defaults">
     <widgets>
-      <widget name="hbox43"/>
-      <widget name="hbox46"/>
-      <widget name="hbox15"/>
       <widget name="hbox17"/>
+      <widget name="hbox15"/>
+      <widget name="hbox46"/>
+      <widget name="hbox43"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="sizegroup_devices">
     <widgets>
-      <widget name="hbox21"/>
-      <widget name="hbox22"/>
-      <widget name="hbox23"/>
       <widget name="hbox53"/>
+      <widget name="hbox23"/>
+      <widget name="hbox22"/>
+      <widget name="hbox21"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="sizegroup_profiles">
     <widgets>
-      <widget name="hbox6"/>
-      <widget name="hbox39"/>
-      <widget name="hbox36"/>
-      <widget name="hbox10"/>
-      <widget name="hbox34"/>
-      <widget name="hbox48"/>
-      <widget name="hbox12"/>
-      <widget name="hbox31"/>
       <widget name="hbox33"/>
+      <widget name="hbox31"/>
+      <widget name="hbox12"/>
+      <widget name="hbox48"/>
+      <widget name="hbox34"/>
+      <widget name="hbox10"/>
+      <widget name="hbox36"/>
+      <widget name="hbox39"/>
+      <widget name="hbox6"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="sizegroup_combos">
     <widgets>
-      <widget name="combobox_rendering_softproof"/>
-      <widget name="combobox_rendering_display"/>
-      <widget name="combobox_space_cmyk"/>
       <widget name="combobox_space_rgb"/>
+      <widget name="combobox_space_cmyk"/>
+      <widget name="combobox_rendering_display"/>
+      <widget name="combobox_rendering_softproof"/>
     </widgets>
   </object>
 </interface>
