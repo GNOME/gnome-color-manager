@@ -6,8 +6,8 @@ msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager\n"
-"POT-Creation-Date: 2010-05-26 16:33+0000\n"
-"PO-Revision-Date: 2010-05-28 19:35+0200\n"
+"POT-Creation-Date: 2010-05-28 17:36+0000\n"
+"PO-Revision-Date: 2010-05-28 19:41+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -38,7 +38,7 @@ msgid "Install ICC profiles"
 msgstr "Instalar perfiles ICC"
 
 #. Section heading for device profile settings
-#: ../data/gcm-prefs.desktop.in.h:1 ../data/gcm-prefs.ui.h:14
+#: ../data/gcm-prefs.desktop.in.h:1 ../data/gcm-prefs.ui.h:19
 msgid "Color Profiles"
 msgstr "Perfiles de color"
 
@@ -299,7 +299,7 @@ msgstr "Continuar"
 #: ../src/gcm-calibrate-argyll.c:2282 ../src/gcm-calibrate-argyll.c:2332
 #: ../src/gcm-calibrate-argyll.c:2387 ../src/gcm-calibrate-argyll.c:2463
 #: ../src/gcm-calibrate-argyll.c:2544 ../src/gcm-calibrate-argyll.c:2585
-#: ../src/gcm-prefs.c:979 ../src/gcm-prefs.c:2444
+#: ../src/gcm-prefs.c:979 ../src/gcm-prefs.c:2448
 msgid "GNOME Color Manager"
 msgstr "Gestor de color de GNOME"
 
@@ -918,7 +918,6 @@ msgstr ""
 "programa Perfiles de color."
 
 #: ../src/gcm-cell-renderer-profile.c:80
-#| msgid "Defaults"
 msgid "Default"
 msgstr "Predeterminado"
 
@@ -1011,13 +1010,13 @@ msgstr "Programa para volcados de perfiles ICC"
 
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-enum.c:122 ../src/gcm-prefs.c:1890 ../data/gcm-prefs.ui.h:63
+#: ../src/gcm-enum.c:122 ../src/gcm-prefs.c:1896 ../data/gcm-prefs.ui.h:73
 msgid "RGB"
 msgstr "RGB"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-enum.c:126 ../src/gcm-prefs.c:1902 ../data/gcm-prefs.ui.h:6
+#: ../src/gcm-enum.c:126 ../src/gcm-prefs.c:1908 ../data/gcm-prefs.ui.h:11
 msgid "CMYK"
 msgstr "CMYK"
 
@@ -1132,14 +1131,14 @@ msgstr "sin establecer"
 #. TRANSLATORS: no DBus session bus
 #: ../src/gcm-inspect.c:176 ../src/gcm-inspect.c:245 ../src/gcm-inspect.c:313
 #: ../src/gcm-inspect.c:374 ../src/gcm-inspect.c:444 ../src/gcm-utils.c:164
-#: ../src/gcm-utils.c:226
+#: ../src/gcm-utils.c:229
 msgid "Failed to connect to session bus"
 msgstr "Falló al conectar con el bus de sesión"
 
 #. TRANSLATORS: the DBus method failed
 #: ../src/gcm-inspect.c:194 ../src/gcm-inspect.c:263 ../src/gcm-inspect.c:330
 #: ../src/gcm-inspect.c:392 ../src/gcm-inspect.c:462 ../src/gcm-inspect.c:546
-#: ../src/gcm-utils.c:188 ../src/gcm-utils.c:244
+#: ../src/gcm-utils.c:188 ../src/gcm-utils.c:247
 msgid "The request failed"
 msgstr "Falló la solicitud"
 
@@ -1302,28 +1301,28 @@ msgid "Failed to copy"
 msgstr "Falló al copiar"
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:278
+#: ../src/gcm-picker.c:277
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "El colorímetro acoplado no es capaz de leer un punto de color."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:281
+#: ../src/gcm-picker.c:280
 msgid "No colorimeter is attached."
 msgstr "No hay ningún colorímetro acoplado."
 
 #. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:469 ../src/gcm-prefs.c:2708
+#: ../src/gcm-picker.c:468 ../src/gcm-prefs.c:2712
 #, c-format
 msgid "No %s color spaces available"
 msgstr "No existen espacios de color %s disponibles"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-picker.c:499 ../src/gcm-prefs.c:3093
+#: ../src/gcm-picker.c:498 ../src/gcm-prefs.c:3101
 msgid "Set the parent window to make this modal"
 msgstr "Establecer la ventana padre para hacerlo modal"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:519
+#: ../src/gcm-picker.c:518
 msgid "GNOME Color Manager Color Picker"
 msgstr "Selector de color del Gestor de color de GNOME"
 
@@ -1379,17 +1378,17 @@ msgid "Failed to get metadata from image"
 msgstr "Falló al obtener los metadatos de la imagen"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:630 ../src/gcm-prefs.c:1291
+#: ../src/gcm-prefs.c:630 ../src/gcm-prefs.c:1297
 msgid "Failed to create virtual device"
 msgstr "Falló al crear el dispositivo virtual"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:638 ../src/gcm-prefs.c:1299
+#: ../src/gcm-prefs.c:638 ../src/gcm-prefs.c:1305
 msgid "Failed to save virtual device"
 msgstr "Falló al guardar el dispositivo virtual"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:647 ../src/gcm-prefs.c:1308
+#: ../src/gcm-prefs.c:647 ../src/gcm-prefs.c:1314
 msgid "Failed to add virtual device"
 msgstr "Falló al añadir el dispositivo virtual"
 
@@ -1416,43 +1415,43 @@ msgid "Profiling completed"
 msgstr "Perfilado completado"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-prefs.c:1414
+#: ../src/gcm-prefs.c:1420
 msgid "Failed to delete file"
 msgstr "Falló al eliminar el archivo"
 
 #. TRANSLATORS: this is when the button is sensitive
-#: ../src/gcm-prefs.c:1577
+#: ../src/gcm-prefs.c:1583
 msgid "Create a color profile for the selected device"
 msgstr "Crear un perfil de color para el dispositivo seleccionado"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1582
+#: ../src/gcm-prefs.c:1588
 msgid "Cannot profile: No device is selected"
 msgstr "No se puede perfilar: no hay ningún dispositivo seleccionado"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1594
+#: ../src/gcm-prefs.c:1600
 msgid "Cannot calibrate: The display device is not connected"
 msgstr "No se puede calibrar: el dispositivo no está conectado"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1602
+#: ../src/gcm-prefs.c:1608
 msgid "Cannot calibrate: The display driver does not support XRandR 1.3"
 msgstr ""
 "No se puede calibrar: el controlador de la pantalla no soporta XRandR 1.3"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1610
+#: ../src/gcm-prefs.c:1616
 msgid "Cannot calibrate: The measuring instrument is not plugged in"
 msgstr "No se puede calibrar: el instrumento de medición no está conectado"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1625
+#: ../src/gcm-prefs.c:1631
 msgid "Cannot profile: The measuring instrument is not plugged in"
 msgstr "No se puede perfilar: el instrumento de medición no está conectado"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1633
+#: ../src/gcm-prefs.c:1639
 msgid ""
 "Cannot profile: The measuring instrument does not support printer profiling"
 msgstr ""
@@ -1460,176 +1459,176 @@ msgstr ""
 "impresión"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1640
+#: ../src/gcm-prefs.c:1646
 msgid "Cannot profile this type of device"
 msgstr "No se puede perfilar este tipo de dispositivo"
 
 #. TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
 #. * Whilst this does not matter if you only have one monitor attached, it means you
 #. * can't color correct additional monitors or projectors.
-#: ../src/gcm-prefs.c:1718
+#: ../src/gcm-prefs.c:1724
 msgid "Per-device settings not supported. Check your display driver."
 msgstr ""
 "No se soportan los ajustes por dispositivo. Compruebe el controlador de su "
 "pantalla."
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1832
+#: ../src/gcm-prefs.c:1838
 msgid "Input device"
 msgstr "Dispositivo de entrada"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1836
+#: ../src/gcm-prefs.c:1842
 msgid "Display device"
 msgstr "Dispositivo de pantalla"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1840
+#: ../src/gcm-prefs.c:1846
 msgid "Output device"
 msgstr "Dispositivo de salida"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1844
+#: ../src/gcm-prefs.c:1850
 msgid "Devicelink"
 msgstr "Enlace del dispositivo («devicelink»)"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1848
+#: ../src/gcm-prefs.c:1854
 msgid "Colorspace conversion"
 msgstr "Conversión del espacio de color"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-prefs.c:1852
+#: ../src/gcm-prefs.c:1858
 msgid "Abstract"
 msgstr "Resumen"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1856
+#: ../src/gcm-prefs.c:1862
 msgid "Named color"
 msgstr "Color con nombre"
 
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1859 ../src/gcm-prefs.c:1909
+#: ../src/gcm-prefs.c:1865 ../src/gcm-prefs.c:1915
 msgid "Unknown"
 msgstr "Desconocido"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1870
+#: ../src/gcm-prefs.c:1876
 msgid "XYZ"
 msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1874
+#: ../src/gcm-prefs.c:1880
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1878
+#: ../src/gcm-prefs.c:1884
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1882
+#: ../src/gcm-prefs.c:1888
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1886
+#: ../src/gcm-prefs.c:1892
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1894
+#: ../src/gcm-prefs.c:1900
 msgid "Gray"
 msgstr "Gris"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1898
+#: ../src/gcm-prefs.c:1904
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1906
+#: ../src/gcm-prefs.c:1912
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-prefs.c:2075
+#: ../src/gcm-prefs.c:2081
 msgid "Yes"
 msgstr "Sí"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-prefs.c:2078
+#: ../src/gcm-prefs.c:2084
 msgid "No"
 msgstr "No"
 
 #. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/gcm-prefs.c:2223
+#: ../src/gcm-prefs.c:2229
 msgid "No hardware support"
 msgstr "Sin soporte hardware"
 
 #. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/gcm-prefs.c:2227 ../src/gcm-prefs.c:2496
+#: ../src/gcm-prefs.c:2233 ../src/gcm-prefs.c:2500
 msgid "disconnected"
 msgstr "desconectado"
 
 #. TRANSLATORS: the profile was of the wrong sort for this device
-#: ../src/gcm-prefs.c:2332
+#: ../src/gcm-prefs.c:2352
 msgid "Could not import profile"
 msgstr "No se pudo importar el pefil"
 
-#: ../src/gcm-prefs.c:2332
+#: ../src/gcm-prefs.c:2353
 msgid "The profile was of the wrong type for this device"
 msgstr "El perfil era del tipo erróneo para este dispositivo"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:2432
+#: ../src/gcm-prefs.c:2436
 msgid "Device added"
 msgstr "Dispositivo añadido"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:2436
+#: ../src/gcm-prefs.c:2440
 msgid "Device removed"
 msgstr "Dispositivo quitado"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3017 ../data/gcm-prefs.ui.h:34
+#: ../src/gcm-prefs.c:3025 ../data/gcm-prefs.ui.h:41
 msgid "Display"
 msgstr "Pantalla"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3021
+#: ../src/gcm-prefs.c:3029
 msgid "Scanner"
 msgstr "Escáner"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3025
+#: ../src/gcm-prefs.c:3033
 msgid "Printer"
 msgstr "Impresora"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3029
+#: ../src/gcm-prefs.c:3037
 msgid "Camera"
 msgstr "Cámara"
 
 #. TRANSLATORS: button for more details about the vcgt failure
-#: ../src/gcm-prefs.c:3373
+#: ../src/gcm-prefs.c:3382
 msgid "More Information"
 msgstr "Más información"
 
 #. TRANSLATORS: button to install extra profiles
-#: ../src/gcm-prefs.c:3376
+#: ../src/gcm-prefs.c:3385
 msgid "Install now"
 msgstr "Instalar ahora"
 
 #. TRANSLATORS: this is displayed while the devices are being probed
-#: ../src/gcm-prefs.c:3379
+#: ../src/gcm-prefs.c:3388
 msgid "Loading list of devices…"
 msgstr "Cargando la lista de dispositivos…"
 
 #. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/gcm-prefs.c:3386
+#: ../src/gcm-prefs.c:3395
 msgid ""
 "This profile does not have the information required for whole-screen color "
 "correction."
@@ -1638,7 +1637,7 @@ msgstr ""
 "la pantalla entera."
 
 #. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/gcm-prefs.c:3394
+#: ../src/gcm-prefs.c:3403
 msgid "More color profiles could be automatically installed."
 msgstr "Se podrían instalar automáticamente más perfiles de color."
 
@@ -1679,7 +1678,7 @@ msgid "Do not exit after the request has been processed"
 msgstr "No salir después de que se haya procesado la solicitud"
 
 #. TRANSLATORS: program name, a session wide daemon to watch for updates and changing system state
-#: ../src/gcm-session.c:699 ../data/gcm-prefs.ui.h:10
+#: ../src/gcm-session.c:699 ../data/gcm-prefs.ui.h:15
 msgid "Color Management"
 msgstr "Gestión de color"
 
@@ -1688,35 +1687,56 @@ msgid "Color Management D-Bus Service"
 msgstr "Servicio D-Bus de gestión de color"
 
 #. TRANSLATORS: this is the profile creation date strftime format
-#: ../src/gcm-utils.c:591
+#: ../src/gcm-utils.c:594
 msgid "%B %e %Y, %I:%M:%S %p"
 msgstr "%e de %B de %Y, %H:%M:%S"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:604
+#: ../src/gcm-utils.c:607
 msgid "Perceptual"
 msgstr "De percepción"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:608
-msgid "Relative colormetric"
-msgstr "Colorimetría relativa"
+#: ../src/gcm-utils.c:611
+msgid "Relative"
+msgstr "Relativo"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:612
+#: ../src/gcm-utils.c:615
 msgid "Saturation"
 msgstr "Saturación"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:616
-msgid "Absolute colormetric"
-msgstr "Colorimetría absoluta"
+#: ../src/gcm-utils.c:619
+msgid "Absolute"
+msgstr "Absoluto"
+
+#. TRANSLATORS: rendering intent: you probably want to google this
+#: ../src/gcm-utils.c:632
+msgid "High quality photography"
+msgstr "Fotografía de alta calidad"
+
+#. TRANSLATORS: rendering intent: you probably want to google this
+#: ../src/gcm-utils.c:636
+msgid "Precise color matching"
+msgstr "Coincidencia de color precisa"
+
+#. TRANSLATORS: rendering intent: you probably want to google this
+#: ../src/gcm-utils.c:640
+msgid "Graphs and presentations"
+msgstr "Gráficas y presentaciones"
+
+#. TRANSLATORS: rendering intent: you probably want to google this
+#: ../src/gcm-utils.c:644
+#| msgid "Setting up device"
+msgid "Proofing devices"
+msgstr "Corrección de dispositivos"
 
 #: ../data/gcm-calibrate.ui.h:1
 msgid "Blue:"
 msgstr "Azul:"
 
-#: ../data/gcm-calibrate.ui.h:2 ../data/gcm-prefs.ui.h:5
+#: ../data/gcm-calibrate.ui.h:2 ../data/gcm-prefs.ui.h:10
 msgid "Brightness:"
 msgstr "Brillo:"
 
@@ -1791,7 +1811,7 @@ msgstr "Selector de color"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
 #. The profile colorspace, e.g. RGB
-#: ../data/gcm-picker.ui.h:4 ../data/gcm-prefs.ui.h:16
+#: ../data/gcm-picker.ui.h:4 ../data/gcm-prefs.ui.h:21
 msgid "Colorspace:"
 msgstr "Espacio de color:"
 
@@ -1807,7 +1827,7 @@ msgstr "Lab (D50):"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. What mode to use for display rendering intent
-#: ../data/gcm-picker.ui.h:10 ../data/gcm-prefs.ui.h:65
+#: ../data/gcm-picker.ui.h:10 ../data/gcm-prefs.ui.h:75
 msgid "RGB:"
 msgstr "RGB:"
 
@@ -1827,56 +1847,86 @@ msgid "_Measure"
 msgstr "_Medida"
 
 #: ../data/gcm-prefs.ui.h:1
+#| msgid ""
+#| "A working space is the range of colors that can be encoded into an image."
+msgid ""
+"A working space is a default colorspace that is not associated with a "
+"specific device."
+msgstr ""
+"Un espacio de trabajo es el espacio de color predeterminado que no está "
+"asociado con un dispositivo específico."
+
+#: ../data/gcm-prefs.ui.h:2
 msgid ""
 "A working space is the range of colors that can be encoded into an image."
 msgstr ""
 "Un espacio de trabajo es el rango de colores que se pueden codificar en una "
 "imagen."
 
-#. This is a button to add a virtual device
 #: ../data/gcm-prefs.ui.h:3
-#| msgid "_Add&#x2026;"
+#| msgid "Create a color profile for the selected device"
+msgid "Add a color profile to be used for this device"
+msgstr "Añadir un perfil de color para usarlo con este dispositivo"
+
+#: ../data/gcm-prefs.ui.h:4
+#| msgid "Manage ICC color profiles"
+msgid "Add a new color profile"
+msgstr "Añadir un perfil de color nuevo"
+
+#. This is a button to add a virtual device
+#: ../data/gcm-prefs.ui.h:6
 msgid "Add d_evice&#x2026;"
 msgstr "Añadir di_spositivo#x2026;"
 
-#: ../data/gcm-prefs.ui.h:4
+#: ../data/gcm-prefs.ui.h:7
 msgid "Adds a virtual device that is not connected."
 msgstr "Añade un dispositivo virtual que no está conectado."
 
+#. Profiles that can be added to the device
+#: ../data/gcm-prefs.ui.h:9
+#| msgid "All files"
+msgid "Available Profiles"
+msgstr "Perfiles disponibles"
+
 #. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:8
+#: ../data/gcm-prefs.ui.h:13
 msgid "CMYK:"
 msgstr "CMYK:"
 
-#: ../data/gcm-prefs.ui.h:9
+#: ../data/gcm-prefs.ui.h:14
 msgid "Close this dialog"
 msgstr "Cerrar este diálogo"
 
 #. Section heading for device profile settings
-#: ../data/gcm-prefs.ui.h:12
+#: ../data/gcm-prefs.ui.h:17
 msgid "Color Profile"
 msgstr "Perfil de color"
 
-#: ../data/gcm-prefs.ui.h:17
+#: ../data/gcm-prefs.ui.h:22
 msgid "Contrast:"
 msgstr "Contraste:"
 
 #. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
-#: ../data/gcm-prefs.ui.h:19
+#: ../data/gcm-prefs.ui.h:24
 msgid "Create _Profile"
 msgstr "Crear p_erfil"
 
+#: ../data/gcm-prefs.ui.h:25
+#| msgid "Create _Profile for Device"
+msgid "Create a profile for the device"
+msgstr "Crear un perfil para el dispositivo"
+
 #. When the profile was created
-#: ../data/gcm-prefs.ui.h:21
+#: ../data/gcm-prefs.ui.h:27
 msgid "Created:"
 msgstr "Creado:"
 
 #. Tab title, system wide defaults to use
-#: ../data/gcm-prefs.ui.h:23
+#: ../data/gcm-prefs.ui.h:29
 msgid "Defaults"
 msgstr "Predeterminados"
 
-#: ../data/gcm-prefs.ui.h:24
+#: ../data/gcm-prefs.ui.h:30
 msgid ""
 "Delete the disconnected device - if you reconnect the device it will "
 "reappear in the list"
@@ -1884,65 +1934,70 @@ msgstr ""
 "Eliminar el dispositivo desconectado; si reconecta el dispositivo volverá a "
 "aparecer en la lista"
 
+#: ../data/gcm-prefs.ui.h:31
+#| msgid "Generating the profile"
+msgid "Delete this profile"
+msgstr "Eliminar este perfil"
+
 #. Section heading for device settings
-#: ../data/gcm-prefs.ui.h:26
+#: ../data/gcm-prefs.ui.h:33
 msgid "Device"
 msgstr "Dispositivo"
 
 #. The manufacturer of the profile
-#: ../data/gcm-prefs.ui.h:28
+#: ../data/gcm-prefs.ui.h:35
 msgid "Device manufacturer:"
 msgstr "Fabricante del dispositivo:"
 
 #. The manufacturer of the profile
-#: ../data/gcm-prefs.ui.h:30
+#: ../data/gcm-prefs.ui.h:37
 msgid "Device model:"
 msgstr "Modelo del dispositivo:"
 
-#: ../data/gcm-prefs.ui.h:31
+#: ../data/gcm-prefs.ui.h:38
 msgid "Device type:"
 msgstr "Tipo de dispositivo:"
 
 #. Tab title, currently connected or saved devices
-#: ../data/gcm-prefs.ui.h:33
+#: ../data/gcm-prefs.ui.h:40
 msgid "Devices"
 msgstr "Dispositivos"
 
 #. If the profile contains a display correction table
-#: ../data/gcm-prefs.ui.h:36
+#: ../data/gcm-prefs.ui.h:43
 msgid "Display correction:"
 msgstr "Corrección de pantalla:"
 
 #. What mode to use for display rendering intent
-#: ../data/gcm-prefs.ui.h:38
+#: ../data/gcm-prefs.ui.h:45
 msgid "Display:"
 msgstr "Pantalla:"
 
 #. The EISA (standards body) identifier of the device
-#: ../data/gcm-prefs.ui.h:40
+#: ../data/gcm-prefs.ui.h:47
 msgid "EISA ID:"
 msgstr "ID de EISA:"
 
 #. The file size in bytes of the profile
-#: ../data/gcm-prefs.ui.h:42
+#: ../data/gcm-prefs.ui.h:49
 msgid "File size:"
 msgstr "Tamaño de archivo:"
 
 #. The basename (the last section of the filename) of the profile
-#: ../data/gcm-prefs.ui.h:44
+#: ../data/gcm-prefs.ui.h:51
 msgid "Filename:"
 msgstr "Nombre del archivo:"
 
 #. Settings that users don't normally have to touch
-#: ../data/gcm-prefs.ui.h:46
+#: ../data/gcm-prefs.ui.h:53
 msgid "Fine tuning"
 msgstr "Ajuste fino"
 
-#: ../data/gcm-prefs.ui.h:47
+#: ../data/gcm-prefs.ui.h:54
 msgid "Gamma:"
 msgstr "Gamma:"
 
-#: ../data/gcm-prefs.ui.h:48
+#: ../data/gcm-prefs.ui.h:55
 msgid ""
 "Image files can be dragged on this window to auto-complete the above fields."
 msgstr ""
@@ -1950,43 +2005,52 @@ msgstr ""
 "campos superiores."
 
 #. The licence of the profile, normally non-free
-#: ../data/gcm-prefs.ui.h:50
+#: ../data/gcm-prefs.ui.h:57
 msgid "License:"
 msgstr "Licencia:"
 
+#: ../data/gcm-prefs.ui.h:58
+msgid "Make the selected profile the default profile"
+msgstr "Hacer del perfil seleccionado el predeterminado"
+
 #. The manufacturer of the device
-#: ../data/gcm-prefs.ui.h:52
+#: ../data/gcm-prefs.ui.h:60
 msgid "Manufacturer:"
 msgstr "Fabricante:"
 
 #. The model of the device
-#: ../data/gcm-prefs.ui.h:54
+#: ../data/gcm-prefs.ui.h:62
 msgid "Model:"
 msgstr "Modelo:"
 
-#: ../data/gcm-prefs.ui.h:55
+#: ../data/gcm-prefs.ui.h:63
 msgid "More details"
 msgstr "Más detalles"
 
-#: ../data/gcm-prefs.ui.h:56
+#. Some profiles are not compatible with some devices
+#: ../data/gcm-prefs.ui.h:65
+msgid "Only profiles that are compatible with the device will be listed above."
+msgstr "Debajo sólo se listarán perfiles compatibles con el dispositivo."
+
+#: ../data/gcm-prefs.ui.h:66
 msgid "Open the documentation"
 msgstr "Abrir la documentación"
 
-#: ../data/gcm-prefs.ui.h:57
+#: ../data/gcm-prefs.ui.h:67
 msgid "Profile Graphs"
 msgstr "Gráficas de perfil"
 
 #. The type of profile, e.g. display, scanner, etc.
-#: ../data/gcm-prefs.ui.h:59
+#: ../data/gcm-prefs.ui.h:69
 msgid "Profile type:"
 msgstr "Tipo de perfil:"
 
 #. Tab title, currently installed profiles
-#: ../data/gcm-prefs.ui.h:61
+#: ../data/gcm-prefs.ui.h:71
 msgid "Profiles"
 msgstr "Perfiles"
 
-#: ../data/gcm-prefs.ui.h:62
+#: ../data/gcm-prefs.ui.h:72
 msgid ""
 "Program the video card with the adjusted color values so all windows are "
 "color corrected"
@@ -1994,53 +2058,69 @@ msgstr ""
 "Programar la tarjeta de vídeo con los valores de color ajustados para que "
 "todas las ventanas tengan el color correcto"
 
+#: ../data/gcm-prefs.ui.h:76
+#| msgid "Create a color profile for the selected device"
+msgid "Remove a color profile for this device"
+msgstr "Quitar un perfil de color para este dispositivo"
+
 #. This is a button to delete the saved or virtual device
-#: ../data/gcm-prefs.ui.h:67
-#| msgid "Reload a device"
+#: ../data/gcm-prefs.ui.h:78
 msgid "Remove de_vice"
 msgstr "Quitar dispositi_vo"
 
-#: ../data/gcm-prefs.ui.h:68
+#: ../data/gcm-prefs.ui.h:79
 msgid "Rendering intent"
 msgstr "Modo de renderizado"
 
 #. This resets the device to it's defaults, and removes any user tweaked settings.
-#: ../data/gcm-prefs.ui.h:70
-#| msgid "Results"
+#: ../data/gcm-prefs.ui.h:81
 msgid "Rese_t"
 msgstr "_Restablecer"
 
-#: ../data/gcm-prefs.ui.h:71
+#: ../data/gcm-prefs.ui.h:82
+#| msgid "Reset your display to the factory defaults."
+msgid "Reset the sliders to thier default values"
+msgstr "Restablecer los deslizadores a sus valores predeterminados."
+
+#: ../data/gcm-prefs.ui.h:83
 msgid "Save these profiles for all users"
 msgstr "Guardar estos perfiles para todos los usuarios"
 
 #. The serial number of the device
-#: ../data/gcm-prefs.ui.h:73
+#: ../data/gcm-prefs.ui.h:85
 msgid "Serial number:"
 msgstr "Número de serie:"
 
-#: ../data/gcm-prefs.ui.h:74
+#: ../data/gcm-prefs.ui.h:86
 msgid ""
 "Set a property on the system so applications use the default display profile"
 msgstr ""
 "Establecer una propiedad en el sistema para que las aplicaciones usen el "
 "perfil de mostrado predeterminado"
 
-#: ../data/gcm-prefs.ui.h:75
-#| msgid "_Set profile for color managed applications"
+#: ../data/gcm-prefs.ui.h:87
 msgid "Set profile for _color managed applications"
 msgstr "Establecer el perfil de _color para las aplicaciones gestionadas"
 
 #. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:77
+#: ../data/gcm-prefs.ui.h:89
 msgid "Softproof:"
 msgstr "Prueba blanda:"
 
-#: ../data/gcm-prefs.ui.h:78
+#: ../data/gcm-prefs.ui.h:90
+#| msgid "The rendering intent is how one gamut size is mapped to another."
+msgid ""
+"The rendering intent defines how color should be transformed from one "
+"colorspace to another."
+msgstr ""
+"El modo de renderizado define cómo se debe transformar el color de un "
+"espacio de color a otro."
+
+#: ../data/gcm-prefs.ui.h:91
 msgid "The rendering intent is how one gamut size is mapped to another."
 msgstr "El modo de renderizado es cómo se mapea una gama de color a otra."
 
-#: ../data/gcm-prefs.ui.h:79
+#: ../data/gcm-prefs.ui.h:92
 msgid ""
 "The rendering intent to use when transforming from the image gamut to the "
 "device output gamut"
@@ -2048,7 +2128,7 @@ msgstr ""
 "El modo de renderizado que usar al transformar la gama de color de una "
 "imagen a la gama de color del dispositivo de salida"
 
-#: ../data/gcm-prefs.ui.h:80
+#: ../data/gcm-prefs.ui.h:93
 msgid ""
 "The rendering intent to use when transforming from the image gamut to the "
 "display gamut"
@@ -2056,48 +2136,52 @@ msgstr ""
 "El modo de renderizado que usar al transformar la gama de color de una "
 "imagen a la gama de color de la pantalla"
 
-#: ../data/gcm-prefs.ui.h:81
+#: ../data/gcm-prefs.ui.h:94
 msgid "These settings control how color management is applied to your desktop."
 msgstr ""
 "Estos ajustes controlan cómo se aplica la gestión de color en su escritorio."
 
-#: ../data/gcm-prefs.ui.h:82
+#: ../data/gcm-prefs.ui.h:95
 msgid "This is the default CMYK working space to use in applications"
 msgstr ""
 "Este es el espacio de color CMYK predeterminado para usar en aplicaciones"
 
-#: ../data/gcm-prefs.ui.h:83
+#: ../data/gcm-prefs.ui.h:96
 msgid "This is the default RGB working space to use in applications"
 msgstr ""
 "Este es el espacio de color RGB predeterminado para usar en aplicaciones"
 
-#: ../data/gcm-prefs.ui.h:84
+#: ../data/gcm-prefs.ui.h:97
 msgid "Working space"
 msgstr "Espacio de trabajo"
 
-#: ../data/gcm-prefs.ui.h:85
+#: ../data/gcm-prefs.ui.h:98
 msgid "_Add&#x2026;"
 msgstr "_Añadir…"
 
-#: ../data/gcm-prefs.ui.h:86
+#: ../data/gcm-prefs.ui.h:99
 msgid "_Apply display correction"
 msgstr "_Aplicar corrección de pantalla"
 
 #. Makes the profile the default for the device
-#: ../data/gcm-prefs.ui.h:88
+#: ../data/gcm-prefs.ui.h:101
 msgid "_Make Default"
 msgstr "_Hacer predeterminado"
 
-#: ../data/gcm-prefs.ui.h:89
-#| msgid "Remove"
+#: ../data/gcm-prefs.ui.h:102
 msgid "_Remove"
 msgstr "_Quitar"
 
 #. This is when the settings are set for all users, unless they have per-user settings themselves
-#: ../data/gcm-prefs.ui.h:91
-#| msgid "_Reset to defaults"
+#: ../data/gcm-prefs.ui.h:104
 msgid "_Set System Default"
 msgstr "_Establecer los valores predeterminados del sistema"
+
+#~ msgid "Relative colormetric"
+#~ msgstr "Colorimetría relativa"
+
+#~ msgid "Absolute colormetric"
+#~ msgstr "Colorimetría absoluta"
 
 #~ msgid "This device already exists"
 #~ msgstr "Este dispositivo ya existe"
@@ -2283,9 +2367,6 @@ msgstr "_Establecer los valores predeterminados del sistema"
 
 #~ msgid "Do you want them to be automatically installed?"
 #~ msgstr "¿Quiere que se instalen automáticamente?"
-
-#~ msgid "Create _Profile for Device"
-#~ msgstr "Crear per_fil para el dispositivo"
 
 #~ msgid "Delete the currently selected color profile"
 #~ msgstr "Eliminar el perfil de color actualmente seleccionado"
