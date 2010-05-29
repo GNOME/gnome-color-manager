@@ -70,5 +70,15 @@
       <summary>If the data migration has been done</summary>
       <description>This is incremented to the latest config version if the config file has been migrated.</description>
     </key>
+    <key name="enable-sane" type="b">
+      <default>true</default>
+      <summary>If SANE support is enabled</summary>
+      <description>This allows the user to disable scanner support if attached devices fail when probed.</description>
+    </key>
+    <key name="enable-cups" type="b">
+      <default>true</default>
+      <summary>If CUPS support is enabled</summary>
+      <description>This allows the user to disable printer support if attached devices fail when probed.</description>
+    </key>
   </schema>
 </schemalist>

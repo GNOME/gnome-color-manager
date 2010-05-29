@@ -422,6 +422,7 @@ gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevic
 	const gchar *value;
 	GcmDevice *device_tmp;
 	guint i;
+	gboolean enable;
 	GcmClientPrivate *priv = client->priv;
 #endif
 
@@ -434,6 +435,11 @@ gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevic
 		/* we need to remove scanner devices */
 		value = g_udev_device_get_property (udev_device, "GCM_RESCAN");
 		if (g_strcmp0 (value, "scanner") == 0) {
+
+			/* are we ignoring scanners */
+			enable = g_settings_get_boolean (client->priv->settings, GCM_SETTINGS_ENABLE_SANE);
+			if (!enable)
+				return;
 
 			/* set all scanners as disconnected */
 			for (i=0; i<priv->array->len; i++) {
@@ -463,6 +469,12 @@ gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevic
 		/* we need to rescan scanner devices */
 		value = g_udev_device_get_property (udev_device, "GCM_RESCAN");
 		if (g_strcmp0 (value, "scanner") == 0) {
+
+			/* are we ignoring scanners */
+			enable = g_settings_get_boolean (client->priv->settings, GCM_SETTINGS_ENABLE_SANE);
+			if (!enable)
+				return;
+
 			if (priv->refresh_id != 0)
 				g_source_remove (priv->refresh_id);
 			priv->refresh_id = g_timeout_add (GCM_CLIENT_SANE_REMOVED_TIMEOUT,
@@ -1065,6 +1077,8 @@ gcm_client_add_saved (GcmClient *client, GError **error)
 		}
 	}
 out:
+	/* inform the UI */
+	gcm_client_done_loading (client);
 	g_strfreev (groups);
 	g_free (filename);
 	g_key_file_free (keyfile);
@@ -1079,6 +1093,7 @@ gcm_client_coldplug (GcmClient *client, GcmClientColdplug coldplug, GError **err
 {
 	gboolean ret = TRUE;
 	GThread *thread;
+	gboolean enable;
 
 	g_return_val_if_fail (GCM_IS_CLIENT (client), FALSE);
 
@@ -1090,6 +1105,7 @@ gcm_client_coldplug (GcmClient *client, GcmClientColdplug coldplug, GError **err
 
 	/* saved devices */
 	if (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_SAVED) {
+		gcm_client_add_loading (client);
 		ret = gcm_client_add_saved (client, error);
 		if (!ret)
 			goto out;
@@ -1120,7 +1136,8 @@ gcm_client_coldplug (GcmClient *client, GcmClientColdplug coldplug, GError **err
 	}
 
 	/* CUPS */
-	if (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_CUPS) {
+	enable = g_settings_get_boolean (client->priv->settings, GCM_SETTINGS_ENABLE_CUPS);
+	if (enable && (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_CUPS)) {
 		gcm_client_add_loading (client);
 		egg_debug ("adding devices of type CUPS");
 		if (client->priv->use_threads) {
@@ -1136,7 +1153,8 @@ gcm_client_coldplug (GcmClient *client, GcmClientColdplug coldplug, GError **err
 
 #ifdef GCM_USE_SANE
 	/* SANE */
-	if (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_SANE) {
+	enable = g_settings_get_boolean (client->priv->settings, GCM_SETTINGS_ENABLE_SANE);
+	if (enable && (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_SANE)) {
 		gcm_client_add_loading (client);
 		egg_debug ("adding devices of type SANE");
 		if (client->priv->use_threads) {
