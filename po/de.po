@@ -14,9 +14,9 @@ msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager\n"
-"POT-Creation-Date: 2010-05-27 11:41+0000\n"
-"PO-Revision-Date: 2010-05-27 15:57+0200\n"
-"Last-Translator: Christian Kirbach  <Christian.Kirbach@googlemail.com>\n"
+"POT-Creation-Date: 2010-05-29 13:29+0000\n"
+"PO-Revision-Date: 2010-05-29 14:38+0100\n"
+"Last-Translator: Mario Blättermann <mariobl@gnome.org>\n"
 "Language-Team: Deutsch <gnome-de@gnome.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -305,7 +305,7 @@ msgstr "Fortfahren"
 #: ../src/gcm-calibrate-argyll.c:2282 ../src/gcm-calibrate-argyll.c:2332
 #: ../src/gcm-calibrate-argyll.c:2387 ../src/gcm-calibrate-argyll.c:2463
 #: ../src/gcm-calibrate-argyll.c:2544 ../src/gcm-calibrate-argyll.c:2585
-#: ../src/gcm-prefs.c:979 ../src/gcm-prefs.c:2448
+#: ../src/gcm-prefs.c:979 ../src/gcm-prefs.c:2479
 msgid "GNOME Color Manager"
 msgstr "GNOME-Farbverwaltung"
 
@@ -946,48 +946,50 @@ msgstr "Laptop-LCD"
 
 #. TRANSLATORS: this is when the EDID file cannot be read
 #: ../src/gcm-dump-edid.c:58
-msgid "Cannot load file contents"
-msgstr "Der Dateiinhalt kann nicht geladen werden"
+msgid "Cannot load file contents:"
+msgstr "Der Dateiinhalt kann nicht geladen werden:"
 
 #. TRANSLATORS: this is when the EDID cannot be parsed
 #: ../src/gcm-dump-edid.c:67
-msgid "Cannot parse EDID contents"
-msgstr "EDID-Inhalt kann nicht verarbeitet werden"
+msgid "Cannot parse EDID contents:"
+msgstr "EDID-Inhalt kann nicht verarbeitet werden:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:75
-msgid "Monitor name"
-msgstr "Name des Monitors"
+msgid "Monitor name:"
+msgstr "Name des Monitors:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:80
-msgid "Vendor name"
-msgstr "Name des Herstellers"
+msgid "Vendor name:"
+msgstr "Name des Herstellers:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:85
-msgid "Serial number"
-msgstr "Seriennummer"
+#. The serial number of the device
+#: ../src/gcm-dump-edid.c:85 ../data/gcm-prefs.ui.h:85
+msgid "Serial number:"
+msgstr "Seriennummer:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:90
-msgid "EISA ID"
-msgstr "EISA-Kennung"
+#. The EISA (standards body) identifier of the device
+#: ../src/gcm-dump-edid.c:90 ../data/gcm-prefs.ui.h:47
+msgid "EISA ID:"
+msgstr "EISA-Kennung:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:95
-msgid "PNP identifier"
-msgstr "PNP-Bezeichner"
+msgid "PNP identifier:"
+msgstr "PNP-Bezeichner:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:101
-msgid "Size"
-msgstr "Größe"
+msgid "Size:"
+msgstr "Größe:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:106
-msgid "Gamma"
-msgstr "Gamma"
+#: ../src/gcm-dump-edid.c:106 ../data/gcm-prefs.ui.h:54
+msgid "Gamma:"
+msgstr "Gamma:"
 
 # Extended Display Identification Data (EDID) ist eine 128 Byte-Datenstruktur, mit der ein Display seine Möglichkeiten beschreibt. Enthalten sind Informationen wie der Hersteller, Fertigungsdatum, Displaygröße, Pixel Mapping Data (nur bei reinen Digitalpanels) usw.
 #. TRANSLATORS: command line option: a list of files to parse
@@ -997,8 +999,8 @@ msgstr "Zu verarbeitende EDID-Dumps"
 
 #. TRANSLATORS: this is the filename we are displaying
 #: ../src/gcm-dump-edid.c:159
-msgid "EDID dump"
-msgstr "EDID-Dump"
+msgid "EDID dump:"
+msgstr "EDID-Dump:"
 
 #. TRANSLATORS: we saved the EDID to a file - second parameter is a filename
 #: ../src/gcm-dump-edid.c:196
@@ -1024,13 +1026,13 @@ msgstr "Programm zum Abspeichern von ICC-Profilen"
 
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-enum.c:122 ../src/gcm-prefs.c:1896 ../data/gcm-prefs.ui.h:73
+#: ../src/gcm-enum.c:122 ../src/gcm-prefs.c:1906 ../data/gcm-prefs.ui.h:73
 msgid "RGB"
 msgstr "RGB"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-enum.c:126 ../src/gcm-prefs.c:1908 ../data/gcm-prefs.ui.h:11
+#: ../src/gcm-enum.c:126 ../src/gcm-prefs.c:1918 ../data/gcm-prefs.ui.h:11
 msgid "CMYK"
 msgstr "CMYK"
 
@@ -1146,15 +1148,15 @@ msgstr "nicht gesetzt"
 #: ../src/gcm-inspect.c:176 ../src/gcm-inspect.c:245 ../src/gcm-inspect.c:313
 #: ../src/gcm-inspect.c:374 ../src/gcm-inspect.c:444 ../src/gcm-utils.c:164
 #: ../src/gcm-utils.c:229
-msgid "Failed to connect to session bus"
-msgstr "Verbindung mit dem Sitzungsbus konnte nicht hergestellt werden"
+msgid "Failed to connect to session bus:"
+msgstr "Verbindung mit dem Sitzungsbus konnte nicht hergestellt werden:"
 
 #. TRANSLATORS: the DBus method failed
 #: ../src/gcm-inspect.c:194 ../src/gcm-inspect.c:263 ../src/gcm-inspect.c:330
-#: ../src/gcm-inspect.c:392 ../src/gcm-inspect.c:462 ../src/gcm-inspect.c:546
-#: ../src/gcm-utils.c:188 ../src/gcm-utils.c:247
-msgid "The request failed"
-msgstr "Die Abfrage ist gescheitert."
+#: ../src/gcm-inspect.c:392 ../src/gcm-inspect.c:462 ../src/gcm-utils.c:188
+#: ../src/gcm-utils.c:247
+msgid "The request failed:"
+msgstr "Die Abfrage ist gescheitert:"
 
 #. TRANSLATORS: no profile has been asigned to this device
 #: ../src/gcm-inspect.c:203
@@ -1184,23 +1186,28 @@ msgstr "Für diesen Gerätetyp gibt es keine ICC-Profile"
 
 #. TRANSLATORS: this is the rendering intent of the output
 #: ../src/gcm-inspect.c:510
-msgid "Rendering intent (display)"
-msgstr "Darstellungstyp (Ausgabe)"
+msgid "Rendering intent (display):"
+msgstr "Darstellungstyp (Ausgabe):"
 
 #. TRANSLATORS: this is the rendering intent of the printer
 #: ../src/gcm-inspect.c:516
-msgid "Rendering intent (softproof)"
-msgstr "Darstellungstyp (Drucksimulation)"
+msgid "Rendering intent (softproof):"
+msgstr "Darstellungstyp (Drucksimulation):"
 
 #. TRANSLATORS: this is the rendering intent of the output
 #: ../src/gcm-inspect.c:524
-msgid "RGB Colorspace"
-msgstr "RGB-Farbraum"
+msgid "RGB Colorspace:"
+msgstr "RGB-Farbraum:"
 
 #. TRANSLATORS: this is the rendering intent of the printer
 #: ../src/gcm-inspect.c:530
-msgid "CMYK Colorspace"
-msgstr "CMYK-Farbraum"
+msgid "CMYK Colorspace:"
+msgstr "CMYK-Farbraum:"
+
+#. TRANSLATORS: the DBus method failed
+#: ../src/gcm-inspect.c:546
+msgid "The request failed"
+msgstr "Die Abfrage ist gescheitert."
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:595
@@ -1254,64 +1261,64 @@ msgstr "Gnome-Farbverwaltung: Systemweite Installation eines ICC-Profils"
 
 #. TRANSLATORS: user did not specify a valid filename
 #: ../src/gcm-install-system-wide.c:149
-msgid "You need to specify exactly one ICC profile filename"
-msgstr "Sie müssen genau einen Dateinamen eines ICC-Profils angeben"
+msgid "You need to specify exactly one ICC profile filename."
+msgstr "Sie müssen genau einen Dateinamen eines ICC-Profils angeben."
 
 #. TRANSLATORS: user did not specify a valid device ID
 #: ../src/gcm-install-system-wide.c:157
-msgid "You need to specify exactly one device ID"
-msgstr "Sie müssen genau eine Gerätekennung angeben"
+msgid "You need to specify exactly one device ID."
+msgstr "Sie müssen genau eine Gerätekennung angeben."
 
 #. TRANSLATORS: user did not specify a valid device ID
 #: ../src/gcm-install-system-wide.c:166
-msgid "The device ID has invalid characters"
-msgstr "Die Gerätekennung enthält ungültige Zeichen"
+msgid "The device ID has invalid characters."
+msgstr "Die Gerätekennung enthält ungültige Zeichen."
 
 #. TRANSLATORS: only able to install profiles as root
 #: ../src/gcm-install-system-wide.c:176
-msgid "This program can only be used by the root user"
+msgid "This program can only be used by the root user."
 msgstr ""
 "Dieses Programm darf nur durch den Administrator (root) verwendet werden."
 
 #. TRANSLATORS: only able to install profiles with an absolute path
 #: ../src/gcm-install-system-wide.c:185
-msgid "The source filename must be absolute"
-msgstr "Der Pfad zur Quelldatei muss absolut sein"
+msgid "The source filename must be absolute."
+msgstr "Der Pfad zur Quelldatei muss absolut sein."
 
 #. TRANSLATORS: error details
 #: ../src/gcm-install-system-wide.c:196
-msgid "Failed to get content type"
-msgstr "Inhaltstyp konnte nicht ermittelt werden"
+msgid "Failed to get content type:"
+msgstr "Inhaltstyp konnte nicht ermittelt werden:"
 
 #. TRANSLATORS: the content type is the detected type of file
 #: ../src/gcm-install-system-wide.c:206
-msgid "Content type was incorrect"
-msgstr "Inhaltstyp war nicht richtig"
+msgid "Content type was incorrect:"
+msgstr "Inhaltstyp war nicht richtig:"
 
 #. TRANSLATORS: the program must never be directly run
 #: ../src/gcm-install-system-wide.c:215
-msgid "This program must only be run through pkexec"
+msgid "This program must only be run through pkexec."
 msgstr "Dieses Programm darf nur durch pkexec ausgeführt werden."
 
 #. TRANSLATORS: PolicyKit has gone all insane on us, and we refuse to parse junk
 #: ../src/gcm-install-system-wide.c:224
-msgid "PKEXEC_UID must be set to an integer value"
-msgstr "PKEXEC_UID muss als Ganzzahlwert gesetzt sein"
+msgid "PKEXEC_UID must be set to an integer value."
+msgstr "PKEXEC_UID muss als Ganzzahlwert gesetzt sein."
 
 #. TRANSLATORS: we are complaining that a file must be really owned by the user who called this program
 #: ../src/gcm-install-system-wide.c:233
-msgid "The ICC profile must be owned by you"
-msgstr "Sie müssen der Besitzer der ICC-Profildatei sein"
+msgid "The ICC profile must be owned by the user."
+msgstr "Sie müssen der Besitzer der ICC-Profildatei sein."
 
 #. TRANSLATORS: only able to install profiles with an absolute path
 #: ../src/gcm-install-system-wide.c:246
-msgid "The destination filename must be absolute"
-msgstr "Der Pfad zur Zieldatei muss absolut sein"
+msgid "The destination filename must be absolute."
+msgstr "Der Pfad zur Zieldatei muss absolut sein."
 
 #. TRANSLATORS: error details
 #: ../src/gcm-install-system-wide.c:256
-msgid "Failed to copy"
-msgstr "Kopieren ist fehlgeschlagen"
+msgid "Failed to copy:"
+msgstr "Kopieren ist fehlgeschlagen:"
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
 #: ../src/gcm-picker.c:277
@@ -1326,13 +1333,13 @@ msgid "No colorimeter is attached."
 msgstr "Es ist kein Farbmesser angeschlossen."
 
 #. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:468 ../src/gcm-prefs.c:2712
+#: ../src/gcm-picker.c:468 ../src/gcm-prefs.c:2743
 #, c-format
 msgid "No %s color spaces available"
 msgstr "Keine %s-Farbprofile verfügbar"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-picker.c:498 ../src/gcm-prefs.c:3101
+#: ../src/gcm-picker.c:498 ../src/gcm-prefs.c:3132
 msgid "Set the parent window to make this modal"
 msgstr "Das Elternfenster setzen, um dieses modal zu machen"
 
@@ -1393,17 +1400,17 @@ msgid "Failed to get metadata from image"
 msgstr "Erhalten der Metadaten dieses Bildes ist gescheitert"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:630 ../src/gcm-prefs.c:1297
+#: ../src/gcm-prefs.c:630 ../src/gcm-prefs.c:1307
 msgid "Failed to create virtual device"
 msgstr "Anlegen des virtuellen Geräts ist fehlgeschlagen"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:638 ../src/gcm-prefs.c:1305
+#: ../src/gcm-prefs.c:638 ../src/gcm-prefs.c:1315
 msgid "Failed to save virtual device"
 msgstr "Speichern des virtuellen Geräts ist fehlgeschlagen"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:647 ../src/gcm-prefs.c:1314
+#: ../src/gcm-prefs.c:647 ../src/gcm-prefs.c:1324
 msgid "Failed to add virtual device"
 msgstr "Hinzufügen des virtuellen Geräts ist fehlgeschlagen"
 
@@ -1429,50 +1436,50 @@ msgid "Profiling completed"
 msgstr "Einrichtung abgeschlossen"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-prefs.c:1420
+#: ../src/gcm-prefs.c:1430
 msgid "Failed to delete file"
 msgstr "Datei konnte nicht gelöscht werden"
 
 #. TRANSLATORS: this is when the button is sensitive
-#: ../src/gcm-prefs.c:1583
+#: ../src/gcm-prefs.c:1593
 msgid "Create a color profile for the selected device"
 msgstr "Ein Farbprofil für das gewählte Gerät erstellen"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1588
+#: ../src/gcm-prefs.c:1598
 msgid "Cannot profile: No device is selected"
 msgstr "Einrichtung kann nicht ausgeführt werden: Kein Gerät ausgewählt"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1600
+#: ../src/gcm-prefs.c:1610
 msgid "Cannot calibrate: The display device is not connected"
 msgstr ""
 "Kalibrierung kann nicht ausgeführt werden: Das Anzeigegerät ist nicht "
 "angeschlossen"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1608
+#: ../src/gcm-prefs.c:1618
 msgid "Cannot calibrate: The display driver does not support XRandR 1.3"
 msgstr ""
 "Kalibrierung kann nicht ausgeführt werden: Der Grafiktreiber unterstützt "
 "XRandR 1.3 nicht"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1616
+#: ../src/gcm-prefs.c:1626
 msgid "Cannot calibrate: The measuring instrument is not plugged in"
 msgstr ""
 "Kalibrierung kann nicht ausgeführt werden: Das Messinstrument ist nicht "
 "eingesteckt"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1631
+#: ../src/gcm-prefs.c:1641
 msgid "Cannot profile: The measuring instrument is not plugged in"
 msgstr ""
 "Kalibrierung kann nicht ausgeführt werden: Das Messinstrument ist nicht "
 "eingesteckt"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1639
+#: ../src/gcm-prefs.c:1649
 msgid ""
 "Cannot profile: The measuring instrument does not support printer profiling"
 msgstr ""
@@ -1480,176 +1487,176 @@ msgstr ""
 "nicht die Einrichtung von Druckern"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1646
+#: ../src/gcm-prefs.c:1656
 msgid "Cannot profile this type of device"
 msgstr "Dieser Typ von Gerät kann nicht kalibriert werden"
 
 #. TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
 #. * Whilst this does not matter if you only have one monitor attached, it means you
 #. * can't color correct additional monitors or projectors.
-#: ../src/gcm-prefs.c:1724
+#: ../src/gcm-prefs.c:1734
 msgid "Per-device settings not supported. Check your display driver."
 msgstr ""
 "Separate Einstellungen je Gerät werden nicht unterstützt. Überprüfen Sie den "
 "Grafiktreiber."
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1838
+#: ../src/gcm-prefs.c:1848
 msgid "Input device"
 msgstr "Eingabegerät"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1842
+#: ../src/gcm-prefs.c:1852
 msgid "Display device"
 msgstr "Anzeigegerät"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1846
+#: ../src/gcm-prefs.c:1856
 msgid "Output device"
 msgstr "Ausgabegerät"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1850
+#: ../src/gcm-prefs.c:1860
 msgid "Devicelink"
 msgstr "Geräteverknüpfung"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1854
+#: ../src/gcm-prefs.c:1864
 msgid "Colorspace conversion"
 msgstr "Farbraumumwandlung"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-prefs.c:1858
+#: ../src/gcm-prefs.c:1868
 msgid "Abstract"
 msgstr "Abstrakt"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1862
+#: ../src/gcm-prefs.c:1872
 msgid "Named color"
 msgstr "Definierte Farbe"
 
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1865 ../src/gcm-prefs.c:1915
+#: ../src/gcm-prefs.c:1875 ../src/gcm-prefs.c:1925
 msgid "Unknown"
 msgstr "Unbekannte"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1876
+#: ../src/gcm-prefs.c:1886
 msgid "XYZ"
 msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1880
+#: ../src/gcm-prefs.c:1890
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1884
+#: ../src/gcm-prefs.c:1894
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1888
+#: ../src/gcm-prefs.c:1898
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1892
+#: ../src/gcm-prefs.c:1902
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1900
+#: ../src/gcm-prefs.c:1910
 msgid "Gray"
 msgstr "Grau"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1904
+#: ../src/gcm-prefs.c:1914
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1912
+#: ../src/gcm-prefs.c:1922
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-prefs.c:2081
+#: ../src/gcm-prefs.c:2112
 msgid "Yes"
 msgstr "Ja"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-prefs.c:2084
+#: ../src/gcm-prefs.c:2115
 msgid "No"
 msgstr "Nein"
 
 #. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/gcm-prefs.c:2229
+#: ../src/gcm-prefs.c:2260
 msgid "No hardware support"
 msgstr "Keine Hardware-Unterstützung"
 
 #. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/gcm-prefs.c:2233 ../src/gcm-prefs.c:2500
+#: ../src/gcm-prefs.c:2264 ../src/gcm-prefs.c:2531
 msgid "disconnected"
 msgstr "getrennt"
 
 #. TRANSLATORS: the profile was of the wrong sort for this device
-#: ../src/gcm-prefs.c:2352
+#: ../src/gcm-prefs.c:2383
 msgid "Could not import profile"
 msgstr "Profil konnte nicht importiert werden"
 
-#: ../src/gcm-prefs.c:2353
+#: ../src/gcm-prefs.c:2384
 msgid "The profile was of the wrong type for this device"
 msgstr "Das Profil war vom falschen Typ für dieses Gerät"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:2436
+#: ../src/gcm-prefs.c:2467
 msgid "Device added"
 msgstr "Gerät hinzugefügt"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:2440
+#: ../src/gcm-prefs.c:2471
 msgid "Device removed"
 msgstr "Gerät entfernt"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3025 ../data/gcm-prefs.ui.h:41
+#: ../src/gcm-prefs.c:3056 ../data/gcm-prefs.ui.h:41
 msgid "Display"
 msgstr "Anzeige"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3029
+#: ../src/gcm-prefs.c:3060
 msgid "Scanner"
 msgstr "Scanner"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3033
+#: ../src/gcm-prefs.c:3064
 msgid "Printer"
 msgstr "Drucker"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3037
+#: ../src/gcm-prefs.c:3068
 msgid "Camera"
 msgstr "Kamera"
 
 #. TRANSLATORS: button for more details about the vcgt failure
-#: ../src/gcm-prefs.c:3382
+#: ../src/gcm-prefs.c:3415
 msgid "More Information"
 msgstr "Weitere Informationen"
 
 #. TRANSLATORS: button to install extra profiles
-#: ../src/gcm-prefs.c:3385
+#: ../src/gcm-prefs.c:3418
 msgid "Install now"
 msgstr "Jetzt installieren"
 
 #. TRANSLATORS: this is displayed while the devices are being probed
-#: ../src/gcm-prefs.c:3388
+#: ../src/gcm-prefs.c:3421
 msgid "Loading list of devices…"
 msgstr "Geräteliste wird geladen …"
 
 #. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/gcm-prefs.c:3395
+#: ../src/gcm-prefs.c:3428
 msgid ""
 "This profile does not have the information required for whole-screen color "
 "correction."
@@ -1658,7 +1665,7 @@ msgstr ""
 "Farbkorrektur des gesamten Bildschirms"
 
 #. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/gcm-prefs.c:3403
+#: ../src/gcm-prefs.c:3436
 msgid "More color profiles could be automatically installed."
 msgstr "Weitere Farbprofile können automatisch installiert werden."
 
@@ -1747,14 +1754,12 @@ msgstr "Präzise Farbanpassung"
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:640
 msgid "Graphs and presentations"
-msgstr ""
+msgstr "Graphen und Präsentationen"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:644
-#, fuzzy
-#| msgid "Setting up device"
 msgid "Proofing devices"
-msgstr "Anzeigegerät wird eingerichtet"
+msgstr "Geräte werden eingerichtet"
 
 #: ../data/gcm-calibrate.ui.h:1
 msgid "Blue:"
@@ -1990,11 +1995,6 @@ msgstr "Anzeigekorrektur:"
 msgid "Display:"
 msgstr "Anzeige:"
 
-#. The EISA (standards body) identifier of the device
-#: ../data/gcm-prefs.ui.h:47
-msgid "EISA ID:"
-msgstr "EISA-Kennung:"
-
 #. The file size in bytes of the profile
 #: ../data/gcm-prefs.ui.h:49
 msgid "File size:"
@@ -2009,10 +2009,6 @@ msgstr "Dateiname:"
 #: ../data/gcm-prefs.ui.h:53
 msgid "Fine tuning"
 msgstr "Feinabstimmung"
-
-#: ../data/gcm-prefs.ui.h:54
-msgid "Gamma:"
-msgstr "Gamma:"
 
 #: ../data/gcm-prefs.ui.h:55
 msgid ""
@@ -2095,17 +2091,12 @@ msgid "Rese_t"
 msgstr "_Zurücksetzen"
 
 #: ../data/gcm-prefs.ui.h:82
-msgid "Reset the sliders to thier default values"
+msgid "Reset the sliders to the default values"
 msgstr "Die Schieberegler auf Voreinstellungen zurücksetzen"
 
 #: ../data/gcm-prefs.ui.h:83
 msgid "Save these profiles for all users"
 msgstr "Diese Profile für alle Benutzer speichern"
-
-#. The serial number of the device
-#: ../data/gcm-prefs.ui.h:85
-msgid "Serial number:"
-msgstr "Seriennummer:"
 
 #: ../data/gcm-prefs.ui.h:86
 msgid ""
@@ -2193,6 +2184,15 @@ msgstr "_Entfernen"
 #: ../data/gcm-prefs.ui.h:104
 msgid "_Set System Default"
 msgstr "Zur systemweiten _Vorgabe machen"
+
+#~ msgid "Serial number"
+#~ msgstr "Seriennummer"
+
+#~ msgid "EISA ID"
+#~ msgstr "EISA-Kennung"
+
+#~ msgid "Gamma"
+#~ msgstr "Gamma"
 
 #~ msgid "This device already exists"
 #~ msgstr "Dieses Gerät existiert bereits"
