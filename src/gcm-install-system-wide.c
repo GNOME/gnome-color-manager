@@ -146,7 +146,7 @@ main (gint argc, gchar *argv[])
 	/* no input */
 	if (filenames == NULL || g_strv_length (filenames) != 1) {
 		/* TRANSLATORS: user did not specify a valid filename */
-		g_print ("%s\n", _("You need to specify exactly one ICC profile filename"));
+		g_print ("%s\n", _("You need to specify exactly one ICC profile filename."));
 		retval = GCM_INSTALL_SYSTEM_WIDE_EXIT_CODE_ARGUMENTS_INVALID;
 		goto out;
 	}
@@ -154,7 +154,7 @@ main (gint argc, gchar *argv[])
 	/* no id */
 	if (id == NULL) {
 		/* TRANSLATORS: user did not specify a valid device ID */
-		g_print ("%s\n", _("You need to specify exactly one device ID"));
+		g_print ("%s\n", _("You need to specify exactly one device ID."));
 		retval = GCM_INSTALL_SYSTEM_WIDE_EXIT_CODE_ARGUMENTS_INVALID;
 		goto out;
 	}
@@ -163,7 +163,7 @@ main (gint argc, gchar *argv[])
 	ret = gcm_install_system_wide_is_alphanum_lcase (id);
 	if (!ret) {
 		/* TRANSLATORS: user did not specify a valid device ID */
-		g_print ("%s\n", _("The device ID has invalid characters"));
+		g_print ("%s\n", _("The device ID has invalid characters."));
 		retval = GCM_INSTALL_SYSTEM_WIDE_EXIT_CODE_ARGUMENTS_INVALID;
 		goto out;
 	}
@@ -173,7 +173,7 @@ main (gint argc, gchar *argv[])
 	euid = geteuid ();
 	if (uid != 0 || euid != 0) {
 		/* TRANSLATORS: only able to install profiles as root */
-		g_print ("%s\n", _("This program can only be used by the root user"));
+		g_print ("%s\n", _("This program can only be used by the root user."));
 		retval = GCM_INSTALL_SYSTEM_WIDE_EXIT_CODE_ARGUMENTS_INVALID;
 		goto out;
 	}
@@ -182,7 +182,7 @@ main (gint argc, gchar *argv[])
 	ret = g_path_is_absolute (filenames[0]);
 	if (!ret) {
 		/* TRANSLATORS: only able to install profiles with an absolute path */
-		g_print ("%s\n", _("The source filename must be absolute"));
+		g_print ("%s\n", _("The source filename must be absolute."));
 		retval = GCM_INSTALL_SYSTEM_WIDE_EXIT_CODE_ARGUMENTS_INVALID;
 		goto out;
 	}
@@ -193,7 +193,7 @@ main (gint argc, gchar *argv[])
 				  G_FILE_QUERY_INFO_NOFOLLOW_SYMLINKS, NULL, &error);
 	if (info == NULL) {
 		/* TRANSLATORS: error details */
-		g_print ("%s: %s\n", _("Failed to get content type"), error->message);
+		g_print ("%s %s\n", _("Failed to get content type:"), error->message);
 		g_error_free (error);
 		retval = GCM_INSTALL_SYSTEM_WIDE_EXIT_CODE_CONTENT_TYPE_INVALID;
 		goto out;
@@ -203,7 +203,7 @@ main (gint argc, gchar *argv[])
 	type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
 	if (g_strcmp0 (type, "application/vnd.iccprofile") != 0) {
 		/* TRANSLATORS: the content type is the detected type of file */
-		g_print ("%s: %s\n", _("Content type was incorrect"), type);
+		g_print ("%s %s\n", _("Content type was incorrect:"), type);
 		retval = GCM_INSTALL_SYSTEM_WIDE_EXIT_CODE_CONTENT_TYPE_INVALID;
 		goto out;
 	}
@@ -212,7 +212,7 @@ main (gint argc, gchar *argv[])
 	pkexec_uid_str = g_getenv ("PKEXEC_UID");
 	if (pkexec_uid_str == NULL) {
 		/* TRANSLATORS: the program must never be directly run */
-		g_print ("%s: %s\n", _("This program must only be run through pkexec"), type);
+		g_print ("%s\n", _("This program must only be run through pkexec."));
 		retval = GCM_INSTALL_SYSTEM_WIDE_EXIT_CODE_INVALID_USER;
 		goto out;
 	}
@@ -221,7 +221,7 @@ main (gint argc, gchar *argv[])
 	ret = egg_strtouint (pkexec_uid_str, &pkexec_uid);
 	if (!ret) {
 		/* TRANSLATORS: PolicyKit has gone all insane on us, and we refuse to parse junk */
-		g_print ("%s: %s\n", _("PKEXEC_UID must be set to an integer value"), type);
+		g_print ("%s\n", _("PKEXEC_UID must be set to an integer value."));
 		retval = GCM_INSTALL_SYSTEM_WIDE_EXIT_CODE_INVALID_USER;
 		goto out;
 	}
@@ -230,7 +230,7 @@ main (gint argc, gchar *argv[])
 	file_uid = g_file_info_get_attribute_uint32 (info, G_FILE_ATTRIBUTE_UNIX_UID);
 	if (file_uid != pkexec_uid) {
 		/* TRANSLATORS: we are complaining that a file must be really owned by the user who called this program */
-		g_print ("%s: %s\n", _("The ICC profile must be owned by you"), type);
+		g_print ("%s\n", _("The ICC profile must be owned by the user."));
 		retval = GCM_INSTALL_SYSTEM_WIDE_EXIT_CODE_INVALID_USER;
 		goto out;
 	}
@@ -243,7 +243,7 @@ main (gint argc, gchar *argv[])
 	ret = g_path_is_absolute (dest);
 	if (!ret) {
 		/* TRANSLATORS: only able to install profiles with an absolute path */
-		g_print ("%s\n", _("The destination filename must be absolute"));
+		g_print ("%s\n", _("The destination filename must be absolute."));
 		retval = GCM_INSTALL_SYSTEM_WIDE_EXIT_CODE_ARGUMENTS_INVALID;
 		goto out;
 	}
@@ -253,7 +253,7 @@ main (gint argc, gchar *argv[])
 	ret = g_file_copy (file, file_dest, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, &error);
 	if (!ret) {
 		/* TRANSLATORS: error details */
-		g_print ("%s: %s\n", _("Failed to copy"), error->message);
+		g_print ("%s %s\n", _("Failed to copy:"), error->message);
 		g_error_free (error);
 		retval = GCM_INSTALL_SYSTEM_WIDE_EXIT_CODE_FAILED_TO_COPY;
 		goto out;

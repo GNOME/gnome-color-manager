@@ -161,7 +161,7 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
 	if (connection == NULL) {
 		/* TRANSLATORS: no DBus session bus */
-		g_print ("%s: %s\n", _("Failed to connect to session bus"), error->message);
+		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -185,7 +185,7 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 						G_MAXINT, NULL, &error);
 	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
-		egg_warning ("%s: %s\n", _("The request failed"), error->message);
+		egg_warning ("%s %s\n", _("The request failed:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -226,7 +226,7 @@ gcm_utils_is_package_installed (const gchar *package_name)
 	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
 	if (connection == NULL) {
 		/* TRANSLATORS: no DBus session bus */
-		g_print ("%s: %s\n", _("Failed to connect to session bus"), error->message);
+		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -244,7 +244,7 @@ gcm_utils_is_package_installed (const gchar *package_name)
 						G_MAXINT, NULL, &error);
 	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
-		egg_warning ("%s: %s\n", _("The request failed"), error->message);
+		egg_warning ("%s %s\n", _("The request failed:"), error->message);
 		g_error_free (error);
 		goto out;
 	}

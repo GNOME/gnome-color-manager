@@ -173,7 +173,7 @@ gcm_inspect_show_profiles_for_device (const gchar *device_id)
 	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
 	if (connection == NULL) {
 		/* TRANSLATORS: no DBus session bus */
-		g_print ("%s: %s\n", _("Failed to connect to session bus"), error->message);
+		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -191,7 +191,7 @@ gcm_inspect_show_profiles_for_device (const gchar *device_id)
 						-1, NULL, &error);
 	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
-		g_print ("%s: %s\n", _("The request failed"), error->message);
+		g_print ("%s %s\n", _("The request failed:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -242,7 +242,7 @@ gcm_inspect_show_profiles_for_file (const gchar *filename)
 	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
 	if (connection == NULL) {
 		/* TRANSLATORS: no DBus session bus */
-		g_print ("%s: %s\n", _("Failed to connect to session bus"), error->message);
+		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -260,7 +260,7 @@ gcm_inspect_show_profiles_for_file (const gchar *filename)
 						-1, NULL, &error);
 	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
-		g_print ("%s: %s\n", _("The request failed"), error->message);
+		g_print ("%s %s\n", _("The request failed:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -310,7 +310,7 @@ gcm_inspect_show_profiles_for_devices (void)
 	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
 	if (connection == NULL) {
 		/* TRANSLATORS: no DBus session bus */
-		g_print ("%s: %s\n", _("Failed to connect to session bus"), error->message);
+		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -327,7 +327,7 @@ gcm_inspect_show_profiles_for_devices (void)
 						-1, NULL, &error);
 	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
-		g_print ("%s: %s\n", _("The request failed"), error->message);
+		g_print ("%s %s\n", _("The request failed:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -371,7 +371,7 @@ gcm_inspect_show_profile_for_window (guint xid)
 	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
 	if (connection == NULL) {
 		/* TRANSLATORS: no DBus session bus */
-		g_print ("%s: %s\n", _("Failed to connect to session bus"), error->message);
+		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -389,7 +389,7 @@ gcm_inspect_show_profile_for_window (guint xid)
 						-1, NULL, &error);
 	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
-		g_print ("%s: %s\n", _("The request failed"), error->message);
+		g_print ("%s %s\n", _("The request failed:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -441,7 +441,7 @@ gcm_inspect_show_profiles_for_type (const gchar *type)
 	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
 	if (connection == NULL) {
 		/* TRANSLATORS: no DBus session bus */
-		g_print ("%s: %s\n", _("Failed to connect to session bus"), error->message);
+		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -459,7 +459,7 @@ gcm_inspect_show_profiles_for_type (const gchar *type)
 						-1, NULL, &error);
 	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
-		g_print ("%s: %s\n", _("The request failed"), error->message);
+		g_print ("%s %s\n", _("The request failed:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -507,13 +507,13 @@ gcm_inspect_proxy_appeared_cb (GDBusConnection *connection,
 	result = g_dbus_proxy_get_cached_property (proxy, "RenderingIntentDisplay");
 	if (result != NULL) {
 		/* TRANSLATORS: this is the rendering intent of the output */
-		g_print ("%s:\t%s\n", _("Rendering intent (display)"), g_variant_get_string (result, NULL));
+		g_print ("%s\t%s\n", _("Rendering intent (display):"), g_variant_get_string (result, NULL));
 		g_variant_unref (result);
 	}
 	result = g_dbus_proxy_get_cached_property (proxy, "RenderingIntentSoftproof");
 	if (result != NULL) {
 		/* TRANSLATORS: this is the rendering intent of the printer */
-		g_print ("%s:\t%s\n", _("Rendering intent (softproof)"), g_variant_get_string (result, NULL));
+		g_print ("%s\t%s\n", _("Rendering intent (softproof):"), g_variant_get_string (result, NULL));
 		g_variant_unref (result);
 	}
 
@@ -521,13 +521,13 @@ gcm_inspect_proxy_appeared_cb (GDBusConnection *connection,
 	result = g_dbus_proxy_get_cached_property (proxy, "RenderingIntentDisplay");
 	if (result != NULL) {
 		/* TRANSLATORS: this is the rendering intent of the output */
-		g_print ("%s:\t%s\n", _("RGB Colorspace"), g_variant_get_string (result, NULL));
+		g_print ("%s\t%s\n", _("RGB Colorspace:"), g_variant_get_string (result, NULL));
 		g_variant_unref (result);
 	}
 	result = g_dbus_proxy_get_cached_property (proxy, "RenderingIntentSoftproof");
 	if (result != NULL) {
 		/* TRANSLATORS: this is the rendering intent of the printer */
-		g_print ("%s:\t%s\n", _("CMYK Colorspace"), g_variant_get_string (result, NULL));
+		g_print ("%s\t%s\n", _("CMYK Colorspace:"), g_variant_get_string (result, NULL));
 		g_variant_unref (result);
 	}
 

@@ -55,7 +55,7 @@ gcm_dump_edid_filename (const gchar *filename)
 	ret = g_file_get_contents (filename, &data, NULL, &error);
 	if (!ret) {
 		/* TRANSLATORS: this is when the EDID file cannot be read */
-		g_print ("%s: %s\n", _("Cannot load file contents"), error->message);
+		g_print ("%s %s\n", _("Cannot load file contents:"), error->message);
 		goto out;
 	}
 
@@ -64,7 +64,7 @@ gcm_dump_edid_filename (const gchar *filename)
 	ret = gcm_edid_parse (edid, (const guint8 *) data, &error);
 	if (!ret) {
 		/* TRANSLATORS: this is when the EDID cannot be parsed */
-		g_print ("%s: %s\n", _("Cannot parse EDID contents"), error->message);
+		g_print ("%s %s\n", _("Cannot parse EDID contents:"), error->message);
 		goto out;
 	}
 
@@ -72,38 +72,38 @@ gcm_dump_edid_filename (const gchar *filename)
 	monitor_name = gcm_edid_get_monitor_name (edid);
 	if (monitor_name != NULL) {
 		/* TRANSLATORS: this is debugging output for the supplied EDID file */
-		g_print ("  %s: %s\n", _("Monitor name"), monitor_name);
+		g_print ("  %s %s\n", _("Monitor name:"), monitor_name);
 	}
 	vendor_name = gcm_edid_get_vendor_name (edid);
 	if (vendor_name != NULL) {
 		/* TRANSLATORS: this is debugging output for the supplied EDID file */
-		g_print ("  %s: %s\n", _("Vendor name"), vendor_name);
+		g_print ("  %s %s\n", _("Vendor name:"), vendor_name);
 	}
 	serial_number = gcm_edid_get_serial_number (edid);
 	if (serial_number != NULL) {
 		/* TRANSLATORS: this is debugging output for the supplied EDID file */
-		g_print ("  %s: %s\n", _("Serial number"), serial_number);
+		g_print ("  %s %s\n", _("Serial number:"), serial_number);
 	}
 	eisa_id = gcm_edid_get_eisa_id (edid);
 	if (eisa_id != NULL) {
 		/* TRANSLATORS: this is debugging output for the supplied EDID file */
-		g_print ("  %s: %s\n", _("EISA ID"), eisa_id);
+		g_print ("  %s %s\n", _("EISA ID:"), eisa_id);
 	}
 	pnp_id = gcm_edid_get_pnp_id (edid);
 	if (pnp_id != NULL) {
 		/* TRANSLATORS: this is debugging output for the supplied EDID file */
-		g_print ("  %s: %s\n", _("PNP identifier"), pnp_id);
+		g_print ("  %s %s\n", _("PNP identifier:"), pnp_id);
 	}
 	width = gcm_edid_get_width (edid);
 	height = gcm_edid_get_height (edid);
 	if (width != 0) {
 		/* TRANSLATORS: this is debugging output for the supplied EDID file */
-		g_print ("  %s: %ix%i\n", _("Size"), width, height);
+		g_print ("  %s %ix%i\n", _("Size:"), width, height);
 	}
 	gamma = gcm_edid_get_gamma (edid);
 	if (gamma > 0.0f) {
 		/* TRANSLATORS: this is debugging output for the supplied EDID file */
-		g_print ("  %s: %f\n", _("Gamma"), gamma);
+		g_print ("  %s %f\n", _("Gamma:"), gamma);
 	}
 out:
 	if (edid != NULL)
@@ -156,7 +156,7 @@ main (int argc, char **argv)
 	if (files != NULL) {
 		for (i=0; files[i] != NULL; i++) {
 			/* TRANSLATORS: this is the filename we are displaying */
-			g_print ("%s: %s\n", _("EDID dump"), files[i]);
+			g_print ("%s %s\n", _("EDID dump:"), files[i]);
 			gcm_dump_edid_filename (files[i]);
 		}
 		goto out;
