@@ -6,8 +6,8 @@ msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager\n"
-"POT-Creation-Date: 2010-05-28 17:36+0000\n"
-"PO-Revision-Date: 2010-05-28 19:41+0200\n"
+"POT-Creation-Date: 2010-05-29 07:27+0000\n"
+"PO-Revision-Date: 2010-05-29 10:54+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -933,48 +933,56 @@ msgstr "LCD de portátil"
 
 #. TRANSLATORS: this is when the EDID file cannot be read
 #: ../src/gcm-dump-edid.c:58
-msgid "Cannot load file contents"
-msgstr "No se puede cargar el contenido del archivo"
+#| msgid "Cannot load file contents"
+msgid "Cannot load file contents:"
+msgstr "No se puede cargar el contenido del archivo:"
 
 #. TRANSLATORS: this is when the EDID cannot be parsed
 #: ../src/gcm-dump-edid.c:67
-msgid "Cannot parse EDID contents"
-msgstr "No se puede analizar el contenido EDID"
+#| msgid "Cannot parse EDID contents"
+msgid "Cannot parse EDID contents:"
+msgstr "No se puede analizar el contenido EDID:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:75
-msgid "Monitor name"
-msgstr "Nombre del monitor"
+#| msgid "Monitor name"
+msgid "Monitor name:"
+msgstr "Nombre del monitor:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:80
-msgid "Vendor name"
-msgstr "Nombre del fabricante"
+#| msgid "Vendor name"
+msgid "Vendor name:"
+msgstr "Nombre del fabricante:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:85
-msgid "Serial number"
-msgstr "Número de serie"
+#. The serial number of the device
+#: ../src/gcm-dump-edid.c:85 ../data/gcm-prefs.ui.h:85
+msgid "Serial number:"
+msgstr "Número de serie:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:90
-msgid "EISA ID"
-msgstr "ID de EISA"
+#. The EISA (standards body) identifier of the device
+#: ../src/gcm-dump-edid.c:90 ../data/gcm-prefs.ui.h:47
+msgid "EISA ID:"
+msgstr "ID de EISA:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:95
-msgid "PNP identifier"
-msgstr "Identificador PNP"
+#| msgid "PNP identifier"
+msgid "PNP identifier:"
+msgstr "Identificador PNP:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:101
-msgid "Size"
-msgstr "Tamaño"
+#| msgid "Size"
+msgid "Size:"
+msgstr "Tamaño:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:106
-msgid "Gamma"
-msgstr "Gamma"
+#: ../src/gcm-dump-edid.c:106 ../data/gcm-prefs.ui.h:54
+msgid "Gamma:"
+msgstr "Gamma:"
 
 #. TRANSLATORS: command line option: a list of files to parse
 #: ../src/gcm-dump-edid.c:136
@@ -983,8 +991,9 @@ msgstr "Volcados EDID que analizar"
 
 #. TRANSLATORS: this is the filename we are displaying
 #: ../src/gcm-dump-edid.c:159
-msgid "EDID dump"
-msgstr "Volcado EDID"
+#| msgid "EDID dump"
+msgid "EDID dump:"
+msgstr "Volcado EDID:"
 
 #. TRANSLATORS: we saved the EDID to a file - second parameter is a filename
 #: ../src/gcm-dump-edid.c:196
@@ -1132,15 +1141,17 @@ msgstr "sin establecer"
 #: ../src/gcm-inspect.c:176 ../src/gcm-inspect.c:245 ../src/gcm-inspect.c:313
 #: ../src/gcm-inspect.c:374 ../src/gcm-inspect.c:444 ../src/gcm-utils.c:164
 #: ../src/gcm-utils.c:229
-msgid "Failed to connect to session bus"
-msgstr "Falló al conectar con el bus de sesión"
+#| msgid "Failed to connect to session bus"
+msgid "Failed to connect to session bus:"
+msgstr "Falló al conectar con el bus de sesión:"
 
 #. TRANSLATORS: the DBus method failed
 #: ../src/gcm-inspect.c:194 ../src/gcm-inspect.c:263 ../src/gcm-inspect.c:330
-#: ../src/gcm-inspect.c:392 ../src/gcm-inspect.c:462 ../src/gcm-inspect.c:546
-#: ../src/gcm-utils.c:188 ../src/gcm-utils.c:247
-msgid "The request failed"
-msgstr "Falló la solicitud"
+#: ../src/gcm-inspect.c:392 ../src/gcm-inspect.c:462 ../src/gcm-utils.c:188
+#: ../src/gcm-utils.c:247
+#| msgid "The request failed"
+msgid "The request failed:"
+msgstr "Falló la solicitud:"
 
 #. TRANSLATORS: no profile has been asigned to this device
 #: ../src/gcm-inspect.c:203
@@ -1170,23 +1181,32 @@ msgstr "No existen perfiles ICC para este tipo de dispositivo"
 
 #. TRANSLATORS: this is the rendering intent of the output
 #: ../src/gcm-inspect.c:510
-msgid "Rendering intent (display)"
-msgstr "Intento de renderizado (pantalla)"
+#| msgid "Rendering intent (display)"
+msgid "Rendering intent (display):"
+msgstr "Intento de renderizado (pantalla):"
 
 #. TRANSLATORS: this is the rendering intent of the printer
 #: ../src/gcm-inspect.c:516
-msgid "Rendering intent (softproof)"
-msgstr "Intento de renderizado (prueba suave)"
+#| msgid "Rendering intent (softproof)"
+msgid "Rendering intent (softproof):"
+msgstr "Intento de renderizado (prueba suave):"
 
 #. TRANSLATORS: this is the rendering intent of the output
 #: ../src/gcm-inspect.c:524
-msgid "RGB Colorspace"
-msgstr "Espacio de color RGB"
+#| msgid "RGB Colorspace"
+msgid "RGB Colorspace:"
+msgstr "Espacio de color RGB:"
 
 #. TRANSLATORS: this is the rendering intent of the printer
 #: ../src/gcm-inspect.c:530
-msgid "CMYK Colorspace"
-msgstr "Espacio de color CMYK"
+#| msgid "CMYK Colorspace"
+msgid "CMYK Colorspace:"
+msgstr "Espacio de color CMYK:"
+
+#. TRANSLATORS: the DBus method failed
+#: ../src/gcm-inspect.c:546
+msgid "The request failed"
+msgstr "Falló la solicitud"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:595
@@ -1242,63 +1262,75 @@ msgstr ""
 
 #. TRANSLATORS: user did not specify a valid filename
 #: ../src/gcm-install-system-wide.c:149
-msgid "You need to specify exactly one ICC profile filename"
-msgstr "Debe especificar exactamente un nombre de archivo de perfil ICC"
+#| msgid "You need to specify exactly one ICC profile filename"
+msgid "You need to specify exactly one ICC profile filename."
+msgstr "Debe especificar exactamente un nombre de archivo de perfil ICC."
 
 #. TRANSLATORS: user did not specify a valid device ID
 #: ../src/gcm-install-system-wide.c:157
-msgid "You need to specify exactly one device ID"
-msgstr "Debe especificar exactamente un ID de dispositivo"
+#| msgid "You need to specify exactly one device ID"
+msgid "You need to specify exactly one device ID."
+msgstr "Debe especificar exactamente un ID de dispositivo."
 
 #. TRANSLATORS: user did not specify a valid device ID
 #: ../src/gcm-install-system-wide.c:166
-msgid "The device ID has invalid characters"
-msgstr "El ID del dispositivo tiene caracteres no válidos"
+#| msgid "The device ID has invalid characters"
+msgid "The device ID has invalid characters."
+msgstr "El ID del dispositivo tiene caracteres no válidos."
 
 #. TRANSLATORS: only able to install profiles as root
 #: ../src/gcm-install-system-wide.c:176
-msgid "This program can only be used by the root user"
-msgstr "Este programa sólo lo puede usar el superusuario"
+#| msgid "This program can only be used by the root user"
+msgid "This program can only be used by the root user."
+msgstr "Este programa sólo lo puede usar el superusuario."
 
 #. TRANSLATORS: only able to install profiles with an absolute path
 #: ../src/gcm-install-system-wide.c:185
-msgid "The source filename must be absolute"
-msgstr "El nombre del archivo de origen debe ser absoluto"
+#| msgid "The source filename must be absolute"
+msgid "The source filename must be absolute."
+msgstr "El nombre del archivo de origen debe ser absoluto."
 
 #. TRANSLATORS: error details
 #: ../src/gcm-install-system-wide.c:196
-msgid "Failed to get content type"
-msgstr "Falló al obtener el tipo de contenido"
+#| msgid "Failed to get content type"
+msgid "Failed to get content type:"
+msgstr "Falló al obtener el tipo de contenido:"
 
 #. TRANSLATORS: the content type is the detected type of file
 #: ../src/gcm-install-system-wide.c:206
-msgid "Content type was incorrect"
-msgstr "El tipo de contenido era incorrecto"
+#| msgid "Content type was incorrect"
+msgid "Content type was incorrect:"
+msgstr "El tipo de contenido era incorrecto:"
 
 #. TRANSLATORS: the program must never be directly run
 #: ../src/gcm-install-system-wide.c:215
-msgid "This program must only be run through pkexec"
-msgstr "Este programa sólo se puede ejecutar a través de pkexec"
+#| msgid "This program must only be run through pkexec"
+msgid "This program must only be run through pkexec."
+msgstr "Este programa sólo se puede ejecutar a través de pkexec."
 
 #. TRANSLATORS: PolicyKit has gone all insane on us, and we refuse to parse junk
 #: ../src/gcm-install-system-wide.c:224
-msgid "PKEXEC_UID must be set to an integer value"
-msgstr "Se debe establecer PKEXEC_UID a un valor entero"
+#| msgid "PKEXEC_UID must be set to an integer value"
+msgid "PKEXEC_UID must be set to an integer value."
+msgstr "Se debe establecer PKEXEC_UID a un valor entero."
 
 #. TRANSLATORS: we are complaining that a file must be really owned by the user who called this program
 #: ../src/gcm-install-system-wide.c:233
-msgid "The ICC profile must be owned by you"
-msgstr "Debe ser el propietario del perfil ICC"
+#| msgid "The ICC profile must be owned by you"
+msgid "The ICC profile must be owned by the user."
+msgstr "El usuario debe ser el propietario del perfil ICC."
 
 #. TRANSLATORS: only able to install profiles with an absolute path
 #: ../src/gcm-install-system-wide.c:246
-msgid "The destination filename must be absolute"
-msgstr "El nombre del archivo de destino debe ser absoluto"
+#| msgid "The destination filename must be absolute"
+msgid "The destination filename must be absolute."
+msgstr "El nombre del archivo de destino debe ser absoluto."
 
 #. TRANSLATORS: error details
 #: ../src/gcm-install-system-wide.c:256
-msgid "Failed to copy"
-msgstr "Falló al copiar"
+#| msgid "Failed to copy"
+msgid "Failed to copy:"
+msgstr "Falló al copiar:"
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
 #: ../src/gcm-picker.c:277
@@ -1728,7 +1760,6 @@ msgstr "Gráficas y presentaciones"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:644
-#| msgid "Setting up device"
 msgid "Proofing devices"
 msgstr "Corrección de dispositivos"
 
@@ -1847,8 +1878,6 @@ msgid "_Measure"
 msgstr "_Medida"
 
 #: ../data/gcm-prefs.ui.h:1
-#| msgid ""
-#| "A working space is the range of colors that can be encoded into an image."
 msgid ""
 "A working space is a default colorspace that is not associated with a "
 "specific device."
@@ -1864,12 +1893,10 @@ msgstr ""
 "imagen."
 
 #: ../data/gcm-prefs.ui.h:3
-#| msgid "Create a color profile for the selected device"
 msgid "Add a color profile to be used for this device"
 msgstr "Añadir un perfil de color para usarlo con este dispositivo"
 
 #: ../data/gcm-prefs.ui.h:4
-#| msgid "Manage ICC color profiles"
 msgid "Add a new color profile"
 msgstr "Añadir un perfil de color nuevo"
 
@@ -1884,7 +1911,6 @@ msgstr "Añade un dispositivo virtual que no está conectado."
 
 #. Profiles that can be added to the device
 #: ../data/gcm-prefs.ui.h:9
-#| msgid "All files"
 msgid "Available Profiles"
 msgstr "Perfiles disponibles"
 
@@ -1912,7 +1938,6 @@ msgid "Create _Profile"
 msgstr "Crear p_erfil"
 
 #: ../data/gcm-prefs.ui.h:25
-#| msgid "Create _Profile for Device"
 msgid "Create a profile for the device"
 msgstr "Crear un perfil para el dispositivo"
 
@@ -1935,7 +1960,6 @@ msgstr ""
 "aparecer en la lista"
 
 #: ../data/gcm-prefs.ui.h:31
-#| msgid "Generating the profile"
 msgid "Delete this profile"
 msgstr "Eliminar este perfil"
 
@@ -1973,11 +1997,6 @@ msgstr "Corrección de pantalla:"
 msgid "Display:"
 msgstr "Pantalla:"
 
-#. The EISA (standards body) identifier of the device
-#: ../data/gcm-prefs.ui.h:47
-msgid "EISA ID:"
-msgstr "ID de EISA:"
-
 #. The file size in bytes of the profile
 #: ../data/gcm-prefs.ui.h:49
 msgid "File size:"
@@ -1992,10 +2011,6 @@ msgstr "Nombre del archivo:"
 #: ../data/gcm-prefs.ui.h:53
 msgid "Fine tuning"
 msgstr "Ajuste fino"
-
-#: ../data/gcm-prefs.ui.h:54
-msgid "Gamma:"
-msgstr "Gamma:"
 
 #: ../data/gcm-prefs.ui.h:55
 msgid ""
@@ -2059,7 +2074,6 @@ msgstr ""
 "todas las ventanas tengan el color correcto"
 
 #: ../data/gcm-prefs.ui.h:76
-#| msgid "Create a color profile for the selected device"
 msgid "Remove a color profile for this device"
 msgstr "Quitar un perfil de color para este dispositivo"
 
@@ -2078,18 +2092,13 @@ msgid "Rese_t"
 msgstr "_Restablecer"
 
 #: ../data/gcm-prefs.ui.h:82
-#| msgid "Reset your display to the factory defaults."
-msgid "Reset the sliders to thier default values"
-msgstr "Restablecer los deslizadores a sus valores predeterminados."
+#| msgid "Reset the sliders to thier default values"
+msgid "Reset the sliders to the default values"
+msgstr "Restablecer los deslizadores a los valores predeterminados"
 
 #: ../data/gcm-prefs.ui.h:83
 msgid "Save these profiles for all users"
 msgstr "Guardar estos perfiles para todos los usuarios"
-
-#. The serial number of the device
-#: ../data/gcm-prefs.ui.h:85
-msgid "Serial number:"
-msgstr "Número de serie:"
 
 #: ../data/gcm-prefs.ui.h:86
 msgid ""
@@ -2108,7 +2117,6 @@ msgid "Softproof:"
 msgstr "Prueba blanda:"
 
 #: ../data/gcm-prefs.ui.h:90
-#| msgid "The rendering intent is how one gamut size is mapped to another."
 msgid ""
 "The rendering intent defines how color should be transformed from one "
 "colorspace to another."
@@ -2176,6 +2184,15 @@ msgstr "_Quitar"
 #: ../data/gcm-prefs.ui.h:104
 msgid "_Set System Default"
 msgstr "_Establecer los valores predeterminados del sistema"
+
+#~ msgid "Serial number"
+#~ msgstr "Número de serie"
+
+#~ msgid "EISA ID"
+#~ msgstr "ID de EISA"
+
+#~ msgid "Gamma"
+#~ msgstr "Gamma"
 
 #~ msgid "Relative colormetric"
 #~ msgstr "Colorimetría relativa"
