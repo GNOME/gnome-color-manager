@@ -187,9 +187,6 @@ if test "x$HAVE_CUPS" != "xyes"; then
 	AC_MSG_ERROR([cups-devel is required for gnome-color-manager])
 fi
 
-#AC_SUBST(gsettingsupdateschemacache,
-#	`pkg-config --variable gsettingsupdateschemacache gio-2.0`)
-
 dnl ---------------------------------------------------------------------------
 dnl - Make paths available for source files
 dnl ---------------------------------------------------------------------------
