@@ -1006,9 +1006,14 @@ gcm_client_possibly_migrate_config_file (GcmClient *client)
 	gdest = g_file_new_for_path (dest);
 	ret = g_file_copy (gsource, gdest, G_FILE_COPY_NONE, NULL, NULL, NULL, &error);
 	if (!ret) {
-		egg_warning ("failed to copy: %s", error->message);
+		/* does the file already exist? -- i.e. the schema version was reset */
+		if (error->domain != G_IO_ERROR ||
+		    error->code != G_IO_ERROR_EXISTS) {
+			egg_warning ("failed to copy: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
 		g_error_free (error);
-		goto out;
 	}
 
 	/* do not attempt to migrate this again */
