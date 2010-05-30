@@ -219,13 +219,15 @@ egg_debug_print_line (const gchar *func, const gchar *file, const int line, cons
 	gchar *str_time;
 	gchar *header;
 	time_t the_time;
+	GTimeVal timeval;
 
+	g_get_current_time (&timeval);
 	time (&the_time);
 	str_time = g_new0 (gchar, 255);
 	strftime (str_time, 254, "%H:%M:%S", localtime (&the_time));
 
 	/* generate header text */
-	header = g_strdup_printf ("TI:%s\tFI:%s\tFN:%s,%d", str_time, file, func, line);
+	header = g_strdup_printf ("TI:%s.%li\tFI:%s\tFN:%s,%d", str_time, timeval.tv_usec, file, func, line);
 	g_free (str_time);
 
 	/* always in light green */

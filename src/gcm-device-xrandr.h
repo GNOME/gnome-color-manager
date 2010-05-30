@@ -53,6 +53,8 @@ GcmDevice	*gcm_device_xrandr_new			(void);
 gboolean	 gcm_device_xrandr_set_from_output	(GcmDevice		*device,
 							 GnomeRROutput		*output,
 							 GError			**error);
+void		 gcm_device_xrandr_set_remove_atom	(GcmDeviceXrandr	*device_xrandr,
+							 gboolean		 remove_atom);
 const gchar	*gcm_device_xrandr_get_native_device	(GcmDeviceXrandr	*device_xrandr);
 gboolean	 gcm_device_xrandr_get_fallback		(GcmDeviceXrandr	*device_xrandr);
 

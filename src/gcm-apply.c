@@ -39,6 +39,7 @@ int
 main (int argc, char **argv)
 {
 	gboolean ret;
+	gboolean login = FALSE;
 	guint retval = 0;
 	GError *error = NULL;
 	GOptionContext *context;
@@ -46,6 +47,13 @@ main (int argc, char **argv)
 	guint i;
 	GcmClient *client = NULL;
 	GcmDevice *device;
+
+	const GOptionEntry options[] = {
+		{ "login", 'l', 0, G_OPTION_ARG_NONE, &login,
+		  /* TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear */
+		  _("Do not attempt to clear previously applied settings"), NULL },
+		{ NULL}
+	};
 
 	setlocale (LC_ALL, "");
 
@@ -56,6 +64,7 @@ main (int argc, char **argv)
 	gtk_init (&argc, &argv);
 
 	context = g_option_context_new ("gnome-color-manager apply program");
+	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_add_group (context, egg_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
@@ -74,6 +83,9 @@ main (int argc, char **argv)
 	array = gcm_client_get_devices (client);
 	for (i=0; i<array->len; i++) {
 		device = g_ptr_array_index (array, i);
+
+		/* optimize for login to save a few hundred ms */
+		gcm_device_xrandr_set_remove_atom (GCM_DEVICE_XRANDR (device), !login);
 
 		/* set gamma for device */
 		egg_debug ("setting profiles on device: %s", gcm_device_get_id (device));

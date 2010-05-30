@@ -58,6 +58,7 @@ struct _GcmDeviceXrandrPrivate
 	GcmXserver			*xserver;
 	GcmScreen			*screen;
 	gboolean			 xrandr_fallback;
+	gboolean			 remove_atom;
 };
 
 enum {
@@ -421,6 +422,19 @@ out:
 }
 
 /**
+ * gcm_device_xrandr_set_remove_atom:
+ *
+ * This is set to FALSE at login time when we are sure there are going to be
+ * no atoms previously set that have to be removed.
+ **/
+void
+gcm_device_xrandr_set_remove_atom (GcmDeviceXrandr *device_xrandr, gboolean remove_atom)
+{
+	g_return_if_fail (GCM_IS_DEVICE_XRANDR (device_xrandr));
+	device_xrandr->priv->remove_atom = remove_atom;
+}
+
+/**
  * gcm_device_xrandr_apply:
  *
  * Return value: %TRUE for success;
@@ -542,6 +556,10 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	/* either remove the atoms or set them */
 	use_atom = gconf_client_get_bool (priv->gconf_client, GCM_SETTINGS_SET_ICC_PROFILE_ATOM, NULL);
 	if (!use_atom || filename == NULL) {
+
+		/* at login we don't need to remove any previously set options */
+		if (!priv->remove_atom)
+			goto out;
 
 		/* remove the output atom if there's nothing to show */
 		ret = gcm_xserver_remove_output_profile (priv->xserver, output_name, error);
@@ -671,6 +689,7 @@ gcm_device_xrandr_init (GcmDeviceXrandr *device_xrandr)
 	device_xrandr->priv = GCM_DEVICE_XRANDR_GET_PRIVATE (device_xrandr);
 	device_xrandr->priv->native_device = NULL;
 	device_xrandr->priv->xrandr_fallback = FALSE;
+	device_xrandr->priv->remove_atom = TRUE;
 	device_xrandr->priv->gamma_size = 0;
 	device_xrandr->priv->edid = gcm_edid_new ();
 	device_xrandr->priv->dmi = gcm_dmi_new ();
