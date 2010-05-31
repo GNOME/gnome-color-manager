@@ -61,6 +61,7 @@ struct _GcmProfilePrivate
 	gchar			*manufacturer;
 	gchar			*model;
 	gchar			*datetime;
+	gchar			*checksum;
 	GcmXyz			*white;
 	GcmXyz			*black;
 	GcmXyz			*red;
@@ -75,6 +76,7 @@ enum {
 	PROP_MANUFACTURER,
 	PROP_MODEL,
 	PROP_DATETIME,
+	PROP_CHECKSUM,
 	PROP_DESCRIPTION,
 	PROP_FILENAME,
 	PROP_KIND,
@@ -130,7 +132,6 @@ gcm_profile_set_description (GcmProfile *profile, const gchar *description)
 	}
 	g_object_notify (G_OBJECT (profile), "description");
 }
-
 
 /**
  * gcm_profile_get_filename:
@@ -195,7 +196,6 @@ gcm_profile_set_filename (GcmProfile *profile, const gchar *filename)
 	g_object_notify (G_OBJECT (profile), "filename");
 }
 
-
 /**
  * gcm_profile_get_copyright:
  **/
@@ -222,7 +222,6 @@ gcm_profile_set_copyright (GcmProfile *profile, const gchar *copyright)
 		gcm_utils_ensure_printable (priv->copyright);
 	g_object_notify (G_OBJECT (profile), "copyright");
 }
-
 
 /**
  * gcm_profile_get_model:
@@ -278,7 +277,6 @@ gcm_profile_set_manufacturer (GcmProfile *profile, const gchar *manufacturer)
 	g_object_notify (G_OBJECT (profile), "manufacturer");
 }
 
-
 /**
  * gcm_profile_get_datetime:
  **/
@@ -304,6 +302,30 @@ gcm_profile_set_datetime (GcmProfile *profile, const gchar *datetime)
 	g_object_notify (G_OBJECT (profile), "datetime");
 }
 
+/**
+ * gcm_profile_get_checksum:
+ **/
+const gchar *
+gcm_profile_get_checksum (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+	return profile->priv->checksum;
+}
+
+/**
+ * gcm_profile_set_checksum:
+ **/
+static void
+gcm_profile_set_checksum (GcmProfile *profile, const gchar *checksum)
+{
+	GcmProfilePrivate *priv = profile->priv;
+
+	g_return_if_fail (GCM_IS_PROFILE (profile));
+
+	g_free (priv->checksum);
+	priv->checksum = g_strdup (checksum);
+	g_object_notify (G_OBJECT (profile), "checksum");
+}
 
 /**
  * gcm_profile_get_size:
@@ -326,7 +348,6 @@ gcm_profile_set_size (GcmProfile *profile, guint size)
 	g_object_notify (G_OBJECT (profile), "size");
 }
 
-
 /**
  * gcm_profile_get_kind:
  **/
@@ -348,7 +369,6 @@ gcm_profile_set_kind (GcmProfile *profile, GcmProfileKind kind)
 	g_object_notify (G_OBJECT (profile), "kind");
 }
 
-
 /**
  * gcm_profile_get_colorspace:
  **/
@@ -369,7 +389,6 @@ gcm_profile_set_colorspace (GcmProfile *profile, GcmColorspace colorspace)
 	profile->priv->colorspace = colorspace;
 	g_object_notify (G_OBJECT (profile), "colorspace");
 }
-
 
 /**
  * gcm_profile_get_has_vcgt:
@@ -399,6 +418,7 @@ gboolean
 gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, GError **error)
 {
 	gboolean ret = FALSE;
+	gchar *checksum = NULL;
 	GcmProfilePrivate *priv = profile->priv;
 	GcmProfileClass *klass = GCM_PROFILE_GET_CLASS (profile);
 
@@ -413,7 +433,14 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 
 	/* proxy */
 	ret = klass->parse_data (profile, data, length, error);
+	if (!ret)
+		goto out;
+
+	/* generate and set checksum */
+	checksum = g_compute_checksum_for_data (G_CHECKSUM_MD5, (const guchar *) data, length);
+	gcm_profile_set_checksum (profile, checksum);
 out:
+	g_free (checksum);
 	return ret;
 }
 
@@ -565,6 +592,9 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_DATETIME:
 		g_value_set_string (value, priv->datetime);
 		break;
+	case PROP_CHECKSUM:
+		g_value_set_string (value, priv->checksum);
+		break;
 	case PROP_DESCRIPTION:
 		g_value_set_string (value, priv->description);
 		break;
@@ -710,6 +740,14 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	g_object_class_install_property (object_class, PROP_DATETIME, pspec);
 
 	/**
+	 * GcmProfile:checksum:
+	 */
+	pspec = g_param_spec_string ("checksum", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_CHECKSUM, pspec);
+
+	/**
 	 * GcmProfile:description:
 	 */
 	pspec = g_param_spec_string ("description", NULL, NULL,
@@ -832,6 +870,7 @@ gcm_profile_finalize (GObject *object)
 	g_free (priv->manufacturer);
 	g_free (priv->model);
 	g_free (priv->datetime);
+	g_free (priv->checksum);
 	g_object_unref (priv->white);
 	g_object_unref (priv->black);
 	g_object_unref (priv->red);

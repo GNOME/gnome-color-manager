@@ -812,6 +812,7 @@ typedef struct {
 	const gchar *model;
 	const gchar *datetime;
 	const gchar *description;
+	const gchar *checksum;
 	GcmProfileKind kind;
 	GcmColorspace colorspace;
 	gfloat luminance;
@@ -845,6 +846,7 @@ gcm_test_profile_test_parse_file (const gchar *datafile, GcmProfileTestData *tes
 	g_assert_cmpstr (gcm_profile_get_model (profile_lcms1), ==, test_data->model);
 	g_assert_cmpstr (gcm_profile_get_datetime (profile_lcms1), ==, test_data->datetime);
 	g_assert_cmpstr (gcm_profile_get_description (profile_lcms1), ==, test_data->description);
+	g_assert_cmpstr (gcm_profile_get_checksum (profile_lcms1), ==, test_data->checksum);
 	g_assert_cmpint (gcm_profile_get_kind (profile_lcms1), ==, test_data->kind);
 	g_assert_cmpint (gcm_profile_get_colorspace (profile_lcms1), ==, test_data->colorspace);
 
@@ -873,6 +875,7 @@ gcm_test_profile_func (void)
 	test_data.colorspace = GCM_COLORSPACE_RGB;
 	test_data.luminance = 0.648454;
 	test_data.datetime = "February  9 1998, 06:49:00 AM";
+	test_data.checksum = "8e2aed5dac6f8b5d8da75610a65b7f27";
 	gcm_test_profile_test_parse_file ("bluish.icc", &test_data);
 
 	/* Adobe test */
@@ -884,6 +887,7 @@ gcm_test_profile_func (void)
 	test_data.colorspace = GCM_COLORSPACE_RGB;
 	test_data.luminance = 0.648446;
 	test_data.datetime = "August 16 2005, 09:49:54 PM";
+	test_data.checksum = "bd847723f676e2b846daaf6759330624";
 	gcm_test_profile_test_parse_file ("AdobeGammaTest.icm", &test_data);
 }
 
