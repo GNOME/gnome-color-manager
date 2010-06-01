@@ -239,7 +239,7 @@ main (gint argc, gchar *argv[])
 	filename_dest = g_strconcat (id, ".icc", NULL);
 
 	/* absolute source filenames only */
-	dest = g_build_filename (GCM_SYSTEM_PROFILES_DIR, filename_dest, NULL);
+	dest = g_build_filename (GCM_SYSTEM_PROFILES_DIR, "icc", filename_dest, NULL);
 	ret = g_path_is_absolute (dest);
 	if (!ret) {
 		/* TRANSLATORS: only able to install profiles with an absolute path */
