@@ -6,6 +6,8 @@ TEST_FILES =						\
 	cie-widget.png					\
 	gamma-widget.png				\
 	ibm-t61.icc					\
+	bluish-symlink.icc				\
+	bluish.icc					\
 	image-widget-good.png				\
 	image-widget-nonembed.png			\
 	image-widget-output.png				\
