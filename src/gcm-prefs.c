@@ -2186,6 +2186,13 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	egg_debug ("filename: %s", filename);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_delete"));
 	gtk_widget_set_sensitive (widget, ret);
+	if (ret) {
+		/* TRANSLATORS: this is the tooltip when the profile can be deleted */
+		gtk_widget_set_tooltip_text (widget, _("Delete this profile"));
+	} else {
+		/* TRANSLATORS: this is the tooltip when the profile cannot be deleted */
+		gtk_widget_set_tooltip_text (widget, _("This profile cannot be deleted"));
+	}
 
 	/* should we show the pane at all */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_profile_graphs"));
