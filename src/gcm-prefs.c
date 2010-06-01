@@ -2860,6 +2860,9 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	gchar *intent_display;
 	gchar *intent_softproof;
 
+	/* search the disk for profiles */
+	gcm_profile_store_search_default (profile_store);
+
 	/* setup RGB combobox */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_space_rgb"));
 	colorspace_rgb = g_settings_get_string (settings, GCM_SETTINGS_COLORSPACE_RGB);

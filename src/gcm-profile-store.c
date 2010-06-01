@@ -41,9 +41,6 @@ static void     gcm_profile_store_finalize	(GObject     *object);
 
 #define GCM_PROFILE_STORE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_PROFILE_STORE, GcmProfileStorePrivate))
 
-static gboolean	gcm_profile_store_add_profiles_for_path	(GcmProfileStore *profile_store, const gchar *path);
-static void	gcm_profile_store_add_profiles		(GcmProfileStore *profile_store);
-
 /**
  * GcmProfileStorePrivate:
  *
@@ -138,22 +135,71 @@ out:
 }
 
 /**
+ * gcm_profile_store_get_by_checksum:
+ *
+ * @profile_store: a valid %GcmProfileStore instance
+ * @checksum: the profile checksum
+ *
+ * Gets a profile.
+ *
+ * Return value: a valid %GcmProfile or %NULL. Free with g_object_unref()
+ **/
+GcmProfile *
+gcm_profile_store_get_by_checksum (GcmProfileStore *profile_store, const gchar *checksum)
+{
+	guint i;
+	GcmProfile *profile = NULL;
+	GcmProfile *profile_tmp;
+	const gchar *checksum_tmp;
+	GcmProfileStorePrivate *priv = profile_store->priv;
+
+	g_return_val_if_fail (GCM_IS_PROFILE_STORE (profile_store), NULL);
+	g_return_val_if_fail (checksum != NULL, NULL);
+
+	/* find profile */
+	for (i=0; i<priv->profile_array->len; i++) {
+		profile_tmp = g_ptr_array_index (priv->profile_array, i);
+		checksum_tmp = gcm_profile_get_checksum (profile_tmp);
+		if (g_strcmp0 (checksum, checksum_tmp) == 0) {
+			profile = g_object_ref (profile_tmp);
+			goto out;
+		}
+	}
+out:
+	return profile;
+}
+
+/**
+ * gcm_profile_store_remove_profile:
+ **/
+static gboolean
+gcm_profile_store_remove_profile (GcmProfileStore *profile_store, GcmProfile *profile)
+{
+	gboolean ret;
+	GcmProfileStorePrivate *priv = profile_store->priv;
+
+	/* remove from list */
+	ret = g_ptr_array_remove (priv->profile_array, profile);
+	if (!ret) {
+		egg_warning ("failed to remove %s", gcm_profile_get_filename (profile));
+		goto out;
+	}
+
+	/* emit a signal */
+	egg_debug ("emit removed (and changed): %s", gcm_profile_get_filename (profile));
+	g_signal_emit (profile_store, signals[SIGNAL_REMOVED], 0, profile);
+	g_signal_emit (profile_store, signals[SIGNAL_CHANGED], 0);
+out:
+	return ret;
+}
+
+/**
  * gcm_profile_store_notify_filename_cb:
  **/
 static void
 gcm_profile_store_notify_filename_cb (GcmProfile *profile, GParamSpec *pspec, GcmProfileStore *profile_store)
 {
-	const gchar *description;
-	GcmProfileStorePrivate *priv = profile_store->priv;
-
-	/* remove from list */
-	g_ptr_array_remove (priv->profile_array, profile);
-
-	/* emit a signal */
-	description = gcm_profile_get_description (profile);
-	egg_debug ("emit removed (and changed): %s", description);
-	g_signal_emit (profile_store, signals[SIGNAL_REMOVED], 0, profile);
-	g_signal_emit (profile_store, signals[SIGNAL_CHANGED], 0);
+	gcm_profile_store_remove_profile (profile_store, profile);
 }
 
 /**
@@ -164,8 +210,10 @@ gcm_profile_store_add_profile (GcmProfileStore *profile_store, GFile *file)
 {
 	gboolean ret = FALSE;
 	GcmProfile *profile = NULL;
+	GcmProfile *profile_tmp = NULL;
 	GError *error = NULL;
 	gchar *filename = NULL;
+	const gchar *checksum;
 	GcmProfileStorePrivate *priv = profile_store->priv;
 
 	/* already added? */
@@ -183,6 +231,22 @@ gcm_profile_store_add_profile (GcmProfileStore *profile_store, GFile *file)
 		goto out;		
 	}
 
+	/* check the profile has not been added already */
+	checksum = gcm_profile_get_checksum (profile);
+	profile_tmp = gcm_profile_store_get_by_checksum (profile_store, checksum);
+	if (profile_tmp != NULL) {
+
+		/* we value a local file higher than the shared file */
+		if (gcm_profile_get_can_delete (profile_tmp)) {
+			egg_debug ("already added a deletable profile %s, cannot add %s",
+				   gcm_profile_get_filename (profile_tmp), filename);
+			goto out;
+		}
+
+		/* remove the old profile in favour of the new one */
+		gcm_profile_store_remove_profile (profile_store, profile_tmp);
+	}
+
 	/* add to array */
 	egg_debug ("parsed new profile '%s'", filename);
 	g_ptr_array_add (priv->profile_array, g_object_ref (profile));
@@ -194,6 +258,8 @@ gcm_profile_store_add_profile (GcmProfileStore *profile_store, GFile *file)
 	g_signal_emit (profile_store, signals[SIGNAL_CHANGED], 0);
 out:
 	g_free (filename);
+	if (profile_tmp != NULL)
+		g_object_unref (profile_tmp);
 	if (profile != NULL)
 		g_object_unref (profile);
 	return ret;
@@ -218,20 +284,23 @@ gcm_profile_store_file_monitor_changed_cb (GFileMonitor *monitor, GFile *file, G
 		goto out;
 	}
 	egg_debug ("%s was added, rescanning everything", path);
-	gcm_profile_store_add_profiles (profile_store);
+	gcm_profile_store_search_default (profile_store);
 out:
 	g_free (path);
 }
 
 /**
- * gcm_profile_store_add_profiles_for_path:
+ * gcm_profile_store_search_by_path:
+ *
+ * Return value: if any profile were added
  **/
-static gboolean
-gcm_profile_store_add_profiles_for_path (GcmProfileStore *profile_store, const gchar *path)
+gboolean
+gcm_profile_store_search_by_path (GcmProfileStore *profile_store, const gchar *path)
 {
 	GDir *dir = NULL;
 	GError *error = NULL;
-	gboolean ret = TRUE;
+	gboolean ret;
+	gboolean success = FALSE;
 	const gchar *name;
 	gchar *full_path;
 	GcmProfileStorePrivate *priv = profile_store->priv;
@@ -245,7 +314,7 @@ gcm_profile_store_add_profiles_for_path (GcmProfileStore *profile_store, const g
 		file = g_file_new_for_path (path);
 		ret = gcm_utils_is_icc_profile (file);
 		if (ret) {
-			gcm_profile_store_add_profile (profile_store, file);
+			success = gcm_profile_store_add_profile (profile_store, file);
 			goto out;
 		}
 
@@ -289,7 +358,9 @@ gcm_profile_store_add_profiles_for_path (GcmProfileStore *profile_store, const g
 
 		/* make the compete path */
 		full_path = g_build_filename (path, name, NULL);
-		gcm_profile_store_add_profiles_for_path (profile_store, full_path);
+		ret = gcm_profile_store_search_by_path (profile_store, full_path);
+		if (ret)
+			success = TRUE;
 		g_free (full_path);
 	} while (TRUE);
 out:
@@ -299,13 +370,13 @@ out:
 		g_object_unref (file);
 	if (dir != NULL)
 		g_dir_close (dir);
-	return ret;
+	return success;
 }
 
 /**
  * gcm_profile_store_add_profiles_from_mounted_volume:
  **/
-static void
+static gboolean
 gcm_profile_store_add_profiles_from_mounted_volume (GcmProfileStore *profile_store, GMount *mount)
 {
 	GFile *root;
@@ -314,6 +385,8 @@ gcm_profile_store_add_profiles_from_mounted_volume (GcmProfileStore *profile_sto
 	const gchar *type;
 	GFileInfo *info;
 	GError *error = NULL;
+	gboolean ret;
+	gboolean success = FALSE;
 
 	/* get the mount root */
 	root = g_mount_get_root (mount);
@@ -334,7 +407,9 @@ gcm_profile_store_add_profiles_from_mounted_volume (GcmProfileStore *profile_sto
 	/* only scan hfs volumes for OSX */
 	if (g_strcmp0 (type, "hfs") == 0) {
 		path = g_build_filename (path_root, "Library", "ColorSync", "Profiles", "Displays", NULL);
-		gcm_profile_store_add_profiles_for_path (profile_store, path);
+		ret = gcm_profile_store_search_by_path (profile_store, path);
+		if (ret)
+			success = TRUE;
 		g_free (path);
 
 		/* no more matching */
@@ -346,17 +421,23 @@ gcm_profile_store_add_profiles_from_mounted_volume (GcmProfileStore *profile_sto
 
 		/* Windows XP */
 		path = g_build_filename (path_root, "Windows", "system32", "spool", "drivers", "color", NULL);
-		gcm_profile_store_add_profiles_for_path (profile_store, path);
+		ret = gcm_profile_store_search_by_path (profile_store, path);
+		if (ret)
+			success = TRUE;
 		g_free (path);
 
 		/* Windows 2000 */
 		path = g_build_filename (path_root, "Winnt", "system32", "spool", "drivers", "color", NULL);
-		gcm_profile_store_add_profiles_for_path (profile_store, path);
+		ret = gcm_profile_store_search_by_path (profile_store, path);
+		if (ret)
+			success = TRUE;
 		g_free (path);
 
 		/* Windows 98 and ME */
 		path = g_build_filename (path_root, "Windows", "System", "Color", NULL);
-		gcm_profile_store_add_profiles_for_path (profile_store, path);
+		ret = gcm_profile_store_search_by_path (profile_store, path);
+		if (ret)
+			success = TRUE;
 		g_free (path);
 
 		/* no more matching */
@@ -365,14 +446,17 @@ gcm_profile_store_add_profiles_from_mounted_volume (GcmProfileStore *profile_sto
 out:
 	g_free (path_root);
 	g_object_unref (root);
+	return success;
 }
 
 /**
  * gcm_profile_store_add_profiles_from_mounted_volumes:
  **/
-static void
+static gboolean
 gcm_profile_store_add_profiles_from_mounted_volumes (GcmProfileStore *profile_store)
 {
+	gboolean ret;
+	gboolean success = FALSE;
 	GList *mounts, *l;
 	GMount *mount;
 	GcmProfileStorePrivate *priv = profile_store->priv;
@@ -381,32 +465,47 @@ gcm_profile_store_add_profiles_from_mounted_volumes (GcmProfileStore *profile_st
 	mounts = g_volume_monitor_get_mounts (priv->volume_monitor);
 	for (l = mounts; l != NULL; l = l->next) {
 		mount = l->data;
-		gcm_profile_store_add_profiles_from_mounted_volume (profile_store, mount);
+		ret = gcm_profile_store_add_profiles_from_mounted_volume (profile_store, mount);
+		if (ret)
+			success = TRUE;
 		g_object_unref (mount);
 	}
 	g_list_free (mounts);
+	return success;
 }
 
 /**
  * gcm_profile_store_add_profiles:
+ *
+ * Return value: if any profile were added
  **/
-static void
-gcm_profile_store_add_profiles (GcmProfileStore *profile_store)
+gboolean
+gcm_profile_store_search_default (GcmProfileStore *profile_store)
 {
 	gchar *path;
 	gboolean ret;
+	gboolean success = FALSE;
 	GError *error;
 	GcmProfileStorePrivate *priv = profile_store->priv;
 
 	/* get OSX and Linux system-wide profiles */
-	gcm_profile_store_add_profiles_for_path (profile_store, "/usr/share/color/icc");
-	gcm_profile_store_add_profiles_for_path (profile_store, "/usr/local/share/color/icc");
-	gcm_profile_store_add_profiles_for_path (profile_store, "/Library/ColorSync/Profiles/Displays");
+	ret = gcm_profile_store_search_by_path (profile_store, "/usr/share/color/icc");
+	if (ret)
+		success = TRUE;
+	ret = gcm_profile_store_search_by_path (profile_store, "/usr/local/share/color/icc");
+	if (ret)
+		success = TRUE;
+	ret = gcm_profile_store_search_by_path (profile_store, "/Library/ColorSync/Profiles/Displays");
+	if (ret)
+		success = TRUE;
 
 	/* get OSX and Windows system-wide profiles when using Linux */
 	ret = g_settings_get_boolean (priv->settings, GCM_SETTINGS_USE_PROFILES_FROM_VOLUMES);
-	if (ret)
-		gcm_profile_store_add_profiles_from_mounted_volumes (profile_store);
+	if (ret) {
+		ret = gcm_profile_store_add_profiles_from_mounted_volumes (profile_store);
+		if (ret)
+			success = TRUE;
+	}
 
 	/* get Linux per-user profiles */
 	path = g_build_filename (g_get_user_data_dir (), "icc", NULL);
@@ -415,19 +514,26 @@ gcm_profile_store_add_profiles (GcmProfileStore *profile_store)
 		egg_error ("failed to create directory on startup: %s", error->message);
 		g_error_free (error);
 	} else {
-		gcm_profile_store_add_profiles_for_path (profile_store, path);
+		ret = gcm_profile_store_search_by_path (profile_store, path);
+		if (ret)
+			success = TRUE;
 	}
 	g_free (path);
 
 	/* get per-user profiles from obsolete location */
 	path = g_build_filename (g_get_home_dir (), ".color", "icc", NULL);
-	gcm_profile_store_add_profiles_for_path (profile_store, path);
+	ret = gcm_profile_store_search_by_path (profile_store, path);
+	if (ret)
+		success = TRUE;
 	g_free (path);
 
 	/* get OSX per-user profiles */
 	path = g_build_filename (g_get_home_dir (), "Library", "ColorSync", "Profiles", NULL);
-	gcm_profile_store_add_profiles_for_path (profile_store, path);
+	ret = gcm_profile_store_search_by_path (profile_store, path);
+	if (ret)
+		success = TRUE;
 	g_free (path);
+	return success;
 }
 
 /**
@@ -497,9 +603,6 @@ gcm_profile_store_init (GcmProfileStore *profile_store)
 			  "mount-added",
 			  G_CALLBACK(gcm_profile_store_volume_monitor_mount_added_cb),
 			  profile_store);
-
-	/* get profiles */
-	gcm_profile_store_add_profiles (profile_store);
 }
 
 /**
