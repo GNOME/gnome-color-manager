@@ -55,6 +55,7 @@ struct _GcmProfilePrivate
 	GcmColorspace		 colorspace;
 	guint			 size;
 	gboolean		 has_vcgt;
+	gboolean		 can_delete;
 	gchar			*description;
 	gchar			*filename;
 	gchar			*copyright;
@@ -81,6 +82,7 @@ enum {
 	PROP_COLORSPACE,
 	PROP_SIZE,
 	PROP_HAS_VCGT,
+	PROP_CAN_DELETE,
 	PROP_WHITE,
 	PROP_BLACK,
 	PROP_RED,
@@ -371,6 +373,16 @@ gcm_profile_set_has_vcgt (GcmProfile *profile, gboolean has_vcgt)
 }
 
 /**
+ * gcm_profile_get_can_delete:
+ **/
+gboolean
+gcm_profile_get_can_delete (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
+	return profile->priv->can_delete;
+}
+
+/**
  * gcm_profile_parse_data:
  **/
 gboolean
@@ -402,13 +414,21 @@ gboolean
 gcm_profile_parse (GcmProfile *profile, GFile *file, GError **error)
 {
 	gchar *data = NULL;
-	gboolean ret;
+	gboolean ret = FALSE;
 	gsize length;
 	gchar *filename = NULL;
 	GError *error_local = NULL;
+	GFileInfo *info;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
 	g_return_val_if_fail (file != NULL, FALSE);
+
+	/* find out if the user could delete this profile */
+	info = g_file_query_info (file, G_FILE_ATTRIBUTE_ACCESS_CAN_DELETE,
+				  G_FILE_QUERY_INFO_NONE, NULL, error);
+	if (info == NULL)
+		goto out;
+	profile->priv->can_delete = g_file_info_get_attribute_boolean (info, G_FILE_ATTRIBUTE_ACCESS_CAN_DELETE);
 
 	/* load files */
 	ret = g_file_load_contents (file, NULL, &data, &length, NULL, &error_local);
@@ -427,6 +447,8 @@ gcm_profile_parse (GcmProfile *profile, GFile *file, GError **error)
 	filename = g_file_get_path (file);
 	gcm_profile_set_filename (profile, filename);
 out:
+	if (info != NULL)
+		g_object_unref (info);
 	g_free (filename);
 	g_free (data);
 	return ret;
@@ -560,6 +582,9 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 		break;
 	case PROP_HAS_VCGT:
 		g_value_set_boolean (value, priv->has_vcgt);
+		break;
+	case PROP_CAN_DELETE:
+		g_value_set_boolean (value, priv->can_delete);
 		break;
 	case PROP_WHITE:
 		g_value_set_object (value, priv->white);
@@ -736,6 +761,14 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	g_object_class_install_property (object_class, PROP_HAS_VCGT, pspec);
 
 	/**
+	 * GcmProfile:can-delete:
+	 */
+	pspec = g_param_spec_boolean ("can-delete", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_CAN_DELETE, pspec);
+
+	/**
 	 * GcmProfile:white:
 	 */
 	pspec = g_param_spec_object ("white", NULL, NULL,
@@ -785,6 +818,7 @@ static void
 gcm_profile_init (GcmProfile *profile)
 {
 	profile->priv = GCM_PROFILE_GET_PRIVATE (profile);
+	profile->priv->can_delete = FALSE;
 	profile->priv->monitor = NULL;
 	profile->priv->kind = GCM_PROFILE_KIND_UNKNOWN;
 	profile->priv->colorspace = GCM_COLORSPACE_UNKNOWN;

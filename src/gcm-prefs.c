@@ -1646,8 +1646,7 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	}
 
 	/* set delete sensitivity */
-	ret = (filename != NULL && g_str_has_prefix (filename, "/home/"));
-	egg_debug ("filename: %s", filename);
+	ret = gcm_profile_get_can_delete (profile);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_delete"));
 	gtk_widget_set_sensitive (widget, ret);
 
