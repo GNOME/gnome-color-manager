@@ -107,7 +107,7 @@ GNOMEDESKTOP_REQUIRED=2.14.0
 UNIQUE_REQUIRED=1.0.0
 VTE_REQUIRED=0.25.1
 CANBERRA_REQUIRED=0.10
-GIO_REQUIRED=2.25.0
+GIO_REQUIRED=2.25.1
 
 dnl ---------------------------------------------------------------------------
 dnl - Check library dependencies

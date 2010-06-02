@@ -1,3 +1,57 @@
+Version 2.31.2
+~~~~~~~~~~~~~~
+Released: 2010-06-02
+
+* Notes
+ - You'll need Glib 2.25.1 and VTE 0.25.1 to compile now.
+ - Lots of the new functionality is checked for at build time. Ensure you have
+   development packages for cups, sane-backends, libtiff, libexif and exiv2 for
+   full functionality.
+
+* Translations
+ - Updated Czech translation (Milan Knizek)
+ - Updated Danish translation (Ask H. Larsen)
+ - Updated Estonian translation (Mattias Põldaru)
+ - Updated French translation (Claude Paroz)
+ - Updated German doc translation (Mario Blättermann)
+ - Updated German translation (Christian Kirbach)
+ - Updated German translation (Mario Blättermann)
+ - Updated Norwegian bokmål translation (Kjartan Maraas)
+ - Updated Slovenian translation (Andrej Žnidaršič)
+ - Updated Spanish translation (Jorge González)
+
+* New Features:
+ - Port to GDBus (Richard Hughes)
+ - Port to GSettings (Richard Hughes)
+ - Port to GTest (Richard Hughes)
+ - Add UI elements to assign multiple profiles for each device (Richard Hughes)
+ - Add GetProfilesForFile() DBus method to get suitable ICC profiles for a given file (Richard Hughes)
+ - Add a GConf to GSettings migration script (Richard Hughes)
+ - Add optional exif2 support so we can get properties of RAW files (Richard Hughes)
+ - Allow the user to just drag an image file onto the window to create a virtual profile (Richard Hughes)
+ - Allow the user to double click a profile to make it default (Richard Hughes)
+
+* Bugfix:
+ - Add a message in the help file explaining the drop file action (Richard Hughes)
+ - Add gcm_profile_get_can_delete() and get the permissions from GIO rather than hardcoding a hack (Richard Hughes)
+ - Add gcm_profile_get_checksum() so we can use this as a key to detect duplicates (Richard Hughes)
+ - Add some information labels to the defaults pane (Richard Hughes)
+ - Add two new settings objects 'enable-sane' and 'enable-cups' for in-field debugging (Richard Hughes)
+ - Allow adding saved devices when coldplugging (Richard Hughes)
+ - Allow RAW files to be dragged onto the UI with spaces in the name (Richard Hughes)
+ - Allow virtual devices to have a serial number (Richard Hughes)
+ - At login do not attempt to remove previously set X atoms, which speeds up gcm-apply by 750ms (Richard Hughes)
+ - Ignore duplicate profiles by the MD5 checksum (Richard Hughes)
+ - Include the serial number in the virtual device ID (Richard Hughes)
+ - Include the trailing colon in translated strings. Fixes #619967 (Richard Hughes)
+ - Migrate the old device-profiles.conf to the new location so the user does not have to do it manually (Richard Hughes)
+ - Only connect to SANE and CUPS when the device lists are needed (Richard Hughes)
+ - Do not bother the user with calibration notifications by default (Richard Hughes)
+ - Put a short intent description in the combobox choices (Richard Hughes)
+ - Support version 0.2 of the OpenIccDirectoryProposal (Richard Hughes)
+ - Use the new ARGYLL_NOT_INTERACTIVE environment variable (Richard Hughes)
+ - Use the newer VTE API (Richard Hughes)
+
 Version 2.31.1
 ~~~~~~~~~~~~~~
 Released: 2010-05-06
