@@ -67,9 +67,6 @@ done
 
 %find_lang %name --with-gnome
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %post
 touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
 update-desktop-database %{_datadir}/applications &> /dev/null || :
@@ -77,9 +74,9 @@ update-mime-database %{_datadir}/mime &> /dev/null || :
 glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 
 %postun
-if [ $1 -eq 0 ] ; then
-    touch --no-create %{_datadir}/icons/hicolor &>/dev/null
-    gtk-update-icon-cache %{_datadir}/icons/hicolor &>/dev/null || :
+if [ $1 -eq 0 ]; then
+    touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
+    gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
 fi
 update-desktop-database %{_datadir}/applications &> /dev/null || :
 update-mime-database %{_datadir}/mime &> /dev/null || :
