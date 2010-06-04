@@ -2957,6 +2957,14 @@ gcm_calibrate_argyll_finalize (GObject *object)
 		g_main_loop_run (priv->loop);
 	}
 
+	/* we don't care if the VTE widget redraws now */
+	g_signal_handlers_disconnect_by_func (calibrate_argyll->priv->terminal,
+					      G_CALLBACK (gcm_calibrate_argyll_exit_cb),
+					      calibrate_argyll);
+	g_signal_handlers_disconnect_by_func (calibrate_argyll->priv->terminal,
+					      G_CALLBACK (gcm_calibrate_argyll_cursor_moved_cb),
+					      calibrate_argyll);
+
 	/* hide */
 	gcm_calibrate_dialog_hide (priv->calibrate_dialog);
 
