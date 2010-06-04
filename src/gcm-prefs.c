@@ -922,8 +922,10 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* we failed to calibrate */
-	if (!ret)
+	if (!ret) {
+		egg_warning ("failed to calibrate");
 		goto out;
+	}
 
 	/* failed to get profile */
 	filename = gcm_calibrate_get_filename_result (calibrate);
@@ -942,10 +944,8 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		goto out;
 	}
 
-	/* get new list */
-	profile_array = gcm_profile_store_get_array (profile_store);
-
 	/* find an existing profile of this name */
+	profile_array = gcm_device_get_profiles (current_device);
 	destination = g_file_get_path (dest);
 	for (i=0; i<profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
@@ -982,8 +982,6 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 			 CA_PROP_EVENT_DESCRIPTION, _("Profiling completed"), NULL);
 out:
 	g_free (destination);
-	if (profile_array != NULL)
-		g_ptr_array_unref (profile_array);
 	if (calibrate != NULL)
 		g_object_unref (calibrate);
 	if (file != NULL)
