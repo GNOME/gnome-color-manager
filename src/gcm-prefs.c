@@ -101,6 +101,7 @@ typedef enum {
 } GcmPrefsEntryType;
 
 static void gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer userdata);
+static void gcm_prefs_profile_store_changed_cb (GcmProfileStore *_profile_store, gpointer user_data);
 
 #define GCM_PREFS_TREEVIEW_MAIN_WIDTH		350 /* px */
 #define GCM_PREFS_TREEVIEW_PROFILES_WIDTH	450 /* px */
@@ -2862,6 +2863,7 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 
 	/* search the disk for profiles */
 	gcm_profile_store_search_default (profile_store);
+	g_signal_connect (profile_store, "changed", G_CALLBACK(gcm_prefs_profile_store_changed_cb), NULL);
 
 	/* setup RGB combobox */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_space_rgb"));
@@ -3185,7 +3187,6 @@ main (int argc, char **argv)
 
 	/* maintain a list of profiles */
 	profile_store = gcm_profile_store_new ();
-	g_signal_connect (profile_store, "changed", G_CALLBACK(gcm_prefs_profile_store_changed_cb), NULL);
 
 	/* create list stores */
 	list_store_devices = gtk_list_store_new (GCM_DEVICES_COLUMN_LAST, G_TYPE_STRING, G_TYPE_STRING,
