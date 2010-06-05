@@ -315,7 +315,7 @@ gcm_session_LDADD =					\
 gcm_session_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
-if EGG_BUILD_TESTS
+if GCM_BUILD_TESTS
 
 check_PROGRAMS =					\
 	gcm-self-test
