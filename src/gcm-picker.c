@@ -28,7 +28,6 @@
 #include <gio/gio.h>
 #include <locale.h>
 #include <gtk/gtk.h>
-#include <unique/unique.h>
 #include <lcms.h>
 
 #include "egg-debug.h"
@@ -233,8 +232,8 @@ gcm_picker_xyz_notify_cb (GcmCalibrate *calibrate_, GParamSpec *pspec, gpointer 
 static void
 gcm_picker_close_cb (GtkWidget *widget, gpointer data)
 {
-	GMainLoop *loop = (GMainLoop *) data;
-	g_main_loop_quit (loop);
+	GApplication *application = (GApplication *) data;
+	g_application_quit (application, 0);
 }
 
 /**
@@ -295,20 +294,6 @@ static void
 gcm_picker_colorimeter_changed_cb (GcmColorimeter *colorimeter, gpointer user_data)
 {
 	gcm_picker_colorimeter_setup_ui (colorimeter);
-}
-
-/**
- * gcm_picker_message_received_cb
- **/
-static UniqueResponse
-gcm_picker_message_received_cb (UniqueApp *app, UniqueCommand command, UniqueMessageData *message_data, guint time_ms, gpointer data)
-{
-	GtkWindow *window;
-	if (command == UNIQUE_ACTIVATE) {
-		window = GTK_WINDOW (gtk_builder_get_object (builder, "dialog_picker"));
-		gtk_window_present (window);
-	}
-	return UNIQUE_RESPONSE_OK;
 }
 
 /**
@@ -477,6 +462,20 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 }
 
 /**
+ * gcm_prefs_application_prepare_action_cb:
+ **/
+static void
+gcm_prefs_application_prepare_action_cb (GApplication *application, GVariant *arguments,
+					 GVariant *platform_data, gpointer user_data)
+{
+	GtkWindow *window;
+
+	egg_debug ("application prepare action");
+	window = GTK_WINDOW (gtk_builder_get_object (builder, "dialog_picker"));
+	gtk_window_present (window);
+}
+
+/**
  * main:
  **/
 int
@@ -485,10 +484,9 @@ main (int argc, char *argv[])
 	GOptionContext *context;
 	guint retval = 0;
 	GError *error = NULL;
-	GMainLoop *loop;
+	GApplication *application;
 	GtkWidget *main_window;
 	GtkWidget *widget;
-	UniqueApp *unique_app;
 	guint xid = 0;
 	GcmColorimeter *colorimeter = NULL;
 
@@ -522,19 +520,10 @@ main (int argc, char *argv[])
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
 
-	/* block in a loop */
-	loop = g_main_loop_new (NULL, FALSE);
-
-
-	/* are we already activated? */
-	unique_app = unique_app_new ("org.gnome.ColorManager.Picker", NULL);
-	if (unique_app_is_running (unique_app)) {
-		egg_debug ("You have another instance running. This program will now close");
-		unique_app_send_message (unique_app, UNIQUE_ACTIVATE, NULL);
-		goto out;
-	}
-	g_signal_connect (unique_app, "message-received",
-			  G_CALLBACK (gcm_picker_message_received_cb), NULL);
+	/* ensure single instance */
+	application = g_application_new_and_register ("org.gnome.ColorManager.Picker", argc, argv);
+	g_signal_connect (application, "prepare-activation",
+			  G_CALLBACK (gcm_prefs_application_prepare_action_cb), NULL);
 
 	/* get UI */
 	builder = gtk_builder_new ();
@@ -548,11 +537,11 @@ main (int argc, char *argv[])
 	main_window = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_picker"));
 	gtk_window_set_icon_name (GTK_WINDOW (main_window), GCM_STOCK_ICON);
 	g_signal_connect (main_window, "delete_event",
-			  G_CALLBACK (gcm_picker_delete_event_cb), loop);
+			  G_CALLBACK (gcm_picker_delete_event_cb), application);
 
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_close"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_picker_close_cb), loop);
+			  G_CALLBACK (gcm_picker_close_cb), application);
 
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_help"));
 	g_signal_connect (widget, "clicked",
@@ -621,10 +610,10 @@ main (int argc, char *argv[])
 
 	/* wait */
 	gtk_widget_show (main_window);
-	g_main_loop_run (loop);
+	g_application_run (application);
 
 out:
-	g_object_unref (unique_app);
+	g_object_unref (application);
 	if (profile_store != NULL)
 		g_object_unref (profile_store);
 	if (colorimeter != NULL)
@@ -633,7 +622,6 @@ out:
 		g_object_unref (calibrate);
 	if (builder != NULL)
 		g_object_unref (builder);
-	g_main_loop_unref (loop);
 	return retval;
 }
 
