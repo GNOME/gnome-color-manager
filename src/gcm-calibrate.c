@@ -725,8 +725,10 @@ gcm_calibrate_device_get_reference_image (const gchar *directory, GtkWindow *win
 	GtkWidget *dialog;
 	GtkFileFilter *filter;
 
-	/* TRANSLATORS: dialog for file->open dialog */
-	dialog = gtk_file_chooser_dialog_new (_("Select reference image"), window,
+	/* TRANSLATORS: dialog for file->open dialog. A calibration target image is the
+	 * aquired image of the calibration target, e.g. an image file that looks
+	 * a bit like this: http://www.colorreference.de/targets/target.jpg */
+	dialog = gtk_file_chooser_dialog_new (_("Select calibration target image"), window,
 					       GTK_FILE_CHOOSER_ACTION_OPEN,
 					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 					       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
@@ -905,8 +907,10 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	/* TRANSLATORS: title, you can profile all at once, or in steps */
 	title = _("Please choose a profiling mode");
 
-	/* TRANSLATORS: dialog message */
-	message = _("Please indicate if you want to profile a local printer, generate some reference images, or process some reference images.");
+	/* TRANSLATORS: dialog message. Test patches are pages of colored squares
+	 * that are printed with a printer, and then read in with a calibration
+	 * device to create a profile */
+	message = _("Please indicate if you want to profile a local printer, generate some test patches, or profile using existing test patches.");
 
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_PRINT_MODE, title, message);
@@ -1046,13 +1050,15 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 #endif
 	}
 
-	/* TRANSLATORS: this is the window title for when the user selects the chart type.
-	                A chart is a type of reference image the user has purchased. */
-	title = _("Please select chart type");
+	/* TRANSLATORS: this is the window title for when the user selects the calibration target.
+	 * A calibration target is an accuratly printed grid of colors, for instance:
+	 * the IT 8.7 targets available here: http://www.targets.coloraid.de/ */
+	title = _("Please select a calibration target");
 	g_string_set_size (string, 0);
 
-	/* TRANSLATORS: dialog message, preface */
-	g_string_append_printf (string, "%s\n", _("Before profiling the device, you have to manually capture an image of a calibrated target and save it as a TIFF image file."));
+	/* TRANSLATORS: dialog message, preface. A calibration target looks like
+	 * this: http://www.colorreference.de/targets/target.jpg */
+	g_string_append_printf (string, "%s\n", _("Before profiling the device, you have to manually capture an image of a calibration target and save it as a TIFF image file."));
 
 	/* scanner specific options */
 	if (priv->device_kind == GCM_DEVICE_KIND_SCANNER) {
@@ -1073,7 +1079,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	g_string_append_printf (string, "\n%s\n", _("For best results, the reference target should also be less than two years old."));
 
 	/* TRANSLATORS: this is the message body for the chart selection */
-	g_string_append_printf (string, "\n%s\n", _("Please select the chart type which corresponds to your reference file."));
+	g_string_append_printf (string, "\n%s\n", _("Please select the calibration target type which corresponds to your reference file."));
 
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
@@ -1086,7 +1092,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 		g_set_error_literal (error,
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_USER_ABORT,
-				     "user did not choose chart type");
+				     "user did not choose calibration target type");
 		ret = FALSE;
 		goto out;
 	}
@@ -1113,7 +1119,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 		g_set_error_literal (error,
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_USER_ABORT,
-				     "could not get reference image");
+				     "could not get calibration target image");
 		ret = FALSE;
 		goto out;
 	}
