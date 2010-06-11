@@ -51,6 +51,7 @@
 #define GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD	"recalibrate-display-threshold"
 #define GCM_SETTINGS_ENABLE_SANE			"enable-sane"
 #define GCM_SETTINGS_ENABLE_CUPS			"enable-cups"
+#define GCM_SETTINGS_PROFILE_GRAPH_TYPE			"profile-graph-type"
 
 #define GCM_CONFIG_VERSION_ORIGINAL			0
 #define GCM_CONFIG_VERSION_SHARED_SPEC			1

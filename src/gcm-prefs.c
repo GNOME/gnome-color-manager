@@ -60,6 +60,7 @@ static GtkWidget *info_bar_vcgt = NULL;
 static GtkWidget *info_bar_profiles = NULL;
 static GtkWidget *cie_widget = NULL;
 static GtkWidget *trc_widget = NULL;
+static GtkWidget *vcgt_widget = NULL;
 static GSettings *settings = NULL;
 
 enum {
@@ -1988,7 +1989,8 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	GtkTreeIter iter;
 	GtkWidget *widget;
 	GcmProfile *profile;
-	GcmClut *clut = NULL;
+	GcmClut *clut_trc = NULL;
+	GcmClut *clut_vcgt = NULL;
 	GcmXyz *white;
 	GcmXyz *red;
 	GcmXyz *green;
@@ -2047,19 +2049,35 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	}
 
 	/* get curve data */
-	clut = gcm_profile_generate_curve (profile, 256);
+	clut_trc = gcm_profile_generate_curve (profile, 256);
 
 	/* only show if there is useful information */
-	if (clut != NULL)
-		size = gcm_clut_get_size (clut);
+	if (clut_trc != NULL)
+		size = gcm_clut_get_size (clut_trc);
 	if (size > 0) {
 		g_object_set (trc_widget,
-			      "clut", clut,
+			      "clut", clut_trc,
 			      NULL);
 		gtk_widget_show (trc_widget);
 		show_section = TRUE;
 	} else {
 		gtk_widget_hide (trc_widget);
+	}
+
+	/* get vcgt data */
+	clut_vcgt = gcm_profile_generate_vcgt (profile, 256);
+
+	/* only show if there is useful information */
+	if (clut_vcgt != NULL)
+		size = gcm_clut_get_size (clut_vcgt);
+	if (size > 0) {
+		g_object_set (vcgt_widget,
+			      "clut", clut_vcgt,
+			      NULL);
+		gtk_widget_show (vcgt_widget);
+		show_section = TRUE;
+	} else {
+		gtk_widget_hide (vcgt_widget);
 	}
 
 	/* set kind */
@@ -2178,13 +2196,15 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	}
 
 	/* should we show the pane at all */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_profile_graphs"));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_graph"));
 	gtk_widget_set_visible (widget, show_section);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profile_info"));
 	gtk_widget_set_visible (widget, TRUE);
 
-	if (clut != NULL)
-		g_object_unref (clut);
+	if (clut_trc != NULL)
+		g_object_unref (clut_trc);
+	if (clut_vcgt != NULL)
+		g_object_unref (clut_vcgt);
 	g_object_unref (white);
 	g_object_unref (red);
 	g_object_unref (green);
@@ -3080,6 +3100,80 @@ gcm_prefs_setup_virtual_combobox (GtkWidget *widget)
 	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), GCM_DEVICE_KIND_PRINTER - 2);
 }
 
+
+/**
+ * gcm_prefs_graph_combo_changed_cb:
+ **/
+static void
+gcm_prefs_graph_combo_changed_cb (GtkWidget *widget, gpointer data)
+{
+	gint active;
+	const gchar *value = "none";
+
+	/* no selection */
+	active = gtk_combo_box_get_active (GTK_COMBO_BOX(widget));
+	if (active == -1)
+		return;
+
+	/* hide or show the correct graphs */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_graph_widgets"));
+	gtk_widget_set_visible (widget, active != 0);
+
+	/* hide or show the correct graphs */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_cie_axis"));
+	gtk_widget_set_visible (widget, active == 1);
+
+	/* hide or show the correct graphs */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_trc_axis"));
+	gtk_widget_set_visible (widget, active == 2);
+
+	/* hide or show the correct graphs */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_vcgt_axis"));
+	gtk_widget_set_visible (widget, active == 3);
+
+	/* save to GSettings */
+	if (active == 1)
+		value = "cie-1931-xy";
+	else if (active == 2)
+		value = "trc";
+	else if (active == 3)
+		value = "vcgt";
+	egg_debug ("changed profile-graph-type to %s", value);
+	g_settings_set_string (settings, GCM_SETTINGS_PROFILE_GRAPH_TYPE, value);
+}
+
+/**
+ * gcm_prefs_setup_graph_combobox:
+ **/
+static void
+gcm_prefs_setup_graph_combobox (GtkWidget *widget)
+{
+	gchar *graph_type;
+	guint active = 0;
+
+	/* TRANSLATORS: combo-entry, no graph selected to be shown */
+	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("None"));
+
+	/* TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...) */
+	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("CIE 1931 xy"));
+
+	/* TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out) */
+	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("Transfer response curve"));
+
+	/* TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card) */
+	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("Video card gamma table"));
+
+	/* get from settings */
+	graph_type = g_settings_get_string (settings, GCM_SETTINGS_PROFILE_GRAPH_TYPE);
+	if (g_strcmp0 (graph_type, "cie-1931-xy") == 0)
+		active = 1;
+	if (g_strcmp0 (graph_type, "trc") == 0)
+		active = 2;
+	if (g_strcmp0 (graph_type, "vcgt") == 0)
+		active = 3;
+	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), active);
+}
+
 /**
  * gpk_update_viewer_notify_network_state_cb:
  **/
@@ -3159,6 +3253,9 @@ main (int argc, char **argv)
 	application = g_application_new_and_register ("org.gnome.ColorManager.Prefs", argc, argv);
 	g_signal_connect (application, "prepare-activation",
 			  G_CALLBACK (gcm_prefs_application_prepare_action_cb), NULL);
+
+	/* setup defaults */
+	settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 
 	/* get UI */
 	builder = gtk_builder_new ();
@@ -3277,7 +3374,7 @@ main (int argc, char **argv)
 	gtk_widget_set_sensitive (widget, FALSE);
 
 	/* hidden until a profile is selected */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_profile_graphs"));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_graph"));
 	gtk_widget_set_visible (widget, FALSE);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profile_info"));
 	gtk_widget_set_visible (widget, FALSE);
@@ -3314,6 +3411,12 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_virtual_type"));
 	gcm_prefs_set_combo_simple_text (widget);
 	gcm_prefs_setup_virtual_combobox (widget);
+
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_graph"));
+	gcm_prefs_set_combo_simple_text (widget);
+	gcm_prefs_setup_graph_combobox (widget);
+	g_signal_connect (widget, "changed",
+			  G_CALLBACK (gcm_prefs_graph_combo_changed_cb), (gpointer) "cmyk");
 
 	/* set up assign dialog */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_assign"));
@@ -3389,15 +3492,23 @@ main (int argc, char **argv)
 	gtk_box_pack_start (GTK_BOX(widget), trc_widget, TRUE, TRUE, 0);
 	gtk_box_reorder_child (GTK_BOX(widget), trc_widget, 0);
 
+	/* use vcgt widget */
+	vcgt_widget = gcm_trc_widget_new ();
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_vcgt_widget"));
+	gtk_box_pack_start (GTK_BOX(widget), vcgt_widget, TRUE, TRUE, 0);
+	gtk_box_reorder_child (GTK_BOX(widget), vcgt_widget, 0);
+
 	/* do we set a default size to make the window larger? */
 	screen = gdk_screen_get_default ();
 	if (gdk_screen_get_width (screen) < 1024 ||
 	    gdk_screen_get_height (screen) < 768) {
 		gtk_widget_set_size_request (cie_widget, 50, 50);
 		gtk_widget_set_size_request (trc_widget, 50, 50);
+		gtk_widget_set_size_request (vcgt_widget, 50, 50);
 	} else {
 		gtk_widget_set_size_request (cie_widget, 200, 200);
 		gtk_widget_set_size_request (trc_widget, 200, 200);
+		gtk_widget_set_size_request (vcgt_widget, 200, 200);
 	}
 
 	/* use infobar */
@@ -3453,6 +3564,10 @@ main (int argc, char **argv)
 	/* show main UI */
 	gtk_widget_show (main_window);
 
+	/* refresh UI */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_graph"));
+	gcm_prefs_graph_combo_changed_cb (widget, NULL);
+
 	/* connect up sliders */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
 	g_signal_connect (widget, "value-changed",
@@ -3463,9 +3578,6 @@ main (int argc, char **argv)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
 	g_signal_connect (widget, "value-changed",
 			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
-
-	/* setup defaults */
-	settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 
 	/* connect up global widget */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "checkbutton_display"));
