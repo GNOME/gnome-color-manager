@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-10 16:45+0300\n"
-"PO-Revision-Date: 2010-06-10 16:48+0200\n"
+"POT-Creation-Date: 2010-06-12 10:25+0300\n"
+"PO-Revision-Date: 2010-06-12 10:28+0200\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Gezer <sh.yaron@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -293,7 +293,7 @@ msgstr "המשך"
 #: ../src/gcm-calibrate-argyll.c:2288 ../src/gcm-calibrate-argyll.c:2338
 #: ../src/gcm-calibrate-argyll.c:2393 ../src/gcm-calibrate-argyll.c:2469
 #: ../src/gcm-calibrate-argyll.c:2550 ../src/gcm-calibrate-argyll.c:2591
-#: ../src/gcm-prefs.c:979 ../src/gcm-prefs.c:2469
+#: ../src/gcm-prefs.c:980 ../src/gcm-prefs.c:2489
 msgid "GNOME Color Manager"
 msgstr "מנהל הצבע של GNOME"
 
@@ -630,7 +630,7 @@ msgstr "קובצי תמונה נתמכים"
 
 #. TRANSLATORS: filter name on the file->open dialog
 #: ../src/gcm-calibrate.c:751 ../src/gcm-calibrate.c:803
-#: ../src/gcm-prefs.c:549
+#: ../src/gcm-prefs.c:550
 msgid "All files"
 msgstr "כל הקבצים"
 
@@ -645,7 +645,7 @@ msgid "CIE values"
 msgstr "ערכי CIE"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:869 ../src/gcm-prefs.c:521
+#: ../src/gcm-calibrate.c:869 ../src/gcm-prefs.c:522
 msgid "Select ICC Profile File"
 msgstr "יש לבחור קובץ פרופיל ICC"
 
@@ -695,14 +695,14 @@ msgid "If you already have the correct file, you can skip this step."
 msgstr "אם בידיך הקובץ הנכון, ניתן לדלג על צעד זה."
 
 #. TRANSLATORS: button, skip installing a package
-#: ../src/gcm-calibrate.c:1039 ../src/gcm-prefs.c:860
+#: ../src/gcm-calibrate.c:1039 ../src/gcm-prefs.c:861
 msgid "Do not install"
 msgstr "לא להתקין"
 
 #. TRANSLATORS: button, install a package
 #. TRANSLATORS: button text
 #. TRANSLATORS: button, install a package
-#: ../src/gcm-calibrate.c:1041 ../src/gcm-import.c:188 ../src/gcm-prefs.c:862
+#: ../src/gcm-calibrate.c:1041 ../src/gcm-import.c:188 ../src/gcm-prefs.c:863
 msgid "Install"
 msgstr "התקנה"
 
@@ -915,7 +915,7 @@ msgstr "שם היצרן:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #. The serial number of the device
-#: ../src/gcm-dump-edid.c:85 ../data/gcm-prefs.ui.h:81
+#: ../src/gcm-dump-edid.c:85 ../data/gcm-prefs.ui.h:86
 msgid "Serial number:"
 msgstr "מספר סידורי:"
 
@@ -974,13 +974,13 @@ msgstr "תכנית לאיסוף נתונים מפרופילי ICC"
 
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-enum.c:122 ../src/gcm-prefs.c:1890 ../data/gcm-prefs.ui.h:69
+#: ../src/gcm-enum.c:122 ../src/gcm-prefs.c:1891 ../data/gcm-prefs.ui.h:70
 msgid "RGB"
 msgstr "RGB"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-enum.c:126 ../src/gcm-prefs.c:1902 ../data/gcm-prefs.ui.h:11
+#: ../src/gcm-enum.c:126 ../src/gcm-prefs.c:1903 ../data/gcm-prefs.ui.h:11
 msgid "CMYK"
 msgstr "CMYK"
 
@@ -1058,7 +1058,7 @@ msgid "Import ICC profile"
 msgstr "ייבוא פרופיל ICC"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-import.c:209 ../src/gcm-prefs.c:585
+#: ../src/gcm-import.c:209 ../src/gcm-prefs.c:586
 msgid "Failed to copy file"
 msgstr "ארע כשל בהעתקת הקובץ"
 
@@ -1278,13 +1278,13 @@ msgid "No colorimeter is attached."
 msgstr "לא מחובר קולורימטר (מד צבע)."
 
 #. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:453 ../src/gcm-prefs.c:2733
+#: ../src/gcm-picker.c:453 ../src/gcm-prefs.c:2753
 #, c-format
 msgid "No %s color spaces available"
 msgstr "אין מרחבי צבע %s זמינים"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-picker.c:496 ../src/gcm-prefs.c:3139
+#: ../src/gcm-picker.c:496 ../src/gcm-prefs.c:3233
 msgid "Set the parent window to make this modal"
 msgstr "הגדרת חלון ההורה כדי ליצור מודל זה"
 
@@ -1294,316 +1294,336 @@ msgid "GNOME Color Manager Color Picker"
 msgstr "דוגם הצבע של מנהל הצבעים של GNOME"
 
 #. TRANSLATORS: could not save for all users
-#: ../src/gcm-prefs.c:163
+#: ../src/gcm-prefs.c:164
 msgid "Failed to save defaults for all users"
 msgstr "ארע כשל בשמירת ברירות המחדל לכול המשתמשים"
 
 #. TRANSLATORS: this is where the user can click and import a profile
-#: ../src/gcm-prefs.c:191
+#: ../src/gcm-prefs.c:192
 msgid "Other profile…"
 msgstr "פרופיל אחר..."
 
 #. TRANSLATORS: could not calibrate
-#: ../src/gcm-prefs.c:325
+#: ../src/gcm-prefs.c:326
 msgid "Failed to calibrate device"
 msgstr "ארע כשל בכיול ההתקן"
 
 #. TRANSLATORS: could not calibrate
-#: ../src/gcm-prefs.c:360
+#: ../src/gcm-prefs.c:361
 msgid "Failed to calibrate printer"
 msgstr "ארע כשל בכיול המדפסת"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-prefs.c:473
+#: ../src/gcm-prefs.c:474
 msgid "Permanently delete profile?"
 msgstr "האם למחוק פרופיל זה לצמיתות?"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-prefs.c:476
+#: ../src/gcm-prefs.c:477
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr "האם ברצונך להסיר פרופיל זה מהמערכת שלך לצמיתות?"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-prefs.c:479
+#: ../src/gcm-prefs.c:480
 msgid "Delete"
 msgstr "מחיקה"
 
-#: ../src/gcm-prefs.c:524
+#: ../src/gcm-prefs.c:525
 msgid "Import"
 msgstr "ייבוא"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-prefs.c:542
+#: ../src/gcm-prefs.c:543
 msgid "Supported ICC profiles"
 msgstr "התקני ICC נתמכים"
 
-#: ../src/gcm-prefs.c:613
+#: ../src/gcm-prefs.c:614
 msgid "Failed to get metadata from image"
 msgstr "ארע כשל בקבלת נתוני העל מהתמונה"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:630 ../src/gcm-prefs.c:1305
+#: ../src/gcm-prefs.c:631 ../src/gcm-prefs.c:1306
 msgid "Failed to create virtual device"
 msgstr "ארע כשל ביצירת התקן וירטואלי"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:638 ../src/gcm-prefs.c:1313
+#: ../src/gcm-prefs.c:639 ../src/gcm-prefs.c:1314
 msgid "Failed to save virtual device"
 msgstr "ארע כשל בשמירת התקן וירטואלי"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:647 ../src/gcm-prefs.c:1322
+#: ../src/gcm-prefs.c:648 ../src/gcm-prefs.c:1323
 msgid "Failed to add virtual device"
 msgstr "ארע כשל בהוספת התקן וירטואלי"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-prefs.c:849
+#: ../src/gcm-prefs.c:850
 msgid "Install calibration and profiling software?"
 msgstr "האם להתקין תכנה לכיול וליצירת פרופילים?"
 
 #. TRANSLATORS: dialog message saying the argyllcms is not installed
-#: ../src/gcm-prefs.c:853
+#: ../src/gcm-prefs.c:854
 msgid "Calibration and profiling software is not installed."
 msgstr "לא מותקנת תכנה לכיול וליצירת פרופילים."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-prefs.c:855
+#: ../src/gcm-prefs.c:856
 msgid "These tools are required to build color profiles for devices."
 msgstr "כלים אלו נדרשים להכנת פרופילי צבע עבור התקנים."
 
 #. TRANSLATORS: this is the sound description
-#: ../src/gcm-prefs.c:981
+#: ../src/gcm-prefs.c:982
 msgid "Profiling completed"
 msgstr "יצירת הפרופיל הושלמה"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-prefs.c:1428
+#: ../src/gcm-prefs.c:1429
 msgid "Failed to delete file"
 msgstr "ארע כשל במחיקת הקובץ"
 
 #. TRANSLATORS: this is when the button is sensitive
-#: ../src/gcm-prefs.c:1577
+#: ../src/gcm-prefs.c:1578
 msgid "Create a color profile for the selected device"
 msgstr "יצירת פרופיל צבע עבור ההתקן הנבחר"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1582
+#: ../src/gcm-prefs.c:1583
 msgid "Cannot profile: No device is selected"
 msgstr "לא ניתן ליצור פרופיל: לא נבחר אף התקן"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1594
+#: ../src/gcm-prefs.c:1595
 msgid "Cannot calibrate: The display device is not connected"
 msgstr "לא ניתן לכייל: התקן התצוגה אינו מחובר"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1602
+#: ../src/gcm-prefs.c:1603
 msgid "Cannot calibrate: The display driver does not support XRandR 1.3"
 msgstr "לא ניתן לכייל: מנהל התקן התצוגה אינו תומך ב־XRandR 1.3"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1610
+#: ../src/gcm-prefs.c:1611
 msgid "Cannot calibrate: The measuring instrument is not plugged in"
 msgstr "לא ניתן לכייל: כלי המדידה אינו מחובר"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1625
+#: ../src/gcm-prefs.c:1626
 msgid "Cannot profile: The measuring instrument is not plugged in"
 msgstr "לא ניתן ליצור פרופיל: כלי המדידה אינו מחובר"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1633
+#: ../src/gcm-prefs.c:1634
 msgid ""
 "Cannot profile: The measuring instrument does not support printer profiling"
 msgstr "לא ניתן ליצור פרופיל: כלי המדידה אינו תומך ביצירת פרופילי מדפסת"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1640
+#: ../src/gcm-prefs.c:1641
 msgid "Cannot profile this type of device"
 msgstr "לא ניתן ליצור פרופיל לסוג כזה של התקן"
 
 #. TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
 #. * Whilst this does not matter if you only have one monitor attached, it means you
 #. * can't color correct additional monitors or projectors.
-#: ../src/gcm-prefs.c:1718
+#: ../src/gcm-prefs.c:1719
 msgid "Per-device settings not supported. Check your display driver."
 msgstr "הגדרות בעבור כל התקן בנפרד אינן נתמכות. יש לבדוק את מנהל התקן התצוגה."
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1832
+#: ../src/gcm-prefs.c:1833
 msgid "Input device"
 msgstr "התקן הקלט"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1836
+#: ../src/gcm-prefs.c:1837
 msgid "Display device"
 msgstr "התקן התצוגה"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1840
+#: ../src/gcm-prefs.c:1841
 msgid "Output device"
 msgstr "התקן הפלט"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1844
+#: ../src/gcm-prefs.c:1845
 msgid "Devicelink"
 msgstr "קישור להתקן"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1848
+#: ../src/gcm-prefs.c:1849
 msgid "Colorspace conversion"
 msgstr "המרה בין מרחבי צבע"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-prefs.c:1852
+#: ../src/gcm-prefs.c:1853
 msgid "Abstract"
 msgstr "מופשט"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1856
+#: ../src/gcm-prefs.c:1857
 msgid "Named color"
 msgstr "צבע בעל שם"
 
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1859 ../src/gcm-prefs.c:1909
+#: ../src/gcm-prefs.c:1860 ../src/gcm-prefs.c:1910
 msgid "Unknown"
 msgstr "לא ידוע"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1870
+#: ../src/gcm-prefs.c:1871
 msgid "XYZ"
 msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1874
+#: ../src/gcm-prefs.c:1875
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1878
+#: ../src/gcm-prefs.c:1879
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1882
+#: ../src/gcm-prefs.c:1883
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1886
+#: ../src/gcm-prefs.c:1887
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1894
+#: ../src/gcm-prefs.c:1895
 msgid "Gray"
 msgstr "אפור"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1898
+#: ../src/gcm-prefs.c:1899
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1906
+#: ../src/gcm-prefs.c:1907
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-prefs.c:2096
+#: ../src/gcm-prefs.c:2114
 msgid "Yes"
 msgstr "כן"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-prefs.c:2099
+#: ../src/gcm-prefs.c:2117
 msgid "No"
 msgstr "לא"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-prefs.c:2174 ../data/gcm-prefs.ui.h:29
+#: ../src/gcm-prefs.c:2192 ../data/gcm-prefs.ui.h:29
 msgid "Delete this profile"
 msgstr "מחיקת פרופיל זה"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-prefs.c:2177
+#: ../src/gcm-prefs.c:2195
 msgid "This profile cannot be deleted"
 msgstr "לא ניתן למחוק פרופיל זה"
 
 #. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/gcm-prefs.c:2250
+#: ../src/gcm-prefs.c:2270
 msgid "No hardware support"
 msgstr "אין תמיכה בחומרה"
 
 #. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/gcm-prefs.c:2254 ../src/gcm-prefs.c:2521
+#: ../src/gcm-prefs.c:2274 ../src/gcm-prefs.c:2541
 msgid "disconnected"
 msgstr "מנותק"
 
 #. TRANSLATORS: the profile was of the wrong sort for this device
-#: ../src/gcm-prefs.c:2373
+#: ../src/gcm-prefs.c:2393
 msgid "Could not import profile"
 msgstr "לא ניתן לייבא את הפרופיל"
 
-#: ../src/gcm-prefs.c:2374
+#: ../src/gcm-prefs.c:2394
 msgid "The profile was of the wrong type for this device"
 msgstr "הפרופיל היה מסוג שאינו תואם להתקן זה"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:2457
+#: ../src/gcm-prefs.c:2477
 msgid "Device added"
 msgstr "נוסף התקן"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:2461
+#: ../src/gcm-prefs.c:2481
 msgid "Device removed"
 msgstr "הוסר התקן"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3050 ../data/gcm-prefs.ui.h:37
+#: ../src/gcm-prefs.c:3070 ../data/gcm-prefs.ui.h:37
 msgid "Display"
 msgstr "תצוגה"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3054
+#: ../src/gcm-prefs.c:3074
 msgid "Scanner"
 msgstr "סורק"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3058
+#: ../src/gcm-prefs.c:3078
 msgid "Printer"
 msgstr "מדפסת"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3062
+#: ../src/gcm-prefs.c:3082
 msgid "Camera"
 msgstr "מצלמה"
 
+#. TRANSLATORS: combo-entry, no graph selected to be shown
+#: ../src/gcm-prefs.c:3155
+msgid "None"
+msgstr "ללא"
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...)
+#: ../src/gcm-prefs.c:3158
+msgid "CIE 1931 xy"
+msgstr "CIE 1931 xy"
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out)
+#: ../src/gcm-prefs.c:3161
+msgid "Transfer response curve"
+msgstr "העברת עקומת התגובה"
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card)
+#: ../src/gcm-prefs.c:3164
+msgid "Video card gamma table"
+msgstr "טבלת הגאמה של כרטיס המסך"
+
 #. TRANSLATORS: button for more details about the vcgt failure
-#: ../src/gcm-prefs.c:3413
+#: ../src/gcm-prefs.c:3524
 msgid "More Information"
 msgstr "מידע נוסף"
 
 #. TRANSLATORS: button to install extra profiles
-#: ../src/gcm-prefs.c:3416
+#: ../src/gcm-prefs.c:3527
 msgid "Install now"
 msgstr "התקנה כעת"
 
 #. TRANSLATORS: this is displayed while the devices are being probed
-#: ../src/gcm-prefs.c:3419
+#: ../src/gcm-prefs.c:3530
 msgid "Loading list of devices…"
 msgstr "רשימת ההתקנים נטענת..."
 
 #. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/gcm-prefs.c:3426
+#: ../src/gcm-prefs.c:3537
 msgid ""
 "This profile does not have the information required for whole-screen color "
 "correction."
 msgstr "לפרופיל זה אין את המידע הדרוש לתיקון צבע למסך כולו."
 
 #. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/gcm-prefs.c:3434
+#: ../src/gcm-prefs.c:3545
 msgid "More color profiles could be automatically installed."
 msgstr "ניתן להתקין פרופילי צבע נוספים באופן אוטומטי"
 
@@ -1792,7 +1812,7 @@ msgstr "מעבדה (D50):"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. What mode to use for display rendering intent
-#: ../data/gcm-picker.ui.h:10 ../data/gcm-prefs.ui.h:71
+#: ../data/gcm-picker.ui.h:10 ../data/gcm-prefs.ui.h:72
 msgid "RGB:"
 msgstr "RGB:"
 
@@ -1926,164 +1946,193 @@ msgstr "שם הקובץ:"
 msgid "Fine tuning"
 msgstr "כוונון עדין"
 
-#: ../data/gcm-prefs.ui.h:51
+#. The graph representing the profile
+#: ../data/gcm-prefs.ui.h:52
+msgid "Graph:"
+msgstr "תרשים:"
+
+#: ../data/gcm-prefs.ui.h:53
 msgid ""
 "Image files can be dragged on this window to auto-complete the above fields."
 msgstr "ניתן לגרור קובצי תמונה למסך זה כדי להשלים אוטומטית את השדות שלהלן."
 
 #. The licence of the profile, normally non-free
-#: ../data/gcm-prefs.ui.h:53
+#: ../data/gcm-prefs.ui.h:55
 msgid "License:"
 msgstr "רישיון:"
 
-#: ../data/gcm-prefs.ui.h:54
+#: ../data/gcm-prefs.ui.h:56
 msgid "Make the selected profile the default profile"
 msgstr "הפיכת הפרופיל הנבחר לפרופיל ברירת המחד"
 
 #. The manufacturer of the device
-#: ../data/gcm-prefs.ui.h:56
+#: ../data/gcm-prefs.ui.h:58
 msgid "Manufacturer:"
 msgstr "יצרן:"
 
 #. The model of the device
-#: ../data/gcm-prefs.ui.h:58
+#: ../data/gcm-prefs.ui.h:60
 msgid "Model:"
 msgstr "דגם:"
 
-#: ../data/gcm-prefs.ui.h:59
+#: ../data/gcm-prefs.ui.h:61
 msgid "More details"
 msgstr "פרטים נוספים"
 
 #. Some profiles are not compatible with some devices
-#: ../data/gcm-prefs.ui.h:61
+#: ../data/gcm-prefs.ui.h:63
 msgid "Only profiles that are compatible with the device will be listed above."
 msgstr "רק פרופילים התומכים בהתקן יופיעו להלן."
 
-#: ../data/gcm-prefs.ui.h:62
+#: ../data/gcm-prefs.ui.h:64
 msgid "Open the documentation"
 msgstr "פתיחת התיעוד"
 
-#: ../data/gcm-prefs.ui.h:63
-msgid "Profile Graphs"
-msgstr "תרשימי הפרופיל"
-
 #. The type of profile, e.g. display, scanner, etc.
-#: ../data/gcm-prefs.ui.h:65
+#: ../data/gcm-prefs.ui.h:66
 msgid "Profile type:"
 msgstr "סוג הפרופיל:"
 
 #. Tab title, currently installed profiles
-#: ../data/gcm-prefs.ui.h:67
+#: ../data/gcm-prefs.ui.h:68
 msgid "Profiles"
 msgstr "פרופילים"
 
-#: ../data/gcm-prefs.ui.h:68
+#: ../data/gcm-prefs.ui.h:69
 msgid ""
 "Program the video card with the adjusted color values so all windows are "
 "color corrected"
 msgstr "תכנות כרטיס המסך עם ערכי הצבעים ששונו כך שצבעם של כל החלונות יתוקן"
 
-#: ../data/gcm-prefs.ui.h:72
+#: ../data/gcm-prefs.ui.h:73
 msgid "Remove a color profile for this device"
 msgstr "הסרת פרופיל צבע עבור התקן זה"
 
 #. This is a button to delete the saved or virtual device
-#: ../data/gcm-prefs.ui.h:74
+#: ../data/gcm-prefs.ui.h:75
 msgid "Remove de_vice"
 msgstr "ה_סרת התקן"
 
-#: ../data/gcm-prefs.ui.h:75
+#: ../data/gcm-prefs.ui.h:76
 msgid "Rendering intent"
 msgstr "מיקוד Render"
 
 #. This resets the device to it's defaults, and removes any user tweaked settings.
-#: ../data/gcm-prefs.ui.h:77
+#: ../data/gcm-prefs.ui.h:78
 msgid "Rese_t"
 msgstr "_איפוס"
 
-#: ../data/gcm-prefs.ui.h:78
+#: ../data/gcm-prefs.ui.h:79
 msgid "Reset the sliders to the default values"
 msgstr "איפוס פסי הגלילה לערכי ברירת המחדל"
 
-#: ../data/gcm-prefs.ui.h:79
+#. The TRC axis label
+#: ../data/gcm-prefs.ui.h:81
+msgid "Response in"
+msgstr "תגובה נכנסת"
+
+#. The TRC axis label
+#: ../data/gcm-prefs.ui.h:83
+msgid "Response out"
+msgstr "תגובה יוצאת"
+
+#: ../data/gcm-prefs.ui.h:84
 msgid "Save these profiles for all users"
 msgstr "שמירת פרופילים אלו עבור כל המשתמש"
 
-#: ../data/gcm-prefs.ui.h:82
+#: ../data/gcm-prefs.ui.h:87
 msgid ""
 "Set a property on the system so applications use the default display profile"
 msgstr ""
 "הגדרת תכונה במערכת כדי שיישומים ישתמשו בפרופיל התצוגה המוגדר כברירת המחדל"
 
-#: ../data/gcm-prefs.ui.h:83
+#: ../data/gcm-prefs.ui.h:88
 msgid "Set profile for _color managed applications"
 msgstr "הגדרת פרופיל עבור _יישומים מנוהלי צבע"
 
 #. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:85
+#: ../data/gcm-prefs.ui.h:90
 msgid "Softproof:"
 msgstr "כיוון להדפסה:"
 
-#: ../data/gcm-prefs.ui.h:86
+#: ../data/gcm-prefs.ui.h:91
 msgid ""
 "The rendering intent defines how color should be transformed from one "
 "colorspace to another."
 msgstr "מיקוד ה־Render מגדיר אילו צבעים יועתקו ממרחב צבע אחד לאחר."
 
-#: ../data/gcm-prefs.ui.h:87
+#: ../data/gcm-prefs.ui.h:92
 msgid "The rendering intent is how one gamut size is mapped to another."
 msgstr "מיקוד ה־Render הוא כיצד גודל טווח צבע אחד ממופה לאחר."
 
-#: ../data/gcm-prefs.ui.h:88
+#: ../data/gcm-prefs.ui.h:93
 msgid ""
 "The rendering intent to use when transforming from the image gamut to the "
 "device output gamut"
 msgstr ""
 "מיקוד ה־Render לשימוש בעת העתקה מטווח צבע התמונה לטווח הצבע של התקן הפלט"
 
-#: ../data/gcm-prefs.ui.h:89
+#: ../data/gcm-prefs.ui.h:94
 msgid ""
 "The rendering intent to use when transforming from the image gamut to the "
 "display gamut"
 msgstr "מיקוד ה־Render לשימוש בעת העתקה מטווח צבע התמונה לטווח הצבע של התצוגה"
 
-#: ../data/gcm-prefs.ui.h:90
+#: ../data/gcm-prefs.ui.h:95
 msgid "These settings control how color management is applied to your desktop."
 msgstr "הגדרות אלו שולטות כיצד ניהול הצבעים חל על שולחן העבודה שלך."
 
-#: ../data/gcm-prefs.ui.h:91
+#: ../data/gcm-prefs.ui.h:96
 msgid "This is the default CMYK working space to use in applications"
 msgstr "זהו מרחב העבודה ב־CMYK כברירת מחדל לשימוש ביישומים"
 
-#: ../data/gcm-prefs.ui.h:92
+#: ../data/gcm-prefs.ui.h:97
 msgid "This is the default RGB working space to use in applications"
 msgstr "זהו מרחב העבודה ב־RGB כברירת מחדל לשימוש ביישומים"
 
-#: ../data/gcm-prefs.ui.h:93
+#. The TRC axis label
+#: ../data/gcm-prefs.ui.h:99
+msgid "Video card out"
+msgstr "פלט כרטיס המסך"
+
+#: ../data/gcm-prefs.ui.h:100
 msgid "Working space"
 msgstr "מרחב עבודה"
 
-#: ../data/gcm-prefs.ui.h:94
+#: ../data/gcm-prefs.ui.h:101
 msgid "_Add&#x2026;"
 msgstr "_הוספה&#x2026;"
 
-#: ../data/gcm-prefs.ui.h:95
+#: ../data/gcm-prefs.ui.h:102
 msgid "_Apply display correction"
 msgstr "החלת _תיקוני התצוגה"
 
 #. Makes the profile the default for the device
-#: ../data/gcm-prefs.ui.h:97
+#: ../data/gcm-prefs.ui.h:104
 msgid "_Make Default"
 msgstr "ה_פיכה לברירת מחדל"
 
-#: ../data/gcm-prefs.ui.h:98
+#: ../data/gcm-prefs.ui.h:105
 msgid "_Remove"
 msgstr "ה_סרה"
 
 #. This is when the settings are set for all users, unless they have per-user settings themselves
-#: ../data/gcm-prefs.ui.h:100
+#: ../data/gcm-prefs.ui.h:107
 msgid "_Set System Default"
 msgstr "ה_גדרה כברירת המחדל במערכת"
+
+#. The CIE axis label, not to be confused with 'X'
+#: ../data/gcm-prefs.ui.h:109
+msgid "x"
+msgstr "x"
+
+#. The CIE axis label, not to be confused with 'Y'
+#: ../data/gcm-prefs.ui.h:111
+msgid "y"
+msgstr "y"
+
+#~ msgid "Profile Graphs"
+#~ msgstr "תרשימי הפרופיל"
 
 #~ msgid "Select reference image"
 #~ msgstr "יש לבחור תמונת הנחיה"
