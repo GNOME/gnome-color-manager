@@ -514,7 +514,7 @@ gcm_session_handle_method_call (GDBusConnection *connection_, const gchar *sende
 		g_variant_get (parameters, "(ss)", &filename, &hints);
 
 		/* get array of profile filenames */
-		array = gcm_session_get_profiles_for_file (device_id, &error);
+		array = gcm_session_get_profiles_for_file (filename, &error);
 		if (array == NULL) {
 			g_dbus_method_invocation_return_dbus_error (invocation,
 								    "org.gnome.ColorManager.Failed",
