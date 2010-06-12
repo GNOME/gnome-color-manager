@@ -106,7 +106,7 @@ GTK_REQUIRED=2.90.0
 GNOMEDESKTOP_REQUIRED=2.14.0
 VTE_REQUIRED=0.25.1
 CANBERRA_REQUIRED=0.10
-GIO_REQUIRED=2.25.8
+GIO_REQUIRED=2.25.9
 
 dnl ---------------------------------------------------------------------------
 dnl - Check library dependencies
