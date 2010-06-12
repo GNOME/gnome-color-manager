@@ -486,13 +486,13 @@ gcm_device_set_title (GcmDevice *device, const gchar *title)
 /**
  * gcm_device_get_profiles:
  *
- * Return value: the profiles. Do not unref this value
+ * Return value: the profiles. Free with g_ptr_array_unref()
  **/
 GPtrArray *
 gcm_device_get_profiles (GcmDevice *device)
 {
 	g_return_val_if_fail (GCM_IS_DEVICE (device), NULL);
-	return device->priv->profiles;
+	return g_ptr_array_ref (device->priv->profiles);
 }
 
 /**
