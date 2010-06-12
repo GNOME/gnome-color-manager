@@ -340,6 +340,10 @@ gcm_session_get_profiles_for_file (const gchar *filename, GError **error)
 		}
 	}
 
+	/* nothing found, so set error */
+	if (array == NULL)
+		g_set_error_literal (error, 1, 0, "No profiles were found.");
+
 	/* unref list of devices */
 	g_ptr_array_unref (array_devices);
 out:
@@ -399,6 +403,10 @@ gcm_session_get_profiles_for_device (const gchar *device_id_with_prefix, GError 
 			break;
 		}
 	}
+
+	/* nothing found, so set error */
+	if (array == NULL)
+		g_set_error_literal (error, 1, 0, "No profiles were found.");
 
 	/* unref list of devices */
 	g_ptr_array_unref (array_devices);
