@@ -1226,9 +1226,13 @@ gcm_client_add_device (GcmClient *client, GcmDevice *device, GError **error)
 	const gchar *device_id;
 	GcmDevice *device_tmp = NULL;
 	GPtrArray *array;
+	static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
 
 	g_return_val_if_fail (GCM_IS_CLIENT (client), FALSE);
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
+
+	/* lock */
+	g_static_mutex_lock (&mutex);
 
 	/* look to see if device already exists */
 	device_id = gcm_device_get_id (device);
@@ -1261,6 +1265,9 @@ gcm_client_add_device (GcmClient *client, GcmDevice *device, GError **error)
 	/* all okay */
 	ret = TRUE;
 out:
+	/* unlock */
+	g_static_mutex_unlock (&mutex);
+
 	if (device_tmp != NULL)
 		g_object_unref (device_tmp);
 	return ret;
