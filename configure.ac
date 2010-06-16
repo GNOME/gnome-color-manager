@@ -153,7 +153,7 @@ if test x$enable_exiv = xyes; then
 	AC_DEFINE(GCM_USE_EXIV,1,[Use EXIV support for detecting scanners])
 fi
 
-PKG_CHECK_MODULES(CANBERRA, libcanberra-gtk >= $CANBERRA_REQUIRED)
+PKG_CHECK_MODULES(CANBERRA, libcanberra-gtk3 >= $CANBERRA_REQUIRED)
 
 PKG_CHECK_MODULES(EXIF, libexif)
 AC_CHECK_LIB(tiff, TIFFReadRGBAImageOriented,
