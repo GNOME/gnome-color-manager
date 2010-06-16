@@ -115,15 +115,21 @@ PKG_CHECK_MODULES(GLIB, glib-2.0 >= $GLIB_REQUIRED gobject-2.0 gthread-2.0 gio-2
 PKG_CHECK_MODULES(XORG, xxf86vm xrandr)
 PKG_CHECK_MODULES(GTK, gtk+-3.0 >= $GTK_REQUIRED)
 PKG_CHECK_MODULES(GNOMEDESKTOP, gnome-desktop-2.0 >= $GNOMEDESKTOP_REQUIRED)
-PKG_CHECK_MODULES(VTE, vte >= $VTE_REQUIRED)
 PKG_CHECK_MODULES(GUDEV, gudev-1.0)
 PKG_CHECK_MODULES(LCMS, lcms)
 PKG_CHECK_MODULES(X11, x11)
 PKG_CHECK_MODULES(NOTIFY, libnotify)
 
+dnl **** Check for VTE ****
+PKG_CHECK_MODULES(VTE, vte3 >= $VTE_REQUIRED, has_vte=yes, has_vte=no)
+AM_CONDITIONAL(GCM_USE_VTE, test x$has_vte = xyes)
+if test x$has_vte = xyes; then
+	AC_DEFINE(GCM_USE_VTE,1,[Use VTE terminal widget])
+fi
+
+dnl **** Check for SANE ****
 AC_ARG_ENABLE(sane, AS_HELP_STRING([--enable-sane],[Enable SANE support for scanner support]), enable_sane=$enableval,
 				   enable_sane=yes)
-dnl **** Check for SANE ****
 if test x$enable_sane != xno; then
 	PKG_CHECK_MODULES(SANE, sane-backends, has_sane=yes, has_sane=no)
 	if test $has_sane = "no"; then
@@ -272,6 +278,7 @@ echo "
         PackageKit integration:    ${enable_packagekit}
         SANE support:              ${enable_sane}
         RAW support:               ${enable_exiv}
+        VTE support:               ${has_vte}
         building unit tests:       ${enable_tests}
 "
 
