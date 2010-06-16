@@ -502,6 +502,7 @@ typedef struct {
 	const gchar *vendor_name;
 	const gchar *serial_number;
 	const gchar *eisa_id;
+	const gchar *checksum;
 	const gchar *pnp_id;
 	guint width;
 	guint height;
@@ -530,6 +531,7 @@ gcm_test_edid_test_parse_edid_file (GcmEdid *edid, const gchar *datafile, GcmEdi
 	g_assert_cmpstr (gcm_edid_get_vendor_name (edid), ==, test_data->vendor_name);
 	g_assert_cmpstr (gcm_edid_get_serial_number (edid), ==, test_data->serial_number);
 	g_assert_cmpstr (gcm_edid_get_eisa_id (edid), ==, test_data->eisa_id);
+	g_assert_cmpstr (gcm_edid_get_checksum (edid), ==, test_data->checksum);
 	g_assert_cmpstr (gcm_edid_get_pnp_id (edid), ==, test_data->pnp_id);
 	g_assert_cmpint (gcm_edid_get_height (edid), ==, test_data->height);
 	g_assert_cmpint (gcm_edid_get_width (edid), ==, test_data->width);
@@ -555,6 +557,7 @@ gcm_test_edid_func (void)
 	test_data.vendor_name = "Goldstar Company Ltd";
 	test_data.serial_number = "34398";
 	test_data.eisa_id = NULL;
+	test_data.checksum = "80b7dda4c74b06366abb8fa23e71d645";
 	test_data.pnp_id = "GSM";
 	test_data.height = 30;
 	test_data.width = 47;
@@ -566,6 +569,7 @@ gcm_test_edid_func (void)
 	test_data.vendor_name = "IBM France";
 	test_data.serial_number = NULL;
 	test_data.eisa_id = "LTN154P2-L05";
+	test_data.checksum = "c585d9e80adc65c54f0a52597e850f83";
 	test_data.pnp_id = "IBM";
 	test_data.height = 21;
 	test_data.width = 33;
