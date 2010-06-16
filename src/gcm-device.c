@@ -733,10 +733,13 @@ gcm_device_save (GcmDevice *device, GError **error)
 	gchar *filename = NULL;
 	gchar *timespec = NULL;
 	gchar **profile_filenames;
+	gchar *config_data = NULL;
+	gchar **config_items = NULL;
 	GError *error_local = NULL;
 	GTimeVal timeval;
 	GcmProfile *profile;
 	GcmDevicePrivate *priv = device->priv;
+	GcmDeviceClass *klass = GCM_DEVICE_GET_CLASS (device);
 
 	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
 	g_return_val_if_fail (priv->id != NULL, FALSE);
@@ -854,6 +857,20 @@ gcm_device_save (GcmDevice *device, GError **error)
 	if (priv->virtual)
 		g_key_file_set_boolean (keyfile, priv->id, "virtual", TRUE);
 
+	/* get extra, device specific config data */
+	if (klass->get_config_data != NULL) {
+		config_data = klass->get_config_data (device);
+		config_items = g_strsplit (config_data, "=", 2);
+		if (g_strv_length (config_items) != 2) {
+			ret = FALSE;
+			g_set_error (error, 1, 0, "failed to get device specific config data for: %s", priv->id);
+			goto out;
+		}
+
+		/* save unstructured data to the keyfile */
+		g_key_file_set_string (keyfile, priv->id, config_items[0], config_items[1]);
+	}
+
 	/* convert to string */
 	data = g_key_file_to_data (keyfile, NULL, &error_local);
 	if (data == NULL) {
@@ -874,6 +891,8 @@ gcm_device_save (GcmDevice *device, GError **error)
 	/* update status */
 	gcm_device_set_saved (device, TRUE);
 out:
+	g_strfreev (config_items);
+	g_free (config_data);
 	g_free (timespec);
 	g_free (data);
 	g_free (filename);

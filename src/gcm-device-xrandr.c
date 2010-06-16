@@ -51,6 +51,7 @@ struct _GcmDeviceXrandrPrivate
 {
 	gchar				*native_device;
 	gchar				*eisa_id;
+	gchar				*edid_md5;
 	guint				 gamma_size;
 	GcmEdid				*edid;
 	GcmDmi				*dmi;
@@ -66,6 +67,7 @@ enum {
 	PROP_NATIVE_DEVICE,
 	PROP_XRANDR_FALLBACK,
 	PROP_EISA_ID,
+	PROP_EDID_MD5,
 	PROP_LAST
 };
 
@@ -90,6 +92,15 @@ const gchar *
 gcm_device_xrandr_get_eisa_id (GcmDeviceXrandr *device_xrandr)
 {
 	return device_xrandr->priv->eisa_id;
+}
+
+/**
+ * gcm_device_xrandr_get_edid_md5:
+ **/
+const gchar *
+gcm_device_xrandr_get_edid_md5 (GcmDeviceXrandr *device_xrandr)
+{
+	return device_xrandr->priv->edid_md5;
 }
 
 /**
@@ -261,6 +272,7 @@ gcm_device_xrandr_set_from_output (GcmDevice *device, GnomeRROutput *output, GEr
 	manufacturer = gcm_edid_get_vendor_name (priv->edid);
 	serial = gcm_edid_get_serial_number (priv->edid);
 	priv->eisa_id = g_strdup (gcm_edid_get_eisa_id (priv->edid));
+	priv->edid_md5 = g_strdup (gcm_edid_get_checksum (priv->edid));
 
 	/* refine data if it's missing */
 	output_name = gnome_rr_output_get_name (output);
@@ -443,6 +455,17 @@ gcm_device_xrandr_set_remove_atom (GcmDeviceXrandr *device_xrandr, gboolean remo
 {
 	g_return_if_fail (GCM_IS_DEVICE_XRANDR (device_xrandr));
 	device_xrandr->priv->remove_atom = remove_atom;
+}
+
+/**
+ * gcm_device_xrandr_get_config_data:
+ **/
+static gchar *
+gcm_device_xrandr_get_config_data (GcmDevice *device)
+{
+	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (device);
+	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
+	return g_strdup_printf ("edid-hash=%s", priv->edid_md5);
 }
 
 /**
@@ -631,6 +654,9 @@ gcm_device_xrandr_get_property (GObject *object, guint prop_id, GValue *value, G
 	case PROP_EISA_ID:
 		g_value_set_string (value, priv->eisa_id);
 		break;
+	case PROP_EDID_MD5:
+		g_value_set_string (value, priv->edid_md5);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -672,6 +698,7 @@ gcm_device_xrandr_class_init (GcmDeviceXrandrClass *klass)
 	object_class->set_property = gcm_device_xrandr_set_property;
 
 	device_class->apply = gcm_device_xrandr_apply;
+	device_class->get_config_data = gcm_device_xrandr_get_config_data;
 
 	/**
 	 * GcmDeviceXrandr:native-device:
@@ -697,6 +724,14 @@ gcm_device_xrandr_class_init (GcmDeviceXrandrClass *klass)
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_EISA_ID, pspec);
 
+	/**
+	 * GcmDeviceXrandr:edid-md5:
+	 */
+	pspec = g_param_spec_string ("edid-md", NULL, NULL,
+				     NULL,
+				     G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_EDID_MD5, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmDeviceXrandrPrivate));
 }
 
@@ -709,6 +744,7 @@ gcm_device_xrandr_init (GcmDeviceXrandr *device_xrandr)
 	device_xrandr->priv = GCM_DEVICE_XRANDR_GET_PRIVATE (device_xrandr);
 	device_xrandr->priv->native_device = NULL;
 	device_xrandr->priv->eisa_id = NULL;
+	device_xrandr->priv->edid_md5 = NULL;
 	device_xrandr->priv->xrandr_fallback = FALSE;
 	device_xrandr->priv->remove_atom = TRUE;
 	device_xrandr->priv->gamma_size = 0;
@@ -730,6 +766,7 @@ gcm_device_xrandr_finalize (GObject *object)
 
 	g_free (priv->native_device);
 	g_free (priv->eisa_id);
+	g_free (priv->edid_md5);
 	g_object_unref (priv->edid);
 	g_object_unref (priv->dmi);
 	g_object_unref (priv->settings);
