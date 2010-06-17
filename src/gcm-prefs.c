@@ -129,8 +129,8 @@ gcm_prefs_error_dialog (const gchar *title, const gchar *message)
 static void
 gcm_prefs_close_cb (GtkWidget *widget, gpointer data)
 {
-	GApplication *application = (GApplication *) data;
-	g_application_quit_with_data (application, NULL);
+	GtkApplication *application = (GtkApplication *) data;
+	gtk_application_quit (application);
 }
 
 /**
@@ -3211,20 +3211,6 @@ gcm_prefs_button_virtual_entry_changed_cb (GtkEntry *entry, GParamSpec *pspec, g
 }
 
 /**
- * gcm_prefs_application_prepare_action_cb:
- **/
-static void
-gcm_prefs_application_prepare_action_cb (GApplication *application, GVariant *arguments,
-					 GVariant *platform_data, gpointer user_data)
-{
-	GtkWindow *window;
-
-	egg_debug ("application prepare action");
-	window = GTK_WINDOW (gtk_builder_get_object (builder, "dialog_prefs"));
-	gtk_window_present (window);
-}
-
-/**
  * main:
  **/
 int
@@ -3241,7 +3227,7 @@ main (int argc, char **argv)
 	GtkWidget *info_bar_vcgt_label;
 	GtkWidget *info_bar_profiles_label;
 	GdkScreen *screen;
-	GApplication *application;
+	GtkApplication *application;
 
 	const GOptionEntry options[] = {
 		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
@@ -3266,9 +3252,7 @@ main (int argc, char **argv)
 	g_option_context_free (context);
 
 	/* ensure single instance */
-	application = g_application_new ("org.gnome.ColorManager.Prefs", argc, argv);
-	g_signal_connect (application, "prepare-activation",
-			  G_CALLBACK (gcm_prefs_application_prepare_action_cb), NULL);
+	application = gtk_application_new ("org.gnome.ColorManager.Prefs", &argc, &argv);
 
 	/* setup defaults */
 	settings = g_settings_new (GCM_SETTINGS_SCHEMA);
@@ -3347,6 +3331,7 @@ main (int argc, char **argv)
 	gtk_tree_view_set_reorderable (GTK_TREE_VIEW (widget), TRUE);
 
 	main_window = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_prefs"));
+	gtk_application_add_window (application, GTK_WINDOW (main_window));
 
 	/* Hide window first so that the dialogue resizes itself without redrawing */
 	gtk_widget_hide (main_window);
@@ -3624,7 +3609,7 @@ main (int argc, char **argv)
 	g_idle_add (gcm_prefs_startup_phase1_idle_cb, NULL);
 
 	/* wait */
-	g_application_run (application);
+	gtk_application_run (application);
 out:
 	g_object_unref (application);
 	if (current_device != NULL)

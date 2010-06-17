@@ -232,8 +232,8 @@ gcm_picker_xyz_notify_cb (GcmCalibrate *calibrate_, GParamSpec *pspec, gpointer 
 static void
 gcm_picker_close_cb (GtkWidget *widget, gpointer data)
 {
-	GApplication *application = (GApplication *) data;
-	g_application_quit_with_data (application, NULL);
+	GtkApplication *application = (GtkApplication *) data;
+	gtk_application_quit (application);
 }
 
 /**
@@ -462,20 +462,6 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 }
 
 /**
- * gcm_prefs_application_prepare_action_cb:
- **/
-static void
-gcm_prefs_application_prepare_action_cb (GApplication *application, GVariant *arguments,
-					 GVariant *platform_data, gpointer user_data)
-{
-	GtkWindow *window;
-
-	egg_debug ("application prepare action");
-	window = GTK_WINDOW (gtk_builder_get_object (builder, "dialog_picker"));
-	gtk_window_present (window);
-}
-
-/**
  * main:
  **/
 int
@@ -484,7 +470,7 @@ main (int argc, char *argv[])
 	GOptionContext *context;
 	guint retval = 0;
 	GError *error = NULL;
-	GApplication *application;
+	GtkApplication *application;
 	GtkWidget *main_window;
 	GtkWidget *widget;
 	guint xid = 0;
@@ -521,9 +507,7 @@ main (int argc, char *argv[])
 	g_option_context_free (context);
 
 	/* ensure single instance */
-	application = g_application_new ("org.gnome.ColorManager.Picker", argc, argv);
-	g_signal_connect (application, "prepare-activation",
-			  G_CALLBACK (gcm_prefs_application_prepare_action_cb), NULL);
+	application = gtk_application_new ("org.gnome.ColorManager.Picker", &argc, &argv);
 
 	/* get UI */
 	builder = gtk_builder_new ();
@@ -535,6 +519,7 @@ main (int argc, char *argv[])
 	}
 
 	main_window = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_picker"));
+	gtk_application_add_window (application, GTK_WINDOW (main_window));
 	gtk_window_set_icon_name (GTK_WINDOW (main_window), GCM_STOCK_ICON);
 	g_signal_connect (main_window, "delete_event",
 			  G_CALLBACK (gcm_picker_delete_event_cb), application);
@@ -610,7 +595,7 @@ main (int argc, char *argv[])
 
 	/* wait */
 	gtk_widget_show (main_window);
-	g_application_run (application);
+	gtk_application_run (application);
 
 out:
 	g_object_unref (application);
