@@ -233,7 +233,7 @@ static void
 gcm_picker_close_cb (GtkWidget *widget, gpointer data)
 {
 	GApplication *application = (GApplication *) data;
-	g_application_quit (application, 0);
+	g_application_quit_with_data (application, NULL);
 }
 
 /**
@@ -521,7 +521,7 @@ main (int argc, char *argv[])
 	g_option_context_free (context);
 
 	/* ensure single instance */
-	application = g_application_new_and_register ("org.gnome.ColorManager.Picker", argc, argv);
+	application = g_application_new ("org.gnome.ColorManager.Picker", argc, argv);
 	g_signal_connect (application, "prepare-activation",
 			  G_CALLBACK (gcm_prefs_application_prepare_action_cb), NULL);
 
