@@ -1575,6 +1575,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 	GcmDeviceKind kind;
 	gboolean connected;
 	gboolean xrandr_fallback;
+	gboolean has_vte = TRUE;
 
 	/* TRANSLATORS: this is when the button is sensitive */
 	tooltip = _("Create a color profile for the selected device");
@@ -1582,7 +1583,18 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 	/* no device selected */
 	if (current_device == NULL) {
 		/* TRANSLATORS: this is when the button is insensitive */
-		tooltip = _("Cannot profile: No device is selected");
+		tooltip = _("Cannot create profile: No device is selected");
+		goto out;
+	}
+
+#ifndef GCM_USE_VTE
+	has_vte = FALSE;
+#endif
+
+	/* no VTE support */
+	if (!has_vte) {
+		/* TRANSLATORS: this is when the button is insensitive because the distro compiled GCM without VTE */
+		tooltip = _("Cannot create profile: Virtual console support is missing");
 		goto out;
 	}
 
@@ -1594,7 +1606,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		connected = gcm_device_get_connected (current_device);
 		if (!connected) {
 			/* TRANSLATORS: this is when the button is insensitive */
-			tooltip = _("Cannot calibrate: The display device is not connected");
+			tooltip = _("Cannot create profile: The display device is not connected");
 			goto out;
 		}
 
@@ -1602,7 +1614,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		xrandr_fallback = gcm_device_xrandr_get_fallback (GCM_DEVICE_XRANDR (current_device));
 		if (xrandr_fallback) {
 			/* TRANSLATORS: this is when the button is insensitive */
-			tooltip = _("Cannot calibrate: The display driver does not support XRandR 1.3");
+			tooltip = _("Cannot create profile: The display driver does not support XRandR 1.3");
 			goto out;
 		}
 
@@ -1610,7 +1622,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		ret = gcm_colorimeter_get_present (colorimeter);
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
-			tooltip = _("Cannot calibrate: The measuring instrument is not plugged in");
+			tooltip = _("Cannot create profile: The measuring instrument is not plugged in");
 			goto out;
 		}
 	} else if (kind == GCM_DEVICE_KIND_SCANNER ||
@@ -1625,7 +1637,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		ret = gcm_colorimeter_get_present (colorimeter);
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
-			tooltip = _("Cannot profile: The measuring instrument is not plugged in");
+			tooltip = _("Cannot create profile: The measuring instrument is not plugged in");
 			goto out;
 		}
 
@@ -1633,14 +1645,14 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		ret = gcm_colorimeter_supports_printer (colorimeter);
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
-			tooltip = _("Cannot profile: The measuring instrument does not support printer profiling");
+			tooltip = _("Cannot create profile: The measuring instrument does not support printer profiling");
 			goto out;
 		}
 
 	} else {
 
 		/* TRANSLATORS: this is when the button is insensitive */
-		tooltip = _("Cannot profile this type of device");
+		tooltip = _("Cannot create a profile for this type of device");
 	}
 out:
 	/* control the tooltip and sensitivity of the button */
