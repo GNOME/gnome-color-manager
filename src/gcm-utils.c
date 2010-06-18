@@ -145,7 +145,7 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 
 	g_return_val_if_fail (package_name != NULL, FALSE);
 
-#ifndef GCM_USE_PACKAGEKIT
+#ifndef HAVE_PACKAGEKIT
 	egg_warning ("cannot install %s: this package was not compiled with --enable-packagekit", package_name);
 	goto out;
 #endif
@@ -217,7 +217,7 @@ gcm_utils_is_package_installed (const gchar *package_name)
 
 	g_return_val_if_fail (package_name != NULL, FALSE);
 
-#ifndef GCM_USE_PACKAGEKIT
+#ifndef HAVE_PACKAGEKIT
 	egg_warning ("cannot query %s: this package was not compiled with --enable-packagekit", package_name);
 	return TRUE;
 #endif

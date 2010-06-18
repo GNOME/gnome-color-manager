@@ -62,6 +62,25 @@
 #define GCM_PREFS_PACKAGE_NAME_COLOR_PROFILES		"shared-color-profiles"
 #define GCM_PREFS_PACKAGE_NAME_COLOR_PROFILES_EXTRA	"shared-color-profiles-extra"
 
+/* libnotify dummy code */
+#ifndef HAVE_LIBNOTIFY
+#define	notify_init(f1)						/* nothing */
+#define	notify_is_initted(f1)					FALSE
+#define	notify_notification_close(f1,f2)			TRUE
+#define	notify_notification_show(f1,f2)				TRUE
+#define	notify_notification_set_timeout(f1,f2)			/* nothing */
+#define	notify_notification_set_urgency(f1,f2)			/* nothing */
+#define	notify_notification_add_action(f1,f2,f3,f4,f5,f6)	/* nothing */
+#define NotifyNotification					GtkWidget
+#define	NotifyUrgency						guint
+#define	notify_notification_new(f1,f2,f3,f4)			gtk_fixed_new()
+#define	notify_notification_new_with_status_icon(f1,f2,f3,f4)	gtk_fixed_new()
+#define NOTIFY_URGENCY_LOW					0
+#define NOTIFY_URGENCY_NORMAL					1
+#define NOTIFY_URGENCY_CRITICAL					2
+#define NOTIFY_EXPIRES_NEVER					0
+#endif
+
 gboolean	 gcm_utils_mkdir_for_filename		(const gchar		*filename,
 							 GError			**error);
 gboolean	 gcm_utils_mkdir_with_parents		(const gchar		*filename,

@@ -35,7 +35,7 @@
 #include <libgnomeui/gnome-rr.h>
 #include <cups/cups.h>
 
-#ifdef GCM_USE_SANE
+#ifdef HAVE_SANE
  #include <sane/sane.h>
 #endif
 
@@ -43,7 +43,7 @@
 #include "gcm-device-xrandr.h"
 #include "gcm-device-udev.h"
 #include "gcm-device-cups.h"
-#ifdef GCM_USE_SANE
+#ifdef HAVE_SANE
  #include "gcm-device-sane.h"
 #endif
 #include "gcm-device-virtual.h"
@@ -58,7 +58,7 @@ static void     gcm_client_finalize	(GObject     *object);
 
 static void gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output);
 
-#ifdef GCM_USE_SANE
+#ifdef HAVE_SANE
 static gboolean gcm_client_coldplug_devices_sane (GcmClient *client, GError **error);
 static gpointer gcm_client_coldplug_devices_sane_thrd (GcmClient *client);
 #endif
@@ -382,7 +382,7 @@ out:
 	return ret;
 }
 
-#ifdef GCM_USE_SANE
+#ifdef HAVE_SANE
 /**
  * gcm_client_sane_refresh_cb:
  **/
@@ -426,7 +426,7 @@ static void
 gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevice *udev_device, GcmClient *client)
 {
 	gboolean ret;
-#ifdef GCM_USE_SANE
+#ifdef HAVE_SANE
 	const gchar *value;
 	GcmDevice *device_tmp;
 	guint i;
@@ -439,7 +439,7 @@ gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevic
 		if (ret)
 			egg_debug ("removed %s", g_udev_device_get_sysfs_path (udev_device));
 
-#ifdef GCM_USE_SANE
+#ifdef HAVE_SANE
 		/* we need to remove scanner devices */
 		value = g_udev_device_get_property (udev_device, "GCM_RESCAN");
 		if (g_strcmp0 (value, "scanner") == 0) {
@@ -473,7 +473,7 @@ gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevic
 		if (ret)
 			egg_debug ("added %s", g_udev_device_get_sysfs_path (udev_device));
 
-#ifdef GCM_USE_SANE
+#ifdef HAVE_SANE
 		/* we need to rescan scanner devices */
 		value = g_udev_device_get_property (udev_device, "GCM_RESCAN");
 		if (g_strcmp0 (value, "scanner") == 0) {
@@ -793,7 +793,7 @@ gcm_client_coldplug_devices_cups_thrd (GcmClient *client)
 	return NULL;
 }
 
-#ifdef GCM_USE_SANE
+#ifdef HAVE_SANE
 /**
  * gcm_client_sane_add:
  **/
@@ -928,7 +928,7 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 	} else if (kind == GCM_DEVICE_KIND_CAMERA) {
 		/* FIXME: use GPhoto? */
 		device = gcm_device_udev_new ();
-#ifdef GCM_USE_SANE
+#ifdef HAVE_SANE
 	} else if (kind == GCM_DEVICE_KIND_SCANNER) {
 		device = gcm_device_sane_new ();
 #endif
@@ -1164,7 +1164,7 @@ gcm_client_coldplug (GcmClient *client, GcmClientColdplug coldplug, GError **err
 		}
 	}
 
-#ifdef GCM_USE_SANE
+#ifdef HAVE_SANE
 	/* SANE */
 	enable = g_settings_get_boolean (client->priv->settings, GCM_SETTINGS_ENABLE_SANE);
 	if (enable && (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_SANE)) {
@@ -1541,7 +1541,7 @@ gcm_client_finalize (GObject *object)
 	g_object_unref (priv->settings);
 	if (client->priv->init_cups)
 		httpClose (priv->http);
-#ifdef GCM_USE_SANE
+#ifdef HAVE_SANE
 	if (client->priv->init_sane)
 		sane_exit ();
 #endif

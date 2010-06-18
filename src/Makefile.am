@@ -115,7 +115,7 @@ bin_PROGRAMS =						\
 	gcm-picker					\
 	gcm-import
 
-if GCM_USE_EXIV
+if HAVE_EXIV
 libexec_PROGRAMS = gcm-helper-exiv
 gcm_helper_exiv_SOURCES = gcm-helper-exiv.cpp
 gcm_helper_exiv_LDADD = $(EXIV_LIBS)
@@ -311,7 +311,7 @@ gcm_session_LDADD =					\
 gcm_session_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
-if GCM_BUILD_TESTS
+if HAVEmake
 
 check_PROGRAMS =					\
 	gcm-self-test

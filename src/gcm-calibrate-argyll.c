@@ -35,7 +35,7 @@
 #include <gio/gio.h>
 #include <stdlib.h>
 #include <gtk/gtk.h>
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 #include <vte/vte.h>
 #endif
 #include <canberra-gtk.h>
@@ -185,7 +185,7 @@ gcm_calibrate_argyll_printer_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 	return patches;
 }
 
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 /**
  * gcm_calibrate_argyll_get_colorimeter_image_attach:
  **/
@@ -369,7 +369,7 @@ static gboolean
 gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll, gchar **argv, GError **error)
 {
 	gboolean ret = FALSE;
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 	const gchar *envp[] = { "ARGYLL_NOT_INTERACTIVE", NULL };
 	const gchar *working_directory;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
@@ -494,7 +494,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 		ret = FALSE;
 		goto out;
 	}
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
@@ -586,7 +586,7 @@ gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll, G
 		ret = FALSE;
 		goto out;
 	}
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
@@ -693,7 +693,7 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 		ret = FALSE;
 		goto out;
 	}
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
@@ -789,7 +789,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 		ret = FALSE;
 		goto out;
 	}
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
@@ -906,7 +906,7 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 		ret = FALSE;
 		goto out;
 	}
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
@@ -1128,7 +1128,7 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 		ret = FALSE;
 		goto out;
 	}
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
@@ -1253,7 +1253,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 		ret = FALSE;
 		goto out;
 	}
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
@@ -1504,7 +1504,7 @@ gcm_calibrate_argyll_spotread_read_chart (GcmCalibrateArgyll *calibrate_argyll, 
 		ret = FALSE;
 		goto out;
 	}
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
@@ -1668,7 +1668,7 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 		ret = FALSE;
 		goto out;
 	}
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
 		gchar *vte_text;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
@@ -2216,7 +2216,7 @@ out:
 	return ret;
 }
 
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 /**
  * gcm_calibrate_argyll_exit_cb:
  **/
@@ -2726,7 +2726,7 @@ out:
 }
 #endif
 
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 /**
  * gcm_calibrate_argyll_selection_func_cb:
  **/
@@ -2796,7 +2796,7 @@ gcm_calibrate_argyll_response_cb (GtkWidget *widget, GtkResponseType response, G
 		/* send input if waiting */
 		if (priv->state == GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN) {
 			egg_debug ("sending '%s' to argyll", priv->argyllcms_ok);
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 			vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), priv->argyllcms_ok, 1);
 #endif
 			gcm_calibrate_dialog_pop (priv->calibrate_dialog);
@@ -2818,7 +2818,7 @@ gcm_calibrate_argyll_response_cb (GtkWidget *widget, GtkResponseType response, G
 		/* send input if waiting */
 		if (priv->state == GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN) {
 			egg_debug ("sending 'Q' to argyll");
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 			vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), "Q", 1);
 #endif
 			priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
@@ -2966,7 +2966,7 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 	calibrate_argyll->priv->screen = gcm_screen_new ();
 
 	/* add vte widget */
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 	calibrate_argyll->priv->terminal = vte_terminal_new ();
 	vte_terminal_set_size (VTE_TERMINAL(calibrate_argyll->priv->terminal), 80, 10);
 	g_signal_connect (calibrate_argyll->priv->terminal, "child-exited",
@@ -2996,7 +2996,7 @@ gcm_calibrate_argyll_finalize (GObject *object)
 		g_main_loop_run (priv->loop);
 	}
 
-#ifdef GCM_USE_VTE
+#ifdef HAVE_VTE
 	/* we don't care if the VTE widget redraws now */
 	g_signal_handlers_disconnect_by_func (calibrate_argyll->priv->terminal,
 					      G_CALLBACK (gcm_calibrate_argyll_exit_cb),

@@ -24,8 +24,9 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <locale.h>
+#ifdef HAVE_LIBNOTIFY
 #include <libnotify/notify.h>
-
+#endif
 #include "egg-debug.h"
 
 #include "gcm-client.h"
@@ -67,6 +68,7 @@ gcm_session_check_idle_cb (gpointer user_data)
 	return TRUE;
 }
 
+#ifdef HAVE_LIBNOTIFY
 /**
  * gcm_session_notify_cb:
  **/
@@ -88,6 +90,7 @@ gcm_session_notify_cb (NotifyNotification *notification, gchar *action, gpointer
 		}
 	}
 }
+#endif
 
 /**
  * gcm_session_notify_recalibrate:

@@ -199,7 +199,7 @@ out:
 	return ret;
 }
 
-#ifdef GCM_USE_EXIV
+#ifdef HAVE_EXIV
 /**
  * gcm_exif_parse_exiv:
  **/
@@ -296,7 +296,7 @@ gcm_exif_parse (GcmExif *exif, GFile *file, GError **error)
 		goto out;
 	}
 
-#ifdef GCM_USE_EXIV
+#ifdef HAVE_EXIV
 	if (g_strcmp0 (content_type, "image/x-adobe-dng") == 0 ||
 	    g_strcmp0 (content_type, "image/x-canon-crw") == 0 ||
 	    g_strcmp0 (content_type, "image/x-fuji-raf") == 0 ||

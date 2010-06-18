@@ -112,9 +112,16 @@ PKG_CHECK_MODULES(NOTIFY, libnotify)
 
 dnl **** Check for VTE ****
 PKG_CHECK_MODULES(VTE, vte3 >= 0.25.1, has_vte=yes, has_vte=no)
-AM_CONDITIONAL(GCM_USE_VTE, test x$has_vte = xyes)
+AM_CONDITIONAL(HAVE_VTE, test x$has_vte = xyes)
 if test x$has_vte = xyes; then
-	AC_DEFINE(GCM_USE_VTE,1,[Use VTE terminal widget])
+	AC_DEFINE(HAVE_VTE,1,[Use VTE terminal widget])
+fi
+
+dnl **** Check for LIBNOTIFY ****
+PKG_CHECK_MODULES(LIBNOTIFY, libnotify3 >= 0.4.3, has_libnotify=yes, has_libnotify=no)
+AM_CONDITIONAL(HAVE_LIBNOTIFY, test x$libnotify = xyes)
+if test x$has_libnotify = xyes; then
+	AC_DEFINE(HAVE_LIBNOTIFY,1,[Use session notifications])
 fi
 
 dnl **** Check for SANE ****
@@ -133,9 +140,9 @@ if test x$enable_sane != xno; then
 		AC_SUBST(SANE_LIBS)
 	fi
 fi
-AM_CONDITIONAL(GCM_USE_SANE, test x$enable_sane = xyes)
+AM_CONDITIONAL(HAVE_SANE, test x$enable_sane = xyes)
 if test x$enable_sane = xyes; then
-	AC_DEFINE(GCM_USE_SANE,1,[Use SANE support for detecting scanners])
+	AC_DEFINE(HAVE_SANE,1,[Use SANE support for detecting scanners])
 fi
 
 AC_ARG_ENABLE(exiv, AS_HELP_STRING([--enable-exiv],[Enable EXIV support for RAW support]), enable_exiv=$enableval,
@@ -144,9 +151,9 @@ dnl **** Check for EXIV ****
 if test x$enable_exiv != xno; then
 	PKG_CHECK_MODULES(EXIV, exiv2)
 fi
-AM_CONDITIONAL(GCM_USE_EXIV, test x$enable_exiv = xyes)
+AM_CONDITIONAL(HAVE_EXIV, test x$enable_exiv = xyes)
 if test x$enable_exiv = xyes; then
-	AC_DEFINE(GCM_USE_EXIV,1,[Use EXIV support for detecting scanners])
+	AC_DEFINE(HAVE_EXIV,1,[Use EXIV support for detecting scanners])
 fi
 
 PKG_CHECK_MODULES(CANBERRA, libcanberra-gtk3 >= 0.10)
@@ -214,9 +221,9 @@ dnl - Use PackageKit to install missing tools
 dnl ---------------------------------------------------------------------------
 AC_ARG_ENABLE(packagekit, AS_HELP_STRING([--enable-packagekit],[enable PackageKit integration]),
 	      enable_packagekit=$enableval,enable_packagekit=yes)
-AM_CONDITIONAL(GCM_USE_PACKAGEKIT, test x$enable_packagekit = xyes)
+AM_CONDITIONAL(HAVE_PACKAGEKIT, test x$enable_packagekit = xyes)
 if test x$enable_packagekit = xyes; then
-	AC_DEFINE(GCM_USE_PACKAGEKIT,1,[Use PackageKit for installing packages])
+	AC_DEFINE(HAVE_PACKAGEKIT,1,[Use PackageKit for installing packages])
 fi
 
 dnl ---------------------------------------------------------------------------
@@ -224,7 +231,7 @@ dnl - Build self tests
 dnl ---------------------------------------------------------------------------
 AC_ARG_ENABLE(tests, AS_HELP_STRING([--enable-tests],[enable unit test code]),
 	      enable_tests=$enableval,enable_tests=yes)
-AM_CONDITIONAL(GCM_BUILD_TESTS, test x$enable_tests = xyes)
+AM_CONDITIONAL(HAVEmake, test x$enable_tests = xyes)
 
 AC_SUBST(GCM_SYSTEM_PROFILES_DIR, "\$(localstatedir)/lib/color")
 
