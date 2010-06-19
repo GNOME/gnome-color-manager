@@ -1,4 +1,22 @@
 <schemalist>
+  <enum id="org.gnome.color-manager.RenderingType">
+    <value nick="perceptual" value="1"/>
+    <value nick="relative-colormetric" value="2"/>
+    <value nick="saturation" value="3"/>
+    <value nick="absolute-colormetric" value="4"/>
+  </enum>
+  <enum id="org.gnome.color-manager.CalibrationLength">
+    <value nick="short" value="0"/>
+    <value nick="normal" value="1"/>
+    <value nick="long" value="2"/>
+    <value nick="ask" value="3"/>
+  </enum>
+  <enum id="org.gnome.color-manager.GraphType">
+    <value nick="none" value="0"/>
+    <value nick="cie-1931-xy" value="1"/>
+    <value nick="trc" value="2"/>
+    <value nick="vcgt" value="3"/>
+  </enum>
   <schema id="org.gnome.color-manager" path="/apps/gnome-color-manager/">
     <key name="default-gamma" type="d">
       <default>1.0</default>
@@ -30,12 +48,12 @@
       <summary>Show the fine tuning controls for display devices</summary>
       <description>If set to TRUE then the fine tuning controls are visible. This allows the user to change the display profile outside of what the ICC profile suggests and is only recommended for advanced users.</description>
     </key>
-    <key name="rendering-intent-display" type="s">
+    <key name="rendering-intent-display" enum="org.gnome.color-manager.RenderingType">
       <default>'perceptual'</default>
       <summary>The rendering intent to use for the display, e.g. 'perceptual'</summary>
       <description>The rendering intent to use for the display, e.g. 'perceptual'.</description>
     </key>
-    <key name="rendering-intent-softproof" type="s">
+    <key name="rendering-intent-softproof" enum="org.gnome.color-manager.RenderingType">
       <default>'perceptual'</default>
       <summary>The rendering intent to use for softproofs, e.g. 'perceptual'</summary>
       <description>The rendering intent to use for softproofs, e.g. 'perceptual'.</description>
@@ -50,7 +68,7 @@
       <summary>The default CMYK profile</summary>
       <description>The CMYK profile filename to be used by applications by default.</description>
     </key>
-    <key name="calibration-length" type="s">
+    <key name="calibration-length" enum="org.gnome.color-manager.CalibrationLength">
       <default>'ask'</default>
       <summary>The default calibration length</summary>
       <description>The length of calibration, as this is proportional to the accuracy. The option 'short' creates a quick profile, 'normal' a regular one, and 'long' takes a really long time, but is more precise and creates a better profile. Use 'ask' if you want the user to choose.</description>
@@ -80,7 +98,7 @@
       <summary>If CUPS support is enabled</summary>
       <description>This allows the user to disable printer support if attached devices fail when probed.</description>
     </key>
-    <key name="profile-graph-type" type="s">
+    <key name="profile-graph-type" enum="org.gnome.color-manager.GraphType">
       <default>'cie-1931-xy'</default>
       <summary>The graph type to show in the properties page</summary>
       <description>The graph type in the properties page. This should not be changed manually as this is set from the UI.</description>
