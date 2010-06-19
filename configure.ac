@@ -108,7 +108,6 @@ PKG_CHECK_MODULES(GNOMEDESKTOP, gnome-desktop-3.0 >= 2.90.0)
 PKG_CHECK_MODULES(GUDEV, gudev-1.0)
 PKG_CHECK_MODULES(LCMS, lcms)
 PKG_CHECK_MODULES(X11, x11)
-PKG_CHECK_MODULES(NOTIFY, libnotify)
 
 dnl **** Check for VTE ****
 PKG_CHECK_MODULES(VTE, vte3 >= 0.25.1, has_vte=yes, has_vte=no)
