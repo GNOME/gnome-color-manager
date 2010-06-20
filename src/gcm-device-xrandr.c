@@ -469,6 +469,31 @@ gcm_device_xrandr_get_config_data (GcmDevice *device)
 }
 
 /**
+ * gcm_device_xrandr_is_primary:
+ *
+ * Return value: %TRUE is the monitor is left-most
+ **/
+gboolean
+gcm_device_xrandr_is_primary (GcmDeviceXrandr *device_xrandr)
+{
+	gint x, y;
+	gboolean ret = FALSE;
+	GnomeRROutput *output;
+
+	/* check we have an output */
+	output = gcm_screen_get_output_by_name (device_xrandr->priv->screen,
+						device_xrandr->priv->output_name, NULL);
+	if (output == NULL)
+		goto out;
+
+	/* is the monitor our primary monitor */
+	gnome_rr_output_get_position (output, &x, &y);
+	ret = (x == 0 && y == 0);
+out:
+	return ret;
+}
+
+/**
  * gcm_device_xrandr_apply:
  *
  * Return value: %TRUE for success;
