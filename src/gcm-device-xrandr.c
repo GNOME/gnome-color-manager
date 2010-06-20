@@ -482,7 +482,7 @@ gcm_device_xrandr_is_primary (GcmDeviceXrandr *device_xrandr)
 
 	/* check we have an output */
 	output = gcm_screen_get_output_by_name (device_xrandr->priv->screen,
-						device_xrandr->priv->output_name, NULL);
+						device_xrandr->priv->native_device, NULL);
 	if (output == NULL)
 		goto out;
 
