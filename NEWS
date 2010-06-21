@@ -1,3 +1,37 @@
+Version 2.31.3
+~~~~~~~~~~~~~~
+Released: 2010-06-21
+
+* Translations
+ - Added Galician translations (Fran Diéguez)
+ - Added Hebrew translation (Yaron Shahrabani)
+ - Added Norwegian bokmål translation (Kjartan Maraas)
+ - Updated Indonesian translation (Andika Triwidada)
+ - Updated Italian translation (Francesco Groccia)
+ - Updated Norwegian bokmål translation (Kjartan Maraas)
+ - Updated Punjabi Translation (A S Alam)
+ - Updated Spanish translation (Jorge González)
+ - Updated Galician translations (Fran Diéguez)
+ - Updated Hebrew translation (Yaron Shahrabani)
+
+* New Features:
+ - Require GTK3 as per the GNOME release team announcement (Richard Hughes)
+ - Port to GtkApplication (Richard Hughes)
+ - Port to GDBus (Richard Hughes)
+ - Use the GSetting enum functionality (Richard Hughes)
+ - Make libnotify optional dependency as it relies on gtk-2.0 (Richard Hughes)
+ - Make VTE optional as it relies on gtk-2.0 (Richard Hughes)
+ - Require libcanberra-gtk3 (Richard Hughes)
+ - Require gnome-desktop3 (Richard Hughes)
+
+* Bugfix:
+ - Disconnect the VTE callbacks when ending the calibration to prevent a nasty crash (Richard Hughes)
+ - Only emit ::added signals from the main thread, not the coldplug threads (Richard Hughes)
+ - Redo the graph UI in the profiles page to be more HIG friendly (Richard Hughes)
+ - Save the EDID MD5 hash to device-profiles.conf for xrandr devices (Richard Hughes)
+ - Set the calibrate button insensitive if VTE is unavailable (Richard Hughes)
+ - Use the same term 'calibration target' thoughout the UI (Richard Hughes)
+
 Version 2.31.2
 ~~~~~~~~~~~~~~
 Released: 2010-06-02
