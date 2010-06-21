@@ -46,22 +46,25 @@
 #include "gcm-utils.h"
 #include "gcm-xyz.h"
 
-static GtkBuilder *builder = NULL;
-static GtkListStore *list_store_devices = NULL;
-static GtkListStore *list_store_profiles = NULL;
-static GtkListStore *list_store_assign = NULL;
-static GcmDevice *current_device = NULL;
-static GcmProfileStore *profile_store = NULL;
-static GcmClient *gcm_client = NULL;
-static GcmColorimeter *colorimeter = NULL;
-static gboolean setting_up_device = FALSE;
-static GtkWidget *info_bar_loading = NULL;
-static GtkWidget *info_bar_vcgt = NULL;
-static GtkWidget *info_bar_profiles = NULL;
-static GtkWidget *cie_widget = NULL;
-static GtkWidget *trc_widget = NULL;
-static GtkWidget *vcgt_widget = NULL;
-static GSettings *settings = NULL;
+typedef struct {
+	GtkBuilder	*builder;
+	GtkApplication	*application;
+	GtkListStore	*list_store_devices;
+	GtkListStore	*list_store_profiles;
+	GtkListStore	*list_store_assign;
+	GcmDevice	*current_device;
+	GcmProfileStore	*profile_store;
+	GcmClient	*gcm_client;
+	GcmColorimeter	*colorimeter;
+	gboolean	 setting_up_device;
+	GtkWidget	*info_bar_loading;
+	GtkWidget	*info_bar_vcgt;
+	GtkWidget	*info_bar_profiles;
+	GtkWidget	*cie_widget;
+	GtkWidget	*trc_widget;
+	GtkWidget	*vcgt_widget;
+	GSettings	*settings;
+} GcmPrefsData;
 
 enum {
 	GCM_DEVICES_COLUMN_ID,
@@ -100,8 +103,8 @@ typedef enum {
 	GCM_PREFS_ENTRY_TYPE_LAST
 } GcmPrefsEntryType;
 
-static void gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer userdata);
-static void gcm_prefs_profile_store_changed_cb (GcmProfileStore *_profile_store, gpointer user_data);
+static void gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, GcmPrefsData *prefsdata);
+static void gcm_prefs_profile_store_changed_cb (GcmProfileStore *profile_store, GcmPrefsData *prefsdata);
 
 #define GCM_PREFS_TREEVIEW_MAIN_WIDTH		350 /* px */
 #define GCM_PREFS_TREEVIEW_PROFILES_WIDTH	450 /* px */
@@ -110,12 +113,12 @@ static void gcm_prefs_profile_store_changed_cb (GcmProfileStore *_profile_store,
  * gcm_prefs_error_dialog:
  **/
 static void
-gcm_prefs_error_dialog (const gchar *title, const gchar *message)
+gcm_prefs_error_dialog (GcmPrefsData *prefsdata, const gchar *title, const gchar *message)
 {
 	GtkWindow *window;
 	GtkWidget *dialog;
 
-	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	window = GTK_WINDOW(gtk_builder_get_object (prefsdata->builder, "dialog_prefs"));
 	dialog = gtk_message_dialog_new (window, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, "%s", title);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", message);
@@ -127,17 +130,16 @@ gcm_prefs_error_dialog (const gchar *title, const gchar *message)
  * gcm_prefs_close_cb:
  **/
 static void
-gcm_prefs_close_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_close_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
-	GtkApplication *application = (GtkApplication *) data;
-	gtk_application_quit (application);
+	gtk_application_quit (prefsdata->application);
 }
 
 /**
  * gcm_prefs_set_default:
  **/
 static gboolean
-gcm_prefs_set_default (GcmDevice *device)
+gcm_prefs_set_default (GcmPrefsData *prefsdata, GcmDevice *device)
 {
 	GError *error = NULL;
 	gboolean ret = FALSE;
@@ -161,7 +163,7 @@ gcm_prefs_set_default (GcmDevice *device)
 	ret = g_spawn_command_line_sync (cmdline, NULL, NULL, NULL, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not save for all users */
-		gcm_prefs_error_dialog (_("Failed to save defaults for all users"), error->message);
+		gcm_prefs_error_dialog (prefsdata, _("Failed to save defaults for all users"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -212,7 +214,7 @@ gcm_prefs_combobox_add_profile (GtkWidget *widget, GcmProfile *profile, GcmPrefs
  * gcm_prefs_default_cb:
  **/
 static void
-gcm_prefs_default_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_default_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	GPtrArray *array = NULL;
 	GcmDevice *device;
@@ -221,7 +223,7 @@ gcm_prefs_default_cb (GtkWidget *widget, gpointer data)
 	guint i;
 
 	/* set for each output */
-	array = gcm_client_get_devices (gcm_client);
+	array = gcm_client_get_devices (prefsdata->gcm_client);
 	for (i=0; i<array->len; i++) {
 		device = g_ptr_array_index (array, i);
 
@@ -231,7 +233,7 @@ gcm_prefs_default_cb (GtkWidget *widget, gpointer data)
 			continue;
 
 		/* set for this device */
-		ret = gcm_prefs_set_default (device);
+		ret = gcm_prefs_set_default (prefsdata, device);
 		if (!ret)
 			break;
 	}
@@ -242,7 +244,7 @@ gcm_prefs_default_cb (GtkWidget *widget, gpointer data)
  * gcm_prefs_help_cb:
  **/
 static void
-gcm_prefs_help_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_help_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	gcm_gnome_help ("preferences");
 }
@@ -251,9 +253,9 @@ gcm_prefs_help_cb (GtkWidget *widget, gpointer data)
  * gcm_prefs_delete_event_cb:
  **/
 static gboolean
-gcm_prefs_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
+gcm_prefs_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmPrefsData *prefsdata)
 {
-	gcm_prefs_close_cb (widget, data);
+	gcm_prefs_close_cb (widget, prefsdata);
 	return FALSE;
 }
 
@@ -261,7 +263,7 @@ gcm_prefs_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
  * gcm_prefs_calibrate_display:
  **/
 static gboolean
-gcm_prefs_calibrate_display (GcmCalibrate *calibrate)
+gcm_prefs_calibrate_display (GcmPrefsData *prefsdata, GcmCalibrate *calibrate)
 {
 	gboolean ret = FALSE;
 	gboolean ret_tmp;
@@ -269,11 +271,11 @@ gcm_prefs_calibrate_display (GcmCalibrate *calibrate)
 	GtkWindow *window;
 
 	/* no device */
-	if (current_device == NULL)
+	if (prefsdata->current_device == NULL)
 		goto out;
 
 	/* set properties from the device */
-	ret = gcm_calibrate_set_from_device (calibrate, current_device, &error);
+	ret = gcm_calibrate_set_from_device (calibrate, prefsdata->current_device, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
@@ -281,7 +283,7 @@ gcm_prefs_calibrate_display (GcmCalibrate *calibrate)
 	}
 
 	/* run each task in order */
-	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	window = GTK_WINDOW(gtk_builder_get_object (prefsdata->builder, "dialog_prefs"));
 	ret = gcm_calibrate_display (calibrate, window, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
@@ -291,7 +293,7 @@ gcm_prefs_calibrate_display (GcmCalibrate *calibrate)
 out:
 	/* need to set the gamma back to the default after calibration */
 	error = NULL;
-	ret_tmp = gcm_device_apply (current_device, &error);
+	ret_tmp = gcm_device_apply (prefsdata->current_device, &error);
 	if (!ret_tmp) {
 		egg_warning ("failed to apply profile: %s", error->message);
 		g_error_free (error);
@@ -303,14 +305,14 @@ out:
  * gcm_prefs_calibrate_device:
  **/
 static gboolean
-gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
+gcm_prefs_calibrate_device (GcmPrefsData *prefsdata, GcmCalibrate *calibrate)
 {
 	gboolean ret = FALSE;
 	GError *error = NULL;
 	GtkWindow *window;
 
 	/* set defaults from device */
-	ret = gcm_calibrate_set_from_device (calibrate, current_device, &error);
+	ret = gcm_calibrate_set_from_device (calibrate, prefsdata->current_device, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
@@ -318,12 +320,12 @@ gcm_prefs_calibrate_device (GcmCalibrate *calibrate)
 	}
 
 	/* do each step */
-	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	window = GTK_WINDOW(gtk_builder_get_object (prefsdata->builder, "dialog_prefs"));
 	ret = gcm_calibrate_device (calibrate, window, &error);
 	if (!ret) {
 		if (error->code != GCM_CALIBRATE_ERROR_USER_ABORT) {
 			/* TRANSLATORS: could not calibrate */
-			gcm_prefs_error_dialog (_("Failed to calibrate device"), error->message);
+			gcm_prefs_error_dialog (prefsdata, _("Failed to calibrate device"), error->message);
 		} else {
 			egg_warning ("failed to calibrate: %s", error->message);
 		}
@@ -338,14 +340,14 @@ out:
  * gcm_prefs_calibrate_printer:
  **/
 static gboolean
-gcm_prefs_calibrate_printer (GcmCalibrate *calibrate)
+gcm_prefs_calibrate_printer (GcmPrefsData *prefsdata, GcmCalibrate *calibrate)
 {
 	gboolean ret = FALSE;
 	GError *error = NULL;
 	GtkWindow *window;
 
 	/* set defaults from device */
-	ret = gcm_calibrate_set_from_device (calibrate, current_device, &error);
+	ret = gcm_calibrate_set_from_device (calibrate, prefsdata->current_device, &error);
 	if (!ret) {
 		egg_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
@@ -353,12 +355,12 @@ gcm_prefs_calibrate_printer (GcmCalibrate *calibrate)
 	}
 
 	/* do each step */
-	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	window = GTK_WINDOW(gtk_builder_get_object (prefsdata->builder, "dialog_prefs"));
 	ret = gcm_calibrate_printer (calibrate, window, &error);
 	if (!ret) {
 		if (error->code != GCM_CALIBRATE_ERROR_USER_ABORT) {
 			/* TRANSLATORS: could not calibrate */
-			gcm_prefs_error_dialog (_("Failed to calibrate printer"), error->message);
+			gcm_prefs_error_dialog (prefsdata, _("Failed to calibrate printer"), error->message);
 		} else {
 			egg_warning ("failed to calibrate: %s", error->message);
 		}
@@ -405,7 +407,7 @@ gcm_prefs_profile_get_sort_string (GcmProfileKind kind)
  * gcm_prefs_update_profile_list:
  **/
 static void
-gcm_prefs_update_profile_list (void)
+gcm_prefs_update_profile_list (GcmPrefsData *prefsdata)
 {
 	GtkTreeIter iter;
 	const gchar *description;
@@ -420,10 +422,10 @@ gcm_prefs_update_profile_list (void)
 	egg_debug ("updating profile list");
 
 	/* get new list */
-	profile_array = gcm_profile_store_get_array (profile_store);
+	profile_array = gcm_profile_store_get_array (prefsdata->profile_store);
 
 	/* clear existing list */
-	gtk_list_store_clear (list_store_profiles);
+	gtk_list_store_clear (prefsdata->list_store_profiles);
 
 	/* update each list */
 	for (i=0; i<profile_array->len; i++) {
@@ -431,14 +433,14 @@ gcm_prefs_update_profile_list (void)
 
 		profile_kind = gcm_profile_get_kind (profile);
 		icon_name = gcm_prefs_profile_kind_to_icon_name (profile_kind);
-		gtk_list_store_append (list_store_profiles, &iter);
+		gtk_list_store_append (prefsdata->list_store_profiles, &iter);
 		description = gcm_profile_get_description (profile);
 		sort = g_strdup_printf ("%s%s",
 					gcm_prefs_profile_get_sort_string (profile_kind),
 					description);
 		filename = gcm_profile_get_filename (profile);
 		egg_debug ("add %s to profiles list", filename);
-		gtk_list_store_set (list_store_profiles, &iter,
+		gtk_list_store_set (prefsdata->list_store_profiles, &iter,
 				    GCM_PROFILES_COLUMN_ID, filename,
 				    GCM_PROFILES_COLUMN_SORT, sort,
 				    GCM_PROFILES_COLUMN_ICON, icon_name,
@@ -455,7 +457,7 @@ gcm_prefs_update_profile_list (void)
  * gcm_prefs_profile_delete_cb:
  **/
 static void
-gcm_prefs_profile_delete_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_profile_delete_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	GtkWidget *dialog;
 	GtkResponseType response;
@@ -468,7 +470,7 @@ gcm_prefs_profile_delete_cb (GtkWidget *widget, gpointer data)
 	GtkTreeIter iter;
 
 	/* ask the user to confirm */
-	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	window = GTK_WINDOW(gtk_builder_get_object (prefsdata->builder, "dialog_prefs"));
 	dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CANCEL,
 					 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
 					 _("Permanently delete profile?"));
@@ -484,7 +486,7 @@ gcm_prefs_profile_delete_cb (GtkWidget *widget, gpointer data)
 		goto out;
 
 	/* get the selected row */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_profiles"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "treeview_profiles"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		egg_debug ("no row selected");
@@ -509,7 +511,7 @@ out:
  * gcm_prefs_file_chooser_get_icc_profile:
  **/
 static GFile *
-gcm_prefs_file_chooser_get_icc_profile (void)
+gcm_prefs_file_chooser_get_icc_profile (GcmPrefsData *prefsdata)
 {
 	GtkWindow *window;
 	GtkWidget *dialog;
@@ -517,7 +519,7 @@ gcm_prefs_file_chooser_get_icc_profile (void)
 	GtkFileFilter *filter;
 
 	/* create new dialog */
-	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	window = GTK_WINDOW(gtk_builder_get_object (prefsdata->builder, "dialog_prefs"));
 	/* TRANSLATORS: dialog for file->open dialog */
 	dialog = gtk_file_chooser_dialog_new (_("Select ICC Profile File"), window,
 					       GTK_FILE_CHOOSER_ACTION_OPEN,
@@ -565,7 +567,7 @@ gcm_prefs_file_chooser_get_icc_profile (void)
  * gcm_prefs_profile_import_file:
  **/
 static gboolean
-gcm_prefs_profile_import_file (GFile *file)
+gcm_prefs_profile_import_file (GcmPrefsData *prefsdata, GFile *file)
 {
 	gboolean ret;
 	GError *error = NULL;
@@ -583,7 +585,7 @@ gcm_prefs_profile_import_file (GFile *file)
 	ret = gcm_utils_mkdir_and_copy (file, destination, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */
-		gcm_prefs_error_dialog (_("Failed to copy file"), error->message);
+		gcm_prefs_error_dialog (prefsdata, _("Failed to copy file"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -597,7 +599,7 @@ out:
  * gcm_prefs_profile_add_virtual_file:
  **/
 static gboolean
-gcm_prefs_profile_add_virtual_file (GFile *file)
+gcm_prefs_profile_add_virtual_file (GcmPrefsData *prefsdata, GFile *file)
 {
 	gboolean ret;
 	GcmExif *exif;
@@ -611,7 +613,7 @@ gcm_prefs_profile_add_virtual_file (GFile *file)
 		/* TRANSLATORS: could not add virtual device */
 		if (error->domain != GCM_EXIF_ERROR ||
 		    error->code != GCM_EXIF_ERROR_NO_SUPPORT)
-			gcm_prefs_error_dialog (_("Failed to get metadata from image"), error->message);
+			gcm_prefs_error_dialog (prefsdata, _("Failed to get metadata from image"), error->message);
 		else
 			egg_debug ("not a supported image format: %s", error->message);
 		g_error_free (error);
@@ -628,7 +630,7 @@ gcm_prefs_profile_add_virtual_file (GFile *file)
 						     GCM_COLORSPACE_RGB);
 	if (!ret) {
 		/* TRANSLATORS: could not add virtual device */
-		gcm_prefs_error_dialog (_("Failed to create virtual device"), NULL);
+		gcm_prefs_error_dialog (prefsdata, _("Failed to create virtual device"), NULL);
 		goto out;
 	}
 
@@ -636,16 +638,16 @@ gcm_prefs_profile_add_virtual_file (GFile *file)
 	ret = gcm_device_save (device, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not add virtual device */
-		gcm_prefs_error_dialog (_("Failed to save virtual device"), error->message);
+		gcm_prefs_error_dialog (prefsdata, _("Failed to save virtual device"), error->message);
 		g_error_free (error);
 		goto out;
 	}
 
 	/* add to the device list */
-	ret = gcm_client_add_device (gcm_client, device, &error);
+	ret = gcm_client_add_device (prefsdata->gcm_client, device, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not add virtual device */
-		gcm_prefs_error_dialog (_("Failed to add virtual device"), error->message);
+		gcm_prefs_error_dialog (prefsdata, _("Failed to add virtual device"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -660,19 +662,19 @@ out:
  * gcm_prefs_profile_import_cb:
  **/
 static void
-gcm_prefs_profile_import_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_profile_import_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	GFile *file;
 
 	/* get new file */
-	file = gcm_prefs_file_chooser_get_icc_profile ();
+	file = gcm_prefs_file_chooser_get_icc_profile (prefsdata);
 	if (file == NULL) {
 		egg_warning ("failed to get filename");
 		goto out;
 	}
 
 	/* import this */
-	gcm_prefs_profile_import_file (file);
+	gcm_prefs_profile_import_file (prefsdata, file);
 out:
 	if (file != NULL)
 		g_object_unref (file);
@@ -682,7 +684,7 @@ out:
  * gcm_prefs_drag_data_received_cb:
  **/
 static void
-gcm_prefs_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint _time, gpointer user_data)
+gcm_prefs_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint _time, GcmPrefsData *prefsdata)
 {
 	const guchar *filename;
 	gchar **filenames = NULL;
@@ -711,12 +713,12 @@ gcm_prefs_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gin
 		file = g_file_new_for_uri (filenames[i]);
 
 		/* try to import it */
-		ret = gcm_prefs_profile_import_file (file);
+		ret = gcm_prefs_profile_import_file (prefsdata, file);
 		if (ret)
 			success = TRUE;
 
 		/* try to add a virtual profile with it */
-		ret = gcm_prefs_profile_add_virtual_file (file);
+		ret = gcm_prefs_profile_add_virtual_file (prefsdata, file);
 		if (ret)
 			success = TRUE;
 
@@ -732,7 +734,7 @@ out:
  * gcm_prefs_virtual_set_from_file:
  **/
 static gboolean
-gcm_prefs_virtual_set_from_file (GFile *file)
+gcm_prefs_virtual_set_from_file (GcmPrefsData *prefsdata, GFile *file)
 {
 	gboolean ret;
 	GcmExif *exif;
@@ -753,17 +755,17 @@ gcm_prefs_virtual_set_from_file (GFile *file)
 	/* set model and manufacturer */
 	model = gcm_exif_get_model (exif);
 	if (model != NULL) {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_model"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "entry_virtual_model"));
 		gtk_entry_set_text (GTK_ENTRY (widget), model);
 	}
 	manufacturer = gcm_exif_get_manufacturer (exif);
 	if (manufacturer != NULL) {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_manufacturer"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "entry_virtual_manufacturer"));
 		gtk_entry_set_text (GTK_ENTRY (widget), manufacturer);
 	}
 
 	/* set type */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_virtual_type"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "combobox_virtual_type"));
 	gtk_combo_box_set_active (GTK_COMBO_BOX(widget), GCM_DEVICE_KIND_CAMERA - 2);
 out:
 	g_object_unref (exif);
@@ -775,7 +777,7 @@ out:
  **/
 static void
 gcm_prefs_virtual_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gint x, gint y,
-					 GtkSelectionData *data, guint _time, gpointer user_data)
+					 GtkSelectionData *data, guint _time, GcmPrefsData *prefsdata)
 {
 	const guchar *filename;
 	gchar **filenames = NULL;
@@ -804,7 +806,7 @@ gcm_prefs_virtual_drag_data_received_cb (GtkWidget *widget, GdkDragContext *cont
 		/* check this is an ICC profile */
 		egg_debug ("trying to set %s", filenames[i]);
 		file = g_file_new_for_uri (filenames[i]);
-		ret = gcm_prefs_virtual_set_from_file (file);
+		ret = gcm_prefs_virtual_set_from_file (prefsdata, file);
 		if (!ret) {
 			egg_debug ("%s did not set from file correctly", filenames[i]);
 			gtk_drag_finish (context, FALSE, FALSE, _time);
@@ -825,7 +827,7 @@ out:
  * gcm_prefs_ensure_argyllcms_installed:
  **/
 static gboolean
-gcm_prefs_ensure_argyllcms_installed (void)
+gcm_prefs_ensure_argyllcms_installed (GcmPrefsData *prefsdata)
 {
 	gboolean ret;
 	GtkWindow *window;
@@ -844,7 +846,7 @@ gcm_prefs_ensure_argyllcms_installed (void)
 #endif
 
 	/* ask the user to confirm */
-	window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+	window = GTK_WINDOW(gtk_builder_get_object (prefsdata->builder, "dialog_prefs"));
 	dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
 					 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
 					 _("Install calibration and profiling software?"));
@@ -880,7 +882,7 @@ out:
  * gcm_prefs_calibrate_cb:
  **/
 static void
-gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_calibrate_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	GcmCalibrate *calibrate = NULL;
 	GcmDeviceKind kind;
@@ -896,7 +898,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	gchar *destination = NULL;
 
 	/* ensure argyllcms is installed */
-	ret = gcm_prefs_ensure_argyllcms_installed ();
+	ret = gcm_prefs_ensure_argyllcms_installed (prefsdata);
 	if (!ret)
 		goto out;
 
@@ -904,17 +906,17 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	calibrate = GCM_CALIBRATE(gcm_calibrate_argyll_new ());
 
 	/* choose the correct kind of calibration */
-	kind = gcm_device_get_kind (current_device);
+	kind = gcm_device_get_kind (prefsdata->current_device);
 	switch (kind) {
 	case GCM_DEVICE_KIND_DISPLAY:
-		ret = gcm_prefs_calibrate_display (calibrate);
+		ret = gcm_prefs_calibrate_display (prefsdata, calibrate);
 		break;
 	case GCM_DEVICE_KIND_SCANNER:
 	case GCM_DEVICE_KIND_CAMERA:
-		ret = gcm_prefs_calibrate_device (calibrate);
+		ret = gcm_prefs_calibrate_device (prefsdata, calibrate);
 		break;
 	case GCM_DEVICE_KIND_PRINTER:
-		ret = gcm_prefs_calibrate_printer (calibrate);
+		ret = gcm_prefs_calibrate_printer (prefsdata, calibrate);
 		break;
 	default:
 		egg_warning ("calibration and/or profiling not supported for this device");
@@ -945,7 +947,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* find an existing profile of this name */
-	profile_array = gcm_device_get_profiles (current_device);
+	profile_array = gcm_device_get_profiles (prefsdata->current_device);
 	destination = g_file_get_path (dest);
 	for (i=0; i<profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
@@ -961,8 +963,8 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, gpointer data)
 		egg_debug ("adding: %s", destination);
 
 		/* set this default */
-		gcm_device_set_default_profile_filename (current_device, destination);
-		ret = gcm_device_save (current_device, &error);
+		gcm_device_set_default_profile_filename (prefsdata->current_device, destination);
+		ret = gcm_device_save (prefsdata->current_device, &error);
 		if (!ret) {
 			egg_warning ("failed to save default: %s", error->message);
 			g_error_free (error);
@@ -996,18 +998,18 @@ out:
  * gcm_prefs_device_add_cb:
  **/
 static void
-gcm_prefs_device_add_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_device_add_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	/* show ui */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_virtual"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "dialog_virtual"));
 	gtk_widget_show (widget);
 
 	/* clear entries */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_virtual_type"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "combobox_virtual_type"));
 	gtk_combo_box_set_active (GTK_COMBO_BOX(widget), 0);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_model"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "entry_virtual_model"));
 	gtk_entry_set_text (GTK_ENTRY (widget), "");
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_manufacturer"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "entry_virtual_manufacturer"));
 	gtk_entry_set_text (GTK_ENTRY (widget), "");
 }
 
@@ -1047,7 +1049,7 @@ out:
  * gcm_prefs_add_profiles_suitable_for_devices:
  **/
 static void
-gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, const gchar *profile_filename)
+gcm_prefs_add_profiles_suitable_for_devices (GcmPrefsData *prefsdata, GtkWidget *widget, const gchar *profile_filename)
 {
 	GtkTreeModel *model;
 	guint i;
@@ -1061,7 +1063,7 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, const gchar *pro
 	gtk_list_store_clear (GTK_LIST_STORE (model));
 
 	/* get new list */
-	profile_array = gcm_profile_store_get_array (profile_store);
+	profile_array = gcm_profile_store_get_array (prefsdata->profile_store);
 
 	/* add profiles of the right kind */
 	for (i=0; i<profile_array->len; i++) {
@@ -1072,7 +1074,7 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, const gchar *pro
 			continue;
 
 		/* only add correct types */
-		ret = gcm_prefs_is_profile_suitable_for_device (profile, current_device);
+		ret = gcm_prefs_is_profile_suitable_for_device (profile, prefsdata->current_device);
 		if (!ret)
 			continue;
 
@@ -1090,7 +1092,7 @@ gcm_prefs_add_profiles_suitable_for_devices (GtkWidget *widget, const gchar *pro
  * gcm_prefs_assign_save_profiles_for_device:
  **/
 static void
-gcm_prefs_assign_save_profiles_for_device (GcmDevice *device)
+gcm_prefs_assign_save_profiles_for_device (GcmPrefsData *prefsdata, GcmDevice *device)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -1104,7 +1106,7 @@ gcm_prefs_assign_save_profiles_for_device (GcmDevice *device)
 	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 
 	/* get first element */
-	model = GTK_TREE_MODEL (list_store_assign);
+	model = GTK_TREE_MODEL (prefsdata->list_store_assign);
 	ret = gtk_tree_model_get_iter_first (model, &iter);
 	if (!ret)
 		goto set_profiles;
@@ -1137,7 +1139,7 @@ set_profiles:
 	gcm_device_set_profiles (device, array);
 
 	/* save */
-	ret = gcm_device_save (current_device, &error);
+	ret = gcm_device_save (prefsdata->current_device, &error);
 	if (!ret) {
 		egg_warning ("failed to save config: %s", error->message);
 		g_error_free (error);
@@ -1145,7 +1147,7 @@ set_profiles:
 	}
 
 	/* set the profile */
-	ret = gcm_device_apply (current_device, &error);
+	ret = gcm_device_apply (prefsdata->current_device, &error);
 	if (!ret) {
 		egg_warning ("failed to apply profile: %s", error->message);
 		g_error_free (error);
@@ -1159,17 +1161,17 @@ out:
  * gcm_prefs_assign_add_cb:
  **/
 static void
-gcm_prefs_assign_add_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_assign_add_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	const gchar *profile_filename;
 
 	/* add profiles of the right kind */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
-	profile_filename = gcm_device_get_default_profile_filename (current_device);
-	gcm_prefs_add_profiles_suitable_for_devices (widget, profile_filename);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "combobox_profile"));
+	profile_filename = gcm_device_get_default_profile_filename (prefsdata->current_device);
+	gcm_prefs_add_profiles_suitable_for_devices (prefsdata, widget, profile_filename);
 
 	/* show the dialog */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_assign"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "dialog_assign"));
 	gtk_widget_show (widget);
 }
 
@@ -1177,7 +1179,7 @@ gcm_prefs_assign_add_cb (GtkWidget *widget, gpointer data)
  * gcm_prefs_assign_remove_cb:
  **/
 static void
-gcm_prefs_assign_remove_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_assign_remove_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	GtkTreeIter iter;
 	GtkTreeSelection *selection;
@@ -1186,7 +1188,7 @@ gcm_prefs_assign_remove_cb (GtkWidget *widget, gpointer data)
 	gboolean ret;
 
 	/* get the selected row */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_assign"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "treeview_assign"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		egg_debug ("no row selected");
@@ -1205,12 +1207,12 @@ gcm_prefs_assign_remove_cb (GtkWidget *widget, gpointer data)
 	if (is_default) {
 		ret = gtk_tree_model_get_iter_first (model, &iter);
 		if (ret) {
-			gtk_list_store_set (list_store_assign, &iter,
+			gtk_list_store_set (prefsdata->list_store_assign, &iter,
 					    GCM_ASSIGN_COLUMN_IS_DEFAULT, TRUE,
 					    GCM_ASSIGN_COLUMN_SORT, "0",
 					    -1);
 			do {
-				gtk_list_store_set (list_store_assign, &iter,
+				gtk_list_store_set (prefsdata->list_store_assign, &iter,
 						    GCM_ASSIGN_COLUMN_SORT, "1",
 						    -1);
 			} while (gtk_tree_model_iter_next (model, &iter));
@@ -1218,7 +1220,7 @@ gcm_prefs_assign_remove_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* save device */
-	gcm_prefs_assign_save_profiles_for_device (current_device);
+	gcm_prefs_assign_save_profiles_for_device (prefsdata, prefsdata->current_device);
 out:
 	return;
 }
@@ -1227,7 +1229,7 @@ out:
  * gcm_prefs_assign_make_default_internal:
  **/
 static void
-gcm_prefs_assign_make_default_internal (GtkTreeModel *model, GtkTreeIter *iter_selected)
+gcm_prefs_assign_make_default_internal (GcmPrefsData *prefsdata, GtkTreeModel *model, GtkTreeIter *iter_selected)
 {
 	GtkTreeIter iter;
 	GtkWidget *widget;
@@ -1235,38 +1237,38 @@ gcm_prefs_assign_make_default_internal (GtkTreeModel *model, GtkTreeIter *iter_s
 	/* make none of the devices default */
 	gtk_tree_model_get_iter_first (model, &iter);
 	do {
-		gtk_list_store_set (list_store_assign, &iter,
+		gtk_list_store_set (prefsdata->list_store_assign, &iter,
 				    GCM_ASSIGN_COLUMN_SORT, "1",
 				    GCM_ASSIGN_COLUMN_IS_DEFAULT, FALSE,
 				    -1);
 	} while (gtk_tree_model_iter_next (model, &iter));
 
 	/* make the selected device default */
-	gtk_list_store_set (list_store_assign, iter_selected,
+	gtk_list_store_set (prefsdata->list_store_assign, iter_selected,
 			    GCM_ASSIGN_COLUMN_IS_DEFAULT, TRUE,
 			    GCM_ASSIGN_COLUMN_SORT, "0",
 			    -1);
 
 	/* set button insensitive */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_assign_make_default"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_assign_make_default"));
 	gtk_widget_set_sensitive (widget, FALSE);
 
 	/* save device */
-	gcm_prefs_assign_save_profiles_for_device (current_device);
+	gcm_prefs_assign_save_profiles_for_device (prefsdata, prefsdata->current_device);
 }
 
 /**
  * gcm_prefs_assign_make_default_cb:
  **/
 static void
-gcm_prefs_assign_make_default_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_assign_make_default_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
 
 	/* get the selected row */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_assign"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "treeview_assign"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		egg_debug ("no row selected");
@@ -1274,14 +1276,14 @@ gcm_prefs_assign_make_default_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* make this profile the default */
-	gcm_prefs_assign_make_default_internal (model, &iter);
+	gcm_prefs_assign_make_default_internal (prefsdata, model, &iter);
 }
 
 /**
  * gcm_prefs_button_virtual_add_cb:
  **/
 static void
-gcm_prefs_button_virtual_add_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_button_virtual_add_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	GcmDeviceKind device_kind;
 	GcmDevice *device;
@@ -1291,11 +1293,11 @@ gcm_prefs_button_virtual_add_cb (GtkWidget *widget, gpointer data)
 	GError *error = NULL;
 
 	/* get device details */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_virtual_type"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "combobox_virtual_type"));
 	device_kind = gtk_combo_box_get_active (GTK_COMBO_BOX(widget)) + 2;
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_model"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "entry_virtual_model"));
 	model = gtk_entry_get_text (GTK_ENTRY (widget));
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_manufacturer"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "entry_virtual_manufacturer"));
 	manufacturer = gtk_entry_get_text (GTK_ENTRY (widget));
 
 	/* create device */
@@ -1305,7 +1307,7 @@ gcm_prefs_button_virtual_add_cb (GtkWidget *widget, gpointer data)
 						     NULL, GCM_COLORSPACE_RGB);
 	if (!ret) {
 		/* TRANSLATORS: could not add virtual device */
-		gcm_prefs_error_dialog (_("Failed to create virtual device"), NULL);
+		gcm_prefs_error_dialog (prefsdata, _("Failed to create virtual device"), NULL);
 		goto out;
 	}
 
@@ -1313,23 +1315,23 @@ gcm_prefs_button_virtual_add_cb (GtkWidget *widget, gpointer data)
 	ret = gcm_device_save (device, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not add virtual device */
-		gcm_prefs_error_dialog (_("Failed to save virtual device"), error->message);
+		gcm_prefs_error_dialog (prefsdata, _("Failed to save virtual device"), error->message);
 		g_error_free (error);
 		goto out;
 	}
 
 	/* add to the device list */
-	ret = gcm_client_add_device (gcm_client, device, &error);
+	ret = gcm_client_add_device (prefsdata->gcm_client, device, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not add virtual device */
-		gcm_prefs_error_dialog (_("Failed to add virtual device"), error->message);
+		gcm_prefs_error_dialog (prefsdata, _("Failed to add virtual device"), error->message);
 		g_error_free (error);
 		goto out;
 	}
 
 out:
 	/* we're done */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_virtual"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "dialog_virtual"));
 	gtk_widget_hide (widget);
 }
 
@@ -1337,9 +1339,9 @@ out:
  * gcm_prefs_button_virtual_cancel_cb:
  **/
 static void
-gcm_prefs_button_virtual_cancel_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_button_virtual_cancel_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_virtual"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "dialog_virtual"));
 	gtk_widget_hide (widget);
 }
 
@@ -1347,9 +1349,9 @@ gcm_prefs_button_virtual_cancel_cb (GtkWidget *widget, gpointer data)
  * gcm_prefs_virtual_delete_event_cb:
  **/
 static gboolean
-gcm_prefs_virtual_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
+gcm_prefs_virtual_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmPrefsData *prefsdata)
 {
-	gcm_prefs_button_virtual_cancel_cb (widget, data);
+	gcm_prefs_button_virtual_cancel_cb (widget, prefsdata);
 	return TRUE;
 }
 
@@ -1357,9 +1359,9 @@ gcm_prefs_virtual_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer 
  * gcm_prefs_button_assign_cancel_cb:
  **/
 static void
-gcm_prefs_button_assign_cancel_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_button_assign_cancel_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_assign"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "dialog_assign"));
 	gtk_widget_hide (widget);
 }
 
@@ -1367,7 +1369,7 @@ gcm_prefs_button_assign_cancel_cb (GtkWidget *widget, gpointer data)
  * gcm_prefs_button_assign_ok_cb:
  **/
 static void
-gcm_prefs_button_assign_ok_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_button_assign_ok_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -1376,11 +1378,11 @@ gcm_prefs_button_assign_ok_cb (GtkWidget *widget, gpointer data)
 	gboolean ret;
 
 	/* hide window */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_assign"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "dialog_assign"));
 	gtk_widget_hide (widget);
 
 	/* get entry */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "combobox_profile"));
 	ret = gtk_combo_box_get_active_iter (GTK_COMBO_BOX(widget), &iter);
 	if (!ret)
 		return;
@@ -1390,28 +1392,28 @@ gcm_prefs_button_assign_ok_cb (GtkWidget *widget, gpointer data)
 			    -1);
 
 	/* if list is empty, we want this to be the default item */
-	model = GTK_TREE_MODEL (list_store_assign);
+	model = GTK_TREE_MODEL (prefsdata->list_store_assign);
 	is_default = !gtk_tree_model_get_iter_first (model, &iter);
 
 	/* add profile */
-	gtk_list_store_append (list_store_assign, &iter);
-	gtk_list_store_set (list_store_assign, &iter,
+	gtk_list_store_append (prefsdata->list_store_assign, &iter);
+	gtk_list_store_set (prefsdata->list_store_assign, &iter,
 			    GCM_ASSIGN_COLUMN_PROFILE, profile,
 			    GCM_ASSIGN_COLUMN_SORT, is_default ? "0" : "1",
 			    GCM_ASSIGN_COLUMN_IS_DEFAULT, is_default,
 			    -1);
 
 	/* save device */
-	gcm_prefs_assign_save_profiles_for_device (current_device);
+	gcm_prefs_assign_save_profiles_for_device (prefsdata, prefsdata->current_device);
 }
 
 /**
  * gcm_prefs_assign_delete_event_cb:
  **/
 static gboolean
-gcm_prefs_assign_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
+gcm_prefs_assign_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmPrefsData *prefsdata)
 {
-	gcm_prefs_button_assign_cancel_cb (widget, data);
+	gcm_prefs_button_assign_cancel_cb (widget, prefsdata);
 	return TRUE;
 }
 
@@ -1419,16 +1421,16 @@ gcm_prefs_assign_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer d
  * gcm_prefs_delete_cb:
  **/
 static void
-gcm_prefs_delete_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_delete_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	gboolean ret;
 	GError *error = NULL;
 
 	/* try to delete device */
-	ret = gcm_client_delete_device (gcm_client, current_device, &error);
+	ret = gcm_client_delete_device (prefsdata->gcm_client, prefsdata->current_device, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */
-		gcm_prefs_error_dialog (_("Failed to delete file"), error->message);
+		gcm_prefs_error_dialog (prefsdata, _("Failed to delete file"), error->message);
 		g_error_free (error);
 	}
 }
@@ -1437,16 +1439,16 @@ gcm_prefs_delete_cb (GtkWidget *widget, gpointer data)
  * gcm_prefs_reset_cb:
  **/
 static void
-gcm_prefs_reset_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_reset_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
-	setting_up_device = TRUE;
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
+	prefsdata->setting_up_device = TRUE;
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_gamma"));
 	gtk_range_set_value (GTK_RANGE (widget), 1.0f);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_brightness"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_brightness"));
 	gtk_range_set_value (GTK_RANGE (widget), 0.0f);
-	setting_up_device = FALSE;
+	prefsdata->setting_up_device = FALSE;
 	/* we only want one save, not three */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_contrast"));
 	gtk_range_set_value (GTK_RANGE (widget), 1.0f);
 }
 
@@ -1473,7 +1475,7 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
  * gcm_prefs_add_devices_columns:
  **/
 static void
-gcm_prefs_add_devices_columns (GtkTreeView *treeview)
+gcm_prefs_add_devices_columns (GcmPrefsData *prefsdata, GtkTreeView *treeview)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
@@ -1497,7 +1499,7 @@ gcm_prefs_add_devices_columns (GtkTreeView *treeview)
 	column = gtk_tree_view_column_new_with_attributes ("", renderer,
 							   "markup", GCM_DEVICES_COLUMN_TITLE, NULL);
 	gtk_tree_view_column_set_sort_column_id (column, GCM_DEVICES_COLUMN_SORT);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store_devices), GCM_DEVICES_COLUMN_SORT, GTK_SORT_ASCENDING);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (prefsdata->list_store_devices), GCM_DEVICES_COLUMN_SORT, GTK_SORT_ASCENDING);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
@@ -1506,7 +1508,7 @@ gcm_prefs_add_devices_columns (GtkTreeView *treeview)
  * gcm_prefs_add_profiles_columns:
  **/
 static void
-gcm_prefs_add_profiles_columns (GtkTreeView *treeview)
+gcm_prefs_add_profiles_columns (GcmPrefsData *prefsdata, GtkTreeView *treeview)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
@@ -1530,7 +1532,7 @@ gcm_prefs_add_profiles_columns (GtkTreeView *treeview)
 	column = gtk_tree_view_column_new_with_attributes ("", renderer,
 							   "profile", GCM_PROFILES_COLUMN_PROFILE, NULL);
 	gtk_tree_view_column_set_sort_column_id (column, GCM_PROFILES_COLUMN_SORT);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store_profiles), GCM_PROFILES_COLUMN_SORT, GTK_SORT_ASCENDING);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (prefsdata->list_store_profiles), GCM_PROFILES_COLUMN_SORT, GTK_SORT_ASCENDING);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
@@ -1539,7 +1541,7 @@ gcm_prefs_add_profiles_columns (GtkTreeView *treeview)
  * gcm_prefs_add_assign_columns:
  **/
 static void
-gcm_prefs_add_assign_columns (GtkTreeView *treeview)
+gcm_prefs_add_assign_columns (GcmPrefsData *prefsdata, GtkTreeView *treeview)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
@@ -1558,7 +1560,7 @@ gcm_prefs_add_assign_columns (GtkTreeView *treeview)
 							   "is-default", GCM_ASSIGN_COLUMN_IS_DEFAULT,
 							   NULL);
 	gtk_tree_view_column_set_sort_column_id (column, GCM_ASSIGN_COLUMN_SORT);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (list_store_assign), GCM_ASSIGN_COLUMN_SORT, GTK_SORT_ASCENDING);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (prefsdata->list_store_assign), GCM_ASSIGN_COLUMN_SORT, GTK_SORT_ASCENDING);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
@@ -1567,7 +1569,7 @@ gcm_prefs_add_assign_columns (GtkTreeView *treeview)
  * gcm_prefs_set_calibrate_button_sensitivity:
  **/
 static void
-gcm_prefs_set_calibrate_button_sensitivity (void)
+gcm_prefs_set_calibrate_button_sensitivity (GcmPrefsData *prefsdata)
 {
 	gboolean ret = FALSE;
 	GtkWidget *widget;
@@ -1581,7 +1583,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 	tooltip = _("Create a color profile for the selected device");
 
 	/* no device selected */
-	if (current_device == NULL) {
+	if (prefsdata->current_device == NULL) {
 		/* TRANSLATORS: this is when the button is insensitive */
 		tooltip = _("Cannot create profile: No device is selected");
 		goto out;
@@ -1599,11 +1601,11 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 	}
 
 	/* are we a display */
-	kind = gcm_device_get_kind (current_device);
+	kind = gcm_device_get_kind (prefsdata->current_device);
 	if (kind == GCM_DEVICE_KIND_DISPLAY) {
 
 		/* are we disconnected */
-		connected = gcm_device_get_connected (current_device);
+		connected = gcm_device_get_connected (prefsdata->current_device);
 		if (!connected) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The display device is not connected");
@@ -1611,7 +1613,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		}
 
 		/* are we not XRandR 1.3 compat */
-		xrandr_fallback = gcm_device_xrandr_get_fallback (GCM_DEVICE_XRANDR (current_device));
+		xrandr_fallback = gcm_device_xrandr_get_fallback (GCM_DEVICE_XRANDR (prefsdata->current_device));
 		if (xrandr_fallback) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The display driver does not support XRandR 1.3");
@@ -1619,7 +1621,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		}
 
 		/* find whether we have hardware installed */
-		ret = gcm_colorimeter_get_present (colorimeter);
+		ret = gcm_colorimeter_get_present (prefsdata->colorimeter);
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The measuring instrument is not plugged in");
@@ -1634,7 +1636,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 	} else if (kind == GCM_DEVICE_KIND_PRINTER) {
 
 		/* find whether we have hardware installed */
-		ret = gcm_colorimeter_get_present (colorimeter);
+		ret = gcm_colorimeter_get_present (prefsdata->colorimeter);
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The measuring instrument is not plugged in");
@@ -1642,7 +1644,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 		}
 
 		/* find whether we have hardware installed */
-		ret = gcm_colorimeter_supports_printer (colorimeter);
+		ret = gcm_colorimeter_supports_printer (prefsdata->colorimeter);
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The measuring instrument does not support printer profiling");
@@ -1656,7 +1658,7 @@ gcm_prefs_set_calibrate_button_sensitivity (void)
 	}
 out:
 	/* control the tooltip and sensitivity of the button */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_calibrate"));
 	gtk_widget_set_tooltip_text (widget, tooltip);
 	gtk_widget_set_sensitive (widget, ret);
 }
@@ -1665,7 +1667,7 @@ out:
  * gcm_prefs_devices_treeview_clicked_cb:
  **/
 static void
-gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer userdata)
+gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, GcmPrefsData *prefsdata)
 {
 	guint i;
 	GtkTreeModel *model;
@@ -1699,33 +1701,33 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 
 	/* we have a new device */
 	egg_debug ("selected device is: %s", id);
-	if (current_device != NULL) {
-		g_object_unref (current_device);
-		current_device = NULL;
+	if (prefsdata->current_device != NULL) {
+		g_object_unref (prefsdata->current_device);
+		prefsdata->current_device = NULL;
 	}
-	current_device = gcm_client_get_device_by_id (gcm_client, id);
-	if (current_device == NULL)
+	prefsdata->current_device = gcm_client_get_device_by_id (prefsdata->gcm_client, id);
+	if (prefsdata->current_device == NULL)
 		goto out;
 
 	/* not a xrandr device */
-	kind = gcm_device_get_kind (current_device);
+	kind = gcm_device_get_kind (prefsdata->current_device);
 	if (kind != GCM_DEVICE_KIND_DISPLAY) {
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_fine_tuning"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "expander_fine_tuning"));
 		gtk_widget_set_sensitive (widget, FALSE);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_reset"));
 		gtk_widget_set_sensitive (widget, FALSE);
 	} else {
 		/* show more UI */
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_fine_tuning"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "expander_fine_tuning"));
 		gtk_widget_set_sensitive (widget, TRUE);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_reset"));
 		gtk_widget_set_sensitive (widget, TRUE);
 	}
 
 	/* show broken devices */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_problems"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_problems"));
 	if (kind == GCM_DEVICE_KIND_DISPLAY) {
-		ret = gcm_device_xrandr_get_fallback (GCM_DEVICE_XRANDR (current_device));
+		ret = gcm_device_xrandr_get_fallback (GCM_DEVICE_XRANDR (prefsdata->current_device));
 		if (ret) {
 			/* TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
 			 * Whilst this does not matter if you only have one monitor attached, it means you
@@ -1740,70 +1742,70 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	}
 
 	/* set device labels */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_serial"));
-	device_serial = gcm_device_get_serial (current_device);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_serial"));
+	device_serial = gcm_device_get_serial (prefsdata->current_device);
 	if (device_serial != NULL) {
 		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_serial"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_serial"));
 		gtk_label_set_label (GTK_LABEL (widget), device_serial);
 	} else {
 		gtk_widget_hide (widget);
 	}
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_model"));
-	device_model = gcm_device_get_model (current_device);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_model"));
+	device_model = gcm_device_get_model (prefsdata->current_device);
 	if (device_model != NULL) {
 		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_model"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_model"));
 		gtk_label_set_label (GTK_LABEL (widget), device_model);
 	} else {
 		gtk_widget_hide (widget);
 	}
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_manufacturer"));
-	device_manufacturer = gcm_device_get_manufacturer (current_device);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_manufacturer"));
+	device_manufacturer = gcm_device_get_manufacturer (prefsdata->current_device);
 	if (device_manufacturer != NULL) {
 		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_manufacturer"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_manufacturer"));
 		gtk_label_set_label (GTK_LABEL (widget), device_manufacturer);
 	} else {
 		gtk_widget_hide (widget);
 	}
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_device_details"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "vbox_device_details"));
 	gtk_widget_show (widget);
 
 	/* get display specific properties */
 	if (kind == GCM_DEVICE_KIND_DISPLAY)
-		eisa_id = gcm_device_xrandr_get_eisa_id (GCM_DEVICE_XRANDR (current_device));
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_eisa"));
+		eisa_id = gcm_device_xrandr_get_eisa_id (GCM_DEVICE_XRANDR (prefsdata->current_device));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_eisa"));
 	if (eisa_id != NULL) {
 		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_eisa"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_eisa"));
 		gtk_label_set_label (GTK_LABEL (widget), eisa_id);
 	} else {
 		gtk_widget_hide (widget);
 	}
 
 	/* set adjustments */
-	setting_up_device = TRUE;
-	localgamma = gcm_device_get_gamma (current_device);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
+	prefsdata->setting_up_device = TRUE;
+	localgamma = gcm_device_get_gamma (prefsdata->current_device);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_gamma"));
 	gtk_range_set_value (GTK_RANGE (widget), localgamma);
-	brightness = gcm_device_get_brightness (current_device);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_brightness"));
+	brightness = gcm_device_get_brightness (prefsdata->current_device);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_brightness"));
 	gtk_range_set_value (GTK_RANGE (widget), brightness);
-	contrast = gcm_device_get_contrast (current_device);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
+	contrast = gcm_device_get_contrast (prefsdata->current_device);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_contrast"));
 	gtk_range_set_value (GTK_RANGE (widget), contrast);
-	setting_up_device = FALSE;
+	prefsdata->setting_up_device = FALSE;
 
 	/* clear existing list */
-	gtk_list_store_clear (list_store_assign);
+	gtk_list_store_clear (prefsdata->list_store_assign);
 
 	/* add profiles for the device */
-	profiles = gcm_device_get_profiles (current_device);
+	profiles = gcm_device_get_profiles (prefsdata->current_device);
 	for (i=0; i<profiles->len; i++) {
 		profile = g_ptr_array_index (profiles, i);
-		gtk_list_store_append (list_store_assign, &iter);
-		gtk_list_store_set (list_store_assign, &iter,
+		gtk_list_store_append (prefsdata->list_store_assign, &iter);
+		gtk_list_store_set (prefsdata->list_store_assign, &iter,
 				    GCM_ASSIGN_COLUMN_PROFILE, profile,
 				    GCM_ASSIGN_COLUMN_SORT, (i == 0) ? "0" : "1",
 				    GCM_ASSIGN_COLUMN_IS_DEFAULT, (i == 0),
@@ -1811,27 +1813,27 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection, gpointer use
 	}
 
 	/* select the default profile to display */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_assign"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "treeview_assign"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	path = gtk_tree_path_new_from_string ("0");
 	gtk_tree_selection_select_path (selection, path);
 	gtk_tree_path_free (path);
 
 	/* make sure selectable */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "combobox_profile"));
 	gtk_widget_set_sensitive (widget, TRUE);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_reset"));
 	gtk_widget_set_sensitive (widget, TRUE);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_profile"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_profile"));
 	gtk_widget_set_sensitive (widget, TRUE);
 
 	/* can we delete this device? */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_delete"));
-	connected = gcm_device_get_connected (current_device);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_delete"));
+	connected = gcm_device_get_connected (prefsdata->current_device);
 	gtk_widget_set_sensitive (widget, !connected);
 
 	/* can this device calibrate */
-	gcm_prefs_set_calibrate_button_sensitivity ();
+	gcm_prefs_set_calibrate_button_sensitivity (prefsdata);
 out:
 	if (profiles != NULL)
 		g_ptr_array_unref (profiles);
@@ -1931,27 +1933,27 @@ gcm_prefs_profile_colorspace_to_string (GcmColorspace colorspace)
  **/
 static void
 gcm_prefs_assign_treeview_row_activated_cb (GtkTreeView *tree_view, GtkTreePath *path,
-					    GtkTreeViewColumn *column, gpointer userdata)
+					    GtkTreeViewColumn *column, GcmPrefsData *prefsdata)
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	gboolean ret;
 
 	/* get the iter */
-	model = GTK_TREE_MODEL (list_store_assign);
+	model = GTK_TREE_MODEL (prefsdata->list_store_assign);
 	ret = gtk_tree_model_get_iter (model, &iter, path);
 	if (!ret)
 		return;
 
 	/* make this profile the default */
-	gcm_prefs_assign_make_default_internal (model, &iter);
+	gcm_prefs_assign_make_default_internal (prefsdata, model, &iter);
 }
 
 /**
  * gcm_prefs_assign_treeview_clicked_cb:
  **/
 static void
-gcm_prefs_assign_treeview_clicked_cb (GtkTreeSelection *selection, gpointer userdata)
+gcm_prefs_assign_treeview_clicked_cb (GtkTreeSelection *selection, GcmPrefsData *prefsdata)
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
@@ -1962,9 +1964,9 @@ gcm_prefs_assign_treeview_clicked_cb (GtkTreeSelection *selection, gpointer user
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_assign_make_default"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_assign_make_default"));
 		gtk_widget_set_sensitive (widget, FALSE);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_assign_remove"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_assign_remove"));
 		gtk_widget_set_sensitive (widget, FALSE);
 
 		egg_debug ("no row selected");
@@ -1979,19 +1981,19 @@ gcm_prefs_assign_treeview_clicked_cb (GtkTreeSelection *selection, gpointer user
 	egg_debug ("selected profile = %s", gcm_profile_get_filename (profile));
 
 	/* is the element the first in the list */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_assign_make_default"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_assign_make_default"));
 	gtk_widget_set_sensitive (widget, !is_default);
 
 	/* we can remove it now */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_assign_remove"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_assign_remove"));
 	gtk_widget_set_sensitive (widget, TRUE);
 
 	/* show a warning if the profile is crap */
-	if (gcm_device_get_kind (current_device) == GCM_DEVICE_KIND_DISPLAY &&
+	if (gcm_device_get_kind (prefsdata->current_device) == GCM_DEVICE_KIND_DISPLAY &&
 	    !gcm_profile_get_has_vcgt (profile)) {
-		gtk_widget_show (info_bar_vcgt);
+		gtk_widget_show (prefsdata->info_bar_vcgt);
 	} else {
-		gtk_widget_hide (info_bar_vcgt);
+		gtk_widget_hide (prefsdata->info_bar_vcgt);
 	}
 }
 
@@ -1999,7 +2001,7 @@ gcm_prefs_assign_treeview_clicked_cb (GtkTreeSelection *selection, gpointer user
  * gcm_prefs_profiles_treeview_clicked_cb:
  **/
 static void
-gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer userdata)
+gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmPrefsData *prefsdata)
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
@@ -2052,16 +2054,16 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	/* check we have enough data for the CIE widget */
 	x = gcm_xyz_get_x (red);
 	if (x > 0.001) {
-		g_object_set (cie_widget,
+		g_object_set (prefsdata->cie_widget,
 			      "white", white,
 			      "red", red,
 			      "green", green,
 			      "blue", blue,
 			      NULL);
-		gtk_widget_show (cie_widget);
+		gtk_widget_show (prefsdata->cie_widget);
 		show_section = TRUE;
 	} else {
-		gtk_widget_hide (cie_widget);
+		gtk_widget_hide (prefsdata->cie_widget);
 	}
 
 	/* get curve data */
@@ -2071,13 +2073,13 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	if (clut_trc != NULL)
 		size = gcm_clut_get_size (clut_trc);
 	if (size > 0) {
-		g_object_set (trc_widget,
+		g_object_set (prefsdata->trc_widget,
 			      "clut", clut_trc,
 			      NULL);
-		gtk_widget_show (trc_widget);
+		gtk_widget_show (prefsdata->trc_widget);
 		show_section = TRUE;
 	} else {
-		gtk_widget_hide (trc_widget);
+		gtk_widget_hide (prefsdata->trc_widget);
 	}
 
 	/* get vcgt data */
@@ -2087,43 +2089,43 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	if (clut_vcgt != NULL)
 		size = gcm_clut_get_size (clut_vcgt);
 	if (size > 0) {
-		g_object_set (vcgt_widget,
+		g_object_set (prefsdata->vcgt_widget,
 			      "clut", clut_vcgt,
 			      NULL);
-		gtk_widget_show (vcgt_widget);
+		gtk_widget_show (prefsdata->vcgt_widget);
 		show_section = TRUE;
 	} else {
-		gtk_widget_hide (vcgt_widget);
+		gtk_widget_hide (prefsdata->vcgt_widget);
 	}
 
 	/* set kind */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_type"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_type"));
 	profile_kind = gcm_profile_get_kind (profile);
 	if (profile_kind == GCM_PROFILE_KIND_UNKNOWN) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_type"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_type"));
 		profile_kind_text = gcm_prefs_profile_kind_to_string (profile_kind);
 		gtk_label_set_label (GTK_LABEL (widget), profile_kind_text);
 	}
 
 	/* set colorspace */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_colorspace"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_colorspace"));
 	profile_colorspace = gcm_profile_get_colorspace (profile);
 	if (profile_colorspace == GCM_COLORSPACE_UNKNOWN) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_colorspace"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_colorspace"));
 		profile_colorspace_text = gcm_prefs_profile_colorspace_to_string (profile_colorspace);
 		gtk_label_set_label (GTK_LABEL (widget), profile_colorspace_text);
 	}
 
 	/* set vcgt */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_vcgt"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_vcgt"));
 	gtk_widget_set_visible (widget, (profile_kind == GCM_PROFILE_KIND_DISPLAY_DEVICE));
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_vcgt"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_vcgt"));
 	has_vcgt = gcm_profile_get_has_vcgt (profile);
 	if (has_vcgt) {
 		/* TRANSLATORS: if the device has a VCGT profile */
@@ -2135,73 +2137,73 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 
 	/* set basename */
 	filename = gcm_profile_get_filename (profile);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_filename"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_filename"));
 	basename = g_path_get_basename (filename);
 	gtk_label_set_label (GTK_LABEL (widget), basename);
 
 	/* set size */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_size"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_size"));
 	filesize = gcm_profile_get_size (profile);
 	if (filesize == 0) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_size"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_size"));
 		size_text = g_format_size_for_display (filesize);
 		gtk_label_set_label (GTK_LABEL (widget), size_text);
 	}
 
 	/* set new copyright */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_copyright"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_copyright"));
 	profile_copyright = gcm_profile_get_copyright (profile);
 	if (profile_copyright == NULL) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_copyright"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_copyright"));
 		temp = gcm_utils_linkify (profile_copyright);
 		gtk_label_set_label (GTK_LABEL (widget), temp);
 		g_free (temp);
 	}
 
 	/* set new manufacturer */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_profile_manufacturer"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_profile_manufacturer"));
 	profile_manufacturer = gcm_profile_get_manufacturer (profile);
 	if (profile_manufacturer == NULL) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_profile_manufacturer"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_profile_manufacturer"));
 		temp = gcm_utils_linkify (profile_manufacturer);
 		gtk_label_set_label (GTK_LABEL (widget), temp);
 		g_free (temp);
 	}
 
 	/* set new model */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_profile_model"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_profile_model"));
 	profile_model = gcm_profile_get_model (profile);
 	if (profile_model == NULL) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_profile_model"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_profile_model"));
 		gtk_label_set_label (GTK_LABEL(widget), profile_model);
 	}
 
 	/* set new datetime */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_datetime"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_datetime"));
 	profile_datetime = gcm_profile_get_datetime (profile);
 	if (profile_datetime == NULL) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_datetime"));
+		widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_datetime"));
 		gtk_label_set_label (GTK_LABEL(widget), profile_datetime);
 	}
 
 	/* set delete sensitivity */
 	ret = gcm_profile_get_can_delete (profile);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_delete"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_profile_delete"));
 	gtk_widget_set_sensitive (widget, ret);
 	if (ret) {
 		/* TRANSLATORS: this is the tooltip when the profile can be deleted */
@@ -2212,9 +2214,9 @@ gcm_prefs_profiles_treeview_clicked_cb (GtkTreeSelection *selection, gpointer us
 	}
 
 	/* should we show the pane at all */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_graph"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "vbox_graph"));
 	gtk_widget_set_visible (widget, show_section);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profile_info"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "vbox_profile_info"));
 	gtk_widget_set_visible (widget, TRUE);
 
 	if (clut_trc != NULL)
@@ -2250,7 +2252,7 @@ gcm_prefs_device_kind_to_string (GcmDeviceKind kind)
  * gcm_prefs_add_device_xrandr:
  **/
 static void
-gcm_prefs_add_device_xrandr (GcmDevice *device)
+gcm_prefs_add_device_xrandr (GcmPrefsData *prefsdata, GcmDevice *device)
 {
 	GtkTreeIter iter;
 	const gchar *title_tmp;
@@ -2298,8 +2300,8 @@ gcm_prefs_add_device_xrandr (GcmDevice *device)
 	/* add to list */
 	id = gcm_device_get_id (device);
 	egg_debug ("add %s to device list", id);
-	gtk_list_store_append (list_store_devices, &iter);
-	gtk_list_store_set (list_store_devices, &iter,
+	gtk_list_store_append (prefsdata->list_store_devices, &iter);
+	gtk_list_store_set (prefsdata->list_store_devices, &iter,
 			    GCM_DEVICES_COLUMN_ID, id,
 			    GCM_DEVICES_COLUMN_SORT, sort,
 			    GCM_DEVICES_COLUMN_TITLE, title,
@@ -2339,7 +2341,7 @@ gcm_prefs_set_combo_simple_text (GtkWidget *combo_box)
  * gcm_prefs_profile_combo_changed_cb:
  **/
 static void
-gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	GFile *file = NULL;
 	GFile *dest = NULL;
@@ -2351,7 +2353,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 	GcmPrefsEntryType entry_type;
 
 	/* no devices */
-	if (current_device == NULL)
+	if (prefsdata->current_device == NULL)
 		return;
 
 	/* no selection */
@@ -2367,7 +2369,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 
 	/* import */
 	if (entry_type == GCM_PREFS_ENTRY_TYPE_IMPORT) {
-		file = gcm_prefs_file_chooser_get_icc_profile ();
+		file = gcm_prefs_file_chooser_get_icc_profile (prefsdata);
 		if (file == NULL) {
 			egg_warning ("failed to get ICC file");
 			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
@@ -2375,7 +2377,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 		}
 
 		/* import this */
-		ret = gcm_prefs_profile_import_file (file);
+		ret = gcm_prefs_profile_import_file (prefsdata, file);
 		if (!ret) {
 			gchar *uri;
 			/* set to 'None' */
@@ -2400,13 +2402,13 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, gpointer data)
 		}
 
 		/* check the file is suitable */
-		ret = gcm_prefs_is_profile_suitable_for_device (profile, current_device);
+		ret = gcm_prefs_is_profile_suitable_for_device (profile, prefsdata->current_device);
 		if (!ret) {
 			/* set to 'None' */
 			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 
 			/* TRANSLATORS: the profile was of the wrong sort for this device */
-			gcm_prefs_error_dialog (_("Could not import profile"),
+			gcm_prefs_error_dialog (prefsdata, _("Could not import profile"),
 						_("The profile was of the wrong type for this device"));
 			goto out;
 		}
@@ -2432,7 +2434,7 @@ out:
  * gcm_prefs_slider_changed_cb:
  **/
 static void
-gcm_prefs_slider_changed_cb (GtkRange *range, gpointer *user_data)
+gcm_prefs_slider_changed_cb (GtkRange *range, GcmPrefsData *prefsdata)
 {
 	gfloat localgamma;
 	gfloat brightness;
@@ -2442,23 +2444,23 @@ gcm_prefs_slider_changed_cb (GtkRange *range, gpointer *user_data)
 	GError *error = NULL;
 
 	/* we're just setting up the device, not moving the slider */
-	if (setting_up_device)
+	if (prefsdata->setting_up_device)
 		return;
 
 	/* get values */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_gamma"));
 	localgamma = gtk_range_get_value (GTK_RANGE (widget));
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_brightness"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_brightness"));
 	brightness = gtk_range_get_value (GTK_RANGE (widget));
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_contrast"));
 	contrast = gtk_range_get_value (GTK_RANGE (widget));
 
-	gcm_device_set_gamma (current_device, localgamma);
-	gcm_device_set_brightness (current_device, brightness * 100.0f);
-	gcm_device_set_contrast (current_device, contrast * 100.0f);
+	gcm_device_set_gamma (prefsdata->current_device, localgamma);
+	gcm_device_set_brightness (prefsdata->current_device, brightness * 100.0f);
+	gcm_device_set_contrast (prefsdata->current_device, contrast * 100.0f);
 
 	/* save new profile */
-	ret = gcm_device_save (current_device, &error);
+	ret = gcm_device_save (prefsdata->current_device, &error);
 	if (!ret) {
 		egg_warning ("failed to save config: %s", error->message);
 		g_error_free (error);
@@ -2466,7 +2468,7 @@ gcm_prefs_slider_changed_cb (GtkRange *range, gpointer *user_data)
 	}
 
 	/* actually set the new profile */
-	ret = gcm_device_apply (current_device, &error);
+	ret = gcm_device_apply (prefsdata->current_device, &error);
 	if (!ret) {
 		egg_warning ("failed to apply profile: %s", error->message);
 		g_error_free (error);
@@ -2480,13 +2482,13 @@ out:
  * gcm_prefs_colorimeter_changed_cb:
  **/
 static void
-gcm_prefs_colorimeter_changed_cb (GcmColorimeter *_colorimeter, gpointer user_data)
+gcm_prefs_colorimeter_changed_cb (GcmColorimeter *colorimeter, GcmPrefsData *prefsdata)
 {
 	gboolean present;
 	const gchar *event_id;
 	const gchar *message;
 
-	present = gcm_colorimeter_get_present (_colorimeter);
+	present = gcm_colorimeter_get_present (colorimeter);
 
 	if (present) {
 		/* TRANSLATORS: this is a sound description */
@@ -2505,7 +2507,7 @@ gcm_prefs_colorimeter_changed_cb (GcmColorimeter *_colorimeter, gpointer user_da
 			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
 			 CA_PROP_EVENT_DESCRIPTION, message, NULL);
 
-	gcm_prefs_set_calibrate_button_sensitivity ();
+	gcm_prefs_set_calibrate_button_sensitivity (prefsdata);
 }
 
 /**
@@ -2529,7 +2531,7 @@ gcm_prefs_device_kind_to_icon_name (GcmDeviceKind kind)
  * gcm_prefs_add_device_kind:
  **/
 static void
-gcm_prefs_add_device_kind (GcmDevice *device)
+gcm_prefs_add_device_kind (GcmPrefsData *prefsdata, GcmDevice *device)
 {
 	GtkTreeIter iter;
 	const gchar *title;
@@ -2564,8 +2566,8 @@ gcm_prefs_add_device_kind (GcmDevice *device)
 
 	/* add to list */
 	id = gcm_device_get_id (device);
-	gtk_list_store_append (list_store_devices, &iter);
-	gtk_list_store_set (list_store_devices, &iter,
+	gtk_list_store_append (prefsdata->list_store_devices, &iter);
+	gtk_list_store_set (prefsdata->list_store_devices, &iter,
 			    GCM_DEVICES_COLUMN_ID, id,
 			    GCM_DEVICES_COLUMN_SORT, sort,
 			    GCM_DEVICES_COLUMN_TITLE, string->str,
@@ -2578,7 +2580,7 @@ gcm_prefs_add_device_kind (GcmDevice *device)
  * gcm_prefs_remove_device:
  **/
 static void
-gcm_prefs_remove_device (GcmDevice *gcm_device)
+gcm_prefs_remove_device (GcmPrefsData *prefsdata, GcmDevice *gcm_device)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -2592,7 +2594,7 @@ gcm_prefs_remove_device (GcmDevice *gcm_device)
 		   gcm_device_get_connected (gcm_device));
 
 	/* get first element */
-	model = GTK_TREE_MODEL (list_store_devices);
+	model = GTK_TREE_MODEL (prefsdata->list_store_devices);
 	ret = gtk_tree_model_get_iter_first (model, &iter);
 	if (!ret)
 		return;
@@ -2612,10 +2614,10 @@ gcm_prefs_remove_device (GcmDevice *gcm_device)
 }
 
 /**
- * gcm_prefs_added_idle_cb:
+ * gcm_prefs_added_cb:
  **/
-static gboolean
-gcm_prefs_added_idle_cb (GcmDevice *device)
+static void
+gcm_prefs_added_cb (GcmClient *client, GcmDevice *device, GcmPrefsData *prefsdata)
 {
 	GcmDeviceKind kind;
 	egg_debug ("added: %s (connected: %i, saved: %i)",
@@ -2624,49 +2626,49 @@ gcm_prefs_added_idle_cb (GcmDevice *device)
 		   gcm_device_get_saved (device));
 
 	/* remove the saved device if it's already there */
-	gcm_prefs_remove_device (device);
+	gcm_prefs_remove_device (prefsdata, device);
 
 	/* add the device */
 	kind = gcm_device_get_kind (device);
 	if (kind == GCM_DEVICE_KIND_DISPLAY)
-		gcm_prefs_add_device_xrandr (device);
+		gcm_prefs_add_device_xrandr (prefsdata, device);
 	else
-		gcm_prefs_add_device_kind (device);
-
-	/* unref the instance */
-	g_object_unref (device);
-	return FALSE;
-}
-
-/**
- * gcm_prefs_added_cb:
- **/
-static void
-gcm_prefs_added_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user_data)
-{
-	g_idle_add ((GSourceFunc) gcm_prefs_added_idle_cb, g_object_ref (gcm_device));
+		gcm_prefs_add_device_kind (prefsdata, device);
 }
 
 /**
  * gcm_prefs_changed_cb:
  **/
 static void
-gcm_prefs_changed_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user_data)
+gcm_prefs_changed_cb (GcmClient *client, GcmDevice *device, GcmPrefsData *prefsdata)
 {
+	GcmDeviceKind kind;
+
 	/* no not re-add to the ui if we just deleted this */
-	if (!gcm_device_get_connected (gcm_device) &&
-	    !gcm_device_get_saved (gcm_device)) {
-		egg_warning ("ignoring uninteresting device: %s", gcm_device_get_id (gcm_device));
+	if (!gcm_device_get_connected (device) &&
+	    !gcm_device_get_saved (device)) {
+		egg_warning ("ignoring uninteresting device: %s", gcm_device_get_id (device));
 		return;
 	}
-	g_idle_add ((GSourceFunc) gcm_prefs_added_idle_cb, g_object_ref (gcm_device));
+
+	egg_debug ("changed: %s", gcm_device_get_id (device));
+
+	/* remove the saved device if it's already there */
+	gcm_prefs_remove_device (prefsdata, device);
+
+	/* add the device */
+	kind = gcm_device_get_kind (device);
+	if (kind == GCM_DEVICE_KIND_DISPLAY)
+		gcm_prefs_add_device_xrandr (prefsdata, device);
+	else
+		gcm_prefs_add_device_kind (prefsdata, device);
 }
 
 /**
  * gcm_prefs_removed_cb:
  **/
 static void
-gcm_prefs_removed_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer user_data)
+gcm_prefs_removed_cb (GcmClient *client, GcmDevice *device, GcmPrefsData *prefsdata)
 {
 	gboolean connected;
 	GtkTreeIter iter;
@@ -2675,21 +2677,21 @@ gcm_prefs_removed_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer us
 	gboolean ret;
 
 	/* remove from the UI */
-	gcm_prefs_remove_device (gcm_device);
+	gcm_prefs_remove_device (prefsdata, device);
 
 	/* ensure this device is re-added if it's been saved */
-	connected = gcm_device_get_connected (gcm_device);
+	connected = gcm_device_get_connected (device);
 	if (connected)
-		gcm_client_coldplug (gcm_client, GCM_CLIENT_COLDPLUG_SAVED, NULL);
+		gcm_client_coldplug (prefsdata->gcm_client, GCM_CLIENT_COLDPLUG_SAVED, NULL);
 
 	/* select the first device */
-	ret = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (list_store_devices), &iter);
+	ret = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (prefsdata->list_store_devices), &iter);
 	if (!ret)
 		return;
 
 	/* click it */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
-	gtk_tree_view_set_model (GTK_TREE_VIEW (widget), GTK_TREE_MODEL (list_store_devices));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "treeview_devices"));
+	gtk_tree_view_set_model (GTK_TREE_VIEW (widget), GTK_TREE_MODEL (prefsdata->list_store_devices));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	gtk_tree_selection_select_iter (selection, &iter);
 }
@@ -2698,7 +2700,7 @@ gcm_prefs_removed_cb (GcmClient *gcm_client_, GcmDevice *gcm_device, gpointer us
  * gcm_prefs_startup_phase2_idle_cb:
  **/
 static gboolean
-gcm_prefs_startup_phase2_idle_cb (gpointer user_data)
+gcm_prefs_startup_phase2_idle_cb (GcmPrefsData *prefsdata)
 {
 	GtkWidget *widget;
 	GtkTreeSelection *selection;
@@ -2706,10 +2708,10 @@ gcm_prefs_startup_phase2_idle_cb (gpointer user_data)
 	gboolean ret;
 
 	/* update list of profiles */
-	gcm_prefs_update_profile_list ();
+	gcm_prefs_update_profile_list (prefsdata);
 
 	/* select a profile to display */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_profiles"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "treeview_profiles"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	path = gtk_tree_path_new_from_string ("0");
 	gtk_tree_selection_select_path (selection, path);
@@ -2718,7 +2720,7 @@ gcm_prefs_startup_phase2_idle_cb (gpointer user_data)
 	/* do we show the shared-color-profiles-extra installer? */
 	egg_debug ("getting installed");
 	ret = gcm_utils_is_package_installed (GCM_PREFS_PACKAGE_NAME_COLOR_PROFILES_EXTRA);
-	gtk_widget_set_visible (info_bar_profiles, !ret);
+	gtk_widget_set_visible (prefsdata->info_bar_profiles, !ret);
 
 	return FALSE;
 }
@@ -2727,7 +2729,7 @@ gcm_prefs_startup_phase2_idle_cb (gpointer user_data)
  * gcm_prefs_setup_space_combobox:
  **/
 static void
-gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspace colorspace, const gchar *profile_filename)
+gcm_prefs_setup_space_combobox (GcmPrefsData *prefsdata, GtkWidget *widget, GcmColorspace colorspace, const gchar *profile_filename)
 {
 	GcmProfile *profile;
 	guint i;
@@ -2741,7 +2743,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspace colorspace, con
 	GtkTreeIter iter;
 
 	/* get new list */
-	profile_array = gcm_profile_store_get_array (profile_store);
+	profile_array = gcm_profile_store_get_array (prefsdata->profile_store);
 
 	/* update each list */
 	for (i=0; i<profile_array->len; i++) {
@@ -2781,14 +2783,14 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget, GcmColorspace colorspace, con
  * gcm_prefs_space_combo_changed_cb:
  **/
 static void
-gcm_prefs_space_combo_changed_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_space_combo_changed_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	gboolean ret;
 	GtkTreeIter iter;
 	const gchar *filename;
 	GtkTreeModel *model;
 	GcmProfile *profile = NULL;
-	const gchar *key = GCM_SETTINGS_COLORSPACE_RGB;
+	const gchar *key = g_object_get_data (G_OBJECT(widget), "GCM:GSettingsKey");
 
 	/* no selection */
 	ret = gtk_combo_box_get_active_iter (GTK_COMBO_BOX(widget), &iter);
@@ -2803,12 +2805,9 @@ gcm_prefs_space_combo_changed_cb (GtkWidget *widget, gpointer data)
 	if (profile == NULL)
 		goto out;
 
-	if (data != NULL)
-		key = GCM_SETTINGS_COLORSPACE_CMYK;
-
 	filename = gcm_profile_get_filename (profile);
 	egg_debug ("changed working space %s", filename);
-	g_settings_set_string (settings, key, filename);
+	g_settings_set_string (prefsdata->settings, key, filename);
 out:
 	if (profile != NULL)
 		g_object_unref (profile);
@@ -2818,22 +2817,19 @@ out:
  * gcm_prefs_renderer_combo_changed_cb:
  **/
 static void
-gcm_prefs_renderer_combo_changed_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_renderer_combo_changed_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	gint active;
-	const gchar *key = GCM_SETTINGS_RENDERING_INTENT_DISPLAY;
+	const gchar *key = g_object_get_data (G_OBJECT(widget), "GCM:GSettingsKey");
 
 	/* no selection */
 	active = gtk_combo_box_get_active (GTK_COMBO_BOX(widget));
 	if (active == -1)
 		return;
 
-	if (data != NULL)
-		key = GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF;
-
 	/* save to GSettings */
 	egg_debug ("changed rendering intent to %s", gcm_intent_to_string (active+1));
-	g_settings_set_enum (settings, key, active+1);
+	g_settings_set_enum (prefsdata->settings, key, active+1);
 }
 
 /**
@@ -2866,53 +2862,57 @@ gcm_prefs_setup_rendering_combobox (GtkWidget *widget, GcmIntent intent)
  * gcm_prefs_startup_phase1_idle_cb:
  **/
 static gboolean
-gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
+gcm_prefs_startup_phase1_idle_cb (GcmPrefsData *prefsdata)
 {
 	GtkWidget *widget;
 	gboolean ret;
 	GError *error = NULL;
 	gchar *colorspace_rgb;
 	gchar *colorspace_cmyk;
-	gint intent_display;
-	gint intent_softproof;
+	gint intent_display = -1;
+	gint intent_softproof = -1;
 
 	/* search the disk for profiles */
-	gcm_profile_store_search_default (profile_store);
-	g_signal_connect (profile_store, "changed", G_CALLBACK(gcm_prefs_profile_store_changed_cb), NULL);
+	gcm_profile_store_search_default (prefsdata->profile_store);
+	g_signal_connect (prefsdata->profile_store, "changed", G_CALLBACK(gcm_prefs_profile_store_changed_cb), prefsdata);
 
 	/* setup RGB combobox */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_space_rgb"));
-	colorspace_rgb = g_settings_get_string (settings, GCM_SETTINGS_COLORSPACE_RGB);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "combobox_space_rgb"));
+	colorspace_rgb = g_settings_get_string (prefsdata->settings, GCM_SETTINGS_COLORSPACE_RGB);
 	gcm_prefs_set_combo_simple_text (widget);
-	gcm_prefs_setup_space_combobox (widget, GCM_COLORSPACE_RGB, colorspace_rgb);
+	gcm_prefs_setup_space_combobox (prefsdata, widget, GCM_COLORSPACE_RGB, colorspace_rgb);
+	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey", (gpointer) GCM_SETTINGS_COLORSPACE_RGB);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), NULL);
+			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), prefsdata);
 
 	/* setup CMYK combobox */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_space_cmyk"));
-	colorspace_cmyk = g_settings_get_string (settings, GCM_SETTINGS_COLORSPACE_CMYK);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "combobox_space_cmyk"));
+	colorspace_cmyk = g_settings_get_string (prefsdata->settings, GCM_SETTINGS_COLORSPACE_CMYK);
 	gcm_prefs_set_combo_simple_text (widget);
-	gcm_prefs_setup_space_combobox (widget, GCM_COLORSPACE_CMYK, colorspace_cmyk);
+	gcm_prefs_setup_space_combobox (prefsdata, widget, GCM_COLORSPACE_CMYK, colorspace_cmyk);
+	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey", (gpointer) GCM_SETTINGS_COLORSPACE_CMYK);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), (gpointer) "cmyk");
+			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), prefsdata);
 
 	/* setup rendering lists */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_rendering_display"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "combobox_rendering_display"));
 	gcm_prefs_set_combo_simple_text (widget);
-	intent_display = g_settings_get_enum (settings, GCM_SETTINGS_RENDERING_INTENT_DISPLAY);
+	intent_display = g_settings_get_enum (prefsdata->settings, GCM_SETTINGS_RENDERING_INTENT_DISPLAY);
 	gcm_prefs_setup_rendering_combobox (widget, intent_display);
+	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey", (gpointer) GCM_SETTINGS_RENDERING_INTENT_DISPLAY);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), NULL);
+			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), prefsdata);
 
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_rendering_softproof"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "combobox_rendering_softproof"));
 	gcm_prefs_set_combo_simple_text (widget);
-	intent_softproof = g_settings_get_enum (settings, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF);
+	intent_softproof = g_settings_get_enum (prefsdata->settings, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF);
 	gcm_prefs_setup_rendering_combobox (widget, intent_softproof);
+	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey", (gpointer) GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), (gpointer) "softproof");
+			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), prefsdata);
 
 	/* coldplug plugged in devices */
-	ret = gcm_client_coldplug (gcm_client, GCM_CLIENT_COLDPLUG_ALL, &error);
+	ret = gcm_client_coldplug (prefsdata->gcm_client, GCM_CLIENT_COLDPLUG_ALL, &error);
 	if (!ret) {
 		egg_warning ("failed to add connected devices: %s", error->message);
 		g_error_free (error);
@@ -2920,10 +2920,10 @@ gcm_prefs_startup_phase1_idle_cb (gpointer user_data)
 	}
 
 	/* set calibrate button sensitivity */
-	gcm_prefs_set_calibrate_button_sensitivity ();
+	gcm_prefs_set_calibrate_button_sensitivity (prefsdata);
 
 	/* start phase 2 of the startup */
-	g_idle_add ((GSourceFunc) gcm_prefs_startup_phase2_idle_cb, NULL);
+	g_idle_add ((GSourceFunc) gcm_prefs_startup_phase2_idle_cb, prefsdata);
 
 out:
 	g_free (colorspace_rgb);
@@ -2935,7 +2935,7 @@ out:
  * gcm_prefs_reset_devices_idle_cb:
  **/
 static gboolean
-gcm_prefs_reset_devices_idle_cb (gpointer user_data)
+gcm_prefs_reset_devices_idle_cb (GcmPrefsData *prefsdata)
 {
 	GPtrArray *array = NULL;
 	GcmDevice *device;
@@ -2944,7 +2944,7 @@ gcm_prefs_reset_devices_idle_cb (gpointer user_data)
 	guint i;
 
 	/* set for each output */
-	array = gcm_client_get_devices (gcm_client);
+	array = gcm_client_get_devices (prefsdata->gcm_client);
 	for (i=0; i<array->len; i++) {
 		device = g_ptr_array_index (array, i);
 
@@ -2964,10 +2964,10 @@ gcm_prefs_reset_devices_idle_cb (gpointer user_data)
  * gcm_prefs_checkbutton_changed_cb:
  **/
 static void
-gcm_prefs_checkbutton_changed_cb (GtkWidget *widget, gpointer user_data)
+gcm_prefs_checkbutton_changed_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	/* set the new setting */
-	g_idle_add ((GSourceFunc) gcm_prefs_reset_devices_idle_cb, NULL);
+	g_idle_add ((GSourceFunc) gcm_prefs_reset_devices_idle_cb, prefsdata);
 }
 
 /**
@@ -2991,33 +2991,33 @@ gcm_prefs_setup_drag_and_drop (GtkWidget *widget)
  * gcm_prefs_profile_store_changed_cb:
  **/
 static void
-gcm_prefs_profile_store_changed_cb (GcmProfileStore *_profile_store, gpointer user_data)
+gcm_prefs_profile_store_changed_cb (GcmProfileStore *profile_store, GcmPrefsData *prefsdata)
 {
 	GtkTreeSelection *selection;
 	GtkWidget *widget;
 
 	/* clear and update the profile list */
-	gcm_prefs_update_profile_list ();
+	gcm_prefs_update_profile_list (prefsdata);
 
 	/* re-get all the profiles for this device */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "treeview_devices"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	if (selection == NULL)
 		return;
-	g_signal_emit_by_name (selection, "changed", NULL);
+	g_signal_emit_by_name (selection, "changed", prefsdata);
 }
 
 /**
  * gcm_prefs_select_first_device_idle_cb:
  **/
 static gboolean
-gcm_prefs_select_first_device_idle_cb (gpointer data)
+gcm_prefs_select_first_device_idle_cb (GcmPrefsData *prefsdata)
 {
 	GtkTreePath *path;
 	GtkWidget *widget;
 
 	/* set the cursor on the first device */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "treeview_devices"));
 	path = gtk_tree_path_new_from_string ("0");
 	gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
 	gtk_tree_path_free (path);
@@ -3029,29 +3029,29 @@ gcm_prefs_select_first_device_idle_cb (gpointer data)
  * gcm_prefs_client_notify_loading_cb:
  **/
 static void
-gcm_prefs_client_notify_loading_cb (GcmClient *client, GParamSpec *pspec, gpointer data)
+gcm_prefs_client_notify_loading_cb (GcmClient *client, GParamSpec *pspec, GcmPrefsData *prefsdata)
 {
 	gboolean loading;
 
 	/*if loading show the bar */
 	loading = gcm_client_get_loading (client);
 	if (loading) {
-		gtk_widget_show (info_bar_loading);
+		gtk_widget_show (prefsdata->info_bar_loading);
 		return;
 	}
 
 	/* otherwise clear the loading widget */
-	gtk_widget_hide (info_bar_loading);
+	gtk_widget_hide (prefsdata->info_bar_loading);
 
 	/* idle callback */
-	g_idle_add (gcm_prefs_select_first_device_idle_cb, NULL);
+	g_idle_add ((GSourceFunc) gcm_prefs_select_first_device_idle_cb, prefsdata);
 }
 
 /**
  * gcm_prefs_info_bar_response_cb:
  **/
 static void
-gcm_prefs_info_bar_response_cb (GtkDialog *dialog, GtkResponseType response, gpointer user_data)
+gcm_prefs_info_bar_response_cb (GtkDialog *dialog, GtkResponseType response, GcmPrefsData *prefsdata)
 {
 	GtkWindow *window;
 	gboolean ret;
@@ -3062,10 +3062,10 @@ gcm_prefs_info_bar_response_cb (GtkDialog *dialog, GtkResponseType response, gpo
 
 	} else if (response == GTK_RESPONSE_APPLY) {
 		/* install the extra profiles */
-		window = GTK_WINDOW(gtk_builder_get_object (builder, "dialog_prefs"));
+		window = GTK_WINDOW(gtk_builder_get_object (prefsdata->builder, "dialog_prefs"));
 		ret = gcm_utils_install_package (GCM_PREFS_PACKAGE_NAME_COLOR_PROFILES_EXTRA, window);
 		if (ret)
-			gtk_widget_hide (info_bar_profiles);
+			gtk_widget_hide (prefsdata->info_bar_profiles);
 	}
 }
 
@@ -3115,10 +3115,9 @@ gcm_prefs_setup_virtual_combobox (GtkWidget *widget)
  * gcm_prefs_graph_combo_changed_cb:
  **/
 static void
-gcm_prefs_graph_combo_changed_cb (GtkWidget *widget, gpointer data)
+gcm_prefs_graph_combo_changed_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 {
 	gint active;
-	const gchar *value = "none";
 
 	/* no selection */
 	active = gtk_combo_box_get_active (GTK_COMBO_BOX(widget));
@@ -3126,31 +3125,30 @@ gcm_prefs_graph_combo_changed_cb (GtkWidget *widget, gpointer data)
 		return;
 
 	/* hide or show the correct graphs */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_graph_widgets"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_graph_widgets"));
 	gtk_widget_set_visible (widget, active != 0);
 
 	/* hide or show the correct graphs */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_cie_axis"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "vbox_cie_axis"));
 	gtk_widget_set_visible (widget, active == 1);
 
 	/* hide or show the correct graphs */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_trc_axis"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "vbox_trc_axis"));
 	gtk_widget_set_visible (widget, active == 2);
 
 	/* hide or show the correct graphs */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_vcgt_axis"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "vbox_vcgt_axis"));
 	gtk_widget_set_visible (widget, active == 3);
 
 	/* save to GSettings */
-	egg_debug ("changed profile-graph-type to %s", value);
-	g_settings_set_enum (settings, GCM_SETTINGS_PROFILE_GRAPH_TYPE, active);
+	g_settings_set_enum (prefsdata->settings, GCM_SETTINGS_PROFILE_GRAPH_TYPE, active);
 }
 
 /**
  * gcm_prefs_setup_graph_combobox:
  **/
 static void
-gcm_prefs_setup_graph_combobox (GtkWidget *widget)
+gcm_prefs_setup_graph_combobox (GcmPrefsData *prefsdata, GtkWidget *widget)
 {
 	gint active;
 
@@ -3167,7 +3165,7 @@ gcm_prefs_setup_graph_combobox (GtkWidget *widget)
 	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("Video card gamma table"));
 
 	/* get from settings */
-	active = g_settings_get_enum (settings, GCM_SETTINGS_PROFILE_GRAPH_TYPE);
+	active = g_settings_get_enum (prefsdata->settings, GCM_SETTINGS_PROFILE_GRAPH_TYPE);
 	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), active);
 }
 
@@ -3175,19 +3173,19 @@ gcm_prefs_setup_graph_combobox (GtkWidget *widget)
  * gpk_update_viewer_notify_network_state_cb:
  **/
 static void
-gcm_prefs_button_virtual_entry_changed_cb (GtkEntry *entry, GParamSpec *pspec, gpointer user_data)
+gcm_prefs_button_virtual_entry_changed_cb (GtkEntry *entry, GParamSpec *pspec, GcmPrefsData *prefsdata)
 {
 	const gchar *model;
 	const gchar *manufacturer;
 	GtkWidget *widget;
 
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_model"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "entry_virtual_model"));
 	model = gtk_entry_get_text (GTK_ENTRY (widget));
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_manufacturer"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "entry_virtual_manufacturer"));
 	manufacturer = gtk_entry_get_text (GTK_ENTRY (widget));
 
 	/* only set the add button sensitive if both sections have text */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_virtual_add"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_virtual_add"));
 	gtk_widget_set_sensitive (widget, (model != NULL && model[0] != '\0' && manufacturer != NULL && manufacturer[0] != '\0'));
 }
 
@@ -3208,7 +3206,7 @@ main (int argc, char **argv)
 	GtkWidget *info_bar_vcgt_label;
 	GtkWidget *info_bar_profiles_label;
 	GdkScreen *screen;
-	GtkApplication *application;
+	GcmPrefsData *prefsdata;
 
 	const GOptionEntry options[] = {
 		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
@@ -3232,15 +3230,17 @@ main (int argc, char **argv)
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
 
+	prefsdata = g_new0 (GcmPrefsData, 1);
+
 	/* ensure single instance */
-	application = gtk_application_new ("org.gnome.ColorManager.Prefs", &argc, &argv);
+	prefsdata->application = gtk_application_new ("org.gnome.ColorManager.Prefs", &argc, &argv);
 
 	/* setup defaults */
-	settings = g_settings_new (GCM_SETTINGS_SCHEMA);
+	prefsdata->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 
 	/* get UI */
-	builder = gtk_builder_new ();
-	retval = gtk_builder_add_from_file (builder, GCM_DATA "/gcm-prefs.ui", &error);
+	prefsdata->builder = gtk_builder_new ();
+	retval = gtk_builder_add_from_file (prefsdata->builder, GCM_DATA "/gcm-prefs.ui", &error);
 	if (retval == 0) {
 		egg_warning ("failed to load ui: %s", error->message);
 		g_error_free (error);
@@ -3252,209 +3252,209 @@ main (int argc, char **argv)
 	                                   GCM_DATA G_DIR_SEPARATOR_S "icons");
 
 	/* maintain a list of profiles */
-	profile_store = gcm_profile_store_new ();
+	prefsdata->profile_store = gcm_profile_store_new ();
 
 	/* create list stores */
-	list_store_devices = gtk_list_store_new (GCM_DEVICES_COLUMN_LAST, G_TYPE_STRING, G_TYPE_STRING,
+	prefsdata->list_store_devices = gtk_list_store_new (GCM_DEVICES_COLUMN_LAST, G_TYPE_STRING, G_TYPE_STRING,
 						 G_TYPE_STRING, G_TYPE_STRING);
-	list_store_profiles = gtk_list_store_new (GCM_PROFILES_COLUMN_LAST, G_TYPE_STRING,
+	prefsdata->list_store_profiles = gtk_list_store_new (GCM_PROFILES_COLUMN_LAST, G_TYPE_STRING,
 						  G_TYPE_STRING, G_TYPE_STRING, GCM_TYPE_PROFILE);
-	list_store_assign = gtk_list_store_new (GCM_ASSIGN_COLUMN_LAST, G_TYPE_STRING, GCM_TYPE_PROFILE, G_TYPE_BOOLEAN);
+	prefsdata->list_store_assign = gtk_list_store_new (GCM_ASSIGN_COLUMN_LAST, G_TYPE_STRING, GCM_TYPE_PROFILE, G_TYPE_BOOLEAN);
 
 	/* assign buttons */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_assign_add"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_assign_add"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_assign_add_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_assign_remove"));
+			  G_CALLBACK (gcm_prefs_assign_add_cb), prefsdata);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_assign_remove"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_assign_remove_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_assign_make_default"));
+			  G_CALLBACK (gcm_prefs_assign_remove_cb), prefsdata);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_assign_make_default"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_assign_make_default_cb), NULL);
+			  G_CALLBACK (gcm_prefs_assign_make_default_cb), prefsdata);
 
 	/* create device tree view */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_devices"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "treeview_devices"));
 	gtk_tree_view_set_model (GTK_TREE_VIEW (widget),
-				 GTK_TREE_MODEL (list_store_devices));
+				 GTK_TREE_MODEL (prefsdata->list_store_devices));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	g_signal_connect (selection, "changed",
-			  G_CALLBACK (gcm_prefs_devices_treeview_clicked_cb), NULL);
+			  G_CALLBACK (gcm_prefs_devices_treeview_clicked_cb), prefsdata);
 
 	/* add columns to the tree view */
-	gcm_prefs_add_devices_columns (GTK_TREE_VIEW (widget));
+	gcm_prefs_add_devices_columns (prefsdata, GTK_TREE_VIEW (widget));
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
 
 	/* create profile tree view */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_profiles"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "treeview_profiles"));
 	gtk_tree_view_set_model (GTK_TREE_VIEW (widget),
-				 GTK_TREE_MODEL (list_store_profiles));
+				 GTK_TREE_MODEL (prefsdata->list_store_profiles));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	g_signal_connect (selection, "changed",
-			  G_CALLBACK (gcm_prefs_profiles_treeview_clicked_cb), NULL);
+			  G_CALLBACK (gcm_prefs_profiles_treeview_clicked_cb), prefsdata);
 
 	/* add columns to the tree view */
-	gcm_prefs_add_profiles_columns (GTK_TREE_VIEW (widget));
+	gcm_prefs_add_profiles_columns (prefsdata, GTK_TREE_VIEW (widget));
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
 
 	/* create assign tree view */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "treeview_assign"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "treeview_assign"));
 	gtk_tree_view_set_model (GTK_TREE_VIEW (widget),
-				 GTK_TREE_MODEL (list_store_assign));
+				 GTK_TREE_MODEL (prefsdata->list_store_assign));
 	g_signal_connect (GTK_TREE_VIEW (widget), "row-activated",
-			  G_CALLBACK (gcm_prefs_assign_treeview_row_activated_cb), NULL);
+			  G_CALLBACK (gcm_prefs_assign_treeview_row_activated_cb), prefsdata);
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	g_signal_connect (selection, "changed",
-			  G_CALLBACK (gcm_prefs_assign_treeview_clicked_cb), NULL);
+			  G_CALLBACK (gcm_prefs_assign_treeview_clicked_cb), prefsdata);
 
 	/* add columns to the tree view */
-	gcm_prefs_add_assign_columns (GTK_TREE_VIEW (widget));
+	gcm_prefs_add_assign_columns (prefsdata, GTK_TREE_VIEW (widget));
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
 	gtk_tree_view_set_reorderable (GTK_TREE_VIEW (widget), TRUE);
 
-	main_window = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_prefs"));
-	gtk_application_add_window (application, GTK_WINDOW (main_window));
+	main_window = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "dialog_prefs"));
+	gtk_application_add_window (prefsdata->application, GTK_WINDOW (main_window));
 
 	/* Hide window first so that the dialogue resizes itself without redrawing */
 	gtk_widget_hide (main_window);
 	gtk_window_set_icon_name (GTK_WINDOW (main_window), GCM_STOCK_ICON);
 	g_signal_connect (main_window, "delete_event",
-			  G_CALLBACK (gcm_prefs_delete_event_cb), application);
+			  G_CALLBACK (gcm_prefs_delete_event_cb), prefsdata);
 	g_signal_connect (main_window, "drag-data-received",
-			  G_CALLBACK (gcm_prefs_drag_data_received_cb), application);
+			  G_CALLBACK (gcm_prefs_drag_data_received_cb), prefsdata);
 	gcm_prefs_setup_drag_and_drop (GTK_WIDGET(main_window));
 
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_close"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_close"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_close_cb), application);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_default"));
+			  G_CALLBACK (gcm_prefs_close_cb), prefsdata);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_default"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_default_cb), application);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_help"));
+			  G_CALLBACK (gcm_prefs_default_cb), prefsdata);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_help"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_help_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_reset"));
+			  G_CALLBACK (gcm_prefs_help_cb), prefsdata);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_reset"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_reset_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_delete"));
+			  G_CALLBACK (gcm_prefs_reset_cb), prefsdata);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_delete"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_delete_cb), NULL);
+			  G_CALLBACK (gcm_prefs_delete_cb), prefsdata);
 	gtk_widget_set_sensitive (widget, FALSE);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_device_add"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_device_add"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_device_add_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_calibrate"));
+			  G_CALLBACK (gcm_prefs_device_add_cb), prefsdata);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_calibrate"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_calibrate_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_delete"));
+			  G_CALLBACK (gcm_prefs_calibrate_cb), prefsdata);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_profile_delete"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_profile_delete_cb), NULL);
+			  G_CALLBACK (gcm_prefs_profile_delete_cb), prefsdata);
 	gtk_widget_set_sensitive (widget, FALSE);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_profile_import"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_profile_import"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_profile_import_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_fine_tuning"));
+			  G_CALLBACK (gcm_prefs_profile_import_cb), prefsdata);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "expander_fine_tuning"));
 	gtk_widget_set_sensitive (widget, FALSE);
 
 	/* hidden until a profile is selected */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_graph"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "vbox_graph"));
 	gtk_widget_set_visible (widget, FALSE);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_profile_info"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "vbox_profile_info"));
 	gtk_widget_set_visible (widget, FALSE);
 
 	/* hide widgets by default */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_device_details"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "vbox_device_details"));
 	gtk_widget_hide (widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "label_profile"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "label_profile"));
 	gtk_widget_set_sensitive (widget, FALSE);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_manufacturer"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_manufacturer"));
 	gtk_widget_hide (widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_model"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_model"));
 	gtk_widget_hide (widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_serial"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_serial"));
 	gtk_widget_hide (widget);
 
 	/* set up virtual dialog */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_virtual"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "dialog_virtual"));
 	g_signal_connect (widget, "delete-event",
-			  G_CALLBACK (gcm_prefs_virtual_delete_event_cb), NULL);
+			  G_CALLBACK (gcm_prefs_virtual_delete_event_cb), prefsdata);
 	g_signal_connect (widget, "drag-data-received",
-			  G_CALLBACK (gcm_prefs_virtual_drag_data_received_cb), NULL);
+			  G_CALLBACK (gcm_prefs_virtual_drag_data_received_cb), prefsdata);
 	gcm_prefs_setup_drag_and_drop (widget);
 
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_virtual_add"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_virtual_add"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_button_virtual_add_cb), NULL);
+			  G_CALLBACK (gcm_prefs_button_virtual_add_cb), prefsdata);
 	gtk_widget_set_sensitive (widget, FALSE);
 
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_virtual_cancel"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_virtual_cancel"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_button_virtual_cancel_cb), NULL);
+			  G_CALLBACK (gcm_prefs_button_virtual_cancel_cb), prefsdata);
 
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_virtual_type"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "combobox_virtual_type"));
 	gcm_prefs_set_combo_simple_text (widget);
 	gcm_prefs_setup_virtual_combobox (widget);
 
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_graph"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "combobox_graph"));
 	gcm_prefs_set_combo_simple_text (widget);
-	gcm_prefs_setup_graph_combobox (widget);
+	gcm_prefs_setup_graph_combobox (prefsdata, widget);
 	g_signal_connect (widget, "changed",
-			  G_CALLBACK (gcm_prefs_graph_combo_changed_cb), (gpointer) "cmyk");
+			  G_CALLBACK (gcm_prefs_graph_combo_changed_cb), prefsdata);
 
 	/* set up assign dialog */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_assign"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "dialog_assign"));
 	g_signal_connect (widget, "delete-event",
-			  G_CALLBACK (gcm_prefs_assign_delete_event_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_assign_cancel"));
+			  G_CALLBACK (gcm_prefs_assign_delete_event_cb), prefsdata);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_assign_cancel"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_button_assign_cancel_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_assign_ok"));
+			  G_CALLBACK (gcm_prefs_button_assign_cancel_cb), prefsdata);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "button_assign_ok"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_button_assign_ok_cb), NULL);
+			  G_CALLBACK (gcm_prefs_button_assign_ok_cb), prefsdata);
 
 	/* disable the add button if nothing in either box */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_model"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "entry_virtual_model"));
 	g_signal_connect (widget, "notify::text",
-			  G_CALLBACK (gcm_prefs_button_virtual_entry_changed_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "entry_virtual_manufacturer"));
+			  G_CALLBACK (gcm_prefs_button_virtual_entry_changed_cb), prefsdata);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "entry_virtual_manufacturer"));
 	g_signal_connect (widget, "notify::text",
-			  G_CALLBACK (gcm_prefs_button_virtual_entry_changed_cb), NULL);
+			  G_CALLBACK (gcm_prefs_button_virtual_entry_changed_cb), prefsdata);
 
 	/* setup icc profiles list */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_profile"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "combobox_profile"));
 	gcm_prefs_set_combo_simple_text (widget);
 	gtk_widget_set_sensitive (widget, FALSE);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), NULL);
+			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb), prefsdata);
 
 	/* set ranges */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_gamma"));
 	gtk_range_set_range (GTK_RANGE (widget), 0.1f, 5.0f);
 	gtk_scale_add_mark (GTK_SCALE (widget), 1.0f, GTK_POS_TOP, "");
 	gtk_scale_add_mark (GTK_SCALE (widget), 1.8f, GTK_POS_TOP, "");
 	gtk_scale_add_mark (GTK_SCALE (widget), 2.2f, GTK_POS_TOP, "");
 
 	/* set ranges */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_brightness"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_brightness"));
 	gtk_range_set_range (GTK_RANGE (widget), 0.0f, 0.9f);
 //	gtk_scale_add_mark (GTK_SCALE (widget), 0.0f, GTK_POS_TOP, "");
 
 	/* set ranges */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_contrast"));
 	gtk_range_set_range (GTK_RANGE (widget), 0.1f, 1.0f);
 //	gtk_scale_add_mark (GTK_SCALE (widget), 1.0f, GTK_POS_TOP, "");
 
 	/* use a device client array */
-	gcm_client = gcm_client_new ();
-	gcm_client_set_use_threads (gcm_client, TRUE);
-	g_signal_connect (gcm_client, "added", G_CALLBACK (gcm_prefs_added_cb), NULL);
-	g_signal_connect (gcm_client, "removed", G_CALLBACK (gcm_prefs_removed_cb), NULL);
-	g_signal_connect (gcm_client, "changed", G_CALLBACK (gcm_prefs_changed_cb), NULL);
-	g_signal_connect (gcm_client, "notify::loading",
-			  G_CALLBACK (gcm_prefs_client_notify_loading_cb), NULL);
+	prefsdata->gcm_client = gcm_client_new ();
+	gcm_client_set_use_threads (prefsdata->gcm_client, TRUE);
+	g_signal_connect (prefsdata->gcm_client, "added", G_CALLBACK (gcm_prefs_added_cb), prefsdata);
+	g_signal_connect (prefsdata->gcm_client, "removed", G_CALLBACK (gcm_prefs_removed_cb), prefsdata);
+	g_signal_connect (prefsdata->gcm_client, "changed", G_CALLBACK (gcm_prefs_changed_cb), prefsdata);
+	g_signal_connect (prefsdata->gcm_client, "notify::loading",
+			  G_CALLBACK (gcm_prefs_client_notify_loading_cb), prefsdata);
 
 	/* use the color device */
-	colorimeter = gcm_colorimeter_new ();
-	g_signal_connect (colorimeter, "changed", G_CALLBACK (gcm_prefs_colorimeter_changed_cb), NULL);
+	prefsdata->colorimeter = gcm_colorimeter_new ();
+	g_signal_connect (prefsdata->colorimeter, "changed", G_CALLBACK (gcm_prefs_colorimeter_changed_cb), prefsdata);
 
 	/* set the parent window if it is specified */
 	if (xid != 0) {
@@ -3463,148 +3463,148 @@ main (int argc, char **argv)
 	}
 
 	/* use cie widget */
-	cie_widget = gcm_cie_widget_new ();
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_cie_widget"));
-	gtk_box_pack_start (GTK_BOX(widget), cie_widget, TRUE, TRUE, 0);
-	gtk_box_reorder_child (GTK_BOX(widget), cie_widget, 0);
+	prefsdata->cie_widget = gcm_cie_widget_new ();
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_cie_widget"));
+	gtk_box_pack_start (GTK_BOX(widget), prefsdata->cie_widget, TRUE, TRUE, 0);
+	gtk_box_reorder_child (GTK_BOX(widget), prefsdata->cie_widget, 0);
 
 	/* use trc widget */
-	trc_widget = gcm_trc_widget_new ();
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_trc_widget"));
-	gtk_box_pack_start (GTK_BOX(widget), trc_widget, TRUE, TRUE, 0);
-	gtk_box_reorder_child (GTK_BOX(widget), trc_widget, 0);
+	prefsdata->trc_widget = gcm_trc_widget_new ();
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_trc_widget"));
+	gtk_box_pack_start (GTK_BOX(widget), prefsdata->trc_widget, TRUE, TRUE, 0);
+	gtk_box_reorder_child (GTK_BOX(widget), prefsdata->trc_widget, 0);
 
 	/* use vcgt widget */
-	vcgt_widget = gcm_trc_widget_new ();
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hbox_vcgt_widget"));
-	gtk_box_pack_start (GTK_BOX(widget), vcgt_widget, TRUE, TRUE, 0);
-	gtk_box_reorder_child (GTK_BOX(widget), vcgt_widget, 0);
+	prefsdata->vcgt_widget = gcm_trc_widget_new ();
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hbox_vcgt_widget"));
+	gtk_box_pack_start (GTK_BOX(widget), prefsdata->vcgt_widget, TRUE, TRUE, 0);
+	gtk_box_reorder_child (GTK_BOX(widget), prefsdata->vcgt_widget, 0);
 
 	/* do we set a default size to make the window larger? */
 	screen = gdk_screen_get_default ();
 	if (gdk_screen_get_width (screen) < 1024 ||
 	    gdk_screen_get_height (screen) < 768) {
-		gtk_widget_set_size_request (cie_widget, 50, 50);
-		gtk_widget_set_size_request (trc_widget, 50, 50);
-		gtk_widget_set_size_request (vcgt_widget, 50, 50);
+		gtk_widget_set_size_request (prefsdata->cie_widget, 50, 50);
+		gtk_widget_set_size_request (prefsdata->trc_widget, 50, 50);
+		gtk_widget_set_size_request (prefsdata->vcgt_widget, 50, 50);
 	} else {
-		gtk_widget_set_size_request (cie_widget, 200, 200);
-		gtk_widget_set_size_request (trc_widget, 200, 200);
-		gtk_widget_set_size_request (vcgt_widget, 200, 200);
+		gtk_widget_set_size_request (prefsdata->cie_widget, 200, 200);
+		gtk_widget_set_size_request (prefsdata->trc_widget, 200, 200);
+		gtk_widget_set_size_request (prefsdata->vcgt_widget, 200, 200);
 	}
 
 	/* use infobar */
-	info_bar_loading = gtk_info_bar_new ();
-	info_bar_vcgt = gtk_info_bar_new ();
-	g_signal_connect (info_bar_vcgt, "response",
-			  G_CALLBACK (gcm_prefs_info_bar_response_cb), NULL);
-	info_bar_profiles = gtk_info_bar_new ();
-	g_signal_connect (info_bar_profiles, "response",
-			  G_CALLBACK (gcm_prefs_info_bar_response_cb), NULL);
+	prefsdata->info_bar_loading = gtk_info_bar_new ();
+	prefsdata->info_bar_vcgt = gtk_info_bar_new ();
+	g_signal_connect (prefsdata->info_bar_vcgt, "response",
+			  G_CALLBACK (gcm_prefs_info_bar_response_cb), prefsdata);
+	prefsdata->info_bar_profiles = gtk_info_bar_new ();
+	g_signal_connect (prefsdata->info_bar_profiles, "response",
+			  G_CALLBACK (gcm_prefs_info_bar_response_cb), prefsdata);
 
 	/* TRANSLATORS: button for more details about the vcgt failure */
-	gtk_info_bar_add_button (GTK_INFO_BAR(info_bar_vcgt), _("More Information"), GTK_RESPONSE_HELP);
+	gtk_info_bar_add_button (GTK_INFO_BAR(prefsdata->info_bar_vcgt), _("More Information"), GTK_RESPONSE_HELP);
 
 	/* TRANSLATORS: button to install extra profiles */
-	gtk_info_bar_add_button (GTK_INFO_BAR(info_bar_profiles), _("Install now"), GTK_RESPONSE_APPLY);
+	gtk_info_bar_add_button (GTK_INFO_BAR(prefsdata->info_bar_profiles), _("Install now"), GTK_RESPONSE_APPLY);
 
 	/* TRANSLATORS: this is displayed while the devices are being probed */
 	info_bar_loading_label = gtk_label_new (_("Loading list of devices…"));
-	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar_loading), GTK_MESSAGE_INFO);
-	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar_loading));
+	gtk_info_bar_set_message_type (GTK_INFO_BAR(prefsdata->info_bar_loading), GTK_MESSAGE_INFO);
+	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(prefsdata->info_bar_loading));
 	gtk_container_add (GTK_CONTAINER(widget), info_bar_loading_label);
 	gtk_widget_show (info_bar_loading_label);
 
 	/* TRANSLATORS: this is displayed when the profile is crap */
 	info_bar_vcgt_label = gtk_label_new (_("This profile does not have the information required for whole-screen color correction."));
 	gtk_label_set_line_wrap (GTK_LABEL (info_bar_vcgt_label), TRUE);
-	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar_vcgt), GTK_MESSAGE_INFO);
-	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar_vcgt));
+	gtk_info_bar_set_message_type (GTK_INFO_BAR(prefsdata->info_bar_vcgt), GTK_MESSAGE_INFO);
+	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(prefsdata->info_bar_vcgt));
 	gtk_container_add (GTK_CONTAINER(widget), info_bar_vcgt_label);
 	gtk_widget_show (info_bar_vcgt_label);
 
 	/* TRANSLATORS: this is displayed when the profile is crap */
 	info_bar_profiles_label = gtk_label_new (_("More color profiles could be automatically installed."));
 	gtk_label_set_line_wrap (GTK_LABEL (info_bar_profiles_label), TRUE);
-	gtk_info_bar_set_message_type (GTK_INFO_BAR(info_bar_profiles), GTK_MESSAGE_INFO);
-	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(info_bar_profiles));
+	gtk_info_bar_set_message_type (GTK_INFO_BAR(prefsdata->info_bar_profiles), GTK_MESSAGE_INFO);
+	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(prefsdata->info_bar_profiles));
 	gtk_container_add (GTK_CONTAINER(widget), info_bar_profiles_label);
 	gtk_widget_show (info_bar_profiles_label);
 
 	/* add infobar to devices pane */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_devices"));
-	gtk_box_pack_start (GTK_BOX(widget), info_bar_loading, FALSE, FALSE, 0);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "vbox_devices"));
+	gtk_box_pack_start (GTK_BOX(widget), prefsdata->info_bar_loading, FALSE, FALSE, 0);
 
 	/* add infobar to devices pane */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox_sections"));
-	gtk_box_pack_start (GTK_BOX(widget), info_bar_vcgt, FALSE, FALSE, 0);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "vbox_sections"));
+	gtk_box_pack_start (GTK_BOX(widget), prefsdata->info_bar_vcgt, FALSE, FALSE, 0);
 
 	/* add infobar to defaults pane */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox3"));
-	gtk_box_pack_start (GTK_BOX(widget), info_bar_profiles, TRUE, FALSE, 0);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "vbox3"));
+	gtk_box_pack_start (GTK_BOX(widget), prefsdata->info_bar_profiles, TRUE, FALSE, 0);
 
 	/* show main UI */
 	gtk_widget_show (main_window);
 
 	/* refresh UI */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_graph"));
-	gcm_prefs_graph_combo_changed_cb (widget, NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "combobox_graph"));
+	gcm_prefs_graph_combo_changed_cb (widget, prefsdata);
 
 	/* connect up sliders */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_contrast"));
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_contrast"));
 	g_signal_connect (widget, "value-changed",
-			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_brightness"));
+			  G_CALLBACK (gcm_prefs_slider_changed_cb), prefsdata);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_brightness"));
 	g_signal_connect (widget, "value-changed",
-			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "hscale_gamma"));
+			  G_CALLBACK (gcm_prefs_slider_changed_cb), prefsdata);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "hscale_gamma"));
 	g_signal_connect (widget, "value-changed",
-			  G_CALLBACK (gcm_prefs_slider_changed_cb), NULL);
+			  G_CALLBACK (gcm_prefs_slider_changed_cb), prefsdata);
 
 	/* connect up global widget */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "checkbutton_display"));
-	g_settings_bind (settings,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "checkbutton_display"));
+	g_settings_bind (prefsdata->settings,
 			 GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION,
 			 widget, "active",
 			 G_SETTINGS_BIND_DEFAULT);
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_checkbutton_changed_cb), NULL);
+			  G_CALLBACK (gcm_prefs_checkbutton_changed_cb), prefsdata);
 
 	/* connect up atom widget */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "checkbutton_profile"));
-	g_settings_bind (settings,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "checkbutton_profile"));
+	g_settings_bind (prefsdata->settings,
 			 GCM_SETTINGS_SET_ICC_PROFILE_ATOM,
 			 widget, "active",
 			 G_SETTINGS_BIND_DEFAULT);
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_prefs_checkbutton_changed_cb), NULL);
+			  G_CALLBACK (gcm_prefs_checkbutton_changed_cb), prefsdata);
 
 	/* do we show the fine tuning box */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_fine_tuning"));
-	g_settings_bind (settings,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefsdata->builder, "expander_fine_tuning"));
+	g_settings_bind (prefsdata->settings,
 			 GCM_SETTINGS_SHOW_FINE_TUNING,
 			 widget, "visible",
 			 G_SETTINGS_BIND_DEFAULT | G_SETTINGS_BIND_NO_SENSITIVITY);
 
 	/* do all this after the window has been set up */
-	g_idle_add (gcm_prefs_startup_phase1_idle_cb, NULL);
+	g_idle_add ((GSourceFunc) gcm_prefs_startup_phase1_idle_cb, prefsdata);
 
 	/* wait */
-	gtk_application_run (application);
+	gtk_application_run (prefsdata->application);
 out:
-	g_object_unref (application);
-	if (current_device != NULL)
-		g_object_unref (current_device);
-	if (colorimeter != NULL)
-		g_object_unref (colorimeter);
-	if (settings != NULL)
-		g_object_unref (settings);
-	if (builder != NULL)
-		g_object_unref (builder);
-	if (profile_store != NULL)
-		g_object_unref (profile_store);
-	if (gcm_client != NULL)
-		g_object_unref (gcm_client);
+	g_object_unref (prefsdata->application);
+	if (prefsdata->current_device != NULL)
+		g_object_unref (prefsdata->current_device);
+	if (prefsdata->colorimeter != NULL)
+		g_object_unref (prefsdata->colorimeter);
+	if (prefsdata->settings != NULL)
+		g_object_unref (prefsdata->settings);
+	if (prefsdata->builder != NULL)
+		g_object_unref (prefsdata->builder);
+	if (prefsdata->profile_store != NULL)
+		g_object_unref (prefsdata->profile_store);
+	if (prefsdata->gcm_client != NULL)
+		g_object_unref (prefsdata->gcm_client);
+	g_free (prefsdata);
 	return retval;
 }
-
