@@ -167,7 +167,15 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 		profile_in = cmsOpenProfileFromMem (profile_data, profile_size);
 		profile_close_input = TRUE;
 	} else if (priv->input_profile != NULL) {
+
+		/* not RGB */
+		if (gcm_profile_get_colorspace (priv->input_profile) != GCM_COLORSPACE_RGB) {
+			egg_warning ("input colorspace has to be RGB!");
+			goto out;
+		}
+
 		/* use built-in */
+		egg_debug ("using input profile of %s", gcm_profile_get_filename (priv->input_profile));
 		profile_in = gcm_profile_get_handle (priv->input_profile);
 		profile_close_input = FALSE;
 	} else {
@@ -178,7 +186,15 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 
 	/* get output profile */
 	if (priv->output_profile != NULL) {
+
+		/* not RGB */
+		if (gcm_profile_get_colorspace (priv->output_profile) != GCM_COLORSPACE_RGB) {
+			egg_warning ("output colorspace has to be RGB!");
+			goto out;
+		}
+
 		/* use built-in */
+		egg_debug ("using output profile of %s", gcm_profile_get_filename (priv->output_profile));
 		profile_out = gcm_profile_get_handle (priv->output_profile);
 		profile_close_output = FALSE;
 	} else {
