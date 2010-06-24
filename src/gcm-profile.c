@@ -421,6 +421,18 @@ gcm_profile_set_has_vcgt (GcmProfile *profile, gboolean has_vcgt)
 }
 
 /**
+ * gcm_profile_get_handle:
+ *
+ * Return value: Do not call cmsCloseProfile() on this value!
+ **/
+gpointer
+gcm_profile_get_handle (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+	return profile->priv->lcms_profile;
+}
+
+/**
  * gcm_profile_get_can_delete:
  **/
 gboolean

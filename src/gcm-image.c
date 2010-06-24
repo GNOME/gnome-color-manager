@@ -46,87 +46,23 @@ static void     gcm_image_finalize	(GObject     *object);
  **/
 struct _GcmImagePrivate
 {
-	gboolean			 has_embedded_icc_profile;
-	gboolean			 use_embedded_icc_profile;
-	gchar				*output_icc_profile;
-	gchar				*input_icc_profile;
+	gboolean			 has_embedded_profile;
+	gboolean			 use_embedded_profile;
+	GcmProfile			*output_profile;
+	GcmProfile			*input_profile;
 	GdkPixbuf			*original_pixbuf;
 };
 
 enum {
 	PROP_0,
-	PROP_HAS_EMBEDDED_ICC_PROFILE,
-	PROP_USE_EMBEDDED_ICC_PROFILE,
-	PROP_OUTPUT_ICC_PROFILE,
-	PROP_INPUT_ICC_PROFILE,
+	PROP_HAS_EMBEDDED_PROFILE,
+	PROP_USE_EMBEDDED_PROFILE,
+	PROP_OUTPUT_PROFILE,
+	PROP_INPUT_PROFILE,
 	PROP_LAST
 };
 
 G_DEFINE_TYPE (GcmImage, gcm_image, GTK_TYPE_IMAGE)
-
-/**
- * gcm_image_get_profile_in:
- **/
-static cmsHPROFILE
-gcm_image_get_profile_in (GcmImage *image, const gchar *icc_profile_base64)
-{
-	cmsHPROFILE profile = NULL;
-	guchar *icc_profile = NULL;
-	gsize icc_profile_size;
-	GcmImagePrivate *priv = image->priv;
-
-	/* ignore built-in */
-	if (priv->use_embedded_icc_profile == FALSE) {
-		egg_debug ("ignoring embedded ICC profile, assume sRGB");
-		profile = cmsCreate_sRGBProfile ();
-		goto out;
-	}
-
-	/* decode */
-	icc_profile = g_base64_decode (icc_profile_base64, &icc_profile_size);
-	if (icc_profile == NULL) {
-		egg_warning ("failed to decode base64");
-		goto out;
-	}
-
-	/* use embedded profile */
-	profile = cmsOpenProfileFromMem (icc_profile, icc_profile_size);
-out:
-	g_free (icc_profile);
-	return profile;
-}
-
-/**
- * gcm_image_get_profile_out:
- **/
-static cmsHPROFILE
-gcm_image_get_profile_out (GcmImage *image)
-{
-	cmsHPROFILE profile = NULL;
-	guchar *icc_profile = NULL;
-	gsize icc_profile_size;
-	GcmImagePrivate *priv = image->priv;
-
-	/* not set */
-	if (priv->output_icc_profile == NULL) {
-		egg_debug ("no output ICC profile, assume sRGB");
-		profile = cmsCreate_sRGBProfile ();
-		goto out;
-	}
-
-	/* decode */
-	icc_profile = g_base64_decode (priv->output_icc_profile, &icc_profile_size);
-	if (icc_profile == NULL) {
-		egg_warning ("failed to decode base64");
-		goto out;
-	}
-
-	/* use embedded profile */
-	profile = cmsOpenProfileFromMem (icc_profile, icc_profile_size);
-out:
-	g_free (icc_profile);
-	return profile;
-}
 
 /**
  * gcm_image_get_format:
@@ -175,7 +111,7 @@ out:
 static void
 gcm_image_cms_convert_pixbuf (GcmImage *image)
 {
-	const gchar *icc_profile_base64;
+	const gchar *profile_base64;
 	gint i;
 	cmsUInt32Number format;
 	gint width, height, rowstride;
@@ -185,6 +121,10 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 	cmsHPROFILE profile_out;
 	cmsHTRANSFORM transform;
 	GdkPixbuf *pixbuf_cms;
+	guchar *profile_data = NULL;
+	gsize profile_size;
+	gboolean profile_close_input = FALSE;
+	gboolean profile_close_output = FALSE;
 	GcmImagePrivate *priv = image->priv;
 
 	/* not a pixbuf-backed image */
@@ -208,20 +148,47 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 
 	/* get profile from pixbuf */
 	pixbuf_cms = gtk_image_get_pixbuf (GTK_IMAGE(image));
-	icc_profile_base64 = gdk_pixbuf_get_option (pixbuf_cms, "icc-profile");
+	profile_base64 = gdk_pixbuf_get_option (pixbuf_cms, "profile");
 
 	/* set the boolean property */
-	priv->use_embedded_icc_profile = (icc_profile_base64 != NULL);
+	priv->has_embedded_profile = (profile_base64 != NULL);
 
-	/* just exit, and have no color management done */
-	if (icc_profile_base64 == NULL) {
-		egg_debug ("not a color managed image");
+	/* get input profile */
+	if (priv->use_embedded_profile && priv->has_embedded_profile) {
+
+		/* decode built-in */
+		profile_data = g_base64_decode (profile_base64, &profile_size);
+		if (profile_data == NULL) {
+			egg_warning ("failed to decode base64");
+			goto out;
+		}
+
+		/* use embedded profile */
+		profile_in = cmsOpenProfileFromMem (profile_data, profile_size);
+		profile_close_input = TRUE;
 		goto out;
+	} else if (priv->input_profile != NULL) {
+		/* use built-in */
+		profile_in = gcm_profile_get_handle (priv->input_profile);
+		profile_close_input = FALSE;
+		goto out;
+	} else {
+		egg_debug ("no profile, assume sRGB");
+		profile_in = cmsCreate_sRGBProfile ();
+		profile_close_input = TRUE;
 	}
 
-	/* get profiles */
-	profile_in = gcm_image_get_profile_in (image, icc_profile_base64);
-	profile_out = gcm_image_get_profile_out (image);
+	/* get output profile */
+	if (priv->output_profile != NULL) {
+		/* use built-in */
+		profile_out = gcm_profile_get_handle (priv->output_profile);
+		profile_close_output = FALSE;
+		goto out;
+	} else {
+		egg_debug ("no profile, assume sRGB");
+		profile_out = cmsCreate_sRGBProfile ();
+		profile_close_output = TRUE;
+	}
 
 	/* create transform */
 	transform = cmsCreateTransform (profile_in, format, profile_out, format, INTENT_PERCEPTUAL, 0);
@@ -240,13 +207,16 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 
 	/* destroy lcms state */
 	cmsDeleteTransform (transform);
-	cmsCloseProfile (profile_in);
-	cmsCloseProfile (profile_out);
+	if (profile_close_input)
+		cmsCloseProfile (profile_in);
+	if (profile_close_output)
+		cmsCloseProfile (profile_out);
 
 	/* refresh widget */
 	gtk_widget_set_visible (GTK_WIDGET(image), FALSE);
 	gtk_widget_set_visible (GTK_WIDGET(image), TRUE);
 out:
+	g_free (profile_data);
 	return;
 }
 
@@ -288,6 +258,57 @@ out:
 }
 
 /**
+ * gcm_image_set_input_profile:
+ **/
+void
+gcm_image_set_input_profile (GcmImage *image, GcmProfile *profile)
+{
+	GcmImagePrivate *priv = image->priv;
+	if (priv->input_profile != NULL) {
+		g_object_unref (priv->input_profile);
+		priv->input_profile = NULL;
+	}
+	if (profile != NULL)
+		priv->input_profile = g_object_ref (profile);
+	gcm_image_cms_convert_pixbuf (image);
+}
+
+/**
+ * gcm_image_set_output_profile:
+ **/
+void
+gcm_image_set_output_profile (GcmImage *image, GcmProfile *profile)
+{
+	GcmImagePrivate *priv = image->priv;
+	if (priv->output_profile != NULL) {
+		g_object_unref (priv->output_profile);
+		priv->output_profile = NULL;
+	}
+	if (profile != NULL)
+		priv->output_profile = g_object_ref (profile);
+	gcm_image_cms_convert_pixbuf (image);
+}
+
+/**
+ * gcm_image_has_embedded_profile:
+ **/
+gboolean
+gcm_image_has_embedded_profile (GcmImage *image)
+{
+	return image->priv->has_embedded_profile;
+}
+
+/**
+ * gcm_image_use_embedded_profile:
+ **/
+void
+gcm_image_use_embedded_profile (GcmImage *image, gboolean use_embedded_profile)
+{
+	image->priv->use_embedded_profile = use_embedded_profile;
+	gcm_image_cms_convert_pixbuf (image);
+}
+
+/**
  * gcm_image_get_property:
  **/
 static void
@@ -297,17 +318,17 @@ gcm_image_get_property (GObject *object, guint prop_id, GValue *value, GParamSpe
 	GcmImagePrivate *priv = image->priv;
 
 	switch (prop_id) {
-	case PROP_HAS_EMBEDDED_ICC_PROFILE:
-		g_value_set_boolean (value, priv->has_embedded_icc_profile);
+	case PROP_HAS_EMBEDDED_PROFILE:
+		g_value_set_boolean (value, priv->has_embedded_profile);
 		break;
-	case PROP_USE_EMBEDDED_ICC_PROFILE:
-		g_value_set_boolean (value, priv->use_embedded_icc_profile);
+	case PROP_USE_EMBEDDED_PROFILE:
+		g_value_set_boolean (value, priv->use_embedded_profile);
 		break;
-	case PROP_OUTPUT_ICC_PROFILE:
-		g_value_set_string (value, priv->output_icc_profile);
+	case PROP_OUTPUT_PROFILE:
+		g_value_set_object (value, priv->output_profile);
 		break;
-	case PROP_INPUT_ICC_PROFILE:
-		g_value_set_string (value, priv->input_icc_profile);
+	case PROP_INPUT_PROFILE:
+		g_value_set_object (value, priv->input_profile);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -322,22 +343,16 @@ static void
 gcm_image_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	GcmImage *image = GCM_IMAGE (object);
-	GcmImagePrivate *priv = image->priv;
 
 	switch (prop_id) {
-	case PROP_USE_EMBEDDED_ICC_PROFILE:
-		priv->use_embedded_icc_profile = g_value_get_boolean (value);
-		gcm_image_cms_convert_pixbuf (image);
+	case PROP_USE_EMBEDDED_PROFILE:
+		gcm_image_use_embedded_profile (image, g_value_get_boolean (value));
 		break;
-	case PROP_OUTPUT_ICC_PROFILE:
-		g_free (priv->output_icc_profile);
-		priv->output_icc_profile = g_strdup (g_value_get_string (value));
-		gcm_image_cms_convert_pixbuf (image);
+	case PROP_OUTPUT_PROFILE:
+		gcm_image_set_output_profile (image, g_value_get_object (value));
 		break;
-	case PROP_INPUT_ICC_PROFILE:
-		g_free (priv->input_icc_profile);
-		priv->input_icc_profile = g_strdup (g_value_get_string (value));
-		gcm_image_cms_convert_pixbuf (image);
+	case PROP_INPUT_PROFILE:
+		gcm_image_set_input_profile (image, g_value_get_object (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -358,36 +373,36 @@ gcm_image_class_init (GcmImageClass *klass)
 	object_class->set_property = gcm_image_set_property;
 
 	/**
-	 * GcmImage:has-embedded-icc-profile:
+	 * GcmImage:has-embedded-profile:
 	 */
-	pspec = g_param_spec_boolean ("has-embedded-icc-profile", NULL, NULL,
+	pspec = g_param_spec_boolean ("has-embedded-profile", NULL, NULL,
 				      TRUE,
 				      G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_HAS_EMBEDDED_ICC_PROFILE, pspec);
+	g_object_class_install_property (object_class, PROP_HAS_EMBEDDED_PROFILE, pspec);
 
 	/**
-	 * GcmImage:use-embedded-icc-profile:
+	 * GcmImage:use-embedded-profile:
 	 */
-	pspec = g_param_spec_boolean ("use-embedded-icc-profile", NULL, NULL,
+	pspec = g_param_spec_boolean ("use-embedded-profile", NULL, NULL,
 				      TRUE,
 				      G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_USE_EMBEDDED_ICC_PROFILE, pspec);
+	g_object_class_install_property (object_class, PROP_USE_EMBEDDED_PROFILE, pspec);
 
 	/**
-	 * GcmImage:output-icc-profile:
+	 * GcmImage:output-profile:
 	 */
-	pspec = g_param_spec_string ("output-icc-profile", NULL, NULL,
-				     NULL,
+	pspec = g_param_spec_object ("output-profile", NULL, NULL,
+				     GCM_TYPE_PROFILE,
 				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_OUTPUT_ICC_PROFILE, pspec);
+	g_object_class_install_property (object_class, PROP_OUTPUT_PROFILE, pspec);
 
 	/**
-	 * GcmImage:input-icc-profile:
+	 * GcmImage:input-profile:
 	 */
-	pspec = g_param_spec_string ("input-icc-profile", NULL, NULL,
-				     NULL,
+	pspec = g_param_spec_object ("input-profile", NULL, NULL,
+				     GCM_TYPE_PROFILE,
 				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_INPUT_ICC_PROFILE, pspec);
+	g_object_class_install_property (object_class, PROP_INPUT_PROFILE, pspec);
 
 	g_type_class_add_private (klass, sizeof (GcmImagePrivate));
 }
@@ -402,8 +417,8 @@ gcm_image_init (GcmImage *image)
 
 	priv = image->priv = GCM_IMAGE_GET_PRIVATE (image);
 
-	priv->has_embedded_icc_profile = FALSE;
-	priv->use_embedded_icc_profile = TRUE;
+	priv->has_embedded_profile = FALSE;
+	priv->use_embedded_profile = TRUE;
 	priv->original_pixbuf = NULL;
 
 	/* only convert pixbuf if the size changes */
@@ -422,8 +437,10 @@ gcm_image_finalize (GObject *object)
 
 	if (priv->original_pixbuf != NULL)
 		g_object_unref (priv->original_pixbuf);
-	g_free (priv->output_icc_profile);
-	g_free (priv->input_icc_profile);
+	if (priv->output_profile != NULL)
+		g_object_unref (priv->output_profile);
+	if (priv->input_profile != NULL)
+		g_object_unref (priv->input_profile);
 
 	G_OBJECT_CLASS (gcm_image_parent_class)->finalize (object);
 }

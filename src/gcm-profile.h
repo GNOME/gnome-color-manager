@@ -72,6 +72,7 @@ gboolean	 gcm_profile_parse_data			(GcmProfile	*profile,
 gboolean	 gcm_profile_save			(GcmProfile	*profile,
 							 const gchar	*filename,
 							 GError		**error);
+gpointer	 gcm_profile_get_handle			(GcmProfile	*profile);
 const gchar	*gcm_profile_get_checksum		(GcmProfile	*profile);
 gboolean	 gcm_profile_get_can_delete		(GcmProfile	*profile);
 GcmClut		*gcm_profile_generate_vcgt		(GcmProfile	*profile,

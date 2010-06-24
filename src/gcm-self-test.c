@@ -685,35 +685,6 @@ gcm_test_gamma_widget_func (void)
 	g_free (filename_image);
 }
 
-static gchar *
-gcm_image_test_get_ibmt61_profile ()
-{
-	gchar *filename;
-	gchar *profile_base64 = NULL;
-	gchar *contents = NULL;
-	gboolean ret;
-	gsize length;
-	GError *error = NULL;
-
-	/* get test file */
-	filename = gcm_test_get_data_file ("ibm-t61.icc");
-
-	/* get contents */
-	ret = g_file_get_contents (filename, &contents, &length, &error);
-	if (!ret) {
-		g_warning ("failed to get contents: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* encode */
-	profile_base64 = g_base64_encode ((const guchar *)contents, length);
-out:
-	g_free (contents);
-	g_free (filename);
-	return profile_base64;
-}
-
 static void
 gcm_test_image_func (void)
 {
@@ -724,7 +695,10 @@ gcm_test_image_func (void)
 	gint response;
 	gchar *filename_widget;
 	gchar *filename_test;
-	gchar *profile_base64;
+	gchar *filename;
+	gboolean ret;
+	GcmProfile *profile;
+	GFile *file;
 
 	image = gcm_image_new ();
 	g_assert (image != NULL);
@@ -747,8 +721,8 @@ gcm_test_image_func (void)
 	gtk_widget_show (image_test);
 
 	g_object_set (image,
-		      "use-embedded-icc-profile", TRUE,
-		      "output-icc-profile", NULL,
+		      "use-embedded-profile", TRUE,
+		      "output-profile", NULL,
 		      NULL);
 
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
@@ -758,22 +732,28 @@ gcm_test_image_func (void)
 	filename_test = gcm_test_get_data_file ("image-widget-nonembed.png");
 	gtk_image_set_from_file (GTK_IMAGE(image_test), filename_test);
 	g_object_set (image,
-		      "use-embedded-icc-profile", FALSE,
+		      "use-embedded-profile", FALSE,
 		      NULL);
 
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	g_assert ((response == GTK_RESPONSE_YES));
 	g_free (filename_test);
 
-	profile_base64 = gcm_image_test_get_ibmt61_profile ();
-	g_assert ((profile_base64 != NULL));
-
 	filename_test = gcm_test_get_data_file ("image-widget-output.png");
 	gtk_image_set_from_file (GTK_IMAGE(image_test), filename_test);
 	g_object_set (image,
-		      "use-embedded-icc-profile", TRUE,
-		      "output-icc-profile", profile_base64,
+		      "use-embedded-profile", TRUE,
 		      NULL);
+
+	/* get test file */
+	filename = gcm_test_get_data_file ("ibm-t61.icc");
+	profile = gcm_profile_new ();
+	file = g_file_new_for_path (filename);
+	ret = gcm_profile_parse (profile, file, NULL);
+	g_object_unref (file);
+	g_assert (ret);
+	gcm_image_set_output_profile (image, profile);
+	g_object_unref (profile);
 
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	g_assert ((response == GTK_RESPONSE_YES));
@@ -781,7 +761,7 @@ gcm_test_image_func (void)
 
 	gtk_widget_destroy (dialog);
 
-	g_free (profile_base64);
+	g_free (filename);
 	g_free (filename_widget);
 }
 
