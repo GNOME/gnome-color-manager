@@ -230,7 +230,7 @@ dnl - Build self tests
 dnl ---------------------------------------------------------------------------
 AC_ARG_ENABLE(tests, AS_HELP_STRING([--enable-tests],[enable unit test code]),
 	      enable_tests=$enableval,enable_tests=yes)
-AM_CONDITIONAL(HAVEmake, test x$enable_tests = xyes)
+AM_CONDITIONAL(HAVE_TESTS, test x$enable_tests = xyes)
 
 AC_SUBST(GCM_SYSTEM_PROFILES_DIR, "\$(localstatedir)/lib/color")
 

@@ -309,7 +309,7 @@ gcm_session_LDADD =					\
 gcm_session_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
-if HAVEmake
+if HAVE_TESTS
 
 check_PROGRAMS =					\
 	gcm-self-test
