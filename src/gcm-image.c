@@ -166,14 +166,12 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 		/* use embedded profile */
 		profile_in = cmsOpenProfileFromMem (profile_data, profile_size);
 		profile_close_input = TRUE;
-		goto out;
 	} else if (priv->input_profile != NULL) {
 		/* use built-in */
 		profile_in = gcm_profile_get_handle (priv->input_profile);
 		profile_close_input = FALSE;
-		goto out;
 	} else {
-		egg_debug ("no profile, assume sRGB");
+		egg_debug ("no input profile, assume sRGB");
 		profile_in = cmsCreate_sRGBProfile ();
 		profile_close_input = TRUE;
 	}
@@ -183,9 +181,8 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 		/* use built-in */
 		profile_out = gcm_profile_get_handle (priv->output_profile);
 		profile_close_output = FALSE;
-		goto out;
 	} else {
-		egg_debug ("no profile, assume sRGB");
+		egg_debug ("no output profile, assume sRGB");
 		profile_out = cmsCreate_sRGBProfile ();
 		profile_close_output = TRUE;
 	}
