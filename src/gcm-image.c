@@ -50,6 +50,7 @@ struct _GcmImagePrivate
 	gboolean			 use_embedded_profile;
 	GcmProfile			*output_profile;
 	GcmProfile			*input_profile;
+	GcmProfile			*abstract_profile;
 	GdkPixbuf			*original_pixbuf;
 };
 
@@ -59,6 +60,7 @@ enum {
 	PROP_USE_EMBEDDED_PROFILE,
 	PROP_OUTPUT_PROFILE,
 	PROP_INPUT_PROFILE,
+	PROP_ABSTRACT_PROFILE,
 	PROP_LAST
 };
 
@@ -117,9 +119,10 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 	gint width, height, rowstride;
 	guchar *p_in;
 	guchar *p_out;
-	cmsHPROFILE profile_in;
-	cmsHPROFILE profile_out;
-	cmsHTRANSFORM transform;
+	cmsHPROFILE profile_in = NULL;
+	cmsHPROFILE profile_out = NULL;
+	cmsHPROFILE profile_abstract = NULL;
+	cmsHTRANSFORM transform = NULL;
 	GdkPixbuf *pixbuf_cms;
 	guchar *profile_data = NULL;
 	gsize profile_size;
@@ -203,8 +206,30 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 		profile_close_output = TRUE;
 	}
 
-	/* create transform */
-	transform = cmsCreateTransform (profile_in, format, profile_out, format, INTENT_PERCEPTUAL, 0);
+	/* get abstract profile */
+	if (priv->abstract_profile != NULL) {
+		cmsHPROFILE profiles[3];
+
+		/* not LAB */
+		if (gcm_profile_get_colorspace (priv->abstract_profile) != GCM_COLORSPACE_LAB) {
+			egg_warning ("abstract profile has to be LAB!");
+			goto out;
+		}
+
+		/* generate a devicelink */
+		profiles[0] = profile_in;
+		profiles[1] = gcm_profile_get_handle (priv->abstract_profile);
+		profiles[2] = profile_out;
+		transform = cmsCreateMultiprofileTransform (profiles, 3, format, format, INTENT_PERCEPTUAL, 0);
+
+	} else {
+		/* create basic transform */
+		transform = cmsCreateTransform (profile_in, format, profile_out, format, INTENT_PERCEPTUAL, 0);
+	}
+
+	/* failed? */
+	if (transform == NULL)
+		goto out;
 
 	/* process each row */
 	height = gdk_pixbuf_get_height (priv->original_pixbuf);
@@ -218,17 +243,22 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 		p_out += rowstride;
 	}
 
-	/* destroy lcms state */
-	cmsDeleteTransform (transform);
-	if (profile_close_input)
-		cmsCloseProfile (profile_in);
-	if (profile_close_output)
-		cmsCloseProfile (profile_out);
-
 	/* refresh widget */
-	gtk_widget_set_visible (GTK_WIDGET(image), FALSE);
-	gtk_widget_set_visible (GTK_WIDGET(image), TRUE);
+	if (gtk_widget_get_visible (GTK_WIDGET(image))) {
+		gtk_widget_set_visible (GTK_WIDGET(image), FALSE);
+		gtk_widget_set_visible (GTK_WIDGET(image), TRUE);
+	}
 out:
+	/* destroy lcms state */
+	if (transform != NULL)
+		cmsDeleteTransform (transform);
+	if (profile_in != NULL && profile_close_input)
+		cmsCloseProfile (profile_in);
+	if (profile_out != NULL && profile_close_output)
+		cmsCloseProfile (profile_out);
+	if (profile_abstract != NULL)
+		cmsCloseProfile (profile_abstract);
+
 	g_free (profile_data);
 	return;
 }
@@ -281,8 +311,10 @@ gcm_image_set_input_profile (GcmImage *image, GcmProfile *profile)
 		g_object_unref (priv->input_profile);
 		priv->input_profile = NULL;
 	}
-	if (profile != NULL)
+	if (profile != NULL) {
 		priv->input_profile = g_object_ref (profile);
+		gcm_image_use_embedded_profile (image, FALSE);
+	}
 	gcm_image_cms_convert_pixbuf (image);
 }
 
@@ -299,6 +331,22 @@ gcm_image_set_output_profile (GcmImage *image, GcmProfile *profile)
 	}
 	if (profile != NULL)
 		priv->output_profile = g_object_ref (profile);
+	gcm_image_cms_convert_pixbuf (image);
+}
+
+/**
+ * gcm_image_set_abstract_profile:
+ **/
+void
+gcm_image_set_abstract_profile (GcmImage *image, GcmProfile *profile)
+{
+	GcmImagePrivate *priv = image->priv;
+	if (priv->abstract_profile != NULL) {
+		g_object_unref (priv->abstract_profile);
+		priv->abstract_profile = NULL;
+	}
+	if (profile != NULL)
+		priv->abstract_profile = g_object_ref (profile);
 	gcm_image_cms_convert_pixbuf (image);
 }
 
@@ -343,6 +391,9 @@ gcm_image_get_property (GObject *object, guint prop_id, GValue *value, GParamSpe
 	case PROP_INPUT_PROFILE:
 		g_value_set_object (value, priv->input_profile);
 		break;
+	case PROP_ABSTRACT_PROFILE:
+		g_value_set_object (value, priv->abstract_profile);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -366,6 +417,9 @@ gcm_image_set_property (GObject *object, guint prop_id, const GValue *value, GPa
 		break;
 	case PROP_INPUT_PROFILE:
 		gcm_image_set_input_profile (image, g_value_get_object (value));
+		break;
+	case PROP_ABSTRACT_PROFILE:
+		gcm_image_set_abstract_profile (image, g_value_get_object (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -417,6 +471,14 @@ gcm_image_class_init (GcmImageClass *klass)
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_INPUT_PROFILE, pspec);
 
+	/**
+	 * GcmImage:abstract-profile:
+	 */
+	pspec = g_param_spec_object ("abstract-profile", NULL, NULL,
+				     GCM_TYPE_PROFILE,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_ABSTRACT_PROFILE, pspec);
+
 	g_type_class_add_private (klass, sizeof (GcmImagePrivate));
 }
 
@@ -454,6 +516,8 @@ gcm_image_finalize (GObject *object)
 		g_object_unref (priv->output_profile);
 	if (priv->input_profile != NULL)
 		g_object_unref (priv->input_profile);
+	if (priv->abstract_profile != NULL)
+		g_object_unref (priv->abstract_profile);
 
 	G_OBJECT_CLASS (gcm_image_parent_class)->finalize (object);
 }
