@@ -223,7 +223,7 @@ gcm_profile_store_add_profile (GcmProfileStore *profile_store, GFile *file)
 		goto out;
 
 	/* parse the profile name */
-	profile = gcm_profile_default_new ();
+	profile = gcm_profile_new ();
 	ret = gcm_profile_parse (profile, file, &error);
 	if (!ret) {
 		egg_warning ("failed to add profile '%s': %s", filename, error->message);

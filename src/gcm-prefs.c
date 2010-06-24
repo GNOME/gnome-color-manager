@@ -2391,7 +2391,7 @@ gcm_prefs_profile_combo_changed_cb (GtkWidget *widget, GcmPrefsData *prefsdata)
 
 		/* get an object of the destination */
 		dest = gcm_utils_get_profile_destination (file);
-		profile = gcm_profile_default_new ();
+		profile = gcm_profile_new ();
 		ret = gcm_profile_parse (profile, dest, &error);
 		if (!ret) {
 			/* set to first entry */

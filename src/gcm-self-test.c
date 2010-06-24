@@ -41,7 +41,6 @@
 #include "gcm-print.h"
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
-#include "gcm-profile-lcms1.h"
 #include "gcm-tables.h"
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
@@ -200,7 +199,7 @@ gcm_test_cie_widget_func (void)
 	filename_profile = gcm_test_get_data_file ("bluish.icc");
 	g_assert ((filename_profile != NULL));
 
-	profile = gcm_profile_default_new ();
+	profile = gcm_profile_new ();
 	file = g_file_new_for_path (filename_profile);
 	gcm_profile_parse (profile, file, NULL);
 	g_object_get (profile,
@@ -831,41 +830,41 @@ gcm_test_profile_test_parse_file (const gchar *datafile, GcmProfileTestData *tes
 	gchar *filename = NULL;
 	gboolean ret;
 	GError *error = NULL;
-	GcmProfile *profile_lcms1;
+	GcmProfile *profile;
 	GcmXyz *xyz;
 	gfloat luminance;
 	GFile *file;
 
-	profile_lcms1 = GCM_PROFILE(gcm_profile_lcms1_new ());
-	g_assert (profile_lcms1 != NULL);
+	profile = GCM_PROFILE(gcm_profile_new ());
+	g_assert (profile != NULL);
 
 	filename = gcm_test_get_data_file (datafile);
 	g_assert ((filename != NULL));
 
 	file = g_file_new_for_path (filename);
-	ret = gcm_profile_parse (profile_lcms1, file, &error);
+	ret = gcm_profile_parse (profile, file, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_object_unref (file);
 
-	g_assert_cmpstr (gcm_profile_get_copyright (profile_lcms1), ==, test_data->copyright);
-	g_assert_cmpstr (gcm_profile_get_manufacturer (profile_lcms1), ==, test_data->manufacturer);
-	g_assert_cmpstr (gcm_profile_get_model (profile_lcms1), ==, test_data->model);
-	g_assert_cmpstr (gcm_profile_get_datetime (profile_lcms1), ==, test_data->datetime);
-	g_assert_cmpstr (gcm_profile_get_description (profile_lcms1), ==, test_data->description);
-	g_assert_cmpstr (gcm_profile_get_checksum (profile_lcms1), ==, test_data->checksum);
-	g_assert_cmpint (gcm_profile_get_kind (profile_lcms1), ==, test_data->kind);
-	g_assert_cmpint (gcm_profile_get_colorspace (profile_lcms1), ==, test_data->colorspace);
-	g_assert_cmpint (gcm_profile_get_has_vcgt (profile_lcms1), ==, test_data->has_vcgt);
+	g_assert_cmpstr (gcm_profile_get_copyright (profile), ==, test_data->copyright);
+	g_assert_cmpstr (gcm_profile_get_manufacturer (profile), ==, test_data->manufacturer);
+	g_assert_cmpstr (gcm_profile_get_model (profile), ==, test_data->model);
+	g_assert_cmpstr (gcm_profile_get_datetime (profile), ==, test_data->datetime);
+	g_assert_cmpstr (gcm_profile_get_description (profile), ==, test_data->description);
+	g_assert_cmpstr (gcm_profile_get_checksum (profile), ==, test_data->checksum);
+	g_assert_cmpint (gcm_profile_get_kind (profile), ==, test_data->kind);
+	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, test_data->colorspace);
+	g_assert_cmpint (gcm_profile_get_has_vcgt (profile), ==, test_data->has_vcgt);
 
-	g_object_get (profile_lcms1,
+	g_object_get (profile,
 		      "red", &xyz,
 		      NULL);
 	luminance = gcm_xyz_get_x (xyz);
 	g_assert_cmpfloat (fabs (luminance - test_data->luminance), <, 0.001);
 
 	g_object_unref (xyz);
-	g_object_unref (profile_lcms1);
+	g_object_unref (profile);
 	g_free (filename);
 }
 
@@ -991,7 +990,7 @@ gcm_test_trc_widget_func (void)
 	filename_profile = gcm_test_get_data_file ("AdobeGammaTest.icm");
 	g_assert ((filename_profile != NULL));
 
-	profile = gcm_profile_default_new ();
+	profile = gcm_profile_new ();
 	file = g_file_new_for_path (filename_profile);
 	gcm_profile_parse (profile, file, NULL);
 	clut = gcm_profile_generate_vcgt (profile, 256);

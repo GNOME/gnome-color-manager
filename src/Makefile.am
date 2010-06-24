@@ -79,8 +79,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-gamma-widget.h				\
 	gcm-profile-store.c				\
 	gcm-profile-store.h				\
-	gcm-profile-lcms1.c				\
-	gcm-profile-lcms1.h				\
 	gcm-profile.c					\
 	gcm-profile.h					\
 	gcm-calibrate.c					\

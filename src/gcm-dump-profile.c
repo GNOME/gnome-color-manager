@@ -51,7 +51,7 @@ gcm_dump_profile_filename (const gchar *filename)
 	GFile *file = NULL;
 
 	/* parse profile */
-	profile = gcm_profile_default_new ();
+	profile = gcm_profile_new ();
 	file = g_file_new_for_path (filename);
 	ret = gcm_profile_parse (profile, file, &error);
 	if (!ret) {
