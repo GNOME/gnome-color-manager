@@ -175,7 +175,6 @@ gcm_clut_get_array (GcmClut *clut)
 
 	min = clut->priv->brightness / 100.0f;
 	max = (1.0f - min) * (clut->priv->contrast / 100.0f) + min;
-	egg_debug ("min=%f,max=%f", min, max);
 	custom_gamma = clut->priv->gamma;
 
 	array = g_ptr_array_new_with_free_func (g_free);

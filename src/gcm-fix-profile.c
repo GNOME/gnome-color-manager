@@ -23,7 +23,7 @@
 
 #include <glib/gi18n.h>
 #include <locale.h>
-#include <lcms.h>
+#include <lcms2.h>
 
 static gint lcms_error_code = 0;
 
@@ -52,6 +52,7 @@ gcm_fix_profile_filename (const gchar *filename, const gchar *description, const
 		ret = FALSE;
 		goto out;
 	}
+#if 0
 	if (description != NULL) {
 		ret = _cmsAddTextTag (lcms_profile, icSigProfileDescriptionTag, description);
 		if (!ret || lcms_error_code != 0) {
@@ -80,7 +81,8 @@ gcm_fix_profile_filename (const gchar *filename, const gchar *description, const
 			goto out;
 		}
 	}
-	_cmsSaveProfile (lcms_profile, filename);
+#endif
+	cmsSaveProfileToFile (lcms_profile, filename);
 out:
 	if (lcms_profile != NULL)
 		cmsCloseProfile (lcms_profile);
@@ -88,18 +90,16 @@ out:
 	return ret;
 }
 
-/*
- * gcm_fix_profile_lcms_error_cb:
- */
-static int
-gcm_fix_profile_lcms_error_cb (int ErrorCode, const char *ErrorText)
+/**
+ * gcm_fix_profile_error_cb:
+ **/
+static void
+gcm_fix_profile_error_cb (cmsContext ContextID, cmsUInt32Number errorcode, const char *text)
 {
-	g_warning ("LCMS error %i: %s", ErrorCode, ErrorText);
+	g_warning ("LCMS error %i: %s", errorcode, text);
 
 	/* copy this sytemwide */
-	lcms_error_code = ErrorCode;
-
-	return LCMS_ERRC_WARNING;
+	lcms_error_code = errorcode;
 }
 
 /*
@@ -154,9 +154,7 @@ main (int argc, char **argv)
 		goto out;
 
 	/* setup LCMS */
-	cmsSetErrorHandler (gcm_fix_profile_lcms_error_cb);
-	cmsErrorAction (LCMS_ERROR_SHOW);
-	cmsSetLanguage ("en", "US");
+	cmsSetLogErrorHandler (gcm_fix_profile_error_cb);
 
 	/* fix each profile */
 	for (i=0; files[i] != NULL; i++) {

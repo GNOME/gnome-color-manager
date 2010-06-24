@@ -32,7 +32,7 @@
 #include <glib-object.h>
 #include <glib/gi18n.h>
 #include <gio/gio.h>
-#include <lcms.h>
+#include <lcms2.h>
 
 #include "egg-debug.h"
 
@@ -44,45 +44,6 @@ static void     gcm_profile_finalize	(GObject     *object);
 
 #define GCM_PROFILE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_PROFILE, GcmProfilePrivate))
 
-#define GCM_NUMTAGS			0x80
-#define GCM_BODY			0x84
-
-#define GCM_TAG_ID			0x00
-#define GCM_TAG_OFFSET			0x04
-#define GCM_TAG_SIZE			0x08
-#define GCM_TAG_WIDTH			0x0c
-
-#define icSigVideoCartGammaTableTag	0x76636774
-#define icSigMachineLookUpTableTag	0x6d4c5554
-
-#define GCM_MLUT_RED			0x000
-#define GCM_MLUT_GREEN			0x200
-#define GCM_MLUT_BLUE			0x400
-
-#define GCM_DESC_RECORD_SIZE		0x08
-#define GCM_DESC_RECORD_TEXT		0x0c
-#define GCM_TEXT_RECORD_TEXT		0x08
-
-#define GCM_VCGT_ID			0x00
-#define GCM_VCGT_DUMMY			0x04
-#define GCM_VCGT_GAMMA_TYPE		0x08
-#define GCM_VCGT_GAMMA_DATA		0x0c
-
-#define GCM_VCGT_FORMULA_GAMMA_RED	0x00
-#define GCM_VCGT_FORMULA_MIN_RED	0x04
-#define GCM_VCGT_FORMULA_MAX_RED	0x08
-#define GCM_VCGT_FORMULA_GAMMA_GREEN	0x0c
-#define GCM_VCGT_FORMULA_MIN_GREEN	0x10
-#define GCM_VCGT_FORMULA_MAX_GREEN	0x14
-#define GCM_VCGT_FORMULA_GAMMA_BLUE	0x18
-#define GCM_VCGT_FORMULA_MIN_BLUE	0x1c
-#define GCM_VCGT_FORMULA_MAX_BLUE	0x20
-
-#define GCM_VCGT_TABLE_NUM_CHANNELS	0x00
-#define GCM_VCGT_TABLE_NUM_ENTRIES	0x02
-#define GCM_VCGT_TABLE_NUM_SIZE		0x04
-#define GCM_VCGT_TABLE_NUM_DATA		0x06
-
 /**
  * GcmProfilePrivate:
  *
@@ -90,6 +51,7 @@ static void     gcm_profile_finalize	(GObject     *object);
  **/
 struct _GcmProfilePrivate
 {
+	gboolean		 loaded;
 	GcmProfileKind		 kind;
 	GcmColorspace		 colorspace;
 	guint			 size;
@@ -108,17 +70,12 @@ struct _GcmProfilePrivate
 	GcmXyz			*green;
 	GcmXyz			*blue;
 	GFileMonitor		*monitor;
-
-	gboolean			 loaded;
-	gboolean			 has_mlut;
-	gboolean			 has_vcgt_formula;
-	gboolean			 has_vcgt_table;
-	cmsHPROFILE			 lcms_profile;
-	GcmClutData			*vcgt_data;
-	guint				 vcgt_data_size;
-	GcmClutData			*mlut_data;
-	guint				 mlut_data_size;
-	gboolean			 adobe_gamma_workaround;
+	gboolean		 has_mlut;
+	cmsHPROFILE		 lcms_profile;
+	GcmClutData		*vcgt_data;
+	guint			 vcgt_data_size;
+	GcmClutData		*mlut_data;
+	guint			 mlut_data_size;
 };
 
 enum {
@@ -146,301 +103,6 @@ enum {
 G_DEFINE_TYPE (GcmProfile, gcm_profile, G_TYPE_OBJECT)
 
 static void gcm_profile_file_monitor_changed_cb (GFileMonitor *monitor, GFile *file, GFile *other_file, GFileMonitorEvent event_type, GcmProfile *profile);
-
-/**
- * gcm_parser_decode_32:
- **/
-static guint
-gcm_parser_decode_32 (const guint8 *data)
-{
-	guint retval;
-	retval = (*(data + 0) << 0) + (*(data + 1) << 8) + (*(data + 2) << 16) + (*(data + 3) << 24);
-	return GUINT32_FROM_BE (retval);
-}
-
-/**
- * gcm_parser_decode_16:
- **/
-static guint
-gcm_parser_decode_16 (const guint8 *data)
-{
-	guint retval;
-	retval = (*(data + 0) << 0) + (*(data + 1) << 8);
-	return GUINT16_FROM_BE (retval);
-}
-
-/**
- * gcm_parser_decode_8:
- **/
-static guint
-gcm_parser_decode_8 (const guint8 *data)
-{
-	guint retval;
-	retval = (*data << 0);
-	return GUINT16_FROM_BE (retval);
-}
-
-/**
- * gcm_parser_load_icc_mlut:
- **/
-static gboolean
-gcm_parser_load_icc_mlut (GcmProfile *profile, const guint8 *data, guint size)
-{
-	gboolean ret = TRUE;
-	guint i;
-	GcmClutData *mlut_data;
-
-	/* just load in data into a fixed size LUT */
-	profile->priv->mlut_data = g_new0 (GcmClutData, 256);
-	mlut_data = profile->priv->mlut_data;
-
-	for (i=0; i<256; i++)
-		mlut_data[i].red = gcm_parser_decode_16 (data + GCM_MLUT_RED + i*2);
-	for (i=0; i<256; i++)
-		mlut_data[i].green = gcm_parser_decode_16 (data + GCM_MLUT_GREEN + i*2);
-	for (i=0; i<256; i++)
-		mlut_data[i].blue = gcm_parser_decode_16 (data + GCM_MLUT_BLUE + i*2);
-
-	/* save datatype */
-	profile->priv->has_mlut = TRUE;
-	return ret;
-}
-
-/**
- * gcm_parser_load_icc_vcgt_formula:
- **/
-static gboolean
-gcm_parser_load_icc_vcgt_formula (GcmProfile *profile, const guint8 *data, guint size)
-{
-	gboolean ret = FALSE;
-	GcmClutData *vcgt_data;
-
-	/* just load in data into a temporary array */
-	profile->priv->vcgt_data = g_new0 (GcmClutData, 4);
-	vcgt_data = profile->priv->vcgt_data;
-
-	/* read in block of data */
-	vcgt_data[0].red = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_GAMMA_RED);
-	vcgt_data[0].green = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_GAMMA_GREEN);
-	vcgt_data[0].blue = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_GAMMA_BLUE);
-
-	vcgt_data[1].red = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_MIN_RED);
-	vcgt_data[1].green = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_MIN_GREEN);
-	vcgt_data[1].blue = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_MIN_BLUE);
-
-	vcgt_data[2].red = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_MAX_RED);
-	vcgt_data[2].green = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_MAX_GREEN);
-	vcgt_data[2].blue = gcm_parser_decode_32 (data + GCM_VCGT_FORMULA_MAX_BLUE);
-
-	/* check if valid */
-	if (vcgt_data[0].red / 65536.0 > 5.0 || vcgt_data[0].green / 65536.0 > 5.0 || vcgt_data[0].blue / 65536.0 > 5.0) {
-		egg_warning ("Gamma values out of range: [R:%u G:%u B:%u]", vcgt_data[0].red, vcgt_data[0].green, vcgt_data[0].blue);
-		goto out;
-	}
-	if (vcgt_data[1].red / 65536.0 >= 1.0 || vcgt_data[1].green / 65536.0 >= 1.0 || vcgt_data[1].blue / 65536.0 >= 1.0) {
-		egg_warning ("Gamma min limit out of range: [R:%u G:%u B:%u]", vcgt_data[1].red, vcgt_data[1].green, vcgt_data[1].blue);
-		goto out;
-	}
-	if (vcgt_data[2].red / 65536.0 > 1.0 || vcgt_data[2].green / 65536.0 > 1.0 || vcgt_data[2].blue / 65536.0 > 1.0) {
-		egg_warning ("Gamma max limit out of range: [R:%u G:%u B:%u]", vcgt_data[2].red, vcgt_data[2].green, vcgt_data[2].blue);
-		goto out;
-	}
-
-	/* save datatype */
-	profile->priv->has_vcgt_formula = TRUE;
-	profile->priv->vcgt_data_size = 3;
-	ret = TRUE;
-out:
-	return ret;
-}
-
-/**
- * gcm_parser_load_icc_vcgt_table:
- **/
-static gboolean
-gcm_parser_load_icc_vcgt_table (GcmProfile *profile, const guint8 *data, guint size)
-{
-	gboolean ret = TRUE;
-	guint num_channels = 0;
-	guint num_entries = 0;
-	guint entry_size = 0;
-	guint i;
-	GcmClutData *vcgt_data;
-
-	num_channels = gcm_parser_decode_16 (data + GCM_VCGT_TABLE_NUM_CHANNELS);
-	num_entries = gcm_parser_decode_16 (data + GCM_VCGT_TABLE_NUM_ENTRIES);
-	entry_size = gcm_parser_decode_16 (data + GCM_VCGT_TABLE_NUM_SIZE);
-
-	/* work-around for AdobeGamma-ProfileLcms1s (taken from xcalib) */
-	if (profile->priv->adobe_gamma_workaround) {
-		egg_debug ("Working around AdobeGamma profile");
-		entry_size = 2;
-		num_entries = 256;
-		num_channels = 3;
-	}
-
-	/* only able to parse RGB data */
-	if (num_channels != 3) {
-		egg_warning ("cannot parse non RGB entries");
-		ret = FALSE;
-		goto out;
-	}
-
-	/* bigger than will fit in 16 bits? */
-	if (entry_size > 2) {
-		egg_warning ("cannot parse large entries");
-		ret = FALSE;
-		goto out;
-	}
-
-	/* allocate ramp, plus one entry for extrapolation */
-	profile->priv->vcgt_data = g_new0 (GcmClutData, num_entries + 1);
-	vcgt_data = profile->priv->vcgt_data;
-
-	if (entry_size == 1) {
-		for (i=0; i<num_entries; i++)
-			vcgt_data[i].red = gcm_parser_decode_8 (data + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 0) + i);
-		for (i=0; i<num_entries; i++)
-			vcgt_data[i].green = gcm_parser_decode_8 (data + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 1) + i);
-		for (i=0; i<num_entries; i++)
-			vcgt_data[i].blue = gcm_parser_decode_8 (data + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 2) + i);
-	} else {
-		for (i=0; i<num_entries; i++)
-			vcgt_data[i].red = gcm_parser_decode_16 (data + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 0) + (i*2));
-		for (i=0; i<num_entries; i++)
-			vcgt_data[i].green = gcm_parser_decode_16 (data + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 2) + (i*2));
-		for (i=0; i<num_entries; i++)
-			vcgt_data[i].blue = gcm_parser_decode_16 (data + GCM_VCGT_TABLE_NUM_DATA + (num_entries * 4) + (i*2));
-	}
-
-	/* save datatype */
-	profile->priv->has_vcgt_table = TRUE;
-	profile->priv->vcgt_data_size = num_entries;
-out:
-	return ret;
-}
-
-/**
- * gcm_parser_load_icc_vcgt:
- **/
-static gboolean
-gcm_parser_load_icc_vcgt (GcmProfile *profile, const guint8 *data, guint size)
-{
-	gboolean ret = FALSE;
-	guint tag_id;
-	guint gamma_type;
-
-	/* check we have a VCGT block */
-	tag_id = gcm_parser_decode_32 (data);
-	if (tag_id != icSigVideoCartGammaTableTag) {
-		egg_warning ("invalid content of table vcgt, starting with %x", tag_id);
-		goto out;
-	}
-
-	/* check what type of gamma encoding we have */
-	gamma_type = gcm_parser_decode_32 (data + GCM_VCGT_GAMMA_TYPE);
-	if (gamma_type == 0) {
-		ret = gcm_parser_load_icc_vcgt_table (profile, data + GCM_VCGT_GAMMA_DATA, size);
-		goto out;
-	}
-	if (gamma_type == 1) {
-		ret = gcm_parser_load_icc_vcgt_formula (profile, data + GCM_VCGT_GAMMA_DATA, size);
-		goto out;
-	}
-
-	/* we didn't understand the encoding */
-	egg_warning ("gamma type encoding not recognized");
-out:
-	return ret;
-}
-
-/**
- * gcm_profile_utf16be_to_locale:
- *
- * Convert ICC encoded UTF-16BE into a string the user can understand
- **/
-static gchar *
-gcm_profile_utf16be_to_locale (const guint8 *text, guint size)
-{
-	gsize items_written;
-	gchar *text_utf8 = NULL;
-	gchar *text_locale = NULL;
-	GError *error = NULL;
-
-	/* convert from ICC text encoding to UTF-8 */
-	text_utf8 = g_convert ((const gchar*)text, size, "UTF-8", "UTF-16BE", NULL, &items_written, &error);
-	if (text_utf8 == NULL) {
-		egg_warning ("failed to convert to UTF-8: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* convert from UTF-8 to the users locale*/
-	text_locale = g_locale_from_utf8 (text_utf8, items_written, NULL, NULL, &error);
-	if (text_locale == NULL) {
-		egg_warning ("failed to convert to locale: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-out:
-	g_free (text_utf8);
-	return text_locale;
-}
-
-/**
- * gcm_profile_parse_multi_localized_unicode:
- **/
-static gchar *
-gcm_profile_parse_multi_localized_unicode (GcmProfile *profile, const guint8 *data, guint size)
-{
-	guint i;
-	gchar *text = NULL;
-	guint record_size;
-	guint names_size;
-	guint len;
-	guint offset_name;
-	guint32 type;
-
-	/* get type */
-	type = gcm_parser_decode_32 (data);
-
-	/* check we are not a localized tag */
-	if (type == icSigTextDescriptionType) {
-		record_size = gcm_parser_decode_32 (data + GCM_DESC_RECORD_SIZE);
-		text = g_strndup ((const gchar*)&data[GCM_DESC_RECORD_TEXT], record_size);
-		goto out;
-	}
-
-	/* check we are not a localized tag */
-	if (type == icSigTextType) {
-		text = g_strdup ((const gchar*)&data[GCM_TEXT_RECORD_TEXT]);
-		goto out;
-	}
-
-	/* check we are not a localized tag */
-	if (type == icSigMultiLocalizedUnicodeType) {
-		names_size = gcm_parser_decode_32 (data + 8);
-		if (names_size != 1) {
-			/* there is more than one language encoded */
-			egg_warning ("more than one item of data in MLUC (names size: %i), using first one", names_size);
-		}
-		len = gcm_parser_decode_32 (data + 20);
-		offset_name = gcm_parser_decode_32 (data + 24);
-		text = gcm_profile_utf16be_to_locale (data + offset_name, len);
-		goto out;
-	}
-
-	/* an unrecognized tag */
-	for (i=0x0; i<0x1c; i++) {
-		egg_warning ("unrecognized text tag");
-		if (data[i] >= 'A' && data[i] <= 'z')
-			egg_debug ("%i\t%c (%i)", i, data[i], data[i]);
-		else
-			egg_debug ("%i\t  (%i)", i, data[i]);
-	}
-out:
-	return text;
-}
 
 /**
  * gcm_profile_get_description:
@@ -775,23 +437,17 @@ gboolean
 gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, GError **error)
 {
 	gboolean ret = FALSE;
-	gchar *checksum = NULL;
-	guint num_tags;
-	guint i;
-	guint tag_id;
-	guint offset;
-	guint tag_size;
-	guint tag_offset;
-	icProfileClassSignature profile_class;
-	icColorSpaceSignature color_space;
+	cmsProfileClassSignature profile_class;
+	cmsColorSpaceSignature color_space;
 	GcmColorspace colorspace;
 	GcmProfileKind profile_kind;
-	cmsCIEXYZ cie_xyz;
+	cmsCIEXYZ *cie_xyz;
 	cmsCIEXYZTRIPLE cie_illum;
 	struct tm created;
 	cmsHPROFILE xyz_profile;
 	cmsHTRANSFORM transform;
-	gchar *text;
+	gchar *text = NULL;
+	gchar *checksum = NULL;
 	GcmXyz *xyz;
 	GcmProfilePrivate *priv = profile->priv;
 
@@ -803,69 +459,67 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	priv->size = length;
 	priv->loaded = TRUE;
 
+	/* ensure we have the header */
+	if (length < 0x84) {
+		g_set_error (error, 1, 0, "profile was not valid (file size too small)");
+		goto out;
+	}
+
 	/* load profile into lcms */
-	priv->lcms_profile = cmsOpenProfileFromMem ((LPVOID)data, length);
+	priv->lcms_profile = cmsOpenProfileFromMem (data, length);
 	if (priv->lcms_profile == NULL) {
 		g_set_error_literal (error, 1, 0, "failed to load: not an ICC profile");
 		goto out;
 	}
 
 	/* get white point */
-	ret = cmsTakeMediaWhitePoint (&cie_xyz, priv->lcms_profile);
-	if (ret) {
-		xyz = gcm_xyz_new ();
-		g_object_set (xyz,
-			      "cie-x", cie_xyz.X,
-			      "cie-y", cie_xyz.Y,
-			      "cie-z", cie_xyz.Z,
+	cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigMediaWhitePointTag);
+	if (cie_xyz != NULL) {
+		g_object_set (priv->white,
+			      "cie-x", cie_xyz->X,
+			      "cie-y", cie_xyz->Y,
+			      "cie-z", cie_xyz->Z,
 			      NULL);
-		g_object_set (profile,
-			      "white", xyz,
-			      NULL);
-		g_object_unref (xyz);
 	} else {
+		gcm_xyz_clear (priv->white);
 		egg_warning ("failed to get white point");
 	}
 
 	/* get black point */
-	ret = cmsTakeMediaBlackPoint (&cie_xyz, priv->lcms_profile);
-	if (ret) {
-		xyz = gcm_xyz_new ();
-		g_object_set (xyz,
-			      "cie-x", cie_xyz.X,
-			      "cie-y", cie_xyz.Y,
-			      "cie-z", cie_xyz.Z,
+	cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigMediaBlackPointTag);
+	if (cie_xyz != NULL) {
+		g_object_set (priv->black,
+			      "cie-x", cie_xyz->X,
+			      "cie-y", cie_xyz->Y,
+			      "cie-z", cie_xyz->Z,
 			      NULL);
-		g_object_set (profile,
-			      "black", xyz,
-			      NULL);
-		g_object_unref (xyz);
 	} else {
+		gcm_xyz_clear (priv->black);
 		egg_warning ("failed to get black point");
 	}
 
 	/* get the profile kind */
 	profile_class = cmsGetDeviceClass (priv->lcms_profile);
 	switch (profile_class) {
-	case icSigInputClass:
+	case cmsSigInputClass:
 		profile_kind = GCM_PROFILE_KIND_INPUT_DEVICE;
 		break;
-	case icSigDisplayClass:
+	case cmsSigDisplayClass:
 		profile_kind = GCM_PROFILE_KIND_DISPLAY_DEVICE;
 		break;
-	case icSigOutputClass:
+	case cmsSigOutputClass:
 		profile_kind = GCM_PROFILE_KIND_OUTPUT_DEVICE;
 		break;
-	case icSigLinkClass:
+	case cmsSigLinkClass:
 		profile_kind = GCM_PROFILE_KIND_DEVICELINK;
 		break;
-	case icSigColorSpaceClass:
+	case cmsSigColorSpaceClass:
 		profile_kind = GCM_PROFILE_KIND_COLORSPACE_CONVERSION;
 		break;
-	case icSigAbstractClass:
+	case cmsSigAbstractClass:
 		profile_kind = GCM_PROFILE_KIND_ABSTRACT;
 		break;
-	case icSigNamedColorClass:
+	case cmsSigNamedColorClass:
 		profile_kind = GCM_PROFILE_KIND_NAMED_COLOR;
 		break;
 	default:
@@ -876,34 +530,34 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	/* get colorspace */
 	color_space = cmsGetColorSpace (priv->lcms_profile);
 	switch (color_space) {
-	case icSigXYZData:
+	case cmsSigXYZData:
 		colorspace = GCM_COLORSPACE_XYZ;
 		break;
-	case icSigLabData:
+	case cmsSigLabData:
 		colorspace = GCM_COLORSPACE_LAB;
 		break;
-	case icSigLuvData:
+	case cmsSigLuvData:
 		colorspace = GCM_COLORSPACE_LUV;
 		break;
-	case icSigYCbCrData:
+	case cmsSigYCbCrData:
 		colorspace = GCM_COLORSPACE_YCBCR;
 		break;
-	case icSigYxyData:
+	case cmsSigYxyData:
 		colorspace = GCM_COLORSPACE_YXY;
 		break;
-	case icSigRgbData:
+	case cmsSigRgbData:
 		colorspace = GCM_COLORSPACE_RGB;
 		break;
-	case icSigGrayData:
+	case cmsSigGrayData:
 		colorspace = GCM_COLORSPACE_GRAY;
 		break;
-	case icSigHsvData:
+	case cmsSigHsvData:
 		colorspace = GCM_COLORSPACE_HSV;
 		break;
-	case icSigCmykData:
+	case cmsSigCmykData:
 		colorspace = GCM_COLORSPACE_CMYK;
 		break;
-	case icSigCmyData:
+	case cmsSigCmyData:
 		colorspace = GCM_COLORSPACE_CMY;
 		break;
 	default:
@@ -911,11 +565,8 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	}
 	gcm_profile_set_colorspace (profile, colorspace);
 
-	/* get primary illuminants */
-	ret = cmsTakeColorants (&cie_illum, priv->lcms_profile);
-
-	/* geting the illuminants failed, try running it through the profile */
-	if (!ret && color_space == icSigRgbData) {
+	/* get the illuminants by running it through the profile */
+	if (color_space == cmsSigRgbData) {
 		gdouble rgb_values[3];
 
 		/* create a transform from profile to XYZ */
@@ -992,72 +643,48 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	}
 
 	/* get the profile created time and date */
-	ret = cmsTakeCreationDateTime (&created, priv->lcms_profile);
+	ret = cmsGetHeaderCreationDateTime (priv->lcms_profile, &created);
 	if (ret) {
 		text = gcm_utils_format_date_time (&created);
 		gcm_profile_set_datetime (profile, text);
 		g_free (text);
 	}
 
-	/* get the number of tags in the file */
-	num_tags = gcm_parser_decode_32 (data + GCM_NUMTAGS);
-	for (i=0; i<num_tags; i++) {
-		offset = GCM_TAG_WIDTH * i;
-		tag_id = gcm_parser_decode_32 (data + GCM_BODY + offset + GCM_TAG_ID);
-		tag_offset = gcm_parser_decode_32 (data + GCM_BODY + offset + GCM_TAG_OFFSET);
-		tag_size = gcm_parser_decode_32 (data + GCM_BODY + offset + GCM_TAG_SIZE);
+	/* do we have vcgt */
+	ret = cmsIsTag (priv->lcms_profile, cmsSigVcgtTag);
+	gcm_profile_set_has_vcgt (profile, ret);
 
-		/* print tag */
-//		egg_debug ("tag %x is present at 0x%x with size %u", tag_id, tag_offset, tag_size);
+	/* allocate temporary buffer */
+	text = g_new0 (gchar, 1024);
 
-		if (tag_id == icSigProfileDescriptionTag) {
-			text = gcm_profile_parse_multi_localized_unicode (profile, data + tag_offset, tag_size);
-			gcm_profile_set_description (profile, text);
-			g_free (text);
-		}
-		if (tag_id == icSigCopyrightTag) {
-			text = gcm_profile_parse_multi_localized_unicode (profile, data + tag_offset, tag_size);
-			gcm_profile_set_copyright (profile, text);
-			g_free (text);
-		}
-		if (tag_id == icSigDeviceMfgDescTag) {
-			text = gcm_profile_parse_multi_localized_unicode (profile, data + tag_offset, tag_size);
-			gcm_profile_set_manufacturer (profile, text);
-			g_free (text);
-		}
-		if (tag_id == icSigDeviceModelDescTag) {
-			text = gcm_profile_parse_multi_localized_unicode (profile, data + tag_offset, tag_size);
-			gcm_profile_set_model (profile, text);
-			g_free (text);
-		}
-		if (tag_id == icSigMachineLookUpTableTag) {
-			ret = gcm_parser_load_icc_mlut (profile, data + tag_offset, tag_size);
-			if (!ret) {
-				g_set_error_literal (error, 1, 0, "failed to load mlut");
-				goto out;
-			}
-		}
-		if (tag_id == icSigVideoCartGammaTableTag) {
-			if (tag_size == 1584)
-				priv->adobe_gamma_workaround = TRUE;
-			ret = gcm_parser_load_icc_vcgt (profile, data + tag_offset, tag_size);
-			if (!ret) {
-				g_set_error_literal (error, 1, 0, "failed to load vcgt");
-				goto out;
-			}
-		}
-	}
+	/* get description */
+	ret = cmsGetProfileInfoASCII (priv->lcms_profile, cmsInfoDescription, "en", "US", text, 1024);
+	if (ret)
+		gcm_profile_set_description (profile, text);
+
+	/* get copyright */
+	ret = cmsGetProfileInfoASCII (priv->lcms_profile, cmsInfoCopyright, "en", "US", text, 1024);
+	if (ret)
+		gcm_profile_set_copyright (profile, text);
+
+	/* get description */
+	ret = cmsGetProfileInfoASCII (priv->lcms_profile, cmsInfoManufacturer, "en", "US", text, 1024);
+	if (ret)
+		gcm_profile_set_manufacturer (profile, text);
+
+	/* get description */
+	ret = cmsGetProfileInfoASCII (priv->lcms_profile, cmsInfoModel, "en", "US", text, 1024);
+	if (ret)
+		gcm_profile_set_model (profile, text);
 
 	/* success */
 	ret = TRUE;
-
-	/* set properties */
-	gcm_profile_set_has_vcgt (profile, priv->has_vcgt_formula || priv->has_vcgt_table);
 
 	/* generate and set checksum */
 	checksum = g_compute_checksum_for_data (G_CHECKSUM_MD5, (const guchar *) data, length);
 	gcm_profile_set_checksum (profile, checksum);
 out:
+	g_free (text);
 	g_free (checksum);
 	return ret;
 }
@@ -1125,7 +752,7 @@ gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
 	}
 
 	/* save, TODO: get error */
-	_cmsSaveProfile (priv->lcms_profile, filename);
+	cmsSaveProfileToFile (priv->lcms_profile, filename);
 	ret = TRUE;
 out:
 	return ret;
@@ -1139,122 +766,38 @@ out:
 GcmClut *
 gcm_profile_generate_vcgt (GcmProfile *profile, guint size)
 {
-	/* proxy */
-	guint i;
-	guint ratio;
-	GcmClutData *tmp;
-	GcmClutData *vcgt_data;
-	GcmClutData *mlut_data;
-	gfloat gamma_red, min_red, max_red;
-	gfloat gamma_green, min_green, max_green;
-	gfloat gamma_blue, min_blue, max_blue;
-	guint num_entries;
 	GcmClut *clut = NULL;
+	GcmClutData *tmp;
 	GPtrArray *array = NULL;
-	gfloat inverse_ratio;
-	guint idx;
-	gfloat frac;
+	GcmProfilePrivate *priv = profile->priv;
+	const cmsToneCurve **vcgt;
+	cmsFloat32Number in;
+	guint i;
 
-	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
-	g_return_val_if_fail (size != 0, FALSE);
-
-	/* reduce dereferences */
-	vcgt_data = profile->priv->vcgt_data;
-	mlut_data = profile->priv->mlut_data;
-
-	if (profile->priv->has_vcgt_table) {
-
-		/* create array */
-		array = g_ptr_array_new_with_free_func (g_free);
-
-		/* simply subsample if the LUT is smaller than the number of entries in the file */
-		num_entries = profile->priv->vcgt_data_size;
-		if (num_entries >= size) {
-			ratio = (guint) (num_entries / size);
-			for (i=0; i<size; i++) {
-				/* add a point */
-				tmp = g_new0 (GcmClutData, 1);
-				tmp->red = vcgt_data[ratio*i].red;
-				tmp->green = vcgt_data[ratio*i].green;
-				tmp->blue = vcgt_data[ratio*i].blue;
-				g_ptr_array_add (array, tmp);
-			}
-			goto out;
-		}
-
-		/* LUT is bigger than number of entries, so interpolate */
-		inverse_ratio = (gfloat) num_entries / size;
-		vcgt_data[num_entries].red = 0xffff;
-		vcgt_data[num_entries].green = 0xffff;
-		vcgt_data[num_entries].blue = 0xffff;
-
-		/* interpolate */
-		for (i=0; i<size; i++) {
-			idx = floor(i*inverse_ratio);
-			frac = (i*inverse_ratio) - idx;
-			tmp = g_new0 (GcmClutData, 1);
-			tmp->red = vcgt_data[idx].red * (1.0f-frac) + vcgt_data[idx + 1].red * frac;
-			tmp->green = vcgt_data[idx].green * (1.0f-frac) + vcgt_data[idx + 1].green * frac;
-			tmp->blue = vcgt_data[idx].blue * (1.0f-frac) + vcgt_data[idx + 1].blue * frac;
-			g_ptr_array_add (array, tmp);
-		}
+	/* get tone curves from profile */
+	vcgt = cmsReadTag (priv->lcms_profile, cmsSigVcgtType);
+	if (vcgt == NULL || vcgt[0] == NULL) {
+		egg_debug ("profile does not have any VCGT data");
 		goto out;
 	}
 
-	if (profile->priv->has_vcgt_formula) {
-
-		/* create array */
-		array = g_ptr_array_new_with_free_func (g_free);
-
-		gamma_red = (gfloat) vcgt_data[0].red / 65536.0;
-		gamma_green = (gfloat) vcgt_data[0].green / 65536.0;
-		gamma_blue = (gfloat) vcgt_data[0].blue / 65536.0;
-		min_red = (gfloat) vcgt_data[1].red / 65536.0;
-		min_green = (gfloat) vcgt_data[1].green / 65536.0;
-		min_blue = (gfloat) vcgt_data[1].blue / 65536.0;
-		max_red = (gfloat) vcgt_data[2].red / 65536.0;
-		max_green = (gfloat) vcgt_data[2].green / 65536.0;
-		max_blue = (gfloat) vcgt_data[2].blue / 65536.0;
-
-		/* create mapping of desired size */
-		for (i=0; i<size; i++) {
-			/* add a point */
-			tmp = g_new0 (GcmClutData, 1);
-			tmp->red = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_red) * (max_red - min_red) + min_red);
-			tmp->green = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_green) * (max_green - min_green) + min_green);
-			tmp->blue = 65536.0 * ((gdouble) pow ((gdouble) i / (gdouble) size, gamma_blue) * (max_blue - min_blue) + min_blue);
-			g_ptr_array_add (array, tmp);
-		}
-		goto out;
+	/* create array */
+	array = g_ptr_array_new_with_free_func (g_free);
+	for (i=0; i<size; i++) {
+		in = (gdouble) i / (gdouble) (size - 1);
+		tmp = g_new0 (GcmClutData, 1);
+		tmp->red = cmsEvalToneCurveFloat(vcgt[0], in) * (gdouble) 0xffff;
+		tmp->green = cmsEvalToneCurveFloat(vcgt[1], in) * (gdouble) 0xffff;
+		tmp->blue = cmsEvalToneCurveFloat(vcgt[2], in) * (gdouble) 0xffff;
+		g_ptr_array_add (array, tmp);
 	}
 
-	if (profile->priv->has_mlut) {
-
-		/* create array */
-		array = g_ptr_array_new_with_free_func (g_free);
-
-		/* roughly interpolate table */
-		ratio = (guint) (256 / (size));
-		for (i=0; i<size; i++) {
-			/* add a point */
-			tmp = g_new0 (GcmClutData, 1);
-			tmp->red = mlut_data[ratio*i].red;
-			tmp->green = mlut_data[ratio*i].green;
-			tmp->blue = mlut_data[ratio*i].blue;
-			g_ptr_array_add (array, tmp);
-		}
-		goto out;
-	}
-
-	/* bugger */
-	egg_debug ("no LUT to generate");
+	/* create new scaled CLUT */
+	clut = gcm_clut_new ();
+	gcm_clut_set_source_array (clut, array);
 out:
-	if (array != NULL) {
-		/* create new output array */
-		clut = gcm_clut_new ();
-		gcm_clut_set_source_array (clut, array);
+	if (array != NULL)
 		g_ptr_array_unref (array);
-	}
 	return clut;
 }
 
@@ -1374,13 +917,12 @@ out:
 
 
 /**
- * gcm_profile_lcms_error_cb:
+ * gcm_profile_error_cb:
  **/
-static int
-gcm_profile_lcms_error_cb (int ErrorCode, const char *ErrorText)
+static void
+gcm_profile_error_cb (cmsContext ContextID, cmsUInt32Number errorcode, const char *text)
 {
-	egg_warning ("LCMS error %i: %s", ErrorCode, ErrorText);
-	return LCMS_ERRC_WARNING;
+	egg_warning ("LCMS error %i: %s", errorcode, text);
 }
 
 /**
@@ -1671,7 +1213,6 @@ gcm_profile_init (GcmProfile *profile)
 	profile->priv = GCM_PROFILE_GET_PRIVATE (profile);
 	profile->priv->vcgt_data = NULL;
 	profile->priv->mlut_data = NULL;
-	profile->priv->adobe_gamma_workaround = FALSE;
 	profile->priv->can_delete = FALSE;
 	profile->priv->monitor = NULL;
 	profile->priv->kind = GCM_PROFILE_KIND_UNKNOWN;
@@ -1683,9 +1224,7 @@ gcm_profile_init (GcmProfile *profile)
 	profile->priv->blue = gcm_xyz_new ();
 
 	/* setup LCMS */
-	cmsSetErrorHandler (gcm_profile_lcms_error_cb);
-	cmsErrorAction (LCMS_ERROR_SHOW);
-	cmsSetLanguage ("en", "US");
+	cmsSetLogErrorHandler (gcm_profile_error_cb);
 }
 
 /**

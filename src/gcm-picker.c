@@ -28,7 +28,7 @@
 #include <gio/gio.h>
 #include <locale.h>
 #include <gtk/gtk.h>
-#include <lcms.h>
+#include <lcms2.h>
 
 #include "egg-debug.h"
 
@@ -148,7 +148,7 @@ gcm_picker_refresh_results (void)
 	/* get profiles */
 	profile_xyz = cmsCreateXYZProfile ();
 	profile_rgb = cmsOpenProfileFromFile (profile_filename, "r");
-	profile_lab = cmsCreateLabProfile (cmsD50_xyY ());
+	profile_lab = cmsCreateLab4Profile (cmsD50_xyY ());
 
 	/* create transforms */
 	transform_rgb = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL, profile_rgb, TYPE_RGB_8, INTENT_PERCEPTUAL, 0);
@@ -315,16 +315,14 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
 	gdk_window_set_transient_for (our_window, parent_window);
 }
 
-/*
- * gcm_picker_lcms_error_cb:
- */
-static gint
-gcm_picker_lcms_error_cb (gint error_code, const gchar *error_text)
+/**
+ * gcm_picker_error_cb:
+ **/
+static void
+gcm_picker_error_cb (cmsContext ContextID, cmsUInt32Number errorcode, const char *text)
 {
-	egg_warning ("LCMS error %i: %s", error_code, error_text);
-	return LCMS_ERRC_WARNING;
+	egg_warning ("LCMS error %i: %s", errorcode, text);
 }
-
 
 /**
  * gcm_prefs_space_combo_changed_cb:
@@ -493,9 +491,7 @@ main (int argc, char *argv[])
 	g_type_init ();
 
 	/* setup LCMS */
-	cmsSetErrorHandler (gcm_picker_lcms_error_cb);
-	cmsErrorAction (LCMS_ERROR_SHOW);
-	cmsSetLanguage ("en", "US");
+	cmsSetLogErrorHandler (gcm_picker_error_cb);
 
 	context = g_option_context_new (NULL);
 	/* TRANSLATORS: tool that is used to pick colors */

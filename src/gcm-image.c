@@ -29,7 +29,7 @@
 #include "config.h"
 
 #include <gtk/gtk.h>
-#include <lcms.h>
+#include <lcms2.h>
 
 #include "egg-debug.h"
 
@@ -131,12 +131,12 @@ out:
 /**
  * gcm_image_get_format:
  **/
-static DWORD
+static cmsUInt32Number
 gcm_image_get_format (GcmImage *image)
 {
 	guint bits;
 	guint has_alpha;
-	DWORD format = 0;
+	cmsUInt32Number format = 0;
 	GcmImagePrivate *priv = image->priv;
 
 	/* get data */
@@ -177,7 +177,7 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 {
 	const gchar *icc_profile_base64;
 	gint i;
-	DWORD format;
+	cmsUInt32Number format;
 	gint width, height, rowstride;
 	guchar *p_in;
 	guchar *p_out;
