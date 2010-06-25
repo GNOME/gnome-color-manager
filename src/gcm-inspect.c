@@ -556,13 +556,13 @@ out:
 int
 main (int argc, char **argv)
 {
+	guint i;
 	gboolean x11 = FALSE;
 	gboolean dump = FALSE;
 	guint xid = 0;
 	gchar *device_id = NULL;
 	gchar *type = NULL;
 	gchar *filename = NULL;
-	GcmDeviceKind kind_enum;
 	guint retval = 0;
 	GOptionContext *context;
 
@@ -613,10 +613,14 @@ main (int argc, char **argv)
 	if (xid != 0)
 		gcm_inspect_show_profile_for_window (xid);
 	if (type != NULL) {
-		kind_enum = gcm_device_kind_from_string (type);
-		if (kind_enum == GCM_DEVICE_KIND_UNKNOWN) {
+		if (gcm_device_kind_from_string (type) == GCM_DEVICE_KIND_UNKNOWN &&
+		    gcm_profile_kind_from_string (type) == GCM_PROFILE_KIND_UNKNOWN) {
 			/* TRANSLATORS: this is when the user does --type=mickeymouse */
-			g_print ("%s\n", _("Device type not recognized"));
+			g_print ("%s\n", _("Device or profile type not recognized, recognised types are:"));
+			for (i=1; i<GCM_DEVICE_KIND_LAST; i++)
+				g_print (" - %s\n", gcm_device_kind_to_string (i));
+			for (i=1; i<GCM_PROFILE_KIND_LAST; i++)
+				g_print (" - %s\n", gcm_profile_kind_to_string (i));
 		} else {
 			/* show device profiles */
 			gcm_inspect_show_profiles_for_type (type);

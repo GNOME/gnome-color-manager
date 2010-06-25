@@ -246,23 +246,18 @@ out:
 }
 
 /**
- * gcm_session_get_profiles_for_kind:
+ * gcm_session_get_profiles_for_profile_kind:
  **/
 static GPtrArray *
-gcm_session_get_profiles_for_kind (GcmDeviceKind kind, GError **error)
+gcm_session_get_profiles_for_profile_kind (GcmProfileKind kind, GError **error)
 {
 	guint i;
 	GcmProfile *profile;
-	GcmProfileKind profile_kind;
-	GcmProfileKind kind_tmp;
 	GPtrArray *array;
 	GPtrArray *profile_array;
 
 	/* create a temp array */
 	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
-
-	/* get the correct profile kind for the device kind */
-	profile_kind = gcm_utils_device_kind_to_profile_kind (kind);
 
 	/* get list */
 	profile_array = gcm_profile_store_get_array (profile_store);
@@ -270,8 +265,7 @@ gcm_session_get_profiles_for_kind (GcmDeviceKind kind, GError **error)
 		profile = g_ptr_array_index (profile_array, i);
 
 		/* compare what we have against what we were given */
-		kind_tmp = gcm_profile_get_kind (profile);
-		if (kind_tmp == profile_kind)
+		if (kind == gcm_profile_get_kind (profile))
 			g_ptr_array_add (array, g_object_ref (profile));
 	}
 
@@ -437,6 +431,8 @@ gcm_session_handle_method_call (GDBusConnection *connection_, const gchar *sende
 	GcmDevice *device;
 	GError *error = NULL;
 	const gchar *profile_filename;
+	GcmProfileKind profile_kind;
+	GcmDeviceKind device_kind;
 	guint i;
 
 	/* return 'as' */
@@ -503,8 +499,24 @@ gcm_session_handle_method_call (GDBusConnection *connection_, const gchar *sende
 	if (g_strcmp0 (method_name, "GetProfilesForType") == 0) {
 		g_variant_get (parameters, "(ss)", &type, &hints);
 
+		/* try to parse string */
+		profile_kind = gcm_profile_kind_from_string (type);
+		if (profile_kind == GCM_PROFILE_KIND_UNKNOWN) {
+			/* get the correct profile kind for the device kind */
+			device_kind = gcm_device_kind_from_string (type);
+			profile_kind = gcm_utils_device_kind_to_profile_kind (device_kind);
+		}
+
+		/* still nothing */
+		if (profile_kind == GCM_PROFILE_KIND_UNKNOWN) {
+			g_dbus_method_invocation_return_dbus_error (invocation,
+								    "org.gnome.ColorManager.Failed",
+								    "did not get a profile or device type");
+			goto out;
+		}
+
 		/* get array of profiles */
-		array = gcm_session_get_profiles_for_kind (gcm_device_kind_from_string (type), &error);
+		array = gcm_session_get_profiles_for_profile_kind (profile_kind, &error);
 		if (array == NULL) {
 			g_dbus_method_invocation_return_dbus_error (invocation,
 								    "org.gnome.ColorManager.Failed",

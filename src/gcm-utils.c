@@ -576,7 +576,6 @@ gcm_utils_device_kind_to_profile_kind (GcmDeviceKind kind)
 		profile_kind = GCM_PROFILE_KIND_OUTPUT_DEVICE;
 		break;
 	default:
-		egg_warning ("unknown kind: %i", kind);
 		profile_kind = GCM_PROFILE_KIND_UNKNOWN;
 	}
 	return profile_kind;
