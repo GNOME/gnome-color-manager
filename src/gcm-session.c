@@ -286,7 +286,7 @@ gcm_session_variant_from_profile_array (GPtrArray *array)
 	GVariant *value;
 
 	/* create builder */
-	builder = g_variant_builder_new (G_VARIANT_TYPE_ARRAY);
+	builder = g_variant_builder_new (G_VARIANT_TYPE("a(ss)"));
 
 	/* add each tuple to the array */
 	for (i=0; i<array->len; i++) {
