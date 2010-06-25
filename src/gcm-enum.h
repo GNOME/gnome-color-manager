@@ -71,6 +71,7 @@ typedef enum {
 
 GcmIntent	 gcm_intent_from_string			(const gchar		*intent);
 const gchar	*gcm_intent_to_string			(GcmIntent		 intent);
+GcmProfileKind	 gcm_profile_kind_from_string		(const gchar		*profile_kind);
 const gchar	*gcm_profile_kind_to_string		(GcmProfileKind		 profile_kind);
 const gchar	*gcm_colorspace_to_string		(GcmColorspace		 colorspace);
 const gchar	*gcm_colorspace_to_localised_string	(GcmColorspace	 colorspace);
