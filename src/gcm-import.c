@@ -29,6 +29,7 @@
 #include "egg-debug.h"
 
 #include "gcm-profile.h"
+#include "gcm-profile-store.h"
 #include "gcm-utils.h"
 #include "gcm-xyz.h"
 #include "gcm-cie-widget.h"
@@ -64,7 +65,9 @@ main (int argc, char **argv)
 	GFile *file = NULL;
 	gchar **files = NULL;
 	guint retval = 1;
+	GcmProfileStore *profile_store = NULL;
 	GcmProfile *profile = NULL;
+	GcmProfile *profile_tmp = NULL;
 	GcmColorspace colorspace;
 	GError *error = NULL;
 	GOptionContext *context;
@@ -148,7 +151,7 @@ main (int argc, char **argv)
 		      "blue", blue,
 		      NULL);
 
-	/* check file does't already exist */
+	/* check file does't already exist as a file */
 	destination = gcm_utils_get_profile_destination (file);
 	ret = g_file_query_exists (destination, NULL);
 	if (ret) {
@@ -156,11 +159,20 @@ main (int argc, char **argv)
 		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, _("ICC profile already installed"));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s\n%s", description, copyright);
+		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_widget_destroy (dialog);
+		goto out;
+	}
 
-		/* add cie widget */
-		gcm_import_add_cie_widget (GTK_DIALOG(dialog), cie_widget);
-
-		gtk_window_set_resizable (GTK_WINDOW (dialog), TRUE);
+	/* check file does't already exist as systemwide */
+	profile_store = gcm_profile_store_new ();
+	gcm_profile_store_search_default (profile_store);
+	profile_tmp = gcm_profile_store_get_by_checksum (profile_store, gcm_profile_get_checksum (profile));
+	if (profile_tmp != NULL) {
+		/* TRANSLATORS: color profile already been installed */
+		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, _("ICC profile already installed system-wide"));
+		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s\n%s", description, copyright);
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 		goto out;
@@ -237,6 +249,10 @@ out:
 		g_string_free (string, TRUE);
 	if (profile != NULL)
 		g_object_unref (profile);
+	if (profile_store != NULL)
+		g_object_unref (profile_store);
+	if (profile_tmp != NULL)
+		g_object_unref (profile_tmp);
 	if (destination != NULL)
 		g_object_unref (destination);
 	g_strfreev (files);
