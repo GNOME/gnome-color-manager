@@ -13,6 +13,7 @@ INCLUDES =						\
 	$(EXIV_CFLAGS)					\
 	$(NOTIFY_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
+	$(CONTROL_CENTER_CFLAGS)			\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
 	$(GUDEV_CFLAGS)					\
@@ -28,6 +29,9 @@ INCLUDES =						\
 
 introspectiondir = $(datadir)/dbus-1/interfaces
 dist_introspection_DATA = org.gnome.ColorManager.xml
+
+ccpanelsdir = $(PANELS_DIR)
+ccpanels_LTLIBRARIES = libcolor.la
 
 noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\
@@ -108,7 +112,7 @@ bin_PROGRAMS =						\
 	gcm-fix-profile					\
 	gcm-dump-edid					\
 	gcm-apply					\
-	gcm-prefs					\
+	gcm-viewer					\
 	gcm-session					\
 	gcm-picker					\
 	gcm-import
@@ -239,12 +243,12 @@ gcm_import_LDADD =					\
 gcm_import_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
-gcm_prefs_SOURCES =					\
+gcm_viewer_SOURCES =					\
 	gcm-cell-renderer-profile.c			\
 	gcm-cell-renderer-profile.h			\
-	gcm-prefs.c
+	gcm-viewer.c
 
-gcm_prefs_LDADD =					\
+gcm_viewer_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
@@ -258,10 +262,9 @@ gcm_prefs_LDADD =					\
 	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
-	$(CANBERRA_LIBS)				\
 	-lm
 
-gcm_prefs_CFLAGS =					\
+gcm_viewer_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_picker_SOURCES =					\
@@ -308,6 +311,33 @@ gcm_session_LDADD =					\
 
 gcm_session_CFLAGS =					\
 	$(WARNINGFLAGS_C)
+
+libcolor_la_SOURCES =					\
+	cc-color-panel.c				\
+	cc-color-panel.h				\
+	gcm-cell-renderer-profile.c			\
+	gcm-cell-renderer-profile.h			\
+	$(libgcmshared_a_SOURCES)			\
+	$(NULL)
+
+libcolor_la_LIBADD =					\
+	$(GLIB_LIBS)					\
+	$(X11_LIBS)					\
+	$(GNOMEDESKTOP_LIBS)				\
+	$(GUDEV_LIBS)					\
+	$(LCMS_LIBS)					\
+	$(XORG_LIBS)					\
+	$(GTK_LIBS)					\
+	$(TIFF_LIBS)					\
+	$(EXIF_LIBS)					\
+	$(SANE_LIBS)					\
+	$(NOTIFY_LIBS)					\
+	$(CUPS_LIBS)					\
+	$(CANBERRA_LIBS)				\
+	$(CONTROL_CENTER_LIBS)
+
+libcolor_la_LDFLAGS = -avoid-version -module
+libcolor_la_CFLAGS = $(WARNINGFLAGS_C)
 
 if HAVE_TESTS
 

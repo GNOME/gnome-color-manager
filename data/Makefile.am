@@ -33,6 +33,7 @@ pkgdata_DATA =						\
 	gcm-calibrate.ui				\
 	gcm-spawn.ui					\
 	gcm-picker.ui					\
+	gcm-viewer.ui					\
 	gcm-prefs.ui
 
 EXTRA_DIST =						\

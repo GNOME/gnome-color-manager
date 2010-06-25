@@ -62,6 +62,9 @@ for i in gcm-prefs gcm-import ; do
     $RPM_BUILD_ROOT%{_datadir}/applications/$i.desktop
 done
 
+rm -f $RPM_BUILD_ROOT%{_libdir}/control-center-1/panels/*.a
+rm -f $RPM_BUILD_ROOT%{_libdir}/control-center-1/panels/*.la
+
 %find_lang %name --with-gnome
 
 %post
@@ -92,8 +95,9 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
 %{_datadir}/gnome-color-manager/gcm-*.ui
 %dir %{_datadir}/gnome-color-manager/targets
 %dir %{_datadir}/gnome-color-manager/icons
-%{_datadir}/gnome-color-manager/targets/*.png
-%{_datadir}/gnome-color-manager/icons/*.svg
+%{_datadir}/gnome-color-manager/targets
+%{_datadir}/gnome-color-manager/icons
+%{_datadir}/gnome-color-manager/figures
 %{_datadir}/man/man1/*.1.gz
 %{_datadir}/gnome/help/gnome-color-manager
 %{_datadir}/omf/gnome-color-manager
@@ -108,6 +112,7 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
 %{_datadir}/glib-2.0/schemas/org.gnome.color-manager.gschema.xml
 %{_datadir}/GConf/gsettings/org.gnome.color-manager.gschema.migrate
 %{_datadir}/dbus-1/interfaces/org.gnome.ColorManager.xml
+%{_libdir}/control-center-1/panels/*.so
 
 %changelog
 * #LONGDATE# Richard Hughes <richard@hughsie.com> #VERSION#-0.#BUILD##ALPHATAG#

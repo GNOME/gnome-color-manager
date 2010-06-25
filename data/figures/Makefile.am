@@ -1,5 +1,9 @@
-figuresdir = $(datadir)/gnome-color-manager/icons
+figuresdir = $(datadir)/gnome-color-manager/figures
 figures_DATA = 	 			\
+	viewer-example.png
+
+iconsdir = $(datadir)/gnome-color-manager/icons
+icons_DATA = 	 			\
 	clock.svg			\
 	calibration-short.svg		\
 	calibration-normal.svg		\
@@ -18,5 +22,6 @@ figures_DATA = 	 			\
 	munki-screen.svg
 
 EXTRA_DIST =				\
+	$(icons_DATA)			\
 	$(figures_DATA)
 
