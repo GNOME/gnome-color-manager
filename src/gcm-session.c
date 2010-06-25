@@ -744,6 +744,7 @@ main (int argc, char *argv[])
 
 	/* have access to all profiles */
 	profile_store = gcm_profile_store_new ();
+	gcm_profile_store_search (profile_store, GCM_PROFILE_STORE_SEARCH_ALL);
 	timer = g_timer_new ();
 
 	/* get all connected devices */
