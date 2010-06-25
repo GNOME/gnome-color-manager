@@ -59,6 +59,14 @@ struct _GcmProfileStoreClass
 	void (*_gcm_reserved5) (void);
 };
 
+typedef enum {
+	GCM_PROFILE_STORE_SEARCH_ALL		= 0,
+	GCM_PROFILE_STORE_SEARCH_SYSTEM		= 1,
+	GCM_PROFILE_STORE_SEARCH_VOLUMES	= 2,
+	GCM_PROFILE_STORE_SEARCH_USER		= 4,
+	GCM_PROFILE_STORE_SEARCH_MACHINE	= 8
+} GcmProfileSearchFlags;
+
 GType		 gcm_profile_store_get_type		(void);
 GcmProfileStore	*gcm_profile_store_new			(void);
 
@@ -67,8 +75,9 @@ GcmProfile	*gcm_profile_store_get_by_filename	(GcmProfileStore	*profile_store,
 GcmProfile	*gcm_profile_store_get_by_checksum	(GcmProfileStore	*profile_store,
 							 const gchar		*checksum);
 GPtrArray	*gcm_profile_store_get_array		(GcmProfileStore	*profile_store);
-gboolean	 gcm_profile_store_search_default	(GcmProfileStore	*profile_store);
-gboolean	 gcm_profile_store_search_by_path	(GcmProfileStore	*profile_store,
+gboolean	 gcm_profile_store_search		(GcmProfileStore	*profile_store,
+							 GcmProfileSearchFlags	 search_flags);
+gboolean	 gcm_profile_store_search_path		(GcmProfileStore	*profile_store,
 							 const gchar		*path);
 
 G_END_DECLS

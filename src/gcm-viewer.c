@@ -859,7 +859,7 @@ gcm_viewer_startup_phase1_idle_cb (GcmViewerPrivate *viewer)
 	GtkTreePath *path;
 
 	/* search the disk for profiles */
-	gcm_profile_store_search_default (viewer->profile_store);
+	gcm_profile_store_search (viewer->profile_store, GCM_PROFILE_STORE_SEARCH_ALL);
 	g_signal_connect (viewer->profile_store, "changed", G_CALLBACK(gcm_viewer_profile_store_changed_cb), viewer);
 
 	/* update list of profiles */

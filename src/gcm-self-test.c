@@ -874,7 +874,7 @@ gcm_test_profile_store_func (void)
 
 	/* add test files */
 	filename = gcm_test_get_data_file (".");
-	ret = gcm_profile_store_search_by_path (store, filename);
+	ret = gcm_profile_store_search_path (store, filename);
 	g_assert (ret);
 	g_free (filename);
 

@@ -164,9 +164,9 @@ main (int argc, char **argv)
 		goto out;
 	}
 
-	/* check file does't already exist as systemwide */
+	/* check file does't already exist as system-wide */
 	profile_store = gcm_profile_store_new ();
-	gcm_profile_store_search_default (profile_store);
+	gcm_profile_store_search (profile_store, GCM_PROFILE_STORE_SEARCH_SYSTEM);
 	profile_tmp = gcm_profile_store_get_by_checksum (profile_store, gcm_profile_get_checksum (profile));
 	if (profile_tmp != NULL) {
 		/* TRANSLATORS: color profile already been installed */

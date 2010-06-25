@@ -2318,7 +2318,7 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 	gint intent_softproof = -1;
 
 	/* search the disk for profiles */
-	gcm_profile_store_search_default (panel->priv->profile_store);
+	gcm_profile_store_search (panel->priv->profile_store, GCM_PROFILE_STORE_SEARCH_ALL);
 	g_signal_connect (panel->priv->profile_store, "changed", G_CALLBACK(cc_color_panel_profile_store_changed_cb), panel);
 
 	/* setup RGB combobox */
