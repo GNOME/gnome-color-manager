@@ -178,6 +178,9 @@ gcm_profile_store_remove_profile (GcmProfileStore *profile_store, GcmProfile *pr
 	gboolean ret;
 	GcmProfileStorePrivate *priv = profile_store->priv;
 
+	/* grab a temporary reference on this profile */
+	g_object_ref (profile);
+
 	/* remove from list */
 	ret = g_ptr_array_remove (priv->profile_array, profile);
 	if (!ret) {
@@ -186,10 +189,11 @@ gcm_profile_store_remove_profile (GcmProfileStore *profile_store, GcmProfile *pr
 	}
 
 	/* emit a signal */
-	egg_debug ("emit removed (and changed): %s", gcm_profile_get_filename (profile));
+	egg_debug ("emit removed (and changed): %s", gcm_profile_get_checksum (profile));
 	g_signal_emit (profile_store, signals[SIGNAL_REMOVED], 0, profile);
 	g_signal_emit (profile_store, signals[SIGNAL_CHANGED], 0);
 out:
+	g_object_unref (profile);
 	return ret;
 }
 
