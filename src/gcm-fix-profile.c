@@ -28,6 +28,20 @@
 static gint lcms_error_code = 0;
 
 /*
+ * _cmsWriteTagTextAscii:
+ */
+static cmsBool
+_cmsWriteTagTextAscii (cmsHPROFILE lcms_profile, cmsTagSignature sig, const gchar *text)
+{
+	cmsBool ret;
+	cmsMLU *mlu = cmsMLUalloc (0, 1);
+	cmsMLUsetASCII (mlu, "EN", "us", text);
+	ret = cmsWriteTag (lcms_profile, sig, mlu);
+	cmsMLUfree (mlu);
+	return ret;
+}
+
+/*
  * gcm_fix_profile_filename:
  */
 static gboolean
@@ -52,36 +66,38 @@ gcm_fix_profile_filename (const gchar *filename, const gchar *description, const
 		ret = FALSE;
 		goto out;
 	}
-#if 0
+
+	/* profile version to write */
+	cmsSetProfileVersion (lcms_profile, 3.4);
 	if (description != NULL) {
-		ret = _cmsAddTextTag (lcms_profile, icSigProfileDescriptionTag, description);
+		ret = _cmsWriteTagTextAscii (lcms_profile, cmsSigProfileDescriptionTag, description);
 		if (!ret || lcms_error_code != 0) {
 			g_warning ("failed to write description");
 			goto out;
 		}
 	}
 	if (copyright != NULL) {
-		ret = _cmsAddTextTag (lcms_profile, icSigCopyrightTag, copyright);
+		ret = _cmsWriteTagTextAscii (lcms_profile, cmsSigCopyrightTag, copyright);
 		if (!ret || lcms_error_code != 0) {
 			g_warning ("failed to write copyright");
 			goto out;
 		}
 	}
 	if (model != NULL) {
-		ret = _cmsAddTextTag (lcms_profile, icSigDeviceModelDescTag, model);
+		ret = _cmsWriteTagTextAscii (lcms_profile, cmsSigDeviceModelDescTag, model);
 		if (!ret || lcms_error_code != 0) {
 			g_warning ("failed to write model");
 			goto out;
 		}
 	}
 	if (manufacturer != NULL) {
-		ret = _cmsAddTextTag (lcms_profile, icSigDeviceMfgDescTag, manufacturer);
+		ret = _cmsWriteTagTextAscii (lcms_profile, cmsSigDeviceMfgDescTag, manufacturer);
 		if (!ret || lcms_error_code != 0) {
 			g_warning ("failed to write manufacturer");
 			goto out;
 		}
 	}
-#endif
+
 	cmsSaveProfileToFile (lcms_profile, filename);
 out:
 	if (lcms_profile != NULL)
