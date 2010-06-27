@@ -48,30 +48,72 @@
 #include "gcm-profile.h"
 #include "gcm-xyz.h"
 
-/**
- * gcm_test_get_data_file:
- **/
-static gchar *
-gcm_test_get_data_file (const gchar *filename)
+/** ver:1.0 ***********************************************************/
+static GMainLoop *_test_loop = NULL;
+static guint _test_loop_timeout_id = 0;
+
+static gboolean
+_g_test_hang_check_cb (gpointer user_data)
 {
-	gboolean ret;
-	gchar *full;
-
-	/* check to see if we are being run in the build root */
-	full = g_build_filename ("..", "data", "tests", filename, NULL);
-	ret = g_file_test (full, G_FILE_TEST_EXISTS);
-	if (ret)
-		return full;
-	g_free (full);
-
-	/* check to see if we are being run in make check */
-	full = g_build_filename ("..", "..", "data", "tests", filename, NULL);
-	ret = g_file_test (full, G_FILE_TEST_EXISTS);
-	if (ret)
-		return full;
-	g_free (full);
-	return NULL;
+	guint timeout_ms = *((guint*) user_data);
+	g_main_loop_quit (_test_loop);
+	g_warning ("loop not completed in %ims", timeout_ms);
+	g_assert_not_reached ();
+	return FALSE;
 }
+
+/**
+ * _g_test_loop_run_with_timeout:
+ **/
+static void
+_g_test_loop_run_with_timeout (guint timeout_ms)
+{
+	g_assert (_test_loop_timeout_id == 0);
+	_test_loop = g_main_loop_new (NULL, FALSE);
+	_test_loop_timeout_id = g_timeout_add (timeout_ms, _g_test_hang_check_cb, &timeout_ms);
+	g_main_loop_run (_test_loop);
+}
+
+#if 0
+static gboolean
+_g_test_hang_wait_cb (gpointer user_data)
+{
+	g_main_loop_quit (_test_loop);
+	_test_loop_timeout_id = 0;
+	return FALSE;
+}
+
+/**
+ * _g_test_loop_wait:
+ **/
+static void
+_g_test_loop_wait (guint timeout_ms)
+{
+	g_assert (_test_loop_timeout_id == 0);
+	_test_loop = g_main_loop_new (NULL, FALSE);
+	_test_loop_timeout_id = g_timeout_add (timeout_ms, _g_test_hang_wait_cb, &timeout_ms);
+	g_main_loop_run (_test_loop);
+}
+#endif
+
+/**
+ * _g_test_loop_quit:
+ **/
+static void
+_g_test_loop_quit (void)
+{
+	if (_test_loop_timeout_id > 0) {
+		g_source_remove (_test_loop_timeout_id);
+		_test_loop_timeout_id = 0;
+	}
+	if (_test_loop != NULL) {
+		g_main_loop_quit (_test_loop);
+		g_main_loop_unref (_test_loop);
+		_test_loop = NULL;
+	}
+}
+
+/**********************************************************************/
 
 static void
 gcm_test_assert_basename (const gchar *filename1, const gchar *filename2)
@@ -124,21 +166,18 @@ gcm_test_calibrate_func (void)
 	GcmCalibrate *calibrate;
 	gboolean ret;
 	GError *error = NULL;
-	gchar *filename;
 
 	calibrate = gcm_calibrate_new ();
 	g_assert (calibrate != NULL);
 
 	/* calibrate display manually */
-	filename = gcm_test_get_data_file ("test.tif");
-	ret = gcm_calibrate_set_from_exif (GCM_CALIBRATE(calibrate), filename, &error);
+	ret = gcm_calibrate_set_from_exif (GCM_CALIBRATE(calibrate), TESTDATADIR "/test.tif", &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_assert_cmpstr (gcm_calibrate_get_model_fallback (calibrate), ==, "NIKON D60");
 	g_assert_cmpstr (gcm_calibrate_get_manufacturer_fallback (calibrate), ==, "NIKON CORPORATION");
 
 	g_object_unref (calibrate);
-	g_free (filename);
 }
 
 static void
@@ -186,21 +225,13 @@ gcm_test_cie_widget_func (void)
 	GcmXyz *green;
 	GcmXyz *blue;
 	gint response;
-	gchar *filename_profile;
-	gchar *filename_image;
 	GFile *file = NULL;
 
 	widget = gcm_cie_widget_new ();
 	g_assert (widget != NULL);
 
-	filename_image = gcm_test_get_data_file ("cie-widget.png");
-	g_assert ((filename_image != NULL));
-
-	filename_profile = gcm_test_get_data_file ("bluish.icc");
-	g_assert ((filename_profile != NULL));
-
 	profile = gcm_profile_new ();
-	file = g_file_new_for_path (filename_profile);
+	file = g_file_new_for_path (TESTDATADIR "/bluish.icc");
 	gcm_profile_parse (profile, file, NULL);
 	g_object_get (profile,
 		      "white", &white,
@@ -219,7 +250,7 @@ gcm_test_cie_widget_func (void)
 
 	/* show in a dialog as an example */
 	dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "Does CIE widget match\nthe picture below?");
-	image = gtk_image_new_from_file (filename_image);
+	image = gtk_image_new_from_file (TESTDATADIR "/cie-widget.png");
 	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 	gtk_box_pack_end (GTK_BOX(vbox), widget, TRUE, TRUE, 12);
 	gtk_box_pack_end (GTK_BOX(vbox), image, TRUE, TRUE, 12);
@@ -239,8 +270,6 @@ gcm_test_cie_widget_func (void)
 	g_object_unref (red);
 	g_object_unref (green);
 	g_object_unref (blue);
-	g_free (filename_profile);
-	g_free (filename_image);
 }
 
 static void
@@ -332,13 +361,12 @@ gcm_test_clut_func (void)
 }
 
 static guint _changes = 0;
-static GMainLoop *_loop = NULL;
 
 static void
 gcm_device_test_changed_cb (GcmDevice *device)
 {
 	_changes++;
-	g_main_loop_quit (_loop);
+	_g_test_loop_quit ();
 }
 
 static void
@@ -354,12 +382,6 @@ gcm_test_device_func (void)
 	gchar *data;
 	gchar **split;
 	gchar *contents;
-	gchar *icc_filename1;
-	gchar *icc_filename2;
-
-	/* get test files */
-	icc_filename1 = gcm_test_get_data_file ("bluish.icc");
-	icc_filename2 = gcm_test_get_data_file ("AdobeGammaTest.icm");
 
 	device = gcm_device_udev_new ();
 	g_assert (device != NULL);
@@ -385,14 +407,13 @@ gcm_test_device_func (void)
 		      "colorspace", GCM_COLORSPACE_RGB,
 		      NULL);
 
-	_loop = g_main_loop_new (NULL, FALSE);
-	g_main_loop_run (_loop);
-	/* TODO: time out of loop */
+	_g_test_loop_run_with_timeout (1000);
 
 	g_assert_cmpint (_changes, ==, 1);
 
 	gcm_device_set_connected (device, TRUE);
-	g_main_loop_run (_loop);
+
+	_g_test_loop_run_with_timeout (1000);
 
 	g_assert_cmpint (_changes, ==, 2);
 
@@ -422,35 +443,35 @@ gcm_test_device_func (void)
 				    "title=Canon - CanoScan\n"
 				    "type=scanner\n"
 				    "profile=%s;%s\n",
-				    icc_filename1, icc_filename2);
+				    TESTDATADIR "/bluish.icc",
+				    TESTDATADIR "/AdobeGammaTest.icm");
 	g_file_set_contents (filename, contents, -1, NULL);
 
 	ret = gcm_device_load (device, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
-
-	g_main_loop_run (_loop);
-	/* TODO: time out of loop */
+	/* time out of loop */
+	_g_test_loop_run_with_timeout (1000);
 
 	g_assert_cmpint (_changes, ==, 3);
 
 	/* get some properties */
 	profile_filename = gcm_device_get_default_profile_filename (device);
-	gcm_test_assert_basename (profile_filename, icc_filename1);
+	gcm_test_assert_basename (profile_filename, TESTDATADIR "/bluish.icc");
 	profiles = gcm_device_get_profiles (device);
 	g_assert_cmpint (profiles->len, ==, 2);
 
 	profile = g_ptr_array_index (profiles, 0);
 	g_assert (profile != NULL);
-	gcm_test_assert_basename (gcm_profile_get_filename (profile), icc_filename1);
+	gcm_test_assert_basename (gcm_profile_get_filename (profile), TESTDATADIR "/bluish.icc");
 
 	profile = g_ptr_array_index (profiles, 1);
 	g_assert (profile != NULL);
-	gcm_test_assert_basename (gcm_profile_get_filename (profile), icc_filename2);
+	gcm_test_assert_basename (gcm_profile_get_filename (profile), TESTDATADIR "/AdobeGammaTest.icm");
 
 	/* set some properties */
-	gcm_device_set_default_profile_filename (device, icc_filename1);
+	gcm_device_set_default_profile_filename (device, TESTDATADIR "/bluish.icc");
 
 	/* ensure the file is nuked, again */
 	g_unlink (filename);
@@ -473,10 +494,7 @@ gcm_test_device_func (void)
 
 	/* ensure the file is nuked, in case we are running in distcheck */
 	g_unlink (filename);
-	g_main_loop_unref (_loop);
 	g_free (filename);
-	g_free (icc_filename1);
-	g_free (icc_filename2);
 	g_free (contents);
 	g_ptr_array_unref (profiles);
 
@@ -509,15 +527,13 @@ typedef struct {
 } GcmEdidTestData;
 
 static void
-gcm_test_edid_test_parse_edid_file (GcmEdid *edid, const gchar *datafile, GcmEdidTestData *test_data)
+gcm_test_edid_test_parse_edid_file (GcmEdid *edid, const gchar *filename, GcmEdidTestData *test_data)
 {
-	gchar *filename;
 	gchar *data;
 	gfloat mygamma;
 	gboolean ret;
 	GError *error = NULL;
 
-	filename = gcm_test_get_data_file (datafile);
 	ret = g_file_get_contents (filename, &data, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -538,7 +554,6 @@ gcm_test_edid_test_parse_edid_file (GcmEdid *edid, const gchar *datafile, GcmEdi
 	g_assert_cmpfloat (mygamma, >=, test_data->gamma - 0.01);
 	g_assert_cmpfloat (mygamma, <, test_data->gamma + 0.01);
 
-	g_free (filename);
 	g_free (data);
 }
 
@@ -561,7 +576,7 @@ gcm_test_edid_func (void)
 	test_data.height = 30;
 	test_data.width = 47;
 	test_data.gamma = 2.2f;
-	gcm_test_edid_test_parse_edid_file (edid, "LG-L225W-External.bin", &test_data);
+	gcm_test_edid_test_parse_edid_file (edid, TESTDATADIR "/LG-L225W-External.bin", &test_data);
 
 	/* Lenovo T61 Intel Panel */
 	test_data.monitor_name = NULL;
@@ -573,7 +588,7 @@ gcm_test_edid_func (void)
 	test_data.height = 21;
 	test_data.width = 33;
 	test_data.gamma = 2.2f;
-	gcm_test_edid_test_parse_edid_file (edid, "Lenovo-T61-Internal.bin", &test_data);
+	gcm_test_edid_test_parse_edid_file (edid, TESTDATADIR "/Lenovo-T61-Internal.bin", &test_data);
 
 	g_object_unref (edid);
 }
@@ -584,17 +599,14 @@ gcm_test_exif_func (void)
 	GcmExif *exif;
 	gboolean ret;
 	GError *error = NULL;
-	gchar *filename;
 	GFile *file;
 
 	exif = gcm_exif_new ();
 	g_assert (exif != NULL);
 
 	/* TIFF */
-	filename = gcm_test_get_data_file ("test.tif");
-	file = g_file_new_for_path (filename);
+	file = g_file_new_for_path (TESTDATADIR "/test.tif");
 	ret = gcm_exif_parse (exif, file, &error);
-	g_free (filename);
 	g_object_unref (file);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -604,10 +616,8 @@ gcm_test_exif_func (void)
 	g_assert_cmpint (gcm_exif_get_device_kind (exif), ==, GCM_DEVICE_KIND_CAMERA);
 
 	/* JPG */
-	filename = gcm_test_get_data_file ("test.jpg");
-	file = g_file_new_for_path (filename);
+	file = g_file_new_for_path (TESTDATADIR "/test.jpg");
 	ret = gcm_exif_parse (exif, file, &error);
-	g_free (filename);
 	g_object_unref (file);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -617,10 +627,8 @@ gcm_test_exif_func (void)
 	g_assert_cmpint (gcm_exif_get_device_kind (exif), ==, GCM_DEVICE_KIND_CAMERA);
 
 	/* RAW */
-	filename = gcm_test_get_data_file ("test.kdc");
-	file = g_file_new_for_path (filename);
+	file = g_file_new_for_path (TESTDATADIR "/test.kdc");
 	ret = gcm_exif_parse (exif, file, &error);
-	g_free (filename);
 	g_object_unref (file);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -630,10 +638,8 @@ gcm_test_exif_func (void)
 	g_assert_cmpint (gcm_exif_get_device_kind (exif), ==, GCM_DEVICE_KIND_CAMERA);
 
 	/* PNG */
-	filename = gcm_test_get_data_file ("test.png");
-	file = g_file_new_for_path (filename);
+	file = g_file_new_for_path (TESTDATADIR "/test.png");
 	ret = gcm_exif_parse (exif, file, &error);
-	g_free (filename);
 	g_object_unref (file);
 	g_assert_error (error, GCM_EXIF_ERROR, GCM_EXIF_ERROR_NO_SUPPORT);
 	g_assert (!ret);
@@ -649,7 +655,6 @@ gcm_test_gamma_widget_func (void)
 	GtkWidget *dialog;
 	GtkWidget *vbox;
 	gint response;
-	gchar *filename_image;
 
 	widget = gcm_gamma_widget_new ();
 	g_assert (widget != NULL);
@@ -662,12 +667,9 @@ gcm_test_gamma_widget_func (void)
 		      "color-blue", 0.25f,
 		      NULL);
 
-	filename_image = gcm_test_get_data_file ("gamma-widget.png");
-	g_assert ((filename_image != NULL));
-
 	/* show in a dialog as an example */
 	dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "Does GAMMA widget match\nthe picture below?");
-	image = gtk_image_new_from_file (filename_image);
+	image = gtk_image_new_from_file (TESTDATADIR "/gamma-widget.png");
 	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 	gtk_box_pack_end (GTK_BOX(vbox), widget, TRUE, TRUE, 12);
 	gtk_box_pack_end (GTK_BOX(vbox), image, TRUE, TRUE, 12);
@@ -681,8 +683,6 @@ gcm_test_gamma_widget_func (void)
 	g_assert ((response == GTK_RESPONSE_YES));
 
 	gtk_widget_destroy (dialog);
-
-	g_free (filename_image);
 }
 
 static void
@@ -693,9 +693,6 @@ gcm_test_image_func (void)
 	GtkWidget *dialog;
 	GtkWidget *vbox;
 	gint response;
-	gchar *filename_widget;
-	gchar *filename_test;
-	gchar *filename;
 	gboolean ret;
 	GcmProfile *profile;
 	GFile *file;
@@ -703,15 +700,11 @@ gcm_test_image_func (void)
 	image = gcm_image_new ();
 	g_assert (image != NULL);
 
-	filename_widget = gcm_test_get_data_file ("image-widget.png");
-	gtk_image_set_from_file (GTK_IMAGE(image), filename_widget);
-
-	filename_test = gcm_test_get_data_file ("image-widget-good.png");
-	g_assert ((filename_test != NULL));
+	gtk_image_set_from_file (GTK_IMAGE(image), TESTDATADIR "/image-widget.png");
 
 	/* show in a dialog as an example */
 	dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "Does color-corrected image match\nthe picture below?");
-	image_test = gtk_image_new_from_file (filename_test);
+	image_test = gtk_image_new_from_file (TESTDATADIR "/image-widget-good.png");
 	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 	gtk_box_pack_end (GTK_BOX(vbox), GTK_WIDGET(image), TRUE, TRUE, 12);
 	gtk_box_pack_end (GTK_BOX(vbox), image_test, TRUE, TRUE, 12);
@@ -727,28 +720,23 @@ gcm_test_image_func (void)
 
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	g_assert ((response == GTK_RESPONSE_YES));
-	g_free (filename_test);
 
-	filename_test = gcm_test_get_data_file ("image-widget-nonembed.png");
-	gtk_image_set_from_file (GTK_IMAGE(image_test), filename_test);
+	gtk_image_set_from_file (GTK_IMAGE(image_test), TESTDATADIR "/image-widget-nonembed.png");
 	g_object_set (image,
 		      "use-embedded-profile", FALSE,
 		      NULL);
 
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	g_assert ((response == GTK_RESPONSE_YES));
-	g_free (filename_test);
 
-	filename_test = gcm_test_get_data_file ("image-widget-output.png");
-	gtk_image_set_from_file (GTK_IMAGE(image_test), filename_test);
+	gtk_image_set_from_file (GTK_IMAGE(image_test), TESTDATADIR "/image-widget-output.png");
 	g_object_set (image,
 		      "use-embedded-profile", TRUE,
 		      NULL);
 
 	/* get test file */
-	filename = gcm_test_get_data_file ("ibm-t61.icc");
 	profile = gcm_profile_new ();
-	file = g_file_new_for_path (filename);
+	file = g_file_new_for_path (TESTDATADIR "/ibm-t61.icc");
 	ret = gcm_profile_parse (profile, file, NULL);
 	g_object_unref (file);
 	g_assert (ret);
@@ -757,12 +745,8 @@ gcm_test_image_func (void)
 
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	g_assert ((response == GTK_RESPONSE_YES));
-	g_free (filename_test);
 
 	gtk_widget_destroy (dialog);
-
-	g_free (filename);
-	g_free (filename_widget);
 }
 
 static GPtrArray *
@@ -770,8 +754,8 @@ gcm_print_test_render_cb (GcmPrint *print,  GtkPageSetup *page_setup, gpointer u
 {
 	GPtrArray *filenames;
 	filenames = g_ptr_array_new_with_free_func (g_free);
-	g_ptr_array_add (filenames, gcm_test_get_data_file ("image-widget-nonembed.png"));
-	g_ptr_array_add (filenames, gcm_test_get_data_file ("image-widget-good.png"));
+	g_ptr_array_add (filenames, g_strdup (TESTDATADIR "/image-widget-nonembed.png"));
+	g_ptr_array_add (filenames, g_strdup (TESTDATADIR "/image-widget-good.png"));
 	return filenames;
 }
 
@@ -794,7 +778,6 @@ gcm_test_print_func (void)
 static void
 gcm_test_profile_func (void)
 {
-	gchar *filename = NULL;
 	GcmProfile *profile;
 	GFile *file;
 	GcmClut *clut;
@@ -803,14 +786,12 @@ gcm_test_profile_func (void)
 	GcmXyz *xyz;
 
 	/* bluish test */
-	filename = gcm_test_get_data_file ("bluish.icc");
-	profile = GCM_PROFILE(gcm_profile_new ());
-	file = g_file_new_for_path (filename);
+	profile = gcm_profile_new ();
+	file = g_file_new_for_path (TESTDATADIR "/bluish.icc");
 	ret = gcm_profile_parse (profile, file, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_object_unref (file);
-	g_free (filename);
 
 	/* get CLUT */
 	clut = gcm_profile_generate_vcgt (profile, 256);
@@ -838,14 +819,12 @@ gcm_test_profile_func (void)
 	g_object_unref (profile);
 
 	/* Adobe test */
-	filename = gcm_test_get_data_file ("AdobeGammaTest.icm");
-	profile = GCM_PROFILE(gcm_profile_new ());
-	file = g_file_new_for_path (filename);
+	profile = gcm_profile_new ();
+	file = g_file_new_for_path (TESTDATADIR "/AdobeGammaTest.icm");
 	ret = gcm_profile_parse (profile, file, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_object_unref (file);
-	g_free (filename);
 
 	g_assert_cmpstr (gcm_profile_get_copyright (profile), ==, "Copyright (c) 1998 Hewlett-Packard Company Modified using Adobe Gamma");
 	g_assert_cmpstr (gcm_profile_get_manufacturer (profile), ==, "IEC http://www.iec.ch");
@@ -867,16 +846,13 @@ gcm_test_profile_store_func (void)
 	GPtrArray *array;
 	GcmProfile *profile;
 	gboolean ret;
-	gchar *filename;
 
 	store = gcm_profile_store_new ();
 	g_assert (store != NULL);
 
 	/* add test files */
-	filename = gcm_test_get_data_file (".");
-	ret = gcm_profile_store_search_path (store, filename);
+	ret = gcm_profile_store_search_path (store, TESTDATADIR "/.");
 	g_assert (ret);
-	g_free (filename);
 
 	/* profile does not exist */
 	profile = gcm_profile_store_get_by_filename (store, "xxxxxxxxx");
@@ -937,21 +913,13 @@ gcm_test_trc_widget_func (void)
 	GcmClut *clut;
 	GcmProfile *profile;
 	gint response;
-	gchar *filename_profile;
-	gchar *filename_image;
 	GFile *file;
 
 	widget = gcm_trc_widget_new ();
 	g_assert (widget != NULL);
 
-	filename_image = gcm_test_get_data_file ("trc-widget.png");
-	g_assert ((filename_image != NULL));
-
-	filename_profile = gcm_test_get_data_file ("AdobeGammaTest.icm");
-	g_assert ((filename_profile != NULL));
-
 	profile = gcm_profile_new ();
-	file = g_file_new_for_path (filename_profile);
+	file = g_file_new_for_path (TESTDATADIR "/AdobeGammaTest.icm");
 	gcm_profile_parse (profile, file, NULL);
 	clut = gcm_profile_generate_vcgt (profile, 256);
 	g_object_set (widget,
@@ -961,7 +929,7 @@ gcm_test_trc_widget_func (void)
 
 	/* show in a dialog as an example */
 	dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "Does TRC widget match\nthe picture below?");
-	image = gtk_image_new_from_file (filename_image);
+	image = gtk_image_new_from_file (TESTDATADIR "/trc-widget.png");
 	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
 	gtk_box_pack_end (GTK_BOX(vbox), widget, TRUE, TRUE, 12);
 	gtk_box_pack_end (GTK_BOX(vbox), image, TRUE, TRUE, 12);
@@ -978,8 +946,6 @@ gcm_test_trc_widget_func (void)
 
 	g_object_unref (clut);
 	g_object_unref (profile);
-	g_free (filename_profile);
-	g_free (filename_image);
 }
 
 static void
@@ -1005,12 +971,10 @@ gcm_test_utils_func (void)
 	g_object_unref (file);
 	g_object_unref (dest);
 
-	filename = gcm_test_get_data_file ("bluish.icc");
-	file = g_file_new_for_path (filename);
+	file = g_file_new_for_path (TESTDATADIR "/bluish.icc");
 	ret = gcm_utils_is_icc_profile (file);
 	g_assert (ret);
 	g_object_unref (file);
-	g_free (filename);
 
 	ret = gcm_utils_output_is_lcd_internal ("LVDS1");
 	g_assert (ret);
@@ -1091,11 +1055,7 @@ gcm_test_client_func (void)
 	GcmDevice *device;
 	gchar *contents;
 	gchar *filename;
-	gchar *icc_filename;
 	gchar *data = NULL;
-
-	/* get test file */
-	icc_filename = gcm_test_get_data_file ("bluish.icc");
 
 	client = gcm_client_new ();
 	g_assert (client != NULL);
@@ -1120,7 +1080,8 @@ gcm_test_client_func (void)
 				    "profile=%s\n"
 				    "title=Goldstar\n"
 				    "type=display\n"
-				    "colorspace=rgb\n", icc_filename);
+				    "colorspace=rgb\n",
+				    TESTDATADIR "/bluish.icc");
 	ret = g_file_set_contents (filename, contents, -1, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -1135,7 +1096,7 @@ gcm_test_client_func (void)
 	device = g_ptr_array_index (array, 0);
 	g_assert_cmpstr (gcm_device_get_id (device), ==, "xrandr_goldstar");
 	g_assert_cmpstr (gcm_device_get_title (device), ==, "Goldstar");
-	gcm_test_assert_basename (gcm_device_get_default_profile_filename (device), icc_filename);
+	gcm_test_assert_basename (gcm_device_get_default_profile_filename (device), TESTDATADIR "/bluish.icc");
 	g_assert (gcm_device_get_saved (device));
 	g_assert (!gcm_device_get_connected (device));
 	g_assert (GCM_IS_DEVICE_XRANDR (device));
@@ -1155,7 +1116,7 @@ gcm_test_client_func (void)
 	device = g_ptr_array_index (array, 0);
 	g_assert_cmpstr (gcm_device_get_id (device), ==, "xrandr_goldstar");
 	g_assert_cmpstr (gcm_device_get_title (device), ==, "Slightly different");
-	gcm_test_assert_basename (gcm_device_get_default_profile_filename (device), icc_filename);
+	gcm_test_assert_basename (gcm_device_get_default_profile_filename (device), TESTDATADIR "/bluish.icc");
 	g_assert (gcm_device_get_saved (device));
 	g_assert (gcm_device_get_connected (device));
 	g_assert (GCM_IS_DEVICE_UDEV (device));
@@ -1182,7 +1143,6 @@ gcm_test_client_func (void)
 	g_unlink (filename);
 	g_free (contents);
 	g_free (filename);
-	g_free (icc_filename);
 	g_free (data);
 }
 

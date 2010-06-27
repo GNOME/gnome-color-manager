@@ -24,6 +24,7 @@ INCLUDES =						\
 	-DSYSCONFDIR=\""$(sysconfdir)"\"		\
 	-DVERSION="\"$(VERSION)\""			\
 	-DLOCALEDIR=\""$(localedir)"\"			\
+	-DTESTDATADIR=\""$(top_srcdir)/data/tests"\"	\
 	-DGCM_SYSTEM_PROFILES_DIR="\"$(GCM_SYSTEM_PROFILES_DIR)"\" \
 	-DGCM_DATA=\"$(pkgdatadir)\"
 
