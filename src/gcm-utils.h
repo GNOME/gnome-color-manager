@@ -63,7 +63,7 @@
 #define GCM_PREFS_PACKAGE_NAME_COLOR_PROFILES_EXTRA	"shared-color-profiles-extra"
 
 /* libnotify dummy code */
-#ifndef HAVE_LIBNOTIFY
+#ifndef HAVE_NOTIFY
 #define	notify_init(f1)						/* nothing */
 #define	notify_is_initted(f1)					FALSE
 #define	notify_notification_close(f1,f2)			TRUE
