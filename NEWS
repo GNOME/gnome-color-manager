@@ -1,3 +1,28 @@
+Version 2.31.4
+~~~~~~~~~~~~~~
+Released: 2010-07-01
+
+* Translations
+ - Updated Galician translations (Fran Diéguez)
+ - Updated Spanish translation (Jorge González)
+ - Updated Estonian translation (Mattias Põldaru)
+ - Updated Hebrew translation (Yaron Shahrabani)
+ - Updated Simplified Chinese translation (甘露 Gan Lu)
+
+* New Features:
+ - Port from lcms to lcms2 (Richard Hughes)
+ - Split gcm-prefs into a control center module and a profile viewer (Richard Hughes)
+ - Add gcm_image_set_abstract_profile() so we can set LAB abstract profiles (Richard Hughes)
+ - Add GcmProfileSearchFlags so we can control what kind of profiles are loaded (Richard Hughes)
+ - Allow passing profile and device types to GetProfilesForType() (Richard Hughes)
+
+* Bugfix:
+ - Do not try to convert if the input and output profiles are not RGB (Richard Hughes)
+ - Refuse to import a local profile if it already exists system-wide (Richard Hughes)
+ - Make GcmImage take a GcmProfile, not a base64 string (Richard Hughes)
+ - Depend on gnome-control-center 2.31.4 for GTK 3.0 fixes (Richard Hughes)
+ - Ensure we load the profile store in the DBus service (Richard Hughes)
+
 Version 2.31.3
 ~~~~~~~~~~~~~~
 Released: 2010-06-21
