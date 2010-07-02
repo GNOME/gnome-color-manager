@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-26 10:52+0300\n"
-"PO-Revision-Date: 2010-06-26 10:53+0200\n"
+"POT-Creation-Date: 2010-07-03 01:54+0300\n"
+"PO-Revision-Date: 2010-07-03 01:55+0200\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Gezer <sh.yaron@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -1124,7 +1124,7 @@ msgstr "שם היצרן:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #. The serial number of the device
-#: ../src/gcm-dump-edid.c:85 ../data/gcm-prefs.ui.h:60
+#: ../src/gcm-dump-edid.c:85 ../data/gcm-prefs.ui.h:62
 msgid "Serial number:"
 msgstr "מספר סידורי:"
 
@@ -1183,7 +1183,7 @@ msgstr "תכנית לאיסוף נתונים מפרופילי ICC"
 
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-enum.c:145 ../src/gcm-viewer.c:550 ../data/gcm-prefs.ui.h:48
+#: ../src/gcm-enum.c:145 ../src/gcm-viewer.c:550 ../data/gcm-prefs.ui.h:50
 msgid "RGB"
 msgstr "RGB"
 
@@ -1194,32 +1194,32 @@ msgid "CMYK"
 msgstr "CMYK"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-fix-profile.c:124
+#: ../src/gcm-fix-profile.c:140
 msgid "The description of the profile"
 msgstr "תיאור הפרופיל"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-fix-profile.c:127
+#: ../src/gcm-fix-profile.c:143
 msgid "The copyright of the profile"
 msgstr "זכויות היוצרים של הפרופיל"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-fix-profile.c:130
+#: ../src/gcm-fix-profile.c:146
 msgid "The model of the profile"
 msgstr "דגם הפרופיל"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-fix-profile.c:133
+#: ../src/gcm-fix-profile.c:149
 msgid "The manufacturer of the profile"
 msgstr "יצרן הפרופיל"
 
 #. TRANSLATORS: command line option: a list of icc files to fix
-#: ../src/gcm-fix-profile.c:136
+#: ../src/gcm-fix-profile.c:152
 msgid "Profiles to fix"
 msgstr "פרופילים לתיקון"
 
 #. TRANSLATORS: this fixes broken profiles
-#: ../src/gcm-fix-profile.c:147
+#: ../src/gcm-fix-profile.c:163
 msgid "ICC profile fix program"
 msgstr "התכנית לתיקון פרופילי ICC"
 
@@ -1826,7 +1826,7 @@ msgstr "מעבדה (D50):"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. What mode to use for display rendering intent
-#: ../data/gcm-picker.ui.h:10 ../data/gcm-prefs.ui.h:50
+#: ../data/gcm-picker.ui.h:10 ../data/gcm-prefs.ui.h:52
 msgid "RGB:"
 msgstr "RGB:"
 
@@ -1862,8 +1862,8 @@ msgstr "הוספת פרופיל צבע לשימוש בהתקן זה"
 
 #. This is a button to add a virtual device
 #: ../data/gcm-prefs.ui.h:5
-msgid "Add d_evice&#x2026;"
-msgstr "הוספת ה_תקן&#x2026;"
+msgid "Add d_evice…"
+msgstr "הוספת ה_תקן…"
 
 #: ../data/gcm-prefs.ui.h:6
 msgid "Adds a virtual device that is not connected."
@@ -1906,7 +1906,7 @@ msgstr "ברירות מחדל"
 msgid ""
 "Delete the disconnected device - if you reconnect the device it will "
 "reappear in the list"
-msgstr "מחיקת ההתקן המנותק - אם ההתקן יחובר שוב הוא ישוב ויופיע ברשימה"
+msgstr "מחיקת ההתקן המנותק — אם ההתקן יחובר שוב הוא ישוב ויופיע ברשימה"
 
 #: ../data/gcm-prefs.ui.h:23
 msgid "Device type:"
@@ -1968,52 +1968,52 @@ msgstr "פתיחת התיעוד"
 msgid "Pr_ofile Viewer"
 msgstr "מ_ציג הפרופילים"
 
-#: ../data/gcm-prefs.ui.h:47
+#. The rendering intent for the print preview
+#: ../data/gcm-prefs.ui.h:48
+msgid "Print Preview:"
+msgstr "תצוגה מקדימה להדפסה:"
+
+#: ../data/gcm-prefs.ui.h:49
 msgid ""
 "Program the video card with the adjusted color values so all windows are "
 "color corrected"
 msgstr "תכנות כרטיס המסך עם ערכי הצבעים ששונו כך שצבעם של כל החלונות יתוקן"
 
-#: ../data/gcm-prefs.ui.h:51
+#: ../data/gcm-prefs.ui.h:53
 msgid "Remove a color profile for this device"
 msgstr "הסרת פרופיל צבע עבור התקן זה"
 
 #. This is a button to delete the saved or virtual device
-#: ../data/gcm-prefs.ui.h:53
+#: ../data/gcm-prefs.ui.h:55
 msgid "Remove de_vice"
 msgstr "ה_סרת התקן"
 
-#: ../data/gcm-prefs.ui.h:54
+#: ../data/gcm-prefs.ui.h:56
 msgid "Rendering intent"
 msgstr "מיקוד Render"
 
 #. This resets the device to it's defaults, and removes any user tweaked settings.
-#: ../data/gcm-prefs.ui.h:56
+#: ../data/gcm-prefs.ui.h:58
 msgid "Rese_t"
 msgstr "_איפוס"
 
-#: ../data/gcm-prefs.ui.h:57
+#: ../data/gcm-prefs.ui.h:59
 msgid "Reset the sliders to the default values"
 msgstr "איפוס פסי הגלילה לערכי ברירת המחדל"
 
-#: ../data/gcm-prefs.ui.h:58
+#: ../data/gcm-prefs.ui.h:60
 msgid "Save these profiles for all users"
 msgstr "שמירת פרופילים אלו עבור כל המשתמש"
 
-#: ../data/gcm-prefs.ui.h:61
+#: ../data/gcm-prefs.ui.h:63
 msgid ""
 "Set a property on the system so applications use the default display profile"
 msgstr ""
 "הגדרת תכונה במערכת כדי שיישומים ישתמשו בפרופיל התצוגה המוגדר כברירת המחדל"
 
-#: ../data/gcm-prefs.ui.h:62
+#: ../data/gcm-prefs.ui.h:64
 msgid "Set profile for _color managed applications"
 msgstr "הגדרת פרופיל עבור _יישומים מנוהלי צבע"
-
-#. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:64
-msgid "Softproof:"
-msgstr "כיוון להדפסה:"
 
 #: ../data/gcm-prefs.ui.h:65
 msgid ""
@@ -2077,6 +2077,9 @@ msgstr "ה_פיכה לברירת מחדל"
 #: ../data/gcm-prefs.ui.h:78
 msgid "_Set System Default"
 msgstr "ה_גדרה כברירת המחדל במערכת"
+
+#~ msgid "Softproof:"
+#~ msgstr "כיוון להדפסה:"
 
 #~ msgid "Add a new color profile"
 #~ msgstr "הוספת פרופיל צבע חדש"
