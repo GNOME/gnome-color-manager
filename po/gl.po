@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-06-30 00:19+0200\n"
-"PO-Revision-Date: 2010-06-30 00:20+0200\n"
+"POT-Creation-Date: 2010-07-07 23:20+0200\n"
+"PO-Revision-Date: 2010-07-07 23:21+0200\n"
 "Last-Translator: Fran Diéguez <frandieguez@ubuntu.com>\n"
 "Language-Team: Galician <gnome@g11n.net>\n"
 "MIME-Version: 1.0\n"
@@ -1179,7 +1179,7 @@ msgstr "Nome do fabricante:"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #. The serial number of the device
-#: ../src/gcm-dump-edid.c:85 ../data/gcm-prefs.ui.h:60
+#: ../src/gcm-dump-edid.c:85 ../data/gcm-prefs.ui.h:62
 msgid "Serial number:"
 msgstr "Número de serie:"
 
@@ -1238,7 +1238,7 @@ msgstr "Programa para volcados de perfiles ICC"
 
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-enum.c:145 ../src/gcm-viewer.c:550 ../data/gcm-prefs.ui.h:48
+#: ../src/gcm-enum.c:145 ../src/gcm-viewer.c:550 ../data/gcm-prefs.ui.h:50
 msgid "RGB"
 msgstr "RGB"
 
@@ -1883,7 +1883,7 @@ msgstr "Lab (D50):"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. What mode to use for display rendering intent
-#: ../data/gcm-picker.ui.h:10 ../data/gcm-prefs.ui.h:50
+#: ../data/gcm-picker.ui.h:10 ../data/gcm-prefs.ui.h:52
 msgid "RGB:"
 msgstr "RGB:"
 
@@ -1922,8 +1922,8 @@ msgstr "Engadir un perfil de cor para usalo con este dispositivo"
 
 #. This is a button to add a virtual device
 #: ../data/gcm-prefs.ui.h:5
-msgid "Add d_evice&#x2026;"
-msgstr "Engadir di_spositivo#x2026;"
+msgid "Add d_evice…"
+msgstr "Engadir di_spositivo..."
 
 #: ../data/gcm-prefs.ui.h:6
 msgid "Adds a virtual device that is not connected."
@@ -2032,7 +2032,12 @@ msgstr "Abrir a documentación"
 msgid "Pr_ofile Viewer"
 msgstr "Visor de per_files"
 
-#: ../data/gcm-prefs.ui.h:47
+#. The rendering intent for the print preview
+#: ../data/gcm-prefs.ui.h:48
+msgid "Print Preview:"
+msgstr "Vista previa da impresión:"
+
+#: ../data/gcm-prefs.ui.h:49
 msgid ""
 "Program the video card with the adjusted color values so all windows are "
 "color corrected"
@@ -2040,47 +2045,42 @@ msgstr ""
 "Programar a tarxeta de vídeo cos valores de cor axustados para que todas as "
 "xanelas teñan a cor correcta"
 
-#: ../data/gcm-prefs.ui.h:51
+#: ../data/gcm-prefs.ui.h:53
 msgid "Remove a color profile for this device"
 msgstr "Quitar un perfil de cor para este dispositivo"
 
 #. This is a button to delete the saved or virtual device
-#: ../data/gcm-prefs.ui.h:53
+#: ../data/gcm-prefs.ui.h:55
 msgid "Remove de_vice"
 msgstr "Quitar dispositi_vo"
 
-#: ../data/gcm-prefs.ui.h:54
+#: ../data/gcm-prefs.ui.h:56
 msgid "Rendering intent"
 msgstr "Modo de renderizado"
 
 #. This resets the device to it's defaults, and removes any user tweaked settings.
-#: ../data/gcm-prefs.ui.h:56
+#: ../data/gcm-prefs.ui.h:58
 msgid "Rese_t"
 msgstr "_Restabelecer"
 
-#: ../data/gcm-prefs.ui.h:57
+#: ../data/gcm-prefs.ui.h:59
 msgid "Reset the sliders to the default values"
 msgstr "Restabelecer os deslizadores aos valores predefinidos"
 
-#: ../data/gcm-prefs.ui.h:58
+#: ../data/gcm-prefs.ui.h:60
 msgid "Save these profiles for all users"
 msgstr "Gardar estes perfiles para todos os usuarios"
 
-#: ../data/gcm-prefs.ui.h:61
+#: ../data/gcm-prefs.ui.h:63
 msgid ""
 "Set a property on the system so applications use the default display profile"
 msgstr ""
 "Estabelecer unha propiedade no sistema para que os aplicativos usen o perfil "
 "de pantalla predefinido"
 
-#: ../data/gcm-prefs.ui.h:62
+#: ../data/gcm-prefs.ui.h:64
 msgid "Set profile for _color managed applications"
 msgstr "Estabelecer o perfil de _cor para os aplicativos xestionados"
-
-#. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:64
-msgid "Softproof:"
-msgstr "Proba blanda:"
 
 #: ../data/gcm-prefs.ui.h:65
 msgid ""
@@ -2151,6 +2151,9 @@ msgstr "_Facer predefinido"
 #: ../data/gcm-prefs.ui.h:78
 msgid "_Set System Default"
 msgstr "_Estabelecer os valores predefinidos do sistema"
+
+#~ msgid "Softproof:"
+#~ msgstr "Proba blanda:"
 
 #~ msgid "Add a new color profile"
 #~ msgstr "Engadir un perfil de cor novo"
