@@ -69,6 +69,7 @@ struct _GcmProfilePrivate
 	GcmXyz			*red;
 	GcmXyz			*green;
 	GcmXyz			*blue;
+	GFile			*file;
 	GFileMonitor		*monitor;
 	gboolean		 has_mlut;
 	cmsHPROFILE		 lcms_profile;
@@ -86,7 +87,7 @@ enum {
 	PROP_DATETIME,
 	PROP_CHECKSUM,
 	PROP_DESCRIPTION,
-	PROP_FILENAME,
+	PROP_FILE,
 	PROP_KIND,
 	PROP_COLORSPACE,
 	PROP_SIZE,
@@ -143,16 +144,6 @@ gcm_profile_set_description (GcmProfile *profile, const gchar *description)
 }
 
 /**
- * gcm_profile_get_filename:
- **/
-const gchar *
-gcm_profile_get_filename (GcmProfile *profile)
-{
-	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
-	return profile->priv->filename;
-}
-
-/**
  * gcm_profile_has_colorspace_description:
  *
  * Return value: if the description mentions the profile colorspace explicity,
@@ -175,34 +166,60 @@ gcm_profile_has_colorspace_description (GcmProfile *profile)
 }
 
 /**
- * gcm_profile_set_filename:
+ * gcm_profile_get_file:
+ *
+ * Return value: Do not unref.
+ **/
+GFile *
+gcm_profile_get_file (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+	return profile->priv->file;
+}
+
+/**
+ * gcm_profile_set_file:
  **/
 void
-gcm_profile_set_filename (GcmProfile *profile, const gchar *filename)
+gcm_profile_set_file (GcmProfile *profile, GFile *file)
 {
 	GcmProfilePrivate *priv = profile->priv;
-	GFile *file;
 
 	g_return_if_fail (GCM_IS_PROFILE (profile));
-
-	g_free (priv->filename);
-	priv->filename = g_strdup (filename);
+	g_return_if_fail (G_IS_FILE (file));
 
 	/* unref old instance */
-	if (priv->monitor != NULL) {
+	if (priv->file != NULL)
+		g_object_unref (priv->file);
+	if (priv->monitor != NULL)
 		g_object_unref (priv->monitor);
-		priv->monitor = NULL;
-	}
+	g_free (priv->filename);
 
 	/* setup watch on new profile */
-	if (priv->filename != NULL) {
-		file = g_file_new_for_path (priv->filename);
-		priv->monitor = g_file_monitor_file (file, G_FILE_MONITOR_NONE, NULL, NULL);
-		if (priv->monitor != NULL)
-			g_signal_connect (priv->monitor, "changed", G_CALLBACK(gcm_profile_file_monitor_changed_cb), profile);
-		g_object_unref (file);
-	}
-	g_object_notify (G_OBJECT (profile), "filename");
+	priv->file = g_object_ref (file);
+	priv->filename = g_file_get_path (file);
+	priv->monitor = g_file_monitor_file (file, G_FILE_MONITOR_NONE, NULL, NULL);
+	if (priv->monitor != NULL)
+		g_signal_connect (priv->monitor, "changed", G_CALLBACK(gcm_profile_file_monitor_changed_cb), profile);
+
+	/* notify we've changed */
+	g_object_notify (G_OBJECT (profile), "file");
+}
+
+/**
+ * gcm_profile_get_filename:
+ **/
+const gchar *
+gcm_profile_get_filename (GcmProfile *profile)
+{
+	GcmProfilePrivate *priv = profile->priv;
+
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+
+	/* this returns a const, so we have to track it internally */
+	if (priv->filename == NULL)
+		priv->filename = g_file_get_path (priv->file);
+	return priv->filename;
 }
 
 /**
@@ -710,7 +727,6 @@ gcm_profile_parse (GcmProfile *profile, GFile *file, GError **error)
 	gchar *data = NULL;
 	gboolean ret = FALSE;
 	gsize length;
-	gchar *filename = NULL;
 	GError *error_local = NULL;
 	GFileInfo *info;
 
@@ -738,12 +754,10 @@ gcm_profile_parse (GcmProfile *profile, GFile *file, GError **error)
 		goto out;
 
 	/* save */
-	filename = g_file_get_path (file);
-	gcm_profile_set_filename (profile, filename);
+	gcm_profile_set_file (profile, file);
 out:
 	if (info != NULL)
 		g_object_unref (info);
-	g_free (filename);
 	g_free (data);
 	return ret;
 }
@@ -922,7 +936,9 @@ gcm_profile_file_monitor_changed_cb (GFileMonitor *monitor, GFile *file, GFile *
 
 	/* just rescan everything */
 	egg_debug ("%s deleted, clearing filename", priv->filename);
-	gcm_profile_set_filename (profile, NULL);
+	if (priv->file != NULL)
+		g_object_unref (priv->file);
+	priv->file = NULL;
 out:
 	return;
 }
@@ -965,8 +981,8 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_DESCRIPTION:
 		g_value_set_string (value, priv->description);
 		break;
-	case PROP_FILENAME:
-		g_value_set_string (value, priv->filename);
+	case PROP_FILE:
+		g_value_set_object (value, priv->file);
 		break;
 	case PROP_KIND:
 		g_value_set_uint (value, priv->kind);
@@ -1029,8 +1045,8 @@ gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, G
 	case PROP_DESCRIPTION:
 		gcm_profile_set_description (profile, g_value_get_string (value));
 		break;
-	case PROP_FILENAME:
-		gcm_profile_set_filename (profile, g_value_get_string (value));
+	case PROP_FILE:
+		gcm_profile_set_file (profile, g_value_get_object (value));
 		break;
 	case PROP_KIND:
 		gcm_profile_set_kind (profile, g_value_get_uint (value));
@@ -1126,12 +1142,12 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	g_object_class_install_property (object_class, PROP_DESCRIPTION, pspec);
 
 	/**
-	 * GcmProfile:filename:
+	 * GcmProfile:file:
 	 */
-	pspec = g_param_spec_string ("filename", NULL, NULL,
-				     NULL,
+	pspec = g_param_spec_object ("file", NULL, NULL,
+				     G_TYPE_FILE,
 				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_FILENAME, pspec);
+	g_object_class_install_property (object_class, PROP_FILE, pspec);
 
 	/**
 	 * GcmProfile:kind:
@@ -1262,6 +1278,8 @@ gcm_profile_finalize (GObject *object)
 	g_object_unref (priv->red);
 	g_object_unref (priv->green);
 	g_object_unref (priv->blue);
+	if (priv->file != NULL)
+		g_object_unref (priv->file);
 	if (priv->monitor != NULL)
 		g_object_unref (priv->monitor);
 

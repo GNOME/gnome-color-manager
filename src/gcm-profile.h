@@ -82,9 +82,10 @@ GcmClut		*gcm_profile_generate_curve		(GcmProfile	*profile,
 const gchar	*gcm_profile_get_description		(GcmProfile	*profile);
 void		 gcm_profile_set_description		(GcmProfile	*profile,
 							 const gchar 	*description);
+GFile		*gcm_profile_get_file			(GcmProfile	*profile);
+void		 gcm_profile_set_file			(GcmProfile	*profile,
+							 GFile	 	*file);
 const gchar	*gcm_profile_get_filename		(GcmProfile	*profile);
-void		 gcm_profile_set_filename		(GcmProfile	*profile,
-							 const gchar 	*filename);
 const gchar	*gcm_profile_get_copyright		(GcmProfile	*profile);
 void		 gcm_profile_set_copyright		(GcmProfile	*profile,
 							 const gchar 	*copyright);
