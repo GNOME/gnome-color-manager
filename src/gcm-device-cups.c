@@ -131,6 +131,8 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 				colorspace = GCM_COLORSPACE_RGB;
 			else if (g_strcmp0 (value, "CMYK") == 0)
 				colorspace = GCM_COLORSPACE_CMYK;
+			else if (g_strcmp0 (value, "Gray") == 0)
+				colorspace = GCM_COLORSPACE_GRAY;
 			else
 				egg_warning ("colorspace not recognized: %s", value);
 		} else if (g_strcmp0 (keyword, "cupsICCProfile") == 0) {
