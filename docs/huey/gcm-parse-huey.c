@@ -95,7 +95,7 @@ get_command_string (guchar value)
 }
 
 static void
-parse_output (GString *output, const gchar *line, gboolean reply)
+parse_command_sequence (GString *output, const gchar *line, gboolean reply)
 {
 	gchar **tok;
 	guint j;
@@ -129,6 +129,104 @@ out:
 	g_strfreev (tok);
 }
 
+typedef enum {
+	GCM_PARSE_MODE_USBDUMP,
+	GCM_PARSE_MODE_ARGYLLD9,
+	GCM_PARSE_MODE_STRACEUSB
+} GcmParseMode;
+
+static void
+parse_line_argyll (GString *output, gchar *line, gboolean *reply)
+{
+	if (g_str_has_prefix (line, "huey: Sending cmd")) {
+		g_string_append (output, " ---> ");
+		*reply = FALSE;
+	}
+	if (g_str_has_prefix (line, "huey: Reading response")) {
+		g_string_append (output, " <--- ");
+		*reply = TRUE;
+	}
+	if (g_str_has_prefix (line, "icoms: Writing control data")) {
+		parse_command_sequence (output, &line[28], *reply);
+	}
+	if (g_str_has_prefix (line, " '")) {
+		line[21] = '\0';
+		/* argyll 'helpfully' removes the two bytes */
+		g_string_append (output, "00(success) xx(cmd) ");
+		g_string_append (output, &line[2]);
+		g_string_append (output, "\n");
+	}
+	if (g_strcmp0 (line, " ICOM err 0x0") == 0)
+		g_string_append (output, "\n");
+}
+
+static void
+parse_line_usbdump (GString *output, const gchar *line, gboolean *reply)
+{
+
+	/* timestamp */
+	if (line[0] == '[')
+		return;
+
+	/* function */
+	if (line[0] == '-') {
+		g_string_append (output, "\n");
+		if (g_str_has_suffix (line, "URB_FUNCTION_CLASS_INTERFACE:"))
+			g_string_append (output, "[class-interface]     ");
+		else if (g_str_has_suffix (line, "URB_FUNCTION_CONTROL_TRANSFER:"))
+			g_string_append (output, "[control-transfer]    ");
+		else if (g_str_has_suffix (line, "URB_FUNCTION_BULK_OR_INTERRUPT_TRANSFER:"))
+			g_string_append (output, "[interrupt-transfer]  ");
+		else
+			g_string_append (output, "[unknown]             ");
+	}
+
+	if (g_strstr_len (line, -1, "USBD_TRANSFER_DIRECTION_IN") != NULL) {
+		g_string_append (output, " <--- ");
+		*reply = TRUE;
+	}
+	if (g_strstr_len (line, -1, "USBD_TRANSFER_DIRECTION_OUT") != NULL) {
+		g_string_append (output, " ---> ");
+		*reply = FALSE;
+	}
+
+	if (g_strstr_len (line, -1, "00000000:") != NULL) {
+		parse_command_sequence (output, &line[14], *reply);
+	}
+}
+
+static void
+parse_line_straceusb (GString *output, const gchar *line, gboolean *reply)
+{
+	gchar *tmp;
+
+	if (g_strstr_len (line, -1, "USBDEVFS") == NULL)
+		return;
+	if (g_strstr_len (line, -1, "EAGAIN") != NULL)
+		return;
+//make && ./gcm-parse-huey straceusb strace-spotread-usb.txt strace-spotread-usb.parsed && cat ./strace-spotread-usb.parsed
+	tmp = g_strstr_len (line, -1, "data=");
+	if (tmp == NULL) {
+		*reply = TRUE;
+		tmp = g_strstr_len (line, -1, "buffer=");
+		if (tmp == NULL)
+			return;
+	} else {
+		*reply = FALSE;
+	}
+
+	tmp[28] = '\0';
+	parse_command_sequence (output, tmp+5, *reply);
+	g_string_append (output, "\n");
+
+	return;
+
+	g_error ("@%s@", tmp+5);
+
+	g_string_append (output, line);
+	g_string_append (output, "\n");
+}
+
 gint
 main (gint argc, gchar *argv[])
 {
@@ -140,16 +238,29 @@ main (gint argc, gchar *argv[])
 	guint i;
 	gchar *line;
 	gboolean reply = FALSE;
+	GcmParseMode mode = 0;
 
-	if (argc != 3) {
-		g_print ("need to specify two files\n");
+	if (argc != 4) {
+		g_print ("need to specify mode then two files\n");
 		goto out;
 	}
 
-	g_print ("parsing %s into %s... ", argv[1], argv[2]);
+	/* get the mode */
+	if (g_strcmp0 (argv[1], "usbdump") == 0)
+		mode = GCM_PARSE_MODE_USBDUMP;
+	else if (g_strcmp0 (argv[1], "argylld9") == 0)
+		mode = GCM_PARSE_MODE_ARGYLLD9;
+	else if (g_strcmp0 (argv[1], "straceusb") == 0)
+		mode = GCM_PARSE_MODE_STRACEUSB;
+	else {
+		g_print ("mode unrecognised, use strace, argylld9 or straceusb");
+		goto out;
+	}
+
+	g_print ("parsing %s into %s... ", argv[2], argv[3]);
 
 	/* read file */
-	ret = g_file_get_contents (argv[1], &data, NULL, &error);
+	ret = g_file_get_contents (argv[2], &data, NULL, &error);
 	if (!ret) {
 		g_print ("failed to read: %s\n", error->message);
 		g_error_free (error);
@@ -162,64 +273,18 @@ main (gint argc, gchar *argv[])
 	for (i=0; split[i] != NULL; i++) {
 		line = split[i];
 
-		/* timestamp */
-		if (line[0] == '[')
-			continue;
-
-		/* --------- argyll -D9 format --------- */
-		if (g_str_has_prefix (line, "huey: Sending cmd")) {
-			g_string_append (output, " ---> ");
-			reply = FALSE;
-		}
-		if (g_str_has_prefix (line, "huey: Reading response")) {
-			g_string_append (output, " <--- ");
-			reply = TRUE;
-		}
-		if (g_str_has_prefix (line, "icoms: Writing control data")) {
-			parse_output (output, &line[28], reply);
-		}
-		if (g_str_has_prefix (line, " '")) {
-			line[21] = '\0';
-			/* argyll 'helpfully' removes the two bytes */
-			g_string_append (output, "00(success) xx(cmd) ");
-			g_string_append (output, &line[2]);
-			g_string_append (output, "\n");
-		}
-		if (g_strcmp0 (line, " ICOM err 0x0") == 0)
-			g_string_append (output, "\n");
-		/* --------- argyll -D9 format --------- */
-
-		/* function */
-		if (line[0] == '-') {
-			g_string_append (output, "\n");
-			if (g_str_has_suffix (line, "URB_FUNCTION_CLASS_INTERFACE:"))
-				g_string_append (output, "[class-interface]     ");
-			else if (g_str_has_suffix (line, "URB_FUNCTION_CONTROL_TRANSFER:"))
-				g_string_append (output, "[control-transfer]    ");
-			else if (g_str_has_suffix (line, "URB_FUNCTION_BULK_OR_INTERRUPT_TRANSFER:"))
-				g_string_append (output, "[interrupt-transfer]  ");
-			else
-				g_string_append (output, "[unknown]             ");
-		}
-
-		if (g_strstr_len (line, -1, "USBD_TRANSFER_DIRECTION_IN") != NULL) {
-			g_string_append (output, " <--- ");
-			reply = TRUE;
-		}
-		if (g_strstr_len (line, -1, "USBD_TRANSFER_DIRECTION_OUT") != NULL) {
-			g_string_append (output, " ---> ");
-			reply = FALSE;
-		}
-
-		if (g_strstr_len (line, -1, "00000000:") != NULL) {
-			parse_output (output, &line[14], reply);
-		}
-
-//		g_print ("%i:%s\n", i, split[i]);
+		if (mode == GCM_PARSE_MODE_ARGYLLD9)
+			parse_line_argyll (output, line, &reply);
+		else if (mode == GCM_PARSE_MODE_USBDUMP)
+			parse_line_usbdump (output, line, &reply);
+		else if (mode == GCM_PARSE_MODE_STRACEUSB)
+			parse_line_straceusb (output, line, &reply);
+		else
+			g_print ("%i:%s\n", i, split[i]);
 	}
 
 	/* write file */
-	ret = g_file_set_contents (argv[2], output->str, -1, &error);
+	ret = g_file_set_contents (argv[3], output->str, -1, &error);
 	if (!ret) {
 		g_print ("failed to read: %s\n", error->message);
 		g_error_free (error);
