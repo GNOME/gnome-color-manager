@@ -64,13 +64,13 @@
 
 /* (sent at startup  after the unlock)
  * input:   08 0b 00 10 3c 06 00 00
- *             ^^-- register address? We read from 0x04 to 0x72 at startup
+ *             ^^-- register address
  * returns: 00 08 0b b8 00 00 00 00
- *
+ *      address --^^ ^^-- value
  * input:   08 f1 f2 f3 f4 f5 f6 f7
  * returns: 00 08 f1 f2 00 00 00 00
  */
-#define HUEY_COMMAND_UNKNOWN_08		0x08
+#define HUEY_COMMAND_UNKNOWN_REG_READ	0x08
 
 /* returns: all NULL all of the time */
 #define HUEY_COMMAND_UNLOCK		0x0e
@@ -359,21 +359,27 @@ out:
 }
 
 static gboolean
-do_thing_after_unlock (GcmPriv *priv, GError **error)
+read_registers (GcmPriv *priv, GError **error)
 {
 	/* according to wMaxPacketSize, all the messages have just 8 bytes */
-	guchar request[] = { HUEY_COMMAND_UNKNOWN_08, 0x0b, 0x00, 0x10, 0x3c, 0x06, 0x00, 0x00 };
+	guchar request[] = { HUEY_COMMAND_UNKNOWN_REG_READ, 0xff, 0x00, 0x10, 0x3c, 0x06, 0x00, 0x00 };
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
+	guchar i;
 
-	/* just get data */
-	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
-	if (!ret)
-		goto out;
+	/* We read from 0x04 to 0x72 at startup */
+	for (i=0x00; i<=0x72; i++) {
 
-	/* this seems like the only bit of data that's useful */
-	g_debug ("random thing that's checked: 0x%02x", reply[3]);
+		request[1] = i;
+		ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+		if (!ret)
+			goto out;
+
+		/* this seems like the only bit of data that's useful */
+		g_print ("register value: 0x%02x [%c]\n", reply[3], g_ascii_isprint (reply[3]) ? reply[3] : '?');
+	}
+
 out:
 	return ret;
 }
@@ -415,7 +421,7 @@ main (void)
 	}
 
 	/* this is done by the windows driver */
-	ret = do_thing_after_unlock (priv, &error);
+	ret = read_registers (priv, &error);
 	if (!ret) {
 		g_warning ("failed to do thing: %s", error->message);
 		g_error_free (error);
