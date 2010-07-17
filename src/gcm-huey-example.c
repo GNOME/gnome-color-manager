@@ -123,6 +123,13 @@ send_command (GcmPriv *priv, guchar command, GError **error)
 
 	/* according to wMaxPacketSize, all the messages have just 8 bytes */
 	data = g_new0 (guchar, 8);
+	data[1] = 0xf1;
+	data[2] = 0xf2;
+	data[3] = 0xf3;
+	data[4] = 0xf4;
+	data[5] = 0xf5;
+	data[6] = 0xf6;
+	data[7] = 0xf7;
 
 	/* first byte seems to be a command, i've no idea what the others do */
 	data[0] = command;
@@ -148,7 +155,7 @@ send_command (GcmPriv *priv, guchar command, GError **error)
 if(1){
 	/* show what we've got */
 	g_print ("cmd 0x%02x\t", command);
-	for (i=0; i< (guint)bytes_read; i++)
+	for (i=2; i< (guint)bytes_read; i++)
 		g_print ("%02x [%c]\t", data[i], g_ascii_isprint (data[i]) ? data[i] : '?');
 	g_print ("\n");
 }
@@ -180,19 +187,19 @@ out:
 	return ret;
 }
 
-#define HUEY_COMMAND_UNKNOWN_00		0x00
-#define HUEY_COMMAND_UNKNOWN_02		0x02
-#define HUEY_COMMAND_UNKNOWN_03		0x03
-#define HUEY_COMMAND_UNKNOWN_05		0x05
-#define HUEY_COMMAND_UNKNOWN_06		0x06
-#define HUEY_COMMAND_UNKNOWN_07		0x07
-#define HUEY_COMMAND_UNKNOWN_08		0x08
-#define HUEY_COMMAND_UNKNOWN_0E		0x0e
-#define HUEY_COMMAND_UNKNOWN_0F		0x0f
-#define HUEY_COMMAND_UNKNOWN_13		0x13
-#define HUEY_COMMAND_UNKNOWN_16		0x16
-#define HUEY_COMMAND_UNKNOWN_18		0x18
-#define HUEY_COMMAND_UNKNOWN_19		0x19
+#define HUEY_COMMAND_UNKNOWN_00		0x00 /* returns: "Cir001" -- Cirrus Logic? It's a Cyprus IC... */
+#define HUEY_COMMAND_UNKNOWN_02		0x02 /* returns: all NULL */
+#define HUEY_COMMAND_UNKNOWN_03		0x03 /* returns: all NULL */
+#define HUEY_COMMAND_UNKNOWN_05		0x05 /* returns: all NULL */
+#define HUEY_COMMAND_UNKNOWN_06		0x06 /* returns: all NULL */
+#define HUEY_COMMAND_UNKNOWN_07		0x07 /* returns: all NULL */
+#define HUEY_COMMAND_UNKNOWN_08		0x08 /* returns: all NULL */
+#define HUEY_COMMAND_UNKNOWN_0E		0x0e /* returns: all NULL */
+#define HUEY_COMMAND_UNKNOWN_0F		0x0f /* returns: all NULL */
+#define HUEY_COMMAND_UNKNOWN_13		0x13 /* returns: all NULL */
+#define HUEY_COMMAND_UNKNOWN_16		0x16 /* returns: all NULL */
+#define HUEY_COMMAND_UNKNOWN_18		0x18 /* returns: all NULL */
+#define HUEY_COMMAND_UNKNOWN_19		0x19 /* returns: all NULL */
 
 int
 main (void)
