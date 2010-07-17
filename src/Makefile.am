@@ -119,7 +119,8 @@ bin_PROGRAMS =						\
 	gcm-session					\
 	gcm-picker					\
 	gcm-ddc-util					\
-	gcm-import
+	gcm-import					\
+	gcm-huey-example
 
 if HAVE_EXIV
 libexec_PROGRAMS = gcm-helper-exiv
@@ -390,6 +391,16 @@ install-data-hook:
 	if test -w $(DESTDIR)$(prefix)/; then \
 		mkdir -p $(DESTDIR)$(GCM_SYSTEM_PROFILES_DIR); \
 	fi
+
+gcm_huey_example_SOURCES =				\
+	gcm-huey-example.c
+
+gcm_huey_example_LDADD =				\
+	$(GLIB_LIBS)					\
+	$(COLOR_GLIB_LIBS)
+
+#gcm_huey_example_CFLAGS =				\
+#	$(WARNINGFLAGS_C)
 
 clean-local:
 	rm -f *~
