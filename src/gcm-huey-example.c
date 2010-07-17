@@ -212,7 +212,8 @@ typedef struct {
 	gboolean		 connected;
 	libusb_device		*device;
 	libusb_device_handle	*handle;
-	GcmMat3x3		 calibration_matrix;
+	GcmMat3x3		 calibration_matrix1;
+	GcmMat3x3		 calibration_matrix2;
 } GcmSensorHuey;
 
 /**
@@ -638,34 +639,44 @@ gcm_sensor_huey_read_registers (GcmSensorHuey *huey, GError **error)
 {
 	gboolean ret;
 	guint8 i, j;
-	guint len = 0xff;
+	guint len = 0xf0;
 	guint8 data[len];
 	gchar unlock[5];
 
+if (1) {
 	/* get unlock string */
 	ret = gcm_sensor_huey_read_register_string (huey, 0x7a, unlock, 5, error);
 	if (!ret)
 		goto out;
 	g_print ("Unlock string: %s\n", unlock);
 
+
 	/* get matrix */
-	gcm_mat33_clear (&huey->calibration_matrix);
-	ret = gcm_sensor_huey_read_register_matrix (huey, 0x04, &huey->calibration_matrix, error);
+	gcm_mat33_clear (&huey->calibration_matrix1);
+	ret = gcm_sensor_huey_read_register_matrix (huey, 0x04, &huey->calibration_matrix1, error);
 	if (!ret)
 		goto out;
-	g_print ("device matrix: %s\n", gcm_mat33_to_string (&huey->calibration_matrix));
+	g_print ("device matrix1: %s\n", gcm_mat33_to_string (&huey->calibration_matrix1));
 
-goto out;
+	/* get another matrix, although this one is worse... */
+	gcm_mat33_clear (&huey->calibration_matrix2);
+	ret = gcm_sensor_huey_read_register_matrix (huey, 0x36, &huey->calibration_matrix2, error);
+	if (!ret)
+		goto out;
+	g_print ("device matrix2: %s\n", gcm_mat33_to_string (&huey->calibration_matrix2));
+}
+
+	goto out;
 
 	/* We read from 0x04 to 0x72 at startup */
-	for (i=0x00; i<=len; i++) {
+	for (i=2; i<=len; i++) {
 		ret = gcm_sensor_huey_read_register_byte (huey, i, &data[i], error);
 		if (!ret)
 			goto out;
 	}
 
 	/* try to find patterns */
-	for (i=0; i<len; i+=4) {
+	for (i=2; i<len; i+=4) {
 		g_print ("0x%02x\t", i);
 		for (j=0; j<4; j++)
 			g_print ("%c ", g_ascii_isprint (data[i+j]) ? data[i+j] : '?');
@@ -673,7 +684,7 @@ goto out;
 	}
 	g_print ("\n");
 
-	for (i=0; i<len; i+=4) {
+	for (i=2; i<len; i+=4) {
 		g_print ("0x%02x\t", i);
 		for (j=0; j<4; j++)
 			g_print ("%02i ", data[i+j]);
@@ -681,7 +692,7 @@ goto out;
 	}
 	g_print ("\n");
 
-	for (i=0; i<len; i+=4) {
+	for (i=2; i<len; i+=4) {
 		g_print ("0x%02x\t", i);
 		g_print ("%.4f ", gcm_sensor_huey_data_to_float (&data[i]));
 		g_print ("\n");
@@ -785,7 +796,7 @@ gcm_sensor_huey_get_color (GcmSensorHuey *huey, GcmColorXYZ *values, GError **er
 
 	/* it would be rediculous for the device to emit RGB, it would be completely arbitrary --
 	 * we assume the matrix of data is designed to convert to LAB or XYZ */
-	gcm_mat33_vector_multiply (&huey->calibration_matrix, input, output);
+	gcm_mat33_vector_multiply (&huey->calibration_matrix1, input, output);
 
 	/* scale correct */
 	gcm_vec3_scalar_multiply (output, HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR, output);
@@ -885,7 +896,7 @@ if (0) {
 }
 
 /* try to get color value */
-if (1) {
+if (0) {
 
 	GcmColorXYZ values;
 	ret = gcm_sensor_huey_get_color (huey, &values, &error);
