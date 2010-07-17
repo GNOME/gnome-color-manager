@@ -1,3 +1,3 @@
 SUBDIRS = 						\
-	huey
+	huey						\
 	api

@@ -71,9 +71,9 @@ libcolor_glib_la_LDFLAGS =					\
 	-export-symbols-regex '^gcm_.*'				\
 	$(NULL)
 
-#libcolor_glib_la_CFLAGS =					\
-#	$(WARNINGFLAGS_C)					\
-#	$(NULL)
+libcolor_glib_la_CFLAGS =					\
+	$(WARNINGFLAGS_C)					\
+	$(NULL)
 
 if HAVE_TESTS
 check_PROGRAMS =						\

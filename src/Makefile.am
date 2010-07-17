@@ -399,8 +399,8 @@ gcm_huey_example_LDADD =				\
 	$(GLIB_LIBS)					\
 	$(COLOR_GLIB_LIBS)
 
-#gcm_huey_example_CFLAGS =				\
-#	$(WARNINGFLAGS_C)
+gcm_huey_example_CFLAGS =				\
+	$(WARNINGFLAGS_C)
 
 clean-local:
 	rm -f *~

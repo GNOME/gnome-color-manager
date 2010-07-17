@@ -723,8 +723,8 @@ gcm_sensor_huey_find_device (GcmSensorHuey *sensor_huey, GError **error)
 	libusb_device **devs = NULL;
 	libusb_device *dev;
 	gint retval;
-	gsize cnt;
-	guint i = 0;
+	gint cnt;
+	gint i = 0;
 	gboolean ret = FALSE;
 
 	/* get device */
