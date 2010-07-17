@@ -158,7 +158,27 @@
  * Given there exists only GREEN and BLUE accessors, and that RED comes
  * first in a RGB sequence, I think it's safe to assume that this command
  * does the measurement, and the others just return cached data.
- */
+ *
+ * argyll does (for #ff0000)
+ *
+ * -> 16 00 01 00 01 00 01 00
+ * <-       00 00 0b 00 00 00
+ * -> 02 00 01 00 01 00 01 00
+ * <-       00 00 12 00 00 00
+ * -> 03 00 01 00 01 00 01 00
+ * <-       00 03 41 00 00 00
+ *
+ * then does:
+ *
+ * -> 16 01 63 00 d9 00 04 00
+ * <-       00 0f ce 80 00 00
+ * -> 02 01 63 00 d9 00 04 00
+ * <-       00 0e d0 80 00 00
+ * -> 03 01 63 00 d9 00 04 00
+ * <-       00 0d 3c 00 00 00
+ *
+ * then returns XYZ=87.239169 45.548708 1.952249
+ *  */
 #define HUEY_COMMAND_SENSOR_MEASURE_RGB		0x16
 
 /* input:   21 09 00 02 00 00 08 00 (or)
