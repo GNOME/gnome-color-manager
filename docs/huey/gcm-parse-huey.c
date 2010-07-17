@@ -94,6 +94,41 @@ get_command_string (guchar value)
 	return NULL;
 }
 
+static void
+parse_output (GString *output, const gchar *line, gboolean reply)
+{
+	gchar **tok;
+	guint j;
+	guchar cmd;
+	const gchar *annote;
+	tok = g_strsplit (line, " ", -1);
+
+	/* only know how to parse 8 bytes */
+	if (g_strv_length (tok) != 8)
+		goto out;
+	for (j=0; j<8; j++) {
+		annote = NULL;
+		cmd = g_ascii_strtoll (tok[j], NULL, 16);
+		if (j == 0 && reply) {
+			annote = get_return_string (cmd);
+			if (annote == NULL)
+				g_warning ("return code 0x%02x not known in %s", cmd, line);
+		}
+		if ((j == 0 && !reply) ||
+		    (j == 1 && reply)) {
+			annote = get_command_string (cmd);
+			if (annote == NULL)
+				g_warning ("command code 0x%02x not known", cmd);
+		}
+		if (annote != NULL)
+			g_string_append_printf (output, "%02x(%s) ", cmd, annote);
+		else
+			g_string_append_printf (output, "%02x ", cmd);
+	}
+out:
+	g_strfreev (tok);
+}
+
 gint
 main (gint argc, gchar *argv[])
 {
@@ -103,7 +138,7 @@ main (gint argc, gchar *argv[])
 	GString *output = NULL;
 	GError *error = NULL;
 	guint i;
-	const gchar *line;
+	gchar *line;
 	gboolean reply = FALSE;
 
 	if (argc != 3) {
@@ -131,6 +166,29 @@ main (gint argc, gchar *argv[])
 		if (line[0] == '[')
 			continue;
 
+		/* --------- argyll -D9 format --------- */
+		if (g_str_has_prefix (line, "huey: Sending cmd")) {
+			g_string_append (output, " ---> ");
+			reply = FALSE;
+		}
+		if (g_str_has_prefix (line, "huey: Reading response")) {
+			g_string_append (output, " <--- ");
+			reply = TRUE;
+		}
+		if (g_str_has_prefix (line, "icoms: Writing control data")) {
+			parse_output (output, &line[28], reply);
+		}
+		if (g_str_has_prefix (line, " '")) {
+			line[21] = '\0';
+			/* argyll 'helpfully' removes the two bytes */
+			g_string_append (output, "00(success) xx(cmd) ");
+			g_string_append (output, &line[2]);
+			g_string_append (output, "\n");
+		}
+		if (g_strcmp0 (line, " ICOM err 0x0") == 0)
+			g_string_append (output, "\n");
+		/* --------- argyll -D9 format --------- */
+
 		/* function */
 		if (line[0] == '-') {
 			g_string_append (output, "\n");
@@ -154,35 +212,7 @@ main (gint argc, gchar *argv[])
 		}
 
 		if (g_strstr_len (line, -1, "00000000:") != NULL) {
-			gchar **tok;
-			guint j;
-			guchar cmd;
-			const gchar *annote;
-			tok = g_strsplit (&line[14], " ", -1);
-
-			/* only know how to parse 8 bytes */
-			if (g_strv_length (tok) != 8)
-				continue;
-			for (j=0; j<8; j++) {
-				annote = NULL;
-				cmd = g_ascii_strtoll (tok[j], NULL, 16);
-				if (j == 0 && reply) {
-					annote = get_return_string (cmd);
-					if (annote == NULL)
-						g_warning ("return code 0x%02x not known in %s", cmd, &line[14]);
-				}
-				if ((j == 0 && !reply) ||
-				    (j == 1 && reply)) {
-					annote = get_command_string (cmd);
-					if (annote == NULL)
-						g_warning ("command code 0x%02x not known", cmd);
-				}
-				if (annote != NULL)
-					g_string_append_printf (output, "%02x(%s) ", cmd, annote);
-				else
-					g_string_append_printf (output, "%02x ", cmd);
-			}
-			g_strfreev (tok);
+			parse_output (output, &line[14], reply);
 		}
 
 //		g_print ("%i:%s\n", i, split[i]);
@@ -195,7 +225,7 @@ main (gint argc, gchar *argv[])
 		g_error_free (error);
 		goto out;
 	}
-	
+
 	g_print ("done!\n");
 
 out:
