@@ -66,17 +66,21 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
 #define HUEY_RETVAL_UNKNOWN_81		0x81 /* seen once in init */
 #define HUEY_RETVAL_RETRY		0x90
 
-/* input:   00 00 00 00 3f 00 00 00
+/*
+ * Get the currect status of the device
+ *
+ *  input:   00 00 00 00 3f 00 00 00
  * returns: 00 00 43 69 72 30 30 31  (or)
- *     "Cir001" --^^^^^^^^^^^^^^^^^ -- Cirrus Logic? Circuit1?...
+ *     "Cir001" --^^^^^^^^^^^^^^^^^ -- Circuit1?...
  *          c0 00 4c 6f 63 6b 65 64
  *     "locked" --^^^^^^^^^^^^^^^^^
- *
- * Seems to get the currect status of the device.
  */
 #define HUEY_COMMAND_GET_STATUS		0x00
 
-/* input:   02 xx xx xx xx xx xx xx
+/*
+ * Read the green sample data
+ *
+ * input:   02 xx xx xx xx xx xx xx
  * returns: 00 02 00 00 0a 00 00 00 (or)
  *          00 02 00 0e c6 80 00 00
  *            data --^^^^^ ^-- only ever 00 or 80
@@ -87,12 +91,15 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
  *                            RGB(00,ff,00) is 00 f1
  *                            RGB(00,00,ff) is 08 56
  *
- * only when profiling
- * has to be preceeded by HUEY_COMMAND_SENSOR_MEASURE_RGB (00 1e 00 27 00 15 03)
+ * This doesn't do a sensor read, it seems to be a simple accessor.
+ * HUEY_COMMAND_SENSOR_MEASURE_RGB has to be used before this one.
  */
 #define HUEY_COMMAND_READ_GREEN		0x02
 
-/* input:   03 xx xx xx xx xx xx xx
+/*
+ * Read the blue sample data
+ *
+ * input:   03 xx xx xx xx xx xx xx
  * returns: 00 03 00 0f 18 00 00 00
  *            data --^^^^^ ^-- only ever 00 or 80
  *                    |
@@ -102,69 +109,114 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
  *                            RGB(00,ff,00) is 00 58
  *                            RGB(00,00,ff) is 00 59
  *
- * Only used when doing profiling
- * has to be preceeded by HUEY_COMMAND_SENSOR_MEASURE_RGB (00 01 00 01 00 01 7f)
+ * This doesn't do a sensor read, it seems to be a simple accessor.
+ * HUEY_COMMAND_SENSOR_MEASURE_RGB has to be used before this one.
  */
 #define HUEY_COMMAND_READ_BLUE	0x03
 
-/* input:   05 ?? 11 12 13 14 xx xx
+/*
+ * Set value of some 32 bit register.
+ *
+ * input:   05 ?? 11 12 13 14 xx xx
  * returns: 00 05 00 00 00 00 00 00
  *              ^--- always the same no matter the input
  *
- * never used in profiling */
+ * This is never used in profiling
+ */
 #define HUEY_COMMAND_SET_VALUE		0x05
 
-/* input:   06 xx xx xx xx xx xx xx
+/*
+ * Get the value of some 32 bit register.
+ *
+ * input:   06 xx xx xx xx xx xx xx
  * returns: 00 06 11 12 13 14 00 00
  *    4 bytes ----^^^^^^^^^^^ (from HUEY_COMMAND_SET_VALUE)
  *
- * This is some sort of 32bit register on the device -- the
- * default value at plug-in is 00 0f 42 40, although during profiling it is set to
- * 00 00 6f 00 and then 00 00 61 00.
+ * This is some sort of 32bit register on the device.
+ * The default value at plug-in is 00 0f 42 40, although during
+ * profiling it is set to 00 00 6f 00 and then 00 00 61 00.
  */
 #define HUEY_COMMAND_GET_VALUE		0x06
 
 /* NEVER USED */
 #define HUEY_COMMAND_UNKNOWN_07		0x07
 
-/* (sent at startup  after the unlock)
+/*
+ * Reads a register value.
+ *
+ * (sent at startup  after the unlock)
  * input:   08 0b xx xx xx xx xx xx
  *             ^^-- register address
  * returns: 00 08 0b b8 00 00 00 00
  *      address --^^ ^^-- value
+ *
+ * It appears you can only ask for one byte at a time, well, if you
+ * can ask for more the Windows driver seems to do this one byte at
+ * at time...
  */
 #define HUEY_COMMAND_REGISTER_READ	0x08
 
-/* input:   0e 47 72 4d 62 6b 65 64
+/*
+ * Unlock a locked sensor.
+ *
+ * input:   0e 47 72 4d 62 6b 65 64
  *  "GrMbked"--^^^^^^^^^^^^^^^^^^^^
  * returns: 00 0e 00 00 00 00 00 00
+ *
+ * It might be only GrMbk that is needed to unlock.
+ * We still don't know how to 'lock' a device, it just kinda happens.
  */
 #define HUEY_COMMAND_UNLOCK		0x0e
 
-/* returns: all NULL all of the time */
+/*
+ * Unknown command
+ *
+ * returns: all NULL all of the time */
 #define HUEY_COMMAND_UNKNOWN_0F		0x0f
 
-/* something to do with sampling */
+/*
+ * Unknown command
+ *
+ * Something to do with sampling */
 #define HUEY_COMMAND_UNKNOWN_10		0x10
 
-/* something to do with sampling (that needs a retry with code 5a) */
+/*
+ * Unknown command
+ *
+ * Something to do with sampling (that needs a retry with code 5a)
+ */
 #define HUEY_COMMAND_UNKNOWN_11		0x11
 
-/* something to do with sampling */
+/*
+ * Unknown command
+ *
+ * something to do with sampling
+ */
 #define HUEY_COMMAND_UNKNOWN_12		0x12
 
-/* returns: all NULL all of the time */
+/*
+ * Unknown command
+ *
+ * returns: all NULL all of the time
+ */
 #define HUEY_COMMAND_UNKNOWN_13		0x13
 
-/* returns: seems to be sent, but not requested */
+/*
+ * Unknown command
+ *
+ * returns: seems to be sent, but not requested
+ */
 #define HUEY_COMMAND_UNKNOWN_15		0x15
 
-/* input:   16 00 01 00 01 00 01 00
+/*
+ * Sample a color and return the red component
+ *
+ * input:   16 00 01 00 01 00 01 00
  * returns: 00 16 00 00 00 00 00 00
  *
  * or:
- *                ||----||----||-- numbers steadily increase -- some kind of gain control?
- *    0 or 1 ---.-----.-----.    ,,-- only 00 7f or 03 in the profile-complete
+ *                ||----||----||-- 'gain control'
+ *    0 or 1 ---.-----.-----.    ,,-- only 00 7f or 03
  * input:   16 00 35 00 48 00 1d 03
  * returns: 00 16 00 0b d0 00 00 00
  *            data --^^^^^ ^^-- only ever 00 or 80
@@ -174,8 +226,13 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
  *                            RGB(00,ff,00) is 08 9b	(00 16 00 08 a0 80 00 00)
  *                            RGB(00,00,ff) is 55 5e	(00 16 00 55 73 80 00 00)
  *
- * only when profiling, and used with blue and green
- * THIS COMMAND TAKES A LONG TIME TO EXECUTE
+ * This is used when profiling, and all commands are followed by
+ * HUEY_COMMAND_READ_GREEN and HUEY_COMMAND_READ_BLUE.
+ * 
+ * The returned values are some kind of 16 bit register count that
+ * indicate how much light fell on a sensor. If the sensors are
+ * converting light to pulses, then the 'gain' control tells the sensor
+ * how long to read. It's therefore quicker to read white than black.
  *
  * Given there exists only GREEN and BLUE accessors, and that RED comes
  * first in a RGB sequence, I think it's safe to assume that this command
@@ -200,18 +257,23 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
  * <-       00 0d 3c 00 00 00
  *
  * then returns XYZ=87.239169 45.548708 1.952249
- *
- * IT'S QUICKER TO READ WHITE THAN BLACK!! -- maybe amount of time to count a number of photons?
  */
 #define HUEY_COMMAND_SENSOR_MEASURE_RGB		0x16
 
-/* input:   21 09 00 02 00 00 08 00 (or)
+/*
+ * Unknown command (some sort of poll?)
+ *
+ * input:   21 09 00 02 00 00 08 00 (or)
  * returns: [never seems to return a value]
  *
- * only when profiling, and over and over -- some sort of poll? */
+ * Only when profiling, and over and over.
+ */
 #define HUEY_COMMAND_UNKNOWN_21		0x21
 
-/* input:   17 03 00 xx xx xx xx xx
+/*
+ * Get the level of ambient light from the sensor
+ *
+ *  input:   17 03 00 xx xx xx xx xx
  * returns: 90 17 03 00 00 00 00 00  then on second read:
  * 	    00 17 03 00 00 62 57 00 in light (or)
  * 	    00 17 03 00 00 00 08 00 in dark
@@ -220,35 +282,32 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
  */
 #define HUEY_COMMAND_AMBIENT		0x17
 
-/* input:   18 00 f0 xx xx xx xx xx
+/*
+ * Set the LEDs on the sensor
+ *
+ * input:   18 00 f0 xx xx xx xx xx
  * returns: 00 18 f0 00 00 00 00 00
  *   led mask ----^^
  */
 #define HUEY_COMMAND_SET_LEDS		0x18
 
-/* returns: all NULL for NULL input: times out for f1 f2 f3 f4 f5 f6 f7 f8 */
+/*
+ * Unknown command
+ *
+ * returns: all NULL for NULL input: times out for f1 f2 f3 f4 f5 f6 f7 f8 */
 #define HUEY_COMMAND_UNKNOWN_19		0x19
 
-/* fudge factor */
+/* fudge factor to convert the value of HUEY_COMMAND_AMBIENT to Lux */
 #define HUEY_AMBIENT_UNITS_TO_LUX	125.0f
 
 /* this is a random number chosen to find the best accuracy whilst
  * maintaining a fast read. We scale each RGB value seporately. */
 #define HUEY_PRECISION_TIME_VALUE		0.15f
 
-/* picked out of thin air, just to try to match reality */
+/* Picked out of thin air, just to try to match reality...
+ * I have no idea why we need to do this, although it probably
+ * indicates we doing something wrong. */
 #define HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR	6880.0f
-
-
-#define CONSOLE_RESET		0
-#define CONSOLE_BLACK 		30
-#define CONSOLE_RED		31
-#define CONSOLE_GREEN		32
-#define CONSOLE_YELLOW		33
-#define CONSOLE_BLUE		34
-#define CONSOLE_MAGENTA		35
-#define CONSOLE_CYAN		36
-#define CONSOLE_WHITE		37
 
 /**
  * gcm_sensor_huey_print_data:
@@ -259,16 +318,16 @@ gcm_sensor_huey_print_data (const gchar *title, const guchar *data, gsize length
 	guint i;
 
 	if (g_strcmp0 (title, "request") == 0)
-		g_print ("%c[%dm", 0x1B, CONSOLE_RED);
+		g_print ("%c[%dm", 0x1B, 31);
 	if (g_strcmp0 (title, "reply") == 0)
-		g_print ("%c[%dm", 0x1B, CONSOLE_BLUE);
+		g_print ("%c[%dm", 0x1B, 34);
 	g_print ("%s\t", title);
 
 	for (i=0; i< length; i++)
 		g_print ("%02x [%c]\t", data[i], g_ascii_isprint (data[i]) ? data[i] : '?');
 		//g_print ("%02x,", data[i]);
 
-	g_print ("%c[%dm\n", 0x1B, CONSOLE_RESET);
+	g_print ("%c[%dm\n", 0x1B, 0);
 }
 
 /**
@@ -304,10 +363,10 @@ gcm_sensor_huey_send_data (GcmSensorHuey *sensor_huey,
 		goto out;
 	}
 
-	/* some commands need to retry the read, unknown reason */
+	/* some commands need to retry the read */
 	for (i=0; i<HUEY_MAX_READ_RETRIES; i++) {
 
-		/* get sync response, from bEndpointAddress */
+		/* get sync response */
 		retval = libusb_interrupt_transfer (sensor_huey->priv->handle, 0x81,
 						    reply, (gint) reply_len, (gint*)reply_read,
 						    HUEY_CONTROL_MESSAGE_TIMEOUT);
@@ -375,9 +434,6 @@ gcm_sensor_huey_read_register_byte (GcmSensorHuey *sensor_huey, guint8 addr, gui
 	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);
 	if (!ret)
 		goto out;
-
-	/* this seems like the only byte of data that's useful -- it would be
-	 * good to be able to get more than one byte of data at a time... */
 	*value = reply[3];
 out:
 	return ret;
@@ -490,7 +546,6 @@ gcm_sensor_huey_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
 		goto out;
 
 	/* parse the value */
-	g_debug ("%i, %i", reply[5], reply[5]);
 	*value = (gdouble) (reply[5] * 0xff + reply[6]) / HUEY_AMBIENT_UNITS_TO_LUX;
 out:
 	return ret;
@@ -625,7 +680,7 @@ gcm_sensor_huey_send_unlock (GcmSensorHuey *sensor_huey, GError **error)
 	request[6] = 'e'; // <-         "" */
 	request[7] = 'd'; // <-         "" */
 
-	/* GrMbked == I have no idea, neither does google */
+	/* no idea why the hardware gets 'locked' */
 	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);
 	if (!ret)
 		goto out;
@@ -690,7 +745,7 @@ gcm_sensor_huey_find_device (GcmSensorHuey *sensor_huey, GError **error)
 		goto out;
 	}
 
-	/* set configuration and interface, the only values we've got in lsusb-vvv */
+	/* set configuration and interface */
 	retval = libusb_set_configuration (sensor_huey->priv->handle, 1);
 	if (retval < 0) {
 		ret = FALSE;
@@ -750,7 +805,7 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 		goto out;
 	g_debug ("device matrix1: %s", gcm_mat33_to_string (&priv->calibration_matrix1));
 
-	/* get another matrix, although this one is worse... */
+	/* get another matrix, although this one is different... */
 	gcm_mat33_clear (&priv->calibration_matrix2);
 	ret = gcm_sensor_huey_read_register_matrix (sensor_huey, 0x36, &priv->calibration_matrix2, error);
 	if (!ret)
