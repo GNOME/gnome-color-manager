@@ -212,10 +212,13 @@ typedef struct {
 	gboolean		 connected;
 	libusb_device		*device;
 	libusb_device_handle	*handle;
-} GcmPriv;
+} GcmSensorHuey;
 
+/**
+ * gcm_sensor_huey_find_device:
+ **/
 static gboolean
-gcm_find_device (GcmPriv *priv, GError **error)
+gcm_sensor_huey_find_device (GcmSensorHuey *huey, GError **error)
 {
 	struct libusb_device_descriptor desc;
 	libusb_device **devs = NULL;
@@ -249,7 +252,7 @@ gcm_find_device (GcmPriv *priv, GError **error)
 		    desc.idProduct == HUEY_PRODUCT_ID) {
 			g_debug ("got huey!");
 			ret = TRUE;
-			priv->device = libusb_ref_device (dev);
+			huey->device = libusb_ref_device (dev);
 			break;
 		}
 	}
@@ -261,7 +264,7 @@ gcm_find_device (GcmPriv *priv, GError **error)
 	}
 
 	/* open device */
-	retval = libusb_open (priv->device, &priv->handle);
+	retval = libusb_open (huey->device, &huey->handle);
 	if (retval < 0) {
 		ret = FALSE;
 		g_set_error (error, 1, 0, "failed to open device: %s", libusb_strerror (retval));
@@ -269,13 +272,13 @@ gcm_find_device (GcmPriv *priv, GError **error)
 	}
 
 	/* set configuration and interface, the only values we've got in lsusb-vvv */
-	retval = libusb_set_configuration (priv->handle, 1);
+	retval = libusb_set_configuration (huey->handle, 1);
 	if (retval < 0) {
 		ret = FALSE;
 		g_set_error (error, 1, 0, "failed to set configuration: %s", libusb_strerror (retval));
 		goto out;
 	}
-	retval = libusb_claim_interface (priv->handle, 0);
+	retval = libusb_claim_interface (huey->handle, 0);
 	if (retval < 0) {
 		ret = FALSE;
 		g_set_error (error, 1, 0, "failed to claim interface: %s", libusb_strerror (retval));
@@ -296,8 +299,11 @@ out:
 #define CONSOLE_CYAN		36
 #define CONSOLE_WHITE		37
 
+/**
+ * gcm_sensor_huey_print_data:
+ **/
 static void
-print_data (const gchar *title, const guchar *data, gsize length)
+gcm_sensor_huey_print_data (const gchar *title, const guchar *data, gsize length)
 {
 	guint i;
 
@@ -316,11 +322,14 @@ print_data (const gchar *title, const guchar *data, gsize length)
 	g_print ("\n");
 }
 
+/**
+ * gcm_sensor_huey_send_data:
+ **/
 static gboolean
-send_data (GcmPriv *priv,
-	   const guchar *request, gsize request_len,
-	   guchar *reply, gsize reply_len,
-	   gsize *reply_read, GError **error)
+gcm_sensor_huey_send_data (GcmSensorHuey *huey,
+			   const guchar *request, gsize request_len,
+			   guchar *reply, gsize reply_len,
+			   gsize *reply_read, GError **error)
 {
 	gint retval;
 	gboolean ret = FALSE;
@@ -333,12 +342,13 @@ send_data (GcmPriv *priv,
 	g_return_val_if_fail (reply_read != NULL, FALSE);
 
 	/* show what we've got */
-	print_data ("request", request, request_len);
+	gcm_sensor_huey_print_data ("request", request, request_len);
 
+	/* FIXME -- this is slower than both the windows driver and argyll */
 	g_usleep (100000);
 
 	/* do sync request */
-	retval = libusb_control_transfer (priv->handle,
+	retval = libusb_control_transfer (huey->handle,
 					  LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
 					  0x09, 0x0200, 0,
 					  (guchar *) request, request_len,
@@ -352,7 +362,7 @@ send_data (GcmPriv *priv,
 	for (i=0; i<HUEY_MAX_READ_RETRIES; i++) {
 
 		/* get sync response, from bEndpointAddress */
-		retval = libusb_interrupt_transfer (priv->handle, 0x81,
+		retval = libusb_interrupt_transfer (huey->handle, 0x81,
 						    reply, (gint) reply_len, (gint*)reply_read,
 						    HUEY_CONTROL_MESSAGE_TIMEOUT);
 		if (retval < 0) {
@@ -361,7 +371,7 @@ send_data (GcmPriv *priv,
 		}
 
 		/* show what we've got */
-		print_data ("reply", reply, *reply_read);
+		gcm_sensor_huey_print_data ("reply", reply, *reply_read);
 
 		/* the second byte seems to be the command again */
 		if (reply[1] != request[0]) {
@@ -403,10 +413,12 @@ out:
 	return ret;
 }
 
+/**
+ * gcm_sensor_huey_send_command:
+ **/
 static gboolean
-send_command (GcmPriv *priv, guchar command, const guchar *payload, GError **error)
+gcm_sensor_huey_send_command (GcmSensorHuey *huey, guchar command, const guchar *payload, GError **error)
 {
-	/* according to wMaxPacketSize, all the messages have just 8 bytes */
 	guchar request[8];
 	guchar reply[8];
 	gboolean ret;
@@ -421,7 +433,7 @@ send_command (GcmPriv *priv, guchar command, const guchar *payload, GError **err
 	/* show what we've got */
 	g_print ("cmd 0x%02x\n", command);
 
-	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	ret = gcm_sensor_huey_send_data (huey, request, 8, reply, 8, &reply_read, error);
 	if (!ret)
 		goto out;
 
@@ -429,10 +441,12 @@ out:
 	return ret;
 }
 
+/**
+ * gcm_sensor_huey_send_unlock:
+ **/
 static gboolean
-send_unlock (GcmPriv *priv, GError **error)
+gcm_sensor_huey_send_unlock (GcmSensorHuey *huey, GError **error)
 {
-	/* according to wMaxPacketSize, all the messages have just 8 bytes */
 	guchar request[8];
 	guchar reply[8];
 	gboolean ret;
@@ -443,38 +457,41 @@ send_unlock (GcmPriv *priv, GError **error)
 	request[2] = 'r';
 	request[3] = 'M';
 	request[4] = 'b';
-	request[5] = 'k';
-	request[6] = 'e';
-	request[7] = 'd';
+	request[5] = 'k'; // <- perhaps junk, need to test next time locked */
+	request[6] = 'e'; // <-         "" */
+	request[7] = 'd'; // <-         "" */
 
 	/* GrMbked == I have no idea, neither does google */
-	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	ret = gcm_sensor_huey_send_data (huey, request, 8, reply, 8, &reply_read, error);
 	if (!ret)
 		goto out;
 out:
 	return ret;
 }
 
+/**
+ * gcm_sensor_huey_send_leds:
+ **/
 static gboolean
-send_leds (GcmPriv *priv, guchar mask, GError **error)
+gcm_sensor_huey_send_leds (GcmSensorHuey *huey, guchar mask, GError **error)
 {
 	guchar payload[] = { 0x00, ~mask, 0x00, 0x00, 0x00, 0x00, 0x00 };
-
-	/* send all commands that are implemented */
-	return send_command (priv, HUEY_COMMAND_SET_LEDS, payload, error);
+	return gcm_sensor_huey_send_command (huey, HUEY_COMMAND_SET_LEDS, payload, error);
 }
 
+/**
+ * gcm_sensor_huey_get_ambient:
+ **/
 static gboolean
-get_ambient (GcmPriv *priv, gdouble *value, GError **error)
+gcm_sensor_huey_get_ambient (GcmSensorHuey *huey, gdouble *value, GError **error)
 {
-	/* from usb-ambient.txt */
 	const guchar request[] = { HUEY_COMMAND_AMBIENT, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
 
 	/* hit hardware */
-	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	ret = gcm_sensor_huey_send_data (huey, request, 8, reply, 8, &reply_read, error);
 	if (!ret)
 		goto out;
 
@@ -485,8 +502,11 @@ out:
 	return ret;
 }
 
+/**
+ * gcm_sensor_huey_data_to_float:
+ **/
 static gfloat
-data_to_float (guint8 *value)
+gcm_sensor_huey_data_to_float (guint8 *value)
 {
 	guint32 big;
 	gfloat retval;
@@ -499,37 +519,42 @@ data_to_float (guint8 *value)
 	return retval;
 }
 
-
+/**
+ * gcm_sensor_huey_read_register_byte:
+ **/
 static gboolean
-read_register_byte (GcmPriv *priv, guint8 addr, guint8 *value, GError **error)
+gcm_sensor_huey_read_register_byte (GcmSensorHuey *huey, guint8 addr, guint8 *value, GError **error)
 {
 	guchar request[] = { HUEY_COMMAND_REGISTER_READ, 0xff, 0x00, 0x10, 0x3c, 0x06, 0x00, 0x00 };
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
 
-	/* hit hardware -- it would be good to be able to get more than one byte of data at a time... */
+	/* hit hardware */
 	request[1] = addr;
-	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	ret = gcm_sensor_huey_send_data (huey, request, 8, reply, 8, &reply_read, error);
 	if (!ret)
 		goto out;
 
-	/* this seems like the only byte of data that's useful */
+	/* this seems like the only byte of data that's useful -- it would be
+	 * good to be able to get more than one byte of data at a time... */
 	*value = reply[3];
-//	g_debug ("%02x", *value);
 out:
 	return ret;
 }
 
+/**
+ * gcm_sensor_huey_read_register_string:
+ **/
 static gboolean
-read_register_string (GcmPriv *priv, guint8 addr, gchar *value, gsize len, GError **error)
+gcm_sensor_huey_read_register_string (GcmSensorHuey *huey, guint8 addr, gchar *value, gsize len, GError **error)
 {
 	guint8 i;
 	gboolean ret = TRUE;
 
 	/* get each byte of the string */
 	for (i=0; i<len; i++) {
-		ret = read_register_byte (priv, addr+i, (guint8*) &value[i], error);
+		ret = gcm_sensor_huey_read_register_byte (huey, addr+i, (guint8*) &value[i], error);
 		if (!ret)
 			goto out;
 	}
@@ -537,8 +562,11 @@ out:
 	return ret;
 }
 
+/**
+ * gcm_sensor_huey_read_register_word:
+ **/
 static gboolean
-read_register_word (GcmPriv *priv, guint8 addr, guint32 *value, GError **error)
+gcm_sensor_huey_read_register_word (GcmSensorHuey *huey, guint8 addr, guint32 *value, GError **error)
 {
 	guint8 i;
 	guint8 tmp[4];
@@ -546,26 +574,28 @@ read_register_word (GcmPriv *priv, guint8 addr, guint32 *value, GError **error)
 
 	/* get each byte of the 32 bit number */
 	for (i=0; i<4; i++) {
-		ret = read_register_byte (priv, addr+i, tmp+i, error);
+		ret = gcm_sensor_huey_read_register_byte (huey, addr+i, tmp+i, error);
 		if (!ret)
 			goto out;
 	}
 
 	/* convert to a 32 bit integer */
 	*value = (tmp[0] << 24) + (tmp[1] << 16) + (tmp[2] << 8) + (tmp[3] << 0);
-//	g_debug ("%u", *value);
 out:
 	return ret;
 }
 
+/**
+ * gcm_sensor_huey_read_register_float:
+ **/
 static gboolean
-read_register_float (GcmPriv *priv, guint8 addr, gfloat *value, GError **error)
+gcm_sensor_huey_read_register_float (GcmSensorHuey *huey, guint8 addr, gfloat *value, GError **error)
 {
 	gboolean ret;
 	guint32 tmp;
 
 	/* first read in 32 bit integer */
-	ret = read_register_word (priv, addr, &tmp, error);
+	ret = gcm_sensor_huey_read_register_word (huey, addr, &tmp, error);
 	if (!ret)
 		goto out;
 
@@ -575,8 +605,11 @@ out:
 	return ret;
 }
 
+/**
+ * gcm_sensor_huey_read_register_matrix:
+ **/
 static gboolean
-read_register_matrix (GcmPriv *priv, guint8 addr, GcmMat3x3 *value, GError **error)
+gcm_sensor_huey_read_register_matrix (GcmSensorHuey *huey, guint8 addr, GcmMat3x3 *value, GError **error)
 {
 	gboolean ret = TRUE;
 	guint i;
@@ -584,7 +617,7 @@ read_register_matrix (GcmPriv *priv, guint8 addr, GcmMat3x3 *value, GError **err
 
 	/* read in 3d matrix */
 	for (i=0; i<9; i++) {
-		ret = read_register_float (priv, addr + (i*4), &tmp, error);
+		ret = gcm_sensor_huey_read_register_float (huey, addr + (i*4), &tmp, error);
 		if (!ret)
 			goto out;
 
@@ -597,8 +630,11 @@ out:
 	return ret;
 }
 
+/**
+ * gcm_sensor_huey_read_registers:
+ **/
 static gboolean
-read_registers (GcmPriv *priv, GError **error)
+gcm_sensor_huey_read_registers (GcmSensorHuey *huey, GError **error)
 {
 	gboolean ret;
 	guint8 i, j;
@@ -608,7 +644,7 @@ read_registers (GcmPriv *priv, GError **error)
 	GcmMat3x3 value;
 
 	/* get unlock string */
-	ret = read_register_string (priv, 0x7a, unlock, 5, error);
+	ret = gcm_sensor_huey_read_register_string (huey, 0x7a, unlock, 5, error);
 	if (!ret)
 		goto out;
 	g_print ("Unlock string: %s\n", unlock);
@@ -618,7 +654,7 @@ read_registers (GcmPriv *priv, GError **error)
 
 	/* get matrix */
 	gcm_mat33_clear (&value);
-	ret = read_register_matrix (priv, 0x04, &value, error);
+	ret = gcm_sensor_huey_read_register_matrix (huey, 0x04, &value, error);
 	if (!ret)
 		goto out;
 	g_print ("Big number @0x%02x): %s\n", 0x00, gcm_mat33_to_string (&value));
@@ -628,7 +664,7 @@ g_error ("moo");
 
 	/* We read from 0x04 to 0x72 at startup */
 	for (i=0x00; i<=len; i++) {
-		ret = read_register_byte (priv, i, &data[i], error);
+		ret = gcm_sensor_huey_read_register_byte (huey, i, &data[i], error);
 		if (!ret)
 			goto out;
 	}
@@ -652,7 +688,7 @@ g_error ("moo");
 
 	for (i=0; i<len; i+=4) {
 		g_print ("0x%02x\t", i);
-		g_print ("%.4f ", data_to_float (&data[i]));
+		g_print ("%.4f ", gcm_sensor_huey_data_to_float (&data[i]));
 		g_print ("\n");
 	}
 	g_print ("\n");
@@ -663,8 +699,11 @@ out:
 	return ret;
 }
 
+/**
+ * gcm_sensor_huey_get_color_for_threshold:
+ **/
 static gboolean
-get_color_for_threshold (GcmPriv *priv, GcmColorRgbInt *threshold, GcmColorRgb *values, GError **error)
+gcm_sensor_huey_get_color_for_threshold (GcmSensorHuey *huey, GcmColorRgbInt *threshold, GcmColorRgb *values, GError **error)
 {
 	guchar request[] = { HUEY_COMMAND_SENSOR_MEASURE_RGB, 0x00, threshold->red, 0x00, threshold->green, 0x00, threshold->blue, 0x00 };
 	guchar reply[8];
@@ -672,7 +711,7 @@ get_color_for_threshold (GcmPriv *priv, GcmColorRgbInt *threshold, GcmColorRgb *
 	gsize reply_read;
 
 	/* measure, and get red */
-	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	ret = gcm_sensor_huey_send_data (huey, request, 8, reply, 8, &reply_read, error);
 	if (!ret)
 		goto out;
 
@@ -681,7 +720,7 @@ get_color_for_threshold (GcmPriv *priv, GcmColorRgbInt *threshold, GcmColorRgb *
 
 	/* get green */
 	request[0] = HUEY_COMMAND_READ_GREEN;
-	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	ret = gcm_sensor_huey_send_data (huey, request, 8, reply, 8, &reply_read, error);
 	if (!ret)
 		goto out;
 
@@ -690,7 +729,7 @@ get_color_for_threshold (GcmPriv *priv, GcmColorRgbInt *threshold, GcmColorRgb *
 
 	/* get blue */
 	request[0] = HUEY_COMMAND_READ_BLUE;
-	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	ret = gcm_sensor_huey_send_data (huey, request, 8, reply, 8, &reply_read, error);
 	if (!ret)
 		goto out;
 
@@ -710,8 +749,11 @@ out:
 #define HUEY_SCALE_VALUE_GREEN		3.5f
 #define HUEY_SCALE_VALUE_BLUE		30.0f
 
+/**
+ * gcm_sensor_huey_get_color:
+ **/
 static gboolean
-get_color (GcmPriv *priv, GcmColorRgb *values, GError **error)
+gcm_sensor_huey_get_color (GcmSensorHuey *huey, GcmColorRgb *values, GError **error)
 {
 	gboolean ret;
 	gdouble value;
@@ -721,7 +763,7 @@ get_color (GcmPriv *priv, GcmColorRgb *values, GError **error)
 	multiplier.red = 1;
 	multiplier.green = 1;
 	multiplier.blue = 1;
-	ret = get_color_for_threshold (priv, &multiplier, values, error);
+	ret = gcm_sensor_huey_get_color_for_threshold (huey, &multiplier, values, error);
 	if (!ret)
 		goto out;
 	g_debug ("initial values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", values->red, values->green, values->blue);
@@ -735,7 +777,7 @@ get_color (GcmPriv *priv, GcmColorRgb *values, GError **error)
 	if (values->blue < value)
 		multiplier.blue = value / values->blue;
 	g_debug ("using multiplier factor: red=%i, green=%i, blue=%i", multiplier.red, multiplier.green, multiplier.blue);
-	ret = get_color_for_threshold (priv, &multiplier, values, error);
+	ret = gcm_sensor_huey_get_color_for_threshold (huey, &multiplier, values, error);
 	if (!ret)
 		goto out;
 	g_debug ("prescaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", values->red, values->green, values->blue);
@@ -752,16 +794,19 @@ out:
 	return ret;
 }
 
+/**
+ * main:
+ **/
 int
 main (void)
 {
 	gint retval;
 	gdouble value;
 	gboolean ret;
-	GcmPriv *priv;
+	GcmSensorHuey *huey;
 	GError *error = NULL;
 
-	priv = g_new0 (GcmPriv, 1);
+	huey = g_new0 (GcmSensorHuey, 1);
 
 	/* connect */
 	retval = libusb_init (NULL);
@@ -769,10 +814,10 @@ main (void)
 		g_warning ("failed to init libusb: %s", libusb_strerror (retval));
 		goto out;
 	}
-	priv->connected = TRUE;
+	huey->connected = TRUE;
 
 	/* find device */
-	ret = gcm_find_device (priv, &error);
+	ret = gcm_sensor_huey_find_device (huey, &error);
 	if (!ret) {
 		g_warning ("failed to find sensor: %s", error->message);
 		g_error_free (error);
@@ -780,7 +825,7 @@ main (void)
 	}
 
 	/* unlock */
-	ret = send_unlock (priv, &error);
+	ret = gcm_sensor_huey_send_unlock (huey, &error);
 	if (!ret) {
 		g_warning ("failed to unlock: %s", error->message);
 		g_error_free (error);
@@ -789,7 +834,7 @@ main (void)
 
 if (1) {
 	/* this is done by the windows driver */
-	ret = read_registers (priv, &error);
+	ret = gcm_sensor_huey_read_registers (huey, &error);
 	if (!ret) {
 		g_warning ("failed to do read register: %s", error->message);
 		g_error_free (error);
@@ -798,7 +843,7 @@ if (1) {
 }
 
 	/* set LEDs */
-	ret = send_leds (priv, 0x0f, &error);
+	ret = gcm_sensor_huey_send_leds (huey, 0x0f, &error);
 	if (!ret) {
 		g_warning ("failed to send leds: %s", error->message);
 		g_error_free (error);
@@ -806,7 +851,7 @@ if (1) {
 	}
 
 	/* get ambient */
-	ret = get_ambient (priv, &value, &error);
+	ret = gcm_sensor_huey_get_ambient (huey, &value, &error);
 	if (!ret) {
 		g_warning ("failed to get ambient: %s", error->message);
 		g_error_free (error);
@@ -819,9 +864,9 @@ if (0) {
 	g_warning ("moo");
 
 	/* get default value when device is plugged */
-	send_command (priv, HUEY_COMMAND_GET_VALUE, payload, &error);
+	gcm_sensor_huey_send_command (huey, HUEY_COMMAND_GET_VALUE, payload, &error);
 
-	send_command (priv, HUEY_COMMAND_SET_VALUE, payload, &error);
+	gcm_sensor_huey_send_command (huey, HUEY_COMMAND_SET_VALUE, payload, &error);
 
 	payload[0] = 0x01;
 	payload[1] = 0x02;
@@ -831,7 +876,7 @@ if (0) {
 	payload[5] = 0x06;
 	payload[6] = 0x07;
 
-	send_command (priv, HUEY_COMMAND_GET_VALUE, payload, &error);
+	gcm_sensor_huey_send_command (huey, HUEY_COMMAND_GET_VALUE, payload, &error);
 	g_warning ("moo");
 }
 
@@ -839,7 +884,7 @@ if (0) {
 if (0) {
 
 	GcmColorRgb values;
-	ret = get_color (priv, &values, &error);
+	ret = gcm_sensor_huey_get_color (huey, &values, &error);
 	if (!ret) {
 		g_warning ("failed to measure: %s", error->message);
 		g_error_free (error);
@@ -848,7 +893,7 @@ if (0) {
 	g_debug ("red=%0.4lf, green=%0.4lf, blue=%0.4lf", values.red, values.green, values.blue);
 }
 	/* set LEDs */
-	ret = send_leds (priv, 0x00, &error);
+	ret = gcm_sensor_huey_send_leds (huey, 0x00, &error);
 	if (!ret) {
 		g_warning ("failed to send leds: %s", error->message);
 		g_error_free (error);
@@ -856,13 +901,13 @@ if (0) {
 	}
 
 	/* close device */
-	libusb_close (priv->handle);
+	libusb_close (huey->handle);
 out:
-	if (priv->device != NULL)
-		libusb_unref_device (priv->device);
-	if (priv->connected)
+	if (huey->device != NULL)
+		libusb_unref_device (huey->device);
+	if (huey->connected)
 		libusb_exit (NULL);
-	g_free (priv);
+	g_free (huey);
 	return 0;
 }
 
