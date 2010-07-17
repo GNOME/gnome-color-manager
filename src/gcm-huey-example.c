@@ -28,8 +28,6 @@
 #include <glib.h>
 #include <libcolor-glib.h>
 
-#include "gcm-sensor-huey.h"
-
 /**
  * main:
  **/

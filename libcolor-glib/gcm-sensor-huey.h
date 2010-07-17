@@ -23,7 +23,6 @@
 #define __GCM_SENSOR_HUEY_H
 
 #include <glib-object.h>
-#include <libcolor-glib.h>
 
 #include "gcm-sensor.h"
 

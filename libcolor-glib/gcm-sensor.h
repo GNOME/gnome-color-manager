@@ -23,7 +23,8 @@
 #define __GCM_SENSOR_H
 
 #include <glib-object.h>
-#include <libcolor-glib.h>
+
+#include <gcm-common.h>
 
 G_BEGIN_DECLS
 

@@ -34,6 +34,8 @@ libcolor_glib_include_HEADERS =					\
 	gcm-ddc-device.h					\
 	gcm-ddc-control.h					\
 	gcm-ddc-common.h					\
+	gcm-sensor-huey.h					\
+	gcm-sensor.h						\
 	gcm-version.h						\
 	$(NULL)
 
@@ -41,6 +43,10 @@ libcolor_glib_la_SOURCES =					\
 	libcolor-glib.h						\
 	gcm-common.c						\
 	gcm-common.h						\
+	gcm-sensor.c						\
+	gcm-sensor.h						\
+	gcm-sensor-huey.c					\
+	gcm-sensor-huey.h					\
 	gcm-ddc-client.c					\
 	gcm-ddc-client.h					\
 	gcm-ddc-device.c					\
@@ -63,9 +69,9 @@ libcolor_glib_la_LDFLAGS =					\
 	-export-symbols-regex '^gcm_.*'				\
 	$(NULL)
 
-libcolor_glib_la_CFLAGS =					\
-	$(WARNINGFLAGS_C)					\
-	$(NULL)
+#libcolor_glib_la_CFLAGS =					\
+#	$(WARNINGFLAGS_C)					\
+#	$(NULL)
 
 if HAVE_TESTS
 check_PROGRAMS =						\
