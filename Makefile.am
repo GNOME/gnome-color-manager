@@ -1,4 +1,6 @@
 SUBDIRS = 						\
+	libcolor-glib					\
+	docs						\
 	data						\
 	help						\
 	man						\
