@@ -142,7 +142,7 @@
  *
  * or:
  *                ||----||----||-- numbers steadily increase -- some kind of gain control?
- *    0 or 1 ---.-----.-----.
+ *    0 or 1 ---.-----.-----.    ,,-- only 00 7f or 03 in the profile-complete
  * input:   16 00 35 00 48 00 1d 03
  * returns: 00 16 00 0b d0 00 00 00
  *            data --^^^^^ ^^-- only ever 00 or 80
@@ -163,22 +163,24 @@
  *
  * -> 16 00 01 00 01 00 01 00
  * <-       00 00 0b 00 00 00
- * -> 02 00 01 00 01 00 01 00
+ * -> 02 xx xx xx xx xx xx xx
  * <-       00 00 12 00 00 00
- * -> 03 00 01 00 01 00 01 00
+ * -> 03 xx xx xx xx xx xx xx
  * <-       00 03 41 00 00 00
  *
  * then does:
  *
  * -> 16 01 63 00 d9 00 04 00
  * <-       00 0f ce 80 00 00
- * -> 02 01 63 00 d9 00 04 00
+ * -> 02 xx xx xx xx xx xx xx
  * <-       00 0e d0 80 00 00
- * -> 03 01 63 00 d9 00 04 00
+ * -> 03 xx xx xx xx xx xx xx
  * <-       00 0d 3c 00 00 00
  *
  * then returns XYZ=87.239169 45.548708 1.952249
- *  */
+ *
+ * IT'S QUICKER TO READ WHITE THAN BLACK!! -- maybe amount of time to count a number of photons?
+ */
 #define HUEY_COMMAND_SENSOR_MEASURE_RGB		0x16
 
 /* input:   21 09 00 02 00 00 08 00 (or)
@@ -591,18 +593,41 @@ if (0) {
 
 /* try to get color value */
 if (1) {
-	guchar setup1[] = { 0x00, 0x9c, 0x00, 0xd9, 0x00, 0x56, 0x03 };
+	guchar setup1[] = { 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00 };
+	guchar setup2[] = { 0x01, 0x63, 0x00, 0xd9, 0x00, 0x04, 0x00 };
 	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	g_warning ("moo");
 
+/*
+ * -> 16 00 01 00 01 00 01 00
+ * <-       00 00 0b 00 00 00
+ * -> 02 00 01 00 01 00 01 00
+ * <-       00 00 12 00 00 00
+ * -> 03 00 01 00 01 00 01 00
+ * <-       00 03 41 00 00 00
+ *
+ * then does:
+ *
+ * -> 16 01 63 00 d9 00 04 00
+ * <-       00 0f ce 80 00 00
+ * -> 02 01 63 00 d9 00 04 00
+ * <-       00 0e d0 80 00 00
+ * -> 03 01 63 00 d9 00 04 00
+ * <-       00 0d 3c 00 00 00
+ */
+
 	ret = send_command (priv, HUEY_COMMAND_SENSOR_MEASURE_RGB, setup1, &error);
 	if (!ret) {
-		g_warning ("failed to send randomness: %s", error->message);
+		g_warning ("failed to measure: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
-	send_command (priv, HUEY_COMMAND_READ_BLUE, payload, &error);
 	send_command (priv, HUEY_COMMAND_READ_GREEN, payload, &error);
+	send_command (priv, HUEY_COMMAND_READ_BLUE, payload, &error);
+
+	send_command (priv, HUEY_COMMAND_SENSOR_MEASURE_RGB, setup2, &error);
+	send_command (priv, HUEY_COMMAND_READ_GREEN, payload, &error);
+	send_command (priv, HUEY_COMMAND_READ_BLUE, payload, &error);
 
 	g_warning ("moo");
 }
