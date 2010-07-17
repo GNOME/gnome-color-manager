@@ -55,7 +55,7 @@
  *                            RGB(00,00,ff) is 08 56
  *
  * only when profiling
- * has to be preceeded by HUEY_COMMAND_UNKNOWN_16 (00 1e 00 27 00 15 03)
+ * has to be preceeded by HUEY_COMMAND_SENSOR_RED_SAMPLE (00 1e 00 27 00 15 03)
  */
 #define HUEY_COMMAND_SENSOR_GREEN		0x02
 
@@ -70,7 +70,7 @@
  *                            RGB(00,00,ff) is 00 59
  *
  * Only used when doing profiling
- * has to be preceeded by HUEY_COMMAND_UNKNOWN_16 (00 01 00 01 00 01 7f)
+ * has to be preceeded by HUEY_COMMAND_SENSOR_RED_SAMPLE (00 01 00 01 00 01 7f)
  */
 #define HUEY_COMMAND_SENSOR_BLUE	0x03
 
@@ -129,12 +129,16 @@
  *                            RGB(ff,ff,ff) is odd	(00 16 00 03 ac 80 00 00)
  *                            RGB(ff,00,00) is 06 ea	(00 16 00 06 ed 00 00 00)
  *                            RGB(00,ff,00) is 08 9b	(00 16 00 08 a0 80 00 00)
- *                            RGB(00,00,ff) is 55 5e	(00 16 00 55 73 00 00 00)
+ *                            RGB(00,00,ff) is 55 5e	(00 16 00 55 73 80 00 00)
  *
  * only when profiling, and used with blue and green
  * THIS COMMAND TAKES A LONG TIME TO EXECUTE
+ *
+ * Given there exists only GREEN and BLUE accessors, and that RED comes
+ * first in a RGB sequence, I think it's safe to assume that this command
+ * does the measurement, and the others just return cached data.
  */
-#define HUEY_COMMAND_UNKNOWN_16		0x16
+#define HUEY_COMMAND_SENSOR_RED_SAMPLE		0x16
 
 /* input:   21 09 00 02 00 00 08 00 (or)
  * returns: [never seems to return a value]
@@ -549,7 +553,7 @@ if (1) {
 //	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	g_warning ("moo");
 
-	ret = send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup1, &error);
+	ret = send_command (priv, HUEY_COMMAND_SENSOR_RED_SAMPLE, setup1, &error);
 	if (!ret) {
 		g_warning ("failed to send randomness: %s", error->message);
 		g_error_free (error);
@@ -557,10 +561,10 @@ if (1) {
 	}
 //	send_command (priv, 0x01, payload, &error);
 
-//	send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup1, &error);
+//	send_command (priv, HUEY_COMMAND_SENSOR_RED_SAMPLE, setup1, &error);
 //	send_command (priv, HUEY_COMMAND_SENSOR_BLUE, payload, &error);
 
-//	send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup2, &error);
+//	send_command (priv, HUEY_COMMAND_SENSOR_RED_SAMPLE, setup2, &error);
 //	send_command (priv, HUEY_COMMAND_SENSOR_GREEN, payload, &error);
 
 	g_warning ("moo");
