@@ -501,7 +501,7 @@ data_to_float (guint8 *value)
 
 
 static gboolean
-read_register_byte (GcmPriv *priv, guint8 address, guint8 *value, GError **error)
+read_register_byte (GcmPriv *priv, guint8 addr, guint8 *value, GError **error)
 {
 	guchar request[] = { HUEY_COMMAND_REGISTER_READ, 0xff, 0x00, 0x10, 0x3c, 0x06, 0x00, 0x00 };
 	guchar reply[8];
@@ -509,28 +509,89 @@ read_register_byte (GcmPriv *priv, guint8 address, guint8 *value, GError **error
 	gsize reply_read;
 
 	/* hit hardware -- it would be good to be able to get more than one byte of data at a time... */
-	request[1] = address;
+	request[1] = addr;
 	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
 	if (!ret)
 		goto out;
 
 	/* this seems like the only byte of data that's useful */
 	*value = reply[3];
+//	g_debug ("%02x", *value);
 out:
 	return ret;
 }
 
 static gboolean
-read_register_string (GcmPriv *priv, guint8 address, gchar *value, gsize len, GError **error)
+read_register_string (GcmPriv *priv, guint8 addr, gchar *value, gsize len, GError **error)
 {
 	guint8 i;
 	gboolean ret = TRUE;
 
 	/* get each byte of the string */
 	for (i=0; i<len; i++) {
-		ret = read_register_byte (priv, address+i, (guint8*) &value[i], error);
+		ret = read_register_byte (priv, addr+i, (guint8*) &value[i], error);
 		if (!ret)
 			goto out;
+	}
+out:
+	return ret;
+}
+
+static gboolean
+read_register_word (GcmPriv *priv, guint8 addr, guint32 *value, GError **error)
+{
+	guint8 i;
+	guint8 tmp[4];
+	gboolean ret = TRUE;
+
+	/* get each byte of the 32 bit number */
+	for (i=0; i<4; i++) {
+		ret = read_register_byte (priv, addr+i, tmp+i, error);
+		if (!ret)
+			goto out;
+	}
+
+	/* convert to a 32 bit integer */
+	*value = (tmp[0] << 24) + (tmp[1] << 16) + (tmp[2] << 8) + (tmp[3] << 0);
+//	g_debug ("%u", *value);
+out:
+	return ret;
+}
+
+static gboolean
+read_register_float (GcmPriv *priv, guint8 addr, gfloat *value, GError **error)
+{
+	gboolean ret;
+	guint32 tmp;
+
+	/* first read in 32 bit integer */
+	ret = read_register_word (priv, addr, &tmp, error);
+	if (!ret)
+		goto out;
+
+	/* convert to float */
+	*((guint32 *)value) = tmp;
+out:
+	return ret;
+}
+
+static gboolean
+read_register_matrix (GcmPriv *priv, guint8 addr, GcmMat3x3 *value, GError **error)
+{
+	gboolean ret = TRUE;
+	guint i;
+	gfloat tmp;
+
+	/* read in 3d matrix */
+	for (i=0; i<9; i++) {
+		ret = read_register_float (priv, addr + (i*4), &tmp, error);
+		if (!ret)
+			goto out;
+
+		/* save in matrix -- FIXME: make this a macro */
+		*(((gdouble *) value)+i) = tmp;
+
+		g_debug ("tmp=%f", tmp);
 	}
 out:
 	return ret;
@@ -540,16 +601,30 @@ static gboolean
 read_registers (GcmPriv *priv, GError **error)
 {
 	gboolean ret;
-	guint i, j;
-	guint len = 0x02;//0xff;
+	guint8 i, j;
+	guint len = 0xff;
 	guint8 data[len];
 	gchar unlock[5];
+	GcmMat3x3 value;
 
 	/* get unlock string */
 	ret = read_register_string (priv, 0x7a, unlock, 5, error);
 	if (!ret)
 		goto out;
 	g_print ("Unlock string: %s\n", unlock);
+
+
+//g_error ("moo");
+
+	/* get matrix */
+	gcm_mat33_clear (&value);
+	ret = read_register_matrix (priv, 0x04, &value, error);
+	if (!ret)
+		goto out;
+	g_print ("Big number @0x%02x): %s\n", 0x00, gcm_mat33_to_string (&value));
+
+g_error ("moo");
+
 
 	/* We read from 0x04 to 0x72 at startup */
 	for (i=0x00; i<=len; i++) {
@@ -563,14 +638,6 @@ read_registers (GcmPriv *priv, GError **error)
 		g_print ("0x%02x\t", i);
 		for (j=0; j<4; j++)
 			g_print ("%c ", g_ascii_isprint (data[i+j]) ? data[i+j] : '?');
-		g_print ("\n");
-	}
-	g_print ("\n");
-
-	for (i=0; i<len; i+=4) {
-		g_print ("0x%02x\t", i);
-		for (j=0; j<4; j++)
-			g_print ("%02x ", data[i+j]);
 		g_print ("\n");
 	}
 	g_print ("\n");
