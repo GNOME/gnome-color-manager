@@ -100,6 +100,8 @@
 /* returns: all NULL for NULL input: times out for f1 f2 f3 f4 f5 f6 f7 f8 */
 #define HUEY_COMMAND_UNKNOWN_19		0x19
 
+#define HUEY_AMBIENT_UNITS_TO_LUX	125.0f /* fudge factor */
+
 typedef struct {
 	gboolean		 connected;
 	libusb_device		*device;
@@ -338,7 +340,7 @@ send_leds (GcmPriv *priv, guchar mask, GError **error)
 }
 
 static gboolean
-get_ambient (GcmPriv *priv, guint16 *value, GError **error)
+get_ambient (GcmPriv *priv, gdouble *value, GError **error)
 {
 	/* from usb-ambient.txt */
 	guchar request[] = { HUEY_COMMAND_AMBIENT, 0x03, 0x00, 0xa9, 0xaa, 0xaa, 0xab, 0xab };
@@ -353,7 +355,7 @@ get_ambient (GcmPriv *priv, guint16 *value, GError **error)
 
 	/* parse the value */
 	g_debug ("%i, %i", reply[5], reply[5]);
-	*value = reply[5] * 0xff + reply[6];
+	*value = (gdouble) (reply[5] * 0xff + reply[6]) / HUEY_AMBIENT_UNITS_TO_LUX;
 out:
 	return ret;
 }
@@ -389,7 +391,7 @@ main (void)
 {
 	gint retval;
 	guint i;
-	guint16 value;
+	gdouble value;
 	gboolean ret;
 	GcmPriv *priv;
 	GError *error = NULL;
@@ -420,6 +422,7 @@ main (void)
 		goto out;
 	}
 
+if (0) {
 	/* this is done by the windows driver */
 	ret = read_registers (priv, &error);
 	if (!ret) {
@@ -427,6 +430,7 @@ main (void)
 		g_error_free (error);
 		goto out;
 	}
+}
 
 	/* set LEDs */
 	ret = send_leds (priv, 0x0f, &error);
@@ -443,7 +447,7 @@ main (void)
 		g_error_free (error);
 		goto out;
 	}
-	g_debug ("ambient = %i(units?)", value);
+	g_debug ("ambient = %.1lf Lux", value);
 
 if (0) {
 	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
