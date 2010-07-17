@@ -485,6 +485,20 @@ out:
 	return ret;
 }
 
+static gfloat
+data_to_float (guint8 *value)
+{
+	guint32 big;
+	gfloat retval;
+
+	/* first, convert the guchar data into one long int */
+	big = (value[0] << 24) + (value[1] << 16) + (value[2] << 8) + (value[3] << 0);
+
+	/* then convert it to a float */
+	*((guint32 *)(&retval)) = big;
+	return retval;
+}
+
 static gboolean
 read_registers (GcmPriv *priv, GError **error)
 {
@@ -493,9 +507,9 @@ read_registers (GcmPriv *priv, GError **error)
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
-	guchar i, j;
-	guchar data[72];
-	guint len = 0x5a;
+	guint i, j;
+	guint len = 0xff;
+	guchar data[len];
 
 	/* We read from 0x04 to 0x72 at startup */
 	for (i=0x00; i<=len; i++) {
@@ -533,6 +547,16 @@ read_registers (GcmPriv *priv, GError **error)
 		g_print ("\n");
 	}
 	g_print ("\n");
+
+	for (i=0; i<len; i+=4) {
+		g_print ("0x%02x\t", i);
+		g_print ("%.4f ", data_to_float (&data[i]));
+		g_print ("\n");
+	}
+	g_print ("\n");
+
+
+
 out:
 	return ret;
 }
