@@ -57,15 +57,24 @@
  * Only used when doing profiling */
 #define HUEY_COMMAND_UNKNOWN_03		0x03
 
-/* returns: all NULL for NULL input: 00 05 00 00 00 00 00 00 for f1 f2 f3 f4 f5 f6 f7 f8 */
-#define HUEY_COMMAND_UNKNOWN_05		0x05
+/* input:   11 12 13 14 15 16 17 18
+ * returns: 00 05 00 00 00 00 00 00
+ *              ^--- always the same no matter the input
+ *
+ * never used in profiling */
+#define HUEY_COMMAND_SET_VALUE		0x05
 
 /* input:   06 f1 f2 f3 f4 f5 f6 f7
- * returns: 00 06 f1 f2 f3 f4 00 00
- *    4 bytes ----^
+ * returns: 00 06 11 12 13 14 00 00
+ *    4 bytes ----^^^^^^^^^^^ (from HUEY_COMMAND_SET_VALUE)
+ *
+ * This is some sort of 32bit register on the device -- the
+ * default value at plug-in is 00 0f 42 40, although during profiling it is set to
+ * 00 00 6f 00 and then 00 00 61 00.
+ *
  * returns: all NULL for NULL input
  */
-#define HUEY_COMMAND_UNKNOWN_06		0x06
+#define HUEY_COMMAND_GET_VALUE		0x06
 
 /* returns: all NULL all of the time
  * NEVER USED */
@@ -479,6 +488,27 @@ if (0) {
 			g_clear_error (&error);
 		}
 	}
+}
+
+{
+	guchar payload[] = { 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17 };
+	g_warning ("moo");
+
+	/* get default value when device is plugged */
+	send_command (priv, HUEY_COMMAND_GET_VALUE, payload, &error);
+
+	send_command (priv, HUEY_COMMAND_SET_VALUE, payload, &error);
+
+	payload[0] = 0x01;
+	payload[1] = 0x02;
+	payload[2] = 0x03;
+	payload[3] = 0x04;
+	payload[4] = 0x05;
+	payload[5] = 0x06;
+	payload[6] = 0x07;
+
+	send_command (priv, HUEY_COMMAND_GET_VALUE, payload, &error);
+	g_warning ("moo");
 }
 
 	/* set LEDs */
