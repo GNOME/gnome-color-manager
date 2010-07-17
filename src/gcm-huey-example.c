@@ -145,6 +145,17 @@ send_command (GcmPriv *priv, guchar command, GError **error)
 		goto out;
 	}
 
+	/* the first byte is success */
+	switch (data[0]) {
+	case 0x00:
+		/* assume success */
+	case 0x80:
+		/* failure, the return buffer is set to NoCmd */
+		g_set_error (error, 1, 0, "failed to issue command: %s", &data[2]);
+		goto out;
+	}
+		
+
 	/* show what we've got */
 	g_print ("cmd 0x%02x\t", command);
 	for (i=0; i< (guint)bytes_read; i++)
