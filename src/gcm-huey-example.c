@@ -38,6 +38,20 @@
 #define HUEY_RETVAL_LOCKED		0xc0
 #define HUEY_RETVAL_ERROR		0x80
 
+#define HUEY_COMMAND_UNKNOWN_00		0x00 /* returns: "Cir001" -- Cirrus Logic? It's a Cyprus IC... */
+#define HUEY_COMMAND_UNKNOWN_02		0x02 /* returns: all NULL for NULL input, 00,02,02,cc,53,6c,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_03		0x03 /* returns: all NULL for NULL input, 00,03,62,18,88,85,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_05		0x05 /* returns: all NULL for NULL input, 00,05,00,00,00,00,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_06		0x06 /* returns: all NULL for NULL input, 00,06,f1,f2,f3,f4,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_07		0x07 /* returns: all NULL all of the time */
+#define HUEY_COMMAND_UNKNOWN_08		0x08 /* returns: all NULL for NULL input, 00,08,f1,f2,00,00,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_MAYBE_UNLOCK	0x0e /* returns: all NULL all of the time */
+#define HUEY_COMMAND_UNKNOWN_0F		0x0f /* returns: all NULL all of the time */
+#define HUEY_COMMAND_UNKNOWN_13		0x13 /* returns: all NULL all of the time */
+#define HUEY_COMMAND_UNKNOWN_16		0x16 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_SET_LEDS		0x18 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_19		0x19 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
+
 typedef struct {
 	gboolean		 connected;
 	libusb_device		*device;
@@ -146,6 +160,8 @@ send_data (GcmPriv *priv,
 	/* show what we've got */
 	print_data ("request", request, request_len);
 
+	g_usleep (10000);
+
 	/* do sync request */
 	retval = libusb_control_transfer (priv->handle,
 					  LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
@@ -200,24 +216,19 @@ out:
 }
 
 static gboolean
-send_command (GcmPriv *priv, guchar command, GError **error)
+send_command (GcmPriv *priv, guchar command, const guchar *payload, GError **error)
 {
 	/* according to wMaxPacketSize, all the messages have just 8 bytes */
 	guchar request[8];
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
-
-	request[1] = 0xf1;
-	request[2] = 0xf2;
-	request[3] = 0xf3;
-	request[4] = 0xf4;
-	request[5] = 0xf5;
-	request[6] = 0xf6;
-	request[7] = 0xf7;
+	guint i;
 
 	/* first byte seems to be a command, i've no idea what the others do */
 	request[0] = command;
+	for (i=1; i<8; i++)
+		request[i] = payload[i-1];
 
 	/* show what we've got */
 	g_print ("cmd 0x%02x\n", command);
@@ -229,20 +240,6 @@ send_command (GcmPriv *priv, guchar command, GError **error)
 out:
 	return ret;
 }
-
-#define HUEY_COMMAND_UNKNOWN_00		0x00 /* returns: "Cir001" -- Cirrus Logic? It's a Cyprus IC... */
-#define HUEY_COMMAND_UNKNOWN_02		0x02 /* returns: all NULL for NULL input, 00,02,02,cc,53,6c,00,00 for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_UNKNOWN_03		0x03 /* returns: all NULL for NULL input, 00,03,62,18,88,85,00,00 for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_UNKNOWN_05		0x05 /* returns: all NULL for NULL input, 00,05,00,00,00,00,00,00 for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_UNKNOWN_06		0x06 /* returns: all NULL for NULL input, 00,06,f1,f2,f3,f4,00,00 for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_UNKNOWN_07		0x07 /* returns: all NULL all of the time */
-#define HUEY_COMMAND_UNKNOWN_08		0x08 /* returns: all NULL for NULL input, 00,08,f1,f2,00,00,00,00 for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_MAYBE_UNLOCK	0x0e /* returns: all NULL all of the time */
-#define HUEY_COMMAND_UNKNOWN_0F		0x0f /* returns: all NULL all of the time */
-#define HUEY_COMMAND_UNKNOWN_13		0x13 /* returns: all NULL all of the time */
-#define HUEY_COMMAND_UNKNOWN_16		0x16 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_UNKNOWN_18		0x18 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_UNKNOWN_19		0x19 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
 
 static gboolean
 send_unlock (GcmPriv *priv, GError **error)
@@ -268,6 +265,15 @@ send_unlock (GcmPriv *priv, GError **error)
 		goto out;
 out:
 	return ret;
+}
+
+static gboolean
+send_leds (GcmPriv *priv, guchar mask, GError **error)
+{
+	guchar payload[] = { 0x00, ~mask, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+	/* send all commands that are implemented */
+	return send_command (priv, HUEY_COMMAND_SET_LEDS, payload, error);
 }
 
 int
@@ -305,21 +311,27 @@ main (void)
 		goto out;
 	}
 
-{
+	/* set LEDs */
+	ret = send_leds (priv, 0x0f, &error);
+	if (!ret) {
+		g_warning ("failed to send leds: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+if (0) {
+	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	guchar available[] = { 0x00, 0x02, 0x03, 0x05, 0x06, 0x07, 0x08, 0x0e, 0x0f, 0x13, 0x16, 0x18, 0x19, 0xff };
 
 	/* send all commands that are implemented */
 	for (i=0; available[i] != 0xff; i++) {
-		ret = send_command (priv, available[i], &error);
+		ret = send_command (priv, available[i], payload, &error);
 		if (!ret) {
 			g_warning ("failed to write command 0x%02i: %s\n", available[i], error->message);
 			g_clear_error (&error);
 		}
 	}
 }
-
-	/* do something */
-	g_warning ("fixme");
 
 	/* close device */
 	libusb_close (priv->handle);
