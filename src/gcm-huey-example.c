@@ -116,56 +116,61 @@ out:
 	return ret;
 }
 
+static void
+print_data (const gchar *title, const guchar *data, gsize length)
+{
+	guint i;
+	g_print ("%s\t", title);
+	for (i=0; i< length; i++)
+		g_print ("%02x [%c]\t", data[i], g_ascii_isprint (data[i]) ? data[i] : '?');
+		//g_print ("%02x,", data[i]);
+	g_print ("\n");
+}
+
+
 static gboolean
-send_command (GcmPriv *priv, guchar command, GError **error)
+send_data (GcmPriv *priv,
+	   const guchar *request, gsize request_len,
+	   guchar *reply, gsize reply_len,
+	   gsize *reply_read, GError **error)
 {
 	gint retval;
 	gboolean ret = FALSE;
-	guchar *data;
-	gint bytes_read = 0;
-	guint i;
 
-	/* according to wMaxPacketSize, all the messages have just 8 bytes */
-	data = g_new0 (guchar, 8);
-	data[1] = 0xf1;
-	data[2] = 0xf2;
-	data[3] = 0xf3;
-	data[4] = 0xf4;
-	data[5] = 0xf5;
-	data[6] = 0xf6;
-	data[7] = 0xf7;
+	g_return_val_if_fail (request != NULL, FALSE);
+	g_return_val_if_fail (request_len != 0, FALSE);
+	g_return_val_if_fail (reply != NULL, FALSE);
+	g_return_val_if_fail (reply_len != 0, FALSE);
+	g_return_val_if_fail (reply_read != NULL, FALSE);
 
-	/* first byte seems to be a command, i've no idea what the others do */
-	data[0] = command;
+	/* show what we've got */
+	print_data ("request", request, request_len);
 
 	/* do sync request */
 	retval = libusb_control_transfer (priv->handle,
 					  LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
 					  0x09, 0x0200, 0,
-					  data, 8,
+					  (guchar *) request, request_len,
 					  HUEY_CONTROL_MESSAGE_TIMEOUT);
 	if (retval < 0) {
-		g_set_error (error, 1, 0, "failed to send message interface: %s", libusb_strerror (retval));
+		g_set_error (error, 1, 0, "failed to send request: %s", libusb_strerror (retval));
 		goto out;
 	}
 
 	/* get sync response, from bEndpointAddress */
-	retval = libusb_interrupt_transfer (priv->handle, 0x81, data, 8, &bytes_read, HUEY_CONTROL_MESSAGE_TIMEOUT);
+	retval = libusb_interrupt_transfer (priv->handle, 0x81,
+					    reply, (gint) reply_len, (gint*)reply_read,
+					    HUEY_CONTROL_MESSAGE_TIMEOUT);
 	if (retval < 0) {
-		g_set_error (error, 1, 0, "failed to recieve message interface: %s", libusb_strerror (retval));
+		g_set_error (error, 1, 0, "failed to get reply: %s", libusb_strerror (retval));
 		goto out;
 	}
 
-if(1){
 	/* show what we've got */
-	g_print ("cmd 0x%02x\t", command);
-	for (i=2; i< (guint)bytes_read; i++)
-		g_print ("%02x [%c]\t", data[i], g_ascii_isprint (data[i]) ? data[i] : '?');
-	g_print ("\n");
-}
+	print_data ("reply", reply, *reply_read);
 
 	/* the first byte is success */
-	switch (data[0]) {
+	switch (reply[0]) {
 	case HUEY_RETVAL_SUCCESS:
 		/* assume success */
 		break;
@@ -175,39 +180,95 @@ if(1){
 		goto out;
 	case HUEY_RETVAL_ERROR:
 		/* failure, the return buffer is set to "NoCmd" */
-		g_set_error (error, 1, 0, "failed to issue command: %s", &data[2]);
+		g_set_error (error, 1, 0, "failed to issue command: %s", &reply[2]);
 		goto out;
 	default:
-		g_warning ("return value unknown: 0x%02x, continuing", data[0]);
+		g_warning ("return value unknown: 0x%02x, continuing", reply[0]);
 		break;
 	}
 
 	/* the second byte seems to be the command again */
-	if (data[1] != command) {
-		g_set_error (error, 1, 0, "wrong command reply, got 0x%02x, expected 0x%02x", data[1], command);
+	if (reply[1] != request[0]) {
+		g_set_error (error, 1, 0, "wrong command reply, got 0x%02x, expected 0x%02x", reply[1], request[0]);
 		goto out;
 	}
 
 	/* success */
 	ret = TRUE;
 out:
-	g_free (data);
+	return ret;
+}
+
+static gboolean
+send_command (GcmPriv *priv, guchar command, GError **error)
+{
+	/* according to wMaxPacketSize, all the messages have just 8 bytes */
+	guchar request[8];
+	guchar reply[8];
+	gboolean ret;
+	gsize reply_read;
+
+	request[1] = 0xf1;
+	request[2] = 0xf2;
+	request[3] = 0xf3;
+	request[4] = 0xf4;
+	request[5] = 0xf5;
+	request[6] = 0xf6;
+	request[7] = 0xf7;
+
+	/* first byte seems to be a command, i've no idea what the others do */
+	request[0] = command;
+
+	/* show what we've got */
+	g_print ("cmd 0x%02x\n", command);
+
+	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	if (!ret)
+		goto out;
+
+out:
 	return ret;
 }
 
 #define HUEY_COMMAND_UNKNOWN_00		0x00 /* returns: "Cir001" -- Cirrus Logic? It's a Cyprus IC... */
-#define HUEY_COMMAND_UNKNOWN_02		0x02 /* returns: all NULL */
-#define HUEY_COMMAND_UNKNOWN_03		0x03 /* returns: all NULL */
-#define HUEY_COMMAND_UNKNOWN_05		0x05 /* returns: all NULL */
-#define HUEY_COMMAND_UNKNOWN_06		0x06 /* returns: all NULL */
-#define HUEY_COMMAND_UNKNOWN_07		0x07 /* returns: all NULL */
-#define HUEY_COMMAND_UNKNOWN_08		0x08 /* returns: all NULL */
-#define HUEY_COMMAND_UNKNOWN_0E		0x0e /* returns: all NULL */
-#define HUEY_COMMAND_UNKNOWN_0F		0x0f /* returns: all NULL */
-#define HUEY_COMMAND_UNKNOWN_13		0x13 /* returns: all NULL */
-#define HUEY_COMMAND_UNKNOWN_16		0x16 /* returns: all NULL */
-#define HUEY_COMMAND_UNKNOWN_18		0x18 /* returns: all NULL */
-#define HUEY_COMMAND_UNKNOWN_19		0x19 /* returns: all NULL */
+#define HUEY_COMMAND_UNKNOWN_02		0x02 /* returns: all NULL for NULL input, 00,02,02,cc,53,6c,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_03		0x03 /* returns: all NULL for NULL input, 00,03,62,18,88,85,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_05		0x05 /* returns: all NULL for NULL input, 00,05,00,00,00,00,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_06		0x06 /* returns: all NULL for NULL input, 00,06,f1,f2,f3,f4,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_07		0x07 /* returns: all NULL all of the time */
+#define HUEY_COMMAND_UNKNOWN_08		0x08 /* returns: all NULL for NULL input, 00,08,f1,f2,00,00,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_MAYBE_UNLOCK	0x0e /* returns: all NULL all of the time */
+#define HUEY_COMMAND_UNKNOWN_0F		0x0f /* returns: all NULL all of the time */
+#define HUEY_COMMAND_UNKNOWN_13		0x13 /* returns: all NULL all of the time */
+#define HUEY_COMMAND_UNKNOWN_16		0x16 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_18		0x18 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_19		0x19 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
+
+static gboolean
+send_unlock (GcmPriv *priv, GError **error)
+{
+	/* according to wMaxPacketSize, all the messages have just 8 bytes */
+	guchar request[8];
+	guchar reply[8];
+	gboolean ret;
+	gsize reply_read;
+
+	request[0] = HUEY_COMMAND_MAYBE_UNLOCK;
+	request[1] = 'G';
+	request[2] = 'r';
+	request[3] = 'M';
+	request[4] = 'b';
+	request[5] = 'k';
+	request[6] = 'e';
+	request[7] = 'd';
+
+	/* GrMbked == I have no idea, neither does google */
+	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	if (!ret)
+		goto out;
+out:
+	return ret;
+}
 
 int
 main (void)
@@ -236,6 +297,14 @@ main (void)
 		goto out;
 	}
 
+	/* unlock */
+	ret = send_unlock (priv, &error);
+	if (!ret) {
+		g_warning ("failed to unlock: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
 {
 	guchar available[] = { 0x00, 0x02, 0x03, 0x05, 0x06, 0x07, 0x08, 0x0e, 0x0f, 0x13, 0x16, 0x18, 0x19, 0xff };
 
@@ -245,8 +314,6 @@ main (void)
 		if (!ret) {
 			g_warning ("failed to write command 0x%02i: %s\n", available[i], error->message);
 			g_clear_error (&error);
-//		} else {
-//			g_print ("0x%02x, ", i);
 		}
 	}
 }
