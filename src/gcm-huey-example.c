@@ -736,74 +736,61 @@ out:
 
 /* this is a random number chosen to find the best accuracy whilst
  * maintaining a fast read. We scale each RGB value seporately. */
-#define HUEY_PRECISION_TIME_VALUE	0.25f
+#define HUEY_PRECISION_TIME_VALUE		0.15f
 
-/* the sensor returns an arbitary value which we scale to 1.0 for 100%
- * (this is based on my monitor, not any agreed standard...) */
-#define HUEY_SCALE_VALUE_RED		1.0f
-#define HUEY_SCALE_VALUE_GREEN		1.0f
-#define HUEY_SCALE_VALUE_BLUE		1.0f
+/* picked out of thin air, just to try to match reality */
+#define HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR	6880.0f
 
 /**
  * gcm_sensor_huey_get_color:
  **/
 static gboolean
-gcm_sensor_huey_get_color (GcmSensorHuey *huey, GcmColorRgb *values, GError **error)
+gcm_sensor_huey_get_color (GcmSensorHuey *huey, GcmColorXYZ *values, GError **error)
 {
 	gboolean ret;
 	gdouble value;
+	GcmColorRgb native;
 	GcmColorRgbInt multiplier;
+	GcmVec3 *input = (GcmVec3 *) &native;
+	GcmVec3 *output = (GcmVec3 *) values;
 
 	/* set this to one value for a quick approximate value */
 	multiplier.red = 1;
 	multiplier.green = 1;
 	multiplier.blue = 1;
-	ret = gcm_sensor_huey_get_color_for_threshold (huey, &multiplier, values, error);
+	ret = gcm_sensor_huey_get_color_for_threshold (huey, &multiplier, &native, error);
 	if (!ret)
 		goto out;
-	g_debug ("initial values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", values->red, values->green, values->blue);
+	g_debug ("initial values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.red, native.green, native.blue);
 
 	/* compromise between the amount of time and the precision */
 	value = HUEY_PRECISION_TIME_VALUE;
-	if (values->red < value)
-		multiplier.red = (gfloat)value / values->red;
-	if (values->green < value)
-		multiplier.green = (gfloat)value / values->green;
-	if (values->blue < value)
-		multiplier.blue = (gfloat)value / values->blue;
+	if (native.red < value)
+		multiplier.red = (gfloat)value / native.red;
+	if (native.green < value)
+		multiplier.green = (gfloat)value / native.green;
+	if (native.blue < value)
+		multiplier.blue = (gfloat)value / native.blue;
 	g_debug ("using multiplier factor: red=%i, green=%i, blue=%i", multiplier.red, multiplier.green, multiplier.blue);
-	ret = gcm_sensor_huey_get_color_for_threshold (huey, &multiplier, values, error);
+	ret = gcm_sensor_huey_get_color_for_threshold (huey, &multiplier, &native, error);
 	if (!ret)
 		goto out;
-	g_debug ("prescaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", values->red, values->green, values->blue);
-	values->red = HUEY_SCALE_VALUE_RED * values->red / multiplier.red;
-	values->green = HUEY_SCALE_VALUE_GREEN * values->green / multiplier.green;
-	values->blue = HUEY_SCALE_VALUE_BLUE * values->blue / multiplier.blue;
-	g_debug ("scaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", values->red, values->green, values->blue);
+	g_debug ("prescaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.red, native.green, native.blue);
+	native.red = native.red * (gdouble)multiplier.red;
+	native.green = native.green * (gdouble)multiplier.green;
+	native.blue = native.blue * (gdouble)multiplier.blue;
+	g_debug ("scaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.red, native.green, native.blue);
 
-{
-	GcmVec3 *vec = (GcmVec3 *) values;
-	GcmVec3 test;
+	g_print ("PRE MULTIPLY: %s\n", gcm_vec3_to_string (input));
 
-	g_print ("PRE: %s\n", gcm_vec3_to_string (vec));
+	/* it would be rediculous for the device to emit RGB, it would be completely arbitrary --
+	 * we assume the matrix of data is designed to convert to LAB or XYZ */
+	gcm_mat33_vector_multiply (&huey->device_matrix, input, output);
 
-	/* it would be redicuous for the device to emit RGB, it would be completely arbitrary --
-	 * see if the matrix of data is designed to convert to LAB or XYZ */
-	gcm_mat33_vector_multiply (&huey->device_matrix, vec, &test);
+	/* scale correct */
+	gcm_vec3_scalar_multiply (output, HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR, output);
 
-test.v0 *= 1000;
-test.v1 *= 1000;
-test.v2 *= 1000;
-
-// argyll gets XYZ: 95.773273 50.278955 2.210076 -- we get 3.636, 0.435, -0.017
-
-	g_print ("POST: %s\n", gcm_vec3_to_string (&test));
-}
-
-	g_assert (values->red < 1.0f);
-	g_assert (values->green < 1.0f);
-	g_assert (values->blue < 1.0f);
-
+	g_print ("POST MULTIPLY: %s\n", gcm_vec3_to_string (output));
 out:
 	return ret;
 }
@@ -900,14 +887,14 @@ if (0) {
 /* try to get color value */
 if (1) {
 
-	GcmColorRgb values;
+	GcmColorXYZ values;
 	ret = gcm_sensor_huey_get_color (huey, &values, &error);
 	if (!ret) {
 		g_warning ("failed to measure: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
-	g_debug ("red=%0.4lf, green=%0.4lf, blue=%0.4lf", values.red, values.green, values.blue);
+	g_debug ("X=%0.4lf, Y=%0.4lf, Z=%0.4lf", values.X, values.Y, values.Z);
 }
 	/* set LEDs */
 	ret = gcm_sensor_huey_send_leds (huey, 0x00, &error);
