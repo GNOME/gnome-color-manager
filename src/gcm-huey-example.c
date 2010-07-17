@@ -45,10 +45,11 @@
 #define HUEY_COMMAND_UNKNOWN_06		0x06 /* returns: all NULL for NULL input, 00,06,f1,f2,f3,f4,00,00 for 0xf1f2f3f4f5f6f7f8 */
 #define HUEY_COMMAND_UNKNOWN_07		0x07 /* returns: all NULL all of the time */
 #define HUEY_COMMAND_UNKNOWN_08		0x08 /* returns: all NULL for NULL input, 00,08,f1,f2,00,00,00,00 for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_MAYBE_UNLOCK	0x0e /* returns: all NULL all of the time */
+#define HUEY_COMMAND_UNLOCK		0x0e /* returns: all NULL all of the time */
 #define HUEY_COMMAND_UNKNOWN_0F		0x0f /* returns: all NULL all of the time */
 #define HUEY_COMMAND_UNKNOWN_13		0x13 /* returns: all NULL all of the time */
 #define HUEY_COMMAND_UNKNOWN_16		0x16 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_AMBIENT		0x17 /* returns: ? */
 #define HUEY_COMMAND_SET_LEDS		0x18 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
 #define HUEY_COMMAND_UNKNOWN_19		0x19 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
 
@@ -250,7 +251,7 @@ send_unlock (GcmPriv *priv, GError **error)
 	gboolean ret;
 	gsize reply_read;
 
-	request[0] = HUEY_COMMAND_MAYBE_UNLOCK;
+	request[0] = HUEY_COMMAND_UNLOCK;
 	request[1] = 'G';
 	request[2] = 'r';
 	request[3] = 'M';
@@ -274,6 +275,15 @@ send_leds (GcmPriv *priv, guchar mask, GError **error)
 
 	/* send all commands that are implemented */
 	return send_command (priv, HUEY_COMMAND_SET_LEDS, payload, error);
+}
+
+static gboolean
+get_ambient (GcmPriv *priv, GError **error)
+{
+	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+
+	/* send all commands that are implemented */
+	return send_command (priv, HUEY_COMMAND_AMBIENT, payload, error);
 }
 
 int
@@ -315,6 +325,14 @@ main (void)
 	ret = send_leds (priv, 0x0f, &error);
 	if (!ret) {
 		g_warning ("failed to send leds: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* get ambient */
+	ret = get_ambient (priv, &error);
+	if (!ret) {
+		g_warning ("failed to get ambient: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
