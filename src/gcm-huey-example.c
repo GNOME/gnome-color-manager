@@ -32,7 +32,7 @@
 
 #define HUEY_VENDOR_ID			0x0971
 #define HUEY_PRODUCT_ID			0x2005
-#define HUEY_CONTROL_MESSAGE_TIMEOUT	5000 /* ms */
+#define HUEY_CONTROL_MESSAGE_TIMEOUT	50000 /* ms */
 #define HUEY_MAX_READ_RETRIES		5
 
 #define HUEY_RETVAL_SUCCESS		0x00
@@ -119,7 +119,21 @@
 /* input:   16 00 01 00 01 00 01 00
  * returns: 00 16 00 00 00 00 00 00
  *
- * only when profiling */
+ * or:
+ *                ||----||----||-- numbers steadily increase
+ *    0 or 1 ---.-----.-----.
+ * input:   16 00 35 00 48 00 1d 03
+ * returns: 00 16 00 0b d0 00 00 00
+ *            data --^^^^^ ^^-- only ever 00 or 80
+ *                    \-- for RGB(00,00,00) is odd	(00 16 02 20 f4 ee 07 00)
+ *                            RGB(ff,ff,ff) is odd	(00 16 00 03 ac 80 00 00)
+ *                            RGB(ff,00,00) is 06 ea	(00 16 00 06 ed 00 00 00)
+ *                            RGB(00,ff,00) is 08 9b	(00 16 00 08 a0 80 00 00)
+ *                            RGB(00,00,ff) is 55 5e	(00 16 00 55 73 00 00 00)
+ *
+ * only when profiling, and used with blue and green
+ * THIS COMMAND TAKES A LONG TIME TO EXECUTE
+ */
 #define HUEY_COMMAND_UNKNOWN_16		0x16
 
 /* input:   21 09 00 02 00 00 08 00 (or)
@@ -254,7 +268,7 @@ send_data (GcmPriv *priv,
 	/* show what we've got */
 	print_data ("request", request, request_len);
 
-	g_usleep (10000);
+	g_usleep (100000);
 
 	/* do sync request */
 	retval = libusb_control_transfer (priv->handle,
@@ -530,19 +544,24 @@ if (0) {
 
 /* try to get color value */
 if (1) {
-	guchar setup1[] = { 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x7f };
-	guchar setup2[] = { 0x00, 0x1e, 0x00, 0x27, 0x00, 0x15, 0x03 };
-	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	guchar setup1[] = { 0x00, 0x9c, 0x00, 0xd9, 0x00, 0x56, 0x03 };
+//	guchar setup2[] = { 0x00, 0x1e, 0x00, 0x27, 0x00, 0x15, 0x03 };
+//	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	g_warning ("moo");
 
-	send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup1, &error);
-	send_command (priv, 0x01, payload, &error);
+	ret = send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup1, &error);
+	if (!ret) {
+		g_warning ("failed to send randomness: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+//	send_command (priv, 0x01, payload, &error);
 
-	send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup1, &error);
-	send_command (priv, HUEY_COMMAND_SENSOR_BLUE, payload, &error);
+//	send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup1, &error);
+//	send_command (priv, HUEY_COMMAND_SENSOR_BLUE, payload, &error);
 
-	send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup2, &error);
-	send_command (priv, HUEY_COMMAND_SENSOR_GREEN, payload, &error);
+//	send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup2, &error);
+//	send_command (priv, HUEY_COMMAND_SENSOR_GREEN, payload, &error);
 
 	g_warning ("moo");
 }
