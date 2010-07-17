@@ -145,29 +145,48 @@ send_command (GcmPriv *priv, guchar command, GError **error)
 		goto out;
 	}
 
-	/* the first byte is success */
-	switch (data[0]) {
-	case 0x00:
-		/* assume success */
-	case 0x80:
-		/* failure, the return buffer is set to NoCmd */
-		g_set_error (error, 1, 0, "failed to issue command: %s", &data[2]);
-		goto out;
-	}
-		
-
+if(1){
 	/* show what we've got */
 	g_print ("cmd 0x%02x\t", command);
 	for (i=0; i< (guint)bytes_read; i++)
 		g_print ("%02x [%c]\t", data[i], g_ascii_isprint (data[i]) ? data[i] : '?');
 	g_print ("\n");
-	g_free (data);
+}
+
+	/* the first byte is success */
+	switch (data[0]) {
+	case 0x00:
+		/* assume success */
+		break;
+	case 0x80:
+		/* failure, the return buffer is set to NoCmd */
+		g_set_error (error, 1, 0, "failed to issue command: %s", &data[2]);
+		goto out;
+	default:
+		g_warning ("return value unknown: 0x%02x, continuing", data[0]);
+		break;
+	}
 
 	/* success */
 	ret = TRUE;
 out:
+	g_free (data);
 	return ret;
 }
+
+#define HUEY_COMMAND_UNKNOWN_00		0x00
+#define HUEY_COMMAND_UNKNOWN_02		0x02
+#define HUEY_COMMAND_UNKNOWN_03		0x03
+#define HUEY_COMMAND_UNKNOWN_05		0x05
+#define HUEY_COMMAND_UNKNOWN_06		0x06
+#define HUEY_COMMAND_UNKNOWN_07		0x07
+#define HUEY_COMMAND_UNKNOWN_08		0x08
+#define HUEY_COMMAND_UNKNOWN_0E		0x0e
+#define HUEY_COMMAND_UNKNOWN_0F		0x0f
+#define HUEY_COMMAND_UNKNOWN_13		0x13
+#define HUEY_COMMAND_UNKNOWN_16		0x16
+#define HUEY_COMMAND_UNKNOWN_18		0x18
+#define HUEY_COMMAND_UNKNOWN_19		0x19
 
 int
 main (void)
@@ -196,14 +215,20 @@ main (void)
 		goto out;
 	}
 
-	/* send all commands from 0x00 to 0xff */
-	for (i=0x00; i<0xff; i++) {
-		ret = send_command (priv, i, &error);
+{
+	guchar available[] = { 0x00, 0x02, 0x03, 0x05, 0x06, 0x07, 0x08, 0x0e, 0x0f, 0x13, 0x16, 0x18, 0x19, 0xff };
+
+	/* send all commands that are implemented */
+	for (i=0; available[i] != 0xff; i++) {
+		ret = send_command (priv, available[i], &error);
 		if (!ret) {
-			g_warning ("failed to write command 0x%02i: %s", i, error->message);
+			g_warning ("failed to write command 0x%02i: %s\n", available[i], error->message);
 			g_clear_error (&error);
+//		} else {
+//			g_print ("0x%02x, ", i);
 		}
 	}
+}
 
 	/* do something */
 	g_warning ("fixme");
