@@ -47,6 +47,8 @@ libcolor_glib_la_SOURCES =					\
 	gcm-sensor.h						\
 	gcm-sensor-huey.c					\
 	gcm-sensor-huey.h					\
+	gcm-sensor-dummy.c					\
+	gcm-sensor-dummy.h					\
 	gcm-ddc-client.c					\
 	gcm-ddc-client.h					\
 	gcm-ddc-device.c					\
