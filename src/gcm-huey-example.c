@@ -47,12 +47,26 @@
  * returns: 00 02 00 00 0a 00 00 00 (or)
  *          00 02 00 0e c6 80 00 00
  *            data --^^^^^ ^-- only ever 00 or 80
+ *                    |
+ *                    \-- for RGB(00,00,00) is 09 f2
+ *                            RGB(ff,ff,ff) is 00 00
+ *                            RGB(ff,00,00) is 00 11
+ *                            RGB(00,ff,00) is 00 06
+ *                            RGB(00,00,ff) is 00 06
  *
- * only when profiling */
+ * only when profiling
+ * has to be preceeded by HUEY_COMMAND_UNKNOWN_16 (00 01 00 01 00 01 7f) */
 #define HUEY_COMMAND_UNKNOWN_02		0x02
 
 /* input:   03 02 00 0f c1 80 00 00
  * returns: 00 03 00 0f 18 00 00 00
+ *            data --^^^^^ ^-- only ever 00 or 80
+ *                    |
+ *                    \-- for RGB(00,00,00) is 09 64
+ *                            RGB(ff,ff,ff) is 08 80
+ *                            RGB(ff,00,00) is 03 22
+ *                            RGB(00,ff,00) is 00 58
+ *                            RGB(00,00,ff) is 00 59
  *
  * Only used when doing profiling */
 #define HUEY_COMMAND_UNKNOWN_03		0x03
@@ -490,7 +504,7 @@ if (0) {
 	}
 }
 
-{
+if (0) {
 	guchar payload[] = { 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17 };
 	g_warning ("moo");
 
@@ -511,6 +525,19 @@ if (0) {
 	g_warning ("moo");
 }
 
+/* try to get color value */
+if (1) {
+	guchar setup[] = { 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x7f };
+	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	g_warning ("moo");
+
+	send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup, &error);
+
+	send_command (priv, HUEY_COMMAND_UNKNOWN_02, payload, &error);
+	send_command (priv, HUEY_COMMAND_UNKNOWN_03, payload, &error);
+
+	g_warning ("moo");
+}
 	/* set LEDs */
 	ret = send_leds (priv, 0x00, &error);
 	if (!ret) {
