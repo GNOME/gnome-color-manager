@@ -29,14 +29,26 @@ libcolor_glib_includedir = $(includedir)/libcolor-glib
 
 libcolor_glib_include_HEADERS =					\
 	libcolor-glib.h						\
-	gcm-version.h						\
 	gcm-common.h						\
+	gcm-ddc-client.h					\
+	gcm-ddc-device.h					\
+	gcm-ddc-control.h					\
+	gcm-ddc-common.h					\
+	gcm-version.h						\
 	$(NULL)
 
 libcolor_glib_la_SOURCES =					\
 	libcolor-glib.h						\
-	gcm-common.h						\
 	gcm-common.c						\
+	gcm-common.h						\
+	gcm-ddc-client.c					\
+	gcm-ddc-client.h					\
+	gcm-ddc-device.c					\
+	gcm-ddc-device.h					\
+	gcm-ddc-control.c					\
+	gcm-ddc-control.h					\
+	gcm-ddc-common.c					\
+	gcm-ddc-common.h					\
 	gcm-version.h						\
 	$(NULL)
 

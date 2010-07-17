@@ -29,6 +29,10 @@
 #define __GCM_H_INSIDE__
 
 #include <gcm-common.h>
+#include <gcm-ddc-common.h>
+#include <gcm-ddc-device.h>
+#include <gcm-ddc-client.h>
+#include <gcm-ddc-control.h>
 
 #undef __GCM_H_INSIDE__
 

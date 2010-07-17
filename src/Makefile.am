@@ -17,6 +17,7 @@ INCLUDES =						\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
 	$(GUDEV_CFLAGS)					\
+	-I$(top_srcdir)/libcolor-glib			\
 	-DBINDIR=\"$(bindir)\"				\
 	-DLIBEXECDIR=\"$(libexecdir)\"			\
 	-DSBINDIR=\"$(sbindir)\"			\
@@ -26,6 +27,7 @@ INCLUDES =						\
 	-DLOCALEDIR=\""$(localedir)"\"			\
 	-DTESTDATADIR=\""$(top_srcdir)/data/tests"\"	\
 	-DGCM_SYSTEM_PROFILES_DIR="\"$(GCM_SYSTEM_PROFILES_DIR)"\" \
+	-DI_KNOW_THE_GCM_GLIB_API_IS_SUBJECT_TO_CHANGE	\
 	-DGCM_DATA=\"$(pkgdatadir)\"
 
 introspectiondir = $(datadir)/dbus-1/interfaces
@@ -116,6 +118,7 @@ bin_PROGRAMS =						\
 	gcm-viewer					\
 	gcm-session					\
 	gcm-picker					\
+	gcm-ddc-util					\
 	gcm-import
 
 if HAVE_EXIV
@@ -339,6 +342,19 @@ libcolor_la_LIBADD =					\
 
 libcolor_la_LDFLAGS = -avoid-version -module
 libcolor_la_CFLAGS = $(WARNINGFLAGS_C)
+
+COLOR_GLIB_LIBS =						\
+	$(top_builddir)/libcolor-glib/libcolor-glib.la
+
+gcm_ddc_util_SOURCES =					\
+	gcm-ddc-util.c
+
+gcm_ddc_util_LDADD =					\
+	$(GLIB_LIBS)					\
+	$(COLOR_GLIB_LIBS)
+
+gcm_ddc_util_CFLAGS =					\
+	$(WARNINGFLAGS_C)
 
 if HAVE_TESTS
 

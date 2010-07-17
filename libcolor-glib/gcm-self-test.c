@@ -24,6 +24,8 @@
 #include <glib-object.h>
 
 #include "gcm-common.h"
+#include "gcm-ddc-client.h"
+#include "gcm-ddc-device.h"
 
 static void
 gcm_test_common_func (void)
@@ -109,6 +111,28 @@ gcm_test_common_func (void)
 	g_assert_cmpfloat (mat.m22, >, -0.001f);
 }
 
+static void
+gcm_test_ddc_device_func (void)
+{
+	GcmDdcDevice *device;
+
+	device = gcm_ddc_device_new ();
+	g_assert (device != NULL);
+
+	g_object_unref (device);
+}
+
+static void
+gcm_test_ddc_client_func (void)
+{
+	GcmDdcClient *client;
+
+	client = gcm_ddc_client_new ();
+	g_assert (client != NULL);
+
+	g_object_unref (client);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -118,6 +142,8 @@ main (int argc, char **argv)
 
 	/* tests go here */
 	g_test_add_func ("/libcolor-glib/common", gcm_test_common_func);
+	g_test_add_func ("/libcolor-glib/ddc-device", gcm_test_ddc_device_func);
+	g_test_add_func ("/libcolor-glib/ddc-client", gcm_test_ddc_client_func);
 
 	return g_test_run ();
 }
