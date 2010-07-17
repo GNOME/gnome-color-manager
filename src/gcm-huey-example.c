@@ -493,10 +493,12 @@ read_registers (GcmPriv *priv, GError **error)
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
-	guchar i;
+	guchar i, j;
+	guchar data[72];
+	guint len = 0x5a;
 
 	/* We read from 0x04 to 0x72 at startup */
-	for (i=0x00; i<=0x72; i++) {
+	for (i=0x00; i<=len; i++) {
 
 		request[1] = i;
 		ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
@@ -504,9 +506,33 @@ read_registers (GcmPriv *priv, GError **error)
 			goto out;
 
 		/* this seems like the only bit of data that's useful */
-		g_print ("register value: 0x%02x [%c]\n", reply[3], g_ascii_isprint (reply[3]) ? reply[3] : '?');
+		data[i] = reply[3];
 	}
 
+	/* try to find patterns */
+	for (i=0; i<len; i+=4) {
+		g_print ("0x%02x\t", i);
+		for (j=0; j<4; j++)
+			g_print ("%c ", g_ascii_isprint (data[i+j]) ? data[i+j] : '?');
+		g_print ("\n");
+	}
+	g_print ("\n");
+
+	for (i=0; i<len; i+=4) {
+		g_print ("0x%02x\t", i);
+		for (j=0; j<4; j++)
+			g_print ("%02x ", data[i+j]);
+		g_print ("\n");
+	}
+	g_print ("\n");
+
+	for (i=0; i<len; i+=4) {
+		g_print ("0x%02x\t", i);
+		for (j=0; j<4; j++)
+			g_print ("%02i ", data[i+j]);
+		g_print ("\n");
+	}
+	g_print ("\n");
 out:
 	return ret;
 }
@@ -635,11 +661,11 @@ main (void)
 		goto out;
 	}
 
-if (0) {
+if (1) {
 	/* this is done by the windows driver */
 	ret = read_registers (priv, &error);
 	if (!ret) {
-		g_warning ("failed to do thing: %s", error->message);
+		g_warning ("failed to do read register: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -684,7 +710,7 @@ if (0) {
 }
 
 /* try to get color value */
-if (1) {
+if (0) {
 
 	GcmColorRgb values;
 	ret = get_color (priv, &values, &error);
