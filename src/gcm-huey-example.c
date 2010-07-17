@@ -40,20 +40,54 @@
 #define HUEY_RETVAL_ERROR		0x80
 #define HUEY_RETVAL_RETRY		0x90
 
-#define HUEY_COMMAND_UNKNOWN_00		0x00 /* returns: "Cir001" -- Cirrus Logic? It's a Cyprus IC... */
-#define HUEY_COMMAND_UNKNOWN_02		0x02 /* returns: all NULL for NULL input, 00,02,02,cc,53,6c,00,00 for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_UNKNOWN_03		0x03 /* returns: all NULL for NULL input, 00,03,62,18,88,85,00,00 for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_UNKNOWN_05		0x05 /* returns: all NULL for NULL input, 00,05,00,00,00,00,00,00 for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_UNKNOWN_06		0x06 /* returns: all NULL for NULL input, 00,06,f1,f2,f3,f4,00,00 for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_UNKNOWN_07		0x07 /* returns: all NULL all of the time */
-#define HUEY_COMMAND_UNKNOWN_08		0x08 /* returns: all NULL for NULL input, 00,08,f1,f2,00,00,00,00 for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_UNLOCK		0x0e /* returns: all NULL all of the time */
-#define HUEY_COMMAND_UNKNOWN_0F		0x0f /* returns: all NULL all of the time */
-#define HUEY_COMMAND_UNKNOWN_13		0x13 /* returns: all NULL all of the time */
-#define HUEY_COMMAND_UNKNOWN_16		0x16 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_AMBIENT		0x17 /* returns: 90,17,03,00,00,00,00,00 */
-#define HUEY_COMMAND_SET_LEDS		0x18 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_UNKNOWN_19		0x19 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
+/* returns: "Cir001" -- Cirrus Logic? It's a Cyprus IC... */
+#define HUEY_COMMAND_UNKNOWN_00		0x00
+
+/* returns: all NULL for NULL input, 00,02,02,cc,53,6c,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_02		0x02
+
+/* returns: all NULL for NULL input, 00,03,62,18,88,85,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_03		0x03
+
+/* returns: all NULL for NULL input, 00,05,00,00,00,00,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_05		0x05
+
+/* returns: all NULL for NULL input, 00,06,f1,f2,f3,f4,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_06		0x06
+
+/* returns: all NULL all of the time */
+#define HUEY_COMMAND_UNKNOWN_07		0x07
+
+/* returns: all NULL for NULL input, 00,08,f1,f2,00,00,00,00 for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_08		0x08
+
+/* returns: all NULL all of the time */
+#define HUEY_COMMAND_UNLOCK		0x0e
+
+/* returns: all NULL all of the time */
+#define HUEY_COMMAND_UNKNOWN_0F		0x0f
+
+/* returns: all NULL all of the time */
+#define HUEY_COMMAND_UNKNOWN_13		0x13
+
+/* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_16		0x16
+
+/* returns: 90,17,03,00,00,00,00,00, then on second read:
+ * 	    00,17,03,00,00,62,57,00 in light (or)
+ * 	    00,17,03,00,00,00,08,00 in light
+ * 	no idea	--^^	   ^---^ = 16bits data?
+ */
+#define HUEY_COMMAND_AMBIENT		0x17
+
+/* input:   18,00,f0,00,00,00,00,00
+ * returns: 00,18,f0,00,00,00,00,00
+ *   led mask ----^
+ */
+#define HUEY_COMMAND_SET_LEDS		0x18
+
+/* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
+#define HUEY_COMMAND_UNKNOWN_19		0x19
 
 typedef struct {
 	gboolean		 connected;
@@ -241,7 +275,7 @@ send_command (GcmPriv *priv, guchar command, const guchar *payload, GError **err
 	gsize reply_read;
 	guint i;
 
-	/* first byte seems to be a command, i've no idea what the others do */
+	/* first byte seems to be a command */
 	request[0] = command;
 	for (i=1; i<8; i++)
 		request[i] = payload[i-1];
@@ -293,13 +327,24 @@ send_leds (GcmPriv *priv, guchar mask, GError **error)
 }
 
 static gboolean
-get_ambient (GcmPriv *priv, GError **error)
+get_ambient (GcmPriv *priv, guint16 *value, GError **error)
 {
 	/* from usb-ambient.txt */
-	guchar payload[] = { 0x03, 0x00, 0xa9, 0xaa, 0xaa, 0xab, 0xab };
+	guchar request[] = { HUEY_COMMAND_AMBIENT, 0x03, 0x00, 0xa9, 0xaa, 0xaa, 0xab, 0xab };
+	guchar reply[8];
+	gboolean ret;
+	gsize reply_read;
 
-	/* send all commands that are implemented */
-	return send_command (priv, HUEY_COMMAND_AMBIENT, payload, error);
+	/* hit hardware */
+	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	if (!ret)
+		goto out;
+
+	/* parse the value */
+	g_debug ("%i, %i", reply[5], reply[5]);
+	*value = reply[5] * 0xff + reply[6];
+out:
+	return ret;
 }
 
 int
@@ -307,6 +352,7 @@ main (void)
 {
 	gint retval;
 	guint i;
+	guint16 value;
 	gboolean ret;
 	GcmPriv *priv;
 	GError *error = NULL;
@@ -346,12 +392,13 @@ main (void)
 	}
 
 	/* get ambient */
-	ret = get_ambient (priv, &error);
+	ret = get_ambient (priv, &value, &error);
 	if (!ret) {
 		g_warning ("failed to get ambient: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
+	g_debug ("ambient = %i(units?)", value);
 
 if (0) {
 	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
