@@ -105,14 +105,12 @@
 #define HUEY_COMMAND_UNKNOWN_07		0x07
 
 /* (sent at startup  after the unlock)
- * input:   08 0b 00 10 3c 06 00 00
+ * input:   08 0b xx xx xx xx xx xx
  *             ^^-- register address
  * returns: 00 08 0b b8 00 00 00 00
  *      address --^^ ^^-- value
- * input:   08 f1 f2 f3 f4 f5 f6 f7
- * returns: 00 08 f1 f2 00 00 00 00
  */
-#define HUEY_COMMAND_UNKNOWN_REG_READ	0x08
+#define HUEY_COMMAND_REGISTER_READ	0x08
 
 /* input:   0e 47 72 4d 62 6b 65 64
  *  "GrMbked"--^^^^^^^^^^^^^^^^^^^^
@@ -491,7 +489,7 @@ static gboolean
 read_registers (GcmPriv *priv, GError **error)
 {
 	/* according to wMaxPacketSize, all the messages have just 8 bytes */
-	guchar request[] = { HUEY_COMMAND_UNKNOWN_REG_READ, 0xff, 0x00, 0x10, 0x3c, 0x06, 0x00, 0x00 };
+	guchar request[] = { HUEY_COMMAND_REGISTER_READ, 0xff, 0x00, 0x10, 0x3c, 0x06, 0x00, 0x00 };
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
