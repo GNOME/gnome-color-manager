@@ -43,10 +43,18 @@
 /* returns: "Cir001" -- Cirrus Logic? Circuit1?... */
 #define HUEY_COMMAND_UNKNOWN_00		0x00
 
-/* returns: all NULL for NULL input: 00 02 02 cc 53 6c 00 00 for f1 f2 f3 f4 f5 f6 f7 f8 */
+/* input:   02 16 00 00 00 00 00 00
+ * returns: 00 02 00 00 0a 00 00 00 (or)
+ *          00 02 00 0e c6 80 00 00
+ *            data --^^^^^ ^-- only ever 00 or 80
+ *
+ * only when profiling */
 #define HUEY_COMMAND_UNKNOWN_02		0x02
 
-/* returns: all NULL for NULL input: 00 03 62 18 88 85 00 00 for f1 f2 f3 f4 f5 f6 f7 f8 */
+/* input:   03 02 00 0f c1 80 00 00
+ * returns: 00 03 00 0f 18 00 00 00
+ *
+ * Only used when doing profiling */
 #define HUEY_COMMAND_UNKNOWN_03		0x03
 
 /* returns: all NULL for NULL input: 00 05 00 00 00 00 00 00 for f1 f2 f3 f4 f5 f6 f7 f8 */
@@ -59,7 +67,8 @@
  */
 #define HUEY_COMMAND_UNKNOWN_06		0x06
 
-/* returns: all NULL all of the time */
+/* returns: all NULL all of the time
+ * NEVER USED */
 #define HUEY_COMMAND_UNKNOWN_07		0x07
 
 /* (sent at startup  after the unlock)
@@ -81,12 +90,21 @@
 /* returns: all NULL all of the time */
 #define HUEY_COMMAND_UNKNOWN_13		0x13
 
-/* returns: all NULL for NULL input: times out for f1 f2 f3 f4 f5 f6 f7 f8 */
+/* input:   16 00 01 00 01 00 01 00
+ * returns: 00 16 00 00 00 00 00 00
+ *
+ * only when profiling */
 #define HUEY_COMMAND_UNKNOWN_16		0x16
+
+/* input:   21 09 00 02 00 00 08 00 (or)
+ * returns: [never seems to return a value]
+ *
+ * only when profiling, and over and over -- some sort of poll? */
+#define HUEY_COMMAND_UNKNOWN_21		0x21
 
 /* returns: 90 17 03 00 00 00 00 00  then on second read:
  * 	    00 17 03 00 00 62 57 00 in light (or)
- * 	    00 17 03 00 00 00 08 00 in light
+ * 	    00 17 03 00 00 00 08 00 in dark
  * 	no idea	--^^	   ^---^ = 16bits data?
  */
 #define HUEY_COMMAND_AMBIENT		0x17
