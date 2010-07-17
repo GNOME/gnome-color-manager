@@ -499,28 +499,63 @@ data_to_float (guint8 *value)
 	return retval;
 }
 
+
 static gboolean
-read_registers (GcmPriv *priv, GError **error)
+read_register_byte (GcmPriv *priv, guint8 address, guint8 *value, GError **error)
 {
-	/* according to wMaxPacketSize, all the messages have just 8 bytes */
 	guchar request[] = { HUEY_COMMAND_REGISTER_READ, 0xff, 0x00, 0x10, 0x3c, 0x06, 0x00, 0x00 };
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
+
+	/* hit hardware -- it would be good to be able to get more than one byte of data at a time... */
+	request[1] = address;
+	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	if (!ret)
+		goto out;
+
+	/* this seems like the only byte of data that's useful */
+	*value = reply[3];
+out:
+	return ret;
+}
+
+static gboolean
+read_register_string (GcmPriv *priv, guint8 address, gchar *value, gsize len, GError **error)
+{
+	guint8 i;
+	gboolean ret = TRUE;
+
+	/* get each byte of the string */
+	for (i=0; i<len; i++) {
+		ret = read_register_byte (priv, address+i, (guint8*) &value[i], error);
+		if (!ret)
+			goto out;
+	}
+out:
+	return ret;
+}
+
+static gboolean
+read_registers (GcmPriv *priv, GError **error)
+{
+	gboolean ret;
 	guint i, j;
-	guint len = 0xff;
-	guchar data[len];
+	guint len = 0x02;//0xff;
+	guint8 data[len];
+	gchar unlock[5];
+
+	/* get unlock string */
+	ret = read_register_string (priv, 0x7a, unlock, 5, error);
+	if (!ret)
+		goto out;
+	g_print ("Unlock string: %s\n", unlock);
 
 	/* We read from 0x04 to 0x72 at startup */
 	for (i=0x00; i<=len; i++) {
-
-		request[1] = i;
-		ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+		ret = read_register_byte (priv, i, &data[i], error);
 		if (!ret)
 			goto out;
-
-		/* this seems like the only bit of data that's useful */
-		data[i] = reply[3];
 	}
 
 	/* try to find patterns */
