@@ -54,11 +54,11 @@ static const gchar *
 get_command_string (guchar value)
 {
 	if (value == 0x00)
-		return "status";
+		return "get-status";
 	if (value == 0x02)
-		return "get-green";
+		return "read-green";
 	if (value == 0x03)
-		return "get-blue";
+		return "read-blue";
 	if (value == 0x05)
 		return "set-value";
 	if (value == 0x06)
@@ -82,7 +82,7 @@ get_command_string (guchar value)
 	if (value == 0x15)
 		return "unknown15(status?)";
 	if (value == 0x16)
-		return "sample&get-red";
+		return "measure-rgb";
 	if (value == 0x21)
 		return "unknown21";
 	if (value == 0x17)

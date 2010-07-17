@@ -50,7 +50,7 @@
  *
  * Seems to get the currect status of the device.
  */
-#define HUEY_COMMAND_STATUS		0x00
+#define HUEY_COMMAND_GET_STATUS		0x00
 
 /* input:   02 16 00 00 00 00 00 00
  * returns: 00 02 00 00 0a 00 00 00 (or)
@@ -64,9 +64,9 @@
  *                            RGB(00,00,ff) is 08 56
  *
  * only when profiling
- * has to be preceeded by HUEY_COMMAND_SENSOR_RED_SAMPLE (00 1e 00 27 00 15 03)
+ * has to be preceeded by HUEY_COMMAND_SENSOR_MEASURE_RGB (00 1e 00 27 00 15 03)
  */
-#define HUEY_COMMAND_SENSOR_GREEN		0x02
+#define HUEY_COMMAND_READ_GREEN		0x02
 
 /* input:   03 02 00 0f c1 80 00 00
  * returns: 00 03 00 0f 18 00 00 00
@@ -79,9 +79,9 @@
  *                            RGB(00,00,ff) is 00 59
  *
  * Only used when doing profiling
- * has to be preceeded by HUEY_COMMAND_SENSOR_RED_SAMPLE (00 01 00 01 00 01 7f)
+ * has to be preceeded by HUEY_COMMAND_SENSOR_MEASURE_RGB (00 01 00 01 00 01 7f)
  */
-#define HUEY_COMMAND_SENSOR_BLUE	0x03
+#define HUEY_COMMAND_READ_BLUE	0x03
 
 /* input:   05 ?? 11 12 13 14 xx xx
  * returns: 00 05 00 00 00 00 00 00
@@ -159,7 +159,7 @@
  * first in a RGB sequence, I think it's safe to assume that this command
  * does the measurement, and the others just return cached data.
  */
-#define HUEY_COMMAND_SENSOR_RED_SAMPLE		0x16
+#define HUEY_COMMAND_SENSOR_MEASURE_RGB		0x16
 
 /* input:   21 09 00 02 00 00 08 00 (or)
  * returns: [never seems to return a value]
@@ -575,14 +575,14 @@ if (1) {
 	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	g_warning ("moo");
 
-	ret = send_command (priv, HUEY_COMMAND_SENSOR_RED_SAMPLE, setup1, &error);
+	ret = send_command (priv, HUEY_COMMAND_SENSOR_MEASURE_RGB, setup1, &error);
 	if (!ret) {
 		g_warning ("failed to send randomness: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
-	send_command (priv, HUEY_COMMAND_SENSOR_BLUE, payload, &error);
-	send_command (priv, HUEY_COMMAND_SENSOR_GREEN, payload, &error);
+	send_command (priv, HUEY_COMMAND_READ_BLUE, payload, &error);
+	send_command (priv, HUEY_COMMAND_READ_GREEN, payload, &error);
 
 	g_warning ("moo");
 }
