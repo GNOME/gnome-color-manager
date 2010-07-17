@@ -33,10 +33,12 @@
 #define HUEY_VENDOR_ID			0x0971
 #define HUEY_PRODUCT_ID			0x2005
 #define HUEY_CONTROL_MESSAGE_TIMEOUT	5000 /* ms */
+#define HUEY_MAX_READ_RETRIES		5
 
 #define HUEY_RETVAL_SUCCESS		0x00
 #define HUEY_RETVAL_LOCKED		0xc0
 #define HUEY_RETVAL_ERROR		0x80
+#define HUEY_RETVAL_RETRY		0x90
 
 #define HUEY_COMMAND_UNKNOWN_00		0x00 /* returns: "Cir001" -- Cirrus Logic? It's a Cyprus IC... */
 #define HUEY_COMMAND_UNKNOWN_02		0x02 /* returns: all NULL for NULL input, 00,02,02,cc,53,6c,00,00 for 0xf1f2f3f4f5f6f7f8 */
@@ -49,7 +51,7 @@
 #define HUEY_COMMAND_UNKNOWN_0F		0x0f /* returns: all NULL all of the time */
 #define HUEY_COMMAND_UNKNOWN_13		0x13 /* returns: all NULL all of the time */
 #define HUEY_COMMAND_UNKNOWN_16		0x16 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
-#define HUEY_COMMAND_AMBIENT		0x17 /* returns: ? */
+#define HUEY_COMMAND_AMBIENT		0x17 /* returns: 90,17,03,00,00,00,00,00 */
 #define HUEY_COMMAND_SET_LEDS		0x18 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
 #define HUEY_COMMAND_UNKNOWN_19		0x19 /* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
 
@@ -142,7 +144,6 @@ print_data (const gchar *title, const guchar *data, gsize length)
 	g_print ("\n");
 }
 
-
 static gboolean
 send_data (GcmPriv *priv,
 	   const guchar *request, gsize request_len,
@@ -151,6 +152,7 @@ send_data (GcmPriv *priv,
 {
 	gint retval;
 	gboolean ret = FALSE;
+	guint i;
 
 	g_return_val_if_fail (request != NULL, FALSE);
 	g_return_val_if_fail (request_len != 0, FALSE);
@@ -174,44 +176,57 @@ send_data (GcmPriv *priv,
 		goto out;
 	}
 
-	/* get sync response, from bEndpointAddress */
-	retval = libusb_interrupt_transfer (priv->handle, 0x81,
-					    reply, (gint) reply_len, (gint*)reply_read,
-					    HUEY_CONTROL_MESSAGE_TIMEOUT);
-	if (retval < 0) {
-		g_set_error (error, 1, 0, "failed to get reply: %s", libusb_strerror (retval));
-		goto out;
-	}
+	/* some commands need to retry the read, unknown reason */
+	for (i=0; i<HUEY_MAX_READ_RETRIES; i++) {
 
-	/* show what we've got */
-	print_data ("reply", reply, *reply_read);
+		/* get sync response, from bEndpointAddress */
+		retval = libusb_interrupt_transfer (priv->handle, 0x81,
+						    reply, (gint) reply_len, (gint*)reply_read,
+						    HUEY_CONTROL_MESSAGE_TIMEOUT);
+		if (retval < 0) {
+			g_set_error (error, 1, 0, "failed to get reply: %s", libusb_strerror (retval));
+			goto out;
+		}
 
-	/* the first byte is success */
-	switch (reply[0]) {
-	case HUEY_RETVAL_SUCCESS:
-		/* assume success */
-		break;
-	case HUEY_RETVAL_LOCKED:
+		/* show what we've got */
+		print_data ("reply", reply, *reply_read);
+
+		/* the second byte seems to be the command again */
+		if (reply[1] != request[0]) {
+			g_set_error (error, 1, 0, "wrong command reply, got 0x%02x, expected 0x%02x", reply[1], request[0]);
+			goto out;
+		}
+
+		/* the first byte is status */
+		if (reply[0] == HUEY_RETVAL_SUCCESS) {
+			ret = TRUE;
+			break;
+		}
+
 		/* failure, the return buffer is set to "Locked" */
-		g_set_error_literal (error, 1, 0, "the device is locked");
-		goto out;
-	case HUEY_RETVAL_ERROR:
+		if (reply[0] == HUEY_RETVAL_LOCKED) {
+			g_set_error_literal (error, 1, 0, "the device is locked");
+			goto out;
+		}
+
 		/* failure, the return buffer is set to "NoCmd" */
-		g_set_error (error, 1, 0, "failed to issue command: %s", &reply[2]);
-		goto out;
-	default:
-		g_warning ("return value unknown: 0x%02x, continuing", reply[0]);
-		break;
+		if (reply[0] == HUEY_RETVAL_ERROR) {
+			g_set_error (error, 1, 0, "failed to issue command: %s", &reply[2]);
+			goto out;
+		}
+
+		/* we ignore retry */
+		if (reply[0] != HUEY_RETVAL_RETRY) {
+			g_set_error (error, 1, 0, "return value unknown: 0x%02x", reply[0]);
+			goto out;
+		}
 	}
 
-	/* the second byte seems to be the command again */
-	if (reply[1] != request[0]) {
-		g_set_error (error, 1, 0, "wrong command reply, got 0x%02x, expected 0x%02x", reply[1], request[0]);
+	/* no success */
+	if (!ret) {
+		g_set_error (error, 1, 0, "gave up retrying after %i reads", HUEY_MAX_READ_RETRIES);
 		goto out;
 	}
-
-	/* success */
-	ret = TRUE;
 out:
 	return ret;
 }
@@ -280,7 +295,8 @@ send_leds (GcmPriv *priv, guchar mask, GError **error)
 static gboolean
 get_ambient (GcmPriv *priv, GError **error)
 {
-	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	/* from usb-ambient.txt */
+	guchar payload[] = { 0x03, 0x00, 0xa9, 0xaa, 0xaa, 0xab, 0xab };
 
 	/* send all commands that are implemented */
 	return send_command (priv, HUEY_COMMAND_AMBIENT, payload, error);
