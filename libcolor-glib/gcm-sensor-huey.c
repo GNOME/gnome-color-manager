@@ -359,7 +359,9 @@ gcm_sensor_huey_send_data (GcmSensorHuey *sensor_huey,
 					  (guchar *) request, request_len,
 					  HUEY_CONTROL_MESSAGE_TIMEOUT);
 	if (retval < 0) {
-		g_set_error (error, 1, 0, "failed to send request: %s", libusb_strerror (retval));
+		g_set_error (error, GCM_SENSOR_ERROR,
+			     GCM_SENSOR_ERROR_INTERNAL,
+			     "failed to send request: %s", libusb_strerror (retval));
 		goto out;
 	}
 
@@ -371,7 +373,9 @@ gcm_sensor_huey_send_data (GcmSensorHuey *sensor_huey,
 						    reply, (gint) reply_len, (gint*)reply_read,
 						    HUEY_CONTROL_MESSAGE_TIMEOUT);
 		if (retval < 0) {
-			g_set_error (error, 1, 0, "failed to get reply: %s", libusb_strerror (retval));
+			g_set_error (error, GCM_SENSOR_ERROR,
+				     GCM_SENSOR_ERROR_INTERNAL,
+				     "failed to get reply: %s", libusb_strerror (retval));
 			goto out;
 		}
 
@@ -380,7 +384,9 @@ gcm_sensor_huey_send_data (GcmSensorHuey *sensor_huey,
 
 		/* the second byte seems to be the command again */
 		if (reply[1] != request[0]) {
-			g_set_error (error, 1, 0, "wrong command reply, got 0x%02x, expected 0x%02x", reply[1], request[0]);
+			g_set_error (error, GCM_SENSOR_ERROR,
+				     GCM_SENSOR_ERROR_INTERNAL,
+				     "wrong command reply, got 0x%02x, expected 0x%02x", reply[1], request[0]);
 			goto out;
 		}
 
@@ -392,26 +398,34 @@ gcm_sensor_huey_send_data (GcmSensorHuey *sensor_huey,
 
 		/* failure, the return buffer is set to "Locked" */
 		if (reply[0] == HUEY_RETVAL_LOCKED) {
-			g_set_error_literal (error, 1, 0, "the device is locked");
+			g_set_error_literal (error, GCM_SENSOR_ERROR,
+					     GCM_SENSOR_ERROR_INTERNAL,
+					     "the device is locked");
 			goto out;
 		}
 
 		/* failure, the return buffer is set to "NoCmd" */
 		if (reply[0] == HUEY_RETVAL_ERROR) {
-			g_set_error (error, 1, 0, "failed to issue command: %s", &reply[2]);
+			g_set_error (error, GCM_SENSOR_ERROR,
+				     GCM_SENSOR_ERROR_INTERNAL,
+				     "failed to issue command: %s", &reply[2]);
 			goto out;
 		}
 
 		/* we ignore retry */
 		if (reply[0] != HUEY_RETVAL_RETRY) {
-			g_set_error (error, 1, 0, "return value unknown: 0x%02x", reply[0]);
+			g_set_error (error, GCM_SENSOR_ERROR,
+				     GCM_SENSOR_ERROR_INTERNAL,
+				     "return value unknown: 0x%02x", reply[0]);
 			goto out;
 		}
 	}
 
 	/* no success */
 	if (!ret) {
-		g_set_error (error, 1, 0, "gave up retrying after %i reads", HUEY_MAX_READ_RETRIES);
+		g_set_error (error, GCM_SENSOR_ERROR,
+			     GCM_SENSOR_ERROR_INTERNAL,
+			     "gave up retrying after %i reads", HUEY_MAX_READ_RETRIES);
 		goto out;
 	}
 out:
@@ -544,7 +558,9 @@ gcm_sensor_huey_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
 	/* ensure the user set this */
 	output_type = gcm_sensor_get_output_type (sensor);
 	if (output_type == GCM_SENSOR_OUTPUT_TYPE_UNKNOWN) {
-		g_set_error_literal (error, 1, 0, "output sensor type was not set");
+		g_set_error_literal (error, GCM_SENSOR_ERROR,
+				     GCM_SENSOR_ERROR_INTERNAL,
+				     "output sensor type was not set");
 		goto out;
 	}
 
@@ -714,7 +730,9 @@ gcm_sensor_huey_find_device (GcmSensorHuey *sensor_huey, GError **error)
 	/* get device */
 	cnt = libusb_get_device_list (NULL, &devs);
 	if (cnt < 0) {
-		g_set_error (error, 1, 0, "failed to get device list: %s", libusb_strerror (cnt));
+		g_set_error (error, GCM_SENSOR_ERROR,
+			     GCM_SENSOR_ERROR_INTERNAL,
+			     "failed to get device list: %s", libusb_strerror (cnt));
 		goto out;
 	}
 
@@ -733,7 +751,6 @@ gcm_sensor_huey_find_device (GcmSensorHuey *sensor_huey, GError **error)
 		/* does match HUEY? */
 		if (desc.idVendor == HUEY_VENDOR_ID &&
 		    desc.idProduct == HUEY_PRODUCT_ID) {
-			g_debug ("got huey!");
 			ret = TRUE;
 			sensor_huey->priv->device = libusb_ref_device (dev);
 			break;
@@ -742,7 +759,9 @@ gcm_sensor_huey_find_device (GcmSensorHuey *sensor_huey, GError **error)
 
 	/* not found */
 	if (!ret) {
-		g_set_error_literal (error, 1, 0, "no compatible hardware attached");
+		g_set_error_literal (error, GCM_SENSOR_ERROR,
+				     GCM_SENSOR_ERROR_INTERNAL,
+				     "no compatible hardware attached");
 		goto out;
 	}
 
@@ -750,7 +769,9 @@ gcm_sensor_huey_find_device (GcmSensorHuey *sensor_huey, GError **error)
 	retval = libusb_open (sensor_huey->priv->device, &sensor_huey->priv->handle);
 	if (retval < 0) {
 		ret = FALSE;
-		g_set_error (error, 1, 0, "failed to open device: %s", libusb_strerror (retval));
+		g_set_error (error, GCM_SENSOR_ERROR,
+			     GCM_SENSOR_ERROR_INTERNAL,
+			     "failed to open device: %s", libusb_strerror (retval));
 		goto out;
 	}
 
@@ -758,13 +779,17 @@ gcm_sensor_huey_find_device (GcmSensorHuey *sensor_huey, GError **error)
 	retval = libusb_set_configuration (sensor_huey->priv->handle, 1);
 	if (retval < 0) {
 		ret = FALSE;
-		g_set_error (error, 1, 0, "failed to set configuration: %s", libusb_strerror (retval));
+		g_set_error (error, GCM_SENSOR_ERROR,
+			     GCM_SENSOR_ERROR_INTERNAL,
+			     "failed to set configuration: %s", libusb_strerror (retval));
 		goto out;
 	}
 	retval = libusb_claim_interface (sensor_huey->priv->handle, 0);
 	if (retval < 0) {
 		ret = FALSE;
-		g_set_error (error, 1, 0, "failed to claim interface: %s", libusb_strerror (retval));
+		g_set_error (error, GCM_SENSOR_ERROR,
+			     GCM_SENSOR_ERROR_INTERNAL,
+			     "failed to claim interface: %s", libusb_strerror (retval));
 		goto out;
 	}
 out:

@@ -24,6 +24,7 @@
 #include <glib-object.h>
 
 #include "gcm-common.h"
+#include "gcm-sensor-dummy.h"
 #include "gcm-ddc-client.h"
 #include "gcm-ddc-device.h"
 
@@ -133,6 +134,50 @@ gcm_test_ddc_client_func (void)
 	g_object_unref (client);
 }
 
+static void
+gcm_test_sensor_func (void)
+{
+	gboolean ret;
+	GError *error = NULL;
+	GcmSensor *sensor;
+	gdouble value;
+	GcmColorXYZ values;
+
+	/* start sensor */
+	sensor = gcm_sensor_dummy_new ();
+	ret = gcm_sensor_startup (sensor, &error);
+	g_assert (ret);
+	g_assert_no_error (error);
+
+	/* set LEDs */
+	ret = gcm_sensor_set_leds (sensor, 0x0f, &error);
+	g_assert (ret);
+	g_assert_no_error (error);
+
+	/* set mode */
+	gcm_sensor_set_output_type (sensor, GCM_SENSOR_OUTPUT_TYPE_LCD);
+	g_assert_cmpint (gcm_sensor_get_output_type (sensor), ==, GCM_SENSOR_OUTPUT_TYPE_LCD);
+
+	/* get ambient */
+	ret = gcm_sensor_get_ambient (sensor, &value, &error);
+	g_assert (ret);
+	g_assert_no_error (error);
+	g_debug ("ambient = %.1lf Lux", value);
+
+	/* sample color */
+	ret = gcm_sensor_sample (sensor, &values, &error);
+	g_assert (ret);
+	g_assert_no_error (error);
+	g_debug ("X=%0.4lf, Y=%0.4lf, Z=%0.4lf", values.X, values.Y, values.Z);
+
+	/* set LEDs */
+	ret = gcm_sensor_set_leds (sensor, 0x00, &error);
+	g_assert (ret);
+	g_assert_no_error (error);
+
+	g_object_unref (sensor);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -144,6 +189,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/libcolor-glib/common", gcm_test_common_func);
 	g_test_add_func ("/libcolor-glib/ddc-device", gcm_test_ddc_device_func);
 	g_test_add_func ("/libcolor-glib/ddc-client", gcm_test_ddc_client_func);
+	g_test_add_func ("/libcolor-glib/sensor", gcm_test_sensor_func);
 
 	return g_test_run ();
 }

@@ -35,6 +35,7 @@
 #include <gcm-ddc-control.h>
 #include <gcm-sensor.h>
 #include <gcm-sensor-huey.h>
+#include <gcm-sensor-dummy.h>
 
 #undef __GCM_H_INSIDE__
 
