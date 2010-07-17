@@ -212,6 +212,7 @@ typedef struct {
 	gboolean		 connected;
 	libusb_device		*device;
 	libusb_device_handle	*handle;
+	GcmMat3x3		 device_matrix;
 } GcmSensorHuey;
 
 /**
@@ -611,6 +612,10 @@ gcm_sensor_huey_read_register_matrix (GcmSensorHuey *huey, guint8 addr, GcmMat3x
 	gboolean ret = TRUE;
 	guint i;
 	gfloat tmp;
+	gdouble *matrix_data;
+
+	/* get this to avoid casting */
+	matrix_data = gcm_mat33_get_data (value);
 
 	/* read in 3d matrix */
 	for (i=0; i<9; i++) {
@@ -618,10 +623,8 @@ gcm_sensor_huey_read_register_matrix (GcmSensorHuey *huey, guint8 addr, GcmMat3x
 		if (!ret)
 			goto out;
 
-		/* save in matrix -- FIXME: make this a macro */
-		*(((gdouble *) value)+i) = tmp;
-
-		g_debug ("tmp=%f", tmp);
+		/* save in matrix */
+		*(matrix_data+i) = tmp;
 	}
 out:
 	return ret;
@@ -638,7 +641,6 @@ gcm_sensor_huey_read_registers (GcmSensorHuey *huey, GError **error)
 	guint len = 0xff;
 	guint8 data[len];
 	gchar unlock[5];
-	GcmMat3x3 value;
 
 	/* get unlock string */
 	ret = gcm_sensor_huey_read_register_string (huey, 0x7a, unlock, 5, error);
@@ -647,11 +649,13 @@ gcm_sensor_huey_read_registers (GcmSensorHuey *huey, GError **error)
 	g_print ("Unlock string: %s\n", unlock);
 
 	/* get matrix */
-	gcm_mat33_clear (&value);
-	ret = gcm_sensor_huey_read_register_matrix (huey, 0x04, &value, error);
+	gcm_mat33_clear (&huey->device_matrix);
+	ret = gcm_sensor_huey_read_register_matrix (huey, 0x04, &huey->device_matrix, error);
 	if (!ret)
 		goto out;
-	g_print ("Big number @0x%02x): %s\n", 0x00, gcm_mat33_to_string (&value));
+	g_print ("device matrix: %s\n", gcm_mat33_to_string (&huey->device_matrix));
+
+goto out;
 
 	/* We read from 0x04 to 0x72 at startup */
 	for (i=0x00; i<=len; i++) {
@@ -736,9 +740,9 @@ out:
 
 /* the sensor returns an arbitary value which we scale to 1.0 for 100%
  * (this is based on my monitor, not any agreed standard...) */
-#define HUEY_SCALE_VALUE_RED		4.5f
-#define HUEY_SCALE_VALUE_GREEN		3.5f
-#define HUEY_SCALE_VALUE_BLUE		30.0f
+#define HUEY_SCALE_VALUE_RED		1.0f
+#define HUEY_SCALE_VALUE_GREEN		1.0f
+#define HUEY_SCALE_VALUE_BLUE		1.0f
 
 /**
  * gcm_sensor_huey_get_color:
@@ -776,6 +780,25 @@ gcm_sensor_huey_get_color (GcmSensorHuey *huey, GcmColorRgb *values, GError **er
 	values->green = HUEY_SCALE_VALUE_GREEN * values->green / multiplier.green;
 	values->blue = HUEY_SCALE_VALUE_BLUE * values->blue / multiplier.blue;
 	g_debug ("scaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", values->red, values->green, values->blue);
+
+{
+	GcmVec3 *vec = (GcmVec3 *) values;
+	GcmVec3 test;
+
+	g_print ("PRE: %s\n", gcm_vec3_to_string (vec));
+
+	/* it would be redicuous for the device to emit RGB, it would be completely arbitrary --
+	 * see if the matrix of data is designed to convert to LAB or XYZ */
+	gcm_mat33_vector_multiply (&huey->device_matrix, vec, &test);
+
+test.v0 *= 1000;
+test.v1 *= 1000;
+test.v2 *= 1000;
+
+// argyll gets XYZ: 95.773273 50.278955 2.210076 -- we get 3.636, 0.435, -0.017
+
+	g_print ("POST: %s\n", gcm_vec3_to_string (&test));
+}
 
 	g_assert (values->red < 1.0f);
 	g_assert (values->green < 1.0f);
@@ -825,7 +848,7 @@ if(0){
 	}
 }
 
-if (0) {
+if (1) {
 	/* this is done by the windows driver */
 	ret = gcm_sensor_huey_read_registers (huey, &error);
 	if (!ret) {
