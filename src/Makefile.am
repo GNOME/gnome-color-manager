@@ -393,6 +393,10 @@ install-data-hook:
 	fi
 
 gcm_huey_example_SOURCES =				\
+	gcm-sensor.c					\
+	gcm-sensor.h					\
+	gcm-sensor-huey.c				\
+	gcm-sensor-huey.h				\
 	gcm-huey-example.c
 
 gcm_huey_example_LDADD =				\
