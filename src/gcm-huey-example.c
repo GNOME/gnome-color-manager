@@ -762,11 +762,11 @@ gcm_sensor_huey_get_color (GcmSensorHuey *huey, GcmColorRgb *values, GError **er
 	/* compromise between the amount of time and the precision */
 	value = HUEY_PRECISION_TIME_VALUE;
 	if (values->red < value)
-		multiplier.red = value / values->red;
+		multiplier.red = (gfloat)value / values->red;
 	if (values->green < value)
-		multiplier.green = value / values->green;
+		multiplier.green = (gfloat)value / values->green;
 	if (values->blue < value)
-		multiplier.blue = value / values->blue;
+		multiplier.blue = (gfloat)value / values->blue;
 	g_debug ("using multiplier factor: red=%i, green=%i, blue=%i", multiplier.red, multiplier.green, multiplier.blue);
 	ret = gcm_sensor_huey_get_color_for_threshold (huey, &multiplier, values, error);
 	if (!ret)
@@ -775,7 +775,7 @@ gcm_sensor_huey_get_color (GcmSensorHuey *huey, GcmColorRgb *values, GError **er
 	values->red = HUEY_SCALE_VALUE_RED * values->red / multiplier.red;
 	values->green = HUEY_SCALE_VALUE_GREEN * values->green / multiplier.green;
 	values->blue = HUEY_SCALE_VALUE_BLUE * values->blue / multiplier.blue;
-//	g_debug ("scaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", values->red, values->green, values->blue);
+	g_debug ("scaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", values->red, values->green, values->blue);
 
 	g_assert (values->red < 1.0f);
 	g_assert (values->green < 1.0f);
