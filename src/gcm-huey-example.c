@@ -518,16 +518,23 @@ typedef struct {
 	guint8	 blue;
 } GcmColorUint8;
 
+#if 0
 typedef struct {
 	guint16	 red;
 	guint16	 green;
 	guint16	 blue;
 } GcmColorUint16;
+#endif
+
+typedef struct {
+	gdouble	 red;
+	gdouble	 green;
+	gdouble	 blue;
+} GcmColorRgbDouble;
 
 static gboolean
-get_color_for_threshold (GcmPriv *priv, GcmColorUint8 *threshold, GcmColorUint16 *values, GError **error)
+get_color_for_threshold (GcmPriv *priv, GcmColorUint8 *threshold, GcmColorRgbDouble *values, GError **error)
 {
-	/* from usb-ambient.txt */
 	guchar request[] = { HUEY_COMMAND_SENSOR_MEASURE_RGB, 0x00, threshold->red, 0x00, threshold->green, 0x00, threshold->blue, 0x00 };
 	guchar reply[8];
 	gboolean ret;
@@ -539,7 +546,7 @@ get_color_for_threshold (GcmPriv *priv, GcmColorUint8 *threshold, GcmColorUint16
 		goto out;
 
 	/* get value */
-	values->red = (reply[3] * 0xff) + reply[4];
+	values->red = 1.0f / ((reply[3] * 0xff) + reply[4]);
 
 	/* get green */
 	request[0] = HUEY_COMMAND_READ_GREEN;
@@ -548,7 +555,7 @@ get_color_for_threshold (GcmPriv *priv, GcmColorUint8 *threshold, GcmColorUint16
 		goto out;
 
 	/* get value */
-	values->green = (reply[3] * 0xff) + reply[4];
+	values->green = 1.0f / ((reply[3] * 0xff) + reply[4]);
 
 	/* get blue */
 	request[0] = HUEY_COMMAND_READ_BLUE;
@@ -557,42 +564,58 @@ get_color_for_threshold (GcmPriv *priv, GcmColorUint8 *threshold, GcmColorUint16
 		goto out;
 
 	/* get value */
-	values->blue = (reply[3] * 0xff) + reply[4];
+	values->blue = 1.0f / ((reply[3] * 0xff) + reply[4]);
 out:
 	return ret;
 }
 
+/* this is a random number chosen to find the best accuracy whilst
+ * maintaining a fast read. We scale each RGB value seporately. */
+#define HUEY_PRECISION_TIME_VALUE	0.25f
+
+/* the sensor returns an arbitary value which we scale to 1.0 for 100%
+ * (this is based on my monitor, not any agreed standard...) */
+#define HUEY_SCALE_VALUE_RED		4.5f
+#define HUEY_SCALE_VALUE_GREEN		3.5f
+#define HUEY_SCALE_VALUE_BLUE		30.0f
+
 static gboolean
-get_color (GcmPriv *priv, GcmColorUint16 *values, GError **error)
+get_color (GcmPriv *priv, GcmColorRgbDouble *values, GError **error)
 {
 	gboolean ret;
-	GcmColorUint8 rgb;
-	guint i;
+	gdouble value;
+	GcmColorUint8 multiplier;
 
 	/* set this to one value for a quick approximate value */
-	rgb.red = 1;
-	rgb.green = 1;
-	rgb.blue = 1;
-	ret = get_color_for_threshold (priv, &rgb, values, error);
+	multiplier.red = 1;
+	multiplier.green = 1;
+	multiplier.blue = 1;
+	ret = get_color_for_threshold (priv, &multiplier, values, error);
 	if (!ret)
 		goto out;
-	g_debug ("initial values: red=%i, green=%i, blue=%i", values->red, values->green, values->blue);
+	g_debug ("initial values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", values->red, values->green, values->blue);
 
-g_print ("xxx%i,%i,%i,%i\n", 0, values->red, values->green, values->blue);
-
-/* generate the relationship to see if it's linear */
-for (i=0;i<100;i++) {
-	/* pump up the scale a little */
-	rgb.red = i;
-	rgb.green = i;
-	rgb.blue = i;
-	ret = get_color_for_threshold (priv, &rgb, values, error);
+	/* compromise between the amount of time and the precision */
+	value = HUEY_PRECISION_TIME_VALUE;
+	if (values->red < value)
+		multiplier.red = value / values->red;
+	if (values->green < value)
+		multiplier.green = value / values->green;
+	if (values->blue < value)
+		multiplier.blue = value / values->blue;
+	g_debug ("using multiplier factor: red=%i, green=%i, blue=%i", multiplier.red, multiplier.green, multiplier.blue);
+	ret = get_color_for_threshold (priv, &multiplier, values, error);
 	if (!ret)
 		goto out;
-	g_debug ("scaled values: red=%i, green=%i, blue=%i", values->red, values->green, values->blue);
+	g_debug ("prescaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", values->red, values->green, values->blue);
+	values->red = HUEY_SCALE_VALUE_RED * values->red / multiplier.red;
+	values->green = HUEY_SCALE_VALUE_GREEN * values->green / multiplier.green;
+	values->blue = HUEY_SCALE_VALUE_BLUE * values->blue / multiplier.blue;
+//	g_debug ("scaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", values->red, values->green, values->blue);
 
-g_print ("%i,%i,%i,%i\n", i, values->red, values->green, values->blue);
-}
+	g_assert (values->red < 1.0f);
+	g_assert (values->green < 1.0f);
+	g_assert (values->blue < 1.0f);
 
 out:
 	return ret;
@@ -602,7 +625,6 @@ int
 main (void)
 {
 	gint retval;
-	guint i;
 	gdouble value;
 	gboolean ret;
 	GcmPriv *priv;
@@ -662,20 +684,6 @@ if (0) {
 	g_debug ("ambient = %.1lf Lux", value);
 
 if (0) {
-	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-	guchar available[] = { 0x00, 0x02, 0x03, 0x05, 0x06, 0x07, 0x08, 0x0e, 0x0f, 0x13, 0x16, 0x18, 0x19, 0xff };
-
-	/* send all commands that are implemented */
-	for (i=0; available[i] != 0xff; i++) {
-		ret = send_command (priv, available[i], payload, &error);
-		if (!ret) {
-			g_warning ("failed to write command 0x%02i: %s\n", available[i], error->message);
-			g_clear_error (&error);
-		}
-	}
-}
-
-if (0) {
 	guchar payload[] = { 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17 };
 	g_warning ("moo");
 
@@ -699,14 +707,14 @@ if (0) {
 /* try to get color value */
 if (1) {
 
-	GcmColorUint16 values;
+	GcmColorRgbDouble values;
 	ret = get_color (priv, &values, &error);
 	if (!ret) {
 		g_warning ("failed to measure: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
-	g_debug ("red=%i, green=%i, blue=%i", values.red, values.green, values.blue);
+	g_debug ("red=%0.4lf, green=%0.4lf, blue=%0.4lf", values.red, values.green, values.blue);
 }
 	/* set LEDs */
 	ret = send_leds (priv, 0x00, &error);
