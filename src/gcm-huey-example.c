@@ -287,14 +287,33 @@ out:
 	return ret;
 }
 
+#define CONSOLE_RESET		0
+#define CONSOLE_BLACK 		30
+#define CONSOLE_RED		31
+#define CONSOLE_GREEN		32
+#define CONSOLE_YELLOW		33
+#define CONSOLE_BLUE		34
+#define CONSOLE_MAGENTA		35
+#define CONSOLE_CYAN		36
+#define CONSOLE_WHITE		37
+
 static void
 print_data (const gchar *title, const guchar *data, gsize length)
 {
 	guint i;
+
+	if (g_strcmp0 (title, "request") == 0)
+		g_print ("%c[%dm", 0x1B, CONSOLE_RED);
+	if (g_strcmp0 (title, "reply") == 0)
+		g_print ("%c[%dm", 0x1B, CONSOLE_BLUE);
 	g_print ("%s\t", title);
+
 	for (i=0; i< length; i++)
 		g_print ("%02x [%c]\t", data[i], g_ascii_isprint (data[i]) ? data[i] : '?');
 		//g_print ("%02x,", data[i]);
+
+	g_print ("%c[%dm", 0x1B, CONSOLE_RESET);
+
 	g_print ("\n");
 }
 
@@ -450,7 +469,7 @@ static gboolean
 get_ambient (GcmPriv *priv, gdouble *value, GError **error)
 {
 	/* from usb-ambient.txt */
-	guchar request[] = { HUEY_COMMAND_AMBIENT, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	const guchar request[] = { HUEY_COMMAND_AMBIENT, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
@@ -489,6 +508,83 @@ read_registers (GcmPriv *priv, GError **error)
 		g_print ("register value: 0x%02x [%c]\n", reply[3], g_ascii_isprint (reply[3]) ? reply[3] : '?');
 	}
 
+out:
+	return ret;
+}
+
+typedef struct {
+	guint8	 red;
+	guint8	 green;
+	guint8	 blue;
+} GcmColorUint8;
+
+typedef struct {
+	guint16	 red;
+	guint16	 green;
+	guint16	 blue;
+} GcmColorUint16;
+
+static gboolean
+get_color_for_threshold (GcmPriv *priv, GcmColorUint8 *threshold, GcmColorUint16 *values, GError **error)
+{
+	/* from usb-ambient.txt */
+	guchar request[] = { HUEY_COMMAND_SENSOR_MEASURE_RGB, 0x00, threshold->red, 0x00, threshold->green, 0x00, threshold->blue, 0x00 };
+	guchar reply[8];
+	gboolean ret;
+	gsize reply_read;
+
+	/* measure, and get red */
+	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	if (!ret)
+		goto out;
+
+	/* get value */
+	values->red = (reply[3] * 0xff) + reply[4];
+
+	/* get green */
+	request[0] = HUEY_COMMAND_READ_GREEN;
+	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	if (!ret)
+		goto out;
+
+	/* get value */
+	values->green = (reply[3] * 0xff) + reply[4];
+
+	/* get blue */
+	request[0] = HUEY_COMMAND_READ_BLUE;
+	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	if (!ret)
+		goto out;
+
+	/* get value */
+	values->blue = (reply[3] * 0xff) + reply[4];
+out:
+	return ret;
+}
+
+static gboolean
+get_color (GcmPriv *priv, GcmColorUint16 *values, GError **error)
+{
+	gboolean ret;
+	GcmColorUint8 rgb;
+
+	/* set this to one value for a quick approximate value */
+	rgb.red = 1;
+	rgb.green = 1;
+	rgb.blue = 1;
+	ret = get_color_for_threshold (priv, &rgb, values, error);
+	if (!ret)
+		goto out;
+	g_debug ("initial values: red=%i, green=%i, blue=%i", values->red, values->green, values->blue);
+
+	/* pump up the scale a little */
+	rgb.red = 4;
+	rgb.green = 4;
+	rgb.blue = 4;
+	ret = get_color_for_threshold (priv, &rgb, values, error);
+	if (!ret)
+		goto out;
+	g_debug ("scaled values: red=%i, green=%i, blue=%i", values->red, values->green, values->blue);
 out:
 	return ret;
 }
@@ -593,43 +689,15 @@ if (0) {
 
 /* try to get color value */
 if (1) {
-	guchar setup1[] = { 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x00 };
-	guchar setup2[] = { 0x01, 0x63, 0x00, 0xd9, 0x00, 0x04, 0x00 };
-	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
-	g_warning ("moo");
 
-/*
- * -> 16 00 01 00 01 00 01 00
- * <-       00 00 0b 00 00 00
- * -> 02 00 01 00 01 00 01 00
- * <-       00 00 12 00 00 00
- * -> 03 00 01 00 01 00 01 00
- * <-       00 03 41 00 00 00
- *
- * then does:
- *
- * -> 16 01 63 00 d9 00 04 00
- * <-       00 0f ce 80 00 00
- * -> 02 01 63 00 d9 00 04 00
- * <-       00 0e d0 80 00 00
- * -> 03 01 63 00 d9 00 04 00
- * <-       00 0d 3c 00 00 00
- */
-
-	ret = send_command (priv, HUEY_COMMAND_SENSOR_MEASURE_RGB, setup1, &error);
+	GcmColorUint16 values;
+	ret = get_color (priv, &values, &error);
 	if (!ret) {
 		g_warning ("failed to measure: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
-	send_command (priv, HUEY_COMMAND_READ_GREEN, payload, &error);
-	send_command (priv, HUEY_COMMAND_READ_BLUE, payload, &error);
-
-	send_command (priv, HUEY_COMMAND_SENSOR_MEASURE_RGB, setup2, &error);
-	send_command (priv, HUEY_COMMAND_READ_GREEN, payload, &error);
-	send_command (priv, HUEY_COMMAND_READ_BLUE, payload, &error);
-
-	g_warning ("moo");
+	g_debug ("red=%i, green=%i, blue=%i", values.red, values.green, values.blue);
 }
 	/* set LEDs */
 	ret = send_leds (priv, 0x00, &error);
