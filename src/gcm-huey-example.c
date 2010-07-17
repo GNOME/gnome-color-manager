@@ -549,8 +549,7 @@ if (0) {
 /* try to get color value */
 if (1) {
 	guchar setup1[] = { 0x00, 0x9c, 0x00, 0xd9, 0x00, 0x56, 0x03 };
-//	guchar setup2[] = { 0x00, 0x1e, 0x00, 0x27, 0x00, 0x15, 0x03 };
-//	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	g_warning ("moo");
 
 	ret = send_command (priv, HUEY_COMMAND_SENSOR_RED_SAMPLE, setup1, &error);
@@ -559,13 +558,8 @@ if (1) {
 		g_error_free (error);
 		goto out;
 	}
-//	send_command (priv, 0x01, payload, &error);
-
-//	send_command (priv, HUEY_COMMAND_SENSOR_RED_SAMPLE, setup1, &error);
-//	send_command (priv, HUEY_COMMAND_SENSOR_BLUE, payload, &error);
-
-//	send_command (priv, HUEY_COMMAND_SENSOR_RED_SAMPLE, setup2, &error);
-//	send_command (priv, HUEY_COMMAND_SENSOR_GREEN, payload, &error);
+	send_command (priv, HUEY_COMMAND_SENSOR_BLUE, payload, &error);
+	send_command (priv, HUEY_COMMAND_SENSOR_GREEN, payload, &error);
 
 	g_warning ("moo");
 }
