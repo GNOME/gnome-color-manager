@@ -52,7 +52,7 @@
  */
 #define HUEY_COMMAND_GET_STATUS		0x00
 
-/* input:   02 16 00 00 00 00 00 00
+/* input:   02 xx xx xx xx xx xx xx
  * returns: 00 02 00 00 0a 00 00 00 (or)
  *          00 02 00 0e c6 80 00 00
  *            data --^^^^^ ^-- only ever 00 or 80
@@ -68,7 +68,7 @@
  */
 #define HUEY_COMMAND_READ_GREEN		0x02
 
-/* input:   03 02 00 0f c1 80 00 00
+/* input:   03 xx xx xx xx xx xx xx
  * returns: 00 03 00 0f 18 00 00 00
  *            data --^^^^^ ^-- only ever 00 or 80
  *                    |
@@ -141,7 +141,7 @@
  * returns: 00 16 00 00 00 00 00 00
  *
  * or:
- *                ||----||----||-- numbers steadily increase
+ *                ||----||----||-- numbers steadily increase -- some kind of gain control?
  *    0 or 1 ---.-----.-----.
  * input:   16 00 35 00 48 00 1d 03
  * returns: 00 16 00 0b d0 00 00 00
