@@ -42,8 +42,15 @@
 #define HUEY_RETVAL_UNKNOWN_81		0x81 /* seen once in init */
 #define HUEY_RETVAL_RETRY		0x90
 
-/* returns: "Cir001" -- Cirrus Logic? Circuit1?... */
-#define HUEY_COMMAND_UNKNOWN_00		0x00
+/* input:   00 00 00 00 3f 00 00 00
+ * returns: 00 00 43 69 72 30 30 31  (or)
+ *     "Cir001" --^^^^^^^^^^^^^^^^^ -- Cirrus Logic? Circuit1?...
+ *          c0 00 4c 6f 63 6b 65 64
+ *     "locked" --^^^^^^^^^^^^^^^^^
+ *
+ * Seems to get the currect status of the device.
+ */
+#define HUEY_COMMAND_STATUS		0x00
 
 /* input:   02 16 00 00 00 00 00 00
  * returns: 00 02 00 00 0a 00 00 00 (or)
@@ -76,27 +83,24 @@
  */
 #define HUEY_COMMAND_SENSOR_BLUE	0x03
 
-/* input:   11 12 13 14 15 16 17 18
+/* input:   05 ?? 11 12 13 14 xx xx
  * returns: 00 05 00 00 00 00 00 00
  *              ^--- always the same no matter the input
  *
  * never used in profiling */
 #define HUEY_COMMAND_SET_VALUE		0x05
 
-/* input:   06 f1 f2 f3 f4 f5 f6 f7
+/* input:   06 xx xx xx xx xx xx xx
  * returns: 00 06 11 12 13 14 00 00
  *    4 bytes ----^^^^^^^^^^^ (from HUEY_COMMAND_SET_VALUE)
  *
  * This is some sort of 32bit register on the device -- the
  * default value at plug-in is 00 0f 42 40, although during profiling it is set to
  * 00 00 6f 00 and then 00 00 61 00.
- *
- * returns: all NULL for NULL input
  */
 #define HUEY_COMMAND_GET_VALUE		0x06
 
-/* returns: all NULL all of the time
- * NEVER USED */
+/* NEVER USED */
 #define HUEY_COMMAND_UNKNOWN_07		0x07
 
 /* (sent at startup  after the unlock)
@@ -109,7 +113,10 @@
  */
 #define HUEY_COMMAND_UNKNOWN_REG_READ	0x08
 
-/* returns: all NULL all of the time */
+/* input:   0e 47 72 4d 62 6b 65 64
+ *  "GrMbked"--^^^^^^^^^^^^^^^^^^^^
+ * returns: 00 0e 00 00 00 00 00 00
+ */
 #define HUEY_COMMAND_UNLOCK		0x0e
 
 /* returns: all NULL all of the time */
@@ -160,7 +167,8 @@
  * only when profiling, and over and over -- some sort of poll? */
 #define HUEY_COMMAND_UNKNOWN_21		0x21
 
-/* returns: 90 17 03 00 00 00 00 00  then on second read:
+/* input:   17 03 00 xx xx xx xx xx
+ * returns: 90 17 03 00 00 00 00 00  then on second read:
  * 	    00 17 03 00 00 62 57 00 in light (or)
  * 	    00 17 03 00 00 00 08 00 in dark
  * 	no idea	--^^  |    ^---^ = 16bits data?
@@ -168,9 +176,9 @@
  */
 #define HUEY_COMMAND_AMBIENT		0x17
 
-/* input:   18 00 f0 00 00 00 00 00
+/* input:   18 00 f0 xx xx xx xx xx
  * returns: 00 18 f0 00 00 00 00 00
- *   led mask ----^
+ *   led mask ----^^
  */
 #define HUEY_COMMAND_SET_LEDS		0x18
 
@@ -420,7 +428,7 @@ static gboolean
 get_ambient (GcmPriv *priv, gdouble *value, GError **error)
 {
 	/* from usb-ambient.txt */
-	guchar request[] = { HUEY_COMMAND_AMBIENT, 0x03, 0x00, 0xa9, 0xaa, 0xaa, 0xab, 0xab };
+	guchar request[] = { HUEY_COMMAND_AMBIENT, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
