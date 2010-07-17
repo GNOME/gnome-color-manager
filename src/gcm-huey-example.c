@@ -167,6 +167,12 @@ if(1){
 		break;
 	}
 
+	/* the second byte seems to be the command again */
+	if (data[1] != command) {
+		g_set_error (error, 1, 0, "wrong command reply, got 0x%02x, expected 0x%02x", data[1], command);
+		goto out;
+	}
+
 	/* success */
 	ret = TRUE;
 out:
