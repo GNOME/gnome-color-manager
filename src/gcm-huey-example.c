@@ -34,6 +34,10 @@
 #define HUEY_PRODUCT_ID			0x2005
 #define HUEY_CONTROL_MESSAGE_TIMEOUT	5000 /* ms */
 
+#define HUEY_RETVAL_SUCCESS		0x00
+#define HUEY_RETVAL_LOCKED		0xc0
+#define HUEY_RETVAL_ERROR		0x80
+
 typedef struct {
 	gboolean		 connected;
 	libusb_device		*device;
@@ -162,11 +166,15 @@ if(1){
 
 	/* the first byte is success */
 	switch (data[0]) {
-	case 0x00:
+	case HUEY_RETVAL_SUCCESS:
 		/* assume success */
 		break;
-	case 0x80:
-		/* failure, the return buffer is set to NoCmd */
+	case HUEY_RETVAL_LOCKED:
+		/* failure, the return buffer is set to "Locked" */
+		g_set_error_literal (error, 1, 0, "the device is locked");
+		goto out;
+	case HUEY_RETVAL_ERROR:
+		/* failure, the return buffer is set to "NoCmd" */
 		g_set_error (error, 1, 0, "failed to issue command: %s", &data[2]);
 		goto out;
 	default:
