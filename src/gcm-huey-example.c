@@ -29,6 +29,7 @@
 
 #include <libusb-1.0/libusb.h>
 #include <glib.h>
+#include <libcolor-glib.h>
 
 #define HUEY_VENDOR_ID			0x0971
 #define HUEY_PRODUCT_ID			0x2005
@@ -512,28 +513,8 @@ out:
 	return ret;
 }
 
-typedef struct {
-	guint8	 red;
-	guint8	 green;
-	guint8	 blue;
-} GcmColorUint8;
-
-#if 0
-typedef struct {
-	guint16	 red;
-	guint16	 green;
-	guint16	 blue;
-} GcmColorUint16;
-#endif
-
-typedef struct {
-	gdouble	 red;
-	gdouble	 green;
-	gdouble	 blue;
-} GcmColorRgbDouble;
-
 static gboolean
-get_color_for_threshold (GcmPriv *priv, GcmColorUint8 *threshold, GcmColorRgbDouble *values, GError **error)
+get_color_for_threshold (GcmPriv *priv, GcmColorRgbInt *threshold, GcmColorRgb *values, GError **error)
 {
 	guchar request[] = { HUEY_COMMAND_SENSOR_MEASURE_RGB, 0x00, threshold->red, 0x00, threshold->green, 0x00, threshold->blue, 0x00 };
 	guchar reply[8];
@@ -580,11 +561,11 @@ out:
 #define HUEY_SCALE_VALUE_BLUE		30.0f
 
 static gboolean
-get_color (GcmPriv *priv, GcmColorRgbDouble *values, GError **error)
+get_color (GcmPriv *priv, GcmColorRgb *values, GError **error)
 {
 	gboolean ret;
 	gdouble value;
-	GcmColorUint8 multiplier;
+	GcmColorRgbInt multiplier;
 
 	/* set this to one value for a quick approximate value */
 	multiplier.red = 1;
@@ -707,7 +688,7 @@ if (0) {
 /* try to get color value */
 if (1) {
 
-	GcmColorRgbDouble values;
+	GcmColorRgb values;
 	ret = get_color (priv, &values, &error);
 	if (!ret) {
 		g_warning ("failed to measure: %s", error->message);
