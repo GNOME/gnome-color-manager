@@ -316,6 +316,7 @@ po/Makefile.in
 rules/Makefile
 src/Makefile
 docs/Makefile
+docs/huey/Makefile
 docs/api/Makefile
 docs/api/version.xml
 libcolor-glib/Makefile

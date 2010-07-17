@@ -37,7 +37,9 @@
 
 #define HUEY_RETVAL_SUCCESS		0x00
 #define HUEY_RETVAL_LOCKED		0xc0
+#define HUEY_RETVAL_UNKNOWN_5A		0x5a /* seen in profiling */
 #define HUEY_RETVAL_ERROR		0x80
+#define HUEY_RETVAL_UNKNOWN_81		0x81 /* seen once in init */
 #define HUEY_RETVAL_RETRY		0x90
 
 /* returns: "Cir001" -- Cirrus Logic? Circuit1?... */
@@ -113,8 +115,20 @@
 /* returns: all NULL all of the time */
 #define HUEY_COMMAND_UNKNOWN_0F		0x0f
 
+/* something to do with sampling */
+#define HUEY_COMMAND_UNKNOWN_10		0x10
+
+/* something to do with sampling (that needs a retry with code 5a) */
+#define HUEY_COMMAND_UNKNOWN_11		0x11
+
+/* something to do with sampling */
+#define HUEY_COMMAND_UNKNOWN_12		0x12
+
 /* returns: all NULL all of the time */
 #define HUEY_COMMAND_UNKNOWN_13		0x13
+
+/* returns: seems to be sent, but not requested */
+#define HUEY_COMMAND_UNKNOWN_15		0x15
 
 /* input:   16 00 01 00 01 00 01 00
  * returns: 00 16 00 00 00 00 00 00
@@ -149,7 +163,8 @@
 /* returns: 90 17 03 00 00 00 00 00  then on second read:
  * 	    00 17 03 00 00 62 57 00 in light (or)
  * 	    00 17 03 00 00 00 08 00 in dark
- * 	no idea	--^^	   ^---^ = 16bits data?
+ * 	no idea	--^^  |    ^---^ = 16bits data?
+ *                    \-- only ever 0 or 2 (only ever saw 2 once...)
  */
 #define HUEY_COMMAND_AMBIENT		0x17
 
