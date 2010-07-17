@@ -344,9 +344,6 @@ gcm_sensor_huey_send_data (GcmSensorHuey *huey,
 	/* show what we've got */
 	gcm_sensor_huey_print_data ("request", request, request_len);
 
-	/* FIXME -- this is slower than both the windows driver and argyll */
-	g_usleep (100000);
-
 	/* do sync request */
 	retval = libusb_control_transfer (huey->handle,
 					  LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
@@ -649,18 +646,12 @@ gcm_sensor_huey_read_registers (GcmSensorHuey *huey, GError **error)
 		goto out;
 	g_print ("Unlock string: %s\n", unlock);
 
-
-//g_error ("moo");
-
 	/* get matrix */
 	gcm_mat33_clear (&value);
 	ret = gcm_sensor_huey_read_register_matrix (huey, 0x04, &value, error);
 	if (!ret)
 		goto out;
 	g_print ("Big number @0x%02x): %s\n", 0x00, gcm_mat33_to_string (&value));
-
-g_error ("moo");
-
 
 	/* We read from 0x04 to 0x72 at startup */
 	for (i=0x00; i<=len; i++) {
@@ -824,6 +815,7 @@ main (void)
 		goto out;
 	}
 
+if(0){
 	/* unlock */
 	ret = gcm_sensor_huey_send_unlock (huey, &error);
 	if (!ret) {
@@ -831,8 +823,9 @@ main (void)
 		g_error_free (error);
 		goto out;
 	}
+}
 
-if (1) {
+if (0) {
 	/* this is done by the windows driver */
 	ret = gcm_sensor_huey_read_registers (huey, &error);
 	if (!ret) {
@@ -850,6 +843,7 @@ if (1) {
 		goto out;
 	}
 
+if (1) {
 	/* get ambient */
 	ret = gcm_sensor_huey_get_ambient (huey, &value, &error);
 	if (!ret) {
@@ -858,6 +852,7 @@ if (1) {
 		goto out;
 	}
 	g_debug ("ambient = %.1lf Lux", value);
+}
 
 if (0) {
 	guchar payload[] = { 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17 };
@@ -877,11 +872,10 @@ if (0) {
 	payload[6] = 0x07;
 
 	gcm_sensor_huey_send_command (huey, HUEY_COMMAND_GET_VALUE, payload, &error);
-	g_warning ("moo");
 }
 
 /* try to get color value */
-if (0) {
+if (1) {
 
 	GcmColorRgb values;
 	ret = gcm_sensor_huey_get_color (huey, &values, &error);
