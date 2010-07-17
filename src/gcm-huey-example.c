@@ -69,7 +69,7 @@
  *                            RGB(00,00,ff) is 00 59
  *
  * Only used when doing profiling */
-#define HUEY_COMMAND_UNKNOWN_03		0x03
+#define HUEY_COMMAND_SENSOR_BLUE	0x03
 
 /* input:   11 12 13 14 15 16 17 18
  * returns: 00 05 00 00 00 00 00 00
@@ -534,7 +534,7 @@ if (1) {
 	send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup, &error);
 
 	send_command (priv, HUEY_COMMAND_UNKNOWN_02, payload, &error);
-	send_command (priv, HUEY_COMMAND_UNKNOWN_03, payload, &error);
+	send_command (priv, HUEY_COMMAND_SENSOR_BLUE, payload, &error);
 
 	g_warning ("moo");
 }
