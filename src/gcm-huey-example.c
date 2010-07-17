@@ -40,25 +40,36 @@
 #define HUEY_RETVAL_ERROR		0x80
 #define HUEY_RETVAL_RETRY		0x90
 
-/* returns: "Cir001" -- Cirrus Logic? It's a Cyprus IC... */
+/* returns: "Cir001" -- Cirrus Logic? Circuit1?... */
 #define HUEY_COMMAND_UNKNOWN_00		0x00
 
-/* returns: all NULL for NULL input, 00,02,02,cc,53,6c,00,00 for 0xf1f2f3f4f5f6f7f8 */
+/* returns: all NULL for NULL input: 00 02 02 cc 53 6c 00 00 for f1 f2 f3 f4 f5 f6 f7 f8 */
 #define HUEY_COMMAND_UNKNOWN_02		0x02
 
-/* returns: all NULL for NULL input, 00,03,62,18,88,85,00,00 for 0xf1f2f3f4f5f6f7f8 */
+/* returns: all NULL for NULL input: 00 03 62 18 88 85 00 00 for f1 f2 f3 f4 f5 f6 f7 f8 */
 #define HUEY_COMMAND_UNKNOWN_03		0x03
 
-/* returns: all NULL for NULL input, 00,05,00,00,00,00,00,00 for 0xf1f2f3f4f5f6f7f8 */
+/* returns: all NULL for NULL input: 00 05 00 00 00 00 00 00 for f1 f2 f3 f4 f5 f6 f7 f8 */
 #define HUEY_COMMAND_UNKNOWN_05		0x05
 
-/* returns: all NULL for NULL input, 00,06,f1,f2,f3,f4,00,00 for 0xf1f2f3f4f5f6f7f8 */
+/* input:   06 f1 f2 f3 f4 f5 f6 f7
+ * returns: 00 06 f1 f2 f3 f4 00 00
+ *    4 bytes ----^
+ * returns: all NULL for NULL input
+ */
 #define HUEY_COMMAND_UNKNOWN_06		0x06
 
 /* returns: all NULL all of the time */
 #define HUEY_COMMAND_UNKNOWN_07		0x07
 
-/* returns: all NULL for NULL input, 00,08,f1,f2,00,00,00,00 for 0xf1f2f3f4f5f6f7f8 */
+/* (sent at startup  after the unlock)
+ * input:   08 0b 00 10 3c 06 00 00
+ *             ^^-- register address? We read from 0x04 to 0x72 at startup
+ * returns: 00 08 0b b8 00 00 00 00
+ *
+ * input:   08 f1 f2 f3 f4 f5 f6 f7
+ * returns: 00 08 f1 f2 00 00 00 00
+ */
 #define HUEY_COMMAND_UNKNOWN_08		0x08
 
 /* returns: all NULL all of the time */
@@ -70,23 +81,23 @@
 /* returns: all NULL all of the time */
 #define HUEY_COMMAND_UNKNOWN_13		0x13
 
-/* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
+/* returns: all NULL for NULL input: times out for f1 f2 f3 f4 f5 f6 f7 f8 */
 #define HUEY_COMMAND_UNKNOWN_16		0x16
 
-/* returns: 90,17,03,00,00,00,00,00, then on second read:
- * 	    00,17,03,00,00,62,57,00 in light (or)
- * 	    00,17,03,00,00,00,08,00 in light
+/* returns: 90 17 03 00 00 00 00 00  then on second read:
+ * 	    00 17 03 00 00 62 57 00 in light (or)
+ * 	    00 17 03 00 00 00 08 00 in light
  * 	no idea	--^^	   ^---^ = 16bits data?
  */
 #define HUEY_COMMAND_AMBIENT		0x17
 
-/* input:   18,00,f0,00,00,00,00,00
- * returns: 00,18,f0,00,00,00,00,00
+/* input:   18 00 f0 00 00 00 00 00
+ * returns: 00 18 f0 00 00 00 00 00
  *   led mask ----^
  */
 #define HUEY_COMMAND_SET_LEDS		0x18
 
-/* returns: all NULL for NULL input, times out for 0xf1f2f3f4f5f6f7f8 */
+/* returns: all NULL for NULL input: times out for f1 f2 f3 f4 f5 f6 f7 f8 */
 #define HUEY_COMMAND_UNKNOWN_19		0x19
 
 typedef struct {
@@ -347,6 +358,26 @@ out:
 	return ret;
 }
 
+static gboolean
+do_thing_after_unlock (GcmPriv *priv, GError **error)
+{
+	/* according to wMaxPacketSize, all the messages have just 8 bytes */
+	guchar request[] = { HUEY_COMMAND_UNKNOWN_08, 0x0b, 0x00, 0x10, 0x3c, 0x06, 0x00, 0x00 };
+	guchar reply[8];
+	gboolean ret;
+	gsize reply_read;
+
+	/* just get data */
+	ret = send_data (priv, request, 8, reply, 8, &reply_read, error);
+	if (!ret)
+		goto out;
+
+	/* this seems like the only bit of data that's useful */
+	g_debug ("random thing that's checked: 0x%02x", reply[3]);
+out:
+	return ret;
+}
+
 int
 main (void)
 {
@@ -383,6 +414,14 @@ main (void)
 		goto out;
 	}
 
+	/* this is done by the windows driver */
+	ret = do_thing_after_unlock (priv, &error);
+	if (!ret) {
+		g_warning ("failed to do thing: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
 	/* set LEDs */
 	ret = send_leds (priv, 0x0f, &error);
 	if (!ret) {
@@ -413,6 +452,14 @@ if (0) {
 		}
 	}
 }
+
+	/* set LEDs */
+	ret = send_leds (priv, 0x00, &error);
+	if (!ret) {
+		g_warning ("failed to send leds: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	/* close device */
 	libusb_close (priv->handle);
