@@ -112,16 +112,60 @@ out:
 	return ret;
 }
 
+static gboolean
+send_command (GcmPriv *priv, guchar command, GError **error)
+{
+	gint retval;
+	gboolean ret = FALSE;
+	guchar *data;
+	gint bytes_read = 0;
+	guint i;
+
+	/* according to wMaxPacketSize, all the messages have just 8 bytes */
+	data = g_new0 (guchar, 8);
+
+	/* first byte seems to be a command, i've no idea what the others do */
+	data[0] = command;
+
+	/* do sync request */
+	retval = libusb_control_transfer (priv->handle,
+					  LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
+					  0x09, 0x0200, 0,
+					  data, 8,
+					  HUEY_CONTROL_MESSAGE_TIMEOUT);
+	if (retval < 0) {
+		g_set_error (error, 1, 0, "failed to send message interface: %s", libusb_strerror (retval));
+		goto out;
+	}
+
+	/* get sync response, from bEndpointAddress */
+	retval = libusb_interrupt_transfer (priv->handle, 0x81, data, 8, &bytes_read, HUEY_CONTROL_MESSAGE_TIMEOUT);
+	if (retval < 0) {
+		g_set_error (error, 1, 0, "failed to recieve message interface: %s", libusb_strerror (retval));
+		goto out;
+	}
+
+	/* show what we've got */
+	g_print ("cmd 0x%02x\t", command);
+	for (i=0; i< (guint)bytes_read; i++)
+		g_print ("%02x [%c]\t", data[i], g_ascii_isprint (data[i]) ? data[i] : '?');
+	g_print ("\n");
+	g_free (data);
+
+	/* success */
+	ret = TRUE;
+out:
+	return ret;
+}
+
 int
 main (void)
 {
 	gint retval;
+	guint i;
 	gboolean ret;
 	GcmPriv *priv;
 	GError *error = NULL;
-	guchar *data;
-	gint bytes_read = 0;
-	guint i;
 
 	priv = g_new0 (GcmPriv, 1);
 
@@ -141,30 +185,14 @@ main (void)
 		goto out;
 	}
 
-	/* according to wMaxPacketSize, all the messages have just 8 bytes */
-	data = g_new0 (guchar, 8);
-	retval = libusb_control_transfer (priv->handle,
-					  LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
-					  0x09, 0x0200, 0,
-					  data, 8,
-					  HUEY_CONTROL_MESSAGE_TIMEOUT);
-	if (retval < 0) {
-		g_warning ("failed to send message interface: %s", libusb_strerror (retval));
-		goto out;
+	/* send all commands from 0x00 to 0xff */
+	for (i=0x00; i<0xff; i++) {
+		ret = send_command (priv, i, &error);
+		if (!ret) {
+			g_warning ("failed to write command 0x%02i: %s", i, error->message);
+			g_clear_error (&error);
+		}
 	}
-
-	/* get response, from bEndpointAddress */
-	retval = libusb_interrupt_transfer (priv->handle, 0x81, data, 8, &bytes_read, HUEY_CONTROL_MESSAGE_TIMEOUT);
-	if (retval < 0) {
-		g_warning ("failed to recieve message interface: %s", libusb_strerror (retval));
-		goto out;
-	}
-
-	for (i=0; i< (guint)bytes_read; i++)
-		g_print ("%02x [%c]\t", data[i], g_ascii_isprint (data[i]) ? data[i] : '?');
-
-	g_print ("\n");
-	g_free (data);
 
 	/* do something */
 	g_warning ("fixme");
