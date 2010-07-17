@@ -50,13 +50,14 @@
  *                    |
  *                    \-- for RGB(00,00,00) is 09 f2
  *                            RGB(ff,ff,ff) is 00 00
- *                            RGB(ff,00,00) is 00 11
- *                            RGB(00,ff,00) is 00 06
- *                            RGB(00,00,ff) is 00 06
+ *                            RGB(ff,00,00) is 02 a5
+ *                            RGB(00,ff,00) is 00 f1
+ *                            RGB(00,00,ff) is 08 56
  *
  * only when profiling
- * has to be preceeded by HUEY_COMMAND_UNKNOWN_16 (00 01 00 01 00 01 7f) */
-#define HUEY_COMMAND_UNKNOWN_02		0x02
+ * has to be preceeded by HUEY_COMMAND_UNKNOWN_16 (00 1e 00 27 00 15 03)
+ */
+#define HUEY_COMMAND_SENSOR_GREEN		0x02
 
 /* input:   03 02 00 0f c1 80 00 00
  * returns: 00 03 00 0f 18 00 00 00
@@ -68,7 +69,9 @@
  *                            RGB(00,ff,00) is 00 58
  *                            RGB(00,00,ff) is 00 59
  *
- * Only used when doing profiling */
+ * Only used when doing profiling
+ * has to be preceeded by HUEY_COMMAND_UNKNOWN_16 (00 01 00 01 00 01 7f)
+ */
 #define HUEY_COMMAND_SENSOR_BLUE	0x03
 
 /* input:   11 12 13 14 15 16 17 18
@@ -527,14 +530,19 @@ if (0) {
 
 /* try to get color value */
 if (1) {
-	guchar setup[] = { 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x7f };
+	guchar setup1[] = { 0x00, 0x01, 0x00, 0x01, 0x00, 0x01, 0x7f };
+	guchar setup2[] = { 0x00, 0x1e, 0x00, 0x27, 0x00, 0x15, 0x03 };
 	guchar payload[] = { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	g_warning ("moo");
 
-	send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup, &error);
+	send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup1, &error);
+	send_command (priv, 0x01, payload, &error);
 
-	send_command (priv, HUEY_COMMAND_UNKNOWN_02, payload, &error);
+	send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup1, &error);
 	send_command (priv, HUEY_COMMAND_SENSOR_BLUE, payload, &error);
+
+	send_command (priv, HUEY_COMMAND_UNKNOWN_16, setup2, &error);
+	send_command (priv, HUEY_COMMAND_SENSOR_GREEN, payload, &error);
 
 	g_warning ("moo");
 }
