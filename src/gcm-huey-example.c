@@ -567,6 +567,7 @@ get_color (GcmPriv *priv, GcmColorUint16 *values, GError **error)
 {
 	gboolean ret;
 	GcmColorUint8 rgb;
+	guint i;
 
 	/* set this to one value for a quick approximate value */
 	rgb.red = 1;
@@ -577,14 +578,22 @@ get_color (GcmPriv *priv, GcmColorUint16 *values, GError **error)
 		goto out;
 	g_debug ("initial values: red=%i, green=%i, blue=%i", values->red, values->green, values->blue);
 
+g_print ("xxx%i,%i,%i,%i\n", 0, values->red, values->green, values->blue);
+
+/* generate the relationship to see if it's linear */
+for (i=0;i<100;i++) {
 	/* pump up the scale a little */
-	rgb.red = 4;
-	rgb.green = 4;
-	rgb.blue = 4;
+	rgb.red = i;
+	rgb.green = i;
+	rgb.blue = i;
 	ret = get_color_for_threshold (priv, &rgb, values, error);
 	if (!ret)
 		goto out;
 	g_debug ("scaled values: red=%i, green=%i, blue=%i", values->red, values->green, values->blue);
+
+g_print ("%i,%i,%i,%i\n", i, values->red, values->green, values->blue);
+}
+
 out:
 	return ret;
 }
