@@ -273,14 +273,14 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
 /*
  * Get the level of ambient light from the sensor
  *
+ *                 ,,--- The output-type, where 00 is LCD and 02 is CRT
  *  input:   17 03 00 xx xx xx xx xx
  * returns: 90 17 03 00 00 00 00 00  then on second read:
  * 	    00 17 03 00 00 62 57 00 in light (or)
  * 	    00 17 03 00 00 00 08 00 in dark
- * 	no idea	--^^  |    ^---^ = 16bits data?
- *                    \-- only ever 0 or 2 (only ever saw 2 once...)
+ * 	no idea	--^^       ^---^ = 16bits data?
  */
-#define HUEY_COMMAND_AMBIENT		0x17
+#define HUEY_COMMAND_GET_AMBIENT	0x17
 
 /*
  * Set the LEDs on the sensor
@@ -297,7 +297,7 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
  * returns: all NULL for NULL input: times out for f1 f2 f3 f4 f5 f6 f7 f8 */
 #define HUEY_COMMAND_UNKNOWN_19		0x19
 
-/* fudge factor to convert the value of HUEY_COMMAND_AMBIENT to Lux */
+/* fudge factor to convert the value of HUEY_COMMAND_GET_AMBIENT to Lux */
 #define HUEY_AMBIENT_UNITS_TO_LUX	125.0f
 
 /* this is a random number chosen to find the best accuracy whilst
@@ -535,12 +535,21 @@ static gboolean
 gcm_sensor_huey_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
 {
 	guchar reply[8];
-	gboolean ret;
+	gboolean ret = FALSE;
 	gsize reply_read;
-	const guchar request[] = { HUEY_COMMAND_AMBIENT, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	GcmSensorOutputType output_type;
+	guchar request[] = { HUEY_COMMAND_GET_AMBIENT, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
 
+	/* ensure the user set this */
+	output_type = gcm_sensor_get_output_type (sensor);
+	if (output_type == GCM_SENSOR_OUTPUT_TYPE_UNKNOWN) {
+		g_set_error_literal (error, 1, 0, "output sensor type was not set");
+		goto out;
+	}
+
 	/* hit hardware */
+	request[2] = (output_type == GCM_SENSOR_OUTPUT_TYPE_LCD) ? 0x00 : 0x02;
 	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);
 	if (!ret)
 		goto out;

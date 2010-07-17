@@ -44,6 +44,7 @@ static void     gcm_sensor_finalize	(GObject     *object);
 struct _GcmSensorPrivate
 {
 	gchar				*device;
+	GcmSensorOutputType		 output_type;
 };
 
 enum {
@@ -53,6 +54,24 @@ enum {
 };
 
 G_DEFINE_TYPE (GcmSensor, gcm_sensor, G_TYPE_OBJECT)
+
+/**
+ * gcm_sensor_set_output_type:
+ **/
+void
+gcm_sensor_set_output_type (GcmSensor *sensor, GcmSensorOutputType output_type)
+{
+	sensor->priv->output_type = output_type;
+}
+
+/**
+ * gcm_sensor_get_output_type:
+ **/
+GcmSensorOutputType
+gcm_sensor_get_output_type (GcmSensor *sensor)
+{
+	return sensor->priv->output_type;
+}
 
 /**
  * gcm_sensor_startup:

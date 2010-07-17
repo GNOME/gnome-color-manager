@@ -59,6 +59,9 @@ main (void)
 		goto out;
 	}
 
+	/* set mode */
+	gcm_sensor_set_output_type (sensor, GCM_SENSOR_OUTPUT_TYPE_LCD);
+
 	/* get ambient */
 	ret = gcm_sensor_get_ambient (sensor, &value, &error);
 	if (!ret) {

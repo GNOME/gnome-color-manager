@@ -68,13 +68,19 @@ struct _GcmSensorClass
 	void (*_gcm_reserved5) (void);
 };
 
-typedef enum
-{
+typedef enum {
 	GCM_SENSOR_ERROR_USER_ABORT,
 	GCM_SENSOR_ERROR_NO_SUPPORT,
 	GCM_SENSOR_ERROR_NO_DATA,
 	GCM_SENSOR_ERROR_INTERNAL
 } GcmSensorError;
+
+typedef enum {
+	GCM_SENSOR_OUTPUT_TYPE_UNKNOWN,
+	GCM_SENSOR_OUTPUT_TYPE_LCD,
+	GCM_SENSOR_OUTPUT_TYPE_CRT,
+	GCM_SENSOR_OUTPUT_TYPE_PROJECTOR
+} GcmSensorOutputType;
 
 /* dummy */
 #define GCM_SENSOR_ERROR	1
@@ -93,6 +99,9 @@ gboolean	 gcm_sensor_sample			(GcmSensor	*sensor,
 							 GError		**error);
 gboolean	 gcm_sensor_startup			(GcmSensor	*sensor,
 							 GError		**error);
+void		 gcm_sensor_set_output_type		(GcmSensor	*sensor,
+							 GcmSensorOutputType output_type);
+GcmSensorOutputType  gcm_sensor_get_output_type		(GcmSensor	*sensor);
 
 G_END_DECLS
 
