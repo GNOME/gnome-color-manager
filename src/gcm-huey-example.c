@@ -212,7 +212,7 @@ typedef struct {
 	gboolean		 connected;
 	libusb_device		*device;
 	libusb_device_handle	*handle;
-	GcmMat3x3		 device_matrix;
+	GcmMat3x3		 calibration_matrix;
 } GcmSensorHuey;
 
 /**
@@ -649,11 +649,11 @@ gcm_sensor_huey_read_registers (GcmSensorHuey *huey, GError **error)
 	g_print ("Unlock string: %s\n", unlock);
 
 	/* get matrix */
-	gcm_mat33_clear (&huey->device_matrix);
-	ret = gcm_sensor_huey_read_register_matrix (huey, 0x04, &huey->device_matrix, error);
+	gcm_mat33_clear (&huey->calibration_matrix);
+	ret = gcm_sensor_huey_read_register_matrix (huey, 0x04, &huey->calibration_matrix, error);
 	if (!ret)
 		goto out;
-	g_print ("device matrix: %s\n", gcm_mat33_to_string (&huey->device_matrix));
+	g_print ("device matrix: %s\n", gcm_mat33_to_string (&huey->calibration_matrix));
 
 goto out;
 
@@ -785,7 +785,7 @@ gcm_sensor_huey_get_color (GcmSensorHuey *huey, GcmColorXYZ *values, GError **er
 
 	/* it would be rediculous for the device to emit RGB, it would be completely arbitrary --
 	 * we assume the matrix of data is designed to convert to LAB or XYZ */
-	gcm_mat33_vector_multiply (&huey->device_matrix, input, output);
+	gcm_mat33_vector_multiply (&huey->calibration_matrix, input, output);
 
 	/* scale correct */
 	gcm_vec3_scalar_multiply (output, HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR, output);
