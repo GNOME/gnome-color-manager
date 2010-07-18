@@ -78,6 +78,11 @@ struct _GcmDdcDeviceClass
 	void (*_gcm_reserved5) (void);
 };
 
+/**
+ * GcmDdcDeviceKind:
+ *
+ * The device type
+ **/
 typedef enum {
 	GCM_DDC_DEVICE_KIND_LCD,
 	GCM_DDC_DEVICE_KIND_CRT,

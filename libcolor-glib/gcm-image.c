@@ -20,10 +20,10 @@
  */
 
 /**
- * SECTION:gcm-image-manual
- * @short_description: routines to manually create a color profile.
+ * SECTION:gcm-image
+ * @short_description: a color managed #GtkImage.
  *
- * This object can create an ICC file manually.
+ * This object is used to convert an image using one, two or three ICC profiles.
  */
 
 #include "config.h"

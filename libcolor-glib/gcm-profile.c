@@ -106,6 +106,13 @@ static void gcm_profile_file_monitor_changed_cb (GFileMonitor *monitor, GFile *f
 
 /**
  * gcm_profile_get_description:
+ * @profile: A valid #GcmProfile
+ *
+ * Gets the profile description.
+ *
+ * Return value: The profile description as a string.
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_profile_get_description (GcmProfile *profile)
@@ -140,6 +147,12 @@ gcm_profile_ensure_printable (gchar *text)
 
 /**
  * gcm_profile_set_description:
+ * @profile: A valid #GcmProfile
+ * @description: the data location to read into
+ *
+ * Sets the description of the profile.
+ *
+ * Since: 0.0.1
  **/
 void
 gcm_profile_set_description (GcmProfile *profile, const gchar *description)
@@ -168,9 +181,14 @@ gcm_profile_set_description (GcmProfile *profile, const gchar *description)
 
 /**
  * gcm_profile_has_colorspace_description:
+ * @profile: A valid #GcmProfile
  *
- * Return value: if the description mentions the profile colorspace explicity,
+ * Finds out if the profile contains a colorspace description.
+ *
+ * Return value: %TRUE if the description mentions the profile colorspace explicity,
  * e.g. "Adobe RGB" for %GCM_COLORSPACE_RGB.
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_profile_has_colorspace_description (GcmProfile *profile)
@@ -190,8 +208,13 @@ gcm_profile_has_colorspace_description (GcmProfile *profile)
 
 /**
  * gcm_profile_get_file:
+ * @profile: A valid #GcmProfile
  *
- * Return value: Do not unref.
+ * Gets the file attached to this profile.
+ *
+ * Return value: A #GFile, or %NULL. Do not free.
+ *
+ * Since: 0.0.1
  **/
 GFile *
 gcm_profile_get_file (GcmProfile *profile)
@@ -202,6 +225,14 @@ gcm_profile_get_file (GcmProfile *profile)
 
 /**
  * gcm_profile_set_file:
+ * @profile: A valid #GcmProfile
+ * @file: A #GFile to read
+ *
+ * Sets the file to be used when reading the profile.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
  **/
 void
 gcm_profile_set_file (GcmProfile *profile, GFile *file)
@@ -231,6 +262,13 @@ gcm_profile_set_file (GcmProfile *profile, GFile *file)
 
 /**
  * gcm_profile_get_filename:
+ * @profile: A valid #GcmProfile
+ *
+ * Gets the filename of the profile data, if one exists.
+ *
+ * Return value: A filename, or %NULL
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_profile_get_filename (GcmProfile *profile)
@@ -247,6 +285,13 @@ gcm_profile_get_filename (GcmProfile *profile)
 
 /**
  * gcm_profile_get_copyright:
+ * @profile: A valid #GcmProfile
+ *
+ * Gets the copyright string for this profile.
+ *
+ * Return value: A string. Do not free.
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_profile_get_copyright (GcmProfile *profile)
@@ -257,6 +302,12 @@ gcm_profile_get_copyright (GcmProfile *profile)
 
 /**
  * gcm_profile_set_copyright:
+ * @profile: A valid #GcmProfile
+ * @copyright: the copyright string
+ *
+ * Sets the copyright string.
+ *
+ * Since: 0.0.1
  **/
 void
 gcm_profile_set_copyright (GcmProfile *profile, const gchar *copyright)
@@ -274,6 +325,13 @@ gcm_profile_set_copyright (GcmProfile *profile, const gchar *copyright)
 
 /**
  * gcm_profile_get_model:
+ * @profile: A valid #GcmProfile
+ *
+ * Gets the device model name.
+ *
+ * Return value: A string. Do not free.
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_profile_get_model (GcmProfile *profile)
@@ -284,6 +342,12 @@ gcm_profile_get_model (GcmProfile *profile)
 
 /**
  * gcm_profile_set_model:
+ * @profile: A valid #GcmProfile
+ * @model: the profile model.
+ *
+ * Sets the device model name.
+ *
+ * Since: 0.0.1
  **/
 void
 gcm_profile_set_model (GcmProfile *profile, const gchar *model)
@@ -301,6 +365,13 @@ gcm_profile_set_model (GcmProfile *profile, const gchar *model)
 
 /**
  * gcm_profile_get_manufacturer:
+ * @profile: A valid #GcmProfile
+ *
+ * Gets the device manufacturer name.
+ *
+ * Return value: A string. Do not free.
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_profile_get_manufacturer (GcmProfile *profile)
@@ -311,6 +382,12 @@ gcm_profile_get_manufacturer (GcmProfile *profile)
 
 /**
  * gcm_profile_set_manufacturer:
+ * @profile: A valid #GcmProfile
+ * @model: the profile manufacturer.
+ *
+ * Sets the device manufacturer name.
+ *
+ * Since: 0.0.1
  **/
 void
 gcm_profile_set_manufacturer (GcmProfile *profile, const gchar *manufacturer)
@@ -328,6 +405,13 @@ gcm_profile_set_manufacturer (GcmProfile *profile, const gchar *manufacturer)
 
 /**
  * gcm_profile_get_datetime:
+ * @profile: A valid #GcmProfile
+ *
+ * Gets the profile date and time.
+ *
+ * Return value: A string. Do not free.
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_profile_get_datetime (GcmProfile *profile)
@@ -338,6 +422,12 @@ gcm_profile_get_datetime (GcmProfile *profile)
 
 /**
  * gcm_profile_set_datetime:
+ * @profile: A valid #GcmProfile
+ * @datetime: the profile date time.
+ *
+ * Sets the profile date and time.
+ *
+ * Since: 0.0.1
  **/
 void
 gcm_profile_set_datetime (GcmProfile *profile, const gchar *datetime)
@@ -498,6 +588,16 @@ gcm_utils_format_date_time (const struct tm *created)
 
 /**
  * gcm_profile_parse_data:
+ * @profile: A valid #GcmProfile
+ * @data: the data to parse
+ * @length: the length of @data
+ * @error: A #GError, or %NULL
+ *
+ * Parses profile data, filling in all the details possible.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, GError **error)
@@ -757,6 +857,15 @@ out:
 
 /**
  * gcm_profile_parse:
+ * @profile: A valid #GcmProfile
+ * @file: A GFile pointing to a profile
+ * @error: A #GError, or %NULL
+ *
+ * Parses a profile filename, filling in all the details possible.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_profile_parse (GcmProfile *profile, GFile *file, GError **error)
@@ -801,6 +910,15 @@ out:
 
 /**
  * gcm_profile_save:
+ * @profile: A valid #GcmProfile
+ * @filename: the data to parse
+ * @error: A #GError, or %NULL
+ *
+ * Saves the profile data to a file.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
@@ -823,8 +941,14 @@ out:
 
 /**
  * gcm_profile_generate_vcgt:
+ * @profile: A valid #GcmProfile
+ * @size: the size of the table to generate
  *
- * Free with g_object_unref();
+ * Generates a VCGT table of a specified size.
+ *
+ * Return value: A #GcmClut object, or %NULL. Free with g_object_unref()
+ *
+ * Since: 0.0.1
  **/
 GcmClut *
 gcm_profile_generate_vcgt (GcmProfile *profile, guint size)
@@ -866,8 +990,14 @@ out:
 
 /**
  * gcm_profile_generate_curve:
+ * @profile: A valid #GcmProfile
+ * @size: the size of the curve to generate
  *
- * Free with g_object_unref();
+ * Generates a curve of a specified size.
+ *
+ * Return value: A #GcmClut object, or %NULL. Free with g_object_unref()
+ *
+ * Since: 0.0.1
  **/
 GcmClut *
 gcm_profile_generate_curve (GcmProfile *profile, guint size)
@@ -1329,7 +1459,9 @@ gcm_profile_finalize (GObject *object)
 /**
  * gcm_profile_new:
  *
- * Return value: a new GcmProfile object.
+ * Return value: a new #GcmProfile object.
+ *
+ * Since: 0.0.1
  **/
 GcmProfile *
 gcm_profile_new (void)

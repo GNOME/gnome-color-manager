@@ -64,6 +64,13 @@ G_DEFINE_TYPE (GcmDdcControl, gcm_ddc_control, G_TYPE_OBJECT)
 
 /**
  * gcm_ddc_control_get_description:
+ * @control: A valid #GcmDdcControl
+ *
+ * Gets the string description for the control.
+ *
+ * Return value: A string value, or %NULL
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_ddc_control_get_description (GcmDdcControl *control)
@@ -112,8 +119,15 @@ out:
 
 /**
  * gcm_ddc_control_set:
+ * @control: A valid #GcmDdcControl
+ * @value: the value to write
+ * @error: a #GError, or %NULL
  *
- * write value to register ctrl of ddc/ci
+ * Sets the control value.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_ddc_control_set (GcmDdcControl *control, guint16 value, GError **error)
@@ -146,6 +160,14 @@ out:
 
 /**
  * gcm_ddc_control_reset:
+ * @control: A valid #GcmDdcControl
+ * @error: a #GError, or %NULL
+ *
+ * Resets the control to it's default value.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_ddc_control_reset (GcmDdcControl *control, GError **error)
@@ -171,6 +193,16 @@ out:
 
 /**
  * gcm_ddc_control_request:
+ * @control: A valid #GcmDdcControl
+ * @value: the value location to write into
+ * @maximum: the value maximum location to write into
+ * @error: a #GError, or %NULL
+ *
+ * Get the value of this control.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_ddc_control_request (GcmDdcControl *control, guint16 *value, guint16 *maximum, GError **error)
@@ -235,6 +267,15 @@ out:
 
 /**
  * gcm_ddc_control_run:
+ * @control: A valid #GcmDdcControl
+ * @error: a #GError, or %NULL
+ *
+ * Runs the control. Note, this only makes sense for true controls like 'degauss'
+ * rather than other VCP values such as 'contrast'.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_ddc_control_run (GcmDdcControl *control, GError **error)
@@ -250,6 +291,13 @@ gcm_ddc_control_run (GcmDdcControl *control, GError **error)
 
 /**
  * gcm_ddc_control_parse:
+ * @control: A valid #GcmDdcControl
+ * @id: the control ID, e.g. %GCM_DDC_CONTROL_ID_BRIGHTNESS
+ * @values: a string of permissible values, e.g. "1 3 5 7 8 9" or %NULL
+ *
+ * Parses a control string for permissable values.
+ *
+ * Since: 0.0.1
  **/
 void
 gcm_ddc_control_parse (GcmDdcControl *control, guchar id, const gchar *values)
@@ -283,6 +331,12 @@ out:
 
 /**
  * gcm_ddc_control_set_device:
+ * @control: A valid #GcmDdcControl
+ * @device: the device that owns this control.
+ *
+ * Set the device that this control belongs to.
+ *
+ * Since: 0.0.1
  **/
 void
 gcm_ddc_control_set_device (GcmDdcControl *control, GcmDdcDevice *device)
@@ -294,6 +348,13 @@ gcm_ddc_control_set_device (GcmDdcControl *control, GcmDdcDevice *device)
 
 /**
  * gcm_ddc_control_get_id:
+ * @control: A valid #GcmDdcControl
+ *
+ * Gets the ID for this control.
+ *
+ * Return value: The control ID, e.g. GCM_DDC_CONTROL_ID_BRIGHTNESS
+ *
+ * Since: 0.0.1
  **/
 guchar
 gcm_ddc_control_get_id (GcmDdcControl *control)
@@ -305,8 +366,13 @@ gcm_ddc_control_get_id (GcmDdcControl *control)
 
 /**
  * gcm_ddc_control_get_values:
+ * @control: A valid #GcmDdcControl
  *
- * Return value: an array of guint16
+ * Gets the permissible values of this control.
+ *
+ * Return value: A GArray of guint16 values, free with g_array_unref().
+ *
+ * Since: 0.0.1
  **/
 GArray *
 gcm_ddc_control_get_values (GcmDdcControl *control)
@@ -318,6 +384,12 @@ gcm_ddc_control_get_values (GcmDdcControl *control)
 
 /**
  * gcm_ddc_control_set_verbose:
+ * @control: A valid #GcmDdcControl
+ * @verbose: if the control should log to stderr.
+ *
+ * Set the control verbosity.
+ *
+ * Since: 0.0.1
  **/
 void
 gcm_ddc_control_set_verbose (GcmDdcControl *control, GcmVerbose verbose)
@@ -431,7 +503,7 @@ gcm_ddc_control_finalize (GObject *object)
 /**
  * gcm_ddc_control_new:
  *
- * GcmDdcControl is a nice GObject wrapper for gcm.
+ * Get a control objects.
  *
  * Return value: A new %GcmDdcControl instance
  *

@@ -23,7 +23,7 @@
  * SECTION:gcm-ddc-device
  * @short_description: For managing different i2c devices
  *
- * A GObject to use for accessing devices.
+ * A GObject to use for accessing a device using I2C.
  */
 
 #include "config.h"
@@ -287,8 +287,14 @@ gcm_ddc_device_wait_for_hardware (GcmDdcDevice *device)
 
 /**
  * gcm_ddc_device_write:
+ * @device: A valid #GcmDdcDevice
+ * @data: the data to write
+ * @length: the length of the data to write
+ * @error: a #GError, or %NULL
  *
- * write data to ddc/ci at address addr
+ * Write data to DDC/CI at previoulsly set address address.
+ *
+ * Return value: %TRUE for success
  **/
 gboolean
 gcm_ddc_device_write (GcmDdcDevice *device, guchar *data, gsize length, GError **error)
@@ -334,7 +340,17 @@ out:
 /**
  * gcm_ddc_device_read:
  *
- * Read ddc/ci formatted frame from ddc/ci
+ * @device: A valid #GcmDdcDevice
+ * @data: the data location to read into
+ * @length: the length of the @data buffer
+ * @recieved_length: the amount of data that was copied
+ * @error: a #GError, or %NULL
+ *
+ * Read DDC/CI formatted frame from the device.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_ddc_device_read (GcmDdcDevice *device, guchar *data, gsize data_length, gsize *recieved_length, GError **error)
@@ -407,7 +423,7 @@ out:
 /**
  * gcm_ddc_device_capabilities_request:
  *
- * read capabilities raw data of ddc/ci
+ * Read capabilities raw data of ddc/ci
  **/
 static gint
 gcm_ddc_device_capabilities_request (GcmDdcDevice *device, guint offset, guchar *data, gsize data_length, gsize *recieved_length, GError **error)
@@ -607,6 +623,15 @@ out:
 
 /**
  * gcm_ddc_device_save:
+ *
+ * @device: A valid #GcmDdcDevice
+ * @error: a #GError, or %NULL
+ *
+ * Saves any state to the device EEPROM.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_ddc_device_save (GcmDdcDevice *device, GError **error)
@@ -661,6 +686,14 @@ out:
 
 /**
  * gcm_ddc_device_close:
+ * @device: A valid #GcmDdcDevice
+ * @error: a #GError, or %NULL
+ *
+ * Close the device, and returning control back to the OSD.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_ddc_device_close (GcmDdcDevice *device, GError **error)
@@ -685,6 +718,15 @@ out:
 
 /**
  * gcm_ddc_device_open:
+ * @device: A valid #GcmDdcDevice
+ * @filename: the device node, e.g. "/dev/ddc-1"
+ * @error: a #GError, or %NULL
+ *
+ * Open a device, and take control of the OSD if possible.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_ddc_device_open (GcmDdcDevice *device, const gchar *filename, GError **error)
@@ -727,6 +769,14 @@ out:
 
 /**
  * gcm_ddc_device_get_controls:
+ * @device: A valid #GcmDdcDevice
+ * @error: a #GError, or %NULL
+ *
+ * Get the list of controls for this device.
+ *
+ * Return value: A #GPtrArray of #GcmDdcControl's, free with g_ptr_array_unref() when done.
+ *
+ * Since: 0.0.1
  **/
 GPtrArray *
 gcm_ddc_device_get_controls (GcmDdcDevice *device, GError **error)
@@ -750,6 +800,15 @@ out:
 
 /**
  * gcm_ddc_device_get_control_by_id:
+ * @device: A valid #GcmDdcDevice
+ * @id: the device ID, e.g. GCM_DDC_CONTROL_ID_BRIGHTNESS
+ * @error: a #GError, or %NULL
+ *
+ * Gets a #GcmControl object from the ID.
+ *
+ * Return value: %NULL, or a #GcmControl which needs to be freed with g_object_unref().
+ *
+ * Since: 0.0.1
  **/
 GcmDdcControl *
 gcm_ddc_device_get_control_by_id (GcmDdcDevice *device, guchar id, GError **error)
@@ -787,6 +846,15 @@ out:
 
 /**
  * gcm_ddc_device_get_edid:
+ * @device: A valid #GcmDdcDevice
+ * @length: the length of the return buffer, or %NULL
+ * @error: a #GError, or %NULL
+ *
+ * Gets the raw EDID data for the device.
+ *
+ * Return value: a pointer to the EDID block. Do not free this value.
+ *
+ * Since: 0.0.1
  **/
 const guint8 *
 gcm_ddc_device_get_edid	(GcmDdcDevice *device, gsize *length, GError **error)
@@ -812,6 +880,14 @@ out:
 
 /**
  * gcm_ddc_device_get_edid_md5:
+ * @device: A valid #GcmDdcDevice
+ * @error: a #GError, or %NULL
+ *
+ * Gets the MD5 of the EDID.
+ *
+ * Return value: The MD5 value of the current EDID. Do not free this value.
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_ddc_device_get_edid_md5 (GcmDdcDevice *device, GError **error)
@@ -835,6 +911,14 @@ out:
 
 /**
  * gcm_ddc_device_get_pnpid:
+ * @device: A valid #GcmDdcDevice
+ * @error: a #GError, or %NULL
+ *
+ * Gets the PNPID for the device.
+ *
+ * Return value: The PNPID, or %NULL.
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_ddc_device_get_pnpid (GcmDdcDevice	*device, GError **error)
@@ -858,6 +942,14 @@ out:
 
 /**
  * gcm_ddc_device_get_model:
+ * @device: A valid #GcmDdcDevice
+ * @error: a #GError, or %NULL
+ *
+ * Gets the model of the device.
+ *
+ * Return value: The model string, or %NULL.
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_ddc_device_get_model (GcmDdcDevice	*device, GError **error)
@@ -881,6 +973,14 @@ out:
 
 /**
  * gcm_ddc_device_get_kind:
+ * @device: A valid #GcmDdcDevice
+ * @error: a #GError, or %NULL
+ *
+ * Gets the device kind.
+ *
+ * Return value: The device kind, e.g. GCM_DDC_DEVICE_KIND_LCD, or %GCM_DDC_DEVICE_KIND_UNKNOWN for an error.
+ *
+ * Since: 0.0.1
  **/
 GcmDdcDeviceKind
 gcm_ddc_device_get_kind (GcmDdcDevice *device, GError **error)
@@ -904,6 +1004,12 @@ out:
 
 /**
  * gcm_ddc_device_set_verbose:
+ * @device: A valid #GcmDdcDevice
+ * @verbose: if we should print out debugging to the console
+ *
+ * Sets the logging mode of the device. By default we log nothing.
+ *
+ * Since: 0.0.1
  **/
 void
 gcm_ddc_device_set_verbose (GcmDdcDevice *device, GcmVerbose verbose)

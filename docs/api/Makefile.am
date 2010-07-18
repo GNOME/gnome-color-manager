@@ -55,18 +55,16 @@ expand_content_files=
 # Only needed if you are using gtkdoc-scangobj to dynamically query widget
 # signals and properties.
 INCLUDES =						\
-	$(POLKIT_CFLAGS)				\
-	$(DBUS_CFLAGS)					\
 	$(GLIB_CFLAGS)					\
 	-I$(top_builddir)/libcolor-glib			\
 	-I$(top_srcdir)/libcolor-glib
 
-GCM_GLIB_LIBS =					\
+LIBCOLOR_GLIB_LIBS =					\
 	$(top_builddir)/libcolor-glib/libcolor-glib.la
 
 GTKDOC_LIBS =						\
 	$(GLIB_LIBS)					\
-	$(GCM_GLIB_LIBS)
+	$(LIBCOLOR_GLIB_LIBS)
 
 # This includes the standard gtk-doc make rules, copied by gtkdocize.
 include $(top_srcdir)/gtk-doc.make

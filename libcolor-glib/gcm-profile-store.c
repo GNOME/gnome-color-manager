@@ -66,12 +66,13 @@ G_DEFINE_TYPE (GcmProfileStore, gcm_profile_store, G_TYPE_OBJECT)
 
 /**
  * gcm_profile_store_get_array:
- *
  * @profile_store: a valid %GcmProfileStore instance
  *
  * Gets the profile list.
  *
  * Return value: an array, free with g_ptr_array_unref()
+ *
+ * Since: 0.0.1
  **/
 GPtrArray *
 gcm_profile_store_get_array (GcmProfileStore *profile_store)
@@ -99,13 +100,14 @@ gcm_profile_store_in_array (GPtrArray *array, const gchar *text)
 
 /**
  * gcm_profile_store_get_by_filename:
- *
  * @profile_store: a valid %GcmProfileStore instance
  * @filename: the profile filename
  *
  * Gets a profile.
  *
  * Return value: a valid %GcmProfile or %NULL. Free with g_object_unref()
+ *
+ * Since: 0.0.1
  **/
 GcmProfile *
 gcm_profile_store_get_by_filename (GcmProfileStore *profile_store, const gchar *filename)
@@ -134,13 +136,14 @@ out:
 
 /**
  * gcm_profile_store_get_by_checksum:
- *
  * @profile_store: a valid %GcmProfileStore instance
  * @checksum: the profile checksum
  *
  * Gets a profile.
  *
  * Return value: a valid %GcmProfile or %NULL. Free with g_object_unref()
+ *
+ * Since: 0.0.1
  **/
 GcmProfile *
 gcm_profile_store_get_by_checksum (GcmProfileStore *profile_store, const gchar *checksum)
@@ -303,8 +306,14 @@ out:
 
 /**
  * gcm_profile_store_search_path:
+ * @profile_store: a valid %GcmProfileStore instance
+ * @path: the filesystem path to search
+ *
+ * Searches a specified location for ICC profiles.
  *
  * Return value: if any profile were added
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_profile_store_search_path (GcmProfileStore *profile_store, const gchar *path)
@@ -503,8 +512,14 @@ out:
 
 /**
  * gcm_profile_store_search:
+ * @profile_store: a valid %GcmProfileStore instance
+ * @flags: the #GcmProfileSearchFlags locations to search
  *
- * Return value: if any profile were added
+ * Searches specified locations for ICC profiles.
+ *
+ * Return value: %TRUE if any profile were added
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_profile_store_search (GcmProfileStore *profile_store, GcmProfileSearchFlags flags)
@@ -666,6 +681,8 @@ gcm_profile_store_finalize (GObject *object)
  * gcm_profile_store_new:
  *
  * Return value: a new GcmProfileStore object.
+ *
+ * Since: 0.0.1
  **/
 GcmProfileStore *
 gcm_profile_store_new (void)

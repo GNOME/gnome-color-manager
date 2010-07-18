@@ -76,9 +76,10 @@ G_DEFINE_TYPE (GcmXserver, gcm_xserver, G_TYPE_OBJECT)
  * @data: the data that is returned from the XServer. Free with g_free()
  * @length: the size of the returned data, or %NULL if you don't care
  * @error: a %GError that is set in the result of an error, or %NULL
- * Return value: %TRUE for success.
  *
  * Gets the ICC profile data from the XServer.
+ *
+ * Return value: %TRUE for success.
  **/
 gboolean
 gcm_xserver_get_root_window_profile_data (GcmXserver *xserver, guint8 **data, gsize *length, GError **error)
@@ -140,9 +141,12 @@ out:
  * @xserver: a valid %GcmXserver instance
  * @filename: the filename of the ICC profile
  * @error: a %GError that is set in the result of an error, or %NULL
- * Return value: %TRUE for success.
  *
  * Sets the ICC profile data to the XServer.
+ *
+ * Return value: %TRUE for success.
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_xserver_set_root_window_profile (GcmXserver *xserver, const gchar *filename, GError **error)
@@ -176,9 +180,12 @@ out:
  * @data: the data that is to be set to the XServer
  * @length: the size of the data
  * @error: a %GError that is set in the result of an error, or %NULL
- * Return value: %TRUE for success.
  *
  * Sets the ICC profile data to the XServer.
+ *
+ * Return value: %TRUE for success.
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_xserver_set_root_window_profile_data (GcmXserver *xserver, const guint8 *data, gsize length, GError **error)
@@ -224,9 +231,12 @@ out:
  * @major: the major version
  * @minor: the minor version
  * @error: a %GError that is set in the result of an error, or %NULL
- * Return value: %TRUE for success.
  *
  * Sets the ICC Profiles in X supported version to the XServer.
+ *
+ * Return value: %TRUE for success.
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_xserver_set_protocol_version (GcmXserver *xserver, guint major, guint minor, GError **error)
@@ -270,9 +280,12 @@ out:
  * gcm_xserver_remove_protocol_version:
  * @xserver: a valid %GcmXserver instance
  * @error: a %GError that is set in the result of an error, or %NULL
- * Return value: %TRUE for success.
  *
  * Removes the ICC profile version data from the XServer.
+ *
+ * Return value: %TRUE for success.
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_xserver_remove_protocol_version (GcmXserver *xserver, GError **error)
@@ -317,9 +330,12 @@ out:
  * @major: the major version
  * @minor: the minor version
  * @error: a %GError that is set in the result of an error, or %NULL
- * Return value: %TRUE for success.
  *
  * Gets the ICC profile data from the XServer.
+ *
+ * Return value: %TRUE for success.
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_xserver_get_protocol_version (GcmXserver *xserver, guint *major, guint *minor, GError **error)
@@ -377,9 +393,12 @@ out:
  * gcm_xserver_remove_root_window_profile:
  * @xserver: a valid %GcmXserver instance
  * @error: a %GError that is set in the result of an error, or %NULL
- * Return value: %TRUE for success.
  *
  * Removes the ICC profile data from the XServer.
+ *
+ * Return value: %TRUE for success.
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_xserver_remove_root_window_profile (GcmXserver *xserver, GError **error)
@@ -425,9 +444,12 @@ out:
  * @data: the data that is returned from the XServer. Free with g_free()
  * @length: the size of the returned data, or %NULL if you don't care
  * @error: a %GError that is set in the result of an error, or %NULL
- * Return value: %TRUE for success.
  *
  * Gets the ICC profile data from the specified output.
+ *
+ * Return value: %TRUE for success.
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_xserver_get_output_profile_data (GcmXserver *xserver, const gchar *output_name, guint8 **data, gsize *length, GError **error)
@@ -509,9 +531,12 @@ out:
  * @output_name: the output name, e.g. "LVDS1"
  * @filename: the filename of the ICC profile
  * @error: a %GError that is set in the result of an error, or %NULL
- * Return value: %TRUE for success.
  *
  * Sets the ICC profile data to the specified output.
+ *
+ * Return value: %TRUE for success.
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_xserver_set_output_profile (GcmXserver *xserver, const gchar *output_name, const gchar *filename, GError **error)
@@ -546,9 +571,12 @@ out:
  * @data: the data that is to be set to the XServer
  * @length: the size of the data
  * @error: a %GError that is set in the result of an error, or %NULL
- * Return value: %TRUE for success.
  *
  * Sets the ICC profile data to the specified output.
+ *
+ * Return value: %TRUE for success.
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_xserver_set_output_profile_data (GcmXserver *xserver, const gchar *output_name, const guint8 *data, gsize length, GError **error)
@@ -602,9 +630,12 @@ out:
  * @xserver: a valid %GcmXserver instance
  * @output_name: the output name, e.g. "LVDS1"
  * @error: a %GError that is set in the result of an error, or %NULL
- * Return value: %TRUE for success.
  *
  * Sets the ICC profile data to the specified output.
+ *
+ * Return value: %TRUE for success.
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_xserver_remove_output_profile (GcmXserver *xserver, const gchar *output_name, GError **error)
@@ -747,6 +778,8 @@ gcm_xserver_finalize (GObject *object)
  * gcm_xserver_new:
  *
  * Return value: a new GcmXserver object.
+ *
+ * Since: 0.0.1
  **/
 GcmXserver *
 gcm_xserver_new (void)
