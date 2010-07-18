@@ -33,6 +33,7 @@
 #include "gcm-profile.h"
 #include "gcm-clut.h"
 #include "gcm-xyz.h"
+#include "gcm-dmi.h"
 
 static void
 gcm_test_common_func (void)
@@ -449,6 +450,18 @@ gcm_test_clut_func (void)
 	g_object_unref (clut);
 }
 
+static void
+gcm_test_dmi_func (void)
+{
+	GcmDmi *dmi;
+
+	dmi = gcm_dmi_new ();
+	g_assert (dmi != NULL);
+	g_assert (gcm_dmi_get_name (dmi) != NULL);
+	g_assert (gcm_dmi_get_version (dmi) != NULL);
+	g_assert (gcm_dmi_get_vendor (dmi) != NULL);
+	g_object_unref (dmi);
+}
 
 static void
 gcm_test_xyz_func (void)
@@ -499,6 +512,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/libcolor-glib/profile", gcm_test_profile_func);
 	g_test_add_func ("/libcolor-glib/clut", gcm_test_clut_func);
 	g_test_add_func ("/libcolor-glib/xyz", gcm_test_xyz_func);
+	g_test_add_func ("/libcolor-glib/dmi", gcm_test_dmi_func);
 
 	return g_test_run ();
 }

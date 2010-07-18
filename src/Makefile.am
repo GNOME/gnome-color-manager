@@ -50,8 +50,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-print.h					\
 	gcm-utils.c					\
 	gcm-utils.h					\
-	gcm-dmi.c					\
-	gcm-dmi.h					\
 	gcm-xserver.c					\
 	gcm-xserver.h					\
 	gcm-client.c					\

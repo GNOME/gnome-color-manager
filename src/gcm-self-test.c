@@ -32,7 +32,6 @@
 #include "gcm-device.h"
 #include "gcm-device-udev.h"
 #include "gcm-device-xrandr.h"
-#include "gcm-dmi.h"
 #include "gcm-exif.h"
 #include "gcm-gamma-widget.h"
 #include "gcm-image.h"
@@ -408,19 +407,6 @@ gcm_test_device_func (void)
 	g_ptr_array_unref (profiles);
 
 	g_object_unref (device);
-}
-
-static void
-gcm_test_dmi_func (void)
-{
-	GcmDmi *dmi;
-
-	dmi = gcm_dmi_new ();
-	g_assert (dmi != NULL);
-	g_assert (gcm_dmi_get_name (dmi) != NULL);
-	g_assert (gcm_dmi_get_version (dmi) != NULL);
-	g_assert (gcm_dmi_get_vendor (dmi) != NULL);
-	g_object_unref (dmi);
 }
 
 static void
@@ -854,7 +840,6 @@ main (int argc, char **argv)
 	g_test_init (&argc, &argv, NULL);
 
 	g_test_add_func ("/color/client", gcm_test_client_func);
-	g_test_add_func ("/color/dmi", gcm_test_dmi_func);
 	g_test_add_func ("/color/calibrate", gcm_test_calibrate_func);
 	g_test_add_func ("/color/exif", gcm_test_exif_func);
 	g_test_add_func ("/color/utils", gcm_test_utils_func);

@@ -40,6 +40,7 @@ libcolor_glib_include_HEADERS =					\
 	gcm-edid.h						\
 	gcm-enum.h						\
 	gcm-profile.h						\
+	gcm-dmi.h						\
 	gcm-version.h						\
 	$(NULL)
 
@@ -59,6 +60,8 @@ libcolor_glib_la_SOURCES =					\
 	gcm-tables.h						\
 	gcm-edid.c						\
 	gcm-edid.h						\
+	gcm-dmi.c						\
+	gcm-dmi.h						\
 	gcm-profile.c						\
 	gcm-profile.h						\
 	gcm-clut.c						\

@@ -40,6 +40,7 @@
 #include <gcm-profile.h>
 #include <gcm-enum.h>
 #include <gcm-clut.h>
+#include <gcm-dmi.h>
 
 #undef __LIBCOLOR_GLIB_H_INSIDE__
 
