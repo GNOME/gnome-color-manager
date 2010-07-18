@@ -592,40 +592,6 @@ gcm_test_print_func (void)
 }
 
 static void
-gcm_test_profile_store_func (void)
-{
-	GcmProfileStore *store;
-	GPtrArray *array;
-	GcmProfile *profile;
-	gboolean ret;
-
-	store = gcm_profile_store_new ();
-	g_assert (store != NULL);
-
-	/* add test files */
-	ret = gcm_profile_store_search_path (store, TESTDATADIR "/.");
-	g_assert (ret);
-
-	/* profile does not exist */
-	profile = gcm_profile_store_get_by_filename (store, "xxxxxxxxx");
-	g_assert (profile == NULL);
-
-	/* profile does exist */
-	profile = gcm_profile_store_get_by_checksum (store, "8e2aed5dac6f8b5d8da75610a65b7f27");
-	g_assert (profile != NULL);
-	g_assert_cmpstr (gcm_profile_get_checksum (profile), ==, "8e2aed5dac6f8b5d8da75610a65b7f27");
-	g_object_unref (profile);
-
-	/* get array of profiles */
-	array = gcm_profile_store_get_array (store);
-	g_assert (array != NULL);
-	g_assert_cmpint (array->len, ==, 3);
-	g_ptr_array_unref (array);
-
-	g_object_unref (store);
-}
-
-static void
 gcm_test_trc_widget_func (void)
 {
 	GtkWidget *widget;
@@ -844,7 +810,6 @@ main (int argc, char **argv)
 	g_test_add_func ("/color/exif", gcm_test_exif_func);
 	g_test_add_func ("/color/utils", gcm_test_utils_func);
 	g_test_add_func ("/color/device", gcm_test_device_func);
-	g_test_add_func ("/color/profile_store", gcm_test_profile_store_func);
 	g_test_add_func ("/color/calibrate_dialog", gcm_test_calibrate_dialog_func);
 	if (g_test_thorough ()) {
 		g_test_add_func ("/color/brightness", gcm_test_brightness_func);

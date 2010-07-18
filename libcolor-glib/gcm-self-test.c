@@ -495,6 +495,41 @@ gcm_test_xyz_func (void)
 	g_object_unref (xyz);
 }
 
+
+static void
+gcm_test_profile_store_func (void)
+{
+	GcmProfileStore *store;
+	GPtrArray *array;
+	GcmProfile *profile;
+	gboolean ret;
+
+	store = gcm_profile_store_new ();
+	g_assert (store != NULL);
+
+	/* add test files */
+	ret = gcm_profile_store_search_path (store, TESTDATADIR "/.");
+	g_assert (ret);
+
+	/* profile does not exist */
+	profile = gcm_profile_store_get_by_filename (store, "xxxxxxxxx");
+	g_assert (profile == NULL);
+
+	/* profile does exist */
+	profile = gcm_profile_store_get_by_checksum (store, "8e2aed5dac6f8b5d8da75610a65b7f27");
+	g_assert (profile != NULL);
+	g_assert_cmpstr (gcm_profile_get_checksum (profile), ==, "8e2aed5dac6f8b5d8da75610a65b7f27");
+	g_object_unref (profile);
+
+	/* get array of profiles */
+	array = gcm_profile_store_get_array (store);
+	g_assert (array != NULL);
+	g_assert_cmpint (array->len, ==, 3);
+	g_ptr_array_unref (array);
+
+	g_object_unref (store);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -513,6 +548,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/libcolor-glib/clut", gcm_test_clut_func);
 	g_test_add_func ("/libcolor-glib/xyz", gcm_test_xyz_func);
 	g_test_add_func ("/libcolor-glib/dmi", gcm_test_dmi_func);
+	g_test_add_func ("/libcolor-glib/profile_store", gcm_test_profile_store_func);
 
 	return g_test_run ();
 }

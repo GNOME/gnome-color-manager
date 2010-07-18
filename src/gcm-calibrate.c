@@ -104,6 +104,29 @@ enum {
 G_DEFINE_TYPE (GcmCalibrate, gcm_calibrate, G_TYPE_OBJECT)
 
 /**
+ * gcm_calibrate_mkdir_with_parents:
+ **/
+static gboolean
+gcm_calibrate_mkdir_with_parents (const gchar *filename, GError **error)
+{
+	gboolean ret;
+	GFile *file = NULL;
+
+	/* ensure desination exists */
+	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
+	if (!ret) {
+		file = g_file_new_for_path (filename);
+		ret = g_file_make_directory_with_parents (file, NULL, error);
+		if (!ret)
+			goto out;
+	}
+out:
+	if (file != NULL)
+		g_object_unref (file);
+	return ret;
+}
+
+/**
  * gcm_calibrate_get_model_fallback:
  **/
 const gchar *
@@ -439,7 +462,7 @@ gcm_calibrate_set_working_path (GcmCalibrate *calibrate, GError **error)
 	timespec = gcm_calibrate_get_time ();
 	folder = g_strjoin (" - ", priv->basename, timespec, NULL);
 	priv->working_path = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "calibration", folder, NULL);
-	ret = gcm_utils_mkdir_with_parents (priv->working_path, error);
+	ret = gcm_calibrate_mkdir_with_parents (priv->working_path, error);
 	g_free (timespec);
 	g_free (folder);
 	return ret;

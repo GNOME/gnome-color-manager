@@ -37,7 +37,6 @@
 #include "egg-debug.h"
 
 #include "gcm-profile.h"
-//#include "gcm-utils.h"
 #include "gcm-xyz.h"
 
 static void     gcm_profile_finalize	(GObject     *object);

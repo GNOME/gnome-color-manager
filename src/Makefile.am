@@ -70,8 +70,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-trc-widget.h				\
 	gcm-gamma-widget.c				\
 	gcm-gamma-widget.h				\
-	gcm-profile-store.c				\
-	gcm-profile-store.h				\
 	gcm-calibrate.c					\
 	gcm-calibrate.h					\
 	gcm-calibrate-argyll.c				\

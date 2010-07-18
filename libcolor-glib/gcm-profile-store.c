@@ -33,7 +33,6 @@
 #include <gio/gio.h>
 
 #include "gcm-profile-store.h"
-#include "gcm-utils.h"
 
 #include "egg-debug.h"
 
@@ -52,7 +51,6 @@ struct _GcmProfileStorePrivate
 	GPtrArray			*monitor_array;
 	GPtrArray			*directory_array;
 	GVolumeMonitor			*volume_monitor;
-	GSettings			*settings;
 };
 
 enum {
@@ -324,16 +322,9 @@ gcm_profile_store_search_path (GcmProfileStore *profile_store, const gchar *path
 	/* add if correct type */
 	if (g_file_test (path, G_FILE_TEST_IS_REGULAR)) {
 
-		/* check the file actually is a profile */
+		/* check the file actually is a profile when we try to parse it */
 		file = g_file_new_for_path (path);
-		ret = gcm_utils_is_icc_profile (file);
-		if (ret) {
-			success = gcm_profile_store_add_profile (profile_store, file);
-			goto out;
-		}
-
-		/* invalid file */
-		egg_debug ("not recognized as ICC profile: %s", path);
+		success = gcm_profile_store_add_profile (profile_store, file);
 		goto out;
 	}
 
@@ -488,6 +479,29 @@ gcm_profile_store_add_profiles_from_mounted_volumes (GcmProfileStore *profile_st
 }
 
 /**
+ * gcm_profile_store_mkdir_with_parents:
+ **/
+static gboolean
+gcm_profile_store_mkdir_with_parents (const gchar *filename, GError **error)
+{
+	gboolean ret;
+	GFile *file = NULL;
+
+	/* ensure desination exists */
+	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
+	if (!ret) {
+		file = g_file_new_for_path (filename);
+		ret = g_file_make_directory_with_parents (file, NULL, error);
+		if (!ret)
+			goto out;
+	}
+out:
+	if (file != NULL)
+		g_object_unref (file);
+	return ret;
+}
+
+/**
  * gcm_profile_store_search:
  *
  * Return value: if any profile were added
@@ -499,7 +513,6 @@ gcm_profile_store_search (GcmProfileStore *profile_store, GcmProfileSearchFlags 
 	gboolean ret;
 	gboolean success = FALSE;
 	GError *error;
-	GcmProfileStorePrivate *priv = profile_store->priv;
 
 	/* get OSX and Linux system-wide profiles */
 	if (flags == GCM_PROFILE_STORE_SEARCH_ALL ||
@@ -518,21 +531,18 @@ gcm_profile_store_search (GcmProfileStore *profile_store, GcmProfileSearchFlags 
 	/* get OSX and Windows system-wide profiles when using Linux */
 	if (flags == GCM_PROFILE_STORE_SEARCH_ALL ||
 	    flags & GCM_PROFILE_STORE_SEARCH_VOLUMES) {
-		ret = g_settings_get_boolean (priv->settings, GCM_SETTINGS_USE_PROFILES_FROM_VOLUMES);
-		if (ret) {
-			ret = gcm_profile_store_add_profiles_from_mounted_volumes (profile_store);
-			if (ret)
-				success = TRUE;
-		}
+		ret = gcm_profile_store_add_profiles_from_mounted_volumes (profile_store);
+		if (ret)
+			success = TRUE;
 	}
 
 	/* get Linux per-user profiles */
 	if (flags == GCM_PROFILE_STORE_SEARCH_ALL ||
 	    flags & GCM_PROFILE_STORE_SEARCH_USER) {
 		path = g_build_filename (g_get_user_data_dir (), "icc", NULL);
-		ret = gcm_utils_mkdir_with_parents (path, &error);
+		ret = gcm_profile_store_mkdir_with_parents (path, &error);
 		if (!ret) {
-			egg_error ("failed to create directory on startup: %s", error->message);
+			egg_warning ("failed to create directory on startup: %s", error->message);
 			g_error_free (error);
 		} else {
 			ret = gcm_profile_store_search_path (profile_store, path);
@@ -626,7 +636,6 @@ gcm_profile_store_init (GcmProfileStore *profile_store)
 	profile_store->priv->profile_array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	profile_store->priv->monitor_array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	profile_store->priv->directory_array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_free);
-	profile_store->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 
 	/* watch for volumes to be connected */
 	profile_store->priv->volume_monitor = g_volume_monitor_get ();
@@ -649,7 +658,6 @@ gcm_profile_store_finalize (GObject *object)
 	g_ptr_array_unref (priv->monitor_array);
 	g_ptr_array_unref (priv->directory_array);
 	g_object_unref (priv->volume_monitor);
-	g_object_unref (priv->settings);
 
 	G_OBJECT_CLASS (gcm_profile_store_parent_class)->finalize (object);
 }

@@ -2317,9 +2317,15 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 	gchar *colorspace_cmyk;
 	gint intent_display = -1;
 	gint intent_softproof = -1;
+	GcmProfileSearchFlags search_flags = GCM_PROFILE_STORE_SEARCH_ALL;
+
+	/* volume checking is optional */
+	ret = g_settings_get_boolean (panel->priv->settings, GCM_SETTINGS_USE_PROFILES_FROM_VOLUMES);
+	if (!ret)
+		search_flags &= ~GCM_PROFILE_STORE_SEARCH_VOLUMES;
 
 	/* search the disk for profiles */
-	gcm_profile_store_search (panel->priv->profile_store, GCM_PROFILE_STORE_SEARCH_ALL);
+	gcm_profile_store_search (panel->priv->profile_store, search_flags);
 	g_signal_connect (panel->priv->profile_store, "changed", G_CALLBACK(cc_color_panel_profile_store_changed_cb), panel);
 
 	/* setup RGB combobox */

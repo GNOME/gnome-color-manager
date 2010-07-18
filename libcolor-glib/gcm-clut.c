@@ -34,7 +34,6 @@
 #include <gio/gio.h>
 
 #include "gcm-clut.h"
-//#include "gcm-utils.h"
 
 #include "egg-debug.h"
 

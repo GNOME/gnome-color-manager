@@ -83,8 +83,6 @@
 
 gboolean	 gcm_utils_mkdir_for_filename		(const gchar		*filename,
 							 GError			**error);
-gboolean	 gcm_utils_mkdir_with_parents		(const gchar		*filename,
-							 GError			**error);
 gboolean	 gcm_utils_mkdir_and_copy		(GFile			*source,
 							 GFile			*destination,
 							 GError			**error);
