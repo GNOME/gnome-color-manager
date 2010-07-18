@@ -52,8 +52,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-utils.h					\
 	gcm-client.c					\
 	gcm-client.h					\
-	gcm-colorimeter.c				\
-	gcm-colorimeter.h				\
 	gcm-device.c					\
 	gcm-device.h					\
 	gcm-device-xrandr.c				\

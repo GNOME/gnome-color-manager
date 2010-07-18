@@ -20,8 +20,8 @@
  */
 
 /**
- * SECTION:gcm-colorimeter
- * @short_description: Colorimeter device abstraction
+ * SECTION:gcm-sensor-client
+ * @short_description: SensorClient device abstraction
  *
  * This object allows the programmer to detect a color sensor device.
  */
@@ -32,21 +32,20 @@
 #include <gudev/gudev.h>
 #include <gtk/gtk.h>
 
-#include "gcm-colorimeter.h"
-#include "gcm-utils.h"
+#include "gcm-sensor-client.h"
 
 #include "egg-debug.h"
 
-static void     gcm_colorimeter_finalize	(GObject     *object);
+static void     gcm_sensor_client_finalize	(GObject     *object);
 
-#define GCM_COLORIMETER_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_COLORIMETER, GcmColorimeterPrivate))
+#define GCM_SENSOR_CLIENT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_SENSOR_CLIENT, GcmSensorClientPrivate))
 
 /**
- * GcmColorimeterPrivate:
+ * GcmSensorClientPrivate:
  *
- * Private #GcmColorimeter data
+ * Private #GcmSensorClient data
  **/
-struct _GcmColorimeterPrivate
+struct _GcmSensorClientPrivate
 {
 	gboolean			 present;
 	GUdevClient			*client;
@@ -65,18 +64,18 @@ enum {
 };
 
 static guint signals[SIGNAL_LAST] = { 0 };
-static gpointer gcm_colorimeter_object = NULL;
+static gpointer gcm_sensor_client_object = NULL;
 
-G_DEFINE_TYPE (GcmColorimeter, gcm_colorimeter, G_TYPE_OBJECT)
+G_DEFINE_TYPE (GcmSensorClient, gcm_sensor_client, G_TYPE_OBJECT)
 
 /**
- * gcm_colorimeter_get_property:
+ * gcm_sensor_client_get_property:
  **/
 static void
-gcm_colorimeter_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+gcm_sensor_client_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
-	GcmColorimeter *colorimeter = GCM_COLORIMETER (object);
-	GcmColorimeterPrivate *priv = colorimeter->priv;
+	GcmSensorClient *sensor_client = GCM_SENSOR_CLIENT (object);
+	GcmSensorClientPrivate *priv = sensor_client->priv;
 
 	switch (prop_id) {
 	case PROP_PRESENT:
@@ -89,10 +88,10 @@ gcm_colorimeter_get_property (GObject *object, guint prop_id, GValue *value, GPa
 }
 
 /**
- * gcm_colorimeter_set_property:
+ * gcm_sensor_client_set_property:
  **/
 static void
-gcm_colorimeter_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
+gcm_sensor_client_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	switch (prop_id) {
 	default:
@@ -102,19 +101,19 @@ gcm_colorimeter_set_property (GObject *object, guint prop_id, const GValue *valu
 }
 
 /**
- * gcm_colorimeter_class_init:
+ * gcm_sensor_client_class_init:
  **/
 static void
-gcm_colorimeter_class_init (GcmColorimeterClass *klass)
+gcm_sensor_client_class_init (GcmSensorClientClass *klass)
 {
 	GParamSpec *pspec;
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-	object_class->finalize = gcm_colorimeter_finalize;
-	object_class->get_property = gcm_colorimeter_get_property;
-	object_class->set_property = gcm_colorimeter_set_property;
+	object_class->finalize = gcm_sensor_client_finalize;
+	object_class->get_property = gcm_sensor_client_get_property;
+	object_class->set_property = gcm_sensor_client_set_property;
 
 	/**
-	 * GcmColorimeter:present:
+	 * GcmSensorClient:present:
 	 */
 	pspec = g_param_spec_boolean ("present", NULL, NULL,
 				      FALSE,
@@ -122,51 +121,51 @@ gcm_colorimeter_class_init (GcmColorimeterClass *klass)
 	g_object_class_install_property (object_class, PROP_PRESENT, pspec);
 
 	/**
-	 * GcmColorimeter::changed:
+	 * GcmSensorClient::changed:
 	 **/
 	signals[SIGNAL_CHANGED] =
 		g_signal_new ("changed",
 			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (GcmColorimeterClass, changed),
+			      G_STRUCT_OFFSET (GcmSensorClientClass, changed),
 			      NULL, NULL, g_cclosure_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
 
-	g_type_class_add_private (klass, sizeof (GcmColorimeterPrivate));
+	g_type_class_add_private (klass, sizeof (GcmSensorClientPrivate));
 }
 
 /**
- * gcm_colorimeter_get_sensor:
+ * gcm_sensor_client_get_sensor:
  **/
 GcmSensor *
-gcm_colorimeter_get_sensor (GcmColorimeter *colorimeter)
+gcm_sensor_client_get_sensor (GcmSensorClient *sensor_client)
 {
-	return colorimeter->priv->sensor;
+	return sensor_client->priv->sensor;
 }
 
 /**
- * gcm_colorimeter_get_present:
+ * gcm_sensor_client_get_present:
  **/
 gboolean
-gcm_colorimeter_get_present (GcmColorimeter *colorimeter)
+gcm_sensor_client_get_present (GcmSensorClient *sensor_client)
 {
-	return colorimeter->priv->present;
+	return sensor_client->priv->present;
 }
 
 /**
- * gcm_colorimeter_device_add:
+ * gcm_sensor_client_device_add:
  **/
 static gboolean
-gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
+gcm_sensor_client_device_add (GcmSensorClient *sensor_client, GUdevDevice *device)
 {
 	const gchar *vendor;
 	const gchar *model;
-	GcmSensorKind colorimeter_kind;
+	GcmSensorKind sensor_client_kind;
 	gboolean ret;
 	const gchar *kind_str;
-	GcmColorimeterPrivate *priv = colorimeter->priv;
+	GcmSensorClientPrivate *priv = sensor_client->priv;
 
 	/* interesting device? */
-	ret = g_udev_device_get_property_as_boolean (device, "GCM_COLORIMETER");
+	ret = g_udev_device_get_property_as_boolean (device, "GCM_SENSOR_CLIENT");
 	if (!ret)
 		goto out;
 
@@ -191,8 +190,8 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 
 	/* try to get type */
 	kind_str = g_udev_device_get_property (device, "GCM_KIND");
-	colorimeter_kind = gcm_sensor_kind_from_string (kind_str);
-	if (colorimeter_kind == GCM_SENSOR_KIND_UNKNOWN)
+	sensor_client_kind = gcm_sensor_kind_from_string (kind_str);
+	if (sensor_client_kind == GCM_SENSOR_KIND_UNKNOWN)
 		egg_warning ("Failed to recognize color device: %s", model);
 
 	g_object_set (priv->sensor,
@@ -202,27 +201,27 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 		      "supports-projector",g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PROJECTOR"),
 		      "supports-printer", g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PRINTER"),
 		      "supports-spot", g_udev_device_get_property_as_boolean (device, "GCM_TYPE_SPOT"),
-		      "kind", colorimeter_kind,
+		      "kind", sensor_client_kind,
 		      NULL);
 
 	/* signal the addition */
 	egg_debug ("emit: changed");
-	g_signal_emit (colorimeter, signals[SIGNAL_CHANGED], 0);
+	g_signal_emit (sensor_client, signals[SIGNAL_CHANGED], 0);
 out:
 	return ret;
 }
 
 /**
- * gcm_colorimeter_device_remove:
+ * gcm_sensor_client_device_remove:
  **/
 static gboolean
-gcm_colorimeter_device_remove (GcmColorimeter *colorimeter, GUdevDevice *device)
+gcm_sensor_client_device_remove (GcmSensorClient *sensor_client, GUdevDevice *device)
 {
 	gboolean ret;
-	GcmColorimeterPrivate *priv = colorimeter->priv;
+	GcmSensorClientPrivate *priv = sensor_client->priv;
 
 	/* interesting device? */
-	ret = g_udev_device_get_property_as_boolean (device, "GCM_COLORIMETER");
+	ret = g_udev_device_get_property_as_boolean (device, "GCM_SENSOR_CLIENT");
 	if (!ret)
 		goto out;
 
@@ -235,26 +234,26 @@ gcm_colorimeter_device_remove (GcmColorimeter *colorimeter, GUdevDevice *device)
 
 	/* signal the removal */
 	egg_debug ("emit: changed");
-	g_signal_emit (colorimeter, signals[SIGNAL_CHANGED], 0);
+	g_signal_emit (sensor_client, signals[SIGNAL_CHANGED], 0);
 out:
 	return ret;
 }
 
 /**
- * gcm_colorimeter_coldplug:
+ * gcm_sensor_client_coldplug:
  **/
 static gboolean
-gcm_colorimeter_coldplug (GcmColorimeter *colorimeter)
+gcm_sensor_client_coldplug (GcmSensorClient *sensor_client)
 {
 	GList *devices;
 	GList *l;
 	gboolean ret = FALSE;
-	GcmColorimeterPrivate *priv = colorimeter->priv;
+	GcmSensorClientPrivate *priv = sensor_client->priv;
 
 	/* get all USB devices */
 	devices = g_udev_client_query_by_subsystem (priv->client, "usb");
 	for (l = devices; l != NULL; l = l->next) {
-		ret = gcm_colorimeter_device_add (colorimeter, l->data);
+		ret = gcm_sensor_client_device_add (sensor_client, l->data);
 		if (ret) {
 			egg_debug ("found color management device");
 			break;
@@ -267,68 +266,68 @@ gcm_colorimeter_coldplug (GcmColorimeter *colorimeter)
 }
 
 /**
- * gcm_colorimeter_uevent_cb:
+ * gcm_sensor_client_uevent_cb:
  **/
 static void
-gcm_colorimeter_uevent_cb (GUdevClient *client, const gchar *action, GUdevDevice *device, GcmColorimeter *colorimeter)
+gcm_sensor_client_uevent_cb (GUdevClient *client, const gchar *action, GUdevDevice *device, GcmSensorClient *sensor_client)
 {
 	egg_debug ("uevent %s", action);
 	if (g_strcmp0 (action, "add") == 0) {
-		gcm_colorimeter_device_add (colorimeter, device);
+		gcm_sensor_client_device_add (sensor_client, device);
 	} else if (g_strcmp0 (action, "remove") == 0) {
-		gcm_colorimeter_device_remove (colorimeter, device);
+		gcm_sensor_client_device_remove (sensor_client, device);
 	}
 }
 
 /**
- * gcm_colorimeter_init:
+ * gcm_sensor_client_init:
  **/
 static void
-gcm_colorimeter_init (GcmColorimeter *colorimeter)
+gcm_sensor_client_init (GcmSensorClient *sensor_client)
 {
 	const gchar *subsystems[] = {"usb", NULL};
 
-	colorimeter->priv = GCM_COLORIMETER_GET_PRIVATE (colorimeter);
+	sensor_client->priv = GCM_SENSOR_CLIENT_GET_PRIVATE (sensor_client);
 
 	/* use GUdev to find the calibration device */
-	colorimeter->priv->client = g_udev_client_new (subsystems);
-	g_signal_connect (colorimeter->priv->client, "uevent",
-			  G_CALLBACK (gcm_colorimeter_uevent_cb), colorimeter);
+	sensor_client->priv->client = g_udev_client_new (subsystems);
+	g_signal_connect (sensor_client->priv->client, "uevent",
+			  G_CALLBACK (gcm_sensor_client_uevent_cb), sensor_client);
 
 	/* coldplug */
-	gcm_colorimeter_coldplug (colorimeter);
+	gcm_sensor_client_coldplug (sensor_client);
 }
 
 /**
- * gcm_colorimeter_finalize:
+ * gcm_sensor_client_finalize:
  **/
 static void
-gcm_colorimeter_finalize (GObject *object)
+gcm_sensor_client_finalize (GObject *object)
 {
-	GcmColorimeter *colorimeter = GCM_COLORIMETER (object);
-	GcmColorimeterPrivate *priv = colorimeter->priv;
+	GcmSensorClient *sensor_client = GCM_SENSOR_CLIENT (object);
+	GcmSensorClientPrivate *priv = sensor_client->priv;
 
 	g_object_unref (priv->client);
 	if (priv->sensor != NULL)
 		g_object_unref (priv->sensor);
 
-	G_OBJECT_CLASS (gcm_colorimeter_parent_class)->finalize (object);
+	G_OBJECT_CLASS (gcm_sensor_client_parent_class)->finalize (object);
 }
 
 /**
- * gcm_colorimeter_new:
+ * gcm_sensor_client_new:
  *
- * Return value: a new GcmColorimeter object.
+ * Return value: a new GcmSensorClient object.
  **/
-GcmColorimeter *
-gcm_colorimeter_new (void)
+GcmSensorClient *
+gcm_sensor_client_new (void)
 {
-	if (gcm_colorimeter_object != NULL) {
-		g_object_ref (gcm_colorimeter_object);
+	if (gcm_sensor_client_object != NULL) {
+		g_object_ref (gcm_sensor_client_object);
 	} else {
-		gcm_colorimeter_object = g_object_new (GCM_TYPE_COLORIMETER, NULL);
-		g_object_add_weak_pointer (gcm_colorimeter_object, &gcm_colorimeter_object);
+		gcm_sensor_client_object = g_object_new (GCM_TYPE_SENSOR_CLIENT, NULL);
+		g_object_add_weak_pointer (gcm_sensor_client_object, &gcm_sensor_client_object);
 	}
-	return GCM_COLORIMETER (gcm_colorimeter_object);
+	return GCM_SENSOR_CLIENT (gcm_sensor_client_object);
 }
 

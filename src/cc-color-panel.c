@@ -35,7 +35,7 @@
 #include "gcm-calibrate-argyll.h"
 #include "gcm-cie-widget.h"
 #include "gcm-client.h"
-#include "gcm-colorimeter.h"
+#include "gcm-sensor-client.h"
 #include "gcm-device-xrandr.h"
 #include "gcm-device-virtual.h"
 #include "gcm-exif.h"
@@ -56,7 +56,7 @@ struct _CcColorPanelPrivate {
 	GcmDevice		*current_device;
 	GcmProfileStore		*profile_store;
 	GcmClient		*gcm_client;
-	GcmColorimeter		*colorimeter;
+	GcmSensorClient		*sensor_client;
 	gboolean		 setting_up_device;
 	GtkWidget		*main_window;
 	GtkWidget		*info_bar_loading;
@@ -1418,7 +1418,7 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 		}
 
 		/* find whether we have hardware installed */
-		ret = gcm_colorimeter_get_present (panel->priv->colorimeter);
+		ret = gcm_sensor_client_get_present (panel->priv->sensor_client);
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The measuring instrument is not plugged in");
@@ -1433,7 +1433,7 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 	} else if (kind == GCM_DEVICE_KIND_PRINTER) {
 
 		/* find whether we have hardware installed */
-		ret = gcm_colorimeter_get_present (panel->priv->colorimeter);
+		ret = gcm_sensor_client_get_present (panel->priv->sensor_client);
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The measuring instrument is not plugged in");
@@ -1441,7 +1441,7 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 		}
 
 		/* find whether we have hardware installed */
-		ret = gcm_sensor_supports_printer (gcm_colorimeter_get_sensor (panel->priv->colorimeter));
+		ret = gcm_sensor_supports_printer (gcm_sensor_client_get_sensor (panel->priv->sensor_client));
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The measuring instrument does not support printer profiling");
@@ -1954,16 +1954,16 @@ out:
 }
 
 /**
- * cc_color_panel_colorimeter_changed_cb:
+ * cc_color_panel_sensor_client_changed_cb:
  **/
 static void
-cc_color_panel_colorimeter_changed_cb (GcmColorimeter *colorimeter, CcColorPanel *panel)
+cc_color_panel_sensor_client_changed_cb (GcmSensorClient *sensor_client, CcColorPanel *panel)
 {
 	gboolean present;
 	const gchar *event_id;
 	const gchar *message;
 
-	present = gcm_colorimeter_get_present (colorimeter);
+	present = gcm_sensor_client_get_present (sensor_client);
 
 	if (present) {
 		/* TRANSLATORS: this is a sound description */
@@ -2603,8 +2603,8 @@ cc_color_panel_finalize (GObject *object)
 
 	if (panel->priv->current_device != NULL)
 		g_object_unref (panel->priv->current_device);
-	if (panel->priv->colorimeter != NULL)
-		g_object_unref (panel->priv->colorimeter);
+	if (panel->priv->sensor_client != NULL)
+		g_object_unref (panel->priv->sensor_client);
 	if (panel->priv->settings != NULL)
 		g_object_unref (panel->priv->settings);
 	if (panel->priv->builder != NULL)
@@ -2809,8 +2809,8 @@ cc_color_panel_init (CcColorPanel *panel)
 			  G_CALLBACK (cc_color_panel_client_notify_loading_cb), panel);
 
 	/* use the color device */
-	panel->priv->colorimeter = gcm_colorimeter_new ();
-	g_signal_connect (panel->priv->colorimeter, "changed", G_CALLBACK (cc_color_panel_colorimeter_changed_cb), panel);
+	panel->priv->sensor_client = gcm_sensor_client_new ();
+	g_signal_connect (panel->priv->sensor_client, "changed", G_CALLBACK (cc_color_panel_sensor_client_changed_cb), panel);
 
 	/* use infobar */
 	panel->priv->info_bar_loading = gtk_info_bar_new ();

@@ -33,7 +33,7 @@
 #include "egg-debug.h"
 
 #include "gcm-calibrate-argyll.h"
-#include "gcm-colorimeter.h"
+#include "gcm-sensor-client.h"
 #include "gcm-profile-store.h"
 #include "gcm-utils.h"
 #include "gcm-xyz.h"
@@ -256,10 +256,10 @@ gcm_picker_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
 }
 
 /**
- * gcm_picker_colorimeter_setup_ui:
+ * gcm_picker_sensor_client_setup_ui:
  **/
 static void
-gcm_picker_colorimeter_setup_ui (GcmColorimeter *colorimeter)
+gcm_picker_sensor_client_setup_ui (GcmSensorClient *sensor_client)
 {
 	gboolean present;
 	gboolean supports_spot;
@@ -267,21 +267,21 @@ gcm_picker_colorimeter_setup_ui (GcmColorimeter *colorimeter)
 	GtkWidget *widget;
 
 	/* no present */
-	present = gcm_colorimeter_get_present (colorimeter);
+	present = gcm_sensor_client_get_present (sensor_client);
 	if (!present) {
 		/* TRANSLATORS: this is displayed the user has not got suitable hardware */
-		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("No colorimeter is attached."));
+		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("No sensor_client is attached."));
 		goto out;
 	}
 
 	/* no support */
-	supports_spot = gcm_sensor_supports_spot (gcm_colorimeter_get_sensor (colorimeter));
+	supports_spot = gcm_sensor_supports_spot (gcm_sensor_client_get_sensor (sensor_client));
 	ret = (present && supports_spot);
 
 	/* change the label */
 	if (present && !supports_spot) {
 		/* TRANSLATORS: this is displayed the user has not got suitable hardware */
-		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("The attached colorimeter is not capable of reading a spot color."));
+		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("The attached sensor_client is not capable of reading a spot color."));
 	} else if (!present) {
 	}
 
@@ -294,12 +294,12 @@ out:
 }
 
 /**
- * gcm_picker_colorimeter_changed_cb:
+ * gcm_picker_sensor_client_changed_cb:
  **/
 static void
-gcm_picker_colorimeter_changed_cb (GcmColorimeter *colorimeter, gpointer user_data)
+gcm_picker_sensor_client_changed_cb (GcmSensorClient *sensor_client, gpointer user_data)
 {
-	gcm_picker_colorimeter_setup_ui (colorimeter);
+	gcm_picker_sensor_client_setup_ui (sensor_client);
 }
 
 /**
@@ -478,7 +478,7 @@ main (int argc, char *argv[])
 	GtkWidget *main_window;
 	GtkWidget *widget;
 	guint xid = 0;
-	GcmColorimeter *colorimeter = NULL;
+	GcmSensorClient *sensor_client = NULL;
 
 	const GOptionEntry options[] = {
 		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
@@ -546,8 +546,8 @@ main (int argc, char *argv[])
 	                                   GCM_DATA G_DIR_SEPARATOR_S "icons");
 
 	/* use the color device */
-	colorimeter = gcm_colorimeter_new ();
-	g_signal_connect (colorimeter, "changed", G_CALLBACK (gcm_picker_colorimeter_changed_cb), NULL);
+	sensor_client = gcm_sensor_client_new ();
+	g_signal_connect (sensor_client, "changed", G_CALLBACK (gcm_picker_sensor_client_changed_cb), NULL);
 
 	/* set the parent window if it is specified */
 	if (xid != 0) {
@@ -573,7 +573,7 @@ main (int argc, char *argv[])
 	gtk_box_pack_start (GTK_BOX(widget), info_bar_hardware, FALSE, FALSE, 0);
 
 	/* disable some ui if no hardware */
-	gcm_picker_colorimeter_setup_ui (colorimeter);
+	gcm_picker_sensor_client_setup_ui (sensor_client);
 
 	/* maintain a list of profiles */
 	profile_store = gcm_profile_store_new ();
@@ -603,8 +603,8 @@ out:
 	g_object_unref (application);
 	if (profile_store != NULL)
 		g_object_unref (profile_store);
-	if (colorimeter != NULL)
-		g_object_unref (colorimeter);
+	if (sensor_client != NULL)
+		g_object_unref (sensor_client);
 	if (calibrate != NULL)
 		g_object_unref (calibrate);
 	if (builder != NULL)

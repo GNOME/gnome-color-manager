@@ -9,6 +9,7 @@ INCLUDES = \
 	$(GLIB_CFLAGS)						\
 	$(GTK_CFLAGS)						\
 	$(LCMS_CFLAGS)						\
+	$(GUDEV_CFLAGS)						\
 	$(USB_CFLAGS)						\
 	-I$(top_srcdir)/libcolor-glib				\
 	-I$(top_builddir)/libcolor-glib				\
@@ -55,6 +56,8 @@ libcolor_glib_la_SOURCES =					\
 	gcm-common.h						\
 	gcm-sensor.c						\
 	gcm-sensor.h						\
+	gcm-sensor-client.c					\
+	gcm-sensor-client.h					\
 	gcm-sensor-huey.c					\
 	gcm-sensor-huey.h					\
 	gcm-sensor-dummy.c					\
@@ -94,6 +97,7 @@ libcolor_glib_la_LIBADD =					\
 	$(USB_LIBS)						\
 	$(LCMS_LIBS)						\
 	$(GLIB_LIBS)						\
+	$(GUDEV_LIBS)						\
 	$(GTK_LIBS)						\
 	-lm
 

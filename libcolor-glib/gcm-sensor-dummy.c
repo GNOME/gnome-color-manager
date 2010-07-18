@@ -21,7 +21,7 @@
 
 /**
  * SECTION:gcm-sensor-dummy
- * @short_description: functionality to talk to a dummy colorimeter.
+ * @short_description: functionality to talk to a dummy sensor_client.
  *
  * This object contains all the low level logic for imaginary hardware.
  */
