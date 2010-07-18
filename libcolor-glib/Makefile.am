@@ -36,11 +36,15 @@ libcolor_glib_include_HEADERS =					\
 	gcm-ddc-common.h					\
 	gcm-sensor-huey.h					\
 	gcm-sensor.h						\
+	gcm-edid.h						\
+	gcm-tables.h						\
 	gcm-version.h						\
 	$(NULL)
 
 libcolor_glib_la_SOURCES =					\
 	libcolor-glib.h						\
+	egg-debug.c						\
+	egg-debug.h						\
 	gcm-common.c						\
 	gcm-common.h						\
 	gcm-sensor.c						\
@@ -49,6 +53,10 @@ libcolor_glib_la_SOURCES =					\
 	gcm-sensor-huey.h					\
 	gcm-sensor-dummy.c					\
 	gcm-sensor-dummy.h					\
+	gcm-tables.c						\
+	gcm-tables.h						\
+	gcm-edid.c						\
+	gcm-edid.h						\
 	gcm-ddc-client.c					\
 	gcm-ddc-client.h					\
 	gcm-ddc-device.c					\
@@ -62,7 +70,8 @@ libcolor_glib_la_SOURCES =					\
 
 libcolor_glib_la_LIBADD =					\
 	$(USB_LIBS)						\
-	$(GLIB_LIBS)
+	$(GLIB_LIBS)						\
+	-lm
 
 libcolor_glib_la_LDFLAGS =					\
 	-version-info $(LT_CURRENT):$(LT_REVISION):$(LT_AGE)	\

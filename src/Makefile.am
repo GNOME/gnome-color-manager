@@ -56,12 +56,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-enum.h					\
 	gcm-clut.c					\
 	gcm-clut.h					\
-	gcm-edid.c					\
-	gcm-edid.h					\
 	gcm-dmi.c					\
 	gcm-dmi.h					\
-	gcm-tables.c					\
-	gcm-tables.h					\
 	gcm-xserver.c					\
 	gcm-xserver.h					\
 	gcm-client.c					\
@@ -105,6 +101,9 @@ libgcmshared_a_SOURCES +=				\
 
 libgcmshared_a_CFLAGS =					\
 	$(WARNINGFLAGS_C)
+
+libgcmshared_a_LIBADD =					\
+	$(COLOR_GLIB_LIBS)
 
 sbin_PROGRAMS =						\
 	gcm-install-system-wide
@@ -152,6 +151,7 @@ gcm_dump_edid_LDADD =					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_dump_edid_CFLAGS =					\
@@ -171,6 +171,7 @@ gcm_dump_profile_LDADD =				\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_dump_profile_CFLAGS =				\
@@ -224,6 +225,7 @@ gcm_apply_LDADD =					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_apply_CFLAGS =					\
@@ -290,6 +292,7 @@ gcm_picker_LDADD =					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
 	$(CANBERRA_LIBS)				\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_picker_CFLAGS =					\
@@ -312,6 +315,7 @@ gcm_session_LDADD =					\
 	$(SANE_LIBS)					\
 	$(NOTIFY_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_session_CFLAGS =					\
@@ -339,7 +343,8 @@ libcolor_la_LIBADD =					\
 	$(NOTIFY_LIBS)					\
 	$(CUPS_LIBS)					\
 	$(CANBERRA_LIBS)				\
-	$(CONTROL_CENTER_LIBS)
+	$(CONTROL_CENTER_LIBS)				\
+	$(COLOR_GLIB_LIBS)
 
 libcolor_la_LDFLAGS = -avoid-version -module
 libcolor_la_CFLAGS = $(WARNINGFLAGS_C)

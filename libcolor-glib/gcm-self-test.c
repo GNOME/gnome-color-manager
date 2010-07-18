@@ -27,6 +27,8 @@
 #include "gcm-sensor-dummy.h"
 #include "gcm-ddc-client.h"
 #include "gcm-ddc-device.h"
+#include "gcm-edid.h"
+#include "gcm-tables.h"
 
 static void
 gcm_test_common_func (void)
@@ -178,6 +180,117 @@ gcm_test_sensor_func (void)
 	g_object_unref (sensor);
 }
 
+
+typedef struct {
+	const gchar *monitor_name;
+	const gchar *vendor_name;
+	const gchar *serial_number;
+	const gchar *eisa_id;
+	const gchar *checksum;
+	const gchar *pnp_id;
+	guint width;
+	guint height;
+	gfloat gamma;
+} GcmEdidTestData;
+
+static void
+gcm_test_edid_test_parse_edid_file (GcmEdid *edid, const gchar *filename, GcmEdidTestData *test_data)
+{
+	gchar *data;
+	gfloat mygamma;
+	gboolean ret;
+	GError *error = NULL;
+
+	ret = g_file_get_contents (filename, &data, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	ret = gcm_edid_parse (edid, (const guint8 *) data, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	g_assert_cmpstr (gcm_edid_get_monitor_name (edid), ==, test_data->monitor_name);
+	g_assert_cmpstr (gcm_edid_get_vendor_name (edid), ==, test_data->vendor_name);
+	g_assert_cmpstr (gcm_edid_get_serial_number (edid), ==, test_data->serial_number);
+	g_assert_cmpstr (gcm_edid_get_eisa_id (edid), ==, test_data->eisa_id);
+	g_assert_cmpstr (gcm_edid_get_checksum (edid), ==, test_data->checksum);
+	g_assert_cmpstr (gcm_edid_get_pnp_id (edid), ==, test_data->pnp_id);
+	g_assert_cmpint (gcm_edid_get_height (edid), ==, test_data->height);
+	g_assert_cmpint (gcm_edid_get_width (edid), ==, test_data->width);
+	mygamma = gcm_edid_get_gamma (edid);
+	g_assert_cmpfloat (mygamma, >=, test_data->gamma - 0.01);
+	g_assert_cmpfloat (mygamma, <, test_data->gamma + 0.01);
+
+	g_free (data);
+}
+
+static void
+gcm_test_edid_func (void)
+{
+	GcmEdid *edid;
+	GcmEdidTestData test_data;
+
+	edid = gcm_edid_new ();
+	g_assert (edid != NULL);
+
+	/* LG 21" LCD panel */
+	test_data.monitor_name = "L225W";
+	test_data.vendor_name = "Goldstar Company Ltd";
+	test_data.serial_number = "34398";
+	test_data.eisa_id = NULL;
+	test_data.checksum = "80b7dda4c74b06366abb8fa23e71d645";
+	test_data.pnp_id = "GSM";
+	test_data.height = 30;
+	test_data.width = 47;
+	test_data.gamma = 2.2f;
+	gcm_test_edid_test_parse_edid_file (edid, TESTDATADIR "/LG-L225W-External.bin", &test_data);
+
+	/* Lenovo T61 Intel Panel */
+	test_data.monitor_name = NULL;
+	test_data.vendor_name = "IBM France";
+	test_data.serial_number = NULL;
+	test_data.eisa_id = "LTN154P2-L05";
+	test_data.checksum = "c585d9e80adc65c54f0a52597e850f83";
+	test_data.pnp_id = "IBM";
+	test_data.height = 21;
+	test_data.width = 33;
+	test_data.gamma = 2.2f;
+	gcm_test_edid_test_parse_edid_file (edid, TESTDATADIR "/Lenovo-T61-Internal.bin", &test_data);
+
+	g_object_unref (edid);
+}
+
+
+static void
+gcm_test_tables_func (void)
+{
+	GcmTables *tables;
+	GError *error = NULL;
+	gchar *vendor;
+
+	tables = gcm_tables_new ();
+	g_assert (tables != NULL);
+
+	vendor = gcm_tables_get_pnp_id (tables, "IBM", &error);
+	g_assert_no_error (error);
+	g_assert (vendor != NULL);
+	g_assert_cmpstr (vendor, ==, "IBM France");
+	g_free (vendor);
+
+	vendor = gcm_tables_get_pnp_id (tables, "MIL", &error);
+	g_assert_no_error (error);
+	g_assert (vendor != NULL);
+	g_assert_cmpstr (vendor, ==, "Marconi Instruments Ltd");
+	g_free (vendor);
+
+	vendor = gcm_tables_get_pnp_id (tables, "XXX", &error);
+	g_assert_error (error, 1, 0);
+	g_assert_cmpstr (vendor, ==, NULL);
+	g_free (vendor);
+
+	g_object_unref (tables);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -190,6 +303,8 @@ main (int argc, char **argv)
 	g_test_add_func ("/libcolor-glib/ddc-device", gcm_test_ddc_device_func);
 	g_test_add_func ("/libcolor-glib/ddc-client", gcm_test_ddc_client_func);
 	g_test_add_func ("/libcolor-glib/sensor", gcm_test_sensor_func);
+	g_test_add_func ("/color/edid", gcm_test_edid_func);
+	g_test_add_func ("/color/tables", gcm_test_tables_func);
 
 	return g_test_run ();
 }
