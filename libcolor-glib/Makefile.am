@@ -86,6 +86,8 @@ libcolor_glib_la_SOURCES =					\
 	gcm-xserver.c						\
 	gcm-xserver.h						\
 	gcm-version.h						\
+	gcm-brightness.c					\
+	gcm-brightness.h					\
 	$(NULL)
 
 libcolor_glib_la_LIBADD =					\

@@ -530,6 +530,39 @@ gcm_test_profile_store_func (void)
 	g_object_unref (store);
 }
 
+static void
+gcm_test_brightness_func (void)
+{
+	GcmBrightness *brightness;
+	gboolean ret;
+	GError *error = NULL;
+	guint orig_percentage;
+	guint percentage;
+
+	brightness = gcm_brightness_new ();
+	g_assert (brightness != NULL);
+
+	ret = gcm_brightness_get_percentage (brightness, &orig_percentage, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	ret = gcm_brightness_set_percentage (brightness, 10, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	ret = gcm_brightness_get_percentage (brightness, &percentage, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_assert_cmpint (percentage, >, 5);
+	g_assert_cmpint (percentage, <, 15);
+
+	ret = gcm_brightness_set_percentage (brightness, orig_percentage, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	g_object_unref (brightness);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -549,6 +582,9 @@ main (int argc, char **argv)
 	g_test_add_func ("/libcolor-glib/xyz", gcm_test_xyz_func);
 	g_test_add_func ("/libcolor-glib/dmi", gcm_test_dmi_func);
 	g_test_add_func ("/libcolor-glib/profile_store", gcm_test_profile_store_func);
+	if (g_test_thorough ()) {
+		g_test_add_func ("/libcolor-glib/brightness", gcm_test_brightness_func);
+	}
 
 	return g_test_run ();
 }

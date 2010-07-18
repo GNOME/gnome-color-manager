@@ -124,39 +124,6 @@ gcm_test_assert_basename (const gchar *filename1, const gchar *filename2)
 }
 
 static void
-gcm_test_brightness_func (void)
-{
-	GcmBrightness *brightness;
-	gboolean ret;
-	GError *error = NULL;
-	guint orig_percentage;
-	guint percentage;
-
-	brightness = gcm_brightness_new ();
-	g_assert (brightness != NULL);
-
-	ret = gcm_brightness_get_percentage (brightness, &orig_percentage, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	ret = gcm_brightness_set_percentage (brightness, 10, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	ret = gcm_brightness_get_percentage (brightness, &percentage, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-	g_assert_cmpint (percentage, >, 5);
-	g_assert_cmpint (percentage, <, 15);
-
-	ret = gcm_brightness_set_percentage (brightness, orig_percentage, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	g_object_unref (brightness);
-}
-
-static void
 gcm_test_calibrate_func (void)
 {
 	GcmCalibrate *calibrate;
@@ -812,7 +779,6 @@ main (int argc, char **argv)
 	g_test_add_func ("/color/device", gcm_test_device_func);
 	g_test_add_func ("/color/calibrate_dialog", gcm_test_calibrate_dialog_func);
 	if (g_test_thorough ()) {
-		g_test_add_func ("/color/brightness", gcm_test_brightness_func);
 		g_test_add_func ("/color/trc", gcm_test_trc_widget_func);
 		g_test_add_func ("/color/cie", gcm_test_cie_widget_func);
 		g_test_add_func ("/color/gamma_widget", gcm_test_gamma_widget_func);

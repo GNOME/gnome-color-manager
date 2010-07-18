@@ -77,9 +77,7 @@ libgcmshared_a_SOURCES =				\
 	gcm-calibrate-manual.c				\
 	gcm-calibrate-manual.h				\
 	gcm-calibrate-dialog.c				\
-	gcm-calibrate-dialog.h				\
-	gcm-brightness.c				\
-	gcm-brightness.h
+	gcm-calibrate-dialog.h
 
 libgcmshared_a_SOURCES +=				\
 	gcm-device-sane.c				\

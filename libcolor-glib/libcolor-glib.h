@@ -42,6 +42,7 @@
 #include <gcm-clut.h>
 #include <gcm-dmi.h>
 #include <gcm-xserver.h>
+#include <gcm-brightness.h>
 #include <gcm-profile-store.h>
 
 #undef __LIBCOLOR_GLIB_H_INSIDE__
