@@ -60,7 +60,7 @@ struct _GcmCalibratePrivate
 	GcmCalibrateDeviceKind		 calibrate_device_kind;
 	GcmCalibratePrintKind		 print_kind;
 	GcmCalibratePrecision		 precision;
-	GcmColorimeterKind		 colorimeter_kind;
+	GcmSensorKind		 colorimeter_kind;
 	GcmCalibrateDialog		*calibrate_dialog;
 	GcmDeviceKind			 device_kind;
 	GcmXyz				*xyz;
@@ -418,7 +418,7 @@ gcm_calibrate_get_display_kind (GcmCalibrate *calibrate, GtkWindow *window, GErr
 
 	/* can this device support projectors? */
 	if (priv->calibrate_device_kind == GCM_CALIBRATE_DEVICE_KIND_PROJECTOR &&
-	    !gcm_colorimeter_supports_projector (priv->colorimeter)) {
+	    !gcm_sensor_supports_projector (gcm_colorimeter_get_sensor (priv->colorimeter))) {
 		/* TRANSLATORS: title, the hardware calibration device does not support projectors */
 		title = _("Could not calibrate and profile using this color measuring instrument");
 
@@ -594,7 +594,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	}
 
 	/* get calibration device model */
-	hardware_device = gcm_colorimeter_get_model (priv->colorimeter);
+	hardware_device = gcm_sensor_get_model (gcm_colorimeter_get_sensor (priv->colorimeter));
 
 	/* get device, harder */
 	if (hardware_device == NULL) {
@@ -1272,7 +1272,11 @@ gcm_calibrate_guess_kind (GcmCalibrate *calibrate)
 static void
 gcm_prefs_colorimeter_changed_cb (GcmColorimeter *_colorimeter, GcmCalibrate *calibrate)
 {
-	calibrate->priv->colorimeter_kind = gcm_colorimeter_get_kind (_colorimeter);
+	GcmSensor *sensor;
+	calibrate->priv->colorimeter_kind = GCM_SENSOR_KIND_UNKNOWN;
+	sensor = gcm_colorimeter_get_sensor (_colorimeter);
+	if (sensor != NULL)
+		calibrate->priv->colorimeter_kind = gcm_sensor_get_kind (sensor);
 	g_object_notify (G_OBJECT (calibrate), "colorimeter-kind");
 }
 
@@ -1511,6 +1515,8 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 static void
 gcm_calibrate_init (GcmCalibrate *calibrate)
 {
+	GcmSensor *sensor;
+
 	calibrate->priv = GCM_CALIBRATE_GET_PRIVATE (calibrate);
 	calibrate->priv->output_name = NULL;
 	calibrate->priv->filename_source = NULL;
@@ -1539,7 +1545,11 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 
 	/* coldplug, and watch for changes */
-	calibrate->priv->colorimeter_kind = gcm_colorimeter_get_kind (calibrate->priv->colorimeter);
+	calibrate->priv->colorimeter_kind = GCM_SENSOR_KIND_UNKNOWN;
+	sensor = gcm_colorimeter_get_sensor (calibrate->priv->colorimeter);
+	if (sensor != NULL)
+		calibrate->priv->colorimeter_kind = gcm_sensor_get_kind (sensor);
+
 	g_signal_connect (calibrate->priv->colorimeter, "changed", G_CALLBACK (gcm_prefs_colorimeter_changed_cb), calibrate);
 }
 

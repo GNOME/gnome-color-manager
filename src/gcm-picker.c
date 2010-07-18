@@ -263,11 +263,19 @@ gcm_picker_colorimeter_setup_ui (GcmColorimeter *colorimeter)
 {
 	gboolean present;
 	gboolean supports_spot;
-	gboolean ret;
+	gboolean ret = FALSE;
 	GtkWidget *widget;
 
+	/* no present */
 	present = gcm_colorimeter_get_present (colorimeter);
-	supports_spot = gcm_colorimeter_supports_spot (colorimeter);
+	if (!present) {
+		/* TRANSLATORS: this is displayed the user has not got suitable hardware */
+		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("No colorimeter is attached."));
+		goto out;
+	}
+
+	/* no support */
+	supports_spot = gcm_sensor_supports_spot (gcm_colorimeter_get_sensor (colorimeter));
 	ret = (present && supports_spot);
 
 	/* change the label */
@@ -275,11 +283,9 @@ gcm_picker_colorimeter_setup_ui (GcmColorimeter *colorimeter)
 		/* TRANSLATORS: this is displayed the user has not got suitable hardware */
 		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("The attached colorimeter is not capable of reading a spot color."));
 	} else if (!present) {
-		/* TRANSLATORS: this is displayed the user has not got suitable hardware */
-		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("No colorimeter is attached."));
 	}
 
-	/* hide some stuff */
+out:
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_measure"));
 	gtk_widget_set_sensitive (widget, ret);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_results"));

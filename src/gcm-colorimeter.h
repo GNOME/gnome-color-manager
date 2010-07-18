@@ -24,6 +24,8 @@
 
 #include <glib-object.h>
 
+#include "gcm-sensor.h"
+
 G_BEGIN_DECLS
 
 #define GCM_TYPE_COLORIMETER		(gcm_colorimeter_get_type ())
@@ -55,34 +57,12 @@ struct _GcmColorimeterClass
 	void (*_gcm_reserved5) (void);
 };
 
-typedef enum {
-	GCM_COLORIMETER_KIND_HUEY,
-	GCM_COLORIMETER_KIND_COLOR_MUNKI,
-	GCM_COLORIMETER_KIND_SPYDER,
-	GCM_COLORIMETER_KIND_DTP20,
-	GCM_COLORIMETER_KIND_DTP22,
-	GCM_COLORIMETER_KIND_DTP41,
-	GCM_COLORIMETER_KIND_DTP51,
-	GCM_COLORIMETER_KIND_SPECTRO_SCAN,
-	GCM_COLORIMETER_KIND_I1_PRO,
-	GCM_COLORIMETER_KIND_COLORIMTRE_HCFR,
-	GCM_COLORIMETER_KIND_UNKNOWN
-} GcmColorimeterKind;
-
 GType			 gcm_colorimeter_get_type		(void);
 GcmColorimeter		*gcm_colorimeter_new			(void);
 
 /* accessors */
-const gchar		*gcm_colorimeter_get_model		(GcmColorimeter		*colorimeter);
-const gchar		*gcm_colorimeter_get_vendor		(GcmColorimeter		*colorimeter);
+GcmSensor		*gcm_colorimeter_get_sensor		(GcmColorimeter		*colorimeter);
 gboolean		 gcm_colorimeter_get_present		(GcmColorimeter		*colorimeter);
-GcmColorimeterKind	 gcm_colorimeter_get_kind		(GcmColorimeter		*colorimeter);
-gboolean		 gcm_colorimeter_supports_display	(GcmColorimeter 	*colorimeter);
-gboolean		 gcm_colorimeter_supports_projector	(GcmColorimeter 	*colorimeter);
-gboolean		 gcm_colorimeter_supports_printer	(GcmColorimeter		*colorimeter);
-gboolean		 gcm_colorimeter_supports_spot		(GcmColorimeter		*colorimeter);
-const gchar		*gcm_colorimeter_kind_to_string		(GcmColorimeterKind	 colorimeter_kind);
-GcmColorimeterKind	 gcm_colorimeter_kind_from_string	(const gchar		*colorimeter_kind);
 
 G_END_DECLS
 

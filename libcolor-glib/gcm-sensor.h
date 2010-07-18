@@ -86,26 +86,49 @@ typedef enum {
 	GCM_SENSOR_OUTPUT_TYPE_PROJECTOR
 } GcmSensorOutputType;
 
+typedef enum {
+	GCM_SENSOR_KIND_HUEY,
+	GCM_SENSOR_KIND_COLOR_MUNKI,
+	GCM_SENSOR_KIND_SPYDER,
+	GCM_SENSOR_KIND_DTP20,
+	GCM_SENSOR_KIND_DTP22,
+	GCM_SENSOR_KIND_DTP41,
+	GCM_SENSOR_KIND_DTP51,
+	GCM_SENSOR_KIND_SPECTRO_SCAN,
+	GCM_SENSOR_KIND_I1_PRO,
+	GCM_SENSOR_KIND_COLORIMTRE_HCFR,
+	GCM_SENSOR_KIND_UNKNOWN
+} GcmSensorKind;
+
 /* dummy */
 #define GCM_SENSOR_ERROR	1
 
-GType		 gcm_sensor_get_type			(void);
-GcmSensor	*gcm_sensor_new				(void);
+GType			 gcm_sensor_get_type		(void);
+GcmSensor		*gcm_sensor_new			(void);
 
-gboolean	 gcm_sensor_get_ambient			(GcmSensor	*sensor,
-							 gdouble	*value,
-							 GError		**error);
-gboolean	 gcm_sensor_set_leds			(GcmSensor	*sensor,
-							 guint8		 value,
-							 GError		**error);
-gboolean	 gcm_sensor_sample			(GcmSensor	*sensor,
-							 GcmColorXYZ	*value,
-							 GError		**error);
-gboolean	 gcm_sensor_startup			(GcmSensor	*sensor,
-							 GError		**error);
-void		 gcm_sensor_set_output_type		(GcmSensor	*sensor,
-							 GcmSensorOutputType output_type);
-GcmSensorOutputType  gcm_sensor_get_output_type		(GcmSensor	*sensor);
+gboolean		 gcm_sensor_get_ambient		(GcmSensor		*sensor,
+							gdouble			*value,
+							GError			**error);
+gboolean		 gcm_sensor_set_leds		(GcmSensor		*sensor,
+							guint8			 value,
+							GError			**error);
+gboolean		 gcm_sensor_sample		(GcmSensor		*sensor,
+							GcmColorXYZ		*value,
+							GError			**error);
+gboolean		 gcm_sensor_startup		(GcmSensor		*sensor,
+							GError			**error);
+void			 gcm_sensor_set_output_type	(GcmSensor		*sensor,
+							 GcmSensorOutputType	 output_type);
+GcmSensorOutputType	 gcm_sensor_get_output_type	(GcmSensor		*sensor);
+const gchar		*gcm_sensor_get_model		(GcmSensor		*sensor);
+const gchar		*gcm_sensor_get_vendor		(GcmSensor		*sensor);
+GcmSensorKind		 gcm_sensor_get_kind		(GcmSensor		*sensor);
+gboolean		 gcm_sensor_supports_display	(GcmSensor 		*sensor);
+gboolean		 gcm_sensor_supports_projector	(GcmSensor 		*sensor);
+gboolean		 gcm_sensor_supports_printer	(GcmSensor		*sensor);
+gboolean		 gcm_sensor_supports_spot	(GcmSensor		*sensor);
+const gchar		*gcm_sensor_kind_to_string	(GcmSensorKind		 sensor_kind);
+GcmSensorKind		 gcm_sensor_kind_from_string	(const gchar		*sensor_kind);
 
 G_END_DECLS
 

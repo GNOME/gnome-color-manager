@@ -158,7 +158,7 @@ static guint
 gcm_calibrate_argyll_printer_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 {
 	guint patches = 180;
-	GcmColorimeterKind colorimeter_kind;
+	GcmSensorKind colorimeter_kind;
 	GcmCalibratePrecision precision;
 
 	/* we care about the kind */
@@ -176,8 +176,8 @@ gcm_calibrate_argyll_printer_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 
 #ifdef USE_DOUBLE_DENSITY
 	/* using double density, so we can double the patch count */
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI ||
-	    colorimeter_kind == GCM_COLORIMETER_KIND_SPECTRO_SCAN) {
+	if (colorimeter_kind == GCM_SENSOR_KIND_COLOR_MUNKI ||
+	    colorimeter_kind == GCM_SENSOR_KIND_SPECTRO_SCAN) {
 		patches *= 2;
 	}
 #endif
@@ -192,18 +192,18 @@ gcm_calibrate_argyll_printer_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 static const gchar *
 gcm_calibrate_argyll_get_colorimeter_image_attach (GcmCalibrateArgyll *calibrate_argyll)
 {
-	GcmColorimeterKind colorimeter_kind;
+	GcmSensorKind colorimeter_kind;
 
 	g_object_get (calibrate_argyll, "colorimeter-kind", &colorimeter_kind, NULL);
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_HUEY)
+	if (colorimeter_kind == GCM_SENSOR_KIND_HUEY)
 		return "huey-attach.svg";
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI)
+	if (colorimeter_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
 		return "munki-attach.svg";
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_SPYDER)
+	if (colorimeter_kind == GCM_SENSOR_KIND_SPYDER)
 		return "spyder-attach.svg";
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLORIMTRE_HCFR)
+	if (colorimeter_kind == GCM_SENSOR_KIND_COLORIMTRE_HCFR)
 		return "hcfr-attach.svg";
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_I1_PRO)
+	if (colorimeter_kind == GCM_SENSOR_KIND_I1_PRO)
 		return "i1-attach.svg";
 	return NULL;
 }
@@ -214,10 +214,10 @@ gcm_calibrate_argyll_get_colorimeter_image_attach (GcmCalibrateArgyll *calibrate
 static const gchar *
 gcm_calibrate_argyll_get_colorimeter_image_calibrate (GcmCalibrateArgyll *calibrate_argyll)
 {
-	GcmColorimeterKind colorimeter_kind;
+	GcmSensorKind colorimeter_kind;
 
 	g_object_get (calibrate_argyll, "colorimeter-kind", &colorimeter_kind, NULL);
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI)
+	if (colorimeter_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
 		return "munki-calibrate.svg";
 	return NULL;
 }
@@ -228,10 +228,10 @@ gcm_calibrate_argyll_get_colorimeter_image_calibrate (GcmCalibrateArgyll *calibr
 static const gchar *
 gcm_calibrate_argyll_get_colorimeter_image_screen (GcmCalibrateArgyll *calibrate_argyll)
 {
-	GcmColorimeterKind colorimeter_kind;
+	GcmSensorKind colorimeter_kind;
 
 	g_object_get (calibrate_argyll, "colorimeter-kind", &colorimeter_kind, NULL);
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI)
+	if (colorimeter_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
 		return "munki-screen.svg";
 	return NULL;
 }
@@ -1558,25 +1558,25 @@ out:
 static const gchar *
 gcm_calibrate_argyll_get_colorimeter_target (GcmCalibrateArgyll *calibrate_argyll)
 {
-	GcmColorimeterKind colorimeter_kind;
+	GcmSensorKind colorimeter_kind;
 
 	g_object_get (calibrate_argyll,
 		      "colorimeter-kind", &colorimeter_kind,
 		      NULL);
 
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_DTP20)
+	if (colorimeter_kind == GCM_SENSOR_KIND_DTP20)
 		return "20";
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_DTP22)
+	if (colorimeter_kind == GCM_SENSOR_KIND_DTP22)
 		return "22";
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_DTP41)
+	if (colorimeter_kind == GCM_SENSOR_KIND_DTP41)
 		return "41";
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_DTP51)
+	if (colorimeter_kind == GCM_SENSOR_KIND_DTP51)
 		return "51";
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_SPECTRO_SCAN)
+	if (colorimeter_kind == GCM_SENSOR_KIND_SPECTRO_SCAN)
 		return "SS";
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_I1_PRO)
+	if (colorimeter_kind == GCM_SENSOR_KIND_I1_PRO)
 		return "i1";
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI)
+	if (colorimeter_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
 		return "CM";
 	return NULL;
 }
@@ -1595,7 +1595,7 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 	gchar *basename = NULL;
 	const gchar *title;
 	const gchar *message;
-	GcmColorimeterKind colorimeter_kind;
+	GcmSensorKind colorimeter_kind;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
@@ -1635,8 +1635,8 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 
 #ifdef USE_DOUBLE_DENSITY
 	/* use double density */
-	if (colorimeter_kind == GCM_COLORIMETER_KIND_COLOR_MUNKI ||
-	    colorimeter_kind == GCM_COLORIMETER_KIND_SPECTRO_SCAN) {
+	if (colorimeter_kind == GCM_SENSOR_KIND_COLOR_MUNKI ||
+	    colorimeter_kind == GCM_SENSOR_KIND_SPECTRO_SCAN) {
 		g_ptr_array_add (array, g_strdup ("-h"));
 	}
 #endif

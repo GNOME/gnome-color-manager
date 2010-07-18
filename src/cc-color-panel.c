@@ -1441,7 +1441,7 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 		}
 
 		/* find whether we have hardware installed */
-		ret = gcm_colorimeter_supports_printer (panel->priv->colorimeter);
+		ret = gcm_sensor_supports_printer (gcm_colorimeter_get_sensor (panel->priv->colorimeter));
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The measuring instrument does not support printer profiling");
