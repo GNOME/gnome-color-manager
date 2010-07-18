@@ -34,7 +34,6 @@
 #include "gcm-device-xrandr.h"
 #include "gcm-exif.h"
 #include "gcm-gamma-widget.h"
-#include "gcm-image.h"
 #include "gcm-print.h"
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
@@ -468,70 +467,6 @@ gcm_test_gamma_widget_func (void)
 	gtk_widget_destroy (dialog);
 }
 
-static void
-gcm_test_image_func (void)
-{
-	GcmImage *image;
-	GtkWidget *image_test;
-	GtkWidget *dialog;
-	GtkWidget *vbox;
-	gint response;
-	gboolean ret;
-	GcmProfile *profile;
-	GFile *file;
-
-	image = gcm_image_new ();
-	g_assert (image != NULL);
-
-	gtk_image_set_from_file (GTK_IMAGE(image), TESTDATADIR "/image-widget.png");
-
-	/* show in a dialog as an example */
-	dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "Does color-corrected image match\nthe picture below?");
-	image_test = gtk_image_new_from_file (TESTDATADIR "/image-widget-good.png");
-	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-	gtk_box_pack_end (GTK_BOX(vbox), GTK_WIDGET(image), TRUE, TRUE, 12);
-	gtk_box_pack_end (GTK_BOX(vbox), image_test, TRUE, TRUE, 12);
-	gtk_widget_set_size_request (GTK_WIDGET(image), 300, 300);
-	gtk_window_set_resizable (GTK_WINDOW (dialog), TRUE);
-	gtk_widget_show (GTK_WIDGET(image));
-	gtk_widget_show (image_test);
-
-	g_object_set (image,
-		      "use-embedded-profile", TRUE,
-		      "output-profile", NULL,
-		      NULL);
-
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
-	g_assert ((response == GTK_RESPONSE_YES));
-
-	gtk_image_set_from_file (GTK_IMAGE(image_test), TESTDATADIR "/image-widget-nonembed.png");
-	g_object_set (image,
-		      "use-embedded-profile", FALSE,
-		      NULL);
-
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
-	g_assert ((response == GTK_RESPONSE_YES));
-
-	gtk_image_set_from_file (GTK_IMAGE(image_test), TESTDATADIR "/image-widget-output.png");
-	g_object_set (image,
-		      "use-embedded-profile", TRUE,
-		      NULL);
-
-	/* get test file */
-	profile = gcm_profile_new ();
-	file = g_file_new_for_path (TESTDATADIR "/ibm-t61.icc");
-	ret = gcm_profile_parse (profile, file, NULL);
-	g_object_unref (file);
-	g_assert (ret);
-	gcm_image_set_output_profile (image, profile);
-	g_object_unref (profile);
-
-	response = gtk_dialog_run (GTK_DIALOG (dialog));
-	g_assert ((response == GTK_RESPONSE_YES));
-
-	gtk_widget_destroy (dialog);
-}
-
 static GPtrArray *
 gcm_print_test_render_cb (GcmPrint *print,  GtkPageSetup *page_setup, gpointer user_data, GError **error)
 {
@@ -782,7 +717,6 @@ main (int argc, char **argv)
 		g_test_add_func ("/color/trc", gcm_test_trc_widget_func);
 		g_test_add_func ("/color/cie", gcm_test_cie_widget_func);
 		g_test_add_func ("/color/gamma_widget", gcm_test_gamma_widget_func);
-		g_test_add_func ("/color/image", gcm_test_image_func);
 	}
 	if (g_test_slow ()) {
 		g_test_add_func ("/color/print", gcm_test_print_func);

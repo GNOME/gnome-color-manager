@@ -42,6 +42,7 @@ libcolor_glib_include_HEADERS =					\
 	gcm-edid.h						\
 	gcm-enum.h						\
 	gcm-profile.h						\
+	gcm-image.h						\
 	gcm-profile-store.h					\
 	gcm-dmi.h						\
 	gcm-xserver.h						\
@@ -72,6 +73,8 @@ libcolor_glib_la_SOURCES =					\
 	gcm-profile.h						\
 	gcm-clut.c						\
 	gcm-clut.h						\
+	gcm-image.c						\
+	gcm-image.h						\
 	gcm-ddc-client.c					\
 	gcm-ddc-client.h					\
 	gcm-ddc-device.c					\

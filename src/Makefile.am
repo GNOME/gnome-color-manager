@@ -40,8 +40,6 @@ noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\
 	egg-debug.c					\
 	egg-debug.h					\
-	gcm-image.c					\
-	gcm-image.h					\
 	gcm-screen.c					\
 	gcm-screen.h					\
 	gcm-exif.c					\
