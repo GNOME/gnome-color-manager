@@ -21,8 +21,6 @@
 
 #include "config.h"
 
-#include <glib/gi18n.h>
-
 #include "gcm-enum.h"
 
 /**
@@ -132,23 +130,6 @@ gcm_colorspace_to_string (GcmColorspace colorspace)
 	if (colorspace == GCM_COLORSPACE_CMY)
 		return "cmy";
 	return "unknown";
-}
-
-/**
- * gcm_colorspace_to_localised_string:
- **/
-const gchar *
-gcm_colorspace_to_localised_string (GcmColorspace colorspace)
-{
-	if (colorspace == GCM_COLORSPACE_RGB) {
-		/* TRANSLATORS: this is the colorspace, e.g. red, green, blue */
-		return _("RGB");
-	}
-	if (colorspace == GCM_COLORSPACE_CMYK) {
-		/* TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black */
-		return _("CMYK");
-	}
-	return NULL;
 }
 
 /**

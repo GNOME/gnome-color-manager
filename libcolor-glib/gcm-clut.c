@@ -34,7 +34,7 @@
 #include <gio/gio.h>
 
 #include "gcm-clut.h"
-#include "gcm-utils.h"
+//#include "gcm-utils.h"
 
 #include "egg-debug.h"
 
@@ -54,7 +54,6 @@ struct _GcmClutPrivate
 	gdouble				 gamma;
 	gdouble				 brightness;
 	gdouble				 contrast;
-	GSettings			*settings;
 };
 
 enum {
@@ -332,10 +331,7 @@ gcm_clut_init (GcmClut *clut)
 {
 	clut->priv = GCM_CLUT_GET_PRIVATE (clut);
 	clut->priv->array = g_ptr_array_new_with_free_func (g_free);
-	clut->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
-	clut->priv->gamma = g_settings_get_double (clut->priv->settings, GCM_SETTINGS_DEFAULT_GAMMA);
-	if (clut->priv->gamma < 0.01)
-		clut->priv->gamma = 1.0f;
+	clut->priv->gamma = 1.0;
 	clut->priv->brightness = 0.0f;
 	clut->priv->contrast = 100.f;
 }
@@ -350,7 +346,6 @@ gcm_clut_finalize (GObject *object)
 	GcmClutPrivate *priv = clut->priv;
 
 	g_ptr_array_unref (priv->array);
-	g_object_unref (clut->priv->settings);
 
 	G_OBJECT_CLASS (gcm_clut_parent_class)->finalize (object);
 }

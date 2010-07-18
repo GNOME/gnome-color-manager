@@ -22,6 +22,7 @@
 #include "config.h"
 
 #include <glib-object.h>
+#include <glib/gi18n.h>
 #include <math.h>
 #include <libgnomeui/gnome-rr.h>
 #include <X11/extensions/Xrandr.h>

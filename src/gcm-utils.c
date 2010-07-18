@@ -296,29 +296,6 @@ gcm_utils_output_is_lcd (const gchar *output_name)
 }
 
 /**
- * gcm_utils_ensure_printable:
- **/
-void
-gcm_utils_ensure_printable (gchar *text)
-{
-	guint i;
-	guint idx = 0;
-
-	g_return_if_fail (text != NULL);
-
-	for (i=0; text[i] != '\0'; i++) {
-		if (g_ascii_isalnum (text[i]) ||
-		    g_ascii_ispunct (text[i]) ||
-		    text[i] == ' ')
-			text[idx++] = text[i];
-	}
-	text[idx] = '\0';
-
-	/* broken profiles have _ instead of spaces */
-	g_strdelimit (text, "_", ' ');
-}
-
-/**
  * gcm_utils_mkdir_with_parents:
  **/
 gboolean
@@ -582,20 +559,6 @@ gcm_utils_device_kind_to_profile_kind (GcmDeviceKind kind)
 }
 
 /**
- * gcm_utils_format_date_time:
- **/
-gchar *
-gcm_utils_format_date_time (const struct tm *created)
-{
-	gchar buffer[256];
-
-	/* TRANSLATORS: this is the profile creation date strftime format */
-	strftime (buffer, sizeof(buffer), _("%B %e %Y, %I:%M:%S %p"), created);
-
-	return g_strdup (g_strchug (buffer));
-}
-
-/**
  * gcm_intent_to_localized_text:
  **/
 const gchar *
@@ -643,5 +606,22 @@ gcm_intent_to_localized_description (GcmIntent intent)
 		return _("Proofing devices");
 	}
 	return "unknown";
+}
+
+/**
+ * gcm_colorspace_to_localised_string:
+ **/
+const gchar *
+gcm_colorspace_to_localised_string (GcmColorspace colorspace)
+{
+	if (colorspace == GCM_COLORSPACE_RGB) {
+		/* TRANSLATORS: this is the colorspace, e.g. red, green, blue */
+		return _("RGB");
+	}
+	if (colorspace == GCM_COLORSPACE_CMYK) {
+		/* TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black */
+		return _("CMYK");
+	}
+	return NULL;
 }
 

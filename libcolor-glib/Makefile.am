@@ -7,6 +7,7 @@ INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
 
 INCLUDES = \
 	$(GLIB_CFLAGS)						\
+	$(LCMS_CFLAGS)						\
 	$(USB_CFLAGS)						\
 	-I$(top_srcdir)/libcolor-glib				\
 	-I$(top_builddir)/libcolor-glib				\
@@ -37,7 +38,8 @@ libcolor_glib_include_HEADERS =					\
 	gcm-sensor-huey.h					\
 	gcm-sensor.h						\
 	gcm-edid.h						\
-	gcm-tables.h						\
+	gcm-enum.h						\
+	gcm-profile.h						\
 	gcm-version.h						\
 	$(NULL)
 
@@ -57,6 +59,10 @@ libcolor_glib_la_SOURCES =					\
 	gcm-tables.h						\
 	gcm-edid.c						\
 	gcm-edid.h						\
+	gcm-profile.c						\
+	gcm-profile.h						\
+	gcm-clut.c						\
+	gcm-clut.h						\
 	gcm-ddc-client.c					\
 	gcm-ddc-client.h					\
 	gcm-ddc-device.c					\
@@ -65,11 +71,16 @@ libcolor_glib_la_SOURCES =					\
 	gcm-ddc-control.h					\
 	gcm-ddc-common.c					\
 	gcm-ddc-common.h					\
+	gcm-enum.c						\
+	gcm-enum.h						\
+	gcm-xyz.c						\
+	gcm-xyz.h						\
 	gcm-version.h						\
 	$(NULL)
 
 libcolor_glib_la_LIBADD =					\
 	$(USB_LIBS)						\
+	$(LCMS_LIBS)						\
 	$(GLIB_LIBS)						\
 	-lm
 

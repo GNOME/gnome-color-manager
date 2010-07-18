@@ -4,7 +4,6 @@ INCLUDES =						\
 	$(GTK_CFLAGS)					\
 	$(GNOMEDESKTOP_CFLAGS)				\
 	$(VTE_CFLAGS)					\
-	$(LCMS_CFLAGS)					\
 	$(XORG_CFLAGS)					\
 	$(CUPS_CFLAGS)					\
 	$(SANE_CFLAGS)					\
@@ -44,18 +43,12 @@ libgcmshared_a_SOURCES =				\
 	gcm-image.h					\
 	gcm-screen.c					\
 	gcm-screen.h					\
-	gcm-xyz.c					\
-	gcm-xyz.h					\
 	gcm-exif.c					\
 	gcm-exif.h					\
 	gcm-print.c					\
 	gcm-print.h					\
 	gcm-utils.c					\
 	gcm-utils.h					\
-	gcm-enum.c					\
-	gcm-enum.h					\
-	gcm-clut.c					\
-	gcm-clut.h					\
 	gcm-dmi.c					\
 	gcm-dmi.h					\
 	gcm-xserver.c					\
@@ -82,8 +75,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-gamma-widget.h				\
 	gcm-profile-store.c				\
 	gcm-profile-store.h				\
-	gcm-profile.c					\
-	gcm-profile.h					\
 	gcm-calibrate.c					\
 	gcm-calibrate.h					\
 	gcm-calibrate-argyll.c				\
@@ -146,7 +137,6 @@ gcm_dump_edid_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
@@ -166,7 +156,6 @@ gcm_dump_profile_LDADD =				\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
@@ -183,10 +172,10 @@ gcm_fix_profile_SOURCES =				\
 gcm_fix_profile_LDADD =					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(LCMS_LIBS)					\
 	-lm
 
 gcm_fix_profile_CFLAGS =				\
@@ -201,11 +190,11 @@ gcm_inspect_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_inspect_CFLAGS =					\
@@ -220,7 +209,6 @@ gcm_apply_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
@@ -240,11 +228,11 @@ gcm_import_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_import_CFLAGS =					\
@@ -262,13 +250,13 @@ gcm_viewer_LDADD =					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(VTE_LIBS)					\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_viewer_CFLAGS =					\
@@ -284,7 +272,6 @@ gcm_picker_LDADD =					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(VTE_LIBS)					\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
@@ -307,7 +294,6 @@ gcm_session_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(TIFF_LIBS)					\
@@ -334,7 +320,6 @@ libcolor_la_LIBADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(TIFF_LIBS)					\
@@ -377,13 +362,13 @@ gcm_self_test_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_self_test_CFLAGS = $(AM_CFLAGS) $(WARNINGFLAGS_C)

@@ -22,6 +22,7 @@
 #include "config.h"
 
 #include <glib-object.h>
+#include <math.h>
 
 #include "gcm-common.h"
 #include "gcm-sensor-dummy.h"
@@ -29,6 +30,9 @@
 #include "gcm-ddc-device.h"
 #include "gcm-edid.h"
 #include "gcm-tables.h"
+#include "gcm-profile.h"
+#include "gcm-clut.h"
+#include "gcm-xyz.h"
 
 static void
 gcm_test_common_func (void)
@@ -291,6 +295,193 @@ gcm_test_tables_func (void)
 	g_object_unref (tables);
 }
 
+
+static void
+gcm_test_profile_func (void)
+{
+	GcmProfile *profile;
+	GFile *file;
+	GcmClut *clut;
+	gboolean ret;
+	GError *error = NULL;
+	GcmXyz *xyz;
+
+	/* bluish test */
+	profile = gcm_profile_new ();
+	file = g_file_new_for_path (TESTDATADIR "/bluish.icc");
+	ret = gcm_profile_parse (profile, file, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_object_unref (file);
+
+	/* get CLUT */
+	clut = gcm_profile_generate_vcgt (profile, 256);
+	g_assert (clut != NULL);
+	g_assert_cmpint (gcm_clut_get_size (clut), ==, 256);
+
+	g_assert_cmpstr (gcm_profile_get_copyright (profile), ==, "Copyright (c) 1998 Hewlett-Packard Company");
+	g_assert_cmpstr (gcm_profile_get_manufacturer (profile), ==, "IEC http://www.iec.ch");
+	g_assert_cmpstr (gcm_profile_get_model (profile), ==, "IEC 61966-2.1 Default RGB colour space - sRGB");
+	g_assert_cmpstr (gcm_profile_get_datetime (profile), ==, "February  9 1998, 06:49:00 AM");
+	g_assert_cmpstr (gcm_profile_get_description (profile), ==, "Blueish Test");
+	g_assert_cmpstr (gcm_profile_get_checksum (profile), ==, "8e2aed5dac6f8b5d8da75610a65b7f27");
+	g_assert_cmpint (gcm_profile_get_kind (profile), ==, GCM_PROFILE_KIND_DISPLAY_DEVICE);
+	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, GCM_COLORSPACE_RGB);
+	g_assert (gcm_profile_get_has_vcgt (profile));
+
+	/* get extra data */
+	g_object_get (profile,
+		      "red", &xyz,
+		      NULL);
+	g_assert_cmpfloat (fabs (gcm_xyz_get_x (xyz) - 0.648454), <, 0.01);
+
+	g_object_unref (xyz);
+	g_object_unref (clut);
+	g_object_unref (profile);
+
+	/* Adobe test */
+	profile = gcm_profile_new ();
+	file = g_file_new_for_path (TESTDATADIR "/AdobeGammaTest.icm");
+	ret = gcm_profile_parse (profile, file, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_object_unref (file);
+
+	g_assert_cmpstr (gcm_profile_get_copyright (profile), ==, "Copyright (c) 1998 Hewlett-Packard Company Modified using Adobe Gamma");
+	g_assert_cmpstr (gcm_profile_get_manufacturer (profile), ==, "IEC http://www.iec.ch");
+	g_assert_cmpstr (gcm_profile_get_model (profile), ==, "IEC 61966-2.1 Default RGB colour space - sRGB");
+	g_assert_cmpstr (gcm_profile_get_datetime (profile), ==, "August 16 2005, 09:49:54 PM");
+	g_assert_cmpstr (gcm_profile_get_description (profile), ==, "ADOBEGAMMA-Test");
+	g_assert_cmpstr (gcm_profile_get_checksum (profile), ==, "bd847723f676e2b846daaf6759330624");
+	g_assert_cmpint (gcm_profile_get_kind (profile), ==, GCM_PROFILE_KIND_DISPLAY_DEVICE);
+	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, GCM_COLORSPACE_RGB);
+	g_assert (gcm_profile_get_has_vcgt (profile));
+
+	g_object_unref (profile);
+}
+
+
+static void
+gcm_test_clut_func (void)
+{
+	GcmClut *clut;
+	GPtrArray *array;
+	const GcmClutData *data;
+
+	clut = gcm_clut_new ();
+	g_assert (clut != NULL);
+
+	/* set some initial properties */
+	g_object_set (clut,
+		      "size", 3,
+		      "contrast", 100.0f,
+		      "brightness", 0.0f,
+		      NULL);
+
+	array = gcm_clut_get_array (clut);
+	g_assert_cmpint (array->len, ==, 3);
+
+	data = g_ptr_array_index (array, 0);
+	g_assert_cmpint (data->red, ==, 0);
+	g_assert_cmpint (data->green, ==, 0);
+	g_assert_cmpint (data->blue, ==, 0);
+
+	data = g_ptr_array_index (array, 1);
+	g_assert_cmpint (data->red, ==, 32767);
+	g_assert_cmpint (data->green, ==, 32767);
+	g_assert_cmpint (data->blue, ==, 32767);
+
+	data = g_ptr_array_index (array, 2);
+	g_assert_cmpint (data->red, ==, 65535);
+	g_assert_cmpint (data->green, ==, 65535);
+	g_assert_cmpint (data->blue, ==, 65535);
+
+	g_ptr_array_unref (array);
+
+	/* set some initial properties */
+	g_object_set (clut,
+		      "contrast", 99.0f,
+		      "brightness", 0.0f,
+		      NULL);
+
+	array = gcm_clut_get_array (clut);
+	g_assert_cmpint (array->len, ==, 3);
+
+	data = g_ptr_array_index (array, 0);
+	g_assert_cmpint (data->red, ==, 0);
+	g_assert_cmpint (data->green, ==, 0);
+	g_assert_cmpint (data->blue, ==, 0);
+	data = g_ptr_array_index (array, 1);
+	g_assert_cmpint (data->red, ==, 32439);
+	g_assert_cmpint (data->green, ==, 32439);
+	g_assert_cmpint (data->blue, ==, 32439);
+	data = g_ptr_array_index (array, 2);
+	g_assert_cmpint (data->red, ==, 64879);
+	g_assert_cmpint (data->green, ==, 64879);
+	g_assert_cmpint (data->blue, ==, 64879);
+
+	g_ptr_array_unref (array);
+
+	/* set some initial properties */
+	g_object_set (clut,
+		      "contrast", 100.0f,
+		      "brightness", 1.0f,
+		      NULL);
+
+	array = gcm_clut_get_array (clut);
+	g_assert_cmpint (array->len, ==, 3);
+
+	data = g_ptr_array_index (array, 0);
+	g_assert_cmpint (data->red, ==, 655);
+	g_assert_cmpint (data->green, ==, 655);
+	g_assert_cmpint (data->blue, ==, 655);
+	data = g_ptr_array_index (array, 1);
+	g_assert_cmpint (data->red, ==, 33094);
+	g_assert_cmpint (data->green, ==, 33094);
+	g_assert_cmpint (data->blue, ==, 33094);
+	data = g_ptr_array_index (array, 2);
+	g_assert_cmpint (data->red, ==, 65535);
+	g_assert_cmpint (data->green, ==, 65535);
+	g_assert_cmpint (data->blue, ==, 65535);
+
+	g_ptr_array_unref (array);
+
+	g_object_unref (clut);
+}
+
+
+static void
+gcm_test_xyz_func (void)
+{
+	GcmXyz *xyz;
+	gdouble value;
+
+	xyz = gcm_xyz_new ();
+	g_assert (xyz != NULL);
+
+	/* nothing set */
+	value = gcm_xyz_get_x (xyz);
+	g_assert_cmpfloat (fabs (value - 0.0f), <, 0.001f);
+
+	/* set dummy values */
+	g_object_set (xyz,
+		      "cie-x", 0.125,
+		      "cie-y", 0.25,
+		      "cie-z", 0.5,
+		      NULL);
+
+	value = gcm_xyz_get_x (xyz);
+	g_assert_cmpfloat (fabs (value - 0.142857143f), <, 0.001f);
+
+	value = gcm_xyz_get_y (xyz);
+	g_assert_cmpfloat (fabs (value - 0.285714286f), <, 0.001f);
+
+	value = gcm_xyz_get_z (xyz);
+	g_assert_cmpfloat (fabs (value - 0.571428571f), <, 0.001f);
+
+	g_object_unref (xyz);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -303,8 +494,11 @@ main (int argc, char **argv)
 	g_test_add_func ("/libcolor-glib/ddc-device", gcm_test_ddc_device_func);
 	g_test_add_func ("/libcolor-glib/ddc-client", gcm_test_ddc_client_func);
 	g_test_add_func ("/libcolor-glib/sensor", gcm_test_sensor_func);
-	g_test_add_func ("/color/edid", gcm_test_edid_func);
-	g_test_add_func ("/color/tables", gcm_test_tables_func);
+	g_test_add_func ("/libcolor-glib/edid", gcm_test_edid_func);
+	g_test_add_func ("/libcolor-glib/tables", gcm_test_tables_func);
+	g_test_add_func ("/libcolor-glib/profile", gcm_test_profile_func);
+	g_test_add_func ("/libcolor-glib/clut", gcm_test_clut_func);
+	g_test_add_func ("/libcolor-glib/xyz", gcm_test_xyz_func);
 
 	return g_test_run ();
 }

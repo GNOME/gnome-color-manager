@@ -36,6 +36,10 @@
 #include <gcm-sensor.h>
 #include <gcm-sensor-huey.h>
 #include <gcm-sensor-dummy.h>
+#include <gcm-edid.h>
+#include <gcm-profile.h>
+#include <gcm-enum.h>
+#include <gcm-clut.h>
 
 #undef __GCM_H_INSIDE__
 
