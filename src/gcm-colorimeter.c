@@ -57,7 +57,6 @@ struct _GcmColorimeterPrivate
 	gchar				*model;
 	GUdevClient			*client;
 	GcmColorimeterKind		 colorimeter_kind;
-	gboolean			 shown_warning;
 };
 
 enum {
@@ -363,7 +362,6 @@ static gboolean
 gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 {
 	gboolean ret;
-	GtkWidget *dialog;
 	const gchar *kind_str;
 	GcmColorimeterPrivate *priv = colorimeter->priv;
 
@@ -401,29 +399,8 @@ gcm_colorimeter_device_add (GcmColorimeter *colorimeter, GUdevDevice *device)
 	/* try to get type */
 	kind_str = g_udev_device_get_property (device, "GCM_KIND");
 	priv->colorimeter_kind = gcm_colorimeter_kind_from_string (kind_str);
-	if (priv->colorimeter_kind == GCM_COLORIMETER_KIND_UNKNOWN) {
+	if (priv->colorimeter_kind == GCM_COLORIMETER_KIND_UNKNOWN)
 		egg_warning ("Failed to recognize color device: %s", priv->model);
-
-		/* show dialog, in order to help the project */
-		if (!priv->shown_warning) {
-			dialog = gtk_message_dialog_new (NULL,
-							 GTK_DIALOG_MODAL,
-							 GTK_MESSAGE_INFO,
-							 GTK_BUTTONS_OK,
-							 /* TRANSLATORS: this is when the device is not recognized */
-							 _("Measuring instrument not recognized"));
-			gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-								  "Could not recognize attached measuring instrument '%s'. "
-								  "It should work okay, but if you want to help the project, "
-								  "please visit %s and supply the required information.",
-								  priv->model, "http://live.gnome.org/GnomeColorManager/Help");
-			gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-			gtk_dialog_run (GTK_DIALOG (dialog));
-			gtk_widget_destroy (dialog);
-			priv->shown_warning = TRUE;
-		}
-		priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;
-	}
 
 	/* signal the addition */
 	egg_debug ("emit: changed");
@@ -520,7 +497,6 @@ gcm_colorimeter_init (GcmColorimeter *colorimeter)
 	colorimeter->priv = GCM_COLORIMETER_GET_PRIVATE (colorimeter);
 	colorimeter->priv->vendor = NULL;
 	colorimeter->priv->model = NULL;
-	colorimeter->priv->shown_warning = FALSE;
 	colorimeter->priv->colorimeter_kind = GCM_COLORIMETER_KIND_UNKNOWN;
 
 	/* use GUdev to find the calibration device */
