@@ -33,7 +33,6 @@
 #include <string.h>
 #include <gio/gio.h>
 #include <stdlib.h>
-#include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <X11/Xatom.h>
 #include <X11/extensions/Xrandr.h>

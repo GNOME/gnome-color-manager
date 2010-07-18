@@ -7,6 +7,7 @@ INTROSPECTION_COMPILER_ARGS = --includedir=$(srcdir)
 
 INCLUDES = \
 	$(GLIB_CFLAGS)						\
+	$(GTK_CFLAGS)						\
 	$(LCMS_CFLAGS)						\
 	$(USB_CFLAGS)						\
 	-I$(top_srcdir)/libcolor-glib				\
@@ -41,6 +42,7 @@ libcolor_glib_include_HEADERS =					\
 	gcm-enum.h						\
 	gcm-profile.h						\
 	gcm-dmi.h						\
+	gcm-xserver.h						\
 	gcm-version.h						\
 	$(NULL)
 
@@ -78,6 +80,8 @@ libcolor_glib_la_SOURCES =					\
 	gcm-enum.h						\
 	gcm-xyz.c						\
 	gcm-xyz.h						\
+	gcm-xserver.c						\
+	gcm-xserver.h						\
 	gcm-version.h						\
 	$(NULL)
 
@@ -85,6 +89,7 @@ libcolor_glib_la_LIBADD =					\
 	$(USB_LIBS)						\
 	$(LCMS_LIBS)						\
 	$(GLIB_LIBS)						\
+	$(GTK_LIBS)						\
 	-lm
 
 libcolor_glib_la_LDFLAGS =					\

@@ -41,6 +41,7 @@
 #include <gcm-enum.h>
 #include <gcm-clut.h>
 #include <gcm-dmi.h>
+#include <gcm-xserver.h>
 
 #undef __LIBCOLOR_GLIB_H_INSIDE__
 
