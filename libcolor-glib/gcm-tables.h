@@ -19,6 +19,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+#if !defined (__LIBCOLOR_GLIB_H_INSIDE__) && !defined (LIBCOLOR_GLIB_COMPILATION)
+#error "Only <libcolor-glib.h> can be included directly."
+#endif
+
 #ifndef __GCM_TABLES_H
 #define __GCM_TABLES_H
 

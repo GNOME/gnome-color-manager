@@ -12,10 +12,10 @@ INCLUDES = \
 	-I$(top_srcdir)/libcolor-glib				\
 	-I$(top_builddir)/libcolor-glib				\
 	-I.							\
-	-DGCM_COMPILATION					\
+	-DLIBCOLOR_GLIB_COMPILATION				\
 	-DLOCALSTATEDIR=\""$(localstatedir)"\" 			\
 	-DTESTDATADIR=\""$(top_srcdir)/data/tests"\"		\
-	-DI_KNOW_THE_GCM_GLIB_API_IS_SUBJECT_TO_CHANGE		\
+	-DI_KNOW_THE_LIBCOLOR_GLIB_API_IS_SUBJECT_TO_CHANGE	\
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\"			\
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\"
 
@@ -122,7 +122,7 @@ introspection_sources = $(libcolor_glib_la_SOURCES)
 
 gcmGlib-1.0.gir: libcolor-glib.la
 gcmGlib_1_0_gir_INCLUDES = GObject-2.0
-gcmGlib_1_0_gir_CFLAGS = $(INCLUDES) -DI_KNOW_THE_GCM_GLIB_API_IS_SUBJECT_TO_CHANGE
+gcmGlib_1_0_gir_CFLAGS = $(INCLUDES) -DI_KNOW_THE_LIBCOLOR_GLIB_API_IS_SUBJECT_TO_CHANGE
 gcmGlib_1_0_gir_LIBS = libcolor-glib.la
 gcmGlib_1_0_gir_FILES = $(addprefix $(srcdir)/,$(introspection_sources))
 INTROSPECTION_GIRS += gcmGlib-1.0.gir

@@ -22,11 +22,11 @@
 #ifndef __LIBCOLOR_GLIB_H__
 #define __LIBCOLOR_GLIB_H__
 
-#ifndef I_KNOW_THE_GCM_GLIB_API_IS_SUBJECT_TO_CHANGE
-#error You have to define I_KNOW_THE_GCM_GLIB_API_IS_SUBJECT_TO_CHANGE
+#ifndef I_KNOW_THE_LIBCOLOR_GLIB_API_IS_SUBJECT_TO_CHANGE
+#error You have to define I_KNOW_THE_LIBCOLOR_GLIB_API_IS_SUBJECT_TO_CHANGE
 #endif
 
-#define __GCM_H_INSIDE__
+#define __LIBCOLOR_GLIB_H_INSIDE__
 
 #include <gcm-common.h>
 #include <gcm-ddc-common.h>
@@ -41,7 +41,7 @@
 #include <gcm-enum.h>
 #include <gcm-clut.h>
 
-#undef __GCM_H_INSIDE__
+#undef __LIBCOLOR_GLIB_H_INSIDE__
 
 #endif /* __LIBCOLOR_GLIB_H__ */
 
