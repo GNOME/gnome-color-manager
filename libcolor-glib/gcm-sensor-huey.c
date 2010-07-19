@@ -719,56 +719,13 @@ out:
 static gboolean
 gcm_sensor_huey_find_device (GcmSensorHuey *sensor_huey, GError **error)
 {
-	struct libusb_device_descriptor desc;
 	libusb_device **devs = NULL;
-	libusb_device *dev;
 	gint retval;
-	gint cnt;
-	gint i = 0;
 	gboolean ret = FALSE;
 
-	/* get device */
-	cnt = libusb_get_device_list (NULL, &devs);
-	if (cnt < 0) {
-		g_set_error (error, GCM_SENSOR_ERROR,
-			     GCM_SENSOR_ERROR_INTERNAL,
-			     "failed to get device list: %s", libusb_strerror (cnt));
-		goto out;
-	}
-
-	/* find device */
-	for (i=0; i<cnt; i++) {
-		dev = devs[i];
-
-		/* get descriptor */
-		retval = libusb_get_device_descriptor (dev, &desc);
-		if (retval < 0) {
-			g_warning ("failed to get device descriptor for %02x:%02x, possibly faulty hardware",
-				   libusb_get_bus_number (dev), libusb_get_device_address (dev));
-			continue;
-		}
-
-		/* does match HUEY? */
-		if (desc.idVendor == HUEY_VENDOR_ID &&
-		    desc.idProduct == HUEY_PRODUCT_ID) {
-			ret = TRUE;
-			sensor_huey->priv->device = libusb_ref_device (dev);
-			break;
-		}
-	}
-
-	/* not found */
-	if (!ret) {
-		g_set_error_literal (error, GCM_SENSOR_ERROR,
-				     GCM_SENSOR_ERROR_INTERNAL,
-				     "no compatible hardware attached");
-		goto out;
-	}
-
 	/* open device */
-	retval = libusb_open (sensor_huey->priv->device, &sensor_huey->priv->handle);
-	if (retval < 0) {
-		ret = FALSE;
+	sensor_huey->priv->handle = libusb_open_device_with_vid_pid (NULL, HUEY_VENDOR_ID, HUEY_PRODUCT_ID);
+	if (sensor_huey->priv->handle == NULL) {
 		g_set_error (error, GCM_SENSOR_ERROR,
 			     GCM_SENSOR_ERROR_INTERNAL,
 			     "failed to open device: %s", libusb_strerror (retval));
@@ -778,7 +735,6 @@ gcm_sensor_huey_find_device (GcmSensorHuey *sensor_huey, GError **error)
 	/* set configuration and interface */
 	retval = libusb_set_configuration (sensor_huey->priv->handle, 1);
 	if (retval < 0) {
-		ret = FALSE;
 		g_set_error (error, GCM_SENSOR_ERROR,
 			     GCM_SENSOR_ERROR_INTERNAL,
 			     "failed to set configuration: %s", libusb_strerror (retval));
@@ -786,12 +742,14 @@ gcm_sensor_huey_find_device (GcmSensorHuey *sensor_huey, GError **error)
 	}
 	retval = libusb_claim_interface (sensor_huey->priv->handle, 0);
 	if (retval < 0) {
-		ret = FALSE;
 		g_set_error (error, GCM_SENSOR_ERROR,
 			     GCM_SENSOR_ERROR_INTERNAL,
 			     "failed to claim interface: %s", libusb_strerror (retval));
 		goto out;
 	}
+
+	/* success */
+	ret = TRUE;
 out:
 	libusb_free_device_list (devs, 1);
 	return ret;
@@ -909,7 +867,9 @@ GcmSensor *
 gcm_sensor_huey_new (void)
 {
 	GcmSensorHuey *sensor;
-	sensor = g_object_new (GCM_TYPE_SENSOR_HUEY, NULL);
+	sensor = g_object_new (GCM_TYPE_SENSOR_HUEY,
+			       "native", TRUE,
+			       NULL);
 	return GCM_SENSOR (sensor);
 }
 

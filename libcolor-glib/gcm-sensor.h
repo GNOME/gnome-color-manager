@@ -27,6 +27,7 @@
 #define __GCM_SENSOR_H
 
 #include <glib-object.h>
+#include <gudev/gudev.h>
 
 #include <gcm-common.h>
 
@@ -72,6 +73,11 @@ struct _GcmSensorClass
 	void (*_gcm_reserved5) (void);
 };
 
+/**
+ * GcmSensorError:
+ *
+ * The error code.
+ **/
 typedef enum {
 	GCM_SENSOR_ERROR_USER_ABORT,
 	GCM_SENSOR_ERROR_NO_SUPPORT,
@@ -79,6 +85,11 @@ typedef enum {
 	GCM_SENSOR_ERROR_INTERNAL
 } GcmSensorError;
 
+/**
+ * GcmSensorOutputType:
+ *
+ * The output type.
+ **/
 typedef enum {
 	GCM_SENSOR_OUTPUT_TYPE_UNKNOWN,
 	GCM_SENSOR_OUTPUT_TYPE_LCD,
@@ -86,6 +97,11 @@ typedef enum {
 	GCM_SENSOR_OUTPUT_TYPE_PROJECTOR
 } GcmSensorOutputType;
 
+/**
+ * GcmSensorKind:
+ *
+ * The sensor type.
+ **/
 typedef enum {
 	GCM_SENSOR_KIND_HUEY,
 	GCM_SENSOR_KIND_COLOR_MUNKI,
@@ -107,16 +123,19 @@ GType			 gcm_sensor_get_type		(void);
 GcmSensor		*gcm_sensor_new			(void);
 
 gboolean		 gcm_sensor_get_ambient		(GcmSensor		*sensor,
-							gdouble			*value,
-							GError			**error);
+							 gdouble		*value,
+							 GError			**error);
 gboolean		 gcm_sensor_set_leds		(GcmSensor		*sensor,
-							guint8			 value,
-							GError			**error);
+							 guint8			 value,
+							 GError			**error);
 gboolean		 gcm_sensor_sample		(GcmSensor		*sensor,
-							GcmColorXYZ		*value,
-							GError			**error);
+							 GcmColorXYZ		*value,
+							 GError			**error);
 gboolean		 gcm_sensor_startup		(GcmSensor		*sensor,
-							GError			**error);
+							 GError			**error);
+gboolean		 gcm_sensor_set_from_device	(GcmSensor		*sensor,
+							 GUdevDevice		*device,
+							 GError			**error);
 void			 gcm_sensor_set_output_type	(GcmSensor		*sensor,
 							 GcmSensorOutputType	 output_type);
 GcmSensorOutputType	 gcm_sensor_get_output_type	(GcmSensor		*sensor);
@@ -127,6 +146,7 @@ gboolean		 gcm_sensor_supports_display	(GcmSensor 		*sensor);
 gboolean		 gcm_sensor_supports_projector	(GcmSensor 		*sensor);
 gboolean		 gcm_sensor_supports_printer	(GcmSensor		*sensor);
 gboolean		 gcm_sensor_supports_spot	(GcmSensor		*sensor);
+gboolean		 gcm_sensor_get_is_native	(GcmSensor		*sensor);
 const gchar		*gcm_sensor_kind_to_string	(GcmSensorKind		 sensor_kind);
 GcmSensorKind		 gcm_sensor_kind_from_string	(const gchar		*sensor_kind);
 

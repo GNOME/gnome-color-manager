@@ -71,7 +71,6 @@ G_DEFINE_TYPE (GcmXserver, gcm_xserver, G_TYPE_OBJECT)
 
 /**
  * gcm_xserver_get_root_window_profile_data:
- *
  * @xserver: a valid %GcmXserver instance
  * @data: the data that is returned from the XServer. Free with g_free()
  * @length: the size of the returned data, or %NULL if you don't care

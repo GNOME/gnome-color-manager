@@ -70,8 +70,7 @@ struct _GcmCalibrateClass
 	void (*_gcm_reserved5) (void);
 };
 
-typedef enum
-{
+typedef enum {
 	GCM_CALIBRATE_ERROR_USER_ABORT,
 	GCM_CALIBRATE_ERROR_NO_SUPPORT,
 	GCM_CALIBRATE_ERROR_NO_DATA,

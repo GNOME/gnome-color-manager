@@ -42,14 +42,8 @@ main (void)
 
 	g_type_init ();
 
-	/* start sensor */
+	/* create new sensor */
 	sensor = gcm_sensor_huey_new ();
-	ret = gcm_sensor_startup (sensor, &error);
-	if (!ret) {
-		g_warning ("failed to start sensor: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
 
 	/* set LEDs */
 	ret = gcm_sensor_set_leds (sensor, 0x0f, &error);

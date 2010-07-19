@@ -31,6 +31,7 @@
 #include <glib-object.h>
 
 #include "gcm-sensor.h"
+#include "egg-debug.h"
 
 static void     gcm_sensor_finalize	(GObject     *object);
 
@@ -43,6 +44,8 @@ static void     gcm_sensor_finalize	(GObject     *object);
  **/
 struct _GcmSensorPrivate
 {
+	gboolean			 native;
+	gboolean			 done_startup;
 	GcmSensorKind			 kind;
 	GcmSensorOutputType		 output_type;
 	gboolean			 supports_display;
@@ -56,6 +59,7 @@ struct _GcmSensorPrivate
 
 enum {
 	PROP_0,
+	PROP_NATIVE,
 	PROP_VENDOR,
 	PROP_MODEL,
 	PROP_KIND,
@@ -71,6 +75,11 @@ G_DEFINE_TYPE (GcmSensor, gcm_sensor, G_TYPE_OBJECT)
 
 /**
  * gcm_sensor_get_model:
+ * @sensor: a valid #GcmSensor instance
+ *
+ * Gets the sensor model.
+ *
+ * Return value: a string.
  **/
 const gchar *
 gcm_sensor_get_model (GcmSensor *sensor)
@@ -80,6 +89,11 @@ gcm_sensor_get_model (GcmSensor *sensor)
 
 /**
  * gcm_sensor_get_vendor:
+ * @sensor: a valid #GcmSensor instance
+ *
+ * Gets the sensor vendor.
+ *
+ * Return value: a string.
  **/
 const gchar *
 gcm_sensor_get_vendor (GcmSensor *sensor)
@@ -89,6 +103,11 @@ gcm_sensor_get_vendor (GcmSensor *sensor)
 
 /**
  * gcm_sensor_supports_display:
+ * @sensor: a valid #GcmSensor instance
+ *
+ * Returns if the sensor supports profiling a display.
+ *
+ * Return value: %TRUE or %FALSE.
  **/
 gboolean
 gcm_sensor_supports_display (GcmSensor *sensor)
@@ -98,6 +117,11 @@ gcm_sensor_supports_display (GcmSensor *sensor)
 
 /**
  * gcm_sensor_supports_projector:
+ * @sensor: a valid #GcmSensor instance
+ *
+ * Returns if the sensor supports profiling a projector.
+ *
+ * Return value: %TRUE or %FALSE.
  **/
 gboolean
 gcm_sensor_supports_projector (GcmSensor *sensor)
@@ -107,6 +131,11 @@ gcm_sensor_supports_projector (GcmSensor *sensor)
 
 /**
  * gcm_sensor_supports_printer:
+ * @sensor: a valid #GcmSensor instance
+ *
+ * Returns if the sensor supports profiling a printer.
+ *
+ * Return value: %TRUE or %FALSE.
  **/
 gboolean
 gcm_sensor_supports_printer (GcmSensor *sensor)
@@ -116,6 +145,11 @@ gcm_sensor_supports_printer (GcmSensor *sensor)
 
 /**
  * gcm_sensor_supports_spot:
+ * @sensor: a valid #GcmSensor instance
+ *
+ * Returns if the sensor supports getting a spot color.
+ *
+ * Return value: %TRUE or %FALSE.
  **/
 gboolean
 gcm_sensor_supports_spot (GcmSensor *sensor)
@@ -125,6 +159,11 @@ gcm_sensor_supports_spot (GcmSensor *sensor)
 
 /**
  * gcm_sensor_get_kind:
+ * @sensor: a valid #GcmSensor instance
+ *
+ * Returns the sensor kind.
+ *
+ * Return value: the sensor kind, e.g. %GCM_SENSOR_KIND_HUEY
  **/
 GcmSensorKind
 gcm_sensor_get_kind (GcmSensor *sensor)
@@ -134,6 +173,11 @@ gcm_sensor_get_kind (GcmSensor *sensor)
 
 /**
  * gcm_sensor_set_output_type:
+ * @sensor: a valid #GcmSensor instance
+ * @output_type: the output type, e.g. %GCM_SENSOR_OUTPUT_TYPE_LCD
+ *
+ * Set the output type. Different sensors may do different
+ * things depending on the output type.
  **/
 void
 gcm_sensor_set_output_type (GcmSensor *sensor, GcmSensorOutputType output_type)
@@ -143,6 +187,12 @@ gcm_sensor_set_output_type (GcmSensor *sensor, GcmSensorOutputType output_type)
 
 /**
  * gcm_sensor_get_output_type:
+ * @sensor: a valid #GcmSensor instance
+ *
+ * Returns the set output type. Different sensors may do different
+ * things depending on the output type.
+ *
+ * Return value: the output type, e.g. %GCM_SENSOR_OUTPUT_TYPE_LCD
  **/
 GcmSensorOutputType
 gcm_sensor_get_output_type (GcmSensor *sensor)
@@ -151,13 +201,95 @@ gcm_sensor_get_output_type (GcmSensor *sensor)
 }
 
 /**
+ * gcm_sensor_get_is_native:
+ * @sensor: a valid #GcmSensor instance
+ *
+ * Sensor support can be built in, for instance the HUEY, or rely on
+ * external frameworks such as argyllcms. Native sensor support is done
+ * internally without calling out to other frameworks.
+ *
+ * Return value: %TRUE for internal, native, support.
+ **/
+gboolean
+gcm_sensor_get_is_native (GcmSensor *sensor)
+{
+	return sensor->priv->native;
+}
+
+/**
+ * gcm_sensor_set_from_device:
+ * @sensor: a valid #GcmSensor instance
+ * @device: a #GUdevDevice
+ * @error: a #GError or %NULL
+ *
+ * Set up some details about the sensor from the raw device.
+ * We aim to get as much as possible from UDEV.
+ *
+ * Return value: %TRUE for success.
+ **/
+gboolean
+gcm_sensor_set_from_device (GcmSensor *sensor, GUdevDevice *device, GError **error)
+{
+	const gchar *kind_str;
+	GcmSensorPrivate *priv = sensor->priv;
+
+	/* device */
+	priv->device = g_strdup (g_udev_device_get_sysfs_path (device));
+
+	/* vendor */
+	priv->vendor = g_strdup (g_udev_device_get_property (device, "ID_VENDOR_FROM_DATABASE"));
+	if (priv->vendor == NULL)
+		priv->vendor = g_strdup (g_udev_device_get_property (device, "ID_VENDOR"));
+	if (priv->vendor == NULL)
+		priv->vendor = g_strdup (g_udev_device_get_sysfs_attr (device, "manufacturer"));
+
+	/* model */
+	priv->model = g_strdup (g_udev_device_get_property (device, "ID_MODEL_FROM_DATABASE"));
+	if (priv->model == NULL)
+		priv->model = g_strdup (g_udev_device_get_property (device, "ID_MODEL"));
+	if (priv->model == NULL)
+		priv->model = g_strdup (g_udev_device_get_sysfs_attr (device, "product"));
+
+	/* try to get type */
+	kind_str = g_udev_device_get_property (device, "GCM_KIND");
+	priv->kind = gcm_sensor_kind_from_string (kind_str);
+	if (priv->kind == GCM_SENSOR_KIND_UNKNOWN)
+		egg_warning ("Failed to recognize color device: %s", priv->model);
+
+	priv->supports_display = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_DISPLAY");
+	priv->supports_projector = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PROJECTOR");
+	priv->supports_printer = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PRINTER");
+	priv->supports_spot = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_SPOT");
+	return TRUE;
+}
+
+/**
  * gcm_sensor_startup:
+ * @sensor: a valid #GcmSensor instance
+ * @error: a #GError or %NULL
+ *
+ * Starts up the device, which can mean connecting to it and uploading
+ * firmware, or just reading configuration details for it.
+ *
+ * You probably don't need to use this function manually, as it is done
+ * automatically as soon as the sensor is required.
+ *
+ * Return value: %TRUE for success.
  **/
 gboolean
 gcm_sensor_startup (GcmSensor *sensor, GError **error)
 {
 	GcmSensorClass *klass = GCM_SENSOR_GET_CLASS (sensor);
 	gboolean ret = FALSE;
+
+	/* already done */
+	if (sensor->priv->done_startup) {
+		g_set_error_literal (error,
+				     GCM_SENSOR_ERROR,
+				     GCM_SENSOR_ERROR_INTERNAL,
+				     "already started");
+		goto out;
+	}
 
 	/* coldplug source */
 	if (klass->startup == NULL) {
@@ -170,18 +302,37 @@ gcm_sensor_startup (GcmSensor *sensor, GError **error)
 
 	/* proxy */
 	ret = klass->startup (sensor, error);
+	if (!ret)
+		goto out;
+
+	/* success */
+	sensor->priv->done_startup = TRUE;
 out:
 	return ret;
 }
 
 /**
  * gcm_sensor_get_ambient:
+ * @sensor: a valid #GcmSensor instance
+ * @value: The returned value
+ * @error: a #GError or %NULL
+ *
+ * Gets the ambient light level of the sensor in Lux.
+ *
+ * Return value: %TRUE for success.
  **/
 gboolean
 gcm_sensor_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
 {
 	GcmSensorClass *klass = GCM_SENSOR_GET_CLASS (sensor);
 	gboolean ret = FALSE;
+
+	/* do startup if not yet done */
+	if (!sensor->priv->done_startup) {
+		ret = gcm_sensor_startup (sensor, error);
+		if (!ret)
+			goto out;
+	}
 
 	/* coldplug source */
 	if (klass->get_ambient == NULL) {
@@ -200,12 +351,26 @@ out:
 
 /**
  * gcm_sensor_sample:
+ * @sensor: a valid #GcmSensor instance
+ * @value: The returned value
+ * @error: a #GError or %NULL
+ *
+ * Sample the color and store as a XYZ value.
+ *
+ * Return value: %TRUE for success.
  **/
 gboolean
 gcm_sensor_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 {
 	GcmSensorClass *klass = GCM_SENSOR_GET_CLASS (sensor);
 	gboolean ret = FALSE;
+
+	/* do startup if not yet done */
+	if (!sensor->priv->done_startup) {
+		ret = gcm_sensor_startup (sensor, error);
+		if (!ret)
+			goto out;
+	}
 
 	/* coldplug source */
 	if (klass->sample == NULL) {
@@ -224,6 +389,13 @@ out:
 
 /**
  * gcm_sensor_set_leds:
+ * @sensor: a valid #GcmSensor instance
+ * @value: The LED bitmask
+ * @error: a #GError or %NULL
+ *
+ * Sets the LED output state for the device.
+ *
+ * Return value: %TRUE for success.
  **/
 gboolean
 gcm_sensor_set_leds (GcmSensor *sensor, guint8 value, GError **error)
@@ -231,7 +403,14 @@ gcm_sensor_set_leds (GcmSensor *sensor, guint8 value, GError **error)
 	GcmSensorClass *klass = GCM_SENSOR_GET_CLASS (sensor);
 	gboolean ret = FALSE;
 
-	/* coldplug source */
+	/* do startup if not yet done */
+	if (!sensor->priv->done_startup) {
+		ret = gcm_sensor_startup (sensor, error);
+		if (!ret)
+			goto out;
+	}
+
+	/* set LEDs */
 	if (klass->set_leds == NULL) {
 		g_set_error_literal (error,
 				     GCM_SENSOR_ERROR,
@@ -248,6 +427,11 @@ out:
 
 /**
  * gcm_sensor_kind_to_string:
+ * @sensor_kind: a #GcmSensorKind
+ *
+ * Gets the sensor kind as a string.
+ *
+ * Return value: the sensor kind, e.g. 'huey'.
  **/
 const gchar *
 gcm_sensor_kind_to_string (GcmSensorKind sensor_kind)
@@ -277,6 +461,11 @@ gcm_sensor_kind_to_string (GcmSensorKind sensor_kind)
 
 /**
  * gcm_sensor_kind_from_string:
+ * @sensor_kind: the sensor kind, e.g. 'huey'.
+ *
+ * Gets the sensor kind as a enumerated value.
+ *
+ * Return value: a #GcmSensorKind
  **/
 GcmSensorKind
 gcm_sensor_kind_from_string (const gchar *sensor_kind)
@@ -314,6 +503,9 @@ gcm_sensor_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	GcmSensorPrivate *priv = sensor->priv;
 
 	switch (prop_id) {
+	case PROP_NATIVE:
+		g_value_set_boolean (value, priv->native);
+		break;
 	case PROP_VENDOR:
 		g_value_set_string (value, priv->vendor);
 		break;
@@ -354,32 +546,8 @@ gcm_sensor_set_property (GObject *object, guint prop_id, const GValue *value, GP
 	GcmSensorPrivate *priv = sensor->priv;
 
 	switch (prop_id) {
-	case PROP_DEVICE:
-		g_free (priv->device);
-		priv->device = g_value_dup_string (value);
-		break;
-	case PROP_VENDOR:
-		g_free (priv->vendor);
-		priv->vendor = g_value_dup_string (value);
-		break;
-	case PROP_MODEL:
-		g_free (priv->model);
-		priv->model = g_value_dup_string (value);
-		break;
-	case PROP_KIND:
-		priv->kind = g_value_get_uint (value);
-		break;
-	case PROP_SUPPORTS_DISPLAY:
-		priv->supports_display = g_value_get_boolean (value);
-		break;
-	case PROP_SUPPORTS_PROJECTOR:
-		priv->supports_projector = g_value_get_boolean (value);
-		break;
-	case PROP_SUPPORTS_PRINTER:
-		priv->supports_printer = g_value_get_boolean (value);
-		break;
-	case PROP_SUPPORTS_SPOT:
-		priv->supports_spot = g_value_get_boolean (value);
+	case PROP_NATIVE:
+		priv->native = g_value_get_boolean (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -400,11 +568,19 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 	object_class->set_property = gcm_sensor_set_property;
 
 	/**
+	 * GcmSensor:native:
+	 */
+	pspec = g_param_spec_boolean ("native", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_NATIVE, pspec);
+
+	/**
 	 * GcmSensor:vendor:
 	 */
 	pspec = g_param_spec_string ("vendor", NULL, NULL,
 				     NULL,
-				     G_PARAM_READWRITE);
+				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_VENDOR, pspec);
 
 	/**
@@ -412,7 +588,7 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 	 */
 	pspec = g_param_spec_string ("model", NULL, NULL,
 				     NULL,
-				     G_PARAM_READWRITE);
+				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_MODEL, pspec);
 
 	/**
@@ -420,7 +596,7 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 	 */
 	pspec = g_param_spec_uint ("kind", NULL, NULL,
 				   0, G_MAXUINT, GCM_SENSOR_KIND_UNKNOWN,
-				   G_PARAM_READWRITE);
+				   G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_KIND, pspec);
 
 	/**
@@ -428,7 +604,7 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 	 */
 	pspec = g_param_spec_boolean ("supports-display", NULL, NULL,
 				      FALSE,
-				      G_PARAM_READWRITE);
+				      G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_SUPPORTS_DISPLAY, pspec);
 
 	/**
@@ -436,7 +612,7 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 	 */
 	pspec = g_param_spec_boolean ("supports-projector", NULL, NULL,
 				      FALSE,
-				      G_PARAM_READWRITE);
+				      G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_SUPPORTS_PROJECTOR, pspec);
 
 
@@ -445,7 +621,7 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 	 */
 	pspec = g_param_spec_boolean ("supports-printer", NULL, NULL,
 				      FALSE,
-				      G_PARAM_READWRITE);
+				      G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_SUPPORTS_PRINTER, pspec);
 
 	/**
@@ -453,7 +629,7 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 	 */
 	pspec = g_param_spec_boolean ("supports-spot", NULL, NULL,
 				      FALSE,
-				      G_PARAM_READWRITE);
+				      G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_SUPPORTS_SPOT, pspec);
 
 	/**
@@ -461,7 +637,7 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 	 */
 	pspec = g_param_spec_string ("device", NULL, NULL,
 				     NULL,
-				     G_PARAM_READWRITE);
+				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_DEVICE, pspec);
 
 	g_type_class_add_private (klass, sizeof (GcmSensorPrivate));
@@ -497,7 +673,7 @@ gcm_sensor_finalize (GObject *object)
 /**
  * gcm_sensor_new:
  *
- * Return value: a new GcmSensor object.
+ * Return value: a new #GcmSensor object.
  **/
 GcmSensor *
 gcm_sensor_new (void)

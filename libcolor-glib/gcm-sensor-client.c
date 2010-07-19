@@ -157,11 +157,7 @@ gcm_sensor_client_get_present (GcmSensorClient *sensor_client)
 static gboolean
 gcm_sensor_client_device_add (GcmSensorClient *sensor_client, GUdevDevice *device)
 {
-	const gchar *vendor;
-	const gchar *model;
-	GcmSensorKind sensor_client_kind;
 	gboolean ret;
-	const gchar *kind_str;
 	GcmSensorClientPrivate *priv = sensor_client->priv;
 
 	/* interesting device? */
@@ -171,38 +167,13 @@ gcm_sensor_client_device_add (GcmSensorClient *sensor_client, GUdevDevice *devic
 
 	/* get data */
 	egg_debug ("adding color management device: %s", g_udev_device_get_sysfs_path (device));
-	priv->present = TRUE;
 	priv->sensor = gcm_sensor_new ();
+	ret = gcm_sensor_set_from_device (priv->sensor, device, NULL);
+	if (!ret)
+		goto out;
 
-	/* vendor */
-	vendor = g_udev_device_get_property (device, "ID_VENDOR_FROM_DATABASE");
-	if (vendor == NULL)
-		vendor = g_udev_device_get_property (device, "ID_VENDOR");
-	if (vendor == NULL)
-		vendor = g_udev_device_get_sysfs_attr (device, "manufacturer");
-
-	/* model */
-	model = g_udev_device_get_property (device, "ID_MODEL_FROM_DATABASE");
-	if (model == NULL)
-		model = g_udev_device_get_property (device, "ID_MODEL");
-	if (model == NULL)
-		model = g_udev_device_get_sysfs_attr (device, "product");
-
-	/* try to get type */
-	kind_str = g_udev_device_get_property (device, "GCM_KIND");
-	sensor_client_kind = gcm_sensor_kind_from_string (kind_str);
-	if (sensor_client_kind == GCM_SENSOR_KIND_UNKNOWN)
-		egg_warning ("Failed to recognize color device: %s", model);
-
-	g_object_set (priv->sensor,
-		      "vendor", vendor,
-		      "model", model,
-		      "supports-display", g_udev_device_get_property_as_boolean (device, "GCM_TYPE_DISPLAY"),
-		      "supports-projector",g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PROJECTOR"),
-		      "supports-printer", g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PRINTER"),
-		      "supports-spot", g_udev_device_get_property_as_boolean (device, "GCM_TYPE_SPOT"),
-		      "kind", sensor_client_kind,
-		      NULL);
+	/* success */
+	priv->present = TRUE;
 
 	/* signal the addition */
 	egg_debug ("emit: changed");
