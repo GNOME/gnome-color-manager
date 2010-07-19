@@ -47,7 +47,6 @@ static void     gcm_sensor_huey_finalize	(GObject     *object);
 struct _GcmSensorHueyPrivate
 {
 	libusb_context			*ctx;
-	libusb_device			*device;
 	libusb_device_handle		*handle;
 	GcmMat3x3			 calibration_matrix1;
 	GcmMat3x3			 calibration_matrix2;
@@ -904,8 +903,6 @@ gcm_sensor_huey_finalize (GObject *object)
 
 	/* close device */
 	libusb_close (priv->handle);
-	if (priv->device != NULL)
-		libusb_unref_device (priv->device);
 	if (priv->ctx != NULL)
 		libusb_exit (priv->ctx);
 

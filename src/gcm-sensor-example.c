@@ -32,17 +32,37 @@
 #include "egg-debug.h"
 
 /**
+ * print_data:
+ **/
+static void
+print_data (const gchar *title, const guchar *data, gsize length)
+{
+	guint i;
+
+	if (!egg_debug_is_verbose ())
+		return;
+
+	if (g_strcmp0 (title, "request") == 0)
+		g_print ("%c[%dm", 0x1B, 31);
+	if (g_strcmp0 (title, "reply") == 0)
+		g_print ("%c[%dm", 0x1B, 34);
+	g_print ("%s\t", title);
+
+	for (i=0; i< length; i++)
+		g_print ("%02x [%c]\t", data[i], g_ascii_isprint (data[i]) ? data[i] : '?');
+	g_print ("\n%s\t", title);
+	for (i=0; i< length; i++)
+		g_print ("%02x ", data[i]);
+
+	g_print ("%c[%dm\n", 0x1B, 0);
+}
+
+/**
  * main:
  **/
 int
 main (int argc, char **argv)
 {
-#if 1
-	gboolean ret;
-	GError *error = NULL;
-	GcmSensor *sensor;
-	gdouble value;
-	GcmColorXYZ values;
 	GOptionContext *context;
 
 	context = g_option_context_new ("gnome-color-manager sensor example");
@@ -51,6 +71,13 @@ main (int argc, char **argv)
 	g_option_context_free (context);
 
 	g_type_init ();
+
+#if 0
+	gboolean ret;
+	GError *error = NULL;
+	GcmSensor *sensor;
+	gdouble value;
+	GcmColorXYZ values;
 
 	/* create new sensor */
 	sensor = gcm_sensor_huey_new ();
@@ -79,13 +106,99 @@ out:
 	g_object_unref (sensor);
 	return 0;
 #else
+{
+	gint retval;
+	gsize reply_read;
+	guchar reply[8];
+	guint i;
+	libusb_device_handle *handle;
 
+	/* connect */
+	retval = libusb_init (NULL);
+	if (retval < 0) {
+		egg_warning ("failed to init libusb: %s", libusb_strerror (retval));
+		goto out;
+	}
+
+#define COLORMUNKI_VENDOR_ID			0x0971
+#define COLORMUNKI_PRODUCT_ID			0x2007
+
+	/* open device */
+	handle = libusb_open_device_with_vid_pid (NULL, COLORMUNKI_VENDOR_ID, COLORMUNKI_PRODUCT_ID);
+	if (handle == NULL) {
+		egg_error ("failed to open device: %s", libusb_strerror (retval));
+		goto out;
+	}
+
+	/* set configuration and interface */
+	retval = libusb_set_configuration (handle, 1);
+	if (retval < 0) {
+		egg_error ("failed to set configuration: %s", libusb_strerror (retval));
+		goto out;
+	}
+	retval = libusb_claim_interface (handle, 0);
+	if (retval < 0) {
+		egg_error ("failed to claim interface: %s", libusb_strerror (retval));
+		goto out;
+	}
+
+	for (i=0; i<9999; i++) {
+
+		reply[0] = 0x00;
+		reply[1] = 0x00;
+		reply[2] = 0x00;
+		reply[3] = 0x00;
+		reply[4] = 0x00;
+		reply[5] = 0x00;
+		reply[6] = 0x00;
+		reply[7] = 0x00;
+
+		/* get sync data */
+		retval = libusb_interrupt_transfer (handle, 0x83,
+						    reply, 8, (gint*)&reply_read,
+						    100000);
+		if (retval < 0) {
+			egg_error ("failed to get data");
+		}
+
+#define COLORMUNKI_COMMAND_DIAL_ROTATE		0x00
+#define COLORMUNKI_COMMAND_BUTTON_PRESSED	0x01
+#define COLORMUNKI_COMMAND_BUTTON_RELEASED	0x02
+
+		print_data ("reply", reply, reply_read);
+		if (reply[0] == COLORMUNKI_COMMAND_DIAL_ROTATE)
+			egg_warning ("dial rotate");
+		if (reply[0] == COLORMUNKI_COMMAND_BUTTON_PRESSED)
+			egg_warning ("button pressed");
+		if (reply[0] == COLORMUNKI_COMMAND_BUTTON_RELEASED)
+			egg_warning ("button released");
+
+/*
+ *   subcmd ----\          /---- some kind of time counter, seconds?
+ *  cmd ----|\ ||          ||
+ * Returns: 02 00 00 00 ac 62 07 00
+ *                \|-||----------||-----always zero
+ *
+ * cmd is:
+ * 00	dial rotate
+ * 01	button pressed
+ * 02	button released
+ *
+ * subcmd is:
+ * 00	button event
+ * 01	dial rotate
+ */
+
+	}
+
+	libusb_exit (NULL);
 	/* get device */
 	/* set configuration */
 	/* get ambient */
 	/* close device */
+}
+out:
 #endif
-
 	return 0;
 }
 
