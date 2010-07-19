@@ -31,6 +31,7 @@
 #include <glib-object.h>
 #include <libusb-1.0/libusb.h>
 
+#include "egg-debug.h"
 #include "gcm-common.h"
 #include "gcm-sensor-huey.h"
 
@@ -318,6 +319,9 @@ gcm_sensor_huey_print_data (const gchar *title, const guchar *data, gsize length
 {
 	guint i;
 
+	if (!egg_debug_is_verbose ())
+		return;
+
 	if (g_strcmp0 (title, "request") == 0)
 		g_print ("%c[%dm", 0x1B, 31);
 	if (g_strcmp0 (title, "reply") == 0)
@@ -326,7 +330,6 @@ gcm_sensor_huey_print_data (const gchar *title, const guchar *data, gsize length
 
 	for (i=0; i< length; i++)
 		g_print ("%02x [%c]\t", data[i], g_ascii_isprint (data[i]) ? data[i] : '?');
-		//g_print ("%02x,", data[i]);
 
 	g_print ("%c[%dm\n", 0x1B, 0);
 }
@@ -652,7 +655,7 @@ gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey, &multiplier, &native, error);
 	if (!ret)
 		goto out;
-	g_debug ("initial values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.R, native.G, native.B);
+	egg_debug ("initial values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.R, native.G, native.B);
 
 	/* compromise between the amount of time and the precision */
 	precision_value = (gdouble) HUEY_PRECISION_TIME_VALUE;
@@ -662,17 +665,16 @@ gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 		multiplier.G = precision_value / native.G;
 	if (native.B < precision_value)
 		multiplier.B = precision_value / native.B;
-	g_debug ("using multiplier factor: red=%i, green=%i, blue=%i", multiplier.R, multiplier.G, multiplier.B);
+	egg_debug ("using multiplier factor: red=%i, green=%i, blue=%i", multiplier.R, multiplier.G, multiplier.B);
 	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey, &multiplier, &native, error);
 	if (!ret)
 		goto out;
-	g_debug ("prescaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.R, native.G, native.B);
+	egg_debug ("prescaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.R, native.G, native.B);
 	native.R = native.R * (gdouble)multiplier.R;
 	native.G = native.G * (gdouble)multiplier.G;
 	native.B = native.B * (gdouble)multiplier.B;
-	g_debug ("scaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.R, native.G, native.B);
-
-	g_print ("PRE MULTIPLY: %s\n", gcm_vec3_to_string (input));
+	egg_debug ("scaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.R, native.G, native.B);
+	egg_debug ("PRE MULTIPLY: %s\n", gcm_vec3_to_string (input));
 
 	/* it would be rediculous for the device to emit RGB, it would be completely arbitrary --
 	 * we assume the matrix of data is designed to convert to LAB or XYZ */
@@ -681,7 +683,7 @@ gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 	/* scale correct */
 	gcm_vec3_scalar_multiply (output, HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR, output);
 
-	g_print ("POST MULTIPLY: %s\n", gcm_vec3_to_string (output));
+	egg_debug ("POST MULTIPLY: %s\n", gcm_vec3_to_string (output));
 out:
 	return ret;
 }
@@ -770,7 +772,7 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 	/* connect */
 	retval = libusb_init (NULL);
 	if (retval < 0) {
-		g_warning ("failed to init libusb: %s", libusb_strerror (retval));
+		egg_warning ("failed to init libusb: %s", libusb_strerror (retval));
 		goto out;
 	}
 	priv->connected = TRUE;
@@ -789,21 +791,21 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 	ret = gcm_sensor_huey_read_register_string (sensor_huey, 0x7a, priv->unlock_string, 5, error);
 	if (!ret)
 		goto out;
-	g_debug ("Unlock string: %s", priv->unlock_string);
+	egg_debug ("Unlock string: %s", priv->unlock_string);
 
 	/* get matrix */
 	gcm_mat33_clear (&priv->calibration_matrix1);
 	ret = gcm_sensor_huey_read_register_matrix (sensor_huey, 0x04, &priv->calibration_matrix1, error);
 	if (!ret)
 		goto out;
-	g_debug ("device matrix1: %s", gcm_mat33_to_string (&priv->calibration_matrix1));
+	egg_debug ("device matrix1: %s", gcm_mat33_to_string (&priv->calibration_matrix1));
 
 	/* get another matrix, although this one is different... */
 	gcm_mat33_clear (&priv->calibration_matrix2);
 	ret = gcm_sensor_huey_read_register_matrix (sensor_huey, 0x36, &priv->calibration_matrix2, error);
 	if (!ret)
 		goto out;
-	g_debug ("device matrix2: %s", gcm_mat33_to_string (&priv->calibration_matrix2));
+	egg_debug ("device matrix2: %s", gcm_mat33_to_string (&priv->calibration_matrix2));
 
 out:
 	return ret;
