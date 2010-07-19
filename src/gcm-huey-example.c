@@ -45,14 +45,6 @@ main (void)
 	/* create new sensor */
 	sensor = gcm_sensor_huey_new ();
 
-	/* set LEDs */
-	ret = gcm_sensor_set_leds (sensor, 0x0f, &error);
-	if (!ret) {
-		g_warning ("failed to send leds: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
 	/* set mode */
 	gcm_sensor_set_output_type (sensor, GCM_SENSOR_OUTPUT_TYPE_LCD);
 
@@ -73,15 +65,6 @@ main (void)
 		goto out;
 	}
 	g_debug ("X=%0.4lf, Y=%0.4lf, Z=%0.4lf", values.X, values.Y, values.Z);
-
-	/* set LEDs */
-	ret = gcm_sensor_set_leds (sensor, 0x00, &error);
-	if (!ret) {
-		g_warning ("failed to send leds: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
 out:
 	g_object_unref (sensor);
 	return 0;

@@ -764,9 +764,11 @@ static gboolean
 gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 {
 	gboolean ret = FALSE;
+	guint i;
 	gint retval;
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
 	GcmSensorHueyPrivate *priv = sensor_huey->priv;
+	const guint8 spin_leds[] = { 0x0, 0x1, 0x2, 0x4, 0x8, 0x4, 0x2, 0x1, 0x0, 0xff };
 
 	/* connect */
 	retval = libusb_init (&priv->ctx);
@@ -805,6 +807,13 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 		goto out;
 	egg_debug ("device matrix2: %s", gcm_mat33_to_string (&priv->calibration_matrix2));
 
+	/* spin the LEDs */
+	for (i=0; spin_leds[i] != 0xff; i++) {
+		ret = gcm_sensor_huey_set_leds (sensor, spin_leds[i], error);
+		if (!ret)
+			goto out;
+		g_usleep (50000);
+	}
 out:
 	return ret;
 }
