@@ -217,16 +217,11 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
  * returns: 00 16 00 00 00 00 00 00
  *
  * or:
- *                ||----||----||-- 'gain control'
- *    0 or 1 ---.-----.-----.    ,,-- only 00 7f or 03
+ *             ,,-,,-,,-,,-,,-,,-- 'gain control'
+ *             || || || || || ||
  * input:   16 00 35 00 48 00 1d 03
  * returns: 00 16 00 0b d0 00 00 00
  *            data --^^^^^ ^^-- only ever 00 or 80
- *                    \-- for RGB(00,00,00) is odd	(00 16 02 20 f4 ee 07 00)
- *                            RGB(ff,ff,ff) is odd	(00 16 00 03 ac 80 00 00)
- *                            RGB(ff,00,00) is 06 ea	(00 16 00 06 ed 00 00 00)
- *                            RGB(00,ff,00) is 08 9b	(00 16 00 08 a0 80 00 00)
- *                            RGB(00,00,ff) is 55 5e	(00 16 00 55 73 80 00 00)
  *
  * This is used when profiling, and all commands are followed by
  * HUEY_COMMAND_READ_GREEN and HUEY_COMMAND_READ_BLUE.
@@ -302,9 +297,9 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
 /* fudge factor to convert the value of HUEY_COMMAND_GET_AMBIENT to Lux */
 #define HUEY_AMBIENT_UNITS_TO_LUX	125.0f
 
-/* this is a random number chosen to find the best accuracy whilst
- * maintaining a fast read. We scale each RGB value seporately. */
-#define HUEY_PRECISION_TIME_VALUE		0.15f
+/* this is the same approx ratio as argyll uses to find the best accuracy
+ * whilst maintaining a fast read. We scale each RGB value seporately. */
+#define HUEY_PRECISION_TIME_VALUE		3500
 
 /* Picked out of thin air, just to try to match reality...
  * I have no idea why we need to do this, although it probably
@@ -593,17 +588,37 @@ gcm_sensor_huey_set_leds (GcmSensor *sensor, guint8 value, GError **error)
 	return gcm_sensor_huey_send_data (sensor_huey, payload, 8, reply, 8, &reply_read, error);
 }
 
+/**
+ * gcm_sensor_huey_write_uint16:
+ **/
+static void
+gcm_sensor_huey_write_uint16 (guchar *data, guint16 value)
+{
+	data[0] = (value >> 8) & 0xff;
+	data[1] = (value >> 0) & 0xff;
+}
+
+typedef struct {
+	guint16	R;
+	guint16	G;
+	guint16	B;
+} GcmSensorHueyMultiplier;
 
 /**
  * gcm_sensor_huey_sample_for_threshold:
  **/
 static gboolean
-gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmColorRGBint *threshold, GcmColorRGB *values, GError **error)
+gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyMultiplier *threshold, GcmColorRGB *values, GError **error)
 {
-	guchar request[] = { HUEY_COMMAND_SENSOR_MEASURE_RGB, 0x00, threshold->R, 0x00, threshold->G, 0x00, threshold->B, 0x00 };
+	guchar request[] = { HUEY_COMMAND_SENSOR_MEASURE_RGB, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
+
+	/* these are 16 bit gain values */
+	gcm_sensor_huey_write_uint16 (request + 1, threshold->R);
+	gcm_sensor_huey_write_uint16 (request + 3, threshold->G);
+	gcm_sensor_huey_write_uint16 (request + 5, threshold->B);
 
 	/* measure, and get red */
 	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);
@@ -636,6 +651,8 @@ out:
 
 /**
  * gcm_sensor_huey_sample:
+ *
+ * Sample the data in two passes.
  **/
 static gboolean
 gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
@@ -643,7 +660,7 @@ gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 	gboolean ret;
 	gdouble precision_value;
 	GcmColorRGB native;
-	GcmColorRGBint multiplier;
+	GcmSensorHueyMultiplier multiplier;
 	GcmVec3 *input = (GcmVec3 *) &native;
 	GcmVec3 *output = (GcmVec3 *) value;
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
@@ -659,12 +676,17 @@ gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 
 	/* compromise between the amount of time and the precision */
 	precision_value = (gdouble) HUEY_PRECISION_TIME_VALUE;
-	if (native.R < precision_value)
-		multiplier.R = precision_value / native.R;
-	if (native.G < precision_value)
-		multiplier.G = precision_value / native.G;
-	if (native.B < precision_value)
-		multiplier.B = precision_value / native.B;
+	multiplier.R = precision_value * native.R;
+	multiplier.G = precision_value * native.G;
+	multiplier.B = precision_value * native.B;
+
+	/* don't allow a value of zero */
+	if (multiplier.R == 0)
+		multiplier.R = 1;
+	if (multiplier.G == 0)
+		multiplier.G = 1;
+	if (multiplier.B == 0)
+		multiplier.B = 1;
 	egg_debug ("using multiplier factor: red=%i, green=%i, blue=%i", multiplier.R, multiplier.G, multiplier.B);
 	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey, &multiplier, &native, error);
 	if (!ret)

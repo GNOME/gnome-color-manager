@@ -139,7 +139,7 @@ static void
 parse_line_argyll (GString *output, gchar *line, gboolean *reply)
 {
 	if (g_str_has_prefix (line, "huey: Sending cmd")) {
-		g_string_append (output, " ---> ");
+//		g_string_append (output, " ---> ");
 		*reply = FALSE;
 	}
 	if (g_str_has_prefix (line, "huey: Reading response")) {
@@ -147,6 +147,8 @@ parse_line_argyll (GString *output, gchar *line, gboolean *reply)
 		*reply = TRUE;
 	}
 	if (g_str_has_prefix (line, "icoms: Writing control data")) {
+		*reply = FALSE;
+		g_string_append (output, " ---> ");
 		parse_command_sequence (output, &line[28], *reply);
 	}
 	if (g_str_has_prefix (line, " '")) {

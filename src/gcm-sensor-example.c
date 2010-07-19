@@ -29,18 +29,26 @@
 #include <libcolor-glib.h>
 #include <libusb-1.0/libusb.h>
 
+#include "egg-debug.h"
+
 /**
  * main:
  **/
 int
-main (void)
+main (int argc, char **argv)
 {
-#if 0
+#if 1
 	gboolean ret;
 	GError *error = NULL;
 	GcmSensor *sensor;
 	gdouble value;
 	GcmColorXYZ values;
+	GOptionContext *context;
+
+	context = g_option_context_new ("gnome-color-manager sensor example");
+	g_option_context_add_group (context, egg_debug_get_option_group ());
+	g_option_context_parse (context, &argc, &argv, NULL);
+	g_option_context_free (context);
 
 	g_type_init ();
 
@@ -70,12 +78,13 @@ main (void)
 out:
 	g_object_unref (sensor);
 	return 0;
-#endif
+#else
 
 	/* get device */
 	/* set configuration */
 	/* get ambient */
 	/* close device */
+#endif
 
 	return 0;
 }

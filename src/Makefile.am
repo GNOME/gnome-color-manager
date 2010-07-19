@@ -371,14 +371,15 @@ install-data-hook:
 		mkdir -p $(DESTDIR)$(GCM_SYSTEM_PROFILES_DIR); \
 	fi
 
-gcm_huey_example_SOURCES =				\
+gcm_sensor_example_SOURCES =				\
 	gcm-sensor-example.c
 
-gcm_huey_example_LDADD =				\
+gcm_sensor_example_LDADD =				\
+	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(COLOR_GLIB_LIBS)
 
-gcm_huey_example_CFLAGS =				\
+gcm_sensor_example_CFLAGS =				\
 	$(WARNINGFLAGS_C)
 
 clean-local:
