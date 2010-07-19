@@ -554,6 +554,14 @@ gcm_sensor_huey_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
 	guchar request[] = { HUEY_COMMAND_GET_AMBIENT, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
 
+	/* no hardware support */
+	if (gcm_sensor_get_output_type (sensor) == GCM_SENSOR_OUTPUT_TYPE_PROJECTOR) {
+		g_set_error_literal (error, GCM_SENSOR_ERROR,
+				     GCM_SENSOR_ERROR_NO_SUPPORT,
+				     "HUEY cannot measure ambient light in projector mode");
+		goto out;
+	}
+
 	/* ensure the user set this */
 	output_type = gcm_sensor_get_output_type (sensor);
 	if (output_type == GCM_SENSOR_OUTPUT_TYPE_UNKNOWN) {
@@ -662,13 +670,21 @@ out:
 static gboolean
 gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 {
-	gboolean ret;
+	gboolean ret = FALSE;
 	gdouble precision_value;
 	GcmColorRGB native;
 	GcmSensorHueyMultiplier multiplier;
 	GcmVec3 *input = (GcmVec3 *) &native;
 	GcmVec3 *output = (GcmVec3 *) value;
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
+
+	/* no hardware support */
+	if (gcm_sensor_get_output_type (sensor) == GCM_SENSOR_OUTPUT_TYPE_PROJECTOR) {
+		g_set_error_literal (error, GCM_SENSOR_ERROR,
+				     GCM_SENSOR_ERROR_NO_SUPPORT,
+				     "HUEY cannot measure ambient light in projector mode");
+		goto out;
+	}
 
 	/* set this to one value for a quick approximate value */
 	multiplier.R = 1;
