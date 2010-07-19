@@ -99,7 +99,7 @@ bin_PROGRAMS =						\
 	gcm-picker					\
 	gcm-ddc-util					\
 	gcm-import					\
-	gcm-huey-example
+	gcm-sensor-example
 
 if HAVE_EXIV
 libexec_PROGRAMS = gcm-helper-exiv
@@ -372,7 +372,7 @@ install-data-hook:
 	fi
 
 gcm_huey_example_SOURCES =				\
-	gcm-huey-example.c
+	gcm-sensor-example.c
 
 gcm_huey_example_LDADD =				\
 	$(GLIB_LIBS)					\

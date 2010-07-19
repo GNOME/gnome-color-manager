@@ -27,6 +27,7 @@
 
 #include <glib.h>
 #include <libcolor-glib.h>
+#include <libusb-1.0/libusb.h>
 
 /**
  * main:
@@ -34,6 +35,7 @@
 int
 main (void)
 {
+#if 0
 	gboolean ret;
 	GError *error = NULL;
 	GcmSensor *sensor;
@@ -67,6 +69,14 @@ main (void)
 	g_debug ("X=%0.4lf, Y=%0.4lf, Z=%0.4lf", values.X, values.Y, values.Z);
 out:
 	g_object_unref (sensor);
+	return 0;
+#endif
+
+	/* get device */
+	/* set configuration */
+	/* get ambient */
+	/* close device */
+
 	return 0;
 }
 

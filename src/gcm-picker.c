@@ -47,6 +47,7 @@ static const gchar *profile_filename = NULL;
 static gboolean done_measure = FALSE;
 static GcmSensor *sensor = NULL;
 static GcmColorXYZ last_sample;
+static gdouble last_ambient = -1.0f;
 
 enum {
 	GCM_PREFS_COMBO_COLUMN_TEXT,
@@ -98,6 +99,7 @@ gcm_picker_refresh_results (void)
 	gchar *text_lab = NULL;
 	gchar *text_rgb = NULL;
 	gchar *text_error = NULL;
+	gchar *text_ambient = NULL;
 	cmsHPROFILE profile_xyz;
 	cmsHPROFILE profile_rgb;
 	cmsHPROFILE profile_lab;
@@ -164,6 +166,16 @@ gcm_picker_refresh_results (void)
 				      ABS ((color_error.Z - color_xyz.Z) / color_xyz.Z * 100));
 	gtk_label_set_label (label, text_error);
 
+	/* set ambient */
+	label = GTK_LABEL (gtk_builder_get_object (builder, "label_ambient"));
+	if (last_ambient < 0) {
+		/* TRANSLATORS: this is when the ambient light level is unknown */
+		gtk_label_set_label (label, _("Unknown"));
+	} else {
+		text_ambient = g_strdup_printf ("%.1f Lux", last_ambient);
+		gtk_label_set_label (label, text_ambient);
+	}
+
 	/* set image */
 	image = GTK_IMAGE (gtk_builder_get_object (builder, "image_preview"));
 	gtk_image_set_from_pixbuf (image, pixbuf);
@@ -172,6 +184,7 @@ gcm_picker_refresh_results (void)
 	g_free (text_lab);
 	g_free (text_rgb);
 	g_free (text_error);
+	g_free (text_ambient);
 	if (pixbuf != NULL)
 		g_object_unref (pixbuf);
 }
@@ -208,6 +221,18 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 	gtk_image_set_from_file (GTK_IMAGE (widget), DATADIR "/icons/hicolor/64x64/apps/gnome-color-manager.png");
 
 	if (gcm_sensor_get_is_native (sensor)) {
+
+		/* set mode */
+		gcm_sensor_set_output_type (sensor, GCM_SENSOR_OUTPUT_TYPE_LCD);
+
+		/* get ambient */
+		ret = gcm_sensor_get_ambient (sensor, &last_ambient, &error);
+		if (!ret) {
+			g_warning ("failed to get ambient: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
+
 		/* sample color */
 		ret = gcm_sensor_sample (sensor, &last_sample, &error);
 		if (!ret) {
