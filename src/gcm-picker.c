@@ -142,7 +142,7 @@ gcm_picker_refresh_results (void)
 
 	/* set XYZ */
 	label = GTK_LABEL (gtk_builder_get_object (builder, "label_xyz"));
-	text_xyz = g_strdup_printf ("%.3f, %.3f, %.3f", color_xyz.X, color_xyz.Y, color_xyz.Z);
+	text_xyz = g_strdup_printf ("%.3f, %.3f, %.3f", last_sample.X, last_sample.Y, last_sample.Z);
 	gtk_label_set_label (label, text_xyz);
 
 	/* set LAB */
