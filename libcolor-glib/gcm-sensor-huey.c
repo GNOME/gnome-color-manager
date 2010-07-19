@@ -649,6 +649,11 @@ out:
 	return ret;
 }
 
+/* in a dark box, the sensors still report a reading */
+#define HUEY_ABSOLUTE_OFFSET_RED	0.000119
+#define HUEY_ABSOLUTE_OFFSET_GREEN	0.000119
+#define HUEY_ABSOLUTE_OFFSET_BLUE	0.000018
+
 /**
  * gcm_sensor_huey_sample:
  *
@@ -672,7 +677,7 @@ gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey, &multiplier, &native, error);
 	if (!ret)
 		goto out;
-	egg_debug ("initial values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.R, native.G, native.B);
+	egg_debug ("initial values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", native.R, native.G, native.B);
 
 	/* compromise between the amount of time and the precision */
 	precision_value = (gdouble) HUEY_PRECISION_TIME_VALUE;
@@ -695,7 +700,7 @@ gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 	native.R = native.R * (gdouble)multiplier.R;
 	native.G = native.G * (gdouble)multiplier.G;
 	native.B = native.B * (gdouble)multiplier.B;
-	egg_debug ("scaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.R, native.G, native.B);
+	egg_debug ("scaled values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", native.R, native.G, native.B);
 	egg_debug ("PRE MULTIPLY: %s\n", gcm_vec3_to_string (input));
 
 	/* it would be rediculous for the device to emit RGB, it would be completely arbitrary --
