@@ -111,6 +111,7 @@ out:
 	gsize reply_read;
 	guchar reply[8];
 	guint i;
+	guint32 event;
 	libusb_device_handle *handle;
 
 	/* connect */
@@ -165,19 +166,21 @@ out:
 #define COLORMUNKI_COMMAND_BUTTON_PRESSED	0x01
 #define COLORMUNKI_COMMAND_BUTTON_RELEASED	0x02
 
+		event = (reply[7] << 24) + (reply[6] << 16) + (reply[5] << 8) + (reply[4] << 0);
+
 		print_data ("reply", reply, reply_read);
 		if (reply[0] == COLORMUNKI_COMMAND_DIAL_ROTATE)
-			egg_warning ("dial rotate");
-		if (reply[0] == COLORMUNKI_COMMAND_BUTTON_PRESSED)
-			egg_warning ("button pressed");
-		if (reply[0] == COLORMUNKI_COMMAND_BUTTON_RELEASED)
-			egg_warning ("button released");
+			egg_warning ("dial rotate at %ims", event);
+		else if (reply[0] == COLORMUNKI_COMMAND_BUTTON_PRESSED)
+			egg_warning ("button pressed at %ims", event);
+		else if (reply[0] == COLORMUNKI_COMMAND_BUTTON_RELEASED)
+			egg_warning ("button released at %ims", event);
 
 /*
- *   subcmd ----\          /---- some kind of time counter, seconds?
- *  cmd ----|\ ||          ||
+ *   subcmd ----\       /------------ 32 bit event time
+ *  cmd ----|\ ||       || || || ||
  * Returns: 02 00 00 00 ac 62 07 00
- *                \|-||----------||-----always zero
+ * always zero ---||-||
  *
  * cmd is:
  * 00	dial rotate

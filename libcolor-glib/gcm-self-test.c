@@ -145,6 +145,12 @@ gcm_test_ddc_client_func (void)
 }
 
 static void
+gcm_test_sensor_button_pressed_cb (GcmSensor *sensor, gint *signal_count)
+{
+	(*signal_count)++;
+}
+
+static void
 gcm_test_sensor_func (void)
 {
 	gboolean ret;
@@ -152,9 +158,12 @@ gcm_test_sensor_func (void)
 	GcmSensor *sensor;
 	gdouble value;
 	GcmColorXYZ values;
+	gboolean signal_count = 0;
 
 	/* start sensor */
 	sensor = gcm_sensor_dummy_new ();
+	g_signal_connect (sensor, "button-pressed", G_CALLBACK (gcm_test_sensor_button_pressed_cb), &signal_count);
+
 	ret = gcm_sensor_startup (sensor, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -170,12 +179,14 @@ gcm_test_sensor_func (void)
 
 	/* get ambient */
 	ret = gcm_sensor_get_ambient (sensor, &value, &error);
+	g_assert_cmpint (signal_count, ==, 0);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_debug ("ambient = %.1lf Lux", value);
 
 	/* sample color */
 	ret = gcm_sensor_sample (sensor, &values, &error);
+	g_assert_cmpint (signal_count, ==, 1);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_debug ("X=%0.4lf, Y=%0.4lf, Z=%0.4lf", values.X, values.Y, values.Z);

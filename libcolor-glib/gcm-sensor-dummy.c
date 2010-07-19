@@ -62,6 +62,9 @@ gcm_sensor_dummy_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 	value->X = 17.0f;
 	value->Y = 18.0f;
 	value->Z = 19.0f;
+
+	/* emulate */
+	gcm_sensor_button_pressed (sensor);
 	return TRUE;
 }
 

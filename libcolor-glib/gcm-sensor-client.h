@@ -48,6 +48,8 @@ struct _GcmSensorClient
 struct _GcmSensorClientClass
 {
 	GObjectClass	parent_class;
+
+	/* signals */
 	void		(* changed)			(void);
 	/* padding for future expansion */
 	void (*_gcm_reserved1) (void);

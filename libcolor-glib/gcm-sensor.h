@@ -65,6 +65,8 @@ struct _GcmSensorClass
 							 GError		**error);
 	gboolean	 (*startup)			(GcmSensor	*sensor,
 							 GError		**error);
+	/* signals */
+	void		(* button_pressed)		(void);
 	/* padding for future expansion */
 	void (*_gcm_reserved1) (void);
 	void (*_gcm_reserved2) (void);
@@ -122,6 +124,7 @@ typedef enum {
 GType			 gcm_sensor_get_type		(void);
 GcmSensor		*gcm_sensor_new			(void);
 
+void			 gcm_sensor_button_pressed	(GcmSensor		*sensor);
 gboolean		 gcm_sensor_get_ambient		(GcmSensor		*sensor,
 							 gdouble		*value,
 							 GError			**error);

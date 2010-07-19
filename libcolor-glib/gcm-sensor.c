@@ -71,7 +71,26 @@ enum {
 	PROP_LAST
 };
 
+enum {
+	SIGNAL_BUTTON_PRESSED,
+	SIGNAL_LAST
+};
+
+static guint signals[SIGNAL_LAST] = { 0 };
+
 G_DEFINE_TYPE (GcmSensor, gcm_sensor, G_TYPE_OBJECT)
+
+/**
+ * gcm_sensor_button_pressed:
+ *
+ * Causes the ::button-pressed signal to be fired.
+ **/
+void
+gcm_sensor_button_pressed (GcmSensor *sensor)
+{
+	egg_debug ("emit: button-pressed");
+	g_signal_emit (sensor, signals[SIGNAL_BUTTON_PRESSED], 0);
+}
 
 /**
  * gcm_sensor_get_model:
@@ -648,6 +667,16 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 				     NULL,
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_DEVICE, pspec);
+
+	/**
+	 * GcmSensor::button-pressed:
+	 **/
+	signals[SIGNAL_BUTTON_PRESSED] =
+		g_signal_new ("button-pressed",
+			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (GcmSensorClass, button_pressed),
+			      NULL, NULL, g_cclosure_marshal_VOID__VOID,
+			      G_TYPE_NONE, 0);
 
 	g_type_class_add_private (klass, sizeof (GcmSensorPrivate));
 }
