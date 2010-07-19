@@ -46,7 +46,7 @@ static void     gcm_sensor_huey_finalize	(GObject     *object);
  **/
 struct _GcmSensorHueyPrivate
 {
-	gboolean			 connected;
+	libusb_context			*ctx;
 	libusb_device			*device;
 	libusb_device_handle		*handle;
 	GcmMat3x3			 calibration_matrix1;
@@ -704,9 +704,9 @@ gcm_sensor_huey_send_unlock (GcmSensorHuey *sensor_huey, GError **error)
 	request[2] = 'r';
 	request[3] = 'M';
 	request[4] = 'b';
-	request[5] = 'k'; // <- perhaps junk, need to test next time locked */
-	request[6] = 'e'; // <-         "" */
-	request[7] = 'd'; // <-         "" */
+	request[5] = 'k'; /* <- perhaps junk, need to test next time locked */
+	request[6] = 'e'; /* <-         "" */
+	request[7] = 'd'; /* <-         "" */
 
 	/* no idea why the hardware gets 'locked' */
 	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);
@@ -722,13 +722,13 @@ out:
 static gboolean
 gcm_sensor_huey_find_device (GcmSensorHuey *sensor_huey, GError **error)
 {
-	libusb_device **devs = NULL;
 	gint retval;
 	gboolean ret = FALSE;
+	GcmSensorHueyPrivate *priv = sensor_huey->priv;
 
 	/* open device */
-	sensor_huey->priv->handle = libusb_open_device_with_vid_pid (NULL, HUEY_VENDOR_ID, HUEY_PRODUCT_ID);
-	if (sensor_huey->priv->handle == NULL) {
+	sensor_huey->priv->handle = libusb_open_device_with_vid_pid (priv->ctx, HUEY_VENDOR_ID, HUEY_PRODUCT_ID);
+	if (priv->handle == NULL) {
 		g_set_error (error, GCM_SENSOR_ERROR,
 			     GCM_SENSOR_ERROR_INTERNAL,
 			     "failed to open device: %s", libusb_strerror (retval));
@@ -736,14 +736,14 @@ gcm_sensor_huey_find_device (GcmSensorHuey *sensor_huey, GError **error)
 	}
 
 	/* set configuration and interface */
-	retval = libusb_set_configuration (sensor_huey->priv->handle, 1);
+	retval = libusb_set_configuration (priv->handle, 1);
 	if (retval < 0) {
 		g_set_error (error, GCM_SENSOR_ERROR,
 			     GCM_SENSOR_ERROR_INTERNAL,
 			     "failed to set configuration: %s", libusb_strerror (retval));
 		goto out;
 	}
-	retval = libusb_claim_interface (sensor_huey->priv->handle, 0);
+	retval = libusb_claim_interface (priv->handle, 0);
 	if (retval < 0) {
 		g_set_error (error, GCM_SENSOR_ERROR,
 			     GCM_SENSOR_ERROR_INTERNAL,
@@ -754,7 +754,6 @@ gcm_sensor_huey_find_device (GcmSensorHuey *sensor_huey, GError **error)
 	/* success */
 	ret = TRUE;
 out:
-	libusb_free_device_list (devs, 1);
 	return ret;
 }
 
@@ -770,12 +769,11 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 	GcmSensorHueyPrivate *priv = sensor_huey->priv;
 
 	/* connect */
-	retval = libusb_init (NULL);
+	retval = libusb_init (&priv->ctx);
 	if (retval < 0) {
 		egg_warning ("failed to init libusb: %s", libusb_strerror (retval));
 		goto out;
 	}
-	priv->connected = TRUE;
 
 	/* find device */
 	ret = gcm_sensor_huey_find_device (sensor_huey, error);
@@ -837,9 +835,10 @@ static void
 gcm_sensor_huey_init (GcmSensorHuey *sensor)
 {
 	GcmSensorHueyPrivate *priv;
-
 	priv = sensor->priv = GCM_SENSOR_HUEY_GET_PRIVATE (sensor);
-
+	gcm_mat33_clear (&priv->calibration_matrix1);
+	gcm_mat33_clear (&priv->calibration_matrix2);
+	priv->unlock_string[0] = '\0';
 }
 
 /**
@@ -855,8 +854,8 @@ gcm_sensor_huey_finalize (GObject *object)
 	libusb_close (priv->handle);
 	if (priv->device != NULL)
 		libusb_unref_device (priv->device);
-	if (priv->connected)
-		libusb_exit (NULL);
+	if (priv->ctx != NULL)
+		libusb_exit (priv->ctx);
 
 	G_OBJECT_CLASS (gcm_sensor_huey_parent_class)->finalize (object);
 }
