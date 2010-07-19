@@ -45,6 +45,8 @@ static GcmCalibrate *calibrate = NULL;
 static GcmProfileStore *profile_store = NULL;
 static const gchar *profile_filename = NULL;
 static gboolean done_measure = FALSE;
+static GcmSensor *sensor = NULL;
+static GcmColorXYZ last_sample;
 
 enum {
 	GCM_PREFS_COMBO_COLUMN_TEXT,
@@ -80,6 +82,118 @@ gcm_picker_set_pixbuf_color (GdkPixbuf *pixbuf, gchar red, gchar green, gchar bl
 }
 
 /**
+ * gcm_picker_refresh_results:
+ **/
+static void
+gcm_picker_refresh_results (void)
+{
+	GtkImage *image;
+	GtkLabel *label;
+	GdkPixbuf *pixbuf = NULL;
+	GcmColorRgbInt color_rgb;
+	GcmColorLab color_lab;
+	GcmColorXYZ color_xyz;
+	GcmColorXYZ color_error;
+	gchar *text_xyz = NULL;
+	gchar *text_lab = NULL;
+	gchar *text_rgb = NULL;
+	gchar *text_error = NULL;
+	cmsHPROFILE profile_xyz;
+	cmsHPROFILE profile_rgb;
+	cmsHPROFILE profile_lab;
+	cmsHTRANSFORM transform_rgb;
+	cmsHTRANSFORM transform_lab;
+	cmsHTRANSFORM transform_error;
+
+	/* copy as we're modifying the value */
+	gcm_color_copy_XYZ (&last_sample, &color_xyz);
+
+	/* create new pixbuf of the right size */
+	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 200, 200);
+
+	/* lcms scales these for some reason */
+	color_xyz.X /= 100.0f;
+	color_xyz.Y /= 100.0f;
+	color_xyz.Z /= 100.0f;
+
+	/* get profiles */
+	profile_xyz = cmsCreateXYZProfile ();
+	profile_rgb = cmsOpenProfileFromFile (profile_filename, "r");
+	profile_lab = cmsCreateLab4Profile (cmsD50_xyY ());
+
+	/* create transforms */
+	transform_rgb = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL, profile_rgb, TYPE_RGB_8, INTENT_PERCEPTUAL, 0);
+	transform_lab = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL, profile_lab, TYPE_Lab_DBL, INTENT_PERCEPTUAL, 0);
+	transform_error = cmsCreateTransform (profile_rgb, TYPE_RGB_8, profile_xyz, TYPE_XYZ_DBL, INTENT_PERCEPTUAL, 0);
+
+	cmsDoTransform (transform_rgb, &color_xyz, &color_rgb, 1);
+	cmsDoTransform (transform_lab, &color_xyz, &color_lab, 1);
+	cmsDoTransform (transform_error, &color_rgb, &color_error, 1);
+
+	/* destroy lcms state */
+	cmsDeleteTransform (transform_rgb);
+	cmsDeleteTransform (transform_lab);
+	cmsDeleteTransform (transform_error);
+	cmsCloseProfile (profile_xyz);
+	cmsCloseProfile (profile_rgb);
+	cmsCloseProfile (profile_lab);
+
+	/* set XYZ */
+	label = GTK_LABEL (gtk_builder_get_object (builder, "label_xyz"));
+	text_xyz = g_strdup_printf ("%.3f, %.3f, %.3f", color_xyz.X, color_xyz.Y, color_xyz.Z);
+	gtk_label_set_label (label, text_xyz);
+
+	/* set LAB */
+	label = GTK_LABEL (gtk_builder_get_object (builder, "label_lab"));
+	text_lab = g_strdup_printf ("%.3f, %.3f, %.3f", color_lab.L, color_lab.a, color_lab.b);
+	gtk_label_set_label (label, text_lab);
+
+	/* set RGB */
+	label = GTK_LABEL (gtk_builder_get_object (builder, "label_rgb"));
+	text_rgb = g_strdup_printf ("%i, %i, %i (#%02X%02X%02X)",
+				    color_rgb.red, color_rgb.green, color_rgb.blue,
+				    color_rgb.red, color_rgb.green, color_rgb.blue);
+	gtk_label_set_label (label, text_rgb);
+	gcm_picker_set_pixbuf_color (pixbuf, color_rgb.red, color_rgb.green, color_rgb.blue);
+
+	/* set error */
+	label = GTK_LABEL (gtk_builder_get_object (builder, "label_error"));
+	text_error = g_strdup_printf ("%.1f%%, %.1f%%, %.1f%%",
+				      ABS ((color_error.X - color_xyz.X) / color_xyz.X * 100),
+				      ABS ((color_error.Y - color_xyz.Y) / color_xyz.Y * 100),
+				      ABS ((color_error.Z - color_xyz.Z) / color_xyz.Z * 100));
+	gtk_label_set_label (label, text_error);
+
+	/* set image */
+	image = GTK_IMAGE (gtk_builder_get_object (builder, "image_preview"));
+	gtk_image_set_from_pixbuf (image, pixbuf);
+
+	g_free (text_xyz);
+	g_free (text_lab);
+	g_free (text_rgb);
+	g_free (text_error);
+	if (pixbuf != NULL)
+		g_object_unref (pixbuf);
+}
+
+/**
+ * gcm_picker_got_results:
+ **/
+static void
+gcm_picker_got_results (void)
+{
+	GtkWidget *widget;
+
+	/* set expanded */
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_results"));
+	gtk_expander_set_expanded (GTK_EXPANDER (widget), TRUE);
+	gtk_widget_set_sensitive (widget, TRUE);
+
+	/* we've got results so make sure it's sensitive */
+	done_measure = TRUE;
+}
+
+/**
  * gcm_picker_measure_cb:
  **/
 static void
@@ -93,118 +207,28 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "image_preview"));
 	gtk_image_set_from_file (GTK_IMAGE (widget), DATADIR "/icons/hicolor/64x64/apps/gnome-color-manager.png");
 
-	/* get value */
-	window = GTK_WINDOW (gtk_builder_get_object (builder, "dialog_picker"));
-	ret = gcm_calibrate_spotread (calibrate, window, &error);
-	if (!ret) {
-		egg_warning ("failed to get spot color: %s", error->message);
-		g_error_free (error);
+	if (gcm_sensor_get_is_native (sensor)) {
+		/* sample color */
+		ret = gcm_sensor_sample (sensor, &last_sample, &error);
+		if (!ret) {
+			egg_warning ("failed to measure: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
+		gcm_picker_refresh_results ();
+		gcm_picker_got_results ();
+	} else {
+		/* get value */
+		window = GTK_WINDOW (gtk_builder_get_object (builder, "dialog_picker"));
+		ret = gcm_calibrate_spotread (calibrate, window, &error);
+		if (!ret) {
+			egg_warning ("failed to get spot color: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
 	}
-}
-
-/**
- * gcm_picker_refresh_results:
- **/
-static void
-gcm_picker_refresh_results (void)
-{
-	GcmXyz *xyz = NULL;
-	GtkImage *image;
-	GtkLabel *label;
-	GdkPixbuf *pixbuf = NULL;
-	gdouble color_xyz[3];
-	guint8 color_rgb[3];
-	gdouble color_lab[3];
-	gdouble color_error[3];
-	gchar *text_xyz = NULL;
-	gchar *text_lab = NULL;
-	gchar *text_rgb = NULL;
-	gchar *text_error = NULL;
-	cmsHPROFILE profile_xyz;
-	cmsHPROFILE profile_rgb;
-	cmsHPROFILE profile_lab;
-	cmsHTRANSFORM transform_rgb;
-	cmsHTRANSFORM transform_lab;
-	cmsHTRANSFORM transform_error;
-
-	/* get new value */
-	g_object_get (calibrate, "xyz", &xyz, NULL);
-
-	/* create new pixbuf of the right size */
-	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 200, 200);
-
-	/* get values */
-	g_object_get (xyz,
-		      "cie-x", &color_xyz[0],
-		      "cie-y", &color_xyz[1],
-		      "cie-z", &color_xyz[2],
-		      NULL);
-
-	/* lcms scales these for some reason */
-	color_xyz[0] /= 100.0f;
-	color_xyz[1] /= 100.0f;
-	color_xyz[2] /= 100.0f;
-
-	/* get profiles */
-	profile_xyz = cmsCreateXYZProfile ();
-	profile_rgb = cmsOpenProfileFromFile (profile_filename, "r");
-	profile_lab = cmsCreateLab4Profile (cmsD50_xyY ());
-
-	/* create transforms */
-	transform_rgb = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL, profile_rgb, TYPE_RGB_8, INTENT_PERCEPTUAL, 0);
-	transform_lab = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL, profile_lab, TYPE_Lab_DBL, INTENT_PERCEPTUAL, 0);
-	transform_error = cmsCreateTransform (profile_rgb, TYPE_RGB_8, profile_xyz, TYPE_XYZ_DBL, INTENT_PERCEPTUAL, 0);
-
-	cmsDoTransform (transform_rgb, color_xyz, color_rgb, 1);
-	cmsDoTransform (transform_lab, color_xyz, color_lab, 1);
-	cmsDoTransform (transform_error, color_rgb, color_error, 1);
-
-	/* destroy lcms state */
-	cmsDeleteTransform (transform_rgb);
-	cmsDeleteTransform (transform_lab);
-	cmsDeleteTransform (transform_error);
-	cmsCloseProfile (profile_xyz);
-	cmsCloseProfile (profile_rgb);
-	cmsCloseProfile (profile_lab);
-
-	/* set XYZ */
-	label = GTK_LABEL (gtk_builder_get_object (builder, "label_xyz"));
-	text_xyz = g_strdup_printf ("%.3f, %.3f, %.3f", color_xyz[0], color_xyz[1], color_xyz[2]);
-	gtk_label_set_label (label, text_xyz);
-
-	/* set LAB */
-	label = GTK_LABEL (gtk_builder_get_object (builder, "label_lab"));
-	text_lab = g_strdup_printf ("%.3f, %.3f, %.3f", color_lab[0], color_lab[1], color_lab[2]);
-	gtk_label_set_label (label, text_lab);
-
-	/* set RGB */
-	label = GTK_LABEL (gtk_builder_get_object (builder, "label_rgb"));
-	text_rgb = g_strdup_printf ("%i, %i, %i (#%02X%02X%02X)",
-				    color_rgb[0], color_rgb[1], color_rgb[2],
-				    color_rgb[0], color_rgb[1], color_rgb[2]);
-	gtk_label_set_label (label, text_rgb);
-	gcm_picker_set_pixbuf_color (pixbuf, color_rgb[0], color_rgb[1], color_rgb[2]);
-
-	/* set error */
-	label = GTK_LABEL (gtk_builder_get_object (builder, "label_error"));
-	text_error = g_strdup_printf ("%.1f%%, %.1f%%, %.1f%%",
-				      ABS ((color_error[0] - color_xyz[0]) / color_xyz[0] * 100),
-				      ABS ((color_error[1] - color_xyz[1]) / color_xyz[1] * 100),
-				      ABS ((color_error[2] - color_xyz[2]) / color_xyz[2] * 100));
-	gtk_label_set_label (label, text_error);
-
-	/* set image */
-	image = GTK_IMAGE (gtk_builder_get_object (builder, "image_preview"));
-	gtk_image_set_from_pixbuf (image, pixbuf);
-
-	g_free (text_xyz);
-	g_free (text_lab);
-	g_free (text_rgb);
-	g_free (text_error);
-	if (xyz != NULL)
-		g_object_unref (xyz);
-	if (pixbuf != NULL)
-		g_object_unref (pixbuf);
+out:
+	return;
 }
 
 /**
@@ -213,17 +237,20 @@ gcm_picker_refresh_results (void)
 static void
 gcm_picker_xyz_notify_cb (GcmCalibrate *calibrate_, GParamSpec *pspec, gpointer user_data)
 {
-	GtkWidget *widget;
+	GcmXyz *xyz;
 
-	/* set expanded */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_results"));
-	gtk_expander_set_expanded (GTK_EXPANDER (widget), TRUE);
-	gtk_widget_set_sensitive (widget, TRUE);
+	/* get new value */
+	g_object_get (calibrate, "xyz", &xyz, NULL);
 
-	/* we've got results so make sure it's sensitive */
-	done_measure = TRUE;
+	g_object_get (xyz,
+		      "cie-x", &last_sample.X,
+		      "cie-y", &last_sample.Y,
+		      "cie-z", &last_sample.Z,
+		      NULL);
 
 	gcm_picker_refresh_results ();
+	gcm_picker_got_results ();
+	g_object_unref (xyz);
 }
 
 /**
@@ -261,34 +288,36 @@ gcm_picker_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
 static void
 gcm_picker_sensor_client_setup_ui (GcmSensorClient *sensor_client)
 {
-	gboolean present;
-	gboolean supports_spot;
 	gboolean ret = FALSE;
 	GtkWidget *widget;
 
-#ifndef HAVE_VTE
-	/* TRANSLATORS: this is displayed if VTE support is not enabled */
-	gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("This application was compiled without VTE support."));
-	goto out;
-#endif
-
 	/* no present */
-	present = gcm_sensor_client_get_present (sensor_client);
-	if (!present) {
+	sensor = gcm_sensor_client_get_sensor (sensor_client);
+	if (sensor == NULL) {
 		/* TRANSLATORS: this is displayed the user has not got suitable hardware */
 		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("No colorimeter is attached."));
 		goto out;
 	}
 
-	/* no support */
-	supports_spot = gcm_sensor_supports_spot (gcm_sensor_client_get_sensor (sensor_client));
-	ret = (present && supports_spot);
+#ifndef HAVE_VTE
+	if (!gcm_sensor_get_is_native (sensor)) {
+		 /* TRANSLATORS: this is displayed if VTE support is not enabled */
+		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("This application was compiled without VTE support."));
+		goto out;
+	}
+#endif
 
-	/* change the label */
-	if (present && !supports_spot) {
+#if 0
+	/* no support */
+	ret = gcm_sensor_supports_spot (sensor);
+	if (!ret) {
 		/* TRANSLATORS: this is displayed the user has not got suitable hardware */
 		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("The attached colorimeter is not capable of reading a spot color."));
+		goto out;
 	}
+#else
+	ret = TRUE;
+#endif
 
 out:
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_measure"));
@@ -361,6 +390,7 @@ gcm_prefs_space_combo_changed_cb (GtkWidget *widget, gpointer data)
 
 	profile_filename = gcm_profile_get_filename (profile);
 	egg_debug ("changed picker space %s", profile_filename);
+
 	gcm_picker_refresh_results ();
 out:
 	if (profile != NULL)
@@ -550,6 +580,9 @@ main (int argc, char *argv[])
 	gtk_icon_theme_append_search_path (gtk_icon_theme_get_default (),
 	                                   GCM_DATA G_DIR_SEPARATOR_S "icons");
 
+	/* create a last sample */
+	//gcm_color_xyz_clear (&last_sample);
+
 	/* use the color device */
 	sensor_client = gcm_sensor_client_new ();
 	g_signal_connect (sensor_client, "changed", G_CALLBACK (gcm_picker_sensor_client_changed_cb), NULL);
@@ -582,6 +615,7 @@ main (int argc, char *argv[])
 
 	/* maintain a list of profiles */
 	profile_store = gcm_profile_store_new ();
+	gcm_profile_store_search (profile_store, GCM_PROFILE_STORE_SEARCH_ALL);
 
 	/* default to AdobeRGB */
 	profile_filename = "/usr/share/color/icc/Argyll/ClayRGB1998.icm";
@@ -594,7 +628,7 @@ main (int argc, char *argv[])
 			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), NULL);
 
 	/* setup results expander */
-	gcm_picker_refresh_results ();
+//	gcm_picker_refresh_results (NULL);
 
 	/* setup initial preview window */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "image_preview"));

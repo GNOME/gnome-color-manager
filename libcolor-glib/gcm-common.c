@@ -34,6 +34,36 @@
 #include <gcm-common.h>
 
 /**
+ * gcm_color_copy_XYZ:
+ * @src: the source color.
+ * @dest: the destination color
+ *
+ * Deep copies a color value.
+ **/
+void
+gcm_color_copy_XYZ (GcmColorXYZ *src, GcmColorXYZ *dest)
+{
+	dest->X = src->X;
+	dest->Y = src->Y;
+	dest->Z = src->Z;
+}
+
+/**
+ * gcm_color_copy_RGB:
+ * @src: the source color.
+ * @dest: the destination color
+ *
+ * Deep copies a color value.
+ **/
+void
+gcm_color_copy_RGB (GcmColorRgb *src, GcmColorRgb *dest)
+{
+	dest->red = src->red;
+	dest->green = src->green;
+	dest->blue = src->blue;
+}
+
+/**
  * gcm_convert_rgb_int_to_rgb:
  **/
 void

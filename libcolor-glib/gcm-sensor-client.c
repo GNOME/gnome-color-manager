@@ -33,6 +33,7 @@
 #include <gtk/gtk.h>
 
 #include "gcm-sensor-client.h"
+#include "gcm-sensor-huey.h"
 
 #include "egg-debug.h"
 
@@ -158,6 +159,9 @@ static gboolean
 gcm_sensor_client_device_add (GcmSensorClient *sensor_client, GUdevDevice *device)
 {
 	gboolean ret;
+	GcmSensor *sensor = NULL;
+	GcmSensorKind kind;
+	const gchar *kind_str;
 	GcmSensorClientPrivate *priv = sensor_client->priv;
 
 	/* interesting device? */
@@ -165,20 +169,32 @@ gcm_sensor_client_device_add (GcmSensorClient *sensor_client, GUdevDevice *devic
 	if (!ret)
 		goto out;
 
+	/* is it a sensor we have a internal native driver for? */
+	kind_str = g_udev_device_get_property (device, "GCM_KIND");
+	kind = gcm_sensor_kind_from_string (kind_str);
+	if (kind == GCM_SENSOR_KIND_HUEY) {
+		egg_warning ("creating internal device");
+		sensor = gcm_sensor_huey_new ();
+	} else {
+		sensor = gcm_sensor_new ();
+	}
+
 	/* get data */
 	egg_debug ("adding color management device: %s", g_udev_device_get_sysfs_path (device));
-	priv->sensor = gcm_sensor_new ();
-	ret = gcm_sensor_set_from_device (priv->sensor, device, NULL);
+	ret = gcm_sensor_set_from_device (sensor, device, NULL);
 	if (!ret)
 		goto out;
 
 	/* success */
 	priv->present = TRUE;
+	priv->sensor = g_object_ref (sensor);
 
 	/* signal the addition */
 	egg_debug ("emit: changed");
 	g_signal_emit (sensor_client, signals[SIGNAL_CHANGED], 0);
 out:
+	if (sensor != NULL)
+		g_object_unref (sensor);
 	return ret;
 }
 

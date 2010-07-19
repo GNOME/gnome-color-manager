@@ -70,6 +70,10 @@ typedef struct {
 	/* any addition fields go *after* the data */
 } GcmVec3;
 
+void		 gcm_color_copy_XYZ		(GcmColorXYZ		*src,
+						 GcmColorXYZ		*dest);
+void		 gcm_color_copy_RGB		(GcmColorRgb		*src,
+						 GcmColorRgb		*dest);
 void		 gcm_convert_rgb_int_to_rgb	(GcmColorRgbInt		*rgb_int,
 						 GcmColorRgb		*rgb);
 void		 gcm_convert_rgb_to_rgb_int	(GcmColorRgb		*rgb,

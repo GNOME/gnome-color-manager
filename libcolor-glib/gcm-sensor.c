@@ -291,6 +291,15 @@ gcm_sensor_startup (GcmSensor *sensor, GError **error)
 		goto out;
 	}
 
+	/* not a native device */
+	if (!sensor->priv->native) {
+		g_set_error_literal (error,
+				     GCM_SENSOR_ERROR,
+				     GCM_SENSOR_ERROR_INTERNAL,
+				     "not a native device, you have to use GcmCalibrate...");
+		goto out;
+	}
+
 	/* coldplug source */
 	if (klass->startup == NULL) {
 		g_set_error_literal (error,
