@@ -60,7 +60,6 @@ struct _GcmDevicePrivate
 	gchar			*model;
 	GPtrArray		*profiles;
 	gchar			*title;
-	GSettings		*settings;
 	GcmColorspace		 colorspace;
 	guint			 changed_id;
 	glong			 modified_time;
@@ -667,9 +666,7 @@ gcm_device_load (GcmDevice *device, GError **error)
 		priv->manufacturer = g_key_file_get_string (file, priv->id, "manufacturer", NULL);
 	priv->gamma = g_key_file_get_double (file, priv->id, "gamma", &error_local);
 	if (error_local != NULL) {
-		priv->gamma = g_settings_get_double (priv->settings, GCM_SETTINGS_DEFAULT_GAMMA);
-		if (priv->gamma < 0.1f)
-			priv->gamma = 1.0f;
+		priv->gamma = 1;
 		g_clear_error (&error_local);
 	}
 	priv->brightness = g_key_file_get_double (file, priv->id, "brightness", &error_local);
@@ -1193,10 +1190,7 @@ gcm_device_init (GcmDevice *device)
 	device->priv->model = NULL;
 	device->priv->profiles = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	device->priv->modified_time = 0;
-	device->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
-	device->priv->gamma = g_settings_get_double (device->priv->settings, GCM_SETTINGS_DEFAULT_GAMMA);
-	if (device->priv->gamma < 0.01)
-		device->priv->gamma = 1.0f;
+	device->priv->gamma = 1.0;
 	device->priv->brightness = 0.0f;
 	device->priv->contrast = 100.f;
 	device->priv->colorspace = GCM_COLORSPACE_UNKNOWN;
@@ -1221,7 +1215,6 @@ gcm_device_finalize (GObject *object)
 	g_free (priv->manufacturer);
 	g_free (priv->model);
 	g_ptr_array_unref (priv->profiles);
-	g_object_unref (priv->settings);
 
 	G_OBJECT_CLASS (gcm_device_parent_class)->finalize (object);
 }

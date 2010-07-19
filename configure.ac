@@ -1,13 +1,47 @@
+# Copyright (C) 2010 Richard Hughes <richard@hughsie.com>
 AC_PREREQ(2.63)
 
-AC_INIT([gnome-color-manager],[2.31.5],[http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager])
+m4_define([gcm_major_version], [2])
+m4_define([gcm_minor_version], [31])
+m4_define([gcm_micro_version], [5])
+m4_define([gcm_version],
+          [gcm_major_version.gcm_minor_version.gcm_micro_version])
+
+AC_INIT([gnome-color-manager],[gcm_version],[http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager])
 AC_CONFIG_SRCDIR(src)
 AM_INIT_AUTOMAKE([1.9 tar-ustar dist-bzip2])
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
+GOBJECT_INTROSPECTION_CHECK([0.6.7])
+
 # enable nice build output on automake1.11
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
+
+GCM_MAJOR_VERSION=gcm_major_version
+GCM_MINOR_VERSION=gcm_minor_version
+GCM_MICRO_VERSION=gcm_micro_version
+GCM_VERSION=gcm_version
+AC_SUBST(GCM_MAJOR_VERSION)
+AC_SUBST(GCM_MINOR_VERSION)
+AC_SUBST(GCM_MICRO_VERSION)
+AC_SUBST(GCM_VERSION)
+
+# libtool versioning - this applies to libcolor-glib
+#
+# See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
+#
+# increment;
+# CURRENT	If the API or ABI interface has changed (reset REVISION to 0)
+# REVISION	If the API and ABI remains the same, but bugs are fixed.
+# AGE		If libgcm can be linked into executables which can be
+# 		built with previous versions of this library. Don't use.
+LT_CURRENT=1
+LT_REVISION=0
+LT_AGE=0
+AC_SUBST(LT_CURRENT)
+AC_SUBST(LT_REVISION)
+AC_SUBST(LT_AGE)
 
 AC_PROG_CC
 AC_PROG_CXX
@@ -108,6 +142,7 @@ PKG_CHECK_MODULES(GNOMEDESKTOP, gnome-desktop-3.0 >= 2.90.0)
 PKG_CHECK_MODULES(GUDEV, gudev-1.0)
 PKG_CHECK_MODULES(LCMS, lcms2)
 PKG_CHECK_MODULES(X11, x11)
+PKG_CHECK_MODULES(USB, [libusb-1.0 >= 1.0.0])
 
 dnl Required for the properties window
 PKG_CHECK_MODULES(CONTROL_CENTER, [
@@ -194,6 +229,22 @@ if test "x$HAVE_CUPS" != "xyes"; then
 fi
 
 dnl ---------------------------------------------------------------------------
+dnl - Generate man pages ? (default enabled)
+dnl ---------------------------------------------------------------------------
+AC_ARG_ENABLE(man_pages, AS_HELP_STRING([--disable-man-pages],[Disable man pages generation]), enable_man_pages=$enableval)
+if test x$enable_man_pages != xno; then
+	AC_PATH_PROG(XSLTPROC, xsltproc, no)
+	if test x$enable_man_pages = xyes; then
+		if test "$XSLTPROC" = "no" ; then
+			AC_MSG_ERROR([xsltproc not found, it's needod to build man pages])
+		fi
+	fi
+else
+	XSLTPROC=no
+fi
+AM_CONDITIONAL(HAVE_XSLTPROC, [test "$XSLTPROC" != "no"])
+
+dnl ---------------------------------------------------------------------------
 dnl - Make paths available for source files
 dnl ---------------------------------------------------------------------------
 AC_SUBST(DATADIR, $datadir)
@@ -264,6 +315,13 @@ policy/Makefile
 po/Makefile.in
 rules/Makefile
 src/Makefile
+docs/Makefile
+docs/huey/Makefile
+docs/api/Makefile
+docs/api/version.xml
+libcolor-glib/Makefile
+libcolor-glib/gcm-version.h
+libcolor-glib/libcolor-glib.pc
 ])
 AC_OUTPUT
 

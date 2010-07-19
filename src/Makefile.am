@@ -4,7 +4,6 @@ INCLUDES =						\
 	$(GTK_CFLAGS)					\
 	$(GNOMEDESKTOP_CFLAGS)				\
 	$(VTE_CFLAGS)					\
-	$(LCMS_CFLAGS)					\
 	$(XORG_CFLAGS)					\
 	$(CUPS_CFLAGS)					\
 	$(SANE_CFLAGS)					\
@@ -17,6 +16,8 @@ INCLUDES =						\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
 	$(GUDEV_CFLAGS)					\
+	-I$(top_srcdir)/libcolor-glib			\
+	-DLIBCOLOR_GLIB_COMPILATION			\
 	-DBINDIR=\"$(bindir)\"				\
 	-DLIBEXECDIR=\"$(libexecdir)\"			\
 	-DSBINDIR=\"$(sbindir)\"			\
@@ -26,6 +27,7 @@ INCLUDES =						\
 	-DLOCALEDIR=\""$(localedir)"\"			\
 	-DTESTDATADIR=\""$(top_srcdir)/data/tests"\"	\
 	-DGCM_SYSTEM_PROFILES_DIR="\"$(GCM_SYSTEM_PROFILES_DIR)"\" \
+	-DI_KNOW_THE_LIBCOLOR_GLIB_API_IS_SUBJECT_TO_CHANGE	\
 	-DGCM_DATA=\"$(pkgdatadir)\"
 
 introspectiondir = $(datadir)/dbus-1/interfaces
@@ -38,34 +40,16 @@ noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\
 	egg-debug.c					\
 	egg-debug.h					\
-	gcm-image.c					\
-	gcm-image.h					\
 	gcm-screen.c					\
 	gcm-screen.h					\
-	gcm-xyz.c					\
-	gcm-xyz.h					\
 	gcm-exif.c					\
 	gcm-exif.h					\
 	gcm-print.c					\
 	gcm-print.h					\
 	gcm-utils.c					\
 	gcm-utils.h					\
-	gcm-enum.c					\
-	gcm-enum.h					\
-	gcm-clut.c					\
-	gcm-clut.h					\
-	gcm-edid.c					\
-	gcm-edid.h					\
-	gcm-dmi.c					\
-	gcm-dmi.h					\
-	gcm-tables.c					\
-	gcm-tables.h					\
-	gcm-xserver.c					\
-	gcm-xserver.h					\
 	gcm-client.c					\
 	gcm-client.h					\
-	gcm-colorimeter.c				\
-	gcm-colorimeter.h				\
 	gcm-device.c					\
 	gcm-device.h					\
 	gcm-device-xrandr.c				\
@@ -82,10 +66,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-trc-widget.h				\
 	gcm-gamma-widget.c				\
 	gcm-gamma-widget.h				\
-	gcm-profile-store.c				\
-	gcm-profile-store.h				\
-	gcm-profile.c					\
-	gcm-profile.h					\
 	gcm-calibrate.c					\
 	gcm-calibrate.h					\
 	gcm-calibrate-argyll.c				\
@@ -93,9 +73,7 @@ libgcmshared_a_SOURCES =				\
 	gcm-calibrate-manual.c				\
 	gcm-calibrate-manual.h				\
 	gcm-calibrate-dialog.c				\
-	gcm-calibrate-dialog.h				\
-	gcm-brightness.c				\
-	gcm-brightness.h
+	gcm-calibrate-dialog.h
 
 libgcmshared_a_SOURCES +=				\
 	gcm-device-sane.c				\
@@ -103,6 +81,9 @@ libgcmshared_a_SOURCES +=				\
 
 libgcmshared_a_CFLAGS =					\
 	$(WARNINGFLAGS_C)
+
+libgcmshared_a_LIBADD =					\
+	$(COLOR_GLIB_LIBS)
 
 sbin_PROGRAMS =						\
 	gcm-install-system-wide
@@ -116,7 +97,9 @@ bin_PROGRAMS =						\
 	gcm-viewer					\
 	gcm-session					\
 	gcm-picker					\
-	gcm-import
+	gcm-ddc-util					\
+	gcm-import					\
+	gcm-huey-example
 
 if HAVE_EXIV
 libexec_PROGRAMS = gcm-helper-exiv
@@ -143,11 +126,11 @@ gcm_dump_edid_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_dump_edid_CFLAGS =					\
@@ -162,11 +145,11 @@ gcm_dump_profile_LDADD =				\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_dump_profile_CFLAGS =				\
@@ -178,10 +161,10 @@ gcm_fix_profile_SOURCES =				\
 gcm_fix_profile_LDADD =					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(LCMS_LIBS)					\
 	-lm
 
 gcm_fix_profile_CFLAGS =				\
@@ -196,11 +179,11 @@ gcm_inspect_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_inspect_CFLAGS =					\
@@ -215,11 +198,11 @@ gcm_apply_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_apply_CFLAGS =					\
@@ -234,11 +217,11 @@ gcm_import_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_import_CFLAGS =					\
@@ -256,13 +239,13 @@ gcm_viewer_LDADD =					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(VTE_LIBS)					\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_viewer_CFLAGS =					\
@@ -278,7 +261,6 @@ gcm_picker_LDADD =					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(VTE_LIBS)					\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
@@ -286,6 +268,7 @@ gcm_picker_LDADD =					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
 	$(CANBERRA_LIBS)				\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_picker_CFLAGS =					\
@@ -300,7 +283,6 @@ gcm_session_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(TIFF_LIBS)					\
@@ -308,6 +290,7 @@ gcm_session_LDADD =					\
 	$(SANE_LIBS)					\
 	$(NOTIFY_LIBS)					\
 	$(CUPS_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_session_CFLAGS =					\
@@ -326,7 +309,6 @@ libcolor_la_LIBADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(TIFF_LIBS)					\
@@ -335,10 +317,24 @@ libcolor_la_LIBADD =					\
 	$(NOTIFY_LIBS)					\
 	$(CUPS_LIBS)					\
 	$(CANBERRA_LIBS)				\
-	$(CONTROL_CENTER_LIBS)
+	$(CONTROL_CENTER_LIBS)				\
+	$(COLOR_GLIB_LIBS)
 
 libcolor_la_LDFLAGS = -avoid-version -module
 libcolor_la_CFLAGS = $(WARNINGFLAGS_C)
+
+COLOR_GLIB_LIBS =						\
+	$(top_builddir)/libcolor-glib/libcolor-glib.la
+
+gcm_ddc_util_SOURCES =					\
+	gcm-ddc-util.c
+
+gcm_ddc_util_LDADD =					\
+	$(GLIB_LIBS)					\
+	$(COLOR_GLIB_LIBS)
+
+gcm_ddc_util_CFLAGS =					\
+	$(WARNINGFLAGS_C)
 
 if HAVE_TESTS
 
@@ -355,13 +351,13 @@ gcm_self_test_LDADD =					\
 	$(X11_LIBS)					\
 	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
-	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
 	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
+	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_self_test_CFLAGS = $(AM_CFLAGS) $(WARNINGFLAGS_C)
@@ -374,6 +370,16 @@ install-data-hook:
 	if test -w $(DESTDIR)$(prefix)/; then \
 		mkdir -p $(DESTDIR)$(GCM_SYSTEM_PROFILES_DIR); \
 	fi
+
+gcm_huey_example_SOURCES =				\
+	gcm-huey-example.c
+
+gcm_huey_example_LDADD =				\
+	$(GLIB_LIBS)					\
+	$(COLOR_GLIB_LIBS)
+
+gcm_huey_example_CFLAGS =				\
+	$(WARNINGFLAGS_C)
 
 clean-local:
 	rm -f *~
