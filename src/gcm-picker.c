@@ -90,7 +90,7 @@ gcm_picker_refresh_results (void)
 	GtkImage *image;
 	GtkLabel *label;
 	GdkPixbuf *pixbuf = NULL;
-	GcmColorRgbInt color_rgb;
+	GcmColorRGBint color_rgb;
 	GcmColorLab color_lab;
 	GcmColorXYZ color_xyz;
 	GcmColorXYZ color_error;
@@ -151,10 +151,10 @@ gcm_picker_refresh_results (void)
 	/* set RGB */
 	label = GTK_LABEL (gtk_builder_get_object (builder, "label_rgb"));
 	text_rgb = g_strdup_printf ("%i, %i, %i (#%02X%02X%02X)",
-				    color_rgb.red, color_rgb.green, color_rgb.blue,
-				    color_rgb.red, color_rgb.green, color_rgb.blue);
+				    color_rgb.R, color_rgb.G, color_rgb.B,
+				    color_rgb.R, color_rgb.G, color_rgb.B);
 	gtk_label_set_label (label, text_rgb);
-	gcm_picker_set_pixbuf_color (pixbuf, color_rgb.red, color_rgb.green, color_rgb.blue);
+	gcm_picker_set_pixbuf_color (pixbuf, color_rgb.R, color_rgb.G, color_rgb.B);
 
 	/* set error */
 	label = GTK_LABEL (gtk_builder_get_object (builder, "label_error"));

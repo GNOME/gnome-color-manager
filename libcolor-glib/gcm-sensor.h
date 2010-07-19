@@ -29,7 +29,7 @@
 #include <glib-object.h>
 #include <gudev/gudev.h>
 
-#include <gcm-common.h>
+#include <gcm-color.h>
 
 G_BEGIN_DECLS
 

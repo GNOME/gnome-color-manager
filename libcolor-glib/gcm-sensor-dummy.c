@@ -106,7 +106,9 @@ GcmSensor *
 gcm_sensor_dummy_new (void)
 {
 	GcmSensorDummy *sensor;
-	sensor = g_object_new (GCM_TYPE_SENSOR_DUMMY, NULL);
+	sensor = g_object_new (GCM_TYPE_SENSOR_DUMMY,
+			       "native", TRUE,
+			       NULL);
 	return GCM_SENSOR (sensor);
 }
 

@@ -41,51 +41,51 @@
 static void
 gcm_test_common_func (void)
 {
-	GcmColorRgbInt rgb_int;
-	GcmColorRgb rgb;
+	GcmColorRGBint rgb_int;
+	GcmColorRGB rgb;
 	GcmColorYxy Yxy;
 	GcmColorXYZ XYZ;
 	GcmMat3x3 mat;
 	GcmMat3x3 matsrc;
 
 	/* black */
-	rgb_int.red = 0x00; rgb_int.green = 0x00; rgb_int.blue = 0x00;
-	gcm_convert_rgb_int_to_rgb (&rgb_int, &rgb);
-	g_assert_cmpfloat (rgb.red, <, 0.01);
-	g_assert_cmpfloat (rgb.green, <, 0.01);
-	g_assert_cmpfloat (rgb.blue, <, 0.01);
-	g_assert_cmpfloat (rgb.red, >, -0.01);
-	g_assert_cmpfloat (rgb.green, >, -0.01);
-	g_assert_cmpfloat (rgb.blue, >, -0.01);
+	rgb_int.R = 0x00; rgb_int.G = 0x00; rgb_int.B = 0x00;
+	gcm_color_convert_RGBint_to_RGB (&rgb_int, &rgb);
+	g_assert_cmpfloat (rgb.R, <, 0.01);
+	g_assert_cmpfloat (rgb.G, <, 0.01);
+	g_assert_cmpfloat (rgb.B, <, 0.01);
+	g_assert_cmpfloat (rgb.R, >, -0.01);
+	g_assert_cmpfloat (rgb.G, >, -0.01);
+	g_assert_cmpfloat (rgb.B, >, -0.01);
 
 	/* white */
-	rgb_int.red = 0xff; rgb_int.green = 0xff; rgb_int.blue = 0xff;
-	gcm_convert_rgb_int_to_rgb (&rgb_int, &rgb);
-	g_assert_cmpfloat (rgb.red, <, 1.01);
-	g_assert_cmpfloat (rgb.green, <, 1.01);
-	g_assert_cmpfloat (rgb.blue, <, 1.01);
-	g_assert_cmpfloat (rgb.red, >, 0.99);
-	g_assert_cmpfloat (rgb.green, >, 0.99);
-	g_assert_cmpfloat (rgb.blue, >, 0.99);
+	rgb_int.R = 0xff; rgb_int.G = 0xff; rgb_int.B = 0xff;
+	gcm_color_convert_RGBint_to_RGB (&rgb_int, &rgb);
+	g_assert_cmpfloat (rgb.R, <, 1.01);
+	g_assert_cmpfloat (rgb.G, <, 1.01);
+	g_assert_cmpfloat (rgb.B, <, 1.01);
+	g_assert_cmpfloat (rgb.R, >, 0.99);
+	g_assert_cmpfloat (rgb.G, >, 0.99);
+	g_assert_cmpfloat (rgb.B, >, 0.99);
 
 	/* and back */
-	gcm_convert_rgb_to_rgb_int (&rgb, &rgb_int);
-	g_assert_cmpint (rgb_int.red, ==, 0xff);
-	g_assert_cmpint (rgb_int.green, ==, 0xff);
-	g_assert_cmpint (rgb_int.blue, ==, 0xff);
+	gcm_color_convert_RGB_to_RGBint (&rgb, &rgb_int);
+	g_assert_cmpint (rgb_int.R, ==, 0xff);
+	g_assert_cmpint (rgb_int.G, ==, 0xff);
+	g_assert_cmpint (rgb_int.B, ==, 0xff);
 
 	/* black */
-	rgb.red = 0.0f; rgb.green = 0.0f; rgb.blue = 0.0f;
-	gcm_convert_rgb_to_rgb_int (&rgb, &rgb_int);
-	g_assert_cmpint (rgb_int.red, ==, 0x00);
-	g_assert_cmpint (rgb_int.green, ==, 0x00);
-	g_assert_cmpint (rgb_int.blue, ==, 0x00);
+	rgb.R = 0.0f; rgb.G = 0.0f; rgb.B = 0.0f;
+	gcm_color_convert_RGB_to_RGBint (&rgb, &rgb_int);
+	g_assert_cmpint (rgb_int.R, ==, 0x00);
+	g_assert_cmpint (rgb_int.G, ==, 0x00);
+	g_assert_cmpint (rgb_int.B, ==, 0x00);
 
 	/* Yxy -> XYZ */
 	Yxy.Y = 21.5;
 	Yxy.x = 0.31;
 	Yxy.y = 0.32;
-	gcm_convert_Yxy_to_XYZ (&Yxy, &XYZ);
+	gcm_color_convert_Yxy_to_XYZ (&Yxy, &XYZ);
 	g_assert_cmpfloat (XYZ.X, <, 21.0);
 	g_assert_cmpfloat (XYZ.X, >, 20.5);
 	g_assert_cmpfloat (XYZ.Y, <, 22.0);
@@ -94,7 +94,7 @@ gcm_test_common_func (void)
 	g_assert_cmpfloat (XYZ.Z, >, 24.5);
 
 	/* and back */
-	gcm_convert_XYZ_to_Yxy (&XYZ, &Yxy);
+	gcm_color_convert_XYZ_to_Yxy (&XYZ, &Yxy);
 	g_assert_cmpfloat (Yxy.Y, <, 22.0);
 	g_assert_cmpfloat (Yxy.Y, >, 21.0);
 	g_assert_cmpfloat (Yxy.x, <, 0.35);
@@ -156,13 +156,13 @@ gcm_test_sensor_func (void)
 	/* start sensor */
 	sensor = gcm_sensor_dummy_new ();
 	ret = gcm_sensor_startup (sensor, &error);
-	g_assert (ret);
 	g_assert_no_error (error);
+	g_assert (ret);
 
 	/* set LEDs */
 	ret = gcm_sensor_set_leds (sensor, 0x0f, &error);
-	g_assert (ret);
 	g_assert_no_error (error);
+	g_assert (ret);
 
 	/* set mode */
 	gcm_sensor_set_output_type (sensor, GCM_SENSOR_OUTPUT_TYPE_LCD);
@@ -170,20 +170,20 @@ gcm_test_sensor_func (void)
 
 	/* get ambient */
 	ret = gcm_sensor_get_ambient (sensor, &value, &error);
-	g_assert (ret);
 	g_assert_no_error (error);
+	g_assert (ret);
 	g_debug ("ambient = %.1lf Lux", value);
 
 	/* sample color */
 	ret = gcm_sensor_sample (sensor, &values, &error);
-	g_assert (ret);
 	g_assert_no_error (error);
+	g_assert (ret);
 	g_debug ("X=%0.4lf, Y=%0.4lf, Z=%0.4lf", values.X, values.Y, values.Z);
 
 	/* set LEDs */
 	ret = gcm_sensor_set_leds (sensor, 0x00, &error);
-	g_assert (ret);
 	g_assert_no_error (error);
+	g_assert (ret);
 
 	g_object_unref (sensor);
 }

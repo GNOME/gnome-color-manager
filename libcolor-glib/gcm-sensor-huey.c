@@ -31,6 +31,7 @@
 #include <glib-object.h>
 #include <libusb-1.0/libusb.h>
 
+#include "gcm-common.h"
 #include "gcm-sensor-huey.h"
 
 static void     gcm_sensor_huey_finalize	(GObject     *object);
@@ -594,9 +595,9 @@ gcm_sensor_huey_set_leds (GcmSensor *sensor, guint8 value, GError **error)
  * gcm_sensor_huey_sample_for_threshold:
  **/
 static gboolean
-gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmColorRgbInt *threshold, GcmColorRgb *values, GError **error)
+gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmColorRGBint *threshold, GcmColorRGB *values, GError **error)
 {
-	guchar request[] = { HUEY_COMMAND_SENSOR_MEASURE_RGB, 0x00, threshold->red, 0x00, threshold->green, 0x00, threshold->blue, 0x00 };
+	guchar request[] = { HUEY_COMMAND_SENSOR_MEASURE_RGB, 0x00, threshold->R, 0x00, threshold->G, 0x00, threshold->B, 0x00 };
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
@@ -607,7 +608,7 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmColorRgbInt
 		goto out;
 
 	/* get value */
-	values->red = 1.0f / ((reply[3] * 0xff) + reply[4]);
+	values->R = 1.0f / ((reply[3] * 0xff) + reply[4]);
 
 	/* get green */
 	request[0] = HUEY_COMMAND_READ_GREEN;
@@ -616,7 +617,7 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmColorRgbInt
 		goto out;
 
 	/* get value */
-	values->green = 1.0f / ((reply[3] * 0xff) + reply[4]);
+	values->G = 1.0f / ((reply[3] * 0xff) + reply[4]);
 
 	/* get blue */
 	request[0] = HUEY_COMMAND_READ_BLUE;
@@ -625,7 +626,7 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmColorRgbInt
 		goto out;
 
 	/* get value */
-	values->blue = 1.0f / ((reply[3] * 0xff) + reply[4]);
+	values->B = 1.0f / ((reply[3] * 0xff) + reply[4]);
 out:
 	return ret;
 }
@@ -638,38 +639,38 @@ gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 {
 	gboolean ret;
 	gdouble precision_value;
-	GcmColorRgb native;
-	GcmColorRgbInt multiplier;
+	GcmColorRGB native;
+	GcmColorRGBint multiplier;
 	GcmVec3 *input = (GcmVec3 *) &native;
 	GcmVec3 *output = (GcmVec3 *) value;
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
 
 	/* set this to one value for a quick approximate value */
-	multiplier.red = 1;
-	multiplier.green = 1;
-	multiplier.blue = 1;
+	multiplier.R = 1;
+	multiplier.G = 1;
+	multiplier.B = 1;
 	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey, &multiplier, &native, error);
 	if (!ret)
 		goto out;
-	g_debug ("initial values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.red, native.green, native.blue);
+	g_debug ("initial values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.R, native.G, native.B);
 
 	/* compromise between the amount of time and the precision */
 	precision_value = (gdouble) HUEY_PRECISION_TIME_VALUE;
-	if (native.red < precision_value)
-		multiplier.red = precision_value / native.red;
-	if (native.green < precision_value)
-		multiplier.green = precision_value / native.green;
-	if (native.blue < precision_value)
-		multiplier.blue = precision_value / native.blue;
-	g_debug ("using multiplier factor: red=%i, green=%i, blue=%i", multiplier.red, multiplier.green, multiplier.blue);
+	if (native.R < precision_value)
+		multiplier.R = precision_value / native.R;
+	if (native.G < precision_value)
+		multiplier.G = precision_value / native.G;
+	if (native.B < precision_value)
+		multiplier.B = precision_value / native.B;
+	g_debug ("using multiplier factor: red=%i, green=%i, blue=%i", multiplier.R, multiplier.G, multiplier.B);
 	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey, &multiplier, &native, error);
 	if (!ret)
 		goto out;
-	g_debug ("prescaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.red, native.green, native.blue);
-	native.red = native.red * (gdouble)multiplier.red;
-	native.green = native.green * (gdouble)multiplier.green;
-	native.blue = native.blue * (gdouble)multiplier.blue;
-	g_debug ("scaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.red, native.green, native.blue);
+	g_debug ("prescaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.R, native.G, native.B);
+	native.R = native.R * (gdouble)multiplier.R;
+	native.G = native.G * (gdouble)multiplier.G;
+	native.B = native.B * (gdouble)multiplier.B;
+	g_debug ("scaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.R, native.G, native.B);
 
 	g_print ("PRE MULTIPLY: %s\n", gcm_vec3_to_string (input));
 

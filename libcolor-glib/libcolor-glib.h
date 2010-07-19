@@ -29,6 +29,7 @@
 #define __LIBCOLOR_GLIB_H_INSIDE__
 
 #include <gcm-common.h>
+#include <gcm-color.h>
 #include <gcm-ddc-common.h>
 #include <gcm-ddc-device.h>
 #include <gcm-ddc-client.h>

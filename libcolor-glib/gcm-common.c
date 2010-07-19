@@ -21,9 +21,9 @@
 
 /**
  * SECTION:gcm-common
- * @short_description: Common functionality
+ * @short_description: Common maths functionality
  *
- * A GObject to use for common shizzle.
+ * A GObject to use for common maths functionality like vectors and matrices.
  */
 
 #include "config.h"
@@ -32,113 +32,6 @@
 #include <glib-object.h>
 
 #include <gcm-common.h>
-
-/**
- * gcm_color_copy_XYZ:
- * @src: the source color.
- * @dest: the destination color
- *
- * Deep copies a color value.
- **/
-void
-gcm_color_copy_XYZ (GcmColorXYZ *src, GcmColorXYZ *dest)
-{
-	dest->X = src->X;
-	dest->Y = src->Y;
-	dest->Z = src->Z;
-}
-
-/**
- * gcm_color_copy_RGB:
- * @src: the source color.
- * @dest: the destination color
- *
- * Deep copies a color value.
- **/
-void
-gcm_color_copy_RGB (GcmColorRgb *src, GcmColorRgb *dest)
-{
-	dest->red = src->red;
-	dest->green = src->green;
-	dest->blue = src->blue;
-}
-
-/**
- * gcm_convert_rgb_int_to_rgb:
- **/
-void
-gcm_convert_rgb_int_to_rgb (GcmColorRgbInt *rgb_int, GcmColorRgb *rgb)
-{
-	rgb->red = (gdouble) rgb_int->red / 255.0f;
-	rgb->green = (gdouble) rgb_int->green / 255.0f;
-	rgb->blue = (gdouble) rgb_int->blue / 255.0f;
-}
-
-/**
- * gcm_convert_rgb_to_rgb_int:
- **/
-void
-gcm_convert_rgb_to_rgb_int (GcmColorRgb *rgb, GcmColorRgbInt *rgb_int)
-{
-	rgb_int->red = (gdouble) rgb->red * 255.0f;
-	rgb_int->green = (gdouble) rgb->green * 255.0f;
-	rgb_int->blue = (gdouble) rgb->blue * 255.0f;
-}
-
-/**
- * gcm_convert_Yxy_to_XYZ:
- **/
-void
-gcm_convert_Yxy_to_XYZ (GcmColorYxy *src, GcmColorXYZ *dest)
-{
-	g_assert (src->Y >= 0.0f);
-	g_assert (src->x >= 0.0f);
-	g_assert (src->y >= 0.0f);
-	g_assert (src->Y <= 100.0f);
-	g_assert (src->x <= 1.0f);
-	g_assert (src->y <= 1.0f);
-
-	/* very small luminance */
-	if (src->Y < 1e-6) {
-		dest->X = 0.0f;
-		dest->Y = 0.0f;
-		dest->Z = 0.0f;
-		return;
-	}
-
-	dest->X = (src->x * src->Y) / src->y;
-	dest->Y = src->Y;
-	dest->Z = (1.0f - src->x - src->y) * src->Y / src->y;
-}
-
-/**
- * gcm_convert_XYZ_to_Yxy:
- **/
-void
-gcm_convert_XYZ_to_Yxy (GcmColorXYZ *src, GcmColorYxy *dest)
-{
-	gdouble sum;
-
-	g_assert (src->X >= 0.0f);
-	g_assert (src->Y >= 0.0f);
-	g_assert (src->Z >= 0.0f);
-	g_assert (src->X < 96.0f);
-	g_assert (src->Y < 100.0f);
-	g_assert (src->Z < 109.0f);
-
-	/* prevent division by zero */
-	sum = src->X + src->Y + src->Z;
-	if (fabs (sum) < 1e-6) {
-		dest->Y = 0.0f;
-		dest->x = 0.0f;
-		dest->y = 0.0f;
-		return;
-	}
-
-	dest->Y = src->Y;
-	dest->x = src->X / sum;
-	dest->y = src->Y / sum;
-}
 
 /**
  * gcm_vec3_clear:
