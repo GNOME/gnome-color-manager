@@ -266,11 +266,17 @@ gcm_picker_sensor_client_setup_ui (GcmSensorClient *sensor_client)
 	gboolean ret = FALSE;
 	GtkWidget *widget;
 
+#ifndef HAVE_VTE
+	/* TRANSLATORS: this is displayed if VTE support is not enabled */
+	gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("This application was compiled without VTE support."));
+	goto out;
+#endif
+
 	/* no present */
 	present = gcm_sensor_client_get_present (sensor_client);
 	if (!present) {
 		/* TRANSLATORS: this is displayed the user has not got suitable hardware */
-		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("No sensor_client is attached."));
+		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("No colorimeter is attached."));
 		goto out;
 	}
 
@@ -281,8 +287,7 @@ gcm_picker_sensor_client_setup_ui (GcmSensorClient *sensor_client)
 	/* change the label */
 	if (present && !supports_spot) {
 		/* TRANSLATORS: this is displayed the user has not got suitable hardware */
-		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("The attached sensor_client is not capable of reading a spot color."));
-	} else if (!present) {
+		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("The attached colorimeter is not capable of reading a spot color."));
 	}
 
 out:

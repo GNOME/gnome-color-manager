@@ -397,6 +397,11 @@ gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll, gchar *
 	/* we're running */
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 out:
+#else
+	g_set_error_literal (error,
+			     GCM_CALIBRATE_ERROR,
+			     GCM_CALIBRATE_ERROR_INTERNAL,
+			     "no VTE support");
 #endif
 	return ret;
 }
@@ -1457,6 +1462,7 @@ gcm_calibrate_argyll_spotread_read_chart (GcmCalibrateArgyll *calibrate_argyll, 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("spotread", error);
 	if (command == NULL) {
+		egg_error ("moo");
 		ret = FALSE;
 		goto out;
 	}
@@ -1489,8 +1495,10 @@ gcm_calibrate_argyll_spotread_read_chart (GcmCalibrateArgyll *calibrate_argyll, 
 
 	/* start up the command */
 	ret = gcm_calibrate_argyll_fork_command (calibrate_argyll, argv, error);
-	if (!ret)
+	if (!ret) {
+		egg_error ("moo");
 		goto out;
+	}
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -1502,6 +1510,7 @@ gcm_calibrate_argyll_spotread_read_chart (GcmCalibrateArgyll *calibrate_argyll, 
 				     GCM_CALIBRATE_ERROR_USER_ABORT,
 				     "calibration was cancelled");
 		ret = FALSE;
+		egg_error ("moo");
 		goto out;
 	}
 #ifdef HAVE_VTE
@@ -1514,6 +1523,7 @@ gcm_calibrate_argyll_spotread_read_chart (GcmCalibrateArgyll *calibrate_argyll, 
 			     "command failed to run successfully: %s", vte_text);
 		g_free (vte_text);
 		ret = FALSE;
+		egg_error ("moo");
 		goto out;
 	}
 #endif
@@ -1541,8 +1551,10 @@ gcm_calibrate_argyll_spotread (GcmCalibrate *calibrate, GtkWindow *window, GErro
 
 	/* step 3 */
 	ret = gcm_calibrate_argyll_spotread_read_chart (calibrate_argyll, error);
-	if (!ret)
+	if (!ret) {
+		egg_error ("moo");
 		goto out;
+	}
 
 	/* step 5 */
 	ret = gcm_calibrate_argyll_remove_temp_files (calibrate_argyll, error);

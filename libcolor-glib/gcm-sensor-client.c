@@ -165,7 +165,7 @@ gcm_sensor_client_device_add (GcmSensorClient *sensor_client, GUdevDevice *devic
 	GcmSensorClientPrivate *priv = sensor_client->priv;
 
 	/* interesting device? */
-	ret = g_udev_device_get_property_as_boolean (device, "GCM_SENSOR_CLIENT");
+	ret = g_udev_device_get_property_as_boolean (device, "GCM_COLORIMETER");
 	if (!ret)
 		goto out;
 
