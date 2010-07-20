@@ -364,6 +364,7 @@ gcm_sensor_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
 
 	/* coldplug source */
 	if (klass->get_ambient == NULL) {
+		ret = FALSE;
 		g_set_error_literal (error,
 				     GCM_SENSOR_ERROR,
 				     GCM_SENSOR_ERROR_INTERNAL,
@@ -402,6 +403,7 @@ gcm_sensor_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 
 	/* coldplug source */
 	if (klass->sample == NULL) {
+		ret = FALSE;
 		g_set_error_literal (error,
 				     GCM_SENSOR_ERROR,
 				     GCM_SENSOR_ERROR_INTERNAL,
