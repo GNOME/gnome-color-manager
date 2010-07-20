@@ -487,7 +487,7 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 		filename_systemwide = g_strdup_printf ("%s/%s.icc", GCM_SYSTEM_PROFILES_DIR, id);
 		ret = g_file_test (filename_systemwide, G_FILE_TEST_EXISTS);
 		if (ret) {
-			egg_error ("using systemwide %s as profile", filename_systemwide);
+			egg_debug ("using systemwide %s as profile", filename_systemwide);
 			filename = g_strdup (filename_systemwide);
 		}
 	}
