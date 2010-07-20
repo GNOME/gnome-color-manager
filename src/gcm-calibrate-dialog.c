@@ -311,8 +311,10 @@ gcm_calibrate_dialog_get_window (GcmCalibrateDialog *calibrate_dialog)
 GtkResponseType
 gcm_calibrate_dialog_run (GcmCalibrateDialog *calibrate_dialog)
 {
-	if (g_main_loop_is_running (calibrate_dialog->priv->loop))
-		egg_error ("you can't call this recursively");
+	if (g_main_loop_is_running (calibrate_dialog->priv->loop)) {
+		egg_warning ("you can't call this recursively");
+		return GTK_RESPONSE_NONE;
+	}
 
 	g_main_loop_run (calibrate_dialog->priv->loop);
 	return calibrate_dialog->priv->response;
