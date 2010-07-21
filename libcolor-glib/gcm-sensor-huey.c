@@ -32,6 +32,8 @@
 #include <libusb-1.0/libusb.h>
 
 #include "egg-debug.h"
+
+#include "gcm-usb.h"
 #include "gcm-common.h"
 #include "gcm-sensor-huey.h"
 
@@ -46,8 +48,7 @@ static void     gcm_sensor_huey_finalize	(GObject     *object);
  **/
 struct _GcmSensorHueyPrivate
 {
-	libusb_context			*ctx;
-	libusb_device_handle		*handle;
+	GcmUsb				*usb;
 	GcmMat3x3			 calibration_matrix1;
 	GcmMat3x3			 calibration_matrix2;
 	gchar				 unlock_string[5];
@@ -340,6 +341,7 @@ gcm_sensor_huey_send_data (GcmSensorHuey *sensor_huey,
 	gint retval;
 	gboolean ret = FALSE;
 	guint i;
+	libusb_device_handle *handle;
 
 	g_return_val_if_fail (request != NULL, FALSE);
 	g_return_val_if_fail (request_len != 0, FALSE);
@@ -351,7 +353,8 @@ gcm_sensor_huey_send_data (GcmSensorHuey *sensor_huey,
 	gcm_sensor_huey_print_data ("request", request, request_len);
 
 	/* do sync request */
-	retval = libusb_control_transfer (sensor_huey->priv->handle,
+	handle = gcm_usb_get_device_handle (sensor_huey->priv->usb);
+	retval = libusb_control_transfer (handle,
 					  LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_CLASS | LIBUSB_RECIPIENT_INTERFACE,
 					  0x09, 0x0200, 0,
 					  (guchar *) request, request_len,
@@ -367,7 +370,7 @@ gcm_sensor_huey_send_data (GcmSensorHuey *sensor_huey,
 	for (i=0; i<HUEY_MAX_READ_RETRIES; i++) {
 
 		/* get sync response */
-		retval = libusb_interrupt_transfer (sensor_huey->priv->handle, 0x81,
+		retval = libusb_interrupt_transfer (handle, 0x81,
 						    reply, (gint) reply_len, (gint*)reply_read,
 						    HUEY_CONTROL_MESSAGE_TIMEOUT);
 		if (retval < 0) {
@@ -759,47 +762,6 @@ out:
 }
 
 /**
- * gcm_sensor_huey_find_device:
- **/
-static gboolean
-gcm_sensor_huey_find_device (GcmSensorHuey *sensor_huey, GError **error)
-{
-	gint retval;
-	gboolean ret = FALSE;
-	GcmSensorHueyPrivate *priv = sensor_huey->priv;
-
-	/* open device */
-	sensor_huey->priv->handle = libusb_open_device_with_vid_pid (priv->ctx, HUEY_VENDOR_ID, HUEY_PRODUCT_ID);
-	if (priv->handle == NULL) {
-		g_set_error (error, GCM_SENSOR_ERROR,
-			     GCM_SENSOR_ERROR_INTERNAL,
-			     "failed to open device: %s", libusb_strerror (retval));
-		goto out;
-	}
-
-	/* set configuration and interface */
-	retval = libusb_set_configuration (priv->handle, 1);
-	if (retval < 0) {
-		g_set_error (error, GCM_SENSOR_ERROR,
-			     GCM_SENSOR_ERROR_INTERNAL,
-			     "failed to set configuration: %s", libusb_strerror (retval));
-		goto out;
-	}
-	retval = libusb_claim_interface (priv->handle, 0);
-	if (retval < 0) {
-		g_set_error (error, GCM_SENSOR_ERROR,
-			     GCM_SENSOR_ERROR_INTERNAL,
-			     "failed to claim interface: %s", libusb_strerror (retval));
-		goto out;
-	}
-
-	/* success */
-	ret = TRUE;
-out:
-	return ret;
-}
-
-/**
  * gcm_sensor_huey_startup:
  **/
 static gboolean
@@ -807,20 +769,14 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 {
 	gboolean ret = FALSE;
 	guint i;
-	gint retval;
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
 	GcmSensorHueyPrivate *priv = sensor_huey->priv;
 	const guint8 spin_leds[] = { 0x0, 0x1, 0x2, 0x4, 0x8, 0x4, 0x2, 0x1, 0x0, 0xff };
 
 	/* connect */
-	retval = libusb_init (&priv->ctx);
-	if (retval < 0) {
-		egg_warning ("failed to init libusb: %s", libusb_strerror (retval));
-		goto out;
-	}
-
-	/* find device */
-	ret = gcm_sensor_huey_find_device (sensor_huey, error);
+	ret = gcm_usb_connect (priv->usb,
+			       HUEY_VENDOR_ID, HUEY_PRODUCT_ID,
+			       0x01, 0x00, error);
 	if (!ret)
 		goto out;
 
@@ -887,6 +843,7 @@ gcm_sensor_huey_init (GcmSensorHuey *sensor)
 {
 	GcmSensorHueyPrivate *priv;
 	priv = sensor->priv = GCM_SENSOR_HUEY_GET_PRIVATE (sensor);
+	priv->usb = gcm_usb_new ();
 	gcm_mat33_clear (&priv->calibration_matrix1);
 	gcm_mat33_clear (&priv->calibration_matrix2);
 	priv->unlock_string[0] = '\0';
@@ -901,10 +858,7 @@ gcm_sensor_huey_finalize (GObject *object)
 	GcmSensorHuey *sensor = GCM_SENSOR_HUEY (object);
 	GcmSensorHueyPrivate *priv = sensor->priv;
 
-	/* close device */
-	libusb_close (priv->handle);
-	if (priv->ctx != NULL)
-		libusb_exit (priv->ctx);
+	g_object_unref (priv->usb);
 
 	G_OBJECT_CLASS (gcm_sensor_huey_parent_class)->finalize (object);
 }
