@@ -40,6 +40,15 @@ static void     gcm_sensor_colormunki_finalize	(GObject     *object);
 
 #define GCM_SENSOR_COLORMUNKI_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_SENSOR_COLORMUNKI, GcmSensorColormunkiPrivate))
 
+typedef enum {
+	GCM_COLORMUNKI_DIAL_POSITION_UNKNOWN,
+	GCM_COLORMUNKI_DIAL_POSITION_PROJECTOR,
+	GCM_COLORMUNKI_DIAL_POSITION_SURFACE,
+	GCM_COLORMUNKI_DIAL_POSITION_CALIBRATION,
+	GCM_COLORMUNKI_DIAL_POSITION_AMBIENT,
+	GCM_COLORMUNKI_DIAL_POSITION_LAST
+} GcmSensorColormunkiDialPosition;
+
 /**
  * GcmSensorColormunkiPrivate:
  *
@@ -50,6 +59,7 @@ struct _GcmSensorColormunkiPrivate
 	struct libusb_transfer		*transfer_interrupt;
 	struct libusb_transfer		*transfer_state;
 	GcmUsb				*usb;
+	GcmSensorColormunkiDialPosition	 dial_position;
 };
 
 G_DEFINE_TYPE (GcmSensorColormunki, gcm_sensor_colormunki, GCM_TYPE_SENSOR)
@@ -65,7 +75,7 @@ G_DEFINE_TYPE (GcmSensorColormunki, gcm_sensor_colormunki, GCM_TYPE_SENSOR)
 #define	COLORMUNKI_BUTTON_STATE_PRESSED		0x01
 
 #define	COLORMUNKI_DIAL_POSITION_PROJECTOR	0x00
-#define	COLORMUNKI_DIAL_POSITION_SPOT		0x01
+#define	COLORMUNKI_DIAL_POSITION_SURFACE		0x01
 #define	COLORMUNKI_DIAL_POSITION_CALIBRATION	0x02
 #define	COLORMUNKI_DIAL_POSITION_AMBIENT	0x03
 
@@ -101,7 +111,8 @@ gcm_sensor_colormunki_submit_transfer (GcmSensorColormunki *sensor_colormunki);
 static void
 gcm_sensor_colormunki_refresh_state_transfer_cb (struct libusb_transfer *transfer)
 {
-//	GcmSensorColormunki *sensor_colormunki = GCM_SENSOR_COLORMUNKI (transfer->user_data);
+	GcmSensorColormunki *sensor_colormunki = GCM_SENSOR_COLORMUNKI (transfer->user_data);
+	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
 	guint8 *reply = transfer->buffer + LIBUSB_CONTROL_SETUP_SIZE;
 
 	if (transfer->status != LIBUSB_TRANSFER_COMPLETED) {
@@ -114,20 +125,26 @@ gcm_sensor_colormunki_refresh_state_transfer_cb (struct libusb_transfer *transfe
 	 *           |/ ||
 	 * dial pos -/  \--- button value
 	 * - 00 = projector
-	 * - 01 = spot
+	 * - 01 = surface
 	 * - 02 = calibration
 	 * - 03 = ambient
 	 */
-	if (reply[0] == COLORMUNKI_DIAL_POSITION_PROJECTOR)
-		egg_debug ("projector");
-	else if (reply[0] == COLORMUNKI_DIAL_POSITION_SPOT)
-		egg_debug ("spot");
-	else if (reply[0] == COLORMUNKI_DIAL_POSITION_CALIBRATION)
-		egg_debug ("calibration");
-	else if (reply[0] == COLORMUNKI_DIAL_POSITION_AMBIENT)
-		egg_debug ("ambient");
-	else
+	if (reply[0] == COLORMUNKI_DIAL_POSITION_PROJECTOR) {
+		egg_debug ("now projector");
+		priv->dial_position = GCM_COLORMUNKI_DIAL_POSITION_PROJECTOR;
+	} else if (reply[0] == COLORMUNKI_DIAL_POSITION_SURFACE) {
+		egg_debug ("now surface");
+		priv->dial_position = GCM_COLORMUNKI_DIAL_POSITION_SURFACE;
+	} else if (reply[0] == COLORMUNKI_DIAL_POSITION_CALIBRATION) {
+		egg_debug ("now calibration");
+		priv->dial_position = GCM_COLORMUNKI_DIAL_POSITION_CALIBRATION;
+	} else if (reply[0] == COLORMUNKI_DIAL_POSITION_AMBIENT) {
+		egg_debug ("now ambient");
+		priv->dial_position = GCM_COLORMUNKI_DIAL_POSITION_AMBIENT;
+	} else {
 		egg_warning ("dial position unknown: 0x%02x", reply[0]);
+		priv->dial_position = GCM_COLORMUNKI_DIAL_POSITION_UNKNOWN;
+	}
 
 	/* button state */
 	if (reply[1] == COLORMUNKI_BUTTON_STATE_RELEASED) {
@@ -261,7 +278,7 @@ gcm_sensor_colormunki_playdo (GcmSensor *sensor, GError **error)
 
 	egg_debug ("submit transfer");
 	gcm_sensor_colormunki_submit_transfer (sensor_colormunki);
-	//ret = gcm_sensor_colormunki_refresh_state (sensor_colormunki, error);
+	ret = gcm_sensor_colormunki_refresh_state (sensor_colormunki, error);
 
 	return ret;
 }
@@ -295,6 +312,41 @@ out:
 }
 
 /**
+ * gcm_sensor_colormunki_get_ambient:
+ **/
+static gboolean
+gcm_sensor_colormunki_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
+{
+	gboolean ret = FALSE;
+	GcmSensorColormunki *sensor_colormunki = GCM_SENSOR_COLORMUNKI (sensor);
+
+	/* no hardware support */
+	if (sensor_colormunki->priv->dial_position != GCM_COLORMUNKI_DIAL_POSITION_AMBIENT) {
+		g_set_error_literal (error, GCM_SENSOR_ERROR,
+				     GCM_SENSOR_ERROR_NO_SUPPORT,
+				     "Cannot measure ambient light in this mode (turn dial!)");
+		goto out;
+	}
+
+/*
+ * ioctl(3, USBDEVFS_SUBMITURB or USBDEVFS_SUBMITURB32, {type=3, endpoint=129, status=0, flags=0, buffer_length=1096, actual_length=0, start_frame=0, number_of_packets=0, error_count=0, signr=0, usercontext=(nil), buffer=00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 ) = 0
+ * ioctl(3, USBDEVFS_CONTROL or USBDEVFS_CONTROL32, {requesttype=64, request=128, value=0, index=0, length=12, timeout=2000, data=00 00 01 00 b7 3e 00 00 02 00 00 00 ) = 12
+ * 
+ * ioctl(3, USBDEVFS_SUBMITURB or USBDEVFS_SUBMITURB32, {type=3, endpoint=129, status=0, flags=0, buffer_length=548, actual_length=0, start_frame=0, number_of_packets=0, error_count=0, signr=0, usercontext=(nil), buffer=d0 a3 9d 00 d0 a3 9d 00 00 00 00 00 00 00 00 00 00 d0 86 40 bf c6 fa 21 a4 4b 61 40 0b 24 0c d6 7a 29 04 40 91 3a 0e c7 f9 28 04 40 c0 b1 55 bc 9b 28 04 40 b9 d3 41 53 86 6a 07 40 df 23 db 4d 0c e3 06 40 20 5c bf 4d b2 53 05 40 5f 28 38 74 26 44 07 40 e9 45 b7 e4 2f a5 08 40 bb a2 87 d7 8c db 07 40 34 90 30 b1 f3 a1 06 40 b0 8f fa 63 84 98 05 40 35 1f 09 07 97 47 04 40 53 ac 8a be ) = 0
+ * 
+ * ioctl(3, USBDEVFS_REAPURBNDELAY or USBDEVFS_REAPURBNDELAY32, {type=3, endpoint=129, status=0, flags=0, buffer_length=548, actual_length=548, start_frame=0, number_of_packets=0, error_count=0, signr=0, usercontext=(nil), buffer=de 07 da 07 d6 07 d8 07 d6 07 16 08 29 0b 79 0d 22 12 f2 17 b4 1c 31 20 4b 22 e2 22 7b 22 a8 21 93 20 eb 1e 2d 1d fe 1b 1c 1b e5 19 69 19 c8 19 b5 19 8a 18 16 17 a4 15 86 14 ac 13 e8 12 22 12 20 12 bf 12 8e 13 d2 13 de 13 ea 13 fb 13 39 14 89 14 bd 14 ec 14 8b 15 78 16 69 17 99 18 ca 19 97 1a 14 1b 6f 1b b5 1b 7f 1c 98 1d 59 1e a9 1e af 1e 71 1e d2 1d db 1c c1 1b d4 1a 50 1a 46 1a }) = 0
+ * write(1, " Result is XYZ: 126.685284 136.9"..., 91 Result is XYZ: 126.685284 136.946975 206.789116, D50 Lab: 112.817679 -7.615524 -49.589593
+) = 91
+* write(1, " Ambient = 430.2 Lux, CCT = 1115"..., 54 Ambient = 430.2 Lux, CCT = 11152K (Delta E 9.399372)
+ */
+
+	/* success */
+	ret = TRUE;
+out:
+	return ret;
+}
+
+/**
  * gcm_sensor_colormunki_class_init:
  **/
 static void
@@ -305,7 +357,7 @@ gcm_sensor_colormunki_class_init (GcmSensorColormunkiClass *klass)
 	object_class->finalize = gcm_sensor_colormunki_finalize;
 
 	/* setup klass links */
-//	parent_class->get_ambient = gcm_sensor_colormunki_get_ambient;
+	parent_class->get_ambient = gcm_sensor_colormunki_get_ambient;
 //	parent_class->set_leds = gcm_sensor_colormunki_set_leds;
 //	parent_class->sample = gcm_sensor_colormunki_sample;
 	parent_class->startup = gcm_sensor_colormunki_startup;
