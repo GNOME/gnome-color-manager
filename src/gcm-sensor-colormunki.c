@@ -33,6 +33,7 @@
 
 #include "egg-debug.h"
 #include "gcm-common.h"
+#include "gcm-usb.h"
 #include "gcm-sensor-colormunki.h"
 
 static void     gcm_sensor_colormunki_finalize	(GObject     *object);
@@ -46,8 +47,8 @@ static void     gcm_sensor_colormunki_finalize	(GObject     *object);
  **/
 struct _GcmSensorColormunkiPrivate
 {
-	libusb_context			*ctx;
-	libusb_device_handle		*handle;
+	struct libusb_transfer		*transfer_interrupt;
+	GcmUsb				*usb;
 };
 
 G_DEFINE_TYPE (GcmSensorColormunki, gcm_sensor_colormunki, GCM_TYPE_SENSOR)
@@ -78,50 +79,85 @@ gcm_sensor_colormunki_print_data (const gchar *title, const guchar *data, gsize 
 	g_print ("%c[%dm\n", 0x1B, 0);
 }
 
-/**
- * gcm_sensor_colormunki_find_device:
- **/
-static gboolean
-gcm_sensor_colormunki_find_device (GcmSensorColormunki *sensor_colormunki, GError **error)
-{
-	gint retval;
-	gboolean ret = FALSE;
-	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
-
-	/* open device */
-	sensor_colormunki->priv->handle = libusb_open_device_with_vid_pid (priv->ctx, COLORMUNKI_VENDOR_ID, COLORMUNKI_PRODUCT_ID);
-	if (priv->handle == NULL) {
-		g_set_error (error, GCM_SENSOR_ERROR,
-			     GCM_SENSOR_ERROR_INTERNAL,
-			     "failed to open device: %s", libusb_strerror (retval));
-		goto out;
-	}
-
-	/* set configuration and interface */
-	retval = libusb_set_configuration (priv->handle, 1);
-	if (retval < 0) {
-		g_set_error (error, GCM_SENSOR_ERROR,
-			     GCM_SENSOR_ERROR_INTERNAL,
-			     "failed to set configuration: %s", libusb_strerror (retval));
-		goto out;
-	}
-	retval = libusb_claim_interface (priv->handle, 0);
-	if (retval < 0) {
-		g_set_error (error, GCM_SENSOR_ERROR,
-			     GCM_SENSOR_ERROR_INTERNAL,
-			     "failed to claim interface: %s", libusb_strerror (retval));
-		goto out;
-	}
-
-	/* success */
-	ret = TRUE;
-out:
-	return ret;
-}
-
 #define COLORMUNKI_COMMAND_DIAL_ROTATE		0x00
 #define COLORMUNKI_COMMAND_BUTTON_PRESSED	0x01
 #define COLORMUNKI_COMMAND_BUTTON_RELEASED	0x02
+
+static void
+gcm_sensor_colormunki_submit_transfer (GcmSensorColormunki *sensor_colormunki);
+
+/**
+ * gcm_sensor_colormunki_transfer_cb:
+ **/
+static void
+gcm_sensor_colormunki_transfer_cb (struct libusb_transfer *transfer)
+{
+	guint32 timestamp;
+	GcmSensorColormunki *sensor_colormunki = GCM_SENSOR_COLORMUNKI (transfer->user_data);
+	guint8 *reply = transfer->buffer;
+
+	if (transfer->status != LIBUSB_TRANSFER_COMPLETED) {
+		egg_warning ("did not succeed");
+		return;
+	}
+
+	/*
+	 *   subcmd ----\       /------------ 32 bit event time
+	 *  cmd ----|\ ||       || || || ||
+	 * Returns: 02 00 00 00 ac 62 07 00
+	 * always zero ---||-||
+	 *
+	 * cmd is:
+	 * 00	dial rotate
+	 * 01	button pressed
+	 * 02	button released
+	 *
+	 * subcmd is:
+	 * 00	button event
+	 * 01	dial rotate
+	 */
+	gcm_sensor_colormunki_print_data ("reply", reply, transfer->actual_length);
+	timestamp = (reply[7] << 24) + (reply[6] << 16) + (reply[5] << 8) + (reply[4] << 0);
+	/* we only care when the button is pressed */
+	if (reply[0] == COLORMUNKI_COMMAND_BUTTON_RELEASED) {
+		egg_debug ("ignoring button released");
+		goto out;
+	}
+
+	if (reply[0] == COLORMUNKI_COMMAND_DIAL_ROTATE) {
+		egg_warning ("dial rotate at %ims", timestamp);
+	} else if (reply[0] == COLORMUNKI_COMMAND_BUTTON_PRESSED) {
+		egg_debug ("button pressed at %ims", timestamp);
+		gcm_sensor_button_pressed (GCM_SENSOR (sensor_colormunki));
+	}
+
+out:
+	/* get the next bit of data */
+	gcm_sensor_colormunki_submit_transfer (sensor_colormunki);
+}
+
+/**
+ * gcm_sensor_colormunki_submit_transfer:
+ **/
+static void
+gcm_sensor_colormunki_submit_transfer (GcmSensorColormunki *sensor_colormunki)
+{
+	gint retval;
+	static guchar reply[8];
+	libusb_device_handle *handle;
+	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
+
+	handle = gcm_usb_get_device_handle (priv->usb);
+	libusb_fill_interrupt_transfer (priv->transfer_interrupt,
+					handle, 0x83, reply, 8,
+					gcm_sensor_colormunki_transfer_cb,
+					sensor_colormunki, -1);
+
+	egg_debug ("submitting transfer");
+	retval = libusb_submit_transfer (priv->transfer_interrupt);
+	if (retval < 0)
+		egg_warning ("failed to submit transfer: %s", libusb_strerror (retval));
+}
 
 /**
  * gcm_sensor_colormunki_playdo:
@@ -129,63 +165,11 @@ out:
 static gboolean
 gcm_sensor_colormunki_playdo (GcmSensor *sensor, GError **error)
 {
-	gint retval;
-	gsize reply_read;
-	guchar reply[8];
-	guint i;
-	guint32 event;
 	GcmSensorColormunki *sensor_colormunki = GCM_SENSOR_COLORMUNKI (sensor);
-	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
 
-	/* open device */
-	for (i=0; i<9999; i++) {
+	egg_debug ("submit transfer");
+	gcm_sensor_colormunki_submit_transfer (sensor_colormunki);
 
-		reply[0] = 0x00;
-		reply[1] = 0x00;
-		reply[2] = 0x00;
-		reply[3] = 0x00;
-		reply[4] = 0x00;
-		reply[5] = 0x00;
-		reply[6] = 0x00;
-		reply[7] = 0x00;
-
-		/*
-		 *   subcmd ----\       /------------ 32 bit event time
-		 *  cmd ----|\ ||       || || || ||
-		 * Returns: 02 00 00 00 ac 62 07 00
-		 * always zero ---||-||
-		 *
-		 * cmd is:
-		 * 00	dial rotate
-		 * 01	button pressed
-		 * 02	button released
-		 *
-		 * subcmd is:
-		 * 00	button event
-		 * 01	dial rotate
-		 */
- 		retval = libusb_interrupt_transfer (priv->handle, 0x83,
-						    reply, 8, (gint*)&reply_read,
-						    100000);
-		if (retval < 0) {
-			egg_error ("failed to get data");
-		}
-
-		event = (reply[7] << 24) + (reply[6] << 16) + (reply[5] << 8) + (reply[4] << 0);
-
-		gcm_sensor_colormunki_print_data ("reply", reply, reply_read);
-
-		/* we only care when the button is pressed */
-		if (reply[0] == COLORMUNKI_COMMAND_BUTTON_RELEASED) {
-			egg_debug ("ignoring button released");
-			continue;
-		}
-
-		if (reply[0] == COLORMUNKI_COMMAND_DIAL_ROTATE)
-			egg_warning ("dial rotate at %ims", event);
-		else if (reply[0] == COLORMUNKI_COMMAND_BUTTON_PRESSED)
-			egg_warning ("button pressed at %ims", event);
-	}
 	return TRUE;
 }
 
@@ -196,21 +180,18 @@ static gboolean
 gcm_sensor_colormunki_startup (GcmSensor *sensor, GError **error)
 {
 	gboolean ret = FALSE;
-	gint retval;
 	GcmSensorColormunki *sensor_colormunki = GCM_SENSOR_COLORMUNKI (sensor);
 	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
 
 	/* connect */
-	retval = libusb_init (&priv->ctx);
-	if (retval < 0) {
-		egg_warning ("failed to init libusb: %s", libusb_strerror (retval));
-		goto out;
-	}
-
-	/* find device */
-	ret = gcm_sensor_colormunki_find_device (sensor_colormunki, error);
+	ret = gcm_usb_connect (priv->usb,
+			       COLORMUNKI_VENDOR_ID, COLORMUNKI_PRODUCT_ID,
+			       0x01, 0x00, error);
 	if (!ret)
 		goto out;
+
+	/* attach to the default mainloop */
+	gcm_usb_attach_to_context (priv->usb, NULL);
 
 	/* find device */
 	ret = gcm_sensor_colormunki_playdo (sensor, error);
@@ -247,6 +228,8 @@ gcm_sensor_colormunki_init (GcmSensorColormunki *sensor)
 {
 	GcmSensorColormunkiPrivate *priv;
 	priv = sensor->priv = GCM_SENSOR_COLORMUNKI_GET_PRIVATE (sensor);
+	priv->transfer_interrupt = libusb_alloc_transfer (0);
+	priv->usb = gcm_usb_new ();
 }
 
 /**
@@ -258,10 +241,13 @@ gcm_sensor_colormunki_finalize (GObject *object)
 	GcmSensorColormunki *sensor = GCM_SENSOR_COLORMUNKI (object);
 	GcmSensorColormunkiPrivate *priv = sensor->priv;
 
-	/* close device */
-	libusb_close (priv->handle);
-	if (priv->ctx != NULL)
-		libusb_exit (priv->ctx);
+	/* FIXME: cancel transfer if it is in progress */
+
+	/* detach from the main loop */
+	g_object_unref (priv->usb);
+
+	/* free transfer */
+	libusb_free_transfer (priv->transfer_interrupt);
 
 	G_OBJECT_CLASS (gcm_sensor_colormunki_parent_class)->finalize (object);
 }

@@ -32,6 +32,16 @@
 #include "gcm-sensor-colormunki.h"
 
 /**
+ * gcm_sensor_example_loop_quit_cb:
+ **/
+static gboolean
+gcm_sensor_example_loop_quit_cb (GMainLoop *loop)
+{
+	g_main_loop_quit (loop);
+	return FALSE;
+}
+
+/**
  * main:
  **/
 int
@@ -43,6 +53,7 @@ main (int argc, char **argv)
 	GcmSensor *sensor;
 	gdouble value;
 	GcmColorXYZ values;
+	GMainLoop *loop;
 
 	context = g_option_context_new ("gnome-color-manager sensor example");
 	g_option_context_add_group (context, egg_debug_get_option_group ());
@@ -50,6 +61,11 @@ main (int argc, char **argv)
 	g_option_context_free (context);
 
 	g_type_init ();
+	g_thread_init (NULL);
+
+	/* spin the loop for a few seconds */
+	loop = g_main_loop_new (NULL, FALSE);
+	g_timeout_add_seconds (10, (GSourceFunc) gcm_sensor_example_loop_quit_cb, loop);
 
 	/* create new sensor */
 	sensor = gcm_sensor_colormunki_new ();
@@ -57,10 +73,21 @@ main (int argc, char **argv)
 	/* set mode */
 	gcm_sensor_set_output_type (sensor, GCM_SENSOR_OUTPUT_TYPE_LCD);
 
+	/* start sensor */
+	ret = gcm_sensor_startup (sensor, &error);
+	if (!ret) {
+		egg_warning ("failed to startup: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* spin the loop */
+	g_main_loop_run (loop);
+
 	/* get ambient */
 	ret = gcm_sensor_get_ambient (sensor, &value, &error);
 	if (!ret) {
-		g_warning ("failed to get ambient: %s", error->message);
+		egg_warning ("failed to get ambient: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -69,12 +96,14 @@ main (int argc, char **argv)
 	/* sample color */
 	ret = gcm_sensor_sample (sensor, &values, &error);
 	if (!ret) {
-		g_warning ("failed to measure: %s", error->message);
+		egg_warning ("failed to measure: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
 	g_debug ("X=%0.4lf, Y=%0.4lf, Z=%0.4lf", values.X, values.Y, values.Z);
+
 out:
+	g_main_loop_unref (loop);
 	g_object_unref (sensor);
 	return 0;
 }
