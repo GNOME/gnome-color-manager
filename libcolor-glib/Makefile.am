@@ -90,6 +90,8 @@ libcolor_glib_la_SOURCES =					\
 	gcm-enum.h						\
 	gcm-xyz.c						\
 	gcm-xyz.h						\
+	gcm-usb.c						\
+	gcm-usb.h						\
 	gcm-profile-store.c					\
 	gcm-profile-store.h					\
 	gcm-xserver.c						\

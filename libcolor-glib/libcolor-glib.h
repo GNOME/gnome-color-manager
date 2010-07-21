@@ -46,6 +46,7 @@
 #include <gcm-xserver.h>
 #include <gcm-brightness.h>
 #include <gcm-profile-store.h>
+#include <gcm-usb.h>
 
 #undef __LIBCOLOR_GLIB_H_INSIDE__
 

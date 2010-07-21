@@ -37,6 +37,7 @@
 #include "gcm-xyz.h"
 #include "gcm-dmi.h"
 #include "gcm-image.h"
+#include "gcm-usb.h"
 
 static void
 gcm_test_common_func (void)
@@ -577,7 +578,6 @@ gcm_test_brightness_func (void)
 	g_object_unref (brightness);
 }
 
-
 static void
 gcm_test_image_func (void)
 {
@@ -642,6 +642,35 @@ gcm_test_image_func (void)
 	gtk_widget_destroy (dialog);
 }
 
+static void
+gcm_test_usb_func (void)
+{
+	GcmUsb *usb;
+	gboolean ret;
+	GError *error = NULL;
+
+	usb = gcm_usb_new ();
+	g_assert (usb != NULL);
+	g_assert (!gcm_usb_get_connected (usb));
+	g_assert (gcm_usb_get_device_handle (usb) == NULL);
+
+	/* try to load */
+	ret = gcm_usb_load (usb, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* attach to the default mainloop */
+	gcm_usb_attach_to_context (usb, NULL);
+
+	/* connect to a non-existant device */
+	ret = gcm_usb_connect (usb, 0xffff, 0xffff, 0x1, 0x1, &error);
+	g_assert (!ret);
+	g_assert_error (error, GCM_USB_ERROR, GCM_USB_ERROR_INTERNAL);
+	g_error_free (error);
+
+	g_object_unref (usb);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -661,6 +690,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/libcolor-glib/xyz", gcm_test_xyz_func);
 	g_test_add_func ("/libcolor-glib/dmi", gcm_test_dmi_func);
 	g_test_add_func ("/libcolor-glib/profile_store", gcm_test_profile_store_func);
+	g_test_add_func ("/libcolor-glib/usb", gcm_test_usb_func);
 	if (g_test_thorough ()) {
 		g_test_add_func ("/libcolor-glib/brightness", gcm_test_brightness_func);
 		g_test_add_func ("/libcolor-glib/image", gcm_test_image_func);
