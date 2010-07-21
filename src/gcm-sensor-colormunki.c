@@ -165,11 +165,46 @@ gcm_sensor_colormunki_submit_transfer (GcmSensorColormunki *sensor_colormunki)
 static gboolean
 gcm_sensor_colormunki_playdo (GcmSensor *sensor, GError **error)
 {
+	gint retval;
+	static guchar request[2];
+	libusb_device_handle *handle;
+
 	GcmSensorColormunki *sensor_colormunki = GCM_SENSOR_COLORMUNKI (sensor);
+	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
 
 	egg_debug ("submit transfer");
 	gcm_sensor_colormunki_submit_transfer (sensor_colormunki);
 
+	/* do sync request */
+	handle = gcm_usb_get_device_handle (priv->usb);
+	retval = libusb_control_transfer (handle,
+					  LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_DEVICE,
+					  0x87, 0x00, 0,
+					  (guchar *) request, 2,
+					  2000);
+	if (retval < 0) {
+		g_set_error (error, GCM_SENSOR_ERROR,
+			     GCM_SENSOR_ERROR_INTERNAL,
+			     "failed to send request: %s", libusb_strerror (retval));
+		goto out;
+	}
+
+	if (request[0] == 0x00)
+		egg_warning ("PROJECTOR");
+	if (request[0] == 0x01)
+		egg_warning ("SPOT");
+	if (request[0] == 0x02)
+		egg_warning ("CAL");
+	if (request[0] == 0x03)
+		egg_warning ("AMBIENT");
+
+	if (request[1] == 0x00)
+		egg_warning ("BUTTON RELEASED");
+	if (request[1] == 0x01)
+		egg_warning ("BUTTON PRESSED");
+
+	gcm_sensor_colormunki_print_data ("reply", request, 2);
+out:
 	return TRUE;
 }
 
