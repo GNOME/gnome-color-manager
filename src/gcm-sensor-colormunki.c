@@ -33,6 +33,7 @@
 
 #include "egg-debug.h"
 #include "gcm-common.h"
+#include "gcm-buffer.h"
 #include "gcm-usb.h"
 #include "gcm-sensor-colormunki.h"
 
@@ -60,6 +61,13 @@ struct _GcmSensorColormunkiPrivate
 	struct libusb_transfer		*transfer_state;
 	GcmUsb				*usb;
 	GcmSensorColormunkiDialPosition	 dial_position;
+	gchar				*version_string;
+	gchar				*chip_id;
+	gchar				*firmware_revision;
+	guint32				 tick_duration;
+	guint32				 min_int;
+	guint32				 eeprom_blocks;
+	guint32				 eeprom_blocksize;
 };
 
 G_DEFINE_TYPE (GcmSensorColormunki, gcm_sensor_colormunki, GCM_TYPE_SENSOR)
@@ -279,7 +287,7 @@ gcm_sensor_colormunki_playdo (GcmSensor *sensor, GError **error)
 	egg_debug ("submit transfer");
 	gcm_sensor_colormunki_submit_transfer (sensor_colormunki);
 	ret = gcm_sensor_colormunki_refresh_state (sensor_colormunki, error);
-
+//out:
 	return ret;
 }
 
@@ -289,6 +297,9 @@ gcm_sensor_colormunki_playdo (GcmSensor *sensor, GError **error)
 static gboolean
 gcm_sensor_colormunki_startup (GcmSensor *sensor, GError **error)
 {
+	gint retval;
+	libusb_device_handle *handle;
+	guchar buffer[36];
 	gboolean ret = FALSE;
 	GcmSensorColormunki *sensor_colormunki = GCM_SENSOR_COLORMUNKI (sensor);
 	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
@@ -303,7 +314,59 @@ gcm_sensor_colormunki_startup (GcmSensor *sensor, GError **error)
 	/* attach to the default mainloop */
 	gcm_usb_attach_to_context (priv->usb, NULL);
 
-	/* find device */
+	/* get firmware parameters */
+	handle = gcm_usb_get_device_handle (priv->usb);
+	retval = libusb_control_transfer (handle,
+					  LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_DEVICE,
+					  0x86, 0, 0, buffer, 24, 2000);
+	if (retval < 0) {
+		g_set_error (error, GCM_SENSOR_ERROR,
+			     GCM_SENSOR_ERROR_NO_SUPPORT,
+			     "failed to get firmware parameters: %s",
+			     libusb_strerror (retval));
+		goto out;
+	}
+	priv->firmware_revision = g_strdup_printf ("%i.%i", gcm_buffer_read_uint16_le (buffer), gcm_buffer_read_uint16_le (buffer+4));
+	priv->tick_duration = gcm_buffer_read_uint16_le (buffer+8);
+	priv->min_int = gcm_buffer_read_uint16_le (buffer+0x0c);
+	priv->eeprom_blocks = gcm_buffer_read_uint16_le (buffer+0x10);
+	priv->eeprom_blocksize = gcm_buffer_read_uint16_le (buffer+0x14);
+
+	/* get chip ID */
+	retval = libusb_control_transfer (handle,
+					  LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_DEVICE,
+					  0x8A, 0, 0, buffer, 8, 2000);
+	if (retval < 0) {
+		g_set_error (error, GCM_SENSOR_ERROR,
+			     GCM_SENSOR_ERROR_NO_SUPPORT,
+			     "failed to get chip id parameters: %s",
+			     libusb_strerror (retval));
+		goto out;
+	}
+	priv->chip_id = g_strdup_printf ("%02x-%02x%02x%02x%02x%02x%02x%02x",
+					 buffer[0], buffer[1], buffer[2], buffer[3],
+					 buffer[4], buffer[5], buffer[6], buffer[7]);
+
+	/* get version string */
+	priv->version_string = g_new0 (gchar, 36);
+	retval = libusb_control_transfer (handle,
+					  LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_DEVICE,
+					  0x85, 0, 0, (guchar*) priv->version_string, 36, 2000);
+	if (retval < 0) {
+		g_set_error (error, GCM_SENSOR_ERROR,
+			     GCM_SENSOR_ERROR_NO_SUPPORT,
+			     "failed to get version string: %s",
+			     libusb_strerror (retval));
+		goto out;
+	}
+
+	/* print details */
+	egg_debug ("Chip ID\t%s", priv->chip_id);
+	egg_debug ("Version\t%s", priv->version_string);
+	egg_debug ("Firmware\tfirmware_revision=%s, tick_duration=%i, min_int=%i, eeprom_blocks=%i, eeprom_blocksize=%i",
+		   priv->firmware_revision, priv->tick_duration, priv->min_int, priv->eeprom_blocks, priv->eeprom_blocksize);
+
+	/* do unknown cool stuff */
 	ret = gcm_sensor_colormunki_playdo (sensor, error);
 	if (!ret)
 		goto out;
@@ -395,6 +458,9 @@ gcm_sensor_colormunki_finalize (GObject *object)
 	/* free transfers */
 	libusb_free_transfer (priv->transfer_interrupt);
 	libusb_free_transfer (priv->transfer_state);
+	g_free (priv->version_string);
+	g_free (priv->chip_id);
+	g_free (priv->firmware_revision);
 
 	G_OBJECT_CLASS (gcm_sensor_colormunki_parent_class)->finalize (object);
 }
