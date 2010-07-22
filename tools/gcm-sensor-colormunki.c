@@ -409,6 +409,30 @@ out:
 	return ret;
 }
 
+
+/**
+ * gcm_sensor_huey_dump:
+ **/
+static gboolean
+gcm_sensor_colormunki_dump (GcmSensor *sensor, GString *data, GError **error)
+{
+	gboolean ret = TRUE;
+	GcmSensorColormunki *sensor_colormunki = GCM_SENSOR_COLORMUNKI (sensor);
+	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
+
+	/* dump the unlock string */
+	g_string_append_printf (data, "colormunki-dump-version: %i\n", 1);
+	g_string_append_printf (data, "chip-id:%s", priv->chip_id);
+	g_string_append_printf (data, "version:%s", priv->version_string);
+	g_string_append_printf (data, "firmware-revision:%s", priv->firmware_revision);
+	g_string_append_printf (data, "tick-duration:%i", priv->tick_duration);
+	g_string_append_printf (data, "min-int:%i", priv->min_int);
+	g_string_append_printf (data, "eeprom-blocks:%i", priv->eeprom_blocks);
+	g_string_append_printf (data, "eeprom-blocksize:%i", priv->eeprom_blocksize);
+//out:
+	return ret;
+}
+
 /**
  * gcm_sensor_colormunki_class_init:
  **/
@@ -424,6 +448,7 @@ gcm_sensor_colormunki_class_init (GcmSensorColormunkiClass *klass)
 //	parent_class->set_leds = gcm_sensor_colormunki_set_leds;
 //	parent_class->sample = gcm_sensor_colormunki_sample;
 	parent_class->startup = gcm_sensor_colormunki_startup;
+	parent_class->dump = gcm_sensor_colormunki_dump;
 
 	g_type_class_add_private (klass, sizeof (GcmSensorColormunkiPrivate));
 }

@@ -404,11 +404,11 @@ gcm_sensor_dump (GcmSensor *sensor, GString *data, GError **error)
 
 	/* write common sensor details */
 	g_string_append (data, "// AUTOMATICALLY GENERATED -- DO NOT EDIT\n");
-	g_string_append_printf (data, "generic dump version: %i\n", 1);
-	g_string_append_printf (data, "kind: %s\n", gcm_sensor_kind_to_string (priv->kind));
-	g_string_append_printf (data, "vendor: %s\n", priv->vendor);
-	g_string_append_printf (data, "model: %s\n", priv->model);
-	g_string_append_printf (data, "device: %s\n", priv->device);
+	g_string_append_printf (data, "generic-dump-version:%i\n", 1);
+	g_string_append_printf (data, "kind:%s\n", gcm_sensor_kind_to_string (priv->kind));
+	g_string_append_printf (data, "vendor:%s\n", priv->vendor);
+	g_string_append_printf (data, "model:%s\n", priv->model);
+	g_string_append_printf (data, "device:%s\n", priv->device);
 
 	/* dump sensor */
 	if (klass->dump == NULL) {

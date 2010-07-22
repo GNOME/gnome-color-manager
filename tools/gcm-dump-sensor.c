@@ -39,6 +39,7 @@ main (int argc, char **argv)
 	GOptionContext *context;
 	GcmSensorClient *sensor_client;
 	GcmSensor *sensor;
+	gchar *filename = NULL;
 
 	setlocale (LC_ALL, "");
 
@@ -69,7 +70,8 @@ main (int argc, char **argv)
 	}
 
 	/* dump details */
-	g_print ("Dumping sensor details... ");
+	filename = g_strdup_printf ("./%s-sensor-dump.txt", gcm_sensor_kind_to_string (gcm_sensor_get_kind (sensor)));
+	g_print ("Dumping sensor details to %s... ", filename);
 	data = g_string_new ("");
 	ret = gcm_sensor_dump (sensor, data, &error);
 	if (!ret) {
@@ -79,7 +81,7 @@ main (int argc, char **argv)
 	}
 
 	/* write to file */
-	ret = g_file_set_contents ("./sensor-dump.txt", data->str, data->len, &error);
+	ret = g_file_set_contents (filename, data->str, data->len, &error);
 	if (!ret) {
 		g_print ("FAILED: Failed to write file: %s\n", error->message);
 		g_error_free (error);
@@ -89,6 +91,7 @@ main (int argc, char **argv)
 	/* success */
 	g_print ("SUCCESS!!\n");
 out:
+	g_free (filename);
 	if (data != NULL)
 		g_string_free (data, TRUE);
 	g_object_unref (sensor_client);
