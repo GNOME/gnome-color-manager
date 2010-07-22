@@ -173,7 +173,7 @@ main (int argc, char **argv)
 	g_option_context_free (context);
 
 	client = gcm_ddc_client_new ();
-	gcm_ddc_client_set_verbose (client, verbose);
+	gcm_ddc_client_set_verbose (client, verbose ? GCM_VERBOSE_PROTOCOL : GCM_VERBOSE_NONE);
 
 	/* we want to enumerate all devices */
 	if (enumerate) {
