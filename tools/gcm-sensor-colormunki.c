@@ -61,6 +61,7 @@ struct _GcmSensorColormunkiPrivate
 	struct libusb_transfer		*transfer_state;
 	GcmUsb				*usb;
 	GcmSensorColormunkiDialPosition	 dial_position;
+	gchar				*serial_number;
 	gchar				*version_string;
 	gchar				*chip_id;
 	gchar				*firmware_revision;
@@ -86,6 +87,8 @@ G_DEFINE_TYPE (GcmSensorColormunki, gcm_sensor_colormunki, GCM_TYPE_SENSOR)
 #define	COLORMUNKI_DIAL_POSITION_SURFACE	0x01
 #define	COLORMUNKI_DIAL_POSITION_CALIBRATION	0x02
 #define	COLORMUNKI_DIAL_POSITION_AMBIENT	0x03
+
+#define	COLORMUNKI_EEPROM_OFFSET_SERIAL_NUMBER	0x0018
 
 /**
  * gcm_sensor_colormunki_print_data:
@@ -436,8 +439,18 @@ gcm_sensor_colormunki_startup (GcmSensor *sensor, GError **error)
 		goto out;
 	}
 
+	/* get serial number */
+	priv->serial_number = g_new0 (gchar, 10);
+	ret = gcm_sensor_colormunki_get_eeprom_data (sensor_colormunki,
+						     COLORMUNKI_EEPROM_OFFSET_SERIAL_NUMBER,
+						     (guchar*)priv->serial_number,
+						     10, error);
+	if (!ret)
+		goto out;
+
 	/* print details */
 	egg_debug ("Chip ID\t%s", priv->chip_id);
+	egg_debug ("Serial number\t%s", priv->serial_number);
 	egg_debug ("Version\t%s", priv->version_string);
 	egg_debug ("Firmware\tfirmware_revision=%s, tick_duration=%i, min_int=%i, eeprom_blocks=%i, eeprom_blocksize=%i",
 		   priv->firmware_revision, priv->tick_duration, priv->min_int, priv->eeprom_blocks, priv->eeprom_blocksize);
@@ -500,13 +513,13 @@ gcm_sensor_colormunki_dump (GcmSensor *sensor, GString *data, GError **error)
 
 	/* dump the unlock string */
 	g_string_append_printf (data, "colormunki-dump-version: %i\n", 1);
-	g_string_append_printf (data, "chip-id:%s", priv->chip_id);
-	g_string_append_printf (data, "version:%s", priv->version_string);
-	g_string_append_printf (data, "firmware-revision:%s", priv->firmware_revision);
-	g_string_append_printf (data, "tick-duration:%i", priv->tick_duration);
-	g_string_append_printf (data, "min-int:%i", priv->min_int);
-	g_string_append_printf (data, "eeprom-blocks:%i", priv->eeprom_blocks);
-	g_string_append_printf (data, "eeprom-blocksize:%i", priv->eeprom_blocksize);
+	g_string_append_printf (data, "chip-id:%s\n", priv->chip_id);
+	g_string_append_printf (data, "version:%s\n", priv->version_string);
+	g_string_append_printf (data, "firmware-revision:%s\n", priv->firmware_revision);
+	g_string_append_printf (data, "tick-duration:%i\n", priv->tick_duration);
+	g_string_append_printf (data, "min-int:%i\n", priv->min_int);
+	g_string_append_printf (data, "eeprom-blocks:%i\n", priv->eeprom_blocks);
+	g_string_append_printf (data, "eeprom-blocksize:%i\n", priv->eeprom_blocksize);
 
 	/* allocate a big chunk o' memory */
 	buffer = g_new0 (guchar, priv->eeprom_blocksize);
@@ -522,7 +535,7 @@ gcm_sensor_colormunki_dump (GcmSensor *sensor, GString *data, GError **error)
 
 		/* write details */
 		for (j=0; j<priv->eeprom_blocksize; j++)
-			g_string_append_printf (data, "eeprom[0x%02x]:0x%02x\n", (i*priv->eeprom_blocksize) + j, buffer[j]);
+			g_string_append_printf (data, "eeprom[0x%04x]:0x%02x\n", (i*priv->eeprom_blocksize) + j, buffer[j]);
 	}
 out:
 	g_free (buffer);
@@ -582,6 +595,7 @@ gcm_sensor_colormunki_finalize (GObject *object)
 	g_free (priv->version_string);
 	g_free (priv->chip_id);
 	g_free (priv->firmware_revision);
+	g_free (priv->serial_number);
 
 	G_OBJECT_CLASS (gcm_sensor_colormunki_parent_class)->finalize (object);
 }
