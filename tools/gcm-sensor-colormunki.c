@@ -83,7 +83,7 @@ G_DEFINE_TYPE (GcmSensorColormunki, gcm_sensor_colormunki, GCM_TYPE_SENSOR)
 #define	COLORMUNKI_BUTTON_STATE_PRESSED		0x01
 
 #define	COLORMUNKI_DIAL_POSITION_PROJECTOR	0x00
-#define	COLORMUNKI_DIAL_POSITION_SURFACE		0x01
+#define	COLORMUNKI_DIAL_POSITION_SURFACE	0x01
 #define	COLORMUNKI_DIAL_POSITION_CALIBRATION	0x02
 #define	COLORMUNKI_DIAL_POSITION_AMBIENT	0x03
 
@@ -113,6 +113,7 @@ gcm_sensor_colormunki_print_data (const gchar *title, const guchar *data, gsize 
 static void
 gcm_sensor_colormunki_submit_transfer (GcmSensorColormunki *sensor_colormunki);
 
+
 /**
  * gcm_sensor_colormunki_refresh_state_transfer_cb:
  **/
@@ -125,7 +126,7 @@ gcm_sensor_colormunki_refresh_state_transfer_cb (struct libusb_transfer *transfe
 
 	if (transfer->status != LIBUSB_TRANSFER_COMPLETED) {
 		egg_warning ("did not succeed");
-		return;
+		goto out;
 	}
 
 	/*
@@ -163,7 +164,9 @@ gcm_sensor_colormunki_refresh_state_transfer_cb (struct libusb_transfer *transfe
 		egg_warning ("switch state unknown: 0x%02x", reply[1]);
 	}
 
-	gcm_sensor_colormunki_print_data ("reply", reply, transfer->actual_length);
+	gcm_sensor_colormunki_print_data ("reply", transfer->buffer + LIBUSB_CONTROL_SETUP_SIZE, transfer->actual_length);
+out:
+	g_free (transfer->buffer);
 }
 
 /**
@@ -174,7 +177,7 @@ gcm_sensor_colormunki_refresh_state (GcmSensorColormunki *sensor_colormunki, GEr
 {
 	gint retval;
 	gboolean ret = FALSE;
-	static guchar request[LIBUSB_CONTROL_SETUP_SIZE+2];
+	static guchar *request;
 	libusb_device_handle *handle;
 	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
 
@@ -182,6 +185,7 @@ gcm_sensor_colormunki_refresh_state (GcmSensorColormunki *sensor_colormunki, GEr
 	handle = gcm_usb_get_device_handle (priv->usb);
 
 	/* request new button state */
+	request = g_new0 (guchar, LIBUSB_CONTROL_SETUP_SIZE + 2);
 	libusb_fill_control_setup (request, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_DEVICE, 0x87, 0x00, 0, 2);
 	libusb_fill_control_transfer (priv->transfer_state, handle, request, &gcm_sensor_colormunki_refresh_state_transfer_cb, sensor_colormunki, 2000);
 
@@ -228,7 +232,7 @@ gcm_sensor_colormunki_transfer_cb (struct libusb_transfer *transfer)
 	 * 00	button event
 	 * 01	dial rotate
 	 */
-	gcm_sensor_colormunki_print_data ("reply", reply, transfer->actual_length);
+	gcm_sensor_colormunki_print_data ("reply", transfer->buffer + LIBUSB_CONTROL_SETUP_SIZE, transfer->actual_length);
 	timestamp = (reply[7] << 24) + (reply[6] << 16) + (reply[5] << 8) + (reply[4] << 0);
 	/* we only care when the button is pressed */
 	if (reply[0] == COLORMUNKI_COMMAND_BUTTON_RELEASED) {
@@ -248,6 +252,7 @@ gcm_sensor_colormunki_transfer_cb (struct libusb_transfer *transfer)
 
 out:
 	/* get the next bit of data */
+	g_free (transfer->buffer);
 	gcm_sensor_colormunki_submit_transfer (sensor_colormunki);
 }
 
@@ -258,10 +263,11 @@ static void
 gcm_sensor_colormunki_submit_transfer (GcmSensorColormunki *sensor_colormunki)
 {
 	gint retval;
-	static guchar reply[8];
+	guchar *reply;
 	libusb_device_handle *handle;
 	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
 
+	reply = g_new0 (guchar, 8);
 	handle = gcm_usb_get_device_handle (priv->usb);
 	libusb_fill_interrupt_transfer (priv->transfer_interrupt,
 					handle, 0x83, reply, 8,
