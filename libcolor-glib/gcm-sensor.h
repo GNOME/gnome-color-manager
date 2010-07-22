@@ -148,6 +148,9 @@ gboolean		 gcm_sensor_set_from_device	(GcmSensor		*sensor,
 void			 gcm_sensor_set_output_type	(GcmSensor		*sensor,
 							 GcmSensorOutputType	 output_type);
 GcmSensorOutputType	 gcm_sensor_get_output_type	(GcmSensor		*sensor);
+void			 gcm_sensor_set_serial_number	(GcmSensor		*sensor,
+							 const gchar		*serial_number);
+const gchar		*gcm_sensor_get_serial_number	(GcmSensor		*sensor);
 const gchar		*gcm_sensor_get_model		(GcmSensor		*sensor);
 const gchar		*gcm_sensor_get_vendor		(GcmSensor		*sensor);
 GcmSensorKind		 gcm_sensor_get_kind		(GcmSensor		*sensor);

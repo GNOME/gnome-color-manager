@@ -54,6 +54,7 @@ struct _GcmSensorPrivate
 	gboolean			 supports_spot;
 	gchar				*vendor;
 	gchar				*model;
+	gchar				*serial_number;
 	gchar				*device;
 };
 
@@ -62,6 +63,7 @@ enum {
 	PROP_NATIVE,
 	PROP_VENDOR,
 	PROP_MODEL,
+	PROP_SERIAL_NUMBER,
 	PROP_KIND,
 	PROP_SUPPORTS_DISPLAY,
 	PROP_SUPPORTS_PROJECTOR,
@@ -90,6 +92,35 @@ gcm_sensor_button_pressed (GcmSensor *sensor)
 {
 	egg_debug ("emit: button-pressed");
 	g_signal_emit (sensor, signals[SIGNAL_BUTTON_PRESSED], 0);
+}
+
+/**
+ * gcm_sensor_set_serial_number:
+ * @sensor: a valid #GcmSensor instance
+ * @serial_number: the serial number
+ *
+ * Sets the sensor serial number which can be used to uniquely identify
+ * the device.
+ **/
+void
+gcm_sensor_set_serial_number (GcmSensor *sensor, const gchar *serial_number)
+{
+	g_free (sensor->priv->serial_number);
+	sensor->priv->serial_number = g_strdup (serial_number);
+}
+
+/**
+ * gcm_sensor_get_serial_number:
+ * @sensor: a valid #GcmSensor instance
+ *
+ * Gets the sensor serial number.
+ *
+ * Return value: a string.
+ **/
+const gchar *
+gcm_sensor_get_serial_number (GcmSensor *sensor)
+{
+	return sensor->priv->serial_number;
 }
 
 /**
@@ -409,6 +440,7 @@ gcm_sensor_dump (GcmSensor *sensor, GString *data, GError **error)
 	g_string_append_printf (data, "kind:%s\n", gcm_sensor_kind_to_string (priv->kind));
 	g_string_append_printf (data, "vendor:%s\n", priv->vendor);
 	g_string_append_printf (data, "model:%s\n", priv->model);
+	g_string_append_printf (data, "serial-number:%s\n", priv->serial_number);
 	g_string_append_printf (data, "device:%s\n", priv->device);
 
 	/* dump sensor */
@@ -591,6 +623,9 @@ gcm_sensor_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_MODEL:
 		g_value_set_string (value, priv->model);
 		break;
+	case PROP_SERIAL_NUMBER:
+		g_value_set_string (value, priv->serial_number);
+		break;
 	case PROP_KIND:
 		g_value_set_uint (value, priv->kind);
 		break;
@@ -630,6 +665,9 @@ gcm_sensor_set_property (GObject *object, guint prop_id, const GValue *value, GP
 		break;
 	case PROP_KIND:
 		priv->kind = g_value_get_uint (value);
+		break;
+	case PROP_SERIAL_NUMBER:
+		gcm_sensor_set_serial_number (sensor, g_value_get_string (value));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -672,6 +710,14 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 				     NULL,
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_MODEL, pspec);
+
+	/**
+	 * GcmSensor:serial-number:
+	 */
+	pspec = g_param_spec_string ("serial-number", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_SERIAL_NUMBER, pspec);
 
 	/**
 	 * GcmSensor:kind:
@@ -758,6 +804,7 @@ gcm_sensor_finalize (GObject *object)
 	g_free (priv->device);
 	g_free (priv->vendor);
 	g_free (priv->model);
+	g_free (priv->serial_number);
 
 	G_OBJECT_CLASS (gcm_sensor_parent_class)->finalize (object);
 }
