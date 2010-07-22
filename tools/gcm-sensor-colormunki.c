@@ -281,14 +281,83 @@ gcm_sensor_colormunki_submit_transfer (GcmSensorColormunki *sensor_colormunki)
 }
 
 /**
+ * gcm_sensor_colormunki_get_eeprom_data:
+ **/
+static gboolean
+gcm_sensor_colormunki_get_eeprom_data (GcmSensorColormunki *sensor_colormunki,
+				       guint16 address, guchar *data, guint16 size, GError **error)
+{
+	gint retval;
+	libusb_device_handle *handle;
+	guchar request[8];
+	gsize reply_read = 0;
+	gboolean ret = FALSE;
+	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
+
+	/* do EEPROM request
+	 *
+	 *   address     length (in LE)
+	 *  ____|____   ____|____
+	 * /         \ /         \
+	 * 04 00 00 00 04 00 00 00
+	 */
+	gcm_buffer_write_uint16_le (request, address);
+	gcm_buffer_write_uint16_le (request + 4, size);
+	gcm_sensor_colormunki_print_data ("request", request, 8);
+	handle = gcm_usb_get_device_handle (priv->usb);
+	retval = libusb_control_transfer (handle,
+					  LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_DEVICE,
+					  0x81, 0, 0, request, 8, 2000);
+	if (retval < 0) {
+		g_set_error (error, GCM_SENSOR_ERROR,
+			     GCM_SENSOR_ERROR_NO_SUPPORT,
+			     "failed to request eeprom: %s",
+			     libusb_strerror (retval));
+		goto out;
+	}
+
+	/* read EEPROM */
+	retval = libusb_bulk_transfer (handle, 0x81,
+				       data, (gint) size, (gint*)&reply_read,
+				       5000);
+	if (retval < 0) {
+		g_set_error (error, GCM_SENSOR_ERROR,
+			     GCM_SENSOR_ERROR_NO_SUPPORT,
+			     "failed to get eeprom data: %s",
+			     libusb_strerror (retval));
+		goto out;
+	}
+	if (reply_read != size) {
+		g_set_error_literal (error, GCM_SENSOR_ERROR,
+				     GCM_SENSOR_ERROR_NO_SUPPORT,
+				     "did not get the correct number of bytes");
+		goto out;
+	}
+	gcm_sensor_colormunki_print_data ("reply", data, size);
+
+	/* success */
+	ret = TRUE;
+out:
+	return ret;
+}
+
+/**
  * gcm_sensor_colormunki_playdo:
  **/
 static gboolean
 gcm_sensor_colormunki_playdo (GcmSensor *sensor, GError **error)
 {
-	gboolean ret = TRUE;
+//	gint retval;
+//	gint i;
+//	libusb_device_handle *handle;
+//	guchar request[8];
+//	guchar *reply;
+//	gsize reply_read = 0;
+	gboolean ret = FALSE;
 	GcmSensorColormunki *sensor_colormunki = GCM_SENSOR_COLORMUNKI (sensor);
 //	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
+
+
 
 	egg_debug ("submit transfer");
 	gcm_sensor_colormunki_submit_transfer (sensor_colormunki);
@@ -422,6 +491,8 @@ out:
 static gboolean
 gcm_sensor_colormunki_dump (GcmSensor *sensor, GString *data, GError **error)
 {
+	guchar *buffer;
+	guint i, j;
 	gboolean ret = TRUE;
 	GcmSensorColormunki *sensor_colormunki = GCM_SENSOR_COLORMUNKI (sensor);
 	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
@@ -435,7 +506,25 @@ gcm_sensor_colormunki_dump (GcmSensor *sensor, GString *data, GError **error)
 	g_string_append_printf (data, "min-int:%i", priv->min_int);
 	g_string_append_printf (data, "eeprom-blocks:%i", priv->eeprom_blocks);
 	g_string_append_printf (data, "eeprom-blocksize:%i", priv->eeprom_blocksize);
-//out:
+
+	/* allocate a big chunk o' memory */
+	buffer = g_new0 (guchar, priv->eeprom_blocksize);
+
+	/* get all banks of EEPROM */
+	for (i=0; i<priv->eeprom_blocks; i++) {
+		ret = gcm_sensor_colormunki_get_eeprom_data (sensor_colormunki,
+							     i*priv->eeprom_blocksize,
+							     buffer, priv->eeprom_blocksize,
+							     error);
+		if (!ret)
+			goto out;
+
+		/* write details */
+		for (j=0; j<priv->eeprom_blocksize; j++)
+			g_string_append_printf (data, "eeprom[0x%02x]:0x%02x\n", (i*priv->eeprom_blocksize) + j, buffer[j]);
+	}
+out:
+	g_free (buffer);
 	return ret;
 }
 
