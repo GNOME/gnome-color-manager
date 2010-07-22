@@ -315,6 +315,7 @@ policy/Makefile
 po/Makefile.in
 rules/Makefile
 src/Makefile
+tools/Makefile
 docs/Makefile
 docs/huey/Makefile
 docs/api/Makefile

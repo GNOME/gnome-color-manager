@@ -28,7 +28,6 @@
 
 #include "egg-debug.h"
 
-#include "gcm-utils.h"
 #include "gcm-screen.h"
 #include "gcm-edid.h"
 
@@ -54,8 +53,7 @@ gcm_dump_edid_filename (const gchar *filename)
 	/* load */
 	ret = g_file_get_contents (filename, &data, NULL, &error);
 	if (!ret) {
-		/* TRANSLATORS: this is when the EDID file cannot be read */
-		g_print ("%s %s\n", _("Cannot load file contents:"), error->message);
+		g_print ("Cannot load file contents: %s\n", error->message);
 		goto out;
 	}
 
@@ -63,48 +61,33 @@ gcm_dump_edid_filename (const gchar *filename)
 	edid = gcm_edid_new ();
 	ret = gcm_edid_parse (edid, (const guint8 *) data, &error);
 	if (!ret) {
-		/* TRANSLATORS: this is when the EDID cannot be parsed */
-		g_print ("%s %s\n", _("Cannot parse EDID contents:"), error->message);
+		g_print ("Cannot parse EDID contents: %s\n", error->message);
 		goto out;
 	}
 
 	/* print data */
 	monitor_name = gcm_edid_get_monitor_name (edid);
-	if (monitor_name != NULL) {
-		/* TRANSLATORS: this is debugging output for the supplied EDID file */
-		g_print ("  %s %s\n", _("Monitor name:"), monitor_name);
-	}
+	if (monitor_name != NULL)
+		g_print ("  Monitor name: %s\n", monitor_name);
 	vendor_name = gcm_edid_get_vendor_name (edid);
-	if (vendor_name != NULL) {
-		/* TRANSLATORS: this is debugging output for the supplied EDID file */
-		g_print ("  %s %s\n", _("Vendor name:"), vendor_name);
-	}
+	if (vendor_name != NULL)
+		g_print ("  Vendor name: %s\n", vendor_name);
 	serial_number = gcm_edid_get_serial_number (edid);
-	if (serial_number != NULL) {
-		/* TRANSLATORS: this is debugging output for the supplied EDID file */
-		g_print ("  %s %s\n", _("Serial number:"), serial_number);
-	}
+	if (serial_number != NULL)
+		g_print ("  Serial number: %s\n", serial_number);
 	eisa_id = gcm_edid_get_eisa_id (edid);
-	if (eisa_id != NULL) {
-		/* TRANSLATORS: this is debugging output for the supplied EDID file */
-		g_print ("  %s %s\n", _("EISA ID:"), eisa_id);
-	}
+	if (eisa_id != NULL)
+		g_print ("  EISA ID: %s\n", eisa_id);
 	pnp_id = gcm_edid_get_pnp_id (edid);
-	if (pnp_id != NULL) {
-		/* TRANSLATORS: this is debugging output for the supplied EDID file */
-		g_print ("  %s %s\n", _("PNP identifier:"), pnp_id);
-	}
+	if (pnp_id != NULL)
+		g_print ("  %s %s\n", "PNP identifier:", pnp_id);
 	width = gcm_edid_get_width (edid);
 	height = gcm_edid_get_height (edid);
-	if (width != 0) {
-		/* TRANSLATORS: this is debugging output for the supplied EDID file */
-		g_print ("  %s %ix%i\n", _("Size:"), width, height);
-	}
+	if (width != 0)
+		g_print ("  Size: %ix%i\n", "", width, height);
 	gamma = gcm_edid_get_gamma (edid);
-	if (gamma > 0.0f) {
-		/* TRANSLATORS: this is debugging output for the supplied EDID file */
-		g_print ("  %s %f\n", _("Gamma:"), gamma);
-	}
+	if (gamma > 0.0f)
+		g_print ("  Gamma: %f\n", gamma);
 out:
 	if (edid != NULL)
 		g_object_unref (edid);
@@ -132,8 +115,7 @@ main (int argc, char **argv)
 
 	const GOptionEntry options[] = {
 		{ G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &files,
-		  /* TRANSLATORS: command line option: a list of files to parse */
-		  _("EDID dumps to parse"), NULL },
+		  "EDID dumps to parse", NULL },
 		{ NULL}
 	};
 
@@ -155,8 +137,7 @@ main (int argc, char **argv)
 	/* we've specified files, just parse them */
 	if (files != NULL) {
 		for (i=0; files[i] != NULL; i++) {
-			/* TRANSLATORS: this is the filename we are displaying */
-			g_print ("%s %s\n", _("EDID dump:"), files[i]);
+			g_print ("EDID dump: %s\n", files[i]);
 			gcm_dump_edid_filename (files[i]);
 		}
 		goto out;
@@ -192,14 +173,11 @@ main (int argc, char **argv)
 		/* save to disk */
 		ret = g_file_set_contents (filename, (const gchar *) data, 0x80, &error);
 		if (ret) {
-			/* TRANSLATORS: we saved the EDID to a file - second parameter is a filename */
-			g_print (_("Saved %i bytes to %s"), 128, filename);
+			g_print "Saved %i bytes to %s", 128, filename);
 			g_print ("\n");
 			gcm_dump_edid_filename (filename);
 		} else {
-			/* TRANSLATORS: we saved the EDID to a file - parameter is a filename */
-			g_print (_("Failed to save EDID to %s"), filename);
-			g_print (": %s\n", error->message);
+			g_print ("Failed to save EDID to %s: %s\n", filename, error->message);
 			/* non-fatal */
 			g_clear_error (&error);
 		}

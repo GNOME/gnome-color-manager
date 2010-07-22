@@ -25,8 +25,6 @@
 #include <gtk/gtk.h>
 #include <locale.h>
 
-#include "egg-debug.h"
-
 #include "gcm-enum.h"
 #include "gcm-profile.h"
 
@@ -55,7 +53,7 @@ gcm_dump_profile_filename (const gchar *filename)
 	file = g_file_new_for_path (filename);
 	ret = gcm_profile_parse (profile, file, &error);
 	if (!ret) {
-		egg_warning ("failed to parse: %s", error->message);
+		g_warning ("failed to parse: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -104,8 +102,7 @@ main (int argc, char **argv)
 
 	const GOptionEntry options[] = {
 		{ G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &files,
-		  /* TRANSLATORS: command line option: a list of files to install */
-		  _("Profiles to view"), NULL },
+		  "Profiles to view", NULL },
 		{ NULL}
 	};
 
@@ -117,10 +114,8 @@ main (int argc, char **argv)
 
 	gtk_init (&argc, &argv);
 
-	/* TRANSLATORS: this just dumps the profile to the screen */
-	context = g_option_context_new (_("ICC profile dump program"));
+	context = g_option_context_new ("ICC profile dump program");
 	g_option_context_add_main_entries (context, options, NULL);
-	g_option_context_add_group (context, egg_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);

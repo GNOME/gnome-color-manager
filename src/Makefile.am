@@ -90,16 +90,11 @@ sbin_PROGRAMS =						\
 
 bin_PROGRAMS =						\
 	gcm-inspect					\
-	gcm-dump-profile				\
-	gcm-fix-profile					\
-	gcm-dump-edid					\
 	gcm-apply					\
 	gcm-viewer					\
 	gcm-session					\
 	gcm-picker					\
-	gcm-ddc-util					\
-	gcm-import					\
-	gcm-sensor-example
+	gcm-import
 
 if HAVE_EXIV
 libexec_PROGRAMS = gcm-helper-exiv
@@ -115,59 +110,6 @@ gcm_install_system_wide_LDADD =				\
 	$(GLIB_LIBS)
 
 gcm_install_system_wide_CFLAGS =			\
-	$(WARNINGFLAGS_C)
-
-gcm_dump_edid_SOURCES =					\
-	gcm-dump-edid.c
-
-gcm_dump_edid_LDADD =					\
-	libgcmshared.a					\
-	$(GLIB_LIBS)					\
-	$(X11_LIBS)					\
-	$(GNOMEDESKTOP_LIBS)				\
-	$(GUDEV_LIBS)					\
-	$(XORG_LIBS)					\
-	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
-	$(COLOR_GLIB_LIBS)				\
-	-lm
-
-gcm_dump_edid_CFLAGS =					\
-	$(WARNINGFLAGS_C)
-
-gcm_dump_profile_SOURCES =				\
-	gcm-dump-profile.c
-
-gcm_dump_profile_LDADD =				\
-	libgcmshared.a					\
-	$(GLIB_LIBS)					\
-	$(X11_LIBS)					\
-	$(GNOMEDESKTOP_LIBS)				\
-	$(GUDEV_LIBS)					\
-	$(XORG_LIBS)					\
-	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
-	$(COLOR_GLIB_LIBS)				\
-	-lm
-
-gcm_dump_profile_CFLAGS =				\
-	$(WARNINGFLAGS_C)
-
-gcm_fix_profile_SOURCES =				\
-	gcm-fix-profile.c
-
-gcm_fix_profile_LDADD =					\
-	$(GLIB_LIBS)					\
-	$(X11_LIBS)					\
-	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
-	$(LCMS_LIBS)					\
-	-lm
-
-gcm_fix_profile_CFLAGS =				\
 	$(WARNINGFLAGS_C)
 
 gcm_inspect_SOURCES =					\
@@ -326,16 +268,6 @@ libcolor_la_CFLAGS = $(WARNINGFLAGS_C)
 COLOR_GLIB_LIBS =						\
 	$(top_builddir)/libcolor-glib/libcolor-glib.la
 
-gcm_ddc_util_SOURCES =					\
-	gcm-ddc-util.c
-
-gcm_ddc_util_LDADD =					\
-	$(GLIB_LIBS)					\
-	$(COLOR_GLIB_LIBS)
-
-gcm_ddc_util_CFLAGS =					\
-	$(WARNINGFLAGS_C)
-
 if HAVE_TESTS
 
 check_PROGRAMS =					\
@@ -370,19 +302,6 @@ install-data-hook:
 	if test -w $(DESTDIR)$(prefix)/; then \
 		mkdir -p $(DESTDIR)$(GCM_SYSTEM_PROFILES_DIR); \
 	fi
-
-gcm_sensor_example_SOURCES =				\
-	gcm-sensor-colormunki.c				\
-	gcm-sensor-colormunki.h				\
-	gcm-sensor-example.c
-
-gcm_sensor_example_LDADD =				\
-	libgcmshared.a					\
-	$(GLIB_LIBS)					\
-	$(COLOR_GLIB_LIBS)
-
-gcm_sensor_example_CFLAGS =				\
-	$(WARNINGFLAGS_C)
 
 clean-local:
 	rm -f *~

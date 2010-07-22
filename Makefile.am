@@ -7,6 +7,7 @@ SUBDIRS = 						\
 	po						\
 	policy						\
 	rules						\
+	tools						\
 	src
 
 snapshot:

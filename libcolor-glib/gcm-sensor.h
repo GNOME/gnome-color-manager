@@ -65,6 +65,9 @@ struct _GcmSensorClass
 							 GError		**error);
 	gboolean	 (*startup)			(GcmSensor	*sensor,
 							 GError		**error);
+	gboolean	 (*dump)			(GcmSensor	*sensor,
+							 GString	*data,
+							 GError		**error);
 	/* signals */
 	void		(* button_pressed)		(void);
 	/* padding for future expansion */
@@ -125,6 +128,9 @@ GType			 gcm_sensor_get_type		(void);
 GcmSensor		*gcm_sensor_new			(void);
 
 void			 gcm_sensor_button_pressed	(GcmSensor		*sensor);
+gboolean		 gcm_sensor_dump		(GcmSensor		*sensor,
+							 GString		*data,
+							 GError			**error);
 gboolean		 gcm_sensor_get_ambient		(GcmSensor		*sensor,
 							 gdouble		*value,
 							 GError			**error);

@@ -379,6 +379,56 @@ out:
 }
 
 /**
+ * gcm_sensor_dump:
+ * @sensor: a valid #GcmSensor instance
+ * @data: A valid #GString for the returned data
+ * @error: a #GError or %NULL
+ *
+ * Dumps the unstructured device data to a string.
+ *
+ * Return value: %TRUE for success.
+ **/
+gboolean
+gcm_sensor_dump (GcmSensor *sensor, GString *data, GError **error)
+{
+	GcmSensorClass *klass = GCM_SENSOR_GET_CLASS (sensor);
+	GcmSensorPrivate *priv = sensor->priv;
+	gboolean ret = FALSE;
+
+	/* do startup if not yet done */
+	if (!sensor->priv->done_startup) {
+		ret = gcm_sensor_startup (sensor, error);
+		if (!ret)
+			goto out;
+	}
+
+	/* write common sensor details */
+	g_string_append (data, "AUTOMATICALLY GENERATED -- DO NOT EDIT\n");
+	g_string_append_printf (data, "generic dump version: %i\n", 1);
+	g_string_append_printf (data, "kind: %s\n", gcm_sensor_kind_to_string (priv->kind));
+	g_string_append_printf (data, "vendor: %s\n", priv->vendor);
+	g_string_append_printf (data, "model: %s\n", priv->model);
+	g_string_append_printf (data, "device: %s\n", priv->device);
+	g_string_append (data, "\n");
+
+	/* dump sensor */
+	g_string_append (data, "device specific data:\n");
+	if (klass->dump == NULL) {
+		ret = FALSE;
+		g_set_error_literal (error,
+				     GCM_SENSOR_ERROR,
+				     GCM_SENSOR_ERROR_INTERNAL,
+				     "no klass support");
+		goto out;
+	}
+
+	/* proxy */
+	ret = klass->dump (sensor, data, error);
+out:
+	return ret;
+}
+
+/**
  * gcm_sensor_sample:
  * @sensor: a valid #GcmSensor instance
  * @value: The returned value

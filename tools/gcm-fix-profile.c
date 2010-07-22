@@ -136,20 +136,15 @@ main (int argc, char **argv)
 
 	const GOptionEntry options[] = {
 		{ "description", 'd', 0, G_OPTION_ARG_STRING, &description,
-		  /* TRANSLATORS: command line option */
-		  _("The description of the profile"), NULL },
+		  "The description of the profile", NULL },
 		{ "copyright", 'c', 0, G_OPTION_ARG_STRING, &copyright,
-		  /* TRANSLATORS: command line option */
-		  _("The copyright of the profile"), NULL },
+		  "The copyright of the profile", NULL },
 		{ "model", 'm', 0, G_OPTION_ARG_STRING, &model,
-		  /* TRANSLATORS: command line option */
-		  _("The model of the profile"), NULL },
+		  "The model of the profile", NULL },
 		{ "manufacturer", 'n', 0, G_OPTION_ARG_STRING, &manufacturer,
-		  /* TRANSLATORS: command line option */
-		  _("The manufacturer of the profile"), NULL },
+		  "The manufacturer of the profile", NULL },
 		{ G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &files,
-		  /* TRANSLATORS: command line option: a list of icc files to fix */
-		  _("Profiles to fix"), NULL },
+		  "Profiles to fix", NULL },
 		{ NULL}
 	};
 
@@ -159,8 +154,7 @@ main (int argc, char **argv)
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
-	/* TRANSLATORS: this fixes broken profiles */
-	context = g_option_context_new (_("ICC profile fix program"));
+	context = g_option_context_new ("ICC profile fix program");
 	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);

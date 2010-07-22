@@ -808,6 +808,34 @@ out:
 }
 
 /**
+ * gcm_sensor_huey_dump:
+ **/
+static gboolean
+gcm_sensor_huey_dump (GcmSensor *sensor, GString *data, GError **error)
+{
+	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
+	GcmSensorHueyPrivate *priv = sensor_huey->priv;
+	gboolean ret;
+	guint i;
+	guint8 value;
+
+	/* dump the unlock string */
+	g_string_append_printf (data, "huey dump version: %i\n", 1);
+	g_string_printf (data, "unlock string: %s\n", priv->unlock_string);
+
+	/* read all the register space */
+	for (i=0; i<0xff; i++) {
+		ret = gcm_sensor_huey_read_register_byte (sensor_huey, i, &value, error);
+		if (!ret)
+			goto out;
+		/* write details */
+		g_string_append_printf (data, "0x%02x: 0x%02x\n", i, value);
+	}
+out:
+	return ret;
+}
+
+/**
  * gcm_sensor_huey_class_init:
  **/
 static void
@@ -822,6 +850,7 @@ gcm_sensor_huey_class_init (GcmSensorHueyClass *klass)
 	parent_class->set_leds = gcm_sensor_huey_set_leds;
 	parent_class->sample = gcm_sensor_huey_sample;
 	parent_class->startup = gcm_sensor_huey_startup;
+	parent_class->dump = gcm_sensor_huey_dump;
 
 	g_type_class_add_private (klass, sizeof (GcmSensorHueyPrivate));
 }
