@@ -301,8 +301,9 @@ gcm_sensor_colormunki_get_eeprom_data (GcmSensorColormunki *sensor_colormunki,
 	 * /         \ /         \
 	 * 04 00 00 00 04 00 00 00
 	 */
-	gcm_buffer_write_uint16_le (request, address);
-	gcm_buffer_write_uint16_le (request + 4, size);
+	egg_debug ("get EEPROM at 0x%04x for %i", address, size);
+	gcm_buffer_write_uint32_le (request, address);
+	gcm_buffer_write_uint32_le (request + 4, size);
 	gcm_sensor_colormunki_print_data ("request", request, 8);
 	handle = gcm_usb_get_device_handle (priv->usb);
 	retval = libusb_control_transfer (handle,

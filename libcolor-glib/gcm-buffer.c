@@ -91,3 +91,67 @@ gcm_buffer_read_uint16_le (const guchar *buffer)
 {
 	return GUINT16_FROM_LE (*(guint16*)buffer);
 }
+
+/**
+ * gcm_buffer_write_uint32_be:
+ * @data: the writable data buffer
+ * @value: the value to write
+ *
+ * Writes a big endian value into a data buffer.
+ * NOTE: No validation is done on the buffer to ensure it's big enough.
+ **/
+void
+gcm_buffer_write_uint32_be (guchar *buffer, guint32 value)
+{
+	buffer[0] = (value >> 24) & 0xff;
+	buffer[1] = (value >> 16) & 0xff;
+	buffer[2] = (value >> 8) & 0xff;
+	buffer[3] = (value >> 0) & 0xff;
+}
+
+/**
+ * gcm_buffer_write_uint32_le:
+ * @data: the writable data buffer
+ * @value: the value to write
+ *
+ * Writes a little endian value into a data buffer.
+ * NOTE: No validation is done on the buffer to ensure it's big enough.
+ **/
+void
+gcm_buffer_write_uint32_le (guchar *buffer, guint32 value)
+{
+	buffer[0] = (value >> 0) & 0xff;
+	buffer[1] = (value >> 8) & 0xff;
+	buffer[2] = (value >> 16) & 0xff;
+	buffer[3] = (value >> 24) & 0xff;
+}
+
+/**
+ * gcm_buffer_read_uint32_be:
+ * @data: the writable data buffer
+ *
+ * Reads a big endian value from a data buffer.
+ * NOTE: No validation is done on the buffer to ensure it's valid.
+ *
+ * Return value: the value to read.
+ **/
+guint32
+gcm_buffer_read_uint32_be (const guchar *buffer)
+{
+	return GUINT32_FROM_BE (*(guint32*)buffer);
+}
+
+/**
+ * gcm_buffer_read_uint32_le:
+ * @data: the writable data buffer
+ *
+ * Reads a big endian value from a data buffer.
+ * NOTE: No validation is done on the buffer to ensure it's valid.
+ *
+ * Return value: the value to read.
+ **/
+guint32
+gcm_buffer_read_uint32_le (const guchar *buffer)
+{
+	return GUINT32_FROM_LE (*(guint32*)buffer);
+}

@@ -34,6 +34,13 @@ void		 gcm_buffer_write_uint16_be		(guchar			*buffer,
 							 guint16		 value);
 void		 gcm_buffer_write_uint16_le		(guchar			*buffer,
 							 guint16		 value);
+guint32		 gcm_buffer_read_uint32_be		(const guchar		*buffer);
+guint32		 gcm_buffer_read_uint32_le		(const guchar		*buffer);
+void		 gcm_buffer_write_uint32_be		(guchar			*buffer,
+							 guint32		 value);
+void		 gcm_buffer_write_uint32_le		(guchar			*buffer,
+							 guint32		 value);
+
 
 #undef __GCM_BUFFER_H_INSIDE__
 
