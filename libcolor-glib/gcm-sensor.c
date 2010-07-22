@@ -271,7 +271,8 @@ gcm_sensor_set_from_device (GcmSensor *sensor, GUdevDevice *device, GError **err
 
 	/* try to get type */
 	kind_str = g_udev_device_get_property (device, "GCM_KIND");
-	priv->kind = gcm_sensor_kind_from_string (kind_str);
+	if (priv->kind == GCM_SENSOR_KIND_UNKNOWN)
+		priv->kind = gcm_sensor_kind_from_string (kind_str);
 	if (priv->kind == GCM_SENSOR_KIND_UNKNOWN)
 		egg_warning ("Failed to recognize color device: %s", priv->model);
 
@@ -591,7 +592,7 @@ gcm_sensor_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 		g_value_set_string (value, priv->model);
 		break;
 	case PROP_KIND:
-		g_value_set_boolean (value, priv->kind);
+		g_value_set_uint (value, priv->kind);
 		break;
 	case PROP_SUPPORTS_DISPLAY:
 		g_value_set_boolean (value, priv->supports_display);
@@ -627,6 +628,9 @@ gcm_sensor_set_property (GObject *object, guint prop_id, const GValue *value, GP
 	case PROP_NATIVE:
 		priv->native = g_value_get_boolean (value);
 		break;
+	case PROP_KIND:
+		priv->kind = g_value_get_uint (value);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -650,7 +654,7 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 	 */
 	pspec = g_param_spec_boolean ("native", NULL, NULL,
 				      FALSE,
-				      G_PARAM_READWRITE);
+				      G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 	g_object_class_install_property (object_class, PROP_NATIVE, pspec);
 
 	/**
@@ -674,7 +678,7 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 	 */
 	pspec = g_param_spec_uint ("kind", NULL, NULL,
 				   0, G_MAXUINT, GCM_SENSOR_KIND_UNKNOWN,
-				   G_PARAM_READABLE);
+				   G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 	g_object_class_install_property (object_class, PROP_KIND, pspec);
 
 	/**

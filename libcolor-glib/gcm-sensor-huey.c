@@ -894,6 +894,7 @@ gcm_sensor_huey_new (void)
 	GcmSensorHuey *sensor;
 	sensor = g_object_new (GCM_TYPE_SENSOR_HUEY,
 			       "native", TRUE,
+			       "kind", GCM_SENSOR_KIND_HUEY,
 			       NULL);
 	return GCM_SENSOR (sensor);
 }

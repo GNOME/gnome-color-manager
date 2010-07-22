@@ -596,6 +596,7 @@ gcm_sensor_colormunki_new (void)
 	GcmSensorColormunki *sensor;
 	sensor = g_object_new (GCM_TYPE_SENSOR_COLORMUNKI,
 			       "native", TRUE,
+			       "kind", GCM_SENSOR_KIND_COLOR_MUNKI,
 			       NULL);
 	return GCM_SENSOR (sensor);
 }
