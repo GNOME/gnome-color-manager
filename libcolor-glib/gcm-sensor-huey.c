@@ -33,6 +33,7 @@
 
 #include "egg-debug.h"
 
+#include "gcm-buffer.h"
 #include "gcm-usb.h"
 #include "gcm-common.h"
 #include "gcm-sensor-huey.h"
@@ -598,16 +599,6 @@ gcm_sensor_huey_set_leds (GcmSensor *sensor, guint8 value, GError **error)
 	return gcm_sensor_huey_send_data (sensor_huey, payload, 8, reply, 8, &reply_read, error);
 }
 
-/**
- * gcm_sensor_huey_write_uint16:
- **/
-static void
-gcm_sensor_huey_write_uint16 (guchar *data, guint16 value)
-{
-	data[0] = (value >> 8) & 0xff;
-	data[1] = (value >> 0) & 0xff;
-}
-
 typedef struct {
 	guint16	R;
 	guint16	G;
@@ -626,9 +617,9 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 	gsize reply_read;
 
 	/* these are 16 bit gain values */
-	gcm_sensor_huey_write_uint16 (request + 1, threshold->R);
-	gcm_sensor_huey_write_uint16 (request + 3, threshold->G);
-	gcm_sensor_huey_write_uint16 (request + 5, threshold->B);
+	gcm_buffer_write_uint16_be (request + 1, threshold->R);
+	gcm_buffer_write_uint16_be (request + 3, threshold->G);
+	gcm_buffer_write_uint16_be (request + 5, threshold->B);
 
 	/* measure, and get red */
 	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);

@@ -38,6 +38,7 @@
 #include "gcm-dmi.h"
 #include "gcm-image.h"
 #include "gcm-usb.h"
+#include "gcm-buffer.h"
 
 static void
 gcm_test_common_func (void)
@@ -671,6 +672,22 @@ gcm_test_usb_func (void)
 	g_object_unref (usb);
 }
 
+static void
+gcm_test_buffer_func (void)
+{
+	guchar buffer[4];
+
+	gcm_buffer_write_uint16_be (buffer, 255);
+	g_assert_cmpint (buffer[0], ==, 0x00);
+	g_assert_cmpint (buffer[1], ==, 0xff);
+	g_assert_cmpint (gcm_buffer_read_uint16_be (buffer), ==, 255);
+
+	gcm_buffer_write_uint16_le (buffer, 8192);
+	g_assert_cmpint (buffer[0], ==, 0x00);
+	g_assert_cmpint (buffer[1], ==, 0x20);
+	g_assert_cmpint (gcm_buffer_read_uint16_le (buffer), ==, 8192);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -691,6 +708,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/libcolor-glib/dmi", gcm_test_dmi_func);
 	g_test_add_func ("/libcolor-glib/profile_store", gcm_test_profile_store_func);
 	g_test_add_func ("/libcolor-glib/usb", gcm_test_usb_func);
+	g_test_add_func ("/libcolor-glib/buffer", gcm_test_buffer_func);
 	if (g_test_thorough ()) {
 		g_test_add_func ("/libcolor-glib/brightness", gcm_test_brightness_func);
 		g_test_add_func ("/libcolor-glib/image", gcm_test_image_func);

@@ -72,6 +72,8 @@ libcolor_glib_la_SOURCES =					\
 	gcm-edid.h						\
 	gcm-dmi.c						\
 	gcm-dmi.h						\
+	gcm-buffer.c						\
+	gcm-buffer.h						\
 	gcm-profile.c						\
 	gcm-profile.h						\
 	gcm-clut.c						\
