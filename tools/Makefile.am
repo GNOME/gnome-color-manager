@@ -2,14 +2,6 @@ INCLUDES =						\
 	$(GLIB_CFLAGS)					\
 	$(X11_CFLAGS)					\
 	$(GTK_CFLAGS)					\
-	$(GNOMEDESKTOP_CFLAGS)				\
-	$(VTE_CFLAGS)					\
-	$(XORG_CFLAGS)					\
-	$(CUPS_CFLAGS)					\
-	$(SANE_CFLAGS)					\
-	$(TIFF_CFLAGS)					\
-	$(EXIF_CFLAGS)					\
-	$(EXIV_CFLAGS)					\
 	$(NOTIFY_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
 	$(CONTROL_CENTER_CFLAGS)			\
@@ -32,6 +24,7 @@ INCLUDES =						\
 
 noinst_PROGRAMS =					\
 	gcm-dump-profile				\
+	gcm-dump-sensor					\
 	gcm-fix-profile					\
 	gcm-ddc-util					\
 	gcm-sensor-example
@@ -41,14 +34,6 @@ gcm_dump_edid_SOURCES =					\
 	gcm-dump-edid.c
 
 gcm_dump_edid_LDADD =					\
-	$(GLIB_LIBS)					\
-	$(X11_LIBS)					\
-	$(GNOMEDESKTOP_LIBS)				\
-	$(GUDEV_LIBS)					\
-	$(XORG_LIBS)					\
-	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
 	$(COLOR_GLIB_LIBS)				\
 	-lm
 
@@ -60,18 +45,20 @@ gcm_dump_profile_SOURCES =				\
 	gcm-dump-profile.c
 
 gcm_dump_profile_LDADD =				\
-	$(GLIB_LIBS)					\
-	$(X11_LIBS)					\
-	$(GNOMEDESKTOP_LIBS)				\
-	$(GUDEV_LIBS)					\
-	$(XORG_LIBS)					\
-	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
 	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_dump_profile_CFLAGS =				\
+	$(WARNINGFLAGS_C)
+
+gcm_dump_sensor_SOURCES =				\
+	gcm-dump-sensor.c
+
+gcm_dump_sensor_LDADD =					\
+	$(COLOR_GLIB_LIBS)				\
+	-lm
+
+gcm_dump_sensor_CFLAGS =				\
 	$(WARNINGFLAGS_C)
 
 gcm_fix_profile_SOURCES =				\
@@ -79,10 +66,6 @@ gcm_fix_profile_SOURCES =				\
 
 gcm_fix_profile_LDADD =					\
 	$(GLIB_LIBS)					\
-	$(X11_LIBS)					\
-	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
 	$(LCMS_LIBS)					\
 	-lm
 
@@ -96,7 +79,6 @@ gcm_ddc_util_SOURCES =					\
 	gcm-ddc-util.c
 
 gcm_ddc_util_LDADD =					\
-	$(GLIB_LIBS)					\
 	$(COLOR_GLIB_LIBS)
 
 gcm_ddc_util_CFLAGS =					\
@@ -110,7 +92,6 @@ gcm_sensor_example_SOURCES =				\
 	gcm-sensor-example.c
 
 gcm_sensor_example_LDADD =				\
-	$(GLIB_LIBS)					\
 	$(COLOR_GLIB_LIBS)
 
 gcm_sensor_example_CFLAGS =				\

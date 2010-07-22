@@ -220,7 +220,7 @@ gcm_sensor_get_output_type (GcmSensor *sensor)
 }
 
 /**
- * gcm_sensor_get_is_native:
+ * gcm_sensor_is_native:
  * @sensor: a valid #GcmSensor instance
  *
  * Sensor support can be built in, for instance the HUEY, or rely on
@@ -230,7 +230,7 @@ gcm_sensor_get_output_type (GcmSensor *sensor)
  * Return value: %TRUE for internal, native, support.
  **/
 gboolean
-gcm_sensor_get_is_native (GcmSensor *sensor)
+gcm_sensor_is_native (GcmSensor *sensor)
 {
 	return sensor->priv->native;
 }
@@ -403,16 +403,14 @@ gcm_sensor_dump (GcmSensor *sensor, GString *data, GError **error)
 	}
 
 	/* write common sensor details */
-	g_string_append (data, "AUTOMATICALLY GENERATED -- DO NOT EDIT\n");
+	g_string_append (data, "// AUTOMATICALLY GENERATED -- DO NOT EDIT\n");
 	g_string_append_printf (data, "generic dump version: %i\n", 1);
 	g_string_append_printf (data, "kind: %s\n", gcm_sensor_kind_to_string (priv->kind));
 	g_string_append_printf (data, "vendor: %s\n", priv->vendor);
 	g_string_append_printf (data, "model: %s\n", priv->model);
 	g_string_append_printf (data, "device: %s\n", priv->device);
-	g_string_append (data, "\n");
 
 	/* dump sensor */
-	g_string_append (data, "device specific data:\n");
 	if (klass->dump == NULL) {
 		ret = FALSE;
 		g_set_error_literal (error,

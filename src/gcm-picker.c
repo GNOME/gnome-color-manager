@@ -220,7 +220,7 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "image_preview"));
 	gtk_image_set_from_file (GTK_IMAGE (widget), DATADIR "/icons/hicolor/64x64/apps/gnome-color-manager.png");
 
-	if (gcm_sensor_get_is_native (sensor)) {
+	if (gcm_sensor_is_native (sensor)) {
 
 		/* set mode */
 		gcm_sensor_set_output_type (sensor, GCM_SENSOR_OUTPUT_TYPE_LCD);
@@ -325,7 +325,7 @@ gcm_picker_sensor_client_setup_ui (GcmSensorClient *sensor_client)
 	}
 
 #ifndef HAVE_VTE
-	if (!gcm_sensor_get_is_native (sensor)) {
+	if (!gcm_sensor_is_native (sensor)) {
 		 /* TRANSLATORS: this is displayed if VTE support is not enabled */
 		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("This application was compiled without VTE support."));
 		goto out;

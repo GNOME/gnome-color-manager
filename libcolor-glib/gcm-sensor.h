@@ -155,7 +155,7 @@ gboolean		 gcm_sensor_supports_display	(GcmSensor 		*sensor);
 gboolean		 gcm_sensor_supports_projector	(GcmSensor 		*sensor);
 gboolean		 gcm_sensor_supports_printer	(GcmSensor		*sensor);
 gboolean		 gcm_sensor_supports_spot	(GcmSensor		*sensor);
-gboolean		 gcm_sensor_get_is_native	(GcmSensor		*sensor);
+gboolean		 gcm_sensor_is_native	(GcmSensor		*sensor);
 const gchar		*gcm_sensor_kind_to_string	(GcmSensorKind		 sensor_kind);
 GcmSensorKind		 gcm_sensor_kind_from_string	(const gchar		*sensor_kind);
 

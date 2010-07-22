@@ -821,7 +821,7 @@ gcm_sensor_huey_dump (GcmSensor *sensor, GString *data, GError **error)
 
 	/* dump the unlock string */
 	g_string_append_printf (data, "huey dump version: %i\n", 1);
-	g_string_printf (data, "unlock string: %s\n", priv->unlock_string);
+	g_string_append_printf (data, "unlock string: %s\n", priv->unlock_string);
 
 	/* read all the register space */
 	for (i=0; i<0xff; i++) {
