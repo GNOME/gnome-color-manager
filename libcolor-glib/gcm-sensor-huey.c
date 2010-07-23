@@ -760,6 +760,8 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 {
 	gboolean ret = FALSE;
 	guint i;
+	guint32 serial_number;
+	gchar *serial_number_tmp = NULL;
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
 	GcmSensorHueyPrivate *priv = sensor_huey->priv;
 	const guint8 spin_leds[] = { 0x0, 0x1, 0x2, 0x4, 0x8, 0x4, 0x2, 0x1, 0x0, 0xff };
@@ -775,6 +777,14 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 	ret = gcm_sensor_huey_send_unlock (sensor_huey, error);
 	if (!ret)
 		goto out;
+
+	/* get serial number */
+	ret = gcm_sensor_huey_read_register_word (sensor_huey, 0x00, &serial_number, error);
+	if (!ret)
+		goto out;
+	serial_number_tmp = g_strdup_printf ("%i", serial_number);
+	gcm_sensor_set_serial_number (sensor, serial_number_tmp);
+	egg_debug ("Serial number: %s", serial_number_tmp);
 
 	/* get unlock string */
 	ret = gcm_sensor_huey_read_register_string (sensor_huey, 0x7a, priv->unlock_string, 5, error);
@@ -804,6 +814,7 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 		g_usleep (50000);
 	}
 out:
+	g_free (serial_number_tmp);
 	return ret;
 }
 
