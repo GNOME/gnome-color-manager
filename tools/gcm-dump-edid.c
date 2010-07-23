@@ -46,9 +46,10 @@ gcm_dump_edid_filename (const gchar *filename)
 	gboolean ret;
 	GError *error = NULL;
 	GcmEdid *edid = NULL;
+	gsize length = 0;
 
 	/* load */
-	ret = g_file_get_contents (filename, &data, NULL, &error);
+	ret = g_file_get_contents (filename, &data, &length, &error);
 	if (!ret) {
 		g_print ("Cannot load file contents: %s\n", error->message);
 		goto out;
@@ -56,7 +57,7 @@ gcm_dump_edid_filename (const gchar *filename)
 
 	/* parse */
 	edid = gcm_edid_new ();
-	ret = gcm_edid_parse (edid, (const guint8 *) data, &error);
+	ret = gcm_edid_parse (edid, (const guint8 *) data, length, &error);
 	if (!ret) {
 		g_print ("Cannot parse EDID contents: %s\n", error->message);
 		goto out;

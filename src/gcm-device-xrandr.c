@@ -242,7 +242,7 @@ gcm_device_xrandr_set_from_output (GcmDevice *device, GcmX11Output *output, GErr
 	/* parse the EDID to get a output specific name */
 	ret = gcm_x11_output_get_edid_data (output, &data, &length, NULL);
 	if (ret) {
-		ret = gcm_edid_parse (priv->edid, data, NULL);
+		ret = gcm_edid_parse (priv->edid, data, length, NULL);
 		if (!ret) {
 			g_set_error (error, 1, 0, "failed to parse edid");
 			goto out;

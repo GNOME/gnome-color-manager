@@ -221,12 +221,13 @@ gcm_test_edid_test_parse_edid_file (GcmEdid *edid, const gchar *filename, GcmEdi
 	gfloat mygamma;
 	gboolean ret;
 	GError *error = NULL;
+	gsize length = 0;
 
-	ret = g_file_get_contents (filename, &data, NULL, &error);
+	ret = g_file_get_contents (filename, &data, &length, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
-	ret = gcm_edid_parse (edid, (const guint8 *) data, &error);
+	ret = gcm_edid_parse (edid, (const guint8 *) data, length, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 

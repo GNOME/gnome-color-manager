@@ -63,6 +63,7 @@ GcmEdid		*gcm_edid_new				(void);
 void		 gcm_edid_reset				(GcmEdid		*edid);
 gboolean	 gcm_edid_parse				(GcmEdid		*edid,
 							 const guint8		*data,
+							 gsize			 length,
 							 GError			**error);
 const gchar	*gcm_edid_get_monitor_name		(GcmEdid		*edid);
 const gchar	*gcm_edid_get_vendor_name		(GcmEdid		*edid);

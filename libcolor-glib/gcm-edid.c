@@ -289,7 +289,7 @@ gcm_edid_parse_string (const guint8 *data)
  * gcm_edid_parse:
  **/
 gboolean
-gcm_edid_parse (GcmEdid *edid, const guint8 *data, GError **error)
+gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
 {
 	gboolean ret = TRUE;
 	guint i;
