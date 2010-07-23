@@ -23,9 +23,9 @@
 #define __GCM_DEVICE_XRANDR_H
 
 #include <glib-object.h>
-#include <libgnomeui/gnome-rr.h>
 
 #include "gcm-device.h"
+#include "gcm-x11-screen.h"
 
 G_BEGIN_DECLS
 
@@ -51,7 +51,7 @@ struct _GcmDeviceXrandrClass
 GType		 gcm_device_xrandr_get_type		(void);
 GcmDevice	*gcm_device_xrandr_new			(void);
 gboolean	 gcm_device_xrandr_set_from_output	(GcmDevice		*device,
-							 GnomeRROutput		*output,
+							 GcmX11Output		*output,
 							 GError			**error);
 void		 gcm_device_xrandr_set_remove_atom	(GcmDeviceXrandr	*device_xrandr,
 							 gboolean		 remove_atom);

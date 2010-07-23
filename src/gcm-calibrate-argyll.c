@@ -43,7 +43,7 @@
 #include "gcm-calibrate-argyll.h"
 #include "gcm-sensor-client.h"
 #include "gcm-utils.h"
-#include "gcm-screen.h"
+#include "gcm-x11-screen.h"
 #include "gcm-print.h"
 #include "gcm-xyz.h"
 #include "gcm-calibrate-dialog.h"
@@ -79,7 +79,7 @@ struct _GcmCalibrateArgyllPrivate
 	GcmCalibrateDialog		*calibrate_dialog;
 	pid_t				 child_pid;
 	GtkResponseType			 response;
-	GcmScreen			*screen;
+	GcmX11Screen			*screen;
 	glong				 vte_previous_row;
 	glong				 vte_previous_col;
 	gboolean			 already_on_window;
@@ -417,7 +417,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	gchar kind;
 	gchar *command = NULL;
 	gchar **argv = NULL;
-	GnomeRROutput *output;
+	GcmX11Output *output;
 	GPtrArray *array = NULL;
 	gchar *basename = NULL;
 	gchar *output_name = NULL;
@@ -445,7 +445,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	}
 
 	/* get the device */
-	output = gcm_screen_get_output_by_name (priv->screen, output_name, error);
+	output = gcm_x11_screen_get_output_by_name (priv->screen, output_name, error);
 	if (output == NULL) {
 		ret = FALSE;
 		goto out;
@@ -2968,7 +2968,7 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 			  G_CALLBACK (gcm_calibrate_argyll_response_cb), calibrate_argyll);
 
 	/* get screen */
-	calibrate_argyll->priv->screen = gcm_screen_new ();
+	calibrate_argyll->priv->screen = gcm_x11_screen_new ();
 
 	/* add vte widget */
 #ifdef HAVE_VTE

@@ -32,13 +32,13 @@
 #include <glib/gi18n.h>
 #include <glib-object.h>
 #include <gudev/gudev.h>
-#include <libgnomeui/gnome-rr.h>
 #include <cups/cups.h>
 
 #ifdef HAVE_SANE
  #include <sane/sane.h>
 #endif
 
+#include "gcm-x11-screen.h"
 #include "gcm-client.h"
 #include "gcm-device-xrandr.h"
 #include "gcm-device-udev.h"
@@ -47,7 +47,7 @@
  #include "gcm-device-sane.h"
 #endif
 #include "gcm-device-virtual.h"
-#include "gcm-screen.h"
+#include "gcm-x11-screen.h"
 #include "gcm-utils.h"
 
 #include "egg-debug.h"
@@ -56,7 +56,7 @@ static void     gcm_client_finalize	(GObject     *object);
 
 #define GCM_CLIENT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_CLIENT, GcmClientPrivate))
 
-static void gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output);
+static void gcm_client_xrandr_add (GcmClient *client, GcmX11Output *output);
 
 #ifdef HAVE_SANE
 static gboolean gcm_client_coldplug_devices_sane (GcmClient *client, GError **error);
@@ -74,7 +74,7 @@ struct _GcmClientPrivate
 	GPtrArray			*array;
 	GUdevClient			*gudev_client;
 	GSettings			*settings;
-	GcmScreen			*screen;
+	GcmX11Screen			*screen;
 	http_t				*http;
 	gboolean			 loading;
 	guint				 loading_refcount;
@@ -590,13 +590,12 @@ gcm_client_get_device_by_window (GcmClient *client, GdkWindow *window)
 	gfloat covered_max = 0.0f;
 	gint window_width, window_height;
 	gint window_x, window_y;
-	gint x, y;
+	guint x, y;
 	guint i;
-	guint len = 0;
 	guint width, height;
-	GnomeRRMode *mode;
-	GnomeRROutput *output_best = NULL;
-	GnomeRROutput **outputs;
+	GcmX11Output *output;
+	GcmX11Output *output_best = NULL;
+	GPtrArray *outputs;
 	GcmDevice *device = NULL;
 
 	/* get the window parameters, in root co-ordinates */
@@ -604,27 +603,22 @@ gcm_client_get_device_by_window (GcmClient *client, GdkWindow *window)
 	gdk_drawable_get_size (GDK_DRAWABLE(window), &window_width, &window_height);
 
 	/* get list of updates */
-	outputs = gcm_screen_get_outputs (client->priv->screen, NULL);
+	outputs = gcm_x11_screen_get_outputs (client->priv->screen, NULL);
 	if (outputs == NULL)
 		goto out;
 
-	/* find length */
-	for (i=0; outputs[i] != NULL; i++)
-		len++;
-
 	/* go through each option */
-	for (i=0; i<len; i++) {
+	for (i=0; i<outputs->len; i++) {
 
 		/* not interesting */
-		if (!gnome_rr_output_is_connected (outputs[i]))
+		output = g_ptr_array_index (outputs, i);
+		if (!gcm_x11_output_get_connected (output))
 			continue;
 
 		/* get details about the output */
-		gnome_rr_output_get_position (outputs[i], &x, &y);
-		mode = gnome_rr_output_get_current_mode (outputs[i]);
-		width = gnome_rr_mode_get_width (mode);
-		height = gnome_rr_mode_get_height (mode);
-		egg_debug ("%s: %ix%i -> %ix%i (%ix%i -> %ix%i)", gnome_rr_output_get_name (outputs[i]),
+		gcm_x11_output_get_position (output, &x, &y);
+		gcm_x11_output_get_size (output, &width, &height);
+		egg_debug ("%s: %ix%i -> %ix%i (%ix%i -> %ix%i)", gcm_x11_output_get_name (output),
 			   x, y, x+width, y+height,
 			   window_x, window_y, window_x+window_width, window_y+window_height);
 
@@ -634,7 +628,7 @@ gcm_client_get_device_by_window (GcmClient *client, GdkWindow *window)
 
 		/* keep a running total of which one is best */
 		if (covered > 0.01f && covered > covered_max) {
-			output_best = outputs[i];
+			output_best = output;
 
 			/* optimize */
 			if (covered > 0.99) {
@@ -644,10 +638,12 @@ gcm_client_get_device_by_window (GcmClient *client, GdkWindow *window)
 
 			/* keep looking */
 			covered_max = covered;
-			egg_debug ("personal best of %f for %s", covered, gnome_rr_output_get_name (output_best));
+			egg_debug ("personal best of %f for %s", covered, gcm_x11_output_get_name (output_best));
 		}
 	}
 out:
+	if (outputs != NULL)
+		g_ptr_array_unref (outputs);
 	/* if we found an output, get the device */
 	if (output_best != NULL) {
 		GcmDevice *device_tmp;
@@ -663,16 +659,16 @@ out:
  * gcm_client_xrandr_add:
  **/
 static void
-gcm_client_xrandr_add (GcmClient *client, GnomeRROutput *output)
+gcm_client_xrandr_add (GcmClient *client, GcmX11Output *output)
 {
 	gboolean ret;
 	GError *error = NULL;
 	GcmDevice *device = NULL;
 
 	/* if nothing connected then ignore */
-	ret = gnome_rr_output_is_connected (output);
+	ret = gcm_x11_output_get_connected (output);
 	if (!ret) {
-		egg_debug ("%s is not connected", gnome_rr_output_get_name (output));
+		egg_debug ("%s is not connected", gcm_x11_output_get_name (output));
 		goto out;
 	}
 
@@ -703,20 +699,32 @@ out:
 static gboolean
 gcm_client_coldplug_devices_xrandr (GcmClient *client, GError **error)
 {
-	GnomeRROutput **outputs;
+	GcmX11Output *output;
+	GPtrArray *outputs = NULL;
 	guint i;
+	gboolean ret;
 	GcmClientPrivate *priv = client->priv;
 
-	outputs = gcm_screen_get_outputs (priv->screen, error);
-	if (outputs == NULL)
-		return FALSE;
-	for (i=0; outputs[i] != NULL; i++)
-		gcm_client_xrandr_add (client, outputs[i]);
+	/* use the default screen */
+	ret = gcm_x11_screen_assign (priv->screen, NULL, error);
+	if (!ret)
+		goto out;
+	outputs = gcm_x11_screen_get_outputs (priv->screen, error);
+	if (outputs == NULL) {
+		ret = FALSE;
+		goto out;
+	}
 
-	/* inform the UI */
+	/* add each device */
+	for (i=0; i<outputs->len; i++) {
+		output = g_ptr_array_index (outputs, i);
+		gcm_client_xrandr_add (client, output);
+	}
+out:
+	if (outputs != NULL)
+		g_ptr_array_unref (outputs);
 	gcm_client_done_loading (client);
-
-	return TRUE;
+	return ret;
 }
 
 /**
@@ -1403,17 +1411,21 @@ gcm_client_set_property (GObject *object, guint prop_id, const GValue *value, GP
  * gcm_client_randr_event_cb:
  **/
 static void
-gcm_client_randr_event_cb (GcmScreen *screen, GcmClient *client)
+gcm_client_randr_event_cb (GcmX11Screen *screen, GcmClient *client)
 {
-	GnomeRROutput **outputs;
+	GPtrArray *outputs;
+	GcmX11Output *output;
 	guint i;
 
 	egg_debug ("screens may have changed");
 
 	/* replug devices */
-	outputs = gcm_screen_get_outputs (screen, NULL);
-	for (i=0; outputs[i] != NULL; i++)
-		gcm_client_xrandr_add (client, outputs[i]);
+	outputs = gcm_x11_screen_get_outputs (screen, NULL);
+	for (i=0; i<outputs->len; i++) {
+		output = g_ptr_array_index (outputs, i);
+		gcm_client_xrandr_add (client, output);
+	}
+	g_ptr_array_unref (outputs);
 }
 
 /**
@@ -1501,8 +1513,8 @@ gcm_client_init (GcmClient *client)
 	client->priv->init_sane = FALSE;
 	client->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 	client->priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
-	client->priv->screen = gcm_screen_new ();
-	g_signal_connect (client->priv->screen, "outputs-changed",
+	client->priv->screen = gcm_x11_screen_new ();
+	g_signal_connect (client->priv->screen, "changed",
 			  G_CALLBACK (gcm_client_randr_event_cb), client);
 
 	/* use GUdev to find devices */

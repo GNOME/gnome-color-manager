@@ -2,7 +2,6 @@ INCLUDES =						\
 	$(GLIB_CFLAGS)					\
 	$(X11_CFLAGS)					\
 	$(GTK_CFLAGS)					\
-	$(GNOMEDESKTOP_CFLAGS)				\
 	$(VTE_CFLAGS)					\
 	$(XORG_CFLAGS)					\
 	$(CUPS_CFLAGS)					\
@@ -14,7 +13,6 @@ INCLUDES =						\
 	$(CANBERRA_CFLAGS)				\
 	$(CONTROL_CENTER_CFLAGS)			\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
-	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
 	$(GUDEV_CFLAGS)					\
 	-I$(top_srcdir)/libcolor-glib			\
 	-DLIBCOLOR_GLIB_COMPILATION			\
@@ -40,8 +38,6 @@ noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\
 	egg-debug.c					\
 	egg-debug.h					\
-	gcm-screen.c					\
-	gcm-screen.h					\
 	gcm-exif.c					\
 	gcm-exif.h					\
 	gcm-print.c					\
@@ -119,7 +115,6 @@ gcm_inspect_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
-	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
@@ -138,7 +133,6 @@ gcm_apply_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
-	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
@@ -157,7 +151,6 @@ gcm_import_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
-	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
@@ -178,7 +171,6 @@ gcm_viewer_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
-	$(GNOMEDESKTOP_LIBS)				\
 	$(VTE_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
@@ -200,7 +192,6 @@ gcm_picker_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
-	$(GNOMEDESKTOP_LIBS)				\
 	$(VTE_LIBS)					\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
@@ -223,7 +214,6 @@ gcm_session_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
-	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
@@ -249,7 +239,6 @@ libcolor_la_SOURCES =					\
 libcolor_la_LIBADD =					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
-	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
@@ -281,7 +270,6 @@ gcm_self_test_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
-	$(GNOMEDESKTOP_LIBS)				\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\

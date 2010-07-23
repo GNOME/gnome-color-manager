@@ -25,11 +25,11 @@ INCLUDES =						\
 noinst_PROGRAMS =					\
 	gcm-dump-profile				\
 	gcm-dump-sensor					\
+	gcm-dump-edid					\
 	gcm-fix-profile					\
 	gcm-ddc-util					\
 	gcm-sensor-example
 
-if FALSE
 gcm_dump_edid_SOURCES =					\
 	gcm-dump-edid.c
 
@@ -39,7 +39,6 @@ gcm_dump_edid_LDADD =					\
 
 gcm_dump_edid_CFLAGS =					\
 	$(WARNINGFLAGS_C)
-endif
 
 gcm_dump_profile_SOURCES =				\
 	gcm-dump-profile.c

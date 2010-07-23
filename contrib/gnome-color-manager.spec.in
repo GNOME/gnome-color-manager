@@ -29,9 +29,7 @@ BuildRequires: vte-devel
 BuildRequires: gnome-doc-utils
 BuildRequires: intltool
 BuildRequires: libgudev1-devel
-BuildRequires: libXxf86vm-devel
 BuildRequires: libXrandr-devel
-BuildRequires: gnome-desktop3-devel
 BuildRequires: lcms2-devel
 BuildRequires: cups-devel
 BuildRequires: sane-backends-devel
@@ -64,6 +62,8 @@ done
 
 rm -f $RPM_BUILD_ROOT%{_libdir}/control-center-1/panels/*.a
 rm -f $RPM_BUILD_ROOT%{_libdir}/control-center-1/panels/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/*.a
+rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 
 %find_lang %name --with-gnome
 
@@ -113,6 +113,12 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
 %{_datadir}/GConf/gsettings/org.gnome.color-manager.gschema.migrate
 %{_datadir}/dbus-1/interfaces/org.gnome.ColorManager.xml
 %{_libdir}/control-center-1/panels/*.so
+%{_includedir}/libcolor-glib/*.h
+%{_libdir}/libcolor-glib.so
+%{_libdir}/libcolor-glib.so.1
+%{_libdir}/libcolor-glib.so.1.0.0
+%{_libdir}/pkgconfig/libcolor-glib.pc
+%{_datadir}/gtk-doc/html/libcolor-glib
 
 %changelog
 * #LONGDATE# Richard Hughes <richard@hughsie.com> #VERSION#-0.#BUILD##ALPHATAG#

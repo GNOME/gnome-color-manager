@@ -46,7 +46,6 @@ libcolor_glib_include_HEADERS =					\
 	gcm-image.h						\
 	gcm-profile-store.h					\
 	gcm-dmi.h						\
-	gcm-xserver.h						\
 	gcm-version.h						\
 	$(NULL)
 
@@ -96,8 +95,10 @@ libcolor_glib_la_SOURCES =					\
 	gcm-usb.h						\
 	gcm-profile-store.c					\
 	gcm-profile-store.h					\
-	gcm-xserver.c						\
-	gcm-xserver.h						\
+	gcm-x11-output.c					\
+	gcm-x11-output.h					\
+	gcm-x11-screen.c					\
+	gcm-x11-screen.h					\
 	gcm-version.h						\
 	gcm-brightness.c					\
 	gcm-brightness.h					\

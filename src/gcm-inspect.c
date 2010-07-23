@@ -23,15 +23,14 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
-#include <libgnomeui/gnome-rr.h>
 #include <locale.h>
 
 #include "egg-debug.h"
 
 #include "gcm-utils.h"
 #include "gcm-profile.h"
-#include "gcm-xserver.h"
-#include "gcm-screen.h"
+#include "gcm-x11-output.h"
+#include "gcm-x11-screen.h"
 
 /**
  * gcm_inspect_print_data_info:
@@ -76,10 +75,10 @@ gcm_inspect_show_x11_atoms (void)
 	guint8 *data = NULL;
 	guint8 *data_tmp;
 	gsize length;
-	GcmXserver *xserver = NULL;
-	GnomeRROutput **outputs;
+	GPtrArray *outputs;
+	GcmX11Output *output;
+	GcmX11Screen *screen = NULL;
 	guint i;
-	GcmScreen *screen = NULL;
 	const gchar *output_name;
 	gchar *title;
 	GError *error = NULL;
@@ -87,10 +86,16 @@ gcm_inspect_show_x11_atoms (void)
 	guint minor;
 
 	/* setup object to access X */
-	xserver = gcm_xserver_new ();
+	screen = gcm_x11_screen_new ();
+	ret = gcm_x11_screen_assign (screen, NULL, &error);
+	if (!ret) {
+		egg_warning ("failed to get outputs: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	/* get profile from XServer */
-	ret = gcm_xserver_get_root_window_profile_data (xserver, &data, &length, &error);
+	ret = gcm_x11_screen_get_profile_data (screen, &data, &length, &error);
 	if (!ret) {
 		egg_warning ("failed to get XServer profile data: %s", error->message);
 		g_error_free (error);
@@ -102,7 +107,7 @@ gcm_inspect_show_x11_atoms (void)
 	}
 
 	/* get profile from XServer */
-	ret = gcm_xserver_get_protocol_version (xserver, &major, &minor, &error);
+	ret = gcm_x11_screen_get_protocol_version (screen, &major, &minor, &error);
 	if (!ret) {
 		egg_warning ("failed to get XServer protocol version: %s", error->message);
 		g_error_free (error);
@@ -114,22 +119,22 @@ gcm_inspect_show_x11_atoms (void)
 	}
 
 	/* coldplug devices */
-	screen = gcm_screen_new ();
-	outputs = gcm_screen_get_outputs (screen, &error);
+	outputs = gcm_x11_screen_get_outputs (screen, &error);
 	if (outputs == NULL) {
 		ret = FALSE;
 		egg_warning ("failed to get outputs: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
-	for (i=0; outputs[i] != NULL; i++) {
+	for (i=0; i<outputs->len; i++) {
 
 		/* get output name */
-		output_name = gnome_rr_output_get_name (outputs[i]);
+		output = g_ptr_array_index (outputs, i);
+		output_name = gcm_x11_output_get_name (output);
 		title = g_strdup_printf (_("Output profile '%s':"), output_name);
 
 		/* get profile from XServer */
-		ret = gcm_xserver_get_output_profile_data (xserver, output_name, &data_tmp, &length, &error);
+		ret = gcm_x11_output_get_profile_data (output, &data_tmp, &length, &error);
 		if (!ret) {
 			egg_warning ("failed to get output profile data: %s", error->message);
 			/* TRANSLATORS: this is when the profile has not been set */
@@ -148,8 +153,6 @@ out:
 	g_free (data);
 	if (screen != NULL)
 		g_object_unref (screen);
-	if (xserver != NULL)
-		g_object_unref (xserver);
 	return ret;
 }
 
@@ -567,9 +570,9 @@ main (int argc, char **argv)
 	GOptionContext *context;
 
 	const GOptionEntry options[] = {
-		{ "x11", 'x', 0, G_OPTION_ARG_NONE, &x11,
+		{ "xserver", 'x', 0, G_OPTION_ARG_NONE, &x11,
 			/* TRANSLATORS: command line option */
-			_("Show X11 properties"), NULL },
+			_("Show xserver properties"), NULL },
 		{ "device", '\0', 0, G_OPTION_ARG_STRING, &device_id,
 			/* TRANSLATORS: command line option */
 			_("Get the profiles for a specific device"), NULL },

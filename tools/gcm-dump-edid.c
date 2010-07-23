@@ -23,13 +23,10 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
-#include <libgnomeui/gnome-rr.h>
 #include <locale.h>
 
-#include "egg-debug.h"
-
-#include "gcm-screen.h"
 #include "gcm-edid.h"
+#include "gcm-x11-screen.h"
 
 /**
  * gcm_dump_edid_filename:
@@ -84,7 +81,7 @@ gcm_dump_edid_filename (const gchar *filename)
 	width = gcm_edid_get_width (edid);
 	height = gcm_edid_get_height (edid);
 	if (width != 0)
-		g_print ("  Size: %ix%i\n", "", width, height);
+		g_print ("  Size: %ix%i\n", width, height);
 	gamma = gcm_edid_get_gamma (edid);
 	if (gamma > 0.0f)
 		g_print ("  Gamma: %f\n", gamma);
@@ -96,12 +93,30 @@ out:
 }
 
 /**
+ * gcm_dump_edid_alphanum_lcase:
+ **/
+static void
+gcm_dump_edid_alphanum_lcase (gchar *data)
+{
+	guint i;
+
+	g_return_if_fail (data != NULL);
+
+	/* replace unsafe chars, and make lowercase */
+	for (i=0; data[i] != '\0'; i++) {
+		if (!g_ascii_isalnum (data[i]))
+			data[i] = '_';
+		data[i] = g_ascii_tolower (data[i]);
+	}
+}
+
+/**
  * main:
  **/
 int
 main (int argc, char **argv)
 {
-	const guint8 *data;
+	guint8 *data = NULL;
 	gboolean ret;
 	gchar *output_name;
 	gchar *filename;
@@ -109,8 +124,9 @@ main (int argc, char **argv)
 	guint i;
 	guint retval = 0;
 	GError *error = NULL;
-	GnomeRROutput **outputs;
-	GcmScreen *screen = NULL;
+	GPtrArray *outputs;
+	GcmX11Output *output;
+	GcmX11Screen *screen = NULL;
 	GOptionContext *context;
 
 	const GOptionEntry options[] = {
@@ -129,7 +145,6 @@ main (int argc, char **argv)
 
 	context = g_option_context_new ("gnome-color-manager dump edid program");
 	g_option_context_add_main_entries (context, options, NULL);
-	g_option_context_add_group (context, egg_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
@@ -144,28 +159,29 @@ main (int argc, char **argv)
 	}
 
 	/* coldplug devices */
-	screen = gcm_screen_new ();
-	outputs = gcm_screen_get_outputs (screen, &error);
-	if (screen == NULL) {
-		egg_warning ("failed to get outputs: %s", error->message);
+	screen = gcm_x11_screen_new ();
+	outputs = gcm_x11_screen_get_outputs (screen, &error);
+	if (outputs == NULL) {
+		g_print ("Failed to get outputs: %s\n", error->message);
 		retval = 1;
 		goto out;
 	}
-	for (i=0; outputs[i] != NULL; i++) {
+	for (i=0; i<outputs->len; i++) {
 
 		/* only try to get edid if connected */
-		ret = gnome_rr_output_is_connected (outputs[i]);
+		output = g_ptr_array_index (outputs, i);
+		ret = gcm_x11_output_get_connected (output);
 		if (!ret)
 			continue;
 
 		/* get data */
-		data = gnome_rr_output_get_edid_data (outputs[i]);
-		if (data == NULL)
+		ret = gcm_x11_output_get_edid_data (output, &data, NULL, NULL);
+		if (!ret)
 			continue;
 
 		/* get output name */
-		output_name = g_strdup (gnome_rr_output_get_name (outputs[i]));
-		gcm_utils_alphanum_lcase (output_name);
+		output_name = g_strdup (gcm_x11_output_get_name (output));
+		gcm_dump_edid_alphanum_lcase (output_name);
 
 		/* get suitable filename */
 		filename = g_strdup_printf ("./%s.bin", output_name);
@@ -173,16 +189,17 @@ main (int argc, char **argv)
 		/* save to disk */
 		ret = g_file_set_contents (filename, (const gchar *) data, 0x80, &error);
 		if (ret) {
-			g_print "Saved %i bytes to %s", 128, filename);
-			g_print ("\n");
+			g_print ("Saved %i bytes to %s\n", 128, filename);
 			gcm_dump_edid_filename (filename);
 		} else {
 			g_print ("Failed to save EDID to %s: %s\n", filename, error->message);
 			/* non-fatal */
 			g_clear_error (&error);
 		}
+		g_free (data);
 		g_free (filename);
 	}
+	g_ptr_array_unref (outputs);
 out:
 	g_strfreev (files);
 	if (screen != NULL)

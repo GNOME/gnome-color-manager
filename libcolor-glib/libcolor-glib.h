@@ -43,7 +43,8 @@
 #include <gcm-enum.h>
 #include <gcm-clut.h>
 #include <gcm-dmi.h>
-#include <gcm-xserver.h>
+#include <gcm-x11-screen.h>
+#include <gcm-x11-output.h>
 #include <gcm-brightness.h>
 #include <gcm-profile-store.h>
 #include <gcm-usb.h>
