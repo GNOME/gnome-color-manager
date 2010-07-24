@@ -2404,6 +2404,11 @@ cc_color_panel_reset_devices_idle_cb (CcColorPanel *panel)
 	for (i=0; i<array->len; i++) {
 		device = g_ptr_array_index (array, i);
 
+		/* we don't care */
+		ret = gcm_device_get_connected (device);
+		if (!ret)
+			continue;
+
 		/* set gamma for device */
 		ret = gcm_device_apply (device, &error);
 		if (!ret) {
