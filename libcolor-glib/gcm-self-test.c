@@ -39,6 +39,7 @@
 #include "gcm-image.h"
 #include "gcm-usb.h"
 #include "gcm-buffer.h"
+#include "gcm-sample-window.h"
 
 static void
 gcm_test_common_func (void)
@@ -689,11 +690,34 @@ gcm_test_buffer_func (void)
 	g_assert_cmpint (gcm_buffer_read_uint16_le (buffer), ==, 8192);
 }
 
+static gboolean
+gcm_test_sample_window_loop_cb (GMainLoop *loop)
+{
+	g_main_loop_quit (loop);
+	return FALSE;
+}
+
+static void
+gcm_test_sample_window_func (void)
+{
+	GtkWindow *window;
+	GMainLoop *loop;
+	window = gcm_sample_window_new ();
+	g_assert (window != NULL);
+	gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (window), 0xff, 0xff, 0x00);
+	gtk_window_present (window);
+	loop = g_main_loop_new (NULL, FALSE);
+	g_timeout_add_seconds (2, (GSourceFunc) gcm_test_sample_window_loop_cb, loop);
+	g_main_loop_run (loop);
+	g_main_loop_unref (loop);
+	g_object_unref (window);
+}
+
 int
 main (int argc, char **argv)
 {
 	g_type_init ();
-
+	gtk_init (&argc, &argv);
 	g_test_init (&argc, &argv, NULL);
 
 	/* tests go here */
@@ -708,8 +732,9 @@ main (int argc, char **argv)
 	g_test_add_func ("/libcolor-glib/xyz", gcm_test_xyz_func);
 	g_test_add_func ("/libcolor-glib/dmi", gcm_test_dmi_func);
 	g_test_add_func ("/libcolor-glib/profile_store", gcm_test_profile_store_func);
-	g_test_add_func ("/libcolor-glib/usb", gcm_test_usb_func);
 	g_test_add_func ("/libcolor-glib/buffer", gcm_test_buffer_func);
+	g_test_add_func ("/libcolor-glib/sample-window", gcm_test_sample_window_func);
+	g_test_add_func ("/libcolor-glib/usb", gcm_test_usb_func);
 	if (g_test_thorough ()) {
 		g_test_add_func ("/libcolor-glib/brightness", gcm_test_brightness_func);
 		g_test_add_func ("/libcolor-glib/image", gcm_test_image_func);

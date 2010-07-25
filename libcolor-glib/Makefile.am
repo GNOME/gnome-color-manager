@@ -47,12 +47,15 @@ libcolor_glib_include_HEADERS =					\
 	gcm-profile-store.h					\
 	gcm-dmi.h						\
 	gcm-version.h						\
+	gcm-sample-window.h					\
 	$(NULL)
 
 libcolor_glib_la_SOURCES =					\
 	libcolor-glib.h						\
 	egg-debug.c						\
 	egg-debug.h						\
+	gcm-sample-window.c					\
+	gcm-sample-window.h					\
 	gcm-common.c						\
 	gcm-common.h						\
 	gcm-color.c						\
