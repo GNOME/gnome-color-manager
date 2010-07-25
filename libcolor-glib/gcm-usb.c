@@ -107,12 +107,11 @@ gcm_libusb_pollfd_added_cb (int fd, short events, void *user_data)
 }
 
 /**
- * gcm_libusb_pollfd_removed_cb:
+ * gcm_libusb_pollfd_remove:
  **/
 static void
-gcm_libusb_pollfd_removed_cb (int fd, void *user_data)
+gcm_libusb_pollfd_remove (GcmUsb *usb, int fd)
 {
-	GcmUsb *usb = user_data;
 	GcmUsbSource *source = usb->priv->source;
 	GPollFD *pollfd;
 	GSList *elem = source->pollfds;
@@ -137,6 +136,40 @@ gcm_libusb_pollfd_removed_cb (int fd, void *user_data)
 		return;
 	} while ((elem = g_slist_next(elem)));
 	egg_warning ("couldn't find fd %d in list", fd);
+}
+
+/**
+ * gcm_libusb_pollfd_remove_all:
+ **/
+static void
+gcm_libusb_pollfd_remove_all (GcmUsb *usb)
+{
+	GcmUsbSource *source = usb->priv->source;
+	GPollFD *pollfd;
+	GSList *elem = source->pollfds;
+
+	/* nothing to see here, move along */
+	if (elem == NULL)
+		return;
+
+	/* rip apart all the pollfd's */
+	do {
+		pollfd = elem->data;
+		egg_warning ("removing %i", pollfd->fd);
+		g_source_remove_poll ((GSource *) source, pollfd);
+		g_slice_free (GPollFD, pollfd);
+		source->pollfds = g_slist_delete_link (source->pollfds, elem);
+	} while ((elem = g_slist_next(elem)));
+}
+
+/**
+ * gcm_libusb_pollfd_removed_cb:
+ **/
+static void
+gcm_libusb_pollfd_removed_cb (int fd, void *user_data)
+{
+	GcmUsb *usb = user_data;
+	gcm_libusb_pollfd_remove (usb, fd);
 }
 
 /**
@@ -470,6 +503,7 @@ gcm_usb_finalize (GObject *object)
 
 	if (priv->ctx != NULL) {
 		libusb_set_pollfd_notifiers (usb->priv->ctx, NULL, NULL, NULL);
+		gcm_libusb_pollfd_remove_all (usb);
 		libusb_exit (priv->ctx);
 	}
 	if (priv->handle != NULL)
