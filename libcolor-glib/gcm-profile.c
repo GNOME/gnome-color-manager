@@ -230,8 +230,6 @@ gcm_profile_get_file (GcmProfile *profile)
  *
  * Sets the file to be used when reading the profile.
  *
- * Return value: %TRUE for success
- *
  * Since: 0.0.1
  **/
 void
@@ -383,7 +381,7 @@ gcm_profile_get_manufacturer (GcmProfile *profile)
 /**
  * gcm_profile_set_manufacturer:
  * @profile: A valid #GcmProfile
- * @model: the profile manufacturer.
+ * @manufacturer: the profile manufacturer.
  *
  * Sets the device manufacturer name.
  *

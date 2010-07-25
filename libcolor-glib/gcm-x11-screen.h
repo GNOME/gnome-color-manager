@@ -90,6 +90,9 @@ gboolean	 gcm_x11_screen_get_protocol_version	(GcmX11Screen		*screen,
 							 guint			*major,
 							 guint			*minor,
 							 GError			**error);
+void		 gcm_x11_screen_get_randr_version	(GcmX11Screen		*screen,
+							 guint			*major,
+							 guint			*minor);
 
 G_END_DECLS
 

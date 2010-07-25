@@ -21,9 +21,10 @@
 
 /**
  * SECTION:gcm-ddc-client
- * @short_description: For managing different i2c devices
+ * @short_description: For managing all the #GcmDdcDevice's.
  *
- * A GObject to use for accessing devices.
+ * A GObject to use for managing a list of #GcmDdcDevice's.
+ * A #GcmDdcClient will contain many #GcmDdcDevice's.
  */
 
 #include "config.h"
@@ -125,6 +126,14 @@ out:
 
 /**
  * gcm_ddc_client_close:
+ * @client: a valid #GcmDdcClient instance
+ * @error: a valid #GError, or %NULL
+ *
+ * Closes the client, releasing all devices.
+ *
+ * Return value: %TRUE for success.
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_ddc_client_close (GcmDdcClient *client, GError **error)
@@ -149,6 +158,15 @@ out:
 
 /**
  * gcm_ddc_client_get_devices:
+ * @client: a valid #GcmDdcClient instance
+ * @error: a valid #GError, or %NULL
+ *
+ * Get all the #GcmDdcDevice's from the client.
+ * If the client has not been loaded it will be done automatically.
+ *
+ * Return value: a #GPtrArray of #GcmDdcDevice's, free with g_ptr_array_unref()
+ *
+ * Since: 0.0.1
  **/
 GPtrArray *
 gcm_ddc_client_get_devices (GcmDdcClient *client, GError **error)
@@ -172,6 +190,16 @@ out:
 
 /**
  * gcm_ddc_client_get_device_from_edid:
+ * @client: a valid #GcmDdcClient instance
+ * @edid_md5: a EDID checksum
+ * @error: a valid #GError, or %NULL
+ *
+ * Get a DDC device from it's EDID value.
+ * If the client has not been loaded it will be done automatically.
+ *
+ * Return value: A refcounted #GcmDdcDevice, or %NULL.
+ *
+ * Since: 0.0.1
  **/
 GcmDdcDevice *
 gcm_ddc_client_get_device_from_edid (GcmDdcClient *client, const gchar *edid_md5, GError **error)
@@ -218,6 +246,12 @@ out:
 
 /**
  * gcm_ddc_client_set_verbose:
+ * @client: a valid #GcmDdcClient instance
+ * @verbose: the logging setting, e.g. %GCM_VERBOSE_PROTOCOL.
+ *
+ * Sets the logging level for this instance.
+ *
+ * Since: 0.0.1
  **/
 void
 gcm_ddc_client_set_verbose (GcmDdcClient *client, GcmVerbose verbose)
@@ -327,9 +361,7 @@ gcm_ddc_client_finalize (GObject *object)
 /**
  * gcm_ddc_client_new:
  *
- * GcmDdcClient is a nice GObject wrapper for gcm.
- *
- * Return value: A new %GcmDdcClient instance
+ * Return value: A new #GcmDdcClient instance
  *
  * Since: 0.0.1
  **/

@@ -62,10 +62,8 @@ void		 gcm_x11_output_set_name		(GcmX11Output		*output,
 const gchar	*gcm_x11_output_get_name		(GcmX11Output		*output);
 void		 gcm_x11_output_set_id			(GcmX11Output		*output,
 							 guint			 id);
-guint		 gcm_x11_output_get_id			(GcmX11Output		*output);
 void		 gcm_x11_output_set_crtc_id		(GcmX11Output		*output,
 							 guint			 crtc_id);
-guint		 gcm_x11_output_get_crtc_id		(GcmX11Output		*output);
 void		 gcm_x11_output_set_gamma_size		(GcmX11Output		*output,
 							 guint			 gamma_size);
 guint		 gcm_x11_output_get_gamma_size		(GcmX11Output		*output);
@@ -88,13 +86,13 @@ void		 gcm_x11_output_set_connected		(GcmX11Output		*output,
 							 gboolean		 connected);
 gboolean	 gcm_x11_output_get_connected		(GcmX11Output		*output);
 gboolean	 gcm_x11_output_get_gamma		(GcmX11Output		*output,
-							 guint			*size,
+							 guint			*length,
 							 guint16		**red,
 							 guint16		**green,
 							 guint16		**blue,
 							 GError			**error);
 gboolean	 gcm_x11_output_set_gamma		(GcmX11Output		*output,
-							 guint			 size,
+							 guint			 length,
 							 guint16		*red,
 							 guint16		*green,
 							 guint16		*blue,

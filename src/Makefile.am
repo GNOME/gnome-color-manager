@@ -33,6 +33,8 @@ dist_introspection_DATA = org.gnome.ColorManager.xml
 
 ccpanelsdir = $(PANELS_DIR)
 ccpanels_LTLIBRARIES = libcolor.la
+ccpanels_CFLAGS =					\
+	$(WARNINGFLAGS_C)
 
 noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\

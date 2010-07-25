@@ -95,6 +95,13 @@ G_DEFINE_TYPE (GcmEdid, gcm_edid, G_TYPE_OBJECT)
 
 /**
  * gcm_edid_get_monitor_name:
+ * @edid: a valid #GcmEdid instance
+ *
+ * Gets the monitor name.
+ *
+ * Return value: a null terminaled string value
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_edid_get_monitor_name (GcmEdid *edid)
@@ -105,6 +112,13 @@ gcm_edid_get_monitor_name (GcmEdid *edid)
 
 /**
  * gcm_edid_get_vendor_name:
+ * @edid: a valid #GcmEdid instance
+ *
+ * Gets the vendor name.
+ *
+ * Return value: a null terminaled string value
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_edid_get_vendor_name (GcmEdid *edid)
@@ -119,6 +133,13 @@ gcm_edid_get_vendor_name (GcmEdid *edid)
 
 /**
  * gcm_edid_get_serial_number:
+ * @edid: a valid #GcmEdid instance
+ *
+ * Gets the device serial number.
+ *
+ * Return value: a null terminaled string value
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_edid_get_serial_number (GcmEdid *edid)
@@ -129,6 +150,13 @@ gcm_edid_get_serial_number (GcmEdid *edid)
 
 /**
  * gcm_edid_get_eisa_id:
+ * @edid: a valid #GcmEdid instance
+ *
+ * Gets the EISA ID.
+ *
+ * Return value: a null terminaled string value
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_edid_get_eisa_id (GcmEdid *edid)
@@ -139,6 +167,14 @@ gcm_edid_get_eisa_id (GcmEdid *edid)
 
 /**
  * gcm_edid_get_checksum:
+ * @edid: a valid #GcmEdid instance
+ *
+ * Gets the EDID MD5 checksum, which is often useful to compare binary
+ * blobs.
+ *
+ * Return value: a null terminaled string value
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_edid_get_checksum (GcmEdid *edid)
@@ -149,6 +185,13 @@ gcm_edid_get_checksum (GcmEdid *edid)
 
 /**
  * gcm_edid_get_pnp_id:
+ * @edid: a valid #GcmEdid instance
+ *
+ * Gets the device PNP ID..
+ *
+ * Return value: a null terminaled string value
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_edid_get_pnp_id (GcmEdid *edid)
@@ -159,6 +202,13 @@ gcm_edid_get_pnp_id (GcmEdid *edid)
 
 /**
  * gcm_edid_get_width:
+ * @edid: a valid #GcmEdid instance
+ *
+ * Gets the width of the panel.
+ *
+ * Return value: the width in mm.
+ *
+ * Since: 0.0.1
  **/
 guint
 gcm_edid_get_width (GcmEdid *edid)
@@ -169,6 +219,13 @@ gcm_edid_get_width (GcmEdid *edid)
 
 /**
  * gcm_edid_get_height:
+ * @edid: a valid #GcmEdid instance
+ *
+ * Gets the panel height.
+ *
+ * Return value: the height in mm.
+ *
+ * Since: 0.0.1
  **/
 guint
 gcm_edid_get_height (GcmEdid *edid)
@@ -179,6 +236,13 @@ gcm_edid_get_height (GcmEdid *edid)
 
 /**
  * gcm_edid_get_gamma:
+ * @edid: a valid #GcmEdid instance
+ *
+ * Gets the monitor gamma.
+ *
+ * Return value: the gamma value, although this is typically 2.2
+ *
+ * Since: 0.0.1
  **/
 gfloat
 gcm_edid_get_gamma (GcmEdid *edid)
@@ -189,6 +253,11 @@ gcm_edid_get_gamma (GcmEdid *edid)
 
 /**
  * gcm_edid_reset:
+ * @edid: a valid #GcmEdid instance
+ *
+ * Resets all the cached values in this object.
+ *
+ * Since: 0.0.1
  **/
 void
 gcm_edid_reset (GcmEdid *edid)
@@ -287,6 +356,17 @@ gcm_edid_parse_string (const guint8 *data)
 
 /**
  * gcm_edid_parse:
+ * @edid: a valid #GcmEdid instance
+ * @data: the EDID block
+ * @length: the data length, typically a multiple of 128
+ * @error: a valid #GError or %NULL
+ *
+ * Parses an EDID block, checking for sanity and decoding anything
+ * important.
+ *
+ * Return value: %TRUE for success.
+ *
+ * Since: 0.0.1
  **/
 gboolean
 gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
@@ -301,6 +381,7 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
 
 	g_return_val_if_fail (GCM_IS_EDID (edid), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
+	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
 
 	/* check header */
 	if (data[0] != 0x00 || data[1] != 0xff) {
@@ -613,7 +694,9 @@ gcm_edid_finalize (GObject *object)
 /**
  * gcm_edid_new:
  *
- * Return value: a new GcmEdid object.
+ * Return value: a new #GcmEdid object.
+ *
+ * Since: 0.0.1
  **/
 GcmEdid *
 gcm_edid_new (void)

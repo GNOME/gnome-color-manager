@@ -30,11 +30,10 @@
 
 #include <glib-object.h>
 #include <libusb-1.0/libusb.h>
+#include <libcolor-glib.h>
 
 #include "egg-debug.h"
-#include "gcm-common.h"
-#include "gcm-buffer.h"
-#include "gcm-usb.h"
+
 #include "gcm-sensor-colormunki.h"
 
 static void     gcm_sensor_colormunki_finalize	(GObject     *object);

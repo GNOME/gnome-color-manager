@@ -58,6 +58,7 @@ struct _GcmDeviceXrandrPrivate
 	GSettings			*settings;
 	GcmX11Screen			*screen;
 	gboolean			 remove_atom;
+	gboolean			 randr_13;
 };
 
 enum {
@@ -237,6 +238,7 @@ gcm_device_xrandr_set_from_output (GcmDevice *device, GcmX11Output *output, GErr
 	const gchar *model;
 	guint8 *data = NULL;
 	gsize length;
+	guint major, minor;
 	GcmDeviceXrandrPrivate *priv = GCM_DEVICE_XRANDR(device)->priv;
 
 	/* parse the EDID to get a output specific name */
@@ -283,6 +285,10 @@ gcm_device_xrandr_set_from_output (GcmDevice *device, GcmX11Output *output, GErr
 		      "native-device", output_name,
 		      NULL);
 
+	/* is XRandR 1.3 compatible */
+	gcm_x11_screen_get_randr_version (priv->screen, &major, &minor);
+	priv->randr_13 = (major >= 1 && minor >= 3);
+
 	/* success */
 	ret = TRUE;
 out:
@@ -290,6 +296,18 @@ out:
 	g_free (id);
 	g_free (title);
 	return ret;
+}
+
+/**
+ * gcm_device_xrandr_apply_for_output:
+ * @device_xrandr: a valid #GcmDeviceXrandr instance
+ *
+ * Return value: %TRUE if the display supports XRandr 1.3;
+ **/
+gboolean
+gcm_device_xrandr_get_xrandr13 (GcmDeviceXrandr *device_xrandr)
+{
+	return device_xrandr->priv->randr_13;
 }
 
 /**
@@ -674,7 +692,6 @@ gcm_device_xrandr_finalize (GObject *object)
 	g_object_unref (priv->edid);
 	g_object_unref (priv->dmi);
 	g_object_unref (priv->settings);
-	g_object_unref (priv->screen);
 	g_object_unref (priv->screen);
 
 	G_OBJECT_CLASS (gcm_device_xrandr_parent_class)->finalize (object);

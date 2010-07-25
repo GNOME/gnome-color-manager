@@ -35,6 +35,9 @@
 
 /**
  * gcm_vec3_clear:
+ * @src: the source vector
+ *
+ * Clears a vector, setting all it's values to zero.
  **/
 void
 gcm_vec3_clear (GcmVec3 *src)
@@ -46,9 +49,15 @@ gcm_vec3_clear (GcmVec3 *src)
 
 /**
  * gcm_vec3_scalar_multiply:
+ * @src: the source
+ * @value: the scalar multiplier
+ * @dest: the destination
+ *
+ * Multiplies a vector with a scalar.
+ * The arguments @src and @dest can be the same value.
  **/
 void
-gcm_vec3_scalar_multiply (GcmVec3 *src, gdouble value, GcmVec3 *dest)
+gcm_vec3_scalar_multiply (const GcmVec3 *src, gdouble value, GcmVec3 *dest)
 {
 	dest->v0 = src->v0 * value;
 	dest->v1 = src->v1 * value;
@@ -57,9 +66,14 @@ gcm_vec3_scalar_multiply (GcmVec3 *src, gdouble value, GcmVec3 *dest)
 
 /**
  * gcm_vec3_to_string:
+ * @src: the source
+ *
+ * Obtains a string representaton of a vector.
+ *
+ * Return value: the string. Free with g_free()
  **/
 gchar *
-gcm_vec3_to_string (GcmVec3 *src)
+gcm_vec3_to_string (const GcmVec3 *src)
 {
 	return g_strdup_printf ("\n/ %0 .3f \\\n"
 				"| %0 .3f |\n"
@@ -69,30 +83,43 @@ gcm_vec3_to_string (GcmVec3 *src)
 
 /**
  * gcm_vec3_get_data:
+ * @src: the vector source
+ *
+ * Gets the raw data for the vector.
+ *
+ * Return value: the pointer to the data segment.
  **/
 gdouble *
-gcm_vec3_get_data (GcmVec3 *src)
+gcm_vec3_get_data (const GcmVec3 *src)
 {
 	return (gdouble *) src;
 }
 
 /**
  * gcm_mat33_clear:
+ * @src: the source
+ *
+ * Clears a matrix value, setting all it's values to zero.
  **/
 void
-gcm_mat33_clear (GcmMat3x3 *dest)
+gcm_mat33_clear (const GcmMat3x3 *src)
 {
 	guint i;
-	gdouble *temp = (gdouble *) dest;
+	gdouble *temp = (gdouble *) src;
 	for (i=0; i<3*3; i++)
 		temp[i] = 0.0f;
 }
 
 /**
  * gcm_mat33_to_string:
+ * @src: the source
+ *
+ * Obtains a string representaton of a matrix.
+ *
+ * Return value: the string. Free with g_free()
  **/
 gchar *
-gcm_mat33_to_string (GcmMat3x3 *src)
+gcm_mat33_to_string (const GcmMat3x3 *src)
 {
 	return g_strdup_printf ("\n/ %0 .3f  %0 .3f  %0 .3f \\\n"
 				"| %0 .3f  %0 .3f  %0 .3f |\n"
@@ -104,31 +131,46 @@ gcm_mat33_to_string (GcmMat3x3 *src)
 
 /**
  * gcm_mat33_get_data:
+ * @src: the matrix source
+ *
+ * Gets the raw data for the matrix.
+ *
+ * Return value: the pointer to the data segment.
  **/
 gdouble *
-gcm_mat33_get_data (GcmMat3x3 *src)
+gcm_mat33_get_data (const GcmMat3x3 *src)
 {
 	return (gdouble *) src;
 }
 
 /**
  * gcm_mat33_set_identity:
+ * @src: the source
+ *
+ * Sets the matrix to an identity value.
  **/
 void
-gcm_mat33_set_identity (GcmMat3x3 *dest)
+gcm_mat33_set_identity (GcmMat3x3 *src)
 {
-	gcm_mat33_clear (dest);
-	dest->m00 = 1.0f;
-	dest->m11 = 1.0f;
-	dest->m22 = 1.0f;
+	gcm_mat33_clear (src);
+	src->m00 = 1.0f;
+	src->m11 = 1.0f;
+	src->m22 = 1.0f;
 }
 
 /**
  * gcm_mat33_vector_multiply:
+ * @mat_src: the matrix source
+ * @vec_src: the vector source
+ * @vec_dest: the destination vector
+ *
+ * Multiplies a matrix with a vector.
+ * The arguments @vec_src and @vec_dest cannot be the same value.
  **/
 void
-gcm_mat33_vector_multiply (GcmMat3x3 *mat_src, GcmVec3 *vec_src, GcmVec3 *vec_dest)
+gcm_mat33_vector_multiply (const GcmMat3x3 *mat_src, const GcmVec3 *vec_src, GcmVec3 *vec_dest)
 {
+	g_return_if_fail (vec_src != vec_src);
 	vec_dest->v0 = mat_src->m00 * vec_src->v0 +
 		       mat_src->m01 * vec_src->v1 +
 		       mat_src->m02 * vec_src->v2;
@@ -142,14 +184,23 @@ gcm_mat33_vector_multiply (GcmMat3x3 *mat_src, GcmVec3 *vec_src, GcmVec3 *vec_de
 
 /**
  * gcm_mat33_matrix_multiply:
+ * @mat_src1: the matrix source
+ * @mat_src2: the other matrix source
+ * @mat_dest: the destination
+ *
+ * Multiply (convolve) one matrix with another.
+ * The arguments @mat_src1 cannot be the same as @mat_dest, and
+ * @mat_src2 cannot be the same as @mat_dest.
  **/
 void
-gcm_mat33_matrix_multiply (GcmMat3x3 *mat_src1, GcmMat3x3 *mat_src2, GcmMat3x3 *mat_dest)
+gcm_mat33_matrix_multiply (const GcmMat3x3 *mat_src1, const GcmMat3x3 *mat_src2, GcmMat3x3 *mat_dest)
 {
 	guint8 i, j, k;
 	gdouble *src1 = gcm_mat33_get_data (mat_src1);
 	gdouble *src2 = gcm_mat33_get_data (mat_src2);
 	gdouble *dest = gcm_mat33_get_data (mat_dest);
+	g_return_if_fail (mat_src1 != mat_dest);
+	g_return_if_fail (mat_src2 != mat_dest);
 
 	for (i=0; i<3; i++) {
 		for (j=0; j<3; j++) {
@@ -162,13 +213,20 @@ gcm_mat33_matrix_multiply (GcmMat3x3 *mat_src1, GcmMat3x3 *mat_src2, GcmMat3x3 *
 
 /**
  * gcm_mat33_reciprocal:
+ * @src: the source
+ * @dest: the destination
  *
- * Return value: FALSE if det is zero (singular)
+ * Inverts the matrix.
+ * The arguments @src and @dest cannot be the same value.
+ *
+ * Return value: %FALSE if det is zero (singular).
  **/
 gboolean
-gcm_mat33_reciprocal (GcmMat3x3 *src, GcmMat3x3 *dest)
+gcm_mat33_reciprocal (const GcmMat3x3 *src, GcmMat3x3 *dest)
 {
 	double det = 0;
+
+	g_return_val_if_fail (src != dest, FALSE);
 
 	det  = src->m00 * (src->m11 * src->m22 - src->m12 * src->m21);
 	det -= src->m01 * (src->m10 * src->m22 - src->m12 * src->m20);

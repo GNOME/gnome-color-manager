@@ -21,7 +21,7 @@
 
 /**
  * SECTION:gcm-ddc-common
- * @short_description: Common functionality
+ * @short_description: Common functionality for DDC/CI objects
  *
  * A GObject to use for common shizzle.
  */
@@ -136,6 +136,8 @@ static const GcmDescription vcp_descriptions[] = {
 
 /**
  * gcm_get_vcp_description_from_index:
+ *
+ * Since: 0.0.1
  **/
 const gchar *
 gcm_get_vcp_description_from_index (guchar idx)
@@ -154,6 +156,8 @@ gcm_get_vcp_description_from_index (guchar idx)
 
 /**
  * gcm_get_vcp_index_from_description:
+ *
+ * Since: 0.0.1
  **/
 guchar
 gcm_get_vcp_index_from_description (const gchar *description)

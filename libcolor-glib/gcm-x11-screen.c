@@ -22,9 +22,10 @@
 
 /**
  * SECTION:gcm-x11-screen
- * @short_description: Object to interact with the XServer
+ * @short_description: An object to interact with the XServer screen.
  *
  * This object talks to the currently running X Server.
+ * The #GcmX11Screen objwect will contain one or many #GcmX11Outputs.
  */
 
 #include "config.h"
@@ -338,7 +339,7 @@ gcm_x11_screen_get_output_by_name (GcmX11Screen *screen, const gchar *name, GErr
 
 /**
  * gcm_x11_screen_get_profile_data:
- * @x11: a valid %GcmX11Screen instance
+ * @screen: a valid %GcmX11Screen instance
  * @data: the data that is returned from the XServer. Free with g_free()
  * @length: the size of the returned data, or %NULL if you don't care
  * @error: a %GError that is set in the result of an error, or %NULL
@@ -399,7 +400,7 @@ out:
 
 /**
  * gcm_x11_screen_set_profile:
- * @x11: a valid %GcmX11Screen instance
+ * @screen: a valid %GcmX11Screen instance
  * @filename: the filename of the ICC profile
  * @error: a %GError that is set in the result of an error, or %NULL
  *
@@ -437,7 +438,7 @@ out:
 
 /**
  * gcm_x11_screen_set_profile_data:
- * @x11: a valid %GcmX11Screen instance
+ * @screen: a valid %GcmX11Screen instance
  * @data: the data that is to be set to the XServer
  * @length: the size of the data
  * @error: a %GError that is set in the result of an error, or %NULL
@@ -484,7 +485,7 @@ out:
 
 /**
  * gcm_x11_screen_set_protocol_version:
- * @x11: a valid %GcmX11Screen instance
+ * @screen: a valid %GcmX11Screen instance
  * @major: the major version
  * @minor: the minor version
  * @error: a %GError that is set in the result of an error, or %NULL
@@ -533,7 +534,7 @@ out:
 
 /**
  * gcm_x11_screen_remove_protocol_version:
- * @x11: a valid %GcmX11Screen instance
+ * @screen: a valid %GcmX11Screen instance
  * @error: a %GError that is set in the result of an error, or %NULL
  *
  * Removes the ICC profile version data from the XServer.
@@ -576,8 +577,7 @@ out:
 
 /**
  * gcm_x11_screen_get_protocol_version:
- *
- * @x11: a valid %GcmX11Screen instance
+ * @screen: a valid %GcmX11Screen instance
  * @major: the major version
  * @minor: the minor version
  * @error: a %GError that is set in the result of an error, or %NULL
@@ -638,7 +638,7 @@ out:
 
 /**
  * gcm_x11_screen_remove_profile:
- * @x11: a valid %GcmX11Screen instance
+ * @screen: a valid %GcmX11Screen instance
  * @error: a %GError that is set in the result of an error, or %NULL
  *
  * Removes the ICC profile data from the XServer.
@@ -677,6 +677,24 @@ gcm_x11_screen_remove_profile (GcmX11Screen *screen, GError **error)
 	}
 out:
 	return ret;
+}
+
+/**
+ * gcm_x11_screen_get_randr_version:
+ * @screen: a valid %GcmX11Screen instance
+ * @major: the returned XRandR version major, or %NULL
+ * @minor: the returned XRandR version minor, or %NULL
+ *
+ * Gets the XRandR version from the server.
+ **/
+void
+gcm_x11_screen_get_randr_version (GcmX11Screen *screen, guint *major, guint *minor)
+{
+	g_return_if_fail (GCM_IS_X11_SCREEN (screen));
+	if (major != NULL)
+		*major = screen->priv->rr_major_version;
+	if (minor != NULL)
+		*minor = screen->priv->rr_minor_version;
 }
 
 /**

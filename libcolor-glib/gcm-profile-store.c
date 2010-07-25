@@ -21,7 +21,7 @@
 
 /**
  * SECTION:gcm-profile-store
- * @short_description: object to hold an array of profiles.
+ * @short_description: Object to search for profiles and keep a list up to date.
  *
  * This object holds an array of %GcmProfiles, and watches both the directories
  * for changes.

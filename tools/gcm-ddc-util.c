@@ -21,7 +21,6 @@
 
 #include <config.h>
 #include <glib/gstdio.h>
-
 #include <libcolor-glib.h>
 
 /**

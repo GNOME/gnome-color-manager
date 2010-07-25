@@ -21,9 +21,9 @@
 
 /**
  * SECTION:gcm-buffer
- * @short_description: buffer functionality
+ * @short_description: Routines to read and write LE and BE values to a data buffer.
  *
- * Functions to manipulate buffer.
+ * Functions to manipulate a raw data buffer.
  */
 
 #include "config.h"
@@ -34,7 +34,7 @@
 
 /**
  * gcm_buffer_write_uint16_be:
- * @data: the writable data buffer
+ * @buffer: the writable data buffer
  * @value: the value to write
  *
  * Writes a big endian value into a data buffer.
@@ -49,7 +49,7 @@ gcm_buffer_write_uint16_be (guchar *buffer, guint16 value)
 
 /**
  * gcm_buffer_write_uint16_le:
- * @data: the writable data buffer
+ * @buffer: the writable data buffer
  * @value: the value to write
  *
  * Writes a little endian value into a data buffer.
@@ -64,7 +64,7 @@ gcm_buffer_write_uint16_le (guchar *buffer, guint16 value)
 
 /**
  * gcm_buffer_read_uint16_be:
- * @data: the writable data buffer
+ * @buffer: the writable data buffer
  *
  * Reads a big endian value from a data buffer.
  * NOTE: No validation is done on the buffer to ensure it's valid.
@@ -79,7 +79,7 @@ gcm_buffer_read_uint16_be (const guchar *buffer)
 
 /**
  * gcm_buffer_read_uint16_le:
- * @data: the writable data buffer
+ * @buffer: the writable data buffer
  *
  * Reads a big endian value from a data buffer.
  * NOTE: No validation is done on the buffer to ensure it's valid.
@@ -94,7 +94,7 @@ gcm_buffer_read_uint16_le (const guchar *buffer)
 
 /**
  * gcm_buffer_write_uint32_be:
- * @data: the writable data buffer
+ * @buffer: the writable data buffer
  * @value: the value to write
  *
  * Writes a big endian value into a data buffer.
@@ -111,7 +111,7 @@ gcm_buffer_write_uint32_be (guchar *buffer, guint32 value)
 
 /**
  * gcm_buffer_write_uint32_le:
- * @data: the writable data buffer
+ * @buffer: the writable data buffer
  * @value: the value to write
  *
  * Writes a little endian value into a data buffer.
@@ -128,7 +128,7 @@ gcm_buffer_write_uint32_le (guchar *buffer, guint32 value)
 
 /**
  * gcm_buffer_read_uint32_be:
- * @data: the writable data buffer
+ * @buffer: the writable data buffer
  *
  * Reads a big endian value from a data buffer.
  * NOTE: No validation is done on the buffer to ensure it's valid.
@@ -143,7 +143,7 @@ gcm_buffer_read_uint32_be (const guchar *buffer)
 
 /**
  * gcm_buffer_read_uint32_le:
- * @data: the writable data buffer
+ * @buffer: the writable data buffer
  *
  * Reads a big endian value from a data buffer.
  * NOTE: No validation is done on the buffer to ensure it's valid.

@@ -21,9 +21,10 @@
 
 /**
  * SECTION:gcm-ddc-device
- * @short_description: For managing different i2c devices
+ * @short_description: For managing a specific i2c devices using DDC/CI.
  *
- * A GObject to use for accessing a device using I2C.
+ * A GObject to use for controlling I2C devices with DDC/CI.
+ * A #GcmDdcDevice will contain many #GcmDdcControl's.
  */
 
 #include "config.h"
@@ -339,10 +340,9 @@ out:
 
 /**
  * gcm_ddc_device_read:
- *
  * @device: A valid #GcmDdcDevice
  * @data: the data location to read into
- * @length: the length of the @data buffer
+ * @data_length: the length of the @data buffer
  * @recieved_length: the amount of data that was copied
  * @error: a #GError, or %NULL
  *
@@ -623,7 +623,6 @@ out:
 
 /**
  * gcm_ddc_device_save:
- *
  * @device: A valid #GcmDdcDevice
  * @error: a #GError, or %NULL
  *
@@ -804,9 +803,9 @@ out:
  * @id: the device ID, e.g. GCM_DDC_CONTROL_ID_BRIGHTNESS
  * @error: a #GError, or %NULL
  *
- * Gets a #GcmControl object from the ID.
+ * Gets a #GcmDdcControl object from the ID.
  *
- * Return value: %NULL, or a #GcmControl which needs to be freed with g_object_unref().
+ * Return value: %NULL, or a #GcmDdcControl which needs to be freed with g_object_unref().
  *
  * Since: 0.0.1
  **/
@@ -1131,8 +1130,6 @@ gcm_ddc_device_finalize (GObject *object)
 
 /**
  * gcm_ddc_device_new:
- *
- * GcmDdcDevice is a nice GObject wrapper for gcm.
  *
  * Return value: A new %GcmDdcDevice instance
  *

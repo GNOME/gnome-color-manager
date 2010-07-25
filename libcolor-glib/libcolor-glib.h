@@ -28,6 +28,7 @@
 
 #define __LIBCOLOR_GLIB_H_INSIDE__
 
+#include <gcm-buffer.h>
 #include <gcm-common.h>
 #include <gcm-color.h>
 #include <gcm-ddc-common.h>

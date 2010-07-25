@@ -24,9 +24,7 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <locale.h>
-
-#include "gcm-enum.h"
-#include "gcm-profile.h"
+#include <libcolor-glib.h>
 
 /**
  * gcm_dump_profile_filename:

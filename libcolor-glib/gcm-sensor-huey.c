@@ -21,7 +21,7 @@
 
 /**
  * SECTION:gcm-sensor-huey
- * @short_description: functionality to talk to the HUEY sensor_client.
+ * @short_description: Userspace driver for the HUEY colorimeter.
  *
  * This object contains all the low level logic for the HUEY hardware.
  */

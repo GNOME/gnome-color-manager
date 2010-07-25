@@ -41,22 +41,22 @@ typedef struct {
 } GcmVec3;
 
 void		 gcm_vec3_clear			(GcmVec3		*src);
-void		 gcm_vec3_scalar_multiply	(GcmVec3		*src,
+void		 gcm_vec3_scalar_multiply	(const GcmVec3		*src,
 						 gdouble		 value,
 						 GcmVec3		*dest);
-gchar		*gcm_vec3_to_string		(GcmVec3		*src);
-gdouble		*gcm_vec3_get_data		(GcmVec3		*src);
-void		 gcm_mat33_clear		(GcmMat3x3		*dest);
-gchar		*gcm_mat33_to_string		(GcmMat3x3		*src);
-gdouble		*gcm_mat33_get_data		(GcmMat3x3		*src);
-void		 gcm_mat33_set_identity		(GcmMat3x3		*dest);
-void		 gcm_mat33_vector_multiply	(GcmMat3x3		*mat_src,
-						 GcmVec3		*vec_src,
+gchar		*gcm_vec3_to_string		(const GcmVec3		*src);
+gdouble		*gcm_vec3_get_data		(const GcmVec3		*src);
+void		 gcm_mat33_clear		(const GcmMat3x3	*src);
+gchar		*gcm_mat33_to_string		(const GcmMat3x3	*src);
+gdouble		*gcm_mat33_get_data		(const GcmMat3x3	*src);
+void		 gcm_mat33_set_identity		(GcmMat3x3		*src);
+void		 gcm_mat33_vector_multiply	(const GcmMat3x3	*mat_src,
+						 const GcmVec3		*vec_src,
 						 GcmVec3		*vec_dest);
-void		 gcm_mat33_matrix_multiply	(GcmMat3x3		*mat_src1,
-						 GcmMat3x3		*mat_src2,
+void		 gcm_mat33_matrix_multiply	(const GcmMat3x3	*mat_src1,
+						 const GcmMat3x3	*mat_src2,
 						 GcmMat3x3		*mat_dest);
-gboolean	 gcm_mat33_reciprocal		(GcmMat3x3		*src,
+gboolean	 gcm_mat33_reciprocal		(const GcmMat3x3	*src,
 						 GcmMat3x3		*dest);
 
 

@@ -62,10 +62,10 @@ void		 gcm_color_copy_XYZ			(GcmColorXYZ		*src,
 							 GcmColorXYZ		*dest);
 void		 gcm_color_copy_RGB			(GcmColorRGB		*src,
 							 GcmColorRGB		*dest);
-void		 gcm_color_convert_RGBint_to_RGB	(GcmColorRGBint		*rgb_int,
-							 GcmColorRGB		*rgb);
-void		 gcm_color_convert_RGB_to_RGBint	(GcmColorRGB		*rgb,
-							 GcmColorRGBint		*rgb_int);
+void		 gcm_color_convert_RGBint_to_RGB	(GcmColorRGBint		*src,
+							 GcmColorRGB		*dest);
+void		 gcm_color_convert_RGB_to_RGBint	(GcmColorRGB		*src,
+							 GcmColorRGBint		*dest);
 void		 gcm_color_convert_Yxy_to_XYZ		(GcmColorYxy		*src,
 							 GcmColorXYZ		*dest);
 void		 gcm_color_convert_XYZ_to_Yxy		(GcmColorXYZ		*src,

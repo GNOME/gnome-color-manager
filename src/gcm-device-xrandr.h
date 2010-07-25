@@ -58,7 +58,7 @@ void		 gcm_device_xrandr_set_remove_atom	(GcmDeviceXrandr	*device_xrandr,
 const gchar	*gcm_device_xrandr_get_native_device	(GcmDeviceXrandr	*device_xrandr);
 const gchar	*gcm_device_xrandr_get_eisa_id		(GcmDeviceXrandr	*device_xrandr);
 const gchar	*gcm_device_xrandr_get_edid_md5		(GcmDeviceXrandr	*device_xrandr);
-gboolean	 gcm_device_xrandr_get_fallback		(GcmDeviceXrandr	*device_xrandr);
+gboolean	 gcm_device_xrandr_get_xrandr13		(GcmDeviceXrandr	*device_xrandr);
 gboolean	 gcm_device_xrandr_is_primary		(GcmDeviceXrandr	*device_xrandr);
 
 G_END_DECLS

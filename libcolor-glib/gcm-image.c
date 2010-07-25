@@ -21,7 +21,7 @@
 
 /**
  * SECTION:gcm-image
- * @short_description: a color managed #GtkImage.
+ * @short_description: A color managed #GtkImage.
  *
  * This object is used to convert an image using one, two or three ICC profiles.
  */

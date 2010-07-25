@@ -71,11 +71,11 @@ gcm_color_copy_RGB (GcmColorRGB *src, GcmColorRGB *dest)
  * Convert from one color format to another.
  **/
 void
-gcm_color_convert_RGBint_to_RGB (GcmColorRGBint *rgb_int, GcmColorRGB *rgb)
+gcm_color_convert_RGBint_to_RGB (GcmColorRGBint *src, GcmColorRGB *dest)
 {
-	rgb->R = (gdouble) rgb_int->R / 255.0f;
-	rgb->G = (gdouble) rgb_int->G / 255.0f;
-	rgb->B = (gdouble) rgb_int->B / 255.0f;
+	dest->R = (gdouble) src->R / 255.0f;
+	dest->G = (gdouble) src->G / 255.0f;
+	dest->B = (gdouble) src->B / 255.0f;
 }
 
 /**
@@ -86,11 +86,11 @@ gcm_color_convert_RGBint_to_RGB (GcmColorRGBint *rgb_int, GcmColorRGB *rgb)
  * Convert from one color format to another.
  **/
 void
-gcm_color_convert_RGB_to_RGBint (GcmColorRGB *rgb, GcmColorRGBint *rgb_int)
+gcm_color_convert_RGB_to_RGBint (GcmColorRGB *src, GcmColorRGBint *dest)
 {
-	rgb_int->R = (gdouble) rgb->R * 255.0f;
-	rgb_int->G = (gdouble) rgb->G * 255.0f;
-	rgb_int->B = (gdouble) rgb->B * 255.0f;
+	dest->R = (gdouble) src->R * 255.0f;
+	dest->G = (gdouble) src->G * 255.0f;
+	dest->B = (gdouble) src->B * 255.0f;
 }
 
 /**

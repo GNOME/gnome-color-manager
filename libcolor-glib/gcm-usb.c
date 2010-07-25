@@ -236,8 +236,6 @@ static GSourceFuncs gcm_usb_source_funcs = {
  * Connects up usb-1 with the GLib event loop. This functionality
  * allows you to submit async requests using usb, and the callbacks
  * just kinda happen at the right time.
- *
- * Return value: %TRUE for success
  **/
 void
 gcm_usb_attach_to_context (GcmUsb *usb, GMainContext *context)
@@ -333,6 +331,10 @@ gcm_usb_get_device_handle (GcmUsb *usb)
 /**
  * gcm_usb_connect:
  * @usb:  a #GcmUsb instance
+ * @vendor_id: the vendor ID to connect to
+ * @product_id: the product ID to connect to
+ * @configuration: the configuration index to use, usually '1'
+ * @interface: the configuration interface to use, usually '0'
  * @error:  a #GError, or %NULL
  *
  * Connects to a specific device.
@@ -380,7 +382,7 @@ gcm_usb_connect (GcmUsb *usb, guint vendor_id, guint product_id, guint configura
 		ret = FALSE;
 		goto out;
 	}
-	retval = libusb_claim_interface (priv->handle, 0);
+	retval = libusb_claim_interface (priv->handle, interface);
 	if (retval < 0) {
 		g_set_error (error, GCM_USB_ERROR,
 			     GCM_USB_ERROR_INTERNAL,

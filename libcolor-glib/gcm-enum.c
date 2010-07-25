@@ -19,6 +19,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
+/**
+ * SECTION:gcm-enum
+ * @short_description: Common routines to convert enumerated values to strings and vice versa.
+ *
+ * Functions to convert enumerated values to strings and vice versa.
+ */
+
 #include "config.h"
 
 #include "gcm-enum.h"

@@ -1372,8 +1372,6 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 	GtkWidget *widget;
 	const gchar *tooltip;
 	GcmDeviceKind kind;
-	gboolean connected;
-	gboolean xrandr_fallback;
 	gboolean has_vte = TRUE;
 
 	/* TRANSLATORS: this is when the button is sensitive */
@@ -1402,16 +1400,16 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 	if (kind == GCM_DEVICE_KIND_DISPLAY) {
 
 		/* are we disconnected */
-		connected = gcm_device_get_connected (panel->priv->current_device);
-		if (!connected) {
+		ret = gcm_device_get_connected (panel->priv->current_device);
+		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The display device is not connected");
 			goto out;
 		}
 
 		/* are we not XRandR 1.3 compat */
-		xrandr_fallback = gcm_device_xrandr_get_fallback (GCM_DEVICE_XRANDR (panel->priv->current_device));
-		if (xrandr_fallback) {
+		ret = gcm_device_xrandr_get_xrandr13 (GCM_DEVICE_XRANDR (panel->priv->current_device));
+		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The display driver does not support XRandR 1.3");
 			goto out;
@@ -1523,19 +1521,20 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 
 	/* show broken devices */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "label_problems"));
+	gtk_widget_hide (widget);
 	if (kind == GCM_DEVICE_KIND_DISPLAY) {
-		ret = gcm_device_xrandr_get_fallback (GCM_DEVICE_XRANDR (panel->priv->current_device));
+		ret = gcm_device_get_connected (panel->priv->current_device);
 		if (ret) {
-			/* TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
-			 * Whilst this does not matter if you only have one monitor attached, it means you
-			 * can't color correct additional monitors or projectors. */
-			gtk_label_set_label (GTK_LABEL (widget), _("Per-device settings not supported. Check your display driver."));
-			gtk_widget_show (widget);
-		} else {
-			gtk_widget_hide (widget);
+			ret = gcm_device_xrandr_get_xrandr13 (GCM_DEVICE_XRANDR (panel->priv->current_device));
+			if (!ret) {
+				/* TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
+				* Whilst this does not matter if you only have one monitor attached, it means you
+				* can't color correct additional monitors or projectors. */
+				gtk_label_set_label (GTK_LABEL (widget),
+						     _("Per-device settings not supported. Check your display driver."));
+				gtk_widget_show (widget);
+			}
 		}
-	} else {
-		gtk_widget_hide (widget);
 	}
 
 	/* set device labels */

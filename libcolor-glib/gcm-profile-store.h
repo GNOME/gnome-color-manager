@@ -80,7 +80,7 @@ GcmProfile	*gcm_profile_store_get_by_checksum	(GcmProfileStore	*profile_store,
 							 const gchar		*checksum);
 GPtrArray	*gcm_profile_store_get_array		(GcmProfileStore	*profile_store);
 gboolean	 gcm_profile_store_search		(GcmProfileStore	*profile_store,
-							 GcmProfileSearchFlags	 search_flags);
+							 GcmProfileSearchFlags	 flags);
 gboolean	 gcm_profile_store_search_path		(GcmProfileStore	*profile_store,
 							 const gchar		*path);
 

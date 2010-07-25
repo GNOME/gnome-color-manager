@@ -23,8 +23,7 @@
 
 #include <glib/gi18n.h>
 #include <locale.h>
-
-#include "gcm-sensor-client.h"
+#include <libcolor-glib.h>
 
 /**
  * main:
