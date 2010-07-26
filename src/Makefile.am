@@ -12,6 +12,7 @@ INCLUDES =						\
 	$(NOTIFY_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
 	$(CONTROL_CENTER_CFLAGS)			\
+	$(SETTINGS_DAEMON_CFLAGS)			\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	$(GUDEV_CFLAGS)					\
 	-I$(top_srcdir)/libcolor-glib			\

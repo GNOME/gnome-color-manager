@@ -141,6 +141,7 @@ PKG_CHECK_MODULES(GTK, gtk+-3.0 >= 2.90.3)
 PKG_CHECK_MODULES(GUDEV, gudev-1.0)
 PKG_CHECK_MODULES(LCMS, lcms2)
 PKG_CHECK_MODULES(X11, x11)
+PKG_CHECK_MODULES(SETTINGS_DAEMON, gnome-settings-daemon)
 PKG_CHECK_MODULES(USB, [libusb-1.0 >= 1.0.0])
 
 dnl Required for the properties window
@@ -314,6 +315,7 @@ policy/Makefile
 po/Makefile.in
 rules/Makefile
 src/Makefile
+session/Makefile
 tools/Makefile
 docs/Makefile
 docs/huey/Makefile

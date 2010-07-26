@@ -64,6 +64,8 @@ rm -f $RPM_BUILD_ROOT%{_libdir}/control-center-1/panels/*.a
 rm -f $RPM_BUILD_ROOT%{_libdir}/control-center-1/panels/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.a
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
+rm -f $RPM_BUILD_ROOT%{_libdir}/gnome-settings-daemon-2.0/libcolor.a
+rm -f $RPM_BUILD_ROOT%{_libdir}/gnome-settings-daemon-2.0/libcolor.la
 
 %find_lang %name --with-gnome
 
@@ -119,6 +121,8 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
 %{_libdir}/libcolor-glib.so.1.0.0
 %{_libdir}/pkgconfig/libcolor-glib.pc
 %{_datadir}/gtk-doc/html/libcolor-glib
+%{_libdir}/gnome-settings-daemon-2.0/color.gnome-settings-plugin
+%{_libdir}/gnome-settings-daemon-2.0/libcolor.so
 
 %changelog
 * #LONGDATE# Richard Hughes <richard@hughsie.com> #VERSION#-0.#BUILD##ALPHATAG#

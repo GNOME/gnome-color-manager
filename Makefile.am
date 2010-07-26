@@ -8,6 +8,7 @@ SUBDIRS = 						\
 	policy						\
 	rules						\
 	tools						\
+	session						\
 	src
 
 snapshot:
