@@ -170,7 +170,7 @@ gcm_mat33_set_identity (GcmMat3x3 *src)
 void
 gcm_mat33_vector_multiply (const GcmMat3x3 *mat_src, const GcmVec3 *vec_src, GcmVec3 *vec_dest)
 {
-	g_return_if_fail (vec_src != vec_src);
+	g_return_if_fail (vec_src != vec_dest);
 	vec_dest->v0 = mat_src->m00 * vec_src->v0 +
 		       mat_src->m01 * vec_src->v1 +
 		       mat_src->m02 * vec_src->v2;

@@ -146,9 +146,16 @@ gcm_libusb_pollfd_remove_all (GcmUsb *usb)
 {
 	GcmUsbSource *source = usb->priv->source;
 	GPollFD *pollfd;
-	GSList *elem = source->pollfds;
+	GSList *elem;
+
+	/* never connected */
+	if (source == NULL) {
+		egg_debug ("never attached to a context");
+		return;
+	}
 
 	/* nothing to see here, move along */
+	elem = source->pollfds;
 	if (elem == NULL)
 		return;
 
