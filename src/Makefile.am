@@ -243,6 +243,7 @@ libcolor_la_LIBADD =					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
 	$(GUDEV_LIBS)					\
+	$(VTE_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(TIFF_LIBS)					\

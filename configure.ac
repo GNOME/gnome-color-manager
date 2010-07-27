@@ -150,7 +150,7 @@ PANELS_DIR="${libdir}/control-center-1/panels"
 AC_SUBST(PANELS_DIR)
 
 dnl **** Check for VTE ****
-PKG_CHECK_MODULES(VTE, vte3 >= 0.25.1, has_vte=yes, has_vte=no)
+PKG_CHECK_MODULES(VTE, vte-2.90 >= 0.25.1, has_vte=yes, has_vte=no)
 AM_CONDITIONAL(HAVE_VTE, test x$has_vte = xyes)
 if test x$has_vte = xyes; then
 	AC_DEFINE(HAVE_VTE,1,[Use VTE terminal widget])
