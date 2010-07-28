@@ -33,6 +33,7 @@
 #include <libusb-1.0/libusb.h>
 
 #include "gcm-usb.h"
+#include "gcm-compat.h"
 
 #include "egg-debug.h"
 

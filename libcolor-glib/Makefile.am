@@ -33,6 +33,7 @@ libcolor_glib_includedir = $(includedir)/libcolor-glib
 libcolor_glib_include_HEADERS =					\
 	libcolor-glib.h						\
 	gcm-common.h						\
+	gcm-compat.h						\
 	gcm-color.h						\
 	gcm-ddc-client.h					\
 	gcm-ddc-device.h					\

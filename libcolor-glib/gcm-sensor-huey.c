@@ -36,6 +36,7 @@
 #include "gcm-buffer.h"
 #include "gcm-usb.h"
 #include "gcm-common.h"
+#include "gcm-compat.h"
 #include "gcm-sensor-huey.h"
 
 static void     gcm_sensor_huey_finalize	(GObject     *object);

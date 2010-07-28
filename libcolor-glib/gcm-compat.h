@@ -19,39 +19,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __LIBCOLOR_GLIB_H__
-#define __LIBCOLOR_GLIB_H__
-
-#ifndef I_KNOW_THE_LIBCOLOR_GLIB_API_IS_SUBJECT_TO_CHANGE
-#error You have to define I_KNOW_THE_LIBCOLOR_GLIB_API_IS_SUBJECT_TO_CHANGE
+#if !defined (__LIBCOLOR_GLIB_H_INSIDE__) && !defined (LIBCOLOR_GLIB_COMPILATION)
+#error "Only <libcolor-glib.h> can be included directly."
 #endif
 
-#define __LIBCOLOR_GLIB_H_INSIDE__
+#ifndef __GCM_COMPAT_H__
+#define __GCM_COMPAT_H__
 
-#include <gcm-buffer.h>
-#include <gcm-common.h>
-#include <gcm-compat.h>
-#include <gcm-color.h>
-#include <gcm-ddc-common.h>
-#include <gcm-ddc-device.h>
-#include <gcm-ddc-client.h>
-#include <gcm-ddc-control.h>
-#include <gcm-sensor.h>
-#include <gcm-sensor-huey.h>
-#include <gcm-sensor-dummy.h>
-#include <gcm-sensor-client.h>
-#include <gcm-edid.h>
-#include <gcm-profile.h>
-#include <gcm-enum.h>
-#include <gcm-clut.h>
-#include <gcm-dmi.h>
-#include <gcm-x11-screen.h>
-#include <gcm-x11-output.h>
-#include <gcm-brightness.h>
-#include <gcm-profile-store.h>
-#include <gcm-usb.h>
+#include "config.h"
 
-#undef __LIBCOLOR_GLIB_H_INSIDE__
+/* only libusb 1.0.8 has libusb_strerror */
+#ifndef HAVE_NEW_USB
+#define	libusb_strerror(f1)				"unknown"
+#endif
 
-#endif /* __LIBCOLOR_GLIB_H__ */
+#endif /* __GCM_COMPAT_H__ */
 
