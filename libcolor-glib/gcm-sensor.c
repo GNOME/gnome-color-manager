@@ -45,6 +45,7 @@ static void     gcm_sensor_finalize	(GObject     *object);
 struct _GcmSensorPrivate
 {
 	gboolean			 native;
+	GcmSensorState			 state;
 	gboolean			 done_startup;
 	GcmSensorKind			 kind;
 	GcmSensorOutputType		 output_type;
@@ -61,6 +62,7 @@ struct _GcmSensorPrivate
 enum {
 	PROP_0,
 	PROP_NATIVE,
+	PROP_STATE,
 	PROP_VENDOR,
 	PROP_MODEL,
 	PROP_SERIAL_NUMBER,
@@ -121,6 +123,33 @@ const gchar *
 gcm_sensor_get_serial_number (GcmSensor *sensor)
 {
 	return sensor->priv->serial_number;
+}
+
+/**
+ * gcm_sensor_set_state:
+ * @sensor: a valid #GcmSensor instance
+ * @state: the sensor state, e.g %GCM_SENSOR_STATE_IDLE
+ *
+ * Sets the device state.
+ **/
+void
+gcm_sensor_set_state (GcmSensor *sensor, GcmSensorState state)
+{
+	sensor->priv->state = state;
+}
+
+/**
+ * gcm_sensor_get_state:
+ * @sensor: a valid #GcmSensor instance
+ *
+ * Gets if the sensor is state taking a measurement.
+ *
+ * Return value: %TRUE for state.
+ **/
+GcmSensorState
+gcm_sensor_get_state (GcmSensor *sensor)
+{
+	return sensor->priv->state;
 }
 
 /**
@@ -617,6 +646,9 @@ gcm_sensor_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_NATIVE:
 		g_value_set_boolean (value, priv->native);
 		break;
+	case PROP_STATE:
+		g_value_set_uint (value, priv->state);
+		break;
 	case PROP_VENDOR:
 		g_value_set_string (value, priv->vendor);
 		break;
@@ -663,6 +695,9 @@ gcm_sensor_set_property (GObject *object, guint prop_id, const GValue *value, GP
 	case PROP_NATIVE:
 		priv->native = g_value_get_boolean (value);
 		break;
+	case PROP_STATE:
+		priv->state = g_value_get_uint (value);
+		break;
 	case PROP_KIND:
 		priv->kind = g_value_get_uint (value);
 		break;
@@ -694,6 +729,14 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 				      FALSE,
 				      G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
 	g_object_class_install_property (object_class, PROP_NATIVE, pspec);
+
+	/**
+	 * GcmSensor:state:
+	 */
+	pspec = g_param_spec_uint ("state", NULL, NULL,
+				   0, G_MAXUINT, GCM_SENSOR_STATE_STARTING,
+				   G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+	g_object_class_install_property (object_class, PROP_STATE, pspec);
 
 	/**
 	 * GcmSensor:vendor:

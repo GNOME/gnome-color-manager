@@ -574,6 +574,9 @@ gcm_sensor_huey_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
 		goto out;
 	}
 
+	/* set state */
+	gcm_sensor_set_state (sensor, GCM_SENSOR_STATE_MEASURING);
+
 	/* hit hardware */
 	request[2] = (output_type == GCM_SENSOR_OUTPUT_TYPE_LCD) ? 0x00 : 0x02;
 	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);
@@ -583,6 +586,8 @@ gcm_sensor_huey_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
 	/* parse the value */
 	*value = (gdouble) (reply[5] * 0xff + reply[6]) / HUEY_AMBIENT_UNITS_TO_LUX;
 out:
+	/* set state */
+	gcm_sensor_set_state (sensor, GCM_SENSOR_STATE_IDLE);
 	return ret;
 }
 
@@ -679,6 +684,9 @@ gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 		goto out;
 	}
 
+	/* set state */
+	gcm_sensor_set_state (sensor, GCM_SENSOR_STATE_MEASURING);
+
 	/* set this to one value for a quick approximate value */
 	multiplier.R = 1;
 	multiplier.G = 1;
@@ -721,6 +729,8 @@ gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 
 	egg_debug ("POST MULTIPLY: %s\n", gcm_vec3_to_string (output));
 out:
+	/* set state */
+	gcm_sensor_set_state (sensor, GCM_SENSOR_STATE_IDLE);
 	return ret;
 }
 
@@ -773,6 +783,9 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 	if (!ret)
 		goto out;
 
+	/* set state */
+	gcm_sensor_set_state (sensor, GCM_SENSOR_STATE_STARTING);
+
 	/* unlock */
 	ret = gcm_sensor_huey_send_unlock (sensor_huey, error);
 	if (!ret)
@@ -814,6 +827,8 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 		g_usleep (50000);
 	}
 out:
+	/* set state */
+	gcm_sensor_set_state (sensor, GCM_SENSOR_STATE_IDLE);
 	g_free (serial_number_tmp);
 	return ret;
 }

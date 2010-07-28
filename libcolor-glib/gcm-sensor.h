@@ -121,6 +121,17 @@ typedef enum {
 	GCM_SENSOR_KIND_UNKNOWN
 } GcmSensorKind;
 
+/**
+ * GcmSensorState:
+ *
+ * The state of the sensor.
+ **/
+typedef enum {
+	GCM_SENSOR_STATE_STARTING,
+	GCM_SENSOR_STATE_IDLE,
+	GCM_SENSOR_STATE_MEASURING
+} GcmSensorState;
+
 /* dummy */
 #define GCM_SENSOR_ERROR	1
 
@@ -128,6 +139,9 @@ GType			 gcm_sensor_get_type		(void);
 GcmSensor		*gcm_sensor_new			(void);
 
 void			 gcm_sensor_button_pressed	(GcmSensor		*sensor);
+void			 gcm_sensor_set_state		(GcmSensor		*sensor,
+							 GcmSensorState		 state);
+GcmSensorState		 gcm_sensor_get_state		(GcmSensor		*sensor);
 gboolean		 gcm_sensor_dump		(GcmSensor		*sensor,
 							 GString		*data,
 							 GError			**error);
