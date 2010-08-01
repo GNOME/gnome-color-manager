@@ -84,6 +84,27 @@ main (gint argc, gchar *argv[])
 			g_print ("0x%02x\t%f\n", i, *value_float);
 		}
 	}
+	g_print ("*** find time/dates ***\n");
+	for (i=0; i<0xff-3; i++) {
+		GDate *date;
+		time_t *time_tmp;
+		gchar text[128];
+		time_tmp = (time_t *) (buffer+i);
+		date = g_date_new ();
+		g_date_set_time_t (date, *time_tmp);
+		if (!g_date_valid(date))
+			continue;
+		if (date->year == 1970)
+			continue;
+		if (date->year > 2011)
+			continue;
+		if (date->year < 1999)
+			continue;
+		g_date_strftime (text, 128, "%F", date);
+		g_print ("0x%02x\t%s\n", i, text);
+		g_date_free (date);
+	}
+
 out:
 	g_strfreev (lines);
 	g_free (data);
