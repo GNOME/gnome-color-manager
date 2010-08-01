@@ -87,11 +87,11 @@ main (gint argc, gchar *argv[])
 	g_print ("*** find time/dates ***\n");
 	for (i=0; i<0xff-3; i++) {
 		GDate *date;
-		time_t *time_tmp;
+		time_t time_tmp;
 		gchar text[128];
-		time_tmp = (time_t *) (buffer+i);
+		time_tmp = (time_t) gcm_buffer_read_uint32_be (buffer+i);
 		date = g_date_new ();
-		g_date_set_time_t (date, *time_tmp);
+		g_date_set_time_t (date, time_tmp);
 		if (!g_date_valid(date))
 			continue;
 		if (date->year == 1970)

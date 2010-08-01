@@ -53,6 +53,8 @@ struct _GcmSensorHueyPrivate
 	GcmUsb				*usb;
 	GcmMat3x3			 calibration_matrix1;
 	GcmMat3x3			 calibration_matrix2;
+	gfloat				 calibration_value;
+	GcmVec3				 calibration_vector;
 	gchar				 unlock_string[5];
 };
 
@@ -154,9 +156,7 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
  * returns: 00 08 0b b8 00 00 00 00
  *      address --^^ ^^-- value
  *
- * It appears you can only ask for one byte at a time, well, if you
- * can ask for more the Windows driver seems to do this one byte at
- * at time...
+ * It appears you can only ask for one byte at a time.
  */
 #define HUEY_COMMAND_REGISTER_READ	0x08
 
@@ -277,7 +277,7 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
  * returns: 90 17 03 00 00 00 00 00  then on second read:
  * 	    00 17 03 00 00 62 57 00 in light (or)
  * 	    00 17 03 00 00 00 08 00 in dark
- * 	no idea	--^^       ^---^ = 16bits data?
+ * 	no idea	--^^       ^---^ = 16bits data
  */
 #define HUEY_COMMAND_GET_AMBIENT	0x17
 
@@ -307,6 +307,27 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
  * I have no idea why we need to do this, although it probably
  * indicates we doing something wrong. */
 #define HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR	6880.0f
+
+/*
+ * Register map:
+ *     x0  x1  x2  x3  x4  x5  x6  x7  x8  x9  xA  xB  xC  xD  xE  xF
+ * 0x [serial-number.][matrix1.......................................|
+ * 1x ...............................................................|
+ * 2x .......]                                                       |
+ * 3x                         [matrix2...............................|
+ * 4x ...............................................................|
+ * 5x ...........................................]                   |
+ * 6x                             [calib_vector......................|
+ * 7x ...........]                                                   |
+ * 8x                                                                |
+ * 9x                             [calib_value...]                   |
+ */
+#define HUEY_EEPROM_ADDR_SERIAL			0x00 /* 4 bytes */
+#define HUEY_EEPROM_ADDR_MATRIX1		0x04 /* 36 bytes */
+#define HUEY_EEPROM_ADDR_MATRIX2		0x36 /* 36 bytes */
+#define HUEY_EEPROM_ADDR_CALIB_VECTOR		0x67 /* 12 bytes */
+#define HUEY_EEPROM_ADDR_UNLOCK			0x7a /* 5 bytes */
+#define HUEY_EEPROM_ADDR_CALIB_VALUE		0x94 /* 4 bytes */
 
 /**
  * gcm_sensor_huey_print_data:
@@ -493,7 +514,7 @@ gcm_sensor_huey_read_register_word (GcmSensorHuey *huey, guint8 addr, guint32 *v
 	}
 
 	/* convert to a 32 bit integer */
-	*value = (tmp[0] << 24) + (tmp[1] << 16) + (tmp[2] << 8) + (tmp[3] << 0);
+	*value = gcm_buffer_read_uint32_be (tmp);
 out:
 	return ret;
 }
@@ -514,6 +535,33 @@ gcm_sensor_huey_read_register_float (GcmSensorHuey *huey, guint8 addr, gfloat *v
 
 	/* convert to float */
 	*((guint32 *)value) = tmp;
+out:
+	return ret;
+}
+
+/**
+ * gcm_sensor_huey_read_register_vector:
+ **/
+static gboolean
+gcm_sensor_huey_read_register_vector (GcmSensorHuey *huey, guint8 addr, GcmVec3 *value, GError **error)
+{
+	gboolean ret = TRUE;
+	guint i;
+	gfloat tmp;
+	gdouble *vector_data;
+
+	/* get this to avoid casting */
+	vector_data = gcm_vec3_get_data (value);
+
+	/* read in vec3 */
+	for (i=0; i<3; i++) {
+		ret = gcm_sensor_huey_read_register_float (huey, addr + (i*4), &tmp, error);
+		if (!ret)
+			goto out;
+
+		/* save in matrix */
+		*(vector_data+i) = tmp;
+	}
 out:
 	return ret;
 }
@@ -585,7 +633,7 @@ gcm_sensor_huey_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
 		goto out;
 
 	/* parse the value */
-	*value = (gdouble) (reply[5] * 0xff + reply[6]) / HUEY_AMBIENT_UNITS_TO_LUX;
+	*value = (gdouble) gcm_buffer_read_uint16_be (reply+5) / HUEY_AMBIENT_UNITS_TO_LUX;
 out:
 	/* set state */
 	gcm_sensor_set_state (sensor, GCM_SENSOR_STATE_IDLE);
@@ -789,7 +837,7 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 		goto out;
 
 	/* get serial number */
-	ret = gcm_sensor_huey_read_register_word (sensor_huey, 0x00, &serial_number, error);
+	ret = gcm_sensor_huey_read_register_word (sensor_huey, HUEY_EEPROM_ADDR_SERIAL, &serial_number, error);
 	if (!ret)
 		goto out;
 	serial_number_tmp = g_strdup_printf ("%i", serial_number);
@@ -797,24 +845,34 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 	egg_debug ("Serial number: %s", serial_number_tmp);
 
 	/* get unlock string */
-	ret = gcm_sensor_huey_read_register_string (sensor_huey, 0x7a, priv->unlock_string, 5, error);
+	ret = gcm_sensor_huey_read_register_string (sensor_huey, HUEY_EEPROM_ADDR_UNLOCK, priv->unlock_string, 5, error);
 	if (!ret)
 		goto out;
 	egg_debug ("Unlock string: %s", priv->unlock_string);
 
 	/* get matrix */
 	gcm_mat33_clear (&priv->calibration_matrix1);
-	ret = gcm_sensor_huey_read_register_matrix (sensor_huey, 0x04, &priv->calibration_matrix1, error);
+	ret = gcm_sensor_huey_read_register_matrix (sensor_huey, HUEY_EEPROM_ADDR_MATRIX1, &priv->calibration_matrix1, error);
 	if (!ret)
 		goto out;
 	egg_debug ("device matrix1: %s", gcm_mat33_to_string (&priv->calibration_matrix1));
 
 	/* get another matrix, although this one is different... */
 	gcm_mat33_clear (&priv->calibration_matrix2);
-	ret = gcm_sensor_huey_read_register_matrix (sensor_huey, 0x36, &priv->calibration_matrix2, error);
+	ret = gcm_sensor_huey_read_register_matrix (sensor_huey, HUEY_EEPROM_ADDR_MATRIX2, &priv->calibration_matrix2, error);
 	if (!ret)
 		goto out;
 	egg_debug ("device matrix2: %s", gcm_mat33_to_string (&priv->calibration_matrix2));
+
+	/* this number is different on all three hueys */
+	ret = gcm_sensor_huey_read_register_float (sensor_huey, HUEY_EEPROM_ADDR_MATRIX2, &priv->calibration_value, error);
+	if (!ret)
+		goto out;
+
+	/* this vector changes between sensor 1 and 3 */
+	ret = gcm_sensor_huey_read_register_vector (sensor_huey, HUEY_EEPROM_ADDR_MATRIX2, &priv->calibration_vector, error);
+	if (!ret)
+		goto out;
 
 	/* spin the LEDs */
 	for (i=0; spin_leds[i] != 0xff; i++) {
@@ -843,8 +901,13 @@ gcm_sensor_huey_dump (GcmSensor *sensor, GString *data, GError **error)
 	guint8 value;
 
 	/* dump the unlock string */
-	g_string_append_printf (data, "huey-dump-version:%i\n", 1);
+	g_string_append_printf (data, "huey-dump-version:%i\n", 2);
 	g_string_append_printf (data, "unlock-string:%s\n", priv->unlock_string);
+	g_string_append_printf (data, "calibration-value:%f\n", priv->calibration_value);
+	g_string_append_printf (data, "calibration-vector:%f,%f,%f\n",
+				priv->calibration_vector.v0,
+				priv->calibration_vector.v1,
+				priv->calibration_vector.v2);
 
 	/* read all the register space */
 	for (i=0; i<0xff; i++) {
