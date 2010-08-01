@@ -705,6 +705,7 @@ gcm_test_sample_window_func (void)
 	window = gcm_sample_window_new ();
 	g_assert (window != NULL);
 	gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (window), 0xff, 0xff, 0x00);
+	gcm_sample_window_set_percentage (GCM_SAMPLE_WINDOW (window), GCM_SAMPLE_WINDOW_PERCENTAGE_PULSE);
 	gtk_window_present (window);
 	loop = g_main_loop_new (NULL, FALSE);
 	g_timeout_add_seconds (2, (GSourceFunc) gcm_test_sample_window_loop_cb, loop);

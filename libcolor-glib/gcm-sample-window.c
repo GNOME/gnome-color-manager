@@ -37,6 +37,7 @@
 static void     gcm_sample_window_finalize	(GObject     *object);
 
 #define GCM_SAMPLE_WINDOW_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_SAMPLE_WINDOW, GcmSampleWindowPrivate))
+#define GCM_SAMPLE_WINDOW_PULSE_DELAY		80	/* ms */
 
 /**
  * GcmSampleWindowPrivate:
@@ -46,9 +47,56 @@ static void     gcm_sample_window_finalize	(GObject     *object);
 struct _GcmSampleWindowPrivate
 {
 	GtkWidget			*image;
+	GtkWidget			*progress_bar;
+	guint				 pulse_id;
 };
 
 G_DEFINE_TYPE (GcmSampleWindow, gcm_sample_window, GTK_TYPE_WINDOW)
+
+/**
+ * gcm_sample_window_pulse_cb:
+ **/
+static gboolean
+gcm_sample_window_pulse_cb (GcmSampleWindow *sample_window)
+{
+	gtk_progress_bar_pulse (GTK_PROGRESS_BAR (sample_window->priv->progress_bar));
+	return TRUE;
+}
+
+/**
+ * gcm_sample_window_set_percentage:
+ * @sample_window: a valid #GcmSampleWindow instance
+ * @percentage: the percentage value to show, or
+ * %GCM_SAMPLE_WINDOW_PERCENTAGE_PULSE for pulsing.
+ *
+ * Sets the percentage value on the window.
+ *
+ * Since: 0.0.1
+ **/
+void
+gcm_sample_window_set_percentage (GcmSampleWindow *sample_window, guint percentage)
+{
+	GcmSampleWindowPrivate *priv = sample_window->priv;
+
+	/* make pulse */
+	if (percentage == GCM_SAMPLE_WINDOW_PERCENTAGE_PULSE) {
+		if (priv->pulse_id == 0) {
+			priv->pulse_id = g_timeout_add (GCM_SAMPLE_WINDOW_PULSE_DELAY,
+							(GSourceFunc) gcm_sample_window_pulse_cb,
+							sample_window);
+		}
+		return;
+	}
+
+	/* no more pulsing */
+	if (priv->pulse_id != 0) {
+		g_source_remove (priv->pulse_id);
+		priv->pulse_id = 0;
+	}
+
+	/* set static value */
+	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (sample_window->priv->progress_bar), percentage / 100.0f);
+}
 
 /**
  * gcm_sample_window_set_color:
@@ -110,11 +158,18 @@ static void
 gcm_sample_window_init (GcmSampleWindow *sample_window)
 {
 	GtkWindow *window = GTK_WINDOW (sample_window);
+	GtkWidget *vbox;
 	sample_window->priv = GCM_SAMPLE_WINDOW_GET_PRIVATE (sample_window);
 	sample_window->priv->image = gtk_image_new ();
+	sample_window->priv->progress_bar = gtk_progress_bar_new ();
+
+	/* pack in two widgets into the window */
+	vbox = gtk_vbox_new (FALSE, 0);
+	gtk_container_add (GTK_CONTAINER (sample_window), vbox);
+	gtk_box_pack_start (GTK_BOX (vbox), sample_window->priv->image, TRUE, TRUE, 0);
+	gtk_box_pack_start (GTK_BOX (vbox), sample_window->priv->progress_bar, TRUE, TRUE, 0);
 	gtk_widget_set_size_request (sample_window->priv->image, 200, 200);
-	gtk_container_add (GTK_CONTAINER (sample_window), sample_window->priv->image);
-	gtk_widget_show (sample_window->priv->image);
+	gtk_widget_show_all (vbox);
 
 	/* show on all virtual desktops */
 	gtk_window_stick (window);
@@ -132,6 +187,8 @@ gcm_sample_window_finalize (GObject *object)
 	GcmSampleWindowPrivate *priv = sample_window->priv;
 
 	g_object_unref (priv->image);
+	if (priv->pulse_id != 0)
+		g_source_remove (priv->pulse_id);
 
 	G_OBJECT_CLASS (gcm_sample_window_parent_class)->finalize (object);
 }
