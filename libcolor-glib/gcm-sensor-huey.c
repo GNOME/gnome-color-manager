@@ -633,7 +633,7 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 		goto out;
 
 	/* get value */
-	values->R = 1.0f / ((reply[3] * 0xff) + reply[4]);
+	values->R = (gdouble) threshold->R / (gdouble)gcm_buffer_read_uint16_be (reply+3);
 
 	/* get green */
 	request[0] = HUEY_COMMAND_READ_GREEN;
@@ -642,7 +642,7 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 		goto out;
 
 	/* get value */
-	values->G = 1.0f / ((reply[3] * 0xff) + reply[4]);
+	values->G = (gdouble) threshold->G / (gdouble)gcm_buffer_read_uint16_be (reply+3);
 
 	/* get blue */
 	request[0] = HUEY_COMMAND_READ_BLUE;
@@ -651,7 +651,7 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 		goto out;
 
 	/* get value */
-	values->B = 1.0f / ((reply[3] * 0xff) + reply[4]);
+	values->B = (gdouble) threshold->B / (gdouble)gcm_buffer_read_uint16_be (reply+3);
 out:
 	return ret;
 }
@@ -714,10 +714,6 @@ gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey, &multiplier, &native, error);
 	if (!ret)
 		goto out;
-	egg_debug ("prescaled values: red=%0.4lf, green=%0.4lf, blue=%0.4lf", native.R, native.G, native.B);
-	native.R = native.R * (gdouble)multiplier.R;
-	native.G = native.G * (gdouble)multiplier.G;
-	native.B = native.B * (gdouble)multiplier.B;
 	egg_debug ("scaled values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", native.R, native.G, native.B);
 	egg_debug ("PRE MULTIPLY: %s\n", gcm_vec3_to_string (input));
 
