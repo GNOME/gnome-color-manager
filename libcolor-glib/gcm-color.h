@@ -58,17 +58,17 @@ typedef struct {
 	gdouble	 B;
 } GcmColorRGB;
 
-void		 gcm_color_copy_XYZ			(GcmColorXYZ		*src,
+void		 gcm_color_copy_XYZ			(const GcmColorXYZ	*src,
 							 GcmColorXYZ		*dest);
-void		 gcm_color_copy_RGB			(GcmColorRGB		*src,
+void		 gcm_color_copy_RGB			(const GcmColorRGB	*src,
 							 GcmColorRGB		*dest);
-void		 gcm_color_convert_RGBint_to_RGB	(GcmColorRGBint		*src,
+void		 gcm_color_convert_RGBint_to_RGB	(const GcmColorRGBint	*src,
 							 GcmColorRGB		*dest);
-void		 gcm_color_convert_RGB_to_RGBint	(GcmColorRGB		*src,
+void		 gcm_color_convert_RGB_to_RGBint	(const GcmColorRGB	*src,
 							 GcmColorRGBint		*dest);
-void		 gcm_color_convert_Yxy_to_XYZ		(GcmColorYxy		*src,
+void		 gcm_color_convert_Yxy_to_XYZ		(const GcmColorYxy	*src,
 							 GcmColorXYZ		*dest);
-void		 gcm_color_convert_XYZ_to_Yxy		(GcmColorXYZ		*src,
+void		 gcm_color_convert_XYZ_to_Yxy		(const GcmColorXYZ	*src,
 							 GcmColorYxy		*dest);
 
 #undef __GCM_COLOR_H_INSIDE__

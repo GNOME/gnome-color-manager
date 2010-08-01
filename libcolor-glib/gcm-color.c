@@ -41,7 +41,7 @@
  * Deep copies a color value.
  **/
 void
-gcm_color_copy_XYZ (GcmColorXYZ *src, GcmColorXYZ *dest)
+gcm_color_copy_XYZ (const GcmColorXYZ *src, GcmColorXYZ *dest)
 {
 	dest->X = src->X;
 	dest->Y = src->Y;
@@ -56,7 +56,7 @@ gcm_color_copy_XYZ (GcmColorXYZ *src, GcmColorXYZ *dest)
  * Deep copies a color value.
  **/
 void
-gcm_color_copy_RGB (GcmColorRGB *src, GcmColorRGB *dest)
+gcm_color_copy_RGB (const GcmColorRGB *src, GcmColorRGB *dest)
 {
 	dest->R = src->R;
 	dest->G = src->G;
@@ -71,7 +71,7 @@ gcm_color_copy_RGB (GcmColorRGB *src, GcmColorRGB *dest)
  * Convert from one color format to another.
  **/
 void
-gcm_color_convert_RGBint_to_RGB (GcmColorRGBint *src, GcmColorRGB *dest)
+gcm_color_convert_RGBint_to_RGB (const GcmColorRGBint *src, GcmColorRGB *dest)
 {
 	dest->R = (gdouble) src->R / 255.0f;
 	dest->G = (gdouble) src->G / 255.0f;
@@ -86,7 +86,7 @@ gcm_color_convert_RGBint_to_RGB (GcmColorRGBint *src, GcmColorRGB *dest)
  * Convert from one color format to another.
  **/
 void
-gcm_color_convert_RGB_to_RGBint (GcmColorRGB *src, GcmColorRGBint *dest)
+gcm_color_convert_RGB_to_RGBint (const GcmColorRGB *src, GcmColorRGBint *dest)
 {
 	dest->R = (gdouble) src->R * 255.0f;
 	dest->G = (gdouble) src->G * 255.0f;
@@ -101,7 +101,7 @@ gcm_color_convert_RGB_to_RGBint (GcmColorRGB *src, GcmColorRGBint *dest)
  * Convert from one color format to another.
  **/
 void
-gcm_color_convert_Yxy_to_XYZ (GcmColorYxy *src, GcmColorXYZ *dest)
+gcm_color_convert_Yxy_to_XYZ (const GcmColorYxy *src, GcmColorXYZ *dest)
 {
 	g_assert (src->Y >= 0.0f);
 	g_assert (src->x >= 0.0f);
@@ -131,7 +131,7 @@ gcm_color_convert_Yxy_to_XYZ (GcmColorYxy *src, GcmColorXYZ *dest)
  * Convert from one color format to another.
  **/
 void
-gcm_color_convert_XYZ_to_Yxy (GcmColorXYZ *src, GcmColorYxy *dest)
+gcm_color_convert_XYZ_to_Yxy (const GcmColorXYZ *src, GcmColorYxy *dest)
 {
 	gdouble sum;
 
