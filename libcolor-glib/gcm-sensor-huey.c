@@ -314,17 +314,19 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
  * 0x [serial-number.][matrix1.......................................|
  * 1x ...............................................................|
  * 2x .......]                                                       |
- * 3x                         [matrix2...............................|
+ * 3x         [manuf-time1...][matrix2...............................|
  * 4x ...............................................................|
- * 5x ...........................................]                   |
+ * 5x .......................................][manuf-time2...]       |
  * 6x                             [calib_vector......................|
- * 7x ...........]                                                   |
+ * 7x ...........]                            [unlock-string.....]   |
  * 8x                                                                |
  * 9x                             [calib_value...]                   |
  */
 #define HUEY_EEPROM_ADDR_SERIAL			0x00 /* 4 bytes */
 #define HUEY_EEPROM_ADDR_MATRIX1		0x04 /* 36 bytes */
+#define HUEY_EEPROM_ADDR_MANUFACTURE_TIME1	0x32 /* 4 bytes, typically ~2009 */
 #define HUEY_EEPROM_ADDR_MATRIX2		0x36 /* 36 bytes */
+#define HUEY_EEPROM_ADDR_MANUFACTURE_TIME2	0x5a /* 4 bytes, typically ~2009 */
 #define HUEY_EEPROM_ADDR_CALIB_VECTOR		0x67 /* 12 bytes */
 #define HUEY_EEPROM_ADDR_UNLOCK			0x7a /* 5 bytes */
 #define HUEY_EEPROM_ADDR_CALIB_VALUE		0x94 /* 4 bytes */
