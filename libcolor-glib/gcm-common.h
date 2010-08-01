@@ -41,6 +41,12 @@ typedef struct {
 } GcmVec3;
 
 void		 gcm_vec3_clear			(GcmVec3		*src);
+void		 gcm_vec3_add			(const GcmVec3		*src1,
+						 const GcmVec3		*src2,
+						 GcmVec3		*dest);
+void		 gcm_vec3_subtract		(const GcmVec3		*src1,
+						 const GcmVec3		*src2,
+						 GcmVec3		*dest);
 void		 gcm_vec3_scalar_multiply	(const GcmVec3		*src,
 						 gdouble		 value,
 						 GcmVec3		*dest);

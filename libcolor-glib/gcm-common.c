@@ -65,6 +65,40 @@ gcm_vec3_scalar_multiply (const GcmVec3 *src, gdouble value, GcmVec3 *dest)
 }
 
 /**
+ * gcm_vec3_add:
+ * @src1: the source
+ * @src2: the other source
+ * @dest: the destination
+ *
+ * Adds two vector quantaties
+ * The arguments @src and @dest can be the same value.
+ **/
+void
+gcm_vec3_add (const GcmVec3 *src1, const GcmVec3 *src2, GcmVec3 *dest)
+{
+	dest->v0 = src1->v0 + src2->v0;
+	dest->v1 = src1->v1 + src2->v1;
+	dest->v2 = src1->v2 + src2->v2;
+}
+
+/**
+ * gcm_vec3_subtract:
+ * @src1: the source
+ * @src2: the other source
+ * @dest: the destination
+ *
+ * Subtracts one vector quantaty from another
+ * The arguments @src and @dest can be the same value.
+ **/
+void
+gcm_vec3_subtract (const GcmVec3 *src1, const GcmVec3 *src2, GcmVec3 *dest)
+{
+	dest->v0 = src1->v0 - src2->v0;
+	dest->v1 = src1->v1 - src2->v1;
+	dest->v2 = src1->v2 - src2->v2;
+}
+
+/**
  * gcm_vec3_to_string:
  * @src: the source
  *
