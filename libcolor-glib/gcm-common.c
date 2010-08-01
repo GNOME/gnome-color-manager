@@ -75,9 +75,9 @@ gcm_vec3_scalar_multiply (const GcmVec3 *src, gdouble value, GcmVec3 *dest)
 gchar *
 gcm_vec3_to_string (const GcmVec3 *src)
 {
-	return g_strdup_printf ("\n/ %0 .3f \\\n"
-				"| %0 .3f |\n"
-				"\\ %0 .3f /\n",
+	return g_strdup_printf ("\n/ %0 .6f \\\n"
+				"| %0 .6f |\n"
+				"\\ %0 .6f /",
 				src->v0, src->v1, src->v2);
 }
 
@@ -121,9 +121,9 @@ gcm_mat33_clear (const GcmMat3x3 *src)
 gchar *
 gcm_mat33_to_string (const GcmMat3x3 *src)
 {
-	return g_strdup_printf ("\n/ %0 .3f  %0 .3f  %0 .3f \\\n"
-				"| %0 .3f  %0 .3f  %0 .3f |\n"
-				"\\ %0 .3f  %0 .3f  %0 .3f /\n",
+	return g_strdup_printf ("\n/ %0 .6f  %0 .6f  %0 .6f \\\n"
+				"| %0 .6f  %0 .6f  %0 .6f |\n"
+				"\\ %0 .6f  %0 .6f  %0 .6f /",
 				src->m00, src->m01, src->m02,
 				src->m10, src->m11, src->m12,
 				src->m20, src->m21, src->m22);
