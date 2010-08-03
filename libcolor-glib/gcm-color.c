@@ -43,6 +43,9 @@
 void
 gcm_color_copy_XYZ (const GcmColorXYZ *src, GcmColorXYZ *dest)
 {
+	g_return_if_fail (src != NULL);
+	g_return_if_fail (dest != NULL);
+
 	dest->X = src->X;
 	dest->Y = src->Y;
 	dest->Z = src->Z;
@@ -58,6 +61,9 @@ gcm_color_copy_XYZ (const GcmColorXYZ *src, GcmColorXYZ *dest)
 void
 gcm_color_copy_RGB (const GcmColorRGB *src, GcmColorRGB *dest)
 {
+	g_return_if_fail (src != NULL);
+	g_return_if_fail (dest != NULL);
+
 	dest->R = src->R;
 	dest->G = src->G;
 	dest->B = src->B;
@@ -73,6 +79,9 @@ gcm_color_copy_RGB (const GcmColorRGB *src, GcmColorRGB *dest)
 void
 gcm_color_convert_RGBint_to_RGB (const GcmColorRGBint *src, GcmColorRGB *dest)
 {
+	g_return_if_fail (src != NULL);
+	g_return_if_fail (dest != NULL);
+
 	dest->R = (gdouble) src->R / 255.0f;
 	dest->G = (gdouble) src->G / 255.0f;
 	dest->B = (gdouble) src->B / 255.0f;
@@ -88,6 +97,9 @@ gcm_color_convert_RGBint_to_RGB (const GcmColorRGBint *src, GcmColorRGB *dest)
 void
 gcm_color_convert_RGB_to_RGBint (const GcmColorRGB *src, GcmColorRGBint *dest)
 {
+	g_return_if_fail (src != NULL);
+	g_return_if_fail (dest != NULL);
+
 	dest->R = (gdouble) src->R * 255.0f;
 	dest->G = (gdouble) src->G * 255.0f;
 	dest->B = (gdouble) src->B * 255.0f;
@@ -103,6 +115,9 @@ gcm_color_convert_RGB_to_RGBint (const GcmColorRGB *src, GcmColorRGBint *dest)
 void
 gcm_color_convert_Yxy_to_XYZ (const GcmColorYxy *src, GcmColorXYZ *dest)
 {
+	g_return_if_fail (src != NULL);
+	g_return_if_fail (dest != NULL);
+
 	g_assert (src->Y >= 0.0f);
 	g_assert (src->x >= 0.0f);
 	g_assert (src->y >= 0.0f);
@@ -134,6 +149,9 @@ void
 gcm_color_convert_XYZ_to_Yxy (const GcmColorXYZ *src, GcmColorYxy *dest)
 {
 	gdouble sum;
+
+	g_return_if_fail (src != NULL);
+	g_return_if_fail (dest != NULL);
 
 	g_assert (src->X >= 0.0f);
 	g_assert (src->Y >= 0.0f);
