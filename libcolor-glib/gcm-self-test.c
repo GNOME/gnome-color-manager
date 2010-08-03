@@ -702,9 +702,15 @@ gcm_test_sample_window_func (void)
 {
 	GtkWindow *window;
 	GMainLoop *loop;
+	GcmColorRGB source;
+
+
 	window = gcm_sample_window_new ();
 	g_assert (window != NULL);
-	gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (window), 0xff, 0xff, 0x00);
+	source.R = 1.0f;
+	source.G = 1.0f;
+	source.B = 0.0f;
+	gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (window), &source);
 	gcm_sample_window_set_percentage (GCM_SAMPLE_WINDOW (window), GCM_SAMPLE_WINDOW_PERCENTAGE_PULSE);
 	gtk_window_present (window);
 	loop = g_main_loop_new (NULL, FALSE);

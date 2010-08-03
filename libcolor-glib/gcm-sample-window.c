@@ -110,7 +110,7 @@ gcm_sample_window_set_percentage (GcmSampleWindow *sample_window, guint percenta
  * Since: 0.0.1
  **/
 void
-gcm_sample_window_set_color (GcmSampleWindow *sample_window, guint8 red, guint8 green, guint8 blue)
+gcm_sample_window_set_color (GcmSampleWindow *sample_window, const GcmColorRGB *color)
 {
 	GdkPixbuf *pixbuf;
 	gint width;
@@ -139,9 +139,9 @@ gcm_sample_window_set_color (GcmSampleWindow *sample_window, guint8 red, guint8 
 	/* set the pixel array */
 	pixels = gdk_pixbuf_get_pixels (pixbuf);
 	for (i=0; i<width*height*3; i+=3) {
-		pixels[i+0] = red;
-		pixels[i+1] = green;
-		pixels[i+2] = blue;
+		pixels[i+0] = (guchar) (color->R * 255.0f);
+		pixels[i+1] = (guchar) (color->G * 255.0f);
+		pixels[i+2] = (guchar) (color->B * 255.0f);
 	}
 
 	/* force redraw */
@@ -177,13 +177,11 @@ gcm_sample_window_init (GcmSampleWindow *sample_window)
 	gtk_container_add (GTK_CONTAINER (sample_window), vbox);
 	gtk_box_pack_start (GTK_BOX (vbox), sample_window->priv->image, TRUE, TRUE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), sample_window->priv->progress_bar, TRUE, TRUE, 0);
-	gtk_widget_set_size_request (sample_window->priv->image, 200, 200);
+	gtk_widget_set_size_request (sample_window->priv->image, 400, 400);
 	gtk_widget_show_all (vbox);
 
 	/* show on all virtual desktops */
 	gtk_window_stick (window);
-	gtk_window_set_default_size (window, 200, 200);
-
 }
 
 /**
@@ -214,8 +212,8 @@ gcm_sample_window_new (void)
 	sample_window = g_object_new (GCM_TYPE_SAMPLE_WINDOW,
 				      "accept-focus", FALSE,
 				      "decorated", FALSE,
-				      "default-height", 200,
-				      "default-width", 200,
+				      "default-height", 400,
+				      "default-width", 400,
 				      "deletable", FALSE,
 				      "destroy-with-parent", TRUE,
 				      "icon-name", "icc-profile",
