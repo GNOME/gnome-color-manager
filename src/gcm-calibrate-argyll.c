@@ -91,11 +91,6 @@ struct _GcmCalibrateArgyllPrivate
 	guint				 keypress_id;
 };
 
-enum {
-	PROP_0,
-	PROP_LAST
-};
-
 G_DEFINE_TYPE (GcmCalibrateArgyll, gcm_calibrate_argyll, GCM_TYPE_CALIBRATE)
 
 /**
@@ -2900,32 +2895,6 @@ gcm_calibrate_argyll_status_changed_cb (GcmPrint *print, GtkPrintStatus status, 
 }
 
 /**
- * gcm_calibrate_argyll_get_property:
- **/
-static void
-gcm_calibrate_argyll_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
-{
-	switch (prop_id) {
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-/**
- * gcm_calibrate_argyll_set_property:
- **/
-static void
-gcm_calibrate_argyll_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
-{
-	switch (prop_id) {
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-/**
  * gcm_calibrate_argyll_class_init:
  **/
 static void
@@ -2934,8 +2903,6 @@ gcm_calibrate_argyll_class_init (GcmCalibrateArgyllClass *klass)
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	GcmCalibrateClass *parent_class = GCM_CALIBRATE_CLASS (klass);
 	object_class->finalize = gcm_calibrate_argyll_finalize;
-	object_class->get_property = gcm_calibrate_argyll_get_property;
-	object_class->set_property = gcm_calibrate_argyll_set_property;
 
 	/* setup klass links */
 	parent_class->calibrate_display = gcm_calibrate_argyll_display;

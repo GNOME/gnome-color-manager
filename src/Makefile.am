@@ -71,6 +71,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-calibrate-argyll.h				\
 	gcm-calibrate-manual.c				\
 	gcm-calibrate-manual.h				\
+	gcm-calibrate-native.c				\
+	gcm-calibrate-native.h				\
 	gcm-calibrate-dialog.c				\
 	gcm-calibrate-dialog.h
 

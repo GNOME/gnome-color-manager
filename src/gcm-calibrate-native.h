@@ -19,8 +19,8 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __GCM_CALIBRATE_ARGYLL_H
-#define __GCM_CALIBRATE_ARGYLL_H
+#ifndef __GCM_CALIBRATE_NATIVE_H
+#define __GCM_CALIBRATE_NATIVE_H
 
 #include <glib-object.h>
 #include <gtk/gtk.h>
@@ -29,29 +29,29 @@
 
 G_BEGIN_DECLS
 
-#define GCM_TYPE_CALIBRATE_ARGYLL		(gcm_calibrate_argyll_get_type ())
-#define GCM_CALIBRATE_ARGYLL(o)			(G_TYPE_CHECK_INSTANCE_CAST ((o), GCM_TYPE_CALIBRATE_ARGYLL, GcmCalibrateArgyll))
-#define GCM_IS_CALIBRATE_ARGYLL(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), GCM_TYPE_CALIBRATE_ARGYLL))
+#define GCM_TYPE_CALIBRATE_NATIVE		(gcm_calibrate_native_get_type ())
+#define GCM_CALIBRATE_NATIVE(o)			(G_TYPE_CHECK_INSTANCE_CAST ((o), GCM_TYPE_CALIBRATE_NATIVE, GcmCalibrateNative))
+#define GCM_IS_CALIBRATE_NATIVE(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), GCM_TYPE_CALIBRATE_NATIVE))
 
-typedef struct _GcmCalibrateArgyllPrivate	GcmCalibrateArgyllPrivate;
-typedef struct _GcmCalibrateArgyll		GcmCalibrateArgyll;
-typedef struct _GcmCalibrateArgyllClass		GcmCalibrateArgyllClass;
+typedef struct _GcmCalibrateNativePrivate	GcmCalibrateNativePrivate;
+typedef struct _GcmCalibrateNative		GcmCalibrateNative;
+typedef struct _GcmCalibrateNativeClass		GcmCalibrateNativeClass;
 
-struct _GcmCalibrateArgyll
+struct _GcmCalibrateNative
 {
 	 GcmCalibrate				 parent;
-	 GcmCalibrateArgyllPrivate		*priv;
+	 GcmCalibrateNativePrivate		*priv;
 };
 
-struct _GcmCalibrateArgyllClass
+struct _GcmCalibrateNativeClass
 {
 	GcmCalibrateClass	parent_class;
 };
 
-GType		 	 gcm_calibrate_argyll_get_type			(void);
-GcmCalibrateArgyll	*gcm_calibrate_argyll_new			(void);
+GType		 	 gcm_calibrate_native_get_type			(void);
+GcmCalibrateNative	*gcm_calibrate_native_new			(void);
 
 G_END_DECLS
 
-#endif /* __GCM_CALIBRATE_ARGYLL_H */
+#endif /* __GCM_CALIBRATE_NATIVE_H */
 
