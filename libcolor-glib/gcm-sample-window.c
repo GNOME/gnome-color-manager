@@ -124,6 +124,7 @@ gcm_sample_window_set_color (GcmSampleWindow *sample_window, guint8 red, guint8 
 	gtk_window_get_size (window, &width, &height);
 
 	/* if no pixbuf, create it */
+	egg_debug ("setting RGB: %f, %f, %f", color->R, color->G, color->B);
 	pixbuf = gtk_image_get_pixbuf (GTK_IMAGE (sample_window->priv->image));
 	if (pixbuf == NULL) {
 		data = g_new0 (guchar, width*height*3);
@@ -142,6 +143,10 @@ gcm_sample_window_set_color (GcmSampleWindow *sample_window, guint8 red, guint8 
 		pixels[i+1] = green;
 		pixels[i+2] = blue;
 	}
+
+	/* force redraw */
+	gtk_widget_set_visible (sample_window->priv->image, FALSE);
+	gtk_widget_set_visible (sample_window->priv->image, TRUE);
 }
 
 /**
