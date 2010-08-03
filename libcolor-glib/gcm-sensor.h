@@ -28,7 +28,7 @@
 
 #include <glib-object.h>
 #include <gudev/gudev.h>
-
+#include <gio/gio.h>
 #include <gcm-color.h>
 
 G_BEGIN_DECLS
@@ -54,16 +54,22 @@ struct _GcmSensorClass
 {
 	GObjectClass	parent_class;
 	/* vtable */
-	gboolean	 (*get_ambient)			(GcmSensor	*sensor,
+	void		 (*get_ambient_async)		(GcmSensor	*sensor,
+							 GCancellable	*cancellable,
+							 GAsyncResult	*res);
+	gboolean	 (*get_ambient_finish)		(GcmSensor	*sensor,
+							 GAsyncResult	*res,
 							 gdouble	*value,
+							 GError		**error);
+	void		 (*sample_async)		(GcmSensor	*sensor,
+							 GCancellable	*cancellable,
+							 GAsyncResult	*res);
+	gboolean	 (*sample_finish)		(GcmSensor	*sensor,
+							 GAsyncResult	*res,
+							 GcmColorXYZ	*value,
 							 GError		**error);
 	gboolean	 (*set_leds)			(GcmSensor	*sensor,
 							 guint8		 value,
-							 GError		**error);
-	gboolean	 (*sample)			(GcmSensor	*sensor,
-							 GcmColorXYZ	*value,
-							 GError		**error);
-	gboolean	 (*startup)			(GcmSensor	*sensor,
 							 GError		**error);
 	gboolean	 (*dump)			(GcmSensor	*sensor,
 							 GString	*data,
@@ -145,16 +151,8 @@ GcmSensorState		 gcm_sensor_get_state		(GcmSensor		*sensor);
 gboolean		 gcm_sensor_dump		(GcmSensor		*sensor,
 							 GString		*data,
 							 GError			**error);
-gboolean		 gcm_sensor_get_ambient		(GcmSensor		*sensor,
-							 gdouble		*value,
-							 GError			**error);
 gboolean		 gcm_sensor_set_leds		(GcmSensor		*sensor,
 							 guint8			 value,
-							 GError			**error);
-gboolean		 gcm_sensor_sample		(GcmSensor		*sensor,
-							 GcmColorXYZ		*value,
-							 GError			**error);
-gboolean		 gcm_sensor_startup		(GcmSensor		*sensor,
 							 GError			**error);
 gboolean		 gcm_sensor_set_from_device	(GcmSensor		*sensor,
 							 GUdevDevice		*device,
@@ -175,6 +173,34 @@ gboolean		 gcm_sensor_supports_spot	(GcmSensor		*sensor);
 gboolean		 gcm_sensor_is_native		(GcmSensor		*sensor);
 const gchar		*gcm_sensor_kind_to_string	(GcmSensorKind		 sensor_kind);
 GcmSensorKind		 gcm_sensor_kind_from_string	(const gchar		*sensor_kind);
+
+/* async sampling functions that take a lot of time */
+void			 gcm_sensor_get_ambient_async	(GcmSensor		*sensor,
+							 GCancellable		*cancellable,
+							 GAsyncReadyCallback	 callback,
+							 gpointer		 user_data);
+gboolean		 gcm_sensor_get_ambient_finish	(GcmSensor		*sensor,
+							 GAsyncResult		*res,
+							 gdouble		*value,
+							 GError			**error);
+void			 gcm_sensor_sample_async	(GcmSensor		*sensor,
+							 GCancellable		*cancellable,
+							 GAsyncReadyCallback	 callback,
+							 gpointer		 user_data);
+gboolean		 gcm_sensor_sample_finish	(GcmSensor		*sensor,
+							 GAsyncResult		*res,
+							 GcmColorXYZ		*value,
+							 GError			**error);
+
+/* sync versions */
+gboolean		 gcm_sensor_get_ambient		(GcmSensor		*sensor,
+							 GCancellable		*cancellable,
+							 gdouble		*value,
+							 GError			**error);
+gboolean		 gcm_sensor_sample		(GcmSensor		*sensor,
+							 GCancellable		*cancellable,
+							 GcmColorXYZ		*value,
+							 GError			**error);
 
 G_END_DECLS
 

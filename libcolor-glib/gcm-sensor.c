@@ -46,7 +46,6 @@ struct _GcmSensorPrivate
 {
 	gboolean			 native;
 	GcmSensorState			 state;
-	gboolean			 done_startup;
 	GcmSensorKind			 kind;
 	GcmSensorOutputType		 output_type;
 	gboolean			 supports_display;
@@ -58,6 +57,16 @@ struct _GcmSensorPrivate
 	gchar				*serial_number;
 	gchar				*device;
 };
+
+
+/* tiny helper to help us do the async operation */
+typedef struct {
+	GError		**error;
+	GMainLoop	*loop;
+	gboolean	 ret;
+	gdouble		 ambient_value;
+	GcmColorXYZ	*sample;
+} GcmSensorHelper;
 
 enum {
 	PROP_0,
@@ -344,99 +353,123 @@ gcm_sensor_set_from_device (GcmSensor *sensor, GUdevDevice *device, GError **err
 }
 
 /**
- * gcm_sensor_startup:
+ * gcm_sensor_sample_async:
  * @sensor: a valid #GcmSensor instance
- * @error: a #GError or %NULL
+ * @cancellable: a #GCancellable or %NULL
+ * @callback: the function to run on completion
+ * @user_data: the data to pass to @callback
  *
- * Starts up the device, which can mean connecting to it and uploading
- * firmware, or just reading configuration details for it.
+ * Sample the color and store as a XYZ value.
  *
- * You probably don't need to use this function manually, as it is done
- * automatically as soon as the sensor is required.
- *
- * Return value: %TRUE for success.
+ * Since: 0.0.1
  **/
-gboolean
-gcm_sensor_startup (GcmSensor *sensor, GError **error)
+void
+gcm_sensor_sample_async (GcmSensor *sensor, GCancellable *cancellable,
+			 GAsyncReadyCallback callback, gpointer user_data)
 {
+	GSimpleAsyncResult *res = NULL;
 	GcmSensorClass *klass = GCM_SENSOR_GET_CLASS (sensor);
-	gboolean ret = FALSE;
+	GError *error = NULL;
 
-	/* already done */
-	if (sensor->priv->done_startup) {
-		g_set_error_literal (error,
-				     GCM_SENSOR_ERROR,
-				     GCM_SENSOR_ERROR_INTERNAL,
-				     "already started");
-		goto out;
-	}
-
-	/* not a native device */
-	if (!sensor->priv->native) {
-		g_set_error_literal (error,
-				     GCM_SENSOR_ERROR,
-				     GCM_SENSOR_ERROR_INTERNAL,
-				     "not a native device, you have to use GcmCalibrate...");
-		goto out;
-	}
+	/* new async request */
+	res = g_simple_async_result_new (G_OBJECT (sensor), callback, user_data, gcm_sensor_sample_async);
 
 	/* coldplug source */
-	if (klass->startup == NULL) {
-		g_set_error_literal (error,
+	if (klass->sample_async == NULL) {
+		g_set_error_literal (&error,
 				     GCM_SENSOR_ERROR,
 				     GCM_SENSOR_ERROR_INTERNAL,
 				     "no klass support");
+		g_simple_async_result_set_from_error (res, error);
+		g_error_free (error);
 		goto out;
 	}
 
 	/* proxy */
-	ret = klass->startup (sensor, error);
-	if (!ret)
-		goto out;
-
-	/* success */
-	sensor->priv->done_startup = TRUE;
+	klass->sample_async (sensor, cancellable, G_ASYNC_RESULT (res));
 out:
-	return ret;
+	g_object_unref (res);
+	return;
 }
 
 /**
- * gcm_sensor_get_ambient:
+ * gcm_sensor_sample_finish:
  * @sensor: a valid #GcmSensor instance
- * @value: The returned value
- * @error: a #GError or %NULL
+ * @res: the #GAsyncResult
+ * @value: the brightness in Lux, return value.
+ * @error: A #GError or %NULL
  *
- * Gets the ambient light level of the sensor in Lux.
+ * Gets the result from the asynchronous function.
  *
- * Return value: %TRUE for success.
+ * Return value: %FALSE for an error
+ *
+ * Since: 0.0.1
  **/
 gboolean
-gcm_sensor_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
+gcm_sensor_sample_finish (GcmSensor *sensor, GAsyncResult *res, GcmColorXYZ *value, GError **error)
 {
 	GcmSensorClass *klass = GCM_SENSOR_GET_CLASS (sensor);
-	gboolean ret = FALSE;
+	return klass->sample_finish (sensor, res, value, error);
+}
 
-	/* do startup if not yet done */
-	if (!sensor->priv->done_startup) {
-		ret = gcm_sensor_startup (sensor, error);
-		if (!ret)
-			goto out;
-	}
+/**
+ * gcm_sensor_get_ambient_async:
+ * @sensor: a valid #GcmSensor instance
+ * @cancellable: a #GCancellable or %NULL
+ * @callback: the function to run on completion
+ * @user_data: the data to pass to @callback
+ *
+ * Asks the hardware to get the ambient light value.
+ *
+ * Since: 0.0.1
+ **/
+void
+gcm_sensor_get_ambient_async (GcmSensor	 *sensor, GCancellable *cancellable,
+			      GAsyncReadyCallback callback, gpointer user_data)
+{
+	GSimpleAsyncResult *res = NULL;
+	GcmSensorClass *klass = GCM_SENSOR_GET_CLASS (sensor);
+	GError *error = NULL;
+
+	/* new async request */
+	res = g_simple_async_result_new (G_OBJECT (sensor), callback, user_data, gcm_sensor_get_ambient_async);
 
 	/* coldplug source */
-	if (klass->get_ambient == NULL) {
-		ret = FALSE;
-		g_set_error_literal (error,
+	if (klass->get_ambient_async == NULL) {
+		g_set_error_literal (&error,
 				     GCM_SENSOR_ERROR,
 				     GCM_SENSOR_ERROR_INTERNAL,
 				     "no klass support");
+		g_simple_async_result_set_from_error (res, error);
+		g_error_free (error);
 		goto out;
 	}
 
 	/* proxy */
-	ret = klass->get_ambient (sensor, value, error);
+	klass->get_ambient_async (sensor, cancellable, G_ASYNC_RESULT (res));
 out:
-	return ret;
+	g_object_unref (res);
+	return;
+}
+
+/**
+ * gcm_sensor_get_ambient_finish:
+ * @sensor: a valid #GcmSensor instance
+ * @res: the #GAsyncResult
+ * @value: the brightness in Lux, return value.
+ * @error: A #GError or %NULL
+ *
+ * Gets the result from the asynchronous function.
+ *
+ * Return value: %FALSE for an error
+ *
+ * Since: 0.0.1
+ **/
+gboolean
+gcm_sensor_get_ambient_finish (GcmSensor *sensor, GAsyncResult *res, gdouble *value, GError **error)
+{
+	GcmSensorClass *klass = GCM_SENSOR_GET_CLASS (sensor);
+	return klass->get_ambient_finish (sensor, res, value, error);
 }
 
 /**
@@ -454,14 +487,7 @@ gcm_sensor_dump (GcmSensor *sensor, GString *data, GError **error)
 {
 	GcmSensorClass *klass = GCM_SENSOR_GET_CLASS (sensor);
 	GcmSensorPrivate *priv = sensor->priv;
-	gboolean ret = FALSE;
-
-	/* do startup if not yet done */
-	if (!sensor->priv->done_startup) {
-		ret = gcm_sensor_startup (sensor, error);
-		if (!ret)
-			goto out;
-	}
+	gboolean ret = TRUE;
 
 	/* write common sensor details */
 	g_string_append (data, "// AUTOMATICALLY GENERATED -- DO NOT EDIT\n");
@@ -489,45 +515,6 @@ out:
 }
 
 /**
- * gcm_sensor_sample:
- * @sensor: a valid #GcmSensor instance
- * @value: The returned value
- * @error: a #GError or %NULL
- *
- * Sample the color and store as a XYZ value.
- *
- * Return value: %TRUE for success.
- **/
-gboolean
-gcm_sensor_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
-{
-	GcmSensorClass *klass = GCM_SENSOR_GET_CLASS (sensor);
-	gboolean ret = FALSE;
-
-	/* do startup if not yet done */
-	if (!sensor->priv->done_startup) {
-		ret = gcm_sensor_startup (sensor, error);
-		if (!ret)
-			goto out;
-	}
-
-	/* coldplug source */
-	if (klass->sample == NULL) {
-		ret = FALSE;
-		g_set_error_literal (error,
-				     GCM_SENSOR_ERROR,
-				     GCM_SENSOR_ERROR_INTERNAL,
-				     "no klass support");
-		goto out;
-	}
-
-	/* proxy */
-	ret = klass->sample (sensor, value, error);
-out:
-	return ret;
-}
-
-/**
  * gcm_sensor_set_leds:
  * @sensor: a valid #GcmSensor instance
  * @value: The LED bitmask
@@ -542,13 +529,6 @@ gcm_sensor_set_leds (GcmSensor *sensor, guint8 value, GError **error)
 {
 	GcmSensorClass *klass = GCM_SENSOR_GET_CLASS (sensor);
 	gboolean ret = FALSE;
-
-	/* do startup if not yet done */
-	if (!sensor->priv->done_startup) {
-		ret = gcm_sensor_startup (sensor, error);
-		if (!ret)
-			goto out;
-	}
 
 	/* set LEDs */
 	if (klass->set_leds == NULL) {
@@ -631,6 +611,118 @@ gcm_sensor_kind_from_string (const gchar *sensor_kind)
 	if (g_strcmp0 (sensor_kind, "colorimtre-hcfr") == 0)
 		return GCM_SENSOR_KIND_COLORIMTRE_HCFR;
 	return GCM_SENSOR_KIND_UNKNOWN;
+}
+
+/**
+ * gcm_sensor_sample_sync_cb:
+ **/
+static void
+gcm_sensor_sample_sync_cb (GcmSensor *sensor, GAsyncResult *res, GcmSensorHelper *helper)
+{
+	/* get the result */
+	helper->ret = gcm_sensor_sample_finish (sensor, res, helper->sample, helper->error);
+	g_main_loop_quit (helper->loop);
+}
+
+/**
+ * gcm_sensor_sample:
+ * @sensor: a valid #GcmSensor instance
+ * @cancellable: a #GCancellable or %NULL
+ * @value: the sensor brightness in Lux.
+ * @error: A #GError or %NULL
+ *
+ * Sample the color and store as a XYZ value.
+ * Warning: this function is synchronous, and may block. Do not use it in GUI
+ * applications.
+ *
+ * Return value: %TRUE if the ambient value was obtained.
+ *
+ * Since: 0.0.1
+ **/
+gboolean
+gcm_sensor_sample (GcmSensor *sensor, GCancellable *cancellable, GcmColorXYZ *value, GError **error)
+{
+	GcmSensorHelper *helper;
+	gboolean ret;
+
+	g_return_val_if_fail (GCM_IS_SENSOR (sensor), FALSE);
+	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+	/* create temp object */
+	helper = g_new0 (GcmSensorHelper, 1);
+	helper->loop = g_main_loop_new (NULL, FALSE);
+	helper->error = error;
+	helper->sample = g_new0 (GcmColorXYZ, 1);
+
+	/* run async method */
+	gcm_sensor_sample_async (sensor, cancellable, (GAsyncReadyCallback) gcm_sensor_sample_sync_cb, helper);
+	g_main_loop_run (helper->loop);
+
+	ret = helper->ret;
+	if (ret && value != NULL)
+		gcm_color_copy_XYZ (helper->sample, value);
+
+	/* free temp object */
+	g_main_loop_unref (helper->loop);
+	g_free (helper->sample);
+	g_free (helper);
+
+	return ret;
+}
+
+/**
+ * gcm_sensor_get_ambient_sync_cb:
+ **/
+static void
+gcm_sensor_get_ambient_sync_cb (GcmSensor *sensor, GAsyncResult *res, GcmSensorHelper *helper)
+{
+	/* get the result */
+	helper->ret = gcm_sensor_get_ambient_finish (sensor, res, &helper->ambient_value, helper->error);
+	g_main_loop_quit (helper->loop);
+}
+
+/**
+ * gcm_sensor_get_ambient:
+ * @sensor: a valid #GcmSensor instance
+ * @cancellable: a #GCancellable or %NULL
+ * @value: the sensor brightness in Lux.
+ * @error: A #GError or %NULL
+ *
+ * Gets the ambient light reading.
+ * Warning: this function is synchronous, and may block. Do not use it in GUI
+ * applications.
+ *
+ * Return value: %TRUE if the ambient value was obtained.
+ *
+ * Since: 0.0.1
+ **/
+gboolean
+gcm_sensor_get_ambient (GcmSensor *sensor, GCancellable *cancellable, gdouble *value, GError **error)
+{
+	GcmSensorHelper *helper;
+	gboolean ret;
+
+	g_return_val_if_fail (GCM_IS_SENSOR (sensor), FALSE);
+	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+	/* create temp object */
+	helper = g_new0 (GcmSensorHelper, 1);
+	helper->loop = g_main_loop_new (NULL, FALSE);
+	helper->error = error;
+
+	/* run async method */
+	gcm_sensor_get_ambient_async (sensor, cancellable, (GAsyncReadyCallback) gcm_sensor_get_ambient_sync_cb, helper);
+	g_main_loop_run (helper->loop);
+
+	ret = helper->ret;
+	if (value != NULL)
+		*value = helper->ambient_value;
+
+	/* free temp object */
+	g_main_loop_unref (helper->loop);
+	g_free (helper);
+
+	return ret;
 }
 
 /**

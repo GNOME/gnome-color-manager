@@ -34,14 +34,193 @@
 
 G_DEFINE_TYPE (GcmSensorDummy, gcm_sensor_dummy, GCM_TYPE_SENSOR)
 
+/* async state for the sensor readings */
+typedef struct {
+	gboolean		 ret;
+	gdouble			 ambient_value;
+	GcmColorXYZ		*sample;
+	GSimpleAsyncResult	*res;
+	GcmSensor		*sensor;
+} GcmSensorAsyncState;
+
 /**
- * gcm_sensor_dummy_get_ambient:
+ * gcm_sensor_dummy_get_ambient_state_finish:
+ **/
+static void
+gcm_sensor_dummy_get_ambient_state_finish (GcmSensorAsyncState *state, const GError *error)
+{
+	gdouble *result;
+
+	/* set result to temp memory location */
+	if (state->ret) {
+		result = g_new0 (gdouble, 1);
+		*result = state->ambient_value;
+		g_simple_async_result_set_op_res_gpointer (state->res, result, (GDestroyNotify) g_free);
+	} else {
+		g_simple_async_result_set_from_error (state->res, error);
+	}
+
+	/* complete */
+	g_simple_async_result_complete_in_idle (state->res);
+
+	g_object_unref (state->res);
+	g_object_unref (state->sensor);
+	g_slice_free (GcmSensorAsyncState, state);
+}
+
+/**
+ * gcm_sensor_dummy_get_ambient_small_wait_cb:
  **/
 static gboolean
-gcm_sensor_dummy_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
+gcm_sensor_dummy_get_ambient_small_wait_cb (GcmSensorAsyncState *state)
 {
-	*value = 17.0f;
-	return TRUE;
+	state->ret = TRUE;
+	state->ambient_value = 7.7f;
+
+	/* just return without a problem */
+	gcm_sensor_dummy_get_ambient_state_finish (state, NULL);
+	return FALSE;
+}
+
+/**
+ * gcm_sensor_dummy_get_ambient_async:
+ **/
+static void
+gcm_sensor_dummy_get_ambient_async (GcmSensor *sensor, GCancellable *cancellable, GAsyncResult *res)
+{
+	GcmSensorAsyncState *state;
+
+	g_return_if_fail (GCM_IS_SENSOR (sensor));
+	g_return_if_fail (res != NULL);
+
+	/* save state */
+	state = g_slice_new0 (GcmSensorAsyncState);
+	state->res = g_object_ref (res);
+	state->sensor = g_object_ref (sensor);
+
+	/* just complete in idle */
+	g_timeout_add_seconds (2, (GSourceFunc) gcm_sensor_dummy_get_ambient_small_wait_cb, state);
+}
+
+/**
+ * gcm_sensor_dummy_get_ambient_finish:
+ **/
+static gboolean
+gcm_sensor_dummy_get_ambient_finish (GcmSensor *sensor, GAsyncResult *res, gdouble *value, GError **error)
+{
+	GSimpleAsyncResult *simple;
+	gboolean ret = TRUE;
+
+	g_return_val_if_fail (GCM_IS_SENSOR (sensor), FALSE);
+	g_return_val_if_fail (G_IS_SIMPLE_ASYNC_RESULT (res), FALSE);
+	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+	/* failed */
+	simple = G_SIMPLE_ASYNC_RESULT (res);
+	if (g_simple_async_result_propagate_error (simple, error)) {
+		ret = FALSE;
+		goto out;
+	}
+
+	/* grab detail */
+	if (value != NULL)
+		*value = *((gdouble*) g_simple_async_result_get_op_res_gpointer (simple));
+out:
+	return ret;
+}
+
+
+/**
+ * gcm_sensor_dummy_sample_state_finish:
+ **/
+static void
+gcm_sensor_dummy_sample_state_finish (GcmSensorAsyncState *state, const GError *error)
+{
+	GcmColorXYZ *result;
+
+	/* set result to temp memory location */
+	if (state->ret) {
+		result = g_new0 (GcmColorXYZ, 1);
+		gcm_color_copy_XYZ (state->sample, result);
+		g_simple_async_result_set_op_res_gpointer (state->res, result, (GDestroyNotify) g_free);
+	} else {
+		g_simple_async_result_set_from_error (state->res, error);
+	}
+
+	/* complete */
+	g_simple_async_result_complete_in_idle (state->res);
+
+	g_object_unref (state->res);
+	g_object_unref (state->sensor);
+	g_free (state->sample);
+	g_slice_free (GcmSensorAsyncState, state);
+}
+
+/**
+ * gcm_sensor_dummy_sample_small_wait_cb:
+ **/
+static gboolean
+gcm_sensor_dummy_sample_small_wait_cb (GcmSensorAsyncState *state)
+{
+	state->ret = TRUE;
+	state->sample->X = 0.1;
+	state->sample->Y = 0.2;
+	state->sample->Z = 0.3;
+
+	/* emulate */
+	gcm_sensor_button_pressed (state->sensor);
+
+	/* just return without a problem */
+	gcm_sensor_dummy_sample_state_finish (state, NULL);
+	return FALSE;
+}
+
+/**
+ * gcm_sensor_dummy_sample_async:
+ **/
+static void
+gcm_sensor_dummy_sample_async (GcmSensor *sensor, GCancellable *cancellable, GAsyncResult *res)
+{
+	GcmSensorAsyncState *state;
+
+	g_return_if_fail (GCM_IS_SENSOR (sensor));
+	g_return_if_fail (res != NULL);
+
+	/* save state */
+	state = g_slice_new0 (GcmSensorAsyncState);
+	state->res = g_object_ref (res);
+	state->sensor = g_object_ref (sensor);
+	state->sample = g_new0 (GcmColorXYZ, 1);
+
+	/* just complete in idle */
+	g_timeout_add_seconds (2, (GSourceFunc) gcm_sensor_dummy_sample_small_wait_cb, state);
+}
+
+/**
+ * gcm_sensor_dummy_sample_finish:
+ **/
+static gboolean
+gcm_sensor_dummy_sample_finish (GcmSensor *sensor, GAsyncResult *res, GcmColorXYZ *value, GError **error)
+{
+	GSimpleAsyncResult *simple;
+	gboolean ret = TRUE;
+
+	g_return_val_if_fail (GCM_IS_SENSOR (sensor), FALSE);
+	g_return_val_if_fail (G_IS_SIMPLE_ASYNC_RESULT (res), FALSE);
+	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+	/* failed */
+	simple = G_SIMPLE_ASYNC_RESULT (res);
+	if (g_simple_async_result_propagate_error (simple, error)) {
+		ret = FALSE;
+		goto out;
+	}
+
+	/* grab detail */
+	if (value != NULL)
+		gcm_color_copy_XYZ ((GcmColorXYZ*) g_simple_async_result_get_op_res_gpointer (simple), value);
+out:
+	return ret;
 }
 
 /**
@@ -49,30 +228,6 @@ gcm_sensor_dummy_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
  **/
 static gboolean
 gcm_sensor_dummy_set_leds (GcmSensor *sensor, guint8 value, GError **error)
-{
-	return TRUE;
-}
-
-/**
- * gcm_sensor_dummy_sample:
- **/
-static gboolean
-gcm_sensor_dummy_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
-{
-	value->X = 17.0f;
-	value->Y = 18.0f;
-	value->Z = 19.0f;
-
-	/* emulate */
-	gcm_sensor_button_pressed (sensor);
-	return TRUE;
-}
-
-/**
- * gcm_sensor_dummy_startup:
- **/
-static gboolean
-gcm_sensor_dummy_startup (GcmSensor *sensor, GError **error)
 {
 	return TRUE;
 }
@@ -86,10 +241,11 @@ gcm_sensor_dummy_class_init (GcmSensorDummyClass *klass)
 	GcmSensorClass *parent_class = GCM_SENSOR_CLASS (klass);
 
 	/* setup klass links */
-	parent_class->get_ambient = gcm_sensor_dummy_get_ambient;
+	parent_class->get_ambient_async = gcm_sensor_dummy_get_ambient_async;
+	parent_class->get_ambient_finish = gcm_sensor_dummy_get_ambient_finish;
+	parent_class->sample_async = gcm_sensor_dummy_sample_async;
+	parent_class->sample_finish = gcm_sensor_dummy_sample_finish;
 	parent_class->set_leds = gcm_sensor_dummy_set_leds;
-	parent_class->sample = gcm_sensor_dummy_sample;
-	parent_class->startup = gcm_sensor_dummy_startup;
 }
 
 /**

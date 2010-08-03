@@ -73,19 +73,8 @@ main (int argc, char **argv)
 	/* set mode */
 	gcm_sensor_set_output_type (sensor, GCM_SENSOR_OUTPUT_TYPE_LCD);
 
-	/* start sensor */
-	ret = gcm_sensor_startup (sensor, &error);
-	if (!ret) {
-		egg_warning ("failed to startup: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* spin the loop */
-	g_main_loop_run (loop);
-
 	/* get ambient */
-	ret = gcm_sensor_get_ambient (sensor, &value, &error);
+	ret = gcm_sensor_get_ambient (sensor, NULL, &value, &error);
 	if (!ret) {
 		egg_warning ("failed to get ambient: %s", error->message);
 		g_error_free (error);
@@ -94,13 +83,16 @@ main (int argc, char **argv)
 	g_debug ("ambient = %.1lf Lux", value);
 
 	/* sample color */
-	ret = gcm_sensor_sample (sensor, &values, &error);
+	ret = gcm_sensor_sample (sensor, NULL, &values, &error);
 	if (!ret) {
 		egg_warning ("failed to measure: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
 	g_debug ("X=%0.4lf, Y=%0.4lf, Z=%0.4lf", values.X, values.Y, values.Z);
+
+	/* spin the loop */
+	g_main_loop_run (loop);
 
 out:
 	g_main_loop_unref (loop);

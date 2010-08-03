@@ -167,10 +167,6 @@ gcm_test_sensor_func (void)
 	sensor = gcm_sensor_dummy_new ();
 	g_signal_connect (sensor, "button-pressed", G_CALLBACK (gcm_test_sensor_button_pressed_cb), &signal_count);
 
-	ret = gcm_sensor_startup (sensor, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
 	/* set LEDs */
 	ret = gcm_sensor_set_leds (sensor, 0x0f, &error);
 	g_assert_no_error (error);
@@ -181,14 +177,14 @@ gcm_test_sensor_func (void)
 	g_assert_cmpint (gcm_sensor_get_output_type (sensor), ==, GCM_SENSOR_OUTPUT_TYPE_LCD);
 
 	/* get ambient */
-	ret = gcm_sensor_get_ambient (sensor, &value, &error);
+	ret = gcm_sensor_get_ambient (sensor, NULL, &value, &error);
 	g_assert_cmpint (signal_count, ==, 0);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_debug ("ambient = %.1lf Lux", value);
 
 	/* sample color */
-	ret = gcm_sensor_sample (sensor, &values, &error);
+	ret = gcm_sensor_sample (sensor, NULL, &values, &error);
 	g_assert_cmpint (signal_count, ==, 1);
 	g_assert_no_error (error);
 	g_assert (ret);

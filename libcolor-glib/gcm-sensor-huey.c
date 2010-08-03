@@ -50,6 +50,7 @@ static void     gcm_sensor_huey_finalize	(GObject     *object);
  **/
 struct _GcmSensorHueyPrivate
 {
+	gboolean			 done_startup;
 	GcmUsb				*usb;
 	GcmMat3x3			 calibration_matrix1;
 	GcmMat3x3			 calibration_matrix2;
@@ -57,6 +58,18 @@ struct _GcmSensorHueyPrivate
 	GcmVec3				 calibration_vector;
 	gchar				 unlock_string[5];
 };
+
+/* async state for the sensor readings */
+typedef struct {
+	gboolean			 ret;
+	gdouble				 ambient_value;
+	gulong				 cancellable_id;
+	GCancellable			*cancellable;
+	GSimpleAsyncResult		*res;
+	GcmSensor			*sensor;
+} GcmSensorAsyncState;
+
+static gboolean gcm_sensor_huey_startup (GcmSensor *sensor, GError **error);
 
 G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
 
@@ -595,12 +608,53 @@ out:
 	return ret;
 }
 
+#if 0
 /**
- * gcm_sensor_huey_get_ambient:
+ * gcm_sensor_huey_get_ambient_state_finish:
  **/
-static gboolean
-gcm_sensor_huey_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
+static void
+gcm_sensor_huey_get_ambient_state_finish (GcmSensorAsyncState *state, const GError *error)
 {
+	gdouble *result;
+
+	/* set result to temp memory location */
+	if (state->ret) {
+		result = g_new0 (gdouble, 1);
+		*result = state->ambient_value;
+		g_simple_async_result_set_op_res_gpointer (state->res, result, (GDestroyNotify) g_free);
+	} else {
+		g_simple_async_result_set_from_error (state->res, error);
+	}
+
+	/* complete */
+	g_simple_async_result_complete_in_idle (state->res);
+
+	/* deallocate */
+	if (state->cancellable != NULL) {
+		g_cancellable_disconnect (state->cancellable, state->cancellable_id);
+		g_object_unref (state->cancellable);
+	}
+	g_object_unref (state->res);
+	g_object_unref (state->sensor);
+	g_slice_free (GcmSensorAsyncState, state);
+}
+#endif
+
+/**
+ * gcm_sensor_huey_cancellable_cancel_cb:
+ **/
+static void
+gcm_sensor_huey_cancellable_cancel_cb (GCancellable *cancellable, GcmSensorAsyncState *state)
+{
+	g_warning ("cancelled huey");
+}
+
+static void
+gcm_sensor_huey_get_ambient_thread_cb (GSimpleAsyncResult *res, GObject *object, GCancellable *cancellable)
+{
+	GcmSensor *sensor = GCM_SENSOR (object);
+	gdouble *result;
+	GError *error = NULL;
 	guchar reply[8];
 	gboolean ret = FALSE;
 	gsize reply_read;
@@ -608,20 +662,34 @@ gcm_sensor_huey_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
 	guchar request[] = { HUEY_COMMAND_GET_AMBIENT, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
 
+	/* ensure sensor is started */
+	if (!sensor_huey->priv->done_startup) {
+		ret = gcm_sensor_huey_startup (sensor, &error);
+		if (!ret) {
+			g_simple_async_result_set_from_error (res, error);
+			g_error_free (error);
+			goto out;
+		}
+	}
+
 	/* no hardware support */
 	if (gcm_sensor_get_output_type (sensor) == GCM_SENSOR_OUTPUT_TYPE_PROJECTOR) {
-		g_set_error_literal (error, GCM_SENSOR_ERROR,
+		g_set_error_literal (&error, GCM_SENSOR_ERROR,
 				     GCM_SENSOR_ERROR_NO_SUPPORT,
 				     "HUEY cannot measure ambient light in projector mode");
+		g_simple_async_result_set_from_error (res, error);
+		g_error_free (error);
 		goto out;
 	}
 
 	/* ensure the user set this */
 	output_type = gcm_sensor_get_output_type (sensor);
 	if (output_type == GCM_SENSOR_OUTPUT_TYPE_UNKNOWN) {
-		g_set_error_literal (error, GCM_SENSOR_ERROR,
+		g_set_error_literal (&error, GCM_SENSOR_ERROR,
 				     GCM_SENSOR_ERROR_INTERNAL,
 				     "output sensor type was not set");
+		g_simple_async_result_set_from_error (res, error);
+		g_error_free (error);
 		goto out;
 	}
 
@@ -630,15 +698,70 @@ gcm_sensor_huey_get_ambient (GcmSensor *sensor, gdouble *value, GError **error)
 
 	/* hit hardware */
 	request[2] = (output_type == GCM_SENSOR_OUTPUT_TYPE_LCD) ? 0x00 : 0x02;
-	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);
-	if (!ret)
+	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, &error);
+	if (!ret) {
+		g_simple_async_result_set_from_error (res, error);
+		g_error_free (error);
 		goto out;
+	}
 
 	/* parse the value */
-	*value = (gdouble) gcm_buffer_read_uint16_be (reply+5) / HUEY_AMBIENT_UNITS_TO_LUX;
+	result = g_new0 (gdouble, 1);
+	*result = (gdouble) gcm_buffer_read_uint16_be (reply+5) / HUEY_AMBIENT_UNITS_TO_LUX;
+	g_simple_async_result_set_op_res_gpointer (res, result, (GDestroyNotify) g_free);
 out:
 	/* set state */
 	gcm_sensor_set_state (sensor, GCM_SENSOR_STATE_IDLE);
+}
+
+/**
+ * gcm_sensor_huey_get_ambient_async:
+ **/
+static void
+gcm_sensor_huey_get_ambient_async (GcmSensor *sensor, GCancellable *cancellable, GAsyncResult *res)
+{
+	GcmSensorAsyncState *state;
+
+	g_return_if_fail (GCM_IS_SENSOR (sensor));
+	g_return_if_fail (res != NULL);
+
+	/* save state */
+	state = g_slice_new0 (GcmSensorAsyncState);
+	state->res = g_object_ref (res);
+	state->sensor = g_object_ref (sensor);
+	if (cancellable != NULL) {
+		state->cancellable = g_object_ref (cancellable);
+		state->cancellable_id = g_cancellable_connect (cancellable, G_CALLBACK (gcm_sensor_huey_cancellable_cancel_cb), state, NULL);
+	}
+
+	/* run in a thread */
+	g_simple_async_result_run_in_thread (G_SIMPLE_ASYNC_RESULT (res), gcm_sensor_huey_get_ambient_thread_cb, 0, cancellable);
+}
+
+/**
+ * gcm_sensor_huey_get_ambient_finish:
+ **/
+static gboolean
+gcm_sensor_huey_get_ambient_finish (GcmSensor *sensor, GAsyncResult *res, gdouble *value, GError **error)
+{
+	GSimpleAsyncResult *simple;
+	gboolean ret = TRUE;
+
+	g_return_val_if_fail (GCM_IS_SENSOR (sensor), FALSE);
+	g_return_val_if_fail (G_IS_SIMPLE_ASYNC_RESULT (res), FALSE);
+	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+	/* failed */
+	simple = G_SIMPLE_ASYNC_RESULT (res);
+	if (g_simple_async_result_propagate_error (simple, error)) {
+		ret = FALSE;
+		goto out;
+	}
+
+	/* grab detail */
+	if (value != NULL)
+		*value = *((gdouble*) g_simple_async_result_get_op_res_gpointer (simple));
+out:
 	return ret;
 }
 
@@ -711,27 +834,38 @@ out:
 #define HUEY_ABSOLUTE_OFFSET_GREEN	0.000119
 #define HUEY_ABSOLUTE_OFFSET_BLUE	0.000018
 
-/**
- * gcm_sensor_huey_sample:
- *
- * Sample the data in two passes.
- **/
-static gboolean
-gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
+static void
+gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCancellable *cancellable)
 {
+	GcmSensor *sensor = GCM_SENSOR (object);
+	GError *error = NULL;
 	gboolean ret = FALSE;
 	gdouble precision_value;
-	GcmColorRGB native;
+	GcmColorRGB color_native;
+	GcmColorXYZ color_result;
+	GcmColorXYZ *tmp;
 	GcmSensorHueyMultiplier multiplier;
-	GcmVec3 *input = (GcmVec3 *) &native;
-	GcmVec3 *output = (GcmVec3 *) value;
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
+	GcmVec3 *color_native_vec3;
+	GcmVec3 *color_result_vec3;
+
+	/* ensure sensor is started */
+	if (!sensor_huey->priv->done_startup) {
+		ret = gcm_sensor_huey_startup (sensor, &error);
+		if (!ret) {
+			g_simple_async_result_set_from_error (res, error);
+			g_error_free (error);
+			goto out;
+		}
+	}
 
 	/* no hardware support */
 	if (gcm_sensor_get_output_type (sensor) == GCM_SENSOR_OUTPUT_TYPE_PROJECTOR) {
-		g_set_error_literal (error, GCM_SENSOR_ERROR,
+		g_set_error_literal (&error, GCM_SENSOR_ERROR,
 				     GCM_SENSOR_ERROR_NO_SUPPORT,
 				     "HUEY cannot measure ambient light in projector mode");
+		g_simple_async_result_set_from_error (res, error);
+		g_error_free (error);
 		goto out;
 	}
 
@@ -742,16 +876,19 @@ gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 	multiplier.R = 1;
 	multiplier.G = 1;
 	multiplier.B = 1;
-	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey, &multiplier, &native, error);
-	if (!ret)
+	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey, &multiplier, &color_native, &error);
+	if (!ret) {
+		g_simple_async_result_set_from_error (res, error);
+		g_error_free (error);
 		goto out;
-	egg_debug ("initial values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", native.R, native.G, native.B);
+	}
+	egg_debug ("initial values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_native.R, color_native.G, color_native.B);
 
 	/* compromise between the amount of time and the precision */
 	precision_value = (gdouble) HUEY_PRECISION_TIME_VALUE;
-	multiplier.R = precision_value * native.R;
-	multiplier.G = precision_value * native.G;
-	multiplier.B = precision_value * native.B;
+	multiplier.R = precision_value * color_native.R;
+	multiplier.G = precision_value * color_native.G;
+	multiplier.B = precision_value * color_native.B;
 
 	/* don't allow a value of zero */
 	if (multiplier.R == 0)
@@ -761,23 +898,86 @@ gcm_sensor_huey_sample (GcmSensor *sensor, GcmColorXYZ *value, GError **error)
 	if (multiplier.B == 0)
 		multiplier.B = 1;
 	egg_debug ("using multiplier factor: red=%i, green=%i, blue=%i", multiplier.R, multiplier.G, multiplier.B);
-	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey, &multiplier, &native, error);
-	if (!ret)
+	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey, &multiplier, &color_native, &error);
+	if (!ret) {
+		g_simple_async_result_set_from_error (res, error);
+		g_error_free (error);
 		goto out;
-	egg_debug ("scaled values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", native.R, native.G, native.B);
-	egg_debug ("PRE MULTIPLY: %s\n", gcm_vec3_to_string (input));
+	}
+
+	/* get colors as vectors */
+	color_native_vec3 = gcm_color_get_RGB_Vec3 (&color_native);
+	color_result_vec3 = gcm_color_get_XYZ_Vec3 (&color_result);
+
+	egg_debug ("scaled values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_native.R, color_native.G, color_native.B);
+	egg_debug ("PRE MULTIPLY: %s\n", gcm_vec3_to_string (color_native_vec3));
 
 	/* it would be rediculous for the device to emit RGB, it would be completely arbitrary --
 	 * we assume the matrix of data is designed to convert to LAB or XYZ */
-	gcm_mat33_vector_multiply (&sensor_huey->priv->calibration_matrix1, input, output);
+	gcm_mat33_vector_multiply (&sensor_huey->priv->calibration_matrix1, color_native_vec3, color_result_vec3);
 
 	/* scale correct */
-	gcm_vec3_scalar_multiply (output, HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR, output);
+	gcm_vec3_scalar_multiply (color_result_vec3, HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR, color_result_vec3);
 
-	egg_debug ("POST MULTIPLY: %s\n", gcm_vec3_to_string (output));
+	egg_debug ("POST MULTIPLY: %s\n", gcm_vec3_to_string (color_result_vec3));
+
+	/* save result */
+	tmp = g_new0 (GcmColorXYZ, 1);
+	gcm_color_copy_XYZ (&color_result, tmp);
+	g_simple_async_result_set_op_res_gpointer (res, tmp, (GDestroyNotify) g_free);
 out:
 	/* set state */
 	gcm_sensor_set_state (sensor, GCM_SENSOR_STATE_IDLE);
+}
+
+/**
+ * gcm_sensor_huey_sample_async:
+ **/
+static void
+gcm_sensor_huey_sample_async (GcmSensor *sensor, GCancellable *cancellable, GAsyncResult *res)
+{
+	GcmSensorAsyncState *state;
+
+	g_return_if_fail (GCM_IS_SENSOR (sensor));
+	g_return_if_fail (res != NULL);
+
+	/* save state */
+	state = g_slice_new0 (GcmSensorAsyncState);
+	state->res = g_object_ref (res);
+	state->sensor = g_object_ref (sensor);
+	if (cancellable != NULL) {
+		state->cancellable = g_object_ref (cancellable);
+		state->cancellable_id = g_cancellable_connect (cancellable, G_CALLBACK (gcm_sensor_huey_cancellable_cancel_cb), state, NULL);
+	}
+
+	/* run in a thread */
+	g_simple_async_result_run_in_thread (G_SIMPLE_ASYNC_RESULT (res), gcm_sensor_huey_sample_thread_cb, 0, cancellable);
+}
+
+/**
+ * gcm_sensor_huey_sample_finish:
+ **/
+static gboolean
+gcm_sensor_huey_sample_finish (GcmSensor *sensor, GAsyncResult *res, GcmColorXYZ *value, GError **error)
+{
+	GSimpleAsyncResult *simple;
+	gboolean ret = TRUE;
+
+	g_return_val_if_fail (GCM_IS_SENSOR (sensor), FALSE);
+	g_return_val_if_fail (G_IS_SIMPLE_ASYNC_RESULT (res), FALSE);
+	g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+
+	/* failed */
+	simple = G_SIMPLE_ASYNC_RESULT (res);
+	if (g_simple_async_result_propagate_error (simple, error)) {
+		ret = FALSE;
+		goto out;
+	}
+
+	/* grab detail */
+	if (value != NULL)
+		gcm_color_copy_XYZ ((GcmColorXYZ*) g_simple_async_result_get_op_res_gpointer (simple), value);
+out:
 	return ret;
 }
 
@@ -883,6 +1083,9 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 			goto out;
 		g_usleep (50000);
 	}
+
+	/* success */
+	sensor_huey->priv->done_startup = TRUE;
 out:
 	/* set state */
 	gcm_sensor_set_state (sensor, GCM_SENSOR_STATE_IDLE);
@@ -901,6 +1104,13 @@ gcm_sensor_huey_dump (GcmSensor *sensor, GString *data, GError **error)
 	gboolean ret;
 	guint i;
 	guint8 value;
+
+	/* ensure sensor is started */
+	if (!priv->done_startup) {
+		ret = gcm_sensor_huey_startup (sensor, error);
+		if (!ret)
+			goto out;
+	}
 
 	/* dump the unlock string */
 	g_string_append_printf (data, "huey-dump-version:%i\n", 2);
@@ -934,10 +1144,11 @@ gcm_sensor_huey_class_init (GcmSensorHueyClass *klass)
 	object_class->finalize = gcm_sensor_huey_finalize;
 
 	/* setup klass links */
-	parent_class->get_ambient = gcm_sensor_huey_get_ambient;
+	parent_class->get_ambient_async = gcm_sensor_huey_get_ambient_async;
+	parent_class->get_ambient_finish = gcm_sensor_huey_get_ambient_finish;
 	parent_class->set_leds = gcm_sensor_huey_set_leds;
-	parent_class->sample = gcm_sensor_huey_sample;
-	parent_class->startup = gcm_sensor_huey_startup;
+	parent_class->sample_async = gcm_sensor_huey_sample_async;
+	parent_class->sample_finish = gcm_sensor_huey_sample_finish;
 	parent_class->dump = gcm_sensor_huey_dump;
 
 	g_type_class_add_private (klass, sizeof (GcmSensorHueyPrivate));

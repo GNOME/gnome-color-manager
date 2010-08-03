@@ -226,7 +226,7 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 		gcm_sensor_set_output_type (sensor, GCM_SENSOR_OUTPUT_TYPE_LCD);
 
 		/* get ambient */
-		ret = gcm_sensor_get_ambient (sensor, &last_ambient, &error);
+		ret = gcm_sensor_get_ambient (sensor, NULL, &last_ambient, &error);
 		if (!ret) {
 			g_warning ("failed to get ambient: %s", error->message);
 			g_error_free (error);
@@ -234,7 +234,7 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 		}
 
 		/* sample color */
-		ret = gcm_sensor_sample (sensor, &last_sample, &error);
+		ret = gcm_sensor_sample (sensor, NULL, &last_sample, &error);
 		if (!ret) {
 			egg_warning ("failed to measure: %s", error->message);
 			g_error_free (error);

@@ -463,6 +463,7 @@ out:
 	return ret;
 }
 
+#if 0
 /**
  * gcm_sensor_colormunki_get_ambient:
  **/
@@ -497,7 +498,7 @@ gcm_sensor_colormunki_get_ambient (GcmSensor *sensor, gdouble *value, GError **e
 out:
 	return ret;
 }
-
+#endif
 
 /**
  * gcm_sensor_huey_dump:
@@ -553,10 +554,9 @@ gcm_sensor_colormunki_class_init (GcmSensorColormunkiClass *klass)
 	object_class->finalize = gcm_sensor_colormunki_finalize;
 
 	/* setup klass links */
-	parent_class->get_ambient = gcm_sensor_colormunki_get_ambient;
+//	parent_class->get_ambient = gcm_sensor_colormunki_get_ambient;
 //	parent_class->set_leds = gcm_sensor_colormunki_set_leds;
 //	parent_class->sample = gcm_sensor_colormunki_sample;
-	parent_class->startup = gcm_sensor_colormunki_startup;
 	parent_class->dump = gcm_sensor_colormunki_dump;
 
 	g_type_class_add_private (klass, sizeof (GcmSensorColormunkiPrivate));
@@ -573,6 +573,9 @@ gcm_sensor_colormunki_init (GcmSensorColormunki *sensor)
 	priv->transfer_interrupt = libusb_alloc_transfer (0);
 	priv->transfer_state = libusb_alloc_transfer (0);
 	priv->usb = gcm_usb_new ();
+
+	//FIXME
+	gcm_sensor_colormunki_startup (GCM_SENSOR (sensor), NULL);
 }
 
 /**
