@@ -173,3 +173,33 @@ gcm_color_convert_XYZ_to_Yxy (const GcmColorXYZ *src, GcmColorYxy *dest)
 	dest->x = src->X / sum;
 	dest->y = src->Y / sum;
 }
+
+/**
+ * gcm_color_get_XYZ_Vec3:
+ * @src: the source color
+ *
+ * Returns the color as a vector component
+ *
+ * Return value: the vector.
+ **/
+GcmVec3	*
+gcm_color_get_XYZ_Vec3 (GcmColorXYZ *src)
+{
+	g_return_val_if_fail (src != NULL, NULL);
+	return (GcmVec3 *) src;
+}
+
+/**
+ * gcm_color_get_RGB_Vec3:
+ * @src: the source color
+ *
+ * Returns the color as a vector component
+ *
+ * Return value: the vector.
+ **/
+GcmVec3	*
+gcm_color_get_RGB_Vec3 (GcmColorRGB *src)
+{
+	g_return_val_if_fail (src != NULL, NULL);
+	return (GcmVec3 *) src;
+}

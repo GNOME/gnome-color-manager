@@ -26,7 +26,7 @@
 #ifndef __GCM_COLOR_H__
 #define __GCM_COLOR_H__
 
-#define __GCM_COLOR_H_INSIDE__
+#include <gcm-common.h>
 
 typedef struct {
 	guint8	 R;
@@ -70,8 +70,8 @@ void		 gcm_color_convert_Yxy_to_XYZ		(const GcmColorYxy	*src,
 							 GcmColorXYZ		*dest);
 void		 gcm_color_convert_XYZ_to_Yxy		(const GcmColorXYZ	*src,
 							 GcmColorYxy		*dest);
-
-#undef __GCM_COLOR_H_INSIDE__
+GcmVec3		*gcm_color_get_XYZ_Vec3			(GcmColorXYZ		*src);
+GcmVec3		*gcm_color_get_RGB_Vec3			(GcmColorRGB		*src);
 
 #endif /* __GCM_COLOR_H__ */
 
