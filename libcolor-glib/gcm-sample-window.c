@@ -131,6 +131,10 @@ gcm_sample_window_set_color (GcmSampleWindow *sample_window, guint8 red, guint8 
 		gtk_image_set_from_pixbuf (GTK_IMAGE (sample_window->priv->image), pixbuf);
 	}
 
+	/* get the pixbuf size */
+	height = gdk_pixbuf_get_height (pixbuf);
+	width = gdk_pixbuf_get_width (pixbuf);
+
 	/* set the pixel array */
 	pixels = gdk_pixbuf_get_pixels (pixbuf);
 	for (i=0; i<width*height*3; i+=3) {
