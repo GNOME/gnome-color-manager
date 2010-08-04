@@ -614,6 +614,9 @@ gcm_sensor_colormunki_new (void)
 	sensor = g_object_new (GCM_TYPE_SENSOR_COLORMUNKI,
 			       "native", TRUE,
 			       "kind", GCM_SENSOR_KIND_COLOR_MUNKI,
+			       "image-display", "munki-attach.svg",
+			       "image-calibrate", "munki-calibrate.svg",
+			       "image-spotread", "munki-screen.svg",
 			       NULL);
 	return GCM_SENSOR (sensor);
 }

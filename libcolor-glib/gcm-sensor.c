@@ -56,6 +56,9 @@ struct _GcmSensorPrivate
 	gchar				*model;
 	gchar				*serial_number;
 	gchar				*device;
+	gchar				*image_display;
+	gchar				*image_calibrate;
+	gchar				*image_spotread;
 };
 
 
@@ -81,6 +84,9 @@ enum {
 	PROP_SUPPORTS_PRINTER,
 	PROP_SUPPORTS_SPOT,
 	PROP_DEVICE,
+	PROP_IMAGE_DISPLAY,
+	PROP_IMAGE_CALIBRATE,
+	PROP_IMAGE_SPOTREAD,
 	PROP_LAST
 };
 
@@ -92,6 +98,33 @@ enum {
 static guint signals[SIGNAL_LAST] = { 0 };
 
 G_DEFINE_TYPE (GcmSensor, gcm_sensor, G_TYPE_OBJECT)
+
+/**
+ * gcm_sensor_get_image_display:
+ **/
+const gchar *
+gcm_sensor_get_image_display (GcmSensor *sensor)
+{
+	return sensor->priv->image_display;
+}
+
+/**
+ * gcm_sensor_get_image_calibrate:
+ **/
+const gchar *
+gcm_sensor_get_image_calibrate (GcmSensor *sensor)
+{
+	return sensor->priv->image_calibrate;
+}
+
+/**
+ * gcm_sensor_get_image_spotread:
+ **/
+const gchar *
+gcm_sensor_get_image_spotread (GcmSensor *sensor)
+{
+	return sensor->priv->image_spotread;
+}
 
 /**
  * gcm_sensor_button_pressed:
@@ -768,6 +801,15 @@ gcm_sensor_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_DEVICE:
 		g_value_set_string (value, priv->device);
 		break;
+	case PROP_IMAGE_DISPLAY:
+		g_value_set_string (value, priv->image_display);
+		break;
+	case PROP_IMAGE_CALIBRATE:
+		g_value_set_string (value, priv->image_calibrate);
+		break;
+	case PROP_IMAGE_SPOTREAD:
+		g_value_set_string (value, priv->image_spotread);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -795,6 +837,15 @@ gcm_sensor_set_property (GObject *object, guint prop_id, const GValue *value, GP
 		break;
 	case PROP_SERIAL_NUMBER:
 		gcm_sensor_set_serial_number (sensor, g_value_get_string (value));
+		break;
+	case PROP_IMAGE_DISPLAY:
+		priv->image_display = g_value_dup_string (value);
+		break;
+	case PROP_IMAGE_CALIBRATE:
+		priv->image_calibrate = g_value_dup_string (value);
+		break;
+	case PROP_IMAGE_SPOTREAD:
+		priv->image_spotread = g_value_dup_string (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -904,6 +955,30 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 	g_object_class_install_property (object_class, PROP_DEVICE, pspec);
 
 	/**
+	 * GcmSensor:image-display:
+	 */
+	pspec = g_param_spec_string ("image-display", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+	g_object_class_install_property (object_class, PROP_IMAGE_DISPLAY, pspec);
+
+	/**
+	 * GcmSensor:image-calibrate:
+	 */
+	pspec = g_param_spec_string ("image-calibrate", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+	g_object_class_install_property (object_class, PROP_IMAGE_CALIBRATE, pspec);
+
+	/**
+	 * GcmSensor:image-spotread:
+	 */
+	pspec = g_param_spec_string ("image-spotread", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE | G_PARAM_CONSTRUCT);
+	g_object_class_install_property (object_class, PROP_IMAGE_SPOTREAD, pspec);
+
+	/**
 	 * GcmSensor::button-pressed:
 	 **/
 	signals[SIGNAL_BUTTON_PRESSED] =
@@ -940,6 +1015,9 @@ gcm_sensor_finalize (GObject *object)
 	g_free (priv->vendor);
 	g_free (priv->model);
 	g_free (priv->serial_number);
+	g_free (priv->image_display);
+	g_free (priv->image_calibrate);
+	g_free (priv->image_spotread);
 
 	G_OBJECT_CLASS (gcm_sensor_parent_class)->finalize (object);
 }

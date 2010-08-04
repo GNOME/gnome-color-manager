@@ -1194,6 +1194,7 @@ gcm_sensor_huey_new (void)
 	sensor = g_object_new (GCM_TYPE_SENSOR_HUEY,
 			       "native", TRUE,
 			       "kind", GCM_SENSOR_KIND_HUEY,
+			       "image-display", "huey-attach.svg",
 			       NULL);
 	return GCM_SENSOR (sensor);
 }

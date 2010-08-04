@@ -173,6 +173,9 @@ gboolean		 gcm_sensor_supports_spot	(GcmSensor		*sensor);
 gboolean		 gcm_sensor_is_native		(GcmSensor		*sensor);
 const gchar		*gcm_sensor_kind_to_string	(GcmSensorKind		 sensor_kind);
 GcmSensorKind		 gcm_sensor_kind_from_string	(const gchar		*sensor_kind);
+const gchar		*gcm_sensor_get_image_display	(GcmSensor		*sensor);
+const gchar		*gcm_sensor_get_image_calibrate	(GcmSensor		*sensor);
+const gchar		*gcm_sensor_get_image_spotread	(GcmSensor		*sensor);
 
 /* async sampling functions that take a lot of time */
 void			 gcm_sensor_get_ambient_async	(GcmSensor		*sensor,
