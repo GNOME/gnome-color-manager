@@ -52,6 +52,15 @@ typedef struct {
 	GSettings	*settings;
 } GcmViewerPrivate;
 
+typedef enum {
+	GCM_VIEWER_NONE,
+	GCM_VIEWER_CIE_1931,
+	GCM_VIEWER_TRC,
+	GCM_VIEWER_VCGT,
+	GCM_VIEWER_PREVIEW_INPUT,
+	GCM_VIEWER_PREVIEW_OUTPUT
+} GcmViewerGraphType;
+
 enum {
 	GCM_PROFILES_COLUMN_ID,
 	GCM_PROFILES_COLUMN_SORT,
@@ -928,23 +937,23 @@ gcm_viewer_graph_combo_changed_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 
 	/* hide or show the correct graphs */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_cie_axis"));
-	gtk_widget_set_visible (widget, active == 1);
+	gtk_widget_set_visible (widget, active == GCM_VIEWER_CIE_1931);
 
 	/* hide or show the correct graphs */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_trc_axis"));
-	gtk_widget_set_visible (widget, active == 2);
+	gtk_widget_set_visible (widget, active == GCM_VIEWER_TRC);
 
 	/* hide or show the correct graphs */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_vcgt_axis"));
-	gtk_widget_set_visible (widget, active == 3);
+	gtk_widget_set_visible (widget, active == GCM_VIEWER_VCGT);
 
 	/* hide or show the correct graphs */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_preview_input"));
-	gtk_widget_set_visible (widget, active == 4);
+	gtk_widget_set_visible (widget, active == GCM_VIEWER_PREVIEW_INPUT);
 
 	/* hide or show the correct graphs */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_preview_output"));
-	gtk_widget_set_visible (widget, active == 5);
+	gtk_widget_set_visible (widget, active == GCM_VIEWER_PREVIEW_OUTPUT);
 
 	/* save to GSettings */
 	g_settings_set_enum (viewer->settings, GCM_SETTINGS_PROFILE_GRAPH_TYPE, active);
