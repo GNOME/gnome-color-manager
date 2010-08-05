@@ -131,12 +131,37 @@ AC_DEFINE(GETTEXT_PACKAGE, "AC_PACKAGE_NAME", [foo])
 AM_GLIB_GNU_GETTEXT
 GLIB_GSETTINGS
 
+dnl **** We can compile against GTK2 or GTK3 ****
+AC_MSG_CHECKING([which gtk+ version to compile against])
+AC_ARG_WITH([gtk],
+  [AS_HELP_STRING([--with-gtk=2.0|3.0],[which gtk+ version to compile against (default: 3.0)])],
+  [case "$with_gtk" in
+     2.0|3.0) ;;
+     *) AC_MSG_ERROR([invalid gtk version specified]) ;;
+   esac],
+  [with_gtk=3.0])
+AC_MSG_RESULT([$with_gtk])
+
+case "$with_gtk" in
+2.0)
+	PKG_CHECK_MODULES(GTK, gtk+-2.0 >= 2.21.5)
+	PKG_CHECK_MODULES(VTE, vte >= 0.25.1, has_vte=yes, has_vte=no)
+	PKG_CHECK_MODULES(NOTIFY, libnotify >= 0.4.0, has_libnotify=yes, has_libnotify=no)
+	PKG_CHECK_MODULES(CANBERRA, libcanberra-gtk >= 0.10)
+	;;
+3.0)
+	PKG_CHECK_MODULES(GTK, gtk+-3.0 >= 2.90.3)
+	PKG_CHECK_MODULES(VTE, vte-2.90 >= 0.25.1, has_vte=yes, has_vte=no)
+	PKG_CHECK_MODULES(NOTIFY, libnotify >= 0.5.0, has_libnotify=yes, has_libnotify=no)
+	PKG_CHECK_MODULES(CANBERRA, libcanberra-gtk3 >= 0.10)
+       ;;
+esac
+
 dnl ---------------------------------------------------------------------------
 dnl - Check library dependencies
 dnl ---------------------------------------------------------------------------
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.14.0 gobject-2.0 gthread-2.0 gio-2.0 >= 2.25.9)
 PKG_CHECK_MODULES(XORG, xrandr)
-PKG_CHECK_MODULES(GTK, gtk+-3.0 >= 2.90.3)
 PKG_CHECK_MODULES(GUDEV, gudev-1.0)
 PKG_CHECK_MODULES(LCMS, lcms2)
 PKG_CHECK_MODULES(X11, x11)
@@ -155,14 +180,12 @@ PANELS_DIR="${libdir}/control-center-1/panels"
 AC_SUBST(PANELS_DIR)
 
 dnl **** Check for VTE ****
-PKG_CHECK_MODULES(VTE, vte-2.90 >= 0.25.1, has_vte=yes, has_vte=no)
 AM_CONDITIONAL(HAVE_VTE, test x$has_vte = xyes)
 if test x$has_vte = xyes; then
 	AC_DEFINE(HAVE_VTE,1,[Use VTE terminal widget])
 fi
 
 dnl **** Check for NOTIFY ****
-PKG_CHECK_MODULES(NOTIFY, libnotify >= 0.5.0, has_libnotify=yes, has_libnotify=no)
 AM_CONDITIONAL(HAVE_NOTIFY, test x$libnotify = xyes)
 if test x$has_libnotify = xyes; then
 	AC_DEFINE(HAVE_NOTIFY,1,[Use session notifications])
@@ -199,8 +222,6 @@ AM_CONDITIONAL(HAVE_EXIV, test x$enable_exiv = xyes)
 if test x$enable_exiv = xyes; then
 	AC_DEFINE(HAVE_EXIV,1,[Use EXIV support for detecting scanners])
 fi
-
-PKG_CHECK_MODULES(CANBERRA, libcanberra-gtk3 >= 0.10)
 
 PKG_CHECK_MODULES(EXIF, libexif)
 AC_CHECK_LIB(tiff, TIFFReadRGBAImageOriented,
@@ -341,6 +362,7 @@ echo "
         compiler:                  ${CC}
         cflags:                    ${CFLAGS}
         cppflags:                  ${CPPFLAGS}
+        GTK version:               ${with_gtk}
         PackageKit integration:    ${enable_packagekit}
         SANE support:              ${enable_sane}
         RAW support:               ${enable_exiv}
