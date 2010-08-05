@@ -503,7 +503,18 @@ gcm_calibrate_dialog_set_show_expander (GcmCalibrateDialog *calibrate_dialog, gb
 void
 gcm_calibrate_dialog_set_move_window (GcmCalibrateDialog *calibrate_dialog, gboolean move_window)
 {
+	gint x, y;
+	GtkWidget *widget;
+	GcmCalibrateDialogPrivate *priv = calibrate_dialog->priv;
+
 	calibrate_dialog->priv->move_window = move_window;
+
+	/* move the dialog out of the way, so the grey square doesn't cover it */
+	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
+	if (move_window) {
+		gtk_window_get_position (GTK_WINDOW (widget), &x, &y);
+		gtk_window_move (GTK_WINDOW (widget), 10, y);
+	}
 }
 
 /**
