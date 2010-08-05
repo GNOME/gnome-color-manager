@@ -217,7 +217,6 @@ gcm_sample_window_new (void)
 				      "deletable", FALSE,
 				      "destroy-with-parent", TRUE,
 				      "icon-name", "icc-profile",
-				      "modal", TRUE,
 				      "resizable", FALSE,
 				      "skip-pager-hint", TRUE,
 				      "skip-taskbar-hint", TRUE,
