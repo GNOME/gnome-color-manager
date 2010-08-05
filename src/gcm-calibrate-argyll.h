@@ -49,7 +49,7 @@ struct _GcmCalibrateArgyllClass
 };
 
 GType		 	 gcm_calibrate_argyll_get_type			(void);
-GcmCalibrateArgyll	*gcm_calibrate_argyll_new			(void);
+GcmCalibrate		*gcm_calibrate_argyll_new			(void);
 
 G_END_DECLS
 

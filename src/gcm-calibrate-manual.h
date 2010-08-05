@@ -58,7 +58,7 @@ struct _GcmCalibrateManualClass
 };
 
 GType			 gcm_calibrate_manual_get_type		 (void);
-GcmCalibrateManual	*gcm_calibrate_manual_new		 (void);
+GcmCalibrate		*gcm_calibrate_manual_new		 (void);
 
 G_END_DECLS
 

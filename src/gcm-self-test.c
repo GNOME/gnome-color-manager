@@ -154,7 +154,7 @@ gcm_test_calibrate_dialog_func (void)
 static void
 gcm_test_calibrate_manual_func (void)
 {
-	GcmCalibrateManual *calibrate;
+	GcmCalibrate *calibrate;
 	gboolean ret;
 	GError *error = NULL;
 
@@ -167,7 +167,7 @@ gcm_test_calibrate_manual_func (void)
 		      NULL);
 
 	/* calibrate display manually */
-	ret = gcm_calibrate_display (GCM_CALIBRATE(calibrate), NULL, &error);
+	ret = gcm_calibrate_display (calibrate, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 

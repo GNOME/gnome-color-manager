@@ -153,12 +153,12 @@ static guint
 gcm_calibrate_argyll_printer_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 {
 	guint patches = 180;
-	GcmSensorKind sensor_client_kind;
+	GcmSensorKind sensor_kind;
 	GcmCalibratePrecision precision;
 
 	/* we care about the kind */
 	g_object_get (calibrate_argyll,
-		      "sensor_client-kind", &sensor_client_kind,
+		      "sensor-kind", &sensor_kind,
 		      "precision", &precision,
 		      NULL);
 
@@ -171,8 +171,8 @@ gcm_calibrate_argyll_printer_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 
 #ifdef USE_DOUBLE_DENSITY
 	/* using double density, so we can double the patch count */
-	if (sensor_client_kind == GCM_SENSOR_KIND_COLOR_MUNKI ||
-	    sensor_client_kind == GCM_SENSOR_KIND_SPECTRO_SCAN) {
+	if (sensor_kind == GCM_SENSOR_KIND_COLOR_MUNKI ||
+	    sensor_kind == GCM_SENSOR_KIND_SPECTRO_SCAN) {
 		patches *= 2;
 	}
 #endif
@@ -182,51 +182,51 @@ gcm_calibrate_argyll_printer_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 
 #ifdef HAVE_VTE
 /**
- * gcm_calibrate_argyll_get_sensor_client_image_attach:
+ * gcm_calibrate_argyll_get_sensor_image_attach:
  **/
 static const gchar *
-gcm_calibrate_argyll_get_sensor_client_image_attach (GcmCalibrateArgyll *calibrate_argyll)
+gcm_calibrate_argyll_get_sensor_image_attach (GcmCalibrateArgyll *calibrate_argyll)
 {
-	GcmSensorKind sensor_client_kind;
+	GcmSensorKind sensor_kind;
 
-	g_object_get (calibrate_argyll, "sensor_client-kind", &sensor_client_kind, NULL);
-	if (sensor_client_kind == GCM_SENSOR_KIND_HUEY)
+	g_object_get (calibrate_argyll, "sensor-kind", &sensor_kind, NULL);
+	if (sensor_kind == GCM_SENSOR_KIND_HUEY)
 		return "huey-attach.svg";
-	if (sensor_client_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
+	if (sensor_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
 		return "munki-attach.svg";
-	if (sensor_client_kind == GCM_SENSOR_KIND_SPYDER)
+	if (sensor_kind == GCM_SENSOR_KIND_SPYDER)
 		return "spyder-attach.svg";
-	if (sensor_client_kind == GCM_SENSOR_KIND_COLORIMTRE_HCFR)
+	if (sensor_kind == GCM_SENSOR_KIND_COLORIMTRE_HCFR)
 		return "hcfr-attach.svg";
-	if (sensor_client_kind == GCM_SENSOR_KIND_I1_PRO)
+	if (sensor_kind == GCM_SENSOR_KIND_I1_PRO)
 		return "i1-attach.svg";
 	return NULL;
 }
 
 /**
- * gcm_calibrate_argyll_get_sensor_client_image_calibrate:
+ * gcm_calibrate_argyll_get_sensor_image_calibrate:
  **/
 static const gchar *
-gcm_calibrate_argyll_get_sensor_client_image_calibrate (GcmCalibrateArgyll *calibrate_argyll)
+gcm_calibrate_argyll_get_sensor_image_calibrate (GcmCalibrateArgyll *calibrate_argyll)
 {
-	GcmSensorKind sensor_client_kind;
+	GcmSensorKind sensor_kind;
 
-	g_object_get (calibrate_argyll, "sensor_client-kind", &sensor_client_kind, NULL);
-	if (sensor_client_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
+	g_object_get (calibrate_argyll, "sensor-kind", &sensor_kind, NULL);
+	if (sensor_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
 		return "munki-calibrate.svg";
 	return NULL;
 }
 
 /**
- * gcm_calibrate_argyll_get_sensor_client_image_screen:
+ * gcm_calibrate_argyll_get_sensor_image_screen:
  **/
 static const gchar *
-gcm_calibrate_argyll_get_sensor_client_image_screen (GcmCalibrateArgyll *calibrate_argyll)
+gcm_calibrate_argyll_get_sensor_image_screen (GcmCalibrateArgyll *calibrate_argyll)
 {
-	GcmSensorKind sensor_client_kind;
+	GcmSensorKind sensor_kind;
 
-	g_object_get (calibrate_argyll, "sensor_client-kind", &sensor_client_kind, NULL);
-	if (sensor_client_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
+	g_object_get (calibrate_argyll, "sensor-kind", &sensor_kind, NULL);
+	if (sensor_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
 		return "munki-screen.svg";
 	return NULL;
 }
@@ -1553,30 +1553,30 @@ out:
 }
 
 /**
- * gcm_calibrate_argyll_get_sensor_client_target:
+ * gcm_calibrate_argyll_get_sensor_target:
  **/
 static const gchar *
-gcm_calibrate_argyll_get_sensor_client_target (GcmCalibrateArgyll *calibrate_argyll)
+gcm_calibrate_argyll_get_sensor_target (GcmCalibrateArgyll *calibrate_argyll)
 {
-	GcmSensorKind sensor_client_kind;
+	GcmSensorKind sensor_kind;
 
 	g_object_get (calibrate_argyll,
-		      "sensor_client-kind", &sensor_client_kind,
+		      "sensor-kind", &sensor_kind,
 		      NULL);
 
-	if (sensor_client_kind == GCM_SENSOR_KIND_DTP20)
+	if (sensor_kind == GCM_SENSOR_KIND_DTP20)
 		return "20";
-	if (sensor_client_kind == GCM_SENSOR_KIND_DTP22)
+	if (sensor_kind == GCM_SENSOR_KIND_DTP22)
 		return "22";
-	if (sensor_client_kind == GCM_SENSOR_KIND_DTP41)
+	if (sensor_kind == GCM_SENSOR_KIND_DTP41)
 		return "41";
-	if (sensor_client_kind == GCM_SENSOR_KIND_DTP51)
+	if (sensor_kind == GCM_SENSOR_KIND_DTP51)
 		return "51";
-	if (sensor_client_kind == GCM_SENSOR_KIND_SPECTRO_SCAN)
+	if (sensor_kind == GCM_SENSOR_KIND_SPECTRO_SCAN)
 		return "SS";
-	if (sensor_client_kind == GCM_SENSOR_KIND_I1_PRO)
+	if (sensor_kind == GCM_SENSOR_KIND_I1_PRO)
 		return "i1";
-	if (sensor_client_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
+	if (sensor_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
 		return "CM";
 	return NULL;
 }
@@ -1595,12 +1595,12 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 	gchar *basename = NULL;
 	const gchar *title;
 	const gchar *message;
-	GcmSensorKind sensor_client_kind;
+	GcmSensorKind sensor_kind;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
-		      "sensor_client-kind", &sensor_client_kind,
+		      "sensor-kind", &sensor_kind,
 		      NULL);
 
 	/* get correct name of the command */
@@ -1631,12 +1631,12 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 	g_ptr_array_add (array, g_strdup ("-v"));
 
 	/* target instrument */
-	g_ptr_array_add (array, g_strdup_printf ("-i%s", gcm_calibrate_argyll_get_sensor_client_target (calibrate_argyll)));
+	g_ptr_array_add (array, g_strdup_printf ("-i%s", gcm_calibrate_argyll_get_sensor_target (calibrate_argyll)));
 
 #ifdef USE_DOUBLE_DENSITY
 	/* use double density */
-	if (sensor_client_kind == GCM_SENSOR_KIND_COLOR_MUNKI ||
-	    sensor_client_kind == GCM_SENSOR_KIND_SPECTRO_SCAN) {
+	if (sensor_kind == GCM_SENSOR_KIND_COLOR_MUNKI ||
+	    sensor_kind == GCM_SENSOR_KIND_SPECTRO_SCAN) {
 		g_ptr_array_add (array, g_strdup ("-h"));
 	}
 #endif
@@ -2278,7 +2278,7 @@ gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 	title = _("Please attach instrument");
 
 	/* get the image, if we have one */
-	filename = gcm_calibrate_argyll_get_sensor_client_image_attach (calibrate_argyll);
+	filename = gcm_calibrate_argyll_get_sensor_image_attach (calibrate_argyll);
 
 	/* different messages with or without image */
 	if (filename != NULL) {
@@ -2336,7 +2336,7 @@ gcm_calibrate_argyll_interaction_calibrate (GcmCalibrateArgyll *calibrate_argyll
 	egg_debug ("blocking waiting for user input: %s", title);
 
 	/* get the image, if we have one */
-	filename = gcm_calibrate_argyll_get_sensor_client_image_calibrate (calibrate_argyll);
+	filename = gcm_calibrate_argyll_get_sensor_image_calibrate (calibrate_argyll);
 
 	if (filename != NULL) {
 		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
@@ -2391,7 +2391,7 @@ gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 	egg_debug ("blocking waiting for user input: %s", title);
 
 	/* get the image, if we have one */
-	filename = gcm_calibrate_argyll_get_sensor_client_image_screen (calibrate_argyll);
+	filename = gcm_calibrate_argyll_get_sensor_image_screen (calibrate_argyll);
 
 	if (filename != NULL) {
 		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
@@ -2997,11 +2997,11 @@ gcm_calibrate_argyll_finalize (GObject *object)
  *
  * Return value: a new GcmCalibrateArgyll object.
  **/
-GcmCalibrateArgyll *
+GcmCalibrate *
 gcm_calibrate_argyll_new (void)
 {
 	GcmCalibrateArgyll *calibrate_argyll;
 	calibrate_argyll = g_object_new (GCM_TYPE_CALIBRATE_ARGYLL, NULL);
-	return GCM_CALIBRATE_ARGYLL (calibrate_argyll);
+	return GCM_CALIBRATE (calibrate_argyll);
 }
 

@@ -49,7 +49,7 @@ struct _GcmCalibrateNativeClass
 };
 
 GType		 	 gcm_calibrate_native_get_type			(void);
-GcmCalibrateNative	*gcm_calibrate_native_new			(void);
+GcmCalibrate		*gcm_calibrate_native_new			(void);
 
 G_END_DECLS
 

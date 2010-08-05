@@ -694,11 +694,11 @@ gcm_calibrate_manual_finalize (GObject *object)
  *
  * Return value: a new GcmCalibrateManual object.
  **/
-GcmCalibrateManual *
+GcmCalibrate *
 gcm_calibrate_manual_new (void)
 {
 	GcmCalibrateManual *calibrate;
 	calibrate = g_object_new (GCM_TYPE_CALIBRATE_MANUAL, NULL);
-	return GCM_CALIBRATE_MANUAL (calibrate);
+	return GCM_CALIBRATE (calibrate);
 }
 

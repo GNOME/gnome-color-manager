@@ -352,11 +352,11 @@ gcm_calibrate_native_finalize (GObject *object)
  *
  * Return value: a new GcmCalibrateNative object.
  **/
-GcmCalibrateNative *
+GcmCalibrate *
 gcm_calibrate_native_new (void)
 {
 	GcmCalibrateNative *calibrate_native;
 	calibrate_native = g_object_new (GCM_TYPE_CALIBRATE_NATIVE, NULL);
-	return GCM_CALIBRATE_NATIVE (calibrate_native);
+	return GCM_CALIBRATE (calibrate_native);
 }
 
