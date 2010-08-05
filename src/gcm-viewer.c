@@ -50,6 +50,7 @@ typedef struct {
 	GtkWidget	*preview_widget_input;
 	GtkWidget	*preview_widget_output;
 	GSettings	*settings;
+	guint		 example_index;
 } GcmViewerPrivate;
 
 typedef enum {
@@ -80,6 +81,7 @@ enum {
 static void gcm_viewer_profile_store_changed_cb (GcmProfileStore *profile_store, GcmViewerPrivate *viewer);
 
 #define GCM_VIEWER_TREEVIEW_WIDTH		350 /* px */
+#define GCM_VIEWER_MAX_EXAMPLE_IMAGES		4
 
 /**
  * gcm_viewer_error_dialog:
@@ -105,6 +107,44 @@ static void
 gcm_viewer_close_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 {
 	gtk_application_quit (viewer->application);
+}
+
+/**
+ * gcm_viewer_set_example_image:
+ **/
+static void
+gcm_viewer_set_example_image (GcmViewerPrivate *viewer, GtkImage *image)
+{
+	gchar *filename;
+	filename = g_strdup_printf ("%s/figures/viewer-example-%02i.png", GCM_DATA, viewer->example_index);
+	gtk_image_set_from_file (image, filename);
+	g_free (filename);
+}
+
+/**
+ * gcm_viewer_image_next_cb:
+ **/
+static void
+gcm_viewer_image_next_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
+{
+	viewer->example_index++;
+	if (viewer->example_index == GCM_VIEWER_MAX_EXAMPLE_IMAGES)
+		viewer->example_index = 0;
+	gcm_viewer_set_example_image (viewer, GTK_IMAGE (viewer->preview_widget_input));
+	gcm_viewer_set_example_image (viewer, GTK_IMAGE (viewer->preview_widget_output));
+}
+
+/**
+ * gcm_viewer_image_prev_cb:
+ **/
+static void
+gcm_viewer_image_prev_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
+{
+	if (viewer->example_index == 0)
+		viewer->example_index = GCM_VIEWER_MAX_EXAMPLE_IMAGES;
+	viewer->example_index--;
+	gcm_viewer_set_example_image (viewer, GTK_IMAGE (viewer->preview_widget_input));
+	gcm_viewer_set_example_image (viewer, GTK_IMAGE (viewer->preview_widget_output));
 }
 
 /**
@@ -955,6 +995,14 @@ gcm_viewer_graph_combo_changed_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_preview_output"));
 	gtk_widget_set_visible (widget, active == GCM_VIEWER_PREVIEW_OUTPUT);
 
+	/* hide or show the buttons */
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_image_prev"));
+	gtk_widget_set_visible (widget, (active == GCM_VIEWER_PREVIEW_INPUT) ||
+					(active == GCM_VIEWER_PREVIEW_OUTPUT));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_image_next"));
+	gtk_widget_set_visible (widget, (active == GCM_VIEWER_PREVIEW_INPUT) ||
+					(active == GCM_VIEWER_PREVIEW_OUTPUT));
+
 	/* save to GSettings */
 	g_settings_set_enum (viewer->settings, GCM_SETTINGS_PROFILE_GRAPH_TYPE, active);
 }
@@ -1096,6 +1144,14 @@ main (int argc, char **argv)
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_viewer_profile_import_cb), viewer);
 
+	/* image next/prev */
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_image_next"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_viewer_image_next_cb), viewer);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_image_prev"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_viewer_image_prev_cb), viewer);
+
 	/* hidden until a profile is selected */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_graph"));
 	gtk_widget_set_visible (widget, FALSE);
@@ -1131,14 +1187,14 @@ main (int argc, char **argv)
 	viewer->preview_widget_input = GTK_WIDGET (gcm_image_new ());
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_preview_input"));
 	gtk_box_pack_end (GTK_BOX(widget), viewer->preview_widget_input, FALSE, FALSE, 0);
-	gtk_image_set_from_file (GTK_IMAGE (viewer->preview_widget_input), GCM_DATA "/figures/viewer-example-00.png");
+	gcm_viewer_set_example_image (viewer, GTK_IMAGE (viewer->preview_widget_input));
 	gtk_widget_set_visible (viewer->preview_widget_input, TRUE);
 
 	/* use preview output */
 	viewer->preview_widget_output = GTK_WIDGET (gcm_image_new ());
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_preview_output"));
 	gtk_box_pack_end (GTK_BOX(widget), viewer->preview_widget_output, FALSE, FALSE, 0);
-	gtk_image_set_from_file (GTK_IMAGE (viewer->preview_widget_output), GCM_DATA "/figures/viewer-example-00.png");
+	gcm_viewer_set_example_image (viewer, GTK_IMAGE (viewer->preview_widget_output));
 	gtk_widget_set_visible (viewer->preview_widget_output, TRUE);
 
 	/* do we set a default size to make the window larger? */
