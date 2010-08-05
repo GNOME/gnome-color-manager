@@ -161,6 +161,43 @@ gcm_sample_window_class_init (GcmSampleWindowClass *klass)
 }
 
 /**
+ * gcm_sample_window_enter_notify_cb:
+ **/
+static gboolean
+gcm_sample_window_enter_notify_cb (GtkWidget *widget, GdkEventCrossing *event, GcmSampleWindow *sample_window)
+{
+	GdkCursor *cursor;
+
+	/* hide cursor */
+	cursor = gdk_cursor_new_for_display (gdk_display_get_default (), GDK_BLANK_CURSOR);
+	gdk_window_set_cursor (gtk_widget_get_window (widget), cursor);
+	gdk_cursor_unref (cursor);
+
+	return FALSE;
+}
+
+/**
+ * gcm_sample_window_leave_notify_cb:
+ **/
+static gboolean
+gcm_sample_window_leave_notify_cb (GtkWidget *widget, GdkEventCrossing *event,
+				   GcmSampleWindow *sample_window)
+{
+	/* restore cursor */
+	gdk_window_set_cursor (gtk_widget_get_window (widget), NULL);
+	return FALSE;
+}
+
+static gboolean
+gcm_sample_window_visibility_notify_cb (GtkWidget *widget, GdkEventVisibility *event,
+					GcmSampleWindow *sample_window)
+{
+	/* reshow it */
+	gtk_window_present (GTK_WINDOW (widget));
+	return TRUE;
+}
+
+/**
  * gcm_sample_window_init:
  **/
 static void
@@ -179,6 +216,17 @@ gcm_sample_window_init (GcmSampleWindow *sample_window)
 	gtk_box_pack_start (GTK_BOX (vbox), sample_window->priv->progress_bar, TRUE, TRUE, 0);
 	gtk_widget_set_size_request (sample_window->priv->image, 400, 400);
 	gtk_widget_show_all (vbox);
+
+	/* be clever and allow the colorimeter to do it's job */
+	g_signal_connect (window, "enter-notify-event",
+			  G_CALLBACK(gcm_sample_window_enter_notify_cb),
+			  sample_window);
+	g_signal_connect (window, "leave-notify-event",
+			  G_CALLBACK(gcm_sample_window_leave_notify_cb),
+			  sample_window);
+	g_signal_connect (window, "visibility-notify-event",
+			  G_CALLBACK(gcm_sample_window_visibility_notify_cb),
+			  sample_window);
 
 	/* show on all virtual desktops */
 	gtk_window_stick (window);
