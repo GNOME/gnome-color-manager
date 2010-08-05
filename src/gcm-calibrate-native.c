@@ -53,6 +53,7 @@ struct _GcmCalibrateNativePrivate
 {
 	GtkWindow			*sample_window;
 	GMainLoop			*loop;
+	GCancellable			*cancellable;
 	GcmCalibrateDialog		*calibrate_dialog;
 };
 
@@ -80,12 +81,12 @@ gcm_calibrate_native_sample_free_cb (GcmColorSample *sample)
  * gcm_calibrate_native_sample_measure:
  **/
 static void
-gcm_calibrate_native_sample_measure (GcmSensor *sensor, GcmColorSample *sample)
+gcm_calibrate_native_sample_measure (GcmSensor *sensor, GCancellable *cancellable, GcmColorSample *sample)
 {
 	GError *error = NULL;
 	gboolean ret;
 
-	ret = gcm_sensor_sample (sensor, NULL, sample->result, &error);
+	ret = gcm_sensor_sample (sensor, cancellable, sample->result, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 }
@@ -159,7 +160,7 @@ gcm_calibrate_native_sample_write (GPtrArray *array, const gchar *filename)
  * gcm_calibrate_native_create_it8_file:
  **/
 static void
-gcm_calibrate_native_create_it8_file (GcmCalibrateNative *calibrate_native)
+gcm_calibrate_native_create_it8_file (GcmCalibrateNative *calibrate_native, GcmSensor *sensor, guint precision)
 {
 	GcmCalibrateNativePrivate *priv = calibrate_native->priv;
 	guint i;
@@ -169,7 +170,9 @@ gcm_calibrate_native_create_it8_file (GcmCalibrateNative *calibrate_native)
 	GcmColorRGB source;
 	GcmColorXYZ result;
 	gdouble divisions;
-	GcmSensor *sensor;
+
+	/* step size */
+	divisions = 1.0f / (gfloat) precision;
 
 	result.X = 0.1;
 	result.Y = 0.2;
@@ -183,17 +186,41 @@ gcm_calibrate_native_create_it8_file (GcmCalibrateNative *calibrate_native)
 	source.B = 1.0;
 	gcm_calibrate_native_sample_add (array, "CBL", &source);
 
+	/* blue ramp */
+	for (i=1; i<precision; i++) {
+		patch_name = g_strdup_printf ("BR%i", i+1);
+		source.B = 1.0f - (divisions * i);
+		gcm_calibrate_native_sample_add (array, patch_name, &source);
+		g_free (patch_name);
+	}
+
 	/* green */
 	source.R = 0.0;
 	source.G = 1.0;
 	source.B = 0.0;
 	gcm_calibrate_native_sample_add (array, "CGR", &source);
 
+	/* green ramp */
+	for (i=1; i<precision; i++) {
+		patch_name = g_strdup_printf ("GR%i", i+1);
+		source.G = 1.0f - (divisions * i);
+		gcm_calibrate_native_sample_add (array, patch_name, &source);
+		g_free (patch_name);
+	}
+
 	/* red */
 	source.R = 1.0;
 	source.G = 0.0;
 	source.B = 0.0;
 	gcm_calibrate_native_sample_add (array, "CRD", &source);
+
+	/* red ramp */
+	for (i=1; i<precision; i++) {
+		patch_name = g_strdup_printf ("RR%i", i+1);
+		source.R = 1.0f - (divisions * i);
+		gcm_calibrate_native_sample_add (array, patch_name, &source);
+		g_free (patch_name);
+	}
 
 	/* white */
 	source.R = 1.0;
@@ -202,8 +229,7 @@ gcm_calibrate_native_create_it8_file (GcmCalibrateNative *calibrate_native)
 	gcm_calibrate_native_sample_add (array, "DMIN", &source);
 
 	/* grey ramp */
-	divisions = 1.0f / 35.0f;
-	for (i=1; i<35; i++) {
+	for (i=1; i<precision; i++) {
 		patch_name = g_strdup_printf ("GS%i", i+1);
 		source.R = 1.0f - (divisions * i);
 		source.G = 1.0f - (divisions * i);
@@ -218,23 +244,39 @@ gcm_calibrate_native_create_it8_file (GcmCalibrateNative *calibrate_native)
 	source.B = 0.0;
 	gcm_calibrate_native_sample_add (array, "DMAX", &source);
 
-	sensor = gcm_sensor_huey_new ();
-
 	/* measure */
 	divisions = 100.0f / array->len;
 	for (i=0; i<array->len; i++) {
+
+		/* is cancelled */
+		if (g_cancellable_is_cancelled (priv->cancellable))
+			goto out;
+
 		sample = g_ptr_array_index (array, i);
 		gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (priv->sample_window), sample->source);
 		gcm_sample_window_set_percentage (GCM_SAMPLE_WINDOW (priv->sample_window), i*divisions);
-		gcm_calibrate_native_sample_measure (sensor, sample);
+		gcm_calibrate_native_sample_measure (sensor, priv->cancellable, sample);
 	}
-
-	g_object_unref (sensor);
 
 	/* write to disk */
 	gcm_calibrate_native_sample_write (array, "./dave.it8");
+out:
 
 	g_ptr_array_unref (array);
+}
+
+/*
+ * _cmsWriteTagTextAscii:
+ */
+static cmsBool
+_cmsWriteTagTextAscii (cmsHPROFILE lcms_profile, cmsTagSignature sig, const gchar *text)
+{
+	cmsBool ret;
+	cmsMLU *mlu = cmsMLUalloc (0, 1);
+	cmsMLUsetASCII (mlu, "EN", "us", text);
+	ret = cmsWriteTag (lcms_profile, sig, mlu);
+	cmsMLUfree (mlu);
+	return ret;
 }
 
 /**
@@ -246,29 +288,107 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 	GcmCalibrateNative *calibrate_native = GCM_CALIBRATE_NATIVE(calibrate);
 	GcmCalibrateNativePrivate *priv = calibrate_native->priv;
 	gboolean ret = TRUE;
+	GcmSensor *sensor;
 	const gchar *title;
 	const gchar *message;
+	const gchar *filename;
+
+{
+cmsHPROFILE profile;
+cmsViewingConditions PCS;
+
+/* take it8 file, and open */
+profile = cmsCreateProfilePlaceholder (NULL);
+
+cmsSetEncodedICCversion (profile, 0x2000000);
+cmsSetDeviceClass (profile, cmsSigDisplayClass);
+cmsSetColorSpace (profile, cmsSigRgbData);
+cmsSetPCS (profile, cmsSigLabData);
+
+_cmsWriteTagTextAscii (profile, cmsSigProfileDescriptionTag, "cmsSigProfileDescriptionTag");
+_cmsWriteTagTextAscii (profile, cmsSigCopyrightTag, "cmsSigCopyrightTag");
+_cmsWriteTagTextAscii (profile, cmsSigDeviceModelDescTag, "cmsSigDeviceModelDescTag");
+_cmsWriteTagTextAscii (profile, cmsSigDeviceMfgDescTag, "cmsSigDeviceMfgDescTag");
+
+PCS.whitePoint.X = cmsD50_XYZ()->X * 100.;
+PCS.whitePoint.Y = cmsD50_XYZ()->Y * 100.;
+PCS.whitePoint.Z = cmsD50_XYZ()->Z * 100.;
+PCS.Yb = 20;			/* 20% of surround */
+PCS.La = 20;			/* Adapting field luminance */
+PCS.surround = AVG_SURROUND;
+PCS.D_value  = 1.0;		/* Complete adaptation */
+
+
+cmsSaveProfileToFile (profile, "dave.icc");
+
+egg_error ("moo");
+}
+
+	sensor = gcm_sensor_huey_new ();
+
+	/* show window */
+	gtk_window_present (priv->sample_window);
+
+	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
+	title = _("Please attach instrument");
+
+	/* get the image, if we have one */
+	filename = gcm_sensor_get_image_display (sensor);
+
+	/* different messages with or without image */
+	if (filename != NULL) {
+		/* TRANSLATORS: dialog message, ask user to attach device, and there's an example image */
+		message = _("Please attach the measuring instrument to the center of the screen on the gray square like the image below.");
+	} else {
+		/* TRANSLATORS: dialog message, ask user to attach device */
+		message = _("Please attach the measuring instrument to the center of the screen on the gray square.");
+	}
+
+	/* block for a response */
+	egg_debug ("blocking waiting for user input: %s", title);
+
+	/* push new messages into the UI */
+	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
+	gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
+	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
+	gcm_calibrate_dialog_set_move_window (priv->calibrate_dialog, TRUE);
+
+	/* TRANSLATORS: button text */
+	gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Continue"));
+
+egg_warning ("moo");
+
+//	gtk_window_present (GTK_WINDOW (priv->calibrate_dialog));
+
+
+	/* wait for response */
+	g_main_loop_run (priv->loop);
+
+	/* is cancelled */
+	if (g_cancellable_is_cancelled (priv->cancellable))
+		goto out;
 
 	/* set modal windows up correctly */
 	gcm_calibrate_dialog_set_move_window (priv->calibrate_dialog, TRUE);
 	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
 
-	/* TRANSLATORS: title, hardware refers to a calibration device */
-	title = _("Set up display");
+	/* TRANSLATORS: title, drawing means painting to the screen */
+	title = _("Drawing the patches");
 
 	/* TRANSLATORS: dialog message */
-	message = _("Setting up display device for use…");
+	message = _("Drawing the generated patches to the screen, which will then be measured by the hardware device.");
 
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
 	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
 	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
 
-	/* show window */
-	gtk_window_present (priv->sample_window);
-	gcm_calibrate_native_create_it8_file (calibrate_native);
+	gcm_calibrate_native_create_it8_file (calibrate_native, sensor, 10);
 
-//out:
+	g_object_unref (sensor);
+
+out:
 	return ret;
 }
 
@@ -301,6 +421,24 @@ gcm_calibrate_native_spotread (GcmCalibrate *calibrate, GtkWindow *window, GErro
 }
 
 /**
+ * gcm_calibrate_native_response_cb:
+ **/
+static void
+gcm_calibrate_native_response_cb (GtkWidget *widget, GtkResponseType response, GcmCalibrateNative *calibrate_native)
+{
+	GcmCalibrateNativePrivate *priv = calibrate_native->priv;
+	if (response == GTK_RESPONSE_OK) {
+		if (g_main_loop_is_running (priv->loop))
+			g_main_loop_quit (priv->loop);
+	}
+	if (response == GTK_RESPONSE_CANCEL) {
+		if (g_main_loop_is_running (priv->loop))
+			g_main_loop_quit (priv->loop);
+		g_cancellable_cancel (priv->cancellable);
+	}
+}
+
+/**
  * gcm_calibrate_native_class_init:
  **/
 static void
@@ -324,10 +462,17 @@ static void
 gcm_calibrate_native_init (GcmCalibrateNative *calibrate_native)
 {
 	calibrate_native->priv = GCM_CALIBRATE_NATIVE_GET_PRIVATE (calibrate_native);
+
+	calibrate_native->priv->loop = g_main_loop_new (NULL, FALSE);
+	calibrate_native->priv->cancellable = g_cancellable_new ();
+
+	/* common dialog */
 	calibrate_native->priv->calibrate_dialog = gcm_calibrate_dialog_new ();
+	g_signal_connect (calibrate_native->priv->calibrate_dialog, "response",
+			  G_CALLBACK (gcm_calibrate_native_response_cb), calibrate_native);
+
+	/* sample window */
 	calibrate_native->priv->sample_window = gcm_sample_window_new ();
-//	g_signal_connect (calibrate_native->priv->calibrate_dialog, "response",
-//			  G_CALLBACK (gcm_calibrate_native_response_cb), calibrate_native);
 }
 
 /**
@@ -343,6 +488,8 @@ gcm_calibrate_native_finalize (GObject *object)
 	gcm_calibrate_dialog_hide (priv->calibrate_dialog);
 	g_object_unref (priv->calibrate_dialog);
 	g_object_unref (priv->sample_window);
+	g_object_unref (priv->cancellable);
+	g_main_loop_unref (priv->loop);
 
 	G_OBJECT_CLASS (gcm_calibrate_native_parent_class)->finalize (object);
 }

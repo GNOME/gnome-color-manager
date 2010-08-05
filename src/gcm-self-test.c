@@ -27,6 +27,7 @@
 #include "gcm-calibrate.h"
 #include "gcm-calibrate-dialog.h"
 #include "gcm-calibrate-manual.h"
+#include "gcm-calibrate-native.h"
 #include "gcm-cie-widget.h"
 #include "gcm-client.h"
 #include "gcm-device.h"
@@ -149,6 +150,27 @@ gcm_test_calibrate_dialog_func (void)
 	calibrate_dialog = gcm_calibrate_dialog_new ();
 	g_assert (calibrate_dialog != NULL);
 	g_object_unref (calibrate_dialog);
+}
+
+static void
+gcm_test_calibrate_native_func (void)
+{
+	gboolean ret;
+	GError *error = NULL;
+	GcmCalibrate *calibrate;
+
+	calibrate = gcm_calibrate_native_new ();
+	g_assert (calibrate != NULL);
+
+	g_object_set (calibrate,
+		      "output-name", "LVDS1",
+		      NULL);
+
+	ret = gcm_calibrate_display (calibrate, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	g_object_unref (calibrate);
 }
 
 static void
@@ -714,6 +736,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/color/device", gcm_test_device_func);
 	g_test_add_func ("/color/calibrate_dialog", gcm_test_calibrate_dialog_func);
 	if (g_test_thorough ()) {
+		g_test_add_func ("/color/calibrate_native", gcm_test_calibrate_native_func);
 		g_test_add_func ("/color/trc", gcm_test_trc_widget_func);
 		g_test_add_func ("/color/cie", gcm_test_cie_widget_func);
 		g_test_add_func ("/color/gamma_widget", gcm_test_gamma_widget_func);
