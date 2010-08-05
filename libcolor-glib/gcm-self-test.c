@@ -24,22 +24,24 @@
 #include <glib-object.h>
 #include <math.h>
 
+#include "gcm-brightness.h"
+#include "gcm-buffer.h"
+#include "gcm-clut.h"
 #include "gcm-common.h"
-#include "gcm-sensor-dummy.h"
 #include "gcm-ddc-client.h"
 #include "gcm-ddc-device.h"
+#include "gcm-dmi.h"
 #include "gcm-edid.h"
-#include "gcm-brightness.h"
-#include "gcm-tables.h"
+#include "gcm-image.h"
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
-#include "gcm-clut.h"
-#include "gcm-xyz.h"
-#include "gcm-dmi.h"
-#include "gcm-image.h"
-#include "gcm-usb.h"
-#include "gcm-buffer.h"
 #include "gcm-sample-window.h"
+#include "gcm-sensor-dummy.h"
+#include "gcm-tables.h"
+#include "gcm-usb.h"
+#include "gcm-x11-output.h"
+#include "gcm-x11-screen.h"
+#include "gcm-xyz.h"
 
 static void
 gcm_test_common_func (void)
@@ -686,6 +688,40 @@ gcm_test_buffer_func (void)
 	g_assert_cmpint (gcm_buffer_read_uint16_le (buffer), ==, 8192);
 }
 
+static void
+gcm_test_x11_func (void)
+{
+	GcmX11Screen *screen;
+	GcmX11Output *output;
+	guint x, y;
+	guint width, height;
+	GError *error = NULL;
+	gboolean ret;
+
+	/* new object */
+	screen = gcm_x11_screen_new ();
+	ret = gcm_x11_screen_assign (screen, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* get object */
+	output = gcm_x11_screen_get_output_by_name (screen, "LVDS1", &error);
+	g_assert_no_error (error);
+	g_assert (output != NULL);
+
+	/* check parameters */
+	gcm_x11_output_get_position (output, &x, &y);
+	g_assert_cmpint (x, ==, 0);
+	g_assert_cmpint (y, ==, 0);
+	gcm_x11_output_get_size (output, &width, &height);
+	g_assert_cmpint (width, >, 0);
+	g_assert_cmpint (height, >, 0);
+	g_assert (gcm_x11_output_get_connected (output));
+
+	g_object_unref (output);
+	g_object_unref (screen);
+}
+
 static gboolean
 gcm_test_sample_window_loop_cb (GMainLoop *loop)
 {
@@ -699,7 +735,6 @@ gcm_test_sample_window_func (void)
 	GtkWindow *window;
 	GMainLoop *loop;
 	GcmColorRGB source;
-
 
 	window = gcm_sample_window_new ();
 	g_assert (window != NULL);
@@ -734,6 +769,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/libcolor-glib/clut", gcm_test_clut_func);
 	g_test_add_func ("/libcolor-glib/xyz", gcm_test_xyz_func);
 	g_test_add_func ("/libcolor-glib/dmi", gcm_test_dmi_func);
+	g_test_add_func ("/libcolor-glib/x11", gcm_test_x11_func);
 	g_test_add_func ("/libcolor-glib/profile_store", gcm_test_profile_store_func);
 	g_test_add_func ("/libcolor-glib/buffer", gcm_test_buffer_func);
 	g_test_add_func ("/libcolor-glib/sample-window", gcm_test_sample_window_func);
