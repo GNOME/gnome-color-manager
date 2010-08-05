@@ -193,7 +193,6 @@ gcm_sample_window_finalize (GObject *object)
 	GcmSampleWindow *sample_window = GCM_SAMPLE_WINDOW (object);
 	GcmSampleWindowPrivate *priv = sample_window->priv;
 
-	g_object_unref (priv->image);
 	if (priv->pulse_id != 0)
 		g_source_remove (priv->pulse_id);
 
@@ -223,7 +222,6 @@ gcm_sample_window_new (void)
 				      "title", "calibration square",
 				      "type-hint", GDK_WINDOW_TYPE_HINT_SPLASHSCREEN,
 				      "urgency-hint", TRUE,
-				      "window-position", GTK_WIN_POS_CENTER_ALWAYS,
 				      NULL);
 	return GTK_WINDOW (sample_window);
 }

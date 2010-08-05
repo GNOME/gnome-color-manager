@@ -730,6 +730,45 @@ gcm_test_sample_window_loop_cb (GMainLoop *loop)
 }
 
 static void
+gcm_test_sample_window_move_window (GtkWindow *window, const gchar *output_name)
+{
+	GcmX11Screen *screen;
+	GcmX11Output *output;
+	guint x, y;
+	guint width, height;
+	gint window_width, window_height;
+	GError *error = NULL;
+	gboolean ret;
+
+	/* get new screen */
+	screen = gcm_x11_screen_new ();
+	ret = gcm_x11_screen_assign (screen, NULL, &error);
+	if (!ret) {
+		g_warning ("failed to assign screen: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* get output */
+	output = gcm_x11_screen_get_output_by_name (screen, output_name, &error);
+	if (output == NULL) {
+		g_warning ("failed to get output: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* center the window on this output */
+	gcm_x11_output_get_position (output, &x, &y);
+	gcm_x11_output_get_size (output, &width, &height);
+	gtk_window_get_size (window, &window_width, &window_height);
+	gtk_window_move (window, x + ((width - window_width) / 2), y + ((height - window_height) / 2));
+out:
+	if (output != NULL)
+		g_object_unref (output);
+	g_object_unref (screen);
+}
+
+static void
 gcm_test_sample_window_func (void)
 {
 	GtkWindow *window;
@@ -743,12 +782,17 @@ gcm_test_sample_window_func (void)
 	source.B = 0.0f;
 	gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (window), &source);
 	gcm_sample_window_set_percentage (GCM_SAMPLE_WINDOW (window), GCM_SAMPLE_WINDOW_PERCENTAGE_PULSE);
+
+	/* move to the center of device lvds1 */
+	gcm_test_sample_window_move_window (window, "LVDS1");
 	gtk_window_present (window);
+
 	loop = g_main_loop_new (NULL, FALSE);
 	g_timeout_add_seconds (2, (GSourceFunc) gcm_test_sample_window_loop_cb, loop);
 	g_main_loop_run (loop);
+
 	g_main_loop_unref (loop);
-	g_object_unref (window);
+	gtk_widget_destroy (GTK_WIDGET (window));
 }
 
 int
