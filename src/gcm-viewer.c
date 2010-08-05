@@ -1122,14 +1122,14 @@ main (int argc, char **argv)
 	viewer->preview_widget_input = GTK_WIDGET (gcm_image_new ());
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_preview_input"));
 	gtk_box_pack_end (GTK_BOX(widget), viewer->preview_widget_input, FALSE, FALSE, 0);
-	gtk_image_set_from_file (GTK_IMAGE (viewer->preview_widget_input), GCM_DATA "/figures/viewer-example.png");
+	gtk_image_set_from_file (GTK_IMAGE (viewer->preview_widget_input), GCM_DATA "/figures/viewer-example-00.png");
 	gtk_widget_set_visible (viewer->preview_widget_input, TRUE);
 
 	/* use preview output */
 	viewer->preview_widget_output = GTK_WIDGET (gcm_image_new ());
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_preview_output"));
 	gtk_box_pack_end (GTK_BOX(widget), viewer->preview_widget_output, FALSE, FALSE, 0);
-	gtk_image_set_from_file (GTK_IMAGE (viewer->preview_widget_output), GCM_DATA "/figures/viewer-example.png");
+	gtk_image_set_from_file (GTK_IMAGE (viewer->preview_widget_output), GCM_DATA "/figures/viewer-example-00.png");
 	gtk_widget_set_visible (viewer->preview_widget_output, TRUE);
 
 	/* do we set a default size to make the window larger? */

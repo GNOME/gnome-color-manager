@@ -1,6 +1,6 @@
 figuresdir = $(datadir)/gnome-color-manager/figures
 figures_DATA = 	 			\
-	viewer-example.png
+	viewer-example-00.png
 
 iconsdir = $(datadir)/gnome-color-manager/icons
 icons_DATA = 	 			\
