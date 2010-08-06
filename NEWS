@@ -1,3 +1,28 @@
+Version 2.31.6
+~~~~~~~~~~~~~~
+Released: 2010-08-06
+
+* Important note:
+ - This is 2.31.6, which is forked from the gnome-2-30 branch.
+ - If you have been using 2.31.5 or any earlier 2.31 version, then you will
+   notice the UI and functionality going back in time. This is unfortunate.
+ - GNOME 3 has been pushed back 6 months, and the GSettings and GtkApplication
+   code is not ready for prime-time just yet. I'm not willing to add multiple
+   levels of ifdef'd code for the n-permutations of distros on different GTK
+   and GLib versions, so people are just going to make do with 3.30.x with
+   a few backported bugs and translation fixes. I do apologise to the
+   translators, who have wasted some time on translating git master.
+ - This release does not use the new control center panel, GDBus or GSettings,
+   nor the new XDG directories location.
+ - I don't intend on wasting time backporting features from git master into
+   GNOME 2.32.x. Bugfixes will be, where they make sense.
+ - In my personal opinion, GNOME 2.32.0 is going to blow goats.
+
+* Bugfix:
+ - Use vte_terminal_fork_command_full() as vte_terminal_fork_command() is deprecated (Richard Hughes)
+ - Include the trailing colon in translated strings. Fixes #619967 (Richard Hughes)
+ - Clean up the temporary file created by cupsGetPPD2(). Fixes rh#582202 (Tim Waugh)
+
 Version 2.30.2
 ~~~~~~~~~~~~~~
 Released: 2010-06-01
