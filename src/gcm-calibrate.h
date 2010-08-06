@@ -23,6 +23,7 @@
 #define __GCM_CALIBRATE_H
 
 #include <glib-object.h>
+#include <gtk/gtk.h>
 
 #include "gcm-device.h"
 
@@ -134,6 +135,7 @@ const gchar	*gcm_calibrate_get_description_fallback	(GcmCalibrate	*calibrate);
 const gchar	*gcm_calibrate_get_manufacturer_fallback (GcmCalibrate	*calibrate);
 const gchar	*gcm_calibrate_get_device_fallback	(GcmCalibrate	*calibrate);
 const gchar	*gcm_calibrate_get_filename_result	(GcmCalibrate	*calibrate);
+const gchar	*gcm_calibrate_get_working_path		(GcmCalibrate	*calibrate);
 
 G_END_DECLS
 
