@@ -253,9 +253,8 @@ gcm_calibrate_set_basename (GcmCalibrate *calibrate)
 		g_string_append_printf (basename, " - %s", serial);
 	g_string_append_printf (basename, " (%04i-%02i-%02i)", date->year, date->month, date->day);
 
-	/* maybe configure in GSettings? */
-	if (0)
-		g_string_append_printf (basename, " [%s]", timespec);
+	/* Use time as we can calibrate more than once per day */
+	g_string_append_printf (basename, " [%s]", timespec);
 
 	/* save this */
 	g_object_set (calibrate, "basename", basename->str, NULL);
