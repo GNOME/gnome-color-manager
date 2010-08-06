@@ -60,7 +60,7 @@ struct _GcmCalibratePrivate
 	GcmCalibrateDeviceKind		 calibrate_device_kind;
 	GcmCalibratePrintKind		 print_kind;
 	GcmCalibratePrecision		 precision;
-	GcmSensorKind		 sensor_client_kind;
+	GcmSensorKind		 sensor_kind;
 	GcmCalibrateDialog		*calibrate_dialog;
 	GcmDeviceKind			 device_kind;
 	GcmXyz				*xyz;
@@ -90,7 +90,7 @@ enum {
 	PROP_CALIBRATE_DEVICE_KIND,
 	PROP_PRINT_KIND,
 	PROP_DEVICE_KIND,
-	PROP_SENSOR_CLIENT_KIND,
+	PROP_SENSOR_KIND,
 	PROP_OUTPUT_NAME,
 	PROP_FILENAME_SOURCE,
 	PROP_FILENAME_REFERENCE,
@@ -1202,8 +1202,8 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 	case PROP_CALIBRATE_DEVICE_KIND:
 		g_value_set_uint (value, priv->calibrate_device_kind);
 		break;
-	case PROP_SENSOR_CLIENT_KIND:
-		g_value_set_uint (value, priv->sensor_client_kind);
+	case PROP_SENSOR_KIND:
+		g_value_set_uint (value, priv->sensor_kind);
 		break;
 	case PROP_OUTPUT_NAME:
 		g_value_set_string (value, priv->output_name);
@@ -1272,10 +1272,10 @@ static void
 gcm_prefs_sensor_client_changed_cb (GcmSensorClient *_sensor_client, GcmCalibrate *calibrate)
 {
 	GcmSensor *sensor;
-	calibrate->priv->sensor_client_kind = GCM_SENSOR_KIND_UNKNOWN;
+	calibrate->priv->sensor_kind = GCM_SENSOR_KIND_UNKNOWN;
 	sensor = gcm_sensor_client_get_sensor (_sensor_client);
 	if (sensor != NULL)
-		calibrate->priv->sensor_client_kind = gcm_sensor_get_kind (sensor);
+		calibrate->priv->sensor_kind = gcm_sensor_get_kind (sensor);
 	g_object_notify (G_OBJECT (calibrate), "sensor_client-kind");
 }
 
@@ -1394,12 +1394,12 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 	g_object_class_install_property (object_class, PROP_DEVICE_KIND, pspec);
 
 	/**
-	 * GcmCalibrate:sensor_client-kind:
+	 * GcmCalibrate:sensor-kind:
 	 */
-	pspec = g_param_spec_uint ("sensor_client-kind", NULL, NULL,
+	pspec = g_param_spec_uint ("sensor-kind", NULL, NULL,
 				   0, G_MAXUINT, 0,
 				   G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_SENSOR_CLIENT_KIND, pspec);
+	g_object_class_install_property (object_class, PROP_SENSOR_KIND, pspec);
 
 	/**
 	 * GcmCalibrate:output-name:
@@ -1544,10 +1544,10 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 
 	/* coldplug, and watch for changes */
-	calibrate->priv->sensor_client_kind = GCM_SENSOR_KIND_UNKNOWN;
+	calibrate->priv->sensor_kind = GCM_SENSOR_KIND_UNKNOWN;
 	sensor = gcm_sensor_client_get_sensor (calibrate->priv->sensor_client);
 	if (sensor != NULL)
-		calibrate->priv->sensor_client_kind = gcm_sensor_get_kind (sensor);
+		calibrate->priv->sensor_kind = gcm_sensor_get_kind (sensor);
 
 	g_signal_connect (calibrate->priv->sensor_client, "changed", G_CALLBACK (gcm_prefs_sensor_client_changed_cb), calibrate);
 }
