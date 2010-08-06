@@ -2551,7 +2551,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 			/* TRANSLATORS: message, the sensor got no readings */
 			message = _("The measuring instrument got no valid readings. Please ensure the aperture is fully open.");
 		} else if (g_strstr_len (line, -1, "Device or resource busy") != NULL) {
-			/* TRANSLATORS: message, the sensor_client has got confused */
+			/* TRANSLATORS: message, the colorimeter has got confused */
 			message = _("The measuring instrument is busy and is not starting up. Please remove the USB plug and re-insert before trying to use this device.");
 		} else {
 			message = found + 8;
@@ -2693,7 +2693,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		string = g_string_new ("");
 
 		/* TRANSLATORS: dialog message, just follow the hardware instructions */
-		g_string_append (string, _("Place the sensor_client on the area of white next to the letter and click and hold the measure switch."));
+		g_string_append (string, _("Place the colorimeter on the area of white next to the letter and click and hold the measure switch."));
 		g_string_append (string, "\n\n");
 
 		/* TRANSLATORS: dialog message, just follow the hardware instructions */
