@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-09 01:17+0200\n"
-"PO-Revision-Date: 2010-08-09 00:46+0200\n"
+"POT-Creation-Date: 2010-08-09 11:36+0200\n"
+"PO-Revision-Date: 2010-08-09 12:07+0200\n"
 "Last-Translator: Fran Dieguez <frandieguez@ubuntu.com>\n"
 "Language-Team: Galician <gnome-gl-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -53,6 +53,11 @@ msgid ""
 "long time, but now use the same value as Microsoft. Microsoft has always "
 "used a value of 2.2."
 msgstr ""
+"O Gamma axústase para afectar a cor do monitor conectado. Tradicionalmente "
+"en Linux usouse un valor de gamma 1.0, pero isto facía que os monitores se "
+"viran de forma incorrecta comparados con Windows XP ou OS X. Apple "
+"tradicionalmente empregou un valor de 1.8, pero agora usa o mesmo valor que "
+"Microsoft Windows usou sempre, 2.2."
 
 #: ../data/gnome-color-manager.schemas.in.h:2
 msgid ""
@@ -61,12 +66,18 @@ msgid ""
 "folders. This may increase startup time if disks need to be spun up to be "
 "searched."
 msgstr ""
+"Se está estabelecida a TRUE buscaranse tamén os perfiles ICC en dispositivos "
+"ao arrinque, por exemplo buscará no cartafol de bibliotecas de OSX ou nos "
+"cartafoles do sistema do Windows XP. Isto pode aumentar o tempo de arrinque "
+"se o disco necesita iniciarse para buscar."
 
 #: ../data/gnome-color-manager.schemas.in.h:3
 msgid ""
 "If set to TRUE then the __ICC_PROFILE hint will be set, which applications "
 "use to convert true color to screen color."
 msgstr ""
+"Se está estabelecida a TRUE estabelecerase a suxestión __ICC_PROFILE, o cal "
+"usan os aplicativos para converter a cor verdadeira en cor da pantalla."
 
 #: ../data/gnome-color-manager.schemas.in.h:4
 msgid ""
@@ -74,53 +85,54 @@ msgid ""
 "user to change the display profile outside of what the ICC profile suggests "
 "and is only recommended for advanced users."
 msgstr ""
+"Se está estabelecida a TRUE mostraranse os controis de axuste fino. Isto "
+"permítelle ao usuario cambiar o perfíl da pantalla fóra do que o perfíl ICC "
+"suxire e só está recomendado para usuarios avanzados."
 
 #: ../data/gnome-color-manager.schemas.in.h:5
 msgid "If set to TRUE then the video LUT is set with the display profile"
-msgstr ""
+msgstr "Se está a TRUE o vídeo LUT estabelecerase co perfil da pantalla"
 
 #: ../data/gnome-color-manager.schemas.in.h:6
 msgid "Set the _ICC_PROFILE hint for applications."
-msgstr ""
+msgstr "Estabelecer a suxestión _ICC_PROFILE para os aplicativos."
 
 #: ../data/gnome-color-manager.schemas.in.h:7
 msgid "Show the fine tuning controls for display devices."
-msgstr ""
+msgstr "Mostrar os controis de axuste fino para o dispositivos de pantalla."
 
 #: ../data/gnome-color-manager.schemas.in.h:8
 msgid "The CMYK profile filename to be used by applications by default."
-msgstr ""
+msgstr "O nome do ficheiro de perfíl CMYK a usar por omisión nos aplicativos."
 
 #: ../data/gnome-color-manager.schemas.in.h:9
 msgid "The RGB profile filename to be used by applications by default."
-msgstr ""
+msgstr "O nome do ficheiro do perfíl RGB a usar por omisión nos aplicativos."
 
 #: ../data/gnome-color-manager.schemas.in.h:10
-#, fuzzy
 msgid "The default CMYK profile."
-msgstr "O modelo do perfil"
+msgstr "O perfil CMYK predefinido"
 
 #: ../data/gnome-color-manager.schemas.in.h:11
-#, fuzzy
 msgid "The default RGB profile."
-msgstr "O modelo do perfil"
+msgstr "O perfil RGB predefinido."
 
 #: ../data/gnome-color-manager.schemas.in.h:12
-#, fuzzy
 msgid "The default calibration length."
-msgstr "Seleccione unha calibración de destino"
+msgstr "A lonxitude de calibración predefinida."
 
 #: ../data/gnome-color-manager.schemas.in.h:13
 msgid "The default gamma to use for monitors with no previous value set."
 msgstr ""
+"O gamma predefinido a usar nos monitores sen un valor anterior estabelecido."
 
 #: ../data/gnome-color-manager.schemas.in.h:14
 msgid "The duration between sending notifications to recalibrate a display."
-msgstr ""
+msgstr "O tempo entre os envíos de notificacións para recalibrar a pantalla."
 
 #: ../data/gnome-color-manager.schemas.in.h:15
 msgid "The duration between sending notifications to recalibrate a printer."
-msgstr ""
+msgstr "O tempo entre os envíos de notificacións para recalibrar a impresora."
 
 #: ../data/gnome-color-manager.schemas.in.h:16
 msgid ""
@@ -129,39 +141,46 @@ msgid ""
 "takes a really long time, but is more precise and creates a better profile. "
 "Use 'ask' if you want the user to choose."
 msgstr ""
+"A lonxitude do calibrado, xa que é proporcional á exactitude. A opción "
+"«short» crea un perfil rápido, «normal» un regular e «long» leva bastante tempo "
+"pero é máis preciso e crea un perfil mellor. Use «ask» se quere que o usuario "
+"escolla."
 
 #: ../data/gnome-color-manager.schemas.in.h:17
+#, fuzzy
 msgid "The rendering intent to use for softproofs, e.g. 'perceptual'."
-msgstr ""
+msgstr "A intención de renderizado a usar para a pantalla, p.ex. «porcentual»"
 
 #: ../data/gnome-color-manager.schemas.in.h:18
-#, fuzzy
 msgid "The rendering intent to use for the display, e.g. 'perceptual'."
-msgstr ""
-"O modo de renderizado que usar ao transformar a gama de cor dunha imaxe á "
-"gama de cor de pantalla."
+msgstr "A intención de renderizado a usar para a pantalla, p.ex. «porcentual»"
 
 #: ../data/gnome-color-manager.schemas.in.h:19
 msgid ""
 "This is the number of seconds in between notifying the user to recalibrate "
 "each display device. Set to 0 to disable the notification."
 msgstr ""
+"Este é o número de segundos entre as notificacións de recalibrado de cada "
+"dispositivo de pantalla ao usuario. Estabelézao a 0 para desactivar a "
+"notificación."
 
 #: ../data/gnome-color-manager.schemas.in.h:20
 msgid ""
 "This is the number of seconds in between notifying the user to recalibrate "
 "each printer device. Set to 0 to disable the notification."
 msgstr ""
+"Isto é o número de segundos entre as notificacións de recalibrado de cada "
+"dispositivo de impresión. Estabelézao a 0 para desactivar a notificación."
 
 #: ../data/gnome-color-manager.schemas.in.h:21
-#, fuzzy
 msgid "Whether ICC profiles should be loaded from external disks."
-msgstr "O usuario debe ser o propietario do perfil ICC."
+msgstr "Indica se os perfiles ICC deberían cargarse desde discos externos."
 
 #: ../data/gnome-color-manager.schemas.in.h:22
 msgid ""
 "Whether the display should be globally corrected or left to applications."
 msgstr ""
+"Indica se a pantalla debería corrixirse globalmente ou só os aplicativos."
 
 #: ../policy/org.gnome.color.policy.in.h:1
 msgid "Authentication is required to install the color profile for all users"
@@ -426,23 +445,21 @@ msgstr "Estabeleza un instrumento de medición para o modo de calibración."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
 #: ../src/gcm-calibrate-argyll.c:2214
-#, fuzzy
 msgid ""
 "Please set the measuring instrument to screen mode like the image below, and "
 "ensure it is attached to the screen."
 msgstr ""
 "Estableza o instrumento de medición no modo de pantalla segundo a imaxe "
-"inferior."
+"inferior, e asegúrese que ten anexada a pantalla."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
 #: ../src/gcm-calibrate-argyll.c:2217
-#, fuzzy
 msgid ""
 "Please set the measuring instrument to screen mode, and ensure it is "
 "attached to the screen."
 msgstr ""
 "Estableza o instrumento de medición no modo de pantalla segundo a imaxe "
-"inferior."
+"inferior, e asegúrese que ten anexada a pantalla."
 
 #. TRANSLATORS: title, the calibration failed
 #: ../src/gcm-calibrate-argyll.c:2288 ../src/gcm-calibrate-argyll.c:2336
@@ -1026,7 +1043,7 @@ msgstr ""
 #. TRANSLATORS: error message
 #: ../src/gcm-client.c:1103
 msgid "This device already exists"
-msgstr ""
+msgstr "Xa existe o dispositivo"
 
 #. TRANSLATORS: this is when the device is not recognized
 #: ../src/gcm-colorimeter.c:391
@@ -1040,56 +1057,48 @@ msgstr "LCD de portátil"
 
 #. TRANSLATORS: this is when the EDID file cannot be read
 #: ../src/gcm-dump-edid.c:58
-#, fuzzy
 msgid "Cannot load file contents"
-msgstr "Non se pode cargar o contido do ficheiro:"
+msgstr "Non é posíbel cargar os contidos do ficheiro"
 
 #. TRANSLATORS: this is when the EDID cannot be parsed
 #: ../src/gcm-dump-edid.c:67
-#, fuzzy
 msgid "Cannot parse EDID contents"
-msgstr "Non se pode analizar o contido EDID:"
+msgstr "Non é posíbel analizar os contidos EDID"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:75
-#, fuzzy
 msgid "Monitor name"
-msgstr "Nome do monitor:"
+msgstr "Nome do monitor"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:80
-#, fuzzy
 msgid "Vendor name"
-msgstr "Nome do fabricante:"
+msgstr "Nome do fabricante"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:85
-#, fuzzy
 msgid "Serial number"
-msgstr "Número de serie:"
+msgstr "Número de serie"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:90
 msgid "Text string"
-msgstr ""
+msgstr "Cadea de texto"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:95
-#, fuzzy
 msgid "PNP identifier"
-msgstr "Identificador PNP:"
+msgstr "Identificador PNP"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:101
-#, fuzzy
 msgid "Size"
-msgstr "Size:"
+msgstr "Tamaño"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:106
-#, fuzzy
 msgid "Gamma"
-msgstr "Gamma:"
+msgstr "Gamma"
 
 #. TRANSLATORS: command line option: a list of files to parse
 #: ../src/gcm-dump-edid.c:136
@@ -1098,9 +1107,8 @@ msgstr "Volcados EDID que analizar"
 
 #. TRANSLATORS: this is the filename we are displaying
 #: ../src/gcm-dump-edid.c:159
-#, fuzzy
 msgid "EDID dump"
-msgstr "Volcado EDID:"
+msgstr "Volcado EDID"
 
 #. TRANSLATORS: we saved the EDID to a file - second parameter is a filename
 #: ../src/gcm-dump-edid.c:196
@@ -1280,9 +1288,8 @@ msgstr "Espazo de cor CMYK:"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:506
-#, fuzzy
 msgid "Show X11 properties"
-msgstr "Mostrar as propiedades do servidor X"
+msgstr "Mostrar as propiedades do X11"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:509
@@ -1311,9 +1318,8 @@ msgstr "Programa de inspección EDID"
 
 #. TRANSLATORS: this is when the user does --type=mickeymouse
 #: ../src/gcm-inspect.c:548
-#, fuzzy
 msgid "Device type not recognized"
-msgstr "Non se recoñeceu o instrumento de medición"
+msgstr "Non se recoñeceu o tipo de dispositivo"
 
 #. command line argument, the ID of the device
 #: ../src/gcm-install-system-wide.c:123
@@ -1439,15 +1445,14 @@ msgstr "Perfiles ICC admitidos"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
 #: ../src/gcm-prefs.c:687
-#, fuzzy
 msgid "Install missing calibration and profiling software?"
 msgstr "Desexa instalar o software de calibración e perfilado?"
 
 #. TRANSLATORS: dialog message saying the argyllcms is not installed
 #: ../src/gcm-prefs.c:691
-#, fuzzy
 msgid "Calibration and profiling software is not installed on this computer."
-msgstr "O software de calibración e perfilado non está instalado."
+msgstr ""
+"O software de calibración e perfilado non está instalado neste computador."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
 #: ../src/gcm-prefs.c:693
@@ -1457,9 +1462,8 @@ msgstr ""
 
 #. TRANSLATORS: dialog message, asking if it's okay to install it
 #: ../src/gcm-prefs.c:695
-#, fuzzy
 msgid "Do you want them to be automatically installed?"
-msgstr "Quere que se instalen?"
+msgstr "Desexa que se instalen automaticamente?"
 
 #. TRANSLATORS: this is the sound description
 #: ../src/gcm-prefs.c:821
@@ -1493,22 +1497,19 @@ msgstr "Crear un perfil de cor para o dispositivo seleccionado"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1074
-#, fuzzy
 msgid "Cannot profile: No device is selected"
-msgstr "Non é posíbel crear o perfil:  non hai ningún dispositivo seleccionado"
+msgstr "Non é posíbel calibrar:  non hai ningún dispositivo seleccionado"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1086
-#, fuzzy
 msgid "Cannot calibrate: The device is not connected"
-msgstr "Non é posíbel crear o perfil: o dispositivo non está conectado"
+msgstr "Non é posíbel calibrar: o dispositivo non está conectado"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1094
-#, fuzzy
 msgid "Cannot calibrate: The display driver does not support XRandR 1.3"
 msgstr ""
-"Non é posíbel crear o perfil: o controlador da pantalla non admite XRandR 1.3"
+"Non é posíbel calibrar: o controlador da pantalla non admite XRandR 1.3"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1102
@@ -1517,25 +1518,21 @@ msgstr "Non é posíbel calibrar: o instrumento de medición non está conectado
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1117
-#, fuzzy
 msgid "Cannot profile: The measuring instrument is not plugged in"
-msgstr ""
-"Non é posíbel crear o perfil: o instrumento de medición non está conectado"
+msgstr "Non é posíbel perfilar: o instrumento de medición non está conectado"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1125
-#, fuzzy
 msgid ""
 "Cannot profile: The measuring instrument does not support printer profiling"
 msgstr ""
-"Non é posíbel crear o perfil: o instrumento de medición non admite o "
-"perfilado de impresión"
+"Non é posíbel perfilar: o instrumento de medición non admite o perfilado de "
+"impresión"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1132
-#, fuzzy
 msgid "Cannot profile this type of device"
-msgstr "Non é posíbel crear o perfil para este tipo de dispositivos"
+msgstr "Non é posíbel perfilar este tipo de dispositivo"
 
 #. TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
 #. * Whilst this does not matter if you only have one monitor attached, it means you
@@ -1786,7 +1783,7 @@ msgstr "De percepción"
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:531
 msgid "Relative colormetric"
-msgstr ""
+msgstr "Colorímetro relativo"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:535
@@ -1796,7 +1793,7 @@ msgstr "Saturación"
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:539
 msgid "Absolute colormetric"
-msgstr ""
+msgstr "Colorímetro absoluto"
 
 #: ../data/gcm-calibrate.ui.h:1
 msgid "Blue:"
@@ -1877,9 +1874,8 @@ msgstr ""
 "Un espacio de traballo é o rango de cores que se poden codificar nunha imaxe."
 
 #: ../data/gcm-prefs.ui.h:2
-#, fuzzy
 msgid "Add Virtual Device"
-msgstr "Produciuse un fallo ao engadir o dispositivo virtual"
+msgstr "Engadir dispositivo virtual"
 
 #: ../data/gcm-prefs.ui.h:3
 msgid "Adds a virtual device that is not connected."
@@ -1910,9 +1906,8 @@ msgstr "Contraster:"
 
 #. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
 #: ../data/gcm-prefs.ui.h:16
-#, fuzzy
 msgid "Create _Profile for Device"
-msgstr "Crear un perfil para o dispositivo"
+msgstr "Crear un _perfil para o dispositivo"
 
 #. When the profile was created
 #: ../data/gcm-prefs.ui.h:18
@@ -1925,9 +1920,8 @@ msgid "Defaults"
 msgstr "Predefinidos"
 
 #: ../data/gcm-prefs.ui.h:21
-#, fuzzy
 msgid "Delete the currently selected color profile"
-msgstr "Desexa eliminar permanentemente o perfil?"
+msgstr "Desexa eliminar o perfil seleccionado?"
 
 #: ../data/gcm-prefs.ui.h:22
 msgid ""
@@ -1992,7 +1986,7 @@ msgstr "Gamma:"
 
 #: ../data/gcm-prefs.ui.h:44
 msgid "Import an ICC file from another location"
-msgstr ""
+msgstr "Importar un ficheiro ICC desde outra localización"
 
 #. The licence of the profile, normally non-free
 #: ../data/gcm-prefs.ui.h:46
@@ -2108,30 +2102,25 @@ msgstr "Espazo de traballo"
 
 #. This is a button to add a virtual device
 #: ../data/gcm-prefs.ui.h:77
-#, fuzzy
 msgid "_Add Device"
-msgstr "Engadir di_spositivo..."
+msgstr "Engadir di_spositivo"
 
 #: ../data/gcm-prefs.ui.h:78
-#, fuzzy
 msgid "_Apply display correction"
-msgstr "_Aplicar a corrección de pantalla básica"
+msgstr "_Aplicar a corrección de pantalla"
 
 #. This is a button to delete the saved or virtual device
 #: ../data/gcm-prefs.ui.h:80
-#, fuzzy
 msgid "_Delete Device"
-msgstr "Eliminar"
+msgstr "_Eliminar dispositivo"
 
 #: ../data/gcm-prefs.ui.h:81
-#, fuzzy
 msgid "_Delete Profile"
-msgstr "Eliminar este perfíl"
+msgstr "_Eliminar o perfíl"
 
 #: ../data/gcm-prefs.ui.h:82
-#, fuzzy
 msgid "_Import Profile"
-msgstr "Importar perfíl ICC"
+msgstr "_Importar perfil "
 
 #: ../data/gcm-prefs.ui.h:83
 msgid "_Make Default"
@@ -2139,12 +2128,10 @@ msgstr "_Facer predefinido"
 
 #. This resets the device to it's defaults, and removes any user tweaked settings.
 #: ../data/gcm-prefs.ui.h:85
-#, fuzzy
 msgid "_Reset to defaults"
-msgstr "_Estabelecer os valores predefinidos do sistema"
+msgstr "_Estabelecer os valores predefinidos"
 
 #: ../data/gcm-prefs.ui.h:86
-#, fuzzy
 msgid "_Set profile for color managed applications"
 msgstr "Estabelecer o perfil de _cor para os aplicativos xestionados"
 
