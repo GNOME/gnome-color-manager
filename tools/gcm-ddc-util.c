@@ -247,6 +247,7 @@ main (int argc, char **argv)
 	if (control_name == NULL) {
 		g_print ("you need to specify a control name with --control\n");
 		show_device (device);
+		goto out;
 	}
 	idx = gcm_get_vcp_index_from_description (control_name);
 	if (idx == GCM_VCP_ID_INVALID) {

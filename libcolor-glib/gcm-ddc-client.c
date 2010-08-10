@@ -232,7 +232,7 @@ gcm_ddc_client_get_device_from_edid (GcmDdcClient *client, const gchar *edid_md5
 
 		/* matches? */
 		if (g_strcmp0 (edid_md5, edid_md5_tmp) == 0) {
-			device = device_tmp;
+			device = g_object_ref (device_tmp);
 			break;
 		}
 	}
