@@ -27,7 +27,7 @@
 #include "gcm-brightness.h"
 #include "gcm-buffer.h"
 #include "gcm-clut.h"
-#include "gcm-common.h"
+#include "gcm-math.h"
 #include "gcm-ddc-client.h"
 #include "gcm-ddc-device.h"
 #include "gcm-dmi.h"
@@ -44,7 +44,7 @@
 #include "gcm-xyz.h"
 
 static void
-gcm_test_common_func (void)
+gcm_test_math_func (void)
 {
 	GcmColorRGBint rgb_int;
 	GcmColorRGB rgb;
@@ -819,7 +819,7 @@ main (int argc, char **argv)
 	g_test_init (&argc, &argv, NULL);
 
 	/* tests go here */
-	g_test_add_func ("/libcolor-glib/common", gcm_test_common_func);
+	g_test_add_func ("/libcolor-glib/math", gcm_test_math_func);
 	g_test_add_func ("/libcolor-glib/ddc-device", gcm_test_ddc_device_func);
 	g_test_add_func ("/libcolor-glib/ddc-client", gcm_test_ddc_client_func);
 	g_test_add_func ("/libcolor-glib/sensor", gcm_test_sensor_func);

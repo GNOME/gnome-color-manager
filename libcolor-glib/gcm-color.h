@@ -26,7 +26,7 @@
 #ifndef __GCM_COLOR_H__
 #define __GCM_COLOR_H__
 
-#include <gcm-common.h>
+#include <gcm-math.h>
 
 typedef struct {
 	guint8	 R;

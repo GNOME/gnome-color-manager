@@ -32,7 +32,7 @@ libcolor_glib_includedir = $(includedir)/libcolor-glib
 
 libcolor_glib_include_HEADERS =					\
 	libcolor-glib.h						\
-	gcm-common.h						\
+	gcm-math.h						\
 	gcm-compat.h						\
 	gcm-color.h						\
 	gcm-ddc-client.h					\
@@ -57,8 +57,8 @@ libcolor_glib_la_SOURCES =					\
 	egg-debug.h						\
 	gcm-sample-window.c					\
 	gcm-sample-window.h					\
-	gcm-common.c						\
-	gcm-common.h						\
+	gcm-math.c						\
+	gcm-math.h						\
 	gcm-color.c						\
 	gcm-color.h						\
 	gcm-sensor.c						\

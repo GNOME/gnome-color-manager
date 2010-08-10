@@ -35,7 +35,7 @@
 
 #include "gcm-buffer.h"
 #include "gcm-usb.h"
-#include "gcm-common.h"
+#include "gcm-math.h"
 #include "gcm-compat.h"
 #include "gcm-sensor-huey.h"
 

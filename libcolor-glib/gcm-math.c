@@ -20,7 +20,7 @@
  */
 
 /**
- * SECTION:gcm-common
+ * SECTION:gcm-math
  * @short_description: Common maths functionality
  *
  * A GObject to use for common maths functionality like vectors and matrices.
@@ -31,7 +31,7 @@
 #include <math.h>
 #include <glib-object.h>
 
-#include <gcm-common.h>
+#include <gcm-math.h>
 
 /**
  * gcm_vec3_clear:
