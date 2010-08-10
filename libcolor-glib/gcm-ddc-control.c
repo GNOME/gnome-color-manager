@@ -34,6 +34,8 @@
 #include <gcm-ddc-device.h>
 #include <gcm-ddc-control.h>
 
+#include "egg-debug.h"
+
 static void     gcm_ddc_control_finalize	(GObject     *object);
 
 #define GCM_DDC_CONTROL_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_DDC_CONTROL, GcmDdcControlPrivate))
@@ -311,7 +313,7 @@ gcm_ddc_control_parse (GcmDdcControl *control, guchar id, const gchar *values)
 	/* just save this */
 	control->priv->id = id;
 	if (control->priv->verbose == GCM_VERBOSE_OVERVIEW)
-		g_debug ("add control 0x%02x (%s)", id, gcm_ddc_control_get_description (control));
+		egg_debug ("add control 0x%02x (%s)", id, gcm_ddc_control_get_description (control));
 
 	/* do we have any values to parse */
 	if (values == NULL)
@@ -322,7 +324,7 @@ gcm_ddc_control_parse (GcmDdcControl *control, guchar id, const gchar *values)
 	for (i=0; split[i] != NULL; i++) {
 		value = atoi (split[i]);
 		if (control->priv->verbose == GCM_VERBOSE_OVERVIEW)
-			g_debug ("add value %i to control 0x%02x", value, id);
+			egg_debug ("add value %i to control 0x%02x", value, id);
 		g_array_append_val (control->priv->values, value);
 	}
 out:

@@ -141,10 +141,26 @@ gcm_test_ddc_device_func (void)
 static void
 gcm_test_ddc_client_func (void)
 {
+	gboolean ret;
+	GPtrArray *array;
+	GError *error = NULL;
 	GcmDdcClient *client;
 
 	client = gcm_ddc_client_new ();
 	g_assert (client != NULL);
+	gcm_ddc_client_set_verbose (client, GCM_VERBOSE_OVERVIEW);
+
+	array = gcm_ddc_client_get_devices (client, &error);
+	g_assert_no_error (error);
+	g_assert (array != NULL);
+
+	/* ensure we have at least one usable device */
+	g_assert_cmpint (array->len, >, 0);
+	g_ptr_array_unref (array);
+
+	ret = gcm_ddc_client_close (client, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
 
 	g_object_unref (client);
 }

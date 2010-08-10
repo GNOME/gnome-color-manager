@@ -97,7 +97,7 @@ void		 gcm_ddc_control_set_verbose		(GcmDdcControl	*control,
 							 GcmVerbose verbose);
 gboolean	 gcm_ddc_control_run			(GcmDdcControl	*control,
 							 GError		**error);
-gboolean	 gcm_ddc_control_request			(GcmDdcControl	*control,
+gboolean	 gcm_ddc_control_request		(GcmDdcControl	*control,
 							 guint16	*value,
 							 guint16	*maximum,
 							 GError		**error);
@@ -107,7 +107,7 @@ gboolean	 gcm_ddc_control_set			(GcmDdcControl	*control,
 gboolean	 gcm_ddc_control_reset			(GcmDdcControl	*control,
 							 GError		**error);
 guchar		 gcm_ddc_control_get_id			(GcmDdcControl	*control);
-const gchar	*gcm_ddc_control_get_description		(GcmDdcControl	*control);
+const gchar	*gcm_ddc_control_get_description	(GcmDdcControl	*control);
 GArray		*gcm_ddc_control_get_values		(GcmDdcControl	*control);
 
 G_END_DECLS

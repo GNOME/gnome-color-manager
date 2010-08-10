@@ -35,6 +35,8 @@
 #include <gcm-ddc-client.h>
 #include <gcm-ddc-device.h>
 
+#include "egg-debug.h"
+
 static void     gcm_ddc_client_finalize	(GObject     *object);
 
 #define GCM_DDC_CLIENT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_DDC_CLIENT, GcmDdcClientPrivate))
@@ -98,12 +100,12 @@ gcm_ddc_client_ensure_coldplug (GcmDdcClient *client, GError **error)
 		gcm_ddc_device_set_verbose (device, client->priv->verbose);
 		ret = gcm_ddc_device_open (device, filename, &error_local);
 		if (!ret) {
-			if (client->priv->verbose == GCM_VERBOSE_OVERVIEW)
-				g_warning ("failed to open %s: %s", filename, error_local->message);
+			if (client->priv->verbose >= GCM_VERBOSE_OVERVIEW)
+				egg_debug ("failed to open %s: %s", filename, error_local->message);
 			g_clear_error (&error_local);
 		} else {
-			if (client->priv->verbose == GCM_VERBOSE_OVERVIEW)
-				g_debug ("success, adding %s", filename);
+			if (client->priv->verbose >= GCM_VERBOSE_OVERVIEW)
+				egg_debug ("success, adding %s", filename);
 			any_found = TRUE;
 			g_ptr_array_add (client->priv->devices, g_object_ref (device));
 		}
