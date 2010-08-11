@@ -452,10 +452,17 @@ static gboolean
 gcm_ddc_device_add_control (GcmDdcDevice *device, const gchar *index_str, const gchar *controls_str)
 {
 	GcmDdcControl *control;
+	guint id;
+
+	/* convert hex to number */
+	id = strtoul (index_str, NULL, 16);
+	if (id == GCM_VCP_ID_INVALID)
+		return FALSE;
+
 	control = gcm_ddc_control_new ();
 	gcm_ddc_control_set_verbose (control, device->priv->verbose);
 	gcm_ddc_control_set_device (control, device);
-	gcm_ddc_control_parse (control, strtoul (index_str, NULL, 16), controls_str);
+	gcm_ddc_control_parse (control, id, controls_str);
 	g_ptr_array_add (device->priv->controls, control);
 	return TRUE;
 }
@@ -615,6 +622,10 @@ gcm_ddc_device_ensure_controls (GcmDdcDevice *device, GError **error)
 			     "failed to parse caps");
 		goto out;
 	}
+
+	/* model not set */
+	if (device->priv->model == NULL)
+		device->priv->model = g_strdup ("<unknown>");
 
 	/* success */
 	device->priv->has_controls = TRUE;

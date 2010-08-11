@@ -78,6 +78,7 @@ const gchar *
 gcm_ddc_control_get_description (GcmDdcControl *control)
 {
 	g_return_val_if_fail (GCM_IS_DDC_CONTROL(control), NULL);
+	g_return_val_if_fail (control->priv->id != GCM_VCP_ID_INVALID, NULL);
 
 	return gcm_get_vcp_description_from_index (control->priv->id);
 }
