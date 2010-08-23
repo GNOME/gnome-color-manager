@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager 2.31.5\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-21 19:27+0800\n"
-"PO-Revision-Date: 2010-07-12 11:19+0800\n"
+"POT-Creation-Date: 2010-08-23 19:50+0800\n"
+"PO-Revision-Date: 2010-08-22 21:20+0800\n"
 "Last-Translator: Chao-Hsiung Liao <j_h_liau@yahoo.com.tw>\n"
 "Language-Team: Chinese (Taiwan) <zh-l10n@lists.linux.org.tw>\n"
 "MIME-Version: 1.0\n"
@@ -51,6 +51,10 @@ msgid ""
 "long time, but now use the same value as Microsoft. Microsoft has always "
 "used a value of 2.2."
 msgstr ""
+"Gamma 是用來調整連接的顯示器顏色。傳統上 Linux 使用的 gamma 數值為 1.0，但是"
+"這樣使得顯示器與 Windows XP 或 OS X 比起來像是被洗過一樣。傳統上 Apple 使用 "
+"1.8 數值很長一段時間，但是現在也使用與 Microsoft 相同的數值。Microsoft 使用的"
+"數值為 2.2。"
 
 #: ../data/gnome-color-manager.schemas.in.h:2
 msgid ""
@@ -59,12 +63,17 @@ msgid ""
 "folders. This may increase startup time if disks need to be spun up to be "
 "searched."
 msgstr ""
+"如果設為 TRUE，就會在啟動時在外部磁碟搜尋裝置的 ICC 設定組合，例如尋找 OSX 程"
+"式庫資料夾或 Windows XP 系統資料夾。如果需要喚醒磁碟才能搜尋，這可能會增加啟"
+"動的時間。"
 
 #: ../data/gnome-color-manager.schemas.in.h:3
 msgid ""
 "If set to TRUE then the __ICC_PROFILE hint will be set, which applications "
 "use to convert true color to screen color."
 msgstr ""
+"如果設為 TRUE，就會設定 __ICC_PROFILE 提示，這會讓應用程式用來將真實色彩轉換"
+"為螢幕顏色。"
 
 #: ../data/gnome-color-manager.schemas.in.h:4
 msgid ""
@@ -72,56 +81,52 @@ msgid ""
 "user to change the display profile outside of what the ICC profile suggests "
 "and is only recommended for advanced users."
 msgstr ""
+"如果設為 TRUE，就會顯示優化校調控制項。這會讓使用者能變更顯示器設定組合超出 "
+"ICC 設定組合建議的範圍，並且只建議給進階的使用者。"
 
 #: ../data/gnome-color-manager.schemas.in.h:5
 msgid "If set to TRUE then the video LUT is set with the display profile"
-msgstr ""
+msgstr "如果設為 TRUE，視訊 LUT 就會以顯示器設定組合設定"
 
 #: ../data/gnome-color-manager.schemas.in.h:6
 msgid "Set the _ICC_PROFILE hint for applications."
-msgstr ""
+msgstr "設定 _ICC_PROFILE 提示給應用程式。"
 
 #: ../data/gnome-color-manager.schemas.in.h:7
 msgid "Show the fine tuning controls for display devices."
-msgstr ""
+msgstr "顯示用於顯示裝置的優化校調控制項。"
 
 #: ../data/gnome-color-manager.schemas.in.h:8
 msgid "The CMYK profile filename to be used by applications by default."
-msgstr ""
+msgstr "應用程式預設使用的 CMYK 設定組合檔案名稱。"
 
 #: ../data/gnome-color-manager.schemas.in.h:9
 msgid "The RGB profile filename to be used by applications by default."
-msgstr ""
+msgstr "應用程式預設使用的 RGB 設定組合檔案名稱。"
 
 #: ../data/gnome-color-manager.schemas.in.h:10
-#, fuzzy
-#| msgid "The model of the profile"
 msgid "The default CMYK profile."
-msgstr "設定組合的型號"
+msgstr "預設的 CMYK 設定組合。"
 
 #: ../data/gnome-color-manager.schemas.in.h:11
-#, fuzzy
-#| msgid "The model of the profile"
 msgid "The default RGB profile."
-msgstr "設定組合的型號"
+msgstr "預設的 RGB 設定組合。"
 
 #: ../data/gnome-color-manager.schemas.in.h:12
-#, fuzzy
-#| msgid "Please select a calibration target"
 msgid "The default calibration length."
-msgstr "請選擇校準目標"
+msgstr "預設的校準時間長度。"
 
 #: ../data/gnome-color-manager.schemas.in.h:13
 msgid "The default gamma to use for monitors with no previous value set."
-msgstr ""
+msgstr "先前未設定數值時給顯示器使用的預設 gamma。"
 
 #: ../data/gnome-color-manager.schemas.in.h:14
 msgid "The duration between sending notifications to recalibrate a display."
-msgstr ""
+msgstr "傳送通知以重新校準顯示器的時間。"
 
 #: ../data/gnome-color-manager.schemas.in.h:15
 msgid "The duration between sending notifications to recalibrate a printer."
-msgstr ""
+msgstr "傳送通知以重新校準印表機的時間。"
 
 #: ../data/gnome-color-manager.schemas.in.h:16
 msgid ""
@@ -130,6 +135,9 @@ msgid ""
 "takes a really long time, but is more precise and creates a better profile. "
 "Use 'ask' if you want the user to choose."
 msgstr ""
+"校準的時間長度，這與準確度成正比。選項「short」(短) 會建立快速設定組合，"
+"「normal」(一般) 會產生普通的設定組合，而「long」(長) 會花上很長的時間，但是"
+"會更加精準並建立較佳的設定組合。如果您要讓使用者選擇就使用「ask」(詢問)。"
 
 #: ../data/gnome-color-manager.schemas.in.h:17
 msgid "The rendering intent to use for softproofs, e.g. 'perceptual'."
@@ -143,24 +151,22 @@ msgstr ""
 msgid ""
 "This is the number of seconds in between notifying the user to recalibrate "
 "each display device. Set to 0 to disable the notification."
-msgstr ""
+msgstr "這是通知使用者重新校準每個顯示裝置之間的秒數。設為 0 就會停用通知。"
 
 #: ../data/gnome-color-manager.schemas.in.h:20
 msgid ""
 "This is the number of seconds in between notifying the user to recalibrate "
 "each printer device. Set to 0 to disable the notification."
-msgstr ""
+msgstr "這是通知使用者重新校準每個印表機裝置之間的秒數。設為 0 就會停用通知。"
 
 #: ../data/gnome-color-manager.schemas.in.h:21
-#, fuzzy
-#| msgid "The ICC profile must be owned by the user."
 msgid "Whether ICC profiles should be loaded from external disks."
-msgstr "ICC 設定組合必須由這個使用者擁有。"
+msgstr "是否從外部磁碟載入 ICC 設定組合。"
 
 #: ../data/gnome-color-manager.schemas.in.h:22
 msgid ""
 "Whether the display should be globally corrected or left to applications."
-msgstr ""
+msgstr "顯示器是要進行全域修正或是針對應用程式。"
 
 #: ../policy/org.gnome.color.policy.in.h:1
 msgid "Authentication is required to install the color profile for all users"
@@ -411,23 +417,17 @@ msgstr "請將測量儀器設定為校準模式。"
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
 #: ../src/gcm-calibrate-argyll.c:2214
-#, fuzzy
-#| msgid ""
-#| "Please set the measuring instrument to screen mode like the image below."
 msgid ""
 "Please set the measuring instrument to screen mode like the image below, and "
 "ensure it is attached to the screen."
-msgstr "請將測量儀器如下圖一樣設定為螢幕模式。"
+msgstr "請將測量儀器如下圖一樣設定為螢幕模式，並確定它連接在螢幕上。"
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
 #: ../src/gcm-calibrate-argyll.c:2217
-#, fuzzy
-#| msgid ""
-#| "Please set the measuring instrument to screen mode like the image below."
 msgid ""
 "Please set the measuring instrument to screen mode, and ensure it is "
 "attached to the screen."
-msgstr "請將測量儀器如下圖一樣設定為螢幕模式。"
+msgstr "請將測量儀器設定為螢幕模式，並確定它連接在螢幕上。"
 
 #. TRANSLATORS: title, the calibration failed
 #: ../src/gcm-calibrate-argyll.c:2288 ../src/gcm-calibrate-argyll.c:2336
@@ -921,7 +921,7 @@ msgstr "這應該只會花上幾分鐘。"
 msgid ""
 "It may help to sit further from the screen or to squint at the calibration "
 "images in order to accurately compare the colors."
-msgstr ""
+msgstr "坐得離螢幕遠一點或瞇著眼睛看校準圖片可能會有助於更準確的比較顏色。"
 
 #. TRANSLATORS: message text, tell the use that they can go back and forwards, as the human eye sucks
 #: ../src/gcm-calibrate-manual.c:242
@@ -959,7 +959,7 @@ msgstr "這個顯示器現在已校準。您可以使用顏色設定組合程式
 #. TRANSLATORS: error message
 #: ../src/gcm-client.c:1103
 msgid "This device already exists"
-msgstr ""
+msgstr "這個裝置已經存在"
 
 #. TRANSLATORS: this is when the device is not recognized
 #: ../src/gcm-colorimeter.c:391
@@ -973,64 +973,48 @@ msgstr "筆記型電腦 LCD"
 
 #. TRANSLATORS: this is when the EDID file cannot be read
 #: ../src/gcm-dump-edid.c:58
-#, fuzzy
-#| msgid "Cannot load file contents:"
 msgid "Cannot load file contents"
-msgstr "不能載入檔案內容："
+msgstr "不能讀取檔案內容"
 
 #. TRANSLATORS: this is when the EDID cannot be parsed
 #: ../src/gcm-dump-edid.c:67
-#, fuzzy
-#| msgid "Cannot parse EDID contents:"
 msgid "Cannot parse EDID contents"
-msgstr "不能分析 EDID 內容："
+msgstr "不能分析 EDID 內容"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:75
-#, fuzzy
-#| msgid "Monitor name:"
 msgid "Monitor name"
-msgstr "監視器名稱："
+msgstr "顯示器名稱"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:80
-#, fuzzy
-#| msgid "Vendor name:"
 msgid "Vendor name"
-msgstr "廠商名稱："
+msgstr "廠商名稱"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:85
-#, fuzzy
-#| msgid "Serial number:"
 msgid "Serial number"
-msgstr "序號："
+msgstr "序號"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:90
 msgid "Text string"
-msgstr ""
+msgstr "文字字串"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:95
-#, fuzzy
-#| msgid "PNP identifier:"
 msgid "PNP identifier"
-msgstr "PNP 識別碼："
+msgstr "PNP 識別碼"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:101
-#, fuzzy
-#| msgid "Size:"
 msgid "Size"
-msgstr "大小："
+msgstr "大小"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:106
-#, fuzzy
-#| msgid "Gamma:"
 msgid "Gamma"
-msgstr "Gamma："
+msgstr "Gamma"
 
 #. TRANSLATORS: command line option: a list of files to parse
 #: ../src/gcm-dump-edid.c:136
@@ -1039,10 +1023,8 @@ msgstr "要分析的 EDID 傾印"
 
 #. TRANSLATORS: this is the filename we are displaying
 #: ../src/gcm-dump-edid.c:159
-#, fuzzy
-#| msgid "EDID dump:"
 msgid "EDID dump"
-msgstr "EDID 傾印："
+msgstr "EDID 傾印"
 
 #. TRANSLATORS: we saved the EDID to a file - second parameter is a filename
 #: ../src/gcm-dump-edid.c:196
@@ -1253,10 +1235,8 @@ msgstr "EDID 檢查程式"
 
 #. TRANSLATORS: this is when the user does --type=mickeymouse
 #: ../src/gcm-inspect.c:548
-#, fuzzy
-#| msgid "Measuring instrument not recognized"
 msgid "Device type not recognized"
-msgstr "無法辨識測量儀器"
+msgstr "無法辨識裝置類型"
 
 #. command line argument, the ID of the device
 #: ../src/gcm-install-system-wide.c:123
@@ -1380,17 +1360,13 @@ msgstr "支援的 ICC 設定組合"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
 #: ../src/gcm-prefs.c:687
-#, fuzzy
-#| msgid "Install calibration and profiling software?"
 msgid "Install missing calibration and profiling software?"
-msgstr "是否安裝校準與分析軟體？"
+msgstr "是否安裝缺少的校準與分析軟體？"
 
 #. TRANSLATORS: dialog message saying the argyllcms is not installed
 #: ../src/gcm-prefs.c:691
-#, fuzzy
-#| msgid "Calibration and profiling software is not installed."
 msgid "Calibration and profiling software is not installed on this computer."
-msgstr "尚未安裝校準與分析軟體。"
+msgstr "這台電腦尚未安裝校準與分析軟體。"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
 #: ../src/gcm-prefs.c:693
@@ -1399,10 +1375,8 @@ msgstr "這些工具是建立裝置的顏色設定組合時必要的。"
 
 #. TRANSLATORS: dialog message, asking if it's okay to install it
 #: ../src/gcm-prefs.c:695
-#, fuzzy
-#| msgid "Do you want them to be installed?"
 msgid "Do you want them to be automatically installed?"
-msgstr "您想要安裝它們嗎？"
+msgstr "您想要自動安裝它們嗎？"
 
 #. TRANSLATORS: this is the sound description
 #: ../src/gcm-prefs.c:821
@@ -1436,56 +1410,39 @@ msgstr "為選取的裝置建立顏色設定組合"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1074
-#, fuzzy
-#| msgid "Cannot create profile: No device is selected"
 msgid "Cannot profile: No device is selected"
-msgstr "不能建立設定組合：尚未選取裝置"
+msgstr "不能分析：沒有選取的裝置"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1086
-#, fuzzy
-#| msgid "Cannot create profile: The display device is not connected"
 msgid "Cannot calibrate: The device is not connected"
-msgstr "不能建立設定組合：顯示裝置未連線"
+msgstr "不能校準：沒有連線中的裝置"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1094
-#, fuzzy
-#| msgid ""
-#| "Cannot create profile: The display driver does not support XRandR 1.3"
 msgid "Cannot calibrate: The display driver does not support XRandR 1.3"
-msgstr "不能建立設定組合：顯示器驅動程式不支援 XRandR 1.3"
+msgstr "不能校準：顯示器驅動程式不支援 XRandR 1.3"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1102
-#, fuzzy
-#| msgid "Cannot create profile: The measuring instrument is not plugged in"
 msgid "Cannot calibrate: The measuring instrument is not plugged in"
-msgstr "不能建立設定組合：尚未插入測量儀器"
+msgstr "不能校準：尚未插入測量儀器"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1117
-#, fuzzy
-#| msgid "Cannot create profile: The measuring instrument is not plugged in"
 msgid "Cannot profile: The measuring instrument is not plugged in"
-msgstr "不能建立設定組合：尚未插入測量儀器"
+msgstr "不能分析：尚未插入測量儀器"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1125
-#, fuzzy
-#| msgid ""
-#| "Cannot create profile: The measuring instrument does not support printer "
-#| "profiling"
 msgid ""
 "Cannot profile: The measuring instrument does not support printer profiling"
-msgstr "不能建立設定組合：這個測量儀器不支援印表機分析"
+msgstr "不能分折：這個測量儀器不支援印表機分析"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1132
-#, fuzzy
-#| msgid "Cannot create a profile for this type of device"
 msgid "Cannot profile this type of device"
-msgstr "不能建立這種裝置類型的設定組合"
+msgstr "不能分析這種類型的裝置"
 
 #. TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
 #. * Whilst this does not matter if you only have one monitor attached, it means you
@@ -1522,7 +1479,7 @@ msgstr "色彩空間轉換"
 #. TRANSLATORS: this the ICC profile kind
 #: ../src/gcm-prefs.c:1401
 msgid "Abstract"
-msgstr ""
+msgstr "抽象"
 
 #. TRANSLATORS: this the ICC profile type
 #: ../src/gcm-prefs.c:1405
@@ -1655,7 +1612,7 @@ msgstr "攝影機"
 #. TRANSLATORS: we can make this modal (stay on top of) another window
 #: ../src/gcm-prefs.c:2695
 msgid "Set the parent window to make this modal"
-msgstr ""
+msgstr "設定上層視窗讓它置頂"
 
 #. TRANSLATORS: button for more details about the vcgt failure
 #: ../src/gcm-prefs.c:2991
@@ -1727,12 +1684,12 @@ msgstr "%Y %B %e,%p %I:%M:%S"
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:527
 msgid "Perceptual"
-msgstr ""
+msgstr "感知"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:531
 msgid "Relative colormetric"
-msgstr ""
+msgstr "相對顏色測量"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:535
@@ -1742,7 +1699,7 @@ msgstr "飽和度"
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:539
 msgid "Absolute colormetric"
-msgstr ""
+msgstr "絕對顏色測量"
 
 #: ../data/gcm-calibrate.ui.h:1
 msgid "Blue:"
@@ -1822,10 +1779,8 @@ msgid ""
 msgstr "工作空間是可以編碼到圖片的顏色範圍。"
 
 #: ../data/gcm-prefs.ui.h:2
-#, fuzzy
-#| msgid "Failed to add virtual device"
 msgid "Add Virtual Device"
-msgstr "無法加入虛擬裝置"
+msgstr "加入虛擬裝置"
 
 #: ../data/gcm-prefs.ui.h:3
 msgid "Adds a virtual device that is not connected."
@@ -1838,12 +1793,10 @@ msgstr "CMYK："
 
 #: ../data/gcm-prefs.ui.h:8
 msgid "Close this dialog"
-msgstr ""
+msgstr "關閉這個對話盒"
 
 #. Section heading for device profile settings
 #: ../data/gcm-prefs.ui.h:11
-#, fuzzy
-#| msgid "Color Profiles"
 msgid "Color Profile"
 msgstr "顏色設定組合"
 
@@ -1858,15 +1811,13 @@ msgstr "對比："
 
 #. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
 #: ../data/gcm-prefs.ui.h:16
-#, fuzzy
-#| msgid "Create a profile for the device"
 msgid "Create _Profile for Device"
-msgstr "正在建立裝置的設定組合"
+msgstr "建立裝置的設定組合(_P)"
 
 #. When the profile was created
 #: ../data/gcm-prefs.ui.h:18
 msgid "Created:"
-msgstr ""
+msgstr "建立時刻："
 
 #. Tab title, system wide defaults to use
 #: ../data/gcm-prefs.ui.h:20
@@ -1874,10 +1825,8 @@ msgid "Defaults"
 msgstr "預設值"
 
 #: ../data/gcm-prefs.ui.h:21
-#, fuzzy
-#| msgid "Permanently delete profile?"
 msgid "Delete the currently selected color profile"
-msgstr "永久刪除設定組合？"
+msgstr "刪除目前選取的設定組合"
 
 #: ../data/gcm-prefs.ui.h:22
 msgid ""
@@ -1887,24 +1836,18 @@ msgstr "刪除已拔除的裝置 - 如果您重新接上裝置它就會再出現
 
 #. Section heading for device settings
 #: ../data/gcm-prefs.ui.h:24
-#, fuzzy
-#| msgid "Devices"
 msgid "Device"
 msgstr "裝置"
 
 #. The manufacturer of the profile
 #: ../data/gcm-prefs.ui.h:26
-#, fuzzy
-#| msgid "Manufacturer:"
 msgid "Device manufacturer:"
-msgstr "製造廠商："
+msgstr "裝置製造商："
 
 #. The manufacturer of the profile
 #: ../data/gcm-prefs.ui.h:28
-#, fuzzy
-#| msgid "Device removed"
 msgid "Device model:"
-msgstr "裝置已移除"
+msgstr "裝置型號："
 
 #: ../data/gcm-prefs.ui.h:29
 msgid "Device type:"
@@ -1917,10 +1860,8 @@ msgstr "裝置"
 
 #. If the profile contains a display correction table
 #: ../data/gcm-prefs.ui.h:34
-#, fuzzy
-#| msgid "_Apply basic display correction"
 msgid "Display correction:"
-msgstr "套用基本顯示器校正(_A)"
+msgstr "顯示器校正："
 
 #. What mode to use for display rendering intent
 #: ../data/gcm-prefs.ui.h:36
@@ -1930,18 +1871,17 @@ msgstr "顯示器："
 #. The file size in bytes of the profile
 #: ../data/gcm-prefs.ui.h:38
 msgid "File size:"
-msgstr ""
+msgstr "檔案大小："
 
 #. The basename (the last section of the filename) of the profile
 #: ../data/gcm-prefs.ui.h:40
 msgid "Filename:"
-msgstr ""
+msgstr "檔案名稱："
 
 #. Settings that users don't normally have to touch
 #: ../data/gcm-prefs.ui.h:42
-#, fuzzy
 msgid "Fine tuning"
-msgstr "硬碟調校"
+msgstr "優化校調"
 
 #: ../data/gcm-prefs.ui.h:43
 msgid "Gamma:"
@@ -1949,12 +1889,12 @@ msgstr "Gamma："
 
 #: ../data/gcm-prefs.ui.h:44
 msgid "Import an ICC file from another location"
-msgstr ""
+msgstr "從其他位置匯入 ICC 檔案"
 
 #. The licence of the profile, normally non-free
 #: ../data/gcm-prefs.ui.h:46
 msgid "License:"
-msgstr ""
+msgstr "授權："
 
 #. The manufacturer of the device
 #: ../data/gcm-prefs.ui.h:48
@@ -1975,24 +1915,18 @@ msgid "Open the documentation"
 msgstr "開啟這份文件"
 
 #: ../data/gcm-prefs.ui.h:53
-#, fuzzy
-#| msgid "Profile Precision"
 msgid "Profile Graphs"
-msgstr "設定組合精確度"
+msgstr "設定組合圖表"
 
 #. The type of profile, e.g. display, scanner, etc.
 #: ../data/gcm-prefs.ui.h:55
-#, fuzzy
-#| msgid "Profiles to view"
 msgid "Profile type:"
-msgstr "要檢視的設定組合"
+msgstr "設定組合類型："
 
 #. Tab title, currently installed profiles
 #: ../data/gcm-prefs.ui.h:57
-#, fuzzy
-#| msgid "Color Profiles"
 msgid "Profiles"
-msgstr "顏色設定組合"
+msgstr "設定組合"
 
 #: ../data/gcm-prefs.ui.h:58
 msgid ""
@@ -2062,35 +1996,25 @@ msgstr "工作空間"
 
 #. This is a button to add a virtual device
 #: ../data/gcm-prefs.ui.h:77
-#, fuzzy
-#| msgid "Add d_evice…"
 msgid "_Add Device"
-msgstr "加入裝置(_E)…"
+msgstr "加入裝置(_A)"
 
 #: ../data/gcm-prefs.ui.h:78
-#, fuzzy
-#| msgid "_Apply basic display correction"
 msgid "_Apply display correction"
-msgstr "套用基本顯示器校正(_A)"
+msgstr "套用顯示器修正(_A)"
 
 #. This is a button to delete the saved or virtual device
 #: ../data/gcm-prefs.ui.h:80
-#, fuzzy
-#| msgid "Delete"
 msgid "_Delete Device"
-msgstr "刪除"
+msgstr "刪除裝置(_D)"
 
 #: ../data/gcm-prefs.ui.h:81
-#, fuzzy
-#| msgid "Delete this profile"
 msgid "_Delete Profile"
-msgstr "刪除這個設定組合"
+msgstr "刪除設定組合(_D)"
 
 #: ../data/gcm-prefs.ui.h:82
-#, fuzzy
-#| msgid "Import ICC profile"
 msgid "_Import Profile"
-msgstr "匯入 ICC 設定組合"
+msgstr "匯入設定組合(_I)"
 
 #: ../data/gcm-prefs.ui.h:83
 msgid "_Make Default"
@@ -2098,16 +2022,12 @@ msgstr "成為預設值(_M)"
 
 #. This resets the device to it's defaults, and removes any user tweaked settings.
 #: ../data/gcm-prefs.ui.h:85
-#, fuzzy
-#| msgid "_Set System Default"
 msgid "_Reset to defaults"
-msgstr "設定系統預設值(_S)"
+msgstr "重置為預設值(_D)"
 
 #: ../data/gcm-prefs.ui.h:86
-#, fuzzy
-#| msgid "Set profile for _color managed applications"
 msgid "_Set profile for color managed applications"
-msgstr "設定顏色管理應用程式的設定組合(_C)"
+msgstr "設定顏色管理應用程式的設定組合(_S)"
 
 #~ msgid "Color"
 #~ msgstr "顏色"
