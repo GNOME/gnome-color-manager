@@ -1009,7 +1009,7 @@ out:
 gboolean
 gcm_client_add_connected (GcmClient *client, GcmClientColdplug coldplug, GError **error)
 {
-	gboolean ret;
+	gboolean ret = TRUE;
 	GThread *thread;
 
 	g_return_val_if_fail (GCM_IS_CLIENT (client), FALSE);
