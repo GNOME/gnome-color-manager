@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: Gnome-color-manager\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager\n"
-"POT-Creation-Date: 2010-08-23 11:50+0000\n"
-"PO-Revision-Date: 2010-08-29 01:08+0300\n"
+"POT-Creation-Date: 2010-08-31 15:00+0000\n"
+"PO-Revision-Date: 2010-08-31 18:54+0300\n"
 "Last-Translator: Mattias Põldaru <mahfiaz gmail com>\n"
 "Language-Team: Gnome Estonian Translation Team <gnome-et@linux.ee>\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 "X-Poedit-Country: Estonia\n"
 
 msgid "Applies device profile settings at session startup"
-msgstr "Seadme profiilisätted määratakse seansi alustamisel"
+msgstr "Seadme profiilisätted rakendatakse seansi alustamisel"
 
 msgid "Load device color profiles"
 msgstr "Seadme värviprofiilide laadimine"
@@ -48,10 +48,10 @@ msgid ""
 "used a value of 2.2."
 msgstr ""
 "Gammat kohandatakse, et muuta monitori värve. Tavaliselt on Linuxis "
-"kasutatud gamma väärtust 1,0, kuid võrreldes Windows XP või OS X-iga näeb "
-"siis ekraan pleekinud välja. Apple on traditsiooniliselt kasutanud väärtust "
-"1,8, kuid nüüd kasutab sama väärtust nagu Microsoft. Microsoft on alati "
-"kasutanud väärtust 2,2."
+"kasutatud gamma väärtust 1,0, kuid võrreldes Windows XP või OS X-iga näib "
+"ekraan siis pleekinud. Apple on traditsiooniliselt kasutanud väärtust 1,8, "
+"kuid nüüd kasutab sama väärtust nagu Microsoft. Microsoft on alati kasutanud "
+"väärtust 2,2."
 
 msgid ""
 "If set to TRUE then external disks are searched for device ICC profiles at "
@@ -61,7 +61,7 @@ msgid ""
 msgstr ""
 "Kui TÕENE, otsitakse käivitumisel välistelt ketastelt seadmete ICC profiile, "
 "näiteks OSX-i teekide kaustast või Windows XP süsteemikaustadest. See võib "
-"suurendada käivitusaega, kui kettad tuleb otsimiseks pöörlema ajada."
+"pikendada käivitusaega, kui kettad tuleb otsimiseks pöörlema ajada."
 
 msgid ""
 "If set to TRUE then the __ICC_PROFILE hint will be set, which applications "
@@ -108,10 +108,10 @@ msgstr ""
 "Vaikimisi gamma, mida kasutatakse ilma eelneva seadistuseta monitoridel."
 
 msgid "The duration between sending notifications to recalibrate a display."
-msgstr "Aeg enne kuvari korduskalibreerimise teadete saatmist."
+msgstr "Aeg enne kuvari korduskalibreerimise teate saatmist."
 
 msgid "The duration between sending notifications to recalibrate a printer."
-msgstr "Aeg enne printeri korduskalibreerimise teadete saatmist."
+msgstr "Aeg enne printeri korduskalibreerimise teate saatmist."
 
 msgid ""
 "The length of calibration, as this is proportional to the accuracy. The "
@@ -119,14 +119,15 @@ msgid ""
 "takes a really long time, but is more precise and creates a better profile. "
 "Use 'ask' if you want the user to choose."
 msgstr ""
-"Kalibreerimise pikkus. See on võrdeline täpsusega. Valik 'short' loob "
+"Kalibreerimise kestus. See on võrdeline täpsusega. Valik 'short' loob "
 "kiirprofiili, 'normal' tavalise ning 'long'-profiili tegemiseks kulub tõesti "
-"palju aega, kuid see on täpsem ning parem profiil. Et vali 'ask', et lasta "
+"palju aega, kuid see on täpsem ning parem profiil. Vali 'ask', et lasta "
 "kasutajal valida."
 
-#, fuzzy
 msgid "The rendering intent to use for softproofs, e.g. 'perceptual'."
-msgstr "Renderdusviis, mida kasutatakse "
+msgstr ""
+"Renderdusviis, mida kasutada värvide simulatsiooniks ekraanil, nt "
+"'pertseptuaalne'."
 
 msgid "The rendering intent to use for the display, e.g. 'perceptual'."
 msgstr "Renderdusviis, mida kasutada ekraanil, n.t 'pertseptuaalne'."
@@ -150,8 +151,7 @@ msgstr "Kas välistelt ketastelt peaks  ICC-profiile laadima."
 
 msgid ""
 "Whether the display should be globally corrected or left to applications."
-msgstr ""
-"Kas kuva peaks parandama automaatselt, või jätma selle rakenduste teha."
+msgstr "Kas kuva peaks parandama automaatselt või jätma selle rakenduste teha."
 
 msgid "Authentication is required to install the color profile for all users"
 msgstr ""
@@ -189,6 +189,10 @@ msgstr "Silumise valikud"
 
 msgid "Show debugging options"
 msgstr "Silumisvalikute kuvamine"
+
+#. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
+msgid "Do not attempt to clear previously applied settings"
+msgstr "Ära ürita puhastada eelnevalt rakendatud sätteid"
 
 #. TRANSLATORS: title, default paramters needed to calibrate_argyll
 msgid "Getting default parameters"
@@ -1661,7 +1665,7 @@ msgstr ""
 # värvisimulatsioon?
 #. Technical color word for softproof rendering intent
 msgid "Softproof:"
-msgstr ""
+msgstr "Värvisimulatsioon:"
 
 msgid "The rendering intent is how one gamut size is mapped to another."
 msgstr "Renderdusviis määrab, kuidas ühe värviruumi ulatus vastab teisele."
@@ -1732,9 +1736,6 @@ msgstr "_Värvihalduse toega rakendustele määratakse profiil"
 
 #~ msgid "More color profiles could be automatically installed."
 #~ msgstr "Veel värviprofiile saaks paigaldada automaatselt."
-
-#~ msgid "Do not attempt to clear previously applied settings"
-#~ msgstr "Ära ürita puhastada eelnevalt rakendatud sätteid"
 
 #~ msgid "Setting up device"
 #~ msgstr "Seadme häälestamine"
