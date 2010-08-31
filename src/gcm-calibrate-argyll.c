@@ -355,7 +355,9 @@ static gboolean
 gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll, gchar **argv, GError **error)
 {
 	gboolean ret = FALSE;
+#if VTE_CHECK_VERSION(0,25,0)
 	const gchar *envp[] = { "ARGYLL_NOT_INTERACTIVE", NULL };
+#endif
 	const gchar *working_directory;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
@@ -365,6 +367,8 @@ gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll, gchar *
 
 	/* try to run */
 	working_directory = gcm_calibrate_get_working_path (GCM_CALIBRATE (calibrate_argyll));
+
+#if VTE_CHECK_VERSION(0,25,0)
 	ret = vte_terminal_fork_command_full (VTE_TERMINAL(priv->terminal),
 					      VTE_PTY_DEFAULT,
 					      working_directory,
@@ -372,6 +376,19 @@ gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll, gchar *
 					      G_SPAWN_FILE_AND_ARGV_ZERO,
 					      NULL, NULL,
 					      &priv->child_pid, error);
+#else
+	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal),
+						     argv[0], argv, NULL,
+						     working_directory,
+						     FALSE, FALSE, FALSE);
+	ret = (priv->child_pid > 0);
+	if (!ret) {
+		g_set_error (error,
+			     GCM_CALIBRATE_ERROR,
+			     GCM_CALIBRATE_ERROR_USER_ABORT,
+			     "failed to spawn %s", argv[0]);
+	}
+#endif
 	if (!ret)
 		goto out;
 
