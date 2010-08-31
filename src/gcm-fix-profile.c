@@ -34,7 +34,7 @@ static gboolean
 gcm_fix_profile_filename (const gchar *filename, const gchar *description, const gchar *copyright, const gchar *model, const gchar *manufacturer)
 {
 	gboolean ret = TRUE;
-	cmsHPROFILE lcms_profile;
+	cmsHPROFILE lcms_profile = NULL;
 	gchar *data = NULL;
 	gsize len;
 	GError *error = NULL;
