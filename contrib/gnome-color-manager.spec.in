@@ -1,8 +1,4 @@
-%define gtk2_version                    2.16.0
-%define dbus_glib_version               0.73
-%define unique_version                  1.0.0
 %define alphatag                        #ALPHATAG#
-
 %{!?python_sitelib: %define python_sitelib %(python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
 
 Summary:   Color management tools for GNOME
@@ -12,32 +8,16 @@ Release:   0.#BUILD#%{?alphatag}%{?dist}
 License:   GPLv2+
 Group:     Applications/System
 URL:       http://projects.gnome.org/gnome-color-manager/
-Source0:   http://download.gnome.org/sources/gnome-color-manager/2.29/%{name}-%{version}.tar.gz
-BuildRoot: %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
+Source0:   http://download.gnome.org/sources/gnome-color-manager/2.31/%{name}-%{version}.tar.gz
 
-Requires:  gtk2 >= %{gtk2_version}
-Requires:  gnome-icon-theme
-Requires:  unique >= %{unique_version}
+Requires:  color-filesystem >= 1-7
+equires:  gnome-icon-theme
 Requires:  shared-mime-info
-Requires:  dbus-glib >= %{dbus_glib_version}
-Requires:  dbus-x11
-Requires:  udev
-Requires:  vte
-Requires:  lcms
-Requires:  cups
-Requires:  sane-backends-libs
-Requires:  polkit
-Requires:  libnotify
-Requires:  PackageKit
 Requires:  shared-color-profiles
-Requires:  libcanberra >= %{libcanberra_version}
-Requires(post):   scrollkeeper
-Requires(pre):    GConf2
-Requires(post):   GConf2
-Requires(preun):  GConf2
-Requires(postun): scrollkeeper
+Requires:  yelp
+Requires:  GConf2
 
-BuildRequires: gtk2-devel >= %{gtk2_version}
+BuildRequires: gtk2-devel >= 2.16.0
 BuildRequires: scrollkeeper
 BuildRequires: gnome-doc-utils >= 0.3.2
 BuildRequires: desktop-file-utils
@@ -45,18 +25,19 @@ BuildRequires: gettext
 BuildRequires: libtool
 BuildRequires: vte-devel
 BuildRequires: gnome-doc-utils
-BuildRequires: unique-devel >= %{unique_version}
+BuildRequires: unique-devel >= 1.0.0
 BuildRequires: intltool
 BuildRequires: libgudev1-devel
-BuildRequires: dbus-glib-devel >= %{dbus_glib_version}
+BuildRequires: dbus-glib-devel >= 0.73
 BuildRequires: libXxf86vm-devel
 BuildRequires: libXrandr-devel
 BuildRequires: gnome-desktop-devel
 BuildRequires: lcms-devel
 BuildRequires: cups-devel
+BuildRequires: libnotify-devel
 BuildRequires: sane-backends-devel
 BuildRequires: libtiff-devel
-BuildRequires: libcanberra-devel >= %{libcanberra_version}
+BuildRequires: libcanberra-devel
 
 %description
 gnome-color-manager is a session framework that makes it easy to manage, install
@@ -70,7 +51,6 @@ and generate color profiles in the GNOME desktop.
 make %{?_smp_mflags}
 
 %install
-rm -rf $RPM_BUILD_ROOT
 make install DESTDIR=$RPM_BUILD_ROOT
 
 for i in gcm-prefs gcm-import ; do
@@ -80,9 +60,6 @@ for i in gcm-prefs gcm-import ; do
 done
 
 %find_lang %name --with-gnome
-
-%clean
-rm -rf $RPM_BUILD_ROOT
 
 %post
 export GCONF_CONFIG_SOURCE=`gconftool-2 --get-default-source`
