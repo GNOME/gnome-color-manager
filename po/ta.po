@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-07 22:23+0530\n"
+"POT-Creation-Date: 2010-09-03 17:17+0530\n"
 "PO-Revision-Date: 2010-08-06 21:26+0530\n"
 "Last-Translator: Dr.T.Vasudevan <agnihot3@gmail.com>\n"
 "Language-Team: Tamil <<Ubuntu-l10n-tam@lists.ubuntu.com>>\n"
@@ -41,6 +41,16 @@ msgstr "நிறம்"
 msgid "Manage ICC color profiles"
 msgstr "ஐசிசி  நிற வரையுருக்களை மேலாளுக"
 
+#. TRANSLATORS: this is where the ICC profile has no description
+#: ../libcolor-glib/gcm-profile.c:176
+msgid "Missing description"
+msgstr "தவறிப்போன விவரம்:"
+
+#. TRANSLATORS: this is the profile creation date strftime format
+#: ../libcolor-glib/gcm-profile.c:582
+msgid "%B %e %Y, %I:%M:%S %p"
+msgstr "%B %e %Y, %I:%M:%S %p"
+
 #: ../policy/org.gnome.color.policy.in.h:1
 msgid "Authentication is required to install the color profile for all users"
 msgstr "எல்லாப் பயனர்களுக்கு நிற வரிவுரு அமைக்க அங்கீகாரம் தேவைப்படுகிறது"
@@ -56,34 +66,6 @@ msgstr "எல்லாப் பயனர்களுக்கு நிற வ
 #: ../policy/org.gnome.color.policy.in.h:10
 msgid "Install system color profiles"
 msgstr "கணினி நிற வரையுருக்களை நிறுவுக"
-
-#. TRANSLATORS: turn on all debugging
-#: ../src/egg-debug.c:390
-msgid "Show debugging information for all files"
-msgstr "எல்லா கோப்புகளுக்கும் பிழைத்திருத்த தகவல்களை காட்டு"
-
-#. TRANSLATORS: a list of modules to debug
-#: ../src/egg-debug.c:461
-msgid "Debug these specific modules"
-msgstr "குறிப்பிட்ட கூறுகளை வழு நீக்குக."
-
-#. TRANSLATORS: a list of functions to debug
-#: ../src/egg-debug.c:464
-msgid "Debug these specific functions"
-msgstr "குறிப்பிட்ட செயல்களை வழு நீக்குக."
-
-#. TRANSLATORS: save to a log
-#: ../src/egg-debug.c:467
-msgid "Log debugging data to a file"
-msgstr "வழுநீக்க தரவை ஒரு கோப்புக்கு ஏற்றுமதி செய்"
-
-#: ../src/egg-debug.c:471
-msgid "Debugging Options"
-msgstr "பிழைத்திருத்த தேர்வுகள்"
-
-#: ../src/egg-debug.c:471
-msgid "Show debugging options"
-msgstr " பிழைத்திருத்த தேர்வுகளை காட்டுை காட்டுக."
 
 #. TRANSLATORS: could not save for all users
 #: ../src/cc-color-panel.c:154
@@ -327,6 +309,34 @@ msgstr "இந்த வரியுருவில் முழு திரை
 msgid "More color profiles could be automatically installed."
 msgstr "மேலும் நிற வரையுருக்கள் தானியங்கியாக நிறுவ இயலும்."
 
+#. TRANSLATORS: turn on all debugging
+#: ../src/egg-debug.c:390
+msgid "Show debugging information for all files"
+msgstr "எல்லா கோப்புகளுக்கும் பிழைத்திருத்த தகவல்களை காட்டு"
+
+#. TRANSLATORS: a list of modules to debug
+#: ../src/egg-debug.c:461
+msgid "Debug these specific modules"
+msgstr "குறிப்பிட்ட கூறுகளை வழு நீக்குக."
+
+#. TRANSLATORS: a list of functions to debug
+#: ../src/egg-debug.c:464
+msgid "Debug these specific functions"
+msgstr "குறிப்பிட்ட செயல்களை வழு நீக்குக."
+
+#. TRANSLATORS: save to a log
+#: ../src/egg-debug.c:467
+msgid "Log debugging data to a file"
+msgstr "வழுநீக்க தரவை ஒரு கோப்புக்கு ஏற்றுமதி செய்"
+
+#: ../src/egg-debug.c:471
+msgid "Debugging Options"
+msgstr "பிழைத்திருத்த தேர்வுகள்"
+
+#: ../src/egg-debug.c:471
+msgid "Show debugging options"
+msgstr " பிழைத்திருத்த தேர்வுகளை காட்டுை காட்டுக."
+
 #. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
 #: ../src/gcm-apply.c:54
 msgid "Do not attempt to clear previously applied settings"
@@ -367,12 +377,12 @@ msgid "Generating the patches that will be measured with the color instrument."
 msgstr "நிற வன்பொருளால் அளவிடப்படும் திட்டுக்களை உருவாக்குகிறது."
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:750
+#: ../src/gcm-calibrate-argyll.c:750 ../src/gcm-calibrate-native.c:377
 msgid "Drawing the patches"
 msgstr "திட்டுக்களை வரைகிறது"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:752
+#: ../src/gcm-calibrate-argyll.c:752 ../src/gcm-calibrate-native.c:380
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
@@ -430,12 +440,12 @@ msgid "Setting up display device for use…"
 msgstr "பயன்படுத்த காட்சி வன்பொருளை வடிவமைக்கிறது..."
 
 #. TRANSLATORS: title, setting up the photospectromiter
-#: ../src/gcm-calibrate-argyll.c:1465
+#: ../src/gcm-calibrate-argyll.c:1465 ../src/gcm-calibrate-native.c:408
 msgid "Setting up device"
 msgstr "வன்பொருளை வடிவமைக்கிறது."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1467
+#: ../src/gcm-calibrate-argyll.c:1467 ../src/gcm-calibrate-native.c:410
 msgid "Setting up the device to read a spot color…"
 msgstr "ஒரு இடத்து நிறத்தை படிக்க வன்பொருளை வடிவமைக்கிறது."
 
@@ -502,12 +512,12 @@ msgid "Setting up the instrument for use…"
 msgstr "பயன்படுத்த வன்பொருளை வடிவமைக்கிறது..."
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2278
+#: ../src/gcm-calibrate-argyll.c:2278 ../src/gcm-calibrate-native.c:333
 msgid "Please attach instrument"
 msgstr "தயைசெய்து சாதனத்தை இணைக்கவும்."
 
 #. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate-argyll.c:2286
+#: ../src/gcm-calibrate-argyll.c:2286 ../src/gcm-calibrate-native.c:341
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square like the image below."
@@ -516,7 +526,7 @@ msgstr ""
 "பொருத்தவும்."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate-argyll.c:2289
+#: ../src/gcm-calibrate-argyll.c:2289 ../src/gcm-calibrate-native.c:344
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square."
@@ -524,7 +534,7 @@ msgstr "திரையின் நடுவே சாம்பல் நிற
 
 #. TRANSLATORS: button text
 #: ../src/gcm-calibrate-argyll.c:2302 ../src/gcm-calibrate-argyll.c:2356
-#: ../src/gcm-calibrate-argyll.c:2411
+#: ../src/gcm-calibrate-argyll.c:2411 ../src/gcm-calibrate-native.c:358
 msgid "Continue"
 msgstr "தொடரவும்"
 
@@ -1404,158 +1414,6 @@ msgstr "இந்த மாடலுக்கு தாய் சாளரம்
 msgid "GNOME Color Manager Color Picker"
 msgstr "க்னோம் நிற மேலாளர் நிற தேர்வி"
 
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:289
-msgid "Permanently delete profile?"
-msgstr "வரையுருவை  நிரந்தரமாக அழிக்கவா?"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:292
-msgid ""
-"Are you sure you want to remove this profile from your system permanently?"
-msgstr "கணினியில் இருந்து இந்த வரிவுருவை நிரந்தரமாக நீக்க நிச்சயம் விரும்புகிறீர்களா?"
-
-#. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:295
-msgid "Delete"
-msgstr "நீக்கு"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:542
-msgid "Input device"
-msgstr "உள்ளீடு சாதனம்"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:546
-msgid "Display device"
-msgstr "காட்சி சாதனம்"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:550
-msgid "Output device"
-msgstr "விளைவு சாதனம்"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:554
-msgid "Devicelink"
-msgstr "சாதன தொடுப்பு"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:558
-msgid "Colorspace conversion"
-msgstr "நிறக்கள மாற்றம்"
-
-#. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:562
-msgid "Abstract"
-msgstr "சுருக்கம்"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:566
-msgid "Named color"
-msgstr "பெயரிட்ட நிறம்"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:580
-msgid "XYZ"
-msgstr "XYZ"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:584
-msgid "LAB"
-msgstr "லாப்"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:588
-msgid "LUV"
-msgstr "எல்யூவி"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:592
-msgid "YCbCr"
-msgstr "ஒய்சிபிசிஆர்"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:596
-msgid "Yxy"
-msgstr "ஒய்எக்ஸ்ஒய்"
-
-#. TRANSLATORS: this the ICC colorspace type
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#: ../src/gcm-viewer.c:600 ../src/gcm-utils.c:596 ../data/gcm-prefs.ui.h:50
-msgid "RGB"
-msgstr "ஆர்ஜிபி"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:604
-msgid "Gray"
-msgstr "சாம்பல்"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:608
-msgid "HSV"
-msgstr "ஹெச்எஸ்வி"
-
-#. TRANSLATORS: this the ICC colorspace type
-#. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
-#: ../src/gcm-viewer.c:612 ../src/gcm-utils.c:600 ../data/gcm-prefs.ui.h:10
-msgid "CMYK"
-msgstr "சிஎம்ஒய்கே"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:616
-msgid "CMY"
-msgstr "சிஎம்ஒய்"
-
-#. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:771
-msgid "Yes"
-msgstr "ஆம்"
-
-#. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:774
-msgid "No"
-msgstr "இல்லை"
-
-#. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:851
-msgid "Delete this profile"
-msgstr "இந்த வரையுருவை அழி"
-
-#. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:854
-msgid "This profile cannot be deleted"
-msgstr "இந்த வரிவுருவினை அழிக்க முடியாது"
-
-#. TRANSLATORS: combo-entry, no graph selected to be shown
-#: ../src/gcm-viewer.c:1020
-msgid "None"
-msgstr "ஏதுமில்லை"
-
-#. TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...)
-#: ../src/gcm-viewer.c:1023
-msgid "CIE 1931 xy"
-msgstr "CIE 1931 xy"
-
-#. TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out)
-#: ../src/gcm-viewer.c:1026
-msgid "Transfer response curve"
-msgstr "இடமாற்றம் வினைவிளைவு வளைவு "
-
-#. TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card)
-#: ../src/gcm-viewer.c:1029
-msgid "Video card gamma table"
-msgstr "விடியோ அட்டை காமா அட்டவணை"
-
-#. TRANSLATORS: combo-entry, this is a preview image of what the profile looks like
-#: ../src/gcm-viewer.c:1032
-msgid "Image preview (input)"
-msgstr "உருவ முன்காட்சி (உள்ளீட்டு)"
-
-#: ../src/gcm-viewer.c:1033
-msgid "Image preview (output)"
-msgstr "உருவ முன்காட்சி (வெளியீட்டு)"
-
 #. TRANSLATORS: button: this is to open GCM
 #: ../src/gcm-session.c:111
 msgid "Recalibrate now"
@@ -1636,15 +1494,157 @@ msgstr "வரைபடங்கள் மற்றும் முன்வை�
 msgid "Proofing devices"
 msgstr "பிழையறியும் கருவிகள்"
 
-#. TRANSLATORS: this is where the ICC profile has no description
-#: ../libcolor-glib/gcm-profile.c:176
-msgid "Missing description"
-msgstr "தவறிப்போன விவரம்:"
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-utils.c:596 ../src/gcm-viewer.c:600 ../data/gcm-prefs.ui.h:50
+msgid "RGB"
+msgstr "ஆர்ஜிபி"
 
-#. TRANSLATORS: this is the profile creation date strftime format
-#: ../libcolor-glib/gcm-profile.c:582
-msgid "%B %e %Y, %I:%M:%S %p"
-msgstr "%B %e %Y, %I:%M:%S %p"
+#. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-utils.c:600 ../src/gcm-viewer.c:612 ../data/gcm-prefs.ui.h:10
+msgid "CMYK"
+msgstr "சிஎம்ஒய்கே"
+
+#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#: ../src/gcm-viewer.c:289
+msgid "Permanently delete profile?"
+msgstr "வரையுருவை  நிரந்தரமாக அழிக்கவா?"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-viewer.c:292
+msgid ""
+"Are you sure you want to remove this profile from your system permanently?"
+msgstr "கணினியில் இருந்து இந்த வரிவுருவை நிரந்தரமாக நீக்க நிச்சயம் விரும்புகிறீர்களா?"
+
+#. TRANSLATORS: button, delete a profile
+#: ../src/gcm-viewer.c:295
+msgid "Delete"
+msgstr "நீக்கு"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:542
+msgid "Input device"
+msgstr "உள்ளீடு சாதனம்"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:546
+msgid "Display device"
+msgstr "காட்சி சாதனம்"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:550
+msgid "Output device"
+msgstr "விளைவு சாதனம்"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:554
+msgid "Devicelink"
+msgstr "சாதன தொடுப்பு"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:558
+msgid "Colorspace conversion"
+msgstr "நிறக்கள மாற்றம்"
+
+#. TRANSLATORS: this the ICC profile kind
+#: ../src/gcm-viewer.c:562
+msgid "Abstract"
+msgstr "சுருக்கம்"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:566
+msgid "Named color"
+msgstr "பெயரிட்ட நிறம்"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:580
+msgid "XYZ"
+msgstr "XYZ"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:584
+msgid "LAB"
+msgstr "லாப்"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:588
+msgid "LUV"
+msgstr "எல்யூவி"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:592
+msgid "YCbCr"
+msgstr "ஒய்சிபிசிஆர்"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:596
+msgid "Yxy"
+msgstr "ஒய்எக்ஸ்ஒய்"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:604
+msgid "Gray"
+msgstr "சாம்பல்"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:608
+msgid "HSV"
+msgstr "ஹெச்எஸ்வி"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:616
+msgid "CMY"
+msgstr "சிஎம்ஒய்"
+
+#. TRANSLATORS: if the device has a VCGT profile
+#: ../src/gcm-viewer.c:771
+msgid "Yes"
+msgstr "ஆம்"
+
+#. TRANSLATORS: if the device has a VCGT profile
+#: ../src/gcm-viewer.c:774
+msgid "No"
+msgstr "இல்லை"
+
+#. TRANSLATORS: this is the tooltip when the profile can be deleted
+#: ../src/gcm-viewer.c:851
+msgid "Delete this profile"
+msgstr "இந்த வரையுருவை அழி"
+
+#. TRANSLATORS: this is the tooltip when the profile cannot be deleted
+#: ../src/gcm-viewer.c:854
+msgid "This profile cannot be deleted"
+msgstr "இந்த வரிவுருவினை அழிக்க முடியாது"
+
+#. TRANSLATORS: combo-entry, no graph selected to be shown
+#: ../src/gcm-viewer.c:1020
+msgid "None"
+msgstr "ஏதுமில்லை"
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...)
+#: ../src/gcm-viewer.c:1023
+msgid "CIE 1931 xy"
+msgstr "CIE 1931 xy"
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out)
+#: ../src/gcm-viewer.c:1026
+msgid "Transfer response curve"
+msgstr "இடமாற்றம் வினைவிளைவு வளைவு "
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card)
+#: ../src/gcm-viewer.c:1029
+msgid "Video card gamma table"
+msgstr "விடியோ அட்டை காமா அட்டவணை"
+
+#. TRANSLATORS: combo-entry, this is a preview image of what the profile looks like
+#: ../src/gcm-viewer.c:1032
+msgid "Image preview (input)"
+msgstr "உருவ முன்காட்சி (உள்ளீட்டு)"
+
+#: ../src/gcm-viewer.c:1033
+msgid "Image preview (output)"
+msgstr "உருவ முன்காட்சி (வெளியீட்டு)"
 
 #: ../data/gcm-calibrate.ui.h:1
 msgid "Blue:"
