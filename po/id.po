@@ -1,53 +1,61 @@
+# Indonesian translation of gnome-color-manager
+# Copyright (C) 2010 THE gnome-color-manager'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the gnome-color-manager package.
+#
+# Andika Triwidada <andika@gmail.com>, 2010.
+# Dirgita <dirgitadevina@yahoo.co.id>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager\n"
-"POT-Creation-Date: 2010-06-10 13:49+0000\n"
-"PO-Revision-Date: 2010-06-11 16:59+0700\n"
-"Last-Translator: Andika Triwidada <andika@gmail.com>\n"
+"POT-Creation-Date: 2010-08-31 16:40+0000\n"
+"PO-Revision-Date: 2010-09-02 12:09+0700\n"
+"Last-Translator: Dirgita <dirgitadevina@yahoo.co.id>\n"
 "Language-Team: GNOME Indonesian Translation Team <gnome@i15n.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Indonesian\n"
-"X-Poedit-Country: Indonesia\n"
-"X-Poedit-SourceCharset: UTF-8\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"X-Generator: Lokalize 1.1\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #: ../data/gcm-apply.desktop.in.h:1
 msgid "Applies device profile settings at session startup"
 msgstr ""
 
 #: ../data/gcm-apply.desktop.in.h:2
-#, fuzzy
 msgid "Load device color profiles"
-msgstr "Kelola profil warna ICC"
+msgstr "Memuat profil warna perangkat"
 
 #: ../data/gcm-import.desktop.in.h:1
 msgid "ICC Profile Installer"
 msgstr "Pemasang Profil ICC"
 
 #: ../data/gcm-import.desktop.in.h:2
-msgid "ICC profile installer"
-msgstr "Pemasang profil ICC"
-
-#: ../data/gcm-import.desktop.in.h:3
 msgid "Install ICC profiles"
 msgstr "Pasang profil ICC"
 
-#. Section heading for device profile settings
-#: ../data/gcm-prefs.desktop.in.h:1 ../data/gcm-prefs.ui.h:17
-msgid "Color Profiles"
-msgstr "Profil Warna"
+#: ../data/gcm-prefs.desktop.in.h:1
+msgid "Color"
+msgstr "Warna"
 
 #: ../data/gcm-prefs.desktop.in.h:2
 msgid "Manage ICC color profiles"
 msgstr "Kelola profil warna ICC"
 
+#. TRANSLATORS: this is where the ICC profile has no description
+#: ../libcolor-glib/gcm-profile.c:176
+msgid "Missing description"
+msgstr "Kehilangan deskripsi"
+
+#. TRANSLATORS: this is the profile creation date strftime format
+#: ../libcolor-glib/gcm-profile.c:582
+msgid "%B %e %Y, %I:%M:%S %p"
+msgstr ""
+
 #: ../policy/org.gnome.color.policy.in.h:1
 msgid "Authentication is required to install the color profile for all users"
-msgstr ""
+msgstr "Diperlukan otentikasi untuk memasang profil warna pada semua pengguna"
 
 #. SECURITY:
 #. - Normal users require admin authentication to install files system
@@ -62,39 +70,272 @@ msgstr ""
 msgid "Install system color profiles"
 msgstr "Pasang profil ICC"
 
+#. TRANSLATORS: could not save for all users
+#: ../src/cc-color-panel.c:154
+msgid "Failed to save defaults for all users"
+msgstr ""
+
+#. TRANSLATORS: this is where the user can click and import a profile
+#: ../src/cc-color-panel.c:182
+msgid "Other profile…"
+msgstr "Profil lainnya..."
+
+#. TRANSLATORS: could not calibrate
+#: ../src/cc-color-panel.c:331
+msgid "Failed to calibrate device"
+msgstr "Gagal melakukan kalibrasi perangkat"
+
+#. TRANSLATORS: could not calibrate
+#: ../src/cc-color-panel.c:366
+msgid "Failed to calibrate printer"
+msgstr "Gagal melakukan kalibrasi pencetak"
+
+#. TRANSLATORS: dialog for file->open dialog
+#: ../src/cc-color-panel.c:391 ../src/gcm-calibrate.c:872
+#: ../src/gcm-viewer.c:337
+msgid "Select ICC Profile File"
+msgstr "Pilih Berkas Profil ICC"
+
+#: ../src/cc-color-panel.c:394 ../src/gcm-viewer.c:340
+msgid "Import"
+msgstr "Impor"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: ../src/cc-color-panel.c:412 ../src/gcm-viewer.c:358
+msgid "Supported ICC profiles"
+msgstr "Profil ICC yang didukung"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: ../src/cc-color-panel.c:419 ../src/gcm-calibrate.c:754
+#: ../src/gcm-calibrate.c:806 ../src/gcm-viewer.c:365
+msgid "All files"
+msgstr "Semua berkas"
+
+#. TRANSLATORS: could not read file
+#: ../src/cc-color-panel.c:455 ../src/gcm-import.c:221 ../src/gcm-viewer.c:401
+msgid "Failed to copy file"
+msgstr "Gagal menyalin berkas"
+
+#: ../src/cc-color-panel.c:483
+msgid "Failed to get metadata from image"
+msgstr "Gagal memperoleh metadata dari gambar"
+
+#. TRANSLATORS: could not add virtual device
+#: ../src/cc-color-panel.c:500 ../src/cc-color-panel.c:1159
+msgid "Failed to create virtual device"
+msgstr "Gagal membuat perangkat virtual"
+
+#. TRANSLATORS: could not add virtual device
+#: ../src/cc-color-panel.c:508 ../src/cc-color-panel.c:1167
+msgid "Failed to save virtual device"
+msgstr "Gagal menyimpan perangkat virtual"
+
+#. TRANSLATORS: could not add virtual device
+#: ../src/cc-color-panel.c:517 ../src/cc-color-panel.c:1176
+msgid "Failed to add virtual device"
+msgstr "Gagal menambah perangkat virtual"
+
+#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#: ../src/cc-color-panel.c:699
+msgid "Install calibration and profiling software?"
+msgstr ""
+
+#. TRANSLATORS: dialog message saying the argyllcms is not installed
+#: ../src/cc-color-panel.c:703
+msgid "Calibration and profiling software is not installed."
+msgstr ""
+
+#. TRANSLATORS: dialog message saying the color targets are not installed
+#: ../src/cc-color-panel.c:705
+msgid "These tools are required to build color profiles for devices."
+msgstr ""
+
+#. TRANSLATORS: button, skip installing a package
+#: ../src/cc-color-panel.c:710 ../src/gcm-calibrate.c:1041
+msgid "Do not install"
+msgstr "Jangan pasang"
+
+#. TRANSLATORS: button, install a package
+#. TRANSLATORS: button text
+#: ../src/cc-color-panel.c:712 ../src/gcm-calibrate.c:1043
+#: ../src/gcm-import.c:200
+msgid "Install"
+msgstr "Pasang"
+
+#. TRANSLATORS: this is the application name for libcanberra
+#: ../src/cc-color-panel.c:829 ../src/cc-color-panel.c:1981
+#: ../src/gcm-calibrate-argyll.c:2312 ../src/gcm-calibrate-argyll.c:2362
+#: ../src/gcm-calibrate-argyll.c:2417 ../src/gcm-calibrate-argyll.c:2493
+#: ../src/gcm-calibrate-argyll.c:2574 ../src/gcm-calibrate-argyll.c:2615
+msgid "GNOME Color Manager"
+msgstr "GNOME Color Manager"
+
+#. TRANSLATORS: this is the sound description
+#: ../src/cc-color-panel.c:831
+msgid "Profiling completed"
+msgstr ""
+
+#. TRANSLATORS: could not read file
+#: ../src/cc-color-panel.c:1282
+msgid "Failed to delete file"
+msgstr "Gagal menghapus berkas"
+
+#. TRANSLATORS: this is when the button is sensitive
+#: ../src/cc-color-panel.c:1378
+msgid "Create a color profile for the selected device"
+msgstr ""
+
+#. TRANSLATORS: this is when the button is insensitive
+#: ../src/cc-color-panel.c:1383
+msgid "Cannot create profile: No device is selected"
+msgstr "Tidak dapat membuat profil: Tidak ada perangkat yang dipilih"
+
+#. TRANSLATORS: this is when the button is insensitive because the distro compiled GCM without VTE
+#: ../src/cc-color-panel.c:1394
+msgid "Cannot create profile: Virtual console support is missing"
+msgstr "Tidak dapat membuat profil: Kehilangan pendukung konsol virtual"
+
+#. TRANSLATORS: this is when the button is insensitive
+#: ../src/cc-color-panel.c:1406
+msgid "Cannot create profile: The display device is not connected"
+msgstr "Tidak dapat membuat profil: Perangkat tampilan tidak tersambung"
+
+#. TRANSLATORS: this is when the button is insensitive
+#: ../src/cc-color-panel.c:1414
+msgid "Cannot create profile: The display driver does not support XRandR 1.3"
+msgstr ""
+"Tidak dapat membuat profil: Pengandar tampilan tidak mendukung XRandR 1.3"
+
+#. TRANSLATORS: this is when the button is insensitive
+#: ../src/cc-color-panel.c:1422 ../src/cc-color-panel.c:1437
+msgid "Cannot create profile: The measuring instrument is not plugged in"
+msgstr "Tidak dapat membuat profil: Instrumen pengukur tidak terpasang"
+
+#. TRANSLATORS: this is when the button is insensitive
+#: ../src/cc-color-panel.c:1445
+msgid ""
+"Cannot create profile: The measuring instrument does not support printer "
+"profiling"
+msgstr ""
+
+#. TRANSLATORS: this is when the button is insensitive
+#: ../src/cc-color-panel.c:1452
+msgid "Cannot create a profile for this type of device"
+msgstr "Tidak dapat membuat profil untuk jenis perangkat ini"
+
+#: ../src/cc-color-panel.c:1534
+msgid "Per-device settings not supported. Check your display driver."
+msgstr ""
+
+#. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
+#: ../src/cc-color-panel.c:1762
+msgid "No hardware support"
+msgstr "Tak ada dukungan perangkat keras"
+
+#. TRANSLATORS: this is where the device has been setup but is not connected
+#: ../src/cc-color-panel.c:1766 ../src/cc-color-panel.c:2033
+msgid "disconnected"
+msgstr "terputus"
+
+#. TRANSLATORS: the profile was of the wrong sort for this device
+#: ../src/cc-color-panel.c:1885
+msgid "Could not import profile"
+msgstr "Tidak dapat mengimpor profil"
+
+#: ../src/cc-color-panel.c:1886
+msgid "The profile was of the wrong type for this device"
+msgstr ""
+
+#. TRANSLATORS: this is a sound description
+#: ../src/cc-color-panel.c:1969
+msgid "Device added"
+msgstr "Perangkat ditambahkan"
+
+#. TRANSLATORS: this is a sound description
+#: ../src/cc-color-panel.c:1973
+msgid "Device removed"
+msgstr "Perangkat dilepas"
+
+#. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
+#: ../src/cc-color-panel.c:2216 ../src/gcm-picker.c:518
+#, c-format
+msgid "No %s color spaces available"
+msgstr ""
+
+#. TRANSLATORS: device type
+#: ../src/cc-color-panel.c:2537 ../data/gcm-prefs.ui.h:26
+msgid "Display"
+msgstr "Tampilan"
+
+#. TRANSLATORS: device type
+#: ../src/cc-color-panel.c:2541
+msgid "Scanner"
+msgstr "Pemindai"
+
+#. TRANSLATORS: device type
+#: ../src/cc-color-panel.c:2545
+msgid "Printer"
+msgstr "Pencetak"
+
+#. TRANSLATORS: device type
+#: ../src/cc-color-panel.c:2549
+msgid "Camera"
+msgstr "Kamera"
+
+#. TRANSLATORS: button for more details about the vcgt failure
+#: ../src/cc-color-panel.c:2829
+msgid "More Information"
+msgstr "Informasi Lebih Lanjut"
+
+#. TRANSLATORS: button to install extra profiles
+#: ../src/cc-color-panel.c:2832
+msgid "Install now"
+msgstr "Pasang sekarang"
+
+#. TRANSLATORS: this is displayed while the devices are being probed
+#: ../src/cc-color-panel.c:2835
+msgid "Loading list of devices…"
+msgstr "Memuat daftar perangkat..."
+
+#. TRANSLATORS: this is displayed when the profile is crap
+#: ../src/cc-color-panel.c:2842
+msgid ""
+"This profile does not have the information required for whole-screen color "
+"correction."
+msgstr ""
+
+#. TRANSLATORS: this is displayed when the profile is crap
+#: ../src/cc-color-panel.c:2850
+msgid "More color profiles could be automatically installed."
+msgstr ""
+
 #. TRANSLATORS: turn on all debugging
 #: ../src/egg-debug.c:390
-#, fuzzy
 msgid "Show debugging information for all files"
-msgstr "Tampilkan informasi pengawa-kutuan bagi semua berkas"
+msgstr "Menampilkan informasi debug untuk semua berkas"
 
 #. TRANSLATORS: a list of modules to debug
 #: ../src/egg-debug.c:461
-#, fuzzy
 msgid "Debug these specific modules"
-msgstr "Awakutukan modul spesifik ini"
+msgstr "Melakukan debug pada modul-modul yang dipilih"
 
 #. TRANSLATORS: a list of functions to debug
 #: ../src/egg-debug.c:464
-#, fuzzy
 msgid "Debug these specific functions"
-msgstr "Awakutukan fungsi spesifik ini"
+msgstr "Melakukan debuh pada fungsi-fungsi yang dipilih"
 
 #. TRANSLATORS: save to a log
 #: ../src/egg-debug.c:467
-#, fuzzy
 msgid "Log debugging data to a file"
-msgstr "Log data pengawakutuan ke suatu berkas"
+msgstr "Menyimpan log debug"
 
 #: ../src/egg-debug.c:471
-#, fuzzy
 msgid "Debugging Options"
-msgstr "Opsi Pengawakutuan"
+msgstr "Opsi Debug"
 
 #: ../src/egg-debug.c:471
-#, fuzzy
 msgid "Show debugging options"
-msgstr "Tampilkan opsi pengawa-kutuan"
+msgstr "Menampilkan opsi debug"
 
 #. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
 #: ../src/gcm-apply.c:54
@@ -102,12 +343,12 @@ msgid "Do not attempt to clear previously applied settings"
 msgstr ""
 
 #. TRANSLATORS: title, default paramters needed to calibrate_argyll
-#: ../src/gcm-calibrate-argyll.c:447
+#: ../src/gcm-calibrate-argyll.c:453
 msgid "Getting default parameters"
 msgstr "Mengambil parameter baku"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:450
+#: ../src/gcm-calibrate-argyll.c:456
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -116,34 +357,33 @@ msgstr ""
 "ke layar Anda dan mengukur mereka dengan perangkat keras."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:541
-#, fuzzy
+#: ../src/gcm-calibrate-argyll.c:549
 msgid "Reading the patches"
-msgstr "Menggambar keping"
+msgstr "Membaca tambalan"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:543
+#: ../src/gcm-calibrate-argyll.c:551
 msgid "Reading the patches using the color measuring instrument."
 msgstr ""
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:631
+#: ../src/gcm-calibrate-argyll.c:641
 msgid "Generating the patches"
 msgstr "Menjangkitkan keping"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:633
+#: ../src/gcm-calibrate-argyll.c:643
 #, fuzzy
 msgid "Generating the patches that will be measured with the color instrument."
 msgstr "Menjangkitkan keping-keping yang akan diukur dengan perangkat keras."
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:738
+#: ../src/gcm-calibrate-argyll.c:750 ../src/gcm-calibrate-native.c:377
 msgid "Drawing the patches"
 msgstr "Menggambar keping"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:740
+#: ../src/gcm-calibrate-argyll.c:752 ../src/gcm-calibrate-native.c:380
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
@@ -153,137 +393,129 @@ msgstr ""
 
 #. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" - YOU NEED TO STICK TO ASCII
 #. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands"
-#: ../src/gcm-calibrate-argyll.c:848 ../src/gcm-calibrate-argyll.c:1187
+#: ../src/gcm-calibrate-argyll.c:862 ../src/gcm-calibrate-argyll.c:1204
 msgid "Copyright (c)"
 msgstr "Hak Cipta (c):"
 
 #. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:851 ../src/gcm-calibrate-argyll.c:1190
+#: ../src/gcm-calibrate-argyll.c:865 ../src/gcm-calibrate-argyll.c:1207
 msgid "Generating the profile"
 msgstr "Menjangkitkan profil"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:853
+#: ../src/gcm-calibrate-argyll.c:867
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "Menjangkitkan profil warna ICC yang dapat dipakai dengan layar ini."
 
 #. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:989
+#: ../src/gcm-calibrate-argyll.c:1004
 msgid "Copying files"
 msgstr "Menyalin berkas"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:991
+#: ../src/gcm-calibrate-argyll.c:1006
 msgid "Copying source image, chart data and CIE reference values."
 msgstr ""
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:1066
-#, fuzzy
+#: ../src/gcm-calibrate-argyll.c:1081
 msgid "Measuring the patches"
-msgstr "Menggambar keping"
+msgstr "Mengukur tambalan"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1068
+#: ../src/gcm-calibrate-argyll.c:1083
 msgid "Detecting the reference patches and measuring them."
 msgstr ""
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1192
+#: ../src/gcm-calibrate-argyll.c:1209
 #, fuzzy
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "Menjangkitkan profil warna ICC yang dapat dipakai dengan layar ini."
 
 #. TRANSLATORS: title, hardware refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:1381
+#: ../src/gcm-calibrate-argyll.c:1400
 msgid "Set up display"
 msgstr ""
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1384
-#, fuzzy
+#: ../src/gcm-calibrate-argyll.c:1403
 msgid "Setting up display device for use…"
-msgstr "Menata perangkat keras untuk dipakai..."
+msgstr "Menyetel perangkat tampilan untuk dipakai..."
 
 #. TRANSLATORS: title, setting up the photospectromiter
-#: ../src/gcm-calibrate-argyll.c:1446
-#, fuzzy
+#: ../src/gcm-calibrate-argyll.c:1465 ../src/gcm-calibrate-native.c:408
 msgid "Setting up device"
-msgstr "Menata perangkat keras untuk dipakai..."
+msgstr "Menyetel perangkat"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1448
-#, fuzzy
+#: ../src/gcm-calibrate-argyll.c:1467 ../src/gcm-calibrate-native.c:410
 msgid "Setting up the device to read a spot color…"
-msgstr "Menata perangkat keras untuk dipakai..."
+msgstr "Menyetel perangkat untuk membaca titik warna..."
 
 #. TRANSLATORS: title, patches are specific colors used in calibration
-#: ../src/gcm-calibrate-argyll.c:1593
-#, fuzzy
+#: ../src/gcm-calibrate-argyll.c:1614
 msgid "Printing patches"
-msgstr "Menggambar keping"
+msgstr "Mencetak tambalan"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1596
+#: ../src/gcm-calibrate-argyll.c:1617
 msgid "Rendering the patches for the selected paper and ink."
 msgstr ""
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:1936
+#: ../src/gcm-calibrate-argyll.c:1959
 msgid "Wait for the ink to dry"
 msgstr ""
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1939
+#: ../src/gcm-calibrate-argyll.c:1962
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
 msgstr ""
 
 #. TRANSLATORS: the supplied image contains an alpha channel which we have to strip out
-#: ../src/gcm-calibrate-argyll.c:2081
+#: ../src/gcm-calibrate-argyll.c:2104
 msgid "Image is not suitable without conversion"
 msgstr ""
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2084
+#: ../src/gcm-calibrate-argyll.c:2107
 msgid ""
 "The supplied image contains an alpha channel which the profiling tools do "
 "not understand."
 msgstr ""
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2088
+#: ../src/gcm-calibrate-argyll.c:2111
 msgid ""
 "It is normally safe to convert the image, although you should ensure that "
 "the generated profile is valid."
 msgstr ""
 
 #. TRANSLATORS: button text to convert the RGBA image into RGB
-#: ../src/gcm-calibrate-argyll.c:2095
-#, fuzzy
+#: ../src/gcm-calibrate-argyll.c:2118
 msgid "Convert"
-msgstr "_Konversi"
+msgstr "Konversi"
 
 #. TRANSLATORS: title, instrument refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:2153
+#: ../src/gcm-calibrate-argyll.c:2176
 msgid "Set up instrument"
 msgstr ""
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2156
-#, fuzzy
+#: ../src/gcm-calibrate-argyll.c:2179
 msgid "Setting up the instrument for use…"
-msgstr "Menata perangkat keras untuk dipakai..."
+msgstr "Menyetel instrumen untuk dipakai..."
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2254
-#, fuzzy
+#: ../src/gcm-calibrate-argyll.c:2278 ../src/gcm-calibrate-native.c:333
 msgid "Please attach instrument"
-msgstr "Silakan pasang perangkat"
+msgstr "Silakan pasang instrumen"
 
 #. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate-argyll.c:2262
+#: ../src/gcm-calibrate-argyll.c:2286 ../src/gcm-calibrate-native.c:341
 #, fuzzy
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
@@ -291,7 +523,7 @@ msgid ""
 msgstr "Silakan pasang perangkat keras ke pusat layar pada kotak kelabu."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate-argyll.c:2265
+#: ../src/gcm-calibrate-argyll.c:2289 ../src/gcm-calibrate-native.c:344
 #, fuzzy
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
@@ -299,230 +531,219 @@ msgid ""
 msgstr "Silakan pasang perangkat keras ke pusat layar pada kotak kelabu."
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2278 ../src/gcm-calibrate-argyll.c:2332
-#: ../src/gcm-calibrate-argyll.c:2387
+#: ../src/gcm-calibrate-argyll.c:2302 ../src/gcm-calibrate-argyll.c:2356
+#: ../src/gcm-calibrate-argyll.c:2411 ../src/gcm-calibrate-native.c:358
 msgid "Continue"
 msgstr "Lanjutkan"
 
-#. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2288 ../src/gcm-calibrate-argyll.c:2338
-#: ../src/gcm-calibrate-argyll.c:2393 ../src/gcm-calibrate-argyll.c:2469
-#: ../src/gcm-calibrate-argyll.c:2550 ../src/gcm-calibrate-argyll.c:2591
-#: ../src/gcm-prefs.c:979 ../src/gcm-prefs.c:2469
-msgid "GNOME Color Manager"
-msgstr "GNOME Color Manager"
-
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2309 ../src/gcm-calibrate-argyll.c:2364
+#: ../src/gcm-calibrate-argyll.c:2333 ../src/gcm-calibrate-argyll.c:2388
 msgid "Please configure instrument"
 msgstr ""
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2319
+#: ../src/gcm-calibrate-argyll.c:2343
 msgid ""
 "Please set the measuring instrument to calibration mode like the image below."
 msgstr ""
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2322
+#: ../src/gcm-calibrate-argyll.c:2346
 msgid "Please set the measuring instrument to calibration mode."
 msgstr ""
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2374
+#: ../src/gcm-calibrate-argyll.c:2398
 msgid ""
 "Please set the measuring instrument to screen mode like the image below."
 msgstr ""
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2377
+#: ../src/gcm-calibrate-argyll.c:2401
 msgid "Please set the measuring instrument to screen mode."
 msgstr ""
 
 #. TRANSLATORS: title, the calibration failed
-#: ../src/gcm-calibrate-argyll.c:2448 ../src/gcm-calibrate-argyll.c:2517
+#: ../src/gcm-calibrate-argyll.c:2472 ../src/gcm-calibrate-argyll.c:2541
 msgid "Calibration error"
 msgstr "Kesalahan kalibrasi"
 
 #. TRANSLATORS: message, the sample was not read correctly
-#: ../src/gcm-calibrate-argyll.c:2451
+#: ../src/gcm-calibrate-argyll.c:2475
 msgid "The sample could not be read at this time."
 msgstr ""
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2459
+#: ../src/gcm-calibrate-argyll.c:2483
 msgid "Try again"
 msgstr "Coba lagi"
 
 #. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2521
+#: ../src/gcm-calibrate-argyll.c:2545
 msgid "No firmware is installed for this instrument."
 msgstr ""
 
 #. TRANSLATORS: message, the image wasn't good enough
-#: ../src/gcm-calibrate-argyll.c:2524
+#: ../src/gcm-calibrate-argyll.c:2548
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
 msgstr ""
 
 #. TRANSLATORS: message, the sensor got no readings
-#: ../src/gcm-calibrate-argyll.c:2528
+#: ../src/gcm-calibrate-argyll.c:2552
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
 msgstr ""
 
 #. TRANSLATORS: message, the colorimeter has got confused
-#: ../src/gcm-calibrate-argyll.c:2531
+#: ../src/gcm-calibrate-argyll.c:2555
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
 msgstr ""
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-argyll.c:2569
+#: ../src/gcm-calibrate-argyll.c:2593
 msgid "Reading target"
-msgstr ""
+msgstr "Membaca target"
 
 #. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2572
+#: ../src/gcm-calibrate-argyll.c:2596
 msgid "Failed to read the strip correctly."
 msgstr ""
 
 #. TRANSLATORS: button text
 #. TRANSLATORS: button
-#: ../src/gcm-calibrate-argyll.c:2581 ../src/gcm-calibrate-argyll.c:2655
-#, fuzzy
+#: ../src/gcm-calibrate-argyll.c:2605 ../src/gcm-calibrate-argyll.c:2679
 msgid "Retry"
-msgstr "Mencoba kembali"
+msgstr "Coba Lagi"
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2604
+#: ../src/gcm-calibrate-argyll.c:2628
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr ""
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2609
+#: ../src/gcm-calibrate-argyll.c:2633
 msgid "It looks like you've measured the wrong strip."
 msgstr ""
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2613
+#: ../src/gcm-calibrate-argyll.c:2637
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
 msgstr ""
 
 #. TRANSLATORS: button
-#: ../src/gcm-calibrate-argyll.c:2623
+#: ../src/gcm-calibrate-argyll.c:2647
 msgid "Use anyway"
 msgstr ""
 
 #. TRANSLATORS: title, the calibration failed
-#: ../src/gcm-calibrate-argyll.c:2644
+#: ../src/gcm-calibrate-argyll.c:2668
 msgid "Device Error"
 msgstr "Kesalahan Perangkat"
 
 #. TRANSLATORS: message, the sample was not read correctly
-#: ../src/gcm-calibrate-argyll.c:2647
+#: ../src/gcm-calibrate-argyll.c:2671
 msgid "The device could not measure the color spot correctly."
 msgstr ""
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2667
+#: ../src/gcm-calibrate-argyll.c:2691
 #, c-format
 msgid "Ready to read strip %s"
 msgstr ""
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2672
+#: ../src/gcm-calibrate-argyll.c:2696
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
 msgstr ""
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2676
+#: ../src/gcm-calibrate-argyll.c:2700
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
 msgstr ""
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2680
+#: ../src/gcm-calibrate-argyll.c:2704
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
 msgstr ""
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2684
+#: ../src/gcm-calibrate-argyll.c:2708
 msgid ""
 "If you make a mistake just release the switch and you'll get a chance to try "
 "again."
 msgstr ""
 
 #. TRANSLATORS: title, printing reference files to media
-#: ../src/gcm-calibrate-argyll.c:2825
+#: ../src/gcm-calibrate-argyll.c:2856
 msgid "Printing"
 msgstr "Pencetakan"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2832
+#: ../src/gcm-calibrate-argyll.c:2863
 msgid "Preparing the data for the printer."
 msgstr ""
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2838
+#: ../src/gcm-calibrate-argyll.c:2869
 msgid "Sending the targets to the printer."
 msgstr ""
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2842
+#: ../src/gcm-calibrate-argyll.c:2873
 msgid "Printing the targets..."
-msgstr ""
+msgstr "Mencetak target..."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2846
+#: ../src/gcm-calibrate-argyll.c:2877
 msgid "The printing has finished."
-msgstr ""
+msgstr "Selesai mencetak."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2850
+#: ../src/gcm-calibrate-argyll.c:2881
 msgid "The print was aborted."
-msgstr ""
+msgstr "Mencetak dibatalkan."
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:135
+#: ../src/gcm-calibrate.c:140
 msgid "Unknown model"
 msgstr "Model tak dikenal"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:149
-#, fuzzy
+#: ../src/gcm-calibrate.c:154
 msgid "Unknown description"
-msgstr "Keterangan:"
+msgstr "Deskripsi tak dikenal"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:163
+#: ../src/gcm-calibrate.c:168
 msgid "Unknown manufacturer"
 msgstr "Pabrikan tak dikenal"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:177
+#: ../src/gcm-calibrate.c:182
 msgid "Unknown device"
 msgstr "Perangkat tak dikenal"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-calibrate.c:390
-#, fuzzy
+#: ../src/gcm-calibrate.c:394
 msgid "Could not detect screen type"
-msgstr "Tak bisa mendeteksi otomatis CRT atau LCD"
+msgstr "Tidak dapat mendeteksi jenis layar"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:393
+#: ../src/gcm-calibrate.c:397
 #, fuzzy
 msgid ""
 "Please indicate if the screen you are trying to profile is an LCD, CRT or a "
@@ -532,284 +753,259 @@ msgstr ""
 "atau LCD (layar datar digital)."
 
 #. TRANSLATORS: title, the hardware calibration device does not support projectors
-#: ../src/gcm-calibrate.c:418
+#: ../src/gcm-calibrate.c:422
 msgid "Could not calibrate and profile using this color measuring instrument"
 msgstr ""
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:421
+#: ../src/gcm-calibrate.c:425
 msgid ""
 "This color measuring instrument is not designed to support calibration and "
 "profiling projectors."
 msgstr ""
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate.c:482
+#: ../src/gcm-calibrate.c:486
 msgid "Profile Precision"
-msgstr ""
+msgstr "Presisi Profil"
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:485
+#: ../src/gcm-calibrate.c:489
 msgid ""
 "A higher precision profile provides higher accuracy in color matching but "
 "requires more time for reading the color patches."
 msgstr ""
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:488
+#: ../src/gcm-calibrate.c:492
 msgid "For a typical workflow, a normal precision profile is sufficient."
 msgstr ""
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:493
+#: ../src/gcm-calibrate.c:497
 msgid "The high precision profile also requires more paper and printer ink."
 msgstr ""
 
 #. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated
-#: ../src/gcm-calibrate.c:597
+#: ../src/gcm-calibrate.c:601
 msgid "Custom"
 msgstr "Gubahan"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:629
+#: ../src/gcm-calibrate.c:632
 msgid ""
 "Before calibrating the display, it is recommended to configure your display "
 "with the following settings to get optimal results."
 msgstr ""
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:632
+#: ../src/gcm-calibrate.c:635
 msgid ""
 "You may want to consult the owner's manual for your display on how to "
 "achieve these settings."
 msgstr ""
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:635
+#: ../src/gcm-calibrate.c:638
 msgid "Reset your display to the factory defaults."
 msgstr ""
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:638
+#: ../src/gcm-calibrate.c:641
 msgid "Disable dynamic contrast if your display has this feature."
 msgstr ""
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:641
+#: ../src/gcm-calibrate.c:644
 msgid ""
 "Configure your display with custom color settings and ensure the RGB "
 "channels are set to the same values."
 msgstr ""
 
 #. TRANSLATORS: dialog message, addition to bullet item
-#: ../src/gcm-calibrate.c:644
+#: ../src/gcm-calibrate.c:647
 msgid "If custom color is not available then use a 6500K color temperature."
 msgstr ""
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:647
+#: ../src/gcm-calibrate.c:650
 msgid ""
 "Adjust the display brightness to a comfortable level for prolonged viewing."
 msgstr ""
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:650
+#: ../src/gcm-calibrate.c:653
 msgid ""
 "For best results, the display should have been powered for at least 15 "
 "minutes before starting the calibration."
 msgstr ""
 
-#: ../src/gcm-calibrate.c:654
+#: ../src/gcm-calibrate.c:657
 msgid "Display setup"
 msgstr ""
 
 #. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
 #. * aquired image of the calibration target, e.g. an image file that looks
 #. * a bit like this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:731
+#: ../src/gcm-calibrate.c:734
 msgid "Select calibration target image"
 msgstr ""
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:744
+#: ../src/gcm-calibrate.c:747
 msgid "Supported images files"
-msgstr ""
-
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:751 ../src/gcm-calibrate.c:803
-#: ../src/gcm-prefs.c:549
-msgid "All files"
-msgstr "Semua berkas"
+msgstr "Berkas gambar yang didukung"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:776
+#: ../src/gcm-calibrate.c:779
 msgid "Select CIE reference values file"
 msgstr ""
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:796
+#: ../src/gcm-calibrate.c:799
 msgid "CIE values"
-msgstr ""
+msgstr "Nilai CIE"
 
-#. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:869 ../src/gcm-prefs.c:521
-#, fuzzy
-msgid "Select ICC Profile File"
-msgstr "Pemasang Profil ICC"
-
-#: ../src/gcm-calibrate.c:872
+#: ../src/gcm-calibrate.c:875
 msgid "Open"
 msgstr "Buka"
 
 #. TRANSLATORS: title, you can profile all at once, or in steps
-#: ../src/gcm-calibrate.c:908
+#: ../src/gcm-calibrate.c:911
 msgid "Please choose a profiling mode"
 msgstr ""
 
 #. TRANSLATORS: dialog message. Test patches are pages of colored squares
 #. * that are printed with a printer, and then read in with a calibration
 #. * device to create a profile
-#: ../src/gcm-calibrate.c:913
+#: ../src/gcm-calibrate.c:916
 msgid ""
 "Please indicate if you want to profile a local printer, generate some test "
 "patches, or profile using existing test patches."
 msgstr ""
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-calibrate.c:1025
-#, fuzzy
+#: ../src/gcm-calibrate.c:1027
 msgid "Install missing files?"
-msgstr "Pasang profil ICC"
+msgstr "Pasang berkas yang hilang?"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate.c:1028
+#: ../src/gcm-calibrate.c:1030
 msgid "Common color target files are not installed on this computer."
 msgstr ""
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate.c:1030
+#: ../src/gcm-calibrate.c:1032
 msgid "Color target files are needed to convert the image to a color profile."
 msgstr ""
 
 #. TRANSLATORS: dialog message, asking if it's okay to install them
-#: ../src/gcm-calibrate.c:1032
+#: ../src/gcm-calibrate.c:1034
 msgid "Do you want them to be installed?"
 msgstr ""
 
 #. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
-#: ../src/gcm-calibrate.c:1034
+#: ../src/gcm-calibrate.c:1036
 msgid "If you already have the correct file, you can skip this step."
 msgstr ""
-
-#. TRANSLATORS: button, skip installing a package
-#: ../src/gcm-calibrate.c:1039 ../src/gcm-prefs.c:860
-msgid "Do not install"
-msgstr "Jangan pasang"
-
-#. TRANSLATORS: button, install a package
-#. TRANSLATORS: button text
-#. TRANSLATORS: button, install a package
-#: ../src/gcm-calibrate.c:1041 ../src/gcm-import.c:188 ../src/gcm-prefs.c:862
-msgid "Install"
-msgstr "Pasang"
 
 #. TRANSLATORS: this is the window title for when the user selects the calibration target.
 #. * A calibration target is an accuratly printed grid of colors, for instance:
 #. * the IT 8.7 targets available here: http://www.targets.coloraid.de/
-#: ../src/gcm-calibrate.c:1056
+#: ../src/gcm-calibrate.c:1058
 msgid "Please select a calibration target"
 msgstr ""
 
 #. TRANSLATORS: dialog message, preface. A calibration target looks like
 #. * this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:1061
+#: ../src/gcm-calibrate.c:1063
 msgid ""
 "Before profiling the device, you have to manually capture an image of a "
 "calibration target and save it as a TIFF image file."
 msgstr ""
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:1066
+#: ../src/gcm-calibrate.c:1068
 msgid ""
 "Ensure that the contrast and brightness are not changed and color correction "
 "profiles are not applied."
 msgstr ""
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:1069
+#: ../src/gcm-calibrate.c:1071
 msgid ""
 "The device sensor should have been cleaned prior to scanning and the output "
 "file resolution should be at least 200dpi."
 msgstr ""
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:1075
+#: ../src/gcm-calibrate.c:1077
 msgid ""
 "Ensure that the white-balance has not been modified by the camera and that "
 "the lens is clean."
 msgstr ""
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:1079
+#: ../src/gcm-calibrate.c:1081
 msgid ""
 "For best results, the reference target should also be less than two years "
 "old."
 msgstr ""
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:1082
+#: ../src/gcm-calibrate.c:1084
 msgid ""
 "Please select the calibration target type which corresponds to your "
 "reference file."
 msgstr ""
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:556
+#: ../src/gcm-calibrate-dialog.c:569
 msgid "CMP Digital Target 3"
 msgstr "CMP Digital Target 3"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:560
+#: ../src/gcm-calibrate-dialog.c:573
 msgid "CMP DT 003"
 msgstr "CMP DT 003"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:564
+#: ../src/gcm-calibrate-dialog.c:577
 msgid "Color Checker"
 msgstr "Color Checker"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:568
+#: ../src/gcm-calibrate-dialog.c:581
 msgid "Color Checker DC"
 msgstr "Color Checker DC"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:572
+#: ../src/gcm-calibrate-dialog.c:585
 msgid "Color Checker SG"
 msgstr "Color Checker SG"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:576
+#: ../src/gcm-calibrate-dialog.c:589
 msgid "Hutchcolor"
 msgstr "Hutchcolor"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:580
+#: ../src/gcm-calibrate-dialog.c:593
 msgid "i1 RGB Scan 1.4"
 msgstr "i1 RGB Scan 1.4"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:584
+#: ../src/gcm-calibrate-dialog.c:597
 msgid "IT8.7/2"
 msgstr "IT8.7/2"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:588
+#: ../src/gcm-calibrate-dialog.c:601
 msgid "Laser Soft DC Pro"
 msgstr "Laser Soft DC Pro"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:592
+#: ../src/gcm-calibrate-dialog.c:605
 msgid "QPcard 201"
 msgstr "QPcard 201"
 
@@ -879,324 +1075,192 @@ msgstr ""
 msgid "Default"
 msgstr "Bawaan"
 
-#. TRANSLATORS: this is when the device is not recognized
-#: ../src/gcm-colorimeter.c:414
-msgid "Measuring instrument not recognized"
-msgstr ""
-
 #. TRANSLATORS: this is the name of the internal panel
 #: ../src/gcm-device-xrandr.c:138
 msgid "Laptop LCD"
 msgstr "LCD Laptop"
 
-#. TRANSLATORS: this is when the EDID file cannot be read
-#: ../src/gcm-dump-edid.c:58
-msgid "Cannot load file contents:"
-msgstr "Tak bisa memuat isi berkas:"
-
-#. TRANSLATORS: this is when the EDID cannot be parsed
-#: ../src/gcm-dump-edid.c:67
-msgid "Cannot parse EDID contents:"
-msgstr "Tak bisa mengurai isi EDID:"
-
-#. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:75
-msgid "Monitor name:"
-msgstr "Nama monitor:"
-
-#. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:80
-msgid "Vendor name:"
-msgstr "Nama vendor:"
-
-#. TRANSLATORS: this is debugging output for the supplied EDID file
-#. The serial number of the device
-#: ../src/gcm-dump-edid.c:85 ../data/gcm-prefs.ui.h:81
-msgid "Serial number:"
-msgstr "Nomor seri:"
-
-#. TRANSLATORS: this is debugging output for the supplied EDID file
-#. The EISA (standards body) identifier of the device
-#: ../src/gcm-dump-edid.c:90 ../data/gcm-prefs.ui.h:43
-msgid "EISA ID:"
-msgstr "ID EISA:"
-
-#. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:95
-msgid "PNP identifier:"
-msgstr "Identifier PNP"
-
-#. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:101
-msgid "Size:"
-msgstr "Ukuran:"
-
-#. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:106 ../data/gcm-prefs.ui.h:50
-msgid "Gamma:"
-msgstr "Gamma:"
-
-#. TRANSLATORS: command line option: a list of files to parse
-#: ../src/gcm-dump-edid.c:136
-msgid "EDID dumps to parse"
-msgstr ""
-
-#. TRANSLATORS: this is the filename we are displaying
-#: ../src/gcm-dump-edid.c:159
-msgid "EDID dump:"
-msgstr ""
-
-#. TRANSLATORS: we saved the EDID to a file - second parameter is a filename
-#: ../src/gcm-dump-edid.c:196
-#, c-format
-msgid "Saved %i bytes to %s"
-msgstr ""
-
-#. TRANSLATORS: we saved the EDID to a file - parameter is a filename
-#: ../src/gcm-dump-edid.c:201
-#, fuzzy, c-format
-msgid "Failed to save EDID to %s"
-msgstr "Gagal mengurai berkas: %s"
-
-#. TRANSLATORS: command line option: a list of files to install
-#: ../src/gcm-dump-profile.c:108
-msgid "Profiles to view"
-msgstr ""
-
-#. TRANSLATORS: this just dumps the profile to the screen
-#: ../src/gcm-dump-profile.c:121
-#, fuzzy
-msgid "ICC profile dump program"
-msgstr "Profil ICC untuk dipasang"
-
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-enum.c:122 ../src/gcm-prefs.c:1890 ../data/gcm-prefs.ui.h:69
-msgid "RGB"
-msgstr "RGB"
-
-#. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-enum.c:126 ../src/gcm-prefs.c:1902 ../data/gcm-prefs.ui.h:11
-msgid "CMYK"
-msgstr "CMYK"
-
-#. TRANSLATORS: command line option
-#: ../src/gcm-fix-profile.c:124
-#, fuzzy
-msgid "The description of the profile"
-msgstr "_Keterangan profil:"
-
-#. TRANSLATORS: command line option
-#: ../src/gcm-fix-profile.c:127
-#, fuzzy
-msgid "The copyright of the profile"
-msgstr "Menjangkitkan profil"
-
-#. TRANSLATORS: command line option
-#: ../src/gcm-fix-profile.c:130
-#, fuzzy
-msgid "The model of the profile"
-msgstr "Menjangkitkan profil"
-
-#. TRANSLATORS: command line option
-#: ../src/gcm-fix-profile.c:133
-#, fuzzy
-msgid "The manufacturer of the profile"
-msgstr "Menjangkitkan profil"
-
-#. TRANSLATORS: command line option: a list of icc files to fix
-#: ../src/gcm-fix-profile.c:136
-msgid "Profiles to fix"
-msgstr ""
-
-#. TRANSLATORS: this fixes broken profiles
-#: ../src/gcm-fix-profile.c:147
-#, fuzzy
-msgid "ICC profile fix program"
-msgstr "Pemasang profil ICC"
-
 #. TRANSLATORS: command line option: a list of catalogs to install
 #. TRANSLATORS: command line option: a list of files to install
-#: ../src/gcm-import.c:83 ../src/gcm-install-system-wide.c:126
+#: ../src/gcm-import.c:86 ../src/gcm-install-system-wide.c:126
 msgid "ICC profile to install"
 msgstr "Profil ICC untuk dipasang"
 
 #. TRANSLATORS: nothing was specified on the command line
-#: ../src/gcm-import.c:105
+#: ../src/gcm-import.c:108
 msgid "No filename specified"
 msgstr "Tak dinyatakan nama berkas"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-import.c:118
+#: ../src/gcm-import.c:121
 msgid "Failed to open ICC profile"
 msgstr "Gagal membuka profil ICC"
 
 #. TRANSLATORS: parsing error
-#: ../src/gcm-import.c:121
+#: ../src/gcm-import.c:124
 #, c-format
 msgid "Failed to parse file: %s"
 msgstr "Gagal mengurai berkas: %s"
 
 #. TRANSLATORS: color profile already been installed
-#: ../src/gcm-import.c:156
+#: ../src/gcm-import.c:159
 msgid "ICC profile already installed"
 msgstr "Profil ICC telah dipasang"
 
-#. TRANSLATORS: message text
+#. TRANSLATORS: color profile already been installed
 #: ../src/gcm-import.c:173
+msgid "ICC profile already installed system-wide"
+msgstr "Profil ICC telah terpasang dan tersedia pada sistem"
+
+#. TRANSLATORS: message text
+#: ../src/gcm-import.c:185
 #, c-format
 msgid "Import ICC color profile %s?"
 msgstr "Impor profil warna ICC %s?"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:176
+#: ../src/gcm-import.c:188
 msgid "Import ICC color profile?"
 msgstr "Impor profil warna ICC?"
 
 #. ask confirmation
-#: ../src/gcm-import.c:184
+#: ../src/gcm-import.c:196
 msgid "Import ICC profile"
 msgstr "Impor profil ICC"
 
-#. TRANSLATORS: could not read file
-#: ../src/gcm-import.c:209 ../src/gcm-prefs.c:585
-msgid "Failed to copy file"
-msgstr "Gagal menyalin berkas"
-
 #. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
-#: ../src/gcm-inspect.c:59
+#: ../src/gcm-inspect.c:58
 msgid "Description:"
 msgstr "Keterangan:"
 
 #. TRANSLATORS: this is the ICC profile copyright
-#: ../src/gcm-inspect.c:62
+#: ../src/gcm-inspect.c:61
 msgid "Copyright:"
 msgstr "Hak Cipta:"
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:101
+#: ../src/gcm-inspect.c:106
 msgid "Root window profile:"
 msgstr ""
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:113
+#: ../src/gcm-inspect.c:118
 msgid "Root window protocol version:"
 msgstr ""
 
-#: ../src/gcm-inspect.c:129
+#: ../src/gcm-inspect.c:134
 #, c-format
 msgid "Output profile '%s':"
 msgstr "Profil keluaran '%s':"
 
 #. TRANSLATORS: this is when the profile has not been set
-#: ../src/gcm-inspect.c:136
+#: ../src/gcm-inspect.c:141
 msgid "not set"
 msgstr ""
 
 #. TRANSLATORS: no DBus session bus
-#: ../src/gcm-inspect.c:176 ../src/gcm-inspect.c:245 ../src/gcm-inspect.c:313
-#: ../src/gcm-inspect.c:374 ../src/gcm-inspect.c:444 ../src/gcm-utils.c:164
+#: ../src/gcm-inspect.c:179 ../src/gcm-inspect.c:248 ../src/gcm-inspect.c:316
+#: ../src/gcm-inspect.c:377 ../src/gcm-inspect.c:447 ../src/gcm-utils.c:164
 #: ../src/gcm-utils.c:229
 msgid "Failed to connect to session bus:"
-msgstr ""
+msgstr "Gagal terhubung pada bus sesi:"
 
 #. TRANSLATORS: the DBus method failed
-#: ../src/gcm-inspect.c:194 ../src/gcm-inspect.c:263 ../src/gcm-inspect.c:330
-#: ../src/gcm-inspect.c:392 ../src/gcm-inspect.c:462 ../src/gcm-utils.c:188
+#: ../src/gcm-inspect.c:197 ../src/gcm-inspect.c:266 ../src/gcm-inspect.c:333
+#: ../src/gcm-inspect.c:395 ../src/gcm-inspect.c:465 ../src/gcm-utils.c:188
 #: ../src/gcm-utils.c:247
 msgid "The request failed:"
 msgstr "Permintaan gagal:"
 
 #. TRANSLATORS: no profile has been asigned to this device
-#: ../src/gcm-inspect.c:203
+#: ../src/gcm-inspect.c:206
 msgid "There are no ICC profiles for this device"
 msgstr ""
 
 #. TRANSLATORS: this is a list of profiles suitable for the device
-#: ../src/gcm-inspect.c:208 ../src/gcm-inspect.c:277 ../src/gcm-inspect.c:409
-#: ../src/gcm-inspect.c:476
+#: ../src/gcm-inspect.c:211 ../src/gcm-inspect.c:280 ../src/gcm-inspect.c:412
+#: ../src/gcm-inspect.c:479
 msgid "Suitable profiles for:"
 msgstr ""
 
 #. TRANSLATORS: no profile has been asigned to this device
-#: ../src/gcm-inspect.c:272
+#: ../src/gcm-inspect.c:275
 msgid "There are no ICC profiles assigned to this file"
 msgstr ""
 
 #. TRANSLATORS: no profile has been asigned to this window
-#: ../src/gcm-inspect.c:404
+#: ../src/gcm-inspect.c:407
 msgid "There are no ICC profiles for this window"
 msgstr ""
 
 #. TRANSLATORS: no profile has been asigned to this device
-#: ../src/gcm-inspect.c:471
+#: ../src/gcm-inspect.c:474
 msgid "There are no ICC profiles for this device type"
 msgstr ""
 
+#. TRANSLATORS: the DBus method failed
+#: ../src/gcm-inspect.c:518
+msgid "The request failed"
+msgstr ""
+
 #. TRANSLATORS: this is the rendering intent of the output
-#: ../src/gcm-inspect.c:510
+#: ../src/gcm-inspect.c:527
 msgid "Rendering intent (display):"
 msgstr ""
 
 #. TRANSLATORS: this is the rendering intent of the printer
-#: ../src/gcm-inspect.c:516
+#: ../src/gcm-inspect.c:533
 msgid "Rendering intent (softproof):"
 msgstr ""
 
 #. TRANSLATORS: this is the rendering intent of the output
-#: ../src/gcm-inspect.c:524
+#: ../src/gcm-inspect.c:541
 msgid "RGB Colorspace:"
 msgstr ""
 
 #. TRANSLATORS: this is the rendering intent of the printer
-#: ../src/gcm-inspect.c:530
+#: ../src/gcm-inspect.c:547
 msgid "CMYK Colorspace:"
 msgstr ""
 
-#. TRANSLATORS: the DBus method failed
-#: ../src/gcm-inspect.c:546
-msgid "The request failed"
+#. TRANSLATORS: command line option
+#: ../src/gcm-inspect.c:575
+msgid "Show xserver properties"
 msgstr ""
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:595
-msgid "Show X11 properties"
-msgstr ""
-
-#. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:598
+#: ../src/gcm-inspect.c:578
 msgid "Get the profiles for a specific device"
 msgstr ""
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:601
+#: ../src/gcm-inspect.c:581
 msgid "Get the profiles for a specific file"
 msgstr ""
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:604
+#: ../src/gcm-inspect.c:584
 msgid "Get the profile for a specific window"
 msgstr ""
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:607
+#: ../src/gcm-inspect.c:587
 msgid "Get the profiles for a specific device type"
 msgstr ""
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:610
+#: ../src/gcm-inspect.c:590
 msgid "Dump all details about this system"
 msgstr ""
 
 #. TRANSLATORS: just dumps the EDID to disk
-#: ../src/gcm-inspect.c:623
+#: ../src/gcm-inspect.c:603
 msgid "EDID inspect program"
 msgstr ""
 
 #. TRANSLATORS: this is when the user does --type=mickeymouse
-#: ../src/gcm-inspect.c:642
-msgid "Device type not recognized"
+#: ../src/gcm-inspect.c:622
+msgid "Device or profile type not recognized, recognised types are:"
 msgstr ""
 
 #. command line argument, the ID of the device
@@ -1226,21 +1290,18 @@ msgstr ""
 
 #. TRANSLATORS: only able to install profiles as root
 #: ../src/gcm-install-system-wide.c:176
-#, fuzzy
 msgid "This program can only be used by the root user."
-msgstr "Program ini hanya dapat dipakai oleh root"
+msgstr "Program ini hanya bisa digunakan oleh root."
 
 #. TRANSLATORS: only able to install profiles with an absolute path
 #: ../src/gcm-install-system-wide.c:185
-#, fuzzy
 msgid "The source filename must be absolute."
-msgstr "Nama berkas sumber mesti absolut"
+msgstr "Nama berkas sumber harus absolut."
 
 #. TRANSLATORS: error details
 #: ../src/gcm-install-system-wide.c:196
-#, fuzzy
 msgid "Failed to get content type:"
-msgstr "Gagal menyalin berkas"
+msgstr "Gagal memperoleh jenis konten:"
 
 #. TRANSLATORS: the content type is the detected type of file
 #: ../src/gcm-install-system-wide.c:206
@@ -1249,15 +1310,13 @@ msgstr ""
 
 #. TRANSLATORS: the program must never be directly run
 #: ../src/gcm-install-system-wide.c:215
-#, fuzzy
 msgid "This program must only be run through pkexec."
-msgstr "Program ini harus dijalankan melalui pkexec"
+msgstr "Program ini harus dijalankan melalui pkexec."
 
 #. TRANSLATORS: PolicyKit has gone all insane on us, and we refuse to parse junk
 #: ../src/gcm-install-system-wide.c:224
-#, fuzzy
 msgid "PKEXEC_UID must be set to an integer value."
-msgstr "PKEXEC_UID mesti ditata ke suatu nilai integer"
+msgstr "PKEXEC_UID harus disetel dengan nilai integer."
 
 #. TRANSLATORS: we are complaining that a file must be really owned by the user who called this program
 #: ../src/gcm-install-system-wide.c:233
@@ -1271,458 +1330,279 @@ msgstr ""
 
 #. TRANSLATORS: error details
 #: ../src/gcm-install-system-wide.c:256
-#, fuzzy
 msgid "Failed to copy:"
-msgstr "Gagal menyalin berkas"
+msgstr "Gagal disalin:"
+
+#. TRANSLATORS: this is when the ambient light level is unknown
+#. TRANSLATORS: this the ICC profile type
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-picker.c:174 ../src/gcm-viewer.c:569 ../src/gcm-viewer.c:619
+msgid "Unknown"
+msgstr "Tak diketahui"
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:276
-msgid "The attached colorimeter is not capable of reading a spot color."
-msgstr ""
-
-#. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:279
+#: ../src/gcm-picker.c:324
 msgid "No colorimeter is attached."
 msgstr ""
 
-#. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:453 ../src/gcm-prefs.c:2733
-#, c-format
-msgid "No %s color spaces available"
+#. TRANSLATORS: this is displayed if VTE support is not enabled
+#: ../src/gcm-picker.c:331
+msgid "This application was compiled without VTE support."
+msgstr ""
+
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
+#: ../src/gcm-picker.c:341
+msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr ""
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-picker.c:496 ../src/gcm-prefs.c:3139
+#: ../src/gcm-picker.c:547 ../src/gcm-viewer.c:1059
 msgid "Set the parent window to make this modal"
 msgstr "Tata jendela induk untuk membuat ini modal"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:516
+#: ../src/gcm-picker.c:565
 msgid "GNOME Color Manager Color Picker"
 msgstr ""
 
-#. TRANSLATORS: could not save for all users
-#: ../src/gcm-prefs.c:163
-msgid "Failed to save defaults for all users"
-msgstr ""
-
-#. TRANSLATORS: this is where the user can click and import a profile
-#: ../src/gcm-prefs.c:191
-msgid "Other profile…"
-msgstr ""
-
-#. TRANSLATORS: could not calibrate
-#: ../src/gcm-prefs.c:325
-#, fuzzy
-msgid "Failed to calibrate device"
-msgstr "Gagal mengurai berkas: %s"
-
-#. TRANSLATORS: could not calibrate
-#: ../src/gcm-prefs.c:360
-#, fuzzy
-msgid "Failed to calibrate printer"
-msgstr "Gagal mengurai berkas: %s"
-
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-prefs.c:473
-#, fuzzy
-msgid "Permanently delete profile?"
-msgstr "Menjangkitkan profil"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-prefs.c:476
-msgid ""
-"Are you sure you want to remove this profile from your system permanently?"
-msgstr ""
-
-#. TRANSLATORS: button, delete a profile
-#: ../src/gcm-prefs.c:479
-msgid "Delete"
-msgstr "Hapus"
-
-#: ../src/gcm-prefs.c:524
-msgid "Import"
-msgstr "Impor"
-
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-prefs.c:542
-#, fuzzy
-msgid "Supported ICC profiles"
-msgstr "Impor profil ICC"
-
-#: ../src/gcm-prefs.c:613
-msgid "Failed to get metadata from image"
-msgstr ""
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:630 ../src/gcm-prefs.c:1305
-#, fuzzy
-msgid "Failed to create virtual device"
-msgstr "Gagal menyalin berkas"
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:638 ../src/gcm-prefs.c:1313
-#, fuzzy
-msgid "Failed to save virtual device"
-msgstr "Gagal mengurai berkas: %s"
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:647 ../src/gcm-prefs.c:1322
-msgid "Failed to add virtual device"
-msgstr ""
-
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-prefs.c:849
-msgid "Install calibration and profiling software?"
-msgstr ""
-
-#. TRANSLATORS: dialog message saying the argyllcms is not installed
-#: ../src/gcm-prefs.c:853
-msgid "Calibration and profiling software is not installed."
-msgstr ""
-
-#. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-prefs.c:855
-msgid "These tools are required to build color profiles for devices."
-msgstr ""
-
-#. TRANSLATORS: this is the sound description
-#: ../src/gcm-prefs.c:981
-msgid "Profiling completed"
-msgstr ""
-
-#. TRANSLATORS: could not read file
-#: ../src/gcm-prefs.c:1428
-msgid "Failed to delete file"
-msgstr "Gagal menghapus berkas"
-
-#. TRANSLATORS: this is when the button is sensitive
-#: ../src/gcm-prefs.c:1577
-msgid "Create a color profile for the selected device"
-msgstr ""
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1582
-msgid "Cannot profile: No device is selected"
-msgstr ""
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1594
-msgid "Cannot calibrate: The display device is not connected"
-msgstr ""
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1602
-msgid "Cannot calibrate: The display driver does not support XRandR 1.3"
-msgstr ""
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1610
-msgid "Cannot calibrate: The measuring instrument is not plugged in"
-msgstr ""
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1625
-msgid "Cannot profile: The measuring instrument is not plugged in"
-msgstr ""
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1633
-msgid ""
-"Cannot profile: The measuring instrument does not support printer profiling"
-msgstr ""
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1640
-msgid "Cannot profile this type of device"
-msgstr ""
-
-#. TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
-#. * Whilst this does not matter if you only have one monitor attached, it means you
-#. * can't color correct additional monitors or projectors.
-#: ../src/gcm-prefs.c:1718
-msgid "Per-device settings not supported. Check your display driver."
-msgstr ""
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1832
-msgid "Input device"
-msgstr "Perangkat masukan"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1836
-msgid "Display device"
-msgstr "Perangkat tampilan"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1840
-msgid "Output device"
-msgstr "Perangkat keluaran"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1844
-msgid "Devicelink"
-msgstr ""
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1848
-msgid "Colorspace conversion"
-msgstr ""
-
-#. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-prefs.c:1852
-msgid "Abstract"
-msgstr ""
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1856
-msgid "Named color"
-msgstr ""
-
-#. TRANSLATORS: this the ICC profile type
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1859 ../src/gcm-prefs.c:1909
-msgid "Unknown"
-msgstr "Tak diketahui"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1870
-msgid "XYZ"
-msgstr "XYZ"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1874
-msgid "LAB"
-msgstr "LAB"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1878
-msgid "LUV"
-msgstr "LUV"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1882
-msgid "YCbCr"
-msgstr "YCbCr"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1886
-msgid "Yxy"
-msgstr "Yxy"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1894
-msgid "Gray"
-msgstr "Kelabu"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1898
-msgid "HSV"
-msgstr "HSV"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1906
-msgid "CMY"
-msgstr "CMY"
-
-#. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-prefs.c:2096
-msgid "Yes"
-msgstr "Ya"
-
-#. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-prefs.c:2099
-msgid "No"
-msgstr "Tidak"
-
-#. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-prefs.c:2174 ../data/gcm-prefs.ui.h:29
-msgid "Delete this profile"
-msgstr "Hapus profil ini"
-
-#. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-prefs.c:2177
-msgid "This profile cannot be deleted"
-msgstr ""
-
-#. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/gcm-prefs.c:2250
-msgid "No hardware support"
-msgstr "Tak ada dukungan perangkat keras"
-
-#. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/gcm-prefs.c:2254 ../src/gcm-prefs.c:2521
-msgid "disconnected"
-msgstr "terputus"
-
-#. TRANSLATORS: the profile was of the wrong sort for this device
-#: ../src/gcm-prefs.c:2373
-#, fuzzy
-msgid "Could not import profile"
-msgstr "Profil Warna"
-
-#: ../src/gcm-prefs.c:2374
-msgid "The profile was of the wrong type for this device"
-msgstr ""
-
-#. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:2457
-msgid "Device added"
-msgstr "Perangkat ditambahkan"
-
-#. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:2461
-msgid "Device removed"
-msgstr "Perangkat dilepas"
-
-#. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3050 ../data/gcm-prefs.ui.h:37
-msgid "Display"
-msgstr "Tampilan"
-
-#. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3054
-msgid "Scanner"
-msgstr "Pemindai"
-
-#. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3058
-msgid "Printer"
-msgstr "Pencetak"
-
-#. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:3062
-msgid "Camera"
-msgstr "Kamera"
-
-#. TRANSLATORS: button for more details about the vcgt failure
-#: ../src/gcm-prefs.c:3413
-#, fuzzy
-msgid "More Information"
-msgstr "Informasi lebih"
-
-#. TRANSLATORS: button to install extra profiles
-#: ../src/gcm-prefs.c:3416
-msgid "Install now"
-msgstr "Pasang sekarang"
-
-#. TRANSLATORS: this is displayed while the devices are being probed
-#: ../src/gcm-prefs.c:3419
-msgid "Loading list of devices…"
-msgstr ""
-
-#. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/gcm-prefs.c:3426
-msgid ""
-"This profile does not have the information required for whole-screen color "
-"correction."
-msgstr ""
-
-#. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/gcm-prefs.c:3434
-msgid "More color profiles could be automatically installed."
-msgstr ""
-
-#. TRANSLATORS: this is where the ICC profile_lcms1 has no description
-#: ../src/gcm-profile.c:132
-#, fuzzy
-msgid "Missing description"
-msgstr "Keterangan belum ada"
-
 #. TRANSLATORS: button: this is to open GCM
-#: ../src/gcm-session.c:108
-#, fuzzy
+#: ../src/gcm-session.c:111
 msgid "Recalibrate now"
-msgstr "_Kalibrasikan"
+msgstr ""
 
 #. TRANSLATORS: button: this is to ignore the recalibrate notifications
-#: ../src/gcm-session.c:111
+#: ../src/gcm-session.c:114
 msgid "Ignore"
 msgstr "Abaikan"
 
 #. TRANSLATORS: this is when the device has not been recalibrated in a while
-#: ../src/gcm-session.c:138
-#, fuzzy
+#: ../src/gcm-session.c:141
 msgid "Recalibration required"
-msgstr "Kalibrasi"
+msgstr "Diperlukan kalibrasi ulang"
 
 #. TRANSLATORS: this is when the display has not been recalibrated in a while
-#: ../src/gcm-session.c:148
+#: ../src/gcm-session.c:151
 #, c-format
 msgid "The display '%s' should be recalibrated soon."
 msgstr ""
 
 #. TRANSLATORS: this is when the printer has not been recalibrated in a while
-#: ../src/gcm-session.c:155
+#: ../src/gcm-session.c:158
 #, c-format
 msgid "The printer '%s' should be recalibrated soon."
 msgstr ""
 
-#: ../src/gcm-session.c:683
+#: ../src/gcm-session.c:707
 #, fuzzy
 msgid "Do not exit after the request has been processed"
 msgstr "Jangan keluar setelah permintaan telah diproses"
 
 #. TRANSLATORS: program name, a session wide daemon to watch for updates and changing system state
-#: ../src/gcm-session.c:699 ../data/gcm-prefs.ui.h:15
+#: ../src/gcm-session.c:723 ../data/gcm-prefs.ui.h:13
 msgid "Color Management"
 msgstr "Manajemen Warna"
 
-#: ../src/gcm-session.c:701
-#, fuzzy
+#: ../src/gcm-session.c:725
 msgid "Color Management D-Bus Service"
-msgstr "Manajemen warna"
-
-#. TRANSLATORS: this is the profile creation date strftime format
-#: ../src/gcm-utils.c:594
-msgid "%B %e %Y, %I:%M:%S %p"
 msgstr ""
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:607
+#: ../src/gcm-utils.c:546
 msgid "Perceptual"
 msgstr ""
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:611
+#: ../src/gcm-utils.c:550
 msgid "Relative"
 msgstr "Relatif"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:615
+#: ../src/gcm-utils.c:554
 msgid "Saturation"
 msgstr "Saturasi"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:619
+#: ../src/gcm-utils.c:558
 msgid "Absolute"
 msgstr "Absolut"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:632
+#: ../src/gcm-utils.c:571
 msgid "High quality photography"
 msgstr ""
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:636
+#: ../src/gcm-utils.c:575
 msgid "Precise color matching"
 msgstr ""
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:640
+#: ../src/gcm-utils.c:579
 msgid "Graphs and presentations"
 msgstr ""
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:644
+#: ../src/gcm-utils.c:583
 msgid "Proofing devices"
+msgstr ""
+
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-utils.c:596 ../src/gcm-viewer.c:600 ../data/gcm-prefs.ui.h:50
+msgid "RGB"
+msgstr "RGB"
+
+#. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-utils.c:600 ../src/gcm-viewer.c:612 ../data/gcm-prefs.ui.h:10
+msgid "CMYK"
+msgstr "CMYK"
+
+#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#: ../src/gcm-viewer.c:289
+msgid "Permanently delete profile?"
+msgstr "Hapus permanen profil?"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-viewer.c:292
+msgid ""
+"Are you sure you want to remove this profile from your system permanently?"
+msgstr ""
+
+#. TRANSLATORS: button, delete a profile
+#: ../src/gcm-viewer.c:295
+msgid "Delete"
+msgstr "Hapus"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:542
+msgid "Input device"
+msgstr "Perangkat masukan"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:546
+msgid "Display device"
+msgstr "Perangkat tampilan"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:550
+msgid "Output device"
+msgstr "Perangkat keluaran"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:554
+msgid "Devicelink"
+msgstr ""
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:558
+msgid "Colorspace conversion"
+msgstr ""
+
+#. TRANSLATORS: this the ICC profile kind
+#: ../src/gcm-viewer.c:562
+msgid "Abstract"
+msgstr ""
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:566
+msgid "Named color"
+msgstr ""
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:580
+msgid "XYZ"
+msgstr "XYZ"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:584
+msgid "LAB"
+msgstr "LAB"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:588
+msgid "LUV"
+msgstr "LUV"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:592
+msgid "YCbCr"
+msgstr "YCbCr"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:596
+msgid "Yxy"
+msgstr "Yxy"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:604
+msgid "Gray"
+msgstr "Kelabu"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:608
+msgid "HSV"
+msgstr "HSV"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:616
+msgid "CMY"
+msgstr "CMY"
+
+#. TRANSLATORS: if the device has a VCGT profile
+#: ../src/gcm-viewer.c:771
+msgid "Yes"
+msgstr "Ya"
+
+#. TRANSLATORS: if the device has a VCGT profile
+#: ../src/gcm-viewer.c:774
+msgid "No"
+msgstr "Tidak"
+
+#. TRANSLATORS: this is the tooltip when the profile can be deleted
+#: ../src/gcm-viewer.c:851
+msgid "Delete this profile"
+msgstr "Hapus profil ini"
+
+#. TRANSLATORS: this is the tooltip when the profile cannot be deleted
+#: ../src/gcm-viewer.c:854
+msgid "This profile cannot be deleted"
+msgstr "Profil ini tidak dapat dihapus"
+
+#. TRANSLATORS: combo-entry, no graph selected to be shown
+#: ../src/gcm-viewer.c:1020
+msgid "None"
+msgstr "Nihil"
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...)
+#: ../src/gcm-viewer.c:1023
+msgid "CIE 1931 xy"
+msgstr ""
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out)
+#: ../src/gcm-viewer.c:1026
+msgid "Transfer response curve"
+msgstr ""
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card)
+#: ../src/gcm-viewer.c:1029
+msgid "Video card gamma table"
+msgstr ""
+
+#. TRANSLATORS: combo-entry, this is a preview image of what the profile looks like
+#: ../src/gcm-viewer.c:1032
+msgid "Image preview (input)"
+msgstr ""
+
+#: ../src/gcm-viewer.c:1033
+msgid "Image preview (output)"
 msgstr ""
 
 #: ../data/gcm-calibrate.ui.h:1
 msgid "Blue:"
 msgstr "Biru:"
 
-#: ../data/gcm-calibrate.ui.h:2 ../data/gcm-prefs.ui.h:10
+#: ../data/gcm-calibrate.ui.h:2 ../data/gcm-prefs.ui.h:9
 msgid "Brightness:"
 msgstr "Kecerahan:"
 
@@ -1780,7 +1660,7 @@ msgstr ""
 
 #: ../data/gcm-calibrate.ui.h:21
 msgid "Projector"
-msgstr ""
+msgstr "Proyektor"
 
 #: ../data/gcm-calibrate.ui.h:22
 msgid "Red:"
@@ -1790,46 +1670,50 @@ msgstr "Merah:"
 msgid "precision"
 msgstr "presisi"
 
-#. Window title, where the user can pick spot colors using a measuring device
+#. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:2
+msgid "Ambient:"
+msgstr ""
+
+#. Window title, where the user can pick spot colors using a measuring device
+#: ../data/gcm-picker.ui.h:4
 msgid "Color Picker"
 msgstr "Pemilih Warna"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#. The profile colorspace, e.g. RGB
-#: ../data/gcm-picker.ui.h:4 ../data/gcm-prefs.ui.h:19
+#: ../data/gcm-picker.ui.h:6
 #, fuzzy
 msgid "Colorspace:"
 msgstr "Ruang warna"
 
 #. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:6
+#: ../data/gcm-picker.ui.h:8
 msgid "Error:"
 msgstr "Galat:"
 
 #. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:8
+#: ../data/gcm-picker.ui.h:10
 msgid "Lab (D50):"
 msgstr "Lab (D50):"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. What mode to use for display rendering intent
-#: ../data/gcm-picker.ui.h:10 ../data/gcm-prefs.ui.h:71
+#: ../data/gcm-picker.ui.h:12 ../data/gcm-prefs.ui.h:52
 msgid "RGB:"
 msgstr "RGB:"
 
 #. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:12
+#: ../data/gcm-picker.ui.h:14
 msgid "Results"
 msgstr "Hasil"
 
 #. the color representation
-#: ../data/gcm-picker.ui.h:14
+#: ../data/gcm-picker.ui.h:16
 msgid "XYZ:"
 msgstr "XYZ:"
 
 #. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:16
+#: ../data/gcm-picker.ui.h:18
 msgid "_Measure"
 msgstr "_Ukur"
 
@@ -1849,265 +1733,231 @@ msgstr ""
 msgid "Add a color profile to be used for this device"
 msgstr "Menjangkitkan profil warna ICC yang dapat dipakai dengan layar ini."
 
-#: ../data/gcm-prefs.ui.h:4
-#, fuzzy
-msgid "Add a new color profile"
-msgstr "Kelola profil warna ICC"
-
 #. This is a button to add a virtual device
-#: ../data/gcm-prefs.ui.h:6
-msgid "Add d_evice&#x2026;"
-msgstr ""
+#: ../data/gcm-prefs.ui.h:5
+msgid "Add d_evice…"
+msgstr "Tambah p_erangkat..."
 
-#: ../data/gcm-prefs.ui.h:7
+#: ../data/gcm-prefs.ui.h:6
 msgid "Adds a virtual device that is not connected."
 msgstr ""
 
 #. Profiles that can be added to the device
-#: ../data/gcm-prefs.ui.h:9
-#, fuzzy
+#: ../data/gcm-prefs.ui.h:8
 msgid "Available Profiles"
-msgstr "Profil Warna"
+msgstr "Profil yang Tersedia"
 
 #. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:13
+#: ../data/gcm-prefs.ui.h:12
 msgid "CMYK:"
 msgstr "CMYK:"
 
-#: ../data/gcm-prefs.ui.h:14
-msgid "Close this dialog"
-msgstr ""
+#. Section heading for device profile settings
+#: ../data/gcm-prefs.ui.h:15
+msgid "Color Profiles"
+msgstr "Profil Warna"
 
-#: ../data/gcm-prefs.ui.h:20
+#: ../data/gcm-prefs.ui.h:16
 msgid "Contrast:"
 msgstr "Kontras:"
 
 #. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
-#: ../data/gcm-prefs.ui.h:22
+#: ../data/gcm-prefs.ui.h:18
 msgid "Create _Profile"
 msgstr "Buat _Profil"
 
-#: ../data/gcm-prefs.ui.h:23
+#: ../data/gcm-prefs.ui.h:19
 msgid "Create a profile for the device"
-msgstr ""
-
-#. When the profile was created
-#: ../data/gcm-prefs.ui.h:25
-msgid "Created:"
-msgstr "Dibuat:"
+msgstr "Membuat profil untuk perangkat"
 
 #. Tab title, system wide defaults to use
-#: ../data/gcm-prefs.ui.h:27
+#: ../data/gcm-prefs.ui.h:21
 msgid "Defaults"
 msgstr "Bawaan"
 
-#: ../data/gcm-prefs.ui.h:28
+#: ../data/gcm-prefs.ui.h:22
 msgid ""
 "Delete the disconnected device - if you reconnect the device it will "
 "reappear in the list"
 msgstr ""
 
-#. The manufacturer of the profile
-#: ../data/gcm-prefs.ui.h:31
-msgid "Device manufacturer:"
-msgstr ""
-
-#. The manufacturer of the profile
-#: ../data/gcm-prefs.ui.h:33
-msgid "Device model:"
-msgstr ""
-
-#: ../data/gcm-prefs.ui.h:34
+#: ../data/gcm-prefs.ui.h:23
 msgid "Device type:"
 msgstr "Tipe perangkat:"
 
 #. Tab title, currently connected or saved devices
-#: ../data/gcm-prefs.ui.h:36
+#: ../data/gcm-prefs.ui.h:25
 msgid "Devices"
 msgstr "Perangkat"
 
-#. If the profile contains a display correction table
-#: ../data/gcm-prefs.ui.h:39
-msgid "Display correction:"
-msgstr ""
-
 #. What mode to use for display rendering intent
-#: ../data/gcm-prefs.ui.h:41
+#: ../data/gcm-prefs.ui.h:28
 msgid "Display:"
 msgstr "Tampilan:"
 
-#. The file size in bytes of the profile
-#: ../data/gcm-prefs.ui.h:45
-msgid "File size:"
-msgstr "Ukuran berkas:"
+#: ../data/gcm-prefs.ui.h:29
+msgid "Do full screen correction"
+msgstr ""
 
-#. The basename (the last section of the filename) of the profile
-#: ../data/gcm-prefs.ui.h:47
-msgid "Filename:"
-msgstr "Nama berkas:"
+#. The EISA (standards body) identifier of the device
+#: ../data/gcm-prefs.ui.h:31
+msgid "EISA ID:"
+msgstr "ID EISA:"
 
 #. Settings that users don't normally have to touch
-#: ../data/gcm-prefs.ui.h:49
-#, fuzzy
+#: ../data/gcm-prefs.ui.h:33
 msgid "Fine tuning"
-msgstr "Penalaan halus:"
+msgstr "Tala halus"
 
-#: ../data/gcm-prefs.ui.h:51
+#: ../data/gcm-prefs.ui.h:34
+msgid "Gamma:"
+msgstr "Gamma:"
+
+#: ../data/gcm-prefs.ui.h:35
 msgid ""
 "Image files can be dragged on this window to auto-complete the above fields."
 msgstr ""
 
-#. The licence of the profile, normally non-free
-#: ../data/gcm-prefs.ui.h:53
-msgid "License:"
-msgstr "Lisensi:"
-
-#: ../data/gcm-prefs.ui.h:54
+#: ../data/gcm-prefs.ui.h:36
 msgid "Make the selected profile the default profile"
 msgstr ""
 
 #. The manufacturer of the device
-#: ../data/gcm-prefs.ui.h:56
+#: ../data/gcm-prefs.ui.h:38
 msgid "Manufacturer:"
-msgstr ""
+msgstr "Pabrik:"
 
 #. The model of the device
-#: ../data/gcm-prefs.ui.h:58
+#: ../data/gcm-prefs.ui.h:40
 msgid "Model:"
 msgstr "Model:"
 
-#: ../data/gcm-prefs.ui.h:59
+#: ../data/gcm-prefs.ui.h:41
 msgid "More details"
 msgstr "Lebih terinci"
 
 #. Some profiles are not compatible with some devices
-#: ../data/gcm-prefs.ui.h:61
+#: ../data/gcm-prefs.ui.h:43
 msgid "Only profiles that are compatible with the device will be listed above."
 msgstr ""
+"Hanya profil yang cocok dengan perangkat yang ditampilkan dalam daftar di "
+"atas."
 
-#: ../data/gcm-prefs.ui.h:62
+#: ../data/gcm-prefs.ui.h:44
 msgid "Open the documentation"
-msgstr ""
+msgstr "Membuka dokumentasi"
 
-#: ../data/gcm-prefs.ui.h:63
-msgid "Profile Graphs"
-msgstr ""
+#. Button to view installed profiles
+#: ../data/gcm-prefs.ui.h:46
+msgid "Pr_ofile Viewer"
+msgstr "Penampil Pr_ofil"
 
-#. The type of profile, e.g. display, scanner, etc.
-#: ../data/gcm-prefs.ui.h:65
-msgid "Profile type:"
-msgstr ""
+#. The rendering intent for the print preview
+#: ../data/gcm-prefs.ui.h:48
+msgid "Print Preview:"
+msgstr "Pratinjau Cetak:"
 
-#. Tab title, currently installed profiles
-#: ../data/gcm-prefs.ui.h:67
-msgid "Profiles"
-msgstr "Profil"
-
-#: ../data/gcm-prefs.ui.h:68
+#: ../data/gcm-prefs.ui.h:49
 msgid ""
 "Program the video card with the adjusted color values so all windows are "
 "color corrected"
 msgstr ""
 
-#: ../data/gcm-prefs.ui.h:72
+#: ../data/gcm-prefs.ui.h:53
 msgid "Remove a color profile for this device"
-msgstr ""
+msgstr "Menghapus profil warna dari perangkat ini"
 
 #. This is a button to delete the saved or virtual device
-#: ../data/gcm-prefs.ui.h:74
+#: ../data/gcm-prefs.ui.h:55
 msgid "Remove de_vice"
-msgstr ""
+msgstr "_Hapus perangkat"
 
-#: ../data/gcm-prefs.ui.h:75
+#: ../data/gcm-prefs.ui.h:56
 msgid "Rendering intent"
 msgstr ""
 
 #. This resets the device to it's defaults, and removes any user tweaked settings.
-#: ../data/gcm-prefs.ui.h:77
+#: ../data/gcm-prefs.ui.h:58
 msgid "Rese_t"
-msgstr ""
+msgstr "A_tur Ulang"
 
-#: ../data/gcm-prefs.ui.h:78
+#: ../data/gcm-prefs.ui.h:59
 msgid "Reset the sliders to the default values"
-msgstr ""
+msgstr "Mengembalikan ke nilai baku"
 
-#: ../data/gcm-prefs.ui.h:79
+#: ../data/gcm-prefs.ui.h:60
 msgid "Save these profiles for all users"
-msgstr ""
+msgstr "Menyimpan profil ini untuk semua pengguna"
 
-#: ../data/gcm-prefs.ui.h:82
+#. The serial number of the device
+#: ../data/gcm-prefs.ui.h:62
+msgid "Serial number:"
+msgstr "Nomor seri:"
+
+#: ../data/gcm-prefs.ui.h:63
 msgid ""
 "Set a property on the system so applications use the default display profile"
 msgstr ""
 
-#: ../data/gcm-prefs.ui.h:83
+#: ../data/gcm-prefs.ui.h:64
 msgid "Set profile for _color managed applications"
 msgstr ""
 
-#. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:85
-msgid "Softproof:"
-msgstr ""
-
-#: ../data/gcm-prefs.ui.h:86
+#: ../data/gcm-prefs.ui.h:65
 msgid ""
 "The rendering intent defines how color should be transformed from one "
 "colorspace to another."
 msgstr ""
 
-#: ../data/gcm-prefs.ui.h:87
+#: ../data/gcm-prefs.ui.h:66
 msgid "The rendering intent is how one gamut size is mapped to another."
 msgstr ""
 
-#: ../data/gcm-prefs.ui.h:88
+#: ../data/gcm-prefs.ui.h:67
 msgid ""
 "The rendering intent to use when transforming from the image gamut to the "
 "device output gamut"
 msgstr ""
 
-#: ../data/gcm-prefs.ui.h:89
+#: ../data/gcm-prefs.ui.h:68
 msgid ""
 "The rendering intent to use when transforming from the image gamut to the "
 "display gamut"
 msgstr ""
 
-#: ../data/gcm-prefs.ui.h:90
+#: ../data/gcm-prefs.ui.h:69
 msgid "These settings control how color management is applied to your desktop."
 msgstr ""
 
-#: ../data/gcm-prefs.ui.h:91
+#: ../data/gcm-prefs.ui.h:70
+msgid ""
+"This enables full screen color management which requires a modern 3D "
+"graphics card with hardware shader support. This option may increase CPU "
+"load and will increase the amount of power this computer uses."
+msgstr ""
+
+#: ../data/gcm-prefs.ui.h:71
 msgid "This is the default CMYK working space to use in applications"
 msgstr ""
 
-#: ../data/gcm-prefs.ui.h:92
+#: ../data/gcm-prefs.ui.h:72
 msgid "This is the default RGB working space to use in applications"
 msgstr ""
 
-#: ../data/gcm-prefs.ui.h:93
+#: ../data/gcm-prefs.ui.h:73
 msgid "Working space"
 msgstr ""
 
-#: ../data/gcm-prefs.ui.h:94
-msgid "_Add&#x2026;"
-msgstr ""
-
-#: ../data/gcm-prefs.ui.h:95
-msgid "_Apply display correction"
+#: ../data/gcm-prefs.ui.h:74
+msgid "_Apply basic display correction"
 msgstr ""
 
 #. Makes the profile the default for the device
-#: ../data/gcm-prefs.ui.h:97
-#, fuzzy
+#: ../data/gcm-prefs.ui.h:76
 msgid "_Make Default"
 msgstr "Jadikan Baku"
 
-#: ../data/gcm-prefs.ui.h:98
-#, fuzzy
-msgid "_Remove"
-msgstr "_Hapus"
-
 #. This is when the settings are set for all users, unless they have per-user settings themselves
-#: ../data/gcm-prefs.ui.h:100
-#, fuzzy
+#: ../data/gcm-prefs.ui.h:78
 msgid "_Set System Default"
-msgstr "_Kembalikan ke baku"
+msgstr "Jadikan Baku _Sistem"
