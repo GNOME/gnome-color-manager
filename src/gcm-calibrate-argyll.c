@@ -80,6 +80,8 @@ struct _GcmCalibrateArgyllPrivate
 	GcmCalibrateArgyllState		 state;
 	GcmPrint			*print;
 	const gchar			*argyllcms_ok;
+	guint				 terminal_child_exited_id;
+	guint				 terminal_cursor_moved_id;
 };
 
 enum {
@@ -2723,10 +2725,12 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 	/* add vte widget */
 	calibrate_argyll->priv->terminal = vte_terminal_new ();
 	vte_terminal_set_size (VTE_TERMINAL(calibrate_argyll->priv->terminal), 80, 10);
-	g_signal_connect (calibrate_argyll->priv->terminal, "child-exited",
-			  G_CALLBACK (gcm_calibrate_argyll_exit_cb), calibrate_argyll);
-	g_signal_connect (calibrate_argyll->priv->terminal, "cursor-moved",
-			  G_CALLBACK (gcm_calibrate_argyll_cursor_moved_cb), calibrate_argyll);
+	calibrate_argyll->priv->terminal_child_exited_id =
+		g_signal_connect (calibrate_argyll->priv->terminal, "child-exited",
+				G_CALLBACK (gcm_calibrate_argyll_exit_cb), calibrate_argyll);
+	calibrate_argyll->priv->terminal_cursor_moved_id =
+		g_signal_connect (calibrate_argyll->priv->terminal, "cursor-moved",
+				G_CALLBACK (gcm_calibrate_argyll_cursor_moved_cb), calibrate_argyll);
 	gcm_calibrate_dialog_pack_details (calibrate_argyll->priv->calibrate_dialog,
 					   calibrate_argyll->priv->terminal);
 }
@@ -2748,6 +2752,10 @@ gcm_calibrate_argyll_finalize (GObject *object)
 		/* wait until child has quit */
 		g_main_loop_run (priv->loop);
 	}
+
+	/* disconnect */
+	g_signal_handler_disconnect (priv->terminal, priv->terminal_child_exited_id);
+	g_signal_handler_disconnect (priv->terminal, priv->terminal_cursor_moved_id);
 
 	/* hide */
 	gcm_calibrate_dialog_hide (priv->calibrate_dialog);
