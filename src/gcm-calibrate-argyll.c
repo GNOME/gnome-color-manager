@@ -381,7 +381,7 @@ gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll, gchar *
 					      &priv->child_pid, error);
 #else
 	priv->child_pid = vte_terminal_fork_command (VTE_TERMINAL(priv->terminal),
-						     argv[0], argv, NULL,
+						     argv[0], &argv[1], NULL,
 						     working_directory,
 						     FALSE, FALSE, FALSE);
 	ret = (priv->child_pid > 0);
