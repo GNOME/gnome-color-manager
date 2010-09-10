@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager\n"
-"POT-Creation-Date: 2010-08-06 10:53+0000\n"
-"PO-Revision-Date: 2010-08-06 13:46+0100\n"
+"POT-Creation-Date: 2010-09-06 11:23+0000\n"
+"PO-Revision-Date: 2010-09-10 20:07+0100\n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian <gnome-si@googlegroups.com>\n"
 "MIME-Version: 1.0\n"
@@ -44,6 +44,16 @@ msgstr "Barva"
 msgid "Manage ICC color profiles"
 msgstr "Upravljanje barvnih profilov ICC"
 
+#. TRANSLATORS: this is where the ICC profile has no description
+#: ../libcolor-glib/gcm-profile.c:176
+msgid "Missing description"
+msgstr "Manjka opis"
+
+#. TRANSLATORS: this is the profile creation date strftime format
+#: ../libcolor-glib/gcm-profile.c:582
+msgid "%B %e %Y, %I:%M:%S %p"
+msgstr "%e.%m.%Y, %H.%M.%S"
+
 #: ../policy/org.gnome.color.policy.in.h:1
 msgid "Authentication is required to install the color profile for all users"
 msgstr "Za namestitev barvnega profila za vse uporabnike je zahtevana overitev"
@@ -59,34 +69,6 @@ msgstr "Za namestitev barvnega profila za vse uporabnike je zahtevana overitev"
 #: ../policy/org.gnome.color.policy.in.h:10
 msgid "Install system color profiles"
 msgstr "Namestitev sistemskih barvnih profilov"
-
-#. TRANSLATORS: turn on all debugging
-#: ../src/egg-debug.c:390
-msgid "Show debugging information for all files"
-msgstr "Pokaži podrobnosti razhroščevanja za vse datoteke"
-
-#. TRANSLATORS: a list of modules to debug
-#: ../src/egg-debug.c:461
-msgid "Debug these specific modules"
-msgstr "Razhroščevanje določenih modulov"
-
-#. TRANSLATORS: a list of functions to debug
-#: ../src/egg-debug.c:464
-msgid "Debug these specific functions"
-msgstr "Razhroščevanje določenih funkcij"
-
-#. TRANSLATORS: save to a log
-#: ../src/egg-debug.c:467
-msgid "Log debugging data to a file"
-msgstr "Beleži podatke razhroščevalnika v datoteko"
-
-#: ../src/egg-debug.c:471
-msgid "Debugging Options"
-msgstr "Možnosti razhroščevalnika"
-
-#: ../src/egg-debug.c:471
-msgid "Show debugging options"
-msgstr "Pokaži možnosti razhroščevanja"
 
 #. TRANSLATORS: could not save for all users
 #: ../src/cc-color-panel.c:154
@@ -166,12 +148,12 @@ msgstr "Dodajanje navidezne naprave je spodletelo"
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
 #: ../src/cc-color-panel.c:699
 msgid "Install calibration and profiling software?"
-msgstr "Ali naj bo program za umerjanje in profiliranje nameščen?"
+msgstr "Ali naj se namesti programska oprema za umerjanje in ustvarjanje profilov?"
 
 #. TRANSLATORS: dialog message saying the argyllcms is not installed
 #: ../src/cc-color-panel.c:703
 msgid "Calibration and profiling software is not installed."
-msgstr "Program za umerjanje ni nameščen."
+msgstr "Programska oprema za umerjanje in ustvarjanje profilov ni nameščena."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
 #: ../src/cc-color-panel.c:705
@@ -342,6 +324,34 @@ msgstr "Ta profil nima zahtevanih podatkov za popravljanje barve celega zaslona.
 msgid "More color profiles could be automatically installed."
 msgstr "Več barvnih profilov je mogoče namestiti samodejno."
 
+#. TRANSLATORS: turn on all debugging
+#: ../src/egg-debug.c:390
+msgid "Show debugging information for all files"
+msgstr "Pokaži podrobnosti razhroščevanja za vse datoteke"
+
+#. TRANSLATORS: a list of modules to debug
+#: ../src/egg-debug.c:461
+msgid "Debug these specific modules"
+msgstr "Razhroščevanje določenih modulov"
+
+#. TRANSLATORS: a list of functions to debug
+#: ../src/egg-debug.c:464
+msgid "Debug these specific functions"
+msgstr "Razhroščevanje določenih funkcij"
+
+#. TRANSLATORS: save to a log
+#: ../src/egg-debug.c:467
+msgid "Log debugging data to a file"
+msgstr "Beleži podatke razhroščevalnika v datoteko"
+
+#: ../src/egg-debug.c:471
+msgid "Debugging Options"
+msgstr "Možnosti razhroščevalnika"
+
+#: ../src/egg-debug.c:471
+msgid "Show debugging options"
+msgstr "Pokaži možnosti razhroščevanja"
+
 #. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
 #: ../src/gcm-apply.c:54
 msgid "Do not attempt to clear previously applied settings"
@@ -379,11 +389,13 @@ msgstr "Ustvarjanje popravkov, ki bodo izmerjeni z napravo za merjenje barv."
 
 #. TRANSLATORS: title, drawing means painting to the screen
 #: ../src/gcm-calibrate-argyll.c:750
+#: ../src/gcm-calibrate-native.c:377
 msgid "Drawing the patches"
 msgstr "Izris popravkov"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:752
+#: ../src/gcm-calibrate-native.c:380
 msgid "Drawing the generated patches to the screen, which will then be measured by the hardware device."
 msgstr "Izris ustvarjenih popravkov na zaslon, ki bodo izmerjeni s strojno napravo."
 
@@ -442,11 +454,13 @@ msgstr "Nastavljanje naprave zaslona za uporabo ..."
 
 #. TRANSLATORS: title, setting up the photospectromiter
 #: ../src/gcm-calibrate-argyll.c:1465
+#: ../src/gcm-calibrate-native.c:408
 msgid "Setting up device"
 msgstr "Nastavljanje naprave"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:1467
+#: ../src/gcm-calibrate-native.c:410
 msgid "Setting up the device to read a spot color…"
 msgstr "Nastavljanje naprave za branje točke barve ..."
 
@@ -502,16 +516,19 @@ msgstr "Nastavljanje naprave za uporabo ..."
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
 #: ../src/gcm-calibrate-argyll.c:2278
+#: ../src/gcm-calibrate-native.c:333
 msgid "Please attach instrument"
 msgstr "Pripnite napravo"
 
 #. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
 #: ../src/gcm-calibrate-argyll.c:2286
+#: ../src/gcm-calibrate-native.c:341
 msgid "Please attach the measuring instrument to the center of the screen on the gray square like the image below."
 msgstr "Pripnite merilno napravo na siv kvadrat v središču zaslona kot na sliki spodaj."
 
 #. TRANSLATORS: dialog message, ask user to attach device
 #: ../src/gcm-calibrate-argyll.c:2289
+#: ../src/gcm-calibrate-native.c:344
 msgid "Please attach the measuring instrument to the center of the screen on the gray square."
 msgstr "Pripnite merilno napravo na siv kvadrat v središču zaslona."
 
@@ -519,6 +536,7 @@ msgstr "Pripnite merilno napravo na siv kvadrat v središču zaslona."
 #: ../src/gcm-calibrate-argyll.c:2302
 #: ../src/gcm-calibrate-argyll.c:2356
 #: ../src/gcm-calibrate-argyll.c:2411
+#: ../src/gcm-calibrate-native.c:358
 msgid "Continue"
 msgstr "Nadaljuj"
 
@@ -541,7 +559,7 @@ msgstr "Nastavite merilno napravo na način umerjanja."
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
 #: ../src/gcm-calibrate-argyll.c:2398
 msgid "Please set the measuring instrument to screen mode like the image below."
-msgstr "Nastavite merilno napravo na način zaslona kot na sliki spodaj."
+msgstr "Nastavite merilno napravo na način umerjanja kot je prikazano na sliki spodaj."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
 #: ../src/gcm-calibrate-argyll.c:2401
@@ -1166,7 +1184,7 @@ msgstr "Barvni prostor CMYK:"
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:575
 msgid "Show xserver properties"
-msgstr "Pokaži lastnosti strežnika xserver"
+msgstr "Pokaži lastnosti xserver"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:578
@@ -1201,7 +1219,7 @@ msgstr "Preiskovalni program EDID"
 #. TRANSLATORS: this is when the user does --type=mickeymouse
 #: ../src/gcm-inspect.c:622
 msgid "Device or profile type not recognized, recognised types are:"
-msgstr "Vrsta naprave ali profila ni prepoznana. Ustrezne vrste so:"
+msgstr "Vrsta naprave oziroma vrsta profila nista prepoznana; ustrezne vrste so:"
 
 #. command line argument, the ID of the device
 #: ../src/gcm-install-system-wide.c:123
@@ -1308,161 +1326,6 @@ msgstr "Določi glavno okno kot vedno na vrhu"
 msgid "GNOME Color Manager Color Picker"
 msgstr "Izbirnik barv upravljalnika barv GNOME"
 
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:289
-msgid "Permanently delete profile?"
-msgstr "Ali naj se trajno izbriše profil?"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:292
-msgid "Are you sure you want to remove this profile from your system permanently?"
-msgstr "Ali ste prepričani, da želite ta profil trajno odstraniti s sistema?"
-
-#. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:295
-msgid "Delete"
-msgstr "Izbriši"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:542
-msgid "Input device"
-msgstr "Vhodna naprava"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:546
-msgid "Display device"
-msgstr "Naprava zaslona"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:550
-msgid "Output device"
-msgstr "Odvodna naprava"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:554
-msgid "Devicelink"
-msgstr "Povezava naprave"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:558
-msgid "Colorspace conversion"
-msgstr "Pretvorba barvnega prostora"
-
-#. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:562
-msgid "Abstract"
-msgstr "Izvleček"
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:566
-msgid "Named color"
-msgstr "Imenovana barva"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:580
-msgid "XYZ"
-msgstr "XYZ"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:584
-msgid "LAB"
-msgstr "LAB"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:588
-msgid "LUV"
-msgstr "LUV"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:592
-msgid "YCbCr"
-msgstr "YCbCr"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:596
-msgid "Yxy"
-msgstr "Yxy"
-
-#. TRANSLATORS: this the ICC colorspace type
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#: ../src/gcm-viewer.c:600
-#: ../src/gcm-utils.c:596
-#: ../data/gcm-prefs.ui.h:50
-msgid "RGB"
-msgstr "RGB"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:604
-msgid "Gray"
-msgstr "Siva"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:608
-msgid "HSV"
-msgstr "HSV"
-
-#. TRANSLATORS: this the ICC colorspace type
-#. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
-#: ../src/gcm-viewer.c:612
-#: ../src/gcm-utils.c:600
-#: ../data/gcm-prefs.ui.h:10
-msgid "CMYK"
-msgstr "CMYK"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:616
-msgid "CMY"
-msgstr "CMY"
-
-#. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:771
-msgid "Yes"
-msgstr "Da"
-
-#. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:774
-msgid "No"
-msgstr "Ne"
-
-#. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:851
-msgid "Delete this profile"
-msgstr "Izbriši ta profil"
-
-#. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:854
-msgid "This profile cannot be deleted"
-msgstr "Profila ni mogoče izbrisati"
-
-#. TRANSLATORS: combo-entry, no graph selected to be shown
-#: ../src/gcm-viewer.c:1020
-msgid "None"
-msgstr "Brez"
-
-#. TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...)
-#: ../src/gcm-viewer.c:1023
-msgid "CIE 1931 xy"
-msgstr "CIE 1931 xy"
-
-#. TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out)
-#: ../src/gcm-viewer.c:1026
-msgid "Transfer response curve"
-msgstr "Krivulja prenosa odzivnosti"
-
-#. TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card)
-#: ../src/gcm-viewer.c:1029
-msgid "Video card gamma table"
-msgstr "Gama preglednica grafične kartice"
-
-#. TRANSLATORS: combo-entry, this is a preview image of what the profile looks like
-#: ../src/gcm-viewer.c:1032
-msgid "Image preview (input)"
-msgstr "Predogled slike (dovod)"
-
-#: ../src/gcm-viewer.c:1033
-msgid "Image preview (output)"
-msgstr "Predogled slike (odvod)."
-
 #. TRANSLATORS: button: this is to open GCM
 #: ../src/gcm-session.c:111
 msgid "Recalibrate now"
@@ -1544,15 +1407,160 @@ msgstr "Grafi in predstavitve"
 msgid "Proofing devices"
 msgstr "Preverjanje naprav"
 
-#. TRANSLATORS: this is where the ICC profile has no description
-#: ../libcolor-glib/gcm-profile.c:176
-msgid "Missing description"
-msgstr "Manjka opis"
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-utils.c:596
+#: ../src/gcm-viewer.c:600
+#: ../data/gcm-prefs.ui.h:50
+msgid "RGB"
+msgstr "RGB"
 
-#. TRANSLATORS: this is the profile creation date strftime format
-#: ../libcolor-glib/gcm-profile.c:582
-msgid "%B %e %Y, %I:%M:%S %p"
-msgstr "%e.%m.%Y, %H.%M.%S"
+#. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-utils.c:600
+#: ../src/gcm-viewer.c:612
+#: ../data/gcm-prefs.ui.h:10
+msgid "CMYK"
+msgstr "CMYK"
+
+#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#: ../src/gcm-viewer.c:289
+msgid "Permanently delete profile?"
+msgstr "Ali naj se trajno izbriše profil?"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-viewer.c:292
+msgid "Are you sure you want to remove this profile from your system permanently?"
+msgstr "Ali ste prepričani, da želite ta profil trajno odstraniti s sistema?"
+
+#. TRANSLATORS: button, delete a profile
+#: ../src/gcm-viewer.c:295
+msgid "Delete"
+msgstr "Izbriši"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:542
+msgid "Input device"
+msgstr "Vhodna naprava"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:546
+msgid "Display device"
+msgstr "Naprava zaslona"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:550
+msgid "Output device"
+msgstr "Odvodna naprava"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:554
+msgid "Devicelink"
+msgstr "Povezava naprave"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:558
+msgid "Colorspace conversion"
+msgstr "Pretvorba barvnega prostora"
+
+#. TRANSLATORS: this the ICC profile kind
+#: ../src/gcm-viewer.c:562
+msgid "Abstract"
+msgstr "Izvleček"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:566
+msgid "Named color"
+msgstr "Imenovana barva"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:580
+msgid "XYZ"
+msgstr "XYZ"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:584
+msgid "LAB"
+msgstr "LAB"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:588
+msgid "LUV"
+msgstr "LUV"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:592
+msgid "YCbCr"
+msgstr "YCbCr"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:596
+msgid "Yxy"
+msgstr "Yxy"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:604
+msgid "Gray"
+msgstr "Siva"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:608
+msgid "HSV"
+msgstr "HSV"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:616
+msgid "CMY"
+msgstr "CMY"
+
+#. TRANSLATORS: if the device has a VCGT profile
+#: ../src/gcm-viewer.c:771
+msgid "Yes"
+msgstr "Da"
+
+#. TRANSLATORS: if the device has a VCGT profile
+#: ../src/gcm-viewer.c:774
+msgid "No"
+msgstr "Ne"
+
+#. TRANSLATORS: this is the tooltip when the profile can be deleted
+#: ../src/gcm-viewer.c:851
+msgid "Delete this profile"
+msgstr "Izbriši profil"
+
+#. TRANSLATORS: this is the tooltip when the profile cannot be deleted
+#: ../src/gcm-viewer.c:854
+msgid "This profile cannot be deleted"
+msgstr "Profila ni mogoče izbrisati"
+
+#. TRANSLATORS: combo-entry, no graph selected to be shown
+#: ../src/gcm-viewer.c:1020
+msgid "None"
+msgstr "Brez"
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...)
+#: ../src/gcm-viewer.c:1023
+msgid "CIE 1931 xy"
+msgstr "CIE 1931 xy"
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out)
+#: ../src/gcm-viewer.c:1026
+msgid "Transfer response curve"
+msgstr "Krivulja prenosa odzivnosti"
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card)
+#: ../src/gcm-viewer.c:1029
+msgid "Video card gamma table"
+msgstr "Gama preglednica grafične kartice"
+
+#. TRANSLATORS: combo-entry, this is a preview image of what the profile looks like
+#: ../src/gcm-viewer.c:1032
+msgid "Image preview (input)"
+msgstr "Predogled slike (dovod)"
+
+#: ../src/gcm-viewer.c:1033
+msgid "Image preview (output)"
+msgstr "Predogled slike (odvod)."
 
 #: ../data/gcm-calibrate.ui.h:1
 msgid "Blue:"
@@ -1799,7 +1807,7 @@ msgstr "Odpri dokumentacijo"
 #. Button to view installed profiles
 #: ../data/gcm-prefs.ui.h:46
 msgid "Pr_ofile Viewer"
-msgstr "Pregledovalnik _profila"
+msgstr "Pregledovalnik profilov"
 
 #. The rendering intent for the print preview
 #: ../data/gcm-prefs.ui.h:48
@@ -1847,7 +1855,7 @@ msgstr "Nastavitev lastnosti sistema, tako da lahko programi uporabijo privzet p
 
 #: ../data/gcm-prefs.ui.h:64
 msgid "Set profile for _color managed applications"
-msgstr "_Nastavi profil za barvno upravljane programe"
+msgstr "Nastavi profil za _barvno upravljane programe"
 
 #: ../data/gcm-prefs.ui.h:65
 msgid "The rendering intent defines how color should be transformed from one colorspace to another."
@@ -1887,7 +1895,7 @@ msgstr "Delovni prostor"
 
 #: ../data/gcm-prefs.ui.h:74
 msgid "_Apply basic display correction"
-msgstr "_Uveljavi osnovne popravke zaslona"
+msgstr "Uporabi _splošno popravljanje zaslona"
 
 #. Makes the profile the default for the device
 #: ../data/gcm-prefs.ui.h:76
@@ -1897,5 +1905,201 @@ msgstr "Naredi _privzeto"
 #. This is when the settings are set for all users, unless they have per-user settings themselves
 #: ../data/gcm-prefs.ui.h:78
 msgid "_Set System Default"
-msgstr "_Nastavi sistemsko privzeto"
+msgstr "_Nastavi privzete vrednosti"
+
+#~ msgid "ICC profile installer"
+#~ msgstr "Namestitveni program profilov ICC"
+#~ msgid ""
+#~ "Gamma is adjusted to affect the color of the attached monitor. "
+#~ "Traditionally Linux has used a gamma value of 1.0, but this makes "
+#~ "monitors look washed out compared Windows XP or OS X. Apple traditionally "
+#~ "used a value of 1.8 for a long time, but now use the same value as "
+#~ "Microsoft. Microsoft has always used a value of 2.2."
+#~ msgstr ""
+#~ "Vrednost gama je prilagojena barvi priklopljenega zaslona. Linux sistem "
+#~ "uporablja vrednost gama 1,0, kar da občutek izpranosti zaslona v "
+#~ "primerjavi z videzom Windows XP ali OSX. Apple uporablja vrednost 1,8, po "
+#~ "novem pa uporablja enako vrednost kot Microsoft Windows, torej vrednost "
+#~ "2,2."
+#~ msgid ""
+#~ "If set to TRUE then external disks are searched for device ICC profiles "
+#~ "at startup, for instance looking in the OSX library folder or Windows XP "
+#~ "system folders. This may increase startup time if disks need to be spun "
+#~ "up to be searched."
+#~ msgstr ""
+#~ "V kolikor je možnost izbrana, bodo preiskani zunanji diski za profile "
+#~ "naprav ICC ob zagonu. Iskanje poteka v mapi knjižnic OSX in na XP "
+#~ "sistemu, če je ta priklopljen. Omogočena možnost podaljša čas zagona "
+#~ "sistema."
+#~ msgid ""
+#~ "If set to TRUE then the __ICC_PROFILE hint will be set, which "
+#~ "applications use to convert true color to screen color."
+#~ msgstr ""
+#~ "Izbrana možnost določi nastavitev namiga _ICC_PROFILA, ki ga programi "
+#~ "uporabijo za pretvorbo prave barve v barvo na zaslonu."
+#~ msgid ""
+#~ "If set to TRUE then the fine tuning controls are visible. This allows the "
+#~ "user to change the display profile outside of what the ICC profile "
+#~ "suggests and is only recommended for advanced users."
+#~ msgstr ""
+#~ "Izbrana možnost omogoča prikaz gumbov natančno uravnavane. S tem lahko "
+#~ "uporabnik spreminja profila zaslona mimo določil profila ICC. Možnost je "
+#~ "namenjena zahtevnejšim uporabnikom. "
+#~ msgid "If set to TRUE then the video LUT is set with the display profile"
+#~ msgstr "Izbrana možnost nastavi LUT videa skupaj s profilom zaslona"
+#~ msgid "Set the _ICC_PROFILE hint for applications."
+#~ msgstr "Nastavitev namiga _ICC_PROFILA za programe."
+#~ msgid "Show the fine tuning controls for display devices."
+#~ msgstr "Pokaži tipke podrobnega nastavljanja naprav za prikazovanje."
+#~ msgid "The CMYK profile filename to be used by applications by default."
+#~ msgstr "Datoteka profila CMYK za privzeto programsko uporabo."
+#~ msgid "The RGB profile filename to be used by applications by default."
+#~ msgstr "Ime datoteke profila RGB za privzeto uporabo programov."
+#~ msgid "The default CMYK profile."
+#~ msgstr "Privzeti profil CMYK."
+#~ msgid "The default RGB profile."
+#~ msgstr "Privzeti profil RGB."
+#~ msgid "The default calibration length."
+#~ msgstr "Privzeta dolžina umerjanja."
+#~ msgid "The default gamma to use for monitors with no previous value set."
+#~ msgstr "Privzeta vrednost gama za zaslone, kadar ni že določene vrednosti."
+#~ msgid "The duration between sending notifications to recalibrate a display."
+#~ msgstr "Časovni razmik med opozorili uporabniku za umerjanje zaslona."
+#~ msgid "The duration between sending notifications to recalibrate a printer."
+#~ msgstr "Časovni razmik med opozorili uporabniku za umerjanje tiskalnika."
+#~ msgid ""
+#~ "The length of calibration, as this is proportional to the accuracy. The "
+#~ "option 'short' creates a quick profile, 'normal' a regular one, and "
+#~ "'long' takes a really long time, but is more precise and creates a better "
+#~ "profile. Use 'ask' if you want the user to choose."
+#~ msgstr ""
+#~ "Dolžina umerjanja, ki je sorazmerna z natančnostjo. Možnost 'kratko' "
+#~ "ustvari hitri profil, 'običajno' običajni in možnost 'dolgo' zares dolgi "
+#~ "profil, ki pa je natančno določen. Možnost 'vprašaj' zahteva izbiro "
+#~ "uporabnika."
+#~ msgid "The rendering intent to use for softproofs, e.g. 'perceptual'."
+#~ msgstr "Namen izrisovanja za uporabo mehkega preverjanja, npr.: 'zaznavno'."
+#~ msgid "The rendering intent to use for the display, e.g. 'perceptual'."
+#~ msgstr "Namen izrisovanja za uporabo na zaslonu, npr.: 'zaznavno'."
+#~ msgid ""
+#~ "This is the number of seconds in between notifying the user to "
+#~ "recalibrate each display device. Set to 0 to disable the notification."
+#~ msgstr ""
+#~ "Vrednost določa število sekund med opozorili uporabniku, da je treba "
+#~ "umeriti vsako izmed zaslonskih naprav. Vrednost 0 onemogoči pojavljanje "
+#~ "opozoril."
+#~ msgid ""
+#~ "This is the number of seconds in between notifying the user to "
+#~ "recalibrate each printer device. Set to 0 to disable the notification."
+#~ msgstr ""
+#~ "Vrednost določa število sekund med opozorili uporabniku, da je treba "
+#~ "umeriti vsako izmed tiskalniških naprav. Vrednost 0 onemogoči pojavljanje "
+#~ "opozoril."
+#~ msgid "Whether ICC profiles should be loaded from external disks."
+#~ msgstr "Ali naj se profil ICC naloži z zunanjega diska."
+#~ msgid ""
+#~ "Whether the display should be globally corrected or left to applications."
+#~ msgstr "Ali naj bo zaslon splošno popravljen ali prepuščen programom."
+#~ msgid ""
+#~ "Please set the measuring instrument to screen mode like the image below, "
+#~ "and ensure it is attached to the screen."
+#~ msgstr ""
+#~ "Nastavite merilno napravo na način zaslona kot na sliki spodaj in se "
+#~ "prepričajte, da je priklopljen na zaslon."
+#~ msgid ""
+#~ "Please set the measuring instrument to screen mode, and ensure it is "
+#~ "attached to the screen."
+#~ msgstr ""
+#~ "Nastavite merilno napravo na način zaslona in se prepričajte, da je "
+#~ "priklopljen na zaslon."
+#~ msgid "This device already exists"
+#~ msgstr "Naprava že obstaja."
+#~ msgid "Measuring instrument not recognized"
+#~ msgstr "Merilnega instrumenta ni mogoče prepoznati."
+#~ msgid "Cannot load file contents"
+#~ msgstr "Vsebine datoteke ni mogoče naložiti"
+#~ msgid "Cannot parse EDID contents"
+#~ msgstr "Vsebine EDID ni mogoče razčleniti"
+#~ msgid "Monitor name"
+#~ msgstr "Ime monitorja"
+#~ msgid "Vendor name"
+#~ msgstr "Ime proizvajalca"
+#~ msgid "Serial number"
+#~ msgstr "Zaporedna številka"
+#~ msgid "Text string"
+#~ msgstr "Besedilni niz"
+#~ msgid "PNP identifier"
+#~ msgstr "Določilnik PNP"
+#~ msgid "Size"
+#~ msgstr "Velikost"
+#~ msgid "Gamma"
+#~ msgstr "Gama"
+#~ msgid "EDID dumps to parse"
+#~ msgstr "Izpisi EDID za razčlenjevanje"
+#~ msgid "EDID dump"
+#~ msgstr "Izpis EDID"
+#~ msgid "Saved %i bytes to %s"
+#~ msgstr "%i bajtov je shranjenih v %s"
+#~ msgid "Failed to save EDID to %s"
+#~ msgstr "Shranjevanje EDID v %s je spodletelo"
+#~ msgid "ICC profile dump program"
+#~ msgstr "Program za izpis profila ICC"
+#~ msgid "The description of the profile"
+#~ msgstr "Opis profila"
+#~ msgid "The copyright of the profile"
+#~ msgstr "Avtorske pravice profila"
+#~ msgid "The model of the profile"
+#~ msgstr "Model profila"
+#~ msgid "The manufacturer of the profile"
+#~ msgstr "Proizvajalec profila"
+#~ msgid "Profiles to fix"
+#~ msgstr "Profili za popravljanje"
+#~ msgid "ICC profile fix program"
+#~ msgstr "Program za popravljanje profilov ICC"
+#~ msgid "Do you want them to be automatically installed?"
+#~ msgstr "Ali jih želite samodejno namestiti?"
+#~ msgid "Cannot calibrate: The measuring instrument is not plugged in"
+#~ msgstr "Ni mogoče umeriti naprave: merilna naprava ni priklopljena"
+#~ msgid "Relative colormetric"
+#~ msgstr "Relativno barvnometrično"
+#~ msgid "Absolute colormetric"
+#~ msgstr "Absolutno barvnometrično"
+#~ msgid "Add Virtual Device"
+#~ msgstr "Dodaj navidezno napravo"
+#~ msgid "Close this dialog"
+#~ msgstr "Zapri pogovorno okno"
+#~ msgid "Color Profile"
+#~ msgstr "Barvna paleta"
+#~ msgid "Created:"
+#~ msgstr "Ustvarjeno:"
+#~ msgid "Delete the currently selected color profile"
+#~ msgstr "Izbriši trenutno izbran barvni profil"
+#~ msgid "Device"
+#~ msgstr "Naprava"
+#~ msgid "Device manufacturer:"
+#~ msgstr "Proizvajalec naprave:"
+#~ msgid "Device model:"
+#~ msgstr "Model naprave:"
+#~ msgid "Display correction:"
+#~ msgstr "_Popravljanje zaslona:"
+#~ msgid "File size:"
+#~ msgstr "Velikost datoteke:"
+#~ msgid "Filename:"
+#~ msgstr "Ime datoteke:"
+#~ msgid "Import an ICC file from another location"
+#~ msgstr "Uvozi datoteko ICC iz drugega mesta"
+#~ msgid "License:"
+#~ msgstr "Dovoljenje:"
+#~ msgid "Profile Graphs"
+#~ msgstr "Grafi profila"
+#~ msgid "Profile type:"
+#~ msgstr "Vrsta profila:"
+#~ msgid "Profiles"
+#~ msgstr "Profili"
+#~ msgid "Softproof:"
+#~ msgstr "Mehko preverjanje:"
+#~ msgid "_Delete Device"
+#~ msgstr "_Izbriši napravo"
+#~ msgid "_Import Profile"
+#~ msgstr "_Uvozi profil"
 
