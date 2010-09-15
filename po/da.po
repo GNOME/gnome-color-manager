@@ -17,8 +17,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-08-22 13:50+0200\n"
-"PO-Revision-Date: 2010-08-22 13:27+0200\n"
+"POT-Creation-Date: 2010-09-15 21:34+0200\n"
+"PO-Revision-Date: 2010-09-14 22:16+0200\n"
 "Last-Translator: Ask Hjorth Larsen <asklarsen@gmail.com>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "MIME-Version: 1.0\n"
@@ -252,13 +252,18 @@ msgstr "Fejlsøgningsindstillinger"
 msgid "Show debugging options"
 msgstr "Vis fejlsøgningsindstillinger"
 
+#. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
+#: ../src/gcm-apply.c:54
+msgid "Do not attempt to clear previously applied settings"
+msgstr "Forsøg ikke at rydde tidligere anvendte indstillinger"
+
 #. TRANSLATORS: title, default paramters needed to calibrate_argyll
-#: ../src/gcm-calibrate-argyll.c:433
+#: ../src/gcm-calibrate-argyll.c:453
 msgid "Getting default parameters"
 msgstr "Indhenter standardparametre"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:436
+#: ../src/gcm-calibrate-argyll.c:456
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -268,32 +273,32 @@ msgstr ""
 
 # kan også betyde "læser farvefelter", men brugeren vil nok ikke ane uråd selv hvis dette er tilfældet
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:524
+#: ../src/gcm-calibrate-argyll.c:545
 msgid "Reading the patches"
 msgstr "Læsning af farvefelter"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:526
+#: ../src/gcm-calibrate-argyll.c:547
 msgid "Reading the patches using the color measuring instrument."
 msgstr "Læser farvefelterne ved brug af farvemålingsinstrumentet."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:609
+#: ../src/gcm-calibrate-argyll.c:633
 msgid "Generating the patches"
 msgstr "Oprettelse af farvede felter"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:611
+#: ../src/gcm-calibrate-argyll.c:635
 msgid "Generating the patches that will be measured with the color instrument."
 msgstr "Generering af farvefelter, der vil blive målt med farveinstrumentet."
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:713
+#: ../src/gcm-calibrate-argyll.c:738
 msgid "Drawing the patches"
 msgstr "Tegning af farvede felter"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:715
+#: ../src/gcm-calibrate-argyll.c:740
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
@@ -303,72 +308,72 @@ msgstr ""
 
 #. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" - YOU NEED TO STICK TO ASCII
 #. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands"
-#: ../src/gcm-calibrate-argyll.c:820 ../src/gcm-calibrate-argyll.c:1153
+#: ../src/gcm-calibrate-argyll.c:846 ../src/gcm-calibrate-argyll.c:1181
 msgid "Copyright (c)"
 msgstr "Ophavsret (c)"
 
 #. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:823 ../src/gcm-calibrate-argyll.c:1156
+#: ../src/gcm-calibrate-argyll.c:849 ../src/gcm-calibrate-argyll.c:1184
 msgid "Generating the profile"
 msgstr "Oprettelse af profilen"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:825
+#: ../src/gcm-calibrate-argyll.c:851
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "Oprettelse af ICC-farveprofilen som kan bruges med denne skærm."
 
 #. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:958
+#: ../src/gcm-calibrate-argyll.c:985
 msgid "Copying files"
 msgstr "Kopierer filer"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:960
+#: ../src/gcm-calibrate-argyll.c:987
 msgid "Copying source image, chart data and CIE reference values."
 msgstr "Kopierer kildebillede, diagramdata og CIE-referenceværdier."
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:1035
+#: ../src/gcm-calibrate-argyll.c:1062
 msgid "Measuring the patches"
 msgstr "Måling af farvede felter"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1037
+#: ../src/gcm-calibrate-argyll.c:1064
 msgid "Detecting the reference patches and measuring them."
 msgstr "Søgning efter de farvede referencefelter og opmåling af dem."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1158
+#: ../src/gcm-calibrate-argyll.c:1186
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "Oprettelse af ICC-farveprofilen som kan bruges med denne enhed."
 
 #. TRANSLATORS: title, hardware refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:1344
+#: ../src/gcm-calibrate-argyll.c:1373
 msgid "Set up display"
 msgstr "Indstil skærm"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1347
+#: ../src/gcm-calibrate-argyll.c:1376
 msgid "Setting up display device for use…"
 msgstr "Indstiller skærmenhed til brug…"
 
 #. TRANSLATORS: title, patches are specific colors used in calibration
-#: ../src/gcm-calibrate-argyll.c:1446
+#: ../src/gcm-calibrate-argyll.c:1475
 msgid "Printing patches"
 msgstr "Udskriver farvefelter"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1449
+#: ../src/gcm-calibrate-argyll.c:1478
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "Tegner farvefelterne for det valgte papir og blæk."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:1784
+#: ../src/gcm-calibrate-argyll.c:1814
 msgid "Wait for the ink to dry"
 msgstr "Vent på at blækket tørrer"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1787
+#: ../src/gcm-calibrate-argyll.c:1817
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -377,12 +382,12 @@ msgstr ""
 "blæk giver en dårlig profil, og kan skade dit farvemålingsinstrument."
 
 #. TRANSLATORS: the supplied image contains an alpha channel which we have to strip out
-#: ../src/gcm-calibrate-argyll.c:1929
+#: ../src/gcm-calibrate-argyll.c:1959
 msgid "Image is not suitable without conversion"
 msgstr "Billedet er ikke egnet uden konvertering"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1932
+#: ../src/gcm-calibrate-argyll.c:1962
 msgid ""
 "The supplied image contains an alpha channel which the profiling tools do "
 "not understand."
@@ -391,7 +396,7 @@ msgstr ""
 "forstår."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1936
+#: ../src/gcm-calibrate-argyll.c:1966
 msgid ""
 "It is normally safe to convert the image, although you should ensure that "
 "the generated profile is valid."
@@ -400,27 +405,27 @@ msgstr ""
 "oprettede profil er gyldig."
 
 #. TRANSLATORS: button text to convert the RGBA image into RGB
-#: ../src/gcm-calibrate-argyll.c:1943
+#: ../src/gcm-calibrate-argyll.c:1973
 msgid "Convert"
 msgstr "Konvertér"
 
 #. TRANSLATORS: title, instrument refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:2001
+#: ../src/gcm-calibrate-argyll.c:2031
 msgid "Set up instrument"
 msgstr "Indstil instrument"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2004
+#: ../src/gcm-calibrate-argyll.c:2034
 msgid "Setting up the instrument for use…"
 msgstr "Indstiller instrumentet til brug…"
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2097
+#: ../src/gcm-calibrate-argyll.c:2127
 msgid "Please attach instrument"
 msgstr "Tilslut venligst instrument"
 
 #. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate-argyll.c:2105
+#: ../src/gcm-calibrate-argyll.c:2135
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square like the image below."
@@ -429,33 +434,33 @@ msgstr ""
 "billedet nedenfor."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate-argyll.c:2108
+#: ../src/gcm-calibrate-argyll.c:2138
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square."
 msgstr "Placér venligst måleinstrumentet på den grå firkant midt på skærmen."
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2121 ../src/gcm-calibrate-argyll.c:2175
-#: ../src/gcm-calibrate-argyll.c:2227
+#: ../src/gcm-calibrate-argyll.c:2151 ../src/gcm-calibrate-argyll.c:2205
+#: ../src/gcm-calibrate-argyll.c:2257
 msgid "Continue"
 msgstr "Fortsæt"
 
 #. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2131 ../src/gcm-calibrate-argyll.c:2181
-#: ../src/gcm-calibrate-argyll.c:2233 ../src/gcm-calibrate-argyll.c:2309
-#: ../src/gcm-calibrate-argyll.c:2369 ../src/gcm-calibrate-argyll.c:2410
+#: ../src/gcm-calibrate-argyll.c:2161 ../src/gcm-calibrate-argyll.c:2211
+#: ../src/gcm-calibrate-argyll.c:2263 ../src/gcm-calibrate-argyll.c:2342
+#: ../src/gcm-calibrate-argyll.c:2402 ../src/gcm-calibrate-argyll.c:2443
 #: ../src/gcm-prefs.c:819 ../src/gcm-prefs.c:1987
 msgid "GNOME Color Manager"
 msgstr "GNOME Color Manager"
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2152 ../src/gcm-calibrate-argyll.c:2204
+#: ../src/gcm-calibrate-argyll.c:2182 ../src/gcm-calibrate-argyll.c:2234
 msgid "Please configure instrument"
 msgstr "Konfigurér venligst instrumentet"
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2162
+#: ../src/gcm-calibrate-argyll.c:2192
 msgid ""
 "Please set the measuring instrument to calibration mode like the image below."
 msgstr ""
@@ -463,12 +468,12 @@ msgstr ""
 "nedenfor."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2165
+#: ../src/gcm-calibrate-argyll.c:2195
 msgid "Please set the measuring instrument to calibration mode."
 msgstr "Sæt venligst måleinstrumentet til kalibreringstilstand."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2214
+#: ../src/gcm-calibrate-argyll.c:2244
 msgid ""
 "Please set the measuring instrument to screen mode like the image below, and "
 "ensure it is attached to the screen."
@@ -477,7 +482,7 @@ msgstr ""
 "nedenfor, og kontrollér at det er tilsluttet skærmen."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2217
+#: ../src/gcm-calibrate-argyll.c:2247
 msgid ""
 "Please set the measuring instrument to screen mode, and ensure it is "
 "attached to the screen."
@@ -486,27 +491,27 @@ msgstr ""
 "tilsluttet skærmen."
 
 #. TRANSLATORS: title, the calibration failed
-#: ../src/gcm-calibrate-argyll.c:2288 ../src/gcm-calibrate-argyll.c:2336
+#: ../src/gcm-calibrate-argyll.c:2321 ../src/gcm-calibrate-argyll.c:2369
 msgid "Calibration error"
 msgstr "Kalibreringsfejl"
 
 #. TRANSLATORS: message, the sample was not read correctly
-#: ../src/gcm-calibrate-argyll.c:2291
+#: ../src/gcm-calibrate-argyll.c:2324
 msgid "The sample could not be read at this time."
 msgstr "Prøven kunne ikke læses på nuværende tidspunkt."
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2299
+#: ../src/gcm-calibrate-argyll.c:2332
 msgid "Try again"
 msgstr "Prøv igen"
 
 #. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2340
+#: ../src/gcm-calibrate-argyll.c:2373
 msgid "No firmware is installed for this instrument."
 msgstr "Der er ikke installeret nogen firmware for dette instrument."
 
 #. TRANSLATORS: message, the image wasn't good enough
-#: ../src/gcm-calibrate-argyll.c:2343
+#: ../src/gcm-calibrate-argyll.c:2376
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
@@ -515,7 +520,7 @@ msgstr ""
 "rigtige måltype."
 
 #. TRANSLATORS: message, the sensor got no readings
-#: ../src/gcm-calibrate-argyll.c:2347
+#: ../src/gcm-calibrate-argyll.c:2380
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
@@ -524,7 +529,7 @@ msgstr ""
 "er helt åben."
 
 #. TRANSLATORS: message, the colorimeter has got confused
-#: ../src/gcm-calibrate-argyll.c:2350
+#: ../src/gcm-calibrate-argyll.c:2383
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -533,33 +538,33 @@ msgstr ""
 "og genindsæt, før du prøver at bruge denne enhed."
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-argyll.c:2388
+#: ../src/gcm-calibrate-argyll.c:2421
 msgid "Reading target"
 msgstr "Læser mål"
 
 #. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2391
+#: ../src/gcm-calibrate-argyll.c:2424
 msgid "Failed to read the strip correctly."
 msgstr "Kunne ikke læse strimmel rigtigt."
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2400
+#: ../src/gcm-calibrate-argyll.c:2433
 msgid "Retry"
 msgstr "Prøv igen"
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2423
+#: ../src/gcm-calibrate-argyll.c:2456
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "Læs strimmel %s frem for %s!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2428
+#: ../src/gcm-calibrate-argyll.c:2461
 msgid "It looks like you've measured the wrong strip."
 msgstr "Det ser ud til at du har målt den forkerte strimmel."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2432
+#: ../src/gcm-calibrate-argyll.c:2465
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
@@ -568,18 +573,18 @@ msgstr ""
 "usædvanligt papir."
 
 #. TRANSLATORS: button
-#: ../src/gcm-calibrate-argyll.c:2442
+#: ../src/gcm-calibrate-argyll.c:2475
 msgid "Use anyway"
 msgstr "Brug alligevel"
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2454
+#: ../src/gcm-calibrate-argyll.c:2487
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "Klar til at læse strimmel %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2459
+#: ../src/gcm-calibrate-argyll.c:2492
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
@@ -588,7 +593,7 @@ msgstr ""
 "hold måleknappen nede."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2463
+#: ../src/gcm-calibrate-argyll.c:2496
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -597,7 +602,7 @@ msgstr ""
 "er nået til sidens slutpunkt."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2467
+#: ../src/gcm-calibrate-argyll.c:2500
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -606,7 +611,7 @@ msgstr ""
 "prøver at måle."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2471
+#: ../src/gcm-calibrate-argyll.c:2504
 msgid ""
 "If you make a mistake just release the switch and you'll get a chance to try "
 "again."
@@ -615,32 +620,32 @@ msgstr ""
 "for at prøve igen."
 
 #. TRANSLATORS: title, printing reference files to media
-#: ../src/gcm-calibrate-argyll.c:2609
+#: ../src/gcm-calibrate-argyll.c:2642
 msgid "Printing"
 msgstr "Udskrift"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2616
+#: ../src/gcm-calibrate-argyll.c:2649
 msgid "Preparing the data for the printer."
 msgstr "Forbereder data til udskrift."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2622
+#: ../src/gcm-calibrate-argyll.c:2655
 msgid "Sending the targets to the printer."
 msgstr "Sender målene til printeren."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2626
+#: ../src/gcm-calibrate-argyll.c:2659
 msgid "Printing the targets..."
 msgstr "Udskriver målene..."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2630
+#: ../src/gcm-calibrate-argyll.c:2663
 msgid "The printing has finished."
 msgstr "Udskriften er fuldført."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2634
+#: ../src/gcm-calibrate-argyll.c:2667
 msgid "The print was aborted."
 msgstr "Udskriften blev afbrudt."
 
