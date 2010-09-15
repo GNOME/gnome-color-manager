@@ -69,6 +69,9 @@ fi
 AC_ARG_ENABLE(strict, AS_HELP_STRING([--enable-strict],[Enable strict compilation options]), enable_strict=$enableval,
 					enable_strict=$default_strict)
 if test x$enable_strict != xno; then
+	CPPFLAGS="$CPPFLAGS -DG_DISABLE_SINGLE_INCLUDES -DGTK_DISABLE_SINGLE_INCLUDES"
+	CPPFLAGS="$CPPFLAGS -DG_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED"
+	CPPFLAGS="$CPPFLAGS -DGSEAL_ENABLE"
 	if test "$GCC" = "yes"; then
 		CPPFLAGS="$CPPFLAGS -Werror"
 	fi
@@ -85,9 +88,6 @@ AC_SUBST(slashlibdir)
 dnl ---------------------------------------------------------------------------
 dnl - Extra verbose warning switches
 dnl ---------------------------------------------------------------------------
-CPPFLAGS="$CPPFLAGS -DG_DISABLE_SINGLE_INCLUDES -DGTK_DISABLE_SINGLE_INCLUDES"
-CPPFLAGS="$CPPFLAGS -DG_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED -DGDK_DISABLE_DEPRECATED"
-CPPFLAGS="$CPPFLAGS -DGSEAL_ENABLE"
 
 if test "$GCC" = "yes"; then
 	WARNINGFLAGS_C="$WARNINGFLAGS_C -Wall"
