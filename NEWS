@@ -1,3 +1,31 @@
+Version 2.31.92
+~~~~~~~~~~~~~~~
+Released: 2010-09-16
+
+* Translations
+ - Added Korean translation (Homin Lee)
+ - Updated British English translation (Bruce Cowan)
+ - Updated Danish translation (Kenneth Nielsen)
+ - Updated Estonian translation (Mattias Põldaru)
+ - Updated French translation (Claude Paroz)
+ - Updated German translation (Christian Kirbach)
+ - Updated Italian translation (Francesco Groccia)
+ - Updated Lithuanian translation (Aurimas Černius)
+ - Updated Norwegian bokmål translation (Kjartan Maraas)
+ - Updated Polish translation (Piotr Drąg)
+ - Updated Simplified Chinese translation (Aron Xu)
+ - Updated Slovenian translation (Andrej Žnidaršič)
+ - Updated Slovenian translation (Matej Urbančič)
+ - Updated Spanish translation (Jorge González)
+ - Updated Tamil translation (Dr.Tirumurti Vasudevan)
+
+* Bugfix:
+ - Don't prompt the user to calibrate the device again if we are re-using the GcmCalibrate instance (Richard Hughes)
+ - Ensure we disconnect the VTE signals when done with GcmCalibrateArgyll (Richard Hughes)
+ - Lower VTE dep and #ifdef the deprecated methods (Richard Hughes)
+ - Only disable deprecated code for --enable-strict builds (defaulting to true for git) (Richard Hughes)
+ - Put the executable name in argv[0] for argyll commands, otherwise option processing breaks (Richard Hughes)
+
 Version 2.31.91
 ~~~~~~~~~~~~~~~
 Released: 2010-08-31
