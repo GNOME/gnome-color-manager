@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager gnome-2-30\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
-"\"\n"
-"POT-Creation-Date: 2010-05-03 20:18+0900\n"
-"PO-Revision-Date: 2010-05-03 20:00+0900\n"
+"color-manager\n"
+"POT-Creation-Date: 2010-09-17 21:03+0000\n"
+"PO-Revision-Date: 2010-09-18 13:18+0900\n"
 "Last-Translator: Ryo Fujita <rfujita@redhat.com>\n"
 "Language-Team: Japanese <rfujita@redhat.com>\n"
 "MIME-Version: 1.0\n"
@@ -96,7 +96,7 @@ msgstr ""
 
 #: ../data/gnome-color-manager.schemas.in.h:6
 msgid "Set the _ICC_PROFILE hint for applications."
-msgstr "アプリケーション用の_ICC_PROFILEのヒントを設定(_I)"
+msgstr "アプリケーション用の_ICC_PROFILEのヒントを設定します。"
 
 #: ../data/gnome-color-manager.schemas.in.h:7
 msgid "Show the fine tuning controls for display devices."
@@ -148,11 +148,11 @@ msgstr ""
 
 #: ../data/gnome-color-manager.schemas.in.h:17
 msgid "The rendering intent to use for softproofs, e.g. 'perceptual'."
-msgstr "ソフトプルーフで用いるレンダリングの変換方法、例：'知覚的'"
+msgstr "ソフトプルーフで用いるレンダリングの変換方法、例:'知覚的'"
 
 #: ../data/gnome-color-manager.schemas.in.h:18
 msgid "The rendering intent to use for the display, e.g. 'perceptual'."
-msgstr "ディスプレイで用いるレンダリングの変換方法、例：'知覚的'"
+msgstr "ディスプレイで用いるレンダリングの変換方法、例:'知覚的'"
 
 #: ../data/gnome-color-manager.schemas.in.h:19
 msgid ""
@@ -182,7 +182,7 @@ msgstr "ディスプレイが全体的に修正されるか、アプリケーシ
 #: ../policy/org.gnome.color.policy.in.h:1
 msgid "Authentication is required to install the color profile for all users"
 msgstr ""
-"全てのユーザ用にカラープロファイルをインストールするには認証が必要です。"
+"すべてのユーザ用にカラープロファイルをインストールするには認証が必要です。"
 
 #. SECURITY:
 #. - Normal users require admin authentication to install files system
@@ -197,40 +197,45 @@ msgid "Install system color profiles"
 msgstr "システムのカラープロファイルをインストール"
 
 #. TRANSLATORS: turn on all debugging
-#: ../src/egg-debug.c:388
+#: ../src/egg-debug.c:390
 msgid "Show debugging information for all files"
-msgstr "全てのファイルのデバッグ情報を表示"
+msgstr "すべてのファイルのデバッグ情報を表示"
 
 #. TRANSLATORS: a list of modules to debug
-#: ../src/egg-debug.c:459
+#: ../src/egg-debug.c:461
 msgid "Debug these specific modules"
 msgstr "特定のモジュールをデバッグ"
 
 #. TRANSLATORS: a list of functions to debug
-#: ../src/egg-debug.c:462
+#: ../src/egg-debug.c:464
 msgid "Debug these specific functions"
 msgstr "特定の機能をデバッグ"
 
 #. TRANSLATORS: save to a log
-#: ../src/egg-debug.c:465
+#: ../src/egg-debug.c:467
 msgid "Log debugging data to a file"
 msgstr "ファイルにデバッグのデータを記録"
 
-#: ../src/egg-debug.c:469
+#: ../src/egg-debug.c:471
 msgid "Debugging Options"
 msgstr "デバッグオプション"
 
-#: ../src/egg-debug.c:469
+#: ../src/egg-debug.c:471
 msgid "Show debugging options"
 msgstr "デバッグオプションを表示"
 
+#. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
+#: ../src/gcm-apply.c:54
+msgid "Do not attempt to clear previously applied settings"
+msgstr "前回適用した設定を消去しようとしない"
+
 #. TRANSLATORS: title, default paramters needed to calibrate_argyll
-#: ../src/gcm-calibrate-argyll.c:402
+#: ../src/gcm-calibrate-argyll.c:453
 msgid "Getting default parameters"
 msgstr "デフォルトパラメータを取得中"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:405
+#: ../src/gcm-calibrate-argyll.c:456
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -239,32 +244,32 @@ msgstr ""
 "ブレートします。"
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:496
+#: ../src/gcm-calibrate-argyll.c:545
 msgid "Reading the patches"
 msgstr "パッチを読取中"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:498
+#: ../src/gcm-calibrate-argyll.c:547
 msgid "Reading the patches using the color measuring instrument."
 msgstr "測色計によりパッチを読取中"
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:584
+#: ../src/gcm-calibrate-argyll.c:633
 msgid "Generating the patches"
 msgstr "パッチを生成中"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:586
+#: ../src/gcm-calibrate-argyll.c:635
 msgid "Generating the patches that will be measured with the color instrument."
 msgstr "測色計で読み取るパッチを生成中"
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:691
+#: ../src/gcm-calibrate-argyll.c:738
 msgid "Drawing the patches"
 msgstr "パッチを描画中"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:693
+#: ../src/gcm-calibrate-argyll.c:740
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
@@ -272,72 +277,72 @@ msgstr "ハードウェアで計測する生成したパッチを画面に描画
 
 #. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" - YOU NEED TO STICK TO ASCII
 #. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands"
-#: ../src/gcm-calibrate-argyll.c:801 ../src/gcm-calibrate-argyll.c:1141
+#: ../src/gcm-calibrate-argyll.c:846 ../src/gcm-calibrate-argyll.c:1181
 msgid "Copyright (c)"
 msgstr "Copyright (c)"
 
 #. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:804 ../src/gcm-calibrate-argyll.c:1144
+#: ../src/gcm-calibrate-argyll.c:849 ../src/gcm-calibrate-argyll.c:1184
 msgid "Generating the profile"
 msgstr "プロファイルを生成中"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:806
+#: ../src/gcm-calibrate-argyll.c:851
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "この画面で用いることの出来るICCカラープロファイルを生成中"
 
 #. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:940
+#: ../src/gcm-calibrate-argyll.c:985
 msgid "Copying files"
 msgstr "ファイルをコピー中"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:942
+#: ../src/gcm-calibrate-argyll.c:987
 msgid "Copying source image, chart data and CIE reference values."
 msgstr "元のイメージとチャートのデータ、CIEリファレンス値をコピー中"
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:1020
+#: ../src/gcm-calibrate-argyll.c:1062
 msgid "Measuring the patches"
 msgstr "パッチを計測中"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1022
+#: ../src/gcm-calibrate-argyll.c:1064
 msgid "Detecting the reference patches and measuring them."
 msgstr "リファレンスパッチを検出・計測中"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1146
+#: ../src/gcm-calibrate-argyll.c:1186
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "このデバイスで利用可能なICCカラープロファイルを生成中"
 
 #. TRANSLATORS: title, hardware refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:1335
+#: ../src/gcm-calibrate-argyll.c:1373
 msgid "Set up display"
 msgstr "ディスプレイを設定"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1338
+#: ../src/gcm-calibrate-argyll.c:1376
 msgid "Setting up display device for use…"
 msgstr "利用するディスプレイデバイスを設定中..."
 
 #. TRANSLATORS: title, patches are specific colors used in calibration
-#: ../src/gcm-calibrate-argyll.c:1439
+#: ../src/gcm-calibrate-argyll.c:1475
 msgid "Printing patches"
 msgstr "パッチを印刷中"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1442
+#: ../src/gcm-calibrate-argyll.c:1478
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "選択した紙とインク用のパッチをレンダリング中’"
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:1783
+#: ../src/gcm-calibrate-argyll.c:1814
 msgid "Wait for the ink to dry"
 msgstr "インクが乾くのを待ちます"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1786
+#: ../src/gcm-calibrate-argyll.c:1817
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -346,12 +351,12 @@ msgstr ""
 "と、良くないプロファイルが作られ、測色計にダメージを与えることがあります。"
 
 #. TRANSLATORS: the supplied image contains an alpha channel which we have to strip out
-#: ../src/gcm-calibrate-argyll.c:1929
+#: ../src/gcm-calibrate-argyll.c:1959
 msgid "Image is not suitable without conversion"
 msgstr "画像は変換しないと使えません。"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1932
+#: ../src/gcm-calibrate-argyll.c:1962
 msgid ""
 "The supplied image contains an alpha channel which the profiling tools do "
 "not understand."
@@ -360,7 +365,7 @@ msgstr ""
 "ます。"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1936
+#: ../src/gcm-calibrate-argyll.c:1966
 msgid ""
 "It is normally safe to convert the image, although you should ensure that "
 "the generated profile is valid."
@@ -369,71 +374,71 @@ msgstr ""
 "す。"
 
 #. TRANSLATORS: button text to convert the RGBA image into RGB
-#: ../src/gcm-calibrate-argyll.c:1943
+#: ../src/gcm-calibrate-argyll.c:1973
 msgid "Convert"
 msgstr "変換"
 
 #. TRANSLATORS: title, instrument refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:2002
+#: ../src/gcm-calibrate-argyll.c:2031
 msgid "Set up instrument"
 msgstr "計測器を設定"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2005
+#: ../src/gcm-calibrate-argyll.c:2034
 msgid "Setting up the instrument for use…"
 msgstr "利用する計測器を設定中..."
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2098
+#: ../src/gcm-calibrate-argyll.c:2127
 msgid "Please attach instrument"
 msgstr "計測器を置いてください"
 
 #. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate-argyll.c:2106
+#: ../src/gcm-calibrate-argyll.c:2135
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square like the image below."
 msgstr "下の画像のような画面上の灰色の長方形の中心に測色計を置いてください。"
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate-argyll.c:2109
+#: ../src/gcm-calibrate-argyll.c:2138
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square."
 msgstr "画面上の灰色の長方形の中心に測色計を置いてください。"
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2122 ../src/gcm-calibrate-argyll.c:2176
-#: ../src/gcm-calibrate-argyll.c:2228
+#: ../src/gcm-calibrate-argyll.c:2151 ../src/gcm-calibrate-argyll.c:2205
+#: ../src/gcm-calibrate-argyll.c:2257
 msgid "Continue"
 msgstr "続き"
 
 #. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2132 ../src/gcm-calibrate-argyll.c:2182
-#: ../src/gcm-calibrate-argyll.c:2234 ../src/gcm-calibrate-argyll.c:2310
-#: ../src/gcm-calibrate-argyll.c:2370 ../src/gcm-calibrate-argyll.c:2411
-#: ../src/gcm-prefs.c:819 ../src/gcm-prefs.c:1988
+#: ../src/gcm-calibrate-argyll.c:2161 ../src/gcm-calibrate-argyll.c:2211
+#: ../src/gcm-calibrate-argyll.c:2263 ../src/gcm-calibrate-argyll.c:2342
+#: ../src/gcm-calibrate-argyll.c:2402 ../src/gcm-calibrate-argyll.c:2443
+#: ../src/gcm-prefs.c:819 ../src/gcm-prefs.c:1987
 msgid "GNOME Color Manager"
 msgstr "GNOME Color Manager"
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2153 ../src/gcm-calibrate-argyll.c:2205
+#: ../src/gcm-calibrate-argyll.c:2182 ../src/gcm-calibrate-argyll.c:2234
 msgid "Please configure instrument"
 msgstr "計測器を設定してください"
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2163
+#: ../src/gcm-calibrate-argyll.c:2192
 msgid ""
 "Please set the measuring instrument to calibration mode like the image below."
 msgstr "下の画像のような画面上の灰色の長方形の中心に測色計を置いてください。"
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2166
+#: ../src/gcm-calibrate-argyll.c:2195
 msgid "Please set the measuring instrument to calibration mode."
 msgstr "計測器をキャリブレーションモードに設定してください。"
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2215
+#: ../src/gcm-calibrate-argyll.c:2244
 msgid ""
 "Please set the measuring instrument to screen mode like the image below, and "
 "ensure it is attached to the screen."
@@ -442,34 +447,34 @@ msgstr ""
 "ください。"
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2218
+#: ../src/gcm-calibrate-argyll.c:2247
 msgid ""
 "Please set the measuring instrument to screen mode, and ensure it is "
 "attached to the screen."
 msgstr "計測器をキャリブレーションモードに設定し、画面に確実に置いてください。"
 
 #. TRANSLATORS: title, the calibration failed
-#: ../src/gcm-calibrate-argyll.c:2289 ../src/gcm-calibrate-argyll.c:2337
+#: ../src/gcm-calibrate-argyll.c:2321 ../src/gcm-calibrate-argyll.c:2369
 msgid "Calibration error"
 msgstr "キャリブレーションエラー"
 
 #. TRANSLATORS: message, the sample was not read correctly
-#: ../src/gcm-calibrate-argyll.c:2292
+#: ../src/gcm-calibrate-argyll.c:2324
 msgid "The sample could not be read at this time."
 msgstr "今回はサンプルを読み込むことが出来ませんでした。"
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2300
+#: ../src/gcm-calibrate-argyll.c:2332
 msgid "Try again"
 msgstr "再試行する"
 
 #. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2341
+#: ../src/gcm-calibrate-argyll.c:2373
 msgid "No firmware is installed for this instrument."
 msgstr "この計測器にインストールできるファームウェアはありません。"
 
 #. TRANSLATORS: message, the image wasn't good enough
-#: ../src/gcm-calibrate-argyll.c:2344
+#: ../src/gcm-calibrate-argyll.c:2376
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
@@ -478,7 +483,7 @@ msgstr ""
 "さい。"
 
 #. TRANSLATORS: message, the sensor got no readings
-#: ../src/gcm-calibrate-argyll.c:2348
+#: ../src/gcm-calibrate-argyll.c:2380
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
@@ -487,7 +492,7 @@ msgstr ""
 "てください。"
 
 #. TRANSLATORS: message, the colorimeter has got confused
-#: ../src/gcm-calibrate-argyll.c:2351
+#: ../src/gcm-calibrate-argyll.c:2383
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -496,33 +501,33 @@ msgstr ""
 "度接続してください。"
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-argyll.c:2389
+#: ../src/gcm-calibrate-argyll.c:2421
 msgid "Reading target"
 msgstr "色見本を読取中"
 
 #. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2392
+#: ../src/gcm-calibrate-argyll.c:2424
 msgid "Failed to read the strip correctly."
 msgstr "ストリップを正しく読み取ることが出来ませんでした。"
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2401
+#: ../src/gcm-calibrate-argyll.c:2433
 msgid "Retry"
 msgstr "再試行"
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2424
+#: ../src/gcm-calibrate-argyll.c:2456
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "ストリップ%sをストリップ%sの代わりに読みます!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2429
+#: ../src/gcm-calibrate-argyll.c:2461
 msgid "It looks like you've measured the wrong strip."
 msgstr "違うストリップを計測したようです。"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2433
+#: ../src/gcm-calibrate-argyll.c:2465
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
@@ -530,25 +535,25 @@ msgstr ""
 "確実に正しい方を計測したのであれば問題ありません。通常の紙ではないようです。"
 
 #. TRANSLATORS: button
-#: ../src/gcm-calibrate-argyll.c:2443
+#: ../src/gcm-calibrate-argyll.c:2475
 msgid "Use anyway"
 msgstr "とにかく使う"
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2455
+#: ../src/gcm-calibrate-argyll.c:2487
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "ストリップ%sを読み取る準備が出来ました"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2460
+#: ../src/gcm-calibrate-argyll.c:2492
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
 msgstr "文字の隣の白い領域に測色計を置き、計測スイッチを押し続けてください。"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2464
+#: ../src/gcm-calibrate-argyll.c:2496
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -557,7 +562,7 @@ msgstr ""
 "を離してください。"
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2468
+#: ../src/gcm-calibrate-argyll.c:2500
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -566,39 +571,39 @@ msgstr ""
 "さい。"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2472
+#: ../src/gcm-calibrate-argyll.c:2504
 msgid ""
 "If you make a mistake just release the switch and you'll get a chance to try "
 "again."
 msgstr "スイッチを離すのを失敗しただけであれば、再度試すことが出来ます。"
 
 #. TRANSLATORS: title, printing reference files to media
-#: ../src/gcm-calibrate-argyll.c:2610
+#: ../src/gcm-calibrate-argyll.c:2642
 msgid "Printing"
 msgstr "印刷中"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2617
+#: ../src/gcm-calibrate-argyll.c:2649
 msgid "Preparing the data for the printer."
 msgstr "プリンタ用のデータを準備中"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2623
+#: ../src/gcm-calibrate-argyll.c:2655
 msgid "Sending the targets to the printer."
 msgstr "プリンタに色見本を送信中"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2627
+#: ../src/gcm-calibrate-argyll.c:2659
 msgid "Printing the targets..."
 msgstr "色見本を印刷中..."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2631
+#: ../src/gcm-calibrate-argyll.c:2663
 msgid "The printing has finished."
 msgstr "印刷が終了しました。"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2635
+#: ../src/gcm-calibrate-argyll.c:2667
 msgid "The print was aborted."
 msgstr "印刷は中断されました。"
 
@@ -623,12 +628,12 @@ msgid "Unknown device"
 msgstr "不明なデバイス"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-calibrate.c:382
+#: ../src/gcm-calibrate.c:391
 msgid "Could not detect screen type"
 msgstr "画面の種類を判別出来ませんでした"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:385
+#: ../src/gcm-calibrate.c:394
 msgid ""
 "Please indicate if the screen you are trying to profile is an LCD, CRT or a "
 "projector."
@@ -637,12 +642,12 @@ msgstr ""
 "い。"
 
 #. TRANSLATORS: title, the hardware calibration device does not support projectors
-#: ../src/gcm-calibrate.c:410
+#: ../src/gcm-calibrate.c:419
 msgid "Could not calibrate and profile using this color measuring instrument"
 msgstr "測色計によるキャリブレート及びプロファイルが出来ませんでした。"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:413
+#: ../src/gcm-calibrate.c:422
 msgid ""
 "This color measuring instrument is not designed to support calibration and "
 "profiling projectors."
@@ -651,43 +656,28 @@ msgstr ""
 "していません。"
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate.c:474
-msgid "Choose the precision of the profile"
-msgstr "プロファイルの精度を選択"
-
-#. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:477
-msgid "Please choose the profile precision."
-msgstr "プロファイルの精度を選んでください。"
+#: ../src/gcm-calibrate.c:483
+msgid "Profile Precision"
+msgstr "プロファイルの精度"
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:480
+#: ../src/gcm-calibrate.c:486
+msgid ""
+"A higher precision profile provides higher accuracy in color matching but "
+"requires more time for reading the color patches."
+msgstr ""
+"高精度のプロファイルではより正確なカラーマッチングが可能ですが、色見本を読み"
+"取るためのより長い時間も必要です。"
+
+#. TRANSLATORS: this is the message body for the chart selection
+#: ../src/gcm-calibrate.c:489
 msgid "For a typical workflow, a normal precision profile is sufficient."
 msgstr "典型的な作業手順では、通常の精度で充分です。"
 
-#. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:483
-msgid ""
-"High precision profiles provide higher accuracy in color matching. "
-"Correspondingly, low precision profiles result in lower quality."
-msgstr ""
-"高精度のプロファイルによってより正確なカラーマッチングが可能です。反対に低い"
-"精度のプロファイルでは低品質な結果しか得られません。"
-
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:488
-msgid ""
-"The high precision profiles also require more paper and time for reading the "
-"color swatches."
-msgstr ""
-"高精度のプロファイルでは色見本を読むために、より多くの紙と時間が必要です。"
-
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate.c:494
-msgid ""
-"The high precision profiles also require more time for reading the color "
-"swatches."
-msgstr "高精度のプロファイルでは色見本を読むために、より多くの時間が必要です。"
+msgid "The high precision profile also requires more paper and printer ink."
+msgstr "高精度のプロファイルでは、より多くの紙とインクも必要です。"
 
 #. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated
 #: ../src/gcm-calibrate.c:568
@@ -755,109 +745,115 @@ msgstr ""
 msgid "Display setup"
 msgstr "ディスプレイ設定"
 
-#. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:700
-msgid "Select reference image"
-msgstr "リファレンス画像を選択"
+#. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
+#. * aquired image of the calibration target, e.g. an image file that looks
+#. * a bit like this: http://www.colorreference.de/targets/target.jpg
+#: ../src/gcm-calibrate.c:702
+msgid "Select calibration target image"
+msgstr "キャリブレーション対象の画像を選択してください"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:713
+#: ../src/gcm-calibrate.c:715
 msgid "Supported images files"
 msgstr "サポートされている画像ファイル"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:720 ../src/gcm-calibrate.c:772
+#: ../src/gcm-calibrate.c:722 ../src/gcm-calibrate.c:774
 #: ../src/gcm-prefs.c:543
 msgid "All files"
-msgstr "全てのファイル"
+msgstr "すべてのファイル"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:745
+#: ../src/gcm-calibrate.c:747
 msgid "Select CIE reference values file"
 msgstr "CIEリファレンス値のファイルを選択"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:765
+#: ../src/gcm-calibrate.c:767
 msgid "CIE values"
 msgstr "CIE値"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:838 ../src/gcm-prefs.c:515
+#: ../src/gcm-calibrate.c:840 ../src/gcm-prefs.c:515
 msgid "Select ICC Profile File"
 msgstr "ICCプロファイルのファイルを選択"
 
-#: ../src/gcm-calibrate.c:841
+#: ../src/gcm-calibrate.c:843
 msgid "Open"
 msgstr "開く"
 
 #. TRANSLATORS: title, you can profile all at once, or in steps
-#: ../src/gcm-calibrate.c:877
+#: ../src/gcm-calibrate.c:879
 msgid "Please choose a profiling mode"
 msgstr "プロファイルのモードを選んでください"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:880
+#. TRANSLATORS: dialog message. Test patches are pages of colored squares
+#. * that are printed with a printer, and then read in with a calibration
+#. * device to create a profile
+#: ../src/gcm-calibrate.c:884
 msgid ""
-"Please indicate if you want to profile a local printer, generate some "
-"reference images, or process some reference images."
+"Please indicate if you want to profile a local printer, generate some test "
+"patches, or profile using existing test patches."
 msgstr ""
-"接続されたプリンタをプロファイルするのか、リファレンス画像を生成するのか、リ"
-"ファレンス画像を処理するのかを指定してください。"
+"接続されたプリンタをプロファイルするのか、テストパッチを生成するのか、既存の"
+"テストパッチを使ってプロファイルするのかを指定してください。"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-calibrate.c:992
+#: ../src/gcm-calibrate.c:996
 msgid "Install missing files?"
-msgstr "見つからないファイルをインストールしますか？"
+msgstr "見つからないファイルをインストールしますか?"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate.c:995
+#: ../src/gcm-calibrate.c:999
 msgid "Common color target files are not installed on this computer."
 msgstr "このコンピュータには汎用の色見本ファイルがインストールされていません。"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate.c:997
+#: ../src/gcm-calibrate.c:1001
 msgid "Color target files are needed to convert the image to a color profile."
 msgstr "画像をカラープロファイルに変換するには色見本ファイルが必要です。"
 
 #. TRANSLATORS: dialog message, asking if it's okay to install them
-#: ../src/gcm-calibrate.c:999
+#: ../src/gcm-calibrate.c:1003
 msgid "Do you want them to be installed?"
-msgstr "これらをインストールしますか？"
+msgstr "これらをインストールしますか?"
 
 #. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
-#: ../src/gcm-calibrate.c:1001
+#: ../src/gcm-calibrate.c:1005
 msgid "If you already have the correct file, you can skip this step."
 msgstr "適切なファイルが既にあれば、この手順はスキップできます。"
 
 #. TRANSLATORS: button, skip installing a package
-#: ../src/gcm-calibrate.c:1006 ../src/gcm-prefs.c:702
+#: ../src/gcm-calibrate.c:1010 ../src/gcm-prefs.c:702
 msgid "Do not install"
 msgstr "インストールしない"
 
 #. TRANSLATORS: button, install a package
 #. TRANSLATORS: button text
 #. TRANSLATORS: button, install a package
-#: ../src/gcm-calibrate.c:1008 ../src/gcm-import.c:188 ../src/gcm-prefs.c:700
+#: ../src/gcm-calibrate.c:1012 ../src/gcm-import.c:188 ../src/gcm-prefs.c:700
 msgid "Install"
 msgstr "インストール"
 
-#. TRANSLATORS: this is the window title for when the user selects the chart type.
-#. A chart is a type of reference image the user has purchased.
-#: ../src/gcm-calibrate.c:1022
-msgid "Please select chart type"
-msgstr "チャートの種類を選んでください"
+#. TRANSLATORS: this is the window title for when the user selects the calibration target.
+#. * A calibration target is an accuratly printed grid of colors, for instance:
+#. * the IT 8.7 targets available here: http://www.targets.coloraid.de/
+#: ../src/gcm-calibrate.c:1027
+msgid "Please select a calibration target"
+msgstr "キャリブレーションターゲットを選択してください"
 
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:1026
+#. TRANSLATORS: dialog message, preface. A calibration target looks like
+#. * this: http://www.colorreference.de/targets/target.jpg
+#: ../src/gcm-calibrate.c:1032
 msgid ""
 "Before profiling the device, you have to manually capture an image of a "
-"calibrated target and save it as a TIFF image file."
+"calibration target and save it as a TIFF image file."
 msgstr ""
 "デバイスをプロファイルする前に、キャリブレートしたターゲットのイメージを手動"
 "で取り込み、TIFF画像ファイルとして保存しなければなりません。"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:1031
+#: ../src/gcm-calibrate.c:1037
 msgid ""
 "Ensure that the contrast and brightness are not changed and color correction "
 "profiles are not applied."
@@ -866,7 +862,7 @@ msgstr ""
 "いことを確認してください。"
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:1034
+#: ../src/gcm-calibrate.c:1040
 msgid ""
 "The device sensor should have been cleaned prior to scanning and the output "
 "file resolution should be at least 200dpi."
@@ -875,7 +871,7 @@ msgstr ""
 "200dpi以上であることが推奨されます。"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:1040
+#: ../src/gcm-calibrate.c:1046
 msgid ""
 "Ensure that the white-balance has not been modified by the camera and that "
 "the lens is clean."
@@ -884,7 +880,7 @@ msgstr ""
 "してください。"
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:1044
+#: ../src/gcm-calibrate.c:1050
 msgid ""
 "For best results, the reference target should also be less than two years "
 "old."
@@ -892,57 +888,61 @@ msgstr ""
 "最良の結果には、2年以上経過していないリファレンスの色見本であるべきです。"
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:1047
-msgid "Please select the chart type which corresponds to your reference file."
-msgstr "リファレンスファイルに対応する種類のチャートを選択してください。"
+#: ../src/gcm-calibrate.c:1053
+msgid ""
+"Please select the calibration target type which corresponds to your "
+"reference file."
+msgstr ""
+"リファレンスファイルに対応する種類のキャリブレーションターゲットを選択してく"
+"ださい。"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:556
+#: ../src/gcm-calibrate-dialog.c:567
 msgid "CMP Digital Target 3"
 msgstr "CMP Digital Target 3"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:560
+#: ../src/gcm-calibrate-dialog.c:571
 msgid "CMP DT 003"
 msgstr "CMP DT 003"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:564
+#: ../src/gcm-calibrate-dialog.c:575
 msgid "Color Checker"
 msgstr "Color Checker"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:568
+#: ../src/gcm-calibrate-dialog.c:579
 msgid "Color Checker DC"
 msgstr "Color Checker DC"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:572
+#: ../src/gcm-calibrate-dialog.c:583
 msgid "Color Checker SG"
 msgstr "Color Checker SG"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:576
+#: ../src/gcm-calibrate-dialog.c:587
 msgid "Hutchcolor"
 msgstr "Hutchcolor"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:580
+#: ../src/gcm-calibrate-dialog.c:591
 msgid "i1 RGB Scan 1.4"
 msgstr "i1 RGB Scan 1.4"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:584
+#: ../src/gcm-calibrate-dialog.c:595
 msgid "IT8.7/2"
 msgstr "IT8.7/2"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:588
+#: ../src/gcm-calibrate-dialog.c:599
 msgid "Laser Soft DC Pro"
 msgstr "Laser Soft DC Pro"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:592
+#: ../src/gcm-calibrate-dialog.c:603
 msgid "QPcard 201"
 msgstr "QPcard 201"
 
@@ -1018,7 +1018,7 @@ msgstr ""
 "のプロファイルを変更出来ます。"
 
 #. TRANSLATORS: error message
-#: ../src/gcm-client.c:1047
+#: ../src/gcm-client.c:1103
 msgid "This device already exists"
 msgstr "デバイスは既にあります"
 
@@ -1028,7 +1028,7 @@ msgid "Measuring instrument not recognized"
 msgstr "認識されていない測色計"
 
 #. TRANSLATORS: this is the name of the internal panel
-#: ../src/gcm-device-xrandr.c:127
+#: ../src/gcm-device-xrandr.c:128
 msgid "Laptop LCD"
 msgstr "ラップトップLCD"
 
@@ -1170,12 +1170,12 @@ msgstr "インストール済みのICCプロファイル"
 #: ../src/gcm-import.c:173
 #, c-format
 msgid "Import ICC color profile %s?"
-msgstr "%s ICCカラープロファイルを読み込みますか？"
+msgstr "%s ICCカラープロファイルを読み込みますか?"
 
 #. TRANSLATORS: message text
 #: ../src/gcm-import.c:176
 msgid "Import ICC color profile?"
-msgstr "ICCカラープロファイルを読み込みますか？"
+msgstr "ICCカラープロファイルを読み込みますか?"
 
 #. ask confirmation
 #: ../src/gcm-import.c:184
@@ -1246,12 +1246,12 @@ msgstr "この種類のデバイスのICCプロファイルがありません"
 #. TRANSLATORS: this is the rendering intent of the output
 #: ../src/gcm-inspect.c:427
 msgid "Rendering intent (display):"
-msgstr "変換方式（ディスプレイ）:"
+msgstr "変換方式(ディスプレイ):"
 
 #. TRANSLATORS: this is the rendering intent of the printer
 #: ../src/gcm-inspect.c:430
 msgid "Rendering intent (softproof):"
-msgstr "変換方式（ソフトプルーフ）:"
+msgstr "変換方式(ソフトプルーフ):"
 
 #. TRANSLATORS: this is filename of the default colorspace
 #: ../src/gcm-inspect.c:433
@@ -1301,7 +1301,7 @@ msgstr "デバイスの種類が認識されません"
 #. command line argument, the ID of the device
 #: ../src/gcm-install-system-wide.c:123
 msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
-msgstr "デバイスID、例：'xrandr_ibm_france_ltn154p2_l05'"
+msgstr "デバイスID、例*'xrandr_ibm_france_ltn154p2_l05'"
 
 #. TRANSLATORS: tool that is used when copying profiles system-wide
 #: ../src/gcm-install-system-wide.c:141
@@ -1310,68 +1310,68 @@ msgstr "GNOME Color Manager ICCプロファイルのシステムワイドイン�
 
 #. TRANSLATORS: user did not specify a valid filename
 #: ../src/gcm-install-system-wide.c:149
-msgid "You need to specify exactly one ICC profile filename"
-msgstr "単一のICCプロファイルのファイル名を指定する必要があります"
+msgid "You need to specify exactly one ICC profile filename."
+msgstr "単一のICCプロファイルのファイル名を指定する必要があります。"
 
 #. TRANSLATORS: user did not specify a valid device ID
 #: ../src/gcm-install-system-wide.c:157
-msgid "You need to specify exactly one device ID"
-msgstr "単一のデバイスIDを指定する必要があります"
+msgid "You need to specify exactly one device ID."
+msgstr "単一のデバイスIDを指定する必要があります。"
 
 #. TRANSLATORS: user did not specify a valid device ID
 #: ../src/gcm-install-system-wide.c:166
-msgid "The device ID has invalid characters"
-msgstr "デバイスIDに利用できない文字があります"
+msgid "The device ID has invalid characters."
+msgstr "デバイスIDに利用できない文字があります。"
 
 #. TRANSLATORS: only able to install profiles as root
 #: ../src/gcm-install-system-wide.c:176
-msgid "This program can only be used by the root user"
+msgid "This program can only be used by the root user."
 msgstr "このプログラムはrootユーザしか使えません。"
 
 #. TRANSLATORS: only able to install profiles with an absolute path
 #: ../src/gcm-install-system-wide.c:185
-msgid "The source filename must be absolute"
+msgid "The source filename must be absolute."
 msgstr "元のファイル名は絶対パスでなければなりません"
 
 #. TRANSLATORS: error details
 #: ../src/gcm-install-system-wide.c:196
-msgid "Failed to get content type"
-msgstr "コンテントタイプを取得出来ませんでした"
+msgid "Failed to get content type:"
+msgstr "コンテントタイプを取得出来ませんでした:"
 
 #. TRANSLATORS: the content type is the detected type of file
 #: ../src/gcm-install-system-wide.c:206
-msgid "Content type was incorrect"
-msgstr "コンテントタイプが正しくありません"
+msgid "Content type was incorrect:"
+msgstr "コンテントタイプが正しくありません:"
 
 #. TRANSLATORS: the program must never be directly run
 #: ../src/gcm-install-system-wide.c:215
-msgid "This program must only be run through pkexec"
-msgstr "このプログラムはpkexec経由でのみ実行出来ます"
+msgid "This program must only be run through pkexec."
+msgstr "このプログラムはpkexec経由でのみ実行出来ます。"
 
 #. TRANSLATORS: PolicyKit has gone all insane on us, and we refuse to parse junk
 #: ../src/gcm-install-system-wide.c:224
-msgid "PKEXEC_UID must be set to an integer value"
-msgstr "PKEXEC_UIDは整数値を指定してください"
+msgid "PKEXEC_UID must be set to an integer value."
+msgstr "PKEXEC_UIDは整数値を指定してください。"
 
 #. TRANSLATORS: we are complaining that a file must be really owned by the user who called this program
 #: ../src/gcm-install-system-wide.c:233
-msgid "The ICC profile must be owned by you"
-msgstr "ICCプロファイルの所有者はあなたでなければなりません"
+msgid "The ICC profile must be owned by the user."
+msgstr "ICCプロファイルの所有者はあなたでなければなりません。"
 
 #. TRANSLATORS: only able to install profiles with an absolute path
 #: ../src/gcm-install-system-wide.c:246
-msgid "The destination filename must be absolute"
-msgstr "保存先のファイル名は絶対パスでなければなりません"
+msgid "The destination filename must be absolute."
+msgstr "保存先のファイル名は絶対パスでなければなりません。"
 
 #. TRANSLATORS: error details
 #: ../src/gcm-install-system-wide.c:256
-msgid "Failed to copy"
-msgstr "コピーに失敗"
+msgid "Failed to copy:"
+msgstr "コピーに失敗:"
 
 #. TRANSLATORS: could not save for all users
 #: ../src/gcm-prefs.c:152
 msgid "Failed to save defaults for all users"
-msgstr "全てのユーザ用のデフォルト値の保存に失敗"
+msgstr "すべてのユーザ用のデフォルト値の保存に失敗"
 
 #. TRANSLATORS: this is where no profile is selected
 #: ../src/gcm-prefs.c:180
@@ -1396,13 +1396,13 @@ msgstr "プリンタのキャリブレーションに失敗"
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
 #: ../src/gcm-prefs.c:467
 msgid "Permanently delete profile?"
-msgstr "永久にプロファイルを削除しますか？"
+msgstr "永久にプロファイルを削除しますか?"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-prefs.c:470
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
-msgstr "システムから永久にこのプロファイルを削除しても良いですか？"
+msgstr "システムから永久にこのプロファイルを削除しても良いですか?"
 
 #. TRANSLATORS: button, delete a profile
 #: ../src/gcm-prefs.c:473
@@ -1423,7 +1423,7 @@ msgstr "サポートされるICCプロファイル"
 msgid "Install missing calibration and profiling software?"
 msgstr ""
 "見つからなかったキャリブレーションとプロファイルのソフトウェアをインストール"
-"しますか？"
+"しますか?"
 
 #. TRANSLATORS: dialog message saying the argyllcms is not installed
 #: ../src/gcm-prefs.c:691
@@ -1439,7 +1439,7 @@ msgstr "デバイス用のカラープロファイルを作成するにはこれ
 #. TRANSLATORS: dialog message, asking if it's okay to install it
 #: ../src/gcm-prefs.c:695
 msgid "Do you want them to be automatically installed?"
-msgstr "自動的にこれらをインストールしますか？"
+msgstr "自動的にこれらをインストールしますか?"
 
 #. TRANSLATORS: this is the sound description
 #: ../src/gcm-prefs.c:821
@@ -1586,7 +1586,7 @@ msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#: ../src/gcm-prefs.c:1439 ../src/gcm-prefs.c:2205 ../data/gcm-prefs.ui.h:59
+#: ../src/gcm-prefs.c:1439 ../src/gcm-prefs.c:2204 ../data/gcm-prefs.ui.h:59
 msgid "RGB"
 msgstr "RGB"
 
@@ -1602,7 +1602,7 @@ msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
-#: ../src/gcm-prefs.c:1451 ../src/gcm-prefs.c:2209 ../data/gcm-prefs.ui.h:5
+#: ../src/gcm-prefs.c:1451 ../src/gcm-prefs.c:2208 ../data/gcm-prefs.ui.h:5
 msgid "CMYK"
 msgstr "CMYK"
 
@@ -1622,84 +1622,84 @@ msgid "No"
 msgstr "No"
 
 #. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/gcm-prefs.c:1724
+#: ../src/gcm-prefs.c:1723
 msgid "No hardware support"
 msgstr "ハードウェアのサポート無し"
 
 #. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/gcm-prefs.c:1728 ../src/gcm-prefs.c:2040
+#: ../src/gcm-prefs.c:1727 ../src/gcm-prefs.c:2039
 msgid "disconnected"
 msgstr "未接続"
 
 #. TRANSLATORS: the profile was of the wrong sort for this device
-#: ../src/gcm-prefs.c:1840
+#: ../src/gcm-prefs.c:1839
 msgid "Could not import profile"
 msgstr "プロファイルをインポートできません"
 
-#: ../src/gcm-prefs.c:1840
+#: ../src/gcm-prefs.c:1839
 msgid "The profile was of the wrong type for this device"
 msgstr "プロファイルはこのデバイス用のものではありません"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:1976
+#: ../src/gcm-prefs.c:1975
 msgid "Device added"
 msgstr "追加されたデバイス"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:1980
+#: ../src/gcm-prefs.c:1979
 msgid "Device removed"
 msgstr "削除されたデバイス"
 
 #. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
-#: ../src/gcm-prefs.c:2262
+#: ../src/gcm-prefs.c:2261
 #, c-format
 msgid "No %s color spaces available"
 msgstr "%s色空間は利用できません"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2617 ../data/gcm-prefs.ui.h:32
+#: ../src/gcm-prefs.c:2616 ../data/gcm-prefs.ui.h:32
 msgid "Display"
 msgstr "ディスプレイ"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2621
+#: ../src/gcm-prefs.c:2620
 msgid "Scanner"
 msgstr "スキャナ"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2625
+#: ../src/gcm-prefs.c:2624
 msgid "Printer"
 msgstr "プリンタ"
 
 #. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2629
+#: ../src/gcm-prefs.c:2628
 msgid "Camera"
 msgstr "カメラ"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-prefs.c:2696
+#: ../src/gcm-prefs.c:2695
 msgid "Set the parent window to make this modal"
 msgstr "親ウインドウをモーダルにします"
 
 #. TRANSLATORS: button for more details about the vcgt failure
-#: ../src/gcm-prefs.c:2992
+#: ../src/gcm-prefs.c:2991
 msgid "More Information"
 msgstr "詳細情報"
 
 #. TRANSLATORS: this is displayed while the devices are being probed
-#: ../src/gcm-prefs.c:2995
+#: ../src/gcm-prefs.c:2994
 msgid "Loading list of devices…"
-msgstr "デバイスのリストを読込中..."
+msgstr "デバイスのリストを読み込み中…."
 
 #. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/gcm-prefs.c:3002
+#: ../src/gcm-prefs.c:3001
 msgid ""
 "This profile does not have the information required for whole-screen color "
 "correction."
 msgstr "全画面の色補正をするために必要な情報がこのプロファイルには含まれません"
 
 #. TRANSLATORS: this is where the ICC profile_lcms1 has no description
-#: ../src/gcm-profile.c:128
+#: ../src/gcm-profile.c:130
 msgid "Missing description"
 msgstr "不明な説明"
 
@@ -2071,11 +2071,11 @@ msgstr "作業用色空間"
 #. This is a button to add a virtual device
 #: ../data/gcm-prefs.ui.h:77
 msgid "_Add Device"
-msgstr "デバイスを追加"
+msgstr "デバイスを追加(_A)"
 
 #: ../data/gcm-prefs.ui.h:78
 msgid "_Apply display correction"
-msgstr "ディスプレイ補正を適用"
+msgstr "ディスプレイ補正を適用(_A)"
 
 #. This is a button to delete the saved or virtual device
 #: ../data/gcm-prefs.ui.h:80
@@ -2101,94 +2101,26 @@ msgstr "デフォルトに戻す(_R)"
 
 #: ../data/gcm-prefs.ui.h:86
 msgid "_Set profile for color managed applications"
-msgstr "カラーマネジメント対応のアプリケーション用にプロファイルを設定"
+msgstr "カラーマネジメント対応のアプリケーション用にプロファイルを設定(_S)"
 
-#~| msgid "The rendering intent to use for softproofs, e.g. 'perceptual'."
-#~ msgid "The rendering intent to use for softproofs, e.g. 'perceptual'"
-#~ msgstr "ソフトプルーフで用いるレンダリングの変換方法、例：'知覚的'"
+#~ msgid "Choose the precision of the profile"
+#~ msgstr "プロファイルの精度を選択"
 
-#~| msgid "The rendering intent to use for the display, e.g. 'perceptual'."
-#~ msgid "The rendering intent to use for the display, e.g. 'perceptual'"
-#~ msgstr "ディスプレイで用いるレンダリングの変換方法、例：'知覚的'"
+#~ msgid "Please choose the profile precision."
+#~ msgstr "プロファイルの精度を選んでください。"
 
-#~| msgid "Setting up display device for use…"
-#~ msgid "Setting up device"
-#~ msgstr "デバイスを設定中"
-
-#~| msgid "Setting up display device for use…"
-#~ msgid "Setting up the device to read a spot color…"
-#~ msgstr "特色を読み込むためにデバイスを設定中..."
-
-#~| msgid ""
-#~| "Please set the measuring instrument to calibration mode like the image "
-#~| "below."
 #~ msgid ""
-#~ "Please set the measuring instrument to screen mode like the image below."
-#~ msgstr "下の画像のように、測色計をスクリーンモードに設定してください。"
-
-#~| msgid "Please set the measuring instrument to calibration mode."
-#~ msgid "Please set the measuring instrument to screen mode."
-#~ msgstr "計測器をスクリーンモードに設定してください。"
-
-#~| msgid "Device removed"
-#~ msgid "Device Error"
-#~ msgstr "デバイスエラー"
-
-#~ msgid "The device could not measure the color spot correctly."
-#~ msgstr "デバイスが特色を正確に測定できませんでした"
-
-#~| msgid "Profile Graphs"
-#~ msgid "Profile Precision"
-#~ msgstr "プロファイルの精度"
-
-#~| msgid ""
-#~| "The high precision profiles also require more time for reading the color "
-#~| "swatches."
-#~ msgid ""
-#~ "A higher precision profile provides higher accuracy in color matching but "
-#~ "requires more time for reading the color patches."
+#~ "High precision profiles provide higher accuracy in color matching. "
+#~ "Correspondingly, low precision profiles result in lower quality."
 #~ msgstr ""
-#~ "高精度のプロファイルではより正確なカラーマッチングが可能ですが、色見本を読"
-#~ "み取るためのより長い時間も必要です。"
+#~ "高精度のプロファイルによってより正確なカラーマッチングが可能です。反対に低"
+#~ "い精度のプロファイルでは低品質な結果しか得られません。"
 
-#~ msgid "The attached colorimeter is not capable of reading a spot color."
-#~ msgstr "接続された測色計は特色を読むことができません。"
+#~ msgid ""
+#~ "The high precision profiles also require more time for reading the color "
+#~ "swatches."
+#~ msgstr ""
+#~ "高精度のプロファイルでは色見本を読むために、より多くの時間が必要です。"
 
-#~ msgid "No colorimeter is attached."
-#~ msgstr "測色計が接続されていません。"
-
-#~ msgid "GNOME Color Manager Color Picker"
-#~ msgstr "GNOME Color Manager Color Picker"
-
-#~ msgid "Install now"
-#~ msgstr "すぐにインストールする"
-
-#~ msgid "More color profiles could be automatically installed."
-#~ msgstr "追加のプロファイルを自動的にインストール出来ました"
-
-#~ msgid "Color Picker"
-#~ msgstr "Color Picker"
-
-#~ msgid "Error:"
-#~ msgstr "エラー:"
-
-#~ msgid "Results"
-#~ msgstr "結果"
-
-#~ msgid "XYZ:"
-#~ msgstr "XYZ:"
-
-#~ msgid "_Measure"
-#~ msgstr "計測"
-
-#~ msgid "Remove"
-#~ msgstr "削除"
-
-#~ msgid "_Add&#x2026;"
-#~ msgstr "追加(_A)..."
-
-#~ msgid "LAB:"
-#~ msgstr "LAB:"
-
-#~ msgid "Measuring instrument not registered"
-#~ msgstr "登録されていない測色計"
+#~ msgid "Select reference image"
+#~ msgstr "リファレンス画像を選択"
