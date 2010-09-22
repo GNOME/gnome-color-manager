@@ -2314,6 +2314,7 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 	GError *error = NULL;
 	gchar *colorspace_rgb;
 	gchar *colorspace_cmyk;
+	gchar *colorspace_gray;
 	gint intent_display = -1;
 	gint intent_softproof = -1;
 	GcmProfileSearchFlags search_flags = GCM_PROFILE_STORE_SEARCH_ALL;
@@ -2342,6 +2343,15 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 	cc_color_panel_set_combo_simple_text (widget);
 	cc_color_panel_setup_space_combobox (panel, widget, GCM_COLORSPACE_CMYK, colorspace_cmyk);
 	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey", (gpointer) GCM_SETTINGS_COLORSPACE_CMYK);
+	g_signal_connect (G_OBJECT (widget), "changed",
+			  G_CALLBACK (cc_color_panel_space_combo_changed_cb), panel);
+
+	/* setup gray combobox */
+	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "combobox_space_gray"));
+	colorspace_gray = g_settings_get_string (panel->priv->settings, GCM_SETTINGS_COLORSPACE_GRAY);
+	cc_color_panel_set_combo_simple_text (widget);
+	cc_color_panel_setup_space_combobox (panel, widget, GCM_COLORSPACE_GRAY, colorspace_gray);
+	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey", (gpointer) GCM_SETTINGS_COLORSPACE_GRAY);
 	g_signal_connect (G_OBJECT (widget), "changed",
 			  G_CALLBACK (cc_color_panel_space_combo_changed_cb), panel);
 

@@ -8,6 +8,7 @@
       <widget name="combobox_rendering_display"/>
       <widget name="combobox_space_cmyk"/>
       <widget name="combobox_space_rgb"/>
+      <widget name="combobox_space_gray"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="sizegroup_devices">
@@ -22,6 +23,7 @@
     <widgets>
       <widget name="hbox43"/>
       <widget name="hbox46"/>
+      <widget name="hbox6"/>
       <widget name="hbox15"/>
       <widget name="hbox17"/>
     </widgets>
@@ -1355,6 +1357,45 @@
                               </object>
                               <packing>
                                 <property name="position">2</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkHBox" id="hbox5">
+                                <property name="visible">True</property>
+                                <property name="spacing">12</property>
+                                <child>
+                                  <object class="GtkHBox" id="hbox6">
+                                    <property name="visible">True</property>
+                                    <child>
+                                      <object class="GtkLabel" id="label_space_gray">
+                                        <property name="visible">True</property>
+                                        <property name="label" translatable="yes" comments="Technical color word for softproof rendering intent">Gray:</property>
+                                      </object>
+                                      <packing>
+                                        <property name="expand">False</property>
+                                        <property name="fill">False</property>
+                                        <property name="position">0</property>
+                                      </packing>
+                                    </child>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkComboBox" id="combobox_space_gray">
+                                    <property name="visible">True</property>
+                                    <property name="tooltip_text" translatable="yes">This is the default gray working space to use in applications</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="position">3</property>
                               </packing>
                             </child>
                           </object>

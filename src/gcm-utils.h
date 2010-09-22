@@ -42,6 +42,7 @@
 #define GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF		"rendering-intent-softproof"
 #define GCM_SETTINGS_COLORSPACE_RGB			"colorspace-rgb"
 #define GCM_SETTINGS_COLORSPACE_CMYK			"colorspace-cmyk"
+#define GCM_SETTINGS_COLORSPACE_GRAY			"colorspace-gray"
 #define GCM_SETTINGS_USE_PROFILES_FROM_VOLUMES		"use-profiles-from-volumes"
 #define GCM_SETTINGS_CALIBRATION_LENGTH			"calibration-length"
 #define GCM_SETTINGS_SHOW_FINE_TUNING			"show-fine-tuning"

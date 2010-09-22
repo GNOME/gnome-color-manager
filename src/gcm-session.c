@@ -589,6 +589,8 @@ gcm_session_handle_get_property (GDBusConnection *connection_, const gchar *send
 		retval = g_settings_get_value (settings, GCM_SETTINGS_COLORSPACE_RGB);
 	} else if (g_strcmp0 (property_name, "ColorspaceCmyk") == 0) {
 		retval = g_settings_get_value (settings, GCM_SETTINGS_COLORSPACE_CMYK);
+	} else if (g_strcmp0 (property_name, "ColorspaceGray") == 0) {
+		retval = g_settings_get_value (settings, GCM_SETTINGS_COLORSPACE_GRAY);
 	}
 
 	/* reset time */
