@@ -159,6 +159,7 @@ main (int argc, char **argv)
 
 	/* coldplug devices */
 	screen = gcm_x11_screen_new ();
+	gcm_x11_screen_assign (screen, NULL, NULL);
 	outputs = gcm_x11_screen_get_outputs (screen, &error);
 	if (outputs == NULL) {
 		g_print ("Failed to get outputs: %s\n", error->message);
