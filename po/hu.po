@@ -23,7 +23,7 @@ msgstr "Eszközprofil-beállítások alkalmazása a munkamenet indulásakor"
 
 #: ../data/gcm-apply.desktop.in.h:2
 msgid "Load device color profiles"
-msgstr "Eszköz-színprofilok betöltése"
+msgstr "Eszközök színprofiljainak betöltése"
 
 #: ../data/gcm-import.desktop.in.h:1
 msgid "ICC Profile Installer"
@@ -154,11 +154,11 @@ msgstr ""
 #: ../data/gnome-color-manager.schemas.in.h:17
 msgid "The rendering intent to use for softproofs, e.g. 'perceptual'."
 msgstr ""
-"A vizuális ellenőrzéshez használandó leképezési cél, például: „perceptual”."
+"Az ellenőrzéshez használandó megjelenítési cél, például: „perceptual” (érzethelyes)."
 
 #: ../data/gnome-color-manager.schemas.in.h:18
 msgid "The rendering intent to use for the display, e.g. 'perceptual'."
-msgstr "A kijelzőhöz használandó leképezési cél, például: „perceptual”."
+msgstr "A kijelzőhöz használandó megjelenítési cél, például: „perceptual” (érzethelyes)."
 
 #: ../data/gnome-color-manager.schemas.in.h:19
 msgid ""
@@ -1265,12 +1265,12 @@ msgstr "Nincsenek ICC-profilok ehhez az eszköztípushoz"
 #. TRANSLATORS: this is the rendering intent of the output
 #: ../src/gcm-inspect.c:427
 msgid "Rendering intent (display):"
-msgstr "Leképezési cél (kijelző):"
+msgstr "Megjelenítési cél (kijelző):"
 
 #. TRANSLATORS: this is the rendering intent of the printer
 #: ../src/gcm-inspect.c:430
 msgid "Rendering intent (softproof):"
-msgstr "Leképezési cél (vizuális ellenőrzés):"
+msgstr "Megjelenítési cél (ellenőrzés):"
 
 #. TRANSLATORS: this is filename of the default colorspace
 #: ../src/gcm-inspect.c:433
@@ -1771,22 +1771,22 @@ msgstr "%Y. %B %d, %l.%M.%S %p"
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:527
 msgid "Perceptual"
-msgstr "Perceptual"
+msgstr "Érzethelyes"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:531
 msgid "Relative colormetric"
-msgstr "Relative colormetric"
+msgstr "Relatív színmérés"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:535
 msgid "Saturation"
-msgstr "Saturation"
+msgstr "Telítettség"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:539
 msgid "Absolute colormetric"
-msgstr "Absolute colormetric"
+msgstr "Abszolút színmérés"
 
 #: ../data/gcm-calibrate.ui.h:1
 msgid "Blue:"
@@ -1863,7 +1863,7 @@ msgstr "pontosság"
 #: ../data/gcm-prefs.ui.h:1
 msgid ""
 "A working space is the range of colors that can be encoded into an image."
-msgstr "A munkatér a színek egy képbe kódolható tartománya."
+msgstr "A munkaterület a színek egy képbe kódolható tartománya."
 
 #: ../data/gcm-prefs.ui.h:2
 msgid "Add Virtual Device"
@@ -2032,7 +2032,7 @@ msgstr "RGB:"
 
 #: ../data/gcm-prefs.ui.h:62
 msgid "Rendering intent"
-msgstr "Leképezési cél"
+msgstr "Megjelenítési cél"
 
 #: ../data/gcm-prefs.ui.h:63
 msgid "Save these profiles for all users"
@@ -2053,28 +2053,27 @@ msgstr ""
 #. Technical color word for softproof rendering intent
 #: ../data/gcm-prefs.ui.h:68
 msgid "Softproof:"
-msgstr "Vizuális ellenőrzés:"
+msgstr "Ellenőrzés:"
 
 #: ../data/gcm-prefs.ui.h:69
 msgid "The rendering intent is how one gamut size is mapped to another."
 msgstr ""
-"A leképezési cél a színtérméret másik színtérméretre való leképezését adja "
-"meg."
+"A megjelenítési cél a színskálaméretek egymásra való leképezését adja meg."
 
 #: ../data/gcm-prefs.ui.h:70
 msgid ""
 "The rendering intent to use when transforming from the image gamut to the "
 "device output gamut"
 msgstr ""
-"A kép színteréről az eszköz kimeneti színterére alakításkor használandó "
-"leképezési cél"
+"A kép színskálájáról az eszköz kimeneti színskálájára alakításkor használandó "
+"megjelenítési cél"
 
 #: ../data/gcm-prefs.ui.h:71
 msgid ""
 "The rendering intent to use when transforming from the image gamut to the "
 "display gamut"
 msgstr ""
-"A kép színteréről a kijelző színterére alakításkor használandó leképezési cél"
+"A kép színskálájáról a kijelző színskálájára alakításkor használandó megjelenítési cél"
 
 #: ../data/gcm-prefs.ui.h:72
 msgid "These settings control how color management is applied to your desktop."
@@ -2084,15 +2083,15 @@ msgstr ""
 
 #: ../data/gcm-prefs.ui.h:73
 msgid "This is the default CMYK working space to use in applications"
-msgstr "Az alkalmazásokban használandó alapértelmezett CMYK munkatér"
+msgstr "Az alkalmazásokban használandó alapértelmezett CMYK munkaterület"
 
 #: ../data/gcm-prefs.ui.h:74
 msgid "This is the default RGB working space to use in applications"
-msgstr "Az alkalmazásokban használandó alapértelmezett RGB munkatér"
+msgstr "Az alkalmazásokban használandó alapértelmezett RGB munkaterület"
 
 #: ../data/gcm-prefs.ui.h:75
 msgid "Working space"
-msgstr "Munkatér"
+msgstr "Munkaterület"
 
 #. This is a button to add a virtual device
 #: ../data/gcm-prefs.ui.h:77
