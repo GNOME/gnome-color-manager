@@ -34,12 +34,17 @@
  * gcm_utils_linkify:
  **/
 gchar *
-gcm_utils_linkify (const gchar *text)
+gcm_utils_linkify (const gchar *hostile_text)
 {
 	guint i;
 	guint j = 0;
 	gboolean ret;
 	GString *string;
+	gchar *text;
+
+	/* Properly escape this as some profiles 'helpfully' put markup in like:
+	 * "Copyright (C) 2005-2010 Kai-Uwe Behrmann <www.behrmann.name>" */
+	text = g_markup_escape_text (hostile_text, -1);
 
 	/* find and replace links */
 	string = g_string_new ("");
@@ -69,6 +74,7 @@ gcm_utils_linkify (const gchar *text)
 			break;
 		}
 	}
+	g_free (text);
 	return g_string_free (string, FALSE);
 }
 
