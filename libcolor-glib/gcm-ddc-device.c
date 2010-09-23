@@ -393,7 +393,8 @@ gcm_ddc_device_read (GcmDdcDevice *device, guchar *data, gsize data_length, gsiz
 	len = buf[1] & ~GCM_MAGIC_BYTE2;
 	if (len > data_length || len > sizeof(buf)) {
 		g_set_error (error, GCM_DDC_DEVICE_ERROR, GCM_DDC_DEVICE_ERROR_FAILED,
-			     "Invalid response, length is %d, should be %d at most",
+			     "Invalid response, length is %" G_GSIZE_FORMAT ", "
+			     "should be %" G_GSIZE_FORMAT " at most",
 			     len, data_length);
 		ret = FALSE;
 		goto out;
@@ -404,7 +405,7 @@ gcm_ddc_device_read (GcmDdcDevice *device, guchar *data, gsize data_length, gsiz
 		xor ^= buf[i];
 	if (xor != 0) {
 		g_set_error (error, GCM_DDC_DEVICE_ERROR, GCM_DDC_DEVICE_ERROR_FAILED,
-			     "Invalid response, corrupted data - xor is 0x%02x, length 0x%02x", xor, len);
+			     "Invalid response, corrupted data - xor is 0x%02x, length 0x%02x", xor, (guint) len);
 		if (device->priv->verbose == GCM_VERBOSE_PROTOCOL)
 			gcm_ddc_device_print_hex_data ("Bugz", buf, data_length + 3);
 		ret = FALSE;
