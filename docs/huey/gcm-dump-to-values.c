@@ -38,7 +38,7 @@ main (gint argc, gchar *argv[])
 	guint addr;
 	guint8 buffer[0xff+4];
 	guint value_uint32;
-	gfloat *value_float;
+	volatile gfloat value_float;
 
 	if (argc != 2)
 		goto out;
@@ -69,8 +69,10 @@ main (gint argc, gchar *argv[])
 	for (j=0; j<4; j++) {
 		for (i=j; i<0xff-3; i+=4) {
 			value_uint32 = gcm_buffer_read_uint32_be (buffer+i);
-			if (value_uint32 == G_MAXUINT32)
+			if (value_uint32 == G_MAXUINT32) {
+				g_print ("0x%02x\t<invalid>\n", i);
 				continue;
+			}
 			g_print ("0x%02x\t%u\n", i, value_uint32);
 		}
 	}
@@ -78,10 +80,12 @@ main (gint argc, gchar *argv[])
 	for (j=0; j<4; j++) {
 		for (i=j; i<0xff-3; i+=4) {
 			value_uint32 = gcm_buffer_read_uint32_be (buffer+i);
-			value_float = (gfloat*) &value_uint32;
-			if (isnan (*value_float))
+			value_float = *((volatile gfloat*) &value_uint32);
+			if (isnan (value_float)) {
+				g_print ("0x%02x\t<invalid>\n", i);
 				continue;
-			g_print ("0x%02x\t%f\n", i, *value_float);
+			}
+			g_print ("0x%02x\t%f\n", i, value_float);
 		}
 	}
 	g_print ("*** find time/dates ***\n");
@@ -92,14 +96,13 @@ main (gint argc, gchar *argv[])
 		time_tmp = (time_t) gcm_buffer_read_uint32_be (buffer+i);
 		date = g_date_new ();
 		g_date_set_time_t (date, time_tmp);
-		if (!g_date_valid(date))
+		if (!g_date_valid(date) ||
+		    date->year == 1970 ||
+		    date->year > 2011 ||
+		    date->year < 1999) {
+			g_print ("0x%02x\t<invalid>\n", i);
 			continue;
-		if (date->year == 1970)
-			continue;
-		if (date->year > 2011)
-			continue;
-		if (date->year < 1999)
-			continue;
+		}
 		g_date_strftime (text, 128, "%F", date);
 		g_print ("0x%02x\t%s\n", i, text);
 		g_date_free (date);
