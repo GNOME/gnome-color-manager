@@ -52,8 +52,8 @@ struct _GcmSensorHueyPrivate
 {
 	gboolean			 done_startup;
 	GcmUsb				*usb;
-	GcmMat3x3			 calibration_matrix1;
-	GcmMat3x3			 calibration_matrix2;
+	GcmMat3x3			 calibration_lcd;
+	GcmMat3x3			 calibration_crt;
 	gfloat				 calibration_value;
 	GcmVec3				 calibration_vector;
 	gchar				 unlock_string[5];
@@ -334,22 +334,22 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
 /*
  * Register map:
  *     x0  x1  x2  x3  x4  x5  x6  x7  x8  x9  xA  xB  xC  xD  xE  xF
- * 0x [serial-number.][matrix1.......................................|
+ * 0x [serial-number.][matrix-lcd....................................|
  * 1x ...............................................................|
  * 2x .......]                                                       |
- * 3x         [manuf-time1...][matrix2...............................|
+ * 3x         [calib-lcd-time][matrix-crt............................|
  * 4x ...............................................................|
- * 5x .......................................][manuf-time2...]       |
+ * 5x .......................................][calib-crt-time]       |
  * 6x                             [calib_vector......................|
  * 7x ...........]                            [unlock-string.....]   |
  * 8x                                                                |
  * 9x                             [calib_value...]                   |
  */
 #define HUEY_EEPROM_ADDR_SERIAL			0x00 /* 4 bytes */
-#define HUEY_EEPROM_ADDR_MATRIX1		0x04 /* 36 bytes */
-#define HUEY_EEPROM_ADDR_MANUFACTURE_TIME1	0x32 /* 4 bytes, typically ~2009 */
-#define HUEY_EEPROM_ADDR_MATRIX2		0x36 /* 36 bytes */
-#define HUEY_EEPROM_ADDR_MANUFACTURE_TIME2	0x5a /* 4 bytes, typically ~2009 */
+#define HUEY_EEPROM_ADDR_CALIBRATION_DATA_LCD	0x04 /* 36 bytes */
+#define HUEY_EEPROM_ADDR_CALIBRATION_TIME_LCD	0x32 /* 4 bytes */
+#define HUEY_EEPROM_ADDR_CALIBRATION_DATA_CRT	0x36 /* 36 bytes */
+#define HUEY_EEPROM_ADDR_CALIBRATION_TIME_CRT	0x5a /* 4 bytes */
 #define HUEY_EEPROM_ADDR_CALIB_VECTOR		0x67 /* 12 bytes */
 #define HUEY_EEPROM_ADDR_UNLOCK			0x7a /* 5 bytes */
 #define HUEY_EEPROM_ADDR_CALIB_VALUE		0x94 /* 4 bytes */
@@ -858,6 +858,8 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
 	GcmVec3 *color_native_vec3;
 	GcmVec3 *color_result_vec3;
+	GcmMat3x3 *device_calibration;
+	GcmSensorOutputType output_type;
 
 	/* ensure sensor is started */
 	if (!sensor_huey->priv->done_startup) {
@@ -870,7 +872,8 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 	}
 
 	/* no hardware support */
-	if (gcm_sensor_get_output_type (sensor) == GCM_SENSOR_OUTPUT_TYPE_PROJECTOR) {
+	output_type = gcm_sensor_get_output_type (sensor);
+	if (output_type == GCM_SENSOR_OUTPUT_TYPE_PROJECTOR) {
 		g_set_error_literal (&error, GCM_SENSOR_ERROR,
 				     GCM_SENSOR_ERROR_NO_SUPPORT,
 				     "HUEY cannot measure ambient light in projector mode");
@@ -922,9 +925,17 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 	egg_debug ("scaled values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_native.R, color_native.G, color_native.B);
 	egg_debug ("PRE MULTIPLY: %s\n", gcm_vec3_to_string (color_native_vec3));
 
-	/* it would be rediculous for the device to emit RGB, it would be completely arbitrary --
-	 * we assume the matrix of data is designed to convert to LAB or XYZ */
-	gcm_mat33_vector_multiply (&sensor_huey->priv->calibration_matrix1, color_native_vec3, color_result_vec3);
+	/* we use different calibration matrices for each output type */
+	if (output_type == GCM_SENSOR_OUTPUT_TYPE_LCD) {
+		egg_debug ("using LCD calibration matrix");
+		device_calibration = &sensor_huey->priv->calibration_lcd;
+	} else {
+		egg_debug ("using CRT calibration matrix");
+		device_calibration = &sensor_huey->priv->calibration_crt;
+	}
+
+	/* the matrix of data is designed to convert from 'device RGB' to XYZ */
+	gcm_mat33_vector_multiply (device_calibration, color_native_vec3, color_result_vec3);
 
 	/* scale correct */
 	gcm_vec3_scalar_multiply (color_result_vec3, HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR, color_result_vec3);
@@ -1063,26 +1074,26 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 	egg_debug ("Unlock string: %s", priv->unlock_string);
 
 	/* get matrix */
-	gcm_mat33_clear (&priv->calibration_matrix1);
-	ret = gcm_sensor_huey_read_register_matrix (sensor_huey, HUEY_EEPROM_ADDR_MATRIX1, &priv->calibration_matrix1, error);
+	gcm_mat33_clear (&priv->calibration_lcd);
+	ret = gcm_sensor_huey_read_register_matrix (sensor_huey, HUEY_EEPROM_ADDR_CALIBRATION_DATA_LCD, &priv->calibration_lcd, error);
 	if (!ret)
 		goto out;
-	egg_debug ("device matrix1: %s", gcm_mat33_to_string (&priv->calibration_matrix1));
+	egg_debug ("device matrix1: %s", gcm_mat33_to_string (&priv->calibration_lcd));
 
 	/* get another matrix, although this one is different... */
-	gcm_mat33_clear (&priv->calibration_matrix2);
-	ret = gcm_sensor_huey_read_register_matrix (sensor_huey, HUEY_EEPROM_ADDR_MATRIX2, &priv->calibration_matrix2, error);
+	gcm_mat33_clear (&priv->calibration_crt);
+	ret = gcm_sensor_huey_read_register_matrix (sensor_huey, HUEY_EEPROM_ADDR_CALIBRATION_DATA_CRT, &priv->calibration_crt, error);
 	if (!ret)
 		goto out;
-	egg_debug ("device matrix2: %s", gcm_mat33_to_string (&priv->calibration_matrix2));
+	egg_debug ("device matrix2: %s", gcm_mat33_to_string (&priv->calibration_crt));
 
 	/* this number is different on all three hueys */
-	ret = gcm_sensor_huey_read_register_float (sensor_huey, HUEY_EEPROM_ADDR_MATRIX2, &priv->calibration_value, error);
+	ret = gcm_sensor_huey_read_register_float (sensor_huey, HUEY_EEPROM_ADDR_CALIBRATION_DATA_CRT, &priv->calibration_value, error);
 	if (!ret)
 		goto out;
 
 	/* this vector changes between sensor 1 and 3 */
-	ret = gcm_sensor_huey_read_register_vector (sensor_huey, HUEY_EEPROM_ADDR_MATRIX2, &priv->calibration_vector, error);
+	ret = gcm_sensor_huey_read_register_vector (sensor_huey, HUEY_EEPROM_ADDR_CALIBRATION_DATA_CRT, &priv->calibration_vector, error);
 	if (!ret)
 		goto out;
 
@@ -1173,8 +1184,8 @@ gcm_sensor_huey_init (GcmSensorHuey *sensor)
 	GcmSensorHueyPrivate *priv;
 	priv = sensor->priv = GCM_SENSOR_HUEY_GET_PRIVATE (sensor);
 	priv->usb = gcm_usb_new ();
-	gcm_mat33_clear (&priv->calibration_matrix1);
-	gcm_mat33_clear (&priv->calibration_matrix2);
+	gcm_mat33_clear (&priv->calibration_lcd);
+	gcm_mat33_clear (&priv->calibration_crt);
 	priv->unlock_string[0] = '\0';
 }
 
