@@ -5,7 +5,7 @@ INCLUDES =							\
 	$(GTK_CFLAGS)						\
 	$(GLIB_CFLAGS)
 
-bin_PROGRAMS =							\
+noinst_PROGRAMS =						\
 	gcm-parse-huey						\
 	gcm-dump-to-values
 
