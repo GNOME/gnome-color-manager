@@ -78,7 +78,7 @@ get_command_string (guchar value)
 	if (value == 0x12)
 		return "unknown12";
 	if (value == 0x13)
-		return "unknown13";
+		return "measure-rgb-crt";
 	if (value == 0x15)
 		return "unknown15(status?)";
 	if (value == 0x16)
@@ -100,31 +100,43 @@ parse_command_sequence (GString *output, const gchar *line, gboolean reply)
 	gchar **tok;
 	guint j;
 	guchar cmd;
-	const gchar *annote;
+	guchar instruction = 0;
+	const gchar *command_as_text;
 	tok = g_strsplit (line, " ", -1);
 
 	/* only know how to parse 8 bytes */
 	if (g_strv_length (tok) != 8)
 		goto out;
 	for (j=0; j<8; j++) {
-		annote = NULL;
+		command_as_text = NULL;
 		cmd = g_ascii_strtoll (tok[j], NULL, 16);
 		if (j == 0 && reply) {
-			annote = get_return_string (cmd);
-			if (annote == NULL)
+			command_as_text = get_return_string (cmd);
+			if (command_as_text == NULL)
 				g_warning ("return code 0x%02x not known in %s", cmd, line);
 		}
 		if ((j == 0 && !reply) ||
 		    (j == 1 && reply)) {
-			annote = get_command_string (cmd);
-			if (annote == NULL)
+			instruction = cmd;
+			command_as_text = get_command_string (instruction);
+			if (command_as_text == NULL)
 				g_warning ("command code 0x%02x not known", cmd);
 		}
-		if (annote != NULL)
-			g_string_append_printf (output, "%02x(%s) ", cmd, annote);
+		/* some requests are filled with junk data */
+		if (!reply && instruction == 0x08 && j > 1)
+			g_string_append_printf (output, "xx ");
+		else if (!reply && instruction == 0x18 && j > 4)
+			g_string_append_printf (output, "xx ");
+		else if (!reply && instruction == 0x17 && j > 3)
+			g_string_append_printf (output, "xx ");
+		else if (command_as_text != NULL)
+			g_string_append_printf (output, "%02x(%s) ", cmd, command_as_text);
 		else
 			g_string_append_printf (output, "%02x ", cmd);
 	}
+	/* remove trailing space */
+	if (output->len > 1)
+		g_string_set_size (output, output->len - 1);
 out:
 	g_strfreev (tok);
 }

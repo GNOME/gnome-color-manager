@@ -212,11 +212,21 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
 #define HUEY_COMMAND_UNKNOWN_12		0x12
 
 /*
- * Unknown command
+ * Measures RGB value, and return the red value (only used in CRT mode).
  *
- * returns: all NULL all of the time
+ * Seems to have to retry, every single time.
+ *
+ *                   Gain?
+ *              _______|_______
+ *             /---\ /---\ /---\
+ * input:   13 02 41 00 54 00 49 00
+ * returns: 00 13 00 00 01 99 02 00
+ *                   ^^^^^ - would match HUEY_COMMAND_SENSOR_MEASURE_RGB
+ *
+ * The gain seems not to change for different measurements with different
+ * colors. This seems to be a less precise profile too.
  */
-#define HUEY_COMMAND_UNKNOWN_13		0x13
+#define HUEY_COMMAND_SENSOR_MEASURE_RGB_CRT	0x13
 
 /*
  * Unknown command
