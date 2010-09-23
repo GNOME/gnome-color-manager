@@ -289,7 +289,7 @@ gcm_device_xrandr_get_gamma_size_fallback (void)
 	/* this is per-screen, not per output which is less than ideal */
 	gdk_error_trap_push ();
 	egg_warning ("using PER-SCREEN gamma tables as driver is not XRANDR 1.3 compliant");
-	rc = XF86VidModeGetGammaRampSize (GDK_DISPLAY(), gdk_x11_get_default_screen (), (int*) &size);
+	rc = XF86VidModeGetGammaRampSize (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), gdk_x11_get_default_screen (), (int*) &size);
 	gdk_error_trap_pop ();
 	if (!rc)
 		size = 0;
@@ -318,7 +318,7 @@ gcm_device_xrandr_get_gamma_size (GcmDeviceXrandr *device_xrandr, GnomeRRCrtc *c
 
 	/* get the value, and catch errors */
 	gdk_error_trap_push ();
-	size = XRRGetCrtcGammaSize (GDK_DISPLAY(), id);
+	size = XRRGetCrtcGammaSize (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), id);
 	if (gdk_error_trap_pop ())
 		size = 0;
 
@@ -353,7 +353,7 @@ gcm_device_xrandr_apply_fallback (XRRCrtcGamma *crtc_gamma, guint size)
 	/* this is per-screen, not per output which is less than ideal */
 	gdk_error_trap_push ();
 	egg_warning ("using PER-SCREEN gamma tables as driver is not XRANDR 1.3 compliant");
-	rc = XF86VidModeSetGammaRamp (GDK_DISPLAY(), gdk_x11_get_default_screen (), size, crtc_gamma->red, crtc_gamma->green, crtc_gamma->blue);
+	rc = XF86VidModeSetGammaRamp (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), gdk_x11_get_default_screen (), size, crtc_gamma->red, crtc_gamma->green, crtc_gamma->blue);
 	gdk_error_trap_pop ();
 
 	return rc;
@@ -403,7 +403,7 @@ gcm_device_xrandr_apply_for_crtc (GcmDeviceXrandr *device_xrandr, GnomeRRCrtc *c
 
 	/* get the value, and catch errors */
 	gdk_error_trap_push ();
-	XRRSetCrtcGamma (GDK_DISPLAY(), id, crtc_gamma);
+	XRRSetCrtcGamma (GDK_DISPLAY_XDISPLAY (gdk_display_get_default ()), id, crtc_gamma);
 	gdk_flush ();
 	if (gdk_error_trap_pop ()) {
 		/* some drivers support Xrandr 1.2, not 1.3 */
