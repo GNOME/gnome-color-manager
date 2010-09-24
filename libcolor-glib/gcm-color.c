@@ -34,6 +34,44 @@
 #include <gcm-color.h>
 
 /**
+ * gcm_color_init_XYZ:
+ * @dest: the destination color
+ * @X: component value
+ * @Y: component value
+ * @Z: component value
+ *
+ * Initialises a color value.
+ **/
+void
+gcm_color_init_XYZ (GcmColorXYZ *dest, gdouble X, gdouble Y, gdouble Z)
+{
+	g_return_if_fail (dest != NULL);
+
+	dest->X = X;
+	dest->Y = Y;
+	dest->Z = Z;
+}
+
+/**
+ * gcm_color_init_RGB:
+ * @dest: the destination color
+ * @R: component value
+ * @G: component value
+ * @B: component value
+ *
+ * Initialises a color value.
+ **/
+void
+gcm_color_init_RGB (GcmColorRGB *dest, gdouble R, gdouble G, gdouble B)
+{
+	g_return_if_fail (dest != NULL);
+
+	dest->R = R;
+	dest->G = G;
+	dest->B = B;
+}
+
+/**
  * gcm_color_copy_XYZ:
  * @src: the source color
  * @dest: the destination color

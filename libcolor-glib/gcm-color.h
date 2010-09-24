@@ -58,6 +58,14 @@ typedef struct {
 	gdouble	 B;
 } GcmColorRGB;
 
+void		 gcm_color_init_XYZ			(GcmColorXYZ		*dest,
+							 gdouble		 X,
+							 gdouble		 Y,
+							 gdouble		 Z);
+void		 gcm_color_init_RGB			(GcmColorRGB		*dest,
+							 gdouble		 R,
+							 gdouble		 G,
+							 gdouble		 B);
 void		 gcm_color_copy_XYZ			(const GcmColorXYZ	*src,
 							 GcmColorXYZ		*dest);
 void		 gcm_color_copy_RGB			(const GcmColorRGB	*src,
