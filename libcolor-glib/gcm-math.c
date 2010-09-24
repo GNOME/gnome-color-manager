@@ -48,6 +48,25 @@ gcm_vec3_clear (GcmVec3 *src)
 }
 
 /**
+ * gcm_vec3_init:
+ * @dest: the destination vector
+ * @v0: component value
+ * @v1: component value
+ * @v2: component value
+ *
+ * Initialises a vector.
+ **/
+void
+gcm_vec3_init (GcmVec3 *dest, gdouble v0, gdouble v1, gdouble v2)
+{
+	g_return_if_fail (dest != NULL);
+
+	dest->v0 = v0;
+	dest->v1 = v1;
+	dest->v2 = v2;
+}
+
+/**
  * gcm_vec3_scalar_multiply:
  * @src: the source
  * @value: the scalar multiplier

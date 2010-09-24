@@ -52,6 +52,10 @@ void		 gcm_vec3_scalar_multiply	(const GcmVec3		*src,
 						 GcmVec3		*dest);
 gchar		*gcm_vec3_to_string		(const GcmVec3		*src);
 gdouble		*gcm_vec3_get_data		(const GcmVec3		*src);
+void		 gcm_vec3_init			(GcmVec3		*dest,
+						 gdouble		 v0,
+						 gdouble		 v1,
+						 gdouble		 v2);
 void		 gcm_mat33_clear		(const GcmMat3x3	*src);
 gchar		*gcm_mat33_to_string		(const GcmMat3x3	*src);
 gdouble		*gcm_mat33_get_data		(const GcmMat3x3	*src);
