@@ -605,6 +605,10 @@ gcm_colorspace_to_localised_string (GcmColorspace colorspace)
 		/* TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black */
 		return _("CMYK");
 	}
+	if (colorspace == GCM_COLORSPACE_GRAY) {
+		/* TRANSLATORS: this is the colorspace type */
+		return _("gray");
+	}
 	return NULL;
 }
 

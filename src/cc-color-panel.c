@@ -2200,7 +2200,7 @@ cc_color_panel_setup_space_combobox (CcColorPanel *panel, GtkWidget *widget, Gcm
 		colorspace_tmp = gcm_profile_get_colorspace (profile);
 		if (!has_vcgt &&
 		    colorspace == colorspace_tmp &&
-		    (colorspace == GCM_COLORSPACE_CMYK ||
+		    (colorspace != GCM_COLORSPACE_RGB ||
 		     has_colorspace_description)) {
 			cc_color_panel_combobox_add_profile (widget, profile, GCM_PREFS_ENTRY_TYPE_PROFILE, &iter);
 
