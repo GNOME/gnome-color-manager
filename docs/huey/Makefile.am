@@ -5,9 +5,23 @@ INCLUDES =							\
 	$(GTK_CFLAGS)						\
 	$(GLIB_CFLAGS)
 
+COLOR_GLIB_LIBS =						\
+	$(top_builddir)/libcolor-glib/libcolor-glib.la
+
 noinst_PROGRAMS =						\
 	gcm-parse-huey						\
+	gcm-calculate-fudge					\
 	gcm-dump-to-values
+
+gcm_calculate_fudge_SOURCES =					\
+	gcm-calculate-fudge.c
+
+gcm_calculate_fudge_LDADD =					\
+	$(COLOR_GLIB_LIBS)					\
+	$(GLIB_LIBS)
+
+gcm_calculate_fudge_CFLAGS =					\
+	$(WARNINGFLAGS_C)
 
 gcm_parse_huey_SOURCES =					\
 	gcm-parse-huey.c
@@ -20,9 +34,6 @@ gcm_parse_huey_CFLAGS =						\
 
 gcm_dump_to_values_SOURCES =					\
 	gcm-dump-to-values.c
-
-COLOR_GLIB_LIBS =						\
-	$(top_builddir)/libcolor-glib/libcolor-glib.la
 
 gcm_dump_to_values_LDADD =					\
 	$(COLOR_GLIB_LIBS)					\

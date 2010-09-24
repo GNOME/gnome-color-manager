@@ -55,7 +55,7 @@ struct _GcmSensorHueyPrivate
 	GcmMat3x3			 calibration_lcd;
 	GcmMat3x3			 calibration_crt;
 	gfloat				 calibration_value;
-	GcmVec3				 calibration_vector;
+	GcmVec3				 dark_offset;
 	gchar				 unlock_string[5];
 };
 
@@ -329,7 +329,7 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
 /* Picked out of thin air, just to try to match reality...
  * I have no idea why we need to do this, although it probably
  * indicates we doing something wrong. */
-#define HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR	6880.0f
+#define HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR	3.347250f
 
 /*
  * Register map:
@@ -350,7 +350,7 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
 #define HUEY_EEPROM_ADDR_CALIBRATION_TIME_LCD	0x32 /* 4 bytes */
 #define HUEY_EEPROM_ADDR_CALIBRATION_DATA_CRT	0x36 /* 36 bytes */
 #define HUEY_EEPROM_ADDR_CALIBRATION_TIME_CRT	0x5a /* 4 bytes */
-#define HUEY_EEPROM_ADDR_CALIB_VECTOR		0x67 /* 12 bytes */
+#define HUEY_EEPROM_ADDR_DARK_OFFSET		0x67 /* 12 bytes */
 #define HUEY_EEPROM_ADDR_UNLOCK			0x7a /* 5 bytes */
 #define HUEY_EEPROM_ADDR_CALIB_VALUE		0x94 /* 4 bytes */
 
@@ -839,10 +839,41 @@ out:
 	return ret;
 }
 
-/* in a dark box, the sensors still report a reading */
-#define HUEY_ABSOLUTE_OFFSET_RED	0.000119
-#define HUEY_ABSOLUTE_OFFSET_GREEN	0.000119
-#define HUEY_ABSOLUTE_OFFSET_BLUE	0.000018
+/**
+ * gcm_sensor_huey_convert_device_RGB_to_XYZ:
+ *
+ * / X \   (( / R \             )   / d \    / c a l \ )
+ * | Y | = (( | G | x pre-scale ) - | r |  * | m a t | ) x post_scale
+ * \ Z /   (( \ B /             )   \ k /    \ l c d / )
+ *
+ * The device RGB values have to be scaled to something in the same
+ * scale as the dark calibration. The results then have to be scaled
+ * after convolving. I assume the first is a standard value, and the
+ * second scale must be available in the eeprom somewhere.
+ **/
+static void
+gcm_sensor_huey_convert_device_RGB_to_XYZ (GcmColorRGB *src, GcmColorXYZ *dest,
+					   GcmMat3x3 *calibration, GcmVec3 *dark_offset,
+					   gdouble pre_scale, gdouble post_scale)
+{
+	GcmVec3 *color_native_vec3;
+	GcmVec3 *color_result_vec3;
+	GcmVec3 temp;
+
+	/* pre-multiply */
+	color_native_vec3 = gcm_color_get_RGB_Vec3 (src);
+	gcm_vec3_scalar_multiply (color_native_vec3, pre_scale, &temp);
+
+	/* remove dark calibration */
+	gcm_vec3_subtract (&temp, dark_offset, &temp);
+
+	/* convolve */
+	color_result_vec3 = gcm_color_get_XYZ_Vec3 (dest);
+	gcm_mat33_vector_multiply (calibration, &temp, color_result_vec3);
+
+	/* post-multiply */
+	gcm_vec3_scalar_multiply (color_result_vec3, post_scale, color_result_vec3);
+}
 
 static void
 gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCancellable *cancellable)
@@ -856,8 +887,6 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 	GcmColorXYZ *tmp;
 	GcmSensorHueyMultiplier multiplier;
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
-	GcmVec3 *color_native_vec3;
-	GcmVec3 *color_result_vec3;
 	GcmMat3x3 *device_calibration;
 	GcmSensorOutputType output_type;
 
@@ -918,12 +947,7 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 		goto out;
 	}
 
-	/* get colors as vectors */
-	color_native_vec3 = gcm_color_get_RGB_Vec3 (&color_native);
-	color_result_vec3 = gcm_color_get_XYZ_Vec3 (&color_result);
-
 	egg_debug ("scaled values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_native.R, color_native.G, color_native.B);
-	egg_debug ("PRE MULTIPLY: %s\n", gcm_vec3_to_string (color_native_vec3));
 
 	/* we use different calibration matrices for each output type */
 	if (output_type == GCM_SENSOR_OUTPUT_TYPE_LCD) {
@@ -934,13 +958,13 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 		device_calibration = &sensor_huey->priv->calibration_crt;
 	}
 
-	/* the matrix of data is designed to convert from 'device RGB' to XYZ */
-	gcm_mat33_vector_multiply (device_calibration, color_native_vec3, color_result_vec3);
-
-	/* scale correct */
-	gcm_vec3_scalar_multiply (color_result_vec3, HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR, color_result_vec3);
-
-	egg_debug ("POST MULTIPLY: %s\n", gcm_vec3_to_string (color_result_vec3));
+	/* convert from device RGB to XYZ */
+	gcm_sensor_huey_convert_device_RGB_to_XYZ (&color_native,
+						   &color_result,
+						   device_calibration,
+						   &sensor_huey->priv->dark_offset,
+						   2000.0f,
+						   HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR);
 
 	/* save result */
 	tmp = g_new0 (GcmColorXYZ, 1);
@@ -1088,12 +1112,12 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 	egg_debug ("device matrix2: %s", gcm_mat33_to_string (&priv->calibration_crt));
 
 	/* this number is different on all three hueys */
-	ret = gcm_sensor_huey_read_register_float (sensor_huey, HUEY_EEPROM_ADDR_CALIBRATION_DATA_CRT, &priv->calibration_value, error);
+	ret = gcm_sensor_huey_read_register_float (sensor_huey, HUEY_EEPROM_ADDR_CALIB_VALUE, &priv->calibration_value, error);
 	if (!ret)
 		goto out;
 
 	/* this vector changes between sensor 1 and 3 */
-	ret = gcm_sensor_huey_read_register_vector (sensor_huey, HUEY_EEPROM_ADDR_CALIBRATION_DATA_CRT, &priv->calibration_vector, error);
+	ret = gcm_sensor_huey_read_register_vector (sensor_huey, HUEY_EEPROM_ADDR_DARK_OFFSET, &priv->dark_offset, error);
 	if (!ret)
 		goto out;
 
@@ -1137,10 +1161,10 @@ gcm_sensor_huey_dump (GcmSensor *sensor, GString *data, GError **error)
 	g_string_append_printf (data, "huey-dump-version:%i\n", 2);
 	g_string_append_printf (data, "unlock-string:%s\n", priv->unlock_string);
 	g_string_append_printf (data, "calibration-value:%f\n", priv->calibration_value);
-	g_string_append_printf (data, "calibration-vector:%f,%f,%f\n",
-				priv->calibration_vector.v0,
-				priv->calibration_vector.v1,
-				priv->calibration_vector.v2);
+	g_string_append_printf (data, "dark-offset:%f,%f,%f\n",
+				priv->dark_offset.v0,
+				priv->dark_offset.v1,
+				priv->dark_offset.v2);
 
 	/* read all the register space */
 	for (i=0; i<0xff; i++) {
