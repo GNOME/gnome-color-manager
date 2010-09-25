@@ -1,15 +1,10 @@
-# Indonesian translation of gnome-color-manager
-# Copyright (C) 2009 gnome-color-manager's COPYRIGHT HOLDER
-# This file is distributed under the same licence as the gnome-color-manager package.
-# Andika Triwidada <andika@gmail.com>, 2009, 2010.
-#
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager gnome-2-32\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager\n"
 "POT-Creation-Date: 2010-09-24 20:02+0000\n"
-"PO-Revision-Date: 2010-09-25 10:26+0700\n"
+"PO-Revision-Date: 2010-09-25 14:44+0700\n"
 "Last-Translator: Andika Triwidada <andika@gmail.com>\n"
 "Language-Team: GNOME Indonesian Translation Team <gnome@i15n.org>\n"
 "MIME-Version: 1.0\n"
@@ -92,11 +87,11 @@ msgstr "Tunjukkan kendali penalaan halus bagi perangkat tampilan."
 
 #: ../data/gnome-color-manager.schemas.in.h:8
 msgid "The CMYK profile filename to be used by applications by default."
-msgstr ""
+msgstr "Nama berkas profil CMYK yang akan dipakai secara bawaan oleh aplikasi."
 
 #: ../data/gnome-color-manager.schemas.in.h:9
 msgid "The RGB profile filename to be used by applications by default."
-msgstr ""
+msgstr "Nama berkas profil RGB yang akan dipakai secara bawaan oleh aplikasi."
 
 #: ../data/gnome-color-manager.schemas.in.h:10
 msgid "The default CMYK profile."
@@ -113,14 +108,17 @@ msgstr "Panjang kalibrasi bawaan."
 #: ../data/gnome-color-manager.schemas.in.h:13
 msgid "The default gamma to use for monitors with no previous value set."
 msgstr ""
+"Gamma bawaan untuk dipakai pada monitor yang sebelumnya nilainya tak ditata."
 
 #: ../data/gnome-color-manager.schemas.in.h:14
 msgid "The duration between sending notifications to recalibrate a display."
 msgstr ""
+"Durasi antara pengiriman notifikasi untuk mengalibrasi ulang suatu tampilan."
 
 #: ../data/gnome-color-manager.schemas.in.h:15
 msgid "The duration between sending notifications to recalibrate a printer."
 msgstr ""
+"Durasi antara pengiriman notifikasi untuk mengalibrasi ulang suatu pencetak."
 
 #: ../data/gnome-color-manager.schemas.in.h:16
 msgid ""
@@ -160,11 +158,8 @@ msgid ""
 msgstr ""
 
 #: ../policy/org.gnome.color.policy.in.h:1
-#, fuzzy
 msgid "Authentication is required to install the color profile for all users"
-msgstr ""
-"Otentikasi diperlukan untuk memasang tatanan multi-monitor bagi semua "
-"pengguna"
+msgstr "Otentikasi diperlukan untuk memasang profil warna bagi semua pengguna"
 
 #. SECURITY:
 #. - Normal users require admin authentication to install files system
@@ -283,7 +278,7 @@ msgstr "Menyalin berkas"
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:987
 msgid "Copying source image, chart data and CIE reference values."
-msgstr ""
+msgstr "Menyalin gambar sumber, data diagram, dan nilai referensi CIE."
 
 #. TRANSLATORS: title, drawing means painting to the screen
 #: ../src/gcm-calibrate-argyll.c:1062
@@ -297,32 +292,29 @@ msgstr "Mendeteksi keping-keping referensi dan mengukur mereka."
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:1186
-#, fuzzy
 msgid "Generating the ICC color profile that can be used with this device."
-msgstr "Menjangkitkan profil warna ICC yang dapat dipakai dengan layar ini."
+msgstr ""
+"Menjangkitkan profil warna ICC yang dapat dipakai dengan perangkat ini."
 
 #. TRANSLATORS: title, hardware refers to a calibration device
 #: ../src/gcm-calibrate-argyll.c:1373
-#, fuzzy
 msgid "Set up display"
-msgstr "Pengat_uran halaman..."
+msgstr "Menyiapkan tampilan"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:1376
-#, fuzzy
 msgid "Setting up display device for use…"
-msgstr "Menata perangkat keras untuk dipakai..."
+msgstr "Menyiapkan perangkat tampilan untuk dipakai…"
 
 #. TRANSLATORS: title, patches are specific colors used in calibration
 #: ../src/gcm-calibrate-argyll.c:1475
-#, fuzzy
 msgid "Printing patches"
-msgstr "Menjangkitkan keping"
+msgstr "Mencetak keping"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:1478
 msgid "Rendering the patches for the selected paper and ink."
-msgstr ""
+msgstr "Merender keping-keping bagi kertas dan tinta yang dipilih."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
 #: ../src/gcm-calibrate-argyll.c:1814
@@ -335,11 +327,14 @@ msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
 msgstr ""
+"Silakan tunggu beberapa menit sampai tinta kering. Memrofil tinta basah akan "
+"menghasilkan profil yang buruk dan mungkin dapat merusak instrumen "
+"pengukuran warna Anda."
 
 #. TRANSLATORS: the supplied image contains an alpha channel which we have to strip out
 #: ../src/gcm-calibrate-argyll.c:1959
 msgid "Image is not suitable without conversion"
-msgstr ""
+msgstr "Gambar tak cocok tanpa konversi"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:1962
@@ -347,6 +342,8 @@ msgid ""
 "The supplied image contains an alpha channel which the profiling tools do "
 "not understand."
 msgstr ""
+"Gambar yang diberikan memuat suatu kanal alfa yang tak dipahami peralatan "
+"pemrofil."
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:1966
@@ -354,46 +351,44 @@ msgid ""
 "It is normally safe to convert the image, although you should ensure that "
 "the generated profile is valid."
 msgstr ""
+"Biasanya aman untuk mengonversi gambar, walaupun Anda mesti memastikan bahwa "
+"profil yang dijangkitkan valid."
 
 #. TRANSLATORS: button text to convert the RGBA image into RGB
 #: ../src/gcm-calibrate-argyll.c:1973
-#, fuzzy
 msgid "Convert"
-msgstr "_Konversi"
+msgstr "Konversi"
 
 #. TRANSLATORS: title, instrument refers to a calibration device
 #: ../src/gcm-calibrate-argyll.c:2031
-#, fuzzy
 msgid "Set up instrument"
-msgstr "Pengat_uran halaman..."
+msgstr "Menyiapkan instrumen"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:2034
-#, fuzzy
 msgid "Setting up the instrument for use…"
-msgstr "Menata perangkat keras untuk dipakai..."
+msgstr "Menyiapkan instrumen untuk dipakai…"
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
 #: ../src/gcm-calibrate-argyll.c:2127
-#, fuzzy
 msgid "Please attach instrument"
-msgstr "Tidak dapat melampirkan file %s: %s"
+msgstr "Silakan pasang instrumen"
 
 #. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
 #: ../src/gcm-calibrate-argyll.c:2135
-#, fuzzy
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square like the image below."
-msgstr "Silakan pasang perangkat keras ke pusat layar pada kotak kelabu."
+msgstr ""
+"Silakan pasang instrumen pengukuran di pusat layar pada kotak kelabu seperti "
+"gambar di bawah."
 
 #. TRANSLATORS: dialog message, ask user to attach device
 #: ../src/gcm-calibrate-argyll.c:2138
-#, fuzzy
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square."
-msgstr "Silakan pasang perangkat keras ke pusat layar pada kotak kelabu."
+msgstr "Silakan pasang instrumen pengukuran di pusat layar pada kotak kelabu."
 
 #. TRANSLATORS: button text
 #: ../src/gcm-calibrate-argyll.c:2151 ../src/gcm-calibrate-argyll.c:2205
@@ -411,9 +406,8 @@ msgstr "GNOME Color Manager"
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
 #: ../src/gcm-calibrate-argyll.c:2182 ../src/gcm-calibrate-argyll.c:2234
-#, fuzzy
 msgid "Please configure instrument"
-msgstr "Silakan konfigurasi pengaturan akun berikut"
+msgstr "Silakan konfigurasi instrumen"
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
 #: ../src/gcm-calibrate-argyll.c:2192
@@ -428,19 +422,21 @@ msgstr ""
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
 #: ../src/gcm-calibrate-argyll.c:2244
-#, fuzzy
 msgid ""
 "Please set the measuring instrument to screen mode like the image below, and "
 "ensure it is attached to the screen."
-msgstr "Silakan pasang perangkat keras ke pusat layar pada kotak kelabu."
+msgstr ""
+"Silakan tata instrumen pengukuran ke mode layar seperti gambar di bawah, dan "
+"pastikan itu terpasang ke layar."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
 #: ../src/gcm-calibrate-argyll.c:2247
-#, fuzzy
 msgid ""
 "Please set the measuring instrument to screen mode, and ensure it is "
 "attached to the screen."
-msgstr "Silakan pasang perangkat keras ke pusat layar pada kotak kelabu."
+msgstr ""
+"Silakan tata instrumen pengukuran ke mode layar, dan pastikan itu terpasang "
+"ke layar."
 
 #. TRANSLATORS: title, the calibration failed
 #: ../src/gcm-calibrate-argyll.c:2321 ../src/gcm-calibrate-argyll.c:2369
@@ -450,7 +446,7 @@ msgstr "Kesalahan kalibrasi"
 #. TRANSLATORS: message, the sample was not read correctly
 #: ../src/gcm-calibrate-argyll.c:2324
 msgid "The sample could not be read at this time."
-msgstr ""
+msgstr "Sampel tak bisa dibaca kali ini."
 
 #. TRANSLATORS: button text
 #: ../src/gcm-calibrate-argyll.c:2332
@@ -460,7 +456,7 @@ msgstr "Coba lagi"
 #. TRANSLATORS: message, no firmware is available
 #: ../src/gcm-calibrate-argyll.c:2373
 msgid "No firmware is installed for this instrument."
-msgstr ""
+msgstr "Tak ada firmware terpasang bagi instrumen ini."
 
 #. TRANSLATORS: message, the image wasn't good enough
 #: ../src/gcm-calibrate-argyll.c:2376
@@ -496,20 +492,20 @@ msgstr "Gagal membaca strip dengan benar."
 
 #. TRANSLATORS: button text
 #: ../src/gcm-calibrate-argyll.c:2433
-#, fuzzy
 msgid "Retry"
-msgstr "Mencoba kembali"
+msgstr "Coba lagi"
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
 #: ../src/gcm-calibrate-argyll.c:2456
-#, c-format
+#, fuzzy, c-format
 msgid "Read strip %s rather than %s!"
-msgstr ""
+msgstr "Baca strip %s jangan %s!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
 #: ../src/gcm-calibrate-argyll.c:2461
+#, fuzzy
 msgid "It looks like you've measured the wrong strip."
-msgstr ""
+msgstr "Sepertinya Anda telah mengukur strip yang salah."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
 #: ../src/gcm-calibrate-argyll.c:2465
@@ -564,33 +560,28 @@ msgstr "Pencetakan"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:2649
-#, fuzzy
 msgid "Preparing the data for the printer."
-msgstr "Cari data yang tersisa"
+msgstr "Menyiapkan data bagi pencetak."
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:2655
-#, fuzzy
 msgid "Sending the targets to the printer."
-msgstr "Cetak ke Pencetak Uji"
+msgstr "Mengirim target ke pencetak."
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:2659
-#, fuzzy
 msgid "Printing the targets..."
-msgstr "Tujuan penjatuhan:"
+msgstr "Mencetak target..."
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:2663
-#, fuzzy
 msgid "The printing has finished."
-msgstr "%s telah selesai diawali"
+msgstr "Pencetakan telah selesai."
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:2667
-#, fuzzy
 msgid "The print was aborted."
-msgstr "Persetujuan kunci dibatalkan"
+msgstr "Pencetakan dibatalkan."
 
 #. TRANSLATORS: this is saved in the profile
 #: ../src/gcm-calibrate.c:134
@@ -599,9 +590,8 @@ msgstr "Model tak dikenal"
 
 #. TRANSLATORS: this is saved in the profile
 #: ../src/gcm-calibrate.c:148
-#, fuzzy
 msgid "Unknown description"
-msgstr "Tanpa keterangan"
+msgstr "Deskripsi tak dikenal"
 
 #. TRANSLATORS: this is saved in the profile
 #: ../src/gcm-calibrate.c:162
@@ -615,19 +605,17 @@ msgstr "Perangkat tak dikenal"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
 #: ../src/gcm-calibrate.c:391
-#, fuzzy
 msgid "Could not detect screen type"
-msgstr "%s: Tidak dapat membaca Jenis Sambungan"
+msgstr "Tidak dapat mendeteksi jenis layar"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate.c:394
-#, fuzzy
 msgid ""
 "Please indicate if the screen you are trying to profile is an LCD, CRT or a "
 "projector."
 msgstr ""
-"Mohon nyatakan apakah layar yang Anda coba profilkan adalah CRT (tipe lama) "
-"atau LCD (layar datar digital)."
+"Mohon nyatakan apakah layar yang Anda coba profilkan adalah LCD, CRT, atau "
+"projektor."
 
 #. TRANSLATORS: title, the hardware calibration device does not support projectors
 #: ../src/gcm-calibrate.c:419
@@ -643,9 +631,8 @@ msgstr ""
 
 #. TRANSLATORS: dialog title
 #: ../src/gcm-calibrate.c:483
-#, fuzzy
 msgid "Profile Precision"
-msgstr "Simpan profil"
+msgstr "Presisi Profil"
 
 #. TRANSLATORS: this is the message body for the chart selection
 #: ../src/gcm-calibrate.c:486
@@ -667,7 +654,7 @@ msgstr ""
 #. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated
 #: ../src/gcm-calibrate.c:568
 msgid "Custom"
-msgstr "Gubahan"
+msgstr "Ubahan"
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate.c:600
@@ -719,23 +706,20 @@ msgid ""
 msgstr ""
 
 #: ../src/gcm-calibrate.c:625
-#, fuzzy
 msgid "Display setup"
-msgstr "Pengaturan Halaman"
+msgstr "Pengaturan tampilan"
 
 #. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
 #. * aquired image of the calibration target, e.g. an image file that looks
 #. * a bit like this: http://www.colorreference.de/targets/target.jpg
 #: ../src/gcm-calibrate.c:702
-#, fuzzy
 msgid "Select calibration target image"
-msgstr "Silakan pilih sebuah image disk."
+msgstr "Pilih gambar target kalibrasi"
 
 #. TRANSLATORS: filter name on the file->open dialog
 #: ../src/gcm-calibrate.c:715
-#, fuzzy
 msgid "Supported images files"
-msgstr "Semua Berkas Yang Didukung"
+msgstr "Berkas gambar yang didukung"
 
 #. TRANSLATORS: filter name on the file->open dialog
 #: ../src/gcm-calibrate.c:722 ../src/gcm-calibrate.c:774
@@ -755,9 +739,8 @@ msgstr "Nilai CIE"
 
 #. TRANSLATORS: dialog for file->open dialog
 #: ../src/gcm-calibrate.c:840 ../src/gcm-prefs.c:515
-#, fuzzy
 msgid "Select ICC Profile File"
-msgstr "Profil ICC untuk dipasang"
+msgstr "Pilih Berkas Profil ICC"
 
 #: ../src/gcm-calibrate.c:843
 msgid "Open"
@@ -765,9 +748,8 @@ msgstr "Buka"
 
 #. TRANSLATORS: title, you can profile all at once, or in steps
 #: ../src/gcm-calibrate.c:879
-#, fuzzy
 msgid "Please choose a profiling mode"
-msgstr "Silakan pilih nama lain"
+msgstr "Silakan pilih suatu mode pemrofilan"
 
 #. TRANSLATORS: dialog message. Test patches are pages of colored squares
 #. * that are printed with a printer, and then read in with a calibration
@@ -780,9 +762,8 @@ msgstr ""
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
 #: ../src/gcm-calibrate.c:996
-#, fuzzy
 msgid "Install missing files?"
-msgstr "Berkas untuk dipasang"
+msgstr "Pasang berkas yang kurang?"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
 #: ../src/gcm-calibrate.c:999
@@ -796,9 +777,8 @@ msgstr ""
 
 #. TRANSLATORS: dialog message, asking if it's okay to install them
 #: ../src/gcm-calibrate.c:1003
-#, fuzzy
 msgid "Do you want them to be installed?"
-msgstr "Anda mengizinkannya?"
+msgstr "Anda ingin mereka dipasang?"
 
 #. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
 #: ../src/gcm-calibrate.c:1005
@@ -821,9 +801,8 @@ msgstr "Pasang"
 #. * A calibration target is an accuratly printed grid of colors, for instance:
 #. * the IT 8.7 targets available here: http://www.targets.coloraid.de/
 #: ../src/gcm-calibrate.c:1027
-#, fuzzy
 msgid "Please select a calibration target"
-msgstr "Silakan nyatakan nama target"
+msgstr "Silakan pilih target kalibrasi"
 
 #. TRANSLATORS: dialog message, preface. A calibration target looks like
 #. * this: http://www.colorreference.de/targets/target.jpg
@@ -920,9 +899,8 @@ msgstr "QPcard 201"
 
 #. TRANSLATORS: dialog title
 #: ../src/gcm-calibrate-manual.c:200
-#, fuzzy
 msgid "Introduction to display calibration"
-msgstr "Gagal untuk menampilkan bantuan: %s"
+msgstr "Pengenalan ke kalibrasi tampilan"
 
 #. TRANSLATORS: message text, an ICC profile is a file that characterizes the device
 #: ../src/gcm-calibrate-manual.c:222
@@ -957,9 +935,9 @@ msgstr ""
 
 #. TRANSLATORS: dialog title
 #: ../src/gcm-calibrate-manual.c:254
-#, fuzzy, c-format
+#, c-format
 msgid "Create table item %i/%i"
-msgstr "Pilih data tes baru"
+msgstr "Membuat butir tabel %i/%i"
 
 #. TRANSLATORS: message text
 #: ../src/gcm-calibrate-manual.c:275
@@ -983,15 +961,13 @@ msgstr ""
 
 #. TRANSLATORS: error message
 #: ../src/gcm-client.c:1103
-#, fuzzy
 msgid "This device already exists"
-msgstr "ID kontak ini sudah ada."
+msgstr "Perangkat ini sudah ada"
 
 #. TRANSLATORS: this is when the device is not recognized
 #: ../src/gcm-colorimeter.c:391
-#, fuzzy
 msgid "Measuring instrument not recognized"
-msgstr "Format berkas tak dikenal"
+msgstr "Instrumen pengukuran tak dikenal"
 
 #. TRANSLATORS: this is the name of the internal panel
 #: ../src/gcm-device-xrandr.c:128
@@ -1000,15 +976,13 @@ msgstr "LCD Laptop"
 
 #. TRANSLATORS: this is when the EDID file cannot be read
 #: ../src/gcm-dump-edid.c:58
-#, fuzzy
 msgid "Cannot load file contents"
-msgstr "Tak bisa memuat isi berkas:"
+msgstr "Tak bisa memuat isi berkas"
 
 #. TRANSLATORS: this is when the EDID cannot be parsed
 #: ../src/gcm-dump-edid.c:67
-#, fuzzy
 msgid "Cannot parse EDID contents"
-msgstr "Tak bisa mengurai isi EDID:"
+msgstr "Tak bisa mengurai isi EDID"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:75
@@ -1047,75 +1021,65 @@ msgstr "Gamma"
 
 #. TRANSLATORS: command line option: a list of files to parse
 #: ../src/gcm-dump-edid.c:136
-#, fuzzy
 msgid "EDID dumps to parse"
-msgstr "Data tidak dapat diuraikan"
+msgstr "Dump EDID untuk diurai"
 
 #. TRANSLATORS: this is the filename we are displaying
 #: ../src/gcm-dump-edid.c:159
-#, fuzzy
 msgid "EDID dump"
-msgstr "Dump Ditulis"
+msgstr "Dump EDID"
 
 #. TRANSLATORS: we saved the EDID to a file - second parameter is a filename
 #: ../src/gcm-dump-edid.c:196
-#, fuzzy, c-format
+#, c-format
 msgid "Saved %i bytes to %s"
-msgstr "Kembalikan ke berkas asal yang tersimpan sebelumnya"
+msgstr "Menyimpan %i byte ke %s"
 
 #. TRANSLATORS: we saved the EDID to a file - parameter is a filename
 #: ../src/gcm-dump-edid.c:201
-#, fuzzy, c-format
+#, c-format
 msgid "Failed to save EDID to %s"
-msgstr "Gagal menyimpan UserDatabase untuk %s"
+msgstr "Gagal menyimpan EDID ke %s"
 
 #. TRANSLATORS: command line option: a list of files to install
 #: ../src/gcm-dump-profile.c:108
-#, fuzzy
 msgid "Profiles to view"
-msgstr "Kembalikan ke _Tampilan Standar"
+msgstr "Profil untuk ditilik"
 
 #. TRANSLATORS: this just dumps the profile to the screen
 #: ../src/gcm-dump-profile.c:121
-#, fuzzy
 msgid "ICC profile dump program"
-msgstr "Profil ICC untuk dipasang"
+msgstr "Program dump profil ICC"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-fix-profile.c:124
-#, fuzzy
 msgid "The description of the profile"
-msgstr "_Keterangan profil:"
+msgstr "Keterangan profil"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-fix-profile.c:127
-#, fuzzy
 msgid "The copyright of the profile"
-msgstr "Simpan profil"
+msgstr "Hak cipta profil"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-fix-profile.c:130
-#, fuzzy
 msgid "The model of the profile"
-msgstr "Simpan profil"
+msgstr "Model profil"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-fix-profile.c:133
-#, fuzzy
 msgid "The manufacturer of the profile"
-msgstr "Simpan profil"
+msgstr "Pabrikan profil"
 
 #. TRANSLATORS: command line option: a list of icc files to fix
 #: ../src/gcm-fix-profile.c:136
-#, fuzzy
 msgid "Profiles to fix"
-msgstr "%i pemutakhiran perbaikan kutu"
+msgstr "Profil yang akan diperbaiki"
 
 #. TRANSLATORS: this fixes broken profiles
 #: ../src/gcm-fix-profile.c:147
-#, fuzzy
 msgid "ICC profile fix program"
-msgstr "Profil ICC untuk dipasang"
+msgstr "Program perbaikan profil ICC"
 
 #. TRANSLATORS: command line option: a list of catalogs to install
 #. TRANSLATORS: command line option: a list of files to install
@@ -1177,15 +1141,13 @@ msgstr "Hak Cipta:"
 
 #. TRANSLATORS: the root window of all the screens
 #: ../src/gcm-inspect.c:102
-#, fuzzy
 msgid "Root window profile:"
-msgstr "Perubahan pada profil %s"
+msgstr "Profil jendela akar:"
 
 #. TRANSLATORS: the root window of all the screens
 #: ../src/gcm-inspect.c:114
-#, fuzzy
 msgid "Root window protocol version:"
-msgstr "Microsoft Challenge Handshake Authentication Protocol versi 2"
+msgstr "Versi protokol jendela akar:"
 
 #: ../src/gcm-inspect.c:130
 #, c-format
@@ -1206,41 +1168,37 @@ msgstr "Permintaan gagal"
 #. TRANSLATORS: no rofile has been asigned to this device
 #: ../src/gcm-inspect.c:208
 msgid "There are no ICC profiles for this device"
-msgstr ""
+msgstr "Tak ada profil ICC bagi perangkat ini"
 
 #. TRANSLATORS: this is a list of profiles suitable for the device
 #: ../src/gcm-inspect.c:213 ../src/gcm-inspect.c:328 ../src/gcm-inspect.c:392
-#, fuzzy
 msgid "Suitable profiles for:"
-msgstr "Cari Berkas..."
+msgstr "Profil yang cocok bagi:"
 
 #. TRANSLATORS: no profile has been asigned to this window
 #: ../src/gcm-inspect.c:323
 msgid "There are no ICC profiles for this window"
-msgstr ""
+msgstr "Tidak ada profil ICC bagi jendela ini"
 
 #. TRANSLATORS: no rofile has been asigned to this device type
 #: ../src/gcm-inspect.c:387
 msgid "There are no ICC profiles for this device type"
-msgstr ""
+msgstr "Tidak ada profil ICC bagi jenis perangkat ini"
 
 #. TRANSLATORS: this is the rendering intent of the output
 #: ../src/gcm-inspect.c:427
-#, fuzzy
 msgid "Rendering intent (display):"
-msgstr "Tampilkan _semua area kerja"
+msgstr "Intensi perenderan (tampilan):"
 
 #. TRANSLATORS: this is the rendering intent of the printer
 #: ../src/gcm-inspect.c:430
-#, fuzzy
 msgid "Rendering intent (softproof):"
-msgstr "Detil Penggambaran Fonta"
+msgstr "Intensi perenderan (softproof):"
 
 #. TRANSLATORS: this is filename of the default colorspace
 #: ../src/gcm-inspect.c:433
-#, fuzzy
 msgid "RGB Colorspace:"
-msgstr "Ruang warna CMYK:"
+msgstr "Ruang warna RGB:"
 
 #. TRANSLATORS: this is filename of the default colorspace
 #: ../src/gcm-inspect.c:436
@@ -1249,164 +1207,145 @@ msgstr "Ruang warna CMYK:"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:506
-#, fuzzy
 msgid "Show X11 properties"
-msgstr "Tampilkan informasi arsip"
+msgstr "Tampilkan properti X11"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:509
 msgid "Get the profiles for a specific device"
-msgstr ""
+msgstr "Ambil profil bagi perangkat tertentu"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:512
 msgid "Get the profile for a specific window"
-msgstr ""
+msgstr "Ambil profil bagi jendela tertentu"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:515
 msgid "Get the profiles for a specific device type"
-msgstr ""
+msgstr "Ambil profil bagi jenis perangkat tertentu"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:518
 msgid "Dump all details about this system"
-msgstr ""
+msgstr "Dump semua rincian tentang sistem ini"
 
 #. TRANSLATORS: just dumps the EDID to disk
 #: ../src/gcm-inspect.c:531
-#, fuzzy
 msgid "EDID inspect program"
-msgstr "Tambah Program Startup"
+msgstr "Program pemeriksa EDID"
 
 #. TRANSLATORS: this is when the user does --type=mickeymouse
 #: ../src/gcm-inspect.c:548
-#, fuzzy
 msgid "Device type not recognized"
-msgstr "Format berkas tak dikenal"
+msgstr "Jenis perangkat tak dikenal"
 
 #. command line argument, the ID of the device
 #: ../src/gcm-install-system-wide.c:123
 msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
-msgstr ""
+msgstr "ID perangkat, mis. 'xrandr_ibm_france_ltn154p2_l05'"
 
 #. TRANSLATORS: tool that is used when copying profiles system-wide
 #: ../src/gcm-install-system-wide.c:141
 msgid "GNOME Color Manager ICC profile system-wide installer"
-msgstr ""
+msgstr "Pemasang profil ICC seluruh-sistem Manajer Warna GNOME"
 
 #. TRANSLATORS: user did not specify a valid filename
 #: ../src/gcm-install-system-wide.c:149
 msgid "You need to specify exactly one ICC profile filename."
-msgstr ""
+msgstr "Anda perlu menyatakan tepat satu nama berkas profil ICC."
 
 #. TRANSLATORS: user did not specify a valid device ID
 #: ../src/gcm-install-system-wide.c:157
-#, fuzzy
 msgid "You need to specify exactly one device ID."
-msgstr "Anda perlu menyatakan paling tidak satu path perangkat yang valid"
+msgstr "Anda perlu menyatakan tepat satu ID perangkat."
 
 #. TRANSLATORS: user did not specify a valid device ID
 #: ../src/gcm-install-system-wide.c:166
 msgid "The device ID has invalid characters."
-msgstr ""
+msgstr "ID perangkat memuat karakter tak valid."
 
 #. TRANSLATORS: only able to install profiles as root
 #: ../src/gcm-install-system-wide.c:176
-#, fuzzy
 msgid "This program can only be used by the root user."
-msgstr "Program ini hanya dapat dipakai oleh root"
+msgstr "Program ini hanya dapat dipakai oleh root."
 
 #. TRANSLATORS: only able to install profiles with an absolute path
 #: ../src/gcm-install-system-wide.c:185
-#, fuzzy
 msgid "The source filename must be absolute."
-msgstr "Nama berkas sumber mesti absolut"
+msgstr "Nama berkas sumber mesti absolut."
 
 #. TRANSLATORS: error details
 #: ../src/gcm-install-system-wide.c:196
-#, fuzzy
 msgid "Failed to get content type:"
-msgstr "Gagal untuk mendapatkan daftar pengguna"
+msgstr "Gagal mendapatkan jenis isi:"
 
 #. TRANSLATORS: the content type is the detected type of file
 #: ../src/gcm-install-system-wide.c:206
-#, fuzzy
 msgid "Content type was incorrect:"
-msgstr "Kata sandinya salah."
+msgstr "Jenis isi salah:"
 
 #. TRANSLATORS: the program must never be directly run
 #: ../src/gcm-install-system-wide.c:215
-#, fuzzy
 msgid "This program must only be run through pkexec."
-msgstr "Program ini harus dijalankan melalui pkexec"
+msgstr "Program ini harus dijalankan melalui pkexec."
 
 #. TRANSLATORS: PolicyKit has gone all insane on us, and we refuse to parse junk
 #: ../src/gcm-install-system-wide.c:224
-#, fuzzy
 msgid "PKEXEC_UID must be set to an integer value."
-msgstr "PKEXEC_UID mesti ditata ke suatu nilai integer"
+msgstr "PKEXEC_UID mesti ditata ke suatu nilai bulat."
 
 #. TRANSLATORS: we are complaining that a file must be really owned by the user who called this program
 #: ../src/gcm-install-system-wide.c:233
 msgid "The ICC profile must be owned by the user."
-msgstr ""
+msgstr "Pemilik profil ICC mesti si pengguna."
 
 #. TRANSLATORS: only able to install profiles with an absolute path
 #: ../src/gcm-install-system-wide.c:246
-#, fuzzy
 msgid "The destination filename must be absolute."
-msgstr "Nama berkas sumber mesti absolut"
+msgstr "Nama berkas tujuan mesti absolut."
 
 #. TRANSLATORS: error details
 #: ../src/gcm-install-system-wide.c:256
-#, fuzzy
 msgid "Failed to copy:"
-msgstr "Gagal menyalin berkas"
+msgstr "Gagal menyalin:"
 
 #. TRANSLATORS: could not save for all users
 #: ../src/gcm-prefs.c:152
-#, fuzzy
 msgid "Failed to save defaults for all users"
-msgstr ""
-"Lalukan otentikasi untuk menyimpan sambungan ini bagi semua pengguna dari "
-"mesin ini."
+msgstr "Gagal menyimpan bawaan bagi semua pengguna"
 
 #. TRANSLATORS: this is where no profile is selected
 #: ../src/gcm-prefs.c:180
-#, fuzzy
 msgid "None"
-msgstr "Tak Ada"
+msgstr "Tak ada"
 
 #. TRANSLATORS: this is where the user can click and import a profile
 #: ../src/gcm-prefs.c:184
-#, fuzzy
 msgid "Other profile…"
-msgstr "_Profil Baru..."
+msgstr "Profil lain…"
 
 #. TRANSLATORS: could not calibrate
 #: ../src/gcm-prefs.c:318
-#, fuzzy
 msgid "Failed to calibrate device"
-msgstr "Gagal menulis ke perangkat"
+msgstr "Gagal mengalibrasi perangkat"
 
 #. TRANSLATORS: could not calibrate
 #: ../src/gcm-prefs.c:353
-#, fuzzy
 msgid "Failed to calibrate printer"
-msgstr "Cetak ke Pencetak Uji"
+msgstr "Gagal mengalibrasi pencetak"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
 #: ../src/gcm-prefs.c:467
-#, fuzzy
 msgid "Permanently delete profile?"
-msgstr "Hapus profil ini?\n"
+msgstr "Hapus profil secara permanen?"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-prefs.c:470
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr ""
+"Anda yakin ingin menghapus profil ini dari sistem Anda secara permanen?"
 
 #. TRANSLATORS: button, delete a profile
 #: ../src/gcm-prefs.c:473
@@ -1419,53 +1358,49 @@ msgstr "Impor"
 
 #. TRANSLATORS: filter name on the file->open dialog
 #: ../src/gcm-prefs.c:536
-#, fuzzy
 msgid "Supported ICC profiles"
-msgstr "Pasang profil ICC"
+msgstr "Profil ICC yang didukung"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
 #: ../src/gcm-prefs.c:687
 msgid "Install missing calibration and profiling software?"
-msgstr ""
+msgstr "Pasang perangkat lunak pemrofilan dan kalibrasi?"
 
 #. TRANSLATORS: dialog message saying the argyllcms is not installed
 #: ../src/gcm-prefs.c:691
 msgid "Calibration and profiling software is not installed on this computer."
 msgstr ""
+"Perangkat lunak pemrofilan dan kalibrasi tak terpasang pada komputer ini."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
 #: ../src/gcm-prefs.c:693
 msgid "These tools are required to build color profiles for devices."
-msgstr ""
+msgstr "Peralatan ini diperlukan untuk membangun profil warna bagi perangkat."
 
 #. TRANSLATORS: dialog message, asking if it's okay to install it
 #: ../src/gcm-prefs.c:695
 msgid "Do you want them to be automatically installed?"
-msgstr ""
+msgstr "Apakah Anda ingin mereka dipasang secara otomatis?"
 
 #. TRANSLATORS: this is the sound description
 #: ../src/gcm-prefs.c:821
-#, fuzzy
 msgid "Profiling completed"
-msgstr "Tugas selesai"
+msgstr "Pemrofilan komplit"
 
 #. TRANSLATORS: could not add virtual device
 #: ../src/gcm-prefs.c:877
-#, fuzzy
 msgid "Failed to create virtual device"
-msgstr "Gagal memeriksa path perangkat"
+msgstr "Gagal membuat perangkat virtual"
 
 #. TRANSLATORS: could not add virtual device
 #: ../src/gcm-prefs.c:885
-#, fuzzy
 msgid "Failed to save virtual device"
-msgstr "Gagal memeriksa path perangkat"
+msgstr "Gagal menyimpan perangkat virtual"
 
 #. TRANSLATORS: could not add virtual device
 #: ../src/gcm-prefs.c:894
-#, fuzzy
 msgid "Failed to add virtual device"
-msgstr "Gagal memeriksa path perangkat"
+msgstr "Gagal menambah perangkat virtual"
 
 #. TRANSLATORS: could not read file
 #: ../src/gcm-prefs.c:938
@@ -1475,51 +1410,51 @@ msgstr "Gagal menghapus berkas"
 #. TRANSLATORS: this is when the button is sensitive
 #: ../src/gcm-prefs.c:1069
 msgid "Create a color profile for the selected device"
-msgstr ""
+msgstr "Buat profil warna bagi perangkat yang dipilih"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1074
 msgid "Cannot profile: No device is selected"
-msgstr ""
+msgstr "Tak bisa memrofil: Tak ada perangkat yang dipilih"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1086
 msgid "Cannot calibrate: The device is not connected"
-msgstr ""
+msgstr "Tak bisa mengalibrasi: Perangkat tak tersambung"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1094
 msgid "Cannot calibrate: The display driver does not support XRandR 1.3"
-msgstr ""
+msgstr "Tak bisa mengalibrasi: Penggerak tampilan tak mendukung XRandR 1.3"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1102
 msgid "Cannot calibrate: The measuring instrument is not plugged in"
-msgstr ""
+msgstr "Tak bisa mengalibrasi: Instrumen pengukuran tak ditancapkan"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1117
 msgid "Cannot profile: The measuring instrument is not plugged in"
-msgstr ""
+msgstr "Tak bisa memrofil: Instrumen pengukuran tak ditancapkan"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1125
 msgid ""
 "Cannot profile: The measuring instrument does not support printer profiling"
 msgstr ""
+"Tak bisa memrofil: Instrumen pengukuran tak mendukung pemrofilan pencetak"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1132
-#, fuzzy
 msgid "Cannot profile this type of device"
-msgstr "Jenis arsip ini tak dapat diubah"
+msgstr "Tak bisa memrofil jenis perangkat ini"
 
 #. TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
 #. * Whilst this does not matter if you only have one monitor attached, it means you
 #. * can't color correct additional monitors or projectors.
 #: ../src/gcm-prefs.c:1296
 msgid "Per-device settings not supported. Check your display driver."
-msgstr ""
+msgstr "Tatanan per perangkat tak didukung. Periksa penggerak tampilan Anda."
 
 #. TRANSLATORS: this the ICC profile type
 #: ../src/gcm-prefs.c:1381
@@ -1539,13 +1474,12 @@ msgstr "Perangkat keluaran"
 #. TRANSLATORS: this the ICC profile type
 #: ../src/gcm-prefs.c:1393
 msgid "Devicelink"
-msgstr ""
+msgstr "Devicelink"
 
 #. TRANSLATORS: this the ICC profile type
 #: ../src/gcm-prefs.c:1397
-#, fuzzy
 msgid "Colorspace conversion"
-msgstr "Konversi printf"
+msgstr "Konversi ruang warna"
 
 #. TRANSLATORS: this the ICC profile kind
 #: ../src/gcm-prefs.c:1401
@@ -1554,9 +1488,8 @@ msgstr "Abstrak"
 
 #. TRANSLATORS: this the ICC profile type
 #: ../src/gcm-prefs.c:1405
-#, fuzzy
 msgid "Named color"
-msgstr "Pilih warna"
+msgstr "Warna bernama"
 
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
@@ -1643,7 +1576,7 @@ msgstr "Tidak bisa mengimpor profil"
 
 #: ../src/gcm-prefs.c:1839
 msgid "The profile was of the wrong type for this device"
-msgstr ""
+msgstr "Profil yang salah bagi jenis perangkat ini"
 
 #. TRANSLATORS: this is a sound description
 #: ../src/gcm-prefs.c:1975
@@ -1657,9 +1590,9 @@ msgstr "Perangkat dilepas"
 
 #. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
 #: ../src/gcm-prefs.c:2261
-#, fuzzy, c-format
+#, c-format
 msgid "No %s color spaces available"
-msgstr "Tak tersedia sambungan jaringan"
+msgstr "Ruang warna %s tak tersedia"
 
 #. TRANSLATORS: device type
 #: ../src/gcm-prefs.c:2616 ../data/gcm-prefs.ui.h:32
@@ -1702,6 +1635,8 @@ msgid ""
 "This profile does not have the information required for whole-screen color "
 "correction."
 msgstr ""
+"Profil ini tak punya informasi yang diperlukan untuk koreksi warna seluruh-"
+"layar."
 
 #. TRANSLATORS: this is where the ICC profile_lcms1 has no description
 #: ../src/gcm-profile.c:130
@@ -1760,7 +1695,6 @@ msgstr ""
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:537
-#, fuzzy
 msgid "Relative colormetric"
 msgstr "Colormetric relatif"
 
@@ -1771,7 +1705,6 @@ msgstr "Saturasi"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:545
-#, fuzzy
 msgid "Absolute colormetric"
 msgstr "Colormetric absolut"
 
@@ -1993,9 +1926,8 @@ msgid "Open the documentation"
 msgstr "Buka dokumentasi"
 
 #: ../data/gcm-prefs.ui.h:53
-#, fuzzy
 msgid "Profile Graphs"
-msgstr "Simpan profil"
+msgstr "Grafik Profil"
 
 #. The type of profile, e.g. display, scanner, etc.
 #: ../data/gcm-prefs.ui.h:55
@@ -2043,23 +1975,28 @@ msgstr ""
 #. Technical color word for softproof rendering intent
 #: ../data/gcm-prefs.ui.h:68
 msgid "Softproof:"
-msgstr ""
+msgstr "Softproof:"
 
 #: ../data/gcm-prefs.ui.h:69
 msgid "The rendering intent is how one gamut size is mapped to another."
 msgstr ""
+"Intensi perenderan adalah bagaimana ukuran satu gamut dipetakan ke yang lain."
 
 #: ../data/gcm-prefs.ui.h:70
 msgid ""
 "The rendering intent to use when transforming from the image gamut to the "
 "device output gamut"
 msgstr ""
+"Intensi perenderan yang dipakai ketika menransformasi dari gamut gambar ke "
+"gamut keluaran perangkat"
 
 #: ../data/gcm-prefs.ui.h:71
 msgid ""
 "The rendering intent to use when transforming from the image gamut to the "
 "display gamut"
 msgstr ""
+"Intensi perenderan yang dipakai ketika menransformasi dari gamut gambar ke "
+"gamut tampilan"
 
 #: ../data/gcm-prefs.ui.h:72
 msgid "These settings control how color management is applied to your desktop."
