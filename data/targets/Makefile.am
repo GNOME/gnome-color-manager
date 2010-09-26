@@ -9,6 +9,7 @@ targets_DATA =					\
 	LaserSoftDCPro.png			\
 	i1_RGB_Scan_14.png			\
 	CMP_DT_003.png				\
+	QPcard_202.png				\
 	IT872.png
 
 EXTRA_DIST =					\
