@@ -69,3 +69,18 @@ gcm_sensor_colormunki_dial_position_to_string (guchar value)
 		return "ambient";
 	return NULL;
 }
+
+/**
+ * gcm_sensor_colormunki_endpoint_to_string:
+ **/
+const gchar *
+gcm_sensor_colormunki_endpoint_to_string (guint value)
+{
+	if (value == GCM_SENSOR_COLORMUNKI_EP_CONTROL)
+		return "control";
+	if (value == GCM_SENSOR_COLORMUNKI_EP_DATA)
+		return "data";
+	if (value == GCM_SENSOR_COLORMUNKI_EP_EVENT)
+		return "event";
+	return NULL;
+}

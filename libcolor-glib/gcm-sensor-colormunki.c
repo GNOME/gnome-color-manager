@@ -107,40 +107,11 @@ gcm_sensor_colormunki_refresh_state_transfer_cb (struct libusb_transfer *transfe
 		goto out;
 	}
 
-	/*
-	 * Returns:  00 00
-	 *           |/ ||
-	 * dial pos -/  \--- button value
-	 * - 00 = projector
-	 * - 01 = surface
-	 * - 02 = calibration
-	 * - 03 = ambient
-	 */
-	if (reply[0] == GCM_SENSOR_COLORMUNKI_DIAL_POSITION_PROJECTOR) {
-		egg_debug ("now projector");
-		priv->dial_position = GCM_SENSOR_COLORMUNKI_DIAL_POSITION_PROJECTOR;
-	} else if (reply[0] == GCM_SENSOR_COLORMUNKI_DIAL_POSITION_SURFACE) {
-		egg_debug ("now surface");
-		priv->dial_position = GCM_SENSOR_COLORMUNKI_DIAL_POSITION_SURFACE;
-	} else if (reply[0] == GCM_SENSOR_COLORMUNKI_DIAL_POSITION_CALIBRATION) {
-		egg_debug ("now calibration");
-		priv->dial_position = GCM_SENSOR_COLORMUNKI_DIAL_POSITION_CALIBRATION;
-	} else if (reply[0] == GCM_SENSOR_COLORMUNKI_DIAL_POSITION_AMBIENT) {
-		egg_debug ("now ambient");
-		priv->dial_position = GCM_SENSOR_COLORMUNKI_DIAL_POSITION_AMBIENT;
-	} else {
-		egg_warning ("dial position unknown: 0x%02x", reply[0]);
-		priv->dial_position = GCM_SENSOR_COLORMUNKI_DIAL_POSITION_UNKNOWN;
-	}
-
-	/* button state */
-	if (reply[1] == GCM_SENSOR_COLORMUNKI_BUTTON_STATE_RELEASED) {
-		egg_debug ("button released");
-	} else if (reply[1] == GCM_SENSOR_COLORMUNKI_BUTTON_STATE_PRESSED) {
-		egg_debug ("button pressed");
-	} else {
-		egg_warning ("switch state unknown: 0x%02x", reply[1]);
-	}
+	/* sensor position and button state */
+	priv->dial_position = reply[0];
+	egg_debug ("dial now %s, button now %s",
+		   gcm_sensor_colormunki_dial_position_to_string (priv->dial_position),
+		   gcm_sensor_colormunki_button_state_to_string (reply[1]));
 
 	gcm_sensor_colormunki_print_data ("reply", transfer->buffer + LIBUSB_CONTROL_SETUP_SIZE, transfer->actual_length);
 out:
@@ -164,8 +135,13 @@ gcm_sensor_colormunki_refresh_state (GcmSensorColormunki *sensor_colormunki, GEr
 
 	/* request new button state */
 	request = g_new0 (guchar, LIBUSB_CONTROL_SETUP_SIZE + 2);
-	libusb_fill_control_setup (request, LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_DEVICE, 0x87, 0x00, 0, 2);
-	libusb_fill_control_transfer (priv->transfer_state, handle, request, &gcm_sensor_colormunki_refresh_state_transfer_cb, sensor_colormunki, 2000);
+	libusb_fill_control_setup (request,
+				   LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_DEVICE,
+				   GCM_SENSOR_COLORMUNKI_REQUEST_GET_STATUS,
+				   0x00, 0, 2);
+	libusb_fill_control_transfer (priv->transfer_state, handle, request,
+				      &gcm_sensor_colormunki_refresh_state_transfer_cb,
+				      sensor_colormunki, 2000);
 
 	/* submit transfer */
 	retval = libusb_submit_transfer (priv->transfer_state);
@@ -195,21 +171,6 @@ gcm_sensor_colormunki_transfer_cb (struct libusb_transfer *transfer)
 		return;
 	}
 
-	/*
-	 *   subcmd ----\       /------------ 32 bit event time
-	 *  cmd ----|\ ||       || || || ||
-	 * Returns: 02 00 00 00 ac 62 07 00
-	 * always zero ---||-||
-	 *
-	 * cmd is:
-	 * 00	dial rotate
-	 * 01	button pressed
-	 * 02	button released
-	 *
-	 * subcmd is:
-	 * 00	button event
-	 * 01	dial rotate
-	 */
 	gcm_sensor_colormunki_print_data ("reply", transfer->buffer + LIBUSB_CONTROL_SETUP_SIZE, transfer->actual_length);
 	timestamp = (reply[7] << 24) + (reply[6] << 16) + (reply[5] << 8) + (reply[4] << 0);
 	/* we only care when the button is pressed */
@@ -247,8 +208,9 @@ gcm_sensor_colormunki_submit_transfer (GcmSensorColormunki *sensor_colormunki)
 
 	reply = g_new0 (guchar, 8);
 	handle = gcm_usb_get_device_handle (priv->usb);
-	libusb_fill_interrupt_transfer (priv->transfer_interrupt,
-					handle, 0x83, reply, 8,
+	libusb_fill_interrupt_transfer (priv->transfer_interrupt, handle,
+					GCM_SENSOR_COLORMUNKI_REQUEST_INTERRUPT,
+					reply, 8,
 					gcm_sensor_colormunki_transfer_cb,
 					sensor_colormunki, -1);
 
@@ -273,13 +235,7 @@ gcm_sensor_colormunki_get_eeprom_data (GcmSensorColormunki *sensor_colormunki,
 	gboolean ret = FALSE;
 	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
 
-	/* do EEPROM request
-	 *
-	 *   address     length (LE)
-	 *  ____|____   ____|____
-	 * /         \ /         \
-	 * 04 00 00 00 04 00 00 00
-	 */
+	/* do EEPROM request */
 	egg_debug ("get EEPROM at 0x%04x for %i", address, size);
 	gcm_buffer_write_uint32_le (request, address);
 	gcm_buffer_write_uint32_le (request + 4, size);
@@ -287,7 +243,8 @@ gcm_sensor_colormunki_get_eeprom_data (GcmSensorColormunki *sensor_colormunki,
 	handle = gcm_usb_get_device_handle (priv->usb);
 	retval = libusb_control_transfer (handle,
 					  LIBUSB_ENDPOINT_OUT | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_DEVICE,
-					  0x81, 0, 0, request, 8, 2000);
+					  GCM_SENSOR_COLORMUNKI_REQUEST_EEPROM_DATA,
+					  0, 0, request, 8, 2000);
 	if (retval < 0) {
 		g_set_error (error, GCM_SENSOR_ERROR,
 			     GCM_SENSOR_ERROR_NO_SUPPORT,
@@ -297,7 +254,8 @@ gcm_sensor_colormunki_get_eeprom_data (GcmSensorColormunki *sensor_colormunki,
 	}
 
 	/* read EEPROM */
-	retval = libusb_bulk_transfer (handle, 0x81,
+	retval = libusb_bulk_transfer (handle,
+				       GCM_SENSOR_COLORMUNKI_REQUEST_EEPROM_DATA,
 				       data, (gint) size, (gint*)&reply_read,
 				       5000);
 	if (retval < 0) {
@@ -374,7 +332,8 @@ gcm_sensor_colormunki_startup (GcmSensor *sensor, GError **error)
 	handle = gcm_usb_get_device_handle (priv->usb);
 	retval = libusb_control_transfer (handle,
 					  LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_DEVICE,
-					  0x86, 0, 0, buffer, 24, 2000);
+					  GCM_SENSOR_COLORMUNKI_REQUEST_FIRMWARE_PARAMS,
+					  0, 0, buffer, 24, 2000);
 	if (retval < 0) {
 		g_set_error (error, GCM_SENSOR_ERROR,
 			     GCM_SENSOR_ERROR_NO_SUPPORT,
@@ -393,7 +352,8 @@ gcm_sensor_colormunki_startup (GcmSensor *sensor, GError **error)
 	/* get chip ID */
 	retval = libusb_control_transfer (handle,
 					  LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_DEVICE,
-					  0x8A, 0, 0, buffer, 8, 2000);
+					  GCM_SENSOR_COLORMUNKI_REQUEST_CHIP_ID,
+					  0, 0, buffer, 8, 2000);
 	if (retval < 0) {
 		g_set_error (error, GCM_SENSOR_ERROR,
 			     GCM_SENSOR_ERROR_NO_SUPPORT,
@@ -409,7 +369,8 @@ gcm_sensor_colormunki_startup (GcmSensor *sensor, GError **error)
 	priv->version_string = g_new0 (gchar, 36);
 	retval = libusb_control_transfer (handle,
 					  LIBUSB_ENDPOINT_IN | LIBUSB_REQUEST_TYPE_VENDOR | LIBUSB_RECIPIENT_DEVICE,
-					  0x85, 0, 0, (guchar*) priv->version_string, 36, 2000);
+					  GCM_SENSOR_COLORMUNKI_REQUEST_VERSION_STRING,
+					  0, 0, (guchar*) priv->version_string, 36, 2000);
 	if (retval < 0) {
 		g_set_error (error, GCM_SENSOR_ERROR,
 			     GCM_SENSOR_ERROR_NO_SUPPORT,

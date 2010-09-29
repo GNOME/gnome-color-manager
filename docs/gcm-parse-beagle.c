@@ -26,6 +26,7 @@
 #include <libcolor-glib.h>
 
 #include "gcm-sensor-huey-private.h"
+#include "gcm-sensor-colormunki-private.h"
 
 typedef enum {
 	GCM_PARSE_SECTION_LEVEL,
@@ -52,6 +53,7 @@ typedef struct {
 	const gchar		*summary_pretty;
 	gint			 dev;
 	gint			 ep;
+	const gchar		*ep_description;
 	GcmParseEntryDirection	 direction;
 } GcmParseEntry;
 
@@ -67,6 +69,8 @@ gcm_parse_beagle_process_entry_huey (GcmParseEntry *entry)
 	guchar instruction = 0;
 	const gchar *command_as_text;
 	GString *output;
+
+	entry->ep_description = "default";
 
 	/* only know how to parse 8 bytes */
 	tok = g_strsplit (entry->summary, " ", -1);
@@ -118,6 +122,80 @@ out:
 }
 
 /**
+ * gcm_parse_beagle_process_entry_colormunki:
+ **/
+static void
+gcm_parse_beagle_process_entry_colormunki (GcmParseEntry *entry)
+{
+	gchar **tok;
+	guint j;
+	guchar cmd;
+	guint tok_len;
+	GString *output;
+
+	/* set ep description */
+	entry->ep_description = gcm_sensor_colormunki_endpoint_to_string (entry->ep);
+
+	output = g_string_new ("");
+
+	/* only know how to parse 8 bytes */
+	tok = g_strsplit (entry->summary, " ", -1);
+	tok_len = g_strv_length (tok);
+
+	/* status */
+	if (entry->ep == GCM_SENSOR_COLORMUNKI_EP_CONTROL &&
+	    entry->direction == GCM_PARSE_ENTRY_DIRECTION_REPLY &&
+	    tok_len == 2) {
+
+		/* dial position */
+		cmd = g_ascii_strtoll (tok[0], NULL, 16);
+		g_string_append_printf (output, "%s(dial-position-%s) ",
+					tok[0],
+					gcm_sensor_colormunki_dial_position_to_string (cmd));
+
+		/* button value */
+		cmd = g_ascii_strtoll (tok[1], NULL, 16);
+		g_string_append_printf (output, "%s(button-state-%s)",
+					tok[1],
+					gcm_sensor_colormunki_button_state_to_string (cmd));
+		goto out;
+	}
+
+	/* event */
+	if (entry->ep == GCM_SENSOR_COLORMUNKI_EP_EVENT &&
+	    entry->direction == GCM_PARSE_ENTRY_DIRECTION_REPLY &&
+	    tok_len == 8) {
+		g_print ("process 8: %s\n", entry->summary);
+
+		/* cmd */
+		cmd = g_ascii_strtoll (tok[0], NULL, 16);
+		g_string_append_printf (output, "%s(%s) ",
+					tok[0],
+					gcm_sensor_colormunki_command_value_to_string (cmd));
+
+		for (j=1; j<8; j++) {
+			cmd = g_ascii_strtoll (tok[j], NULL, 16);
+			g_string_append_printf (output, "%02x ", cmd);
+		}
+		if (output->len > 1)
+			g_string_set_size (output, output->len - 1);
+		goto out;
+	}
+
+	/* unknown command */
+	for (j=0; j<tok_len; j++) {
+		cmd = g_ascii_strtoll (tok[j], NULL, 16);
+		g_string_append_printf (output, "%02x ", cmd);
+	}
+	if (output->len > 1)
+		g_string_set_size (output, output->len - 1);
+out:
+	if (output != NULL)
+		entry->summary_pretty = g_string_free (output, FALSE);
+	g_strfreev (tok);
+}
+
+/**
  * gcm_parse_beagle_process_entry:
  **/
 static gchar *
@@ -127,7 +205,7 @@ gcm_parse_beagle_process_entry (GcmSensorKind kind, GcmParseEntry *entry)
 	const gchar *direction = "??";
 
 	/* timeout */
-	if (g_strcmp0 (entry->record, "[250 IN-NAK]") == 0)
+	if (g_str_has_suffix (entry->record, "IN-NAK]"))
 		goto out;
 
 	/* device closed */
@@ -137,9 +215,19 @@ gcm_parse_beagle_process_entry (GcmSensorKind kind, GcmParseEntry *entry)
 	/* usb error */
 	if (g_strcmp0 (entry->record, "[53 SYNC ERRORS]") == 0)
 		goto out;
-	if (g_strcmp0 (entry->record, "[240 IN-NAK]") == 0)
-		goto out;
+
+	/* other event to ignore */
 	if (g_strcmp0 (entry->record, "Bus event") == 0)
+		goto out;
+	if (g_strcmp0 (entry->record, "Get Configuration Descriptor") == 0)
+		goto out;
+	if (g_strcmp0 (entry->record, "Set Configuration") == 0)
+		goto out;
+
+	/* not sure what these are */
+	if (g_str_has_suffix (entry->record, " SOF]"))
+		goto out;
+	if (g_strcmp0 (entry->record, "Clear Endpoint Feature") == 0)
 		goto out;
 
 	/* start or end of file */
@@ -163,8 +251,12 @@ gcm_parse_beagle_process_entry (GcmSensorKind kind, GcmParseEntry *entry)
 	/* sexify the output */
 	if (kind == GCM_SENSOR_KIND_HUEY)
 		gcm_parse_beagle_process_entry_huey (entry);
-	retval = g_strdup_printf ("dev%02i ep%02i\t%s\t%s\n",
-				  entry->dev, entry->ep, direction,
+	else if (kind == GCM_SENSOR_KIND_COLOR_MUNKI)
+		gcm_parse_beagle_process_entry_colormunki (entry);
+	retval = g_strdup_printf ("dev%02i ep%02i(%s)\t%s\t%s\n",
+				  entry->dev, entry->ep,
+				  entry->ep_description,
+				  direction,
 				  entry->summary_pretty != NULL ? entry->summary_pretty : entry->summary);
 out:
 	return retval;
@@ -219,6 +311,8 @@ main (gint argc, gchar *argv[])
 		    split[i][0] == '\0')
 			continue;
 
+		g_print ("@@%i:%s\n", i, split[i]);
+
 		/* populate a GcmParseEntry */
 		sections = g_strsplit (split[i], ",", -1);
 		entry.record = sections[GCM_PARSE_SECTION_RECORD];
@@ -227,6 +321,7 @@ main (gint argc, gchar *argv[])
 		entry.ep = atoi (sections[GCM_PARSE_SECTION_EP]);
 		entry.direction = GCM_PARSE_ENTRY_DIRECTION_UNKNOWN;
 		entry.summary_pretty = NULL;
+		entry.ep_description = NULL;
 		part = gcm_parse_beagle_process_entry (kind, &entry);
 		if (part != NULL) {
 			g_string_append (output, part);
