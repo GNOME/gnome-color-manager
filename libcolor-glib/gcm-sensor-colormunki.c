@@ -35,19 +35,13 @@
 #include "egg-debug.h"
 
 #include "gcm-sensor-colormunki.h"
+#include "gcm-sensor-colormunki-private.h"
 
 static void     gcm_sensor_colormunki_finalize	(GObject     *object);
 
 #define GCM_SENSOR_COLORMUNKI_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_SENSOR_COLORMUNKI, GcmSensorColormunkiPrivate))
 
-typedef enum {
-	GCM_COLORMUNKI_DIAL_POSITION_UNKNOWN,
-	GCM_COLORMUNKI_DIAL_POSITION_PROJECTOR,
-	GCM_COLORMUNKI_DIAL_POSITION_SURFACE,
-	GCM_COLORMUNKI_DIAL_POSITION_CALIBRATION,
-	GCM_COLORMUNKI_DIAL_POSITION_AMBIENT,
-	GCM_COLORMUNKI_DIAL_POSITION_LAST
-} GcmSensorColormunkiDialPosition;
+typedef gint GcmSensorColormunkiDialPosition;
 
 /**
  * GcmSensorColormunkiPrivate:
@@ -70,23 +64,6 @@ struct _GcmSensorColormunkiPrivate
 };
 
 G_DEFINE_TYPE (GcmSensorColormunki, gcm_sensor_colormunki, GCM_TYPE_SENSOR)
-
-#define COLORMUNKI_VENDOR_ID			0x0971
-#define COLORMUNKI_PRODUCT_ID			0x2007
-
-#define COLORMUNKI_COMMAND_DIAL_ROTATE		0x00
-#define COLORMUNKI_COMMAND_BUTTON_PRESSED	0x01
-#define COLORMUNKI_COMMAND_BUTTON_RELEASED	0x02
-
-#define	COLORMUNKI_BUTTON_STATE_RELEASED	0x00
-#define	COLORMUNKI_BUTTON_STATE_PRESSED		0x01
-
-#define	COLORMUNKI_DIAL_POSITION_PROJECTOR	0x00
-#define	COLORMUNKI_DIAL_POSITION_SURFACE	0x01
-#define	COLORMUNKI_DIAL_POSITION_CALIBRATION	0x02
-#define	COLORMUNKI_DIAL_POSITION_AMBIENT	0x03
-
-#define	COLORMUNKI_EEPROM_OFFSET_SERIAL_NUMBER	0x0018
 
 /**
  * gcm_sensor_colormunki_print_data:
@@ -139,27 +116,27 @@ gcm_sensor_colormunki_refresh_state_transfer_cb (struct libusb_transfer *transfe
 	 * - 02 = calibration
 	 * - 03 = ambient
 	 */
-	if (reply[0] == COLORMUNKI_DIAL_POSITION_PROJECTOR) {
+	if (reply[0] == GCM_SENSOR_COLORMUNKI_DIAL_POSITION_PROJECTOR) {
 		egg_debug ("now projector");
-		priv->dial_position = GCM_COLORMUNKI_DIAL_POSITION_PROJECTOR;
-	} else if (reply[0] == COLORMUNKI_DIAL_POSITION_SURFACE) {
+		priv->dial_position = GCM_SENSOR_COLORMUNKI_DIAL_POSITION_PROJECTOR;
+	} else if (reply[0] == GCM_SENSOR_COLORMUNKI_DIAL_POSITION_SURFACE) {
 		egg_debug ("now surface");
-		priv->dial_position = GCM_COLORMUNKI_DIAL_POSITION_SURFACE;
-	} else if (reply[0] == COLORMUNKI_DIAL_POSITION_CALIBRATION) {
+		priv->dial_position = GCM_SENSOR_COLORMUNKI_DIAL_POSITION_SURFACE;
+	} else if (reply[0] == GCM_SENSOR_COLORMUNKI_DIAL_POSITION_CALIBRATION) {
 		egg_debug ("now calibration");
-		priv->dial_position = GCM_COLORMUNKI_DIAL_POSITION_CALIBRATION;
-	} else if (reply[0] == COLORMUNKI_DIAL_POSITION_AMBIENT) {
+		priv->dial_position = GCM_SENSOR_COLORMUNKI_DIAL_POSITION_CALIBRATION;
+	} else if (reply[0] == GCM_SENSOR_COLORMUNKI_DIAL_POSITION_AMBIENT) {
 		egg_debug ("now ambient");
-		priv->dial_position = GCM_COLORMUNKI_DIAL_POSITION_AMBIENT;
+		priv->dial_position = GCM_SENSOR_COLORMUNKI_DIAL_POSITION_AMBIENT;
 	} else {
 		egg_warning ("dial position unknown: 0x%02x", reply[0]);
-		priv->dial_position = GCM_COLORMUNKI_DIAL_POSITION_UNKNOWN;
+		priv->dial_position = GCM_SENSOR_COLORMUNKI_DIAL_POSITION_UNKNOWN;
 	}
 
 	/* button state */
-	if (reply[1] == COLORMUNKI_BUTTON_STATE_RELEASED) {
+	if (reply[1] == GCM_SENSOR_COLORMUNKI_BUTTON_STATE_RELEASED) {
 		egg_debug ("button released");
-	} else if (reply[1] == COLORMUNKI_BUTTON_STATE_PRESSED) {
+	} else if (reply[1] == GCM_SENSOR_COLORMUNKI_BUTTON_STATE_PRESSED) {
 		egg_debug ("button pressed");
 	} else {
 		egg_warning ("switch state unknown: 0x%02x", reply[1]);
@@ -236,14 +213,14 @@ gcm_sensor_colormunki_transfer_cb (struct libusb_transfer *transfer)
 	gcm_sensor_colormunki_print_data ("reply", transfer->buffer + LIBUSB_CONTROL_SETUP_SIZE, transfer->actual_length);
 	timestamp = (reply[7] << 24) + (reply[6] << 16) + (reply[5] << 8) + (reply[4] << 0);
 	/* we only care when the button is pressed */
-	if (reply[0] == COLORMUNKI_COMMAND_BUTTON_RELEASED) {
+	if (reply[0] == GCM_SENSOR_COLORMUNKI_COMMAND_BUTTON_RELEASED) {
 		egg_debug ("ignoring button released");
 		goto out;
 	}
 
-	if (reply[0] == COLORMUNKI_COMMAND_DIAL_ROTATE) {
+	if (reply[0] == GCM_SENSOR_COLORMUNKI_COMMAND_DIAL_ROTATE) {
 		egg_warning ("dial rotate at %ims", timestamp);
-	} else if (reply[0] == COLORMUNKI_COMMAND_BUTTON_PRESSED) {
+	} else if (reply[0] == GCM_SENSOR_COLORMUNKI_COMMAND_BUTTON_PRESSED) {
 		egg_debug ("button pressed at %ims", timestamp);
 		gcm_sensor_button_pressed (GCM_SENSOR (sensor_colormunki));
 	}
@@ -384,7 +361,8 @@ gcm_sensor_colormunki_startup (GcmSensor *sensor, GError **error)
 
 	/* connect */
 	ret = gcm_usb_connect (priv->usb,
-			       COLORMUNKI_VENDOR_ID, COLORMUNKI_PRODUCT_ID,
+			       GCM_SENSOR_COLORMUNKI_VENDOR_ID,
+			       GCM_SENSOR_COLORMUNKI_PRODUCT_ID,
 			       0x01, 0x00, error);
 	if (!ret)
 		goto out;
@@ -474,7 +452,7 @@ gcm_sensor_colormunki_get_ambient (GcmSensor *sensor, gdouble *value, GError **e
 	GcmSensorColormunki *sensor_colormunki = GCM_SENSOR_COLORMUNKI (sensor);
 
 	/* no hardware support */
-	if (sensor_colormunki->priv->dial_position != GCM_COLORMUNKI_DIAL_POSITION_AMBIENT) {
+	if (sensor_colormunki->priv->dial_position != GCM_SENSOR_COLORMUNKI_DIAL_POSITION_AMBIENT) {
 		g_set_error_literal (error, GCM_SENSOR_ERROR,
 				     GCM_SENSOR_ERROR_NO_SUPPORT,
 				     "Cannot measure ambient light in this mode (turn dial!)");
@@ -612,7 +590,7 @@ gcm_sensor_colormunki_new (void)
 {
 	GcmSensorColormunki *sensor;
 	sensor = g_object_new (GCM_TYPE_SENSOR_COLORMUNKI,
-			       "native", TRUE,
+			       "native", FALSE,
 			       "kind", GCM_SENSOR_KIND_COLOR_MUNKI,
 			       "image-display", "munki-attach.svg",
 			       "image-calibrate", "munki-calibrate.svg",

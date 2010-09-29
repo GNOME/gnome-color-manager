@@ -86,8 +86,6 @@ gcm_ddc_util_CFLAGS =					\
 gcm_sensor_example_SOURCES =				\
 	egg-debug.c					\
 	egg-debug.h					\
-	gcm-sensor-colormunki.c				\
-	gcm-sensor-colormunki.h				\
 	gcm-sensor-example.c
 
 gcm_sensor_example_LDADD =				\
