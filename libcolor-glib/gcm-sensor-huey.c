@@ -38,6 +38,7 @@
 #include "gcm-math.h"
 #include "gcm-compat.h"
 #include "gcm-sensor-huey.h"
+#include "gcm-sensor-huey-private.h"
 
 static void     gcm_sensor_huey_finalize	(GObject     *object);
 
@@ -73,253 +74,10 @@ static gboolean gcm_sensor_huey_startup (GcmSensor *sensor, GError **error);
 
 G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
 
-#define HUEY_VENDOR_ID			0x0971
-#define HUEY_PRODUCT_ID			0x2005
 #define HUEY_CONTROL_MESSAGE_TIMEOUT	50000 /* ms */
 #define HUEY_MAX_READ_RETRIES		5
 
-#define HUEY_RETVAL_SUCCESS		0x00
-#define HUEY_RETVAL_LOCKED		0xc0
-#define HUEY_RETVAL_UNKNOWN_5A		0x5a /* seen in profiling */
-#define HUEY_RETVAL_ERROR		0x80
-#define HUEY_RETVAL_UNKNOWN_81		0x81 /* seen once in init */
-#define HUEY_RETVAL_RETRY		0x90
-
-/*
- * Get the currect status of the device
- *
- *  input:   00 00 00 00 3f 00 00 00
- * returns: 00 00 43 69 72 30 30 31  (or)
- *     "Cir001" --^^^^^^^^^^^^^^^^^ -- Circuit1?...
- *          c0 00 4c 6f 63 6b 65 64
- *     "locked" --^^^^^^^^^^^^^^^^^
- */
-#define HUEY_COMMAND_GET_STATUS		0x00
-
-/*
- * Read the green sample data
- *
- * input:   02 xx xx xx xx xx xx xx
- * returns: 00 02 00 00 0a 00 00 00 (or)
- *          00 02 00 0e c6 80 00 00
- *            data --^^^^^ ^-- only ever 00 or 80
- *                    |
- *                    \-- for RGB(00,00,00) is 09 f2
- *                            RGB(ff,ff,ff) is 00 00
- *                            RGB(ff,00,00) is 02 a5
- *                            RGB(00,ff,00) is 00 f1
- *                            RGB(00,00,ff) is 08 56
- *
- * This doesn't do a sensor read, it seems to be a simple accessor.
- * HUEY_COMMAND_SENSOR_MEASURE_RGB has to be used before this one.
- */
-#define HUEY_COMMAND_READ_GREEN		0x02
-
-/*
- * Read the blue sample data
- *
- * input:   03 xx xx xx xx xx xx xx
- * returns: 00 03 00 0f 18 00 00 00
- *            data --^^^^^ ^-- only ever 00 or 80
- *                    |
- *                    \-- for RGB(00,00,00) is 09 64
- *                            RGB(ff,ff,ff) is 08 80
- *                            RGB(ff,00,00) is 03 22
- *                            RGB(00,ff,00) is 00 58
- *                            RGB(00,00,ff) is 00 59
- *
- * This doesn't do a sensor read, it seems to be a simple accessor.
- * HUEY_COMMAND_SENSOR_MEASURE_RGB has to be used before this one.
- */
-#define HUEY_COMMAND_READ_BLUE	0x03
-
-/*
- * Set value of some 32 bit register.
- *
- * input:   05 ?? 11 12 13 14 xx xx
- * returns: 00 05 00 00 00 00 00 00
- *              ^--- always the same no matter the input
- *
- * This is never used in profiling
- */
-#define HUEY_COMMAND_SET_VALUE		0x05
-
-/*
- * Get the value of some 32 bit register.
- *
- * input:   06 xx xx xx xx xx xx xx
- * returns: 00 06 11 12 13 14 00 00
- *    4 bytes ----^^^^^^^^^^^ (from HUEY_COMMAND_SET_VALUE)
- *
- * This is some sort of 32bit register on the device.
- * The default value at plug-in is 00 0f 42 40, although during
- * profiling it is set to 00 00 6f 00 and then 00 00 61 00.
- */
-#define HUEY_COMMAND_GET_VALUE		0x06
-
-/* NEVER USED */
-#define HUEY_COMMAND_UNKNOWN_07		0x07
-
-/*
- * Reads a register value.
- *
- * (sent at startup  after the unlock)
- * input:   08 0b xx xx xx xx xx xx
- *             ^^-- register address
- * returns: 00 08 0b b8 00 00 00 00
- *      address --^^ ^^-- value
- *
- * It appears you can only ask for one byte at a time.
- */
-#define HUEY_COMMAND_REGISTER_READ	0x08
-
-/*
- * Unlock a locked sensor.
- *
- * input:   0e 47 72 4d 62 6b 65 64
- *  "GrMbked"--^^^^^^^^^^^^^^^^^^^^
- * returns: 00 0e 00 00 00 00 00 00
- *
- * It might be only GrMbk that is needed to unlock.
- * We still don't know how to 'lock' a device, it just kinda happens.
- */
-#define HUEY_COMMAND_UNLOCK		0x0e
-
-/*
- * Unknown command
- *
- * returns: all NULL all of the time */
-#define HUEY_COMMAND_UNKNOWN_0F		0x0f
-
-/*
- * Unknown command
- *
- * Something to do with sampling */
-#define HUEY_COMMAND_UNKNOWN_10		0x10
-
-/*
- * Unknown command
- *
- * Something to do with sampling (that needs a retry with code 5a)
- */
-#define HUEY_COMMAND_UNKNOWN_11		0x11
-
-/*
- * Unknown command
- *
- * something to do with sampling
- */
-#define HUEY_COMMAND_UNKNOWN_12		0x12
-
-/*
- * Measures RGB value, and return the red value (only used in CRT mode).
- *
- * Seems to have to retry, every single time.
- *
- *                   Gain?
- *              _______|_______
- *             /---\ /---\ /---\
- * input:   13 02 41 00 54 00 49 00
- * returns: 00 13 00 00 01 99 02 00
- *                   ^^^^^ - would match HUEY_COMMAND_SENSOR_MEASURE_RGB
- *
- * The gain seems not to change for different measurements with different
- * colors. This seems to be a less precise profile too.
- */
-#define HUEY_COMMAND_SENSOR_MEASURE_RGB_CRT	0x13
-
-/*
- * Unknown command
- *
- * returns: seems to be sent, but not requested
- */
-#define HUEY_COMMAND_UNKNOWN_15		0x15
-
-/*
- * Sample a color and return the red component
- *
- * input:   16 00 01 00 01 00 01 00
- * returns: 00 16 00 00 00 00 00 00
- *
- * or:
- *             ,,-,,-,,-,,-,,-,,-- 'gain control'
- *             || || || || || ||
- * input:   16 00 35 00 48 00 1d 03
- * returns: 00 16 00 0b d0 00 00 00
- *            data --^^^^^ ^^-- only ever 00 or 80
- *
- * This is used when profiling, and all commands are followed by
- * HUEY_COMMAND_READ_GREEN and HUEY_COMMAND_READ_BLUE.
- * 
- * The returned values are some kind of 16 bit register count that
- * indicate how much light fell on a sensor. If the sensors are
- * converting light to pulses, then the 'gain' control tells the sensor
- * how long to read. It's therefore quicker to read white than black.
- *
- * Given there exists only GREEN and BLUE accessors, and that RED comes
- * first in a RGB sequence, I think it's safe to assume that this command
- * does the measurement, and the others just return cached data.
- *
- * argyll does (for #ff0000)
- *
- * -> 16 00 01 00 01 00 01 00
- * <-       00 00 0b 00 00 00
- * -> 02 xx xx xx xx xx xx xx
- * <-       00 00 12 00 00 00
- * -> 03 xx xx xx xx xx xx xx
- * <-       00 03 41 00 00 00
- *
- * then does:
- *
- * -> 16 01 63 00 d9 00 04 00
- * <-       00 0f ce 80 00 00
- * -> 02 xx xx xx xx xx xx xx
- * <-       00 0e d0 80 00 00
- * -> 03 xx xx xx xx xx xx xx
- * <-       00 0d 3c 00 00 00
- *
- * then returns XYZ=87.239169 45.548708 1.952249
- */
-#define HUEY_COMMAND_SENSOR_MEASURE_RGB		0x16
-
-/*
- * Unknown command (some sort of poll?)
- *
- * input:   21 09 00 02 00 00 08 00 (or)
- * returns: [never seems to return a value]
- *
- * Only when profiling, and over and over.
- */
-#define HUEY_COMMAND_UNKNOWN_21		0x21
-
-/*
- * Get the level of ambient light from the sensor
- *
- *                 ,,--- The output-type, where 00 is LCD and 02 is CRT
- *  input:   17 03 00 xx xx xx xx xx
- * returns: 90 17 03 00 00 00 00 00  then on second read:
- * 	    00 17 03 00 00 62 57 00 in light (or)
- * 	    00 17 03 00 00 00 08 00 in dark
- * 	no idea	--^^       ^---^ = 16bits data
- */
-#define HUEY_COMMAND_GET_AMBIENT	0x17
-
-/*
- * Set the LEDs on the sensor
- *
- * input:   18 00 f0 xx xx xx xx xx
- * returns: 00 18 f0 00 00 00 00 00
- *   led mask ----^^
- */
-#define HUEY_COMMAND_SET_LEDS		0x18
-
-/*
- * Unknown command
- *
- * returns: all NULL for NULL input: times out for f1 f2 f3 f4 f5 f6 f7 f8 */
-#define HUEY_COMMAND_UNKNOWN_19		0x19
-
-/* fudge factor to convert the value of HUEY_COMMAND_GET_AMBIENT to Lux */
+/* fudge factor to convert the value of GCM_SENSOR_HUEY_COMMAND_GET_AMBIENT to Lux */
 #define HUEY_AMBIENT_UNITS_TO_LUX	125.0f
 
 /* this is the same approx ratio as argyll uses to find the best accuracy
@@ -330,29 +88,6 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
  * I have no idea why we need to do this, although it probably
  * indicates we doing something wrong. */
 #define HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR	3.347250f
-
-/*
- * Register map:
- *     x0  x1  x2  x3  x4  x5  x6  x7  x8  x9  xA  xB  xC  xD  xE  xF
- * 0x [serial-number.][matrix-lcd....................................|
- * 1x ...............................................................|
- * 2x .......]                                                       |
- * 3x         [calib-lcd-time][matrix-crt............................|
- * 4x ...............................................................|
- * 5x .......................................][calib-crt-time]       |
- * 6x                             [calib_vector......................|
- * 7x ...........]                            [unlock-string.....]   |
- * 8x                                                                |
- * 9x                             [calib_value...]                   |
- */
-#define HUEY_EEPROM_ADDR_SERIAL			0x00 /* 4 bytes */
-#define HUEY_EEPROM_ADDR_CALIBRATION_DATA_LCD	0x04 /* 36 bytes */
-#define HUEY_EEPROM_ADDR_CALIBRATION_TIME_LCD	0x32 /* 4 bytes */
-#define HUEY_EEPROM_ADDR_CALIBRATION_DATA_CRT	0x36 /* 36 bytes */
-#define HUEY_EEPROM_ADDR_CALIBRATION_TIME_CRT	0x5a /* 4 bytes */
-#define HUEY_EEPROM_ADDR_DARK_OFFSET		0x67 /* 12 bytes */
-#define HUEY_EEPROM_ADDR_UNLOCK			0x7a /* 5 bytes */
-#define HUEY_EEPROM_ADDR_CALIB_VALUE		0x94 /* 4 bytes */
 
 /**
  * gcm_sensor_huey_print_data:
@@ -440,13 +175,13 @@ gcm_sensor_huey_send_data (GcmSensorHuey *sensor_huey,
 		}
 
 		/* the first byte is status */
-		if (reply[0] == HUEY_RETVAL_SUCCESS) {
+		if (reply[0] == GCM_SENSOR_HUEY_RETURN_SUCCESS) {
 			ret = TRUE;
 			break;
 		}
 
 		/* failure, the return buffer is set to "Locked" */
-		if (reply[0] == HUEY_RETVAL_LOCKED) {
+		if (reply[0] == GCM_SENSOR_HUEY_RETURN_LOCKED) {
 			g_set_error_literal (error, GCM_SENSOR_ERROR,
 					     GCM_SENSOR_ERROR_INTERNAL,
 					     "the device is locked");
@@ -454,7 +189,7 @@ gcm_sensor_huey_send_data (GcmSensorHuey *sensor_huey,
 		}
 
 		/* failure, the return buffer is set to "NoCmd" */
-		if (reply[0] == HUEY_RETVAL_ERROR) {
+		if (reply[0] == GCM_SENSOR_HUEY_RETURN_ERROR) {
 			g_set_error (error, GCM_SENSOR_ERROR,
 				     GCM_SENSOR_ERROR_INTERNAL,
 				     "failed to issue command: %s", &reply[2]);
@@ -462,7 +197,7 @@ gcm_sensor_huey_send_data (GcmSensorHuey *sensor_huey,
 		}
 
 		/* we ignore retry */
-		if (reply[0] != HUEY_RETVAL_RETRY) {
+		if (reply[0] != GCM_SENSOR_HUEY_RETURN_RETRY) {
 			g_set_error (error, GCM_SENSOR_ERROR,
 				     GCM_SENSOR_ERROR_INTERNAL,
 				     "return value unknown: 0x%02x", reply[0]);
@@ -487,7 +222,7 @@ out:
 static gboolean
 gcm_sensor_huey_read_register_byte (GcmSensorHuey *sensor_huey, guint8 addr, guint8 *value, GError **error)
 {
-	guchar request[] = { HUEY_COMMAND_REGISTER_READ, 0xff, 0x00, 0x10, 0x3c, 0x06, 0x00, 0x00 };
+	guchar request[] = { GCM_SENSOR_HUEY_COMMAND_REGISTER_READ, 0xff, 0x00, 0x10, 0x3c, 0x06, 0x00, 0x00 };
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
@@ -669,7 +404,7 @@ gcm_sensor_huey_get_ambient_thread_cb (GSimpleAsyncResult *res, GObject *object,
 	gboolean ret = FALSE;
 	gsize reply_read;
 	GcmSensorOutputType output_type;
-	guchar request[] = { HUEY_COMMAND_GET_AMBIENT, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	guchar request[] = { GCM_SENSOR_HUEY_COMMAND_GET_AMBIENT, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
 
 	/* ensure sensor is started */
@@ -784,7 +519,7 @@ gcm_sensor_huey_set_leds (GcmSensor *sensor, guint8 value, GError **error)
 	guchar reply[8];
 	gsize reply_read;
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
-	guchar payload[] = { HUEY_COMMAND_SET_LEDS, 0x00, ~value, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	guchar payload[] = { GCM_SENSOR_HUEY_COMMAND_SET_LEDS, 0x00, ~value, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	return gcm_sensor_huey_send_data (sensor_huey, payload, 8, reply, 8, &reply_read, error);
 }
 
@@ -800,7 +535,7 @@ typedef struct {
 static gboolean
 gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyMultiplier *threshold, GcmColorRGB *values, GError **error)
 {
-	guchar request[] = { HUEY_COMMAND_SENSOR_MEASURE_RGB, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	guchar request[] = { GCM_SENSOR_HUEY_COMMAND_SENSOR_MEASURE_RGB, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
@@ -819,7 +554,7 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 	values->R = (gdouble) threshold->R / (gdouble)gcm_buffer_read_uint16_be (reply+3);
 
 	/* get green */
-	request[0] = HUEY_COMMAND_READ_GREEN;
+	request[0] = GCM_SENSOR_HUEY_COMMAND_READ_GREEN;
 	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);
 	if (!ret)
 		goto out;
@@ -828,7 +563,7 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 	values->G = (gdouble) threshold->G / (gdouble)gcm_buffer_read_uint16_be (reply+3);
 
 	/* get blue */
-	request[0] = HUEY_COMMAND_READ_BLUE;
+	request[0] = GCM_SENSOR_HUEY_COMMAND_READ_BLUE;
 	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);
 	if (!ret)
 		goto out;
@@ -1037,7 +772,7 @@ gcm_sensor_huey_send_unlock (GcmSensorHuey *sensor_huey, GError **error)
 	gboolean ret;
 	gsize reply_read;
 
-	request[0] = HUEY_COMMAND_UNLOCK;
+	request[0] = GCM_SENSOR_HUEY_COMMAND_UNLOCK;
 	request[1] = 'G';
 	request[2] = 'r';
 	request[3] = 'M';
@@ -1070,7 +805,7 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 
 	/* connect */
 	ret = gcm_usb_connect (priv->usb,
-			       HUEY_VENDOR_ID, HUEY_PRODUCT_ID,
+			       GCM_SENSOR_HUEY_VENDOR_ID, GCM_SENSOR_HUEY_PRODUCT_ID,
 			       0x01, 0x00, error);
 	if (!ret)
 		goto out;
@@ -1084,7 +819,9 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 		goto out;
 
 	/* get serial number */
-	ret = gcm_sensor_huey_read_register_word (sensor_huey, HUEY_EEPROM_ADDR_SERIAL, &serial_number, error);
+	ret = gcm_sensor_huey_read_register_word (sensor_huey,
+						  GCM_SENSOR_HUEY_EEPROM_ADDR_SERIAL,
+						  &serial_number, error);
 	if (!ret)
 		goto out;
 	serial_number_tmp = g_strdup_printf ("%i", serial_number);
@@ -1092,32 +829,42 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 	egg_debug ("Serial number: %s", serial_number_tmp);
 
 	/* get unlock string */
-	ret = gcm_sensor_huey_read_register_string (sensor_huey, HUEY_EEPROM_ADDR_UNLOCK, priv->unlock_string, 5, error);
+	ret = gcm_sensor_huey_read_register_string (sensor_huey,
+						    GCM_SENSOR_HUEY_EEPROM_ADDR_UNLOCK,
+						    priv->unlock_string, 5, error);
 	if (!ret)
 		goto out;
 	egg_debug ("Unlock string: %s", priv->unlock_string);
 
 	/* get matrix */
 	gcm_mat33_clear (&priv->calibration_lcd);
-	ret = gcm_sensor_huey_read_register_matrix (sensor_huey, HUEY_EEPROM_ADDR_CALIBRATION_DATA_LCD, &priv->calibration_lcd, error);
+	ret = gcm_sensor_huey_read_register_matrix (sensor_huey,
+						    GCM_SENSOR_HUEY_EEPROM_ADDR_CALIBRATION_DATA_LCD,
+						    &priv->calibration_lcd, error);
 	if (!ret)
 		goto out;
 	egg_debug ("device matrix1: %s", gcm_mat33_to_string (&priv->calibration_lcd));
 
 	/* get another matrix, although this one is different... */
 	gcm_mat33_clear (&priv->calibration_crt);
-	ret = gcm_sensor_huey_read_register_matrix (sensor_huey, HUEY_EEPROM_ADDR_CALIBRATION_DATA_CRT, &priv->calibration_crt, error);
+	ret = gcm_sensor_huey_read_register_matrix (sensor_huey,
+						    GCM_SENSOR_HUEY_EEPROM_ADDR_CALIBRATION_DATA_CRT,
+						    &priv->calibration_crt, error);
 	if (!ret)
 		goto out;
 	egg_debug ("device matrix2: %s", gcm_mat33_to_string (&priv->calibration_crt));
 
 	/* this number is different on all three hueys */
-	ret = gcm_sensor_huey_read_register_float (sensor_huey, HUEY_EEPROM_ADDR_CALIB_VALUE, &priv->calibration_value, error);
+	ret = gcm_sensor_huey_read_register_float (sensor_huey,
+						   GCM_SENSOR_HUEY_EEPROM_ADDR_CALIB_VALUE,
+						   &priv->calibration_value, error);
 	if (!ret)
 		goto out;
 
 	/* this vector changes between sensor 1 and 3 */
-	ret = gcm_sensor_huey_read_register_vector (sensor_huey, HUEY_EEPROM_ADDR_DARK_OFFSET, &priv->dark_offset, error);
+	ret = gcm_sensor_huey_read_register_vector (sensor_huey,
+						    GCM_SENSOR_HUEY_EEPROM_ADDR_DARK_OFFSET,
+						    &priv->dark_offset, error);
 	if (!ret)
 		goto out;
 

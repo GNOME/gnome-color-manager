@@ -25,74 +25,7 @@
 
 #include <glib.h>
 
-#define HUEY_RETVAL_SUCCESS		0x00
-#define HUEY_RETVAL_LOCKED		0xc0
-#define HUEY_RETVAL_UNKNOWN_5A		0x5a /* seen in profiling */
-#define HUEY_RETVAL_ERROR		0x80
-#define HUEY_RETVAL_UNKNOWN_81		0x81 /* seen once in init */
-#define HUEY_RETVAL_RETRY		0x90
-
-static const gchar *
-get_return_string (guchar value)
-{
-	if (value == HUEY_RETVAL_SUCCESS)
-		return "success";
-	if (value == HUEY_RETVAL_LOCKED)
-		return "locked";
-	if (value == HUEY_RETVAL_ERROR)
-		return "error";
-	if (value == HUEY_RETVAL_RETRY)
-		return "retry";
-	if (value == HUEY_RETVAL_UNKNOWN_5A)
-		return "unknown5a";
-	if (value == HUEY_RETVAL_UNKNOWN_81)
-		return "unknown81";
-	return NULL;
-}
-
-static const gchar *
-get_command_string (guchar value)
-{
-	if (value == 0x00)
-		return "get-status";
-	if (value == 0x02)
-		return "read-green";
-	if (value == 0x03)
-		return "read-blue";
-	if (value == 0x05)
-		return "set-value";
-	if (value == 0x06)
-		return "get-value";
-	if (value == 0x07)
-		return "unknown07";
-	if (value == 0x08)
-		return "reg-read";
-	if (value == 0x0e)
-		return "unlock";
-	if (value == 0x0f)
-		return "unknown0f";
-	if (value == 0x10)
-		return "unknown10";
-	if (value == 0x11)
-		return "unknown11";
-	if (value == 0x12)
-		return "unknown12";
-	if (value == 0x13)
-		return "measure-rgb-crt";
-	if (value == 0x15)
-		return "unknown15(status?)";
-	if (value == 0x16)
-		return "measure-rgb";
-	if (value == 0x21)
-		return "unknown21";
-	if (value == 0x17)
-		return "ambient";
-	if (value == 0x18)
-		return "set-leds";
-	if (value == 0x19)
-		return "unknown19";
-	return NULL;
-}
+#include "gcm-sensor-huey-private.h"
 
 static void
 parse_command_sequence (GString *output, const gchar *line, gboolean reply)
@@ -111,14 +44,14 @@ parse_command_sequence (GString *output, const gchar *line, gboolean reply)
 		command_as_text = NULL;
 		cmd = g_ascii_strtoll (tok[j], NULL, 16);
 		if (j == 0 && reply) {
-			command_as_text = get_return_string (cmd);
+			command_as_text = gcm_sensor_huey_return_code_to_string (cmd);
 			if (command_as_text == NULL)
 				g_warning ("return code 0x%02x not known in %s", cmd, line);
 		}
 		if ((j == 0 && !reply) ||
 		    (j == 1 && reply)) {
 			instruction = cmd;
-			command_as_text = get_command_string (instruction);
+			command_as_text = gcm_sensor_huey_command_code_to_string (instruction);
 			if (command_as_text == NULL)
 				g_warning ("command code 0x%02x not known", cmd);
 		}
