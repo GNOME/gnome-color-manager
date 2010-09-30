@@ -253,6 +253,8 @@ static gchar *
 gcm_edid_parse_string (const guint8 *data)
 {
 	gchar *text;
+	guint i;
+	guint replaced = 0;
 
 	/* copy 12 bytes */
 	text = g_strndup ((const gchar *) data, 12);
@@ -267,7 +269,24 @@ gcm_edid_parse_string (const guint8 *data)
 	if (text[0] == '\0') {
 		g_free (text);
 		text = NULL;
+		goto out;
 	}
+
+	/* ensure string is printable */
+	for (i=0;i<12;i++) {
+		if (!g_ascii_isprint (text[i])) {
+			text[i] = '-';
+			replaced++;
+		}
+	}
+
+	/* if the string is junk, ignore the string */
+	if (replaced > 4) {
+		g_free (text);
+		text = NULL;
+		goto out;
+	}
+out:
 	return text;
 }
 
