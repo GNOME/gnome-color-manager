@@ -26,21 +26,11 @@
 #ifndef __GCM_COMPAT_H__
 #define __GCM_COMPAT_H__
 
-#include <gtk/gtk.h>
 #include "config.h"
 
 /* only libusb 1.0.8 has libusb_strerror */
 #ifndef HAVE_NEW_USB
 #define	libusb_strerror(f1)				"unknown"
-#endif
-
-/* GtkApplication is missing */
-#if (!GTK_CHECK_VERSION(2,21,6))
-#define GtkApplication					GObject
-#define gtk_application_quit(f1)			g_assert(f1!=NULL)
-#define gtk_application_run(f1)				g_assert(f1!=NULL)
-#define gtk_application_add_window(f1,f2)		g_assert(f1!=NULL)
-#define gtk_application_new(f1,f2,f3)			g_object_new(G_TYPE_OBJECT, NULL)
 #endif
 
 #endif /* __GCM_COMPAT_H__ */

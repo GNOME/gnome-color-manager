@@ -29,7 +29,6 @@
 #include <locale.h>
 #include <gtk/gtk.h>
 #include <lcms2.h>
-#include <libcolor-glib.h>
 
 #include "egg-debug.h"
 

@@ -26,7 +26,6 @@
 #include <glib/gstdio.h>
 #include <locale.h>
 #include <canberra-gtk.h>
-#include <libcolor-glib.h>
 
 #include "egg-debug.h"
 
