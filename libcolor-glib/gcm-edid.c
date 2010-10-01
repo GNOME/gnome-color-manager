@@ -356,7 +356,7 @@ gcm_edid_parse_string (const guint8 *data)
 	}
 
 	/* ensure string is printable */
-	for (i=0;i<12;i++) {
+	for (i=0; text[i] != '\0'; i++) {
 		if (!g_ascii_isprint (text[i])) {
 			text[i] = '-';
 			replaced++;
