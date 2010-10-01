@@ -1508,13 +1508,13 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	kind = gcm_device_get_kind (panel->priv->current_device);
 	if (kind != GCM_DEVICE_KIND_DISPLAY) {
 		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "expander_fine_tuning"));
-		gtk_widget_set_sensitive (widget, FALSE);
+		gtk_widget_set_visible (widget, FALSE);
 		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_reset"));
 		gtk_widget_set_sensitive (widget, FALSE);
 	} else {
 		/* show more UI */
 		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "expander_fine_tuning"));
-		gtk_widget_set_sensitive (widget, TRUE);
+		gtk_widget_set_visible (widget, TRUE);
 		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_reset"));
 		gtk_widget_set_sensitive (widget, TRUE);
 	}
