@@ -1028,8 +1028,8 @@ gcm_viewer_setup_graph_combobox (GcmViewerPrivate *viewer, GtkWidget *widget)
 	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("Video card gamma table"));
 
 	/* TRANSLATORS: combo-entry, this is a preview image of what the profile looks like */
-	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("Image preview (input)"));
-	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("Image preview (output)"));
+	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("Image preview (from sRGB)"));
+	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("Image preview (to sRGB)"));
 
 	/* get from settings */
 	active = g_settings_get_enum (viewer->settings, GCM_SETTINGS_PROFILE_GRAPH_TYPE);
