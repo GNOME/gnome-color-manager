@@ -63,6 +63,8 @@ struct _CcColorPanelPrivate {
 	GtkWidget		*info_bar_vcgt;
 	GtkWidget		*info_bar_profiles;
 	GSettings		*settings;
+	guint			 save_and_apply_id;
+	guint			 apply_all_devices_id;
 };
 
 G_DEFINE_DYNAMIC_TYPE (CcColorPanel, cc_color_panel, CC_TYPE_PANEL)
@@ -1284,21 +1286,72 @@ cc_color_panel_delete_cb (GtkWidget *widget, CcColorPanel *panel)
 	}
 }
 
+
+/**
+ * cc_color_panel_save_and_apply_current_device_cb:
+ **/
+static gboolean
+cc_color_panel_save_and_apply_current_device_cb (CcColorPanel *panel)
+{
+	gfloat localgamma;
+	gfloat brightness;
+	gfloat contrast;
+	GtkWidget *widget;
+	gboolean ret;
+	GError *error = NULL;
+
+	/* get values */
+	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_gamma"));
+	localgamma = gtk_range_get_value (GTK_RANGE (widget));
+	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_brightness"));
+	brightness = gtk_range_get_value (GTK_RANGE (widget));
+	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_contrast"));
+	contrast = gtk_range_get_value (GTK_RANGE (widget));
+
+	gcm_device_set_gamma (panel->priv->current_device, localgamma);
+	gcm_device_set_brightness (panel->priv->current_device, brightness * 100.0f);
+	gcm_device_set_contrast (panel->priv->current_device, contrast * 100.0f);
+
+	/* save new profile */
+	ret = gcm_device_save (panel->priv->current_device, &error);
+	if (!ret) {
+		egg_warning ("failed to save config: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* actually set the new profile */
+	ret = gcm_device_apply (panel->priv->current_device, &error);
+	if (!ret) {
+		egg_warning ("failed to apply profile: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+out:
+	panel->priv->save_and_apply_id = 0;
+	return FALSE;
+}
+
 /**
  * cc_color_panel_reset_cb:
  **/
 static void
 cc_color_panel_reset_cb (GtkWidget *widget, CcColorPanel *panel)
 {
-	panel->priv->setting_up_device = TRUE;
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_gamma"));
 	gtk_range_set_value (GTK_RANGE (widget), 1.0f);
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_brightness"));
 	gtk_range_set_value (GTK_RANGE (widget), 0.0f);
-	panel->priv->setting_up_device = FALSE;
-	/* we only want one save, not three */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_contrast"));
 	gtk_range_set_value (GTK_RANGE (widget), 1.0f);
+
+	/* if we've already queued a save and apply, ignore this */
+	if (panel->priv->save_and_apply_id != 0) {
+		egg_debug ("ignoring extra save and apply, as one is already pending");
+		return;
+	}
+	panel->priv->save_and_apply_id =
+		g_timeout_add (50, (GSourceFunc) cc_color_panel_save_and_apply_current_device_cb, panel);
 }
 
 /**
@@ -1910,46 +1963,21 @@ out:
 static void
 cc_color_panel_slider_changed_cb (GtkRange *range, CcColorPanel *panel)
 {
-	gfloat localgamma;
-	gfloat brightness;
-	gfloat contrast;
-	GtkWidget *widget;
-	gboolean ret;
-	GError *error = NULL;
-
 	/* we're just setting up the device, not moving the slider */
-	if (panel->priv->setting_up_device)
+	if (panel->priv->setting_up_device) {
+		egg_debug ("setting up device, so ignore");
 		return;
-
-	/* get values */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_gamma"));
-	localgamma = gtk_range_get_value (GTK_RANGE (widget));
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_brightness"));
-	brightness = gtk_range_get_value (GTK_RANGE (widget));
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_contrast"));
-	contrast = gtk_range_get_value (GTK_RANGE (widget));
-
-	gcm_device_set_gamma (panel->priv->current_device, localgamma);
-	gcm_device_set_brightness (panel->priv->current_device, brightness * 100.0f);
-	gcm_device_set_contrast (panel->priv->current_device, contrast * 100.0f);
-
-	/* save new profile */
-	ret = gcm_device_save (panel->priv->current_device, &error);
-	if (!ret) {
-		egg_warning ("failed to save config: %s", error->message);
-		g_error_free (error);
-		goto out;
 	}
 
-	/* actually set the new profile */
-	ret = gcm_device_apply (panel->priv->current_device, &error);
-	if (!ret) {
-		egg_warning ("failed to apply profile: %s", error->message);
-		g_error_free (error);
-		goto out;
+	/* if we've already queued a save and apply, ignore this */
+	if (panel->priv->save_and_apply_id != 0) {
+		egg_debug ("ignoring extra save and apply, as one is already pending");
+		return;
 	}
-out:
-	return;
+
+	/* schedule a save and apply */
+	panel->priv->save_and_apply_id =
+		g_timeout_add (50, (GSourceFunc) cc_color_panel_save_and_apply_current_device_cb, panel);
 }
 
 /**
@@ -2397,10 +2425,10 @@ out:
 }
 
 /**
- * cc_color_panel_reset_devices_idle_cb:
+ * cc_color_panel_apply_all_devices_idle_cb:
  **/
 static gboolean
-cc_color_panel_reset_devices_idle_cb (CcColorPanel *panel)
+cc_color_panel_apply_all_devices_idle_cb (CcColorPanel *panel)
 {
 	GPtrArray *array = NULL;
 	GcmDevice *device;
@@ -2427,6 +2455,7 @@ cc_color_panel_reset_devices_idle_cb (CcColorPanel *panel)
 		}
 	}
 	g_ptr_array_unref (array);
+	panel->priv->apply_all_devices_id = 0;
 	return FALSE;
 }
 
@@ -2437,7 +2466,8 @@ static void
 cc_color_panel_checkbutton_changed_cb (GtkWidget *widget, CcColorPanel *panel)
 {
 	/* set the new setting */
-	g_idle_add ((GSourceFunc) cc_color_panel_reset_devices_idle_cb, panel);
+	panel->priv->apply_all_devices_id =
+		g_idle_add ((GSourceFunc) cc_color_panel_apply_all_devices_idle_cb, panel);
 }
 
 /**
@@ -2627,6 +2657,10 @@ cc_color_panel_finalize (GObject *object)
 		g_object_unref (panel->priv->profile_store);
 	if (panel->priv->gcm_client != NULL)
 		g_object_unref (panel->priv->gcm_client);
+	if (panel->priv->save_and_apply_id != 0)
+		g_source_remove (panel->priv->save_and_apply_id);
+	if (panel->priv->apply_all_devices_id != 0)
+		g_source_remove (panel->priv->apply_all_devices_id);
 
 	G_OBJECT_CLASS (cc_color_panel_parent_class)->finalize (object);
 }
