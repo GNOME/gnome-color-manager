@@ -569,7 +569,7 @@ gcm_x11_output_get_profile_data (GcmX11Output *output, guint8 **data, gsize *len
 				   AnyPropertyType, &type, &format, &nitems, &bytes_after,
 				   (unsigned char **) &data_tmp);
 	egg_debug ("got %i bytes", (guint) nitems);
-	gdk_error_trap_pop ();
+	gdk_error_trap_pop_ignored ();
 
 	/* did the call fail */
 	if (rc != Success) {

@@ -369,7 +369,7 @@ gcm_x11_screen_get_profile_data (GcmX11Screen *screen, guint8 **data, gsize *len
 	atom = XInternAtom (priv->xdisplay, "_ICC_PROFILE", FALSE);
 	rc = XGetWindowProperty (priv->xdisplay, priv->xroot, atom, 0, G_MAXLONG, False, XA_CARDINAL,
 				 &type, &format, &nitems, &bytes_after, (void*) &data_tmp);
-	gdk_error_trap_pop ();
+	gdk_error_trap_pop_ignored ();
 
 	/* did the call fail */
 	if (rc != Success) {
@@ -465,7 +465,7 @@ gcm_x11_screen_set_profile_data (GcmX11Screen *screen, const guint8 *data, gsize
 	gdk_error_trap_push ();
 	atom = XInternAtom (priv->xdisplay, "_ICC_PROFILE", FALSE);
 	rc = XChangeProperty (priv->xdisplay, priv->xroot, atom, XA_CARDINAL, 8, PropModeReplace, (unsigned char*) data, length);
-	gdk_error_trap_pop ();
+	gdk_error_trap_pop_ignored ();
 
 	/* for some reason this fails with BadRequest, but actually sets the value */
 	if (rc == BadRequest)
@@ -514,7 +514,7 @@ gcm_x11_screen_set_protocol_version (GcmX11Screen *screen, guint major, guint mi
 	gdk_error_trap_push ();
 	atom = XInternAtom (priv->xdisplay, "_ICC_PROFILE_IN_X_VERSION", FALSE);
 	rc = XChangeProperty (priv->xdisplay, priv->xroot, atom, XA_CARDINAL, 8, PropModeReplace, (unsigned char*) &data, 1);
-	gdk_error_trap_pop ();
+	gdk_error_trap_pop_ignored ();
 
 	/* for some reason this fails with BadRequest, but actually sets the value */
 	if (rc == BadRequest)
@@ -559,7 +559,7 @@ gcm_x11_screen_remove_protocol_version (GcmX11Screen *screen, GError **error)
 	gdk_error_trap_push ();
 	atom = XInternAtom (priv->xdisplay, "_ICC_PROFILE_IN_X_VERSION", FALSE);
 	rc = XDeleteProperty(priv->xdisplay, priv->xroot, atom);
-	gdk_error_trap_pop ();
+	gdk_error_trap_pop_ignored ();
 
 	/* this fails with BadRequest if the atom was not set */
 	if (rc == BadRequest)
@@ -610,7 +610,7 @@ gcm_x11_screen_get_protocol_version (GcmX11Screen *screen, guint *major, guint *
 	atom = XInternAtom (priv->xdisplay, "_ICC_PROFILE_IN_X_VERSION", FALSE);
 	rc = XGetWindowProperty (priv->xdisplay, priv->xroot, atom, 0, G_MAXLONG, False, XA_CARDINAL,
 				 &type, &format, &nitems, &bytes_after, (unsigned char **) &data_tmp);
-	gdk_error_trap_pop ();
+	gdk_error_trap_pop_ignored ();
 
 	/* did the call fail */
 	if (rc != Success) {
@@ -663,7 +663,7 @@ gcm_x11_screen_remove_profile (GcmX11Screen *screen, GError **error)
 	gdk_error_trap_push ();
 	atom = XInternAtom (priv->xdisplay, "_ICC_PROFILE", FALSE);
 	rc = XDeleteProperty (priv->xdisplay, priv->xroot, atom);
-	gdk_error_trap_pop ();
+	gdk_error_trap_pop_ignored ();
 
 	/* this fails with BadRequest if the atom was not set */
 	if (rc == BadRequest)
