@@ -600,7 +600,8 @@ gcm_client_get_device_by_window (GcmClient *client, GdkWindow *window)
 
 	/* get the window parameters, in root co-ordinates */
 	gdk_window_get_origin (window, &window_x, &window_y);
-	gdk_drawable_get_size (GDK_DRAWABLE(window), &window_width, &window_height);
+	window_width = gdk_window_get_width (window);
+	window_height = gdk_window_get_height (window);
 
 	/* get list of updates */
 	outputs = gcm_x11_screen_get_outputs (client->priv->screen, NULL);
