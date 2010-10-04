@@ -41,10 +41,9 @@ struct GcmGammaWidgetPrivate
 	gdouble			 color_blue;
 	guint			 chart_width;
 	guint			 chart_height;
-	cairo_t			*cr;
 };
 
-static gboolean gcm_gamma_widget_expose (GtkWidget *gamma, GdkEventExpose *event);
+static gboolean gcm_gamma_widget_draw (GtkWidget *gamma, cairo_t *cr);
 static void	gcm_gamma_widget_finalize (GObject *object);
 
 enum
@@ -130,7 +129,7 @@ gcm_gamma_widget_class_init (GcmGammaWidgetClass *class)
 	GtkWidgetClass *widget_class = GTK_WIDGET_CLASS (class);
 	GObjectClass *object_class = G_OBJECT_CLASS (class);
 
-	widget_class->expose_event = gcm_gamma_widget_expose;
+	widget_class->draw = gcm_gamma_widget_draw;
 	object_class->get_property = dkp_gamma_get_property;
 	object_class->set_property = dkp_gamma_set_property;
 	object_class->finalize = gcm_gamma_widget_finalize;
@@ -279,20 +278,22 @@ gcm_gamma_widget_draw_bounding_box (cairo_t *cr, gint x, gint y, gint width, gin
 
 /**
  * gcm_gamma_widget_draw:
+ *
+ * Just repaint the entire gamma widget on expose.
  **/
-static void
+static gboolean
 gcm_gamma_widget_draw (GtkWidget *gamma_widget, cairo_t *cr)
 {
 	GtkAllocation allocation;
 
 	GcmGammaWidget *gama = (GcmGammaWidget*) gamma_widget;
-	g_return_if_fail (gama != NULL);
-	g_return_if_fail (GCM_IS_GAMMA_WIDGET (gama));
+	g_return_val_if_fail (gama != NULL, FALSE);
+	g_return_val_if_fail (GCM_IS_GAMMA_WIDGET (gama), FALSE);
 
 	/* make size adjustment */
 	gtk_widget_get_allocation (gamma_widget, &allocation);
 	if (allocation.height <= 5 || allocation.width <= 5)
-		return;
+		return FALSE;
 
 	/* save */
 	gama->priv->chart_height = ((guint) (allocation.height / 2) * 2) - 1;
@@ -302,29 +303,6 @@ gcm_gamma_widget_draw (GtkWidget *gamma_widget, cairo_t *cr)
 	gcm_gamma_widget_draw_bounding_box (cr, 0, 0, gama->priv->chart_width, gama->priv->chart_height);
 	gcm_gamma_widget_draw_lines (gama, cr);
 	gcm_gamma_widget_draw_box (gama, cr);
-}
-
-/**
- * gcm_gamma_widget_expose:
- *
- * Just repaint the entire gamma widget on expose.
- **/
-static gboolean
-gcm_gamma_widget_expose (GtkWidget *gamma_widget, GdkEventExpose *event)
-{
-	cairo_t *cr;
-
-	/* get a cairo_t */
-	cr = gdk_cairo_create (gtk_widget_get_window (gamma_widget));
-	cairo_rectangle (cr,
-			 event->area.x, event->area.y,
-			 event->area.width, event->area.height);
-	cairo_clip (cr);
-	((GcmGammaWidget *)gamma_widget)->priv->cr = cr;
-
-	gcm_gamma_widget_draw (gamma_widget, cr);
-
-	cairo_destroy (cr);
 	return FALSE;
 }
 
