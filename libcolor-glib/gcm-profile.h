@@ -65,7 +65,6 @@ struct _GcmProfileClass
 
 GType		 gcm_profile_get_type		  	(void);
 GcmProfile	*gcm_profile_new			(void);
-GcmProfile	*gcm_profile_new		(void);
 gboolean	 gcm_profile_parse			(GcmProfile	*profile,
 							 GFile		*file,
 							 GError		**error);
