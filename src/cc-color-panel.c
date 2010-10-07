@@ -43,7 +43,7 @@
 #include "gcm-profile-store.h"
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
-#include "gcm-xyz.h"
+#include "gcm-color.h"
 
 #include "egg-debug.h"
 

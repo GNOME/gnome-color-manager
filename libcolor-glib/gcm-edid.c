@@ -34,6 +34,7 @@
 #include <gio/gio.h>
 #include <stdlib.h>
 
+#include "gcm-color.h"
 #include "gcm-edid.h"
 #include "gcm-tables.h"
 
@@ -59,6 +60,10 @@ struct _GcmEdidPrivate
 	guint				 width;
 	guint				 height;
 	gfloat				 gamma;
+	GcmColorYxy			*red;
+	GcmColorYxy			*green;
+	GcmColorYxy			*blue;
+	GcmColorYxy			*white;
 	GcmTables			*tables;
 };
 
@@ -73,6 +78,10 @@ enum {
 	PROP_PNP_ID,
 	PROP_WIDTH,
 	PROP_HEIGHT,
+	PROP_RED,
+	PROP_GREEN,
+	PROP_BLUE,
+	PROP_WHITE,
 	PROP_LAST
 };
 
@@ -252,6 +261,74 @@ gcm_edid_get_gamma (GcmEdid *edid)
 }
 
 /**
+ * gcm_edid_get_red:
+ * @edid: a valid #GcmEdid instance
+ *
+ * Gets the monitor red chromaticity value.
+ *
+ * Return value: the #GcmColorYxy value
+ *
+ * Since: 0.0.1
+ **/
+const GcmColorYxy *
+gcm_edid_get_red (GcmEdid *edid)
+{
+	g_return_val_if_fail (GCM_IS_EDID (edid), NULL);
+	return edid->priv->red;
+}
+
+/**
+ * gcm_edid_get_green:
+ * @edid: a valid #GcmEdid instance
+ *
+ * Gets the monitor green chromaticity value.
+ *
+ * Return value: the #GcmColorYxy value
+ *
+ * Since: 0.0.1
+ **/
+const GcmColorYxy *
+gcm_edid_get_green (GcmEdid *edid)
+{
+	g_return_val_if_fail (GCM_IS_EDID (edid), NULL);
+	return edid->priv->green;
+}
+
+/**
+ * gcm_edid_get_blue:
+ * @edid: a valid #GcmEdid instance
+ *
+ * Gets the monitor red chromaticity value.
+ *
+ * Return value: the #GcmColorYxy value
+ *
+ * Since: 0.0.1
+ **/
+const GcmColorYxy *
+gcm_edid_get_blue (GcmEdid *edid)
+{
+	g_return_val_if_fail (GCM_IS_EDID (edid), NULL);
+	return edid->priv->blue;
+}
+
+/**
+ * gcm_edid_get_white:
+ * @edid: a valid #GcmEdid instance
+ *
+ * Gets the monitor white chromaticity value.
+ *
+ * Return value: the #GcmColorYxy value
+ *
+ * Since: 0.0.1
+ **/
+const GcmColorYxy *
+gcm_edid_get_white (GcmEdid *edid)
+{
+	g_return_val_if_fail (GCM_IS_EDID (edid), NULL);
+	return edid->priv->white;
+}
+
+/**
  * gcm_edid_reset:
  * @edid: a valid #GcmEdid instance
  *
@@ -395,7 +472,6 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
 	GcmEdidPrivate *priv = edid->priv;
 	guint32 serial;
 	guint extension_blocks;
-	gdouble x, y;
 	gchar *tmp;
 
 	g_return_val_if_fail (GCM_IS_EDID (edid), FALSE);
@@ -452,24 +528,24 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
 	}
 
 	/* get color red */
-	x = gcm_edid_decode_fraction (data[0x1b], gcm_edid_get_bits (data[0x19], 6, 7));
-	y = gcm_edid_decode_fraction (data[0x1c], gcm_edid_get_bits (data[0x19], 5, 4));
-	egg_debug ("red x=%f,y=%f", x, y);
+	priv->red->x = gcm_edid_decode_fraction (data[0x1b], gcm_edid_get_bits (data[0x19], 6, 7));
+	priv->red->y = gcm_edid_decode_fraction (data[0x1c], gcm_edid_get_bits (data[0x19], 5, 4));
+	egg_debug ("red x=%f,y=%f", priv->red->x, priv->red->y);
 
 	/* get color green */
-	x = gcm_edid_decode_fraction (data[0x1d], gcm_edid_get_bits (data[0x19], 2, 3));
-	y = gcm_edid_decode_fraction (data[0x1e], gcm_edid_get_bits (data[0x19], 0, 1));
-	egg_debug ("green x=%f,y=%f", x, y);
+	priv->green->x = gcm_edid_decode_fraction (data[0x1d], gcm_edid_get_bits (data[0x19], 2, 3));
+	priv->green->y = gcm_edid_decode_fraction (data[0x1e], gcm_edid_get_bits (data[0x19], 0, 1));
+	egg_debug ("green x=%f,y=%f", priv->green->x, priv->green->y);
 
 	/* get color blue */
-	x = gcm_edid_decode_fraction (data[0x1f], gcm_edid_get_bits (data[0x1a], 6, 7));
-	y = gcm_edid_decode_fraction (data[0x20], gcm_edid_get_bits (data[0x1a], 4, 5));
-	egg_debug ("blue x=%f,y=%f", x, y);
+	priv->blue->x = gcm_edid_decode_fraction (data[0x1f], gcm_edid_get_bits (data[0x1a], 6, 7));
+	priv->blue->y = gcm_edid_decode_fraction (data[0x20], gcm_edid_get_bits (data[0x1a], 4, 5));
+	egg_debug ("blue x=%f,y=%f", priv->blue->x, priv->blue->y);
 
 	/* get color white */
-	x = gcm_edid_decode_fraction (data[0x21], gcm_edid_get_bits (data[0x1a], 2, 3));
-	y = gcm_edid_decode_fraction (data[0x22], gcm_edid_get_bits (data[0x1a], 0, 1));
-	egg_debug ("white x=%f,y=%f", x, y);
+	priv->white->x = gcm_edid_decode_fraction (data[0x21], gcm_edid_get_bits (data[0x1a], 2, 3));
+	priv->white->y = gcm_edid_decode_fraction (data[0x22], gcm_edid_get_bits (data[0x1a], 0, 1));
+	egg_debug ("white x=%f,y=%f", priv->white->x, priv->white->y);
 
 	/* parse EDID data */
 	for (i=GCM_EDID_OFFSET_DATA_BLOCKS; i <= GCM_EDID_OFFSET_LAST_BLOCK; i+=18) {
@@ -567,6 +643,18 @@ gcm_edid_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 		break;
 	case PROP_HEIGHT:
 		g_value_set_uint (value, priv->height);
+		break;
+	case PROP_WHITE:
+		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->white));
+		break;
+	case PROP_RED:
+		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->red));
+		break;
+	case PROP_GREEN:
+		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->green));
+		break;
+	case PROP_BLUE:
+		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->blue));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -671,6 +759,39 @@ gcm_edid_class_init (GcmEdidClass *klass)
 				   G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_HEIGHT, pspec);
 
+	/**
+	 * GcmEdid:red:
+	 */
+	g_object_class_install_property (object_class,
+					 PROP_RED,
+					 g_param_spec_boxed ("red", NULL, NULL,
+							     GCM_TYPE_COLOR_YXY,
+							     G_PARAM_READABLE));
+	/**
+	 * GcmEdid:green:
+	 */
+	g_object_class_install_property (object_class,
+					 PROP_GREEN,
+					 g_param_spec_boxed ("green", NULL, NULL,
+							     GCM_TYPE_COLOR_YXY,
+							     G_PARAM_READABLE));
+	/**
+	 * GcmEdid:blue:
+	 */
+	g_object_class_install_property (object_class,
+					 PROP_BLUE,
+					 g_param_spec_boxed ("blue", NULL, NULL,
+							     GCM_TYPE_COLOR_YXY,
+							     G_PARAM_READABLE));
+	/**
+	 * GcmEdid:white:
+	 */
+	g_object_class_install_property (object_class,
+					 PROP_WHITE,
+					 g_param_spec_boxed ("white", NULL, NULL,
+							     GCM_TYPE_COLOR_YXY,
+							     G_PARAM_READABLE));
+
 	g_type_class_add_private (klass, sizeof (GcmEdidPrivate));
 }
 
@@ -688,6 +809,10 @@ gcm_edid_init (GcmEdid *edid)
 	edid->priv->checksum = NULL;
 	edid->priv->tables = gcm_tables_new ();
 	edid->priv->pnp_id = g_new0 (gchar, 4);
+	edid->priv->red = gcm_color_new_Yxy ();
+	edid->priv->green = gcm_color_new_Yxy ();
+	edid->priv->blue = gcm_color_new_Yxy ();
+	edid->priv->white = gcm_color_new_Yxy ();
 }
 
 /**
@@ -705,6 +830,10 @@ gcm_edid_finalize (GObject *object)
 	g_free (priv->eisa_id);
 	g_free (priv->checksum);
 	g_free (priv->pnp_id);
+	gcm_color_free_Yxy (priv->white);
+	gcm_color_free_Yxy (priv->red);
+	gcm_color_free_Yxy (priv->green);
+	gcm_color_free_Yxy (priv->blue);
 	g_object_unref (priv->tables);
 
 	G_OBJECT_CLASS (gcm_edid_parent_class)->finalize (object);

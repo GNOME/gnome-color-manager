@@ -31,7 +31,7 @@
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
 #include "gcm-utils.h"
-#include "gcm-xyz.h"
+#include "gcm-color.h"
 #include "gcm-cie-widget.h"
 
 /**
@@ -75,10 +75,10 @@ main (int argc, char **argv)
 	GtkWidget *dialog;
 	GtkResponseType response;
 	GtkWidget *cie_widget = NULL;
-	GcmXyz *white = NULL;
-	GcmXyz *red = NULL;
-	GcmXyz *green = NULL;
-	GcmXyz *blue = NULL;
+	GcmColorXYZ *white = NULL;
+	GcmColorXYZ *red = NULL;
+	GcmColorXYZ *green = NULL;
+	GcmColorXYZ *blue = NULL;
 
 	const GOptionEntry options[] = {
 		{ G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &files,

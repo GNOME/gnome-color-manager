@@ -36,7 +36,7 @@
 #include "gcm-sensor-client.h"
 #include "gcm-profile-store.h"
 #include "gcm-utils.h"
-#include "gcm-xyz.h"
+#include "gcm-color.h"
 
 static GtkBuilder *builder = NULL;
 static GtkWidget *info_bar_hardware = NULL;
@@ -262,7 +262,7 @@ out:
 static void
 gcm_picker_xyz_notify_cb (GcmCalibrate *calibrate_, GParamSpec *pspec, gpointer user_data)
 {
-	GcmXyz *xyz;
+	GcmColorXYZ *xyz;
 
 	/* get new value */
 	g_object_get (calibrate, "xyz", &xyz, NULL);
@@ -275,7 +275,7 @@ gcm_picker_xyz_notify_cb (GcmCalibrate *calibrate_, GParamSpec *pspec, gpointer 
 
 	gcm_picker_refresh_results ();
 	gcm_picker_got_results ();
-	g_object_unref (xyz);
+	gcm_color_free_XYZ (xyz);
 }
 
 /**

@@ -37,7 +37,7 @@
 #include "gcm-profile-store.h"
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
-#include "gcm-xyz.h"
+#include "gcm-color.h"
 
 typedef struct {
 	GtkBuilder	*builder;
@@ -630,10 +630,14 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	GcmProfile *profile;
 	GcmClut *clut_trc = NULL;
 	GcmClut *clut_vcgt = NULL;
-	GcmXyz *white;
-	GcmXyz *red;
-	GcmXyz *green;
-	GcmXyz *blue;
+	GcmColorXYZ *white;
+	GcmColorXYZ *red;
+	GcmColorXYZ *green;
+	GcmColorXYZ *blue;
+	GcmColorYxy white_Yxy;
+	GcmColorYxy red_Yxy;
+	GcmColorYxy green_Yxy;
+	GcmColorYxy blue_Yxy;
 	const gchar *profile_copyright;
 	const gchar *profile_manufacturer;
 	const gchar *profile_model ;
@@ -650,7 +654,6 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	gboolean has_vcgt;
 	guint size = 0;
 	guint filesize;
-	gfloat x;
 	gboolean show_section = FALSE;
 
 	/* This will only work in single or browse selection mode! */
@@ -693,14 +696,17 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 		      NULL);
 
 	/* check we have enough data for the CIE widget */
-	x = gcm_xyz_get_x (red);
+	gcm_color_convert_XYZ_to_Yxy (white, &white_Yxy);
+	gcm_color_convert_XYZ_to_Yxy (red, &red_Yxy);
+	gcm_color_convert_XYZ_to_Yxy (green, &green_Yxy);
+	gcm_color_convert_XYZ_to_Yxy (blue, &blue_Yxy);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_cie_axis"));
-	if (x > 0.001) {
+	if (white_Yxy.x > 0.001) {
 		g_object_set (viewer->cie_widget,
-			      "white", white,
-			      "red", red,
-			      "green", green,
-			      "blue", blue,
+			      "white", &white_Yxy,
+			      "red", &red_Yxy,
+			      "green", &green_Yxy,
+			      "blue", &blue_Yxy,
 			      NULL);
 	} else {
 		gtk_widget_hide (widget);
@@ -863,10 +869,10 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 		g_object_unref (clut_trc);
 	if (clut_vcgt != NULL)
 		g_object_unref (clut_vcgt);
-	g_object_unref (white);
-	g_object_unref (red);
-	g_object_unref (green);
-	g_object_unref (blue);
+	gcm_color_free_XYZ (white);
+	gcm_color_free_XYZ (red);
+	gcm_color_free_XYZ (green);
+	gcm_color_free_XYZ (blue);
 	g_free (size_text);
 	g_free (basename);
 }

@@ -34,7 +34,102 @@
 #include <gcm-color.h>
 
 /**
- * gcm_color_init_XYZ:
+ * gcm_color_dup_XYZ:
+ **/
+GcmColorXYZ *
+gcm_color_dup_XYZ (const GcmColorXYZ *src)
+{
+	GcmColorXYZ *dest;
+	g_return_val_if_fail (src != NULL, NULL);
+	dest = gcm_color_new_XYZ ();
+	dest->X = src->X;
+	dest->Y = src->Y;
+	dest->Z = src->Z;
+	return dest;
+}
+
+/**
+ * gcm_color_dup_RGB:
+ **/
+GcmColorRGB *
+gcm_color_dup_RGB (const GcmColorRGB *src)
+{
+	GcmColorRGB *dest;
+	g_return_val_if_fail (src != NULL, NULL);
+	dest = gcm_color_new_RGB ();
+	dest->R = src->R;
+	dest->G = src->G;
+	dest->B = src->B;
+	return dest;
+}
+
+/**
+ * gcm_color_dup_Yxy:
+ **/
+GcmColorYxy *
+gcm_color_dup_Yxy (const GcmColorYxy *src)
+{
+	GcmColorYxy *dest;
+	g_return_val_if_fail (src != NULL, NULL);
+	dest = gcm_color_new_Yxy ();
+	dest->x = src->x;
+	dest->y = src->y;
+	return dest;
+}
+
+/**
+ * gcm_color_get_type_XYZ:
+ * Return value: a #GType
+ *
+ * Gets a specific type.
+ **/
+GType
+gcm_color_get_type_XYZ (void)
+{
+	static GType type_id = 0;
+	if (!type_id)
+		type_id = g_boxed_type_register_static ("GcmColorXYZ",
+							(GBoxedCopyFunc) gcm_color_dup_XYZ,
+							(GBoxedFreeFunc) gcm_color_free_XYZ);
+	return type_id;
+}
+
+/**
+ * gcm_color_get_type_RGB:
+ * Return value: a #GType
+ *
+ * Gets a specific type.
+ **/
+GType
+gcm_color_get_type_RGB (void)
+{
+	static GType type_id = 0;
+	if (!type_id)
+		type_id = g_boxed_type_register_static ("GcmColorRGB",
+							(GBoxedCopyFunc) gcm_color_dup_RGB,
+							(GBoxedFreeFunc) gcm_color_free_RGB);
+	return type_id;
+}
+
+/**
+ * gcm_color_get_type_Yxy:
+ * Return value: a #GType
+ *
+ * Gets a specific type.
+ **/
+GType
+gcm_color_get_type_Yxy (void)
+{
+	static GType type_id = 0;
+	if (!type_id)
+		type_id = g_boxed_type_register_static ("GcmColorYxy",
+							(GBoxedCopyFunc) gcm_color_dup_Yxy,
+							(GBoxedFreeFunc) gcm_color_free_Yxy);
+	return type_id;
+}
+
+/**
+ * gcm_color_set_XYZ:
  * @dest: the destination color
  * @X: component value
  * @Y: component value
@@ -43,7 +138,7 @@
  * Initialises a color value.
  **/
 void
-gcm_color_init_XYZ (GcmColorXYZ *dest, gdouble X, gdouble Y, gdouble Z)
+gcm_color_set_XYZ (GcmColorXYZ *dest, gdouble X, gdouble Y, gdouble Z)
 {
 	g_return_if_fail (dest != NULL);
 
@@ -53,7 +148,23 @@ gcm_color_init_XYZ (GcmColorXYZ *dest, gdouble X, gdouble Y, gdouble Z)
 }
 
 /**
- * gcm_color_init_RGB:
+ * gcm_color_clear_XYZ:
+ * @dest: the destination color
+ *
+ * Initialises a color value.
+ **/
+void
+gcm_color_clear_XYZ (GcmColorXYZ *dest)
+{
+	g_return_if_fail (dest != NULL);
+
+	dest->X = 0.0f;
+	dest->Y = 0.0f;
+	dest->Z = 0.0f;
+}
+
+/**
+ * gcm_color_set_RGB:
  * @dest: the destination color
  * @R: component value
  * @G: component value
@@ -62,7 +173,7 @@ gcm_color_init_XYZ (GcmColorXYZ *dest, gdouble X, gdouble Y, gdouble Z)
  * Initialises a color value.
  **/
 void
-gcm_color_init_RGB (GcmColorRGB *dest, gdouble R, gdouble G, gdouble B)
+gcm_color_set_RGB (GcmColorRGB *dest, gdouble R, gdouble G, gdouble B)
 {
 	g_return_if_fail (dest != NULL);
 
@@ -87,6 +198,24 @@ gcm_color_copy_XYZ (const GcmColorXYZ *src, GcmColorXYZ *dest)
 	dest->X = src->X;
 	dest->Y = src->Y;
 	dest->Z = src->Z;
+}
+
+/**
+ * gcm_color_copy_Yxy:
+ * @src: the source color
+ * @dest: the destination color
+ *
+ * Deep copies a color value.
+ **/
+void
+gcm_color_copy_Yxy (const GcmColorYxy *src, GcmColorYxy *dest)
+{
+	g_return_if_fail (src != NULL);
+	g_return_if_fail (dest != NULL);
+
+	dest->Y = src->Y;
+	dest->x = src->x;
+	dest->y = src->y;
 }
 
 /**

@@ -45,7 +45,7 @@
 #include "gcm-utils.h"
 #include "gcm-x11-screen.h"
 #include "gcm-print.h"
-#include "gcm-xyz.h"
+#include "gcm-color.h"
 #include "gcm-calibrate-dialog.h"
 
 #include "egg-debug.h"
@@ -2515,10 +2515,10 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	/* spot read result */
 	found = g_strstr_len (line, -1, "Result is XYZ");
 	if (found != NULL) {
-		GcmXyz *xyz;
+		GcmColorXYZ *xyz;
 		egg_warning ("line=%s", line);
 		split = g_strsplit (line, " ", -1);
-		xyz = gcm_xyz_new ();
+		xyz = gcm_color_new_XYZ ();
 		g_object_set (xyz,
 			      "cie-x", g_ascii_strtod (split[4], NULL),
 			      "cie-y", g_ascii_strtod (split[5], NULL),
@@ -2529,7 +2529,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 			      NULL);
 		priv->done_spot_read = TRUE;
 		gcm_calibrate_dialog_response (priv->calibrate_dialog, GTK_RESPONSE_CANCEL);
-		g_object_unref (xyz);
+		gcm_color_free_XYZ (xyz);
 		goto out;
 	}
 

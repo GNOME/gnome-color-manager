@@ -26,6 +26,7 @@
 #ifndef __GCM_COLOR_H__
 #define __GCM_COLOR_H__
 
+#include <glib-object.h>
 #include <gcm-math.h>
 
 typedef struct {
@@ -58,16 +59,39 @@ typedef struct {
 	gdouble	 B;
 } GcmColorRGB;
 
-void		 gcm_color_init_XYZ			(GcmColorXYZ		*dest,
+#define	GCM_TYPE_COLOR_RGB	(gcm_color_get_type_RGB ())
+#define	GCM_TYPE_COLOR_XYZ	(gcm_color_get_type_XYZ ())
+#define	GCM_TYPE_COLOR_YXY	(gcm_color_get_type_Yxy ())
+
+/* types */
+GType		 gcm_color_get_type_XYZ			(void);
+GType		 gcm_color_get_type_RGB			(void);
+GType		 gcm_color_get_type_Yxy			(void);
+
+/* allocate and deallocate helpers */
+#define		 gcm_color_new_XYZ()			g_new0 (GcmColorXYZ, 1)
+#define		 gcm_color_new_RGB()			g_new0 (GcmColorRGB, 1)
+#define		 gcm_color_new_Yxy()			g_new0 (GcmColorYxy, 1)
+#define		 gcm_color_free_XYZ			g_free
+#define		 gcm_color_free_RGB			g_free
+#define		 gcm_color_free_Yxy			g_free
+GcmColorXYZ	*gcm_color_dup_XYZ			(const GcmColorXYZ	*src);
+GcmColorRGB	*gcm_color_dup_RGB			(const GcmColorRGB	*src);
+GcmColorYxy	*gcm_color_dup_Yxy			(const GcmColorYxy	*src);
+
+void		 gcm_color_set_XYZ			(GcmColorXYZ		*dest,
 							 gdouble		 X,
 							 gdouble		 Y,
 							 gdouble		 Z);
-void		 gcm_color_init_RGB			(GcmColorRGB		*dest,
+void		 gcm_color_set_RGB			(GcmColorRGB		*dest,
 							 gdouble		 R,
 							 gdouble		 G,
 							 gdouble		 B);
 void		 gcm_color_copy_XYZ			(const GcmColorXYZ	*src,
 							 GcmColorXYZ		*dest);
+void		 gcm_color_copy_Yxy			(const GcmColorYxy	*src,
+							 GcmColorYxy		*dest);
+void		 gcm_color_clear_XYZ			(GcmColorXYZ		*dest);
 void		 gcm_color_copy_RGB			(const GcmColorRGB	*src,
 							 GcmColorRGB		*dest);
 void		 gcm_color_convert_RGBint_to_RGB	(const GcmColorRGBint	*src,
