@@ -899,6 +899,7 @@ _cmsWriteTagTextAscii (cmsHPROFILE lcms_profile, cmsTagSignature sig, const gcha
 gboolean
 gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
 {
+	GFile *file = NULL;
 	gboolean ret = FALSE;
 	GcmProfilePrivate *priv = profile->priv;
 
@@ -949,7 +950,19 @@ gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
 	/* save, TODO: get error */
 	cmsSaveProfileToFile (priv->lcms_profile, filename);
 	ret = TRUE;
+
+	/* the profile now tracks the saved file */
+	if (priv->filename == NULL) {
+		egg_debug ("assuming %s, so re-parse", filename);
+		file = g_file_new_for_path (filename);
+		ret = gcm_profile_parse (profile, file, error);
+		if (!ret)
+			goto out;
+	}
+
 out:
+	if (file != NULL)
+		g_object_unref (file);
 	return ret;
 }
 
