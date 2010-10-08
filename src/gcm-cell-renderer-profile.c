@@ -65,19 +65,21 @@ gcm_cell_renderer_set_markup (GcmCellRendererProfile *renderer)
 	GString *string;
 	const gchar *description;
 
-	/* not yet set */
-	if (renderer->profile == NULL)
-		return;
+	/* do we have a profile to load? */
+	if (renderer->profile == NULL) {
+		/* TRANSLATORS: this is when there is no profile for the device */
+		string = g_string_new (_("No profile"));
+	} else {
+		/* add profile description */
+		description = gcm_profile_get_description (renderer->profile);
+		if (description == NULL)
+			description = gcm_profile_get_filename (renderer->profile);
+		string = g_string_new (description);
 
-	/* add profile description */
-	description = gcm_profile_get_description (renderer->profile);
-	if (description == NULL)
-		description = gcm_profile_get_filename (renderer->profile);
-	string = g_string_new (description);
-
-	/* TRANSLATORS: this is the default profile */
-	if (renderer->is_default)
-		g_string_append_printf (string, " [%s]", _("Default"));
+		/* TRANSLATORS: this is the default profile */
+		if (renderer->is_default)
+			g_string_append_printf (string, " [%s]", _("Default"));
+	}
 
 	/* assign */
 	g_free (renderer->markup);

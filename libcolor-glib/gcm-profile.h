@@ -31,6 +31,7 @@
 
 #include "gcm-clut.h"
 #include "gcm-enum.h"
+#include "gcm-color.h"
 
 G_BEGIN_DECLS
 
@@ -82,6 +83,13 @@ GcmClut		*gcm_profile_generate_vcgt		(GcmProfile	*profile,
 							 guint		 size);
 GcmClut		*gcm_profile_generate_curve		(GcmProfile	*profile,
 							 guint		 size);
+gboolean	 gcm_profile_create_from_chroma		(GcmProfile	*profile,
+							 gdouble	 gamma,
+							 const GcmColorYxy *red,
+							 const GcmColorYxy *green,
+							 const GcmColorYxy *blue,
+							 const GcmColorYxy *white,
+							 GError		**error);
 const gchar	*gcm_profile_get_description		(GcmProfile	*profile);
 void		 gcm_profile_set_description		(GcmProfile	*profile,
 							 const gchar 	*description);
@@ -102,8 +110,6 @@ const gchar	*gcm_profile_get_datetime		(GcmProfile	*profile);
 void		 gcm_profile_set_datetime		(GcmProfile	*profile,
 							 const gchar 	*datetime);
 guint		 gcm_profile_get_size			(GcmProfile	*profile);
-void		 gcm_profile_set_size			(GcmProfile	*profile,
-							 guint		 size);
 GcmProfileKind	 gcm_profile_get_kind			(GcmProfile	*profile);
 void		 gcm_profile_set_kind			(GcmProfile	*profile,
 							 GcmProfileKind	 kind);
@@ -111,8 +117,6 @@ GcmColorspace	 gcm_profile_get_colorspace		(GcmProfile	*profile);
 void		 gcm_profile_set_colorspace		(GcmProfile	*profile,
 							 GcmColorspace	 colorspace);
 gboolean	 gcm_profile_get_has_vcgt		(GcmProfile	*profile);
-void		 gcm_profile_set_has_vcgt		(GcmProfile	*profile,
-							 gboolean	 has_vcgt);
 gboolean	 gcm_profile_has_colorspace_description	(GcmProfile	*profile);
 
 G_END_DECLS

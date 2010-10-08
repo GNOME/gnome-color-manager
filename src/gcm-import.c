@@ -31,7 +31,7 @@
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
 #include "gcm-utils.h"
-#include "gcm-xyz.h"
+#include "gcm-color.h"
 #include "gcm-cie-widget.h"
 
 /**
@@ -75,10 +75,6 @@ main (int argc, char **argv)
 	GtkWidget *dialog;
 	GtkResponseType response;
 	GtkWidget *cie_widget = NULL;
-	GcmXyz *white = NULL;
-	GcmXyz *red = NULL;
-	GcmXyz *green = NULL;
-	GcmXyz *blue = NULL;
 
 	const GOptionEntry options[] = {
 		{ G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &files,
@@ -132,24 +128,15 @@ main (int argc, char **argv)
 	description = gcm_profile_get_description (profile);
 	copyright = gcm_profile_get_copyright (profile);
 	colorspace = gcm_profile_get_colorspace (profile);
-	g_object_get (profile,
-		      "white", &white,
-		      "red", &red,
-		      "green", &green,
-		      "blue", &blue,
-		      NULL);
 
 	/* use CIE widget */
 	cie_widget = gcm_cie_widget_new ();
-	gtk_widget_set_size_request (cie_widget, 200, 200);
 	g_object_set (cie_widget,
 		      "use-grid", FALSE,
 		      "use-whitepoint", FALSE,
-		      "white", white,
-		      "red", red,
-		      "green", green,
-		      "blue", blue,
 		      NULL);
+	gtk_widget_set_size_request (cie_widget, 200, 200);
+	gcm_cie_widget_set_from_profile (cie_widget, profile);
 
 	/* check file does't already exist as a file */
 	destination = gcm_utils_get_profile_destination (file);
@@ -226,25 +213,9 @@ main (int argc, char **argv)
 		gtk_widget_destroy (dialog);
 		goto out;
 	}
-
-	/* open up the preferences */
-	ret = g_spawn_command_line_async (BINDIR "/gcm-prefs", &error);
-	if (!ret) {
-		egg_warning ("failed to spawn preferences: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
 out:
 	if (file != NULL)
 		g_object_unref (file);
-	if (white != NULL)
-		g_object_unref (white);
-	if (red != NULL)
-		g_object_unref (red);
-	if (green != NULL)
-		g_object_unref (green);
-	if (blue != NULL)
-		g_object_unref (blue);
 	if (string != NULL)
 		g_string_free (string, TRUE);
 	if (profile != NULL)

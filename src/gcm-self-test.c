@@ -40,9 +40,9 @@
 #include "gcm-profile-store.h"
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
-#include "gcm-xyz.h"
+#include "gcm-color.h"
 #include "gcm-profile.h"
-#include "gcm-xyz.h"
+#include "gcm-color.h"
 
 /** ver:1.0 ***********************************************************/
 static GMainLoop *_test_loop = NULL;
@@ -204,12 +204,16 @@ gcm_test_cie_widget_func (void)
 	GtkWidget *dialog;
 	GtkWidget *vbox;
 	GcmProfile *profile;
-	GcmXyz *white;
-	GcmXyz *red;
-	GcmXyz *green;
-	GcmXyz *blue;
+	GcmColorXYZ *white;
+	GcmColorXYZ *red;
+	GcmColorXYZ *green;
+	GcmColorXYZ *blue;
 	gint response;
 	GFile *file = NULL;
+	GcmColorYxy white_Yxy;
+	GcmColorYxy red_Yxy;
+	GcmColorYxy green_Yxy;
+	GcmColorYxy blue_Yxy;
 
 	widget = gcm_cie_widget_new ();
 	g_assert (widget != NULL);
@@ -225,11 +229,16 @@ gcm_test_cie_widget_func (void)
 		      NULL);
 	g_object_unref (file);
 
+	gcm_color_convert_XYZ_to_Yxy (white, &white_Yxy);
+	gcm_color_convert_XYZ_to_Yxy (red, &red_Yxy);
+	gcm_color_convert_XYZ_to_Yxy (green, &green_Yxy);
+	gcm_color_convert_XYZ_to_Yxy (blue, &blue_Yxy);
+
 	g_object_set (widget,
-		      "red", red,
-		      "green", green,
-		      "blue", blue,
-		      "white", white,
+		      "red", &red_Yxy,
+		      "green", &green_Yxy,
+		      "blue", &blue_Yxy,
+		      "white", &white_Yxy,
 		      NULL);
 
 	/* show in a dialog as an example */
@@ -250,10 +259,10 @@ gcm_test_cie_widget_func (void)
 	gtk_widget_destroy (dialog);
 
 	g_object_unref (profile);
-	g_object_unref (white);
-	g_object_unref (red);
-	g_object_unref (green);
-	g_object_unref (blue);
+	gcm_color_free_XYZ (white);
+	gcm_color_free_XYZ (red);
+	gcm_color_free_XYZ (green);
+	gcm_color_free_XYZ (blue);
 }
 
 static guint _changes = 0;
@@ -278,6 +287,8 @@ gcm_test_device_func (void)
 	gchar *data;
 	gchar **split;
 	gchar *contents;
+	GcmX11Screen *screen;
+	GcmX11Output *output;
 
 	device = gcm_device_udev_new ();
 	g_assert (device != NULL);
@@ -394,6 +405,38 @@ gcm_test_device_func (void)
 	g_free (contents);
 	g_ptr_array_unref (profiles);
 
+	g_object_unref (device);
+
+	/* test auto-generation of the profile */
+	device = gcm_device_xrandr_new ();
+	screen = gcm_x11_screen_new ();
+	ret = gcm_x11_screen_assign (screen, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	output = gcm_x11_screen_get_output_by_name (screen, "LVDS-1", &error);
+	g_assert_no_error (error);
+	g_assert (output != NULL);
+	g_object_unref (screen);
+
+	/* setup device */
+	ret = gcm_device_xrandr_set_from_output (device, output, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_object_unref (output);
+
+	/* generate profile */
+	profile = gcm_device_generate_profile (device, &error);
+	g_assert_no_error (error);
+	g_assert (profile != NULL);
+
+	g_assert_cmpstr (gcm_profile_get_copyright (profile), ==, "No copyright");
+
+	/* DEBUG */
+//	ret = gcm_profile_save (profile, "./moo.icc", &error);
+//	g_assert_no_error (error);
+//	g_assert (ret);
+
+	g_object_unref (profile);
 	g_object_unref (device);
 }
 

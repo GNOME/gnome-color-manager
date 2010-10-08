@@ -43,7 +43,7 @@
 #include "gcm-profile-store.h"
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
-#include "gcm-xyz.h"
+#include "gcm-color.h"
 
 #include "egg-debug.h"
 
@@ -1673,8 +1673,6 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	gtk_widget_set_sensitive (widget, TRUE);
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_reset"));
 	gtk_widget_set_sensitive (widget, TRUE);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "label_profile"));
-	gtk_widget_set_sensitive (widget, TRUE);
 
 	/* can we delete this device? */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_delete"));
@@ -2774,8 +2772,6 @@ cc_color_panel_init (CcColorPanel *panel)
 	/* hide widgets by default */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "vbox_device_details"));
 	gtk_widget_hide (widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "label_profile"));
-	gtk_widget_set_sensitive (widget, FALSE);
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hbox_manufacturer"));
 	gtk_widget_hide (widget);
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hbox_model"));

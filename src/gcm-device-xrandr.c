@@ -390,6 +390,54 @@ gcm_device_xrandr_get_config_data (GcmDevice *device)
 }
 
 /**
+ * gcm_device_xrandr_generate_profile:
+ **/
+static GcmProfile *
+gcm_device_xrandr_generate_profile (GcmDevice *device, GError **error)
+{
+	gboolean ret;
+	const gchar *data;
+	GcmProfile *profile;
+	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (device);
+	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
+
+	/* create new profile */
+	profile = gcm_profile_new ();
+	gcm_profile_set_colorspace (profile, 0);
+	gcm_profile_set_copyright (profile, "No copyright");
+	gcm_profile_set_description (profile, "Automatically generated profile for EDID");
+	gcm_profile_set_kind (profile, GCM_PROFILE_KIND_DISPLAY_DEVICE);
+
+	/* get manufacturer */
+	data = gcm_edid_get_vendor_name (priv->edid);
+	if (data == NULL)
+		data = "Unknown vendor";
+	gcm_profile_set_manufacturer (profile, data);
+
+	/* get model */
+	data = gcm_edid_get_monitor_name (priv->edid);
+	if (data == NULL)
+		data = "Unknown monitor";
+	gcm_profile_set_model (profile, data);
+
+	/* generate a profile from the chroma data */
+	ret = gcm_profile_create_from_chroma (profile,
+					      gcm_edid_get_gamma (priv->edid),
+					      gcm_edid_get_red (priv->edid),
+					      gcm_edid_get_green (priv->edid),
+					      gcm_edid_get_blue (priv->edid),
+					      gcm_edid_get_white (priv->edid),
+					      error);
+	if (!ret) {
+		g_object_unref (profile);
+		profile = NULL;
+		goto out;
+	}
+out:
+	return profile;
+}
+
+/**
  * gcm_device_xrandr_is_primary:
  *
  * Return value: %TRUE is the monitor is left-most
@@ -631,6 +679,7 @@ gcm_device_xrandr_class_init (GcmDeviceXrandrClass *klass)
 
 	device_class->apply = gcm_device_xrandr_apply;
 	device_class->get_config_data = gcm_device_xrandr_get_config_data;
+	device_class->generate_profile = gcm_device_xrandr_generate_profile;
 
 	/**
 	 * GcmDeviceXrandr:native-device:

@@ -37,7 +37,7 @@
 #include "gcm-profile-store.h"
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
-#include "gcm-xyz.h"
+#include "gcm-color.h"
 
 typedef struct {
 	GtkBuilder	*builder;
@@ -630,10 +630,6 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	GcmProfile *profile;
 	GcmClut *clut_trc = NULL;
 	GcmClut *clut_vcgt = NULL;
-	GcmXyz *white;
-	GcmXyz *red;
-	GcmXyz *green;
-	GcmXyz *blue;
 	const gchar *profile_copyright;
 	const gchar *profile_manufacturer;
 	const gchar *profile_model ;
@@ -650,7 +646,6 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	gboolean has_vcgt;
 	guint size = 0;
 	guint filesize;
-	gfloat x;
 	gboolean show_section = FALSE;
 
 	/* This will only work in single or browse selection mode! */
@@ -684,27 +679,10 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_output), NULL);
 	}
 
-	/* get the new details from the profile */
-	g_object_get (profile,
-		      "white", &white,
-		      "red", &red,
-		      "green", &green,
-		      "blue", &blue,
-		      NULL);
-
-	/* check we have enough data for the CIE widget */
-	x = gcm_xyz_get_x (red);
+	/* setup cie widget */
+	gcm_cie_widget_set_from_profile (viewer->cie_widget, profile);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_cie_axis"));
-	if (x > 0.001) {
-		g_object_set (viewer->cie_widget,
-			      "white", white,
-			      "red", red,
-			      "green", green,
-			      "blue", blue,
-			      NULL);
-	} else {
-		gtk_widget_hide (widget);
-	}
+	gtk_widget_set_visible (widget, gtk_widget_get_visible (viewer->cie_widget));
 
 	/* get curve data */
 	clut_trc = gcm_profile_generate_curve (profile, 256);
@@ -863,10 +841,6 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 		g_object_unref (clut_trc);
 	if (clut_vcgt != NULL)
 		g_object_unref (clut_vcgt);
-	g_object_unref (white);
-	g_object_unref (red);
-	g_object_unref (green);
-	g_object_unref (blue);
 	g_free (size_text);
 	g_free (basename);
 }

@@ -37,7 +37,7 @@
 #include "egg-debug.h"
 
 #include "gcm-profile.h"
-#include "gcm-xyz.h"
+#include "gcm-color.h"
 
 static void     gcm_profile_finalize	(GObject     *object);
 
@@ -63,11 +63,11 @@ struct _GcmProfilePrivate
 	gchar			*model;
 	gchar			*datetime;
 	gchar			*checksum;
-	GcmXyz			*white;
-	GcmXyz			*black;
-	GcmXyz			*red;
-	GcmXyz			*green;
-	GcmXyz			*blue;
+	GcmColorXYZ		*white;
+	GcmColorXYZ		*black;
+	GcmColorXYZ		*red;
+	GcmColorXYZ		*green;
+	GcmColorXYZ		*blue;
 	GFile			*file;
 	GFileMonitor		*monitor;
 	gboolean		 has_mlut;
@@ -477,7 +477,7 @@ gcm_profile_get_size (GcmProfile *profile)
 /**
  * gcm_profile_set_size:
  **/
-void
+static void
 gcm_profile_set_size (GcmProfile *profile, guint size)
 {
 	g_return_if_fail (GCM_IS_PROFILE (profile));
@@ -540,7 +540,7 @@ gcm_profile_get_has_vcgt (GcmProfile *profile)
 /**
  * gcm_profile_set_has_vcgt:
  **/
-void
+static void
 gcm_profile_set_has_vcgt (GcmProfile *profile, gboolean has_vcgt)
 {
 	g_return_if_fail (GCM_IS_PROFILE (profile));
@@ -612,7 +612,6 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	cmsHTRANSFORM transform;
 	gchar *text = NULL;
 	gchar *checksum = NULL;
-	GcmXyz *xyz;
 	GcmProfilePrivate *priv = profile->priv;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
@@ -639,26 +638,20 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	/* get white point */
 	cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigMediaWhitePointTag);
 	if (cie_xyz != NULL) {
-		g_object_set (priv->white,
-			      "cie-x", cie_xyz->X,
-			      "cie-y", cie_xyz->Y,
-			      "cie-z", cie_xyz->Z,
-			      NULL);
+		gcm_color_set_XYZ (priv->white,
+				   cie_xyz->X, cie_xyz->Y, cie_xyz->Z);
 	} else {
-		gcm_xyz_clear (priv->white);
+		gcm_color_clear_XYZ (priv->white);
 		egg_warning ("failed to get white point");
 	}
 
 	/* get black point */
 	cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigMediaBlackPointTag);
 	if (cie_xyz != NULL) {
-		g_object_set (priv->black,
-			      "cie-x", cie_xyz->X,
-			      "cie-y", cie_xyz->Y,
-			      "cie-z", cie_xyz->Z,
-			      NULL);
+		gcm_color_set_XYZ (priv->black,
+				   cie_xyz->X, cie_xyz->Y, cie_xyz->Z);
 	} else {
-		gcm_xyz_clear (priv->black);
+		gcm_color_clear_XYZ (priv->black);
 		egg_warning ("failed to get black point");
 	}
 
@@ -767,41 +760,12 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 
 	/* we've got valid values */
 	if (ret) {
-		/* red */
-		xyz = gcm_xyz_new ();
-		g_object_set (xyz,
-			      "cie-x", cie_illum.Red.X,
-			      "cie-y", cie_illum.Red.Y,
-			      "cie-z", cie_illum.Red.Z,
-			      NULL);
-		g_object_set (profile,
-			      "red", xyz,
-			      NULL);
-		g_object_unref (xyz);
-
-		/* green */
-		xyz = gcm_xyz_new ();
-		g_object_set (xyz,
-			      "cie-x", cie_illum.Green.X,
-			      "cie-y", cie_illum.Green.Y,
-			      "cie-z", cie_illum.Green.Z,
-			      NULL);
-		g_object_set (profile,
-			      "green", xyz,
-			      NULL);
-		g_object_unref (xyz);
-
-		/* blue */
-		xyz = gcm_xyz_new ();
-		g_object_set (xyz,
-			      "cie-x", cie_illum.Blue.X,
-			      "cie-y", cie_illum.Blue.Y,
-			      "cie-z", cie_illum.Blue.Z,
-			      NULL);
-		g_object_set (profile,
-			      "blue", xyz,
-			      NULL);
-		g_object_unref (xyz);
+		gcm_color_set_XYZ (priv->red,
+				   cie_illum.Red.X, cie_illum.Red.Y, cie_illum.Red.Z);
+		gcm_color_set_XYZ (priv->green,
+				   cie_illum.Green.X, cie_illum.Green.Y, cie_illum.Green.Z);
+		gcm_color_set_XYZ (priv->blue,
+				   cie_illum.Blue.X, cie_illum.Blue.Y, cie_illum.Blue.Z);
 	} else {
 		egg_debug ("failed to get luminance values");
 	}
@@ -906,6 +870,20 @@ out:
 	return ret;
 }
 
+/*
+ * _cmsWriteTagTextAscii:
+ */
+static cmsBool
+_cmsWriteTagTextAscii (cmsHPROFILE lcms_profile, cmsTagSignature sig, const gchar *text)
+{
+	cmsBool ret;
+	cmsMLU *mlu = cmsMLUalloc (0, 1);
+	cmsMLUsetASCII (mlu, "EN", "us", text);
+	ret = cmsWriteTag (lcms_profile, sig, mlu);
+	cmsMLUfree (mlu);
+	return ret;
+}
+
 /**
  * gcm_profile_save:
  * @profile: A valid #GcmProfile
@@ -925,13 +903,109 @@ gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
 	GcmProfilePrivate *priv = profile->priv;
 
 	/* not loaded */
-	if (priv->size == 0) {
-		g_set_error_literal (error, 1, 0, "not loaded");
+	if (priv->lcms_profile == NULL) {
+		g_set_error_literal (error, 1, 0, "not loaded or generated");
 		goto out;
+	}
+
+	/* write text data */
+	if (priv->description != NULL) {
+		ret = _cmsWriteTagTextAscii (priv->lcms_profile,
+					     cmsSigProfileDescriptionTag,
+					     priv->description);
+		if (!ret) {
+			g_set_error_literal (error, 1, 0, "failed to write description");
+			goto out;
+		}
+	}
+	if (priv->copyright != NULL) {
+		ret = _cmsWriteTagTextAscii (priv->lcms_profile,
+					     cmsSigCopyrightTag,
+					     priv->copyright);
+		if (!ret) {
+			g_set_error_literal (error, 1, 0, "failed to write copyright");
+			goto out;
+		}
+	}
+	if (priv->model != NULL) {
+		ret = _cmsWriteTagTextAscii (priv->lcms_profile,
+					     cmsSigDeviceModelDescTag,
+					     priv->model);
+		if (!ret) {
+			g_set_error_literal (error, 1, 0, "failed to write model");
+			goto out;
+		}
+	}
+	if (priv->manufacturer != NULL) {
+		ret = _cmsWriteTagTextAscii (priv->lcms_profile,
+					     cmsSigDeviceMfgDescTag,
+					     priv->manufacturer);
+		if (!ret) {
+			g_set_error_literal (error, 1, 0, "failed to write manufacturer");
+			goto out;
+		}
 	}
 
 	/* save, TODO: get error */
 	cmsSaveProfileToFile (priv->lcms_profile, filename);
+	ret = TRUE;
+out:
+	return ret;
+}
+
+/**
+ * gcm_profile_create_from_chroma:
+ * @profile: A valid #GcmProfile
+ * @filename: the data to parse
+ * @error: A #GError, or %NULL
+ *
+ * Saves the profile data to a file.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
+ **/
+gboolean
+gcm_profile_create_from_chroma (GcmProfile *profile, gdouble gamma,
+				const GcmColorYxy *red,
+				const GcmColorYxy *green,
+				const GcmColorYxy *blue,
+				const GcmColorYxy *white,
+				GError **error)
+{
+	gboolean ret = FALSE;
+	cmsCIExyYTRIPLE chroma;
+	cmsToneCurve *transfer_curve[3];
+	cmsCIExyY white_point;
+	GcmProfilePrivate *priv = profile->priv;
+
+	/* not loaded */
+	if (priv->lcms_profile != NULL) {
+		g_set_error_literal (error, 1, 0, "already loaded or generated");
+		goto out;
+	}
+
+	/* copy data from our structures (which are the wrong packing
+	 * size for lcms2) */
+	chroma.Red.x = red->x;
+	chroma.Red.y = red->y;
+	chroma.Green.x = green->x;
+	chroma.Green.y = green->y;
+	chroma.Blue.x = blue->x;
+	chroma.Blue.y = blue->y;
+	white_point.x = white->x;
+	white_point.y = white->y;
+	white_point.Y = 1.0;
+
+	/* estimate the transfer function for the gamma */
+	transfer_curve[0] = transfer_curve[1] = transfer_curve[2] = cmsBuildGamma (NULL, gamma);
+
+	/* create our generated profile */
+	priv->lcms_profile = cmsCreateRGBProfile (&white_point, &chroma, transfer_curve);
+	cmsSetEncodedICCversion (priv->lcms_profile, 2);
+	cmsFreeToneCurve (*transfer_curve);
+
+	/* success */
 	ret = TRUE;
 out:
 	return ret;
@@ -1165,19 +1239,19 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 		g_value_set_boolean (value, priv->can_delete);
 		break;
 	case PROP_WHITE:
-		g_value_set_object (value, priv->white);
+		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->white));
 		break;
 	case PROP_BLACK:
-		g_value_set_object (value, priv->black);
+		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->black));
 		break;
 	case PROP_RED:
-		g_value_set_object (value, priv->red);
+		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->red));
 		break;
 	case PROP_GREEN:
-		g_value_set_object (value, priv->green);
+		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->green));
 		break;
 	case PROP_BLUE:
-		g_value_set_object (value, priv->blue);
+		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->blue));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1226,19 +1300,19 @@ gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, G
 		gcm_profile_set_has_vcgt (profile, g_value_get_boolean (value));
 		break;
 	case PROP_WHITE:
-		priv->white = g_value_dup_object (value);
+		gcm_color_copy_XYZ (g_value_get_boxed (value), priv->white);
 		break;
 	case PROP_BLACK:
-		priv->black = g_value_dup_object (value);
+		gcm_color_copy_XYZ (g_value_get_boxed (value), priv->black);
 		break;
 	case PROP_RED:
-		priv->red = g_value_dup_object (value);
+		gcm_color_copy_XYZ (g_value_get_boxed (value), priv->red);
 		break;
 	case PROP_GREEN:
-		priv->green = g_value_dup_object (value);
+		gcm_color_copy_XYZ (g_value_get_boxed (value), priv->green);
 		break;
 	case PROP_BLUE:
-		priv->blue = g_value_dup_object (value);
+		gcm_color_copy_XYZ (g_value_get_boxed (value), priv->blue);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1357,41 +1431,41 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	/**
 	 * GcmProfile:white:
 	 */
-	pspec = g_param_spec_object ("white", NULL, NULL,
-				     GCM_TYPE_XYZ,
-				     G_PARAM_READWRITE);
+	pspec = g_param_spec_boxed ("white", NULL, NULL,
+				    GCM_TYPE_COLOR_XYZ,
+				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_WHITE, pspec);
 
 	/**
 	 * GcmProfile:black:
 	 */
-	pspec = g_param_spec_object ("black", NULL, NULL,
-				     GCM_TYPE_XYZ,
-				     G_PARAM_READWRITE);
+	pspec = g_param_spec_boxed ("black", NULL, NULL,
+				    GCM_TYPE_COLOR_XYZ,
+				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_BLACK, pspec);
 
 	/**
 	 * GcmProfile:red:
 	 */
-	pspec = g_param_spec_object ("red", NULL, NULL,
-				     GCM_TYPE_XYZ,
-				     G_PARAM_READWRITE);
+	pspec = g_param_spec_boxed ("red", NULL, NULL,
+				    GCM_TYPE_COLOR_XYZ,
+				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_RED, pspec);
 
 	/**
 	 * GcmProfile:green:
 	 */
-	pspec = g_param_spec_object ("green", NULL, NULL,
-				     GCM_TYPE_XYZ,
-				     G_PARAM_READWRITE);
+	pspec = g_param_spec_boxed ("green", NULL, NULL,
+				    GCM_TYPE_COLOR_XYZ,
+				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_GREEN, pspec);
 
 	/**
 	 * GcmProfile:blue:
 	 */
-	pspec = g_param_spec_object ("blue", NULL, NULL,
-				     GCM_TYPE_XYZ,
-				     G_PARAM_READWRITE);
+	pspec = g_param_spec_boxed ("blue", NULL, NULL,
+				    GCM_TYPE_COLOR_XYZ,
+				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_BLUE, pspec);
 
 	g_type_class_add_private (klass, sizeof (GcmProfilePrivate));
@@ -1410,11 +1484,11 @@ gcm_profile_init (GcmProfile *profile)
 	profile->priv->monitor = NULL;
 	profile->priv->kind = GCM_PROFILE_KIND_UNKNOWN;
 	profile->priv->colorspace = GCM_COLORSPACE_UNKNOWN;
-	profile->priv->white = gcm_xyz_new ();
-	profile->priv->black = gcm_xyz_new ();
-	profile->priv->red = gcm_xyz_new ();
-	profile->priv->green = gcm_xyz_new ();
-	profile->priv->blue = gcm_xyz_new ();
+	profile->priv->white = gcm_color_new_XYZ ();
+	profile->priv->black = gcm_color_new_XYZ ();
+	profile->priv->red = gcm_color_new_XYZ ();
+	profile->priv->green = gcm_color_new_XYZ ();
+	profile->priv->blue = gcm_color_new_XYZ ();
 
 	/* setup LCMS */
 	cmsSetLogErrorHandler (gcm_profile_error_cb);
@@ -1438,11 +1512,11 @@ gcm_profile_finalize (GObject *object)
 	g_free (priv->checksum);
 	g_free (priv->vcgt_data);
 	g_free (priv->mlut_data);
-	g_object_unref (priv->white);
-	g_object_unref (priv->black);
-	g_object_unref (priv->red);
-	g_object_unref (priv->green);
-	g_object_unref (priv->blue);
+	gcm_color_free_XYZ (priv->white);
+	gcm_color_free_XYZ (priv->black);
+	gcm_color_free_XYZ (priv->red);
+	gcm_color_free_XYZ (priv->green);
+	gcm_color_free_XYZ (priv->blue);
 	if (priv->file != NULL)
 		g_object_unref (priv->file);
 	if (priv->monitor != NULL)

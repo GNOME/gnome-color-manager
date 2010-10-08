@@ -99,8 +99,6 @@ libcolor_glib_la_SOURCES =					\
 	gcm-ddc-common.h					\
 	gcm-enum.c						\
 	gcm-enum.h						\
-	gcm-xyz.c						\
-	gcm-xyz.h						\
 	gcm-usb.c						\
 	gcm-usb.h						\
 	gcm-profile-store.c					\

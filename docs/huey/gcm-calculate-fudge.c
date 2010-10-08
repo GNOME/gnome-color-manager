@@ -137,18 +137,18 @@ main (gint argc, gchar *argv[])
 	guint i;
 
 	/* get the device RGB measured values */
-	gcm_color_init_RGB (&device_rgb[0], 0.082935, 0.053567, 0.001294);
-	gcm_color_init_RGB (&device_rgb[1], 0.066773, 0.150323, 0.009683);
-	gcm_color_init_RGB (&device_rgb[2], 0.013250, 0.021211, 0.095019);
-	gcm_color_init_RGB (&device_rgb[3], 0.156415, 0.220809, 0.105035);
-	gcm_color_init_RGB (&device_rgb[4], 0.000310, 0.000513, 0.000507);
+	gcm_color_set_RGB (&device_rgb[0], 0.082935, 0.053567, 0.001294);
+	gcm_color_set_RGB (&device_rgb[1], 0.066773, 0.150323, 0.009683);
+	gcm_color_set_RGB (&device_rgb[2], 0.013250, 0.021211, 0.095019);
+	gcm_color_set_RGB (&device_rgb[3], 0.156415, 0.220809, 0.105035);
+	gcm_color_set_RGB (&device_rgb[4], 0.000310, 0.000513, 0.000507);
 
 	/* get some results from argyll */
-	gcm_color_init_XYZ (&actual_xyz[0], 82.537676, 42.634870, 2.142396);
-	gcm_color_init_XYZ (&actual_xyz[1], 61.758330, 122.072291, 17.345163);
-	gcm_color_init_XYZ (&actual_xyz[2], 36.544046, 19.224371, 161.438049);
-	gcm_color_init_XYZ (&actual_xyz[3], 174.129280, 180.500098, 179.302163);
-	gcm_color_init_XYZ (&actual_xyz[4], 0.407554, 0.419799, 0.849899);
+	gcm_color_set_XYZ (&actual_xyz[0], 82.537676, 42.634870, 2.142396);
+	gcm_color_set_XYZ (&actual_xyz[1], 61.758330, 122.072291, 17.345163);
+	gcm_color_set_XYZ (&actual_xyz[2], 36.544046, 19.224371, 161.438049);
+	gcm_color_set_XYZ (&actual_xyz[3], 174.129280, 180.500098, 179.302163);
+	gcm_color_set_XYZ (&actual_xyz[4], 0.407554, 0.419799, 0.849899);
 
 	/* get the calibration vector */
 	gcm_vec3_init (&dark_offset, 0.014000, 0.014000, 0.016226);

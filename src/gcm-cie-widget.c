@@ -29,7 +29,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "gcm-xyz.h"
+#include "gcm-color.h"
 #include "gcm-cie-widget.h"
 
 #include "egg-debug.h"
@@ -51,15 +51,11 @@ struct GcmCieWidgetPrivate
 
 	/* CIE x and y coordinates of its three primary illuminants and the
 	 * x and y coordinates of the white point. */
-	gdouble			 red_x;
-	gdouble			 red_y;				/* red primary illuminant */
-	gdouble			 green_x;
-	gdouble			 green_y;			/* green primary illuminant */
-	gdouble			 blue_x;
-	gdouble			 blue_y;			/* blue primary illuminant */
-	gdouble			 white_x;
-	gdouble			 white_y;			/* white point */
-	gdouble			 gamma;				/* gamma of nonlinear correction */
+	GcmColorYxy		*red;			/* red primary illuminant */
+	GcmColorYxy		*green;			/* green primary illuminant */
+	GcmColorYxy		*blue;			/* blue primary illuminant */
+	GcmColorYxy		*white;			/* white point */
+	gdouble			 gamma;			/* gamma of nonlinear correction */
 };
 
 /* The following table gives the spectral chromaticity co-ordinates
@@ -410,10 +406,10 @@ enum
 };
 
 /**
- * dkp_cie_get_property:
+ * gcm_cie_get_property:
  **/
 static void
-dkp_cie_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
+gcm_cie_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
 	GcmCieWidget *cie = GCM_CIE_WIDGET (object);
 	switch (prop_id) {
@@ -430,13 +426,13 @@ dkp_cie_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec 
 }
 
 /**
- * dkp_cie_set_property:
+ * gcm_cie_set_property:
  **/
 static void
-dkp_cie_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
+gcm_cie_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
 	GcmCieWidget *cie = GCM_CIE_WIDGET (object);
-	GcmXyz *xyz;
+	GcmCieWidgetPrivate *priv = cie->priv;
 
 	switch (prop_id) {
 	case PROP_USE_GRID:
@@ -446,24 +442,16 @@ dkp_cie_set_property (GObject *object, guint prop_id, const GValue *value, GPara
 		cie->priv->use_whitepoint = g_value_get_boolean (value);
 		break;
 	case PROP_RED:
-		xyz = g_value_get_object (value);
-		cie->priv->red_x = gcm_xyz_get_x (xyz);
-		cie->priv->red_y = gcm_xyz_get_y (xyz);
+		gcm_color_copy_Yxy (g_value_get_boxed (value), priv->red);
 		break;
 	case PROP_GREEN:
-		xyz = g_value_get_object (value);
-		cie->priv->green_x = gcm_xyz_get_x (xyz);
-		cie->priv->green_y = gcm_xyz_get_y (xyz);
+		gcm_color_copy_Yxy (g_value_get_boxed (value), priv->green);
 		break;
 	case PROP_BLUE:
-		xyz = g_value_get_object (value);
-		cie->priv->blue_x = gcm_xyz_get_x (xyz);
-		cie->priv->blue_y = gcm_xyz_get_y (xyz);
+		gcm_color_copy_Yxy (g_value_get_boxed (value), priv->blue);
 		break;
 	case PROP_WHITE:
-		xyz = g_value_get_object (value);
-		cie->priv->white_x = gcm_xyz_get_x (xyz);
-		cie->priv->white_y = gcm_xyz_get_y (xyz);
+		gcm_color_copy_Yxy (g_value_get_boxed (value), priv->white);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -485,8 +473,8 @@ gcm_cie_widget_class_init (GcmCieWidgetClass *class)
 	GObjectClass *object_class = G_OBJECT_CLASS (class);
 
 	widget_class->draw = gcm_cie_widget_draw;
-	object_class->get_property = dkp_cie_get_property;
-	object_class->set_property = dkp_cie_set_property;
+	object_class->get_property = gcm_cie_get_property;
+	object_class->set_property = gcm_cie_set_property;
 	object_class->finalize = gcm_cie_widget_finalize;
 
 	g_type_class_add_private (class, sizeof (GcmCieWidgetPrivate));
@@ -504,24 +492,65 @@ gcm_cie_widget_class_init (GcmCieWidgetClass *class)
 							       G_PARAM_READWRITE));
 	g_object_class_install_property (object_class,
 					 PROP_RED,
-					 g_param_spec_object ("red", NULL, NULL,
-							      GCM_TYPE_XYZ,
-							      G_PARAM_WRITABLE));
+					 g_param_spec_boxed ("red", NULL, NULL,
+							     GCM_TYPE_COLOR_YXY,
+							     G_PARAM_WRITABLE));
 	g_object_class_install_property (object_class,
 					 PROP_GREEN,
-					 g_param_spec_object ("green", NULL, NULL,
-							      GCM_TYPE_XYZ,
-							      G_PARAM_WRITABLE));
+					 g_param_spec_boxed ("green", NULL, NULL,
+							     GCM_TYPE_COLOR_YXY,
+							     G_PARAM_WRITABLE));
 	g_object_class_install_property (object_class,
 					 PROP_BLUE,
-					 g_param_spec_object ("blue", NULL, NULL,
-							      GCM_TYPE_XYZ,
-							      G_PARAM_WRITABLE));
+					 g_param_spec_boxed ("blue", NULL, NULL,
+							     GCM_TYPE_COLOR_YXY,
+							     G_PARAM_WRITABLE));
 	g_object_class_install_property (object_class,
 					 PROP_WHITE,
-					 g_param_spec_object ("white", NULL, NULL,
-							      GCM_TYPE_XYZ,
-							      G_PARAM_WRITABLE));
+					 g_param_spec_boxed ("white", NULL, NULL,
+							     GCM_TYPE_COLOR_YXY,
+							     G_PARAM_WRITABLE));
+}
+
+/**
+ * gcm_cie_widget_set_from_profile:
+ **/
+void
+gcm_cie_widget_set_from_profile (GtkWidget *widget, GcmProfile *profile)
+{
+	GcmCieWidget *cie = GCM_CIE_WIDGET (widget);
+	GcmColorXYZ *white;
+	GcmColorXYZ *red;
+	GcmColorXYZ *green;
+	GcmColorXYZ *blue;
+
+	/* get the new details from the profile */
+	g_object_get (profile,
+		      "white", &white,
+		      "red", &red,
+		      "green", &green,
+		      "blue", &blue,
+		      NULL);
+
+	/* copy into this widget */
+	gcm_color_convert_XYZ_to_Yxy (white, cie->priv->white);
+	gcm_color_convert_XYZ_to_Yxy (red, cie->priv->red);
+	gcm_color_convert_XYZ_to_Yxy (green, cie->priv->green);
+	gcm_color_convert_XYZ_to_Yxy (blue, cie->priv->blue);
+
+	/* hide if we have no data */
+	if (cie->priv->white->x > 0.001) {
+		gtk_widget_hide (widget);
+		gtk_widget_show (widget);
+	} else {
+		gtk_widget_hide (widget);
+	}
+
+	/* free */
+	gcm_color_free_XYZ (white);
+	gcm_color_free_XYZ (red);
+	gcm_color_free_XYZ (green);
+	gcm_color_free_XYZ (blue);
 }
 
 /**
@@ -540,14 +569,18 @@ gcm_cie_widget_init (GcmCieWidget *cie)
 	cie->priv->tongue_buffer = g_ptr_array_new_with_free_func (g_free);
 
 	/* default is CIE REC 709 */
-	cie->priv->red_x = 0.64;
-	cie->priv->red_y = 0.33;
-	cie->priv->green_x = 0.30;
-	cie->priv->green_y = 0.60;
-	cie->priv->blue_x = 0.15;
-	cie->priv->blue_y = 0.06;
-	cie->priv->white_x = 0.3127;
-	cie->priv->white_y = 0.3291;
+	cie->priv->red = gcm_color_new_Yxy ();
+	cie->priv->green = gcm_color_new_Yxy ();
+	cie->priv->blue = gcm_color_new_Yxy ();
+	cie->priv->white = gcm_color_new_Yxy ();
+	cie->priv->red->x = 0.64;
+	cie->priv->red->y = 0.33;
+	cie->priv->green->x = 0.30;
+	cie->priv->green->y = 0.60;
+	cie->priv->blue->x = 0.15;
+	cie->priv->blue->y = 0.06;
+	cie->priv->white->x = 0.3127;
+	cie->priv->white->y = 0.3291;
 	cie->priv->gamma = 0.0;
 
 	/* do pango stuff */
@@ -572,6 +605,10 @@ gcm_cie_widget_finalize (GObject *object)
 
 	context = pango_layout_get_context (cie->priv->layout);
 	g_object_unref (cie->priv->layout);
+	gcm_color_free_Yxy (cie->priv->white);
+	gcm_color_free_Yxy (cie->priv->red);
+	gcm_color_free_Yxy (cie->priv->green);
+	gcm_color_free_Yxy (cie->priv->blue);
 	g_object_unref (context);
 	g_ptr_array_unref (cie->priv->tongue_buffer);
 	G_OBJECT_CLASS (gcm_cie_widget_parent_class)->finalize (object);
@@ -835,13 +872,13 @@ gcm_cie_widget_xyz_to_rgb (GcmCieWidget *cie,
 	gdouble rw, gw, bw;
 	GcmCieWidgetPrivate *priv = cie->priv;
 
-	xr = priv->red_x; yr = priv->red_y; zr = 1 - (xr + yr);
-	xg = priv->green_x; yg = priv->green_y; zg = 1 - (xg + yg);
-	xb = priv->blue_x; yb = priv->blue_y; zb = 1 - (xb + yb);
+	xr = priv->red->x; yr = priv->red->y; zr = 1 - (xr + yr);
+	xg = priv->green->x; yg = priv->green->y; zg = 1 - (xg + yg);
+	xb = priv->blue->x; yb = priv->blue->y; zb = 1 - (xb + yb);
 
-	xw = priv->white_x; yw = priv->white_y; zw = 1 - (xw + yw);
+	xw = priv->white->x; yw = priv->white->y; zw = 1 - (xw + yw);
 
-	/* xyz -> rgb matrix, before scaling to white. */
+	/* xyz -> rgb matrix, before scaling to white-> */
 	rx = yg*zb - yb*zg; ry = xb*zg - xg*zb; rz = xg*yb - xb*yg;
 	gx = yb*zr - yr*zb; gy = xr*zb - xb*zr; gz = xb*yr - xr*yb;
 	bx = yr*zg - yg*zr; by = xg*zr - xr*zg; bz = xr*yg - xg*yr;
@@ -851,7 +888,7 @@ gcm_cie_widget_xyz_to_rgb (GcmCieWidget *cie,
 	gw = (gx*xw + gy*yw + gz*zw) / yw;
 	bw = (bx*xw + by*yw + bz*zw) / yw;
 
-	/* xyz -> rgb matrix, correctly scaled to white. */
+	/* xyz -> rgb matrix, correctly scaled to white-> */
 	rx = rx / rw; ry = ry / rw; rz = rz / rw;
 	gx = gx / gw; gy = gy / gw; gz = gz / gw;
 	bx = bx / bw; by = by / bw; bz = bz / bw;
@@ -949,17 +986,17 @@ gcm_cie_widget_draw_gamut_outline (GcmCieWidget *cie, cairo_t *cr)
 	cairo_set_line_width (cr, 0.9f);
 	cairo_set_source_rgb (cr, 0.0f, 0.0f, 0.0f);
 
-	gcm_cie_widget_map_to_display (cie, priv->red_x, priv->red_y, &wx, &wy);
+	gcm_cie_widget_map_to_display (cie, priv->red->x, priv->red->y, &wx, &wy);
 	if (wx < 0 || wy < 0)
 		goto out;
 	cairo_move_to (cr, wx, wy);
 
-	gcm_cie_widget_map_to_display (cie, priv->green_x, priv->green_y, &wx, &wy);
+	gcm_cie_widget_map_to_display (cie, priv->green->x, priv->green->y, &wx, &wy);
 	if (wx < 0 || wy < 0)
 		goto out;
 	cairo_line_to (cr, wx, wy);
 
-	gcm_cie_widget_map_to_display (cie, priv->blue_x, priv->blue_y, &wx, &wy);
+	gcm_cie_widget_map_to_display (cie, priv->blue->x, priv->blue->y, &wx, &wy);
 	if (wx < 0 || wy < 0)
 		goto out;
 	cairo_line_to (cr, wx, wy);
@@ -991,12 +1028,12 @@ gcm_cie_widget_draw_white_point_cross (GcmCieWidget *cie, cairo_t *cr)
 	cairo_set_line_width (cr, 1.0f);
 
 	/* choose color of cross */
-	if (priv->red_x < 0.001 && priv->green_x < 0.001 && priv->blue_x < 0.001)
+	if (priv->red->x < 0.001 && priv->green->x < 0.001 && priv->blue->x < 0.001)
 		cairo_set_source_rgb (cr, 1.0f, 1.0f, 1.0f);
 	else
 		cairo_set_source_rgb (cr, 0.0f, 0.0f, 0.0f);
 
-	gcm_cie_widget_map_to_display (cie, priv->white_x, priv->white_y, &wx, &wy);
+	gcm_cie_widget_map_to_display (cie, priv->white->x, priv->white->y, &wx, &wy);
 
 	/* don't antialias the cross */
 	wx = (gint) wx + 0.5f;
