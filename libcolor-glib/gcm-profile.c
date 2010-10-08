@@ -477,7 +477,7 @@ gcm_profile_get_size (GcmProfile *profile)
 /**
  * gcm_profile_set_size:
  **/
-void
+static void
 gcm_profile_set_size (GcmProfile *profile, guint size)
 {
 	g_return_if_fail (GCM_IS_PROFILE (profile));
@@ -540,7 +540,7 @@ gcm_profile_get_has_vcgt (GcmProfile *profile)
 /**
  * gcm_profile_set_has_vcgt:
  **/
-void
+static void
 gcm_profile_set_has_vcgt (GcmProfile *profile, gboolean has_vcgt)
 {
 	g_return_if_fail (GCM_IS_PROFILE (profile));
