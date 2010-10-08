@@ -105,8 +105,8 @@ typedef enum {
 static void cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColorPanel *panel);
 static void cc_color_panel_profile_store_changed_cb (GcmProfileStore *profile_store, CcColorPanel *panel);
 
-#define GCM_PREFS_TREEVIEW_MAIN_WIDTH		350 /* px */
-#define GCM_PREFS_TREEVIEW_PROFILES_WIDTH	450 /* px */
+#define GCM_PREFS_TREEVIEW_MAIN_WIDTH		250 /* px */
+#define GCM_PREFS_TREEVIEW_PROFILES_WIDTH	350 /* px */
 
 /**
  * cc_color_panel_error_dialog:
