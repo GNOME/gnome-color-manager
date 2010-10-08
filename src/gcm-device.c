@@ -923,6 +923,28 @@ out:
 }
 
 /**
+ * gcm_device_generate_profile:
+ **/
+GcmProfile *
+gcm_device_generate_profile (GcmDevice *device, GError **error)
+{
+	GcmProfile *profile = NULL;
+	GcmDeviceClass *klass = GCM_DEVICE_GET_CLASS (device);
+
+	/* no support */
+	if (klass->generate_profile == NULL) {
+		g_set_error (error, GCM_DEVICE_ERROR, GCM_DEVICE_ERROR_NO_SUPPPORT,
+			     "no klass support for %s", device->priv->id);
+		goto out;
+	}
+
+	/* run the callback */
+	profile = klass->generate_profile (device, error);
+out:
+	return profile;
+}
+
+/**
  * gcm_device_get_property:
  **/
 static void

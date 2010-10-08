@@ -36,6 +36,10 @@ G_BEGIN_DECLS
 #define GCM_IS_DEVICE_CLASS(k)		(G_TYPE_CHECK_CLASS_TYPE ((k), GCM_TYPE_DEVICE))
 #define GCM_DEVICE_GET_CLASS(o)		(G_TYPE_INSTANCE_GET_CLASS ((o), GCM_TYPE_DEVICE, GcmDeviceClass))
 
+#define GCM_DEVICE_ERROR		1
+#define GCM_DEVICE_ERROR_INTERNAL	0
+#define GCM_DEVICE_ERROR_NO_SUPPPORT	0
+
 typedef struct _GcmDevicePrivate	GcmDevicePrivate;
 typedef struct _GcmDevice		GcmDevice;
 typedef struct _GcmDeviceClass		GcmDeviceClass;
@@ -52,6 +56,8 @@ struct _GcmDeviceClass
 	void		 (*changed)			(GcmDevice		*device);
 	gboolean	 (*apply)			(GcmDevice		*device,
 							 GError			**error);
+	GcmProfile	*(*generate_profile)		(GcmDevice		*device,
+							 GError			**error);
 	gchar		*(*get_config_data)		(GcmDevice		*device);
 	/* padding for future expansion */
 	void (*_gcm_reserved1) (void);
@@ -67,6 +73,8 @@ gboolean		 gcm_device_load			(GcmDevice	*device,
 gboolean		 gcm_device_save			(GcmDevice	*device,
 								 GError		**error);
 gboolean		 gcm_device_apply			(GcmDevice	*device,
+								 GError		**error);
+GcmProfile		*gcm_device_generate_profile		(GcmDevice	*device,
 								 GError		**error);
 
 /* accessors */
