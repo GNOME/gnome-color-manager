@@ -213,14 +213,6 @@ main (int argc, char **argv)
 		gtk_widget_destroy (dialog);
 		goto out;
 	}
-
-	/* open up the preferences */
-	ret = g_spawn_command_line_async (BINDIR "/gcm-prefs", &error);
-	if (!ret) {
-		egg_warning ("failed to spawn preferences: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
 out:
 	if (file != NULL)
 		g_object_unref (file);
