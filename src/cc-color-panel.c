@@ -1545,10 +1545,6 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	gchar *id = NULL;
 	gboolean ret;
 	GcmDeviceKind kind;
-	const gchar *device_serial = NULL;
-	const gchar *device_model = NULL;
-	const gchar *device_manufacturer = NULL;
-	const gchar *eisa_id = NULL;
 	GPtrArray *profiles = NULL;
 	GcmProfile *profile;
 
@@ -1604,49 +1600,6 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 				gtk_widget_show (widget);
 			}
 		}
-	}
-
-	/* set device labels */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hbox_serial"));
-	device_serial = gcm_device_get_serial (panel->priv->current_device);
-	if (device_serial != NULL) {
-		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "label_serial"));
-		gtk_label_set_label (GTK_LABEL (widget), device_serial);
-	} else {
-		gtk_widget_hide (widget);
-	}
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hbox_model"));
-	device_model = gcm_device_get_model (panel->priv->current_device);
-	if (device_model != NULL) {
-		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "label_model"));
-		gtk_label_set_label (GTK_LABEL (widget), device_model);
-	} else {
-		gtk_widget_hide (widget);
-	}
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hbox_manufacturer"));
-	device_manufacturer = gcm_device_get_manufacturer (panel->priv->current_device);
-	if (device_manufacturer != NULL) {
-		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "label_manufacturer"));
-		gtk_label_set_label (GTK_LABEL (widget), device_manufacturer);
-	} else {
-		gtk_widget_hide (widget);
-	}
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "vbox_device_details"));
-	gtk_widget_show (widget);
-
-	/* get display specific properties */
-	if (kind == GCM_DEVICE_KIND_DISPLAY)
-		eisa_id = gcm_device_xrandr_get_eisa_id (GCM_DEVICE_XRANDR (panel->priv->current_device));
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hbox_eisa"));
-	if (eisa_id != NULL) {
-		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "label_eisa"));
-		gtk_label_set_label (GTK_LABEL (widget), eisa_id);
-	} else {
-		gtk_widget_hide (widget);
 	}
 
 	/* set adjustments */
