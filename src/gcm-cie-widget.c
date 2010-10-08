@@ -513,6 +513,47 @@ gcm_cie_widget_class_init (GcmCieWidgetClass *class)
 }
 
 /**
+ * gcm_cie_widget_set_from_profile:
+ **/
+void
+gcm_cie_widget_set_from_profile (GtkWidget *widget, GcmProfile *profile)
+{
+	GcmCieWidget *cie = GCM_CIE_WIDGET (widget);
+	GcmColorXYZ *white;
+	GcmColorXYZ *red;
+	GcmColorXYZ *green;
+	GcmColorXYZ *blue;
+
+	/* get the new details from the profile */
+	g_object_get (profile,
+		      "white", &white,
+		      "red", &red,
+		      "green", &green,
+		      "blue", &blue,
+		      NULL);
+
+	/* copy into this widget */
+	gcm_color_convert_XYZ_to_Yxy (white, cie->priv->white);
+	gcm_color_convert_XYZ_to_Yxy (red, cie->priv->red);
+	gcm_color_convert_XYZ_to_Yxy (green, cie->priv->green);
+	gcm_color_convert_XYZ_to_Yxy (blue, cie->priv->blue);
+
+	/* hide if we have no data */
+	if (cie->priv->white->x > 0.001) {
+		gtk_widget_hide (widget);
+		gtk_widget_show (widget);
+	} else {
+		gtk_widget_hide (widget);
+	}
+
+	/* free */
+	gcm_color_free_XYZ (white);
+	gcm_color_free_XYZ (red);
+	gcm_color_free_XYZ (green);
+	gcm_color_free_XYZ (blue);
+}
+
+/**
  * gcm_cie_widget_init:
  **/
 static void

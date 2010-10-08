@@ -630,14 +630,6 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	GcmProfile *profile;
 	GcmClut *clut_trc = NULL;
 	GcmClut *clut_vcgt = NULL;
-	GcmColorXYZ *white;
-	GcmColorXYZ *red;
-	GcmColorXYZ *green;
-	GcmColorXYZ *blue;
-	GcmColorYxy white_Yxy;
-	GcmColorYxy red_Yxy;
-	GcmColorYxy green_Yxy;
-	GcmColorYxy blue_Yxy;
 	const gchar *profile_copyright;
 	const gchar *profile_manufacturer;
 	const gchar *profile_model ;
@@ -687,30 +679,10 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_output), NULL);
 	}
 
-	/* get the new details from the profile */
-	g_object_get (profile,
-		      "white", &white,
-		      "red", &red,
-		      "green", &green,
-		      "blue", &blue,
-		      NULL);
-
-	/* check we have enough data for the CIE widget */
-	gcm_color_convert_XYZ_to_Yxy (white, &white_Yxy);
-	gcm_color_convert_XYZ_to_Yxy (red, &red_Yxy);
-	gcm_color_convert_XYZ_to_Yxy (green, &green_Yxy);
-	gcm_color_convert_XYZ_to_Yxy (blue, &blue_Yxy);
+	/* setup cie widget */
+	gcm_cie_widget_set_from_profile (viewer->cie_widget, profile);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_cie_axis"));
-	if (white_Yxy.x > 0.001) {
-		g_object_set (viewer->cie_widget,
-			      "white", &white_Yxy,
-			      "red", &red_Yxy,
-			      "green", &green_Yxy,
-			      "blue", &blue_Yxy,
-			      NULL);
-	} else {
-		gtk_widget_hide (widget);
-	}
+	gtk_widget_set_visible (widget, gtk_widget_get_visible (viewer->cie_widget));
 
 	/* get curve data */
 	clut_trc = gcm_profile_generate_curve (profile, 256);
@@ -869,10 +841,6 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 		g_object_unref (clut_trc);
 	if (clut_vcgt != NULL)
 		g_object_unref (clut_vcgt);
-	gcm_color_free_XYZ (white);
-	gcm_color_free_XYZ (red);
-	gcm_color_free_XYZ (green);
-	gcm_color_free_XYZ (blue);
 	g_free (size_text);
 	g_free (basename);
 }

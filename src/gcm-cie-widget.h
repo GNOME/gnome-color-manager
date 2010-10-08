@@ -23,6 +23,7 @@
 #define __GCM_CIE_WIDGET_H__
 
 #include <gtk/gtk.h>
+#include <gcm-profile.h>
 
 G_BEGIN_DECLS
 
@@ -50,6 +51,8 @@ struct GcmCieWidgetClass
 
 GType		 gcm_cie_widget_get_type		(void);
 GtkWidget	*gcm_cie_widget_new			(void);
+void		 gcm_cie_widget_set_from_profile	(GtkWidget	*widget,
+							 GcmProfile	*profile);
 
 G_END_DECLS
 
