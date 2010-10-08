@@ -1037,6 +1037,8 @@ cc_color_panel_assign_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 	GtkTreeModel *model;
 	gboolean is_default;
 	gboolean ret;
+	const gchar *device_md5;
+	GcmProfile *profile = NULL;
 
 	/* get the selected row */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "treeview_assign"));
@@ -1049,7 +1051,19 @@ cc_color_panel_assign_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 	/* if the profile is default, then we'll have to make the first profile default */
 	gtk_tree_model_get (model, &iter,
 			    GCM_ASSIGN_COLUMN_IS_DEFAULT, &is_default,
+			    GCM_ASSIGN_COLUMN_PROFILE, &profile,
 			    -1);
+
+	/* if this is an auto-added profile that the user has *manually*
+	 * removed, then assume there was something wrong with the profile
+	 * and don't do this again on next session start */
+	if (gcm_device_get_kind (panel->priv->current_device) == GCM_DEVICE_KIND_DISPLAY) {
+		device_md5 = gcm_device_xrandr_get_edid_md5 (GCM_DEVICE_XRANDR (panel->priv->current_device));
+		if (g_strstr_len (gcm_profile_get_filename (profile), -1, device_md5) != NULL) {
+			egg_debug ("removed an auto-profile, so disabling add for device");
+			gcm_device_set_use_edid_profile (panel->priv->current_device, FALSE);
+		}
+	}
 
 	/* remove this entry */
 	gtk_list_store_remove (GTK_LIST_STORE(model), &iter);
@@ -1073,6 +1087,8 @@ cc_color_panel_assign_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 	/* save device */
 	cc_color_panel_assign_save_profiles_for_device (panel, panel->priv->current_device);
 out:
+	if (profile != NULL)
+		g_object_unref (profile);
 	return;
 }
 
