@@ -87,6 +87,9 @@ void			 gcm_device_set_connected		(GcmDevice	*device,
 gboolean		 gcm_device_get_virtual			(GcmDevice	*device);
 void			 gcm_device_set_virtual			(GcmDevice	*device,
 								 gboolean	 virtual);
+gboolean		 gcm_device_get_use_edid_profile	(GcmDevice	*device);
+void			 gcm_device_set_use_edid_profile	(GcmDevice	*device,
+								 gboolean	 use_edid_profile);
 gboolean		 gcm_device_get_saved			(GcmDevice	*device);
 void			 gcm_device_set_saved			(GcmDevice	*device,
 								 gboolean	 saved);
@@ -120,6 +123,8 @@ void			 gcm_device_set_title			(GcmDevice	*device,
 GPtrArray		*gcm_device_get_profiles		(GcmDevice	*device);
 void			 gcm_device_set_profiles		(GcmDevice	*device,
 								 GPtrArray	*profiles);
+gboolean		 gcm_device_add_profile			(GcmDevice	*device,
+								 GcmProfile 	*profile);
 glong			 gcm_device_get_modified_time		(GcmDevice	*device);
 
 /* helpers */

@@ -49,6 +49,7 @@ struct _GcmDevicePrivate
 {
 	gboolean		 connected;
 	gboolean		 virtual;
+	gboolean		 use_edid_profile;
 	gboolean		 saved;
 	gfloat			 gamma;
 	gfloat			 brightness;
@@ -71,6 +72,7 @@ enum {
 	PROP_ID,
 	PROP_CONNECTED,
 	PROP_VIRTUAL,
+	PROP_USE_EDID_PROFILE,
 	PROP_SAVED,
 	PROP_SERIAL,
 	PROP_MODEL,
@@ -264,6 +266,27 @@ gcm_device_set_virtual (GcmDevice *device, gboolean virtual)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	device->priv->virtual = virtual;
+	gcm_device_changed (device);
+}
+
+/**
+ * gcm_device_get_use_edid_profile:
+ **/
+gboolean
+gcm_device_get_use_edid_profile (GcmDevice *device)
+{
+	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
+	return device->priv->use_edid_profile;
+}
+
+/**
+ * gcm_device_set_use_edid_profile:
+ **/
+void
+gcm_device_set_use_edid_profile (GcmDevice *device, gboolean use_edid_profile)
+{
+	g_return_if_fail (GCM_IS_DEVICE (device));
+	device->priv->use_edid_profile = use_edid_profile;
 	gcm_device_changed (device);
 }
 
@@ -509,6 +532,36 @@ gcm_device_set_profiles (GcmDevice *device, GPtrArray *profiles)
 }
 
 /**
+ * gcm_device_add_profile:
+ **/
+gboolean
+gcm_device_add_profile (GcmDevice *device, GcmProfile *profile)
+{
+	guint i;
+	gboolean ret = FALSE;
+	const gchar *md5;
+	GcmProfile *profile_tmp;
+
+	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
+	g_return_val_if_fail (profile != NULL, FALSE);
+
+	/* check if already exists */
+	md5 = gcm_profile_get_checksum (profile);
+	for (i=0; i<device->priv->profiles->len; i++) {
+		profile_tmp = g_ptr_array_index (device->priv->profiles, i);
+		if (g_strcmp0 (md5, gcm_profile_get_checksum (profile_tmp)) == 0)
+			goto out;
+	}
+
+	/* add */
+	g_ptr_array_add (device->priv->profiles, g_object_ref (profile));
+	gcm_device_changed (device);
+	ret = TRUE;
+out:
+	return ret;
+}
+
+/**
  * gcm_device_get_default_profile_filename:
  **/
 const gchar *
@@ -694,6 +747,16 @@ gcm_device_load (GcmDevice *device, GError **error)
 	}
 	priv->modified_time = timeval.tv_sec;
 
+	/* should we load the virtual profile */
+	priv->use_edid_profile = g_key_file_get_boolean (file, priv->id, "use-edid-profile", &error_local);
+	if (error_local != NULL) {
+		/* if the key does not exist, and this is a display,
+		 * then enable it by default */
+		if (gcm_device_get_kind (device) == GCM_DEVICE_KIND_DISPLAY)
+			priv->use_edid_profile = TRUE;
+		g_clear_error (&error_local);
+	}
+
 	/* load this */
 	ret = gcm_device_load_from_default_profile (device, &error_local);
 	if (!ret) {
@@ -854,6 +917,10 @@ gcm_device_save (GcmDevice *device, GError **error)
 	if (priv->virtual)
 		g_key_file_set_boolean (keyfile, priv->id, "virtual", TRUE);
 
+	/* add use_edid_profile */
+	if (priv->kind == GCM_DEVICE_KIND_DISPLAY)
+		g_key_file_set_boolean (keyfile, priv->id, "use-edid-profile", priv->use_edid_profile);
+
 	/* get extra, device specific config data */
 	if (klass->get_config_data != NULL) {
 		config_data = klass->get_config_data (device);
@@ -966,6 +1033,9 @@ gcm_device_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_VIRTUAL:
 		g_value_set_boolean (value, priv->virtual);
 		break;
+	case PROP_USE_EDID_PROFILE:
+		g_value_set_boolean (value, priv->use_edid_profile);
+		break;
 	case PROP_SAVED:
 		g_value_set_boolean (value, priv->saved);
 		break;
@@ -1022,6 +1092,9 @@ gcm_device_set_property (GObject *object, guint prop_id, const GValue *value, GP
 		break;
 	case PROP_VIRTUAL:
 		gcm_device_set_virtual (device, g_value_get_boolean (value));
+		break;
+	case PROP_USE_EDID_PROFILE:
+		gcm_device_set_use_edid_profile (device, g_value_get_boolean (value));
 		break;
 	case PROP_SAVED:
 		gcm_device_set_saved (device, g_value_get_boolean (value));
@@ -1102,6 +1175,14 @@ gcm_device_class_init (GcmDeviceClass *klass)
 				      FALSE,
 				      G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_VIRTUAL, pspec);
+
+	/**
+	 * GcmDevice:use-edid-profile:
+	 */
+	pspec = g_param_spec_boolean ("use-edid-profile", NULL, NULL,
+				      FALSE,
+				      G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_USE_EDID_PROFILE, pspec);
 
 	/**
 	 * GcmDevice:saved:
@@ -1207,6 +1288,7 @@ gcm_device_init (GcmDevice *device)
 	device->priv->saved = FALSE;
 	device->priv->connected = FALSE;
 	device->priv->virtual = FALSE;
+	device->priv->use_edid_profile = TRUE;
 	device->priv->serial = NULL;
 	device->priv->manufacturer = NULL;
 	device->priv->model = NULL;
