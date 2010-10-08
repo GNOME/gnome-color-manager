@@ -1666,6 +1666,10 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	path = gtk_tree_path_new_from_string ("0");
 	gtk_tree_selection_select_path (selection, path);
+	/* nothing selected */
+	if (!gtk_tree_selection_path_is_selected (selection, path)) {
+		gtk_widget_hide (panel->priv->info_bar_vcgt);
+	}
 	gtk_tree_path_free (path);
 
 	/* make sure selectable */
