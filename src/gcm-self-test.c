@@ -287,6 +287,8 @@ gcm_test_device_func (void)
 	gchar *data;
 	gchar **split;
 	gchar *contents;
+	GcmX11Screen *screen;
+	GcmX11Output *output;
 
 	device = gcm_device_udev_new ();
 	g_assert (device != NULL);
@@ -403,6 +405,38 @@ gcm_test_device_func (void)
 	g_free (contents);
 	g_ptr_array_unref (profiles);
 
+	g_object_unref (device);
+
+	/* test auto-generation of the profile */
+	device = gcm_device_xrandr_new ();
+	screen = gcm_x11_screen_new ();
+	ret = gcm_x11_screen_assign (screen, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	output = gcm_x11_screen_get_output_by_name (screen, "LVDS-1", &error);
+	g_assert_no_error (error);
+	g_assert (output != NULL);
+	g_object_unref (screen);
+
+	/* setup device */
+	ret = gcm_device_xrandr_set_from_output (device, output, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_object_unref (output);
+
+	/* generate profile */
+	profile = gcm_device_generate_profile (device, &error);
+	g_assert_no_error (error);
+	g_assert (profile != NULL);
+
+	g_assert_cmpstr (gcm_profile_get_copyright (profile), ==, "No copyright");
+
+	/* DEBUG */
+//	ret = gcm_profile_save (profile, "./moo.icc", &error);
+//	g_assert_no_error (error);
+//	g_assert (ret);
+
+	g_object_unref (profile);
 	g_object_unref (device);
 }
 

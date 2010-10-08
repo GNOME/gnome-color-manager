@@ -31,6 +31,7 @@
 
 #include "gcm-clut.h"
 #include "gcm-enum.h"
+#include "gcm-color.h"
 
 G_BEGIN_DECLS
 
@@ -82,6 +83,13 @@ GcmClut		*gcm_profile_generate_vcgt		(GcmProfile	*profile,
 							 guint		 size);
 GcmClut		*gcm_profile_generate_curve		(GcmProfile	*profile,
 							 guint		 size);
+gboolean	 gcm_profile_create_from_chroma		(GcmProfile	*profile,
+							 gdouble	 gamma,
+							 const GcmColorYxy *red,
+							 const GcmColorYxy *green,
+							 const GcmColorYxy *blue,
+							 const GcmColorYxy *white,
+							 GError		**error);
 const gchar	*gcm_profile_get_description		(GcmProfile	*profile);
 void		 gcm_profile_set_description		(GcmProfile	*profile,
 							 const gchar 	*description);

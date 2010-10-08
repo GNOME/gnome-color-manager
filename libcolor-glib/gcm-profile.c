@@ -902,6 +902,64 @@ out:
 }
 
 /**
+ * gcm_profile_create_from_chroma:
+ * @profile: A valid #GcmProfile
+ * @filename: the data to parse
+ * @error: A #GError, or %NULL
+ *
+ * Saves the profile data to a file.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
+ **/
+gboolean
+gcm_profile_create_from_chroma (GcmProfile *profile, gdouble gamma,
+				const GcmColorYxy *red,
+				const GcmColorYxy *green,
+				const GcmColorYxy *blue,
+				const GcmColorYxy *white,
+				GError **error)
+{
+	gboolean ret = FALSE;
+	cmsCIExyYTRIPLE chroma;
+	cmsToneCurve *transfer_curve[3];
+	cmsCIExyY white_point;
+	GcmProfilePrivate *priv = profile->priv;
+
+	/* not loaded */
+	if (priv->lcms_profile != NULL) {
+		g_set_error_literal (error, 1, 0, "already loaded or generated");
+		goto out;
+	}
+
+	/* copy data from our structures (which are the wrong packing
+	 * size for lcms2) */
+	chroma.Red.x = red->x;
+	chroma.Red.y = red->y;
+	chroma.Green.x = green->x;
+	chroma.Green.y = green->y;
+	chroma.Blue.x = blue->x;
+	chroma.Blue.y = blue->y;
+	white_point.x = white->x;
+	white_point.y = white->y;
+	white_point.Y = 1.0;
+
+	/* estimate the transfer function for the gamma */
+	transfer_curve[0] = transfer_curve[1] = transfer_curve[2] = cmsBuildGamma (NULL, gamma);
+
+	/* create our generated profile */
+	priv->lcms_profile = cmsCreateRGBProfile (&white_point, &chroma, transfer_curve);
+	cmsSetEncodedICCversion (priv->lcms_profile, 2);
+	cmsFreeToneCurve (*transfer_curve);
+
+	/* success */
+	ret = TRUE;
+out:
+	return ret;
+}
+
+/**
  * gcm_profile_generate_vcgt:
  * @profile: A valid #GcmProfile
  * @size: the size of the table to generate

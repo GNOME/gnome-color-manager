@@ -395,6 +395,7 @@ gcm_device_xrandr_get_config_data (GcmDevice *device)
 static GcmProfile *
 gcm_device_xrandr_generate_profile (GcmDevice *device, GError **error)
 {
+	gboolean ret;
 	const gchar *data;
 	GcmProfile *profile;
 	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (device);
@@ -419,7 +420,20 @@ gcm_device_xrandr_generate_profile (GcmDevice *device, GError **error)
 		data = "Unknown monitor";
 	gcm_profile_set_model (profile, data);
 
-	/* TODO: generate a profile from the chroma data */
+	/* generate a profile from the chroma data */
+	ret = gcm_profile_create_from_chroma (profile,
+					      gcm_edid_get_gamma (priv->edid),
+					      gcm_edid_get_red (priv->edid),
+					      gcm_edid_get_green (priv->edid),
+					      gcm_edid_get_blue (priv->edid),
+					      gcm_edid_get_white (priv->edid),
+					      error);
+	if (!ret) {
+		g_object_unref (profile);
+		profile = NULL;
+		goto out;
+	}
+out:
 	return profile;
 }
 
