@@ -33,6 +33,66 @@
 #include "gcm-device-xrandr.h"
 
 /**
+ * gcm_apply_create_icc_profile_for_edid:
+ **/
+static gboolean
+gcm_apply_create_icc_profile_for_edid (GcmDevice *device, const gchar *filename, GError **error)
+{
+	gboolean ret = FALSE;
+	GcmProfile *profile;
+
+	/* generate */
+	profile = gcm_device_generate_profile (device, error);
+	if (profile == NULL)
+		goto out;
+
+	/* ensure the per-user directory exists */
+	ret = gcm_utils_mkdir_for_filename (filename, error);
+	if (!ret)
+		goto out;
+
+	/* save this */
+	ret = gcm_profile_save (profile, filename, error);
+	if (!ret)
+		goto out;
+
+	/*
+	 * When we get here there are 4 possible situations:
+	 *
+	 * 1. profiles assigned, use-edid-profile=TRUE		-> add to profiles if not already added, but not as default
+	 * 2. profiles assigned, use-edid-profile=FALSE		-> do nothing
+	 * 3. no profiles, use-edid-profile=TRUE		-> add to profiles as default
+	 * 4. no profiles, use-edid-profile=FALSE		-> do nothing
+	 */
+
+	/* do we set this by default? */
+	if (!gcm_device_get_use_edid_profile (device)) {
+		egg_debug ("not using auto-edid profile as device profile");
+		goto out;
+	}
+
+	/* add to the profiles list */
+	ret = gcm_device_add_profile (device, profile);
+	if (ret) {
+		/* need to save new list */
+		ret = gcm_device_save (device, error);
+		if (!ret)
+			goto out;
+	} else {
+		/* if this failed, it's because it's already associated
+		 * with the device which is okay with us */
+		egg_debug ("already added auto-edid profile, not adding %s",
+			   gcm_profile_get_checksum (profile));
+		ret = TRUE;
+	}
+
+out:
+	if (profile != NULL)
+		g_object_unref (profile);
+	return ret;
+}
+
+/**
  * main:
  **/
 int
@@ -47,6 +107,8 @@ main (int argc, char **argv)
 	guint i;
 	GcmClient *client = NULL;
 	GcmDevice *device;
+	gchar *filename;
+	gchar *path;
 
 	const GOptionEntry options[] = {
 		{ "login", 'l', 0, G_OPTION_ARG_NONE, &login,
@@ -99,8 +161,25 @@ main (int argc, char **argv)
 		/* optimize for login to save a few hundred ms */
 		gcm_device_xrandr_set_remove_atom (GCM_DEVICE_XRANDR (device), !login);
 
+		/* do we have to generate a edid profile? */
+		filename = g_strdup_printf ("edid-%s.icc", gcm_device_xrandr_get_edid_md5 (GCM_DEVICE_XRANDR (device)));
+		path = g_build_filename (g_get_user_data_dir (), "icc", filename, NULL);
+		if (g_file_test (path, G_FILE_TEST_EXISTS)) {
+			egg_debug ("auto-profile edid %s exists", path);
+		} else {
+			egg_debug ("auto-profile edid does not exist, creating as %s", path);
+			ret = gcm_apply_create_icc_profile_for_edid (device, path, &error);
+			if (!ret) {
+				egg_warning ("failed to create profile from EDID data: %s",
+					     error->message);
+				g_clear_error (&error);
+			}
+		}
+		g_free (filename);
+		g_free (path);
+
 		/* set gamma for device */
-		egg_debug ("setting profiles on device: %s", gcm_device_get_id (device));
+		egg_debug ("applying default profile for device: %s", gcm_device_get_id (device));
 		ret = gcm_device_apply (device, &error);
 		if (!ret) {
 			retval = 1;
