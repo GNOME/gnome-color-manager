@@ -592,6 +592,11 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	} else {
 		/* set the per-output and per screen profile atoms */
 		filename = gcm_profile_get_filename (profile);
+		if (filename == NULL) {
+			ret = FALSE;
+			g_set_error_literal (error, 1, 0, "no filename for profile");
+			goto out;
+		}
 		ret = gcm_x11_output_set_profile (output, filename, error);
 		if (!ret)
 			goto out;
