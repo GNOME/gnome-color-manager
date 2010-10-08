@@ -2923,7 +2923,7 @@ cc_color_panel_init (CcColorPanel *panel)
 	gtk_box_pack_start (GTK_BOX(widget), panel->priv->info_bar_vcgt, FALSE, FALSE, 0);
 
 	/* add infobar to defaults pane */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "vbox3"));
+	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "vbox_working_spaces"));
 	gtk_box_pack_start (GTK_BOX(widget), panel->priv->info_bar_profiles, TRUE, FALSE, 0);
 
 	/* connect up sliders */
