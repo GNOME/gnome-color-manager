@@ -870,6 +870,20 @@ out:
 	return ret;
 }
 
+/*
+ * _cmsWriteTagTextAscii:
+ */
+static cmsBool
+_cmsWriteTagTextAscii (cmsHPROFILE lcms_profile, cmsTagSignature sig, const gchar *text)
+{
+	cmsBool ret;
+	cmsMLU *mlu = cmsMLUalloc (0, 1);
+	cmsMLUsetASCII (mlu, "EN", "us", text);
+	ret = cmsWriteTag (lcms_profile, sig, mlu);
+	cmsMLUfree (mlu);
+	return ret;
+}
+
 /**
  * gcm_profile_save:
  * @profile: A valid #GcmProfile
@@ -889,9 +903,47 @@ gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
 	GcmProfilePrivate *priv = profile->priv;
 
 	/* not loaded */
-	if (priv->size == 0) {
-		g_set_error_literal (error, 1, 0, "not loaded");
+	if (priv->lcms_profile == NULL) {
+		g_set_error_literal (error, 1, 0, "not loaded or generated");
 		goto out;
+	}
+
+	/* write text data */
+	if (priv->description != NULL) {
+		ret = _cmsWriteTagTextAscii (priv->lcms_profile,
+					     cmsSigProfileDescriptionTag,
+					     priv->description);
+		if (!ret) {
+			g_set_error_literal (error, 1, 0, "failed to write description");
+			goto out;
+		}
+	}
+	if (priv->copyright != NULL) {
+		ret = _cmsWriteTagTextAscii (priv->lcms_profile,
+					     cmsSigCopyrightTag,
+					     priv->copyright);
+		if (!ret) {
+			g_set_error_literal (error, 1, 0, "failed to write copyright");
+			goto out;
+		}
+	}
+	if (priv->model != NULL) {
+		ret = _cmsWriteTagTextAscii (priv->lcms_profile,
+					     cmsSigDeviceModelDescTag,
+					     priv->model);
+		if (!ret) {
+			g_set_error_literal (error, 1, 0, "failed to write model");
+			goto out;
+		}
+	}
+	if (priv->manufacturer != NULL) {
+		ret = _cmsWriteTagTextAscii (priv->lcms_profile,
+					     cmsSigDeviceMfgDescTag,
+					     priv->manufacturer);
+		if (!ret) {
+			g_set_error_literal (error, 1, 0, "failed to write manufacturer");
+			goto out;
+		}
 	}
 
 	/* save, TODO: get error */
