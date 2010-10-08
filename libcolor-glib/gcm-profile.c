@@ -276,7 +276,7 @@ gcm_profile_get_filename (GcmProfile *profile)
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
 
 	/* this returns a const, so we have to track it internally */
-	if (priv->filename == NULL)
+	if (priv->filename == NULL && priv->file != NULL)
 		priv->filename = g_file_get_path (priv->file);
 	return priv->filename;
 }
