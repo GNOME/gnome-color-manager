@@ -168,8 +168,8 @@ gcm_import_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_viewer_SOURCES =					\
-	gcm-cell-renderer-profile.c			\
-	gcm-cell-renderer-profile.h			\
+	gcm-cell-renderer-profile-text.c		\
+	gcm-cell-renderer-profile-text.h		\
 	gcm-viewer.c
 
 gcm_viewer_LDADD =					\
@@ -236,8 +236,8 @@ gcm_session_CFLAGS =					\
 libcolor_la_SOURCES =					\
 	cc-color-panel.c				\
 	cc-color-panel.h				\
-	gcm-cell-renderer-profile.c			\
-	gcm-cell-renderer-profile.h			\
+	gcm-cell-renderer-profile-text.c		\
+	gcm-cell-renderer-profile-text.h		\
 	$(libgcmshared_a_SOURCES)			\
 	$(NULL)
 

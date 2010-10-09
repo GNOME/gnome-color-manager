@@ -29,7 +29,7 @@
 
 #include "egg-debug.h"
 
-#include "gcm-cell-renderer-profile.h"
+#include "gcm-cell-renderer-profile-text.h"
 #include "gcm-calibrate-argyll.h"
 #include "gcm-cie-widget.h"
 #include "gcm-image.h"
@@ -517,7 +517,7 @@ gcm_viewer_add_profiles_columns (GcmViewerPrivate *viewer, GtkTreeView *treeview
 	gtk_widget_set_size_request (GTK_WIDGET (treeview), GCM_VIEWER_TREEVIEW_WIDTH, -1);
 
 	/* column for text */
-	renderer = gcm_cell_renderer_profile_new ();
+	renderer = gcm_cell_renderer_profile_text_new ();
 	g_object_set (renderer,
 		      "wrap-mode", PANGO_WRAP_WORD,
 		      "wrap-width", GCM_VIEWER_TREEVIEW_WIDTH - 62,

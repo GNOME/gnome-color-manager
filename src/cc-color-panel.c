@@ -31,7 +31,7 @@
 
 #include "egg-debug.h"
 
-#include "gcm-cell-renderer-profile.h"
+#include "gcm-cell-renderer-profile-text.h"
 #include "gcm-calibrate-argyll.h"
 #include "gcm-cie-widget.h"
 #include "gcm-client.h"
@@ -1406,7 +1406,7 @@ cc_color_panel_add_assign_columns (CcColorPanel *panel, GtkTreeView *treeview)
 	GtkTreeViewColumn *column;
 
 	/* column for text */
-	renderer = gcm_cell_renderer_profile_new ();
+	renderer = gcm_cell_renderer_profile_text_new ();
 	g_object_set (renderer,
 		      "wrap-mode", PANGO_WRAP_WORD,
 		      NULL);

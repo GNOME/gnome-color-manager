@@ -27,7 +27,7 @@
 
 #include "egg-debug.h"
 
-#include "gcm-cell-renderer-profile.h"
+#include "gcm-cell-renderer-profile-text.h"
 
 enum {
 	PROP_0,
@@ -36,15 +36,15 @@ enum {
 	PROP_LAST
 };
 
-G_DEFINE_TYPE (GcmCellRendererProfile, gcm_cell_renderer_profile, GTK_TYPE_CELL_RENDERER_TEXT)
+G_DEFINE_TYPE (GcmCellRendererProfileText, gcm_cell_renderer_profile_text, GTK_TYPE_CELL_RENDERER_TEXT)
 
 static gpointer parent_class = NULL;
 
 static void
-gcm_cell_renderer_profile_get_property (GObject *object, guint param_id,
+gcm_cell_renderer_profile_text_get_property (GObject *object, guint param_id,
 				        GValue *value, GParamSpec *pspec)
 {
-	GcmCellRendererProfile *renderer = GCM_CELL_RENDERER_PROFILE (object);
+	GcmCellRendererProfileText *renderer = GCM_CELL_RENDERER_PROFILE_TEXT (object);
 
 	switch (param_id) {
 	case PROP_PROFILE:
@@ -60,7 +60,7 @@ gcm_cell_renderer_profile_get_property (GObject *object, guint param_id,
 }
 
 static void
-gcm_cell_renderer_set_markup (GcmCellRendererProfile *renderer)
+gcm_cell_renderer_set_markup (GcmCellRendererProfileText *renderer)
 {
 	GString *string;
 	const gchar *description;
@@ -88,10 +88,10 @@ gcm_cell_renderer_set_markup (GcmCellRendererProfile *renderer)
 }
 
 static void
-gcm_cell_renderer_profile_set_property (GObject *object, guint param_id,
+gcm_cell_renderer_profile_text_set_property (GObject *object, guint param_id,
 					const GValue *value, GParamSpec *pspec)
 {
-	GcmCellRendererProfile *renderer = GCM_CELL_RENDERER_PROFILE (object);
+	GcmCellRendererProfileText *renderer = GCM_CELL_RENDERER_PROFILE_TEXT (object);
 
 	switch (param_id) {
 	case PROP_PROFILE:
@@ -117,8 +117,8 @@ gcm_cell_renderer_profile_set_property (GObject *object, guint param_id,
 static void
 gcm_cell_renderer_finalize (GObject *object)
 {
-	GcmCellRendererProfile *renderer;
-	renderer = GCM_CELL_RENDERER_PROFILE (object);
+	GcmCellRendererProfileText *renderer;
+	renderer = GCM_CELL_RENDERER_PROFILE_TEXT (object);
 	g_free (renderer->markup);
 	if (renderer->profile != NULL)
 		g_object_unref (renderer->profile);
@@ -126,15 +126,15 @@ gcm_cell_renderer_finalize (GObject *object)
 }
 
 static void
-gcm_cell_renderer_profile_class_init (GcmCellRendererProfileClass *class)
+gcm_cell_renderer_profile_text_class_init (GcmCellRendererProfileTextClass *class)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (class);
 	object_class->finalize = gcm_cell_renderer_finalize;
 
 	parent_class = g_type_class_peek_parent (class);
 
-	object_class->get_property = gcm_cell_renderer_profile_get_property;
-	object_class->set_property = gcm_cell_renderer_profile_set_property;
+	object_class->get_property = gcm_cell_renderer_profile_text_get_property;
+	object_class->set_property = gcm_cell_renderer_profile_text_set_property;
 
 	g_object_class_install_property (object_class, PROP_PROFILE,
 					 g_param_spec_object ("profile", "PROFILE",
@@ -145,10 +145,10 @@ gcm_cell_renderer_profile_class_init (GcmCellRendererProfileClass *class)
 }
 
 /**
- * gcm_cell_renderer_profile_init:
+ * gcm_cell_renderer_profile_text_init:
  **/
 static void
-gcm_cell_renderer_profile_init (GcmCellRendererProfile *renderer)
+gcm_cell_renderer_profile_text_init (GcmCellRendererProfileText *renderer)
 {
 	renderer->is_default = FALSE;
 	renderer->profile = NULL;
@@ -156,11 +156,11 @@ gcm_cell_renderer_profile_init (GcmCellRendererProfile *renderer)
 }
 
 /**
- * gcm_cell_renderer_profile_new:
+ * gcm_cell_renderer_profile_text_new:
  **/
 GtkCellRenderer *
-gcm_cell_renderer_profile_new (void)
+gcm_cell_renderer_profile_text_new (void)
 {
-	return g_object_new (GCM_TYPE_CELL_RENDERER_PROFILE, NULL);
+	return g_object_new (GCM_TYPE_CELL_RENDERER_PROFILE_TEXT, NULL);
 }
 
