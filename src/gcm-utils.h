@@ -98,7 +98,6 @@ gchar		*gcm_utils_get_default_config_location	(void);
 GcmProfileKind	 gcm_utils_device_kind_to_profile_kind	(GcmDeviceKind		 kind);
 gboolean	 gcm_utils_install_package		(const gchar		*package_name,
 							 GtkWindow		*window);
-gboolean	 gcm_utils_is_package_installed		(const gchar		*package_name);
 gboolean	 gcm_utils_is_icc_profile		(GFile			*file);
 gchar		*gcm_utils_linkify			(const gchar		*text);
 const gchar	*gcm_intent_to_localized_text		(GcmIntent	 intent);

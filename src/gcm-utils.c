@@ -210,62 +210,6 @@ out:
 }
 
 /**
- * gcm_utils_is_package_installed:
- **/
-gboolean
-gcm_utils_is_package_installed (const gchar *package_name)
-{
-	GDBusConnection *connection;
-	GVariant *args = NULL;
-	GVariant *response = NULL;
-	GError *error = NULL;
-	gboolean installed = TRUE;
-
-	g_return_val_if_fail (package_name != NULL, FALSE);
-
-#ifndef HAVE_PACKAGEKIT
-	egg_warning ("cannot query %s: this package was not compiled with --enable-packagekit", package_name);
-	return TRUE;
-#endif
-
-	/* get a session bus connection */
-	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
-	if (connection == NULL) {
-		/* TRANSLATORS: no DBus session bus */
-		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* execute sync method */
-	args = g_variant_new ("(ss)", package_name, "timeout=5");
-	response = g_dbus_connection_call_sync (connection,
-						PK_DBUS_SERVICE,
-						PK_DBUS_PATH,
-						PK_DBUS_INTERFACE_QUERY,
-						"IsInstalled",
-						args,
-						G_VARIANT_TYPE ("(b)"),
-						G_DBUS_CALL_FLAGS_NONE,
-						G_MAXINT, NULL, &error);
-	if (response == NULL) {
-		/* TRANSLATORS: the DBus method failed */
-		egg_warning ("%s %s\n", _("The request failed:"), error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* get value */
-	g_variant_get (response, "(b)", &installed);
-out:
-	if (args != NULL)
-		g_variant_unref (args);
-	if (response != NULL)
-		g_variant_unref (response);
-	return installed;
-}
-
-/**
  * gcm_utils_output_is_lcd_internal:
  * @output_name: the output name
  *

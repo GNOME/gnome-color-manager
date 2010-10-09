@@ -73,6 +73,10 @@ static void cc_color_panel_finalize (GObject *object);
 
 #define CC_COLOR_PREFS_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), CC_TYPE_COLOR_PANEL, CcColorPanelPrivate))
 
+#define PK_DBUS_SERVICE					"org.freedesktop.PackageKit"
+#define PK_DBUS_PATH					"/org/freedesktop/PackageKit"
+#define PK_DBUS_INTERFACE_QUERY				"org.freedesktop.PackageKit.Query"
+
 enum {
 	GCM_DEVICES_COLUMN_ID,
 	GCM_DEVICES_COLUMN_SORT,
@@ -2313,6 +2317,83 @@ cc_color_panel_setup_rendering_combobox (GtkWidget *widget, GcmIntent intent)
 }
 
 /**
+ * cc_color_panel_is_color_profiles_extra_installed_ready_cb:
+ **/
+static void
+cc_color_panel_is_color_profiles_extra_installed_ready_cb (GObject *source_object,
+							   GAsyncResult *res,
+							   gpointer user_data)
+{
+	GVariant *response = NULL;
+	GError *error = NULL;
+	gboolean installed = TRUE;
+	CcColorPanel *panel = CC_COLOR_PANEL (user_data);
+
+	/* get details */
+	response = g_dbus_connection_call_finish (G_DBUS_CONNECTION (source_object), res, &error);
+	if (response == NULL) {
+		/* TRANSLATORS: the DBus method failed */
+		egg_warning ("%s %s\n", _("The request failed:"), error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* get value */
+	g_variant_get (response, "(b)", &installed);
+
+	/* show control */
+	gtk_widget_set_visible (panel->priv->info_bar_profiles, !installed);
+out:
+	if (response != NULL)
+		g_variant_unref (response);
+}
+
+/**
+ * cc_color_panel_is_color_profiles_extra_installed:
+ **/
+static void
+cc_color_panel_is_color_profiles_extra_installed (CcColorPanel *panel)
+{
+	GDBusConnection *connection;
+	GVariant *args = NULL;
+	GError *error = NULL;
+
+#ifndef HAVE_PACKAGEKIT
+	egg_warning ("cannot query %s: this package was not compiled with --enable-packagekit", package_name);
+	return;
+#endif
+
+	/* get a session bus connection */
+	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
+	if (connection == NULL) {
+		/* TRANSLATORS: no DBus session bus */
+		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* execute sync method */
+	args = g_variant_new ("(ss)",
+			      GCM_PREFS_PACKAGE_NAME_COLOR_PROFILES_EXTRA,
+			      "timeout=5");
+	g_dbus_connection_call (connection,
+				PK_DBUS_SERVICE,
+				PK_DBUS_PATH,
+				PK_DBUS_INTERFACE_QUERY,
+				"IsInstalled",
+				args,
+				G_VARIANT_TYPE ("(b)"),
+				G_DBUS_CALL_FLAGS_NONE,
+				G_MAXINT, NULL,
+				cc_color_panel_is_color_profiles_extra_installed_ready_cb,
+				panel);
+out:
+	if (args != NULL)
+		g_variant_unref (args);
+	return;
+}
+
+/**
  * cc_color_panel_startup_idle_cb:
  **/
 static gboolean
@@ -2397,8 +2478,7 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 
 	/* do we show the shared-color-profiles-extra installer? */
 	egg_debug ("getting installed");
-	ret = gcm_utils_is_package_installed (GCM_PREFS_PACKAGE_NAME_COLOR_PROFILES_EXTRA);
-	gtk_widget_set_visible (panel->priv->info_bar_profiles, !ret);
+	cc_color_panel_is_color_profiles_extra_installed (panel);
 out:
 	g_free (colorspace_rgb);
 	g_free (colorspace_cmyk);
