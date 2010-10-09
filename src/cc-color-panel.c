@@ -105,9 +105,6 @@ typedef enum {
 static void cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColorPanel *panel);
 static void cc_color_panel_profile_store_changed_cb (GcmProfileStore *profile_store, CcColorPanel *panel);
 
-#define GCM_PREFS_TREEVIEW_MAIN_WIDTH		250 /* px */
-#define GCM_PREFS_TREEVIEW_PROFILES_WIDTH	350 /* px */
-
 /**
  * cc_color_panel_error_dialog:
  **/
@@ -1386,14 +1383,10 @@ cc_color_panel_add_devices_columns (CcColorPanel *panel, GtkTreeView *treeview)
 							   "icon-name", GCM_DEVICES_COLUMN_ICON, NULL);
 	gtk_tree_view_append_column (treeview, column);
 
-	/* set minimum width */
-	gtk_widget_set_size_request (GTK_WIDGET (treeview), GCM_PREFS_TREEVIEW_MAIN_WIDTH, -1);
-
 	/* column for text */
 	renderer = gtk_cell_renderer_text_new ();
 	g_object_set (renderer,
 		      "wrap-mode", PANGO_WRAP_WORD,
-		      "wrap-width", GCM_PREFS_TREEVIEW_MAIN_WIDTH - 62,
 		      NULL);
 	column = gtk_tree_view_column_new_with_attributes ("", renderer,
 							   "markup", GCM_DEVICES_COLUMN_TITLE, NULL);
@@ -1412,14 +1405,10 @@ cc_color_panel_add_assign_columns (CcColorPanel *panel, GtkTreeView *treeview)
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
 
-	/* set minimum width */
-	gtk_widget_set_size_request (GTK_WIDGET (treeview), GCM_PREFS_TREEVIEW_PROFILES_WIDTH, -1);
-
 	/* column for text */
 	renderer = gcm_cell_renderer_profile_new ();
 	g_object_set (renderer,
 		      "wrap-mode", PANGO_WRAP_WORD,
-		      "wrap-width", GCM_PREFS_TREEVIEW_PROFILES_WIDTH - 62,
 		      NULL);
 	column = gtk_tree_view_column_new_with_attributes ("", renderer,
 							   "profile", GCM_ASSIGN_COLUMN_PROFILE,
@@ -1585,18 +1574,20 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	}
 
 	/* show broken devices */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "label_problems"));
+	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hbox_problems"));
 	gtk_widget_hide (widget);
 	if (kind == GCM_DEVICE_KIND_DISPLAY) {
 		ret = gcm_device_get_connected (panel->priv->current_device);
 		if (ret) {
 			ret = gcm_device_xrandr_get_xrandr13 (GCM_DEVICE_XRANDR (panel->priv->current_device));
 			if (!ret) {
+                                widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "label_problems"));
 				/* TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
 				* Whilst this does not matter if you only have one monitor attached, it means you
 				* can't color correct additional monitors or projectors. */
 				gtk_label_set_label (GTK_LABEL (widget),
 						     _("Per-device settings not supported. Check your display driver."));
+                                widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hbox_problems"));
 				gtk_widget_show (widget);
 			}
 		}
@@ -2742,16 +2733,6 @@ cc_color_panel_init (CcColorPanel *panel)
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "expander_fine_tuning"));
 	gtk_widget_set_sensitive (widget, FALSE);
 
-	/* hide widgets by default */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "vbox_device_details"));
-	gtk_widget_hide (widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hbox_manufacturer"));
-	gtk_widget_hide (widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hbox_model"));
-	gtk_widget_hide (widget);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hbox_serial"));
-	gtk_widget_hide (widget);
-
 	/* set up virtual dialog */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "dialog_virtual"));
 	g_signal_connect (widget, "delete-event",
@@ -2872,7 +2853,7 @@ cc_color_panel_init (CcColorPanel *panel)
 	gtk_box_pack_start (GTK_BOX(widget), panel->priv->info_bar_loading, FALSE, FALSE, 0);
 
 	/* add infobar to devices pane */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "vbox_sections"));
+	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "vbox_devices"));
 	gtk_box_pack_start (GTK_BOX(widget), panel->priv->info_bar_vcgt, FALSE, FALSE, 0);
 
 	/* add infobar to defaults pane */
