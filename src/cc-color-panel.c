@@ -60,7 +60,6 @@ struct _CcColorPanelPrivate {
 	GcmSensorClient		*sensor_client;
 	gboolean		 setting_up_device;
 	GtkWidget		*main_window;
-	GtkWidget		*info_bar_loading;
 	GtkWidget		*info_bar_profiles;
 	GSettings		*settings;
 	guint			 save_and_apply_id;
@@ -2474,7 +2473,7 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 	cc_color_panel_set_calibrate_button_sensitivity (panel);
 
 	/* we're probably showing now */
-	panel->priv->main_window = gtk_widget_get_toplevel (panel->priv->info_bar_loading);
+	panel->priv->main_window = gtk_widget_get_toplevel (panel->priv->info_bar_profiles);
 
 	/* do we show the shared-color-profiles-extra installer? */
 	egg_debug ("getting installed");
@@ -2589,18 +2588,6 @@ cc_color_panel_select_first_device_idle_cb (CcColorPanel *panel)
 static void
 cc_color_panel_client_notify_loading_cb (GcmClient *client, GParamSpec *pspec, CcColorPanel *panel)
 {
-	gboolean loading;
-
-	/*if loading show the bar */
-	loading = gcm_client_get_loading (client);
-	if (loading) {
-		gtk_widget_show (panel->priv->info_bar_loading);
-		return;
-	}
-
-	/* otherwise clear the loading widget */
-	gtk_widget_hide (panel->priv->info_bar_loading);
-
 	/* idle callback */
 	g_idle_add ((GSourceFunc) cc_color_panel_select_first_device_idle_cb, panel);
 }
@@ -2730,7 +2717,6 @@ cc_color_panel_init (CcColorPanel *panel)
 	GError *error = NULL;
 	gint retval;
 	GtkTreeSelection *selection;
-	GtkWidget *info_bar_loading_label;
 	GtkWidget *info_bar_profiles_label;
 
 	panel->priv = CC_COLOR_PREFS_GET_PRIVATE (panel);
@@ -2906,20 +2892,12 @@ cc_color_panel_init (CcColorPanel *panel)
 	g_signal_connect (panel->priv->sensor_client, "changed", G_CALLBACK (cc_color_panel_sensor_client_changed_cb), panel);
 
 	/* use infobar */
-	panel->priv->info_bar_loading = gtk_info_bar_new ();
 	panel->priv->info_bar_profiles = gtk_info_bar_new ();
 	g_signal_connect (panel->priv->info_bar_profiles, "response",
 			  G_CALLBACK (cc_color_panel_info_bar_response_cb), panel);
 
 	/* TRANSLATORS: button to install extra profiles */
 	gtk_info_bar_add_button (GTK_INFO_BAR(panel->priv->info_bar_profiles), _("Install now"), GTK_RESPONSE_APPLY);
-
-	/* TRANSLATORS: this is displayed while the devices are being probed */
-	info_bar_loading_label = gtk_label_new (_("Loading list of devices…"));
-	gtk_info_bar_set_message_type (GTK_INFO_BAR(panel->priv->info_bar_loading), GTK_MESSAGE_INFO);
-	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(panel->priv->info_bar_loading));
-	gtk_container_add (GTK_CONTAINER(widget), info_bar_loading_label);
-	gtk_widget_show (info_bar_loading_label);
 
 	/* TRANSLATORS: this is displayed when the profile is crap */
 	info_bar_profiles_label = gtk_label_new (_("More color profiles could be automatically installed."));
@@ -2928,10 +2906,6 @@ cc_color_panel_init (CcColorPanel *panel)
 	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(panel->priv->info_bar_profiles));
 	gtk_container_add (GTK_CONTAINER(widget), info_bar_profiles_label);
 	gtk_widget_show (info_bar_profiles_label);
-
-	/* add infobar to devices pane */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "vbox_devices"));
-	gtk_box_pack_start (GTK_BOX(widget), panel->priv->info_bar_loading, FALSE, FALSE, 0);
 
 	/* add infobar to defaults pane */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "vbox_working_spaces"));
@@ -2974,7 +2948,7 @@ cc_color_panel_init (CcColorPanel *panel)
 			 G_SETTINGS_BIND_DEFAULT | G_SETTINGS_BIND_NO_SENSITIVITY);
 
 	/* get main window */
-	panel->priv->main_window = gtk_widget_get_toplevel (panel->priv->info_bar_loading);
+	panel->priv->main_window = gtk_widget_get_toplevel (panel->priv->info_bar_profiles);
 
 	/* connect up drags */
 	g_signal_connect (panel->priv->main_window, "drag-data-received",
