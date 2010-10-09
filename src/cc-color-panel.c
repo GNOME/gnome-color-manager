@@ -32,6 +32,7 @@
 #include "egg-debug.h"
 
 #include "gcm-cell-renderer-profile-text.h"
+#include "gcm-cell-renderer-profile-icon.h"
 #include "gcm-calibrate-argyll.h"
 #include "gcm-cie-widget.h"
 #include "gcm-client.h"
@@ -60,7 +61,6 @@ struct _CcColorPanelPrivate {
 	gboolean		 setting_up_device;
 	GtkWidget		*main_window;
 	GtkWidget		*info_bar_loading;
-	GtkWidget		*info_bar_vcgt;
 	GtkWidget		*info_bar_profiles;
 	GSettings		*settings;
 	guint			 save_and_apply_id;
@@ -85,6 +85,7 @@ enum {
 	GCM_ASSIGN_COLUMN_SORT,
 	GCM_ASSIGN_COLUMN_PROFILE,
 	GCM_ASSIGN_COLUMN_IS_DEFAULT,
+	GCM_ASSIGN_COLUMN_TOOLTIP,
 	GCM_ASSIGN_COLUMN_LAST
 };
 
@@ -1230,6 +1231,25 @@ cc_color_panel_button_assign_cancel_cb (GtkWidget *widget, CcColorPanel *panel)
 }
 
 /**
+ * cc_color_panel_profile_get_tooltip:
+ **/
+static const gchar *
+cc_color_panel_profile_get_tooltip (GcmProfile *profile)
+{
+	const gchar *tooltip = NULL;
+
+	/* VCGT warning */
+	if (gcm_profile_get_kind (profile) == GCM_PROFILE_KIND_DISPLAY_DEVICE &&
+	    !gcm_profile_get_has_vcgt (profile)) {
+		/* TRANSLATORS: this is displayed when the profile is crap */
+		tooltip = _("This profile does not have the information required for whole-screen color correction.");
+		goto out;
+	}
+out:
+	return tooltip;
+}
+
+/**
  * cc_color_panel_button_assign_ok_cb:
  **/
 static void
@@ -1265,6 +1285,7 @@ cc_color_panel_button_assign_ok_cb (GtkWidget *widget, CcColorPanel *panel)
 			    GCM_ASSIGN_COLUMN_PROFILE, profile,
 			    GCM_ASSIGN_COLUMN_SORT, is_default ? "0" : "1",
 			    GCM_ASSIGN_COLUMN_IS_DEFAULT, is_default,
+			    GCM_ASSIGN_COLUMN_TOOLTIP, cc_color_panel_profile_get_tooltip (profile),
 			    -1);
 
 	/* save device */
@@ -1416,6 +1437,15 @@ cc_color_panel_add_assign_columns (CcColorPanel *panel, GtkTreeView *treeview)
 							   NULL);
 	gtk_tree_view_column_set_sort_column_id (column, GCM_ASSIGN_COLUMN_SORT);
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (panel->priv->list_store_assign), GCM_ASSIGN_COLUMN_SORT, GTK_SORT_ASCENDING);
+	gtk_tree_view_append_column (treeview, column);
+	gtk_tree_view_column_set_expand (column, TRUE);
+
+	/* column for icon */
+	renderer = gcm_cell_renderer_profile_icon_new ();
+	g_object_set (renderer, "stock-size", GTK_ICON_SIZE_BUTTON, NULL);
+	column = gtk_tree_view_column_new_with_attributes ("", renderer,
+							   "profile", GCM_ASSIGN_COLUMN_PROFILE,
+							   NULL);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
@@ -1618,6 +1648,7 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 				    GCM_ASSIGN_COLUMN_PROFILE, profile,
 				    GCM_ASSIGN_COLUMN_SORT, (i == 0) ? "0" : "1",
 				    GCM_ASSIGN_COLUMN_IS_DEFAULT, (i == 0),
+				    GCM_ASSIGN_COLUMN_TOOLTIP, cc_color_panel_profile_get_tooltip (profile),
 				    -1);
 	}
 
@@ -1626,10 +1657,6 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	path = gtk_tree_path_new_from_string ("0");
 	gtk_tree_selection_select_path (selection, path);
-	/* nothing selected */
-	if (!gtk_tree_selection_path_is_selected (selection, path)) {
-		gtk_widget_hide (panel->priv->info_bar_vcgt);
-	}
 	gtk_tree_path_free (path);
 
 	/* make sure selectable */
@@ -1710,14 +1737,6 @@ cc_color_panel_assign_treeview_clicked_cb (GtkTreeSelection *selection, CcColorP
 	/* we can remove it now */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_assign_remove"));
 	gtk_widget_set_sensitive (widget, TRUE);
-
-	/* show a warning if the profile is crap */
-	if (gcm_device_get_kind (panel->priv->current_device) == GCM_DEVICE_KIND_DISPLAY &&
-	    !gcm_profile_get_has_vcgt (profile)) {
-		gtk_widget_show (panel->priv->info_bar_vcgt);
-	} else {
-		gtk_widget_hide (panel->priv->info_bar_vcgt);
-	}
 }
 
 /**
@@ -2515,11 +2534,7 @@ cc_color_panel_info_bar_response_cb (GtkDialog *dialog, GtkResponseType response
 	GtkWindow *window;
 	gboolean ret;
 
-	if (response == GTK_RESPONSE_HELP) {
-		/* open the help file in the right place */
-		gcm_gnome_help ("faq-missing-vcgt");
-
-	} else if (response == GTK_RESPONSE_APPLY) {
+	if (response == GTK_RESPONSE_APPLY) {
 		/* install the extra profiles */
 		window = GTK_WINDOW(panel->priv->main_window);
 		ret = gcm_utils_install_package (GCM_PREFS_PACKAGE_NAME_COLOR_PROFILES_EXTRA, window);
@@ -2636,7 +2651,6 @@ cc_color_panel_init (CcColorPanel *panel)
 	gint retval;
 	GtkTreeSelection *selection;
 	GtkWidget *info_bar_loading_label;
-	GtkWidget *info_bar_vcgt_label;
 	GtkWidget *info_bar_profiles_label;
 
 	panel->priv = CC_COLOR_PREFS_GET_PRIVATE (panel);
@@ -2668,7 +2682,7 @@ cc_color_panel_init (CcColorPanel *panel)
 	/* create list stores */
 	panel->priv->list_store_devices = gtk_list_store_new (GCM_DEVICES_COLUMN_LAST, G_TYPE_STRING, G_TYPE_STRING,
 						 G_TYPE_STRING, G_TYPE_STRING);
-	panel->priv->list_store_assign = gtk_list_store_new (GCM_ASSIGN_COLUMN_LAST, G_TYPE_STRING, GCM_TYPE_PROFILE, G_TYPE_BOOLEAN);
+	panel->priv->list_store_assign = gtk_list_store_new (GCM_ASSIGN_COLUMN_LAST, G_TYPE_STRING, GCM_TYPE_PROFILE, G_TYPE_BOOLEAN, G_TYPE_STRING);
 
 	/* assign buttons */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_assign_add"));
@@ -2707,6 +2721,7 @@ cc_color_panel_init (CcColorPanel *panel)
 	cc_color_panel_add_assign_columns (panel, GTK_TREE_VIEW (widget));
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
 	gtk_tree_view_set_reorderable (GTK_TREE_VIEW (widget), TRUE);
+	gtk_tree_view_set_tooltip_column (GTK_TREE_VIEW (widget), GCM_ASSIGN_COLUMN_TOOLTIP);
 
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_default"));
 	g_signal_connect (widget, "clicked",
@@ -2812,15 +2827,9 @@ cc_color_panel_init (CcColorPanel *panel)
 
 	/* use infobar */
 	panel->priv->info_bar_loading = gtk_info_bar_new ();
-	panel->priv->info_bar_vcgt = gtk_info_bar_new ();
-	g_signal_connect (panel->priv->info_bar_vcgt, "response",
-			  G_CALLBACK (cc_color_panel_info_bar_response_cb), panel);
 	panel->priv->info_bar_profiles = gtk_info_bar_new ();
 	g_signal_connect (panel->priv->info_bar_profiles, "response",
 			  G_CALLBACK (cc_color_panel_info_bar_response_cb), panel);
-
-	/* TRANSLATORS: button for more details about the vcgt failure */
-	gtk_info_bar_add_button (GTK_INFO_BAR(panel->priv->info_bar_vcgt), _("More Information"), GTK_RESPONSE_HELP);
 
 	/* TRANSLATORS: button to install extra profiles */
 	gtk_info_bar_add_button (GTK_INFO_BAR(panel->priv->info_bar_profiles), _("Install now"), GTK_RESPONSE_APPLY);
@@ -2833,14 +2842,6 @@ cc_color_panel_init (CcColorPanel *panel)
 	gtk_widget_show (info_bar_loading_label);
 
 	/* TRANSLATORS: this is displayed when the profile is crap */
-	info_bar_vcgt_label = gtk_label_new (_("This profile does not have the information required for whole-screen color correction."));
-	gtk_label_set_line_wrap (GTK_LABEL (info_bar_vcgt_label), TRUE);
-	gtk_info_bar_set_message_type (GTK_INFO_BAR(panel->priv->info_bar_vcgt), GTK_MESSAGE_INFO);
-	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(panel->priv->info_bar_vcgt));
-	gtk_container_add (GTK_CONTAINER(widget), info_bar_vcgt_label);
-	gtk_widget_show (info_bar_vcgt_label);
-
-	/* TRANSLATORS: this is displayed when the profile is crap */
 	info_bar_profiles_label = gtk_label_new (_("More color profiles could be automatically installed."));
 	gtk_label_set_line_wrap (GTK_LABEL (info_bar_profiles_label), TRUE);
 	gtk_info_bar_set_message_type (GTK_INFO_BAR(panel->priv->info_bar_profiles), GTK_MESSAGE_INFO);
@@ -2851,10 +2852,6 @@ cc_color_panel_init (CcColorPanel *panel)
 	/* add infobar to devices pane */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "vbox_devices"));
 	gtk_box_pack_start (GTK_BOX(widget), panel->priv->info_bar_loading, FALSE, FALSE, 0);
-
-	/* add infobar to devices pane */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "vbox_devices"));
-	gtk_box_pack_start (GTK_BOX(widget), panel->priv->info_bar_vcgt, FALSE, FALSE, 0);
 
 	/* add infobar to defaults pane */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "vbox_working_spaces"));
