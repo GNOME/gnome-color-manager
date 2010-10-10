@@ -1015,7 +1015,7 @@ gcm_profile_create_from_chroma (GcmProfile *profile, gdouble gamma,
 
 	/* create our generated profile */
 	priv->lcms_profile = cmsCreateRGBProfile (&white_point, &chroma, transfer_curve);
-	cmsSetEncodedICCversion (priv->lcms_profile, 2);
+	cmsWriteTag (priv->lcms_profile, cmsSigVcgtType, transfer_curve);
 	cmsFreeToneCurve (*transfer_curve);
 
 	/* success */
