@@ -72,10 +72,6 @@ struct _GcmProfilePrivate
 	GFileMonitor		*monitor;
 	gboolean		 has_mlut;
 	cmsHPROFILE		 lcms_profile;
-	GcmClutData		*vcgt_data;
-	guint			 vcgt_data_size;
-	GcmClutData		*mlut_data;
-	guint			 mlut_data_size;
 };
 
 enum {
@@ -1491,8 +1487,6 @@ static void
 gcm_profile_init (GcmProfile *profile)
 {
 	profile->priv = GCM_PROFILE_GET_PRIVATE (profile);
-	profile->priv->vcgt_data = NULL;
-	profile->priv->mlut_data = NULL;
 	profile->priv->can_delete = FALSE;
 	profile->priv->monitor = NULL;
 	profile->priv->kind = GCM_PROFILE_KIND_UNKNOWN;
@@ -1523,8 +1517,6 @@ gcm_profile_finalize (GObject *object)
 	g_free (priv->model);
 	g_free (priv->datetime);
 	g_free (priv->checksum);
-	g_free (priv->vcgt_data);
-	g_free (priv->mlut_data);
 	gcm_color_free_XYZ (priv->white);
 	gcm_color_free_XYZ (priv->black);
 	gcm_color_free_XYZ (priv->red);
