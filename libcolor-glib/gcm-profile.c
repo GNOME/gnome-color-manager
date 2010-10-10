@@ -63,6 +63,7 @@ struct _GcmProfilePrivate
 	gchar			*model;
 	gchar			*datetime;
 	gchar			*checksum;
+	guint			 temperature;
 	GcmColorXYZ		*white;
 	GcmColorXYZ		*black;
 	GcmColorXYZ		*red;
@@ -93,6 +94,7 @@ enum {
 	PROP_RED,
 	PROP_GREEN,
 	PROP_BLUE,
+	PROP_TEMPERATURE,
 	PROP_LAST
 };
 
@@ -200,6 +202,23 @@ gcm_profile_has_colorspace_description (GcmProfile *profile)
 
 	/* nothing */
 	return FALSE;
+}
+
+/**
+ * gcm_profile_get_temperature:
+ * @profile: A valid #GcmProfile
+ *
+ * Gets the profile color temperature, rounded to the nearest 100K.
+ *
+ * Return value: The color temperature in Kelvins, or 0 for error.
+ *
+ * Since: 0.0.1
+ **/
+guint
+gcm_profile_get_temperature (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), 0);
+	return profile->priv->temperature;
 }
 
 /**
@@ -634,8 +653,22 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	/* get white point */
 	cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigMediaWhitePointTag);
 	if (cie_xyz != NULL) {
+		GcmColorYxy yxy;
+		cmsCIExyY xyY;
+		gdouble temp_float;
 		gcm_color_set_XYZ (priv->white,
 				   cie_xyz->X, cie_xyz->Y, cie_xyz->Z);
+
+		/* convert to lcms xyY values */
+		gcm_color_convert_XYZ_to_Yxy (priv->white, &yxy);
+		xyY.x = yxy.x;
+		xyY.y = yxy.y;
+		xyY.Y = yxy.Y;
+		cmsTempFromWhitePoint (&temp_float, &xyY);
+
+		/* round to nearest 100K */
+		priv->temperature = (((guint) temp_float) / 100) * 100;
+
 	} else {
 		gcm_color_clear_XYZ (priv->white);
 		egg_warning ("failed to get white point");
@@ -1262,6 +1295,9 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_BLUE:
 		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->blue));
 		break;
+	case PROP_TEMPERATURE:
+		g_value_set_uint (value, priv->temperature);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -1476,6 +1512,14 @@ gcm_profile_class_init (GcmProfileClass *klass)
 				    GCM_TYPE_COLOR_XYZ,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_BLUE, pspec);
+
+	/**
+	 * GcmProfile:temperature:
+	 */
+	pspec = g_param_spec_uint ("temperature", NULL, NULL,
+				   0, G_MAXUINT, 0,
+				   G_PARAM_READABLE);
+	g_object_class_install_property (object_class, PROP_TEMPERATURE, pspec);
 
 	g_type_class_add_private (klass, sizeof (GcmProfilePrivate));
 }

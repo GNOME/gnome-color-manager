@@ -363,6 +363,7 @@ gcm_test_profile_func (void)
 	g_assert_cmpstr (gcm_profile_get_checksum (profile), ==, "8e2aed5dac6f8b5d8da75610a65b7f27");
 	g_assert_cmpint (gcm_profile_get_kind (profile), ==, GCM_PROFILE_KIND_DISPLAY_DEVICE);
 	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, GCM_COLORSPACE_RGB);
+	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 6500);
 	g_assert (gcm_profile_get_has_vcgt (profile));
 
 	/* get extra data */
@@ -393,6 +394,7 @@ gcm_test_profile_func (void)
 	g_assert_cmpstr (gcm_profile_get_checksum (profile), ==, "bd847723f676e2b846daaf6759330624");
 	g_assert_cmpint (gcm_profile_get_kind (profile), ==, GCM_PROFILE_KIND_DISPLAY_DEVICE);
 	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, GCM_COLORSPACE_RGB);
+	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 6500);
 	g_assert (gcm_profile_get_has_vcgt (profile));
 
 	g_object_unref (profile);

@@ -645,6 +645,7 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	gboolean ret;
 	gboolean has_vcgt;
 	guint size = 0;
+	guint temperature;
 	guint filesize;
 	gboolean show_section = FALSE;
 
@@ -758,6 +759,15 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	temp = g_markup_escape_text (basename, -1);
 	gtk_label_set_label (GTK_LABEL (widget), temp);
 	g_free (temp);
+
+	/* set whitepoint */
+	temperature = gcm_profile_get_temperature (profile);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_temp"));
+	temp = g_strdup_printf ("%i°K", temperature);
+	gtk_label_set_label (GTK_LABEL (widget), temp);
+	g_free (temp);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_temp"));
+	gtk_widget_set_visible (widget, (temperature > 0));
 
 	/* set size */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_size"));

@@ -118,6 +118,7 @@ void		 gcm_profile_set_colorspace		(GcmProfile	*profile,
 							 GcmColorspace	 colorspace);
 gboolean	 gcm_profile_get_has_vcgt		(GcmProfile	*profile);
 gboolean	 gcm_profile_has_colorspace_description	(GcmProfile	*profile);
+guint		 gcm_profile_get_temperature		(GcmProfile	*profile);
 
 G_END_DECLS
 
