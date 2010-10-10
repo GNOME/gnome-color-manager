@@ -682,8 +682,6 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 
 	/* setup cie widget */
 	gcm_cie_widget_set_from_profile (viewer->cie_widget, profile);
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_cie_axis"));
-	gtk_widget_set_visible (widget, gtk_widget_get_visible (viewer->cie_widget));
 
 	/* get curve data */
 	clut_trc = gcm_profile_generate_curve (profile, 256);
