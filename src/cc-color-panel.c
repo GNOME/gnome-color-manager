@@ -64,6 +64,7 @@ struct _CcColorPanelPrivate {
 	GSettings		*settings;
 	guint			 save_and_apply_id;
 	guint			 apply_all_devices_id;
+	GCancellable		*cancellable;
 };
 
 G_DEFINE_DYNAMIC_TYPE (CcColorPanel, cc_color_panel, CC_TYPE_PANEL)
@@ -2383,7 +2384,8 @@ cc_color_panel_is_color_profiles_extra_installed (CcColorPanel *panel)
 				args,
 				G_VARIANT_TYPE ("(b)"),
 				G_DBUS_CALL_FLAGS_NONE,
-				G_MAXINT, NULL,
+				G_MAXINT,
+				panel->priv->cancellable,
 				cc_color_panel_is_color_profiles_extra_installed_ready_cb,
 				panel);
 out:
@@ -2689,6 +2691,7 @@ cc_color_panel_finalize (GObject *object)
 {
 	CcColorPanel *panel = CC_COLOR_PANEL (object);
 
+	g_cancellable_cancel (panel->priv->cancellable);
 	if (panel->priv->current_device != NULL)
 		g_object_unref (panel->priv->current_device);
 	if (panel->priv->sensor_client != NULL)
@@ -2720,6 +2723,7 @@ cc_color_panel_init (CcColorPanel *panel)
 	GtkWidget *info_bar_profiles_label;
 
 	panel->priv = CC_COLOR_PREFS_GET_PRIVATE (panel);
+	panel->priv->cancellable = g_cancellable_new ();
 
 	/* setup defaults */
 	panel->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
