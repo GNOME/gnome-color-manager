@@ -124,6 +124,7 @@ gcm_sensor_huey_send_data (GcmSensorHuey *sensor_huey,
 	gint retval;
 	gboolean ret = FALSE;
 	guint i;
+	gint reply_read_raw;
 	libusb_device_handle *handle;
 
 	g_return_val_if_fail (request != NULL, FALSE);
@@ -154,7 +155,7 @@ gcm_sensor_huey_send_data (GcmSensorHuey *sensor_huey,
 
 		/* get sync response */
 		retval = libusb_interrupt_transfer (handle, 0x81,
-						    reply, (gint) reply_len, (gint*)reply_read,
+						    reply, (gint) reply_len, &reply_read_raw,
 						    HUEY_CONTROL_MESSAGE_TIMEOUT);
 		if (retval < 0) {
 			g_set_error (error, GCM_SENSOR_ERROR,
@@ -162,6 +163,10 @@ gcm_sensor_huey_send_data (GcmSensorHuey *sensor_huey,
 				     "failed to get reply: %s", libusb_strerror (retval));
 			goto out;
 		}
+
+		/* on 64bit we can't just cast a gsize pointer to a
+		 * gint pointer, we have to copy */
+		*reply_read = reply_read_raw;
 
 		/* show what we've got */
 		gcm_sensor_huey_print_data ("reply", reply, *reply_read);
