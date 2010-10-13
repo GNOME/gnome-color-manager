@@ -2692,6 +2692,7 @@ cc_color_panel_finalize (GObject *object)
 	CcColorPanel *panel = CC_COLOR_PANEL (object);
 
 	g_cancellable_cancel (panel->priv->cancellable);
+	g_object_unref (panel->priv->cancellable);
 	if (panel->priv->current_device != NULL)
 		g_object_unref (panel->priv->current_device);
 	if (panel->priv->sensor_client != NULL)
