@@ -90,6 +90,8 @@ gboolean	 gcm_profile_create_from_chroma		(GcmProfile	*profile,
 							 const GcmColorYxy *blue,
 							 const GcmColorYxy *white,
 							 GError		**error);
+gboolean	 gcm_profile_guess_and_add_vcgt		(GcmProfile	*profile,
+							 GError		**error);
 const gchar	*gcm_profile_get_description		(GcmProfile	*profile);
 void		 gcm_profile_set_description		(GcmProfile	*profile,
 							 const gchar 	*description);

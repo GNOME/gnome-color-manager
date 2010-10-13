@@ -1062,6 +1062,91 @@ out:
 }
 
 /**
+ * gcm_profile_guess_and_add_vcgt:
+ * @profile: A valid #GcmProfile
+ * @error: A #GError, or %NULL
+ *
+ * Runs a grey image through the profile, to guess semi-correct VCGT curves
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
+ **/
+gboolean
+gcm_profile_guess_and_add_vcgt (GcmProfile *profile, GError **error)
+{
+	cmsHPROFILE srgb_profile = NULL;
+	cmsHTRANSFORM transform = NULL;
+	cmsToneCurve *transfer_curve[3];
+	cmsUInt16Number rawdata[3][256];
+	const guint size = 256;
+	gboolean ret = FALSE;
+	gdouble *values_in = NULL;
+	gdouble *values_out = NULL;
+	gfloat divadd;
+	gfloat divamount;
+	guint i;
+	GcmProfilePrivate *priv = profile->priv;
+
+	/* not loaded */
+	if (priv->lcms_profile == NULL) {
+		g_set_error_literal (error, 1, 0, "not already loaded or generated");
+		goto out;
+	}
+
+	/* create arrays */
+	values_in = g_new0 (gdouble, size * 3);
+	values_out = g_new0 (gdouble, size * 3);
+
+	/* populate with data */
+	divamount = 1.0f / (gfloat) (size - 1);
+	for (i=0; i<size; i++) {
+		divadd = divamount * (gfloat) i;
+
+		/* grey component */
+		values_in[(i * 3)+0] = divadd;
+		values_in[(i * 3)+1] = divadd;
+		values_in[(i * 3)+2] = divadd;
+	}
+
+	/* create a transform from sRGB to profile */
+	srgb_profile = cmsCreate_sRGBProfile ();
+	transform = cmsCreateTransform (priv->lcms_profile, TYPE_RGB_DBL,
+					srgb_profile, TYPE_RGB_DBL,
+					INTENT_ABSOLUTE_COLORIMETRIC, 0);
+	if (transform == NULL) {
+		g_set_error_literal (error, 1, 0, "failed to generate transform");
+		goto out;
+	}
+
+	/* do transform */
+	cmsDoTransform (transform, values_in, values_out, size);
+
+	/* unroll the data */
+	for (i=0; i<size; i++) {
+		rawdata[0][i] = values_out[(i * 3)+0] * 0xffff;
+		rawdata[1][i] = values_out[(i * 3)+1] * 0xffff;
+		rawdata[2][i] = values_out[(i * 3)+2] * 0xffff;
+	}
+
+	/* build tone curves */
+	for (i=0; i<3; i++)
+		transfer_curve[i] = cmsBuildTabulatedToneCurve16 (NULL, 256, rawdata[i]);
+
+	/* write to VCGT */
+	ret = cmsWriteTag (priv->lcms_profile, cmsSigVcgtType, transfer_curve);
+	cmsFreeToneCurveTriple (transfer_curve);
+out:
+	g_free (values_in);
+	g_free (values_out);
+	if (transform != NULL)
+		cmsDeleteTransform (transform);
+	if (srgb_profile != NULL)
+		cmsCloseProfile (srgb_profile);
+	return ret;
+}
+
+/**
  * gcm_profile_generate_vcgt:
  * @profile: A valid #GcmProfile
  * @size: the size of the table to generate

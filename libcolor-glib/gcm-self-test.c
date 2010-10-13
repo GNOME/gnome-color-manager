@@ -341,6 +341,10 @@ gcm_test_profile_func (void)
 	GError *error = NULL;
 	GcmColorXYZ *xyz;
 	GcmColorYxy yxy;
+	GcmColorYxy red;
+	GcmColorYxy green;
+	GcmColorYxy blue;
+	GcmColorYxy white;
 
 	/* bluish test */
 	profile = gcm_profile_new ();
@@ -397,6 +401,55 @@ gcm_test_profile_func (void)
 	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 6500);
 	g_assert (gcm_profile_get_has_vcgt (profile));
 
+	g_object_unref (profile);
+
+	/* create test */
+	profile = gcm_profile_new ();
+
+	/* from my T61 */
+	gcm_color_set_Yxy (&red, 1.0f, 0.569336f, 0.332031f);
+	gcm_color_set_Yxy (&green, 1.0f, 0.311523f, 0.543945f);
+	gcm_color_set_Yxy (&blue, 1.0f, 0.149414f, 0.131836f);
+	gcm_color_set_Yxy (&white, 1.0f, 0.313477f, 0.329102f);
+
+	/* create from chroma */
+	ret = gcm_profile_create_from_chroma (profile, 2.2f, &red, &green, &blue, &white, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* add vcgt */
+	ret = gcm_profile_guess_and_add_vcgt (profile, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* save */
+	gcm_profile_save (profile, "dave.icc", &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	g_object_unref (profile);
+
+	/* verify values */
+	profile = gcm_profile_new ();
+	file = g_file_new_for_path ("dave.icc");
+	ret = gcm_profile_parse (profile, file, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	g_assert_cmpstr (gcm_profile_get_copyright (profile), ==, "No copyright, use freely");
+	g_assert_cmpstr (gcm_profile_get_manufacturer (profile), ==, NULL);
+	g_assert_cmpstr (gcm_profile_get_model (profile), ==, NULL);
+	g_assert_cmpstr (gcm_profile_get_description (profile), ==, "RGB built-in");
+	g_assert_cmpint (gcm_profile_get_kind (profile), ==, GCM_PROFILE_KIND_DISPLAY_DEVICE);
+	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, GCM_COLORSPACE_RGB);
+	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 5000);
+	g_assert (gcm_profile_get_has_vcgt (profile));
+
+	/* delete temp file */
+	ret = g_file_delete (file, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	g_object_unref (file);
 	g_object_unref (profile);
 }
 
