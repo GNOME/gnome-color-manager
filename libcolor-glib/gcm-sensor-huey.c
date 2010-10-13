@@ -706,6 +706,8 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 						   2000.0f,
 						   HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR);
 
+	egg_debug ("finished values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_result.X, color_result.Y, color_result.Z);
+
 	/* save result */
 	tmp = g_new0 (GcmColorXYZ, 1);
 	gcm_color_copy_XYZ (&color_result, tmp);
