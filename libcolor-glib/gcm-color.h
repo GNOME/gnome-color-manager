@@ -87,6 +87,10 @@ void		 gcm_color_set_RGB			(GcmColorRGB		*dest,
 							 gdouble		 R,
 							 gdouble		 G,
 							 gdouble		 B);
+void		 gcm_color_set_Yxy			(GcmColorYxy		*dest,
+							 gdouble		 Y,
+							 gdouble		 x,
+							 gdouble		 y);
 void		 gcm_color_copy_XYZ			(const GcmColorXYZ	*src,
 							 GcmColorXYZ		*dest);
 void		 gcm_color_copy_Yxy			(const GcmColorYxy	*src,

@@ -183,6 +183,25 @@ gcm_color_set_RGB (GcmColorRGB *dest, gdouble R, gdouble G, gdouble B)
 }
 
 /**
+ * gcm_color_set_Yxy:
+ * @dest: the destination color
+ * @Y: component value
+ * @x: component value
+ * @y: component value
+ *
+ * Initialises a color value.
+ **/
+void
+gcm_color_set_Yxy (GcmColorYxy *dest, gdouble Y, gdouble x, gdouble y)
+{
+	g_return_if_fail (dest != NULL);
+
+	dest->Y = Y;
+	dest->x = x;
+	dest->y = y;
+}
+
+/**
  * gcm_color_copy_XYZ:
  * @src: the source color
  * @dest: the destination color
