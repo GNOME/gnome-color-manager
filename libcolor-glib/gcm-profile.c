@@ -938,6 +938,14 @@ gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
 		goto out;
 	}
 
+	/* this is all we support writing */
+	if (priv->colorspace == GCM_COLORSPACE_RGB) {
+		cmsSetColorSpace (priv->lcms_profile, cmsSigRgbData);
+		cmsSetPCS (priv->lcms_profile, cmsSigLabData);
+	}
+	if (priv->kind == GCM_PROFILE_KIND_DISPLAY_DEVICE)
+		cmsSetDeviceClass (priv->lcms_profile, cmsSigDisplayClass);
+
 	/* write text data */
 	if (priv->description != NULL) {
 		ret = _cmsWriteTagTextAscii (priv->lcms_profile,
