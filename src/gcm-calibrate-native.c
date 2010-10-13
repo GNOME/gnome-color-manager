@@ -222,26 +222,26 @@ gcm_calibrate_native_create_it8_file (GcmCalibrateNative *calibrate_native, GcmS
 		g_free (patch_name);
 	}
 
-	/* white */
-	source.R = 1.0;
-	source.G = 1.0;
-	source.B = 1.0;
-	gcm_calibrate_native_sample_add (array, "DMIN", &source);
-
-	/* grey ramp */
-	for (i=1; i<precision; i++) {
-		patch_name = g_strdup_printf ("GS%i", i+1);
-		source.R = 1.0f - (divisions * i);
-		source.G = 1.0f - (divisions * i);
-		source.B = 1.0f - (divisions * i);
-		gcm_calibrate_native_sample_add (array, patch_name, &source);
-		g_free (patch_name);
-	}
-
 	/* black */
 	source.R = 0.0;
 	source.G = 0.0;
 	source.B = 0.0;
+	gcm_calibrate_native_sample_add (array, "DMIN", &source);
+
+	/* grey ramp */
+	for (i=0; i<precision; i++) {
+		patch_name = g_strdup_printf ("GS%i", i+1);
+		source.R = divisions * i;
+		source.G = divisions * i;
+		source.B = divisions * i;
+		gcm_calibrate_native_sample_add (array, patch_name, &source);
+		g_free (patch_name);
+	}
+
+	/* white */
+	source.R = 1.0;
+	source.G = 1.0;
+	source.B = 1.0;
 	gcm_calibrate_native_sample_add (array, "DMAX", &source);
 
 	/* measure */
