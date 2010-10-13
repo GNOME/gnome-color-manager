@@ -1196,6 +1196,53 @@ out:
 }
 
 /**
+ * gcm_profile_set_vcgt_from_data:
+ * @profile: A valid #GcmProfile
+ * @red: red color data
+ * @green: green color data
+ * @blue: blue color data
+ * @size: the size of the color curves.
+ *
+ * Sets a VCGT curve of a specified size.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
+ **/
+gboolean
+gcm_profile_set_vcgt_from_data (GcmProfile *profile, guint16 *red, guint16 *green, guint16 *blue, guint size, GError **error)
+{
+	guint i;
+	gboolean ret = FALSE;
+	cmsToneCurve *vcgt_curve[3];
+	GcmProfilePrivate *priv = profile->priv;
+
+	/* not loaded or created */
+	if (priv->lcms_profile == NULL)
+		priv->lcms_profile = cmsCreateProfilePlaceholder (NULL);
+
+	/* print what we've got */
+	for (i=0; i<size; i++)
+		egg_debug ("VCGT%i = %i,%i,%i", i, red[i], green[i], blue[i]);
+
+	/* build tone curve */
+	vcgt_curve[0] = cmsBuildTabulatedToneCurve16 (NULL, size, red);
+	vcgt_curve[1] = cmsBuildTabulatedToneCurve16 (NULL, size, green);
+	vcgt_curve[2] = cmsBuildTabulatedToneCurve16 (NULL, size, blue);
+
+	/* write the tag */
+	ret = cmsWriteTag (priv->lcms_profile, cmsSigVcgtType, vcgt_curve);
+	for (i=0; i<3; i++)
+		cmsFreeToneCurve (vcgt_curve[i]);
+	if (!ret) {
+		g_set_error_literal (error, 1, 0, "Failed to set vcgt");
+		goto out;
+	}
+out:
+	return ret;
+}
+
+/**
  * gcm_profile_generate_curve:
  * @profile: A valid #GcmProfile
  * @size: the size of the curve to generate

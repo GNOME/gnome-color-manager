@@ -83,6 +83,12 @@ GcmClut		*gcm_profile_generate_vcgt		(GcmProfile	*profile,
 							 guint		 size);
 GcmClut		*gcm_profile_generate_curve		(GcmProfile	*profile,
 							 guint		 size);
+gboolean	 gcm_profile_set_vcgt_from_data		(GcmProfile	*profile,
+							 guint16	*red,
+							 guint16	*green,
+							 guint16	*blue,
+							 guint		 size,
+							 GError		**error);
 gboolean	 gcm_profile_create_from_chroma		(GcmProfile	*profile,
 							 gdouble	 gamma,
 							 const GcmColorYxy *red,
