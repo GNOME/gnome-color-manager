@@ -200,6 +200,8 @@ gcm_calibrate_argyll_get_sensor_image_attach (GcmCalibrateArgyll *calibrate_argy
 		return "hcfr-attach.svg";
 	if (sensor_kind == GCM_SENSOR_KIND_I1_PRO)
 		return "i1-attach.svg";
+	if (sensor_kind == GCM_SENSOR_KIND_DTP94)
+		return "dtp94-attach.svg";
 	return NULL;
 }
 

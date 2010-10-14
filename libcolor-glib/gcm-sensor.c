@@ -603,6 +603,8 @@ gcm_sensor_kind_to_string (GcmSensorKind sensor_kind)
 		return "dtp41";
 	if (sensor_kind == GCM_SENSOR_KIND_DTP51)
 		return "dtp51";
+	if (sensor_kind == GCM_SENSOR_KIND_DTP94)
+		return "dtp94";
 	if (sensor_kind == GCM_SENSOR_KIND_SPECTRO_SCAN)
 		return "spectro-scan";
 	if (sensor_kind == GCM_SENSOR_KIND_I1_PRO)
@@ -637,6 +639,8 @@ gcm_sensor_kind_from_string (const gchar *sensor_kind)
 		return GCM_SENSOR_KIND_DTP41;
 	if (g_strcmp0 (sensor_kind, "dtp51") == 0)
 		return GCM_SENSOR_KIND_DTP51;
+	if (g_strcmp0 (sensor_kind, "dtp94") == 0)
+		return GCM_SENSOR_KIND_DTP94;
 	if (g_strcmp0 (sensor_kind, "spectro-scan") == 0)
 		return GCM_SENSOR_KIND_SPECTRO_SCAN;
 	if (g_strcmp0 (sensor_kind, "i1-pro") == 0)
