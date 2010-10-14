@@ -1335,9 +1335,15 @@ gcm_profile_set_vcgt_from_data (GcmProfile *profile, guint16 *red, guint16 *gree
 	if (priv->lcms_profile == NULL)
 		priv->lcms_profile = cmsCreateProfilePlaceholder (NULL);
 
-	/* print what we've got */
-	for (i=0; i<size; i++)
-		egg_debug ("VCGT%i = %i,%i,%i", i, red[i], green[i], blue[i]);
+	/* check monotonic */
+	for (i=0; i<size-1; i++) {
+		if (red[i] > red[i+1] ||
+		    green[i] > green[i+1] ||
+		    blue[i] > blue[i+1]) {
+			g_set_error_literal (error, 1, 0, "CVGT data not monotonic");
+			goto out;
+		}
+	}
 
 	/* build tone curve */
 	vcgt_curve[0] = cmsBuildTabulatedToneCurve16 (NULL, size, red);
