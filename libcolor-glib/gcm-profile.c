@@ -878,7 +878,7 @@ out:
  * @file: A GFile pointing to a profile
  * @error: A #GError, or %NULL
  *
- * Parses a profile filename, filling in all the details possible.
+ * Parses a profile file, filling in all the details possible.
  *
  * Return value: %TRUE for success
  *
@@ -1120,7 +1120,10 @@ out:
 /**
  * gcm_profile_create_from_chroma:
  * @profile: A valid #GcmProfile
- * @filename: the data to parse
+ * @red: primary color data
+ * @green: primary color data
+ * @blue: primary color data
+ * @white: whitepoint data
  * @error: A #GError, or %NULL
  *
  * Saves the profile data to a file.
@@ -1484,6 +1487,9 @@ gcm_profile_file_monitor_changed_cb (GFileMonitor *monitor, GFile *file, GFile *
 	if (priv->file != NULL)
 		g_object_unref (priv->file);
 	priv->file = NULL;
+	g_free (priv->filename);
+	priv->filename = NULL;
+	g_object_notify (G_OBJECT (profile), "file");
 out:
 	return;
 }

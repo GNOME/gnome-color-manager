@@ -274,8 +274,9 @@ gcm_viewer_profile_delete_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 	GtkWidget *dialog;
 	GtkResponseType response;
 	GtkWindow *window;
-	gint retval;
-	const gchar *filename;
+	GError *error = NULL;
+	GFile *file = NULL;
+	gboolean ret;
 	GcmProfile *profile;
 	GtkTreeSelection *selection;
 	GtkTreeModel *model;
@@ -311,10 +312,13 @@ gcm_viewer_profile_delete_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 			    -1);
 
 	/* try to remove file */
-	filename = gcm_profile_get_filename (profile);
-	retval = g_unlink (filename);
-	if (retval != 0)
+	file = gcm_profile_get_file (profile);
+	ret = g_file_delete (file, NULL, &error);
+	if (!ret) {
+		egg_warning ("failed to be deleted: %s", error->message);
+		g_error_free (error);
 		goto out;
+	}
 out:
 	return;
 }
@@ -1019,6 +1023,24 @@ gcm_viewer_setup_graph_combobox (GcmViewerPrivate *viewer, GtkWidget *widget)
 }
 
 /**
+ * gcm_viewer_profile_store_added_cb:
+ **/
+static void
+gcm_viewer_profile_store_added_cb (GcmProfileStore *profile_store, GcmProfile *profile, GcmViewerPrivate *viewer)
+{
+	gcm_viewer_update_profile_list (viewer);
+}
+
+/**
+ * gcm_viewer_profile_store_removed_cb:
+ **/
+static void
+gcm_viewer_profile_store_removed_cb (GcmProfileStore *profile_store, GcmProfile *profile, GcmViewerPrivate *viewer)
+{
+	gcm_viewer_update_profile_list (viewer);
+}
+
+/**
  * main:
  **/
 int
@@ -1079,6 +1101,10 @@ main (int argc, char **argv)
 
 	/* maintain a list of profiles */
 	viewer->profile_store = gcm_profile_store_new ();
+	g_signal_connect (viewer->profile_store, "added",
+			  G_CALLBACK (gcm_viewer_profile_store_added_cb), viewer);
+	g_signal_connect (viewer->profile_store, "removed",
+			  G_CALLBACK (gcm_viewer_profile_store_removed_cb), viewer);
 
 	/* create list stores */
 	viewer->list_store_profiles = gtk_list_store_new (GCM_PROFILES_COLUMN_LAST, G_TYPE_STRING,

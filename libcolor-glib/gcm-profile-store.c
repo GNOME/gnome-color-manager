@@ -255,7 +255,7 @@ gcm_profile_store_add_profile (GcmProfileStore *profile_store, GFile *file)
 	/* add to array */
 	egg_debug ("parsed new profile '%s'", filename);
 	g_ptr_array_add (priv->profile_array, g_object_ref (profile));
-	g_signal_connect (profile, "notify::filename", G_CALLBACK(gcm_profile_store_notify_filename_cb), profile_store);
+	g_signal_connect (profile, "notify::file", G_CALLBACK(gcm_profile_store_notify_filename_cb), profile_store);
 
 	/* emit a signal */
 	egg_debug ("emit added (and changed): %s", filename);
