@@ -129,6 +129,8 @@ gcm_test_calibrate_func (void)
 	GcmCalibrate *calibrate;
 	gboolean ret;
 	GError *error = NULL;
+	gchar *model;
+	gchar *manufacturer;
 
 	calibrate = gcm_calibrate_new ();
 	g_assert (calibrate != NULL);
@@ -137,9 +139,12 @@ gcm_test_calibrate_func (void)
 	ret = gcm_calibrate_set_from_exif (GCM_CALIBRATE(calibrate), TESTDATADIR "/test.tif", &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	g_assert_cmpstr (gcm_calibrate_get_model_fallback (calibrate), ==, "NIKON D60");
-	g_assert_cmpstr (gcm_calibrate_get_manufacturer_fallback (calibrate), ==, "NIKON CORPORATION");
-
+	model = gcm_calibrate_get_profile_model (calibrate);
+	manufacturer = gcm_calibrate_get_profile_manufacturer (calibrate);
+	g_assert_cmpstr (model, ==, "NIKON D60");
+	g_assert_cmpstr (manufacturer, ==, "NIKON CORPORATION");
+	g_free (model);
+	g_free (manufacturer);
 	g_object_unref (calibrate);
 }
 

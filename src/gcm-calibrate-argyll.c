@@ -820,15 +820,12 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 	gchar **argv = NULL;
-	GDate *date = NULL;
 	gchar *copyright = NULL;
-	gchar *description_new = NULL;
+	gchar *description = NULL;
+	gchar *manufacturer = NULL;
+	gchar *model = NULL;
 	gchar *command = NULL;
 	gchar *basename = NULL;
-	const gchar *description = NULL;
-	const gchar *manufacturer = NULL;
-	const gchar *model = NULL;
-	gchar *device = NULL;
 	GPtrArray *array = NULL;
 	const gchar *title;
 	const gchar *message;
@@ -836,13 +833,13 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
-		      "device", &device,
 		      NULL);
 
-	/* get, returning fallbacks if nothing was set */
-	model = gcm_calibrate_get_model_fallback (GCM_CALIBRATE (calibrate_argyll));
-	manufacturer = gcm_calibrate_get_manufacturer_fallback (GCM_CALIBRATE (calibrate_argyll));
-	description = gcm_calibrate_get_description_fallback (GCM_CALIBRATE (calibrate_argyll));
+	/* get profile text data */
+	copyright = gcm_calibrate_get_profile_copyright (GCM_CALIBRATE (calibrate_argyll));
+	description = gcm_calibrate_get_profile_description (GCM_CALIBRATE (calibrate_argyll));
+	model = gcm_calibrate_get_profile_model (GCM_CALIBRATE (calibrate_argyll));
+	manufacturer = gcm_calibrate_get_profile_manufacturer (GCM_CALIBRATE (calibrate_argyll));
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("colprof", error);
@@ -850,16 +847,6 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 		ret = FALSE;
 		goto out;
 	}
-
-	/* create date and set it to now */
-	date = g_date_new ();
-	g_date_set_time_t (date, time (NULL));
-
-        /* get description */
-	description_new = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", device, description, date->year, date->month, date->day);
-
-	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" - YOU NEED TO STICK TO ASCII */
-	copyright = g_strdup_printf ("%s %04i %s", _("Copyright (c)"), date->year, g_get_real_name ());
 
 	/* TRANSLATORS: title, a profile is a ICC file */
 	title = _("Generating the profile");
@@ -881,7 +868,7 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	g_ptr_array_add (array, g_strdup ("-v"));
 	g_ptr_array_add (array, g_strdup_printf ("-A%s", manufacturer));
 	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
-	g_ptr_array_add (array, g_strdup_printf ("-D%s", description_new));
+	g_ptr_array_add (array, g_strdup_printf ("-D%s", description));
 	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
 	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_get_quality_arg (calibrate_argyll)));
 	g_ptr_array_add (array, g_strdup ("-as"));
@@ -922,13 +909,12 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
-	if (date != NULL)
-		g_date_free (date);
 	g_free (basename);
 	g_free (command);
-	g_free (description_new);
-	g_free (device);
 	g_free (copyright);
+	g_free (description);
+	g_free (manufacturer);
+	g_free (model);
 	g_strfreev (argv);
 	return ret;
 }
@@ -1160,16 +1146,13 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 	gchar **argv = NULL;
-	GDate *date = NULL;
-	gchar *description_tmp = NULL;
-	const gchar *description;
-	gchar *copyright = NULL;
 	GPtrArray *array = NULL;
 	gchar *command = NULL;
 	gchar *basename = NULL;
-	const gchar *manufacturer;
-	const gchar *model;
-	const gchar *device;
+	gchar *copyright = NULL;
+	gchar *description = NULL;
+	gchar *manufacturer = NULL;
+	gchar *model = NULL;
 	const gchar *title;
 	const gchar *message;
 	GcmCalibrateReferenceKind reference_kind;
@@ -1180,11 +1163,11 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 		      "reference-kind", &reference_kind,
 		      NULL);
 
-	/* get, returning fallbacks if nothing was set */
-	model = gcm_calibrate_get_model_fallback (GCM_CALIBRATE (calibrate_argyll));
-	manufacturer = gcm_calibrate_get_manufacturer_fallback (GCM_CALIBRATE (calibrate_argyll));
-	description = gcm_calibrate_get_description_fallback (GCM_CALIBRATE (calibrate_argyll));
-	device = gcm_calibrate_get_device_fallback (GCM_CALIBRATE (calibrate_argyll));
+	/* get profile text data */
+	copyright = gcm_calibrate_get_profile_copyright (GCM_CALIBRATE (calibrate_argyll));
+	description = gcm_calibrate_get_profile_description (GCM_CALIBRATE (calibrate_argyll));
+	model = gcm_calibrate_get_profile_model (GCM_CALIBRATE (calibrate_argyll));
+	manufacturer = gcm_calibrate_get_profile_manufacturer (GCM_CALIBRATE (calibrate_argyll));
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("colprof", error);
@@ -1192,16 +1175,6 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 		ret = FALSE;
 		goto out;
 	}
-
-	/* create date and set it to now */
-	date = g_date_new ();
-	g_date_set_time_t (date, time (NULL));
-
-        /* create a long description */
-	description_tmp = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", device, description, date->year, date->month, date->day);
-
-	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" */
-	copyright = g_strdup_printf ("%s %04i %s", _("Copyright (c)"), date->year, g_get_real_name ());
 
 	/* TRANSLATORS: title, a profile is a ICC file */
 	title = _("Generating the profile");
@@ -1223,7 +1196,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	g_ptr_array_add (array, g_strdup ("-v"));
 	g_ptr_array_add (array, g_strdup_printf ("-A%s", manufacturer));
 	g_ptr_array_add (array, g_strdup_printf ("-M%s", model));
-	g_ptr_array_add (array, g_strdup_printf ("-D%s", description_tmp));
+	g_ptr_array_add (array, g_strdup_printf ("-D%s", description));
 	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
 	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_get_quality_arg (calibrate_argyll)));
 
@@ -1269,10 +1242,10 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
-	if (date != NULL)
-		g_date_free (date);
-	g_free (description_tmp);
 	g_free (copyright);
+	g_free (description);
+	g_free (manufacturer);
+	g_free (model);
 	g_free (basename);
 	g_free (command);
 	g_strfreev (argv);

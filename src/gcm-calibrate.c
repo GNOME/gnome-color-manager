@@ -127,59 +127,85 @@ out:
 }
 
 /**
- * gcm_calibrate_get_model_fallback:
+ * gcm_calibrate_get_device_fallback:
  **/
-const gchar *
-gcm_calibrate_get_model_fallback (GcmCalibrate *calibrate)
+gchar *
+gcm_calibrate_get_profile_copyright (GcmCalibrate *calibrate)
 {
-	GcmCalibratePrivate *priv = calibrate->priv;
-	if (priv->model != NULL)
-		return priv->model;
+	gchar *text;
+	GDate *date = NULL;
 
-	/* TRANSLATORS: this is saved in the profile */
-	return _("Unknown model");
-}
+	/* create date and set it to now */
+	date = g_date_new ();
+	g_date_set_time_t (date, time (NULL));
 
-/**
- * gcm_calibrate_get_description_fallback:
- **/
-const gchar *
-gcm_calibrate_get_description_fallback (GcmCalibrate *calibrate)
-{
-	GcmCalibratePrivate *priv = calibrate->priv;
-	if (priv->description != NULL)
-		return priv->description;
+	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" - YOU NEED TO USE ASCII ONLY */
+	text = g_strdup_printf ("%s %04i %s", _("Copyright (c)"), date->year, g_get_real_name ());
 
-	/* TRANSLATORS: this is saved in the profile */
-	return _("Unknown description");
-}
-
-/**
- * gcm_calibrate_get_manufacturer_fallback:
- **/
-const gchar *
-gcm_calibrate_get_manufacturer_fallback (GcmCalibrate *calibrate)
-{
-	GcmCalibratePrivate *priv = calibrate->priv;
-	if (priv->manufacturer != NULL)
-		return priv->manufacturer;
-
-	/* TRANSLATORS: this is saved in the profile */
-	return _("Unknown manufacturer");
+	g_date_free (date);
+	return text;
 }
 
 /**
  * gcm_calibrate_get_device_fallback:
  **/
-const gchar *
-gcm_calibrate_get_device_fallback (GcmCalibrate *calibrate)
+gchar *
+gcm_calibrate_get_profile_description (GcmCalibrate *calibrate)
+{
+	gchar *text;
+	GDate *date = NULL;
+	const gchar *description;
+	GcmCalibratePrivate *priv = calibrate->priv;
+
+	/* create date and set it to now */
+	date = g_date_new ();
+	g_date_set_time_t (date, time (NULL));
+
+	/* we've got something set */
+	if (priv->description != NULL) {
+		description = priv->description;
+	} else {
+		/* TRANSLATORS: this is saved in the profile */
+		description = _("Unknown description");
+	}
+
+	/* get description */
+	text = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", priv->device, description, date->year, date->month, date->day);
+
+	g_date_free (date);
+	return text;
+}
+
+/**
+ * gcm_calibrate_get_device_fallback:
+ **/
+gchar *
+gcm_calibrate_get_profile_model (GcmCalibrate *calibrate)
 {
 	GcmCalibratePrivate *priv = calibrate->priv;
-	if (priv->device != NULL)
-		return priv->device;
+
+	/* we've got something set */
+	if (priv->model != NULL)
+		return g_strdup (priv->model);
 
 	/* TRANSLATORS: this is saved in the profile */
-	return _("Unknown device");
+	return g_strdup (_("Unknown model"));
+}
+
+/**
+ * gcm_calibrate_get_device_fallback:
+ **/
+gchar *
+gcm_calibrate_get_profile_manufacturer (GcmCalibrate *calibrate)
+{
+	GcmCalibratePrivate *priv = calibrate->priv;
+
+	/* we've got something set */
+	if (priv->manufacturer != NULL)
+		return g_strdup (priv->manufacturer);
+
+	/* TRANSLATORS: this is saved in the profile */
+	return g_strdup (_("Unknown manufacturer"));
 }
 
 /**
@@ -216,6 +242,15 @@ const gchar *
 gcm_calibrate_get_working_path (GcmCalibrate *calibrate)
 {
 	return calibrate->priv->working_path;
+}
+
+/**
+ * gcm_calibrate_get_basename:
+ **/
+const gchar *
+gcm_calibrate_get_basename (GcmCalibrate *calibrate)
+{
+	return calibrate->priv->basename;
 }
 
 /**

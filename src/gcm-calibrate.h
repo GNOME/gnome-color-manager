@@ -135,12 +135,14 @@ gboolean	 gcm_calibrate_set_from_device		(GcmCalibrate	*calibrate,
 gboolean	 gcm_calibrate_set_from_exif		(GcmCalibrate	*calibrate,
 							 const gchar	*filename,
 							 GError		**error);
-const gchar	*gcm_calibrate_get_model_fallback	(GcmCalibrate	*calibrate);
-const gchar	*gcm_calibrate_get_description_fallback	(GcmCalibrate	*calibrate);
-const gchar	*gcm_calibrate_get_manufacturer_fallback (GcmCalibrate	*calibrate);
-const gchar	*gcm_calibrate_get_device_fallback	(GcmCalibrate	*calibrate);
 const gchar	*gcm_calibrate_get_filename_result	(GcmCalibrate	*calibrate);
 const gchar	*gcm_calibrate_get_working_path		(GcmCalibrate	*calibrate);
+const gchar	*gcm_calibrate_get_basename		(GcmCalibrate	*calibrate);
+
+gchar		*gcm_calibrate_get_profile_copyright	(GcmCalibrate	*calibrate);
+gchar		*gcm_calibrate_get_profile_description	(GcmCalibrate	*calibrate);
+gchar		*gcm_calibrate_get_profile_model	(GcmCalibrate	*calibrate);
+gchar		*gcm_calibrate_get_profile_manufacturer	(GcmCalibrate	*calibrate);
 
 G_END_DECLS
 
