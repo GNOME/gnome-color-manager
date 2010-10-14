@@ -289,6 +289,14 @@ cc_color_panel_calibrate_display (CcColorPanel *panel, GcmCalibrate *calibrate)
 		goto out;
 	}
 
+	/* clear any VCGT */
+	ret = gcm_device_xrandr_reset (GCM_DEVICE_XRANDR (panel->priv->current_device), &error);
+	if (!ret) {
+		egg_warning ("failed to reset so we can calibrate: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
 	/* run each task in order */
 	window = GTK_WINDOW(panel->priv->main_window);
 	ret = gcm_calibrate_display (calibrate, window, &error);

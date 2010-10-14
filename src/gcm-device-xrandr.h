@@ -60,6 +60,8 @@ const gchar	*gcm_device_xrandr_get_eisa_id		(GcmDeviceXrandr	*device_xrandr);
 const gchar	*gcm_device_xrandr_get_edid_md5		(GcmDeviceXrandr	*device_xrandr);
 gboolean	 gcm_device_xrandr_get_xrandr13		(GcmDeviceXrandr	*device_xrandr);
 gboolean	 gcm_device_xrandr_is_primary		(GcmDeviceXrandr	*device_xrandr);
+gboolean	 gcm_device_xrandr_reset		(GcmDeviceXrandr	*device_xrandr,
+							 GError			**error);
 
 G_END_DECLS
 

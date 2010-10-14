@@ -299,7 +299,7 @@ out:
 }
 
 /**
- * gcm_device_xrandr_apply_for_output:
+ * gcm_device_xrandr_get_xrandr13:
  * @device_xrandr: a valid #GcmDeviceXrandr instance
  *
  * Return value: %TRUE if the display supports XRandr 1.3;
@@ -463,6 +463,60 @@ gcm_device_xrandr_is_primary (GcmDeviceXrandr *device_xrandr)
 	/* is the monitor our primary monitor */
 	gcm_x11_output_get_position (output, &x, &y);
 	ret = (x == 0 && y == 0);
+out:
+	return ret;
+}
+
+/**
+ * gcm_device_xrandr_reset:
+ *
+ * Clears any VCGT table, so we're ready for profiling
+ *
+ * Return value: %TRUE for success;
+ **/
+gboolean
+gcm_device_xrandr_reset (GcmDeviceXrandr *device_xrandr, GError **error)
+{
+	const gchar *id;
+	const gchar *output_name;
+	gboolean ret = FALSE;
+	GcmClut *clut = NULL;
+	GcmDeviceKind kind;
+	GcmX11Output *output;
+	guint size;
+	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
+
+	/* do no set the gamma for non-display types */
+	id = gcm_device_get_id (GCM_DEVICE (device_xrandr));
+	kind = gcm_device_get_kind (GCM_DEVICE (device_xrandr));
+	if (kind != GCM_DEVICE_KIND_DISPLAY) {
+		g_set_error (error, 1, 0, "not a display: %s", id);
+		goto out;
+	}
+
+	/* should be set for display types */
+	output_name = gcm_device_xrandr_get_native_device (device_xrandr);
+	if (output_name == NULL || output_name[0] == '\0') {
+		g_set_error (error, 1, 0, "no output name for display: %s", id);
+		goto out;
+	}
+
+	/* get GcmX11Output for this device */
+	output = gcm_x11_screen_get_output_by_name (priv->screen, output_name, error);
+	if (output == NULL)
+		goto out;
+	size = gcm_x11_output_get_gamma_size (output);
+
+	/* create a linear ramp */
+	clut = gcm_clut_new ();
+	g_object_set (clut,
+		      "size", size,
+		      NULL);
+
+	/* actually set the gamma */
+	ret = gcm_device_xrandr_apply_for_output (device_xrandr, output, clut, error);
+	if (!ret)
+		goto out;
 out:
 	return ret;
 }
