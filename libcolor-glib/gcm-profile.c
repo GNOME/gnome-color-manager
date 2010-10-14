@@ -1230,6 +1230,10 @@ gcm_profile_set_vcgt_from_data (GcmProfile *profile, guint16 *red, guint16 *gree
 	vcgt_curve[1] = cmsBuildTabulatedToneCurve16 (NULL, size, green);
 	vcgt_curve[2] = cmsBuildTabulatedToneCurve16 (NULL, size, blue);
 
+	/* smooth it */
+	for (i=0; i<3; i++)
+		cmsSmoothToneCurve (vcgt_curve[i], 5);
+
 	/* write the tag */
 	ret = cmsWriteTag (priv->lcms_profile, cmsSigVcgtType, vcgt_curve);
 	for (i=0; i<3; i++)
