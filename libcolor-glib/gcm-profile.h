@@ -89,6 +89,14 @@ gboolean	 gcm_profile_set_vcgt_from_data		(GcmProfile	*profile,
 							 guint16	*blue,
 							 guint		 size,
 							 GError		**error);
+gboolean	 gcm_profile_set_whitepoint		(GcmProfile	*profile,
+							 const GcmColorXYZ *whitepoint,
+							 GError		**error);
+gboolean	 gcm_profile_set_primaries		(GcmProfile	*profile,
+							 const GcmColorXYZ *red,
+							 const GcmColorXYZ *green,
+							 const GcmColorXYZ *blue,
+							 GError		**error);
 gboolean	 gcm_profile_create_from_chroma		(GcmProfile	*profile,
 							 gdouble	 gamma,
 							 const GcmColorYxy *red,

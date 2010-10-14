@@ -940,6 +940,94 @@ _cmsWriteTagTextAscii (cmsHPROFILE lcms_profile, cmsTagSignature sig, const gcha
 }
 
 /**
+ * gcm_profile_set_whitepoint:
+ * @profile: A valid #GcmProfile
+ * @whitepoint: the whitepoint
+ * @error: A #GError, or %NULL
+ *
+ * Saves the whitepoint data to a file.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
+ **/
+gboolean
+gcm_profile_set_whitepoint (GcmProfile *profile, const GcmColorXYZ *whitepoint, GError **error)
+{
+	gboolean ret;
+	GcmProfilePrivate *priv = profile->priv;
+
+	/* not loaded */
+	if (priv->lcms_profile == NULL)
+		priv->lcms_profile = cmsCreateProfilePlaceholder (NULL);
+
+	/* copy */
+	gcm_color_copy_XYZ (whitepoint, priv->white);
+
+	/* write tag */
+	ret = cmsWriteTag (priv->lcms_profile, cmsSigMediaWhitePointTag, priv->white);
+	if (!ret) {
+		g_set_error_literal (error, 1, 0, "failed to set write cmsSigMediaWhitePointTag");
+		goto out;
+	}
+out:
+	return ret;
+}
+
+/**
+ * gcm_profile_set_primaries:
+ * @profile: A valid #GcmProfile
+ * @red: the red primary
+ * @green: the green primary
+ * @blue: the blue primary
+ * @error: A #GError, or %NULL
+ *
+ * Saves the primaries data to a file.
+ *
+ * Return value: %TRUE for success
+ *
+ * Since: 0.0.1
+ **/
+gboolean
+gcm_profile_set_primaries (GcmProfile *profile,
+			   const GcmColorXYZ *red,
+			   const GcmColorXYZ *green,
+			   const GcmColorXYZ *blue,
+			   GError **error)
+{
+	gboolean ret;
+	GcmProfilePrivate *priv = profile->priv;
+
+	/* not loaded */
+	if (priv->lcms_profile == NULL)
+		priv->lcms_profile = cmsCreateProfilePlaceholder (NULL);
+
+	/* copy */
+	gcm_color_copy_XYZ (red, priv->red);
+	gcm_color_copy_XYZ (green, priv->green);
+	gcm_color_copy_XYZ (blue, priv->blue);
+
+	/* write tags */
+	ret = cmsWriteTag (priv->lcms_profile, cmsSigRedMatrixColumnTag, priv->red);
+	if (!ret) {
+		g_set_error_literal (error, 1, 0, "failed to set write cmsSigRedMatrixColumnTag");
+		goto out;
+	}
+	ret = cmsWriteTag (priv->lcms_profile, cmsSigGreenMatrixColumnTag, priv->green);
+	if (!ret) {
+		g_set_error_literal (error, 1, 0, "failed to set write cmsSigGreenMatrixColumnTag");
+		goto out;
+	}
+	ret = cmsWriteTag (priv->lcms_profile, cmsSigBlueMatrixColumnTag, priv->blue);
+	if (!ret) {
+		g_set_error_literal (error, 1, 0, "failed to set write cmsSigBlueMatrixColumnTag");
+		goto out;
+	}
+out:
+	return ret;
+}
+
+/**
  * gcm_profile_save:
  * @profile: A valid #GcmProfile
  * @filename: the data to parse
