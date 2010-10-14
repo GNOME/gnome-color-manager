@@ -627,6 +627,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	cmsHTRANSFORM transform;
 	gchar *text = NULL;
 	gchar *checksum = NULL;
+	gboolean got_illuminants = FALSE;
 	GcmProfilePrivate *priv = profile->priv;
 
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
@@ -751,8 +752,24 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	}
 	gcm_profile_set_colorspace (profile, colorspace);
 
-	/* get the illuminants by running it through the profile */
+	/* get the illuminants from the primaries */
 	if (color_space == cmsSigRgbData) {
+		cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigRedMatrixColumnTag);
+		if (cie_xyz != NULL) {
+			/* assume that if red is present, the green and blue are too */
+			gcm_color_copy_XYZ ((GcmColorXYZ *) cie_xyz, (GcmColorXYZ *) &cie_illum.Red);
+			cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigGreenMatrixColumnTag);
+			gcm_color_copy_XYZ ((GcmColorXYZ *) cie_xyz, (GcmColorXYZ *) &cie_illum.Green);
+			cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigBlueMatrixColumnTag);
+			gcm_color_copy_XYZ ((GcmColorXYZ *) cie_xyz, (GcmColorXYZ *) &cie_illum.Blue);
+			got_illuminants = TRUE;
+		} else {
+			egg_debug ("failed to get illuminants");
+		}
+	}
+
+	/* get the illuminants by running it through the profile */
+	if (!got_illuminants && color_space == cmsSigRgbData) {
 		gdouble rgb_values[3];
 
 		/* create a transform from profile to XYZ */
@@ -780,7 +797,9 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 
 			/* we're done */
 			cmsDeleteTransform (transform);
-			ret = TRUE;
+			got_illuminants = TRUE;
+		} else {
+			egg_debug ("failed to run through profile");
 		}
 
 		/* no more need for the output profile */
@@ -788,7 +807,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	}
 
 	/* we've got valid values */
-	if (ret) {
+	if (got_illuminants) {
 		gcm_color_set_XYZ (priv->red,
 				   cie_illum.Red.X, cie_illum.Red.Y, cie_illum.Red.Z);
 		gcm_color_set_XYZ (priv->green,
@@ -797,6 +816,9 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 				   cie_illum.Blue.X, cie_illum.Blue.Y, cie_illum.Blue.Z);
 	} else {
 		egg_debug ("failed to get luminance values");
+		gcm_color_clear_XYZ (priv->red);
+		gcm_color_clear_XYZ (priv->green);
+		gcm_color_clear_XYZ (priv->blue);
 	}
 
 	/* get the profile created time and date */
