@@ -654,25 +654,29 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	/* get white point */
 	cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigMediaWhitePointTag);
 	if (cie_xyz != NULL) {
-		GcmColorYxy yxy;
 		cmsCIExyY xyY;
 		gdouble temp_float;
 		gcm_color_set_XYZ (priv->white,
 				   cie_xyz->X, cie_xyz->Y, cie_xyz->Z);
 
 		/* convert to lcms xyY values */
-		gcm_color_convert_XYZ_to_Yxy (priv->white, &yxy);
-		xyY.x = yxy.x;
-		xyY.y = yxy.y;
-		xyY.Y = yxy.Y;
-		cmsTempFromWhitePoint (&temp_float, &xyY);
+		cmsXYZ2xyY (&xyY, cie_xyz);
+		egg_debug ("whitepoint = %f,%f [%f]", xyY.x, xyY.y, xyY.Y);
 
-		/* round to nearest 100K */
-		priv->temperature = (((guint) temp_float) / 100) * 100;
-
+		/* get temperature */
+		ret = cmsTempFromWhitePoint (&temp_float, &xyY);
+		if (ret) {
+			/* round to nearest 100K */
+			priv->temperature = (((guint) temp_float) / 100) * 100;
+			egg_debug ("color temperature = %i", priv->temperature);
+		} else {
+			priv->temperature = 0;
+			egg_warning ("failed to get color temperature");
+		}
 	} else {
+		/* this is no big suprise, some profiles don't have these */
 		gcm_color_clear_XYZ (priv->white);
-		egg_warning ("failed to get white point");
+		egg_debug ("failed to get white point");
 	}
 
 	/* get black point */
@@ -681,8 +685,8 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 		gcm_color_set_XYZ (priv->black,
 				   cie_xyz->X, cie_xyz->Y, cie_xyz->Z);
 	} else {
+		/* this is no big suprise, most profiles don't have these */
 		gcm_color_clear_XYZ (priv->black);
-		egg_warning ("failed to get black point");
 	}
 
 	/* get the profile kind */
