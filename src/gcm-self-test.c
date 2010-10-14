@@ -163,18 +163,77 @@ gcm_test_calibrate_native_func (void)
 	gboolean ret;
 	GError *error = NULL;
 	GcmCalibrate *calibrate;
+	GcmClient *client;
+	GcmX11Screen *screen;
+	GcmDevice *device;
+	gchar *contents;
+	gchar *filename;
 
 	calibrate = gcm_calibrate_native_new ();
 	g_assert (calibrate != NULL);
 
 	g_object_set (calibrate,
-		      "output-name", "LVDS1",
+		      "output-name", "LVDS-1",
 		      NULL);
 
+	/* create a virtual device we can "calibrate" */
+	client = gcm_client_new ();
+	g_assert (client != NULL);
+	g_setenv ("GCM_TEST", "1", TRUE);
+	filename = gcm_utils_get_default_config_location ();
+	contents = g_strdup_printf ("[xrandr_hewlett_packard_hp_lp2480zx_3cm82200kv]\n"
+				    "serial=3CM82200KV\n"
+				    "model=HP LP2480zx\n"
+				    "manufacturer=Hewlett Packard\n"
+				    "title=Hewlett Packard - HP LP2480zx - 24\"\n"
+				    "type=display\n"
+				    "colorspace=rgb");
+	ret = g_file_set_contents (filename, contents, -1, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	ret = gcm_client_coldplug (client, GCM_CLIENT_COLDPLUG_SAVED, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	device = gcm_client_get_device_by_id (client, "xrandr_hewlett_packard_hp_lp2480zx_3cm82200kv");
+	g_assert (device != NULL);
+
+	/* set device */
+	g_object_set (device,
+		      "native-device", "LVDS-1",
+		      NULL);
+	ret = gcm_calibrate_set_from_device (calibrate, device, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* use a screen */
+	screen = gcm_x11_screen_new ();
+	ret = gcm_x11_screen_assign (screen, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* clear any VCGT */
+	ret = gcm_device_xrandr_reset (GCM_DEVICE_XRANDR (device), &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	/* do the calibration */
 	ret = gcm_calibrate_display (calibrate, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
+	/* be good and restore the settings if they changed */
+	ret = g_spawn_command_line_sync (BINDIR "/gcm-apply", NULL, NULL, NULL, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+
+	g_object_unref (client);
+	g_object_unref (device);
+	g_unlink (filename);
+	g_free (contents);
+	g_free (filename);
+	g_object_unref (screen);
 	g_object_unref (calibrate);
 }
 
