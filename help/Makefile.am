@@ -16,5 +16,5 @@ DOC_FIGURES =					\
 	figures/gcm-set-default.png		\
 	figures/gcm-import.png
 
-DOC_LINGUAS = cs de el es fr id ja ru zh_CN
+DOC_LINGUAS = cs de el es fr id ja ru sl zh_CN
 
