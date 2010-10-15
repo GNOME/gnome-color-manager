@@ -339,9 +339,6 @@ gcm_color_convert_XYZ_to_Yxy (const GcmColorXYZ *src, GcmColorYxy *dest)
 	g_return_if_fail (src != NULL);
 	g_return_if_fail (dest != NULL);
 
-	g_assert (src->X >= 0.0f);
-	g_assert (src->Y >= 0.0f);
-	g_assert (src->Z >= 0.0f);
 	g_assert (src->X < 96.0f);
 	g_assert (src->Y < 100.0f);
 	g_assert (src->Z < 109.0f);
