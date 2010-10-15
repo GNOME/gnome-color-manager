@@ -368,7 +368,7 @@ static gboolean
 gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *filename, guint vcgt_size, GError **error)
 {
 	gboolean ret = FALSE;
-	guint64 rampsize;
+	guint rampsize;
 	cmsHANDLE it8_handle;
 	cmsCIExyYTRIPLE primaries;
 	cmsCIExyY whitepoint;
@@ -468,7 +468,7 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 		g_set_error_literal (error, 1, 0, "no gray ramp found");
 		goto out;
 	}
-	egg_debug ("rampsize = %li", rampsize);
+	egg_debug ("rampsize = %i", rampsize);
 
 	/* create arrays for the sampled and processed data */
 	for (j=0; j<3; j++) {
