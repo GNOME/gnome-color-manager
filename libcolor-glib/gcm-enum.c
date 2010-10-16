@@ -32,6 +32,8 @@
 
 /**
  * gcm_intent_to_string:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_intent_to_string (GcmIntent intent)
@@ -49,6 +51,8 @@ gcm_intent_to_string (GcmIntent intent)
 
 /**
  * gcm_intent_from_string:
+ *
+ * Since: 2.91.1
  **/
 GcmIntent
 gcm_intent_from_string (const gchar *intent)
@@ -66,6 +70,8 @@ gcm_intent_from_string (const gchar *intent)
 
 /**
  * gcm_intent_from_string:
+ *
+ * Since: 2.91.1
  **/
 GcmProfileKind
 gcm_profile_kind_from_string (const gchar *profile_kind)
@@ -89,6 +95,8 @@ gcm_profile_kind_from_string (const gchar *profile_kind)
 
 /**
  * gcm_profile_kind_to_string:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_profile_kind_to_string (GcmProfileKind kind)
@@ -112,6 +120,8 @@ gcm_profile_kind_to_string (GcmProfileKind kind)
 
 /**
  * gcm_colorspace_to_string:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_colorspace_to_string (GcmColorspace colorspace)
@@ -141,6 +151,8 @@ gcm_colorspace_to_string (GcmColorspace colorspace)
 
 /**
  * gcm_colorspace_from_string:
+ *
+ * Since: 2.91.1
  **/
 GcmColorspace
 gcm_colorspace_from_string (const gchar *colorspace)

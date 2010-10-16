@@ -123,6 +123,8 @@ gcm_sensor_client_class_init (GcmSensorClientClass *klass)
 
 	/**
 	 * GcmSensorClient::changed:
+	 *
+	 * Since: 2.91.1
 	 **/
 	signals[SIGNAL_CHANGED] =
 		g_signal_new ("changed",
@@ -136,6 +138,8 @@ gcm_sensor_client_class_init (GcmSensorClientClass *klass)
 
 /**
  * gcm_sensor_client_get_sensor:
+ *
+ * Since: 2.91.1
  **/
 GcmSensor *
 gcm_sensor_client_get_sensor (GcmSensorClient *sensor_client)
@@ -145,6 +149,8 @@ gcm_sensor_client_get_sensor (GcmSensorClient *sensor_client)
 
 /**
  * gcm_sensor_client_get_present:
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_sensor_client_get_present (GcmSensorClient *sensor_client)
@@ -305,6 +311,8 @@ gcm_sensor_client_finalize (GObject *object)
  * gcm_sensor_client_new:
  *
  * Return value: a new GcmSensorClient object.
+ *
+ * Since: 2.91.1
  **/
 GcmSensorClient *
 gcm_sensor_client_new (void)

@@ -79,7 +79,7 @@ G_DEFINE_TYPE (GcmX11Output, gcm_x11_output, G_TYPE_OBJECT)
  *
  * Sets the display.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_x11_output_set_display (GcmX11Output *output, gpointer display)
@@ -96,7 +96,7 @@ gcm_x11_output_set_display (GcmX11Output *output, gpointer display)
  *
  * Sets the interal panel name.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_x11_output_set_name (GcmX11Output *output, const gchar *name)
@@ -114,7 +114,7 @@ gcm_x11_output_set_name (GcmX11Output *output, const gchar *name)
  *
  * Return value: the panel name
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_x11_output_get_name (GcmX11Output *output)
@@ -130,7 +130,7 @@ gcm_x11_output_get_name (GcmX11Output *output)
  *
  * Sets the ID of the output.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_x11_output_set_id (GcmX11Output *output, guint id)
@@ -147,7 +147,7 @@ gcm_x11_output_set_id (GcmX11Output *output, guint id)
  *
  * Sets the CRTC (specific control on an output) id.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_x11_output_set_crtc_id (GcmX11Output *output, guint crtc_id)
@@ -164,7 +164,7 @@ gcm_x11_output_set_crtc_id (GcmX11Output *output, guint crtc_id)
  *
  * Sets the size of the gamma ramp.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_x11_output_set_gamma_size (GcmX11Output *output, guint gamma_size)
@@ -182,7 +182,7 @@ gcm_x11_output_set_gamma_size (GcmX11Output *output, guint gamma_size)
  *
  * Return value: the size. This is normally 256 or 1024.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 guint
 gcm_x11_output_get_gamma_size (GcmX11Output *output)
@@ -198,7 +198,7 @@ gcm_x11_output_get_gamma_size (GcmX11Output *output)
  *
  * Sets if the panel is the most important primary screen.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_x11_output_set_primary (GcmX11Output *output, gboolean primary)
@@ -217,7 +217,7 @@ gcm_x11_output_set_primary (GcmX11Output *output, gboolean primary)
  *
  * Return value: %TRUE for the primary screen.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_output_get_primary (GcmX11Output *output)
@@ -235,7 +235,7 @@ gcm_x11_output_get_primary (GcmX11Output *output)
  * plugged into the port.
  * NOTE: a device can be conncted even if it is powered off or in sleep mode.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_x11_output_set_connected (GcmX11Output *output, gboolean connected)
@@ -254,7 +254,7 @@ gcm_x11_output_set_connected (GcmX11Output *output, gboolean connected)
  *
  * Return value: if the device is connected.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_output_get_connected (GcmX11Output *output)
@@ -272,7 +272,7 @@ gcm_x11_output_get_connected (GcmX11Output *output)
  * Sets the position of the display relative to the absolute size of all
  * the #GcmX11Output's.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_x11_output_set_position (GcmX11Output *output, guint x, guint y)
@@ -291,7 +291,7 @@ gcm_x11_output_set_position (GcmX11Output *output, guint x, guint y)
  * Gets the position of the panel relative to the absolute size of all
  * the #GcmX11Output's.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_x11_output_get_position (GcmX11Output *output, guint *x, guint *y)
@@ -311,7 +311,7 @@ gcm_x11_output_get_position (GcmX11Output *output, guint *x, guint *y)
  *
  * Sets the size of the output.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_x11_output_set_size (GcmX11Output *output, guint width, guint height)
@@ -329,7 +329,7 @@ gcm_x11_output_set_size (GcmX11Output *output, guint width, guint height)
  *
  * Gets the output size.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_x11_output_get_size (GcmX11Output *output, guint *width, guint *height)
@@ -384,7 +384,7 @@ out:
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_output_get_edid_data (GcmX11Output *output, guint8 **data, gsize *length, GError **error)
@@ -433,6 +433,8 @@ out:
  * Sets the gamma ramps for the given output.
  *
  * Return value: %TRUE for success.
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_output_set_gamma (GcmX11Output *output, guint length, guint16 *red, guint16 *green, guint16 *blue, GError **error)
@@ -487,7 +489,7 @@ gcm_x11_output_set_gamma (GcmX11Output *output, guint length, guint16 *red, guin
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_output_get_gamma (GcmX11Output *output, guint *length, guint16 **red, guint16 **green, guint16 **blue, GError **error)
@@ -543,7 +545,7 @@ gcm_x11_output_get_gamma (GcmX11Output *output, guint *length, guint16 **red, gu
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_output_get_profile_data (GcmX11Output *output, guint8 **data, gsize *length, GError **error)
@@ -609,7 +611,7 @@ out:
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_output_set_profile (GcmX11Output *output, const gchar *filename, GError **error)
@@ -648,7 +650,7 @@ out:
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_output_set_profile_data (GcmX11Output *output, const guint8 *data, gsize length, GError **error)
@@ -692,7 +694,7 @@ out:
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_output_remove_profile (GcmX11Output *output, GError **error)
@@ -813,7 +815,7 @@ gcm_x11_output_finalize (GObject *object)
  *
  * Return value: a new GcmX11Output object.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmX11Output *
 gcm_x11_output_new (void)

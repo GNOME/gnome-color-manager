@@ -71,7 +71,7 @@ gcm_sample_window_pulse_cb (GcmSampleWindow *sample_window)
  *
  * Sets the percentage value on the window.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_sample_window_set_percentage (GcmSampleWindow *sample_window, guint percentage)
@@ -107,7 +107,7 @@ gcm_sample_window_set_percentage (GcmSampleWindow *sample_window, guint percenta
  *
  * Sets the window to a specific color.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_sample_window_set_color (GcmSampleWindow *sample_window, const GcmColorRGB *color)
@@ -251,6 +251,8 @@ gcm_sample_window_finalize (GObject *object)
  * gcm_sample_window_new:
  *
  * Return value: a new #GcmSampleWindow object.
+ *
+ * Since: 2.91.1
  **/
 GtkWindow *
 gcm_sample_window_new (void)

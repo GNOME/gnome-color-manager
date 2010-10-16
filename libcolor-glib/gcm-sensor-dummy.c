@@ -260,6 +260,8 @@ gcm_sensor_dummy_init (GcmSensorDummy *sensor)
  * gcm_sensor_dummy_new:
  *
  * Return value: a new #GcmSensor object.
+ *
+ * Since: 2.91.1
  **/
 GcmSensor *
 gcm_sensor_dummy_new (void)

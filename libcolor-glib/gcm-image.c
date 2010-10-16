@@ -302,6 +302,8 @@ out:
 
 /**
  * gcm_image_set_input_profile:
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_image_set_input_profile (GcmImage *image, GcmProfile *profile)
@@ -320,6 +322,8 @@ gcm_image_set_input_profile (GcmImage *image, GcmProfile *profile)
 
 /**
  * gcm_image_set_output_profile:
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_image_set_output_profile (GcmImage *image, GcmProfile *profile)
@@ -336,6 +340,8 @@ gcm_image_set_output_profile (GcmImage *image, GcmProfile *profile)
 
 /**
  * gcm_image_set_abstract_profile:
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_image_set_abstract_profile (GcmImage *image, GcmProfile *profile)
@@ -352,6 +358,8 @@ gcm_image_set_abstract_profile (GcmImage *image, GcmProfile *profile)
 
 /**
  * gcm_image_has_embedded_profile:
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_image_has_embedded_profile (GcmImage *image)
@@ -361,6 +369,8 @@ gcm_image_has_embedded_profile (GcmImage *image)
 
 /**
  * gcm_image_use_embedded_profile:
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_image_use_embedded_profile (GcmImage *image, gboolean use_embedded_profile)
@@ -526,6 +536,8 @@ gcm_image_finalize (GObject *object)
  * gcm_image_new:
  *
  * Return value: a new GcmImage object.
+ *
+ * Since: 2.91.1
  **/
 GcmImage *
 gcm_image_new (void)

@@ -72,7 +72,7 @@ G_DEFINE_TYPE (GcmProfileStore, gcm_profile_store, G_TYPE_OBJECT)
  *
  * Return value: an array, free with g_ptr_array_unref()
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GPtrArray *
 gcm_profile_store_get_array (GcmProfileStore *profile_store)
@@ -107,7 +107,7 @@ gcm_profile_store_in_array (GPtrArray *array, const gchar *text)
  *
  * Return value: a valid %GcmProfile or %NULL. Free with g_object_unref()
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmProfile *
 gcm_profile_store_get_by_filename (GcmProfileStore *profile_store, const gchar *filename)
@@ -143,7 +143,7 @@ out:
  *
  * Return value: a valid %GcmProfile or %NULL. Free with g_object_unref()
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmProfile *
 gcm_profile_store_get_by_checksum (GcmProfileStore *profile_store, const gchar *checksum)
@@ -313,7 +313,7 @@ out:
  *
  * Return value: if any profile were added
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_profile_store_search_path (GcmProfileStore *profile_store, const gchar *path)
@@ -519,7 +519,7 @@ out:
  *
  * Return value: %TRUE if any profile were added
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_profile_store_search (GcmProfileStore *profile_store, GcmProfileSearchFlags flags)
@@ -612,6 +612,8 @@ gcm_profile_store_class_init (GcmProfileStoreClass *klass)
 
 	/**
 	 * GcmProfileStore::added
+	 *
+	 * Since: 2.91.1
 	 **/
 	signals[SIGNAL_ADDED] =
 		g_signal_new ("added",
@@ -621,6 +623,8 @@ gcm_profile_store_class_init (GcmProfileStoreClass *klass)
 			      G_TYPE_NONE, 1, G_TYPE_OBJECT);
 	/**
 	 * GcmProfileStore::removed
+	 *
+	 * Since: 2.91.1
 	 **/
 	signals[SIGNAL_REMOVED] =
 		g_signal_new ("removed",
@@ -630,6 +634,8 @@ gcm_profile_store_class_init (GcmProfileStoreClass *klass)
 			      G_TYPE_NONE, 1, G_TYPE_OBJECT);
 	/**
 	 * GcmProfileStore::changed
+	 *
+	 * Since: 2.91.1
 	 **/
 	signals[SIGNAL_CHANGED] =
 		g_signal_new ("changed",
@@ -682,7 +688,7 @@ gcm_profile_store_finalize (GObject *object)
  *
  * Return value: a new GcmProfileStore object.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmProfileStore *
 gcm_profile_store_new (void)

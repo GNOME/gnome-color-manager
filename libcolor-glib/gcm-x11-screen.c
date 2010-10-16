@@ -197,7 +197,7 @@ out:
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_screen_assign (GcmX11Screen *screen, GdkScreen *gdk_screen, GError **error)
@@ -280,7 +280,7 @@ out:
  *
  * Return value: A #GPtrArray of #GcmX11Output's. Free with g_ptr_array_unref() when done.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GPtrArray *
 gcm_x11_screen_get_outputs (GcmX11Screen *screen, GError **error)
@@ -308,7 +308,7 @@ gcm_x11_screen_get_outputs (GcmX11Screen *screen, GError **error)
  *
  * Return value: A #GcmX11Output, or %NULL if nothing matched.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmX11Output *
 gcm_x11_screen_get_output_by_name (GcmX11Screen *screen, const gchar *name, GError **error)
@@ -347,6 +347,8 @@ gcm_x11_screen_get_output_by_name (GcmX11Screen *screen, const gchar *name, GErr
  * Gets the ICC profile data from the XServer.
  *
  * Return value: %TRUE for success.
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_screen_get_profile_data (GcmX11Screen *screen, guint8 **data, gsize *length, GError **error)
@@ -408,7 +410,7 @@ out:
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_screen_set_profile (GcmX11Screen *screen, const gchar *filename, GError **error)
@@ -447,7 +449,7 @@ out:
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_screen_set_profile_data (GcmX11Screen *screen, const guint8 *data, gsize length, GError **error)
@@ -494,7 +496,7 @@ out:
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_screen_set_protocol_version (GcmX11Screen *screen, guint major, guint minor, GError **error)
@@ -541,7 +543,7 @@ out:
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_screen_remove_protocol_version (GcmX11Screen *screen, GError **error)
@@ -586,7 +588,7 @@ out:
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_screen_get_protocol_version (GcmX11Screen *screen, guint *major, guint *minor, GError **error)
@@ -645,7 +647,7 @@ out:
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_x11_screen_remove_profile (GcmX11Screen *screen, GError **error)
@@ -686,6 +688,8 @@ out:
  * @minor: the returned XRandR version minor, or %NULL
  *
  * Gets the XRandR version from the server.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_x11_screen_get_randr_version (GcmX11Screen *screen, guint *major, guint *minor)
@@ -708,6 +712,8 @@ gcm_x11_screen_class_init (GcmX11ScreenClass *klass)
 
 	/**
 	 * GcmX11Screen::changed:
+	 *
+	 * Since: 2.91.1
 	 **/
 	signals[SIGNAL_CHANGED] =
 		g_signal_new ("changed",
@@ -749,7 +755,7 @@ gcm_x11_screen_finalize (GObject *object)
  *
  * Return value: a new #GcmX11Screen object.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmX11Screen *
 gcm_x11_screen_new (void)

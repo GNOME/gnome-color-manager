@@ -69,6 +69,8 @@ G_DEFINE_TYPE (GcmUsb, gcm_usb, G_TYPE_OBJECT)
 
 /**
  * gcm_usb_get_connected:
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_usb_get_connected (GcmUsb *usb)
@@ -277,6 +279,8 @@ static GSourceFuncs gcm_usb_source_funcs = {
  * Connects up usb-1 with the GLib event loop. This functionality
  * allows you to submit async requests using usb, and the callbacks
  * just kinda happen at the right time.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_usb_attach_to_context (GcmUsb *usb, GMainContext *context)
@@ -321,6 +325,8 @@ gcm_usb_attach_to_context (GcmUsb *usb, GMainContext *context)
  * Connects to libusb. You normally don't have to call this method manually.
  *
  * Return value: %TRUE for success
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_usb_load (GcmUsb *usb, GError **error)
@@ -362,6 +368,8 @@ out:
  * Gets the low-level device handle
  *
  * Return value: The #libusb_device_handle or %NULL. Do not unref this value.
+ *
+ * Since: 2.91.1
  **/
 libusb_device_handle *
 gcm_usb_get_device_handle (GcmUsb *usb)
@@ -381,6 +389,8 @@ gcm_usb_get_device_handle (GcmUsb *usb)
  * Connects to a specific device.
  *
  * Return value: %TRUE for success
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_usb_connect (GcmUsb *usb, guint vendor_id, guint product_id, guint configuration, guint interface, GError **error)
@@ -524,6 +534,8 @@ gcm_usb_finalize (GObject *object)
  * gcm_usb_new:
  *
  * Return value: a new #GcmUsb object.
+ *
+ * Since: 2.91.1
  **/
 GcmUsb *
 gcm_usb_new (void)

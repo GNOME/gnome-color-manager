@@ -97,6 +97,8 @@ gcm_clut_set_source_data (GcmClut *clut, const GcmClutData *data, guint size)
 
 /**
  * gcm_clut_set_source_array:
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_clut_set_source_array (GcmClut *clut, GPtrArray *array)
@@ -118,6 +120,8 @@ gcm_clut_set_source_array (GcmClut *clut, GPtrArray *array)
 
 /**
  * gcm_clut_reset:
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_clut_reset (GcmClut *clut)
@@ -146,6 +150,8 @@ gcm_clut_get_adjusted_value (guint value, gdouble min, gdouble max, gdouble cust
 
 /**
  * gcm_clut_get_size:
+ *
+ * Since: 2.91.1
  **/
 guint
 gcm_clut_get_size (GcmClut *clut)
@@ -155,6 +161,8 @@ gcm_clut_get_size (GcmClut *clut)
 
 /**
  * gcm_clut_get_array:
+ *
+ * Since: 2.91.1
  **/
 GPtrArray *
 gcm_clut_get_array (GcmClut *clut)
@@ -203,6 +211,8 @@ gcm_clut_get_array (GcmClut *clut)
 
 /**
  * gcm_clut_print:
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_clut_print (GcmClut *clut)
@@ -353,6 +363,8 @@ gcm_clut_finalize (GObject *object)
  * gcm_clut_new:
  *
  * Return value: a new GcmClut object.
+ *
+ * Since: 2.91.1
  **/
 GcmClut *
 gcm_clut_new (void)

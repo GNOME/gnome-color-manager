@@ -101,6 +101,8 @@ G_DEFINE_TYPE (GcmSensor, gcm_sensor, G_TYPE_OBJECT)
 
 /**
  * gcm_sensor_get_image_display:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_sensor_get_image_display (GcmSensor *sensor)
@@ -110,6 +112,8 @@ gcm_sensor_get_image_display (GcmSensor *sensor)
 
 /**
  * gcm_sensor_get_image_calibrate:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_sensor_get_image_calibrate (GcmSensor *sensor)
@@ -119,6 +123,8 @@ gcm_sensor_get_image_calibrate (GcmSensor *sensor)
 
 /**
  * gcm_sensor_get_image_spotread:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_sensor_get_image_spotread (GcmSensor *sensor)
@@ -130,6 +136,8 @@ gcm_sensor_get_image_spotread (GcmSensor *sensor)
  * gcm_sensor_button_pressed:
  *
  * Causes the ::button-pressed signal to be fired.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_sensor_button_pressed (GcmSensor *sensor)
@@ -145,6 +153,8 @@ gcm_sensor_button_pressed (GcmSensor *sensor)
  *
  * Sets the sensor serial number which can be used to uniquely identify
  * the device.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_sensor_set_serial_number (GcmSensor *sensor, const gchar *serial_number)
@@ -160,6 +170,8 @@ gcm_sensor_set_serial_number (GcmSensor *sensor, const gchar *serial_number)
  * Gets the sensor serial number.
  *
  * Return value: a string.
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_sensor_get_serial_number (GcmSensor *sensor)
@@ -173,6 +185,8 @@ gcm_sensor_get_serial_number (GcmSensor *sensor)
  * @state: the sensor state, e.g %GCM_SENSOR_STATE_IDLE
  *
  * Sets the device state.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_sensor_set_state (GcmSensor *sensor, GcmSensorState state)
@@ -187,6 +201,8 @@ gcm_sensor_set_state (GcmSensor *sensor, GcmSensorState state)
  * Gets if the sensor is state taking a measurement.
  *
  * Return value: %TRUE for state.
+ *
+ * Since: 2.91.1
  **/
 GcmSensorState
 gcm_sensor_get_state (GcmSensor *sensor)
@@ -201,6 +217,8 @@ gcm_sensor_get_state (GcmSensor *sensor)
  * Gets the sensor model.
  *
  * Return value: a string.
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_sensor_get_model (GcmSensor *sensor)
@@ -215,6 +233,8 @@ gcm_sensor_get_model (GcmSensor *sensor)
  * Gets the sensor vendor.
  *
  * Return value: a string.
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_sensor_get_vendor (GcmSensor *sensor)
@@ -229,6 +249,8 @@ gcm_sensor_get_vendor (GcmSensor *sensor)
  * Returns if the sensor supports profiling a display.
  *
  * Return value: %TRUE or %FALSE.
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_sensor_supports_display (GcmSensor *sensor)
@@ -243,6 +265,8 @@ gcm_sensor_supports_display (GcmSensor *sensor)
  * Returns if the sensor supports profiling a projector.
  *
  * Return value: %TRUE or %FALSE.
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_sensor_supports_projector (GcmSensor *sensor)
@@ -257,6 +281,8 @@ gcm_sensor_supports_projector (GcmSensor *sensor)
  * Returns if the sensor supports profiling a printer.
  *
  * Return value: %TRUE or %FALSE.
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_sensor_supports_printer (GcmSensor *sensor)
@@ -271,6 +297,8 @@ gcm_sensor_supports_printer (GcmSensor *sensor)
  * Returns if the sensor supports getting a spot color.
  *
  * Return value: %TRUE or %FALSE.
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_sensor_supports_spot (GcmSensor *sensor)
@@ -285,6 +313,8 @@ gcm_sensor_supports_spot (GcmSensor *sensor)
  * Returns the sensor kind.
  *
  * Return value: the sensor kind, e.g. %GCM_SENSOR_KIND_HUEY
+ *
+ * Since: 2.91.1
  **/
 GcmSensorKind
 gcm_sensor_get_kind (GcmSensor *sensor)
@@ -299,6 +329,8 @@ gcm_sensor_get_kind (GcmSensor *sensor)
  *
  * Set the output type. Different sensors may do different
  * things depending on the output type.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_sensor_set_output_type (GcmSensor *sensor, GcmSensorOutputType output_type)
@@ -314,6 +346,8 @@ gcm_sensor_set_output_type (GcmSensor *sensor, GcmSensorOutputType output_type)
  * things depending on the output type.
  *
  * Return value: the output type, e.g. %GCM_SENSOR_OUTPUT_TYPE_LCD
+ *
+ * Since: 2.91.1
  **/
 GcmSensorOutputType
 gcm_sensor_get_output_type (GcmSensor *sensor)
@@ -330,6 +364,8 @@ gcm_sensor_get_output_type (GcmSensor *sensor)
  * internally without calling out to other frameworks.
  *
  * Return value: %TRUE for internal, native, support.
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_sensor_is_native (GcmSensor *sensor)
@@ -347,6 +383,8 @@ gcm_sensor_is_native (GcmSensor *sensor)
  * We aim to get as much as possible from UDEV.
  *
  * Return value: %TRUE for success.
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_sensor_set_from_device (GcmSensor *sensor, GUdevDevice *device, GError **error)
@@ -394,7 +432,7 @@ gcm_sensor_set_from_device (GcmSensor *sensor, GUdevDevice *device, GError **err
  *
  * Sample the color and store as a XYZ value.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_sensor_sample_async (GcmSensor *sensor, GCancellable *cancellable,
@@ -436,7 +474,7 @@ out:
  *
  * Return value: %FALSE for an error
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_sensor_sample_finish (GcmSensor *sensor, GAsyncResult *res, GcmColorXYZ *value, GError **error)
@@ -454,7 +492,7 @@ gcm_sensor_sample_finish (GcmSensor *sensor, GAsyncResult *res, GcmColorXYZ *val
  *
  * Asks the hardware to get the ambient light value.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_sensor_get_ambient_async (GcmSensor	 *sensor, GCancellable *cancellable,
@@ -496,7 +534,7 @@ out:
  *
  * Return value: %FALSE for an error
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_sensor_get_ambient_finish (GcmSensor *sensor, GAsyncResult *res, gdouble *value, GError **error)
@@ -514,6 +552,8 @@ gcm_sensor_get_ambient_finish (GcmSensor *sensor, GAsyncResult *res, gdouble *va
  * Dumps the unstructured device data to a string.
  *
  * Return value: %TRUE for success.
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_sensor_dump (GcmSensor *sensor, GString *data, GError **error)
@@ -556,6 +596,8 @@ out:
  * Sets the LED output state for the device.
  *
  * Return value: %TRUE for success.
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_sensor_set_leds (GcmSensor *sensor, guint8 value, GError **error)
@@ -585,6 +627,8 @@ out:
  * Gets the sensor kind as a string.
  *
  * Return value: the sensor kind, e.g. 'huey'.
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_sensor_kind_to_string (GcmSensorKind sensor_kind)
@@ -621,6 +665,8 @@ gcm_sensor_kind_to_string (GcmSensorKind sensor_kind)
  * Gets the sensor kind as a enumerated value.
  *
  * Return value: a #GcmSensorKind
+ *
+ * Since: 2.91.1
  **/
 GcmSensorKind
 gcm_sensor_kind_from_string (const gchar *sensor_kind)
@@ -674,7 +720,7 @@ gcm_sensor_sample_sync_cb (GcmSensor *sensor, GAsyncResult *res, GcmSensorHelper
  *
  * Return value: %TRUE if the ambient value was obtained.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_sensor_sample (GcmSensor *sensor, GCancellable *cancellable, GcmColorXYZ *value, GError **error)
@@ -731,7 +777,7 @@ gcm_sensor_get_ambient_sync_cb (GcmSensor *sensor, GAsyncResult *res, GcmSensorH
  *
  * Return value: %TRUE if the ambient value was obtained.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_sensor_get_ambient (GcmSensor *sensor, GCancellable *cancellable, gdouble *value, GError **error)
@@ -984,6 +1030,8 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 
 	/**
 	 * GcmSensor::button-pressed:
+	 *
+	 * Since: 2.91.1
 	 **/
 	signals[SIGNAL_BUTTON_PRESSED] =
 		g_signal_new ("button-pressed",
@@ -1030,6 +1078,8 @@ gcm_sensor_finalize (GObject *object)
  * gcm_sensor_new:
  *
  * Return value: a new #GcmSensor object.
+ *
+ * Since: 2.91.1
  **/
 GcmSensor *
 gcm_sensor_new (void)

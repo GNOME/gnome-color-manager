@@ -38,6 +38,8 @@
  * @src: the source vector
  *
  * Clears a vector, setting all it's values to zero.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_vec3_clear (GcmVec3 *src)
@@ -55,6 +57,8 @@ gcm_vec3_clear (GcmVec3 *src)
  * @v2: component value
  *
  * Initialises a vector.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_vec3_init (GcmVec3 *dest, gdouble v0, gdouble v1, gdouble v2)
@@ -74,6 +78,8 @@ gcm_vec3_init (GcmVec3 *dest, gdouble v0, gdouble v1, gdouble v2)
  *
  * Multiplies a vector with a scalar.
  * The arguments @src and @dest can be the same value.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_vec3_scalar_multiply (const GcmVec3 *src, gdouble value, GcmVec3 *dest)
@@ -91,6 +97,8 @@ gcm_vec3_scalar_multiply (const GcmVec3 *src, gdouble value, GcmVec3 *dest)
  *
  * Adds two vector quantaties
  * The arguments @src and @dest can be the same value.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_vec3_add (const GcmVec3 *src1, const GcmVec3 *src2, GcmVec3 *dest)
@@ -108,6 +116,8 @@ gcm_vec3_add (const GcmVec3 *src1, const GcmVec3 *src2, GcmVec3 *dest)
  *
  * Subtracts one vector quantaty from another
  * The arguments @src and @dest can be the same value.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_vec3_subtract (const GcmVec3 *src1, const GcmVec3 *src2, GcmVec3 *dest)
@@ -124,6 +134,8 @@ gcm_vec3_subtract (const GcmVec3 *src1, const GcmVec3 *src2, GcmVec3 *dest)
  * Obtains a string representaton of a vector.
  *
  * Return value: the string. Free with g_free()
+ *
+ * Since: 2.91.1
  **/
 gchar *
 gcm_vec3_to_string (const GcmVec3 *src)
@@ -141,6 +153,8 @@ gcm_vec3_to_string (const GcmVec3 *src)
  * Gets the raw data for the vector.
  *
  * Return value: the pointer to the data segment.
+ *
+ * Since: 2.91.1
  **/
 gdouble *
 gcm_vec3_get_data (const GcmVec3 *src)
@@ -153,6 +167,8 @@ gcm_vec3_get_data (const GcmVec3 *src)
  * @src: the source
  *
  * Clears a matrix value, setting all it's values to zero.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_mat33_clear (const GcmMat3x3 *src)
@@ -170,6 +186,8 @@ gcm_mat33_clear (const GcmMat3x3 *src)
  * Obtains a string representaton of a matrix.
  *
  * Return value: the string. Free with g_free()
+ *
+ * Since: 2.91.1
  **/
 gchar *
 gcm_mat33_to_string (const GcmMat3x3 *src)
@@ -189,6 +207,8 @@ gcm_mat33_to_string (const GcmMat3x3 *src)
  * Gets the raw data for the matrix.
  *
  * Return value: the pointer to the data segment.
+ *
+ * Since: 2.91.1
  **/
 gdouble *
 gcm_mat33_get_data (const GcmMat3x3 *src)
@@ -201,6 +221,8 @@ gcm_mat33_get_data (const GcmMat3x3 *src)
  * @src: the source
  *
  * Sets the matrix to an identity value.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_mat33_set_identity (GcmMat3x3 *src)
@@ -219,6 +241,8 @@ gcm_mat33_set_identity (GcmMat3x3 *src)
  *
  * Multiplies a matrix with a vector.
  * The arguments @vec_src and @vec_dest cannot be the same value.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_mat33_vector_multiply (const GcmMat3x3 *mat_src, const GcmVec3 *vec_src, GcmVec3 *vec_dest)
@@ -244,6 +268,8 @@ gcm_mat33_vector_multiply (const GcmMat3x3 *mat_src, const GcmVec3 *vec_src, Gcm
  * Multiply (convolve) one matrix with another.
  * The arguments @mat_src1 cannot be the same as @mat_dest, and
  * @mat_src2 cannot be the same as @mat_dest.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_mat33_matrix_multiply (const GcmMat3x3 *mat_src1, const GcmMat3x3 *mat_src2, GcmMat3x3 *mat_dest)
@@ -273,6 +299,8 @@ gcm_mat33_matrix_multiply (const GcmMat3x3 *mat_src1, const GcmMat3x3 *mat_src2,
  * The arguments @src and @dest cannot be the same value.
  *
  * Return value: %FALSE if det is zero (singular).
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_mat33_reciprocal (const GcmMat3x3 *src, GcmMat3x3 *dest)

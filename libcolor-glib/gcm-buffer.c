@@ -39,6 +39,8 @@
  *
  * Writes a big endian value into a data buffer.
  * NOTE: No validation is done on the buffer to ensure it's big enough.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_buffer_write_uint16_be (guchar *buffer, guint16 value)
@@ -54,6 +56,8 @@ gcm_buffer_write_uint16_be (guchar *buffer, guint16 value)
  *
  * Writes a little endian value into a data buffer.
  * NOTE: No validation is done on the buffer to ensure it's big enough.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_buffer_write_uint16_le (guchar *buffer, guint16 value)
@@ -70,6 +74,8 @@ gcm_buffer_write_uint16_le (guchar *buffer, guint16 value)
  * NOTE: No validation is done on the buffer to ensure it's valid.
  *
  * Return value: the value to read.
+ *
+ * Since: 2.91.1
  **/
 guint16
 gcm_buffer_read_uint16_be (const guchar *buffer)
@@ -85,6 +91,8 @@ gcm_buffer_read_uint16_be (const guchar *buffer)
  * NOTE: No validation is done on the buffer to ensure it's valid.
  *
  * Return value: the value to read.
+ *
+ * Since: 2.91.1
  **/
 guint16
 gcm_buffer_read_uint16_le (const guchar *buffer)
@@ -99,6 +107,8 @@ gcm_buffer_read_uint16_le (const guchar *buffer)
  *
  * Writes a big endian value into a data buffer.
  * NOTE: No validation is done on the buffer to ensure it's big enough.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_buffer_write_uint32_be (guchar *buffer, guint32 value)
@@ -116,6 +126,8 @@ gcm_buffer_write_uint32_be (guchar *buffer, guint32 value)
  *
  * Writes a little endian value into a data buffer.
  * NOTE: No validation is done on the buffer to ensure it's big enough.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_buffer_write_uint32_le (guchar *buffer, guint32 value)
@@ -134,6 +146,8 @@ gcm_buffer_write_uint32_le (guchar *buffer, guint32 value)
  * NOTE: No validation is done on the buffer to ensure it's valid.
  *
  * Return value: the value to read.
+ *
+ * Since: 2.91.1
  **/
 guint32
 gcm_buffer_read_uint32_be (const guchar *buffer)
@@ -149,6 +163,8 @@ gcm_buffer_read_uint32_be (const guchar *buffer)
  * NOTE: No validation is done on the buffer to ensure it's valid.
  *
  * Return value: the value to read.
+ *
+ * Since: 2.91.1
  **/
 guint32
 gcm_buffer_read_uint32_le (const guchar *buffer)

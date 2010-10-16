@@ -298,6 +298,8 @@ gcm_ddc_device_wait_for_hardware (GcmDdcDevice *device)
  * Write data to DDC/CI at previoulsly set address address.
  *
  * Return value: %TRUE for success
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_ddc_device_write (GcmDdcDevice *device, guchar *data, gsize length, GError **error)
@@ -352,7 +354,7 @@ out:
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_ddc_device_read (GcmDdcDevice *device, guchar *data, gsize data_length, gsize *recieved_length, GError **error)
@@ -644,7 +646,7 @@ out:
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_ddc_device_save (GcmDdcDevice *device, GError **error)
@@ -706,7 +708,7 @@ out:
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_ddc_device_close (GcmDdcDevice *device, GError **error)
@@ -739,7 +741,7 @@ out:
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_ddc_device_open (GcmDdcDevice *device, const gchar *filename, GError **error)
@@ -789,7 +791,7 @@ out:
  *
  * Return value: A #GPtrArray of #GcmDdcControl's, free with g_ptr_array_unref() when done.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GPtrArray *
 gcm_ddc_device_get_controls (GcmDdcDevice *device, GError **error)
@@ -821,7 +823,7 @@ out:
  *
  * Return value: %NULL, or a #GcmDdcControl which needs to be freed with g_object_unref().
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmDdcControl *
 gcm_ddc_device_get_control_by_id (GcmDdcDevice *device, guchar id, GError **error)
@@ -867,7 +869,7 @@ out:
  *
  * Return value: a pointer to the EDID block. Do not free this value.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const guint8 *
 gcm_ddc_device_get_edid	(GcmDdcDevice *device, gsize *length, GError **error)
@@ -900,7 +902,7 @@ out:
  *
  * Return value: The MD5 value of the current EDID. Do not free this value.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_ddc_device_get_edid_md5 (GcmDdcDevice *device, GError **error)
@@ -931,7 +933,7 @@ out:
  *
  * Return value: The PNPID, or %NULL.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_ddc_device_get_pnpid (GcmDdcDevice	*device, GError **error)
@@ -962,7 +964,7 @@ out:
  *
  * Return value: The model string, or %NULL.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_ddc_device_get_model (GcmDdcDevice	*device, GError **error)
@@ -993,7 +995,7 @@ out:
  *
  * Return value: The device kind, e.g. GCM_DDC_DEVICE_KIND_LCD, or %GCM_DDC_DEVICE_KIND_UNKNOWN for an error.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmDdcDeviceKind
 gcm_ddc_device_get_kind (GcmDdcDevice *device, GError **error)
@@ -1022,7 +1024,7 @@ out:
  *
  * Sets the logging mode of the device. By default we log nothing.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_ddc_device_set_verbose (GcmDdcDevice *device, GcmVerbose verbose)
@@ -1036,7 +1038,7 @@ gcm_ddc_device_set_verbose (GcmDdcDevice *device, GcmVerbose verbose)
  *
  * Return value: Our personal error quark.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GQuark
 gcm_ddc_device_error_quark (void)
@@ -1094,7 +1096,7 @@ gcm_ddc_device_class_init (GcmDdcDeviceClass *klass)
 	/**
 	 * GcmDdcDevice:has-coldplug:
 	 *
-	 * Since: 0.0.1
+	 * Since: 2.91.1
 	 */
 	pspec = g_param_spec_boolean ("has-coldplug", NULL, "if there are no transactions in progress on this device",
 				      TRUE,
@@ -1147,7 +1149,7 @@ gcm_ddc_device_finalize (GObject *object)
  *
  * Return value: A new %GcmDdcDevice instance
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmDdcDevice *
 gcm_ddc_device_new (void)

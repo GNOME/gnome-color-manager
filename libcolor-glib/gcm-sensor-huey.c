@@ -985,6 +985,8 @@ gcm_sensor_huey_finalize (GObject *object)
  * gcm_sensor_huey_new:
  *
  * Return value: a new #GcmSensor object.
+ *
+ * Since: 2.91.1
  **/
 GcmSensor *
 gcm_sensor_huey_new (void)

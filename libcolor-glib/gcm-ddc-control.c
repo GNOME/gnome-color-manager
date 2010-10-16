@@ -72,7 +72,7 @@ G_DEFINE_TYPE (GcmDdcControl, gcm_ddc_control, G_TYPE_OBJECT)
  *
  * Return value: A string value, or %NULL
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_ddc_control_get_description (GcmDdcControl *control)
@@ -130,7 +130,7 @@ out:
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_ddc_control_set (GcmDdcControl *control, guint16 value, GError **error)
@@ -170,7 +170,7 @@ out:
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_ddc_control_reset (GcmDdcControl *control, GError **error)
@@ -205,7 +205,7 @@ out:
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_ddc_control_request (GcmDdcControl *control, guint16 *value, guint16 *maximum, GError **error)
@@ -278,7 +278,7 @@ out:
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_ddc_control_run (GcmDdcControl *control, GError **error)
@@ -300,7 +300,7 @@ gcm_ddc_control_run (GcmDdcControl *control, GError **error)
  *
  * Parses a control string for permissable values.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_ddc_control_parse (GcmDdcControl *control, guchar id, const gchar *values)
@@ -339,7 +339,7 @@ out:
  *
  * Set the device that this control belongs to.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_ddc_control_set_device (GcmDdcControl *control, GcmDdcDevice *device)
@@ -357,7 +357,7 @@ gcm_ddc_control_set_device (GcmDdcControl *control, GcmDdcDevice *device)
  *
  * Return value: The control ID, e.g. GCM_DDC_CONTROL_ID_BRIGHTNESS
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 guchar
 gcm_ddc_control_get_id (GcmDdcControl *control)
@@ -375,7 +375,7 @@ gcm_ddc_control_get_id (GcmDdcControl *control)
  *
  * Return value: A GArray of guint16 values, free with g_array_unref().
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GArray *
 gcm_ddc_control_get_values (GcmDdcControl *control)
@@ -392,7 +392,7 @@ gcm_ddc_control_get_values (GcmDdcControl *control)
  *
  * Set the control verbosity.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_ddc_control_set_verbose (GcmDdcControl *control, GcmVerbose verbose)
@@ -406,7 +406,7 @@ gcm_ddc_control_set_verbose (GcmDdcControl *control, GcmVerbose verbose)
  *
  * Return value: Our personal error quark.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GQuark
 gcm_ddc_control_error_quark (void)
@@ -464,7 +464,7 @@ gcm_ddc_control_class_init (GcmDdcControlClass *klass)
 	/**
 	 * GcmDdcControl:supported:
 	 *
-	 * Since: 0.0.1
+	 * Since: 2.91.1
 	 */
 	pspec = g_param_spec_boolean ("supported", NULL, "if there are no transactions in progress on this control",
 				      TRUE,
@@ -510,7 +510,7 @@ gcm_ddc_control_finalize (GObject *object)
  *
  * Return value: A new %GcmDdcControl instance
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmDdcControl *
 gcm_ddc_control_new (void)

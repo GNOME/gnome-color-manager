@@ -27,6 +27,8 @@
 
 /**
  * gcm_sensor_huey_return_code_to_string:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_sensor_huey_return_code_to_string (guchar value)
@@ -48,6 +50,8 @@ gcm_sensor_huey_return_code_to_string (guchar value)
 
 /**
  * gcm_sensor_huey_command_code_to_string:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_sensor_huey_command_code_to_string (guchar value)

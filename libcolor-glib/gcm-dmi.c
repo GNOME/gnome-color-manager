@@ -103,6 +103,8 @@ gcm_dmi_get_data (const gchar *filename)
 
 /**
  * gcm_dmi_get_name:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_dmi_get_name (GcmDmi *dmi)
@@ -119,6 +121,8 @@ gcm_dmi_get_name (GcmDmi *dmi)
 
 /**
  * gcm_dmi_get_version:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_dmi_get_version (GcmDmi *dmi)
@@ -137,6 +141,8 @@ gcm_dmi_get_version (GcmDmi *dmi)
 
 /**
  * gcm_dmi_get_vendor:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_dmi_get_vendor (GcmDmi *dmi)
@@ -261,6 +267,8 @@ gcm_dmi_finalize (GObject *object)
  * gcm_dmi_new:
  *
  * Return value: a new GcmDmi object.
+ *
+ * Since: 2.91.1
  **/
 GcmDmi *
 gcm_dmi_new (void)

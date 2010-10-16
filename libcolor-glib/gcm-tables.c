@@ -61,6 +61,8 @@ G_DEFINE_TYPE (GcmTables, gcm_tables, G_TYPE_OBJECT)
 
 /**
  * gcm_tables_get_pnp_id:
+ *
+ * Since: 2.91.1
  **/
 gchar *
 gcm_tables_get_pnp_id (GcmTables *tables, const gchar *pnp_id, GError **error)
@@ -252,6 +254,8 @@ gcm_tables_finalize (GObject *object)
  * gcm_tables_new:
  *
  * Return value: a new GcmTables object.
+ *
+ * Since: 2.91.1
  **/
 GcmTables *
 gcm_tables_new (void)

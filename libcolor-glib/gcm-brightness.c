@@ -64,6 +64,8 @@ G_DEFINE_TYPE (GcmBrightness, gcm_brightness, G_TYPE_OBJECT)
 
 /**
  * gcm_brightness_set_percentage:
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_brightness_set_percentage (GcmBrightness *brightness, guint percentage, GError **error)
@@ -109,6 +111,8 @@ out:
 
 /**
  * gcm_brightness_get_percentage:
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_brightness_get_percentage (GcmBrightness *brightness, guint *percentage, GError **error)
@@ -238,6 +242,8 @@ gcm_brightness_finalize (GObject *object)
  * gcm_brightness_new:
  *
  * Return value: a new GcmBrightness object.
+ *
+ * Since: 2.91.1
  **/
 GcmBrightness *
 gcm_brightness_new (void)

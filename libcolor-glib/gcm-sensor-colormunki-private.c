@@ -27,6 +27,8 @@
 
 /**
  * gcm_sensor_colormunki_command_value_to_string:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_sensor_colormunki_command_value_to_string (guchar value)
@@ -42,6 +44,8 @@ gcm_sensor_colormunki_command_value_to_string (guchar value)
 
 /**
  * gcm_sensor_colormunki_button_state_to_string:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_sensor_colormunki_button_state_to_string (guchar value)
@@ -55,6 +59,8 @@ gcm_sensor_colormunki_button_state_to_string (guchar value)
 
 /**
  * gcm_sensor_colormunki_dial_position_to_string:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_sensor_colormunki_dial_position_to_string (guchar value)
@@ -72,6 +78,8 @@ gcm_sensor_colormunki_dial_position_to_string (guchar value)
 
 /**
  * gcm_sensor_colormunki_endpoint_to_string:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_sensor_colormunki_endpoint_to_string (guint value)

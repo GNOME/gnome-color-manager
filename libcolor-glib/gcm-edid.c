@@ -110,7 +110,7 @@ G_DEFINE_TYPE (GcmEdid, gcm_edid, G_TYPE_OBJECT)
  *
  * Return value: a null terminaled string value
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_edid_get_monitor_name (GcmEdid *edid)
@@ -127,7 +127,7 @@ gcm_edid_get_monitor_name (GcmEdid *edid)
  *
  * Return value: a null terminaled string value
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_edid_get_vendor_name (GcmEdid *edid)
@@ -148,7 +148,7 @@ gcm_edid_get_vendor_name (GcmEdid *edid)
  *
  * Return value: a null terminaled string value
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_edid_get_serial_number (GcmEdid *edid)
@@ -165,7 +165,7 @@ gcm_edid_get_serial_number (GcmEdid *edid)
  *
  * Return value: a null terminaled string value
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_edid_get_eisa_id (GcmEdid *edid)
@@ -183,7 +183,7 @@ gcm_edid_get_eisa_id (GcmEdid *edid)
  *
  * Return value: a null terminaled string value
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_edid_get_checksum (GcmEdid *edid)
@@ -200,7 +200,7 @@ gcm_edid_get_checksum (GcmEdid *edid)
  *
  * Return value: a null terminaled string value
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_edid_get_pnp_id (GcmEdid *edid)
@@ -217,7 +217,7 @@ gcm_edid_get_pnp_id (GcmEdid *edid)
  *
  * Return value: the width in mm.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 guint
 gcm_edid_get_width (GcmEdid *edid)
@@ -234,7 +234,7 @@ gcm_edid_get_width (GcmEdid *edid)
  *
  * Return value: the height in mm.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 guint
 gcm_edid_get_height (GcmEdid *edid)
@@ -251,7 +251,7 @@ gcm_edid_get_height (GcmEdid *edid)
  *
  * Return value: the gamma value, although this is typically 2.2
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gfloat
 gcm_edid_get_gamma (GcmEdid *edid)
@@ -268,7 +268,7 @@ gcm_edid_get_gamma (GcmEdid *edid)
  *
  * Return value: the #GcmColorYxy value
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const GcmColorYxy *
 gcm_edid_get_red (GcmEdid *edid)
@@ -285,7 +285,7 @@ gcm_edid_get_red (GcmEdid *edid)
  *
  * Return value: the #GcmColorYxy value
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const GcmColorYxy *
 gcm_edid_get_green (GcmEdid *edid)
@@ -302,7 +302,7 @@ gcm_edid_get_green (GcmEdid *edid)
  *
  * Return value: the #GcmColorYxy value
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const GcmColorYxy *
 gcm_edid_get_blue (GcmEdid *edid)
@@ -319,7 +319,7 @@ gcm_edid_get_blue (GcmEdid *edid)
  *
  * Return value: the #GcmColorYxy value
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const GcmColorYxy *
 gcm_edid_get_white (GcmEdid *edid)
@@ -334,7 +334,7 @@ gcm_edid_get_white (GcmEdid *edid)
  *
  * Resets all the cached values in this object.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_edid_reset (GcmEdid *edid)
@@ -462,7 +462,7 @@ out:
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
@@ -844,7 +844,7 @@ gcm_edid_finalize (GObject *object)
  *
  * Return value: a new #GcmEdid object.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmEdid *
 gcm_edid_new (void)

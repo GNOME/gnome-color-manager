@@ -110,7 +110,7 @@ static void gcm_profile_file_monitor_changed_cb (GFileMonitor *monitor, GFile *f
  *
  * Return value: The profile description as a string.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_profile_get_description (GcmProfile *profile)
@@ -150,7 +150,7 @@ gcm_profile_ensure_printable (gchar *text)
  *
  * Sets the description of the profile.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_profile_set_description (GcmProfile *profile, const gchar *description)
@@ -186,7 +186,7 @@ gcm_profile_set_description (GcmProfile *profile, const gchar *description)
  * Return value: %TRUE if the description mentions the profile colorspace explicity,
  * e.g. "Adobe RGB" for %GCM_COLORSPACE_RGB.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_profile_has_colorspace_description (GcmProfile *profile)
@@ -212,7 +212,7 @@ gcm_profile_has_colorspace_description (GcmProfile *profile)
  *
  * Return value: The color temperature in Kelvins, or 0 for error.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 guint
 gcm_profile_get_temperature (GcmProfile *profile)
@@ -229,7 +229,7 @@ gcm_profile_get_temperature (GcmProfile *profile)
  *
  * Return value: A #GFile, or %NULL. Do not free.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GFile *
 gcm_profile_get_file (GcmProfile *profile)
@@ -245,7 +245,7 @@ gcm_profile_get_file (GcmProfile *profile)
  *
  * Sets the file to be used when reading the profile.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_profile_set_file (GcmProfile *profile, GFile *file)
@@ -281,7 +281,7 @@ gcm_profile_set_file (GcmProfile *profile, GFile *file)
  *
  * Return value: A filename, or %NULL
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_profile_get_filename (GcmProfile *profile)
@@ -304,7 +304,7 @@ gcm_profile_get_filename (GcmProfile *profile)
  *
  * Return value: A string. Do not free.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_profile_get_copyright (GcmProfile *profile)
@@ -320,7 +320,7 @@ gcm_profile_get_copyright (GcmProfile *profile)
  *
  * Sets the copyright string.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_profile_set_copyright (GcmProfile *profile, const gchar *copyright)
@@ -344,7 +344,7 @@ gcm_profile_set_copyright (GcmProfile *profile, const gchar *copyright)
  *
  * Return value: A string. Do not free.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_profile_get_model (GcmProfile *profile)
@@ -360,7 +360,7 @@ gcm_profile_get_model (GcmProfile *profile)
  *
  * Sets the device model name.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_profile_set_model (GcmProfile *profile, const gchar *model)
@@ -384,7 +384,7 @@ gcm_profile_set_model (GcmProfile *profile, const gchar *model)
  *
  * Return value: A string. Do not free.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_profile_get_manufacturer (GcmProfile *profile)
@@ -400,7 +400,7 @@ gcm_profile_get_manufacturer (GcmProfile *profile)
  *
  * Sets the device manufacturer name.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_profile_set_manufacturer (GcmProfile *profile, const gchar *manufacturer)
@@ -424,7 +424,7 @@ gcm_profile_set_manufacturer (GcmProfile *profile, const gchar *manufacturer)
  *
  * Return value: A string. Do not free.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_profile_get_datetime (GcmProfile *profile)
@@ -440,7 +440,7 @@ gcm_profile_get_datetime (GcmProfile *profile)
  *
  * Sets the profile date and time.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_profile_set_datetime (GcmProfile *profile, const gchar *datetime)
@@ -456,6 +456,8 @@ gcm_profile_set_datetime (GcmProfile *profile, const gchar *datetime)
 
 /**
  * gcm_profile_get_checksum:
+ *
+ * Since: 2.91.1
  **/
 const gchar *
 gcm_profile_get_checksum (GcmProfile *profile)
@@ -481,6 +483,8 @@ gcm_profile_set_checksum (GcmProfile *profile, const gchar *checksum)
 
 /**
  * gcm_profile_get_size:
+ *
+ * Since: 2.91.1
  **/
 guint
 gcm_profile_get_size (GcmProfile *profile)
@@ -502,6 +506,8 @@ gcm_profile_set_size (GcmProfile *profile, guint size)
 
 /**
  * gcm_profile_get_kind:
+ *
+ * Since: 2.91.1
  **/
 GcmProfileKind
 gcm_profile_get_kind (GcmProfile *profile)
@@ -512,6 +518,8 @@ gcm_profile_get_kind (GcmProfile *profile)
 
 /**
  * gcm_profile_set_kind:
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_profile_set_kind (GcmProfile *profile, GcmProfileKind kind)
@@ -523,6 +531,8 @@ gcm_profile_set_kind (GcmProfile *profile, GcmProfileKind kind)
 
 /**
  * gcm_profile_get_colorspace:
+ *
+ * Since: 2.91.1
  **/
 GcmColorspace
 gcm_profile_get_colorspace (GcmProfile *profile)
@@ -533,6 +543,8 @@ gcm_profile_get_colorspace (GcmProfile *profile)
 
 /**
  * gcm_profile_set_colorspace:
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_profile_set_colorspace (GcmProfile *profile, GcmColorspace colorspace)
@@ -544,6 +556,8 @@ gcm_profile_set_colorspace (GcmProfile *profile, GcmColorspace colorspace)
 
 /**
  * gcm_profile_get_has_vcgt:
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_profile_get_has_vcgt (GcmProfile *profile)
@@ -567,6 +581,8 @@ gcm_profile_set_has_vcgt (GcmProfile *profile, gboolean has_vcgt)
  * gcm_profile_get_handle:
  *
  * Return value: Do not call cmsCloseProfile() on this value!
+ *
+ * Since: 2.91.1
  **/
 gpointer
 gcm_profile_get_handle (GcmProfile *profile)
@@ -577,6 +593,8 @@ gcm_profile_get_handle (GcmProfile *profile)
 
 /**
  * gcm_profile_get_can_delete:
+ *
+ * Since: 2.91.1
  **/
 gboolean
 gcm_profile_get_can_delete (GcmProfile *profile)
@@ -610,7 +628,7 @@ gcm_utils_format_date_time (const struct tm *created)
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, GError **error)
@@ -882,7 +900,7 @@ out:
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_profile_parse (GcmProfile *profile, GFile *file, GError **error)
@@ -949,7 +967,7 @@ _cmsWriteTagTextAscii (cmsHPROFILE lcms_profile, cmsTagSignature sig, const gcha
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_profile_set_whitepoint (GcmProfile *profile, const GcmColorXYZ *whitepoint, GError **error)
@@ -986,7 +1004,7 @@ out:
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_profile_set_primaries (GcmProfile *profile,
@@ -1037,7 +1055,7 @@ out:
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
@@ -1130,7 +1148,7 @@ out:
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_profile_create_from_chroma (GcmProfile *profile, gdouble gamma,
@@ -1187,7 +1205,7 @@ out:
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_profile_guess_and_add_vcgt (GcmProfile *profile, GError **error)
@@ -1272,7 +1290,7 @@ out:
  *
  * Return value: A #GcmClut object, or %NULL. Free with g_object_unref()
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmClut *
 gcm_profile_generate_vcgt (GcmProfile *profile, guint size)
@@ -1324,7 +1342,7 @@ out:
  *
  * Return value: %TRUE for success
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_profile_set_vcgt_from_data (GcmProfile *profile, guint16 *red, guint16 *green, guint16 *blue, guint size, GError **error)
@@ -1378,7 +1396,7 @@ out:
  *
  * Return value: A #GcmClut object, or %NULL. Free with g_object_unref()
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmClut *
 gcm_profile_generate_curve (GcmProfile *profile, guint size)
@@ -1852,7 +1870,7 @@ gcm_profile_finalize (GObject *object)
  *
  * Return value: a new #GcmProfile object.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmProfile *
 gcm_profile_new (void)

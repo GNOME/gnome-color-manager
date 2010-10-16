@@ -35,6 +35,8 @@
 
 /**
  * gcm_color_dup_XYZ:
+ *
+ * Since: 2.91.1
  **/
 GcmColorXYZ *
 gcm_color_dup_XYZ (const GcmColorXYZ *src)
@@ -50,6 +52,8 @@ gcm_color_dup_XYZ (const GcmColorXYZ *src)
 
 /**
  * gcm_color_dup_RGB:
+ *
+ * Since: 2.91.1
  **/
 GcmColorRGB *
 gcm_color_dup_RGB (const GcmColorRGB *src)
@@ -65,6 +69,8 @@ gcm_color_dup_RGB (const GcmColorRGB *src)
 
 /**
  * gcm_color_dup_Yxy:
+ *
+ * Since: 2.91.1
  **/
 GcmColorYxy *
 gcm_color_dup_Yxy (const GcmColorYxy *src)
@@ -82,6 +88,8 @@ gcm_color_dup_Yxy (const GcmColorYxy *src)
  * Return value: a #GType
  *
  * Gets a specific type.
+ *
+ * Since: 2.91.1
  **/
 GType
 gcm_color_get_type_XYZ (void)
@@ -99,6 +107,8 @@ gcm_color_get_type_XYZ (void)
  * Return value: a #GType
  *
  * Gets a specific type.
+ *
+ * Since: 2.91.1
  **/
 GType
 gcm_color_get_type_RGB (void)
@@ -116,6 +126,8 @@ gcm_color_get_type_RGB (void)
  * Return value: a #GType
  *
  * Gets a specific type.
+ *
+ * Since: 2.91.1
  **/
 GType
 gcm_color_get_type_Yxy (void)
@@ -136,6 +148,8 @@ gcm_color_get_type_Yxy (void)
  * @Z: component value
  *
  * Initialises a color value.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_color_set_XYZ (GcmColorXYZ *dest, gdouble X, gdouble Y, gdouble Z)
@@ -152,6 +166,8 @@ gcm_color_set_XYZ (GcmColorXYZ *dest, gdouble X, gdouble Y, gdouble Z)
  * @dest: the destination color
  *
  * Initialises a color value.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_color_clear_XYZ (GcmColorXYZ *dest)
@@ -171,6 +187,8 @@ gcm_color_clear_XYZ (GcmColorXYZ *dest)
  * @B: component value
  *
  * Initialises a color value.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_color_set_RGB (GcmColorRGB *dest, gdouble R, gdouble G, gdouble B)
@@ -190,6 +208,8 @@ gcm_color_set_RGB (GcmColorRGB *dest, gdouble R, gdouble G, gdouble B)
  * @y: component value
  *
  * Initialises a color value.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_color_set_Yxy (GcmColorYxy *dest, gdouble Y, gdouble x, gdouble y)
@@ -207,6 +227,8 @@ gcm_color_set_Yxy (GcmColorYxy *dest, gdouble Y, gdouble x, gdouble y)
  * @dest: the destination color
  *
  * Deep copies a color value.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_color_copy_XYZ (const GcmColorXYZ *src, GcmColorXYZ *dest)
@@ -225,6 +247,8 @@ gcm_color_copy_XYZ (const GcmColorXYZ *src, GcmColorXYZ *dest)
  * @dest: the destination color
  *
  * Deep copies a color value.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_color_copy_Yxy (const GcmColorYxy *src, GcmColorYxy *dest)
@@ -243,6 +267,8 @@ gcm_color_copy_Yxy (const GcmColorYxy *src, GcmColorYxy *dest)
  * @dest: the destination color
  *
  * Deep copies a color value.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_color_copy_RGB (const GcmColorRGB *src, GcmColorRGB *dest)
@@ -261,6 +287,8 @@ gcm_color_copy_RGB (const GcmColorRGB *src, GcmColorRGB *dest)
  * @dest: the destination color
  *
  * Convert from one color format to another.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_color_convert_RGBint_to_RGB (const GcmColorRGBint *src, GcmColorRGB *dest)
@@ -279,6 +307,8 @@ gcm_color_convert_RGBint_to_RGB (const GcmColorRGBint *src, GcmColorRGB *dest)
  * @dest: the destination color
  *
  * Convert from one color format to another.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_color_convert_RGB_to_RGBint (const GcmColorRGB *src, GcmColorRGBint *dest)
@@ -297,6 +327,8 @@ gcm_color_convert_RGB_to_RGBint (const GcmColorRGB *src, GcmColorRGBint *dest)
  * @dest: the destination color
  *
  * Convert from one color format to another.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_color_convert_Yxy_to_XYZ (const GcmColorYxy *src, GcmColorXYZ *dest)
@@ -330,6 +362,8 @@ gcm_color_convert_Yxy_to_XYZ (const GcmColorYxy *src, GcmColorXYZ *dest)
  * @dest: the destination color
  *
  * Convert from one color format to another.
+ *
+ * Since: 2.91.1
  **/
 void
 gcm_color_convert_XYZ_to_Yxy (const GcmColorXYZ *src, GcmColorYxy *dest)
@@ -364,6 +398,8 @@ gcm_color_convert_XYZ_to_Yxy (const GcmColorXYZ *src, GcmColorYxy *dest)
  * Returns the color as a vector component
  *
  * Return value: the vector.
+ *
+ * Since: 2.91.1
  **/
 GcmVec3	*
 gcm_color_get_XYZ_Vec3 (GcmColorXYZ *src)
@@ -379,6 +415,8 @@ gcm_color_get_XYZ_Vec3 (GcmColorXYZ *src)
  * Returns the color as a vector component
  *
  * Return value: the vector.
+ *
+ * Since: 2.91.1
  **/
 GcmVec3	*
 gcm_color_get_RGB_Vec3 (GcmColorRGB *src)

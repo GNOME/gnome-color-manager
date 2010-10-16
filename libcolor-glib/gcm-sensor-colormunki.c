@@ -545,6 +545,8 @@ gcm_sensor_colormunki_finalize (GObject *object)
  * gcm_sensor_colormunki_new:
  *
  * Return value: a new #GcmSensor object.
+ *
+ * Since: 2.91.1
  **/
 GcmSensor *
 gcm_sensor_colormunki_new (void)

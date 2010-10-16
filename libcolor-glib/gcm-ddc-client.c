@@ -135,7 +135,7 @@ out:
  *
  * Return value: %TRUE for success.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 gboolean
 gcm_ddc_client_close (GcmDdcClient *client, GError **error)
@@ -168,7 +168,7 @@ out:
  *
  * Return value: a #GPtrArray of #GcmDdcDevice's, free with g_ptr_array_unref()
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GPtrArray *
 gcm_ddc_client_get_devices (GcmDdcClient *client, GError **error)
@@ -201,7 +201,7 @@ out:
  *
  * Return value: A refcounted #GcmDdcDevice, or %NULL.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmDdcDevice *
 gcm_ddc_client_get_device_from_edid (GcmDdcClient *client, const gchar *edid_md5, GError **error)
@@ -253,7 +253,7 @@ out:
  *
  * Sets the logging level for this instance.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 void
 gcm_ddc_client_set_verbose (GcmDdcClient *client, GcmVerbose verbose)
@@ -267,7 +267,7 @@ gcm_ddc_client_set_verbose (GcmDdcClient *client, GcmVerbose verbose)
  *
  * Return value: Our personal error quark.
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GQuark
 gcm_ddc_client_error_quark (void)
@@ -325,7 +325,7 @@ gcm_ddc_client_class_init (GcmDdcClientClass *klass)
 	/**
 	 * GcmDdcClient:has-coldplug:
 	 *
-	 * Since: 0.0.1
+	 * Since: 2.91.1
 	 */
 	pspec = g_param_spec_boolean ("has-coldplug", NULL, "if there are no transactions in progress on this client",
 				      TRUE,
@@ -365,7 +365,7 @@ gcm_ddc_client_finalize (GObject *object)
  *
  * Return value: A new #GcmDdcClient instance
  *
- * Since: 0.0.1
+ * Since: 2.91.1
  **/
 GcmDdcClient *
 gcm_ddc_client_new (void)
