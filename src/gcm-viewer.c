@@ -490,6 +490,10 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
 
 	display = gdk_display_get_default ();
 	parent_window = gdk_window_foreign_new_for_display (display, xid);
+	if (parent_window == NULL) {
+		egg_warning ("failed to get parent window");
+		return;
+	}
 	our_window = gtk_widget_get_window (GTK_WIDGET (window));
 	if (our_window == NULL) {
 		egg_warning ("failed to get our window");
@@ -1229,6 +1233,10 @@ main (int argc, char **argv)
 	if (xid != 0) {
 		egg_debug ("Setting xid %i", xid);
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), xid);
+
+		/* hide the preferences button */
+		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_preferences"));
+		gtk_widget_hide (widget);
 	}
 
 	/* refresh UI */
