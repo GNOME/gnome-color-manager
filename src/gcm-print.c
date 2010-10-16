@@ -33,8 +33,6 @@
 
 #include "gcm-print.h"
 
-#include "egg-debug.h"
-
 static void     gcm_print_finalize	(GObject     *object);
 
 #define GCM_PRINT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_PRINT, GcmPrintPrivate))
@@ -113,7 +111,7 @@ gcm_print_begin_print_cb (GtkPrintOperation *operation, GtkPrintContext *context
 	}
 
 	/* setting the page count */
-	egg_debug ("setting %i pages", task->filenames->len);
+	g_debug ("setting %i pages", task->filenames->len);
 	gtk_print_operation_set_n_pages (operation, task->filenames->len);
 out:
 	return;
@@ -157,7 +155,7 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 
 	/* scale image to fill the page, but preserve aspect */
 	scale = MIN (width / gdk_pixbuf_get_width (pixbuf), height / gdk_pixbuf_get_height (pixbuf));
-	egg_debug ("surface=%.0fx%.0f, pixbuf=%ix%i (scale=%f)", width, height, gdk_pixbuf_get_width (pixbuf), gdk_pixbuf_get_height (pixbuf), scale);
+	g_debug ("surface=%.0fx%.0f, pixbuf=%ix%i (scale=%f)", width, height, gdk_pixbuf_get_width (pixbuf), gdk_pixbuf_get_height (pixbuf), scale);
 	cairo_scale (cr, scale, scale);
 
 	/* blit to the context */
@@ -190,12 +188,12 @@ gcm_print_status_changed_cb (GtkPrintOperation *operation, GcmPrintTask *task)
 
 	/* signal the status change */
 	status = gtk_print_operation_get_status (operation);
-	egg_debug ("emit: status-changed: %i", status);
+	g_debug ("emit: status-changed: %i", status);
 	g_signal_emit (task->print, signals[SIGNAL_STATUS_CHANGED], 0, status);
 
 	/* done? */
 	if (status == GTK_PRINT_STATUS_FINISHED) {
-		egg_debug ("printing finished");
+		g_debug ("printing finished");
 		g_idle_add ((GSourceFunc) gcm_print_loop_quit_idle_cb, task);
 	} else if (status == GTK_PRINT_STATUS_FINISHED_ABORTED) {
 		task->aborted = TRUE;
@@ -204,7 +202,7 @@ gcm_print_status_changed_cb (GtkPrintOperation *operation, GcmPrintTask *task)
 		if (task->error == NULL)
 			g_set_error (&task->error, 1, 0, "printing was aborted, and no error was set");
 
-		egg_debug ("printing aborted");
+		g_debug ("printing aborted");
 		g_idle_add ((GSourceFunc) gcm_print_loop_quit_idle_cb, task);
 	}
 }
@@ -215,7 +213,7 @@ gcm_print_status_changed_cb (GtkPrintOperation *operation, GcmPrintTask *task)
 static void
 gcm_print_done_cb (GtkPrintOperation *operation, GtkPrintOperationResult result, GcmPrintTask *task)
 {
-	egg_debug ("we're done rendering...");
+	g_debug ("we're done rendering...");
 }
 
 /**

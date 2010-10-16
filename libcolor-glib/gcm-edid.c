@@ -38,8 +38,6 @@
 #include "gcm-edid.h"
 #include "gcm-tables.h"
 
-#include "egg-debug.h"
-
 static void     gcm_edid_finalize	(GObject     *object);
 
 #define GCM_EDID_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_EDID, GcmEdidPrivate))
@@ -100,7 +98,6 @@ G_DEFINE_TYPE (GcmEdid, gcm_edid, G_TYPE_OBJECT)
 #define GCM_DESCRIPTOR_COLOR_MANAGEMENT_DATA		0xf9
 #define GCM_DESCRIPTOR_ALPHANUMERIC_DATA_STRING		0xfe
 #define GCM_DESCRIPTOR_COLOR_POINT			0xfb
-
 
 /**
  * gcm_edid_get_monitor_name:
@@ -496,7 +493,7 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
 	priv->pnp_id[0] = 'A' + ((data[GCM_EDID_OFFSET_PNPID+0] & 0x7c) / 4) - 1;
 	priv->pnp_id[1] = 'A' + ((data[GCM_EDID_OFFSET_PNPID+0] & 0x3) * 8) + ((data[GCM_EDID_OFFSET_PNPID+1] & 0xe0) / 32) - 1;
 	priv->pnp_id[2] = 'A' + (data[GCM_EDID_OFFSET_PNPID+1] & 0x1f) - 1;
-	egg_debug ("PNPID: %s", priv->pnp_id);
+	g_debug ("PNPID: %s", priv->pnp_id);
 
 	/* maybe there isn't a ASCII serial number descriptor, so use this instead */
 	serial = (guint32) data[GCM_EDID_OFFSET_SERIAL+0];
@@ -505,7 +502,7 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
 	serial += (guint32) data[GCM_EDID_OFFSET_SERIAL+3] * 0x1000000;
 	if (serial > 0) {
 		priv->serial_number = g_strdup_printf ("%" G_GUINT32_FORMAT, serial);
-		egg_debug ("Serial: %s", priv->serial_number);
+		g_debug ("Serial: %s", priv->serial_number);
 	}
 
 	/* get the size */
@@ -521,31 +518,31 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
 	/* get gamma */
 	if (data[GCM_EDID_OFFSET_GAMMA] == 0xff) {
 		priv->gamma = 1.0f;
-		egg_debug ("gamma is stored in an extension block");
+		g_debug ("gamma is stored in an extension block");
 	} else {
 		priv->gamma = ((gfloat) data[GCM_EDID_OFFSET_GAMMA] / 100) + 1;
-		egg_debug ("gamma is reported as %f", priv->gamma);
+		g_debug ("gamma is reported as %f", priv->gamma);
 	}
 
 	/* get color red */
 	priv->red->x = gcm_edid_decode_fraction (data[0x1b], gcm_edid_get_bits (data[0x19], 6, 7));
 	priv->red->y = gcm_edid_decode_fraction (data[0x1c], gcm_edid_get_bits (data[0x19], 5, 4));
-	egg_debug ("red x=%f,y=%f", priv->red->x, priv->red->y);
+	g_debug ("red x=%f,y=%f", priv->red->x, priv->red->y);
 
 	/* get color green */
 	priv->green->x = gcm_edid_decode_fraction (data[0x1d], gcm_edid_get_bits (data[0x19], 2, 3));
 	priv->green->y = gcm_edid_decode_fraction (data[0x1e], gcm_edid_get_bits (data[0x19], 0, 1));
-	egg_debug ("green x=%f,y=%f", priv->green->x, priv->green->y);
+	g_debug ("green x=%f,y=%f", priv->green->x, priv->green->y);
 
 	/* get color blue */
 	priv->blue->x = gcm_edid_decode_fraction (data[0x1f], gcm_edid_get_bits (data[0x1a], 6, 7));
 	priv->blue->y = gcm_edid_decode_fraction (data[0x20], gcm_edid_get_bits (data[0x1a], 4, 5));
-	egg_debug ("blue x=%f,y=%f", priv->blue->x, priv->blue->y);
+	g_debug ("blue x=%f,y=%f", priv->blue->x, priv->blue->y);
 
 	/* get color white */
 	priv->white->x = gcm_edid_decode_fraction (data[0x21], gcm_edid_get_bits (data[0x1a], 2, 3));
 	priv->white->y = gcm_edid_decode_fraction (data[0x22], gcm_edid_get_bits (data[0x1a], 0, 1));
-	egg_debug ("white x=%f,y=%f", priv->white->x, priv->white->y);
+	g_debug ("white x=%f,y=%f", priv->white->x, priv->white->y);
 
 	/* parse EDID data */
 	for (i=GCM_EDID_OFFSET_DATA_BLOCKS; i <= GCM_EDID_OFFSET_LAST_BLOCK; i+=18) {
@@ -569,7 +566,7 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
 				priv->serial_number = tmp;
 			}
 		} else if (data[i+3] == GCM_DESCRIPTOR_COLOR_MANAGEMENT_DATA) {
-			egg_warning ("failing to parse color management data");
+			g_warning ("failing to parse color management data");
 		} else if (data[i+3] == GCM_DESCRIPTOR_ALPHANUMERIC_DATA_STRING) {
 			tmp = gcm_edid_parse_string (&data[i+5]);
 			if (tmp != NULL) {
@@ -578,14 +575,14 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
 			}
 		} else if (data[i+3] == GCM_DESCRIPTOR_COLOR_POINT) {
 			if (data[i+3+9] != 0xff) {
-				egg_debug ("extended EDID block(1) which contains a better gamma value");
+				g_debug ("extended EDID block(1) which contains a better gamma value");
 				priv->gamma = ((gfloat) data[i+3+9] / 100) + 1;
-				egg_debug ("gamma is overridden as %f", priv->gamma);
+				g_debug ("gamma is overridden as %f", priv->gamma);
 			}
 			if (data[i+3+14] != 0xff) {
-				egg_debug ("extended EDID block(2) which contains a better gamma value");
+				g_debug ("extended EDID block(2) which contains a better gamma value");
 				priv->gamma = ((gfloat) data[i+3+9] / 100) + 1;
-				egg_debug ("gamma is overridden as %f", priv->gamma);
+				g_debug ("gamma is overridden as %f", priv->gamma);
 			}
 		}
 	}
@@ -593,16 +590,16 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
 	/* extension blocks */
 	extension_blocks = data[GCM_EDID_OFFSET_EXTENSION_BLOCK_COUNT];
 	if (extension_blocks > 0)
-		egg_warning ("%i extension blocks to parse", extension_blocks);
+		g_warning ("%i extension blocks to parse", extension_blocks);
 
 	/* calculate checksum */
 	priv->checksum = g_compute_checksum_for_data (G_CHECKSUM_MD5, data, 0x6c);
 
 	/* print what we've got */
-	egg_debug ("monitor name: %s", priv->monitor_name);
-	egg_debug ("serial number: %s", priv->serial_number);
-	egg_debug ("ascii string: %s", priv->eisa_id);
-	egg_debug ("checksum: %s", priv->checksum);
+	g_debug ("monitor name: %s", priv->monitor_name);
+	g_debug ("serial number: %s", priv->serial_number);
+	g_debug ("ascii string: %s", priv->eisa_id);
+	g_debug ("checksum: %s", priv->checksum);
 out:
 	return ret;
 }

@@ -166,8 +166,10 @@ main (int argc, char **argv)
 	g_type_init ();
 
 	context = g_option_context_new ("DDC/CI utility program");
-	g_option_context_set_summary (context, "This exposes the DDC/CI protocol used by most modern displays.");
 	g_option_context_add_main_entries (context, options, NULL);
+	g_option_context_set_summary (context, "This exposes the DDC/CI protocol used by most modern displays.");
+	g_option_context_add_group (context, gcm_debug_get_option_group ());
+	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
 

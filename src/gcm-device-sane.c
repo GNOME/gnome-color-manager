@@ -28,8 +28,6 @@
 #include "gcm-enum.h"
 #include "gcm-utils.h"
 
-#include "egg-debug.h"
-
 static void     gcm_device_sane_finalize	(GObject     *object);
 
 #define GCM_DEVICE_SANE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_DEVICE_SANE, GcmDeviceSanePrivate))
@@ -172,10 +170,10 @@ gcm_device_sane_set_from_device (GcmDevice *device, const SANE_Device *sane_devi
 	gchar *model = NULL;
 	gchar *title = NULL;
 
-	egg_debug ("name=%s", sane_device->name);
-	egg_debug ("vendor=%s", sane_device->vendor);
-	egg_debug ("model=%s", sane_device->model);
-	egg_debug ("type=%s", sane_device->type);
+	g_debug ("name=%s", sane_device->name);
+	g_debug ("vendor=%s", sane_device->vendor);
+	g_debug ("model=%s", sane_device->model);
+	g_debug ("type=%s", sane_device->type);
 
 	/* convert device_id 'plustek:libusb:004:002' to suitable id */
 	id = g_strdup_printf ("sane_%s", sane_device->model);
@@ -291,7 +289,7 @@ gcm_device_sane_apply_device (GcmDeviceSane *device_sane, GError **error)
 	device_filename = g_strdup_printf ("%s:%s.drc", manufacturer, model);
 	g_strdelimit (device_filename, "/", '_');
 	gcm_device_sane_remove_spaces (device_filename);
-	egg_debug ("device_filename=%s", device_filename);
+	g_debug ("device_filename=%s", device_filename);
 
 	filename = g_build_filename (g_get_home_dir (), ".sane", "xsane", device_filename, NULL);
 

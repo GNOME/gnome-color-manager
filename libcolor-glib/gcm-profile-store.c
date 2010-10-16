@@ -34,8 +34,6 @@
 
 #include "gcm-profile-store.h"
 
-#include "egg-debug.h"
-
 static void     gcm_profile_store_finalize	(GObject     *object);
 
 #define GCM_PROFILE_STORE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_PROFILE_STORE, GcmProfileStorePrivate))
@@ -185,12 +183,12 @@ gcm_profile_store_remove_profile (GcmProfileStore *profile_store, GcmProfile *pr
 	/* remove from list */
 	ret = g_ptr_array_remove (priv->profile_array, profile);
 	if (!ret) {
-		egg_warning ("failed to remove %s", gcm_profile_get_filename (profile));
+		g_warning ("failed to remove %s", gcm_profile_get_filename (profile));
 		goto out;
 	}
 
 	/* emit a signal */
-	egg_debug ("emit removed (and changed): %s", gcm_profile_get_checksum (profile));
+	g_debug ("emit removed (and changed): %s", gcm_profile_get_checksum (profile));
 	g_signal_emit (profile_store, signals[SIGNAL_REMOVED], 0, profile);
 	g_signal_emit (profile_store, signals[SIGNAL_CHANGED], 0);
 out:
@@ -231,7 +229,7 @@ gcm_profile_store_add_profile (GcmProfileStore *profile_store, GFile *file)
 	profile = gcm_profile_new ();
 	ret = gcm_profile_parse (profile, file, &error);
 	if (!ret) {
-		egg_warning ("failed to add profile '%s': %s", filename, error->message);
+		g_warning ("failed to add profile '%s': %s", filename, error->message);
 		g_error_free (error);
 		goto out;		
 	}
@@ -243,7 +241,7 @@ gcm_profile_store_add_profile (GcmProfileStore *profile_store, GFile *file)
 
 		/* we value a local file higher than the shared file */
 		if (gcm_profile_get_can_delete (profile_tmp)) {
-			egg_debug ("already added a deletable profile %s, cannot add %s",
+			g_debug ("already added a deletable profile %s, cannot add %s",
 				   gcm_profile_get_filename (profile_tmp), filename);
 			goto out;
 		}
@@ -253,12 +251,12 @@ gcm_profile_store_add_profile (GcmProfileStore *profile_store, GFile *file)
 	}
 
 	/* add to array */
-	egg_debug ("parsed new profile '%s'", filename);
+	g_debug ("parsed new profile '%s'", filename);
 	g_ptr_array_add (priv->profile_array, g_object_ref (profile));
 	g_signal_connect (profile, "notify::file", G_CALLBACK(gcm_profile_store_notify_filename_cb), profile_store);
 
 	/* emit a signal */
-	egg_debug ("emit added (and changed): %s", filename);
+	g_debug ("emit added (and changed): %s", filename);
 	g_signal_emit (profile_store, signals[SIGNAL_ADDED], 0, profile);
 	g_signal_emit (profile_store, signals[SIGNAL_CHANGED], 0);
 out:
@@ -288,14 +286,14 @@ gcm_profile_store_file_monitor_changed_cb (GFileMonitor *monitor, GFile *file, G
 	/* ignore temp files */
 	path = g_file_get_path (file);
 	if (g_strrstr (path, ".goutputstream") != NULL) {
-		egg_debug ("ignoring gvfs temporary file");
+		g_debug ("ignoring gvfs temporary file");
 		goto out;
 	}
 
 	/* just rescan the correct directory */
 	parent = g_file_get_parent (file);
 	parent_path = g_file_get_path (parent);
-	egg_debug ("%s was added, rescanning %s", path, parent_path);
+	g_debug ("%s was added, rescanning %s", path, parent_path);
 	gcm_profile_store_search_path (profile_store, parent_path);
 out:
 	if (parent != NULL)
@@ -340,7 +338,7 @@ gcm_profile_store_search_path (GcmProfileStore *profile_store, const gchar *path
 	/* get contents */
 	dir = g_dir_open (path, 0, &error);
 	if (dir == NULL) {
-		egg_debug ("failed to open: %s", error->message);
+		g_debug ("failed to open: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -351,7 +349,7 @@ gcm_profile_store_search_path (GcmProfileStore *profile_store, const gchar *path
 		file = g_file_new_for_path (path);
 		monitor = g_file_monitor_directory (file, G_FILE_MONITOR_NONE, NULL, &error);
 		if (monitor == NULL) {
-			egg_debug ("failed to monitor path: %s", error->message);
+			g_debug ("failed to monitor path: %s", error->message);
 			g_error_free (error);
 			goto out;
 		}
@@ -410,12 +408,12 @@ gcm_profile_store_add_profiles_from_mounted_volume (GcmProfileStore *profile_sto
 	/* get the filesystem type */
 	info = g_file_query_filesystem_info (root, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE, NULL, &error);
 	if (info == NULL) {
-		egg_warning ("failed to get filesystem type: %s", error->message);
+		g_warning ("failed to get filesystem type: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
 	type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE);
-	egg_debug ("filesystem mounted on %s has type %s", path_root, type);
+	g_debug ("filesystem mounted on %s has type %s", path_root, type);
 
 	/* only scan hfs volumes for OSX */
 	if (g_strcmp0 (type, "hfs") == 0) {
@@ -557,7 +555,7 @@ gcm_profile_store_search (GcmProfileStore *profile_store, GcmProfileSearchFlags 
 		path = g_build_filename (g_get_user_data_dir (), "icc", NULL);
 		ret = gcm_profile_store_mkdir_with_parents (path, &error);
 		if (!ret) {
-			egg_warning ("failed to create directory on startup: %s", error->message);
+			g_warning ("failed to create directory on startup: %s", error->message);
 			g_error_free (error);
 		} else {
 			ret = gcm_profile_store_search_path (profile_store, path);

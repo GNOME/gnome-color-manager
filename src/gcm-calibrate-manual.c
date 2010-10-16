@@ -33,15 +33,11 @@
 #include <gtk/gtk.h>
 #include <math.h>
 
-#include "egg-debug.h"
-
 #include "gcm-utils.h"
 #include "gcm-clut.h"
 #include "gcm-gamma-widget.h"
 #include "gcm-trc-widget.h"
 #include "gcm-calibrate-manual.h"
-
-#include "egg-debug.h"
 
 static void     gcm_calibrate_manual_finalize	(GObject     *object);
 
@@ -83,7 +79,6 @@ enum {
 };
 
 G_DEFINE_TYPE (GcmCalibrateManual, gcm_calibrate_manual, GCM_TYPE_CALIBRATE)
-
 
 /**
  * gcm_calibrate_manual_close_cb:
@@ -173,7 +168,7 @@ gcm_calibrate_manual_slider_changed_cb (GtkRange *range, GcmCalibrateManual *cal
 	priv->profile_green[priv->current_gamma] = green;
 	priv->profile_blue[priv->current_gamma] = blue;
 
-	egg_debug ("@%i, (%f,%f,%f)", priv->current_gamma, red, green, blue);
+	g_debug ("@%i, (%f,%f,%f)", priv->current_gamma, red, green, blue);
 out:
 	return;
 }
@@ -287,7 +282,7 @@ gcm_calibrate_manual_setup_page (GcmCalibrateManual *calibrate, guint page)
 
 		/* save default */
 		if (priv->profile_red[priv->current_gamma] > 1.0f) {
-			egg_debug ("resetting %i to %f", page, priv->midpoint);
+			g_debug ("resetting %i to %f", page, priv->midpoint);
 			priv->profile_red[priv->current_gamma] = priv->midpoint;
 			priv->profile_green[priv->current_gamma] = priv->midpoint;
 			priv->profile_blue[priv->current_gamma] = priv->midpoint;
@@ -300,7 +295,7 @@ gcm_calibrate_manual_setup_page (GcmCalibrateManual *calibrate, guint page)
 		ave = (priv->profile_red[priv->current_gamma] + priv->profile_green[priv->current_gamma] + priv->profile_blue[priv->current_gamma]) / 3.0f;
 		widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "hscale_brightness"));
 		gtk_range_set_value (GTK_RANGE(widget), ave - priv->midpoint);
-		egg_debug ("brightness compensation=%f", (ave - priv->midpoint));
+		g_debug ("brightness compensation=%f", (ave - priv->midpoint));
 
 		/* color is offset */
 		widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "hscale_red"));
@@ -318,7 +313,7 @@ gcm_calibrate_manual_setup_page (GcmCalibrateManual *calibrate, guint page)
 		priv->profile_green[priv->current_gamma] = CLAMP (priv->profile_green[priv->current_gamma], 0.0f, 1.0f);
 		priv->profile_blue[priv->current_gamma] = CLAMP (priv->profile_blue[priv->current_gamma], 0.0f, 1.0f);
 
-		egg_debug ("saving colours");
+		g_debug ("saving colours");
 		g_object_set (priv->gamma_widget,
 			      "color-light", light,
 			      "color-dark", dark,
@@ -394,7 +389,7 @@ gcm_calibrate_manual_setup_page (GcmCalibrateManual *calibrate, guint page)
 		goto out;
 	}
 
-	egg_warning ("oops - no page");
+	g_warning ("oops - no page");
 out:
 	if (string_title != NULL)
 		g_string_free (string_title, TRUE);
@@ -461,8 +456,8 @@ gcm_calibrate_manual_apply_cb (GtkWidget *widget, GcmCalibrateManual *calibrate)
 
 	guint i;
 	for (i=0; i<priv->calibration_steps; i++)
-		egg_debug ("@%i, %f, %f, %f", i, priv->profile_red[i], priv->profile_green[i], priv->profile_blue[i]);
-	egg_warning ("NOP: need to create profile with lcms!");
+		g_debug ("@%i, %f, %f, %f", i, priv->profile_red[i], priv->profile_green[i], priv->profile_blue[i]);
+	g_warning ("NOP: need to create profile with lcms!");
 	priv->ret = TRUE;
 
 	/* we're done */
@@ -481,7 +476,7 @@ gcm_calibrate_manual_display (GcmCalibrate *calibrate_, GtkWindow *window, GErro
 	guint i;
 	GcmCalibrateManual *calibrate = GCM_CALIBRATE_MANUAL(calibrate_);
 	GcmCalibrateManualPrivate *priv = calibrate->priv;
-	egg_debug ("calibrate_display in %i steps", priv->calibration_steps);
+	g_debug ("calibrate_display in %i steps", priv->calibration_steps);
 
 	/* save error, which can be NULL */
 	priv->error = error;
@@ -603,7 +598,7 @@ gcm_calibrate_manual_init (GcmCalibrateManual *calibrate)
 	priv->builder = gtk_builder_new ();
 	retval = gtk_builder_add_from_file (priv->builder, GCM_DATA "/gcm-calibrate.ui", &error);
 	if (retval == 0) {
-		egg_error ("failed to load ui: %s", error->message);
+		g_error ("failed to load ui: %s", error->message);
 		g_error_free (error);
 	}
 

@@ -25,12 +25,11 @@
 #include <gtk/gtk.h>
 #include <locale.h>
 
-#include "egg-debug.h"
-
 #include "gcm-utils.h"
 #include "gcm-profile.h"
 #include "gcm-x11-output.h"
 #include "gcm-x11-screen.h"
+#include "gcm-debug.h"
 
 /**
  * gcm_inspect_print_data_info:
@@ -46,7 +45,7 @@ gcm_inspect_print_data_info (const gchar *title, const guint8 *data, gsize lengt
 	profile = gcm_profile_new ();
 	ret = gcm_profile_parse_data (profile, data, length, &error);
 	if (!ret) {
-		egg_warning ("failed to parse data: %s", error->message);
+		g_warning ("failed to parse data: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -89,7 +88,7 @@ gcm_inspect_show_x11_atoms (void)
 	screen = gcm_x11_screen_new ();
 	ret = gcm_x11_screen_assign (screen, NULL, &error);
 	if (!ret) {
-		egg_warning ("failed to get outputs: %s", error->message);
+		g_warning ("failed to get outputs: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -97,7 +96,7 @@ gcm_inspect_show_x11_atoms (void)
 	/* get profile from XServer */
 	ret = gcm_x11_screen_get_profile_data (screen, &data, &length, &error);
 	if (!ret) {
-		egg_warning ("failed to get XServer profile data: %s", error->message);
+		g_warning ("failed to get XServer profile data: %s", error->message);
 		g_error_free (error);
 		/* non-fatal */
 		error = NULL;
@@ -109,7 +108,7 @@ gcm_inspect_show_x11_atoms (void)
 	/* get profile from XServer */
 	ret = gcm_x11_screen_get_protocol_version (screen, &major, &minor, &error);
 	if (!ret) {
-		egg_warning ("failed to get XServer protocol version: %s", error->message);
+		g_warning ("failed to get XServer protocol version: %s", error->message);
 		g_error_free (error);
 		/* non-fatal */
 		error = NULL;
@@ -122,7 +121,7 @@ gcm_inspect_show_x11_atoms (void)
 	outputs = gcm_x11_screen_get_outputs (screen, &error);
 	if (outputs == NULL) {
 		ret = FALSE;
-		egg_warning ("failed to get outputs: %s", error->message);
+		g_warning ("failed to get outputs: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -136,7 +135,7 @@ gcm_inspect_show_x11_atoms (void)
 		/* get profile from XServer */
 		ret = gcm_x11_output_get_profile_data (output, &data_tmp, &length, &error);
 		if (!ret) {
-			egg_warning ("failed to get output profile data: %s", error->message);
+			g_warning ("failed to get output profile data: %s", error->message);
 			/* TRANSLATORS: this is when the profile has not been set */
 			g_print ("%s %s\n", title, _("not set"));
 			g_error_free (error);
@@ -602,7 +601,7 @@ main (int argc, char **argv)
 	/* TRANSLATORS: just dumps the EDID to disk */
 	context = g_option_context_new (_("EDID inspect program"));
 	g_option_context_add_main_entries (context, options, NULL);
-	g_option_context_add_group (context, egg_debug_get_option_group ());
+	g_option_context_add_group (context, gcm_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);

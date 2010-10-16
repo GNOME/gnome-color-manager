@@ -26,8 +26,6 @@
 #include "gcm-device-udev.h"
 #include "gcm-utils.h"
 
-#include "egg-debug.h"
-
 static void     gcm_device_udev_finalize	(GObject     *object);
 
 #define GCM_DEVICE_UDEV_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_DEVICE_UDEV, GcmDeviceUdevPrivate))
@@ -188,7 +186,6 @@ gcm_device_udev_class_init (GcmDeviceUdevClass *klass)
 	object_class->finalize = gcm_device_udev_finalize;
 	object_class->get_property = gcm_device_udev_get_property;
 	object_class->set_property = gcm_device_udev_set_property;
-
 
 	/**
 	 * GcmDeviceUdev:native-device:

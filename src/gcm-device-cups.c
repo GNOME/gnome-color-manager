@@ -29,8 +29,6 @@
 #include "gcm-enum.h"
 #include "gcm-utils.h"
 
-#include "egg-debug.h"
-
 static void     gcm_device_cups_finalize	(GObject     *object);
 
 #define GCM_DEVICE_CUPS_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_DEVICE_CUPS, GcmDeviceCupsPrivate))
@@ -72,9 +70,9 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 	gchar *profile_filename = NULL;
 	GcmColorspace colorspace = GCM_COLORSPACE_UNKNOWN;
 
-	egg_debug ("name: %s", dest.name);
-	egg_debug ("instance: %s", dest.instance);
-	egg_debug ("num_options: %i", dest.num_options);
+	g_debug ("name: %s", dest.name);
+	g_debug ("instance: %s", dest.instance);
+	g_debug ("num_options: %i", dest.num_options);
 
 	/* don't add Cups-PDF devices */
 	if (g_strcmp0 (dest.name, "Cups-PDF") == 0) {
@@ -84,7 +82,7 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 	}
 
 	ppd_file_location = cupsGetPPD2 (http, dest.name);
-	egg_debug ("ppd_file_location=%s", ppd_file_location);
+	g_debug ("ppd_file_location=%s", ppd_file_location);
 
 	/* don't add devices without PPD */
 	if (ppd_file_location == NULL) {
@@ -134,14 +132,14 @@ gcm_device_cups_set_from_dest (GcmDevice *device, http_t *http, cups_dest_t dest
 			else if (g_strcmp0 (value, "Gray") == 0)
 				colorspace = GCM_COLORSPACE_GRAY;
 			else
-				egg_warning ("colorspace not recognized: %s", value);
+				g_warning ("colorspace not recognized: %s", value);
 		} else if (g_strcmp0 (keyword, "cupsICCProfile") == 0) {
 			/* FIXME: possibly map from http://localhost:port/profiles/dave.icc to ~/.icc/color/dave.icc */
 			profile_filename = g_strdup (value);
-			egg_warning ("remap %s?", profile_filename);
+			g_warning ("remap %s?", profile_filename);
 		}
 
-//		egg_debug ("keyword: %s, value: %s, spec: %s", keyword, value, ppd_file->attrs[i]->spec);
+//		g_debug ("keyword: %s, value: %s, spec: %s", keyword, value, ppd_file->attrs[i]->spec);
 	}
 
 	/* convert device_id 'MFG:HP;MDL:deskjet d1300 series;DES:deskjet d1300 series;' to suitable id */
@@ -227,7 +225,6 @@ gcm_device_cups_class_init (GcmDeviceCupsClass *klass)
 	object_class->finalize = gcm_device_cups_finalize;
 	object_class->get_property = gcm_device_cups_get_property;
 	object_class->set_property = gcm_device_cups_set_property;
-
 
 	/**
 	 * GcmDeviceCups:native-device:

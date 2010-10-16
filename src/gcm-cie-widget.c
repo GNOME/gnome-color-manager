@@ -32,8 +32,6 @@
 #include "gcm-color.h"
 #include "gcm-cie-widget.h"
 
-#include "egg-debug.h"
-
 G_DEFINE_TYPE (GcmCieWidget, gcm_cie_widget, GTK_TYPE_DRAWING_AREA);
 #define GCM_CIE_WIDGET_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_CIE_WIDGET, GcmCieWidgetPrivate))
 #define GCM_CIE_WIDGET_FONT "Sans 8"

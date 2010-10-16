@@ -36,8 +36,6 @@
 #include "gcm-calibrate-dialog.h"
 #include "gcm-utils.h"
 
-#include "egg-debug.h"
-
 static void     gcm_calibrate_dialog_finalize	(GObject     *object);
 
 #define GCM_CALIBRATE_DIALOG_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_CALIBRATE_DIALOG, GcmCalibrateDialogPrivate))
@@ -227,7 +225,7 @@ gcm_calibrate_dialog_set_image_filename_private (GcmCalibrateDialog *calibrate_d
 		filename = g_build_filename (GCM_DATA, "icons", image_filename, NULL);
 		pixbuf = gdk_pixbuf_new_from_file_at_size (filename, 200, 400, &error);
 		if (pixbuf == NULL) {
-			egg_warning ("failed to load image: %s", error->message);
+			g_warning ("failed to load image: %s", error->message);
 			g_error_free (error);
 			gtk_widget_hide (widget);
 		} else {
@@ -286,7 +284,7 @@ gcm_calibrate_dialog_set_window	(GcmCalibrateDialog *calibrate_dialog, GtkWindow
 	/* ensure it's not the same thing */
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
 	if (GTK_WINDOW (widget) == window) {
-		egg_warning ("trying to set parent to self!");
+		g_warning ("trying to set parent to self!");
 		return;
 	}
 
@@ -312,7 +310,7 @@ GtkResponseType
 gcm_calibrate_dialog_run (GcmCalibrateDialog *calibrate_dialog)
 {
 	if (g_main_loop_is_running (calibrate_dialog->priv->loop)) {
-		egg_warning ("you can't call this recursively");
+		g_warning ("you can't call this recursively");
 		return GTK_RESPONSE_NONE;
 	}
 
@@ -388,7 +386,7 @@ gcm_calibrate_dialog_show (GcmCalibrateDialog		*calibrate_dialog,
 	widget = GTK_WIDGET (gtk_builder_get_object (priv->builder, "dialog_calibrate"));
 	if (calibrate_dialog->priv->move_window) {
 		gtk_window_get_position (GTK_WINDOW (widget), &x, &y);
-		egg_debug ("currently at %i,%i, moving left", x, y);
+		g_debug ("currently at %i,%i, moving left", x, y);
 		gtk_window_move (GTK_WINDOW (widget), 10, y);
 	}
 
@@ -421,7 +419,7 @@ gcm_calibrate_dialog_pop (GcmCalibrateDialog *calibrate_dialog)
 	/* save in case we need to reuse */
 	len = priv->cached_dialogs->len;
 	if (len < 2) {
-		egg_warning ("cannot pop dialog as nothing to recover");
+		g_warning ("cannot pop dialog as nothing to recover");
 		return;
 	}
 	dialog = g_ptr_array_index (priv->cached_dialogs, len-2);
@@ -775,7 +773,7 @@ gcm_calibrate_dialog_init (GcmCalibrateDialog *calibrate_dialog)
 	calibrate_dialog->priv->builder = gtk_builder_new ();
 	retval = gtk_builder_add_from_file (calibrate_dialog->priv->builder, GCM_DATA "/gcm-calibrate.ui", &error);
 	if (retval == 0) {
-		egg_error ("failed to load ui: %s", error->message);
+		g_error ("failed to load ui: %s", error->message);
 		g_error_free (error);
 	}
 

@@ -35,8 +35,6 @@
 
 #include "gcm-exif.h"
 
-#include "egg-debug.h"
-
 static void     gcm_exif_finalize	(GObject     *object);
 
 #define GCM_EXIF_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_EXIF, GcmExifPrivate))

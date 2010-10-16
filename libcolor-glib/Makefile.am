@@ -14,6 +14,7 @@ INCLUDES = \
 	-I$(top_srcdir)/libcolor-glib				\
 	-I$(top_builddir)/libcolor-glib				\
 	-I.							\
+	-DG_LOG_DOMAIN=\"Gcm\"					\
 	-DLIBCOLOR_GLIB_COMPILATION				\
 	-DLOCALSTATEDIR=\""$(localstatedir)"\" 			\
 	-DTESTDATADIR=\""$(top_srcdir)/data/tests"\"		\
@@ -53,8 +54,8 @@ libcolor_glib_include_HEADERS =					\
 
 libcolor_glib_la_SOURCES =					\
 	libcolor-glib.h						\
-	egg-debug.c						\
-	egg-debug.h						\
+	gcm-debug.c						\
+	gcm-debug.h						\
 	gcm-sample-window.c					\
 	gcm-sample-window.h					\
 	gcm-math.c						\

@@ -32,8 +32,6 @@
 #include <libusb-1.0/libusb.h>
 #include <libcolor-glib.h>
 
-#include "egg-debug.h"
-
 #include "gcm-sensor-colormunki.h"
 #include "gcm-sensor-colormunki-private.h"
 
@@ -73,9 +71,6 @@ gcm_sensor_colormunki_print_data (const gchar *title, const guchar *data, gsize 
 {
 	guint i;
 
-	if (!egg_debug_is_verbose ())
-		return;
-
 	if (g_strcmp0 (title, "request") == 0)
 		g_print ("%c[%dm", 0x1B, 31);
 	if (g_strcmp0 (title, "reply") == 0)
@@ -91,7 +86,6 @@ gcm_sensor_colormunki_print_data (const gchar *title, const guchar *data, gsize 
 static void
 gcm_sensor_colormunki_submit_transfer (GcmSensorColormunki *sensor_colormunki);
 
-
 /**
  * gcm_sensor_colormunki_refresh_state_transfer_cb:
  **/
@@ -103,13 +97,13 @@ gcm_sensor_colormunki_refresh_state_transfer_cb (struct libusb_transfer *transfe
 	guint8 *reply = transfer->buffer + LIBUSB_CONTROL_SETUP_SIZE;
 
 	if (transfer->status != LIBUSB_TRANSFER_COMPLETED) {
-		egg_warning ("did not succeed");
+		g_warning ("did not succeed");
 		goto out;
 	}
 
 	/* sensor position and button state */
 	priv->dial_position = reply[0];
-	egg_debug ("dial now %s, button now %s",
+	g_debug ("dial now %s, button now %s",
 		   gcm_sensor_colormunki_dial_position_to_string (priv->dial_position),
 		   gcm_sensor_colormunki_button_state_to_string (reply[1]));
 
@@ -146,7 +140,7 @@ gcm_sensor_colormunki_refresh_state (GcmSensorColormunki *sensor_colormunki, GEr
 	/* submit transfer */
 	retval = libusb_submit_transfer (priv->transfer_state);
 	if (retval < 0) {
-		egg_warning ("failed to submit transfer: %s", libusb_strerror (retval));
+		g_warning ("failed to submit transfer: %s", libusb_strerror (retval));
 		goto out;
 	}
 
@@ -167,7 +161,7 @@ gcm_sensor_colormunki_transfer_cb (struct libusb_transfer *transfer)
 	guint8 *reply = transfer->buffer;
 
 	if (transfer->status != LIBUSB_TRANSFER_COMPLETED) {
-		egg_warning ("did not succeed");
+		g_warning ("did not succeed");
 		return;
 	}
 
@@ -175,14 +169,14 @@ gcm_sensor_colormunki_transfer_cb (struct libusb_transfer *transfer)
 	timestamp = (reply[7] << 24) + (reply[6] << 16) + (reply[5] << 8) + (reply[4] << 0);
 	/* we only care when the button is pressed */
 	if (reply[0] == GCM_SENSOR_COLORMUNKI_COMMAND_BUTTON_RELEASED) {
-		egg_debug ("ignoring button released");
+		g_debug ("ignoring button released");
 		goto out;
 	}
 
 	if (reply[0] == GCM_SENSOR_COLORMUNKI_COMMAND_DIAL_ROTATE) {
-		egg_warning ("dial rotate at %ims", timestamp);
+		g_warning ("dial rotate at %ims", timestamp);
 	} else if (reply[0] == GCM_SENSOR_COLORMUNKI_COMMAND_BUTTON_PRESSED) {
-		egg_debug ("button pressed at %ims", timestamp);
+		g_debug ("button pressed at %ims", timestamp);
 		gcm_sensor_button_pressed (GCM_SENSOR (sensor_colormunki));
 	}
 
@@ -214,10 +208,10 @@ gcm_sensor_colormunki_submit_transfer (GcmSensorColormunki *sensor_colormunki)
 					gcm_sensor_colormunki_transfer_cb,
 					sensor_colormunki, -1);
 
-	egg_debug ("submitting transfer");
+	g_debug ("submitting transfer");
 	retval = libusb_submit_transfer (priv->transfer_interrupt);
 	if (retval < 0)
-		egg_warning ("failed to submit transfer: %s", libusb_strerror (retval));
+		g_warning ("failed to submit transfer: %s", libusb_strerror (retval));
 }
 
 /**
@@ -236,7 +230,7 @@ gcm_sensor_colormunki_get_eeprom_data (GcmSensorColormunki *sensor_colormunki,
 	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
 
 	/* do EEPROM request */
-	egg_debug ("get EEPROM at 0x%04x for %i", address, size);
+	g_debug ("get EEPROM at 0x%04x for %i", address, size);
 	gcm_buffer_write_uint32_le (request, address);
 	gcm_buffer_write_uint32_le (request + 4, size);
 	gcm_sensor_colormunki_print_data ("request", request, 8);
@@ -295,9 +289,7 @@ gcm_sensor_colormunki_playdo (GcmSensor *sensor, GError **error)
 	GcmSensorColormunki *sensor_colormunki = GCM_SENSOR_COLORMUNKI (sensor);
 //	GcmSensorColormunkiPrivate *priv = sensor_colormunki->priv;
 
-
-
-	egg_debug ("submit transfer");
+	g_debug ("submit transfer");
 	gcm_sensor_colormunki_submit_transfer (sensor_colormunki);
 	ret = gcm_sensor_colormunki_refresh_state (sensor_colormunki, error);
 //out:
@@ -388,10 +380,10 @@ gcm_sensor_colormunki_startup (GcmSensor *sensor, GError **error)
 	gcm_sensor_set_serial_number (sensor, (const gchar*) buffer);
 
 	/* print details */
-	egg_debug ("Chip ID\t%s", priv->chip_id);
-	egg_debug ("Serial number\t%s", gcm_sensor_get_serial_number (sensor));
-	egg_debug ("Version\t%s", priv->version_string);
-	egg_debug ("Firmware\tfirmware_revision=%s, tick_duration=%i, min_int=%i, eeprom_blocks=%i, eeprom_blocksize=%i",
+	g_debug ("Chip ID\t%s", priv->chip_id);
+	g_debug ("Serial number\t%s", gcm_sensor_get_serial_number (sensor));
+	g_debug ("Version\t%s", priv->version_string);
+	g_debug ("Firmware\tfirmware_revision=%s, tick_duration=%i, min_int=%i, eeprom_blocks=%i, eeprom_blocksize=%i",
 		   priv->firmware_revision, priv->tick_duration, priv->min_int, priv->eeprom_blocks, priv->eeprom_blocksize);
 
 	/* do unknown cool stuff */

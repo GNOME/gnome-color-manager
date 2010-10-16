@@ -29,8 +29,6 @@
 #include "gcm-profile.h"
 #include "gcm-trc-widget.h"
 
-#include "egg-debug.h"
-
 G_DEFINE_TYPE (GcmTrcWidget, gcm_trc_widget, GTK_TYPE_DRAWING_AREA);
 #define GCM_TRC_WIDGET_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_TRC_WIDGET, GcmTrcWidgetPrivate))
 #define GCM_TRC_WIDGET_FONT "Sans 8"

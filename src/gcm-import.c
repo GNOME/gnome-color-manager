@@ -26,13 +26,12 @@
 #include <math.h>
 #include <locale.h>
 
-#include "egg-debug.h"
-
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
 #include "gcm-utils.h"
 #include "gcm-color.h"
 #include "gcm-cie-widget.h"
+#include "gcm-debug.h"
 
 /**
  * gcm_import_add_cie_widget:
@@ -93,7 +92,7 @@ main (int argc, char **argv)
 
 	context = g_option_context_new ("gnome-color-manager import program");
 	g_option_context_add_main_entries (context, options, NULL);
-	g_option_context_add_group (context, egg_debug_get_option_group ());
+	g_option_context_add_group (context, gcm_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);

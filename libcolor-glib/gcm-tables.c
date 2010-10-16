@@ -32,8 +32,6 @@
 
 #include "gcm-tables.h"
 
-#include "egg-debug.h"
-
 static void     gcm_tables_finalize	(GObject     *object);
 
 #define GCM_TABLES_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_TABLES, GcmTablesPrivate))
@@ -93,7 +91,7 @@ gcm_tables_get_pnp_id (GcmTables *tables, const gchar *pnp_id, GError **error)
 		}
 
 		/* load the contents */
-		egg_debug ("loading: %s", filename);
+		g_debug ("loading: %s", filename);
 		ret = g_file_get_contents (filename, &data, NULL, error);
 		if (!ret)
 			goto out;
@@ -216,7 +214,7 @@ gcm_tables_set_default_data_dir (GcmTables *tables)
 	}
 
 	/* need to install package? */
-	egg_warning ("cannot find pnp.ids");
+	g_warning ("cannot find pnp.ids");
 out:
 	return ret;
 }

@@ -35,8 +35,6 @@
 
 #include "gcm-clut.h"
 
-#include "egg-debug.h"
-
 static void     gcm_clut_finalize	(GObject     *object);
 
 #define GCM_CLUT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_CLUT, GcmClutPrivate))
@@ -186,7 +184,7 @@ gcm_clut_get_array (GcmClut *clut)
 	array = g_ptr_array_new_with_free_func (g_free);
 	if (clut->priv->array->len == 0) {
 		/* generate a dummy gamma */
-		egg_debug ("falling back to dummy gamma");
+		g_debug ("falling back to dummy gamma");
 		for (i=0; i<clut->priv->size; i++) {
 			value = (i * 0xffff) / (clut->priv->size - 1);
 			data = g_new0 (GcmClutData, 1);

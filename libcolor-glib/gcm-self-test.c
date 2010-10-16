@@ -218,7 +218,6 @@ gcm_test_sensor_func (void)
 	g_object_unref (sensor);
 }
 
-
 typedef struct {
 	const gchar *monitor_name;
 	const gchar *vendor_name;
@@ -299,7 +298,6 @@ gcm_test_edid_func (void)
 	g_object_unref (edid);
 }
 
-
 static void
 gcm_test_tables_func (void)
 {
@@ -329,7 +327,6 @@ gcm_test_tables_func (void)
 
 	g_object_unref (tables);
 }
-
 
 static void
 gcm_test_profile_func (void)
@@ -452,7 +449,6 @@ gcm_test_profile_func (void)
 	g_object_unref (file);
 	g_object_unref (profile);
 }
-
 
 static void
 gcm_test_clut_func (void)
@@ -577,7 +573,6 @@ gcm_test_xyz_func (void)
 
 	gcm_color_free_XYZ (xyz);
 }
-
 
 static void
 gcm_test_profile_store_func (void)

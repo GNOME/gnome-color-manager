@@ -39,8 +39,6 @@
 #include "gcm-calibrate-dialog.h"
 #include "gcm-sample-window.h"
 
-#include "egg-debug.h"
-
 static void     gcm_calibrate_native_finalize	(GObject     *object);
 
 #define GCM_CALIBRATE_NATIVE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_CALIBRATE_NATIVE, GcmCalibrateNativePrivate))
@@ -404,7 +402,7 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 	/* get the whitepoint */
 	gcm_calibrate_native_get_it8_patch_xyY (it8_handle, "DMAX", &whitepoint);
 	cmsTempFromWhitePoint (&temperature, &whitepoint);
-	egg_debug ("native whitepoint=%f,%f [scale:%f] (%fK)", whitepoint.x, whitepoint.y, whitepoint.Y, temperature);
+	g_debug ("native whitepoint=%f,%f [scale:%f] (%fK)", whitepoint.x, whitepoint.y, whitepoint.Y, temperature);
 
 	/* we need to scale each reading by this value */
 	whitepointY = whitepoint.Y;
@@ -427,7 +425,7 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 	gcm_calibrate_native_get_it8_patch_xyY (it8_handle, "CGR", &primaries.Green);
 	gcm_calibrate_native_get_it8_patch_xyY (it8_handle, "CBL", &primaries.Blue);
 
-	egg_debug ("red=%f,%f green=%f,%f blue=%f,%f",
+	g_debug ("red=%f,%f green=%f,%f blue=%f,%f",
 		   primaries.Red.x, primaries.Red.y,
 		   primaries.Green.x, primaries.Green.y,
 		   primaries.Blue.x, primaries.Blue.y);
@@ -468,7 +466,7 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 		g_set_error_literal (error, 1, 0, "no gray ramp found");
 		goto out;
 	}
-	egg_debug ("rampsize = %i", rampsize);
+	g_debug ("rampsize = %i", rampsize);
 
 	/* create arrays for the sampled and processed data */
 	for (j=0; j<3; j++) {
@@ -486,7 +484,7 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 		_gcm_color_scale_XYZ (&patch_xyz, whitepointY);
 
 		cmsDoTransform (conversion_transform, &patch_xyz, &actual_rgb, 1);
-		egg_debug ("%s = %f,%f,%f -> %f,%f,%f", patch_name,
+		g_debug ("%s = %f,%f,%f -> %f,%f,%f", patch_name,
 			   patch_rgb.R, patch_rgb.G, patch_rgb.B,
 			   actual_rgb.R, actual_rgb.G, actual_rgb.B);
 
@@ -497,7 +495,7 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 	}
 
 	for (i=0; i<rampsize; i++) {
-		egg_debug ("%i, %f,%f,%f", i,
+		g_debug ("%i, %f,%f,%f", i,
 			   data_sampled[0][i],
 			   data_sampled[1][i],
 			   data_sampled[2][i]);
@@ -526,7 +524,7 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 		data_sampled[1][i] -= leakage.G;
 		data_sampled[2][i] -= leakage.B;
 	}
-	egg_debug ("removed backlight leakage = %f,%f,%f", leakage.R, leakage.G, leakage.B);
+	g_debug ("removed backlight leakage = %f,%f,%f", leakage.R, leakage.G, leakage.B);
 
 	/* scale all values to 1.0 */
 	gcm_color_set_RGB (&scale, 0.0, 0.0, 0.0);
@@ -543,17 +541,17 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 		data_sampled[1][i] /= scale.G;
 		data_sampled[2][i] /= scale.B;
 	}
-	egg_debug ("scaled to 1.0 using = %f,%f,%f", scale.R, scale.G, scale.B);
+	g_debug ("scaled to 1.0 using = %f,%f,%f", scale.R, scale.G, scale.B);
 
 	for (i=0; i<rampsize; i++) {
-		egg_debug ("%i, %f,%f,%f", i,
+		g_debug ("%i, %f,%f,%f", i,
 			   data_sampled[0][i],
 			   data_sampled[1][i],
 			   data_sampled[2][i]);
 	}
 
 	for (i=0; i<rampsize; i++) {
-		egg_debug ("%i, %f,%f,%f", i,
+		g_debug ("%i, %f,%f,%f", i,
 			   data_sampled[0][i],
 			   data_sampled[1][i],
 			   data_sampled[2][i]);
@@ -642,7 +640,7 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 	device.D_value  = 1.0;		/* Complete adaptation */
 
 	int PCSType = PT_Lab;
-	egg_warning ("%i", PCSType);
+	g_warning ("%i", PCSType);
 
 	cmsSaveProfileToFile (profile, "dave.icc");
 #endif
@@ -669,7 +667,7 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 	}
 
 	/* block for a response */
-	egg_debug ("blocking waiting for user input: %s", title);
+	g_debug ("blocking waiting for user input: %s", title);
 
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
@@ -720,7 +718,7 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 	else if (precision == GCM_CALIBRATE_PRECISION_LONG)
 		steps = 30;
 
-	egg_debug ("creating %s", filename_it8);
+	g_debug ("creating %s", filename_it8);
 	gcm_calibrate_native_create_it8_file (calibrate_native, sensor, filename_it8, 10);
 
 	/* get profile text data */
@@ -744,7 +742,7 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 		goto out;
 
 	/* save */
-	egg_debug ("saving %s", filename_icc);
+	g_debug ("saving %s", filename_icc);
 	ret = gcm_profile_save (profile, filename_icc, error);
 	if (!ret)
 		goto out;

@@ -34,8 +34,6 @@
 #include <gio/gio.h>
 #include <lcms2.h>
 
-#include "egg-debug.h"
-
 #include "gcm-profile.h"
 #include "gcm-color.h"
 
@@ -118,7 +116,6 @@ gcm_profile_get_description (GcmProfile *profile)
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
 	return profile->priv->description;
 }
-
 
 /**
  * gcm_profile_ensure_printable:
@@ -679,22 +676,22 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 
 		/* convert to lcms xyY values */
 		cmsXYZ2xyY (&xyY, cie_xyz);
-		egg_debug ("whitepoint = %f,%f [%f]", xyY.x, xyY.y, xyY.Y);
+		g_debug ("whitepoint = %f,%f [%f]", xyY.x, xyY.y, xyY.Y);
 
 		/* get temperature */
 		ret = cmsTempFromWhitePoint (&temp_float, &xyY);
 		if (ret) {
 			/* round to nearest 100K */
 			priv->temperature = (((guint) temp_float) / 100) * 100;
-			egg_debug ("color temperature = %i", priv->temperature);
+			g_debug ("color temperature = %i", priv->temperature);
 		} else {
 			priv->temperature = 0;
-			egg_warning ("failed to get color temperature");
+			g_warning ("failed to get color temperature");
 		}
 	} else {
 		/* this is no big suprise, some profiles don't have these */
 		gcm_color_clear_XYZ (priv->white);
-		egg_debug ("failed to get white point");
+		g_debug ("failed to get white point");
 	}
 
 	/* get black point */
@@ -786,7 +783,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 			gcm_color_copy_XYZ ((GcmColorXYZ *) cie_xyz, (GcmColorXYZ *) &cie_illum.Blue);
 			got_illuminants = TRUE;
 		} else {
-			egg_debug ("failed to get illuminants");
+			g_debug ("failed to get illuminants");
 		}
 	}
 
@@ -821,7 +818,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 			cmsDeleteTransform (transform);
 			got_illuminants = TRUE;
 		} else {
-			egg_debug ("failed to run through profile");
+			g_debug ("failed to run through profile");
 		}
 
 		/* no more need for the output profile */
@@ -837,7 +834,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 		gcm_color_set_XYZ (priv->blue,
 				   cie_illum.Blue.X, cie_illum.Blue.Y, cie_illum.Blue.Z);
 	} else {
-		egg_debug ("failed to get luminance values");
+		g_debug ("failed to get luminance values");
 		gcm_color_clear_XYZ (priv->red);
 		gcm_color_clear_XYZ (priv->green);
 		gcm_color_clear_XYZ (priv->blue);
@@ -1122,7 +1119,7 @@ gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
 
 	/* the profile now tracks the saved file */
 	if (priv->filename == NULL) {
-		egg_debug ("assuming %s, so re-parse", filename);
+		g_debug ("assuming %s, so re-parse", filename);
 		file = g_file_new_for_path (filename);
 		ret = gcm_profile_parse (profile, file, error);
 		if (!ret)
@@ -1306,7 +1303,7 @@ gcm_profile_generate_vcgt (GcmProfile *profile, guint size)
 	/* get tone curves from profile */
 	vcgt = cmsReadTag (priv->lcms_profile, cmsSigVcgtType);
 	if (vcgt == NULL || vcgt[0] == NULL) {
-		egg_debug ("profile does not have any VCGT data");
+		g_debug ("profile does not have any VCGT data");
 		goto out;
 	}
 
@@ -1501,7 +1498,7 @@ gcm_profile_file_monitor_changed_cb (GFileMonitor *monitor, GFile *file, GFile *
 		goto out;
 
 	/* just rescan everything */
-	egg_debug ("%s deleted, clearing filename", priv->filename);
+	g_debug ("%s deleted, clearing filename", priv->filename);
 	if (priv->file != NULL)
 		g_object_unref (priv->file);
 	priv->file = NULL;
@@ -1512,14 +1509,13 @@ out:
 	return;
 }
 
-
 /**
  * gcm_profile_error_cb:
  **/
 static void
 gcm_profile_error_cb (cmsContext ContextID, cmsUInt32Number errorcode, const char *text)
 {
-	egg_warning ("LCMS error %i: %s", errorcode, text);
+	g_warning ("LCMS error %i: %s", errorcode, text);
 }
 
 /**

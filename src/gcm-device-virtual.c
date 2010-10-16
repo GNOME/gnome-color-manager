@@ -27,8 +27,6 @@
 #include "gcm-enum.h"
 #include "gcm-utils.h"
 
-#include "egg-debug.h"
-
 #define GCM_DEVICE_VIRTUAL_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_DEVICE_VIRTUAL, GcmDeviceVirtualPrivate))
 
 G_DEFINE_TYPE (GcmDeviceVirtual, gcm_device_virtual, GCM_TYPE_DEVICE)
@@ -53,7 +51,7 @@ gcm_device_virtual_create_from_params (GcmDeviceVirtual *device_virtual,
 	gcm_utils_alphanum_lcase (id);
 
 	/* create the device */
-	egg_debug ("adding %s '%s'", id, title);
+	g_debug ("adding %s '%s'", id, title);
 	g_object_set (device_virtual,
 		      "connected", FALSE,
 		      "kind", device_kind,

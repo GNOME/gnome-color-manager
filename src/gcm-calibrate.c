@@ -41,8 +41,6 @@
 #include "gcm-calibrate-dialog.h"
 #include "gcm-exif.h"
 
-#include "egg-debug.h"
-
 static void     gcm_calibrate_finalize	(GObject     *object);
 
 #define GCM_CALIBRATE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_CALIBRATE, GcmCalibratePrivate))
@@ -502,7 +500,6 @@ gcm_calibrate_set_working_path (GcmCalibrate *calibrate, GError **error)
 	return ret;
 }
 
-
 /**
  * gcm_calibrate_get_precision:
  **/
@@ -723,7 +720,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 		/* get the old brightness so we can restore state */
 		ret = gcm_brightness_get_percentage (brightness, &percentage, &error_tmp);
 		if (!ret) {
-			egg_warning ("failed to get brightness: %s", error_tmp->message);
+			g_warning ("failed to get brightness: %s", error_tmp->message);
 			g_error_free (error_tmp);
 			/* not fatal */
 			error_tmp = NULL;
@@ -732,7 +729,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 		/* set the new brightness */
 		ret = gcm_brightness_set_percentage (brightness, 100, &error_tmp);
 		if (!ret) {
-			egg_warning ("failed to set brightness: %s", error_tmp->message);
+			g_warning ("failed to set brightness: %s", error_tmp->message);
 			g_error_free (error_tmp);
 			/* not fatal */
 			error_tmp = NULL;
@@ -747,7 +744,7 @@ out:
 		/* set the new brightness */
 		ret_tmp = gcm_brightness_set_percentage (brightness, percentage, &error_tmp);
 		if (!ret_tmp) {
-			egg_warning ("failed to restore brightness: %s", error_tmp->message);
+			g_warning ("failed to restore brightness: %s", error_tmp->message);
 			g_error_free (error_tmp);
 			/* not fatal */
 			error = NULL;
@@ -761,7 +758,6 @@ out:
 	g_free (precision);
 	return ret;
 }
-
 
 /**
  * gcm_calibrate_device_get_reference_image:
@@ -878,7 +874,7 @@ gcm_calibrate_get_device_for_it8_file (const gchar *filename)
 	/* get contents */
 	ret = g_file_get_contents (filename, &contents, NULL, &error);
 	if (!ret) {
-		egg_warning ("failed to get contents: %s", error->message);
+		g_warning ("failed to get contents: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -1093,7 +1089,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 		if (response == GTK_RESPONSE_YES)
 			has_shared_targets = gcm_utils_install_package (GCM_PREFS_PACKAGE_NAME_SHARED_COLOR_TARGETS, window);
 #else
-		egg_warning ("cannot install: this package was not compiled with --enable-packagekit");
+		g_warning ("cannot install: this package was not compiled with --enable-packagekit");
 #endif
 	}
 
@@ -1173,7 +1169,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	/* use the exif data if there is any present */
 	ret = gcm_calibrate_set_from_exif (calibrate, reference_image, NULL);
 	if (!ret)
-		egg_debug ("no EXIF data, so using device attributes");
+		g_debug ("no EXIF data, so using device attributes");
 
 	/* get reference data */
 	directory = has_shared_targets ? "/usr/share/color/targets" : "/media";

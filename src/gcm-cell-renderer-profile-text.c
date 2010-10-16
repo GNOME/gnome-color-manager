@@ -25,8 +25,6 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 
-#include "egg-debug.h"
-
 #include "gcm-cell-renderer-profile-text.h"
 
 enum {

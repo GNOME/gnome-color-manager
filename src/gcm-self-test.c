@@ -30,6 +30,7 @@
 #include "gcm-calibrate-native.h"
 #include "gcm-cie-widget.h"
 #include "gcm-client.h"
+#include "gcm-debug.h"
 #include "gcm-device.h"
 #include "gcm-device-udev.h"
 #include "gcm-device-xrandr.h"
@@ -835,6 +836,9 @@ main (int argc, char **argv)
 		g_thread_init (NULL);
 	gtk_init (&argc, &argv);
 	g_test_init (&argc, &argv, NULL);
+
+	/* setup manually as we have no GMainContext */
+	gcm_debug_setup (g_getenv ("VERBOSE") != NULL);
 
 	g_test_add_func ("/color/client", gcm_test_client_func);
 	g_test_add_func ("/color/calibrate", gcm_test_calibrate_func);

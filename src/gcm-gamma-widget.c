@@ -27,8 +27,6 @@
 
 #include "gcm-gamma-widget.h"
 
-#include "egg-debug.h"
-
 G_DEFINE_TYPE (GcmGammaWidget, gcm_gamma_widget, GTK_TYPE_DRAWING_AREA);
 #define GCM_GAMMA_WIDGET_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_GAMMA_WIDGET, GcmGammaWidgetPrivate))
 

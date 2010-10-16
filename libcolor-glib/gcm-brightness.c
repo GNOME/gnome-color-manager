@@ -33,8 +33,6 @@
 
 #include "gcm-brightness.h"
 
-#include "egg-debug.h"
-
 static void     gcm_brightness_finalize	(GObject     *object);
 
 #define GCM_BRIGHTNESS_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_BRIGHTNESS, GcmBrightnessPrivate))

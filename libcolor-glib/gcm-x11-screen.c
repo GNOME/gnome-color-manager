@@ -37,8 +37,6 @@
 
 #include "gcm-x11-screen.h"
 
-#include "egg-debug.h"
-
 static void     gcm_x11_screen_finalize	(GObject     *object);
 
 #define GCM_X11_SCREEN_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_X11_SCREEN, GcmX11ScreenPrivate))
@@ -87,7 +85,7 @@ gcm_x11_screen_on_event_cb (GdkXEvent *xevent, GdkEvent *event, gpointer data)
 	event_num = e->type - priv->randr_event_base;
 
 	if (event_num == RRScreenChangeNotify) {
-		egg_debug ("emit changed");
+		g_debug ("emit changed");
 		g_signal_emit (screen, signals[SIGNAL_CHANGED], 0);
 	}
 
@@ -135,7 +133,7 @@ gcm_x11_screen_refresh (GcmX11Screen *screen, GError **error)
 		output_info = XRRGetOutputInfo (priv->xdisplay, resources, rr_output);
 		gdk_flush ();
 		if (gdk_error_trap_pop ()) {
-			egg_warning ("failed to get output info");
+			g_warning ("failed to get output info");
 			continue;
 		}
 
@@ -147,7 +145,7 @@ gcm_x11_screen_refresh (GcmX11Screen *screen, GError **error)
 			crtc_info = XRRGetCrtcInfo (priv->xdisplay, resources, output_info->crtc);
 			gdk_flush ();
 			if (gdk_error_trap_pop () || crtc_info == NULL) {
-				egg_warning ("failed to get crtc info for %s", output_info->name);
+				g_warning ("failed to get crtc info for %s", output_info->name);
 				continue;
 			}
 
@@ -156,7 +154,7 @@ gcm_x11_screen_refresh (GcmX11Screen *screen, GError **error)
 			gamma_size = XRRGetCrtcGammaSize (priv->xdisplay, output_info->crtc);
 			gdk_flush ();
 			if (gdk_error_trap_pop ()) {
-				egg_warning ("failed to get gamma size");
+				g_warning ("failed to get gamma size");
 				continue;
 			}
 
@@ -256,7 +254,7 @@ gcm_x11_screen_assign (GcmX11Screen *screen, GdkScreen *gdk_screen, GError **err
 			priv->xroot,
 			RRScreenChangeNotifyMask);
 	if (gdk_error_trap_pop ()) {
-		egg_warning ("failed to select input");
+		g_warning ("failed to select input");
 		goto out;
 	}
 
@@ -422,7 +420,7 @@ gcm_x11_screen_set_profile (GcmX11Screen *screen, const gchar *filename, GError 
 	g_return_val_if_fail (GCM_IS_X11_SCREEN (screen), FALSE);
 	g_return_val_if_fail (filename != NULL, FALSE);
 
-	egg_debug ("setting root window ICC profile atom from %s", filename);
+	g_debug ("setting root window ICC profile atom from %s", filename);
 
 	/* get contents of file */
 	ret = g_file_get_contents (filename, &data, &length, error);
@@ -555,7 +553,7 @@ gcm_x11_screen_remove_protocol_version (GcmX11Screen *screen, GError **error)
 
 	g_return_val_if_fail (GCM_IS_X11_SCREEN (screen), FALSE);
 
-	egg_debug ("removing root window ICC profile atom");
+	g_debug ("removing root window ICC profile atom");
 
 	/* get the value */
 	gdk_error_trap_push ();
@@ -659,7 +657,7 @@ gcm_x11_screen_remove_profile (GcmX11Screen *screen, GError **error)
 
 	g_return_val_if_fail (GCM_IS_X11_SCREEN (screen), FALSE);
 
-	egg_debug ("removing root window ICC profile atom");
+	g_debug ("removing root window ICC profile atom");
 
 	/* get the value */
 	gdk_error_trap_push ();

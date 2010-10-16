@@ -114,6 +114,7 @@ main (int argc, char **argv)
 
 	context = g_option_context_new ("ICC profile dump program");
 	g_option_context_add_main_entries (context, options, NULL);
+	g_option_context_add_group (context, gcm_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);

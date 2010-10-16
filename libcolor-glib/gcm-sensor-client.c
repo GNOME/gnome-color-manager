@@ -35,8 +35,6 @@
 #include "gcm-sensor-client.h"
 #include "gcm-sensor-huey.h"
 
-#include "egg-debug.h"
-
 static void     gcm_sensor_client_finalize	(GObject     *object);
 
 #define GCM_SENSOR_CLIENT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_SENSOR_CLIENT, GcmSensorClientPrivate))
@@ -179,14 +177,14 @@ gcm_sensor_client_device_add (GcmSensorClient *sensor_client, GUdevDevice *devic
 	kind_str = g_udev_device_get_property (device, "GCM_KIND");
 	kind = gcm_sensor_kind_from_string (kind_str);
 	if (kind == GCM_SENSOR_KIND_HUEY) {
-		egg_warning ("creating internal device");
+		g_warning ("creating internal device");
 		sensor = gcm_sensor_huey_new ();
 	} else {
 		sensor = gcm_sensor_new ();
 	}
 
 	/* get data */
-	egg_debug ("adding color management device: %s", g_udev_device_get_sysfs_path (device));
+	g_debug ("adding color management device: %s", g_udev_device_get_sysfs_path (device));
 	ret = gcm_sensor_set_from_device (sensor, device, NULL);
 	if (!ret)
 		goto out;
@@ -196,7 +194,7 @@ gcm_sensor_client_device_add (GcmSensorClient *sensor_client, GUdevDevice *devic
 	priv->sensor = g_object_ref (sensor);
 
 	/* signal the addition */
-	egg_debug ("emit: changed");
+	g_debug ("emit: changed");
 	g_signal_emit (sensor_client, signals[SIGNAL_CHANGED], 0);
 out:
 	if (sensor != NULL)
@@ -219,14 +217,14 @@ gcm_sensor_client_device_remove (GcmSensorClient *sensor_client, GUdevDevice *de
 		goto out;
 
 	/* get data */
-	egg_debug ("removing color management device: %s", g_udev_device_get_sysfs_path (device));
+	g_debug ("removing color management device: %s", g_udev_device_get_sysfs_path (device));
 	priv->present = FALSE;
 	if (priv->sensor != NULL)
 		g_object_unref (priv->sensor);
 	priv->sensor = NULL;
 
 	/* signal the removal */
-	egg_debug ("emit: changed");
+	g_debug ("emit: changed");
 	g_signal_emit (sensor_client, signals[SIGNAL_CHANGED], 0);
 out:
 	return ret;
@@ -248,7 +246,7 @@ gcm_sensor_client_coldplug (GcmSensorClient *sensor_client)
 	for (l = devices; l != NULL; l = l->next) {
 		ret = gcm_sensor_client_device_add (sensor_client, l->data);
 		if (ret) {
-			egg_debug ("found color management device");
+			g_debug ("found color management device");
 			break;
 		}
 	}
@@ -264,7 +262,7 @@ gcm_sensor_client_coldplug (GcmSensorClient *sensor_client)
 static void
 gcm_sensor_client_uevent_cb (GUdevClient *client, const gchar *action, GUdevDevice *device, GcmSensorClient *sensor_client)
 {
-	egg_debug ("uevent %s", action);
+	g_debug ("uevent %s", action);
 	if (g_strcmp0 (action, "add") == 0) {
 		gcm_sensor_client_device_add (sensor_client, device);
 	} else if (g_strcmp0 (action, "remove") == 0) {

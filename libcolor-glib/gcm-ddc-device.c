@@ -45,8 +45,6 @@
 #include <gcm-ddc-device.h>
 #include <gcm-ddc-control.h>
 
-#include "egg-debug.h"
-
 static void     gcm_ddc_device_finalize	(GObject     *object);
 
 #define GCM_DDC_DEVICE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_DDC_DEVICE, GcmDdcDevicePrivate))
@@ -389,7 +387,7 @@ gcm_ddc_device_read (GcmDdcDevice *device, guchar *data, gsize data_length, gsiz
 
 	if ((buf[1] & GCM_MAGIC_BYTE2) == 0) {
 		/* Fujitsu Siemens P19-2 and NEC LCD 1970NX send wrong magic when reading caps. */
-		egg_debug ( "Invalid response, magic is 0x%02x, correcting", buf[1]);
+		g_debug ( "Invalid response, magic is 0x%02x, correcting", buf[1]);
 	}
 
 	len = buf[1] & ~GCM_MAGIC_BYTE2;
@@ -477,7 +475,7 @@ static gboolean
 gcm_ddc_device_set_device_property (GcmDdcDevice *device, const gchar *key, const gchar *value)
 {
 	if (device->priv->verbose >= GCM_VERBOSE_OVERVIEW)
-		egg_debug ("key=%s, value=%s", key, value);
+		g_debug ("key=%s, value=%s", key, value);
 	if (g_strcmp0 (key, "type") == 0) {
 		if (g_strcmp0 (value, "lcd") == 0)
 			device->priv->kind = GCM_DDC_DEVICE_KIND_LCD;
@@ -580,7 +578,7 @@ gcm_ddc_device_ensure_controls (GcmDdcDevice *device, GError **error)
 		ret = gcm_ddc_device_capabilities_request (device, offset, buf, sizeof(buf), &len, error);
 		if (!ret) {
 			if (device->priv->verbose >= GCM_VERBOSE_PROTOCOL)
-				egg_warning ("Failed to read capabilities offset 0x%02x.", offset);
+				g_warning ("Failed to read capabilities offset 0x%02x.", offset);
 			retries--;
 			continue;
 		}
@@ -588,7 +586,7 @@ gcm_ddc_device_ensure_controls (GcmDdcDevice *device, GError **error)
 		/* not enough data */
 		if (len < 3) {
 			if (device->priv->verbose >= GCM_VERBOSE_PROTOCOL)
-				egg_debug ("Not enough capabilities data at offset 0x%02x.", offset);
+				g_debug ("Not enough capabilities data at offset 0x%02x.", offset);
 			retries--;
 			continue;
 		}
@@ -596,7 +594,7 @@ gcm_ddc_device_ensure_controls (GcmDdcDevice *device, GError **error)
 		/* check response */
 		if (buf[0] != GCM_CAPABILITIES_REPLY) {
 			if (device->priv->verbose == GCM_VERBOSE_PROTOCOL)
-				egg_warning ("Not correct capabilities reply at offset 0x%02x.", offset);
+				g_warning ("Not correct capabilities reply at offset 0x%02x.", offset);
 			retries--;
 			continue;
 		}
@@ -604,7 +602,7 @@ gcm_ddc_device_ensure_controls (GcmDdcDevice *device, GError **error)
 		/* check offset */
 		if ((buf[1] * 256 + buf[2]) != offset) {
 			if (device->priv->verbose == GCM_VERBOSE_PROTOCOL)
-				egg_warning ("Not correct capabilities offset at offset 0x%02x.", offset);
+				g_warning ("Not correct capabilities offset at offset 0x%02x.", offset);
 			retries--;
 			continue;
 		}
@@ -616,7 +614,7 @@ gcm_ddc_device_ensure_controls (GcmDdcDevice *device, GError **error)
 	} while (len != 3);
 
 	if (device->priv->verbose == GCM_VERBOSE_OVERVIEW)
-		egg_debug ("raw caps: %s", string->str);
+		g_debug ("raw caps: %s", string->str);
 
 	/* parse */
 	ret = gcm_ddc_device_parse_caps (device, string->str);

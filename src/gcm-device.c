@@ -34,8 +34,6 @@
 #include "gcm-profile.h"
 #include "gcm-utils.h"
 
-#include "egg-debug.h"
-
 static void     gcm_device_finalize	(GObject     *object);
 
 #define GCM_DEVICE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_DEVICE, GcmDevicePrivate))
@@ -104,7 +102,7 @@ static gboolean
 gcm_device_changed_cb (GcmDevice *device)
 {
 	/* emit a signal */
-	egg_debug ("emit changed: %s", gcm_device_get_id (device));
+	g_debug ("emit changed: %s", gcm_device_get_id (device));
 	g_signal_emit (device, signals[SIGNAL_CHANGED], 0);
 	device->priv->changed_id = 0;
 	return FALSE;
@@ -193,7 +191,7 @@ gcm_device_load_from_default_profile (GcmDevice *device, GError **error)
 	profile = g_ptr_array_index (priv->profiles, 0);
 	ret = g_file_test (gcm_profile_get_filename (profile), G_FILE_TEST_EXISTS);
 	if (!ret) {
-		egg_warning ("the file was deleted and can't be loaded: %s", gcm_profile_get_filename (profile));
+		g_warning ("the file was deleted and can't be loaded: %s", gcm_profile_get_filename (profile));
 		/* this is not fatal */
 		ret = TRUE;
 		goto out;
@@ -611,7 +609,7 @@ gcm_device_set_default_profile_filename (GcmDevice *device, const gchar *profile
 	file = g_file_new_for_path (profile_filename);
 	ret = gcm_profile_parse (profile, file, &error);
 	if (!ret) {
-		egg_warning ("failed to parse: %s", error->message);
+		g_warning ("failed to parse: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -672,7 +670,6 @@ gcm_device_load (GcmDevice *device, GError **error)
 	ret = g_key_file_load_from_file (file, filename, G_KEY_FILE_NONE, &error_local);
 	if (!ret) {
 		/* not fatal */
-		egg_warning ("failed to load from file: %s", error_local->message);
 		g_error_free (error_local);
 		ret = TRUE;
 		goto out;
@@ -682,7 +679,7 @@ gcm_device_load (GcmDevice *device, GError **error)
 	ret = g_key_file_has_group (file, priv->id);
 	if (!ret) {
 		/* not fatal */
-		egg_debug ("failed to find saved parameters for %s", priv->id);
+		g_debug ("failed to find saved parameters for %s", priv->id);
 		ret = TRUE;
 		goto out;
 	}
@@ -703,7 +700,7 @@ gcm_device_load (GcmDevice *device, GError **error)
 			if (ret) {
 				g_ptr_array_add (priv->profiles, g_object_ref (profile));
 			} else {
-				egg_warning ("failed to parse %s: %s", profile_filenames[i], error_local->message);
+				g_warning ("failed to parse %s: %s", profile_filenames[i], error_local->message);
 				g_clear_error (&error_local);
 			}
 			g_object_unref (profile);
@@ -738,7 +735,7 @@ gcm_device_load (GcmDevice *device, GError **error)
 	if (iso_date != NULL) {
 		ret = g_time_val_from_iso8601 (iso_date, &timeval);
 		if (!ret) {
-			egg_warning ("failed to parse: %s", iso_date);
+			g_warning ("failed to parse: %s", iso_date);
 			g_get_current_time (&timeval);
 		}
 	} else {
@@ -762,7 +759,7 @@ gcm_device_load (GcmDevice *device, GError **error)
 	if (!ret) {
 
 		/* just print a warning, this is not fatal */
-		egg_warning ("failed to load profile %s", error_local->message);
+		g_warning ("failed to load profile %s", error_local->message);
 		g_error_free (error_local);
 
 		/* recover as the file might have been corrupted */
@@ -979,7 +976,7 @@ gcm_device_apply (GcmDevice *device, GError **error)
 
 	/* no support */
 	if (klass->apply == NULL) {
-		egg_debug ("no klass support for %s", device->priv->id);
+		g_debug ("no klass support for %s", device->priv->id);
 		goto out;
 	}
 

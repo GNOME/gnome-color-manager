@@ -35,8 +35,6 @@
 #include "gcm-usb.h"
 #include "gcm-compat.h"
 
-#include "egg-debug.h"
-
 static void     gcm_usb_finalize	(GObject     *object);
 
 #define GCM_USB_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_USB, GcmUsbPrivate))
@@ -119,11 +117,11 @@ gcm_libusb_pollfd_remove (GcmUsb *usb, int fd)
 	GPollFD *pollfd;
 	GSList *elem = source->pollfds;
 
-	egg_debug ("remove pollfd %i", fd);
+	g_debug ("remove pollfd %i", fd);
 
 	/* nothing to see here, move along */
 	if (elem == NULL) {
-		egg_warning("cannot remove from list as list is empty?");
+		g_warning("cannot remove from list as list is empty?");
 		return;
 	}
 
@@ -138,7 +136,7 @@ gcm_libusb_pollfd_remove (GcmUsb *usb, int fd)
 		source->pollfds = g_slist_delete_link (source->pollfds, elem);
 		return;
 	} while ((elem = g_slist_next(elem)));
-	egg_warning ("couldn't find fd %d in list", fd);
+	g_warning ("couldn't find fd %d in list", fd);
 }
 
 /**
@@ -153,7 +151,7 @@ gcm_libusb_pollfd_remove_all (GcmUsb *usb)
 
 	/* never connected */
 	if (source == NULL) {
-		egg_debug ("never attached to a context");
+		g_debug ("never attached to a context");
 		return;
 	}
 
@@ -165,7 +163,7 @@ gcm_libusb_pollfd_remove_all (GcmUsb *usb)
 	/* rip apart all the pollfd's */
 	do {
 		pollfd = elem->data;
-		egg_warning ("removing %i", pollfd->fd);
+		g_warning ("removing %i", pollfd->fd);
 		g_source_remove_poll ((GSource *) source, pollfd);
 		g_slice_free (GPollFD, pollfd);
 		source->pollfds = g_slist_delete_link (source->pollfds, elem);
@@ -291,7 +289,7 @@ gcm_usb_attach_to_context (GcmUsb *usb, GMainContext *context)
 
 	/* already connected */
 	if (priv->source != NULL) {
-		egg_warning ("already attached to a context");
+		g_warning ("already attached to a context");
 		return;
 	}
 

@@ -31,7 +31,6 @@
 #include <glib-object.h>
 
 #include "gcm-sensor.h"
-#include "egg-debug.h"
 
 static void     gcm_sensor_finalize	(GObject     *object);
 
@@ -60,7 +59,6 @@ struct _GcmSensorPrivate
 	gchar				*image_calibrate;
 	gchar				*image_spotread;
 };
-
 
 /* tiny helper to help us do the async operation */
 typedef struct {
@@ -142,7 +140,7 @@ gcm_sensor_get_image_spotread (GcmSensor *sensor)
 void
 gcm_sensor_button_pressed (GcmSensor *sensor)
 {
-	egg_debug ("emit: button-pressed");
+	g_debug ("emit: button-pressed");
 	g_signal_emit (sensor, signals[SIGNAL_BUTTON_PRESSED], 0);
 }
 
@@ -414,7 +412,7 @@ gcm_sensor_set_from_device (GcmSensor *sensor, GUdevDevice *device, GError **err
 	if (priv->kind == GCM_SENSOR_KIND_UNKNOWN)
 		priv->kind = gcm_sensor_kind_from_string (kind_str);
 	if (priv->kind == GCM_SENSOR_KIND_UNKNOWN)
-		egg_warning ("Failed to recognize color device: %s", priv->model);
+		g_warning ("Failed to recognize color device: %s", priv->model);
 
 	priv->supports_display = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_DISPLAY");
 	priv->supports_projector = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PROJECTOR");
@@ -978,7 +976,6 @@ gcm_sensor_class_init (GcmSensorClass *klass)
 				      FALSE,
 				      G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_SUPPORTS_PROJECTOR, pspec);
-
 
 	/**
 	 * GcmSensor:supports-printer:

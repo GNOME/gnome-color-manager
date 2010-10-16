@@ -9,6 +9,7 @@ INCLUDES =						\
 	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
 	$(GUDEV_CFLAGS)					\
 	-I$(top_srcdir)/libcolor-glib			\
+	-DG_LOG_DOMAIN=\"Gcm\"				\
 	-DLIBCOLOR_GLIB_COMPILATION			\
 	-DBINDIR=\"$(bindir)\"				\
 	-DLIBEXECDIR=\"$(libexecdir)\"			\
@@ -71,7 +72,7 @@ gcm_fix_profile_LDADD =					\
 gcm_fix_profile_CFLAGS =				\
 	$(WARNINGFLAGS_C)
 
-COLOR_GLIB_LIBS =						\
+COLOR_GLIB_LIBS =					\
 	$(top_builddir)/libcolor-glib/libcolor-glib.la
 
 gcm_ddc_util_SOURCES =					\
@@ -84,8 +85,6 @@ gcm_ddc_util_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_sensor_example_SOURCES =				\
-	egg-debug.c					\
-	egg-debug.h					\
 	gcm-sensor-example.c
 
 gcm_sensor_example_LDADD =				\

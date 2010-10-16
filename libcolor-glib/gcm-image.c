@@ -31,8 +31,6 @@
 #include <gtk/gtk.h>
 #include <lcms2.h>
 
-#include "egg-debug.h"
-
 #include "gcm-image.h"
 
 static void     gcm_image_finalize	(GObject     *object);
@@ -132,20 +130,20 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 
 	/* not a pixbuf-backed image */
 	if (priv->original_pixbuf == NULL) {
-		egg_warning ("no pixbuf to convert");
+		g_warning ("no pixbuf to convert");
 		goto out;
 	}
 
 	/* CMYK not supported */
 	if (gdk_pixbuf_get_colorspace (priv->original_pixbuf) != GDK_COLORSPACE_RGB) {
-		egg_debug ("non-RGB not supported");
+		g_debug ("non-RGB not supported");
 		goto out;
 	}
 
 	/* work out the LCMS format flags */
 	format = gcm_image_get_format (image);
 	if (format == 0) {
-		egg_warning ("format not supported");
+		g_warning ("format not supported");
 		goto out;
 	}
 
@@ -162,7 +160,7 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 		/* decode built-in */
 		profile_data = g_base64_decode (profile_base64, &profile_size);
 		if (profile_data == NULL) {
-			egg_warning ("failed to decode base64");
+			g_warning ("failed to decode base64");
 			goto out;
 		}
 
@@ -173,16 +171,16 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 
 		/* not RGB */
 		if (gcm_profile_get_colorspace (priv->input_profile) != GCM_COLORSPACE_RGB) {
-			egg_warning ("input colorspace has to be RGB!");
+			g_warning ("input colorspace has to be RGB!");
 			goto out;
 		}
 
 		/* use built-in */
-		egg_debug ("using input profile of %s", gcm_profile_get_filename (priv->input_profile));
+		g_debug ("using input profile of %s", gcm_profile_get_filename (priv->input_profile));
 		profile_in = gcm_profile_get_handle (priv->input_profile);
 		profile_close_input = FALSE;
 	} else {
-		egg_debug ("no input profile, assume sRGB");
+		g_debug ("no input profile, assume sRGB");
 		profile_in = cmsCreate_sRGBProfile ();
 		profile_close_input = TRUE;
 	}
@@ -192,16 +190,16 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 
 		/* not RGB */
 		if (gcm_profile_get_colorspace (priv->output_profile) != GCM_COLORSPACE_RGB) {
-			egg_warning ("output colorspace has to be RGB!");
+			g_warning ("output colorspace has to be RGB!");
 			goto out;
 		}
 
 		/* use built-in */
-		egg_debug ("using output profile of %s", gcm_profile_get_filename (priv->output_profile));
+		g_debug ("using output profile of %s", gcm_profile_get_filename (priv->output_profile));
 		profile_out = gcm_profile_get_handle (priv->output_profile);
 		profile_close_output = FALSE;
 	} else {
-		egg_debug ("no output profile, assume sRGB");
+		g_debug ("no output profile, assume sRGB");
 		profile_out = cmsCreate_sRGBProfile ();
 		profile_close_output = TRUE;
 	}
@@ -212,7 +210,7 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 
 		/* not LAB */
 		if (gcm_profile_get_colorspace (priv->abstract_profile) != GCM_COLORSPACE_LAB) {
-			egg_warning ("abstract profile has to be LAB!");
+			g_warning ("abstract profile has to be LAB!");
 			goto out;
 		}
 
@@ -279,7 +277,7 @@ gcm_image_notify_pixbuf_cb (GObject *object, GParamSpec *pspec, GcmImage *image)
 		goto out;
 	applied = g_object_get_data (G_OBJECT(pixbuf), "cms-converted-pixbuf");
 	if (applied != NULL) {
-		egg_debug ("already copied and converted pixbuf, use gcm_image_cms_convert_pixbuf() instead");
+		g_debug ("already copied and converted pixbuf, use gcm_image_cms_convert_pixbuf() instead");
 		goto out;
 	}
 

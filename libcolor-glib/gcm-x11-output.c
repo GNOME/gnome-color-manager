@@ -37,8 +37,6 @@
 
 #include "gcm-x11-output.h"
 
-#include "egg-debug.h"
-
 static void     gcm_x11_output_finalize	(GObject     *object);
 
 #define GCM_X11_OUTPUT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_X11_OUTPUT, GcmX11OutputPrivate))
@@ -533,7 +531,6 @@ gcm_x11_output_get_gamma (GcmX11Output *output, guint *length, guint16 **red, gu
 	return TRUE;
 }
 
-
 /**
  * gcm_x11_output_get_profile_data:
  * @output: a valid %GcmX11Output instance
@@ -570,7 +567,7 @@ gcm_x11_output_get_profile_data (GcmX11Output *output, guint8 **data, gsize *len
 				   atom, 0, ~0, False, False,
 				   AnyPropertyType, &type, &format, &nitems, &bytes_after,
 				   (unsigned char **) &data_tmp);
-	egg_debug ("got %i bytes", (guint) nitems);
+	g_debug ("got %i bytes", (guint) nitems);
 	gdk_error_trap_pop_ignored ();
 
 	/* did the call fail */
@@ -623,7 +620,7 @@ gcm_x11_output_set_profile (GcmX11Output *output, const gchar *filename, GError 
 	g_return_val_if_fail (GCM_IS_X11_OUTPUT (output), FALSE);
 	g_return_val_if_fail (filename != NULL, FALSE);
 
-	egg_debug ("setting output ICC profile atom from %s", filename);
+	g_debug ("setting output ICC profile atom from %s", filename);
 
 	/* get contents of file */
 	ret = g_file_get_contents (filename, &data, &length, error);

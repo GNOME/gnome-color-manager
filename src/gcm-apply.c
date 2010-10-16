@@ -26,11 +26,10 @@
 #include <math.h>
 #include <locale.h>
 
-#include "egg-debug.h"
-
 #include "gcm-utils.h"
 #include "gcm-client.h"
 #include "gcm-device-xrandr.h"
+#include "gcm-debug.h"
 
 /**
  * gcm_apply_create_icc_profile_for_edid:
@@ -67,7 +66,7 @@ gcm_apply_create_icc_profile_for_edid (GcmDevice *device, const gchar *filename,
 
 	/* do we set this by default? */
 	if (!gcm_device_get_use_edid_profile (device)) {
-		egg_debug ("not using auto-edid profile as device profile");
+		g_debug ("not using auto-edid profile as device profile");
 		goto out;
 	}
 
@@ -81,7 +80,7 @@ gcm_apply_create_icc_profile_for_edid (GcmDevice *device, const gchar *filename,
 	} else {
 		/* if this failed, it's because it's already associated
 		 * with the device which is okay with us */
-		egg_debug ("already added auto-edid profile, not adding %s",
+		g_debug ("already added auto-edid profile, not adding %s",
 			   gcm_profile_get_checksum (profile));
 		ret = TRUE;
 	}
@@ -127,7 +126,7 @@ main (int argc, char **argv)
 
 	context = g_option_context_new ("gnome-color-manager apply program");
 	g_option_context_add_main_entries (context, options, NULL);
-	g_option_context_add_group (context, egg_debug_get_option_group ());
+	g_option_context_add_group (context, gcm_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
@@ -139,7 +138,7 @@ main (int argc, char **argv)
 	 */
 	ret = g_spawn_command_line_async ("gconftool-2 --set --type=bool /apps/gnome_settings_daemon/plugins/color/active true", &error);
 	if (!ret) {
-		egg_warning ("failed to install GConf key: %s", error->message);
+		g_warning ("failed to install GConf key: %s", error->message);
 		/* non-fatal */
 		g_clear_error (&error);
 	}
@@ -148,7 +147,7 @@ main (int argc, char **argv)
 	client = gcm_client_new ();
 	ret = gcm_client_coldplug (client, GCM_CLIENT_COLDPLUG_XRANDR, &error);
 	if (!ret) {
-		egg_warning ("failed to get devices: %s", error->message);
+		g_warning ("failed to get devices: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -165,12 +164,12 @@ main (int argc, char **argv)
 		filename = g_strdup_printf ("edid-%s.icc", gcm_device_xrandr_get_edid_md5 (GCM_DEVICE_XRANDR (device)));
 		path = g_build_filename (g_get_user_data_dir (), "icc", filename, NULL);
 		if (g_file_test (path, G_FILE_TEST_EXISTS)) {
-			egg_debug ("auto-profile edid %s exists", path);
+			g_debug ("auto-profile edid %s exists", path);
 		} else {
-			egg_debug ("auto-profile edid does not exist, creating as %s", path);
+			g_debug ("auto-profile edid does not exist, creating as %s", path);
 			ret = gcm_apply_create_icc_profile_for_edid (device, path, &error);
 			if (!ret) {
-				egg_warning ("failed to create profile from EDID data: %s",
+				g_warning ("failed to create profile from EDID data: %s",
 					     error->message);
 				g_clear_error (&error);
 			}
@@ -179,11 +178,11 @@ main (int argc, char **argv)
 		g_free (path);
 
 		/* set gamma for device */
-		egg_debug ("applying default profile for device: %s", gcm_device_get_id (device));
+		g_debug ("applying default profile for device: %s", gcm_device_get_id (device));
 		ret = gcm_device_apply (device, &error);
 		if (!ret) {
 			retval = 1;
-			egg_warning ("failed to set gamma: %s", error->message);
+			g_warning ("failed to set gamma: %s", error->message);
 			g_error_free (error);
 			break;
 		}

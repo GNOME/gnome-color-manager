@@ -129,7 +129,6 @@ out:
 	return ret;
 }
 
-
 /**
  * gcm_sensor_dummy_sample_state_finish:
  **/

@@ -28,7 +28,6 @@
 #include <glib.h>
 #include <libcolor-glib.h>
 
-#include "egg-debug.h"
 #include "gcm-sensor-colormunki.h"
 
 /**
@@ -56,7 +55,8 @@ main (int argc, char **argv)
 	GMainLoop *loop;
 
 	context = g_option_context_new ("gnome-color-manager sensor example");
-	g_option_context_add_group (context, egg_debug_get_option_group ());
+	g_option_context_add_group (context, gcm_debug_get_option_group ());
+	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
 
@@ -76,7 +76,7 @@ main (int argc, char **argv)
 	/* get ambient */
 	ret = gcm_sensor_get_ambient (sensor, NULL, &value, &error);
 	if (!ret) {
-		egg_warning ("failed to get ambient: %s", error->message);
+		g_warning ("failed to get ambient: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -85,7 +85,7 @@ main (int argc, char **argv)
 	/* sample color */
 	ret = gcm_sensor_sample (sensor, NULL, &values, &error);
 	if (!ret) {
-		egg_warning ("failed to measure: %s", error->message);
+		g_warning ("failed to measure: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}

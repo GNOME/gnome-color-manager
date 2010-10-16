@@ -36,6 +36,7 @@
 #include <gcm-ddc-device.h>
 #include <gcm-ddc-client.h>
 #include <gcm-ddc-control.h>
+#include <gcm-sample-window.h>
 #include <gcm-sensor.h>
 #include <gcm-sensor-huey.h>
 #include <gcm-sensor-dummy.h>
@@ -50,6 +51,10 @@
 #include <gcm-brightness.h>
 #include <gcm-profile-store.h>
 #include <gcm-usb.h>
+
+#ifdef LIBCOLOR_GLIB_COMPILATION
+#include <gcm-debug.h>
+#endif
 
 #undef __LIBCOLOR_GLIB_H_INSIDE__
 

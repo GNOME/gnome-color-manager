@@ -31,8 +31,6 @@
 #include <glib-object.h>
 #include <libusb-1.0/libusb.h>
 
-#include "egg-debug.h"
-
 #include "gcm-buffer.h"
 #include "gcm-usb.h"
 #include "gcm-math.h"
@@ -96,9 +94,6 @@ static void
 gcm_sensor_huey_print_data (const gchar *title, const guchar *data, gsize length)
 {
 	guint i;
-
-	if (!egg_debug_is_verbose ())
-		return;
 
 	if (g_strcmp0 (title, "request") == 0)
 		g_print ("%c[%dm", 0x1B, 31);
@@ -664,7 +659,7 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 		g_error_free (error);
 		goto out;
 	}
-	egg_debug ("initial values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_native.R, color_native.G, color_native.B);
+	g_debug ("initial values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_native.R, color_native.G, color_native.B);
 
 	/* compromise between the amount of time and the precision */
 	precision_value = (gdouble) HUEY_PRECISION_TIME_VALUE;
@@ -679,7 +674,7 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 		multiplier.G = 1;
 	if (multiplier.B == 0)
 		multiplier.B = 1;
-	egg_debug ("using multiplier factor: red=%i, green=%i, blue=%i", multiplier.R, multiplier.G, multiplier.B);
+	g_debug ("using multiplier factor: red=%i, green=%i, blue=%i", multiplier.R, multiplier.G, multiplier.B);
 	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey, &multiplier, &color_native, &error);
 	if (!ret) {
 		g_simple_async_result_set_from_error (res, error);
@@ -687,14 +682,14 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 		goto out;
 	}
 
-	egg_debug ("scaled values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_native.R, color_native.G, color_native.B);
+	g_debug ("scaled values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_native.R, color_native.G, color_native.B);
 
 	/* we use different calibration matrices for each output type */
 	if (output_type == GCM_SENSOR_OUTPUT_TYPE_LCD) {
-		egg_debug ("using LCD calibration matrix");
+		g_debug ("using LCD calibration matrix");
 		device_calibration = &sensor_huey->priv->calibration_lcd;
 	} else {
-		egg_debug ("using CRT calibration matrix");
+		g_debug ("using CRT calibration matrix");
 		device_calibration = &sensor_huey->priv->calibration_crt;
 	}
 
@@ -706,7 +701,7 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 						   2000.0f,
 						   HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR);
 
-	egg_debug ("finished values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_result.X, color_result.Y, color_result.Z);
+	g_debug ("finished values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_result.X, color_result.Y, color_result.Z);
 
 	/* save result */
 	tmp = g_new0 (GcmColorXYZ, 1);
@@ -833,7 +828,7 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 		goto out;
 	serial_number_tmp = g_strdup_printf ("%i", serial_number);
 	gcm_sensor_set_serial_number (sensor, serial_number_tmp);
-	egg_debug ("Serial number: %s", serial_number_tmp);
+	g_debug ("Serial number: %s", serial_number_tmp);
 
 	/* get unlock string */
 	ret = gcm_sensor_huey_read_register_string (sensor_huey,
@@ -841,7 +836,7 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 						    priv->unlock_string, 5, error);
 	if (!ret)
 		goto out;
-	egg_debug ("Unlock string: %s", priv->unlock_string);
+	g_debug ("Unlock string: %s", priv->unlock_string);
 
 	/* get matrix */
 	gcm_mat33_clear (&priv->calibration_lcd);
@@ -850,7 +845,7 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 						    &priv->calibration_lcd, error);
 	if (!ret)
 		goto out;
-	egg_debug ("device matrix1: %s", gcm_mat33_to_string (&priv->calibration_lcd));
+	g_debug ("device matrix1: %s", gcm_mat33_to_string (&priv->calibration_lcd));
 
 	/* get another matrix, although this one is different... */
 	gcm_mat33_clear (&priv->calibration_crt);
@@ -859,7 +854,7 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 						    &priv->calibration_crt, error);
 	if (!ret)
 		goto out;
-	egg_debug ("device matrix2: %s", gcm_mat33_to_string (&priv->calibration_crt));
+	g_debug ("device matrix2: %s", gcm_mat33_to_string (&priv->calibration_crt));
 
 	/* this number is different on all three hueys */
 	ret = gcm_sensor_huey_read_register_float (sensor_huey,

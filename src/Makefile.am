@@ -16,6 +16,7 @@ INCLUDES =						\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	$(GUDEV_CFLAGS)					\
 	-I$(top_srcdir)/libcolor-glib			\
+	-DG_LOG_DOMAIN=\"Gcm\"				\
 	-DLIBCOLOR_GLIB_COMPILATION			\
 	-DBINDIR=\"$(bindir)\"				\
 	-DLIBEXECDIR=\"$(libexecdir)\"			\
@@ -39,8 +40,6 @@ ccpanels_CFLAGS =					\
 
 noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\
-	egg-debug.c					\
-	egg-debug.h					\
 	gcm-exif.c					\
 	gcm-exif.h					\
 	gcm-print.c					\

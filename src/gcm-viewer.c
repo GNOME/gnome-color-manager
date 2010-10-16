@@ -27,8 +27,6 @@
 #include <locale.h>
 #include <canberra-gtk.h>
 
-#include "egg-debug.h"
-
 #include "gcm-cell-renderer-profile-text.h"
 #include "gcm-calibrate-argyll.h"
 #include "gcm-cie-widget.h"
@@ -38,6 +36,7 @@
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
 #include "gcm-color.h"
+#include "gcm-debug.h"
 
 typedef struct {
 	GtkBuilder	*builder;
@@ -157,7 +156,7 @@ gcm_viewer_preferences_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 	GError *error = NULL;
 	ret = g_spawn_command_line_async ("gnome-control-center color", &error);
 	if (!ret) {
-		egg_warning ("failed to run prefs: %s", error->message);
+		g_warning ("failed to run prefs: %s", error->message);
 		g_error_free (error);
 	}
 }
@@ -231,7 +230,7 @@ gcm_viewer_update_profile_list (GcmViewerPrivate *viewer)
 	gchar *sort = NULL;
 	GPtrArray *profile_array = NULL;
 
-	egg_debug ("updating profile list");
+	g_debug ("updating profile list");
 
 	/* get new list */
 	profile_array = gcm_profile_store_get_array (viewer->profile_store);
@@ -251,7 +250,7 @@ gcm_viewer_update_profile_list (GcmViewerPrivate *viewer)
 					gcm_viewer_profile_get_sort_string (profile_kind),
 					description);
 		filename = gcm_profile_get_filename (profile);
-		egg_debug ("add %s to profiles list", filename);
+		g_debug ("add %s to profiles list", filename);
 		gtk_list_store_set (viewer->list_store_profiles, &iter,
 				    GCM_PROFILES_COLUMN_ID, filename,
 				    GCM_PROFILES_COLUMN_SORT, sort,
@@ -302,7 +301,7 @@ gcm_viewer_profile_delete_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "treeview_profiles"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
-		egg_debug ("no row selected");
+		g_debug ("no row selected");
 		goto out;
 	}
 
@@ -315,7 +314,7 @@ gcm_viewer_profile_delete_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 	file = gcm_profile_get_file (profile);
 	ret = g_file_delete (file, NULL, &error);
 	if (!ret) {
-		egg_warning ("failed to be deleted: %s", error->message);
+		g_warning ("failed to be deleted: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -392,7 +391,7 @@ gcm_viewer_profile_import_file (GcmViewerPrivate *viewer, GFile *file)
 	/* check if correct type */
 	ret = gcm_utils_is_icc_profile (file);
 	if (!ret) {
-		egg_debug ("not a ICC profile");
+		g_debug ("not a ICC profile");
 		goto out;
 	}
 
@@ -422,7 +421,7 @@ gcm_viewer_profile_import_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 	/* get new file */
 	file = gcm_viewer_file_chooser_get_icc_profile (viewer);
 	if (file == NULL) {
-		egg_warning ("failed to get filename");
+		g_warning ("failed to get filename");
 		goto out;
 	}
 
@@ -452,7 +451,7 @@ gcm_viewer_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gi
 		goto out;
 
 	/* import this */
-	egg_debug ("dropped: %p (%s)", data, filename);
+	g_debug ("dropped: %p (%s)", data, filename);
 
 	/* split, as multiple drag targets are accepted */
 	filenames = g_strsplit_set ((const gchar *)filename, "\r\n", -1);
@@ -491,12 +490,12 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
 	display = gdk_display_get_default ();
 	parent_window = gdk_window_foreign_new_for_display (display, xid);
 	if (parent_window == NULL) {
-		egg_warning ("failed to get parent window");
+		g_warning ("failed to get parent window");
 		return;
 	}
 	our_window = gtk_widget_get_window (GTK_WIDGET (window));
 	if (our_window == NULL) {
-		egg_warning ("failed to get our window");
+		g_warning ("failed to get our window");
 		return;
 	}
 
@@ -659,7 +658,7 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
-		egg_debug ("no row selected");
+		g_debug ("no row selected");
 		return;
 	}
 
@@ -1077,7 +1076,7 @@ main (int argc, char **argv)
 
 	context = g_option_context_new ("gnome-color-manager prefs program");
 	g_option_context_add_main_entries (context, options, NULL);
-	g_option_context_add_group (context, egg_debug_get_option_group ());
+	g_option_context_add_group (context, gcm_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
@@ -1094,7 +1093,7 @@ main (int argc, char **argv)
 	viewer->builder = gtk_builder_new ();
 	retval = gtk_builder_add_from_file (viewer->builder, GCM_DATA "/gcm-viewer.ui", &error);
 	if (retval == 0) {
-		egg_warning ("failed to load ui: %s", error->message);
+		g_warning ("failed to load ui: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -1231,7 +1230,7 @@ main (int argc, char **argv)
 
 	/* set the parent window if it is specified */
 	if (xid != 0) {
-		egg_debug ("Setting xid %i", xid);
+		g_debug ("Setting xid %i", xid);
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), xid);
 
 		/* hide the preferences button */

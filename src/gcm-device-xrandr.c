@@ -36,8 +36,6 @@
 #include "gcm-x11-output.h"
 #include "gcm-x11-screen.h"
 
-#include "egg-debug.h"
-
 static void     gcm_device_xrandr_finalize	(GObject     *object);
 
 #define GCM_DEVICE_XRANDR_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_DEVICE_XRANDR, GcmDeviceXrandrPrivate))
@@ -256,7 +254,7 @@ gcm_device_xrandr_set_from_output (GcmDevice *device, GcmX11Output *output, GErr
 
 	/* get details */
 	id = gcm_device_xrandr_get_id_for_xrandr_device (GCM_DEVICE_XRANDR(device), output);
-	egg_debug ("asking to add %s", id);
+	g_debug ("asking to add %s", id);
 
 	/* get data about the display */
 	model = gcm_edid_get_monitor_name (priv->edid);
@@ -575,7 +573,7 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 		filename_systemwide = g_strdup_printf ("%s/icc/%s.icc", GCM_SYSTEM_PROFILES_DIR, id);
 		ret = g_file_test (filename_systemwide, G_FILE_TEST_EXISTS);
 		if (ret) {
-			egg_debug ("using systemwide %s as profile", filename_systemwide);
+			g_debug ("using systemwide %s as profile", filename_systemwide);
 			profile = gcm_profile_new ();
 			file = g_file_new_for_path (filename_systemwide);
 			ret = gcm_profile_parse (profile, file, error);

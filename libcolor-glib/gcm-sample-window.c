@@ -32,8 +32,6 @@
 #include <glib-object.h>
 #include "gcm-sample-window.h"
 
-#include "egg-debug.h"
-
 static void     gcm_sample_window_finalize	(GObject     *object);
 
 #define GCM_SAMPLE_WINDOW_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_SAMPLE_WINDOW, GcmSampleWindowPrivate))
@@ -124,7 +122,7 @@ gcm_sample_window_set_color (GcmSampleWindow *sample_window, const GcmColorRGB *
 	gtk_window_get_size (window, &width, &height);
 
 	/* if no pixbuf, create it */
-	egg_debug ("setting RGB: %f, %f, %f", color->R, color->G, color->B);
+	g_debug ("setting RGB: %f, %f, %f", color->R, color->G, color->B);
 	pixbuf = gtk_image_get_pixbuf (GTK_IMAGE (sample_window->priv->image));
 	if (pixbuf == NULL) {
 		data = g_new0 (guchar, width*height*3);

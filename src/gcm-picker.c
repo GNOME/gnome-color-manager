@@ -30,13 +30,12 @@
 #include <gtk/gtk.h>
 #include <lcms2.h>
 
-#include "egg-debug.h"
-
 #include "gcm-calibrate-argyll.h"
 #include "gcm-sensor-client.h"
 #include "gcm-profile-store.h"
 #include "gcm-utils.h"
 #include "gcm-color.h"
+#include "gcm-debug.h"
 
 static GtkBuilder *builder = NULL;
 static GtkWidget *info_bar_hardware = NULL;
@@ -236,7 +235,7 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 		/* sample color */
 		ret = gcm_sensor_sample (sensor, NULL, &last_sample, &error);
 		if (!ret) {
-			egg_warning ("failed to measure: %s", error->message);
+			g_warning ("failed to measure: %s", error->message);
 			g_error_free (error);
 			goto out;
 		}
@@ -247,7 +246,7 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 		window = GTK_WINDOW (gtk_builder_get_object (builder, "dialog_picker"));
 		ret = gcm_calibrate_spotread (calibrate, window, &error);
 		if (!ret) {
-			egg_warning ("failed to get spot color: %s", error->message);
+			g_warning ("failed to get spot color: %s", error->message);
 			g_error_free (error);
 			goto out;
 		}
@@ -386,7 +385,7 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
 static void
 gcm_picker_error_cb (cmsContext ContextID, cmsUInt32Number errorcode, const char *text)
 {
-	egg_warning ("LCMS error %i: %s", errorcode, text);
+	g_warning ("LCMS error %i: %s", errorcode, text);
 }
 
 /**
@@ -414,7 +413,7 @@ gcm_prefs_space_combo_changed_cb (GtkWidget *widget, gpointer data)
 		goto out;
 
 	profile_filename = gcm_profile_get_filename (profile);
-	egg_debug ("changed picker space %s", profile_filename);
+	g_debug ("changed picker space %s", profile_filename);
 
 	gcm_picker_refresh_results ();
 out:
@@ -461,7 +460,6 @@ gcm_prefs_combobox_add_profile (GtkWidget *widget, GcmProfile *profile, GtkTreeI
 	/* iter is optional */
 	if (iter == NULL)
 		iter = &iter_tmp;
-
 
 	/* also add profile */
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX(widget));
@@ -562,7 +560,7 @@ main (int argc, char *argv[])
 	context = g_option_context_new (NULL);
 	/* TRANSLATORS: tool that is used to pick colors */
 	g_option_context_set_summary (context, _("GNOME Color Manager Color Picker"));
-	g_option_context_add_group (context, egg_debug_get_option_group ());
+	g_option_context_add_group (context, gcm_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_parse (context, &argc, &argv, NULL);
@@ -575,7 +573,7 @@ main (int argc, char *argv[])
 	builder = gtk_builder_new ();
 	retval = gtk_builder_add_from_file (builder, GCM_DATA "/gcm-picker.ui", &error);
 	if (retval == 0) {
-		egg_warning ("failed to load ui: %s", error->message);
+		g_warning ("failed to load ui: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -614,7 +612,7 @@ main (int argc, char *argv[])
 
 	/* set the parent window if it is specified */
 	if (xid != 0) {
-		egg_debug ("Setting xid %i", xid);
+		g_debug ("Setting xid %i", xid);
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), xid);
 	}
 

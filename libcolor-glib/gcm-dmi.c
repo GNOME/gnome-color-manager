@@ -37,8 +37,6 @@
 #include "gcm-dmi.h"
 #include "gcm-tables.h"
 
-#include "egg-debug.h"
-
 static void     gcm_dmi_finalize	(GObject     *object);
 
 #define GCM_DMI_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_DMI, GcmDmiPrivate))
@@ -80,7 +78,7 @@ gcm_dmi_get_data (const gchar *filename)
 	/* get the contents */
 	ret = g_file_get_contents (filename, &data, NULL, &error);
 	if (!ret) {
-		egg_warning ("failed to get contents of %s: %s", filename, error->message);
+		g_warning ("failed to get contents of %s: %s", filename, error->message);
 		g_error_free (error);
 	}
 
@@ -99,7 +97,6 @@ gcm_dmi_get_data (const gchar *filename)
 
 	return data;
 }
-
 
 /**
  * gcm_dmi_get_name:

@@ -27,8 +27,6 @@
 
 #include "gcm-utils.h"
 
-#include "egg-debug.h"
-
 #define PK_DBUS_SERVICE					"org.freedesktop.PackageKit"
 #define PK_DBUS_PATH					"/org/freedesktop/PackageKit"
 #define PK_DBUS_INTERFACE_QUERY				"org.freedesktop.PackageKit.Query"
@@ -106,7 +104,7 @@ gcm_utils_is_icc_profile (GFile *file)
 			goto out;
 		}
 	} else {
-		egg_warning ("failed to get content type of %s: %s", filename, error->message);
+		g_warning ("failed to get content type of %s: %s", filename, error->message);
 		g_error_free (error);
 	}
 
@@ -152,7 +150,7 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 	g_return_val_if_fail (package_name != NULL, FALSE);
 
 #ifndef HAVE_PACKAGEKIT
-	egg_warning ("cannot install %s: this package was not compiled with --enable-packagekit", package_name);
+	g_warning ("cannot install %s: this package was not compiled with --enable-packagekit", package_name);
 	goto out;
 #endif
 
@@ -191,7 +189,7 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 						G_MAXINT, NULL, &error);
 	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
-		egg_warning ("%s %s\n", _("The request failed:"), error->message);
+		g_warning ("%s %s\n", _("The request failed:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -382,7 +380,7 @@ gcm_gnome_help (const gchar *link_id)
 		uri = g_strconcat ("ghelp:gnome-color-manager?", link_id, NULL);
 	else
 		uri = g_strdup ("ghelp:gnome-color-manager");
-	egg_debug ("opening uri %s", uri);
+	g_debug ("opening uri %s", uri);
 
 	gtk_show_uri (NULL, uri, GDK_CURRENT_TIME, &error);
 

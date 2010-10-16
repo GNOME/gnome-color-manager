@@ -48,8 +48,6 @@
 #include "gcm-color.h"
 #include "gcm-calibrate-dialog.h"
 
-#include "egg-debug.h"
-
 #define FIXED_ARGYLL
 
 //#define USE_DOUBLE_DENSITY
@@ -267,7 +265,7 @@ gcm_calibrate_argyll_get_display (const gchar *output_name, GError **error)
 		g_strdelimit (name, " ", '\0');
 		if (g_strcmp0 (output_name, &name[26]) == 0) {
 			display = atoi (&name[4]);
-			egg_debug ("found %s mapped to %i", output_name, display);
+			g_debug ("found %s mapped to %i", output_name, display);
 		}
 		g_free (name);
 	}
@@ -315,7 +313,7 @@ gcm_calibrate_argyll_debug_argv (const gchar *program, gchar **argv)
 {
 	gchar *join;
 	join = g_strjoinv ("  ", argv);
-	egg_debug ("running %s  %s", program, join);
+	g_debug ("running %s  %s", program, join);
 	g_free (join);
 }
 
@@ -518,7 +516,6 @@ out:
 	g_strfreev (argv);
 	return ret;
 }
-
 
 /**
  * gcm_calibrate_argyll_display_read_chart:
@@ -1330,7 +1327,7 @@ gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll, GE
 			filename_tmp = g_strdup_printf ("%s/%s.%s", working_path, basename, exts[i]);
 			ret = g_file_test (filename_tmp, G_FILE_TEST_IS_REGULAR);
 			if (ret) {
-				egg_debug ("removing %s", filename_tmp);
+				g_debug ("removing %s", filename_tmp);
 				g_unlink (filename_tmp);
 			}
 			g_free (filename_tmp);
@@ -1342,7 +1339,7 @@ gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll, GE
 		filename_tmp = g_strdup_printf ("%s/%s", working_path, filenames[i]);
 		ret = g_file_test (filename_tmp, G_FILE_TEST_IS_REGULAR);
 		if (ret) {
-			egg_debug ("removing %s", filename_tmp);
+			g_debug ("removing %s", filename_tmp);
 			g_unlink (filename_tmp);
 		}
 		g_free (filename_tmp);
@@ -1708,7 +1705,7 @@ gcm_calibrate_argyll_render_cb (GcmPrint *print, GtkPageSetup *page_setup, GcmCa
 		if (g_str_has_prefix (filename, basename) &&
 		    g_str_has_suffix (filename, ".tif")) {
 			filename_tmp = g_build_filename (working_path, filename, NULL);
-			egg_debug ("add print page %s", filename_tmp);
+			g_debug ("add print page %s", filename_tmp);
 			g_ptr_array_add (array, filename_tmp);
 		}
 		filename = g_dir_read_name (dir);
@@ -1764,7 +1761,7 @@ gcm_calibrate_argyll_set_device_from_ti2 (GcmCalibrate *calibrate, const gchar *
 		device_ptr = device + 7;
 
 	/* set for calibration */
-	egg_debug ("setting instrument to '%s'", device_ptr);
+	g_debug ("setting instrument to '%s'", device_ptr);
 	g_object_set (calibrate,
 		      "device", device_ptr,
 		      NULL);
@@ -1834,7 +1831,7 @@ gcm_calibrate_argyll_printer_convert_jpeg (GcmCalibrateArgyll *calibrate_argyll,
 			g_strlcpy (filename_jpg+len-4, ".jpg", 5);
 
 			/* convert from tiff to jpg */
-			egg_debug ("convert %s to %s", filename_tiff, filename_jpg);
+			g_debug ("convert %s to %s", filename_tiff, filename_jpg);
 			pixbuf = gdk_pixbuf_new_from_file (filename_tiff, error);
 			if (pixbuf == NULL) {
 				ret = FALSE;
@@ -1923,7 +1920,7 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError
 			goto out;
 
 		cmdline = g_strdup_printf ("nautilus \"%s\"", working_path);
-		egg_debug ("we need to open the directory we're using: %s", cmdline);
+		g_debug ("we need to open the directory we're using: %s", cmdline);
 		ret = g_spawn_command_line_async (cmdline, error);
 		goto out;
 	}
@@ -2203,7 +2200,7 @@ gcm_calibrate_argyll_exit_cb (VteTerminal *terminal, GcmCalibrateArgyll *calibra
 
 	/* get the child exit status */
 	exit_status = vte_terminal_get_child_exit_status (terminal);
-	egg_debug ("child exit-status is %i", exit_status);
+	g_debug ("child exit-status is %i", exit_status);
 	if (exit_status == 0)
 		priv->response = GTK_RESPONSE_ACCEPT;
 	else
@@ -2239,7 +2236,7 @@ gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 
 	/* different tools assume the device is not on the screen */
 	if (priv->already_on_window) {
-		egg_debug ("VTE: already on screen so faking keypress");
+		g_debug ("VTE: already on screen so faking keypress");
 		priv->keypress_id = g_timeout_add_seconds (1,
 							   (GSourceFunc) gcm_calibrate_argyll_timeout_cb,
 							   calibrate_argyll);
@@ -2265,7 +2262,7 @@ gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 	}
 
 	/* block for a response */
-	egg_debug ("blocking waiting for user input: %s", title);
+	g_debug ("blocking waiting for user input: %s", title);
 
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
@@ -2308,7 +2305,7 @@ gcm_calibrate_argyll_interaction_calibrate (GcmCalibrateArgyll *calibrate_argyll
 	title = _("Please configure instrument");
 
 	/* block for a response */
-	egg_debug ("blocking waiting for user input: %s", title);
+	g_debug ("blocking waiting for user input: %s", title);
 
 	/* get the image, if we have one */
 	filename = gcm_calibrate_argyll_get_sensor_image_calibrate (calibrate_argyll);
@@ -2363,7 +2360,7 @@ gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 	title = _("Please configure instrument");
 
 	/* block for a response */
-	egg_debug ("blocking waiting for user input: %s", title);
+	g_debug ("blocking waiting for user input: %s", title);
 
 	/* get the image, if we have one */
 	filename = gcm_calibrate_argyll_get_sensor_image_screen (calibrate_argyll);
@@ -2419,7 +2416,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 
 	/* attach device */
 	if (g_strcmp0 (line, "Place instrument on test window.") == 0) {
-		egg_debug ("VTE: interaction required: %s", line);
+		g_debug ("VTE: interaction required: %s", line);
 		gcm_calibrate_argyll_interaction_attach (calibrate_argyll);
 		ret = FALSE;
 		goto out;
@@ -2427,7 +2424,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 
 	/* set to calibrate */
 	if (g_strcmp0 (line, "Set instrument sensor to calibration position,") == 0) {
-		egg_debug ("VTE: interaction required, set to calibrate");
+		g_debug ("VTE: interaction required, set to calibrate");
 		gcm_calibrate_argyll_interaction_calibrate (calibrate_argyll);
 		ret = FALSE;
 		goto out;
@@ -2435,7 +2432,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 
 	/* set to calibrate */
 	if (g_strcmp0 (line, "(Sensor should be in surface position)") == 0) {
-		egg_debug ("VTE: interaction required, set to surface");
+		g_debug ("VTE: interaction required, set to surface");
 		gcm_calibrate_argyll_interaction_surface (calibrate_argyll);
 		ret = FALSE;
 		goto out;
@@ -2483,7 +2480,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	    g_strstr_len (line, -1, "User Aborted") != NULL ||
 	    g_str_has_prefix (line, "Perspective correction factors") ||
 	    g_str_has_suffix (line, "key to continue:")) {
-		egg_debug ("VTE: ignore: %s", line);
+		g_debug ("VTE: ignore: %s", line);
 		goto out;
 	}
 
@@ -2491,7 +2488,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	found = g_strstr_len (line, -1, "Result is XYZ");
 	if (found != NULL) {
 		GcmColorXYZ *xyz;
-		egg_warning ("line=%s", line);
+		g_warning ("line=%s", line);
 		split = g_strsplit (line, " ", -1);
 		xyz = gcm_color_new_XYZ ();
 		g_object_set (xyz,
@@ -2537,7 +2534,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
 		gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
 
-		egg_debug ("VTE: error: %s", found+8);
+		g_debug ("VTE: error: %s", found+8);
 
 		/* set state */
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_LOOP;
@@ -2635,7 +2632,6 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		goto out;
 	}
 
-
 	/* reading strip */
 	if (g_str_has_prefix (line, "Spot read failed due to misread")) {
 
@@ -2691,7 +2687,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	}
 
 	/* report a warning so friendly people report bugs */
-	egg_warning ("VTE: could not screenscrape: %s", line);
+	g_warning ("VTE: could not screenscrape: %s", line);
 out:
 	g_free (title_str);
 	g_strfreev (split);
@@ -2770,7 +2766,7 @@ gcm_calibrate_argyll_response_cb (GtkWidget *widget, GtkResponseType response, G
 
 		/* send input if waiting */
 		if (priv->state == GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN) {
-			egg_debug ("sending '%s' to argyll", priv->argyllcms_ok);
+			g_debug ("sending '%s' to argyll", priv->argyllcms_ok);
 #ifdef HAVE_VTE
 			vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), priv->argyllcms_ok, 1);
 #endif
@@ -2792,7 +2788,7 @@ gcm_calibrate_argyll_response_cb (GtkWidget *widget, GtkResponseType response, G
 
 		/* send input if waiting */
 		if (priv->state == GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN) {
-			egg_debug ("sending 'Q' to argyll");
+			g_debug ("sending 'Q' to argyll");
 #ifdef HAVE_VTE
 			vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), "Q", 1);
 #endif
@@ -2936,7 +2932,7 @@ gcm_calibrate_argyll_finalize (GObject *object)
 
 	/* process running */
 	if (priv->child_pid != -1) {
-		egg_debug ("killing child");
+		g_debug ("killing child");
 		kill (priv->child_pid, SIGKILL);
 
 		/* wait until child has quit */

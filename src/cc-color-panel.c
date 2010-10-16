@@ -29,8 +29,6 @@
 #include <gdk/gdkx.h>
 #include <canberra-gtk.h>
 
-#include "egg-debug.h"
-
 #include "gcm-cell-renderer-profile-text.h"
 #include "gcm-cell-renderer-profile-icon.h"
 #include "gcm-calibrate-argyll.h"
@@ -45,8 +43,6 @@
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
 #include "gcm-color.h"
-
-#include "egg-debug.h"
 
 #include "cc-color-panel.h"
 
@@ -144,14 +140,14 @@ cc_color_panel_set_default (CcColorPanel *panel, GcmDevice *device)
 	id = gcm_device_get_id (device);
 	filename = gcm_device_get_default_profile_filename (device);
 	if (filename == NULL) {
-		egg_debug ("no filename for %s", id);
+		g_debug ("no filename for %s", id);
 		goto out;
 	}
 
 	/* run using PolicyKit */
 	install_cmd = g_build_filename (SBINDIR, "gcm-install-system-wide", NULL);
 	cmdline = g_strdup_printf ("pkexec %s --id %s \"%s\"", install_cmd, id, filename);
-	egg_debug ("running: %s", cmdline);
+	g_debug ("running: %s", cmdline);
 	ret = g_spawn_command_line_sync (cmdline, NULL, NULL, NULL, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not save for all users */
@@ -257,10 +253,10 @@ cc_color_panel_viewer_cb (GtkWidget *widget, CcColorPanel *panel)
 
 	/* run with modal set */
 	command = g_strdup_printf ("%s/gcm-viewer --parent-window %u", BINDIR, xid);
-	egg_debug ("running: %s", command);
+	g_debug ("running: %s", command);
 	ret = g_spawn_command_line_async (command, &error);
 	if (!ret) {
-		egg_warning ("failed to run prefs: %s", error->message);
+		g_warning ("failed to run prefs: %s", error->message);
 		g_error_free (error);
 	}
 	g_free (command);
@@ -284,7 +280,7 @@ cc_color_panel_calibrate_display (CcColorPanel *panel, GcmCalibrate *calibrate)
 	/* set properties from the device */
 	ret = gcm_calibrate_set_from_device (calibrate, panel->priv->current_device, &error);
 	if (!ret) {
-		egg_warning ("failed to calibrate: %s", error->message);
+		g_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -292,7 +288,7 @@ cc_color_panel_calibrate_display (CcColorPanel *panel, GcmCalibrate *calibrate)
 	/* clear any VCGT */
 	ret = gcm_device_xrandr_reset (GCM_DEVICE_XRANDR (panel->priv->current_device), &error);
 	if (!ret) {
-		egg_warning ("failed to reset so we can calibrate: %s", error->message);
+		g_warning ("failed to reset so we can calibrate: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -301,7 +297,7 @@ cc_color_panel_calibrate_display (CcColorPanel *panel, GcmCalibrate *calibrate)
 	window = GTK_WINDOW(panel->priv->main_window);
 	ret = gcm_calibrate_display (calibrate, window, &error);
 	if (!ret) {
-		egg_warning ("failed to calibrate: %s", error->message);
+		g_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -310,7 +306,7 @@ out:
 	error = NULL;
 	ret_tmp = gcm_device_apply (panel->priv->current_device, &error);
 	if (!ret_tmp) {
-		egg_warning ("failed to apply profile: %s", error->message);
+		g_warning ("failed to apply profile: %s", error->message);
 		g_error_free (error);
 	}
 	return ret;
@@ -329,7 +325,7 @@ cc_color_panel_calibrate_device (CcColorPanel *panel, GcmCalibrate *calibrate)
 	/* set defaults from device */
 	ret = gcm_calibrate_set_from_device (calibrate, panel->priv->current_device, &error);
 	if (!ret) {
-		egg_warning ("failed to calibrate: %s", error->message);
+		g_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -342,7 +338,7 @@ cc_color_panel_calibrate_device (CcColorPanel *panel, GcmCalibrate *calibrate)
 			/* TRANSLATORS: could not calibrate */
 			cc_color_panel_error_dialog (panel, _("Failed to calibrate device"), error->message);
 		} else {
-			egg_warning ("failed to calibrate: %s", error->message);
+			g_warning ("failed to calibrate: %s", error->message);
 		}
 		g_error_free (error);
 		goto out;
@@ -364,7 +360,7 @@ cc_color_panel_calibrate_printer (CcColorPanel *panel, GcmCalibrate *calibrate)
 	/* set defaults from device */
 	ret = gcm_calibrate_set_from_device (calibrate, panel->priv->current_device, &error);
 	if (!ret) {
-		egg_warning ("failed to calibrate: %s", error->message);
+		g_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -377,7 +373,7 @@ cc_color_panel_calibrate_printer (CcColorPanel *panel, GcmCalibrate *calibrate)
 			/* TRANSLATORS: could not calibrate */
 			cc_color_panel_error_dialog (panel, _("Failed to calibrate printer"), error->message);
 		} else {
-			egg_warning ("failed to calibrate: %s", error->message);
+			g_warning ("failed to calibrate: %s", error->message);
 		}
 		g_error_free (error);
 		goto out;
@@ -455,7 +451,7 @@ cc_color_panel_profile_import_file (CcColorPanel *panel, GFile *file)
 	/* check if correct type */
 	ret = gcm_utils_is_icc_profile (file);
 	if (!ret) {
-		egg_debug ("not a ICC profile");
+		g_debug ("not a ICC profile");
 		goto out;
 	}
 
@@ -494,7 +490,7 @@ cc_color_panel_profile_add_virtual_file (CcColorPanel *panel, GFile *file)
 		    error->code != GCM_EXIF_ERROR_NO_SUPPORT)
 			cc_color_panel_error_dialog (panel, _("Failed to get metadata from image"), error->message);
 		else
-			egg_debug ("not a supported image format: %s", error->message);
+			g_debug ("not a supported image format: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -556,7 +552,7 @@ cc_color_panel_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context
 		goto out;
 
 	/* import this */
-	egg_debug ("dropped: %p (%s)", data, filename);
+	g_debug ("dropped: %p (%s)", data, filename);
 
 	/* split, as multiple drag targets are accepted */
 	filenames = g_strsplit_set ((const gchar *)filename, "\r\n", -1);
@@ -604,7 +600,7 @@ cc_color_panel_virtual_set_from_file (CcColorPanel *panel, GFile *file)
 	exif = gcm_exif_new ();
 	ret = gcm_exif_parse (exif, file, &error);
 	if (!ret) {
-		egg_warning ("failed to parse file: %s", error->message);
+		g_warning ("failed to parse file: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -652,7 +648,7 @@ cc_color_panel_virtual_drag_data_received_cb (GtkWidget *widget, GdkDragContext 
 	}
 
 	/* import this */
-	egg_debug ("dropped: %p (%s)", data, filename);
+	g_debug ("dropped: %p (%s)", data, filename);
 
 	/* split, as multiple drag targets are accepted */
 	filenames = g_strsplit_set ((const gchar *)filename, "\r\n", -1);
@@ -663,11 +659,11 @@ cc_color_panel_virtual_drag_data_received_cb (GtkWidget *widget, GdkDragContext 
 			continue;
 
 		/* check this is an ICC profile */
-		egg_debug ("trying to set %s", filenames[i]);
+		g_debug ("trying to set %s", filenames[i]);
 		file = g_file_new_for_uri (filenames[i]);
 		ret = cc_color_panel_virtual_set_from_file (panel, file);
 		if (!ret) {
-			egg_debug ("%s did not set from file correctly", filenames[i]);
+			g_debug ("%s did not set from file correctly", filenames[i]);
 			gtk_drag_finish (context, FALSE, FALSE, _time);
 			goto out;
 		}
@@ -700,7 +696,7 @@ cc_color_panel_ensure_argyllcms_installed (CcColorPanel *panel)
 		goto out;
 
 #ifndef HAVE_PACKAGEKIT
-	egg_warning ("cannot install: this package was not compiled with --enable-packagekit");
+	g_warning ("cannot install: this package was not compiled with --enable-packagekit");
 	goto out;
 #endif
 
@@ -778,20 +774,20 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 		ret = cc_color_panel_calibrate_printer (panel, calibrate);
 		break;
 	default:
-		egg_warning ("calibration and/or profiling not supported for this device");
+		g_warning ("calibration and/or profiling not supported for this device");
 		goto out;
 	}
 
 	/* we failed to calibrate */
 	if (!ret) {
-		egg_warning ("failed to calibrate");
+		g_warning ("failed to calibrate");
 		goto out;
 	}
 
 	/* failed to get profile */
 	filename = gcm_calibrate_get_filename_result (calibrate);
 	if (filename == NULL) {
-		egg_warning ("failed to get filename from calibration");
+		g_warning ("failed to get filename from calibration");
 		goto out;
 	}
 
@@ -800,7 +796,7 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 	dest = gcm_utils_get_profile_destination (file);
 	ret = gcm_utils_mkdir_and_copy (file, dest, &error);
 	if (!ret) {
-		egg_warning ("failed to calibrate: %s", error->message);
+		g_warning ("failed to calibrate: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -812,20 +808,20 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 		profile = g_ptr_array_index (profile_array, i);
 		name = gcm_profile_get_filename (profile);
 		if (g_strcmp0 (name, destination) == 0) {
-			egg_debug ("found existing profile: %s", destination);
+			g_debug ("found existing profile: %s", destination);
 			break;
 		}
 	}
 
 	/* we didn't find an existing profile */
 	if (i == profile_array->len) {
-		egg_debug ("adding: %s", destination);
+		g_debug ("adding: %s", destination);
 
 		/* set this default */
 		gcm_device_set_default_profile_filename (panel->priv->current_device, destination);
 		ret = gcm_device_save (panel->priv->current_device, &error);
 		if (!ret) {
-			egg_warning ("failed to save default: %s", error->message);
+			g_warning ("failed to save default: %s", error->message);
 			g_error_free (error);
 			goto out;
 		}
@@ -1001,7 +997,7 @@ set_profiles:
 	/* save */
 	ret = gcm_device_save (panel->priv->current_device, &error);
 	if (!ret) {
-		egg_warning ("failed to save config: %s", error->message);
+		g_warning ("failed to save config: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -1009,7 +1005,7 @@ set_profiles:
 	/* set the profile */
 	ret = gcm_device_apply (panel->priv->current_device, &error);
 	if (!ret) {
-		egg_warning ("failed to apply profile: %s", error->message);
+		g_warning ("failed to apply profile: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -1054,7 +1050,7 @@ cc_color_panel_assign_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "treeview_assign"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
-		egg_debug ("no row selected");
+		g_debug ("no row selected");
 		goto out;
 	}
 
@@ -1070,7 +1066,7 @@ cc_color_panel_assign_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 	if (gcm_device_get_kind (panel->priv->current_device) == GCM_DEVICE_KIND_DISPLAY) {
 		device_md5 = gcm_device_xrandr_get_edid_md5 (GCM_DEVICE_XRANDR (panel->priv->current_device));
 		if (g_strstr_len (gcm_profile_get_filename (profile), -1, device_md5) != NULL) {
-			egg_debug ("removed an auto-profile, so disabling add for device");
+			g_debug ("removed an auto-profile, so disabling add for device");
 			gcm_device_set_use_edid_profile (panel->priv->current_device, FALSE);
 		}
 	}
@@ -1148,7 +1144,7 @@ cc_color_panel_assign_make_default_cb (GtkWidget *widget, CcColorPanel *panel)
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "treeview_assign"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
-		egg_debug ("no row selected");
+		g_debug ("no row selected");
 		return;
 	}
 
@@ -1332,7 +1328,6 @@ cc_color_panel_delete_cb (GtkWidget *widget, CcColorPanel *panel)
 	}
 }
 
-
 /**
  * cc_color_panel_save_and_apply_current_device_cb:
  **/
@@ -1361,7 +1356,7 @@ cc_color_panel_save_and_apply_current_device_cb (CcColorPanel *panel)
 	/* save new profile */
 	ret = gcm_device_save (panel->priv->current_device, &error);
 	if (!ret) {
-		egg_warning ("failed to save config: %s", error->message);
+		g_warning ("failed to save config: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -1369,7 +1364,7 @@ cc_color_panel_save_and_apply_current_device_cb (CcColorPanel *panel)
 	/* actually set the new profile */
 	ret = gcm_device_apply (panel->priv->current_device, &error);
 	if (!ret) {
-		egg_warning ("failed to apply profile: %s", error->message);
+		g_warning ("failed to apply profile: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -1393,7 +1388,7 @@ cc_color_panel_reset_cb (GtkWidget *widget, CcColorPanel *panel)
 
 	/* if we've already queued a save and apply, ignore this */
 	if (panel->priv->save_and_apply_id != 0) {
-		egg_debug ("ignoring extra save and apply, as one is already pending");
+		g_debug ("ignoring extra save and apply, as one is already pending");
 		return;
 	}
 	panel->priv->save_and_apply_id =
@@ -1581,7 +1576,7 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
-		egg_debug ("no row selected");
+		g_debug ("no row selected");
 		goto out;
 	}
 
@@ -1591,7 +1586,7 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 			    -1);
 
 	/* we have a new device */
-	egg_debug ("selected device is: %s", id);
+	g_debug ("selected device is: %s", id);
 	if (panel->priv->current_device != NULL) {
 		g_object_unref (panel->priv->current_device);
 		panel->priv->current_device = NULL;
@@ -1731,7 +1726,7 @@ cc_color_panel_assign_treeview_clicked_cb (GtkTreeSelection *selection, CcColorP
 		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_assign_remove"));
 		gtk_widget_set_sensitive (widget, FALSE);
 
-		egg_debug ("no row selected");
+		g_debug ("no row selected");
 		return;
 	}
 
@@ -1740,7 +1735,7 @@ cc_color_panel_assign_treeview_clicked_cb (GtkTreeSelection *selection, CcColorP
 			    GCM_ASSIGN_COLUMN_PROFILE, &profile,
 			    GCM_ASSIGN_COLUMN_IS_DEFAULT, &is_default,
 			    -1);
-	egg_debug ("selected profile = %s", gcm_profile_get_filename (profile));
+	g_debug ("selected profile = %s", gcm_profile_get_filename (profile));
 
 	/* is the element the first in the list */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_assign_make_default"));
@@ -1785,7 +1780,7 @@ cc_color_panel_add_device_xrandr (CcColorPanel *panel, GcmDevice *device)
 
 	/* sanity check */
 	if (!GCM_IS_DEVICE_XRANDR (device)) {
-		egg_warning ("not a xrandr device");
+		g_warning ("not a xrandr device");
 		goto out;
 	}
 
@@ -1796,7 +1791,7 @@ cc_color_panel_add_device_xrandr (CcColorPanel *panel, GcmDevice *device)
 		/* set the gamma on the device */
 		ret = gcm_device_apply (device, &error);
 		if (!ret) {
-			egg_warning ("failed to apply profile: %s", error->message);
+			g_warning ("failed to apply profile: %s", error->message);
 			g_error_free (error);
 		}
 
@@ -1819,7 +1814,7 @@ cc_color_panel_add_device_xrandr (CcColorPanel *panel, GcmDevice *device)
 
 	/* add to list */
 	id = gcm_device_get_id (device);
-	egg_debug ("add %s to device list", id);
+	g_debug ("add %s to device list", id);
 	gtk_list_store_append (panel->priv->list_store_devices, &iter);
 	gtk_list_store_set (panel->priv->list_store_devices, &iter,
 			    GCM_DEVICES_COLUMN_ID, id,
@@ -1891,7 +1886,7 @@ cc_color_panel_profile_combo_changed_cb (GtkWidget *widget, CcColorPanel *panel)
 	if (entry_type == GCM_PREFS_ENTRY_TYPE_IMPORT) {
 		file = cc_color_panel_file_chooser_get_icc_profile (panel);
 		if (file == NULL) {
-			egg_warning ("failed to get ICC file");
+			g_warning ("failed to get ICC file");
 			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 			goto out;
 		}
@@ -1904,7 +1899,7 @@ cc_color_panel_profile_combo_changed_cb (GtkWidget *widget, CcColorPanel *panel)
 			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 
 			uri = g_file_get_uri (file);
-			egg_debug ("%s did not import correctly", uri);
+			g_debug ("%s did not import correctly", uri);
 			g_free (uri);
 			goto out;
 		}
@@ -1916,7 +1911,7 @@ cc_color_panel_profile_combo_changed_cb (GtkWidget *widget, CcColorPanel *panel)
 		if (!ret) {
 			/* set to first entry */
 			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
-			egg_warning ("failed to parse ICC file: %s", error->message);
+			g_warning ("failed to parse ICC file: %s", error->message);
 			g_error_free (error);
 			goto out;
 		}
@@ -1958,13 +1953,13 @@ cc_color_panel_slider_changed_cb (GtkRange *range, CcColorPanel *panel)
 {
 	/* we're just setting up the device, not moving the slider */
 	if (panel->priv->setting_up_device) {
-		egg_debug ("setting up device, so ignore");
+		g_debug ("setting up device, so ignore");
 		return;
 	}
 
 	/* if we've already queued a save and apply, ignore this */
 	if (panel->priv->save_and_apply_id != 0) {
-		egg_debug ("ignoring extra save and apply, as one is already pending");
+		g_debug ("ignoring extra save and apply, as one is already pending");
 		return;
 	}
 
@@ -2085,7 +2080,7 @@ cc_color_panel_remove_device (CcColorPanel *panel, GcmDevice *gcm_device)
 
 	/* remove */
 	id = gcm_device_get_id (gcm_device);
-	egg_debug ("removing: %s (connected: %i)", id,
+	g_debug ("removing: %s (connected: %i)", id,
 		   gcm_device_get_connected (gcm_device));
 
 	/* get first element */
@@ -2115,7 +2110,7 @@ static void
 cc_color_panel_added_cb (GcmClient *client, GcmDevice *device, CcColorPanel *panel)
 {
 	GcmDeviceKind kind;
-	egg_debug ("added: %s (connected: %i, saved: %i)",
+	g_debug ("added: %s (connected: %i, saved: %i)",
 		   gcm_device_get_id (device),
 		   gcm_device_get_connected (device),
 		   gcm_device_get_saved (device));
@@ -2142,11 +2137,11 @@ cc_color_panel_changed_cb (GcmClient *client, GcmDevice *device, CcColorPanel *p
 	/* no not re-add to the ui if we just deleted this */
 	if (!gcm_device_get_connected (device) &&
 	    !gcm_device_get_saved (device)) {
-		egg_warning ("ignoring uninteresting device: %s", gcm_device_get_id (device));
+		g_warning ("ignoring uninteresting device: %s", gcm_device_get_id (device));
 		return;
 	}
 
-	egg_debug ("changed: %s", gcm_device_get_id (device));
+	g_debug ("changed: %s", gcm_device_get_id (device));
 
 	/* remove the saved device if it's already there */
 	cc_color_panel_remove_device (panel, device);
@@ -2272,7 +2267,7 @@ cc_color_panel_space_combo_changed_cb (GtkWidget *widget, CcColorPanel *panel)
 		goto out;
 
 	filename = gcm_profile_get_filename (profile);
-	egg_debug ("changed working space %s", filename);
+	g_debug ("changed working space %s", filename);
 	g_settings_set_string (panel->priv->settings, key, filename);
 out:
 	if (profile != NULL)
@@ -2294,7 +2289,7 @@ cc_color_panel_renderer_combo_changed_cb (GtkWidget *widget, CcColorPanel *panel
 		return;
 
 	/* save to GSettings */
-	egg_debug ("changed rendering intent to %s", gcm_intent_to_string (active+1));
+	g_debug ("changed rendering intent to %s", gcm_intent_to_string (active+1));
 	g_settings_set_enum (panel->priv->settings, key, active+1);
 }
 
@@ -2341,7 +2336,7 @@ cc_color_panel_is_color_profiles_extra_installed_ready_cb (GObject *source_objec
 	response = g_dbus_connection_call_finish (G_DBUS_CONNECTION (source_object), res, &error);
 	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
-		egg_warning ("%s %s\n", _("The request failed:"), error->message);
+		g_warning ("%s %s\n", _("The request failed:"), error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -2367,7 +2362,7 @@ cc_color_panel_is_color_profiles_extra_installed (CcColorPanel *panel)
 	GError *error = NULL;
 
 #ifndef HAVE_PACKAGEKIT
-	egg_warning ("cannot query %s: this package was not compiled with --enable-packagekit", package_name);
+	g_warning ("cannot query %s: this package was not compiled with --enable-packagekit", package_name);
 	return;
 #endif
 
@@ -2474,7 +2469,7 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 	/* coldplug plugged in devices */
 	ret = gcm_client_coldplug (panel->priv->gcm_client, GCM_CLIENT_COLDPLUG_ALL, &error);
 	if (!ret) {
-		egg_warning ("failed to add connected devices: %s", error->message);
+		g_warning ("failed to add connected devices: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -2486,7 +2481,7 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 	panel->priv->main_window = gtk_widget_get_toplevel (panel->priv->info_bar_profiles);
 
 	/* do we show the shared-color-profiles-extra installer? */
-	egg_debug ("getting installed");
+	g_debug ("getting installed");
 	cc_color_panel_is_color_profiles_extra_installed (panel);
 out:
 	g_free (colorspace_rgb);
@@ -2519,7 +2514,7 @@ cc_color_panel_apply_all_devices_idle_cb (CcColorPanel *panel)
 		/* set gamma for device */
 		ret = gcm_device_apply (device, &error);
 		if (!ret) {
-			egg_warning ("failed to set profile: %s", error->message);
+			g_warning ("failed to set profile: %s", error->message);
 			g_error_free (error);
 			break;
 		}
@@ -2741,7 +2736,7 @@ cc_color_panel_init (CcColorPanel *panel)
 	panel->priv->builder = gtk_builder_new ();
 	retval = gtk_builder_add_from_file (panel->priv->builder, GCM_DATA "/gcm-prefs.ui", &error);
 	if (retval == 0) {
-		egg_error ("failed to load ui: %s", error->message);
+		g_error ("failed to load ui: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
