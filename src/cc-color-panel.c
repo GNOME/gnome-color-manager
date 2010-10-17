@@ -2716,6 +2716,56 @@ cc_color_panel_finalize (GObject *object)
 	G_OBJECT_CLASS (cc_color_panel_parent_class)->finalize (object);
 }
 
+/**
+ * cc_color_panel_profile_store_removed_cb:
+ **/
+static void
+cc_color_panel_profile_store_removed_cb (GcmProfileStore *profile_store, GcmProfile *profile, CcColorPanel *panel)
+{
+	GcmProfile *profile_tmp;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	gboolean ret = FALSE;
+
+	/* check this isn't in the list store already */
+	model = GTK_TREE_MODEL (panel->priv->list_store_assign);
+	if (!gtk_tree_model_get_iter_first (model, &iter))
+		goto out;
+	do {
+		gtk_tree_model_get (model, &iter,
+				    GCM_ASSIGN_COLUMN_PROFILE, &profile_tmp,
+				    -1);
+		/* matches */
+		if (g_strcmp0 (gcm_profile_get_checksum (profile),
+			       gcm_profile_get_checksum (profile_tmp)) == 0) {
+			g_debug ("removed %s which is in the device list",
+				 gcm_profile_get_filename (profile));
+			gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
+			ret = TRUE;
+		}
+		g_object_unref (profile_tmp);
+		if (ret)
+			break;
+	} while (gtk_tree_model_iter_next (model, &iter));
+
+	/* we changed the list */
+	if (ret) {
+
+		/* save */
+		cc_color_panel_assign_save_profiles_for_device (panel, panel->priv->current_device);
+
+		/* re-set the first item as default */
+		if (!gtk_tree_model_get_iter_first (model, &iter))
+			goto out;
+		gtk_list_store_set (panel->priv->list_store_assign, &iter,
+				    GCM_ASSIGN_COLUMN_SORT, "0",
+				    GCM_ASSIGN_COLUMN_IS_DEFAULT, TRUE,
+				    -1);
+	}
+out:
+	return;
+}
+
 static void
 cc_color_panel_init (CcColorPanel *panel)
 {
@@ -2749,9 +2799,6 @@ cc_color_panel_init (CcColorPanel *panel)
 	/* add application specific icons to search path */
 	gtk_icon_theme_append_search_path (gtk_icon_theme_get_default (),
 	                                   GCM_DATA G_DIR_SEPARATOR_S "icons");
-
-	/* maintain a list of profiles */
-	panel->priv->profile_store = gcm_profile_store_new ();
 
 	/* create list stores */
 	panel->priv->list_store_devices = gtk_list_store_new (GCM_DEVICES_COLUMN_LAST, G_TYPE_STRING, G_TYPE_STRING,
@@ -2894,6 +2941,11 @@ cc_color_panel_init (CcColorPanel *panel)
 	g_signal_connect (panel->priv->gcm_client, "changed", G_CALLBACK (cc_color_panel_changed_cb), panel);
 	g_signal_connect (panel->priv->gcm_client, "notify::loading",
 			  G_CALLBACK (cc_color_panel_client_notify_loading_cb), panel);
+
+	/* maintain a list of profiles */
+	panel->priv->profile_store = gcm_profile_store_new ();
+	g_signal_connect (panel->priv->profile_store, "removed",
+			  G_CALLBACK (cc_color_panel_profile_store_removed_cb), panel);
 
 	/* use the color device */
 	panel->priv->sensor_client = gcm_sensor_client_new ();
