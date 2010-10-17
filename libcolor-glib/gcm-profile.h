@@ -135,6 +135,10 @@ void		 gcm_profile_set_colorspace		(GcmProfile	*profile,
 gboolean	 gcm_profile_get_has_vcgt		(GcmProfile	*profile);
 gboolean	 gcm_profile_has_colorspace_description	(GcmProfile	*profile);
 guint		 gcm_profile_get_temperature		(GcmProfile	*profile);
+const GcmColorXYZ *gcm_profile_get_red			(GcmProfile	*profile);
+const GcmColorXYZ *gcm_profile_get_green		(GcmProfile	*profile);
+const GcmColorXYZ *gcm_profile_get_blue			(GcmProfile	*profile);
+const GcmColorXYZ *gcm_profile_get_white		(GcmProfile	*profile);
 
 G_END_DECLS
 

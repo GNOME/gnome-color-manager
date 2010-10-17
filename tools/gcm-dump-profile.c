@@ -44,7 +44,9 @@ gcm_dump_profile_filename (const gchar *filename)
 	const gchar *manufacturer;
 	const gchar *model;
 	const gchar *datetime;
+	const GcmColorXYZ *color;
 	GFile *file = NULL;
+	guint temperature;
 
 	/* parse profile */
 	profile = gcm_profile_new ();
@@ -62,7 +64,7 @@ gcm_dump_profile_filename (const gchar *filename)
 	colorspace = gcm_profile_get_colorspace (profile);
 	g_print ("Colorspace:\t%s\n", gcm_colorspace_to_string (colorspace));
 	size = gcm_profile_get_size (profile);
-	g_print ("Size:\t%i bytes\n", size);
+	g_print ("Size:\t\t%i bytes\n", size);
 	has_vcgt = gcm_profile_get_has_vcgt (profile);
 	g_print ("Has VCGT:\t%s\n", has_vcgt ? "Yes" : "No");
 	description = gcm_profile_get_description (profile);
@@ -77,6 +79,21 @@ gcm_dump_profile_filename (const gchar *filename)
 	model = gcm_profile_get_model (profile);
 	if (model != NULL)
 		g_print ("Model:\t%s\n", model);
+	color = gcm_profile_get_white (profile);
+	if (color != NULL)
+		g_print ("White:\t\t%f,%f,%f\n", color->X, color->Y, color->Z);
+	color = gcm_profile_get_red (profile);
+	if (color != NULL)
+		g_print ("Red:\t\t%f,%f,%f\n", color->X, color->Y, color->Z);
+	color = gcm_profile_get_green (profile);
+	if (color != NULL)
+		g_print ("Green:\t\t%f,%f,%f\n", color->X, color->Y, color->Z);
+	color = gcm_profile_get_blue (profile);
+	if (color != NULL)
+		g_print ("Blue:\t\t%f,%f,%f\n", color->X, color->Y, color->Z);
+	temperature = gcm_profile_get_temperature (profile);
+	if (temperature != 0)
+		g_print ("Temperature:\t%iK\n", temperature);
 	datetime = gcm_profile_get_datetime (profile);
 	if (datetime != NULL)
 		g_print ("Created:\t%s\n", datetime);

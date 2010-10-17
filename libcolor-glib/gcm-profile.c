@@ -219,6 +219,74 @@ gcm_profile_get_temperature (GcmProfile *profile)
 }
 
 /**
+ * gcm_profile_get_red:
+ * @profile: a valid #GcmProfile instance
+ *
+ * Gets the monitor red chromaticity value.
+ *
+ * Return value: the #GcmColorXYZ value
+ *
+ * Since: 2.91.1
+ **/
+const GcmColorXYZ *
+gcm_profile_get_red (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+	return profile->priv->red;
+}
+
+/**
+ * gcm_profile_get_green:
+ * @profile: a valid #GcmProfile instance
+ *
+ * Gets the monitor green chromaticity value.
+ *
+ * Return value: the #GcmColorXYZ value
+ *
+ * Since: 2.91.1
+ **/
+const GcmColorXYZ *
+gcm_profile_get_green (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+	return profile->priv->green;
+}
+
+/**
+ * gcm_profile_get_blue:
+ * @profile: a valid #GcmProfile instance
+ *
+ * Gets the monitor red chromaticity value.
+ *
+ * Return value: the #GcmColorXYZ value
+ *
+ * Since: 2.91.1
+ **/
+const GcmColorXYZ *
+gcm_profile_get_blue (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+	return profile->priv->blue;
+}
+
+/**
+ * gcm_profile_get_white:
+ * @profile: a valid #GcmProfile instance
+ *
+ * Gets the monitor white chromaticity value.
+ *
+ * Return value: the #GcmColorXYZ value
+ *
+ * Since: 2.91.1
+ **/
+const GcmColorXYZ *
+gcm_profile_get_white (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+	return profile->priv->white;
+}
+
+/**
  * gcm_profile_get_file:
  * @profile: A valid #GcmProfile
  *
