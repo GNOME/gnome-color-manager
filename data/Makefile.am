@@ -10,6 +10,7 @@ dist_migration_DATA = org.gnome.color-manager.gschema.migrate
 @INTLTOOL_DESKTOP_RULE@
 desktopdir = $(datadir)/applications
 desktop_in_files =					\
+	gcm-viewer.desktop.in				\
 	gcm-prefs.desktop.in				\
 	gcm-import.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
