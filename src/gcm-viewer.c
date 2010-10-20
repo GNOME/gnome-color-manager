@@ -77,8 +77,6 @@ enum {
 	GCM_VIEWER_COMBO_COLUMN_LAST
 };
 
-static void gcm_viewer_profile_store_changed_cb (GcmProfileStore *profile_store, GcmViewerPrivate *viewer);
-
 #define GCM_VIEWER_TREEVIEW_WIDTH		350 /* px */
 #define GCM_VIEWER_MAX_EXAMPLE_IMAGES		4
 
@@ -887,6 +885,33 @@ gcm_viewer_set_combo_simple_text (GtkWidget *combo_box)
 }
 
 /**
+ * gcm_viewer_profile_store_added_cb:
+ **/
+static void
+gcm_viewer_profile_store_added_cb (GcmProfileStore *profile_store, GcmProfile *profile, GcmViewerPrivate *viewer)
+{
+	gcm_viewer_update_profile_list (viewer);
+}
+
+/**
+ * gcm_viewer_profile_store_removed_cb:
+ **/
+static void
+gcm_viewer_profile_store_removed_cb (GcmProfileStore *profile_store, GcmProfile *profile, GcmViewerPrivate *viewer)
+{
+	gcm_viewer_update_profile_list (viewer);
+}
+
+/**
+ * gcm_viewer_profile_store_changed_cb:
+ **/
+static void
+gcm_viewer_profile_store_changed_cb (GcmProfileStore *profile_store, GcmViewerPrivate *viewer)
+{
+	gcm_viewer_update_profile_list (viewer);
+}
+
+/**
  * gcm_viewer_startup_phase1_idle_cb:
  **/
 static gboolean
@@ -905,7 +930,12 @@ gcm_viewer_startup_phase1_idle_cb (GcmViewerPrivate *viewer)
 
 	/* search the disk for profiles */
 	gcm_profile_store_search (viewer->profile_store, search_flags);
-	g_signal_connect (viewer->profile_store, "changed", G_CALLBACK(gcm_viewer_profile_store_changed_cb), viewer);
+	g_signal_connect (viewer->profile_store, "changed",
+			  G_CALLBACK(gcm_viewer_profile_store_changed_cb), viewer);
+	g_signal_connect (viewer->profile_store, "added",
+			  G_CALLBACK (gcm_viewer_profile_store_added_cb), viewer);
+	g_signal_connect (viewer->profile_store, "removed",
+			  G_CALLBACK (gcm_viewer_profile_store_removed_cb), viewer);
 
 	/* update list of profiles */
 	gcm_viewer_update_profile_list (viewer);
@@ -935,16 +965,6 @@ gcm_viewer_setup_drag_and_drop (GtkWidget *widget)
 
 	gtk_drag_dest_set (widget, GTK_DEST_DEFAULT_ALL, &entry, 1, GDK_ACTION_MOVE | GDK_ACTION_COPY);
 	g_free (entry.target);
-}
-
-/**
- * gcm_viewer_profile_store_changed_cb:
- **/
-static void
-gcm_viewer_profile_store_changed_cb (GcmProfileStore *profile_store, GcmViewerPrivate *viewer)
-{
-	/* clear and update the profile list */
-	gcm_viewer_update_profile_list (viewer);
 }
 
 /**
@@ -1026,24 +1046,6 @@ gcm_viewer_setup_graph_combobox (GcmViewerPrivate *viewer, GtkWidget *widget)
 }
 
 /**
- * gcm_viewer_profile_store_added_cb:
- **/
-static void
-gcm_viewer_profile_store_added_cb (GcmProfileStore *profile_store, GcmProfile *profile, GcmViewerPrivate *viewer)
-{
-	gcm_viewer_update_profile_list (viewer);
-}
-
-/**
- * gcm_viewer_profile_store_removed_cb:
- **/
-static void
-gcm_viewer_profile_store_removed_cb (GcmProfileStore *profile_store, GcmProfile *profile, GcmViewerPrivate *viewer)
-{
-	gcm_viewer_update_profile_list (viewer);
-}
-
-/**
  * main:
  **/
 int
@@ -1104,10 +1106,6 @@ main (int argc, char **argv)
 
 	/* maintain a list of profiles */
 	viewer->profile_store = gcm_profile_store_new ();
-	g_signal_connect (viewer->profile_store, "added",
-			  G_CALLBACK (gcm_viewer_profile_store_added_cb), viewer);
-	g_signal_connect (viewer->profile_store, "removed",
-			  G_CALLBACK (gcm_viewer_profile_store_removed_cb), viewer);
 
 	/* create list stores */
 	viewer->list_store_profiles = gtk_list_store_new (GCM_PROFILES_COLUMN_LAST, G_TYPE_STRING,
