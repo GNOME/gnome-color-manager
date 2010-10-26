@@ -2202,6 +2202,7 @@ cc_color_panel_setup_space_combobox (CcColorPanel *panel, GtkWidget *widget, Gcm
 	gchar *text = NULL;
 	GPtrArray *profile_array = NULL;
 	GtkTreeIter iter;
+	GtkTreeModel *model;
 
 	/* get new list */
 	profile_array = gcm_profile_store_get_array (panel->priv->profile_store);
@@ -2231,7 +2232,11 @@ cc_color_panel_setup_space_combobox (CcColorPanel *panel, GtkWidget *widget, Gcm
 		/* TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK" */
 		text = g_strdup_printf (_("No %s color spaces available"),
 					gcm_colorspace_to_localised_string (colorspace));
-		gtk_combo_box_append_text (GTK_COMBO_BOX(widget), text);
+		model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
+		gtk_list_store_append (GTK_LIST_STORE(model), &iter);
+		gtk_list_store_set (GTK_LIST_STORE(model), &iter,
+				    GCM_PREFS_COMBO_COLUMN_TEXT, text,
+				    -1);
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 		gtk_widget_set_sensitive (widget, FALSE);
 	}
@@ -2307,7 +2312,7 @@ cc_color_panel_setup_rendering_combobox (GtkWidget *widget, GcmIntent intent)
 		label = g_strdup_printf ("%s - %s",
 					 gcm_intent_to_localized_text (i),
 					 gcm_intent_to_localized_description (i));
-		gtk_combo_box_append_text (GTK_COMBO_BOX (widget), label);
+		gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (widget), label);
 		g_free (label);
 		if (i == intent) {
 			ret = TRUE;
@@ -2451,7 +2456,6 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 
 	/* setup rendering lists */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "combobox_rendering_display"));
-	cc_color_panel_set_combo_simple_text (widget);
 	intent_display = g_settings_get_enum (panel->priv->settings, GCM_SETTINGS_RENDERING_INTENT_DISPLAY);
 	cc_color_panel_setup_rendering_combobox (widget, intent_display);
 	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey", (gpointer) GCM_SETTINGS_RENDERING_INTENT_DISPLAY);
@@ -2459,7 +2463,6 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 			  G_CALLBACK (cc_color_panel_renderer_combo_changed_cb), panel);
 
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "combobox_rendering_softproof"));
-	cc_color_panel_set_combo_simple_text (widget);
 	intent_softproof = g_settings_get_enum (panel->priv->settings, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF);
 	cc_color_panel_setup_rendering_combobox (widget, intent_softproof);
 	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey", (gpointer) GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF);
@@ -2651,7 +2654,7 @@ cc_color_panel_setup_virtual_combobox (GtkWidget *widget)
 
 	for (i=GCM_DEVICE_KIND_SCANNER; i<GCM_DEVICE_KIND_LAST; i++) {
 		text = gcm_device_kind_to_localised_string (i);
-		gtk_combo_box_append_text (GTK_COMBO_BOX(widget), text);
+		gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(widget), text);
 	}
 	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), GCM_DEVICE_KIND_PRINTER - 2);
 }
@@ -2885,9 +2888,7 @@ cc_color_panel_init (CcColorPanel *panel)
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_virtual_cancel"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (cc_color_panel_button_virtual_cancel_cb), panel);
-
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "combobox_virtual_type"));
-	cc_color_panel_set_combo_simple_text (widget);
 	cc_color_panel_setup_virtual_combobox (widget);
 
 	/* set up assign dialog */

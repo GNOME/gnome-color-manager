@@ -487,6 +487,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 	gchar *text = NULL;
 	GPtrArray *profile_array = NULL;
 	GtkTreeIter iter;
+	GtkTreeModel *model;
 
 	/* get new list */
 	profile_array = gcm_profile_store_get_array (profile_store);
@@ -514,7 +515,11 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 		/* TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK" */
 		text = g_strdup_printf (_("No %s color spaces available"),
 					gcm_colorspace_to_localised_string (GCM_COLORSPACE_RGB));
-		gtk_combo_box_append_text (GTK_COMBO_BOX(widget), text);
+		model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
+		gtk_list_store_append (GTK_LIST_STORE(model), &iter);
+		gtk_list_store_set (GTK_LIST_STORE(model), &iter,
+				    GCM_PREFS_COMBO_COLUMN_TEXT, text,
+				    -1);
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 		gtk_widget_set_sensitive (widget, FALSE);
 	}

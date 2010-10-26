@@ -823,8 +823,8 @@ gcm_calibrate_dialog_init (GcmCalibrateDialog *calibrate_dialog)
 
 	/* add the list of charts */
 	for (i = 0; i < GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN; i++) {
-		gtk_combo_box_append_text (GTK_COMBO_BOX (widget),
-					   gcm_calibrate_dialog_reference_kind_to_localised_string (i));
+		gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (widget),
+						gcm_calibrate_dialog_reference_kind_to_localised_string (i));
 	}
 
 	/* use IT8 by default */

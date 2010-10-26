@@ -859,32 +859,6 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 }
 
 /**
- * gcm_viewer_set_combo_simple_text:
- **/
-static void
-gcm_viewer_set_combo_simple_text (GtkWidget *combo_box)
-{
-	GtkCellRenderer *renderer;
-	GtkListStore *store;
-
-	store = gtk_list_store_new (4, G_TYPE_STRING, GCM_TYPE_PROFILE, G_TYPE_UINT, G_TYPE_STRING);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), GCM_VIEWER_COMBO_COLUMN_SORTABLE, GTK_SORT_ASCENDING);
-	gtk_combo_box_set_model (GTK_COMBO_BOX (combo_box), GTK_TREE_MODEL (store));
-	g_object_unref (store);
-
-	renderer = gtk_cell_renderer_text_new ();
-	g_object_set (renderer,
-		      "ellipsize", PANGO_ELLIPSIZE_END,
-		      "wrap-mode", PANGO_WRAP_WORD_CHAR,
-		      "width-chars", 60,
-		      NULL);
-	gtk_cell_layout_pack_start (GTK_CELL_LAYOUT (combo_box), renderer, TRUE);
-	gtk_cell_layout_set_attributes (GTK_CELL_LAYOUT (combo_box), renderer,
-					"text", GCM_VIEWER_COMBO_COLUMN_TEXT,
-					NULL);
-}
-
-/**
  * gcm_viewer_profile_store_added_cb:
  **/
 static void
@@ -1025,20 +999,20 @@ gcm_viewer_setup_graph_combobox (GcmViewerPrivate *viewer, GtkWidget *widget)
 	gint active;
 
 	/* TRANSLATORS: combo-entry, no graph selected to be shown */
-	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("None"));
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(widget), _("None"));
 
 	/* TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...) */
-	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("CIE 1931 xy"));
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(widget), _("CIE 1931 xy"));
 
 	/* TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out) */
-	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("Transfer response curve"));
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(widget), _("Transfer response curve"));
 
 	/* TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card) */
-	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("Video card gamma table"));
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(widget), _("Video card gamma table"));
 
 	/* TRANSLATORS: combo-entry, this is a preview image of what the profile looks like */
-	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("Image preview (from sRGB)"));
-	gtk_combo_box_append_text (GTK_COMBO_BOX(widget), _("Image preview (to sRGB)"));
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(widget), _("Image preview (from sRGB)"));
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(widget), _("Image preview (to sRGB)"));
 
 	/* get from settings */
 	active = g_settings_get_enum (viewer->settings, GCM_SETTINGS_PROFILE_GRAPH_TYPE);
@@ -1169,7 +1143,6 @@ main (int argc, char **argv)
 
 	/* hide widgets by default */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "combobox_graph"));
-	gcm_viewer_set_combo_simple_text (widget);
 	gcm_viewer_setup_graph_combobox (viewer, widget);
 	g_signal_connect (widget, "changed",
 			  G_CALLBACK (gcm_viewer_graph_combo_changed_cb), viewer);
