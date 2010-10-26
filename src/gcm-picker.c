@@ -47,6 +47,8 @@ static gboolean done_measure = FALSE;
 static GcmSensor *sensor = NULL;
 static GcmColorXYZ last_sample;
 static gdouble last_ambient = -1.0f;
+static guint xid = 0;
+static GcmSensorClient *sensor_client = NULL;
 
 enum {
 	GCM_PREFS_COMBO_COLUMN_TEXT,
@@ -284,7 +286,7 @@ static void
 gcm_picker_close_cb (GtkWidget *widget, gpointer data)
 {
 	GtkApplication *application = (GtkApplication *) data;
-	gtk_application_quit (application);
+	g_application_release (G_APPLICATION (application));
 }
 
 /**
@@ -310,7 +312,7 @@ gcm_picker_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
  * gcm_picker_sensor_client_setup_ui:
  **/
 static void
-gcm_picker_sensor_client_setup_ui (GcmSensorClient *sensor_client)
+gcm_picker_sensor_client_setup_ui (GcmSensorClient *_sensor_client)
 {
 	gboolean ret = FALSE;
 	GtkWidget *widget;
@@ -355,7 +357,7 @@ out:
  * gcm_picker_sensor_client_changed_cb:
  **/
 static void
-gcm_picker_sensor_client_changed_cb (GcmSensorClient *sensor_client, gpointer user_data)
+gcm_picker_sensor_client_changed_cb (GcmSensorClient *_sensor_client, gpointer user_data)
 {
 	gcm_picker_sensor_client_setup_ui (sensor_client);
 }
@@ -364,14 +366,14 @@ gcm_picker_sensor_client_changed_cb (GcmSensorClient *sensor_client, gpointer us
  * gcm_window_set_parent_xid:
  **/
 static void
-gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
+gcm_window_set_parent_xid (GtkWindow *window, guint32 _xid)
 {
 	GdkDisplay *display;
 	GdkWindow *parent_window;
 	GdkWindow *our_window;
 
 	display = gdk_display_get_default ();
-	parent_window = gdk_window_foreign_new_for_display (display, xid);
+	parent_window = gdk_window_foreign_new_for_display (display, _xid);
 	our_window = gtk_widget_get_window (GTK_WIDGET (window));
 
 	/* set this above our parent */
@@ -529,50 +531,26 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 }
 
 /**
- * main:
+ * gcm_picker_activate_cb:
  **/
-int
-main (int argc, char *argv[])
+static void
+gcm_picker_activate_cb (GApplication *application, gpointer user_data)
 {
-	GOptionContext *context;
+	GtkWindow *window;
+	window = GTK_WINDOW (gtk_builder_get_object (builder, "dialog_picker"));
+	gtk_window_present (window);
+}
+
+/**
+ * gcm_picker_startup_cb:
+ **/
+static void
+gcm_picker_startup_cb (GApplication *application, gpointer user_data)
+{
 	guint retval = 0;
 	GError *error = NULL;
-	GtkApplication *application;
 	GtkWidget *main_window;
 	GtkWidget *widget;
-	guint xid = 0;
-	GcmSensorClient *sensor_client = NULL;
-
-	const GOptionEntry options[] = {
-		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
-		  /* TRANSLATORS: we can make this modal (stay on top of) another window */
-		  _("Set the parent window to make this modal"), NULL },
-		{ NULL}
-	};
-
-	/* setup translations */
-	setlocale (LC_ALL, "");
-	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
-	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-	textdomain (GETTEXT_PACKAGE);
-
-	/* setup type system */
-	g_type_init ();
-
-	/* setup LCMS */
-	cmsSetLogErrorHandler (gcm_picker_error_cb);
-
-	context = g_option_context_new (NULL);
-	/* TRANSLATORS: tool that is used to pick colors */
-	g_option_context_set_summary (context, _("GNOME Color Manager Color Picker"));
-	g_option_context_add_group (context, gcm_debug_get_option_group ());
-	g_option_context_add_group (context, gtk_get_option_group (TRUE));
-	g_option_context_add_main_entries (context, options, NULL);
-	g_option_context_parse (context, &argc, &argv, NULL);
-	g_option_context_free (context);
-
-	/* ensure single instance */
-	application = gtk_application_new ("org.gnome.ColorManager.Picker", &argc, &argv);
 
 	/* get UI */
 	builder = gtk_builder_new ();
@@ -584,7 +562,7 @@ main (int argc, char *argv[])
 	}
 
 	main_window = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_picker"));
-	gtk_application_add_window (application, GTK_WINDOW (main_window));
+	gtk_application_add_window (GTK_APPLICATION (application), GTK_WINDOW (main_window));
 	gtk_window_set_icon_name (GTK_WINDOW (main_window), GCM_STOCK_ICON);
 	g_signal_connect (main_window, "delete_event",
 			  G_CALLBACK (gcm_picker_delete_event_cb), application);
@@ -664,9 +642,57 @@ main (int argc, char *argv[])
 
 	/* wait */
 	gtk_widget_show (main_window);
-	gtk_application_run (application);
-
 out:
+	return;
+}
+
+/**
+ * main:
+ **/
+int
+main (int argc, char *argv[])
+{
+	GOptionContext *context;
+	GtkApplication *application;
+	int status = 0;
+
+	const GOptionEntry options[] = {
+		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
+		  /* TRANSLATORS: we can make this modal (stay on top of) another window */
+		  _("Set the parent window to make this modal"), NULL },
+		{ NULL}
+	};
+
+	/* setup translations */
+	setlocale (LC_ALL, "");
+	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
+
+	/* setup type system */
+	g_type_init ();
+
+	/* setup LCMS */
+	cmsSetLogErrorHandler (gcm_picker_error_cb);
+
+	context = g_option_context_new (NULL);
+	/* TRANSLATORS: tool that is used to pick colors */
+	g_option_context_set_summary (context, _("GNOME Color Manager Color Picker"));
+	g_option_context_add_group (context, gcm_debug_get_option_group ());
+	g_option_context_add_group (context, gtk_get_option_group (TRUE));
+	g_option_context_add_main_entries (context, options, NULL);
+	g_option_context_parse (context, &argc, &argv, NULL);
+	g_option_context_free (context);
+
+	/* ensure single instance */
+	application = gtk_application_new ("org.gnome.ColorManager.Picker", 0);
+	g_signal_connect (application, "startup",
+			  G_CALLBACK (gcm_picker_startup_cb), NULL);
+	g_signal_connect (application, "activate",
+			  G_CALLBACK (gcm_picker_activate_cb), NULL);
+
+	status = g_application_run (G_APPLICATION (application), argc, argv);
+
 	g_object_unref (application);
 	if (profile_store != NULL)
 		g_object_unref (profile_store);
@@ -676,6 +702,6 @@ out:
 		g_object_unref (calibrate);
 	if (builder != NULL)
 		g_object_unref (builder);
-	return retval;
+	return status;
 }
 

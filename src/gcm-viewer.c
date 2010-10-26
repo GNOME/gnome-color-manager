@@ -38,6 +38,8 @@
 #include "gcm-color.h"
 #include "gcm-debug.h"
 
+static guint xid = 0;
+
 typedef struct {
 	GtkBuilder	*builder;
 	GtkApplication	*application;
@@ -103,7 +105,7 @@ gcm_viewer_error_dialog (GcmViewerPrivate *viewer, const gchar *title, const gch
 static void
 gcm_viewer_close_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 {
-	gtk_application_quit (viewer->application);
+	g_application_release (G_APPLICATION (viewer->application));
 }
 
 /**
@@ -479,14 +481,14 @@ out:
  * gcm_window_set_parent_xid:
  **/
 static void
-gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
+gcm_window_set_parent_xid (GtkWindow *window, guint32 _xid)
 {
 	GdkDisplay *display;
 	GdkWindow *parent_window;
 	GdkWindow *our_window;
 
 	display = gdk_display_get_default ();
-	parent_window = gdk_window_foreign_new_for_display (display, xid);
+	parent_window = gdk_window_foreign_new_for_display (display, _xid);
 	if (parent_window == NULL) {
 		g_warning ("failed to get parent window");
 		return;
@@ -1020,47 +1022,28 @@ gcm_viewer_setup_graph_combobox (GcmViewerPrivate *viewer, GtkWidget *widget)
 }
 
 /**
- * main:
+ * gcm_viewer_activate_cb:
  **/
-int
-main (int argc, char **argv)
+static void
+gcm_viewer_activate_cb (GApplication *application, GcmViewerPrivate *viewer)
 {
-	guint retval = 0;
-	GOptionContext *context;
+	GtkWindow *window;
+	window = GTK_WINDOW (gtk_builder_get_object (viewer->builder, "dialog_viewer"));
+	gtk_window_present (window);
+}
+
+/**
+ * gcm_viewer_startup_cb:
+ **/
+static void
+gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
+{
 	GtkWidget *main_window;
 	GtkWidget *widget;
-	guint xid = 0;
 	GError *error = NULL;
 	GtkTreeSelection *selection;
 	GdkScreen *screen;
-	GcmViewerPrivate *viewer;
-
-	const GOptionEntry options[] = {
-		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
-		  /* TRANSLATORS: we can make this modal (stay on top of) another window */
-		  _("Set the parent window to make this modal"), NULL },
-		{ NULL}
-	};
-
-	setlocale (LC_ALL, "");
-
-	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
-	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
-	textdomain (GETTEXT_PACKAGE);
-
-	gtk_init (&argc, &argv);
-
-	context = g_option_context_new ("gnome-color-manager prefs program");
-	g_option_context_add_main_entries (context, options, NULL);
-	g_option_context_add_group (context, gcm_debug_get_option_group ());
-	g_option_context_add_group (context, gtk_get_option_group (TRUE));
-	g_option_context_parse (context, &argc, &argv, NULL);
-	g_option_context_free (context);
-
-	viewer = g_new0 (GcmViewerPrivate, 1);
-
-	/* ensure single instance */
-	viewer->application = gtk_application_new ("org.gnome.ColorManager.Profile", &argc, &argv);
+	gint retval;
 
 	/* setup defaults */
 	viewer->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
@@ -1215,10 +1198,54 @@ main (int argc, char **argv)
 
 	/* do all this after the window has been set up */
 	g_idle_add ((GSourceFunc) gcm_viewer_startup_phase1_idle_cb, viewer);
+out:
+	return;
+}
+
+/**
+ * main:
+ **/
+int
+main (int argc, char **argv)
+{
+	GOptionContext *context;
+	GcmViewerPrivate *viewer;
+	int status = 0;
+
+	const GOptionEntry options[] = {
+		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
+		  /* TRANSLATORS: we can make this modal (stay on top of) another window */
+		  _("Set the parent window to make this modal"), NULL },
+		{ NULL}
+	};
+
+	setlocale (LC_ALL, "");
+
+	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
+	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
+
+	gtk_init (&argc, &argv);
+
+	context = g_option_context_new ("gnome-color-manager prefs program");
+	g_option_context_add_main_entries (context, options, NULL);
+	g_option_context_add_group (context, gcm_debug_get_option_group ());
+	g_option_context_add_group (context, gtk_get_option_group (TRUE));
+	g_option_context_parse (context, &argc, &argv, NULL);
+	g_option_context_free (context);
+
+	viewer = g_new0 (GcmViewerPrivate, 1);
+
+	/* ensure single instance */
+	viewer->application = gtk_application_new ("org.gnome.ColorManager.Profile", 0);
+	g_signal_connect (viewer->application, "startup",
+			  G_CALLBACK (gcm_viewer_startup_cb), viewer);
+	g_signal_connect (viewer->application, "activate",
+			  G_CALLBACK (gcm_viewer_activate_cb), viewer);
 
 	/* wait */
-	gtk_application_run (viewer->application);
-out:
+	status = g_application_run (G_APPLICATION (viewer->application), argc, argv);
+
 	g_object_unref (viewer->application);
 	if (viewer->settings != NULL)
 		g_object_unref (viewer->settings);
@@ -1227,5 +1254,5 @@ out:
 	if (viewer->profile_store != NULL)
 		g_object_unref (viewer->profile_store);
 	g_free (viewer);
-	return retval;
+	return status;
 }
