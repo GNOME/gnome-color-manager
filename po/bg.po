@@ -1,0 +1,2330 @@
+# Bulgarian translation of gnome-color-manager po-file.
+# Copyright (C) 2010 Rosi Dimova <pocu@bk.ru>.
+# This file is distributed under the same license as the gnome-color-manager package.
+# Rosi Dimova <pocu@bk.ru>, 2010.
+# Alexander Shopov <ash@kambanaria.org>, 2010.
+#
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-color-manager master\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2010-10-28 07:08+0300\n"
+"PO-Revision-Date: 2010-10-28 07:09+0300\n"
+"Last-Translator: Rosi Dimova <pocu@bk.ru>\n"
+"Language-Team: Bulgarian <dict@fsa-bg.org>\n"
+"Language: bg\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+
+#: ../data/gcm-apply.desktop.in.h:1
+msgid "Applies device profile settings at session startup"
+msgstr ""
+"Прилагане на настройките в профила на устройството при стартиране на сесията"
+
+#: ../data/gcm-apply.desktop.in.h:2
+msgid "Load device color profiles"
+msgstr "Зареждане на цветовите профили на устройството"
+
+#: ../data/gcm-import.desktop.in.h:1
+msgid "ICC Profile Installer"
+msgstr "Инсталиране на цветови профил"
+
+#: ../data/gcm-import.desktop.in.h:2
+msgid "Install ICC profiles"
+msgstr "Инсталиране на цветови профили"
+
+#: ../data/gcm-prefs.desktop.in.h:1
+#, fuzzy
+msgid "Color"
+msgstr "Цветово пространство:"
+
+#: ../data/gcm-prefs.desktop.in.h:2
+msgid "Manage ICC color profiles"
+msgstr "Управление на цветови профили "
+
+#: ../data/gcm-viewer.desktop.in.h:1
+#, fuzzy
+msgid "Color Profile Viewer"
+msgstr "Цветови профил"
+
+#: ../data/gcm-viewer.desktop.in.h:2
+#, fuzzy
+msgid "Inspect and compare installed color profiles"
+msgstr "Инсталиране на системни цветови профили"
+
+#. TRANSLATORS: turn on all debugging
+#: ../libcolor-glib/gcm-debug.c:104
+msgid "Show debugging information for all files"
+msgstr "Показване на данни за изчисляване на грешки за всички файлове"
+
+#: ../libcolor-glib/gcm-debug.c:161
+msgid "Debugging Options"
+msgstr "Настройки за изчистване на грешки"
+
+#: ../libcolor-glib/gcm-debug.c:161
+msgid "Show debugging options"
+msgstr "Показване на настройките за изчистване на грешки"
+
+#. TRANSLATORS: this is where the ICC profile has no description
+#: ../libcolor-glib/gcm-profile.c:171
+msgid "Missing description"
+msgstr "Липсва описание"
+
+#. TRANSLATORS: this is the profile creation date strftime format
+#: ../libcolor-glib/gcm-profile.c:680
+msgid "%B %e %Y, %I:%M:%S %p"
+msgstr "%e %B %Y, %H:%M:%S"
+
+#: ../policy/org.gnome.color.policy.in.h:1
+msgid "Authentication is required to install the color profile for all users"
+msgstr ""
+"Необходима е идентификация за инсталиране цветови профил за всички "
+"потребители"
+
+#. SECURITY:
+#. - Normal users require admin authentication to install files system
+#. wide to apply color profiles for sessions that have not explicitly
+#. chosen profiles to apply.
+#. - This should not be set to 'yes' as unprivileged users could then
+#. set a profile set to all-white or all-black and thus make the
+#. other sessions unusable.
+#.
+#: ../policy/org.gnome.color.policy.in.h:10
+msgid "Install system color profiles"
+msgstr "Инсталиране на системни цветови профили"
+
+#. TRANSLATORS: could not save for all users
+#: ../src/cc-color-panel.c:154
+msgid "Failed to save defaults for all users"
+msgstr "Неуспех при запазване на стандартните настройки за всички потребители "
+
+#. TRANSLATORS: this is where the user can click and import a profile
+#: ../src/cc-color-panel.c:182
+msgid "Other profile…"
+msgstr "Друг профил…"
+
+#. TRANSLATORS: could not calibrate
+#: ../src/cc-color-panel.c:339
+msgid "Failed to calibrate device"
+msgstr "Неуспех при калибриране на устройство"
+
+#. TRANSLATORS: could not calibrate
+#: ../src/cc-color-panel.c:374
+msgid "Failed to calibrate printer"
+msgstr "Неуспех при калибриране на принтер"
+
+#. TRANSLATORS: dialog for file->open dialog
+#: ../src/cc-color-panel.c:399 ../src/gcm-calibrate.c:913
+#: ../src/gcm-viewer.c:339
+msgid "Select ICC Profile File"
+msgstr "Избор на файл с цветови профил"
+
+#: ../src/cc-color-panel.c:402 ../src/gcm-viewer.c:342
+msgid "Import"
+msgstr "Внасяне"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: ../src/cc-color-panel.c:420 ../src/gcm-viewer.c:360
+msgid "Supported ICC profiles"
+msgstr "Поддържани цветови профили"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: ../src/cc-color-panel.c:427 ../src/gcm-calibrate.c:795
+#: ../src/gcm-calibrate.c:847 ../src/gcm-viewer.c:367
+msgid "All files"
+msgstr "Всички файлове"
+
+#. TRANSLATORS: could not read file
+#: ../src/cc-color-panel.c:463 ../src/gcm-import.c:207 ../src/gcm-viewer.c:403
+msgid "Failed to copy file"
+msgstr "Неуспех при копиране на файл"
+
+#: ../src/cc-color-panel.c:491
+#, fuzzy
+msgid "Failed to get metadata from image"
+msgstr "Неуспех при изтриване на файл"
+
+#. TRANSLATORS: could not add virtual device
+#: ../src/cc-color-panel.c:508 ../src/cc-color-panel.c:1183
+msgid "Failed to create virtual device"
+msgstr "Неуспех при създаване на виртуално устройство"
+
+#. TRANSLATORS: could not add virtual device
+#: ../src/cc-color-panel.c:516 ../src/cc-color-panel.c:1191
+msgid "Failed to save virtual device"
+msgstr "Неуспех при запазване на виртуално устройство"
+
+#. TRANSLATORS: could not add virtual device
+#: ../src/cc-color-panel.c:525 ../src/cc-color-panel.c:1200
+msgid "Failed to add virtual device"
+msgstr "Неуспех при добавяне на виртуално устройство"
+
+#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#: ../src/cc-color-panel.c:707
+#, fuzzy
+msgid "Install calibration and profiling software?"
+msgstr "Да се инсталира ли софтуер за цветово калибриране и цветови профили?"
+
+#. TRANSLATORS: dialog message saying the argyllcms is not installed
+#: ../src/cc-color-panel.c:711
+#, fuzzy
+msgid "Calibration and profiling software is not installed."
+msgstr ""
+"На компютъра липсва инсталиран софтуер за цветово калибриране и цветови "
+"профили."
+
+#. TRANSLATORS: dialog message saying the color targets are not installed
+#: ../src/cc-color-panel.c:713
+msgid "These tools are required to build color profiles for devices."
+msgstr ""
+"Инструментите са необходими за създаване на цветови профили за устройства."
+
+#. TRANSLATORS: button, skip installing a package
+#: ../src/cc-color-panel.c:718 ../src/gcm-calibrate.c:1082
+msgid "Do not install"
+msgstr "Да не се инсталира"
+
+#. TRANSLATORS: button, install a package
+#. TRANSLATORS: button text
+#: ../src/cc-color-panel.c:720 ../src/gcm-calibrate.c:1084
+#: ../src/gcm-import.c:186
+msgid "Install"
+msgstr "Да се инсталира"
+
+#. TRANSLATORS: this is the application name for libcanberra
+#: ../src/cc-color-panel.c:837 ../src/cc-color-panel.c:1997
+#: ../src/gcm-calibrate-argyll.c:2284 ../src/gcm-calibrate-argyll.c:2334
+#: ../src/gcm-calibrate-argyll.c:2389 ../src/gcm-calibrate-argyll.c:2465
+#: ../src/gcm-calibrate-argyll.c:2546 ../src/gcm-calibrate-argyll.c:2587
+msgid "GNOME Color Manager"
+msgstr "Управление на цветовете на GNOME"
+
+#. TRANSLATORS: this is the sound description
+#: ../src/cc-color-panel.c:839
+msgid "Profiling completed"
+msgstr "Създаването на профил приключи"
+
+#. TRANSLATORS: this is displayed when the profile is crap
+#: ../src/cc-color-panel.c:1253
+msgid ""
+"This profile does not have the information required for whole-screen color "
+"correction."
+msgstr ""
+"Профилът не съдържа данни, необходими за цветова корекция на целия екран."
+
+#. TRANSLATORS: could not read file
+#: ../src/cc-color-panel.c:1326
+msgid "Failed to delete file"
+msgstr "Неуспех при изтриване на файл"
+
+#. TRANSLATORS: this is when the button is sensitive
+#: ../src/cc-color-panel.c:1473
+msgid "Create a color profile for the selected device"
+msgstr "Създаване на цветови профил за избраното устройство"
+
+#. TRANSLATORS: this is when the button is insensitive
+#: ../src/cc-color-panel.c:1478
+#, fuzzy
+msgid "Cannot create profile: No device is selected"
+msgstr "Не може да калибрира: не е избрано устройство"
+
+#. TRANSLATORS: this is when the button is insensitive because the distro compiled GCM without VTE
+#: ../src/cc-color-panel.c:1489
+msgid "Cannot create profile: Virtual console support is missing"
+msgstr ""
+
+#. TRANSLATORS: this is when the button is insensitive
+#: ../src/cc-color-panel.c:1501
+#, fuzzy
+msgid "Cannot create profile: The display device is not connected"
+msgstr "Не може да калибрира: устройството не е свързано"
+
+#. TRANSLATORS: this is when the button is insensitive
+#: ../src/cc-color-panel.c:1509
+#, fuzzy
+msgid "Cannot create profile: The display driver does not support XRandR 1.3"
+msgstr "Не може да калибрира: драйверът на монитора не поддържа XRandR 1.3"
+
+#. TRANSLATORS: this is when the button is insensitive
+#: ../src/cc-color-panel.c:1517 ../src/cc-color-panel.c:1532
+#, fuzzy
+msgid "Cannot create profile: The measuring instrument is not plugged in"
+msgstr "Не може да зададе профил: колориметърът не е свързан"
+
+#. TRANSLATORS: this is when the button is insensitive
+#: ../src/cc-color-panel.c:1540
+#, fuzzy
+msgid ""
+"Cannot create profile: The measuring instrument does not support printer "
+"profiling"
+msgstr "Не може да зададе профил: колориметърът не поддържа принтери"
+
+#. TRANSLATORS: this is when the button is insensitive
+#: ../src/cc-color-panel.c:1547
+#, fuzzy
+msgid "Cannot create a profile for this type of device"
+msgstr "Не може да зададе профил на този вид устройство"
+
+#: ../src/cc-color-panel.c:1626
+msgid "Per-device settings not supported. Check your display driver."
+msgstr ""
+"Не се поддържат настройки за всяко устройство. Проверете драйвера на вашия "
+"монитор."
+
+#. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
+#: ../src/cc-color-panel.c:1803
+msgid "No hardware support"
+msgstr "Липсва хардуерна поддръжка"
+
+#. TRANSLATORS: this is where the device has been setup but is not connected
+#: ../src/cc-color-panel.c:1807 ../src/cc-color-panel.c:2049
+msgid "disconnected"
+msgstr "прекъснат"
+
+#. TRANSLATORS: the profile was of the wrong sort for this device
+#: ../src/cc-color-panel.c:1926
+msgid "Could not import profile"
+msgstr "Профилът не може да внесе"
+
+#: ../src/cc-color-panel.c:1927
+msgid "The profile was of the wrong type for this device"
+msgstr "Профилът е за неправилен вид спрямо устройството"
+
+#. TRANSLATORS: this is a sound description
+#: ../src/cc-color-panel.c:1985
+msgid "Device added"
+msgstr "Устройството е добавено"
+
+#. TRANSLATORS: this is a sound description
+#: ../src/cc-color-panel.c:1989
+msgid "Device removed"
+msgstr "Устройството е извадено"
+
+#. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
+#: ../src/cc-color-panel.c:2233 ../src/gcm-picker.c:518
+#, c-format
+msgid "No %s color spaces available"
+msgstr "Няма цветови пространства %s"
+
+#. TRANSLATORS: the DBus method failed
+#: ../src/cc-color-panel.c:2344 ../src/gcm-inspect.c:196
+#: ../src/gcm-inspect.c:265 ../src/gcm-inspect.c:332 ../src/gcm-inspect.c:394
+#: ../src/gcm-inspect.c:464 ../src/gcm-utils.c:192
+#, fuzzy
+msgid "The request failed:"
+msgstr "Заявката е неуспешна"
+
+#. TRANSLATORS: no DBus session bus
+#: ../src/cc-color-panel.c:2378 ../src/gcm-inspect.c:178
+#: ../src/gcm-inspect.c:247 ../src/gcm-inspect.c:315 ../src/gcm-inspect.c:376
+#: ../src/gcm-inspect.c:446 ../src/gcm-utils.c:168
+#, fuzzy
+msgid "Failed to connect to session bus:"
+msgstr "Неуспех при получаване на вида съдържание:"
+
+#. TRANSLATORS: device type
+#. Tab title, display specific controls
+#: ../src/cc-color-panel.c:2629 ../data/gcm-prefs.ui.h:18
+msgid "Display"
+msgstr "Монитор"
+
+#. TRANSLATORS: device type
+#: ../src/cc-color-panel.c:2633
+msgid "Scanner"
+msgstr "Скенер"
+
+#. TRANSLATORS: device type
+#: ../src/cc-color-panel.c:2637
+msgid "Printer"
+msgstr "Принтер"
+
+#. TRANSLATORS: device type
+#: ../src/cc-color-panel.c:2641
+msgid "Camera"
+msgstr "Фотоапарат"
+
+#. TRANSLATORS: button to install extra profiles
+#: ../src/cc-color-panel.c:2961
+#, fuzzy
+msgid "Install now"
+msgstr "Да се инсталира"
+
+#. TRANSLATORS: this is displayed when the profile is crap
+#: ../src/cc-color-panel.c:2964
+#, fuzzy
+msgid "More color profiles could be automatically installed."
+msgstr "Искате ли да се инсталират автоматично?"
+
+#. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
+#: ../src/gcm-apply.c:115
+msgid "Do not attempt to clear previously applied settings"
+msgstr "Да не се изчистват предишни настройки"
+
+#. TRANSLATORS: title, default paramters needed to calibrate_argyll
+#: ../src/gcm-calibrate-argyll.c:453
+msgid "Getting default parameters"
+msgstr "Получаване на стандартни параметри"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:456
+msgid ""
+"This pre-calibrates the screen by sending colored and gray patches to your "
+"screen and measuring them with the hardware device."
+msgstr ""
+"Това ще калибрира екрана чрез изобразяване на цветни и сиви полета и "
+"измерването им с устройство (колориметър)."
+
+#. TRANSLATORS: title, patches are specific colours used in calibration
+#: ../src/gcm-calibrate-argyll.c:548
+msgid "Reading the patches"
+msgstr "Отчитане на цветови полета"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:550
+msgid "Reading the patches using the color measuring instrument."
+msgstr "Отчитане на цветовите полета с колориметър."
+
+#. TRANSLATORS: title, patches are specific colours used in calibration
+#: ../src/gcm-calibrate-argyll.c:640
+msgid "Generating the patches"
+msgstr "Създаване на цветови полета"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:642
+msgid "Generating the patches that will be measured with the color instrument."
+msgstr "Създаване на цветови полета, които ще бъдат измерени с колориметър."
+
+#. TRANSLATORS: title, drawing means painting to the screen
+#: ../src/gcm-calibrate-argyll.c:749 ../src/gcm-calibrate-native.c:695
+msgid "Drawing the patches"
+msgstr "Изобразяване на цветови полета"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:751 ../src/gcm-calibrate-native.c:698
+msgid ""
+"Drawing the generated patches to the screen, which will then be measured by "
+"the hardware device."
+msgstr ""
+"Изобразяване на създадените цветови полета на екрана, които ще се измерват "
+"от колориметъра."
+
+#. TRANSLATORS: title, a profile is a ICC file
+#: ../src/gcm-calibrate-argyll.c:851 ../src/gcm-calibrate-argyll.c:1179
+msgid "Generating the profile"
+msgstr "Създаване на профил"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:853
+msgid "Generating the ICC color profile that can be used with this screen."
+msgstr "Създаване на цветови профил, който може да се използва с екрана."
+
+#. TRANSLATORS: title, a profile is a ICC file
+#: ../src/gcm-calibrate-argyll.c:989
+msgid "Copying files"
+msgstr "Копиране на файлове"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:991
+msgid "Copying source image, chart data and CIE reference values."
+msgstr ""
+"Копиране на изходното изображение, данните за диаграмата и справочните "
+"стойности на Международната комисия за осветление (CIE)."
+
+#. TRANSLATORS: title, drawing means painting to the screen
+#: ../src/gcm-calibrate-argyll.c:1066
+msgid "Measuring the patches"
+msgstr "Измерване на цветовите полета"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:1068
+msgid "Detecting the reference patches and measuring them."
+msgstr "Откриване на справочните цветови полета и измерване."
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:1181
+msgid "Generating the ICC color profile that can be used with this device."
+msgstr "Създаване на цветови профил, който може да се използва с устройството."
+
+#. TRANSLATORS: title, hardware refers to a calibration device
+#: ../src/gcm-calibrate-argyll.c:1372
+msgid "Set up display"
+msgstr "Настройване на монитор"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:1375
+msgid "Setting up display device for use…"
+msgstr "Настройване на излъчващото устройство за употреба…"
+
+#. TRANSLATORS: title, setting up the photospectromiter
+#: ../src/gcm-calibrate-argyll.c:1437 ../src/gcm-calibrate-native.c:774
+#, fuzzy
+msgid "Setting up device"
+msgstr "Настройване на излъчващото устройство за употреба…"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:1439 ../src/gcm-calibrate-native.c:776
+#, fuzzy
+msgid "Setting up the device to read a spot color…"
+msgstr "Настройване на излъчващото устройство за употреба…"
+
+#. TRANSLATORS: title, patches are specific colors used in calibration
+#: ../src/gcm-calibrate-argyll.c:1586
+msgid "Printing patches"
+msgstr "Отпечатване на цветови полета"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:1589
+msgid "Rendering the patches for the selected paper and ink."
+msgstr "Изчисляване на цветовите полета за избраната хартия и мастило."
+
+#. TRANSLATORS: title, patches are specific colours used in calibration
+#: ../src/gcm-calibrate-argyll.c:1931
+msgid "Wait for the ink to dry"
+msgstr "Изчакайте мастилото да изсъхне"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:1934
+msgid ""
+"Please wait a few minutes for the ink to dry. Profiling damp ink will "
+"produce a poor profile and may damage your color measuring instrument."
+msgstr ""
+"Изчакайте няколко минути да изсъхне мастилото. Измерването при мокро мастило "
+"води до лош профил, а може и да повреди колориметъра."
+
+#. TRANSLATORS: the supplied image contains an alpha channel which we have to strip out
+#: ../src/gcm-calibrate-argyll.c:2076
+msgid "Image is not suitable without conversion"
+msgstr "Изображението не е подходящо без преобразуване"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:2079
+msgid ""
+"The supplied image contains an alpha channel which the profiling tools do "
+"not understand."
+msgstr ""
+"Предоставеното изображение съдържа алфа канал, който инструментите за "
+"профили не разбират."
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:2083
+msgid ""
+"It is normally safe to convert the image, although you should ensure that "
+"the generated profile is valid."
+msgstr ""
+"Безопасно е да преобразувате изображението, въпреки че трябва да проверите, "
+"дали създаденият профил е верен."
+
+#. TRANSLATORS: button text to convert the RGBA image into RGB
+#: ../src/gcm-calibrate-argyll.c:2090
+msgid "Convert"
+msgstr "Преобразуване"
+
+#. TRANSLATORS: title, instrument refers to a calibration device
+#: ../src/gcm-calibrate-argyll.c:2148
+msgid "Set up instrument"
+msgstr "Настройка на колориметър"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:2151
+msgid "Setting up the instrument for use…"
+msgstr "Настройване на колориметъра за използване…"
+
+#. TRANSLATORS: title, instrument is a hardware color calibration sensor
+#: ../src/gcm-calibrate-argyll.c:2250 ../src/gcm-calibrate-native.c:655
+msgid "Please attach instrument"
+msgstr "Свържете колориметъра"
+
+#. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
+#: ../src/gcm-calibrate-argyll.c:2258 ../src/gcm-calibrate-native.c:663
+msgid ""
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square like the image below."
+msgstr ""
+"Поставете колориметъра към центъра на екрана върху сивия квадрат, както е "
+"указано на картинката по-долу."
+
+#. TRANSLATORS: dialog message, ask user to attach device
+#: ../src/gcm-calibrate-argyll.c:2261 ../src/gcm-calibrate-native.c:666
+msgid ""
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square."
+msgstr "Поставете колориметъра към центъра на екрана върху сивия квадрат."
+
+#. TRANSLATORS: button text
+#: ../src/gcm-calibrate-argyll.c:2274 ../src/gcm-calibrate-argyll.c:2328
+#: ../src/gcm-calibrate-argyll.c:2383 ../src/gcm-calibrate-native.c:680
+msgid "Continue"
+msgstr "Продължаване"
+
+#. TRANSLATORS: title, instrument is a hardware color calibration sensor
+#: ../src/gcm-calibrate-argyll.c:2305 ../src/gcm-calibrate-argyll.c:2360
+msgid "Please configure instrument"
+msgstr "Настройте колориметъра"
+
+#. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
+#: ../src/gcm-calibrate-argyll.c:2315
+msgid ""
+"Please set the measuring instrument to calibration mode like the image below."
+msgstr ""
+"Настройте колориметъра в режим за калибриране, както е показано по-долу."
+
+#. TRANSLATORS: this is when the user has to change a setting on the sensor
+#: ../src/gcm-calibrate-argyll.c:2318
+msgid "Please set the measuring instrument to calibration mode."
+msgstr "Настройте колориметъра в режим за калибриране."
+
+#. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
+#: ../src/gcm-calibrate-argyll.c:2370
+#, fuzzy
+msgid ""
+"Please set the measuring instrument to screen mode like the image below."
+msgstr ""
+"Настройте колориметъра в режим за калибриране, както е показано по-долу."
+
+#. TRANSLATORS: this is when the user has to change a setting on the sensor
+#: ../src/gcm-calibrate-argyll.c:2373
+#, fuzzy
+msgid "Please set the measuring instrument to screen mode."
+msgstr "Настройте колориметъра в режим за калибриране."
+
+#. TRANSLATORS: title, the calibration failed
+#: ../src/gcm-calibrate-argyll.c:2444 ../src/gcm-calibrate-argyll.c:2513
+msgid "Calibration error"
+msgstr "Грешка при калибриране"
+
+#. TRANSLATORS: message, the sample was not read correctly
+#: ../src/gcm-calibrate-argyll.c:2447
+msgid "The sample could not be read at this time."
+msgstr "Образецът не може да бъде прочетен."
+
+#. TRANSLATORS: button text
+#: ../src/gcm-calibrate-argyll.c:2455
+msgid "Try again"
+msgstr "Опитайте отново"
+
+#. TRANSLATORS: message, no firmware is available
+#: ../src/gcm-calibrate-argyll.c:2517
+msgid "No firmware is installed for this instrument."
+msgstr "Не е инсталиран фърмуер за колориметъра."
+
+#. TRANSLATORS: message, the image wasn't good enough
+#: ../src/gcm-calibrate-argyll.c:2520
+msgid ""
+"The pattern match wasn't good enough. Ensure you have the correct type of "
+"target selected."
+msgstr ""
+"Съпоставянето с цветовото поле не беше достатъчно добро. Проверете дали сте "
+"избрали правилния вид образец."
+
+#. TRANSLATORS: message, the sensor got no readings
+#: ../src/gcm-calibrate-argyll.c:2524
+msgid ""
+"The measuring instrument got no valid readings. Please ensure the aperture "
+"is fully open."
+msgstr ""
+"Колориметърът не отчете валидни показания. Проверете дали блендата е изцяло "
+"отворена."
+
+#. TRANSLATORS: message, the colorimeter has got confused
+#: ../src/gcm-calibrate-argyll.c:2527
+msgid ""
+"The measuring instrument is busy and is not starting up. Please remove the "
+"USB plug and re-insert before trying to use this device."
+msgstr ""
+"Колориметърът е зает и не може да стартира. Извадете кабела за връзка по USB "
+"към компютъра и го поставете отново, преди да използвате отново устройството."
+
+#. TRANSLATORS: dialog title
+#: ../src/gcm-calibrate-argyll.c:2565
+msgid "Reading target"
+msgstr "Четене на карта"
+
+#. TRANSLATORS: message, no firmware is available
+#: ../src/gcm-calibrate-argyll.c:2568
+msgid "Failed to read the strip correctly."
+msgstr "Неуспех при отчитането на ивицата."
+
+#. TRANSLATORS: button text
+#. TRANSLATORS: button
+#: ../src/gcm-calibrate-argyll.c:2577 ../src/gcm-calibrate-argyll.c:2650
+msgid "Retry"
+msgstr "Повтаряне"
+
+#. TRANSLATORS: dialog title, where %s is a letter like 'A'
+#: ../src/gcm-calibrate-argyll.c:2600
+#, c-format
+msgid "Read strip %s rather than %s!"
+msgstr "Отчитане на ивица %s, а не %s!"
+
+#. TRANSLATORS: dialog message, just follow the hardware instructions
+#: ../src/gcm-calibrate-argyll.c:2605
+msgid "It looks like you've measured the wrong strip."
+msgstr "Изглежда сте измерили погрешната ивица."
+
+#. TRANSLATORS: dialog message, just follow the hardware instructions
+#: ../src/gcm-calibrate-argyll.c:2609
+msgid ""
+"If you've really measured the right one, it's okay, it could just be unusual "
+"paper."
+msgstr ""
+"Ако наистина сте измерили правилната, хартията може просто да е необичайна."
+
+#. TRANSLATORS: button
+#: ../src/gcm-calibrate-argyll.c:2619
+msgid "Use anyway"
+msgstr "Използване въпреки това"
+
+#. TRANSLATORS: title, the calibration failed
+#: ../src/gcm-calibrate-argyll.c:2639
+#, fuzzy
+msgid "Device Error"
+msgstr "Устройството е извадено"
+
+#. TRANSLATORS: message, the sample was not read correctly
+#: ../src/gcm-calibrate-argyll.c:2642
+msgid "The device could not measure the color spot correctly."
+msgstr ""
+
+#. TRANSLATORS: dialog title, where %s is a letter like 'A'
+#: ../src/gcm-calibrate-argyll.c:2662
+#, c-format
+msgid "Ready to read strip %s"
+msgstr "Готовност за отчитане на ивица %s"
+
+#. TRANSLATORS: dialog message, just follow the hardware instructions
+#: ../src/gcm-calibrate-argyll.c:2667
+msgid ""
+"Place the colorimeter on the area of white next to the letter and click and "
+"hold the measure switch."
+msgstr ""
+"Поставете колориметъра в бялата област до буквата, натиснете и задръжте "
+"ключа за измерване."
+
+#. TRANSLATORS: dialog message, just follow the hardware instructions
+#: ../src/gcm-calibrate-argyll.c:2671
+msgid ""
+"Slowly scan the target line from left to right and release the switch when "
+"you get to the end of the page."
+msgstr ""
+"Сканирайте бавно целевата линия от ляво на дясно и освободете ключа, когато "
+"стигнете края на страницата."
+
+#. TRANSLATORS: dialog message, the sensor has to be above the line
+#: ../src/gcm-calibrate-argyll.c:2675
+msgid ""
+"Ensure the center of the device is properly aligned with the row you are "
+"trying to measure."
+msgstr ""
+"Проверете дали центърът на устройството е подравнен към реда, който се "
+"опитвате да измерите."
+
+#. TRANSLATORS: dialog message, just follow the hardware instructions
+#: ../src/gcm-calibrate-argyll.c:2679
+msgid ""
+"If you make a mistake just release the switch and you'll get a chance to try "
+"again."
+msgstr "Ако сгрешите, просто освободете ключа и ще опитайте отново."
+
+#. TRANSLATORS: title, printing reference files to media
+#: ../src/gcm-calibrate-argyll.c:2827
+msgid "Printing"
+msgstr "Отпечатване"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:2834
+msgid "Preparing the data for the printer."
+msgstr "Подготовка на данните за принтера."
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:2840
+msgid "Sending the targets to the printer."
+msgstr "Изпращане на калибриращи карти към принтера."
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:2844
+msgid "Printing the targets..."
+msgstr "Печат на карти…"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:2848
+msgid "The printing has finished."
+msgstr "Отпечатването завърши."
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:2852
+msgid "The print was aborted."
+msgstr "Отпечатването бе прекъснато."
+
+#. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" - YOU NEED TO USE ASCII ONLY
+#: ../src/gcm-calibrate.c:141
+msgid "Copyright (c)"
+msgstr "Copyright (c)"
+
+#. TRANSLATORS: this is saved in the profile
+#: ../src/gcm-calibrate.c:167
+msgid "Unknown description"
+msgstr "Неизвестно описание"
+
+#. TRANSLATORS: this is saved in the profile
+#: ../src/gcm-calibrate.c:190
+msgid "Unknown model"
+msgstr "Неизвестен модел"
+
+#. TRANSLATORS: this is saved in the profile
+#: ../src/gcm-calibrate.c:206
+msgid "Unknown manufacturer"
+msgstr "Неизвестен производител"
+
+#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#: ../src/gcm-calibrate.c:427
+msgid "Could not detect screen type"
+msgstr "Неуспех при откриване на вида на екрана"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate.c:430
+msgid ""
+"Please indicate if the screen you are trying to profile is an LCD, CRT or a "
+"projector."
+msgstr ""
+"Укажете вида на екрана за профила — течнокристален, катоднолъчев или "
+"проектор."
+
+#. TRANSLATORS: title, the hardware calibration device does not support projectors
+#: ../src/gcm-calibrate.c:455
+msgid "Could not calibrate and profile using this color measuring instrument"
+msgstr "Неуспех при калибриране и създаване на профил с колориметър"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate.c:458
+msgid ""
+"This color measuring instrument is not designed to support calibration and "
+"profiling projectors."
+msgstr ""
+"Колориметърът не поддържа калибриране и създаване на профили на проектори."
+
+#. TRANSLATORS: dialog title
+#: ../src/gcm-calibrate.c:518
+msgid "Profile Precision"
+msgstr "Прецизност на профила"
+
+#. TRANSLATORS: this is the message body for the chart selection
+#: ../src/gcm-calibrate.c:521
+msgid ""
+"A higher precision profile provides higher accuracy in color matching but "
+"requires more time for reading the color patches."
+msgstr ""
+"Профилът с по-висока прецизност осигурява по-висока точност на цветовете, но "
+"се нуждае от повече време за отчитане на цветовите полета."
+
+#. TRANSLATORS: this is the message body for the chart selection
+#: ../src/gcm-calibrate.c:524
+msgid "For a typical workflow, a normal precision profile is sufficient."
+msgstr "За обичайна работа профилът със средна прецизност е достатъчен."
+
+#. TRANSLATORS: dialog message, preface
+#: ../src/gcm-calibrate.c:529
+msgid "The high precision profile also requires more paper and printer ink."
+msgstr ""
+"Профилът с висока прецизност изисква повече хартия и принтерно мастило."
+
+#. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated
+#: ../src/gcm-calibrate.c:643
+msgid "Custom"
+msgstr "Собствен"
+
+#. TRANSLATORS: dialog message, preface
+#: ../src/gcm-calibrate.c:674
+msgid ""
+"Before calibrating the display, it is recommended to configure your display "
+"with the following settings to get optimal results."
+msgstr ""
+"За оптимални резултати преди калибриране на монитора се препоръчва да го "
+"настроите по следния начин."
+
+#. TRANSLATORS: dialog message, preface
+#: ../src/gcm-calibrate.c:677
+msgid ""
+"You may want to consult the owner's manual for your display on how to "
+"achieve these settings."
+msgstr ""
+"Можете да се направите справка с ръководството за монитора се как да го "
+"настройвате."
+
+#. TRANSLATORS: dialog message, bullet item
+#: ../src/gcm-calibrate.c:680
+msgid "Reset your display to the factory defaults."
+msgstr "Нулиране на монитора към фабричните настройки."
+
+#. TRANSLATORS: dialog message, bullet item
+#: ../src/gcm-calibrate.c:683
+msgid "Disable dynamic contrast if your display has this feature."
+msgstr ""
+"Изключване на динамичния контраст, ако мониторът поддържа това свойство."
+
+#. TRANSLATORS: dialog message, bullet item
+#: ../src/gcm-calibrate.c:686
+msgid ""
+"Configure your display with custom color settings and ensure the RGB "
+"channels are set to the same values."
+msgstr ""
+"Настройте монитора със собствени цветови параметри и проверете дали каналите "
+"за RGB са зададени към същите стойности."
+
+#. TRANSLATORS: dialog message, addition to bullet item
+#: ../src/gcm-calibrate.c:689
+msgid "If custom color is not available then use a 6500K color temperature."
+msgstr "Ако няма собствен цвят, използвайте температура на цвета от 6500K."
+
+#. TRANSLATORS: dialog message, bullet item
+#: ../src/gcm-calibrate.c:692
+msgid ""
+"Adjust the display brightness to a comfortable level for prolonged viewing."
+msgstr ""
+"Задайте яркостта на монитора на ниво удобно за продължително разглеждане."
+
+#. TRANSLATORS: dialog message, suffix
+#: ../src/gcm-calibrate.c:695
+msgid ""
+"For best results, the display should have been powered for at least 15 "
+"minutes before starting the calibration."
+msgstr ""
+"За най-добри резултати мониторът трябва да е работи поне 15 минути преди "
+"началото на калибрирането."
+
+#: ../src/gcm-calibrate.c:699
+msgid "Display setup"
+msgstr "Настройване на монитора"
+
+#. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
+#. * aquired image of the calibration target, e.g. an image file that looks
+#. * a bit like this: http://www.colorreference.de/targets/target.jpg
+#: ../src/gcm-calibrate.c:775
+msgid "Select calibration target image"
+msgstr "Избор на изображение с карта за калибриране"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: ../src/gcm-calibrate.c:788
+msgid "Supported images files"
+msgstr "Поддържани файлове за изображения"
+
+#. TRANSLATORS: dialog for file->open dialog
+#: ../src/gcm-calibrate.c:820
+msgid "Select CIE reference values file"
+msgstr "Избор на файл със справочни стойности на CIE"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: ../src/gcm-calibrate.c:840
+msgid "CIE values"
+msgstr "Стойности на CIE"
+
+#: ../src/gcm-calibrate.c:916
+msgid "Open"
+msgstr "Отваряне"
+
+#. TRANSLATORS: title, you can profile all at once, or in steps
+#: ../src/gcm-calibrate.c:952
+msgid "Please choose a profiling mode"
+msgstr "Изберете режим за задаване на профил"
+
+#. TRANSLATORS: dialog message. Test patches are pages of colored squares
+#. * that are printed with a printer, and then read in with a calibration
+#. * device to create a profile
+#: ../src/gcm-calibrate.c:957
+msgid ""
+"Please indicate if you want to profile a local printer, generate some test "
+"patches, or profile using existing test patches."
+msgstr ""
+"Укажете дали искате да направите профил на локален принтер, да отпечатате "
+"карта за калибриране или да калибрирате с наличните цветови полета."
+
+#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#: ../src/gcm-calibrate.c:1068
+msgid "Install missing files?"
+msgstr "Да се инсталират ли липсващите файлове?"
+
+#. TRANSLATORS: dialog message saying the color targets are not installed
+#: ../src/gcm-calibrate.c:1071
+msgid "Common color target files are not installed on this computer."
+msgstr "На този компютър не са инсталирани файловете с карти за калибриране."
+
+#. TRANSLATORS: dialog message saying the color targets are not installed
+#: ../src/gcm-calibrate.c:1073
+msgid "Color target files are needed to convert the image to a color profile."
+msgstr ""
+"За преобразуването на изображението в цветови профил са необходими файлове с "
+"карти за калибриране."
+
+#. TRANSLATORS: dialog message, asking if it's okay to install them
+#: ../src/gcm-calibrate.c:1075
+msgid "Do you want them to be installed?"
+msgstr "Искате ли да се инсталират?"
+
+#. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
+#: ../src/gcm-calibrate.c:1077
+msgid "If you already have the correct file, you can skip this step."
+msgstr "Ако вече имате правилния файл, можете да пропуснете тази стъпка."
+
+#. TRANSLATORS: this is the window title for when the user selects the calibration target.
+#. * A calibration target is an accuratly printed grid of colors, for instance:
+#. * the IT 8.7 targets available here: http://www.targets.coloraid.de/
+#: ../src/gcm-calibrate.c:1099
+msgid "Please select a calibration target"
+msgstr "Изберете образец за калибриране"
+
+#. TRANSLATORS: dialog message, preface. A calibration target looks like
+#. * this: http://www.colorreference.de/targets/target.jpg
+#: ../src/gcm-calibrate.c:1104
+msgid ""
+"Before profiling the device, you have to manually capture an image of a "
+"calibration target and save it as a TIFF image file."
+msgstr ""
+"Преди изготвянето на профил на устройството, трябва ръчно да регистрирате "
+"изображение от образец за калибриране и да го съхраните като файл TIFF."
+
+#. TRANSLATORS: dialog message, preface
+#: ../src/gcm-calibrate.c:1109
+msgid ""
+"Ensure that the contrast and brightness are not changed and color correction "
+"profiles are not applied."
+msgstr ""
+"Проверете дали контрастът и яркостта не са променени и дали профилите за "
+"цветова корекция не са приложени."
+
+#. TRANSLATORS: dialog message, suffix
+#: ../src/gcm-calibrate.c:1112
+msgid ""
+"The device sensor should have been cleaned prior to scanning and the output "
+"file resolution should be at least 200dpi."
+msgstr ""
+"Сензорът на устройството трябва да се почисти преди сканиране, а "
+"разделителната способност на изходящия файл трябва да е поне 200dpi."
+
+#. TRANSLATORS: dialog message, preface
+#: ../src/gcm-calibrate.c:1118
+msgid ""
+"Ensure that the white-balance has not been modified by the camera and that "
+"the lens is clean."
+msgstr ""
+"Проверете дали балансът на бялото не е променен от фотоапарата и дали лещата "
+"е чиста."
+
+#. TRANSLATORS: dialog message, suffix
+#: ../src/gcm-calibrate.c:1122
+msgid ""
+"For best results, the reference target should also be less than two years "
+"old."
+msgstr ""
+"За най-добри резултати еталонната карта трябва да е на по-малко от две "
+"години."
+
+#. TRANSLATORS: this is the message body for the chart selection
+#: ../src/gcm-calibrate.c:1125
+msgid ""
+"Please select the calibration target type which corresponds to your "
+"reference file."
+msgstr ""
+"Изберете вида калибровъчна карта, която отговаря на вашия еталонен файл."
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-dialog.c:567
+msgid "CMP Digital Target 3"
+msgstr "CMP Digital Target 3"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-dialog.c:571
+msgid "CMP DT 003"
+msgstr "CMP DT 003"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-dialog.c:575
+msgid "Color Checker"
+msgstr "Color Checker"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-dialog.c:579
+msgid "Color Checker DC"
+msgstr "Color Checker DC"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-dialog.c:583
+msgid "Color Checker SG"
+msgstr "Color Checker SG"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-dialog.c:587
+msgid "Hutchcolor"
+msgstr "Hutchcolor"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-dialog.c:591
+msgid "i1 RGB Scan 1.4"
+msgstr "i1 RGB Scan 1.4"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-dialog.c:595
+msgid "IT8.7/2"
+msgstr "IT8.7/2"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-dialog.c:599
+msgid "Laser Soft DC Pro"
+msgstr "Laser Soft DC Pro"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-dialog.c:603
+msgid "QPcard 201"
+msgstr "QPcard 201"
+
+#. TRANSLATORS: dialog title
+#: ../src/gcm-calibrate-manual.c:195
+msgid "Introduction to display calibration"
+msgstr "Въведение в калибрирането на монитор"
+
+#. TRANSLATORS: message text, an ICC profile is a file that characterizes the device
+#: ../src/gcm-calibrate-manual.c:217
+msgid ""
+"This dialog will help calibrate your display and create a custom ICC profile."
+msgstr ""
+"Прозорецът ще ви помогне да калибрирате вашия монитор и да създадете "
+"собствен цветови профил."
+
+#. TRANSLATORS: message text, telling the user they are in for the long haul
+#: ../src/gcm-calibrate-manual.c:220
+msgid ""
+"The calibration will involve several steps so that an accurate profile can "
+"be obtained."
+msgstr "Калибрирането ще включва няколко стъпки, за да се получи точен профил."
+
+#. TRANSLATORS: message text, this is a lie. It will take more than a few minutes, but we don't want to scare the hapless user
+#: ../src/gcm-calibrate-manual.c:223
+msgid "It should only take a few minutes."
+msgstr "Това ще отнеме няколко минути."
+
+#. TRANSLATORS: message text, when you're comparing colors, it helps if the image is a bit out of focus otherwise the
+#. * fovea (center bit of the eye) tries to 'pick out' a colour, rather than take the average reading
+#: ../src/gcm-calibrate-manual.c:234
+msgid ""
+"It may help to sit further from the screen or to squint at the calibration "
+"images in order to accurately compare the colors."
+msgstr ""
+"Може да бъде от полза да седнете по-далеч от монитора или да погледнете "
+"калибриращите изображения през клепки, за да съпоставите цветовете точно."
+
+#. TRANSLATORS: message text, tell the use that they can go back and forwards, as the human eye sucks
+#: ../src/gcm-calibrate-manual.c:237
+msgid "You can repeat the calibration steps as many times as you want."
+msgstr "Можете да повторите стъпките по калибриране, когато пожелаете."
+
+#. TRANSLATORS: dialog title
+#: ../src/gcm-calibrate-manual.c:249
+#, c-format
+msgid "Create table item %i/%i"
+msgstr "Създаване на табличен елемент %i/%i"
+
+#. TRANSLATORS: message text
+#: ../src/gcm-calibrate-manual.c:270
+msgid ""
+"Please try to match up the gray square with the surrounding alternating "
+"bars. You should match the brightness first, and then if required change the "
+"color tint so it looks plain gray."
+msgstr ""
+"Опитайте да сравните сивия квадрат със съседните променящи се ивици. Първо "
+"трябва да съпоставите яркостта и ако е необходимо, да промените нюанса, за "
+"да изглежда чисто сив."
+
+#. TRANSLATORS: dialog title
+#: ../src/gcm-calibrate-manual.c:367
+msgid "Summary"
+msgstr "Обобщение"
+
+#. TRANSLATORS: message text
+#: ../src/gcm-calibrate-manual.c:386
+msgid ""
+"This display is now calibrated. You can change the current profile using the "
+"Color Profiles program."
+msgstr ""
+"Мониторът е калибриран. Можете да промените текущия профил с програмата за "
+"цветови профили."
+
+#. TRANSLATORS: this is when there is no profile for the device
+#: ../src/gcm-cell-renderer-profile-text.c:69
+#, fuzzy
+msgid "No profile"
+msgstr "Цветови профил"
+
+#: ../src/gcm-cell-renderer-profile-text.c:79
+#, fuzzy
+msgid "Default"
+msgstr "Стандартни"
+
+# CONTINUE
+#. TRANSLATORS: this is the name of the internal panel
+#: ../src/gcm-device-xrandr.c:136
+msgid "Laptop LCD"
+msgstr "Лаптоп LCD"
+
+#. TRANSLATORS: this is prepended to the device title to let the use know it was generated by us automatically
+#: ../src/gcm-device-xrandr.c:422
+msgid "Automatic"
+msgstr ""
+
+#. TRANSLATORS: command line option: a list of catalogs to install
+#. TRANSLATORS: command line option: a list of files to install
+#: ../src/gcm-import.c:81 ../src/gcm-install-system-wide.c:126
+msgid "ICC profile to install"
+msgstr "Цветови профил за инсталиране"
+
+#. TRANSLATORS: nothing was specified on the command line
+#: ../src/gcm-import.c:103
+msgid "No filename specified"
+msgstr "Не е указано име на файл"
+
+#. TRANSLATORS: could not read file
+#: ../src/gcm-import.c:116
+msgid "Failed to open ICC profile"
+msgstr "Неуспех при отваряне на цветови профил"
+
+#. TRANSLATORS: parsing error
+#: ../src/gcm-import.c:119
+#, c-format
+msgid "Failed to parse file: %s"
+msgstr "Неуспех при интерпретиране на файл: %s"
+
+#. TRANSLATORS: color profile already been installed
+#: ../src/gcm-import.c:145
+msgid "ICC profile already installed"
+msgstr "Цветовият профил вече е инсталиран"
+
+#. TRANSLATORS: color profile already been installed
+#: ../src/gcm-import.c:159
+#, fuzzy
+msgid "ICC profile already installed system-wide"
+msgstr "Цветовият профил вече е инсталиран"
+
+#. TRANSLATORS: message text
+#: ../src/gcm-import.c:171
+#, c-format
+msgid "Import ICC color profile %s?"
+msgstr "Да се внесе ли цветовия профил %s?"
+
+#. TRANSLATORS: message text
+#: ../src/gcm-import.c:174
+msgid "Import ICC color profile?"
+msgstr "Да се внесе ли цветовия профил?"
+
+#. ask confirmation
+#: ../src/gcm-import.c:182
+msgid "Import ICC profile"
+msgstr "Внасяне на цветови профил"
+
+#. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
+#: ../src/gcm-inspect.c:57
+msgid "Description:"
+msgstr "Описание:"
+
+#. TRANSLATORS: this is the ICC profile copyright
+#: ../src/gcm-inspect.c:60
+msgid "Copyright:"
+msgstr "Авторски права:"
+
+#. TRANSLATORS: the root window of all the screens
+#: ../src/gcm-inspect.c:105
+msgid "Root window profile:"
+msgstr "Профил на основния прозорец:"
+
+#. TRANSLATORS: the root window of all the screens
+#: ../src/gcm-inspect.c:117
+msgid "Root window protocol version:"
+msgstr "Версия на протокола на основния прозорец:"
+
+#: ../src/gcm-inspect.c:133
+#, c-format
+msgid "Output profile '%s':"
+msgstr "Профил на изходното устройство „%s“:"
+
+#. TRANSLATORS: this is when the profile has not been set
+#: ../src/gcm-inspect.c:140
+msgid "not set"
+msgstr "неопределен"
+
+#. TRANSLATORS: no profile has been asigned to this device
+#: ../src/gcm-inspect.c:205
+msgid "There are no ICC profiles for this device"
+msgstr "Няма цветови профили за устройството"
+
+#. TRANSLATORS: this is a list of profiles suitable for the device
+#: ../src/gcm-inspect.c:210 ../src/gcm-inspect.c:279 ../src/gcm-inspect.c:411
+#: ../src/gcm-inspect.c:478
+msgid "Suitable profiles for:"
+msgstr "Подходящи профили за:"
+
+#. TRANSLATORS: no profile has been asigned to this device
+#: ../src/gcm-inspect.c:274
+#, fuzzy
+msgid "There are no ICC profiles assigned to this file"
+msgstr "Няма цветови профили за устройството"
+
+#. TRANSLATORS: no profile has been asigned to this window
+#: ../src/gcm-inspect.c:406
+msgid "There are no ICC profiles for this window"
+msgstr "Няма цветови профили за прозореца"
+
+#. TRANSLATORS: no profile has been asigned to this device
+#: ../src/gcm-inspect.c:473
+msgid "There are no ICC profiles for this device type"
+msgstr "Няма цветови профили за вида на устройството"
+
+#. TRANSLATORS: the DBus method failed
+#: ../src/gcm-inspect.c:517
+msgid "The request failed"
+msgstr "Заявката е неуспешна"
+
+# FIXME
+#. TRANSLATORS: this is the rendering intent of the output
+#: ../src/gcm-inspect.c:526
+msgid "Rendering intent (display):"
+msgstr "Алгоритъм на преобразуване (монитор):"
+
+#. TRANSLATORS: this is the rendering intent of the printer
+#: ../src/gcm-inspect.c:532
+msgid "Rendering intent (softproof):"
+msgstr "Алгоритъм на преобразуване (пробна разпечатка):"
+
+#. TRANSLATORS: this is the rendering intent of the output
+#: ../src/gcm-inspect.c:540
+msgid "RGB Colorspace:"
+msgstr "Цветово пространство RGB:"
+
+#. TRANSLATORS: this is the rendering intent of the printer
+#: ../src/gcm-inspect.c:546
+msgid "CMYK Colorspace:"
+msgstr "Цветово пространство CMYK:"
+
+#. TRANSLATORS: command line option
+#: ../src/gcm-inspect.c:574
+#, fuzzy
+msgid "Show xserver properties"
+msgstr "Показване на свойствата на X11"
+
+#. TRANSLATORS: command line option
+#: ../src/gcm-inspect.c:577
+msgid "Get the profiles for a specific device"
+msgstr "Получаване на профили за определено устройство"
+
+#. TRANSLATORS: command line option
+#: ../src/gcm-inspect.c:580
+#, fuzzy
+msgid "Get the profiles for a specific file"
+msgstr "Получаване на профили за определено устройство"
+
+#. TRANSLATORS: command line option
+#: ../src/gcm-inspect.c:583
+msgid "Get the profile for a specific window"
+msgstr "Получаване на профил за определен прозорец"
+
+#. TRANSLATORS: command line option
+#: ../src/gcm-inspect.c:586
+msgid "Get the profiles for a specific device type"
+msgstr "Получаване на профили за определен вид устройство"
+
+#. TRANSLATORS: command line option
+#: ../src/gcm-inspect.c:589
+msgid "Dump all details about this system"
+msgstr "Извеждане на всички подробности за системата"
+
+#. TRANSLATORS: just dumps the EDID to disk
+#: ../src/gcm-inspect.c:602
+msgid "EDID inspect program"
+msgstr "Програма за разглеждане на EDID"
+
+#. TRANSLATORS: this is when the user does --type=mickeymouse
+#: ../src/gcm-inspect.c:621
+#, fuzzy
+msgid "Device or profile type not recognized, recognised types are:"
+msgstr "Видът устройство не е разпознат"
+
+#. command line argument, the ID of the device
+#: ../src/gcm-install-system-wide.c:123
+msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
+msgstr "Идентификатор на устройство, напр. „xrandr_ibm_france_ltn154p2_l05“"
+
+#. TRANSLATORS: tool that is used when copying profiles system-wide
+#: ../src/gcm-install-system-wide.c:141
+msgid "GNOME Color Manager ICC profile system-wide installer"
+msgstr ""
+"Управление на цветовете на GNOME: системна инсталация на цветови профил"
+
+#. TRANSLATORS: user did not specify a valid filename
+#: ../src/gcm-install-system-wide.c:149
+msgid "You need to specify exactly one ICC profile filename."
+msgstr "Трябва да посочите точно едно име на файл за цветови профил."
+
+#. TRANSLATORS: user did not specify a valid device ID
+#: ../src/gcm-install-system-wide.c:157
+msgid "You need to specify exactly one device ID."
+msgstr "Трябва да посочите точно един идентификатор на устройство."
+
+#. TRANSLATORS: user did not specify a valid device ID
+#: ../src/gcm-install-system-wide.c:166
+msgid "The device ID has invalid characters."
+msgstr "Идентификаторът на устройството съдържа непозволени знаци."
+
+#. TRANSLATORS: only able to install profiles as root
+#: ../src/gcm-install-system-wide.c:176
+msgid "This program can only be used by the root user."
+msgstr "Програмата може да се ползва само от системен администратор."
+
+#. TRANSLATORS: only able to install profiles with an absolute path
+#: ../src/gcm-install-system-wide.c:185
+msgid "The source filename must be absolute."
+msgstr "Пътят до файла трябва да е абсолютен"
+
+#. TRANSLATORS: error details
+#: ../src/gcm-install-system-wide.c:196
+msgid "Failed to get content type:"
+msgstr "Неуспех при получаване на вида съдържание:"
+
+#. TRANSLATORS: the content type is the detected type of file
+#: ../src/gcm-install-system-wide.c:206
+msgid "Content type was incorrect:"
+msgstr "Видът на съдържанието не е правилен:"
+
+#. TRANSLATORS: the program must never be directly run
+#: ../src/gcm-install-system-wide.c:215
+msgid "This program must only be run through pkexec."
+msgstr "Програмата може да се стартира само чрез „pkexec“."
+
+#. TRANSLATORS: PolicyKit has gone all insane on us, and we refuse to parse junk
+#: ../src/gcm-install-system-wide.c:224
+msgid "PKEXEC_UID must be set to an integer value."
+msgstr "PKEXEC_UID трябва да е цяло число."
+
+#. TRANSLATORS: we are complaining that a file must be really owned by the user who called this program
+#: ../src/gcm-install-system-wide.c:233
+msgid "The ICC profile must be owned by the user."
+msgstr "Цветовият профил трябва да е собственост на потребителя."
+
+#. TRANSLATORS: only able to install profiles with an absolute path
+#: ../src/gcm-install-system-wide.c:246
+msgid "The destination filename must be absolute."
+msgstr "Пътят до целевия файл трябва да е абсолютен"
+
+#. TRANSLATORS: error details
+#: ../src/gcm-install-system-wide.c:256
+msgid "Failed to copy:"
+msgstr "Неуспех при копиране:"
+
+#. TRANSLATORS: this is when the ambient light level is unknown
+#. TRANSLATORS: this the ICC profile type
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-picker.c:174 ../src/gcm-viewer.c:575 ../src/gcm-viewer.c:625
+msgid "Unknown"
+msgstr "Непознато"
+
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
+#: ../src/gcm-picker.c:324
+msgid "No colorimeter is attached."
+msgstr ""
+
+#. TRANSLATORS: this is displayed if VTE support is not enabled
+#: ../src/gcm-picker.c:331
+msgid "This application was compiled without VTE support."
+msgstr ""
+
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
+#: ../src/gcm-picker.c:341
+msgid "The attached colorimeter is not capable of reading a spot color."
+msgstr ""
+
+#. TRANSLATORS: we can make this modal (stay on top of) another window
+#: ../src/gcm-picker.c:662 ../src/gcm-viewer.c:1218
+msgid "Set the parent window to make this modal"
+msgstr "Задайте родителски прозорец, за да е модален този"
+
+#. TRANSLATORS: tool that is used to pick colors
+#: ../src/gcm-picker.c:680
+#, fuzzy
+msgid "GNOME Color Manager Color Picker"
+msgstr "Управление на цветовете на GNOME"
+
+#. TRANSLATORS: button: this is to open GCM
+#: ../src/gcm-session.c:107
+msgid "Recalibrate now"
+msgstr "Калибриране сега"
+
+#. TRANSLATORS: button: this is to ignore the recalibrate notifications
+#: ../src/gcm-session.c:110
+msgid "Ignore"
+msgstr "Пренебрегване"
+
+#. TRANSLATORS: this is when the device has not been recalibrated in a while
+#: ../src/gcm-session.c:137
+msgid "Recalibration required"
+msgstr "Нужно е калибриране"
+
+#. TRANSLATORS: this is when the display has not been recalibrated in a while
+#: ../src/gcm-session.c:147
+#, c-format
+msgid "The display '%s' should be recalibrated soon."
+msgstr "Мониторът „%s“ трябва скоро да се калибрира."
+
+#. TRANSLATORS: this is when the printer has not been recalibrated in a while
+#: ../src/gcm-session.c:154
+#, c-format
+msgid "The printer '%s' should be recalibrated soon."
+msgstr "Принтерът „%s“ трябва скоро да се калибрира."
+
+#: ../src/gcm-session.c:705
+msgid "Do not exit after the request has been processed"
+msgstr "Програмата да не спира след обработката на заявката"
+
+#. TRANSLATORS: program name, a session wide daemon to watch for updates and changing system state
+#: ../src/gcm-session.c:721 ../data/gcm-prefs.ui.h:10
+msgid "Color Management"
+msgstr "Управление на цветовете"
+
+#: ../src/gcm-session.c:723
+msgid "Color Management D-Bus Service"
+msgstr "Услуга на D-Bus за управление на цветовете"
+
+#. TRANSLATORS: rendering intent: you probably want to google this
+#: ../src/gcm-utils.c:494
+msgid "Perceptual"
+msgstr "Перцептуално"
+
+#. TRANSLATORS: rendering intent: you probably want to google this
+#: ../src/gcm-utils.c:498
+msgid "Relative"
+msgstr ""
+
+#. TRANSLATORS: rendering intent: you probably want to google this
+#: ../src/gcm-utils.c:502
+msgid "Saturation"
+msgstr "Насищане"
+
+#. TRANSLATORS: rendering intent: you probably want to google this
+#: ../src/gcm-utils.c:506
+msgid "Absolute"
+msgstr ""
+
+#. TRANSLATORS: rendering intent: you probably want to google this
+#: ../src/gcm-utils.c:519
+msgid "High quality photography"
+msgstr ""
+
+#. TRANSLATORS: rendering intent: you probably want to google this
+#: ../src/gcm-utils.c:523
+msgid "Precise color matching"
+msgstr ""
+
+#. TRANSLATORS: rendering intent: you probably want to google this
+#: ../src/gcm-utils.c:527
+msgid "Graphs and presentations"
+msgstr ""
+
+#. TRANSLATORS: rendering intent: you probably want to google this
+#: ../src/gcm-utils.c:531
+#, fuzzy
+msgid "Proofing devices"
+msgstr "Неизвестно устройство"
+
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-utils.c:544 ../src/gcm-viewer.c:606 ../data/gcm-prefs.ui.h:41
+msgid "RGB"
+msgstr "RGB"
+
+#. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-utils.c:548 ../src/gcm-viewer.c:618 ../data/gcm-prefs.ui.h:7
+msgid "CMYK"
+msgstr "CMYK"
+
+#. TRANSLATORS: this is the colorspace type
+#: ../src/gcm-utils.c:552
+msgid "gray"
+msgstr ""
+
+#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#: ../src/gcm-viewer.c:288
+msgid "Permanently delete profile?"
+msgstr "Окончателно изтриване на профил?"
+
+#. TRANSLATORS: dialog message
+#: ../src/gcm-viewer.c:291
+msgid ""
+"Are you sure you want to remove this profile from your system permanently?"
+msgstr ""
+"Сигурни ли сте, че искате окончателно да премахнете профила от вашата "
+"система?"
+
+#. TRANSLATORS: button, delete a profile
+#: ../src/gcm-viewer.c:294
+msgid "Delete"
+msgstr "Изтриване"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:548
+msgid "Input device"
+msgstr "Входно устройство"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:552
+msgid "Display device"
+msgstr "Монитор"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:556
+msgid "Output device"
+msgstr "Изходно устройство"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:560
+msgid "Devicelink"
+msgstr "Връзка между устройства"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:564
+msgid "Colorspace conversion"
+msgstr "Преобразуване на цветово пространство"
+
+#. TRANSLATORS: this the ICC profile kind
+#: ../src/gcm-viewer.c:568
+msgid "Abstract"
+msgstr "Абстрактен"
+
+#. TRANSLATORS: this the ICC profile type
+#: ../src/gcm-viewer.c:572
+msgid "Named color"
+msgstr "Именуван цвят"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:586
+msgid "XYZ"
+msgstr "XYZ"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:590
+msgid "LAB"
+msgstr "LAB"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:594
+msgid "LUV"
+msgstr "LUV"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:598
+msgid "YCbCr"
+msgstr "YCbCr"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:602
+msgid "Yxy"
+msgstr "Yxy"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:610
+msgid "Gray"
+msgstr "Gray"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:614
+msgid "HSV"
+msgstr "HSV"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:622
+msgid "CMY"
+msgstr "CMY"
+
+#. TRANSLATORS: if the device has a VCGT profile
+#: ../src/gcm-viewer.c:754
+msgid "Yes"
+msgstr "Да"
+
+#. TRANSLATORS: if the device has a VCGT profile
+#: ../src/gcm-viewer.c:757
+msgid "No"
+msgstr "Не"
+
+#. TRANSLATORS: this is the tooltip when the profile can be deleted
+#: ../src/gcm-viewer.c:843
+#, fuzzy
+msgid "Delete this profile"
+msgstr "_Изтриване на профил"
+
+#. TRANSLATORS: this is the tooltip when the profile cannot be deleted
+#: ../src/gcm-viewer.c:846
+msgid "This profile cannot be deleted"
+msgstr ""
+
+#. TRANSLATORS: combo-entry, no graph selected to be shown
+#: ../src/gcm-viewer.c:1004
+msgid "None"
+msgstr "Няма"
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...)
+#: ../src/gcm-viewer.c:1007
+msgid "CIE 1931 xy"
+msgstr ""
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out)
+#: ../src/gcm-viewer.c:1010
+msgid "Transfer response curve"
+msgstr ""
+
+#. TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card)
+#: ../src/gcm-viewer.c:1013
+msgid "Video card gamma table"
+msgstr ""
+
+#. TRANSLATORS: combo-entry, this is a preview image of what the profile looks like
+#: ../src/gcm-viewer.c:1016
+msgid "Image preview (from sRGB)"
+msgstr ""
+
+#: ../src/gcm-viewer.c:1017
+msgid "Image preview (to sRGB)"
+msgstr ""
+
+#: ../data/gcm-calibrate.ui.h:1
+msgid "Blue:"
+msgstr "Синьо:"
+
+#: ../data/gcm-calibrate.ui.h:2 ../data/gcm-prefs.ui.h:6
+msgid "Brightness:"
+msgstr "Яркост:"
+
+#: ../data/gcm-calibrate.ui.h:3
+msgid "CRT"
+msgstr "КЛТ"
+
+#. The user wants to create images suitable to send to a photo-processing lab
+#: ../data/gcm-calibrate.ui.h:5
+msgid "Create images for printing"
+msgstr "Създаване на изображения за отпечатване"
+
+#. Expander label, for use when the user wants to see the VTE widget and what the calibration tool is actually doing
+#: ../data/gcm-calibrate.ui.h:6 ../data/gcm-spawn.ui.h:2
+msgid "Details"
+msgstr "Подробности"
+
+#. window title
+#: ../data/gcm-calibrate.ui.h:8
+msgid "Device Calibration"
+msgstr "Калибриране на устройство"
+
+#. The user wants to analyse images that have been printed by a photo-processing lab
+#: ../data/gcm-calibrate.ui.h:10
+msgid "Generate profile from printed images"
+msgstr "Създаване на профил от печатни изображения"
+
+#: ../data/gcm-calibrate.ui.h:11
+msgid "Green:"
+msgstr "Зелено:"
+
+#. The precision of the calibration
+#: ../data/gcm-calibrate.ui.h:13
+msgid "High"
+msgstr "Висока"
+
+#: ../data/gcm-calibrate.ui.h:14
+msgid "LCD"
+msgstr "LCD"
+
+#. The precision of the calibration
+#: ../data/gcm-calibrate.ui.h:16
+msgid "Low"
+msgstr "Ниска"
+
+#. The length of the translation
+#: ../data/gcm-calibrate.ui.h:18
+msgid "Normal"
+msgstr "Средна"
+
+#. The user is trying to create an ICC profile of a printer that is connected to the computer
+#: ../data/gcm-calibrate.ui.h:20
+msgid "Profile locally attached printer"
+msgstr "Сваляне на профил от локално свързан принтер"
+
+#: ../data/gcm-calibrate.ui.h:21
+msgid "Projector"
+msgstr "Проектор"
+
+#: ../data/gcm-calibrate.ui.h:22
+msgid "Red:"
+msgstr "Червено:"
+
+#: ../data/gcm-calibrate.ui.h:23
+msgid "precision"
+msgstr "точност"
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:2
+msgid "Ambient:"
+msgstr ""
+
+#. Window title, where the user can pick spot colors using a measuring device
+#: ../data/gcm-picker.ui.h:4
+#, fuzzy
+msgid "Color Picker"
+msgstr "Color Checker"
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#: ../data/gcm-picker.ui.h:6
+msgid "Colorspace:"
+msgstr "Цветово пространство:"
+
+#. This shows the error in the conversion to RGB.
+#: ../data/gcm-picker.ui.h:8
+msgid "Error:"
+msgstr ""
+
+#. Lab is the color representation and D50 is the white point
+#: ../data/gcm-picker.ui.h:10
+msgid "Lab (D50):"
+msgstr ""
+
+#. These are the values of the chosen color in Red, Green, Blue encoding
+#. What mode to use for display rendering intent
+#: ../data/gcm-picker.ui.h:12 ../data/gcm-prefs.ui.h:43
+msgid "RGB:"
+msgstr "RGB:"
+
+#. Expander title, the results from the color picker
+#: ../data/gcm-picker.ui.h:14
+#, fuzzy
+msgid "Results"
+msgstr "Стандартни"
+
+#. the color representation
+#: ../data/gcm-picker.ui.h:16
+msgid "XYZ:"
+msgstr ""
+
+#. Button text, to get a single sample of color
+#: ../data/gcm-picker.ui.h:18
+msgid "_Measure"
+msgstr ""
+
+#: ../data/gcm-prefs.ui.h:1
+#, fuzzy
+msgid ""
+"A working space is a default colorspace that is not associated with a "
+"specific device."
+msgstr ""
+"Работното пространство е диапазонът от цветове, който може да се кодира в "
+"изображение."
+
+#. This is a button to add a virtual device
+#: ../data/gcm-prefs.ui.h:3
+#, fuzzy
+msgid "Add d_evice…"
+msgstr "_Добавяне на устройство"
+
+#. Profiles that can be added to the device
+#: ../data/gcm-prefs.ui.h:5
+#, fuzzy
+msgid "Available Profiles"
+msgstr "Всички файлове"
+
+#. Technical color word for softproof rendering intent
+#: ../data/gcm-prefs.ui.h:9
+msgid "CMYK:"
+msgstr "CMYK:"
+
+#: ../data/gcm-prefs.ui.h:11
+msgid "Contrast:"
+msgstr "Контраст:"
+
+#. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
+#: ../data/gcm-prefs.ui.h:13
+#, fuzzy
+msgid "Create _Profile"
+msgstr "_Изтриване на профил"
+
+#: ../data/gcm-prefs.ui.h:14
+msgid "Device type:"
+msgstr "Вид:"
+
+#. Tab title, currently connected or saved devices
+#: ../data/gcm-prefs.ui.h:16
+msgid "Devices"
+msgstr "Устройства"
+
+#. What mode to use for display rendering intent
+#: ../data/gcm-prefs.ui.h:20
+msgid "Display:"
+msgstr "Монитор:"
+
+#: ../data/gcm-prefs.ui.h:21
+msgid "Do full screen correction"
+msgstr ""
+
+#. Settings that users don't normally have to touch
+#: ../data/gcm-prefs.ui.h:23
+msgid "Fine tuning"
+msgstr "Фина настройка"
+
+#: ../data/gcm-prefs.ui.h:24
+msgid ""
+"For a color managed workflow, each connected device should have one or more "
+"color profiles associated with it."
+msgstr ""
+
+#: ../data/gcm-prefs.ui.h:25
+msgid "Gamma:"
+msgstr "Гама:"
+
+#. Technical color word for softproof rendering intent
+#: ../data/gcm-prefs.ui.h:27
+#, fuzzy
+msgid "Gray:"
+msgstr "Gray"
+
+#: ../data/gcm-prefs.ui.h:28
+msgid ""
+"Image files can be dragged on this window to auto-complete the above fields."
+msgstr ""
+
+#: ../data/gcm-prefs.ui.h:29
+#, fuzzy
+msgid "Make default"
+msgstr "_Да е стандартно"
+
+#: ../data/gcm-prefs.ui.h:30
+msgid "Manufacturer:"
+msgstr "Производител:"
+
+#: ../data/gcm-prefs.ui.h:31
+msgid "Model:"
+msgstr "Модел:"
+
+#: ../data/gcm-prefs.ui.h:32
+msgid "More details"
+msgstr "Подробности"
+
+#. Some profiles are not compatible with some devices
+#: ../data/gcm-prefs.ui.h:34
+msgid "Only profiles that are compatible with the device will be listed above."
+msgstr ""
+
+#: ../data/gcm-prefs.ui.h:35
+msgid "Open the documentation"
+msgstr "Отваряне на документацията"
+
+#. Button to view installed profiles
+#: ../data/gcm-prefs.ui.h:37
+#, fuzzy
+msgid "Pr_ofile Viewer"
+msgstr "Профили за преглед"
+
+#. The rendering intent for the print preview
+#: ../data/gcm-prefs.ui.h:39
+#, fuzzy
+msgid "Print Preview:"
+msgstr "Профили за преглед"
+
+#: ../data/gcm-prefs.ui.h:40
+msgid ""
+"Program the video card with the adjusted color values so all windows are "
+"color corrected"
+msgstr ""
+"Програмиране на видеокартата с регулираните стойности на цвета, така че "
+"всички прозорци да са цветово коригирани"
+
+#. This is a button to delete the saved or virtual device
+#: ../data/gcm-prefs.ui.h:45
+msgid "Remove de_vice"
+msgstr ""
+
+#. Tab title, the way colors should be converted from one colorspace to another
+#: ../data/gcm-prefs.ui.h:47
+#, fuzzy
+msgid "Rendering Intents"
+msgstr "Алгоритъм на преобразуване"
+
+#. This resets the device to it's defaults, and removes any user tweaked settings.
+#: ../data/gcm-prefs.ui.h:49
+msgid "Rese_t"
+msgstr ""
+
+#: ../data/gcm-prefs.ui.h:50
+msgid "Save these profiles for all users"
+msgstr "Запазване на профилите за всички потребители"
+
+#: ../data/gcm-prefs.ui.h:51
+msgid ""
+"Set a property on the system so applications use the default display profile"
+msgstr ""
+"Задаване като свойство на системата. Така приложенията ще използват "
+"стандартния профил"
+
+#: ../data/gcm-prefs.ui.h:52
+#, fuzzy
+msgid "Set profile for _color managed applications"
+msgstr "_Определяне на профила за приложения с управление на цвета"
+
+# FIXME
+#: ../data/gcm-prefs.ui.h:53
+#, fuzzy
+msgid ""
+"The rendering intent defines how color should be transformed from one "
+"colorspace to another."
+msgstr "Алгоритъм на преобразуване за превръщане на цветови диапазон в друг."
+
+#: ../data/gcm-prefs.ui.h:54
+msgid ""
+"These settings are applied for all displays attached to this computer, even "
+"ones that are added later."
+msgstr ""
+
+#: ../data/gcm-prefs.ui.h:55
+msgid ""
+"This enables full screen color management which requires a modern 3D "
+"graphics card with hardware shader support. This option may increase CPU "
+"load and will increase the amount of power this computer uses."
+msgstr ""
+
+# FIXME
+#. Tab title, icc color spaces to use for different defaults
+#: ../data/gcm-prefs.ui.h:57
+#, fuzzy
+msgid "Working Spaces"
+msgstr "Работно пространство"
+
+#: ../data/gcm-prefs.ui.h:58
+#, fuzzy
+msgid "_Apply basic display correction"
+msgstr "_Прилагане на корекция"
+
+#. This is when the settings are set for all users, unless they have per-user settings themselves
+#: ../data/gcm-prefs.ui.h:60
+#, fuzzy
+msgid "_Set System Default"
+msgstr "_Стандартни настройки"
+
+#~ msgid "ICC profile installer"
+#~ msgstr "Инсталиране на цветови профил"
+
+#~ msgid "Color Profiles"
+#~ msgstr "Цветови профили"
+
+#~ msgid ""
+#~ "Gamma is adjusted to affect the color of the attached monitor. "
+#~ "Traditionally Linux has used a gamma value of 1.0, but this makes "
+#~ "monitors look washed out compared Windows XP or OS X. Apple traditionally "
+#~ "used a value of 1.8 for a long time, but now use the same value as "
+#~ "Microsoft. Microsoft has always used a value of 2.2."
+#~ msgstr ""
+#~ "Гаматаn е променена заради цвета на свързания монитор. Преди Линукс "
+#~ "използваше стойност на от 1,0, но това кара монитора да изглежда избелял "
+#~ "в сравнение с Windows XP или OS X. Apple традиционно използваше стойност "
+#~ "от 1,8, но сега е със същата стойност като Microsoft, които винаги са "
+#~ "използвали 2,2."
+
+#~ msgid ""
+#~ "If set to TRUE then external disks are searched for device ICC profiles "
+#~ "at startup, for instance looking in the OSX library folder or Windows XP "
+#~ "system folders. This may increase startup time if disks need to be spun "
+#~ "up to be searched."
+#~ msgstr ""
+#~ "Ако е истина, външните дискове се претърсват за цветови профили при "
+#~ "стартиране, напр. търсене в папката за библиотеки на OSX или системните "
+#~ "папки на Windows XP. Това може да увеличи времето за стартиране — "
+#~ "дисковете трябва да се завъртят, за да бъдат претърсени."
+
+#~ msgid ""
+#~ "If set to TRUE then the __ICC_PROFILE hint will be set, which "
+#~ "applications use to convert true color to screen color."
+#~ msgstr ""
+#~ "Ако е истина, подсказката __ICC_PROFILE ще бъде зададена, за да определи "
+#~ "кои приложения ще преобразуват истински цвят в екранен."
+
+#~ msgid ""
+#~ "If set to TRUE then the fine tuning controls are visible. This allows the "
+#~ "user to change the display profile outside of what the ICC profile "
+#~ "suggests and is only recommended for advanced users."
+#~ msgstr ""
+#~ "Ако е истина, регулаторите за фина настройка са видими. Това позволява на "
+#~ "потребителя да променя профила на монитора извън предложеното от цветовия "
+#~ "профил и се препоръчва само на напреднали потребители."
+
+#~ msgid "If set to TRUE then the video LUT is set with the display profile"
+#~ msgstr "Ако е истина, видеото ще ползва справочната таблица на монитора"
+
+#~ msgid "Set the _ICC_PROFILE hint for applications."
+#~ msgstr "Определяне на подсказката _ICC_PROFILE за приложения."
+
+#~ msgid "Show the fine tuning controls for display devices."
+#~ msgstr "Показване на регулаторите за фина настройка за монитори."
+
+#~ msgid "The CMYK profile filename to be used by applications by default."
+#~ msgstr "Стандартен файл с цветови профил за CMYK за приложенията."
+
+#~ msgid "The RGB profile filename to be used by applications by default."
+#~ msgstr "Стандартен файл с цветови профил за RGB за приложенията."
+
+#~ msgid "The default CMYK profile."
+#~ msgstr "Стандартен профил за CMYK."
+
+#~ msgid "The default RGB profile."
+#~ msgstr "Стандартен профил за RGB."
+
+#~ msgid "The default calibration length."
+#~ msgstr "Стандартна продължителност на калибриране."
+
+#~ msgid "The default gamma to use for monitors with no previous value set."
+#~ msgstr "Стандартна гама за монитори без предишна зададена стойност."
+
+#~ msgid "The duration between sending notifications to recalibrate a display."
+#~ msgstr "Време между уведомленията за повторно калибриране на монитора."
+
+#~ msgid "The duration between sending notifications to recalibrate a printer."
+#~ msgstr "Време между уведомленията за повторно калибриране на принтер."
+
+#~ msgid ""
+#~ "The length of calibration, as this is proportional to the accuracy. The "
+#~ "option 'short' creates a quick profile, 'normal' a regular one, and "
+#~ "'long' takes a really long time, but is more precise and creates a better "
+#~ "profile. Use 'ask' if you want the user to choose."
+#~ msgstr ""
+#~ "Продължителност на калибриране, като тя е пропорционална на точността. "
+#~ "Настройката „short“ (кратка) създава бърз профил, „normal“ (средна) — "
+#~ "обикновен профил, а „long“ (дълга) отнема доста време, но е по-точна и "
+#~ "създава по-добър профил. Използвайте „ask“ (запитване), ако потребителят "
+#~ "избира."
+
+# FIXME
+#~ msgid "The rendering intent to use for softproofs, e.g. 'perceptual'."
+#~ msgstr ""
+#~ "Алгоритъм на преобразуване при пробни разпечатки, напр. „перцептуален“."
+
+#~ msgid "The rendering intent to use for the display, e.g. 'perceptual'."
+#~ msgstr "Алгоритъм на преобразуване за монитора, напр. „перцептуален“."
+
+#~ msgid ""
+#~ "This is the number of seconds in between notifying the user to "
+#~ "recalibrate each display device. Set to 0 to disable the notification."
+#~ msgstr ""
+#~ "Брой секунди между уведомленията за повторно калибриране на излъчващо "
+#~ "устройство. Настройте на 0, за да изключите известяването."
+
+#~ msgid ""
+#~ "This is the number of seconds in between notifying the user to "
+#~ "recalibrate each printer device. Set to 0 to disable the notification."
+#~ msgstr ""
+#~ "Брой секунди между уведомленията за повторно калибриране на печатащо "
+#~ "устройство. Настройте на 0, за да изключите известяването."
+
+#~ msgid "Whether ICC profiles should be loaded from external disks."
+#~ msgstr "Дали цветовите профили да се зареждат от външни дискове."
+
+#~ msgid ""
+#~ "Whether the display should be globally corrected or left to applications."
+#~ msgstr "Дали мониторът да се управлява глобално или от приложения."
+
+#~ msgid "Debug these specific modules"
+#~ msgstr "Изчистване на грешки в конкретните модули"
+
+#~ msgid "Debug these specific functions"
+#~ msgstr "Изчистване на грешки в конкретните функции"
+
+#~ msgid "Log debugging data to a file"
+#~ msgstr "Записване на данните за изчистване на грешки във файл "
+
+#~ msgid ""
+#~ "Please set the measuring instrument to screen mode like the image below, "
+#~ "and ensure it is attached to the screen."
+#~ msgstr ""
+#~ "Настройте колориметъра в екранен режим, както е показано по-долу и "
+#~ "проверете дали е прикрепен към екрана."
+
+#~ msgid ""
+#~ "Please set the measuring instrument to screen mode, and ensure it is "
+#~ "attached to the screen."
+#~ msgstr ""
+#~ "Настройте колориметъра в екранен режим и проверете дали е прикрепен към "
+#~ "екрана."
+
+#~ msgid "This device already exists"
+#~ msgstr "Устройството вече съществува"
+
+#~ msgid "Measuring instrument not recognized"
+#~ msgstr "Колориметърът не е разпознат"
+
+#~ msgid "Cannot load file contents"
+#~ msgstr "Съдържанието на файла не може да се зареди"
+
+#~ msgid "Cannot parse EDID contents"
+#~ msgstr "Съдържаната информация за EDID не може да интерпретира"
+
+#~ msgid "Monitor name"
+#~ msgstr "Име на монитор"
+
+#~ msgid "Vendor name"
+#~ msgstr "Име на производител"
+
+#~ msgid "Serial number"
+#~ msgstr "Сериен номер"
+
+#~ msgid "Text string"
+#~ msgstr "Текстов елемент"
+
+#~ msgid "PNP identifier"
+#~ msgstr "Идентификатор за PNP"
+
+#~ msgid "Size"
+#~ msgstr "Размер"
+
+#~ msgid "Gamma"
+#~ msgstr "Гама"
+
+#~ msgid "EDID dumps to parse"
+#~ msgstr "Изходни данни от EDID за анализ"
+
+#~ msgid "EDID dump"
+#~ msgstr "Изходни данни от EDID"
+
+#~ msgid "Saved %i bytes to %s"
+#~ msgstr "Запазени са %i байта в %s"
+
+#~ msgid "Failed to save EDID to %s"
+#~ msgstr "Неуспех при запазване на EDID в %s"
+
+#~ msgid "ICC profile dump program"
+#~ msgstr "Програма за изнасяне на цветови профил"
+
+#~ msgid "The description of the profile"
+#~ msgstr "Описание на профила"
+
+#~ msgid "The copyright of the profile"
+#~ msgstr "Авторски права върху профила"
+
+#~ msgid "The model of the profile"
+#~ msgstr "Модел на профила"
+
+#~ msgid "The manufacturer of the profile"
+#~ msgstr "Производител на профила"
+
+#~ msgid "Profiles to fix"
+#~ msgstr "Профили за поправяне"
+
+#~ msgid "ICC profile fix program"
+#~ msgstr "Програма за поправяне на цветови профил"
+
+# FIXME
+#~ msgid "Cannot calibrate: The measuring instrument is not plugged in"
+#~ msgstr "Не може да калибрира: колориметърът не е свързан"
+
+#~ msgid "More Information"
+#~ msgstr "Повече информация"
+
+#~ msgid "Loading list of devices…"
+#~ msgstr "Зареждане на списък с устройства…"
+
+# FIXME
+#~ msgid "Relative colormetric"
+#~ msgstr "Относително цветометрично"
+
+#~ msgid "Absolute colormetric"
+#~ msgstr "Абсолютно цветометрично"
+
+#~ msgid "Add Virtual Device"
+#~ msgstr "Добавяне на виртуално устройство"
+
+#~ msgid "Adds a virtual device that is not connected."
+#~ msgstr "Добавяне на виртуално устройство, което не е свързано."
+
+#~ msgid "Close this dialog"
+#~ msgstr "Затваряне на прозореца"
+
+#~ msgid "Create _Profile for Device"
+#~ msgstr "Създаване на _профил за устройство"
+
+#~ msgid "Created:"
+#~ msgstr "Създаден на:"
+
+#~ msgid "Delete the currently selected color profile"
+#~ msgstr "Изтриване на текущо избрания цветови профил"
+
+#~ msgid ""
+#~ "Delete the disconnected device - if you reconnect the device it will "
+#~ "reappear in the list"
+#~ msgstr ""
+#~ "Изтриване на разкаченото устройство — ако го свържете отново, ще се появи "
+#~ "в списъка"
+
+#~ msgid "Device"
+#~ msgstr "Устройство"
+
+#~ msgid "Device manufacturer:"
+#~ msgstr "Производител:"
+
+#~ msgid "Device model:"
+#~ msgstr "Модел:"
+
+#~ msgid "Display correction:"
+#~ msgstr "Корекция на монитора:"
+
+#~ msgid "File size:"
+#~ msgstr "Размер на файл:"
+
+#~ msgid "Filename:"
+#~ msgstr "Име на файл:"
+
+#~ msgid "Import an ICC file from another location"
+#~ msgstr "Внасяне на цветови профил от друго място"
+
+#~ msgid "License:"
+#~ msgstr "Лиценз:"
+
+#~ msgid "Profile Graphs"
+#~ msgstr "Графики на профила"
+
+#~ msgid "Profile type:"
+#~ msgstr "Вид профил:"
+
+#~ msgid "Profiles"
+#~ msgstr "Профили"
+
+#~ msgid "Serial number:"
+#~ msgstr "Сериен номер:"
+
+# FIXME
+#~ msgid "Softproof:"
+#~ msgstr "Пробна разпечатка:"
+
+#~ msgid ""
+#~ "The rendering intent to use when transforming from the image gamut to the "
+#~ "device output gamut"
+#~ msgstr ""
+#~ "Алгоритъм на преобразуване при превръщане на цветовия диапазон на "
+#~ "изображението към диапазон на изходното устройство"
+
+#~ msgid ""
+#~ "The rendering intent to use when transforming from the image gamut to the "
+#~ "display gamut"
+#~ msgstr ""
+#~ "Алгоритъм на преобразуване при превръщане на цветовия диапазон на "
+#~ "изображението към диапазон на монитора"
+
+#~ msgid ""
+#~ "These settings control how color management is applied to your desktop."
+#~ msgstr "Настройките регулират управлението на цветовете върху екрана. "
+
+#~ msgid "This is the default CMYK working space to use in applications"
+#~ msgstr "Стандартна работна зона на CMYK за приложения"
+
+#~ msgid "This is the default RGB working space to use in applications"
+#~ msgstr "Стандартно работно пространство на RGB за приложения"
+
+#~ msgid "_Delete Device"
+#~ msgstr "_Изтриване на устройство"
+
+#~ msgid "_Import Profile"
+#~ msgstr "_Внасяне на профил"
