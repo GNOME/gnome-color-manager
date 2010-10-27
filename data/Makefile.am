@@ -28,7 +28,9 @@ $(service_DATA): $(service_in_files) Makefile
 	@sed -e "s|\@servicedir\@|$(bindir)|" $< > $@
 
 @GSETTINGS_RULES@
-gsettings_SCHEMAS = org.gnome.color-manager.gschema.xml
+gsettings_SCHEMAS =					\
+	org.gnome.color-manager.gschema.xml		\
+	org.gnome.settings-daemon.plugins.color.gschema.xml
 
 pkgdata_DATA =						\
 	gcm-calibrate.ui				\

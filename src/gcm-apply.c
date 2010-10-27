@@ -131,18 +131,6 @@ main (int argc, char **argv)
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
 
-	/*
-	 * FIXME: THIS IS A HACK.
-	 * When gnome-settings-daemon ports from GConf to GSettings we can do this
-	 * properly and install a schema file. Until then, eugh.
-	 */
-	ret = g_spawn_command_line_async ("gconftool-2 --set --type=bool /apps/gnome_settings_daemon/plugins/color/active true", &error);
-	if (!ret) {
-		g_warning ("failed to install GConf key: %s", error->message);
-		/* non-fatal */
-		g_clear_error (&error);
-	}
-
 	/* get devices */
 	client = gcm_client_new ();
 	ret = gcm_client_coldplug (client, GCM_CLIENT_COLDPLUG_XRANDR, &error);
