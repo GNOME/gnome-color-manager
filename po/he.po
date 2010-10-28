@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-10-21 00:59+0200\n"
-"PO-Revision-Date: 2010-10-21 01:00+0200\n"
+"POT-Creation-Date: 2010-10-28 23:57+0200\n"
+"PO-Revision-Date: 2010-10-28 23:57+0200\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: Gezer <sh.yaron@gmail.com>\n"
 "MIME-Version: 1.0\n"
@@ -51,6 +51,14 @@ msgstr "מציג פרופילי הצבע"
 msgid "Inspect and compare installed color profiles"
 msgstr "ניתוח והשוואה של פרופילי הצבע המתוקנים"
 
+#: ../data/org.gnome.settings-daemon.plugins.color.gschema.xml.h:1
+msgid "Activation of this plugin"
+msgstr "Activation of this plugin"
+
+#: ../data/org.gnome.settings-daemon.plugins.color.gschema.xml.h:2
+msgid "Whether this plugin would be activated by gnome-settings-daemon or not"
+msgstr "Whether this plugin would be activated by gnome-settings-daemon or not"
+
 #. TRANSLATORS: turn on all debugging
 #: ../libcolor-glib/gcm-debug.c:104
 msgid "Show debugging information for all files"
@@ -91,99 +99,99 @@ msgid "Install system color profiles"
 msgstr "התקנת פרופילי צבע של המערכת"
 
 #. TRANSLATORS: could not save for all users
-#: ../src/cc-color-panel.c:154
+#: ../src/cc-color-panel.c:147
 msgid "Failed to save defaults for all users"
 msgstr "ארע כשל בשמירת בררות המחדל לכול המשתמשים"
 
 #. TRANSLATORS: this is where the user can click and import a profile
-#: ../src/cc-color-panel.c:182
+#: ../src/cc-color-panel.c:175
 msgid "Other profile…"
 msgstr "פרופיל אחר..."
 
 #. TRANSLATORS: could not calibrate
-#: ../src/cc-color-panel.c:339
+#: ../src/cc-color-panel.c:332
 msgid "Failed to calibrate device"
 msgstr "אירע כשל בכיול ההתקן"
 
 #. TRANSLATORS: could not calibrate
-#: ../src/cc-color-panel.c:374
+#: ../src/cc-color-panel.c:367
 msgid "Failed to calibrate printer"
 msgstr "אירע כשל בכיול המדפסת"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/cc-color-panel.c:399 ../src/gcm-calibrate.c:913
-#: ../src/gcm-viewer.c:337
+#: ../src/cc-color-panel.c:392 ../src/gcm-calibrate.c:913
+#: ../src/gcm-viewer.c:339
 msgid "Select ICC Profile File"
 msgstr "יש לבחור קובץ פרופיל ICC"
 
-#: ../src/cc-color-panel.c:402 ../src/gcm-viewer.c:340
+#: ../src/cc-color-panel.c:395 ../src/gcm-viewer.c:342
 msgid "Import"
 msgstr "יבוא"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/cc-color-panel.c:420 ../src/gcm-viewer.c:358
+#: ../src/cc-color-panel.c:413 ../src/gcm-viewer.c:360
 msgid "Supported ICC profiles"
 msgstr "התקני ICC נתמכים"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/cc-color-panel.c:427 ../src/gcm-calibrate.c:795
-#: ../src/gcm-calibrate.c:847 ../src/gcm-viewer.c:365
+#: ../src/cc-color-panel.c:420 ../src/gcm-calibrate.c:795
+#: ../src/gcm-calibrate.c:847 ../src/gcm-viewer.c:367
 msgid "All files"
 msgstr "כל הקבצים"
 
 #. TRANSLATORS: could not read file
-#: ../src/cc-color-panel.c:463 ../src/gcm-import.c:207 ../src/gcm-viewer.c:401
+#: ../src/cc-color-panel.c:456 ../src/gcm-import.c:207 ../src/gcm-viewer.c:403
 msgid "Failed to copy file"
 msgstr "אירע כשל בהעתקת הקובץ"
 
-#: ../src/cc-color-panel.c:491
+#: ../src/cc-color-panel.c:484
 msgid "Failed to get metadata from image"
 msgstr "אירע כשל בקבלת נתוני העל מהתמונה"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:508 ../src/cc-color-panel.c:1183
+#: ../src/cc-color-panel.c:501 ../src/cc-color-panel.c:1123
 msgid "Failed to create virtual device"
 msgstr "אירע כשל ביצירת התקן וירטואלי"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:516 ../src/cc-color-panel.c:1191
+#: ../src/cc-color-panel.c:509 ../src/cc-color-panel.c:1131
 msgid "Failed to save virtual device"
 msgstr "אירע כשל בשמירת התקן וירטואלי"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:525 ../src/cc-color-panel.c:1200
+#: ../src/cc-color-panel.c:518 ../src/cc-color-panel.c:1140
 msgid "Failed to add virtual device"
 msgstr "אירע כשל בהוספת התקן וירטואלי"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/cc-color-panel.c:707
+#: ../src/cc-color-panel.c:700
 msgid "Install calibration and profiling software?"
 msgstr "האם להתקין תכנה לכיול וליצירת פרופילים?"
 
 #. TRANSLATORS: dialog message saying the argyllcms is not installed
-#: ../src/cc-color-panel.c:711
+#: ../src/cc-color-panel.c:704
 msgid "Calibration and profiling software is not installed."
 msgstr "לא מותקנת תכנה לכיול וליצירת פרופילים."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/cc-color-panel.c:713
+#: ../src/cc-color-panel.c:706
 msgid "These tools are required to build color profiles for devices."
 msgstr "כלים אלו נדרשים להכנת פרופילי צבע עבור התקנים."
 
 #. TRANSLATORS: button, skip installing a package
-#: ../src/cc-color-panel.c:718 ../src/gcm-calibrate.c:1082
+#: ../src/cc-color-panel.c:711 ../src/gcm-calibrate.c:1082
 msgid "Do not install"
 msgstr "לא להתקין"
 
 #. TRANSLATORS: button, install a package
 #. TRANSLATORS: button text
-#: ../src/cc-color-panel.c:720 ../src/gcm-calibrate.c:1084
+#: ../src/cc-color-panel.c:713 ../src/gcm-calibrate.c:1084
 #: ../src/gcm-import.c:186
 msgid "Install"
 msgstr "התקנה"
 
 #. TRANSLATORS: this is the application name for libcanberra
-#: ../src/cc-color-panel.c:837 ../src/cc-color-panel.c:1997
+#: ../src/cc-color-panel.c:830 ../src/cc-color-panel.c:1921
 #: ../src/gcm-calibrate-argyll.c:2284 ../src/gcm-calibrate-argyll.c:2334
 #: ../src/gcm-calibrate-argyll.c:2389 ../src/gcm-calibrate-argyll.c:2465
 #: ../src/gcm-calibrate-argyll.c:2546 ../src/gcm-calibrate-argyll.c:2587
@@ -191,112 +199,105 @@ msgid "GNOME Color Manager"
 msgstr "מנהל הצבע של GNOME"
 
 #. TRANSLATORS: this is the sound description
-#: ../src/cc-color-panel.c:839
+#: ../src/cc-color-panel.c:832
 msgid "Profiling completed"
 msgstr "יצירת הפרופיל הושלמה"
 
-#. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/cc-color-panel.c:1253
-msgid ""
-"This profile does not have the information required for whole-screen color "
-"correction."
-msgstr "לפרופיל זה אין את המידע הדרוש לתיקון צבע למסך כולו."
-
 #. TRANSLATORS: could not read file
-#: ../src/cc-color-panel.c:1326
+#: ../src/cc-color-panel.c:1266
 msgid "Failed to delete file"
 msgstr "ארע כשל במחיקת הקובץ"
 
 #. TRANSLATORS: this is when the button is sensitive
-#: ../src/cc-color-panel.c:1473
+#: ../src/cc-color-panel.c:1413
 msgid "Create a color profile for the selected device"
 msgstr "יצירת פרופיל צבע עבור ההתקן הנבחר"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1478
+#: ../src/cc-color-panel.c:1418
 msgid "Cannot create profile: No device is selected"
 msgstr "לא ניתן ליצור פרופיל: לא נבחר התקן"
 
 #. TRANSLATORS: this is when the button is insensitive because the distro compiled GCM without VTE
-#: ../src/cc-color-panel.c:1489
+#: ../src/cc-color-panel.c:1429
 msgid "Cannot create profile: Virtual console support is missing"
 msgstr "לא ניתן ליצור פרופיל: לא קיימת תמיכה במסוף וירטואלי"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1501
+#: ../src/cc-color-panel.c:1441
 msgid "Cannot create profile: The display device is not connected"
 msgstr "לא ניתן ליצור פרופיל: התקן התצוגה אינו מחובר"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1509
+#: ../src/cc-color-panel.c:1449
 msgid "Cannot create profile: The display driver does not support XRandR 1.3"
 msgstr "לא ניתן ליצור פרופיל: מנהל התקן התצוגה אינו תומך ב־XRandR‏ 1.3"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1517 ../src/cc-color-panel.c:1532
+#: ../src/cc-color-panel.c:1457 ../src/cc-color-panel.c:1472
 msgid "Cannot create profile: The measuring instrument is not plugged in"
 msgstr "לא ניתן ליצור פרופיל: כלי המדידה אינו מחובר"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1540
+#: ../src/cc-color-panel.c:1480
 msgid ""
 "Cannot create profile: The measuring instrument does not support printer "
 "profiling"
 msgstr "לא ניתן ליצור פרופיל: כלי המדידה אינו תומך ביצירת פרופילי מדפסת"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1547
+#: ../src/cc-color-panel.c:1487
 msgid "Cannot create a profile for this type of device"
 msgstr "לא ניתן ליצור פרופיל להתקן מסוג זה"
 
-#: ../src/cc-color-panel.c:1626
+#: ../src/cc-color-panel.c:1563
 msgid "Per-device settings not supported. Check your display driver."
 msgstr "הגדרות בעבור כל התקן בנפרד אינן נתמכות. יש לבדוק את מנהל התקן התצוגה."
 
 #. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/cc-color-panel.c:1803
+#: ../src/cc-color-panel.c:1727
 msgid "No hardware support"
 msgstr "אין תמיכה בחומרה"
 
 #. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/cc-color-panel.c:1807 ../src/cc-color-panel.c:2049
+#: ../src/cc-color-panel.c:1731 ../src/cc-color-panel.c:1973
 msgid "disconnected"
 msgstr "מנותק"
 
 #. TRANSLATORS: the profile was of the wrong sort for this device
-#: ../src/cc-color-panel.c:1926
+#: ../src/cc-color-panel.c:1850
 msgid "Could not import profile"
 msgstr "לא ניתן לייבא את הפרופיל"
 
-#: ../src/cc-color-panel.c:1927
+#: ../src/cc-color-panel.c:1851
 msgid "The profile was of the wrong type for this device"
 msgstr "הפרופיל היה מסוג שאינו תואם להתקן זה"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/cc-color-panel.c:1985
+#: ../src/cc-color-panel.c:1909
 msgid "Device added"
 msgstr "נוסף התקן"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/cc-color-panel.c:1989
+#: ../src/cc-color-panel.c:1913
 msgid "Device removed"
 msgstr "הוסר התקן"
 
 #. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
-#: ../src/cc-color-panel.c:2232 ../src/gcm-picker.c:515
+#: ../src/cc-color-panel.c:2138 ../src/gcm-picker.c:518
 #, c-format
 msgid "No %s color spaces available"
 msgstr "אין מרחבי צבע %s זמינים"
 
 #. TRANSLATORS: the DBus method failed
-#: ../src/cc-color-panel.c:2339 ../src/gcm-inspect.c:196
+#: ../src/cc-color-panel.c:2249 ../src/gcm-inspect.c:196
 #: ../src/gcm-inspect.c:265 ../src/gcm-inspect.c:332 ../src/gcm-inspect.c:394
 #: ../src/gcm-inspect.c:464 ../src/gcm-utils.c:192
 msgid "The request failed:"
 msgstr "הבקשה נכשלה:"
 
 #. TRANSLATORS: no DBus session bus
-#: ../src/cc-color-panel.c:2373 ../src/gcm-inspect.c:178
+#: ../src/cc-color-panel.c:2283 ../src/gcm-inspect.c:178
 #: ../src/gcm-inspect.c:247 ../src/gcm-inspect.c:315 ../src/gcm-inspect.c:376
 #: ../src/gcm-inspect.c:446 ../src/gcm-utils.c:168
 msgid "Failed to connect to session bus:"
@@ -304,37 +305,37 @@ msgstr "ארע כשל בחיבור לאפיק ההפעלה:"
 
 #. TRANSLATORS: device type
 #. Tab title, display specific controls
-#: ../src/cc-color-panel.c:2626 ../data/gcm-prefs.ui.h:18
+#: ../src/cc-color-panel.c:2534 ../data/gcm-prefs.ui.h:18
 msgid "Display"
 msgstr "תצוגה"
 
 #. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2630
+#: ../src/cc-color-panel.c:2538
 msgid "Scanner"
 msgstr "סורק"
 
 #. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2634
+#: ../src/cc-color-panel.c:2542
 msgid "Printer"
 msgstr "מדפסת"
 
 #. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2638
+#: ../src/cc-color-panel.c:2546
 msgid "Camera"
 msgstr "מצלמה"
 
 #. TRANSLATORS: button to install extra profiles
-#: ../src/cc-color-panel.c:2960
+#: ../src/cc-color-panel.c:2814
 msgid "Install now"
 msgstr "התקנה כעת"
 
 #. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/cc-color-panel.c:2963
+#: ../src/cc-color-panel.c:2817
 msgid "More color profiles could be automatically installed."
 msgstr "ניתן להתקין פרופילי צבע נוספים באופן אוטומטי"
 
 #. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
-#: ../src/gcm-apply.c:115
+#: ../src/gcm-apply.c:114
 msgid "Do not attempt to clear previously applied settings"
 msgstr "אין לנסות לפנות הגדרות שהוחלו בעבר"
 
@@ -1101,6 +1102,13 @@ msgstr "LCD של מחשב נייד"
 msgid "Automatic"
 msgstr "אוטומטי"
 
+#. TRANSLATORS: this is displayed when the profile is crap
+#: ../src/gcm-list-store-profiles.c:51
+msgid ""
+"This profile does not have the information required for whole-screen color "
+"correction."
+msgstr "לפרופיל זה אין את המידע הדרוש לתיקון צבע למסך כולו."
+
 #. TRANSLATORS: command line option: a list of catalogs to install
 #. TRANSLATORS: command line option: a list of files to install
 #: ../src/gcm-import.c:81 ../src/gcm-install-system-wide.c:126
@@ -1343,32 +1351,32 @@ msgstr "כשל בהעתקה:"
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:172 ../src/gcm-viewer.c:573 ../src/gcm-viewer.c:623
+#: ../src/gcm-picker.c:174 ../src/gcm-viewer.c:575 ../src/gcm-viewer.c:625
 msgid "Unknown"
 msgstr "לא ידוע"
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:322
+#: ../src/gcm-picker.c:324
 msgid "No colorimeter is attached."
 msgstr "לא מחובר קולורימטר (מד צבע)."
 
 #. TRANSLATORS: this is displayed if VTE support is not enabled
-#: ../src/gcm-picker.c:329
+#: ../src/gcm-picker.c:331
 msgid "This application was compiled without VTE support."
 msgstr "יישום זה עבר הידור ללא תמיכה ב־VTE."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:339
+#: ../src/gcm-picker.c:341
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "הקולורימטר (מד צבע) המחובר אינו תומך בקריאת צבע של כתם."
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-picker.c:544 ../src/gcm-viewer.c:1067
+#: ../src/gcm-picker.c:662 ../src/gcm-viewer.c:1218
 msgid "Set the parent window to make this modal"
 msgstr "הגדרת חלון ההורה כדי ליצור מודל זה"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:562
+#: ../src/gcm-picker.c:680
 msgid "GNOME Color Manager Color Picker"
 msgstr "דוגם הצבע של מנהל הצבעים של GNOME"
 
@@ -1454,13 +1462,13 @@ msgstr "התקני התאמת דיוק"
 
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:544 ../src/gcm-viewer.c:604 ../data/gcm-prefs.ui.h:41
+#: ../src/gcm-utils.c:544 ../src/gcm-viewer.c:606 ../data/gcm-prefs.ui.h:41
 msgid "RGB"
 msgstr "RGB"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:548 ../src/gcm-viewer.c:616 ../data/gcm-prefs.ui.h:7
+#: ../src/gcm-utils.c:548 ../src/gcm-viewer.c:618 ../data/gcm-prefs.ui.h:7
 msgid "CMYK"
 msgstr "CMYK"
 
@@ -1470,142 +1478,142 @@ msgid "gray"
 msgstr "אפור"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:286
+#: ../src/gcm-viewer.c:288
 msgid "Permanently delete profile?"
 msgstr "האם למחוק פרופיל זה לצמיתות?"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:289
+#: ../src/gcm-viewer.c:291
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr "האם ברצונך להסיר פרופיל זה מהמערכת שלך לצמיתות?"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:292
+#: ../src/gcm-viewer.c:294
 msgid "Delete"
 msgstr "מחיקה"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:546
+#: ../src/gcm-viewer.c:548
 msgid "Input device"
 msgstr "התקן הקלט"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:550
+#: ../src/gcm-viewer.c:552
 msgid "Display device"
 msgstr "התקן התצוגה"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:554
+#: ../src/gcm-viewer.c:556
 msgid "Output device"
 msgstr "התקן הפלט"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:558
+#: ../src/gcm-viewer.c:560
 msgid "Devicelink"
 msgstr "קישור להתקן"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:562
+#: ../src/gcm-viewer.c:564
 msgid "Colorspace conversion"
 msgstr "המרה בין מרחבי צבע"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:566
+#: ../src/gcm-viewer.c:568
 msgid "Abstract"
 msgstr "מופשט"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:570
+#: ../src/gcm-viewer.c:572
 msgid "Named color"
 msgstr "צבע בעל שם"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:584
+#: ../src/gcm-viewer.c:586
 msgid "XYZ"
 msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:588
+#: ../src/gcm-viewer.c:590
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:592
+#: ../src/gcm-viewer.c:594
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:596
+#: ../src/gcm-viewer.c:598
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:600
+#: ../src/gcm-viewer.c:602
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:608
+#: ../src/gcm-viewer.c:610
 msgid "Gray"
 msgstr "אפור"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:612
+#: ../src/gcm-viewer.c:614
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:620
+#: ../src/gcm-viewer.c:622
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:752
+#: ../src/gcm-viewer.c:754
 msgid "Yes"
 msgstr "כן"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:755
+#: ../src/gcm-viewer.c:757
 msgid "No"
 msgstr "לא"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:841
+#: ../src/gcm-viewer.c:843
 msgid "Delete this profile"
 msgstr "מחיקת פרופיל זה"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:844
+#: ../src/gcm-viewer.c:846
 msgid "This profile cannot be deleted"
 msgstr "לא ניתן למחוק פרופיל זה"
 
 #. TRANSLATORS: combo-entry, no graph selected to be shown
-#: ../src/gcm-viewer.c:1028
+#: ../src/gcm-viewer.c:1004
 msgid "None"
 msgstr "ללא"
 
 #. TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...)
-#: ../src/gcm-viewer.c:1031
+#: ../src/gcm-viewer.c:1007
 msgid "CIE 1931 xy"
 msgstr "CIE 1931 xy"
 
 #. TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out)
-#: ../src/gcm-viewer.c:1034
+#: ../src/gcm-viewer.c:1010
 msgid "Transfer response curve"
 msgstr "העברת עקומת התגובה"
 
 #. TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card)
-#: ../src/gcm-viewer.c:1037
+#: ../src/gcm-viewer.c:1013
 msgid "Video card gamma table"
 msgstr "טבלת הגאמה של כרטיס המסך"
 
 #. TRANSLATORS: combo-entry, this is a preview image of what the profile looks like
-#: ../src/gcm-viewer.c:1040
+#: ../src/gcm-viewer.c:1016
 msgid "Image preview (from sRGB)"
 msgstr "הצגה מקדימה של התמונה (מ־sRGB)"
 
-#: ../src/gcm-viewer.c:1041
+#: ../src/gcm-viewer.c:1017
 msgid "Image preview (to sRGB)"
 msgstr "הצגה מקדימה של התמונה (ל־sRGB)"
 
