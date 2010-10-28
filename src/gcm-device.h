@@ -123,8 +123,15 @@ void			 gcm_device_set_title			(GcmDevice	*device,
 GPtrArray		*gcm_device_get_profiles		(GcmDevice	*device);
 void			 gcm_device_set_profiles		(GcmDevice	*device,
 								 GPtrArray	*profiles);
-gboolean		 gcm_device_add_profile			(GcmDevice	*device,
-								 GcmProfile 	*profile);
+gboolean		 gcm_device_profile_add			(GcmDevice	*device,
+								 GcmProfile 	*profile,
+								 GError		**error);
+gboolean		 gcm_device_profile_remove		(GcmDevice	*device,
+								 GcmProfile 	*profile,
+								 GError		**error);
+gboolean		 gcm_device_profile_set_default		(GcmDevice	*device,
+								 GcmProfile 	*profile,
+								 GError		**error);
 glong			 gcm_device_get_modified_time		(GcmDevice	*device);
 
 /* helpers */

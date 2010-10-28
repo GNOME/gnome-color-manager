@@ -71,7 +71,7 @@ gcm_apply_create_icc_profile_for_edid (GcmDevice *device, const gchar *filename,
 	}
 
 	/* add to the profiles list */
-	ret = gcm_device_add_profile (device, profile);
+	ret = gcm_device_profile_add (device, profile, NULL);
 	if (ret) {
 		/* need to save new list */
 		ret = gcm_device_save (device, error);
@@ -81,10 +81,9 @@ gcm_apply_create_icc_profile_for_edid (GcmDevice *device, const gchar *filename,
 		/* if this failed, it's because it's already associated
 		 * with the device which is okay with us */
 		g_debug ("already added auto-edid profile, not adding %s",
-			   gcm_profile_get_checksum (profile));
+			 gcm_profile_get_checksum (profile));
 		ret = TRUE;
 	}
-
 out:
 	if (profile != NULL)
 		g_object_unref (profile);

@@ -235,6 +235,8 @@ gcm_session_CFLAGS =					\
 libcolor_la_SOURCES =					\
 	cc-color-panel.c				\
 	cc-color-panel.h				\
+	gcm-list-store-profiles.c			\
+	gcm-list-store-profiles.h			\
 	gcm-cell-renderer-profile-text.c		\
 	gcm-cell-renderer-profile-text.h		\
 	gcm-cell-renderer-profile-icon.c		\

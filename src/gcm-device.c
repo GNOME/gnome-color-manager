@@ -530,10 +530,10 @@ gcm_device_set_profiles (GcmDevice *device, GPtrArray *profiles)
 }
 
 /**
- * gcm_device_add_profile:
+ * gcm_device_profile_add:
  **/
 gboolean
-gcm_device_add_profile (GcmDevice *device, GcmProfile *profile)
+gcm_device_profile_add (GcmDevice *device, GcmProfile *profile, GError **error)
 {
 	guint i;
 	gboolean ret = FALSE;
@@ -547,14 +547,115 @@ gcm_device_add_profile (GcmDevice *device, GcmProfile *profile)
 	md5 = gcm_profile_get_checksum (profile);
 	for (i=0; i<device->priv->profiles->len; i++) {
 		profile_tmp = g_ptr_array_index (device->priv->profiles, i);
-		if (g_strcmp0 (md5, gcm_profile_get_checksum (profile_tmp)) == 0)
+		if (g_strcmp0 (md5, gcm_profile_get_checksum (profile_tmp)) == 0) {
+			g_set_error (error, GCM_DEVICE_ERROR, GCM_DEVICE_ERROR_INTERNAL,
+				     "already added %s", gcm_profile_get_filename (profile));
 			goto out;
+		}
 	}
 
 	/* add */
 	g_ptr_array_add (device->priv->profiles, g_object_ref (profile));
 	gcm_device_changed (device);
 	ret = TRUE;
+out:
+	return ret;
+}
+
+/**
+ * gcm_device_profile_remove:
+ **/
+gboolean
+gcm_device_profile_remove (GcmDevice *device, GcmProfile *profile, GError **error)
+{
+	guint i;
+	gboolean ret = TRUE;
+	const gchar *md5;
+	GcmProfile *profile_tmp;
+
+	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
+	g_return_val_if_fail (profile != NULL, FALSE);
+
+	/* array empty */
+	if (device->priv->profiles->len == 0) {
+		g_set_error_literal (error, GCM_DEVICE_ERROR, GCM_DEVICE_ERROR_INTERNAL,
+				     "the profile array is empty");
+		ret = FALSE;
+		goto out;
+	}
+
+	/* check if exists */
+	md5 = gcm_profile_get_checksum (profile);
+	for (i=0; i<device->priv->profiles->len; i++) {
+		profile_tmp = g_ptr_array_index (device->priv->profiles, i);
+		if (g_strcmp0 (md5, gcm_profile_get_checksum (profile_tmp)) == 0) {
+			g_ptr_array_remove_index (device->priv->profiles, i);
+			gcm_device_changed (device);
+			goto out;
+		}
+	}
+
+	/* not present */
+	g_set_error (error, GCM_DEVICE_ERROR, GCM_DEVICE_ERROR_INTERNAL,
+		     "asked to remove %s that does not exist",
+		     gcm_profile_get_filename (profile));
+	ret = FALSE;
+out:
+	return ret;
+}
+
+/**
+ * gcm_device_profile_set_default:
+ **/
+gboolean
+gcm_device_profile_set_default (GcmDevice *device, GcmProfile *profile, GError **error)
+{
+	guint i;
+	gboolean ret = TRUE;
+	const gchar *md5;
+	GcmProfile *profile_tmp;
+	gpointer tmp;
+
+	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
+	g_return_val_if_fail (profile != NULL, FALSE);
+
+	/* array empty */
+	if (device->priv->profiles->len == 0) {
+		g_set_error_literal (error, GCM_DEVICE_ERROR, GCM_DEVICE_ERROR_INTERNAL,
+				     "the profile array is empty");
+		ret = FALSE;
+		goto out;
+	}
+
+	/* only one item */
+	if (device->priv->profiles->len == 1)
+		goto out;
+
+	/* check if exists */
+	md5 = gcm_profile_get_checksum (profile);
+	for (i=0; i<device->priv->profiles->len; i++) {
+		profile_tmp = g_ptr_array_index (device->priv->profiles, i);
+		if (g_strcmp0 (md5, gcm_profile_get_checksum (profile_tmp)) == 0) {
+			if (i == 0) {
+				g_set_error_literal (error, GCM_DEVICE_ERROR, GCM_DEVICE_ERROR_INTERNAL,
+						     "profile already set default");
+				ret = FALSE;
+				goto out;
+			}
+			/* swap the two pointer locations */
+			tmp = device->priv->profiles->pdata[0];
+			device->priv->profiles->pdata[0] = device->priv->profiles->pdata[i];
+			device->priv->profiles->pdata[i] = tmp;
+			gcm_device_changed (device);
+			goto out;
+		}
+	}
+
+	/* not present */
+	g_set_error (error, GCM_DEVICE_ERROR, GCM_DEVICE_ERROR_INTERNAL,
+		     "asked to set default %s that does not exist in list",
+		     gcm_profile_get_filename (profile));
+	ret = FALSE;
 out:
 	return ret;
 }

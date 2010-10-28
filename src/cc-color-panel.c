@@ -43,13 +43,14 @@
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
 #include "gcm-color.h"
+#include "gcm-list-store-profiles.h"
 
 #include "cc-color-panel.h"
 
 struct _CcColorPanelPrivate {
 	GtkBuilder		*builder;
 	GtkListStore		*list_store_devices;
-	GtkListStore		*list_store_assign;
+	GtkListStore		*list_store_profiles;
 	GcmDevice		*current_device;
 	GcmProfileStore		*profile_store;
 	GcmClient		*gcm_client;
@@ -79,14 +80,6 @@ enum {
 	GCM_DEVICES_COLUMN_ICON,
 	GCM_DEVICES_COLUMN_TITLE,
 	GCM_DEVICES_COLUMN_LAST
-};
-
-enum {
-	GCM_ASSIGN_COLUMN_SORT,
-	GCM_ASSIGN_COLUMN_PROFILE,
-	GCM_ASSIGN_COLUMN_IS_DEFAULT,
-	GCM_ASSIGN_COLUMN_TOOLTIP,
-	GCM_ASSIGN_COLUMN_LAST
 };
 
 enum {
@@ -945,79 +938,10 @@ cc_color_panel_add_profiles_suitable_for_devices (CcColorPanel *panel, GtkWidget
 }
 
 /**
- * cc_color_panel_assign_save_profiles_for_device:
+ * cc_color_panel_profile_add_cb:
  **/
 static void
-cc_color_panel_assign_save_profiles_for_device (CcColorPanel *panel, GcmDevice *device)
-{
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	gboolean is_default;
-	GcmProfile *profile;
-	GPtrArray *array;
-	gboolean ret;
-	GError *error = NULL;
-
-	/* create empty array */
-	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
-
-	/* get first element */
-	model = GTK_TREE_MODEL (panel->priv->list_store_assign);
-	ret = gtk_tree_model_get_iter_first (model, &iter);
-	if (!ret)
-		goto set_profiles;
-
-	/* add default device first */
-	do {
-		gtk_tree_model_get (model, &iter,
-				    GCM_ASSIGN_COLUMN_PROFILE, &profile,
-				    GCM_ASSIGN_COLUMN_IS_DEFAULT, &is_default,
-				    -1);
-		if (is_default)
-			g_ptr_array_add (array, g_object_ref (profile));
-		g_object_unref (profile);
-	} while (gtk_tree_model_iter_next (model, &iter));
-
-	/* add non-default devices next */
-	gtk_tree_model_get_iter_first (model, &iter);
-	do {
-		gtk_tree_model_get (model, &iter,
-				    GCM_ASSIGN_COLUMN_PROFILE, &profile,
-				    GCM_ASSIGN_COLUMN_IS_DEFAULT, &is_default,
-				    -1);
-		if (!is_default)
-			g_ptr_array_add (array, g_object_ref (profile));
-		g_object_unref (profile);
-	} while (gtk_tree_model_iter_next (model, &iter));
-
-set_profiles:
-	/* save new array */
-	gcm_device_set_profiles (device, array);
-
-	/* save */
-	ret = gcm_device_save (panel->priv->current_device, &error);
-	if (!ret) {
-		g_warning ("failed to save config: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* set the profile */
-	ret = gcm_device_apply (panel->priv->current_device, &error);
-	if (!ret) {
-		g_warning ("failed to apply profile: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-out:
-	g_ptr_array_unref (array);
-}
-
-/**
- * cc_color_panel_assign_add_cb:
- **/
-static void
-cc_color_panel_assign_add_cb (GtkWidget *widget, CcColorPanel *panel)
+cc_color_panel_profile_add_cb (GtkWidget *widget, CcColorPanel *panel)
 {
 	const gchar *profile_filename;
 
@@ -1033,18 +957,18 @@ cc_color_panel_assign_add_cb (GtkWidget *widget, CcColorPanel *panel)
 }
 
 /**
- * cc_color_panel_assign_remove_cb:
+ * cc_color_panel_profile_remove_cb:
  **/
 static void
-cc_color_panel_assign_remove_cb (GtkWidget *widget, CcColorPanel *panel)
+cc_color_panel_profile_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 {
 	GtkTreeIter iter;
 	GtkTreeSelection *selection;
 	GtkTreeModel *model;
-	gboolean is_default;
 	gboolean ret;
 	const gchar *device_md5;
 	GcmProfile *profile = NULL;
+	GError *error = NULL;
 
 	/* get the selected row */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "treeview_assign"));
@@ -1056,8 +980,7 @@ cc_color_panel_assign_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 
 	/* if the profile is default, then we'll have to make the first profile default */
 	gtk_tree_model_get (model, &iter,
-			    GCM_ASSIGN_COLUMN_IS_DEFAULT, &is_default,
-			    GCM_ASSIGN_COLUMN_PROFILE, &profile,
+			    GCM_LIST_STORE_PROFILES_COLUMN_PROFILE, &profile,
 			    -1);
 
 	/* if this is an auto-added profile that the user has *manually*
@@ -1071,27 +994,29 @@ cc_color_panel_assign_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 		}
 	}
 
-	/* remove this entry */
-	gtk_list_store_remove (GTK_LIST_STORE(model), &iter);
-
-	/* /something/ has to be the default profile */
-	if (is_default) {
-		ret = gtk_tree_model_get_iter_first (model, &iter);
-		if (ret) {
-			gtk_list_store_set (panel->priv->list_store_assign, &iter,
-					    GCM_ASSIGN_COLUMN_IS_DEFAULT, TRUE,
-					    GCM_ASSIGN_COLUMN_SORT, "0",
-					    -1);
-			do {
-				gtk_list_store_set (panel->priv->list_store_assign, &iter,
-						    GCM_ASSIGN_COLUMN_SORT, "1",
-						    -1);
-			} while (gtk_tree_model_iter_next (model, &iter));
-		}
+	/* just remove it, the list store will get ::changed */
+	ret = gcm_device_profile_remove (panel->priv->current_device, profile, &error);
+	if (!ret) {
+		g_warning ("failed to remove profile: %s", error->message);
+		g_error_free (error);
+		goto out;
 	}
 
-	/* save device */
-	cc_color_panel_assign_save_profiles_for_device (panel, panel->priv->current_device);
+	/* save */
+	ret = gcm_device_save (panel->priv->current_device, &error);
+	if (!ret) {
+		g_warning ("failed to save config: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* apply */
+	ret = gcm_device_apply (panel->priv->current_device, &error);
+	if (!ret) {
+		g_warning ("failed to apply config: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 out:
 	if (profile != NULL)
 		g_object_unref (profile);
@@ -1099,42 +1024,57 @@ out:
 }
 
 /**
- * cc_color_panel_assign_make_default_internal:
+ * cc_color_panel_profile_make_default_internal:
  **/
 static void
-cc_color_panel_assign_make_default_internal (CcColorPanel *panel, GtkTreeModel *model, GtkTreeIter *iter_selected)
+cc_color_panel_profile_make_default_internal (CcColorPanel *panel, GtkTreeModel *model, GtkTreeIter *iter_selected)
 {
-	GtkTreeIter iter;
+	GcmProfile *profile;
+	GError *error = NULL;
+	gboolean ret;
 	GtkWidget *widget;
 
-	/* make none of the devices default */
-	gtk_tree_model_get_iter_first (model, &iter);
-	do {
-		gtk_list_store_set (panel->priv->list_store_assign, &iter,
-				    GCM_ASSIGN_COLUMN_SORT, "1",
-				    GCM_ASSIGN_COLUMN_IS_DEFAULT, FALSE,
-				    -1);
-	} while (gtk_tree_model_iter_next (model, &iter));
-
-	/* make the selected device default */
-	gtk_list_store_set (panel->priv->list_store_assign, iter_selected,
-			    GCM_ASSIGN_COLUMN_IS_DEFAULT, TRUE,
-			    GCM_ASSIGN_COLUMN_SORT, "0",
+	/* get currentlt selected item */
+	gtk_tree_model_get (model, iter_selected,
+			    GCM_LIST_STORE_PROFILES_COLUMN_PROFILE, &profile,
 			    -1);
+
+	/* just set it default, the list store will get ::changed */
+	ret = gcm_device_profile_set_default (panel->priv->current_device, profile, &error);
+	if (!ret) {
+		g_warning ("failed to set default profile: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* save */
+	ret = gcm_device_save (panel->priv->current_device, &error);
+	if (!ret) {
+		g_warning ("failed to save config: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* apply */
+	ret = gcm_device_apply (panel->priv->current_device, &error);
+	if (!ret) {
+		g_warning ("failed to apply config: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	/* set button insensitive */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_assign_make_default"));
 	gtk_widget_set_sensitive (widget, FALSE);
-
-	/* save device */
-	cc_color_panel_assign_save_profiles_for_device (panel, panel->priv->current_device);
+out:
+	g_object_unref (profile);
 }
 
 /**
- * cc_color_panel_assign_make_default_cb:
+ * cc_color_panel_profile_make_default_cb:
  **/
 static void
-cc_color_panel_assign_make_default_cb (GtkWidget *widget, CcColorPanel *panel)
+cc_color_panel_profile_make_default_cb (GtkWidget *widget, CcColorPanel *panel)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -1149,7 +1089,7 @@ cc_color_panel_assign_make_default_cb (GtkWidget *widget, CcColorPanel *panel)
 	}
 
 	/* make this profile the default */
-	cc_color_panel_assign_make_default_internal (panel, model, &iter);
+	cc_color_panel_profile_make_default_internal (panel, model, &iter);
 }
 
 /**
@@ -1239,25 +1179,6 @@ cc_color_panel_button_assign_cancel_cb (GtkWidget *widget, CcColorPanel *panel)
 }
 
 /**
- * cc_color_panel_profile_get_tooltip:
- **/
-static const gchar *
-cc_color_panel_profile_get_tooltip (GcmProfile *profile)
-{
-	const gchar *tooltip = NULL;
-
-	/* VCGT warning */
-	if (gcm_profile_get_kind (profile) == GCM_PROFILE_KIND_DISPLAY_DEVICE &&
-	    !gcm_profile_get_has_vcgt (profile)) {
-		/* TRANSLATORS: this is displayed when the profile is crap */
-		tooltip = _("This profile does not have the information required for whole-screen color correction.");
-		goto out;
-	}
-out:
-	return tooltip;
-}
-
-/**
  * cc_color_panel_button_assign_ok_cb:
  **/
 static void
@@ -1265,9 +1186,9 @@ cc_color_panel_button_assign_ok_cb (GtkWidget *widget, CcColorPanel *panel)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
-	GcmProfile *profile;
-	gboolean is_default = FALSE;
+	GcmProfile *profile = NULL;
 	gboolean ret;
+	GError *error = NULL;
 
 	/* hide window */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "dialog_assign"));
@@ -1277,34 +1198,53 @@ cc_color_panel_button_assign_ok_cb (GtkWidget *widget, CcColorPanel *panel)
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "combobox_profile"));
 	ret = gtk_combo_box_get_active_iter (GTK_COMBO_BOX(widget), &iter);
 	if (!ret)
-		return;
+		goto out;
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX(widget));
 	gtk_tree_model_get (model, &iter,
 			    GCM_PREFS_COMBO_COLUMN_PROFILE, &profile,
 			    -1);
 
-	/* if list is empty, we want this to be the default item */
-	model = GTK_TREE_MODEL (panel->priv->list_store_assign);
-	is_default = !gtk_tree_model_get_iter_first (model, &iter);
+	/* just add it, the list store will get ::changed */
+	ret = gcm_device_profile_add (panel->priv->current_device, profile, &error);
+	if (!ret) {
+		g_warning ("failed to add: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
-	/* add profile */
-	gtk_list_store_append (panel->priv->list_store_assign, &iter);
-	gtk_list_store_set (panel->priv->list_store_assign, &iter,
-			    GCM_ASSIGN_COLUMN_PROFILE, profile,
-			    GCM_ASSIGN_COLUMN_SORT, is_default ? "0" : "1",
-			    GCM_ASSIGN_COLUMN_IS_DEFAULT, is_default,
-			    GCM_ASSIGN_COLUMN_TOOLTIP, cc_color_panel_profile_get_tooltip (profile),
-			    -1);
+	/* make it default */
+	ret = gcm_device_profile_set_default (panel->priv->current_device, profile, &error);
+	if (!ret) {
+		g_warning ("failed to set default: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
-	/* save device */
-	cc_color_panel_assign_save_profiles_for_device (panel, panel->priv->current_device);
+	/* save */
+	ret = gcm_device_save (panel->priv->current_device, &error);
+	if (!ret) {
+		g_warning ("failed to save config: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* apply */
+	ret = gcm_device_apply (panel->priv->current_device, &error);
+	if (!ret) {
+		g_warning ("failed to apply config: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+out:
+	if (profile != NULL)
+		g_object_unref (profile);
 }
 
 /**
- * cc_color_panel_assign_delete_event_cb:
+ * cc_color_panel_profile_delete_event_cb:
  **/
 static gboolean
-cc_color_panel_assign_delete_event_cb (GtkWidget *widget, GdkEvent *event, CcColorPanel *panel)
+cc_color_panel_profile_delete_event_cb (GtkWidget *widget, GdkEvent *event, CcColorPanel *panel)
 {
 	cc_color_panel_button_assign_cancel_cb (widget, panel);
 	return TRUE;
@@ -1439,11 +1379,11 @@ cc_color_panel_add_assign_columns (CcColorPanel *panel, GtkTreeView *treeview)
 		      "wrap-mode", PANGO_WRAP_WORD,
 		      NULL);
 	column = gtk_tree_view_column_new_with_attributes ("", renderer,
-							   "profile", GCM_ASSIGN_COLUMN_PROFILE,
-							   "is-default", GCM_ASSIGN_COLUMN_IS_DEFAULT,
+							   "profile", GCM_LIST_STORE_PROFILES_COLUMN_PROFILE,
+							   "is-default", GCM_LIST_STORE_PROFILES_COLUMN_IS_DEFAULT,
 							   NULL);
-	gtk_tree_view_column_set_sort_column_id (column, GCM_ASSIGN_COLUMN_SORT);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (panel->priv->list_store_assign), GCM_ASSIGN_COLUMN_SORT, GTK_SORT_ASCENDING);
+	gtk_tree_view_column_set_sort_column_id (column, GCM_LIST_STORE_PROFILES_COLUMN_SORT);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (panel->priv->list_store_profiles), GCM_LIST_STORE_PROFILES_COLUMN_SORT, GTK_SORT_ASCENDING);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 
@@ -1451,7 +1391,7 @@ cc_color_panel_add_assign_columns (CcColorPanel *panel, GtkTreeView *treeview)
 	renderer = gcm_cell_renderer_profile_icon_new ();
 	g_object_set (renderer, "stock-size", GTK_ICON_SIZE_BUTTON, NULL);
 	column = gtk_tree_view_column_new_with_attributes ("", renderer,
-							   "profile", GCM_ASSIGN_COLUMN_PROFILE,
+							   "profile", GCM_LIST_STORE_PROFILES_COLUMN_PROFILE,
 							   NULL);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
@@ -1559,9 +1499,7 @@ out:
 static void
 cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColorPanel *panel)
 {
-	guint i;
 	GtkTreeModel *model;
-	GtkTreeIter iter;
 	GtkTreePath *path;
 	GtkWidget *widget;
 	gfloat localgamma;
@@ -1571,8 +1509,7 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	gchar *id = NULL;
 	gboolean ret;
 	GcmDeviceKind kind;
-	GPtrArray *profiles = NULL;
-	GcmProfile *profile;
+	GtkTreeIter iter;
 
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -1643,21 +1580,9 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	gtk_range_set_value (GTK_RANGE (widget), contrast);
 	panel->priv->setting_up_device = FALSE;
 
-	/* clear existing list */
-	gtk_list_store_clear (panel->priv->list_store_assign);
-
-	/* add profiles for the device */
-	profiles = gcm_device_get_profiles (panel->priv->current_device);
-	for (i=0; i<profiles->len; i++) {
-		profile = g_ptr_array_index (profiles, i);
-		gtk_list_store_append (panel->priv->list_store_assign, &iter);
-		gtk_list_store_set (panel->priv->list_store_assign, &iter,
-				    GCM_ASSIGN_COLUMN_PROFILE, profile,
-				    GCM_ASSIGN_COLUMN_SORT, (i == 0) ? "0" : "1",
-				    GCM_ASSIGN_COLUMN_IS_DEFAULT, (i == 0),
-				    GCM_ASSIGN_COLUMN_TOOLTIP, cc_color_panel_profile_get_tooltip (profile),
-				    -1);
-	}
+	/* set new device */
+	gcm_list_store_profiles_set_from_device (panel->priv->list_store_profiles,
+						 panel->priv->current_device);
 
 	/* select the default profile to display */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "treeview_assign"));
@@ -1680,16 +1605,14 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	/* can this device calibrate */
 	cc_color_panel_set_calibrate_button_sensitivity (panel);
 out:
-	if (profiles != NULL)
-		g_ptr_array_unref (profiles);
 	g_free (id);
 }
 
 /**
- * cc_color_panel_assign_treeview_row_activated_cb:
+ * cc_color_panel_profile_treeview_row_activated_cb:
  **/
 static void
-cc_color_panel_assign_treeview_row_activated_cb (GtkTreeView *tree_view, GtkTreePath *path,
+cc_color_panel_profile_treeview_row_activated_cb (GtkTreeView *tree_view, GtkTreePath *path,
 					    GtkTreeViewColumn *column, CcColorPanel *panel)
 {
 	GtkTreeModel *model;
@@ -1697,20 +1620,20 @@ cc_color_panel_assign_treeview_row_activated_cb (GtkTreeView *tree_view, GtkTree
 	gboolean ret;
 
 	/* get the iter */
-	model = GTK_TREE_MODEL (panel->priv->list_store_assign);
+	model = GTK_TREE_MODEL (panel->priv->list_store_profiles);
 	ret = gtk_tree_model_get_iter (model, &iter, path);
 	if (!ret)
 		return;
 
 	/* make this profile the default */
-	cc_color_panel_assign_make_default_internal (panel, model, &iter);
+	cc_color_panel_profile_make_default_internal (panel, model, &iter);
 }
 
 /**
- * cc_color_panel_assign_treeview_clicked_cb:
+ * cc_color_panel_profile_treeview_clicked_cb:
  **/
 static void
-cc_color_panel_assign_treeview_clicked_cb (GtkTreeSelection *selection, CcColorPanel *panel)
+cc_color_panel_profile_treeview_clicked_cb (GtkTreeSelection *selection, CcColorPanel *panel)
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
@@ -1732,8 +1655,8 @@ cc_color_panel_assign_treeview_clicked_cb (GtkTreeSelection *selection, CcColorP
 
 	/* get profile */
 	gtk_tree_model_get (model, &iter,
-			    GCM_ASSIGN_COLUMN_PROFILE, &profile,
-			    GCM_ASSIGN_COLUMN_IS_DEFAULT, &is_default,
+			    GCM_LIST_STORE_PROFILES_COLUMN_PROFILE, &profile,
+			    GCM_LIST_STORE_PROFILES_COLUMN_IS_DEFAULT, &is_default,
 			    -1);
 	g_debug ("selected profile = %s", gcm_profile_get_filename (profile));
 
@@ -1744,6 +1667,7 @@ cc_color_panel_assign_treeview_clicked_cb (GtkTreeSelection *selection, CcColorP
 	/* we can remove it now */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_assign_remove"));
 	gtk_widget_set_sensitive (widget, TRUE);
+	g_object_unref (profile);
 }
 
 /**
@@ -2132,26 +2056,7 @@ cc_color_panel_added_cb (GcmClient *client, GcmDevice *device, CcColorPanel *pan
 static void
 cc_color_panel_changed_cb (GcmClient *client, GcmDevice *device, CcColorPanel *panel)
 {
-	GcmDeviceKind kind;
-
-	/* no not re-add to the ui if we just deleted this */
-	if (!gcm_device_get_connected (device) &&
-	    !gcm_device_get_saved (device)) {
-		g_warning ("ignoring uninteresting device: %s", gcm_device_get_id (device));
-		return;
-	}
-
-	g_debug ("changed: %s", gcm_device_get_id (device));
-
-	/* remove the saved device if it's already there */
-	cc_color_panel_remove_device (panel, device);
-
-	/* add the device */
-	kind = gcm_device_get_kind (device);
-	if (kind == GCM_DEVICE_KIND_DISPLAY)
-		cc_color_panel_add_device_xrandr (panel, device);
-	else
-		cc_color_panel_add_device_kind (panel, device);
+	g_debug ("changed: %s (doing nothing)", gcm_device_get_id (device));
 }
 
 /**
@@ -2719,56 +2624,6 @@ cc_color_panel_finalize (GObject *object)
 	G_OBJECT_CLASS (cc_color_panel_parent_class)->finalize (object);
 }
 
-/**
- * cc_color_panel_profile_store_removed_cb:
- **/
-static void
-cc_color_panel_profile_store_removed_cb (GcmProfileStore *profile_store, GcmProfile *profile, CcColorPanel *panel)
-{
-	GcmProfile *profile_tmp;
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	gboolean ret = FALSE;
-
-	/* check this isn't in the list store already */
-	model = GTK_TREE_MODEL (panel->priv->list_store_assign);
-	if (!gtk_tree_model_get_iter_first (model, &iter))
-		goto out;
-	do {
-		gtk_tree_model_get (model, &iter,
-				    GCM_ASSIGN_COLUMN_PROFILE, &profile_tmp,
-				    -1);
-		/* matches */
-		if (g_strcmp0 (gcm_profile_get_checksum (profile),
-			       gcm_profile_get_checksum (profile_tmp)) == 0) {
-			g_debug ("removed %s which is in the device list",
-				 gcm_profile_get_filename (profile));
-			gtk_list_store_remove (GTK_LIST_STORE (model), &iter);
-			ret = TRUE;
-		}
-		g_object_unref (profile_tmp);
-		if (ret)
-			break;
-	} while (gtk_tree_model_iter_next (model, &iter));
-
-	/* we changed the list */
-	if (ret) {
-
-		/* save */
-		cc_color_panel_assign_save_profiles_for_device (panel, panel->priv->current_device);
-
-		/* re-set the first item as default */
-		if (!gtk_tree_model_get_iter_first (model, &iter))
-			goto out;
-		gtk_list_store_set (panel->priv->list_store_assign, &iter,
-				    GCM_ASSIGN_COLUMN_SORT, "0",
-				    GCM_ASSIGN_COLUMN_IS_DEFAULT, TRUE,
-				    -1);
-	}
-out:
-	return;
-}
-
 static void
 cc_color_panel_init (CcColorPanel *panel)
 {
@@ -2806,18 +2661,18 @@ cc_color_panel_init (CcColorPanel *panel)
 	/* create list stores */
 	panel->priv->list_store_devices = gtk_list_store_new (GCM_DEVICES_COLUMN_LAST, G_TYPE_STRING, G_TYPE_STRING,
 						 G_TYPE_STRING, G_TYPE_STRING);
-	panel->priv->list_store_assign = gtk_list_store_new (GCM_ASSIGN_COLUMN_LAST, G_TYPE_STRING, GCM_TYPE_PROFILE, G_TYPE_BOOLEAN, G_TYPE_STRING);
+	panel->priv->list_store_profiles = gcm_list_store_profiles_new ();
 
 	/* assign buttons */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_assign_add"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_assign_add_cb), panel);
+			  G_CALLBACK (cc_color_panel_profile_add_cb), panel);
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_assign_remove"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_assign_remove_cb), panel);
+			  G_CALLBACK (cc_color_panel_profile_remove_cb), panel);
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_assign_make_default"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_assign_make_default_cb), panel);
+			  G_CALLBACK (cc_color_panel_profile_make_default_cb), panel);
 
 	/* create device tree view */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "treeview_devices"));
@@ -2834,18 +2689,18 @@ cc_color_panel_init (CcColorPanel *panel)
 	/* create assign tree view */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "treeview_assign"));
 	gtk_tree_view_set_model (GTK_TREE_VIEW (widget),
-				 GTK_TREE_MODEL (panel->priv->list_store_assign));
+				 GTK_TREE_MODEL (panel->priv->list_store_profiles));
 	g_signal_connect (GTK_TREE_VIEW (widget), "row-activated",
-			  G_CALLBACK (cc_color_panel_assign_treeview_row_activated_cb), panel);
+			  G_CALLBACK (cc_color_panel_profile_treeview_row_activated_cb), panel);
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	g_signal_connect (selection, "changed",
-			  G_CALLBACK (cc_color_panel_assign_treeview_clicked_cb), panel);
+			  G_CALLBACK (cc_color_panel_profile_treeview_clicked_cb), panel);
 
 	/* add columns to the tree view */
 	cc_color_panel_add_assign_columns (panel, GTK_TREE_VIEW (widget));
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
 	gtk_tree_view_set_reorderable (GTK_TREE_VIEW (widget), TRUE);
-	gtk_tree_view_set_tooltip_column (GTK_TREE_VIEW (widget), GCM_ASSIGN_COLUMN_TOOLTIP);
+	gtk_tree_view_set_tooltip_column (GTK_TREE_VIEW (widget), GCM_LIST_STORE_PROFILES_COLUMN_TOOLTIP);
 
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_default"));
 	g_signal_connect (widget, "clicked",
@@ -2894,7 +2749,7 @@ cc_color_panel_init (CcColorPanel *panel)
 	/* set up assign dialog */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "dialog_assign"));
 	g_signal_connect (widget, "delete-event",
-			  G_CALLBACK (cc_color_panel_assign_delete_event_cb), panel);
+			  G_CALLBACK (cc_color_panel_profile_delete_event_cb), panel);
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_assign_cancel"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (cc_color_panel_button_assign_cancel_cb), panel);
@@ -2945,8 +2800,6 @@ cc_color_panel_init (CcColorPanel *panel)
 
 	/* maintain a list of profiles */
 	panel->priv->profile_store = gcm_profile_store_new ();
-	g_signal_connect (panel->priv->profile_store, "removed",
-			  G_CALLBACK (cc_color_panel_profile_store_removed_cb), panel);
 
 	/* use the color device */
 	panel->priv->sensor_client = gcm_sensor_client_new ();

@@ -174,7 +174,7 @@ gcm_test_calibrate_native_func (void)
 	g_assert (calibrate != NULL);
 
 	g_object_set (calibrate,
-		      "output-name", "LVDS-1",
+		      "output-name", "LVDS1",
 		      NULL);
 
 	/* create a virtual device we can "calibrate" */
@@ -202,7 +202,7 @@ gcm_test_calibrate_native_func (void)
 
 	/* set device */
 	g_object_set (device,
-		      "native-device", "LVDS-1",
+		      "native-device", "LVDS1",
 		      NULL);
 	ret = gcm_calibrate_set_from_device (calibrate, device, &error);
 	g_assert_no_error (error);
@@ -478,7 +478,7 @@ gcm_test_device_func (void)
 	ret = gcm_x11_screen_assign (screen, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	output = gcm_x11_screen_get_output_by_name (screen, "LVDS-1", &error);
+	output = gcm_x11_screen_get_output_by_name (screen, "LVDS1", &error);
 	g_assert_no_error (error);
 	g_assert (output != NULL);
 	g_object_unref (screen);
