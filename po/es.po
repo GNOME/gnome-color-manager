@@ -6,8 +6,8 @@ msgstr ""
 "Project-Id-Version: gnome-color-manager.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager\n"
-"POT-Creation-Date: 2010-10-18 11:26+0000\n"
-"PO-Revision-Date: 2010-10-19 00:33+0200\n"
+"POT-Creation-Date: 2010-10-29 00:00+0000\n"
+"PO-Revision-Date: 2010-10-29 09:59+0200\n"
 "Last-Translator: Jorge González <jorgegonz@svn.gnome.org>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -42,14 +42,20 @@ msgid "Manage ICC color profiles"
 msgstr "Gestionar perfiles de color ICC"
 
 #: ../data/gcm-viewer.desktop.in.h:1
-#| msgid "Pr_ofile Viewer"
 msgid "Color Profile Viewer"
 msgstr "Visor de perfiles de color"
 
 #: ../data/gcm-viewer.desktop.in.h:2
-#| msgid "Install system color profiles"
 msgid "Inspect and compare installed color profiles"
 msgstr "Inspeccionar y comparar perfiles de color instalados"
+
+#: ../data/org.gnome.settings-daemon.plugins.color.gschema.xml.h:1
+msgid "Activation of this plugin"
+msgstr "Activación de este complemento"
+
+#: ../data/org.gnome.settings-daemon.plugins.color.gschema.xml.h:2
+msgid "Whether this plugin would be activated by gnome-settings-daemon or not"
+msgstr "Indica si gnome-settings-daemon activará este complemento o no"
 
 #. TRANSLATORS: turn on all debugging
 #: ../libcolor-glib/gcm-debug.c:104
@@ -93,101 +99,101 @@ msgid "Install system color profiles"
 msgstr "Instalar perfiles de color del sistema"
 
 #. TRANSLATORS: could not save for all users
-#: ../src/cc-color-panel.c:154
+#: ../src/cc-color-panel.c:147
 msgid "Failed to save defaults for all users"
 msgstr "Falló al guardar los predeterminados para todos los usuarios"
 
 #. TRANSLATORS: this is where the user can click and import a profile
-#: ../src/cc-color-panel.c:182
+#: ../src/cc-color-panel.c:175
 msgid "Other profile…"
 msgstr "Otro perfil…"
 
 #. TRANSLATORS: could not calibrate
-#: ../src/cc-color-panel.c:339
+#: ../src/cc-color-panel.c:332
 msgid "Failed to calibrate device"
 msgstr "Falló al calibrar el dispositivo"
 
 #. TRANSLATORS: could not calibrate
-#: ../src/cc-color-panel.c:374
+#: ../src/cc-color-panel.c:367
 msgid "Failed to calibrate printer"
 msgstr "Falló al calibrar la impresora"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/cc-color-panel.c:399 ../src/gcm-calibrate.c:913
+#: ../src/cc-color-panel.c:392 ../src/gcm-calibrate.c:913
 #: ../src/gcm-viewer.c:339
 msgid "Select ICC Profile File"
 msgstr "Seleccionar archivo de perfil ICC"
 
-#: ../src/cc-color-panel.c:402 ../src/gcm-viewer.c:342
+#: ../src/cc-color-panel.c:395 ../src/gcm-viewer.c:342
 msgid "Import"
 msgstr "Importar"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/cc-color-panel.c:420 ../src/gcm-viewer.c:360
+#: ../src/cc-color-panel.c:413 ../src/gcm-viewer.c:360
 msgid "Supported ICC profiles"
 msgstr "Perfiles ICC soportados"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/cc-color-panel.c:427 ../src/gcm-calibrate.c:795
+#: ../src/cc-color-panel.c:420 ../src/gcm-calibrate.c:795
 #: ../src/gcm-calibrate.c:847 ../src/gcm-viewer.c:367
 msgid "All files"
 msgstr "Todos los archivos"
 
 #. TRANSLATORS: could not read file
-#: ../src/cc-color-panel.c:463 ../src/gcm-import.c:207 ../src/gcm-viewer.c:403
+#: ../src/cc-color-panel.c:456 ../src/gcm-import.c:207 ../src/gcm-viewer.c:403
 msgid "Failed to copy file"
 msgstr "Falló al copiar el archivo"
 
-#: ../src/cc-color-panel.c:491
+#: ../src/cc-color-panel.c:484
 msgid "Failed to get metadata from image"
 msgstr "Falló al obtener los metadatos de la imagen"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:508 ../src/cc-color-panel.c:1183
+#: ../src/cc-color-panel.c:501 ../src/cc-color-panel.c:1123
 msgid "Failed to create virtual device"
 msgstr "Falló al crear el dispositivo virtual"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:516 ../src/cc-color-panel.c:1191
+#: ../src/cc-color-panel.c:509 ../src/cc-color-panel.c:1131
 msgid "Failed to save virtual device"
 msgstr "Falló al guardar el dispositivo virtual"
 
 #. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:525 ../src/cc-color-panel.c:1200
+#: ../src/cc-color-panel.c:518 ../src/cc-color-panel.c:1140
 msgid "Failed to add virtual device"
 msgstr "Falló al añadir el dispositivo virtual"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/cc-color-panel.c:707
+#: ../src/cc-color-panel.c:700
 msgid "Install calibration and profiling software?"
 msgstr "¿Instalar software de calibración y perfilado?"
 
 #. TRANSLATORS: dialog message saying the argyllcms is not installed
-#: ../src/cc-color-panel.c:711
+#: ../src/cc-color-panel.c:704
 msgid "Calibration and profiling software is not installed."
 msgstr "El software de calibración y perfilado no está instalado."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/cc-color-panel.c:713
+#: ../src/cc-color-panel.c:706
 msgid "These tools are required to build color profiles for devices."
 msgstr ""
 "Se requieren estas herramientas para construir perfiles de color para "
 "dispositivos."
 
 #. TRANSLATORS: button, skip installing a package
-#: ../src/cc-color-panel.c:718 ../src/gcm-calibrate.c:1082
+#: ../src/cc-color-panel.c:711 ../src/gcm-calibrate.c:1082
 msgid "Do not install"
 msgstr "No instalar"
 
 #. TRANSLATORS: button, install a package
 #. TRANSLATORS: button text
-#: ../src/cc-color-panel.c:720 ../src/gcm-calibrate.c:1084
+#: ../src/cc-color-panel.c:713 ../src/gcm-calibrate.c:1084
 #: ../src/gcm-import.c:186
 msgid "Install"
 msgstr "Instalar"
 
 #. TRANSLATORS: this is the application name for libcanberra
-#: ../src/cc-color-panel.c:837 ../src/cc-color-panel.c:1997
+#: ../src/cc-color-panel.c:830 ../src/cc-color-panel.c:1921
 #: ../src/gcm-calibrate-argyll.c:2284 ../src/gcm-calibrate-argyll.c:2334
 #: ../src/gcm-calibrate-argyll.c:2389 ../src/gcm-calibrate-argyll.c:2465
 #: ../src/gcm-calibrate-argyll.c:2546 ../src/gcm-calibrate-argyll.c:2587
@@ -195,60 +201,51 @@ msgid "GNOME Color Manager"
 msgstr "Gestor de color de GNOME"
 
 #. TRANSLATORS: this is the sound description
-#: ../src/cc-color-panel.c:839
+#: ../src/cc-color-panel.c:832
 msgid "Profiling completed"
 msgstr "Perfilado completado"
 
-#. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/cc-color-panel.c:1253
-msgid ""
-"This profile does not have the information required for whole-screen color "
-"correction."
-msgstr ""
-"Este perfil no tiene la información necesaria para la corrección de color de "
-"la pantalla entera."
-
 #. TRANSLATORS: could not read file
-#: ../src/cc-color-panel.c:1326
+#: ../src/cc-color-panel.c:1266
 msgid "Failed to delete file"
 msgstr "Falló al eliminar el archivo"
 
 #. TRANSLATORS: this is when the button is sensitive
-#: ../src/cc-color-panel.c:1473
+#: ../src/cc-color-panel.c:1413
 msgid "Create a color profile for the selected device"
 msgstr "Crear un perfil de color para el dispositivo seleccionado"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1478
+#: ../src/cc-color-panel.c:1418
 msgid "Cannot create profile: No device is selected"
 msgstr "No se puede crear el pefil: no hay ningún dispositivo seleccionado"
 
 #. TRANSLATORS: this is when the button is insensitive because the distro compiled GCM without VTE
-#: ../src/cc-color-panel.c:1489
+#: ../src/cc-color-panel.c:1429
 msgid "Cannot create profile: Virtual console support is missing"
 msgstr "No se puede crear el pefil: falta el soporte para la consola virtual"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1501
+#: ../src/cc-color-panel.c:1441
 msgid "Cannot create profile: The display device is not connected"
 msgstr ""
 "No se puede crear el pefil: el dispositivo de pantalla no está conectado"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1509
+#: ../src/cc-color-panel.c:1449
 msgid "Cannot create profile: The display driver does not support XRandR 1.3"
 msgstr ""
 "No se puede crear el pefil: el controlador del dispositivo de pantalla no "
 "soporta XRandR 1.3"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1517 ../src/cc-color-panel.c:1532
+#: ../src/cc-color-panel.c:1457 ../src/cc-color-panel.c:1472
 msgid "Cannot create profile: The measuring instrument is not plugged in"
 msgstr ""
 "No se puede crear el pefil: el instrumento de medición no está conectado"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1540
+#: ../src/cc-color-panel.c:1480
 msgid ""
 "Cannot create profile: The measuring instrument does not support printer "
 "profiling"
@@ -257,60 +254,60 @@ msgstr ""
 "de impresión"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1547
+#: ../src/cc-color-panel.c:1487
 msgid "Cannot create a profile for this type of device"
 msgstr "No se puede crear un perfil para este tipo de dispositivo"
 
-#: ../src/cc-color-panel.c:1626
+#: ../src/cc-color-panel.c:1563
 msgid "Per-device settings not supported. Check your display driver."
 msgstr ""
 "No se soportan los ajustes por dispositivo. Compruebe el controlador de su "
 "pantalla."
 
 #. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/cc-color-panel.c:1803
+#: ../src/cc-color-panel.c:1727
 msgid "No hardware support"
 msgstr "Sin soporte hardware"
 
 #. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/cc-color-panel.c:1807 ../src/cc-color-panel.c:2049
+#: ../src/cc-color-panel.c:1731 ../src/cc-color-panel.c:1973
 msgid "disconnected"
 msgstr "desconectado"
 
 #. TRANSLATORS: the profile was of the wrong sort for this device
-#: ../src/cc-color-panel.c:1926
+#: ../src/cc-color-panel.c:1850
 msgid "Could not import profile"
 msgstr "No se pudo importar el pefil"
 
-#: ../src/cc-color-panel.c:1927
+#: ../src/cc-color-panel.c:1851
 msgid "The profile was of the wrong type for this device"
 msgstr "El perfil era del tipo erróneo para este dispositivo"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/cc-color-panel.c:1985
+#: ../src/cc-color-panel.c:1909
 msgid "Device added"
 msgstr "Dispositivo añadido"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/cc-color-panel.c:1989
+#: ../src/cc-color-panel.c:1913
 msgid "Device removed"
 msgstr "Dispositivo quitado"
 
 #. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
-#: ../src/cc-color-panel.c:2232 ../src/gcm-picker.c:515
+#: ../src/cc-color-panel.c:2138 ../src/gcm-picker.c:518
 #, c-format
 msgid "No %s color spaces available"
 msgstr "No existen espacios de color %s disponibles"
 
 #. TRANSLATORS: the DBus method failed
-#: ../src/cc-color-panel.c:2339 ../src/gcm-inspect.c:196
+#: ../src/cc-color-panel.c:2249 ../src/gcm-inspect.c:196
 #: ../src/gcm-inspect.c:265 ../src/gcm-inspect.c:332 ../src/gcm-inspect.c:394
 #: ../src/gcm-inspect.c:464 ../src/gcm-utils.c:192
 msgid "The request failed:"
 msgstr "Falló la solicitud:"
 
 #. TRANSLATORS: no DBus session bus
-#: ../src/cc-color-panel.c:2373 ../src/gcm-inspect.c:178
+#: ../src/cc-color-panel.c:2283 ../src/gcm-inspect.c:178
 #: ../src/gcm-inspect.c:247 ../src/gcm-inspect.c:315 ../src/gcm-inspect.c:376
 #: ../src/gcm-inspect.c:446 ../src/gcm-utils.c:168
 msgid "Failed to connect to session bus:"
@@ -318,37 +315,37 @@ msgstr "Falló al conectar con el bus de sesión:"
 
 #. TRANSLATORS: device type
 #. Tab title, display specific controls
-#: ../src/cc-color-panel.c:2626 ../data/gcm-prefs.ui.h:18
+#: ../src/cc-color-panel.c:2534 ../data/gcm-prefs.ui.h:18
 msgid "Display"
 msgstr "Pantalla"
 
 #. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2630
+#: ../src/cc-color-panel.c:2538
 msgid "Scanner"
 msgstr "Escáner"
 
 #. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2634
+#: ../src/cc-color-panel.c:2542
 msgid "Printer"
 msgstr "Impresora"
 
 #. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2638
+#: ../src/cc-color-panel.c:2546
 msgid "Camera"
 msgstr "Cámara"
 
 #. TRANSLATORS: button to install extra profiles
-#: ../src/cc-color-panel.c:2960
+#: ../src/cc-color-panel.c:2814
 msgid "Install now"
 msgstr "Instalar ahora"
 
 #. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/cc-color-panel.c:2963
+#: ../src/cc-color-panel.c:2817
 msgid "More color profiles could be automatically installed."
 msgstr "Se podrían instalar automáticamente más perfiles de color."
 
 #. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
-#: ../src/gcm-apply.c:115
+#: ../src/gcm-apply.c:114
 msgid "Do not attempt to clear previously applied settings"
 msgstr "No intentar limpiar los ajustes previamente aplicados"
 
@@ -1168,6 +1165,15 @@ msgstr "LCD de portátil"
 msgid "Automatic"
 msgstr "Automático"
 
+#. TRANSLATORS: this is displayed when the profile is crap
+#: ../src/gcm-list-store-profiles.c:51
+msgid ""
+"This profile does not have the information required for whole-screen color "
+"correction."
+msgstr ""
+"Este perfil no tiene la información necesaria para la corrección de color de "
+"la pantalla entera."
+
 #. TRANSLATORS: command line option: a list of catalogs to install
 #. TRANSLATORS: command line option: a list of files to install
 #: ../src/gcm-import.c:81 ../src/gcm-install-system-wide.c:126
@@ -1414,72 +1420,72 @@ msgstr "Falló al copiar:"
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:172 ../src/gcm-viewer.c:575 ../src/gcm-viewer.c:625
+#: ../src/gcm-picker.c:174 ../src/gcm-viewer.c:575 ../src/gcm-viewer.c:625
 msgid "Unknown"
 msgstr "Desconocido"
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:322
+#: ../src/gcm-picker.c:324
 msgid "No colorimeter is attached."
 msgstr "No hay ningún colorímetro acoplado."
 
 #. TRANSLATORS: this is displayed if VTE support is not enabled
-#: ../src/gcm-picker.c:329
+#: ../src/gcm-picker.c:331
 msgid "This application was compiled without VTE support."
 msgstr "Esta aplicación se compiló sin soporte para VTE."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:339
+#: ../src/gcm-picker.c:341
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "El colorímetro acoplado no es capaz de leer un punto de color."
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-picker.c:544 ../src/gcm-viewer.c:1065
+#: ../src/gcm-picker.c:662 ../src/gcm-viewer.c:1218
 msgid "Set the parent window to make this modal"
 msgstr "Establecer la ventana padre para hacerlo modal"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:562
+#: ../src/gcm-picker.c:680
 msgid "GNOME Color Manager Color Picker"
 msgstr "Selector de color del Gestor de color de GNOME"
 
 #. TRANSLATORS: button: this is to open GCM
-#: ../src/gcm-session.c:111
+#: ../src/gcm-session.c:107
 msgid "Recalibrate now"
 msgstr "Recalibrar ahora"
 
 #. TRANSLATORS: button: this is to ignore the recalibrate notifications
-#: ../src/gcm-session.c:114
+#: ../src/gcm-session.c:110
 msgid "Ignore"
 msgstr "Ignorar"
 
 #. TRANSLATORS: this is when the device has not been recalibrated in a while
-#: ../src/gcm-session.c:141
+#: ../src/gcm-session.c:137
 msgid "Recalibration required"
 msgstr "Se necesita recalibrado"
 
 #. TRANSLATORS: this is when the display has not been recalibrated in a while
-#: ../src/gcm-session.c:151
+#: ../src/gcm-session.c:147
 #, c-format
 msgid "The display '%s' should be recalibrated soon."
 msgstr "Se debería recalibrar la pantalla «%s» pronto."
 
 #. TRANSLATORS: this is when the printer has not been recalibrated in a while
-#: ../src/gcm-session.c:158
+#: ../src/gcm-session.c:154
 #, c-format
 msgid "The printer '%s' should be recalibrated soon."
 msgstr "Se debería recalibrar la impresora «%s» pronto."
 
-#: ../src/gcm-session.c:709
+#: ../src/gcm-session.c:705
 msgid "Do not exit after the request has been processed"
 msgstr "No salir después de que se haya procesado la solicitud"
 
 #. TRANSLATORS: program name, a session wide daemon to watch for updates and changing system state
-#: ../src/gcm-session.c:725 ../data/gcm-prefs.ui.h:10
+#: ../src/gcm-session.c:721 ../data/gcm-prefs.ui.h:10
 msgid "Color Management"
 msgstr "Gestión de color"
 
-#: ../src/gcm-session.c:727
+#: ../src/gcm-session.c:723
 msgid "Color Management D-Bus Service"
 msgstr "Servicio D-Bus de gestión de color"
 
@@ -1654,31 +1660,31 @@ msgid "This profile cannot be deleted"
 msgstr "Este perfil no se puede eliminar"
 
 #. TRANSLATORS: combo-entry, no graph selected to be shown
-#: ../src/gcm-viewer.c:1008
+#: ../src/gcm-viewer.c:1004
 msgid "None"
 msgstr "Ninguna"
 
 #. TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...)
-#: ../src/gcm-viewer.c:1011
+#: ../src/gcm-viewer.c:1007
 msgid "CIE 1931 xy"
 msgstr "CIE 1931 xy"
 
 #. TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out)
-#: ../src/gcm-viewer.c:1014
+#: ../src/gcm-viewer.c:1010
 msgid "Transfer response curve"
 msgstr "Curva de respuesta de transferencia"
 
 #. TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card)
-#: ../src/gcm-viewer.c:1017
+#: ../src/gcm-viewer.c:1013
 msgid "Video card gamma table"
 msgstr "Tabla de gamma de la tarjeta gráfica"
 
 #. TRANSLATORS: combo-entry, this is a preview image of what the profile looks like
-#: ../src/gcm-viewer.c:1020
+#: ../src/gcm-viewer.c:1016
 msgid "Image preview (from sRGB)"
 msgstr "Vista previa de imagen (de sRGB)"
 
-#: ../src/gcm-viewer.c:1021
+#: ../src/gcm-viewer.c:1017
 msgid "Image preview (to sRGB)"
 msgstr "Vista previa de imagen (a SRGB)"
 
