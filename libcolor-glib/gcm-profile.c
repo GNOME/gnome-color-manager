@@ -62,6 +62,7 @@ struct _GcmProfilePrivate
 	gchar			*datetime;
 	gchar			*checksum;
 	guint			 temperature;
+	GHashTable		*dict;
 	GcmColorXYZ		*white;
 	GcmColorXYZ		*black;
 	GcmColorXYZ		*red;
@@ -1201,6 +1202,42 @@ out:
 }
 
 /**
+ * gcm_profile_get_data:
+ * @profile: A valid #GcmProfile
+ * @key: the dictionary key
+ *
+ * Gets an item of data from the profile dictionary.
+ *
+ * Return value: The dictinary data, or %NULL if the key does not exist.
+ *
+ * Since: 2.91.2
+ **/
+const gchar *
+gcm_profile_get_data (GcmProfile *profile, const gchar *key)
+{
+	g_warning ("lcms2 support for dict missing: Cannot get %s", key);
+	return (const gchar *) g_hash_table_lookup (profile->priv->dict, key);
+}
+
+/**
+ * gcm_profile_get_data:
+ * @profile: A valid #GcmProfile
+ * @key: the dictionary key
+ * @data: the dictionary data
+ *
+ * Sets an item of data from the profile dictionary, overwriting it if
+ * it already exists.
+ *
+ * Since: 2.91.2
+ **/
+void
+gcm_profile_set_data (GcmProfile *profile, const gchar *key, const gchar *data)
+{
+	g_warning ("lcms2 support for dict missing: Cannot set %s to %s", key, data);
+	g_hash_table_insert (profile->priv->dict, g_strdup (key), g_strdup (data));
+}
+
+/**
  * gcm_profile_create_from_chroma:
  * @profile: A valid #GcmProfile
  * @red: primary color data
@@ -1885,6 +1922,7 @@ gcm_profile_init (GcmProfile *profile)
 	profile->priv = GCM_PROFILE_GET_PRIVATE (profile);
 	profile->priv->can_delete = FALSE;
 	profile->priv->monitor = NULL;
+	profile->priv->dict = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	profile->priv->kind = GCM_PROFILE_KIND_UNKNOWN;
 	profile->priv->colorspace = GCM_COLORSPACE_UNKNOWN;
 	profile->priv->white = gcm_color_new_XYZ ();
@@ -1918,6 +1956,7 @@ gcm_profile_finalize (GObject *object)
 	gcm_color_free_XYZ (priv->red);
 	gcm_color_free_XYZ (priv->green);
 	gcm_color_free_XYZ (priv->blue);
+	g_hash_table_destroy (profile->priv->dict);
 	if (priv->file != NULL)
 		g_object_unref (priv->file);
 	if (priv->monitor != NULL)

@@ -139,6 +139,11 @@ const GcmColorXYZ *gcm_profile_get_red			(GcmProfile	*profile);
 const GcmColorXYZ *gcm_profile_get_green		(GcmProfile	*profile);
 const GcmColorXYZ *gcm_profile_get_blue			(GcmProfile	*profile);
 const GcmColorXYZ *gcm_profile_get_white		(GcmProfile	*profile);
+const gchar	*gcm_profile_get_data			(GcmProfile	*profile,
+							 const gchar	*key);
+void		 gcm_profile_set_data			(GcmProfile	*profile,
+							 const gchar	*key,
+							 const gchar	*data);
 
 G_END_DECLS
 
