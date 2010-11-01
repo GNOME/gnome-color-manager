@@ -208,7 +208,7 @@ gcm_sample_window_init (GcmSampleWindow *sample_window)
 	sample_window->priv->progress_bar = gtk_progress_bar_new ();
 
 	/* pack in two widgets into the window */
-	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, FALSE, 0);
+	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 0);
 	gtk_container_add (GTK_CONTAINER (sample_window), vbox);
 	gtk_box_pack_start (GTK_BOX (vbox), sample_window->priv->image, TRUE, TRUE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), sample_window->priv->progress_bar, TRUE, TRUE, 0);
