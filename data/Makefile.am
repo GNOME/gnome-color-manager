@@ -53,5 +53,6 @@ DISTCLEANFILES =					\
 	org.gnome.ColorManager.service			\
 	gcm-apply.desktop				\
 	gcm-prefs.desktop				\
+	gcm-viewer.desktop				\
 	gcm-import.desktop
 

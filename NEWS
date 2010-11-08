@@ -1,3 +1,65 @@
+Version 2.91.2
+~~~~~~~~~~~~~~
+Released: 2010-11-08
+
+* Translations
+ - Added Catalan (Valencian) translation (Carles Ferrando)
+ - Added French doc translation (Bruno Brouard)
+ - Added Korean translation (Homin Lee)
+ - Added Slovenian translation (Matej Urbančič)
+ - Updated Bulgarian translation (Alexander Shopov)
+ - Updated Estonian translation (Mattias Põldaru)
+ - Updated Galician translations (Fran Diéguez)
+ - Updated German doc translation, bug #631978 (Mario Blättermann)
+ - Updated German translation (Christian Kirbach)
+ - Updated Hebrew translation (Yaron Shahrabani)
+ - Updated Japanese translation (Takayuki KUSANO)
+ - Updated Korean translation (Changwoo Ryu)
+ - Updated Norwegian bokmål translation (Kjartan Maraas)
+ - Updated Slovenian translation (Andrej Žnidaršič)
+ - Updated Spanish translation (Jorge González)
+ - Updated Swedish translation (Daniel Nylander)
+
+* New Features:
+ - Add defines and an attach image for the DTP94 colorimeter. Fixes #632052 (Richard Hughes)
+ - Add functionality for a virtual profile to be generated from the EDID data (Richard Hughes)
+ - Add gcm_profile_get_data() and gcm_profile_set_data() which can be used with the DICT tag (Richard Hughes)
+ - Add gcm_profile_guess_and_add_vcgt() to emulate a VCGT from an ICC profile (Richard Hughes)
+ - Add the color temperature into the profie viewer details (Richard Hughes)
+ - At login automatically generate an ICC profile from the EDID and add it to each display device (Richard Hughes)
+ - Show the color XYZ values in gcm-dump-profile (Richard Hughes)
+
+* Bugfix:
+ - Add and remove profiles from gcm-viewer as they are added and removed from the store (Richard Hughes)
+ - Add the X-GNOME-Settings-Panel category so the control center panel is not in 'Other' (Richard Hughes)
+ - Add whitepoint, rXYZ, and VCGT functionality to GcmCalibrateNative (Richard Hughes)
+ - Apply some smoothing to the generated VCGT curves (Richard Hughes)
+ - Do not keep adding the auto-EDID profile if the user explicitly removes it from the GUI (Richard Hughes)
+ - Do not use a GtkInfoBox for the VCGT warning (Richard Hughes)
+ - Do the request to PackageKit async, to avoid a 200ms lag in the GUI at startup (Richard Hughes)
+ - Ensure we cancel the PackageKit DBus query if the panel is unloaded (Richard Hughes)
+ - Ensure we write the colorspace back into the raw profile if we generated it (Richard Hughes)
+ - Fix compile with gnome-settings-daemon from git master (Richard Hughes)
+ - Fix typo in data/org.gnome.settings-daemon.plugins.color.gschema.xml (Vladimir)
+ - If a profile is deleted, ensure it is removed from the control center panel listbox (Richard Hughes)
+ - If the profile viewer was set modal over the preferences dialog, then don't show a link back to the control center (Richard Hughes)
+ - Install a schema file to launch gcm-apply by default in new versions of gnome-settings-daemon (Richard Hughes)
+ - Migrate away from EggDebug and use the builtin GLib logging framework (Richard Hughes)
+ - Port to GtkComboBoxText (Richard Hughes)
+ - Port to libnotify 0.7.0 (Richard Hughes)
+ - Port to the new GtkApplication API (Richard Hughes)
+ - Read the rXYZ, gXYZ and bXYZ tags to get the profile primaries before using a transform fallback (Richard Hughes)
+ - Remove deprecated Encoding key from .desktop file (Javier Jardón)
+ - Remove GcmXYZ and use proper boxed GTypes for the color structures (Richard Hughes)
+ - Remove the device-specific labels on the first panel page (Richard Hughes)
+ - Remove the loading GtkInfoBox as it just makes the UI resize at startup (Richard Hughes)
+ - Reorganize the first pane to stack the devices above the profiles (Richard Hughes)
+ - Set all the 'Since: ' version numbers to the correct versions (Richard Hughes)
+ - Set COLOR_MEASUREMENT_DEVICE to get the correct ACL when argyllcms is not installed (Richard Hughes)
+ - Split the control panel out into 4 tabs to reduce the vertical height (Richard Hughes)
+ - Use gtk_box_new() instead gtk_[v|h]box_new() (Javier Jardón)
+ - Use the correct icon in the profile viewer when using GNOME Shell (Richard Hughes)
+
 Version 2.91.1
 ~~~~~~~~~~~~~~
 Released: 2010-10-05
