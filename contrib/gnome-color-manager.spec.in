@@ -9,23 +9,22 @@ Release:   0.#BUILD#%{?alphatag}%{?dist}
 License:   GPLv2+
 Group:     Applications/System
 URL:       http://projects.gnome.org/gnome-color-manager/
-Source0:   http://download.gnome.org/sources/gnome-color-manager/2.31/%{name}-%{version}.tar.gz
+Source0:   http://download.gnome.org/sources/gnome-color-manager/2.91/%{name}-%{version}-%{?alphatag}.tar.bz2
 
 Requires:  color-filesystem >= 1-7
 Requires:  gnome-icon-theme
 Requires:  shared-mime-info
 Requires:  shared-color-profiles
-Requires:  yelp
 Requires:  dconf
 Requires:  GConf2 >= 2.31.1
 
-BuildRequires: gtk2-devel >= 2.16.0
+BuildRequires: gtk3-devel >= 2.91.3
 BuildRequires: scrollkeeper
 BuildRequires: gnome-doc-utils >= 0.3.2
 BuildRequires: desktop-file-utils
 BuildRequires: gettext
 BuildRequires: libtool
-BuildRequires: vte-devel
+#BuildRequires: vte-devel
 BuildRequires: gnome-doc-utils
 BuildRequires: intltool
 BuildRequires: libgudev1-devel
@@ -39,6 +38,10 @@ BuildRequires: exiv2-devel
 BuildRequires: libcanberra-devel
 BuildRequires: libnotify-devel >= 0.7.0
 BuildRequires: glib2-devel >= 2.25.9-2
+BuildRequires: control-center-devel >= 2.90.1
+BuildRequires: gnome-settings-daemon-devel >= 2.90.1
+BuildRequires: libusb1-devel
+BuildRequires: docbook-utils
 
 %description
 gnome-color-manager is a session framework that makes it easy to manage, install
@@ -112,6 +115,7 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
 %{_sbindir}/gcm-install-system-wide
 %{_datadir}/polkit-1/actions/org.gnome.color.policy
 %{_datadir}/glib-2.0/schemas/org.gnome.color-manager.gschema.xml
+%{_datadir}/glib-2.0/schemas/org.gnome.settings-daemon.plugins.color.gschema.xml
 %{_datadir}/GConf/gsettings/org.gnome.color-manager.gschema.migrate
 %{_datadir}/dbus-1/interfaces/org.gnome.ColorManager.xml
 %{_libdir}/control-center-1/panels/*.so
