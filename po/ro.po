@@ -2,19 +2,20 @@
 # Copyright (C) 2010 gnome-color-manager's COPYRIGHT HOLDER
 # This file is distributed under the same license as the gnome-color-manager package.
 # Lucian Adrian Grijincu <lucian.grijincu@gmail.com>, 2010.
+# Daniel Șerbănescu <cyber19rider@gmail.com>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager\n"
-"POT-Creation-Date: 2010-09-23 10:37+0000\n"
-"PO-Revision-Date: 2010-09-24 23:01+0300\n"
+"POT-Creation-Date: 2010-10-13 11:18+0000\n"
+"PO-Revision-Date: 2010-10-25 18:45+0300\n"
 "Last-Translator: Lucian Adrian Grijincu <lucian.grijincu@gmail.com>\n"
 "Language-Team: Romanian Gnome Team <gnomero-list@lists.sourceforge.net>\n"
-"Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: ro\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2);;\n"
 "X-Generator: Virtaal 0.6.1\n"
@@ -32,7 +33,6 @@ msgid "ICC Profile Installer"
 msgstr "Instalator de profiluri ICC"
 
 #: ../data/gcm-import.desktop.in.h:2
-#| msgid "ICC Profile Installer"
 msgid "ICC profile installer"
 msgstr "Instalator de profiluri ICC"
 
@@ -92,11 +92,11 @@ msgstr ""
 
 #: ../data/gnome-color-manager.schemas.in.h:8
 msgid "The CMYK profile filename to be used by applications by default."
-msgstr ""
+msgstr "Numele fișierului profilului CMYK de utilizat implicit în aplicații."
 
 #: ../data/gnome-color-manager.schemas.in.h:9
 msgid "The RGB profile filename to be used by applications by default."
-msgstr ""
+msgstr "Numele fișierului profilului RGB de utilizat implicit în aplicații."
 
 #: ../data/gnome-color-manager.schemas.in.h:10
 msgid "The default CMYK profile."
@@ -107,21 +107,22 @@ msgid "The default RGB profile."
 msgstr "Profilul RGB implicit."
 
 #: ../data/gnome-color-manager.schemas.in.h:12
-#| msgid "Please select a calibration target"
 msgid "The default calibration length."
-msgstr "Lungimea de calibrare implicită."
+msgstr "Lungimea implicită a calibrării."
 
 #: ../data/gnome-color-manager.schemas.in.h:13
 msgid "The default gamma to use for monitors with no previous value set."
 msgstr ""
+"Gama implicită de folosit pentru monitoarele ce nu au stabilită o valoare "
+"anterioară."
 
 #: ../data/gnome-color-manager.schemas.in.h:14
 msgid "The duration between sending notifications to recalibrate a display."
-msgstr "Durată dintre trimiterea notificărilor de recalibrare a afișajului."
+msgstr "Durata dintre trimiterea notificărilor și recalibrarea afișajului."
 
 #: ../data/gnome-color-manager.schemas.in.h:15
 msgid "The duration between sending notifications to recalibrate a printer."
-msgstr "Durată dintre trimiterea notificărilor de recalibrare a imprimantei."
+msgstr "Durata dintre trimiterea notificărilor și recalibrarea imprimantei."
 
 #: ../data/gnome-color-manager.schemas.in.h:16
 msgid ""
@@ -134,35 +135,38 @@ msgstr ""
 #: ../data/gnome-color-manager.schemas.in.h:17
 msgid "The rendering intent to use for softproofs, e.g. 'perceptual'."
 msgstr ""
+"Intenția de randare de folosit pentru probe software de culoare, de ex. "
+"„perceptuală”."
 
 #: ../data/gnome-color-manager.schemas.in.h:18
-#| msgid ""
-#| "The rendering intent to use when transforming from the image gamut to the "
-#| "display gamut"
 msgid "The rendering intent to use for the display, e.g. 'perceptual'."
-msgstr ""
+msgstr "Intenția de randare de folosit pentru afișaj, de ex. „perceptuală”."
 
 #: ../data/gnome-color-manager.schemas.in.h:19
 msgid ""
 "This is the number of seconds in between notifying the user to recalibrate "
 "each display device. Set to 0 to disable the notification."
 msgstr ""
+"Acesta este numărul de secunde între care se notifică utilizatorul pentru a "
+"recalibra fiecare dispozitiv de afișare. Valoarea 0 va dezactiva notificarea."
 
 #: ../data/gnome-color-manager.schemas.in.h:20
 msgid ""
 "This is the number of seconds in between notifying the user to recalibrate "
 "each printer device. Set to 0 to disable the notification."
 msgstr ""
+"Acesta este numărul de secunde între care se notifică utilizatorul pentru a "
+"recalibra fiecare imprimantă. Valoarea 0 va dezactiva notificarea."
 
 #: ../data/gnome-color-manager.schemas.in.h:21
-#| msgid "The ICC profile must be owned by the user."
 msgid "Whether ICC profiles should be loaded from external disks."
-msgstr ""
+msgstr "Profilurile ICC ar trebui încărcate de pe discuri externe."
 
 #: ../data/gnome-color-manager.schemas.in.h:22
 msgid ""
 "Whether the display should be globally corrected or left to applications."
 msgstr ""
+"Dacă afișajul ar trebui corectat global sau lăsat la dispoziția aplicațiilor."
 
 #: ../policy/org.gnome.color.policy.in.h:1
 msgid "Authentication is required to install the color profile for all users"
@@ -436,25 +440,21 @@ msgstr "Puneți instrumentul de măsurare în modul de calibrare."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
 #: ../src/gcm-calibrate-argyll.c:2244
-#, fuzzy
-#| msgid ""
-#| "Please set the measuring instrument to screen mode like the image below."
 msgid ""
 "Please set the measuring instrument to screen mode like the image below, and "
 "ensure it is attached to the screen."
 msgstr ""
-"Puneți instrumentul de măsurare în modul de ecran ca în imaginea de mai jos."
+"Puneți instrumentul de măsurare în modul de ecran ca în imaginea de mai jos, "
+"și asigurați-vă că este atașat ecranului."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
 #: ../src/gcm-calibrate-argyll.c:2247
-#, fuzzy
-#| msgid ""
-#| "Please set the measuring instrument to screen mode like the image below."
 msgid ""
 "Please set the measuring instrument to screen mode, and ensure it is "
 "attached to the screen."
 msgstr ""
-"Puneți instrumentul de măsurare în modul de ecran ca în imaginea de mai jos."
+"Puneți instrumentul de măsurare în modul de ecran, și asigurați-vă că este "
+"atașat ecranului."
 
 #. TRANSLATORS: title, the calibration failed
 #: ../src/gcm-calibrate-argyll.c:2321 ../src/gcm-calibrate-argyll.c:2369
@@ -547,7 +547,7 @@ msgstr "Utilizează oricum"
 #: ../src/gcm-calibrate-argyll.c:2487
 #, c-format
 msgid "Ready to read strip %s"
-msgstr "Gata pentru citirea benzii %s"
+msgstr "Pregătit pentru citirea benzii %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
 #: ../src/gcm-calibrate-argyll.c:2492
@@ -555,7 +555,7 @@ msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
 msgstr ""
-"Plasați culorimetrul pe zona albă de lângă literă, faceți clic și mențineți "
+"Plasați colorimetrul pe zona albă de lângă literă, faceți clic și mențineți "
 "comutatorul de măsurare."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
@@ -717,7 +717,7 @@ msgstr ""
 #. TRANSLATORS: dialog message, bullet item
 #: ../src/gcm-calibrate.c:606
 msgid "Reset your display to the factory defaults."
-msgstr "Resetați afișajul la valorile setările din fabrică."
+msgstr "Resetați afișajul la valorile din fabrică."
 
 #. TRANSLATORS: dialog message, bullet item
 #: ../src/gcm-calibrate.c:609
@@ -840,7 +840,7 @@ msgstr "Doriți să le instalați?"
 #. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
 #: ../src/gcm-calibrate.c:1005
 msgid "If you already have the correct file, you can skip this step."
-msgstr "Dacă deja aveți fișierul corect, puteți sări peste această fază."
+msgstr "Dacă deja aveți fișierul corect, puteți omite această fază."
 
 #. TRANSLATORS: button, skip installing a package
 #: ../src/gcm-calibrate.c:1010 ../src/gcm-prefs.c:702
@@ -975,7 +975,7 @@ msgstr "Introducere în calibrarea afișajului"
 msgid ""
 "This dialog will help calibrate your display and create a custom ICC profile."
 msgstr ""
-"Acest dialog că va ajuta să calibrați afișajul și să creați profiluri ICC "
+"Acest dialog vă va ajuta să calibrați afișajul și să creați profiluri ICC "
 "personalizate."
 
 #. TRANSLATORS: message text, telling the user they are in for the long haul
@@ -1009,7 +1009,7 @@ msgstr "Puteți repeta pașii de calibrare de câte ori doriți."
 #: ../src/gcm-calibrate-manual.c:254
 #, c-format
 msgid "Create table item %i/%i"
-msgstr "Creare element tabel %i/%i "
+msgstr "Creează element tabel %i/%i "
 
 #. TRANSLATORS: message text
 #: ../src/gcm-calibrate-manual.c:275
@@ -1039,14 +1039,12 @@ msgstr ""
 #. TRANSLATORS: error message
 #: ../src/gcm-client.c:1103
 msgid "This device already exists"
-msgstr ""
+msgstr "Acest dispozitiv există deja"
 
 #. TRANSLATORS: this is when the device is not recognized
 #: ../src/gcm-colorimeter.c:391
-#, fuzzy
-#| msgid "Please set the measuring instrument to screen mode."
 msgid "Measuring instrument not recognized"
-msgstr "Puneți instrumentul de măsurare în modul de ecran."
+msgstr "Instrumentul de măsurare nu este recunoscut"
 
 #. TRANSLATORS: this is the name of the internal panel
 #: ../src/gcm-device-xrandr.c:128
@@ -1061,7 +1059,7 @@ msgstr "Nu se poate încărca conținutul fișierului"
 #. TRANSLATORS: this is when the EDID cannot be parsed
 #: ../src/gcm-dump-edid.c:67
 msgid "Cannot parse EDID contents"
-msgstr "Nu pot analiza conținutul EDID"
+msgstr "Nu se poate analiza conținutul EDID"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:75
@@ -1071,11 +1069,10 @@ msgstr "Nume monitor"
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:80
 msgid "Vendor name"
-msgstr "Nume furnizor"
+msgstr "Numele comerciantului"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:85
-#| msgid "Serial number:"
 msgid "Serial number"
 msgstr "Număr de serie"
 
@@ -1096,7 +1093,6 @@ msgstr "Dimensiune"
 
 #. TRANSLATORS: this is debugging output for the supplied EDID file
 #: ../src/gcm-dump-edid.c:106
-#| msgid "Gamma:"
 msgid "Gamma"
 msgstr "Gama"
 
@@ -1114,68 +1110,53 @@ msgstr ""
 #: ../src/gcm-dump-edid.c:196
 #, c-format
 msgid "Saved %i bytes to %s"
-msgstr ""
+msgstr "S-au salvat %i octeți în %s"
 
 #. TRANSLATORS: we saved the EDID to a file - parameter is a filename
 #: ../src/gcm-dump-edid.c:201
 #, c-format
-#| msgid "Failed to parse file: %s"
 msgid "Failed to save EDID to %s"
-msgstr "Nu s-a putut salva EDID-ul în %s"
+msgstr "Nu s-a putut salva EDID în %s"
 
 #. TRANSLATORS: command line option: a list of files to install
 #: ../src/gcm-dump-profile.c:108
-#| msgid "Pr_ofile Viewer"
 msgid "Profiles to view"
 msgstr "Profiluri de vizualizat"
 
 #. TRANSLATORS: this just dumps the profile to the screen
 #: ../src/gcm-dump-profile.c:121
-#| msgid "ICC profile to install"
 msgid "ICC profile dump program"
 msgstr ""
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-fix-profile.c:124
-#, fuzzy
-#| msgid "Generating the profile"
 msgid "The description of the profile"
-msgstr "Se generează profilul"
+msgstr "Descrierea profilului"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-fix-profile.c:127
-#, fuzzy
-#| msgid "Generating the profile"
 msgid "The copyright of the profile"
-msgstr "Se generează profilul"
+msgstr "Drepturile de autor ale profilului"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-fix-profile.c:130
-#, fuzzy
-#| msgid "Generating the profile"
 msgid "The model of the profile"
-msgstr "Se generează profilul"
+msgstr "Modelul profilului"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-fix-profile.c:133
-#, fuzzy
-#| msgid "Generating the profile"
 msgid "The manufacturer of the profile"
-msgstr "Se generează profilul"
+msgstr "Fabricantul profilului"
 
 #. TRANSLATORS: command line option: a list of icc files to fix
 #: ../src/gcm-fix-profile.c:136
-#, fuzzy
-#| msgid "Pr_ofile Viewer"
 msgid "Profiles to fix"
-msgstr "Vizualizator pr_ofiluri"
+msgstr "Profiluri de reparat"
 
 #. TRANSLATORS: this fixes broken profiles
 #: ../src/gcm-fix-profile.c:147
-#, fuzzy
-#| msgid "ICC profile to install"
 msgid "ICC profile fix program"
-msgstr "Profil ICC de instalat"
+msgstr "Program de reparat profiluri ICC"
 
 #. TRANSLATORS: command line option: a list of catalogs to install
 #. TRANSLATORS: command line option: a list of files to install
@@ -1197,7 +1178,7 @@ msgstr "Nu s-a putut deschide profilul ICC"
 #: ../src/gcm-import.c:121
 #, c-format
 msgid "Failed to parse file: %s"
-msgstr "Nu s-a putut parsa fișierul: %s"
+msgstr "Nu s-a putut analiza fișierul: %s"
 
 #. TRANSLATORS: color profile already been installed
 #: ../src/gcm-import.c:156
@@ -1289,7 +1270,7 @@ msgstr "Intenție de randare (afișaj):"
 #. TRANSLATORS: this is the rendering intent of the printer
 #: ../src/gcm-inspect.c:430
 msgid "Rendering intent (softproof):"
-msgstr "Intenție de randare (softproof):"
+msgstr "Intenție de randare (probă software de culoare):"
 
 #. TRANSLATORS: this is filename of the default colorspace
 #: ../src/gcm-inspect.c:433
@@ -1303,10 +1284,8 @@ msgstr "Spațiu de culoare CMYK:"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:506
-#, fuzzy
-#| msgid "Show xserver properties"
 msgid "Show X11 properties"
-msgstr "Afișează proprietățile xserver"
+msgstr "Afișează proprietățile X11"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:509
@@ -1335,10 +1314,8 @@ msgstr "Program de inspecție EDID"
 
 #. TRANSLATORS: this is when the user does --type=mickeymouse
 #: ../src/gcm-inspect.c:548
-#, fuzzy
-#| msgid "Device or profile type not recognized, recognised types are:"
 msgid "Device type not recognized"
-msgstr "Dispozitiv sau tip de profil nerecunoscut, tipurile cunoscute sunt:"
+msgstr "Dispozitiv sau tip de profil nerecunoscut"
 
 #. command line argument, the ID of the device
 #: ../src/gcm-install-system-wide.c:123
@@ -1464,17 +1441,14 @@ msgstr "Profiluri ICC suportate"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
 #: ../src/gcm-prefs.c:687
-#, fuzzy
-#| msgid "Install calibration and profiling software?"
 msgid "Install missing calibration and profiling software?"
-msgstr "Instalați software de calibrare și profilare?"
+msgstr "Instalați software-ul de calibrare și profilare ce lipsește?"
 
 #. TRANSLATORS: dialog message saying the argyllcms is not installed
 #: ../src/gcm-prefs.c:691
-#, fuzzy
-#| msgid "Calibration and profiling software is not installed."
 msgid "Calibration and profiling software is not installed on this computer."
-msgstr "Software-ul de calibrare și profilare nu este instalat."
+msgstr ""
+"Software-ul de calibrare și profilare nu este instalat pe acest calculator."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
 #: ../src/gcm-prefs.c:693
@@ -1485,15 +1459,13 @@ msgstr ""
 
 #. TRANSLATORS: dialog message, asking if it's okay to install it
 #: ../src/gcm-prefs.c:695
-#, fuzzy
-#| msgid "Do you want them to be installed?"
 msgid "Do you want them to be automatically installed?"
-msgstr "Doriți să le instalați?"
+msgstr "Doriți să fie instalate automat?"
 
 #. TRANSLATORS: this is the sound description
 #: ../src/gcm-prefs.c:821
 msgid "Profiling completed"
-msgstr "Profilarea completă"
+msgstr "Profilare completă"
 
 #. TRANSLATORS: could not add virtual device
 #: ../src/gcm-prefs.c:877
@@ -1518,55 +1490,45 @@ msgstr "Nu s-a putut șterge fișierul"
 #. TRANSLATORS: this is when the button is sensitive
 #: ../src/gcm-prefs.c:1069
 msgid "Create a color profile for the selected device"
-msgstr "Crează un profil de culoare pentru dispozitivul selectat"
+msgstr "Creează un profil de culoare pentru dispozitivul selectat"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1074
-#| msgid "Cannot create profile: No device is selected"
 msgid "Cannot profile: No device is selected"
-msgstr "Nu s-a putu profila: Niciun dispozitiv selectat"
+msgstr "Nu s-a putut crea profilul: Niciun dispozitiv selectat"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1086
-#| msgid "Cannot create profile: The display device is not connected"
 msgid "Cannot calibrate: The device is not connected"
 msgstr "Nu s-a putut calibra: Dispozitivul de afișare nu este conectat"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1094
-#| msgid ""
-#| "Cannot create profile: The display driver does not support XRandR 1.3"
 msgid "Cannot calibrate: The display driver does not support XRandR 1.3"
 msgstr "Nu s-a putut calibra: Driverul de afișare nu suportă XRandR 1.3"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1102
-#| msgid "Cannot create profile: The measuring instrument is not plugged in"
 msgid "Cannot calibrate: The measuring instrument is not plugged in"
 msgstr "Nu s-a putut calibra: Instrumentul de măsurare nu este conectat"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1117
-#| msgid "Cannot create profile: The measuring instrument is not plugged in"
 msgid "Cannot profile: The measuring instrument is not plugged in"
-msgstr "Nu s-a putut profila: Instrumentul de măsurare nu este conectat"
+msgstr "Nu s-a putut crea profilul: Instrumentul de măsurare nu este conectat"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1125
-#| msgid ""
-#| "Cannot create profile: The measuring instrument does not support printer "
-#| "profiling"
 msgid ""
 "Cannot profile: The measuring instrument does not support printer profiling"
 msgstr ""
-"Nu s-a putut profila: Instrumentul de măsurare nu suportă profilarea "
+"Nu s-a putut crea profilul: Instrumentul de măsurare nu suportă profilarea "
 "imprimantei"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/gcm-prefs.c:1132
-#| msgid "Cannot create a profile for this type of device"
 msgid "Cannot profile this type of device"
-msgstr "Nu se poate profila acest tip de dispozitiv"
+msgstr "Nu se poate crea un profil pentru acest tip de dispozitiv"
 
 #. TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
 #. * Whilst this does not matter if you only have one monitor attached, it means you
@@ -1707,7 +1669,7 @@ msgstr "Dispozitiv adăugat"
 #. TRANSLATORS: this is a sound description
 #: ../src/gcm-prefs.c:1979
 msgid "Device removed"
-msgstr "Dispozitivul scos"
+msgstr "Dispozitiv eliminat"
 
 #. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
 #: ../src/gcm-prefs.c:2261
@@ -1812,12 +1774,12 @@ msgstr "%e %B %Y, %H:%M:%S"
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:533
 msgid "Perceptual"
-msgstr "Perceptual"
+msgstr "Perceptuală"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:537
 msgid "Relative colormetric"
-msgstr ""
+msgstr "Colorimetrică relativă"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:541
@@ -1827,7 +1789,7 @@ msgstr "Saturație"
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:545
 msgid "Absolute colormetric"
-msgstr ""
+msgstr "Colorimetrică absolută"
 
 #: ../data/gcm-calibrate.ui.h:1
 msgid "Blue:"
@@ -1909,7 +1871,6 @@ msgstr ""
 "într-o imagine."
 
 #: ../data/gcm-prefs.ui.h:2
-#| msgid "Failed to add virtual device"
 msgid "Add Virtual Device"
 msgstr "Adaugă dispozitiv virtual"
 
@@ -1928,9 +1889,8 @@ msgstr "Închide acest dialog"
 
 #. Section heading for device profile settings
 #: ../data/gcm-prefs.ui.h:11
-#| msgid "Color Profiles"
 msgid "Color Profile"
-msgstr "Profil de culoare"
+msgstr "Profiluri de culoare"
 
 #. The profile colorspace, e.g. RGB
 #: ../data/gcm-prefs.ui.h:13
@@ -1943,14 +1903,13 @@ msgstr "Contrast:"
 
 #. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
 #: ../data/gcm-prefs.ui.h:16
-#| msgid "Create a profile for the device"
 msgid "Create _Profile for Device"
 msgstr "Creează un _profil pentru dispozitiv"
 
 #. When the profile was created
 #: ../data/gcm-prefs.ui.h:18
 msgid "Created:"
-msgstr "Creat:"
+msgstr "Creat la:"
 
 #. Tab title, system wide defaults to use
 #: ../data/gcm-prefs.ui.h:20
@@ -1958,9 +1917,8 @@ msgid "Defaults"
 msgstr "Valori implicite"
 
 #: ../data/gcm-prefs.ui.h:21
-#| msgid "Permanently delete profile?"
 msgid "Delete the currently selected color profile"
-msgstr "Șterge profilul de culoare selectat"
+msgstr "Ștergeți profilul de culoare selectat"
 
 #: ../data/gcm-prefs.ui.h:22
 msgid ""
@@ -1972,21 +1930,18 @@ msgstr ""
 
 #. Section heading for device settings
 #: ../data/gcm-prefs.ui.h:24
-#| msgid "Devices"
 msgid "Device"
 msgstr "Dispozitiv"
 
 #. The manufacturer of the profile
 #: ../data/gcm-prefs.ui.h:26
-#| msgid "Manufacturer:"
 msgid "Device manufacturer:"
-msgstr "Producător dispozitiv:"
+msgstr "Producătorul dispozitivului:"
 
 #. The manufacturer of the profile
 #: ../data/gcm-prefs.ui.h:28
-#| msgid "Device removed"
 msgid "Device model:"
-msgstr "Model dispozitiv:"
+msgstr "Modelul dispozitivului:"
 
 #: ../data/gcm-prefs.ui.h:29
 msgid "Device type:"
@@ -1999,9 +1954,8 @@ msgstr "Dispozitive"
 
 #. If the profile contains a display correction table
 #: ../data/gcm-prefs.ui.h:34
-#| msgid "_Apply basic display correction"
 msgid "Display correction:"
-msgstr "Corecție de afișare:"
+msgstr "Afișează corecțiile:"
 
 #. What mode to use for display rendering intent
 #: ../data/gcm-prefs.ui.h:36
@@ -2029,7 +1983,7 @@ msgstr "Gama:"
 
 #: ../data/gcm-prefs.ui.h:44
 msgid "Import an ICC file from another location"
-msgstr "Importă un fișier ICC dintr-o altă locație"
+msgstr "Importă un fișier ICC din altă locație"
 
 #. The licence of the profile, normally non-free
 #: ../data/gcm-prefs.ui.h:46
@@ -2055,19 +2009,16 @@ msgid "Open the documentation"
 msgstr "Deschide documentația"
 
 #: ../data/gcm-prefs.ui.h:53
-#| msgid "Profile Precision"
 msgid "Profile Graphs"
-msgstr "Grafice de profilare"
+msgstr "Graficele profilului"
 
 #. The type of profile, e.g. display, scanner, etc.
 #: ../data/gcm-prefs.ui.h:55
-#| msgid "Pr_ofile Viewer"
 msgid "Profile type:"
-msgstr "Tip profil:"
+msgstr "Tipul profilului:"
 
 #. Tab title, currently installed profiles
 #: ../data/gcm-prefs.ui.h:57
-#| msgid "Color Profiles"
 msgid "Profiles"
 msgstr "Profiluri"
 
@@ -2107,7 +2058,7 @@ msgstr ""
 #. Technical color word for softproof rendering intent
 #: ../data/gcm-prefs.ui.h:68
 msgid "Softproof:"
-msgstr ""
+msgstr "Probă software de culoare:"
 
 #: ../data/gcm-prefs.ui.h:69
 msgid "The rendering intent is how one gamut size is mapped to another."
@@ -2151,46 +2102,39 @@ msgstr "Spațiu de lucru"
 
 #. This is a button to add a virtual device
 #: ../data/gcm-prefs.ui.h:77
-#| msgid "Add d_evice…"
 msgid "_Add Device"
 msgstr "_Adaugă dispozitiv"
 
 #: ../data/gcm-prefs.ui.h:78
-#| msgid "_Apply basic display correction"
 msgid "_Apply display correction"
 msgstr "_Aplică corecții afișajului"
 
 #. This is a button to delete the saved or virtual device
 #: ../data/gcm-prefs.ui.h:80
-#| msgid "Delete"
 msgid "_Delete Device"
-msgstr "Șter_ge dispozitivul"
+msgstr "Șterge _dispozitivul"
 
 #: ../data/gcm-prefs.ui.h:81
-#| msgid "Delete this profile"
 msgid "_Delete Profile"
 msgstr "Șter_ge profilul"
 
 #: ../data/gcm-prefs.ui.h:82
-#| msgid "Import ICC profile"
 msgid "_Import Profile"
 msgstr "_Importă profil"
 
 #: ../data/gcm-prefs.ui.h:83
 msgid "_Make Default"
-msgstr "Configurează ca i_mplicit"
+msgstr "Configurează ca _implicit"
 
 #. This resets the device to it's defaults, and removes any user tweaked settings.
 #: ../data/gcm-prefs.ui.h:85
-#| msgid "_Set System Default"
 msgid "_Reset to defaults"
 msgstr "_Resetează la valorile implicite"
 
 #: ../data/gcm-prefs.ui.h:86
-#| msgid "Set profile for _color managed applications"
 msgid "_Set profile for color managed applications"
 msgstr ""
-"_Definește profilul pentru aplicațiile cărora li se administrează culorile"
+"Definește profilul pentru aplicațiile cărora li _se administrează culorile"
 
 #~ msgid "Color"
 #~ msgstr "Culoare"
@@ -2233,19 +2177,19 @@ msgstr ""
 #~ msgstr "Cererea a eșuat:"
 
 #~ msgid "There are no ICC profiles assigned to this file"
-#~ msgstr "Nu există profiluri ICC asignate acestui fișier"
+#~ msgstr "Nu există profiluri ICC atribuite acestui fișier"
 
 #~ msgid "Get the profiles for a specific file"
 #~ msgstr "Obține profilurile unui fișier specific"
 
 #~ msgid "No colorimeter is attached."
-#~ msgstr "Nu există niciun culorimetru atașat."
+#~ msgstr "Nu există niciun colorimetru atașat."
 
 #~ msgid "This application was compiled without VTE support."
 #~ msgstr "Această aplicație a fost compilată fără suport pentru VTE."
 
 #~ msgid "The attached colorimeter is not capable of reading a spot color."
-#~ msgstr "Culorimetrul atașat nu este capabil să citească culori spot."
+#~ msgstr "Colorimetrul atașat nu este capabil să citească culori spot."
 
 #~ msgid "GNOME Color Manager Color Picker"
 #~ msgstr "Selector de culoare al Administratorului de culoare GNOME"
@@ -2364,7 +2308,7 @@ msgstr ""
 #~ msgstr "Rese_tează"
 
 #~ msgid "Reset the sliders to the default values"
-#~ msgstr "Resetează glisoarele la valorile implicite"
+#~ msgstr "Restabilește glisoarele la valorile implicite"
 
 #~ msgid ""
 #~ "The rendering intent defines how color should be transformed from one "
