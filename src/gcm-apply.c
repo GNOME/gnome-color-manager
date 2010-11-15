@@ -107,6 +107,7 @@ main (int argc, char **argv)
 	GcmDevice *device;
 	gchar *filename;
 	gchar *path;
+	const gchar *edid_md5;
 
 	const GOptionEntry options[] = {
 		{ "login", 'l', 0, G_OPTION_ARG_NONE, &login,
@@ -148,21 +149,26 @@ main (int argc, char **argv)
 		gcm_device_xrandr_set_remove_atom (GCM_DEVICE_XRANDR (device), !login);
 
 		/* do we have to generate a edid profile? */
-		filename = g_strdup_printf ("edid-%s.icc", gcm_device_xrandr_get_edid_md5 (GCM_DEVICE_XRANDR (device)));
-		path = g_build_filename (g_get_user_data_dir (), "icc", filename, NULL);
-		if (g_file_test (path, G_FILE_TEST_EXISTS)) {
-			g_debug ("auto-profile edid %s exists", path);
+		edid_md5 = gcm_device_xrandr_get_edid_md5 (GCM_DEVICE_XRANDR (device));
+		if (edid_md5 == NULL) {
+			g_warning ("no EDID data for device");
 		} else {
-			g_debug ("auto-profile edid does not exist, creating as %s", path);
-			ret = gcm_apply_create_icc_profile_for_edid (device, path, &error);
-			if (!ret) {
-				g_warning ("failed to create profile from EDID data: %s",
-					     error->message);
-				g_clear_error (&error);
+			filename = g_strdup_printf ("edid-%s.icc", edid_md5);
+			path = g_build_filename (g_get_user_data_dir (), "icc", filename, NULL);
+			if (g_file_test (path, G_FILE_TEST_EXISTS)) {
+				g_debug ("auto-profile edid %s exists", path);
+			} else {
+				g_debug ("auto-profile edid does not exist, creating as %s", path);
+				ret = gcm_apply_create_icc_profile_for_edid (device, path, &error);
+				if (!ret) {
+					g_warning ("failed to create profile from EDID data: %s",
+						     error->message);
+					g_clear_error (&error);
+				}
 			}
+			g_free (filename);
+			g_free (path);
 		}
-		g_free (filename);
-		g_free (path);
 
 		/* set gamma for device */
 		g_debug ("applying default profile for device: %s", gcm_device_get_id (device));
