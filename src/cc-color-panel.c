@@ -1274,24 +1274,9 @@ cc_color_panel_delete_cb (GtkWidget *widget, CcColorPanel *panel)
 static gboolean
 cc_color_panel_save_and_apply_current_device_cb (CcColorPanel *panel)
 {
-	gfloat localgamma;
-	gfloat brightness;
-	gfloat contrast;
 	GtkWidget *widget;
 	gboolean ret;
 	GError *error = NULL;
-
-	/* get values */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_gamma"));
-	localgamma = gtk_range_get_value (GTK_RANGE (widget));
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_brightness"));
-	brightness = gtk_range_get_value (GTK_RANGE (widget));
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_contrast"));
-	contrast = gtk_range_get_value (GTK_RANGE (widget));
-
-	gcm_device_set_gamma (panel->priv->current_device, localgamma);
-	gcm_device_set_brightness (panel->priv->current_device, brightness * 100.0f);
-	gcm_device_set_contrast (panel->priv->current_device, contrast * 100.0f);
 
 	/* save new profile */
 	ret = gcm_device_save (panel->priv->current_device, &error);
@@ -1311,28 +1296,6 @@ cc_color_panel_save_and_apply_current_device_cb (CcColorPanel *panel)
 out:
 	panel->priv->save_and_apply_id = 0;
 	return FALSE;
-}
-
-/**
- * cc_color_panel_reset_cb:
- **/
-static void
-cc_color_panel_reset_cb (GtkWidget *widget, CcColorPanel *panel)
-{
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_gamma"));
-	gtk_range_set_value (GTK_RANGE (widget), 1.0f);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_brightness"));
-	gtk_range_set_value (GTK_RANGE (widget), 0.0f);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_contrast"));
-	gtk_range_set_value (GTK_RANGE (widget), 1.0f);
-
-	/* if we've already queued a save and apply, ignore this */
-	if (panel->priv->save_and_apply_id != 0) {
-		g_debug ("ignoring extra save and apply, as one is already pending");
-		return;
-	}
-	panel->priv->save_and_apply_id =
-		g_timeout_add (50, (GSourceFunc) cc_color_panel_save_and_apply_current_device_cb, panel);
 }
 
 /**
@@ -1502,9 +1465,6 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	GtkTreeModel *model;
 	GtkTreePath *path;
 	GtkWidget *widget;
-	gfloat localgamma;
-	gfloat brightness;
-	gfloat contrast;
 	gboolean connected;
 	gchar *id = NULL;
 	gboolean ret;
@@ -1532,21 +1492,6 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	if (panel->priv->current_device == NULL)
 		goto out;
 
-	/* not a xrandr device */
-	kind = gcm_device_get_kind (panel->priv->current_device);
-	if (kind != GCM_DEVICE_KIND_DISPLAY) {
-		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "expander_fine_tuning"));
-		gtk_widget_set_sensitive (widget, FALSE);
-		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_reset"));
-		gtk_widget_set_sensitive (widget, FALSE);
-	} else {
-		/* show more UI */
-		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "expander_fine_tuning"));
-		gtk_widget_set_sensitive (widget, TRUE);
-		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_reset"));
-		gtk_widget_set_sensitive (widget, TRUE);
-	}
-
 	/* show broken devices */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hbox_problems"));
 	gtk_widget_hide (widget);
@@ -1567,19 +1512,6 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 		}
 	}
 
-	/* set adjustments */
-	panel->priv->setting_up_device = TRUE;
-	localgamma = gcm_device_get_gamma (panel->priv->current_device);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_gamma"));
-	gtk_range_set_value (GTK_RANGE (widget), localgamma);
-	brightness = gcm_device_get_brightness (panel->priv->current_device);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_brightness"));
-	gtk_range_set_value (GTK_RANGE (widget), brightness);
-	contrast = gcm_device_get_contrast (panel->priv->current_device);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_contrast"));
-	gtk_range_set_value (GTK_RANGE (widget), contrast);
-	panel->priv->setting_up_device = FALSE;
-
 	/* set new device */
 	gcm_list_store_profiles_set_from_device (panel->priv->list_store_profiles,
 						 panel->priv->current_device);
@@ -1593,8 +1525,6 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 
 	/* make sure selectable */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "combobox_profile"));
-	gtk_widget_set_sensitive (widget, TRUE);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_reset"));
 	gtk_widget_set_sensitive (widget, TRUE);
 
 	/* can we delete this device? */
@@ -1867,29 +1797,6 @@ out:
 		g_object_unref (dest);
 	if (profile != NULL)
 		g_object_unref (profile);
-}
-
-/**
- * cc_color_panel_slider_changed_cb:
- **/
-static void
-cc_color_panel_slider_changed_cb (GtkRange *range, CcColorPanel *panel)
-{
-	/* we're just setting up the device, not moving the slider */
-	if (panel->priv->setting_up_device) {
-		g_debug ("setting up device, so ignore");
-		return;
-	}
-
-	/* if we've already queued a save and apply, ignore this */
-	if (panel->priv->save_and_apply_id != 0) {
-		g_debug ("ignoring extra save and apply, as one is already pending");
-		return;
-	}
-
-	/* schedule a save and apply */
-	panel->priv->save_and_apply_id =
-		g_timeout_add (50, (GSourceFunc) cc_color_panel_save_and_apply_current_device_cb, panel);
 }
 
 /**
@@ -2711,9 +2618,6 @@ cc_color_panel_init (CcColorPanel *panel)
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_viewer"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (cc_color_panel_viewer_cb), panel);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_reset"));
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_reset_cb), panel);
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_delete"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (cc_color_panel_delete_cb), panel);
@@ -2724,8 +2628,6 @@ cc_color_panel_init (CcColorPanel *panel)
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_calibrate"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (cc_color_panel_calibrate_cb), panel);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "expander_fine_tuning"));
-	gtk_widget_set_sensitive (widget, FALSE);
 
 	/* set up virtual dialog */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "dialog_virtual"));
@@ -2772,23 +2674,6 @@ cc_color_panel_init (CcColorPanel *panel)
 	g_signal_connect (G_OBJECT (widget), "changed",
 			  G_CALLBACK (cc_color_panel_profile_combo_changed_cb), panel);
 
-	/* set ranges */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_gamma"));
-	gtk_range_set_range (GTK_RANGE (widget), 0.1f, 5.0f);
-	gtk_scale_add_mark (GTK_SCALE (widget), 1.0f, GTK_POS_TOP, "");
-	gtk_scale_add_mark (GTK_SCALE (widget), 1.8f, GTK_POS_TOP, "");
-	gtk_scale_add_mark (GTK_SCALE (widget), 2.2f, GTK_POS_TOP, "");
-
-	/* set ranges */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_brightness"));
-	gtk_range_set_range (GTK_RANGE (widget), 0.0f, 0.9f);
-//	gtk_scale_add_mark (GTK_SCALE (widget), 0.0f, GTK_POS_TOP, "");
-
-	/* set ranges */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_contrast"));
-	gtk_range_set_range (GTK_RANGE (widget), 0.1f, 1.0f);
-//	gtk_scale_add_mark (GTK_SCALE (widget), 1.0f, GTK_POS_TOP, "");
-
 	/* use a device client array */
 	panel->priv->gcm_client = gcm_client_new ();
 	gcm_client_set_use_threads (panel->priv->gcm_client, TRUE);
@@ -2824,24 +2709,6 @@ cc_color_panel_init (CcColorPanel *panel)
 	/* add infobar to defaults pane */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "vbox_working_spaces"));
 	gtk_box_pack_start (GTK_BOX(widget), panel->priv->info_bar_profiles, TRUE, FALSE, 0);
-
-	/* connect up sliders */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_contrast"));
-	g_signal_connect (widget, "value-changed",
-			  G_CALLBACK (cc_color_panel_slider_changed_cb), panel);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_brightness"));
-	g_signal_connect (widget, "value-changed",
-			  G_CALLBACK (cc_color_panel_slider_changed_cb), panel);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hscale_gamma"));
-	g_signal_connect (widget, "value-changed",
-			  G_CALLBACK (cc_color_panel_slider_changed_cb), panel);
-
-	/* do we show the fine tuning box */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "expander_fine_tuning"));
-	g_settings_bind (panel->priv->settings,
-			 GCM_SETTINGS_SHOW_FINE_TUNING,
-			 widget, "visible",
-			 G_SETTINGS_BIND_DEFAULT | G_SETTINGS_BIND_NO_SENSITIVITY);
 
 	/* get main window */
 	panel->priv->main_window = gtk_widget_get_toplevel (panel->priv->info_bar_profiles);
