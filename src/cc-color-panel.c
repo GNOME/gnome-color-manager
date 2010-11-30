@@ -2836,24 +2836,6 @@ cc_color_panel_init (CcColorPanel *panel)
 	g_signal_connect (widget, "value-changed",
 			  G_CALLBACK (cc_color_panel_slider_changed_cb), panel);
 
-	/* connect up global widget */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "checkbutton_display"));
-	g_settings_bind (panel->priv->settings,
-			 GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION,
-			 widget, "active",
-			 G_SETTINGS_BIND_DEFAULT);
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_checkbutton_changed_cb), panel);
-
-	/* connect up atom widget */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "checkbutton_profile"));
-	g_settings_bind (panel->priv->settings,
-			 GCM_SETTINGS_SET_ICC_PROFILE_ATOM,
-			 widget, "active",
-			 G_SETTINGS_BIND_DEFAULT);
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_checkbutton_changed_cb), panel);
-
 	/* do we show the fine tuning box */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "expander_fine_tuning"));
 	g_settings_bind (panel->priv->settings,
