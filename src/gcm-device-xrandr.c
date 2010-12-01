@@ -435,6 +435,23 @@ gcm_device_xrandr_generate_profile (GcmDevice *device, GError **error)
 		profile = NULL;
 		goto out;
 	}
+
+	/* set 'ICC meta Tag for Monitor Profiles' data */
+	gcm_profile_set_data (profile,
+			      "EDID_md5",
+			      gcm_edid_get_checksum (priv->edid));
+	gcm_profile_set_data (profile,
+			      "EDID_model",
+			      gcm_edid_get_monitor_name (priv->edid));
+	gcm_profile_set_data (profile,
+			      "EDID_serial",
+			      gcm_edid_get_serial_number (priv->edid));
+	gcm_profile_set_data (profile,
+			      "EDID_mnft",
+			      gcm_edid_get_pnp_id (priv->edid));
+	gcm_profile_set_data (profile,
+			      "EDID_manufacturer",
+			      gcm_edid_get_vendor_name (priv->edid));
 out:
 	g_free (title);
 	return profile;
