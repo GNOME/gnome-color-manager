@@ -242,7 +242,7 @@ cc_color_panel_viewer_cb (GtkWidget *widget, CcColorPanel *panel)
 	gchar *command;
 
 	/* get xid */
-	xid = gdk_x11_drawable_get_xid (gtk_widget_get_window (GTK_WIDGET (panel->priv->main_window)));
+	xid = gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET (panel->priv->main_window)));
 
 	/* run with modal set */
 	command = g_strdup_printf ("%s/gcm-viewer --parent-window %u", BINDIR, xid);

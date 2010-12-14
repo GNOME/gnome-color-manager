@@ -225,7 +225,7 @@ gcm_x11_screen_assign (GcmX11Screen *screen, GdkScreen *gdk_screen, GError **err
 	}
 
 	priv->gdk_root = gdk_screen_get_root_window (priv->gdk_screen);
-	priv->xroot = gdk_x11_drawable_get_xid (priv->gdk_root);
+	priv->xroot = gdk_x11_window_get_xid (priv->gdk_root);
 	priv->xdisplay = dpy;
 	priv->xscreen = gdk_x11_screen_get_xscreen (priv->gdk_screen);
 	priv->randr_event_base = event_base;

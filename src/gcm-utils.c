@@ -156,7 +156,7 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 
 	/* get xid of this window */
 	if (window != NULL)
-		xid = gdk_x11_drawable_get_xid (gtk_widget_get_window (GTK_WIDGET(window)));
+		xid = gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET(window)));
 
 	/* we're expecting an array of packages */
 	packages = g_strsplit (package_name, "|", 1);
