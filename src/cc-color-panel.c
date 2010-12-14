@@ -1269,36 +1269,6 @@ cc_color_panel_delete_cb (GtkWidget *widget, CcColorPanel *panel)
 }
 
 /**
- * cc_color_panel_save_and_apply_current_device_cb:
- **/
-static gboolean
-cc_color_panel_save_and_apply_current_device_cb (CcColorPanel *panel)
-{
-	GtkWidget *widget;
-	gboolean ret;
-	GError *error = NULL;
-
-	/* save new profile */
-	ret = gcm_device_save (panel->priv->current_device, &error);
-	if (!ret) {
-		g_warning ("failed to save config: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* actually set the new profile */
-	ret = gcm_device_apply (panel->priv->current_device, &error);
-	if (!ret) {
-		g_warning ("failed to apply profile: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-out:
-	panel->priv->save_and_apply_id = 0;
-	return FALSE;
-}
-
-/**
  * cc_color_panel_add_devices_columns:
  **/
 static void
@@ -1495,6 +1465,7 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	/* show broken devices */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hbox_problems"));
 	gtk_widget_hide (widget);
+	kind = gcm_device_get_kind (panel->priv->current_device);
 	if (kind == GCM_DEVICE_KIND_DISPLAY) {
 		ret = gcm_device_get_connected (panel->priv->current_device);
 		if (ret) {
@@ -2302,52 +2273,6 @@ out:
 	g_free (colorspace_rgb);
 	g_free (colorspace_cmyk);
 	return FALSE;
-}
-
-/**
- * cc_color_panel_apply_all_devices_idle_cb:
- **/
-static gboolean
-cc_color_panel_apply_all_devices_idle_cb (CcColorPanel *panel)
-{
-	GPtrArray *array = NULL;
-	GcmDevice *device;
-	GError *error = NULL;
-	gboolean ret;
-	guint i;
-
-	/* set for each output */
-	array = gcm_client_get_devices (panel->priv->gcm_client);
-	for (i=0; i<array->len; i++) {
-		device = g_ptr_array_index (array, i);
-
-		/* we don't care */
-		ret = gcm_device_get_connected (device);
-		if (!ret)
-			continue;
-
-		/* set gamma for device */
-		ret = gcm_device_apply (device, &error);
-		if (!ret) {
-			g_warning ("failed to set profile: %s", error->message);
-			g_error_free (error);
-			break;
-		}
-	}
-	g_ptr_array_unref (array);
-	panel->priv->apply_all_devices_id = 0;
-	return FALSE;
-}
-
-/**
- * cc_color_panel_checkbutton_changed_cb:
- **/
-static void
-cc_color_panel_checkbutton_changed_cb (GtkWidget *widget, CcColorPanel *panel)
-{
-	/* set the new setting */
-	panel->priv->apply_all_devices_id =
-		g_idle_add ((GSourceFunc) cc_color_panel_apply_all_devices_idle_cb, panel);
 }
 
 /**
