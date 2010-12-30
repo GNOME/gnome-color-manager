@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2010-12-30 00:10+0100\n"
-"PO-Revision-Date: 2010-12-30 01:42+0100\n"
+"PO-Revision-Date: 2010-12-30 09:57+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -45,17 +45,16 @@ msgid "Manage ICC color profiles"
 msgstr "Hantera ICC-färgprofiler"
 
 #: ../data/gnome-color-manager.schemas.in.h:1
-#, fuzzy
 msgid "Gamma is adjusted to affect the color of the attached monitor. Traditionally Linux has used a gamma value of 1.0, but this makes monitors look washed out compared Windows XP or OS X. Apple traditionally used a value of 1.8 for a long time, but now use the same value as Microsoft. Microsoft has always used a value of 2.2."
-msgstr "Gamma justeras för att påverka färgen på den anslutna skärmen. Traditionellt sett har Linux använt ett gammavärde på 1.0, men detta gör att skärmar ser urtvättade ut i jämförelse med Windows XP eller OSX. Apple har traditionellt sett använt ett värde på 1.8 under en längre tid men använder nu samma värde som Microsoft. Microsoft har alltid använt ett värde på 2.2."
+msgstr "Gamma justeras för att påverka färgen på den anslutna skärmen. Traditionellt sett har Linux använt ett gammavärde på 1.0, men detta gör att skärmar ser urtvättade ut i jämförelse med Windows XP eller OS X. Apple har traditionellt sett använt ett värde på 1.8 under en längre tid men använder nu samma värde som Microsoft. Microsoft har alltid använt ett värde på 2.2."
 
 #: ../data/gnome-color-manager.schemas.in.h:2
 msgid "If set to TRUE then external disks are searched for device ICC profiles at startup, for instance looking in the OSX library folder or Windows XP system folders. This may increase startup time if disks need to be spun up to be searched."
-msgstr ""
+msgstr "Om inställd till TRUE så kommer externa diskar att genomsökas efter ICC-enhetsprofiler vid uppstart, till exempel leta i OS X biblioteksmapp eller systemmappar i Windows XP. Detta kan öka uppstartstiden om diskar behöver varvas upp för att genomsökas."
 
 #: ../data/gnome-color-manager.schemas.in.h:3
 msgid "If set to TRUE then the __ICC_PROFILE hint will be set, which applications use to convert true color to screen color."
-msgstr ""
+msgstr "Om inställd till TRUE så kommer hinten __ICC_PROFILE att ställas in, vilket program kommer att använda för att konvertera verklig färg till skärmfärg."
 
 #: ../data/gnome-color-manager.schemas.in.h:4
 msgid "If set to TRUE then the fine tuning controls are visible. This allows the user to change the display profile outside of what the ICC profile suggests and is only recommended for advanced users."
@@ -67,19 +66,19 @@ msgstr ""
 
 #: ../data/gnome-color-manager.schemas.in.h:6
 msgid "Set the _ICC_PROFILE hint for applications."
-msgstr ""
+msgstr "Ställ in hinten _ICC_PROFILE för program."
 
 #: ../data/gnome-color-manager.schemas.in.h:7
 msgid "Show the fine tuning controls for display devices."
-msgstr ""
+msgstr "Visa finjusteringskontroller för skärmenheter."
 
 #: ../data/gnome-color-manager.schemas.in.h:8
 msgid "The CMYK profile filename to be used by applications by default."
-msgstr ""
+msgstr "Filnamnet för CMYK-profilen som ska användas av program som standard."
 
 #: ../data/gnome-color-manager.schemas.in.h:9
 msgid "The RGB profile filename to be used by applications by default."
-msgstr ""
+msgstr "Filnamnet för RGB-profilen som ska användas av program som standard."
 
 #: ../data/gnome-color-manager.schemas.in.h:10
 msgid "The default CMYK profile."
@@ -99,11 +98,11 @@ msgstr "Standardgamma att använda för skärmar utan tidigare inställda värde
 
 #: ../data/gnome-color-manager.schemas.in.h:14
 msgid "The duration between sending notifications to recalibrate a display."
-msgstr ""
+msgstr "Längd mellan sändning av notifieringar om att kalibrera om en skärm."
 
 #: ../data/gnome-color-manager.schemas.in.h:15
 msgid "The duration between sending notifications to recalibrate a printer."
-msgstr ""
+msgstr "Längd mellan sändning av notifieringar om att kalibrera om en skrivare."
 
 #: ../data/gnome-color-manager.schemas.in.h:16
 msgid "The length of calibration, as this is proportional to the accuracy. The option 'short' creates a quick profile, 'normal' a regular one, and 'long' takes a really long time, but is more precise and creates a better profile. Use 'ask' if you want the user to choose."
@@ -119,11 +118,11 @@ msgstr ""
 
 #: ../data/gnome-color-manager.schemas.in.h:19
 msgid "This is the number of seconds in between notifying the user to recalibrate each display device. Set to 0 to disable the notification."
-msgstr ""
+msgstr "Detta är antalet sekunder mellan notifiering av användaren om att kalibrera om varje skärmenhet. Ställ in till 0 för att inaktivera notifieringen."
 
 #: ../data/gnome-color-manager.schemas.in.h:20
 msgid "This is the number of seconds in between notifying the user to recalibrate each printer device. Set to 0 to disable the notification."
-msgstr ""
+msgstr "Detta är antalet sekunder mellan notifiering av användaren om att kalibrera om varje skrivarenhet. Ställ in till 0 för att inaktivera notifieringen."
 
 #: ../data/gnome-color-manager.schemas.in.h:21
 msgid "Whether ICC profiles should be loaded from external disks."
@@ -561,7 +560,7 @@ msgstr "Profilprecision"
 #. TRANSLATORS: this is the message body for the chart selection
 #: ../src/gcm-calibrate.c:486
 msgid "A higher precision profile provides higher accuracy in color matching but requires more time for reading the color patches."
-msgstr ""
+msgstr "En högre precisionsprofil tillhandahåller högre precision i färgmatchningen men kräver mer tid för att läsa färgmätningsrutorna."
 
 #. TRANSLATORS: this is the message body for the chart selection
 #: ../src/gcm-calibrate.c:489
@@ -581,7 +580,7 @@ msgstr "Anpassad"
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate.c:600
 msgid "Before calibrating the display, it is recommended to configure your display with the following settings to get optimal results."
-msgstr ""
+msgstr "Det rekommenderas att konfigurera din skärm med följande inställningar för att få optimala resultat före du kalibrerar skärmen."
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate.c:603
@@ -606,17 +605,17 @@ msgstr "Konfigurera din skärm med anpassade färginställningar och försäkra 
 #. TRANSLATORS: dialog message, addition to bullet item
 #: ../src/gcm-calibrate.c:615
 msgid "If custom color is not available then use a 6500K color temperature."
-msgstr ""
+msgstr "Om anpassad färg inte är tillgänglig så använd en färgtemperatur på 6500K."
 
 #. TRANSLATORS: dialog message, bullet item
 #: ../src/gcm-calibrate.c:618
 msgid "Adjust the display brightness to a comfortable level for prolonged viewing."
-msgstr ""
+msgstr "Justera skärmens ljusstyrka till en komfortabel nivå för visning under längre perioder."
 
 #. TRANSLATORS: dialog message, suffix
 #: ../src/gcm-calibrate.c:621
 msgid "For best results, the display should have been powered for at least 15 minutes before starting the calibration."
-msgstr ""
+msgstr "För bästa resultat bör skärmen vara påslagen minst 15 minuter före kalibreringen påbörjas."
 
 #: ../src/gcm-calibrate.c:625
 msgid "Display setup"
@@ -724,7 +723,7 @@ msgstr "Välj ett kalibreringsmål"
 #. * this: http://www.colorreference.de/targets/target.jpg
 #: ../src/gcm-calibrate.c:1032
 msgid "Before profiling the device, you have to manually capture an image of a calibration target and save it as a TIFF image file."
-msgstr ""
+msgstr "För enheten profileras så måste du manuellt ta en bild på ett kalibreringsmål och spara det som en TIFF-bildfil."
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate.c:1037
@@ -734,17 +733,17 @@ msgstr "Försäkra dig om att kontrast och ljusstyrka inte är ändrade och att 
 #. TRANSLATORS: dialog message, suffix
 #: ../src/gcm-calibrate.c:1040
 msgid "The device sensor should have been cleaned prior to scanning and the output file resolution should be at least 200dpi."
-msgstr ""
+msgstr "Enhetssensorn bör ha rengjorts före avläsningen och utdatafilens upplösning bör vara minst 200 dpi."
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate.c:1046
 msgid "Ensure that the white-balance has not been modified by the camera and that the lens is clean."
-msgstr ""
+msgstr "Försäkra dig om att vitbalansen inte har ändrats av kameran och att linsen är rengjord."
 
 #. TRANSLATORS: dialog message, suffix
 #: ../src/gcm-calibrate.c:1050
 msgid "For best results, the reference target should also be less than two years old."
-msgstr ""
+msgstr "För bästa resultat bör referensmålet vara mindre än två år gammalt."
 
 #. TRANSLATORS: this is the message body for the chart selection
 #: ../src/gcm-calibrate.c:1053
@@ -825,7 +824,7 @@ msgstr "Det bör endast ta ett par minuter."
 #. * fovea (center bit of the eye) tries to 'pick out' a colour, rather than take the average reading
 #: ../src/gcm-calibrate-manual.c:239
 msgid "It may help to sit further from the screen or to squint at the calibration images in order to accurately compare the colors."
-msgstr ""
+msgstr "Det kan hjälpa att sitta längre från skärmen eller att kisa på kalibreringsbilderna för att bättre kunna jämföra färgerna."
 
 #. TRANSLATORS: message text, tell the use that they can go back and forwards, as the human eye sucks
 #: ../src/gcm-calibrate-manual.c:242
@@ -836,12 +835,12 @@ msgstr "Du kan upprepa kalibreringsstegen så många gånger som du önskar."
 #: ../src/gcm-calibrate-manual.c:254
 #, c-format
 msgid "Create table item %i/%i"
-msgstr ""
+msgstr "Skapa tabellobjekt %i/%i"
 
 #. TRANSLATORS: message text
 #: ../src/gcm-calibrate-manual.c:275
 msgid "Please try to match up the gray square with the surrounding alternating bars. You should match the brightness first, and then if required change the color tint so it looks plain gray."
-msgstr ""
+msgstr "Försök att matcha den grå fyrkanten med en omgivande rutorna. Du bör matcha ljusstyrkan först och sedan, om det krävs, ändra färgtoningen  så att den ser helt grå ut."
 
 #. TRANSLATORS: dialog title
 #: ../src/gcm-calibrate-manual.c:372
@@ -1858,7 +1857,7 @@ msgstr "Serienummer:"
 
 #: ../data/gcm-prefs.ui.h:66
 msgid "Set a property on the system so applications use the default display profile"
-msgstr ""
+msgstr "Ställ in en egenskap på systemet så att program använder standardprofilen för skärmen"
 
 #. Technical color word for softproof rendering intent
 #: ../data/gcm-prefs.ui.h:68
@@ -1905,7 +1904,7 @@ msgstr "T_illämpa skärmkorrigering"
 #. This is a button to delete the saved or virtual device
 #: ../data/gcm-prefs.ui.h:80
 msgid "_Delete Device"
-msgstr "_Ta bort enhet"
+msgstr "Ta _bort enhet"
 
 #: ../data/gcm-prefs.ui.h:81
 msgid "_Delete Profile"
