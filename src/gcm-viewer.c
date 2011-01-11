@@ -23,6 +23,7 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#include <gdk/gdkx.h>
 #include <glib/gstdio.h>
 #include <locale.h>
 #include <canberra-gtk.h>
@@ -488,7 +489,7 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 _xid)
 	GdkWindow *our_window;
 
 	display = gdk_display_get_default ();
-	parent_window = gdk_window_foreign_new_for_display (display, _xid);
+	parent_window = gdk_x11_window_foreign_new_for_display (display, _xid);
 	if (parent_window == NULL) {
 		g_warning ("failed to get parent window");
 		return;

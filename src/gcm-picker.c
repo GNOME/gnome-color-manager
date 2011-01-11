@@ -28,6 +28,7 @@
 #include <gio/gio.h>
 #include <locale.h>
 #include <gtk/gtk.h>
+#include <gdk/gdkx.h>
 #include <lcms2.h>
 
 #include "gcm-calibrate-argyll.h"
@@ -373,7 +374,7 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 _xid)
 	GdkWindow *our_window;
 
 	display = gdk_display_get_default ();
-	parent_window = gdk_window_foreign_new_for_display (display, _xid);
+	parent_window = gdk_x11_window_foreign_new_for_display (display, _xid);
 	our_window = gtk_widget_get_window (GTK_WIDGET (window));
 
 	/* set this above our parent */

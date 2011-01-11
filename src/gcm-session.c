@@ -23,6 +23,7 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#include <gdk/gdkx.h>
 #include <locale.h>
 #include <libnotify/notify.h>
 
@@ -216,7 +217,7 @@ gcm_session_get_profile_for_window (guint xid, GError **error)
 	g_debug ("getting profile for %i", xid);
 
 	/* get window for xid */
-	window = gdk_window_foreign_new (xid);
+	window = gdk_x11_window_foreign_new_for_display (gdk_display_get_default (), xid);
 	if (window == NULL) {
 		g_set_error (error, 1, 0, "failed to find window with xid %i", xid);
 		goto out;
