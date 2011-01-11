@@ -169,7 +169,7 @@ gcm_sample_window_enter_notify_cb (GtkWidget *widget, GdkEventCrossing *event, G
 	/* hide cursor */
 	cursor = gdk_cursor_new_for_display (gdk_display_get_default (), GDK_BLANK_CURSOR);
 	gdk_window_set_cursor (gtk_widget_get_window (widget), cursor);
-	gdk_cursor_unref (cursor);
+	g_object_unref (cursor);
 
 	return FALSE;
 }
