@@ -3,7 +3,7 @@ AC_PREREQ(2.63)
 
 m4_define([gcm_major_version], [2])
 m4_define([gcm_minor_version], [91])
-m4_define([gcm_micro_version], [4])
+m4_define([gcm_micro_version], [5])
 m4_define([gcm_version],
           [gcm_major_version.gcm_minor_version.gcm_micro_version])
 
