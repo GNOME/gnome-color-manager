@@ -1,5 +1,6 @@
 INCLUDES =							\
 	-DI_KNOW_THE_LIBCOLOR_GLIB_API_IS_SUBJECT_TO_CHANGE	\
+	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE			\
 	-DBINDIR=\"$(bindir)\"					\
 	-I$(top_srcdir)/libcolor-glib				\
 	$(GLIB_CFLAGS)						\

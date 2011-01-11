@@ -19,6 +19,7 @@ INCLUDES = \
 	-DLOCALSTATEDIR=\""$(localstatedir)"\" 			\
 	-DTESTDATADIR=\""$(top_srcdir)/data/tests"\"		\
 	-DI_KNOW_THE_LIBCOLOR_GLIB_API_IS_SUBJECT_TO_CHANGE	\
+	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE			\
 	-DPACKAGE_DATA_DIR=\""$(datadir)"\"			\
 	-DPACKAGE_LOCALE_DIR=\""$(prefix)/$(DATADIRNAME)/locale"\"
 

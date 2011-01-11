@@ -3,6 +3,7 @@ INCLUDES =							\
 	$(GUDEV_CFLAGS)						\
 	$(GTK_CFLAGS)						\
 	-I$(top_srcdir)/libcolor-glib				\
+	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE			\
 	-DI_KNOW_THE_LIBCOLOR_GLIB_API_IS_SUBJECT_TO_CHANGE
 
 COLOR_GLIB_LIBS =						\

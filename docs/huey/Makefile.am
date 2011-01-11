@@ -1,6 +1,7 @@
 INCLUDES =							\
 	-I$(top_srcdir)/libcolor-glib				\
 	-DI_KNOW_THE_LIBCOLOR_GLIB_API_IS_SUBJECT_TO_CHANGE	\
+	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE			\
 	-DGCM_I_KNOW_THIS_IS_PRIVATE				\
 	$(GUDEV_CFLAGS)						\
 	$(GTK_CFLAGS)						\
