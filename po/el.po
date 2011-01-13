@@ -1,20 +1,20 @@
-#
 # Michael Kotsarinis <mk73628@hotmail.com>, 2010.
 # Simos Xenitellis <simos@gnome.org>, 2010.
-#
+# Michael Kotsarinis <mk73628@gmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-13 12:18+0200\n"
-"PO-Revision-Date: 2010-09-20 11:39+0200\n"
-"Last-Translator: Bakaoukas Nikolaos <nikolaos.x1@gmail.com>\n"
-"Language-Team: Greek <team@gnome.gr>\n"
+"POT-Creation-Date: 2011-01-13 12:20+0200\n"
+"PO-Revision-Date: 2011-01-13 11:23+0300\n"
+"Last-Translator: Michael Kotsarinis <mk73628@gmail.com>\n"
+"Language-Team: team@gnome.gr\n"
 "Language: el\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=n>1;\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Virtaal 0.6.1\n"
 "X-Poedit-Language: Greek\n"
 "X-Poedit-Country: GREECE\n"
 
@@ -36,23 +36,20 @@ msgid "Install ICC profiles"
 msgstr "Εγκατάσταση προφίλ ICC"
 
 #: ../data/gcm-prefs.desktop.in.h:1
-#, fuzzy
 msgid "Color"
-msgstr "Χρωματικός χώρος:"
+msgstr "Χρώμα"
 
 #: ../data/gcm-prefs.desktop.in.h:2
 msgid "Manage ICC color profiles"
 msgstr "Διαχείριση προφίλ χρωμάτων ICC"
 
 #: ../data/gcm-viewer.desktop.in.h:1
-#, fuzzy
 msgid "Color Profile Viewer"
-msgstr "Προφίλ για προβολή"
+msgstr "Προβολή χρωματικών προφίλ"
 
 #: ../data/gcm-viewer.desktop.in.h:2
-#, fuzzy
 msgid "Inspect and compare installed color profiles"
-msgstr "Εγκατάσταση προφίλ χρώματος συστήματος"
+msgstr "Επιθεώρηση και σύγκριση εγκατεστημένων προφίλ χρώματος"
 
 #. TRANSLATORS: turn on all debugging
 #: ../libcolor-glib/gcm-debug.c:104
@@ -141,9 +138,8 @@ msgid "Failed to copy file"
 msgstr "Αποτυχία αντιγραφής αρχείου"
 
 #: ../src/cc-color-panel.c:484
-#, fuzzy
 msgid "Failed to get metadata from image"
-msgstr "Αποτυχία διαγραφής αρχείου"
+msgstr "Αποτυχία λήψης μεταδεδομένων από την εικόνα"
 
 #. TRANSLATORS: could not add virtual device
 #: ../src/cc-color-panel.c:501 ../src/cc-color-panel.c:1123
@@ -162,19 +158,13 @@ msgstr "Αποτυχία προσθήκης εικονικής συσκευής"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
 #: ../src/cc-color-panel.c:700
-#, fuzzy
 msgid "Install calibration and profiling software?"
-msgstr ""
-"Να γίνει εγκατάσταση του απαιτούμενου λογισμικού βαθμονόμησης και "
-"δημιουργίας προφίλ;"
+msgstr "Να γίνει εγκατάσταση λογισμικού βαθμονόμησης και δημιουργίας προφίλ;"
 
 #. TRANSLATORS: dialog message saying the argyllcms is not installed
 #: ../src/cc-color-panel.c:704
-#, fuzzy
 msgid "Calibration and profiling software is not installed."
-msgstr ""
-"Δεν έχει εγκατασταθεί σε αυτό τον υπολογιστή λογισμικό βαθμονόμησης και "
-"δημιουργίας προφίλ."
+msgstr "Δεν έχει εγκατασταθεί λογισμικό βαθμονόμησης και δημιουργίας προφίλ."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
 #: ../src/cc-color-panel.c:706
@@ -220,49 +210,45 @@ msgstr "Δημιουργία προφίλ χρώματος για την επι�
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/cc-color-panel.c:1351
-#, fuzzy
 msgid "Cannot create profile: No device is selected"
-msgstr "Αδύνατη η δημιουργία προφίλ: Δεν έχει επιλεγεί συσκευή"
+msgstr "Αδύνατη η δημιουργία προφίλ: Δεν έχει επιλεχθεί συσκευή"
 
 #. TRANSLATORS: this is when the button is insensitive because the distro compiled GCM without VTE
 #: ../src/cc-color-panel.c:1362
 msgid "Cannot create profile: Virtual console support is missing"
-msgstr ""
+msgstr "Αδυναμία δημιουργίας προφίλ: Λείπει η υποστήριξη εικονικής κονσόλας"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/cc-color-panel.c:1374
-#, fuzzy
 msgid "Cannot create profile: The display device is not connected"
-msgstr "Αδύνατη η βαθμονόμηση: Η συσκευή δεν είναι συνδεδεμένη"
+msgstr ""
+"Αδύνατη η δημιουργία προφίλ: Η συσκευή απεικόνισης δεν είναι συνδεδεμένη"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/cc-color-panel.c:1382
-#, fuzzy
 msgid "Cannot create profile: The display driver does not support XRandR 1.3"
 msgstr ""
-"Αδύνατη η βαθμονόμηση: Ο οδηγός της οθόνης δεν υποστηρίζει το XRandR 1.3"
+"Αδύνατη η δημιουργία προφίλ: Ο οδηγός της οθόνης δεν υποστηρίζει το XRandR "
+"1.3"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/cc-color-panel.c:1390 ../src/cc-color-panel.c:1405
-#, fuzzy
 msgid "Cannot create profile: The measuring instrument is not plugged in"
 msgstr "Αδύνατη η δημιουργία προφίλ: Το όργανο μέτρησης δεν έχει συνδεθεί"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/cc-color-panel.c:1413
-#, fuzzy
 msgid ""
 "Cannot create profile: The measuring instrument does not support printer "
 "profiling"
 msgstr ""
-"Αδύνατη η βαθμονόμηση: το όργανο μέτρησης δεν υποστηρίζει δημιουργία προφίλ "
-"εκτυπωτών"
+"Αδύνατη η δημιουργία προφίλ: το όργανο μέτρησης δεν υποστηρίζει δημιουργία "
+"προφίλ εκτυπωτών"
 
 #. TRANSLATORS: this is when the button is insensitive
 #: ../src/cc-color-panel.c:1420
-#, fuzzy
 msgid "Cannot create a profile for this type of device"
-msgstr "Αδύνατη η βαθμονόμηση αυτού του τύπου συσκευής"
+msgstr "Αδύνατη η δημιουργία προφίλ για αυτόν τον τύπο συσκευής"
 
 #: ../src/cc-color-panel.c:1479
 msgid "Per-device settings not supported. Check your display driver."
@@ -307,17 +293,15 @@ msgstr "Δεν υπάρχουν διαθέσιμοι %s χρωματικοί χ�
 #: ../src/cc-color-panel.c:2127 ../src/gcm-inspect.c:196
 #: ../src/gcm-inspect.c:265 ../src/gcm-inspect.c:332 ../src/gcm-inspect.c:394
 #: ../src/gcm-inspect.c:464 ../src/gcm-utils.c:192
-#, fuzzy
 msgid "The request failed:"
-msgstr "Το αίτημα απέτυχε"
+msgstr "Το αίτημα απέτυχε:"
 
 #. TRANSLATORS: no DBus session bus
 #: ../src/cc-color-panel.c:2161 ../src/gcm-inspect.c:178
 #: ../src/gcm-inspect.c:247 ../src/gcm-inspect.c:315 ../src/gcm-inspect.c:376
 #: ../src/gcm-inspect.c:446 ../src/gcm-utils.c:168
-#, fuzzy
 msgid "Failed to connect to session bus:"
-msgstr "Αποτυχία ανάκτησης περιεχομένου τύπου:"
+msgstr "Αποτυχία σύνδεσης στο δίαυλο συνεδρίας:"
 
 #. TRANSLATORS: device type
 #: ../src/cc-color-panel.c:2366
@@ -341,15 +325,13 @@ msgstr "Κάμερα"
 
 #. TRANSLATORS: button to install extra profiles
 #: ../src/cc-color-panel.c:2624
-#, fuzzy
 msgid "Install now"
-msgstr "Εγκατάσταση"
+msgstr "Εγκατάσταση τώρα"
 
 #. TRANSLATORS: this is displayed when the profile is crap
 #: ../src/cc-color-panel.c:2627
-#, fuzzy
 msgid "More color profiles could be automatically installed."
-msgstr "Επιθυμείτε να εγκατασταθούν αυτόματα;"
+msgstr "Περισσότερα προφίλ χρώματος θα μπορούσαν να εγκατασταθούν αυτόματα."
 
 #. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
 #: ../src/gcm-apply.c:115
@@ -459,15 +441,13 @@ msgstr "Προετοιμασία συσκευής απεικόνισης προ�
 
 #. TRANSLATORS: title, setting up the photospectromiter
 #: ../src/gcm-calibrate-argyll.c:1437 ../src/gcm-calibrate-native.c:774
-#, fuzzy
 msgid "Setting up device"
-msgstr "Προετοιμασία συσκευής απεικόνισης προς χρήση…"
+msgstr "Προετοιμασία συσκευής"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:1439 ../src/gcm-calibrate-native.c:776
-#, fuzzy
 msgid "Setting up the device to read a spot color…"
-msgstr "Προετοιμασία συσκευής απεικόνισης προς χρήση…"
+msgstr "Προετοιμασία συσκευής για ανάγνωση σημείου χρώματος…"
 
 #. TRANSLATORS: title, patches are specific colors used in calibration
 #: ../src/gcm-calibrate-argyll.c:1586
@@ -580,17 +560,16 @@ msgstr "Παρακαλώ βάλτε το όργανο σε κατάσταση β
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
 #: ../src/gcm-calibrate-argyll.c:2370
-#, fuzzy
 msgid ""
 "Please set the measuring instrument to screen mode like the image below."
 msgstr ""
-"Παρακαλώ βάλτε το όργανο σε κατάσταση βαθμονόμησης όπως στην ακόλουθη εικόνα."
+"Παρακαλώ βάλτε το όργανο μέτρησης σε λειτουργία οθόνης όπως στην ακόλουθη "
+"εικόνα."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
 #: ../src/gcm-calibrate-argyll.c:2373
-#, fuzzy
 msgid "Please set the measuring instrument to screen mode."
-msgstr "Παρακαλώ βάλτε το όργανο σε κατάσταση βαθμονόμησης."
+msgstr "Παρακαλώ βάλτε το όργανο σε λειτουργία οθόνης."
 
 #. TRANSLATORS: title, the calibration failed
 #: ../src/gcm-calibrate-argyll.c:2444 ../src/gcm-calibrate-argyll.c:2513
@@ -683,14 +662,13 @@ msgstr "Χρήση έτσι κι αλλιώς"
 
 #. TRANSLATORS: title, the calibration failed
 #: ../src/gcm-calibrate-argyll.c:2639
-#, fuzzy
 msgid "Device Error"
-msgstr "Συσκευή αφαιρέθηκε"
+msgstr "Σφάλμα συσκευής"
 
 #. TRANSLATORS: message, the sample was not read correctly
 #: ../src/gcm-calibrate-argyll.c:2642
 msgid "The device could not measure the color spot correctly."
-msgstr ""
+msgstr "Η συσκευή δεν μπόρεσε να μετρήσει το χρωματικό σημείο σωστά."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
 #: ../src/gcm-calibrate-argyll.c:2662
@@ -1167,14 +1145,12 @@ msgstr ""
 
 #. TRANSLATORS: this is when there is no profile for the device
 #: ../src/gcm-cell-renderer-profile-text.c:69
-#, fuzzy
 msgid "No profile"
-msgstr "Προφίλ χρώματος"
+msgstr "Δεν υπάρχει προφίλ"
 
 #: ../src/gcm-cell-renderer-profile-text.c:79
-#, fuzzy
 msgid "Default"
-msgstr "Προεπιλογές"
+msgstr "Προεπιλογή"
 
 #. TRANSLATORS: this is the name of the internal panel
 #: ../src/gcm-device-xrandr.c:136
@@ -1184,7 +1160,7 @@ msgstr "LCD φορητού"
 #. TRANSLATORS: this is prepended to the device title to let the use know it was generated by us automatically
 #: ../src/gcm-device-xrandr.c:422
 msgid "Automatic"
-msgstr ""
+msgstr "Αυτόματα"
 
 #. TRANSLATORS: this is displayed when the profile is crap
 #: ../src/gcm-list-store-profiles.c:51
@@ -1224,9 +1200,8 @@ msgstr "Το προφίλ ICC είναι ήδη εγκατεστημένο"
 
 #. TRANSLATORS: color profile already been installed
 #: ../src/gcm-import.c:159
-#, fuzzy
 msgid "ICC profile already installed system-wide"
-msgstr "Το προφίλ ICC είναι ήδη εγκατεστημένο"
+msgstr "Το προφίλ ICC είναι ήδη εγκατεστημένο για όλο το σύστημα"
 
 #. TRANSLATORS: message text
 #: ../src/gcm-import.c:171
@@ -1287,9 +1262,8 @@ msgstr "Κατάλληλα προφίλ για:"
 
 #. TRANSLATORS: no profile has been asigned to this device
 #: ../src/gcm-inspect.c:274
-#, fuzzy
 msgid "There are no ICC profiles assigned to this file"
-msgstr "Δεν υπάρχουν προφίλ ICC για αυτή τη συσκευή"
+msgstr "Δεν έχουν ορισθεί προφίλ ICC για αυτή τη συσκευή"
 
 #. TRANSLATORS: no profile has been asigned to this window
 #: ../src/gcm-inspect.c:406
@@ -1328,9 +1302,8 @@ msgstr "Χρωματικός χώρος CMYK:"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:574
-#, fuzzy
 msgid "Show xserver properties"
-msgstr "Εμφάνιση ιδιοτήτων του X11"
+msgstr "Εμφάνιση ιδιοτήτων του xserver"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:577
@@ -1339,9 +1312,8 @@ msgstr "Ανάκτηση προφίλ για μια συγκεκριμένη σ�
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:580
-#, fuzzy
 msgid "Get the profiles for a specific file"
-msgstr "Ανάκτηση προφίλ για μια συγκεκριμένη συσκευή"
+msgstr "Ανάκτηση προφίλ για ένα συγκεκριμένο αρχείο"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:583
@@ -1365,9 +1337,10 @@ msgstr "Πρόγραμμα εξέτασης EDID"
 
 #. TRANSLATORS: this is when the user does --type=mickeymouse
 #: ../src/gcm-inspect.c:621
-#, fuzzy
 msgid "Device or profile type not recognized, recognised types are:"
-msgstr "Ο τύπος της συσκευής δεν αναγνωρίσθηκε"
+msgstr ""
+"Ο τύπος της συσκευής ή του προφίλ δεν αναγνωρίσθηκε, οι αναγνωριζόμενοι "
+"τύποι είναι:"
 
 #. command line argument, the ID of the device
 #: ../src/gcm-install-system-wide.c:123
@@ -1452,17 +1425,19 @@ msgstr "Άγνωστο"
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
 #: ../src/gcm-picker.c:325
 msgid "No colorimeter is attached."
-msgstr ""
+msgstr "Δεν έχει συνδεθεί χρωματόμετρο."
 
 #. TRANSLATORS: this is displayed if VTE support is not enabled
 #: ../src/gcm-picker.c:332
 msgid "This application was compiled without VTE support."
-msgstr ""
+msgstr "Η εφαρμογή μεταγλωττίσθηκε χωρίς υποστήριξη VTE."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
 #: ../src/gcm-picker.c:342
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr ""
+"Το συνδεδεμένο χρωματόμετρο δεν έχει τη δυνατότητα να διαβάσει χρωματικό "
+"σημείο."
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
 #: ../src/gcm-picker.c:663 ../src/gcm-viewer.c:1219
@@ -1471,9 +1446,8 @@ msgstr "Ορίστε το γονικό παράθυρο για να βρίσκε
 
 #. TRANSLATORS: tool that is used to pick colors
 #: ../src/gcm-picker.c:681
-#, fuzzy
 msgid "GNOME Color Manager Color Picker"
-msgstr "Διαχείριση χρώματος του GNOME"
+msgstr "Επιλογή χρώματος της διαχείρισης χρώματος του GNOME"
 
 #. TRANSLATORS: button: this is to open GCM
 #: ../src/gcm-session.c:108
@@ -1523,7 +1497,7 @@ msgstr "Αντιληπτικό (Perceptual)"
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:498
 msgid "Relative"
-msgstr ""
+msgstr "Σχετικό"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:502
@@ -1533,28 +1507,27 @@ msgstr "Κορεσμός (Saturation)"
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:506
 msgid "Absolute"
-msgstr ""
+msgstr "Απόλυτο"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:519
 msgid "High quality photography"
-msgstr ""
+msgstr "Φωτογραφία υψηλής ποιότητας"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:523
 msgid "Precise color matching"
-msgstr ""
+msgstr "Ακριβές ταίριασμα χρώματος"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:527
 msgid "Graphs and presentations"
-msgstr ""
+msgstr "Γραφήματα και παρουσιάσεις"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
 #: ../src/gcm-utils.c:531
-#, fuzzy
 msgid "Proofing devices"
-msgstr "Άγνωστη συσκευή"
+msgstr "Συσκευές δοκιμίων"
 
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
@@ -1571,7 +1544,7 @@ msgstr "CMYK"
 #. TRANSLATORS: this is the colorspace type
 #: ../src/gcm-utils.c:552
 msgid "gray"
-msgstr ""
+msgstr "gray"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
 #: ../src/gcm-viewer.c:289
@@ -1678,14 +1651,13 @@ msgstr "Όχι"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
 #: ../src/gcm-viewer.c:844
-#, fuzzy
 msgid "Delete this profile"
-msgstr "Δια_γραφή προφίλ"
+msgstr "Διαγραφή αυτού του προφίλ"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
 #: ../src/gcm-viewer.c:847
 msgid "This profile cannot be deleted"
-msgstr ""
+msgstr "Αυτό το προφίλ δεν μπορεί να διαγραφεί"
 
 #. TRANSLATORS: combo-entry, no graph selected to be shown
 #: ../src/gcm-viewer.c:1005
@@ -1695,26 +1667,26 @@ msgstr "Κανένα"
 #. TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...)
 #: ../src/gcm-viewer.c:1008
 msgid "CIE 1931 xy"
-msgstr ""
+msgstr "CIE 1931 xy"
 
 #. TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out)
 #: ../src/gcm-viewer.c:1011
 msgid "Transfer response curve"
-msgstr ""
+msgstr "Καμπύλη μεταφοράς απόκρισης"
 
 #. TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card)
 #: ../src/gcm-viewer.c:1014
 msgid "Video card gamma table"
-msgstr ""
+msgstr "Πίνακας γάμμα κάρτας γραφικών"
 
 #. TRANSLATORS: combo-entry, this is a preview image of what the profile looks like
 #: ../src/gcm-viewer.c:1017
 msgid "Image preview (from sRGB)"
-msgstr ""
+msgstr "Προεπισκόπηση εικόνας (από sRGB)"
 
 #: ../src/gcm-viewer.c:1018
 msgid "Image preview (to sRGB)"
-msgstr ""
+msgstr "Προεπισκόπηση εικόνας (σε sRGB)"
 
 #: ../data/gcm-calibrate.ui.h:1
 msgid "Blue:"
@@ -1791,13 +1763,12 @@ msgstr "ακρίβεια"
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:2
 msgid "Ambient:"
-msgstr ""
+msgstr "Φωτισμός περιβάλλοντος:"
 
 #. Window title, where the user can pick spot colors using a measuring device
 #: ../data/gcm-picker.ui.h:4
-#, fuzzy
 msgid "Color Picker"
-msgstr "Color Checker"
+msgstr "Επιλογή χρώματος"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
 #: ../data/gcm-picker.ui.h:6
@@ -1807,12 +1778,12 @@ msgstr "Χρωματικός χώρος:"
 #. This shows the error in the conversion to RGB.
 #: ../data/gcm-picker.ui.h:8
 msgid "Error:"
-msgstr ""
+msgstr "Σφάλμα:"
 
 #. Lab is the color representation and D50 is the white point
 #: ../data/gcm-picker.ui.h:10
 msgid "Lab (D50):"
-msgstr ""
+msgstr "Lab (D50):"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. What mode to use for display rendering intent
@@ -1822,40 +1793,36 @@ msgstr "RGB:"
 
 #. Expander title, the results from the color picker
 #: ../data/gcm-picker.ui.h:14
-#, fuzzy
 msgid "Results"
-msgstr "Προεπιλογές"
+msgstr "Αποτελέσματα"
 
 #. the color representation
 #: ../data/gcm-picker.ui.h:16
 msgid "XYZ:"
-msgstr ""
+msgstr "XYZ:"
 
 #. Button text, to get a single sample of color
 #: ../data/gcm-picker.ui.h:18
 msgid "_Measure"
-msgstr ""
+msgstr "_Μέτρηση"
 
 #: ../data/gcm-prefs.ui.h:1
-#, fuzzy
 msgid ""
 "A working space is a default colorspace that is not associated with a "
 "specific device."
 msgstr ""
-"Ο χρωματικός χώρος εργασίας είναι το εύρος των χρωμάτων που μπορεί να "
-"κωδικοποιηθεί σε μια εικόνα."
+"Ο χώρος εργασίας είναι ένας προεπιλεγμένος χρωματικός χώρος που δεν "
+"σχετίζεται με μια συγκεκριμένη συσκευή."
 
 #. This is a button to add a virtual device
 #: ../data/gcm-prefs.ui.h:3
-#, fuzzy
 msgid "Add d_evice…"
-msgstr "_Προσθήκη συσκευής"
+msgstr "_Προσθήκη συσκευής…"
 
 #. Profiles that can be added to the device
 #: ../data/gcm-prefs.ui.h:5
-#, fuzzy
 msgid "Available Profiles"
-msgstr "Όλα τα αρχεία"
+msgstr "Διαθέσιμα προφίλ"
 
 #. Technical color word for softproof rendering intent
 #: ../data/gcm-prefs.ui.h:8
@@ -1864,9 +1831,8 @@ msgstr "CMYK:"
 
 #. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
 #: ../data/gcm-prefs.ui.h:11
-#, fuzzy
 msgid "Create _Profile"
-msgstr "Δια_γραφή προφίλ"
+msgstr "_Δημιουργία προφίλ"
 
 #: ../data/gcm-prefs.ui.h:12
 msgid "Device type:"
@@ -1887,22 +1853,24 @@ msgid ""
 "For a color managed workflow, each connected device should have one or more "
 "color profiles associated with it."
 msgstr ""
+"Για σειρά εργασιών με διαχείριση χρώματος, κάθε συνδεδεμένη συσκευή θα "
+"πρέπει να έχει ένα ή περισσότερα χρωματικά προφίλ που σχετίζονται με αυτή."
 
 #. Technical color word for softproof rendering intent
 #: ../data/gcm-prefs.ui.h:19
-#, fuzzy
 msgid "Gray:"
-msgstr "Gray"
+msgstr "Gray:"
 
 #: ../data/gcm-prefs.ui.h:20
 msgid ""
 "Image files can be dragged on this window to auto-complete the above fields."
 msgstr ""
+"Αρχεία εικόνων μπορούν να μεταφερθούν σε αυτό το παράθυρο για αυτόματη "
+"συμπλήρωση των παραπάνω πεδίων."
 
 #: ../data/gcm-prefs.ui.h:21
-#, fuzzy
 msgid "Make default"
-msgstr "_Ορισμός ως προεπιλογή"
+msgstr "Ορισμός ως προεπιλογή"
 
 #: ../data/gcm-prefs.ui.h:22
 msgid "Manufacturer:"
@@ -1919,7 +1887,7 @@ msgstr "Περισσότερες λεπτομέρειες"
 #. Some profiles are not compatible with some devices
 #: ../data/gcm-prefs.ui.h:26
 msgid "Only profiles that are compatible with the device will be listed above."
-msgstr ""
+msgstr "Μόνο προφίλ που είναι συμβατά με τη συσκευή θα απαριθμηθούν παραπάνω."
 
 #: ../data/gcm-prefs.ui.h:27
 msgid "Open the documentation"
@@ -1927,24 +1895,21 @@ msgstr "Άνοιγμα τεκμηρίωσης"
 
 #. Button to view installed profiles
 #: ../data/gcm-prefs.ui.h:29
-#, fuzzy
 msgid "Pr_ofile Viewer"
-msgstr "Προφίλ για προβολή"
+msgstr "Προ_βολή προφίλ"
 
 #. The rendering intent for the print preview
 #: ../data/gcm-prefs.ui.h:31
-#, fuzzy
 msgid "Print Preview:"
-msgstr "Προφίλ για προβολή"
+msgstr "Προεπισκόπηση εκτύπωσης:"
 
 #. This is a button to delete the saved or virtual device
 #: ../data/gcm-prefs.ui.h:36
 msgid "Remove de_vice"
-msgstr ""
+msgstr "Αφαίρεση συ_σκευής"
 
 #. Tab title, the way colors should be converted from one colorspace to another
 #: ../data/gcm-prefs.ui.h:38
-#, fuzzy
 msgid "Rendering Intents"
 msgstr "Στόχος απόδοσης χρωμάτων"
 
@@ -1953,25 +1918,22 @@ msgid "Save these profiles for all users"
 msgstr "Αποθήκευση αυτών των προφίλ για όλους τους χρήστες"
 
 #: ../data/gcm-prefs.ui.h:40
-#, fuzzy
 msgid ""
 "The rendering intent defines how color should be transformed from one "
 "colorspace to another."
 msgstr ""
-"Ο στόχος της απόδοσης είναι ο τρόπος με τον οποίο ένα αποτύπωμα χρωματικού "
-"εύρους (gamut) χαρτογραφείται σε ένα άλλο."
+"Ο στόχος της απόδοσης καθορίζει πως το χρώμα θα πρέπει να μετατρέπεται από "
+"ένα χρωματικό χώρο σε ένα άλλο."
 
 #. Tab title, icc color spaces to use for different defaults
 #: ../data/gcm-prefs.ui.h:42
-#, fuzzy
 msgid "Working Spaces"
-msgstr "Χρωματικός χώρος εργασίας"
+msgstr "Χρωματικοί χώροι εργασίας"
 
 #. This is when the settings are set for all users, unless they have per-user settings themselves
 #: ../data/gcm-prefs.ui.h:44
-#, fuzzy
 msgid "_Set System Default"
-msgstr "Επα_ναφορά προεπιλογών"
+msgstr "Ο_ρισμός προεπιλογών για το σύστημα"
 
 #~ msgid "More Information"
 #~ msgstr "Περισσότερες πληροφορίες"
