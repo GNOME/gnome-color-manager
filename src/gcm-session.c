@@ -44,28 +44,7 @@ static GcmProfileStore *profile_store = NULL;
 static GTimer *timer = NULL;
 static GDBusConnection *connection = NULL;
 
-#define GCM_SESSION_IDLE_EXIT		60 /* seconds */
 #define GCM_SESSION_NOTIFY_TIMEOUT	30000 /* ms */
-
-/**
- * gcm_session_check_idle_cb:
- **/
-static gboolean
-gcm_session_check_idle_cb (gpointer user_data)
-{
-	guint idle;
-
-	/* get the idle time */
-	idle = (guint) g_timer_elapsed (timer, NULL);
-	g_debug ("we've been idle for %is", idle);
-	if (idle > GCM_SESSION_IDLE_EXIT) {
-		g_debug ("exiting loop as idle");
-		g_main_loop_quit (loop);
-		return FALSE;
-	}
-	/* continue to poll */
-	return TRUE;
-}
 
 /**
  * gcm_session_notify_cb:
@@ -602,7 +581,6 @@ gcm_session_client_changed_cb (GcmClient *client_, GcmDevice *device, gpointer u
 int
 main (int argc, char *argv[])
 {
-	gboolean no_timed_exit = FALSE;
 	GOptionContext *context;
 	GError *error = NULL;
 	gboolean ret;
@@ -611,12 +589,6 @@ main (int argc, char *argv[])
 	guint poll_id = 0;
 	GFile *file = NULL;
 	gchar *introspection_data = NULL;
-
-	const GOptionEntry options[] = {
-		{ "no-timed-exit", '\0', 0, G_OPTION_ARG_NONE, &no_timed_exit,
-		  _("Do not exit after the request has been processed"), NULL },
-		{ NULL}
-	};
 
 	setlocale (LC_ALL, "");
 
@@ -633,7 +605,6 @@ main (int argc, char *argv[])
 	g_set_application_name (_("Color Management"));
 	context = g_option_context_new (NULL);
 	g_option_context_set_summary (context, _("Color Management D-Bus Service"));
-	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_add_group (context, gcm_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
@@ -693,14 +664,6 @@ main (int argc, char *argv[])
 				   gcm_session_on_name_acquired,
 				   gcm_session_on_name_lost,
 				   NULL, NULL);
-
-	/* only timeout if we have specified it on the command line */
-	if (!no_timed_exit) {
-		poll_id = g_timeout_add_seconds (5, (GSourceFunc) gcm_session_check_idle_cb, NULL);
-#if GLIB_CHECK_VERSION(2,25,8)
-		g_source_set_name_by_id (poll_id, "[GcmSession] inactivity checker");
-#endif
-	}
 
 	/* wait */
 	g_main_loop_run (loop);
