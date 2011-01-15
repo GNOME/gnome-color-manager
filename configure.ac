@@ -209,25 +209,6 @@ fi
 AC_SUBST(TIFF_CFLAGS)
 AC_SUBST(TIFF_LIBS)
 
-dnl **** Check for cups ****
-AC_SUBST(CUPS_CFLAGS,"")
-AC_SUBST(CUPS_LIBS,"")
-ac_save_CPPFLAGS="$CPPFLAGS"
-ac_cups_cflags=`cups-config --cflags 2>/dev/null`
-ac_cups_libs=`cups-config --ldflags 2>/dev/null`
-CPPFLAGS="$CPPFLAGS $ac_cups_cflags"
-AC_CHECK_HEADERS(cups/cups.h,
-    [AC_CHECK_LIB(cups,cupsGetDefault,
-		  [
-			CUPS_CFLAGS="$ac_cups_cflags"
-			CUPS_LIBS="-lcups $ac_cups_libs"
-			HAVE_CUPS="yes"
-		  ],,[$ac_cups_libs])])
-CPPFLAGS="$ac_save_CPPFLAGS"
-if test "x$HAVE_CUPS" != "xyes"; then
-	AC_MSG_ERROR([cups-devel is required for gnome-color-manager])
-fi
-
 dnl ---------------------------------------------------------------------------
 dnl - Generate man pages ? (default enabled)
 dnl ---------------------------------------------------------------------------

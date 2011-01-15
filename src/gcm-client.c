@@ -32,7 +32,6 @@
 #include <glib/gi18n.h>
 #include <glib-object.h>
 #include <gudev/gudev.h>
-#include <cups/cups.h>
 
 #ifdef HAVE_SANE
  #include <sane/sane.h>
@@ -42,7 +41,6 @@
 #include "gcm-client.h"
 #include "gcm-device-xrandr.h"
 #include "gcm-device-udev.h"
-#include "gcm-device-cups.h"
 #ifdef HAVE_SANE
  #include "gcm-device-sane.h"
 #endif
@@ -73,11 +71,9 @@ struct _GcmClientPrivate
 	GUdevClient			*gudev_client;
 	GSettings			*settings;
 	GcmX11Screen			*screen;
-	http_t				*http;
 	gboolean			 loading;
 	guint				 loading_refcount;
 	gboolean			 use_threads;
-	gboolean			 init_cups;
 	gboolean			 init_sane;
 	guint				 refresh_id;
 	guint				 emit_added_id;
@@ -726,80 +722,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_client_cups_add:
- **/
-static void
-gcm_client_cups_add (GcmClient *client, cups_dest_t dest)
-{
-	gboolean ret;
-	GError *error = NULL;
-	GcmDevice *device = NULL;
-	GcmClientPrivate *priv = client->priv;
-
-	/* create new device */
-	device = gcm_device_cups_new ();
-	ret = gcm_device_cups_set_from_dest (device, priv->http, dest, &error);
-	if (!ret) {
-		g_debug ("failed to set for output: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* add device */
-	ret = gcm_client_add_device (client, device, &error);
-	if (!ret) {
-		g_debug ("failed to set for device: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-out:
-	if (device != NULL)
-		g_object_unref (device);
-}
-
-/**
- * gcm_client_coldplug_devices_cups:
- **/
-static gboolean
-gcm_client_coldplug_devices_cups (GcmClient *client, GError **error)
-{
-	gint num_dests;
-	cups_dest_t *dests;
-	gint i;
-	GcmClientPrivate *priv = client->priv;
-
-	/* initialize */
-	if (!client->priv->init_cups) {
-		httpInitialize();
-		/* should be okay for localhost */
-		client->priv->http = httpConnectEncrypt (cupsServer (), ippPort (), cupsEncryption ());
-		client->priv->init_cups = TRUE;
-	}
-
-	num_dests = cupsGetDests2 (priv->http, &dests);
-	g_debug ("got %i printers", num_dests);
-
-	/* get printers on the local server */
-	for (i = 0; i < num_dests; i++)
-		gcm_client_cups_add (client, dests[i]);
-	cupsFreeDests (num_dests, dests);
-
-	/* inform the UI */
-	gcm_client_done_loading (client);
-	return TRUE;
-}
-
-/**
- * gcm_client_coldplug_devices_cups_thrd:
- **/
-static gpointer
-gcm_client_coldplug_devices_cups_thrd (GcmClient *client)
-{
-	gcm_client_coldplug_devices_cups (client, NULL);
-	return NULL;
-}
-
 #ifdef HAVE_SANE
 /**
  * gcm_client_sane_add:
@@ -930,8 +852,6 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 		device = gcm_device_virtual_new ();
 	} else if (kind == GCM_DEVICE_KIND_DISPLAY) {
 		device = gcm_device_xrandr_new ();
-	} else if (kind == GCM_DEVICE_KIND_PRINTER) {
-		device = gcm_device_cups_new ();
 	} else if (kind == GCM_DEVICE_KIND_CAMERA) {
 		/* FIXME: use GPhoto? */
 		device = gcm_device_udev_new ();
@@ -1150,22 +1070,6 @@ gcm_client_coldplug (GcmClient *client, GcmClientColdplug coldplug, GError **err
 				goto out;
 		} else {
 			ret = gcm_client_coldplug_devices_udev (client, error);
-			if (!ret)
-				goto out;
-		}
-	}
-
-	/* CUPS */
-	enable = g_settings_get_boolean (client->priv->settings, GCM_SETTINGS_ENABLE_CUPS);
-	if (enable && (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_CUPS)) {
-		gcm_client_add_loading (client);
-		g_debug ("adding devices of type CUPS");
-		if (client->priv->use_threads) {
-			thread = g_thread_create ((GThreadFunc) gcm_client_coldplug_devices_cups_thrd, client, FALSE, error);
-			if (thread == NULL)
-				goto out;
-		} else {
-			ret = gcm_client_coldplug_devices_cups (client, error);
 			if (!ret)
 				goto out;
 		}
@@ -1508,7 +1412,6 @@ gcm_client_init (GcmClient *client)
 	client->priv->display_name = NULL;
 	client->priv->loading_refcount = 0;
 	client->priv->use_threads = FALSE;
-	client->priv->init_cups = FALSE;
 	client->priv->init_sane = FALSE;
 	client->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 	client->priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
@@ -1550,8 +1453,6 @@ gcm_client_finalize (GObject *object)
 	g_object_unref (priv->gudev_client);
 	g_object_unref (priv->screen);
 	g_object_unref (priv->settings);
-	if (client->priv->init_cups)
-		httpClose (priv->http);
 #ifdef HAVE_SANE
 	if (client->priv->init_sane)
 		sane_exit ();
