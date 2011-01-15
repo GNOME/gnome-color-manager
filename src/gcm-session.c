@@ -432,24 +432,6 @@ gcm_session_handle_method_call (GDBusConnection *connection_, const gchar *sende
 	GcmDeviceKind device_kind;
 	guint i;
 
-	/* return 'as' */
-	if (g_strcmp0 (method_name, "GetDevices") == 0) {
-
-		/* copy the device id */
-		array = gcm_client_get_devices (client);
-		devices = g_new0 (gchar *, array->len + 1);
-		for (i=0; i<array->len; i++) {
-			device = g_ptr_array_index (array, i);
-			devices[i] = g_strdup (gcm_device_get_id (device));
-		}
-
-		/* format the value */
-		value = g_variant_new_strv ((const gchar * const *) devices, -1);
-		tuple = g_variant_new_tuple (&value, 1);
-		g_dbus_method_invocation_return_value (invocation, tuple);
-		goto out;
-	}
-
 	/* return 's' */
 	if (g_strcmp0 (method_name, "GetProfileForWindow") == 0) {
 		g_variant_get (parameters, "(u)", &xid);
