@@ -292,7 +292,6 @@ data/targets/Makefile
 data/figures/Makefile
 help/Makefile
 man/Makefile
-policy/Makefile
 po/Makefile.in
 rules/Makefile
 src/Makefile

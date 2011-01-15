@@ -5,7 +5,6 @@ SUBDIRS = 						\
 	help						\
 	man						\
 	po						\
-	policy						\
 	rules						\
 	tools						\
 	session						\

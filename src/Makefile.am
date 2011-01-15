@@ -81,9 +81,6 @@ libgcmshared_a_CFLAGS =					\
 libgcmshared_a_LIBADD =					\
 	$(COLOR_GLIB_LIBS)
 
-sbin_PROGRAMS =						\
-	gcm-install-system-wide
-
 bin_PROGRAMS =						\
 	gcm-inspect					\
 	gcm-apply					\
@@ -98,15 +95,6 @@ gcm_helper_exiv_SOURCES = gcm-helper-exiv.cpp
 gcm_helper_exiv_LDADD = $(EXIV_LIBS)
 gcm_helper_exiv_CXXFLAGS = -Wall
 endif
-
-gcm_install_system_wide_SOURCES =			\
-	gcm-install-system-wide.c
-
-gcm_install_system_wide_LDADD =				\
-	$(GLIB_LIBS)
-
-gcm_install_system_wide_CFLAGS =			\
-	$(WARNINGFLAGS_C)
 
 gcm_inspect_SOURCES =					\
 	gcm-inspect.c

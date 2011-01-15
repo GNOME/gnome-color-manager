@@ -122,36 +122,8 @@ cc_color_panel_error_dialog (CcColorPanel *panel, const gchar *title, const gcha
 static gboolean
 cc_color_panel_set_default (CcColorPanel *panel, GcmDevice *device)
 {
-	GError *error = NULL;
-	gboolean ret = FALSE;
-	gchar *cmdline = NULL;
-	const gchar *filename;
-	const gchar *id;
-	gchar *install_cmd = NULL;
-
-	/* nothing set */
-	id = gcm_device_get_id (device);
-	filename = gcm_device_get_default_profile_filename (device);
-	if (filename == NULL) {
-		g_debug ("no filename for %s", id);
-		goto out;
-	}
-
-	/* run using PolicyKit */
-	install_cmd = g_build_filename (SBINDIR, "gcm-install-system-wide", NULL);
-	cmdline = g_strdup_printf ("pkexec %s --id %s \"%s\"", install_cmd, id, filename);
-	g_debug ("running: %s", cmdline);
-	ret = g_spawn_command_line_sync (cmdline, NULL, NULL, NULL, &error);
-	if (!ret) {
-		/* TRANSLATORS: could not save for all users */
-		cc_color_panel_error_dialog (panel, _("Failed to save defaults for all users"), error->message);
-		g_error_free (error);
-		goto out;
-	}
-out:
-	g_free (install_cmd);
-	g_free (cmdline);
-	return ret;
+	/* TODO: make default */
+	return TRUE;
 }
 
 /**
