@@ -32,10 +32,6 @@
 #include <gcm-math.h>
 #include <gcm-compat.h>
 #include <gcm-color.h>
-#include <gcm-ddc-common.h>
-#include <gcm-ddc-device.h>
-#include <gcm-ddc-client.h>
-#include <gcm-ddc-control.h>
 #include <gcm-sample-window.h>
 #include <gcm-sensor.h>
 #include <gcm-sensor-huey.h>

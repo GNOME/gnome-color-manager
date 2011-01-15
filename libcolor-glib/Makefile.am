@@ -37,10 +37,6 @@ libcolor_glib_include_HEADERS =					\
 	gcm-math.h						\
 	gcm-compat.h						\
 	gcm-color.h						\
-	gcm-ddc-client.h					\
-	gcm-ddc-device.h					\
-	gcm-ddc-control.h					\
-	gcm-ddc-common.h					\
 	gcm-sensor-huey.h					\
 	gcm-sensor.h						\
 	gcm-edid.h						\
@@ -91,14 +87,6 @@ libcolor_glib_la_SOURCES =					\
 	gcm-clut.h						\
 	gcm-image.c						\
 	gcm-image.h						\
-	gcm-ddc-client.c					\
-	gcm-ddc-client.h					\
-	gcm-ddc-device.c					\
-	gcm-ddc-device.h					\
-	gcm-ddc-control.c					\
-	gcm-ddc-control.h					\
-	gcm-ddc-common.c					\
-	gcm-ddc-common.h					\
 	gcm-enum.c						\
 	gcm-enum.h						\
 	gcm-usb.c						\

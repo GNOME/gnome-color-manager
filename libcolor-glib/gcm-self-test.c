@@ -29,8 +29,6 @@
 #include "gcm-color.h"
 #include "gcm-clut.h"
 #include "gcm-math.h"
-#include "gcm-ddc-client.h"
-#include "gcm-ddc-device.h"
 #include "gcm-dmi.h"
 #include "gcm-edid.h"
 #include "gcm-image.h"
@@ -127,44 +125,6 @@ gcm_test_math_func (void)
 	g_assert_cmpfloat (mat.m11, >, 3.9f);
 	g_assert_cmpfloat (mat.m22, <, 0.001f);
 	g_assert_cmpfloat (mat.m22, >, -0.001f);
-}
-
-static void
-gcm_test_ddc_device_func (void)
-{
-	GcmDdcDevice *device;
-
-	device = gcm_ddc_device_new ();
-	g_assert (device != NULL);
-
-	g_object_unref (device);
-}
-
-static void
-gcm_test_ddc_client_func (void)
-{
-	gboolean ret;
-	GPtrArray *array;
-	GError *error = NULL;
-	GcmDdcClient *client;
-
-	client = gcm_ddc_client_new ();
-	g_assert (client != NULL);
-	gcm_ddc_client_set_verbose (client, GCM_VERBOSE_OVERVIEW);
-
-	array = gcm_ddc_client_get_devices (client, &error);
-	g_assert_no_error (error);
-	g_assert (array != NULL);
-
-	/* ensure we have at least one usable device */
-	g_assert_cmpint (array->len, >, 0);
-	g_ptr_array_unref (array);
-
-	ret = gcm_ddc_client_close (client, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	g_object_unref (client);
 }
 
 static void
@@ -866,8 +826,6 @@ main (int argc, char **argv)
 
 	/* tests go here */
 	g_test_add_func ("/libcolor-glib/math", gcm_test_math_func);
-	g_test_add_func ("/libcolor-glib/ddc-device", gcm_test_ddc_device_func);
-	g_test_add_func ("/libcolor-glib/ddc-client", gcm_test_ddc_client_func);
 	g_test_add_func ("/libcolor-glib/sensor", gcm_test_sensor_func);
 	g_test_add_func ("/libcolor-glib/edid", gcm_test_edid_func);
 	g_test_add_func ("/libcolor-glib/tables", gcm_test_tables_func);

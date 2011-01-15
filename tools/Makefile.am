@@ -28,7 +28,6 @@ noinst_PROGRAMS =					\
 	gcm-dump-sensor					\
 	gcm-dump-edid					\
 	gcm-fix-profile					\
-	gcm-ddc-util					\
 	gcm-sensor-example
 
 gcm_dump_edid_SOURCES =					\
@@ -74,15 +73,6 @@ gcm_fix_profile_CFLAGS =				\
 
 COLOR_GLIB_LIBS =					\
 	$(top_builddir)/libcolor-glib/libcolor-glib.la
-
-gcm_ddc_util_SOURCES =					\
-	gcm-ddc-util.c
-
-gcm_ddc_util_LDADD =					\
-	$(COLOR_GLIB_LIBS)
-
-gcm_ddc_util_CFLAGS =					\
-	$(WARNINGFLAGS_C)
 
 gcm_sensor_example_SOURCES =				\
 	gcm-sensor-example.c
