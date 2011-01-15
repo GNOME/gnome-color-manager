@@ -81,7 +81,6 @@ libgcmshared_a_LIBADD =					\
 
 bin_PROGRAMS =						\
 	gcm-inspect					\
-	gcm-apply					\
 	gcm-viewer					\
 	gcm-session					\
 	gcm-picker					\
@@ -110,24 +109,6 @@ gcm_inspect_LDADD =					\
 	-lm
 
 gcm_inspect_CFLAGS =					\
-	$(WARNINGFLAGS_C)
-
-gcm_apply_SOURCES =					\
-	gcm-apply.c
-
-gcm_apply_LDADD =					\
-	libgcmshared.a					\
-	$(GLIB_LIBS)					\
-	$(X11_LIBS)					\
-	$(GUDEV_LIBS)					\
-	$(XORG_LIBS)					\
-	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
-	$(COLOR_GLIB_LIBS)				\
-	-lm
-
-gcm_apply_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_import_SOURCES =					\

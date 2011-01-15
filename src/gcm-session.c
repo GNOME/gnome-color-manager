@@ -576,19 +576,92 @@ gcm_session_client_changed_cb (GcmClient *client_, GcmDevice *device, gpointer u
 }
 
 /**
+ * gcm_apply_create_icc_profile_for_edid:
+ **/
+static gboolean
+gcm_apply_create_icc_profile_for_edid (GcmDevice *device, const gchar *filename, GError **error)
+{
+	gboolean ret = FALSE;
+	GcmProfile *profile;
+
+	/* generate */
+	profile = gcm_device_generate_profile (device, error);
+	if (profile == NULL)
+		goto out;
+
+	/* ensure the per-user directory exists */
+	ret = gcm_utils_mkdir_for_filename (filename, error);
+	if (!ret)
+		goto out;
+
+	/* save this */
+	ret = gcm_profile_save (profile, filename, error);
+	if (!ret)
+		goto out;
+
+	/*
+	 * When we get here there are 4 possible situations:
+	 *
+	 * 1. profiles assigned, use-edid-profile=TRUE		-> add to profiles if not already added, but not as default
+	 * 2. profiles assigned, use-edid-profile=FALSE		-> do nothing
+	 * 3. no profiles, use-edid-profile=TRUE		-> add to profiles as default
+	 * 4. no profiles, use-edid-profile=FALSE		-> do nothing
+	 */
+
+	/* do we set this by default? */
+	if (!gcm_device_get_use_edid_profile (device)) {
+		g_debug ("not using auto-edid profile as device profile");
+		goto out;
+	}
+
+	/* add to the profiles list */
+	ret = gcm_device_profile_add (device, profile, NULL);
+	if (ret) {
+		/* need to save new list */
+		ret = gcm_device_save (device, error);
+		if (!ret)
+			goto out;
+	} else {
+		/* if this failed, it's because it's already associated
+		 * with the device which is okay with us */
+		g_debug ("already added auto-edid profile, not adding %s",
+			 gcm_profile_get_checksum (profile));
+		ret = TRUE;
+	}
+out:
+	if (profile != NULL)
+		g_object_unref (profile);
+	return ret;
+}
+
+/**
  * main:
  **/
 int
 main (int argc, char *argv[])
 {
-	GOptionContext *context;
-	GError *error = NULL;
+	const gchar *edid_md5;
+	gboolean login = FALSE;
 	gboolean ret;
-	guint retval = 1;
+	gchar *filename;
+	gchar *introspection_data = NULL;
+	gchar *path;
+	GcmDevice *device;
+	GError *error = NULL;
+	GFile *file = NULL;
+	GOptionContext *context;
+	GPtrArray *array = NULL;
+	guint i;
 	guint owner_id = 0;
 	guint poll_id = 0;
-	GFile *file = NULL;
-	gchar *introspection_data = NULL;
+	guint retval = 1;
+
+	const GOptionEntry options[] = {
+		{ "login", 'l', 0, G_OPTION_ARG_NONE, &login,
+		  /* TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear */
+		  _("Do not attempt to clear previously applied settings"), NULL },
+		{ NULL}
+	};
 
 	setlocale (LC_ALL, "");
 
@@ -605,6 +678,7 @@ main (int argc, char *argv[])
 	g_set_application_name (_("Color Management"));
 	context = g_option_context_new (NULL);
 	g_option_context_set_summary (context, _("Color Management D-Bus Service"));
+	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_add_group (context, gcm_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
@@ -623,6 +697,47 @@ main (int argc, char *argv[])
 	g_signal_connect (client, "added", G_CALLBACK (gcm_session_client_changed_cb), NULL);
 	g_signal_connect (client, "removed", G_CALLBACK (gcm_session_client_changed_cb), NULL);
 	g_signal_connect (client, "changed", G_CALLBACK (gcm_session_client_changed_cb), NULL);
+
+	/* set for each output */
+	array = gcm_client_get_devices (client);
+	for (i=0; i<array->len; i++) {
+		device = g_ptr_array_index (array, i);
+
+		/* optimize for login to save a few hundred ms */
+		gcm_device_xrandr_set_remove_atom (GCM_DEVICE_XRANDR (device), !login);
+
+		/* do we have to generate a edid profile? */
+		edid_md5 = gcm_device_xrandr_get_edid_md5 (GCM_DEVICE_XRANDR (device));
+		if (edid_md5 == NULL) {
+			g_warning ("no EDID data for device");
+		} else {
+			filename = g_strdup_printf ("edid-%s.icc", edid_md5);
+			path = g_build_filename (g_get_user_data_dir (), "icc", filename, NULL);
+			if (g_file_test (path, G_FILE_TEST_EXISTS)) {
+				g_debug ("auto-profile edid %s exists", path);
+			} else {
+				g_debug ("auto-profile edid does not exist, creating as %s", path);
+				ret = gcm_apply_create_icc_profile_for_edid (device, path, &error);
+				if (!ret) {
+					g_warning ("failed to create profile from EDID data: %s",
+						     error->message);
+					g_clear_error (&error);
+				}
+			}
+			g_free (filename);
+			g_free (path);
+		}
+
+		/* set gamma for device */
+		g_debug ("applying default profile for device: %s", gcm_device_get_id (device));
+		ret = gcm_device_apply (device, &error);
+		if (!ret) {
+			retval = 1;
+			g_warning ("failed to set gamma: %s", error->message);
+			g_error_free (error);
+			break;
+		}
+	}
 
 	/* have access to all profiles */
 	profile_store = gcm_profile_store_new ();
@@ -672,6 +787,8 @@ main (int argc, char *argv[])
 	retval = 0;
 out:
 	g_free (introspection_data);
+	if (array != NULL)
+		g_ptr_array_unref (array);
 	if (poll_id != 0)
 		g_source_remove (poll_id);
 	if (file != NULL)
