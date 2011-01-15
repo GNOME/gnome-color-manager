@@ -36,7 +36,6 @@
 #include "gcm-client.h"
 #include "gcm-sensor-client.h"
 #include "gcm-device-xrandr.h"
-#include "gcm-device-virtual.h"
 #include "gcm-exif.h"
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
@@ -461,7 +460,8 @@ cc_color_panel_profile_add_virtual_file (CcColorPanel *panel, GFile *file)
 	}
 
 	/* create device */
-	device = gcm_device_virtual_new	();
+	device = NULL;
+#if 0
 	ret = gcm_device_virtual_create_from_params (GCM_DEVICE_VIRTUAL (device),
 						     gcm_exif_get_device_kind (exif),
 						     gcm_exif_get_model (exif),
@@ -473,6 +473,7 @@ cc_color_panel_profile_add_virtual_file (CcColorPanel *panel, GFile *file)
 		cc_color_panel_error_dialog (panel, _("Failed to create virtual device"), NULL);
 		goto out;
 	}
+#endif
 
 	/* save what we've got */
 	ret = gcm_device_save (device, &error);
@@ -1086,15 +1087,7 @@ cc_color_panel_button_virtual_add_cb (GtkWidget *widget, CcColorPanel *panel)
 	manufacturer = gtk_entry_get_text (GTK_ENTRY (widget));
 
 	/* create device */
-	device = gcm_device_virtual_new	();
-	ret = gcm_device_virtual_create_from_params (GCM_DEVICE_VIRTUAL (device),
-						     device_kind, model, manufacturer,
-						     NULL, GCM_COLORSPACE_RGB);
-	if (!ret) {
-		/* TRANSLATORS: could not add virtual device */
-		cc_color_panel_error_dialog (panel, _("Failed to create virtual device"), NULL);
-		goto out;
-	}
+	device = NULL;
 
 	/* save what we've got */
 	ret = gcm_device_save (device, &error);

@@ -43,7 +43,6 @@
 #ifdef HAVE_SANE
  #include "gcm-device-sane.h"
 #endif
-#include "gcm-device-virtual.h"
 #include "gcm-x11-screen.h"
 #include "gcm-utils.h"
 
@@ -838,9 +837,7 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 	}
 
 	/* create device of specified type */
-	if (virtual) {
-		device = gcm_device_virtual_new ();
-	} else if (kind == GCM_DEVICE_KIND_DISPLAY) {
+	if (kind == GCM_DEVICE_KIND_DISPLAY) {
 		device = gcm_device_xrandr_new ();
 #ifdef HAVE_SANE
 	} else if (kind == GCM_DEVICE_KIND_SCANNER) {
