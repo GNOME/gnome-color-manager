@@ -894,19 +894,12 @@ gcm_viewer_profile_store_changed_cb (GcmProfileStore *profile_store, GcmViewerPr
 static gboolean
 gcm_viewer_startup_phase1_idle_cb (GcmViewerPrivate *viewer)
 {
-	gboolean ret;
 	GtkWidget *widget;
 	GtkTreeSelection *selection;
 	GtkTreePath *path;
-	GcmProfileSearchFlags search_flags = GCM_PROFILE_STORE_SEARCH_ALL;
-
-	/* volume checking is optional */
-	ret = g_settings_get_boolean (viewer->settings, GCM_SETTINGS_USE_PROFILES_FROM_VOLUMES);
-	if (!ret)
-		search_flags &= ~GCM_PROFILE_STORE_SEARCH_VOLUMES;
 
 	/* search the disk for profiles */
-	gcm_profile_store_search (viewer->profile_store, search_flags);
+	gcm_profile_store_search (viewer->profile_store);
 	g_signal_connect (viewer->profile_store, "changed",
 			  G_CALLBACK(gcm_viewer_profile_store_changed_cb), viewer);
 	g_signal_connect (viewer->profile_store, "added",

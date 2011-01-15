@@ -48,7 +48,6 @@ struct _GcmProfileStorePrivate
 	GPtrArray			*profile_array;
 	GPtrArray			*monitor_array;
 	GPtrArray			*directory_array;
-	GVolumeMonitor			*volume_monitor;
 };
 
 enum {
@@ -385,107 +384,6 @@ out:
 }
 
 /**
- * gcm_profile_store_add_profiles_from_mounted_volume:
- **/
-static gboolean
-gcm_profile_store_add_profiles_from_mounted_volume (GcmProfileStore *profile_store, GMount *mount)
-{
-	GFile *root;
-	gchar *path;
-	gchar *path_root;
-	const gchar *type;
-	GFileInfo *info;
-	GError *error = NULL;
-	gboolean ret;
-	gboolean success = FALSE;
-
-	/* get the mount root */
-	root = g_mount_get_root (mount);
-	path_root = g_file_get_path (root);
-	if (path_root == NULL)
-		goto out;
-
-	/* get the filesystem type */
-	info = g_file_query_filesystem_info (root, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE, NULL, &error);
-	if (info == NULL) {
-		g_warning ("failed to get filesystem type: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-	type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_FILESYSTEM_TYPE);
-	g_debug ("filesystem mounted on %s has type %s", path_root, type);
-
-	/* only scan hfs volumes for OSX */
-	if (g_strcmp0 (type, "hfs") == 0) {
-		path = g_build_filename (path_root, "Library", "ColorSync", "Profiles", "Displays", NULL);
-		ret = gcm_profile_store_search_path (profile_store, path);
-		if (ret)
-			success = TRUE;
-		g_free (path);
-
-		/* no more matching */
-		goto out;
-	}
-
-	/* and fat32 and ntfs for windows */
-	if (g_strcmp0 (type, "ntfs") == 0 || g_strcmp0 (type, "msdos") == 0) {
-
-		/* Windows XP */
-		path = g_build_filename (path_root, "Windows", "system32", "spool", "drivers", "color", NULL);
-		ret = gcm_profile_store_search_path (profile_store, path);
-		if (ret)
-			success = TRUE;
-		g_free (path);
-
-		/* Windows 2000 */
-		path = g_build_filename (path_root, "Winnt", "system32", "spool", "drivers", "color", NULL);
-		ret = gcm_profile_store_search_path (profile_store, path);
-		if (ret)
-			success = TRUE;
-		g_free (path);
-
-		/* Windows 98 and ME */
-		path = g_build_filename (path_root, "Windows", "System", "Color", NULL);
-		ret = gcm_profile_store_search_path (profile_store, path);
-		if (ret)
-			success = TRUE;
-		g_free (path);
-
-		/* no more matching */
-		goto out;
-	}
-out:
-	g_free (path_root);
-	g_object_unref (root);
-	return success;
-}
-
-/**
- * gcm_profile_store_add_profiles_from_mounted_volumes:
- **/
-static gboolean
-gcm_profile_store_add_profiles_from_mounted_volumes (GcmProfileStore *profile_store)
-{
-	gboolean ret;
-	gboolean success = FALSE;
-	GList *mounts, *l;
-	GMount *mount;
-	GcmProfileStorePrivate *priv = profile_store->priv;
-
-	/* get all current mounts */
-	mounts = g_volume_monitor_get_mounts (priv->volume_monitor);
-	for (l = mounts; l != NULL; l = l->next) {
-		mount = l->data;
-		ret = gcm_profile_store_add_profiles_from_mounted_volume (profile_store, mount);
-		if (ret)
-			success = TRUE;
-		g_object_unref (mount);
-	}
-	g_list_free (mounts);
-	return success;
-}
-
-/**
  * gcm_profile_store_mkdir_with_parents:
  **/
 static gboolean
@@ -511,7 +409,6 @@ out:
 /**
  * gcm_profile_store_search:
  * @profile_store: a valid %GcmProfileStore instance
- * @flags: the #GcmProfileSearchFlags locations to search
  *
  * Searches specified locations for ICC profiles.
  *
@@ -520,83 +417,40 @@ out:
  * Since: 2.91.1
  **/
 gboolean
-gcm_profile_store_search (GcmProfileStore *profile_store, GcmProfileSearchFlags flags)
+gcm_profile_store_search (GcmProfileStore *profile_store)
 {
 	gchar *path;
 	gboolean ret;
 	gboolean success = FALSE;
 	GError *error;
 
-	/* get OSX and Linux system-wide profiles */
-	if (flags == GCM_PROFILE_STORE_SEARCH_ALL ||
-	    flags & GCM_PROFILE_STORE_SEARCH_SYSTEM) {
-		ret = gcm_profile_store_search_path (profile_store, "/usr/share/color/icc");
-		if (ret)
-			success = TRUE;
-		ret = gcm_profile_store_search_path (profile_store, "/usr/local/share/color/icc");
-		if (ret)
-			success = TRUE;
-		ret = gcm_profile_store_search_path (profile_store, "/Library/ColorSync/Profiles/Displays");
-		if (ret)
-			success = TRUE;
-	}
-
-	/* get OSX and Windows system-wide profiles when using Linux */
-	if (flags == GCM_PROFILE_STORE_SEARCH_ALL ||
-	    flags & GCM_PROFILE_STORE_SEARCH_VOLUMES) {
-		ret = gcm_profile_store_add_profiles_from_mounted_volumes (profile_store);
-		if (ret)
-			success = TRUE;
-	}
-
 	/* get Linux per-user profiles */
-	if (flags == GCM_PROFILE_STORE_SEARCH_ALL ||
-	    flags & GCM_PROFILE_STORE_SEARCH_USER) {
-		path = g_build_filename (g_get_user_data_dir (), "icc", NULL);
-		ret = gcm_profile_store_mkdir_with_parents (path, &error);
-		if (!ret) {
-			g_warning ("failed to create directory on startup: %s", error->message);
-			g_error_free (error);
-		} else {
-			ret = gcm_profile_store_search_path (profile_store, path);
-			if (ret)
-				success = TRUE;
-		}
-		g_free (path);
-
-		/* get per-user profiles from obsolete location */
-		path = g_build_filename (g_get_home_dir (), ".color", "icc", NULL);
+	path = g_build_filename (g_get_user_data_dir (), "icc", NULL);
+	ret = gcm_profile_store_mkdir_with_parents (path, &error);
+	if (!ret) {
+		g_warning ("failed to create directory on startup: %s", error->message);
+		g_error_free (error);
+	} else {
 		ret = gcm_profile_store_search_path (profile_store, path);
 		if (ret)
 			success = TRUE;
-		g_free (path);
-
-		/* get OSX per-user profiles */
-		path = g_build_filename (g_get_home_dir (), "Library", "ColorSync", "Profiles", NULL);
-		ret = gcm_profile_store_search_path (profile_store, path);
-		if (ret)
-			success = TRUE;
-		g_free (path);
 	}
+	g_free (path);
 
-	/* get machine specific profiles */
-	if (flags == GCM_PROFILE_STORE_SEARCH_ALL ||
-	    flags & GCM_PROFILE_STORE_SEARCH_MACHINE) {
-		ret = gcm_profile_store_search_path (profile_store, "/var/lib/color/icc");
-		if (ret)
-			success = TRUE;
-	}
+	/* get per-user profiles from obsolete location */
+	path = g_build_filename (g_get_home_dir (), ".color", "icc", NULL);
+	ret = gcm_profile_store_search_path (profile_store, path);
+	if (ret)
+		success = TRUE;
+	g_free (path);
 
+	/* get OSX per-user profiles */
+	path = g_build_filename (g_get_home_dir (), "Library", "ColorSync", "Profiles", NULL);
+	ret = gcm_profile_store_search_path (profile_store, path);
+	if (ret)
+		success = TRUE;
+	g_free (path);
 	return success;
-}
-
-/**
- * gcm_profile_store_volume_monitor_mount_added_cb:
- **/
-static void
-gcm_profile_store_volume_monitor_mount_added_cb (GVolumeMonitor *volume_monitor, GMount *mount, GcmProfileStore *profile_store)
-{
-	gcm_profile_store_add_profiles_from_mounted_volume (profile_store, mount);
 }
 
 /**
@@ -655,13 +509,6 @@ gcm_profile_store_init (GcmProfileStore *profile_store)
 	profile_store->priv->profile_array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	profile_store->priv->monitor_array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	profile_store->priv->directory_array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_free);
-
-	/* watch for volumes to be connected */
-	profile_store->priv->volume_monitor = g_volume_monitor_get ();
-	g_signal_connect (profile_store->priv->volume_monitor,
-			  "mount-added",
-			  G_CALLBACK(gcm_profile_store_volume_monitor_mount_added_cb),
-			  profile_store);
 }
 
 /**
@@ -676,7 +523,6 @@ gcm_profile_store_finalize (GObject *object)
 	g_ptr_array_unref (priv->profile_array);
 	g_ptr_array_unref (priv->monitor_array);
 	g_ptr_array_unref (priv->directory_array);
-	g_object_unref (priv->volume_monitor);
 
 	G_OBJECT_CLASS (gcm_profile_store_parent_class)->finalize (object);
 }

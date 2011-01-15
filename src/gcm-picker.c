@@ -622,7 +622,7 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 
 	/* maintain a list of profiles */
 	profile_store = gcm_profile_store_new ();
-	gcm_profile_store_search (profile_store, GCM_PROFILE_STORE_SEARCH_ALL);
+	gcm_profile_store_search (profile_store);
 
 	/* default to AdobeRGB */
 	profile_filename = "/usr/share/color/icc/Argyll/ClayRGB1998.icm";

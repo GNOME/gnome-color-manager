@@ -152,7 +152,7 @@ main (int argc, char **argv)
 
 	/* check file does't already exist as system-wide */
 	profile_store = gcm_profile_store_new ();
-	gcm_profile_store_search (profile_store, GCM_PROFILE_STORE_SEARCH_SYSTEM);
+	gcm_profile_store_search (profile_store);
 	profile_tmp = gcm_profile_store_get_by_checksum (profile_store, gcm_profile_get_checksum (profile));
 	if (profile_tmp != NULL) {
 		/* TRANSLATORS: color profile already been installed */

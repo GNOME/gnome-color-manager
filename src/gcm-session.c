@@ -699,7 +699,6 @@ main (int argc, char *argv[])
 	guint poll_id = 0;
 	GFile *file = NULL;
 	gchar *introspection_data = NULL;
-	GcmProfileSearchFlags search_flags = GCM_PROFILE_STORE_SEARCH_ALL;
 
 	const GOptionEntry options[] = {
 		{ "no-timed-exit", '\0', 0, G_OPTION_ARG_NONE, &no_timed_exit,
@@ -744,13 +743,7 @@ main (int argc, char *argv[])
 
 	/* have access to all profiles */
 	profile_store = gcm_profile_store_new ();
-
-	/* volume checking is optional */
-	ret = g_settings_get_boolean (settings, GCM_SETTINGS_USE_PROFILES_FROM_VOLUMES);
-	if (!ret)
-		search_flags &= ~GCM_PROFILE_STORE_SEARCH_VOLUMES;
-
-	gcm_profile_store_search (profile_store, search_flags);
+	gcm_profile_store_search (profile_store);
 	timer = g_timer_new ();
 
 	/* get all connected devices */
