@@ -40,7 +40,6 @@
 #include "gcm-x11-screen.h"
 #include "gcm-client.h"
 #include "gcm-device-xrandr.h"
-#include "gcm-device-udev.h"
 #ifdef HAVE_SANE
  #include "gcm-device-sane.h"
 #endif
@@ -353,15 +352,6 @@ gcm_client_gudev_add (GcmClient *client, GUdevDevice *udev_device)
 	value = g_udev_device_get_property (udev_device, "GCM_DEVICE");
 	if (value == NULL)
 		goto out;
-
-	/* create new device */
-	device = gcm_device_udev_new ();
-	ret = gcm_device_udev_set_from_device (device, udev_device, &error);
-	if (!ret) {
-		g_debug ("failed to set for device: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
 
 	/* add device */
 	ret = gcm_client_add_device (client, device, &error);
@@ -852,9 +842,6 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 		device = gcm_device_virtual_new ();
 	} else if (kind == GCM_DEVICE_KIND_DISPLAY) {
 		device = gcm_device_xrandr_new ();
-	} else if (kind == GCM_DEVICE_KIND_CAMERA) {
-		/* FIXME: use GPhoto? */
-		device = gcm_device_udev_new ();
 #ifdef HAVE_SANE
 	} else if (kind == GCM_DEVICE_KIND_SCANNER) {
 		device = gcm_device_sane_new ();
