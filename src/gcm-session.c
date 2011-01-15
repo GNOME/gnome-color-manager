@@ -243,35 +243,6 @@ out:
 }
 
 /**
- * gcm_session_get_profiles_for_profile_kind:
- **/
-static GPtrArray *
-gcm_session_get_profiles_for_profile_kind (GcmProfileKind kind, GError **error)
-{
-	guint i;
-	GcmProfile *profile;
-	GPtrArray *array;
-	GPtrArray *profile_array;
-
-	/* create a temp array */
-	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
-
-	/* get list */
-	profile_array = gcm_profile_store_get_array (profile_store);
-	for (i=0; i<profile_array->len; i++) {
-		profile = g_ptr_array_index (profile_array, i);
-
-		/* compare what we have against what we were given */
-		if (kind == gcm_profile_get_kind (profile))
-			g_ptr_array_add (array, g_object_ref (profile));
-	}
-
-	/* unref profile list */
-	g_ptr_array_unref (profile_array);
-	return array;
-}
-
-/**
  * gcm_session_variant_from_profile_array:
  **/
 static GVariant *
@@ -425,12 +396,8 @@ gcm_session_handle_method_call (GDBusConnection *connection_, const gchar *sende
 	gchar *type = NULL;
 	GPtrArray *array = NULL;
 	gchar **devices = NULL;
-	GcmDevice *device;
 	GError *error = NULL;
 	const gchar *profile_filename;
-	GcmProfileKind profile_kind;
-	GcmDeviceKind device_kind;
-	guint i;
 
 	/* return 's' */
 	if (g_strcmp0 (method_name, "GetProfileForWindow") == 0) {
@@ -459,43 +426,6 @@ gcm_session_handle_method_call (GDBusConnection *connection_, const gchar *sende
 
 		/* get array of profile filenames */
 		array = gcm_session_get_profiles_for_device (device_id, &error);
-		if (array == NULL) {
-			g_dbus_method_invocation_return_dbus_error (invocation,
-								    "org.gnome.ColorManager.Failed",
-								    error->message);
-			g_error_free (error);
-			goto out;
-		}
-
-		/* format the value */
-		value = gcm_session_variant_from_profile_array (array);
-		tuple = g_variant_new_tuple (&value, 1);
-		g_dbus_method_invocation_return_value (invocation, tuple);
-		goto out;
-	}
-
-	/* return 'a(ss)' */
-	if (g_strcmp0 (method_name, "GetProfilesForType") == 0) {
-		g_variant_get (parameters, "(ss)", &type, &hints);
-
-		/* try to parse string */
-		profile_kind = gcm_profile_kind_from_string (type);
-		if (profile_kind == GCM_PROFILE_KIND_UNKNOWN) {
-			/* get the correct profile kind for the device kind */
-			device_kind = gcm_device_kind_from_string (type);
-			profile_kind = gcm_utils_device_kind_to_profile_kind (device_kind);
-		}
-
-		/* still nothing */
-		if (profile_kind == GCM_PROFILE_KIND_UNKNOWN) {
-			g_dbus_method_invocation_return_dbus_error (invocation,
-								    "org.gnome.ColorManager.Failed",
-								    "did not get a profile or device type");
-			goto out;
-		}
-
-		/* get array of profiles */
-		array = gcm_session_get_profiles_for_profile_kind (profile_kind, &error);
 		if (array == NULL) {
 			g_dbus_method_invocation_return_dbus_error (invocation,
 								    "org.gnome.ColorManager.Failed",
