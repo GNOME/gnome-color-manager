@@ -35,6 +35,7 @@
 #include "gcm-profile-store.h"
 
 static void     gcm_profile_store_finalize	(GObject     *object);
+static gboolean	gcm_profile_store_search_path (GcmProfileStore *profile_store, const gchar *path);
 
 #define GCM_PROFILE_STORE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_PROFILE_STORE, GcmProfileStorePrivate))
 
@@ -45,7 +46,7 @@ static void     gcm_profile_store_finalize	(GObject     *object);
  **/
 struct _GcmProfileStorePrivate
 {
-	GPtrArray			*profile_array;
+	GPtrArray			*filename_array;
 	GPtrArray			*monitor_array;
 	GPtrArray			*directory_array;
 };
@@ -60,21 +61,6 @@ enum {
 static guint signals[SIGNAL_LAST] = { 0 };
 
 G_DEFINE_TYPE (GcmProfileStore, gcm_profile_store, G_TYPE_OBJECT)
-
-/**
- * gcm_profile_store_get_array:
- * @profile_store: a valid %GcmProfileStore instance
- *
- * Gets the profile list.
- *
- * Return value: an array, free with g_ptr_array_unref()
- **/
-GPtrArray *
-gcm_profile_store_get_array (GcmProfileStore *profile_store)
-{
-	g_return_val_if_fail (GCM_IS_PROFILE_STORE (profile_store), NULL);
-	return g_ptr_array_ref (profile_store->priv->profile_array);
-}
 
 /**
  * gcm_profile_store_in_array:
@@ -94,181 +80,53 @@ gcm_profile_store_in_array (GPtrArray *array, const gchar *text)
 }
 
 /**
- * gcm_profile_store_get_by_filename:
- * @profile_store: a valid %GcmProfileStore instance
- * @filename: the profile filename
- *
- * Gets a profile.
- *
- * Return value: a valid %GcmProfile or %NULL. Free with g_object_unref()
- **/
-GcmProfile *
-gcm_profile_store_get_by_filename (GcmProfileStore *profile_store, const gchar *filename)
-{
-	guint i;
-	GcmProfile *profile = NULL;
-	GcmProfile *profile_tmp;
-	const gchar *filename_tmp;
-	GcmProfileStorePrivate *priv = profile_store->priv;
-
-	g_return_val_if_fail (GCM_IS_PROFILE_STORE (profile_store), NULL);
-	g_return_val_if_fail (filename != NULL, NULL);
-
-	/* find profile */
-	for (i=0; i<priv->profile_array->len; i++) {
-		profile_tmp = g_ptr_array_index (priv->profile_array, i);
-		filename_tmp = gcm_profile_get_filename (profile_tmp);
-		if (g_strcmp0 (filename, filename_tmp) == 0) {
-			profile = g_object_ref (profile_tmp);
-			goto out;
-		}
-	}
-out:
-	return profile;
-}
-
-/**
- * gcm_profile_store_get_by_checksum:
- * @profile_store: a valid %GcmProfileStore instance
- * @checksum: the profile checksum
- *
- * Gets a profile.
- *
- * Return value: a valid %GcmProfile or %NULL. Free with g_object_unref()
- **/
-GcmProfile *
-gcm_profile_store_get_by_checksum (GcmProfileStore *profile_store, const gchar *checksum)
-{
-	guint i;
-	GcmProfile *profile = NULL;
-	GcmProfile *profile_tmp;
-	const gchar *checksum_tmp;
-	GcmProfileStorePrivate *priv = profile_store->priv;
-
-	g_return_val_if_fail (GCM_IS_PROFILE_STORE (profile_store), NULL);
-	g_return_val_if_fail (checksum != NULL, NULL);
-
-	/* find profile */
-	for (i=0; i<priv->profile_array->len; i++) {
-		profile_tmp = g_ptr_array_index (priv->profile_array, i);
-		checksum_tmp = gcm_profile_get_checksum (profile_tmp);
-		if (g_strcmp0 (checksum, checksum_tmp) == 0) {
-			profile = g_object_ref (profile_tmp);
-			goto out;
-		}
-	}
-out:
-	return profile;
-}
-
-/**
  * gcm_profile_store_remove_profile:
  **/
 static gboolean
-gcm_profile_store_remove_profile (GcmProfileStore *profile_store, GcmProfile *profile)
+gcm_profile_store_remove_profile (GcmProfileStore *profile_store, const gchar *filename)
 {
 	gboolean ret;
 	GcmProfileStorePrivate *priv = profile_store->priv;
 
-	/* grab a temporary reference on this profile */
-	g_object_ref (profile);
-
 	/* remove from list */
-	ret = g_ptr_array_remove (priv->profile_array, profile);
+	ret = g_ptr_array_remove (priv->filename_array, (gchar*)filename);
 	if (!ret) {
-		g_warning ("failed to remove %s", gcm_profile_get_filename (profile));
+		g_warning ("failed to remove %s", filename);
 		goto out;
 	}
 
 	/* emit a signal */
-	g_debug ("emit removed (and changed): %s", gcm_profile_get_checksum (profile));
-	g_signal_emit (profile_store, signals[SIGNAL_REMOVED], 0, profile);
-	g_signal_emit (profile_store, signals[SIGNAL_CHANGED], 0);
+	g_debug ("emit removed: %s", filename);
+	g_signal_emit (profile_store, signals[SIGNAL_REMOVED], 0, filename);
 out:
-	g_object_unref (profile);
 	return ret;
-}
-
-/**
- * gcm_profile_store_notify_filename_cb:
- **/
-static void
-gcm_profile_store_notify_filename_cb (GcmProfile *profile, GParamSpec *pspec, GcmProfileStore *profile_store)
-{
-	gcm_profile_store_remove_profile (profile_store, profile);
 }
 
 /**
  * gcm_profile_store_add_profile:
  **/
-static gboolean
-gcm_profile_store_add_profile (GcmProfileStore *profile_store, GFile *file)
+static void
+gcm_profile_store_add_profile (GcmProfileStore *profile_store, const gchar *filename)
 {
-	gboolean ret = FALSE;
-	GcmProfile *profile = NULL;
-	GcmProfile *profile_tmp = NULL;
-	GError *error = NULL;
-	gchar *filename = NULL;
-	const gchar *checksum;
 	GcmProfileStorePrivate *priv = profile_store->priv;
 
-	/* already added? */
-	filename = g_file_get_path (file);
-	profile = gcm_profile_store_get_by_filename (profile_store, filename);
-	if (profile != NULL)
-		goto out;
-
-	/* parse the profile name */
-	profile = gcm_profile_new ();
-	ret = gcm_profile_parse (profile, file, &error);
-	if (!ret) {
-		g_warning ("failed to add profile '%s': %s", filename, error->message);
-		g_error_free (error);
-		goto out;		
-	}
-
-	/* check the profile has not been added already */
-	checksum = gcm_profile_get_checksum (profile);
-	profile_tmp = gcm_profile_store_get_by_checksum (profile_store, checksum);
-	if (profile_tmp != NULL) {
-
-		/* we value a local file higher than the shared file */
-		if (gcm_profile_get_can_delete (profile_tmp)) {
-			g_debug ("already added a deletable profile %s, cannot add %s",
-				   gcm_profile_get_filename (profile_tmp), filename);
-			goto out;
-		}
-
-		/* remove the old profile in favour of the new one */
-		gcm_profile_store_remove_profile (profile_store, profile_tmp);
-	}
-
-	/* add to array */
-	g_debug ("parsed new profile '%s'", filename);
-	g_ptr_array_add (priv->profile_array, g_object_ref (profile));
-	g_signal_connect (profile, "notify::file",
-			  G_CALLBACK(gcm_profile_store_notify_filename_cb),
-			  profile_store);
+	/* remove from list */
+	g_ptr_array_add (priv->filename_array, g_strdup (filename));
 
 	/* emit a signal */
-	g_debug ("emit added (and changed): %s", filename);
-	g_signal_emit (profile_store, signals[SIGNAL_ADDED], 0, profile);
-	g_signal_emit (profile_store, signals[SIGNAL_CHANGED], 0);
-out:
-	g_free (filename);
-	if (profile_tmp != NULL)
-		g_object_unref (profile_tmp);
-	if (profile != NULL)
-		g_object_unref (profile);
-	return ret;
+	g_debug ("emit add: %s", filename);
+	g_signal_emit (profile_store, signals[SIGNAL_ADDED], 0, filename);
 }
 
 /**
  * gcm_profile_store_file_monitor_changed_cb:
  **/
 static void
-gcm_profile_store_file_monitor_changed_cb (GFileMonitor *monitor, GFile *file, GFile *other_file,
-					   GFileMonitorEvent event_type, GcmProfileStore *profile_store)
+gcm_profile_store_file_monitor_changed_cb (GFileMonitor *monitor,
+					   GFile *file,
+					   GFile *other_file,
+					   GFileMonitorEvent event_type,
+					   GcmProfileStore *profile_store)
 {
 	gchar *path = NULL;
 	gchar *parent_path = NULL;
@@ -285,6 +143,8 @@ gcm_profile_store_file_monitor_changed_cb (GFileMonitor *monitor, GFile *file, G
 		goto out;
 	}
 
+if (0)	gcm_profile_store_remove_profile (profile_store, NULL);
+
 	/* just rescan the correct directory */
 	parent = g_file_get_parent (file);
 	parent_path = g_file_get_path (parent);
@@ -299,14 +159,8 @@ out:
 
 /**
  * gcm_profile_store_search_path:
- * @profile_store: a valid %GcmProfileStore instance
- * @path: the filesystem path to search
- *
- * Searches a specified location for ICC profiles.
- *
- * Return value: if any profile were added
  **/
-gboolean
+static gboolean
 gcm_profile_store_search_path (GcmProfileStore *profile_store, const gchar *path)
 {
 	GDir *dir = NULL;
@@ -323,8 +177,7 @@ gcm_profile_store_search_path (GcmProfileStore *profile_store, const gchar *path
 	if (g_file_test (path, G_FILE_TEST_IS_REGULAR)) {
 
 		/* check the file actually is a profile when we try to parse it */
-		file = g_file_new_for_path (path);
-		success = gcm_profile_store_add_profile (profile_store, file);
+		gcm_profile_store_add_profile (profile_store, path);
 		goto out;
 	}
 
@@ -461,8 +314,8 @@ gcm_profile_store_class_init (GcmProfileStoreClass *klass)
 		g_signal_new ("added",
 			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (GcmProfileStoreClass, added),
-			      NULL, NULL, g_cclosure_marshal_VOID__OBJECT,
-			      G_TYPE_NONE, 1, G_TYPE_OBJECT);
+			      NULL, NULL, g_cclosure_marshal_VOID__STRING,
+			      G_TYPE_NONE, 1, G_TYPE_STRING);
 	/**
 	 * GcmProfileStore::removed
 	 **/
@@ -470,17 +323,8 @@ gcm_profile_store_class_init (GcmProfileStoreClass *klass)
 		g_signal_new ("removed",
 			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (GcmProfileStoreClass, removed),
-			      NULL, NULL, g_cclosure_marshal_VOID__OBJECT,
-			      G_TYPE_NONE, 1, G_TYPE_OBJECT);
-	/**
-	 * GcmProfileStore::changed
-	 **/
-	signals[SIGNAL_CHANGED] =
-		g_signal_new ("changed",
-			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
-			      G_STRUCT_OFFSET (GcmProfileStoreClass, changed),
-			      NULL, NULL, g_cclosure_marshal_VOID__VOID,
-			      G_TYPE_NONE, 0);
+			      NULL, NULL, g_cclosure_marshal_VOID__STRING,
+			      G_TYPE_NONE, 1, G_TYPE_STRING);
 
 	g_type_class_add_private (klass, sizeof (GcmProfileStorePrivate));
 }
@@ -492,7 +336,7 @@ static void
 gcm_profile_store_init (GcmProfileStore *profile_store)
 {
 	profile_store->priv = GCM_PROFILE_STORE_GET_PRIVATE (profile_store);
-	profile_store->priv->profile_array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	profile_store->priv->filename_array = g_ptr_array_new_with_free_func (g_free);
 	profile_store->priv->monitor_array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 	profile_store->priv->directory_array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_free);
 }
@@ -506,7 +350,7 @@ gcm_profile_store_finalize (GObject *object)
 	GcmProfileStore *profile_store = GCM_PROFILE_STORE (object);
 	GcmProfileStorePrivate *priv = profile_store->priv;
 
-	g_ptr_array_unref (priv->profile_array);
+	g_ptr_array_unref (priv->filename_array);
 	g_ptr_array_unref (priv->monitor_array);
 	g_ptr_array_unref (priv->directory_array);
 

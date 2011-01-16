@@ -493,7 +493,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 	GtkTreeModel *model;
 
 	/* get new list */
-	profile_array = gcm_profile_store_get_array (profile_store);
+//	profile_array = gcm_profile_store_get_array (profile_store);
 
 	/* update each list */
 	for (i=0; i<profile_array->len; i++) {

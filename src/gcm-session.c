@@ -629,11 +629,40 @@ out:
  **/
 static void
 gcm_session_profile_store_added_cb (GcmProfileStore *profile_store_,
-				    GcmProfile *profile,
+				    const gchar *filename,
 				    gpointer user_data)
 {
-	//xxx
-	g_debug ("add profile");
+	CdProfile *profile;
+	gboolean ret;
+	GError *error = NULL;
+
+	g_debug ("profile %s added", filename);
+	profile = cd_client_create_profile_sync (client,
+						 filename,
+						 CD_OBJECT_SCOPE_TEMPORARY,
+						 NULL,
+						 &error);
+	if (profile == NULL) {
+		g_warning ("failed to create profile: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* set filename */
+	ret = cd_profile_set_filename_sync (profile,
+					    filename,
+					    NULL,
+					    &error);
+	if (!ret) {
+		g_warning ("failed to create profile: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+out:
+	if (profile != NULL)
+		g_object_unref (profile);
 }
 
 /**
@@ -641,11 +670,25 @@ gcm_session_profile_store_added_cb (GcmProfileStore *profile_store_,
  **/
 static void
 gcm_session_profile_store_removed_cb (GcmProfileStore *profile_store_,
-				      GcmProfile *profile,
+				      const gchar *filename,
 				      gpointer user_data)
 {
-	//xxx
-	g_debug ("remove profile");
+	gboolean ret;
+	GError *error = NULL;
+
+	g_debug ("profile %s removed", filename);
+	ret = cd_client_delete_profile_sync (client,
+					     filename,
+					     NULL,
+					     &error);
+	if (!ret) {
+		g_warning ("failed to create profile: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+out:
+	return;
 }
 
 /**
@@ -712,22 +755,11 @@ gcm_x11_screen_output_removed_cb (GcmX11Screen *screen_,
 {
 	gboolean ret;
 	GError *error = NULL;
-	CdDevice *device;
 
 	g_debug ("output %s removed",
 		 gcm_x11_output_get_name (output));
-	device = cd_client_find_device_sync (client,
-					     gcm_x11_output_get_name (output),
-					     NULL,
-					     &error);
-	if (device == NULL) {
-		g_warning ("failed to find device: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
 	ret = cd_client_delete_device_sync (client,
-					    device,
+					    gcm_x11_output_get_name (output),
 					    NULL,
 					    &error);
 	if (!ret) {
@@ -737,8 +769,7 @@ gcm_x11_screen_output_removed_cb (GcmX11Screen *screen_,
 		goto out;
 	}
 out:
-	if (device != NULL)
-		g_object_unref (device);
+	return;
 }
 
 /**
@@ -871,13 +902,13 @@ main (int argc, char *argv[])
 
 	/* have access to all profiles */
 	profile_store = gcm_profile_store_new ();
-	gcm_profile_store_search (profile_store);
 	g_signal_connect (profile_store, "added",
 			  G_CALLBACK (gcm_session_profile_store_added_cb),
 			  NULL);
 	g_signal_connect (profile_store, "removed",
 			  G_CALLBACK (gcm_session_profile_store_removed_cb),
 			  NULL);
+	gcm_profile_store_search (profile_store);
 
 	/* create new objects */
 	loop = g_main_loop_new (NULL, FALSE);

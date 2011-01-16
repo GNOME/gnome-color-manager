@@ -234,7 +234,7 @@ gcm_viewer_update_profile_list (GcmViewerPrivate *viewer)
 	g_debug ("updating profile list");
 
 	/* get new list */
-	profile_array = gcm_profile_store_get_array (viewer->profile_store);
+//	profile_array = gcm_profile_store_get_array (viewer->profile_store);
 
 	/* clear existing list */
 	gtk_list_store_clear (viewer->list_store_profiles);

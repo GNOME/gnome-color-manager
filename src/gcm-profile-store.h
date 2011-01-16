@@ -24,8 +24,6 @@
 
 #include <glib-object.h>
 
-#include "gcm-profile.h"
-
 G_BEGIN_DECLS
 
 #define GCM_TYPE_PROFILE_STORE		(gcm_profile_store_get_type ())
@@ -48,30 +46,14 @@ struct _GcmProfileStore
 struct _GcmProfileStoreClass
 {
 	GObjectClass	parent_class;
-	void		(* added)			(GcmProfile		*profile);
-	void		(* removed)			(GcmProfile		*profile);
-	void		(* changed)			(void);
-	/* padding for future expansion */
-	void (*_gcm_reserved1) (void);
-	void (*_gcm_reserved2) (void);
-	void (*_gcm_reserved3) (void);
-	void (*_gcm_reserved4) (void);
-	void (*_gcm_reserved5) (void);
+	void		(* added)			(const gchar		*filename);
+	void		(* removed)			(const gchar		*filename);
 };
 
 GType		 gcm_profile_store_get_type		(void);
 GcmProfileStore	*gcm_profile_store_new			(void);
-
-GcmProfile	*gcm_profile_store_get_by_filename	(GcmProfileStore	*profile_store,
-							 const gchar		*filename);
-GcmProfile	*gcm_profile_store_get_by_checksum	(GcmProfileStore	*profile_store,
-							 const gchar		*checksum);
-GPtrArray	*gcm_profile_store_get_array		(GcmProfileStore	*profile_store);
 gboolean	 gcm_profile_store_search		(GcmProfileStore	*profile_store);
-gboolean	 gcm_profile_store_search_path		(GcmProfileStore	*profile_store,
-							 const gchar		*path);
 
 G_END_DECLS
 
 #endif /* __GCM_PROFILE_STORE_H */
-

@@ -153,7 +153,7 @@ main (int argc, char **argv)
 	/* check file does't already exist as system-wide */
 	profile_store = gcm_profile_store_new ();
 	gcm_profile_store_search (profile_store);
-	profile_tmp = gcm_profile_store_get_by_checksum (profile_store, gcm_profile_get_checksum (profile));
+//	profile_tmp = gcm_profile_store_get_by_checksum (profile_store, gcm_profile_get_checksum (profile));
 	if (profile_tmp != NULL) {
 		/* TRANSLATORS: color profile already been installed */
 		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, _("ICC profile already installed system-wide"));

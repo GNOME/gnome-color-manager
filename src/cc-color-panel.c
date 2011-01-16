@@ -877,7 +877,7 @@ cc_color_panel_add_profiles_suitable_for_devices (CcColorPanel *panel, GtkWidget
 	guint i;
 	gboolean ret;
 	GcmProfile *profile;
-	GPtrArray *profile_array;
+	GPtrArray *profile_array = NULL;
 	GtkTreeIter iter;
 
 	/* clear existing entries */
@@ -885,7 +885,7 @@ cc_color_panel_add_profiles_suitable_for_devices (CcColorPanel *panel, GtkWidget
 	gtk_list_store_clear (GTK_LIST_STORE (model));
 
 	/* get new list */
-	profile_array = gcm_profile_store_get_array (panel->priv->profile_store);
+//	profile_array = gcm_profile_store_get_array (panel->priv->profile_store);
 
 	/* add profiles of the right kind */
 	for (i=0; i<profile_array->len; i++) {
@@ -1947,7 +1947,7 @@ cc_color_panel_setup_space_combobox (CcColorPanel *panel, GtkWidget *widget, Gcm
 	GtkTreeModel *model;
 
 	/* get new list */
-	profile_array = gcm_profile_store_get_array (panel->priv->profile_store);
+//	profile_array = gcm_profile_store_get_array (panel->priv->profile_store);
 
 	/* update each list */
 	for (i=0; i<profile_array->len; i++) {
