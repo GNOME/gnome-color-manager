@@ -831,81 +831,6 @@ out:
 }
 
 /**
- * gcm_client_possibly_migrate_config_file:
- *
- * Copy the configuration file from ~/.config/gnome-color-manager to ~/.config/color
- **/
-static gboolean
-gcm_client_possibly_migrate_config_file (GcmClient *client)
-{
-	gchar *dest = NULL;
-	gchar *source = NULL;
-	GFile *gdest = NULL;
-	GFile *gsource = NULL;
-	gboolean ret = FALSE;
-	gint config_version;
-	GError *error = NULL;
-
-	/* have we already attempted this (check first to avoid stating a file */
-	config_version = g_settings_get_int (client->priv->settings,
-					     GCM_SETTINGS_MIGRATE_CONFIG_VERSION);
-	if (config_version >= GCM_CONFIG_VERSION_SHARED_SPEC)
-		goto out;
-
-	/* create default path */
-	source = g_build_filename (g_get_user_config_dir (),
-				   "gnome-color-manager",
-				   "device-profiles.conf",
-				   NULL);
-	gsource = g_file_new_for_path (source);
-
-	/* no old profile */
-	ret = g_file_query_exists (gsource, NULL);
-	if (!ret) {
-		g_settings_set_int (client->priv->settings,
-				    GCM_SETTINGS_MIGRATE_CONFIG_VERSION,
-				    GCM_CONFIG_VERSION_SHARED_SPEC);
-		goto out;
-	}
-
-	/* ensure new root exists */
-	dest = gcm_utils_get_default_config_location ();
-	ret = gcm_utils_mkdir_for_filename (dest, &error);
-	if (!ret) {
-		g_warning ("failed to create new tree: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* copy to new root */
-	gdest = g_file_new_for_path (dest);
-	ret = g_file_copy (gsource, gdest, G_FILE_COPY_NONE, NULL, NULL, NULL, &error);
-	if (!ret) {
-		/* does the file already exist? -- i.e. the schema version was reset */
-		if (error->domain != G_IO_ERROR ||
-		    error->code != G_IO_ERROR_EXISTS) {
-			g_warning ("failed to copy: %s", error->message);
-			g_error_free (error);
-			goto out;
-		}
-		g_error_free (error);
-	}
-
-	/* do not attempt to migrate this again */
-	g_settings_set_int (client->priv->settings,
-			    GCM_SETTINGS_MIGRATE_CONFIG_VERSION,
-			    GCM_CONFIG_VERSION_SHARED_SPEC);
-out:
-	g_free (source);
-	g_free (dest);
-	if (gsource != NULL)
-		g_object_unref (gsource);
-	if (gdest != NULL)
-		g_object_unref (gdest);
-	return ret;
-}
-
-/**
  * gcm_client_add_saved:
  **/
 static gboolean
@@ -917,9 +842,6 @@ gcm_client_add_saved (GcmClient *client, GError **error)
 	gchar **groups = NULL;
 	guint i;
 	GcmDevice *device;
-
-	/* copy from old location */
-	gcm_client_possibly_migrate_config_file (client);
 
 	/* get the config file */
 	filename = gcm_utils_get_default_config_location ();
@@ -976,9 +898,6 @@ gcm_client_coldplug (GcmClient *client, GcmClientColdplug coldplug, GError **err
 	gboolean enable;
 
 	g_return_val_if_fail (GCM_IS_CLIENT (client), FALSE);
-
-	/* copy from old location */
-	gcm_client_possibly_migrate_config_file (client);
 
 	/* reset */
 	client->priv->loading_refcount = 0;
