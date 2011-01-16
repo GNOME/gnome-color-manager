@@ -63,7 +63,6 @@ struct _GcmClientClass
 typedef enum {
 	GCM_CLIENT_COLDPLUG_ALL		= 0x00,
 	GCM_CLIENT_COLDPLUG_SANE	= 0x04,
-	GCM_CLIENT_COLDPLUG_SAVED	= 0x10,
 	GCM_CLIENT_COLDPLUG_LAST,
 } GcmClientColdplug;
 

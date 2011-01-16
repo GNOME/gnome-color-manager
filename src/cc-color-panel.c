@@ -1908,7 +1908,6 @@ cc_color_panel_changed_cb (GcmClient *client, GcmDevice *device, CcColorPanel *p
 static void
 cc_color_panel_removed_cb (GcmClient *client, GcmDevice *device, CcColorPanel *panel)
 {
-	gboolean connected;
 	GtkTreeIter iter;
 	GtkTreeSelection *selection;
 	GtkWidget *widget;
@@ -1916,11 +1915,6 @@ cc_color_panel_removed_cb (GcmClient *client, GcmDevice *device, CcColorPanel *p
 
 	/* remove from the UI */
 	cc_color_panel_remove_device (panel, device);
-
-	/* ensure this device is re-added if it's been saved */
-	connected = gcm_device_get_connected (device);
-	if (connected)
-		gcm_client_coldplug (panel->priv->gcm_client, GCM_CLIENT_COLDPLUG_SAVED, NULL);
 
 	/* select the first device */
 	ret = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (panel->priv->list_store_devices), &iter);
