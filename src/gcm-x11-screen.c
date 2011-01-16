@@ -61,6 +61,8 @@ struct _GcmX11ScreenPrivate
 
 enum {
 	SIGNAL_CHANGED,
+	SIGNAL_ADDED,
+	SIGNAL_REMOVED,
 	SIGNAL_LAST
 };
 
@@ -94,12 +96,34 @@ gcm_x11_screen_on_event_cb (GdkXEvent *xevent, GdkEvent *event, gpointer data)
 }
 
 /**
+ * gcm_x11_screen_get_output_for_id:
+ **/
+static GcmX11Output *
+gcm_x11_screen_get_output_for_id (GcmX11Screen *screen, guint id)
+{
+	GcmX11Output *output = NULL;
+	GcmX11Output *output_tmp;
+	GcmX11ScreenPrivate *priv = screen->priv;
+	guint i;
+
+	/* find by id */
+	for (i=0; i<priv->outputs->len; i++) {
+		output_tmp = g_ptr_array_index (screen->priv->outputs, i);
+		if (id == gcm_x11_output_get_id (output)) {
+			output = output_tmp;
+			break;
+		}
+	}
+	return output;
+}
+
+/**
  * gcm_x11_screen_refresh:
  **/
 static gboolean
 gcm_x11_screen_refresh (GcmX11Screen *screen, GError **error)
 {
-	gint i;
+	guint i;
 	gboolean connected;
 	gboolean ret = FALSE;
 	GcmX11ScreenPrivate *priv = screen->priv;
@@ -109,9 +133,13 @@ gcm_x11_screen_refresh (GcmX11Screen *screen, GError **error)
 	XRROutputInfo *output_info;
 	XRRCrtcInfo *crtc_info;
 	gint gamma_size;
+	gboolean emit_added;
 
-	/* clear old outputs */
-	g_ptr_array_set_size (priv->outputs, 0);
+	/* mark all outputs as disconnected */
+	for (i=0; i<priv->outputs->len; i++) {
+		output = g_ptr_array_index (priv->outputs, i);
+		gcm_x11_output_set_connected (output, FALSE);
+	}
 
 	/* get new resources */
 	gdk_error_trap_push ();
@@ -125,7 +153,7 @@ gcm_x11_screen_refresh (GcmX11Screen *screen, GError **error)
 	}
 
 	/* add each output */
-	for (i=0; i < resources->noutput; i++) {
+	for (i=0; i < (guint) resources->noutput; i++) {
 		rr_output = resources->outputs[i];
 
 		/* get information about the output */
@@ -158,8 +186,15 @@ gcm_x11_screen_refresh (GcmX11Screen *screen, GError **error)
 				continue;
 			}
 
+			/* try and find an existing device */
+			emit_added = FALSE;
+			output = gcm_x11_screen_get_output_for_id (screen, rr_output);
+			if (output == NULL) {
+				output = gcm_x11_output_new ();
+				emit_added = TRUE;
+			}
+
 			/* create new object and set properties */
-			output = gcm_x11_output_new ();
 			gcm_x11_output_set_name (output, output_info->name);
 			gcm_x11_output_set_display (output, priv->xdisplay);
 			gcm_x11_output_set_id (output, rr_output);
@@ -171,12 +206,26 @@ gcm_x11_screen_refresh (GcmX11Screen *screen, GError **error)
 			gcm_x11_output_set_size (output, crtc_info->width, crtc_info->height);
 
 			/* add it to the array */
-			g_ptr_array_add (priv->outputs, output);
+			if (emit_added) {
+				g_ptr_array_add (priv->outputs, output);
+				g_debug ("emit added: %s", output_info->name);
+				g_signal_emit (screen, signals[SIGNAL_ADDED], 0, output);
+			}
 
 			/* free client side X resources */
 			XRRFreeCrtcInfo (crtc_info);
 		}
 		XRRFreeOutputInfo (output_info);
+	}
+
+	/* remove any disconnected output */
+	for (i=0; i<priv->outputs->len; i++) {
+		output = g_ptr_array_index (priv->outputs, i);
+		if (!gcm_x11_output_get_connected (output)) {
+			g_debug ("emit added: %s", output_info->name);
+			g_signal_emit (screen, signals[SIGNAL_REMOVED], 0, output);
+			g_ptr_array_remove (priv->outputs, output);
+		}
 	}
 
 	/* success */
@@ -695,6 +744,24 @@ gcm_x11_screen_class_init (GcmX11ScreenClass *klass)
 			      G_STRUCT_OFFSET (GcmX11ScreenClass, changed),
 			      NULL, NULL, g_cclosure_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
+	/**
+	 * GcmX11Screen::added:
+	 **/
+	signals[SIGNAL_ADDED] =
+		g_signal_new ("added",
+			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (GcmX11ScreenClass, added),
+			      NULL, NULL, g_cclosure_marshal_VOID__OBJECT,
+			      G_TYPE_NONE, 1, GCM_TYPE_X11_OUTPUT);
+	/**
+	 * GcmX11Screen::removed:
+	 **/
+	signals[SIGNAL_REMOVED] =
+		g_signal_new ("removed",
+			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (GcmX11ScreenClass, removed),
+			      NULL, NULL, g_cclosure_marshal_VOID__OBJECT,
+			      G_TYPE_NONE, 1, GCM_TYPE_X11_OUTPUT);
 
 	g_type_class_add_private (klass, sizeof (GcmX11ScreenPrivate));
 }

@@ -58,6 +58,7 @@ void		 gcm_x11_output_set_name		(GcmX11Output		*output,
 const gchar	*gcm_x11_output_get_name		(GcmX11Output		*output);
 void		 gcm_x11_output_set_id			(GcmX11Output		*output,
 							 guint			 id);
+guint		 gcm_x11_output_get_id			(GcmX11Output		*output);
 void		 gcm_x11_output_set_crtc_id		(GcmX11Output		*output,
 							 guint			 crtc_id);
 void		 gcm_x11_output_set_gamma_size		(GcmX11Output		*output,

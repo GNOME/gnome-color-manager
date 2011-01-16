@@ -116,6 +116,21 @@ gcm_x11_output_get_name (GcmX11Output *output)
 }
 
 /**
+ * gcm_x11_output_get_id:
+ * @output: a valid %GcmX11Output instance
+ *
+ * Gets the panel id.
+ *
+ * Return value: the panel id
+ **/
+guint
+gcm_x11_output_get_id (GcmX11Output *output)
+{
+	g_return_val_if_fail (GCM_IS_X11_OUTPUT (output), 0);
+	return output->priv->id;
+}
+
+/**
  * gcm_x11_output_set_id:
  * @output: a valid %GcmX11Output instance
  * @id: the xrandr ID for the output

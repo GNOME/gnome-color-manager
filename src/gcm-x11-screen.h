@@ -50,6 +50,10 @@ struct _GcmX11ScreenClass
 {
 	GObjectClass		 parent_class;
 	void			(* changed)		(GcmX11Screen		*screen);
+	void			(* added)		(GcmX11Screen		*screen,
+							 GcmX11Output		*output);
+	void			(* removed)		(GcmX11Screen		*screen,
+							 GcmX11Output		*output);
 };
 
 GType		 gcm_x11_screen_get_type		(void);
