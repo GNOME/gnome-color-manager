@@ -62,6 +62,8 @@ GcmX11Screen	*gcm_x11_screen_new			(void);
 gboolean	 gcm_x11_screen_assign			(GcmX11Screen		*screen,
 							 GdkScreen		*gdk_screen,
 							 GError			**error);
+gboolean	 gcm_x11_screen_refresh			(GcmX11Screen		*screen,
+							 GError			**error);
 GPtrArray	*gcm_x11_screen_get_outputs		(GcmX11Screen		*screen,
 							 GError			**error);
 GcmX11Output	*gcm_x11_screen_get_output_by_name	(GcmX11Screen		*screen,

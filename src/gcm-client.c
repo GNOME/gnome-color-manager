@@ -37,9 +37,7 @@
  #include <sane/sane.h>
 #endif
 
-#include "gcm-x11-screen.h"
 #include "gcm-client.h"
-#include "gcm-device-xrandr.h"
 #ifdef HAVE_SANE
  #include "gcm-device-sane.h"
 #endif
@@ -49,8 +47,6 @@
 static void     gcm_client_finalize	(GObject     *object);
 
 #define GCM_CLIENT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_CLIENT, GcmClientPrivate))
-
-static void gcm_client_xrandr_add (GcmClient *client, GcmX11Output *output);
 
 #ifdef HAVE_SANE
 static gboolean gcm_client_coldplug_devices_sane (GcmClient *client, GError **error);
@@ -68,7 +64,6 @@ struct _GcmClientPrivate
 	GPtrArray			*array;
 	GUdevClient			*gudev_client;
 	GSettings			*settings;
-	GcmX11Screen			*screen;
 	gboolean			 loading;
 	guint				 loading_refcount;
 	gboolean			 use_threads;
@@ -534,7 +529,7 @@ gcm_client_get_device_by_window (GcmClient *client, GdkWindow *window)
 	guint width, height;
 	GcmX11Output *output;
 	GcmX11Output *output_best = NULL;
-	GPtrArray *outputs;
+	GPtrArray *outputs = NULL;
 	GcmDevice *device = NULL;
 
 	/* get the window parameters, in root co-ordinates */
@@ -543,7 +538,7 @@ gcm_client_get_device_by_window (GcmClient *client, GdkWindow *window)
 	window_height = gdk_window_get_height (window);
 
 	/* get list of updates */
-	outputs = gcm_x11_screen_get_outputs (client->priv->screen, NULL);
+	//outputs = gcm_x11_screen_get_outputs (client->priv->screen, NULL);
 	if (outputs == NULL)
 		goto out;
 
@@ -587,84 +582,12 @@ out:
 	/* if we found an output, get the device */
 	if (output_best != NULL) {
 		GcmDevice *device_tmp;
-		device_tmp = gcm_device_xrandr_new ();
-		gcm_device_xrandr_set_from_output (device_tmp, output_best, NULL);
-		device = gcm_client_get_device_by_id (client, gcm_device_get_id (device_tmp));
+//		device_tmp = gcm_device_xrandr_new ();
+//		gcm_device_xrandr_set_from_output (device_tmp, output_best, NULL);
+//		device = gcm_client_get_device_by_id (client, gcm_device_get_id (device_tmp));
 		g_object_unref (device_tmp);
 	}
 	return device;
-}
-
-/**
- * gcm_client_xrandr_add:
- **/
-static void
-gcm_client_xrandr_add (GcmClient *client, GcmX11Output *output)
-{
-	gboolean ret;
-	GError *error = NULL;
-	GcmDevice *device = NULL;
-
-	/* if nothing connected then ignore */
-	ret = gcm_x11_output_get_connected (output);
-	if (!ret) {
-		g_debug ("%s is not connected", gcm_x11_output_get_name (output));
-		goto out;
-	}
-
-	/* create new device */
-	device = gcm_device_xrandr_new ();
-	ret = gcm_device_xrandr_set_from_output (device, output, &error);
-	if (!ret) {
-		g_debug ("failed to set for output: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* add device */
-	ret = gcm_client_add_device (client, device, &error);
-	if (!ret) {
-		g_debug ("failed to set for device: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-out:
-	if (device != NULL)
-		g_object_unref (device);
-}
-
-/**
- * gcm_client_coldplug_devices_xrandr:
- **/
-static gboolean
-gcm_client_coldplug_devices_xrandr (GcmClient *client, GError **error)
-{
-	GcmX11Output *output;
-	GPtrArray *outputs = NULL;
-	guint i;
-	gboolean ret;
-	GcmClientPrivate *priv = client->priv;
-
-	/* use the default screen */
-	ret = gcm_x11_screen_assign (priv->screen, NULL, error);
-	if (!ret)
-		goto out;
-	outputs = gcm_x11_screen_get_outputs (priv->screen, error);
-	if (outputs == NULL) {
-		ret = FALSE;
-		goto out;
-	}
-
-	/* add each device */
-	for (i=0; i<outputs->len; i++) {
-		output = g_ptr_array_index (outputs, i);
-		gcm_client_xrandr_add (client, output);
-	}
-out:
-	if (outputs != NULL)
-		g_ptr_array_unref (outputs);
-	gcm_client_done_loading (client);
-	return ret;
 }
 
 #ifdef HAVE_SANE
@@ -793,10 +716,8 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 	}
 
 	/* create device of specified type */
-	if (kind == CD_DEVICE_KIND_DISPLAY) {
-		device = gcm_device_xrandr_new ();
 #ifdef HAVE_SANE
-	} else if (kind == CD_DEVICE_KIND_SCANNER) {
+	if (kind == CD_DEVICE_KIND_SCANNER) {
 		device = gcm_device_sane_new ();
 #endif
 	} else {
@@ -906,15 +827,6 @@ gcm_client_coldplug (GcmClient *client, GcmClientColdplug coldplug, GError **err
 	if (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_SAVED) {
 		gcm_client_add_loading (client);
 		ret = gcm_client_add_saved (client, error);
-		if (!ret)
-			goto out;
-	}
-
-	/* XRandR */
-	if (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_XRANDR) {
-		gcm_client_add_loading (client);
-		g_debug ("adding devices of type XRandR");
-		ret = gcm_client_coldplug_devices_xrandr (client, error);
 		if (!ret)
 			goto out;
 	}
@@ -1155,27 +1067,6 @@ gcm_client_set_property (GObject *object, guint prop_id, const GValue *value, GP
 }
 
 /**
- * gcm_client_randr_event_cb:
- **/
-static void
-gcm_client_randr_event_cb (GcmX11Screen *screen, GcmClient *client)
-{
-	GPtrArray *outputs;
-	GcmX11Output *output;
-	guint i;
-
-	g_debug ("screens may have changed");
-
-	/* replug devices */
-	outputs = gcm_x11_screen_get_outputs (screen, NULL);
-	for (i=0; i<outputs->len; i++) {
-		output = g_ptr_array_index (outputs, i);
-		gcm_client_xrandr_add (client, output);
-	}
-	g_ptr_array_unref (outputs);
-}
-
-/**
  * gcm_client_class_init:
  **/
 static void
@@ -1259,9 +1150,6 @@ gcm_client_init (GcmClient *client)
 	client->priv->init_sane = FALSE;
 	client->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 	client->priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
-	client->priv->screen = gcm_x11_screen_new ();
-	g_signal_connect (client->priv->screen, "changed",
-			  G_CALLBACK (gcm_client_randr_event_cb), client);
 
 	/* use GUdev to find devices */
 	client->priv->gudev_client = g_udev_client_new (subsystems);
@@ -1295,7 +1183,6 @@ gcm_client_finalize (GObject *object)
 	g_free (priv->display_name);
 	g_ptr_array_unref (priv->array);
 	g_object_unref (priv->gudev_client);
-	g_object_unref (priv->screen);
 	g_object_unref (priv->settings);
 #ifdef HAVE_SANE
 	if (client->priv->init_sane)

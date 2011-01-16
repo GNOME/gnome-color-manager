@@ -109,7 +109,7 @@ gcm_x11_screen_get_output_for_id (GcmX11Screen *screen, guint id)
 	/* find by id */
 	for (i=0; i<priv->outputs->len; i++) {
 		output_tmp = g_ptr_array_index (screen->priv->outputs, i);
-		if (id == gcm_x11_output_get_id (output)) {
+		if (id == gcm_x11_output_get_id (output_tmp)) {
 			output = output_tmp;
 			break;
 		}
@@ -120,7 +120,7 @@ gcm_x11_screen_get_output_for_id (GcmX11Screen *screen, guint id)
 /**
  * gcm_x11_screen_refresh:
  **/
-static gboolean
+gboolean
 gcm_x11_screen_refresh (GcmX11Screen *screen, GError **error)
 {
 	guint i;
@@ -158,7 +158,9 @@ gcm_x11_screen_refresh (GcmX11Screen *screen, GError **error)
 
 		/* get information about the output */
 		gdk_error_trap_push ();
-		output_info = XRRGetOutputInfo (priv->xdisplay, resources, rr_output);
+		output_info = XRRGetOutputInfo (priv->xdisplay,
+						resources,
+						rr_output);
 		gdk_flush ();
 		if (gdk_error_trap_pop ()) {
 			g_warning ("failed to get output info");
@@ -222,8 +224,10 @@ gcm_x11_screen_refresh (GcmX11Screen *screen, GError **error)
 	for (i=0; i<priv->outputs->len; i++) {
 		output = g_ptr_array_index (priv->outputs, i);
 		if (!gcm_x11_output_get_connected (output)) {
-			g_debug ("emit added: %s", output_info->name);
-			g_signal_emit (screen, signals[SIGNAL_REMOVED], 0, output);
+			g_debug ("emit removed: %s",
+				 gcm_x11_output_get_name (output));
+			g_signal_emit (screen, signals[SIGNAL_REMOVED], 0,
+				       output);
 			g_ptr_array_remove (priv->outputs, output);
 		}
 	}

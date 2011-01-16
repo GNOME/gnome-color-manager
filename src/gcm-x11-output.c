@@ -81,7 +81,6 @@ void
 gcm_x11_output_set_display (GcmX11Output *output, gpointer display)
 {
 	g_return_if_fail (GCM_IS_X11_OUTPUT (output));
-	g_return_if_fail (output->priv->display == NULL);
 	output->priv->display = display;
 }
 
@@ -96,7 +95,6 @@ void
 gcm_x11_output_set_name (GcmX11Output *output, const gchar *name)
 {
 	g_return_if_fail (GCM_IS_X11_OUTPUT (output));
-	g_return_if_fail (output->priv->name == NULL);
 	output->priv->name = g_strdup (name);
 }
 
@@ -141,7 +139,6 @@ void
 gcm_x11_output_set_id (GcmX11Output *output, guint id)
 {
 	g_return_if_fail (GCM_IS_X11_OUTPUT (output));
-	g_return_if_fail (output->priv->id == 0);
 	output->priv->id = id;
 }
 
@@ -156,7 +153,6 @@ void
 gcm_x11_output_set_crtc_id (GcmX11Output *output, guint crtc_id)
 {
 	g_return_if_fail (GCM_IS_X11_OUTPUT (output));
-	g_return_if_fail (output->priv->crtc_id == 0);
 	output->priv->crtc_id = crtc_id;
 }
 
@@ -171,7 +167,6 @@ void
 gcm_x11_output_set_gamma_size (GcmX11Output *output, guint gamma_size)
 {
 	g_return_if_fail (GCM_IS_X11_OUTPUT (output));
-	g_return_if_fail (output->priv->gamma_size == 0);
 	output->priv->gamma_size = gamma_size;
 }
 
@@ -201,7 +196,6 @@ void
 gcm_x11_output_set_primary (GcmX11Output *output, gboolean primary)
 {
 	g_return_if_fail (GCM_IS_X11_OUTPUT (output));
-	g_return_if_fail (!output->priv->primary);
 	output->priv->primary = primary;
 }
 

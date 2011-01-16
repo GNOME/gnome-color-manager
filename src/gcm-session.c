@@ -39,13 +39,14 @@
 static GMainLoop *loop = NULL;
 static GSettings *settings = NULL;
 static GDBusNodeInfo *introspection = NULL;
-static GcmClient *client = NULL;
+static CdClient *client = NULL;
 static GcmProfileStore *profile_store = NULL;
-static GTimer *timer = NULL;
+static GcmX11Screen *x11_screen = NULL;
 static GDBusConnection *connection = NULL;
 
 #define GCM_SESSION_NOTIFY_TIMEOUT	30000 /* ms */
 
+#if 0
 /**
  * gcm_session_notify_cb:
  **/
@@ -140,7 +141,9 @@ gcm_session_notify_device (GcmDevice *device)
 		gcm_session_notify_recalibrate (title, message, kind);
 	g_free (message);
 }
+#endif
 
+#if 0
 /**
  * gcm_session_added_cb:
  **/
@@ -182,6 +185,7 @@ gcm_session_added_cb (GcmClient *client_, GcmDevice *device, gpointer user_data)
 out:
 	g_free (basename);
 }
+#endif
 
 /**
  * gcm_session_get_profile_for_window:
@@ -189,7 +193,7 @@ out:
 static const gchar *
 gcm_session_get_profile_for_window (guint xid, GError **error)
 {
-	GcmDevice *device;
+	GcmDevice *device = NULL;
 	GdkWindow *window;
 	const gchar *filename = NULL;
 
@@ -203,7 +207,7 @@ gcm_session_get_profile_for_window (guint xid, GError **error)
 	}
 
 	/* get device for this window */
-	device = gcm_client_get_device_by_window (client, window);
+//	device = gcm_client_get_device_by_window (client, window);
 	if (device == NULL) {
 		g_set_error (error, 1, 0, "no device found for xid %i", xid);
 		goto out;
@@ -259,7 +263,7 @@ gcm_session_get_profiles_for_file (const gchar *filename, GError **error)
 	GcmExif *exif;
 	GcmDevice *device;
 	GPtrArray *array = NULL;
-	GPtrArray *array_devices;
+	GPtrArray *array_devices = NULL;
 	GFile *file;
 
 	/* get file type */
@@ -271,7 +275,7 @@ gcm_session_get_profiles_for_file (const gchar *filename, GError **error)
 
 	/* get list */
 	g_debug ("query=%s", filename);
-	array_devices = gcm_client_get_devices (client);
+//	array_devices = gcm_client_get_devices (client);
 	for (i=0; i<array_devices->len; i++) {
 		device = g_ptr_array_index (array_devices, i);
 
@@ -308,7 +312,7 @@ gcm_session_get_profiles_for_device (const gchar *device_id_with_prefix, GError 
 	gboolean use_native_device = FALSE;
 	GcmDevice *device;
 	GPtrArray *array = NULL;
-	GPtrArray *array_devices;
+	GPtrArray *array_devices = NULL;
 
 	/* strip the prefix, if there is any */
 	device_id = g_strstr_len (device_id_with_prefix, -1, ":");
@@ -325,7 +329,7 @@ gcm_session_get_profiles_for_device (const gchar *device_id_with_prefix, GError 
 
 	/* get list */
 	g_debug ("query=%s [%s] %i", device_id_with_prefix, device_id, use_native_device);
-	array_devices = gcm_client_get_devices (client);
+//	array_devices = gcm_client_get_devices (client);
 	for (i=0; i<array_devices->len; i++) {
 		device = g_ptr_array_index (array_devices, i);
 
@@ -441,9 +445,6 @@ gcm_session_handle_method_call (GDBusConnection *connection_, const gchar *sende
 		goto out;
 	}
 out:
-	/* reset time */
-	g_timer_reset (timer);
-
 	if (array != NULL)
 		g_ptr_array_unref (array);
 	if (tuple != NULL)
@@ -480,10 +481,6 @@ gcm_session_handle_get_property (GDBusConnection *connection_, const gchar *send
 	} else if (g_strcmp0 (property_name, "ColorspaceGray") == 0) {
 		retval = g_settings_get_value (settings, GCM_SETTINGS_COLORSPACE_GRAY);
 	}
-
-	/* reset time */
-	g_timer_reset (timer);
-
 	return retval;
 }
 
@@ -566,15 +563,7 @@ gcm_session_key_changed_cb (GSettings *settings_, const gchar *key, gpointer use
 	gcm_session_emit_changed ();
 }
 
-/**
- * gcm_session_client_changed_cb:
- **/
-static void
-gcm_session_client_changed_cb (GcmClient *client_, GcmDevice *device, gpointer user_data)
-{
-	gcm_session_emit_changed ();
-}
-
+#if 0
 /**
  * gcm_apply_create_icc_profile_for_edid:
  **/
@@ -633,6 +622,124 @@ out:
 		g_object_unref (profile);
 	return ret;
 }
+#endif
+
+/**
+ * gcm_session_profile_store_added_cb:
+ **/
+static void
+gcm_session_profile_store_added_cb (GcmProfileStore *profile_store_,
+				    GcmProfile *profile,
+				    gpointer user_data)
+{
+	//xxx
+	g_debug ("add profile");
+}
+
+/**
+ * gcm_session_profile_store_removed_cb:
+ **/
+static void
+gcm_session_profile_store_removed_cb (GcmProfileStore *profile_store_,
+				      GcmProfile *profile,
+				      gpointer user_data)
+{
+	//xxx
+	g_debug ("remove profile");
+}
+
+/**
+ * gcm_x11_screen_output_added_cb:
+ **/
+static void
+gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
+				GcmX11Output *output,
+				gpointer user_data)
+{
+	CdDevice *device;
+	gboolean ret;
+	GError *error = NULL;
+
+	g_debug ("output %s added",
+		 gcm_x11_output_get_name (output));
+	device = cd_client_create_device_sync (client,
+					       gcm_x11_output_get_name (output),
+					       CD_OBJECT_SCOPE_TEMPORARY,
+					       NULL,
+					       &error);
+	if (device == NULL) {
+		g_warning ("failed to create device: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* set kind */
+	ret = cd_device_set_kind_sync (device,
+				       CD_DEVICE_KIND_DISPLAY,
+				       NULL,
+				       &error);
+	if (device == NULL) {
+		g_warning ("failed to create device: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* set model */
+	ret = cd_device_set_model_sync (device,
+					gcm_x11_output_get_name (output),
+					NULL,
+					&error);
+	if (device == NULL) {
+		g_warning ("failed to create device: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+out:
+	if (device != NULL)
+		g_object_unref (device);
+}
+
+/**
+ * gcm_x11_screen_output_removed_cb:
+ **/
+static void
+gcm_x11_screen_output_removed_cb (GcmX11Screen *screen_,
+				  GcmX11Output *output,
+				  gpointer user_data)
+{
+	gboolean ret;
+	GError *error = NULL;
+	CdDevice *device;
+
+	g_debug ("output %s removed",
+		 gcm_x11_output_get_name (output));
+	device = cd_client_find_device_sync (client,
+					     gcm_x11_output_get_name (output),
+					     NULL,
+					     &error);
+	if (device == NULL) {
+		g_warning ("failed to find device: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+	ret = cd_client_delete_device_sync (client,
+					    device,
+					    NULL,
+					    &error);
+	if (!ret) {
+		g_warning ("failed to delete device: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+out:
+	if (device != NULL)
+		g_object_unref (device);
+}
 
 /**
  * main:
@@ -640,18 +747,18 @@ out:
 int
 main (int argc, char *argv[])
 {
-	const gchar *edid_md5;
+//	const gchar *edid_md5;
 	gboolean login = FALSE;
 	gboolean ret;
-	gchar *filename;
+//	gchar *filename;
 	gchar *introspection_data = NULL;
-	gchar *path;
-	GcmDevice *device;
+//	gchar *path;
+//	GcmDevice *device;
 	GError *error = NULL;
 	GFile *file = NULL;
 	GOptionContext *context;
 	GPtrArray *array = NULL;
-	guint i;
+//	guint i;
 	guint owner_id = 0;
 	guint poll_id = 0;
 	guint retval = 1;
@@ -688,16 +795,38 @@ main (int argc, char *argv[])
 
 	/* get the settings */
 	settings = g_settings_new (GCM_SETTINGS_SCHEMA);
-	g_signal_connect (settings, "changed", G_CALLBACK (gcm_session_key_changed_cb), NULL);
+	g_signal_connect (settings, "changed",
+			  G_CALLBACK (gcm_session_key_changed_cb), NULL);
 
-	/* monitor devices as they are added */
-	client = gcm_client_new ();
-	gcm_client_set_use_threads (client, TRUE);
-	g_signal_connect (client, "added", G_CALLBACK (gcm_session_added_cb), NULL);
-	g_signal_connect (client, "added", G_CALLBACK (gcm_session_client_changed_cb), NULL);
-	g_signal_connect (client, "removed", G_CALLBACK (gcm_session_client_changed_cb), NULL);
-	g_signal_connect (client, "changed", G_CALLBACK (gcm_session_client_changed_cb), NULL);
+	/* monitor daemon */
+	client = cd_client_new ();
+	ret = cd_client_connect_sync (client, NULL, &error);
+	if (!ret) {
+		g_warning ("failed to connect to colord: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
+	/* monitor displays */
+	x11_screen = gcm_x11_screen_new ();
+	g_signal_connect (x11_screen, "added",
+			  G_CALLBACK (gcm_x11_screen_output_added_cb), NULL);
+	g_signal_connect (x11_screen, "removed",
+			  G_CALLBACK (gcm_x11_screen_output_removed_cb), NULL);
+	ret = gcm_x11_screen_assign (x11_screen, NULL, &error);
+	if (!ret) {
+		g_warning ("failed to assign: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+	ret = gcm_x11_screen_refresh (x11_screen, &error);
+	if (!ret) {
+		g_warning ("failed to refresh: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+#if 0
 	/* set for each output */
 	array = gcm_client_get_devices (client);
 	for (i=0; i<array->len; i++) {
@@ -738,18 +867,17 @@ main (int argc, char *argv[])
 			break;
 		}
 	}
+#endif
 
 	/* have access to all profiles */
 	profile_store = gcm_profile_store_new ();
 	gcm_profile_store_search (profile_store);
-	timer = g_timer_new ();
-
-	/* get all connected devices */
-	ret = gcm_client_coldplug (client, GCM_CLIENT_COLDPLUG_ALL, &error);
-	if (!ret) {
-		g_warning ("failed to coldplug: %s", error->message);
-		g_error_free (error);
-	}
+	g_signal_connect (profile_store, "added",
+			  G_CALLBACK (gcm_session_profile_store_added_cb),
+			  NULL);
+	g_signal_connect (profile_store, "removed",
+			  G_CALLBACK (gcm_session_profile_store_removed_cb),
+			  NULL);
 
 	/* create new objects */
 	loop = g_main_loop_new (NULL, FALSE);
@@ -797,8 +925,6 @@ out:
 		g_bus_unown_name (owner_id);
 	if (profile_store != NULL)
 		g_object_unref (profile_store);
-	if (timer != NULL)
-		g_timer_destroy (timer);
 	if (connection != NULL)
 		g_object_unref (connection);
 	g_dbus_node_info_unref (introspection);
