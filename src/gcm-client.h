@@ -87,8 +87,6 @@ gboolean	 gcm_client_coldplug				(GcmClient		*client,
 								 GcmClientColdplug	 coldplug,
 								 GError			**error);
 GPtrArray	*gcm_client_get_devices				(GcmClient		*client);
-void		 gcm_client_set_use_threads			(GcmClient		*client,
-								 gboolean		 use_threads);
 gboolean	 gcm_client_get_loading				(GcmClient		*client);
 
 G_END_DECLS

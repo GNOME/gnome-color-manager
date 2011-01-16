@@ -50,7 +50,6 @@ static void     gcm_client_finalize	(GObject     *object);
 
 #ifdef HAVE_SANE
 static gboolean gcm_client_coldplug_devices_sane (GcmClient *client, GError **error);
-static gpointer gcm_client_coldplug_devices_sane_thrd (GcmClient *client);
 #endif
 
 /**
@@ -66,7 +65,6 @@ struct _GcmClientPrivate
 	GSettings			*settings;
 	gboolean			 loading;
 	guint				 loading_refcount;
-	gboolean			 use_threads;
 	gboolean			 init_sane;
 	guint				 refresh_id;
 	guint				 emit_added_id;
@@ -76,7 +74,6 @@ enum {
 	PROP_0,
 	PROP_DISPLAY_NAME,
 	PROP_LOADING,
-	PROP_USE_THREADS,
 	PROP_LAST
 };
 
@@ -93,16 +90,6 @@ static gpointer gcm_client_object = NULL;
 G_DEFINE_TYPE (GcmClient, gcm_client, G_TYPE_OBJECT)
 
 #define	GCM_CLIENT_SANE_REMOVED_TIMEOUT		200	/* ms */
-
-/**
- * gcm_client_set_use_threads:
- **/
-void
-gcm_client_set_use_threads (GcmClient *client, gboolean use_threads)
-{
-	client->priv->use_threads = use_threads;
-	g_object_notify (G_OBJECT (client), "use-threads");
-}
 
 /**
  * gcm_client_set_loading:
@@ -369,7 +356,6 @@ gcm_client_sane_refresh_cb (GcmClient *client)
 {
 	gboolean ret;
 	GError *error = NULL;
-	GThread *thread;
 
 	/* inform UI if we are loading devices still */
 	client->priv->loading_refcount = 1;
@@ -377,20 +363,11 @@ gcm_client_sane_refresh_cb (GcmClient *client)
 
 	/* rescan */
 	g_debug ("rescanning sane");
-	if (client->priv->use_threads) {
-		thread = g_thread_create ((GThreadFunc) gcm_client_coldplug_devices_sane_thrd, client, FALSE, &error);
-		if (thread == NULL) {
-			g_debug ("failed to rescan sane devices: %s", error->message);
-			g_error_free (error);
-			goto out;
-		}
-	} else {
-		ret = gcm_client_coldplug_devices_sane (client, &error);
-		if (!ret) {
-			g_debug ("failed to rescan sane devices: %s", error->message);
-			g_error_free (error);
-			goto out;
-		}
+	ret = gcm_client_coldplug_devices_sane (client, &error);
+	if (!ret) {
+		g_debug ("failed to rescan sane devices: %s", error->message);
+		g_error_free (error);
+		goto out;
 	}
 out:
 	return FALSE;
@@ -669,15 +646,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_client_coldplug_devices_sane_thrd:
- **/
-static gpointer
-gcm_client_coldplug_devices_sane_thrd (GcmClient *client)
-{
-	gcm_client_coldplug_devices_sane (client, NULL);
-	return NULL;
-}
 #endif
 
 /**
@@ -815,7 +783,6 @@ gboolean
 gcm_client_coldplug (GcmClient *client, GcmClientColdplug coldplug, GError **error)
 {
 	gboolean ret = TRUE;
-	GThread *thread;
 	gboolean enable;
 
 	g_return_val_if_fail (GCM_IS_CLIENT (client), FALSE);
@@ -837,15 +804,9 @@ gcm_client_coldplug (GcmClient *client, GcmClientColdplug coldplug, GError **err
 	if (enable && (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_SANE)) {
 		gcm_client_add_loading (client);
 		g_debug ("adding devices of type SANE");
-		if (client->priv->use_threads) {
-			thread = g_thread_create ((GThreadFunc) gcm_client_coldplug_devices_sane_thrd, client, FALSE, error);
-			if (thread == NULL)
-				goto out;
-		} else {
-			ret = gcm_client_coldplug_devices_sane (client, error);
-			if (!ret)
-				goto out;
-		}
+		ret = gcm_client_coldplug_devices_sane (client, error);
+		if (!ret)
+			goto out;
 	}
 #endif
 out:
@@ -933,7 +894,7 @@ gcm_client_add_device (GcmClient *client, GcmDevice *device, GError **error)
 	g_ptr_array_add (client->priv->array, g_object_ref (device));
 	g_signal_connect (device, "changed", G_CALLBACK (gcm_client_device_changed_cb), client);
 
-	/* emit a signal from the main thread, not this one */
+	/* emit a signal */
 	gcm_client_emit_added_idle (client, device);
 
 	/* all okay */
@@ -1034,9 +995,6 @@ gcm_client_get_property (GObject *object, guint prop_id, GValue *value, GParamSp
 	case PROP_LOADING:
 		g_value_set_boolean (value, priv->loading);
 		break;
-	case PROP_USE_THREADS:
-		g_value_set_boolean (value, priv->use_threads);
-		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -1056,9 +1014,6 @@ gcm_client_set_property (GObject *object, guint prop_id, const GValue *value, GP
 	case PROP_DISPLAY_NAME:
 		g_free (priv->display_name);
 		priv->display_name = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_USE_THREADS:
-		priv->use_threads = g_value_get_boolean (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1093,14 +1048,6 @@ gcm_client_class_init (GcmClientClass *klass)
 				      TRUE,
 				      G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_LOADING, pspec);
-
-	/**
-	 * GcmClient:use-threads:
-	 */
-	pspec = g_param_spec_boolean ("use-threads", NULL, NULL,
-				      TRUE,
-				      G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_USE_THREADS, pspec);
 
 	/**
 	 * GcmClient::added
@@ -1146,7 +1093,6 @@ gcm_client_init (GcmClient *client)
 	client->priv = GCM_CLIENT_GET_PRIVATE (client);
 	client->priv->display_name = NULL;
 	client->priv->loading_refcount = 0;
-	client->priv->use_threads = FALSE;
 	client->priv->init_sane = FALSE;
 	client->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 	client->priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);

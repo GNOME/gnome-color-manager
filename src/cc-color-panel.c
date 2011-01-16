@@ -2560,7 +2560,6 @@ cc_color_panel_init (CcColorPanel *panel)
 
 	/* use a device client array */
 	panel->priv->gcm_client = gcm_client_new ();
-	gcm_client_set_use_threads (panel->priv->gcm_client, TRUE);
 	g_signal_connect (panel->priv->gcm_client, "added", G_CALLBACK (cc_color_panel_added_cb), panel);
 	g_signal_connect (panel->priv->gcm_client, "removed", G_CALLBACK (cc_color_panel_removed_cb), panel);
 	g_signal_connect (panel->priv->gcm_client, "changed", G_CALLBACK (cc_color_panel_changed_cb), panel);
