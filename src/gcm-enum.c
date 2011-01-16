@@ -31,40 +31,6 @@
 #include "gcm-enum.h"
 
 /**
- * gcm_intent_to_string:
- **/
-const gchar *
-gcm_intent_to_string (GcmIntent intent)
-{
-	if (intent == GCM_INTENT_PERCEPTUAL)
-		return "perceptual";
-	if (intent == GCM_INTENT_RELATIVE_COLORMETRIC)
-		return "relative-colormetric";
-	if (intent == GCM_INTENT_SATURATION)
-		return "saturation";
-	if (intent == GCM_INTENT_ABSOLUTE_COLORMETRIC)
-		return "absolute-colormetric";
-	return "unknown";
-}
-
-/**
- * gcm_intent_from_string:
- **/
-GcmIntent
-gcm_intent_from_string (const gchar *intent)
-{
-	if (g_strcmp0 (intent, "perceptual") == 0)
-		return GCM_INTENT_PERCEPTUAL;
-	if (g_strcmp0 (intent, "relative-colormetric") == 0)
-		return GCM_INTENT_RELATIVE_COLORMETRIC;
-	if (g_strcmp0 (intent, "saturation") == 0)
-		return GCM_INTENT_SATURATION;
-	if (g_strcmp0 (intent, "absolute-colormetric") == 0)
-		return GCM_INTENT_ABSOLUTE_COLORMETRIC;
-	return GCM_INTENT_UNKNOWN;
-}
-
-/**
  * gcm_colorspace_to_string:
  **/
 const gchar *

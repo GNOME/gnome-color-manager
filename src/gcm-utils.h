@@ -78,8 +78,8 @@ gboolean	 gcm_utils_install_package		(const gchar		*package_name,
 							 GtkWindow		*window);
 gboolean	 gcm_utils_is_icc_profile		(GFile			*file);
 gchar		*gcm_utils_linkify			(const gchar		*text);
-const gchar	*gcm_intent_to_localized_text		(GcmIntent	 intent);
-const gchar	*gcm_intent_to_localized_description	(GcmIntent	 intent);
+const gchar	*cd_rendering_intent_to_localized_text		(CdRenderingIntent	 intent);
+const gchar	*cd_rendering_intent_to_localized_description	(CdRenderingIntent	 intent);
 const gchar	*gcm_colorspace_to_localised_string	(GcmColorspace	 colorspace);
 
 #endif /* __GCM_UTILS_H */

@@ -25,15 +25,6 @@
 #include <glib-object.h>
 
 typedef enum {
-	GCM_INTENT_UNKNOWN,
-	GCM_INTENT_PERCEPTUAL,
-	GCM_INTENT_RELATIVE_COLORMETRIC,
-	GCM_INTENT_SATURATION,
-	GCM_INTENT_ABSOLUTE_COLORMETRIC,
-	GCM_INTENT_LAST
-} GcmIntent;
-
-typedef enum {
 	GCM_COLORSPACE_UNKNOWN,
 	GCM_COLORSPACE_XYZ,
 	GCM_COLORSPACE_LAB,
@@ -48,8 +39,6 @@ typedef enum {
 	GCM_COLORSPACE_LAST
 } GcmColorspace;
 
-GcmIntent	 gcm_intent_from_string			(const gchar		*intent);
-const gchar	*gcm_intent_to_string			(GcmIntent		 intent);
 const gchar	*gcm_colorspace_to_string		(GcmColorspace		 colorspace);
 GcmColorspace	 gcm_colorspace_from_string		(const gchar		*colorspace);
 

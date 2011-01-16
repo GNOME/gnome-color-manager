@@ -2042,7 +2042,7 @@ cc_color_panel_renderer_combo_changed_cb (GtkWidget *widget, CcColorPanel *panel
 		return;
 
 	/* save to GSettings */
-	g_debug ("changed rendering intent to %s", gcm_intent_to_string (active+1));
+	g_debug ("changed rendering intent to %s", cd_rendering_intent_to_string (active+1));
 	g_settings_set_enum (panel->priv->settings, key, active+1);
 }
 
@@ -2050,16 +2050,16 @@ cc_color_panel_renderer_combo_changed_cb (GtkWidget *widget, CcColorPanel *panel
  * cc_color_panel_setup_rendering_combobox:
  **/
 static void
-cc_color_panel_setup_rendering_combobox (GtkWidget *widget, GcmIntent intent)
+cc_color_panel_setup_rendering_combobox (GtkWidget *widget, CdRenderingIntent intent)
 {
 	guint i;
 	gboolean ret = FALSE;
 	gchar *label;
 
-	for (i=1; i<GCM_INTENT_LAST; i++) {
+	for (i=1; i<CD_RENDERING_INTENT_LAST; i++) {
 		label = g_strdup_printf ("%s - %s",
-					 gcm_intent_to_localized_text (i),
-					 gcm_intent_to_localized_description (i));
+					 cd_rendering_intent_to_localized_text (i),
+					 cd_rendering_intent_to_localized_description (i));
 		gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (widget), label);
 		g_free (label);
 		if (i == intent) {

@@ -484,24 +484,24 @@ gcm_utils_device_kind_to_profile_kind (CdDeviceKind kind)
 }
 
 /**
- * gcm_intent_to_localized_text:
+ * cd_rendering_intent_to_localized_text:
  **/
 const gchar *
-gcm_intent_to_localized_text (GcmIntent intent)
+cd_rendering_intent_to_localized_text (CdRenderingIntent intent)
 {
-	if (intent == GCM_INTENT_PERCEPTUAL) {
+	if (intent == CD_RENDERING_INTENT_PERCEPTUAL) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Perceptual");
 	}
-	if (intent == GCM_INTENT_RELATIVE_COLORMETRIC) {
+	if (intent == CD_RENDERING_INTENT_RELATIVE_COLORMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Relative");
 	}
-	if (intent == GCM_INTENT_SATURATION) {
+	if (intent == CD_RENDERING_INTENT_SATURATION) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Saturation");
 	}
-	if (intent == GCM_INTENT_ABSOLUTE_COLORMETRIC) {
+	if (intent == CD_RENDERING_INTENT_ABSOLUTE_COLORMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Absolute");
 	}
@@ -509,24 +509,24 @@ gcm_intent_to_localized_text (GcmIntent intent)
 }
 
 /**
- * gcm_intent_to_localized_description:
+ * cd_rendering_intent_to_localized_description:
  **/
 const gchar *
-gcm_intent_to_localized_description (GcmIntent intent)
+cd_rendering_intent_to_localized_description (CdRenderingIntent intent)
 {
-	if (intent == GCM_INTENT_PERCEPTUAL) {
+	if (intent == CD_RENDERING_INTENT_PERCEPTUAL) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("High quality photography");
 	}
-	if (intent == GCM_INTENT_RELATIVE_COLORMETRIC) {
+	if (intent == CD_RENDERING_INTENT_RELATIVE_COLORMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Precise color matching");
 	}
-	if (intent == GCM_INTENT_SATURATION) {
+	if (intent == CD_RENDERING_INTENT_SATURATION) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Graphs and presentations");
 	}
-	if (intent == GCM_INTENT_ABSOLUTE_COLORMETRIC) {
+	if (intent == CD_RENDERING_INTENT_ABSOLUTE_COLORMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Proofing devices");
 	}
