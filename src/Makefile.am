@@ -4,11 +4,11 @@ INCLUDES =						\
 	$(GTK_CFLAGS)					\
 	$(VTE_CFLAGS)					\
 	$(XORG_CFLAGS)					\
-	$(CUPS_CFLAGS)					\
 	$(SANE_CFLAGS)					\
 	$(TIFF_CFLAGS)					\
 	$(EXIF_CFLAGS)					\
 	$(EXIV_CFLAGS)					\
+	$(COLORD_CFLAGS)				\
 	$(NOTIFY_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
 	$(CONTROL_CENTER_CFLAGS)			\
@@ -104,7 +104,6 @@ gcm_inspect_LDADD =					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
 	$(COLOR_GLIB_LIBS)				\
 	-lm
 
@@ -122,7 +121,6 @@ gcm_import_LDADD =					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
 	$(COLOR_GLIB_LIBS)				\
 	-lm
 
@@ -143,7 +141,6 @@ gcm_viewer_LDADD =					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
 	$(COLOR_GLIB_LIBS)				\
@@ -164,7 +161,6 @@ gcm_picker_LDADD =					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
 	$(CANBERRA_LIBS)				\
@@ -188,7 +184,7 @@ gcm_session_LDADD =					\
 	$(EXIF_LIBS)					\
 	$(SANE_LIBS)					\
 	$(NOTIFY_LIBS)					\
-	$(CUPS_LIBS)					\
+	$(COLORD_LIBS)					\
 	$(COLOR_GLIB_LIBS)				\
 	-lm
 
@@ -218,7 +214,6 @@ libcolor_la_LIBADD =					\
 	$(EXIF_LIBS)					\
 	$(SANE_LIBS)					\
 	$(NOTIFY_LIBS)					\
-	$(CUPS_LIBS)					\
 	$(CANBERRA_LIBS)				\
 	$(CONTROL_CENTER_LIBS)				\
 	$(COLOR_GLIB_LIBS)
@@ -246,7 +241,6 @@ gcm_self_test_LDADD =					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
 	$(COLOR_GLIB_LIBS)				\
