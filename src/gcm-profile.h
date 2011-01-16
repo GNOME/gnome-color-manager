@@ -24,6 +24,7 @@
 
 #include <glib-object.h>
 #include <gio/gio.h>
+#include <colord.h>
 
 #include "gcm-clut.h"
 #include "gcm-enum.h"
@@ -122,9 +123,9 @@ const gchar	*gcm_profile_get_datetime		(GcmProfile	*profile);
 void		 gcm_profile_set_datetime		(GcmProfile	*profile,
 							 const gchar 	*datetime);
 guint		 gcm_profile_get_size			(GcmProfile	*profile);
-GcmProfileKind	 gcm_profile_get_kind			(GcmProfile	*profile);
+CdProfileKind	 gcm_profile_get_kind			(GcmProfile	*profile);
 void		 gcm_profile_set_kind			(GcmProfile	*profile,
-							 GcmProfileKind	 kind);
+							 CdProfileKind	 kind);
 GcmColorspace	 gcm_profile_get_colorspace		(GcmProfile	*profile);
 void		 gcm_profile_set_colorspace		(GcmProfile	*profile,
 							 GcmColorspace	 colorspace);

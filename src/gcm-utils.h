@@ -74,7 +74,7 @@ gboolean	 gcm_utils_output_is_lcd		(const gchar		*output_name);
 void		 gcm_utils_alphanum_lcase		(gchar			*string);
 void		 gcm_utils_ensure_sensible_filename	(gchar			*string);
 gchar		*gcm_utils_get_default_config_location	(void);
-GcmProfileKind	 gcm_utils_device_kind_to_profile_kind	(GcmDeviceKind		 kind);
+CdProfileKind	 gcm_utils_device_kind_to_profile_kind	(CdDeviceKind		 kind);
 gboolean	 gcm_utils_install_package		(const gchar		*package_name,
 							 GtkWindow		*window);
 gboolean	 gcm_utils_is_icc_profile		(GFile			*file);

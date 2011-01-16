@@ -435,7 +435,7 @@ gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevic
 			/* set all scanners as disconnected */
 			for (i=0; i<priv->array->len; i++) {
 				device_tmp = g_ptr_array_index (priv->array, i);
-				if (gcm_device_get_kind (device_tmp) == GCM_DEVICE_KIND_SCANNER)
+				if (gcm_device_get_kind (device_tmp) == CD_DEVICE_KIND_SCANNER)
 					gcm_device_set_connected (device_tmp, FALSE);
 			}
 
@@ -767,7 +767,7 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 	gchar *kind_text = NULL;
 	gchar *colorspace_text = NULL;
 	GcmColorspace colorspace;
-	GcmDeviceKind kind;
+	CdDeviceKind kind;
 	GcmDevice *device = NULL;
 	gboolean ret;
 	gboolean virtual;
@@ -779,8 +779,8 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 		goto out;
 	virtual = g_key_file_get_boolean (keyfile, id, "virtual", NULL);
 	kind_text = g_key_file_get_string (keyfile, id, "type", NULL);
-	kind = gcm_device_kind_from_string (kind_text);
-	if (kind == GCM_DEVICE_KIND_UNKNOWN)
+	kind = cd_device_kind_from_string (kind_text);
+	if (kind == CD_DEVICE_KIND_UNKNOWN)
 		goto out;
 
 	/* get colorspace */
@@ -793,10 +793,10 @@ gcm_client_add_unconnected_device (GcmClient *client, GKeyFile *keyfile, const g
 	}
 
 	/* create device of specified type */
-	if (kind == GCM_DEVICE_KIND_DISPLAY) {
+	if (kind == CD_DEVICE_KIND_DISPLAY) {
 		device = gcm_device_xrandr_new ();
 #ifdef HAVE_SANE
-	} else if (kind == GCM_DEVICE_KIND_SCANNER) {
+	} else if (kind == CD_DEVICE_KIND_SCANNER) {
 		device = gcm_device_sane_new ();
 #endif
 	} else {

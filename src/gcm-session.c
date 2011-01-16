@@ -72,7 +72,7 @@ gcm_session_notify_cb (NotifyNotification *notification, gchar *action, gpointer
  * gcm_session_notify_recalibrate:
  **/
 static gboolean
-gcm_session_notify_recalibrate (const gchar *title, const gchar *message, GcmDeviceKind kind)
+gcm_session_notify_recalibrate (const gchar *title, const gchar *message, CdDeviceKind kind)
 {
 	gboolean ret;
 	GError *error = NULL;
@@ -87,7 +87,7 @@ gcm_session_notify_recalibrate (const gchar *title, const gchar *message, GcmDev
 	notify_notification_add_action (notification, "recalibrate", _("Recalibrate now"), gcm_session_notify_cb, NULL, NULL);
 
 	/* TRANSLATORS: button: this is to ignore the recalibrate notifications */
-	notify_notification_add_action (notification, gcm_device_kind_to_string (kind), _("Ignore"), gcm_session_notify_cb, NULL, NULL);
+	notify_notification_add_action (notification, cd_device_kind_to_string (kind), _("Ignore"), gcm_session_notify_cb, NULL, NULL);
 
 	ret = notify_notification_show (notification, &error);
 	if (!ret) {
@@ -105,7 +105,7 @@ gcm_session_notify_device (GcmDevice *device)
 {
 	gchar *message;
 	const gchar *title;
-	GcmDeviceKind kind;
+	CdDeviceKind kind;
 	glong since;
 	GTimeVal timeval;
 	gint threshold;
@@ -118,7 +118,7 @@ gcm_session_notify_device (GcmDevice *device)
 
 	/* check we care */
 	kind = gcm_device_get_kind (device);
-	if (kind == GCM_DEVICE_KIND_DISPLAY) {
+	if (kind == CD_DEVICE_KIND_DISPLAY) {
 
 		/* get from GSettings */
 		threshold = g_settings_get_int (settings, GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD);
@@ -147,15 +147,15 @@ gcm_session_notify_device (GcmDevice *device)
 static void
 gcm_session_added_cb (GcmClient *client_, GcmDevice *device, gpointer user_data)
 {
-	GcmDeviceKind kind;
+	CdDeviceKind kind;
 	const gchar *profile;
 	gchar *basename = NULL;
 	gboolean allow_notifications;
 
 	/* check we care */
 	kind = gcm_device_get_kind (device);
-	if (kind != GCM_DEVICE_KIND_DISPLAY &&
-	    kind != GCM_DEVICE_KIND_PRINTER)
+	if (kind != CD_DEVICE_KIND_DISPLAY &&
+	    kind != CD_DEVICE_KIND_PRINTER)
 		return;
 
 	/* ensure we have a profile */

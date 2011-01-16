@@ -65,52 +65,6 @@ gcm_intent_from_string (const gchar *intent)
 }
 
 /**
- * gcm_intent_from_string:
- **/
-GcmProfileKind
-gcm_profile_kind_from_string (const gchar *profile_kind)
-{
-	if (g_strcmp0 (profile_kind, "input-device") == 0)
-		return GCM_PROFILE_KIND_INPUT_DEVICE;
-	if (g_strcmp0 (profile_kind, "display-device") == 0)
-		return GCM_PROFILE_KIND_DISPLAY_DEVICE;
-	if (g_strcmp0 (profile_kind, "output-device") == 0)
-		return GCM_PROFILE_KIND_OUTPUT_DEVICE;
-	if (g_strcmp0 (profile_kind, "devicelink") == 0)
-		return GCM_PROFILE_KIND_DEVICELINK;
-	if (g_strcmp0 (profile_kind, "colorspace-conversion") == 0)
-		return GCM_PROFILE_KIND_COLORSPACE_CONVERSION;
-	if (g_strcmp0 (profile_kind, "abstract") == 0)
-		return GCM_PROFILE_KIND_ABSTRACT;
-	if (g_strcmp0 (profile_kind, "named-color") == 0)
-		return GCM_PROFILE_KIND_NAMED_COLOR;
-	return GCM_PROFILE_KIND_UNKNOWN;
-}
-
-/**
- * gcm_profile_kind_to_string:
- **/
-const gchar *
-gcm_profile_kind_to_string (GcmProfileKind kind)
-{
-	if (kind == GCM_PROFILE_KIND_INPUT_DEVICE)
-		return "input-device";
-	if (kind == GCM_PROFILE_KIND_DISPLAY_DEVICE)
-		return "display-device";
-	if (kind == GCM_PROFILE_KIND_OUTPUT_DEVICE)
-		return "output-device";
-	if (kind == GCM_PROFILE_KIND_DEVICELINK)
-		return "devicelink";
-	if (kind == GCM_PROFILE_KIND_COLORSPACE_CONVERSION)
-		return "colorspace-conversion";
-	if (kind == GCM_PROFILE_KIND_ABSTRACT)
-		return "abstract";
-	if (kind == GCM_PROFILE_KIND_NAMED_COLOR)
-		return "named-color";
-	return "unknown";
-}
-
-/**
  * gcm_colorspace_to_string:
  **/
 const gchar *

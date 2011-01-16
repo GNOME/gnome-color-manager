@@ -45,7 +45,7 @@ cc_color_panel_profile_get_tooltip (GcmProfile *profile)
 	const gchar *tooltip = NULL;
 
 	/* VCGT warning */
-	if (gcm_profile_get_kind (profile) == GCM_PROFILE_KIND_DISPLAY_DEVICE &&
+	if (gcm_profile_get_kind (profile) == CD_PROFILE_KIND_DISPLAY_DEVICE &&
 	    !gcm_profile_get_has_vcgt (profile)) {
 		/* TRANSLATORS: this is displayed when the profile is crap */
 		tooltip = _("This profile does not have the information required for whole-screen color correction.");

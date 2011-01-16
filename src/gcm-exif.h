@@ -24,6 +24,7 @@
 
 #include <glib-object.h>
 #include <gio/gio.h>
+#include <colord.h>
 
 #include "gcm-enum.h"
 
@@ -67,7 +68,7 @@ GcmExif		*gcm_exif_new				(void);
 const gchar	*gcm_exif_get_manufacturer		(GcmExif	*exif);
 const gchar	*gcm_exif_get_model			(GcmExif	*exif);
 const gchar	*gcm_exif_get_serial			(GcmExif	*exif);
-GcmDeviceKind	 gcm_exif_get_device_kind		(GcmExif	*exif);
+CdDeviceKind	 gcm_exif_get_device_kind		(GcmExif	*exif);
 gboolean	 gcm_exif_parse				(GcmExif	*exif,
 							 GFile		*file,
 							 GError		**error);

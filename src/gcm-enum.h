@@ -34,18 +34,6 @@ typedef enum {
 } GcmIntent;
 
 typedef enum {
-	GCM_PROFILE_KIND_UNKNOWN,
-	GCM_PROFILE_KIND_INPUT_DEVICE,
-	GCM_PROFILE_KIND_DISPLAY_DEVICE,
-	GCM_PROFILE_KIND_OUTPUT_DEVICE,
-	GCM_PROFILE_KIND_DEVICELINK,
-	GCM_PROFILE_KIND_COLORSPACE_CONVERSION,
-	GCM_PROFILE_KIND_ABSTRACT,
-	GCM_PROFILE_KIND_NAMED_COLOR,
-	GCM_PROFILE_KIND_LAST
-} GcmProfileKind;
-
-typedef enum {
 	GCM_COLORSPACE_UNKNOWN,
 	GCM_COLORSPACE_XYZ,
 	GCM_COLORSPACE_LAB,
@@ -60,23 +48,10 @@ typedef enum {
 	GCM_COLORSPACE_LAST
 } GcmColorspace;
 
-typedef enum {
-	GCM_DEVICE_KIND_UNKNOWN,
-	GCM_DEVICE_KIND_DISPLAY,
-	GCM_DEVICE_KIND_SCANNER,
-	GCM_DEVICE_KIND_PRINTER,
-	GCM_DEVICE_KIND_CAMERA,
-	GCM_DEVICE_KIND_LAST
-} GcmDeviceKind;
-
 GcmIntent	 gcm_intent_from_string			(const gchar		*intent);
 const gchar	*gcm_intent_to_string			(GcmIntent		 intent);
-GcmProfileKind	 gcm_profile_kind_from_string		(const gchar		*profile_kind);
-const gchar	*gcm_profile_kind_to_string		(GcmProfileKind		 profile_kind);
 const gchar	*gcm_colorspace_to_string		(GcmColorspace		 colorspace);
 GcmColorspace	 gcm_colorspace_from_string		(const gchar		*colorspace);
-GcmDeviceKind	 gcm_device_kind_from_string		(const gchar		*kind);
-const gchar	*gcm_device_kind_to_string		(GcmDeviceKind		 kind);
 
 #endif /* __GCM_ENUM_H */
 

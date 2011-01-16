@@ -170,7 +170,7 @@ cc_color_panel_default_cb (GtkWidget *widget, CcColorPanel *panel)
 {
 	GPtrArray *array = NULL;
 	GcmDevice *device;
-	GcmDeviceKind kind;
+	CdDeviceKind kind;
 	gboolean ret;
 	guint i;
 
@@ -181,7 +181,7 @@ cc_color_panel_default_cb (GtkWidget *widget, CcColorPanel *panel)
 
 		/* not a xrandr panel */
 		kind = gcm_device_get_kind (device);
-		if (kind != GCM_DEVICE_KIND_DISPLAY)
+		if (kind != CD_DEVICE_KIND_DISPLAY)
 			continue;
 
 		/* set for this device */
@@ -585,7 +585,7 @@ cc_color_panel_virtual_set_from_file (CcColorPanel *panel, GFile *file)
 
 	/* set type */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "combobox_virtual_type"));
-	gtk_combo_box_set_active (GTK_COMBO_BOX(widget), GCM_DEVICE_KIND_CAMERA - 2);
+	gtk_combo_box_set_active (GTK_COMBO_BOX(widget), CD_DEVICE_KIND_CAMERA - 2);
 out:
 	g_object_unref (exif);
 	return ret;
@@ -706,7 +706,7 @@ static void
 cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 {
 	GcmCalibrate *calibrate = NULL;
-	GcmDeviceKind kind;
+	CdDeviceKind kind;
 	gboolean ret;
 	GError *error = NULL;
 	const gchar *filename;
@@ -729,14 +729,14 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 	/* choose the correct kind of calibration */
 	kind = gcm_device_get_kind (panel->priv->current_device);
 	switch (kind) {
-	case GCM_DEVICE_KIND_DISPLAY:
+	case CD_DEVICE_KIND_DISPLAY:
 		ret = cc_color_panel_calibrate_display (panel, calibrate);
 		break;
-	case GCM_DEVICE_KIND_SCANNER:
-	case GCM_DEVICE_KIND_CAMERA:
+	case CD_DEVICE_KIND_SCANNER:
+	case CD_DEVICE_KIND_CAMERA:
 		ret = cc_color_panel_calibrate_device (panel, calibrate);
 		break;
-	case GCM_DEVICE_KIND_PRINTER:
+	case CD_DEVICE_KIND_PRINTER:
 		ret = cc_color_panel_calibrate_printer (panel, calibrate);
 		break;
 	default:
@@ -841,12 +841,12 @@ cc_color_panel_device_add_cb (GtkWidget *widget, CcColorPanel *panel)
 static gboolean
 cc_color_panel_is_profile_suitable_for_device (GcmProfile *profile, GcmDevice *device)
 {
-	GcmProfileKind profile_kind_tmp;
-	GcmProfileKind profile_kind;
+	CdProfileKind profile_kind_tmp;
+	CdProfileKind profile_kind;
 	GcmColorspace profile_colorspace;
 	GcmColorspace device_colorspace;
 	gboolean ret = FALSE;
-	GcmDeviceKind device_kind;
+	CdDeviceKind device_kind;
 
 	/* not the right colorspace */
 	device_colorspace = gcm_device_get_colorspace (device);
@@ -959,7 +959,7 @@ cc_color_panel_profile_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 	/* if this is an auto-added profile that the user has *manually*
 	 * removed, then assume there was something wrong with the profile
 	 * and don't do this again on next session start */
-	if (gcm_device_get_kind (panel->priv->current_device) == GCM_DEVICE_KIND_DISPLAY) {
+	if (gcm_device_get_kind (panel->priv->current_device) == CD_DEVICE_KIND_DISPLAY) {
 		device_md5 = gcm_device_xrandr_get_edid_md5 (GCM_DEVICE_XRANDR (panel->priv->current_device));
 		if (g_strstr_len (gcm_profile_get_filename (profile), -1, device_md5) != NULL) {
 			g_debug ("removed an auto-profile, so disabling add for device");
@@ -1071,7 +1071,7 @@ cc_color_panel_profile_make_default_cb (GtkWidget *widget, CcColorPanel *panel)
 static void
 cc_color_panel_button_virtual_add_cb (GtkWidget *widget, CcColorPanel *panel)
 {
-	GcmDeviceKind device_kind;
+	CdDeviceKind device_kind;
 	GcmDevice *device;
 	const gchar *model;
 	const gchar *manufacturer;
@@ -1304,7 +1304,7 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 	gboolean ret = FALSE;
 	GtkWidget *widget;
 	const gchar *tooltip;
-	GcmDeviceKind kind;
+	CdDeviceKind kind;
 	gboolean has_vte = TRUE;
 
 	/* TRANSLATORS: this is when the button is sensitive */
@@ -1330,7 +1330,7 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 
 	/* are we a display */
 	kind = gcm_device_get_kind (panel->priv->current_device);
-	if (kind == GCM_DEVICE_KIND_DISPLAY) {
+	if (kind == CD_DEVICE_KIND_DISPLAY) {
 
 		/* are we disconnected */
 		ret = gcm_device_get_connected (panel->priv->current_device);
@@ -1355,13 +1355,13 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 			tooltip = _("Cannot create profile: The measuring instrument is not plugged in");
 			goto out;
 		}
-	} else if (kind == GCM_DEVICE_KIND_SCANNER ||
-		   kind == GCM_DEVICE_KIND_CAMERA) {
+	} else if (kind == CD_DEVICE_KIND_SCANNER ||
+		   kind == CD_DEVICE_KIND_CAMERA) {
 
 		/* TODO: find out if we can scan using gnome-scan */
 		ret = TRUE;
 
-	} else if (kind == GCM_DEVICE_KIND_PRINTER) {
+	} else if (kind == CD_DEVICE_KIND_PRINTER) {
 
 		/* find whether we have hardware installed */
 		ret = gcm_sensor_client_get_present (panel->priv->sensor_client);
@@ -1403,7 +1403,7 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	gboolean connected;
 	gchar *id = NULL;
 	gboolean ret;
-	GcmDeviceKind kind;
+	CdDeviceKind kind;
 	GtkTreeIter iter;
 
 	/* This will only work in single or browse selection mode! */
@@ -1431,7 +1431,7 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "hbox_problems"));
 	gtk_widget_hide (widget);
 	kind = gcm_device_get_kind (panel->priv->current_device);
-	if (kind == GCM_DEVICE_KIND_DISPLAY) {
+	if (kind == CD_DEVICE_KIND_DISPLAY) {
 		ret = gcm_device_get_connected (panel->priv->current_device);
 		if (ret) {
 			ret = gcm_device_xrandr_get_xrandr13 (GCM_DEVICE_XRANDR (panel->priv->current_device));
@@ -1537,18 +1537,18 @@ cc_color_panel_profile_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 }
 
 /**
- * gcm_device_kind_to_string:
+ * cd_device_kind_to_string:
  **/
 static const gchar *
-cc_color_panel_device_kind_to_string (GcmDeviceKind kind)
+cc_color_panel_device_kind_to_string (CdDeviceKind kind)
 {
-	if (kind == GCM_DEVICE_KIND_DISPLAY)
+	if (kind == CD_DEVICE_KIND_DISPLAY)
 		return "1";
-	if (kind == GCM_DEVICE_KIND_SCANNER)
+	if (kind == CD_DEVICE_KIND_SCANNER)
 		return "2";
-	if (kind == GCM_DEVICE_KIND_CAMERA)
+	if (kind == CD_DEVICE_KIND_CAMERA)
 		return "3";
-	if (kind == GCM_DEVICE_KIND_PRINTER)
+	if (kind == CD_DEVICE_KIND_PRINTER)
 		return "4";
 	return "5";
 }
@@ -1599,7 +1599,7 @@ cc_color_panel_add_device_xrandr (CcColorPanel *panel, GcmDevice *device)
 
 	/* create sort order */
 	sort = g_strdup_printf ("%s%s",
-				cc_color_panel_device_kind_to_string (GCM_DEVICE_KIND_DISPLAY),
+				cc_color_panel_device_kind_to_string (CD_DEVICE_KIND_DISPLAY),
 				title);
 
 	/* add to list */
@@ -1771,15 +1771,15 @@ cc_color_panel_sensor_client_changed_cb (GcmSensorClient *sensor_client, CcColor
  * cc_color_panel_device_kind_to_icon_name:
  **/
 static const gchar *
-cc_color_panel_device_kind_to_icon_name (GcmDeviceKind kind)
+cc_color_panel_device_kind_to_icon_name (CdDeviceKind kind)
 {
-	if (kind == GCM_DEVICE_KIND_DISPLAY)
+	if (kind == CD_DEVICE_KIND_DISPLAY)
 		return "video-display";
-	if (kind == GCM_DEVICE_KIND_SCANNER)
+	if (kind == CD_DEVICE_KIND_SCANNER)
 		return "scanner";
-	if (kind == GCM_DEVICE_KIND_PRINTER)
+	if (kind == CD_DEVICE_KIND_PRINTER)
 		return "printer";
-	if (kind == GCM_DEVICE_KIND_CAMERA)
+	if (kind == CD_DEVICE_KIND_CAMERA)
 		return "camera-photo";
 	return "image-missing";
 }
@@ -1795,7 +1795,7 @@ cc_color_panel_add_device_kind (CcColorPanel *panel, GcmDevice *device)
 	GString *string;
 	const gchar *id;
 	gchar *sort = NULL;
-	GcmDeviceKind kind;
+	CdDeviceKind kind;
 	const gchar *icon_name;
 	gboolean connected;
 	gboolean virtual;
@@ -1876,7 +1876,7 @@ cc_color_panel_remove_device (CcColorPanel *panel, GcmDevice *gcm_device)
 static void
 cc_color_panel_added_cb (GcmClient *client, GcmDevice *device, CcColorPanel *panel)
 {
-	GcmDeviceKind kind;
+	CdDeviceKind kind;
 	g_debug ("added: %s (connected: %i, saved: %i)",
 		   gcm_device_get_id (device),
 		   gcm_device_get_connected (device),
@@ -1887,7 +1887,7 @@ cc_color_panel_added_cb (GcmClient *client, GcmDevice *device, CcColorPanel *pan
 
 	/* add the device */
 	kind = gcm_device_get_kind (device);
-	if (kind == GCM_DEVICE_KIND_DISPLAY)
+	if (kind == CD_DEVICE_KIND_DISPLAY)
 		cc_color_panel_add_device_xrandr (panel, device);
 	else
 		cc_color_panel_add_device_kind (panel, device);
@@ -2315,24 +2315,24 @@ cc_color_panel_info_bar_response_cb (GtkDialog *dialog, GtkResponseType response
 }
 
 /**
- * gcm_device_kind_to_localised_string:
+ * cd_device_kind_to_localised_string:
  **/
 static const gchar *
-gcm_device_kind_to_localised_string (GcmDeviceKind device_kind)
+cd_device_kind_to_localised_string (CdDeviceKind device_kind)
 {
-	if (device_kind == GCM_DEVICE_KIND_DISPLAY) {
+	if (device_kind == CD_DEVICE_KIND_DISPLAY) {
 		/* TRANSLATORS: device type */
 		return _("Display");
 	}
-	if (device_kind == GCM_DEVICE_KIND_SCANNER) {
+	if (device_kind == CD_DEVICE_KIND_SCANNER) {
 		/* TRANSLATORS: device type */
 		return _("Scanner");
 	}
-	if (device_kind == GCM_DEVICE_KIND_PRINTER) {
+	if (device_kind == CD_DEVICE_KIND_PRINTER) {
 		/* TRANSLATORS: device type */
 		return _("Printer");
 	}
-	if (device_kind == GCM_DEVICE_KIND_CAMERA) {
+	if (device_kind == CD_DEVICE_KIND_CAMERA) {
 		/* TRANSLATORS: device type */
 		return _("Camera");
 	}
@@ -2348,11 +2348,11 @@ cc_color_panel_setup_virtual_combobox (GtkWidget *widget)
 	guint i;
 	const gchar *text;
 
-	for (i=GCM_DEVICE_KIND_SCANNER; i<GCM_DEVICE_KIND_LAST; i++) {
-		text = gcm_device_kind_to_localised_string (i);
+	for (i=CD_DEVICE_KIND_SCANNER; i<CD_DEVICE_KIND_LAST; i++) {
+		text = cd_device_kind_to_localised_string (i);
 		gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(widget), text);
 	}
-	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), GCM_DEVICE_KIND_PRINTER - 2);
+	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), CD_DEVICE_KIND_PRINTER - 2);
 }
 
 /**

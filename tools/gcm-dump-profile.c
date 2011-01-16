@@ -24,6 +24,7 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <locale.h>
+#include <colord.h>
 
 #include "gcm-profile.h"
 #include "gcm-debug.h"
@@ -62,7 +63,7 @@ gcm_dump_profile_filename (const gchar *filename)
 
 	/* print what we know */
 	profile_kind = gcm_profile_get_kind (profile);
-	g_print ("Kind:\t%s\n", gcm_profile_kind_to_string (profile_kind));
+//	g_print ("Kind:\t%s\n", cd_profile_kind_to_string (profile_kind));
 	colorspace = gcm_profile_get_colorspace (profile);
 	g_print ("Colorspace:\t%s\n", gcm_colorspace_to_string (colorspace));
 	size = gcm_profile_get_size (profile);

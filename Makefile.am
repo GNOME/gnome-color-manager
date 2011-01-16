@@ -1,12 +1,12 @@
-SUBDIRS = 						\
+SUBDIRS =						\
+	src						\
 	docs						\
 	data						\
 	help						\
 	man						\
 	po						\
 	rules						\
-	tools						\
-	src
+	tools
 
 snapshot:
 	$(MAKE) dist distdir=$(PACKAGE)-$(VERSION)-`date +"%Y%m%d"`

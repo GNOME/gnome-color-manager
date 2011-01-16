@@ -4,7 +4,7 @@ INCLUDES =							\
 	$(GTK_CFLAGS)						\
 	$(GLIB_CFLAGS)
 
-COLOR_GLIB_LIBS =						\
+COLORD_LIBS =						\
 	$(top_builddir)/src/libgcmshared.a
 
 noinst_PROGRAMS =						\
@@ -15,7 +15,7 @@ gcm_parse_huey_SOURCES =					\
 	gcm-parse-huey.c
 
 gcm_parse_huey_LDADD =						\
-	$(COLOR_GLIB_LIBS)					\
+	$(COLORD_LIBS)					\
 	$(GLIB_LIBS)
 
 gcm_parse_huey_CFLAGS =						\
@@ -25,7 +25,7 @@ gcm_dump_to_values_SOURCES =					\
 	gcm-dump-to-values.c
 
 gcm_dump_to_values_LDADD =					\
-	$(COLOR_GLIB_LIBS)					\
+	$(COLORD_LIBS)					\
 	$(GLIB_LIBS)
 
 gcm_dump_to_values_CFLAGS =					\

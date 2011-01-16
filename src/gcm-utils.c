@@ -462,23 +462,23 @@ out:
 /**
  * gcm_utils_device_kind_to_profile_kind:
  **/
-GcmProfileKind
-gcm_utils_device_kind_to_profile_kind (GcmDeviceKind kind)
+CdProfileKind
+gcm_utils_device_kind_to_profile_kind (CdDeviceKind kind)
 {
-	GcmProfileKind profile_kind;
+	CdProfileKind profile_kind;
 	switch (kind) {
-	case GCM_DEVICE_KIND_DISPLAY:
-		profile_kind = GCM_PROFILE_KIND_DISPLAY_DEVICE;
+	case CD_DEVICE_KIND_DISPLAY:
+		profile_kind = CD_PROFILE_KIND_DISPLAY_DEVICE;
 		break;
-	case GCM_DEVICE_KIND_CAMERA:
-	case GCM_DEVICE_KIND_SCANNER:
-		profile_kind = GCM_PROFILE_KIND_INPUT_DEVICE;
+	case CD_DEVICE_KIND_CAMERA:
+	case CD_DEVICE_KIND_SCANNER:
+		profile_kind = CD_PROFILE_KIND_INPUT_DEVICE;
 		break;
-	case GCM_DEVICE_KIND_PRINTER:
-		profile_kind = GCM_PROFILE_KIND_OUTPUT_DEVICE;
+	case CD_DEVICE_KIND_PRINTER:
+		profile_kind = CD_PROFILE_KIND_OUTPUT_DEVICE;
 		break;
 	default:
-		profile_kind = GCM_PROFILE_KIND_UNKNOWN;
+		profile_kind = CD_PROFILE_KIND_UNKNOWN;
 	}
 	return profile_kind;
 }

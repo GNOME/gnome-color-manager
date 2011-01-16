@@ -272,7 +272,7 @@ gcm_device_xrandr_set_from_output (GcmDevice *device, GcmX11Output *output, GErr
 	/* add new device */
 	title = gcm_device_xrandr_get_output_name (GCM_DEVICE_XRANDR(device), output);
 	g_object_set (device,
-		      "kind", GCM_DEVICE_KIND_DISPLAY,
+		      "kind", CD_DEVICE_KIND_DISPLAY,
 		      "colorspace", GCM_COLORSPACE_RGB,
 		      "id", id,
 		      "connected", TRUE,
@@ -404,7 +404,7 @@ gcm_device_xrandr_generate_profile (GcmDevice *device, GError **error)
 	profile = gcm_profile_new ();
 	gcm_profile_set_colorspace (profile, 0);
 	gcm_profile_set_copyright (profile, "No copyright");
-	gcm_profile_set_kind (profile, GCM_PROFILE_KIND_DISPLAY_DEVICE);
+	gcm_profile_set_kind (profile, CD_PROFILE_KIND_DISPLAY_DEVICE);
 
 	/* get manufacturer */
 	data = gcm_edid_get_vendor_name (priv->edid);
@@ -496,7 +496,7 @@ gcm_device_xrandr_reset (GcmDeviceXrandr *device_xrandr, GError **error)
 	const gchar *output_name;
 	gboolean ret = FALSE;
 	GcmClut *clut = NULL;
-	GcmDeviceKind kind;
+	CdDeviceKind kind;
 	GcmX11Output *output;
 	guint size;
 	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
@@ -504,7 +504,7 @@ gcm_device_xrandr_reset (GcmDeviceXrandr *device_xrandr, GError **error)
 	/* do no set the gamma for non-display types */
 	id = gcm_device_get_id (GCM_DEVICE (device_xrandr));
 	kind = gcm_device_get_kind (GCM_DEVICE (device_xrandr));
-	if (kind != GCM_DEVICE_KIND_DISPLAY) {
+	if (kind != CD_DEVICE_KIND_DISPLAY) {
 		g_set_error (error, 1, 0, "not a display: %s", id);
 		goto out;
 	}
@@ -562,14 +562,14 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	gboolean use_atom;
 	gboolean leftmost_screen = FALSE;
 	GFile *file = NULL;
-	GcmDeviceKind kind;
+	CdDeviceKind kind;
 	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (device);
 	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
 
 	/* do no set the gamma for non-display types */
 	id = gcm_device_get_id (device);
 	kind = gcm_device_get_kind (device);
-	if (kind != GCM_DEVICE_KIND_DISPLAY) {
+	if (kind != CD_DEVICE_KIND_DISPLAY) {
 		g_set_error (error, 1, 0, "not a display: %s", id);
 		goto out;
 	}

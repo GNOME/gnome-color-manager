@@ -615,14 +615,14 @@ main (int argc, char **argv)
 	if (xid != 0)
 		gcm_inspect_show_profile_for_window (xid);
 	if (type != NULL) {
-		if (gcm_device_kind_from_string (type) == GCM_DEVICE_KIND_UNKNOWN &&
-		    gcm_profile_kind_from_string (type) == GCM_PROFILE_KIND_UNKNOWN) {
+		if (cd_device_kind_from_string (type) == CD_DEVICE_KIND_UNKNOWN &&
+		    cd_profile_kind_from_string (type) == CD_PROFILE_KIND_UNKNOWN) {
 			/* TRANSLATORS: this is when the user does --type=mickeymouse */
 			g_print ("%s\n", _("Device or profile type not recognized, recognised types are:"));
-			for (i=1; i<GCM_DEVICE_KIND_LAST; i++)
-				g_print (" - %s\n", gcm_device_kind_to_string (i));
-			for (i=1; i<GCM_PROFILE_KIND_LAST; i++)
-				g_print (" - %s\n", gcm_profile_kind_to_string (i));
+			for (i=1; i<CD_DEVICE_KIND_LAST; i++)
+				g_print (" - %s\n", cd_device_kind_to_string (i));
+			for (i=1; i<CD_PROFILE_KIND_LAST; i++)
+				g_print (" - %s\n", cd_profile_kind_to_string (i));
 		} else {
 			/* show device profiles */
 			gcm_inspect_show_profiles_for_type (type);

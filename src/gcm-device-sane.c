@@ -77,7 +77,7 @@ gcm_device_sane_set_from_device (GcmDevice *device, const SANE_Device *sane_devi
 
 	/* set properties on device */
 	g_object_set (device,
-		      "kind", GCM_DEVICE_KIND_SCANNER,
+		      "kind", CD_DEVICE_KIND_SCANNER,
 		      "colorspace", GCM_COLORSPACE_RGB,
 		      "id", id,
 		      "connected", TRUE,

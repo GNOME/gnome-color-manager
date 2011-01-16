@@ -58,7 +58,7 @@ gcm_cell_renderer_set_icon_name (GcmCellRendererProfileIcon *renderer)
 {
 	const gchar *icon_name = NULL;
 
-	if (gcm_profile_get_kind (renderer->profile) == GCM_PROFILE_KIND_DISPLAY_DEVICE &&
+	if (gcm_profile_get_kind (renderer->profile) == CD_PROFILE_KIND_DISPLAY_DEVICE &&
 	    !gcm_profile_get_has_vcgt (renderer->profile))
 		icon_name = "dialog-information";
 

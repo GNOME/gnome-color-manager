@@ -33,6 +33,7 @@
 #include <glib/gi18n.h>
 #include <gio/gio.h>
 #include <lcms2.h>
+#include <colord.h>
 
 #include "gcm-profile.h"
 #include "gcm-color.h"
@@ -49,7 +50,7 @@ static void     gcm_profile_finalize	(GObject     *object);
 struct _GcmProfilePrivate
 {
 	gboolean		 loaded;
-	GcmProfileKind		 kind;
+	CdProfileKind		 kind;
 	GcmColorspace		 colorspace;
 	guint			 size;
 	gboolean		 has_vcgt;
@@ -531,10 +532,10 @@ gcm_profile_set_size (GcmProfile *profile, guint size)
 /**
  * gcm_profile_get_kind:
  **/
-GcmProfileKind
+CdProfileKind
 gcm_profile_get_kind (GcmProfile *profile)
 {
-	g_return_val_if_fail (GCM_IS_PROFILE (profile), GCM_PROFILE_KIND_UNKNOWN);
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), CD_PROFILE_KIND_UNKNOWN);
 	return profile->priv->kind;
 }
 
@@ -542,7 +543,7 @@ gcm_profile_get_kind (GcmProfile *profile)
  * gcm_profile_set_kind:
  **/
 void
-gcm_profile_set_kind (GcmProfile *profile, GcmProfileKind kind)
+gcm_profile_set_kind (GcmProfile *profile, CdProfileKind kind)
 {
 	g_return_if_fail (GCM_IS_PROFILE (profile));
 	profile->priv->kind = kind;
@@ -645,7 +646,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	cmsProfileClassSignature profile_class;
 	cmsColorSpaceSignature color_space;
 	GcmColorspace colorspace;
-	GcmProfileKind profile_kind;
+	CdProfileKind profile_kind;
 	cmsCIEXYZ *cie_xyz;
 	cmsCIEXYZTRIPLE cie_illum;
 	struct tm created;
@@ -719,28 +720,28 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	profile_class = cmsGetDeviceClass (priv->lcms_profile);
 	switch (profile_class) {
 	case cmsSigInputClass:
-		profile_kind = GCM_PROFILE_KIND_INPUT_DEVICE;
+		profile_kind = CD_PROFILE_KIND_INPUT_DEVICE;
 		break;
 	case cmsSigDisplayClass:
-		profile_kind = GCM_PROFILE_KIND_DISPLAY_DEVICE;
+		profile_kind = CD_PROFILE_KIND_DISPLAY_DEVICE;
 		break;
 	case cmsSigOutputClass:
-		profile_kind = GCM_PROFILE_KIND_OUTPUT_DEVICE;
+		profile_kind = CD_PROFILE_KIND_OUTPUT_DEVICE;
 		break;
 	case cmsSigLinkClass:
-		profile_kind = GCM_PROFILE_KIND_DEVICELINK;
+		profile_kind = CD_PROFILE_KIND_DEVICELINK;
 		break;
 	case cmsSigColorSpaceClass:
-		profile_kind = GCM_PROFILE_KIND_COLORSPACE_CONVERSION;
+		profile_kind = CD_PROFILE_KIND_COLORSPACE_CONVERSION;
 		break;
 	case cmsSigAbstractClass:
-		profile_kind = GCM_PROFILE_KIND_ABSTRACT;
+		profile_kind = CD_PROFILE_KIND_ABSTRACT;
 		break;
 	case cmsSigNamedColorClass:
-		profile_kind = GCM_PROFILE_KIND_NAMED_COLOR;
+		profile_kind = CD_PROFILE_KIND_NAMED_COLOR;
 		break;
 	default:
-		profile_kind = GCM_PROFILE_KIND_UNKNOWN;
+		profile_kind = CD_PROFILE_KIND_UNKNOWN;
 	}
 	gcm_profile_set_kind (profile, profile_kind);
 
@@ -1075,7 +1076,7 @@ gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
 		cmsSetColorSpace (priv->lcms_profile, cmsSigRgbData);
 		cmsSetPCS (priv->lcms_profile, cmsSigLabData);
 	}
-	if (priv->kind == GCM_PROFILE_KIND_DISPLAY_DEVICE)
+	if (priv->kind == CD_PROFILE_KIND_DISPLAY_DEVICE)
 		cmsSetDeviceClass (priv->lcms_profile, cmsSigDisplayClass);
 
 	/* write text data */
@@ -1851,7 +1852,7 @@ gcm_profile_init (GcmProfile *profile)
 	profile->priv->can_delete = FALSE;
 	profile->priv->monitor = NULL;
 	profile->priv->dict = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
-	profile->priv->kind = GCM_PROFILE_KIND_UNKNOWN;
+	profile->priv->kind = CD_PROFILE_KIND_UNKNOWN;
 	profile->priv->colorspace = GCM_COLORSPACE_UNKNOWN;
 	profile->priv->white = gcm_color_new_XYZ ();
 	profile->priv->black = gcm_color_new_XYZ ();

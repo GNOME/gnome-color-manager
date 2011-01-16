@@ -421,7 +421,7 @@ gcm_test_profile_func (void)
 	g_assert_cmpstr (gcm_profile_get_datetime (profile), ==, "February  9 1998, 06:49:00 AM");
 	g_assert_cmpstr (gcm_profile_get_description (profile), ==, "Blueish Test");
 	g_assert_cmpstr (gcm_profile_get_checksum (profile), ==, "8e2aed5dac6f8b5d8da75610a65b7f27");
-	g_assert_cmpint (gcm_profile_get_kind (profile), ==, GCM_PROFILE_KIND_DISPLAY_DEVICE);
+	g_assert_cmpint (gcm_profile_get_kind (profile), ==, CD_PROFILE_KIND_DISPLAY_DEVICE);
 	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, GCM_COLORSPACE_RGB);
 	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 6500);
 	g_assert (gcm_profile_get_has_vcgt (profile));
@@ -452,7 +452,7 @@ gcm_test_profile_func (void)
 	g_assert_cmpstr (gcm_profile_get_datetime (profile), ==, "August 16 2005, 09:49:54 PM");
 	g_assert_cmpstr (gcm_profile_get_description (profile), ==, "ADOBEGAMMA-Test");
 	g_assert_cmpstr (gcm_profile_get_checksum (profile), ==, "bd847723f676e2b846daaf6759330624");
-	g_assert_cmpint (gcm_profile_get_kind (profile), ==, GCM_PROFILE_KIND_DISPLAY_DEVICE);
+	g_assert_cmpint (gcm_profile_get_kind (profile), ==, CD_PROFILE_KIND_DISPLAY_DEVICE);
 	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, GCM_COLORSPACE_RGB);
 	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 6500);
 	g_assert (gcm_profile_get_has_vcgt (profile));
@@ -495,7 +495,7 @@ gcm_test_profile_func (void)
 	g_assert_cmpstr (gcm_profile_get_manufacturer (profile), ==, NULL);
 	g_assert_cmpstr (gcm_profile_get_model (profile), ==, NULL);
 	g_assert_cmpstr (gcm_profile_get_description (profile), ==, "RGB built-in");
-	g_assert_cmpint (gcm_profile_get_kind (profile), ==, GCM_PROFILE_KIND_DISPLAY_DEVICE);
+	g_assert_cmpint (gcm_profile_get_kind (profile), ==, CD_PROFILE_KIND_DISPLAY_DEVICE);
 	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, GCM_COLORSPACE_RGB);
 	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 5000);
 	g_assert (gcm_profile_get_has_vcgt (profile));
@@ -1155,15 +1155,15 @@ gcm_test_device_func (void)
 
 	g_assert_cmpint (_changes, ==, 0);
 
-	g_assert (gcm_device_kind_from_string ("scanner") == GCM_DEVICE_KIND_SCANNER);
-	g_assert (gcm_device_kind_from_string ("xxx") == GCM_DEVICE_KIND_UNKNOWN);
+	g_assert (cd_device_kind_from_string ("scanner") == CD_DEVICE_KIND_SCANNER);
+	g_assert (cd_device_kind_from_string ("xxx") == CD_DEVICE_KIND_UNKNOWN);
 
-	g_assert_cmpstr (gcm_device_kind_to_string (GCM_DEVICE_KIND_SCANNER), ==, "scanner");
-	g_assert_cmpstr (gcm_device_kind_to_string (GCM_DEVICE_KIND_UNKNOWN), ==, "unknown");
+	g_assert_cmpstr (cd_device_kind_to_string (CD_DEVICE_KIND_SCANNER), ==, "scanner");
+	g_assert_cmpstr (cd_device_kind_to_string (CD_DEVICE_KIND_UNKNOWN), ==, "unknown");
 
 	/* set some properties */
 	g_object_set (device,
-		      "kind", GCM_DEVICE_KIND_SCANNER,
+		      "kind", CD_DEVICE_KIND_SCANNER,
 		      "id", "sysfs_dummy_device",
 		      "connected", FALSE,
 		      "virtual", FALSE,
@@ -1317,7 +1317,7 @@ gcm_test_exif_func (void)
 	g_assert_cmpstr (gcm_exif_get_model (exif), ==, "NIKON D60");
 	g_assert_cmpstr (gcm_exif_get_manufacturer (exif), ==, "NIKON CORPORATION");
 	g_assert_cmpstr (gcm_exif_get_serial (exif), ==, NULL);
-	g_assert_cmpint (gcm_exif_get_device_kind (exif), ==, GCM_DEVICE_KIND_CAMERA);
+	g_assert_cmpint (gcm_exif_get_device_kind (exif), ==, CD_DEVICE_KIND_CAMERA);
 
 	/* JPG */
 	file = g_file_new_for_path (TESTDATADIR "/test.jpg");
@@ -1328,7 +1328,7 @@ gcm_test_exif_func (void)
 	g_assert_cmpstr (gcm_exif_get_model (exif), ==, "NIKON D60");
 	g_assert_cmpstr (gcm_exif_get_manufacturer (exif), ==, "NIKON CORPORATION");
 	g_assert_cmpstr (gcm_exif_get_serial (exif), ==, NULL);
-	g_assert_cmpint (gcm_exif_get_device_kind (exif), ==, GCM_DEVICE_KIND_CAMERA);
+	g_assert_cmpint (gcm_exif_get_device_kind (exif), ==, CD_DEVICE_KIND_CAMERA);
 
 	/* RAW */
 	file = g_file_new_for_path (TESTDATADIR "/test.kdc");
@@ -1339,7 +1339,7 @@ gcm_test_exif_func (void)
 	g_assert_cmpstr (gcm_exif_get_model (exif), ==, "Eastman Kodak Company");
 	g_assert_cmpstr (gcm_exif_get_manufacturer (exif), ==, "Kodak Digital Science DC50 Zoom Camera");
 	g_assert_cmpstr (gcm_exif_get_serial (exif), ==, NULL);
-	g_assert_cmpint (gcm_exif_get_device_kind (exif), ==, GCM_DEVICE_KIND_CAMERA);
+	g_assert_cmpint (gcm_exif_get_device_kind (exif), ==, CD_DEVICE_KIND_CAMERA);
 
 	/* PNG */
 	file = g_file_new_for_path (TESTDATADIR "/test.png");
@@ -1516,8 +1516,8 @@ gcm_test_utils_func (void)
 	g_assert_cmpstr (filename, ==, "/tmp/device-profiles.conf");
 	g_free (filename);
 
-	g_assert (gcm_utils_device_kind_to_profile_kind (GCM_DEVICE_KIND_SCANNER) == GCM_PROFILE_KIND_INPUT_DEVICE);
-	g_assert (gcm_utils_device_kind_to_profile_kind (GCM_DEVICE_KIND_UNKNOWN) == GCM_PROFILE_KIND_UNKNOWN);
+	g_assert (gcm_utils_device_kind_to_profile_kind (CD_DEVICE_KIND_SCANNER) == CD_PROFILE_KIND_INPUT_DEVICE);
+	g_assert (gcm_utils_device_kind_to_profile_kind (CD_DEVICE_KIND_UNKNOWN) == CD_PROFILE_KIND_UNKNOWN);
 }
 
 static void

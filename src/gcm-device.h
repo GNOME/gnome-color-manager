@@ -78,9 +78,9 @@ GcmProfile		*gcm_device_generate_profile		(GcmDevice	*device,
 								 GError		**error);
 
 /* accessors */
-GcmDeviceKind		 gcm_device_get_kind			(GcmDevice	*device);
+CdDeviceKind		 gcm_device_get_kind			(GcmDevice	*device);
 void			 gcm_device_set_kind			(GcmDevice	*device,
-								 GcmDeviceKind kind);
+								 CdDeviceKind kind);
 gboolean		 gcm_device_get_connected		(GcmDevice	*device);
 void			 gcm_device_set_connected		(GcmDevice	*device,
 								 gboolean	 connected);

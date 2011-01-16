@@ -52,7 +52,7 @@ struct _GcmDevicePrivate
 	gfloat			 gamma;
 	gfloat			 brightness;
 	gfloat			 contrast;
-	GcmDeviceKind		 kind;
+	CdDeviceKind		 kind;
 	gchar			*id;
 	gchar			*serial;
 	gchar			*manufacturer;
@@ -138,35 +138,35 @@ out:
 }
 
 /**
- * gcm_device_kind_from_string:
+ * cd_device_kind_from_string:
  **/
-GcmDeviceKind
-gcm_device_kind_from_string (const gchar *kind)
+CdDeviceKind
+cd_device_kind_from_string (const gchar *kind)
 {
 	if (g_strcmp0 (kind, "display") == 0)
-		return GCM_DEVICE_KIND_DISPLAY;
+		return CD_DEVICE_KIND_DISPLAY;
 	if (g_strcmp0 (kind, "scanner") == 0)
-		return GCM_DEVICE_KIND_SCANNER;
+		return CD_DEVICE_KIND_SCANNER;
 	if (g_strcmp0 (kind, "printer") == 0)
-		return GCM_DEVICE_KIND_PRINTER;
+		return CD_DEVICE_KIND_PRINTER;
 	if (g_strcmp0 (kind, "camera") == 0)
-		return GCM_DEVICE_KIND_CAMERA;
-	return GCM_DEVICE_KIND_UNKNOWN;
+		return CD_DEVICE_KIND_CAMERA;
+	return CD_DEVICE_KIND_UNKNOWN;
 }
 
 /**
- * gcm_device_kind_to_string:
+ * cd_device_kind_to_string:
  **/
 const gchar *
-gcm_device_kind_to_string (GcmDeviceKind kind)
+cd_device_kind_to_string (CdDeviceKind kind)
 {
-	if (kind == GCM_DEVICE_KIND_DISPLAY)
+	if (kind == CD_DEVICE_KIND_DISPLAY)
 		return "display";
-	if (kind == GCM_DEVICE_KIND_SCANNER)
+	if (kind == CD_DEVICE_KIND_SCANNER)
 		return "scanner";
-	if (kind == GCM_DEVICE_KIND_PRINTER)
+	if (kind == CD_DEVICE_KIND_PRINTER)
 		return "printer";
-	if (kind == GCM_DEVICE_KIND_CAMERA)
+	if (kind == CD_DEVICE_KIND_CAMERA)
 		return "camera";
 	return "unknown";
 }
@@ -203,10 +203,10 @@ out:
 /**
  * gcm_device_get_kind:
  **/
-GcmDeviceKind
+CdDeviceKind
 gcm_device_get_kind (GcmDevice *device)
 {
-	g_return_val_if_fail (GCM_IS_DEVICE (device), GCM_DEVICE_KIND_UNKNOWN);
+	g_return_val_if_fail (GCM_IS_DEVICE (device), CD_DEVICE_KIND_UNKNOWN);
 	return device->priv->kind;
 }
 
@@ -214,7 +214,7 @@ gcm_device_get_kind (GcmDevice *device)
  * gcm_device_set_kind:
  **/
 void
-gcm_device_set_kind (GcmDevice *device, GcmDeviceKind kind)
+gcm_device_set_kind (GcmDevice *device, CdDeviceKind kind)
 {
 	g_return_if_fail (GCM_IS_DEVICE (device));
 	if (device->priv->kind != kind) {
@@ -850,7 +850,7 @@ gcm_device_load (GcmDevice *device, GError **error)
 	if (error_local != NULL) {
 		/* if the key does not exist, and this is a display,
 		 * then enable it by default */
-		if (gcm_device_get_kind (device) == GCM_DEVICE_KIND_DISPLAY)
+		if (gcm_device_get_kind (device) == CD_DEVICE_KIND_DISPLAY)
 			priv->use_edid_profile = TRUE;
 		g_clear_error (&error_local);
 	}
@@ -1006,7 +1006,7 @@ gcm_device_save (GcmDevice *device, GError **error)
 	/* save other properties we'll need if we add this device offline */
 	if (priv->title != NULL)
 		g_key_file_set_string (keyfile, priv->id, "title", priv->title);
-	g_key_file_set_string (keyfile, priv->id, "type", gcm_device_kind_to_string (priv->kind));
+	g_key_file_set_string (keyfile, priv->id, "type", cd_device_kind_to_string (priv->kind));
 
 	/* add colorspace */
 	g_key_file_set_string (keyfile, priv->id, "colorspace", gcm_colorspace_to_string (priv->colorspace));
@@ -1016,7 +1016,7 @@ gcm_device_save (GcmDevice *device, GError **error)
 		g_key_file_set_boolean (keyfile, priv->id, "virtual", TRUE);
 
 	/* add use_edid_profile */
-	if (priv->kind == GCM_DEVICE_KIND_DISPLAY)
+	if (priv->kind == CD_DEVICE_KIND_DISPLAY)
 		g_key_file_set_boolean (keyfile, priv->id, "use-edid-profile", priv->use_edid_profile);
 
 	/* get extra, device specific config data */

@@ -185,17 +185,17 @@ gcm_viewer_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmViewerPrivate
  * gcm_viewer_profile_kind_to_icon_name:
  **/
 static const gchar *
-gcm_viewer_profile_kind_to_icon_name (GcmProfileKind kind)
+gcm_viewer_profile_kind_to_icon_name (CdProfileKind kind)
 {
-	if (kind == GCM_PROFILE_KIND_DISPLAY_DEVICE)
+	if (kind == CD_PROFILE_KIND_DISPLAY_DEVICE)
 		return "video-display";
-	if (kind == GCM_PROFILE_KIND_INPUT_DEVICE)
+	if (kind == CD_PROFILE_KIND_INPUT_DEVICE)
 		return "scanner";
-	if (kind == GCM_PROFILE_KIND_OUTPUT_DEVICE)
+	if (kind == CD_PROFILE_KIND_OUTPUT_DEVICE)
 		return "printer";
-	if (kind == GCM_PROFILE_KIND_COLORSPACE_CONVERSION)
+	if (kind == CD_PROFILE_KIND_COLORSPACE_CONVERSION)
 		return "view-refresh";
-	if (kind == GCM_PROFILE_KIND_ABSTRACT)
+	if (kind == CD_PROFILE_KIND_ABSTRACT)
 		return "insert-link";
 	return "image-missing";
 }
@@ -204,13 +204,13 @@ gcm_viewer_profile_kind_to_icon_name (GcmProfileKind kind)
  * gcm_viewer_profile_get_sort_string:
  **/
 static const gchar *
-gcm_viewer_profile_get_sort_string (GcmProfileKind kind)
+gcm_viewer_profile_get_sort_string (CdProfileKind kind)
 {
-	if (kind == GCM_PROFILE_KIND_DISPLAY_DEVICE)
+	if (kind == CD_PROFILE_KIND_DISPLAY_DEVICE)
 		return "1";
-	if (kind == GCM_PROFILE_KIND_INPUT_DEVICE)
+	if (kind == CD_PROFILE_KIND_INPUT_DEVICE)
 		return "2";
-	if (kind == GCM_PROFILE_KIND_OUTPUT_DEVICE)
+	if (kind == CD_PROFILE_KIND_OUTPUT_DEVICE)
 		return "3";
 	return "4";
 }
@@ -224,7 +224,7 @@ gcm_viewer_update_profile_list (GcmViewerPrivate *viewer)
 	GtkTreeIter iter;
 	const gchar *description;
 	const gchar *icon_name;
-	GcmProfileKind profile_kind = GCM_PROFILE_KIND_UNKNOWN;
+	CdProfileKind profile_kind = CD_PROFILE_KIND_UNKNOWN;
 	GcmProfile *profile;
 	guint i;
 	const gchar *filename = NULL;
@@ -542,33 +542,33 @@ gcm_viewer_add_profiles_columns (GcmViewerPrivate *viewer, GtkTreeView *treeview
  * gcm_viewer_profile_kind_to_string:
  **/
 static gchar *
-gcm_viewer_profile_kind_to_string (GcmProfileKind kind)
+gcm_viewer_profile_kind_to_string (CdProfileKind kind)
 {
-	if (kind == GCM_PROFILE_KIND_INPUT_DEVICE) {
+	if (kind == CD_PROFILE_KIND_INPUT_DEVICE) {
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Input device");
 	}
-	if (kind == GCM_PROFILE_KIND_DISPLAY_DEVICE) {
+	if (kind == CD_PROFILE_KIND_DISPLAY_DEVICE) {
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Display device");
 	}
-	if (kind == GCM_PROFILE_KIND_OUTPUT_DEVICE) {
+	if (kind == CD_PROFILE_KIND_OUTPUT_DEVICE) {
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Output device");
 	}
-	if (kind == GCM_PROFILE_KIND_DEVICELINK) {
+	if (kind == CD_PROFILE_KIND_DEVICELINK) {
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Devicelink");
 	}
-	if (kind == GCM_PROFILE_KIND_COLORSPACE_CONVERSION) {
+	if (kind == CD_PROFILE_KIND_COLORSPACE_CONVERSION) {
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Colorspace conversion");
 	}
-	if (kind == GCM_PROFILE_KIND_ABSTRACT) {
+	if (kind == CD_PROFILE_KIND_ABSTRACT) {
 		/* TRANSLATORS: this the ICC profile kind */
 		return _("Abstract");
 	}
-	if (kind == GCM_PROFILE_KIND_NAMED_COLOR) {
+	if (kind == CD_PROFILE_KIND_NAMED_COLOR) {
 		/* TRANSLATORS: this the ICC profile type */
 		return _("Named color");
 	}
@@ -646,7 +646,7 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	const gchar *filename;
 	gchar *basename = NULL;
 	gchar *size_text = NULL;
-	GcmProfileKind profile_kind;
+	CdProfileKind profile_kind;
 	GcmColorspace profile_colorspace;
 	const gchar *profile_kind_text;
 	const gchar *profile_colorspace_text;
@@ -724,7 +724,7 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	/* set kind */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_type"));
 	profile_kind = gcm_profile_get_kind (profile);
-	if (profile_kind == GCM_PROFILE_KIND_UNKNOWN) {
+	if (profile_kind == CD_PROFILE_KIND_UNKNOWN) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);
@@ -747,7 +747,7 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 
 	/* set vcgt */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_vcgt"));
-	gtk_widget_set_visible (widget, (profile_kind == GCM_PROFILE_KIND_DISPLAY_DEVICE));
+	gtk_widget_set_visible (widget, (profile_kind == CD_PROFILE_KIND_DISPLAY_DEVICE));
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_vcgt"));
 	has_vcgt = gcm_profile_get_has_vcgt (profile);
 	if (has_vcgt) {

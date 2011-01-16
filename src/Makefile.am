@@ -122,9 +122,6 @@ libgcmshared_a_SOURCES +=				\
 libgcmshared_a_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
-libgcmshared_a_LIBADD =					\
-	$(COLOR_GLIB_LIBS)
-
 bin_PROGRAMS =						\
 	gcm-inspect					\
 	gcm-viewer					\
@@ -151,7 +148,7 @@ gcm_inspect_LDADD =					\
 	$(GTK_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(SANE_LIBS)					\
-	$(COLOR_GLIB_LIBS)				\
+	$(COLORD_LIBS)					\
 	-lm
 
 gcm_inspect_CFLAGS =					\
@@ -169,7 +166,7 @@ gcm_import_LDADD =					\
 	$(GTK_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(SANE_LIBS)					\
-	$(COLOR_GLIB_LIBS)				\
+	$(COLORD_LIBS)					\
 	-lm
 
 gcm_import_CFLAGS =					\
@@ -192,7 +189,7 @@ gcm_viewer_LDADD =					\
 	$(TIFF_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(EXIF_LIBS)					\
-	$(COLOR_GLIB_LIBS)				\
+	$(COLORD_LIBS)					\
 	-lm
 
 gcm_viewer_CFLAGS =					\
@@ -215,7 +212,7 @@ gcm_picker_LDADD =					\
 	$(LCMS_LIBS)					\
 	$(EXIF_LIBS)					\
 	$(CANBERRA_LIBS)				\
-	$(COLOR_GLIB_LIBS)				\
+	$(COLORD_LIBS)				\
 	-lm
 
 gcm_picker_CFLAGS =					\
@@ -268,7 +265,7 @@ libcolor_la_LIBADD =					\
 	$(NOTIFY_LIBS)					\
 	$(CANBERRA_LIBS)				\
 	$(CONTROL_CENTER_LIBS)				\
-	$(COLOR_GLIB_LIBS)
+	$(COLORD_LIBS)
 
 libcolor_la_LDFLAGS = -avoid-version -module
 libcolor_la_CFLAGS = $(WARNINGFLAGS_C)

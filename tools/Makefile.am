@@ -4,6 +4,7 @@ INCLUDES =						\
 	$(GTK_CFLAGS)					\
 	$(NOTIFY_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
+	$(COLORD_CFLAGS)				\
 	$(CONTROL_CENTER_CFLAGS)			\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
@@ -48,6 +49,7 @@ gcm_dump_profile_SOURCES =				\
 
 gcm_dump_profile_LDADD =				\
 	$(GLIB_LIBS)					\
+	$(COLORD_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(top_builddir)/src/libgcmshared.a		\
 	-lm
@@ -81,7 +83,7 @@ gcm_fix_profile_LDADD =					\
 gcm_fix_profile_CFLAGS =				\
 	$(WARNINGFLAGS_C)
 
-COLOR_GLIB_LIBS =					\
+COLORD_LIBS =					\
 	$(top_builddir)/src/libgcmshared.a
 
 gcm_sensor_example_SOURCES =				\
