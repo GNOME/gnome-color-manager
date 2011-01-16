@@ -24,7 +24,10 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <locale.h>
-#include <libcolor-glib.h>
+
+#include "gcm-edid.h"
+#include "gcm-x11-screen.h"
+#include "gcm-debug.h"
 
 /**
  * gcm_dump_edid_filename:

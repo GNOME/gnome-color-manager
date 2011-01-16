@@ -1,5 +1,4 @@
 SUBDIRS = 						\
-	libcolor-glib					\
 	docs						\
 	data						\
 	help						\
@@ -7,7 +6,6 @@ SUBDIRS = 						\
 	po						\
 	rules						\
 	tools						\
-	session						\
 	src
 
 snapshot:

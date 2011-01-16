@@ -18,31 +18,6 @@ GOBJECT_INTROSPECTION_CHECK([0.6.7])
 # enable nice build output on automake1.11
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
-GCM_MAJOR_VERSION=gcm_major_version
-GCM_MINOR_VERSION=gcm_minor_version
-GCM_MICRO_VERSION=gcm_micro_version
-GCM_VERSION=gcm_version
-AC_SUBST(GCM_MAJOR_VERSION)
-AC_SUBST(GCM_MINOR_VERSION)
-AC_SUBST(GCM_MICRO_VERSION)
-AC_SUBST(GCM_VERSION)
-
-# libtool versioning - this applies to libcolor-glib
-#
-# See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
-#
-# increment;
-# CURRENT	If the API or ABI interface has changed (reset REVISION to 0)
-# REVISION	If the API and ABI remains the same, but bugs are fixed.
-# AGE		If libgcm can be linked into executables which can be
-# 		built with previous versions of this library. Don't use.
-LT_CURRENT=1
-LT_REVISION=0
-LT_AGE=0
-AC_SUBST(LT_CURRENT)
-AC_SUBST(LT_REVISION)
-AC_SUBST(LT_AGE)
-
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_INSTALL
@@ -53,9 +28,6 @@ IT_PROG_INTLTOOL([0.35.0])
 
 GNOME_COMPILE_WARNINGS(error)
 GNOME_DOC_INIT
-
-# set up gtk-doc
-GTK_DOC_CHECK(1.9)
 
 dnl ---------------------------------------------------------------------------
 dnl - Use strict options (default enabled for devs, disabled in releases)
@@ -296,15 +268,9 @@ man/Makefile
 po/Makefile.in
 rules/Makefile
 src/Makefile
-session/Makefile
 tools/Makefile
 docs/Makefile
 docs/huey/Makefile
-docs/api/Makefile
-docs/api/version.xml
-libcolor-glib/Makefile
-libcolor-glib/gcm-version.h
-libcolor-glib/libcolor-glib.pc
 ])
 AC_OUTPUT
 

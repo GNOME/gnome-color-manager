@@ -24,7 +24,9 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <locale.h>
-#include <libcolor-glib.h>
+
+#include "gcm-profile.h"
+#include "gcm-debug.h"
 
 /**
  * gcm_dump_profile_filename:
@@ -127,12 +129,9 @@ main (int argc, char **argv)
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
-	gtk_init (&argc, &argv);
-
 	context = g_option_context_new ("ICC profile dump program");
 	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_add_group (context, gcm_debug_get_option_group ());
-	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
 

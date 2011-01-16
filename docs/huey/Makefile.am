@@ -1,29 +1,15 @@
 INCLUDES =							\
-	-I$(top_srcdir)/libcolor-glib				\
-	-DI_KNOW_THE_LIBCOLOR_GLIB_API_IS_SUBJECT_TO_CHANGE	\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE			\
-	-DGCM_I_KNOW_THIS_IS_PRIVATE				\
 	$(GUDEV_CFLAGS)						\
 	$(GTK_CFLAGS)						\
 	$(GLIB_CFLAGS)
 
 COLOR_GLIB_LIBS =						\
-	$(top_builddir)/libcolor-glib/libcolor-glib.la
+	$(top_builddir)/src/libgcmshared.a
 
 noinst_PROGRAMS =						\
 	gcm-parse-huey						\
-	gcm-calculate-fudge					\
 	gcm-dump-to-values
-
-gcm_calculate_fudge_SOURCES =					\
-	gcm-calculate-fudge.c
-
-gcm_calculate_fudge_LDADD =					\
-	$(COLOR_GLIB_LIBS)					\
-	$(GLIB_LIBS)
-
-gcm_calculate_fudge_CFLAGS =					\
-	$(WARNINGFLAGS_C)
 
 gcm_parse_huey_SOURCES =					\
 	gcm-parse-huey.c
