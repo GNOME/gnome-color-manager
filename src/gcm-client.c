@@ -480,50 +480,6 @@ gcm_client_uevent_cb (GUdevClient *gudev_client, const gchar *action, GUdevDevic
 }
 
 /**
- * gcm_client_coldplug_devices_udev:
- **/
-static gboolean
-gcm_client_coldplug_devices_udev (GcmClient *client, GError **error)
-{
-	GList *devices;
-	GList *l;
-	GUdevDevice *udev_device;
-	GcmClientPrivate *priv = client->priv;
-
-	/* get all USB devices */
-	devices = g_udev_client_query_by_subsystem (priv->gudev_client, "usb");
-	for (l = devices; l != NULL; l = l->next) {
-		udev_device = l->data;
-		gcm_client_gudev_add (client, udev_device);
-	}
-
-	/* get all video4linux devices */
-	devices = g_udev_client_query_by_subsystem (priv->gudev_client, "video4linux");
-	for (l = devices; l != NULL; l = l->next) {
-		udev_device = l->data;
-		gcm_client_gudev_add (client, udev_device);
-	}
-
-	g_list_foreach (devices, (GFunc) g_object_unref, NULL);
-	g_list_free (devices);
-
-	/* inform the UI */
-	gcm_client_done_loading (client);
-
-	return TRUE;
-}
-
-/**
- * gcm_client_coldplug_devices_udev_thrd:
- **/
-static gpointer
-gcm_client_coldplug_devices_udev_thrd (GcmClient *client)
-{
-	gcm_client_coldplug_devices_udev (client, NULL);
-	return NULL;
-}
-
-/**
  * gcm_client_get_device_by_window_covered:
  **/
 static gfloat
@@ -1042,21 +998,6 @@ gcm_client_coldplug (GcmClient *client, GcmClientColdplug coldplug, GError **err
 		ret = gcm_client_coldplug_devices_xrandr (client, error);
 		if (!ret)
 			goto out;
-	}
-
-	/* UDEV */
-	if (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_UDEV) {
-		gcm_client_add_loading (client);
-		g_debug ("adding devices of type UDEV");
-		if (client->priv->use_threads) {
-			thread = g_thread_create ((GThreadFunc) gcm_client_coldplug_devices_udev_thrd, client, FALSE, error);
-			if (thread == NULL)
-				goto out;
-		} else {
-			ret = gcm_client_coldplug_devices_udev (client, error);
-			if (!ret)
-				goto out;
-		}
 	}
 
 #ifdef HAVE_SANE
