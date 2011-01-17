@@ -356,7 +356,9 @@ gcm_x11_screen_get_outputs (GcmX11Screen *screen, GError **error)
  * Return value: A #GcmX11Output, or %NULL if nothing matched.
  **/
 GcmX11Output *
-gcm_x11_screen_get_output_by_name (GcmX11Screen *screen, const gchar *name, GError **error)
+gcm_x11_screen_get_output_by_name (GcmX11Screen *screen,
+				   const gchar *name,
+				   GError **error)
 {
 	guint i;
 	GcmX11Output *output;
@@ -383,6 +385,121 @@ gcm_x11_screen_get_output_by_name (GcmX11Screen *screen, const gchar *name, GErr
 }
 
 /**
+ * cd_x11_screen_get_output_coverage:
+ **/
+static gfloat
+cd_x11_screen_get_output_coverage (gint x, gint y,
+					    gint width, gint height,
+					    gint window_x, gint window_y,
+					    gint window_width, gint window_height)
+{
+	gfloat covered = 0.0f;
+	gint overlap_x;
+	gint overlap_y;
+
+	/* to the right of the window */
+	if (window_x > x + width)
+		goto out;
+	if (window_y > y + height)
+		goto out;
+
+	/* to the left of the window */
+	if (window_x + window_width < x)
+		goto out;
+	if (window_y + window_height < y)
+		goto out;
+
+	/* get the overlaps */
+	overlap_x = MIN((window_x + window_width - x), width) -
+		    MAX(window_x - x, 0);
+	overlap_y = MIN((window_y + window_height - y), height) -
+		    MAX(window_y - y, 0);
+
+	/* not in this window */
+	if (overlap_x <= 0)
+		goto out;
+	if (overlap_y <= 0)
+		goto out;
+
+	/* get the coverage */
+	covered = (gfloat) (overlap_x * overlap_y) /
+		  (gfloat) (window_width * window_height);
+	g_debug ("overlap_x=%i,overlap_y=%i,covered=%f",
+		  overlap_x, overlap_y, covered);
+out:
+	return covered;
+}
+
+/**
+ * cd_x11_screen_get_output_by_window:
+ **/
+GcmX11Output *
+cd_x11_screen_get_output_by_window (GcmX11Screen *screen,
+				    GdkWindow *window)
+{
+	GcmX11Output *output;
+	GcmX11Output *output_best = NULL;
+	GcmX11ScreenPrivate *priv = screen->priv;
+	gfloat covered;
+	gfloat covered_max = 0.0f;
+	gint window_width, window_height;
+	gint window_x, window_y;
+	guint i;
+	guint width, height;
+	guint x, y;
+
+	/* get the window parameters, in root co-ordinates */
+	gdk_window_get_origin (window, &window_x, &window_y);
+	window_width = gdk_window_get_width (window);
+	window_height = gdk_window_get_height (window);
+
+	/* go through each output */
+	for (i=0; i<priv->outputs->len; i++) {
+
+		/* not interesting */
+		output = g_ptr_array_index (priv->outputs, i);
+		if (!gcm_x11_output_get_connected (output))
+			continue;
+
+		/* get details about the output */
+		gcm_x11_output_get_position (output, &x, &y);
+		gcm_x11_output_get_size (output, &width, &height);
+		g_debug ("%s: %ix%i -> %ix%i (%ix%i -> %ix%i)",
+			 gcm_x11_output_get_name (output),
+			 x, y,
+			 x+width, y+height,
+			 window_x, window_y,
+			 window_x+window_width,
+			 window_y+window_height);
+
+		/* get the fraction of how much the window is covered */
+		covered = cd_x11_screen_get_output_coverage (x, y,
+							     width, height,
+							     window_x, window_y,
+							     window_width, window_height);
+
+		/* keep a running total of which one is best */
+		if (covered > 0.01f && covered > covered_max) {
+			output_best = output;
+
+			/* optimize */
+			if (covered > 0.99) {
+				g_debug ("all in one window");
+				goto out;
+			}
+
+			/* keep looking */
+			covered_max = covered;
+			g_debug ("personal best of %f for %s", covered, gcm_x11_output_get_name (output_best));
+		}
+	}
+out:
+	if (output_best != NULL)
+		g_object_ref (output_best);
+	return output_best;
+}
+
+/**
  * gcm_x11_screen_get_profile_data:
  * @screen: a valid %GcmX11Screen instance
  * @data: the data that is returned from the XServer. Free with g_free()
@@ -394,7 +511,10 @@ gcm_x11_screen_get_output_by_name (GcmX11Screen *screen, const gchar *name, GErr
  * Return value: %TRUE for success.
  **/
 gboolean
-gcm_x11_screen_get_profile_data (GcmX11Screen *screen, guint8 **data, gsize *length, GError **error)
+gcm_x11_screen_get_profile_data (GcmX11Screen *screen,
+				 guint8 **data,
+				 gsize *length,
+				 GError **error)
 {
 	gboolean ret = FALSE;
 	gchar *data_tmp = NULL;

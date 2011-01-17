@@ -36,83 +36,81 @@ ccpanels_CFLAGS =					\
 
 noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\
-	gcm-debug.c					\
-	gcm-debug.h					\
-	gcm-sample-window.c				\
-	gcm-sample-window.h				\
-	gcm-math.c					\
-	gcm-math.h					\
+	gcm-brightness.c				\
+	gcm-brightness.h				\
+	gcm-buffer.c					\
+	gcm-buffer.h					\
+	gcm-calibrate-argyll.c				\
+	gcm-calibrate-argyll.h				\
+	gcm-calibrate.c					\
+	gcm-calibrate-dialog.c				\
+	gcm-calibrate-dialog.h				\
+	gcm-calibrate.h					\
+	gcm-calibrate-manual.c				\
+	gcm-calibrate-manual.h				\
+	gcm-calibrate-native.c				\
+	gcm-calibrate-native.h				\
+	gcm-cie-widget.c				\
+	gcm-cie-widget.h				\
+	gcm-clut.c					\
+	gcm-clut.h					\
 	gcm-color.c					\
 	gcm-color.h					\
+	gcm-debug.c					\
+	gcm-debug.h					\
+	gcm-device.c					\
+	gcm-device.h					\
+	gcm-device-xrandr.c				\
+	gcm-device-xrandr.h				\
+	gcm-dmi.c					\
+	gcm-dmi.h					\
+	gcm-edid.c					\
+	gcm-edid.h					\
+	gcm-enum.c					\
+	gcm-enum.h					\
+	gcm-exif.c					\
+	gcm-exif.h					\
+	gcm-gamma-widget.c				\
+	gcm-gamma-widget.h				\
+	gcm-image.c					\
+	gcm-image.h					\
+	gcm-math.c					\
+	gcm-math.h					\
+	gcm-print.c					\
+	gcm-print.h					\
+	gcm-profile.c					\
+	gcm-profile.h					\
+	gcm-profile-store.c				\
+	gcm-profile-store.h				\
+	gcm-sample-window.c				\
+	gcm-sample-window.h				\
 	gcm-sensor.c					\
-	gcm-sensor.h					\
 	gcm-sensor-client.c				\
 	gcm-sensor-client.h				\
-	gcm-sensor-huey.c				\
-	gcm-sensor-huey.h				\
-	gcm-sensor-huey-private.c			\
-	gcm-sensor-huey-private.h			\
 	gcm-sensor-colormunki.c				\
 	gcm-sensor-colormunki.h				\
 	gcm-sensor-colormunki-private.c			\
 	gcm-sensor-colormunki-private.h			\
 	gcm-sensor-dummy.c				\
 	gcm-sensor-dummy.h				\
+	gcm-sensor.h					\
+	gcm-sensor-huey.c				\
+	gcm-sensor-huey.h				\
+	gcm-sensor-huey-private.c			\
+	gcm-sensor-huey-private.h			\
 	gcm-tables.c					\
 	gcm-tables.h					\
-	gcm-edid.c					\
-	gcm-edid.h					\
-	gcm-dmi.c					\
-	gcm-dmi.h					\
-	gcm-buffer.c					\
-	gcm-buffer.h					\
-	gcm-profile.c					\
-	gcm-profile.h					\
-	gcm-clut.c					\
-	gcm-clut.h					\
-	gcm-image.c					\
-	gcm-image.h					\
-	gcm-enum.c					\
-	gcm-enum.h					\
+	gcm-trc-widget.c				\
+	gcm-trc-widget.h				\
 	gcm-usb.c					\
 	gcm-usb.h					\
-	gcm-profile-store.c				\
-	gcm-profile-store.h				\
+	gcm-utils.c					\
+	gcm-utils.h					\
+	gcm-version.h					\
 	gcm-x11-output.c				\
 	gcm-x11-output.h				\
 	gcm-x11-screen.c				\
-	gcm-x11-screen.h				\
-	gcm-version.h					\
-	gcm-brightness.c				\
-	gcm-brightness.h				\
-	gcm-exif.c					\
-	gcm-exif.h					\
-	gcm-print.c					\
-	gcm-print.h					\
-	gcm-utils.c					\
-	gcm-utils.h					\
-	gcm-client.c					\
-	gcm-client.h					\
-	gcm-device.c					\
-	gcm-device.h					\
-	gcm-device-xrandr.c				\
-	gcm-device-xrandr.h				\
-	gcm-cie-widget.c				\
-	gcm-cie-widget.h				\
-	gcm-trc-widget.c				\
-	gcm-trc-widget.h				\
-	gcm-gamma-widget.c				\
-	gcm-gamma-widget.h				\
-	gcm-calibrate.c					\
-	gcm-calibrate.h					\
-	gcm-calibrate-argyll.c				\
-	gcm-calibrate-argyll.h				\
-	gcm-calibrate-manual.c				\
-	gcm-calibrate-manual.h				\
-	gcm-calibrate-native.c				\
-	gcm-calibrate-native.h				\
-	gcm-calibrate-dialog.c				\
-	gcm-calibrate-dialog.h
+	gcm-x11-screen.h
 
 libgcmshared_a_CFLAGS =					\
 	$(WARNINGFLAGS_C)

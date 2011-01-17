@@ -33,7 +33,6 @@
 #include "gcm-cell-renderer-profile-icon.h"
 #include "gcm-calibrate-argyll.h"
 #include "gcm-cie-widget.h"
-#include "gcm-client.h"
 #include "gcm-sensor-client.h"
 #include "gcm-device-xrandr.h"
 #include "gcm-exif.h"
@@ -52,7 +51,7 @@ struct _CcColorPanelPrivate {
 	GtkListStore		*list_store_profiles;
 	GcmDevice		*current_device;
 	GcmProfileStore		*profile_store;
-	GcmClient		*gcm_client;
+	CdClient		*cd_client;
 	GcmSensorClient		*sensor_client;
 	gboolean		 setting_up_device;
 	GtkWidget		*main_window;
@@ -175,7 +174,7 @@ cc_color_panel_default_cb (GtkWidget *widget, CcColorPanel *panel)
 	guint i;
 
 	/* set for each output */
-	array = gcm_client_get_devices (panel->priv->gcm_client);
+//	array = cd_client_get_devices (panel->priv->cd_client);
 	for (i=0; i<array->len; i++) {
 		device = g_ptr_array_index (array, i);
 
@@ -485,7 +484,7 @@ cc_color_panel_profile_add_virtual_file (CcColorPanel *panel, GFile *file)
 	}
 
 	/* add to the device list */
-	ret = gcm_client_add_device (panel->priv->gcm_client, device, &error);
+//	ret = cd_client_add_device (panel->priv->cd_client, device, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not add virtual device */
 		cc_color_panel_error_dialog (panel, _("Failed to add virtual device"), error->message);
@@ -1099,7 +1098,7 @@ cc_color_panel_button_virtual_add_cb (GtkWidget *widget, CcColorPanel *panel)
 	}
 
 	/* add to the device list */
-	ret = gcm_client_add_device (panel->priv->gcm_client, device, &error);
+//	ret = cd_client_add_device (panel->priv->cd_client, device, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not add virtual device */
 		cc_color_panel_error_dialog (panel, _("Failed to add virtual device"), error->message);
@@ -1221,11 +1220,11 @@ cc_color_panel_profile_delete_event_cb (GtkWidget *widget, GdkEvent *event, CcCo
 static void
 cc_color_panel_delete_cb (GtkWidget *widget, CcColorPanel *panel)
 {
-	gboolean ret;
+	gboolean ret = FALSE;
 	GError *error = NULL;
 
 	/* try to delete device */
-	ret = gcm_client_delete_device (panel->priv->gcm_client, panel->priv->current_device, &error);
+//	ret = cd_client_delete_device (panel->priv->cd_client, panel->priv->current_device, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */
 		cc_color_panel_error_dialog (panel, _("Failed to delete file"), error->message);
@@ -1423,7 +1422,7 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 		g_object_unref (panel->priv->current_device);
 		panel->priv->current_device = NULL;
 	}
-	panel->priv->current_device = gcm_client_get_device_by_id (panel->priv->gcm_client, id);
+//	panel->priv->current_device = cd_client_get_device_by_id (panel->priv->cd_client, id);
 	if (panel->priv->current_device == NULL)
 		goto out;
 
@@ -1874,7 +1873,7 @@ cc_color_panel_remove_device (CcColorPanel *panel, GcmDevice *gcm_device)
  * cc_color_panel_added_cb:
  **/
 static void
-cc_color_panel_added_cb (GcmClient *client, GcmDevice *device, CcColorPanel *panel)
+cc_color_panel_added_cb (CdClient *client, GcmDevice *device, CcColorPanel *panel)
 {
 	CdDeviceKind kind;
 	g_debug ("added: %s (connected: %i, saved: %i)",
@@ -1897,7 +1896,7 @@ cc_color_panel_added_cb (GcmClient *client, GcmDevice *device, CcColorPanel *pan
  * cc_color_panel_changed_cb:
  **/
 static void
-cc_color_panel_changed_cb (GcmClient *client, GcmDevice *device, CcColorPanel *panel)
+cc_color_panel_changed_cb (CdClient *client, GcmDevice *device, CcColorPanel *panel)
 {
 	g_debug ("changed: %s (doing nothing)", gcm_device_get_id (device));
 }
@@ -1906,7 +1905,7 @@ cc_color_panel_changed_cb (GcmClient *client, GcmDevice *device, CcColorPanel *p
  * cc_color_panel_removed_cb:
  **/
 static void
-cc_color_panel_removed_cb (GcmClient *client, GcmDevice *device, CcColorPanel *panel)
+cc_color_panel_removed_cb (CdClient *client, GcmDevice *device, CcColorPanel *panel)
 {
 	GtkTreeIter iter;
 	GtkTreeSelection *selection;
@@ -2151,7 +2150,7 @@ static gboolean
 cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 {
 	GtkWidget *widget;
-	gboolean ret;
+	gboolean ret = FALSE;
 	GError *error = NULL;
 	gchar *colorspace_rgb;
 	gchar *colorspace_cmyk;
@@ -2206,7 +2205,7 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 			  G_CALLBACK (cc_color_panel_renderer_combo_changed_cb), panel);
 
 	/* coldplug plugged in devices */
-	ret = gcm_client_coldplug (panel->priv->gcm_client, GCM_CLIENT_COLDPLUG_ALL, &error);
+//	ret = cd_client_coldplug (panel->priv->cd_client, &error);
 	if (!ret) {
 		g_warning ("failed to add connected devices: %s", error->message);
 		g_error_free (error);
@@ -2284,7 +2283,7 @@ cc_color_panel_select_first_device_idle_cb (CcColorPanel *panel)
  * cc_color_panel_client_notify_loading_cb:
  **/
 static void
-cc_color_panel_client_notify_loading_cb (GcmClient *client, GParamSpec *pspec, CcColorPanel *panel)
+cc_color_panel_client_notify_loading_cb (CdClient *client, GParamSpec *pspec, CcColorPanel *panel)
 {
 	/* idle callback */
 	g_idle_add ((GSourceFunc) cc_color_panel_select_first_device_idle_cb, panel);
@@ -2399,8 +2398,8 @@ cc_color_panel_finalize (GObject *object)
 		g_object_unref (panel->priv->builder);
 	if (panel->priv->profile_store != NULL)
 		g_object_unref (panel->priv->profile_store);
-	if (panel->priv->gcm_client != NULL)
-		g_object_unref (panel->priv->gcm_client);
+	if (panel->priv->cd_client != NULL)
+		g_object_unref (panel->priv->cd_client);
 	if (panel->priv->save_and_apply_id != 0)
 		g_source_remove (panel->priv->save_and_apply_id);
 	if (panel->priv->apply_all_devices_id != 0)
@@ -2553,11 +2552,11 @@ cc_color_panel_init (CcColorPanel *panel)
 			  G_CALLBACK (cc_color_panel_profile_combo_changed_cb), panel);
 
 	/* use a device client array */
-	panel->priv->gcm_client = gcm_client_new ();
-	g_signal_connect (panel->priv->gcm_client, "added", G_CALLBACK (cc_color_panel_added_cb), panel);
-	g_signal_connect (panel->priv->gcm_client, "removed", G_CALLBACK (cc_color_panel_removed_cb), panel);
-	g_signal_connect (panel->priv->gcm_client, "changed", G_CALLBACK (cc_color_panel_changed_cb), panel);
-	g_signal_connect (panel->priv->gcm_client, "notify::loading",
+	panel->priv->cd_client = cd_client_new ();
+	g_signal_connect (panel->priv->cd_client, "added", G_CALLBACK (cc_color_panel_added_cb), panel);
+	g_signal_connect (panel->priv->cd_client, "removed", G_CALLBACK (cc_color_panel_removed_cb), panel);
+	g_signal_connect (panel->priv->cd_client, "changed", G_CALLBACK (cc_color_panel_changed_cb), panel);
+	g_signal_connect (panel->priv->cd_client, "notify::loading",
 			  G_CALLBACK (cc_color_panel_client_notify_loading_cb), panel);
 
 	/* maintain a list of profiles */

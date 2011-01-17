@@ -25,14 +25,13 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <locale.h>
+#include <colord.h>
 #include <libnotify/notify.h>
 
-#include "gcm-client.h"
 #include "gcm-device-xrandr.h"
 #include "gcm-exif.h"
 #include "gcm-device.h"
 #include "gcm-utils.h"
-#include "gcm-client.h"
 #include "gcm-profile-store.h"
 #include "gcm-debug.h"
 
@@ -148,7 +147,7 @@ gcm_session_notify_device (GcmDevice *device)
  * gcm_session_added_cb:
  **/
 static void
-gcm_session_added_cb (GcmClient *client_, GcmDevice *device, gpointer user_data)
+gcm_session_added_cb (CdClient *client_, GcmDevice *device, gpointer user_data)
 {
 	CdDeviceKind kind;
 	const gchar *profile;
@@ -207,7 +206,7 @@ gcm_session_get_profile_for_window (guint xid, GError **error)
 	}
 
 	/* get device for this window */
-//	device = gcm_client_get_device_by_window (client, window);
+//	device = cd_x11_screen_get_output_by_window (client, window);
 	if (device == NULL) {
 		g_set_error (error, 1, 0, "no device found for xid %i", xid);
 		goto out;
@@ -275,7 +274,7 @@ gcm_session_get_profiles_for_file (const gchar *filename, GError **error)
 
 	/* get list */
 	g_debug ("query=%s", filename);
-//	array_devices = gcm_client_get_devices (client);
+//	array_devices = cd_client_get_devices (client);
 	for (i=0; i<array_devices->len; i++) {
 		device = g_ptr_array_index (array_devices, i);
 
@@ -329,7 +328,7 @@ gcm_session_get_profiles_for_device (const gchar *device_id_with_prefix, GError 
 
 	/* get list */
 	g_debug ("query=%s [%s] %i", device_id_with_prefix, device_id, use_native_device);
-//	array_devices = gcm_client_get_devices (client);
+//	array_devices = cd_client_get_devices (client);
 	for (i=0; i<array_devices->len; i++) {
 		device = g_ptr_array_index (array_devices, i);
 
@@ -859,7 +858,7 @@ main (int argc, char *argv[])
 
 #if 0
 	/* set for each output */
-	array = gcm_client_get_devices (client);
+	array = cd_client_get_devices (client);
 	for (i=0; i<array->len; i++) {
 		device = g_ptr_array_index (array, i);
 

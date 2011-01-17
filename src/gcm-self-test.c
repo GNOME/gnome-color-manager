@@ -956,7 +956,7 @@ gcm_test_calibrate_native_func (void)
 	gboolean ret;
 	GError *error = NULL;
 	GcmCalibrate *calibrate;
-	GcmClient *client;
+	CdClient *client;
 	GcmX11Screen *screen;
 	GcmDevice *device;
 	gchar *contents;
@@ -970,7 +970,7 @@ gcm_test_calibrate_native_func (void)
 		      NULL);
 
 	/* create a virtual device we can "calibrate" */
-	client = gcm_client_new ();
+	client = cd_client_new ();
 	g_assert (client != NULL);
 	g_setenv ("GCM_TEST", "1", TRUE);
 	contents = g_strdup_printf ("[xrandr_hewlett_packard_hp_lp2480zx_3cm82200kv]\n"
@@ -984,7 +984,7 @@ gcm_test_calibrate_native_func (void)
 	g_assert_no_error (error);
 	g_assert (ret);
 
-	device = gcm_client_get_device_by_id (client, "xrandr_hewlett_packard_hp_lp2480zx_3cm82200kv");
+	device = cd_client_get_device_by_id (client, "xrandr_hewlett_packard_hp_lp2480zx_3cm82200kv");
 	g_assert (device != NULL);
 
 	/* set device */
@@ -1508,7 +1508,7 @@ gcm_test_utils_func (void)
 static void
 gcm_test_client_func (void)
 {
-	GcmClient *client;
+	CdClient *client;
 	GError *error = NULL;
 	gboolean ret;
 	GPtrArray *array;
@@ -1517,10 +1517,10 @@ gcm_test_client_func (void)
 	gchar *filename;
 	gchar *data = NULL;
 
-	client = gcm_client_new ();
+	client = cd_client_new ();
 	g_assert (client != NULL);
 
-	array = gcm_client_get_devices (client);
+	array = cd_client_get_devices (client);
 	g_assert (array != NULL);
 	g_assert_cmpint (array->len, ==, 0);
 	g_ptr_array_unref (array);
@@ -1536,7 +1536,7 @@ gcm_test_client_func (void)
 	g_assert_no_error (error);
 	g_assert (ret);
 
-	array = gcm_client_get_devices (client);
+	array = cd_client_get_devices (client);
 	g_assert (array != NULL);
 	g_assert_cmpint (array->len, ==, 1);
 	device = g_ptr_array_index (array, 0);
@@ -1552,12 +1552,12 @@ gcm_test_client_func (void)
 	gcm_device_set_id (device, "xrandr_goldstar");
 	gcm_device_set_title (device, "Slightly different");
 	gcm_device_set_connected (device, TRUE);
-	ret = gcm_client_add_device (client, device, &error);
+	ret = cd_client_add_device (client, device, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
 	/* ensure we merge saved properties into current devices */
-	array = gcm_client_get_devices (client);
+	array = cd_client_get_devices (client);
 	g_assert_cmpint (array->len, ==, 1);
 	device = g_ptr_array_index (array, 0);
 	g_assert_cmpstr (gcm_device_get_id (device), ==, "xrandr_goldstar");
@@ -1569,11 +1569,11 @@ gcm_test_client_func (void)
 
 	/* delete */
 	gcm_device_set_connected (device, FALSE);
-	ret = gcm_client_delete_device (client, device, &error);
+	ret = cd_client_delete_device (client, device, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
-	array = gcm_client_get_devices (client);
+	array = cd_client_get_devices (client);
 	g_assert_cmpint (array->len, ==, 0);
 	g_ptr_array_unref (array);
 

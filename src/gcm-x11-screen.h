@@ -69,6 +69,8 @@ GPtrArray	*gcm_x11_screen_get_outputs		(GcmX11Screen		*screen,
 GcmX11Output	*gcm_x11_screen_get_output_by_name	(GcmX11Screen		*screen,
 							 const gchar		*name,
 							 GError			**error);
+GcmX11Output	*cd_x11_screen_get_output_by_window	(GcmX11Screen		*screen,
+							 GdkWindow		*window);
 gboolean	 gcm_x11_screen_get_profile_data	(GcmX11Screen		*screen,
 							 guint8			**data,
 							 gsize			*length,
