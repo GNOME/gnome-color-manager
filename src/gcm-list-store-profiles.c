@@ -23,8 +23,8 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-#include "gcm-device.h"
 #include "gcm-list-store-profiles.h"
+#include "gcm-profile.h"
 
 G_DEFINE_TYPE (GcmListStoreProfiles, gcm_list_store_profiles, GTK_TYPE_LIST_STORE);
 
@@ -32,7 +32,7 @@ G_DEFINE_TYPE (GcmListStoreProfiles, gcm_list_store_profiles, GTK_TYPE_LIST_STOR
 
 struct GcmListStoreProfilesPrivate
 {
-	GcmDevice		*device;
+	CdDevice		*device;
 	guint			 changed_id;
 };
 
@@ -71,7 +71,7 @@ gcm_list_store_refresh_profiles (GtkListStore *list_store)
 	gtk_list_store_clear (list_store);
 
 	/* add profiles for the device */
-	profiles = gcm_device_get_profiles (priv->device);
+	profiles = cd_device_get_profiles (priv->device);
 	for (i=0; i<profiles->len; i++) {
 		profile = g_ptr_array_index (profiles, i);
 		gtk_list_store_append (list_store, &iter);
@@ -90,7 +90,7 @@ gcm_list_store_refresh_profiles (GtkListStore *list_store)
  * gcm_list_store_profiles_device_changed_cb:
  **/
 static void
-gcm_list_store_profiles_device_changed_cb (GcmDevice *device, GtkListStore *list_store)
+gcm_list_store_profiles_device_changed_cb (CdDevice *device, GtkListStore *list_store)
 {
 	gcm_list_store_refresh_profiles (list_store);
 }
@@ -99,7 +99,7 @@ gcm_list_store_profiles_device_changed_cb (GcmDevice *device, GtkListStore *list
  * gcm_list_store_profiles_set_from_device:
  **/
 void
-gcm_list_store_profiles_set_from_device (GtkListStore *list_store, GcmDevice *device)
+gcm_list_store_profiles_set_from_device (GtkListStore *list_store, CdDevice *device)
 {
 	GcmListStoreProfilesPrivate *priv = GCM_LIST_STORE_PROFILES(list_store)->priv;
 

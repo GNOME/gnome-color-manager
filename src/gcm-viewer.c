@@ -580,45 +580,45 @@ gcm_viewer_profile_kind_to_string (CdProfileKind kind)
  * gcm_viewer_profile_colorspace_to_string:
  **/
 static gchar *
-gcm_viewer_profile_colorspace_to_string (GcmColorspace colorspace)
+gcm_viewer_profile_colorspace_to_string (CdColorspace colorspace)
 {
-	if (colorspace == GCM_COLORSPACE_XYZ) {
+	if (colorspace == CD_COLORSPACE_XYZ) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("XYZ");
 	}
-	if (colorspace == GCM_COLORSPACE_LAB) {
+	if (colorspace == CD_COLORSPACE_LAB) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("LAB");
 	}
-	if (colorspace == GCM_COLORSPACE_LUV) {
+	if (colorspace == CD_COLORSPACE_LUV) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("LUV");
 	}
-	if (colorspace == GCM_COLORSPACE_YCBCR) {
+	if (colorspace == CD_COLORSPACE_YCBCR) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("YCbCr");
 	}
-	if (colorspace == GCM_COLORSPACE_YXY) {
+	if (colorspace == CD_COLORSPACE_YXY) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("Yxy");
 	}
-	if (colorspace == GCM_COLORSPACE_RGB) {
+	if (colorspace == CD_COLORSPACE_RGB) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("RGB");
 	}
-	if (colorspace == GCM_COLORSPACE_GRAY) {
+	if (colorspace == CD_COLORSPACE_GRAY) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("Gray");
 	}
-	if (colorspace == GCM_COLORSPACE_HSV) {
+	if (colorspace == CD_COLORSPACE_HSV) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("HSV");
 	}
-	if (colorspace == GCM_COLORSPACE_CMYK) {
+	if (colorspace == CD_COLORSPACE_CMYK) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("CMYK");
 	}
-	if (colorspace == GCM_COLORSPACE_CMY) {
+	if (colorspace == CD_COLORSPACE_CMY) {
 		/* TRANSLATORS: this the ICC colorspace type */
 		return _("CMY");
 	}
@@ -647,7 +647,7 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	gchar *basename = NULL;
 	gchar *size_text = NULL;
 	CdProfileKind profile_kind;
-	GcmColorspace profile_colorspace;
+	CdColorspace profile_colorspace;
 	const gchar *profile_kind_text;
 	const gchar *profile_colorspace_text;
 	gboolean ret;
@@ -669,13 +669,13 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 			    -1);
 
 	/* set the preview widgets */
-	if (gcm_profile_get_colorspace (profile) == GCM_COLORSPACE_RGB) {
+	if (gcm_profile_get_colorspace (profile) == CD_COLORSPACE_RGB) {
 		gcm_image_set_input_profile (GCM_IMAGE(viewer->preview_widget_input), profile);
 		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_input), NULL);
 		gcm_image_set_output_profile (GCM_IMAGE(viewer->preview_widget_output), profile);
 		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_output), NULL);
 		show_section = TRUE;
-	} else if (gcm_profile_get_colorspace (profile) == GCM_COLORSPACE_LAB) {
+	} else if (gcm_profile_get_colorspace (profile) == CD_COLORSPACE_LAB) {
 		gcm_image_set_input_profile (GCM_IMAGE(viewer->preview_widget_input), NULL);
 		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_input), profile);
 		gcm_image_set_output_profile (GCM_IMAGE(viewer->preview_widget_output), NULL);
@@ -736,7 +736,7 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	/* set colorspace */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_colorspace"));
 	profile_colorspace = gcm_profile_get_colorspace (profile);
-	if (profile_colorspace == GCM_COLORSPACE_UNKNOWN) {
+	if (profile_colorspace == CD_COLORSPACE_UNKNOWN) {
 		gtk_widget_hide (widget);
 	} else {
 		gtk_widget_show (widget);

@@ -24,6 +24,7 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
+#include <colord.h>
 
 #include "gcm-utils.h"
 
@@ -515,20 +516,20 @@ cd_rendering_intent_to_localized_description (CdRenderingIntent intent)
 }
 
 /**
- * gcm_colorspace_to_localised_string:
+ * cd_colorspace_to_localised_string:
  **/
 const gchar *
-gcm_colorspace_to_localised_string (GcmColorspace colorspace)
+cd_colorspace_to_localised_string (CdColorspace colorspace)
 {
-	if (colorspace == GCM_COLORSPACE_RGB) {
+	if (colorspace == CD_COLORSPACE_RGB) {
 		/* TRANSLATORS: this is the colorspace, e.g. red, green, blue */
 		return _("RGB");
 	}
-	if (colorspace == GCM_COLORSPACE_CMYK) {
+	if (colorspace == CD_COLORSPACE_CMYK) {
 		/* TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black */
 		return _("CMYK");
 	}
-	if (colorspace == GCM_COLORSPACE_GRAY) {
+	if (colorspace == CD_COLORSPACE_GRAY) {
 		/* TRANSLATORS: this is the colorspace type */
 		return _("gray");
 	}

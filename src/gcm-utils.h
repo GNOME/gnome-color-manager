@@ -25,9 +25,7 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
-#include "gcm-device.h"
 #include "gcm-profile.h"
-#include "gcm-enum.h"
 
 #define GCM_STOCK_ICON					"gnome-color-manager"
 #define GCM_DBUS_SERVICE				"org.gnome.ColorManager"
@@ -79,7 +77,7 @@ gboolean	 gcm_utils_is_icc_profile		(GFile			*file);
 gchar		*gcm_utils_linkify			(const gchar		*text);
 const gchar	*cd_rendering_intent_to_localized_text		(CdRenderingIntent	 intent);
 const gchar	*cd_rendering_intent_to_localized_description	(CdRenderingIntent	 intent);
-const gchar	*gcm_colorspace_to_localised_string	(GcmColorspace	 colorspace);
+const gchar	*cd_colorspace_to_localised_string	(CdColorspace	 colorspace);
 
 #endif /* __GCM_UTILS_H */
 

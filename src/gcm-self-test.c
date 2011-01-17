@@ -422,7 +422,7 @@ gcm_test_profile_func (void)
 	g_assert_cmpstr (gcm_profile_get_description (profile), ==, "Blueish Test");
 	g_assert_cmpstr (gcm_profile_get_checksum (profile), ==, "8e2aed5dac6f8b5d8da75610a65b7f27");
 	g_assert_cmpint (gcm_profile_get_kind (profile), ==, CD_PROFILE_KIND_DISPLAY_DEVICE);
-	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, GCM_COLORSPACE_RGB);
+	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, CD_COLORSPACE_RGB);
 	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 6500);
 	g_assert (gcm_profile_get_has_vcgt (profile));
 
@@ -453,7 +453,7 @@ gcm_test_profile_func (void)
 	g_assert_cmpstr (gcm_profile_get_description (profile), ==, "ADOBEGAMMA-Test");
 	g_assert_cmpstr (gcm_profile_get_checksum (profile), ==, "bd847723f676e2b846daaf6759330624");
 	g_assert_cmpint (gcm_profile_get_kind (profile), ==, CD_PROFILE_KIND_DISPLAY_DEVICE);
-	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, GCM_COLORSPACE_RGB);
+	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, CD_COLORSPACE_RGB);
 	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 6500);
 	g_assert (gcm_profile_get_has_vcgt (profile));
 
@@ -496,7 +496,7 @@ gcm_test_profile_func (void)
 	g_assert_cmpstr (gcm_profile_get_model (profile), ==, NULL);
 	g_assert_cmpstr (gcm_profile_get_description (profile), ==, "RGB built-in");
 	g_assert_cmpint (gcm_profile_get_kind (profile), ==, CD_PROFILE_KIND_DISPLAY_DEVICE);
-	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, GCM_COLORSPACE_RGB);
+	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, CD_COLORSPACE_RGB);
 	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 5000);
 	g_assert (gcm_profile_get_has_vcgt (profile));
 
@@ -958,7 +958,7 @@ gcm_test_calibrate_native_func (void)
 	GcmCalibrate *calibrate;
 	CdClient *client;
 	GcmX11Screen *screen;
-	GcmDevice *device;
+	CdDevice *device;
 	gchar *contents;
 	gchar *filename = NULL;
 
@@ -1002,7 +1002,7 @@ gcm_test_calibrate_native_func (void)
 	g_assert (ret);
 
 	/* clear any VCGT */
-	ret = gcm_device_xrandr_reset (GCM_DEVICE_XRANDR (device), &error);
+	ret = cd_device_xrandr_reset (CD_DEVICE_XRANDR (device), &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -1120,7 +1120,7 @@ gcm_test_cie_widget_func (void)
 static guint _changes = 0;
 
 static void
-gcm_device_test_changed_cb (GcmDevice *device)
+cd_device_test_changed_cb (CdDevice *device)
 {
 	_changes++;
 	_g_test_loop_quit ();
@@ -1129,7 +1129,7 @@ gcm_device_test_changed_cb (GcmDevice *device)
 static void
 gcm_test_device_func (void)
 {
-	GcmDevice *device;
+	CdDevice *device;
 	gboolean ret;
 	GError *error = NULL;
 	gchar *filename;
@@ -1142,11 +1142,11 @@ gcm_test_device_func (void)
 	GcmX11Screen *screen;
 	GcmX11Output *output;
 
-	device = gcm_device_xrandr_new ();
+	device = cd_device_xrandr_new ();
 	g_assert (device != NULL);
 
 	/* connect to the changed signal */
-	g_signal_connect (device, "changed", G_CALLBACK (gcm_device_test_changed_cb), NULL);
+	g_signal_connect (device, "changed", G_CALLBACK (cd_device_test_changed_cb), NULL);
 
 	g_assert_cmpint (_changes, ==, 0);
 
@@ -1163,33 +1163,33 @@ gcm_test_device_func (void)
 		      "connected", FALSE,
 		      "virtual", FALSE,
 		      "serial", "0123456789",
-		      "colorspace", GCM_COLORSPACE_RGB,
+		      "colorspace", CD_COLORSPACE_RGB,
 		      NULL);
 
 	_g_test_loop_run_with_timeout (1000);
 
 	g_assert_cmpint (_changes, ==, 1);
 
-	gcm_device_set_connected (device, TRUE);
+	cd_device_set_connected (device, TRUE);
 
 	_g_test_loop_run_with_timeout (1000);
 
 	g_assert_cmpint (_changes, ==, 2);
 
-	g_assert_cmpstr (gcm_device_get_id (device), ==, "sysfs_dummy_device");
+	g_assert_cmpstr (cd_device_get_id (device), ==, "sysfs_dummy_device");
 
 	/* missing file */
-	ret = gcm_device_load (device, &error);
+	ret = cd_device_load (device, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
-	g_assert_cmpstr (gcm_device_get_default_profile_filename (device), ==, NULL);
+	g_assert_cmpstr (cd_device_get_default_profile_filename (device), ==, NULL);
 
 	/* empty file that exists */
 	g_file_set_contents (filename, "", -1, NULL);
 
 	/* load from empty file */
-	ret = gcm_device_load (device, &error);
+	ret = cd_device_load (device, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -1202,7 +1202,7 @@ gcm_test_device_func (void)
 				    TESTDATADIR "/AdobeGammaTest.icm");
 	g_file_set_contents (filename, contents, -1, NULL);
 
-	ret = gcm_device_load (device, &error);
+	ret = cd_device_load (device, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -1212,9 +1212,9 @@ gcm_test_device_func (void)
 	g_assert_cmpint (_changes, ==, 3);
 
 	/* get some properties */
-	profile_filename = gcm_device_get_default_profile_filename (device);
+	profile_filename = cd_device_get_default_profile_filename (device);
 	gcm_test_assert_basename (profile_filename, TESTDATADIR "/bluish.icc");
-	profiles = gcm_device_get_profiles (device);
+	profiles = cd_device_get_profiles (device);
 	g_assert_cmpint (profiles->len, ==, 2);
 
 	profile = g_ptr_array_index (profiles, 0);
@@ -1226,13 +1226,13 @@ gcm_test_device_func (void)
 	gcm_test_assert_basename (gcm_profile_get_filename (profile), TESTDATADIR "/AdobeGammaTest.icm");
 
 	/* set some properties */
-	gcm_device_set_default_profile_filename (device, TESTDATADIR "/bluish.icc");
+	cd_device_set_default_profile_filename (device, TESTDATADIR "/bluish.icc");
 
 	/* ensure the file is nuked, again */
 	g_unlink (filename);
 
 	/* save to empty file */
-	ret = gcm_device_save (device, &error);
+	ret = cd_device_save (device, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -1256,7 +1256,7 @@ gcm_test_device_func (void)
 	g_object_unref (device);
 
 	/* test auto-generation of the profile */
-	device = gcm_device_xrandr_new ();
+	device = cd_device_xrandr_new ();
 	screen = gcm_x11_screen_new ();
 	ret = gcm_x11_screen_assign (screen, NULL, &error);
 	g_assert_no_error (error);
@@ -1267,13 +1267,13 @@ gcm_test_device_func (void)
 	g_object_unref (screen);
 
 	/* setup device */
-	ret = gcm_device_xrandr_set_from_output (device, output, &error);
+	ret = cd_device_xrandr_set_from_output (device, output, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_object_unref (output);
 
 	/* generate profile */
-	profile = gcm_device_generate_profile (device, &error);
+	profile = cd_device_generate_profile (device, &error);
 	g_assert_no_error (error);
 	g_assert (profile != NULL);
 
@@ -1512,7 +1512,7 @@ gcm_test_client_func (void)
 	GError *error = NULL;
 	gboolean ret;
 	GPtrArray *array;
-	GcmDevice *device;
+	CdDevice *device;
 	gchar *contents;
 	gchar *filename;
 	gchar *data = NULL;
@@ -1540,18 +1540,18 @@ gcm_test_client_func (void)
 	g_assert (array != NULL);
 	g_assert_cmpint (array->len, ==, 1);
 	device = g_ptr_array_index (array, 0);
-	g_assert_cmpstr (gcm_device_get_id (device), ==, "xrandr_goldstar");
-	g_assert_cmpstr (gcm_device_get_title (device), ==, "Goldstar");
-	gcm_test_assert_basename (gcm_device_get_default_profile_filename (device), TESTDATADIR "/bluish.icc");
-	g_assert (gcm_device_get_saved (device));
-	g_assert (!gcm_device_get_connected (device));
+	g_assert_cmpstr (cd_device_get_id (device), ==, "xrandr_goldstar");
+	g_assert_cmpstr (cd_device_get_title (device), ==, "Goldstar");
+	gcm_test_assert_basename (cd_device_get_default_profile_filename (device), TESTDATADIR "/bluish.icc");
+	g_assert (cd_device_get_saved (device));
+	g_assert (!cd_device_get_connected (device));
 	g_assert (GCM_IS_DEVICE_XRANDR (device));
 	g_ptr_array_unref (array);
 
-	device = gcm_device_xrandr_new ();
-	gcm_device_set_id (device, "xrandr_goldstar");
-	gcm_device_set_title (device, "Slightly different");
-	gcm_device_set_connected (device, TRUE);
+	device = cd_device_xrandr_new ();
+	cd_device_set_id (device, "xrandr_goldstar");
+	cd_device_set_title (device, "Slightly different");
+	cd_device_set_connected (device, TRUE);
 	ret = cd_client_add_device (client, device, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
@@ -1560,15 +1560,15 @@ gcm_test_client_func (void)
 	array = cd_client_get_devices (client);
 	g_assert_cmpint (array->len, ==, 1);
 	device = g_ptr_array_index (array, 0);
-	g_assert_cmpstr (gcm_device_get_id (device), ==, "xrandr_goldstar");
-	g_assert_cmpstr (gcm_device_get_title (device), ==, "Slightly different");
-	gcm_test_assert_basename (gcm_device_get_default_profile_filename (device), TESTDATADIR "/bluish.icc");
-	g_assert (gcm_device_get_saved (device));
-	g_assert (gcm_device_get_connected (device));
+	g_assert_cmpstr (cd_device_get_id (device), ==, "xrandr_goldstar");
+	g_assert_cmpstr (cd_device_get_title (device), ==, "Slightly different");
+	gcm_test_assert_basename (cd_device_get_default_profile_filename (device), TESTDATADIR "/bluish.icc");
+	g_assert (cd_device_get_saved (device));
+	g_assert (cd_device_get_connected (device));
 	g_ptr_array_unref (array);
 
 	/* delete */
-	gcm_device_set_connected (device, FALSE);
+	cd_device_set_connected (device, FALSE);
 	ret = cd_client_delete_device (client, device, &error);
 	g_assert_no_error (error);
 	g_assert (ret);

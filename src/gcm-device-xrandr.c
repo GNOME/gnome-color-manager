@@ -19,17 +19,17 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-gboolean	 gcm_device_xrandr_set_from_output	(GcmDevice		*device,
+gboolean	 cd_device_xrandr_set_from_output	(CdDevice		*device,
 							 GcmX11Output		*output,
 							 GError			**error);
-void		 gcm_device_xrandr_set_remove_atom	(GcmDeviceXrandr	*device_xrandr,
+void		 cd_device_xrandr_set_remove_atom	(CdDeviceXrandr	*device_xrandr,
 							 gboolean		 remove_atom);
-const gchar	*gcm_device_xrandr_get_native_device	(GcmDeviceXrandr	*device_xrandr);
-const gchar	*gcm_device_xrandr_get_eisa_id		(GcmDeviceXrandr	*device_xrandr);
-const gchar	*gcm_device_xrandr_get_edid_md5		(GcmDeviceXrandr	*device_xrandr);
-gboolean	 gcm_device_xrandr_get_xrandr13		(GcmDeviceXrandr	*device_xrandr);
-gboolean	 gcm_device_xrandr_is_primary		(GcmDeviceXrandr	*device_xrandr);
-gboolean	 gcm_device_xrandr_reset		(GcmDeviceXrandr	*device_xrandr,
+const gchar	*cd_device_xrandr_get_native_device	(CdDeviceXrandr	*device_xrandr);
+const gchar	*cd_device_xrandr_get_eisa_id		(CdDeviceXrandr	*device_xrandr);
+const gchar	*cd_device_xrandr_get_edid_md5		(CdDeviceXrandr	*device_xrandr);
+gboolean	 cd_device_xrandr_get_xrandr13		(CdDeviceXrandr	*device_xrandr);
+gboolean	 cd_device_xrandr_is_primary		(CdDeviceXrandr	*device_xrandr);
+gboolean	 cd_device_xrandr_reset		(CdDeviceXrandr	*device_xrandr,
 							 GError			**error);
 
 #include <X11/extensions/Xrandr.h>
@@ -45,11 +45,11 @@ gboolean	 gcm_device_xrandr_reset		(GcmDeviceXrandr	*device_xrandr,
 #include "gcm-x11-screen.h"
 
 /**
- * GcmDeviceXrandrPrivate:
+ * CdDeviceXrandrPrivate:
  *
- * Private #GcmDeviceXrandr data
+ * Private #CdDeviceXrandr data
  **/
-struct _GcmDeviceXrandrPrivate
+struct _CdDeviceXrandrPrivate
 {
 	gchar				*native_device;
 	gchar				*eisa_id;
@@ -66,39 +66,39 @@ struct _GcmDeviceXrandrPrivate
 #define GCM_ICC_PROFILE_IN_X_VERSION_MINOR	3
 
 /**
- * gcm_device_xrandr_get_native_device:
+ * cd_device_xrandr_get_native_device:
  **/
 const gchar *
-gcm_device_xrandr_get_native_device (GcmDeviceXrandr *device_xrandr)
+cd_device_xrandr_get_native_device (CdDeviceXrandr *device_xrandr)
 {
 	return device_xrandr->priv->native_device;
 }
 
 /**
- * gcm_device_xrandr_get_eisa_id:
+ * cd_device_xrandr_get_eisa_id:
  **/
 const gchar *
-gcm_device_xrandr_get_eisa_id (GcmDeviceXrandr *device_xrandr)
+cd_device_xrandr_get_eisa_id (CdDeviceXrandr *device_xrandr)
 {
 	return device_xrandr->priv->eisa_id;
 }
 
 /**
- * gcm_device_xrandr_get_edid_md5:
+ * cd_device_xrandr_get_edid_md5:
  **/
 const gchar *
-gcm_device_xrandr_get_edid_md5 (GcmDeviceXrandr *device_xrandr)
+cd_device_xrandr_get_edid_md5 (CdDeviceXrandr *device_xrandr)
 {
 	return device_xrandr->priv->edid_md5;
 }
 
 /**
- * gcm_device_xrandr_get_output_name:
+ * cd_device_xrandr_get_output_name:
  *
  * Return value: the output name, free with g_free().
  **/
 static gchar *
-gcm_device_xrandr_get_output_name (GcmDeviceXrandr *device_xrandr, GcmX11Output *output)
+cd_device_xrandr_get_output_name (CdDeviceXrandr *device_xrandr, GcmX11Output *output)
 {
 	const gchar *output_name;
 	const gchar *name;
@@ -107,7 +107,7 @@ gcm_device_xrandr_get_output_name (GcmDeviceXrandr *device_xrandr, GcmX11Output 
 	gboolean ret;
 	guint width = 0;
 	guint height = 0;
-	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
+	CdDeviceXrandrPrivate *priv = device_xrandr->priv;
 
 	/* blank */
 	string = g_string_new ("");
@@ -163,10 +163,10 @@ out:
 }
 
 /**
- * gcm_device_xrandr_get_id_for_xrandr_device:
+ * cd_device_xrandr_get_id_for_xrandr_device:
  **/
 static gchar *
-gcm_device_xrandr_get_id_for_xrandr_device (GcmDeviceXrandr *device_xrandr, GcmX11Output *output)
+cd_device_xrandr_get_id_for_xrandr_device (CdDeviceXrandr *device_xrandr, GcmX11Output *output)
 {
 	const gchar *output_name;
 	const gchar *name;
@@ -175,7 +175,7 @@ gcm_device_xrandr_get_id_for_xrandr_device (GcmDeviceXrandr *device_xrandr, GcmX
 	const gchar *serial;
 	GString *string;
 	gboolean ret;
-	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
+	CdDeviceXrandrPrivate *priv = device_xrandr->priv;
 
 	/* blank */
 	string = g_string_new ("xrandr");
@@ -214,10 +214,10 @@ out:
 }
 
 /**
- * gcm_device_xrandr_set_from_output:
+ * cd_device_xrandr_set_from_output:
  **/
 gboolean
-gcm_device_xrandr_set_from_output (GcmDevice *device, GcmX11Output *output, GError **error)
+cd_device_xrandr_set_from_output (CdDevice *device, GcmX11Output *output, GError **error)
 {
 	gchar *title = NULL;
 	gchar *id = NULL;
@@ -230,7 +230,7 @@ gcm_device_xrandr_set_from_output (GcmDevice *device, GcmX11Output *output, GErr
 	guint8 *data = NULL;
 	gsize length;
 	guint major, minor;
-	GcmDeviceXrandrPrivate *priv = GCM_DEVICE_XRANDR(device)->priv;
+	CdDeviceXrandrPrivate *priv = CD_DEVICE_XRANDR(device)->priv;
 
 	/* parse the EDID to get a output specific name */
 	ret = gcm_x11_output_get_edid_data (output, &data, &length, NULL);
@@ -246,7 +246,7 @@ gcm_device_xrandr_set_from_output (GcmDevice *device, GcmX11Output *output, GErr
 	}
 
 	/* get details */
-	id = gcm_device_xrandr_get_id_for_xrandr_device (GCM_DEVICE_XRANDR(device), output);
+	id = cd_device_xrandr_get_id_for_xrandr_device (CD_DEVICE_XRANDR(device), output);
 	g_debug ("asking to add %s", id);
 
 	/* get data about the display */
@@ -263,10 +263,10 @@ gcm_device_xrandr_set_from_output (GcmDevice *device, GcmX11Output *output, GErr
 		model = gcm_dmi_get_version (priv->dmi);
 
 	/* add new device */
-	title = gcm_device_xrandr_get_output_name (GCM_DEVICE_XRANDR(device), output);
+	title = cd_device_xrandr_get_output_name (CD_DEVICE_XRANDR(device), output);
 	g_object_set (device,
 		      "kind", CD_DEVICE_KIND_DISPLAY,
-		      "colorspace", GCM_COLORSPACE_RGB,
+		      "colorspace", CD_COLORSPACE_RGB,
 		      "id", id,
 		      "connected", TRUE,
 		      "serial", serial,
@@ -290,17 +290,17 @@ out:
 }
 
 /**
- * gcm_device_xrandr_generate_profile:
+ * cd_device_xrandr_generate_profile:
  **/
 static GcmProfile *
-gcm_device_xrandr_generate_profile (GcmDevice *device, GError **error)
+cd_device_xrandr_generate_profile (CdDevice *device, GError **error)
 {
 	gboolean ret;
 	const gchar *data;
 	gchar *title = NULL;
 	GcmProfile *profile;
-	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (device);
-	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
+	CdDeviceXrandr *device_xrandr = CD_DEVICE_XRANDR (device);
+	CdDeviceXrandrPrivate *priv = device_xrandr->priv;
 
 	/* create new profile */
 	profile = gcm_profile_new ();
@@ -321,7 +321,7 @@ gcm_device_xrandr_generate_profile (GcmDevice *device, GError **error)
 	gcm_profile_set_model (profile, data);
 
 	/* TRANSLATORS: this is prepended to the device title to let the use know it was generated by us automatically */
-	title = g_strdup_printf ("%s, %s", _("Automatic"), gcm_device_get_title (device));
+	title = g_strdup_printf ("%s, %s", _("Automatic"), cd_device_get_title (device));
 	gcm_profile_set_description (profile, title);
 
 	/* generate a profile from the chroma data */
@@ -360,14 +360,14 @@ out:
 }
 
 /**
- * gcm_device_xrandr_reset:
+ * cd_device_xrandr_reset:
  *
  * Clears any VCGT table, so we're ready for profiling
  *
  * Return value: %TRUE for success;
  **/
 gboolean
-gcm_device_xrandr_reset (GcmDeviceXrandr *device_xrandr, GError **error)
+cd_device_xrandr_reset (CdDeviceXrandr *device_xrandr, GError **error)
 {
 	const gchar *id;
 	const gchar *output_name;
@@ -376,18 +376,18 @@ gcm_device_xrandr_reset (GcmDeviceXrandr *device_xrandr, GError **error)
 	CdDeviceKind kind;
 	GcmX11Output *output;
 	guint size;
-	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
+	CdDeviceXrandrPrivate *priv = device_xrandr->priv;
 
 	/* do no set the gamma for non-display types */
-	id = gcm_device_get_id (GCM_DEVICE (device_xrandr));
-	kind = gcm_device_get_kind (GCM_DEVICE (device_xrandr));
+	id = cd_device_get_id (CD_DEVICE (device_xrandr));
+	kind = cd_device_get_kind (CD_DEVICE (device_xrandr));
 	if (kind != CD_DEVICE_KIND_DISPLAY) {
 		g_set_error (error, 1, 0, "not a display: %s", id);
 		goto out;
 	}
 
 	/* should be set for display types */
-	output_name = gcm_device_xrandr_get_native_device (device_xrandr);
+	output_name = cd_device_xrandr_get_native_device (device_xrandr);
 	if (output_name == NULL || output_name[0] == '\0') {
 		g_set_error (error, 1, 0, "no output name for display: %s", id);
 		goto out;
@@ -414,12 +414,12 @@ out:
 }
 
 /**
- * gcm_device_xrandr_apply:
+ * cd_device_xrandr_apply:
  *
  * Return value: %TRUE for success;
  **/
 static gboolean
-gcm_device_xrandr_apply (GcmDevice *device, GError **error)
+cd_device_xrandr_apply (CdDevice *device, GError **error)
 {
 	gboolean ret = FALSE;
 	GcmClut *clut = NULL;
@@ -440,27 +440,27 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	gboolean leftmost_screen = FALSE;
 	GFile *file = NULL;
 	CdDeviceKind kind;
-	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (device);
-	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
+	CdDeviceXrandr *device_xrandr = CD_DEVICE_XRANDR (device);
+	CdDeviceXrandrPrivate *priv = device_xrandr->priv;
 
 	/* do no set the gamma for non-display types */
-	id = gcm_device_get_id (device);
-	kind = gcm_device_get_kind (device);
+	id = cd_device_get_id (device);
+	kind = cd_device_get_kind (device);
 	if (kind != CD_DEVICE_KIND_DISPLAY) {
 		g_set_error (error, 1, 0, "not a display: %s", id);
 		goto out;
 	}
 
 	/* should be set for display types */
-	output_name = gcm_device_xrandr_get_native_device (device_xrandr);
+	output_name = cd_device_xrandr_get_native_device (device_xrandr);
 	if (output_name == NULL || output_name[0] == '\0') {
 		g_set_error (error, 1, 0, "no output name for display: %s", id);
 		goto out;
 	}
 
 	/* if not saved, try to find default profile */
-	saved = gcm_device_get_saved (device);
-	profile = gcm_device_get_default_profile (device);
+	saved = cd_device_get_saved (device);
+	profile = cd_device_get_default_profile (device);
 	if (profile != NULL)
 		g_object_ref (profile);
 	if (!saved && profile == NULL) {
@@ -496,9 +496,9 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 
 	/* do fine adjustment */
 	if (use_global) {
-		gamma_adjust = gcm_device_get_gamma (device);
-		brightness = gcm_device_get_brightness (device);
-		contrast = gcm_device_get_contrast (device);
+		gamma_adjust = cd_device_get_gamma (device);
+		brightness = cd_device_get_brightness (device);
+		contrast = cd_device_get_contrast (device);
 		g_object_set (clut,
 			      "gamma", gamma_adjust,
 			      "brightness", brightness,
@@ -570,12 +570,12 @@ out:
 }
 
 /**
- * gcm_device_xrandr_init:
+ * cd_device_xrandr_init:
  **/
 static void
-gcm_device_xrandr_init (GcmDeviceXrandr *device_xrandr)
+cd_device_xrandr_init (CdDeviceXrandr *device_xrandr)
 {
-	device_xrandr->priv = GCM_DEVICE_XRANDR_GET_PRIVATE (device_xrandr);
+	device_xrandr->priv = CD_DEVICE_XRANDR_GET_PRIVATE (device_xrandr);
 	device_xrandr->priv->native_device = NULL;
 	device_xrandr->priv->eisa_id = NULL;
 	device_xrandr->priv->edid_md5 = NULL;
@@ -587,13 +587,13 @@ gcm_device_xrandr_init (GcmDeviceXrandr *device_xrandr)
 }
 
 /**
- * gcm_device_xrandr_finalize:
+ * cd_device_xrandr_finalize:
  **/
 static void
-gcm_device_xrandr_finalize (GObject *object)
+cd_device_xrandr_finalize (GObject *object)
 {
-	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (object);
-	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
+	CdDeviceXrandr *device_xrandr = CD_DEVICE_XRANDR (object);
+	CdDeviceXrandrPrivate *priv = device_xrandr->priv;
 
 	g_free (priv->native_device);
 	g_free (priv->eisa_id);
@@ -602,5 +602,5 @@ gcm_device_xrandr_finalize (GObject *object)
 	g_object_unref (priv->dmi);
 	g_object_unref (priv->screen);
 
-	G_OBJECT_CLASS (gcm_device_xrandr_parent_class)->finalize (object);
+	G_OBJECT_CLASS (cd_device_xrandr_parent_class)->finalize (object);
 }

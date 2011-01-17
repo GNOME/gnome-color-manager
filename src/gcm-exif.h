@@ -26,8 +26,6 @@
 #include <gio/gio.h>
 #include <colord.h>
 
-#include "gcm-enum.h"
-
 G_BEGIN_DECLS
 
 #define GCM_TYPE_EXIF		(gcm_exif_get_type ())

@@ -30,6 +30,7 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#include <colord.h>
 
 #include "gcm-calibrate.h"
 #include "gcm-color.h"
@@ -303,7 +304,7 @@ gcm_calibrate_set_basename (GcmCalibrate *calibrate)
  * gcm_calibrate_set_from_device:
  **/
 gboolean
-gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GError **error)
+gcm_calibrate_set_from_device (GcmCalibrate *calibrate, CdDevice *device, GError **error)
 {
 	gboolean lcd_internal;
 	gboolean ret = TRUE;
@@ -316,15 +317,15 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 	GcmCalibratePrivate *priv = calibrate->priv;
 
 	/* get the device */
-	kind = gcm_device_get_kind (device);
-	serial = gcm_device_get_serial (device);
-	model = gcm_device_get_model (device);
-	description = gcm_device_get_title (device);
-	manufacturer = gcm_device_get_manufacturer (device);
+	kind = cd_device_get_kind (device);
+//	serial = cd_device_get_serial (device);
+	model = cd_device_get_model (device);
+//	description = cd_device_get_title (device);
+//	manufacturer = cd_device_get_manufacturer (device);
 
 	/* if we're a laptop, maybe use the dmi data instead */
 	if (kind == CD_DEVICE_KIND_DISPLAY) {
-//		native_device = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
+//		native_device = cd_device_xrandr_get_native_device (CD_DEVICE_XRANDR (device));
 		lcd_internal = gcm_utils_output_is_lcd_internal (native_device);
 		if (lcd_internal) {
 			model = gcm_dmi_get_name (priv->dmi);
@@ -346,7 +347,7 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 
 	/* display specific properties */
 	if (kind == CD_DEVICE_KIND_DISPLAY) {
-//		native_device = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
+//		native_device = cd_device_xrandr_get_native_device (CD_DEVICE_XRANDR (device));
 		if (native_device == NULL) {
 			g_set_error (error,
 				     GCM_CALIBRATE_ERROR,

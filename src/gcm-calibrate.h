@@ -25,8 +25,6 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
-#include "gcm-device.h"
-
 G_BEGIN_DECLS
 
 #define GCM_TYPE_CALIBRATE		(gcm_calibrate_get_type ())
@@ -130,7 +128,7 @@ gboolean	 gcm_calibrate_spotread			(GcmCalibrate	*calibrate,
 							 GtkWindow	*window,
 							 GError		**error);
 gboolean	 gcm_calibrate_set_from_device		(GcmCalibrate	*calibrate,
-							 GcmDevice	*device,
+							 CdDevice	*device,
 							 GError		**error);
 gboolean	 gcm_calibrate_set_from_exif		(GcmCalibrate	*calibrate,
 							 const gchar	*filename,

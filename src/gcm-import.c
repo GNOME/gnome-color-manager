@@ -67,7 +67,7 @@ main (int argc, char **argv)
 	GcmProfileStore *profile_store = NULL;
 	GcmProfile *profile = NULL;
 	GcmProfile *profile_tmp = NULL;
-	GcmColorspace colorspace;
+	CdColorspace colorspace;
 	GError *error = NULL;
 	GOptionContext *context;
 	GString *string = NULL;
@@ -189,7 +189,7 @@ main (int argc, char **argv)
 	gcm_import_add_cie_widget (GTK_DIALOG(dialog), cie_widget);
 
 	/* only show the cie widget if we have RGB data */
-	if (colorspace != GCM_COLORSPACE_RGB)
+	if (colorspace != CD_COLORSPACE_RGB)
 		gtk_widget_hide (cie_widget);
 
 	gtk_window_set_resizable (GTK_WINDOW (dialog), TRUE);

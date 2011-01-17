@@ -58,14 +58,10 @@ libgcmshared_a_SOURCES =				\
 	gcm-color.h					\
 	gcm-debug.c					\
 	gcm-debug.h					\
-	gcm-device.c					\
-	gcm-device.h					\
 	gcm-dmi.c					\
 	gcm-dmi.h					\
 	gcm-edid.c					\
 	gcm-edid.h					\
-	gcm-enum.c					\
-	gcm-enum.h					\
 	gcm-exif.c					\
 	gcm-exif.h					\
 	gcm-gamma-widget.c				\

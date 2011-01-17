@@ -27,7 +27,6 @@
 #include <colord.h>
 
 #include "gcm-clut.h"
-#include "gcm-enum.h"
 #include "gcm-color.h"
 
 G_BEGIN_DECLS
@@ -126,9 +125,9 @@ guint		 gcm_profile_get_size			(GcmProfile	*profile);
 CdProfileKind	 gcm_profile_get_kind			(GcmProfile	*profile);
 void		 gcm_profile_set_kind			(GcmProfile	*profile,
 							 CdProfileKind	 kind);
-GcmColorspace	 gcm_profile_get_colorspace		(GcmProfile	*profile);
+CdColorspace	 gcm_profile_get_colorspace		(GcmProfile	*profile);
 void		 gcm_profile_set_colorspace		(GcmProfile	*profile,
-							 GcmColorspace	 colorspace);
+							 CdColorspace	 colorspace);
 gboolean	 gcm_profile_get_has_vcgt		(GcmProfile	*profile);
 gboolean	 gcm_profile_has_colorspace_description	(GcmProfile	*profile);
 guint		 gcm_profile_get_temperature		(GcmProfile	*profile);

@@ -30,6 +30,7 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <lcms2.h>
+#include <colord.h>
 
 #include "gcm-calibrate-argyll.h"
 #include "gcm-sensor-client.h"
@@ -483,7 +484,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 	GcmProfile *profile;
 	guint i;
 	const gchar *filename;
-	GcmColorspace colorspace;
+	CdColorspace colorspace;
 	gboolean has_profile = FALSE;
 	gboolean has_vcgt;
 	gboolean has_colorspace_description;
@@ -504,7 +505,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 		has_colorspace_description = gcm_profile_has_colorspace_description (profile);
 		colorspace = gcm_profile_get_colorspace (profile);
 		if (!has_vcgt && has_colorspace_description &&
-		    colorspace == GCM_COLORSPACE_RGB) {
+		    colorspace == CD_COLORSPACE_RGB) {
 			gcm_prefs_combobox_add_profile (widget, profile, &iter);
 
 			/* set active option */
@@ -517,7 +518,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 	if (!has_profile) {
 		/* TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK" */
 		text = g_strdup_printf (_("No %s color spaces available"),
-					gcm_colorspace_to_localised_string (GCM_COLORSPACE_RGB));
+					cd_colorspace_to_localised_string (CD_COLORSPACE_RGB));
 		model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
 		gtk_list_store_append (GTK_LIST_STORE(model), &iter);
 		gtk_list_store_set (GTK_LIST_STORE(model), &iter,

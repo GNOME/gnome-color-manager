@@ -170,7 +170,7 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 	} else if (priv->input_profile != NULL) {
 
 		/* not RGB */
-		if (gcm_profile_get_colorspace (priv->input_profile) != GCM_COLORSPACE_RGB) {
+		if (gcm_profile_get_colorspace (priv->input_profile) != CD_COLORSPACE_RGB) {
 			g_warning ("input colorspace has to be RGB!");
 			goto out;
 		}
@@ -189,7 +189,7 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 	if (priv->output_profile != NULL) {
 
 		/* not RGB */
-		if (gcm_profile_get_colorspace (priv->output_profile) != GCM_COLORSPACE_RGB) {
+		if (gcm_profile_get_colorspace (priv->output_profile) != CD_COLORSPACE_RGB) {
 			g_warning ("output colorspace has to be RGB!");
 			goto out;
 		}
@@ -209,7 +209,7 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 		cmsHPROFILE profiles[3];
 
 		/* not LAB */
-		if (gcm_profile_get_colorspace (priv->abstract_profile) != GCM_COLORSPACE_LAB) {
+		if (gcm_profile_get_colorspace (priv->abstract_profile) != CD_COLORSPACE_LAB) {
 			g_warning ("abstract profile has to be LAB!");
 			goto out;
 		}

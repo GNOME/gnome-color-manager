@@ -23,7 +23,7 @@
 #define __GCM_LIST_STORE_PROFILES_H__
 
 #include <gtk/gtk.h>
-#include <gcm-device.h>
+#include <colord.h>
 
 G_BEGIN_DECLS
 
@@ -60,7 +60,7 @@ struct GcmListStoreProfilesClass
 GType		 gcm_list_store_profiles_get_type		(void);
 GtkListStore	*gcm_list_store_profiles_new			(void);
 void		 gcm_list_store_profiles_set_from_device	(GtkListStore	*list_store,
-								 GcmDevice	*device);
+								 CdDevice	*device);
 
 G_END_DECLS
 

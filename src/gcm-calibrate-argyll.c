@@ -34,6 +34,7 @@
 #include <string.h>
 #include <gio/gio.h>
 #include <stdlib.h>
+#include <colord.h>
 #include <gtk/gtk.h>
 #ifdef HAVE_VTE
 #include <vte/vte.h>

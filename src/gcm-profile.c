@@ -51,7 +51,7 @@ struct _GcmProfilePrivate
 {
 	gboolean		 loaded;
 	CdProfileKind		 kind;
-	GcmColorspace		 colorspace;
+	CdColorspace		 colorspace;
 	guint			 size;
 	gboolean		 has_vcgt;
 	gboolean		 can_delete;
@@ -179,7 +179,7 @@ gcm_profile_set_description (GcmProfile *profile, const gchar *description)
  * Finds out if the profile contains a colorspace description.
  *
  * Return value: %TRUE if the description mentions the profile colorspace explicity,
- * e.g. "Adobe RGB" for %GCM_COLORSPACE_RGB.
+ * e.g. "Adobe RGB" for %CD_COLORSPACE_RGB.
  **/
 gboolean
 gcm_profile_has_colorspace_description (GcmProfile *profile)
@@ -188,9 +188,9 @@ gcm_profile_has_colorspace_description (GcmProfile *profile)
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
 
 	/* for each profile type */
-	if (priv->colorspace == GCM_COLORSPACE_RGB)
+	if (priv->colorspace == CD_COLORSPACE_RGB)
 		return (g_strstr_len (priv->description, -1, "RGB") != NULL);
-	if (priv->colorspace == GCM_COLORSPACE_CMYK)
+	if (priv->colorspace == CD_COLORSPACE_CMYK)
 		return (g_strstr_len (priv->description, -1, "CMYK") != NULL);
 
 	/* nothing */
@@ -553,10 +553,10 @@ gcm_profile_set_kind (GcmProfile *profile, CdProfileKind kind)
 /**
  * gcm_profile_get_colorspace:
  **/
-GcmColorspace
+CdColorspace
 gcm_profile_get_colorspace (GcmProfile *profile)
 {
-	g_return_val_if_fail (GCM_IS_PROFILE (profile), GCM_COLORSPACE_UNKNOWN);
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), CD_COLORSPACE_UNKNOWN);
 	return profile->priv->colorspace;
 }
 
@@ -564,7 +564,7 @@ gcm_profile_get_colorspace (GcmProfile *profile)
  * gcm_profile_set_colorspace:
  **/
 void
-gcm_profile_set_colorspace (GcmProfile *profile, GcmColorspace colorspace)
+gcm_profile_set_colorspace (GcmProfile *profile, CdColorspace colorspace)
 {
 	g_return_if_fail (GCM_IS_PROFILE (profile));
 	profile->priv->colorspace = colorspace;
@@ -645,7 +645,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	gboolean ret = FALSE;
 	cmsProfileClassSignature profile_class;
 	cmsColorSpaceSignature color_space;
-	GcmColorspace colorspace;
+	CdColorspace colorspace;
 	CdProfileKind profile_kind;
 	cmsCIEXYZ *cie_xyz;
 	cmsCIEXYZTRIPLE cie_illum;
@@ -749,37 +749,37 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	color_space = cmsGetColorSpace (priv->lcms_profile);
 	switch (color_space) {
 	case cmsSigXYZData:
-		colorspace = GCM_COLORSPACE_XYZ;
+		colorspace = CD_COLORSPACE_XYZ;
 		break;
 	case cmsSigLabData:
-		colorspace = GCM_COLORSPACE_LAB;
+		colorspace = CD_COLORSPACE_LAB;
 		break;
 	case cmsSigLuvData:
-		colorspace = GCM_COLORSPACE_LUV;
+		colorspace = CD_COLORSPACE_LUV;
 		break;
 	case cmsSigYCbCrData:
-		colorspace = GCM_COLORSPACE_YCBCR;
+		colorspace = CD_COLORSPACE_YCBCR;
 		break;
 	case cmsSigYxyData:
-		colorspace = GCM_COLORSPACE_YXY;
+		colorspace = CD_COLORSPACE_YXY;
 		break;
 	case cmsSigRgbData:
-		colorspace = GCM_COLORSPACE_RGB;
+		colorspace = CD_COLORSPACE_RGB;
 		break;
 	case cmsSigGrayData:
-		colorspace = GCM_COLORSPACE_GRAY;
+		colorspace = CD_COLORSPACE_GRAY;
 		break;
 	case cmsSigHsvData:
-		colorspace = GCM_COLORSPACE_HSV;
+		colorspace = CD_COLORSPACE_HSV;
 		break;
 	case cmsSigCmykData:
-		colorspace = GCM_COLORSPACE_CMYK;
+		colorspace = CD_COLORSPACE_CMYK;
 		break;
 	case cmsSigCmyData:
-		colorspace = GCM_COLORSPACE_CMY;
+		colorspace = CD_COLORSPACE_CMY;
 		break;
 	default:
-		colorspace = GCM_COLORSPACE_UNKNOWN;
+		colorspace = CD_COLORSPACE_UNKNOWN;
 	}
 	gcm_profile_set_colorspace (profile, colorspace);
 
@@ -1072,7 +1072,7 @@ gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
 	}
 
 	/* this is all we support writing */
-	if (priv->colorspace == GCM_COLORSPACE_RGB) {
+	if (priv->colorspace == CD_COLORSPACE_RGB) {
 		cmsSetColorSpace (priv->lcms_profile, cmsSigRgbData);
 		cmsSetPCS (priv->lcms_profile, cmsSigLabData);
 	}
@@ -1444,12 +1444,12 @@ gcm_profile_generate_curve (GcmProfile *profile, guint size)
 	cmsHPROFILE srgb_profile = NULL;
 	cmsHTRANSFORM transform = NULL;
 	guint type;
-	GcmColorspace colorspace;
+	CdColorspace colorspace;
 	GcmProfilePrivate *priv = profile->priv;
 
 	/* run through the profile */
 	colorspace = gcm_profile_get_colorspace (profile);
-	if (colorspace == GCM_COLORSPACE_RGB) {
+	if (colorspace == CD_COLORSPACE_RGB) {
 
 		/* RGB */
 		component_width = 3;
@@ -1853,7 +1853,7 @@ gcm_profile_init (GcmProfile *profile)
 	profile->priv->monitor = NULL;
 	profile->priv->dict = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	profile->priv->kind = CD_PROFILE_KIND_UNKNOWN;
-	profile->priv->colorspace = GCM_COLORSPACE_UNKNOWN;
+	profile->priv->colorspace = CD_COLORSPACE_UNKNOWN;
 	profile->priv->white = gcm_color_new_XYZ ();
 	profile->priv->black = gcm_color_new_XYZ ();
 	profile->priv->red = gcm_color_new_XYZ ();
