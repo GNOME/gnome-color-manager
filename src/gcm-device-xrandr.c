@@ -377,17 +377,6 @@ gcm_device_xrandr_set_remove_atom (GcmDeviceXrandr *device_xrandr, gboolean remo
 }
 
 /**
- * gcm_device_xrandr_get_config_data:
- **/
-static gchar *
-gcm_device_xrandr_get_config_data (GcmDevice *device)
-{
-	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (device);
-	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
-	return g_strdup_printf ("edid-hash=%s", priv->edid_md5);
-}
-
-/**
  * gcm_device_xrandr_generate_profile:
  **/
 static GcmProfile *
@@ -757,7 +746,6 @@ gcm_device_xrandr_class_init (GcmDeviceXrandrClass *klass)
 	object_class->set_property = gcm_device_xrandr_set_property;
 
 	device_class->apply = gcm_device_xrandr_apply;
-	device_class->get_config_data = gcm_device_xrandr_get_config_data;
 	device_class->generate_profile = gcm_device_xrandr_generate_profile;
 
 	/**

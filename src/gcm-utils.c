@@ -441,25 +441,6 @@ gcm_utils_ensure_sensible_filename (gchar *data)
 }
 
 /**
- * gcm_utils_get_default_config_location:
- **/
-gchar *
-gcm_utils_get_default_config_location (void)
-{
-	gchar *filename;
-
-	if (g_getenv ("GCM_TEST") != NULL) {
-		filename = g_strdup ("/tmp/device-profiles.conf");
-		goto out;
-	}
-
-	/* create default path */
-	filename = g_build_filename (g_get_user_config_dir (), "color", "device-profiles.conf", NULL);
-out:
-	return filename;
-}
-
-/**
  * gcm_utils_device_kind_to_profile_kind:
  **/
 CdProfileKind

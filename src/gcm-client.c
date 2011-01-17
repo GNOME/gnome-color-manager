@@ -624,68 +624,6 @@ gcm_client_remove_device (GcmClient *client, GcmDevice *device, GError **error)
 }
 
 /**
- * gcm_client_delete_device:
- **/
-gboolean
-gcm_client_delete_device (GcmClient *client, GcmDevice *device, GError **error)
-{
-	gboolean ret = FALSE;
-	const gchar *device_id;
-	gchar *data = NULL;
-	gchar *filename = NULL;
-	GKeyFile *keyfile = NULL;
-
-	g_return_val_if_fail (GCM_IS_CLIENT (client), FALSE);
-	g_return_val_if_fail (GCM_IS_DEVICE (device), FALSE);
-
-	/* check device is saved */
-	device_id = gcm_device_get_id (device);
-	if (!gcm_device_get_saved (device))
-		goto out;
-
-	/* get the config file */
-	filename = gcm_utils_get_default_config_location ();
-	g_debug ("removing %s from %s", device_id, filename);
-
-	/* load the config file */
-	keyfile = g_key_file_new ();
-	ret = g_key_file_load_from_file (keyfile, filename, G_KEY_FILE_NONE, error);
-	if (!ret)
-		goto out;
-
-	/* remove from the config file */
-	ret = g_key_file_remove_group (keyfile, device_id, error);
-	if (!ret)
-		goto out;
-
-	/* convert to string */
-	data = g_key_file_to_data (keyfile, NULL, error);
-	if (data == NULL) {
-		ret = FALSE;
-		goto out;
-	}
-
-	/* save contents */
-	ret = g_file_set_contents (filename, data, -1, error);
-	if (!ret)
-		goto out;
-
-	/* update status */
-	gcm_device_set_saved (device, FALSE);
-
-	/* remove device */
-	ret = gcm_client_remove_device_internal (client, device, TRUE, error);
-	if (!ret)
-		goto out;
-out:
-	g_free (data);
-	g_free (filename);
-	if (keyfile != NULL)
-		g_key_file_free (keyfile);
-	return ret;
-}
-
-/**
  * gcm_client_get_property:
  **/
 static void

@@ -960,7 +960,7 @@ gcm_test_calibrate_native_func (void)
 	GcmX11Screen *screen;
 	GcmDevice *device;
 	gchar *contents;
-	gchar *filename;
+	gchar *filename = NULL;
 
 	calibrate = gcm_calibrate_native_new ();
 	g_assert (calibrate != NULL);
@@ -973,7 +973,6 @@ gcm_test_calibrate_native_func (void)
 	client = gcm_client_new ();
 	g_assert (client != NULL);
 	g_setenv ("GCM_TEST", "1", TRUE);
-	filename = gcm_utils_get_default_config_location ();
 	contents = g_strdup_printf ("[xrandr_hewlett_packard_hp_lp2480zx_3cm82200kv]\n"
 				    "serial=3CM82200KV\n"
 				    "model=HP LP2480zx\n"
@@ -982,10 +981,6 @@ gcm_test_calibrate_native_func (void)
 				    "type=display\n"
 				    "colorspace=rgb");
 	ret = g_file_set_contents (filename, contents, -1, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	ret = gcm_client_coldplug (client, GCM_CLIENT_COLDPLUG_SAVED, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -1182,10 +1177,6 @@ gcm_test_device_func (void)
 	g_assert_cmpint (_changes, ==, 2);
 
 	g_assert_cmpstr (gcm_device_get_id (device), ==, "sysfs_dummy_device");
-
-	/* ensure the file is nuked */
-	filename = gcm_utils_get_default_config_location ();
-	g_unlink (filename);
 
 	/* missing file */
 	ret = gcm_device_load (device, &error);
@@ -1510,12 +1501,6 @@ gcm_test_utils_func (void)
 	g_assert_cmpstr (filename, ==, "Hel lo__Wo-(r)ld_");
 	g_free (filename);
 
-	/* get default config location (when in make check) */
-	g_setenv ("GCM_TEST", "1", TRUE);
-	filename = gcm_utils_get_default_config_location ();
-	g_assert_cmpstr (filename, ==, "/tmp/device-profiles.conf");
-	g_free (filename);
-
 	g_assert (gcm_utils_device_kind_to_profile_kind (CD_DEVICE_KIND_SCANNER) == CD_PROFILE_KIND_INPUT_DEVICE);
 	g_assert (gcm_utils_device_kind_to_profile_kind (CD_DEVICE_KIND_UNKNOWN) == CD_PROFILE_KIND_UNKNOWN);
 }
@@ -1535,16 +1520,6 @@ gcm_test_client_func (void)
 	client = gcm_client_new ();
 	g_assert (client != NULL);
 
-	/* ensure file is gone */
-	g_setenv ("GCM_TEST", "1", TRUE);
-	filename = gcm_utils_get_default_config_location ();
-	g_unlink (filename);
-
-	/* ensure we don't fail with no config file */
-	ret = gcm_client_coldplug (client, GCM_CLIENT_COLDPLUG_SAVED, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
 	array = gcm_client_get_devices (client);
 	g_assert (array != NULL);
 	g_assert_cmpint (array->len, ==, 0);
@@ -1558,10 +1533,6 @@ gcm_test_client_func (void)
 				    "colorspace=rgb\n",
 				    TESTDATADIR "/bluish.icc");
 	ret = g_file_set_contents (filename, contents, -1, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	ret = gcm_client_coldplug (client, GCM_CLIENT_COLDPLUG_SAVED, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
