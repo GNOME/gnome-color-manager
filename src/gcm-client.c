@@ -33,24 +33,13 @@
 #include <glib-object.h>
 #include <gudev/gudev.h>
 
-#ifdef HAVE_SANE
- #include <sane/sane.h>
-#endif
-
 #include "gcm-client.h"
-#ifdef HAVE_SANE
- #include "gcm-device-sane.h"
-#endif
 #include "gcm-x11-screen.h"
 #include "gcm-utils.h"
 
 static void     gcm_client_finalize	(GObject     *object);
 
 #define GCM_CLIENT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_CLIENT, GcmClientPrivate))
-
-#ifdef HAVE_SANE
-static gboolean gcm_client_coldplug_devices_sane (GcmClient *client, GError **error);
-#endif
 
 /**
  * GcmClientPrivate:
@@ -65,7 +54,6 @@ struct _GcmClientPrivate
 	GSettings			*settings;
 	gboolean			 loading;
 	guint				 loading_refcount;
-	gboolean			 init_sane;
 	guint				 refresh_id;
 	guint				 emit_added_id;
 };
@@ -90,49 +78,6 @@ static gpointer gcm_client_object = NULL;
 G_DEFINE_TYPE (GcmClient, gcm_client, G_TYPE_OBJECT)
 
 #define	GCM_CLIENT_SANE_REMOVED_TIMEOUT		200	/* ms */
-
-/**
- * gcm_client_set_loading:
- **/
-static void
-gcm_client_set_loading (GcmClient *client, gboolean ret)
-{
-	client->priv->loading = ret;
-	g_object_notify (G_OBJECT (client), "loading");
-	g_debug ("loading: %i", ret);
-}
-
-/**
- * gcm_client_done_loading:
- **/
-static void
-gcm_client_done_loading (GcmClient *client)
-{
-	static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
-
-	/* decrement refcount, with a lock */
-	g_static_mutex_lock (&mutex);
-	client->priv->loading_refcount--;
-	if (client->priv->loading_refcount == 0)
-		gcm_client_set_loading (client, FALSE);
-	g_static_mutex_unlock (&mutex);
-}
-
-/**
- * gcm_client_add_loading:
- **/
-static void
-gcm_client_add_loading (GcmClient *client)
-{
-	static GStaticMutex mutex = G_STATIC_MUTEX_INIT;
-
-	/* decrement refcount, with a lock */
-	g_static_mutex_lock (&mutex);
-	client->priv->loading_refcount++;
-	if (client->priv->loading_refcount > 0)
-		gcm_client_set_loading (client, TRUE);
-	g_static_mutex_unlock (&mutex);
-}
 
 /**
  * gcm_client_get_devices:
@@ -346,33 +291,6 @@ out:
 		g_object_unref (device);
 	return ret;
 }
-
-#ifdef HAVE_SANE
-/**
- * gcm_client_sane_refresh_cb:
- **/
-static gboolean
-gcm_client_sane_refresh_cb (GcmClient *client)
-{
-	gboolean ret;
-	GError *error = NULL;
-
-	/* inform UI if we are loading devices still */
-	client->priv->loading_refcount = 1;
-	gcm_client_set_loading (client, TRUE);
-
-	/* rescan */
-	g_debug ("rescanning sane");
-	ret = gcm_client_coldplug_devices_sane (client, &error);
-	if (!ret) {
-		g_debug ("failed to rescan sane devices: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-out:
-	return FALSE;
-}
-#endif
 
 /**
  * gcm_client_uevent_cb:
@@ -599,83 +517,7 @@ out:
 		g_object_unref (device);
 }
 
-/**
- * gcm_client_coldplug_devices_sane:
- **/
-static gboolean
-gcm_client_coldplug_devices_sane (GcmClient *client, GError **error)
-{
-	gint i;
-	gboolean ret = TRUE;
-	SANE_Status status;
-	const SANE_Device **device_list;
-
-	/* force sane to drop it's cache of devices -- yes, it is that crap */
-	if (client->priv->init_sane) {
-		sane_exit ();
-		client->priv->init_sane = FALSE;
-	}
-	status = sane_init (NULL, NULL);
-	if (status != SANE_STATUS_GOOD) {
-		ret = FALSE;
-		g_set_error (error, 1, 0, "failed to init SANE: %s", sane_strstatus (status));
-		goto out;
-	}
-	client->priv->init_sane = TRUE;
-
-	/* get scanners on the local server */
-	status = sane_get_devices (&device_list, FALSE);
-	if (status != SANE_STATUS_GOOD) {
-		ret = FALSE;
-		g_set_error (error, 1, 0, "failed to get devices from SANE: %s", sane_strstatus (status));
-		goto out;
-	}
-
-	/* nothing */
-	if (device_list == NULL || device_list[0] == NULL) {
-		g_debug ("no devices to add");
-		goto out;
-	}
-
-	/* add them */
-	for (i=0; device_list[i] != NULL; i++)
-		gcm_client_sane_add (client, device_list[i]);
-out:
-	/* inform the UI */
-	gcm_client_done_loading (client);
-	return ret;
-}
-
 #endif
-
-/**
- * gcm_client_coldplug:
- **/
-gboolean
-gcm_client_coldplug (GcmClient *client, GcmClientColdplug coldplug, GError **error)
-{
-	gboolean ret = TRUE;
-	gboolean enable;
-
-	g_return_val_if_fail (GCM_IS_CLIENT (client), FALSE);
-
-	/* reset */
-	client->priv->loading_refcount = 0;
-
-#ifdef HAVE_SANE
-	/* SANE */
-	enable = g_settings_get_boolean (client->priv->settings, GCM_SETTINGS_ENABLE_SANE);
-	if (enable && (!coldplug || coldplug & GCM_CLIENT_COLDPLUG_SANE)) {
-		gcm_client_add_loading (client);
-		g_debug ("adding devices of type SANE");
-		ret = gcm_client_coldplug_devices_sane (client, error);
-		if (!ret)
-			goto out;
-	}
-#endif
-out:
-	return ret;
-}
 
 typedef struct {
 	GcmClient *client;
@@ -957,7 +799,6 @@ gcm_client_init (GcmClient *client)
 	client->priv = GCM_CLIENT_GET_PRIVATE (client);
 	client->priv->display_name = NULL;
 	client->priv->loading_refcount = 0;
-	client->priv->init_sane = FALSE;
 	client->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 	client->priv->array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 
@@ -994,10 +835,6 @@ gcm_client_finalize (GObject *object)
 	g_ptr_array_unref (priv->array);
 	g_object_unref (priv->gudev_client);
 	g_object_unref (priv->settings);
-#ifdef HAVE_SANE
-	if (client->priv->init_sane)
-		sane_exit ();
-#endif
 
 	G_OBJECT_CLASS (gcm_client_parent_class)->finalize (object);
 }

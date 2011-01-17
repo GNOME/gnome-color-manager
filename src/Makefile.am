@@ -4,7 +4,6 @@ INCLUDES =						\
 	$(GTK_CFLAGS)					\
 	$(VTE_CFLAGS)					\
 	$(XORG_CFLAGS)					\
-	$(SANE_CFLAGS)					\
 	$(TIFF_CFLAGS)					\
 	$(EXIF_CFLAGS)					\
 	$(EXIV_CFLAGS)					\
@@ -115,10 +114,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-calibrate-dialog.c				\
 	gcm-calibrate-dialog.h
 
-libgcmshared_a_SOURCES +=				\
-	gcm-device-sane.c				\
-	gcm-device-sane.h
-
 libgcmshared_a_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
@@ -147,7 +142,6 @@ gcm_inspect_LDADD =					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(LCMS_LIBS)					\
-	$(SANE_LIBS)					\
 	$(COLORD_LIBS)					\
 	-lm
 
@@ -165,7 +159,6 @@ gcm_import_LDADD =					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(LCMS_LIBS)					\
-	$(SANE_LIBS)					\
 	$(COLORD_LIBS)					\
 	-lm
 
@@ -185,7 +178,6 @@ gcm_viewer_LDADD =					\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(EXIF_LIBS)					\
@@ -206,7 +198,6 @@ gcm_picker_LDADD =					\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(USB_LIBS)					\
 	$(LCMS_LIBS)					\
@@ -230,7 +221,6 @@ gcm_session_LDADD =					\
 	$(GTK_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
-	$(SANE_LIBS)					\
 	$(NOTIFY_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(COLORD_LIBS)					\
@@ -261,7 +251,6 @@ libcolor_la_LIBADD =					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
 	$(LCMS_LIBS)					\
-	$(SANE_LIBS)					\
 	$(NOTIFY_LIBS)					\
 	$(CANBERRA_LIBS)				\
 	$(CONTROL_CENTER_LIBS)				\
@@ -287,7 +276,6 @@ gcm_self_test_LDADD =					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
 	$(USB_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\

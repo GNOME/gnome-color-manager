@@ -137,27 +137,6 @@ fi
 dnl **** Check for libnotify ****
 PKG_CHECK_MODULES(NOTIFY, libnotify >= 0.7.0)
 
-dnl **** Check for SANE ****
-AC_ARG_ENABLE(sane, AS_HELP_STRING([--enable-sane],[Enable SANE support for scanner support]), enable_sane=$enableval,
-				   enable_sane=yes)
-if test x$enable_sane != xno; then
-	PKG_CHECK_MODULES(SANE, sane-backends, has_sane=yes, has_sane=no)
-	if test $has_sane = "no"; then
-		AC_CHECK_HEADER(sane/sane.h, has_sane=yes, has_sane=no)
-		if test $has_sane = "no"; then
-			AC_MSG_ERROR([Cannot fine SANE])
-		fi
-		SANE_CFLAGS=""
-		SANE_LIBS="-lsane"
-		AC_SUBST(SANE_CFLAGS)
-		AC_SUBST(SANE_LIBS)
-	fi
-fi
-AM_CONDITIONAL(HAVE_SANE, test x$enable_sane = xyes)
-if test x$enable_sane = xyes; then
-	AC_DEFINE(HAVE_SANE,1,[Use SANE support for detecting scanners])
-fi
-
 AC_ARG_ENABLE(exiv, AS_HELP_STRING([--enable-exiv],[Enable EXIV support for RAW support]), enable_exiv=$enableval,
 				   enable_exiv=yes)
 dnl **** Check for EXIV ****
@@ -285,7 +264,6 @@ echo "
         cflags:                    ${CFLAGS}
         cppflags:                  ${CPPFLAGS}
         PackageKit integration:    ${enable_packagekit}
-        SANE support:              ${enable_sane}
         RAW support:               ${enable_exiv}
         VTE support:               ${has_vte}
         New LIBUSB:                ${has_new_libusb}
