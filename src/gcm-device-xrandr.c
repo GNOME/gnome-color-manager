@@ -19,11 +19,19 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#include "config.h"
+gboolean	 gcm_device_xrandr_set_from_output	(GcmDevice		*device,
+							 GcmX11Output		*output,
+							 GError			**error);
+void		 gcm_device_xrandr_set_remove_atom	(GcmDeviceXrandr	*device_xrandr,
+							 gboolean		 remove_atom);
+const gchar	*gcm_device_xrandr_get_native_device	(GcmDeviceXrandr	*device_xrandr);
+const gchar	*gcm_device_xrandr_get_eisa_id		(GcmDeviceXrandr	*device_xrandr);
+const gchar	*gcm_device_xrandr_get_edid_md5		(GcmDeviceXrandr	*device_xrandr);
+gboolean	 gcm_device_xrandr_get_xrandr13		(GcmDeviceXrandr	*device_xrandr);
+gboolean	 gcm_device_xrandr_is_primary		(GcmDeviceXrandr	*device_xrandr);
+gboolean	 gcm_device_xrandr_reset		(GcmDeviceXrandr	*device_xrandr,
+							 GError			**error);
 
-#include <glib-object.h>
-#include <glib/gi18n.h>
-#include <math.h>
 #include <X11/extensions/Xrandr.h>
 #include <gdk/gdkx.h>
 
@@ -35,10 +43,6 @@
 #include "gcm-clut.h"
 #include "gcm-x11-output.h"
 #include "gcm-x11-screen.h"
-
-static void     gcm_device_xrandr_finalize	(GObject     *object);
-
-#define GCM_DEVICE_XRANDR_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_DEVICE_XRANDR, GcmDeviceXrandrPrivate))
 
 /**
  * GcmDeviceXrandrPrivate:
@@ -53,21 +57,10 @@ struct _GcmDeviceXrandrPrivate
 	guint				 gamma_size;
 	GcmEdid				*edid;
 	GcmDmi				*dmi;
-	GSettings			*settings;
 	GcmX11Screen			*screen;
 	gboolean			 remove_atom;
 	gboolean			 randr_13;
 };
-
-enum {
-	PROP_0,
-	PROP_NATIVE_DEVICE,
-	PROP_EISA_ID,
-	PROP_EDID_MD5,
-	PROP_LAST
-};
-
-G_DEFINE_TYPE (GcmDeviceXrandr, gcm_device_xrandr, GCM_TYPE_DEVICE)
 
 #define GCM_ICC_PROFILE_IN_X_VERSION_MAJOR	0
 #define GCM_ICC_PROFILE_IN_X_VERSION_MINOR	3
@@ -297,86 +290,6 @@ out:
 }
 
 /**
- * gcm_device_xrandr_get_xrandr13:
- * @device_xrandr: a valid #GcmDeviceXrandr instance
- *
- * Return value: %TRUE if the display supports XRandr 1.3;
- **/
-gboolean
-gcm_device_xrandr_get_xrandr13 (GcmDeviceXrandr *device_xrandr)
-{
-	return device_xrandr->priv->randr_13;
-}
-
-/**
- * gcm_device_xrandr_apply_for_output:
- *
- * Return value: %TRUE for success;
- **/
-static gboolean
-gcm_device_xrandr_apply_for_output (GcmDeviceXrandr *device_xrandr, GcmX11Output *output, GcmClut *clut, GError **error)
-{
-	gboolean ret = TRUE;
-	GPtrArray *array = NULL;
-	guint16 *red = NULL;
-	guint16 *green = NULL;
-	guint16 *blue = NULL;
-	guint i;
-	GcmClutData *data;
-
-	/* get data */
-	array = gcm_clut_get_array (clut);
-	if (array == NULL) {
-		ret = FALSE;
-		g_set_error_literal (error, 1, 0, "failed to get CLUT data");
-		goto out;
-	}
-
-	/* no length? */
-	if (array->len == 0) {
-		ret = FALSE;
-		g_set_error_literal (error, 1, 0, "no data in the CLUT array");
-		goto out;
-	}
-
-	/* convert to a type X understands */
-	red = g_new (guint16, array->len);
-	green = g_new (guint16, array->len);
-	blue = g_new (guint16, array->len);
-	for (i=0; i<array->len; i++) {
-		data = g_ptr_array_index (array, i);
-		red[i] = data->red;
-		green[i] = data->green;
-		blue[i] = data->blue;
-	}
-
-	/* send to LUT */
-	ret = gcm_x11_output_set_gamma (output, array->len, red, green, blue, error);
-	if (!ret)
-		goto out;
-out:
-	g_free (red);
-	g_free (green);
-	g_free (blue);
-	if (array != NULL)
-		g_ptr_array_unref (array);
-	return ret;
-}
-
-/**
- * gcm_device_xrandr_set_remove_atom:
- *
- * This is set to FALSE at login time when we are sure there are going to be
- * no atoms previously set that have to be removed.
- **/
-void
-gcm_device_xrandr_set_remove_atom (GcmDeviceXrandr *device_xrandr, gboolean remove_atom)
-{
-	g_return_if_fail (GCM_IS_DEVICE_XRANDR (device_xrandr));
-	device_xrandr->priv->remove_atom = remove_atom;
-}
-
-/**
  * gcm_device_xrandr_generate_profile:
  **/
 static GcmProfile *
@@ -447,31 +360,6 @@ out:
 }
 
 /**
- * gcm_device_xrandr_is_primary:
- *
- * Return value: %TRUE is the monitor is left-most
- **/
-gboolean
-gcm_device_xrandr_is_primary (GcmDeviceXrandr *device_xrandr)
-{
-	guint x, y;
-	gboolean ret = FALSE;
-	GcmX11Output *output;
-
-	/* check we have an output */
-	output = gcm_x11_screen_get_output_by_name (device_xrandr->priv->screen,
-						    device_xrandr->priv->native_device, NULL);
-	if (output == NULL)
-		goto out;
-
-	/* is the monitor our primary monitor */
-	gcm_x11_output_get_position (output, &x, &y);
-	ret = (x == 0 && y == 0);
-out:
-	return ret;
-}
-
-/**
  * gcm_device_xrandr_reset:
  *
  * Clears any VCGT table, so we're ready for profiling
@@ -518,7 +406,7 @@ gcm_device_xrandr_reset (GcmDeviceXrandr *device_xrandr, GError **error)
 		      NULL);
 
 	/* actually set the gamma */
-	ret = gcm_device_xrandr_apply_for_output (device_xrandr, output, clut, error);
+	ret = gcm_x11_output_set_gamma_from_clut (output, clut, error);
 	if (!ret)
 		goto out;
 out:
@@ -596,10 +484,7 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	priv->gamma_size = gcm_x11_output_get_gamma_size (output);
 	size = priv->gamma_size;
 
-	/* only set the CLUT if we're not seting the atom */
-	use_global = g_settings_get_boolean (priv->settings, GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION);
-	if (use_global && profile != NULL)
-		clut = gcm_profile_generate_vcgt (profile, size);
+	clut = gcm_profile_generate_vcgt (profile, size);
 
 	/* create dummy CLUT if we failed */
 	if (clut == NULL) {
@@ -622,7 +507,7 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	}
 
 	/* actually set the gamma */
-	ret = gcm_device_xrandr_apply_for_output (device_xrandr, output, clut, error);
+	ret = gcm_x11_output_set_gamma_from_clut (output, clut, error);
 	if (!ret)
 		goto out;
 
@@ -630,9 +515,7 @@ gcm_device_xrandr_apply (GcmDevice *device, GError **error)
 	gcm_x11_output_get_position (output, &x, &y);
 	leftmost_screen = (x == 0 && y == 0);
 
-	/* either remove the atoms or set them */
-	use_atom = g_settings_get_boolean (priv->settings, GCM_SETTINGS_SET_ICC_PROFILE_ATOM);
-	if (!use_atom || profile == NULL) {
+	if (profile == NULL) {
 
 		/* at login we don't need to remove any previously set options */
 		if (!priv->remove_atom)
@@ -687,95 +570,6 @@ out:
 }
 
 /**
- * gcm_device_xrandr_get_property:
- **/
-static void
-gcm_device_xrandr_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
-{
-	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (object);
-	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
-
-	switch (prop_id) {
-	case PROP_NATIVE_DEVICE:
-		g_value_set_string (value, priv->native_device);
-		break;
-	case PROP_EISA_ID:
-		g_value_set_string (value, priv->eisa_id);
-		break;
-	case PROP_EDID_MD5:
-		g_value_set_string (value, priv->edid_md5);
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-/**
- * gcm_device_xrandr_set_property:
- **/
-static void
-gcm_device_xrandr_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
-{
-	GcmDeviceXrandr *device_xrandr = GCM_DEVICE_XRANDR (object);
-	GcmDeviceXrandrPrivate *priv = device_xrandr->priv;
-
-	switch (prop_id) {
-	case PROP_NATIVE_DEVICE:
-		g_free (priv->native_device);
-		priv->native_device = g_strdup (g_value_get_string (value));
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-/**
- * gcm_device_xrandr_class_init:
- **/
-static void
-gcm_device_xrandr_class_init (GcmDeviceXrandrClass *klass)
-{
-	GParamSpec *pspec;
-	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-	GcmDeviceClass *device_class = GCM_DEVICE_CLASS (klass);
-
-	object_class->finalize = gcm_device_xrandr_finalize;
-	object_class->get_property = gcm_device_xrandr_get_property;
-	object_class->set_property = gcm_device_xrandr_set_property;
-
-	device_class->apply = gcm_device_xrandr_apply;
-	device_class->generate_profile = gcm_device_xrandr_generate_profile;
-
-	/**
-	 * GcmDeviceXrandr:native-device:
-	 */
-	pspec = g_param_spec_string ("native-device", NULL, NULL,
-				     NULL,
-				     G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_NATIVE_DEVICE, pspec);
-
-	/**
-	 * GcmDeviceXrandr:eisa-id:
-	 */
-	pspec = g_param_spec_string ("eisa-id", NULL, NULL,
-				     NULL,
-				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_EISA_ID, pspec);
-
-	/**
-	 * GcmDeviceXrandr:edid-md5:
-	 */
-	pspec = g_param_spec_string ("edid-md", NULL, NULL,
-				     NULL,
-				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_EDID_MD5, pspec);
-
-	g_type_class_add_private (klass, sizeof (GcmDeviceXrandrPrivate));
-}
-
-/**
  * gcm_device_xrandr_init:
  **/
 static void
@@ -789,7 +583,6 @@ gcm_device_xrandr_init (GcmDeviceXrandr *device_xrandr)
 	device_xrandr->priv->gamma_size = 0;
 	device_xrandr->priv->edid = gcm_edid_new ();
 	device_xrandr->priv->dmi = gcm_dmi_new ();
-	device_xrandr->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 	device_xrandr->priv->screen = gcm_x11_screen_new ();
 }
 
@@ -807,22 +600,7 @@ gcm_device_xrandr_finalize (GObject *object)
 	g_free (priv->edid_md5);
 	g_object_unref (priv->edid);
 	g_object_unref (priv->dmi);
-	g_object_unref (priv->settings);
 	g_object_unref (priv->screen);
 
 	G_OBJECT_CLASS (gcm_device_xrandr_parent_class)->finalize (object);
 }
-
-/**
- * gcm_device_xrandr_new:
- *
- * Return value: a new #GcmDevice object.
- **/
-GcmDevice *
-gcm_device_xrandr_new (void)
-{
-	GcmDevice *device;
-	device = g_object_new (GCM_TYPE_DEVICE_XRANDR, NULL);
-	return GCM_DEVICE (device);
-}
-

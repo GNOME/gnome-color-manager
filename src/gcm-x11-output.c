@@ -362,7 +362,10 @@ out:
  * Return value: %TRUE for success.
  **/
 gboolean
-gcm_x11_output_get_edid_data (GcmX11Output *output, guint8 **data, gsize *length, GError **error)
+gcm_x11_output_get_edid_data (GcmX11Output *output,
+			      guint8 **data,
+			      gsize *length,
+			      GError **error)
 {
 	Atom edid_atom;
 	guint8 *result;
@@ -410,7 +413,12 @@ out:
  * Return value: %TRUE for success.
  **/
 gboolean
-gcm_x11_output_set_gamma (GcmX11Output *output, guint length, guint16 *red, guint16 *green, guint16 *blue, GError **error)
+gcm_x11_output_set_gamma (GcmX11Output *output,
+			  guint length,
+			  guint16 *red,
+			  guint16 *green,
+			  guint16 *blue,
+			  GError **error)
 {
 	guint copy_size;
 	XRRCrtcGamma *gamma;
@@ -450,6 +458,64 @@ gcm_x11_output_set_gamma (GcmX11Output *output, guint length, guint16 *red, guin
 }
 
 /**
+ * gcm_x11_output_set_gamma_from_clut:
+ **/
+gboolean
+gcm_x11_output_set_gamma_from_clut (GcmX11Output *output,
+				    GcmClut *clut,
+				    GError **error)
+{
+	gboolean ret = TRUE;
+	GPtrArray *array = NULL;
+	guint16 *red = NULL;
+	guint16 *green = NULL;
+	guint16 *blue = NULL;
+	guint i;
+	GcmClutData *data;
+
+	/* get data */
+	array = gcm_clut_get_array (clut);
+	if (array == NULL) {
+		ret = FALSE;
+		g_set_error_literal (error, 1, 0,
+				     "failed to get CLUT data");
+		goto out;
+	}
+
+	/* no length? */
+	if (array->len == 0) {
+		ret = FALSE;
+		g_set_error_literal (error, 1, 0,
+				     "no data in the CLUT array");
+		goto out;
+	}
+
+	/* convert to a type X understands */
+	red = g_new (guint16, array->len);
+	green = g_new (guint16, array->len);
+	blue = g_new (guint16, array->len);
+	for (i=0; i<array->len; i++) {
+		data = g_ptr_array_index (array, i);
+		red[i] = data->red;
+		green[i] = data->green;
+		blue[i] = data->blue;
+	}
+
+	/* send to LUT */
+	ret = gcm_x11_output_set_gamma (output, array->len,
+					red, green, blue, error);
+	if (!ret)
+		goto out;
+out:
+	g_free (red);
+	g_free (green);
+	g_free (blue);
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	return ret;
+}
+
+/**
  * gcm_x11_output_get_gamma:
  * @output: a valid %GcmX11Output instance
  * @length: the returned data arrays size, or %NULL.
@@ -463,7 +529,12 @@ gcm_x11_output_set_gamma (GcmX11Output *output, guint length, guint16 *red, guin
  * Return value: %TRUE for success.
  **/
 gboolean
-gcm_x11_output_get_gamma (GcmX11Output *output, guint *length, guint16 **red, guint16 **green, guint16 **blue, GError **error)
+gcm_x11_output_get_gamma (GcmX11Output *output,
+			  guint *length,
+			  guint16 **red,
+			  guint16 **green,
+			  guint16 **blue,
+			  GError **error)
 {
 	guint copy_size;
 	guint16 *r, *g, *b;
@@ -516,7 +587,10 @@ gcm_x11_output_get_gamma (GcmX11Output *output, guint *length, guint16 **red, gu
  * Return value: %TRUE for success.
  **/
 gboolean
-gcm_x11_output_get_profile_data (GcmX11Output *output, guint8 **data, gsize *length, GError **error)
+gcm_x11_output_get_profile_data (GcmX11Output *output,
+				 guint8 **data,
+				 gsize *length,
+				 GError **error)
 {
 	gboolean ret = FALSE;
 	gchar *data_tmp = NULL;
@@ -543,17 +617,19 @@ gcm_x11_output_get_profile_data (GcmX11Output *output, guint8 **data, gsize *len
 
 	/* did the call fail */
 	if (rc != Success) {
-		g_set_error (error, 1, 0, "failed to get icc profile atom with rc %i", rc);
+		g_set_error (error, 1, 0,
+			     "failed to get icc profile atom with rc %i", rc);
 		goto out;
 	}
 
 	/* was nothing found */
 	if (nitems == 0) {
-		g_set_error (error, 1, 0, "icc profile atom has not been set");
+		g_set_error (error, 1, 0,
+			     "icc profile atom has not been set");
 		goto out;
 	}
 
-	/* allocate the data using Glib, rather than asking the user to use XFree */
+	/* allocate the data using Glib */
 	*data = g_new0 (guint8, nitems);
 	memcpy (*data, data_tmp, nitems);
 
@@ -580,7 +656,9 @@ out:
  * Return value: %TRUE for success.
  **/
 gboolean
-gcm_x11_output_set_profile (GcmX11Output *output, const gchar *filename, GError **error)
+gcm_x11_output_set_profile (GcmX11Output *output,
+			    const gchar *filename,
+			    GError **error)
 {
 	gboolean ret;
 	gchar *data = NULL;

@@ -28,12 +28,13 @@
 #include <colord.h>
 #include <libnotify/notify.h>
 
-#include "gcm-device-xrandr.h"
-#include "gcm-exif.h"
-#include "gcm-device.h"
-#include "gcm-utils.h"
-#include "gcm-profile-store.h"
 #include "gcm-debug.h"
+#include "gcm-device.h"
+#include "gcm-exif.h"
+#include "gcm-profile-store.h"
+#include "gcm-utils.h"
+#include "gcm-x11-output.h"
+#include "gcm-x11-screen.h"
 
 static GMainLoop *loop = NULL;
 static GSettings *settings = NULL;
@@ -333,11 +334,7 @@ gcm_session_get_profiles_for_device (const gchar *device_id_with_prefix, GError 
 		device = g_ptr_array_index (array_devices, i);
 
 		/* get the id for this device */
-		if (use_native_device && GCM_IS_DEVICE_XRANDR (device)) {
-			device_id_tmp = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
-		} else {
-			device_id_tmp = gcm_device_get_id (device);
-		}
+		device_id_tmp = gcm_device_get_id (device);
 
 		/* wrong kind of device */
 		if (device_id_tmp == NULL)

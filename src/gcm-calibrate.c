@@ -34,7 +34,6 @@
 #include "gcm-calibrate.h"
 #include "gcm-color.h"
 #include "gcm-dmi.h"
-#include "gcm-device-xrandr.h"
 #include "gcm-utils.h"
 #include "gcm-brightness.h"
 #include "gcm-sensor-client.h"
@@ -325,7 +324,7 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 
 	/* if we're a laptop, maybe use the dmi data instead */
 	if (kind == CD_DEVICE_KIND_DISPLAY) {
-		native_device = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
+//		native_device = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
 		lcd_internal = gcm_utils_output_is_lcd_internal (native_device);
 		if (lcd_internal) {
 			model = gcm_dmi_get_name (priv->dmi);
@@ -347,7 +346,7 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 
 	/* display specific properties */
 	if (kind == CD_DEVICE_KIND_DISPLAY) {
-		native_device = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
+//		native_device = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
 		if (native_device == NULL) {
 			g_set_error (error,
 				     GCM_CALIBRATE_ERROR,

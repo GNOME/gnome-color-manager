@@ -34,7 +34,6 @@
 #include "gcm-calibrate-argyll.h"
 #include "gcm-cie-widget.h"
 #include "gcm-sensor-client.h"
-#include "gcm-device-xrandr.h"
 #include "gcm-exif.h"
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
@@ -249,7 +248,7 @@ cc_color_panel_calibrate_display (CcColorPanel *panel, GcmCalibrate *calibrate)
 	}
 
 	/* clear any VCGT */
-	ret = gcm_device_xrandr_reset (GCM_DEVICE_XRANDR (panel->priv->current_device), &error);
+//	ret = gcm_device_xrandr_reset (GCM_DEVICE_XRANDR (panel->priv->current_device), &error);
 	if (!ret) {
 		g_warning ("failed to reset so we can calibrate: %s", error->message);
 		g_error_free (error);
@@ -938,7 +937,7 @@ cc_color_panel_profile_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 	GtkTreeSelection *selection;
 	GtkTreeModel *model;
 	gboolean ret;
-	const gchar *device_md5;
+	const gchar *device_md5 = NULL;
 	GcmProfile *profile = NULL;
 	GError *error = NULL;
 
@@ -959,7 +958,7 @@ cc_color_panel_profile_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 	 * removed, then assume there was something wrong with the profile
 	 * and don't do this again on next session start */
 	if (gcm_device_get_kind (panel->priv->current_device) == CD_DEVICE_KIND_DISPLAY) {
-		device_md5 = gcm_device_xrandr_get_edid_md5 (GCM_DEVICE_XRANDR (panel->priv->current_device));
+//		device_md5 = gcm_device_xrandr_get_edid_md5 (GCM_DEVICE_XRANDR (panel->priv->current_device));
 		if (g_strstr_len (gcm_profile_get_filename (profile), -1, device_md5) != NULL) {
 			g_debug ("removed an auto-profile, so disabling add for device");
 			gcm_device_set_use_edid_profile (panel->priv->current_device, FALSE);
@@ -1340,7 +1339,7 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 		}
 
 		/* are we not XRandR 1.3 compat */
-		ret = gcm_device_xrandr_get_xrandr13 (GCM_DEVICE_XRANDR (panel->priv->current_device));
+//		ret = gcm_device_xrandr_get_xrandr13 (GCM_DEVICE_XRANDR (panel->priv->current_device));
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The display driver does not support XRandR 1.3");
@@ -1433,7 +1432,7 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	if (kind == CD_DEVICE_KIND_DISPLAY) {
 		ret = gcm_device_get_connected (panel->priv->current_device);
 		if (ret) {
-			ret = gcm_device_xrandr_get_xrandr13 (GCM_DEVICE_XRANDR (panel->priv->current_device));
+//			ret = gcm_device_xrandr_get_xrandr13 (GCM_DEVICE_XRANDR (panel->priv->current_device));
 			if (!ret) {
                                 widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "label_problems"));
 				/* TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
@@ -1567,12 +1566,6 @@ cc_color_panel_add_device_xrandr (CcColorPanel *panel, GcmDevice *device)
 	gboolean connected;
 	GError *error = NULL;
 
-	/* sanity check */
-	if (!GCM_IS_DEVICE_XRANDR (device)) {
-		g_warning ("not a xrandr device");
-		goto out;
-	}
-
 	/* italic for non-connected devices */
 	connected = gcm_device_get_connected (device);
 	title_tmp = gcm_device_get_title (device);
@@ -1610,7 +1603,6 @@ cc_color_panel_add_device_xrandr (CcColorPanel *panel, GcmDevice *device)
 			    GCM_DEVICES_COLUMN_SORT, sort,
 			    GCM_DEVICES_COLUMN_TITLE, title,
 			    GCM_DEVICES_COLUMN_ICON, "video-display", -1);
-out:
 	g_free (sort);
 	g_free (title);
 }

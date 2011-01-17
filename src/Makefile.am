@@ -60,8 +60,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-debug.h					\
 	gcm-device.c					\
 	gcm-device.h					\
-	gcm-device-xrandr.c				\
-	gcm-device-xrandr.h				\
 	gcm-dmi.c					\
 	gcm-dmi.h					\
 	gcm-edid.c					\

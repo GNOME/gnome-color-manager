@@ -24,6 +24,8 @@
 
 #include <glib-object.h>
 
+#include "gcm-clut.h"
+
 G_BEGIN_DECLS
 
 #define GCM_TYPE_X11_OUTPUT		(gcm_x11_output_get_type ())
@@ -93,6 +95,9 @@ gboolean	 gcm_x11_output_set_gamma		(GcmX11Output		*output,
 							 guint16		*red,
 							 guint16		*green,
 							 guint16		*blue,
+							 GError			**error);
+gboolean	 gcm_x11_output_set_gamma_from_clut	(GcmX11Output		*output,
+							 GcmClut		*clut,
 							 GError			**error);
 gboolean	 gcm_x11_output_get_edid_data		(GcmX11Output		*output,
 							 guint8			**data,
