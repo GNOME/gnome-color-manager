@@ -112,7 +112,7 @@ PKG_CHECK_MODULES(GTK, gtk+-3.0 >= 2.91.0)
 PKG_CHECK_MODULES(GUDEV, gudev-1.0)
 PKG_CHECK_MODULES(LCMS, lcms2)
 PKG_CHECK_MODULES(X11, x11)
-PKG_CHECK_MODULES(COLORD, colord)
+PKG_CHECK_MODULES(COLORD, colord >= 0.1.1)
 PKG_CHECK_MODULES(SETTINGS_DAEMON, gnome-settings-daemon)
 PKG_CHECK_MODULES(USB, libusb-1.0 >= 1.0.9, has_new_libusb=yes, has_new_libusb=no)
 if test x$has_new_libusb = xyes; then
