@@ -167,15 +167,10 @@ gcm_calibrate_native_create_it8_file (GcmCalibrateNative *calibrate_native, GcmS
 	GcmColorSample *sample;
 	GPtrArray *array;
 	GcmColorRGB source;
-	GcmColorXYZ result;
 	gdouble divisions;
 
 	/* step size */
 	divisions = 1.0f / (gfloat) (steps - 1);
-
-	result.X = 0.1;
-	result.Y = 0.2;
-	result.Z = 0.3;
 
 	array = g_ptr_array_new_with_free_func ((GDestroyNotify) gcm_calibrate_native_sample_free_cb);
 
@@ -719,7 +714,7 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 		steps = 30;
 
 	g_debug ("creating %s", filename_it8);
-	gcm_calibrate_native_create_it8_file (calibrate_native, sensor, filename_it8, 10);
+	gcm_calibrate_native_create_it8_file (calibrate_native, sensor, filename_it8, steps);
 
 	/* get profile text data */
 	copyright = gcm_calibrate_get_profile_copyright (calibrate);

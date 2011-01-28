@@ -68,7 +68,7 @@ gcm_parse_beagle_process_entry_huey (GcmParseEntry *entry)
 	guchar cmd;
 	guchar instruction = 0;
 	const gchar *command_as_text;
-	GString *output;
+	GString *output = NULL;
 
 	entry->ep_description = "default";
 

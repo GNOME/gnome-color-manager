@@ -234,6 +234,10 @@ gcm_usb_source_dispatch (GSource *source, GSourceFunc callback, gpointer user_da
 	struct timeval tv = { 0, 0 };
 	GcmUsb *usb = user_data;
 	r = libusb_handle_events_timeout (usb->priv->ctx, &tv);
+	if (r < 0) {
+		g_warning ("failed to handle event: %s",
+			   libusb_strerror (retval));
+	}
 	return TRUE;
 }
 
