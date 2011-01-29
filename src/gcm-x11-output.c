@@ -60,6 +60,7 @@ struct _GcmX11OutputPrivate
 	guint				 y;
 	guint				 width;
 	guint				 height;
+	GcmEdid				*edid;
 };
 
 enum {
@@ -361,19 +362,24 @@ out:
  *
  * Return value: %TRUE for success.
  **/
-gboolean
-gcm_x11_output_get_edid_data (GcmX11Output *output,
-			      guint8 **data,
-			      gsize *length,
-			      GError **error)
+GcmEdid *
+gcm_x11_output_get_edid (GcmX11Output *output,
+			 GError **error)
 {
 	Atom edid_atom;
-	guint8 *result;
+	guint8 *result = NULL;
 	gint len;
+	GcmEdid *edid = NULL;
 	gboolean ret = FALSE;
 
-	g_return_val_if_fail (GCM_IS_X11_OUTPUT (output), FALSE);
-	g_return_val_if_fail (output->priv->display != NULL, FALSE);
+	g_return_val_if_fail (GCM_IS_X11_OUTPUT (output), NULL);
+	g_return_val_if_fail (output->priv->display != NULL, NULL);
+
+	/* already parsed */
+	if (output->priv->edid != NULL) {
+		edid = g_object_ref (output->priv->edid);
+		goto out;
+	}
 
 	/* get the new name */
 	edid_atom = XInternAtom (output->priv->display, "EDID", FALSE);
@@ -391,12 +397,20 @@ gcm_x11_output_get_edid_data (GcmX11Output *output,
 		goto out;
 	}
 
-	/* success */
-	if (data != NULL)
-		*data = result;
-	ret = TRUE;
+	/* parse edid */
+	edid = gcm_edid_new ();
+	ret = gcm_edid_parse (edid, result, len, error);
+	if (!ret) {
+		g_object_unref (edid);
+		edid = NULL;
+		goto out;
+	}
+
+	/* cache for later */
+	output->priv->edid = g_object_ref (edid);
 out:
-	return ret;
+	g_free (result);
+	return edid;
 }
 
 /**
@@ -846,6 +860,8 @@ gcm_x11_output_finalize (GObject *object)
 	GcmX11OutputPrivate *priv = output->priv;
 
 	g_free (priv->display_name);
+	if (priv->edid != NULL)
+		g_object_unref (priv->edid);
 
 	G_OBJECT_CLASS (gcm_x11_output_parent_class)->finalize (object);
 }

@@ -25,6 +25,7 @@
 #include <glib-object.h>
 
 #include "gcm-clut.h"
+#include "gcm-edid.h"
 
 G_BEGIN_DECLS
 
@@ -99,9 +100,7 @@ gboolean	 gcm_x11_output_set_gamma		(GcmX11Output		*output,
 gboolean	 gcm_x11_output_set_gamma_from_clut	(GcmX11Output		*output,
 							 GcmClut		*clut,
 							 GError			**error);
-gboolean	 gcm_x11_output_get_edid_data		(GcmX11Output		*output,
-							 guint8			**data,
-							 gsize			*length,
+GcmEdid		*gcm_x11_output_get_edid		(GcmX11Output		*output,
 							 GError			**error);
 gboolean	 gcm_x11_output_get_profile_data	(GcmX11Output		*output,
 							 guint8			**data,
