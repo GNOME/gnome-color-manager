@@ -686,6 +686,17 @@ gcm_session_profile_store_added_cb (GcmProfileStore *profile_store_,
 		g_error_free (error);
 		goto out;
 	}
+
+	/* commit */
+	ret = cd_profile_commit_sync (profile,
+				      NULL,
+				      &error);
+	if (!ret) {
+		g_warning ("failed to commit profile: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
 out:
 	if (profile != NULL)
 		g_object_unref (profile);
@@ -762,6 +773,17 @@ gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 					&error);
 	if (device == NULL) {
 		g_warning ("failed to create device: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* commit */
+	ret = cd_device_commit_sync (device,
+				     NULL,
+				     &error);
+	if (!ret) {
+		g_warning ("failed to commit device: %s",
 			   error->message);
 		g_error_free (error);
 		goto out;
