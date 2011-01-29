@@ -69,9 +69,9 @@ gcm_cell_renderer_set_markup (GcmCellRendererProfileText *renderer)
 		string = g_string_new (_("No profile"));
 	} else {
 		/* add profile description */
-		description = gcm_profile_get_description (renderer->profile);
+		description = cd_profile_get_title (renderer->profile);
 		if (description == NULL)
-			description = gcm_profile_get_filename (renderer->profile);
+			description = cd_profile_get_filename (renderer->profile);
 		string = g_string_new (description);
 
 		/* TRANSLATORS: this is the default profile */
@@ -136,7 +136,7 @@ gcm_cell_renderer_profile_text_class_init (GcmCellRendererProfileTextClass *clas
 
 	g_object_class_install_property (object_class, PROP_PROFILE,
 					 g_param_spec_object ("profile", "PROFILE",
-					 "PROFILE", GCM_TYPE_PROFILE, G_PARAM_READWRITE));
+					 "PROFILE", CD_TYPE_PROFILE, G_PARAM_READWRITE));
 	g_object_class_install_property (object_class, PROP_IS_DEFAULT,
 					 g_param_spec_boolean ("is-default", "IS_DEFAULT",
 					 "IS_DEFAULT", FALSE, G_PARAM_READWRITE));

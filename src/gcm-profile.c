@@ -53,7 +53,6 @@ struct _GcmProfilePrivate
 	CdProfileKind		 kind;
 	CdColorspace		 colorspace;
 	guint			 size;
-	gboolean		 has_vcgt;
 	gboolean		 can_delete;
 	gchar			*description;
 	gchar			*filename;
@@ -87,7 +86,6 @@ enum {
 	PROP_KIND,
 	PROP_COLORSPACE,
 	PROP_SIZE,
-	PROP_HAS_VCGT,
 	PROP_CAN_DELETE,
 	PROP_WHITE,
 	PROP_BLACK,
@@ -572,27 +570,6 @@ gcm_profile_set_colorspace (GcmProfile *profile, CdColorspace colorspace)
 }
 
 /**
- * gcm_profile_get_has_vcgt:
- **/
-gboolean
-gcm_profile_get_has_vcgt (GcmProfile *profile)
-{
-	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
-	return profile->priv->has_vcgt;
-}
-
-/**
- * gcm_profile_set_has_vcgt:
- **/
-static void
-gcm_profile_set_has_vcgt (GcmProfile *profile, gboolean has_vcgt)
-{
-	g_return_if_fail (GCM_IS_PROFILE (profile));
-	profile->priv->has_vcgt = has_vcgt;
-	g_object_notify (G_OBJECT (profile), "has_vcgt");
-}
-
-/**
  * gcm_profile_get_handle:
  *
  * Return value: Do not call cmsCloseProfile() on this value!
@@ -859,10 +836,6 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 		gcm_profile_set_datetime (profile, text);
 		g_free (text);
 	}
-
-	/* do we have vcgt */
-	ret = cmsIsTag (priv->lcms_profile, cmsSigVcgtTag);
-	gcm_profile_set_has_vcgt (profile, ret);
 
 	/* allocate temporary buffer */
 	text = g_new0 (gchar, 1024);
@@ -1592,9 +1565,6 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_SIZE:
 		g_value_set_uint (value, priv->size);
 		break;
-	case PROP_HAS_VCGT:
-		g_value_set_boolean (value, priv->has_vcgt);
-		break;
 	case PROP_CAN_DELETE:
 		g_value_set_boolean (value, priv->can_delete);
 		break;
@@ -1658,9 +1628,6 @@ gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, G
 		break;
 	case PROP_SIZE:
 		gcm_profile_set_size (profile, g_value_get_uint (value));
-		break;
-	case PROP_HAS_VCGT:
-		gcm_profile_set_has_vcgt (profile, g_value_get_boolean (value));
 		break;
 	case PROP_WHITE:
 		gcm_color_copy_XYZ (g_value_get_boxed (value), priv->white);
@@ -1774,14 +1741,6 @@ gcm_profile_class_init (GcmProfileClass *klass)
 				   0, G_MAXUINT, 0,
 				   G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_SIZE, pspec);
-
-	/**
-	 * GcmProfile:has-vcgt:
-	 */
-	pspec = g_param_spec_boolean ("has-vcgt", NULL, NULL,
-				      FALSE,
-				      G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_HAS_VCGT, pspec);
 
 	/**
 	 * GcmProfile:can-delete:

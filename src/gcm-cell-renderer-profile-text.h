@@ -24,8 +24,7 @@
 
 #include <glib-object.h>
 #include <gtk/gtk.h>
-
-#include "gcm-profile.h"
+#include <colord.h>
 
 #define GCM_TYPE_CELL_RENDERER_PROFILE_TEXT		(gcm_cell_renderer_profile_text_get_type())
 #define GCM_CELL_RENDERER_PROFILE_TEXT(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), GCM_TYPE_CELL_RENDERER_PROFILE_TEXT, GcmCellRendererProfileText))
@@ -42,7 +41,7 @@ typedef struct _GcmCellRendererProfileTextClass		GcmCellRendererProfileTextClass
 struct _GcmCellRendererProfileText
 {
 	GtkCellRendererText	 parent;
-	GcmProfile		*profile;
+	CdProfile		*profile;
 	gboolean		 is_default;
 	gchar			*markup;
 };

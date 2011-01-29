@@ -24,8 +24,7 @@
 
 #include <glib-object.h>
 #include <gtk/gtk.h>
-
-#include "gcm-profile.h"
+#include <colord.h>
 
 #define GCM_TYPE_CELL_RENDERER_PROFILE_ICON		(gcm_cell_renderer_profile_icon_get_type())
 #define GCM_CELL_RENDERER_PROFILE_ICON(obj)		(G_TYPE_CHECK_INSTANCE_CAST((obj), GCM_TYPE_CELL_RENDERER_PROFILE_ICON, GcmCellRendererProfileIcon))
@@ -42,7 +41,7 @@ typedef struct _GcmCellRendererProfileIconClass		GcmCellRendererProfileIconClass
 struct _GcmCellRendererProfileIcon
 {
 	GtkCellRendererPixbuf	 parent;
-	GcmProfile		*profile;
+	CdProfile		*profile;
 	gchar			*icon_name;
 };
 

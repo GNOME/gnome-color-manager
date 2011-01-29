@@ -424,7 +424,6 @@ gcm_test_profile_func (void)
 	g_assert_cmpint (gcm_profile_get_kind (profile), ==, CD_PROFILE_KIND_DISPLAY_DEVICE);
 	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, CD_COLORSPACE_RGB);
 	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 6500);
-	g_assert (gcm_profile_get_has_vcgt (profile));
 
 	/* get extra data */
 	g_object_get (profile,
@@ -455,7 +454,6 @@ gcm_test_profile_func (void)
 	g_assert_cmpint (gcm_profile_get_kind (profile), ==, CD_PROFILE_KIND_DISPLAY_DEVICE);
 	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, CD_COLORSPACE_RGB);
 	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 6500);
-	g_assert (gcm_profile_get_has_vcgt (profile));
 
 	g_object_unref (profile);
 
@@ -498,7 +496,6 @@ gcm_test_profile_func (void)
 	g_assert_cmpint (gcm_profile_get_kind (profile), ==, CD_PROFILE_KIND_DISPLAY_DEVICE);
 	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, CD_COLORSPACE_RGB);
 	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 5000);
-	g_assert (gcm_profile_get_has_vcgt (profile));
 
 	/* delete temp file */
 	ret = g_file_delete (file, NULL, &error);
