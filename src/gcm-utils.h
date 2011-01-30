@@ -78,6 +78,7 @@ gchar		*gcm_utils_linkify			(const gchar		*text);
 const gchar	*cd_rendering_intent_to_localized_text		(CdRenderingIntent	 intent);
 const gchar	*cd_rendering_intent_to_localized_description	(CdRenderingIntent	 intent);
 const gchar	*cd_colorspace_to_localised_string	(CdColorspace	 colorspace);
+gboolean	 gcm_profile_has_colorspace_description	(CdProfile		*profile);
 
 #endif /* __GCM_UTILS_H */
 

@@ -128,7 +128,6 @@ void		 gcm_profile_set_kind			(GcmProfile	*profile,
 CdColorspace	 gcm_profile_get_colorspace		(GcmProfile	*profile);
 void		 gcm_profile_set_colorspace		(GcmProfile	*profile,
 							 CdColorspace	 colorspace);
-gboolean	 gcm_profile_has_colorspace_description	(GcmProfile	*profile);
 guint		 gcm_profile_get_temperature		(GcmProfile	*profile);
 const GcmColorXYZ *gcm_profile_get_red			(GcmProfile	*profile);
 const GcmColorXYZ *gcm_profile_get_green		(GcmProfile	*profile);

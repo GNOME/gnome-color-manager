@@ -536,3 +536,31 @@ cd_colorspace_to_localised_string (CdColorspace colorspace)
 	return NULL;
 }
 
+/**
+ * gcm_profile_has_colorspace_description:
+ * @profile: A valid #CdProfile
+ *
+ * Finds out if the profile contains a colorspace description.
+ *
+ * Return value: %TRUE if the description mentions the profile colorspace explicity,
+ * e.g. "Adobe RGB" for %CD_COLORSPACE_RGB.
+ **/
+gboolean
+gcm_profile_has_colorspace_description (CdProfile *profile)
+{
+	CdColorspace colorspace;
+	const gchar *description;
+
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
+
+	/* for each profile type */
+	colorspace = cd_profile_get_colorspace (profile);
+	description = cd_profile_get_title (profile);
+	if (colorspace == CD_COLORSPACE_RGB)
+		return (g_strstr_len (description, -1, "RGB") != NULL);
+	if (colorspace == CD_COLORSPACE_CMYK)
+		return (g_strstr_len (description, -1, "CMYK") != NULL);
+
+	/* nothing */
+	return FALSE;
+}

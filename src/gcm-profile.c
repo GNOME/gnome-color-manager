@@ -171,31 +171,6 @@ gcm_profile_set_description (GcmProfile *profile, const gchar *description)
 }
 
 /**
- * gcm_profile_has_colorspace_description:
- * @profile: A valid #GcmProfile
- *
- * Finds out if the profile contains a colorspace description.
- *
- * Return value: %TRUE if the description mentions the profile colorspace explicity,
- * e.g. "Adobe RGB" for %CD_COLORSPACE_RGB.
- **/
-gboolean
-gcm_profile_has_colorspace_description (GcmProfile *profile)
-{
-	GcmProfilePrivate *priv = profile->priv;
-	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
-
-	/* for each profile type */
-	if (priv->colorspace == CD_COLORSPACE_RGB)
-		return (g_strstr_len (priv->description, -1, "RGB") != NULL);
-	if (priv->colorspace == CD_COLORSPACE_CMYK)
-		return (g_strstr_len (priv->description, -1, "CMYK") != NULL);
-
-	/* nothing */
-	return FALSE;
-}
-
-/**
  * gcm_profile_get_temperature:
  * @profile: A valid #GcmProfile
  *

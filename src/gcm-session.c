@@ -43,7 +43,9 @@ static GcmProfileStore *profile_store = NULL;
 static GcmX11Screen *x11_screen = NULL;
 static GDBusConnection *connection = NULL;
 
-#define GCM_SESSION_NOTIFY_TIMEOUT	30000 /* ms */
+#define GCM_SESSION_NOTIFY_TIMEOUT		30000 /* ms */
+#define GCM_ICC_PROFILE_IN_X_VERSION_MAJOR	0
+#define GCM_ICC_PROFILE_IN_X_VERSION_MINOR	3
 
 /**
  * cd_device_get_title:
@@ -393,6 +395,7 @@ gcm_session_device_assign (CdDevice *device)
 					   error->message);
 				g_clear_error (&error);
 			}
+			//FIXME: use gcm_x11_screen_remove_protocol_version
 		}
 		goto out;
 	}

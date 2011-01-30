@@ -1082,7 +1082,7 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 				      NULL,
 				      &error);
 	if (!ret) {
-		g_warning ("failed to connect to client: %s",
+		g_warning ("failed to connect to colord: %s",
 			   error->message);
 		g_error_free (error);
 		goto out;
