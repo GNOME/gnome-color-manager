@@ -978,6 +978,18 @@ gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 		goto out;
 	}
 
+	/* set colorspace */
+	ret = cd_device_set_colorspace_sync (device,
+					     CD_COLORSPACE_RGB,
+					     NULL,
+					     &error);
+	if (device == NULL) {
+		g_warning ("failed to create device: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
 	/* set model */
 	ret = cd_device_set_model_sync (device,
 					gcm_x11_output_get_name (output),
