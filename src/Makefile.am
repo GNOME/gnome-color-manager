@@ -100,7 +100,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-usb.h					\
 	gcm-utils.c					\
 	gcm-utils.h					\
-	gcm-version.h					\
 	gcm-x11-output.c				\
 	gcm-x11-output.h				\
 	gcm-x11-screen.c				\
