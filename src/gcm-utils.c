@@ -551,7 +551,7 @@ gcm_profile_has_colorspace_description (CdProfile *profile)
 	CdColorspace colorspace;
 	const gchar *description;
 
-	g_return_val_if_fail (GCM_IS_PROFILE (profile), FALSE);
+	g_return_val_if_fail (CD_IS_PROFILE (profile), FALSE);
 
 	/* for each profile type */
 	colorspace = cd_profile_get_colorspace (profile);
