@@ -67,8 +67,6 @@ gcm_dump_profile_filename (const gchar *filename)
 	colorspace = gcm_profile_get_colorspace (profile);
 //	g_print ("Colorspace:\t%s\n", cd_colorspace_to_string (colorspace));
 	size = gcm_profile_get_size (profile);
-	g_print ("Size:\t\t%i bytes\n", size);
-	has_vcgt = gcm_profile_get_has_vcgt (profile);
 	g_print ("Has VCGT:\t%s\n", has_vcgt ? "Yes" : "No");
 	description = gcm_profile_get_description (profile);
 	if (description != NULL)

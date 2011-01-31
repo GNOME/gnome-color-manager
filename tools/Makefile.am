@@ -26,23 +26,8 @@ INCLUDES =						\
 noinst_PROGRAMS =					\
 	gcm-dump-profile				\
 	gcm-dump-sensor					\
-	gcm-dump-edid					\
 	gcm-fix-profile					\
 	gcm-sensor-example
-
-gcm_dump_edid_SOURCES =					\
-	gcm-dump-edid.c
-
-gcm_dump_edid_LDADD =					\
-	$(GLIB_LIBS)					\
-	$(XORG_LIBS)					\
-	$(X11_LIBS)					\
-	$(GTK_LIBS)					\
-	$(top_builddir)/src/libgcmshared.a		\
-	-lm
-
-gcm_dump_edid_CFLAGS =					\
-	$(WARNINGFLAGS_C)
 
 gcm_dump_profile_SOURCES =				\
 	gcm-dump-profile.c
