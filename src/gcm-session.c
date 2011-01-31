@@ -395,7 +395,13 @@ gcm_session_device_assign (CdDevice *device)
 					   error->message);
 				g_clear_error (&error);
 			}
-			//FIXME: use gcm_x11_screen_remove_protocol_version
+			ret = gcm_x11_screen_remove_protocol_version (x11_screen,
+								      &error);
+			if (!ret) {
+				g_warning ("failed to clear output _ICC_PROFILE version: %s",
+					   error->message);
+				g_clear_error (&error);
+			}
 		}
 		goto out;
 	}
@@ -409,6 +415,15 @@ gcm_session_device_assign (CdDevice *device)
 		ret = gcm_x11_screen_set_profile (x11_screen,
 						 filename,
 						 &error);
+		if (!ret) {
+			g_warning ("failed to set screen _ICC_PROFILE: %s",
+				   error->message);
+			g_clear_error (&error);
+		}
+		ret = gcm_x11_screen_set_protocol_version (x11_screen,
+							   GCM_ICC_PROFILE_IN_X_VERSION_MAJOR,
+							   GCM_ICC_PROFILE_IN_X_VERSION_MINOR,
+							   &error);
 		if (!ret) {
 			g_warning ("failed to set screen _ICC_PROFILE: %s",
 				   error->message);
