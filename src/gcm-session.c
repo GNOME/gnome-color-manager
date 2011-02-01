@@ -29,6 +29,7 @@
 #include <libnotify/notify.h>
 
 #include "gcm-debug.h"
+#include "gcm-dmi.h"
 #include "gcm-exif.h"
 #include "gcm-profile-store.h"
 #include "gcm-utils.h"
@@ -40,6 +41,7 @@ static GSettings *settings = NULL;
 static GDBusNodeInfo *introspection = NULL;
 static CdClient *client = NULL;
 static GcmProfileStore *profile_store = NULL;
+static GcmDmi *dmi = NULL;
 static GcmX11Screen *x11_screen = NULL;
 static GDBusConnection *connection = NULL;
 
@@ -960,9 +962,21 @@ gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 				GcmX11Output *output,
 				gpointer user_data)
 {
-	CdDevice *device;
+	CdDevice *device = NULL;
+	const gchar *model;
+	const gchar *vendor;
 	gboolean ret;
+	GcmEdid *edid;
 	GError *error = NULL;
+
+	/* get edid */
+	edid = gcm_x11_output_get_edid (output, &error);
+	if (edid == NULL) {
+		g_warning ("failed to get edid: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	g_debug ("output %s added",
 		 gcm_x11_output_get_name (output));
@@ -1002,13 +1016,37 @@ gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 		goto out;
 	}
 
+	/* is this an internal device? */
+	ret = gcm_utils_output_is_lcd_internal (gcm_x11_output_get_name (output));
+	if (ret) {
+		model = gcm_dmi_get_name (dmi);
+		vendor = gcm_dmi_get_vendor (dmi);
+	} else {
+		model = gcm_edid_get_monitor_name (edid);
+		if (model == NULL)
+			model = gcm_x11_output_get_name (output);
+		vendor = gcm_edid_get_vendor_name (edid);
+	}
+
 	/* set model */
 	ret = cd_device_set_model_sync (device,
-					gcm_x11_output_get_name (output),
+					model,
 					NULL,
 					&error);
-	if (device == NULL) {
-		g_warning ("failed to create device: %s",
+	if (!ret) {
+		g_warning ("failed to set model: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* set vendor */
+	ret = cd_device_set_vendor_sync (device,
+					 vendor,
+					 NULL,
+					 &error);
+	if (!ret) {
+		g_warning ("failed to set vendor: %s",
 			   error->message);
 		g_error_free (error);
 		goto out;
@@ -1027,6 +1065,8 @@ gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 out:
 	if (device != NULL)
 		g_object_unref (device);
+	if (edid != NULL)
+		g_object_unref (edid);
 }
 
 /**
@@ -1109,6 +1149,9 @@ main (int argc, char *argv[])
 	settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 	g_signal_connect (settings, "changed",
 			  G_CALLBACK (gcm_session_key_changed_cb), NULL);
+
+	/* use DMI data for internal panels */
+	dmi = gcm_dmi_new ();
 
 	/* monitor daemon */
 	client = cd_client_new ();
@@ -1216,6 +1259,8 @@ out:
 		g_bus_unown_name (owner_id);
 	if (profile_store != NULL)
 		g_object_unref (profile_store);
+	if (dmi != NULL)
+		g_object_unref (dmi);
 	if (connection != NULL)
 		g_object_unref (connection);
 	g_dbus_node_info_unref (introspection);
