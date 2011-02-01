@@ -491,6 +491,18 @@ gcm_session_device_added_assign_cb (CdClient *client_,
 }
 
 /**
+ * gcm_session_device_changed_assign_cb:
+ **/
+static void
+gcm_session_device_changed_assign_cb (CdClient *client_,
+				      CdDevice *device,
+				      gpointer user_data)
+{
+	g_debug ("%s changed", cd_device_get_id (device));
+	gcm_session_device_assign (device);
+}
+
+/**
  * gcm_session_get_profile_for_window:
  **/
 static const gchar *
@@ -1106,12 +1118,25 @@ main (int argc, char *argv[])
 	g_signal_connect (client, "device-added",
 			  G_CALLBACK (gcm_session_device_added_assign_cb),
 			  NULL);
+	g_signal_connect (client, "device-changed",
+			  G_CALLBACK (gcm_session_device_changed_assign_cb),
+			  NULL);
 	ret = cd_client_connect_sync (client, NULL, &error);
 	if (!ret) {
 		g_warning ("failed to connect to colord: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
+
+	/* have access to all profiles */
+	profile_store = gcm_profile_store_new ();
+	g_signal_connect (profile_store, "added",
+			  G_CALLBACK (gcm_session_profile_store_added_cb),
+			  NULL);
+	g_signal_connect (profile_store, "removed",
+			  G_CALLBACK (gcm_session_profile_store_removed_cb),
+			  NULL);
+	gcm_profile_store_search (profile_store);
 
 	/* set for each device that already exist */
 	array = cd_client_get_devices_sync (client, NULL, &error);
@@ -1144,16 +1169,6 @@ main (int argc, char *argv[])
 		g_error_free (error);
 		goto out;
 	}
-
-	/* have access to all profiles */
-	profile_store = gcm_profile_store_new ();
-	g_signal_connect (profile_store, "added",
-			  G_CALLBACK (gcm_session_profile_store_added_cb),
-			  NULL);
-	g_signal_connect (profile_store, "removed",
-			  G_CALLBACK (gcm_session_profile_store_removed_cb),
-			  NULL);
-	gcm_profile_store_search (profile_store);
 
 	/* create new objects */
 	loop = g_main_loop_new (NULL, FALSE);
