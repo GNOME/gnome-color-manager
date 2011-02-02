@@ -943,7 +943,7 @@ cc_color_panel_profile_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 	GtkTreeSelection *selection;
 	GtkTreeModel *model;
 	gboolean ret = FALSE;
-	GcmProfile *profile = NULL;
+	CdProfile *profile = NULL;
 	GError *error = NULL;
 
 	/* get the selected row */
@@ -960,7 +960,10 @@ cc_color_panel_profile_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 			    -1);
 
 	/* just remove it, the list store will get ::changed */
-//	ret = cd_device_profile_remove (panel->priv->current_device, profile, &error);
+	ret = cd_device_remove_profile_sync (panel->priv->current_device,
+					     profile,
+					     panel->priv->cancellable,
+					     &error);
 	if (!ret) {
 		g_warning ("failed to remove profile: %s", error->message);
 		g_error_free (error);
