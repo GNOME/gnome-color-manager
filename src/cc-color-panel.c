@@ -2059,16 +2059,12 @@ out:
 static gboolean
 cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 {
-	CdDevice *device;
 	gchar *colorspace_cmyk;
 	gchar *colorspace_gray;
 	gchar *colorspace_rgb;
-	GError *error = NULL;
 	gint intent_display = -1;
 	gint intent_softproof = -1;
-	GPtrArray *devices = NULL;
 	GtkWidget *widget;
-	guint i;
 
 	/* search the disk for profiles */
 	g_signal_connect (panel->priv->client, "changed", G_CALLBACK(cc_color_panel_profile_store_changed_cb), panel);
@@ -2115,21 +2111,6 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 	g_signal_connect (G_OBJECT (widget), "changed",
 			  G_CALLBACK (cc_color_panel_renderer_combo_changed_cb), panel);
 
-	/* get devices and add them */
-	devices = cd_client_get_devices_sync (panel->priv->client,
-					      panel->priv->cancellable,
-					      &error);
-	if (devices == NULL) {
-		g_warning ("failed to add connected devices: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-	for (i=0; i<devices->len; i++) {
-		device = g_ptr_array_index (devices, i);
-		cc_color_panel_add_device (panel, device);
-	}
-
 	/* set calibrate button sensitivity */
 	cc_color_panel_set_calibrate_button_sensitivity (panel);
 
@@ -2139,9 +2120,7 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 	/* do we show the shared-color-profiles-extra installer? */
 	g_debug ("getting installed");
 	cc_color_panel_is_color_profiles_extra_installed (panel);
-out:
-	if (devices != NULL)
-		g_ptr_array_unref (devices);
+
 	g_free (colorspace_rgb);
 	g_free (colorspace_cmyk);
 	return FALSE;
@@ -2182,31 +2161,44 @@ cc_color_panel_profile_store_changed_cb (CdClient *client, CcColorPanel *panel)
 }
 
 /**
- * cc_color_panel_select_first_device_idle_cb:
+ * cc_color_panel_get_devices_cb:
  **/
-static gboolean
-cc_color_panel_select_first_device_idle_cb (CcColorPanel *panel)
+static void
+cc_color_panel_get_devices_cb (GObject *object,
+			       GAsyncResult *res,
+			       gpointer user_data)
 {
+	CcColorPanel *panel = (CcColorPanel *) user_data;
+	CdClient *client = CD_CLIENT (object);
+	CdDevice *device;
+	GError *error = NULL;
+	GPtrArray *devices;
 	GtkTreePath *path;
 	GtkWidget *widget;
+	guint i;
+
+	/* get devices and add them */
+	devices = cd_client_get_devices_finish (client, res, &error);
+	if (devices == NULL) {
+		g_warning ("failed to add connected devices: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+	for (i=0; i<devices->len; i++) {
+		device = g_ptr_array_index (devices, i);
+		cc_color_panel_add_device (panel, device);
+	}
 
 	/* set the cursor on the first device */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "treeview_devices"));
+	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+						     "treeview_devices"));
 	path = gtk_tree_path_new_from_string ("0");
 	gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
 	gtk_tree_path_free (path);
-
-	return FALSE;
-}
-
-/**
- * cc_color_panel_client_notify_loading_cb:
- **/
-static void
-cc_color_panel_client_notify_loading_cb (CdClient *client, GParamSpec *pspec, CcColorPanel *panel)
-{
-	/* idle callback */
-	g_idle_add ((GSourceFunc) cc_color_panel_select_first_device_idle_cb, panel);
+out:
+	if (devices != NULL)
+		g_ptr_array_unref (devices);
 }
 
 /**
@@ -2479,8 +2471,6 @@ cc_color_panel_init (CcColorPanel *panel)
 	g_signal_connect (panel->priv->client, "device-added", G_CALLBACK (cc_color_panel_device_added_cb), panel);
 	g_signal_connect (panel->priv->client, "device-removed", G_CALLBACK (cc_color_panel_device_removed_cb), panel);
 	g_signal_connect (panel->priv->client, "changed", G_CALLBACK (cc_color_panel_changed_cb), panel);
-if(0)	g_signal_connect (panel->priv->client, "notify::loading",
-			  G_CALLBACK (cc_color_panel_client_notify_loading_cb), panel);
 
 	/* connect to colord */
 	ret = cd_client_connect_sync (panel->priv->client,
@@ -2492,6 +2482,12 @@ if(0)	g_signal_connect (panel->priv->client, "notify::loading",
 		g_error_free (error);
 		goto out;
 	}
+
+	/* get devices async */
+	cd_client_get_devices (panel->priv->client,
+			       panel->priv->cancellable,
+			       cc_color_panel_get_devices_cb,
+			       panel);
 
 	/* use the color device */
 	panel->priv->sensor_client = gcm_sensor_client_new ();
