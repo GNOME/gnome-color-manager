@@ -302,6 +302,71 @@ out:
 }
 
 /**
+ * gcm_session_device_set_gamma:
+ **/
+static gboolean
+gcm_session_device_set_gamma (GcmX11Output *output,
+			      CdProfile *profile,
+			      GError **error)
+{
+	const gchar *filename;
+	gboolean ret;
+	GcmClut *clut = NULL;
+	GcmProfile *gcm_profile = NULL;
+	GFile *file = NULL;
+
+	/* parse locally so we can access the VCGT data */
+	gcm_profile = gcm_profile_new ();
+	filename = cd_profile_get_filename (profile);
+	file = g_file_new_for_path (filename);
+	ret = gcm_profile_parse (gcm_profile, file, error);
+	if (!ret)
+		goto out;
+
+	/* create a lookup table */
+	clut = gcm_profile_generate_vcgt (gcm_profile,
+					  gcm_x11_output_get_gamma_size (output));
+
+	/* apply the vcgt to this output */
+	ret = gcm_x11_output_set_gamma_from_clut (output, clut, error);
+	if (!ret)
+		goto out;
+out:
+	if (clut != NULL)
+		g_object_unref (clut);
+	if (gcm_profile != NULL)
+		g_object_unref (gcm_profile);
+	if (file != NULL)
+		g_object_unref (file);
+	return ret;
+}
+
+/**
+ * gcm_session_device_reset_gamma:
+ **/
+static gboolean
+gcm_session_device_reset_gamma (GcmX11Output *output,
+			        GError **error)
+{
+	gboolean ret;
+	GcmClut *clut;
+
+	/* create a linear ramp */
+	clut = gcm_clut_new ();
+	g_object_set (clut,
+		      "size", gcm_x11_output_get_gamma_size (output),
+		      NULL);
+
+	/* apply the vcgt to this output */
+	ret = gcm_x11_output_set_gamma_from_clut (output, clut, error);
+	if (!ret)
+		goto out;
+out:
+	g_object_unref (clut);
+	return ret;
+}
+
+/**
  * gcm_session_device_assign:
  **/
 static void
@@ -313,12 +378,9 @@ gcm_session_device_assign (CdDevice *device)
 	gboolean ret;
 	gchar *autogen_filename = NULL;
 	gchar *autogen_path = NULL;
-	GcmClut *clut = NULL;
 	GcmEdid *edid = NULL;
-	GcmProfile *gcm_profile = NULL;
 	GcmX11Output *output = NULL;
 	GError *error = NULL;
-	GFile *file = NULL;
 
 	/* check we care */
 	kind = cd_device_get_kind (device);
@@ -436,49 +498,44 @@ gcm_session_device_assign (CdDevice *device)
 					  filename,
 					  &error);
 	if (!ret) {
-		g_warning ("failed to clear output _ICC_PROFILE: %s",
+		g_warning ("failed to set output _ICC_PROFILE: %s",
 			   error->message);
 		g_clear_error (&error);
 	}
 
 	/* create a vcgt for this icc file */
-	gcm_profile = gcm_profile_new ();
-	file = g_file_new_for_path (filename);
-	ret = gcm_profile_parse (gcm_profile, file, &error);
-	if (!ret) {
-		g_warning ("failed to parse %s: %s",
-			   filename,
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-	clut = gcm_profile_generate_vcgt (gcm_profile,
-					  gcm_x11_output_get_gamma_size (output));
-
-	/* apply the vcgt to this output */
-	ret = gcm_x11_output_set_gamma_from_clut (output, clut, &error);
-	if (!ret) {
-		g_warning ("failed to set %s gamma tables: %s",
-			   cd_device_get_id (device),
-			   error->message);
-		g_error_free (error);
-		goto out;
+	ret = cd_profile_get_has_vcgt (profile);
+	if (ret) {
+		ret = gcm_session_device_set_gamma (output,
+						    profile,
+						    &error);
+		if (!ret) {
+			g_warning ("failed to set %s gamma tables: %s",
+				   cd_device_get_id (device),
+				   error->message);
+			g_error_free (error);
+			goto out;
+		}
+	} else {
+		ret = gcm_session_device_reset_gamma (output,
+						      &error);
+		if (!ret) {
+			g_warning ("failed to reset %s gamma tables: %s",
+				   cd_device_get_id (device),
+				   error->message);
+			g_error_free (error);
+			goto out;
+		}
 	}
 out:
 	g_free (autogen_filename);
 	g_free (autogen_path);
-	if (file != NULL)
-		g_object_unref (file);
 	if (edid != NULL)
 		g_object_unref (edid);
-	if (clut != NULL)
-		g_object_unref (clut);
 	if (output != NULL)
 		g_object_unref (output);
 	if (profile != NULL)
 		g_object_unref (profile);
-	if (gcm_profile != NULL)
-		g_object_unref (gcm_profile);
 }
 
 /**
