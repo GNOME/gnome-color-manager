@@ -161,7 +161,6 @@ gcm_libusb_pollfd_remove_all (GcmUsb *usb)
 	/* rip apart all the pollfd's */
 	do {
 		pollfd = elem->data;
-		g_warning ("removing %i", pollfd->fd);
 		g_source_remove_poll ((GSource *) source, pollfd);
 		g_slice_free (GPollFD, pollfd);
 		source->pollfds = g_slist_delete_link (source->pollfds, elem);

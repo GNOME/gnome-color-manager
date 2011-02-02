@@ -269,6 +269,7 @@ gcm_self_test_LDADD =					\
 	$(GTK_LIBS)					\
 	$(USB_LIBS)					\
 	$(TIFF_LIBS)					\
+	$(COLORD_LIBS)					\
 	$(EXIF_LIBS)					\
 	-lm
 

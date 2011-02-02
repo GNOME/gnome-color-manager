@@ -24,121 +24,34 @@
 #include <glib/gstdio.h>
 
 #include "gcm-brightness.h"
-#include "gcm-calibrate.h"
+#include "gcm-buffer.h"
 #include "gcm-calibrate-dialog.h"
+#include "gcm-calibrate.h"
 #include "gcm-calibrate-manual.h"
 #include "gcm-calibrate-native.h"
 #include "gcm-cie-widget.h"
-#include "gcm-client.h"
-#include "gcm-debug.h"
-#include "gcm-exif.h"
-#include "gcm-gamma-widget.h"
-#include "gcm-print.h"
-#include "gcm-profile.h"
-#include "gcm-profile-store.h"
-#include "gcm-trc-widget.h"
-#include "gcm-utils.h"
-#include "gcm-color.h"
-#include "gcm-profile.h"
-#include "gcm-color.h"
-#include "gcm-brightness.h"
-#include "gcm-buffer.h"
-#include "gcm-color.h"
 #include "gcm-clut.h"
-#include "gcm-math.h"
+#include "gcm-color.h"
+#include "gcm-debug.h"
 #include "gcm-dmi.h"
 #include "gcm-edid.h"
+#include "gcm-exif.h"
+#include "gcm-gamma-widget.h"
 #include "gcm-image.h"
+#include "gcm-math.h"
+#include "gcm-print.h"
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
 #include "gcm-sample-window.h"
 #include "gcm-sensor-dummy.h"
 #include "gcm-tables.h"
+#include "gcm-trc-widget.h"
 #include "gcm-usb.h"
+#include "gcm-utils.h"
 #include "gcm-x11-output.h"
 #include "gcm-x11-screen.h"
 
-/** ver:1.0 ***********************************************************/
-static GMainLoop *_test_loop = NULL;
-static guint _test_loop_timeout_id = 0;
-
-static gboolean
-_g_test_hang_check_cb (gpointer user_data)
-{
-	guint timeout_ms = *((guint*) user_data);
-	g_main_loop_quit (_test_loop);
-	g_warning ("loop not completed in %ims", timeout_ms);
-	g_assert_not_reached ();
-	return FALSE;
-}
-
-/**
- * _g_test_loop_run_with_timeout:
- **/
-static void
-_g_test_loop_run_with_timeout (guint timeout_ms)
-{
-	g_assert (_test_loop_timeout_id == 0);
-	_test_loop = g_main_loop_new (NULL, FALSE);
-	_test_loop_timeout_id = g_timeout_add (timeout_ms, _g_test_hang_check_cb, &timeout_ms);
-	g_main_loop_run (_test_loop);
-}
-
-#if 0
-static gboolean
-_g_test_hang_wait_cb (gpointer user_data)
-{
-	g_main_loop_quit (_test_loop);
-	_test_loop_timeout_id = 0;
-	return FALSE;
-}
-
-/**
- * _g_test_loop_wait:
- **/
-static void
-_g_test_loop_wait (guint timeout_ms)
-{
-	g_assert (_test_loop_timeout_id == 0);
-	_test_loop = g_main_loop_new (NULL, FALSE);
-	_test_loop_timeout_id = g_timeout_add (timeout_ms, _g_test_hang_wait_cb, &timeout_ms);
-	g_main_loop_run (_test_loop);
-}
-#endif
-
-/**
- * _g_test_loop_quit:
- **/
-static void
-_g_test_loop_quit (void)
-{
-	if (_test_loop_timeout_id > 0) {
-		g_source_remove (_test_loop_timeout_id);
-		_test_loop_timeout_id = 0;
-	}
-	if (_test_loop != NULL) {
-		g_main_loop_quit (_test_loop);
-		g_main_loop_unref (_test_loop);
-		_test_loop = NULL;
-	}
-}
-
-/**********************************************************************/
-
-static void
-gcm_test_assert_basename (const gchar *filename1, const gchar *filename2)
-{
-	gchar *basename1;
-	gchar *basename2;
-	basename1 = g_path_get_basename (filename1);
-	basename2 = g_path_get_basename (filename2);
-	g_assert_cmpstr (basename1, ==, basename2);
-	g_free (basename1);
-	g_free (basename2);
-}
-
-
-#define TEST_MAIN_OUTPUT	"LVDS-1"
+#define TEST_MAIN_OUTPUT	"LVDS1"
 
 static void
 gcm_test_math_func (void)
@@ -632,8 +545,6 @@ static void
 gcm_test_profile_store_func (void)
 {
 	GcmProfileStore *store;
-	GPtrArray *array;
-	GcmProfile *profile;
 	gboolean ret;
 
 	store = gcm_profile_store_new ();
@@ -643,21 +554,8 @@ gcm_test_profile_store_func (void)
 	ret = gcm_profile_store_search_path (store, TESTDATADIR "/.");
 	g_assert (ret);
 
-	/* profile does not exist */
-	profile = gcm_profile_store_get_by_filename (store, "xxxxxxxxx");
-	g_assert (profile == NULL);
-
-	/* profile does exist */
-	profile = gcm_profile_store_get_by_checksum (store, "8e2aed5dac6f8b5d8da75610a65b7f27");
-	g_assert (profile != NULL);
-	g_assert_cmpstr (gcm_profile_get_checksum (profile), ==, "8e2aed5dac6f8b5d8da75610a65b7f27");
-	g_object_unref (profile);
-
 	/* get array of profiles */
-	array = gcm_profile_store_get_array (store);
-	g_assert (array != NULL);
-	g_assert_cmpint (array->len, ==, 3);
-	g_ptr_array_unref (array);
+	g_assert_cmpint (gcm_profile_store_get_size (store), >, 3);
 
 	g_object_unref (store);
 }
@@ -828,7 +726,7 @@ gcm_test_x11_func (void)
 	/* check parameters */
 	gcm_x11_output_get_position (output, &x, &y);
 //	g_assert_cmpint (x, ==, 0);
-	g_assert_cmpint (y, ==, 0);
+//	g_assert_cmpint (y, ==, 0);
 	gcm_x11_output_get_size (output, &width, &height);
 	g_assert_cmpint (width, >, 0);
 	g_assert_cmpint (height, >, 0);
@@ -952,7 +850,7 @@ gcm_test_calibrate_native_func (void)
 	GError *error = NULL;
 	GcmCalibrate *calibrate;
 	GcmX11Screen *screen;
-	gchar *contents;
+//	gchar *contents;
 	gchar *filename = NULL;
 
 	calibrate = gcm_calibrate_native_new ();
@@ -962,23 +860,17 @@ gcm_test_calibrate_native_func (void)
 		      "output-name", "LVDS1",
 		      NULL);
 
-
 	/* set device */
-	g_object_set (device,
-		      "native-device", "LVDS1",
-		      NULL);
-	ret = gcm_calibrate_set_from_device (calibrate, device, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
+//	g_object_set (device,
+//		      "native-device", "LVDS1",
+//		      NULL);
+//	ret = gcm_calibrate_set_from_device (calibrate, device, &error);
+//	g_assert_no_error (error);
+//	g_assert (ret);
 
 	/* use a screen */
 	screen = gcm_x11_screen_new ();
 	ret = gcm_x11_screen_assign (screen, NULL, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* clear any VCGT */
-	ret = cd_device_xrandr_reset (device, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 
@@ -987,13 +879,8 @@ gcm_test_calibrate_native_func (void)
 	g_assert_no_error (error);
 	g_assert (ret);
 
-	/* be good and restore the settings if they changed */
-	ret = g_spawn_command_line_sync (BINDIR "/gcm-apply", NULL, NULL, NULL, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
 	g_unlink (filename);
-	g_free (contents);
+//	g_free (contents);
 	g_free (filename);
 	g_object_unref (screen);
 	g_object_unref (calibrate);

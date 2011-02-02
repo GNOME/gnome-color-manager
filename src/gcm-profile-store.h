@@ -53,6 +53,9 @@ struct _GcmProfileStoreClass
 GType		 gcm_profile_store_get_type		(void);
 GcmProfileStore	*gcm_profile_store_new			(void);
 gboolean	 gcm_profile_store_search		(GcmProfileStore	*profile_store);
+gboolean	 gcm_profile_store_search_path		(GcmProfileStore	*profile_store,
+							 const gchar		*path);
+guint		 gcm_profile_store_get_size		(GcmProfileStore	*profile_store);
 
 G_END_DECLS
 

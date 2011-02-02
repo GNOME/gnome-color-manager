@@ -262,7 +262,9 @@ out:
  * gcm_picker_xyz_notify_cb:
  **/
 static void
-gcm_picker_xyz_notify_cb (GcmCalibrate *calibrate_, GParamSpec *pspec, gpointer user_data)
+gcm_picker_xyz_notify_cb (GcmCalibrate *calibrate_,
+			  GParamSpec *pspec,
+			  gpointer user_data)
 {
 	GcmColorXYZ *xyz;
 
@@ -322,14 +324,16 @@ gcm_picker_sensor_client_setup_ui (GcmSensorClient *_sensor_client)
 	sensor = gcm_sensor_client_get_sensor (sensor_client);
 	if (sensor == NULL) {
 		/* TRANSLATORS: this is displayed the user has not got suitable hardware */
-		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("No colorimeter is attached."));
+		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label),
+				    _("No colorimeter is attached."));
 		goto out;
 	}
 
 #ifndef HAVE_VTE
 	if (!gcm_sensor_is_native (sensor)) {
 		 /* TRANSLATORS: this is displayed if VTE support is not enabled */
-		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("This application was compiled without VTE support."));
+		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label),
+				     _("This application was compiled without VTE support."));
 		goto out;
 	}
 #endif
@@ -434,7 +438,8 @@ gcm_prefs_set_combo_simple_text (GtkWidget *combo_box)
 	GtkListStore *store;
 
 	store = gtk_list_store_new (2, G_TYPE_STRING, CD_TYPE_PROFILE);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store), GCM_PREFS_COMBO_COLUMN_TEXT, GTK_SORT_ASCENDING);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store),
+					      GCM_PREFS_COMBO_COLUMN_TEXT, GTK_SORT_ASCENDING);
 	gtk_combo_box_set_model (GTK_COMBO_BOX (combo_box), GTK_TREE_MODEL (store));
 	g_object_unref (store);
 
@@ -524,7 +529,8 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 		}
 	}
 	if (!has_profile) {
-		/* TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK" */
+		/* TRANSLATORS: this is when there are no profiles that can be used;
+		 * the search term is either "RGB" or "CMYK" */
 		text = g_strdup_printf (_("No %s color spaces available"),
 					cd_colorspace_to_localised_string (CD_COLORSPACE_RGB));
 		model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
@@ -566,7 +572,9 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 
 	/* get UI */
 	builder = gtk_builder_new ();
-	retval = gtk_builder_add_from_file (builder, GCM_DATA "/gcm-picker.ui", &error);
+	retval = gtk_builder_add_from_file (builder,
+					    GCM_DATA "/gcm-picker.ui",
+					    &error);
 	if (retval == 0) {
 		g_warning ("failed to load ui: %s", error->message);
 		g_error_free (error);
@@ -603,7 +611,8 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 
 	/* use the color device */
 	sensor_client = gcm_sensor_client_new ();
-	g_signal_connect (sensor_client, "changed", G_CALLBACK (gcm_picker_sensor_client_changed_cb), NULL);
+	g_signal_connect (sensor_client, "changed",
+			  G_CALLBACK (gcm_picker_sensor_client_changed_cb), NULL);
 
 	/* set the parent window if it is specified */
 	if (xid != 0) {

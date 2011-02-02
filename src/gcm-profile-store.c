@@ -35,7 +35,6 @@
 #include "gcm-profile-store.h"
 
 static void     gcm_profile_store_finalize	(GObject     *object);
-static gboolean	gcm_profile_store_search_path (GcmProfileStore *profile_store, const gchar *path);
 
 #define GCM_PROFILE_STORE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_PROFILE_STORE, GcmProfileStorePrivate))
 
@@ -61,6 +60,15 @@ enum {
 static guint signals[SIGNAL_LAST] = { 0 };
 
 G_DEFINE_TYPE (GcmProfileStore, gcm_profile_store, G_TYPE_OBJECT)
+
+/**
+ * gcm_profile_store_in_array:
+ **/
+guint
+gcm_profile_store_get_size (GcmProfileStore *profile_store)
+{
+	return profile_store->priv->filename_array->len;
+}
 
 /**
  * gcm_profile_store_in_array:
@@ -160,7 +168,7 @@ out:
 /**
  * gcm_profile_store_search_path:
  **/
-static gboolean
+gboolean
 gcm_profile_store_search_path (GcmProfileStore *profile_store, const gchar *path)
 {
 	GDir *dir = NULL;
@@ -178,6 +186,7 @@ gcm_profile_store_search_path (GcmProfileStore *profile_store, const gchar *path
 
 		/* check the file actually is a profile when we try to parse it */
 		gcm_profile_store_add_profile (profile_store, path);
+		success = TRUE;
 		goto out;
 	}
 
