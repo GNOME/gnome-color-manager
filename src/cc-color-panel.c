@@ -1052,8 +1052,9 @@ cc_color_panel_button_virtual_add_cb (GtkWidget *widget, CcColorPanel *panel)
 	CdDevice *device;
 	const gchar *model;
 	const gchar *manufacturer;
-	gboolean ret = FALSE;
+	gchar *device_id;
 	GError *error = NULL;
+	GHashTable *device_props;
 
 	/* get device details */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "combobox_virtual_type"));
@@ -1064,9 +1065,28 @@ cc_color_panel_button_virtual_add_cb (GtkWidget *widget, CcColorPanel *panel)
 	manufacturer = gtk_entry_get_text (GTK_ENTRY (widget));
 
 	/* create device */
+	device_id = g_strdup_printf ("%s-%s-%s",
+				     cd_device_kind_to_string (device_kind),
+				     manufacturer,
+				     model);
+	device_props = g_hash_table_new_full (g_str_hash, g_str_equal,
+					      g_free, g_free);
+	g_hash_table_insert (device_props,
+			     g_strdup ("Kind"),
+			     g_strdup (cd_device_kind_to_string (device_kind)));
+	g_hash_table_insert (device_props,
+			     g_strdup ("Mode"),
+			     g_strdup (cd_device_mode_to_string (CD_DEVICE_MODE_VIRTUAL)));
+	g_hash_table_insert (device_props,
+			     g_strdup ("Model"),
+			     g_strdup (model));
+	g_hash_table_insert (device_props,
+			     g_strdup ("Vendor"),
+			     g_strdup (manufacturer));
 	device = cd_client_create_device_sync (panel->priv->client,
-					       "virtual-fixme",
+					       device_id,
 					       CD_OBJECT_SCOPE_DISK,
+					       device_props,
 					       panel->priv->cancellable,
 					       &error);
 	if (device == NULL) {
@@ -1077,57 +1097,11 @@ cc_color_panel_button_virtual_add_cb (GtkWidget *widget, CcColorPanel *panel)
 		g_error_free (error);
 		goto out;
 	}
-
-	/* set kind */
-	ret = cd_device_set_kind_sync (device,
-				       device_kind,
-				       panel->priv->cancellable,
-				       &error);
-	if (!ret) {
-		g_warning ("failed to set property: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* set model */
-	ret = cd_device_set_model_sync (device,
-					model,
-					panel->priv->cancellable,
-					&error);
-	if (!ret) {
-		g_warning ("failed to set property: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* set manufacturer */
-	ret = cd_device_set_vendor_sync (device,
-					 manufacturer,
-					 panel->priv->cancellable,
-					 &error);
-	if (!ret) {
-		g_warning ("failed to set property: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* commit */
-	ret = cd_device_commit_sync (device,
-				     panel->priv->cancellable,
-				     &error);
-	if (!ret) {
-		g_warning ("failed to commit device: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
 out:
-	/* we're done */
+	g_hash_table_unref (device_props);
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "dialog_virtual"));
 	gtk_widget_hide (widget);
+	g_free (device_id);
 }
 
 /**
@@ -1415,6 +1389,7 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	GtkTreePath *path;
 	GtkWidget *widget;
 	GtkTreeIter iter;
+	CdDeviceMode device_mode;
 
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -1456,8 +1431,9 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection, CcColor
 	gtk_widget_set_sensitive (widget, TRUE);
 
 	/* can we delete this device? */
+	device_mode = cd_device_get_mode (panel->priv->current_device);
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder, "button_delete"));
-	gtk_widget_set_sensitive (widget, TRUE);
+	gtk_widget_set_sensitive (widget, device_mode == CD_DEVICE_MODE_VIRTUAL);
 
 	/* can this device calibrate */
 	cc_color_panel_set_calibrate_button_sensitivity (panel);

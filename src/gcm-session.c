@@ -942,13 +942,19 @@ gcm_session_profile_store_added_cb (GcmProfileStore *profile_store_,
 				    gpointer user_data)
 {
 	CdProfile *profile;
-	gboolean ret;
 	GError *error = NULL;
+	GHashTable *profile_props;
 
 	g_debug ("profile %s added", filename);
+	profile_props = g_hash_table_new_full (g_str_hash, g_str_equal,
+					       g_free, g_free);
+	g_hash_table_insert (profile_props,
+			     g_strdup ("Filename"),
+			     g_strdup (filename));
 	profile = cd_client_create_profile_sync (client,
 						 filename,
 						 CD_OBJECT_SCOPE_TEMPORARY,
+						 profile_props,
 						 NULL,
 						 &error);
 	if (profile == NULL) {
@@ -957,30 +963,8 @@ gcm_session_profile_store_added_cb (GcmProfileStore *profile_store_,
 		g_error_free (error);
 		goto out;
 	}
-
-	/* set filename */
-	ret = cd_profile_set_filename_sync (profile,
-					    filename,
-					    NULL,
-					    &error);
-	if (!ret) {
-		g_warning ("failed to create profile: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* commit */
-	ret = cd_profile_commit_sync (profile,
-				      NULL,
-				      &error);
-	if (!ret) {
-		g_warning ("failed to commit profile: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
 out:
+	g_hash_table_unref (profile_props);
 	if (profile != NULL)
 		g_object_unref (profile);
 }
@@ -1025,6 +1009,7 @@ gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 	gboolean ret;
 	GcmEdid *edid;
 	GError *error = NULL;
+	GHashTable *device_props = NULL;
 
 	/* get edid */
 	edid = gcm_x11_output_get_edid (output, &error);
@@ -1035,43 +1020,6 @@ gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 		goto out;
 	}
 
-	g_debug ("output %s added",
-		 gcm_x11_output_get_name (output));
-	device = cd_client_create_device_sync (client,
-					       gcm_x11_output_get_name (output),
-					       CD_OBJECT_SCOPE_TEMPORARY,
-					       NULL,
-					       &error);
-	if (device == NULL) {
-		g_warning ("failed to create device: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* set kind */
-	ret = cd_device_set_kind_sync (device,
-				       CD_DEVICE_KIND_DISPLAY,
-				       NULL,
-				       &error);
-	if (device == NULL) {
-		g_warning ("failed to create device: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* set colorspace */
-	ret = cd_device_set_colorspace_sync (device,
-					     CD_COLORSPACE_RGB,
-					     NULL,
-					     &error);
-	if (device == NULL) {
-		g_warning ("failed to create device: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
 
 	/* is this an internal device? */
 	ret = gcm_utils_output_is_lcd_internal (gcm_x11_output_get_name (output));
@@ -1085,41 +1033,40 @@ gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 		vendor = gcm_edid_get_vendor_name (edid);
 	}
 
-	/* set model */
-	ret = cd_device_set_model_sync (device,
-					model,
-					NULL,
-					&error);
-	if (!ret) {
-		g_warning ("failed to set model: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* set vendor */
-	ret = cd_device_set_vendor_sync (device,
-					 vendor,
-					 NULL,
-					 &error);
-	if (!ret) {
-		g_warning ("failed to set vendor: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* commit */
-	ret = cd_device_commit_sync (device,
-				     NULL,
-				     &error);
-	if (!ret) {
-		g_warning ("failed to commit device: %s",
+	g_debug ("output %s added",
+		 gcm_x11_output_get_name (output));
+	device_props = g_hash_table_new_full (g_str_hash, g_str_equal,
+					      g_free, g_free);
+	g_hash_table_insert (device_props,
+			     g_strdup ("Kind"),
+			     g_strdup (cd_device_kind_to_string (CD_DEVICE_KIND_DISPLAY)));
+	g_hash_table_insert (device_props,
+			     g_strdup ("Mode"),
+			     g_strdup (cd_device_mode_to_string (CD_DEVICE_MODE_PHYSICAL)));
+	g_hash_table_insert (device_props,
+			     g_strdup ("Colorspace"),
+			     g_strdup (cd_colorspace_to_string (CD_COLORSPACE_RGB)));
+	g_hash_table_insert (device_props,
+			     g_strdup ("Vendor"),
+			     g_strdup (vendor));
+	g_hash_table_insert (device_props,
+			     g_strdup ("Model"),
+			     g_strdup (model));
+	device = cd_client_create_device_sync (client,
+					       gcm_x11_output_get_name (output),
+					       CD_OBJECT_SCOPE_TEMPORARY,
+					       device_props,
+					       NULL,
+					       &error);
+	if (device == NULL) {
+		g_warning ("failed to create device: %s",
 			   error->message);
 		g_error_free (error);
 		goto out;
 	}
 out:
+	if (device_props != NULL)
+		g_hash_table_unref (device_props);
 	if (device != NULL)
 		g_object_unref (device);
 	if (edid != NULL)
