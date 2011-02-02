@@ -114,16 +114,6 @@ cc_color_panel_error_dialog (CcColorPanel *panel, const gchar *title, const gcha
 }
 
 /**
- * cc_color_panel_set_default:
- **/
-static gboolean
-cc_color_panel_set_default (CcColorPanel *panel, CdDevice *device)
-{
-	/* TODO: make default */
-	return TRUE;
-}
-
-/**
  * cc_color_panel_combobox_add_profile:
  **/
 static void
@@ -171,26 +161,45 @@ cc_color_panel_default_cb (GtkWidget *widget, CcColorPanel *panel)
 {
 	GPtrArray *array = NULL;
 	CdDevice *device;
-	CdDeviceKind kind;
+	CdProfile *profile;
 	gboolean ret;
 	guint i;
+	GError *error = NULL;
 
 	/* set for each output */
-//	array = cd_client_get_devices (panel->priv->client);
+	array = cd_client_get_devices_sync (panel->priv->client,
+					    panel->priv->cancellable,
+					    &error);
+	if (array == NULL) {
+		g_warning ("failed to get devices: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
 	for (i=0; i<array->len; i++) {
 		device = g_ptr_array_index (array, i);
 
-		/* not a xrandr panel */
-		kind = cd_device_get_kind (device);
-		if (kind != CD_DEVICE_KIND_DISPLAY)
+		/* TODO: check if the profile is already systemwide */
+		profile = cd_device_get_default_profile (device);
+		if (profile == NULL)
 			continue;
 
-		/* set for this device */
-		ret = cc_color_panel_set_default (panel, device);
-		if (!ret)
-			break;
+		/* install somewhere out of $HOME */
+		ret = cd_profile_install_system_wide_sync (profile,
+							   panel->priv->cancellable,
+							   &error);
+		if (!ret) {
+			g_warning ("failed to set profile system-wide: %s",
+				   error->message);
+			g_object_unref (profile);
+			g_error_free (error);
+			goto out;
+		}
+		g_object_unref (profile);
 	}
-	g_ptr_array_unref (array);
+out:
+	if (array != NULL)
+		g_ptr_array_unref (array);
 }
 
 /**
