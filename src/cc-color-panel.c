@@ -1204,7 +1204,9 @@ out:
  * cc_color_panel_profile_delete_event_cb:
  **/
 static gboolean
-cc_color_panel_profile_delete_event_cb (GtkWidget *widget, GdkEvent *event, CcColorPanel *panel)
+cc_color_panel_profile_delete_event_cb (GtkWidget *widget,
+					GdkEvent *event,
+					CcColorPanel *panel)
 {
 	cc_color_panel_button_assign_cancel_cb (widget, panel);
 	return TRUE;
@@ -1220,10 +1222,13 @@ cc_color_panel_delete_cb (GtkWidget *widget, CcColorPanel *panel)
 	GError *error = NULL;
 
 	/* try to delete device */
-//	ret = cd_client_delete_device (panel->priv->client, panel->priv->current_device, &error);
+	ret = cd_client_delete_device_sync (panel->priv->client,
+					    cd_device_get_id (panel->priv->current_device),
+					    panel->priv->cancellable,
+					    &error);
 	if (!ret) {
-		/* TRANSLATORS: could not read file */
-		cc_color_panel_error_dialog (panel, _("Failed to delete file"), error->message);
+		/* TRANSLATORS: could not delete virtual device */
+		cc_color_panel_error_dialog (panel, _("Failed to delete device"), error->message);
 		g_error_free (error);
 	}
 }
@@ -1232,7 +1237,8 @@ cc_color_panel_delete_cb (GtkWidget *widget, CcColorPanel *panel)
  * cc_color_panel_add_devices_columns:
  **/
 static void
-cc_color_panel_add_devices_columns (CcColorPanel *panel, GtkTreeView *treeview)
+cc_color_panel_add_devices_columns (CcColorPanel *panel,
+				    GtkTreeView *treeview)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
@@ -1261,7 +1267,8 @@ cc_color_panel_add_devices_columns (CcColorPanel *panel, GtkTreeView *treeview)
  * cc_color_panel_add_assign_columns:
  **/
 static void
-cc_color_panel_add_assign_columns (CcColorPanel *panel, GtkTreeView *treeview)
+cc_color_panel_add_assign_columns (CcColorPanel *panel,
+				   GtkTreeView *treeview)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
