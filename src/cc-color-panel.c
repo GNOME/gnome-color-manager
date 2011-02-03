@@ -1398,11 +1398,6 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection,
 	if (panel->priv->current_device == NULL)
 		goto out;
 
-	/* show broken devices */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
-						     "hbox_problems"));
-	gtk_widget_hide (widget);
-
 	/* set new device */
 	gcm_list_store_profiles_set_from_device (panel->priv->list_store_profiles,
 						 panel->priv->current_device);
