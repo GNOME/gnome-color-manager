@@ -222,6 +222,79 @@ out:
 }
 
 /**
+ * gcm_session_profile_added_notify_cb:
+ **/
+static void
+gcm_session_profile_added_notify_cb (CdClient *client_,
+				     CdProfile *profile,
+				     gpointer user_data)
+{
+	GHashTable *metadata;
+	const gchar *edid_md5;
+	GcmX11Output *output = NULL;
+	GError *error = NULL;
+	CdDevice *device = NULL;
+	gboolean ret;
+
+	/* does the profile have EDID metadata? */
+	metadata = cd_profile_get_metadata (profile);
+	edid_md5 = g_hash_table_lookup (metadata, "EDID_md5");
+	if (edid_md5 == NULL)
+		goto out;
+
+	/* get the GcmX11Output for the edid */
+	output = gcm_x11_screen_get_output_by_edid (x11_screen,
+						    edid_md5,
+						    &error);
+	if (output == NULL) {
+		g_debug ("edid hash %s ignored: %s",
+			 edid_md5,
+			 error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* get the CdDevice for this ID */
+	device = cd_client_find_device_sync (client,
+					     gcm_x11_output_get_name (output),
+					     NULL,
+					     &error);
+	if (device == NULL) {
+		g_error ("not found device %s which should have been added: %s",
+			 gcm_x11_output_get_name (output),
+			 error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* add the profile to the device */
+	ret = cd_device_add_profile_sync (device,
+					  profile,
+					  NULL,
+					  &error);
+	if (!ret) {
+		/* this will fail if the profile is already added */
+		g_debug ("failed to assign auto-edid profile to device %s: %s",
+			 gcm_x11_output_get_name (output),
+			 error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* phew! */
+	g_debug ("successfully assigned %s to %s",
+		 cd_profile_get_object_path (profile),
+		 cd_device_get_object_path (device));
+out:
+	if (metadata != NULL)
+		g_hash_table_unref (metadata);
+	if (output != NULL)
+		g_object_unref (output);
+	if (device != NULL)
+		g_object_unref (device);
+}
+
+/**
  * gcm_apply_create_icc_profile_for_edid:
  **/
 static gboolean
@@ -431,8 +504,6 @@ gcm_session_device_assign (CdDevice *device)
 				     error->message);
 			g_clear_error (&error);
 		}
-
-		/* FIXME: assign profile to device */
 	}
 
 	/* get the default profile for the device */
@@ -1161,6 +1232,9 @@ main (int argc, char *argv[])
 	client = cd_client_new ();
 	g_signal_connect (client, "device-added",
 			  G_CALLBACK (gcm_session_device_added_notify_cb),
+			  NULL);
+	g_signal_connect (client, "profile-added",
+			  G_CALLBACK (gcm_session_profile_added_notify_cb),
 			  NULL);
 	g_signal_connect (client, "device-added",
 			  G_CALLBACK (gcm_session_device_added_assign_cb),

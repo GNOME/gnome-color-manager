@@ -385,6 +385,54 @@ gcm_x11_screen_get_output_by_name (GcmX11Screen *screen,
 }
 
 /**
+ * gcm_x11_screen_get_output_by_name:
+ * @screen: a valid %GcmX11Screen instance
+ * @edid_md5: an output hash
+ * @error: a %GError or %NULL
+ *
+ * Gets a specified output.
+ *
+ * Return value: A #GcmX11Output, or %NULL if nothing matched.
+ **/
+GcmX11Output *
+gcm_x11_screen_get_output_by_edid (GcmX11Screen *screen,
+				   const gchar *edid_md5,
+				   GError **error)
+{
+	guint i;
+	GcmX11Output *output_tmp;
+	GcmX11Output *output = NULL;
+	GcmEdid *edid;
+	GcmX11ScreenPrivate *priv = screen->priv;
+
+	/* not set the display */
+	if (priv->gdk_screen == NULL) {
+		g_set_error_literal (error,
+				     GCM_X11_SCREEN_ERROR, GCM_X11_SCREEN_ERROR_INTERNAL,
+				     "no display set, use gcm_x11_screen_assign()");
+		return NULL;
+	}
+
+	/* find the output */
+	for (i=0; i<priv->outputs->len; i++) {
+		output_tmp = g_ptr_array_index (priv->outputs, i);
+		edid = gcm_x11_output_get_edid (output_tmp, NULL);
+		if (edid == NULL)
+			continue;
+		if (g_strcmp0 (gcm_edid_get_checksum (edid), edid_md5) == 0)
+			output = g_object_ref (output_tmp);
+		g_object_unref (edid);
+		if (output != NULL)
+			goto out;
+	}
+	g_set_error_literal (error,
+			     GCM_X11_SCREEN_ERROR, GCM_X11_SCREEN_ERROR_INTERNAL,
+			     "no connected output with that eidd hash");
+out:
+	return output;
+}
+
+/**
  * cd_x11_screen_get_output_coverage:
  **/
 static gfloat
