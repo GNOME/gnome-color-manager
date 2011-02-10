@@ -7,11 +7,9 @@ INCLUDES =						\
 	$(COLORD_CFLAGS)				\
 	$(CONTROL_CENTER_CFLAGS)			\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
-	-DGNOME_DESKTOP_USE_UNSTABLE_API		\
 	$(GUDEV_CFLAGS)					\
 	-I$(top_srcdir)/src				\
 	-DG_LOG_DOMAIN=\"Gcm\"				\
-	-DLIBCOLOR_GLIB_COMPILATION			\
 	-DBINDIR=\"$(bindir)\"				\
 	-DLIBEXECDIR=\"$(libexecdir)\"			\
 	-DSBINDIR=\"$(sbindir)\"			\
@@ -67,9 +65,6 @@ gcm_fix_profile_LDADD =					\
 
 gcm_fix_profile_CFLAGS =				\
 	$(WARNINGFLAGS_C)
-
-COLORD_LIBS =					\
-	$(top_builddir)/src/libgcmshared.a
 
 gcm_sensor_example_SOURCES =				\
 	gcm-sensor-example.c

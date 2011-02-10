@@ -41,7 +41,6 @@ gcm_dump_profile_filename (const gchar *filename)
 	guint profile_kind;
 	guint colorspace;
 	guint size;
-	gboolean has_vcgt;
 	const gchar *description;
 	const gchar *copyright;
 	const gchar *manufacturer;
@@ -63,11 +62,12 @@ gcm_dump_profile_filename (const gchar *filename)
 
 	/* print what we know */
 	profile_kind = gcm_profile_get_kind (profile);
-//	g_print ("Kind:\t%s\n", cd_profile_kind_to_string (profile_kind));
+	g_print ("Kind:\t%s\n", cd_profile_kind_to_string (profile_kind));
 	colorspace = gcm_profile_get_colorspace (profile);
-//	g_print ("Colorspace:\t%s\n", cd_colorspace_to_string (colorspace));
+	g_print ("Colorspace:\t%s\n", cd_colorspace_to_string (colorspace));
 	size = gcm_profile_get_size (profile);
-	g_print ("Has VCGT:\t%s\n", has_vcgt ? "Yes" : "No");
+	if (size != 0)
+		g_print ("Size:\t%i\n", size);
 	description = gcm_profile_get_description (profile);
 	if (description != NULL)
 		g_print ("Description:\t%s\n", description);
