@@ -295,66 +295,6 @@ out:
 }
 
 /**
- * gcm_inspect_show_profiles_for_devices:
- **/
-static gboolean
-gcm_inspect_show_profiles_for_devices (void)
-{
-	gboolean ret = FALSE;
-	GDBusConnection *connection;
-	GError *error = NULL;
-	guint i;
-	const gchar **devices = NULL;
-	GVariant *response = NULL;
-	GVariant *response_child = NULL;
-
-	/* get a session bus connection */
-	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
-	if (connection == NULL) {
-		/* TRANSLATORS: no DBus session bus */
-		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* execute sync method */
-	response = g_dbus_connection_call_sync (connection,
-						GCM_DBUS_SERVICE,
-						GCM_DBUS_PATH,
-						GCM_DBUS_INTERFACE,
-						"GetDevices",
-						NULL,
-						G_VARIANT_TYPE ("(as)"),
-						G_DBUS_CALL_FLAGS_NONE,
-						-1, NULL, &error);
-	if (response == NULL) {
-		/* TRANSLATORS: the DBus method failed */
-		g_print ("%s %s\n", _("The request failed:"), error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* print each device */
-	response_child = g_variant_get_child_value (response, 0);
-	devices = g_variant_get_strv (response_child, NULL);
-	for (i=0; devices[i] != NULL; i++) {
-		ret = gcm_inspect_show_profiles_for_device (devices[i]);
-		if (!ret)
-			goto out;
-	}
-
-	/* success */
-	ret = TRUE;
-out:
-	g_free (devices);
-	if (response != NULL)
-		g_variant_unref (response);
-	if (response_child != NULL)
-		g_variant_unref (response_child);
-	return ret;
-}
-
-/**
  * gcm_inspect_show_profile_for_window:
  **/
 static gboolean
@@ -630,7 +570,6 @@ main (int argc, char **argv)
 	}
 	if (dump) {
 		gcm_inspect_get_properties ();
-		gcm_inspect_show_profiles_for_devices ();
 	}
 
 	g_free (device_id);
