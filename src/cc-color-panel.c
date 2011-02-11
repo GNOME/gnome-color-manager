@@ -674,23 +674,46 @@ out:
 }
 
 /**
+ * cc_color_panel_wait_in_mainloop_quit_cb:
+ **/
+static gboolean
+cc_color_panel_wait_in_mainloop_quit_cb (GMainLoop *loop)
+{
+	g_main_loop_quit (loop);
+	return FALSE;
+}
+
+/**
+ * cc_color_panel_wait_in_mainloop:
+ **/
+static void
+cc_color_panel_wait_in_mainloop (guint timeout_ms)
+{
+	GMainLoop *loop;
+	loop = g_main_loop_new (NULL, FALSE);
+	g_timeout_add (timeout_ms,
+		       (GSourceFunc) cc_color_panel_wait_in_mainloop_quit_cb,
+		       loop);
+	g_main_loop_run (loop);
+	g_main_loop_unref (loop);
+}
+
+/**
  * cc_color_panel_calibrate_cb:
  **/
 static void
 cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 {
-	GcmCalibrate *calibrate = NULL;
 	CdDeviceKind kind;
-	gboolean ret;
-	GError *error = NULL;
+	CdProfile *profile = NULL;
 	const gchar *filename;
-	guint i;
-	const gchar *name;
-	GcmProfile *profile;
-	GPtrArray *profile_array = NULL;
-	GFile *file = NULL;
-	GFile *dest = NULL;
+	gchar *filename_dest = NULL;
+	gboolean ret;
 	gchar *destination = NULL;
+	GcmCalibrate *calibrate = NULL;
+	GError *error = NULL;
+	GFile *dest = NULL;
+	GFile *file = NULL;
 
 	/* ensure argyllcms is installed */
 	ret = cc_color_panel_ensure_argyllcms_installed (panel);
@@ -741,24 +764,33 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 		goto out;
 	}
 
-	/* find an existing profile of this name */
-//	profile_array = cd_device_get_profiles (panel->priv->current_device);
-	destination = g_file_get_path (dest);
-	for (i=0; i<profile_array->len; i++) {
-		profile = g_ptr_array_index (profile_array, i);
-		name = gcm_profile_get_filename (profile);
-		if (g_strcmp0 (name, destination) == 0) {
-			g_debug ("found existing profile: %s", destination);
-			break;
-		}
+	/* spin the mainloop, waiting for gcm-session to notice the new
+	 * file and add it as a profile to colord */
+	cc_color_panel_wait_in_mainloop (2000);
+
+	/* add the new profile as the default */
+	filename_dest = g_file_get_path (dest);
+	profile = cd_client_find_profile_by_filename_sync (panel->priv->client,
+							   filename_dest,
+							   panel->priv->cancellable,
+							   &error);
+	if (profile == NULL) {
+		g_warning ("failed to find calibration profile: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
 	}
-
-	/* we didn't find an existing profile */
-	if (i == profile_array->len) {
-		g_debug ("adding: %s", destination);
-
-		/* set this default */
-//		cd_device_set_default_profile_filename (panel->priv->current_device, destination);
+	ret = cd_device_add_profile_sync (panel->priv->current_device,
+					  profile,
+					  panel->priv->cancellable,
+					  &error);
+	if (!ret) {
+		g_warning ("failed to add %s to %s: %s",
+			   cd_profile_get_id (profile),
+			   cd_device_get_id (panel->priv->current_device),
+			   error->message);
+		g_error_free (error);
+		goto out;
 	}
 
 	/* remove temporary file */
@@ -773,8 +805,9 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 			 CA_PROP_EVENT_DESCRIPTION, _("Profiling completed"), NULL);
 out:
 	g_free (destination);
-	if (profile_array != NULL)
-		g_ptr_array_unref (profile_array);
+	g_free (filename_dest);
+	if (profile != NULL)
+		g_object_unref (profile);
 	if (calibrate != NULL)
 		g_object_unref (calibrate);
 	if (file != NULL)
