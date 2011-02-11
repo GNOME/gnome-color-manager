@@ -2039,17 +2039,13 @@ out:
 static gboolean
 gcm_calibrate_argyll_check_and_remove_alpha (GcmCalibrateArgyll *calibrate_argyll, GError **error)
 {
-	gboolean ret = TRUE;
-	GdkPixbuf *pixbuf = NULL;
-	GdkPixbuf *pixbuf_new = NULL;
-	gchar *reference_image = NULL;
-	gchar *basename = NULL;
 	const gchar *working_path;
+	gboolean ret = TRUE;
+	gchar *basename = NULL;
 	gchar *filename = NULL;
-	const gchar *title;
-	GString *string = NULL;
-	GtkResponseType response;
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	gchar *reference_image = NULL;
+	GdkPixbuf *pixbuf_new = NULL;
+	GdkPixbuf *pixbuf = NULL;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
@@ -2072,33 +2068,6 @@ gcm_calibrate_argyll_check_and_remove_alpha (GcmCalibrateArgyll *calibrate_argyl
 	if (!gdk_pixbuf_get_has_alpha (pixbuf))
 		goto out;
 
-	/* TRANSLATORS: the supplied image contains an alpha channel which we have to strip out */
-	title = _("Image is not suitable without conversion");
-
-	/* TRANSLATORS: dialog message */
-	string = g_string_new (_("The supplied image contains an alpha channel which the profiling tools do not understand."));
-	g_string_append (string, "\n\n");
-
-	/* TRANSLATORS: dialog message */
-	g_string_append (string, _("It is normally safe to convert the image, although you should ensure that the generated profile is valid."));
-
-	/* push new messages into the UI */
-	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, string->str);
-	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
-	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
-	/* TRANSLATORS: button text to convert the RGBA image into RGB */
-	gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Convert"));
-	response = gcm_calibrate_dialog_run (priv->calibrate_dialog);
-	if (response != GTK_RESPONSE_OK) {
-		gcm_calibrate_dialog_hide (priv->calibrate_dialog);
-		g_set_error_literal (error,
-				     GCM_CALIBRATE_ERROR,
-				     GCM_CALIBRATE_ERROR_USER_ABORT,
-				     "user did not convert RGBA into RGB");
-		ret = FALSE;
-		goto out;
-	}
-
 	/* remove the alpha channel */
 	pixbuf_new = gcm_calibrate_argyll_pixbuf_remove_alpha (pixbuf);
 	if (pixbuf_new == NULL) {
@@ -2119,8 +2088,6 @@ out:
 	g_free (filename);
 	g_free (basename);
 	g_free (reference_image);
-	if (string != NULL)
-		g_string_free (string, TRUE);
 	if (pixbuf != NULL)
 		g_object_unref (pixbuf);
 	if (pixbuf_new != NULL)
