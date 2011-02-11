@@ -460,7 +460,7 @@ gcm_session_device_assign (CdDevice *device)
 	if (kind != CD_DEVICE_KIND_DISPLAY)
 		return;
 
-	g_debug ("need to add display device %s",
+	g_debug ("need to assign display device %s",
 		 cd_device_get_id (device));
 
 	/* get the GcmX11Output for the device id */
@@ -542,6 +542,17 @@ gcm_session_device_assign (CdDevice *device)
 					   error->message);
 				g_clear_error (&error);
 			}
+		}
+
+		/* reset, as we want linear profiles for profiling */
+		ret = gcm_session_device_reset_gamma (output,
+						      &error);
+		if (!ret) {
+			g_warning ("failed to reset %s gamma tables: %s",
+				   cd_device_get_id (device),
+				   error->message);
+			g_error_free (error);
+			goto out;
 		}
 		goto out;
 	}
