@@ -248,31 +248,8 @@ cc_color_panel_calibrate_display (CcColorPanel *panel,
 				  GcmCalibrate *calibrate)
 {
 	gboolean ret = FALSE;
-	gboolean ret_tmp = FALSE;
 	GError *error = NULL;
 	GtkWindow *window;
-
-	/* no device */
-	if (panel->priv->current_device == NULL)
-		goto out;
-
-	/* set properties from the device */
-	ret = gcm_calibrate_set_from_device (calibrate,
-					     panel->priv->current_device,
-					     &error);
-	if (!ret) {
-		g_warning ("failed to calibrate: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* clear any VCGT */
-//	ret = cd_device_xrandr_reset (CD_DEVICE_XRANDR (panel->priv->current_device), &error);
-	if (!ret) {
-		g_warning ("failed to reset so we can calibrate: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
 
 	/* run each task in order */
 	window = GTK_WINDOW(panel->priv->main_window);
@@ -283,13 +260,6 @@ cc_color_panel_calibrate_display (CcColorPanel *panel,
 		goto out;
 	}
 out:
-	/* need to set the gamma back to the default after calibration */
-	error = NULL;
-//	ret_tmp = cd_device_apply (panel->priv->current_device, &error);
-	if (!ret_tmp) {
-		g_warning ("failed to apply profile: %s", error->message);
-		g_error_free (error);
-	}
 	return ret;
 }
 
@@ -302,16 +272,6 @@ cc_color_panel_calibrate_device (CcColorPanel *panel, GcmCalibrate *calibrate)
 	gboolean ret = FALSE;
 	GError *error = NULL;
 	GtkWindow *window;
-
-	/* set defaults from device */
-	ret = gcm_calibrate_set_from_device (calibrate,
-					     panel->priv->current_device,
-					     &error);
-	if (!ret) {
-		g_warning ("failed to calibrate: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
 
 	/* do each step */
 	window = GTK_WINDOW(panel->priv->main_window);
@@ -341,16 +301,6 @@ cc_color_panel_calibrate_printer (CcColorPanel *panel, GcmCalibrate *calibrate)
 	gboolean ret = FALSE;
 	GError *error = NULL;
 	GtkWindow *window;
-
-	/* set defaults from device */
-	ret = gcm_calibrate_set_from_device (calibrate,
-					     panel->priv->current_device,
-					     &error);
-	if (!ret) {
-		g_warning ("failed to calibrate: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
 
 	/* do each step */
 	window = GTK_WINDOW(panel->priv->main_window);
@@ -709,6 +659,7 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 	const gchar *filename;
 	gchar *filename_dest = NULL;
 	gboolean ret;
+	gboolean success;
 	gchar *destination = NULL;
 	GcmCalibrate *calibrate = NULL;
 	GError *error = NULL;
@@ -723,26 +674,58 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 	/* create new calibration object */
 	calibrate = GCM_CALIBRATE(gcm_calibrate_argyll_new ());
 
+	/* set defaults from device */
+	ret = gcm_calibrate_set_from_device (calibrate,
+					     panel->priv->current_device,
+					     &error);
+	if (!ret) {
+		g_warning ("failed to calibrate: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* mark device to be profiled in colord */
+	ret = cd_device_profiling_inhibit_sync (panel->priv->current_device,
+						panel->priv->cancellable,
+						&error);
+	if (!ret) {
+		g_warning ("failed to profile inhibit: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
 	/* choose the correct kind of calibration */
 	kind = cd_device_get_kind (panel->priv->current_device);
 	switch (kind) {
 	case CD_DEVICE_KIND_DISPLAY:
-		ret = cc_color_panel_calibrate_display (panel, calibrate);
+		success = cc_color_panel_calibrate_display (panel, calibrate);
 		break;
 	case CD_DEVICE_KIND_SCANNER:
 	case CD_DEVICE_KIND_CAMERA:
-		ret = cc_color_panel_calibrate_device (panel, calibrate);
+		success = cc_color_panel_calibrate_device (panel, calibrate);
 		break;
 	case CD_DEVICE_KIND_PRINTER:
-		ret = cc_color_panel_calibrate_printer (panel, calibrate);
+		success = cc_color_panel_calibrate_printer (panel, calibrate);
 		break;
 	default:
 		g_warning ("calibration and/or profiling not supported for this device");
 		goto out;
 	}
 
-	/* we failed to calibrate */
+	/* unmark device to be profiled in colord */
+	ret = cd_device_profiling_uninhibit_sync (panel->priv->current_device,
+						  panel->priv->cancellable,
+						  &error);
 	if (!ret) {
+		g_warning ("failed to profile uninhibit: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* we failed to calibrate */
+	if (!success) {
 		g_warning ("failed to calibrate");
 		goto out;
 	}
