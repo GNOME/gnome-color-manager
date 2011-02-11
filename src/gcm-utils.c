@@ -184,7 +184,7 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 						PK_DBUS_INTERFACE_MODIFY,
 						"InstallPackageNames",
 						args,
-						G_VARIANT_TYPE ("(b)"),
+						NULL,
 						G_DBUS_CALL_FLAGS_NONE,
 						G_MAXINT, NULL, &error);
 	if (response == NULL) {
