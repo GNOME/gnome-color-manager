@@ -62,7 +62,7 @@ static guint signals[SIGNAL_LAST] = { 0 };
 G_DEFINE_TYPE (GcmProfileStore, gcm_profile_store, G_TYPE_OBJECT)
 
 /**
- * gcm_profile_store_in_array:
+ * gcm_profile_store_get_size:
  **/
 guint
 gcm_profile_store_get_size (GcmProfileStore *profile_store)
@@ -71,10 +71,10 @@ gcm_profile_store_get_size (GcmProfileStore *profile_store)
 }
 
 /**
- * gcm_profile_store_in_array:
+ * gcm_profile_store_find:
  **/
-static gboolean
-gcm_profile_store_in_array (GPtrArray *array, const gchar *text)
+static const gchar *
+gcm_profile_store_find (GPtrArray *array, const gchar *text)
 {
 	const gchar *tmp;
 	guint i;
@@ -82,22 +82,26 @@ gcm_profile_store_in_array (GPtrArray *array, const gchar *text)
 	for (i=0; i<array->len; i++) {
 		tmp = g_ptr_array_index (array, i);
 		if (g_strcmp0 (text, tmp) == 0)
-			return TRUE;
+			return tmp;
 	}
-	return FALSE;
+	return NULL;
 }
 
 /**
  * gcm_profile_store_remove_profile:
  **/
 static gboolean
-gcm_profile_store_remove_profile (GcmProfileStore *profile_store, const gchar *filename)
+gcm_profile_store_remove_profile (GcmProfileStore *profile_store,
+				  const gchar *filename)
 {
 	gboolean ret;
+	const gchar *tmp;
+
 	GcmProfileStorePrivate *priv = profile_store->priv;
 
 	/* remove from list */
-	ret = g_ptr_array_remove (priv->filename_array, (gchar*)filename);
+	tmp = gcm_profile_store_find (priv->filename_array, filename);
+	ret = g_ptr_array_remove (priv->filename_array, (gpointer)tmp);
 	if (!ret) {
 		g_warning ("failed to remove %s", filename);
 		goto out;
@@ -140,24 +144,31 @@ gcm_profile_store_file_monitor_changed_cb (GFileMonitor *monitor,
 	gchar *parent_path = NULL;
 	GFile *parent = NULL;
 
-	/* only care about created objects */
-	if (event_type != G_FILE_MONITOR_EVENT_CREATED)
-		goto out;
-
-	/* ignore temp files */
-	path = g_file_get_path (file);
-	if (g_strrstr (path, ".goutputstream") != NULL) {
-		g_debug ("ignoring gvfs temporary file");
+	/* profile was deleted */
+	if (event_type == G_FILE_MONITOR_EVENT_DELETED) {
+		path = g_file_get_path (file);
+		g_debug ("%s was removed", path);
+		gcm_profile_store_remove_profile (profile_store, path);
 		goto out;
 	}
 
-if (0)	gcm_profile_store_remove_profile (profile_store, NULL);
+	/* only care about created objects */
+	if (event_type == G_FILE_MONITOR_EVENT_CREATED) {
 
-	/* just rescan the correct directory */
-	parent = g_file_get_parent (file);
-	parent_path = g_file_get_path (parent);
-	g_debug ("%s was added, rescanning %s", path, parent_path);
-	gcm_profile_store_search_path (profile_store, parent_path);
+		/* ignore temp files */
+		path = g_file_get_path (file);
+		if (g_strrstr (path, ".goutputstream") != NULL) {
+			g_debug ("ignoring gvfs temporary file");
+			goto out;
+		}
+
+		/* just rescan the correct directory */
+		parent = g_file_get_parent (file);
+		parent_path = g_file_get_path (parent);
+		g_debug ("%s was added, rescanning %s", path, parent_path);
+		gcm_profile_store_search_path (profile_store, parent_path);
+		goto out;
+	}
 out:
 	if (parent != NULL)
 		g_object_unref (parent);
@@ -180,6 +191,7 @@ gcm_profile_store_search_path (GcmProfileStore *profile_store, const gchar *path
 	GcmProfileStorePrivate *priv = profile_store->priv;
 	GFileMonitor *monitor = NULL;
 	GFile *file = NULL;
+	const gchar *tmp;
 
 	/* add if correct type */
 	if (g_file_test (path, G_FILE_TEST_IS_REGULAR)) {
@@ -199,8 +211,8 @@ gcm_profile_store_search_path (GcmProfileStore *profile_store, const gchar *path
 	}
 
 	/* add an inotify watch if not already added? */
-	ret = gcm_profile_store_in_array (priv->directory_array, path);
-	if (!ret) {
+	tmp = gcm_profile_store_find (priv->directory_array, path);
+	if (tmp == NULL) {
 		file = g_file_new_for_path (path);
 		monitor = g_file_monitor_directory (file, G_FILE_MONITOR_NONE, NULL, &error);
 		if (monitor == NULL) {

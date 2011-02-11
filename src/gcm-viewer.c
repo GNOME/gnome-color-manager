@@ -280,16 +280,17 @@ out:
 static void
 gcm_viewer_profile_delete_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 {
-	GtkWidget *dialog;
-	GtkResponseType response;
-	GtkWindow *window;
+	CdProfile *profile;
+	gboolean ret;
+	const gchar *filename;
 	GError *error = NULL;
 	GFile *file = NULL;
-	gboolean ret;
-	GcmProfile *profile;
-	GtkTreeSelection *selection;
-	GtkTreeModel *model;
+	GtkResponseType response;
 	GtkTreeIter iter;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection;
+	GtkWidget *dialog;
+	GtkWindow *window;
 
 	/* ask the user to confirm */
 	window = GTK_WINDOW(gtk_builder_get_object (viewer->builder, "dialog_viewer"));
@@ -321,7 +322,8 @@ gcm_viewer_profile_delete_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 			    -1);
 
 	/* try to remove file */
-	file = gcm_profile_get_file (profile);
+	filename = cd_profile_get_filename (profile);
+	file = g_file_new_for_path (filename);
 	ret = g_file_delete (file, NULL, &error);
 	if (!ret) {
 		g_warning ("failed to be deleted: %s", error->message);
@@ -329,6 +331,8 @@ gcm_viewer_profile_delete_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 		goto out;
 	}
 out:
+	if (file != NULL)
+		g_object_unref (file);
 	return;
 }
 
