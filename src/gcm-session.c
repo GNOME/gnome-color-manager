@@ -507,10 +507,15 @@ gcm_session_device_assign (CdDevice *device)
 	}
 
 	/* get the default profile for the device */
-	profile = cd_device_get_default_profile (device);
+	profile = cd_device_get_profile_for_qualifier_sync (device,
+							    "*",
+							    NULL,
+							    &error);
 	if (profile == NULL) {
-		g_debug ("%s has no profile to set",
-			 cd_device_get_id (device));
+		g_debug ("%s has no default profile to set: %s",
+			 cd_device_get_id (device),
+			 error->message);
+		g_clear_error (&error);
 
 		/* clear the _ICC_PROFILE atom if not logging in */
 		ret = gcm_x11_output_remove_profile (output,
