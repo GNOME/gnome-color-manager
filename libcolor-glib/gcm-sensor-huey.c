@@ -78,9 +78,13 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
 /* fudge factor to convert the value of GCM_SENSOR_HUEY_COMMAND_GET_AMBIENT to Lux */
 #define HUEY_AMBIENT_UNITS_TO_LUX	125.0f
 
-/* this is the same approx ratio as argyll uses to find the best accuracy
- * whilst maintaining a fast read. We scale each RGB value seporately. */
-#define HUEY_PRECISION_TIME_VALUE		1e6
+/* The CY7C63001 is paired with a 6.00Mhz crystal */
+#define HUEY_CLOCK_FREQUENCY		6e6
+
+/* It takes 6 clock pulses to process a single 16bit increment (INC)
+ * instruction and check for the carry so this is the fastest a loop
+ * can be processed. */
+#define HUEY_POLL_FREQUENCY		1e6
 
 /* Picked out of thin air, just to try to match reality...
  * I have no idea why we need to do this, although it probably
@@ -751,7 +755,7 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 	g_debug ("initial values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_native.R, color_native.G, color_native.B);
 
 	/* compromise between the amount of time and the precision */
-	precision_value = (gdouble) HUEY_PRECISION_TIME_VALUE;
+	precision_value = (gdouble) HUEY_POLL_FREQUENCY;
 	multiplier.R = precision_value * color_native.R;
 	multiplier.G = precision_value * color_native.G;
 	multiplier.B = precision_value * color_native.B;
