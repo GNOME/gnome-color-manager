@@ -91,7 +91,9 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
  * gcm_sensor_huey_print_data:
  **/
 static void
-gcm_sensor_huey_print_data (const gchar *title, const guchar *data, gsize length)
+gcm_sensor_huey_print_data (const gchar *title,
+			    const guchar *data,
+			    gsize length)
 {
 	guint i;
 
@@ -220,16 +222,30 @@ out:
  * gcm_sensor_huey_read_register_byte:
  **/
 static gboolean
-gcm_sensor_huey_read_register_byte (GcmSensorHuey *sensor_huey, guint8 addr, guint8 *value, GError **error)
+gcm_sensor_huey_read_register_byte (GcmSensorHuey *sensor_huey,
+				    guint8 addr,
+				    guint8 *value,
+				    GError **error)
 {
-	guchar request[] = { GCM_SENSOR_HUEY_COMMAND_REGISTER_READ, 0xff, 0x00, 0x10, 0x3c, 0x06, 0x00, 0x00 };
+	guchar request[] = { GCM_SENSOR_HUEY_COMMAND_REGISTER_READ,
+			     0xff,
+			     0x00,
+			     0x10,
+			     0x3c,
+			     0x06,
+			     0x00,
+			     0x00 };
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
 
 	/* hit hardware */
 	request[1] = addr;
-	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);
+	ret = gcm_sensor_huey_send_data (sensor_huey,
+					 request, 8,
+					 reply, 8,
+					 &reply_read,
+					 error);
 	if (!ret)
 		goto out;
 	*value = reply[3];
@@ -241,14 +257,21 @@ out:
  * gcm_sensor_huey_read_register_string:
  **/
 static gboolean
-gcm_sensor_huey_read_register_string (GcmSensorHuey *huey, guint8 addr, gchar *value, gsize len, GError **error)
+gcm_sensor_huey_read_register_string (GcmSensorHuey *huey,
+				      guint8 addr,
+				      gchar *value,
+				      gsize len,
+				      GError **error)
 {
 	guint8 i;
 	gboolean ret = TRUE;
 
 	/* get each byte of the string */
 	for (i=0; i<len; i++) {
-		ret = gcm_sensor_huey_read_register_byte (huey, addr+i, (guint8*) &value[i], error);
+		ret = gcm_sensor_huey_read_register_byte (huey,
+							  addr+i,
+							  (guint8*) &value[i],
+							  error);
 		if (!ret)
 			goto out;
 	}
@@ -260,7 +283,10 @@ out:
  * gcm_sensor_huey_read_register_word:
  **/
 static gboolean
-gcm_sensor_huey_read_register_word (GcmSensorHuey *huey, guint8 addr, guint32 *value, GError **error)
+gcm_sensor_huey_read_register_word (GcmSensorHuey *huey,
+				    guint8 addr,
+				    guint32 *value,
+				    GError **error)
 {
 	guint8 i;
 	guint8 tmp[4];
@@ -268,7 +294,10 @@ gcm_sensor_huey_read_register_word (GcmSensorHuey *huey, guint8 addr, guint32 *v
 
 	/* get each byte of the 32 bit number */
 	for (i=0; i<4; i++) {
-		ret = gcm_sensor_huey_read_register_byte (huey, addr+i, tmp+i, error);
+		ret = gcm_sensor_huey_read_register_byte (huey,
+							  addr+i,
+							  tmp+i,
+							  error);
 		if (!ret)
 			goto out;
 	}
@@ -283,13 +312,19 @@ out:
  * gcm_sensor_huey_read_register_float:
  **/
 static gboolean
-gcm_sensor_huey_read_register_float (GcmSensorHuey *huey, guint8 addr, gfloat *value, GError **error)
+gcm_sensor_huey_read_register_float (GcmSensorHuey *huey,
+				     guint8 addr,
+				     gfloat *value,
+				     GError **error)
 {
 	gboolean ret;
 	guint32 tmp;
 
 	/* first read in 32 bit integer */
-	ret = gcm_sensor_huey_read_register_word (huey, addr, &tmp, error);
+	ret = gcm_sensor_huey_read_register_word (huey,
+						  addr,
+						  &tmp,
+						  error);
 	if (!ret)
 		goto out;
 
@@ -303,7 +338,10 @@ out:
  * gcm_sensor_huey_read_register_vector:
  **/
 static gboolean
-gcm_sensor_huey_read_register_vector (GcmSensorHuey *huey, guint8 addr, GcmVec3 *value, GError **error)
+gcm_sensor_huey_read_register_vector (GcmSensorHuey *huey,
+				      guint8 addr,
+				      GcmVec3 *value,
+				      GError **error)
 {
 	gboolean ret = TRUE;
 	guint i;
@@ -315,7 +353,10 @@ gcm_sensor_huey_read_register_vector (GcmSensorHuey *huey, guint8 addr, GcmVec3 
 
 	/* read in vec3 */
 	for (i=0; i<3; i++) {
-		ret = gcm_sensor_huey_read_register_float (huey, addr + (i*4), &tmp, error);
+		ret = gcm_sensor_huey_read_register_float (huey,
+							   addr + (i*4),
+							   &tmp,
+							   error);
 		if (!ret)
 			goto out;
 
@@ -330,7 +371,10 @@ out:
  * gcm_sensor_huey_read_register_matrix:
  **/
 static gboolean
-gcm_sensor_huey_read_register_matrix (GcmSensorHuey *huey, guint8 addr, GcmMat3x3 *value, GError **error)
+gcm_sensor_huey_read_register_matrix (GcmSensorHuey *huey,
+				      guint8 addr,
+				      GcmMat3x3 *value,
+				      GError **error)
 {
 	gboolean ret = TRUE;
 	guint i;
@@ -342,7 +386,10 @@ gcm_sensor_huey_read_register_matrix (GcmSensorHuey *huey, guint8 addr, GcmMat3x
 
 	/* read in 3d matrix */
 	for (i=0; i<9; i++) {
-		ret = gcm_sensor_huey_read_register_float (huey, addr + (i*4), &tmp, error);
+		ret = gcm_sensor_huey_read_register_float (huey,
+							   addr + (i*4),
+							   &tmp,
+							   error);
 		if (!ret)
 			goto out;
 
@@ -358,7 +405,8 @@ out:
  * gcm_sensor_huey_get_ambient_state_finish:
  **/
 static void
-gcm_sensor_huey_get_ambient_state_finish (GcmSensorAsyncState *state, const GError *error)
+gcm_sensor_huey_get_ambient_state_finish (GcmSensorAsyncState *state,
+					  const GError *error)
 {
 	gdouble *result;
 
@@ -389,13 +437,16 @@ gcm_sensor_huey_get_ambient_state_finish (GcmSensorAsyncState *state, const GErr
  * gcm_sensor_huey_cancellable_cancel_cb:
  **/
 static void
-gcm_sensor_huey_cancellable_cancel_cb (GCancellable *cancellable, GcmSensorAsyncState *state)
+gcm_sensor_huey_cancellable_cancel_cb (GCancellable *cancellable,
+				       GcmSensorAsyncState *state)
 {
 	g_warning ("cancelled huey");
 }
 
 static void
-gcm_sensor_huey_get_ambient_thread_cb (GSimpleAsyncResult *res, GObject *object, GCancellable *cancellable)
+gcm_sensor_huey_get_ambient_thread_cb (GSimpleAsyncResult *res,
+				       GObject *object,
+				       GCancellable *cancellable)
 {
 	GcmSensor *sensor = GCM_SENSOR (object);
 	gdouble *result;
@@ -404,7 +455,14 @@ gcm_sensor_huey_get_ambient_thread_cb (GSimpleAsyncResult *res, GObject *object,
 	gboolean ret = FALSE;
 	gsize reply_read;
 	GcmSensorOutputType output_type;
-	guchar request[] = { GCM_SENSOR_HUEY_COMMAND_GET_AMBIENT, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	guchar request[] = { GCM_SENSOR_HUEY_COMMAND_GET_AMBIENT,
+			     0x03,
+			     0x00,
+			     0x00,
+			     0x00,
+			     0x00,
+			     0x00,
+			     0x00 };
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
 
 	/* ensure sensor is started */
@@ -443,7 +501,11 @@ gcm_sensor_huey_get_ambient_thread_cb (GSimpleAsyncResult *res, GObject *object,
 
 	/* hit hardware */
 	request[2] = (output_type == GCM_SENSOR_OUTPUT_TYPE_LCD) ? 0x00 : 0x02;
-	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, &error);
+	ret = gcm_sensor_huey_send_data (sensor_huey,
+					 request, 8,
+					 reply, 8,
+					 &reply_read,
+					 &error);
 	if (!ret) {
 		g_simple_async_result_set_from_error (res, error);
 		g_error_free (error);
@@ -463,7 +525,9 @@ out:
  * gcm_sensor_huey_get_ambient_async:
  **/
 static void
-gcm_sensor_huey_get_ambient_async (GcmSensor *sensor, GCancellable *cancellable, GAsyncResult *res)
+gcm_sensor_huey_get_ambient_async (GcmSensor *sensor,
+				   GCancellable *cancellable,
+				   GAsyncResult *res)
 {
 	GcmSensorAsyncState *state;
 
@@ -487,7 +551,10 @@ gcm_sensor_huey_get_ambient_async (GcmSensor *sensor, GCancellable *cancellable,
  * gcm_sensor_huey_get_ambient_finish:
  **/
 static gboolean
-gcm_sensor_huey_get_ambient_finish (GcmSensor *sensor, GAsyncResult *res, gdouble *value, GError **error)
+gcm_sensor_huey_get_ambient_finish (GcmSensor *sensor,
+				    GAsyncResult *res,
+				    gdouble *value,
+				    GError **error)
 {
 	GSimpleAsyncResult *simple;
 	gboolean ret = TRUE;
@@ -519,8 +586,18 @@ gcm_sensor_huey_set_leds (GcmSensor *sensor, guint8 value, GError **error)
 	guchar reply[8];
 	gsize reply_read;
 	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
-	guchar payload[] = { GCM_SENSOR_HUEY_COMMAND_SET_LEDS, 0x00, ~value, 0x00, 0x00, 0x00, 0x00, 0x00 };
-	return gcm_sensor_huey_send_data (sensor_huey, payload, 8, reply, 8, &reply_read, error);
+	guchar payload[] = { GCM_SENSOR_HUEY_COMMAND_SET_LEDS,
+			     0x00,
+			     ~value,
+			     0x00,
+			     0x00,
+			     0x00,
+			     0x00,
+			     0x00 };
+	return gcm_sensor_huey_send_data (sensor_huey,
+					  payload, 8, reply, 8,
+					  &reply_read,
+					  error);
 }
 
 typedef struct {
@@ -546,7 +623,11 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 	gcm_buffer_write_uint16_be (request + 5, threshold->B);
 
 	/* measure, and get red */
-	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);
+	ret = gcm_sensor_huey_send_data (sensor_huey,
+					 request, 8,
+					 reply, 8,
+					 &reply_read,
+					 error);
 	if (!ret)
 		goto out;
 
@@ -555,7 +636,11 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 
 	/* get green */
 	request[0] = GCM_SENSOR_HUEY_COMMAND_READ_GREEN;
-	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);
+	ret = gcm_sensor_huey_send_data (sensor_huey,
+					 request, 8,
+					 reply, 8,
+					 &reply_read,
+					 error);
 	if (!ret)
 		goto out;
 
@@ -564,7 +649,11 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 
 	/* get blue */
 	request[0] = GCM_SENSOR_HUEY_COMMAND_READ_BLUE;
-	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);
+	ret = gcm_sensor_huey_send_data (sensor_huey,
+					 request, 8,
+					 reply, 8,
+					 &reply_read,
+					 error);
 	if (!ret)
 		goto out;
 
@@ -640,7 +729,7 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 	if (output_type == GCM_SENSOR_OUTPUT_TYPE_PROJECTOR) {
 		g_set_error_literal (&error, GCM_SENSOR_ERROR,
 				     GCM_SENSOR_ERROR_NO_SUPPORT,
-				     "HUEY cannot measure ambient light in projector mode");
+				     "HUEY cannot measure in projector mode");
 		g_simple_async_result_set_from_error (res, error);
 		g_error_free (error);
 		goto out;
@@ -716,7 +805,9 @@ out:
  * gcm_sensor_huey_sample_async:
  **/
 static void
-gcm_sensor_huey_sample_async (GcmSensor *sensor, GCancellable *cancellable, GAsyncResult *res)
+gcm_sensor_huey_sample_async (GcmSensor *sensor,
+			      GCancellable *cancellable,
+			      GAsyncResult *res)
 {
 	GcmSensorAsyncState *state;
 
@@ -740,7 +831,10 @@ gcm_sensor_huey_sample_async (GcmSensor *sensor, GCancellable *cancellable, GAsy
  * gcm_sensor_huey_sample_finish:
  **/
 static gboolean
-gcm_sensor_huey_sample_finish (GcmSensor *sensor, GAsyncResult *res, GcmColorXYZ *value, GError **error)
+gcm_sensor_huey_sample_finish (GcmSensor *sensor,
+			       GAsyncResult *res,
+			       GcmColorXYZ *value,
+			       GError **error)
 {
 	GSimpleAsyncResult *simple;
 	gboolean ret = TRUE;
@@ -784,7 +878,11 @@ gcm_sensor_huey_send_unlock (GcmSensorHuey *sensor_huey, GError **error)
 	request[7] = 'd'; /* <-         "" */
 
 	/* no idea why the hardware gets 'locked' */
-	ret = gcm_sensor_huey_send_data (sensor_huey, request, 8, reply, 8, &reply_read, error);
+	ret = gcm_sensor_huey_send_data (sensor_huey,
+					 request, 8,
+					 reply, 8,
+					 &reply_read,
+					 error);
 	if (!ret)
 		goto out;
 out:
@@ -823,7 +921,8 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 	/* get serial number */
 	ret = gcm_sensor_huey_read_register_word (sensor_huey,
 						  GCM_SENSOR_HUEY_EEPROM_ADDR_SERIAL,
-						  &serial_number, error);
+						  &serial_number,
+						  error);
 	if (!ret)
 		goto out;
 	serial_number_tmp = g_strdup_printf ("%i", serial_number);
@@ -833,7 +932,9 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 	/* get unlock string */
 	ret = gcm_sensor_huey_read_register_string (sensor_huey,
 						    GCM_SENSOR_HUEY_EEPROM_ADDR_UNLOCK,
-						    priv->unlock_string, 5, error);
+						    priv->unlock_string,
+						    5,
+						    error);
 	if (!ret)
 		goto out;
 	g_debug ("Unlock string: %s", priv->unlock_string);
@@ -842,19 +943,23 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 	gcm_mat33_clear (&priv->calibration_lcd);
 	ret = gcm_sensor_huey_read_register_matrix (sensor_huey,
 						    GCM_SENSOR_HUEY_EEPROM_ADDR_CALIBRATION_DATA_LCD,
-						    &priv->calibration_lcd, error);
+						    &priv->calibration_lcd,
+						    error);
 	if (!ret)
 		goto out;
-	g_debug ("device matrix1: %s", gcm_mat33_to_string (&priv->calibration_lcd));
+	g_debug ("device calibration LCD: %s",
+		 gcm_mat33_to_string (&priv->calibration_lcd));
 
 	/* get another matrix, although this one is different... */
 	gcm_mat33_clear (&priv->calibration_crt);
 	ret = gcm_sensor_huey_read_register_matrix (sensor_huey,
 						    GCM_SENSOR_HUEY_EEPROM_ADDR_CALIBRATION_DATA_CRT,
-						    &priv->calibration_crt, error);
+						    &priv->calibration_crt,
+						    error);
 	if (!ret)
 		goto out;
-	g_debug ("device matrix2: %s", gcm_mat33_to_string (&priv->calibration_crt));
+	g_debug ("device calibration CRT: %s",
+		 gcm_mat33_to_string (&priv->calibration_crt));
 
 	/* this number is different on all three hueys */
 	ret = gcm_sensor_huey_read_register_float (sensor_huey,
@@ -867,7 +972,8 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 	/* this vector changes between sensor 1 and 3 */
 	ret = gcm_sensor_huey_read_register_vector (sensor_huey,
 						    GCM_SENSOR_HUEY_EEPROM_ADDR_DARK_OFFSET,
-						    &priv->dark_offset, error);
+						    &priv->dark_offset,
+						    error);
 	if (!ret)
 		goto out;
 
@@ -909,8 +1015,10 @@ gcm_sensor_huey_dump (GcmSensor *sensor, GString *data, GError **error)
 
 	/* dump the unlock string */
 	g_string_append_printf (data, "huey-dump-version:%i\n", 2);
-	g_string_append_printf (data, "unlock-string:%s\n", priv->unlock_string);
-	g_string_append_printf (data, "calibration-value:%f\n", priv->calibration_value);
+	g_string_append_printf (data, "unlock-string:%s\n",
+				priv->unlock_string);
+	g_string_append_printf (data, "calibration-value:%f\n",
+				priv->calibration_value);
 	g_string_append_printf (data, "dark-offset:%f,%f,%f\n",
 				priv->dark_offset.v0,
 				priv->dark_offset.v1,
@@ -918,11 +1026,18 @@ gcm_sensor_huey_dump (GcmSensor *sensor, GString *data, GError **error)
 
 	/* read all the register space */
 	for (i=0; i<0xff; i++) {
-		ret = gcm_sensor_huey_read_register_byte (sensor_huey, i, &value, error);
+		ret = gcm_sensor_huey_read_register_byte (sensor_huey,
+							  i,
+							  &value,
+							  error);
 		if (!ret)
 			goto out;
+
 		/* write details */
-		g_string_append_printf (data, "register[0x%02x]:0x%02x\n", i, value);
+		g_string_append_printf (data,
+					"register[0x%02x]:0x%02x\n",
+					i,
+					value);
 	}
 out:
 	return ret;
