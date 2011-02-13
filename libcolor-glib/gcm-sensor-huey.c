@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2010-2011 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU Lesser General Public License Version 2.1
  *
@@ -89,7 +89,7 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
 /* Picked out of thin air, just to try to match reality...
  * I have no idea why we need to do this, although it probably
  * indicates we doing something wrong. */
-#define HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR	2000
+#define HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR	3.5
 
 /**
  * gcm_sensor_huey_print_data:
@@ -610,13 +610,23 @@ typedef struct {
 	guint16	B;
 } GcmSensorHueyMultiplier;
 
+typedef struct {
+	guint32	R;
+	guint32	G;
+	guint32	B;
+} GcmSensorHueyDeviceRaw;
+
 /**
  * gcm_sensor_huey_sample_for_threshold:
  **/
 static gboolean
-gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyMultiplier *threshold, GcmColorRGB *values, GError **error)
+gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey,
+				      GcmSensorHueyMultiplier *threshold,
+				      GcmSensorHueyDeviceRaw *raw,
+				      GError **error)
 {
-	guchar request[] = { GCM_SENSOR_HUEY_COMMAND_SENSOR_MEASURE_RGB, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
+	guchar request[] = { GCM_SENSOR_HUEY_COMMAND_SENSOR_MEASURE_RGB,
+			     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 	guchar reply[8];
 	gboolean ret;
 	gsize reply_read;
@@ -636,7 +646,7 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 		goto out;
 
 	/* get value */
-	values->R = (gdouble) threshold->R / (gdouble)gcm_buffer_read_uint32_be (reply+2);
+	raw->R = gcm_buffer_read_uint32_be (reply+2);
 
 	/* get green */
 	request[0] = GCM_SENSOR_HUEY_COMMAND_READ_GREEN;
@@ -649,7 +659,7 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 		goto out;
 
 	/* get value */
-	values->G = (gdouble) threshold->G / (gdouble)gcm_buffer_read_uint32_be (reply+2);
+	raw->G = gcm_buffer_read_uint32_be (reply+2);
 
 	/* get blue */
 	request[0] = GCM_SENSOR_HUEY_COMMAND_READ_BLUE;
@@ -662,7 +672,7 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 		goto out;
 
 	/* get value */
-	values->B = (gdouble) threshold->B / (gdouble)gcm_buffer_read_uint32_be (reply+2);
+	raw->B = gcm_buffer_read_uint32_be (reply+2);
 out:
 	return ret;
 }
@@ -670,53 +680,49 @@ out:
 /**
  * gcm_sensor_huey_convert_device_RGB_to_XYZ:
  *
- * / X \   (( / R \             )   / d \    / c a l \ )
- * | Y | = (( | G | x pre-scale ) - | r |  * | m a t | ) x post_scale
- * \ Z /   (( \ B /             )   \ k /    \ l c d / )
+ * / X \   ( / R \    / c a l \ )
+ * | Y | = ( | G |  * | m a t | ) x post_scale
+ * \ Z /   ( \ B /    \ l c d / )
  *
- * The device RGB values have to be scaled to something in the same
- * scale as the dark calibration. The results then have to be scaled
- * after convolving. I assume the first is a standard value, and the
- * second scale must be available in the eeprom somewhere.
+ * FIXME: I assume the post_scale is in the eeprom somewhere.
  **/
 static void
-gcm_sensor_huey_convert_device_RGB_to_XYZ (GcmColorRGB *src, GcmColorXYZ *dest,
-					   GcmMat3x3 *calibration, GcmVec3 *dark_offset,
-					   gdouble pre_scale, gdouble post_scale)
+gcm_sensor_huey_convert_device_RGB_to_XYZ (GcmColorRGB *src,
+					   GcmColorXYZ *dest,
+					   GcmMat3x3 *calibration,
+					   gdouble post_scale)
 {
-	GcmVec3 *color_native_vec3;
 	GcmVec3 *color_result_vec3;
-	GcmVec3 temp;
-
-	/* pre-multiply */
-	color_native_vec3 = gcm_color_get_RGB_Vec3 (src);
-	gcm_vec3_scalar_multiply (color_native_vec3, pre_scale, &temp);
-
-	/* remove dark calibration */
-	gcm_vec3_subtract (&temp, dark_offset, &temp);
+	GcmVec3 *temp;
 
 	/* convolve */
+	temp = gcm_color_get_RGB_Vec3 (src);
 	color_result_vec3 = gcm_color_get_XYZ_Vec3 (dest);
-	gcm_mat33_vector_multiply (calibration, &temp, color_result_vec3);
+	gcm_mat33_vector_multiply (calibration, temp, color_result_vec3);
 
 	/* post-multiply */
-	gcm_vec3_scalar_multiply (color_result_vec3, post_scale, color_result_vec3);
+	gcm_vec3_scalar_multiply (color_result_vec3,
+				  post_scale,
+				  color_result_vec3);
 }
 
 static void
-gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCancellable *cancellable)
+gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res,
+				  GObject *object,
+				  GCancellable *cancellable)
 {
-	GcmSensor *sensor = GCM_SENSOR (object);
-	GError *error = NULL;
 	gboolean ret = FALSE;
-	gdouble precision_value;
-	GcmColorRGB color_native;
+	GcmColorRGB values;
 	GcmColorXYZ color_result;
 	GcmColorXYZ *tmp;
-	GcmSensorHueyMultiplier multiplier;
-	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
 	GcmMat3x3 *device_calibration;
+	GcmSensorHueyDeviceRaw color_native;
+	GcmSensorHueyMultiplier multiplier;
 	GcmSensorOutputType output_type;
+	GcmVec3 *temp;
+	GError *error = NULL;
+	GcmSensor *sensor = GCM_SENSOR (object);
+	GcmSensorHuey *sensor_huey = GCM_SENSOR_HUEY (sensor);
 
 	/* ensure sensor is started */
 	if (!sensor_huey->priv->done_startup) {
@@ -746,19 +752,22 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 	multiplier.R = 1;
 	multiplier.G = 1;
 	multiplier.B = 1;
-	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey, &multiplier, &color_native, &error);
+	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey,
+						    &multiplier,
+						    &color_native,
+						    &error);
 	if (!ret) {
 		g_simple_async_result_set_from_error (res, error);
 		g_error_free (error);
 		goto out;
 	}
-	g_debug ("initial values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_native.R, color_native.G, color_native.B);
+	g_debug ("initial values: red=%i, green=%i, blue=%i",
+		 color_native.R, color_native.G, color_native.B);
 
-	/* compromise between the amount of time and the precision */
-	precision_value = (gdouble) HUEY_POLL_FREQUENCY;
-	multiplier.R = precision_value * color_native.R;
-	multiplier.G = precision_value * color_native.G;
-	multiplier.B = precision_value * color_native.B;
+	/* try to fill the 16 bit register for accuracy */
+	multiplier.R = HUEY_POLL_FREQUENCY / color_native.R;
+	multiplier.G = HUEY_POLL_FREQUENCY / color_native.G;
+	multiplier.B = HUEY_POLL_FREQUENCY / color_native.B;
 
 	/* don't allow a value of zero */
 	if (multiplier.R == 0)
@@ -767,15 +776,45 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 		multiplier.G = 1;
 	if (multiplier.B == 0)
 		multiplier.B = 1;
-	g_debug ("using multiplier factor: red=%i, green=%i, blue=%i", multiplier.R, multiplier.G, multiplier.B);
-	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey, &multiplier, &color_native, &error);
+	g_debug ("using multiplier factor: red=%i, green=%i, blue=%i",
+		 multiplier.R, multiplier.G, multiplier.B);
+	ret = gcm_sensor_huey_sample_for_threshold (sensor_huey,
+						    &multiplier,
+						    &color_native,
+						    &error);
 	if (!ret) {
 		g_simple_async_result_set_from_error (res, error);
 		g_error_free (error);
 		goto out;
 	}
 
-	g_debug ("scaled values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_native.R, color_native.G, color_native.B);
+	g_debug ("raw values: red=%i, green=%i, blue=%i",
+		 color_native.R, color_native.G, color_native.B);
+
+	/* get DeviceRGB values */
+	values.R = (gdouble) multiplier.R * 0.5f * HUEY_POLL_FREQUENCY / ((gdouble) color_native.R);
+	values.G = (gdouble) multiplier.G * 0.5f * HUEY_POLL_FREQUENCY / ((gdouble) color_native.G);
+	values.B = (gdouble) multiplier.B * 0.5f * HUEY_POLL_FREQUENCY / ((gdouble) color_native.B);
+
+	g_debug ("scaled values: red=%0.6lf, green=%0.6lf, blue=%0.6lf",
+		 values.R, values.G, values.B);
+
+	/* remove dark offset */
+	temp = gcm_color_get_RGB_Vec3 (&values);
+	gcm_vec3_subtract (temp,
+			   &sensor_huey->priv->dark_offset,
+			   temp);
+
+	g_debug ("dark offset values: red=%0.6lf, green=%0.6lf, blue=%0.6lf",
+		 values.R, values.G, values.B);
+
+	/* negative values don't make sense (device needs recalibration) */
+	if (values.R < 0.0f)
+		values.R = 0.0f;
+	if (values.G < 0.0f)
+		values.G = 0.0f;
+	if (values.B < 0.0f)
+		values.B = 0.0f;
 
 	/* we use different calibration matrices for each output type */
 	if (output_type == GCM_SENSOR_OUTPUT_TYPE_LCD) {
@@ -787,14 +826,13 @@ gcm_sensor_huey_sample_thread_cb (GSimpleAsyncResult *res, GObject *object, GCan
 	}
 
 	/* convert from device RGB to XYZ */
-	gcm_sensor_huey_convert_device_RGB_to_XYZ (&color_native,
+	gcm_sensor_huey_convert_device_RGB_to_XYZ (&values,
 						   &color_result,
 						   device_calibration,
-						   &sensor_huey->priv->dark_offset,
-						   2000.0f,
 						   HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR);
 
-	g_debug ("finished values: red=%0.6lf, green=%0.6lf, blue=%0.6lf", color_result.X, color_result.Y, color_result.Z);
+	g_debug ("finished values: red=%0.6lf, green=%0.6lf, blue=%0.6lf",
+		 color_result.X, color_result.Y, color_result.Z);
 
 	/* save result */
 	tmp = g_new0 (GcmColorXYZ, 1);
