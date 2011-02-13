@@ -80,12 +80,12 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
 
 /* this is the same approx ratio as argyll uses to find the best accuracy
  * whilst maintaining a fast read. We scale each RGB value seporately. */
-#define HUEY_PRECISION_TIME_VALUE		3500
+#define HUEY_PRECISION_TIME_VALUE		1e6
 
 /* Picked out of thin air, just to try to match reality...
  * I have no idea why we need to do this, although it probably
  * indicates we doing something wrong. */
-#define HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR	3.347250f
+#define HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR	2000
 
 /**
  * gcm_sensor_huey_print_data:
@@ -632,7 +632,7 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 		goto out;
 
 	/* get value */
-	values->R = (gdouble) threshold->R / (gdouble)gcm_buffer_read_uint16_be (reply+3);
+	values->R = (gdouble) threshold->R / (gdouble)gcm_buffer_read_uint32_be (reply+2);
 
 	/* get green */
 	request[0] = GCM_SENSOR_HUEY_COMMAND_READ_GREEN;
@@ -645,7 +645,7 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 		goto out;
 
 	/* get value */
-	values->G = (gdouble) threshold->G / (gdouble)gcm_buffer_read_uint16_be (reply+3);
+	values->G = (gdouble) threshold->G / (gdouble)gcm_buffer_read_uint32_be (reply+2);
 
 	/* get blue */
 	request[0] = GCM_SENSOR_HUEY_COMMAND_READ_BLUE;
@@ -658,7 +658,7 @@ gcm_sensor_huey_sample_for_threshold (GcmSensorHuey *sensor_huey, GcmSensorHueyM
 		goto out;
 
 	/* get value */
-	values->B = (gdouble) threshold->B / (gdouble)gcm_buffer_read_uint16_be (reply+3);
+	values->B = (gdouble) threshold->B / (gdouble)gcm_buffer_read_uint32_be (reply+2);
 out:
 	return ret;
 }
