@@ -287,7 +287,7 @@ G_BEGIN_DECLS
  * 6x                             [calib_vector......................|
  * 7x ...........]                            [unlock-string.....]   |
  * 8x                                                                |
- * 9x                             [calib_value...]                   |
+ * 9x                 [calib_value...]                               |
  */
 #define GCM_SENSOR_HUEY_EEPROM_ADDR_SERIAL			0x00 /* 4 bytes */
 #define GCM_SENSOR_HUEY_EEPROM_ADDR_CALIBRATION_DATA_LCD	0x04 /* 36 bytes */
