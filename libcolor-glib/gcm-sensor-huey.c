@@ -89,7 +89,7 @@ G_DEFINE_TYPE (GcmSensorHuey, gcm_sensor_huey, GCM_TYPE_SENSOR)
 /* Picked out of thin air, just to try to match reality...
  * I have no idea why we need to do this, although it probably
  * indicates we doing something wrong. */
-#define HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR	3.5
+#define HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR	3.43
 
 /**
  * gcm_sensor_huey_print_data:
