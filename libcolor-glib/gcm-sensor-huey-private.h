@@ -296,7 +296,7 @@ G_BEGIN_DECLS
 #define GCM_SENSOR_HUEY_EEPROM_ADDR_CALIBRATION_TIME_CRT	0x5a /* 4 bytes */
 #define GCM_SENSOR_HUEY_EEPROM_ADDR_DARK_OFFSET			0x67 /* 12 bytes */
 #define GCM_SENSOR_HUEY_EEPROM_ADDR_UNLOCK			0x7a /* 5 bytes */
-#define GCM_SENSOR_HUEY_EEPROM_ADDR_CALIB_VALUE			0x94 /* 4 bytes */
+#define GCM_SENSOR_HUEY_EEPROM_ADDR_AMBIENT_CALIB_VALUE		0x94 /* 4 bytes */
 
 const gchar	*gcm_sensor_huey_return_code_to_string		(guchar	 value);
 const gchar	*gcm_sensor_huey_command_code_to_string		(guchar	 value);

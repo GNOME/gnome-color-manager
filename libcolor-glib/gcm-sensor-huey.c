@@ -858,8 +858,9 @@ gcm_sensor_huey_startup (GcmSensor *sensor, GError **error)
 
 	/* this number is different on all three hueys */
 	ret = gcm_sensor_huey_read_register_float (sensor_huey,
-						   GCM_SENSOR_HUEY_EEPROM_ADDR_CALIB_VALUE,
-						   &priv->calibration_value, error);
+						   GCM_SENSOR_HUEY_EEPROM_ADDR_AMBIENT_CALIB_VALUE,
+						   &priv->calibration_value,
+						   error);
 	if (!ret)
 		goto out;
 
