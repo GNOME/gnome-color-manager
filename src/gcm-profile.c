@@ -1022,7 +1022,9 @@ gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
 	/* this is all we support writing */
 	if (priv->colorspace == CD_COLORSPACE_RGB) {
 		cmsSetColorSpace (priv->lcms_profile, cmsSigRgbData);
-		cmsSetPCS (priv->lcms_profile, cmsSigLabData);
+		cmsSetPCS (priv->lcms_profile, cmsSigXYZData);
+		cmsSetHeaderRenderingIntent (priv->lcms_profile,
+					     INTENT_RELATIVE_COLORIMETRIC);
 	}
 	if (priv->kind == CD_PROFILE_KIND_DISPLAY_DEVICE)
 		cmsSetDeviceClass (priv->lcms_profile, cmsSigDisplayClass);
