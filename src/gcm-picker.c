@@ -90,24 +90,29 @@ gcm_picker_set_pixbuf_color (GdkPixbuf *pixbuf, gchar red, gchar green, gchar bl
 static void
 gcm_picker_refresh_results (void)
 {
-	GtkImage *image;
-	GtkLabel *label;
-	GdkPixbuf *pixbuf = NULL;
-	GcmColorRGBint color_rgb;
-	GcmColorLab color_lab;
-	GcmColorXYZ color_xyz;
-	GcmColorXYZ color_error;
-	gchar *text_xyz = NULL;
+	cmsCIExyY xyY;
+	cmsHPROFILE profile_lab;
+	cmsHPROFILE profile_rgb;
+	cmsHPROFILE profile_xyz;
+	cmsHTRANSFORM transform_error;
+	cmsHTRANSFORM transform_lab;
+	cmsHTRANSFORM transform_rgb;
+	gboolean ret;
+	gchar *text_ambient = NULL;
+	gchar *text_error = NULL;
 	gchar *text_lab = NULL;
 	gchar *text_rgb = NULL;
-	gchar *text_error = NULL;
-	gchar *text_ambient = NULL;
-	cmsHPROFILE profile_xyz;
-	cmsHPROFILE profile_rgb;
-	cmsHPROFILE profile_lab;
-	cmsHTRANSFORM transform_rgb;
-	cmsHTRANSFORM transform_lab;
-	cmsHTRANSFORM transform_error;
+	gchar *text_temperature = NULL;
+	gchar *text_whitepoint = NULL;
+	gchar *text_xyz = NULL;
+	GcmColorLab color_lab;
+	GcmColorRGBint color_rgb;
+	GcmColorXYZ color_error;
+	GcmColorXYZ color_xyz;
+	GdkPixbuf *pixbuf = NULL;
+	gdouble temperature = 0.0f;
+	GtkImage *image;
+	GtkLabel *label;
 
 	/* copy as we're modifying the value */
 	gcm_color_copy_XYZ (&last_sample, &color_xyz);
@@ -126,9 +131,15 @@ gcm_picker_refresh_results (void)
 	profile_lab = cmsCreateLab4Profile (cmsD50_xyY ());
 
 	/* create transforms */
-	transform_rgb = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL, profile_rgb, TYPE_RGB_8, INTENT_PERCEPTUAL, 0);
-	transform_lab = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL, profile_lab, TYPE_Lab_DBL, INTENT_PERCEPTUAL, 0);
-	transform_error = cmsCreateTransform (profile_rgb, TYPE_RGB_8, profile_xyz, TYPE_XYZ_DBL, INTENT_PERCEPTUAL, 0);
+	transform_rgb = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL,
+					    profile_rgb, TYPE_RGB_8,
+					    INTENT_PERCEPTUAL, 0);
+	transform_lab = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL,
+					    profile_lab, TYPE_Lab_DBL,
+					    INTENT_PERCEPTUAL, 0);
+	transform_error = cmsCreateTransform (profile_rgb, TYPE_RGB_8,
+					      profile_xyz, TYPE_XYZ_DBL,
+					      INTENT_PERCEPTUAL, 0);
 
 	cmsDoTransform (transform_rgb, &color_xyz, &color_rgb, 1);
 	cmsDoTransform (transform_lab, &color_xyz, &color_lab, 1);
@@ -144,13 +155,36 @@ gcm_picker_refresh_results (void)
 
 	/* set XYZ */
 	label = GTK_LABEL (gtk_builder_get_object (builder, "label_xyz"));
-	text_xyz = g_strdup_printf ("%.3f, %.3f, %.3f", last_sample.X, last_sample.Y, last_sample.Z);
+	text_xyz = g_strdup_printf ("%.3f, %.3f, %.3f",
+				    last_sample.X,
+				    last_sample.Y,
+				    last_sample.Z);
 	gtk_label_set_label (label, text_xyz);
 
 	/* set LAB */
 	label = GTK_LABEL (gtk_builder_get_object (builder, "label_lab"));
-	text_lab = g_strdup_printf ("%.3f, %.3f, %.3f", color_lab.L, color_lab.a, color_lab.b);
+	text_lab = g_strdup_printf ("%.3f, %.3f, %.3f",
+				    color_lab.L,
+				    color_lab.a,
+				    color_lab.b);
 	gtk_label_set_label (label, text_lab);
+
+	/* set whitepoint */
+	cmsXYZ2xyY (&xyY, (cmsCIEXYZ *)&last_sample);
+	label = GTK_LABEL (gtk_builder_get_object (builder, "label_whitepoint"));
+	text_whitepoint = g_strdup_printf ("%.3f,%.3f [%.3f]",
+					   xyY.x, xyY.y, xyY.Y);
+	gtk_label_set_label (label, text_whitepoint);
+
+	/* set temperature */
+	ret = cmsTempFromWhitePoint (&temperature, &xyY);
+	if (ret) {
+		/* round to nearest 10K */
+		temperature = (((guint) temperature) / 10) * 10;
+	}
+	label = GTK_LABEL (gtk_builder_get_object (builder, "label_temperature"));
+	text_temperature = g_strdup_printf ("%.0fK", temperature);
+	gtk_label_set_label (label, text_temperature);
 
 	/* set RGB */
 	label = GTK_LABEL (gtk_builder_get_object (builder, "label_rgb"));
@@ -182,11 +216,13 @@ gcm_picker_refresh_results (void)
 	image = GTK_IMAGE (gtk_builder_get_object (builder, "image_preview"));
 	gtk_image_set_from_pixbuf (image, pixbuf);
 
-	g_free (text_xyz);
+	g_free (text_ambient);
+	g_free (text_error);
 	g_free (text_lab);
 	g_free (text_rgb);
-	g_free (text_error);
-	g_free (text_ambient);
+	g_free (text_temperature);
+	g_free (text_whitepoint);
+	g_free (text_xyz);
 	if (pixbuf != NULL)
 		g_object_unref (pixbuf);
 }
