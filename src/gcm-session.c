@@ -314,7 +314,7 @@ gcm_apply_create_icc_profile_for_edid (GcmEdid *edid,
 
 	/* create new profile */
 	profile = gcm_profile_new ();
-	gcm_profile_set_colorspace (profile, 0);
+	gcm_profile_set_colorspace (profile, CD_COLORSPACE_RGB);
 	gcm_profile_set_copyright (profile, "No copyright");
 	gcm_profile_set_kind (profile, CD_PROFILE_KIND_DISPLAY_DEVICE);
 
