@@ -1,3 +1,22 @@
+Version 2.91.90
+~~~~~~~~~~~~~~~
+Released: 2011-02-22
+
+* Translations
+ - Updated French Translation (Bruno Brouard)
+ - Updated Greek translation (Michael Kotsarinis)
+ - Updated Norwegian bokmål translation (Kjartan Maraas)
+ - Updated Slovenian translation (Matej Urbančič)
+ - Updated Spanish translation (Jorge González)
+
+* Bugfix:
+ - Do not ask the user whether to strip the alpha channel during calibration (Richard Hughes)
+ - Fix a critial warning when installing the shared-color-targets data (Richard Hughes)
+ - huey: remove the dark current values before scaling for the calibration matrix (Richard Hughes)
+ - huey: the CY7C63001 is paired with a 6.00Mhz crystal and it takes 6 clock cycles to process a 16bit inc with carry check (Richard Hughes)
+ - huey: when reading SENSOR_MEASURE_RGB, READ_GREEN and READ_BLUE, the data value is 32 bits in size (Richard Hughes)
+ - Use gcm-calculate-fudge to calculate a more accurate value of HUEY_XYZ_POST_MULTIPLY_SCALE_FACTOR (Richard Hughes)
+
 Version 2.91.5
 ~~~~~~~~~~~~~~
 Released: 2011-01-11
