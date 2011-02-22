@@ -1317,7 +1317,7 @@ gcm_prefs_sensor_client_changed_cb (GcmSensorClient *_sensor_client, GcmCalibrat
 	sensor = gcm_sensor_client_get_sensor (_sensor_client);
 	if (sensor != NULL)
 		calibrate->priv->sensor_kind = gcm_sensor_get_kind (sensor);
-	g_object_notify (G_OBJECT (calibrate), "sensor_client-kind");
+	g_object_notify (G_OBJECT (calibrate), "sensor-kind");
 }
 
 /**
