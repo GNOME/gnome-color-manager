@@ -52,10 +52,21 @@ static GDBusConnection *connection = NULL;
 /**
  * cd_device_get_title:
  **/
-static const gchar *
+static gchar *
 cd_device_get_title (CdDevice *device)
 {
-	return "FIXME!";
+	const gchar *vendor;
+	const gchar *model;
+
+	model = cd_device_get_model (device);
+	vendor = cd_device_get_vendor (device);
+	if (model != NULL && vendor != NULL)
+		return g_strdup_printf ("%s - %s", vendor, model);
+	if (vendor != NULL)
+		return g_strdup (vendor);
+	if (model != NULL)
+		return g_strdup (model);
+	return g_strdup (cd_device_get_id (device));
 }
 
 /**
@@ -131,18 +142,20 @@ gcm_session_notify_recalibrate (const gchar *title,
 static void
 gcm_session_notify_device (CdDevice *device)
 {
-	gchar *message;
-	const gchar *title;
 	CdDeviceKind kind;
+	const gchar *title;
+	gchar *device_title = NULL;
+	gchar *message;
+	gint threshold;
 	glong since;
 	GTimeVal timeval;
-	gint threshold;
 
 	/* get current time */
 	g_get_current_time (&timeval);
 
 	/* TRANSLATORS: this is when the device has not been recalibrated in a while */
 	title = _("Recalibration required");
+	device_title = cd_device_get_title (device);
 
 	/* check we care */
 	kind = cd_device_get_kind (device);
@@ -154,7 +167,7 @@ gcm_session_notify_device (CdDevice *device)
 
 		/* TRANSLATORS: this is when the display has not been recalibrated in a while */
 		message = g_strdup_printf (_("The display '%s' should be recalibrated soon."),
-					   cd_device_get_title (device));
+					   device_title);
 	} else {
 
 		/* get from GSettings */
@@ -163,13 +176,14 @@ gcm_session_notify_device (CdDevice *device)
 
 		/* TRANSLATORS: this is when the printer has not been recalibrated in a while */
 		message = g_strdup_printf (_("The printer '%s' should be recalibrated soon."),
-					   cd_device_get_title (device));
+					   device_title);
 	}
 
 	/* check if we need to notify */
 	since = timeval.tv_sec - cd_device_get_modified (device);
 	if (threshold > since)
 		gcm_session_notify_recalibrate (title, message, kind);
+	g_free (device_title);
 	g_free (message);
 }
 
