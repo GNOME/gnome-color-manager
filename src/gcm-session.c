@@ -454,6 +454,7 @@ gcm_session_device_assign (CdDevice *device)
 	GcmEdid *edid = NULL;
 	GcmX11Output *output = NULL;
 	GError *error = NULL;
+	const gchar *qualifier_default[] = { "*", NULL};
 
 	/* check we care */
 	kind = cd_device_get_kind (device);
@@ -507,10 +508,10 @@ gcm_session_device_assign (CdDevice *device)
 	}
 
 	/* get the default profile for the device */
-	profile = cd_device_get_profile_for_qualifier_sync (device,
-							    "*",
-							    NULL,
-							    &error);
+	profile = cd_device_get_profile_for_qualifiers_sync (device,
+							     qualifier_default,
+							     NULL,
+							     &error);
 	if (profile == NULL) {
 		g_debug ("%s has no default profile to set: %s",
 			 cd_device_get_id (device),
