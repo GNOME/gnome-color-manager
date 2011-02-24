@@ -1107,6 +1107,7 @@ gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 {
 	CdDevice *device = NULL;
 	const gchar *model;
+	const gchar *serial;
 	const gchar *vendor;
 	gboolean ret;
 	GcmEdid *edid;
@@ -1122,7 +1123,6 @@ gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 		goto out;
 	}
 
-
 	/* is this an internal device? */
 	ret = gcm_utils_output_is_lcd_internal (gcm_x11_output_get_name (output));
 	if (ret) {
@@ -1134,6 +1134,11 @@ gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 			model = gcm_x11_output_get_name (output);
 		vendor = gcm_edid_get_vendor_name (edid);
 	}
+
+	/* get a serial number if one exists */
+	serial = gcm_edid_get_serial_number (edid);
+	if (serial == NULL)
+		serial = "unknown";
 
 	g_debug ("output %s added",
 		 gcm_x11_output_get_name (output));
@@ -1154,6 +1159,9 @@ gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 	g_hash_table_insert (device_props,
 			     g_strdup ("Model"),
 			     g_strdup (model));
+	g_hash_table_insert (device_props,
+			     g_strdup ("Serial"),
+			     g_strdup (serial));
 	device = cd_client_create_device_sync (client,
 					       gcm_x11_output_get_name (output),
 					       CD_OBJECT_SCOPE_TEMPORARY,
