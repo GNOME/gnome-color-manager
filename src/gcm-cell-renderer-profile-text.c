@@ -70,8 +70,10 @@ gcm_cell_renderer_set_markup (GcmCellRendererProfileText *renderer)
 	} else {
 		/* add profile description */
 		description = cd_profile_get_title (renderer->profile);
-		if (description == NULL)
+		if (description == NULL || description[0] == '\0')
 			description = cd_profile_get_filename (renderer->profile);
+		if (description == NULL || description[0] == '\0')
+			description = cd_profile_get_id (renderer->profile);
 		string = g_string_new (description);
 
 		/* TRANSLATORS: this is the default profile */
