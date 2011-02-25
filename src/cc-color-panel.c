@@ -764,6 +764,7 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 		goto out;
 	}
 	ret = cd_device_add_profile_sync (panel->priv->current_device,
+					  CD_DEVICE_RELATION_HARD,
 					  profile,
 					  panel->priv->cancellable,
 					  &error);
@@ -1178,6 +1179,7 @@ cc_color_panel_button_assign_ok_cb (GtkWidget *widget, CcColorPanel *panel)
 
 	/* just add it, the list store will get ::changed */
 	ret = cd_device_add_profile_sync (panel->priv->current_device,
+					  CD_DEVICE_RELATION_HARD,
 					  profile,
 					  panel->priv->cancellable,
 					  &error);

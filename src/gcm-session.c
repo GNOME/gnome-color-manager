@@ -283,6 +283,7 @@ gcm_session_profile_added_notify_cb (CdClient *client_,
 
 	/* add the profile to the device */
 	ret = cd_device_add_profile_sync (device,
+					  CD_DEVICE_RELATION_SOFT,
 					  profile,
 					  NULL,
 					  &error);
