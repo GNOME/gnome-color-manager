@@ -274,9 +274,9 @@ gcm_session_profile_added_notify_cb (CdClient *client_,
 					     NULL,
 					     &error);
 	if (device == NULL) {
-		g_error ("not found device %s which should have been added: %s",
-			 gcm_x11_output_get_name (output),
-			 error->message);
+		g_warning ("not found device %s which should have been added: %s",
+			   gcm_x11_output_get_name (output),
+			   error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -1099,12 +1099,10 @@ out:
 }
 
 /**
- * gcm_x11_screen_output_added_cb:
+ * gcm_session_add_x11_output:
  **/
 static void
-gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
-				GcmX11Output *output,
-				gpointer user_data)
+gcm_session_add_x11_output (GcmX11Output *output)
 {
 	CdDevice *device = NULL;
 	const gchar *model;
@@ -1184,6 +1182,18 @@ out:
 		g_object_unref (edid);
 }
 
+
+/**
+ * gcm_x11_screen_output_added_cb:
+ **/
+static void
+gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
+				GcmX11Output *output,
+				gpointer user_data)
+{
+	gcm_session_add_x11_output (output);
+}
+
 /**
  * gcm_x11_screen_output_removed_cb:
  **/
@@ -1212,23 +1222,91 @@ out:
 }
 
 /**
+ * gcm_session_colord_appeared_cb:
+ **/
+static void
+gcm_session_colord_appeared_cb (GDBusConnection *_connection,
+				const gchar *name,
+				const gchar *name_owner,
+				gpointer user_data)
+{
+	gboolean ret;
+	GError *error = NULL;
+	GPtrArray *array = NULL;
+	GPtrArray *outputs = NULL;
+	guint i;
+	CdDevice *device;
+	GcmX11Output *output;
+
+	g_debug ("%s has appeared as %s", name, name_owner);
+
+	/* add screens */
+	ret = gcm_x11_screen_refresh (x11_screen, &error);
+	if (!ret) {
+		g_warning ("failed to refresh: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* get X11 outputs */
+	outputs = gcm_x11_screen_get_outputs (x11_screen, &error);
+	if (outputs == NULL) {
+		g_warning ("failed to get outputs: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+	for (i=0; i<outputs->len; i++) {
+		output = g_ptr_array_index (outputs, i);
+		gcm_session_add_x11_output (output);
+	}
+
+	/* add profiles */
+	gcm_profile_store_search (profile_store);
+
+	/* set for each device that already exist */
+	array = cd_client_get_devices_sync (client, NULL, &error);
+	if (array == NULL) {
+		g_warning ("failed to get devices: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+	for (i=0; i<array->len; i++) {
+		device = g_ptr_array_index (array, i);
+		gcm_session_device_assign (device);
+	}
+out:
+	if (array != NULL)
+		g_ptr_array_unref (array);
+}
+
+/**
+ * gcm_session_colord_vanished_cb:
+ **/
+static void
+gcm_session_colord_vanished_cb (GDBusConnection *_connection,
+				const gchar *name,
+				gpointer user_data)
+{
+	g_debug ("%s has vanished", name);
+}
+
+/**
  * main:
  **/
 int
 main (int argc, char *argv[])
 {
-	CdDevice *device;
 	gboolean login = FALSE;
 	gboolean ret;
 	gchar *introspection_data = NULL;
 	GError *error = NULL;
 	GFile *file = NULL;
 	GOptionContext *context;
-	GPtrArray *array = NULL;
-	guint i;
 	guint owner_id = 0;
 	guint poll_id = 0;
 	guint retval = 1;
+	guint watcher_id = 0;
 
 	const GOptionEntry options[] = {
 		{ "login", 'l', 0, G_OPTION_ARG_NONE, &login,
@@ -1297,20 +1375,6 @@ main (int argc, char *argv[])
 	g_signal_connect (profile_store, "removed",
 			  G_CALLBACK (gcm_session_profile_store_removed_cb),
 			  NULL);
-	gcm_profile_store_search (profile_store);
-
-	/* set for each device that already exist */
-	array = cd_client_get_devices_sync (client, NULL, &error);
-	if (array == NULL) {
-		g_warning ("failed to get devices: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-	for (i=0; i<array->len; i++) {
-		device = g_ptr_array_index (array, i);
-		gcm_session_device_assign (device);
-	}
 
 	/* monitor displays */
 	x11_screen = gcm_x11_screen_new ();
@@ -1321,12 +1385,6 @@ main (int argc, char *argv[])
 	ret = gcm_x11_screen_assign (x11_screen, NULL, &error);
 	if (!ret) {
 		g_warning ("failed to assign: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-	ret = gcm_x11_screen_refresh (x11_screen, &error);
-	if (!ret) {
-		g_warning ("failed to refresh: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -1360,6 +1418,15 @@ main (int argc, char *argv[])
 				   gcm_session_on_name_lost,
 				   NULL, NULL);
 
+	/* watch to see when colord appears */
+	watcher_id = g_bus_watch_name (G_BUS_TYPE_SYSTEM,
+				       "org.freedesktop.ColorManager",
+				       G_BUS_NAME_WATCHER_FLAGS_NONE,
+				       gcm_session_colord_appeared_cb,
+				       gcm_session_colord_vanished_cb,
+				       NULL,
+				       NULL);
+
 	/* wait */
 	g_main_loop_run (loop);
 
@@ -1367,8 +1434,8 @@ main (int argc, char *argv[])
 	retval = 0;
 out:
 	g_free (introspection_data);
-	if (array != NULL)
-		g_ptr_array_unref (array);
+	if (watcher_id > 0)
+		g_bus_unwatch_name (watcher_id);
 	if (poll_id != 0)
 		g_source_remove (poll_id);
 	if (file != NULL)
