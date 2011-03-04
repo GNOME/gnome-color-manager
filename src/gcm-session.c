@@ -1056,7 +1056,7 @@ gcm_session_profile_store_added_cb (GcmProfileStore *profile_store_,
 			     g_strdup (filename));
 	profile = cd_client_create_profile_sync (client,
 						 filename,
-						 CD_OBJECT_SCOPE_TEMPORARY,
+						 CD_OBJECT_SCOPE_TEMP,
 						 profile_props,
 						 NULL,
 						 &error);
@@ -1165,7 +1165,7 @@ gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 			     g_strdup (serial));
 	device = cd_client_create_device_sync (client,
 					       gcm_x11_output_get_name (output),
-					       CD_OBJECT_SCOPE_TEMPORARY,
+					       CD_OBJECT_SCOPE_TEMP,
 					       device_props,
 					       NULL,
 					       &error);
