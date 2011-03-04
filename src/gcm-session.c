@@ -1109,6 +1109,7 @@ gcm_session_add_x11_output (GcmX11Output *output)
 	const gchar *serial;
 	const gchar *vendor;
 	gboolean ret;
+	gchar *device_id = NULL;
 	GcmEdid *edid;
 	GError *error = NULL;
 	GHashTable *device_props = NULL;
@@ -1139,8 +1140,9 @@ gcm_session_add_x11_output (GcmX11Output *output)
 	if (serial == NULL)
 		serial = "unknown";
 
-	g_debug ("output %s added",
-		 gcm_x11_output_get_name (output));
+	device_id = g_strdup_printf ("xrandr_%s",
+				     gcm_x11_output_get_name (output));
+	g_debug ("output %s added", device_id);
 	device_props = g_hash_table_new_full (g_str_hash, g_str_equal,
 					      g_free, g_free);
 	g_hash_table_insert (device_props,
@@ -1162,7 +1164,7 @@ gcm_session_add_x11_output (GcmX11Output *output)
 			     g_strdup ("Serial"),
 			     g_strdup (serial));
 	device = cd_client_create_device_sync (client,
-					       gcm_x11_output_get_name (output),
+					       device_id,
 					       CD_OBJECT_SCOPE_TEMP,
 					       device_props,
 					       NULL,
@@ -1174,6 +1176,7 @@ gcm_session_add_x11_output (GcmX11Output *output)
 		goto out;
 	}
 out:
+	g_free (device_id);
 	if (device_props != NULL)
 		g_hash_table_unref (device_props);
 	if (device != NULL)
