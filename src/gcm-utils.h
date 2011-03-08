@@ -25,9 +25,7 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
-#include "gcm-device.h"
 #include "gcm-profile.h"
-#include "gcm-enum.h"
 
 #define GCM_STOCK_ICON					"gnome-color-manager"
 #define GCM_DBUS_SERVICE				"org.gnome.ColorManager"
@@ -43,15 +41,12 @@
 #define GCM_SETTINGS_COLORSPACE_RGB			"colorspace-rgb"
 #define GCM_SETTINGS_COLORSPACE_CMYK			"colorspace-cmyk"
 #define GCM_SETTINGS_COLORSPACE_GRAY			"colorspace-gray"
-#define GCM_SETTINGS_USE_PROFILES_FROM_VOLUMES		"use-profiles-from-volumes"
 #define GCM_SETTINGS_CALIBRATION_LENGTH			"calibration-length"
 #define GCM_SETTINGS_SHOW_FINE_TUNING			"show-fine-tuning"
 #define GCM_SETTINGS_SHOW_NOTIFICATIONS			"show-notifications"
-#define GCM_SETTINGS_MIGRATE_CONFIG_VERSION		"migrate-config-version"
 #define GCM_SETTINGS_RECALIBRATE_PRINTER_THRESHOLD	"recalibrate-printer-threshold"
 #define GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD	"recalibrate-display-threshold"
 #define GCM_SETTINGS_ENABLE_SANE			"enable-sane"
-#define GCM_SETTINGS_ENABLE_CUPS			"enable-cups"
 #define GCM_SETTINGS_PROFILE_GRAPH_TYPE			"profile-graph-type"
 
 #define GCM_CONFIG_VERSION_ORIGINAL			0
@@ -75,15 +70,15 @@ gboolean	 gcm_utils_output_is_lcd_internal	(const gchar		*output_name);
 gboolean	 gcm_utils_output_is_lcd		(const gchar		*output_name);
 void		 gcm_utils_alphanum_lcase		(gchar			*string);
 void		 gcm_utils_ensure_sensible_filename	(gchar			*string);
-gchar		*gcm_utils_get_default_config_location	(void);
-GcmProfileKind	 gcm_utils_device_kind_to_profile_kind	(GcmDeviceKind		 kind);
+CdProfileKind	 gcm_utils_device_kind_to_profile_kind	(CdDeviceKind		 kind);
 gboolean	 gcm_utils_install_package		(const gchar		*package_name,
 							 GtkWindow		*window);
 gboolean	 gcm_utils_is_icc_profile		(GFile			*file);
 gchar		*gcm_utils_linkify			(const gchar		*text);
-const gchar	*gcm_intent_to_localized_text		(GcmIntent	 intent);
-const gchar	*gcm_intent_to_localized_description	(GcmIntent	 intent);
-const gchar	*gcm_colorspace_to_localised_string	(GcmColorspace	 colorspace);
+const gchar	*cd_rendering_intent_to_localized_text		(CdRenderingIntent	 intent);
+const gchar	*cd_rendering_intent_to_localized_description	(CdRenderingIntent	 intent);
+const gchar	*cd_colorspace_to_localised_string	(CdColorspace	 colorspace);
+gboolean	 gcm_profile_has_colorspace_description	(CdProfile		*profile);
 
 #endif /* __GCM_UTILS_H */
 

@@ -49,7 +49,7 @@ struct _GcmExifPrivate
 	gchar				*manufacturer;
 	gchar				*model;
 	gchar				*serial;
-	GcmDeviceKind			 device_kind;
+	CdDeviceKind			 device_kind;
 };
 
 enum {
@@ -74,7 +74,7 @@ gcm_exif_parse_tiff (GcmExif *exif, const gchar *filename, GError **error)
 	const gchar *model = NULL;
 	const gchar *serial = NULL;
 	const gchar *temp = NULL;
-	GcmDeviceKind device_kind = GCM_DEVICE_KIND_UNKNOWN;
+	CdDeviceKind device_kind = CD_DEVICE_KIND_UNKNOWN;
 	TIFF *tiff;
 	GcmExifPrivate *priv = exif->priv;
 
@@ -97,14 +97,14 @@ gcm_exif_parse_tiff (GcmExif *exif, const gchar *filename, GError **error)
 	/* these are all camera specific values */
 	TIFFGetField (tiff,EXIFTAG_FNUMBER, &temp);
 	if (temp != NULL)
-		device_kind = GCM_DEVICE_KIND_CAMERA;
+		device_kind = CD_DEVICE_KIND_CAMERA;
 	TIFFGetField (tiff,TIFFTAG_LENSINFO, &temp);
 	if (temp != NULL)
-		device_kind = GCM_DEVICE_KIND_CAMERA;
+		device_kind = CD_DEVICE_KIND_CAMERA;
 
 	/* crappy fallback */
 	if (g_str_has_prefix (manufacturer, "NIKON"))
-		device_kind = GCM_DEVICE_KIND_CAMERA;
+		device_kind = CD_DEVICE_KIND_CAMERA;
 
 	/* free old versions */
 	g_free (priv->manufacturer);
@@ -131,7 +131,7 @@ gcm_exif_parse_jpeg (GcmExif *exif, const gchar *filename, GError **error)
 	GcmExifPrivate *priv = exif->priv;
 	ExifData *ed = NULL;
 	ExifEntry *entry;
-	GcmDeviceKind device_kind = GCM_DEVICE_KIND_UNKNOWN;
+	CdDeviceKind device_kind = CD_DEVICE_KIND_UNKNOWN;
 	gchar make[1024] = { '\0' };
 	gchar model[1024] = { '\0' };
 
@@ -163,13 +163,13 @@ gcm_exif_parse_jpeg (GcmExif *exif, const gchar *filename, GError **error)
 	/* these are all camera specific values */
 	entry = exif_content_get_entry (ed->ifd[EXIF_IFD_EXIF], EXIF_TAG_FNUMBER);
 	if (entry != NULL)
-		device_kind = GCM_DEVICE_KIND_CAMERA;
+		device_kind = CD_DEVICE_KIND_CAMERA;
 	entry = exif_content_get_entry (ed->ifd[EXIF_IFD_EXIF], EXIF_TAG_SHUTTER_SPEED_VALUE);
 	if (entry != NULL)
-		device_kind = GCM_DEVICE_KIND_CAMERA;
+		device_kind = CD_DEVICE_KIND_CAMERA;
 	entry = exif_content_get_entry (ed->ifd[EXIF_IFD_EXIF], EXIF_TAG_FLASH);
 	if (entry != NULL)
-		device_kind = GCM_DEVICE_KIND_CAMERA;
+		device_kind = CD_DEVICE_KIND_CAMERA;
 
 	/* we failed to get data */
 	if (make == NULL || model == NULL) {
@@ -251,7 +251,7 @@ gcm_exif_parse_exiv (GcmExif *exif, const gchar *filename, GError **error)
 		priv->serial = g_strdup (split[2]);
 	else
 		priv->serial = NULL;
-	priv->device_kind = GCM_DEVICE_KIND_CAMERA;
+	priv->device_kind = CD_DEVICE_KIND_CAMERA;
 
 out:
 	g_free (standard_output);
@@ -358,10 +358,10 @@ gcm_exif_get_serial (GcmExif *exif)
 /**
  * gcm_exif_get_device_kind:
  **/
-GcmDeviceKind
+CdDeviceKind
 gcm_exif_get_device_kind (GcmExif *exif)
 {
-	g_return_val_if_fail (GCM_IS_EXIF (exif), GCM_DEVICE_KIND_UNKNOWN);
+	g_return_val_if_fail (GCM_IS_EXIF (exif), CD_DEVICE_KIND_UNKNOWN);
 	return exif->priv->device_kind;
 }
 
@@ -432,7 +432,7 @@ gcm_exif_class_init (GcmExifClass *klass)
 	 * GcmExif:device-kind:
 	 */
 	pspec = g_param_spec_uint ("device-kind", NULL, NULL,
-				   0, G_MAXUINT, GCM_DEVICE_KIND_UNKNOWN,
+				   0, G_MAXUINT, CD_DEVICE_KIND_UNKNOWN,
 				   G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_DEVICE_KIND, pspec);
 
@@ -449,7 +449,7 @@ gcm_exif_init (GcmExif *exif)
 	exif->priv->manufacturer = NULL;
 	exif->priv->model = NULL;
 	exif->priv->serial = NULL;
-	exif->priv->device_kind = GCM_DEVICE_KIND_CAMERA;
+	exif->priv->device_kind = CD_DEVICE_KIND_CAMERA;
 }
 
 /**

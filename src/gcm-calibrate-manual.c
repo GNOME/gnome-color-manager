@@ -32,6 +32,7 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <math.h>
+#include <colord.h>
 
 #include "gcm-utils.h"
 #include "gcm-clut.h"

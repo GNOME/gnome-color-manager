@@ -18,31 +18,6 @@ GOBJECT_INTROSPECTION_CHECK([0.6.7])
 # enable nice build output on automake1.11
 m4_ifdef([AM_SILENT_RULES],[AM_SILENT_RULES([yes])])
 
-GCM_MAJOR_VERSION=gcm_major_version
-GCM_MINOR_VERSION=gcm_minor_version
-GCM_MICRO_VERSION=gcm_micro_version
-GCM_VERSION=gcm_version
-AC_SUBST(GCM_MAJOR_VERSION)
-AC_SUBST(GCM_MINOR_VERSION)
-AC_SUBST(GCM_MICRO_VERSION)
-AC_SUBST(GCM_VERSION)
-
-# libtool versioning - this applies to libcolor-glib
-#
-# See http://sources.redhat.com/autobook/autobook/autobook_91.html#SEC91 for details
-#
-# increment;
-# CURRENT	If the API or ABI interface has changed (reset REVISION to 0)
-# REVISION	If the API and ABI remains the same, but bugs are fixed.
-# AGE		If libgcm can be linked into executables which can be
-# 		built with previous versions of this library. Don't use.
-LT_CURRENT=1
-LT_REVISION=0
-LT_AGE=0
-AC_SUBST(LT_CURRENT)
-AC_SUBST(LT_REVISION)
-AC_SUBST(LT_AGE)
-
 AC_PROG_CC
 AC_PROG_CXX
 AC_PROG_INSTALL
@@ -53,9 +28,6 @@ IT_PROG_INTLTOOL([0.35.0])
 
 GNOME_COMPILE_WARNINGS(error)
 GNOME_DOC_INIT
-
-# set up gtk-doc
-GTK_DOC_CHECK(1.9)
 
 dnl ---------------------------------------------------------------------------
 dnl - Use strict options (default enabled for devs, disabled in releases)
@@ -140,6 +112,7 @@ PKG_CHECK_MODULES(GTK, gtk+-3.0 >= 2.91.0)
 PKG_CHECK_MODULES(GUDEV, gudev-1.0)
 PKG_CHECK_MODULES(LCMS, lcms2)
 PKG_CHECK_MODULES(X11, x11)
+PKG_CHECK_MODULES(COLORD, colord >= 0.1.2)
 PKG_CHECK_MODULES(SETTINGS_DAEMON, gnome-settings-daemon)
 PKG_CHECK_MODULES(USB, libusb-1.0 >= 1.0.9, has_new_libusb=yes, has_new_libusb=no)
 if test x$has_new_libusb = xyes; then
@@ -164,27 +137,6 @@ fi
 dnl **** Check for libnotify ****
 PKG_CHECK_MODULES(NOTIFY, libnotify >= 0.7.0)
 
-dnl **** Check for SANE ****
-AC_ARG_ENABLE(sane, AS_HELP_STRING([--enable-sane],[Enable SANE support for scanner support]), enable_sane=$enableval,
-				   enable_sane=yes)
-if test x$enable_sane != xno; then
-	PKG_CHECK_MODULES(SANE, sane-backends, has_sane=yes, has_sane=no)
-	if test $has_sane = "no"; then
-		AC_CHECK_HEADER(sane/sane.h, has_sane=yes, has_sane=no)
-		if test $has_sane = "no"; then
-			AC_MSG_ERROR([Cannot fine SANE])
-		fi
-		SANE_CFLAGS=""
-		SANE_LIBS="-lsane"
-		AC_SUBST(SANE_CFLAGS)
-		AC_SUBST(SANE_LIBS)
-	fi
-fi
-AM_CONDITIONAL(HAVE_SANE, test x$enable_sane = xyes)
-if test x$enable_sane = xyes; then
-	AC_DEFINE(HAVE_SANE,1,[Use SANE support for detecting scanners])
-fi
-
 AC_ARG_ENABLE(exiv, AS_HELP_STRING([--enable-exiv],[Enable EXIV support for RAW support]), enable_exiv=$enableval,
 				   enable_exiv=yes)
 dnl **** Check for EXIV ****
@@ -208,25 +160,6 @@ if test "x$HAVE_TIFF" != "xyes"; then
 fi
 AC_SUBST(TIFF_CFLAGS)
 AC_SUBST(TIFF_LIBS)
-
-dnl **** Check for cups ****
-AC_SUBST(CUPS_CFLAGS,"")
-AC_SUBST(CUPS_LIBS,"")
-ac_save_CPPFLAGS="$CPPFLAGS"
-ac_cups_cflags=`cups-config --cflags 2>/dev/null`
-ac_cups_libs=`cups-config --ldflags 2>/dev/null`
-CPPFLAGS="$CPPFLAGS $ac_cups_cflags"
-AC_CHECK_HEADERS(cups/cups.h,
-    [AC_CHECK_LIB(cups,cupsGetDefault,
-		  [
-			CUPS_CFLAGS="$ac_cups_cflags"
-			CUPS_LIBS="-lcups $ac_cups_libs"
-			HAVE_CUPS="yes"
-		  ],,[$ac_cups_libs])])
-CPPFLAGS="$ac_save_CPPFLAGS"
-if test "x$HAVE_CUPS" != "xyes"; then
-	AC_MSG_ERROR([cups-devel is required for gnome-color-manager])
-fi
 
 dnl ---------------------------------------------------------------------------
 dnl - Generate man pages ? (default enabled)
@@ -311,19 +244,12 @@ data/targets/Makefile
 data/figures/Makefile
 help/Makefile
 man/Makefile
-policy/Makefile
 po/Makefile.in
 rules/Makefile
 src/Makefile
-session/Makefile
 tools/Makefile
 docs/Makefile
 docs/huey/Makefile
-docs/api/Makefile
-docs/api/version.xml
-libcolor-glib/Makefile
-libcolor-glib/gcm-version.h
-libcolor-glib/libcolor-glib.pc
 ])
 AC_OUTPUT
 
@@ -338,7 +264,6 @@ echo "
         cflags:                    ${CFLAGS}
         cppflags:                  ${CPPFLAGS}
         PackageKit integration:    ${enable_packagekit}
-        SANE support:              ${enable_sane}
         RAW support:               ${enable_exiv}
         VTE support:               ${has_vte}
         New LIBUSB:                ${has_new_libusb}

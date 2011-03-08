@@ -30,11 +30,10 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#include <colord.h>
 
 #include "gcm-calibrate.h"
 #include "gcm-color.h"
-#include "gcm-dmi.h"
-#include "gcm-device-xrandr.h"
 #include "gcm-utils.h"
 #include "gcm-brightness.h"
 #include "gcm-sensor-client.h"
@@ -52,7 +51,6 @@ static void     gcm_calibrate_finalize	(GObject     *object);
  **/
 struct _GcmCalibratePrivate
 {
-	GcmDmi				*dmi;
 	GcmSensorClient			*sensor_client;
 	GcmCalibrateReferenceKind	 reference_kind;
 	GcmCalibrateDeviceKind		 calibrate_device_kind;
@@ -60,7 +58,7 @@ struct _GcmCalibratePrivate
 	GcmCalibratePrecision		 precision;
 	GcmSensorKind			 sensor_kind;
 	GcmCalibrateDialog		*calibrate_dialog;
-	GcmDeviceKind			 device_kind;
+	CdDeviceKind			 device_kind;
 	GcmColorXYZ			*xyz;
 	gchar				*output_name;
 	gchar				*filename_source;
@@ -304,34 +302,22 @@ gcm_calibrate_set_basename (GcmCalibrate *calibrate)
  * gcm_calibrate_set_from_device:
  **/
 gboolean
-gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GError **error)
+gcm_calibrate_set_from_device (GcmCalibrate *calibrate, CdDevice *device, GError **error)
 {
-	gboolean lcd_internal;
 	gboolean ret = TRUE;
 	const gchar *native_device = NULL;
 	const gchar *manufacturer = NULL;
 	const gchar *model = NULL;
 	const gchar *description = NULL;
 	const gchar *serial = NULL;
-	GcmDeviceKind kind;
-	GcmCalibratePrivate *priv = calibrate->priv;
+	CdDeviceKind kind;
 
 	/* get the device */
-	kind = gcm_device_get_kind (device);
-	serial = gcm_device_get_serial (device);
-	model = gcm_device_get_model (device);
-	description = gcm_device_get_title (device);
-	manufacturer = gcm_device_get_manufacturer (device);
-
-	/* if we're a laptop, maybe use the dmi data instead */
-	if (kind == GCM_DEVICE_KIND_DISPLAY) {
-		native_device = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
-		lcd_internal = gcm_utils_output_is_lcd_internal (native_device);
-		if (lcd_internal) {
-			model = gcm_dmi_get_name (priv->dmi);
-			manufacturer = gcm_dmi_get_vendor (priv->dmi);
-		}
-	}
+	kind = cd_device_get_kind (device);
+	serial = cd_device_get_serial (device);
+	model = cd_device_get_model (device);
+	description = cd_device_get_model (device);
+	manufacturer = cd_device_get_vendor (device);
 
 	/* set the proper values */
 	g_object_set (calibrate,
@@ -346,8 +332,8 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, GcmDevice *device, GErro
 	gcm_calibrate_set_basename (calibrate);
 
 	/* display specific properties */
-	if (kind == GCM_DEVICE_KIND_DISPLAY) {
-		native_device = gcm_device_xrandr_get_native_device (GCM_DEVICE_XRANDR (device));
+	if (kind == CD_DEVICE_KIND_DISPLAY) {
+//		native_device = cd_device_xrandr_get_native_device (CD_DEVICE_XRANDR (device));
 		if (native_device == NULL) {
 			g_set_error (error,
 				     GCM_CALIBRATE_ERROR,
@@ -524,7 +510,7 @@ gcm_calibrate_get_precision (GcmCalibrate *calibrate, GError **error)
 	g_string_append_printf (string, "\n%s", _("For a typical workflow, a normal precision profile is sufficient."));
 
 	/* printer specific options */
-	if (priv->device_kind == GCM_DEVICE_KIND_PRINTER) {
+	if (priv->device_kind == CD_DEVICE_KIND_PRINTER) {
 		/* TRANSLATORS: dialog message, preface */
 		g_string_append_printf (string, "\n%s", _("The high precision profile also requires more paper and printer ink."));
 	}
@@ -639,7 +625,8 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 
 	/* get device, harder */
 	if (hardware_device == NULL) {
-		/* TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated */
+		/* TRANSLATORS: this is the formattted custom profile description.
+		 * "Custom" refers to the fact that it's user generated */
 		hardware_device = g_strdup (_("Custom"));
 	}
 
@@ -1104,7 +1091,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	g_string_append_printf (string, "%s\n", _("Before profiling the device, you have to manually capture an image of a calibration target and save it as a TIFF image file."));
 
 	/* scanner specific options */
-	if (priv->device_kind == GCM_DEVICE_KIND_SCANNER) {
+	if (priv->device_kind == CD_DEVICE_KIND_SCANNER) {
 		/* TRANSLATORS: dialog message, preface */
 		g_string_append_printf (string, "%s\n", _("Ensure that the contrast and brightness are not changed and color correction profiles are not applied."));
 
@@ -1113,7 +1100,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	}
 
 	/* camera specific options */
-	if (priv->device_kind == GCM_DEVICE_KIND_CAMERA) {
+	if (priv->device_kind == CD_DEVICE_KIND_CAMERA) {
 		/* TRANSLATORS: dialog message, preface */
 		g_string_append_printf (string, "%s\n", _("Ensure that the white-balance has not been modified by the camera and that the lens is clean."));
 	}
@@ -1575,7 +1562,6 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
 	calibrate->priv->precision = GCM_CALIBRATE_PRECISION_UNKNOWN;
 	calibrate->priv->sensor_client = gcm_sensor_client_new ();
-	calibrate->priv->dmi = gcm_dmi_new ();
 	calibrate->priv->calibrate_dialog = gcm_calibrate_dialog_new ();
 
 	// FIXME: this has to be per-run specific
@@ -1616,7 +1602,6 @@ gcm_calibrate_finalize (GObject *object)
 	g_signal_handlers_disconnect_by_func (calibrate->priv->sensor_client, G_CALLBACK (gcm_prefs_sensor_client_changed_cb), calibrate);
 	gcm_color_free_XYZ (priv->xyz);
 	g_object_unref (priv->sensor_client);
-	g_object_unref (priv->dmi);
 	g_object_unref (priv->calibrate_dialog);
 	g_object_unref (priv->settings);
 

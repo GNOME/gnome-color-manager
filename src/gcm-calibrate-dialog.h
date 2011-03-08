@@ -25,8 +25,6 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
-#include "gcm-device.h"
-
 G_BEGIN_DECLS
 
 #define GCM_TYPE_CALIBRATE_DIALOG		(gcm_calibrate_dialog_get_type ())

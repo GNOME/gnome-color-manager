@@ -23,10 +23,10 @@
 #include <sys/types.h>
 #include <stdlib.h>
 #include <glib.h>
-#include <libcolor-glib.h>
 
 #include "gcm-sensor-huey-private.h"
 #include "gcm-sensor-colormunki-private.h"
+#include "gcm-sensor.h"
 
 typedef enum {
 	GCM_PARSE_SECTION_LEVEL,

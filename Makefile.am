@@ -1,15 +1,12 @@
-SUBDIRS = 						\
-	libcolor-glib					\
+SUBDIRS =						\
+	src						\
 	docs						\
 	data						\
 	help						\
 	man						\
 	po						\
-	policy						\
 	rules						\
-	tools						\
-	session						\
-	src
+	tools
 
 snapshot:
 	$(MAKE) dist distdir=$(PACKAGE)-$(VERSION)-`date +"%Y%m%d"`

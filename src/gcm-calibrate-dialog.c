@@ -30,8 +30,8 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#include <colord.h>
 
-#include "gcm-enum.h"
 #include "gcm-calibrate.h"
 #include "gcm-calibrate-dialog.h"
 #include "gcm-utils.h"

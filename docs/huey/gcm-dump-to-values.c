@@ -25,7 +25,8 @@
 #include <math.h>
 
 #include <glib.h>
-#include <libcolor-glib.h>
+
+#include "../../src/gcm-buffer.h"
 
 gint
 main (gint argc, gchar *argv[])

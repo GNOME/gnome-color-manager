@@ -1,30 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
   <requires lib="gtk+" version="2.16"/>
-  <!-- interface-naming-policy project-wide -->
   <object class="GtkDialog" id="dialog_picker">
+    <property name="can_focus">False</property>
     <property name="border_width">5</property>
     <property name="title" translatable="yes" comments="Window title, where the user can pick spot colors using a measuring device">Color Picker</property>
     <property name="icon_name">gnome-color-manager</property>
     <property name="type_hint">dialog</property>
     <child internal-child="vbox">
-      <object class="GtkVBox" id="dialog-vbox1">
+      <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
         <property name="spacing">2</property>
+        <child internal-child="action_area">
+          <object class="GtkButtonBox" id="dialog-action_area1">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="layout_style">end</property>
+            <child>
+              <object class="GtkButton" id="button_help">
+                <property name="label">gtk-help</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">0</property>
+                <property name="secondary">True</property>
+              </packing>
+            </child>
+            <child>
+              <object class="GtkButton" id="button_close">
+                <property name="label">gtk-close</property>
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="receives_default">True</property>
+                <property name="use_action_appearance">False</property>
+                <property name="use_stock">True</property>
+              </object>
+              <packing>
+                <property name="expand">False</property>
+                <property name="fill">False</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+        </child>
         <child>
           <object class="GtkVBox" id="vbox1">
             <property name="visible">True</property>
+            <property name="can_focus">False</property>
             <property name="border_width">12</property>
             <property name="spacing">12</property>
             <child>
               <object class="GtkHBox" id="hbox1">
                 <property name="visible">True</property>
+                <property name="can_focus">False</property>
                 <property name="spacing">6</property>
                 <child>
                   <object class="GtkImage" id="image_preview">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                   </object>
                   <packing>
+                    <property name="expand">True</property>
+                    <property name="fill">True</property>
                     <property name="position">0</property>
                   </packing>
                 </child>
@@ -34,6 +79,7 @@
                     <property name="visible">True</property>
                     <property name="can_focus">True</property>
                     <property name="receives_default">True</property>
+                    <property name="use_action_appearance">False</property>
                     <property name="use_underline">True</property>
                     <property name="image_position">top</property>
                   </object>
@@ -57,18 +103,22 @@
                 <child>
                   <object class="GtkVBox" id="vbox2">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="border_width">9</property>
                     <property name="spacing">6</property>
                     <child>
                       <object class="GtkHBox" id="hbox_xyz">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="spacing">12</property>
                         <child>
                           <object class="GtkHBox" id="hbox_xyz_align">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <child>
                               <object class="GtkLabel" id="label_xyz_title">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="label" translatable="yes" comments="the color representation">XYZ:</property>
                               </object>
                               <packing>
@@ -87,6 +137,7 @@
                         <child>
                           <object class="GtkLabel" id="label_xyz">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="selectable">True</property>
                           </object>
                           <packing>
@@ -105,13 +156,16 @@
                     <child>
                       <object class="GtkHBox" id="hbox_lab">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="spacing">12</property>
                         <child>
                           <object class="GtkHBox" id="hbox_lab_align">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <child>
                               <object class="GtkLabel" id="label_lab_title">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="label" translatable="yes" comments="Lab is the color representation and D50 is the white point">Lab (D50):</property>
                               </object>
                               <packing>
@@ -130,6 +184,7 @@
                         <child>
                           <object class="GtkLabel" id="label_lab">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="selectable">True</property>
                           </object>
                           <packing>
@@ -146,16 +201,19 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkHBox" id="hbox2">
+                      <object class="GtkHBox" id="hbox_whitepoint">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="spacing">12</property>
                         <child>
-                          <object class="GtkHBox" id="hbox_colorspace_align">
+                          <object class="GtkHBox" id="hbox_whitepoint_align">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkLabel" id="label_colorspace">
+                              <object class="GtkLabel" id="label_whitepoint_title">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes" comments="This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB">Colorspace:</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes" comments="This refers to the amount of ambient light on the sensor">Media whitepoint:</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -171,10 +229,14 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkComboBox" id="combobox_colorspace">
+                          <object class="GtkLabel" id="label_whitepoint">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="selectable">True</property>
                           </object>
                           <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
                             <property name="position">1</property>
                           </packing>
                         </child>
@@ -186,16 +248,19 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkHBox" id="hbox_rgb">
+                      <object class="GtkHBox" id="hbox_temperature">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="spacing">12</property>
                         <child>
-                          <object class="GtkHBox" id="hbox_rgb_align">
+                          <object class="GtkHBox" id="hbox_temperature_align">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkLabel" id="label_rgb_title">
+                              <object class="GtkLabel" id="label_temperature_title">
                                 <property name="visible">True</property>
-                                <property name="label" translatable="yes" comments="These are the values of the chosen color in Red, Green, Blue encoding">RGB:</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes" comments="This refers to the amount of ambient light on the sensor">Color Temperature:</property>
                               </object>
                               <packing>
                                 <property name="expand">False</property>
@@ -211,8 +276,9 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="label_rgb">
+                          <object class="GtkLabel" id="label_temperature">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="selectable">True</property>
                           </object>
                           <packing>
@@ -229,58 +295,18 @@
                       </packing>
                     </child>
                     <child>
-                      <object class="GtkHBox" id="hbox_error">
-                        <property name="visible">True</property>
-                        <property name="spacing">12</property>
-                        <child>
-                          <object class="GtkHBox" id="hbox_error_align">
-                            <property name="visible">True</property>
-                            <child>
-                              <object class="GtkLabel" id="label_error_title">
-                                <property name="visible">True</property>
-                                <property name="label" translatable="yes" comments="This shows the error in the conversion to RGB.">Error:</property>
-                              </object>
-                              <packing>
-                                <property name="expand">False</property>
-                                <property name="fill">False</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkLabel" id="label_error">
-                            <property name="visible">True</property>
-                            <property name="selectable">True</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">1</property>
-                          </packing>
-                        </child>
-                      </object>
-                      <packing>
-                        <property name="expand">False</property>
-                        <property name="fill">False</property>
-                        <property name="position">4</property>
-                      </packing>
-                    </child>
-                    <child>
                       <object class="GtkHBox" id="hbox_ambient">
                         <property name="visible">True</property>
+                        <property name="can_focus">False</property>
                         <property name="spacing">12</property>
                         <child>
                           <object class="GtkHBox" id="hbox_ambient_align">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <child>
                               <object class="GtkLabel" id="label_ambient_title">
                                 <property name="visible">True</property>
+                                <property name="can_focus">False</property>
                                 <property name="label" translatable="yes" comments="This refers to the amount of ambient light on the sensor">Ambient:</property>
                               </object>
                               <packing>
@@ -299,6 +325,7 @@
                         <child>
                           <object class="GtkLabel" id="label_ambient">
                             <property name="visible">True</property>
+                            <property name="can_focus">False</property>
                             <property name="selectable">True</property>
                           </object>
                           <packing>
@@ -311,7 +338,147 @@
                       <packing>
                         <property name="expand">False</property>
                         <property name="fill">False</property>
+                        <property name="position">4</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkHBox" id="hbox2">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="spacing">12</property>
+                        <child>
+                          <object class="GtkHBox" id="hbox_colorspace_align">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkLabel" id="label_colorspace">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes" comments="This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB">Colorspace:</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkComboBox" id="combobox_colorspace">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                          </object>
+                          <packing>
+                            <property name="expand">True</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
                         <property name="position">5</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkHBox" id="hbox_rgb">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="spacing">12</property>
+                        <child>
+                          <object class="GtkHBox" id="hbox_rgb_align">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkLabel" id="label_rgb_title">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes" comments="These are the values of the chosen color in Red, Green, Blue encoding">RGB:</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label_rgb">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="selectable">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">6</property>
+                      </packing>
+                    </child>
+                    <child>
+                      <object class="GtkHBox" id="hbox_error">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="spacing">12</property>
+                        <child>
+                          <object class="GtkHBox" id="hbox_error_align">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkLabel" id="label_error_title">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label" translatable="yes" comments="This shows the error in the conversion to RGB.">Error:</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">False</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkLabel" id="label_error">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <property name="selectable">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="position">7</property>
                       </packing>
                     </child>
                   </object>
@@ -319,6 +486,7 @@
                 <child type="label">
                   <object class="GtkLabel" id="label1">
                     <property name="visible">True</property>
+                    <property name="can_focus">False</property>
                     <property name="label" translatable="yes" comments="Expander title, the results from the color picker">Results</property>
                     <attributes>
                       <attribute name="weight" value="bold"/>
@@ -328,52 +496,15 @@
               </object>
               <packing>
                 <property name="expand">False</property>
-                <property name="position">1</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="position">1</property>
-          </packing>
-        </child>
-        <child internal-child="action_area">
-          <object class="GtkHButtonBox" id="dialog-action_area1">
-            <property name="visible">True</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="button_help">
-                <property name="label">gtk-help</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-                <property name="secondary">True</property>
-              </packing>
-            </child>
-            <child>
-              <object class="GtkButton" id="button_close">
-                <property name="label">gtk-close</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
+                <property name="fill">True</property>
                 <property name="position">1</property>
               </packing>
             </child>
           </object>
           <packing>
             <property name="expand">False</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
           </packing>
         </child>
       </object>
@@ -391,6 +522,8 @@
       <widget name="hbox_rgb_align"/>
       <widget name="hbox_error_align"/>
       <widget name="hbox_ambient_align"/>
+      <widget name="hbox_temperature_align"/>
+      <widget name="hbox_whitepoint_align"/>
     </widgets>
   </object>
 </interface>

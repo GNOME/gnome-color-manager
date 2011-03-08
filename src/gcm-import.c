@@ -25,9 +25,9 @@
 #include <gtk/gtk.h>
 #include <math.h>
 #include <locale.h>
+#include <colord.h>
 
 #include "gcm-profile.h"
-#include "gcm-profile-store.h"
 #include "gcm-utils.h"
 #include "gcm-color.h"
 #include "gcm-cie-widget.h"
@@ -57,23 +57,23 @@ gcm_import_add_cie_widget (GtkDialog *dialog, GtkWidget *cie_widget)
 int
 main (int argc, char **argv)
 {
-	gboolean ret;
+	CdClient *client = NULL;
+	CdColorspace colorspace;
+	CdProfile *profile_tmp = NULL;
 	const gchar *copyright;
 	const gchar *description;
+	gboolean ret;
+	gchar **files = NULL;
+	GcmProfile *profile = NULL;
+	GError *error = NULL;
 	GFile *destination = NULL;
 	GFile *file = NULL;
-	gchar **files = NULL;
-	guint retval = 1;
-	GcmProfileStore *profile_store = NULL;
-	GcmProfile *profile = NULL;
-	GcmProfile *profile_tmp = NULL;
-	GcmColorspace colorspace;
-	GError *error = NULL;
 	GOptionContext *context;
 	GString *string = NULL;
-	GtkWidget *dialog;
 	GtkResponseType response;
 	GtkWidget *cie_widget = NULL;
+	GtkWidget *dialog;
+	guint retval = 1;
 
 	const GOptionEntry options[] = {
 		{ G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &files,
@@ -151,14 +151,32 @@ main (int argc, char **argv)
 	}
 
 	/* check file does't already exist as system-wide */
-	profile_store = gcm_profile_store_new ();
-	gcm_profile_store_search (profile_store, GCM_PROFILE_STORE_SEARCH_SYSTEM);
-	profile_tmp = gcm_profile_store_get_by_checksum (profile_store, gcm_profile_get_checksum (profile));
+	client = cd_client_new ();
+	ret = cd_client_connect_sync (client,
+				      NULL,
+				      &error);
+	if (!ret) {
+		g_warning ("failed to connect to colord: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+	profile_tmp = cd_client_find_profile_sync (client,
+						   gcm_profile_get_checksum (profile),
+						   NULL,
+						   NULL);
 	if (profile_tmp != NULL) {
 		/* TRANSLATORS: color profile already been installed */
-		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, _("ICC profile already installed system-wide"));
+		dialog = gtk_message_dialog_new (NULL,
+						 GTK_DIALOG_MODAL,
+						 GTK_MESSAGE_INFO,
+						 GTK_BUTTONS_CLOSE,
+						 _("ICC profile already installed system-wide"));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s\n%s", description, copyright);
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+							  "%s\n%s",
+							  description,
+							  copyright);
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 		goto out;
@@ -189,7 +207,7 @@ main (int argc, char **argv)
 	gcm_import_add_cie_widget (GTK_DIALOG(dialog), cie_widget);
 
 	/* only show the cie widget if we have RGB data */
-	if (colorspace != GCM_COLORSPACE_RGB)
+	if (colorspace != CD_COLORSPACE_RGB)
 		gtk_widget_hide (cie_widget);
 
 	gtk_window_set_resizable (GTK_WINDOW (dialog), TRUE);
@@ -219,8 +237,8 @@ out:
 		g_string_free (string, TRUE);
 	if (profile != NULL)
 		g_object_unref (profile);
-	if (profile_store != NULL)
-		g_object_unref (profile_store);
+	if (client != NULL)
+		g_object_unref (client);
 	if (profile_tmp != NULL)
 		g_object_unref (profile_tmp);
 	if (destination != NULL)

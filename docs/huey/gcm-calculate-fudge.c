@@ -25,7 +25,6 @@
 #include <math.h>
 
 #include <glib.h>
-#include <libcolor-glib.h>
 
 typedef struct {
 	guint16	R;

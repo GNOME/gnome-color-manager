@@ -4,20 +4,17 @@ INCLUDES =						\
 	$(GTK_CFLAGS)					\
 	$(VTE_CFLAGS)					\
 	$(XORG_CFLAGS)					\
-	$(CUPS_CFLAGS)					\
-	$(SANE_CFLAGS)					\
 	$(TIFF_CFLAGS)					\
 	$(EXIF_CFLAGS)					\
 	$(EXIV_CFLAGS)					\
+	$(COLORD_CFLAGS)				\
 	$(NOTIFY_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
 	$(CONTROL_CENTER_CFLAGS)			\
 	$(SETTINGS_DAEMON_CFLAGS)			\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	$(GUDEV_CFLAGS)					\
-	-I$(top_srcdir)/libcolor-glib			\
 	-DG_LOG_DOMAIN=\"Gcm\"				\
-	-DLIBCOLOR_GLIB_COMPILATION			\
 	-DBINDIR=\"$(bindir)\"				\
 	-DLIBEXECDIR=\"$(libexecdir)\"			\
 	-DSBINDIR=\"$(sbindir)\"			\
@@ -27,7 +24,6 @@ INCLUDES =						\
 	-DLOCALEDIR=\""$(localedir)"\"			\
 	-DTESTDATADIR=\""$(top_srcdir)/data/tests"\"	\
 	-DGCM_SYSTEM_PROFILES_DIR="\"$(GCM_SYSTEM_PROFILES_DIR)"\" \
-	-DI_KNOW_THE_LIBCOLOR_GLIB_API_IS_SUBJECT_TO_CHANGE	\
 	-DGCM_DATA=\"$(pkgdatadir)\"
 
 introspectiondir = $(datadir)/dbus-1/interfaces
@@ -40,57 +36,80 @@ ccpanels_CFLAGS =					\
 
 noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\
-	gcm-exif.c					\
-	gcm-exif.h					\
-	gcm-print.c					\
-	gcm-print.h					\
-	gcm-utils.c					\
-	gcm-utils.h					\
-	gcm-client.c					\
-	gcm-client.h					\
-	gcm-device.c					\
-	gcm-device.h					\
-	gcm-device-xrandr.c				\
-	gcm-device-xrandr.h				\
-	gcm-device-udev.c				\
-	gcm-device-udev.h				\
-	gcm-device-cups.c				\
-	gcm-device-cups.h				\
-	gcm-device-virtual.c				\
-	gcm-device-virtual.h				\
-	gcm-cie-widget.c				\
-	gcm-cie-widget.h				\
-	gcm-trc-widget.c				\
-	gcm-trc-widget.h				\
-	gcm-gamma-widget.c				\
-	gcm-gamma-widget.h				\
-	gcm-calibrate.c					\
-	gcm-calibrate.h					\
+	gcm-brightness.c				\
+	gcm-brightness.h				\
+	gcm-buffer.c					\
+	gcm-buffer.h					\
 	gcm-calibrate-argyll.c				\
 	gcm-calibrate-argyll.h				\
+	gcm-calibrate.c					\
+	gcm-calibrate-dialog.c				\
+	gcm-calibrate-dialog.h				\
+	gcm-calibrate.h					\
 	gcm-calibrate-manual.c				\
 	gcm-calibrate-manual.h				\
 	gcm-calibrate-native.c				\
 	gcm-calibrate-native.h				\
-	gcm-calibrate-dialog.c				\
-	gcm-calibrate-dialog.h
-
-libgcmshared_a_SOURCES +=				\
-	gcm-device-sane.c				\
-	gcm-device-sane.h
+	gcm-cie-widget.c				\
+	gcm-cie-widget.h				\
+	gcm-clut.c					\
+	gcm-clut.h					\
+	gcm-color.c					\
+	gcm-color.h					\
+	gcm-debug.c					\
+	gcm-debug.h					\
+	gcm-dmi.c					\
+	gcm-dmi.h					\
+	gcm-edid.c					\
+	gcm-edid.h					\
+	gcm-exif.c					\
+	gcm-exif.h					\
+	gcm-gamma-widget.c				\
+	gcm-gamma-widget.h				\
+	gcm-image.c					\
+	gcm-image.h					\
+	gcm-math.c					\
+	gcm-math.h					\
+	gcm-print.c					\
+	gcm-print.h					\
+	gcm-profile.c					\
+	gcm-profile.h					\
+	gcm-profile-store.c				\
+	gcm-profile-store.h				\
+	gcm-sample-window.c				\
+	gcm-sample-window.h				\
+	gcm-sensor.c					\
+	gcm-sensor-client.c				\
+	gcm-sensor-client.h				\
+	gcm-sensor-colormunki.c				\
+	gcm-sensor-colormunki.h				\
+	gcm-sensor-colormunki-private.c			\
+	gcm-sensor-colormunki-private.h			\
+	gcm-sensor-dummy.c				\
+	gcm-sensor-dummy.h				\
+	gcm-sensor.h					\
+	gcm-sensor-huey.c				\
+	gcm-sensor-huey.h				\
+	gcm-sensor-huey-private.c			\
+	gcm-sensor-huey-private.h			\
+	gcm-tables.c					\
+	gcm-tables.h					\
+	gcm-trc-widget.c				\
+	gcm-trc-widget.h				\
+	gcm-usb.c					\
+	gcm-usb.h					\
+	gcm-utils.c					\
+	gcm-utils.h					\
+	gcm-x11-output.c				\
+	gcm-x11-output.h				\
+	gcm-x11-screen.c				\
+	gcm-x11-screen.h
 
 libgcmshared_a_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
-libgcmshared_a_LIBADD =					\
-	$(COLOR_GLIB_LIBS)
-
-sbin_PROGRAMS =						\
-	gcm-install-system-wide
-
 bin_PROGRAMS =						\
 	gcm-inspect					\
-	gcm-apply					\
 	gcm-viewer					\
 	gcm-session					\
 	gcm-picker					\
@@ -99,18 +118,9 @@ bin_PROGRAMS =						\
 if HAVE_EXIV
 libexec_PROGRAMS = gcm-helper-exiv
 gcm_helper_exiv_SOURCES = gcm-helper-exiv.cpp
-gcm_helper_exiv_LDADD = $(EXIV_LIBS)
+gcm_helper_exiv_LDADD = $(EXIV_LIBS) $(GLIB_LIBS)
 gcm_helper_exiv_CXXFLAGS = -Wall
 endif
-
-gcm_install_system_wide_SOURCES =			\
-	gcm-install-system-wide.c
-
-gcm_install_system_wide_LDADD =				\
-	$(GLIB_LIBS)
-
-gcm_install_system_wide_CFLAGS =			\
-	$(WARNINGFLAGS_C)
 
 gcm_inspect_SOURCES =					\
 	gcm-inspect.c
@@ -122,30 +132,11 @@ gcm_inspect_LDADD =					\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
-	$(COLOR_GLIB_LIBS)				\
+	$(LCMS_LIBS)					\
+	$(COLORD_LIBS)					\
 	-lm
 
 gcm_inspect_CFLAGS =					\
-	$(WARNINGFLAGS_C)
-
-gcm_apply_SOURCES =					\
-	gcm-apply.c
-
-gcm_apply_LDADD =					\
-	libgcmshared.a					\
-	$(GLIB_LIBS)					\
-	$(X11_LIBS)					\
-	$(GUDEV_LIBS)					\
-	$(XORG_LIBS)					\
-	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
-	$(COLOR_GLIB_LIBS)				\
-	-lm
-
-gcm_apply_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_import_SOURCES =					\
@@ -158,9 +149,8 @@ gcm_import_LDADD =					\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
-	$(COLOR_GLIB_LIBS)				\
+	$(LCMS_LIBS)					\
+	$(COLORD_LIBS)					\
 	-lm
 
 gcm_import_CFLAGS =					\
@@ -179,11 +169,10 @@ gcm_viewer_LDADD =					\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
+	$(LCMS_LIBS)					\
 	$(EXIF_LIBS)					\
-	$(COLOR_GLIB_LIBS)				\
+	$(COLORD_LIBS)					\
 	-lm
 
 gcm_viewer_CFLAGS =					\
@@ -200,12 +189,12 @@ gcm_picker_LDADD =					\
 	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
 	$(TIFF_LIBS)					\
+	$(USB_LIBS)					\
+	$(LCMS_LIBS)					\
 	$(EXIF_LIBS)					\
 	$(CANBERRA_LIBS)				\
-	$(COLOR_GLIB_LIBS)				\
+	$(COLORD_LIBS)				\
 	-lm
 
 gcm_picker_CFLAGS =					\
@@ -223,10 +212,9 @@ gcm_session_LDADD =					\
 	$(GTK_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
-	$(SANE_LIBS)					\
 	$(NOTIFY_LIBS)					\
-	$(CUPS_LIBS)					\
-	$(COLOR_GLIB_LIBS)				\
+	$(LCMS_LIBS)					\
+	$(COLORD_LIBS)					\
 	-lm
 
 gcm_session_CFLAGS =					\
@@ -253,18 +241,14 @@ libcolor_la_LIBADD =					\
 	$(GTK_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
-	$(SANE_LIBS)					\
+	$(LCMS_LIBS)					\
 	$(NOTIFY_LIBS)					\
-	$(CUPS_LIBS)					\
 	$(CANBERRA_LIBS)				\
 	$(CONTROL_CENTER_LIBS)				\
-	$(COLOR_GLIB_LIBS)
+	$(COLORD_LIBS)
 
 libcolor_la_LDFLAGS = -avoid-version -module
 libcolor_la_CFLAGS = $(WARNINGFLAGS_C)
-
-COLOR_GLIB_LIBS =						\
-	$(top_builddir)/libcolor-glib/libcolor-glib.la
 
 if HAVE_TESTS
 
@@ -280,13 +264,13 @@ gcm_self_test_LDADD =					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
 	$(GUDEV_LIBS)					\
+	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
-	$(SANE_LIBS)					\
-	$(CUPS_LIBS)					\
+	$(USB_LIBS)					\
 	$(TIFF_LIBS)					\
+	$(COLORD_LIBS)					\
 	$(EXIF_LIBS)					\
-	$(COLOR_GLIB_LIBS)				\
 	-lm
 
 gcm_self_test_CFLAGS = $(AM_CFLAGS) $(WARNINGFLAGS_C)
@@ -294,11 +278,6 @@ gcm_self_test_CFLAGS = $(AM_CFLAGS) $(WARNINGFLAGS_C)
 TESTS = gcm-self-test
 
 endif
-
-install-data-hook:
-	if test -w $(DESTDIR)$(prefix)/; then \
-		mkdir -p $(DESTDIR)$(GCM_SYSTEM_PROFILES_DIR); \
-	fi
 
 clean-local:
 	rm -f *~

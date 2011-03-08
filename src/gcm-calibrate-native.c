@@ -33,11 +33,13 @@
 #include <gtk/gtk.h>
 #include <lcms2.h>
 #include <math.h>
+#include <colord.h>
 
 #include "gcm-calibrate-native.h"
 #include "gcm-sensor-client.h"
 #include "gcm-calibrate-dialog.h"
 #include "gcm-sample-window.h"
+#include "gcm-profile.h"
 
 static void     gcm_calibrate_native_finalize	(GObject     *object);
 
@@ -724,8 +726,8 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 
 	/* create basic profile */
 	profile = gcm_profile_new ();
-	gcm_profile_set_colorspace (profile, GCM_COLORSPACE_RGB);
-	gcm_profile_set_kind (profile, GCM_PROFILE_KIND_DISPLAY_DEVICE);
+	gcm_profile_set_colorspace (profile, CD_COLORSPACE_RGB);
+	gcm_profile_set_kind (profile, CD_PROFILE_KIND_DISPLAY_DEVICE);
 	gcm_profile_set_description (profile, description);
 	gcm_profile_set_copyright (profile, copyright);
 	gcm_profile_set_model (profile, model);

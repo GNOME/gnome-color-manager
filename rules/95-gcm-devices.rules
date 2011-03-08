@@ -11,15 +11,15 @@
 # Devices that may have profiles.
 #
 # These are properties defining the behavior:
-#  GCM_DEVICE		Can be assinged a profile
+#  CD_DEVICE		Can be assinged a profile
 #  GCM_TYPE		The type of device
 #  GCM_RESCAN		If we should rescan a particualr device class
 
 # Cameras with gphoto drivers
-SUBSYSTEM=="usb", ENV{ID_GPHOTO2}!="", ENV{GCM_DEVICE}="1", ENV{GCM_TYPE}="camera"
+SUBSYSTEM=="usb", ENV{ID_GPHOTO2}!="", ENV{CD_DEVICE}="1", ENV{GCM_TYPE}="camera"
 
 # video cameras
-SUBSYSTEM=="video4linux", ENV{ID_V4L_PRODUCT}!="", ENV{GCM_DEVICE}="1", ENV{GCM_TYPE}="camera"
+SUBSYSTEM=="video4linux", ENV{ID_V4L_PRODUCT}!="", ENV{CD_DEVICE}="1", ENV{GCM_TYPE}="camera"
 
 # USB SANE scanners
 SUBSYSTEM=="usb", ENV{libsane_matched}!="", ENV{GCM_RESCAN}="scanner"

@@ -25,7 +25,7 @@
 
 #include <glib.h>
 
-#include "gcm-sensor-huey-private.h"
+#include "../../src/gcm-sensor-huey-private.h"
 
 static void
 parse_command_sequence (GString *output, const gchar *line, gboolean reply)

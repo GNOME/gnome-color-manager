@@ -58,8 +58,8 @@ gcm_cell_renderer_set_icon_name (GcmCellRendererProfileIcon *renderer)
 {
 	const gchar *icon_name = NULL;
 
-	if (gcm_profile_get_kind (renderer->profile) == GCM_PROFILE_KIND_DISPLAY_DEVICE &&
-	    !gcm_profile_get_has_vcgt (renderer->profile))
+	if (cd_profile_get_kind (renderer->profile) == CD_PROFILE_KIND_DISPLAY_DEVICE &&
+	    !cd_profile_get_has_vcgt (renderer->profile))
 		icon_name = "dialog-information";
 
 	g_object_set (renderer, "icon-name", icon_name, NULL);
@@ -112,7 +112,7 @@ gcm_cell_renderer_profile_icon_class_init (GcmCellRendererProfileIconClass *clas
 
 	g_object_class_install_property (object_class, PROP_PROFILE,
 					 g_param_spec_object ("profile", NULL,
-					 NULL, GCM_TYPE_PROFILE, G_PARAM_READWRITE));
+					 NULL, CD_TYPE_PROFILE, G_PARAM_READWRITE));
 }
 
 /**

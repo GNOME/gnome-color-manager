@@ -30,8 +30,6 @@ BuildRequires: intltool
 BuildRequires: libgudev1-devel
 BuildRequires: libXrandr-devel
 BuildRequires: lcms2-devel
-BuildRequires: cups-devel
-BuildRequires: sane-backends-devel
 BuildRequires: libtiff-devel
 BuildRequires: libexif-devel
 BuildRequires: exiv2-devel
@@ -112,21 +110,11 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
 %{_datadir}/applications/gcm-*.desktop
 %{_sysconfdir}/xdg/autostart/*.desktop
 %{_datadir}/dbus-1/services/org.gnome.ColorManager.service
-%{_sbindir}/gcm-install-system-wide
-%{_datadir}/polkit-1/actions/org.gnome.color.policy
 %{_datadir}/glib-2.0/schemas/org.gnome.color-manager.gschema.xml
 %{_datadir}/glib-2.0/schemas/org.gnome.settings-daemon.plugins.color.gschema.xml
 %{_datadir}/GConf/gsettings/org.gnome.color-manager.gschema.migrate
 %{_datadir}/dbus-1/interfaces/org.gnome.ColorManager.xml
 %{_libdir}/control-center-1/panels/*.so
-%{_includedir}/libcolor-glib/*.h
-%{_libdir}/libcolor-glib.so
-%{_libdir}/libcolor-glib.so.1
-%{_libdir}/libcolor-glib.so.1.0.0
-%{_libdir}/pkgconfig/libcolor-glib.pc
-%{_datadir}/gtk-doc/html/libcolor-glib
-%{_libdir}/gnome-settings-daemon-2.0/color.gnome-settings-plugin
-%{_libdir}/gnome-settings-daemon-2.0/libcolor.so
 
 %changelog
 * #LONGDATE# Richard Hughes <richard@hughsie.com> #VERSION#-0.#BUILD##ALPHATAG#

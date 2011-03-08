@@ -24,6 +24,7 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
+#include <colord.h>
 
 #include "gcm-utils.h"
 
@@ -441,67 +442,48 @@ gcm_utils_ensure_sensible_filename (gchar *data)
 }
 
 /**
- * gcm_utils_get_default_config_location:
- **/
-gchar *
-gcm_utils_get_default_config_location (void)
-{
-	gchar *filename;
-
-	if (g_getenv ("GCM_TEST") != NULL) {
-		filename = g_strdup ("/tmp/device-profiles.conf");
-		goto out;
-	}
-
-	/* create default path */
-	filename = g_build_filename (g_get_user_config_dir (), "color", "device-profiles.conf", NULL);
-out:
-	return filename;
-}
-
-/**
  * gcm_utils_device_kind_to_profile_kind:
  **/
-GcmProfileKind
-gcm_utils_device_kind_to_profile_kind (GcmDeviceKind kind)
+CdProfileKind
+gcm_utils_device_kind_to_profile_kind (CdDeviceKind kind)
 {
-	GcmProfileKind profile_kind;
+	CdProfileKind profile_kind;
 	switch (kind) {
-	case GCM_DEVICE_KIND_DISPLAY:
-		profile_kind = GCM_PROFILE_KIND_DISPLAY_DEVICE;
+	case CD_DEVICE_KIND_DISPLAY:
+		profile_kind = CD_PROFILE_KIND_DISPLAY_DEVICE;
 		break;
-	case GCM_DEVICE_KIND_CAMERA:
-	case GCM_DEVICE_KIND_SCANNER:
-		profile_kind = GCM_PROFILE_KIND_INPUT_DEVICE;
+	case CD_DEVICE_KIND_CAMERA:
+	case CD_DEVICE_KIND_SCANNER:
+		profile_kind = CD_PROFILE_KIND_INPUT_DEVICE;
 		break;
-	case GCM_DEVICE_KIND_PRINTER:
-		profile_kind = GCM_PROFILE_KIND_OUTPUT_DEVICE;
+	case CD_DEVICE_KIND_PRINTER:
+		profile_kind = CD_PROFILE_KIND_OUTPUT_DEVICE;
 		break;
 	default:
-		profile_kind = GCM_PROFILE_KIND_UNKNOWN;
+		profile_kind = CD_PROFILE_KIND_UNKNOWN;
 	}
 	return profile_kind;
 }
 
 /**
- * gcm_intent_to_localized_text:
+ * cd_rendering_intent_to_localized_text:
  **/
 const gchar *
-gcm_intent_to_localized_text (GcmIntent intent)
+cd_rendering_intent_to_localized_text (CdRenderingIntent intent)
 {
-	if (intent == GCM_INTENT_PERCEPTUAL) {
+	if (intent == CD_RENDERING_INTENT_PERCEPTUAL) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Perceptual");
 	}
-	if (intent == GCM_INTENT_RELATIVE_COLORMETRIC) {
+	if (intent == CD_RENDERING_INTENT_RELATIVE_COLORMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Relative");
 	}
-	if (intent == GCM_INTENT_SATURATION) {
+	if (intent == CD_RENDERING_INTENT_SATURATION) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Saturation");
 	}
-	if (intent == GCM_INTENT_ABSOLUTE_COLORMETRIC) {
+	if (intent == CD_RENDERING_INTENT_ABSOLUTE_COLORMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Absolute");
 	}
@@ -509,24 +491,24 @@ gcm_intent_to_localized_text (GcmIntent intent)
 }
 
 /**
- * gcm_intent_to_localized_description:
+ * cd_rendering_intent_to_localized_description:
  **/
 const gchar *
-gcm_intent_to_localized_description (GcmIntent intent)
+cd_rendering_intent_to_localized_description (CdRenderingIntent intent)
 {
-	if (intent == GCM_INTENT_PERCEPTUAL) {
+	if (intent == CD_RENDERING_INTENT_PERCEPTUAL) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("High quality photography");
 	}
-	if (intent == GCM_INTENT_RELATIVE_COLORMETRIC) {
+	if (intent == CD_RENDERING_INTENT_RELATIVE_COLORMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Precise color matching");
 	}
-	if (intent == GCM_INTENT_SATURATION) {
+	if (intent == CD_RENDERING_INTENT_SATURATION) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Graphs and presentations");
 	}
-	if (intent == GCM_INTENT_ABSOLUTE_COLORMETRIC) {
+	if (intent == CD_RENDERING_INTENT_ABSOLUTE_COLORMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Proofing devices");
 	}
@@ -534,23 +516,51 @@ gcm_intent_to_localized_description (GcmIntent intent)
 }
 
 /**
- * gcm_colorspace_to_localised_string:
+ * cd_colorspace_to_localised_string:
  **/
 const gchar *
-gcm_colorspace_to_localised_string (GcmColorspace colorspace)
+cd_colorspace_to_localised_string (CdColorspace colorspace)
 {
-	if (colorspace == GCM_COLORSPACE_RGB) {
+	if (colorspace == CD_COLORSPACE_RGB) {
 		/* TRANSLATORS: this is the colorspace, e.g. red, green, blue */
 		return _("RGB");
 	}
-	if (colorspace == GCM_COLORSPACE_CMYK) {
+	if (colorspace == CD_COLORSPACE_CMYK) {
 		/* TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black */
 		return _("CMYK");
 	}
-	if (colorspace == GCM_COLORSPACE_GRAY) {
+	if (colorspace == CD_COLORSPACE_GRAY) {
 		/* TRANSLATORS: this is the colorspace type */
 		return _("gray");
 	}
 	return NULL;
 }
 
+/**
+ * gcm_profile_has_colorspace_description:
+ * @profile: A valid #CdProfile
+ *
+ * Finds out if the profile contains a colorspace description.
+ *
+ * Return value: %TRUE if the description mentions the profile colorspace explicity,
+ * e.g. "Adobe RGB" for %CD_COLORSPACE_RGB.
+ **/
+gboolean
+gcm_profile_has_colorspace_description (CdProfile *profile)
+{
+	CdColorspace colorspace;
+	const gchar *description;
+
+	g_return_val_if_fail (CD_IS_PROFILE (profile), FALSE);
+
+	/* for each profile type */
+	colorspace = cd_profile_get_colorspace (profile);
+	description = cd_profile_get_title (profile);
+	if (colorspace == CD_COLORSPACE_RGB)
+		return (g_strstr_len (description, -1, "RGB") != NULL);
+	if (colorspace == CD_COLORSPACE_CMYK)
+		return (g_strstr_len (description, -1, "CMYK") != NULL);
+
+	/* nothing */
+	return FALSE;
+}

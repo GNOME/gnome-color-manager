@@ -34,6 +34,7 @@
 #include <string.h>
 #include <gio/gio.h>
 #include <stdlib.h>
+#include <colord.h>
 #include <gtk/gtk.h>
 #ifdef HAVE_VTE
 #include <vte/vte.h>
@@ -621,7 +622,7 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	gchar *basename = NULL;
 	const gchar *title;
 	const gchar *message;
-	GcmDeviceKind device_kind;
+	CdDeviceKind device_kind;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
@@ -654,7 +655,7 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	g_ptr_array_add (array, g_strdup (command));
 #endif
 	g_ptr_array_add (array, g_strdup ("-v"));
-	if (device_kind == GCM_DEVICE_KIND_PRINTER) {
+	if (device_kind == CD_DEVICE_KIND_PRINTER) {
 		/* print RGB */
 		g_ptr_array_add (array, g_strdup ("-d2"));
 
@@ -666,9 +667,9 @@ gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_arg
 	}
 
 	/* get number of patches */
-	if (device_kind == GCM_DEVICE_KIND_DISPLAY)
+	if (device_kind == CD_DEVICE_KIND_DISPLAY)
 		g_ptr_array_add (array, g_strdup_printf ("-f%i", gcm_calibrate_argyll_display_get_patches (calibrate_argyll)));
-	else if (device_kind == GCM_DEVICE_KIND_PRINTER)
+	else if (device_kind == CD_DEVICE_KIND_PRINTER)
 		g_ptr_array_add (array, g_strdup_printf ("-f%i", gcm_calibrate_argyll_printer_get_patches (calibrate_argyll)));
 
 	g_ptr_array_add (array, g_strdup (basename));

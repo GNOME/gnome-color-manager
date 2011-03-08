@@ -24,7 +24,10 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <locale.h>
-#include <libcolor-glib.h>
+#include <colord.h>
+
+#include "gcm-profile.h"
+#include "gcm-debug.h"
 
 /**
  * gcm_dump_profile_filename:
@@ -38,7 +41,6 @@ gcm_dump_profile_filename (const gchar *filename)
 	guint profile_kind;
 	guint colorspace;
 	guint size;
-	gboolean has_vcgt;
 	const gchar *description;
 	const gchar *copyright;
 	const gchar *manufacturer;
@@ -60,13 +62,12 @@ gcm_dump_profile_filename (const gchar *filename)
 
 	/* print what we know */
 	profile_kind = gcm_profile_get_kind (profile);
-	g_print ("Kind:\t%s\n", gcm_profile_kind_to_string (profile_kind));
+	g_print ("Kind:\t%s\n", cd_profile_kind_to_string (profile_kind));
 	colorspace = gcm_profile_get_colorspace (profile);
-	g_print ("Colorspace:\t%s\n", gcm_colorspace_to_string (colorspace));
+	g_print ("Colorspace:\t%s\n", cd_colorspace_to_string (colorspace));
 	size = gcm_profile_get_size (profile);
-	g_print ("Size:\t\t%i bytes\n", size);
-	has_vcgt = gcm_profile_get_has_vcgt (profile);
-	g_print ("Has VCGT:\t%s\n", has_vcgt ? "Yes" : "No");
+	if (size != 0)
+		g_print ("Size:\t%i\n", size);
 	description = gcm_profile_get_description (profile);
 	if (description != NULL)
 		g_print ("Description:\t%s\n", description);
@@ -122,17 +123,15 @@ main (int argc, char **argv)
 	};
 
 	setlocale (LC_ALL, "");
+	g_type_init ();
 
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
-	gtk_init (&argc, &argv);
-
 	context = g_option_context_new ("ICC profile dump program");
 	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_add_group (context, gcm_debug_get_option_group ());
-	g_option_context_add_group (context, gtk_get_option_group (TRUE));
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
 

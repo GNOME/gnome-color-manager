@@ -23,8 +23,8 @@
 #include <gtk/gtk.h>
 #include <glib/gi18n.h>
 
-#include "gcm-device.h"
 #include "gcm-list-store-profiles.h"
+#include "gcm-profile.h"
 
 G_DEFINE_TYPE (GcmListStoreProfiles, gcm_list_store_profiles, GTK_TYPE_LIST_STORE);
 
@@ -32,7 +32,7 @@ G_DEFINE_TYPE (GcmListStoreProfiles, gcm_list_store_profiles, GTK_TYPE_LIST_STOR
 
 struct GcmListStoreProfilesPrivate
 {
-	GcmDevice		*device;
+	CdDevice		*device;
 	guint			 changed_id;
 };
 
@@ -40,13 +40,13 @@ struct GcmListStoreProfilesPrivate
  * cc_color_panel_profile_get_tooltip:
  **/
 static const gchar *
-cc_color_panel_profile_get_tooltip (GcmProfile *profile)
+cc_color_panel_profile_get_tooltip (CdProfile *profile)
 {
 	const gchar *tooltip = NULL;
 
 	/* VCGT warning */
-	if (gcm_profile_get_kind (profile) == GCM_PROFILE_KIND_DISPLAY_DEVICE &&
-	    !gcm_profile_get_has_vcgt (profile)) {
+	if (cd_profile_get_kind (profile) == CD_PROFILE_KIND_DISPLAY_DEVICE &&
+	    !cd_profile_get_has_vcgt (profile)) {
 		/* TRANSLATORS: this is displayed when the profile is crap */
 		tooltip = _("This profile does not have the information required for whole-screen color correction.");
 		goto out;
@@ -63,7 +63,7 @@ gcm_list_store_refresh_profiles (GtkListStore *list_store)
 {
 	GPtrArray *profiles;
 	GtkTreeIter iter;
-	GcmProfile *profile;
+	CdProfile *profile;
 	guint i;
 	GcmListStoreProfilesPrivate *priv = GCM_LIST_STORE_PROFILES(list_store)->priv;
 
@@ -71,7 +71,7 @@ gcm_list_store_refresh_profiles (GtkListStore *list_store)
 	gtk_list_store_clear (list_store);
 
 	/* add profiles for the device */
-	profiles = gcm_device_get_profiles (priv->device);
+	profiles = cd_device_get_profiles (priv->device);
 	for (i=0; i<profiles->len; i++) {
 		profile = g_ptr_array_index (profiles, i);
 		gtk_list_store_append (list_store, &iter);
@@ -90,7 +90,7 @@ gcm_list_store_refresh_profiles (GtkListStore *list_store)
  * gcm_list_store_profiles_device_changed_cb:
  **/
 static void
-gcm_list_store_profiles_device_changed_cb (GcmDevice *device, GtkListStore *list_store)
+gcm_list_store_profiles_device_changed_cb (CdDevice *device, GtkListStore *list_store)
 {
 	gcm_list_store_refresh_profiles (list_store);
 }
@@ -99,7 +99,7 @@ gcm_list_store_profiles_device_changed_cb (GcmDevice *device, GtkListStore *list
  * gcm_list_store_profiles_set_from_device:
  **/
 void
-gcm_list_store_profiles_set_from_device (GtkListStore *list_store, GcmDevice *device)
+gcm_list_store_profiles_set_from_device (GtkListStore *list_store, CdDevice *device)
 {
 	GcmListStoreProfilesPrivate *priv = GCM_LIST_STORE_PROFILES(list_store)->priv;
 
@@ -125,7 +125,7 @@ gcm_list_store_profiles_set_from_device (GtkListStore *list_store, GcmDevice *de
 static void
 gcm_list_store_profiles_init (GcmListStoreProfiles *list_store)
 {
-	GType types[] = { G_TYPE_STRING, GCM_TYPE_PROFILE, G_TYPE_BOOLEAN, G_TYPE_STRING };
+	GType types[] = { G_TYPE_STRING, CD_TYPE_PROFILE, G_TYPE_BOOLEAN, G_TYPE_STRING };
 	list_store->priv = GCM_LIST_STORE_PROFILES_GET_PRIVATE (list_store);
 	gtk_list_store_set_column_types (GTK_LIST_STORE (list_store), GCM_LIST_STORE_PROFILES_COLUMN_LAST, types);
 }
