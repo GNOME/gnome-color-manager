@@ -216,31 +216,6 @@ cc_color_panel_help_cb (GtkWidget *widget, CcColorPanel *panel)
 }
 
 /**
- * cc_color_panel_viewer_cb:
- **/
-static void
-cc_color_panel_viewer_cb (GtkWidget *widget, CcColorPanel *panel)
-{
-	gboolean ret;
-	GError *error = NULL;
-	guint xid;
-	gchar *command;
-
-	/* get xid */
-	xid = gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET (panel->priv->main_window)));
-
-	/* run with modal set */
-	command = g_strdup_printf ("%s/gcm-viewer --parent-window %u", BINDIR, xid);
-	g_debug ("running: %s", command);
-	ret = g_spawn_command_line_async (command, &error);
-	if (!ret) {
-		g_warning ("failed to run prefs: %s", error->message);
-		g_error_free (error);
-	}
-	g_free (command);
-}
-
-/**
  * cc_color_panel_calibrate_display:
  **/
 static gboolean
@@ -2356,6 +2331,31 @@ cc_color_panel_class_finalize (CcColorPanelClass *klass)
 {
 }
 
+static gboolean
+cc_color_panel_activate_link_cb (GtkLabel *label,
+				 const gchar *uri,
+				 CcColorPanel *panel)
+{
+	gboolean ret;
+	GError *error = NULL;
+	guint xid;
+	gchar *command;
+
+	/* get xid */
+	xid = gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET (panel->priv->main_window)));
+
+	/* run with modal set */
+	command = g_strdup_printf ("%s/gcm-viewer --parent-window %u", BINDIR, xid);
+	g_debug ("running: %s", command);
+	ret = g_spawn_command_line_async (command, &error);
+	if (!ret) {
+		g_warning ("failed to run prefs: %s", error->message);
+		g_error_free (error);
+	}
+	g_free (command);
+	return TRUE;
+}
+
 static void
 cc_color_panel_finalize (GObject *object)
 {
@@ -2391,6 +2391,7 @@ cc_color_panel_init (CcColorPanel *panel)
 	GtkWidget *info_bar_profiles_label;
 	GtkWidget *main_window;
 	GtkWidget *widget;
+	gchar *text = NULL;
 
 	panel->priv = CC_COLOR_PREFS_GET_PRIVATE (panel);
 	panel->priv->cancellable = g_cancellable_new ();
@@ -2485,9 +2486,13 @@ cc_color_panel_init (CcColorPanel *panel)
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (cc_color_panel_help_cb), panel);
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
-						     "button_viewer"));
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_viewer_cb), panel);
+						     "label_viewer"));
+	g_signal_connect (widget, "activate-link",
+			  G_CALLBACK (cc_color_panel_activate_link_cb), panel);
+	/* TRANSLATORS: link to gcm-viewer */
+	text = g_strdup_printf ("<a href=\"moo\">%s</a>",
+				_("Compare profiles..."));
+	gtk_label_set_markup (GTK_LABEL (widget), text);
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
 						     "button_delete"));
 	g_signal_connect (widget, "clicked",
@@ -2639,6 +2644,7 @@ if(0)	cc_color_panel_setup_drag_and_drop (GTK_WIDGET (panel->priv->main_window))
 	/* do all this after the window has been set up */
 	g_idle_add ((GSourceFunc) cc_color_panel_startup_idle_cb, panel);
 out:
+	g_free (text);
 	return;
 }
 
