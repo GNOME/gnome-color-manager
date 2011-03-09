@@ -207,15 +207,6 @@ out:
 }
 
 /**
- * cc_color_panel_help_cb:
- **/
-static void
-cc_color_panel_help_cb (GtkWidget *widget, CcColorPanel *panel)
-{
-	gcm_gnome_help ("preferences");
-}
-
-/**
  * cc_color_panel_calibrate_display:
  **/
 static gboolean
@@ -2481,10 +2472,6 @@ cc_color_panel_init (CcColorPanel *panel)
 						     "button_default"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (cc_color_panel_default_cb), panel);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
-						     "button_help"));
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_help_cb), panel);
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
 						     "label_viewer"));
 	g_signal_connect (widget, "activate-link",

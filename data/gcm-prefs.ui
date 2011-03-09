@@ -169,23 +169,6 @@
             <property name="can_focus">False</property>
             <property name="layout_style">end</property>
             <child>
-              <object class="GtkButton" id="button_help">
-                <property name="label">gtk-help</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="tooltip_text" translatable="yes">Open the documentation</property>
-                <property name="use_action_appearance">False</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-                <property name="secondary">True</property>
-              </packing>
-            </child>
-            <child>
               <object class="GtkButton" id="button_default">
                 <property name="label" translatable="yes" comments="This is when the settings are set for all users, unless they have per-user settings themselves">_Set for all users</property>
                 <property name="visible">True</property>
@@ -198,7 +181,7 @@
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
-                <property name="position">2</property>
+                <property name="position">0</property>
               </packing>
             </child>
           </object>
@@ -305,7 +288,7 @@
                         </child>
                         <child>
                           <object class="GtkButton" id="button_calibrate">
-                            <property name="label" translatable="yes" comments="This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image">Create _Profile</property>
+                            <property name="label" translatable="yes" comments="This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image">Calibrate</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
@@ -398,7 +381,7 @@
                         </child>
                         <child>
                           <object class="GtkButton" id="button_assign_make_default">
-                            <property name="label" translatable="yes">Set as default</property>
+                            <property name="label" translatable="yes">Set default</property>
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
@@ -810,7 +793,6 @@
       </object>
     </child>
     <action-widgets>
-      <action-widget response="0">button_help</action-widget>
       <action-widget response="0">button_default</action-widget>
     </action-widgets>
   </object>
