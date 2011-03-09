@@ -1263,6 +1263,12 @@ gcm_session_colord_appeared_cb (GDBusConnection *_connection,
 		gcm_session_add_x11_output (output);
 	}
 
+	/* only connect when colord is awake */
+	g_signal_connect (x11_screen, "added",
+			  G_CALLBACK (gcm_x11_screen_output_added_cb), NULL);
+	g_signal_connect (x11_screen, "removed",
+			  G_CALLBACK (gcm_x11_screen_output_removed_cb), NULL);
+
 	/* add profiles */
 	gcm_profile_store_search (profile_store);
 
@@ -1381,10 +1387,6 @@ main (int argc, char *argv[])
 
 	/* monitor displays */
 	x11_screen = gcm_x11_screen_new ();
-	g_signal_connect (x11_screen, "added",
-			  G_CALLBACK (gcm_x11_screen_output_added_cb), NULL);
-	g_signal_connect (x11_screen, "removed",
-			  G_CALLBACK (gcm_x11_screen_output_removed_cb), NULL);
 	ret = gcm_x11_screen_assign (x11_screen, NULL, &error);
 	if (!ret) {
 		g_warning ("failed to assign: %s", error->message);
