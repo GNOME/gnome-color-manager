@@ -1480,6 +1480,7 @@ cc_color_panel_profile_treeview_clicked_cb (GtkTreeSelection *selection,
 	gboolean is_default;
 	GtkWidget *widget;
 	CdProfile *profile;
+	CdDeviceRelation relation;
 
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -1499,6 +1500,7 @@ cc_color_panel_profile_treeview_clicked_cb (GtkTreeSelection *selection,
 	gtk_tree_model_get (model, &iter,
 			    GCM_LIST_STORE_PROFILES_COLUMN_PROFILE, &profile,
 			    GCM_LIST_STORE_PROFILES_COLUMN_IS_DEFAULT, &is_default,
+			    GCM_LIST_STORE_PROFILES_COLUMN_RELATION, &relation,
 			    -1);
 	g_debug ("selected profile = %s",
 		 cd_profile_get_filename (profile));
@@ -1508,10 +1510,17 @@ cc_color_panel_profile_treeview_clicked_cb (GtkTreeSelection *selection,
 						     "button_assign_make_default"));
 	gtk_widget_set_sensitive (widget, !is_default);
 
-	/* we can remove it now */
+	/* we can only remove hard relationships */
 	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
 						     "button_assign_remove"));
-	gtk_widget_set_sensitive (widget, TRUE);
+	if (relation == CD_DEVICE_RELATION_HARD) {
+		gtk_widget_set_tooltip_text (widget, "");
+		gtk_widget_set_sensitive (widget, TRUE);
+	} else {
+		/* TRANSLATORS: this is when an auto-added profile cannot be removed */
+		gtk_widget_set_tooltip_text (widget, _("Cannot remove automatically added profile"));
+		gtk_widget_set_sensitive (widget, FALSE);
+	}
 	g_object_unref (profile);
 }
 

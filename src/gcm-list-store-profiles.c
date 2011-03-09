@@ -66,6 +66,7 @@ gcm_list_store_refresh_profiles (GtkListStore *list_store)
 	CdProfile *profile;
 	guint i;
 	GcmListStoreProfilesPrivate *priv = GCM_LIST_STORE_PROFILES(list_store)->priv;
+	CdDeviceRelation relation = CD_DEVICE_RELATION_UNKNOWN;
 
 	/* clear existing list */
 	gtk_list_store_clear (list_store);
@@ -74,15 +75,23 @@ gcm_list_store_refresh_profiles (GtkListStore *list_store)
 	profiles = cd_device_get_profiles (priv->device);
 	for (i=0; i<profiles->len; i++) {
 		profile = g_ptr_array_index (profiles, i);
+
+#if CD_CHECK_VERSION(0,1,4)
+		/* find the profile relationship */
+		relation = cd_device_get_profile_relation (priv->device,
+							   profile,
+							   NULL, NULL);
+#endif
+
 		gtk_list_store_append (list_store, &iter);
 		gtk_list_store_set (list_store, &iter,
 				    GCM_LIST_STORE_PROFILES_COLUMN_PROFILE, profile,
 				    GCM_LIST_STORE_PROFILES_COLUMN_SORT, (i == 0) ? "0" : "1",
 				    GCM_LIST_STORE_PROFILES_COLUMN_IS_DEFAULT, (i == 0),
 				    GCM_LIST_STORE_PROFILES_COLUMN_TOOLTIP, cc_color_panel_profile_get_tooltip (profile),
+				    GCM_LIST_STORE_PROFILES_COLUMN_RELATION, relation,
 				    -1);
 	}
-
 	g_ptr_array_unref (profiles);
 }
 
@@ -125,7 +134,7 @@ gcm_list_store_profiles_set_from_device (GtkListStore *list_store, CdDevice *dev
 static void
 gcm_list_store_profiles_init (GcmListStoreProfiles *list_store)
 {
-	GType types[] = { G_TYPE_STRING, CD_TYPE_PROFILE, G_TYPE_BOOLEAN, G_TYPE_STRING };
+	GType types[] = { G_TYPE_STRING, CD_TYPE_PROFILE, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_UINT };
 	list_store->priv = GCM_LIST_STORE_PROFILES_GET_PRIVATE (list_store);
 	gtk_list_store_set_column_types (GTK_LIST_STORE (list_store), GCM_LIST_STORE_PROFILES_COLUMN_LAST, types);
 }
