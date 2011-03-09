@@ -248,6 +248,7 @@ gcm_session_profile_added_notify_cb (CdClient *client_,
 	GcmX11Output *output = NULL;
 	GError *error = NULL;
 	CdDevice *device = NULL;
+	gchar *device_id = NULL;
 	gboolean ret;
 
 	/* does the profile have EDID metadata? */
@@ -269,13 +270,15 @@ gcm_session_profile_added_notify_cb (CdClient *client_,
 	}
 
 	/* get the CdDevice for this ID */
+	device_id = g_strdup_printf ("xrandr_%s",
+				     gcm_x11_output_get_name (output));
 	device = cd_client_find_device_sync (client,
-					     gcm_x11_output_get_name (output),
+					     device_id,
 					     NULL,
 					     &error);
 	if (device == NULL) {
 		g_warning ("not found device %s which should have been added: %s",
-			   gcm_x11_output_get_name (output),
+			   device_id,
 			   error->message);
 		g_error_free (error);
 		goto out;
@@ -301,6 +304,7 @@ gcm_session_profile_added_notify_cb (CdClient *client_,
 		 cd_profile_get_object_path (profile),
 		 cd_device_get_object_path (device));
 out:
+	g_free (device_id);
 	if (metadata != NULL)
 		g_hash_table_unref (metadata);
 	if (output != NULL)
@@ -470,6 +474,7 @@ gcm_session_device_assign (CdDevice *device)
 	GcmX11Output *output = NULL;
 	GError *error = NULL;
 	const gchar *qualifier_default[] = { "*", NULL};
+	const gchar *xrandr_id;
 
 	/* check we care */
 	kind = cd_device_get_kind (device);
@@ -480,8 +485,15 @@ gcm_session_device_assign (CdDevice *device)
 		 cd_device_get_id (device));
 
 	/* get the GcmX11Output for the device id */
+	xrandr_id = cd_device_get_id (device);
+	if (!g_str_has_prefix (xrandr_id, "xrandr_")) {
+		g_warning ("xrandr device does not start with prefix: %s",
+			   xrandr_id);
+		return;
+	}
+	xrandr_id += 7;
 	output = gcm_x11_screen_get_output_by_name (x11_screen,
-						    cd_device_get_id (device),
+						    xrandr_id,
 						    &error);
 	if (output == NULL) {
 		g_warning ("no %s device found: %s",
