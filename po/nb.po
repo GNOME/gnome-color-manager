@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager 2.91.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-03-02 21:31+0100\n"
-"PO-Revision-Date: 2011-03-02 21:35+0100\n"
+"POT-Creation-Date: 2011-03-10 22:29+0100\n"
+"PO-Revision-Date: 2011-03-10 22:31+0100\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.uio.no>\n"
 "Language: nb\n"
@@ -18,11 +18,11 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Virtaal 0.6.1\n"
 
-#: ../data/gcm-apply.desktop.in.h:1
+#: ../data/gcm-session.desktop.in.h:1
 msgid "Applies device profile settings at session startup"
 msgstr "Slår på innstillinger fra enhetsprofil når økten startes"
 
-#: ../data/gcm-apply.desktop.in.h:2
+#: ../data/gcm-session.desktop.in.h:2
 msgid "Load device color profiles"
 msgstr "Last fargeprofiler for enheter"
 
@@ -51,186 +51,136 @@ msgid "Inspect and compare installed color profiles"
 msgstr "Inspiser og sammenligne installerte fargeprofiler"
 
 #. TRANSLATORS: turn on all debugging
-#: ../libcolor-glib/gcm-debug.c:104
+#: ../src/gcm-debug.c:105
 msgid "Show debugging information for all files"
 msgstr "Vis feilsøkingsinformasjon for alle filer"
 
-#: ../libcolor-glib/gcm-debug.c:161
+#: ../src/gcm-debug.c:162
 msgid "Debugging Options"
 msgstr "Feilsøkingsalternativer"
 
-#: ../libcolor-glib/gcm-debug.c:161
+#: ../src/gcm-debug.c:162
 msgid "Show debugging options"
 msgstr "Vis alternativer for feilsøking"
 
 #. TRANSLATORS: this is where the ICC profile has no description
-#: ../libcolor-glib/gcm-profile.c:172
+#: ../src/gcm-profile.c:167
 msgid "Missing description"
 msgstr "Mangler beskrivelse"
 
 #. TRANSLATORS: this is the profile creation date strftime format
-#: ../libcolor-glib/gcm-profile.c:681
+#: ../src/gcm-profile.c:578
 msgid "%B %e %Y, %I:%M:%S %p"
 msgstr "%B %e %Y, %H.%M.%S"
 
-#: ../policy/org.gnome.color.policy.in.h:1
-msgid "Authentication is required to install the color profile for all users"
-msgstr "Autentisering kreves for å installere fargeprofilen for alle brukere"
-
-#. SECURITY:
-#. - Normal users require admin authentication to install files system
-#. wide to apply color profiles for sessions that have not explicitly
-#. chosen profiles to apply.
-#. - This should not be set to 'yes' as unprivileged users could then
-#. set a profile set to all-white or all-black and thus make the
-#. other sessions unusable.
-#.
-#: ../policy/org.gnome.color.policy.in.h:10
-msgid "Install system color profiles"
-msgstr "Installer fargeprofiler for systemet"
-
-#. TRANSLATORS: could not save for all users
-#: ../src/cc-color-panel.c:147
-msgid "Failed to save defaults for all users"
-msgstr "Klarte ikke å lagre forvalg for alle brukere"
-
 #. TRANSLATORS: this is where the user can click and import a profile
-#: ../src/cc-color-panel.c:175
+#: ../src/cc-color-panel.c:141
 msgid "Other profile…"
 msgstr "Annen profil …"
 
-#. TRANSLATORS: could not calibrate
-#: ../src/cc-color-panel.c:332
+#: ../src/cc-color-panel.c:249
 msgid "Failed to calibrate device"
 msgstr "Klarte ikke å kalibrere enheten"
 
-#. TRANSLATORS: could not calibrate
-#: ../src/cc-color-panel.c:367
+#: ../src/cc-color-panel.c:278
 msgid "Failed to calibrate printer"
 msgstr "Klarte ikke å kalibrere skriveren"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/cc-color-panel.c:392 ../src/gcm-calibrate.c:913
-#: ../src/gcm-viewer.c:340
+#: ../src/cc-color-panel.c:305 ../src/gcm-calibrate.c:900
+#: ../src/gcm-viewer.c:353
 msgid "Select ICC Profile File"
 msgstr "Velg fil for ICC-profil"
 
-#: ../src/cc-color-panel.c:395 ../src/gcm-viewer.c:343
+#: ../src/cc-color-panel.c:308 ../src/gcm-viewer.c:356
 msgid "Import"
 msgstr "Importer"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/cc-color-panel.c:413 ../src/gcm-viewer.c:361
+#: ../src/cc-color-panel.c:326 ../src/gcm-viewer.c:374
 msgid "Supported ICC profiles"
 msgstr "Støttede ICC-profiler"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/cc-color-panel.c:420 ../src/gcm-calibrate.c:795
-#: ../src/gcm-calibrate.c:847 ../src/gcm-viewer.c:368
+#: ../src/cc-color-panel.c:333 ../src/gcm-calibrate.c:782
+#: ../src/gcm-calibrate.c:834 ../src/gcm-viewer.c:381
 msgid "All files"
 msgstr "Alle filer"
 
 #. TRANSLATORS: could not read file
-#: ../src/cc-color-panel.c:456 ../src/gcm-import.c:207 ../src/gcm-viewer.c:404
+#: ../src/cc-color-panel.c:370 ../src/gcm-import.c:225 ../src/gcm-viewer.c:417
 msgid "Failed to copy file"
 msgstr "Klarte ikke å kopiere filen"
 
-#: ../src/cc-color-panel.c:484
-msgid "Failed to get metadata from image"
-msgstr "Klarte ikke å hente metadata fra bildet"
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:501 ../src/cc-color-panel.c:1123
-msgid "Failed to create virtual device"
-msgstr "Klarte ikke å lage virtuell enhet"
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:509 ../src/cc-color-panel.c:1131
-msgid "Failed to save virtual device"
-msgstr "Klarte ikke å lagre virtuell enhet"
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:518 ../src/cc-color-panel.c:1140
-msgid "Failed to add virtual device"
-msgstr "Klarte ikke å legge til virtuell enhet"
-
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/cc-color-panel.c:700
+#: ../src/cc-color-panel.c:561
 msgid "Install calibration and profiling software?"
 msgstr "Installer programvare for kalibrering og profilering?"
 
-#. TRANSLATORS: dialog message saying the argyllcms is not installed
-#: ../src/cc-color-panel.c:704
+#: ../src/cc-color-panel.c:566
 msgid "Calibration and profiling software is not installed."
 msgstr "Kalibrerings- og profileringsprogramvare er ikke installert."
 
-#. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/cc-color-panel.c:706
+#: ../src/cc-color-panel.c:569
 msgid "These tools are required to build color profiles for devices."
 msgstr "Disse verktøyene kreves for å lage fargeprofiler for enheter."
 
 #. TRANSLATORS: button, skip installing a package
-#: ../src/cc-color-panel.c:711 ../src/gcm-calibrate.c:1082
+#: ../src/cc-color-panel.c:574 ../src/gcm-calibrate.c:1069
 msgid "Do not install"
 msgstr "Ikke installer"
 
 #. TRANSLATORS: button, install a package
 #. TRANSLATORS: button text
-#: ../src/cc-color-panel.c:713 ../src/gcm-calibrate.c:1084
-#: ../src/gcm-import.c:186
+#: ../src/cc-color-panel.c:576 ../src/gcm-calibrate.c:1071
+#: ../src/gcm-import.c:204
 msgid "Install"
 msgstr "Installer"
 
 #. TRANSLATORS: this is the application name for libcanberra
-#: ../src/cc-color-panel.c:830 ../src/cc-color-panel.c:1799
-#: ../src/gcm-calibrate-argyll.c:2251 ../src/gcm-calibrate-argyll.c:2301
-#: ../src/gcm-calibrate-argyll.c:2356 ../src/gcm-calibrate-argyll.c:2432
-#: ../src/gcm-calibrate-argyll.c:2513 ../src/gcm-calibrate-argyll.c:2554
+#: ../src/cc-color-panel.c:753 ../src/cc-color-panel.c:1658
+#: ../src/gcm-calibrate-argyll.c:2252 ../src/gcm-calibrate-argyll.c:2302
+#: ../src/gcm-calibrate-argyll.c:2357 ../src/gcm-calibrate-argyll.c:2433
+#: ../src/gcm-calibrate-argyll.c:2514 ../src/gcm-calibrate-argyll.c:2555
 msgid "GNOME Color Manager"
 msgstr "GNOME fargestyrer"
 
 #. TRANSLATORS: this is the sound description
-#: ../src/cc-color-panel.c:832
+#: ../src/cc-color-panel.c:755
 msgid "Profiling completed"
 msgstr "Profilering fullført"
 
-#. TRANSLATORS: could not read file
-#: ../src/cc-color-panel.c:1266
-msgid "Failed to delete file"
-msgstr "Klarte ikke å slette filen"
+#: ../src/cc-color-panel.c:1071
+msgid "Failed to add create virtual device"
+msgstr "Klarte ikke å legge til virtuell enhet"
+
+#. TRANSLATORS: could not delete virtual device
+#: ../src/cc-color-panel.c:1201
+msgid "Failed to delete device"
+msgstr "Klarte ikke å slette enheten"
 
 #. TRANSLATORS: this is when the button is sensitive
-#: ../src/cc-color-panel.c:1346
+#: ../src/cc-color-panel.c:1285
 msgid "Create a color profile for the selected device"
 msgstr "Lag en fargeprofil for valgt enhet"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1351
+#: ../src/cc-color-panel.c:1290
 msgid "Cannot create profile: No device is selected"
 msgstr "Kan ikke lage profil: Ingen enhet valgt"
 
 #. TRANSLATORS: this is when the button is insensitive because the distro compiled GCM without VTE
-#: ../src/cc-color-panel.c:1362
+#: ../src/cc-color-panel.c:1301
 msgid "Cannot create profile: Virtual console support is missing"
 msgstr "Kan ikke lage profil: Mangler støtte for virtuelt konsoll"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1374
-msgid "Cannot create profile: The display device is not connected"
-msgstr "Kan ikke lage profil: Skjermenheten er ikke koblet til"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1382
-msgid "Cannot create profile: The display driver does not support XRandR 1.3"
-msgstr "Kan ikke lage profil: Skjermdriveren støtter ikke XRandR 1.3"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1390 ../src/cc-color-panel.c:1405
+#: ../src/cc-color-panel.c:1313 ../src/cc-color-panel.c:1328
 msgid "Cannot create profile: The measuring instrument is not plugged in"
 msgstr "Kan ikke lage profil: Måleinstrumentet er ikke koblet til"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1413
+#: ../src/cc-color-panel.c:1336
 msgid ""
 "Cannot create profile: The measuring instrument does not support printer "
 "profiling"
@@ -238,105 +188,88 @@ msgstr ""
 "Kan ikke lage profil: Måleinstrumentet støtter ikke profilering av skrivere"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1420
+#: ../src/cc-color-panel.c:1343
 msgid "Cannot create a profile for this type of device"
 msgstr "Kan ikke lage en profil for denne typen enhet"
 
-#: ../src/cc-color-panel.c:1479
-msgid "Per-device settings not supported. Check your display driver."
-msgstr "Innstillinger per enhet er ikke støttet. Sjekk din skjermdriver."
-
-#. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/cc-color-panel.c:1628
-msgid "No hardware support"
-msgstr "Ingen maskinvarestøtte"
-
-#. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/cc-color-panel.c:1632 ../src/cc-color-panel.c:1851
-msgid "disconnected"
-msgstr "koblet fra"
-
-#. TRANSLATORS: the profile was of the wrong sort for this device
-#: ../src/cc-color-panel.c:1751
-msgid "Could not import profile"
-msgstr "Kunne ikke importere profil"
-
-#: ../src/cc-color-panel.c:1752
-msgid "The profile was of the wrong type for this device"
-msgstr "Profilen var av feil type for denne enheten"
+#. TRANSLATORS: this is when an auto-added profile cannot be removed
+#: ../src/cc-color-panel.c:1487
+msgid "Cannot remove automatically added profile"
+msgstr "Kan ikke fjerne profil som er lagt til automatisk"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/cc-color-panel.c:1787
+#: ../src/cc-color-panel.c:1646
 msgid "Device added"
 msgstr "Enhet lagt til"
 
 #. TRANSLATORS: this is a sound description
-#: ../src/cc-color-panel.c:1791
+#: ../src/cc-color-panel.c:1650
 msgid "Device removed"
 msgstr "Enhet fjernet"
 
-#. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
-#: ../src/cc-color-panel.c:2016 ../src/gcm-picker.c:519
+#. TRANSLATORS: this is when there are no profiles that
+#. * can be used; the search term is either "RGB" or "CMYK"
+#. TRANSLATORS: this is when there are no profiles that can be used;
+#. * the search term is either "RGB" or "CMYK"
+#: ../src/cc-color-panel.c:1869 ../src/gcm-picker.c:570
 #, c-format
 msgid "No %s color spaces available"
 msgstr "Ingen %s-fargeområder tilgjengelig"
 
 #. TRANSLATORS: the DBus method failed
-#: ../src/cc-color-panel.c:2127 ../src/gcm-inspect.c:196
-#: ../src/gcm-inspect.c:265 ../src/gcm-inspect.c:332 ../src/gcm-inspect.c:394
-#: ../src/gcm-inspect.c:464 ../src/gcm-utils.c:192
+#: ../src/cc-color-panel.c:1982 ../src/gcm-inspect.c:196
+#: ../src/gcm-inspect.c:265 ../src/gcm-inspect.c:334 ../src/gcm-inspect.c:404
+#: ../src/gcm-utils.c:193
 msgid "The request failed:"
 msgstr "Forespørselen feilet:"
 
 #. TRANSLATORS: no DBus session bus
-#: ../src/cc-color-panel.c:2161 ../src/gcm-inspect.c:178
-#: ../src/gcm-inspect.c:247 ../src/gcm-inspect.c:315 ../src/gcm-inspect.c:376
-#: ../src/gcm-inspect.c:446 ../src/gcm-utils.c:168
+#: ../src/cc-color-panel.c:2018 ../src/gcm-inspect.c:178
+#: ../src/gcm-inspect.c:247 ../src/gcm-inspect.c:316 ../src/gcm-inspect.c:386
+#: ../src/gcm-utils.c:169
 msgid "Failed to connect to session bus:"
 msgstr "Klarte ikke å koble til øktbussen:"
 
 #. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2366
+#: ../src/cc-color-panel.c:2250
 msgid "Display"
 msgstr "Skjerm"
 
 #. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2370
+#: ../src/cc-color-panel.c:2254
 msgid "Scanner"
 msgstr "Skanner"
 
 #. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2374
+#: ../src/cc-color-panel.c:2258
 msgid "Printer"
 msgstr "Skriver"
 
 #. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2378
+#: ../src/cc-color-panel.c:2262
 msgid "Camera"
 msgstr "Kamera"
 
-#. TRANSLATORS: button to install extra profiles
-#: ../src/cc-color-panel.c:2624
+#: ../src/cc-color-panel.c:2481
+msgid "Compare profiles..."
+msgstr "Sammenligne profiler …"
+
+#: ../src/cc-color-panel.c:2605
 msgid "Install now"
 msgstr "Installer nå"
 
 #. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/cc-color-panel.c:2627
+#: ../src/cc-color-panel.c:2608
 msgid "More color profiles could be automatically installed."
 msgstr "Flere fargeprofiler kan installeres automatisk."
 
-#. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
-#: ../src/gcm-apply.c:115
-msgid "Do not attempt to clear previously applied settings"
-msgstr "Ikke prøv å tømme tidligere brukte innstillinger"
-
 #. TRANSLATORS: title, default paramters needed to calibrate_argyll
-#: ../src/gcm-calibrate-argyll.c:453
+#: ../src/gcm-calibrate-argyll.c:454
 msgid "Getting default parameters"
 msgstr "Henter forvalgte parametere"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:456
+#: ../src/gcm-calibrate-argyll.c:457
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -345,32 +278,32 @@ msgstr ""
 "skjermen for så å måle dem med måleinstrumentet."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:548
+#: ../src/gcm-calibrate-argyll.c:549
 msgid "Reading the patches"
 msgstr "Leser lappene"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:550
+#: ../src/gcm-calibrate-argyll.c:551
 msgid "Reading the patches using the color measuring instrument."
 msgstr "Leser lappene ved å bruke fargemåleinstrumentet."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:640
+#: ../src/gcm-calibrate-argyll.c:641
 msgid "Generating the patches"
 msgstr "Lager lappene"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:642
+#: ../src/gcm-calibrate-argyll.c:643
 msgid "Generating the patches that will be measured with the color instrument."
 msgstr "Lager lapper som skal måles av fargemåleinstrumentet."
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:749 ../src/gcm-calibrate-native.c:690
+#: ../src/gcm-calibrate-argyll.c:750 ../src/gcm-calibrate-native.c:692
 msgid "Drawing the patches"
 msgstr "Tegner lapper"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:751 ../src/gcm-calibrate-native.c:693
+#: ../src/gcm-calibrate-argyll.c:752 ../src/gcm-calibrate-native.c:695
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
@@ -379,77 +312,77 @@ msgstr ""
 "måleinstrumentet."
 
 #. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:851 ../src/gcm-calibrate-argyll.c:1179
+#: ../src/gcm-calibrate-argyll.c:852 ../src/gcm-calibrate-argyll.c:1180
 msgid "Generating the profile"
 msgstr "Lager profilen"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:853
+#: ../src/gcm-calibrate-argyll.c:854
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "Lager ICC-fargeprofil som kan brukes med denne skjermen."
 
 #. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:989
+#: ../src/gcm-calibrate-argyll.c:990
 msgid "Copying files"
 msgstr "Kopierer filer"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:991
+#: ../src/gcm-calibrate-argyll.c:992
 msgid "Copying source image, chart data and CIE reference values."
 msgstr "Kopierer kildebilde, diagramdata og CIE-referanseverdier."
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:1066
+#: ../src/gcm-calibrate-argyll.c:1067
 msgid "Measuring the patches"
 msgstr "Måler lappene"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1068
+#: ../src/gcm-calibrate-argyll.c:1069
 msgid "Detecting the reference patches and measuring them."
 msgstr "Finner referanselappene og måler dem."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1181
+#: ../src/gcm-calibrate-argyll.c:1182
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "Lager ICC-fargeprofil som kan brukes med denne enheten."
 
 #. TRANSLATORS: title, hardware refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:1372
+#: ../src/gcm-calibrate-argyll.c:1373
 msgid "Set up display"
 msgstr "Sett opp skjerm"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1375
+#: ../src/gcm-calibrate-argyll.c:1376
 msgid "Setting up display device for use…"
 msgstr "Setter opp skjermenhet for bruk …"
 
 #. TRANSLATORS: title, setting up the photospectromiter
-#: ../src/gcm-calibrate-argyll.c:1437 ../src/gcm-calibrate-native.c:769
+#: ../src/gcm-calibrate-argyll.c:1438 ../src/gcm-calibrate-native.c:771
 msgid "Setting up device"
 msgstr "Setter opp enhet"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1439 ../src/gcm-calibrate-native.c:771
+#: ../src/gcm-calibrate-argyll.c:1440 ../src/gcm-calibrate-native.c:773
 msgid "Setting up the device to read a spot color…"
 msgstr "Setter opp skjermenhet for å lese en punktfarge …"
 
 #. TRANSLATORS: title, patches are specific colors used in calibration
-#: ../src/gcm-calibrate-argyll.c:1586
+#: ../src/gcm-calibrate-argyll.c:1587
 msgid "Printing patches"
 msgstr "Skriver ut lapper"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1589
+#: ../src/gcm-calibrate-argyll.c:1590
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "Tegner lappene for det valgte papiret og blekket."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:1931
+#: ../src/gcm-calibrate-argyll.c:1932
 msgid "Wait for the ink to dry"
 msgstr "Vent på at blekket skal tørke"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1934
+#: ../src/gcm-calibrate-argyll.c:1935
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -458,22 +391,22 @@ msgstr ""
 "gi dårlig resultat og kan skade måleinstrumentet."
 
 #. TRANSLATORS: title, instrument refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:2115
+#: ../src/gcm-calibrate-argyll.c:2116
 msgid "Set up instrument"
 msgstr "Sett opp instrument"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2118
+#: ../src/gcm-calibrate-argyll.c:2119
 msgid "Setting up the instrument for use…"
 msgstr "Setter opp instrumentet for bruk …"
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2217 ../src/gcm-calibrate-native.c:650
+#: ../src/gcm-calibrate-argyll.c:2218 ../src/gcm-calibrate-native.c:652
 msgid "Please attach instrument"
 msgstr "Vennligst koble til instrumentet"
 
 #. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate-argyll.c:2225 ../src/gcm-calibrate-native.c:658
+#: ../src/gcm-calibrate-argyll.c:2226 ../src/gcm-calibrate-native.c:660
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square like the image below."
@@ -482,69 +415,69 @@ msgstr ""
 "som på bildet under."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate-argyll.c:2228 ../src/gcm-calibrate-native.c:661
+#: ../src/gcm-calibrate-argyll.c:2229 ../src/gcm-calibrate-native.c:663
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square."
 msgstr "Kople til måleinstrumentet på det grå kvadratet på midten av skjermen."
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2241 ../src/gcm-calibrate-argyll.c:2295
-#: ../src/gcm-calibrate-argyll.c:2350 ../src/gcm-calibrate-native.c:675
+#: ../src/gcm-calibrate-argyll.c:2242 ../src/gcm-calibrate-argyll.c:2296
+#: ../src/gcm-calibrate-argyll.c:2351 ../src/gcm-calibrate-native.c:677
 msgid "Continue"
 msgstr "Fortsett"
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2272 ../src/gcm-calibrate-argyll.c:2327
+#: ../src/gcm-calibrate-argyll.c:2273 ../src/gcm-calibrate-argyll.c:2328
 msgid "Please configure instrument"
 msgstr "Vennligst konfigurer instrumentet"
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2282
+#: ../src/gcm-calibrate-argyll.c:2283
 msgid ""
 "Please set the measuring instrument to calibration mode like the image below."
 msgstr ""
 "Vennligst sett måleinstrumentet i kalibreringsmodus som vist i bildet under."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2285
+#: ../src/gcm-calibrate-argyll.c:2286
 msgid "Please set the measuring instrument to calibration mode."
 msgstr "Vennligst sett målingsinstrumentet i kalibreringsmodus."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2337
+#: ../src/gcm-calibrate-argyll.c:2338
 msgid ""
 "Please set the measuring instrument to screen mode like the image below."
 msgstr ""
 "Vennligst sett måleinstrumentet i kalibreringsmodus som vist i bildet under."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2340
+#: ../src/gcm-calibrate-argyll.c:2341
 msgid "Please set the measuring instrument to screen mode."
 msgstr "Vennligst sett målingsinstrumentet til skjermmodus."
 
 #. TRANSLATORS: title, the calibration failed
-#: ../src/gcm-calibrate-argyll.c:2411 ../src/gcm-calibrate-argyll.c:2480
+#: ../src/gcm-calibrate-argyll.c:2412 ../src/gcm-calibrate-argyll.c:2481
 msgid "Calibration error"
 msgstr "Feil ved kalibrering"
 
 #. TRANSLATORS: message, the sample was not read correctly
-#: ../src/gcm-calibrate-argyll.c:2414
+#: ../src/gcm-calibrate-argyll.c:2415
 msgid "The sample could not be read at this time."
 msgstr "Prøven kunne ikkje leses for øyeblikket."
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2422
+#: ../src/gcm-calibrate-argyll.c:2423
 msgid "Try again"
 msgstr "Prøv igjen"
 
 #. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2484
+#: ../src/gcm-calibrate-argyll.c:2485
 msgid "No firmware is installed for this instrument."
 msgstr "Ingen fastvare er installert for dette instrumentet."
 
 #. TRANSLATORS: message, the image wasn't good enough
-#: ../src/gcm-calibrate-argyll.c:2487
+#: ../src/gcm-calibrate-argyll.c:2488
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
@@ -552,7 +485,7 @@ msgstr ""
 "Mønstersamstemmelsen var ikke god nok. Påse at du har valgt riktig type mål."
 
 #. TRANSLATORS: message, the sensor got no readings
-#: ../src/gcm-calibrate-argyll.c:2491
+#: ../src/gcm-calibrate-argyll.c:2492
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
@@ -561,7 +494,7 @@ msgstr ""
 "åpen."
 
 #. TRANSLATORS: message, the colorimeter has got confused
-#: ../src/gcm-calibrate-argyll.c:2494
+#: ../src/gcm-calibrate-argyll.c:2495
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -570,34 +503,34 @@ msgstr ""
 "før du prøver igjen."
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-argyll.c:2532
+#: ../src/gcm-calibrate-argyll.c:2533
 msgid "Reading target"
 msgstr "Leser mål"
 
 #. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2535
+#: ../src/gcm-calibrate-argyll.c:2536
 msgid "Failed to read the strip correctly."
 msgstr "Stripen ble ikke riktig lest."
 
 #. TRANSLATORS: button text
 #. TRANSLATORS: button
-#: ../src/gcm-calibrate-argyll.c:2544 ../src/gcm-calibrate-argyll.c:2617
+#: ../src/gcm-calibrate-argyll.c:2545 ../src/gcm-calibrate-argyll.c:2618
 msgid "Retry"
 msgstr "Prøv igjen"
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2567
+#: ../src/gcm-calibrate-argyll.c:2568
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "Les stripe %s i stedet for %s."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2572
+#: ../src/gcm-calibrate-argyll.c:2573
 msgid "It looks like you've measured the wrong strip."
 msgstr "Det virker som om du har målt feil stripe."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2576
+#: ../src/gcm-calibrate-argyll.c:2577
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
@@ -606,28 +539,28 @@ msgstr ""
 "være spesielt papir."
 
 #. TRANSLATORS: button
-#: ../src/gcm-calibrate-argyll.c:2586
+#: ../src/gcm-calibrate-argyll.c:2587
 msgid "Use anyway"
 msgstr "Bruk likevel"
 
 #. TRANSLATORS: title, the calibration failed
-#: ../src/gcm-calibrate-argyll.c:2606
+#: ../src/gcm-calibrate-argyll.c:2607
 msgid "Device Error"
 msgstr "Feil med enhet"
 
 #. TRANSLATORS: message, the sample was not read correctly
-#: ../src/gcm-calibrate-argyll.c:2609
+#: ../src/gcm-calibrate-argyll.c:2610
 msgid "The device could not measure the color spot correctly."
 msgstr "Enheten kunne ikke måle fargepunktet riktig."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2629
+#: ../src/gcm-calibrate-argyll.c:2630
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "Klar til å lese stripe %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2634
+#: ../src/gcm-calibrate-argyll.c:2635
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
@@ -636,7 +569,7 @@ msgstr ""
 "trykke og holde målebryteren nede."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2638
+#: ../src/gcm-calibrate-argyll.c:2639
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -645,7 +578,7 @@ msgstr ""
 "enden av siden."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2642
+#: ../src/gcm-calibrate-argyll.c:2643
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -653,81 +586,81 @@ msgstr ""
 "Påse at senteret på enheten er riktig oppstilt ved raden du forsøker å måle."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2646
+#: ../src/gcm-calibrate-argyll.c:2647
 msgid ""
 "If you make a mistake just release the switch and you'll get a chance to try "
 "again."
 msgstr "Slipp bryteren om du gjør en feil slik at du kan prøve på nytt."
 
 #. TRANSLATORS: title, printing reference files to media
-#: ../src/gcm-calibrate-argyll.c:2794
+#: ../src/gcm-calibrate-argyll.c:2795
 msgid "Printing"
 msgstr "Skriver ut"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2801
+#: ../src/gcm-calibrate-argyll.c:2802
 msgid "Preparing the data for the printer."
 msgstr "Forbereder data for skriveren."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2807
+#: ../src/gcm-calibrate-argyll.c:2808
 msgid "Sending the targets to the printer."
 msgstr "Sender mål til skriveren."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2811
+#: ../src/gcm-calibrate-argyll.c:2812
 msgid "Printing the targets..."
 msgstr "Skriver ut mål …"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2815
+#: ../src/gcm-calibrate-argyll.c:2816
 msgid "The printing has finished."
 msgstr "Utskrift er fullført."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2819
+#: ../src/gcm-calibrate-argyll.c:2820
 msgid "The print was aborted."
 msgstr "Utskrift ble avbrutt."
 
 #. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" - YOU NEED TO USE ASCII ONLY
-#: ../src/gcm-calibrate.c:141
+#: ../src/gcm-calibrate.c:139
 msgid "Copyright (c)"
 msgstr "Opphavsrett ©"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:167
+#: ../src/gcm-calibrate.c:165
 msgid "Unknown description"
 msgstr "Ukjent beskrivelse"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:190
+#: ../src/gcm-calibrate.c:188
 msgid "Unknown model"
 msgstr "Ukjent modell"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:206
+#: ../src/gcm-calibrate.c:204
 msgid "Unknown manufacturer"
 msgstr "Ukjent produsent"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-calibrate.c:427
+#: ../src/gcm-calibrate.c:413
 msgid "Could not detect screen type"
 msgstr "Kunne ikke gjenkjenne skjermtype"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:430
+#: ../src/gcm-calibrate.c:416
 msgid ""
 "Please indicate if the screen you are trying to profile is an LCD, CRT or a "
 "projector."
 msgstr "Angi om skjermen du profilerer er en LCD, CRT eller en prosjektør."
 
 #. TRANSLATORS: title, the hardware calibration device does not support projectors
-#: ../src/gcm-calibrate.c:455
+#: ../src/gcm-calibrate.c:441
 msgid "Could not calibrate and profile using this color measuring instrument"
 msgstr "Klarte ikkje å kalibrere og profilere med dette måleinstrumentet"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:458
+#: ../src/gcm-calibrate.c:444
 msgid ""
 "This color measuring instrument is not designed to support calibration and "
 "profiling projectors."
@@ -736,12 +669,12 @@ msgstr ""
 "prosjektører."
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate.c:518
+#: ../src/gcm-calibrate.c:504
 msgid "Profile Precision"
 msgstr "Presisjon for profil"
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:521
+#: ../src/gcm-calibrate.c:507
 msgid ""
 "A higher precision profile provides higher accuracy in color matching but "
 "requires more time for reading the color patches."
@@ -750,22 +683,23 @@ msgstr ""
 "lenger tid for å lese fargelappene."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:524
+#: ../src/gcm-calibrate.c:510
 msgid "For a typical workflow, a normal precision profile is sufficient."
 msgstr "Normal presisjon for profil er godt nok for normalt bruk."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:529
+#: ../src/gcm-calibrate.c:515
 msgid "The high precision profile also requires more paper and printer ink."
 msgstr "Høy presisjon for profil krever også mer papir og blekk."
 
-#. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated
-#: ../src/gcm-calibrate.c:643
+#. TRANSLATORS: this is the formattted custom profile description.
+#. * "Custom" refers to the fact that it's user generated
+#: ../src/gcm-calibrate.c:630
 msgid "Custom"
 msgstr "Egendefinert"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:674
+#: ../src/gcm-calibrate.c:661
 msgid ""
 "Before calibrating the display, it is recommended to configure your display "
 "with the following settings to get optimal results."
@@ -774,24 +708,24 @@ msgstr ""
 "med de følgende innstillingene."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:677
+#: ../src/gcm-calibrate.c:664
 msgid ""
 "You may want to consult the owner's manual for your display on how to "
 "achieve these settings."
 msgstr "Du må kanskje se i skjermens manual for å oppnå disse innstillingene."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:680
+#: ../src/gcm-calibrate.c:667
 msgid "Reset your display to the factory defaults."
 msgstr "Nullstill din skjerm til forvalgte verdier fra fabrikken."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:683
+#: ../src/gcm-calibrate.c:670
 msgid "Disable dynamic contrast if your display has this feature."
 msgstr "Slå av dynamisk kontrask dersom din skjerm har denne egenskapen."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:686
+#: ../src/gcm-calibrate.c:673
 msgid ""
 "Configure your display with custom color settings and ensure the RGB "
 "channels are set to the same values."
@@ -800,19 +734,19 @@ msgstr ""
 "kanalene er stilt til de samme verdiene."
 
 #. TRANSLATORS: dialog message, addition to bullet item
-#: ../src/gcm-calibrate.c:689
+#: ../src/gcm-calibrate.c:676
 msgid "If custom color is not available then use a 6500K color temperature."
 msgstr ""
 "Om egendefinerte farger ikke er tilgjengelige så bruk 6500K fargetemperatur."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:692
+#: ../src/gcm-calibrate.c:679
 msgid ""
 "Adjust the display brightness to a comfortable level for prolonged viewing."
 msgstr "Juster lysstyrken til et komfortabelt nivå for seing over lengre tid."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:695
+#: ../src/gcm-calibrate.c:682
 msgid ""
 "For best results, the display should have been powered for at least 15 "
 "minutes before starting the calibration."
@@ -820,45 +754,45 @@ msgstr ""
 "For de beste resultater bør skjermen slås av i minst 15 minutter før "
 "kalibreringen startes."
 
-#: ../src/gcm-calibrate.c:699
+#: ../src/gcm-calibrate.c:686
 msgid "Display setup"
 msgstr "Oppsett av skjerm"
 
 #. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
 #. * aquired image of the calibration target, e.g. an image file that looks
 #. * a bit like this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:775
+#: ../src/gcm-calibrate.c:762
 msgid "Select calibration target image"
 msgstr "Velg bilde for kalibreringsmål"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:788
+#: ../src/gcm-calibrate.c:775
 msgid "Supported images files"
 msgstr "Støttede bildefiler"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:820
+#: ../src/gcm-calibrate.c:807
 msgid "Select CIE reference values file"
 msgstr "Velg fil for CIE-referanseverdier"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:840
+#: ../src/gcm-calibrate.c:827
 msgid "CIE values"
 msgstr "CIE-verdier"
 
-#: ../src/gcm-calibrate.c:916
+#: ../src/gcm-calibrate.c:903
 msgid "Open"
 msgstr "Åpne"
 
 #. TRANSLATORS: title, you can profile all at once, or in steps
-#: ../src/gcm-calibrate.c:952
+#: ../src/gcm-calibrate.c:939
 msgid "Please choose a profiling mode"
 msgstr "Vennligst velg profileringsmodus"
 
 #. TRANSLATORS: dialog message. Test patches are pages of colored squares
 #. * that are printed with a printer, and then read in with a calibration
 #. * device to create a profile
-#: ../src/gcm-calibrate.c:957
+#: ../src/gcm-calibrate.c:944
 msgid ""
 "Please indicate if you want to profile a local printer, generate some test "
 "patches, or profile using existing test patches."
@@ -867,40 +801,40 @@ msgstr ""
 "eller profilere ved å bruke eksisterende testlapper."
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-calibrate.c:1068
+#: ../src/gcm-calibrate.c:1055
 msgid "Install missing files?"
 msgstr "Installler manglende filer?"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate.c:1071
+#: ../src/gcm-calibrate.c:1058
 msgid "Common color target files are not installed on this computer."
 msgstr "Vanlige målfargefiler er ikke installert på denne datamaskinen."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate.c:1073
+#: ../src/gcm-calibrate.c:1060
 msgid "Color target files are needed to convert the image to a color profile."
 msgstr "Målfargefiler trenges for å konvertere bildet til fargeprofil"
 
 #. TRANSLATORS: dialog message, asking if it's okay to install them
-#: ../src/gcm-calibrate.c:1075
+#: ../src/gcm-calibrate.c:1062
 msgid "Do you want them to be installed?"
 msgstr "Vil du installere dem?"
 
 #. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
-#: ../src/gcm-calibrate.c:1077
+#: ../src/gcm-calibrate.c:1064
 msgid "If you already have the correct file, you can skip this step."
 msgstr "Du har allerede den riktige filen så du kan hoppe over dette steget."
 
 #. TRANSLATORS: this is the window title for when the user selects the calibration target.
 #. * A calibration target is an accuratly printed grid of colors, for instance:
 #. * the IT 8.7 targets available here: http://www.targets.coloraid.de/
-#: ../src/gcm-calibrate.c:1099
+#: ../src/gcm-calibrate.c:1086
 msgid "Please select a calibration target"
 msgstr "Vennligst velg et mål for kalibrering"
 
 #. TRANSLATORS: dialog message, preface. A calibration target looks like
 #. * this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:1104
+#: ../src/gcm-calibrate.c:1091
 msgid ""
 "Before profiling the device, you have to manually capture an image of a "
 "calibration target and save it as a TIFF image file."
@@ -909,7 +843,7 @@ msgstr ""
 "en TIFF-bildefil."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:1109
+#: ../src/gcm-calibrate.c:1096
 msgid ""
 "Ensure that the contrast and brightness are not changed and color correction "
 "profiles are not applied."
@@ -918,7 +852,7 @@ msgstr ""
 "fargerettelse ikke er tatt i bruk."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:1112
+#: ../src/gcm-calibrate.c:1099
 msgid ""
 "The device sensor should have been cleaned prior to scanning and the output "
 "file resolution should be at least 200dpi."
@@ -927,7 +861,7 @@ msgstr ""
 "minst 200 dpi."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:1118
+#: ../src/gcm-calibrate.c:1105
 msgid ""
 "Ensure that the white-balance has not been modified by the camera and that "
 "the lens is clean."
@@ -935,7 +869,7 @@ msgstr ""
 "Påse at hvitbalansen ikke har blitt endret av kameraet og at linsen er ren."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:1122
+#: ../src/gcm-calibrate.c:1109
 msgid ""
 "For best results, the reference target should also be less than two years "
 "old."
@@ -943,7 +877,7 @@ msgstr ""
 "For de beste resultater bør referansemålet være mindre enn to år gammel."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:1125
+#: ../src/gcm-calibrate.c:1112
 msgid ""
 "Please select the calibration target type which corresponds to your "
 "reference file."
@@ -1000,12 +934,12 @@ msgid "QPcard 201"
 msgstr "QPcard 201"
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:195
+#: ../src/gcm-calibrate-manual.c:196
 msgid "Introduction to display calibration"
 msgstr "Innføring i skjermkalibrering"
 
 #. TRANSLATORS: message text, an ICC profile is a file that characterizes the device
-#: ../src/gcm-calibrate-manual.c:217
+#: ../src/gcm-calibrate-manual.c:218
 msgid ""
 "This dialog will help calibrate your display and create a custom ICC profile."
 msgstr ""
@@ -1013,7 +947,7 @@ msgstr ""
 "egendefinert ICC-profil."
 
 #. TRANSLATORS: message text, telling the user they are in for the long haul
-#: ../src/gcm-calibrate-manual.c:220
+#: ../src/gcm-calibrate-manual.c:221
 msgid ""
 "The calibration will involve several steps so that an accurate profile can "
 "be obtained."
@@ -1021,13 +955,13 @@ msgstr ""
 "Kalibreringen vil gå gjennom mange steg slik at en nøyaktig profil kan lages."
 
 #. TRANSLATORS: message text, this is a lie. It will take more than a few minutes, but we don't want to scare the hapless user
-#: ../src/gcm-calibrate-manual.c:223
+#: ../src/gcm-calibrate-manual.c:224
 msgid "It should only take a few minutes."
 msgstr "Det skal bare ta noen minutter."
 
 #. TRANSLATORS: message text, when you're comparing colors, it helps if the image is a bit out of focus otherwise the
 #. * fovea (center bit of the eye) tries to 'pick out' a colour, rather than take the average reading
-#: ../src/gcm-calibrate-manual.c:234
+#: ../src/gcm-calibrate-manual.c:235
 msgid ""
 "It may help to sit further from the screen or to squint at the calibration "
 "images in order to accurately compare the colors."
@@ -1036,18 +970,18 @@ msgstr ""
 "kalibreringsbildene for å sammenligne fargene mer nøyaktig."
 
 #. TRANSLATORS: message text, tell the use that they can go back and forwards, as the human eye sucks
-#: ../src/gcm-calibrate-manual.c:237
+#: ../src/gcm-calibrate-manual.c:238
 msgid "You can repeat the calibration steps as many times as you want."
 msgstr "Du kan gjenta kalibreringstegene så mange ganger du ønsker."
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:249
+#: ../src/gcm-calibrate-manual.c:250
 #, c-format
 msgid "Create table item %i/%i"
 msgstr "Lag tabelloppføring %i/%i"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-calibrate-manual.c:270
+#: ../src/gcm-calibrate-manual.c:271
 msgid ""
 "Please try to match up the gray square with the surrounding alternating "
 "bars. You should match the brightness first, and then if required change the "
@@ -1058,12 +992,12 @@ msgstr ""
 "klart grått ut."
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:367
+#: ../src/gcm-calibrate-manual.c:368
 msgid "Summary"
 msgstr "Sammendrag"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-calibrate-manual.c:386
+#: ../src/gcm-calibrate-manual.c:387
 msgid ""
 "This display is now calibrated. You can change the current profile using the "
 "Color Profiles program."
@@ -1076,19 +1010,9 @@ msgstr ""
 msgid "No profile"
 msgstr "Ingen profil"
 
-#: ../src/gcm-cell-renderer-profile-text.c:79
+#: ../src/gcm-cell-renderer-profile-text.c:81
 msgid "Default"
 msgstr "Forvalg"
-
-#. TRANSLATORS: this is the name of the internal panel
-#: ../src/gcm-device-xrandr.c:136
-msgid "Laptop LCD"
-msgstr "LCD på bærbar PC"
-
-#. TRANSLATORS: this is prepended to the device title to let the use know it was generated by us automatically
-#: ../src/gcm-device-xrandr.c:422
-msgid "Automatic"
-msgstr "Automatisk"
 
 #. TRANSLATORS: this is displayed when the profile is crap
 #: ../src/gcm-list-store-profiles.c:51
@@ -1100,8 +1024,7 @@ msgstr ""
 "skjermen."
 
 #. TRANSLATORS: command line option: a list of catalogs to install
-#. TRANSLATORS: command line option: a list of files to install
-#: ../src/gcm-import.c:81 ../src/gcm-install-system-wide.c:126
+#: ../src/gcm-import.c:81
 msgid "ICC profile to install"
 msgstr "ICC-profil som skal installeres"
 
@@ -1126,24 +1049,23 @@ msgstr "Klarte ikke å lese filen: %s"
 msgid "ICC profile already installed"
 msgstr "ICC-profil er allerede installert"
 
-#. TRANSLATORS: color profile already been installed
-#: ../src/gcm-import.c:159
+#: ../src/gcm-import.c:174
 msgid "ICC profile already installed system-wide"
 msgstr "ICC-profil er allerede installert for systemet"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:171
+#: ../src/gcm-import.c:189
 #, c-format
 msgid "Import ICC color profile %s?"
 msgstr "Importer ICC-fargeprofil %s?"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:174
+#: ../src/gcm-import.c:192
 msgid "Import ICC color profile?"
 msgstr "Importer ICC-fargeprofil?"
 
 #. ask confirmation
-#: ../src/gcm-import.c:182
+#: ../src/gcm-import.c:200
 msgid "Import ICC profile"
 msgstr "Importer ICC-profil"
 
@@ -1183,8 +1105,8 @@ msgid "There are no ICC profiles for this device"
 msgstr "Det finnes ingen ICC-profiler for denne enheten"
 
 #. TRANSLATORS: this is a list of profiles suitable for the device
-#: ../src/gcm-inspect.c:210 ../src/gcm-inspect.c:279 ../src/gcm-inspect.c:411
-#: ../src/gcm-inspect.c:478
+#: ../src/gcm-inspect.c:210 ../src/gcm-inspect.c:279 ../src/gcm-inspect.c:351
+#: ../src/gcm-inspect.c:418
 msgid "Suitable profiles for:"
 msgstr "Passende profiler for:"
 
@@ -1194,417 +1116,347 @@ msgid "There are no ICC profiles assigned to this file"
 msgstr "Ingen ICC-profiler er tilegnet denne filen"
 
 #. TRANSLATORS: no profile has been asigned to this window
-#: ../src/gcm-inspect.c:406
+#: ../src/gcm-inspect.c:346
 msgid "There are no ICC profiles for this window"
 msgstr "Det finnes ingen ICC-profiler for dette vinduet"
 
 #. TRANSLATORS: no profile has been asigned to this device
-#: ../src/gcm-inspect.c:473
+#: ../src/gcm-inspect.c:413
 msgid "There are no ICC profiles for this device type"
 msgstr "Det finnes ingen ICC-profiler for denne typen enhet"
 
 #. TRANSLATORS: the DBus method failed
-#: ../src/gcm-inspect.c:517
+#: ../src/gcm-inspect.c:457
 msgid "The request failed"
 msgstr "Forespørselen feilet"
 
 #. TRANSLATORS: this is the rendering intent of the output
-#: ../src/gcm-inspect.c:526
+#: ../src/gcm-inspect.c:466
 msgid "Rendering intent (display):"
 msgstr "Fargetilpassning (skjerm):"
 
 #. TRANSLATORS: this is the rendering intent of the printer
-#: ../src/gcm-inspect.c:532
+#: ../src/gcm-inspect.c:472
 msgid "Rendering intent (softproof):"
 msgstr "Fargetilpassning (softproof):"
 
 #. TRANSLATORS: this is the rendering intent of the output
-#: ../src/gcm-inspect.c:540
+#: ../src/gcm-inspect.c:480
 msgid "RGB Colorspace:"
 msgstr "RGB-fargeområde:"
 
 #. TRANSLATORS: this is the rendering intent of the printer
-#: ../src/gcm-inspect.c:546
+#: ../src/gcm-inspect.c:486
 msgid "CMYK Colorspace:"
 msgstr "CMYK-fargeområde:"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:574
+#: ../src/gcm-inspect.c:514
 msgid "Show xserver properties"
 msgstr "Vis egenskaper for X-tjener"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:577
+#: ../src/gcm-inspect.c:517
 msgid "Get the profiles for a specific device"
 msgstr "Hent profiler for en spesifikk enhet"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:580
+#: ../src/gcm-inspect.c:520
 msgid "Get the profiles for a specific file"
 msgstr "Hent profiler for en spesifikk fil"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:583
+#: ../src/gcm-inspect.c:523
 msgid "Get the profile for a specific window"
 msgstr "Hent profil for et spesifikt vindu"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:586
+#: ../src/gcm-inspect.c:526
 msgid "Get the profiles for a specific device type"
 msgstr "Hent profiler for en spesifikk type enhet"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:589
+#: ../src/gcm-inspect.c:529
 msgid "Dump all details about this system"
 msgstr "Dumper alle detaljer om dette systemet"
 
 #. TRANSLATORS: just dumps the EDID to disk
-#: ../src/gcm-inspect.c:602
+#: ../src/gcm-inspect.c:542
 msgid "EDID inspect program"
 msgstr "Program for EDID-inspeksjon"
 
 #. TRANSLATORS: this is when the user does --type=mickeymouse
-#: ../src/gcm-inspect.c:621
+#: ../src/gcm-inspect.c:561
 msgid "Device or profile type not recognized, recognised types are:"
 msgstr "Enhets- eller profiltype ikke gjenkjent. Gjenkjente typer er:"
-
-#. command line argument, the ID of the device
-#: ../src/gcm-install-system-wide.c:123
-msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
-msgstr "Enhets-ID, f.eks «xrandr_ibm_france_ltn154p2_l05»"
-
-#. TRANSLATORS: tool that is used when copying profiles system-wide
-#: ../src/gcm-install-system-wide.c:141
-msgid "GNOME Color Manager ICC profile system-wide installer"
-msgstr ""
-"GNOME Fargestyrers systemomspennende installasjonsprogram for ICC-profil"
-
-#. TRANSLATORS: user did not specify a valid filename
-#: ../src/gcm-install-system-wide.c:149
-msgid "You need to specify exactly one ICC profile filename."
-msgstr "Du må oppgi eksakt ett filnavn for en ICC-profil."
-
-#. TRANSLATORS: user did not specify a valid device ID
-#: ../src/gcm-install-system-wide.c:157
-msgid "You need to specify exactly one device ID."
-msgstr "Du må oppgi eksakt en enhets-ID."
-
-#. TRANSLATORS: user did not specify a valid device ID
-#: ../src/gcm-install-system-wide.c:166
-msgid "The device ID has invalid characters."
-msgstr "Enhets-ID har ugyldige tegn."
-
-#. TRANSLATORS: only able to install profiles as root
-#: ../src/gcm-install-system-wide.c:176
-msgid "This program can only be used by the root user."
-msgstr "Dette programmet kan kun brukes av root-brukeren."
-
-#. TRANSLATORS: only able to install profiles with an absolute path
-#: ../src/gcm-install-system-wide.c:185
-msgid "The source filename must be absolute."
-msgstr "Kildefilnavnet må være absolutt."
-
-#. TRANSLATORS: error details
-#: ../src/gcm-install-system-wide.c:196
-msgid "Failed to get content type:"
-msgstr "Klarte ikke å hente innholdstype:"
-
-#. TRANSLATORS: the content type is the detected type of file
-#: ../src/gcm-install-system-wide.c:206
-msgid "Content type was incorrect:"
-msgstr "Feil innholdstype:"
-
-#. TRANSLATORS: the program must never be directly run
-#: ../src/gcm-install-system-wide.c:215
-msgid "This program must only be run through pkexec."
-msgstr "Dette programmet kan kun kjøres gjennom pkexec."
-
-#. TRANSLATORS: PolicyKit has gone all insane on us, and we refuse to parse junk
-#: ../src/gcm-install-system-wide.c:224
-msgid "PKEXEC_UID must be set to an integer value."
-msgstr "PKEXEC_UID må være satt til en heltallsverdi."
-
-#. TRANSLATORS: we are complaining that a file must be really owned by the user who called this program
-#: ../src/gcm-install-system-wide.c:233
-msgid "The ICC profile must be owned by the user."
-msgstr "ICC-profilen må være eid av brukeren."
-
-#. TRANSLATORS: only able to install profiles with an absolute path
-#: ../src/gcm-install-system-wide.c:246
-msgid "The destination filename must be absolute."
-msgstr "Målfilnavnet må være absolutt."
-
-#. TRANSLATORS: error details
-#: ../src/gcm-install-system-wide.c:256
-msgid "Failed to copy:"
-msgstr "Klarte ikke å kopiere:"
 
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:175 ../src/gcm-viewer.c:576 ../src/gcm-viewer.c:626
+#: ../src/gcm-picker.c:209 ../src/gcm-viewer.c:592 ../src/gcm-viewer.c:642
 msgid "Unknown"
 msgstr "Ukjent"
 
-#. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:325
+#: ../src/gcm-picker.c:364
 msgid "No colorimeter is attached."
 msgstr "Ingen fargemåler er koblet til."
 
-#. TRANSLATORS: this is displayed if VTE support is not enabled
-#: ../src/gcm-picker.c:332
+#: ../src/gcm-picker.c:372
 msgid "This application was compiled without VTE support."
 msgstr "Dette programmet ble kompilert uten VTE-støtte."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:342
+#: ../src/gcm-picker.c:382
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "Den tilkoblede fargemåleren kan ikke lese punktfarger."
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-picker.c:663 ../src/gcm-viewer.c:1219
+#: ../src/gcm-picker.c:727 ../src/gcm-viewer.c:1249
 msgid "Set the parent window to make this modal"
 msgstr "Sett opphavsvindu for å gjøre dette modalt"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:681
+#: ../src/gcm-picker.c:745
 msgid "GNOME Color Manager Color Picker"
 msgstr "Fargevelger for GNOME fargehåndtering"
 
-#. TRANSLATORS: button: this is to open GCM
-#: ../src/gcm-session.c:108
+#: ../src/gcm-session.c:119
 msgid "Recalibrate now"
 msgstr "Kalibrer på nytt nå"
 
-#. TRANSLATORS: button: this is to ignore the recalibrate notifications
-#: ../src/gcm-session.c:111
+#: ../src/gcm-session.c:126
 msgid "Ignore"
 msgstr "Ignorer"
 
 #. TRANSLATORS: this is when the device has not been recalibrated in a while
-#: ../src/gcm-session.c:138
+#: ../src/gcm-session.c:157
 msgid "Recalibration required"
 msgstr "Rekalibrering kreves"
 
 #. TRANSLATORS: this is when the display has not been recalibrated in a while
-#: ../src/gcm-session.c:148
+#: ../src/gcm-session.c:169
 #, c-format
 msgid "The display '%s' should be recalibrated soon."
 msgstr "Skjermen «%s» bør snart bli kalibrert på nytt."
 
 #. TRANSLATORS: this is when the printer has not been recalibrated in a while
-#: ../src/gcm-session.c:155
+#: ../src/gcm-session.c:178
 #, c-format
 msgid "The printer '%s' should be recalibrated soon."
 msgstr "Skriveren «%s» bør snart bli kalibrert på nytt."
 
-#: ../src/gcm-session.c:706
-msgid "Do not exit after the request has been processed"
-msgstr "Ikke avslutt etter at forespørselen er behandlet"
+#: ../src/gcm-session.c:354
+msgid "Automatic"
+msgstr "Automatisk"
+
+#. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
+#: ../src/gcm-session.c:1335
+msgid "Do not attempt to clear previously applied settings"
+msgstr "Ikke prøv å tømme tidligere brukte innstillinger"
 
 #. TRANSLATORS: program name, a session wide daemon to watch for updates and changing system state
-#: ../src/gcm-session.c:722 ../data/gcm-prefs.ui.h:9
+#: ../src/gcm-session.c:1351 ../data/gcm-prefs.ui.h:9
 msgid "Color Management"
 msgstr "Fargestyring"
 
-#: ../src/gcm-session.c:724
+#: ../src/gcm-session.c:1353
 msgid "Color Management D-Bus Service"
 msgstr "DBus-tjeneste for fargestyring"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:494
+#: ../src/gcm-utils.c:476
 msgid "Perceptual"
 msgstr "Perseptuell"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:498
+#: ../src/gcm-utils.c:480
 msgid "Relative"
 msgstr "Relativ"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:502
+#: ../src/gcm-utils.c:484
 msgid "Saturation"
 msgstr "Metning"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:506
+#: ../src/gcm-utils.c:488
 msgid "Absolute"
 msgstr "Absolutt"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:519
+#: ../src/gcm-utils.c:501
 msgid "High quality photography"
 msgstr "Høykvalitet fotografi"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:523
+#: ../src/gcm-utils.c:505
 msgid "Precise color matching"
 msgstr "Presis fargesammenligning"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:527
+#: ../src/gcm-utils.c:509
 msgid "Graphs and presentations"
 msgstr "Grafer og presentasjoner"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:531
+#: ../src/gcm-utils.c:513
 msgid "Proofing devices"
 msgstr ""
 
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:544 ../src/gcm-viewer.c:607 ../data/gcm-prefs.ui.h:32
+#: ../src/gcm-utils.c:526 ../src/gcm-viewer.c:623 ../data/gcm-prefs.ui.h:26
 msgid "RGB"
 msgstr "RGB"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:548 ../src/gcm-viewer.c:619 ../data/gcm-prefs.ui.h:6
+#: ../src/gcm-utils.c:530 ../src/gcm-viewer.c:635 ../data/gcm-prefs.ui.h:4
 msgid "CMYK"
 msgstr "CMYK"
 
 #. TRANSLATORS: this is the colorspace type
-#: ../src/gcm-utils.c:552
+#: ../src/gcm-utils.c:534
 msgid "gray"
 msgstr "grå"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:289
+#: ../src/gcm-viewer.c:299
 msgid "Permanently delete profile?"
 msgstr "Slett profilen permanent?"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:292
+#: ../src/gcm-viewer.c:302
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr "Er du sikker på at du vil fjerne denne profilen fra systemet for godt?"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:295
+#: ../src/gcm-viewer.c:305
 msgid "Delete"
 msgstr "Slett"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:549
+#: ../src/gcm-viewer.c:565
 msgid "Input device"
 msgstr "Inndataenhet"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:553
+#: ../src/gcm-viewer.c:569
 msgid "Display device"
 msgstr "Skjermenhet"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:557
+#: ../src/gcm-viewer.c:573
 msgid "Output device"
 msgstr "Utdataenhet"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:561
+#: ../src/gcm-viewer.c:577
 msgid "Devicelink"
 msgstr "Devicelink"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:565
+#: ../src/gcm-viewer.c:581
 msgid "Colorspace conversion"
 msgstr "Konvertering av fargeområde"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:569
+#: ../src/gcm-viewer.c:585
 msgid "Abstract"
 msgstr "Abstrakt"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:573
+#: ../src/gcm-viewer.c:589
 msgid "Named color"
 msgstr "Navngitt farge"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:587
+#: ../src/gcm-viewer.c:603
 msgid "XYZ"
 msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:591
+#: ../src/gcm-viewer.c:607
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:595
+#: ../src/gcm-viewer.c:611
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:599
+#: ../src/gcm-viewer.c:615
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:603
+#: ../src/gcm-viewer.c:619
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:611
+#: ../src/gcm-viewer.c:627
 msgid "Gray"
 msgstr "Grå"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:615
+#: ../src/gcm-viewer.c:631
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:623
+#: ../src/gcm-viewer.c:639
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:755
+#: ../src/gcm-viewer.c:780
 msgid "Yes"
 msgstr "Ja"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:758
+#: ../src/gcm-viewer.c:783
 msgid "No"
 msgstr "Nei"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:844
+#: ../src/gcm-viewer.c:869
 msgid "Delete this profile"
 msgstr "Slett denne profilen"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:847
+#: ../src/gcm-viewer.c:872
 msgid "This profile cannot be deleted"
 msgstr "Denne profilen kan ikke slettes"
 
 #. TRANSLATORS: combo-entry, no graph selected to be shown
-#: ../src/gcm-viewer.c:1005
+#: ../src/gcm-viewer.c:1019
 msgid "None"
 msgstr "Ingen"
 
 #. TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...)
-#: ../src/gcm-viewer.c:1008
+#: ../src/gcm-viewer.c:1022
 msgid "CIE 1931 xy"
 msgstr "CIE 1931 xy"
 
 #. TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out)
-#: ../src/gcm-viewer.c:1011
+#: ../src/gcm-viewer.c:1025
 msgid "Transfer response curve"
 msgstr "Responskurve for overføringer"
 
 #. TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card)
-#: ../src/gcm-viewer.c:1014
+#: ../src/gcm-viewer.c:1028
 msgid "Video card gamma table"
 msgstr "Gammatabell for grafikkort"
 
 #. TRANSLATORS: combo-entry, this is a preview image of what the profile looks like
-#: ../src/gcm-viewer.c:1017
+#: ../src/gcm-viewer.c:1031
 msgid "Image preview (from sRGB)"
 msgstr "Forhåndsvisning av bildet (fra sRGB)"
 
-#: ../src/gcm-viewer.c:1018
+#: ../src/gcm-viewer.c:1032
 msgid "Image preview (to sRGB)"
 msgstr "Forhåndsvisning av bildet (til sRGB)"
 
@@ -1630,53 +1482,48 @@ msgstr "Lag bilder for utskrift"
 msgid "Details"
 msgstr "Detaljer"
 
-#. window title
-#: ../data/gcm-calibrate.ui.h:8
-msgid "Device Calibration"
-msgstr "Kalibrering av enhet"
-
 #. The user wants to analyse images that have been printed by a photo-processing lab
-#: ../data/gcm-calibrate.ui.h:10
+#: ../data/gcm-calibrate.ui.h:8
 msgid "Generate profile from printed images"
 msgstr "Lag profil fra utskrift av bilder"
 
-#: ../data/gcm-calibrate.ui.h:11
+#: ../data/gcm-calibrate.ui.h:9
 msgid "Green:"
 msgstr "Grønn:"
 
 #. The precision of the calibration
-#: ../data/gcm-calibrate.ui.h:13
+#: ../data/gcm-calibrate.ui.h:11
 msgid "High"
 msgstr "Høy"
 
-#: ../data/gcm-calibrate.ui.h:14
+#: ../data/gcm-calibrate.ui.h:12
 msgid "LCD"
 msgstr "LCD"
 
 #. The precision of the calibration
-#: ../data/gcm-calibrate.ui.h:16
+#: ../data/gcm-calibrate.ui.h:14
 msgid "Low"
 msgstr "Lav"
 
 #. The length of the translation
-#: ../data/gcm-calibrate.ui.h:18
+#: ../data/gcm-calibrate.ui.h:16
 msgid "Normal"
 msgstr "Normal"
 
 #. The user is trying to create an ICC profile of a printer that is connected to the computer
-#: ../data/gcm-calibrate.ui.h:20
+#: ../data/gcm-calibrate.ui.h:18
 msgid "Profile locally attached printer"
 msgstr "Lag profil for lokalt tilknyttet skriver"
 
-#: ../data/gcm-calibrate.ui.h:21
+#: ../data/gcm-calibrate.ui.h:19
 msgid "Projector"
 msgstr "Prosjektor"
 
-#: ../data/gcm-calibrate.ui.h:22
+#: ../data/gcm-calibrate.ui.h:20
 msgid "Red:"
 msgstr "Rød:"
 
-#: ../data/gcm-calibrate.ui.h:23
+#: ../data/gcm-calibrate.ui.h:21
 msgid "precision"
 msgstr "presisjon"
 
@@ -1690,39 +1537,49 @@ msgstr "Bakgrunnslys:"
 msgid "Color Picker"
 msgstr "Fargevelger"
 
-#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:6
+msgid "Color Temperature:"
+msgstr "Fargetemperatur:"
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#: ../data/gcm-picker.ui.h:8
 msgid "Colorspace:"
 msgstr "Fargeområde:"
 
 #. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:8
+#: ../data/gcm-picker.ui.h:10
 msgid "Error:"
 msgstr "Feil:"
 
 #. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:10
+#: ../data/gcm-picker.ui.h:12
 msgid "Lab (D50):"
 msgstr "Lab (D50):"
 
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:14
+msgid "Media whitepoint:"
+msgstr ""
+
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. What mode to use for display rendering intent
-#: ../data/gcm-picker.ui.h:12 ../data/gcm-prefs.ui.h:34
+#: ../data/gcm-picker.ui.h:16 ../data/gcm-prefs.ui.h:28
 msgid "RGB:"
 msgstr "RGB:"
 
 #. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:14
+#: ../data/gcm-picker.ui.h:18
 msgid "Results"
 msgstr "Resultater"
 
 #. the color representation
-#: ../data/gcm-picker.ui.h:16
+#: ../data/gcm-picker.ui.h:20
 msgid "XYZ:"
 msgstr "XYZ:"
 
 #. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:18
+#: ../data/gcm-picker.ui.h:22
 msgid "_Measure"
 msgstr "_Mål"
 
@@ -1734,41 +1591,36 @@ msgstr ""
 "Et arbeidsområde er et forvalgt fargeområde som ikke er tilknyttet en "
 "bestemt enhet."
 
-#. This is a button to add a virtual device
-#: ../data/gcm-prefs.ui.h:3
-msgid "Add d_evice…"
-msgstr "Legg til _enhet …"
-
 #. Profiles that can be added to the device
-#: ../data/gcm-prefs.ui.h:5
+#: ../data/gcm-prefs.ui.h:3
 msgid "Available Profiles"
 msgstr "Tilgjengelige profiler"
 
 #. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:8
+#: ../data/gcm-prefs.ui.h:6
 msgid "CMYK:"
 msgstr "CMYK:"
 
 #. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
-#: ../data/gcm-prefs.ui.h:11
-msgid "Create _Profile"
-msgstr "Lag _profil"
+#: ../data/gcm-prefs.ui.h:8
+msgid "Calibrate"
+msgstr "Kalibrer"
 
-#: ../data/gcm-prefs.ui.h:12
+#: ../data/gcm-prefs.ui.h:10
 msgid "Device type:"
 msgstr "Type enhet:"
 
 #. Tab title, currently connected or saved devices
-#: ../data/gcm-prefs.ui.h:14
+#: ../data/gcm-prefs.ui.h:12
 msgid "Devices"
 msgstr "Enheter"
 
 #. What mode to use for display rendering intent
-#: ../data/gcm-prefs.ui.h:16
+#: ../data/gcm-prefs.ui.h:14
 msgid "Display:"
 msgstr "Skjerm:"
 
-#: ../data/gcm-prefs.ui.h:17
+#: ../data/gcm-prefs.ui.h:15
 msgid ""
 "For a color managed workflow, each connected device should have one or more "
 "color profiles associated with it."
@@ -1777,67 +1629,53 @@ msgstr ""
 "å ha en fargestyrt arbeidsflyt."
 
 #. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:19
+#: ../data/gcm-prefs.ui.h:17
 msgid "Gray:"
 msgstr "Grå:"
 
-#: ../data/gcm-prefs.ui.h:20
+#: ../data/gcm-prefs.ui.h:18
 msgid ""
 "Image files can be dragged on this window to auto-complete the above fields."
 msgstr ""
 "Bildefiler kan dras til dette vinduet for å automatisk fylle ut de "
 "overstående feltene."
 
-#: ../data/gcm-prefs.ui.h:21
-msgid "Make default"
-msgstr "Gjør til forvalg"
-
-#: ../data/gcm-prefs.ui.h:22
+#: ../data/gcm-prefs.ui.h:19
 msgid "Manufacturer:"
 msgstr "Produsent:"
 
-#: ../data/gcm-prefs.ui.h:23
+#: ../data/gcm-prefs.ui.h:20
 msgid "Model:"
 msgstr "Modell:"
 
-#: ../data/gcm-prefs.ui.h:24
+#: ../data/gcm-prefs.ui.h:21
 msgid "More details"
 msgstr "Flere detaljer"
 
 #. Some profiles are not compatible with some devices
-#: ../data/gcm-prefs.ui.h:26
+#: ../data/gcm-prefs.ui.h:23
 msgid "Only profiles that are compatible with the device will be listed above."
 msgstr "Kun profiler som er kompatible med enheten vil vises over."
 
-#: ../data/gcm-prefs.ui.h:27
-msgid "Open the documentation"
-msgstr "Åpne dokumentasjonen"
-
-#. Button to view installed profiles
-#: ../data/gcm-prefs.ui.h:29
-msgid "Pr_ofile Viewer"
-msgstr "Pr_ofilvisning"
-
 #. The rendering intent for the print preview
-#: ../data/gcm-prefs.ui.h:31
+#: ../data/gcm-prefs.ui.h:25
 msgid "Print Preview:"
 msgstr "Forhåndsvisning av utskrift:"
 
-#. This is a button to delete the saved or virtual device
-#: ../data/gcm-prefs.ui.h:36
-msgid "Remove de_vice"
-msgstr "Fjern en_het"
-
 #. Tab title, the way colors should be converted from one colorspace to another
-#: ../data/gcm-prefs.ui.h:38
+#: ../data/gcm-prefs.ui.h:30
 msgid "Rendering Intents"
 msgstr "Fargetilpassninger"
 
-#: ../data/gcm-prefs.ui.h:39
+#: ../data/gcm-prefs.ui.h:31
 msgid "Save these profiles for all users"
 msgstr "Lagre disse profilene for alle brukere"
 
-#: ../data/gcm-prefs.ui.h:40
+#: ../data/gcm-prefs.ui.h:32
+msgid "Set default"
+msgstr "Sett forvalg"
+
+#: ../data/gcm-prefs.ui.h:33
 msgid ""
 "The rendering intent defines how color should be transformed from one "
 "colorspace to another."
@@ -1846,11 +1684,11 @@ msgstr ""
 "fargeområde til et annet."
 
 #. Tab title, icc color spaces to use for different defaults
-#: ../data/gcm-prefs.ui.h:42
+#: ../data/gcm-prefs.ui.h:35
 msgid "Working Spaces"
 msgstr "Arbeidsområder"
 
 #. This is when the settings are set for all users, unless they have per-user settings themselves
-#: ../data/gcm-prefs.ui.h:44
-msgid "_Set System Default"
-msgstr "_Sett til forvalg"
+#: ../data/gcm-prefs.ui.h:37
+msgid "_Set for all users"
+msgstr "_Sett for alle brukere"
