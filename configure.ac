@@ -141,6 +141,8 @@ PKG_CHECK_MODULES(GUDEV, gudev-1.0)
 PKG_CHECK_MODULES(LCMS, lcms2)
 PKG_CHECK_MODULES(X11, x11)
 PKG_CHECK_MODULES(SETTINGS_DAEMON, gnome-settings-daemon)
+PLUGINDIR=`$PKG_CONFIG --variable=plugindir gnome-settings-daemon`
+AC_SUBST([PLUGINDIR], ["$PLUGINDIR"])
 PKG_CHECK_MODULES(USB, libusb-1.0 >= 1.0.9, has_new_libusb=yes, has_new_libusb=no)
 if test x$has_new_libusb = xyes; then
 	AC_DEFINE(HAVE_NEW_USB,1,[Got new libusb])

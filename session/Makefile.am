@@ -8,7 +8,7 @@ INCLUDES =							\
 	$(SETTINGS_DAEMON_CFLAGS)				\
 	$(GUDEV_CFLAGS)
 
-plugindir = $(libdir)/gnome-settings-daemon-2.0
+plugindir = $(PLUGINDIR)
 plugin_LTLIBRARIES =						\
 	libcolor.la
 plugin_CFLAGS =							\
