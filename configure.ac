@@ -3,7 +3,7 @@ AC_PREREQ(2.63)
 
 m4_define([gcm_major_version], [2])
 m4_define([gcm_minor_version], [91])
-m4_define([gcm_micro_version], [91])
+m4_define([gcm_micro_version], [92])
 m4_define([gcm_version],
           [gcm_major_version.gcm_minor_version.gcm_micro_version])
 
@@ -53,9 +53,6 @@ IT_PROG_INTLTOOL([0.35.0])
 
 GNOME_COMPILE_WARNINGS(error)
 GNOME_DOC_INIT
-
-# set up gtk-doc
-GTK_DOC_CHECK(1.9)
 
 dnl ---------------------------------------------------------------------------
 dnl - Use strict options (default enabled for devs, disabled in releases)
@@ -321,8 +318,6 @@ session/Makefile
 tools/Makefile
 docs/Makefile
 docs/huey/Makefile
-docs/api/Makefile
-docs/api/version.xml
 libcolor-glib/Makefile
 libcolor-glib/gcm-version.h
 libcolor-glib/libcolor-glib.pc

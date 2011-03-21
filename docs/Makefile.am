@@ -1,6 +1,5 @@
 SUBDIRS = 						\
-	huey						\
-	api
+	huey
 
 INCLUDES =							\
 	-I$(top_srcdir)/libcolor-glib				\

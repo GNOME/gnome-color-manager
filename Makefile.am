@@ -44,7 +44,7 @@ EXTRA_DIST =						\
 	config.h
 
 DISTCHECK_CONFIGURE_FLAGS = 				\
-	--enable-gtk-doc --disable-tests
+	--disable-tests
 
 distclean-local:
 	if test $(srdcir) = .; then :; else \
