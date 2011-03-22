@@ -2392,7 +2392,7 @@ cc_color_panel_init (CcColorPanel *panel)
 
 	/* get UI */
 	panel->priv->builder = gtk_builder_new ();
-	gtk_builder_set_translation_domain (self->priv->builder, GETTEXT_PACKAGE);
+	gtk_builder_set_translation_domain (panel->priv->builder, GETTEXT_PACKAGE);
 	retval = gtk_builder_add_from_file (panel->priv->builder,
 					    GCM_DATA "/gcm-prefs.ui",
 					    &error);
