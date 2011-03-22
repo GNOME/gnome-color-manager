@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2007-2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2007-2011 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -36,14 +36,16 @@
 #include "gcm-x11-output.h"
 #include "gcm-x11-screen.h"
 
-static GMainLoop *loop = NULL;
-static GSettings *settings = NULL;
-static GDBusNodeInfo *introspection = NULL;
-static CdClient *client = NULL;
-static GcmProfileStore *profile_store = NULL;
-static GcmDmi *dmi = NULL;
-static GcmX11Screen *x11_screen = NULL;
-static GDBusConnection *connection = NULL;
+typedef struct {
+	CdClient	*client;
+	GcmDmi		*dmi;
+	GcmProfileStore	*profile_store;
+	GcmX11Screen	*x11_screen;
+	GDBusConnection	*connection;
+	GDBusNodeInfo	*introspection;
+	GMainLoop	*loop;
+	GSettings	*settings;
+} GcmSessionPrivate;
 
 #define GCM_SESSION_NOTIFY_TIMEOUT		30000 /* ms */
 #define GCM_ICC_PROFILE_IN_X_VERSION_MAJOR	0
@@ -73,17 +75,20 @@ cd_device_get_title (CdDevice *device)
  * gcm_session_notify_cb:
  **/
 static void
-gcm_session_notify_cb (NotifyNotification *notification, gchar *action, gpointer user_data)
+gcm_session_notify_cb (NotifyNotification *notification,
+		       gchar *action,
+		       gpointer user_data)
 {
 	gboolean ret;
 	GError *error = NULL;
+	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
 
 	if (g_strcmp0 (action, "display") == 0) {
-		g_settings_set_int (settings,
+		g_settings_set_int (priv->settings,
 				    GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD,
 				    0);
 	} else if (g_strcmp0 (action, "printer") == 0) {
-		g_settings_set_int (settings,
+		g_settings_set_int (priv->settings,
 				    GCM_SETTINGS_RECALIBRATE_PRINTER_THRESHOLD,
 				    0);
 	} else if (g_strcmp0 (action, "recalibrate") == 0) {
@@ -100,7 +105,8 @@ gcm_session_notify_cb (NotifyNotification *notification, gchar *action, gpointer
  * gcm_session_notify_recalibrate:
  **/
 static gboolean
-gcm_session_notify_recalibrate (const gchar *title,
+gcm_session_notify_recalibrate (GcmSessionPrivate *priv,
+				const gchar *title,
 				const gchar *message,
 				CdDeviceKind kind)
 {
@@ -118,14 +124,14 @@ gcm_session_notify_recalibrate (const gchar *title,
 					"recalibrate",
 					_("Recalibrate now"),
 					gcm_session_notify_cb,
-					NULL, NULL);
+					priv, NULL);
 
 	/* TRANSLATORS: button: this is to ignore the recalibrate notifications */
 	notify_notification_add_action (notification,
 					cd_device_kind_to_string (kind),
 					_("Ignore"),
 					gcm_session_notify_cb,
-					NULL, NULL);
+					priv, NULL);
 
 	ret = notify_notification_show (notification, &error);
 	if (!ret) {
@@ -140,7 +146,7 @@ gcm_session_notify_recalibrate (const gchar *title,
  * gcm_session_notify_device:
  **/
 static void
-gcm_session_notify_device (CdDevice *device)
+gcm_session_notify_device (GcmSessionPrivate *priv, CdDevice *device)
 {
 	CdDeviceKind kind;
 	const gchar *title;
@@ -162,7 +168,7 @@ gcm_session_notify_device (CdDevice *device)
 	if (kind == CD_DEVICE_KIND_DISPLAY) {
 
 		/* get from GSettings */
-		threshold = g_settings_get_int (settings,
+		threshold = g_settings_get_int (priv->settings,
 						GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD);
 
 		/* TRANSLATORS: this is when the display has not been recalibrated in a while */
@@ -171,7 +177,7 @@ gcm_session_notify_device (CdDevice *device)
 	} else {
 
 		/* get from GSettings */
-		threshold = g_settings_get_int (settings,
+		threshold = g_settings_get_int (priv->settings,
 						GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD);
 
 		/* TRANSLATORS: this is when the printer has not been recalibrated in a while */
@@ -182,7 +188,7 @@ gcm_session_notify_device (CdDevice *device)
 	/* check if we need to notify */
 	since = timeval.tv_sec - cd_device_get_modified (device);
 	if (threshold > since)
-		gcm_session_notify_recalibrate (title, message, kind);
+		gcm_session_notify_recalibrate (priv, title, message, kind);
 	g_free (device_title);
 	g_free (message);
 }
@@ -191,9 +197,9 @@ gcm_session_notify_device (CdDevice *device)
  * gcm_session_device_added_notify_cb:
  **/
 static void
-gcm_session_device_added_notify_cb (CdClient *client_,
+gcm_session_device_added_notify_cb (CdClient *client,
 				    CdDevice *device,
-				    gpointer user_data)
+				    GcmSessionPrivate *priv)
 {
 	CdDeviceKind kind;
 	CdProfile *profile;
@@ -224,13 +230,13 @@ gcm_session_device_added_notify_cb (CdClient *client_,
 	}
 
 	/* do we allow notifications */
-	allow_notifications = g_settings_get_boolean (settings,
+	allow_notifications = g_settings_get_boolean (priv->settings,
 						      GCM_SETTINGS_SHOW_NOTIFICATIONS);
 	if (!allow_notifications)
 		goto out;
 
 	/* handle device */
-	gcm_session_notify_device (device);
+	gcm_session_notify_device (priv, device);
 out:
 	g_free (basename);
 }
@@ -239,9 +245,9 @@ out:
  * gcm_session_profile_added_notify_cb:
  **/
 static void
-gcm_session_profile_added_notify_cb (CdClient *client_,
+gcm_session_profile_added_notify_cb (CdClient *client,
 				     CdProfile *profile,
-				     gpointer user_data)
+				     GcmSessionPrivate *priv)
 {
 	GHashTable *metadata;
 	const gchar *edid_md5;
@@ -258,7 +264,7 @@ gcm_session_profile_added_notify_cb (CdClient *client_,
 		goto out;
 
 	/* get the GcmX11Output for the edid */
-	output = gcm_x11_screen_get_output_by_edid (x11_screen,
+	output = gcm_x11_screen_get_output_by_edid (priv->x11_screen,
 						    edid_md5,
 						    &error);
 	if (output == NULL) {
@@ -272,7 +278,7 @@ gcm_session_profile_added_notify_cb (CdClient *client_,
 	/* get the CdDevice for this ID */
 	device_id = g_strdup_printf ("xrandr_%s",
 				     gcm_x11_output_get_name (output));
-	device = cd_client_find_device_sync (client,
+	device = cd_client_find_device_sync (priv->client,
 					     device_id,
 					     NULL,
 					     &error);
@@ -462,7 +468,7 @@ out:
  * gcm_session_device_assign:
  **/
 static void
-gcm_session_device_assign (CdDevice *device)
+gcm_session_device_assign (GcmSessionPrivate *priv, CdDevice *device)
 {
 	CdDeviceKind kind;
 	CdProfile *profile = NULL;
@@ -492,7 +498,7 @@ gcm_session_device_assign (CdDevice *device)
 		return;
 	}
 	xrandr_id += 7;
-	output = gcm_x11_screen_get_output_by_name (x11_screen,
+	output = gcm_x11_screen_get_output_by_name (priv->x11_screen,
 						    xrandr_id,
 						    &error);
 	if (output == NULL) {
@@ -556,14 +562,14 @@ gcm_session_device_assign (CdDevice *device)
 
 		/* the default output? */
 		if (gcm_x11_output_get_primary (output)) {
-			ret = gcm_x11_screen_remove_profile (x11_screen,
+			ret = gcm_x11_screen_remove_profile (priv->x11_screen,
 							     &error);
 			if (!ret) {
 				g_warning ("failed to clear output _ICC_PROFILE: %s",
 					   error->message);
 				g_clear_error (&error);
 			}
-			ret = gcm_x11_screen_remove_protocol_version (x11_screen,
+			ret = gcm_x11_screen_remove_protocol_version (priv->x11_screen,
 								      &error);
 			if (!ret) {
 				g_warning ("failed to clear output _ICC_PROFILE version: %s",
@@ -591,15 +597,15 @@ gcm_session_device_assign (CdDevice *device)
 
 	/* set the _ICC_PROFILE atom */
 	if (gcm_x11_output_get_primary (output)) {
-		ret = gcm_x11_screen_set_profile (x11_screen,
-						 filename,
-						 &error);
+		ret = gcm_x11_screen_set_profile (priv->x11_screen,
+						  filename,
+						  &error);
 		if (!ret) {
 			g_warning ("failed to set screen _ICC_PROFILE: %s",
 				   error->message);
 			g_clear_error (&error);
 		}
-		ret = gcm_x11_screen_set_protocol_version (x11_screen,
+		ret = gcm_x11_screen_set_protocol_version (priv->x11_screen,
 							   GCM_ICC_PROFILE_IN_X_VERSION_MAJOR,
 							   GCM_ICC_PROFILE_IN_X_VERSION_MINOR,
 							   &error);
@@ -657,30 +663,32 @@ out:
  * gcm_session_device_added_assign_cb:
  **/
 static void
-gcm_session_device_added_assign_cb (CdClient *client_,
+gcm_session_device_added_assign_cb (CdClient *client,
 				    CdDevice *device,
-				    gpointer user_data)
+				    GcmSessionPrivate *priv)
 {
-	gcm_session_device_assign (device);
+	gcm_session_device_assign (priv, device);
 }
 
 /**
  * gcm_session_device_changed_assign_cb:
  **/
 static void
-gcm_session_device_changed_assign_cb (CdClient *client_,
+gcm_session_device_changed_assign_cb (CdClient *client,
 				      CdDevice *device,
-				      gpointer user_data)
+				      GcmSessionPrivate *priv)
 {
 	g_debug ("%s changed", cd_device_get_id (device));
-	gcm_session_device_assign (device);
+	gcm_session_device_assign (priv, device);
 }
 
 /**
  * gcm_session_get_profile_for_window:
  **/
 static const gchar *
-gcm_session_get_profile_for_window (guint xid, GError **error)
+gcm_session_get_profile_for_window (GcmSessionPrivate *priv,
+				    guint xid,
+				    GError **error)
 {
 	CdDevice *device = NULL;
 	CdProfile *profile = NULL;
@@ -702,7 +710,8 @@ gcm_session_get_profile_for_window (guint xid, GError **error)
 	}
 
 	/* get output for this window */
-	output = cd_x11_screen_get_output_by_window (x11_screen, window);
+	output = cd_x11_screen_get_output_by_window (priv->x11_screen,
+						     window);
 	if (output == NULL) {
 		g_set_error (error, 1, 0,
 			     "no output found for xid %i",
@@ -713,7 +722,7 @@ gcm_session_get_profile_for_window (guint xid, GError **error)
 	/* get device for this output */
 	device_id = g_strdup_printf ("xrandr_%s",
 				     gcm_x11_output_get_name (output));
-	device = cd_client_find_device_sync (client,
+	device = cd_client_find_device_sync (priv->client,
 					     device_id,
 					     NULL,
 					     &error_local);
@@ -787,7 +796,9 @@ gcm_session_variant_from_profile_array (GPtrArray *array)
  * gcm_session_get_profiles_for_file:
  **/
 static GPtrArray *
-gcm_session_get_profiles_for_file (const gchar *filename, GError **error)
+gcm_session_get_profiles_for_file (GcmSessionPrivate *priv,
+				   const gchar *filename,
+				   GError **error)
 {
 	guint i;
 	gboolean ret;
@@ -806,7 +817,7 @@ gcm_session_get_profiles_for_file (const gchar *filename, GError **error)
 
 	/* get list */
 	g_debug ("query=%s", filename);
-//	array_devices = cd_client_get_devices (client);
+//	array_devices = cd_client_get_devices (priv->client);
 	for (i=0; i<array_devices->len; i++) {
 		device = g_ptr_array_index (array_devices, i);
 
@@ -835,7 +846,9 @@ out:
  * gcm_session_get_profiles_for_device:
  **/
 static GPtrArray *
-gcm_session_get_profiles_for_device (const gchar *device_id_with_prefix, GError **error)
+gcm_session_get_profiles_for_device (GcmSessionPrivate *priv,
+				     const gchar *device_id_with_prefix,
+				     GError **error)
 {
 	const gchar *device_id;
 	const gchar *device_id_tmp;
@@ -860,7 +873,7 @@ gcm_session_get_profiles_for_device (const gchar *device_id_with_prefix, GError 
 
 	/* get list */
 	g_debug ("query=%s [%s] %i", device_id_with_prefix, device_id, use_native_device);
-//	array_devices = cd_client_get_devices (client);
+//	array_devices = cd_client_get_devices (priv->client);
 	for (i=0; i<array_devices->len; i++) {
 		device = g_ptr_array_index (array_devices, i);
 
@@ -908,13 +921,16 @@ gcm_session_handle_method_call (GDBusConnection *connection_, const gchar *sende
 	gchar **devices = NULL;
 	GError *error = NULL;
 	const gchar *profile_filename;
+	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
 
 	/* return 's' */
 	if (g_strcmp0 (method_name, "GetProfileForWindow") == 0) {
 		g_variant_get (parameters, "(u)", &xid);
 
 		/* get the profile for a window */
-		profile_filename = gcm_session_get_profile_for_window (xid, &error);
+		profile_filename = gcm_session_get_profile_for_window (priv,
+								       xid,
+								       &error);
 		if (profile_filename == NULL) {
 			g_dbus_method_invocation_return_dbus_error (invocation,
 								    "org.gnome.ColorManager.Failed",
@@ -935,7 +951,9 @@ gcm_session_handle_method_call (GDBusConnection *connection_, const gchar *sende
 		g_variant_get (parameters, "(ss)", &device_id, &hints);
 
 		/* get array of profile filenames */
-		array = gcm_session_get_profiles_for_device (device_id, &error);
+		array = gcm_session_get_profiles_for_device (priv,
+							     device_id,
+							     &error);
 		if (array == NULL) {
 			g_dbus_method_invocation_return_dbus_error (invocation,
 								    "org.gnome.ColorManager.Failed",
@@ -956,7 +974,9 @@ gcm_session_handle_method_call (GDBusConnection *connection_, const gchar *sende
 		g_variant_get (parameters, "(ss)", &filename, &hints);
 
 		/* get array of profile filenames */
-		array = gcm_session_get_profiles_for_file (filename, &error);
+		array = gcm_session_get_profiles_for_file (priv,
+							   filename,
+							   &error);
 		if (array == NULL) {
 			g_dbus_method_invocation_return_dbus_error (invocation,
 								    "org.gnome.ColorManager.Failed",
@@ -996,17 +1016,18 @@ gcm_session_handle_get_property (GDBusConnection *connection_, const gchar *send
 				 gpointer user_data)
 {
 	GVariant *retval = NULL;
+	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
 
 	if (g_strcmp0 (property_name, "RenderingIntentDisplay") == 0) {
-		retval = g_settings_get_value (settings, GCM_SETTINGS_RENDERING_INTENT_DISPLAY);
+		retval = g_settings_get_value (priv->settings, GCM_SETTINGS_RENDERING_INTENT_DISPLAY);
 	} else if (g_strcmp0 (property_name, "RenderingIntentSoftproof") == 0) {
-		retval = g_settings_get_value (settings, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF);
+		retval = g_settings_get_value (priv->settings, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF);
 	} else if (g_strcmp0 (property_name, "ColorspaceRgb") == 0) {
-		retval = g_settings_get_value (settings, GCM_SETTINGS_COLORSPACE_RGB);
+		retval = g_settings_get_value (priv->settings, GCM_SETTINGS_COLORSPACE_RGB);
 	} else if (g_strcmp0 (property_name, "ColorspaceCmyk") == 0) {
-		retval = g_settings_get_value (settings, GCM_SETTINGS_COLORSPACE_CMYK);
+		retval = g_settings_get_value (priv->settings, GCM_SETTINGS_COLORSPACE_CMYK);
 	} else if (g_strcmp0 (property_name, "ColorspaceGray") == 0) {
-		retval = g_settings_get_value (settings, GCM_SETTINGS_COLORSPACE_GRAY);
+		retval = g_settings_get_value (priv->settings, GCM_SETTINGS_COLORSPACE_GRAY);
 	}
 	return retval;
 }
@@ -1015,20 +1036,23 @@ gcm_session_handle_get_property (GDBusConnection *connection_, const gchar *send
  * gcm_session_on_bus_acquired:
  **/
 static void
-gcm_session_on_bus_acquired (GDBusConnection *connection_, const gchar *name, gpointer user_data)
+gcm_session_on_bus_acquired (GDBusConnection *connection,
+			     const gchar *name,
+			     gpointer user_data)
 {
 	guint registration_id;
+	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
 	static const GDBusInterfaceVTable interface_vtable = {
 		gcm_session_handle_method_call,
 		gcm_session_handle_get_property,
 		NULL
 	};
 
-	registration_id = g_dbus_connection_register_object (connection_,
+	registration_id = g_dbus_connection_register_object (connection,
 							     GCM_DBUS_PATH,
-							     introspection->interfaces[0],
+							     priv->introspection->interfaces[0],
 							     &interface_vtable,
-							     NULL,  /* user_data */
+							     priv,  /* user_data */
 							     NULL,  /* user_data_free_func */
 							     NULL); /* GError** */
 	g_assert (registration_id > 0);
@@ -1038,37 +1062,43 @@ gcm_session_on_bus_acquired (GDBusConnection *connection_, const gchar *name, gp
  * gcm_session_on_name_acquired:
  **/
 static void
-gcm_session_on_name_acquired (GDBusConnection *connection_, const gchar *name, gpointer user_data)
+gcm_session_on_name_acquired (GDBusConnection *connection,
+			      const gchar *name,
+			      gpointer user_data)
 {
+	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
 	g_debug ("acquired name: %s", name);
-	connection = g_object_ref (connection_);
+	priv->connection = g_object_ref (connection);
 }
 
 /**
  * gcm_session_on_name_lost:
  **/
 static void
-gcm_session_on_name_lost (GDBusConnection *connection_, const gchar *name, gpointer user_data)
+gcm_session_on_name_lost (GDBusConnection *connection,
+			  const gchar *name,
+			  gpointer user_data)
 {
+	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
 	g_debug ("lost name: %s", name);
-	g_main_loop_quit (loop);
+	g_main_loop_quit (priv->loop);
 }
 
 /**
  * gcm_session_emit_changed:
  **/
 static void
-gcm_session_emit_changed (void)
+gcm_session_emit_changed (GcmSessionPrivate *priv)
 {
 	gboolean ret;
 	GError *error = NULL;
 
 	/* check we are connected */
-	if (connection == NULL)
+	if (priv->connection == NULL)
 		return;
 
 	/* just emit signal */
-	ret = g_dbus_connection_emit_signal (connection,
+	ret = g_dbus_connection_emit_signal (priv->connection,
 					     NULL,
 					     GCM_DBUS_PATH,
 					     GCM_DBUS_INTERFACE,
@@ -1085,9 +1115,11 @@ gcm_session_emit_changed (void)
  * gcm_session_key_changed_cb:
  **/
 static void
-gcm_session_key_changed_cb (GSettings *settings_, const gchar *key, gpointer user_data)
+gcm_session_key_changed_cb (GSettings *settings,
+			    const gchar *key,
+			    GcmSessionPrivate *priv)
 {
-	gcm_session_emit_changed ();
+	gcm_session_emit_changed (priv);
 }
 
 /**
@@ -1096,7 +1128,7 @@ gcm_session_key_changed_cb (GSettings *settings_, const gchar *key, gpointer use
 static void
 gcm_session_profile_store_added_cb (GcmProfileStore *profile_store_,
 				    const gchar *filename,
-				    gpointer user_data)
+				    GcmSessionPrivate *priv)
 {
 	CdProfile *profile;
 	GError *error = NULL;
@@ -1108,7 +1140,7 @@ gcm_session_profile_store_added_cb (GcmProfileStore *profile_store_,
 	g_hash_table_insert (profile_props,
 			     g_strdup ("Filename"),
 			     g_strdup (filename));
-	profile = cd_client_create_profile_sync (client,
+	profile = cd_client_create_profile_sync (priv->client,
 						 filename,
 						 CD_OBJECT_SCOPE_TEMP,
 						 profile_props,
@@ -1132,13 +1164,13 @@ out:
 static void
 gcm_session_profile_store_removed_cb (GcmProfileStore *profile_store_,
 				      const gchar *filename,
-				      gpointer user_data)
+				      GcmSessionPrivate *priv)
 {
 	gboolean ret;
 	GError *error = NULL;
 
 	g_debug ("profile %s removed", filename);
-	ret = cd_client_delete_profile_sync (client,
+	ret = cd_client_delete_profile_sync (priv->client,
 					     filename,
 					     NULL,
 					     &error);
@@ -1156,7 +1188,7 @@ out:
  * gcm_session_add_x11_output:
  **/
 static void
-gcm_session_add_x11_output (GcmX11Output *output)
+gcm_session_add_x11_output (GcmSessionPrivate *priv, GcmX11Output *output)
 {
 	CdDevice *device = NULL;
 	const gchar *model;
@@ -1180,8 +1212,8 @@ gcm_session_add_x11_output (GcmX11Output *output)
 	/* is this an internal device? */
 	ret = gcm_utils_output_is_lcd_internal (gcm_x11_output_get_name (output));
 	if (ret) {
-		model = gcm_dmi_get_name (dmi);
-		vendor = gcm_dmi_get_vendor (dmi);
+		model = gcm_dmi_get_name (priv->dmi);
+		vendor = gcm_dmi_get_vendor (priv->dmi);
 	} else {
 		model = gcm_edid_get_monitor_name (edid);
 		if (model == NULL)
@@ -1217,7 +1249,7 @@ gcm_session_add_x11_output (GcmX11Output *output)
 	g_hash_table_insert (device_props,
 			     g_strdup ("Serial"),
 			     g_strdup (serial));
-	device = cd_client_create_device_sync (client,
+	device = cd_client_create_device_sync (priv->client,
 					       device_id,
 					       CD_OBJECT_SCOPE_TEMP,
 					       device_props,
@@ -1246,9 +1278,9 @@ out:
 static void
 gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 				GcmX11Output *output,
-				gpointer user_data)
+				GcmSessionPrivate *priv)
 {
-	gcm_session_add_x11_output (output);
+	gcm_session_add_x11_output (priv, output);
 }
 
 /**
@@ -1257,14 +1289,14 @@ gcm_x11_screen_output_added_cb (GcmX11Screen *screen_,
 static void
 gcm_x11_screen_output_removed_cb (GcmX11Screen *screen_,
 				  GcmX11Output *output,
-				  gpointer user_data)
+				  GcmSessionPrivate *priv)
 {
 	gboolean ret;
 	GError *error = NULL;
 
 	g_debug ("output %s removed",
 		 gcm_x11_output_get_name (output));
-	ret = cd_client_delete_device_sync (client,
+	ret = cd_client_delete_device_sync (priv->client,
 					    gcm_x11_output_get_name (output),
 					    NULL,
 					    &error);
@@ -1282,7 +1314,7 @@ out:
  * gcm_session_colord_appeared_cb:
  **/
 static void
-gcm_session_colord_appeared_cb (GDBusConnection *_connection,
+gcm_session_colord_appeared_cb (GDBusConnection *connection,
 				const gchar *name,
 				const gchar *name_owner,
 				gpointer user_data)
@@ -1294,11 +1326,12 @@ gcm_session_colord_appeared_cb (GDBusConnection *_connection,
 	guint i;
 	CdDevice *device;
 	GcmX11Output *output;
+	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
 
 	g_debug ("%s has appeared as %s", name, name_owner);
 
 	/* add screens */
-	ret = gcm_x11_screen_refresh (x11_screen, &error);
+	ret = gcm_x11_screen_refresh (priv->x11_screen, &error);
 	if (!ret) {
 		g_warning ("failed to refresh: %s", error->message);
 		g_error_free (error);
@@ -1306,7 +1339,7 @@ gcm_session_colord_appeared_cb (GDBusConnection *_connection,
 	}
 
 	/* get X11 outputs */
-	outputs = gcm_x11_screen_get_outputs (x11_screen, &error);
+	outputs = gcm_x11_screen_get_outputs (priv->x11_screen, &error);
 	if (outputs == NULL) {
 		g_warning ("failed to get outputs: %s", error->message);
 		g_error_free (error);
@@ -1314,20 +1347,22 @@ gcm_session_colord_appeared_cb (GDBusConnection *_connection,
 	}
 	for (i=0; i<outputs->len; i++) {
 		output = g_ptr_array_index (outputs, i);
-		gcm_session_add_x11_output (output);
+		gcm_session_add_x11_output (priv, output);
 	}
 
 	/* only connect when colord is awake */
-	g_signal_connect (x11_screen, "added",
-			  G_CALLBACK (gcm_x11_screen_output_added_cb), NULL);
-	g_signal_connect (x11_screen, "removed",
-			  G_CALLBACK (gcm_x11_screen_output_removed_cb), NULL);
+	g_signal_connect (priv->x11_screen, "added",
+			  G_CALLBACK (gcm_x11_screen_output_added_cb),
+			  priv);
+	g_signal_connect (priv->x11_screen, "removed",
+			  G_CALLBACK (gcm_x11_screen_output_removed_cb),
+			  priv);
 
 	/* add profiles */
-	gcm_profile_store_search (profile_store);
+	gcm_profile_store_search (priv->profile_store);
 
 	/* set for each device that already exist */
-	array = cd_client_get_devices_sync (client, NULL, &error);
+	array = cd_client_get_devices_sync (priv->client, NULL, &error);
 	if (array == NULL) {
 		g_warning ("failed to get devices: %s",
 			   error->message);
@@ -1336,7 +1371,7 @@ gcm_session_colord_appeared_cb (GDBusConnection *_connection,
 	}
 	for (i=0; i<array->len; i++) {
 		device = g_ptr_array_index (array, i);
-		gcm_session_device_assign (device);
+		gcm_session_device_assign (priv, device);
 	}
 out:
 	if (array != NULL)
@@ -1370,6 +1405,7 @@ main (int argc, char *argv[])
 	guint poll_id = 0;
 	guint retval = 1;
 	guint watcher_id = 0;
+	GcmSessionPrivate *priv;
 
 	const GOptionEntry options[] = {
 		{ "login", 'l', 0, G_OPTION_ARG_NONE, &login,
@@ -1401,29 +1437,31 @@ main (int argc, char *argv[])
 
 	gtk_init (&argc, &argv);
 
+	priv = g_new0 (GcmSessionPrivate, 1);
+
 	/* get the settings */
-	settings = g_settings_new (GCM_SETTINGS_SCHEMA);
-	g_signal_connect (settings, "changed",
-			  G_CALLBACK (gcm_session_key_changed_cb), NULL);
+	priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
+	g_signal_connect (priv->settings, "changed",
+			  G_CALLBACK (gcm_session_key_changed_cb), priv);
 
 	/* use DMI data for internal panels */
-	dmi = gcm_dmi_new ();
+	priv->dmi = gcm_dmi_new ();
 
 	/* monitor daemon */
-	client = cd_client_new ();
-	g_signal_connect (client, "device-added",
+	priv->client = cd_client_new ();
+	g_signal_connect (priv->client, "device-added",
 			  G_CALLBACK (gcm_session_device_added_notify_cb),
-			  NULL);
-	g_signal_connect (client, "profile-added",
+			  priv);
+	g_signal_connect (priv->client, "profile-added",
 			  G_CALLBACK (gcm_session_profile_added_notify_cb),
-			  NULL);
-	g_signal_connect (client, "device-added",
+			  priv);
+	g_signal_connect (priv->client, "device-added",
 			  G_CALLBACK (gcm_session_device_added_assign_cb),
-			  NULL);
-	g_signal_connect (client, "device-changed",
+			  priv);
+	g_signal_connect (priv->client, "device-changed",
 			  G_CALLBACK (gcm_session_device_changed_assign_cb),
-			  NULL);
-	ret = cd_client_connect_sync (client, NULL, &error);
+			  priv);
+	ret = cd_client_connect_sync (priv->client, NULL, &error);
 	if (!ret) {
 		g_warning ("failed to connect to colord: %s", error->message);
 		g_error_free (error);
@@ -1431,17 +1469,17 @@ main (int argc, char *argv[])
 	}
 
 	/* have access to all profiles */
-	profile_store = gcm_profile_store_new ();
-	g_signal_connect (profile_store, "added",
+	priv->profile_store = gcm_profile_store_new ();
+	g_signal_connect (priv->profile_store, "added",
 			  G_CALLBACK (gcm_session_profile_store_added_cb),
-			  NULL);
-	g_signal_connect (profile_store, "removed",
+			  priv);
+	g_signal_connect (priv->profile_store, "removed",
 			  G_CALLBACK (gcm_session_profile_store_removed_cb),
-			  NULL);
+			  priv);
 
 	/* monitor displays */
-	x11_screen = gcm_x11_screen_new ();
-	ret = gcm_x11_screen_assign (x11_screen, NULL, &error);
+	priv->x11_screen = gcm_x11_screen_new ();
+	ret = gcm_x11_screen_assign (priv->x11_screen, NULL, &error);
 	if (!ret) {
 		g_warning ("failed to assign: %s", error->message);
 		g_error_free (error);
@@ -1449,7 +1487,7 @@ main (int argc, char *argv[])
 	}
 
 	/* create new objects */
-	loop = g_main_loop_new (NULL, FALSE);
+	priv->loop = g_main_loop_new (NULL, FALSE);
 
 	/* load introspection from file */
 	file = g_file_new_for_path (DATADIR "/dbus-1/interfaces/org.gnome.ColorManager.xml");
@@ -1461,8 +1499,8 @@ main (int argc, char *argv[])
 	}
 
 	/* build introspection from XML */
-	introspection = g_dbus_node_info_new_for_xml (introspection_data, &error);
-	if (introspection == NULL) {
+	priv->introspection = g_dbus_node_info_new_for_xml (introspection_data, &error);
+	if (priv->introspection == NULL) {
 		g_warning ("failed to load introspection: %s", error->message);
 		g_error_free (error);
 		goto out;
@@ -1475,7 +1513,7 @@ main (int argc, char *argv[])
 				   gcm_session_on_bus_acquired,
 				   gcm_session_on_name_acquired,
 				   gcm_session_on_name_lost,
-				   NULL, NULL);
+				   priv, NULL);
 
 	/* watch to see when colord appears */
 	watcher_id = g_bus_watch_name (G_BUS_TYPE_SYSTEM,
@@ -1483,11 +1521,10 @@ main (int argc, char *argv[])
 				       G_BUS_NAME_WATCHER_FLAGS_NONE,
 				       gcm_session_colord_appeared_cb,
 				       gcm_session_colord_vanished_cb,
-				       NULL,
-				       NULL);
+				       priv, NULL);
 
 	/* wait */
-	g_main_loop_run (loop);
+	g_main_loop_run (priv->loop);
 
 	/* success */
 	retval = 0;
@@ -1501,16 +1538,21 @@ out:
 		g_object_unref (file);
 	if (owner_id > 0)
 		g_bus_unown_name (owner_id);
-	if (profile_store != NULL)
-		g_object_unref (profile_store);
-	if (dmi != NULL)
-		g_object_unref (dmi);
-	if (connection != NULL)
-		g_object_unref (connection);
-	g_dbus_node_info_unref (introspection);
-	g_object_unref (settings);
-	g_object_unref (client);
-	g_main_loop_unref (loop);
+	if (priv != NULL) {
+		if (priv->profile_store != NULL)
+			g_object_unref (priv->profile_store);
+		if (priv->dmi != NULL)
+			g_object_unref (priv->dmi);
+		if (priv->connection != NULL)
+			g_object_unref (priv->connection);
+		if (priv->x11_screen != NULL)
+			g_object_unref (priv->x11_screen);
+		g_dbus_node_info_unref (priv->introspection);
+		g_object_unref (priv->settings);
+		g_object_unref (priv->client);
+		g_main_loop_unref (priv->loop);
+		g_free (priv);
+	}
 	return retval;
 }
 
