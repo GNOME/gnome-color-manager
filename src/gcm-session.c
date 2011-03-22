@@ -683,34 +683,76 @@ static const gchar *
 gcm_session_get_profile_for_window (guint xid, GError **error)
 {
 	CdDevice *device = NULL;
-	GdkWindow *window;
+	CdProfile *profile = NULL;
 	const gchar *filename = NULL;
+	gchar *device_id = NULL;
+	GcmX11Output *output = NULL;
+	GdkWindow *window;
+	GError *error_local = NULL;
 
 	g_debug ("getting profile for %i", xid);
 
 	/* get window for xid */
 	window = gdk_x11_window_foreign_new_for_display (gdk_display_get_default (), xid);
 	if (window == NULL) {
-		g_set_error (error, 1, 0, "failed to find window with xid %i", xid);
+		g_set_error (error, 1, 0,
+			     "failed to create window for xid %i",
+			     xid);
 		goto out;
 	}
 
-	/* get device for this window */
-//	output = cd_x11_screen_get_output_by_window (client, window);
+	/* get output for this window */
+	output = cd_x11_screen_get_output_by_window (x11_screen, window);
+	if (output == NULL) {
+		g_set_error (error, 1, 0,
+			     "no output found for xid %i",
+			     xid);
+		goto out;
+	}
+
+	/* get device for this output */
+	device_id = g_strdup_printf ("xrandr_%s",
+				     gcm_x11_output_get_name (output));
+	device = cd_client_find_device_sync (client,
+					     device_id,
+					     NULL,
+					     &error_local);
+
 	if (device == NULL) {
-		g_set_error (error, 1, 0, "no device found for xid %i", xid);
+		g_set_error (error, 1, 0,
+			     "no device found for xid %i: %s",
+			     xid, error_local->message);
+		g_error_free (error_local);
 		goto out;
 	}
 
-	/* get the data */
-//	filename = cd_device_get_default_profile_filename (device);
+	/* get the default profile for the device */
+	profile = cd_device_get_default_profile (device);
 	if (filename == NULL) {
-		g_set_error (error, 1, 0, "no profiles found for xid %i", xid);
+		g_set_error (error, 1, 0,
+			     "no profiles found for device %s",
+			     device_id);
+		goto out;
+	}
+
+	/* get the filename */
+	filename = cd_profile_get_filename (profile);
+	if (filename == NULL) {
+		g_set_error (error, 1, 0,
+			     "no filname found for profile %s",
+			     cd_profile_get_id (profile));
 		goto out;
 	}
 out:
+	g_free (device_id);
 	if (window != NULL)
 		g_object_unref (window);
+	if (profile != NULL)
+		g_object_unref (profile);
+	if (device != NULL)
+		g_object_unref (device);
+	if (output != NULL)
+		g_object_unref (output);
 	return filename;
 }
 
