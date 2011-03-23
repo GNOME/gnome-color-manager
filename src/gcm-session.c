@@ -242,6 +242,51 @@ out:
 }
 
 /**
+ * gcm_session_get_output_id:
+ **/
+static gchar *
+gcm_session_get_output_id (GcmX11Output *output)
+{
+	const gchar *name;
+	const gchar *serial;
+	const gchar *vendor;
+	GcmEdid *edid = NULL;
+	GString *device_id;
+	GError *error = NULL;
+
+	/* all output devices are prefixed with this */
+	device_id = g_string_new ("xrandr");
+
+	/* get the output EDID if possible */
+	edid = gcm_x11_output_get_edid (output, &error);
+	if (edid == NULL) {
+		g_debug ("no edid for %s [%s], falling back to connection name",
+			 gcm_x11_output_get_name (output),
+			 error->message);
+		g_error_free (error);
+		g_string_append_printf (device_id,
+					"_%s",
+					gcm_x11_output_get_name (output));
+		goto out;
+	}
+
+	/* get EDID data */
+	vendor = gcm_edid_get_vendor_name (edid);
+	if (vendor != NULL)
+		g_string_append_printf (device_id, "_%s", vendor);
+	name = gcm_edid_get_monitor_name (edid);
+	if (name != NULL)
+		g_string_append_printf (device_id, "_%s", name);
+	serial = gcm_edid_get_serial_number (edid);
+	if (serial != NULL)
+		g_string_append_printf (device_id, "_%s", serial);
+out:
+	if (edid != NULL)
+		g_object_unref (edid);
+	return g_string_free (device_id, FALSE);
+}
+
+/**
  * gcm_session_profile_added_notify_cb:
  **/
 static void
@@ -276,8 +321,7 @@ gcm_session_profile_added_notify_cb (CdClient *client,
 	}
 
 	/* get the CdDevice for this ID */
-	device_id = g_strdup_printf ("xrandr_%s",
-				     gcm_x11_output_get_name (output));
+	device_id = gcm_session_get_output_id (output);
 	device = cd_client_find_device_sync (priv->client,
 					     device_id,
 					     NULL,
@@ -465,6 +509,43 @@ out:
 }
 
 /**
+ * gcm_session_get_x11_output_by_id:
+ **/
+static GcmX11Output *
+gcm_session_get_x11_output_by_id (GcmSessionPrivate *priv,
+				  const gchar *device_id,
+				  GError **error)
+{
+	gchar *output_id;
+	GcmX11Output *output = NULL;
+	GcmX11Output *output_tmp;
+	GPtrArray *outputs = NULL;
+	guint i;
+
+	/* search all X11 outputs for the device id */
+	outputs = gcm_x11_screen_get_outputs (priv->x11_screen, error);
+	if (outputs == NULL)
+		goto out;
+	for (i=0; i<outputs->len && output == NULL; i++) {
+		output_tmp = g_ptr_array_index (outputs, i);
+		output_id = gcm_session_get_output_id (output_tmp);
+		if (g_strcmp0 (output_id, device_id) == 0) {
+			output = g_object_ref (output_tmp);
+		}
+		g_free (output_id);
+	}
+	if (output == NULL) {
+		g_set_error (error, 1, 0,
+			     "Failed to find output %s",
+			     device_id);
+	}
+out:
+	if (outputs != NULL)
+		g_ptr_array_unref (outputs);
+	return output;
+}
+
+/**
  * gcm_session_device_assign:
  **/
 static void
@@ -492,15 +573,9 @@ gcm_session_device_assign (GcmSessionPrivate *priv, CdDevice *device)
 
 	/* get the GcmX11Output for the device id */
 	xrandr_id = cd_device_get_id (device);
-	if (!g_str_has_prefix (xrandr_id, "xrandr_")) {
-		g_warning ("xrandr device does not start with prefix: %s",
-			   xrandr_id);
-		return;
-	}
-	xrandr_id += 7;
-	output = gcm_x11_screen_get_output_by_name (priv->x11_screen,
-						    xrandr_id,
-						    &error);
+	output = gcm_session_get_x11_output_by_id (priv,
+						   xrandr_id,
+						   &error);
 	if (output == NULL) {
 		g_warning ("no %s device found: %s",
 			   cd_device_get_id (device),
@@ -720,8 +795,7 @@ gcm_session_get_profile_for_window (GcmSessionPrivate *priv,
 	}
 
 	/* get device for this output */
-	device_id = g_strdup_printf ("xrandr_%s",
-				     gcm_x11_output_get_name (output));
+	device_id = gcm_session_get_output_id (output);
 	device = cd_client_find_device_sync (priv->client,
 					     device_id,
 					     NULL,
@@ -1226,8 +1300,7 @@ gcm_session_add_x11_output (GcmSessionPrivate *priv, GcmX11Output *output)
 	if (serial == NULL)
 		serial = "unknown";
 
-	device_id = g_strdup_printf ("xrandr_%s",
-				     gcm_x11_output_get_name (output));
+	device_id = gcm_session_get_output_id (output);
 	g_debug ("output %s added", device_id);
 	device_props = g_hash_table_new_full (g_str_hash, g_str_equal,
 					      g_free, g_free);
