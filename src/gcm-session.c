@@ -273,13 +273,13 @@ gcm_session_get_output_id (GcmX11Output *output)
 	/* get EDID data */
 	vendor = gcm_edid_get_vendor_name (edid);
 	if (vendor != NULL)
-		g_string_append_printf (device_id, "_%s", vendor);
+		g_string_append_printf (device_id, "-%s", vendor);
 	name = gcm_edid_get_monitor_name (edid);
 	if (name != NULL)
-		g_string_append_printf (device_id, "_%s", name);
+		g_string_append_printf (device_id, "-%s", name);
 	serial = gcm_edid_get_serial_number (edid);
 	if (serial != NULL)
-		g_string_append_printf (device_id, "_%s", serial);
+		g_string_append_printf (device_id, "-%s", serial);
 out:
 	if (edid != NULL)
 		g_object_unref (edid);
@@ -1197,6 +1197,32 @@ gcm_session_key_changed_cb (GSettings *settings,
 }
 
 /**
+ * gcm_session_get_file_checksum:
+ **/
+static gchar *
+gcm_session_get_file_checksum (const gchar *filename,
+			       GError **error)
+{
+	gboolean ret;
+	gchar *checksum = NULL;
+	gchar *data = NULL;
+	gsize length;
+
+	/* read file */
+	ret = g_file_get_contents (filename, &data, &length, error);
+	if (!ret)
+		goto out;
+
+	/* generate checksum */
+	checksum = g_compute_checksum_for_data (G_CHECKSUM_MD5,
+						(const guchar *) data,
+						length);
+out:
+	g_free (data);
+	return checksum;
+}
+
+/**
  * gcm_session_profile_store_added_cb:
  **/
 static void
@@ -1204,18 +1230,30 @@ gcm_session_profile_store_added_cb (GcmProfileStore *profile_store_,
 				    const gchar *filename,
 				    GcmSessionPrivate *priv)
 {
-	CdProfile *profile;
+	CdProfile *profile = NULL;
+	gchar *checksum = NULL;
+	gchar *profile_id = NULL;
 	GError *error = NULL;
-	GHashTable *profile_props;
+	GHashTable *profile_props = NULL;
 
 	g_debug ("profile %s added", filename);
+
+	/* generate ID */
+	checksum = gcm_session_get_file_checksum (filename, &error);
+	if (checksum == NULL) {
+		g_warning ("failed to get profile checksum: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+	profile_id = g_strdup_printf ("icc-%s", checksum);
 	profile_props = g_hash_table_new_full (g_str_hash, g_str_equal,
 					       g_free, g_free);
 	g_hash_table_insert (profile_props,
 			     g_strdup ("Filename"),
 			     g_strdup (filename));
 	profile = cd_client_create_profile_sync (priv->client,
-						 filename,
+						 profile_id,
 						 CD_OBJECT_SCOPE_TEMP,
 						 profile_props,
 						 NULL,
@@ -1227,7 +1265,10 @@ gcm_session_profile_store_added_cb (GcmProfileStore *profile_store_,
 		goto out;
 	}
 out:
-	g_hash_table_unref (profile_props);
+	g_free (checksum);
+	g_free (profile_id);
+	if (profile_props != NULL)
+		g_hash_table_unref (profile_props);
 	if (profile != NULL)
 		g_object_unref (profile);
 }
