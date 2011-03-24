@@ -473,7 +473,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	g_ptr_array_add (array, g_strdup ("-m"));
 	g_ptr_array_add (array, g_strdup_printf ("-d%i", priv->display));
 	g_ptr_array_add (array, g_strdup_printf ("-y%c", kind));
-//	g_ptr_array_add (array, g_strdup ("-p 0.8,0.5,1.0"));
+	g_ptr_array_add (array, g_strdup ("-p 0.5,0.5,1.2"));
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
