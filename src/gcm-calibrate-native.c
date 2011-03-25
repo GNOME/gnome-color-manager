@@ -385,7 +385,7 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 	GcmColorRGB leakage;
 	cmsHPROFILE conversion_profile = NULL;
 	cmsHPROFILE xyz_profile = NULL;
-	cmsToneCurve *transfer_curve[3];
+	cmsToneCurve *transfer_curve[3] = { NULL, NULL, NULL };
 	cmsHTRANSFORM conversion_transform = NULL;
 	gdouble *data_sampled[3] = { NULL, NULL, NULL};
 	gdouble *data_interpolated[3] = { NULL, NULL, NULL};

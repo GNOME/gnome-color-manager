@@ -44,6 +44,9 @@ main (gint argc, gchar *argv[])
 	if (argc != 2)
 		goto out;
 
+	for (i=0; i<0xff; i++)
+		buffer[i] = 0;
+
 	//g_error ("argv[1]=%s", argv[1]);
 	ret = g_file_get_contents (argv[1], &data, NULL, &error);
 	if (!ret) {

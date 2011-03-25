@@ -891,7 +891,11 @@ gcm_session_get_profiles_for_file (GcmSessionPrivate *priv,
 
 	/* get list */
 	g_debug ("query=%s", filename);
-//	array_devices = cd_client_get_devices (priv->client);
+	array_devices = cd_client_get_devices_sync (priv->client,
+						    NULL,
+						    error);
+	if (array_devices == NULL)
+		goto out;
 	for (i=0; i<array_devices->len; i++) {
 		device = g_ptr_array_index (array_devices, i);
 
@@ -947,7 +951,11 @@ gcm_session_get_profiles_for_device (GcmSessionPrivate *priv,
 
 	/* get list */
 	g_debug ("query=%s [%s] %i", device_id_with_prefix, device_id, use_native_device);
-//	array_devices = cd_client_get_devices (priv->client);
+	array_devices = cd_client_get_devices_sync (priv->client,
+						    NULL,
+						    error);
+	if (array_devices == NULL)
+		goto out;
 	for (i=0; i<array_devices->len; i++) {
 		device = g_ptr_array_index (array_devices, i);
 
@@ -972,6 +980,7 @@ gcm_session_get_profiles_for_device (GcmSessionPrivate *priv,
 
 	/* unref list of devices */
 	g_ptr_array_unref (array_devices);
+out:
 	return array;
 }
 
