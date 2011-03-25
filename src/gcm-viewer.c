@@ -147,30 +147,6 @@ gcm_viewer_image_prev_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 }
 
 /**
- * gcm_viewer_preferences_cb:
- **/
-static void
-gcm_viewer_preferences_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
-{
-	gboolean ret;
-	GError *error = NULL;
-	ret = g_spawn_command_line_async ("gnome-control-center color", &error);
-	if (!ret) {
-		g_warning ("failed to run prefs: %s", error->message);
-		g_error_free (error);
-	}
-}
-
-/**
- * gcm_viewer_help_cb:
- **/
-static void
-gcm_viewer_help_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
-{
-	gcm_gnome_help ("viewer");
-}
-
-/**
  * gcm_viewer_delete_event_cb:
  **/
 static gboolean
@@ -1126,13 +1102,6 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_close"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_viewer_close_cb), viewer);
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_preferences"));
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_viewer_preferences_cb), viewer);
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_help"));
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_viewer_help_cb), viewer);
-	gtk_widget_set_sensitive (widget, FALSE);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_profile_delete"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_viewer_profile_delete_cb), viewer);
