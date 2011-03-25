@@ -10,7 +10,6 @@ INCLUDES =						\
 	$(COLORD_CFLAGS)				\
 	$(NOTIFY_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
-	$(CONTROL_CENTER_CFLAGS)			\
 	$(SETTINGS_DAEMON_CFLAGS)			\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	$(GUDEV_CFLAGS)					\
@@ -28,11 +27,6 @@ INCLUDES =						\
 
 introspectiondir = $(datadir)/dbus-1/interfaces
 dist_introspection_DATA = org.gnome.ColorManager.xml
-
-ccpanelsdir = $(PANELS_DIR)
-ccpanels_LTLIBRARIES = libcolor.la
-ccpanels_CFLAGS =					\
-	$(WARNINGFLAGS_C)
 
 noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\
@@ -111,6 +105,7 @@ libgcmshared_a_CFLAGS =					\
 bin_PROGRAMS =						\
 	gcm-inspect					\
 	gcm-viewer					\
+	gcm-prefs					\
 	gcm-session					\
 	gcm-picker					\
 	gcm-import
@@ -121,6 +116,34 @@ gcm_helper_exiv_SOURCES = gcm-helper-exiv.cpp
 gcm_helper_exiv_LDADD = $(EXIV_LIBS) $(GLIB_LIBS)
 gcm_helper_exiv_CXXFLAGS = -Wall
 endif
+
+gcm_prefs_SOURCES =					\
+	gcm-list-store-profiles.c			\
+	gcm-list-store-profiles.h			\
+	gcm-cell-renderer-profile-text.c		\
+	gcm-cell-renderer-profile-text.h		\
+	gcm-cell-renderer-profile-icon.c		\
+	gcm-cell-renderer-profile-icon.h		\
+	gcm-prefs.c
+
+gcm_prefs_LDADD =					\
+	libgcmshared.a					\
+	$(CANBERRA_LIBS)				\
+	$(COLORD_LIBS)					\
+	$(EXIF_LIBS)					\
+	$(GLIB_LIBS)					\
+	$(GTK_LIBS)					\
+	$(GUDEV_LIBS)					\
+	$(LCMS_LIBS)					\
+	$(TIFF_LIBS)					\
+	$(USB_LIBS)					\
+	$(VTE_LIBS)					\
+	$(X11_LIBS)					\
+	$(XORG_LIBS)					\
+	-lm
+
+gcm_prefs_CFLAGS =					\
+	$(WARNINGFLAGS_C)
 
 gcm_inspect_SOURCES =					\
 	gcm-inspect.c
@@ -219,36 +242,6 @@ gcm_session_LDADD =					\
 
 gcm_session_CFLAGS =					\
 	$(WARNINGFLAGS_C)
-
-libcolor_la_SOURCES =					\
-	cc-color-panel.c				\
-	cc-color-panel.h				\
-	gcm-list-store-profiles.c			\
-	gcm-list-store-profiles.h			\
-	gcm-cell-renderer-profile-text.c		\
-	gcm-cell-renderer-profile-text.h		\
-	gcm-cell-renderer-profile-icon.c		\
-	gcm-cell-renderer-profile-icon.h		\
-	$(libgcmshared_a_SOURCES)			\
-	$(NULL)
-
-libcolor_la_LIBADD =					\
-	$(GLIB_LIBS)					\
-	$(X11_LIBS)					\
-	$(GUDEV_LIBS)					\
-	$(VTE_LIBS)					\
-	$(XORG_LIBS)					\
-	$(GTK_LIBS)					\
-	$(TIFF_LIBS)					\
-	$(EXIF_LIBS)					\
-	$(LCMS_LIBS)					\
-	$(NOTIFY_LIBS)					\
-	$(CANBERRA_LIBS)				\
-	$(CONTROL_CENTER_LIBS)				\
-	$(COLORD_LIBS)
-
-libcolor_la_LDFLAGS = -avoid-version -module
-libcolor_la_CFLAGS = $(WARNINGFLAGS_C)
 
 if HAVE_TESTS
 

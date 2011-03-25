@@ -34,20 +34,20 @@
 #include "gcm-cell-renderer-profile-icon.h"
 #include "gcm-calibrate-argyll.h"
 #include "gcm-sensor-client.h"
+#include "gcm-debug.h"
 #include "gcm-exif.h"
 #include "gcm-utils.h"
 #include "gcm-color.h"
 #include "gcm-list-store-profiles.h"
 
-#include "cc-color-panel.h"
-
-struct _CcColorPanelPrivate {
+typedef struct {
 	CdClient		*client;
 	CdDevice		*current_device;
 	gboolean		 setting_up_device;
 	GCancellable		*cancellable;
 	GcmSensorClient		*sensor_client;
 	GSettings		*settings;
+	GtkApplication		*application;
 	GtkBuilder		*builder;
 	GtkListStore		*list_store_devices;
 	GtkListStore		*list_store_profiles;
@@ -55,13 +55,8 @@ struct _CcColorPanelPrivate {
 	GtkWidget		*main_window;
 	guint			 apply_all_devices_id;
 	guint			 save_and_apply_id;
-};
-
-G_DEFINE_DYNAMIC_TYPE (CcColorPanel, cc_color_panel, CC_TYPE_PANEL)
-
-static void cc_color_panel_finalize (GObject *object);
-
-#define CC_COLOR_PREFS_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), CC_TYPE_COLOR_PANEL, CcColorPanelPrivate))
+	guint			 parent_xid;
+} GcmPrefsPriv;
 
 #define PK_DBUS_SERVICE				"org.freedesktop.PackageKit"
 #define PK_DBUS_PATH				"/org/freedesktop/PackageKit"
@@ -90,22 +85,22 @@ typedef enum {
 	GCM_PREFS_ENTRY_TYPE_LAST
 } GcmPrefsEntryType;
 
-static void cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection,
-							CcColorPanel *panel);
-static void cc_color_panel_profile_store_changed_cb (CdClient *client,
-						     CcColorPanel *panel);
+static void gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection,
+						   GcmPrefsPriv *prefs);
+static void gcm_prefs_profile_store_changed_cb (CdClient *client,
+						GcmPrefsPriv *prefs);
 
 /**
- * cc_color_panel_error_dialog:
+ * gcm_prefs_error_dialog:
  **/
 static void
-cc_color_panel_error_dialog (CcColorPanel *panel,
-			     const gchar *title,
-			     const gchar *message)
+gcm_prefs_error_dialog (GcmPrefsPriv *prefs,
+			const gchar *title,
+			const gchar *message)
 {
 	GtkWidget *dialog;
 
-	dialog = gtk_message_dialog_new (GTK_WINDOW (panel->priv->main_window),
+	dialog = gtk_message_dialog_new (GTK_WINDOW (prefs->main_window),
 					 GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR,
 					 GTK_BUTTONS_CLOSE, "%s", title);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
@@ -115,13 +110,13 @@ cc_color_panel_error_dialog (CcColorPanel *panel,
 }
 
 /**
- * cc_color_panel_combobox_add_profile:
+ * gcm_prefs_combobox_add_profile:
  **/
 static void
-cc_color_panel_combobox_add_profile (GtkWidget *widget,
-				     CdProfile *profile,
-				     GcmPrefsEntryType entry_type,
-				     GtkTreeIter *iter)
+gcm_prefs_combobox_add_profile (GtkWidget *widget,
+				CdProfile *profile,
+				GcmPrefsEntryType entry_type,
+				GtkTreeIter *iter)
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter_tmp;
@@ -155,10 +150,10 @@ cc_color_panel_combobox_add_profile (GtkWidget *widget,
 }
 
 /**
- * cc_color_panel_default_cb:
+ * gcm_prefs_default_cb:
  **/
 static void
-cc_color_panel_default_cb (GtkWidget *widget, CcColorPanel *panel)
+gcm_prefs_default_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 {
 	GPtrArray *array = NULL;
 	CdDevice *device;
@@ -168,8 +163,8 @@ cc_color_panel_default_cb (GtkWidget *widget, CcColorPanel *panel)
 	GError *error = NULL;
 
 	/* set for each output */
-	array = cd_client_get_devices_sync (panel->priv->client,
-					    panel->priv->cancellable,
+	array = cd_client_get_devices_sync (prefs->client,
+					    prefs->cancellable,
 					    &error);
 	if (array == NULL) {
 		g_warning ("failed to get devices: %s",
@@ -187,7 +182,7 @@ cc_color_panel_default_cb (GtkWidget *widget, CcColorPanel *panel)
 
 		/* install somewhere out of $HOME */
 		ret = cd_profile_install_system_wide_sync (profile,
-							   panel->priv->cancellable,
+							   prefs->cancellable,
 							   &error);
 		if (!ret) {
 			g_warning ("failed to set profile system-wide: %s",
@@ -204,18 +199,18 @@ out:
 }
 
 /**
- * cc_color_panel_calibrate_display:
+ * gcm_prefs_calibrate_display:
  **/
 static gboolean
-cc_color_panel_calibrate_display (CcColorPanel *panel,
-				  GcmCalibrate *calibrate)
+gcm_prefs_calibrate_display (GcmPrefsPriv *prefs,
+			     GcmCalibrate *calibrate)
 {
 	gboolean ret = FALSE;
 	GError *error = NULL;
 	GtkWindow *window;
 
 	/* run each task in order */
-	window = GTK_WINDOW(panel->priv->main_window);
+	window = GTK_WINDOW(prefs->main_window);
 	ret = gcm_calibrate_display (calibrate, window, &error);
 	if (!ret) {
 		g_warning ("failed to calibrate: %s", error->message);
@@ -227,24 +222,24 @@ out:
 }
 
 /**
- * cc_color_panel_calibrate_device:
+ * gcm_prefs_calibrate_device:
  **/
 static gboolean
-cc_color_panel_calibrate_device (CcColorPanel *panel, GcmCalibrate *calibrate)
+gcm_prefs_calibrate_device (GcmPrefsPriv *prefs, GcmCalibrate *calibrate)
 {
 	gboolean ret = FALSE;
 	GError *error = NULL;
 	GtkWindow *window;
 
 	/* do each step */
-	window = GTK_WINDOW(panel->priv->main_window);
+	window = GTK_WINDOW(prefs->main_window);
 	ret = gcm_calibrate_device (calibrate, window, &error);
 	if (!ret) {
 		if (error->code != GCM_CALIBRATE_ERROR_USER_ABORT) {
 			/* TRANSLATORS: could not calibrate */
-			cc_color_panel_error_dialog (panel,
-						     _("Failed to calibrate device"),
-						     error->message);
+			gcm_prefs_error_dialog (prefs,
+						_("Failed to calibrate device"),
+						error->message);
 		} else {
 			g_warning ("failed to calibrate: %s", error->message);
 		}
@@ -256,22 +251,22 @@ out:
 }
 
 /**
- * cc_color_panel_calibrate_printer:
+ * gcm_prefs_calibrate_printer:
  **/
 static gboolean
-cc_color_panel_calibrate_printer (CcColorPanel *panel, GcmCalibrate *calibrate)
+gcm_prefs_calibrate_printer (GcmPrefsPriv *prefs, GcmCalibrate *calibrate)
 {
 	gboolean ret = FALSE;
 	GError *error = NULL;
 	GtkWindow *window;
 
 	/* do each step */
-	window = GTK_WINDOW(panel->priv->main_window);
+	window = GTK_WINDOW(prefs->main_window);
 	ret = gcm_calibrate_printer (calibrate, window, &error);
 	if (!ret) {
 		if (error->code != GCM_CALIBRATE_ERROR_USER_ABORT) {
 			/* TRANSLATORS: could not calibrate */
-			cc_color_panel_error_dialog (panel,
+			gcm_prefs_error_dialog (prefs,
 						     _("Failed to calibrate printer"),
 						     error->message);
 		} else {
@@ -285,10 +280,10 @@ out:
 }
 
 /**
- * cc_color_panel_file_chooser_get_icc_profile:
+ * gcm_prefs_file_chooser_get_icc_profile:
  **/
 static GFile *
-cc_color_panel_file_chooser_get_icc_profile (CcColorPanel *panel)
+gcm_prefs_file_chooser_get_icc_profile (GcmPrefsPriv *prefs)
 {
 	GtkWindow *window;
 	GtkWidget *dialog;
@@ -296,7 +291,7 @@ cc_color_panel_file_chooser_get_icc_profile (CcColorPanel *panel)
 	GtkFileFilter *filter;
 
 	/* create new dialog */
-	window = GTK_WINDOW(gtk_builder_get_object (panel->priv->builder,
+	window = GTK_WINDOW(gtk_builder_get_object (prefs->builder,
 						    "dialog_assign"));
 	/* TRANSLATORS: dialog for file->open dialog */
 	dialog = gtk_file_chooser_dialog_new (_("Select ICC Profile File"), window,
@@ -342,10 +337,10 @@ cc_color_panel_file_chooser_get_icc_profile (CcColorPanel *panel)
 }
 
 /**
- * cc_color_panel_profile_import_file:
+ * gcm_prefs_profile_import_file:
  **/
 static gboolean
-cc_color_panel_profile_import_file (CcColorPanel *panel, GFile *file)
+gcm_prefs_profile_import_file (GcmPrefsPriv *prefs, GFile *file)
 {
 	gboolean ret;
 	GError *error = NULL;
@@ -363,7 +358,7 @@ cc_color_panel_profile_import_file (CcColorPanel *panel, GFile *file)
 	ret = gcm_utils_mkdir_and_copy (file, destination, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */
-		cc_color_panel_error_dialog (panel,
+		gcm_prefs_error_dialog (prefs,
 					     _("Failed to copy file"),
 					     error->message);
 		g_error_free (error);
@@ -376,15 +371,15 @@ out:
 }
 
 /**
- * cc_color_panel_drag_data_received_cb:
+ * gcm_prefs_drag_data_received_cb:
  **/
 static void
-cc_color_panel_drag_data_received_cb (GtkWidget *widget,
-				      GdkDragContext *context,
-				      gint x, gint y,
-				      GtkSelectionData *data,
-				      guint _time,
-				      CcColorPanel *panel)
+gcm_prefs_drag_data_received_cb (GtkWidget *widget,
+				 GdkDragContext *context,
+				 gint x, gint y,
+				 GtkSelectionData *data,
+				 guint _time,
+				 GcmPrefsPriv *prefs)
 {
 	const guchar *filename;
 	gchar **filenames = NULL;
@@ -413,7 +408,7 @@ cc_color_panel_drag_data_received_cb (GtkWidget *widget,
 		file = g_file_new_for_uri (filenames[i]);
 
 		/* try to import it */
-		ret = cc_color_panel_profile_import_file (panel, file);
+		ret = gcm_prefs_profile_import_file (prefs, file);
 		if (ret)
 			success = TRUE;
 
@@ -426,10 +421,10 @@ out:
 }
 
 /**
- * cc_color_panel_virtual_set_from_file:
+ * gcm_prefs_virtual_set_from_file:
  **/
 static gboolean
-cc_color_panel_virtual_set_from_file (CcColorPanel *panel, GFile *file)
+gcm_prefs_virtual_set_from_file (GcmPrefsPriv *prefs, GFile *file)
 {
 	gboolean ret;
 	GcmExif *exif;
@@ -450,19 +445,19 @@ cc_color_panel_virtual_set_from_file (CcColorPanel *panel, GFile *file)
 	/* set model and manufacturer */
 	model = gcm_exif_get_model (exif);
 	if (model != NULL) {
-		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+		widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 							     "entry_virtual_model"));
 		gtk_entry_set_text (GTK_ENTRY (widget), model);
 	}
 	manufacturer = gcm_exif_get_manufacturer (exif);
 	if (manufacturer != NULL) {
-		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+		widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "entry_virtual_manufacturer"));
 		gtk_entry_set_text (GTK_ENTRY (widget), manufacturer);
 	}
 
 	/* set type */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "combobox_virtual_type"));
 	gtk_combo_box_set_active (GTK_COMBO_BOX(widget), CD_DEVICE_KIND_CAMERA - 2);
 out:
@@ -471,24 +466,22 @@ out:
 }
 
 /**
- * cc_color_panel_virtual_drag_data_received_cb:
+ * gcm_prefs_virtual_drag_data_received_cb:
  **/
 static void
-cc_color_panel_virtual_drag_data_received_cb (GtkWidget *widget,
-					      GdkDragContext *context,
-					      gint x, gint y,
-					      GtkSelectionData *data,
-					      guint info,
-					      guint _time,
-					      CcColorPanel *panel)
+gcm_prefs_virtual_drag_data_received_cb (GtkWidget *widget,
+					 GdkDragContext *context,
+					 gint x, gint y,
+					 GtkSelectionData *data,
+					 guint info,
+					 guint _time,
+					 GcmPrefsPriv *prefs)
 {
 	const guchar *filename;
 	gchar **filenames = NULL;
 	GFile *file = NULL;
 	guint i;
 	gboolean ret;
-
-	g_return_if_fail (CC_IS_COLOR_PANEL (panel));
 
 	/* get filenames */
 	filename = gtk_selection_data_get_data (data);
@@ -511,7 +504,7 @@ cc_color_panel_virtual_drag_data_received_cb (GtkWidget *widget,
 		/* check this is an ICC profile */
 		g_debug ("trying to set %s", filenames[i]);
 		file = g_file_new_for_uri (filenames[i]);
-		ret = cc_color_panel_virtual_set_from_file (panel, file);
+		ret = gcm_prefs_virtual_set_from_file (prefs, file);
 		if (!ret) {
 			g_debug ("%s did not set from file correctly",
 				 filenames[i]);
@@ -530,10 +523,10 @@ out:
 }
 
 /**
- * cc_color_panel_ensure_argyllcms_installed:
+ * gcm_prefs_ensure_argyllcms_installed:
  **/
 static gboolean
-cc_color_panel_ensure_argyllcms_installed (CcColorPanel *panel)
+gcm_prefs_ensure_argyllcms_installed (GcmPrefsPriv *prefs)
 {
 	gboolean ret;
 	GtkWindow *window;
@@ -552,7 +545,7 @@ cc_color_panel_ensure_argyllcms_installed (CcColorPanel *panel)
 #endif
 
 	/* ask the user to confirm */
-	window = GTK_WINDOW(panel->priv->main_window);
+	window = GTK_WINDOW(prefs->main_window);
 	dialog = gtk_message_dialog_new (window, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_NONE,
 					 /* TRANSLATORS: title, usually we can tell based on the EDID data or output name */
 					 _("Install calibration and profiling software?"));
@@ -587,35 +580,35 @@ out:
 }
 
 /**
- * cc_color_panel_wait_in_mainloop_quit_cb:
+ * gcm_prefs_wait_in_mainloop_quit_cb:
  **/
 static gboolean
-cc_color_panel_wait_in_mainloop_quit_cb (GMainLoop *loop)
+gcm_prefs_wait_in_mainloop_quit_cb (GMainLoop *loop)
 {
 	g_main_loop_quit (loop);
 	return FALSE;
 }
 
 /**
- * cc_color_panel_wait_in_mainloop:
+ * gcm_prefs_wait_in_mainloop:
  **/
 static void
-cc_color_panel_wait_in_mainloop (guint timeout_ms)
+gcm_prefs_wait_in_mainloop (guint timeout_ms)
 {
 	GMainLoop *loop;
 	loop = g_main_loop_new (NULL, FALSE);
 	g_timeout_add (timeout_ms,
-		       (GSourceFunc) cc_color_panel_wait_in_mainloop_quit_cb,
+		       (GSourceFunc) gcm_prefs_wait_in_mainloop_quit_cb,
 		       loop);
 	g_main_loop_run (loop);
 	g_main_loop_unref (loop);
 }
 
 /**
- * cc_color_panel_calibrate_cb:
+ * gcm_prefs_calibrate_cb:
  **/
 static void
-cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
+gcm_prefs_calibrate_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 {
 	CdDeviceKind kind;
 	CdProfile *profile = NULL;
@@ -630,7 +623,7 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 	GFile *file = NULL;
 
 	/* ensure argyllcms is installed */
-	ret = cc_color_panel_ensure_argyllcms_installed (panel);
+	ret = gcm_prefs_ensure_argyllcms_installed (prefs);
 	if (!ret)
 		goto out;
 
@@ -639,7 +632,7 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 
 	/* set defaults from device */
 	ret = gcm_calibrate_set_from_device (calibrate,
-					     panel->priv->current_device,
+					     prefs->current_device,
 					     &error);
 	if (!ret) {
 		g_warning ("failed to calibrate: %s", error->message);
@@ -648,8 +641,8 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 	}
 
 	/* mark device to be profiled in colord */
-	ret = cd_device_profiling_inhibit_sync (panel->priv->current_device,
-						panel->priv->cancellable,
+	ret = cd_device_profiling_inhibit_sync (prefs->current_device,
+						prefs->cancellable,
 						&error);
 	if (!ret) {
 		g_warning ("failed to profile inhibit: %s",
@@ -659,17 +652,17 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 	}
 
 	/* choose the correct kind of calibration */
-	kind = cd_device_get_kind (panel->priv->current_device);
+	kind = cd_device_get_kind (prefs->current_device);
 	switch (kind) {
 	case CD_DEVICE_KIND_DISPLAY:
-		success = cc_color_panel_calibrate_display (panel, calibrate);
+		success = gcm_prefs_calibrate_display (prefs, calibrate);
 		break;
 	case CD_DEVICE_KIND_SCANNER:
 	case CD_DEVICE_KIND_CAMERA:
-		success = cc_color_panel_calibrate_device (panel, calibrate);
+		success = gcm_prefs_calibrate_device (prefs, calibrate);
 		break;
 	case CD_DEVICE_KIND_PRINTER:
-		success = cc_color_panel_calibrate_printer (panel, calibrate);
+		success = gcm_prefs_calibrate_printer (prefs, calibrate);
 		break;
 	default:
 		g_warning ("calibration and/or profiling not supported for this device");
@@ -677,8 +670,8 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 	}
 
 	/* unmark device to be profiled in colord */
-	ret = cd_device_profiling_uninhibit_sync (panel->priv->current_device,
-						  panel->priv->cancellable,
+	ret = cd_device_profiling_uninhibit_sync (prefs->current_device,
+						  prefs->cancellable,
 						  &error);
 	if (!ret) {
 		g_warning ("failed to profile uninhibit: %s",
@@ -712,13 +705,13 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 
 	/* spin the mainloop, waiting for gcm-session to notice the new
 	 * file and add it as a profile to colord */
-	cc_color_panel_wait_in_mainloop (2000);
+	gcm_prefs_wait_in_mainloop (2000);
 
 	/* add the new profile as the default */
 	filename_dest = g_file_get_path (dest);
-	profile = cd_client_find_profile_by_filename_sync (panel->priv->client,
+	profile = cd_client_find_profile_by_filename_sync (prefs->client,
 							   filename_dest,
-							   panel->priv->cancellable,
+							   prefs->cancellable,
 							   &error);
 	if (profile == NULL) {
 		g_warning ("failed to find calibration profile: %s",
@@ -726,15 +719,15 @@ cc_color_panel_calibrate_cb (GtkWidget *widget, CcColorPanel *panel)
 		g_error_free (error);
 		goto out;
 	}
-	ret = cd_device_add_profile_sync (panel->priv->current_device,
+	ret = cd_device_add_profile_sync (prefs->current_device,
 					  CD_DEVICE_RELATION_HARD,
 					  profile,
-					  panel->priv->cancellable,
+					  prefs->cancellable,
 					  &error);
 	if (!ret) {
 		g_warning ("failed to add %s to %s: %s",
 			   cd_profile_get_id (profile),
-			   cd_device_get_id (panel->priv->current_device),
+			   cd_device_get_id (prefs->current_device),
 			   error->message);
 		g_error_free (error);
 		goto out;
@@ -764,36 +757,36 @@ out:
 }
 
 /**
- * cc_color_panel_device_add_cb:
+ * gcm_prefs_device_add_cb:
  **/
 static void
-cc_color_panel_device_add_cb (GtkWidget *widget, CcColorPanel *panel)
+gcm_prefs_device_add_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 {
 	/* show ui */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "dialog_virtual"));
 	gtk_widget_show (widget);
 	gtk_window_set_transient_for (GTK_WINDOW (widget),
-				      GTK_WINDOW (panel->priv->main_window));
+				      GTK_WINDOW (prefs->main_window));
 
 	/* clear entries */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "combobox_virtual_type"));
 	gtk_combo_box_set_active (GTK_COMBO_BOX(widget), 0);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "entry_virtual_model"));
 	gtk_entry_set_text (GTK_ENTRY (widget), "");
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "entry_virtual_manufacturer"));
 	gtk_entry_set_text (GTK_ENTRY (widget), "");
 }
 
 /**
- * cc_color_panel_is_profile_suitable_for_device:
+ * gcm_prefs_is_profile_suitable_for_device:
  **/
 static gboolean
-cc_color_panel_is_profile_suitable_for_device (CdProfile *profile,
-					       CdDevice *device)
+gcm_prefs_is_profile_suitable_for_device (CdProfile *profile,
+					  CdDevice *device)
 {
 	CdProfileKind profile_kind_tmp;
 	CdProfileKind profile_kind;
@@ -822,12 +815,12 @@ out:
 }
 
 /**
- * cc_color_panel_add_profiles_suitable_for_devices:
+ * gcm_prefs_add_profiles_suitable_for_devices:
  **/
 static void
-cc_color_panel_add_profiles_suitable_for_devices (CcColorPanel *panel,
-						  GtkWidget *widget,
-						  CdProfile *profile)
+gcm_prefs_add_profiles_suitable_for_devices (GcmPrefsPriv *prefs,
+					     GtkWidget *widget,
+					     CdProfile *profile)
 {
 	CdProfile *profile_tmp;
 	gboolean ret;
@@ -842,8 +835,8 @@ cc_color_panel_add_profiles_suitable_for_devices (CcColorPanel *panel,
 	gtk_list_store_clear (GTK_LIST_STORE (model));
 
 	/* get profiles */
-	profile_array = cd_client_get_profiles_sync (panel->priv->client,
-						     panel->priv->cancellable,
+	profile_array = cd_client_get_profiles_sync (prefs->client,
+						     prefs->cancellable,
 						     &error);
 	if (profile_array == NULL) {
 		g_warning ("failed to get profiles: %s",
@@ -863,20 +856,20 @@ cc_color_panel_add_profiles_suitable_for_devices (CcColorPanel *panel,
 			continue;
 
 		/* only add correct types */
-		ret = cc_color_panel_is_profile_suitable_for_device (profile_tmp,
-								     panel->priv->current_device);
+		ret = gcm_prefs_is_profile_suitable_for_device (profile_tmp,
+								     prefs->current_device);
 		if (!ret)
 			continue;
 
 		/* add */
-		cc_color_panel_combobox_add_profile (widget,
+		gcm_prefs_combobox_add_profile (widget,
 						     profile_tmp,
 						     GCM_PREFS_ENTRY_TYPE_PROFILE,
 						     &iter);
 	}
 
 	/* add a import entry */
-	cc_color_panel_combobox_add_profile (widget, NULL, GCM_PREFS_ENTRY_TYPE_IMPORT, NULL);
+	gcm_prefs_combobox_add_profile (widget, NULL, GCM_PREFS_ENTRY_TYPE_IMPORT, NULL);
 	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 out:
 	if (profile_array != NULL)
@@ -884,33 +877,33 @@ out:
 }
 
 /**
- * cc_color_panel_profile_add_cb:
+ * gcm_prefs_profile_add_cb:
  **/
 static void
-cc_color_panel_profile_add_cb (GtkWidget *widget, CcColorPanel *panel)
+gcm_prefs_profile_add_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 {
 	CdProfile *profile = NULL;
 
 	/* add profiles of the right kind */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "combobox_profile"));
-	profile = cd_device_get_default_profile (panel->priv->current_device);
-	cc_color_panel_add_profiles_suitable_for_devices (panel, widget, profile);
+	profile = cd_device_get_default_profile (prefs->current_device);
+	gcm_prefs_add_profiles_suitable_for_devices (prefs, widget, profile);
 
 	/* show the dialog */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "dialog_assign"));
 	gtk_widget_show (widget);
-	gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (panel->priv->main_window));
+	gtk_window_set_transient_for (GTK_WINDOW (widget), GTK_WINDOW (prefs->main_window));
 	if (profile != NULL)
 		g_object_unref (profile);
 }
 
 /**
- * cc_color_panel_profile_remove_cb:
+ * gcm_prefs_profile_remove_cb:
  **/
 static void
-cc_color_panel_profile_remove_cb (GtkWidget *widget, CcColorPanel *panel)
+gcm_prefs_profile_remove_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 {
 	GtkTreeIter iter;
 	GtkTreeSelection *selection;
@@ -920,7 +913,7 @@ cc_color_panel_profile_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 	GError *error = NULL;
 
 	/* get the selected row */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "treeview_assign"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -934,9 +927,9 @@ cc_color_panel_profile_remove_cb (GtkWidget *widget, CcColorPanel *panel)
 			    -1);
 
 	/* just remove it, the list store will get ::changed */
-	ret = cd_device_remove_profile_sync (panel->priv->current_device,
+	ret = cd_device_remove_profile_sync (prefs->current_device,
 					     profile,
-					     panel->priv->cancellable,
+					     prefs->cancellable,
 					     &error);
 	if (!ret) {
 		g_warning ("failed to remove profile: %s", error->message);
@@ -950,12 +943,12 @@ out:
 }
 
 /**
- * cc_color_panel_profile_make_default_internal:
+ * gcm_prefs_profile_make_default_internal:
  **/
 static void
-cc_color_panel_profile_make_default_internal (CcColorPanel *panel,
-					      GtkTreeModel *model,
-					      GtkTreeIter *iter_selected)
+gcm_prefs_profile_make_default_internal (GcmPrefsPriv *prefs,
+					 GtkTreeModel *model,
+					 GtkTreeIter *iter_selected)
 {
 	CdProfile *profile;
 	GError *error = NULL;
@@ -968,9 +961,9 @@ cc_color_panel_profile_make_default_internal (CcColorPanel *panel,
 			    -1);
 
 	/* just set it default */
-	ret = cd_device_make_profile_default_sync (panel->priv->current_device,
+	ret = cd_device_make_profile_default_sync (prefs->current_device,
 						   profile,
-						   panel->priv->cancellable,
+						   prefs->cancellable,
 						   &error);
 	if (!ret) {
 		g_warning ("failed to set default profile: %s", error->message);
@@ -979,7 +972,7 @@ cc_color_panel_profile_make_default_internal (CcColorPanel *panel,
 	}
 
 	/* set button insensitive */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_assign_make_default"));
 	gtk_widget_set_sensitive (widget, FALSE);
 out:
@@ -987,17 +980,17 @@ out:
 }
 
 /**
- * cc_color_panel_profile_make_default_cb:
+ * gcm_prefs_profile_make_default_cb:
  **/
 static void
-cc_color_panel_profile_make_default_cb (GtkWidget *widget, CcColorPanel *panel)
+gcm_prefs_profile_make_default_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
 
 	/* get the selected row */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "treeview_assign"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
@@ -1006,14 +999,14 @@ cc_color_panel_profile_make_default_cb (GtkWidget *widget, CcColorPanel *panel)
 	}
 
 	/* make this profile the default */
-	cc_color_panel_profile_make_default_internal (panel, model, &iter);
+	gcm_prefs_profile_make_default_internal (prefs, model, &iter);
 }
 
 /**
- * cc_color_panel_button_virtual_add_cb:
+ * gcm_prefs_button_virtual_add_cb:
  **/
 static void
-cc_color_panel_button_virtual_add_cb (GtkWidget *widget, CcColorPanel *panel)
+gcm_prefs_button_virtual_add_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 {
 	CdDeviceKind device_kind;
 	CdDevice *device;
@@ -1024,13 +1017,13 @@ cc_color_panel_button_virtual_add_cb (GtkWidget *widget, CcColorPanel *panel)
 	GHashTable *device_props;
 
 	/* get device details */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "combobox_virtual_type"));
 	device_kind = gtk_combo_box_get_active (GTK_COMBO_BOX(widget)) + 2;
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "entry_virtual_model"));
 	model = gtk_entry_get_text (GTK_ENTRY (widget));
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "entry_virtual_manufacturer"));
 	manufacturer = gtk_entry_get_text (GTK_ENTRY (widget));
 
@@ -1056,15 +1049,15 @@ cc_color_panel_button_virtual_add_cb (GtkWidget *widget, CcColorPanel *panel)
 	g_hash_table_insert (device_props,
 			     g_strdup ("Vendor"),
 			     g_strdup (manufacturer));
-	device = cd_client_create_device_sync (panel->priv->client,
+	device = cd_client_create_device_sync (prefs->client,
 					       device_id,
 					       CD_OBJECT_SCOPE_DISK,
 					       device_props,
-					       panel->priv->cancellable,
+					       prefs->cancellable,
 					       &error);
 	if (device == NULL) {
 		/* TRANSLATORS: could not add virtual device */
-		cc_color_panel_error_dialog (panel,
+		gcm_prefs_error_dialog (prefs,
 					     _("Failed to add create virtual device"),
 					     error->message);
 		g_error_free (error);
@@ -1072,51 +1065,51 @@ cc_color_panel_button_virtual_add_cb (GtkWidget *widget, CcColorPanel *panel)
 	}
 out:
 	g_hash_table_unref (device_props);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "dialog_virtual"));
 	gtk_widget_hide (widget);
 	g_free (device_id);
 }
 
 /**
- * cc_color_panel_button_virtual_cancel_cb:
+ * gcm_prefs_button_virtual_cancel_cb:
  **/
 static void
-cc_color_panel_button_virtual_cancel_cb (GtkWidget *widget, CcColorPanel *panel)
+gcm_prefs_button_virtual_cancel_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 {
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "dialog_virtual"));
 	gtk_widget_hide (widget);
 }
 
 /**
- * cc_color_panel_virtual_delete_event_cb:
+ * gcm_prefs_virtual_delete_event_cb:
  **/
 static gboolean
-cc_color_panel_virtual_delete_event_cb (GtkWidget *widget,
-					GdkEvent *event,
-					CcColorPanel *panel)
+gcm_prefs_virtual_delete_event_cb (GtkWidget *widget,
+				   GdkEvent *event,
+				   GcmPrefsPriv *prefs)
 {
-	cc_color_panel_button_virtual_cancel_cb (widget, panel);
+	gcm_prefs_button_virtual_cancel_cb (widget, prefs);
 	return TRUE;
 }
 
 /**
- * cc_color_panel_button_assign_cancel_cb:
+ * gcm_prefs_button_assign_cancel_cb:
  **/
 static void
-cc_color_panel_button_assign_cancel_cb (GtkWidget *widget, CcColorPanel *panel)
+gcm_prefs_button_assign_cancel_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 {
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "dialog_assign"));
 	gtk_widget_hide (widget);
 }
 
 /**
- * cc_color_panel_button_assign_ok_cb:
+ * gcm_prefs_button_assign_ok_cb:
  **/
 static void
-cc_color_panel_button_assign_ok_cb (GtkWidget *widget, CcColorPanel *panel)
+gcm_prefs_button_assign_ok_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -1125,12 +1118,12 @@ cc_color_panel_button_assign_ok_cb (GtkWidget *widget, CcColorPanel *panel)
 	GError *error = NULL;
 
 	/* hide window */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "dialog_assign"));
 	gtk_widget_hide (widget);
 
 	/* get entry */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "combobox_profile"));
 	ret = gtk_combo_box_get_active_iter (GTK_COMBO_BOX(widget), &iter);
 	if (!ret)
@@ -1141,10 +1134,10 @@ cc_color_panel_button_assign_ok_cb (GtkWidget *widget, CcColorPanel *panel)
 			    -1);
 
 	/* just add it, the list store will get ::changed */
-	ret = cd_device_add_profile_sync (panel->priv->current_device,
+	ret = cd_device_add_profile_sync (prefs->current_device,
 					  CD_DEVICE_RELATION_HARD,
 					  profile,
-					  panel->priv->cancellable,
+					  prefs->cancellable,
 					  &error);
 	if (!ret) {
 		g_warning ("failed to add: %s", error->message);
@@ -1153,9 +1146,9 @@ cc_color_panel_button_assign_ok_cb (GtkWidget *widget, CcColorPanel *panel)
 	}
 
 	/* make it default */
-	ret = cd_device_make_profile_default_sync (panel->priv->current_device,
+	ret = cd_device_make_profile_default_sync (prefs->current_device,
 						   profile,
-						   panel->priv->cancellable,
+						   prefs->cancellable,
 						   &error);
 	if (!ret) {
 		g_warning ("failed to set default: %s", error->message);
@@ -1168,44 +1161,44 @@ out:
 }
 
 /**
- * cc_color_panel_profile_delete_event_cb:
+ * gcm_prefs_profile_delete_event_cb:
  **/
 static gboolean
-cc_color_panel_profile_delete_event_cb (GtkWidget *widget,
-					GdkEvent *event,
-					CcColorPanel *panel)
+gcm_prefs_profile_delete_event_cb (GtkWidget *widget,
+				   GdkEvent *event,
+				   GcmPrefsPriv *prefs)
 {
-	cc_color_panel_button_assign_cancel_cb (widget, panel);
+	gcm_prefs_button_assign_cancel_cb (widget, prefs);
 	return TRUE;
 }
 
 /**
- * cc_color_panel_delete_cb:
+ * gcm_prefs_delete_cb:
  **/
 static void
-cc_color_panel_delete_cb (GtkWidget *widget, CcColorPanel *panel)
+gcm_prefs_delete_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 {
 	gboolean ret = FALSE;
 	GError *error = NULL;
 
 	/* try to delete device */
-	ret = cd_client_delete_device_sync (panel->priv->client,
-					    cd_device_get_id (panel->priv->current_device),
-					    panel->priv->cancellable,
+	ret = cd_client_delete_device_sync (prefs->client,
+					    cd_device_get_id (prefs->current_device),
+					    prefs->cancellable,
 					    &error);
 	if (!ret) {
 		/* TRANSLATORS: could not delete virtual device */
-		cc_color_panel_error_dialog (panel, _("Failed to delete device"), error->message);
+		gcm_prefs_error_dialog (prefs, _("Failed to delete device"), error->message);
 		g_error_free (error);
 	}
 }
 
 /**
- * cc_color_panel_add_devices_columns:
+ * gcm_prefs_add_devices_columns:
  **/
 static void
-cc_color_panel_add_devices_columns (CcColorPanel *panel,
-				    GtkTreeView *treeview)
+gcm_prefs_add_devices_columns (GcmPrefsPriv *prefs,
+			       GtkTreeView *treeview)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
@@ -1227,17 +1220,17 @@ cc_color_panel_add_devices_columns (CcColorPanel *panel,
 							   "markup", CD_DEVICES_COLUMN_TITLE,
 							   NULL);
 	gtk_tree_view_column_set_sort_column_id (column, CD_DEVICES_COLUMN_SORT);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (panel->priv->list_store_devices), CD_DEVICES_COLUMN_SORT, GTK_SORT_ASCENDING);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (prefs->list_store_devices), CD_DEVICES_COLUMN_SORT, GTK_SORT_ASCENDING);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
 
 /**
- * cc_color_panel_add_assign_columns:
+ * gcm_prefs_add_assign_columns:
  **/
 static void
-cc_color_panel_add_assign_columns (CcColorPanel *panel,
-				   GtkTreeView *treeview)
+gcm_prefs_add_assign_columns (GcmPrefsPriv *prefs,
+			      GtkTreeView *treeview)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
@@ -1252,7 +1245,7 @@ cc_color_panel_add_assign_columns (CcColorPanel *panel,
 							   "is-default", GCM_LIST_STORE_PROFILES_COLUMN_IS_DEFAULT,
 							   NULL);
 	gtk_tree_view_column_set_sort_column_id (column, GCM_LIST_STORE_PROFILES_COLUMN_SORT);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (panel->priv->list_store_profiles), GCM_LIST_STORE_PROFILES_COLUMN_SORT, GTK_SORT_ASCENDING);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (prefs->list_store_profiles), GCM_LIST_STORE_PROFILES_COLUMN_SORT, GTK_SORT_ASCENDING);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 
@@ -1267,10 +1260,10 @@ cc_color_panel_add_assign_columns (CcColorPanel *panel,
 }
 
 /**
- * cc_color_panel_set_calibrate_button_sensitivity:
+ * gcm_prefs_set_calibrate_button_sensitivity:
  **/
 static void
-cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
+gcm_prefs_set_calibrate_button_sensitivity (GcmPrefsPriv *prefs)
 {
 	gboolean ret = FALSE;
 	GtkWidget *widget;
@@ -1282,7 +1275,7 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 	tooltip = _("Create a color profile for the selected device");
 
 	/* no device selected */
-	if (panel->priv->current_device == NULL) {
+	if (prefs->current_device == NULL) {
 		/* TRANSLATORS: this is when the button is insensitive */
 		tooltip = _("Cannot create profile: No device is selected");
 		goto out;
@@ -1300,11 +1293,11 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 	}
 
 	/* are we a display */
-	kind = cd_device_get_kind (panel->priv->current_device);
+	kind = cd_device_get_kind (prefs->current_device);
 	if (kind == CD_DEVICE_KIND_DISPLAY) {
 
 		/* find whether we have hardware installed */
-		ret = gcm_sensor_client_get_present (panel->priv->sensor_client);
+		ret = gcm_sensor_client_get_present (prefs->sensor_client);
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The measuring instrument is not plugged in");
@@ -1319,7 +1312,7 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 	} else if (kind == CD_DEVICE_KIND_PRINTER) {
 
 		/* find whether we have hardware installed */
-		ret = gcm_sensor_client_get_present (panel->priv->sensor_client);
+		ret = gcm_sensor_client_get_present (prefs->sensor_client);
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The measuring instrument is not plugged in");
@@ -1327,7 +1320,7 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 		}
 
 		/* find whether we have hardware installed */
-		ret = gcm_sensor_supports_printer (gcm_sensor_client_get_sensor (panel->priv->sensor_client));
+		ret = gcm_sensor_supports_printer (gcm_sensor_client_get_sensor (prefs->sensor_client));
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The measuring instrument does not support printer profiling");
@@ -1341,18 +1334,18 @@ cc_color_panel_set_calibrate_button_sensitivity (CcColorPanel *panel)
 	}
 out:
 	/* control the tooltip and sensitivity of the button */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_calibrate"));
 	gtk_widget_set_tooltip_text (widget, tooltip);
 	gtk_widget_set_sensitive (widget, ret);
 }
 
 /**
- * cc_color_panel_devices_treeview_clicked_cb:
+ * gcm_prefs_devices_treeview_clicked_cb:
  **/
 static void
-cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection,
-					    CcColorPanel *panel)
+gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection,
+				       GcmPrefsPriv *prefs)
 {
 	GtkTreeModel *model;
 	GtkTreePath *path;
@@ -1367,24 +1360,24 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection,
 	}
 
 	/* get current device */
-	if (panel->priv->current_device != NULL)
-		g_object_unref (panel->priv->current_device);
+	if (prefs->current_device != NULL)
+		g_object_unref (prefs->current_device);
 	gtk_tree_model_get (model, &iter,
-			    CD_DEVICES_COLUMN_DEVICE, &panel->priv->current_device,
+			    CD_DEVICES_COLUMN_DEVICE, &prefs->current_device,
 			    -1);
 
 	/* we have a new device */
 	g_debug ("selected device is: %s",
-		 cd_device_get_id (panel->priv->current_device));
-	if (panel->priv->current_device == NULL)
+		 cd_device_get_id (prefs->current_device));
+	if (prefs->current_device == NULL)
 		goto out;
 
 	/* set new device */
-	gcm_list_store_profiles_set_from_device (panel->priv->list_store_profiles,
-						 panel->priv->current_device);
+	gcm_list_store_profiles_set_from_device (prefs->list_store_profiles,
+						 prefs->current_device);
 
 	/* select the default profile to display */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "treeview_assign"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	path = gtk_tree_path_new_from_string ("0");
@@ -1392,51 +1385,51 @@ cc_color_panel_devices_treeview_clicked_cb (GtkTreeSelection *selection,
 	gtk_tree_path_free (path);
 
 	/* make sure selectable */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "combobox_profile"));
 	gtk_widget_set_sensitive (widget, TRUE);
 
 	/* can we delete this device? */
-	device_mode = cd_device_get_mode (panel->priv->current_device);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	device_mode = cd_device_get_mode (prefs->current_device);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_delete"));
 	gtk_widget_set_sensitive (widget, device_mode == CD_DEVICE_MODE_VIRTUAL);
 
 	/* can this device calibrate */
-	cc_color_panel_set_calibrate_button_sensitivity (panel);
+	gcm_prefs_set_calibrate_button_sensitivity (prefs);
 out:
 	return;
 }
 
 /**
- * cc_color_panel_profile_treeview_row_activated_cb:
+ * gcm_prefs_profile_treeview_row_activated_cb:
  **/
 static void
-cc_color_panel_profile_treeview_row_activated_cb (GtkTreeView *tree_view,
-						  GtkTreePath *path,
-						  GtkTreeViewColumn *column,
-						  CcColorPanel *panel)
+gcm_prefs_profile_treeview_row_activated_cb (GtkTreeView *tree_view,
+					     GtkTreePath *path,
+					     GtkTreeViewColumn *column,
+					     GcmPrefsPriv *prefs)
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	gboolean ret;
 
 	/* get the iter */
-	model = GTK_TREE_MODEL (panel->priv->list_store_profiles);
+	model = GTK_TREE_MODEL (prefs->list_store_profiles);
 	ret = gtk_tree_model_get_iter (model, &iter, path);
 	if (!ret)
 		return;
 
 	/* make this profile the default */
-	cc_color_panel_profile_make_default_internal (panel, model, &iter);
+	gcm_prefs_profile_make_default_internal (prefs, model, &iter);
 }
 
 /**
- * cc_color_panel_profile_treeview_clicked_cb:
+ * gcm_prefs_profile_treeview_clicked_cb:
  **/
 static void
-cc_color_panel_profile_treeview_clicked_cb (GtkTreeSelection *selection,
-					    CcColorPanel *panel)
+gcm_prefs_profile_treeview_clicked_cb (GtkTreeSelection *selection,
+				       GcmPrefsPriv *prefs)
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
@@ -1448,10 +1441,10 @@ cc_color_panel_profile_treeview_clicked_cb (GtkTreeSelection *selection,
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 
-		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+		widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_assign_make_default"));
 		gtk_widget_set_sensitive (widget, FALSE);
-		widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+		widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_assign_remove"));
 		gtk_widget_set_sensitive (widget, FALSE);
 
@@ -1469,12 +1462,12 @@ cc_color_panel_profile_treeview_clicked_cb (GtkTreeSelection *selection,
 		 cd_profile_get_filename (profile));
 
 	/* is the element the first in the list */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_assign_make_default"));
 	gtk_widget_set_sensitive (widget, !is_default);
 
 	/* we can only remove hard relationships */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_assign_remove"));
 	if (relation == CD_DEVICE_RELATION_HARD) {
 		gtk_widget_set_tooltip_text (widget, "");
@@ -1491,7 +1484,7 @@ cc_color_panel_profile_treeview_clicked_cb (GtkTreeSelection *selection,
  * cd_device_kind_to_string:
  **/
 static const gchar *
-cc_color_panel_device_kind_to_string (CdDeviceKind kind)
+gcm_prefs_device_kind_to_string (CdDeviceKind kind)
 {
 	if (kind == CD_DEVICE_KIND_DISPLAY)
 		return "1";
@@ -1527,10 +1520,10 @@ gcm_device_get_title (CdDevice *device)
 }
 
 /**
- * cc_color_panel_set_combo_simple_text:
+ * gcm_prefs_set_combo_simple_text:
  **/
 static void
-cc_color_panel_set_combo_simple_text (GtkWidget *combo_box)
+gcm_prefs_set_combo_simple_text (GtkWidget *combo_box)
 {
 	GtkCellRenderer *renderer;
 	GtkListStore *store;
@@ -1560,11 +1553,11 @@ cc_color_panel_set_combo_simple_text (GtkWidget *combo_box)
 }
 
 /**
- * cc_color_panel_profile_combo_changed_cb:
+ * gcm_prefs_profile_combo_changed_cb:
  **/
 static void
-cc_color_panel_profile_combo_changed_cb (GtkWidget *widget,
-					 CcColorPanel *panel)
+gcm_prefs_profile_combo_changed_cb (GtkWidget *widget,
+				    GcmPrefsPriv *prefs)
 {
 	GFile *file = NULL;
 	gboolean ret;
@@ -1574,7 +1567,7 @@ cc_color_panel_profile_combo_changed_cb (GtkWidget *widget,
 	GcmPrefsEntryType entry_type;
 
 	/* no devices */
-	if (panel->priv->current_device == NULL)
+	if (prefs->current_device == NULL)
 		return;
 
 	/* no selection */
@@ -1590,7 +1583,7 @@ cc_color_panel_profile_combo_changed_cb (GtkWidget *widget,
 
 	/* import */
 	if (entry_type == GCM_PREFS_ENTRY_TYPE_IMPORT) {
-		file = cc_color_panel_file_chooser_get_icc_profile (panel);
+		file = gcm_prefs_file_chooser_get_icc_profile (prefs);
 		if (file == NULL) {
 			g_warning ("failed to get ICC file");
 			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
@@ -1598,7 +1591,7 @@ cc_color_panel_profile_combo_changed_cb (GtkWidget *widget,
 		}
 
 		/* import this */
-		ret = cc_color_panel_profile_import_file (panel, file);
+		ret = gcm_prefs_profile_import_file (prefs, file);
 		if (!ret) {
 			gchar *uri;
 			/* set to 'None' */
@@ -1626,11 +1619,11 @@ out:
 }
 
 /**
- * cc_color_panel_sensor_client_changed_cb:
+ * gcm_prefs_sensor_client_changed_cb:
  **/
 static void
-cc_color_panel_sensor_client_changed_cb (GcmSensorClient *sensor_client,
-					 CcColorPanel *panel)
+gcm_prefs_sensor_client_changed_cb (GcmSensorClient *sensor_client,
+				    GcmPrefsPriv *prefs)
 {
 	gboolean present;
 	const gchar *event_id;
@@ -1655,14 +1648,14 @@ cc_color_panel_sensor_client_changed_cb (GcmSensorClient *sensor_client,
 			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
 			 CA_PROP_EVENT_DESCRIPTION, message, NULL);
 
-	cc_color_panel_set_calibrate_button_sensitivity (panel);
+	gcm_prefs_set_calibrate_button_sensitivity (prefs);
 }
 
 /**
- * cc_color_panel_device_kind_to_icon_name:
+ * gcm_prefs_device_kind_to_icon_name:
  **/
 static const gchar *
-cc_color_panel_device_kind_to_icon_name (CdDeviceKind kind)
+gcm_prefs_device_kind_to_icon_name (CdDeviceKind kind)
 {
 	if (kind == CD_DEVICE_KIND_DISPLAY)
 		return "video-display";
@@ -1677,10 +1670,10 @@ cc_color_panel_device_kind_to_icon_name (CdDeviceKind kind)
 
 
 /**
- * cc_color_panel_add_device:
+ * gcm_prefs_add_device:
  **/
 static void
-cc_color_panel_add_device (CcColorPanel *panel, CdDevice *device)
+gcm_prefs_add_device (GcmPrefsPriv *prefs, CdDevice *device)
 {
 	CdDeviceKind kind;
 	const gchar *icon_name;
@@ -1691,21 +1684,21 @@ cc_color_panel_add_device (CcColorPanel *panel, CdDevice *device)
 
 	/* get icon */
 	kind = cd_device_get_kind (device);
-	icon_name = cc_color_panel_device_kind_to_icon_name (kind);
+	icon_name = gcm_prefs_device_kind_to_icon_name (kind);
 
 	/* italic for non-connected devices */
 	title = gcm_device_get_title (device);
 
 	/* create sort order */
 	sort = g_strdup_printf ("%s%s",
-				cc_color_panel_device_kind_to_string (kind),
+				gcm_prefs_device_kind_to_string (kind),
 				title);
 
 	/* add to list */
 	id = cd_device_get_id (device);
 	g_debug ("add %s to device list", id);
-	gtk_list_store_append (panel->priv->list_store_devices, &iter);
-	gtk_list_store_set (panel->priv->list_store_devices, &iter,
+	gtk_list_store_append (prefs->list_store_devices, &iter);
+	gtk_list_store_set (prefs->list_store_devices, &iter,
 			    CD_DEVICES_COLUMN_DEVICE, device,
 			    CD_DEVICES_COLUMN_ID, id,
 			    CD_DEVICES_COLUMN_SORT, sort,
@@ -1716,10 +1709,10 @@ cc_color_panel_add_device (CcColorPanel *panel, CdDevice *device)
 }
 
 /**
- * cc_color_panel_remove_device:
+ * gcm_prefs_remove_device:
  **/
 static void
-cc_color_panel_remove_device (CcColorPanel *panel, CdDevice *cd_device)
+gcm_prefs_remove_device (GcmPrefsPriv *prefs, CdDevice *cd_device)
 {
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -1731,7 +1724,7 @@ cc_color_panel_remove_device (CcColorPanel *panel, CdDevice *cd_device)
 	id = cd_device_get_id (cd_device);
 
 	/* get first element */
-	model = GTK_TREE_MODEL (panel->priv->list_store_devices);
+	model = GTK_TREE_MODEL (prefs->list_store_devices);
 	ret = gtk_tree_model_get_iter_first (model, &iter);
 	if (!ret)
 		return;
@@ -1751,38 +1744,38 @@ cc_color_panel_remove_device (CcColorPanel *panel, CdDevice *cd_device)
 }
 
 /**
- * cc_color_panel_device_added_cb:
+ * gcm_prefs_device_added_cb:
  **/
 static void
-cc_color_panel_device_added_cb (CdClient *client,
+gcm_prefs_device_added_cb (CdClient *client,
 				CdDevice *device,
-				CcColorPanel *panel)
+				GcmPrefsPriv *prefs)
 {
 	/* remove the saved device if it's already there */
-	cc_color_panel_remove_device (panel, device);
+	gcm_prefs_remove_device (prefs, device);
 
 	/* add the device */
-	cc_color_panel_add_device (panel, device);
+	gcm_prefs_add_device (prefs, device);
 }
 
 /**
- * cc_color_panel_changed_cb:
+ * gcm_prefs_changed_cb:
  **/
 static void
-cc_color_panel_changed_cb (CdClient *client,
-			   CdDevice *device,
-			   CcColorPanel *panel)
+gcm_prefs_changed_cb (CdClient *client,
+		      CdDevice *device,
+		      GcmPrefsPriv *prefs)
 {
 	g_debug ("changed: %s (doing nothing)", cd_device_get_id (device));
 }
 
 /**
- * cc_color_panel_device_removed_cb:
+ * gcm_prefs_device_removed_cb:
  **/
 static void
-cc_color_panel_device_removed_cb (CdClient *client,
-				  CdDevice *device,
-				  CcColorPanel *panel)
+gcm_prefs_device_removed_cb (CdClient *client,
+			     CdDevice *device,
+			     GcmPrefsPriv *prefs)
 {
 	GtkTreeIter iter;
 	GtkTreeSelection *selection;
@@ -1790,30 +1783,30 @@ cc_color_panel_device_removed_cb (CdClient *client,
 	gboolean ret;
 
 	/* remove from the UI */
-	cc_color_panel_remove_device (panel, device);
+	gcm_prefs_remove_device (prefs, device);
 
 	/* select the first device */
-	ret = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (panel->priv->list_store_devices), &iter);
+	ret = gtk_tree_model_get_iter_first (GTK_TREE_MODEL (prefs->list_store_devices), &iter);
 	if (!ret)
 		return;
 
 	/* click it */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "treeview_devices"));
 	gtk_tree_view_set_model (GTK_TREE_VIEW (widget),
-				 GTK_TREE_MODEL (panel->priv->list_store_devices));
+				 GTK_TREE_MODEL (prefs->list_store_devices));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	gtk_tree_selection_select_iter (selection, &iter);
 }
 
 /**
- * cc_color_panel_setup_space_combobox:
+ * gcm_prefs_setup_space_combobox:
  **/
 static void
-cc_color_panel_setup_space_combobox (CcColorPanel *panel,
-				     GtkWidget *widget,
-				     CdColorspace colorspace,
-				     const gchar *profile_filename)
+gcm_prefs_setup_space_combobox (GcmPrefsPriv *prefs,
+				GtkWidget *widget,
+				CdColorspace colorspace,
+				const gchar *profile_filename)
 {
 	CdColorspace colorspace_tmp;
 	CdProfile *profile;
@@ -1829,8 +1822,8 @@ cc_color_panel_setup_space_combobox (CcColorPanel *panel,
 	guint i;
 
 	/* get profiles */
-	profile_array = cd_client_get_profiles_sync (panel->priv->client,
-						     panel->priv->cancellable,
+	profile_array = cd_client_get_profiles_sync (prefs->client,
+						     prefs->cancellable,
 						     &error);
 	if (profile_array == NULL) {
 		g_warning ("failed to get profiles: %s",
@@ -1851,7 +1844,7 @@ cc_color_panel_setup_space_combobox (CcColorPanel *panel,
 		    colorspace == colorspace_tmp &&
 		    (colorspace != CD_COLORSPACE_RGB ||
 		     has_colorspace_description)) {
-			cc_color_panel_combobox_add_profile (widget, profile, GCM_PREFS_ENTRY_TYPE_PROFILE, &iter);
+			gcm_prefs_combobox_add_profile (widget, profile, GCM_PREFS_ENTRY_TYPE_PROFILE, &iter);
 
 			/* set active option */
 			filename = cd_profile_get_filename (profile);
@@ -1880,10 +1873,10 @@ out:
 }
 
 /**
- * cc_color_panel_space_combo_changed_cb:
+ * gcm_prefs_space_combo_changed_cb:
  **/
 static void
-cc_color_panel_space_combo_changed_cb (GtkWidget *widget, CcColorPanel *panel)
+gcm_prefs_space_combo_changed_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 {
 	gboolean ret;
 	GtkTreeIter iter;
@@ -1907,17 +1900,17 @@ cc_color_panel_space_combo_changed_cb (GtkWidget *widget, CcColorPanel *panel)
 
 	filename = cd_profile_get_filename (profile);
 	g_debug ("changed working space %s", filename);
-	g_settings_set_string (panel->priv->settings, key, filename);
+	g_settings_set_string (prefs->settings, key, filename);
 out:
 	if (profile != NULL)
 		g_object_unref (profile);
 }
 
 /**
- * cc_color_panel_renderer_combo_changed_cb:
+ * gcm_prefs_renderer_combo_changed_cb:
  **/
 static void
-cc_color_panel_renderer_combo_changed_cb (GtkWidget *widget, CcColorPanel *panel)
+gcm_prefs_renderer_combo_changed_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 {
 	gint active;
 	const gchar *key = g_object_get_data (G_OBJECT(widget), "GCM:GSettingsKey");
@@ -1929,14 +1922,14 @@ cc_color_panel_renderer_combo_changed_cb (GtkWidget *widget, CcColorPanel *panel
 
 	/* save to GSettings */
 	g_debug ("changed rendering intent to %s", cd_rendering_intent_to_string (active+1));
-	g_settings_set_enum (panel->priv->settings, key, active+1);
+	g_settings_set_enum (prefs->settings, key, active+1);
 }
 
 /**
- * cc_color_panel_setup_rendering_combobox:
+ * gcm_prefs_setup_rendering_combobox:
  **/
 static void
-cc_color_panel_setup_rendering_combobox (GtkWidget *widget, CdRenderingIntent intent)
+gcm_prefs_setup_rendering_combobox (GtkWidget *widget, CdRenderingIntent intent)
 {
 	guint i;
 	gboolean ret = FALSE;
@@ -1959,17 +1952,17 @@ cc_color_panel_setup_rendering_combobox (GtkWidget *widget, CdRenderingIntent in
 }
 
 /**
- * cc_color_panel_is_color_profiles_extra_installed_ready_cb:
+ * gcm_prefs_is_color_profiles_extra_installed_ready_cb:
  **/
 static void
-cc_color_panel_is_color_profiles_extra_installed_ready_cb (GObject *source_object,
-							   GAsyncResult *res,
-							   gpointer user_data)
+gcm_prefs_is_color_profiles_extra_installed_ready_cb (GObject *source_object,
+						       GAsyncResult *res,
+						       gpointer user_data)
 {
 	GVariant *response = NULL;
 	GError *error = NULL;
 	gboolean installed = TRUE;
-	CcColorPanel *panel = CC_COLOR_PANEL (user_data);
+	GcmPrefsPriv *prefs = (GcmPrefsPriv *) user_data;
 
 	/* get details */
 	response = g_dbus_connection_call_finish (G_DBUS_CONNECTION (source_object),
@@ -1986,17 +1979,17 @@ cc_color_panel_is_color_profiles_extra_installed_ready_cb (GObject *source_objec
 	g_variant_get (response, "(b)", &installed);
 
 	/* show control */
-	gtk_widget_set_visible (panel->priv->info_bar_profiles, !installed);
+	gtk_widget_set_visible (prefs->info_bar_profiles, !installed);
 out:
 	if (response != NULL)
 		g_variant_unref (response);
 }
 
 /**
- * cc_color_panel_is_color_profiles_extra_installed:
+ * gcm_prefs_is_color_profiles_extra_installed:
  **/
 static void
-cc_color_panel_is_color_profiles_extra_installed (CcColorPanel *panel)
+gcm_prefs_is_color_profiles_extra_installed (GcmPrefsPriv *prefs)
 {
 	GDBusConnection *connection;
 	GVariant *args = NULL;
@@ -2031,9 +2024,9 @@ cc_color_panel_is_color_profiles_extra_installed (CcColorPanel *panel)
 				G_VARIANT_TYPE ("(b)"),
 				G_DBUS_CALL_FLAGS_NONE,
 				G_MAXINT,
-				panel->priv->cancellable,
-				cc_color_panel_is_color_profiles_extra_installed_ready_cb,
-				panel);
+				prefs->cancellable,
+				gcm_prefs_is_color_profiles_extra_installed_ready_cb,
+				prefs);
 out:
 	if (args != NULL)
 		g_variant_unref (args);
@@ -2041,10 +2034,10 @@ out:
 }
 
 /**
- * cc_color_panel_startup_idle_cb:
+ * gcm_prefs_startup_idle_cb:
  **/
 static gboolean
-cc_color_panel_startup_idle_cb (CcColorPanel *panel)
+gcm_prefs_startup_idle_cb (GcmPrefsPriv *prefs)
 {
 	gchar *colorspace_cmyk;
 	gchar *colorspace_gray;
@@ -2054,81 +2047,81 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 	GtkWidget *widget;
 
 	/* search the disk for profiles */
-	g_signal_connect (panel->priv->client, "changed",
-			  G_CALLBACK(cc_color_panel_profile_store_changed_cb), panel);
+	g_signal_connect (prefs->client, "changed",
+			  G_CALLBACK(gcm_prefs_profile_store_changed_cb), prefs);
 
 	/* setup RGB combobox */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "combobox_space_rgb"));
-	colorspace_rgb = g_settings_get_string (panel->priv->settings,
+	colorspace_rgb = g_settings_get_string (prefs->settings,
 						 GCM_SETTINGS_COLORSPACE_RGB);
-	cc_color_panel_set_combo_simple_text (widget);
-	cc_color_panel_setup_space_combobox (panel, widget,
+	gcm_prefs_set_combo_simple_text (widget);
+	gcm_prefs_setup_space_combobox (prefs, widget,
 					     CD_COLORSPACE_RGB,
 					     colorspace_rgb);
 	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey",
 			   (gpointer) GCM_SETTINGS_COLORSPACE_RGB);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (cc_color_panel_space_combo_changed_cb), panel);
+			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), prefs);
 
 	/* setup CMYK combobox */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "combobox_space_cmyk"));
-	colorspace_cmyk = g_settings_get_string (panel->priv->settings,
+	colorspace_cmyk = g_settings_get_string (prefs->settings,
 						 GCM_SETTINGS_COLORSPACE_CMYK);
-	cc_color_panel_set_combo_simple_text (widget);
-	cc_color_panel_setup_space_combobox (panel, widget,
+	gcm_prefs_set_combo_simple_text (widget);
+	gcm_prefs_setup_space_combobox (prefs, widget,
 					     CD_COLORSPACE_CMYK,
 					     colorspace_cmyk);
 	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey",
 			   (gpointer) GCM_SETTINGS_COLORSPACE_CMYK);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (cc_color_panel_space_combo_changed_cb), panel);
+			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), prefs);
 
 	/* setup gray combobox */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "combobox_space_gray"));
-	colorspace_gray = g_settings_get_string (panel->priv->settings,
+	colorspace_gray = g_settings_get_string (prefs->settings,
 						 GCM_SETTINGS_COLORSPACE_GRAY);
-	cc_color_panel_set_combo_simple_text (widget);
-	cc_color_panel_setup_space_combobox (panel, widget,
+	gcm_prefs_set_combo_simple_text (widget);
+	gcm_prefs_setup_space_combobox (prefs, widget,
 					     CD_COLORSPACE_GRAY,
 					     colorspace_gray);
 	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey",
 			   (gpointer) GCM_SETTINGS_COLORSPACE_GRAY);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (cc_color_panel_space_combo_changed_cb), panel);
+			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), prefs);
 
 	/* setup rendering lists */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "combobox_rendering_display"));
-	intent_display = g_settings_get_enum (panel->priv->settings,
+	intent_display = g_settings_get_enum (prefs->settings,
 					      GCM_SETTINGS_RENDERING_INTENT_DISPLAY);
-	cc_color_panel_setup_rendering_combobox (widget, intent_display);
+	gcm_prefs_setup_rendering_combobox (widget, intent_display);
 	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey",
 			   (gpointer) GCM_SETTINGS_RENDERING_INTENT_DISPLAY);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (cc_color_panel_renderer_combo_changed_cb), panel);
+			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), prefs);
 
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "combobox_rendering_softproof"));
-	intent_softproof = g_settings_get_enum (panel->priv->settings,
+	intent_softproof = g_settings_get_enum (prefs->settings,
 						GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF);
-	cc_color_panel_setup_rendering_combobox (widget, intent_softproof);
+	gcm_prefs_setup_rendering_combobox (widget, intent_softproof);
 	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey",
 			   (gpointer) GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (cc_color_panel_renderer_combo_changed_cb), panel);
+			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), prefs);
 
 	/* set calibrate button sensitivity */
-	cc_color_panel_set_calibrate_button_sensitivity (panel);
+	gcm_prefs_set_calibrate_button_sensitivity (prefs);
 
 	/* we're probably showing now */
-	panel->priv->main_window = gtk_widget_get_toplevel (panel->priv->info_bar_profiles);
+	prefs->main_window = gtk_widget_get_toplevel (prefs->info_bar_profiles);
 
 	/* do we show the shared-color-profiles-extra installer? */
 	g_debug ("getting installed");
-	cc_color_panel_is_color_profiles_extra_installed (panel);
+	gcm_prefs_is_color_profiles_extra_installed (prefs);
 
 	g_free (colorspace_rgb);
 	g_free (colorspace_cmyk);
@@ -2136,10 +2129,10 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 }
 
 /**
- * cc_color_panel_setup_drag_and_drop:
+ * gcm_prefs_setup_drag_and_drop:
  **/
 static void
-cc_color_panel_setup_drag_and_drop (GtkWidget *widget)
+gcm_prefs_setup_drag_and_drop (GtkWidget *widget)
 {
 	GtkTargetEntry entry;
 
@@ -2157,32 +2150,32 @@ cc_color_panel_setup_drag_and_drop (GtkWidget *widget)
 }
 
 /**
- * cc_color_panel_profile_store_changed_cb:
+ * gcm_prefs_profile_store_changed_cb:
  **/
 static void
-cc_color_panel_profile_store_changed_cb (CdClient *client, CcColorPanel *panel)
+gcm_prefs_profile_store_changed_cb (CdClient *client, GcmPrefsPriv *prefs)
 {
 	GtkTreeSelection *selection;
 	GtkWidget *widget;
 
 	/* re-get all the profiles for this device */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "treeview_devices"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	if (selection == NULL)
 		return;
-	g_signal_emit_by_name (selection, "changed", panel);
+	g_signal_emit_by_name (selection, "changed", prefs);
 }
 
 /**
- * cc_color_panel_get_devices_cb:
+ * gcm_prefs_get_devices_cb:
  **/
 static void
-cc_color_panel_get_devices_cb (GObject *object,
-			       GAsyncResult *res,
-			       gpointer user_data)
+gcm_prefs_get_devices_cb (GObject *object,
+			  GAsyncResult *res,
+			  gpointer user_data)
 {
-	CcColorPanel *panel = (CcColorPanel *) user_data;
+	GcmPrefsPriv *prefs = (GcmPrefsPriv *) user_data;
 	CdClient *client = CD_CLIENT (object);
 	CdDevice *device;
 	GError *error = NULL;
@@ -2201,11 +2194,11 @@ cc_color_panel_get_devices_cb (GObject *object,
 	}
 	for (i=0; i<devices->len; i++) {
 		device = g_ptr_array_index (devices, i);
-		cc_color_panel_add_device (panel, device);
+		gcm_prefs_add_device (prefs, device);
 	}
 
 	/* set the cursor on the first device */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "treeview_devices"));
 	path = gtk_tree_path_new_from_string ("0");
 	gtk_tree_view_set_cursor (GTK_TREE_VIEW (widget), path, NULL, FALSE);
@@ -2216,23 +2209,23 @@ out:
 }
 
 /**
- * cc_color_panel_info_bar_response_cb:
+ * gcm_prefs_info_bar_response_cb:
  **/
 static void
-cc_color_panel_info_bar_response_cb (GtkDialog *dialog,
-				     GtkResponseType response,
-				     CcColorPanel *panel)
+gcm_prefs_info_bar_response_cb (GtkDialog *dialog,
+				GtkResponseType response,
+				GcmPrefsPriv *prefs)
 {
 	GtkWindow *window;
 	gboolean ret;
 
 	if (response == GTK_RESPONSE_APPLY) {
 		/* install the extra profiles */
-		window = GTK_WINDOW(panel->priv->main_window);
+		window = GTK_WINDOW(prefs->main_window);
 		ret = gcm_utils_install_package (GCM_PREFS_PACKAGE_NAME_COLOR_PROFILES_EXTRA,
 						 window);
 		if (ret)
-			gtk_widget_hide (panel->priv->info_bar_profiles);
+			gtk_widget_hide (prefs->info_bar_profiles);
 	}
 }
 
@@ -2262,10 +2255,10 @@ cd_device_kind_to_localised_string (CdDeviceKind device_kind)
 }
 
 /**
- * cc_color_panel_setup_virtual_combobox:
+ * gcm_prefs_setup_virtual_combobox:
  **/
 static void
-cc_color_panel_setup_virtual_combobox (GtkWidget *widget)
+gcm_prefs_setup_virtual_combobox (GtkWidget *widget)
 {
 	guint i;
 	const gchar *text;
@@ -2281,23 +2274,23 @@ cc_color_panel_setup_virtual_combobox (GtkWidget *widget)
  * gpk_update_viewer_notify_network_state_cb:
  **/
 static void
-cc_color_panel_button_virtual_entry_changed_cb (GtkEntry *entry,
-						GParamSpec *pspec,
-						CcColorPanel *panel)
+gcm_prefs_button_virtual_entry_changed_cb (GtkEntry *entry,
+					   GParamSpec *pspec,
+					   GcmPrefsPriv *prefs)
 {
 	const gchar *model;
 	const gchar *manufacturer;
 	GtkWidget *widget;
 
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "entry_virtual_model"));
 	model = gtk_entry_get_text (GTK_ENTRY (widget));
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "entry_virtual_manufacturer"));
 	manufacturer = gtk_entry_get_text (GTK_ENTRY (widget));
 
 	/* only set the add button sensitive if both sections have text */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_virtual_add"));
 	gtk_widget_set_sensitive (widget,
 				 (model != NULL &&
@@ -2306,23 +2299,10 @@ cc_color_panel_button_virtual_entry_changed_cb (GtkEntry *entry,
 				  manufacturer[0] != '\0'));
 }
 
-static void
-cc_color_panel_class_init (CcColorPanelClass *klass)
-{
-	GObjectClass *object_class = G_OBJECT_CLASS (klass);
-	g_type_class_add_private (klass, sizeof (CcColorPanelPrivate));
-	object_class->finalize = cc_color_panel_finalize;
-}
-
-static void
-cc_color_panel_class_finalize (CcColorPanelClass *klass)
-{
-}
-
 static gboolean
-cc_color_panel_activate_link_cb (GtkLabel *label,
-				 const gchar *uri,
-				 CcColorPanel *panel)
+gcm_prefs_activate_link_cb (GtkLabel *label,
+			    const gchar *uri,
+			    GcmPrefsPriv *prefs)
 {
 	gboolean ret;
 	GError *error = NULL;
@@ -2330,7 +2310,7 @@ cc_color_panel_activate_link_cb (GtkLabel *label,
 	gchar *command;
 
 	/* get xid */
-	xid = gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET (panel->priv->main_window)));
+	xid = gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET (prefs->main_window)));
 
 	/* run with modal set */
 	command = g_strdup_printf ("%s/gcm-viewer --parent-window %u", BINDIR, xid);
@@ -2344,33 +2324,49 @@ cc_color_panel_activate_link_cb (GtkLabel *label,
 	return TRUE;
 }
 
+/**
+ * gcm_window_set_parent_xid:
+ **/
 static void
-cc_color_panel_finalize (GObject *object)
+gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
 {
-	CcColorPanel *panel = CC_COLOR_PANEL (object);
+	GdkDisplay *display;
+	GdkWindow *parent_window;
+	GdkWindow *our_window;
 
-	g_cancellable_cancel (panel->priv->cancellable);
-	g_object_unref (panel->priv->cancellable);
-	if (panel->priv->current_device != NULL)
-		g_object_unref (panel->priv->current_device);
-	if (panel->priv->sensor_client != NULL)
-		g_object_unref (panel->priv->sensor_client);
-	if (panel->priv->settings != NULL)
-		g_object_unref (panel->priv->settings);
-	if (panel->priv->builder != NULL)
-		g_object_unref (panel->priv->builder);
-	if (panel->priv->client != NULL)
-		g_object_unref (panel->priv->client);
-	if (panel->priv->save_and_apply_id != 0)
-		g_source_remove (panel->priv->save_and_apply_id);
-	if (panel->priv->apply_all_devices_id != 0)
-		g_source_remove (panel->priv->apply_all_devices_id);
+	display = gdk_display_get_default ();
+	parent_window = gdk_x11_window_foreign_new_for_display (display, xid);
+	if (parent_window == NULL) {
+		g_warning ("failed to get parent window");
+		return;
+	}
+	our_window = gtk_widget_get_window (GTK_WIDGET (window));
+	if (our_window == NULL) {
+		g_warning ("failed to get our window");
+		return;
+	}
 
-	G_OBJECT_CLASS (cc_color_panel_parent_class)->finalize (object);
+	/* set this above our parent */
+	gtk_window_set_modal (window, TRUE);
+	gdk_window_set_transient_for (our_window, parent_window);
 }
 
+/**
+ * gcm_viewer_activate_cb:
+ **/
 static void
-cc_color_panel_init (CcColorPanel *panel)
+gcm_viewer_activate_cb (GApplication *application, GcmPrefsPriv *viewer)
+{
+	GtkWindow *window;
+	window = GTK_WINDOW (gtk_builder_get_object (viewer->builder, "dialog_prefs"));
+	gtk_window_present (window);
+}
+
+/**
+ * gcm_viewer_startup_cb:
+ **/
+static void
+gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 {
 	gboolean ret;
 	GError *error = NULL;
@@ -2381,16 +2377,15 @@ cc_color_panel_init (CcColorPanel *panel)
 	GtkWidget *widget;
 	gchar *text = NULL;
 
-	panel->priv = CC_COLOR_PREFS_GET_PRIVATE (panel);
-	panel->priv->cancellable = g_cancellable_new ();
+	prefs->cancellable = g_cancellable_new ();
 
 	/* setup defaults */
-	panel->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
+	prefs->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 
 	/* get UI */
-	panel->priv->builder = gtk_builder_new ();
-	gtk_builder_set_translation_domain (panel->priv->builder, GETTEXT_PACKAGE);
-	retval = gtk_builder_add_from_file (panel->priv->builder,
+	prefs->builder = gtk_builder_new ();
+	gtk_builder_set_translation_domain (prefs->builder, GETTEXT_PACKAGE);
+	retval = gtk_builder_add_from_file (prefs->builder,
 					    GCM_DATA "/gcm-prefs.ui",
 					    &error);
 	if (retval == 0) {
@@ -2399,179 +2394,173 @@ cc_color_panel_init (CcColorPanel *panel)
 		goto out;
 	}
 
-	/* reparent */
-	main_window = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
-							  "dialog_prefs"));
-	widget = gtk_dialog_get_content_area (GTK_DIALOG (main_window));
-	gtk_widget_reparent (widget, GTK_WIDGET (panel));
-
 	/* add application specific icons to search path */
 	gtk_icon_theme_append_search_path (gtk_icon_theme_get_default (),
 	                                   GCM_DATA G_DIR_SEPARATOR_S "icons");
 
 	/* create list stores */
-	panel->priv->list_store_devices = gtk_list_store_new (CD_DEVICES_COLUMN_LAST,
+	prefs->list_store_devices = gtk_list_store_new (CD_DEVICES_COLUMN_LAST,
 							      G_TYPE_STRING,
 							      G_TYPE_STRING,
 							      G_TYPE_STRING,
 							      G_TYPE_STRING,
 							      CD_TYPE_DEVICE);
-	panel->priv->list_store_profiles = gcm_list_store_profiles_new ();
+	prefs->list_store_profiles = gcm_list_store_profiles_new ();
 
 	/* assign buttons */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_assign_add"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_profile_add_cb), panel);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+			  G_CALLBACK (gcm_prefs_profile_add_cb), prefs);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_assign_remove"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_profile_remove_cb), panel);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+			  G_CALLBACK (gcm_prefs_profile_remove_cb), prefs);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_assign_make_default"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_profile_make_default_cb), panel);
+			  G_CALLBACK (gcm_prefs_profile_make_default_cb), prefs);
 
 	/* create device tree view */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "treeview_devices"));
 	gtk_tree_view_set_model (GTK_TREE_VIEW (widget),
-				 GTK_TREE_MODEL (panel->priv->list_store_devices));
+				 GTK_TREE_MODEL (prefs->list_store_devices));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	g_signal_connect (selection, "changed",
-			  G_CALLBACK (cc_color_panel_devices_treeview_clicked_cb),
-			  panel);
+			  G_CALLBACK (gcm_prefs_devices_treeview_clicked_cb),
+			  prefs);
 
 	/* add columns to the tree view */
-	cc_color_panel_add_devices_columns (panel, GTK_TREE_VIEW (widget));
+	gcm_prefs_add_devices_columns (prefs, GTK_TREE_VIEW (widget));
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
 
 	/* create assign tree view */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "treeview_assign"));
 	gtk_tree_view_set_model (GTK_TREE_VIEW (widget),
-				 GTK_TREE_MODEL (panel->priv->list_store_profiles));
+				 GTK_TREE_MODEL (prefs->list_store_profiles));
 	g_signal_connect (GTK_TREE_VIEW (widget), "row-activated",
-			  G_CALLBACK (cc_color_panel_profile_treeview_row_activated_cb),
-			  panel);
+			  G_CALLBACK (gcm_prefs_profile_treeview_row_activated_cb),
+			  prefs);
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	g_signal_connect (selection, "changed",
-			  G_CALLBACK (cc_color_panel_profile_treeview_clicked_cb),
-			  panel);
+			  G_CALLBACK (gcm_prefs_profile_treeview_clicked_cb),
+			  prefs);
 
 	/* add columns to the tree view */
-	cc_color_panel_add_assign_columns (panel, GTK_TREE_VIEW (widget));
+	gcm_prefs_add_assign_columns (prefs, GTK_TREE_VIEW (widget));
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
 	gtk_tree_view_set_reorderable (GTK_TREE_VIEW (widget), TRUE);
 	gtk_tree_view_set_tooltip_column (GTK_TREE_VIEW (widget),
 					  GCM_LIST_STORE_PROFILES_COLUMN_TOOLTIP);
 
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_default"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_default_cb), panel);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+			  G_CALLBACK (gcm_prefs_default_cb), prefs);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "label_viewer"));
 	g_signal_connect (widget, "activate-link",
-			  G_CALLBACK (cc_color_panel_activate_link_cb), panel);
+			  G_CALLBACK (gcm_prefs_activate_link_cb), prefs);
 	/* TRANSLATORS: link to gcm-viewer */
 	text = g_strdup_printf ("<a href=\"moo\">%s</a>",
 				_("Compare profiles..."));
 	gtk_label_set_markup (GTK_LABEL (widget), text);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_delete"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_delete_cb), panel);
+			  G_CALLBACK (gcm_prefs_delete_cb), prefs);
 	gtk_widget_set_sensitive (widget, FALSE);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_device_add"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_device_add_cb), panel);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+			  G_CALLBACK (gcm_prefs_device_add_cb), prefs);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_calibrate"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_calibrate_cb), panel);
+			  G_CALLBACK (gcm_prefs_calibrate_cb), prefs);
 
 	/* set up virtual dialog */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "dialog_virtual"));
 	g_signal_connect (widget, "delete-event",
-			  G_CALLBACK (cc_color_panel_virtual_delete_event_cb),
-			  panel);
+			  G_CALLBACK (gcm_prefs_virtual_delete_event_cb),
+			  prefs);
 	g_signal_connect (widget, "drag-data-received",
-			  G_CALLBACK (cc_color_panel_virtual_drag_data_received_cb),
-			  panel);
-	cc_color_panel_setup_drag_and_drop (widget);
+			  G_CALLBACK (gcm_prefs_virtual_drag_data_received_cb),
+			  prefs);
+	gcm_prefs_setup_drag_and_drop (widget);
 
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_virtual_add"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_button_virtual_add_cb),
-			  panel);
+			  G_CALLBACK (gcm_prefs_button_virtual_add_cb),
+			  prefs);
 	gtk_widget_set_sensitive (widget, FALSE);
 
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_virtual_cancel"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_button_virtual_cancel_cb),
-			  panel);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+			  G_CALLBACK (gcm_prefs_button_virtual_cancel_cb),
+			  prefs);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "combobox_virtual_type"));
-	cc_color_panel_setup_virtual_combobox (widget);
+	gcm_prefs_setup_virtual_combobox (widget);
 
 	/* set up assign dialog */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "dialog_assign"));
 	g_signal_connect (widget, "delete-event",
-			  G_CALLBACK (cc_color_panel_profile_delete_event_cb),
-			  panel);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+			  G_CALLBACK (gcm_prefs_profile_delete_event_cb),
+			  prefs);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_assign_cancel"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_button_assign_cancel_cb),
-			  panel);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+			  G_CALLBACK (gcm_prefs_button_assign_cancel_cb),
+			  prefs);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_assign_ok"));
 	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (cc_color_panel_button_assign_ok_cb),
-			  panel);
+			  G_CALLBACK (gcm_prefs_button_assign_ok_cb),
+			  prefs);
 
 	/* disable the add button if nothing in either box */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "entry_virtual_model"));
 	g_signal_connect (widget, "notify::text",
-			  G_CALLBACK (cc_color_panel_button_virtual_entry_changed_cb),
-			  panel);
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+			  G_CALLBACK (gcm_prefs_button_virtual_entry_changed_cb),
+			  prefs);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "entry_virtual_manufacturer"));
 	g_signal_connect (widget, "notify::text",
-			  G_CALLBACK (cc_color_panel_button_virtual_entry_changed_cb),
-			  panel);
+			  G_CALLBACK (gcm_prefs_button_virtual_entry_changed_cb),
+			  prefs);
 
 	/* setup icc profiles list */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "combobox_profile"));
-	cc_color_panel_set_combo_simple_text (widget);
+	gcm_prefs_set_combo_simple_text (widget);
 	gtk_widget_set_sensitive (widget, FALSE);
 	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (cc_color_panel_profile_combo_changed_cb),
-			  panel);
+			  G_CALLBACK (gcm_prefs_profile_combo_changed_cb),
+			  prefs);
 
 	/* use a device client array */
-	panel->priv->client = cd_client_new ();
-	g_signal_connect (panel->priv->client, "device-added",
-			  G_CALLBACK (cc_color_panel_device_added_cb),
-			  panel);
-	g_signal_connect (panel->priv->client, "device-removed",
-			  G_CALLBACK (cc_color_panel_device_removed_cb),
-			  panel);
-	g_signal_connect (panel->priv->client, "changed",
-			  G_CALLBACK (cc_color_panel_changed_cb),
-			  panel);
+	prefs->client = cd_client_new ();
+	g_signal_connect (prefs->client, "device-added",
+			  G_CALLBACK (gcm_prefs_device_added_cb),
+			  prefs);
+	g_signal_connect (prefs->client, "device-removed",
+			  G_CALLBACK (gcm_prefs_device_removed_cb),
+			  prefs);
+	g_signal_connect (prefs->client, "changed",
+			  G_CALLBACK (gcm_prefs_changed_cb),
+			  prefs);
 
 	/* connect to colord */
-	ret = cd_client_connect_sync (panel->priv->client,
-				      panel->priv->cancellable,
+	ret = cd_client_connect_sync (prefs->client,
+				      prefs->cancellable,
 				      &error);
 	if (!ret) {
 		g_warning ("failed to connect to colord: %s",
@@ -2581,79 +2570,134 @@ cc_color_panel_init (CcColorPanel *panel)
 	}
 
 	/* get devices async */
-	cd_client_get_devices (panel->priv->client,
-			       panel->priv->cancellable,
-			       cc_color_panel_get_devices_cb,
-			       panel);
+	cd_client_get_devices (prefs->client,
+			       prefs->cancellable,
+			       gcm_prefs_get_devices_cb,
+			       prefs);
 
 	/* use the color device */
-	panel->priv->sensor_client = gcm_sensor_client_new ();
-	g_signal_connect (panel->priv->sensor_client, "changed",
-			  G_CALLBACK (cc_color_panel_sensor_client_changed_cb),
-			  panel);
+	prefs->sensor_client = gcm_sensor_client_new ();
+	g_signal_connect (prefs->sensor_client, "changed",
+			  G_CALLBACK (gcm_prefs_sensor_client_changed_cb),
+			  prefs);
 
 	/* use infobar */
-	panel->priv->info_bar_profiles = gtk_info_bar_new ();
-	g_signal_connect (panel->priv->info_bar_profiles, "response",
-			  G_CALLBACK (cc_color_panel_info_bar_response_cb),
-			  panel);
+	prefs->info_bar_profiles = gtk_info_bar_new ();
+	g_signal_connect (prefs->info_bar_profiles, "response",
+			  G_CALLBACK (gcm_prefs_info_bar_response_cb),
+			  prefs);
 
 	/* TRANSLATORS: button to install extra profiles */
-	gtk_info_bar_add_button (GTK_INFO_BAR(panel->priv->info_bar_profiles),
+	gtk_info_bar_add_button (GTK_INFO_BAR(prefs->info_bar_profiles),
 				 _("Install now"), GTK_RESPONSE_APPLY);
 
 	/* TRANSLATORS: this is displayed when the profile is crap */
 	info_bar_profiles_label = gtk_label_new (_("More color profiles could be automatically installed."));
 	gtk_label_set_line_wrap (GTK_LABEL (info_bar_profiles_label), TRUE);
-	gtk_info_bar_set_message_type (GTK_INFO_BAR(panel->priv->info_bar_profiles),
+	gtk_info_bar_set_message_type (GTK_INFO_BAR(prefs->info_bar_profiles),
 				       GTK_MESSAGE_INFO);
-	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(panel->priv->info_bar_profiles));
+	widget = gtk_info_bar_get_content_area (GTK_INFO_BAR(prefs->info_bar_profiles));
 	gtk_container_add (GTK_CONTAINER(widget), info_bar_profiles_label);
 	gtk_widget_show (info_bar_profiles_label);
 
 	/* add infobar to defaults pane */
-	widget = GTK_WIDGET (gtk_builder_get_object (panel->priv->builder,
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "vbox_working_spaces"));
 	gtk_box_pack_start (GTK_BOX(widget),
-			    panel->priv->info_bar_profiles,
+			    prefs->info_bar_profiles,
 			    TRUE, FALSE, 0);
 
 	/* get main window */
-	panel->priv->main_window = gtk_widget_get_toplevel (panel->priv->info_bar_profiles);
+	prefs->main_window = gtk_widget_get_toplevel (prefs->info_bar_profiles);
 
 	/* connect up drags */
-	g_signal_connect (panel->priv->main_window, "drag-data-received",
-			  G_CALLBACK (cc_color_panel_drag_data_received_cb), panel);
-if(0)	cc_color_panel_setup_drag_and_drop (GTK_WIDGET (panel->priv->main_window));
+	g_signal_connect (prefs->main_window, "drag-data-received",
+			  G_CALLBACK (gcm_prefs_drag_data_received_cb), prefs);
+	gcm_prefs_setup_drag_and_drop (GTK_WIDGET (prefs->main_window));
+
+	/* setup application */
+	main_window = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
+							  "dialog_prefs"));
+	gtk_application_add_window (prefs->application,
+				    GTK_WINDOW (main_window));
+
+	/* set the parent window if it is specified */
+	if (prefs->parent_xid != 0) {
+		g_debug ("Setting xid %i", prefs->parent_xid);
+		gcm_window_set_parent_xid (GTK_WINDOW (main_window),
+					   prefs->parent_xid);
+	}
 
 	/* do all this after the window has been set up */
-	g_idle_add ((GSourceFunc) cc_color_panel_startup_idle_cb, panel);
+	g_idle_add ((GSourceFunc) gcm_prefs_startup_idle_cb, prefs);
 out:
 	g_free (text);
-	return;
 }
 
-void
-cc_color_panel_register (GIOModule *module)
-{
-	cc_color_panel_register_type (G_TYPE_MODULE (module));
-	g_io_extension_point_implement (CC_SHELL_PANEL_EXTENSION_POINT,
-					CC_TYPE_COLOR_PANEL,
-					"color", 0);
-}
 
-/* GIO extension stuff */
-void
-g_io_module_load (GIOModule *module)
+/**
+ * main:
+ **/
+int
+main (int argc, char **argv)
 {
+	GOptionContext *context;
+	GcmPrefsPriv *prefs;
+	int status = 0;
+	guint xid;
+
+	const GOptionEntry options[] = {
+		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
+		  /* TRANSLATORS: we can make this modal (stay on top of) another window */
+		  _("Set the parent window to make this modal"), NULL },
+		{ NULL}
+	};
+
+	setlocale (LC_ALL, "");
+
 	bindtextdomain (GETTEXT_PACKAGE, LOCALEDIR);
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
+	textdomain (GETTEXT_PACKAGE);
 
-	/* register the panel */
-	cc_color_panel_register (module);
-}
+	gtk_init (&argc, &argv);
 
-void
-g_io_module_unload (GIOModule *module)
-{
+	context = g_option_context_new ("gnome-color-manager");
+	g_option_context_add_main_entries (context, options, NULL);
+	g_option_context_add_group (context, gcm_debug_get_option_group ());
+	g_option_context_add_group (context, gtk_get_option_group (TRUE));
+	g_option_context_parse (context, &argc, &argv, NULL);
+	g_option_context_free (context);
+
+	prefs = g_new0 (GcmPrefsPriv, 1);
+	prefs->parent_xid = xid;
+
+	/* ensure single instance */
+	prefs->application = gtk_application_new ("org.gnome.ColorManager.Prefs", 0);
+	g_signal_connect (prefs->application, "startup",
+			  G_CALLBACK (gcm_viewer_startup_cb), prefs);
+	g_signal_connect (prefs->application, "activate",
+			  G_CALLBACK (gcm_viewer_activate_cb), prefs);
+
+	/* wait */
+	status = g_application_run (G_APPLICATION (prefs->application), argc, argv);
+
+	g_object_unref (prefs->application);
+	g_cancellable_cancel (prefs->cancellable);
+	g_object_unref (prefs->cancellable);
+	if (prefs->current_device != NULL)
+		g_object_unref (prefs->current_device);
+	if (prefs->sensor_client != NULL)
+		g_object_unref (prefs->sensor_client);
+	if (prefs->settings != NULL)
+		g_object_unref (prefs->settings);
+	if (prefs->builder != NULL)
+		g_object_unref (prefs->builder);
+	if (prefs->client != NULL)
+		g_object_unref (prefs->client);
+	if (prefs->save_and_apply_id != 0)
+		g_source_remove (prefs->save_and_apply_id);
+	if (prefs->apply_all_devices_id != 0)
+		g_source_remove (prefs->apply_all_devices_id);
+	g_free (prefs);
+	return status;
 }

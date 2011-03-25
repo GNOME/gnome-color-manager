@@ -61,12 +61,8 @@ for i in gcm-prefs gcm-import ; do
     $RPM_BUILD_ROOT%{_datadir}/applications/$i.desktop
 done
 
-rm -f $RPM_BUILD_ROOT%{_libdir}/control-center-1/panels/*.a
-rm -f $RPM_BUILD_ROOT%{_libdir}/control-center-1/panels/*.la
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.a
 rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
-rm -f $RPM_BUILD_ROOT%{_libdir}/gnome-settings-daemon-2.0/libcolor.a
-rm -f $RPM_BUILD_ROOT%{_libdir}/gnome-settings-daemon-2.0/libcolor.la
 
 %find_lang %name --with-gnome
 
@@ -114,7 +110,6 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
 %{_datadir}/glib-2.0/schemas/org.gnome.settings-daemon.plugins.color.gschema.xml
 %{_datadir}/GConf/gsettings/org.gnome.color-manager.gschema.migrate
 %{_datadir}/dbus-1/interfaces/org.gnome.ColorManager.xml
-%{_libdir}/control-center-1/panels/*.so
 
 %changelog
 * #LONGDATE# Richard Hughes <richard@hughsie.com> #VERSION#-0.#BUILD##ALPHATAG#
