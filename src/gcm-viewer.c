@@ -646,7 +646,7 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	const gchar *profile_colorspace_text;
 	gboolean ret;
 	gboolean has_vcgt;
-	guint size = 0;
+	guint size;
 	guint temperature;
 	guint filesize;
 	gboolean show_section = FALSE;
@@ -690,19 +690,28 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	}
 
 	/* setup cie widget */
-	gcm_cie_widget_set_from_profile (viewer->cie_widget, gcm_profile);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_cie"));
+	if (cd_profile_get_colorspace (profile) == CD_COLORSPACE_RGB) {
+		gcm_cie_widget_set_from_profile (viewer->cie_widget,
+						 gcm_profile);
+		gtk_widget_show (widget);
+	} else {
+		gtk_widget_hide (widget);
+	}
 
 	/* get curve data */
 	clut_trc = gcm_profile_generate_curve (gcm_profile, 256);
 
 	/* only show if there is useful information */
+	size = 0;
 	if (clut_trc != NULL)
 		size = gcm_clut_get_size (clut_trc);
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_trc_axis"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_trc"));
 	if (size > 0) {
 		g_object_set (viewer->trc_widget,
 			      "clut", clut_trc,
 			      NULL);
+		gtk_widget_show (widget);
 	} else {
 		gtk_widget_hide (widget);
 	}
@@ -711,16 +720,19 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	clut_vcgt = gcm_profile_generate_vcgt (gcm_profile, 256);
 
 	/* only show if there is useful information */
+	size = 0;
 	if (clut_vcgt != NULL)
 		size = gcm_clut_get_size (clut_vcgt);
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_vcgt_axis"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_vcgt"));
 	if (size > 0) {
 		g_object_set (viewer->vcgt_widget,
 			      "clut", clut_vcgt,
 			      NULL);
+		gtk_widget_show (widget);
 	} else {
 		gtk_widget_hide (widget);
 	}
+
 
 	/* set kind */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_type"));
@@ -747,8 +759,6 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	}
 
 	/* set vcgt */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_vcgt"));
-	gtk_widget_set_visible (widget, (profile_kind == CD_PROFILE_KIND_DISPLAY_DEVICE));
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_vcgt"));
 	has_vcgt = cd_profile_get_has_vcgt (profile);
 	if (has_vcgt) {
@@ -848,11 +858,11 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 		gtk_widget_set_tooltip_text (widget, _("This profile cannot be deleted"));
 	}
 
-	/* should we show the pane at all */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_graph"));
+	/* should we show the image previews at all */
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_to_srgb"));
 	gtk_widget_set_visible (widget, show_section);
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_profile_info"));
-	gtk_widget_set_visible (widget, TRUE);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_from_srgb"));
+	gtk_widget_set_visible (widget, show_section);
 
 	if (gcm_profile != NULL)
 		g_object_unref (gcm_profile);
@@ -935,84 +945,6 @@ gcm_viewer_setup_drag_and_drop (GtkWidget *widget)
 }
 
 /**
- * gcm_viewer_graph_combo_changed_cb:
- **/
-static void
-gcm_viewer_graph_combo_changed_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
-{
-	gint active;
-
-	/* no selection */
-	active = gtk_combo_box_get_active (GTK_COMBO_BOX(widget));
-	if (active == -1)
-		return;
-
-	/* hide or show the correct graphs */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_graph_widgets"));
-	gtk_widget_set_visible (widget, active != 0);
-
-	/* hide or show the correct graphs */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_cie_axis"));
-	gtk_widget_set_visible (widget, active == GCM_VIEWER_CIE_1931);
-
-	/* hide or show the correct graphs */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_trc_axis"));
-	gtk_widget_set_visible (widget, active == GCM_VIEWER_TRC);
-
-	/* hide or show the correct graphs */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_vcgt_axis"));
-	gtk_widget_set_visible (widget, active == GCM_VIEWER_VCGT);
-
-	/* hide or show the correct graphs */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_preview_input"));
-	gtk_widget_set_visible (widget, active == GCM_VIEWER_PREVIEW_INPUT);
-
-	/* hide or show the correct graphs */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_preview_output"));
-	gtk_widget_set_visible (widget, active == GCM_VIEWER_PREVIEW_OUTPUT);
-
-	/* hide or show the buttons */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_image_prev"));
-	gtk_widget_set_visible (widget, (active == GCM_VIEWER_PREVIEW_INPUT) ||
-					(active == GCM_VIEWER_PREVIEW_OUTPUT));
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_image_next"));
-	gtk_widget_set_visible (widget, (active == GCM_VIEWER_PREVIEW_INPUT) ||
-					(active == GCM_VIEWER_PREVIEW_OUTPUT));
-
-	/* save to GSettings */
-	g_settings_set_enum (viewer->settings, GCM_SETTINGS_PROFILE_GRAPH_TYPE, active);
-}
-
-/**
- * gcm_viewer_setup_graph_combobox:
- **/
-static void
-gcm_viewer_setup_graph_combobox (GcmViewerPrivate *viewer, GtkWidget *widget)
-{
-	gint active;
-
-	/* TRANSLATORS: combo-entry, no graph selected to be shown */
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(widget), _("None"));
-
-	/* TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...) */
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(widget), _("CIE 1931 xy"));
-
-	/* TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out) */
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(widget), _("Transfer response curve"));
-
-	/* TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card) */
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(widget), _("Video card gamma table"));
-
-	/* TRANSLATORS: combo-entry, this is a preview image of what the profile looks like */
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(widget), _("Image preview (from sRGB)"));
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(widget), _("Image preview (to sRGB)"));
-
-	/* get from settings */
-	active = g_settings_get_enum (viewer->settings, GCM_SETTINGS_PROFILE_GRAPH_TYPE);
-	gtk_combo_box_set_active (GTK_COMBO_BOX (widget), active);
-}
-
-/**
  * gcm_viewer_activate_cb:
  **/
 static void
@@ -1030,7 +962,6 @@ static void
 gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 {
 	gboolean ret;
-	GdkScreen *screen;
 	GError *error = NULL;
 	gint retval;
 	GtkTreeSelection *selection;
@@ -1118,33 +1049,21 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_viewer_image_prev_cb), viewer);
 
-	/* hidden until a profile is selected */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_graph"));
-	gtk_widget_set_visible (widget, FALSE);
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_profile_info"));
-	gtk_widget_set_visible (widget, FALSE);
-
-	/* hide widgets by default */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "combobox_graph"));
-	gcm_viewer_setup_graph_combobox (viewer, widget);
-	g_signal_connect (widget, "changed",
-			  G_CALLBACK (gcm_viewer_graph_combo_changed_cb), viewer);
-
 	/* use cie widget */
 	viewer->cie_widget = gcm_cie_widget_new ();
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_cie_widget"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_cie_widget"));
 	gtk_box_pack_start (GTK_BOX(widget), viewer->cie_widget, TRUE, TRUE, 0);
 	gtk_box_reorder_child (GTK_BOX(widget), viewer->cie_widget, 0);
 
 	/* use trc widget */
 	viewer->trc_widget = gcm_trc_widget_new ();
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_trc_widget"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_trc_widget"));
 	gtk_box_pack_start (GTK_BOX(widget), viewer->trc_widget, TRUE, TRUE, 0);
 	gtk_box_reorder_child (GTK_BOX(widget), viewer->trc_widget, 0);
 
 	/* use vcgt widget */
 	viewer->vcgt_widget = gcm_trc_widget_new ();
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_vcgt_widget"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_vcgt_widget"));
 	gtk_box_pack_start (GTK_BOX(widget), viewer->vcgt_widget, TRUE, TRUE, 0);
 	gtk_box_reorder_child (GTK_BOX(widget), viewer->vcgt_widget, 0);
 
@@ -1162,23 +1081,6 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	gcm_viewer_set_example_image (viewer, GTK_IMAGE (viewer->preview_widget_output));
 	gtk_widget_set_visible (viewer->preview_widget_output, TRUE);
 
-	/* do we set a default size to make the window larger? */
-	screen = gdk_screen_get_default ();
-	if (gdk_screen_get_width (screen) < 1024 ||
-	    gdk_screen_get_height (screen) < 768) {
-		gtk_widget_set_size_request (viewer->cie_widget, 50, 50);
-		gtk_widget_set_size_request (viewer->trc_widget, 50, 50);
-		gtk_widget_set_size_request (viewer->vcgt_widget, 50, 50);
-		gtk_widget_set_size_request (viewer->preview_widget_input, 50, 50);
-		gtk_widget_set_size_request (viewer->preview_widget_output, 50, 50);
-	} else {
-		gtk_widget_set_size_request (viewer->cie_widget, 200, 200);
-		gtk_widget_set_size_request (viewer->trc_widget, 200, 200);
-		gtk_widget_set_size_request (viewer->vcgt_widget, 200, 200);
-		gtk_widget_set_size_request (viewer->preview_widget_input, 200, 200);
-		gtk_widget_set_size_request (viewer->preview_widget_output, 200, 200);
-	}
-
 	/* show main UI */
 	gtk_widget_show (main_window);
 
@@ -1191,10 +1093,6 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_preferences"));
 		gtk_widget_hide (widget);
 	}
-
-	/* refresh UI */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "combobox_graph"));
-	gcm_viewer_graph_combo_changed_cb (widget, viewer);
 
 	/* do all this after the window has been set up */
 	g_idle_add ((GSourceFunc) gcm_viewer_startup_phase1_idle_cb, viewer);
