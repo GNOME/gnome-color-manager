@@ -1088,10 +1088,6 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	if (xid != 0) {
 		g_debug ("Setting xid %i", xid);
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), xid);
-
-		/* hide the preferences button */
-		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_preferences"));
-		gtk_widget_hide (widget);
 	}
 
 	/* do all this after the window has been set up */
