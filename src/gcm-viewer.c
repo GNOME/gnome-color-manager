@@ -100,15 +100,6 @@ gcm_viewer_error_dialog (GcmViewerPrivate *viewer, const gchar *title, const gch
 }
 
 /**
- * gcm_viewer_close_cb:
- **/
-static void
-gcm_viewer_close_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
-{
-	g_application_release (G_APPLICATION (viewer->application));
-}
-
-/**
  * gcm_viewer_set_example_image:
  **/
 static void
@@ -152,7 +143,7 @@ gcm_viewer_image_prev_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 static gboolean
 gcm_viewer_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmViewerPrivate *viewer)
 {
-	gcm_viewer_close_cb (widget, viewer);
+	g_application_release (G_APPLICATION (viewer->application));
 	return FALSE;
 }
 
@@ -1030,9 +1021,6 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 			  G_CALLBACK (gcm_viewer_drag_data_received_cb), viewer);
 	gcm_viewer_setup_drag_and_drop (GTK_WIDGET(main_window));
 
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_close"));
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_viewer_close_cb), viewer);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_profile_delete"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_viewer_profile_delete_cb), viewer);
