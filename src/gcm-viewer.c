@@ -1033,7 +1033,13 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_image_next"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_viewer_image_next_cb), viewer);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_image_next1"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_viewer_image_next_cb), viewer);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_image_prev"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_viewer_image_prev_cb), viewer);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_image_prev1"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_viewer_image_prev_cb), viewer);
 
