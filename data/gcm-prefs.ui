@@ -151,42 +151,18 @@
       <action-widget response="0">button_assign_ok</action-widget>
     </action-widgets>
   </object>
-  <object class="GtkDialog" id="dialog_prefs">
+  <object class="GtkWindow" id="dialog_prefs">
     <property name="can_focus">False</property>
     <property name="border_width">12</property>
     <property name="title" translatable="yes">Color Management</property>
     <property name="window_position">center</property>
     <property name="icon_name">preferences-system</property>
-    <property name="type_hint">normal</property>
-    <child internal-child="vbox">
+    <child>
       <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="orientation">vertical</property>
         <property name="spacing">6</property>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="dialog-action_area1">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="button_default">
-                <property name="label" translatable="yes" comments="This is when the settings are set for all users, unless they have per-user settings themselves">_Set for all users</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="tooltip_text" translatable="yes">Save these profiles for all users</property>
-                <property name="use_action_appearance">False</property>
-                <property name="use_underline">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-          </object>
-        </child>
         <child>
           <object class="GtkNotebook" id="notebook_prefs">
             <property name="visible">True</property>
@@ -288,6 +264,25 @@
                           </packing>
                         </child>
                         <child>
+                          <object class="GtkButton" id="button_default">
+                            <property name="label" translatable="yes" comments="This is when the settings are set for all users, unless they have per-user settings themselves">_Set for all users</property>
+                            <property name="visible">True</property>
+                            <property name="can_focus">True</property>
+                            <property name="receives_default">True</property>
+                            <property name="has_tooltip">True</property>
+                            <property name="tooltip_markup" translatable="yes">Save these profiles for all users</property>
+                            <property name="tooltip_text" translatable="yes">Save these profiles for all users</property>
+                            <property name="use_action_appearance">False</property>
+                            <property name="use_underline">True</property>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">False</property>
+                            <property name="position">2</property>
+                            <property name="secondary">True</property>
+                          </packing>
+                        </child>
+                        <child>
                           <object class="GtkButton" id="button_calibrate">
                             <property name="label" translatable="yes" comments="This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image">Calibrate</property>
                             <property name="visible">True</property>
@@ -299,7 +294,7 @@
                           <packing>
                             <property name="expand">True</property>
                             <property name="fill">True</property>
-                            <property name="position">2</property>
+                            <property name="position">3</property>
                             <property name="secondary">True</property>
                           </packing>
                         </child>
@@ -793,9 +788,6 @@
         </child>
       </object>
     </child>
-    <action-widgets>
-      <action-widget response="0">button_default</action-widget>
-    </action-widgets>
   </object>
   <object class="GtkDialog" id="dialog_virtual">
     <property name="can_focus">False</property>

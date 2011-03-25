@@ -155,47 +155,28 @@ gcm_prefs_combobox_add_profile (GtkWidget *widget,
 static void
 gcm_prefs_default_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 {
-	GPtrArray *array = NULL;
-	CdDevice *device;
 	CdProfile *profile;
 	gboolean ret;
-	guint i;
 	GError *error = NULL;
 
-	/* set for each output */
-	array = cd_client_get_devices_sync (prefs->client,
-					    prefs->cancellable,
-					    &error);
-	if (array == NULL) {
-		g_warning ("failed to get devices: %s",
+	/* TODO: check if the profile is already systemwide */
+	profile = cd_device_get_default_profile (prefs->current_device);
+	if (profile == NULL)
+		goto out;
+
+	/* install somewhere out of $HOME */
+	ret = cd_profile_install_system_wide_sync (profile,
+						   prefs->cancellable,
+						   &error);
+	if (!ret) {
+		g_warning ("failed to set profile system-wide: %s",
 			   error->message);
 		g_error_free (error);
 		goto out;
 	}
-	for (i=0; i<array->len; i++) {
-		device = g_ptr_array_index (array, i);
-
-		/* TODO: check if the profile is already systemwide */
-		profile = cd_device_get_default_profile (device);
-		if (profile == NULL)
-			continue;
-
-		/* install somewhere out of $HOME */
-		ret = cd_profile_install_system_wide_sync (profile,
-							   prefs->cancellable,
-							   &error);
-		if (!ret) {
-			g_warning ("failed to set profile system-wide: %s",
-				   error->message);
-			g_object_unref (profile);
-			g_error_free (error);
-			goto out;
-		}
-		g_object_unref (profile);
-	}
 out:
-	if (array != NULL)
-		g_ptr_array_unref (array);
+	if (profile != NULL)
+		g_object_unref (profile);
 }
 
 /**
@@ -2435,6 +2416,11 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 	gcm_prefs_add_devices_columns (prefs, GTK_TREE_VIEW (widget));
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
 
+	/* force to be at least 3 rows high */
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
+						     "scrolledwindow1"));
+	gtk_widget_set_size_request (widget, 450, 36 * 3);
+
 	/* create assign tree view */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "treeview_assign"));
@@ -2454,6 +2440,11 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 	gtk_tree_view_set_reorderable (GTK_TREE_VIEW (widget), TRUE);
 	gtk_tree_view_set_tooltip_column (GTK_TREE_VIEW (widget),
 					  GCM_LIST_STORE_PROFILES_COLUMN_TOOLTIP);
+
+	/* force to be at least 2 rows high */
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
+						     "scrolledwindow_assign"));
+	gtk_widget_set_size_request (widget, 450, 36 * 3);
 
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "button_default"));
