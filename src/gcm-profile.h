@@ -28,6 +28,7 @@
 
 #include "gcm-clut.h"
 #include "gcm-color.h"
+#include "gcm-hull.h"
 
 G_BEGIN_DECLS
 
@@ -79,6 +80,8 @@ GcmClut		*gcm_profile_generate_vcgt		(GcmProfile	*profile,
 							 guint		 size);
 GcmClut		*gcm_profile_generate_curve		(GcmProfile	*profile,
 							 guint		 size);
+GcmHull		*gcm_profile_generate_gamut_hull	(GcmProfile	*profile,
+							 guint		 res);
 gboolean	 gcm_profile_set_vcgt_from_data		(GcmProfile	*profile,
 							 guint16	*red,
 							 guint16	*green,

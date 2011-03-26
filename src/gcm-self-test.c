@@ -372,6 +372,8 @@ gcm_test_profile_func (void)
 	GcmColorYxy green;
 	GcmColorYxy blue;
 	GcmColorYxy white;
+	GcmHull *hull;
+	gchar *data;
 
 	/* bluish test */
 	profile = gcm_profile_new ();
@@ -473,6 +475,25 @@ gcm_test_profile_func (void)
 	g_assert_no_error (error);
 	g_assert (ret);
 
+	g_object_unref (file);
+	g_object_unref (profile);
+
+	/* get gamut hull */
+	profile = gcm_profile_new ();
+	file = g_file_new_for_path (TESTDATADIR "/ibm-t61.icc");
+	ret = gcm_profile_parse (profile, file, &error);
+	g_assert_no_error (error);
+	g_assert (ret);
+	hull = gcm_profile_generate_gamut_hull (profile, 12);
+	g_assert (hull != NULL);
+
+	/* save as PLY file */
+	data = gcm_hull_export_to_ply (hull);
+	ret = g_file_set_contents ("/tmp/gamut.ply", data, -1, NULL);
+	g_assert (ret);
+
+	g_free (data);
+	g_object_unref (hull);
 	g_object_unref (file);
 	g_object_unref (profile);
 }
