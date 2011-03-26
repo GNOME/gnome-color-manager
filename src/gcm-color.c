@@ -274,6 +274,19 @@ gcm_color_convert_RGBint_to_RGB (const GcmColorRGBint *src, GcmColorRGB *dest)
 }
 
 /**
+ * gcm_color_value_double_to_uint8:
+ **/
+static guint8
+gcm_color_value_double_to_uint8 (gdouble value)
+{
+	if (value < 0)
+		return 0;
+	if (value > 1.0f)
+		return 255;
+	return value * 255.0f;
+}
+
+/**
  * gcm_color_convert_RGB_to_RGBint:
  * @src: the source color
  * @dest: the destination color
@@ -286,9 +299,10 @@ gcm_color_convert_RGB_to_RGBint (const GcmColorRGB *src, GcmColorRGBint *dest)
 	g_return_if_fail (src != NULL);
 	g_return_if_fail (dest != NULL);
 
-	dest->R = (gdouble) src->R * 255.0f;
-	dest->G = (gdouble) src->G * 255.0f;
-	dest->B = (gdouble) src->B * 255.0f;
+	/* also deal with overflow and underflow */
+	dest->R = gcm_color_value_double_to_uint8 (src->R);
+	dest->G = gcm_color_value_double_to_uint8 (src->G);
+	dest->B = gcm_color_value_double_to_uint8 (src->B);
 }
 
 /**
