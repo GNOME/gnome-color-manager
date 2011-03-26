@@ -807,7 +807,7 @@ static void
 gcm_test_sample_window_move_window (GtkWindow *window, const gchar *output_name)
 {
 	GcmX11Screen *screen;
-	GcmX11Output *output;
+	GcmX11Output *output = NULL;
 	guint x, y;
 	guint width, height;
 	gint window_width, window_height;
