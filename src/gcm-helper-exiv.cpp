@@ -42,7 +42,6 @@ main (int argc, char* const argv[])
 		"Exif.Nikon3.SerialNumber",
 		"Exif.OlympusEq.InternalSerialNumber",
 		"Exif.OlympusEq.SerialNumber",
-		"Exif.Olympus.SerialNumber",
 		"Exif.Olympus.SerialNumber2",
 		"Exif.Sigma.SerialNumber",
 		NULL };
