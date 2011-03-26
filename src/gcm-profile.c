@@ -34,6 +34,7 @@
 #include <gio/gio.h>
 #include <lcms2.h>
 #include <colord.h>
+#include <math.h>
 
 #include "gcm-profile.h"
 #include "gcm-color.h"
@@ -1136,7 +1137,8 @@ gcm_profile_set_data (GcmProfile *profile, const gchar *key, const gchar *data)
  * Return value: %TRUE for success
  **/
 gboolean
-gcm_profile_create_from_chroma (GcmProfile *profile, gdouble gamma,
+gcm_profile_create_from_chroma (GcmProfile *profile,
+				gdouble localgamma,
 				const GcmColorYxy *red,
 				const GcmColorYxy *green,
 				const GcmColorYxy *blue,
@@ -1168,7 +1170,7 @@ gcm_profile_create_from_chroma (GcmProfile *profile, gdouble gamma,
 	white_point.Y = 1.0;
 
 	/* estimate the transfer function for the gamma */
-	transfer_curve[0] = transfer_curve[1] = transfer_curve[2] = cmsBuildGamma (NULL, gamma);
+	transfer_curve[0] = transfer_curve[1] = transfer_curve[2] = cmsBuildGamma (NULL, localgamma);
 
 	/* create our generated profile */
 	priv->lcms_profile = cmsCreateRGBProfile (&white_point, &chroma, transfer_curve);
