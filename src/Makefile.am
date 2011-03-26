@@ -34,6 +34,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-brightness.h				\
 	gcm-buffer.c					\
 	gcm-buffer.h					\
+	gcm-hull.c					\
+	gcm-hull.h					\
 	gcm-calibrate-argyll.c				\
 	gcm-calibrate-argyll.h				\
 	gcm-calibrate.c					\

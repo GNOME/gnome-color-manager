@@ -37,6 +37,7 @@
 #include "gcm-edid.h"
 #include "gcm-exif.h"
 #include "gcm-gamma-widget.h"
+#include "gcm-hull.h"
 #include "gcm-image.h"
 #include "gcm-math.h"
 #include "gcm-print.h"
@@ -296,6 +297,65 @@ gcm_test_tables_func (void)
 	g_free (vendor);
 
 	g_object_unref (tables);
+}
+
+static void
+gcm_test_hull_func (void)
+{
+	GcmHull *hull;
+	GcmColorXYZ xyz;
+	GcmColorRGB color;
+	guint faces[3];
+	gchar *data;
+
+	hull = gcm_hull_new ();
+	g_assert (hull != NULL);
+
+	gcm_hull_set_flags (hull, 8);
+	g_assert_cmpint (gcm_hull_get_flags (hull), ==, 8);
+
+	/* add a point */
+	xyz.X = 1.0;
+	xyz.Y = 2.0;
+	xyz.Z = 3.0;
+	color.R = 0.25;
+	color.G = 0.5;
+	color.B = 1.0;
+	gcm_hull_add_vertex (hull, &xyz, &color);
+
+	/* add another two */
+	xyz.Z = 2.0;
+	gcm_hull_add_vertex (hull, &xyz, &color);
+	xyz.X = 2.0;
+	gcm_hull_add_vertex (hull, &xyz, &color);
+
+	/* add a face */
+	faces[0] = 0;
+	faces[1] = 1;
+	faces[2] = 2;
+	gcm_hull_add_face (hull, faces, 3);
+
+	/* export to a PLY file */
+	data = gcm_hull_export_to_ply (hull);
+	g_assert_cmpstr (data, ==, "ply\n"
+				   "format ascii 1.0\n"
+				   "element vertex 3\n"
+				   "property float x\n"
+				   "property float y\n"
+				   "property float z\n"
+				   "property uchar red\n"
+				   "property uchar green\n"
+				   "property uchar blue\n"
+				   "element face 1\n"
+				   "property list uchar uint vertex_indices\n"
+				   "end_header\n"
+				   "1.000000 2.000000 3.000000 63 127 255\n"
+				   "1.000000 2.000000 2.000000 63 127 255\n"
+				   "2.000000 2.000000 2.000000 63 127 255\n"
+				   "3 0 1 2\n");
+	g_free (data);
+
+	g_object_unref (hull);
 }
 
 static void
@@ -1211,6 +1271,7 @@ main (int argc, char **argv)
 	g_test_add_func ("/color/utils", gcm_test_utils_func);
 	g_test_add_func ("/color/calibrate_dialog", gcm_test_calibrate_dialog_func);
 	g_test_add_func ("/color/math", gcm_test_math_func);
+	g_test_add_func ("/color/hull", gcm_test_hull_func);
 	g_test_add_func ("/color/sensor", gcm_test_sensor_func);
 	g_test_add_func ("/color/edid", gcm_test_edid_func);
 	g_test_add_func ("/color/tables", gcm_test_tables_func);
