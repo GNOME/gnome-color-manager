@@ -475,17 +475,17 @@ cd_rendering_intent_to_localized_text (CdRenderingIntent intent)
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Perceptual");
 	}
-	if (intent == CD_RENDERING_INTENT_RELATIVE_COLORMETRIC) {
+	if (intent == CD_RENDERING_INTENT_RELATIVE_COLORIMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
-		return _("Relative");
+		return _("Relative Colorimetric");
 	}
 	if (intent == CD_RENDERING_INTENT_SATURATION) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Saturation");
 	}
-	if (intent == CD_RENDERING_INTENT_ABSOLUTE_COLORMETRIC) {
+	if (intent == CD_RENDERING_INTENT_ABSOLUTE_COLORIMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
-		return _("Absolute");
+		return _("Absolute Colorimetric");
 	}
 	return "unknown";
 }
@@ -500,7 +500,7 @@ cd_rendering_intent_to_localized_description (CdRenderingIntent intent)
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("High quality photography");
 	}
-	if (intent == CD_RENDERING_INTENT_RELATIVE_COLORMETRIC) {
+	if (intent == CD_RENDERING_INTENT_RELATIVE_COLORIMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Precise color matching");
 	}
@@ -508,7 +508,7 @@ cd_rendering_intent_to_localized_description (CdRenderingIntent intent)
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Graphs and presentations");
 	}
-	if (intent == CD_RENDERING_INTENT_ABSOLUTE_COLORMETRIC) {
+	if (intent == CD_RENDERING_INTENT_ABSOLUTE_COLORIMETRIC) {
 		/* TRANSLATORS: rendering intent: you probably want to google this */
 		return _("Proofing devices");
 	}
