@@ -29,6 +29,10 @@
 #include <canberra-gtk.h>
 #include <colord.h>
 
+#ifdef HAVE_CLUTTER
+ #include <clutter-gtk/clutter-gtk.h>
+#endif
+
 #include "gcm-cell-renderer-profile-text.h"
 #include "gcm-cie-widget.h"
 #include "gcm-image.h"
@@ -38,6 +42,10 @@
 #include "gcm-color.h"
 #include "gcm-debug.h"
 
+#ifdef HAVE_CLUTTER
+ #include "gcm-hull-widget.h"
+#endif
+
 static guint xid = 0;
 
 typedef struct {
@@ -46,6 +54,7 @@ typedef struct {
 	GtkListStore	*list_store_profiles;
 	CdClient	*client;
 	GtkWidget	*cie_widget;
+	GtkWidget	*hull_widget;
 	GtkWidget	*trc_widget;
 	GtkWidget	*vcgt_widget;
 	GtkWidget	*preview_widget_input;
@@ -707,6 +716,15 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 		gtk_widget_hide (widget);
 	}
 
+#ifdef HAVE_CLUTTER
+	/* show 3d gamut hull */
+	gtk_widget_show (viewer->hull_widget);
+	gcm_hull_widget_clear (GCM_HULL_WIDGET (viewer->hull_widget));
+	ret = gcm_hull_widget_add (GCM_HULL_WIDGET (viewer->hull_widget), gcm_profile);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_3d"));
+	gtk_widget_set_visible (widget, ret);
+#endif
+
 	/* get vcgt data */
 	clut_vcgt = gcm_profile_generate_vcgt (gcm_profile, 256);
 
@@ -723,7 +741,6 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	} else {
 		gtk_widget_hide (widget);
 	}
-
 
 	/* set kind */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_type"));
@@ -1049,6 +1066,16 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	gtk_box_pack_start (GTK_BOX(widget), viewer->cie_widget, TRUE, TRUE, 0);
 	gtk_box_reorder_child (GTK_BOX(widget), viewer->cie_widget, 0);
 
+	/* use clutter widget */
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_3d"));
+#ifdef HAVE_CLUTTER
+	viewer->hull_widget = gcm_hull_widget_new ();
+	gtk_box_pack_start (GTK_BOX(widget), viewer->hull_widget, TRUE, TRUE, 0);
+	gtk_box_reorder_child (GTK_BOX(widget), viewer->hull_widget, 0);
+#else
+	gtk_widget_hide (widget);
+#endif
+
 	/* use trc widget */
 	viewer->trc_widget = gcm_trc_widget_new ();
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_trc_widget"));
@@ -1114,6 +1141,9 @@ main (int argc, char **argv)
 	textdomain (GETTEXT_PACKAGE);
 
 	gtk_init (&argc, &argv);
+#ifdef HAVE_CLUTTER
+	gtk_clutter_init (&argc, &argv);
+#endif
 
 	context = g_option_context_new ("gnome-color-manager profile viewer");
 	g_option_context_add_main_entries (context, options, NULL);

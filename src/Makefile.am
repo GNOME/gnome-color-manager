@@ -10,6 +10,7 @@ INCLUDES =						\
 	$(COLORD_CFLAGS)				\
 	$(NOTIFY_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
+	$(CLUTTER_CFLAGS)				\
 	$(SETTINGS_DAEMON_CFLAGS)			\
 	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
 	$(GUDEV_CFLAGS)					\
@@ -100,6 +101,12 @@ libgcmshared_a_SOURCES =				\
 	gcm-x11-output.h				\
 	gcm-x11-screen.c				\
 	gcm-x11-screen.h
+
+if HAVE_CLUTTER
+libgcmshared_a_SOURCES +=				\
+	gcm-hull-widget.c				\
+	gcm-hull-widget.h
+endif
 
 libgcmshared_a_CFLAGS =					\
 	$(WARNINGFLAGS_C)
@@ -198,6 +205,7 @@ gcm_viewer_LDADD =					\
 	$(LCMS_LIBS)					\
 	$(EXIF_LIBS)					\
 	$(COLORD_LIBS)					\
+	$(CLUTTER_LIBS)					\
 	-lm
 
 gcm_viewer_CFLAGS =					\

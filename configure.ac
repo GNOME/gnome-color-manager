@@ -119,6 +119,14 @@ else
 	PKG_CHECK_MODULES(USB, libusb-1.0 >= 1.0.0)
 fi
 
+PKG_CHECK_MODULES(CLUTTER, clutter-gtk-1.0 mash-0.1, has_clutter=yes, has_clutter=no)
+AM_CONDITIONAL(HAVE_CLUTTER, test x$has_clutter = xyes)
+if test x$has_clutter = xyes; then
+	AC_DEFINE(HAVE_CLUTTER,1,[has clutter support])
+else
+	AC_MSG_WARN([clutter-gtk and mash not found, no 3D support])
+fi
+
 dnl **** Check for VTE ****
 PKG_CHECK_MODULES(VTE, vte-2.90 >= 0.25.1, has_vte=yes, has_vte=no)
 AM_CONDITIONAL(HAVE_VTE, test x$has_vte = xyes)
@@ -161,7 +169,7 @@ if test x$enable_man_pages != xno; then
 	AC_PATH_PROG(XSLTPROC, xsltproc, no)
 	if test x$enable_man_pages = xyes; then
 		if test "$XSLTPROC" = "no" ; then
-			AC_MSG_ERROR([xsltproc not found, it's needod to build man pages])
+			AC_MSG_ERROR([xsltproc not found])
 		fi
 	fi
 else
@@ -259,6 +267,7 @@ echo "
         RAW support:               ${enable_exiv}
         VTE support:               ${has_vte}
         New LIBUSB:                ${has_new_libusb}
+        3D support:                ${has_clutter}
         building unit tests:       ${enable_tests}
 "
 

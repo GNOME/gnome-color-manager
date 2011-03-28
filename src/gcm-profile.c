@@ -1876,7 +1876,7 @@ gcm_profile_generate_gamut_hull (GcmProfile *profile, guint res)
 	srgb_profile = cmsCreate_sRGBProfile ();
 	srgb_transform = cmsCreateTransform (lab_profile, TYPE_Lab_DBL,
 					     srgb_profile, TYPE_RGB_DBL,
-					     INTENT_PERCEPTUAL, 0);
+					     INTENT_ABSOLUTE_COLORIMETRIC, 0);
 	if (srgb_transform == NULL) {
 		g_warning ("failed to create sRGB transform");
 		goto out;
