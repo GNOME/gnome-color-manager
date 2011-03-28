@@ -856,7 +856,7 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 
 	/* set delete sensitivity */
 	ret = gcm_profile_get_can_delete (gcm_profile);
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_profile_delete"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "toolbutton_profile_delete"));
 	gtk_widget_set_sensitive (widget, ret);
 	if (ret) {
 		/* TRANSLATORS: this is the tooltip when the profile can be deleted */
@@ -975,6 +975,7 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	GtkTreeSelection *selection;
 	GtkWidget *main_window;
 	GtkWidget *widget;
+	GtkStyleContext *context;
 
 	/* setup defaults */
 	viewer->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
@@ -1038,11 +1039,11 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 			  G_CALLBACK (gcm_viewer_drag_data_received_cb), viewer);
 	gcm_viewer_setup_drag_and_drop (GTK_WIDGET(main_window));
 
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_profile_delete"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "toolbutton_profile_delete"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_viewer_profile_delete_cb), viewer);
 	gtk_widget_set_sensitive (widget, FALSE);
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_profile_import"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "toolbutton_profile_import"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_viewer_profile_import_cb), viewer);
 
@@ -1101,6 +1102,18 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	gtk_box_pack_end (GTK_BOX(widget), viewer->preview_widget_output, FALSE, FALSE, 0);
 	gcm_viewer_set_example_image (viewer, GTK_IMAGE (viewer->preview_widget_output));
 	gtk_widget_set_visible (viewer->preview_widget_output, TRUE);
+
+	/* make profiles toolbar sexy */
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "scrolledwindow_profiles"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_set_junction_sides (context, GTK_JUNCTION_BOTTOM);
+
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "toolbar_profiles"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, GTK_STYLE_CLASS_INLINE_TOOLBAR);
+	gtk_style_context_set_junction_sides (context, GTK_JUNCTION_TOP);
 
 	/* show main UI */
 	gtk_widget_show (main_window);
