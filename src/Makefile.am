@@ -37,6 +37,7 @@ libgcmshared_a_SOURCES =				\
 	gcm-buffer.h					\
 	gcm-hull.c					\
 	gcm-hull.h					\
+	gcm-compat.h					\
 	gcm-calibrate-argyll.c				\
 	gcm-calibrate-argyll.h				\
 	gcm-calibrate.c					\
