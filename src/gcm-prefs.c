@@ -954,7 +954,7 @@ gcm_prefs_profile_make_default_internal (GcmPrefsPriv *prefs,
 
 	/* set button insensitive */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "button_assign_make_default"));
+						     "toolbutton_profile_default"));
 	gtk_widget_set_sensitive (widget, FALSE);
 out:
 	g_object_unref (profile);
@@ -1316,7 +1316,7 @@ gcm_prefs_set_calibrate_button_sensitivity (GcmPrefsPriv *prefs)
 out:
 	/* control the tooltip and sensitivity of the button */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "button_calibrate"));
+						     "toolbutton_device_calibrate"));
 	gtk_widget_set_tooltip_text (widget, tooltip);
 	gtk_widget_set_sensitive (widget, ret);
 }
@@ -1373,7 +1373,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection,
 	/* can we delete this device? */
 	device_mode = cd_device_get_mode (prefs->current_device);
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "button_delete"));
+						     "toolbutton_device_remove"));
 	gtk_widget_set_sensitive (widget, device_mode == CD_DEVICE_MODE_VIRTUAL);
 
 	/* can this device calibrate */
@@ -1423,10 +1423,10 @@ gcm_prefs_profile_treeview_clicked_cb (GtkTreeSelection *selection,
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 
 		widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "button_assign_make_default"));
+						     "toolbutton_profile_default"));
 		gtk_widget_set_sensitive (widget, FALSE);
 		widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "button_assign_remove"));
+						     "toolbutton_profile_remove"));
 		gtk_widget_set_sensitive (widget, FALSE);
 
 		g_debug ("no row selected");
@@ -1444,12 +1444,12 @@ gcm_prefs_profile_treeview_clicked_cb (GtkTreeSelection *selection,
 
 	/* is the element the first in the list */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "button_assign_make_default"));
+						     "toolbutton_profile_default"));
 	gtk_widget_set_sensitive (widget, !is_default);
 
 	/* we can only remove hard relationships */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "button_assign_remove"));
+						     "toolbutton_profile_remove"));
 	if (relation == CD_DEVICE_RELATION_HARD) {
 		gtk_widget_set_tooltip_text (widget, "");
 		gtk_widget_set_sensitive (widget, TRUE);
@@ -2357,6 +2357,7 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 	GtkWidget *main_window;
 	GtkWidget *widget;
 	gchar *text = NULL;
+	GtkStyleContext *context;
 
 	prefs->cancellable = g_cancellable_new ();
 
@@ -2390,15 +2391,15 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 
 	/* assign buttons */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "button_assign_add"));
+						     "toolbutton_profile_add"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_profile_add_cb), prefs);
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "button_assign_remove"));
+						     "toolbutton_profile_remove"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_profile_remove_cb), prefs);
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "button_assign_make_default"));
+						     "toolbutton_profile_default"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_profile_make_default_cb), prefs);
 
@@ -2418,7 +2419,7 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 
 	/* force to be at least 3 rows high */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "scrolledwindow1"));
+						     "scrolledwindow_devices"));
 	gtk_widget_set_size_request (widget, 450, 36 * 3);
 
 	/* create assign tree view */
@@ -2447,7 +2448,7 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 	gtk_widget_set_size_request (widget, 450, 36 * 3);
 
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "button_default"));
+						     "toolbutton_device_default"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_default_cb), prefs);
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
@@ -2459,18 +2460,42 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 				_("Compare profiles..."));
 	gtk_label_set_markup (GTK_LABEL (widget), text);
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "button_delete"));
+						     "toolbutton_device_remove"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_delete_cb), prefs);
 	gtk_widget_set_sensitive (widget, FALSE);
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "button_device_add"));
+						     "toolbutton_device_add"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_device_add_cb), prefs);
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "button_calibrate"));
+						     "toolbutton_device_calibrate"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_calibrate_cb), prefs);
+
+	/* make devices toolbar sexy */
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
+						     "scrolledwindow_devices"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_set_junction_sides (context, GTK_JUNCTION_BOTTOM);
+
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
+						     "toolbar_devices"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, GTK_STYLE_CLASS_INLINE_TOOLBAR);
+	gtk_style_context_set_junction_sides (context, GTK_JUNCTION_TOP);
+
+	/* make profiles toolbar sexy */
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
+						     "scrolledwindow_assign"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_set_junction_sides (context, GTK_JUNCTION_BOTTOM);
+
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
+						     "toolbar_profiles"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, GTK_STYLE_CLASS_INLINE_TOOLBAR);
+	gtk_style_context_set_junction_sides (context, GTK_JUNCTION_TOP);
 
 	/* set up virtual dialog */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
