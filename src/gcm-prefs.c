@@ -1791,6 +1791,16 @@ gcm_prefs_add_device (GcmPrefsPriv *prefs, CdDevice *device)
 	/* italic for non-connected devices */
 	title = gcm_device_get_title (device);
 
+	/* are we really a webcam */
+	if (kind == CD_DEVICE_KIND_CAMERA) {
+		if (g_strstr_len (title, -1, "webcam") != NULL ||
+		    g_strstr_len (title, -1, "Webcam") != NULL ||
+		    g_strstr_len (title, -1, "Internal") != NULL ||
+		    g_strstr_len (title, -1, "Integrated") != NULL) {
+			icon_name = "camera-web";
+		}
+	}
+
 	/* create sort order */
 	sort = g_strdup_printf ("%s%s",
 				gcm_prefs_device_kind_to_string (kind),
