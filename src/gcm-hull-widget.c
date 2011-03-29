@@ -70,6 +70,22 @@ gcm_hull_widget_clear (GcmHullWidget *hull_widget)
 }
 
 /**
+ * gcm_hull_widget_set_actor_position:
+ **/
+static void
+gcm_hull_widget_set_actor_position (GcmHullWidget *hull_widget,
+				    ClutterActor *actor)
+{
+	ClutterActor *stage = hull_widget->priv->stage;
+	clutter_actor_set_size (actor,
+				clutter_actor_get_width (stage) * 0.7f,
+				clutter_actor_get_height (stage) * 0.7f);
+	clutter_actor_set_position (actor,
+				    clutter_actor_get_width (stage) * 0.15f,
+				    clutter_actor_get_height (stage) * 0.15f);
+}
+
+/**
  * gcm_hull_widget_add:
  **/
 gboolean
@@ -106,12 +122,7 @@ gcm_hull_widget_add (GcmHullWidget *hull_widget,
 	}
 
 	/* set some good defaults */
-	clutter_actor_set_size (model,
-				clutter_actor_get_width (hull_widget->priv->stage) * 0.7f,
-				clutter_actor_get_height (hull_widget->priv->stage) * 0.7f);
-	clutter_actor_set_position (model,
-				    clutter_actor_get_width (hull_widget->priv->stage) * 0.15f,
-				    clutter_actor_get_height (hull_widget->priv->stage) * 0.15f);
+	gcm_hull_widget_set_actor_position (hull_widget, model);
 
 	/* add the actor to the stage */
 	clutter_container_add_actor (CLUTTER_CONTAINER (hull_widget->priv->stage),
@@ -222,6 +233,24 @@ out:
 }
 
 /**
+ * gcm_hull_widget_stage_allocation_changed_cb:
+ **/
+static void
+gcm_hull_widget_stage_allocation_changed_cb (ClutterActor *actor,
+					     ClutterActorBox *box,
+					     ClutterAllocationFlags flags,
+					     GcmHullWidget *hull_widget)
+{
+	ClutterActor *model;
+	guint i;
+
+	for (i=0; i<hull_widget->priv->models->len; i++) {
+		model = g_ptr_array_index (hull_widget->priv->models, i);
+		gcm_hull_widget_set_actor_position (hull_widget, model);
+	}
+}
+
+/**
  * gcm_hull_widget_get_property:
  **/
 static void
@@ -302,6 +331,9 @@ gcm_hull_widget_init (GcmHullWidget *hull_widget)
 	color.blue = 120;
 	color.alpha = 0;
 	clutter_stage_set_color (CLUTTER_STAGE (hull_widget->priv->stage), &color);
+	g_signal_connect (hull_widget->priv->stage, "allocation-changed",
+			  G_CALLBACK (gcm_hull_widget_stage_allocation_changed_cb),
+			  hull_widget);
 
 	/* allow user to rotate */
 	gtk_widget_add_events (GTK_WIDGET (hull_widget),
