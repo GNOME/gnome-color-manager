@@ -1479,25 +1479,78 @@ gcm_prefs_device_kind_to_string (CdDeviceKind kind)
 }
 
 /**
+ * gcm_device_title_remove_suffix:
+ **/
+static void
+gcm_device_title_remove_suffix (GString *string, const gchar *suffix)
+{
+	gsize len;
+
+	/* remove trailing space */
+	if (string->str[string->len-1] == ' ')
+		g_string_truncate (string, string->len-1);
+
+	/* remove the suffix */
+	if (g_str_has_suffix (string->str, suffix)) {
+		len = strlen (suffix);
+		g_string_truncate (string, string->len - len);
+	}
+
+	/* remove trailing space */
+	if (string->str[string->len-1] == ' ')
+		g_string_truncate (string, string->len-1);
+}
+
+/**
  * gcm_device_get_title:
  **/
 static gchar *
 gcm_device_get_title (CdDevice *device)
 {
-	const gchar *model;
-	const gchar *vendor;
+	GString *model;
+	GString *vendor;
+	GString *string;
 
-	/* try to geta nice string */
-	vendor = cd_device_get_vendor (device);
-	model = cd_device_get_model (device);
-	if (vendor != NULL && vendor[0] != '\0' &&
-	    model != NULL && model[0] != '\0')
-		return g_strdup_printf ("%s - %s", vendor, model);
-	if (model != NULL && model[0] != '\0')
-		return g_strdup (model);
-	if (vendor != NULL && vendor[0] != '\0')
-		return g_strdup (vendor);
-	return g_strdup (cd_device_get_id (device));
+	/* try to get a nice string suitable for display */
+	vendor = g_string_new (cd_device_get_vendor (device));
+	model = g_string_new (cd_device_get_model (device));
+	string = g_string_new ("");
+
+	/* get rid of crap suffixes */
+	gcm_device_title_remove_suffix (vendor, "Ltd.");
+	gcm_device_title_remove_suffix (vendor, "Co.");
+
+	/* correct some company names */
+	if (g_str_has_prefix (vendor->str, "HP "))
+		g_string_assign (vendor, "Hewlett Packard");
+	if (g_str_has_prefix (vendor->str, "LENOVO"))
+		g_string_assign (vendor, "Lenovo");
+
+	if (vendor != NULL && vendor->len > 0 &&
+	    model != NULL && model->len > 0) {
+		g_string_append_printf (string, "%s - %s",
+					vendor->str, model->str);
+		goto out;
+	}
+
+	/* just model */
+	if (model != NULL && model->len > 0) {
+		g_string_append (string, model->str);
+		goto out;
+	}
+
+	/* just vendor */
+	if (vendor != NULL && vendor->len > 0) {
+		g_string_append (string, vendor->str);
+		goto out;
+	}
+
+	/* fallback to id */
+	g_string_append (string, cd_device_get_id (device));
+out:
+	g_string_free (vendor, TRUE);
+	g_string_free (model, TRUE);
+	return g_string_free (string, FALSE);
 }
 
 /**
