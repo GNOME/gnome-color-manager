@@ -844,9 +844,9 @@ gcm_prefs_add_profiles_suitable_for_devices (GcmPrefsPriv *prefs,
 
 		/* add */
 		gcm_prefs_combobox_add_profile (widget,
-						     profile_tmp,
-						     GCM_PREFS_ENTRY_TYPE_PROFILE,
-						     &iter);
+						profile_tmp,
+						GCM_PREFS_ENTRY_TYPE_PROFILE,
+						&iter);
 	}
 
 	/* add a import entry */
@@ -1492,7 +1492,9 @@ gcm_prefs_profile_treeview_clicked_cb (GtkTreeSelection *selection,
 		widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "toolbutton_profile_remove"));
 		gtk_widget_set_sensitive (widget, FALSE);
-
+		widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
+						     "toolbutton_profile_view"));
+		gtk_widget_set_sensitive (widget, FALSE);
 		g_debug ("no row selected");
 		return;
 	}
@@ -1522,6 +1524,11 @@ gcm_prefs_profile_treeview_clicked_cb (GtkTreeSelection *selection,
 		gtk_widget_set_tooltip_text (widget, _("Cannot remove automatically added profile"));
 		gtk_widget_set_sensitive (widget, FALSE);
 	}
+
+	/* allow getting profile info */
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
+					     "toolbutton_profile_view"));
+	gtk_widget_set_sensitive (widget, TRUE);
 	g_object_unref (profile);
 }
 
