@@ -1237,7 +1237,7 @@ gcm_prefs_add_assign_columns (GcmPrefsPriv *prefs,
 							   "profile", GCM_LIST_STORE_PROFILES_COLUMN_PROFILE,
 							   NULL);
 	gtk_tree_view_append_column (treeview, column);
-	gtk_tree_view_column_set_expand (column, TRUE);
+	gtk_tree_view_column_set_expand (column, FALSE);
 }
 
 /**
