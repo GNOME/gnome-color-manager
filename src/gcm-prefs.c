@@ -1590,6 +1590,10 @@ gcm_device_get_title (CdDevice *device)
 	if (g_str_has_prefix (vendor->str, "LENOVO"))
 		g_string_assign (vendor, "Lenovo");
 
+	/* correct some models */
+	if (g_strcmp0 (model->str, "Integrated Camera") == 0)
+		g_string_assign (model, "Webcam");
+
 	if (vendor != NULL && vendor->len > 0 &&
 	    model != NULL && model->len > 0) {
 		g_string_append_printf (string, "%s - %s",
