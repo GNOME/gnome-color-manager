@@ -76,9 +76,11 @@ gcm_cell_renderer_set_markup (GcmCellRendererProfileText *renderer)
 			description = cd_profile_get_id (renderer->profile);
 		string = g_string_new (description);
 
-		/* TRANSLATORS: this is the default profile */
-		if (renderer->is_default)
-			g_string_append_printf (string, " [%s]", _("Default"));
+		/* this is the default profile */
+		if (renderer->is_default) {
+			g_string_prepend (string, "<b>");
+			g_string_append (string, "</b>");
+		}
 	}
 
 	/* assign */
