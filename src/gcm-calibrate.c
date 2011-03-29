@@ -1093,7 +1093,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	/* scanner specific options */
 	if (priv->device_kind == CD_DEVICE_KIND_SCANNER) {
 		/* TRANSLATORS: dialog message, preface */
-		g_string_append_printf (string, "%s\n", _("Ensure that the contrast and brightness are not changed and color correction profiles are not applied."));
+		g_string_append_printf (string, "%s\n", _("Ensure that the contrast and brightness are not changed and color correction profiles have not been applied."));
 
 		/* TRANSLATORS: dialog message, suffix */
 		g_string_append_printf (string, "%s\n", _("The device sensor should have been cleaned prior to scanning and the output file resolution should be at least 200dpi."));
@@ -1105,11 +1105,8 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 		g_string_append_printf (string, "%s\n", _("Ensure that the white-balance has not been modified by the camera and that the lens is clean."));
 	}
 
-	/* TRANSLATORS: dialog message, suffix */
-	g_string_append_printf (string, "\n%s\n", _("For best results, the reference target should also be less than two years old."));
-
 	/* TRANSLATORS: this is the message body for the chart selection */
-	g_string_append_printf (string, "\n%s\n", _("Please select the calibration target type which corresponds to your reference file."));
+	g_string_append_printf (string, "\n%s", _("Please select the calibration target type."));
 
 	/* push new messages into the UI */
 	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
