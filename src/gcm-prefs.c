@@ -2549,7 +2549,7 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 	/* force to be at least 3 rows high */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "scrolledwindow_devices"));
-	gtk_widget_set_size_request (widget, 450, 36 * 3);
+	gtk_widget_set_size_request (widget, 550, 36 * 3);
 
 	/* create assign tree view */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
