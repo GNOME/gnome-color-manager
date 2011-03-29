@@ -26,8 +26,6 @@
 #ifndef __GCM_COMPAT_H__
 #define __GCM_COMPAT_H__
 
-#include "config.h"
-
 /* only libusb 1.0.8 has libusb_strerror */
 #ifndef HAVE_NEW_USB
 #define	libusb_strerror(f1)				"unknown"
