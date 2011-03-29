@@ -60,7 +60,7 @@ gcm_cell_renderer_set_icon_name (GcmCellRendererProfileIcon *renderer)
 
 	if (cd_profile_get_kind (renderer->profile) == CD_PROFILE_KIND_DISPLAY_DEVICE &&
 	    !cd_profile_get_has_vcgt (renderer->profile))
-		icon_name = "dialog-information";
+		icon_name = "dialog-warning";
 
 	g_object_set (renderer, "icon-name", icon_name, NULL);
 }
