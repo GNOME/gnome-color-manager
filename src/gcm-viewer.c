@@ -1115,6 +1115,48 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	gtk_style_context_add_class (context, GTK_STYLE_CLASS_INLINE_TOOLBAR);
 	gtk_style_context_set_junction_sides (context, GTK_JUNCTION_TOP);
 
+	/* make profile labels sexy */
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "label_title_type"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, "dim-label");
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "label_title_colorspace"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, "dim-label");
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "label_title_datetime"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, "dim-label");
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "label_title_profile_manufacturer"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, "dim-label");
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "label_title_profile_model"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, "dim-label");
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "label_title_vcgt"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, "dim-label");
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "label_title_temp"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, "dim-label");
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "label_title_copyright"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, "dim-label");
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "label_title_size"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, "dim-label");
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "label_title_filename"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, "dim-label");
+
 	/* show main UI */
 	gtk_widget_show (main_window);
 
