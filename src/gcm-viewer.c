@@ -46,8 +46,6 @@
  #include "gcm-hull-widget.h"
 #endif
 
-static guint xid = 0;
-
 typedef struct {
 	GtkBuilder	*builder;
 	GtkApplication	*application;
@@ -61,6 +59,8 @@ typedef struct {
 	GtkWidget	*preview_widget_output;
 	GSettings	*settings;
 	guint		 example_index;
+	gchar		*profile_id;
+	guint		 xid;
 } GcmViewerPrivate;
 
 typedef enum {
@@ -471,14 +471,14 @@ out:
  * gcm_window_set_parent_xid:
  **/
 static void
-gcm_window_set_parent_xid (GtkWindow *window, guint32 _xid)
+gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
 {
 	GdkDisplay *display;
 	GdkWindow *parent_window;
 	GdkWindow *our_window;
 
 	display = gdk_display_get_default ();
-	parent_window = gdk_x11_window_foreign_new_for_display (display, _xid);
+	parent_window = gdk_x11_window_foreign_new_for_display (display, xid);
 	if (parent_window == NULL) {
 		g_warning ("failed to get parent window");
 		return;
@@ -492,6 +492,7 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 _xid)
 	/* set this above our parent */
 	gtk_window_set_modal (window, TRUE);
 	gdk_window_set_transient_for (our_window, parent_window);
+	gtk_window_set_title (window, "");
 }
 
 /**
@@ -619,16 +620,13 @@ gcm_viewer_profile_colorspace_to_string (CdColorspace colorspace)
 }
 
 /**
- * gcm_viewer_profiles_treeview_clicked_cb:
+ * gcm_viewer_set_profile:
  **/
 static void
-gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerPrivate *viewer)
+gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 {
-	GtkTreeModel *model;
-	GtkTreeIter iter;
 	GtkWidget *widget;
 	GFile *file;
-	CdProfile *profile;
 	GcmProfile *gcm_profile;
 	GcmClut *clut_trc = NULL;
 	GcmClut *clut_vcgt = NULL;
@@ -650,17 +648,6 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 	guint temperature;
 	guint filesize;
 	gboolean show_section = FALSE;
-
-	/* This will only work in single or browse selection mode! */
-	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
-		g_debug ("no row selected");
-		return;
-	}
-
-	/* get profile */
-	gtk_tree_model_get (model, &iter,
-			    GCM_PROFILES_COLUMN_PROFILE, &profile,
-			    -1);
 
 	gcm_profile = gcm_profile_new ();
 	file = g_file_new_for_path (cd_profile_get_filename (profile));
@@ -883,6 +870,31 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection, GcmViewerP
 }
 
 /**
+ * gcm_viewer_profiles_treeview_clicked_cb:
+ **/
+static void
+gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection,
+					 GcmViewerPrivate *viewer)
+{
+	GtkTreeModel *model;
+	GtkTreeIter iter;
+	CdProfile *profile;
+
+	/* This will only work in single or browse selection mode! */
+	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+		g_debug ("no row selected");
+		return;
+	}
+
+	/* show profile */
+	gtk_tree_model_get (model, &iter,
+			    GCM_PROFILES_COLUMN_PROFILE, &profile,
+			    -1);
+	gcm_viewer_set_profile (viewer, profile);
+	g_object_unref (profile);
+}
+
+/**
  * gcm_viewer_client_profile_added_cb:
  **/
 static void
@@ -969,13 +981,14 @@ gcm_viewer_activate_cb (GApplication *application, GcmViewerPrivate *viewer)
 static void
 gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 {
+	CdProfile *profile = NULL;
 	gboolean ret;
 	GError *error = NULL;
 	gint retval;
+	GtkStyleContext *context;
 	GtkTreeSelection *selection;
 	GtkWidget *main_window;
 	GtkWidget *widget;
-	GtkStyleContext *context;
 
 	/* setup defaults */
 	viewer->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
@@ -1026,6 +1039,13 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	/* add columns to the tree view */
 	gcm_viewer_add_profiles_columns (viewer, GTK_TREE_VIEW (widget));
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
+
+	/* hide the profiles pane */
+	if (viewer->profile_id != NULL) {
+		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+				     "vbox_profiles"));
+		gtk_widget_hide (widget);
+	}
 
 	main_window = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "dialog_viewer"));
 	gtk_application_add_window (viewer->application, GTK_WINDOW (main_window));
@@ -1161,14 +1181,33 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	gtk_widget_show (main_window);
 
 	/* set the parent window if it is specified */
-	if (xid != 0) {
-		g_debug ("Setting xid %i", xid);
-		gcm_window_set_parent_xid (GTK_WINDOW (main_window), xid);
+	if (viewer->xid != 0) {
+		g_debug ("Setting xid %i", viewer->xid);
+		gcm_window_set_parent_xid (GTK_WINDOW (main_window), viewer->xid);
 	}
 
 	/* do all this after the window has been set up */
-	g_idle_add ((GSourceFunc) gcm_viewer_startup_phase1_idle_cb, viewer);
+	if (viewer->profile_id == NULL) {
+		g_idle_add ((GSourceFunc) gcm_viewer_startup_phase1_idle_cb, viewer);
+		goto out;
+	}
+
+	/* select a specific profile only */
+	profile = cd_client_find_profile_sync (viewer->client,
+					       viewer->profile_id,
+					       NULL,
+					       &error);
+	if (profile == NULL) {
+		g_warning ("failed to get profile %s: %s",
+			   viewer->profile_id,
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+	gcm_viewer_set_profile (viewer, profile);
 out:
+	if (profile != NULL)
+		g_object_unref (profile);
 	return;
 }
 
@@ -1178,14 +1217,19 @@ out:
 int
 main (int argc, char **argv)
 {
-	GOptionContext *context;
+	gchar *profile_id = NULL;
 	GcmViewerPrivate *viewer;
+	GOptionContext *context;
+	guint xid;
 	int status = 0;
 
 	const GOptionEntry options[] = {
 		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
 		  /* TRANSLATORS: we can make this modal (stay on top of) another window */
 		  _("Set the parent window to make this modal"), NULL },
+		{ "profile", 'f', 0, G_OPTION_ARG_STRING, &profile_id,
+		  /* TRANSLATORS: show just the one profile, rather than all */
+		  _("Set the specific profile to show"), NULL },
 		{ NULL}
 	};
 
@@ -1208,6 +1252,8 @@ main (int argc, char **argv)
 	g_option_context_free (context);
 
 	viewer = g_new0 (GcmViewerPrivate, 1);
+	viewer->xid = xid;
+	viewer->profile_id = profile_id;
 
 	/* ensure single instance */
 	viewer->application = gtk_application_new ("org.gnome.ColorManager.Viewer", 0);
@@ -1226,6 +1272,8 @@ main (int argc, char **argv)
 		g_object_unref (viewer->builder);
 	if (viewer->client != NULL)
 		g_object_unref (viewer->client);
+	if (viewer->profile_id != NULL)
+		g_free (viewer->profile_id);
 	g_free (viewer);
 	return status;
 }

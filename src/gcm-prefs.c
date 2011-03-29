@@ -984,6 +984,70 @@ gcm_prefs_profile_make_default_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 }
 
 /**
+ * gcm_prefs_open_viewer:
+ **/
+static gboolean
+gcm_prefs_open_viewer (GcmPrefsPriv *prefs, const gchar *options)
+{
+	gboolean ret;
+	GError *error = NULL;
+	guint xid;
+	gchar *command;
+
+	/* get xid */
+	xid = gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET (prefs->main_window)));
+
+	/* run with modal set */
+	command = g_strdup_printf ("%s/gcm-viewer --parent-window %u%s",
+				   BINDIR, xid,
+				   options != NULL ? options : "");
+	g_debug ("running: %s", command);
+	ret = g_spawn_command_line_async (command, &error);
+	if (!ret) {
+		g_warning ("failed to run prefs: %s", error->message);
+		g_error_free (error);
+	}
+	g_free (command);
+	return ret;
+}
+
+/**
+ * gcm_prefs_profile_view_cb:
+ **/
+static void
+gcm_prefs_profile_view_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
+{
+	CdProfile *profile = NULL;
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection;
+	gchar *options = NULL;
+
+	/* get the selected row */
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
+						     "treeview_assign"));
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
+		g_debug ("no row selected");
+		goto out;
+	}
+
+	/* get currentlt selected item */
+	gtk_tree_model_get (model, &iter,
+			    GCM_LIST_STORE_PROFILES_COLUMN_PROFILE, &profile,
+			    -1);
+
+	/* open up gcm-viewer as a info pane */
+	options = g_strdup_printf (" --profile=%s",
+				   cd_profile_get_id (profile));
+	gcm_prefs_open_viewer (prefs, options);
+out:
+	g_free (options);
+	if (profile != NULL)
+		g_object_unref (profile);
+}
+
+/**
  * gcm_prefs_button_virtual_add_cb:
  **/
 static void
@@ -2333,28 +2397,15 @@ gcm_prefs_button_virtual_entry_changed_cb (GtkEntry *entry,
 				  manufacturer[0] != '\0'));
 }
 
+/**
+ * gcm_prefs_activate_link_cb:
+ **/
 static gboolean
 gcm_prefs_activate_link_cb (GtkLabel *label,
 			    const gchar *uri,
 			    GcmPrefsPriv *prefs)
 {
-	gboolean ret;
-	GError *error = NULL;
-	guint xid;
-	gchar *command;
-
-	/* get xid */
-	xid = gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET (prefs->main_window)));
-
-	/* run with modal set */
-	command = g_strdup_printf ("%s/gcm-viewer --parent-window %u", BINDIR, xid);
-	g_debug ("running: %s", command);
-	ret = g_spawn_command_line_async (command, &error);
-	if (!ret) {
-		g_warning ("failed to run prefs: %s", error->message);
-		g_error_free (error);
-	}
-	g_free (command);
+	gcm_prefs_open_viewer (prefs, NULL);
 	return TRUE;
 }
 
@@ -2455,6 +2506,10 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 						     "toolbutton_profile_default"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_profile_make_default_cb), prefs);
+	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
+						     "toolbutton_profile_view"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_prefs_profile_view_cb), prefs);
 
 	/* create device tree view */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
