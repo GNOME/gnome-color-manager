@@ -846,7 +846,7 @@ static GVariant *
 gcm_session_variant_from_profile_array (GPtrArray *array)
 {
 	guint i;
-	GcmProfile *profile;
+	CdProfile *profile;
 	GVariantBuilder *builder;
 	GVariant *value;
 
@@ -857,8 +857,8 @@ gcm_session_variant_from_profile_array (GPtrArray *array)
 	for (i=0; i<array->len; i++) {
 		profile = g_ptr_array_index (array, i);
 		g_variant_builder_add (builder, "(ss)",
-				       gcm_profile_get_filename (profile),
-				       gcm_profile_get_description (profile));
+				       cd_profile_get_filename (profile),
+				       cd_profile_get_title (profile));
 	}
 
 	value = g_variant_builder_end (builder);
@@ -928,60 +928,33 @@ gcm_session_get_profiles_for_device (GcmSessionPrivate *priv,
 				     const gchar *device_id_with_prefix,
 				     GError **error)
 {
-	const gchar *device_id;
-	const gchar *device_id_tmp;
-	guint i;
-	gboolean use_native_device = FALSE;
 	CdDevice *device;
-	GPtrArray *array = NULL;
-	GPtrArray *array_devices = NULL;
+	gchar *device_id;
+	GPtrArray *profiles = NULL;
 
-	/* strip the prefix, if there is any */
-	device_id = g_strstr_len (device_id_with_prefix, -1, ":");
-	if (device_id == NULL) {
-		device_id = device_id_with_prefix;
-	} else {
-		device_id++;
-		use_native_device = TRUE;
-	}
-
-	/* use the sysfs path to be backwards compatible */
-	if (g_str_has_prefix (device_id_with_prefix, "/"))
-		use_native_device = TRUE;
+	/* reformat to the device-and-profile-naming-spec */
+	device_id = g_strdup (device_id_with_prefix);
+	if (g_str_has_prefix (device_id_with_prefix, "sane:"))
+		device_id[4] = '-';
 
 	/* get list */
-	g_debug ("query=%s [%s] %i", device_id_with_prefix, device_id, use_native_device);
-	array_devices = cd_client_get_devices_sync (priv->client,
-						    NULL,
-						    error);
-	if (array_devices == NULL)
+	g_debug ("query=%s", device_id);
+	device = cd_client_find_device_sync (priv->client,
+					     device_id,
+					     NULL,
+					     error);
+	if (device == NULL)
 		goto out;
-	for (i=0; i<array_devices->len; i++) {
-		device = g_ptr_array_index (array_devices, i);
-
-		/* get the id for this device */
-		device_id_tmp = cd_device_get_id (device);
-
-		/* wrong kind of device */
-		if (device_id_tmp == NULL)
-			continue;
-
-		/* compare what we have against what we were given */
-		g_debug ("comparing %s with %s", device_id_tmp, device_id);
-		if (g_strcmp0 (device_id_tmp, device_id) == 0) {
-			array = cd_device_get_profiles (device);
-			break;
-		}
-	}
-
-	/* nothing found, so set error */
-	if (array == NULL)
+	profiles = cd_device_get_profiles (device);
+	if (profiles->len == 0) {
 		g_set_error_literal (error, 1, 0, "No profiles were found.");
-
-	/* unref list of devices */
-	g_ptr_array_unref (array_devices);
+		goto out;
+	}
 out:
-	return array;
+	g_free (device_id);
+	if (device != NULL)
+		g_object_unref (device);
+	return profiles;
 }
 
 /**
