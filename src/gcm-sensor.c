@@ -370,16 +370,16 @@ gcm_sensor_set_from_device (GcmSensor *sensor, GUdevDevice *device, GError **err
 		priv->model = g_strdup (g_udev_device_get_sysfs_attr (device, "product"));
 
 	/* try to get type */
-	kind_str = g_udev_device_get_property (device, "GCM_KIND");
+	kind_str = g_udev_device_get_property (device, "COLORD_SENSOR_KIND");
 	if (priv->kind == GCM_SENSOR_KIND_UNKNOWN)
 		priv->kind = gcm_sensor_kind_from_string (kind_str);
 	if (priv->kind == GCM_SENSOR_KIND_UNKNOWN)
 		g_warning ("Failed to recognize color device: %s", priv->model);
 
-	priv->supports_display = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_DISPLAY");
-	priv->supports_projector = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PROJECTOR");
-	priv->supports_printer = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_PRINTER");
-	priv->supports_spot = g_udev_device_get_property_as_boolean (device, "GCM_TYPE_SPOT");
+	priv->supports_display = g_udev_device_get_property_as_boolean (device, "COLORD_SENSOR_CAP_DISPLAY");
+	priv->supports_projector = g_udev_device_get_property_as_boolean (device, "COLORD_SENSOR_CAP_PROJECTOR");
+	priv->supports_printer = g_udev_device_get_property_as_boolean (device, "COLORD_SENSOR_CAP_PRINTER");
+	priv->supports_spot = g_udev_device_get_property_as_boolean (device, "COLORD_SENSOR_CAP_SPOT");
 	return TRUE;
 }
 

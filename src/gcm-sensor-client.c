@@ -163,12 +163,12 @@ gcm_sensor_client_device_add (GcmSensorClient *sensor_client, GUdevDevice *devic
 	GcmSensorClientPrivate *priv = sensor_client->priv;
 
 	/* interesting device? */
-	ret = g_udev_device_get_property_as_boolean (device, "GCM_COLORIMETER");
+	ret = g_udev_device_get_property_as_boolean (device, "COLORD_SENSOR");
 	if (!ret)
 		goto out;
 
 	/* is it a sensor we have a internal native driver for? */
-	kind_str = g_udev_device_get_property (device, "GCM_KIND");
+	kind_str = g_udev_device_get_property (device, "COLORD_SENSOR_KIND");
 	kind = gcm_sensor_kind_from_string (kind_str);
 	if (kind == GCM_SENSOR_KIND_HUEY) {
 		g_debug ("creating native sensor device");
