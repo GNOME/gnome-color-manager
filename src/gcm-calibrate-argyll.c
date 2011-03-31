@@ -2875,6 +2875,7 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 
 	/* get screen */
 	calibrate_argyll->priv->screen = gcm_x11_screen_new ();
+	gcm_x11_screen_assign (calibrate_argyll->priv->screen, NULL, NULL);
 
 	/* add vte widget */
 #ifdef HAVE_VTE

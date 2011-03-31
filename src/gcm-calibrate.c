@@ -333,7 +333,9 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, CdDevice *device, GError
 
 	/* display specific properties */
 	if (kind == CD_DEVICE_KIND_DISPLAY) {
-//		native_device = cd_device_xrandr_get_native_device (CD_DEVICE_XRANDR (device));
+#if CD_CHECK_VERSION(0,1,5)
+		native_device = cd_device_get_metadata_item (device, "XRANDR_name");
+#endif
 		if (native_device == NULL) {
 			g_set_error (error,
 				     GCM_CALIBRATE_ERROR,
