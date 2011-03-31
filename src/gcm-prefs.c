@@ -1592,7 +1592,8 @@ gcm_device_get_title (CdDevice *device)
 	gcm_device_title_remove_suffix (vendor, "Co.");
 
 	/* correct some company names */
-	if (g_str_has_prefix (vendor->str, "HP "))
+	if (g_str_has_prefix (vendor->str, "HP ") ||
+	    g_strcmp0 (vendor->str, "Hewlett-Packard") == 0)
 		g_string_assign (vendor, "Hewlett Packard");
 	if (g_str_has_prefix (vendor->str, "LENOVO"))
 		g_string_assign (vendor, "Lenovo");
