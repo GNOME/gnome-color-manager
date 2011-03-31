@@ -1345,6 +1345,11 @@ gcm_session_add_x11_output (GcmSessionPrivate *priv, GcmX11Output *output)
 	g_hash_table_insert (device_props,
 			     g_strdup ("Serial"),
 			     g_strdup (serial));
+#if CD_CHECK_VERSION(0,1,5)
+	g_hash_table_insert (device_props,
+			     g_strdup ("XRANDR_name"),
+			     g_strdup (gcm_x11_output_get_name (output)));
+#endif
 	device = cd_client_create_device_sync (priv->client,
 					       device_id,
 					       CD_OBJECT_SCOPE_TEMP,
