@@ -51,7 +51,7 @@ main (int argc, char **argv)
 	GError *error = NULL;
 	GcmSensor *sensor;
 	gdouble value;
-	GcmColorXYZ values;
+	CdColorXYZ values;
 	GMainLoop *loop;
 
 	context = g_option_context_new ("gnome-color-manager sensor example");

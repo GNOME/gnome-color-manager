@@ -66,7 +66,7 @@ gcm_list_store_refresh_profiles (GtkListStore *list_store)
 	CdProfile *profile;
 	guint i;
 	GcmListStoreProfilesPrivate *priv = GCM_LIST_STORE_PROFILES(list_store)->priv;
-	CdDeviceRelation relation = CD_DEVICE_RELATION_UNKNOWN;
+	CdDeviceRelation relation;
 
 	/* clear existing list */
 	gtk_list_store_clear (list_store);
@@ -76,12 +76,10 @@ gcm_list_store_refresh_profiles (GtkListStore *list_store)
 	for (i=0; i<profiles->len; i++) {
 		profile = g_ptr_array_index (profiles, i);
 
-#if CD_CHECK_VERSION(0,1,4)
 		/* find the profile relationship */
 		relation = cd_device_get_profile_relation (priv->device,
 							   profile,
 							   NULL, NULL);
-#endif
 
 		gtk_list_store_append (list_store, &iter);
 		gtk_list_store_set (list_store, &iter,

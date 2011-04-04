@@ -42,11 +42,9 @@
 #include <canberra-gtk.h>
 
 #include "gcm-calibrate-argyll.h"
-#include "gcm-sensor-client.h"
 #include "gcm-utils.h"
 #include "gcm-x11-screen.h"
 #include "gcm-print.h"
-#include "gcm-color.h"
 #include "gcm-calibrate-dialog.h"
 
 #define FIXED_ARGYLL
@@ -152,7 +150,7 @@ static guint
 gcm_calibrate_argyll_printer_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 {
 	guint patches = 180;
-	GcmSensorKind sensor_kind;
+	CdSensorKind sensor_kind;
 	GcmCalibratePrecision precision;
 
 	/* we care about the kind */
@@ -170,8 +168,8 @@ gcm_calibrate_argyll_printer_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 
 #ifdef USE_DOUBLE_DENSITY
 	/* using double density, so we can double the patch count */
-	if (sensor_kind == GCM_SENSOR_KIND_COLOR_MUNKI ||
-	    sensor_kind == GCM_SENSOR_KIND_SPECTRO_SCAN) {
+	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI ||
+	    sensor_kind == CD_SENSOR_KIND_SPECTRO_SCAN) {
 		patches *= 2;
 	}
 #endif
@@ -186,20 +184,20 @@ gcm_calibrate_argyll_printer_get_patches (GcmCalibrateArgyll *calibrate_argyll)
 static const gchar *
 gcm_calibrate_argyll_get_sensor_image_attach (GcmCalibrateArgyll *calibrate_argyll)
 {
-	GcmSensorKind sensor_kind;
+	CdSensorKind sensor_kind;
 
 	g_object_get (calibrate_argyll, "sensor-kind", &sensor_kind, NULL);
-	if (sensor_kind == GCM_SENSOR_KIND_HUEY)
+	if (sensor_kind == CD_SENSOR_KIND_HUEY)
 		return "huey-attach.svg";
-	if (sensor_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
+	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI)
 		return "munki-attach.svg";
-	if (sensor_kind == GCM_SENSOR_KIND_SPYDER)
+	if (sensor_kind == CD_SENSOR_KIND_SPYDER)
 		return "spyder-attach.svg";
-	if (sensor_kind == GCM_SENSOR_KIND_COLORIMTRE_HCFR)
+	if (sensor_kind == CD_SENSOR_KIND_COLORIMTRE_HCFR)
 		return "hcfr-attach.svg";
-	if (sensor_kind == GCM_SENSOR_KIND_I1_PRO)
+	if (sensor_kind == CD_SENSOR_KIND_I1_PRO)
 		return "i1-attach.svg";
-	if (sensor_kind == GCM_SENSOR_KIND_DTP94)
+	if (sensor_kind == CD_SENSOR_KIND_DTP94)
 		return "dtp94-attach.svg";
 	return NULL;
 }
@@ -210,10 +208,10 @@ gcm_calibrate_argyll_get_sensor_image_attach (GcmCalibrateArgyll *calibrate_argy
 static const gchar *
 gcm_calibrate_argyll_get_sensor_image_calibrate (GcmCalibrateArgyll *calibrate_argyll)
 {
-	GcmSensorKind sensor_kind;
+	CdSensorKind sensor_kind;
 
 	g_object_get (calibrate_argyll, "sensor-kind", &sensor_kind, NULL);
-	if (sensor_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
+	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI)
 		return "munki-calibrate.svg";
 	return NULL;
 }
@@ -224,10 +222,10 @@ gcm_calibrate_argyll_get_sensor_image_calibrate (GcmCalibrateArgyll *calibrate_a
 static const gchar *
 gcm_calibrate_argyll_get_sensor_image_screen (GcmCalibrateArgyll *calibrate_argyll)
 {
-	GcmSensorKind sensor_kind;
+	CdSensorKind sensor_kind;
 
 	g_object_get (calibrate_argyll, "sensor-kind", &sensor_kind, NULL);
-	if (sensor_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
+	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI)
 		return "munki-screen.svg";
 	return NULL;
 }
@@ -1357,7 +1355,7 @@ gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll, GE
  * gcm_calibrate_argyll_display:
  **/
 static gboolean
-gcm_calibrate_argyll_display (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
+gcm_calibrate_argyll_display (GcmCalibrate *calibrate, CdSensor *sensor, GtkWindow *window, GError **error)
 {
 	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
@@ -1502,7 +1500,7 @@ out:
  * gcm_calibrate_argyll_spotread:
  **/
 static gboolean
-gcm_calibrate_argyll_spotread (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
+gcm_calibrate_argyll_spotread (GcmCalibrate *calibrate, CdSensor *sensor, GtkWindow *window, GError **error)
 {
 	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
@@ -1531,25 +1529,25 @@ out:
 static const gchar *
 gcm_calibrate_argyll_get_sensor_target (GcmCalibrateArgyll *calibrate_argyll)
 {
-	GcmSensorKind sensor_kind;
+	CdSensorKind sensor_kind;
 
 	g_object_get (calibrate_argyll,
 		      "sensor-kind", &sensor_kind,
 		      NULL);
 
-	if (sensor_kind == GCM_SENSOR_KIND_DTP20)
+	if (sensor_kind == CD_SENSOR_KIND_DTP20)
 		return "20";
-	if (sensor_kind == GCM_SENSOR_KIND_DTP22)
+	if (sensor_kind == CD_SENSOR_KIND_DTP22)
 		return "22";
-	if (sensor_kind == GCM_SENSOR_KIND_DTP41)
+	if (sensor_kind == CD_SENSOR_KIND_DTP41)
 		return "41";
-	if (sensor_kind == GCM_SENSOR_KIND_DTP51)
+	if (sensor_kind == CD_SENSOR_KIND_DTP51)
 		return "51";
-	if (sensor_kind == GCM_SENSOR_KIND_SPECTRO_SCAN)
+	if (sensor_kind == CD_SENSOR_KIND_SPECTRO_SCAN)
 		return "SS";
-	if (sensor_kind == GCM_SENSOR_KIND_I1_PRO)
+	if (sensor_kind == CD_SENSOR_KIND_I1_PRO)
 		return "i1";
-	if (sensor_kind == GCM_SENSOR_KIND_COLOR_MUNKI)
+	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI)
 		return "CM";
 	return NULL;
 }
@@ -1568,7 +1566,7 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 	gchar *basename = NULL;
 	const gchar *title;
 	const gchar *message;
-	GcmSensorKind sensor_kind;
+	CdSensorKind sensor_kind;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
@@ -1608,8 +1606,8 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 
 #ifdef USE_DOUBLE_DENSITY
 	/* use double density */
-	if (sensor_kind == GCM_SENSOR_KIND_COLOR_MUNKI ||
-	    sensor_kind == GCM_SENSOR_KIND_SPECTRO_SCAN) {
+	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI ||
+	    sensor_kind == CD_SENSOR_KIND_SPECTRO_SCAN) {
 		g_ptr_array_add (array, g_strdup ("-h"));
 	}
 #endif
@@ -1859,7 +1857,7 @@ out:
  * gcm_calibrate_argyll_printer:
  **/
 static gboolean
-gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
+gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, CdSensor *sensor, GtkWindow *window, GError **error)
 {
 	gboolean ret;
 	gchar *cmdline = NULL;
@@ -2100,7 +2098,7 @@ out:
  * gcm_calibrate_argyll_device:
  **/
 static gboolean
-gcm_calibrate_argyll_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
+gcm_calibrate_argyll_device (GcmCalibrate *calibrate, CdSensor *sensor, GtkWindow *window, GError **error)
 {
 	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
@@ -2455,10 +2453,10 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	/* spot read result */
 	found = g_strstr_len (line, -1, "Result is XYZ");
 	if (found != NULL) {
-		GcmColorXYZ *xyz;
+		CdColorXYZ *xyz;
 		g_warning ("line=%s", line);
 		split = g_strsplit (line, " ", -1);
-		xyz = gcm_color_new_XYZ ();
+		xyz = cd_color_xyz_new ();
 		g_object_set (xyz,
 			      "cie-x", g_ascii_strtod (split[4], NULL),
 			      "cie-y", g_ascii_strtod (split[5], NULL),
@@ -2469,7 +2467,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 			      NULL);
 		priv->done_spot_read = TRUE;
 		gcm_calibrate_dialog_response (priv->calibrate_dialog, GTK_RESPONSE_CANCEL);
-		gcm_color_free_XYZ (xyz);
+		cd_color_xyz_free (xyz);
 		goto out;
 	}
 

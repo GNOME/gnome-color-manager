@@ -33,10 +33,8 @@
 #include <colord.h>
 
 #include "gcm-calibrate.h"
-#include "gcm-color.h"
 #include "gcm-utils.h"
 #include "gcm-brightness.h"
-#include "gcm-sensor-client.h"
 #include "gcm-calibrate-dialog.h"
 #include "gcm-exif.h"
 
@@ -51,15 +49,15 @@ static void     gcm_calibrate_finalize	(GObject     *object);
  **/
 struct _GcmCalibratePrivate
 {
-	GcmSensorClient			*sensor_client;
 	GcmCalibrateReferenceKind	 reference_kind;
 	GcmCalibrateDeviceKind		 calibrate_device_kind;
 	GcmCalibratePrintKind		 print_kind;
 	GcmCalibratePrecision		 precision;
-	GcmSensorKind			 sensor_kind;
+	CdSensor			*sensor;
+	CdSensorKind			 sensor_kind;
 	GcmCalibrateDialog		*calibrate_dialog;
 	CdDeviceKind			 device_kind;
-	GcmColorXYZ			*xyz;
+	CdColorXYZ			*xyz;
 	gchar				*output_name;
 	gchar				*filename_source;
 	gchar				*filename_reference;
@@ -302,7 +300,10 @@ gcm_calibrate_set_basename (GcmCalibrate *calibrate)
  * gcm_calibrate_set_from_device:
  **/
 gboolean
-gcm_calibrate_set_from_device (GcmCalibrate *calibrate, CdDevice *device, GError **error)
+gcm_calibrate_set_from_device (GcmCalibrate *calibrate,
+			       CdDevice *device,
+			       CdSensor *sensor,
+			       GError **error)
 {
 	gboolean ret = TRUE;
 	const gchar *native_device = NULL;
@@ -319,6 +320,11 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, CdDevice *device, GError
 	description = cd_device_get_model (device);
 	manufacturer = cd_device_get_vendor (device);
 
+	/* do not refcount */
+	calibrate->priv->sensor = sensor;
+	calibrate->priv->sensor_kind = cd_sensor_get_kind (sensor);
+	g_object_notify (G_OBJECT (calibrate), "sensor-kind");
+
 	/* set the proper values */
 	g_object_set (calibrate,
 		      "device-kind", kind,
@@ -333,9 +339,7 @@ gcm_calibrate_set_from_device (GcmCalibrate *calibrate, CdDevice *device, GError
 
 	/* display specific properties */
 	if (kind == CD_DEVICE_KIND_DISPLAY) {
-#if CD_CHECK_VERSION(0,1,5)
 		native_device = cd_device_get_metadata_item (device, "XRANDR_name");
-#endif
 		if (native_device == NULL) {
 			g_set_error (error,
 				     GCM_CALIBRATE_ERROR,
@@ -438,7 +442,7 @@ gcm_calibrate_get_display_kind (GcmCalibrate *calibrate, GtkWindow *window, GErr
 
 	/* can this device support projectors? */
 	if (priv->calibrate_device_kind == GCM_CALIBRATE_DEVICE_KIND_PROJECTOR &&
-	    !gcm_sensor_supports_projector (gcm_sensor_client_get_sensor (priv->sensor_client))) {
+	    !cd_sensor_has_cap (priv->sensor, CD_SENSOR_CAP_PROJECTOR)) {
 		/* TRANSLATORS: title, the hardware calibration device does not support projectors */
 		title = _("Could not calibrate and profile using this color measuring instrument");
 
@@ -546,6 +550,7 @@ gboolean
 gcm_calibrate_spotread (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
 {
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
+	GcmCalibratePrivate *priv = calibrate->priv;
 	gboolean ret;
 
 	/* set the per-profile filename */
@@ -564,7 +569,7 @@ gcm_calibrate_spotread (GcmCalibrate *calibrate, GtkWindow *window, GError **err
 	}
 
 	/* proxy */
-	ret = klass->calibrate_spotread (calibrate, window, error);
+	ret = klass->calibrate_spotread (calibrate, priv->sensor, window, error);
 out:
 	return ret;
 }
@@ -586,7 +591,6 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	GError *error_tmp = NULL;
 	gchar *precision = NULL;
 	GcmCalibratePrivate *priv = calibrate->priv;
-	GcmSensor *sensor;
 
 	/* coldplug source */
 	if (priv->output_name == NULL) {
@@ -613,19 +617,8 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 		goto out;
 	}
 
-	/* get calibration device model */
-	sensor = gcm_sensor_client_get_sensor (priv->sensor_client);
-	if (sensor == NULL) {
-		ret = FALSE;
-		g_set_error_literal (error,
-				     GCM_CALIBRATE_ERROR,
-				     GCM_CALIBRATE_ERROR_INTERNAL,
-				     "no sensor found");
-		goto out;
-	}
-	hardware_device = gcm_sensor_get_model (sensor);
-
 	/* get device, harder */
+	hardware_device = cd_sensor_get_model (priv->sensor);
 	if (hardware_device == NULL) {
 		/* TRANSLATORS: this is the formattted custom profile description.
 		 * "Custom" refers to the fact that it's user generated */
@@ -726,7 +719,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	}
 
 	/* proxy */
-	ret = klass->calibrate_display (calibrate, window, error);
+	ret = klass->calibrate_display (calibrate, priv->sensor, window, error);
 out:
 	/* restore brightness */
 	if (percentage != G_MAXUINT) {
@@ -1016,7 +1009,7 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	}
 
 	/* proxy */
-	ret = klass->calibrate_printer (calibrate, window, error);
+	ret = klass->calibrate_printer (calibrate, priv->sensor, window, error);
 out:
 	g_free (precision);
 	return ret;
@@ -1196,7 +1189,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	}
 
 	/* proxy */
-	ret = klass->calibrate_device (calibrate, window, error);
+	ret = klass->calibrate_device (calibrate, priv->sensor, window, error);
 out:
 	if (string != NULL)
 		g_string_free (string, TRUE);
@@ -1269,7 +1262,7 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 		g_value_set_uint (value, priv->precision);
 		break;
 	case PROP_XYZ:
-		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->xyz));
+		g_value_set_boxed (value, g_boxed_copy (CD_TYPE_COLOR_XYZ, priv->xyz));
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1290,20 +1283,6 @@ gcm_calibrate_guess_kind (GcmCalibrate *calibrate)
 	ret = gcm_utils_output_is_lcd_internal (priv->output_name);
 	if (ret)
 		priv->calibrate_device_kind = GCM_CALIBRATE_DEVICE_KIND_LCD;
-}
-
-/**
- * gcm_prefs_sensor_client_changed_cb:
- **/
-static void
-gcm_prefs_sensor_client_changed_cb (GcmSensorClient *_sensor_client, GcmCalibrate *calibrate)
-{
-	GcmSensor *sensor;
-	calibrate->priv->sensor_kind = GCM_SENSOR_KIND_UNKNOWN;
-	sensor = gcm_sensor_client_get_sensor (_sensor_client);
-	if (sensor != NULL)
-		calibrate->priv->sensor_kind = gcm_sensor_get_kind (sensor);
-	g_object_notify (G_OBJECT (calibrate), "sensor-kind");
 }
 
 /**
@@ -1367,8 +1346,8 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 		break;
 	case PROP_XYZ:
 		if (priv->xyz != NULL)
-			gcm_color_free_XYZ (priv->xyz);
-		priv->xyz = g_boxed_copy (GCM_TYPE_COLOR_XYZ, value);
+			cd_color_xyz_free (priv->xyz);
+		priv->xyz = g_boxed_copy (CD_TYPE_COLOR_XYZ, value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1528,7 +1507,7 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 	 * GcmCalibrate:xyz:
 	 */
 	pspec = g_param_spec_boxed ("xyz", NULL, NULL,
-				    GCM_TYPE_COLOR_XYZ,
+				    CD_TYPE_COLOR_XYZ,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_XYZ, pspec);
 
@@ -1541,8 +1520,6 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 static void
 gcm_calibrate_init (GcmCalibrate *calibrate)
 {
-	GcmSensor *sensor;
-
 	calibrate->priv = GCM_CALIBRATE_GET_PRIVATE (calibrate);
 	calibrate->priv->output_name = NULL;
 	calibrate->priv->filename_source = NULL;
@@ -1554,13 +1531,12 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->description = NULL;
 	calibrate->priv->device = NULL;
 	calibrate->priv->serial = NULL;
-	calibrate->priv->xyz = gcm_color_new_XYZ ();
+	calibrate->priv->xyz = cd_color_xyz_new ();
 	calibrate->priv->working_path = NULL;
 	calibrate->priv->calibrate_device_kind = GCM_CALIBRATE_DEVICE_KIND_UNKNOWN;
 	calibrate->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_UNKNOWN;
 	calibrate->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
 	calibrate->priv->precision = GCM_CALIBRATE_PRECISION_UNKNOWN;
-	calibrate->priv->sensor_client = gcm_sensor_client_new ();
 	calibrate->priv->calibrate_dialog = gcm_calibrate_dialog_new ();
 
 	// FIXME: this has to be per-run specific
@@ -1568,14 +1544,6 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 
 	/* use GSettings to get defaults */
 	calibrate->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
-
-	/* coldplug, and watch for changes */
-	calibrate->priv->sensor_kind = GCM_SENSOR_KIND_UNKNOWN;
-	sensor = gcm_sensor_client_get_sensor (calibrate->priv->sensor_client);
-	if (sensor != NULL)
-		calibrate->priv->sensor_kind = gcm_sensor_get_kind (sensor);
-
-	g_signal_connect (calibrate->priv->sensor_client, "changed", G_CALLBACK (gcm_prefs_sensor_client_changed_cb), calibrate);
 }
 
 /**
@@ -1598,9 +1566,7 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->device);
 	g_free (priv->serial);
 	g_free (priv->working_path);
-	g_signal_handlers_disconnect_by_func (calibrate->priv->sensor_client, G_CALLBACK (gcm_prefs_sensor_client_changed_cb), calibrate);
-	gcm_color_free_XYZ (priv->xyz);
-	g_object_unref (priv->sensor_client);
+	cd_color_xyz_free (priv->xyz);
 	g_object_unref (priv->calibrate_dialog);
 	g_object_unref (priv->settings);
 

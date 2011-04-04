@@ -23,8 +23,7 @@
 #define __GCM_EDID_H
 
 #include <glib-object.h>
-
-#include "gcm-color.h"
+#include <colord.h>
 
 G_BEGIN_DECLS
 
@@ -72,10 +71,10 @@ const gchar	*gcm_edid_get_pnp_id			(GcmEdid		*edid);
 guint		 gcm_edid_get_width			(GcmEdid		*edid);
 guint		 gcm_edid_get_height			(GcmEdid		*edid);
 gfloat		 gcm_edid_get_gamma			(GcmEdid		*edid);
-const GcmColorYxy *gcm_edid_get_red			(GcmEdid		*edid);
-const GcmColorYxy *gcm_edid_get_green			(GcmEdid		*edid);
-const GcmColorYxy *gcm_edid_get_blue			(GcmEdid		*edid);
-const GcmColorYxy *gcm_edid_get_white			(GcmEdid		*edid);
+const CdColorYxy *gcm_edid_get_red			(GcmEdid		*edid);
+const CdColorYxy *gcm_edid_get_green			(GcmEdid		*edid);
+const CdColorYxy *gcm_edid_get_blue			(GcmEdid		*edid);
+const CdColorYxy *gcm_edid_get_white			(GcmEdid		*edid);
 
 G_END_DECLS
 

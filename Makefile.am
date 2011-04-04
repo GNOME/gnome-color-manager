@@ -1,11 +1,9 @@
 SUBDIRS =						\
 	src						\
-	docs						\
 	data						\
 	help						\
 	man						\
 	po						\
-	rules						\
 	tools
 
 snapshot:

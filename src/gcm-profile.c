@@ -37,7 +37,6 @@
 #include <math.h>
 
 #include "gcm-profile.h"
-#include "gcm-color.h"
 #include "gcm-hull.h"
 
 static void     gcm_profile_finalize	(GObject     *object);
@@ -65,11 +64,11 @@ struct _GcmProfilePrivate
 	gchar			*checksum;
 	guint			 temperature;
 	GHashTable		*dict;
-	GcmColorXYZ		*white;
-	GcmColorXYZ		*black;
-	GcmColorXYZ		*red;
-	GcmColorXYZ		*green;
-	GcmColorXYZ		*blue;
+	CdColorXYZ		*white;
+	CdColorXYZ		*black;
+	CdColorXYZ		*red;
+	CdColorXYZ		*green;
+	CdColorXYZ		*blue;
 	GFile			*file;
 	GFileMonitor		*monitor;
 	gboolean		 has_mlut;
@@ -195,9 +194,9 @@ gcm_profile_get_temperature (GcmProfile *profile)
  *
  * Gets the monitor red chromaticity value.
  *
- * Return value: the #GcmColorXYZ value
+ * Return value: the #CdColorXYZ value
  **/
-const GcmColorXYZ *
+const CdColorXYZ *
 gcm_profile_get_red (GcmProfile *profile)
 {
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
@@ -210,9 +209,9 @@ gcm_profile_get_red (GcmProfile *profile)
  *
  * Gets the monitor green chromaticity value.
  *
- * Return value: the #GcmColorXYZ value
+ * Return value: the #CdColorXYZ value
  **/
-const GcmColorXYZ *
+const CdColorXYZ *
 gcm_profile_get_green (GcmProfile *profile)
 {
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
@@ -225,9 +224,9 @@ gcm_profile_get_green (GcmProfile *profile)
  *
  * Gets the monitor red chromaticity value.
  *
- * Return value: the #GcmColorXYZ value
+ * Return value: the #CdColorXYZ value
  **/
-const GcmColorXYZ *
+const CdColorXYZ *
 gcm_profile_get_blue (GcmProfile *profile)
 {
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
@@ -240,9 +239,9 @@ gcm_profile_get_blue (GcmProfile *profile)
  *
  * Gets the monitor white chromaticity value.
  *
- * Return value: the #GcmColorXYZ value
+ * Return value: the #CdColorXYZ value
  **/
-const GcmColorXYZ *
+const CdColorXYZ *
 gcm_profile_get_white (GcmProfile *profile)
 {
 	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
@@ -639,7 +638,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	if (cie_xyz != NULL) {
 		cmsCIExyY xyY;
 		gdouble temp_float;
-		gcm_color_set_XYZ (priv->white,
+		cd_color_set_xyz (priv->white,
 				   cie_xyz->X, cie_xyz->Y, cie_xyz->Z);
 
 		/* convert to lcms xyY values */
@@ -658,18 +657,18 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 		}
 	} else {
 		/* this is no big suprise, some profiles don't have these */
-		gcm_color_clear_XYZ (priv->white);
+		cd_color_clear_xyz (priv->white);
 		g_debug ("failed to get white point");
 	}
 
 	/* get black point */
 	cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigMediaBlackPointTag);
 	if (cie_xyz != NULL) {
-		gcm_color_set_XYZ (priv->black,
+		cd_color_set_xyz (priv->black,
 				   cie_xyz->X, cie_xyz->Y, cie_xyz->Z);
 	} else {
 		/* this is no big suprise, most profiles don't have these */
-		gcm_color_clear_XYZ (priv->black);
+		cd_color_clear_xyz (priv->black);
 	}
 
 	/* get the profile kind */
@@ -744,11 +743,11 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 		cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigRedMatrixColumnTag);
 		if (cie_xyz != NULL) {
 			/* assume that if red is present, the green and blue are too */
-			gcm_color_copy_XYZ ((GcmColorXYZ *) cie_xyz, (GcmColorXYZ *) &cie_illum.Red);
+			cd_color_copy_xyz ((CdColorXYZ *) cie_xyz, (CdColorXYZ *) &cie_illum.Red);
 			cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigGreenMatrixColumnTag);
-			gcm_color_copy_XYZ ((GcmColorXYZ *) cie_xyz, (GcmColorXYZ *) &cie_illum.Green);
+			cd_color_copy_xyz ((CdColorXYZ *) cie_xyz, (CdColorXYZ *) &cie_illum.Green);
 			cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigBlueMatrixColumnTag);
-			gcm_color_copy_XYZ ((GcmColorXYZ *) cie_xyz, (GcmColorXYZ *) &cie_illum.Blue);
+			cd_color_copy_xyz ((CdColorXYZ *) cie_xyz, (CdColorXYZ *) &cie_illum.Blue);
 			got_illuminants = TRUE;
 		} else {
 			g_debug ("failed to get illuminants");
@@ -795,17 +794,17 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 
 	/* we've got valid values */
 	if (got_illuminants) {
-		gcm_color_set_XYZ (priv->red,
+		cd_color_set_xyz (priv->red,
 				   cie_illum.Red.X, cie_illum.Red.Y, cie_illum.Red.Z);
-		gcm_color_set_XYZ (priv->green,
+		cd_color_set_xyz (priv->green,
 				   cie_illum.Green.X, cie_illum.Green.Y, cie_illum.Green.Z);
-		gcm_color_set_XYZ (priv->blue,
+		cd_color_set_xyz (priv->blue,
 				   cie_illum.Blue.X, cie_illum.Blue.Y, cie_illum.Blue.Z);
 	} else {
 		g_debug ("failed to get luminance values");
-		gcm_color_clear_XYZ (priv->red);
-		gcm_color_clear_XYZ (priv->green);
-		gcm_color_clear_XYZ (priv->blue);
+		cd_color_clear_xyz (priv->red);
+		cd_color_clear_xyz (priv->green);
+		cd_color_clear_xyz (priv->blue);
 	}
 
 	/* get the profile created time and date */
@@ -927,7 +926,7 @@ _cmsWriteTagTextAscii (cmsHPROFILE lcms_profile, cmsTagSignature sig, const gcha
  * Return value: %TRUE for success
  **/
 gboolean
-gcm_profile_set_whitepoint (GcmProfile *profile, const GcmColorXYZ *whitepoint, GError **error)
+gcm_profile_set_whitepoint (GcmProfile *profile, const CdColorXYZ *whitepoint, GError **error)
 {
 	gboolean ret;
 	GcmProfilePrivate *priv = profile->priv;
@@ -937,7 +936,7 @@ gcm_profile_set_whitepoint (GcmProfile *profile, const GcmColorXYZ *whitepoint, 
 		priv->lcms_profile = cmsCreateProfilePlaceholder (NULL);
 
 	/* copy */
-	gcm_color_copy_XYZ (whitepoint, priv->white);
+	cd_color_copy_xyz (whitepoint, priv->white);
 
 	/* write tag */
 	ret = cmsWriteTag (priv->lcms_profile, cmsSigMediaWhitePointTag, priv->white);
@@ -963,9 +962,9 @@ out:
  **/
 gboolean
 gcm_profile_set_primaries (GcmProfile *profile,
-			   const GcmColorXYZ *red,
-			   const GcmColorXYZ *green,
-			   const GcmColorXYZ *blue,
+			   const CdColorXYZ *red,
+			   const CdColorXYZ *green,
+			   const CdColorXYZ *blue,
 			   GError **error)
 {
 	gboolean ret;
@@ -976,9 +975,9 @@ gcm_profile_set_primaries (GcmProfile *profile,
 		priv->lcms_profile = cmsCreateProfilePlaceholder (NULL);
 
 	/* copy */
-	gcm_color_copy_XYZ (red, priv->red);
-	gcm_color_copy_XYZ (green, priv->green);
-	gcm_color_copy_XYZ (blue, priv->blue);
+	cd_color_copy_xyz (red, priv->red);
+	cd_color_copy_xyz (green, priv->green);
+	cd_color_copy_xyz (blue, priv->blue);
 
 	/* write tags */
 	ret = cmsWriteTag (priv->lcms_profile, cmsSigRedMatrixColumnTag, priv->red);
@@ -1142,10 +1141,10 @@ gcm_profile_set_data (GcmProfile *profile, const gchar *key, const gchar *data)
 gboolean
 gcm_profile_create_from_chroma (GcmProfile *profile,
 				gdouble localgamma,
-				const GcmColorYxy *red,
-				const GcmColorYxy *green,
-				const GcmColorYxy *blue,
-				const GcmColorYxy *white,
+				const CdColorYxy *red,
+				const CdColorYxy *green,
+				const CdColorYxy *blue,
+				const CdColorYxy *white,
 				GError **error)
 {
 	gboolean ret = FALSE;
@@ -1560,8 +1559,8 @@ out:
 static GcmHull *
 gcm_profile_create_hull_for_data (guint res, gdouble *lab, gdouble *rgb)
 {
-	GcmColorRGB color;
-	GcmColorXYZ xyz;
+	CdColorRGB color;
+	CdColorXYZ xyz;
 	GcmHull *hull = NULL;
 	gint channels_n = 3;
 	gint off;
@@ -1976,19 +1975,19 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 		g_value_set_boolean (value, priv->can_delete);
 		break;
 	case PROP_WHITE:
-		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->white));
+		g_value_set_boxed (value, g_boxed_copy (CD_TYPE_COLOR_XYZ, priv->white));
 		break;
 	case PROP_BLACK:
-		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->black));
+		g_value_set_boxed (value, g_boxed_copy (CD_TYPE_COLOR_XYZ, priv->black));
 		break;
 	case PROP_RED:
-		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->red));
+		g_value_set_boxed (value, g_boxed_copy (CD_TYPE_COLOR_XYZ, priv->red));
 		break;
 	case PROP_GREEN:
-		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->green));
+		g_value_set_boxed (value, g_boxed_copy (CD_TYPE_COLOR_XYZ, priv->green));
 		break;
 	case PROP_BLUE:
-		g_value_set_boxed (value, g_boxed_copy (GCM_TYPE_COLOR_XYZ, priv->blue));
+		g_value_set_boxed (value, g_boxed_copy (CD_TYPE_COLOR_XYZ, priv->blue));
 		break;
 	case PROP_TEMPERATURE:
 		g_value_set_uint (value, priv->temperature);
@@ -2037,19 +2036,19 @@ gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, G
 		gcm_profile_set_size (profile, g_value_get_uint (value));
 		break;
 	case PROP_WHITE:
-		gcm_color_copy_XYZ (g_value_get_boxed (value), priv->white);
+		cd_color_copy_xyz (g_value_get_boxed (value), priv->white);
 		break;
 	case PROP_BLACK:
-		gcm_color_copy_XYZ (g_value_get_boxed (value), priv->black);
+		cd_color_copy_xyz (g_value_get_boxed (value), priv->black);
 		break;
 	case PROP_RED:
-		gcm_color_copy_XYZ (g_value_get_boxed (value), priv->red);
+		cd_color_copy_xyz (g_value_get_boxed (value), priv->red);
 		break;
 	case PROP_GREEN:
-		gcm_color_copy_XYZ (g_value_get_boxed (value), priv->green);
+		cd_color_copy_xyz (g_value_get_boxed (value), priv->green);
 		break;
 	case PROP_BLUE:
-		gcm_color_copy_XYZ (g_value_get_boxed (value), priv->blue);
+		cd_color_copy_xyz (g_value_get_boxed (value), priv->blue);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -2161,7 +2160,7 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	 * GcmProfile:white:
 	 */
 	pspec = g_param_spec_boxed ("white", NULL, NULL,
-				    GCM_TYPE_COLOR_XYZ,
+				    CD_TYPE_COLOR_XYZ,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_WHITE, pspec);
 
@@ -2169,7 +2168,7 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	 * GcmProfile:black:
 	 */
 	pspec = g_param_spec_boxed ("black", NULL, NULL,
-				    GCM_TYPE_COLOR_XYZ,
+				    CD_TYPE_COLOR_XYZ,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_BLACK, pspec);
 
@@ -2177,7 +2176,7 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	 * GcmProfile:red:
 	 */
 	pspec = g_param_spec_boxed ("red", NULL, NULL,
-				    GCM_TYPE_COLOR_XYZ,
+				    CD_TYPE_COLOR_XYZ,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_RED, pspec);
 
@@ -2185,7 +2184,7 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	 * GcmProfile:green:
 	 */
 	pspec = g_param_spec_boxed ("green", NULL, NULL,
-				    GCM_TYPE_COLOR_XYZ,
+				    CD_TYPE_COLOR_XYZ,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_GREEN, pspec);
 
@@ -2193,7 +2192,7 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	 * GcmProfile:blue:
 	 */
 	pspec = g_param_spec_boxed ("blue", NULL, NULL,
-				    GCM_TYPE_COLOR_XYZ,
+				    CD_TYPE_COLOR_XYZ,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_BLUE, pspec);
 
@@ -2220,11 +2219,11 @@ gcm_profile_init (GcmProfile *profile)
 	profile->priv->dict = g_hash_table_new_full (g_str_hash, g_str_equal, g_free, g_free);
 	profile->priv->kind = CD_PROFILE_KIND_UNKNOWN;
 	profile->priv->colorspace = CD_COLORSPACE_UNKNOWN;
-	profile->priv->white = gcm_color_new_XYZ ();
-	profile->priv->black = gcm_color_new_XYZ ();
-	profile->priv->red = gcm_color_new_XYZ ();
-	profile->priv->green = gcm_color_new_XYZ ();
-	profile->priv->blue = gcm_color_new_XYZ ();
+	profile->priv->white = cd_color_xyz_new ();
+	profile->priv->black = cd_color_xyz_new ();
+	profile->priv->red = cd_color_xyz_new ();
+	profile->priv->green = cd_color_xyz_new ();
+	profile->priv->blue = cd_color_xyz_new ();
 
 	/* setup LCMS */
 	cmsSetLogErrorHandler (gcm_profile_error_cb);
@@ -2246,11 +2245,11 @@ gcm_profile_finalize (GObject *object)
 	g_free (priv->model);
 	g_free (priv->datetime);
 	g_free (priv->checksum);
-	gcm_color_free_XYZ (priv->white);
-	gcm_color_free_XYZ (priv->black);
-	gcm_color_free_XYZ (priv->red);
-	gcm_color_free_XYZ (priv->green);
-	gcm_color_free_XYZ (priv->blue);
+	cd_color_xyz_free (priv->white);
+	cd_color_xyz_free (priv->black);
+	cd_color_xyz_free (priv->red);
+	cd_color_xyz_free (priv->green);
+	cd_color_xyz_free (priv->blue);
 	g_hash_table_destroy (profile->priv->dict);
 	if (priv->file != NULL)
 		g_object_unref (priv->file);

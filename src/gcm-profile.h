@@ -27,7 +27,6 @@
 #include <colord.h>
 
 #include "gcm-clut.h"
-#include "gcm-color.h"
 #include "gcm-hull.h"
 
 G_BEGIN_DECLS
@@ -89,19 +88,19 @@ gboolean	 gcm_profile_set_vcgt_from_data		(GcmProfile	*profile,
 							 guint		 size,
 							 GError		**error);
 gboolean	 gcm_profile_set_whitepoint		(GcmProfile	*profile,
-							 const GcmColorXYZ *whitepoint,
+							 const CdColorXYZ *whitepoint,
 							 GError		**error);
 gboolean	 gcm_profile_set_primaries		(GcmProfile	*profile,
-							 const GcmColorXYZ *red,
-							 const GcmColorXYZ *green,
-							 const GcmColorXYZ *blue,
+							 const CdColorXYZ *red,
+							 const CdColorXYZ *green,
+							 const CdColorXYZ *blue,
 							 GError		**error);
 gboolean	 gcm_profile_create_from_chroma		(GcmProfile	*profile,
 							 gdouble	 gamma,
-							 const GcmColorYxy *red,
-							 const GcmColorYxy *green,
-							 const GcmColorYxy *blue,
-							 const GcmColorYxy *white,
+							 const CdColorYxy *red,
+							 const CdColorYxy *green,
+							 const CdColorYxy *blue,
+							 const CdColorYxy *white,
 							 GError		**error);
 gboolean	 gcm_profile_guess_and_add_vcgt		(GcmProfile	*profile,
 							 GError		**error);
@@ -132,10 +131,10 @@ CdColorspace	 gcm_profile_get_colorspace		(GcmProfile	*profile);
 void		 gcm_profile_set_colorspace		(GcmProfile	*profile,
 							 CdColorspace	 colorspace);
 guint		 gcm_profile_get_temperature		(GcmProfile	*profile);
-const GcmColorXYZ *gcm_profile_get_red			(GcmProfile	*profile);
-const GcmColorXYZ *gcm_profile_get_green		(GcmProfile	*profile);
-const GcmColorXYZ *gcm_profile_get_blue			(GcmProfile	*profile);
-const GcmColorXYZ *gcm_profile_get_white		(GcmProfile	*profile);
+const CdColorXYZ *gcm_profile_get_red			(GcmProfile	*profile);
+const CdColorXYZ *gcm_profile_get_green		(GcmProfile	*profile);
+const CdColorXYZ *gcm_profile_get_blue			(GcmProfile	*profile);
+const CdColorXYZ *gcm_profile_get_white		(GcmProfile	*profile);
 const gchar	*gcm_profile_get_data			(GcmProfile	*profile,
 							 const gchar	*key);
 void		 gcm_profile_set_data			(GcmProfile	*profile,

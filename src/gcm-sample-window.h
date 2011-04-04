@@ -24,7 +24,7 @@
 
 #include <glib-object.h>
 #include <gtk/gtk.h>
-#include <gcm-color.h>
+#include <colord.h>
 
 G_BEGIN_DECLS
 
@@ -52,7 +52,7 @@ struct _GcmSampleWindowClass
 GType		 gcm_sample_window_get_type		(void);
 GtkWindow	*gcm_sample_window_new			(void);
 void		 gcm_sample_window_set_color		(GcmSampleWindow	*sample_window,
-							 const GcmColorRGB	*color);
+							 const CdColorRGB	*color);
 void		 gcm_sample_window_set_percentage	(GcmSampleWindow	*sample_window,
 							 guint			 percentage);
 

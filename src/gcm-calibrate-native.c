@@ -36,7 +36,6 @@
 #include <colord.h>
 
 #include "gcm-calibrate-native.h"
-#include "gcm-sensor-client.h"
 #include "gcm-calibrate-dialog.h"
 #include "gcm-sample-window.h"
 #include "gcm-profile.h"
@@ -62,8 +61,8 @@ G_DEFINE_TYPE (GcmCalibrateNative, gcm_calibrate_native, GCM_TYPE_CALIBRATE)
 
 typedef struct {
 	gchar		*patch_name;
-	GcmColorRGB	*source;
-	GcmColorXYZ	*result;
+	CdColorRGB	*source;
+	CdColorXYZ	*result;
 } GcmColorSample;
 
 /**
@@ -82,12 +81,17 @@ gcm_calibrate_native_sample_free_cb (GcmColorSample *sample)
  * gcm_calibrate_native_sample_measure:
  **/
 static void
-gcm_calibrate_native_sample_measure (GcmSensor *sensor, GCancellable *cancellable, GcmColorSample *sample)
+gcm_calibrate_native_sample_measure (CdSensor *sensor, GCancellable *cancellable, GcmColorSample *sample)
 {
 	GError *error = NULL;
 	gboolean ret;
 
-	ret = gcm_sensor_sample (sensor, cancellable, sample->result, &error);
+	ret = cd_sensor_get_sample_sync (sensor,
+					 CD_SENSOR_CAP_LCD,
+					 sample->result,
+					 NULL,
+					 cancellable,
+					 &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 }
@@ -96,15 +100,15 @@ gcm_calibrate_native_sample_measure (GcmSensor *sensor, GCancellable *cancellabl
  * gcm_calibrate_native_sample_add:
  **/
 static void
-gcm_calibrate_native_sample_add (GPtrArray *array, const gchar *patch_name, const GcmColorRGB *source)
+gcm_calibrate_native_sample_add (GPtrArray *array, const gchar *patch_name, const CdColorRGB *source)
 {
 	GcmColorSample *sample;
 
 	sample = g_new0 (GcmColorSample, 1);
 	sample->patch_name = g_strdup (patch_name);
-	sample->source = g_new0 (GcmColorRGB, 1);
-	sample->result = g_new0 (GcmColorXYZ, 1);
-	gcm_color_copy_RGB (source, sample->source);
+	sample->source = g_new0 (CdColorRGB, 1);
+	sample->result = g_new0 (CdColorXYZ, 1);
+	cd_color_copy_rgb (source, sample->source);
 	g_ptr_array_add (array, sample);
 }
 
@@ -154,21 +158,18 @@ gcm_calibrate_native_sample_write (GPtrArray *array, const gchar *filename)
 	cmsIT8Free (it8);
 }
 
-//FIXME
-#include "gcm-sensor-huey.h"
-
 /**
  * gcm_calibrate_native_create_it8_file:
  **/
 static void
-gcm_calibrate_native_create_it8_file (GcmCalibrateNative *calibrate_native, GcmSensor *sensor, const gchar *filename, guint steps)
+gcm_calibrate_native_create_it8_file (GcmCalibrateNative *calibrate_native, CdSensor *sensor, const gchar *filename, guint steps)
 {
 	GcmCalibrateNativePrivate *priv = calibrate_native->priv;
 	guint i;
 	gchar *patch_name;
 	GcmColorSample *sample;
 	GPtrArray *array;
-	GcmColorRGB source;
+	CdColorRGB source;
 	gdouble divisions;
 
 	/* step size */
@@ -265,7 +266,7 @@ out:
  * gcm_calibrate_native_get_it8_patch_rgb_xyz:
  **/
 static void
-gcm_calibrate_native_get_it8_patch_rgb_xyz (cmsHANDLE it8_handle, const gchar *patch, GcmColorRGB *rgb, GcmColorXYZ *xyz)
+gcm_calibrate_native_get_it8_patch_rgb_xyz (cmsHANDLE it8_handle, const gchar *patch, CdColorRGB *rgb, CdColorXYZ *xyz)
 {
 	if (rgb != NULL) {
 		rgb->R = cmsIT8GetDataDbl (it8_handle, patch, "RGB_R");
@@ -285,7 +286,7 @@ gcm_calibrate_native_get_it8_patch_rgb_xyz (cmsHANDLE it8_handle, const gchar *p
 static void
 gcm_calibrate_native_get_it8_patch_xyY (cmsHANDLE it8_handle, const gchar *patch, cmsCIExyY *result)
 {
-	GcmColorXYZ sample;
+	CdColorXYZ sample;
 	gcm_calibrate_native_get_it8_patch_rgb_xyz (it8_handle, patch, NULL, &sample);
 	cmsXYZ2xyY (result, (cmsCIEXYZ*) &sample);
 }
@@ -320,12 +321,12 @@ gcm_calibrate_native_interpolate_array (gdouble *data, guint data_size, gdouble 
 
 #if 0
 /**
- * _gcm_color_normalize_XYZ:
+ * _cd_color_normalize_XYZ:
  *
  * Return value: the Y value that was normalised
  **/
 static gdouble
-_gcm_color_normalize_XYZ (GcmColorXYZ *xyz)
+_cd_color_normalize_XYZ (CdColorXYZ *xyz)
 {
 	gdouble Y;
 
@@ -343,10 +344,10 @@ _gcm_color_normalize_XYZ (GcmColorXYZ *xyz)
 #endif
 
 /**
- * _gcm_color_scale_XYZ:
+ * _cd_color_scale_XYZ:
  **/
 static void
-_gcm_color_scale_XYZ (GcmColorXYZ *xyz, gdouble scale)
+_cd_color_scale_XYZ (CdColorXYZ *xyz, gdouble scale)
 {
 	g_return_if_fail (xyz != NULL);
 
@@ -367,9 +368,9 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 	cmsHANDLE it8_handle;
 	cmsCIExyYTRIPLE primaries;
 	cmsCIExyY whitepoint;
-	GcmColorXYZ primary_red;
-	GcmColorXYZ primary_green;
-	GcmColorXYZ primary_blue;
+	CdColorXYZ primary_red;
+	CdColorXYZ primary_green;
+	CdColorXYZ primary_blue;
 	guint i, j;
 	const gdouble gamma22 = 2.2f;
 	const gchar *patch_data;
@@ -377,12 +378,12 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 	gdouble div;
 	gdouble temperature;
 	gdouble whitepointY;
-	GcmColorXYZ patch_xyz;
-	GcmColorRGB patch_rgb;
-	GcmColorRGB actual_rgb;
-	GcmColorXYZ actual_xyz;
-	GcmColorRGB scale;
-	GcmColorRGB leakage;
+	CdColorXYZ patch_xyz;
+	CdColorRGB patch_rgb;
+	CdColorRGB actual_rgb;
+	CdColorXYZ actual_xyz;
+	CdColorRGB scale;
+	CdColorRGB leakage;
 	cmsHPROFILE conversion_profile = NULL;
 	cmsHPROFILE xyz_profile = NULL;
 	cmsToneCurve *transfer_curve[3] = { NULL, NULL, NULL };
@@ -403,7 +404,7 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 
 	/* we need to scale each reading by this value */
 	whitepointY = whitepoint.Y;
-//	_gcm_color_normalize_XYZ (&whitepoint);
+//	_cd_color_normalize_XYZ (&whitepoint);
 
 	/* optionally use a D50 target */
 //	cmsWhitePointFromTemp (&whitepoint, 5000);
@@ -433,9 +434,9 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 	gcm_calibrate_native_get_it8_patch_rgb_xyz (it8_handle, "CBL", NULL, &primary_blue);
 
 	/* scale the values */
-	_gcm_color_scale_XYZ (&primary_red, whitepointY);
-	_gcm_color_scale_XYZ (&primary_green, whitepointY);
-	_gcm_color_scale_XYZ (&primary_blue, whitepointY);
+	_cd_color_scale_XYZ (&primary_red, whitepointY);
+	_cd_color_scale_XYZ (&primary_green, whitepointY);
+	_cd_color_scale_XYZ (&primary_blue, whitepointY);
 
 	/* set the primaries */
 	ret = gcm_profile_set_primaries (profile, &primary_red, &primary_green, &primary_blue, error);
@@ -478,7 +479,7 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 		gcm_calibrate_native_get_it8_patch_rgb_xyz (it8_handle, patch_name, &patch_rgb, &patch_xyz);
 
 		/* scale the values */
-		_gcm_color_scale_XYZ (&patch_xyz, whitepointY);
+		_cd_color_scale_XYZ (&patch_xyz, whitepointY);
 
 		cmsDoTransform (conversion_transform, &patch_xyz, &actual_rgb, 1);
 		g_debug ("%s = %f,%f,%f -> %f,%f,%f", patch_name,
@@ -507,7 +508,7 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 	}
 
 	/* remove the backlight leakage */
-	gcm_color_set_RGB (&leakage, G_MAXDOUBLE, G_MAXDOUBLE, G_MAXDOUBLE);
+	cd_color_set_rgb (&leakage, G_MAXDOUBLE, G_MAXDOUBLE, G_MAXDOUBLE);
 	for (i=0; i<rampsize; i++) {
 		if (data_sampled[0][i] < leakage.R)
 			leakage.R = data_sampled[0][i];
@@ -524,7 +525,7 @@ gcm_calibrate_native_create_profile_from_it8 (GcmProfile *profile, const gchar *
 	g_debug ("removed backlight leakage = %f,%f,%f", leakage.R, leakage.G, leakage.B);
 
 	/* scale all values to 1.0 */
-	gcm_color_set_RGB (&scale, 0.0, 0.0, 0.0);
+	cd_color_set_rgb (&scale, 0.0, 0.0, 0.0);
 	for (i=0; i<rampsize; i++) {
 		if (data_sampled[0][i] > scale.R)
 			scale.R = data_sampled[0][i];
@@ -590,21 +591,20 @@ out:
  * gcm_calibrate_native_display:
  **/
 static gboolean
-gcm_calibrate_native_display (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
+gcm_calibrate_native_display (GcmCalibrate *calibrate, CdSensor *sensor, GtkWindow *window, GError **error)
 {
 	GcmCalibrateNative *calibrate_native = GCM_CALIBRATE_NATIVE(calibrate);
 	GcmCalibrateNativePrivate *priv = calibrate_native->priv;
 	gboolean ret = TRUE;
 	GcmCalibratePrecision precision;
 	guint steps = 0;
-	GcmSensor *sensor;
 	gchar *copyright = NULL;
 	gchar *description = NULL;
 	gchar *manufacturer = NULL;
 	gchar *model = NULL;
 	const gchar *title;
 	const gchar *message;
-	const gchar *filename;
+	const gchar *filename = NULL;
 	const gchar *basename;
 	gchar *filename_it8 = NULL;
 	gchar *filename_icc = NULL;
@@ -642,9 +642,6 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 	cmsSaveProfileToFile (profile, "dave.icc");
 #endif
 
-	/* TODO: get from GcmCalibrate */
-	sensor = gcm_sensor_huey_new ();
-
 	/* show window */
 	gtk_window_present (priv->sample_window);
 
@@ -652,7 +649,7 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 	title = _("Please attach instrument");
 
 	/* get the image, if we have one */
-	filename = gcm_sensor_get_image_display (sensor);
+//	filename = cd_sensor_get_image_display (sensor);
 
 	/* different messages with or without image */
 	if (filename != NULL) {
@@ -745,7 +742,6 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, GtkWindow *window, GError
 		goto out;
 
 out:
-	g_object_unref (sensor);
 	g_free (filename_it8);
 	g_free (filename_icc);
 	g_free (copyright);
@@ -759,7 +755,7 @@ out:
  * gcm_calibrate_native_spotread:
  **/
 static gboolean
-gcm_calibrate_native_spotread (GcmCalibrate *calibrate, GtkWindow *window, GError **error)
+gcm_calibrate_native_spotread (GcmCalibrate *calibrate, CdSensor *sensor, GtkWindow *window, GError **error)
 {
 	GcmCalibrateNative *calibrate_native = GCM_CALIBRATE_NATIVE(calibrate);
 	GcmCalibrateNativePrivate *priv = calibrate_native->priv;

@@ -33,18 +33,15 @@
 #include <colord.h>
 
 #include "gcm-calibrate-argyll.h"
-#include "gcm-sensor-client.h"
 #include "gcm-utils.h"
-#include "gcm-color.h"
 #include "gcm-debug.h"
 
 static CdClient *client = NULL;
 static const gchar *profile_filename = NULL;
 static gboolean done_measure = FALSE;
 static GcmCalibrate *calibrate = NULL;
-static GcmColorXYZ last_sample;
-static GcmSensorClient *sensor_client = NULL;
-static GcmSensor *sensor = NULL;
+static CdColorXYZ last_sample;
+static CdSensor *sensor = NULL;
 static gdouble last_ambient = -1.0f;
 static GtkBuilder *builder = NULL;
 static GtkWidget *info_bar_hardware_label = NULL;
@@ -105,17 +102,17 @@ gcm_picker_refresh_results (void)
 	gchar *text_temperature = NULL;
 	gchar *text_whitepoint = NULL;
 	gchar *text_xyz = NULL;
-	GcmColorLab color_lab;
-	GcmColorRGBint color_rgb;
-	GcmColorXYZ color_error;
-	GcmColorXYZ color_xyz;
+	CdColorLab color_lab;
+	CdColorRGB8 color_rgb;
+	CdColorXYZ color_error;
+	CdColorXYZ color_xyz;
 	GdkPixbuf *pixbuf = NULL;
 	gdouble temperature = 0.0f;
 	GtkImage *image;
 	GtkLabel *label;
 
 	/* copy as we're modifying the value */
-	gcm_color_copy_XYZ (&last_sample, &color_xyz);
+	cd_color_copy_xyz (&last_sample, &color_xyz);
 
 	/* create new pixbuf of the right size */
 	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 200, 200);
@@ -258,26 +255,54 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "image_preview"));
 	gtk_image_set_from_file (GTK_IMAGE (widget), DATADIR "/icons/hicolor/64x64/apps/gnome-color-manager.png");
 
-	if (gcm_sensor_is_native (sensor)) {
+	if (cd_sensor_get_native (sensor)) {
 
-		/* set mode */
-		gcm_sensor_set_output_type (sensor, GCM_SENSOR_OUTPUT_TYPE_LCD);
+		/* lock */
+		ret = cd_sensor_lock_sync (sensor,
+					   NULL,
+					   &error);
+		if (!ret) {
+			g_warning ("failed to lock: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
 
-		/* get ambient */
-		ret = gcm_sensor_get_ambient (sensor, NULL, &last_ambient, &error);
+		/* get color */
+		ret = cd_sensor_get_sample_sync (sensor,
+						 CD_SENSOR_CAP_LCD,
+						 &last_sample,
+						 NULL,
+						 NULL,
+						 &error);
 		if (!ret) {
 			g_warning ("failed to get ambient: %s", error->message);
 			g_error_free (error);
 			goto out;
 		}
 
-		/* sample color */
-		ret = gcm_sensor_sample (sensor, NULL, &last_sample, &error);
+		/* get ambient */
+		ret = cd_sensor_get_sample_sync (sensor,
+						 CD_SENSOR_CAP_AMBIENT,
+						 NULL,
+						 &last_ambient,
+						 NULL,
+						 &error);
 		if (!ret) {
-			g_warning ("failed to measure: %s", error->message);
+			g_warning ("failed to get ambient: %s", error->message);
 			g_error_free (error);
 			goto out;
 		}
+
+		/* unlock */
+		ret = cd_sensor_unlock_sync (sensor,
+					     NULL,
+					     &error);
+		if (!ret) {
+			g_warning ("failed to lock: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
+
 		gcm_picker_refresh_results ();
 		gcm_picker_got_results ();
 	} else {
@@ -302,7 +327,7 @@ gcm_picker_xyz_notify_cb (GcmCalibrate *calibrate_,
 			  GParamSpec *pspec,
 			  gpointer user_data)
 {
-	GcmColorXYZ *xyz;
+	CdColorXYZ *xyz;
 
 	/* get new value */
 	g_object_get (calibrate, "xyz", &xyz, NULL);
@@ -315,7 +340,7 @@ gcm_picker_xyz_notify_cb (GcmCalibrate *calibrate_,
 
 	gcm_picker_refresh_results ();
 	gcm_picker_got_results ();
-	gcm_color_free_XYZ (xyz);
+	cd_color_xyz_free (xyz);
 }
 
 /**
@@ -351,22 +376,30 @@ gcm_picker_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
  * gcm_picker_sensor_client_setup_ui:
  **/
 static void
-gcm_picker_sensor_client_setup_ui (GcmSensorClient *_sensor_client)
+gcm_picker_sensor_client_setup_ui (void)
 {
 	gboolean ret = FALSE;
 	GtkWidget *widget;
+	GPtrArray *sensors;
+	GError *error = NULL;
 
 	/* no present */
-	sensor = gcm_sensor_client_get_sensor (sensor_client);
-	if (sensor == NULL) {
+	sensors = cd_client_get_sensors_sync (client, NULL, &error);
+	if (sensors == NULL) {
+		g_warning ("%s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+	if (sensors->len == 0) {
 		/* TRANSLATORS: this is displayed the user has not got suitable hardware */
 		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label),
 				    _("No colorimeter is attached."));
 		goto out;
 	}
+	sensor = g_object_ref (g_ptr_array_index (sensors, 0));
 
 #ifndef HAVE_VTE
-	if (!gcm_sensor_is_native (sensor)) {
+	if (!cd_sensor_get_native (sensor)) {
 		 /* TRANSLATORS: this is displayed if VTE support is not enabled */
 		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label),
 				     _("This application was compiled without VTE support."));
@@ -376,7 +409,7 @@ gcm_picker_sensor_client_setup_ui (GcmSensorClient *_sensor_client)
 
 #if 0
 	/* no support */
-	ret = gcm_sensor_supports_spot (sensor);
+	ret = cd_sensor_supports_spot (sensor);
 	if (!ret) {
 		/* TRANSLATORS: this is displayed the user has not got suitable hardware */
 		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label), _("The attached colorimeter is not capable of reading a spot color."));
@@ -387,6 +420,8 @@ gcm_picker_sensor_client_setup_ui (GcmSensorClient *_sensor_client)
 #endif
 
 out:
+	if (sensors != NULL)
+		g_ptr_array_unref (sensors);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_measure"));
 	gtk_widget_set_sensitive (widget, ret);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_results"));
@@ -398,9 +433,11 @@ out:
  * gcm_picker_sensor_client_changed_cb:
  **/
 static void
-gcm_picker_sensor_client_changed_cb (GcmSensorClient *_sensor_client, gpointer user_data)
+gcm_picker_sensor_client_changed_cb (CdClient *_client,
+				     CdSensor *_sensor,
+				     gpointer user_data)
 {
-	gcm_picker_sensor_client_setup_ui (sensor_client);
+	gcm_picker_sensor_client_setup_ui ();
 }
 
 /**
@@ -643,12 +680,7 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 	                                   GCM_DATA G_DIR_SEPARATOR_S "icons");
 
 	/* create a last sample */
-	//gcm_color_xyz_clear (&last_sample);
-
-	/* use the color device */
-	sensor_client = gcm_sensor_client_new ();
-	g_signal_connect (sensor_client, "changed",
-			  G_CALLBACK (gcm_picker_sensor_client_changed_cb), NULL);
+	//cd_color_xyz_clear (&last_sample);
 
 	/* set the parent window if it is specified */
 	if (xid != 0) {
@@ -673,9 +705,6 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox1"));
 	gtk_box_pack_start (GTK_BOX(widget), info_bar_hardware, FALSE, FALSE, 0);
 
-	/* disable some ui if no hardware */
-	gcm_picker_sensor_client_setup_ui (sensor_client);
-
 	/* maintain a list of profiles */
 	client = cd_client_new ();
 	ret = cd_client_connect_sync (client,
@@ -687,6 +716,13 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 		g_error_free (error);
 		goto out;
 	}
+	g_signal_connect (client, "sensor-added",
+			  G_CALLBACK (gcm_picker_sensor_client_changed_cb), NULL);
+	g_signal_connect (client, "sensor-removed",
+			  G_CALLBACK (gcm_picker_sensor_client_changed_cb), NULL);
+
+	/* disable some ui if no hardware */
+	gcm_picker_sensor_client_setup_ui ();
 
 	/* default to AdobeRGB */
 	profile_filename = "/usr/share/color/icc/Argyll/ClayRGB1998.icm";
@@ -761,8 +797,6 @@ main (int argc, char *argv[])
 	g_object_unref (application);
 	if (client != NULL)
 		g_object_unref (client);
-	if (sensor_client != NULL)
-		g_object_unref (sensor_client);
 	if (calibrate != NULL)
 		g_object_unref (calibrate);
 	if (builder != NULL)

@@ -23,8 +23,7 @@
 #define __GCM_HULL_H
 
 #include <glib-object.h>
-
-#include "gcm-color.h"
+#include <colord.h>
 
 G_BEGIN_DECLS
 
@@ -53,8 +52,8 @@ struct _GcmHullClass
 GType		 gcm_hull_get_type		  	(void);
 GcmHull		*gcm_hull_new				(void);
 void		 gcm_hull_add_vertex			(GcmHull	*hull,
-							 GcmColorXYZ	*xyz,
-							 GcmColorRGB	*color);
+							 CdColorXYZ	*xyz,
+							 CdColorRGB	*color);
 void		 gcm_hull_add_face			(GcmHull	*hull,
 							 const guint	*data,
 							 gsize		 size);

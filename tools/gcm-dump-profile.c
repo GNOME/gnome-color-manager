@@ -46,7 +46,7 @@ gcm_dump_profile_filename (const gchar *filename)
 	const gchar *manufacturer;
 	const gchar *model;
 	const gchar *datetime;
-	const GcmColorXYZ *color;
+	const CdColorXYZ *color;
 	GFile *file = NULL;
 	guint temperature;
 

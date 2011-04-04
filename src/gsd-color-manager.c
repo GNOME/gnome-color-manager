@@ -33,7 +33,7 @@
 struct GsdColorManagerPrivate
 {
 	guint			 timeout;
-	GcmSensorClient		*sensor_client;
+	CdClient		*sensor_client;
 	EggConsoleKit		*console_kit;
 };
 
@@ -63,13 +63,13 @@ gsd_color_manager_stop (GsdColorManager *manager)
  * gsd_color_manager_sensor_client_changed_cb:
  **/
 static void
-gsd_color_manager_sensor_client_changed_cb (GcmSensorClient *sensor_client, GsdColorManager *manager)
+gsd_color_manager_sensor_client_changed_cb (CdClient *sensor_client, GsdColorManager *manager)
 {
 	gboolean ret;
 	GError *error = NULL;
 
 	/* is sensor connected */
-	ret = gcm_sensor_client_get_present (sensor_client);
+	ret = cd_sensor_client_get_present (sensor_client);
 	if (!ret)
 		return;
 
@@ -86,7 +86,7 @@ gsd_color_manager_sensor_client_changed_cb (GcmSensorClient *sensor_client, GsdC
  * gsd_color_manager_active_changed_cb:
  **/
 static void
-gsd_color_manager_active_changed_cb (GcmSensorClient *sensor_client, gboolean is_active, GsdColorManager *manager)
+gsd_color_manager_active_changed_cb (CdClient *sensor_client, gboolean is_active, GsdColorManager *manager)
 {
 	gboolean ret;
 	GError *error = NULL;
@@ -130,7 +130,7 @@ static void
 gsd_color_manager_init (GsdColorManager *manager)
 {
 	manager->priv = GSD_COLOR_MANAGER_GET_PRIVATE (manager);
-	manager->priv->sensor_client = gcm_sensor_client_new ();
+	manager->priv->sensor_client = cd_client_new ();
 	g_signal_connect (manager->priv->sensor_client, "changed",
 			  G_CALLBACK (gsd_color_manager_sensor_client_changed_cb), manager);
 	manager->priv->console_kit = egg_console_kit_new ();

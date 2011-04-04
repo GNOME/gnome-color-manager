@@ -33,19 +33,17 @@
 #include "gcm-cell-renderer-profile-text.h"
 #include "gcm-cell-renderer-profile-icon.h"
 #include "gcm-calibrate-argyll.h"
-#include "gcm-sensor-client.h"
 #include "gcm-debug.h"
 #include "gcm-exif.h"
 #include "gcm-utils.h"
-#include "gcm-color.h"
 #include "gcm-list-store-profiles.h"
 
 typedef struct {
 	CdClient		*client;
 	CdDevice		*current_device;
+	CdSensor		*sensor;
 	gboolean		 setting_up_device;
 	GCancellable		*cancellable;
-	GcmSensorClient		*sensor_client;
 	GSettings		*settings;
 	GtkApplication		*application;
 	GtkBuilder		*builder;
@@ -614,6 +612,7 @@ gcm_prefs_calibrate_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 	/* set defaults from device */
 	ret = gcm_calibrate_set_from_device (calibrate,
 					     prefs->current_device,
+					     prefs->sensor,
 					     &error);
 	if (!ret) {
 		g_warning ("failed to calibrate: %s", error->message);
@@ -1342,12 +1341,15 @@ gcm_prefs_set_calibrate_button_sensitivity (GcmPrefsPriv *prefs)
 	if (kind == CD_DEVICE_KIND_DISPLAY) {
 
 		/* find whether we have hardware installed */
-		ret = gcm_sensor_client_get_present (prefs->sensor_client);
-		if (!ret) {
+		if (prefs->sensor == NULL) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The measuring instrument is not plugged in");
 			goto out;
 		}
+
+		/* success */
+		ret = TRUE;
+
 	} else if (kind == CD_DEVICE_KIND_SCANNER ||
 		   kind == CD_DEVICE_KIND_CAMERA) {
 
@@ -1357,20 +1359,22 @@ gcm_prefs_set_calibrate_button_sensitivity (GcmPrefsPriv *prefs)
 	} else if (kind == CD_DEVICE_KIND_PRINTER) {
 
 		/* find whether we have hardware installed */
-		ret = gcm_sensor_client_get_present (prefs->sensor_client);
-		if (!ret) {
+		if (prefs->sensor == NULL) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The measuring instrument is not plugged in");
 			goto out;
 		}
 
 		/* find whether we have hardware installed */
-		ret = gcm_sensor_supports_printer (gcm_sensor_client_get_sensor (prefs->sensor_client));
+		ret = cd_sensor_has_cap (prefs->sensor, CD_SENSOR_CAP_PRINTER);
 		if (!ret) {
 			/* TRANSLATORS: this is when the button is insensitive */
 			tooltip = _("Cannot create profile: The measuring instrument does not support printer profiling");
 			goto out;
 		}
+
+		/* success */
+		ret = TRUE;
 
 	} else {
 
@@ -1728,36 +1732,49 @@ out:
 		g_object_unref (profile);
 }
 
+
+
 /**
- * gcm_prefs_sensor_client_changed_cb:
+ * gcm_prefs_sensor_coldplug:
  **/
 static void
-gcm_prefs_sensor_client_changed_cb (GcmSensorClient *sensor_client,
-				    GcmPrefsPriv *prefs)
+gcm_prefs_sensor_coldplug (GcmPrefsPriv *prefs)
 {
-	gboolean present;
-	const gchar *event_id;
-	const gchar *message;
+	GPtrArray *sensors;
+	GError *error = NULL;
 
-	present = gcm_sensor_client_get_present (sensor_client);
-
-	if (present) {
-		/* TRANSLATORS: this is a sound description */
-		message = _("Device added");
-		event_id = "device-added";
-	} else {
-		/* TRANSLATORS: this is a sound description */
-		message = _("Device removed");
-		event_id = "device-removed";
+	/* unref old */
+	if (prefs->sensor != NULL) {
+		g_object_unref (prefs->sensor);
+		prefs->sensor = NULL;
 	}
 
-	/* play sound from the naming spec */
-	ca_context_play (ca_gtk_context_get (), 0,
-			 CA_PROP_EVENT_ID, event_id,
-			 /* TRANSLATORS: this is the application name for libcanberra */
-			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
-			 CA_PROP_EVENT_DESCRIPTION, message, NULL);
+	/* no present */
+	sensors = cd_client_get_sensors_sync (prefs->client, NULL, &error);
+	if (sensors == NULL) {
+		g_warning ("%s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+	if (sensors->len == 0)
+		goto out;
 
+	/* save a copy of the sensor */
+	prefs->sensor = g_object_ref (g_ptr_array_index (sensors, 0));
+out:
+	if (sensors != NULL)
+		g_ptr_array_unref (sensors);
+}
+
+/**
+ * gcm_prefs_client_sensor_changed_cb:
+ **/
+static void
+gcm_prefs_client_sensor_changed_cb (CdClient *client,
+				    CdSensor *sensor,
+				    GcmPrefsPriv *prefs)
+{
+	gcm_prefs_sensor_coldplug (prefs);
 	gcm_prefs_set_calibrate_button_sensitivity (prefs);
 }
 
@@ -1777,7 +1794,6 @@ gcm_prefs_device_kind_to_icon_name (CdDeviceKind kind)
 		return "camera-photo";
 	return "image-missing";
 }
-
 
 /**
  * gcm_prefs_add_device:
@@ -2234,6 +2250,7 @@ gcm_prefs_startup_idle_cb (GcmPrefsPriv *prefs)
 			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), prefs);
 
 	/* set calibrate button sensitivity */
+	gcm_prefs_sensor_coldplug (prefs);
 	gcm_prefs_set_calibrate_button_sensitivity (prefs);
 
 	/* we're probably showing now */
@@ -2721,10 +2738,12 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 			       gcm_prefs_get_devices_cb,
 			       prefs);
 
-	/* use the color device */
-	prefs->sensor_client = gcm_sensor_client_new ();
-	g_signal_connect (prefs->sensor_client, "changed",
-			  G_CALLBACK (gcm_prefs_sensor_client_changed_cb),
+	/* use the color sensor */
+	g_signal_connect (prefs->client, "sensor-added",
+			  G_CALLBACK (gcm_prefs_client_sensor_changed_cb),
+			  prefs);
+	g_signal_connect (prefs->client, "sensor-removed",
+			  G_CALLBACK (gcm_prefs_client_sensor_changed_cb),
 			  prefs);
 
 	/* use infobar */
@@ -2832,8 +2851,8 @@ main (int argc, char **argv)
 	g_object_unref (prefs->cancellable);
 	if (prefs->current_device != NULL)
 		g_object_unref (prefs->current_device);
-	if (prefs->sensor_client != NULL)
-		g_object_unref (prefs->sensor_client);
+	if (prefs->sensor != NULL)
+		g_object_unref (prefs->sensor);
 	if (prefs->settings != NULL)
 		g_object_unref (prefs->settings);
 	if (prefs->builder != NULL)

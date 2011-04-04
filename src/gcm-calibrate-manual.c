@@ -471,7 +471,7 @@ gcm_calibrate_manual_apply_cb (GtkWidget *widget, GcmCalibrateManual *calibrate)
  * gcm_calibrate_manual_display:
  **/
 static gboolean
-gcm_calibrate_manual_display (GcmCalibrate *calibrate_, GtkWindow *window, GError **error)
+gcm_calibrate_manual_display (GcmCalibrate *calibrate_, CdSensor *sensor, GtkWindow *window, GError **error)
 {
 	GtkWidget *widget;
 	guint i;

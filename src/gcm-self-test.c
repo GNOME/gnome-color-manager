@@ -26,14 +26,12 @@
 #include <glib/gstdio.h>
 
 #include "gcm-brightness.h"
-#include "gcm-buffer.h"
 #include "gcm-calibrate-dialog.h"
 #include "gcm-calibrate.h"
 #include "gcm-calibrate-manual.h"
 #include "gcm-calibrate-native.h"
 #include "gcm-cie-widget.h"
 #include "gcm-clut.h"
-#include "gcm-color.h"
 #include "gcm-debug.h"
 #include "gcm-dmi.h"
 #include "gcm-edid.h"
@@ -41,155 +39,17 @@
 #include "gcm-gamma-widget.h"
 #include "gcm-hull.h"
 #include "gcm-image.h"
-#include "gcm-math.h"
 #include "gcm-print.h"
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
 #include "gcm-sample-window.h"
-#include "gcm-sensor-dummy.h"
 #include "gcm-tables.h"
 #include "gcm-trc-widget.h"
-#include "gcm-usb.h"
 #include "gcm-utils.h"
 #include "gcm-x11-output.h"
 #include "gcm-x11-screen.h"
 
 #define TEST_MAIN_OUTPUT	"LVDS1"
-
-static void
-gcm_test_math_func (void)
-{
-	GcmColorRGBint rgb_int;
-	GcmColorRGB rgb;
-	GcmColorYxy Yxy;
-	GcmColorXYZ XYZ;
-	GcmMat3x3 mat;
-	GcmMat3x3 matsrc;
-
-	/* black */
-	rgb_int.R = 0x00; rgb_int.G = 0x00; rgb_int.B = 0x00;
-	gcm_color_convert_RGBint_to_RGB (&rgb_int, &rgb);
-	g_assert_cmpfloat (rgb.R, <, 0.01);
-	g_assert_cmpfloat (rgb.G, <, 0.01);
-	g_assert_cmpfloat (rgb.B, <, 0.01);
-	g_assert_cmpfloat (rgb.R, >, -0.01);
-	g_assert_cmpfloat (rgb.G, >, -0.01);
-	g_assert_cmpfloat (rgb.B, >, -0.01);
-
-	/* white */
-	rgb_int.R = 0xff; rgb_int.G = 0xff; rgb_int.B = 0xff;
-	gcm_color_convert_RGBint_to_RGB (&rgb_int, &rgb);
-	g_assert_cmpfloat (rgb.R, <, 1.01);
-	g_assert_cmpfloat (rgb.G, <, 1.01);
-	g_assert_cmpfloat (rgb.B, <, 1.01);
-	g_assert_cmpfloat (rgb.R, >, 0.99);
-	g_assert_cmpfloat (rgb.G, >, 0.99);
-	g_assert_cmpfloat (rgb.B, >, 0.99);
-
-	/* and back */
-	gcm_color_convert_RGB_to_RGBint (&rgb, &rgb_int);
-	g_assert_cmpint (rgb_int.R, ==, 0xff);
-	g_assert_cmpint (rgb_int.G, ==, 0xff);
-	g_assert_cmpint (rgb_int.B, ==, 0xff);
-
-	/* black */
-	rgb.R = 0.0f; rgb.G = 0.0f; rgb.B = 0.0f;
-	gcm_color_convert_RGB_to_RGBint (&rgb, &rgb_int);
-	g_assert_cmpint (rgb_int.R, ==, 0x00);
-	g_assert_cmpint (rgb_int.G, ==, 0x00);
-	g_assert_cmpint (rgb_int.B, ==, 0x00);
-
-	/* Yxy -> XYZ */
-	Yxy.Y = 21.5;
-	Yxy.x = 0.31;
-	Yxy.y = 0.32;
-	gcm_color_convert_Yxy_to_XYZ (&Yxy, &XYZ);
-	g_assert_cmpfloat (XYZ.X, <, 21.0);
-	g_assert_cmpfloat (XYZ.X, >, 20.5);
-	g_assert_cmpfloat (XYZ.Y, <, 22.0);
-	g_assert_cmpfloat (XYZ.Y, >, 21.0);
-	g_assert_cmpfloat (XYZ.Z, <, 25.0);
-	g_assert_cmpfloat (XYZ.Z, >, 24.5);
-
-	/* and back */
-	gcm_color_convert_XYZ_to_Yxy (&XYZ, &Yxy);
-	g_assert_cmpfloat (Yxy.Y, <, 22.0);
-	g_assert_cmpfloat (Yxy.Y, >, 21.0);
-	g_assert_cmpfloat (Yxy.x, <, 0.35);
-	g_assert_cmpfloat (Yxy.x, >, 0.25);
-	g_assert_cmpfloat (Yxy.y, <, 0.35);
-	g_assert_cmpfloat (Yxy.y, >, 0.25);
-
-	/* matrix */
-	mat.m00 = 1.00f;
-	gcm_mat33_clear (&mat);
-	g_assert_cmpfloat (mat.m00, <, 0.001f);
-	g_assert_cmpfloat (mat.m00, >, -0.001f);
-	g_assert_cmpfloat (mat.m22, <, 0.001f);
-	g_assert_cmpfloat (mat.m22, >, -0.001f);
-
-	/* multiply two matrices */
-	gcm_mat33_clear (&matsrc);
-	matsrc.m01 = matsrc.m10 = 2.0f;
-	gcm_mat33_matrix_multiply (&matsrc, &matsrc, &mat);
-	g_assert_cmpfloat (mat.m00, <, 4.1f);
-	g_assert_cmpfloat (mat.m00, >, 3.9f);
-	g_assert_cmpfloat (mat.m11, <, 4.1f);
-	g_assert_cmpfloat (mat.m11, >, 3.9f);
-	g_assert_cmpfloat (mat.m22, <, 0.001f);
-	g_assert_cmpfloat (mat.m22, >, -0.001f);
-}
-
-static void
-gcm_test_sensor_button_pressed_cb (GcmSensor *sensor, gint *signal_count)
-{
-	(*signal_count)++;
-}
-
-static void
-gcm_test_sensor_func (void)
-{
-	gboolean ret;
-	GError *error = NULL;
-	GcmSensor *sensor;
-	gdouble value;
-	GcmColorXYZ values;
-	gboolean signal_count = 0;
-
-	/* start sensor */
-	sensor = gcm_sensor_dummy_new ();
-	g_signal_connect (sensor, "button-pressed", G_CALLBACK (gcm_test_sensor_button_pressed_cb), &signal_count);
-
-	/* set LEDs */
-	ret = gcm_sensor_set_leds (sensor, 0x0f, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* set mode */
-	gcm_sensor_set_output_type (sensor, GCM_SENSOR_OUTPUT_TYPE_LCD);
-	g_assert_cmpint (gcm_sensor_get_output_type (sensor), ==, GCM_SENSOR_OUTPUT_TYPE_LCD);
-
-	/* get ambient */
-	ret = gcm_sensor_get_ambient (sensor, NULL, &value, &error);
-	g_assert_cmpint (signal_count, ==, 0);
-	g_assert_no_error (error);
-	g_assert (ret);
-	g_debug ("ambient = %.1lf Lux", value);
-
-	/* sample color */
-	ret = gcm_sensor_sample (sensor, NULL, &values, &error);
-	g_assert_cmpint (signal_count, ==, 1);
-	g_assert_no_error (error);
-	g_assert (ret);
-	g_debug ("X=%0.4lf, Y=%0.4lf, Z=%0.4lf", values.X, values.Y, values.Z);
-
-	/* set LEDs */
-	ret = gcm_sensor_set_leds (sensor, 0x00, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	g_object_unref (sensor);
-}
 
 typedef struct {
 	const gchar *monitor_name;
@@ -305,8 +165,8 @@ static void
 gcm_test_hull_func (void)
 {
 	GcmHull *hull;
-	GcmColorXYZ xyz;
-	GcmColorRGB color;
+	CdColorXYZ xyz;
+	CdColorRGB color;
 	guint faces[3];
 	gchar *data;
 
@@ -368,12 +228,12 @@ gcm_test_profile_func (void)
 	GcmClut *clut;
 	gboolean ret;
 	GError *error = NULL;
-	GcmColorXYZ *xyz;
-	GcmColorYxy yxy;
-	GcmColorYxy red;
-	GcmColorYxy green;
-	GcmColorYxy blue;
-	GcmColorYxy white;
+	CdColorXYZ *xyz;
+	CdColorYxy yxy;
+	CdColorYxy red;
+	CdColorYxy green;
+	CdColorYxy blue;
+	CdColorYxy white;
 	GcmHull *hull;
 	gchar *data;
 
@@ -405,10 +265,10 @@ gcm_test_profile_func (void)
 		      "red", &xyz,
 		      NULL);
 	g_assert (xyz != NULL);
-	gcm_color_convert_XYZ_to_Yxy (xyz, &yxy);
+	cd_color_convert_xyz_to_yxy (xyz, &yxy);
 	g_assert_cmpfloat (fabs (yxy.x - 0.648454), <, 0.01);
 
-	gcm_color_free_XYZ (xyz);
+	cd_color_xyz_free (xyz);
 	g_object_unref (clut);
 	g_object_unref (profile);
 
@@ -436,10 +296,10 @@ gcm_test_profile_func (void)
 	profile = gcm_profile_new ();
 
 	/* from my T61 */
-	gcm_color_set_Yxy (&red, 1.0f, 0.569336f, 0.332031f);
-	gcm_color_set_Yxy (&green, 1.0f, 0.311523f, 0.543945f);
-	gcm_color_set_Yxy (&blue, 1.0f, 0.149414f, 0.131836f);
-	gcm_color_set_Yxy (&white, 1.0f, 0.313477f, 0.329102f);
+	cd_color_set_yxy (&red, 1.0f, 0.569336f, 0.332031f);
+	cd_color_set_yxy (&green, 1.0f, 0.311523f, 0.543945f);
+	cd_color_set_yxy (&blue, 1.0f, 0.149414f, 0.131836f);
+	cd_color_set_yxy (&white, 1.0f, 0.313477f, 0.329102f);
 
 	/* create from chroma */
 	ret = gcm_profile_create_from_chroma (profile, 2.2f, &red, &green, &blue, &white, &error);
@@ -602,29 +462,6 @@ gcm_test_dmi_func (void)
 }
 
 static void
-gcm_test_xyz_func (void)
-{
-	GcmColorXYZ *xyz;
-	GcmColorYxy yxy;
-
-	xyz = gcm_color_new_XYZ ();
-	g_assert (xyz != NULL);
-
-	/* nothing set */
-	gcm_color_convert_XYZ_to_Yxy (xyz, &yxy);
-	g_assert_cmpfloat (fabs (yxy.x - 0.0f), <, 0.001f);
-
-	/* set dummy values */
-	gcm_color_set_XYZ (xyz, 0.125, 0.25, 0.5);
-	gcm_color_convert_XYZ_to_Yxy (xyz, &yxy);
-
-	g_assert_cmpfloat (fabs (yxy.x - 0.142857143f), <, 0.001f);
-	g_assert_cmpfloat (fabs (yxy.y - 0.285714286f), <, 0.001f);
-
-	gcm_color_free_XYZ (xyz);
-}
-
-static void
 gcm_test_profile_store_func (void)
 {
 	GcmProfileStore *store;
@@ -741,51 +578,6 @@ gcm_test_image_func (void)
 }
 
 static void
-gcm_test_usb_func (void)
-{
-	GcmUsb *usb;
-	gboolean ret;
-	GError *error = NULL;
-
-	usb = gcm_usb_new ();
-	g_assert (usb != NULL);
-	g_assert (!gcm_usb_get_connected (usb));
-	g_assert (gcm_usb_get_device_handle (usb) == NULL);
-
-	/* try to load */
-	ret = gcm_usb_load (usb, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* attach to the default mainloop */
-	gcm_usb_attach_to_context (usb, NULL);
-
-	/* connect to a non-existant device */
-	ret = gcm_usb_connect (usb, 0xffff, 0xffff, 0x1, 0x1, &error);
-	g_assert (!ret);
-	g_assert_error (error, GCM_USB_ERROR, GCM_USB_ERROR_INTERNAL);
-	g_error_free (error);
-
-	g_object_unref (usb);
-}
-
-static void
-gcm_test_buffer_func (void)
-{
-	guchar buffer[4];
-
-	gcm_buffer_write_uint16_be (buffer, 255);
-	g_assert_cmpint (buffer[0], ==, 0x00);
-	g_assert_cmpint (buffer[1], ==, 0xff);
-	g_assert_cmpint (gcm_buffer_read_uint16_be (buffer), ==, 255);
-
-	gcm_buffer_write_uint16_le (buffer, 8192);
-	g_assert_cmpint (buffer[0], ==, 0x00);
-	g_assert_cmpint (buffer[1], ==, 0x20);
-	g_assert_cmpint (gcm_buffer_read_uint16_le (buffer), ==, 8192);
-}
-
-static void
 gcm_test_x11_func (void)
 {
 	GcmX11Screen *screen;
@@ -870,7 +662,7 @@ gcm_test_sample_window_func (void)
 {
 	GtkWindow *window;
 	GMainLoop *loop;
-	GcmColorRGB source;
+	CdColorRGB source;
 
 	window = gcm_sample_window_new ();
 	g_assert (window != NULL);
@@ -1000,16 +792,16 @@ gcm_test_cie_widget_func (void)
 	GtkWidget *dialog;
 	GtkWidget *vbox;
 	GcmProfile *profile;
-	GcmColorXYZ *white;
-	GcmColorXYZ *red;
-	GcmColorXYZ *green;
-	GcmColorXYZ *blue;
+	CdColorXYZ *white;
+	CdColorXYZ *red;
+	CdColorXYZ *green;
+	CdColorXYZ *blue;
 	gint response;
 	GFile *file = NULL;
-	GcmColorYxy white_Yxy;
-	GcmColorYxy red_Yxy;
-	GcmColorYxy green_Yxy;
-	GcmColorYxy blue_Yxy;
+	CdColorYxy white_Yxy;
+	CdColorYxy red_Yxy;
+	CdColorYxy green_Yxy;
+	CdColorYxy blue_Yxy;
 
 	widget = gcm_cie_widget_new ();
 	g_assert (widget != NULL);
@@ -1025,10 +817,10 @@ gcm_test_cie_widget_func (void)
 		      NULL);
 	g_object_unref (file);
 
-	gcm_color_convert_XYZ_to_Yxy (white, &white_Yxy);
-	gcm_color_convert_XYZ_to_Yxy (red, &red_Yxy);
-	gcm_color_convert_XYZ_to_Yxy (green, &green_Yxy);
-	gcm_color_convert_XYZ_to_Yxy (blue, &blue_Yxy);
+	cd_color_convert_xyz_to_yxy (white, &white_Yxy);
+	cd_color_convert_xyz_to_yxy (red, &red_Yxy);
+	cd_color_convert_xyz_to_yxy (green, &green_Yxy);
+	cd_color_convert_xyz_to_yxy (blue, &blue_Yxy);
 
 	g_object_set (widget,
 		      "red", &red_Yxy,
@@ -1055,10 +847,10 @@ gcm_test_cie_widget_func (void)
 	gtk_widget_destroy (dialog);
 
 	g_object_unref (profile);
-	gcm_color_free_XYZ (white);
-	gcm_color_free_XYZ (red);
-	gcm_color_free_XYZ (green);
-	gcm_color_free_XYZ (blue);
+	cd_color_xyz_free (white);
+	cd_color_xyz_free (red);
+	cd_color_xyz_free (green);
+	cd_color_xyz_free (blue);
 }
 
 static void
@@ -1293,20 +1085,15 @@ main (int argc, char **argv)
 	g_test_add_func ("/color/exif", gcm_test_exif_func);
 	g_test_add_func ("/color/utils", gcm_test_utils_func);
 	g_test_add_func ("/color/calibrate_dialog", gcm_test_calibrate_dialog_func);
-	g_test_add_func ("/color/math", gcm_test_math_func);
 	g_test_add_func ("/color/hull", gcm_test_hull_func);
-	g_test_add_func ("/color/sensor", gcm_test_sensor_func);
 	g_test_add_func ("/color/edid", gcm_test_edid_func);
 	g_test_add_func ("/color/tables", gcm_test_tables_func);
 	g_test_add_func ("/color/profile", gcm_test_profile_func);
 	g_test_add_func ("/color/clut", gcm_test_clut_func);
-	g_test_add_func ("/color/xyz", gcm_test_xyz_func);
 	g_test_add_func ("/color/dmi", gcm_test_dmi_func);
 	g_test_add_func ("/color/x11", gcm_test_x11_func);
 	g_test_add_func ("/color/profile_store", gcm_test_profile_store_func);
-	g_test_add_func ("/color/buffer", gcm_test_buffer_func);
 	g_test_add_func ("/color/sample-window", gcm_test_sample_window_func);
-	g_test_add_func ("/color/usb", gcm_test_usb_func);
 	if (g_test_thorough ()) {
 		g_test_add_func ("/color/brightness", gcm_test_brightness_func);
 		g_test_add_func ("/color/image", gcm_test_image_func);

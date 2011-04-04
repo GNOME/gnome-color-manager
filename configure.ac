@@ -1,13 +1,7 @@
-# Copyright (C) 2010 Richard Hughes <richard@hughsie.com>
+# Copyright (C) 2010-2011 Richard Hughes <richard@hughsie.com>
 AC_PREREQ(2.63)
 
-m4_define([gcm_major_version], [3])
-m4_define([gcm_minor_version], [1])
-m4_define([gcm_micro_version], [1])
-m4_define([gcm_version],
-          [gcm_major_version.gcm_minor_version.gcm_micro_version])
-
-AC_INIT([gnome-color-manager],[gcm_version],[http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager])
+AC_INIT([gnome-color-manager],[3.1.1],[http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager])
 AC_CONFIG_SRCDIR(src)
 AM_INIT_AUTOMAKE([1.9 tar-ustar dist-bzip2])
 AC_CONFIG_HEADERS([config.h])
@@ -46,14 +40,6 @@ if test x$enable_strict != xno; then
 		CPPFLAGS="$CPPFLAGS -Werror"
 	fi
 fi
-
-# udev rules go in /lib, not /usr/lib
-if test "$prefix" = "/usr" -o "$prefix" = "/usr/local" ; then
-  slashlibdir=/lib
-else
-  slashlibdir=$prefix/lib
-fi
-AC_SUBST(slashlibdir)
 
 dnl ---------------------------------------------------------------------------
 dnl - Extra verbose warning switches
@@ -107,11 +93,9 @@ dnl ---------------------------------------------------------------------------
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.14.0 gobject-2.0 gthread-2.0 gio-2.0 >= 2.25.9)
 PKG_CHECK_MODULES(XORG, xrandr)
 PKG_CHECK_MODULES(GTK, gtk+-3.0 >= 2.91.0)
-PKG_CHECK_MODULES(GUDEV, gudev-1.0)
 PKG_CHECK_MODULES(LCMS, lcms2)
 PKG_CHECK_MODULES(X11, x11)
-PKG_CHECK_MODULES(COLORD, colord >= 0.1.2)
-PKG_CHECK_MODULES(SETTINGS_DAEMON, gnome-settings-daemon)
+PKG_CHECK_MODULES(COLORD, colord >= 0.1.6)
 PKG_CHECK_MODULES(USB, libusb-1.0 >= 1.0.9, has_new_libusb=yes, has_new_libusb=no)
 if test x$has_new_libusb = xyes; then
 	AC_DEFINE(HAVE_NEW_USB,1,[Got new libusb])
@@ -245,11 +229,8 @@ data/figures/Makefile
 help/Makefile
 man/Makefile
 po/Makefile.in
-rules/Makefile
 src/Makefile
 tools/Makefile
-docs/Makefile
-docs/huey/Makefile
 ])
 AC_OUTPUT
 

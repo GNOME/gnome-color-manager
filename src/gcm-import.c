@@ -29,7 +29,6 @@
 
 #include "gcm-profile.h"
 #include "gcm-utils.h"
-#include "gcm-color.h"
 #include "gcm-cie-widget.h"
 #include "gcm-debug.h"
 

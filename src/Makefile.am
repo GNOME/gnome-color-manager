@@ -11,9 +11,6 @@ INCLUDES =						\
 	$(NOTIFY_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
 	$(CLUTTER_CFLAGS)				\
-	$(SETTINGS_DAEMON_CFLAGS)			\
-	-DG_UDEV_API_IS_SUBJECT_TO_CHANGE		\
-	$(GUDEV_CFLAGS)					\
 	-DG_LOG_DOMAIN=\"Gcm\"				\
 	-DBINDIR=\"$(bindir)\"				\
 	-DLIBEXECDIR=\"$(libexecdir)\"			\
@@ -31,29 +28,12 @@ dist_introspection_DATA = org.gnome.ColorManager.xml
 
 noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\
-	gcm-brightness.c				\
-	gcm-brightness.h				\
-	gcm-buffer.c					\
-	gcm-buffer.h					\
 	gcm-hull.c					\
 	gcm-hull.h					\
-	gcm-compat.h					\
-	gcm-calibrate-argyll.c				\
-	gcm-calibrate-argyll.h				\
-	gcm-calibrate.c					\
-	gcm-calibrate-dialog.c				\
-	gcm-calibrate-dialog.h				\
-	gcm-calibrate.h					\
-	gcm-calibrate-manual.c				\
-	gcm-calibrate-manual.h				\
-	gcm-calibrate-native.c				\
-	gcm-calibrate-native.h				\
 	gcm-cie-widget.c				\
 	gcm-cie-widget.h				\
 	gcm-clut.c					\
 	gcm-clut.h					\
-	gcm-color.c					\
-	gcm-color.h					\
 	gcm-debug.c					\
 	gcm-debug.h					\
 	gcm-dmi.c					\
@@ -62,40 +42,16 @@ libgcmshared_a_SOURCES =				\
 	gcm-edid.h					\
 	gcm-exif.c					\
 	gcm-exif.h					\
-	gcm-gamma-widget.c				\
-	gcm-gamma-widget.h				\
 	gcm-image.c					\
 	gcm-image.h					\
-	gcm-math.c					\
-	gcm-math.h					\
 	gcm-print.c					\
 	gcm-print.h					\
 	gcm-profile.c					\
 	gcm-profile.h					\
-	gcm-profile-store.c				\
-	gcm-profile-store.h				\
-	gcm-sample-window.c				\
-	gcm-sample-window.h				\
-	gcm-sensor.c					\
-	gcm-sensor-client.c				\
-	gcm-sensor-client.h				\
-	gcm-sensor-colormunki.c				\
-	gcm-sensor-colormunki.h				\
-	gcm-sensor-colormunki-private.c			\
-	gcm-sensor-colormunki-private.h			\
-	gcm-sensor-dummy.c				\
-	gcm-sensor-dummy.h				\
-	gcm-sensor.h					\
-	gcm-sensor-huey.c				\
-	gcm-sensor-huey.h				\
-	gcm-sensor-huey-private.c			\
-	gcm-sensor-huey-private.h			\
 	gcm-tables.c					\
 	gcm-tables.h					\
 	gcm-trc-widget.c				\
 	gcm-trc-widget.h				\
-	gcm-usb.c					\
-	gcm-usb.h					\
 	gcm-utils.c					\
 	gcm-utils.h					\
 	gcm-x11-output.c				\
@@ -128,12 +84,28 @@ gcm_helper_exiv_CXXFLAGS = -Wall
 endif
 
 gcm_prefs_SOURCES =					\
-	gcm-list-store-profiles.c			\
-	gcm-list-store-profiles.h			\
-	gcm-cell-renderer-profile-text.c		\
-	gcm-cell-renderer-profile-text.h		\
+	gcm-brightness.c				\
+	gcm-brightness.h				\
+	gcm-calibrate-argyll.c				\
+	gcm-calibrate-argyll.h				\
+	gcm-calibrate.c					\
+	gcm-calibrate-dialog.c				\
+	gcm-calibrate-dialog.h				\
+	gcm-calibrate.h					\
+	gcm-calibrate-manual.c				\
+	gcm-calibrate-manual.h				\
+	gcm-calibrate-native.c				\
+	gcm-calibrate-native.h				\
 	gcm-cell-renderer-profile-icon.c		\
 	gcm-cell-renderer-profile-icon.h		\
+	gcm-cell-renderer-profile-text.c		\
+	gcm-cell-renderer-profile-text.h		\
+	gcm-gamma-widget.c				\
+	gcm-gamma-widget.h				\
+	gcm-list-store-profiles.c			\
+	gcm-list-store-profiles.h			\
+	gcm-sample-window.c				\
+	gcm-sample-window.h				\
 	gcm-prefs.c
 
 gcm_prefs_LDADD =					\
@@ -143,7 +115,6 @@ gcm_prefs_LDADD =					\
 	$(EXIF_LIBS)					\
 	$(GLIB_LIBS)					\
 	$(GTK_LIBS)					\
-	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(USB_LIBS)					\
@@ -162,7 +133,6 @@ gcm_inspect_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
-	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(LCMS_LIBS)					\
@@ -179,7 +149,6 @@ gcm_import_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
-	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(LCMS_LIBS)					\
@@ -199,7 +168,6 @@ gcm_viewer_LDADD =					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
 	$(VTE_LIBS)					\
-	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(TIFF_LIBS)					\
@@ -213,6 +181,14 @@ gcm_viewer_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_picker_SOURCES =					\
+	gcm-brightness.c				\
+	gcm-brightness.h				\
+	gcm-calibrate-argyll.c				\
+	gcm-calibrate-argyll.h				\
+	gcm-calibrate.c					\
+	gcm-calibrate-dialog.c				\
+	gcm-calibrate-dialog.h				\
+	gcm-calibrate.h					\
 	gcm-picker.c
 
 gcm_picker_LDADD =					\
@@ -220,7 +196,6 @@ gcm_picker_LDADD =					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
 	$(VTE_LIBS)					\
-	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(TIFF_LIBS)					\
@@ -235,13 +210,14 @@ gcm_picker_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_session_SOURCES =					\
+	gcm-profile-store.c				\
+	gcm-profile-store.h				\
 	gcm-session.c
 
 gcm_session_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
-	$(GUDEV_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(TIFF_LIBS)					\
@@ -249,6 +225,7 @@ gcm_session_LDADD =					\
 	$(NOTIFY_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(COLORD_LIBS)					\
+	$(CANBERRA_LIBS)				\
 	-lm
 
 gcm_session_CFLAGS =					\
@@ -260,14 +237,30 @@ check_PROGRAMS =					\
 	gcm-self-test
 
 gcm_self_test_SOURCES =					\
-	gcm-self-test.c					\
-	$(NULL)
+	gcm-brightness.c				\
+	gcm-brightness.h				\
+	gcm-calibrate-argyll.c				\
+	gcm-calibrate-argyll.h				\
+	gcm-calibrate.c					\
+	gcm-calibrate-dialog.c				\
+	gcm-calibrate-dialog.h				\
+	gcm-calibrate.h					\
+	gcm-calibrate-manual.c				\
+	gcm-calibrate-manual.h				\
+	gcm-calibrate-native.c				\
+	gcm-calibrate-native.h				\
+	gcm-gamma-widget.c				\
+	gcm-gamma-widget.h				\
+	gcm-sample-window.c				\
+	gcm-sample-window.h				\
+	gcm-profile-store.c				\
+	gcm-profile-store.h				\
+	gcm-self-test.c
 
 gcm_self_test_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
 	$(X11_LIBS)					\
-	$(GUDEV_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
@@ -275,6 +268,8 @@ gcm_self_test_LDADD =					\
 	$(TIFF_LIBS)					\
 	$(COLORD_LIBS)					\
 	$(EXIF_LIBS)					\
+	$(VTE_LIBS)					\
+	$(CANBERRA_LIBS)				\
 	-lm
 
 gcm_self_test_CFLAGS = $(AM_CFLAGS) $(WARNINGFLAGS_C)

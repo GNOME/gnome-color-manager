@@ -29,7 +29,6 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "gcm-color.h"
 #include "gcm-cie-widget.h"
 
 G_DEFINE_TYPE (GcmCieWidget, gcm_cie_widget, GTK_TYPE_DRAWING_AREA);
@@ -49,10 +48,10 @@ struct GcmCieWidgetPrivate
 
 	/* CIE x and y coordinates of its three primary illuminants and the
 	 * x and y coordinates of the white point. */
-	GcmColorYxy		*red;			/* red primary illuminant */
-	GcmColorYxy		*green;			/* green primary illuminant */
-	GcmColorYxy		*blue;			/* blue primary illuminant */
-	GcmColorYxy		*white;			/* white point */
+	CdColorYxy		*red;			/* red primary illuminant */
+	CdColorYxy		*green;			/* green primary illuminant */
+	CdColorYxy		*blue;			/* blue primary illuminant */
+	CdColorYxy		*white;			/* white point */
 	gdouble			 gamma;			/* gamma of nonlinear correction */
 };
 
@@ -440,16 +439,16 @@ gcm_cie_set_property (GObject *object, guint prop_id, const GValue *value, GPara
 		cie->priv->use_whitepoint = g_value_get_boolean (value);
 		break;
 	case PROP_RED:
-		gcm_color_copy_Yxy (g_value_get_boxed (value), priv->red);
+		cd_color_copy_yxy (g_value_get_boxed (value), priv->red);
 		break;
 	case PROP_GREEN:
-		gcm_color_copy_Yxy (g_value_get_boxed (value), priv->green);
+		cd_color_copy_yxy (g_value_get_boxed (value), priv->green);
 		break;
 	case PROP_BLUE:
-		gcm_color_copy_Yxy (g_value_get_boxed (value), priv->blue);
+		cd_color_copy_yxy (g_value_get_boxed (value), priv->blue);
 		break;
 	case PROP_WHITE:
-		gcm_color_copy_Yxy (g_value_get_boxed (value), priv->white);
+		cd_color_copy_yxy (g_value_get_boxed (value), priv->white);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -491,22 +490,22 @@ gcm_cie_widget_class_init (GcmCieWidgetClass *class)
 	g_object_class_install_property (object_class,
 					 PROP_RED,
 					 g_param_spec_boxed ("red", NULL, NULL,
-							     GCM_TYPE_COLOR_YXY,
+							     CD_TYPE_COLOR_YXY,
 							     G_PARAM_WRITABLE));
 	g_object_class_install_property (object_class,
 					 PROP_GREEN,
 					 g_param_spec_boxed ("green", NULL, NULL,
-							     GCM_TYPE_COLOR_YXY,
+							     CD_TYPE_COLOR_YXY,
 							     G_PARAM_WRITABLE));
 	g_object_class_install_property (object_class,
 					 PROP_BLUE,
 					 g_param_spec_boxed ("blue", NULL, NULL,
-							     GCM_TYPE_COLOR_YXY,
+							     CD_TYPE_COLOR_YXY,
 							     G_PARAM_WRITABLE));
 	g_object_class_install_property (object_class,
 					 PROP_WHITE,
 					 g_param_spec_boxed ("white", NULL, NULL,
-							     GCM_TYPE_COLOR_YXY,
+							     CD_TYPE_COLOR_YXY,
 							     G_PARAM_WRITABLE));
 }
 
@@ -517,10 +516,10 @@ void
 gcm_cie_widget_set_from_profile (GtkWidget *widget, GcmProfile *profile)
 {
 	GcmCieWidget *cie = GCM_CIE_WIDGET (widget);
-	GcmColorXYZ *white;
-	GcmColorXYZ *red;
-	GcmColorXYZ *green;
-	GcmColorXYZ *blue;
+	CdColorXYZ *white;
+	CdColorXYZ *red;
+	CdColorXYZ *green;
+	CdColorXYZ *blue;
 
 	/* get the new details from the profile */
 	g_object_get (profile,
@@ -531,10 +530,10 @@ gcm_cie_widget_set_from_profile (GtkWidget *widget, GcmProfile *profile)
 		      NULL);
 
 	/* copy into this widget */
-	gcm_color_convert_XYZ_to_Yxy (white, cie->priv->white);
-	gcm_color_convert_XYZ_to_Yxy (red, cie->priv->red);
-	gcm_color_convert_XYZ_to_Yxy (green, cie->priv->green);
-	gcm_color_convert_XYZ_to_Yxy (blue, cie->priv->blue);
+	cd_color_convert_xyz_to_yxy (white, cie->priv->white);
+	cd_color_convert_xyz_to_yxy (red, cie->priv->red);
+	cd_color_convert_xyz_to_yxy (green, cie->priv->green);
+	cd_color_convert_xyz_to_yxy (blue, cie->priv->blue);
 
 	/* hide if we have no data */
 	if (cie->priv->white->x > 0.001) {
@@ -545,10 +544,10 @@ gcm_cie_widget_set_from_profile (GtkWidget *widget, GcmProfile *profile)
 	}
 
 	/* free */
-	gcm_color_free_XYZ (white);
-	gcm_color_free_XYZ (red);
-	gcm_color_free_XYZ (green);
-	gcm_color_free_XYZ (blue);
+	cd_color_xyz_free (white);
+	cd_color_xyz_free (red);
+	cd_color_xyz_free (green);
+	cd_color_xyz_free (blue);
 }
 
 /**
@@ -567,10 +566,10 @@ gcm_cie_widget_init (GcmCieWidget *cie)
 	cie->priv->tongue_buffer = g_ptr_array_new_with_free_func (g_free);
 
 	/* default is CIE REC 709 */
-	cie->priv->red = gcm_color_new_Yxy ();
-	cie->priv->green = gcm_color_new_Yxy ();
-	cie->priv->blue = gcm_color_new_Yxy ();
-	cie->priv->white = gcm_color_new_Yxy ();
+	cie->priv->red = cd_color_yxy_new ();
+	cie->priv->green = cd_color_yxy_new ();
+	cie->priv->blue = cd_color_yxy_new ();
+	cie->priv->white = cd_color_yxy_new ();
 	cie->priv->red->x = 0.64;
 	cie->priv->red->y = 0.33;
 	cie->priv->green->x = 0.30;
@@ -603,10 +602,10 @@ gcm_cie_widget_finalize (GObject *object)
 
 	context = pango_layout_get_context (cie->priv->layout);
 	g_object_unref (cie->priv->layout);
-	gcm_color_free_Yxy (cie->priv->white);
-	gcm_color_free_Yxy (cie->priv->red);
-	gcm_color_free_Yxy (cie->priv->green);
-	gcm_color_free_Yxy (cie->priv->blue);
+	cd_color_yxy_free (cie->priv->white);
+	cd_color_yxy_free (cie->priv->red);
+	cd_color_yxy_free (cie->priv->green);
+	cd_color_yxy_free (cie->priv->blue);
 	g_object_unref (context);
 	g_ptr_array_unref (cie->priv->tongue_buffer);
 	G_OBJECT_CLASS (gcm_cie_widget_parent_class)->finalize (object);

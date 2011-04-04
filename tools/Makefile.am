@@ -23,9 +23,7 @@ INCLUDES =						\
 
 noinst_PROGRAMS =					\
 	gcm-dump-profile				\
-	gcm-dump-sensor					\
-	gcm-fix-profile					\
-	gcm-sensor-example
+	gcm-fix-profile
 
 gcm_dump_profile_SOURCES =				\
 	gcm-dump-profile.c
@@ -40,20 +38,6 @@ gcm_dump_profile_LDADD =				\
 gcm_dump_profile_CFLAGS =				\
 	$(WARNINGFLAGS_C)
 
-gcm_dump_sensor_SOURCES =				\
-	gcm-dump-sensor.c
-
-gcm_dump_sensor_LDADD =					\
-	$(GLIB_LIBS)					\
-	$(LCMS_LIBS)					\
-	$(USB_LIBS)					\
-	$(GUDEV_LIBS)					\
-	$(top_builddir)/src/libgcmshared.a		\
-	-lm
-
-gcm_dump_sensor_CFLAGS =				\
-	$(WARNINGFLAGS_C)
-
 gcm_fix_profile_SOURCES =				\
 	gcm-fix-profile.c
 
@@ -64,19 +48,6 @@ gcm_fix_profile_LDADD =					\
 	-lm
 
 gcm_fix_profile_CFLAGS =				\
-	$(WARNINGFLAGS_C)
-
-gcm_sensor_example_SOURCES =				\
-	gcm-sensor-example.c
-
-gcm_sensor_example_LDADD =				\
-	$(GLIB_LIBS)					\
-	$(USB_LIBS)					\
-	$(GUDEV_LIBS)					\
-	$(top_builddir)/src/libgcmshared.a		\
-	$(LCMS_LIBS)
-
-gcm_sensor_example_CFLAGS =				\
 	$(WARNINGFLAGS_C)
 
 clean-local:

@@ -50,15 +50,19 @@ struct _GcmCalibrateClass
 	GObjectClass	parent_class;
 	/* vtable */
 	gboolean	 (*calibrate_display)		(GcmCalibrate	*calibrate,
+							 CdSensor	*sensor,
 							 GtkWindow	*window,
 							 GError		**error);
 	gboolean	 (*calibrate_device)		(GcmCalibrate	*calibrate,
+							 CdSensor	*sensor,
 							 GtkWindow	*window,
 							 GError		**error);
 	gboolean	 (*calibrate_printer)		(GcmCalibrate	*calibrate,
+							 CdSensor	*sensor,
 							 GtkWindow	*window,
 							 GError		**error);
 	gboolean	 (*calibrate_spotread)		(GcmCalibrate	*calibrate,
+							 CdSensor	*sensor,
 							 GtkWindow	*window,
 							 GError		**error);
 	/* padding for future expansion */
@@ -130,6 +134,7 @@ gboolean	 gcm_calibrate_spotread			(GcmCalibrate	*calibrate,
 							 GError		**error);
 gboolean	 gcm_calibrate_set_from_device		(GcmCalibrate	*calibrate,
 							 CdDevice	*device,
+							 CdSensor	*sensor,
 							 GError		**error);
 gboolean	 gcm_calibrate_set_from_exif		(GcmCalibrate	*calibrate,
 							 const gchar	*filename,

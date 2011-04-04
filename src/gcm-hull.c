@@ -23,8 +23,8 @@
 
 #include <glib-object.h>
 #include <math.h>
+#include <colord.h>
 
-#include "gcm-color.h"
 #include "gcm-hull.h"
 
 static void     gcm_hull_finalize	(GObject     *object);
@@ -44,8 +44,8 @@ struct _GcmHullPrivate
 };
 
 typedef struct {
-	GcmColorXYZ	 xyz;
-	GcmColorRGB	 color;
+	CdColorXYZ	 xyz;
+	CdColorRGB	 color;
 } GcmHullVertex;
 
 typedef struct {
@@ -85,13 +85,13 @@ g_hull_face_free (GcmHullFace *face)
  **/
 void
 gcm_hull_add_vertex (GcmHull *hull,
-		     GcmColorXYZ *xyz,
-		     GcmColorRGB *color)
+		     CdColorXYZ *xyz,
+		     CdColorRGB *color)
 {
 	GcmHullVertex *new;
 	new = g_slice_new (GcmHullVertex);
-	gcm_color_copy_XYZ (xyz, &new->xyz);
-	gcm_color_copy_RGB (color, &new->color);
+	cd_color_copy_xyz (xyz, &new->xyz);
+	cd_color_copy_rgb (color, &new->color);
 	g_ptr_array_add (hull->priv->vertices, new);
 }
 
@@ -120,7 +120,7 @@ gcm_hull_export_to_ply (GcmHull *hull)
 	guint i;
 	GcmHullFace *face;
 	GcmHullVertex *vertex;
-	GcmColorRGBint tmp;
+	CdColorRGB8 tmp;
 
 	string = g_string_new ("ply\nformat ascii 1.0\n");
 	g_string_append_printf (string, "element vertex %i\n",
@@ -138,7 +138,7 @@ gcm_hull_export_to_ply (GcmHull *hull)
 
 	for (i=0; i<hull->priv->vertices->len; i++) {
 		vertex = g_ptr_array_index (hull->priv->vertices, i);
-		gcm_color_convert_RGB_to_RGBint (&vertex->color, &tmp);
+		cd_color_convert_rgb_to_rgb8 (&vertex->color, &tmp);
 		g_string_append_printf (string, "%lf %lf %lf %i %i %i\n",
 					vertex->xyz.X,
 					vertex->xyz.Y,

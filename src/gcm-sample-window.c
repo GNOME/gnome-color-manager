@@ -104,7 +104,7 @@ gcm_sample_window_set_percentage (GcmSampleWindow *sample_window, guint percenta
  * Sets the window to a specific color.
  **/
 void
-gcm_sample_window_set_color (GcmSampleWindow *sample_window, const GcmColorRGB *color)
+gcm_sample_window_set_color (GcmSampleWindow *sample_window, const CdColorRGB *color)
 {
 	GdkPixbuf *pixbuf;
 	gint width;

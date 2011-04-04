@@ -39,7 +39,6 @@
 #include "gcm-profile.h"
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
-#include "gcm-color.h"
 #include "gcm-debug.h"
 
 #ifdef HAVE_CLUTTER
