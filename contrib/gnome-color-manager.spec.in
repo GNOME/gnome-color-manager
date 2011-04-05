@@ -1,7 +1,5 @@
 %define alphatag                        #ALPHATAG#
 
-%{!?python_sitelib: %define python_sitelib %(python -c "from distutils.sysconfig import get_python_lib; print get_python_lib()")}
-
 Summary:   Color management tools for GNOME
 Name:      gnome-color-manager
 Version:   #VERSION#
@@ -9,7 +7,7 @@ Release:   0.#BUILD#%{?alphatag}%{?dist}
 License:   GPLv2+
 Group:     Applications/System
 URL:       http://projects.gnome.org/gnome-color-manager/
-Source0:   http://download.gnome.org/sources/gnome-color-manager/2.91/%{name}-%{version}.tar.gz
+Source0:   http://download.gnome.org/sources/gnome-color-manager/3.0/%{name}-%{version}.tar.gz
 
 Requires:  color-filesystem >= 1-7
 Requires:  gnome-icon-theme
@@ -24,7 +22,7 @@ BuildRequires: gnome-doc-utils >= 0.3.2
 BuildRequires: desktop-file-utils
 BuildRequires: gettext
 BuildRequires: libtool
-#BuildRequires: vte-devel
+BuildRequires: vte3-devel
 BuildRequires: gnome-doc-utils
 BuildRequires: intltool
 BuildRequires: libgudev1-devel
@@ -36,9 +34,6 @@ BuildRequires: exiv2-devel
 BuildRequires: libcanberra-devel
 BuildRequires: libnotify-devel >= 0.7.0
 BuildRequires: glib2-devel >= 2.25.9-2
-BuildRequires: control-center-devel >= 2.90.1
-BuildRequires: gnome-settings-daemon-devel >= 2.90.1
-BuildRequires: libusb1-devel
 BuildRequires: docbook-utils
 
 %description
@@ -87,10 +82,7 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING NEWS README
-/lib/udev/rules.d/*.rules
-/lib/udev/gcm-*
 %{_bindir}/gcm-*
-%{_libexecdir}/*
 %dir %{_datadir}/gnome-color-manager
 %{_datadir}/gnome-color-manager/gcm-*.ui
 %dir %{_datadir}/gnome-color-manager/targets
