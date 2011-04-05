@@ -193,11 +193,18 @@ gcm_picker_refresh_results (void)
 
 	/* set error */
 	label = GTK_LABEL (gtk_builder_get_object (builder, "label_error"));
-	text_error = g_strdup_printf ("%.1f%%, %.1f%%, %.1f%%",
-				      ABS ((color_error.X - color_xyz.X) / color_xyz.X * 100),
-				      ABS ((color_error.Y - color_xyz.Y) / color_xyz.Y * 100),
-				      ABS ((color_error.Z - color_xyz.Z) / color_xyz.Z * 100));
-	gtk_label_set_label (label, text_error);
+	if (color_xyz.X > 0.01f &&
+	    color_xyz.Y > 0.01f &&
+	    color_xyz.Z > 0.01f) {
+		text_error = g_strdup_printf ("%.1f%%, %.1f%%, %.1f%%",
+					      ABS ((color_error.X - color_xyz.X) / color_xyz.X * 100),
+					      ABS ((color_error.Y - color_xyz.Y) / color_xyz.Y * 100),
+					      ABS ((color_error.Z - color_xyz.Z) / color_xyz.Z * 100));
+		gtk_label_set_label (label, text_error);
+	} else {
+		/* TRANSLATORS: this is when the error is invalid */
+		gtk_label_set_label (label, _("Unknown"));
+	}
 
 	/* set ambient */
 	label = GTK_LABEL (gtk_builder_get_object (builder, "label_ambient"));
