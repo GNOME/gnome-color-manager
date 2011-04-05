@@ -11,6 +11,7 @@ dist_migration_DATA = org.gnome.color-manager.gschema.migrate
 desktopdir = $(datadir)/applications
 desktop_in_files =					\
 	gcm-viewer.desktop.in				\
+	gcm-picker.desktop.in				\
 	gcm-prefs.desktop.in				\
 	gcm-import.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
@@ -53,6 +54,7 @@ DISTCLEANFILES =					\
 	org.gnome.ColorManager.service			\
 	gcm-session.desktop				\
 	gcm-prefs.desktop				\
+	gcm-picker.desktop				\
 	gcm-viewer.desktop				\
 	gcm-import.desktop
 
