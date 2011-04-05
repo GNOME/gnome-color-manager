@@ -117,7 +117,6 @@ gcm_prefs_LDADD =					\
 	$(GTK_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(TIFF_LIBS)					\
-	$(USB_LIBS)					\
 	$(VTE_LIBS)					\
 	$(X11_LIBS)					\
 	$(XORG_LIBS)					\
@@ -199,7 +198,6 @@ gcm_picker_LDADD =					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
 	$(TIFF_LIBS)					\
-	$(USB_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(EXIF_LIBS)					\
 	$(CANBERRA_LIBS)				\
@@ -264,7 +262,6 @@ gcm_self_test_LDADD =					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
-	$(USB_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(COLORD_LIBS)					\
 	$(EXIF_LIBS)					\

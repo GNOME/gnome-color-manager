@@ -96,12 +96,6 @@ PKG_CHECK_MODULES(GTK, gtk+-3.0 >= 2.91.0)
 PKG_CHECK_MODULES(LCMS, lcms2)
 PKG_CHECK_MODULES(X11, x11)
 PKG_CHECK_MODULES(COLORD, colord >= 0.1.6)
-PKG_CHECK_MODULES(USB, libusb-1.0 >= 1.0.9, has_new_libusb=yes, has_new_libusb=no)
-if test x$has_new_libusb = xyes; then
-	AC_DEFINE(HAVE_NEW_USB,1,[Got new libusb])
-else
-	PKG_CHECK_MODULES(USB, libusb-1.0 >= 1.0.0)
-fi
 
 PKG_CHECK_MODULES(CLUTTER, clutter-gtk-1.0 mash-0.1, has_clutter=yes, has_clutter=no)
 AM_CONDITIONAL(HAVE_CLUTTER, test x$has_clutter = xyes)
@@ -247,7 +241,6 @@ echo "
         PackageKit integration:    ${enable_packagekit}
         RAW support:               ${enable_exiv}
         VTE support:               ${has_vte}
-        New LIBUSB:                ${has_new_libusb}
         3D support:                ${has_clutter}
         building unit tests:       ${enable_tests}
 "
