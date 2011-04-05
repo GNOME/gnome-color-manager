@@ -46,6 +46,7 @@ typedef struct {
 	GDBusNodeInfo	*introspection;
 	GMainLoop	*loop;
 	GSettings	*settings;
+	guint		 watcher_id;
 } GcmSessionPrivate;
 
 #define GCM_SESSION_NOTIFY_TIMEOUT		30000 /* ms */
@@ -1533,6 +1534,38 @@ gcm_session_sensor_removed_cb (CdClient *client,
 }
 
 /**
+ * gcm_session_client_connect_cb:
+ **/
+static void
+gcm_session_client_connect_cb (GObject *source_object,
+			       GAsyncResult *res,
+			       gpointer user_data)
+{
+	gboolean ret;
+	GError *error = NULL;
+	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
+
+	/* connected */
+	g_debug ("connected to colord");
+	ret = cd_client_connect_finish (priv->client, res, &error);
+	if (!ret) {
+		g_warning ("failed to connect to colord: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* watch to see when colord appears */
+	priv->watcher_id = g_bus_watch_name (G_BUS_TYPE_SYSTEM,
+					     "org.freedesktop.ColorManager",
+					     G_BUS_NAME_WATCHER_FLAGS_NONE,
+					     gcm_session_colord_appeared_cb,
+					     gcm_session_colord_vanished_cb,
+					     priv, NULL);
+out:
+	return;
+}
+
+/**
  * main:
  **/
 int
@@ -1547,7 +1580,6 @@ main (int argc, char *argv[])
 	guint owner_id = 0;
 	guint poll_id = 0;
 	guint retval = 1;
-	guint watcher_id = 0;
 	GcmSessionPrivate *priv;
 
 	const GOptionEntry options[] = {
@@ -1610,12 +1642,10 @@ main (int argc, char *argv[])
 	g_signal_connect (priv->client, "sensor-removed",
 			  G_CALLBACK (gcm_session_sensor_removed_cb),
 			  priv);
-	ret = cd_client_connect_sync (priv->client, NULL, &error);
-	if (!ret) {
-		g_warning ("failed to connect to colord: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
+	cd_client_connect (priv->client,
+			   NULL,
+			   gcm_session_client_connect_cb,
+			   priv);
 
 	/* have access to all profiles */
 	priv->profile_store = gcm_profile_store_new ();
@@ -1636,6 +1666,7 @@ main (int argc, char *argv[])
 	}
 
 	/* create new objects */
+	g_debug ("spinning loop");
 	priv->loop = g_main_loop_new (NULL, FALSE);
 
 	/* load introspection from file */
@@ -1664,14 +1695,6 @@ main (int argc, char *argv[])
 				   gcm_session_on_name_lost,
 				   priv, NULL);
 
-	/* watch to see when colord appears */
-	watcher_id = g_bus_watch_name (G_BUS_TYPE_SYSTEM,
-				       "org.freedesktop.ColorManager",
-				       G_BUS_NAME_WATCHER_FLAGS_NONE,
-				       gcm_session_colord_appeared_cb,
-				       gcm_session_colord_vanished_cb,
-				       priv, NULL);
-
 	/* wait */
 	g_main_loop_run (priv->loop);
 
@@ -1679,8 +1702,6 @@ main (int argc, char *argv[])
 	retval = 0;
 out:
 	g_free (introspection_data);
-	if (watcher_id > 0)
-		g_bus_unwatch_name (watcher_id);
 	if (poll_id != 0)
 		g_source_remove (poll_id);
 	if (file != NULL)
@@ -1688,6 +1709,8 @@ out:
 	if (owner_id > 0)
 		g_bus_unown_name (owner_id);
 	if (priv != NULL) {
+		if (priv->watcher_id > 0)
+			g_bus_unwatch_name (priv->watcher_id);
 		if (priv->profile_store != NULL)
 			g_object_unref (priv->profile_store);
 		if (priv->dmi != NULL)
