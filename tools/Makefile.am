@@ -22,8 +22,7 @@ INCLUDES =						\
 	-DGCM_DATA=\"$(pkgdatadir)\"
 
 noinst_PROGRAMS =					\
-	gcm-dump-profile				\
-	gcm-fix-profile
+	gcm-dump-profile
 
 gcm_dump_profile_SOURCES =				\
 	gcm-dump-profile.c
@@ -36,18 +35,6 @@ gcm_dump_profile_LDADD =				\
 	-lm
 
 gcm_dump_profile_CFLAGS =				\
-	$(WARNINGFLAGS_C)
-
-gcm_fix_profile_SOURCES =				\
-	gcm-fix-profile.c
-
-gcm_fix_profile_LDADD =					\
-	$(GLIB_LIBS)					\
-	$(LCMS_LIBS)					\
-	$(top_builddir)/src/libgcmshared.a		\
-	-lm
-
-gcm_fix_profile_CFLAGS =				\
 	$(WARNINGFLAGS_C)
 
 clean-local:
