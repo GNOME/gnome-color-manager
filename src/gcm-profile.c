@@ -1399,6 +1399,7 @@ gcm_profile_generate_curve (GcmProfile *profile, guint size)
 	cmsHTRANSFORM transform = NULL;
 	guint type;
 	CdColorspace colorspace;
+	gdouble tmp;
 	GcmProfilePrivate *priv = profile->priv;
 
 	/* run through the profile */
@@ -1452,9 +1453,21 @@ gcm_profile_generate_curve (GcmProfile *profile, guint size)
 		for (i=0; i<size; i++) {
 			data = g_new0 (GcmClutData, 1);
 
-			data->red = values_out[(i * 3 * component_width)+0] * (gfloat) 0xffff;
-			data->green = values_out[(i * 3 * component_width)+4] * (gfloat) 0xffff;
-			data->blue = values_out[(i * 3 * component_width)+8] * (gfloat) 0xffff;
+			/* default values */
+			data->red = 0;
+			data->green = 0;
+			data->blue = 0;
+
+			/* only save curve data if it is positive */
+			tmp = values_out[(i * 3 * component_width)+0] * (gfloat) 0xffff;
+			if (tmp > 0.0f)
+				data->red = tmp;
+			tmp = values_out[(i * 3 * component_width)+4] * (gfloat) 0xffff;
+			if (tmp > 0.0f)
+				data->green = tmp;
+			tmp = values_out[(i * 3 * component_width)+8] * (gfloat) 0xffff;
+			if (tmp > 0.0f)
+				data->blue = tmp;
 			g_ptr_array_add (array, data);
 		}
 		clut = gcm_clut_new ();
