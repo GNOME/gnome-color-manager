@@ -28,6 +28,7 @@
 #include <colord.h>
 #include <libnotify/notify.h>
 #include <canberra-gtk.h>
+#include <lcms2.h>
 
 #include "gcm-debug.h"
 #include "gcm-dmi.h"
@@ -1181,20 +1182,63 @@ gcm_session_key_changed_cb (GSettings *settings,
 }
 
 /**
- * gcm_session_get_file_checksum:
+ * gcm_session_get_precooked_md5:
  **/
 static gchar *
-gcm_session_get_file_checksum (const gchar *filename,
-			       GError **error)
+gcm_session_get_precooked_md5 (cmsHPROFILE lcms_profile)
+{
+	cmsUInt8Number profile_id[16];
+	gboolean md5_precooked = FALSE;
+	guint i;
+	gchar *md5 = NULL;
+
+	/* check to see if we have a pre-cooked MD5 */
+	cmsGetHeaderProfileID (lcms_profile, profile_id);
+	for (i=0; i<16; i++) {
+		if (profile_id[i] != 0) {
+			md5_precooked = TRUE;
+			break;
+		}
+	}
+	if (!md5_precooked)
+		goto out;
+
+	/* convert to a hex string */
+	md5 = g_new0 (gchar, 32 + 1);
+	for (i=0; i<16; i++)
+		g_snprintf (md5 + i*2, 3, "%x", profile_id[i]);
+out:
+	return md5;
+}
+
+/**
+ * gcm_session_get_md5_for_filename:
+ **/
+static gchar *
+gcm_session_get_md5_for_filename (const gchar *filename,
+				  GError **error)
 {
 	gboolean ret;
 	gchar *checksum = NULL;
 	gchar *data = NULL;
 	gsize length;
+	cmsHPROFILE lcms_profile = NULL;
 
 	/* read file */
 	ret = g_file_get_contents (filename, &data, &length, error);
 	if (!ret)
+		goto out;
+
+	/* get the internal profile id, if it exists */
+	lcms_profile = cmsOpenProfileFromMem (data, length);
+	if (lcms_profile == NULL) {
+		ret = FALSE;
+		g_set_error_literal (error, 1, 0,
+				     "failed to load: not an ICC profile");
+		goto out;
+	}
+	checksum = gcm_session_get_precooked_md5 (lcms_profile);
+	if (checksum != NULL)
 		goto out;
 
 	/* generate checksum */
@@ -1203,8 +1247,11 @@ gcm_session_get_file_checksum (const gchar *filename,
 						length);
 out:
 	g_free (data);
+	if (lcms_profile != NULL)
+		cmsCloseProfile (lcms_profile);
 	return checksum;
 }
+
 
 /**
  * gcm_session_profile_store_added_cb:
@@ -1223,7 +1270,7 @@ gcm_session_profile_store_added_cb (GcmProfileStore *profile_store_,
 	g_debug ("profile %s added", filename);
 
 	/* generate ID */
-	checksum = gcm_session_get_file_checksum (filename, &error);
+	checksum = gcm_session_get_md5_for_filename (filename, &error);
 	if (checksum == NULL) {
 		g_warning ("failed to get profile checksum: %s",
 			   error->message);
