@@ -1283,6 +1283,9 @@ gcm_session_profile_store_added_cb (GcmProfileStore *profile_store_,
 	g_hash_table_insert (profile_props,
 			     g_strdup ("Filename"),
 			     g_strdup (filename));
+	g_hash_table_insert (profile_props,
+			     g_strdup ("FILE_checksum"),
+			     g_strdup (checksum));
 	profile = cd_client_create_profile_sync (priv->client,
 						 profile_id,
 						 CD_OBJECT_SCOPE_TEMP,
