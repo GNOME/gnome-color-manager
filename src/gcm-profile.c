@@ -1070,6 +1070,13 @@ gcm_profile_save (GcmProfile *profile, const gchar *filename, GError **error)
 		}
 	}
 
+	/* write profile id */
+	ret = cmsMD5computeID (priv->lcms_profile);
+	if (!ret) {
+		g_set_error_literal (error, 1, 0, "failed to write profile id");
+		goto out;
+	}
+
 	/* save, TODO: get error */
 	cmsSaveProfileToFile (priv->lcms_profile, filename);
 	ret = TRUE;
