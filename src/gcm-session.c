@@ -1317,20 +1317,34 @@ gcm_session_profile_store_removed_cb (GcmProfileStore *profile_store_,
 {
 	gboolean ret;
 	GError *error = NULL;
+	CdProfile *profile;
 
-	g_debug ("profile %s removed", filename);
+	/* find the ID for the filename */
+	g_debug ("filename %s removed", filename);
+	profile = cd_client_find_profile_by_filename_sync (priv->client,
+							   filename,
+							   NULL,
+							   &error);
+	if (profile == NULL) {
+		g_warning ("%s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* remove it from colord */
+	g_debug ("profile %s removed", cd_profile_get_id (profile));
 	ret = cd_client_delete_profile_sync (priv->client,
-					     filename,
+					     cd_profile_get_id (profile),
 					     NULL,
 					     &error);
 	if (!ret) {
-		g_warning ("failed to create profile: %s",
-			   error->message);
+		g_warning ("%s", error->message);
 		g_error_free (error);
 		goto out;
 	}
 out:
-	return;
+	if(profile != NULL)
+		g_object_unref (profile);
 }
 
 /**

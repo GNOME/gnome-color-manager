@@ -901,6 +901,8 @@ gcm_viewer_client_profile_added_cb (CdClient *client,
 				    CdProfile *profile,
 				    GcmViewerPrivate *viewer)
 {
+	g_debug ("%s added, rescanning",
+		 cd_profile_get_id (profile));
 	gcm_viewer_update_profile_list (viewer);
 }
 
@@ -912,6 +914,8 @@ gcm_viewer_client_profile_removed_cb (CdClient *client,
 				      CdProfile *profile,
 				      GcmViewerPrivate *viewer)
 {
+	g_debug ("%s removed, rescanning",
+		 cd_profile_get_id (profile));
 	gcm_viewer_update_profile_list (viewer);
 }
 
