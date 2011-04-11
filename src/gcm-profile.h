@@ -140,6 +140,8 @@ const gchar	*gcm_profile_get_data			(GcmProfile	*profile,
 void		 gcm_profile_set_data			(GcmProfile	*profile,
 							 const gchar	*key,
 							 const gchar	*data);
+GPtrArray	*gcm_profile_get_named_colors		(GcmProfile	*profile,
+							 GError		**error);
 
 G_END_DECLS
 

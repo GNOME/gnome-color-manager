@@ -38,6 +38,7 @@
 
 #include "gcm-profile.h"
 #include "gcm-hull.h"
+#include "gcm-named-color.h"
 
 static void     gcm_profile_finalize	(GObject     *object);
 
@@ -1916,6 +1917,110 @@ out:
 	if (srgb_transform != NULL)
 		cmsDeleteTransform (srgb_transform);
 	return hull;
+}
+
+/**
+ * gcm_profile_get_named_colors:
+ **/
+GPtrArray *
+gcm_profile_get_named_colors (GcmProfile *profile, GError **error)
+{
+	CdColorLab lab;
+	CdColorXYZ xyz;
+	cmsHPROFILE profile_lab = NULL;
+	cmsHPROFILE profile_xyz = NULL;
+	cmsHTRANSFORM xform = NULL;
+	cmsNAMEDCOLORLIST *nc2 = NULL;
+	cmsUInt16Number pcs[3];
+	cmsUInt32Number count;
+	gboolean ret;
+	gchar name[cmsMAX_PATH];
+	gchar prefix[33];
+	gchar suffix[33];
+	gchar *utf8_tmp;
+	GcmNamedColor *nc;
+	GcmProfilePrivate *priv = profile->priv;
+	GError *error_local = NULL;
+	GPtrArray *array = NULL;
+	GString *string;
+	guint i;
+
+	/* setup a dummy transform so we can get all the named colors */
+	profile_lab = cmsCreateLab2Profile (NULL);
+	profile_xyz = cmsCreateXYZProfile ();
+	xform = cmsCreateTransform (profile_lab, TYPE_Lab_DBL,
+				    profile_xyz, TYPE_XYZ_DBL,
+				    INTENT_ABSOLUTE_COLORIMETRIC, 0);
+	if (xform == NULL) {
+		g_set_error_literal (error, 1, 0, "no transform");
+		goto out;
+	}
+
+	/* retrieve named color list from transform */
+	nc2 = cmsReadTag (priv->lcms_profile, cmsSigNamedColor2Tag);
+	if (nc2 == NULL) {
+		g_set_error_literal (error, 1, 0, "no named color list");
+		goto out;
+	}
+
+	/* get the number of NCs */
+	count = cmsNamedColorCount (nc2);
+	if (count == 0) {
+		g_set_error_literal (error, 1, 0, "no named colors");
+		goto out;
+	}
+	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
+	for (i=0; i<count; i++) {
+
+		/* parse title */
+		string = g_string_new ("");
+		ret = cmsNamedColorInfo (nc2, i,
+					 name,
+					 prefix,
+					 suffix,
+					 (cmsUInt16Number *)&pcs,
+					 NULL);
+		if (!ret) {
+			g_warning ("failed to get NC #%i", i);
+			goto out;
+		}
+		if (prefix[0] != '\0')
+			g_string_append_printf (string, "%s ", prefix);
+		g_string_append (string, name);
+		if (suffix[0] != '\0')
+			g_string_append_printf (string, " %s", suffix);
+		utf8_tmp = g_locale_to_utf8 (string->str, -1,
+					     NULL, NULL,
+					     &error_local);
+		if (utf8_tmp == NULL) {
+			g_warning ("failed to convert '%s' to utf8: %s",
+				   string->str, error_local->message);
+			g_clear_error (&error_local);
+			g_string_free (string, TRUE);
+			continue;
+		}
+
+		/* get color */
+		cmsLabEncoded2Float ((cmsCIELab *) &lab, pcs);
+		cmsDoTransform (xform, &lab, &xyz, 1);
+
+		/* create new nc */
+		nc = gcm_named_color_new ();
+		gcm_named_color_set_title (nc, utf8_tmp);
+		gcm_named_color_set_value (nc, &xyz);
+		g_ptr_array_add (array, nc);
+
+		g_free (utf8_tmp);
+		g_string_free (string, TRUE);
+	}
+out:
+	if (profile_lab != NULL)
+		cmsCloseProfile (profile_lab);
+	if (profile_xyz != NULL)
+		cmsCloseProfile (profile_xyz);
+	if (xform != NULL)
+		cmsDeleteTransform (xform);
+	return array;
 }
 
 /**

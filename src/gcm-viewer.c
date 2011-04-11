@@ -34,10 +34,12 @@
 #endif
 
 #include "gcm-cell-renderer-profile-text.h"
+#include "gcm-cell-renderer-color.h"
 #include "gcm-cie-widget.h"
 #include "gcm-image.h"
 #include "gcm-profile.h"
 #include "gcm-trc-widget.h"
+#include "gcm-named-color.h"
 #include "gcm-utils.h"
 #include "gcm-debug.h"
 
@@ -60,6 +62,7 @@ typedef struct {
 	guint		 example_index;
 	gchar		*profile_id;
 	guint		 xid;
+	GtkListStore	*liststore_nc;
 } GcmViewerPrivate;
 
 typedef enum {
@@ -70,6 +73,13 @@ typedef enum {
 	GCM_VIEWER_PREVIEW_INPUT,
 	GCM_VIEWER_PREVIEW_OUTPUT
 } GcmViewerGraphType;
+
+enum {
+	GCM_NAMED_COLORS_COLUMN_TITLE,
+	GCM_NAMED_COLORS_COLUMN_SORT,
+	GCM_NAMED_COLORS_COLUMN_COLOR,
+	GCM_NAMED_COLORS_COLUMN_LAST
+};
 
 enum {
 	GCM_PROFILES_COLUMN_ID,
@@ -171,6 +181,8 @@ gcm_viewer_profile_kind_to_icon_name (CdProfileKind kind)
 		return "view-refresh";
 	if (kind == CD_PROFILE_KIND_ABSTRACT)
 		return "insert-link";
+	if (kind == CD_PROFILE_KIND_NAMED_COLOR)
+		return "emblem-photos";
 	return "image-missing";
 }
 
@@ -619,6 +631,50 @@ gcm_viewer_profile_colorspace_to_string (CdColorspace colorspace)
 }
 
 /**
+ * gcm_viewer_add_named_colors:
+ **/
+static gboolean
+gcm_viewer_add_named_colors (GcmViewerPrivate *viewer,
+			     GcmProfile *profile)
+{
+	gboolean ret = FALSE;
+	GcmNamedColor *nc;
+	GError *error = NULL;
+	GPtrArray *ncs = NULL;
+	GtkTreeIter iter;
+	guint i;
+
+	/* get profile named colors */
+	ncs = gcm_profile_get_named_colors (profile, &error);
+	if (ncs == NULL) {
+		g_warning ("failed to get named colors: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* add items */
+	gtk_list_store_clear (viewer->liststore_nc);
+	for (i=0; i<ncs->len; i++) {
+		nc = g_ptr_array_index (ncs, i);
+		gtk_list_store_append (viewer->liststore_nc, &iter);
+		gtk_list_store_set (viewer->liststore_nc,
+				    &iter,
+				    GCM_NAMED_COLORS_COLUMN_SORT, "1",
+				    GCM_NAMED_COLORS_COLUMN_TITLE, gcm_named_color_get_title (nc),
+				    GCM_NAMED_COLORS_COLUMN_COLOR, gcm_named_color_get_value (nc),
+				    -1);
+	}
+
+	/* success */
+	ret= TRUE;
+out:
+	if (ncs != NULL)
+		g_ptr_array_unref (ncs);
+	return ret;
+}
+
+/**
  * gcm_viewer_set_profile:
  **/
 static void
@@ -656,13 +712,15 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	g_object_unref (file);
 
 	/* set the preview widgets */
-	if (cd_profile_get_colorspace (profile) == CD_COLORSPACE_RGB) {
+	if (cd_profile_get_colorspace (profile) == CD_COLORSPACE_RGB &&
+	    cd_profile_get_kind (profile) != CD_PROFILE_KIND_NAMED_COLOR) {
 		gcm_image_set_input_profile (GCM_IMAGE(viewer->preview_widget_input), gcm_profile);
 		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_input), NULL);
 		gcm_image_set_output_profile (GCM_IMAGE(viewer->preview_widget_output), gcm_profile);
 		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_output), NULL);
 		show_section = TRUE;
-	} else if (cd_profile_get_colorspace (profile) == CD_COLORSPACE_LAB) {
+	} else if (cd_profile_get_colorspace (profile) == CD_COLORSPACE_LAB &&
+		   cd_profile_get_kind (profile) != CD_PROFILE_KIND_NAMED_COLOR) {
 		gcm_image_set_input_profile (GCM_IMAGE(viewer->preview_widget_input), NULL);
 		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_input), gcm_profile);
 		gcm_image_set_output_profile (GCM_IMAGE(viewer->preview_widget_output), NULL);
@@ -677,7 +735,8 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 
 	/* setup cie widget */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_cie"));
-	if (cd_profile_get_colorspace (profile) == CD_COLORSPACE_RGB) {
+	if (cd_profile_get_colorspace (profile) == CD_COLORSPACE_RGB &&
+	    cd_profile_get_kind (profile) != CD_PROFILE_KIND_NAMED_COLOR) {
 		gcm_cie_widget_set_from_profile (viewer->cie_widget,
 						 gcm_profile);
 		gtk_widget_show (widget);
@@ -840,6 +899,13 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 		gtk_label_set_label (GTK_LABEL(widget), profile_datetime);
 	}
 
+	/* setup named color tab */
+	ret = FALSE;
+	if (profile_kind == CD_PROFILE_KIND_NAMED_COLOR)
+		ret = gcm_viewer_add_named_colors (viewer, gcm_profile);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_named_colors"));
+	gtk_widget_set_visible (widget, ret);
+
 	/* set delete sensitivity */
 	ret = gcm_profile_get_can_delete (gcm_profile);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "toolbutton_profile_delete"));
@@ -978,6 +1044,46 @@ gcm_viewer_activate_cb (GApplication *application, GcmViewerPrivate *viewer)
 	gtk_window_present (window);
 }
 
+static void
+gcm_viewer_add_named_colors_columns (GcmViewerPrivate *viewer, GtkTreeView *treeview)
+{
+	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
+
+	/* column for text */
+	renderer = gtk_cell_renderer_text_new ();
+	g_object_set (renderer,
+		      "wrap-mode", PANGO_WRAP_WORD,
+		      NULL);
+	column = gtk_tree_view_column_new_with_attributes ("", renderer,
+							   "text", GCM_NAMED_COLORS_COLUMN_TITLE,
+							   NULL);
+	gtk_tree_view_column_set_sort_column_id (column, GCM_NAMED_COLORS_COLUMN_SORT);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (viewer->liststore_nc),
+					      GCM_NAMED_COLORS_COLUMN_SORT,
+					      GTK_SORT_ASCENDING);
+	gtk_tree_view_append_column (treeview, column);
+	gtk_tree_view_column_set_expand (column, TRUE);
+
+	/* image */
+	renderer = gcm_cell_renderer_color_new ();
+	g_object_set (renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
+	column = gtk_tree_view_column_new_with_attributes ("", renderer,
+							   "color", GCM_NAMED_COLORS_COLUMN_COLOR,
+							   NULL);
+	gtk_tree_view_append_column (treeview, column);
+	gtk_tree_view_column_set_expand (column, FALSE);
+}
+
+/**
+ * gcm_viewer_named_color_treeview_clicked:
+ **/
+static void
+gcm_viewer_named_color_treeview_clicked (GtkTreeSelection *selection, GcmViewerPrivate *viewer)
+{
+	g_debug ("named color changed");
+}
+
 /**
  * gcm_viewer_startup_cb:
  **/
@@ -1010,7 +1116,7 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 
 	/* add application specific icons to search path */
 	gtk_icon_theme_append_search_path (gtk_icon_theme_get_default (),
-	                                   GCM_DATA G_DIR_SEPARATOR_S "icons");
+					   GCM_DATA G_DIR_SEPARATOR_S "icons");
 
 	/* maintain a list of profiles */
 	viewer->client = cd_client_new ();
@@ -1083,6 +1189,21 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_image_prev1"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_viewer_image_prev_cb), viewer);
+
+	/* use named colors */
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "treeview_named_colors"));
+	viewer->liststore_nc = gtk_list_store_new (GCM_NAMED_COLORS_COLUMN_LAST,
+					       G_TYPE_STRING,
+					       G_TYPE_STRING,
+					       CD_TYPE_COLOR_XYZ);
+	gtk_tree_view_set_model (GTK_TREE_VIEW (widget),
+				 GTK_TREE_MODEL (viewer->liststore_nc));
+	gcm_viewer_add_named_colors_columns (viewer, GTK_TREE_VIEW (widget));
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+	gtk_tree_selection_set_mode (selection, GTK_SELECTION_BROWSE);
+	g_signal_connect (selection, "changed",
+			  G_CALLBACK (gcm_viewer_named_color_treeview_clicked), viewer);
 
 	/* use cie widget */
 	viewer->cie_widget = gcm_cie_widget_new ();
