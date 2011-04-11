@@ -48,6 +48,8 @@ libgcmshared_a_SOURCES =				\
 	gcm-print.h					\
 	gcm-profile.c					\
 	gcm-profile.h					\
+	gcm-named-color.c				\
+	gcm-named-color.h				\
 	gcm-tables.c					\
 	gcm-tables.h					\
 	gcm-trc-widget.c				\
@@ -249,6 +251,8 @@ gcm_self_test_SOURCES =					\
 	gcm-calibrate-native.h				\
 	gcm-gamma-widget.c				\
 	gcm-gamma-widget.h				\
+	gcm-named-color.c				\
+	gcm-named-color.h				\
 	gcm-sample-window.c				\
 	gcm-sample-window.h				\
 	gcm-profile-store.c				\

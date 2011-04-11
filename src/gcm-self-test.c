@@ -24,6 +24,7 @@
 #include <glib-object.h>
 #include <math.h>
 #include <glib/gstdio.h>
+#include <stdlib.h>
 
 #include "gcm-brightness.h"
 #include "gcm-calibrate-dialog.h"
@@ -39,6 +40,7 @@
 #include "gcm-gamma-widget.h"
 #include "gcm-hull.h"
 #include "gcm-image.h"
+#include "gcm-named-color.h"
 #include "gcm-print.h"
 #include "gcm-profile.h"
 #include "gcm-profile-store.h"
@@ -1070,6 +1072,54 @@ gcm_test_utils_func (void)
 	g_assert (gcm_utils_device_kind_to_profile_kind (CD_DEVICE_KIND_UNKNOWN) == CD_PROFILE_KIND_UNKNOWN);
 }
 
+static void
+gcm_test_named_color_func (void)
+{
+	GcmNamedColor *nc;
+	CdColorXYZ *xyz;
+	CdColorXYZ *xyz2;
+	const CdColorXYZ *xyz_new;
+	gchar *tmp = NULL;
+
+	nc = gcm_named_color_new ();
+
+	gcm_named_color_set_title (nc, "Hello world");
+
+	xyz = cd_color_xyz_new ();
+
+	/* use setters */
+	cd_color_set_xyz (xyz, 0.1, 0.2, 0.3);
+	gcm_named_color_set_value (nc, xyz);
+
+	/* test getters */
+	g_assert_cmpstr (gcm_named_color_get_title (nc), ==, "Hello world");
+	xyz_new = gcm_named_color_get_value (nc);
+	g_assert_cmpfloat (abs (xyz_new->X - 0.1), <, 0.01);
+	g_assert_cmpfloat (abs (xyz_new->Y - 0.2), <, 0.01);
+	g_assert_cmpfloat (abs (xyz_new->Z - 0.3), <, 0.01);
+
+	/* overwrite using properties */
+	cd_color_set_xyz (xyz, 0.4, 0.5, 0.6);
+	g_object_set (nc,
+		      "title", "dave",
+		      "value", xyz,
+		      NULL);
+
+	/* test property getters */
+	g_object_get (nc,
+		      "title", &tmp,
+		      "value", &xyz2,
+		      NULL);
+	g_assert_cmpstr (gcm_named_color_get_title (nc), ==, "dave");
+	g_assert_cmpfloat (abs (xyz2->X - 0.4), <, 0.01);
+	g_assert_cmpfloat (abs (xyz2->Y - 0.5), <, 0.01);
+	g_assert_cmpfloat (abs (xyz2->Z - 0.6), <, 0.01);
+
+	g_free (tmp);
+	cd_color_xyz_free (xyz);
+	cd_color_xyz_free (xyz2);
+}
+
 int
 main (int argc, char **argv)
 {
@@ -1081,6 +1131,7 @@ main (int argc, char **argv)
 	/* setup manually as we have no GMainContext */
 	gcm_debug_setup (g_getenv ("VERBOSE") != NULL);
 
+	g_test_add_func ("/color/named-color", gcm_test_named_color_func);
 	g_test_add_func ("/color/calibrate", gcm_test_calibrate_func);
 	g_test_add_func ("/color/exif", gcm_test_exif_func);
 	g_test_add_func ("/color/utils", gcm_test_utils_func);
