@@ -162,6 +162,8 @@ gcm_import_CFLAGS =					\
 gcm_viewer_SOURCES =					\
 	gcm-cell-renderer-profile-text.c		\
 	gcm-cell-renderer-profile-text.h		\
+	gcm-cell-renderer-color.c			\
+	gcm-cell-renderer-color.h			\
 	gcm-viewer.c
 
 gcm_viewer_LDADD =					\
