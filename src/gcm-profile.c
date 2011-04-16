@@ -1192,7 +1192,6 @@ gcm_profile_create_from_chroma (GcmProfile *profile,
 		g_set_error (error, 1, 0, "failed to create profile");
 		goto out;
 	}
-	cmsSetEncodedICCversion (priv->lcms_profile, 2);
 	cmsFreeToneCurve (*transfer_curve);
 
 	/* success */
