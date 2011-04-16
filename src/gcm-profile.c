@@ -67,7 +67,6 @@ struct _GcmProfilePrivate
 	guint			 temperature;
 	GHashTable		*dict;
 	CdColorXYZ		*white;
-	CdColorXYZ		*black;
 	CdColorXYZ		*red;
 	CdColorXYZ		*green;
 	CdColorXYZ		*blue;
@@ -91,7 +90,6 @@ enum {
 	PROP_SIZE,
 	PROP_CAN_DELETE,
 	PROP_WHITE,
-	PROP_BLACK,
 	PROP_RED,
 	PROP_GREEN,
 	PROP_BLUE,
@@ -672,16 +670,6 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 		/* this is no big suprise, some profiles don't have these */
 		cd_color_clear_xyz (priv->white);
 		g_debug ("failed to get white point");
-	}
-
-	/* get black point */
-	cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigMediaBlackPointTag);
-	if (cie_xyz != NULL) {
-		cd_color_set_xyz (priv->black,
-				   cie_xyz->X, cie_xyz->Y, cie_xyz->Z);
-	} else {
-		/* this is no big suprise, most profiles don't have these */
-		cd_color_clear_xyz (priv->black);
 	}
 
 	/* get the profile kind */
@@ -2118,9 +2106,6 @@ gcm_profile_get_property (GObject *object, guint prop_id, GValue *value, GParamS
 	case PROP_WHITE:
 		g_value_set_boxed (value, g_boxed_copy (CD_TYPE_COLOR_XYZ, priv->white));
 		break;
-	case PROP_BLACK:
-		g_value_set_boxed (value, g_boxed_copy (CD_TYPE_COLOR_XYZ, priv->black));
-		break;
 	case PROP_RED:
 		g_value_set_boxed (value, g_boxed_copy (CD_TYPE_COLOR_XYZ, priv->red));
 		break;
@@ -2178,9 +2163,6 @@ gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, G
 		break;
 	case PROP_WHITE:
 		cd_color_copy_xyz (g_value_get_boxed (value), priv->white);
-		break;
-	case PROP_BLACK:
-		cd_color_copy_xyz (g_value_get_boxed (value), priv->black);
 		break;
 	case PROP_RED:
 		cd_color_copy_xyz (g_value_get_boxed (value), priv->red);
@@ -2306,14 +2288,6 @@ gcm_profile_class_init (GcmProfileClass *klass)
 	g_object_class_install_property (object_class, PROP_WHITE, pspec);
 
 	/**
-	 * GcmProfile:black:
-	 */
-	pspec = g_param_spec_boxed ("black", NULL, NULL,
-				    CD_TYPE_COLOR_XYZ,
-				    G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_BLACK, pspec);
-
-	/**
 	 * GcmProfile:red:
 	 */
 	pspec = g_param_spec_boxed ("red", NULL, NULL,
@@ -2361,7 +2335,6 @@ gcm_profile_init (GcmProfile *profile)
 	profile->priv->kind = CD_PROFILE_KIND_UNKNOWN;
 	profile->priv->colorspace = CD_COLORSPACE_UNKNOWN;
 	profile->priv->white = cd_color_xyz_new ();
-	profile->priv->black = cd_color_xyz_new ();
 	profile->priv->red = cd_color_xyz_new ();
 	profile->priv->green = cd_color_xyz_new ();
 	profile->priv->blue = cd_color_xyz_new ();
@@ -2388,7 +2361,6 @@ gcm_profile_finalize (GObject *object)
 	g_free (priv->checksum);
 	g_free (priv->version);
 	cd_color_xyz_free (priv->white);
-	cd_color_xyz_free (priv->black);
 	cd_color_xyz_free (priv->red);
 	cd_color_xyz_free (priv->green);
 	cd_color_xyz_free (priv->blue);
