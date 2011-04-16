@@ -58,6 +58,7 @@ struct _GcmProfilePrivate
 	gboolean		 can_delete;
 	gchar			*description;
 	gchar			*filename;
+	gchar			*version;
 	gchar			*copyright;
 	gchar			*manufacturer;
 	gchar			*model;
@@ -461,6 +462,16 @@ gcm_profile_set_datetime (GcmProfile *profile, const gchar *datetime)
 }
 
 /**
+ * gcm_profile_get_version:
+ **/
+const gchar *
+gcm_profile_get_version (GcmProfile *profile)
+{
+	g_return_val_if_fail (GCM_IS_PROFILE (profile), NULL);
+	return profile->priv->version;
+}
+
+/**
  * gcm_profile_get_checksum:
  **/
 const gchar *
@@ -605,6 +616,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	CdProfileKind profile_kind;
 	cmsCIEXYZ *cie_xyz;
 	cmsCIEXYZTRIPLE cie_illum;
+	cmsFloat64Number profile_version;
 	struct tm created;
 	cmsHPROFILE xyz_profile;
 	cmsHTRANSFORM transform;
@@ -815,6 +827,10 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 		gcm_profile_set_datetime (profile, text);
 		g_free (text);
 	}
+
+	/* get profile header version */
+	profile_version = cmsGetProfileVersion (priv->lcms_profile);
+	priv->version = g_strdup_printf ("%.2lf", profile_version);
 
 	/* allocate temporary buffer */
 	text = g_new0 (gchar, 1024);
@@ -2370,6 +2386,7 @@ gcm_profile_finalize (GObject *object)
 	g_free (priv->model);
 	g_free (priv->datetime);
 	g_free (priv->checksum);
+	g_free (priv->version);
 	cd_color_xyz_free (priv->white);
 	cd_color_xyz_free (priv->black);
 	cd_color_xyz_free (priv->red);

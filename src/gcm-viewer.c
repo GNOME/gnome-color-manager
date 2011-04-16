@@ -830,6 +830,12 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	gtk_label_set_label (GTK_LABEL (widget), temp);
 	g_free (temp);
 
+	/* set profile version */
+	filename = gcm_profile_get_version (gcm_profile);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+			     "label_version"));
+	gtk_label_set_label (GTK_LABEL (widget), filename);
+
 	/* set whitepoint */
 	temperature = gcm_profile_get_temperature (gcm_profile);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_temp"));
@@ -1298,6 +1304,10 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	gtk_style_context_add_class (context, "dim-label");
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
 						     "label_title_filename"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, "dim-label");
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "label_title_version"));
 	context = gtk_widget_get_style_context (widget);
 	gtk_style_context_add_class (context, "dim-label");
 
