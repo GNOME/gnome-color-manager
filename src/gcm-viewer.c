@@ -28,6 +28,7 @@
 #include <locale.h>
 #include <canberra-gtk.h>
 #include <colord.h>
+#include <math.h>
 
 #ifdef HAVE_CLUTTER
  #include <clutter-gtk/clutter-gtk.h>
@@ -839,7 +840,13 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	/* set whitepoint */
 	temperature = gcm_profile_get_temperature (gcm_profile);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_temp"));
-	temp = g_strdup_printf ("%i°K", temperature);
+	if (fabs (temperature - 5000) < 10) {
+		temp = g_strdup_printf ("%i°K (D50)", temperature);
+	} else if (fabs (temperature - 6500) < 10) {
+		temp = g_strdup_printf ("%i°K (D65)", temperature);
+	} else {
+		temp = g_strdup_printf ("%i°K", temperature);
+	}
 	gtk_label_set_label (GTK_LABEL (widget), temp);
 	g_free (temp);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_temp"));
