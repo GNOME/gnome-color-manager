@@ -618,7 +618,7 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, CdSensor *sensor, GtkWind
 	/* take it8 file, and open */
 	profile = cmsCreateProfilePlaceholder (NULL);
 
-	cmsSetEncodedICCversion (profile, 0x2000000);
+	cmsSetProfileVersion (profile, 4.2);
 	cmsSetDeviceClass (profile, cmsSigDisplayClass);
 	cmsSetColorSpace (profile, cmsSigRgbData);
 	cmsSetPCS (profile, cmsSigLabData);
