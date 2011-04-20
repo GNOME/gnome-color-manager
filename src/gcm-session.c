@@ -428,18 +428,30 @@ gcm_apply_create_icc_profile_for_edid (GcmSessionPrivate *priv,
 	gcm_profile_set_data (profile,
 			      "EDID_md5",
 			      gcm_edid_get_checksum (edid));
-	gcm_profile_set_data (profile,
-			      "EDID_model",
-			      gcm_edid_get_monitor_name (edid));
-	gcm_profile_set_data (profile,
-			      "EDID_serial",
-			      gcm_edid_get_serial_number (edid));
-	gcm_profile_set_data (profile,
-			      "EDID_mnft",
-			      gcm_edid_get_pnp_id (edid));
-	gcm_profile_set_data (profile,
-			      "EDID_manufacturer",
-			      gcm_edid_get_vendor_name (edid));
+	data = gcm_edid_get_monitor_name (edid);
+	if (data != NULL) {
+		gcm_profile_set_data (profile,
+				      "EDID_model",
+				      data);
+	}
+	data = gcm_edid_get_serial_number (edid);
+	if (data != NULL) {
+		gcm_profile_set_data (profile,
+				      "EDID_serial",
+				      data);
+	}
+	data = gcm_edid_get_pnp_id (edid);
+	if (data != NULL) {
+		gcm_profile_set_data (profile,
+				      "EDID_mnft",
+				      data);
+	}
+	data = gcm_edid_get_vendor_name (edid);
+	if (data != NULL) {
+		gcm_profile_set_data (profile,
+				      "EDID_manufacturer",
+				      data);
+	}
 
 	/* save this */
 	ret = gcm_profile_save (profile, filename, error);
