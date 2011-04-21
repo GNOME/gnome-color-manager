@@ -1940,13 +1940,12 @@ gcm_profile_get_named_colors (GcmProfile *profile, GError **error)
 	gchar name[cmsMAX_PATH];
 	gchar prefix[33];
 	gchar suffix[33];
-	gchar *utf8_tmp;
 	GcmNamedColor *nc;
 	GcmProfilePrivate *priv = profile->priv;
-	GError *error_local = NULL;
 	GPtrArray *array = NULL;
 	GString *string;
-	guint i;
+	guchar tmp;
+	guint i, j;
 
 	/* setup a dummy transform so we can get all the named colors */
 	profile_lab = cmsCreateLab2Profile (NULL);
@@ -1992,14 +1991,34 @@ gcm_profile_get_named_colors (GcmProfile *profile, GError **error)
 		g_string_append (string, name);
 		if (suffix[0] != '\0')
 			g_string_append_printf (string, " %s", suffix);
-		utf8_tmp = g_locale_to_utf8 (string->str, -1,
-					     NULL, NULL,
-					     &error_local);
-		if (utf8_tmp == NULL) {
-			g_warning ("failed to convert '%s' to utf8: %s",
-				   string->str, error_local->message);
-			g_clear_error (&error_local);
-			g_string_free (string, TRUE);
+
+		/* check is valid */
+		ret = g_utf8_validate (string->str, string->len, NULL);
+		if (!ret) {
+			g_warning ("invalid 7 bit ASCII / UTF8, repairing");
+			for (j=0; j<string->len; j++) {
+				tmp = (guchar) string->str[j];
+
+				/* (R) */
+				if (tmp == 0xae) {
+					string->str[j] = 0xc2;
+					g_string_insert_c (string, j+1, tmp);
+					j+=1;
+				}
+
+				/* unknown */
+				if (tmp == 0x86) {
+					g_string_erase (string, j, 1);
+				}
+			}
+		}
+
+		/* check if we repaired it okay */
+		ret = g_utf8_validate (string->str, string->len, NULL);
+		if (!ret) {
+			g_warning ("failed to fix: skipping entry");
+			for (j=0; j<string->len; j++)
+				g_print ("'%c' (%x)\n", string->str[j], (gchar)string->str[j]);
 			continue;
 		}
 
@@ -2009,11 +2028,10 @@ gcm_profile_get_named_colors (GcmProfile *profile, GError **error)
 
 		/* create new nc */
 		nc = gcm_named_color_new ();
-		gcm_named_color_set_title (nc, utf8_tmp);
+		gcm_named_color_set_title (nc, string->str);
 		gcm_named_color_set_value (nc, &xyz);
 		g_ptr_array_add (array, nc);
 
-		g_free (utf8_tmp);
 		g_string_free (string, TRUE);
 	}
 out:
