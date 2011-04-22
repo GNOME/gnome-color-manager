@@ -11,7 +11,7 @@ COLOR_GLIB_LIBS =						\
 
 udevrulesdir = $(slashlibdir)/udev/rules.d
 udevrules_DATA =						\
-	95-gcm-colorimeters.rules				\
+	69-gcm-colorimeters.rules				\
 	95-gcm-devices.rules					\
 	55-gcm-i2c.rules
 
