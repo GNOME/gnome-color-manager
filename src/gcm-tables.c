@@ -44,6 +44,7 @@ static void     gcm_tables_finalize	(GObject     *object);
 struct _GcmTablesPrivate
 {
 	gchar				*data_dir;
+	gchar				*table_data;
 	GHashTable			*pnp_table;
 };
 
@@ -58,20 +59,65 @@ static gpointer gcm_tables_object = NULL;
 G_DEFINE_TYPE (GcmTables, gcm_tables, G_TYPE_OBJECT)
 
 /**
+ * gcm_tables_load:
+ **/
+static gboolean
+gcm_tables_load (GcmTables *tables, GError **error)
+{
+	gboolean ret;
+	gchar *filename = NULL;
+	gchar *retval = NULL;
+	GcmTablesPrivate *priv = tables->priv;
+	guint i;
+
+	/* check it exists */
+	filename = g_build_filename (priv->data_dir, "pnp.ids", NULL);
+	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
+	if (!ret) {
+		g_set_error (error, 1, 0, "could not load %s", filename);
+		goto out;
+	}
+
+	/* load the contents */
+	g_debug ("loading: %s", filename);
+	ret = g_file_get_contents (filename, &priv->table_data, NULL, error);
+	if (!ret)
+		goto out;
+
+	/* parse into lines */
+	retval = priv->table_data;
+	for (i=0; priv->table_data[i] != '\0'; i++) {
+
+		/* ignore */
+		if (priv->table_data[i] != '\n')
+			continue;
+
+		/* convert newline to NULL */
+		priv->table_data[i] = '\0';
+
+		/* the ID to text is a fixed offset */
+		retval[3] = '\0';
+		g_hash_table_insert (priv->pnp_table,
+				     retval,
+				     retval+4);
+		retval = &priv->table_data[i+1];
+	}
+out:
+	g_free (filename);
+	return ret;
+}
+
+/**
  * gcm_tables_get_pnp_id:
  **/
 gchar *
 gcm_tables_get_pnp_id (GcmTables *tables, const gchar *pnp_id, GError **error)
 {
-	GcmTablesPrivate *priv = tables->priv;
+	gboolean ret;
 	gchar *retval = NULL;
+	GcmTablesPrivate *priv = tables->priv;
 	gpointer found;
 	guint size;
-	gchar *filename = NULL;
-	gboolean ret;
-	gchar *data = NULL;
-	gchar **split = NULL;
-	guint i;
 
 	g_return_val_if_fail (GCM_IS_TABLES (tables), NULL);
 	g_return_val_if_fail (pnp_id != NULL, NULL);
@@ -79,29 +125,9 @@ gcm_tables_get_pnp_id (GcmTables *tables, const gchar *pnp_id, GError **error)
 	/* if table is empty, try to load it */
 	size = g_hash_table_size (priv->pnp_table);
 	if (size == 0) {
-
-		/* check it exists */
-		filename = g_build_filename (priv->data_dir, "pnp.ids", NULL);
-		ret = g_file_test (filename, G_FILE_TEST_EXISTS);
-		if (!ret) {
-			g_set_error (error, 1, 0, "could not load %s", filename);
-			goto out;
-		}
-
-		/* load the contents */
-		g_debug ("loading: %s", filename);
-		ret = g_file_get_contents (filename, &data, NULL, error);
+		ret = gcm_tables_load (tables, error);
 		if (!ret)
 			goto out;
-
-		/* parse into lines */
-		split = g_strsplit (data, "\n", -1);
-		for (i=0; split[i] != NULL; i++) {
-			if (split[i][0] == '\0')
-				continue;
-			split[i][3] = '\0';
-			g_hash_table_insert (priv->pnp_table, g_strdup (split[i]), g_strdup (&split[i][4]));
-		}
 	}
 
 	/* look this up in the table */
@@ -114,9 +140,6 @@ gcm_tables_get_pnp_id (GcmTables *tables, const gchar *pnp_id, GError **error)
 	/* return a copy */
 	retval = g_strdup (found);
 out:
-	g_free (data);
-	g_free (filename);
-	g_strfreev (split);
 	return retval;
 }
 
@@ -225,7 +248,13 @@ gcm_tables_init (GcmTables *tables)
 {
 	tables->priv = GCM_TABLES_GET_PRIVATE (tables);
 	tables->priv->data_dir = NULL;
-	tables->priv->pnp_table = g_hash_table_new_full (g_str_hash, g_str_equal, (GDestroyNotify) g_free, (GDestroyNotify) g_free);
+
+	/* we don't keep malloc'd data in the hash; instead we read it
+	 * out into priv->table_data and then link to it in the hash */
+	tables->priv->pnp_table = g_hash_table_new_full (g_str_hash,
+							 g_str_equal,
+							 NULL,
+							 NULL);
 
 	/* the default location differs on debian and other distros */
 	gcm_tables_set_default_data_dir (tables);
@@ -241,6 +270,7 @@ gcm_tables_finalize (GObject *object)
 	GcmTablesPrivate *priv = tables->priv;
 
 	g_free (priv->data_dir);
+	g_free (priv->table_data);
 	g_hash_table_unref (priv->pnp_table);
 
 	G_OBJECT_CLASS (gcm_tables_parent_class)->finalize (object);
