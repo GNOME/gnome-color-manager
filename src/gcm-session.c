@@ -1242,13 +1242,8 @@ gcm_session_get_md5_for_filename (const gchar *filename,
 	gsize length;
 	cmsHPROFILE lcms_profile = NULL;
 
-	/* read file */
-	ret = g_file_get_contents (filename, &data, &length, error);
-	if (!ret)
-		goto out;
-
 	/* get the internal profile id, if it exists */
-	lcms_profile = cmsOpenProfileFromMem (data, length);
+	lcms_profile = cmsOpenProfileFromFile (filename, "r");
 	if (lcms_profile == NULL) {
 		ret = FALSE;
 		g_set_error_literal (error, 1, 0,
@@ -1260,6 +1255,9 @@ gcm_session_get_md5_for_filename (const gchar *filename,
 		goto out;
 
 	/* generate checksum */
+	ret = g_file_get_contents (filename, &data, &length, error);
+	if (!ret)
+		goto out;
 	checksum = g_compute_checksum_for_data (G_CHECKSUM_MD5,
 						(const guchar *) data,
 						length);
