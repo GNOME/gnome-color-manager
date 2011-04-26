@@ -1648,6 +1648,38 @@ out:
 }
 
 /**
+ * gcm_session_load_introspection:
+ **/
+static gboolean
+gcm_session_load_introspection (GcmSessionPrivate *priv,
+				GError **error)
+{
+	gboolean ret;
+	gchar *introspection_data = NULL;
+	GFile *file = NULL;
+
+	/* load introspection from file */
+	file = g_file_new_for_path (DATADIR "/dbus-1/interfaces/org.gnome.ColorManager.xml");
+	ret = g_file_load_contents (file, NULL, &introspection_data,
+				    NULL, NULL, error);
+	if (!ret)
+		goto out;
+
+	/* build introspection from XML */
+	priv->introspection = g_dbus_node_info_new_for_xml (introspection_data,
+							    error);
+	if (priv->introspection == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+out:
+	if (file != NULL)
+		g_object_unref (file);
+	g_free (introspection_data);
+	return ret;
+}
+
+/**
  * main:
  **/
 int
@@ -1655,9 +1687,7 @@ main (int argc, char *argv[])
 {
 	gboolean login = FALSE;
 	gboolean ret;
-	gchar *introspection_data = NULL;
 	GError *error = NULL;
-	GFile *file = NULL;
 	GOptionContext *context;
 	guint owner_id = 0;
 	guint poll_id = 0;
@@ -1752,17 +1782,8 @@ main (int argc, char *argv[])
 	priv->loop = g_main_loop_new (NULL, FALSE);
 
 	/* load introspection from file */
-	file = g_file_new_for_path (DATADIR "/dbus-1/interfaces/org.gnome.ColorManager.xml");
-	ret = g_file_load_contents (file, NULL, &introspection_data, NULL, NULL, &error);
+	ret = gcm_session_load_introspection (priv, &error);
 	if (!ret) {
-		g_warning ("failed to load introspection: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* build introspection from XML */
-	priv->introspection = g_dbus_node_info_new_for_xml (introspection_data, &error);
-	if (priv->introspection == NULL) {
 		g_warning ("failed to load introspection: %s", error->message);
 		g_error_free (error);
 		goto out;
@@ -1783,11 +1804,8 @@ main (int argc, char *argv[])
 	/* success */
 	retval = 0;
 out:
-	g_free (introspection_data);
 	if (poll_id != 0)
 		g_source_remove (poll_id);
-	if (file != NULL)
-		g_object_unref (file);
 	if (owner_id > 0)
 		g_bus_unown_name (owner_id);
 	if (priv != NULL) {
