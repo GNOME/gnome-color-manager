@@ -1224,7 +1224,7 @@ gcm_session_get_precooked_md5 (cmsHPROFILE lcms_profile)
 	/* convert to a hex string */
 	md5 = g_new0 (gchar, 32 + 1);
 	for (i=0; i<16; i++)
-		g_snprintf (md5 + i*2, 3, "%x", profile_id[i]);
+		g_snprintf (md5 + i*2, 3, "%02x", profile_id[i]);
 out:
 	return md5;
 }
