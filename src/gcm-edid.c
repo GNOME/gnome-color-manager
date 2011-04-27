@@ -33,6 +33,7 @@
 #include <string.h>
 #include <gio/gio.h>
 #include <stdlib.h>
+#include <lcms2.h>
 
 #include "gcm-edid.h"
 #include "gcm-tables.h"
@@ -419,6 +420,26 @@ out:
 }
 
 /**
+ * gcm_edid_get_white_temperature:
+ **/
+static gdouble
+gcm_edid_get_white_temperature (CdColorYxy *yxy)
+{
+	cmsCIExyY xyY;
+	gboolean ret;
+	gdouble temp;
+
+	/* use LCMS to convert the xyY measurement to temperature */
+	xyY.x = yxy->x;
+	xyY.y = yxy->y;
+	xyY.Y = 1.0f;
+	ret = cmsTempFromWhitePoint (&temp, &xyY);
+	if (!ret)
+		temp = -1.0f;
+	return temp;
+}
+
+/**
  * gcm_edid_parse:
  * @edid: a valid #GcmEdid instance
  * @data: the EDID block
@@ -439,6 +460,7 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
 	guint32 serial;
 	guint extension_blocks;
 	gchar *tmp;
+	gdouble temp_float;
 
 	g_return_val_if_fail (GCM_IS_EDID (edid), FALSE);
 	g_return_val_if_fail (data != NULL, FALSE);
@@ -511,7 +533,11 @@ gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
 	/* get color white */
 	priv->white->x = gcm_edid_decode_fraction (data[0x21], gcm_edid_get_bits (data[0x1a], 2, 3));
 	priv->white->y = gcm_edid_decode_fraction (data[0x22], gcm_edid_get_bits (data[0x1a], 0, 1));
-	g_debug ("white x=%f,y=%f", priv->white->x, priv->white->y);
+	temp_float = gcm_edid_get_white_temperature (priv->white);
+	g_debug ("white x=%f,y=%f (%.2fK)",
+		 priv->white->x,
+		 priv->white->y,
+		 temp_float);
 
 	/* parse EDID data */
 	for (i=GCM_EDID_OFFSET_DATA_BLOCKS; i <= GCM_EDID_OFFSET_LAST_BLOCK; i+=18) {
