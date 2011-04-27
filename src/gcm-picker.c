@@ -566,6 +566,7 @@ static void
 gcm_prefs_setup_space_combobox (GtkWidget *widget)
 {
 	CdColorspace colorspace;
+	CdDevice *device_tmp;
 	CdProfile *profile;
 	const gchar *filename;
 	gboolean has_colorspace_description;
@@ -573,6 +574,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 	gboolean has_vcgt;
 	gchar *text = NULL;
 	GError *error = NULL;
+	GPtrArray *devices = NULL;
 	GPtrArray *profile_array = NULL;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
@@ -608,6 +610,24 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 			has_profile = TRUE;
 		}
 	}
+
+	/* add device profiles */
+	devices = cd_client_get_devices_by_kind_sync (client,
+						      CD_DEVICE_KIND_DISPLAY,
+						      NULL,
+						      &error);
+	for (i=0; i<devices->len; i++) {
+		device_tmp = g_ptr_array_index (devices, i);
+		profile = cd_device_get_default_profile (device_tmp);
+		if (profile == NULL)
+			continue;
+
+		/* add device profile */
+		gcm_prefs_combobox_add_profile (widget, profile, NULL);
+		g_object_unref (profile);
+		has_profile = TRUE;
+	}
+
 	if (!has_profile) {
 		/* TRANSLATORS: this is when there are no profiles that can be used;
 		 * the search term is either "RGB" or "CMYK" */
@@ -622,6 +642,8 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 		gtk_widget_set_sensitive (widget, FALSE);
 	}
 out:
+	if (devices != NULL)
+		g_ptr_array_unref (devices);
 	if (profile_array != NULL)
 		g_ptr_array_unref (profile_array);
 	g_free (text);
