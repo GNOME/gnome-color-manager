@@ -1245,7 +1245,6 @@ gcm_session_get_md5_for_filename (const gchar *filename,
 	/* get the internal profile id, if it exists */
 	lcms_profile = cmsOpenProfileFromFile (filename, "r");
 	if (lcms_profile == NULL) {
-		ret = FALSE;
 		g_set_error_literal (error, 1, 0,
 				     "failed to load: not an ICC profile");
 		goto out;
