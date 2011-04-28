@@ -2043,51 +2043,6 @@ out:
 }
 
 /**
- * gcm_prefs_renderer_combo_changed_cb:
- **/
-static void
-gcm_prefs_renderer_combo_changed_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
-{
-	gint active;
-	const gchar *key = g_object_get_data (G_OBJECT(widget), "GCM:GSettingsKey");
-
-	/* no selection */
-	active = gtk_combo_box_get_active (GTK_COMBO_BOX(widget));
-	if (active == -1)
-		return;
-
-	/* save to GSettings */
-	g_debug ("changed rendering intent to %s", cd_rendering_intent_to_string (active+1));
-	g_settings_set_enum (prefs->settings, key, active+1);
-}
-
-/**
- * gcm_prefs_setup_rendering_combobox:
- **/
-static void
-gcm_prefs_setup_rendering_combobox (GtkWidget *widget, CdRenderingIntent intent)
-{
-	guint i;
-	gboolean ret = FALSE;
-	gchar *label;
-
-	for (i=1; i<CD_RENDERING_INTENT_LAST; i++) {
-		label = g_strdup_printf ("%s - %s",
-					 cd_rendering_intent_to_localized_text (i),
-					 cd_rendering_intent_to_localized_description (i));
-		gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (widget), label);
-		g_free (label);
-		if (i == intent) {
-			ret = TRUE;
-			gtk_combo_box_set_active (GTK_COMBO_BOX (widget), i-1);
-		}
-	}
-	/* nothing matches, just set the first option */
-	if (!ret)
-		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
-}
-
-/**
  * gcm_prefs_is_color_profiles_extra_installed_ready_cb:
  **/
 static void
@@ -2178,8 +2133,6 @@ gcm_prefs_startup_idle_cb (GcmPrefsPriv *prefs)
 	gchar *colorspace_cmyk;
 	gchar *colorspace_gray;
 	gchar *colorspace_rgb;
-	gint intent_display = -1;
-	gint intent_softproof = -1;
 	GtkWidget *widget;
 
 	/* search the disk for profiles */
@@ -2227,27 +2180,6 @@ gcm_prefs_startup_idle_cb (GcmPrefsPriv *prefs)
 			   (gpointer) GCM_SETTINGS_COLORSPACE_GRAY);
 	g_signal_connect (G_OBJECT (widget), "changed",
 			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), prefs);
-
-	/* setup rendering lists */
-	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "combobox_rendering_display"));
-	intent_display = g_settings_get_enum (prefs->settings,
-					      GCM_SETTINGS_RENDERING_INTENT_DISPLAY);
-	gcm_prefs_setup_rendering_combobox (widget, intent_display);
-	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey",
-			   (gpointer) GCM_SETTINGS_RENDERING_INTENT_DISPLAY);
-	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), prefs);
-
-	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "combobox_rendering_softproof"));
-	intent_softproof = g_settings_get_enum (prefs->settings,
-						GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF);
-	gcm_prefs_setup_rendering_combobox (widget, intent_softproof);
-	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey",
-			   (gpointer) GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF);
-	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (gcm_prefs_renderer_combo_changed_cb), prefs);
 
 	/* set calibrate button sensitivity */
 	gcm_prefs_sensor_coldplug (prefs);
