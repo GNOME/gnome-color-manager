@@ -64,6 +64,7 @@ typedef struct {
 	gchar		*profile_id;
 	guint		 xid;
 	GtkListStore	*liststore_nc;
+	GtkListStore	*liststore_metadata;
 } GcmViewerPrivate;
 
 typedef enum {
@@ -80,6 +81,12 @@ enum {
 	GCM_NAMED_COLORS_COLUMN_SORT,
 	GCM_NAMED_COLORS_COLUMN_COLOR,
 	GCM_NAMED_COLORS_COLUMN_LAST
+};
+
+enum {
+	GCM_METADATA_COLUMN_KEY,
+	GCM_METADATA_COLUMN_VALUE,
+	GCM_METADATA_COLUMN_LAST
 };
 
 enum {
@@ -675,6 +682,58 @@ out:
 	return ret;
 }
 
+
+/**
+ * gcm_viewer_add_metadata:
+ **/
+static gboolean
+gcm_viewer_add_metadata (GcmViewerPrivate *viewer,
+			 CdProfile *profile)
+{
+	gboolean ret = FALSE;
+	GError *error = NULL;
+	GHashTable *metadata = NULL;
+	GList *keys = NULL;
+	GList *l;
+	GtkTreeIter iter;
+	const gchar *value;
+
+	/* clear existing */
+	gtk_list_store_clear (viewer->liststore_metadata);
+
+	/* get all the metadata entries */
+	metadata = cd_profile_get_metadata (profile);
+	if (metadata == NULL) {
+		g_warning ("failed to get metadata");
+		g_error_free (error);
+		goto out;
+	}
+
+	/* add items */
+	keys = g_hash_table_get_keys (metadata);
+	if (keys == NULL)
+		goto out;
+	for (l = keys; l != NULL; l = l->next) {
+		value = g_hash_table_lookup (metadata, l->data);
+		g_debug ("Adding '%s', '%s'",
+			 (const gchar *) l->data, value);
+		gtk_list_store_append (viewer->liststore_metadata, &iter);
+		gtk_list_store_set (viewer->liststore_metadata,
+				    &iter,
+				    GCM_METADATA_COLUMN_KEY, l->data,
+				    GCM_METADATA_COLUMN_VALUE, value,
+				    -1);
+	}
+
+	/* success */
+	ret = TRUE;
+out:
+	g_list_free (keys);
+	if (metadata != NULL)
+		g_hash_table_unref (metadata);
+	return ret;
+}
+
 /**
  * gcm_viewer_set_profile:
  **/
@@ -919,6 +978,11 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_named_colors"));
 	gtk_widget_set_visible (widget, ret);
 
+	/* setup metadata tab */
+	ret = gcm_viewer_add_metadata (viewer, profile);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_metadata"));
+	gtk_widget_set_visible (widget, ret);
+
 	/* set delete sensitivity */
 	ret = gcm_profile_get_can_delete (gcm_profile);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "toolbutton_profile_delete"));
@@ -1058,7 +1122,8 @@ gcm_viewer_activate_cb (GApplication *application, GcmViewerPrivate *viewer)
 }
 
 static void
-gcm_viewer_add_named_colors_columns (GcmViewerPrivate *viewer, GtkTreeView *treeview)
+gcm_viewer_add_named_colors_columns (GcmViewerPrivate *viewer,
+				     GtkTreeView *treeview)
 {
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
@@ -1086,6 +1151,35 @@ gcm_viewer_add_named_colors_columns (GcmViewerPrivate *viewer, GtkTreeView *tree
 							   NULL);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, FALSE);
+}
+
+static void
+gcm_viewer_add_metadata_columns (GcmViewerPrivate *viewer,
+				 GtkTreeView *treeview)
+{
+	GtkCellRenderer *renderer;
+	GtkTreeViewColumn *column;
+
+	/* column for text */
+	renderer = gtk_cell_renderer_text_new ();
+	g_object_set (renderer,
+		      "wrap-mode", PANGO_WRAP_WORD,
+		      NULL);
+	column = gtk_tree_view_column_new_with_attributes ("", renderer,
+							   "text", GCM_METADATA_COLUMN_KEY,
+							   NULL);
+	gtk_tree_view_column_set_sort_column_id (column, GCM_METADATA_COLUMN_KEY);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (viewer->liststore_metadata),
+					      GCM_METADATA_COLUMN_KEY,
+					      GTK_SORT_ASCENDING);
+	gtk_tree_view_append_column (treeview, column);
+	gtk_tree_view_column_set_expand (column, FALSE);
+
+	column = gtk_tree_view_column_new_with_attributes ("", renderer,
+							   "text", GCM_METADATA_COLUMN_VALUE,
+							   NULL);
+	gtk_tree_view_append_column (treeview, column);
+	gtk_tree_view_column_set_expand (column, TRUE);
 }
 
 /**
@@ -1217,6 +1311,16 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	gtk_tree_selection_set_mode (selection, GTK_SELECTION_BROWSE);
 	g_signal_connect (selection, "changed",
 			  G_CALLBACK (gcm_viewer_named_color_treeview_clicked), viewer);
+
+	/* use metadata */
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "treeview_metadata"));
+	viewer->liststore_metadata = gtk_list_store_new (GCM_METADATA_COLUMN_LAST,
+							 G_TYPE_STRING,
+							 G_TYPE_STRING);
+	gtk_tree_view_set_model (GTK_TREE_VIEW (widget),
+				 GTK_TREE_MODEL (viewer->liststore_metadata));
+	gcm_viewer_add_metadata_columns (viewer, GTK_TREE_VIEW (widget));
 
 	/* use cie widget */
 	viewer->cie_widget = gcm_cie_widget_new ();
