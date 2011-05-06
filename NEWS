@@ -1,3 +1,80 @@
+Version 3.1.1
+~~~~~~~~~~~~~
+Released: 2011-05-06
+
+* Notes:
+ - This is the first unstable release for GNOME 3.1.
+ - Lots of code has been moved from gnome-color-manager into colord, and
+   this means that colord is now a dependency of gnome-color-manager.
+ - There are also a few new features. Try out the new code and see what
+   looks shiny! If it breaks, let us know!
+ - See http://colord.hughsie.com/screenshots.html for screenshots.
+
+* Translations
+ - Updated Brazilian Portuguese translation (Flamarion Jorge)
+ - Updated British English translation (Bruce Cowan)
+ - Updated German translation (Wolfgang Stöggl)
+ - Updated Greek translation (Michael Kotsarinis)
+ - Updated Hungarian translation (Gabor Kelemen)
+ - Updated Italian translation (Francesco Groccia)
+ - Updated Japanese translation (Ryo Fujita)
+ - Updated Korean translation (sangu)
+ - Updated Norwegian bokmål translation (Kjartan Maraas)
+ - Updated Polish translation (Piotr Drąg)
+ - Updated Portuguese translation (Duarte Loreto)
+ - Updated Simplified Chinese translaton (Xianyou Jin)
+
+* New Features:
+ - Add a 3D gamut hull to the profile viewer (Richard Hughes)
+ - Add a metadata tab to gcm-viewer to display all the color geek information (Richard Hughes)
+ - Add media whitepoint and color temperature data to gcm-picker (Richard Hughes)
+ - Add named color profile support to gcm-viewer (Richard Hughes)
+ - Add the profile version number to the information viewer tab (Richard Hughes)
+
+* Removed Features:
+ - Remove all support for device-profiles.conf (Richard Hughes)
+ - Remove all the sensor code as it's been moved to colord (Richard Hughes)
+ - Remove CUPS support, it's using colord now (Richard Hughes)
+ - Remove gcm-apply and merge the functionality into gcm-session (Richard Hughes)
+ - Remove GcmDevice as this is no longer needed with colord (Richard Hughes)
+ - Remove gcm-dump-edid, there are other tools available to do this (Richard Hughes)
+ - Remove libcolor-glib and the gsd plugin as we now have a session process (Richard Hughes)
+ - Remove SANE support, it's moved to colord (Richard Hughes)
+ - Remove support for saved devices in GcmClient (Richard Hughes)
+ - Remove the ability to set a profile systemwide, we can do this in colord (Richard Hughes)
+ - Remove the DDC support from gnome-color-manager, it belongs in a lower library (Richard Hughes)
+ - Remove the GetDevices DBus method, clients are expected to use colord instead (Richard Hughes)
+ - Remove the GetProfilesForType DBus method, clients are expected to use colord (Richard Hughes)
+ - Remove the rendering intent page from the preferences (Richard Hughes)
+ - Remove the window title from the modal calibration dialogs (Richard Hughes)
+ - Remove the xsane.rc functionality, xsane is too broken (Richard Hughes)
+ - Remove UDev support, it's being done in colord now (Richard Hughes)
+ - Remove virtual profile devices, they are now saved in colord (Richard Hughes)
+
+* Bugfix:
+ - Add a desktop icon for gcm-picker to help out gnome-shell (Richard Hughes)
+ - Add and remove session profiles as they appear in the home directory (Richard Hughes)
+ - Add and remove X11 outputs to colord as they are hotplugged (Richard Hughes)
+ - Add any display profiles as known colorspaces in gcm-picker (Richard Hughes)
+ - Add #include <config.h> to make translations work (Kjartan Maraas)
+ - Add the optional FILE_checksum metadata to speed up session startup (Richard Hughes)
+ - Do not allow the user to remove automatically-added profiles from devices (Richard Hughes)
+ - Do not let gcm-session exit, instead stay around for the duration of the session (Richard Hughes)
+ - Get the pre-cooked profile ID from the ICC profile if it is available (Richard Hughes)
+ - Make the argyllcms calibration square 20% larger. Fixes rh#689787 (Richard Hughes)
+ - Make the 'Set for all users' button device specific (Richard Hughes)
+ - Only search for per-user ICC profiles, colord does the system ones now (Richard Hughes)
+ - Repair invalid UTF8 / ASCII in named color profile name entries (Richard Hughes)
+ - Rework gcm-viewer into tabs to make the UI more streamlined (Richard Hughes)
+ - Set the XRANDR_name metadata attribute on all X11 devices (Richard Hughes)
+ - Use cmsOpenProfileFromFile() and hope for profiles with embedded IDs (Richard Hughes)
+ - Use /org/gnome as starting path for schemas (Richard Hughes)
+ - Use ProfilingInhibit when calibrating devices (Richard Hughes)
+ - Watch org.freedesktop.ColorManager so we can re-apply policy (Richard Hughes)
+ - When creating display devices, use both the EDID and DMI data (Richard Hughes)
+ - When creating ICC profiles for a display, use relative-colorimetric (Richard Hughes)
+ - Write a profile ID for automatically generated profiles (Richard Hughes)
+
 Version 2.91.90
 ~~~~~~~~~~~~~~~
 Released: 2011-02-22
