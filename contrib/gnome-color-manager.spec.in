@@ -16,7 +16,7 @@ Requires:  shared-color-profiles
 Requires:  dconf
 Requires:  GConf2 >= 2.31.1
 
-BuildRequires: gtk3-devel >= 2.91.3
+BuildRequires: gtk3-devel >= 3.0.0
 BuildRequires: scrollkeeper
 BuildRequires: gnome-doc-utils >= 0.3.2
 BuildRequires: desktop-file-utils
@@ -35,11 +35,19 @@ BuildRequires: libcanberra-devel
 BuildRequires: libnotify-devel >= 0.7.0
 BuildRequires: glib2-devel >= 2.25.9-2
 BuildRequires: docbook-utils
+BuildRequires: colord-devel
 BuildRequires: libmash-devel
 BuildRequires: clutter-gtk-devel
 
 # GNOME and KDE have different session policy agents
 Provides: color-policy-agent
+
+Requires(post):   /usr/bin/gtk-update-icon-cache
+Requires(postun): /usr/bin/gtk-update-icon-cache
+
+# obsolete sub-package
+Obsoletes: gnome-color-manager-devel <= 3.1.1
+Provides: gnome-color-manager-devel
 
 %description
 gnome-color-manager is a session framework that makes it easy to manage, install
@@ -60,9 +68,6 @@ for i in gcm-prefs gcm-import ; do
     --dir=$RPM_BUILD_ROOT%{_datadir}/applications/                      \
     $RPM_BUILD_ROOT%{_datadir}/applications/$i.desktop
 done
-
-rm -f $RPM_BUILD_ROOT%{_libdir}/*.a
-rm -f $RPM_BUILD_ROOT%{_libdir}/*.la
 
 %find_lang %name --with-gnome
 
