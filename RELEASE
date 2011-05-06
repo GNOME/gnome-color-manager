@@ -2,7 +2,7 @@ PackageKit Release Notes
 
 1. Write NEWS entries for gnome-color-manager in the same format as usual.
 
-Version 3.1.1
+Version 3.1.2
 ~~~~~~~~~~~~~
 Released: 2011-xx-xx
 
@@ -10,12 +10,12 @@ Released: 2011-xx-xx
 * New Features:
 * Bugfix:
 
-git shortlog GNOME_COLOR_MANAGER_3_0_0.. | grep -i -v trivial | grep -v Merge | uniq > NEWS.new
+git shortlog GNOME_COLOR_MANAGER_3_1_1.. | grep -i -v trivial | grep -v Merge | uniq > NEWS.new
 
 3. Commit changes in gnome-color-manager git:
 
-git commit -a -m "Release version 3.1.1"
-git tag -s GNOME_COLOR_MANAGER_3_1_1 -m "==== Version 3.1.1 ===="
+git commit -a -m "Release version 3.1.2"
+git tag -s GNOME_COLOR_MANAGER_3_1_2 -m "==== Version 3.1.2 ===="
 <enter password>
 git push --tags
 git push
@@ -26,12 +26,12 @@ make distcheck
 
 5. Upload tarballs:
 
-scp *.tar.gz rhughes@master.gnome.org:
+scp *.tar.bz2 rhughes@master.gnome.org:
 
 6. Install module
 
 ssh rhughes@master.gnome.org
-install-module gnome-color-manager-*.tar.gz
+install-module gnome-color-manager-*.tar.bz2
 
 7. Do post release version bump in configure.ac
 
