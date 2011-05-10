@@ -249,11 +249,13 @@ gcm_viewer_update_profile_list (GcmViewerPrivate *viewer)
 		profile_kind = cd_profile_get_kind (profile);
 		icon_name = gcm_viewer_profile_kind_to_icon_name (profile_kind);
 		gtk_list_store_append (viewer->list_store_profiles, &iter);
+		filename = cd_profile_get_filename (profile);
+		if (filename == NULL)
+			continue;
 		description = cd_profile_get_title (profile);
 		sort = g_strdup_printf ("%s%s",
 					gcm_viewer_profile_get_sort_string (profile_kind),
 					description);
-		filename = cd_profile_get_filename (profile);
 		g_debug ("add %s to profiles list", filename);
 		gtk_list_store_set (viewer->list_store_profiles, &iter,
 				    GCM_PROFILES_COLUMN_ID, filename,
