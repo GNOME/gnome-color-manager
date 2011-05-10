@@ -1,10 +1,4 @@
 <schemalist>
-  <enum id="org.gnome.color-manager.RenderingType">
-    <value nick="perceptual" value="1"/>
-    <value nick="relative-colorimetric" value="2"/>
-    <value nick="saturation" value="3"/>
-    <value nick="absolute-colorimetric" value="4"/>
-  </enum>
   <enum id="org.gnome.color-manager.CalibrationLength">
     <value nick="short" value="0"/>
     <value nick="normal" value="1"/>
@@ -26,31 +20,6 @@
       <default>true</default>
       <summary>Set the _ICC_PROFILE hint for applications</summary>
       <description>If set to TRUE then the __ICC_PROFILE hint will be set, which applications use to convert true color to screen color.</description>
-    </key>
-    <key name="rendering-intent-display" enum="org.gnome.color-manager.RenderingType">
-      <default>'perceptual'</default>
-      <summary>The rendering intent to use for the display, e.g. 'perceptual'</summary>
-      <description>The rendering intent to use for the display, e.g. 'perceptual'.</description>
-    </key>
-    <key name="rendering-intent-softproof" enum="org.gnome.color-manager.RenderingType">
-      <default>'perceptual'</default>
-      <summary>The rendering intent to use for softproofs, e.g. 'perceptual'</summary>
-      <description>The rendering intent to use for softproofs, e.g. 'perceptual'.</description>
-    </key>
-    <key name="colorspace-rgb" type="s">
-      <default>'/usr/share/color/icc/Argyll/sRGB.icm'</default>
-      <summary>The default RGB profile</summary>
-      <description>The RGB profile filename to be used by applications by default.</description>
-    </key>
-    <key name="colorspace-cmyk" type="s">
-      <default>'/usr/share/color/icc/Fogra27L.icc'</default>
-      <summary>The default CMYK profile</summary>
-      <description>The CMYK profile filename to be used by applications by default.</description>
-    </key>
-    <key name="colorspace-gray" type="s">
-      <default>'/usr/share/color/icc/Oyranos/Gray.icc'</default>
-      <summary>The default gray profile</summary>
-      <description>The gray profile filename to be used by applications by default.</description>
     </key>
     <key name="calibration-length" enum="org.gnome.color-manager.CalibrationLength">
       <default>'ask'</default>
