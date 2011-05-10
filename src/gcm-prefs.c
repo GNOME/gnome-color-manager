@@ -1936,113 +1936,6 @@ gcm_prefs_device_removed_cb (CdClient *client,
 }
 
 /**
- * gcm_prefs_setup_space_combobox:
- **/
-static void
-gcm_prefs_setup_space_combobox (GcmPrefsPriv *prefs,
-				GtkWidget *widget,
-				CdColorspace colorspace,
-				const gchar *profile_filename)
-{
-	CdColorspace colorspace_tmp;
-	CdProfile *profile;
-	const gchar *filename;
-	gboolean has_colorspace_description;
-	gboolean has_profile = FALSE;
-	gboolean has_vcgt;
-	gchar *text = NULL;
-	GError *error = NULL;
-	GPtrArray *profile_array = NULL;
-	GtkTreeIter iter;
-	GtkTreeModel *model;
-	guint i;
-
-	/* get profiles */
-	profile_array = cd_client_get_profiles_sync (prefs->client,
-						     prefs->cancellable,
-						     &error);
-	if (profile_array == NULL) {
-		g_warning ("failed to get profiles: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* update each list */
-	for (i=0; i<profile_array->len; i++) {
-		profile = g_ptr_array_index (profile_array, i);
-
-		/* only for correct kind */
-		has_vcgt = cd_profile_get_has_vcgt (profile);
-		has_colorspace_description = gcm_profile_has_colorspace_description (profile);
-		colorspace_tmp = cd_profile_get_colorspace (profile);
-		if (!has_vcgt &&
-		    colorspace == colorspace_tmp &&
-		    (colorspace != CD_COLORSPACE_RGB ||
-		     has_colorspace_description)) {
-			gcm_prefs_combobox_add_profile (widget, profile, GCM_PREFS_ENTRY_TYPE_PROFILE, &iter);
-
-			/* set active option */
-			filename = cd_profile_get_filename (profile);
-			if (g_strcmp0 (filename, profile_filename) == 0)
-				gtk_combo_box_set_active_iter (GTK_COMBO_BOX (widget), &iter);
-			has_profile = TRUE;
-		}
-	}
-	if (!has_profile) {
-		/* TRANSLATORS: this is when there are no profiles that
-		 * can be used; the search term is either "RGB" or "CMYK" */
-		text = g_strdup_printf (_("No %s color spaces available"),
-					cd_colorspace_to_localised_string (colorspace));
-		model = gtk_combo_box_get_model (GTK_COMBO_BOX (widget));
-		gtk_list_store_append (GTK_LIST_STORE(model), &iter);
-		gtk_list_store_set (GTK_LIST_STORE(model), &iter,
-				    GCM_PREFS_COMBO_COLUMN_TEXT, text,
-				    -1);
-		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
-		gtk_widget_set_sensitive (widget, FALSE);
-	}
-out:
-	if (profile_array != NULL)
-		g_ptr_array_unref (profile_array);
-	g_free (text);
-}
-
-/**
- * gcm_prefs_space_combo_changed_cb:
- **/
-static void
-gcm_prefs_space_combo_changed_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
-{
-	gboolean ret;
-	GtkTreeIter iter;
-	const gchar *filename;
-	GtkTreeModel *model;
-	CdProfile *profile = NULL;
-	const gchar *key = g_object_get_data (G_OBJECT(widget), "GCM:GSettingsKey");
-
-	/* no selection */
-	ret = gtk_combo_box_get_active_iter (GTK_COMBO_BOX(widget), &iter);
-	if (!ret)
-		return;
-
-	/* get profile */
-	model = gtk_combo_box_get_model (GTK_COMBO_BOX(widget));
-	gtk_tree_model_get (model, &iter,
-			    GCM_PREFS_COMBO_COLUMN_PROFILE, &profile,
-			    -1);
-	if (profile == NULL)
-		goto out;
-
-	filename = cd_profile_get_filename (profile);
-	g_debug ("changed working space %s", filename);
-	g_settings_set_string (prefs->settings, key, filename);
-out:
-	if (profile != NULL)
-		g_object_unref (profile);
-}
-
-/**
  * gcm_prefs_is_color_profiles_extra_installed_ready_cb:
  **/
 static void
@@ -2130,56 +2023,9 @@ out:
 static gboolean
 gcm_prefs_startup_idle_cb (GcmPrefsPriv *prefs)
 {
-	gchar *colorspace_cmyk;
-	gchar *colorspace_gray;
-	gchar *colorspace_rgb;
-	GtkWidget *widget;
-
 	/* search the disk for profiles */
 	g_signal_connect (prefs->client, "changed",
 			  G_CALLBACK(gcm_prefs_profile_store_changed_cb), prefs);
-
-	/* setup RGB combobox */
-	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "combobox_space_rgb"));
-	colorspace_rgb = g_settings_get_string (prefs->settings,
-						 GCM_SETTINGS_COLORSPACE_RGB);
-	gcm_prefs_set_combo_simple_text (widget);
-	gcm_prefs_setup_space_combobox (prefs, widget,
-					     CD_COLORSPACE_RGB,
-					     colorspace_rgb);
-	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey",
-			   (gpointer) GCM_SETTINGS_COLORSPACE_RGB);
-	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), prefs);
-
-	/* setup CMYK combobox */
-	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "combobox_space_cmyk"));
-	colorspace_cmyk = g_settings_get_string (prefs->settings,
-						 GCM_SETTINGS_COLORSPACE_CMYK);
-	gcm_prefs_set_combo_simple_text (widget);
-	gcm_prefs_setup_space_combobox (prefs, widget,
-					     CD_COLORSPACE_CMYK,
-					     colorspace_cmyk);
-	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey",
-			   (gpointer) GCM_SETTINGS_COLORSPACE_CMYK);
-	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), prefs);
-
-	/* setup gray combobox */
-	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "combobox_space_gray"));
-	colorspace_gray = g_settings_get_string (prefs->settings,
-						 GCM_SETTINGS_COLORSPACE_GRAY);
-	gcm_prefs_set_combo_simple_text (widget);
-	gcm_prefs_setup_space_combobox (prefs, widget,
-					     CD_COLORSPACE_GRAY,
-					     colorspace_gray);
-	g_object_set_data (G_OBJECT(widget), "GCM:GSettingsKey",
-			   (gpointer) GCM_SETTINGS_COLORSPACE_GRAY);
-	g_signal_connect (G_OBJECT (widget), "changed",
-			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), prefs);
 
 	/* set calibrate button sensitivity */
 	gcm_prefs_sensor_coldplug (prefs);
@@ -2191,9 +2037,6 @@ gcm_prefs_startup_idle_cb (GcmPrefsPriv *prefs)
 	/* do we show the shared-color-profiles-extra installer? */
 	g_debug ("getting installed");
 	gcm_prefs_is_color_profiles_extra_installed (prefs);
-
-	g_free (colorspace_rgb);
-	g_free (colorspace_cmyk);
 	return FALSE;
 }
 
@@ -2369,18 +2212,6 @@ gcm_prefs_button_virtual_entry_changed_cb (GtkEntry *entry,
 }
 
 /**
- * gcm_prefs_activate_link_cb:
- **/
-static gboolean
-gcm_prefs_activate_link_cb (GtkLabel *label,
-			    const gchar *uri,
-			    GcmPrefsPriv *prefs)
-{
-	gcm_prefs_open_viewer (prefs, NULL);
-	return TRUE;
-}
-
-/**
  * gcm_window_set_parent_xid:
  **/
 static void
@@ -2530,14 +2361,6 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 						     "toolbutton_device_default"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_prefs_default_cb), prefs);
-	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "label_viewer"));
-	g_signal_connect (widget, "activate-link",
-			  G_CALLBACK (gcm_prefs_activate_link_cb), prefs);
-	/* TRANSLATORS: link to gcm-viewer */
-	text = g_strdup_printf ("<a href=\"moo\">%s</a>",
-				_("Compare profiles..."));
-	gtk_label_set_markup (GTK_LABEL (widget), text);
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "toolbutton_device_remove"));
 	g_signal_connect (widget, "clicked",
@@ -2699,7 +2522,7 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 
 	/* add infobar to defaults pane */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
-						     "vbox_working_spaces"));
+						     "dialog-vbox1"));
 	gtk_box_pack_start (GTK_BOX(widget),
 			    prefs->info_bar_profiles,
 			    TRUE, FALSE, 0);
