@@ -11,14 +11,6 @@
     <value nick="long" value="2"/>
     <value nick="ask" value="3"/>
   </enum>
-  <enum id="org.gnome.color-manager.GraphType">
-    <value nick="none" value="0"/>
-    <value nick="cie-1931-xy" value="1"/>
-    <value nick="trc" value="2"/>
-    <value nick="vcgt" value="3"/>
-    <value nick="preview-input" value="4"/>
-    <value nick="preview-output" value="5"/>
-  </enum>
   <schema id="org.gnome.color-manager" path="/org/gnome/color-manager/">
     <key name="show-notifications" type="b">
       <default>false</default>
@@ -74,11 +66,6 @@
       <default>15552000</default>
       <summary>The duration between sending notifications to recalibrate a printer</summary>
       <description>This is the number of seconds in between notifying the user to recalibrate each printer device. Set to 0 to disable the notification.</description>
-    </key>
-    <key name="profile-graph-type" enum="org.gnome.color-manager.GraphType">
-      <default>'cie-1931-xy'</default>
-      <summary>The graph type to show in the properties page</summary>
-      <description>The graph type in the properties page. This should not be changed manually as this is set from the UI.</description>
     </key>
   </schema>
 </schemalist>
