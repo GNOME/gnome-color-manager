@@ -1303,6 +1303,10 @@ gcm_profile_generate_vcgt (GcmProfile *profile, guint size)
 	cmsFloat32Number in;
 	guint i;
 
+	/* not an actual profile */
+	if (priv->lcms_profile == NULL)
+		goto out;
+
 	/* get tone curves from profile */
 	vcgt = cmsReadTag (priv->lcms_profile, cmsSigVcgtType);
 	if (vcgt == NULL || vcgt[0] == NULL) {
