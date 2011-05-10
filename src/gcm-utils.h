@@ -41,11 +41,9 @@
 #define GCM_SETTINGS_COLORSPACE_CMYK			"colorspace-cmyk"
 #define GCM_SETTINGS_COLORSPACE_GRAY			"colorspace-gray"
 #define GCM_SETTINGS_CALIBRATION_LENGTH			"calibration-length"
-#define GCM_SETTINGS_SHOW_FINE_TUNING			"show-fine-tuning"
 #define GCM_SETTINGS_SHOW_NOTIFICATIONS			"show-notifications"
 #define GCM_SETTINGS_RECALIBRATE_PRINTER_THRESHOLD	"recalibrate-printer-threshold"
 #define GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD	"recalibrate-display-threshold"
-#define GCM_SETTINGS_ENABLE_SANE			"enable-sane"
 #define GCM_SETTINGS_PROFILE_GRAPH_TYPE			"profile-graph-type"
 
 #define GCM_CONFIG_VERSION_ORIGINAL			0
