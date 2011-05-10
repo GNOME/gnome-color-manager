@@ -33,7 +33,6 @@
 #define GCM_DBUS_PATH					"/org/gnome/ColorManager"
 
 #define GCM_SETTINGS_SCHEMA				"org.gnome.color-manager"
-#define GCM_SETTINGS_DEFAULT_GAMMA			"default-gamma"
 #define GCM_SETTINGS_GLOBAL_DISPLAY_CORRECTION		"global-display-correction"
 #define GCM_SETTINGS_SET_ICC_PROFILE_ATOM		"set-icc-profile-atom"
 #define GCM_SETTINGS_RENDERING_INTENT_DISPLAY		"rendering-intent-display"
