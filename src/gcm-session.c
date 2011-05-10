@@ -1084,32 +1084,6 @@ out:
 }
 
 /**
- * gcm_session_handle_get_property:
- **/
-static GVariant *
-gcm_session_handle_get_property (GDBusConnection *connection_, const gchar *sender,
-				 const gchar *object_path, const gchar *interface_name,
-				 const gchar *property_name, GError **error,
-				 gpointer user_data)
-{
-	GVariant *retval = NULL;
-	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
-
-	if (g_strcmp0 (property_name, "RenderingIntentDisplay") == 0) {
-		retval = g_settings_get_value (priv->settings, GCM_SETTINGS_RENDERING_INTENT_DISPLAY);
-	} else if (g_strcmp0 (property_name, "RenderingIntentSoftproof") == 0) {
-		retval = g_settings_get_value (priv->settings, GCM_SETTINGS_RENDERING_INTENT_SOFTPROOF);
-	} else if (g_strcmp0 (property_name, "ColorspaceRgb") == 0) {
-		retval = g_settings_get_value (priv->settings, GCM_SETTINGS_COLORSPACE_RGB);
-	} else if (g_strcmp0 (property_name, "ColorspaceCmyk") == 0) {
-		retval = g_settings_get_value (priv->settings, GCM_SETTINGS_COLORSPACE_CMYK);
-	} else if (g_strcmp0 (property_name, "ColorspaceGray") == 0) {
-		retval = g_settings_get_value (priv->settings, GCM_SETTINGS_COLORSPACE_GRAY);
-	}
-	return retval;
-}
-
-/**
  * gcm_session_on_bus_acquired:
  **/
 static void
@@ -1121,7 +1095,7 @@ gcm_session_on_bus_acquired (GDBusConnection *connection,
 	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
 	static const GDBusInterfaceVTable interface_vtable = {
 		gcm_session_handle_method_call,
-		gcm_session_handle_get_property,
+		NULL,
 		NULL
 	};
 
