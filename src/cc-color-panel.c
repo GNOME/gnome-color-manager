@@ -61,6 +61,7 @@ struct _CcColorPanelPrivate {
 	GSettings		*settings;
 	guint			 save_and_apply_id;
 	guint			 apply_all_devices_id;
+	guint			 session_startup_id;
 	GCancellable		*cancellable;
 };
 
@@ -2270,6 +2271,7 @@ cc_color_panel_startup_idle_cb (CcColorPanel *panel)
 	g_debug ("getting installed");
 	cc_color_panel_is_color_profiles_extra_installed (panel);
 out:
+	panel->priv->session_startup_id = 0;
 	g_free (colorspace_rgb);
 	g_free (colorspace_cmyk);
 	return FALSE;
@@ -2452,6 +2454,8 @@ cc_color_panel_finalize (GObject *object)
 		g_source_remove (panel->priv->save_and_apply_id);
 	if (panel->priv->apply_all_devices_id != 0)
 		g_source_remove (panel->priv->apply_all_devices_id);
+	if (panel->priv->session_startup_id > 0)
+		g_source_remove (panel->priv->session_startup_id);
 
 	G_OBJECT_CLASS (cc_color_panel_parent_class)->finalize (object);
 }
@@ -2644,7 +2648,8 @@ cc_color_panel_init (CcColorPanel *panel)
 if(0)	cc_color_panel_setup_drag_and_drop (GTK_WIDGET (panel->priv->main_window));
 
 	/* do all this after the window has been set up */
-	g_idle_add ((GSourceFunc) cc_color_panel_startup_idle_cb, panel);
+	panel->priv->session_startup_id =
+		g_idle_add ((GSourceFunc) cc_color_panel_startup_idle_cb, panel);
 out:
 	return;
 }
