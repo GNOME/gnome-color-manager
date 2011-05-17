@@ -26,6 +26,7 @@
 #include <gtk/gtk.h>
 
 #include "gcm-cell-renderer-profile-text.h"
+#include "gcm-utils.h"
 
 enum {
 	PROP_0,
@@ -57,30 +58,54 @@ gcm_cell_renderer_profile_text_get_property (GObject *object, guint param_id,
 	}
 }
 
+static GString *
+gcm_cell_renderer_get_profile_text (CdProfile *profile)
+{
+	CdColorspace colorspace;
+	const gchar *id;
+	GString *string;
+
+	if (profile == NULL) {
+		/* TRANSLATORS: this is when there is no profile for the device */
+		string = g_string_new (_("No profile"));
+		goto out;
+	}
+
+	/* add profile description */
+	id = cd_profile_get_title (profile);
+	if (id != NULL && id[0] != '\0') {
+		string = g_string_new (id);
+		goto out;
+	}
+
+	/* some meta profiles do not have ICC profiles */
+	colorspace = cd_profile_get_colorspace (profile);
+	if (colorspace != CD_COLORSPACE_UNKNOWN) {
+		string = g_string_new (NULL);
+		g_string_append_printf (string,
+					_("Default %s"),
+					cd_colorspace_to_localised_string (colorspace));
+		goto out;
+	}
+
+	/* fall back to ID, ick */
+	string = g_string_new (cd_profile_get_id (profile));
+out:
+	return string;
+}
+
 static void
 gcm_cell_renderer_set_markup (GcmCellRendererProfileText *renderer)
 {
 	GString *string;
-	const gchar *description;
 
 	/* do we have a profile to load? */
-	if (renderer->profile == NULL) {
-		/* TRANSLATORS: this is when there is no profile for the device */
-		string = g_string_new (_("No profile"));
-	} else {
-		/* add profile description */
-		description = cd_profile_get_title (renderer->profile);
-		if (description == NULL || description[0] == '\0')
-			description = cd_profile_get_filename (renderer->profile);
-		if (description == NULL || description[0] == '\0')
-			description = cd_profile_get_id (renderer->profile);
-		string = g_string_new (description);
+	string = gcm_cell_renderer_get_profile_text (renderer->profile);
 
-		/* this is the default profile */
-		if (renderer->is_default) {
-			g_string_prepend (string, "<b>");
-			g_string_append (string, "</b>");
-		}
+	/* this is the default profile */
+	if (renderer->is_default) {
+		g_string_prepend (string, "<b>");
+		g_string_append (string, "</b>");
 	}
 
 	/* assign */
