@@ -31,7 +31,7 @@
 #include <colord.h>
 
 #include "gcm-cell-renderer-profile-text.h"
-#include "gcm-cell-renderer-profile-icon.h"
+#include "gcm-cell-renderer-profile-date.h"
 #include "gcm-calibrate-argyll.h"
 #include "gcm-debug.h"
 #include "gcm-exif.h"
@@ -66,6 +66,9 @@ enum {
 	CD_DEVICES_COLUMN_ICON,
 	CD_DEVICES_COLUMN_TITLE,
 	CD_DEVICES_COLUMN_DEVICE,
+	CD_DEVICES_COLUMN_STATUS,
+	CD_DEVICES_COLUMN_STATUS_IMAGE,
+	CD_DEVICES_COLUMN_TOOLTIP,
 	CD_DEVICES_COLUMN_LAST
 };
 
@@ -1247,26 +1250,57 @@ gcm_prefs_add_devices_columns (GcmPrefsPriv *prefs,
 	GtkCellRenderer *renderer;
 	GtkTreeViewColumn *column;
 
+	gtk_tree_view_set_headers_visible (treeview, TRUE);
+
+	/* --- column for device image and device title --- */
+	column = gtk_tree_view_column_new ();
+	gtk_tree_view_column_set_expand (column, TRUE);
+	/* TRANSLATORS: column for device list */
+	gtk_tree_view_column_set_title (column, _("Device"));
+
 	/* image */
 	renderer = gtk_cell_renderer_pixbuf_new ();
 	g_object_set (renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
-	column = gtk_tree_view_column_new_with_attributes ("", renderer,
-							   "icon-name", CD_DEVICES_COLUMN_ICON,
-							   NULL);
-	gtk_tree_view_append_column (treeview, column);
+	gtk_tree_view_column_pack_start (column, renderer, FALSE);
+	gtk_tree_view_column_add_attribute (column, renderer,
+					    "icon-name", CD_DEVICES_COLUMN_ICON);
 
-	/* column for text */
+	/* text */
 	renderer = gtk_cell_renderer_text_new ();
-	g_object_set (renderer,
-		      "wrap-mode", PANGO_WRAP_WORD,
-		      NULL);
-	column = gtk_tree_view_column_new_with_attributes ("", renderer,
-							   "markup", CD_DEVICES_COLUMN_TITLE,
-							   NULL);
-	gtk_tree_view_column_set_sort_column_id (column, CD_DEVICES_COLUMN_SORT);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (prefs->list_store_devices), CD_DEVICES_COLUMN_SORT, GTK_SORT_ASCENDING);
-	gtk_tree_view_append_column (treeview, column);
+	gtk_tree_view_column_pack_start (column, renderer, TRUE);
+	gtk_tree_view_column_add_attribute (column, renderer,
+					    "markup", CD_DEVICES_COLUMN_TITLE);
 	gtk_tree_view_column_set_expand (column, TRUE);
+	gtk_tree_view_column_set_sort_column_id (column, CD_DEVICES_COLUMN_SORT);
+	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (prefs->list_store_devices),
+					      CD_DEVICES_COLUMN_SORT,
+					      GTK_SORT_ASCENDING);
+	gtk_tree_view_append_column (treeview, GTK_TREE_VIEW_COLUMN(column));
+
+	/* --- column for device status --- */
+	column = gtk_tree_view_column_new ();
+	gtk_tree_view_column_set_expand (column, TRUE);
+	/* TRANSLATORS: column for device list */
+	gtk_tree_view_column_set_title (column, _("Status"));
+
+	/* image */
+	renderer = gtk_cell_renderer_pixbuf_new ();
+	g_object_set (renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
+	gtk_tree_view_column_pack_start (column, renderer, FALSE);
+	gtk_tree_view_column_add_attribute (column, renderer,
+					    "icon-name", CD_DEVICES_COLUMN_STATUS_IMAGE);
+
+	/* text */
+	renderer = gtk_cell_renderer_text_new ();
+	gtk_tree_view_column_pack_start (column, renderer, TRUE);
+	gtk_tree_view_column_add_attribute (column, renderer,
+					    "markup", CD_DEVICES_COLUMN_STATUS);
+	gtk_tree_view_column_set_expand (column, FALSE);
+	gtk_tree_view_append_column (treeview, GTK_TREE_VIEW_COLUMN(column));
+
+	/* tooltip */
+	gtk_tree_view_set_tooltip_column (treeview,
+					  CD_DEVICES_COLUMN_TOOLTIP);
 }
 
 /**
@@ -1284,23 +1318,23 @@ gcm_prefs_add_assign_columns (GcmPrefsPriv *prefs,
 	g_object_set (renderer,
 		      "wrap-mode", PANGO_WRAP_WORD,
 		      NULL);
-	column = gtk_tree_view_column_new_with_attributes ("", renderer,
+	column = gtk_tree_view_column_new_with_attributes (_("Profile"), renderer,
 							   "profile", GCM_LIST_STORE_PROFILES_COLUMN_PROFILE,
 							   "is-default", GCM_LIST_STORE_PROFILES_COLUMN_IS_DEFAULT,
 							   NULL);
-	gtk_tree_view_column_set_sort_column_id (column, GCM_LIST_STORE_PROFILES_COLUMN_SORT);
-	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (prefs->list_store_profiles), GCM_LIST_STORE_PROFILES_COLUMN_SORT, GTK_SORT_ASCENDING);
 	gtk_tree_view_append_column (treeview, column);
 	gtk_tree_view_column_set_expand (column, TRUE);
 
-	/* column for icon */
-	renderer = gcm_cell_renderer_profile_icon_new ();
-	g_object_set (renderer, "stock-size", GTK_ICON_SIZE_BUTTON, NULL);
-	column = gtk_tree_view_column_new_with_attributes ("", renderer,
+	/* column for text */
+	renderer = gcm_cell_renderer_profile_date_new ();
+	g_object_set (renderer,
+		      "wrap-mode", PANGO_WRAP_WORD,
+		      NULL);
+	column = gtk_tree_view_column_new_with_attributes (_("Age"), renderer,
 							   "profile", GCM_LIST_STORE_PROFILES_COLUMN_PROFILE,
 							   NULL);
 	gtk_tree_view_append_column (treeview, column);
-	gtk_tree_view_column_set_expand (column, FALSE);
+	gtk_tree_view_column_set_expand (column, TRUE);
 }
 
 /**
@@ -1796,6 +1830,83 @@ gcm_prefs_device_kind_to_icon_name (CdDeviceKind kind)
 }
 
 /**
+ * gcm_prefs_device_set_model_by_iter:
+ **/
+static void
+gcm_prefs_device_set_model_by_iter (GcmPrefsPriv *prefs, CdDevice *device, GtkTreeIter *iter)
+{
+	GString *status;
+	const gchar *status_image;
+	const gchar *tooltip = NULL;
+	CdProfile *profile = NULL;
+
+	/* set status */
+	profile = cd_device_get_default_profile (device);
+	if (profile == NULL) {
+		status = g_string_new (_("Uncalibrated"));
+		status_image = "emblem-important-symbolic";
+		tooltip = _("This device is not color managed.");
+		goto out;
+	}
+
+	/* autogenerated profiles are crap */
+	if (cd_profile_get_kind (profile) == CD_PROFILE_KIND_DISPLAY_DEVICE &&
+	    !cd_profile_get_has_vcgt (profile)) {
+		status = g_string_new (_("Uncalibrated"));
+		status_image = "emblem-important-symbolic";
+		tooltip = _("This device does not have a profile suitable for whole-screen color correction.");
+		goto out;
+	}
+
+	/* yay! */
+	status = g_string_new (_("Calibrated"));
+	status_image = "emblem-default-symbolic";
+out:
+	g_string_prepend (status, "<span foreground='gray'>");
+	g_string_append (status, "</span>");
+
+	/* save to store */
+	gtk_list_store_set (prefs->list_store_devices, iter,
+			    CD_DEVICES_COLUMN_STATUS, status->str,
+			    CD_DEVICES_COLUMN_STATUS_IMAGE, status_image,
+			    CD_DEVICES_COLUMN_TOOLTIP, tooltip,
+			    -1);
+	g_string_free (status, TRUE);
+	if (profile != NULL)
+		g_object_unref (profile);
+}
+
+/**
+ * gcm_prefs_device_changed_cb:
+ **/
+static void
+gcm_prefs_device_changed_cb (CdDevice *device, GcmPrefsPriv *prefs)
+{
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	const gchar *id;
+	gchar *id_tmp;
+	gboolean ret;
+
+	/* get first element */
+	model = GTK_TREE_MODEL (prefs->list_store_devices);
+	ret = gtk_tree_model_get_iter_first (model, &iter);
+	if (!ret)
+		return;
+
+	/* get the other elements */
+	id = cd_device_get_id (device);
+	do {
+		gtk_tree_model_get (model, &iter,
+				    CD_DEVICES_COLUMN_ID, &id_tmp,
+				    -1);
+		if (g_strcmp0 (id_tmp, id) == 0)
+			gcm_prefs_device_set_model_by_iter (prefs, device, &iter);
+		g_free (id_tmp);
+	} while (gtk_tree_model_iter_next (model, &iter));
+}
+
+/**
  * gcm_prefs_add_device:
  **/
 static void
@@ -1830,16 +1941,22 @@ gcm_prefs_add_device (GcmPrefsPriv *prefs, CdDevice *device)
 				gcm_prefs_device_kind_to_string (kind),
 				title);
 
+	/* watch for changes to update the status icons */
+	g_signal_connect (device, "changed",
+			  G_CALLBACK (gcm_prefs_device_changed_cb), prefs);
+
 	/* add to list */
 	id = cd_device_get_id (device);
 	g_debug ("add %s to device list", id);
 	gtk_list_store_append (prefs->list_store_devices, &iter);
+	gcm_prefs_device_set_model_by_iter (prefs, device, &iter);
 	gtk_list_store_set (prefs->list_store_devices, &iter,
 			    CD_DEVICES_COLUMN_DEVICE, device,
 			    CD_DEVICES_COLUMN_ID, id,
 			    CD_DEVICES_COLUMN_SORT, sort,
 			    CD_DEVICES_COLUMN_TITLE, title,
-			    CD_DEVICES_COLUMN_ICON, icon_name, -1);
+			    CD_DEVICES_COLUMN_ICON, icon_name,
+			    -1);
 	g_free (sort);
 	g_free (title);
 }
@@ -2288,11 +2405,14 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 
 	/* create list stores */
 	prefs->list_store_devices = gtk_list_store_new (CD_DEVICES_COLUMN_LAST,
-							      G_TYPE_STRING,
-							      G_TYPE_STRING,
-							      G_TYPE_STRING,
-							      G_TYPE_STRING,
-							      CD_TYPE_DEVICE);
+							G_TYPE_STRING,
+							G_TYPE_STRING,
+							G_TYPE_STRING,
+							G_TYPE_STRING,
+							CD_TYPE_DEVICE,
+							G_TYPE_STRING,
+							G_TYPE_STRING,
+							G_TYPE_STRING);
 	prefs->list_store_profiles = gcm_list_store_profiles_new ();
 
 	/* assign buttons */
@@ -2330,7 +2450,7 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 	/* force to be at least 3 rows high */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
 						     "scrolledwindow_devices"));
-	gtk_widget_set_size_request (widget, 550, 36 * 3);
+	gtk_widget_set_size_request (widget, 550, 36 * 4);
 
 	/* create assign tree view */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,
@@ -2349,8 +2469,6 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 	gcm_prefs_add_assign_columns (prefs, GTK_TREE_VIEW (widget));
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
 	gtk_tree_view_set_reorderable (GTK_TREE_VIEW (widget), TRUE);
-	gtk_tree_view_set_tooltip_column (GTK_TREE_VIEW (widget),
-					  GCM_LIST_STORE_PROFILES_COLUMN_TOOLTIP);
 
 	/* force to be at least 2 rows high */
 	widget = GTK_WIDGET (gtk_builder_get_object (prefs->builder,

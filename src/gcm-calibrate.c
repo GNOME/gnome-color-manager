@@ -147,13 +147,8 @@ gchar *
 gcm_calibrate_get_profile_description (GcmCalibrate *calibrate)
 {
 	gchar *text;
-	GDate *date = NULL;
 	const gchar *description;
 	GcmCalibratePrivate *priv = calibrate->priv;
-
-	/* create date and set it to now */
-	date = g_date_new ();
-	g_date_set_time_t (date, time (NULL));
 
 	/* we've got something set */
 	if (priv->description != NULL) {
@@ -164,9 +159,7 @@ gcm_calibrate_get_profile_description (GcmCalibrate *calibrate)
 	}
 
 	/* get description */
-	text = g_strdup_printf ("%s, %s (%04i-%02i-%02i)", priv->device, description, date->year, date->month, date->day);
-
-	g_date_free (date);
+	text = g_strdup_printf ("%s, %s", priv->device, description);
 	return text;
 }
 
