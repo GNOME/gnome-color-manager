@@ -60,6 +60,7 @@ gcm_cell_renderer_get_profile_date (CdProfile *profile)
 {
 	gint now;
 	gint64 age;
+	gint64 created;
 	GString *string;
 
 	if (profile == NULL) {
@@ -70,7 +71,12 @@ gcm_cell_renderer_get_profile_date (CdProfile *profile)
 
 	/* get profile age */
 	now = g_get_real_time () / G_USEC_PER_SEC;
-	age = now - cd_profile_get_created (profile);
+	created = cd_profile_get_created (profile);
+	if (created == 0) {
+		string = g_string_new ("");
+		goto out;
+	}
+	age = now - created;
 
 	/* days */
 	string = g_string_new ("");
@@ -109,8 +115,10 @@ gcm_cell_renderer_get_profile_date (CdProfile *profile)
 	/* fallback */
 	g_string_append_printf (string, _("Less than 1 week"));
 out:
-	g_string_prepend (string, "<span foreground='gray'>");
-	g_string_append (string, "</span>");
+	if (string->len > 0) {
+		g_string_prepend (string, "<span foreground='gray'>");
+		g_string_append (string, "</span>");
+	}
 	return string;
 }
 
