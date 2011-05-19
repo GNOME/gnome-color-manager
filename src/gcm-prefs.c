@@ -61,15 +61,15 @@ typedef struct {
 #define PK_DBUS_INTERFACE_QUERY			"org.freedesktop.PackageKit.Query"
 
 enum {
-	CD_DEVICES_COLUMN_ID,
-	CD_DEVICES_COLUMN_SORT,
-	CD_DEVICES_COLUMN_ICON,
-	CD_DEVICES_COLUMN_TITLE,
-	CD_DEVICES_COLUMN_DEVICE,
-	CD_DEVICES_COLUMN_STATUS,
-	CD_DEVICES_COLUMN_STATUS_IMAGE,
-	CD_DEVICES_COLUMN_TOOLTIP,
-	CD_DEVICES_COLUMN_LAST
+	GCM_PREFS_COLUMN_ID,
+	GCM_PREFS_COLUMN_SORT,
+	GCM_PREFS_COLUMN_ICON,
+	GCM_PREFS_COLUMN_TITLE,
+	GCM_PREFS_COLUMN_DEVICE,
+	GCM_PREFS_COLUMN_STATUS,
+	GCM_PREFS_COLUMN_STATUS_IMAGE,
+	GCM_PREFS_COLUMN_TOOLTIP,
+	GCM_PREFS_COLUMN_LAST
 };
 
 enum {
@@ -1263,17 +1263,17 @@ gcm_prefs_add_devices_columns (GcmPrefsPriv *prefs,
 	g_object_set (renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
 	gtk_tree_view_column_pack_start (column, renderer, FALSE);
 	gtk_tree_view_column_add_attribute (column, renderer,
-					    "icon-name", CD_DEVICES_COLUMN_ICON);
+					    "icon-name", GCM_PREFS_COLUMN_ICON);
 
 	/* text */
 	renderer = gtk_cell_renderer_text_new ();
 	gtk_tree_view_column_pack_start (column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute (column, renderer,
-					    "markup", CD_DEVICES_COLUMN_TITLE);
+					    "markup", GCM_PREFS_COLUMN_TITLE);
 	gtk_tree_view_column_set_expand (column, TRUE);
-	gtk_tree_view_column_set_sort_column_id (column, CD_DEVICES_COLUMN_SORT);
+	gtk_tree_view_column_set_sort_column_id (column, GCM_PREFS_COLUMN_SORT);
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (prefs->list_store_devices),
-					      CD_DEVICES_COLUMN_SORT,
+					      GCM_PREFS_COLUMN_SORT,
 					      GTK_SORT_ASCENDING);
 	gtk_tree_view_append_column (treeview, GTK_TREE_VIEW_COLUMN(column));
 
@@ -1288,19 +1288,19 @@ gcm_prefs_add_devices_columns (GcmPrefsPriv *prefs,
 	g_object_set (renderer, "stock-size", GTK_ICON_SIZE_MENU, NULL);
 	gtk_tree_view_column_pack_start (column, renderer, FALSE);
 	gtk_tree_view_column_add_attribute (column, renderer,
-					    "icon-name", CD_DEVICES_COLUMN_STATUS_IMAGE);
+					    "icon-name", GCM_PREFS_COLUMN_STATUS_IMAGE);
 
 	/* text */
 	renderer = gtk_cell_renderer_text_new ();
 	gtk_tree_view_column_pack_start (column, renderer, TRUE);
 	gtk_tree_view_column_add_attribute (column, renderer,
-					    "markup", CD_DEVICES_COLUMN_STATUS);
+					    "markup", GCM_PREFS_COLUMN_STATUS);
 	gtk_tree_view_column_set_expand (column, FALSE);
 	gtk_tree_view_append_column (treeview, GTK_TREE_VIEW_COLUMN(column));
 
 	/* tooltip */
 	gtk_tree_view_set_tooltip_column (treeview,
-					  CD_DEVICES_COLUMN_TOOLTIP);
+					  GCM_PREFS_COLUMN_TOOLTIP);
 }
 
 /**
@@ -1446,7 +1446,7 @@ gcm_prefs_devices_treeview_clicked_cb (GtkTreeSelection *selection,
 	if (prefs->current_device != NULL)
 		g_object_unref (prefs->current_device);
 	gtk_tree_model_get (model, &iter,
-			    CD_DEVICES_COLUMN_DEVICE, &prefs->current_device,
+			    GCM_PREFS_COLUMN_DEVICE, &prefs->current_device,
 			    -1);
 
 	/* we have a new device */
@@ -1867,9 +1867,9 @@ out:
 
 	/* save to store */
 	gtk_list_store_set (prefs->list_store_devices, iter,
-			    CD_DEVICES_COLUMN_STATUS, status->str,
-			    CD_DEVICES_COLUMN_STATUS_IMAGE, status_image,
-			    CD_DEVICES_COLUMN_TOOLTIP, tooltip,
+			    GCM_PREFS_COLUMN_STATUS, status->str,
+			    GCM_PREFS_COLUMN_STATUS_IMAGE, status_image,
+			    GCM_PREFS_COLUMN_TOOLTIP, tooltip,
 			    -1);
 	g_string_free (status, TRUE);
 	if (profile != NULL)
@@ -1898,7 +1898,7 @@ gcm_prefs_device_changed_cb (CdDevice *device, GcmPrefsPriv *prefs)
 	id = cd_device_get_id (device);
 	do {
 		gtk_tree_model_get (model, &iter,
-				    CD_DEVICES_COLUMN_ID, &id_tmp,
+				    GCM_PREFS_COLUMN_ID, &id_tmp,
 				    -1);
 		if (g_strcmp0 (id_tmp, id) == 0)
 			gcm_prefs_device_set_model_by_iter (prefs, device, &iter);
@@ -1951,11 +1951,11 @@ gcm_prefs_add_device (GcmPrefsPriv *prefs, CdDevice *device)
 	gtk_list_store_append (prefs->list_store_devices, &iter);
 	gcm_prefs_device_set_model_by_iter (prefs, device, &iter);
 	gtk_list_store_set (prefs->list_store_devices, &iter,
-			    CD_DEVICES_COLUMN_DEVICE, device,
-			    CD_DEVICES_COLUMN_ID, id,
-			    CD_DEVICES_COLUMN_SORT, sort,
-			    CD_DEVICES_COLUMN_TITLE, title,
-			    CD_DEVICES_COLUMN_ICON, icon_name,
+			    GCM_PREFS_COLUMN_DEVICE, device,
+			    GCM_PREFS_COLUMN_ID, id,
+			    GCM_PREFS_COLUMN_SORT, sort,
+			    GCM_PREFS_COLUMN_TITLE, title,
+			    GCM_PREFS_COLUMN_ICON, icon_name,
 			    -1);
 	g_free (sort);
 	g_free (title);
@@ -1985,7 +1985,7 @@ gcm_prefs_remove_device (GcmPrefsPriv *prefs, CdDevice *cd_device)
 	/* get the other elements */
 	do {
 		gtk_tree_model_get (model, &iter,
-				    CD_DEVICES_COLUMN_ID, &id_tmp,
+				    GCM_PREFS_COLUMN_ID, &id_tmp,
 				    -1);
 		if (g_strcmp0 (id_tmp, id) == 0) {
 			gtk_list_store_remove (GTK_LIST_STORE(model), &iter);
@@ -2404,7 +2404,7 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 	                                   GCM_DATA G_DIR_SEPARATOR_S "icons");
 
 	/* create list stores */
-	prefs->list_store_devices = gtk_list_store_new (CD_DEVICES_COLUMN_LAST,
+	prefs->list_store_devices = gtk_list_store_new (GCM_PREFS_COLUMN_LAST,
 							G_TYPE_STRING,
 							G_TYPE_STRING,
 							G_TYPE_STRING,
