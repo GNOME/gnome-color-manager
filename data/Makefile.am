@@ -9,7 +9,7 @@ desktopdir = $(datadir)/applications
 desktop_in_files =					\
 	gcm-viewer.desktop.in				\
 	gcm-picker.desktop.in				\
-	gcm-prefs.desktop.in				\
+	gcm-calibrate.desktop.in			\
 	gcm-import.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
@@ -26,14 +26,11 @@ $(service_DATA): $(service_in_files) Makefile
 	@sed -e "s|\@servicedir\@|$(bindir)|" $< > $@
 
 pkgdata_DATA =						\
-	gcm-calibrate.ui				\
 	gcm-spawn.ui					\
 	gcm-picker.ui					\
-	gcm-viewer.ui					\
-	gcm-prefs.ui
+	gcm-viewer.ui
 
 EXTRA_DIST =						\
-	$(gsettings_SCHEMAS)				\
 	$(service_in_files)				\
 	$(autostart_in_files)				\
 	$(desktop_in_files)				\
@@ -45,7 +42,7 @@ clean-local :
 DISTCLEANFILES =					\
 	org.gnome.ColorManager.service			\
 	gcm-session.desktop				\
-	gcm-prefs.desktop				\
+	gcm-calibrate.desktop				\
 	gcm-picker.desktop				\
 	gcm-viewer.desktop				\
 	gcm-import.desktop

@@ -50,27 +50,37 @@ struct _GcmCalibrateClass
 	GObjectClass	parent_class;
 	/* vtable */
 	gboolean	 (*calibrate_display)		(GcmCalibrate	*calibrate,
+							 CdDevice	*device,
 							 CdSensor	*sensor,
 							 GtkWindow	*window,
 							 GError		**error);
 	gboolean	 (*calibrate_device)		(GcmCalibrate	*calibrate,
+							 CdDevice	*device,
 							 CdSensor	*sensor,
 							 GtkWindow	*window,
 							 GError		**error);
 	gboolean	 (*calibrate_printer)		(GcmCalibrate	*calibrate,
+							 CdDevice	*device,
 							 CdSensor	*sensor,
 							 GtkWindow	*window,
 							 GError		**error);
 	gboolean	 (*calibrate_spotread)		(GcmCalibrate	*calibrate,
+							 CdDevice	*device,
 							 CdSensor	*sensor,
 							 GtkWindow	*window,
 							 GError		**error);
-	/* padding for future expansion */
-	void (*_gcm_reserved1) (void);
-	void (*_gcm_reserved2) (void);
-	void (*_gcm_reserved3) (void);
-	void (*_gcm_reserved4) (void);
-	void (*_gcm_reserved5) (void);
+	void		 (*interaction)			(GcmCalibrate	*calibrate,
+							 GtkResponseType response);
+
+	/* signal */
+	void		(* title_changed)		(GcmCalibrate	*calibrate,
+							 const gchar	*title);
+	void		(* message_changed)		(GcmCalibrate	*calibrate,
+							 const gchar	*message);
+	void		(* image_changed)		(GcmCalibrate	*calibrate,
+							 const gchar	*filename);
+	void		(* interaction_required)	(GcmCalibrate	*calibrate,
+							 const gchar	*button_text);
 };
 
 typedef enum {
@@ -102,7 +112,7 @@ typedef enum {
 	GCM_CALIBRATE_DEVICE_KIND_LCD,
 	GCM_CALIBRATE_DEVICE_KIND_PROJECTOR,
 	GCM_CALIBRATE_DEVICE_KIND_UNKNOWN
-} GcmCalibrateDeviceKind;
+} GcmCalibrateDisplayKind;
 
 typedef enum {
 	GCM_CALIBRATE_PRINT_KIND_LOCAL,
@@ -120,18 +130,48 @@ typedef enum {
 
 GType		 gcm_calibrate_get_type			(void);
 GcmCalibrate	*gcm_calibrate_new			(void);
+
+/* designed for gcm-calibrate to call */
 gboolean	 gcm_calibrate_display			(GcmCalibrate	*calibrate,
+							 CdDevice	*device,
 							 GtkWindow	*window,
 							 GError		**error);
 gboolean	 gcm_calibrate_device			(GcmCalibrate	*calibrate,
+							 CdDevice	*device,
 							 GtkWindow	*window,
 							 GError		**error);
 gboolean	 gcm_calibrate_printer			(GcmCalibrate	*calibrate,
+							 CdDevice	*device,
 							 GtkWindow	*window,
 							 GError		**error);
 gboolean	 gcm_calibrate_spotread			(GcmCalibrate	*calibrate,
+							 CdDevice	*device,
 							 GtkWindow	*window,
 							 GError		**error);
+void		 gcm_calibrate_set_content_widget	(GcmCalibrate	*calibrate,
+							 GtkWidget	*widget);
+void		 gcm_calibrate_interaction		(GcmCalibrate	*calibrate,
+							 GtkResponseType response);
+
+/* designed for super-classes to call */
+gchar		*gcm_calibrate_get_profile_copyright	(GcmCalibrate	*calibrate);
+gchar		*gcm_calibrate_get_profile_description	(GcmCalibrate	*calibrate);
+gchar		*gcm_calibrate_get_profile_model	(GcmCalibrate	*calibrate);
+gchar		*gcm_calibrate_get_profile_manufacturer	(GcmCalibrate	*calibrate);
+void		 gcm_calibrate_set_sensor		(GcmCalibrate	*calibrate,
+							 CdSensor	*sensor);
+void		 gcm_calibrate_set_title		(GcmCalibrate	*calibrate,
+							 const gchar	*title);
+void		 gcm_calibrate_set_message		(GcmCalibrate	*calibrate,
+							 const gchar	*message);
+void		 gcm_calibrate_set_image		(GcmCalibrate	*calibrate,
+							 const gchar	*filename);
+void		 gcm_calibrate_pop			(GcmCalibrate	*calibrate);
+void		 gcm_calibrate_interaction_required	(GcmCalibrate	*calibrate,
+							 const gchar	*button_text);
+GtkWidget	*gcm_calibrate_get_content_widget	(GcmCalibrate	*calibrate);
+
+/* JUNK */
 gboolean	 gcm_calibrate_set_from_device		(GcmCalibrate	*calibrate,
 							 CdDevice	*device,
 							 CdSensor	*sensor,
@@ -142,11 +182,6 @@ gboolean	 gcm_calibrate_set_from_exif		(GcmCalibrate	*calibrate,
 const gchar	*gcm_calibrate_get_filename_result	(GcmCalibrate	*calibrate);
 const gchar	*gcm_calibrate_get_working_path		(GcmCalibrate	*calibrate);
 const gchar	*gcm_calibrate_get_basename		(GcmCalibrate	*calibrate);
-
-gchar		*gcm_calibrate_get_profile_copyright	(GcmCalibrate	*calibrate);
-gchar		*gcm_calibrate_get_profile_description	(GcmCalibrate	*calibrate);
-gchar		*gcm_calibrate_get_profile_model	(GcmCalibrate	*calibrate);
-gchar		*gcm_calibrate_get_profile_manufacturer	(GcmCalibrate	*calibrate);
 
 G_END_DECLS
 

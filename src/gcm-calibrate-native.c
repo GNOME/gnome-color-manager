@@ -29,7 +29,6 @@
 #include <colord.h>
 
 #include "gcm-calibrate-native.h"
-#include "gcm-calibrate-dialog.h"
 #include "gcm-sample-window.h"
 #include "gcm-profile.h"
 
@@ -47,7 +46,6 @@ struct _GcmCalibrateNativePrivate
 	GtkWindow			*sample_window;
 	GMainLoop			*loop;
 	GCancellable			*cancellable;
-	GcmCalibrateDialog		*calibrate_dialog;
 };
 
 G_DEFINE_TYPE (GcmCalibrateNative, gcm_calibrate_native, GCM_TYPE_CALIBRATE)
@@ -580,7 +578,7 @@ out:
  * gcm_calibrate_native_display:
  **/
 static gboolean
-gcm_calibrate_native_display (GcmCalibrate *calibrate, CdSensor *sensor, GtkWindow *window, GError **error)
+gcm_calibrate_native_display (GcmCalibrate *calibrate, CdDevice *device, CdSensor *sensor, GtkWindow *window, GError **error)
 {
 	GcmCalibrateNative *calibrate_native = GCM_CALIBRATE_NATIVE(calibrate);
 	GcmCalibrateNativePrivate *priv = calibrate_native->priv;
@@ -649,18 +647,7 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, CdSensor *sensor, GtkWind
 		message = _("Please attach the measuring instrument to the center of the screen on the gray square.");
 	}
 
-	/* block for a response */
-	g_debug ("blocking waiting for user input: %s", title);
-
-	/* push new messages into the UI */
-	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
-	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, TRUE);
-	gcm_calibrate_dialog_set_image_filename (priv->calibrate_dialog, filename);
-	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
-	gcm_calibrate_dialog_set_move_window (priv->calibrate_dialog, TRUE);
-
-	/* TRANSLATORS: button text */
-	gcm_calibrate_dialog_set_button_ok_id (priv->calibrate_dialog, _("Continue"));
+	g_debug ("title=%s, message=%s", title, message);
 
 	/* wait for response */
 //	gtk_window_present (GTK_WINDOW (priv->calibrate_dialog));
@@ -670,20 +657,11 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, CdSensor *sensor, GtkWind
 	if (g_cancellable_is_cancelled (priv->cancellable))
 		goto out;
 
-	/* set modal windows up correctly */
-	gcm_calibrate_dialog_set_move_window (priv->calibrate_dialog, TRUE);
-	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
-
 	/* TRANSLATORS: title, drawing means painting to the screen */
 	title = _("Drawing the patches");
 
 	/* TRANSLATORS: dialog message */
 	message = _("Drawing the generated patches to the screen, which will then be measured by the hardware device.");
-
-	/* push new messages into the UI */
-	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
-	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
-	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, FALSE);
 
 	/* get filenames */
 	basename = gcm_calibrate_get_basename (calibrate);
@@ -744,10 +722,10 @@ out:
  * gcm_calibrate_native_spotread:
  **/
 static gboolean
-gcm_calibrate_native_spotread (GcmCalibrate *calibrate, CdSensor *sensor, GtkWindow *window, GError **error)
+gcm_calibrate_native_spotread (GcmCalibrate *calibrate, CdDevice *device, CdSensor *sensor, GtkWindow *window, GError **error)
 {
-	GcmCalibrateNative *calibrate_native = GCM_CALIBRATE_NATIVE(calibrate);
-	GcmCalibrateNativePrivate *priv = calibrate_native->priv;
+//	GcmCalibrateNative *calibrate_native = GCM_CALIBRATE_NATIVE(calibrate);
+//	GcmCalibrateNativePrivate *priv = calibrate_native->priv;
 	gboolean ret = TRUE;
 	const gchar *title;
 	const gchar *message;
@@ -758,32 +736,10 @@ gcm_calibrate_native_spotread (GcmCalibrate *calibrate, CdSensor *sensor, GtkWin
 	message = _("Setting up the device to read a spot color…");
 
 	/* push new messages into the UI */
-	gcm_calibrate_dialog_set_move_window (priv->calibrate_dialog, FALSE);
-	gcm_calibrate_dialog_set_window (priv->calibrate_dialog, window);
-	gcm_calibrate_dialog_set_show_button_ok (priv->calibrate_dialog, FALSE);
-	gcm_calibrate_dialog_set_show_expander (priv->calibrate_dialog, TRUE);
-	gcm_calibrate_dialog_show (priv->calibrate_dialog, GCM_CALIBRATE_DIALOG_TAB_GENERIC, title, message);
+	g_debug ("title=%s, message=%s", title, message);
 
 //out:
 	return ret;
-}
-
-/**
- * gcm_calibrate_native_response_cb:
- **/
-static void
-gcm_calibrate_native_response_cb (GtkWidget *widget, GtkResponseType response, GcmCalibrateNative *calibrate_native)
-{
-	GcmCalibrateNativePrivate *priv = calibrate_native->priv;
-	if (response == GTK_RESPONSE_OK) {
-		if (g_main_loop_is_running (priv->loop))
-			g_main_loop_quit (priv->loop);
-	}
-	if (response == GTK_RESPONSE_CANCEL) {
-		if (g_main_loop_is_running (priv->loop))
-			g_main_loop_quit (priv->loop);
-		g_cancellable_cancel (priv->cancellable);
-	}
 }
 
 /**
@@ -814,11 +770,6 @@ gcm_calibrate_native_init (GcmCalibrateNative *calibrate_native)
 	calibrate_native->priv->loop = g_main_loop_new (NULL, FALSE);
 	calibrate_native->priv->cancellable = g_cancellable_new ();
 
-	/* common dialog */
-	calibrate_native->priv->calibrate_dialog = gcm_calibrate_dialog_new ();
-	g_signal_connect (calibrate_native->priv->calibrate_dialog, "response",
-			  G_CALLBACK (gcm_calibrate_native_response_cb), calibrate_native);
-
 	/* sample window */
 	calibrate_native->priv->sample_window = gcm_sample_window_new ();
 }
@@ -833,8 +784,6 @@ gcm_calibrate_native_finalize (GObject *object)
 	GcmCalibrateNativePrivate *priv = calibrate_native->priv;
 
 	/* hide */
-	gcm_calibrate_dialog_hide (priv->calibrate_dialog);
-	g_object_unref (priv->calibrate_dialog);
 //	g_object_unref (priv->sample_window);
 	g_object_unref (priv->cancellable);
 	g_main_loop_unref (priv->loop);

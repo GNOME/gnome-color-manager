@@ -72,7 +72,7 @@ libgcmshared_a_CFLAGS =					\
 bin_PROGRAMS =						\
 	gcm-inspect					\
 	gcm-viewer					\
-	gcm-prefs					\
+	gcm-calibrate					\
 	gcm-session					\
 	gcm-picker					\
 	gcm-import
@@ -84,14 +84,12 @@ gcm_helper_exiv_LDADD = $(EXIV_LIBS) $(GLIB_LIBS)
 gcm_helper_exiv_CXXFLAGS = -Wall
 endif
 
-gcm_prefs_SOURCES =					\
+gcm_calibrate_SOURCES =					\
 	gcm-brightness.c				\
 	gcm-brightness.h				\
 	gcm-calibrate-argyll.c				\
 	gcm-calibrate-argyll.h				\
 	gcm-calibrate.c					\
-	gcm-calibrate-dialog.c				\
-	gcm-calibrate-dialog.h				\
 	gcm-calibrate.h					\
 	gcm-calibrate-native.c				\
 	gcm-calibrate-native.h				\
@@ -105,9 +103,9 @@ gcm_prefs_SOURCES =					\
 	gcm-list-store-profiles.h			\
 	gcm-sample-window.c				\
 	gcm-sample-window.h				\
-	gcm-prefs.c
+	gcm-calibrate-main.c
 
-gcm_prefs_LDADD =					\
+gcm_calibrate_LDADD =					\
 	libgcmshared.a					\
 	$(CANBERRA_LIBS)				\
 	$(COLORD_LIBS)					\
@@ -121,7 +119,7 @@ gcm_prefs_LDADD =					\
 	$(XORG_LIBS)					\
 	-lm
 
-gcm_prefs_CFLAGS =					\
+gcm_calibrate_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_inspect_SOURCES =					\
@@ -229,8 +227,6 @@ gcm_self_test_SOURCES =					\
 	gcm-calibrate-argyll.c				\
 	gcm-calibrate-argyll.h				\
 	gcm-calibrate.c					\
-	gcm-calibrate-dialog.c				\
-	gcm-calibrate-dialog.h				\
 	gcm-calibrate.h					\
 	gcm-calibrate-native.c				\
 	gcm-calibrate-native.h				\

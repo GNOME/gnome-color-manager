@@ -27,7 +27,6 @@
 #include <stdlib.h>
 
 #include "gcm-brightness.h"
-#include "gcm-calibrate-dialog.h"
 #include "gcm-calibrate.h"
 #include "gcm-calibrate-native.h"
 #include "gcm-cie-widget.h"
@@ -691,58 +690,6 @@ gcm_test_calibrate_func (void)
 }
 
 static void
-gcm_test_calibrate_dialog_func (void)
-{
-	GcmCalibrateDialog *calibrate_dialog;
-	calibrate_dialog = gcm_calibrate_dialog_new ();
-	g_assert (calibrate_dialog != NULL);
-	g_object_unref (calibrate_dialog);
-}
-
-static void
-gcm_test_calibrate_native_func (void)
-{
-	gboolean ret;
-	GError *error = NULL;
-	GcmCalibrate *calibrate;
-	GcmX11Screen *screen;
-//	gchar *contents;
-	gchar *filename = NULL;
-
-	calibrate = gcm_calibrate_native_new ();
-	g_assert (calibrate != NULL);
-
-	g_object_set (calibrate,
-		      "output-name", "LVDS1",
-		      NULL);
-
-	/* set device */
-//	g_object_set (device,
-//		      "native-device", "LVDS1",
-//		      NULL);
-//	ret = gcm_calibrate_set_from_device (calibrate, device, &error);
-//	g_assert_no_error (error);
-//	g_assert (ret);
-
-	/* use a screen */
-	screen = gcm_x11_screen_new ();
-	ret = gcm_x11_screen_assign (screen, NULL, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* do the calibration */
-	ret = gcm_calibrate_display (calibrate, NULL, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	g_unlink (filename);
-//	g_free (contents);
-	g_free (filename);
-	g_object_unref (screen);
-	g_object_unref (calibrate);
-}
-
-static void
 gcm_test_cie_widget_func (void)
 {
 	GtkWidget *widget;
@@ -1091,7 +1038,6 @@ main (int argc, char **argv)
 	g_test_add_func ("/color/calibrate", gcm_test_calibrate_func);
 	g_test_add_func ("/color/exif", gcm_test_exif_func);
 	g_test_add_func ("/color/utils", gcm_test_utils_func);
-	g_test_add_func ("/color/calibrate_dialog", gcm_test_calibrate_dialog_func);
 	g_test_add_func ("/color/hull", gcm_test_hull_func);
 	g_test_add_func ("/color/edid", gcm_test_edid_func);
 	g_test_add_func ("/color/tables", gcm_test_tables_func);
@@ -1103,7 +1049,6 @@ main (int argc, char **argv)
 	if (g_test_thorough ()) {
 		g_test_add_func ("/color/brightness", gcm_test_brightness_func);
 		g_test_add_func ("/color/image", gcm_test_image_func);
-		g_test_add_func ("/color/calibrate_native", gcm_test_calibrate_native_func);
 		g_test_add_func ("/color/trc", gcm_test_trc_widget_func);
 		g_test_add_func ("/color/cie", gcm_test_cie_widget_func);
 		g_test_add_func ("/color/gamma_widget", gcm_test_gamma_widget_func);
