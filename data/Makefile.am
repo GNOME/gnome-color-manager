@@ -30,8 +30,7 @@ $(service_DATA): $(service_in_files) Makefile
 
 @GSETTINGS_RULES@
 gsettings_SCHEMAS =					\
-	org.gnome.color-manager.gschema.xml		\
-	org.gnome.settings-daemon.plugins.color.gschema.xml
+	org.gnome.color-manager.gschema.xml
 
 pkgdata_DATA =						\
 	gcm-calibrate.ui				\
