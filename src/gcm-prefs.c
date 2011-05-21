@@ -44,7 +44,6 @@ typedef struct {
 	CdSensor		*sensor;
 	gboolean		 setting_up_device;
 	GCancellable		*cancellable;
-	GSettings		*settings;
 	GtkApplication		*application;
 	GtkBuilder		*builder;
 	GtkListStore		*list_store_devices;
@@ -2384,9 +2383,6 @@ gcm_viewer_startup_cb (GApplication *application, GcmPrefsPriv *prefs)
 
 	prefs->cancellable = g_cancellable_new ();
 
-	/* setup defaults */
-	prefs->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
-
 	/* get UI */
 	prefs->builder = gtk_builder_new ();
 	gtk_builder_set_translation_domain (prefs->builder, GETTEXT_PACKAGE);
@@ -2726,8 +2722,6 @@ main (int argc, char **argv)
 		g_object_unref (prefs->current_device);
 	if (prefs->sensor != NULL)
 		g_object_unref (prefs->sensor);
-	if (prefs->settings != NULL)
-		g_object_unref (prefs->settings);
 	if (prefs->builder != NULL)
 		g_object_unref (prefs->builder);
 	if (prefs->client != NULL)

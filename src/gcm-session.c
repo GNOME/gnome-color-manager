@@ -45,7 +45,6 @@ typedef struct {
 	GDBusConnection	*connection;
 	GDBusNodeInfo	*introspection;
 	GMainLoop	*loop;
-	GSettings	*settings;
 	guint		 watcher_id;
 } GcmSessionPrivate;
 
@@ -944,44 +943,6 @@ gcm_session_on_name_lost (GDBusConnection *connection,
 }
 
 /**
- * gcm_session_emit_changed:
- **/
-static void
-gcm_session_emit_changed (GcmSessionPrivate *priv)
-{
-	gboolean ret;
-	GError *error = NULL;
-
-	/* check we are connected */
-	if (priv->connection == NULL)
-		return;
-
-	/* just emit signal */
-	ret = g_dbus_connection_emit_signal (priv->connection,
-					     NULL,
-					     GCM_DBUS_PATH,
-					     GCM_DBUS_INTERFACE,
-					     "Changed",
-					     NULL,
-					     &error);
-	if (!ret) {
-		g_warning ("failed to emit signal: %s", error->message);
-		g_error_free (error);
-	}
-}
-
-/**
- * gcm_session_key_changed_cb:
- **/
-static void
-gcm_session_key_changed_cb (GSettings *settings,
-			    const gchar *key,
-			    GcmSessionPrivate *priv)
-{
-	gcm_session_emit_changed (priv);
-}
-
-/**
  * gcm_session_get_precooked_md5:
  **/
 static gchar *
@@ -1504,11 +1465,6 @@ main (int argc, char *argv[])
 
 	priv = g_new0 (GcmSessionPrivate, 1);
 
-	/* get the settings */
-	priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
-	g_signal_connect (priv->settings, "changed",
-			  G_CALLBACK (gcm_session_key_changed_cb), priv);
-
 	/* use DMI data for internal panels */
 	priv->dmi = gcm_dmi_new ();
 
@@ -1595,7 +1551,6 @@ out:
 		if (priv->x11_screen != NULL)
 			g_object_unref (priv->x11_screen);
 		g_dbus_node_info_unref (priv->introspection);
-		g_object_unref (priv->settings);
 		g_object_unref (priv->client);
 		g_main_loop_unref (priv->loop);
 		g_free (priv);

@@ -32,9 +32,6 @@
 #define GCM_DBUS_INTERFACE				"org.gnome.ColorManager"
 #define GCM_DBUS_PATH					"/org/gnome/ColorManager"
 
-#define GCM_SETTINGS_SCHEMA				"org.gnome.color-manager"
-#define GCM_SETTINGS_CALIBRATION_LENGTH			"calibration-length"
-
 /* DISTROS: you will have to patch if you have changed the name of these packages */
 #define GCM_PREFS_PACKAGE_NAME_SHARED_COLOR_TARGETS	"shared-color-targets"
 #define GCM_PREFS_PACKAGE_NAME_ARGYLLCMS		"argyllcms"

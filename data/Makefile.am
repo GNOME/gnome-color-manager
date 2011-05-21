@@ -4,9 +4,6 @@ SUBDIRS = 						\
 	figures						\
 	icons
 
-migrationdir = $(datadir)/GConf/gsettings
-dist_migration_DATA = org.gnome.color-manager.gschema.migrate
-
 @INTLTOOL_DESKTOP_RULE@
 desktopdir = $(datadir)/applications
 desktop_in_files =					\
@@ -27,10 +24,6 @@ service_DATA     = $(service_in_files:.service.in=.service)
 
 $(service_DATA): $(service_in_files) Makefile
 	@sed -e "s|\@servicedir\@|$(bindir)|" $< > $@
-
-@GSETTINGS_RULES@
-gsettings_SCHEMAS =					\
-	org.gnome.color-manager.gschema.xml
 
 pkgdata_DATA =						\
 	gcm-calibrate.ui				\

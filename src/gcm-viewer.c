@@ -59,7 +59,6 @@ typedef struct {
 	GtkWidget	*vcgt_widget;
 	GtkWidget	*preview_widget_input;
 	GtkWidget	*preview_widget_output;
-	GSettings	*settings;
 	guint		 example_index;
 	gchar		*profile_id;
 	guint		 xid;
@@ -1208,9 +1207,6 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	GtkWidget *main_window;
 	GtkWidget *widget;
 
-	/* setup defaults */
-	viewer->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
-
 	/* get UI */
 	viewer->builder = gtk_builder_new ();
 	retval = gtk_builder_add_from_file (viewer->builder,
@@ -1513,8 +1509,6 @@ main (int argc, char **argv)
 	status = g_application_run (G_APPLICATION (viewer->application), argc, argv);
 
 	g_object_unref (viewer->application);
-	if (viewer->settings != NULL)
-		g_object_unref (viewer->settings);
 	if (viewer->builder != NULL)
 		g_object_unref (viewer->builder);
 	if (viewer->client != NULL)

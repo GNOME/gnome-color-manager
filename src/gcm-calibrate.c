@@ -69,7 +69,6 @@ struct _GcmCalibratePrivate
 	gchar				*serial;
 	gchar				*device;
 	gchar				*working_path;
-	GSettings			*settings;
 };
 
 enum {
@@ -631,14 +630,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	}
 
 	/* get default precision */
-	priv->precision = g_settings_get_enum (priv->settings, GCM_SETTINGS_CALIBRATION_LENGTH);
-	if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
-		priv->precision = gcm_calibrate_get_precision (calibrate, error);
-		if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
-			ret = FALSE;
-			goto out;
-		}
-	}
+	priv->precision = gcm_calibrate_get_precision (calibrate, error);
 
 	/* show a warning for external monitors */
 	ret = gcm_utils_output_is_lcd_internal (priv->output_name);
@@ -947,13 +939,10 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, GtkWindow *window, GError **erro
 	}
 
 	/* get default precision */
-	priv->precision = g_settings_get_enum (priv->settings, GCM_SETTINGS_CALIBRATION_LENGTH);
+	priv->precision = gcm_calibrate_get_precision (calibrate, error);
 	if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
-		priv->precision = gcm_calibrate_get_precision (calibrate, error);
-		if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
-			ret = FALSE;
-			goto out;
-		}
+		ret = FALSE;
+		goto out;
 	}
 
 	/* copy */
@@ -1116,13 +1105,10 @@ gcm_calibrate_device (GcmCalibrate *calibrate, GtkWindow *window, GError **error
 	g_object_get (priv->calibrate_dialog, "reference-kind", &priv->reference_kind, NULL);
 
 	/* get default precision */
-	priv->precision = g_settings_get_enum (priv->settings, GCM_SETTINGS_CALIBRATION_LENGTH);
+	priv->precision = gcm_calibrate_get_precision (calibrate, error);
 	if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
-		priv->precision = gcm_calibrate_get_precision (calibrate, error);
-		if (priv->precision == GCM_CALIBRATE_PRECISION_UNKNOWN) {
-			ret = FALSE;
-			goto out;
-		}
+		ret = FALSE;
+		goto out;
 	}
 
 	/* get scanned image */
@@ -1534,9 +1520,6 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 
 	// FIXME: this has to be per-run specific
 	calibrate->priv->working_path = g_strdup ("/tmp");
-
-	/* use GSettings to get defaults */
-	calibrate->priv->settings = g_settings_new (GCM_SETTINGS_SCHEMA);
 }
 
 /**
@@ -1561,7 +1544,6 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->working_path);
 	cd_color_xyz_free (priv->xyz);
 	g_object_unref (priv->calibrate_dialog);
-	g_object_unref (priv->settings);
 
 	G_OBJECT_CLASS (gcm_calibrate_parent_class)->finalize (object);
 }
