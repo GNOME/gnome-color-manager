@@ -6,16 +6,6 @@
     <value nick="ask" value="3"/>
   </enum>
   <schema id="org.gnome.color-manager" path="/org/gnome/color-manager/">
-    <key name="global-display-correction" type="b">
-      <default>true</default>
-      <summary>Whether the display should be globally corrected or left to applications</summary>
-      <description>If set to TRUE then the video LUT is set with the display profile</description>
-    </key>
-    <key name="set-icc-profile-atom" type="b">
-      <default>true</default>
-      <summary>Set the _ICC_PROFILE hint for applications</summary>
-      <description>If set to TRUE then the __ICC_PROFILE hint will be set, which applications use to convert true color to screen color.</description>
-    </key>
     <key name="calibration-length" enum="org.gnome.color-manager.CalibrationLength">
       <default>'ask'</default>
       <summary>The default calibration length</summary>
