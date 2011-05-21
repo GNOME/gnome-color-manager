@@ -112,9 +112,6 @@ if test x$has_vte = xyes; then
 	AC_DEFINE(HAVE_VTE,1,[Use VTE terminal widget])
 fi
 
-dnl **** Check for libnotify ****
-PKG_CHECK_MODULES(NOTIFY, libnotify >= 0.7.0)
-
 AC_ARG_ENABLE(exiv, AS_HELP_STRING([--enable-exiv],[Enable EXIV support for RAW support]), enable_exiv=$enableval,
 				   enable_exiv=yes)
 dnl **** Check for EXIV ****

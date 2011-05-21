@@ -26,7 +26,6 @@
 #include <gdk/gdkx.h>
 #include <locale.h>
 #include <colord.h>
-#include <libnotify/notify.h>
 #include <canberra-gtk.h>
 #include <lcms2.h>
 
@@ -50,199 +49,8 @@ typedef struct {
 	guint		 watcher_id;
 } GcmSessionPrivate;
 
-#define GCM_SESSION_NOTIFY_TIMEOUT		30000 /* ms */
 #define GCM_ICC_PROFILE_IN_X_VERSION_MAJOR	0
 #define GCM_ICC_PROFILE_IN_X_VERSION_MINOR	3
-
-/**
- * cd_device_get_title:
- **/
-static gchar *
-cd_device_get_title (CdDevice *device)
-{
-	const gchar *vendor;
-	const gchar *model;
-
-	model = cd_device_get_model (device);
-	vendor = cd_device_get_vendor (device);
-	if (model != NULL && vendor != NULL)
-		return g_strdup_printf ("%s - %s", vendor, model);
-	if (vendor != NULL)
-		return g_strdup (vendor);
-	if (model != NULL)
-		return g_strdup (model);
-	return g_strdup (cd_device_get_id (device));
-}
-
-/**
- * gcm_session_notify_cb:
- **/
-static void
-gcm_session_notify_cb (NotifyNotification *notification,
-		       gchar *action,
-		       gpointer user_data)
-{
-	gboolean ret;
-	GError *error = NULL;
-	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
-
-	if (g_strcmp0 (action, "display") == 0) {
-		g_settings_set_int (priv->settings,
-				    GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD,
-				    0);
-	} else if (g_strcmp0 (action, "printer") == 0) {
-		g_settings_set_int (priv->settings,
-				    GCM_SETTINGS_RECALIBRATE_PRINTER_THRESHOLD,
-				    0);
-	} else if (g_strcmp0 (action, "recalibrate") == 0) {
-		ret = g_spawn_command_line_async (BINDIR "/gcm-prefs",
-						  &error);
-		if (!ret) {
-			g_warning ("failed to spawn: %s", error->message);
-			g_error_free (error);
-		}
-	}
-}
-
-/**
- * gcm_session_notify_recalibrate:
- **/
-static gboolean
-gcm_session_notify_recalibrate (GcmSessionPrivate *priv,
-				const gchar *title,
-				const gchar *message,
-				CdDeviceKind kind)
-{
-	gboolean ret;
-	GError *error = NULL;
-	NotifyNotification *notification;
-
-	/* show a bubble */
-	notification = notify_notification_new (title, message, GCM_STOCK_ICON);
-	notify_notification_set_timeout (notification, GCM_SESSION_NOTIFY_TIMEOUT);
-	notify_notification_set_urgency (notification, NOTIFY_URGENCY_LOW);
-
-	/* TRANSLATORS: button: this is to open GCM */
-	notify_notification_add_action (notification,
-					"recalibrate",
-					_("Recalibrate now"),
-					gcm_session_notify_cb,
-					priv, NULL);
-
-	/* TRANSLATORS: button: this is to ignore the recalibrate notifications */
-	notify_notification_add_action (notification,
-					cd_device_kind_to_string (kind),
-					_("Ignore"),
-					gcm_session_notify_cb,
-					priv, NULL);
-
-	ret = notify_notification_show (notification, &error);
-	if (!ret) {
-		g_warning ("failed to show notification: %s",
-			   error->message);
-		g_error_free (error);
-	}
-	return ret;
-}
-
-/**
- * gcm_session_notify_device:
- **/
-static void
-gcm_session_notify_device (GcmSessionPrivate *priv, CdDevice *device)
-{
-	CdDeviceKind kind;
-	const gchar *title;
-	gchar *device_title = NULL;
-	gchar *message;
-	gint threshold;
-	glong since;
-	GTimeVal timeval;
-
-	/* get current time */
-	g_get_current_time (&timeval);
-
-	/* TRANSLATORS: this is when the device has not been recalibrated in a while */
-	title = _("Recalibration required");
-	device_title = cd_device_get_title (device);
-
-	/* check we care */
-	kind = cd_device_get_kind (device);
-	if (kind == CD_DEVICE_KIND_DISPLAY) {
-
-		/* get from GSettings */
-		threshold = g_settings_get_int (priv->settings,
-						GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD);
-
-		/* TRANSLATORS: this is when the display has not been recalibrated in a while */
-		message = g_strdup_printf (_("The display '%s' should be recalibrated soon."),
-					   device_title);
-	} else {
-
-		/* get from GSettings */
-		threshold = g_settings_get_int (priv->settings,
-						GCM_SETTINGS_RECALIBRATE_DISPLAY_THRESHOLD);
-
-		/* TRANSLATORS: this is when the printer has not been recalibrated in a while */
-		message = g_strdup_printf (_("The printer '%s' should be recalibrated soon."),
-					   device_title);
-	}
-
-	/* check if we need to notify */
-	since = timeval.tv_sec - cd_device_get_modified (device);
-	if (threshold > since)
-		gcm_session_notify_recalibrate (priv, title, message, kind);
-	g_free (device_title);
-	g_free (message);
-}
-
-/**
- * gcm_session_device_added_notify_cb:
- **/
-static void
-gcm_session_device_added_notify_cb (CdClient *client,
-				    CdDevice *device,
-				    GcmSessionPrivate *priv)
-{
-	CdDeviceKind kind;
-	CdProfile *profile;
-	const gchar *filename;
-	gchar *basename = NULL;
-	gboolean allow_notifications;
-
-	/* check we care */
-	kind = cd_device_get_kind (device);
-	if (kind != CD_DEVICE_KIND_DISPLAY &&
-	    kind != CD_DEVICE_KIND_PRINTER)
-		return;
-
-	/* ensure we have a profile */
-	profile = cd_device_get_default_profile (device);
-	if (profile == NULL) {
-		g_debug ("no profile set for %s", cd_device_get_id (device));
-		goto out;
-	}
-
-	/* ensure it's a profile generated by us */
-	filename = cd_profile_get_filename (profile);
-	basename = g_path_get_basename (filename);
-	if (!g_str_has_prefix (basename, "GCM")) {
-		g_debug ("not a GCM profile for %s: %s",
-			 cd_device_get_id (device), filename);
-		goto out;
-	}
-
-	/* do we allow notifications */
-	allow_notifications = g_settings_get_boolean (priv->settings,
-						      GCM_SETTINGS_SHOW_NOTIFICATIONS);
-	if (!allow_notifications)
-		goto out;
-
-	/* handle device */
-	gcm_session_notify_device (priv, device);
-out:
-	g_free (basename);
-}
 
 /**
  * gcm_session_get_output_id:
@@ -1681,7 +1489,6 @@ main (int argc, char *argv[])
 	if (! g_thread_supported ())
 		g_thread_init (NULL);
 	g_type_init ();
-	notify_init ("gnome-color-manager");
 
 	/* TRANSLATORS: program name, a session wide daemon to watch for updates and changing system state */
 	g_set_application_name (_("Color Management"));
@@ -1707,9 +1514,6 @@ main (int argc, char *argv[])
 
 	/* monitor daemon */
 	priv->client = cd_client_new ();
-	g_signal_connect (priv->client, "device-added",
-			  G_CALLBACK (gcm_session_device_added_notify_cb),
-			  priv);
 	g_signal_connect (priv->client, "profile-added",
 			  G_CALLBACK (gcm_session_profile_added_notify_cb),
 			  priv);

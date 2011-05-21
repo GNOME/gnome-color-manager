@@ -6,11 +6,6 @@
     <value nick="ask" value="3"/>
   </enum>
   <schema id="org.gnome.color-manager" path="/org/gnome/color-manager/">
-    <key name="show-notifications" type="b">
-      <default>false</default>
-      <summary>If notifications should be shown</summary>
-      <description>If set to TRUE then notifications and messages will be used.</description>
-    </key>
     <key name="global-display-correction" type="b">
       <default>true</default>
       <summary>Whether the display should be globally corrected or left to applications</summary>
@@ -25,16 +20,6 @@
       <default>'ask'</default>
       <summary>The default calibration length</summary>
       <description>The length of calibration, as this is proportional to the accuracy. The option 'short' creates a quick profile, 'normal' a regular one, and 'long' takes a really long time, but is more precise and creates a better profile. Use 'ask' if you want the user to choose.</description>
-    </key>
-    <key name="recalibrate-display-threshold" type="i">
-      <default>15552000</default>
-      <summary>The duration between sending notifications to recalibrate a display</summary>
-      <description>This is the number of seconds in between notifying the user to recalibrate each display device. Set to 0 to disable the notification.</description>
-    </key>
-    <key name="recalibrate-printer-threshold" type="i">
-      <default>15552000</default>
-      <summary>The duration between sending notifications to recalibrate a printer</summary>
-      <description>This is the number of seconds in between notifying the user to recalibrate each printer device. Set to 0 to disable the notification.</description>
     </key>
   </schema>
 </schemalist>

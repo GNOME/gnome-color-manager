@@ -8,7 +8,6 @@ INCLUDES =						\
 	$(EXIF_CFLAGS)					\
 	$(EXIV_CFLAGS)					\
 	$(COLORD_CFLAGS)				\
-	$(NOTIFY_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
 	$(CLUTTER_CFLAGS)				\
 	-DG_LOG_DOMAIN=\"Gcm\"				\
@@ -224,7 +223,6 @@ gcm_session_LDADD =					\
 	$(GTK_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(EXIF_LIBS)					\
-	$(NOTIFY_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(COLORD_LIBS)					\
 	$(CANBERRA_LIBS)				\
