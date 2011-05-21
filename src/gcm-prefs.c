@@ -1587,29 +1587,6 @@ gcm_prefs_device_kind_to_string (CdDeviceKind kind)
 }
 
 /**
- * gcm_device_title_remove_suffix:
- **/
-static void
-gcm_device_title_remove_suffix (GString *string, const gchar *suffix)
-{
-	gsize len;
-
-	/* remove trailing space */
-	if (string->str[string->len-1] == ' ')
-		g_string_truncate (string, string->len-1);
-
-	/* remove the suffix */
-	if (g_str_has_suffix (string->str, suffix)) {
-		len = strlen (suffix);
-		g_string_truncate (string, string->len - len);
-	}
-
-	/* remove trailing space */
-	if (string->str[string->len-1] == ' ')
-		g_string_truncate (string, string->len-1);
-}
-
-/**
  * gcm_device_get_title:
  **/
 static gchar *
@@ -1623,21 +1600,6 @@ gcm_device_get_title (CdDevice *device)
 	vendor = g_string_new (cd_device_get_vendor (device));
 	model = g_string_new (cd_device_get_model (device));
 	string = g_string_new ("");
-
-	/* get rid of crap suffixes */
-	gcm_device_title_remove_suffix (vendor, "Ltd.");
-	gcm_device_title_remove_suffix (vendor, "Co.");
-
-	/* correct some company names */
-	if (g_str_has_prefix (vendor->str, "HP ") ||
-	    g_strcmp0 (vendor->str, "Hewlett-Packard") == 0)
-		g_string_assign (vendor, "Hewlett Packard");
-	if (g_str_has_prefix (vendor->str, "LENOVO"))
-		g_string_assign (vendor, "Lenovo");
-
-	/* correct some models */
-	if (g_strcmp0 (model->str, "Integrated Camera") == 0)
-		g_string_assign (model, "Webcam");
 
 	if (vendor != NULL && vendor->len > 0 &&
 	    model != NULL && model->len > 0) {
@@ -1825,6 +1787,8 @@ gcm_prefs_device_kind_to_icon_name (CdDeviceKind kind)
 		return "printer";
 	if (kind == CD_DEVICE_KIND_CAMERA)
 		return "camera-photo";
+	if (kind == CD_DEVICE_KIND_WEBCAM)
+		return "camera-web";
 	return "image-missing";
 }
 
@@ -1924,16 +1888,6 @@ gcm_prefs_add_device (GcmPrefsPriv *prefs, CdDevice *device)
 
 	/* italic for non-connected devices */
 	title = gcm_device_get_title (device);
-
-	/* are we really a webcam */
-	if (kind == CD_DEVICE_KIND_CAMERA) {
-		if (g_strstr_len (title, -1, "webcam") != NULL ||
-		    g_strstr_len (title, -1, "Webcam") != NULL ||
-		    g_strstr_len (title, -1, "Internal") != NULL ||
-		    g_strstr_len (title, -1, "Integrated") != NULL) {
-			icon_name = "camera-web";
-		}
-	}
 
 	/* create sort order */
 	sort = g_strdup_printf ("%s%s",
