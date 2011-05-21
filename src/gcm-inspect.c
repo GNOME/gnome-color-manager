@@ -156,76 +156,6 @@ out:
 }
 
 /**
- * gcm_inspect_show_profiles_for_device:
- **/
-static gboolean
-gcm_inspect_show_profiles_for_device (const gchar *device_id)
-{
-	gboolean ret = FALSE;
-	const gchar *description;
-	const gchar *filename;
-	guint i = 0;
-	GDBusConnection *connection;
-	GError *error = NULL;
-	GVariant *args = NULL;
-	GVariant *response = NULL;
-	GVariantIter *iter = NULL;
-
-	/* get a session bus connection */
-	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
-	if (connection == NULL) {
-		/* TRANSLATORS: no DBus session bus */
-		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* execute sync method */
-	args = g_variant_new ("(ss)", device_id, ""),
-	response = g_dbus_connection_call_sync (connection,
-						GCM_DBUS_SERVICE,
-						GCM_DBUS_PATH,
-						GCM_DBUS_INTERFACE,
-						"GetProfilesForDevice",
-						args,
-						G_VARIANT_TYPE ("(a(ss))"),
-						G_DBUS_CALL_FLAGS_NONE,
-						-1, NULL, &error);
-	if (response == NULL) {
-		/* TRANSLATORS: the DBus method failed */
-		g_print ("%s %s\n", _("The request failed:"), error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* unpack the array */
-	g_variant_get (response, "(a(ss))", &iter);
-	if (g_variant_iter_n_children (iter) == 0) {
-		/* TRANSLATORS: no profile has been asigned to this device */
-		g_print ("%s\n", _("There are no ICC profiles for this device"));
-		goto out;
-	}
-
-	/* TRANSLATORS: this is a list of profiles suitable for the device */
-	g_print ("%s %s\n", _("Suitable profiles for:"), device_id);
-
-	/* for each entry in the array */
-	while (g_variant_iter_loop (iter, "(ss)", &filename, &description))
-		g_print ("%i.\t%s\n\t%s\n", ++i, description, filename);
-
-	/* success */
-	ret = TRUE;
-out:
-	if (iter != NULL)
-		g_variant_iter_free (iter);
-	if (args != NULL)
-		g_variant_unref (args);
-	if (response != NULL)
-		g_variant_unref (response);
-	return ret;
-}
-
-/**
  * gcm_inspect_show_profiles_for_file:
  **/
 static gboolean
@@ -364,146 +294,14 @@ out:
 }
 
 /**
- * gcm_inspect_show_profiles_for_type:
- **/
-static gboolean
-gcm_inspect_show_profiles_for_type (const gchar *type)
-{
-	gboolean ret = FALSE;
-	GDBusConnection *connection;
-	GError *error = NULL;
-	const gchar *filename = NULL;
-	const gchar *description = NULL;
-	guint i = 0;
-	GVariant *args = NULL;
-	GVariant *response = NULL;
-	GVariantIter *iter = NULL;
-
-	/* get a session bus connection */
-	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
-	if (connection == NULL) {
-		/* TRANSLATORS: no DBus session bus */
-		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* execute sync method */
-	args = g_variant_new ("(ss)", type, ""),
-	response = g_dbus_connection_call_sync (connection,
-						GCM_DBUS_SERVICE,
-						GCM_DBUS_PATH,
-						GCM_DBUS_INTERFACE,
-						"GetProfilesForType",
-						args,
-						G_VARIANT_TYPE ("(a(ss))"),
-						G_DBUS_CALL_FLAGS_NONE,
-						-1, NULL, &error);
-	if (response == NULL) {
-		/* TRANSLATORS: the DBus method failed */
-		g_print ("%s %s\n", _("The request failed:"), error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* unpack the array */
-	g_variant_get (response, "(a(ss))", &iter);
-	if (g_variant_iter_n_children (iter) == 0) {
-		/* TRANSLATORS: no profile has been asigned to this device */
-		g_print ("%s\n", _("There are no ICC profiles for this device type"));
-		goto out;
-	}
-
-	/* TRANSLATORS: this is a list of profiles suitable for the device */
-	g_print ("%s %s\n", _("Suitable profiles for:"), type);
-
-	/* for each entry in the array */
-	while (g_variant_iter_loop (iter, "(ss)", &filename, &description))
-		g_print ("%i.\t%s\n\t%s\n", ++i, description, filename);
-
-	/* success */
-	ret = TRUE;
-out:
-	if (iter != NULL)
-		g_variant_iter_free (iter);
-	if (args != NULL)
-		g_variant_unref (args);
-	if (response != NULL)
-		g_variant_unref (response);
-	return ret;
-}
-
-/**
- * gcm_inspect_get_properties:
- **/
-static gboolean
-gcm_inspect_get_properties (void)
-{
-	GDBusProxy *proxy;
-	GError *error = NULL;
-	GVariant *result;
-
-	/* connect to the named instance */
-	proxy = g_dbus_proxy_new_for_bus_sync (G_BUS_TYPE_SESSION,
-					       G_DBUS_PROXY_FLAGS_DO_NOT_CONNECT_SIGNALS,
-					       NULL,
-					       GCM_DBUS_SERVICE,
-					       GCM_DBUS_PATH,
-					       GCM_DBUS_INTERFACE,
-					       NULL,
-					       &error);
-	if (proxy == NULL) {
-		/* TRANSLATORS: the DBus method failed */
-		g_print ("%s: %s\n", _("The request failed"), error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* get rendering intents */
-	result = g_dbus_proxy_get_cached_property (proxy, "RenderingIntentDisplay");
-	if (result != NULL) {
-		/* TRANSLATORS: this is the rendering intent of the output */
-		g_print ("%s\t%s\n", _("Rendering intent (display):"), g_variant_get_string (result, NULL));
-		g_variant_unref (result);
-	}
-	result = g_dbus_proxy_get_cached_property (proxy, "RenderingIntentSoftproof");
-	if (result != NULL) {
-		/* TRANSLATORS: this is the rendering intent of the printer */
-		g_print ("%s\t%s\n", _("Rendering intent (softproof):"), g_variant_get_string (result, NULL));
-		g_variant_unref (result);
-	}
-
-	/* get colorspaces */
-	result = g_dbus_proxy_get_cached_property (proxy, "ColorspaceRgb");
-	if (result != NULL) {
-		/* TRANSLATORS: this is the rendering intent of the output */
-		g_print ("%s\t%s\n", _("RGB Colorspace:"), g_variant_get_string (result, NULL));
-		g_variant_unref (result);
-	}
-	result = g_dbus_proxy_get_cached_property (proxy, "ColorspaceCmyk");
-	if (result != NULL) {
-		/* TRANSLATORS: this is the rendering intent of the printer */
-		g_print ("%s\t%s\n", _("CMYK Colorspace:"), g_variant_get_string (result, NULL));
-		g_variant_unref (result);
-	}
-out:
-	if (proxy != NULL)
-		g_object_unref (proxy);
-	return TRUE;
-}
-
-/**
  * main:
  **/
 int
 main (int argc, char **argv)
 {
-	guint i;
 	gboolean x11 = FALSE;
 	gboolean dump = FALSE;
 	guint xid = 0;
-	gchar *device_id = NULL;
-	gchar *type = NULL;
 	gchar *filename = NULL;
 	guint retval = 0;
 	GOptionContext *context;
@@ -512,18 +310,12 @@ main (int argc, char **argv)
 		{ "xserver", 'x', 0, G_OPTION_ARG_NONE, &x11,
 			/* TRANSLATORS: command line option */
 			_("Show xserver properties"), NULL },
-		{ "device", '\0', 0, G_OPTION_ARG_STRING, &device_id,
-			/* TRANSLATORS: command line option */
-			_("Get the profiles for a specific device"), NULL },
 		{ "file", '\0', 0, G_OPTION_ARG_STRING, &filename,
 			/* TRANSLATORS: command line option */
 			_("Get the profiles for a specific file"), NULL },
 		{ "xid", '\0', 0, G_OPTION_ARG_INT, &xid,
 			/* TRANSLATORS: command line option */
 			_("Get the profile for a specific window"), NULL },
-		{ "type", '\0', 0, G_OPTION_ARG_STRING, &type,
-			/* TRANSLATORS: command line option */
-			_("Get the profiles for a specific device type"), NULL },
 		{ "dump", 'd', 0, G_OPTION_ARG_NONE, &dump,
 			/* TRANSLATORS: command line option */
 			_("Dump all details about this system"), NULL },
@@ -548,33 +340,12 @@ main (int argc, char **argv)
 
 	if (x11 || dump)
 		gcm_inspect_show_x11_atoms ();
-	if (device_id != NULL)
-		gcm_inspect_show_profiles_for_device (device_id);
 	if (filename != NULL)
 		gcm_inspect_show_profiles_for_file (filename);
 	if (xid != 0)
 		gcm_inspect_show_profile_for_window (xid);
-	if (type != NULL) {
-		if (cd_device_kind_from_string (type) == CD_DEVICE_KIND_UNKNOWN &&
-		    cd_profile_kind_from_string (type) == CD_PROFILE_KIND_UNKNOWN) {
-			/* TRANSLATORS: this is when the user does --type=mickeymouse */
-			g_print ("%s\n", _("Device or profile type not recognized, recognised types are:"));
-			for (i=1; i<CD_DEVICE_KIND_LAST; i++)
-				g_print (" - %s\n", cd_device_kind_to_string (i));
-			for (i=1; i<CD_PROFILE_KIND_LAST; i++)
-				g_print (" - %s\n", cd_profile_kind_to_string (i));
-		} else {
-			/* show device profiles */
-			gcm_inspect_show_profiles_for_type (type);
-		}
-	}
-	if (dump) {
-		gcm_inspect_get_properties ();
-	}
 
-	g_free (device_id);
 	g_free (filename);
-	g_free (type);
 	return retval;
 }
 
