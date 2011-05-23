@@ -225,7 +225,6 @@ gcm_session_LDADD =					\
 	$(EXIF_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(COLORD_LIBS)					\
-	$(CANBERRA_LIBS)				\
 	-lm
 
 gcm_session_CFLAGS =					\

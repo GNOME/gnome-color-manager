@@ -26,7 +26,6 @@
 #include <gdk/gdkx.h>
 #include <locale.h>
 #include <colord.h>
-#include <canberra-gtk.h>
 #include <lcms2.h>
 
 #include "gcm-debug.h"
@@ -1313,49 +1312,6 @@ gcm_session_colord_vanished_cb (GDBusConnection *_connection,
 }
 
 /**
- * gcm_session_sensor_added_cb:
- **/
-static void
-gcm_session_sensor_added_cb (CdClient *client,
-			     CdSensor *sensor,
-			     GcmSessionPrivate *priv)
-{
-	gboolean ret;
-	GError *error = NULL;
-
-	ca_context_play (ca_gtk_context_get (), 0,
-			 CA_PROP_EVENT_ID, "device-added",
-			 /* TRANSLATORS: this is the application name for libcanberra */
-			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
-			/* TRANSLATORS: this is a sound description */
-			 CA_PROP_EVENT_DESCRIPTION, _("Sensor added"), NULL);
-
-	/* open up the color prefs window */
-	ret = g_spawn_command_line_async (BINDIR "/gcm-prefs",
-					  &error);
-	if (!ret) {
-		g_warning ("failed to spawn: %s", error->message);
-		g_error_free (error);
-	}
-}
-
-/**
- * gcm_session_sensor_removed_cb:
- **/
-static void
-gcm_session_sensor_removed_cb (CdClient *client,
-			       CdSensor *sensor,
-			       GcmSessionPrivate *priv)
-{
-	ca_context_play (ca_gtk_context_get (), 0,
-			 CA_PROP_EVENT_ID, "device-removed",
-			 /* TRANSLATORS: this is the application name for libcanberra */
-			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
-			/* TRANSLATORS: this is a sound description */
-			 CA_PROP_EVENT_DESCRIPTION, _("Sensor removed"), NULL);
-}
-
-/**
  * gcm_session_client_connect_cb:
  **/
 static void
@@ -1478,12 +1434,6 @@ main (int argc, char *argv[])
 			  priv);
 	g_signal_connect (priv->client, "device-changed",
 			  G_CALLBACK (gcm_session_device_changed_assign_cb),
-			  priv);
-	g_signal_connect (priv->client, "sensor-added",
-			  G_CALLBACK (gcm_session_sensor_added_cb),
-			  priv);
-	g_signal_connect (priv->client, "sensor-removed",
-			  G_CALLBACK (gcm_session_sensor_removed_cb),
 			  priv);
 	cd_client_connect (priv->client,
 			   NULL,
