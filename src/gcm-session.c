@@ -31,7 +31,6 @@
 #include "gcm-debug.h"
 #include "gcm-dmi.h"
 #include "gcm-exif.h"
-#include "gcm-profile-store.h"
 #include "gcm-utils.h"
 #include "gcm-x11-output.h"
 #include "gcm-x11-screen.h"
@@ -39,7 +38,6 @@
 typedef struct {
 	CdClient	*client;
 	GcmDmi		*dmi;
-	GcmProfileStore	*profile_store;
 	GcmX11Screen	*x11_screen;
 	GDBusConnection	*connection;
 	GDBusNodeInfo	*introspection;
@@ -923,169 +921,6 @@ gcm_session_on_name_lost (GDBusConnection *connection,
 	g_main_loop_quit (priv->loop);
 }
 
-/**
- * gcm_session_get_precooked_md5:
- **/
-static gchar *
-gcm_session_get_precooked_md5 (cmsHPROFILE lcms_profile)
-{
-	cmsUInt8Number profile_id[16];
-	gboolean md5_precooked = FALSE;
-	guint i;
-	gchar *md5 = NULL;
-
-	/* check to see if we have a pre-cooked MD5 */
-	cmsGetHeaderProfileID (lcms_profile, profile_id);
-	for (i=0; i<16; i++) {
-		if (profile_id[i] != 0) {
-			md5_precooked = TRUE;
-			break;
-		}
-	}
-	if (!md5_precooked)
-		goto out;
-
-	/* convert to a hex string */
-	md5 = g_new0 (gchar, 32 + 1);
-	for (i=0; i<16; i++)
-		g_snprintf (md5 + i*2, 3, "%02x", profile_id[i]);
-out:
-	return md5;
-}
-
-/**
- * gcm_session_get_md5_for_filename:
- **/
-static gchar *
-gcm_session_get_md5_for_filename (const gchar *filename,
-				  GError **error)
-{
-	gboolean ret;
-	gchar *checksum = NULL;
-	gchar *data = NULL;
-	gsize length;
-	cmsHPROFILE lcms_profile = NULL;
-
-	/* get the internal profile id, if it exists */
-	lcms_profile = cmsOpenProfileFromFile (filename, "r");
-	if (lcms_profile == NULL) {
-		g_set_error_literal (error, 1, 0,
-				     "failed to load: not an ICC profile");
-		goto out;
-	}
-	checksum = gcm_session_get_precooked_md5 (lcms_profile);
-	if (checksum != NULL)
-		goto out;
-
-	/* generate checksum */
-	ret = g_file_get_contents (filename, &data, &length, error);
-	if (!ret)
-		goto out;
-	checksum = g_compute_checksum_for_data (G_CHECKSUM_MD5,
-						(const guchar *) data,
-						length);
-out:
-	g_free (data);
-	if (lcms_profile != NULL)
-		cmsCloseProfile (lcms_profile);
-	return checksum;
-}
-
-
-/**
- * gcm_session_profile_store_added_cb:
- **/
-static void
-gcm_session_profile_store_added_cb (GcmProfileStore *profile_store_,
-				    const gchar *filename,
-				    GcmSessionPrivate *priv)
-{
-	CdProfile *profile = NULL;
-	gchar *checksum = NULL;
-	gchar *profile_id = NULL;
-	GError *error = NULL;
-	GHashTable *profile_props = NULL;
-
-	g_debug ("profile %s added", filename);
-
-	/* generate ID */
-	checksum = gcm_session_get_md5_for_filename (filename, &error);
-	if (checksum == NULL) {
-		g_warning ("failed to get profile checksum: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-	profile_id = g_strdup_printf ("icc-%s", checksum);
-	profile_props = g_hash_table_new_full (g_str_hash, g_str_equal,
-					       g_free, g_free);
-	g_hash_table_insert (profile_props,
-			     g_strdup ("Filename"),
-			     g_strdup (filename));
-	g_hash_table_insert (profile_props,
-			     g_strdup ("FILE_checksum"),
-			     g_strdup (checksum));
-	profile = cd_client_create_profile_sync (priv->client,
-						 profile_id,
-						 CD_OBJECT_SCOPE_TEMP,
-						 profile_props,
-						 NULL,
-						 &error);
-	if (profile == NULL) {
-		g_warning ("failed to create profile: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-out:
-	g_free (checksum);
-	g_free (profile_id);
-	if (profile_props != NULL)
-		g_hash_table_unref (profile_props);
-	if (profile != NULL)
-		g_object_unref (profile);
-}
-
-/**
- * gcm_session_profile_store_removed_cb:
- **/
-static void
-gcm_session_profile_store_removed_cb (GcmProfileStore *profile_store_,
-				      const gchar *filename,
-				      GcmSessionPrivate *priv)
-{
-	gboolean ret;
-	GError *error = NULL;
-	CdProfile *profile;
-
-	/* find the ID for the filename */
-	g_debug ("filename %s removed", filename);
-	profile = cd_client_find_profile_by_filename_sync (priv->client,
-							   filename,
-							   NULL,
-							   &error);
-	if (profile == NULL) {
-		g_warning ("%s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* remove it from colord */
-	g_debug ("profile %s removed", cd_profile_get_id (profile));
-	ret = cd_client_delete_profile_sync (priv->client,
-					     cd_profile_get_id (profile),
-					     NULL,
-					     &error);
-	if (!ret) {
-		g_warning ("%s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-out:
-	if(profile != NULL)
-		g_object_unref (profile);
-}
-
 static void
 gcm_session_create_device_cb (GObject *object,
 			      GAsyncResult *res,
@@ -1300,9 +1135,6 @@ gcm_session_client_connect_cb (GObject *source_object,
 			  G_CALLBACK (gcm_x11_screen_output_removed_cb),
 			  priv);
 
-	/* add profiles */
-	gcm_profile_store_search (priv->profile_store);
-
 	/* set for each device that already exist */
 	cd_client_get_devices (priv->client, NULL,
 			       gcm_session_get_devices_cb,
@@ -1408,15 +1240,6 @@ main (int argc, char *argv[])
 			   gcm_session_client_connect_cb,
 			   priv);
 
-	/* have access to all profiles */
-	priv->profile_store = gcm_profile_store_new ();
-	g_signal_connect (priv->profile_store, "added",
-			  G_CALLBACK (gcm_session_profile_store_added_cb),
-			  priv);
-	g_signal_connect (priv->profile_store, "removed",
-			  G_CALLBACK (gcm_session_profile_store_removed_cb),
-			  priv);
-
 	/* monitor displays */
 	priv->x11_screen = gcm_x11_screen_new ();
 	ret = gcm_x11_screen_assign (priv->x11_screen, NULL, &error);
@@ -1458,8 +1281,6 @@ out:
 	if (owner_id > 0)
 		g_bus_unown_name (owner_id);
 	if (priv != NULL) {
-		if (priv->profile_store != NULL)
-			g_object_unref (priv->profile_store);
 		if (priv->dmi != NULL)
 			g_object_unref (priv->dmi);
 		if (priv->connection != NULL)

@@ -209,8 +209,6 @@ gcm_picker_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_session_SOURCES =					\
-	gcm-profile-store.c				\
-	gcm-profile-store.h				\
 	gcm-session.c
 
 gcm_session_LDADD =					\
@@ -250,8 +248,6 @@ gcm_self_test_SOURCES =					\
 	gcm-named-color.h				\
 	gcm-sample-window.c				\
 	gcm-sample-window.h				\
-	gcm-profile-store.c				\
-	gcm-profile-store.h				\
 	gcm-self-test.c
 
 gcm_self_test_LDADD =					\

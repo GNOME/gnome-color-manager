@@ -42,7 +42,6 @@
 #include "gcm-named-color.h"
 #include "gcm-print.h"
 #include "gcm-profile.h"
-#include "gcm-profile-store.h"
 #include "gcm-sample-window.h"
 #include "gcm-tables.h"
 #include "gcm-trc-widget.h"
@@ -460,25 +459,6 @@ gcm_test_dmi_func (void)
 //	g_assert (gcm_dmi_get_version (dmi) != NULL);
 	g_assert (gcm_dmi_get_vendor (dmi) != NULL);
 	g_object_unref (dmi);
-}
-
-static void
-gcm_test_profile_store_func (void)
-{
-	GcmProfileStore *store;
-	gboolean ret;
-
-	store = gcm_profile_store_new ();
-	g_assert (store != NULL);
-
-	/* add test files */
-	ret = gcm_profile_store_search_path (store, TESTDATADIR "/.");
-	g_assert (ret);
-
-	/* get array of profiles */
-	g_assert_cmpint (gcm_profile_store_get_size (store), >, 3);
-
-	g_object_unref (store);
 }
 
 static void
@@ -1119,7 +1099,6 @@ main (int argc, char **argv)
 	g_test_add_func ("/color/clut", gcm_test_clut_func);
 	g_test_add_func ("/color/dmi", gcm_test_dmi_func);
 	g_test_add_func ("/color/x11", gcm_test_x11_func);
-	g_test_add_func ("/color/profile_store", gcm_test_profile_store_func);
 	g_test_add_func ("/color/sample-window", gcm_test_sample_window_func);
 	if (g_test_thorough ()) {
 		g_test_add_func ("/color/brightness", gcm_test_brightness_func);
