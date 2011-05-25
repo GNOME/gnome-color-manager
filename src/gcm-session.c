@@ -1148,28 +1148,28 @@ gcm_session_add_x11_output (GcmSessionPrivate *priv, GcmX11Output *output)
 	device_id = gcm_session_get_output_id (output);
 	g_debug ("output %s added", device_id);
 	device_props = g_hash_table_new_full (g_str_hash, g_str_equal,
-					      g_free, g_free);
+					      NULL, NULL);
 	g_hash_table_insert (device_props,
-			     g_strdup ("Kind"),
-			     g_strdup (cd_device_kind_to_string (CD_DEVICE_KIND_DISPLAY)));
+			     (gpointer) CD_DEVICE_PROPERTY_KIND,
+			     (gpointer) cd_device_kind_to_string (CD_DEVICE_KIND_DISPLAY));
 	g_hash_table_insert (device_props,
-			     g_strdup ("Mode"),
-			     g_strdup (cd_device_mode_to_string (CD_DEVICE_MODE_PHYSICAL)));
+			     (gpointer) CD_DEVICE_PROPERTY_MODE,
+			     (gpointer) cd_device_mode_to_string (CD_DEVICE_MODE_PHYSICAL));
 	g_hash_table_insert (device_props,
-			     g_strdup ("Colorspace"),
-			     g_strdup (cd_colorspace_to_string (CD_COLORSPACE_RGB)));
+			     (gpointer) CD_DEVICE_PROPERTY_COLORSPACE,
+			     (gpointer) cd_colorspace_to_string (CD_COLORSPACE_RGB));
 	g_hash_table_insert (device_props,
-			     g_strdup ("Vendor"),
-			     g_strdup (vendor));
+			     (gpointer) CD_DEVICE_PROPERTY_VENDOR,
+			     (gpointer) vendor);
 	g_hash_table_insert (device_props,
-			     g_strdup ("Model"),
-			     g_strdup (model));
+			     (gpointer) CD_DEVICE_PROPERTY_MODEL,
+			     (gpointer) model);
 	g_hash_table_insert (device_props,
-			     g_strdup ("Serial"),
-			     g_strdup (serial));
+			     (gpointer) CD_DEVICE_PROPERTY_SERIAL,
+			     (gpointer) serial);
 	g_hash_table_insert (device_props,
-			     g_strdup ("XRANDR_name"),
-			     g_strdup (gcm_x11_output_get_name (output)));
+			     (gpointer) CD_DEVICE_METADATA_XRANDR_NAME,
+			     (gpointer) gcm_x11_output_get_name (output));
 	device = cd_client_create_device_sync (priv->client,
 					       device_id,
 					       CD_OBJECT_SCOPE_TEMP,
