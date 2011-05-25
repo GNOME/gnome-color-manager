@@ -44,7 +44,6 @@ typedef struct {
 	GDBusConnection	*connection;
 	GDBusNodeInfo	*introspection;
 	GMainLoop	*loop;
-	guint		 watcher_id;
 } GcmSessionPrivate;
 
 #define GCM_ICC_PROFILE_IN_X_VERSION_MAJOR	0
@@ -1233,13 +1232,12 @@ out:
 }
 
 /**
- * gcm_session_colord_appeared_cb:
+ * gcm_session_client_connect_cb:
  **/
 static void
-gcm_session_colord_appeared_cb (GDBusConnection *connection,
-				const gchar *name,
-				const gchar *name_owner,
-				gpointer user_data)
+gcm_session_client_connect_cb (GObject *source_object,
+			       GAsyncResult *res,
+			       gpointer user_data)
 {
 	gboolean ret;
 	GError *error = NULL;
@@ -1250,7 +1248,14 @@ gcm_session_colord_appeared_cb (GDBusConnection *connection,
 	GcmX11Output *output;
 	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
 
-	g_debug ("%s has appeared as %s", name, name_owner);
+	/* connected */
+	g_debug ("connected to colord");
+	ret = cd_client_connect_finish (priv->client, res, &error);
+	if (!ret) {
+		g_warning ("failed to connect to colord: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	/* add screens */
 	ret = gcm_x11_screen_refresh (priv->x11_screen, &error);
@@ -1298,49 +1303,6 @@ gcm_session_colord_appeared_cb (GDBusConnection *connection,
 out:
 	if (array != NULL)
 		g_ptr_array_unref (array);
-}
-
-/**
- * gcm_session_colord_vanished_cb:
- **/
-static void
-gcm_session_colord_vanished_cb (GDBusConnection *_connection,
-				const gchar *name,
-				gpointer user_data)
-{
-	g_debug ("%s has vanished", name);
-}
-
-/**
- * gcm_session_client_connect_cb:
- **/
-static void
-gcm_session_client_connect_cb (GObject *source_object,
-			       GAsyncResult *res,
-			       gpointer user_data)
-{
-	gboolean ret;
-	GError *error = NULL;
-	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
-
-	/* connected */
-	g_debug ("connected to colord");
-	ret = cd_client_connect_finish (priv->client, res, &error);
-	if (!ret) {
-		g_warning ("failed to connect to colord: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* watch to see when colord appears */
-	priv->watcher_id = g_bus_watch_name (G_BUS_TYPE_SYSTEM,
-					     "org.freedesktop.ColorManager",
-					     G_BUS_NAME_WATCHER_FLAGS_NONE,
-					     gcm_session_colord_appeared_cb,
-					     gcm_session_colord_vanished_cb,
-					     priv, NULL);
-out:
-	return;
 }
 
 /**
@@ -1490,8 +1452,6 @@ out:
 	if (owner_id > 0)
 		g_bus_unown_name (owner_id);
 	if (priv != NULL) {
-		if (priv->watcher_id > 0)
-			g_bus_unwatch_name (priv->watcher_id);
 		if (priv->profile_store != NULL)
 			g_object_unref (priv->profile_store);
 		if (priv->dmi != NULL)
