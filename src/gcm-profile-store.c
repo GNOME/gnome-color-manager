@@ -19,14 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * SECTION:gcm-profile-store
- * @short_description: Object to search for profiles and keep a list up to date.
- *
- * This object holds an array of %GcmProfiles, and watches both the directories
- * for changes.
- */
-
 #include "config.h"
 
 #include <glib-object.h>

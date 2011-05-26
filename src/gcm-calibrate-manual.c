@@ -19,13 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * SECTION:gcm-calibrate-manual
- * @short_description: routines to manually create a color profile.
- *
- * This object can create an ICC file manually.
- */
-
 #include "config.h"
 
 #include <glib-object.h>

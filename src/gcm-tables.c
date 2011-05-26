@@ -19,13 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * SECTION:gcm-tables
- * @short_description: An object to convert ID values into text
- *
- * This object parses the USB, PCI and PNP tables to return text for numbers.
- */
-
 #include "config.h"
 
 #include <glib-object.h>

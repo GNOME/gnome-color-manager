@@ -20,13 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * SECTION:gcm-x11-output
- * @short_description: An object to interact with the XServer output.
- *
- * This object talks to the currently running X Server.
- */
-
 #include "config.h"
 
 #include <glib-object.h>

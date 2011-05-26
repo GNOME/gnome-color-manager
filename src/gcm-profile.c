@@ -19,14 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * SECTION:gcm-profile
- * @short_description: A parser object that understands the ICC profile data format.
- *
- * This object is a simple parser for the ICC binary profile data. If only understands
- * a subset of the ICC profile, just enought to get some metadata and the LUT.
- */
-
 #include "config.h"
 
 #include <glib-object.h>

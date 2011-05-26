@@ -19,13 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * SECTION:gcm-edid
- * @short_description: EDID parsing object
- *
- * This object parses EDID data blocks.
- */
-
 #include "config.h"
 
 #include <glib-object.h>

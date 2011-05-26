@@ -19,13 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * SECTION:gcm-dmi
- * @short_description: DMI parsing object
- *
- * This object parses DMI data blocks.
- */
-
 #include "config.h"
 
 #include <glib-object.h>

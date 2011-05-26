@@ -20,14 +20,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * SECTION:gcm-x11-screen
- * @short_description: An object to interact with the XServer screen.
- *
- * This object talks to the currently running X Server.
- * The #GcmX11Screen objwect will contain one or many #GcmX11Outputs.
- */
-
 #include "config.h"
 
 #include <glib-object.h>

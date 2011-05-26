@@ -19,13 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * SECTION:gcm-print
- * @short_description: Print device abstraction
- *
- * This object allows the programmer to detect a color sensor device.
- */
-
 #include "config.h"
 
 #include <glib/gi18n.h>

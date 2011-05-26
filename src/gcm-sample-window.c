@@ -19,14 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * SECTION:gcm-sample_window
- * @short_description: Color lookup table object
- *
- * This object represents a color lookup table that is useful to manipulating
- * gamma values in a trivial RGB color space.
- */
-
 #include "config.h"
 
 #include <glib-object.h>

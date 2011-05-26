@@ -19,13 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * SECTION:gcm-image
- * @short_description: A color managed #GtkImage.
- *
- * This object is used to convert an image using one, two or three ICC profiles.
- */
-
 #include "config.h"
 
 #include <gtk/gtk.h>

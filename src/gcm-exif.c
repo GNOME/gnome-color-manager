@@ -19,13 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * SECTION:gcm-exif
- * @short_description: EXIF metadata object
- *
- * This object represents a a file wih EXIF data.
- */
-
 #include "config.h"
 
 #include <glib-object.h>

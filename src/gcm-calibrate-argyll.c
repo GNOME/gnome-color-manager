@@ -19,13 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * SECTION:gcm-calibrate-argyll
- * @short_description: Calibration object
- *
- * This object allows calibration functionality using ArgyllCMS.
- */
-
 #include "config.h"
 
 #include <glib/gi18n.h>

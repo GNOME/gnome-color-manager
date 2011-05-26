@@ -19,13 +19,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-/**
- * SECTION:gcm-brightness
- * @short_description: Object to allow setting the brightness using gnome-power-manager
- *
- * This object sets the laptop panel brightness using gnome-power-manager.
- */
-
 #include "config.h"
 
 #include <glib-object.h>
