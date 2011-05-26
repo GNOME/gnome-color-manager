@@ -72,14 +72,8 @@ gcm_inspect_show_x11_atoms (void)
 {
 	gboolean ret;
 	guint8 *data = NULL;
-	guint8 *data_tmp;
 	gsize length;
-	GPtrArray *outputs;
-	GcmX11Output *output;
 	GcmX11Screen *screen = NULL;
-	guint i;
-	const gchar *output_name;
-	gchar *title;
 	GError *error = NULL;
 	guint major;
 	guint minor;
@@ -115,38 +109,6 @@ gcm_inspect_show_x11_atoms (void)
 	} else {
 		/* TRANSLATORS: the root window of all the screens */
 		g_print ("%s %i.%i\n", _("Root window protocol version:"), major, minor);
-	}
-
-	/* coldplug devices */
-	outputs = gcm_x11_screen_get_outputs (screen, &error);
-	if (outputs == NULL) {
-		ret = FALSE;
-		g_warning ("failed to get outputs: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-	for (i=0; i<outputs->len; i++) {
-
-		/* get output name */
-		output = g_ptr_array_index (outputs, i);
-		output_name = gcm_x11_output_get_name (output);
-		title = g_strdup_printf (_("Output profile '%s':"), output_name);
-
-		/* get profile from XServer */
-		ret = gcm_x11_output_get_profile_data (output, &data_tmp, &length, &error);
-		if (!ret) {
-			g_warning ("failed to get output profile data: %s", error->message);
-			/* TRANSLATORS: this is when the profile has not been set */
-			g_print ("%s %s\n", title, _("not set"));
-			g_error_free (error);
-			/* non-fatal */
-			error = NULL;
-		} else {
-			/* TRANSLATORS: the output, i.e. the flat panel */
-			gcm_inspect_print_data_info (title, data_tmp, length);
-			g_free (data_tmp);
-		}
-		g_free (title);
 	}
 out:
 	g_free (data);

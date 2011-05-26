@@ -102,19 +102,6 @@ gboolean	 gcm_x11_output_set_gamma_from_clut	(GcmX11Output		*output,
 							 GError			**error);
 GcmEdid		*gcm_x11_output_get_edid		(GcmX11Output		*output,
 							 GError			**error);
-gboolean	 gcm_x11_output_get_profile_data	(GcmX11Output		*output,
-							 guint8			**data,
-							 gsize			*length,
-							 GError			**error);
-gboolean	 gcm_x11_output_set_profile_data	(GcmX11Output		*output,
-							 const guint8		*data,
-							 gsize			 length,
-							 GError			**error);
-gboolean	 gcm_x11_output_set_profile		(GcmX11Output		*output,
-							 const gchar		*filename,
-							 GError			**error);
-gboolean	 gcm_x11_output_remove_profile		(GcmX11Output		*output,
-							 GError			**error);
 
 G_END_DECLS
 

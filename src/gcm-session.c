@@ -452,15 +452,6 @@ gcm_session_device_assign (GcmSessionPrivate *priv, CdDevice *device)
 			 error->message);
 		g_clear_error (&error);
 
-		/* clear the _ICC_PROFILE atom if not logging in */
-		ret = gcm_x11_output_remove_profile (output,
-						     &error);
-		if (!ret) {
-			g_warning ("failed to clear screen _ICC_PROFILE: %s",
-				   error->message);
-			g_clear_error (&error);
-		}
-
 		/* the default output? */
 		if (gcm_x11_output_get_primary (output)) {
 			ret = gcm_x11_screen_remove_profile (priv->x11_screen,
@@ -515,14 +506,6 @@ gcm_session_device_assign (GcmSessionPrivate *priv, CdDevice *device)
 				   error->message);
 			g_clear_error (&error);
 		}
-	}
-	ret = gcm_x11_output_set_profile (output,
-					  filename,
-					  &error);
-	if (!ret) {
-		g_warning ("failed to set output _ICC_PROFILE: %s",
-			   error->message);
-		g_clear_error (&error);
 	}
 
 	/* create a vcgt for this icc file */
