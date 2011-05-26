@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2011 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -34,11 +34,6 @@ static void     gcm_dmi_finalize	(GObject     *object);
 
 #define GCM_DMI_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_DMI, GcmDmiPrivate))
 
-/**
- * GcmDmiPrivate:
- *
- * Private #GcmDmi data
- **/
 struct _GcmDmiPrivate
 {
 	gchar				*name;
@@ -58,9 +53,6 @@ static gpointer gcm_dmi_object = NULL;
 
 G_DEFINE_TYPE (GcmDmi, gcm_dmi, G_TYPE_OBJECT)
 
-/**
- * gcm_dmi_get_data:
- **/
 static gchar *
 gcm_dmi_get_data (const gchar *filename)
 {
@@ -91,9 +83,6 @@ gcm_dmi_get_data (const gchar *filename)
 	return data;
 }
 
-/**
- * gcm_dmi_get_name:
- **/
 const gchar *
 gcm_dmi_get_name (GcmDmi *dmi)
 {
@@ -107,9 +96,6 @@ gcm_dmi_get_name (GcmDmi *dmi)
 	return priv->name;
 }
 
-/**
- * gcm_dmi_get_version:
- **/
 const gchar *
 gcm_dmi_get_version (GcmDmi *dmi)
 {
@@ -125,9 +111,6 @@ gcm_dmi_get_version (GcmDmi *dmi)
 	return priv->version;
 }
 
-/**
- * gcm_dmi_get_vendor:
- **/
 const gchar *
 gcm_dmi_get_vendor (GcmDmi *dmi)
 {
@@ -143,9 +126,6 @@ gcm_dmi_get_vendor (GcmDmi *dmi)
 	return priv->vendor;
 }
 
-/**
- * gcm_dmi_get_property:
- **/
 static void
 gcm_dmi_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
@@ -167,9 +147,6 @@ gcm_dmi_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec 
 	}
 }
 
-/**
- * gcm_dmi_set_property:
- **/
 static void
 gcm_dmi_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
@@ -180,9 +157,6 @@ gcm_dmi_set_property (GObject *object, guint prop_id, const GValue *value, GPara
 	}
 }
 
-/**
- * gcm_dmi_class_init:
- **/
 static void
 gcm_dmi_class_init (GcmDmiClass *klass)
 {
@@ -192,25 +166,16 @@ gcm_dmi_class_init (GcmDmiClass *klass)
 	object_class->get_property = gcm_dmi_get_property;
 	object_class->set_property = gcm_dmi_set_property;
 
-	/**
-	 * GcmDmi:name:
-	 */
 	pspec = g_param_spec_string ("name", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_NAME, pspec);
 
-	/**
-	 * GcmDmi:version:
-	 */
 	pspec = g_param_spec_string ("version", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_VERSION, pspec);
 
-	/**
-	 * GcmDmi:vendor:
-	 */
 	pspec = g_param_spec_string ("vendor", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
@@ -219,9 +184,6 @@ gcm_dmi_class_init (GcmDmiClass *klass)
 	g_type_class_add_private (klass, sizeof (GcmDmiPrivate));
 }
 
-/**
- * gcm_dmi_init:
- **/
 static void
 gcm_dmi_init (GcmDmi *dmi)
 {
@@ -231,9 +193,6 @@ gcm_dmi_init (GcmDmi *dmi)
 	dmi->priv->vendor = NULL;
 }
 
-/**
- * gcm_dmi_finalize:
- **/
 static void
 gcm_dmi_finalize (GObject *object)
 {
@@ -247,11 +206,6 @@ gcm_dmi_finalize (GObject *object)
 	G_OBJECT_CLASS (gcm_dmi_parent_class)->finalize (object);
 }
 
-/**
- * gcm_dmi_new:
- *
- * Return value: a new GcmDmi object.
- **/
 GcmDmi *
 gcm_dmi_new (void)
 {

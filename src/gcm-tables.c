@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2011 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -29,11 +29,6 @@ static void     gcm_tables_finalize	(GObject     *object);
 
 #define GCM_TABLES_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_TABLES, GcmTablesPrivate))
 
-/**
- * GcmTablesPrivate:
- *
- * Private #GcmTables data
- **/
 struct _GcmTablesPrivate
 {
 	gchar				*data_dir;
@@ -41,19 +36,10 @@ struct _GcmTablesPrivate
 	GHashTable			*pnp_table;
 };
 
-enum {
-	PROP_0,
-	PROP_DATA_DIR,
-	PROP_LAST
-};
-
 static gpointer gcm_tables_object = NULL;
 
 G_DEFINE_TYPE (GcmTables, gcm_tables, G_TYPE_OBJECT)
 
-/**
- * gcm_tables_load:
- **/
 static gboolean
 gcm_tables_load (GcmTables *tables, GError **error)
 {
@@ -100,9 +86,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_tables_get_pnp_id:
- **/
 gchar *
 gcm_tables_get_pnp_id (GcmTables *tables, const gchar *pnp_id, GError **error)
 {
@@ -136,71 +119,14 @@ out:
 	return retval;
 }
 
-/**
- * gcm_tables_get_property:
- **/
-static void
-gcm_tables_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
-{
-	GcmTables *tables = GCM_TABLES (object);
-	GcmTablesPrivate *priv = tables->priv;
-
-	switch (prop_id) {
-	case PROP_DATA_DIR:
-		g_value_set_string (value, priv->data_dir);
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-/**
- * gcm_tables_set_property:
- **/
-static void
-gcm_tables_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
-{
-	GcmTables *tables = GCM_TABLES (object);
-	GcmTablesPrivate *priv = tables->priv;
-
-	switch (prop_id) {
-	case PROP_DATA_DIR:
-		g_free (priv->data_dir);
-		priv->data_dir = g_strdup (g_value_get_string (value));
-		break;
-	default:
-		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
-		break;
-	}
-}
-
-/**
- * gcm_tables_class_init:
- **/
 static void
 gcm_tables_class_init (GcmTablesClass *klass)
 {
-	GParamSpec *pspec;
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	object_class->finalize = gcm_tables_finalize;
-	object_class->get_property = gcm_tables_get_property;
-	object_class->set_property = gcm_tables_set_property;
-
-	/**
-	 * GcmTables:data-dir:
-	 */
-	pspec = g_param_spec_string ("data-dir", NULL, NULL,
-				     NULL,
-				     G_PARAM_READABLE);
-	g_object_class_install_property (object_class, PROP_DATA_DIR, pspec);
-
 	g_type_class_add_private (klass, sizeof (GcmTablesPrivate));
 }
 
-/**
- * gcm_tables_set_default_data_dir:
- **/
 static gboolean
 gcm_tables_set_default_data_dir (GcmTables *tables)
 {
@@ -233,14 +159,10 @@ out:
 	return ret;
 }
 
-/**
- * gcm_tables_init:
- **/
 static void
 gcm_tables_init (GcmTables *tables)
 {
 	tables->priv = GCM_TABLES_GET_PRIVATE (tables);
-	tables->priv->data_dir = NULL;
 
 	/* we don't keep malloc'd data in the hash; instead we read it
 	 * out into priv->table_data and then link to it in the hash */
@@ -253,9 +175,6 @@ gcm_tables_init (GcmTables *tables)
 	gcm_tables_set_default_data_dir (tables);
 }
 
-/**
- * gcm_tables_finalize:
- **/
 static void
 gcm_tables_finalize (GObject *object)
 {
@@ -269,11 +188,6 @@ gcm_tables_finalize (GObject *object)
 	G_OBJECT_CLASS (gcm_tables_parent_class)->finalize (object);
 }
 
-/**
- * gcm_tables_new:
- *
- * Return value: a new GcmTables object.
- **/
 GcmTables *
 gcm_tables_new (void)
 {

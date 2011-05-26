@@ -1,6 +1,7 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2008 Soren Sandmann <sandmann@redhat.com>
+ * Copyright (C) 2009-2011 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -35,11 +36,6 @@ static void     gcm_edid_finalize	(GObject     *object);
 
 #define GCM_EDID_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_EDID, GcmEdidPrivate))
 
-/**
- * GcmEdidPrivate:
- *
- * Private #GcmEdid data
- **/
 struct _GcmEdidPrivate
 {
 	gchar				*monitor_name;
@@ -92,14 +88,6 @@ G_DEFINE_TYPE (GcmEdid, gcm_edid, G_TYPE_OBJECT)
 #define GCM_DESCRIPTOR_ALPHANUMERIC_DATA_STRING		0xfe
 #define GCM_DESCRIPTOR_COLOR_POINT			0xfb
 
-/**
- * gcm_edid_get_monitor_name:
- * @edid: a valid #GcmEdid instance
- *
- * Gets the monitor name.
- *
- * Return value: a null terminaled string value
- **/
 const gchar *
 gcm_edid_get_monitor_name (GcmEdid *edid)
 {
@@ -107,14 +95,6 @@ gcm_edid_get_monitor_name (GcmEdid *edid)
 	return edid->priv->monitor_name;
 }
 
-/**
- * gcm_edid_get_vendor_name:
- * @edid: a valid #GcmEdid instance
- *
- * Gets the vendor name.
- *
- * Return value: a null terminaled string value
- **/
 const gchar *
 gcm_edid_get_vendor_name (GcmEdid *edid)
 {
@@ -126,14 +106,6 @@ gcm_edid_get_vendor_name (GcmEdid *edid)
 	return priv->vendor_name;
 }
 
-/**
- * gcm_edid_get_serial_number:
- * @edid: a valid #GcmEdid instance
- *
- * Gets the device serial number.
- *
- * Return value: a null terminaled string value
- **/
 const gchar *
 gcm_edid_get_serial_number (GcmEdid *edid)
 {
@@ -141,14 +113,6 @@ gcm_edid_get_serial_number (GcmEdid *edid)
 	return edid->priv->serial_number;
 }
 
-/**
- * gcm_edid_get_eisa_id:
- * @edid: a valid #GcmEdid instance
- *
- * Gets the EISA ID.
- *
- * Return value: a null terminaled string value
- **/
 const gchar *
 gcm_edid_get_eisa_id (GcmEdid *edid)
 {
@@ -156,15 +120,6 @@ gcm_edid_get_eisa_id (GcmEdid *edid)
 	return edid->priv->eisa_id;
 }
 
-/**
- * gcm_edid_get_checksum:
- * @edid: a valid #GcmEdid instance
- *
- * Gets the EDID MD5 checksum, which is often useful to compare binary
- * blobs.
- *
- * Return value: a null terminaled string value
- **/
 const gchar *
 gcm_edid_get_checksum (GcmEdid *edid)
 {
@@ -172,14 +127,6 @@ gcm_edid_get_checksum (GcmEdid *edid)
 	return edid->priv->checksum;
 }
 
-/**
- * gcm_edid_get_pnp_id:
- * @edid: a valid #GcmEdid instance
- *
- * Gets the device PNP ID..
- *
- * Return value: a null terminaled string value
- **/
 const gchar *
 gcm_edid_get_pnp_id (GcmEdid *edid)
 {
@@ -187,14 +134,6 @@ gcm_edid_get_pnp_id (GcmEdid *edid)
 	return edid->priv->pnp_id;
 }
 
-/**
- * gcm_edid_get_width:
- * @edid: a valid #GcmEdid instance
- *
- * Gets the width of the panel.
- *
- * Return value: the width in mm.
- **/
 guint
 gcm_edid_get_width (GcmEdid *edid)
 {
@@ -202,14 +141,6 @@ gcm_edid_get_width (GcmEdid *edid)
 	return edid->priv->width;
 }
 
-/**
- * gcm_edid_get_height:
- * @edid: a valid #GcmEdid instance
- *
- * Gets the panel height.
- *
- * Return value: the height in mm.
- **/
 guint
 gcm_edid_get_height (GcmEdid *edid)
 {
@@ -217,14 +148,6 @@ gcm_edid_get_height (GcmEdid *edid)
 	return edid->priv->height;
 }
 
-/**
- * gcm_edid_get_gamma:
- * @edid: a valid #GcmEdid instance
- *
- * Gets the monitor gamma.
- *
- * Return value: the gamma value, although this is typically 2.2
- **/
 gfloat
 gcm_edid_get_gamma (GcmEdid *edid)
 {
@@ -232,14 +155,6 @@ gcm_edid_get_gamma (GcmEdid *edid)
 	return edid->priv->gamma;
 }
 
-/**
- * gcm_edid_get_red:
- * @edid: a valid #GcmEdid instance
- *
- * Gets the monitor red chromaticity value.
- *
- * Return value: the #CdColorYxy value
- **/
 const CdColorYxy *
 gcm_edid_get_red (GcmEdid *edid)
 {
@@ -247,14 +162,6 @@ gcm_edid_get_red (GcmEdid *edid)
 	return edid->priv->red;
 }
 
-/**
- * gcm_edid_get_green:
- * @edid: a valid #GcmEdid instance
- *
- * Gets the monitor green chromaticity value.
- *
- * Return value: the #CdColorYxy value
- **/
 const CdColorYxy *
 gcm_edid_get_green (GcmEdid *edid)
 {
@@ -262,14 +169,6 @@ gcm_edid_get_green (GcmEdid *edid)
 	return edid->priv->green;
 }
 
-/**
- * gcm_edid_get_blue:
- * @edid: a valid #GcmEdid instance
- *
- * Gets the monitor red chromaticity value.
- *
- * Return value: the #CdColorYxy value
- **/
 const CdColorYxy *
 gcm_edid_get_blue (GcmEdid *edid)
 {
@@ -277,14 +176,6 @@ gcm_edid_get_blue (GcmEdid *edid)
 	return edid->priv->blue;
 }
 
-/**
- * gcm_edid_get_white:
- * @edid: a valid #GcmEdid instance
- *
- * Gets the monitor white chromaticity value.
- *
- * Return value: the #CdColorYxy value
- **/
 const CdColorYxy *
 gcm_edid_get_white (GcmEdid *edid)
 {
@@ -292,12 +183,6 @@ gcm_edid_get_white (GcmEdid *edid)
 	return edid->priv->white;
 }
 
-/**
- * gcm_edid_reset:
- * @edid: a valid #GcmEdid instance
- *
- * Resets all the cached values in this object.
- **/
 void
 gcm_edid_reset (GcmEdid *edid)
 {
@@ -326,11 +211,6 @@ gcm_edid_reset (GcmEdid *edid)
 	priv->gamma = 0.0f;
 }
 
-/**
- * gcm_edid_get_bit:
- *
- * Originally Copyright Soren Sandmann <sandmann@redhat.com>
- **/
 static gint
 gcm_edid_get_bit (gint in, gint bit)
 {
@@ -363,14 +243,6 @@ gcm_edid_decode_fraction (gint high, gint low)
 	return result;
 }
 
-/**
- * gcm_edid_parse_string:
- *
- * This is always 12 bytes, but we can't guarantee it's null terminated
- * or not junk.
- *
- * Return value: the sane text, or %NULL, use g_free() to unref.
- **/
 static gchar *
 gcm_edid_parse_string (const guint8 *data)
 {
@@ -378,7 +250,8 @@ gcm_edid_parse_string (const guint8 *data)
 	guint i;
 	guint replaced = 0;
 
-	/* copy 12 bytes */
+	/* this is always 12 bytes, but we can't guarantee it's null
+	 * terminated or not junk. */
 	text = g_strndup ((const gchar *) data, 12);
 
 	/* remove insane newline chars */
@@ -412,9 +285,6 @@ out:
 	return text;
 }
 
-/**
- * gcm_edid_get_white_temperature:
- **/
 static gdouble
 gcm_edid_get_white_temperature (CdColorYxy *yxy)
 {
@@ -432,18 +302,6 @@ gcm_edid_get_white_temperature (CdColorYxy *yxy)
 	return temp;
 }
 
-/**
- * gcm_edid_parse:
- * @edid: a valid #GcmEdid instance
- * @data: the EDID block
- * @length: the data length, typically a multiple of 128
- * @error: a valid #GError or %NULL
- *
- * Parses an EDID block, checking for sanity and decoding anything
- * important.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_edid_parse (GcmEdid *edid, const guint8 *data, gsize length, GError **error)
 {
@@ -592,9 +450,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_edid_get_property:
- **/
 static void
 gcm_edid_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
@@ -647,9 +502,6 @@ gcm_edid_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 	}
 }
 
-/**
- * gcm_edid_set_property:
- **/
 static void
 gcm_edid_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
@@ -660,9 +512,6 @@ gcm_edid_set_property (GObject *object, guint prop_id, const GValue *value, GPar
 	}
 }
 
-/**
- * gcm_edid_class_init:
- **/
 static void
 gcm_edid_class_init (GcmEdidClass *klass)
 {
@@ -672,105 +521,66 @@ gcm_edid_class_init (GcmEdidClass *klass)
 	object_class->get_property = gcm_edid_get_property;
 	object_class->set_property = gcm_edid_set_property;
 
-	/**
-	 * GcmEdid:monitor-name:
-	 */
 	pspec = g_param_spec_string ("monitor-name", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_MONITOR_NAME, pspec);
 
-	/**
-	 * GcmEdid:vendor-name:
-	 */
 	pspec = g_param_spec_string ("vendor-name", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_VENDOR_NAME, pspec);
 
-	/**
-	 * GcmEdid:serial-number:
-	 */
 	pspec = g_param_spec_string ("serial-number", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_SERIAL_NUMBER, pspec);
 
-	/**
-	 * GcmEdid:eisa-id:
-	 */
 	pspec = g_param_spec_string ("eisa-id", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_EISA_ID, pspec);
 
-	/**
-	 * GcmEdid:checksum:
-	 */
 	pspec = g_param_spec_string ("checksum", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_CHECKSUM, pspec);
 
-	/**
-	 * GcmEdid:gamma:
-	 */
 	pspec = g_param_spec_float ("gamma", NULL, NULL,
 				    1.0f, 5.0f, 1.0f,
 				    G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_GAMMA, pspec);
 
-	/**
-	 * GcmEdid:pnp-id:
-	 */
 	pspec = g_param_spec_string ("pnp-id", NULL, NULL,
 				     NULL,
 				     G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_PNP_ID, pspec);
 
-	/**
-	 * GcmEdid:width:
-	 */
 	pspec = g_param_spec_uint ("width", "in cm", NULL,
 				   0, G_MAXUINT, 0,
 				   G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_WIDTH, pspec);
 
-	/**
-	 * GcmEdid:height:
-	 */
 	pspec = g_param_spec_uint ("height", "in cm", NULL,
 				   0, G_MAXUINT, 0,
 				   G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_HEIGHT, pspec);
 
-	/**
-	 * GcmEdid:red:
-	 */
 	g_object_class_install_property (object_class,
 					 PROP_RED,
 					 g_param_spec_boxed ("red", NULL, NULL,
 							     CD_TYPE_COLOR_YXY,
 							     G_PARAM_READABLE));
-	/**
-	 * GcmEdid:green:
-	 */
 	g_object_class_install_property (object_class,
 					 PROP_GREEN,
 					 g_param_spec_boxed ("green", NULL, NULL,
 							     CD_TYPE_COLOR_YXY,
 							     G_PARAM_READABLE));
-	/**
-	 * GcmEdid:blue:
-	 */
 	g_object_class_install_property (object_class,
 					 PROP_BLUE,
 					 g_param_spec_boxed ("blue", NULL, NULL,
 							     CD_TYPE_COLOR_YXY,
 							     G_PARAM_READABLE));
-	/**
-	 * GcmEdid:white:
-	 */
 	g_object_class_install_property (object_class,
 					 PROP_WHITE,
 					 g_param_spec_boxed ("white", NULL, NULL,
@@ -780,18 +590,10 @@ gcm_edid_class_init (GcmEdidClass *klass)
 	g_type_class_add_private (klass, sizeof (GcmEdidPrivate));
 }
 
-/**
- * gcm_edid_init:
- **/
 static void
 gcm_edid_init (GcmEdid *edid)
 {
 	edid->priv = GCM_EDID_GET_PRIVATE (edid);
-	edid->priv->monitor_name = NULL;
-	edid->priv->vendor_name = NULL;
-	edid->priv->serial_number = NULL;
-	edid->priv->eisa_id = NULL;
-	edid->priv->checksum = NULL;
 	edid->priv->tables = gcm_tables_new ();
 	edid->priv->pnp_id = g_new0 (gchar, 4);
 	edid->priv->red = cd_color_yxy_new ();
@@ -800,9 +602,6 @@ gcm_edid_init (GcmEdid *edid)
 	edid->priv->white = cd_color_yxy_new ();
 }
 
-/**
- * gcm_edid_finalize:
- **/
 static void
 gcm_edid_finalize (GObject *object)
 {
@@ -824,11 +623,6 @@ gcm_edid_finalize (GObject *object)
 	G_OBJECT_CLASS (gcm_edid_parent_class)->finalize (object);
 }
 
-/**
- * gcm_edid_new:
- *
- * Return value: a new #GcmEdid object.
- **/
 GcmEdid *
 gcm_edid_new (void)
 {

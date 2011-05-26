@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2011 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -30,11 +30,6 @@ static void     gcm_brightness_finalize	(GObject     *object);
 
 #define GCM_BRIGHTNESS_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_BRIGHTNESS, GcmBrightnessPrivate))
 
-/**
- * GcmBrightnessPrivate:
- *
- * Private #GcmBrightness data
- **/
 struct _GcmBrightnessPrivate
 {
 	guint				 percentage;
@@ -53,9 +48,6 @@ G_DEFINE_TYPE (GcmBrightness, gcm_brightness, G_TYPE_OBJECT)
 #define	GPM_DBUS_INTERFACE_BACKLIGHT	"org.gnome.PowerManager.Backlight"
 #define	GPM_DBUS_PATH_BACKLIGHT		"/org/gnome/PowerManager/Backlight"
 
-/**
- * gcm_brightness_set_percentage:
- **/
 gboolean
 gcm_brightness_set_percentage (GcmBrightness *brightness, guint percentage, GError **error)
 {
@@ -98,9 +90,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_brightness_get_percentage:
- **/
 gboolean
 gcm_brightness_get_percentage (GcmBrightness *brightness, guint *percentage, GError **error)
 {
@@ -145,9 +134,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_brightness_get_property:
- **/
 static void
 gcm_brightness_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
@@ -164,9 +150,6 @@ gcm_brightness_get_property (GObject *object, guint prop_id, GValue *value, GPar
 	}
 }
 
-/**
- * gcm_brightness_set_property:
- **/
 static void
 gcm_brightness_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
@@ -177,9 +160,6 @@ gcm_brightness_set_property (GObject *object, guint prop_id, const GValue *value
 	}
 }
 
-/**
- * gcm_brightness_class_init:
- **/
 static void
 gcm_brightness_class_init (GcmBrightnessClass *klass)
 {
@@ -200,9 +180,6 @@ gcm_brightness_class_init (GcmBrightnessClass *klass)
 	g_type_class_add_private (klass, sizeof (GcmBrightnessPrivate));
 }
 
-/**
- * gcm_brightness_init:
- **/
 static void
 gcm_brightness_init (GcmBrightness *brightness)
 {
@@ -210,9 +187,6 @@ gcm_brightness_init (GcmBrightness *brightness)
 	brightness->priv->percentage = 0;
 }
 
-/**
- * gcm_brightness_finalize:
- **/
 static void
 gcm_brightness_finalize (GObject *object)
 {
@@ -225,11 +199,6 @@ gcm_brightness_finalize (GObject *object)
 	G_OBJECT_CLASS (gcm_brightness_parent_class)->finalize (object);
 }
 
-/**
- * gcm_brightness_new:
- *
- * Return value: a new GcmBrightness object.
- **/
 GcmBrightness *
 gcm_brightness_new (void)
 {
