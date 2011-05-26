@@ -1,16 +1,16 @@
 # Czech translation for gnome-color-manager.
-# Copyright (C) 2009, 2010 gnome-color-manager's COPYRIGHT HOLDER
+# Copyright (C) 2009 - 2011 gnome-color-manager's COPYRIGHT HOLDER
 # This file is distributed under the same license as the gnome-color-manager package.
 # Lucas Lommer <llommer@svn.gnome.org>, 2009.
 # Marek Černocký <marek@manet.cz>, 2010.
-# Milan Knížek <knizek@volny.cz>, 2010.
+# Milan Knížek <knizek@volny.cz>, 2010, 2011
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2010-11-21 22:38+0100\n"
-"PO-Revision-Date: 2010-11-19 21:32+0100\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager&keywords=I18N+L10N\n"
+"POT-Creation-Date: 2011-05-10 19:20+0000\n"
+"PO-Revision-Date: 2011-05-10 21:47+0100\n"
 "Last-Translator: Milan Knížek <knizek@volny.cz>\n"
 "Language-Team: Czech <gnome-cs-list@gnome.org>\n"
 "Language: cs\n"
@@ -20,11 +20,11 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Poedit-Language: Czech\n"
 
-#: ../data/gcm-apply.desktop.in.h:1
+#: ../data/gcm-session.desktop.in.h:1
 msgid "Applies device profile settings at session startup"
 msgstr "Při spuštění sezení se nastaví profil zařízení"
 
-#: ../data/gcm-apply.desktop.in.h:2
+#: ../data/gcm-session.desktop.in.h:2
 msgid "Load device color profiles"
 msgstr "Načíst profily barev pro zařízení"
 
@@ -36,13 +36,26 @@ msgstr "Instalátor profilu ICC"
 msgid "Install ICC profiles"
 msgstr "Instalovat profily ICC"
 
+#. TRANSLATORS: program name, a session wide daemon to watch for updates and changing system state
 #: ../data/gcm-prefs.desktop.in.h:1
-msgid "Color"
-msgstr "Barva"
+#: ../src/gcm-session.c:1713
+#: ../data/gcm-prefs.ui.h:10
+msgid "Color Management"
+msgstr "Správa barev"
 
 #: ../data/gcm-prefs.desktop.in.h:2
 msgid "Manage ICC color profiles"
 msgstr "Spravovat profily ICC"
+
+#. Window title, where the user can pick spot colors using a measuring device
+#: ../data/gcm-picker.desktop.in.h:1
+#: ../data/gcm-picker.ui.h:4
+msgid "Color Picker"
+msgstr "Měření jednotlivých barev"
+
+#: ../data/gcm-picker.desktop.in.h:2
+msgid "Use the color sensor to sample spot colors"
+msgstr "Použít sondu pro měření samostatného barevného vzorku"
 
 #: ../data/gcm-viewer.desktop.in.h:1
 msgid "Color Profile Viewer"
@@ -53,954 +66,761 @@ msgid "Inspect and compare installed color profiles"
 msgstr "Prozkoumat a porovnat nainstalované profily barev"
 
 #. TRANSLATORS: turn on all debugging
-#: ../libcolor-glib/gcm-debug.c:104
+#: ../src/gcm-debug.c:105
 msgid "Show debugging information for all files"
 msgstr "Zobrazit všechny ladicí informace"
 
-#: ../libcolor-glib/gcm-debug.c:161
+#: ../src/gcm-debug.c:162
 msgid "Debugging Options"
 msgstr "Volby pro ladění"
 
-#: ../libcolor-glib/gcm-debug.c:161
+#: ../src/gcm-debug.c:162
 msgid "Show debugging options"
 msgstr "Zobrazit volby ladění"
 
 #. TRANSLATORS: this is where the ICC profile has no description
-#: ../libcolor-glib/gcm-profile.c:172
+#: ../src/gcm-profile.c:170
 msgid "Missing description"
 msgstr "Popis chybí"
 
 #. TRANSLATORS: this is the profile creation date strftime format
-#: ../libcolor-glib/gcm-profile.c:681
+#: ../src/gcm-profile.c:591
 msgid "%B %e %Y, %I:%M:%S %p"
 msgstr "%e. %B %Y, %I:%M:%S %p"
 
-#: ../policy/org.gnome.color.policy.in.h:1
-msgid "Authentication is required to install the color profile for all users"
-msgstr ""
-"Abyste mohli nainstalovat profily barev pro všechny uživatele, musíte mít "
-"administrátorská oprávnění."
-
-#. SECURITY:
-#. - Normal users require admin authentication to install files system
-#. wide to apply color profiles for sessions that have not explicitly
-#. chosen profiles to apply.
-#. - This should not be set to 'yes' as unprivileged users could then
-#. set a profile set to all-white or all-black and thus make the
-#. other sessions unusable.
-#.
-#: ../policy/org.gnome.color.policy.in.h:10
-msgid "Install system color profiles"
-msgstr "Instalovat systémové profily barev"
-
-#. TRANSLATORS: could not save for all users
-#: ../src/cc-color-panel.c:147
-msgid "Failed to save defaults for all users"
-msgstr "Selhalo uložení výchozích hodnot pro všechny uživatele"
-
 #. TRANSLATORS: this is where the user can click and import a profile
-#: ../src/cc-color-panel.c:175
+#: ../src/gcm-prefs.c:131
 msgid "Other profile…"
 msgstr "Jiný profil…"
 
-#. TRANSLATORS: could not calibrate
-#: ../src/cc-color-panel.c:332
+#: ../src/gcm-prefs.c:220
 msgid "Failed to calibrate device"
 msgstr "Kalibrace zařízení selhala"
 
-#. TRANSLATORS: could not calibrate
-#: ../src/cc-color-panel.c:367
+#: ../src/gcm-prefs.c:249
 msgid "Failed to calibrate printer"
 msgstr "Kalibrace tiskárny selhala"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/cc-color-panel.c:392 ../src/gcm-calibrate.c:913
-#: ../src/gcm-viewer.c:339
+#: ../src/gcm-prefs.c:276
+#: ../src/gcm-calibrate.c:895
+#: ../src/gcm-viewer.c:350
 msgid "Select ICC Profile File"
 msgstr "Výběr souboru s profilem ICC"
 
-#: ../src/cc-color-panel.c:395 ../src/gcm-viewer.c:342
+#: ../src/gcm-prefs.c:279
+#: ../src/gcm-viewer.c:353
 msgid "Import"
 msgstr "Importovat"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/cc-color-panel.c:413 ../src/gcm-viewer.c:360
+#: ../src/gcm-prefs.c:297
+#: ../src/gcm-viewer.c:371
 msgid "Supported ICC profiles"
 msgstr "Podporované profily ICC"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/cc-color-panel.c:420 ../src/gcm-calibrate.c:795
-#: ../src/gcm-calibrate.c:847 ../src/gcm-viewer.c:367
+#: ../src/gcm-prefs.c:304
+#: ../src/gcm-calibrate.c:777
+#: ../src/gcm-calibrate.c:829
+#: ../src/gcm-viewer.c:378
 msgid "All files"
 msgstr "Všechny soubory"
 
 #. TRANSLATORS: could not read file
-#: ../src/cc-color-panel.c:456 ../src/gcm-import.c:207 ../src/gcm-viewer.c:403
+#: ../src/gcm-prefs.c:341
+#: ../src/gcm-import.c:224
+#: ../src/gcm-viewer.c:414
 msgid "Failed to copy file"
 msgstr "Selhalo kopírování souboru"
 
-#: ../src/cc-color-panel.c:484
-msgid "Failed to get metadata from image"
-msgstr "Nepodařilo se získat metadata z obrázku"
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:501 ../src/cc-color-panel.c:1123
-msgid "Failed to create virtual device"
-msgstr "Selhalo vytvoření virtuálního zařízení"
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:509 ../src/cc-color-panel.c:1131
-msgid "Failed to save virtual device"
-msgstr "Selhalo uložení virtuálního zařízení"
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:518 ../src/cc-color-panel.c:1140
-msgid "Failed to add virtual device"
-msgstr "Selhalo přidání virtuálního zařízení"
-
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/cc-color-panel.c:700
+#: ../src/gcm-prefs.c:530
 msgid "Install calibration and profiling software?"
 msgstr "Nainstalovat software pro kalibraci a vytvoření profilu?"
 
-#. TRANSLATORS: dialog message saying the argyllcms is not installed
-#: ../src/cc-color-panel.c:704
+#: ../src/gcm-prefs.c:535
 msgid "Calibration and profiling software is not installed."
 msgstr "Software pro kalibraci a vytvoření profilu není nainstalován."
 
-#. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/cc-color-panel.c:706
+#: ../src/gcm-prefs.c:538
 msgid "These tools are required to build color profiles for devices."
 msgstr "Tyto nástroje jsou nutné k přípravě profilů barev pro zařízení."
 
 #. TRANSLATORS: button, skip installing a package
-#: ../src/cc-color-panel.c:711 ../src/gcm-calibrate.c:1082
+#: ../src/gcm-prefs.c:543
+#: ../src/gcm-calibrate.c:1064
 msgid "Do not install"
 msgstr "Neinstalovat"
 
 #. TRANSLATORS: button, install a package
 #. TRANSLATORS: button text
-#: ../src/cc-color-panel.c:713 ../src/gcm-calibrate.c:1084
-#: ../src/gcm-import.c:186
+#: ../src/gcm-prefs.c:545
+#: ../src/gcm-calibrate.c:1066
+#: ../src/gcm-import.c:203
 msgid "Install"
 msgstr "Nainstalovat"
 
 #. TRANSLATORS: this is the application name for libcanberra
-#: ../src/cc-color-panel.c:830 ../src/cc-color-panel.c:1921
-#: ../src/gcm-calibrate-argyll.c:2284 ../src/gcm-calibrate-argyll.c:2334
-#: ../src/gcm-calibrate-argyll.c:2389 ../src/gcm-calibrate-argyll.c:2465
-#: ../src/gcm-calibrate-argyll.c:2546 ../src/gcm-calibrate-argyll.c:2587
+#: ../src/gcm-prefs.c:723
+#: ../src/gcm-calibrate-argyll.c:2250
+#: ../src/gcm-calibrate-argyll.c:2300
+#: ../src/gcm-calibrate-argyll.c:2355
+#: ../src/gcm-calibrate-argyll.c:2431
+#: ../src/gcm-calibrate-argyll.c:2512
+#: ../src/gcm-calibrate-argyll.c:2553
+#: ../src/gcm-session.c:1586
+#: ../src/gcm-session.c:1610
 msgid "GNOME Color Manager"
 msgstr "Správa barev GNOME"
 
 #. TRANSLATORS: this is the sound description
-#: ../src/cc-color-panel.c:832
+#: ../src/gcm-prefs.c:725
 msgid "Profiling completed"
 msgstr "Profil vytvořen"
 
-#. TRANSLATORS: could not read file
-#: ../src/cc-color-panel.c:1266
-msgid "Failed to delete file"
-msgstr "Selhalo mazání souboru"
+#: ../src/gcm-prefs.c:1105
+msgid "Failed to add create virtual device"
+msgstr "Selhalo přidání vytvořeného virtuálního zařízení"
+
+#. TRANSLATORS: could not delete virtual device
+#: ../src/gcm-prefs.c:1235
+msgid "Failed to delete device"
+msgstr "Selhalo smazání zařízení"
 
 #. TRANSLATORS: this is when the button is sensitive
-#: ../src/cc-color-panel.c:1413
+#: ../src/gcm-prefs.c:1319
 msgid "Create a color profile for the selected device"
 msgstr "Vytvořit profil barev pro vybrané zařízení"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1418
+#: ../src/gcm-prefs.c:1324
 msgid "Cannot create profile: No device is selected"
 msgstr "Nelze vytvořit profil: Není vybrané žádné zařízení"
 
 #. TRANSLATORS: this is when the button is insensitive because the distro compiled GCM without VTE
-#: ../src/cc-color-panel.c:1429
+#: ../src/gcm-prefs.c:1335
 msgid "Cannot create profile: Virtual console support is missing"
 msgstr "Nelze vytvořit profil: chybí podpora virtuální konzoly (VTE)"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1441
-msgid "Cannot create profile: The display device is not connected"
-msgstr "Nelze vytvořit profil: Zobrazovací zařízení není připojené"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1449
-msgid "Cannot create profile: The display driver does not support XRandR 1.3"
-msgstr "Nelze vytvořit profil: ovladač displeje nepodporuje XRandR 1.3"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1457 ../src/cc-color-panel.c:1472
+#: ../src/gcm-prefs.c:1346
+#: ../src/gcm-prefs.c:1364
 msgid "Cannot create profile: The measuring instrument is not plugged in"
 msgstr "Nelze vytvořit profil: měřící sonda není připojena"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1480
-msgid ""
-"Cannot create profile: The measuring instrument does not support printer "
-"profiling"
-msgstr ""
-"Nelze vytvořit profil: měřící sonda nepodporuje vytváření profilu pro "
-"tiskárny"
+#: ../src/gcm-prefs.c:1372
+msgid "Cannot create profile: The measuring instrument does not support printer profiling"
+msgstr "Nelze vytvořit profil: měřící sonda nepodporuje vytváření profilu pro tiskárny"
 
 #. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1487
+#: ../src/gcm-prefs.c:1382
 msgid "Cannot create a profile for this type of device"
 msgstr "Nelze vytvořit profil pro takovýto typ zařízení"
 
-#: ../src/cc-color-panel.c:1563
-msgid "Per-device settings not supported. Check your display driver."
-msgstr ""
-"Nastavení podle zařízení nejsou podporovaná. Zkontrolujte svůj ovladač "
-"obrazovky."
+#. TRANSLATORS: this is when an auto-added profile cannot be removed
+#: ../src/gcm-prefs.c:1528
+msgid "Cannot remove automatically added profile"
+msgstr "Nelze odstranit automaticky přidaný profil"
 
-#. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/cc-color-panel.c:1727
-msgid "No hardware support"
-msgstr "Hardware není podporován"
-
-#. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/cc-color-panel.c:1731 ../src/cc-color-panel.c:1973
-msgid "disconnected"
-msgstr "odpojeno"
-
-#. TRANSLATORS: the profile was of the wrong sort for this device
-#: ../src/cc-color-panel.c:1850
-msgid "Could not import profile"
-msgstr "Nelze importovat profil"
-
-#: ../src/cc-color-panel.c:1851
-msgid "The profile was of the wrong type for this device"
-msgstr "Profil pro toto zařízení byl nesprávného typu"
-
-#. TRANSLATORS: this is a sound description
-#: ../src/cc-color-panel.c:1909
-msgid "Device added"
-msgstr "Zařízení přidáno"
-
-#. TRANSLATORS: this is a sound description
-#: ../src/cc-color-panel.c:1913
-msgid "Device removed"
-msgstr "Zařízení odstraněno"
-
-#. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
-#: ../src/cc-color-panel.c:2138 ../src/gcm-picker.c:518
+#. TRANSLATORS: this is when there are no profiles that
+#. * can be used; the search term is either "RGB" or "CMYK"
+#. TRANSLATORS: this is when there are no profiles that can be used;
+#. * the search term is either "RGB" or "CMYK"
+#: ../src/gcm-prefs.c:1995
+#: ../src/gcm-picker.c:634
 #, c-format
 msgid "No %s color spaces available"
 msgstr "Žádný prostor barev typu %s není k dispozici."
 
 #. TRANSLATORS: the DBus method failed
-#: ../src/cc-color-panel.c:2249 ../src/gcm-inspect.c:196
-#: ../src/gcm-inspect.c:265 ../src/gcm-inspect.c:332 ../src/gcm-inspect.c:394
-#: ../src/gcm-inspect.c:464 ../src/gcm-utils.c:192
+#: ../src/gcm-prefs.c:2063
+#: ../src/gcm-inspect.c:196
+#: ../src/gcm-inspect.c:265
+#: ../src/gcm-inspect.c:334
+#: ../src/gcm-inspect.c:404
+#: ../src/gcm-utils.c:193
 msgid "The request failed:"
 msgstr "Požadavek selhal:"
 
 #. TRANSLATORS: no DBus session bus
-#: ../src/cc-color-panel.c:2283 ../src/gcm-inspect.c:178
-#: ../src/gcm-inspect.c:247 ../src/gcm-inspect.c:315 ../src/gcm-inspect.c:376
-#: ../src/gcm-inspect.c:446 ../src/gcm-utils.c:168
+#: ../src/gcm-prefs.c:2099
+#: ../src/gcm-inspect.c:178
+#: ../src/gcm-inspect.c:247
+#: ../src/gcm-inspect.c:316
+#: ../src/gcm-inspect.c:386
+#: ../src/gcm-utils.c:169
 msgid "Failed to connect to session bus:"
 msgstr "Selhalo spojení s DBus session:"
 
 #. TRANSLATORS: device type
-#. Tab title, display specific controls
-#: ../src/cc-color-panel.c:2534 ../data/gcm-prefs.ui.h:18
+#: ../src/gcm-prefs.c:2309
 msgid "Display"
 msgstr "Displej"
 
 #. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2538
+#: ../src/gcm-prefs.c:2313
 msgid "Scanner"
 msgstr "Skener"
 
 #. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2542
+#: ../src/gcm-prefs.c:2317
 msgid "Printer"
 msgstr "Tiskárna"
 
 #. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2546
+#: ../src/gcm-prefs.c:2321
 msgid "Camera"
 msgstr "Fotoaparát"
 
-#. TRANSLATORS: button to install extra profiles
-#: ../src/cc-color-panel.c:2814
+#: ../src/gcm-prefs.c:2539
+msgid "Compare profiles..."
+msgstr "Porovnat profily..."
+
+#: ../src/gcm-prefs.c:2689
 msgid "Install now"
 msgstr "Nainstalovat nyní"
 
 #. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/cc-color-panel.c:2817
+#: ../src/gcm-prefs.c:2692
 msgid "More color profiles could be automatically installed."
 msgstr "Mohlo by být nainstalováno více profilů barev."
 
-#. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
-#: ../src/gcm-apply.c:115
-msgid "Do not attempt to clear previously applied settings"
-msgstr "Nepokoušet se o smazání předchozího nastavení"
+#. TRANSLATORS: we can make this modal (stay on top of) another window
+#: ../src/gcm-prefs.c:2749
+#: ../src/gcm-picker.c:792
+#: ../src/gcm-viewer.c:1476
+msgid "Set the parent window to make this modal"
+msgstr "Zvolte rodičovské okno - zůstane vždy navrchu"
 
 #. TRANSLATORS: title, default paramters needed to calibrate_argyll
-#: ../src/gcm-calibrate-argyll.c:453
+#: ../src/gcm-calibrate-argyll.c:452
 msgid "Getting default parameters"
 msgstr "Získávají se výchozí parametry"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:456
-msgid ""
-"This pre-calibrates the screen by sending colored and gray patches to your "
-"screen and measuring them with the hardware device."
-msgstr ""
-"Slouží k předběžné kalibraci pomocí měření barevných a šedých vzorků sondou "
-"přiloženou na obrazovku."
+#: ../src/gcm-calibrate-argyll.c:455
+msgid "This pre-calibrates the screen by sending colored and gray patches to your screen and measuring them with the hardware device."
+msgstr "Slouží k předběžné kalibraci pomocí měření barevných a šedých vzorků sondou přiloženou na obrazovku."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:548
+#: ../src/gcm-calibrate-argyll.c:547
 msgid "Reading the patches"
 msgstr "Měření vzorků"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:550
+#: ../src/gcm-calibrate-argyll.c:549
 msgid "Reading the patches using the color measuring instrument."
 msgstr "Měření vzorků pomocí sondy."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:640
+#: ../src/gcm-calibrate-argyll.c:639
 msgid "Generating the patches"
 msgstr "Vytvářejí se vzorky"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:642
+#: ../src/gcm-calibrate-argyll.c:641
 msgid "Generating the patches that will be measured with the color instrument."
 msgstr "Vytvářejí se vzorky, které budou měřeny sondou."
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:749 ../src/gcm-calibrate-native.c:695
+#: ../src/gcm-calibrate-argyll.c:748
+#: ../src/gcm-calibrate-native.c:689
 msgid "Drawing the patches"
 msgstr "Kreslení vzorků"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:751 ../src/gcm-calibrate-native.c:698
-msgid ""
-"Drawing the generated patches to the screen, which will then be measured by "
-"the hardware device."
+#: ../src/gcm-calibrate-argyll.c:750
+#: ../src/gcm-calibrate-native.c:692
+msgid "Drawing the generated patches to the screen, which will then be measured by the hardware device."
 msgstr "Vykreslují se vzorky na obrazovku, následně budou změřeny sondou."
 
 #. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:851 ../src/gcm-calibrate-argyll.c:1179
+#: ../src/gcm-calibrate-argyll.c:850
+#: ../src/gcm-calibrate-argyll.c:1178
 msgid "Generating the profile"
 msgstr "Vytváří se profil"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:853
+#: ../src/gcm-calibrate-argyll.c:852
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "Vytváří se profil ICC, který může být použit pro tuto obrazovku."
 
 #. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:989
+#: ../src/gcm-calibrate-argyll.c:988
 msgid "Copying files"
 msgstr "Kopírují se soubory"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:991
+#: ../src/gcm-calibrate-argyll.c:990
 msgid "Copying source image, chart data and CIE reference values."
 msgstr "Kopíruje se zdrojový obrázek, data obrazce a referenční hodnoty CIE."
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:1066
+#: ../src/gcm-calibrate-argyll.c:1065
 msgid "Measuring the patches"
 msgstr "Měření vzorků"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1068
+#: ../src/gcm-calibrate-argyll.c:1067
 msgid "Detecting the reference patches and measuring them."
 msgstr "Detekují a měří se referenční vzorky."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1181
+#: ../src/gcm-calibrate-argyll.c:1180
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "Vytváří se profil ICC, který může být použit pro toto zařízení."
 
 #. TRANSLATORS: title, hardware refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:1372
+#: ../src/gcm-calibrate-argyll.c:1371
 msgid "Set up display"
 msgstr "Nastavit displej"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1375
+#: ../src/gcm-calibrate-argyll.c:1374
 msgid "Setting up display device for use…"
 msgstr "Nastavuje se zobrazovací zařízení k použití…"
 
 #. TRANSLATORS: title, setting up the photospectromiter
-#: ../src/gcm-calibrate-argyll.c:1437 ../src/gcm-calibrate-native.c:774
+#: ../src/gcm-calibrate-argyll.c:1436
+#: ../src/gcm-calibrate-native.c:767
 msgid "Setting up device"
 msgstr "Připravuje se sonda"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1439 ../src/gcm-calibrate-native.c:776
+#: ../src/gcm-calibrate-argyll.c:1438
+#: ../src/gcm-calibrate-native.c:769
 msgid "Setting up the device to read a spot color…"
 msgstr "Připravuje se sonda ke měření samostatného barevného vzorku…"
 
 #. TRANSLATORS: title, patches are specific colors used in calibration
-#: ../src/gcm-calibrate-argyll.c:1586
+#: ../src/gcm-calibrate-argyll.c:1585
 msgid "Printing patches"
 msgstr "Tisk vzorků"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1589
+#: ../src/gcm-calibrate-argyll.c:1588
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "Vykreslování vzorků pro zvolený papír a inkoust."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:1931
+#: ../src/gcm-calibrate-argyll.c:1930
 msgid "Wait for the ink to dry"
 msgstr "Počkejte, než inkoust zaschne."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1934
-msgid ""
-"Please wait a few minutes for the ink to dry. Profiling damp ink will "
-"produce a poor profile and may damage your color measuring instrument."
-msgstr ""
-"Prosím vyčkejte několik minut, než inkoust zaschne. Měření vlhkého inkoustu "
-"povede k vytvoření mizerného profilu a může poškodit měřící sondu."
-
-#. TRANSLATORS: the supplied image contains an alpha channel which we have to strip out
-#: ../src/gcm-calibrate-argyll.c:2076
-msgid "Image is not suitable without conversion"
-msgstr "Obrázek je nutné před použitím konvertovat."
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2079
-msgid ""
-"The supplied image contains an alpha channel which the profiling tools do "
-"not understand."
-msgstr ""
-"Obrázek obsahuje kanál průhlednosti (alfa kanál), kterému nástroje pro "
-"vytvoření profilu nerozumí."
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2083
-msgid ""
-"It is normally safe to convert the image, although you should ensure that "
-"the generated profile is valid."
-msgstr ""
-"Obvykle je bezpečné konvertovat obrázek, ale přesto byste se měli ujistit, "
-"že vytvořený profil není chybný."
-
-#. TRANSLATORS: button text to convert the RGBA image into RGB
-#: ../src/gcm-calibrate-argyll.c:2090
-msgid "Convert"
-msgstr "Konvertovat"
+#: ../src/gcm-calibrate-argyll.c:1933
+msgid "Please wait a few minutes for the ink to dry. Profiling damp ink will produce a poor profile and may damage your color measuring instrument."
+msgstr "Prosím vyčkejte několik minut, než inkoust zaschne. Měření vlhkého inkoustu povede k vytvoření mizerného profilu a může poškodit měřící sondu."
 
 #. TRANSLATORS: title, instrument refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:2148
+#: ../src/gcm-calibrate-argyll.c:2114
 msgid "Set up instrument"
 msgstr "Nastavit sondu"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2151
+#: ../src/gcm-calibrate-argyll.c:2117
 msgid "Setting up the instrument for use…"
 msgstr "Probíhá aktivace sondy..."
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2250 ../src/gcm-calibrate-native.c:655
+#: ../src/gcm-calibrate-argyll.c:2216
+#: ../src/gcm-calibrate-native.c:649
 msgid "Please attach instrument"
 msgstr "Přiložte prosím měřící sondu"
 
 #. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate-argyll.c:2258 ../src/gcm-calibrate-native.c:663
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square like the image below."
-msgstr ""
-"Přiložte prosím měřící sondu do středu obrazovky na šedý čtverec podobně "
-"jako na následujícím obrázku."
+#: ../src/gcm-calibrate-argyll.c:2224
+#: ../src/gcm-calibrate-native.c:657
+msgid "Please attach the measuring instrument to the center of the screen on the gray square like the image below."
+msgstr "Přiložte prosím měřící sondu do středu obrazovky na šedý čtverec podobně jako na následujícím obrázku."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate-argyll.c:2261 ../src/gcm-calibrate-native.c:666
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square."
+#: ../src/gcm-calibrate-argyll.c:2227
+#: ../src/gcm-calibrate-native.c:660
+msgid "Please attach the measuring instrument to the center of the screen on the gray square."
 msgstr "Přiložte prosím měřící sondu do středu obrazovky na šedý čtverec."
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2274 ../src/gcm-calibrate-argyll.c:2328
-#: ../src/gcm-calibrate-argyll.c:2383 ../src/gcm-calibrate-native.c:680
+#: ../src/gcm-calibrate-argyll.c:2240
+#: ../src/gcm-calibrate-argyll.c:2294
+#: ../src/gcm-calibrate-argyll.c:2349
+#: ../src/gcm-calibrate-native.c:674
 msgid "Continue"
 msgstr "Pokračovat"
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2305 ../src/gcm-calibrate-argyll.c:2360
+#: ../src/gcm-calibrate-argyll.c:2271
+#: ../src/gcm-calibrate-argyll.c:2326
 msgid "Please configure instrument"
 msgstr "Nakonfigurujte prosím sondu"
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2315
-msgid ""
-"Please set the measuring instrument to calibration mode like the image below."
-msgstr ""
-"Nastavte prosím zařízení do režimu kalibrace podobně jako na následujícím "
-"obrázku."
+#: ../src/gcm-calibrate-argyll.c:2281
+msgid "Please set the measuring instrument to calibration mode like the image below."
+msgstr "Nastavte prosím zařízení do režimu kalibrace podobně jako na následujícím obrázku."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2318
+#: ../src/gcm-calibrate-argyll.c:2284
 msgid "Please set the measuring instrument to calibration mode."
 msgstr "Nastavte prosím sondu do režimu kalibrace."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2370
-msgid ""
-"Please set the measuring instrument to screen mode like the image below."
-msgstr ""
-"Nastavte prosím zařízení do režimu měření obrazovky dle následujícího "
-"obrázku."
+#: ../src/gcm-calibrate-argyll.c:2336
+msgid "Please set the measuring instrument to screen mode like the image below."
+msgstr "Nastavte prosím zařízení do režimu měření obrazovky dle následujícího obrázku."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2373
+#: ../src/gcm-calibrate-argyll.c:2339
 msgid "Please set the measuring instrument to screen mode."
 msgstr "Nastavte prosím sondu do režimu měření obrazovky."
 
 #. TRANSLATORS: title, the calibration failed
-#: ../src/gcm-calibrate-argyll.c:2444 ../src/gcm-calibrate-argyll.c:2513
+#: ../src/gcm-calibrate-argyll.c:2410
+#: ../src/gcm-calibrate-argyll.c:2479
 msgid "Calibration error"
 msgstr "Chyba kalibrace"
 
 #. TRANSLATORS: message, the sample was not read correctly
-#: ../src/gcm-calibrate-argyll.c:2447
+#: ../src/gcm-calibrate-argyll.c:2413
 msgid "The sample could not be read at this time."
 msgstr "Vzorek nelze nyní načíst."
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2455
+#: ../src/gcm-calibrate-argyll.c:2421
 msgid "Try again"
 msgstr "Zkuste znovu"
 
 #. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2517
+#: ../src/gcm-calibrate-argyll.c:2483
 msgid "No firmware is installed for this instrument."
 msgstr "Pro tuto měřící sondu není nainstalován firmware."
 
 #. TRANSLATORS: message, the image wasn't good enough
-#: ../src/gcm-calibrate-argyll.c:2520
-msgid ""
-"The pattern match wasn't good enough. Ensure you have the correct type of "
-"target selected."
-msgstr ""
-"Shoda obrazce je nedostatečná. Ujistěte se, že máte vybraný správný typ "
-"obrazce."
+#: ../src/gcm-calibrate-argyll.c:2486
+msgid "The pattern match wasn't good enough. Ensure you have the correct type of target selected."
+msgstr "Shoda obrazce je nedostatečná. Ujistěte se, že máte vybraný správný typ obrazce."
 
 #. TRANSLATORS: message, the sensor got no readings
-#: ../src/gcm-calibrate-argyll.c:2524
-msgid ""
-"The measuring instrument got no valid readings. Please ensure the aperture "
-"is fully open."
-msgstr ""
-"Měření nevedlo k platným výsledkům. Ujistěte se prosím, že clona měřící "
-"sondy je úplně otevřená."
+#: ../src/gcm-calibrate-argyll.c:2490
+msgid "The measuring instrument got no valid readings. Please ensure the aperture is fully open."
+msgstr "Měření nevedlo k platným výsledkům. Ujistěte se prosím, že clona měřící sondy je úplně otevřená."
 
 #. TRANSLATORS: message, the colorimeter has got confused
-#: ../src/gcm-calibrate-argyll.c:2527
-msgid ""
-"The measuring instrument is busy and is not starting up. Please remove the "
-"USB plug and re-insert before trying to use this device."
-msgstr ""
-"Měřící sonda je zaneprázdněna a nelze ji aktivovat. Prosím vyjměte ji z "
-"portu USB a znovu připojte, než zkusíte použít toto zařízení."
+#: ../src/gcm-calibrate-argyll.c:2493
+msgid "The measuring instrument is busy and is not starting up. Please remove the USB plug and re-insert before trying to use this device."
+msgstr "Měřící sonda je zaneprázdněna a nelze ji aktivovat. Prosím vyjměte ji z portu USB a znovu připojte, než zkusíte použít toto zařízení."
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-argyll.c:2565
+#: ../src/gcm-calibrate-argyll.c:2531
 msgid "Reading target"
 msgstr "Měření vzorků"
 
 #. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2568
+#: ../src/gcm-calibrate-argyll.c:2534
 msgid "Failed to read the strip correctly."
 msgstr "Selhalo čtení pásu vzorků."
 
 #. TRANSLATORS: button text
 #. TRANSLATORS: button
-#: ../src/gcm-calibrate-argyll.c:2577 ../src/gcm-calibrate-argyll.c:2650
+#: ../src/gcm-calibrate-argyll.c:2543
+#: ../src/gcm-calibrate-argyll.c:2616
 msgid "Retry"
 msgstr "Zkusit znovu"
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2600
+#: ../src/gcm-calibrate-argyll.c:2566
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "Byl přečten pás vzorků %s místo %s!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2605
+#: ../src/gcm-calibrate-argyll.c:2571
 msgid "It looks like you've measured the wrong strip."
 msgstr "Vypadá to, že jste měřili chybný pás vzorků."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2609
-msgid ""
-"If you've really measured the right one, it's okay, it could just be unusual "
-"paper."
-msgstr ""
-"Pokud jste skutečně měřili správný pás, pak je vše v pořádku. Chyba mohla "
-"vzniknout použitím neobvyklého papíru."
+#: ../src/gcm-calibrate-argyll.c:2575
+msgid "If you've really measured the right one, it's okay, it could just be unusual paper."
+msgstr "Pokud jste skutečně měřili správný pás, pak je vše v pořádku. Chyba mohla vzniknout použitím neobvyklého papíru."
 
 #. TRANSLATORS: button
-#: ../src/gcm-calibrate-argyll.c:2619
+#: ../src/gcm-calibrate-argyll.c:2585
 msgid "Use anyway"
 msgstr "Přesto použít"
 
 #. TRANSLATORS: title, the calibration failed
-#: ../src/gcm-calibrate-argyll.c:2639
+#: ../src/gcm-calibrate-argyll.c:2605
 msgid "Device Error"
 msgstr "Chyba zařízení"
 
 #. TRANSLATORS: message, the sample was not read correctly
-#: ../src/gcm-calibrate-argyll.c:2642
+#: ../src/gcm-calibrate-argyll.c:2608
 msgid "The device could not measure the color spot correctly."
 msgstr "Sonda neuspěla při jednotlivém měření vzorku."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2662
+#: ../src/gcm-calibrate-argyll.c:2628
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "Připraveno ke čtení pásu vzorků %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2667
-msgid ""
-"Place the colorimeter on the area of white next to the letter and click and "
-"hold the measure switch."
-msgstr ""
-"Umístěte sondu na bílou oblast vedle písmene, klikněte a držte stlačený "
-"spínač měření."
+#: ../src/gcm-calibrate-argyll.c:2633
+msgid "Place the colorimeter on the area of white next to the letter and click and hold the measure switch."
+msgstr "Umístěte sondu na bílou oblast vedle písmene, klikněte a držte stlačený spínač měření."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2671
-msgid ""
-"Slowly scan the target line from left to right and release the switch when "
-"you get to the end of the page."
-msgstr ""
-"Pomalu skenujte vybraný pás vzorků zleva doprava a pusťte spínač, až se "
-"dostanete na kraj papíru."
+#: ../src/gcm-calibrate-argyll.c:2637
+msgid "Slowly scan the target line from left to right and release the switch when you get to the end of the page."
+msgstr "Pomalu skenujte vybraný pás vzorků zleva doprava a pusťte spínač, až se dostanete na kraj papíru."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2675
-msgid ""
-"Ensure the center of the device is properly aligned with the row you are "
-"trying to measure."
-msgstr ""
-"Ujistěte se, že střed sondy je správně zarovnán s pásem vzorků, který se "
-"chystáte měřit."
+#: ../src/gcm-calibrate-argyll.c:2641
+msgid "Ensure the center of the device is properly aligned with the row you are trying to measure."
+msgstr "Ujistěte se, že střed sondy je správně zarovnán s pásem vzorků, který se chystáte měřit."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2679
-msgid ""
-"If you make a mistake just release the switch and you'll get a chance to try "
-"again."
-msgstr ""
-"Pokud uděláte chybu, stačí pustit spínač a dostanete šanci zkusit to znovu."
+#: ../src/gcm-calibrate-argyll.c:2645
+msgid "If you make a mistake just release the switch and you'll get a chance to try again."
+msgstr "Pokud uděláte chybu, stačí pustit spínač a dostanete šanci zkusit to znovu."
 
 #. TRANSLATORS: title, printing reference files to media
-#: ../src/gcm-calibrate-argyll.c:2827
+#: ../src/gcm-calibrate-argyll.c:2793
 msgid "Printing"
 msgstr "Tisk"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2834
+#: ../src/gcm-calibrate-argyll.c:2800
 msgid "Preparing the data for the printer."
 msgstr "Příprava dat pro tiskárnu."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2840
+#: ../src/gcm-calibrate-argyll.c:2806
 msgid "Sending the targets to the printer."
 msgstr "Odesílání obrazce na tiskárnu."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2844
+#: ../src/gcm-calibrate-argyll.c:2810
 msgid "Printing the targets..."
 msgstr "Tisk obrazce..."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2848
+#: ../src/gcm-calibrate-argyll.c:2814
 msgid "The printing has finished."
 msgstr "Tisk je ukončen."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2852
+#: ../src/gcm-calibrate-argyll.c:2818
 msgid "The print was aborted."
 msgstr "Tisk byl zrušen."
 
 #. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" - YOU NEED TO USE ASCII ONLY
-#: ../src/gcm-calibrate.c:141
+#: ../src/gcm-calibrate.c:137
 msgid "Copyright (c)"
 msgstr "Copyright (c)"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:167
+#: ../src/gcm-calibrate.c:163
 msgid "Unknown description"
 msgstr "Neznámý popis"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:190
+#: ../src/gcm-calibrate.c:186
 msgid "Unknown model"
 msgstr "Neznámý model"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:206
+#: ../src/gcm-calibrate.c:202
 msgid "Unknown manufacturer"
 msgstr "Neznámý výrobce"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-calibrate.c:427
+#: ../src/gcm-calibrate.c:419
 msgid "Could not detect screen type"
 msgstr "Nelze automaticky zjistit typ obrazovky"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:430
-msgid ""
-"Please indicate if the screen you are trying to profile is an LCD, CRT or a "
-"projector."
-msgstr ""
-"Určete prosím, zda se vytváří profil pro obrazovku typu LCD, CRT a nebo "
-"projektor."
+#: ../src/gcm-calibrate.c:422
+msgid "Please indicate if the screen you are trying to profile is an LCD, CRT or a projector."
+msgstr "Určete prosím, zda se vytváří profil pro obrazovku typu LCD, CRT a nebo projektor."
 
 #. TRANSLATORS: title, the hardware calibration device does not support projectors
-#: ../src/gcm-calibrate.c:455
+#: ../src/gcm-calibrate.c:447
 msgid "Could not calibrate and profile using this color measuring instrument"
 msgstr "Nelze kalibrovat pomocí této měřící sondy."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:458
-msgid ""
-"This color measuring instrument is not designed to support calibration and "
-"profiling projectors."
+#: ../src/gcm-calibrate.c:450
+msgid "This color measuring instrument is not designed to support calibration and profiling projectors."
 msgstr "Tato měřící sonda není určena k vytváření profilu pro projektory."
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate.c:518
+#: ../src/gcm-calibrate.c:510
 msgid "Profile Precision"
 msgstr "Přesnost profilu"
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:521
-msgid ""
-"A higher precision profile provides higher accuracy in color matching but "
-"requires more time for reading the color patches."
-msgstr ""
-"Přesnější profil vede k přesnějšímu převodu barev, ale jeho příprava "
-"vyžaduje více času k měření barevných vzorků."
+#: ../src/gcm-calibrate.c:513
+msgid "A higher precision profile provides higher accuracy in color matching but requires more time for reading the color patches."
+msgstr "Přesnější profil vede k přesnějšímu převodu barev, ale jeho příprava vyžaduje více času k měření barevných vzorků."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:524
+#: ../src/gcm-calibrate.c:516
 msgid "For a typical workflow, a normal precision profile is sufficient."
 msgstr "Normální přesnost je dostatečná pro běžné použití."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:529
+#: ../src/gcm-calibrate.c:521
 msgid "The high precision profile also requires more paper and printer ink."
-msgstr ""
-"Při přípravě vysoce přesného profilu se také spotřebuje více papíru a "
-"inkoustu tiskárny."
+msgstr "Při přípravě vysoce přesného profilu se také spotřebuje více papíru a inkoustu tiskárny."
 
-#. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated
-#: ../src/gcm-calibrate.c:643
+#. TRANSLATORS: this is the formattted custom profile description.
+#. * "Custom" refers to the fact that it's user generated
+#: ../src/gcm-calibrate.c:625
 msgid "Custom"
 msgstr "Vlastní"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:674
-msgid ""
-"Before calibrating the display, it is recommended to configure your display "
-"with the following settings to get optimal results."
-msgstr ""
-"Aby bylo dosaženo optimálního výsledku, doporučuje se monitor před kalibrací "
-"nastavit následovně."
+#: ../src/gcm-calibrate.c:656
+msgid "Before calibrating the display, it is recommended to configure your display with the following settings to get optimal results."
+msgstr "Aby bylo dosaženo optimálního výsledku, doporučuje se monitor před kalibrací nastavit následovně."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:677
-msgid ""
-"You may want to consult the owner's manual for your display on how to "
-"achieve these settings."
-msgstr ""
-"Chcete-li zjistit, jak nastavit monitor, prosím prostudujte uživatelskou "
-"příručku."
+#: ../src/gcm-calibrate.c:659
+msgid "You may want to consult the owner's manual for your display on how to achieve these settings."
+msgstr "Chcete-li zjistit, jak nastavit monitor, prosím prostudujte uživatelskou příručku."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:680
+#: ../src/gcm-calibrate.c:662
 msgid "Reset your display to the factory defaults."
 msgstr "Obnovte výchozí nastavení monitoru (z továrny)."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:683
+#: ../src/gcm-calibrate.c:665
 msgid "Disable dynamic contrast if your display has this feature."
 msgstr "Vypněte dynamický kontrast (má-li monitor tuto funkci)."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:686
-msgid ""
-"Configure your display with custom color settings and ensure the RGB "
-"channels are set to the same values."
-msgstr ""
-"V uživatelském nastavení monitoru se ujistěte, že kanály RGB jsou nastaveny "
-"na shodné hodnoty."
+#: ../src/gcm-calibrate.c:668
+msgid "Configure your display with custom color settings and ensure the RGB channels are set to the same values."
+msgstr "V uživatelském nastavení monitoru se ujistěte, že kanály RGB jsou nastaveny na shodné hodnoty."
 
 #. TRANSLATORS: dialog message, addition to bullet item
-#: ../src/gcm-calibrate.c:689
+#: ../src/gcm-calibrate.c:671
 msgid "If custom color is not available then use a 6500K color temperature."
-msgstr ""
-"Pokud uživatelské nastavení barev není k dispozici, použijte barevnou "
-"teplotu 6500 K."
+msgstr "Pokud uživatelské nastavení barev není k dispozici, použijte barevnou teplotu 6500 K."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:692
-msgid ""
-"Adjust the display brightness to a comfortable level for prolonged viewing."
-msgstr ""
-"Změňte jas monitoru na úroveň, která je příjemná pro dlouhodobou práci."
+#: ../src/gcm-calibrate.c:674
+msgid "Adjust the display brightness to a comfortable level for prolonged viewing."
+msgstr "Změňte jas monitoru na úroveň, která je příjemná pro dlouhodobou práci."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:695
-msgid ""
-"For best results, the display should have been powered for at least 15 "
-"minutes before starting the calibration."
-msgstr ""
-"Aby bylo dosaženo nejlepšího výsledku, monitor by měl být zapnutý alespoň 15 "
-"minut před započetím kalibrace."
+#: ../src/gcm-calibrate.c:677
+msgid "For best results, the display should have been powered for at least 15 minutes before starting the calibration."
+msgstr "Aby bylo dosaženo nejlepšího výsledku, monitor by měl být zapnutý alespoň 15 minut před započetím kalibrace."
 
-#: ../src/gcm-calibrate.c:699
+#: ../src/gcm-calibrate.c:681
 msgid "Display setup"
 msgstr "Nastavení displeje"
 
 #. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
 #. * aquired image of the calibration target, e.g. an image file that looks
 #. * a bit like this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:775
+#: ../src/gcm-calibrate.c:757
 msgid "Select calibration target image"
 msgstr "Zvolte soubor s obrázkem kalibračního obrazce"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:788
+#: ../src/gcm-calibrate.c:770
 msgid "Supported images files"
 msgstr "Podporované typy obrázků"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:820
+#: ../src/gcm-calibrate.c:802
 msgid "Select CIE reference values file"
 msgstr "Zvolte soubor s referenčními hodnotami CIE"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:840
+#: ../src/gcm-calibrate.c:822
 msgid "CIE values"
 msgstr "Hodnoty CIE"
 
-#: ../src/gcm-calibrate.c:916
+#: ../src/gcm-calibrate.c:898
 msgid "Open"
 msgstr "Otevřít"
 
 #. TRANSLATORS: title, you can profile all at once, or in steps
-#: ../src/gcm-calibrate.c:952
+#: ../src/gcm-calibrate.c:934
 msgid "Please choose a profiling mode"
 msgstr "Prosím, zvolte režim vytvoření profilu"
 
 #. TRANSLATORS: dialog message. Test patches are pages of colored squares
 #. * that are printed with a printer, and then read in with a calibration
 #. * device to create a profile
-#: ../src/gcm-calibrate.c:957
-msgid ""
-"Please indicate if you want to profile a local printer, generate some test "
-"patches, or profile using existing test patches."
-msgstr ""
-"Vyberte prosím, zda chcete vytvořit profil pro lokální tiskárnu, vytvořit "
-"testovací vzorky barev či vytvořit profil pomocí existujících testovacích "
-"vzorků."
+#: ../src/gcm-calibrate.c:939
+msgid "Please indicate if you want to profile a local printer, generate some test patches, or profile using existing test patches."
+msgstr "Vyberte prosím, zda chcete vytvořit profil pro lokální tiskárnu, vytvořit testovací vzorky barev či vytvořit profil pomocí existujících testovacích vzorků."
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-calibrate.c:1068
+#: ../src/gcm-calibrate.c:1050
 msgid "Install missing files?"
 msgstr "Nainstalovat chybějící soubory?"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate.c:1071
+#: ../src/gcm-calibrate.c:1053
 msgid "Common color target files are not installed on this computer."
-msgstr ""
-"Na tomto počítači nejsou nainstalovány soubory pro běžné obrazce barev."
+msgstr "Na tomto počítači nejsou nainstalovány soubory pro běžné obrazce barev."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate.c:1073
+#: ../src/gcm-calibrate.c:1055
 msgid "Color target files are needed to convert the image to a color profile."
-msgstr ""
-"Soubory popisující obrazce barev jsou nutné k převodu obrázku do profilu "
-"barev."
+msgstr "Soubory popisující obrazce barev jsou nutné k převodu obrázku do profilu barev."
 
 #. TRANSLATORS: dialog message, asking if it's okay to install them
-#: ../src/gcm-calibrate.c:1075
+#: ../src/gcm-calibrate.c:1057
 msgid "Do you want them to be installed?"
 msgstr "Přejete si, aby byly nainstalovány?"
 
 #. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
-#: ../src/gcm-calibrate.c:1077
+#: ../src/gcm-calibrate.c:1059
 msgid "If you already have the correct file, you can skip this step."
 msgstr "Pokud již máte správný soubor, můžete tento krok přeskočit."
 
 #. TRANSLATORS: this is the window title for when the user selects the calibration target.
 #. * A calibration target is an accuratly printed grid of colors, for instance:
 #. * the IT 8.7 targets available here: http://www.targets.coloraid.de/
-#: ../src/gcm-calibrate.c:1099
+#: ../src/gcm-calibrate.c:1081
 msgid "Please select a calibration target"
 msgstr "Vyberte prosím typ kalibračního obrazce"
 
 #. TRANSLATORS: dialog message, preface. A calibration target looks like
 #. * this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:1104
-msgid ""
-"Before profiling the device, you have to manually capture an image of a "
-"calibration target and save it as a TIFF image file."
-msgstr ""
-"Před vytvořením profilu zařízení musíte ručně naskenovat či vyfotografovat "
-"kalibrační obrazec a uložit jej jako soubor ve formátu TIFF."
+#: ../src/gcm-calibrate.c:1086
+msgid "Before profiling the device, you have to manually capture an image of a calibration target and save it as a TIFF image file."
+msgstr "Před vytvořením profilu zařízení musíte ručně naskenovat či vyfotografovat kalibrační obrazec a uložit jej jako soubor ve formátu TIFF."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:1109
-msgid ""
-"Ensure that the contrast and brightness are not changed and color correction "
-"profiles are not applied."
-msgstr ""
-"Ujistěte se, že nedošlo k úpravě kontrastu či jasu a ani k použití žádných "
-"profilů korekce barev."
+#: ../src/gcm-calibrate.c:1091
+msgid "Ensure that the contrast and brightness are not changed and color correction profiles have not been applied."
+msgstr "Ujistěte se, že nedošlo k úpravě kontrastu či jasu ani k použití žádných profilů korekce barev."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:1112
-msgid ""
-"The device sensor should have been cleaned prior to scanning and the output "
-"file resolution should be at least 200dpi."
-msgstr ""
-"Před skenováním se ujistěte, že senzor zařízení je prostý nečistot a "
-"výstupní rozlišení je minimálně 200 dpi."
+#: ../src/gcm-calibrate.c:1094
+msgid "The device sensor should have been cleaned prior to scanning and the output file resolution should be at least 200dpi."
+msgstr "Před skenováním se ujistěte, že senzor zařízení je prostý nečistot a výstupní rozlišení je minimálně 200 dpi."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:1118
-msgid ""
-"Ensure that the white-balance has not been modified by the camera and that "
-"the lens is clean."
-msgstr ""
-"Ujistěte se, že vyvážení bílé nebylo změněno fotoaparátem a že čočky jsou "
-"čisté."
-
-#. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:1122
-msgid ""
-"For best results, the reference target should also be less than two years "
-"old."
-msgstr ""
-"Abyste dosáhli nejlepších výsledků, neměl by být referenční obrazec starší "
-"dvou let."
+#: ../src/gcm-calibrate.c:1100
+msgid "Ensure that the white-balance has not been modified by the camera and that the lens is clean."
+msgstr "Ujistěte se, že vyvážení bílé nebylo změněno fotoaparátem a že čočky jsou čisté."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:1125
-msgid ""
-"Please select the calibration target type which corresponds to your "
-"reference file."
-msgstr ""
-"Vyberte prosím typ kalibračního obrazce, který odpovídá vašemu referenčnímu "
-"souboru."
+#: ../src/gcm-calibrate.c:1104
+msgid "Please select the calibration target type."
+msgstr "Vyberte prosím typ kalibračního obrazce."
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-dialog.c:567
@@ -1053,152 +873,110 @@ msgid "QPcard 201"
 msgstr "QPcard 201"
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:195
+#: ../src/gcm-calibrate-manual.c:196
 msgid "Introduction to display calibration"
 msgstr "Úvod do kalibrace displeje"
 
 #. TRANSLATORS: message text, an ICC profile is a file that characterizes the device
-#: ../src/gcm-calibrate-manual.c:217
-msgid ""
-"This dialog will help calibrate your display and create a custom ICC profile."
-msgstr ""
-"Tento dialog poskytne nápovědu pro kalibraci displeje a vytvoření profilu "
-"ICC."
+#: ../src/gcm-calibrate-manual.c:218
+msgid "This dialog will help calibrate your display and create a custom ICC profile."
+msgstr "Tento dialog poskytne nápovědu pro kalibraci displeje a vytvoření profilu ICC."
 
 #. TRANSLATORS: message text, telling the user they are in for the long haul
-#: ../src/gcm-calibrate-manual.c:220
-msgid ""
-"The calibration will involve several steps so that an accurate profile can "
-"be obtained."
-msgstr ""
-"Kalibrace zahrnuje několik kroků, než může být vytvořen kvalitní profil."
+#: ../src/gcm-calibrate-manual.c:221
+msgid "The calibration will involve several steps so that an accurate profile can be obtained."
+msgstr "Kalibrace zahrnuje několik kroků, než může být vytvořen kvalitní profil."
 
 #. TRANSLATORS: message text, this is a lie. It will take more than a few minutes, but we don't want to scare the hapless user
-#: ../src/gcm-calibrate-manual.c:223
+#: ../src/gcm-calibrate-manual.c:224
 msgid "It should only take a few minutes."
 msgstr "Mělo by to zabrat jen pár minut."
 
 #. TRANSLATORS: message text, when you're comparing colors, it helps if the image is a bit out of focus otherwise the
 #. * fovea (center bit of the eye) tries to 'pick out' a colour, rather than take the average reading
-#: ../src/gcm-calibrate-manual.c:234
-msgid ""
-"It may help to sit further from the screen or to squint at the calibration "
-"images in order to accurately compare the colors."
-msgstr ""
-"Abyste dokázali dobře porovnat barvy, může vám pomoci vzdálit se od "
-"obrazovky nebo přimhouřit oči při pozorování kalibračních vzorků."
+#: ../src/gcm-calibrate-manual.c:235
+msgid "It may help to sit further from the screen or to squint at the calibration images in order to accurately compare the colors."
+msgstr "Abyste dokázali dobře porovnat barvy, může vám pomoci vzdálit se od obrazovky nebo přimhouřit oči při pozorování kalibračních vzorků."
 
 #. TRANSLATORS: message text, tell the use that they can go back and forwards, as the human eye sucks
-#: ../src/gcm-calibrate-manual.c:237
+#: ../src/gcm-calibrate-manual.c:238
 msgid "You can repeat the calibration steps as many times as you want."
-msgstr ""
-"V případě potřeby se vždy můžete vrátit o jeden či více kroků zpět a postup "
-"opakovat."
+msgstr "V případě potřeby se vždy můžete vrátit o jeden či více kroků zpět a postup opakovat."
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:249
+#: ../src/gcm-calibrate-manual.c:250
 #, c-format
 msgid "Create table item %i/%i"
 msgstr "Vytvořit položku tabulky %i/%i"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-calibrate-manual.c:270
-msgid ""
-"Please try to match up the gray square with the surrounding alternating "
-"bars. You should match the brightness first, and then if required change the "
-"color tint so it looks plain gray."
-msgstr ""
-"Pokuste se prosím sladit šedý čtverec s okolními měnícími se sloupci. "
-"Nejprve srovnejte jas a v případě potřeby i barevný odstín tak, aby obrazec "
-"vypadal neutrálně šedě."
+#: ../src/gcm-calibrate-manual.c:271
+msgid "Please try to match up the gray square with the surrounding alternating bars. You should match the brightness first, and then if required change the color tint so it looks plain gray."
+msgstr "Pokuste se prosím sladit šedý čtverec s okolními měnícími se sloupci. Nejprve srovnejte jas a v případě potřeby i barevný odstín tak, aby obrazec vypadal neutrálně šedě."
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:367
+#: ../src/gcm-calibrate-manual.c:368
 msgid "Summary"
 msgstr "Shrnutí"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-calibrate-manual.c:386
-msgid ""
-"This display is now calibrated. You can change the current profile using the "
-"Color Profiles program."
-msgstr ""
-"Tento displej je nyní kalibrován. Stávající profil můžete změnit pomocí "
-"programu Profily barev."
+#: ../src/gcm-calibrate-manual.c:387
+msgid "This display is now calibrated. You can change the current profile using the Color Profiles program."
+msgstr "Tento displej je nyní kalibrován. Stávající profil můžete změnit pomocí programu Profily barev."
 
 #. TRANSLATORS: this is when there is no profile for the device
 #: ../src/gcm-cell-renderer-profile-text.c:69
 msgid "No profile"
 msgstr "Žádný profil"
 
-#: ../src/gcm-cell-renderer-profile-text.c:79
-msgid "Default"
-msgstr "Výchozí"
-
-#. TRANSLATORS: this is the name of the internal panel
-#: ../src/gcm-device-xrandr.c:136
-msgid "Laptop LCD"
-msgstr "LCD laptopu"
-
-#. TRANSLATORS: this is prepended to the device title to let the use know it was generated by us automatically
-#: ../src/gcm-device-xrandr.c:422
-msgid "Automatic"
-msgstr "Automaticky"
-
 #. TRANSLATORS: this is displayed when the profile is crap
 #: ../src/gcm-list-store-profiles.c:51
-msgid ""
-"This profile does not have the information required for whole-screen color "
-"correction."
-msgstr ""
-"Tento profil neobsahuje informace potřebné pro celoobrazovkovou korekci "
-"barev."
+msgid "This profile does not have the information required for whole-screen color correction."
+msgstr "Tento profil neobsahuje informace potřebné pro celoobrazovkovou korekci barev."
 
 #. TRANSLATORS: command line option: a list of catalogs to install
-#. TRANSLATORS: command line option: a list of files to install
-#: ../src/gcm-import.c:81 ../src/gcm-install-system-wide.c:126
+#: ../src/gcm-import.c:80
 msgid "ICC profile to install"
 msgstr "Profil ICC k instalaci"
 
 #. TRANSLATORS: nothing was specified on the command line
-#: ../src/gcm-import.c:103
+#: ../src/gcm-import.c:102
 msgid "No filename specified"
 msgstr "Nezadáno jméno souboru"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-import.c:116
+#: ../src/gcm-import.c:115
 msgid "Failed to open ICC profile"
 msgstr "Selhalo otevření profilu ICC"
 
 #. TRANSLATORS: parsing error
-#: ../src/gcm-import.c:119
+#: ../src/gcm-import.c:118
 #, c-format
 msgid "Failed to parse file: %s"
 msgstr "Selhala analýza souboru: %s"
 
 #. TRANSLATORS: color profile already been installed
-#: ../src/gcm-import.c:145
+#: ../src/gcm-import.c:144
 msgid "ICC profile already installed"
 msgstr "Profil ICC je již nainstalován"
 
-#. TRANSLATORS: color profile already been installed
-#: ../src/gcm-import.c:159
+#: ../src/gcm-import.c:173
 msgid "ICC profile already installed system-wide"
 msgstr "Profil ICC je již v systému nainstalován"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:171
+#: ../src/gcm-import.c:188
 #, c-format
 msgid "Import ICC color profile %s?"
 msgstr "Importovat profil ICC %s?"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:174
+#: ../src/gcm-import.c:191
 msgid "Import ICC color profile?"
 msgstr "Importovat profil ICC?"
 
 #. ask confirmation
-#: ../src/gcm-import.c:182
+#: ../src/gcm-import.c:199
 msgid "Import ICC profile"
 msgstr "Importovat profil ICC"
 
@@ -1238,8 +1016,10 @@ msgid "There are no ICC profiles for this device"
 msgstr "Profily ICC pro toto zařízení neexistují"
 
 #. TRANSLATORS: this is a list of profiles suitable for the device
-#: ../src/gcm-inspect.c:210 ../src/gcm-inspect.c:279 ../src/gcm-inspect.c:411
-#: ../src/gcm-inspect.c:478
+#: ../src/gcm-inspect.c:210
+#: ../src/gcm-inspect.c:279
+#: ../src/gcm-inspect.c:351
+#: ../src/gcm-inspect.c:418
 msgid "Suitable profiles for:"
 msgstr "Vhodné profily pro:"
 
@@ -1249,424 +1029,338 @@ msgid "There are no ICC profiles assigned to this file"
 msgstr "Profily ICC pro tento soubor neexistují"
 
 #. TRANSLATORS: no profile has been asigned to this window
-#: ../src/gcm-inspect.c:406
+#: ../src/gcm-inspect.c:346
 msgid "There are no ICC profiles for this window"
 msgstr "Profily ICC pro toto okno neexistují"
 
 #. TRANSLATORS: no profile has been asigned to this device
-#: ../src/gcm-inspect.c:473
+#: ../src/gcm-inspect.c:413
 msgid "There are no ICC profiles for this device type"
 msgstr "Profily ICC pro tento typ zařízení neexistují"
 
 #. TRANSLATORS: the DBus method failed
-#: ../src/gcm-inspect.c:517
+#: ../src/gcm-inspect.c:457
 msgid "The request failed"
 msgstr "Požadavek selhal"
 
 #. TRANSLATORS: this is the rendering intent of the output
-#: ../src/gcm-inspect.c:526
+#: ../src/gcm-inspect.c:466
 msgid "Rendering intent (display):"
 msgstr "Záměr transformace (displej):"
 
 #. TRANSLATORS: this is the rendering intent of the printer
-#: ../src/gcm-inspect.c:532
+#: ../src/gcm-inspect.c:472
 msgid "Rendering intent (softproof):"
 msgstr "Záměr transformace (simulace tisku):"
 
 #. TRANSLATORS: this is the rendering intent of the output
-#: ../src/gcm-inspect.c:540
+#: ../src/gcm-inspect.c:480
 msgid "RGB Colorspace:"
 msgstr "Prostor barev RGB:"
 
 #. TRANSLATORS: this is the rendering intent of the printer
-#: ../src/gcm-inspect.c:546
+#: ../src/gcm-inspect.c:486
 msgid "CMYK Colorspace:"
 msgstr "Prostor barev CMYK:"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:574
+#: ../src/gcm-inspect.c:514
 msgid "Show xserver properties"
 msgstr "Zobrazit vlastnosti X serveru"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:577
+#: ../src/gcm-inspect.c:517
 msgid "Get the profiles for a specific device"
 msgstr "Získat profily pro specifické zařízení"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:580
+#: ../src/gcm-inspect.c:520
 msgid "Get the profiles for a specific file"
 msgstr "Získat profily pro specifický soubor"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:583
+#: ../src/gcm-inspect.c:523
 msgid "Get the profile for a specific window"
 msgstr "Získat profily pro specifické okno"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:586
+#: ../src/gcm-inspect.c:526
 msgid "Get the profiles for a specific device type"
 msgstr "Získat profily pro specifický typ zařízení"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:589
+#: ../src/gcm-inspect.c:529
 msgid "Dump all details about this system"
 msgstr "Vypsat všechny detaily o tomto systému"
 
 #. TRANSLATORS: just dumps the EDID to disk
-#: ../src/gcm-inspect.c:602
+#: ../src/gcm-inspect.c:542
 msgid "EDID inspect program"
 msgstr "Program pro zobrazení EDID"
 
 #. TRANSLATORS: this is when the user does --type=mickeymouse
-#: ../src/gcm-inspect.c:621
+#: ../src/gcm-inspect.c:561
 msgid "Device or profile type not recognized, recognised types are:"
 msgstr "Typ zařízení nebo profilu nebyl rozpoznán, podporované typy jsou:"
 
-#. command line argument, the ID of the device
-#: ../src/gcm-install-system-wide.c:123
-msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
-msgstr "ID zařízení, např. „xrandr_ibm_france_ltn154p2_l05“"
-
-#. TRANSLATORS: tool that is used when copying profiles system-wide
-#: ../src/gcm-install-system-wide.c:141
-msgid "GNOME Color Manager ICC profile system-wide installer"
-msgstr "Správce barev GNOME - instalátor profilů ICC pro všechny uživatele"
-
-#. TRANSLATORS: user did not specify a valid filename
-#: ../src/gcm-install-system-wide.c:149
-msgid "You need to specify exactly one ICC profile filename."
-msgstr "Musíte zvolit pouze jeden soubor s profilem ICC."
-
-#. TRANSLATORS: user did not specify a valid device ID
-#: ../src/gcm-install-system-wide.c:157
-msgid "You need to specify exactly one device ID."
-msgstr "Musíte zvolit právě jedno ID zařízení."
-
-#. TRANSLATORS: user did not specify a valid device ID
-#: ../src/gcm-install-system-wide.c:166
-msgid "The device ID has invalid characters."
-msgstr "ID zařízení obsahuje chybné znaky."
-
-#. TRANSLATORS: only able to install profiles as root
-#: ../src/gcm-install-system-wide.c:176
-msgid "This program can only be used by the root user."
-msgstr "Tento program může být použit pouze administrátorem (uživatel root)."
-
-#. TRANSLATORS: only able to install profiles with an absolute path
-#: ../src/gcm-install-system-wide.c:185
-msgid "The source filename must be absolute."
-msgstr "Cesta ke zdrojovému souboru musí být úplná."
-
-#. TRANSLATORS: error details
-#: ../src/gcm-install-system-wide.c:196
-msgid "Failed to get content type:"
-msgstr "Selhalo zjištění typu obsahu:"
-
-#. TRANSLATORS: the content type is the detected type of file
-#: ../src/gcm-install-system-wide.c:206
-msgid "Content type was incorrect:"
-msgstr "Typ obsahu byl chybný:"
-
-#. TRANSLATORS: the program must never be directly run
-#: ../src/gcm-install-system-wide.c:215
-msgid "This program must only be run through pkexec."
-msgstr "Tento program musí být spuštěn pouze pomocí pkexec."
-
-#. TRANSLATORS: PolicyKit has gone all insane on us, and we refuse to parse junk
-#: ../src/gcm-install-system-wide.c:224
-msgid "PKEXEC_UID must be set to an integer value."
-msgstr "PKEXEC_UID musí být nastaveno na celočíselnou hodnotu."
-
-#. TRANSLATORS: we are complaining that a file must be really owned by the user who called this program
-#: ../src/gcm-install-system-wide.c:233
-msgid "The ICC profile must be owned by the user."
-msgstr "Uživatel musí mít vlastnická práva k souboru s profilem ICC."
-
-#. TRANSLATORS: only able to install profiles with an absolute path
-#: ../src/gcm-install-system-wide.c:246
-msgid "The destination filename must be absolute."
-msgstr "Cesta k cílovému souboru musí být úplná (absolutní)."
-
-#. TRANSLATORS: error details
-#: ../src/gcm-install-system-wide.c:256
-msgid "Failed to copy:"
-msgstr "Selhalo kopírování:"
-
+#. TRANSLATORS: this is when the error is invalid
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:174 ../src/gcm-viewer.c:575 ../src/gcm-viewer.c:625
+#: ../src/gcm-picker.c:206
+#: ../src/gcm-picker.c:213
+#: ../src/gcm-viewer.c:590
+#: ../src/gcm-viewer.c:640
 msgid "Unknown"
 msgstr "Neznámé"
 
-#. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:324
+#: ../src/gcm-picker.c:403
 msgid "No colorimeter is attached."
 msgstr "Není připojena žádná sonda."
 
-#. TRANSLATORS: this is displayed if VTE support is not enabled
-#: ../src/gcm-picker.c:331
+#: ../src/gcm-picker.c:412
 msgid "This application was compiled without VTE support."
 msgstr "Tato aplikace byla přeložena bez podpory VTE."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:341
+#: ../src/gcm-picker.c:422
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "Připojená sonda nepodporuje čtení jednotlivých barevných vzorků."
 
-#. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-picker.c:662 ../src/gcm-viewer.c:1218
-msgid "Set the parent window to make this modal"
-msgstr "Zvolte rodičovské okno - zůstane vždy navrchu"
-
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:680
+#: ../src/gcm-picker.c:810
 msgid "GNOME Color Manager Color Picker"
 msgstr "Správa barev GNOME - měření samostatných barev"
 
-#. TRANSLATORS: button: this is to open GCM
-#: ../src/gcm-session.c:107
+#: ../src/gcm-session.c:128
 msgid "Recalibrate now"
 msgstr "Rekalibrovat ihned"
 
-#. TRANSLATORS: button: this is to ignore the recalibrate notifications
-#: ../src/gcm-session.c:110
+#: ../src/gcm-session.c:135
 msgid "Ignore"
 msgstr "Ignorovat"
 
 #. TRANSLATORS: this is when the device has not been recalibrated in a while
-#: ../src/gcm-session.c:137
+#: ../src/gcm-session.c:166
 msgid "Recalibration required"
 msgstr "Je vyžadována nová kalibrace"
 
 #. TRANSLATORS: this is when the display has not been recalibrated in a while
-#: ../src/gcm-session.c:147
+#: ../src/gcm-session.c:178
 #, c-format
 msgid "The display '%s' should be recalibrated soon."
 msgstr "Displej '%s' by měl být znovu kalibrován."
 
 #. TRANSLATORS: this is when the printer has not been recalibrated in a while
-#: ../src/gcm-session.c:154
+#: ../src/gcm-session.c:187
 #, c-format
 msgid "The printer '%s' should be recalibrated soon."
 msgstr "Tiskárna '%s' by měla být znovu kalibrována."
 
-#: ../src/gcm-session.c:705
-msgid "Do not exit after the request has been processed"
-msgstr "Neukončovat po zpracování požadavku"
+#: ../src/gcm-session.c:412
+msgid "Automatic"
+msgstr "Automaticky"
 
-#. TRANSLATORS: program name, a session wide daemon to watch for updates and changing system state
-#: ../src/gcm-session.c:721 ../data/gcm-prefs.ui.h:10
-msgid "Color Management"
-msgstr "Správa barev"
+#. TRANSLATORS: this is a sound description
+#: ../src/gcm-session.c:1588
+msgid "Sensor added"
+msgstr "Sonda přidána"
 
-#: ../src/gcm-session.c:723
+#. TRANSLATORS: this is a sound description
+#: ../src/gcm-session.c:1612
+msgid "Sensor removed"
+msgstr "Sonda odstraněna"
+
+#. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
+#: ../src/gcm-session.c:1697
+msgid "Do not attempt to clear previously applied settings"
+msgstr "Nepokoušet se o smazání předchozího nastavení"
+
+#: ../src/gcm-session.c:1715
 msgid "Color Management D-Bus Service"
 msgstr "Služba D-Bus správy barev"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:494
+#: ../src/gcm-utils.c:476
 msgid "Perceptual"
 msgstr "Perceptuální"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:498
-msgid "Relative"
-msgstr "Relativní"
+#: ../src/gcm-utils.c:480
+msgid "Relative Colorimetric"
+msgstr "Relativní kolorimetrický"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:502
+#: ../src/gcm-utils.c:484
 msgid "Saturation"
 msgstr "Sytost"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:506
-msgid "Absolute"
-msgstr "Absolutní"
+#: ../src/gcm-utils.c:488
+msgid "Absolute Colorimetric"
+msgstr "Absolutní kolorimetrický"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:519
+#: ../src/gcm-utils.c:501
 msgid "High quality photography"
 msgstr "Vysoká fotografická kvalita"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:523
+#: ../src/gcm-utils.c:505
 msgid "Precise color matching"
 msgstr "Přesné mapování barev"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:527
+#: ../src/gcm-utils.c:509
 msgid "Graphs and presentations"
 msgstr "Grafy a prezentace"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:531
+#: ../src/gcm-utils.c:513
 msgid "Proofing devices"
 msgstr "Zařízení náhledu tisku"
 
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:544 ../src/gcm-viewer.c:606 ../data/gcm-prefs.ui.h:41
+#: ../src/gcm-utils.c:526
+#: ../src/gcm-viewer.c:621
+#: ../data/gcm-prefs.ui.h:23
 msgid "RGB"
 msgstr "RGB"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:548 ../src/gcm-viewer.c:618 ../data/gcm-prefs.ui.h:7
+#: ../src/gcm-utils.c:530
+#: ../src/gcm-viewer.c:633
+#: ../data/gcm-prefs.ui.h:5
 msgid "CMYK"
 msgstr "CMYK"
 
 #. TRANSLATORS: this is the colorspace type
-#: ../src/gcm-utils.c:552
+#: ../src/gcm-utils.c:534
 msgid "gray"
 msgstr "šedá"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:288
+#: ../src/gcm-viewer.c:296
 msgid "Permanently delete profile?"
 msgstr "Trvale odstranit profil?"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:291
-msgid ""
-"Are you sure you want to remove this profile from your system permanently?"
+#: ../src/gcm-viewer.c:299
+msgid "Are you sure you want to remove this profile from your system permanently?"
 msgstr "Opravdu chcete natrvalo odstranit tento profil z vašeho počítače?"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:294
+#: ../src/gcm-viewer.c:302
 msgid "Delete"
 msgstr "Smazat"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:548
+#: ../src/gcm-viewer.c:563
 msgid "Input device"
 msgstr "Vstupní zařízení"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:552
+#: ../src/gcm-viewer.c:567
 msgid "Display device"
 msgstr "Zařízení displeje"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:556
+#: ../src/gcm-viewer.c:571
 msgid "Output device"
 msgstr "Výstupní zařízení"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:560
+#: ../src/gcm-viewer.c:575
 msgid "Devicelink"
 msgstr "Device link"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:564
+#: ../src/gcm-viewer.c:579
 msgid "Colorspace conversion"
 msgstr "Konverze prostoru barev"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:568
+#: ../src/gcm-viewer.c:583
 msgid "Abstract"
 msgstr "Abstraktní"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:572
+#: ../src/gcm-viewer.c:587
 msgid "Named color"
 msgstr "Pojmenovaná barva"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:586
+#: ../src/gcm-viewer.c:601
 msgid "XYZ"
 msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:590
+#: ../src/gcm-viewer.c:605
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:594
+#: ../src/gcm-viewer.c:609
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:598
+#: ../src/gcm-viewer.c:613
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:602
+#: ../src/gcm-viewer.c:617
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:610
+#: ../src/gcm-viewer.c:625
 msgid "Gray"
 msgstr "Šedá"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:614
+#: ../src/gcm-viewer.c:629
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:622
+#: ../src/gcm-viewer.c:637
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:754
+#: ../src/gcm-viewer.c:881
 msgid "Yes"
 msgstr "Ano"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:757
+#: ../src/gcm-viewer.c:884
 msgid "No"
 msgstr "Ne"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:843
+#: ../src/gcm-viewer.c:994
 msgid "Delete this profile"
 msgstr "Smazat tento profil"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:846
+#: ../src/gcm-viewer.c:997
 msgid "This profile cannot be deleted"
 msgstr "Tento profil nelze smazat"
 
-#. TRANSLATORS: combo-entry, no graph selected to be shown
-#: ../src/gcm-viewer.c:1004
-msgid "None"
-msgstr "Žádný"
-
-#. TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...)
-#: ../src/gcm-viewer.c:1007
-msgid "CIE 1931 xy"
-msgstr "CIE 1931 xy"
-
-#. TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out)
-#: ../src/gcm-viewer.c:1010
-msgid "Transfer response curve"
-msgstr "Křivka odezvy přenosu"
-
-#. TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card)
-#: ../src/gcm-viewer.c:1013
-msgid "Video card gamma table"
-msgstr "Gama tabulka video karty"
-
-#. TRANSLATORS: combo-entry, this is a preview image of what the profile looks like
-#: ../src/gcm-viewer.c:1016
-msgid "Image preview (from sRGB)"
-msgstr "Náhled obrázku (z sRGB)"
-
-#: ../src/gcm-viewer.c:1017
-msgid "Image preview (to sRGB)"
-msgstr "Náhled obrázku (do sRGB)"
+#. TRANSLATORS: show just the one profile, rather than all
+#: ../src/gcm-viewer.c:1479
+msgid "Set the specific profile to show"
+msgstr "Pro zobrazení vybrat konkrétní profil"
 
 #: ../data/gcm-calibrate.ui.h:1
 msgid "Blue:"
 msgstr "Modrá:"
 
-#: ../data/gcm-calibrate.ui.h:2 ../data/gcm-prefs.ui.h:6
+#: ../data/gcm-calibrate.ui.h:2
 msgid "Brightness:"
 msgstr "Jas:"
 
@@ -1680,57 +1374,53 @@ msgid "Create images for printing"
 msgstr "Vytvořit obrázky pro tisk"
 
 #. Expander label, for use when the user wants to see the VTE widget and what the calibration tool is actually doing
-#: ../data/gcm-calibrate.ui.h:6 ../data/gcm-spawn.ui.h:2
+#: ../data/gcm-calibrate.ui.h:6
+#: ../data/gcm-spawn.ui.h:2
 msgid "Details"
 msgstr "Podrobnosti"
 
-#. window title
-#: ../data/gcm-calibrate.ui.h:8
-msgid "Device Calibration"
-msgstr "Kalibrace zařízení"
-
 #. The user wants to analyse images that have been printed by a photo-processing lab
-#: ../data/gcm-calibrate.ui.h:10
+#: ../data/gcm-calibrate.ui.h:8
 msgid "Generate profile from printed images"
 msgstr "Vytvořit profil z vytištěných obrázků"
 
-#: ../data/gcm-calibrate.ui.h:11
+#: ../data/gcm-calibrate.ui.h:9
 msgid "Green:"
 msgstr "Zelená:"
 
 #. The precision of the calibration
-#: ../data/gcm-calibrate.ui.h:13
+#: ../data/gcm-calibrate.ui.h:11
 msgid "High"
 msgstr "Vysoká"
 
-#: ../data/gcm-calibrate.ui.h:14
+#: ../data/gcm-calibrate.ui.h:12
 msgid "LCD"
 msgstr "LCD"
 
 #. The precision of the calibration
-#: ../data/gcm-calibrate.ui.h:16
+#: ../data/gcm-calibrate.ui.h:14
 msgid "Low"
 msgstr "Nízká"
 
 #. The length of the translation
-#: ../data/gcm-calibrate.ui.h:18
+#: ../data/gcm-calibrate.ui.h:16
 msgid "Normal"
 msgstr "Normální"
 
 #. The user is trying to create an ICC profile of a printer that is connected to the computer
-#: ../data/gcm-calibrate.ui.h:20
+#: ../data/gcm-calibrate.ui.h:18
 msgid "Profile locally attached printer"
 msgstr "Vytvořit profil pro místní (připojenou) tiskárnu"
 
-#: ../data/gcm-calibrate.ui.h:21
+#: ../data/gcm-calibrate.ui.h:19
 msgid "Projector"
 msgstr "Projektor"
 
-#: ../data/gcm-calibrate.ui.h:22
+#: ../data/gcm-calibrate.ui.h:20
 msgid "Red:"
 msgstr "Červená:"
 
-#: ../data/gcm-calibrate.ui.h:23
+#: ../data/gcm-calibrate.ui.h:21
 msgid "precision"
 msgstr "přesnost"
 
@@ -1739,326 +1429,295 @@ msgstr "přesnost"
 msgid "Ambient:"
 msgstr "Okolní:"
 
-#. Window title, where the user can pick spot colors using a measuring device
-#: ../data/gcm-picker.ui.h:4
-msgid "Color Picker"
-msgstr "Měření jednotlivých barev"
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:6
+msgid "Color Temperature:"
+msgstr "Barevná teplota:"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#: ../data/gcm-picker.ui.h:6
+#: ../data/gcm-picker.ui.h:8
 msgid "Colorspace:"
 msgstr "Prostor barev:"
 
 #. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:8
+#: ../data/gcm-picker.ui.h:10
 msgid "Error:"
 msgstr "Chyba:"
 
 #. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:10
+#: ../data/gcm-picker.ui.h:12
 msgid "Lab (D50):"
 msgstr "Lab (D50):"
 
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:14
+msgid "Media whitepoint:"
+msgstr "Bílý bod média:"
+
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. What mode to use for display rendering intent
-#: ../data/gcm-picker.ui.h:12 ../data/gcm-prefs.ui.h:43
+#: ../data/gcm-picker.ui.h:16
+#: ../data/gcm-prefs.ui.h:25
 msgid "RGB:"
 msgstr "RGB:"
 
 #. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:14
+#: ../data/gcm-picker.ui.h:18
 msgid "Results"
 msgstr "Výsledky"
 
 #. the color representation
-#: ../data/gcm-picker.ui.h:16
+#: ../data/gcm-picker.ui.h:20
 msgid "XYZ:"
 msgstr "XYZ:"
 
 #. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:18
+#: ../data/gcm-picker.ui.h:22
 msgid "_Measure"
 msgstr "_Měřit"
 
 #: ../data/gcm-prefs.ui.h:1
-msgid ""
-"A working space is a default colorspace that is not associated with a "
-"specific device."
-msgstr ""
-"Pracovní prostor je výchozí prostor barev, který nesouvisí s žádným "
-"specifickým zařízením."
+msgid "A working space is a default colorspace that is not associated with a specific device."
+msgstr "Pracovní prostor je výchozí prostor barev, který nesouvisí s žádným specifickým zařízením."
 
-#. This is a button to add a virtual device
-#: ../data/gcm-prefs.ui.h:3
-msgid "Add d_evice…"
-msgstr "Přidat zaříz_ení..."
+#: ../data/gcm-prefs.ui.h:2
+msgid "Add"
+msgstr "Přidat"
 
 #. Profiles that can be added to the device
-#: ../data/gcm-prefs.ui.h:5
+#: ../data/gcm-prefs.ui.h:4
 msgid "Available Profiles"
 msgstr "Dostupné profily"
 
 #. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:9
+#: ../data/gcm-prefs.ui.h:7
 msgid "CMYK:"
 msgstr "CMYK:"
 
+#: ../data/gcm-prefs.ui.h:8
+msgid "Calibrate"
+msgstr "Kalibrovat"
+
+#: ../data/gcm-prefs.ui.h:9
+msgid "Calibrate the device"
+msgstr "Kalibrovat zařízení"
+
 #: ../data/gcm-prefs.ui.h:11
-msgid "Contrast:"
-msgstr "Kontrast:"
-
-#. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
-#: ../data/gcm-prefs.ui.h:13
-msgid "Create _Profile"
-msgstr "Vytvořit _Profil"
-
-#: ../data/gcm-prefs.ui.h:14
 msgid "Device type:"
 msgstr "Typ zařízení:"
 
 #. Tab title, currently connected or saved devices
-#: ../data/gcm-prefs.ui.h:16
+#: ../data/gcm-prefs.ui.h:13
 msgid "Devices"
 msgstr "Zařízení"
 
-#. What mode to use for display rendering intent
-#: ../data/gcm-prefs.ui.h:20
-msgid "Display:"
-msgstr "Displej:"
-
-#: ../data/gcm-prefs.ui.h:21
-msgid "Do full screen correction"
-msgstr "Provést celoobrazovkovou korekci"
-
-#. Settings that users don't normally have to touch
-#: ../data/gcm-prefs.ui.h:23
-msgid "Fine tuning"
-msgstr "Jemné doladění"
-
-#: ../data/gcm-prefs.ui.h:24
-msgid ""
-"For a color managed workflow, each connected device should have one or more "
-"color profiles associated with it."
-msgstr ""
-"Pro účely práce se správou barev, každé připojené zařízení by mělo mít "
-"přiřazeno jeden nebo více profilů barev."
-
-#: ../data/gcm-prefs.ui.h:25
-msgid "Gamma:"
-msgstr "Gama:"
+#: ../data/gcm-prefs.ui.h:14
+msgid "For a color managed workflow, each connected device should have one or more color profiles associated with it."
+msgstr "Pro účely práce se správou barev, každé připojené zařízení by mělo mít přiřazeno jeden nebo více profilů barev."
 
 #. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:27
+#: ../data/gcm-prefs.ui.h:16
 msgid "Gray:"
 msgstr "Šedá:"
 
-#: ../data/gcm-prefs.ui.h:28
-msgid ""
-"Image files can be dragged on this window to auto-complete the above fields."
-msgstr ""
-"Přetáhnete-li do tohoto okna soubory s obrázky, výše uvedená pole se vyplní "
-"automaticky."
+#: ../data/gcm-prefs.ui.h:17
+msgid "Image files can be dragged on this window to auto-complete the above fields."
+msgstr "Přetáhnete-li do tohoto okna soubory s obrázky, výše uvedená pole se vyplní automaticky."
 
-#: ../data/gcm-prefs.ui.h:29
-msgid "Make default"
-msgstr "Nastavit jako výchozí"
-
-#: ../data/gcm-prefs.ui.h:30
+#: ../data/gcm-prefs.ui.h:18
 msgid "Manufacturer:"
 msgstr "Výrobce:"
 
-#: ../data/gcm-prefs.ui.h:31
+#: ../data/gcm-prefs.ui.h:19
 msgid "Model:"
 msgstr "Model:"
 
-#: ../data/gcm-prefs.ui.h:32
+#: ../data/gcm-prefs.ui.h:20
 msgid "More details"
 msgstr "Podrobnosti"
 
 #. Some profiles are not compatible with some devices
-#: ../data/gcm-prefs.ui.h:34
+#: ../data/gcm-prefs.ui.h:22
 msgid "Only profiles that are compatible with the device will be listed above."
-msgstr ""
-"Budou zobrazeny pouze profily, které jsou kompatibilní s daným zařízením."
-
-#: ../data/gcm-prefs.ui.h:35
-msgid "Open the documentation"
-msgstr "Otevřít dokumentaci"
-
-#. Button to view installed profiles
-#: ../data/gcm-prefs.ui.h:37
-msgid "Pr_ofile Viewer"
-msgstr "Pr_ohlížeč profilů"
-
-#. The rendering intent for the print preview
-#: ../data/gcm-prefs.ui.h:39
-msgid "Print Preview:"
-msgstr "Náhled tisku:"
-
-#: ../data/gcm-prefs.ui.h:40
-msgid ""
-"Program the video card with the adjusted color values so all windows are "
-"color corrected"
-msgstr ""
-"Nastavit LUT grafické karty pomocí kalibračních úprav barev. Změna barev se "
-"projeví u všech oken pracovního prostředí."
+msgstr "Budou zobrazeny pouze profily, které jsou kompatibilní s daným zařízením."
 
 # (Translator's note: I do not know other shortcuts in the window)
-#. This is a button to delete the saved or virtual device
-#: ../data/gcm-prefs.ui.h:45
-msgid "Remove de_vice"
-msgstr "_Odstranit zařízení"
+#: ../data/gcm-prefs.ui.h:26
+msgid "Remove"
+msgstr "Odstranit"
 
-#. Tab title, the way colors should be converted from one colorspace to another
-#: ../data/gcm-prefs.ui.h:47
-msgid "Rendering Intents"
-msgstr "Záměry transformace"
+#: ../data/gcm-prefs.ui.h:27
+msgid "Set as default"
+msgstr "Nastavit jako výchozí"
 
-#. This resets the device to it's defaults, and removes any user tweaked settings.
-#: ../data/gcm-prefs.ui.h:49
-msgid "Rese_t"
-msgstr "Obnovi_t"
+#: ../data/gcm-prefs.ui.h:28
+msgid "Set for all users"
+msgstr "Nastavit pro všechny uživatele"
 
-#: ../data/gcm-prefs.ui.h:50
-msgid "Save these profiles for all users"
-msgstr "Uložit tyto profily pro všechny uživatele"
+#: ../data/gcm-prefs.ui.h:29
+msgid "Show details about this profile"
+msgstr "Ukázat detaily o tomto profilu"
 
-#: ../data/gcm-prefs.ui.h:51
-msgid ""
-"Set a property on the system so applications use the default display profile"
-msgstr ""
-"Nastavit profil v systému (ICC_PROFILE atom), aby aplikace mohly použít "
-"výchozí profil displeje"
-
-#: ../data/gcm-prefs.ui.h:52
-msgid "Set profile for _color managed applications"
-msgstr "Nastavit profil pro aplika_ce podporující správu barev"
-
-#: ../data/gcm-prefs.ui.h:53
-msgid ""
-"The rendering intent defines how color should be transformed from one "
-"colorspace to another."
-msgstr ""
-"Záměr transformace je způsob, jakým jsou barvy převáděny z jednoho prostoru "
-"barev do jiného."
-
-#: ../data/gcm-prefs.ui.h:54
-msgid ""
-"These settings are applied for all displays attached to this computer, even "
-"ones that are added later."
-msgstr ""
-"Tato nastavení jsou použita pro všechny displeje připojené k tomuto "
-"počítači, dokonce i ty připojené později."
-
-#: ../data/gcm-prefs.ui.h:55
-msgid ""
-"This enables full screen color management which requires a modern 3D "
-"graphics card with hardware shader support. This option may increase CPU "
-"load and will increase the amount of power this computer uses."
-msgstr ""
-"Toto umožní celoobrazovkovou správu barev, která ovšem vyžaduje moderní "
-"grafickou kartu s hardwarovou podporou 3D shaderů. Tato volba může zvýšit "
-"zátěž procesoru a spotřebuje více výkonu počítače."
+#: ../data/gcm-prefs.ui.h:30
+msgid "View details"
+msgstr "Zobrazit detaily"
 
 #. Tab title, icc color spaces to use for different defaults
-#: ../data/gcm-prefs.ui.h:57
+#: ../data/gcm-prefs.ui.h:32
 msgid "Working Spaces"
 msgstr "Pracovní prostory"
 
-#: ../data/gcm-prefs.ui.h:58
-msgid "_Apply basic display correction"
-msgstr "Použít zákl_adní korekci displeje"
-
-#. This is when the settings are set for all users, unless they have per-user settings themselves
-#: ../data/gcm-prefs.ui.h:60
-msgid "_Set System Default"
-msgstr "Na_stavit na výchozí v systému"
-
-#~ msgid "More Information"
-#~ msgstr "Více informací"
-
-#~ msgid "Loading list of devices…"
-#~ msgstr "Načítá se seznam zařízení…"
-
-#~ msgid "Debug these specific modules"
-#~ msgstr "Ladit tyto specifické moduly"
-
-#~ msgid "Debug these specific functions"
-#~ msgstr "Ladit tyto specifické funkce"
-
-#~ msgid "Log debugging data to a file"
-#~ msgstr "Zaznamenat ladicí údaje do souboru"
-
-#~ msgid "Unknown device"
-#~ msgstr "Neznámé zařízení"
+#~ msgid "Color"
+#~ msgstr "Barva"
 
 #~ msgid ""
-#~ "A working space is the range of colors that can be encoded into an image."
+#~ "Authentication is required to install the color profile for all users"
 #~ msgstr ""
-#~ "Pracovní prostor je rozsah barev, který může být zakódován do obrázku."
+#~ "Abyste mohli nainstalovat profily barev pro všechny uživatele, musíte mít "
+#~ "administrátorská oprávnění."
 
-#~ msgid "Add a color profile to be used for this device"
-#~ msgstr "Přidat profil barev pro toto zařízení"
+#~ msgid "Install system color profiles"
+#~ msgstr "Instalovat systémové profily barev"
 
-#~ msgid "Adds a virtual device that is not connected."
-#~ msgstr "Přidá virtuální zařízení, které není připojené k počítači."
+#~ msgid "Failed to save defaults for all users"
+#~ msgstr "Selhalo uložení výchozích hodnot pro všechny uživatele"
 
-#~ msgid "Create a profile for the device"
-#~ msgstr "Vytvořit profil pro zařízení"
+#~ msgid "Failed to get metadata from image"
+#~ msgstr "Nepodařilo se získat metadata z obrázku"
 
-#~ msgid "Defaults"
-#~ msgstr "Výchozí hodnoty"
+#~ msgid "Failed to save virtual device"
+#~ msgstr "Selhalo uložení virtuálního zařízení"
+
+#~ msgid "Failed to add virtual device"
+#~ msgstr "Selhalo přidání virtuálního zařízení"
+
+#~ msgid "Cannot create profile: The display device is not connected"
+#~ msgstr "Nelze vytvořit profil: Zobrazovací zařízení není připojené"
 
 #~ msgid ""
-#~ "Delete the disconnected device - if you reconnect the device it will "
-#~ "reappear in the list"
+#~ "Cannot create profile: The display driver does not support XRandR 1.3"
+#~ msgstr "Nelze vytvořit profil: ovladač displeje nepodporuje XRandR 1.3"
+
+#~ msgid "Per-device settings not supported. Check your display driver."
 #~ msgstr ""
-#~ "Odstranit nepřipojené zařízení - pokud jej znovu připojíte, objeví se "
-#~ "opět v seznamu."
+#~ "Nastavení podle zařízení nejsou podporovaná. Zkontrolujte svůj ovladač "
+#~ "obrazovky."
 
-#~ msgid "EISA ID:"
-#~ msgstr "EISA ID:"
+#~ msgid "No hardware support"
+#~ msgstr "Hardware není podporován"
 
-#~ msgid "Make the selected profile the default profile"
-#~ msgstr "Nastavit vybraný profil jako výchozí"
+#~ msgid "disconnected"
+#~ msgstr "odpojeno"
 
-#~ msgid "Remove a color profile for this device"
-#~ msgstr "Odstranit profil barev pro toto zařízení"
+#~ msgid "Could not import profile"
+#~ msgstr "Nelze importovat profil"
 
-#~ msgid "Reset the sliders to the default values"
-#~ msgstr "Obnovit výchozí nastavení hodnoty"
+#~ msgid "The profile was of the wrong type for this device"
+#~ msgstr "Profil pro toto zařízení byl nesprávného typu"
 
-#~ msgid "Serial number:"
-#~ msgstr "Sériové číslo:"
+#~ msgid "Device added"
+#~ msgstr "Zařízení přidáno"
 
-#~ msgid "The rendering intent is how one gamut size is mapped to another."
-#~ msgstr ""
-#~ "Záměr transformace je způsob, jakým jsou barvy převáděny mezi různě "
-#~ "velkými prostory barev."
+#~ msgid "Image is not suitable without conversion"
+#~ msgstr "Obrázek je nutné před použitím konvertovat."
 
 #~ msgid ""
-#~ "The rendering intent to use when transforming from the image gamut to the "
-#~ "device output gamut"
+#~ "The supplied image contains an alpha channel which the profiling tools do "
+#~ "not understand."
 #~ msgstr ""
-#~ "Záměr transformace, který se má použít pro konverzi z prostoru barev "
-#~ "obrázku do prostoru výstupního zařízení."
+#~ "Obrázek obsahuje kanál průhlednosti (alfa kanál), kterému nástroje pro "
+#~ "vytvoření profilu nerozumí."
 
 #~ msgid ""
-#~ "The rendering intent to use when transforming from the image gamut to the "
-#~ "display gamut"
+#~ "It is normally safe to convert the image, although you should ensure that "
+#~ "the generated profile is valid."
 #~ msgstr ""
-#~ "Záměr transformace, který se má použít pro konverzi z prostoru barev "
-#~ "obrázku do prostoru displeje"
+#~ "Obvykle je bezpečné konvertovat obrázek, ale přesto byste se měli "
+#~ "ujistit, že vytvořený profil není chybný."
+
+#~ msgid "Convert"
+#~ msgstr "Konvertovat"
 
 #~ msgid ""
-#~ "These settings control how color management is applied to your desktop."
+#~ "For best results, the reference target should also be less than two years "
+#~ "old."
 #~ msgstr ""
-#~ "Tyto volby určují, jakým způsobem je správa barev využívána na vašem "
-#~ "počítači."
+#~ "Abyste dosáhli nejlepších výsledků, neměl by být referenční obrazec "
+#~ "starší dvou let."
 
-#~ msgid "This is the default CMYK working space to use in applications"
+#~ msgid ""
+#~ "Please select the calibration target type which corresponds to your "
+#~ "reference file."
 #~ msgstr ""
-#~ "Toto je výchozí pracovní prostor typu CMYK pro využití v aplikacích."
+#~ "Vyberte prosím typ kalibračního obrazce, který odpovídá vašemu "
+#~ "referenčnímu souboru."
 
-#~ msgid "This is the default RGB working space to use in applications"
-#~ msgstr "Toto je výchozí pracovní prostor typu RGB pro využití v aplikacích."
+#~ msgid "Default"
+#~ msgstr "Výchozí"
+
+#~ msgid "Laptop LCD"
+#~ msgstr "LCD laptopu"
+
+#~ msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
+#~ msgstr "ID zařízení, např. „xrandr_ibm_france_ltn154p2_l05“"
+
+#~ msgid "GNOME Color Manager ICC profile system-wide installer"
+#~ msgstr "Správce barev GNOME - instalátor profilů ICC pro všechny uživatele"
+
+#~ msgid "You need to specify exactly one ICC profile filename."
+#~ msgstr "Musíte zvolit pouze jeden soubor s profilem ICC."
+
+#~ msgid "You need to specify exactly one device ID."
+#~ msgstr "Musíte zvolit právě jedno ID zařízení."
+
+#~ msgid "The device ID has invalid characters."
+#~ msgstr "ID zařízení obsahuje chybné znaky."
+
+#~ msgid "This program can only be used by the root user."
+#~ msgstr ""
+#~ "Tento program může být použit pouze administrátorem (uživatel root)."
+
+#~ msgid "The source filename must be absolute."
+#~ msgstr "Cesta ke zdrojovému souboru musí být úplná."
+
+#~ msgid "Failed to get content type:"
+#~ msgstr "Selhalo zjištění typu obsahu:"
+
+#~ msgid "Content type was incorrect:"
+#~ msgstr "Typ obsahu byl chybný:"
+
+#~ msgid "This program must only be run through pkexec."
+#~ msgstr "Tento program musí být spuštěn pouze pomocí pkexec."
+
+#~ msgid "PKEXEC_UID must be set to an integer value."
+#~ msgstr "PKEXEC_UID musí být nastaveno na celočíselnou hodnotu."
+
+#~ msgid "The ICC profile must be owned by the user."
+#~ msgstr "Uživatel musí mít vlastnická práva k souboru s profilem ICC."
+
+#~ msgid "The destination filename must be absolute."
+#~ msgstr "Cesta k cílovému souboru musí být úplná (absolutní)."
+
+#~ msgid "Failed to copy:"
+#~ msgstr "Selhalo kopírování:"
+
+#~ msgid "Do not exit after the request has been processed"
+#~ msgstr "Neukončovat po zpracování požadavku"
+
+#~ msgid "Relative"
+#~ msgstr "Relativní"
+
+#~ msgid "Absolute"
+#~ msgstr "Absolutní"
+
+#~ msgid "None"
+#~ msgstr "Žádný"
+
+#~ msgid "CIE 1931 xy"
+#~ msgstr "CIE 1931 xy"
+
+#~ msgid "Transfer response curve"
+#~ msgstr "Křivka odezvy přenosu"
+
+#~ msgid "Video card gamma table"
+#~ msgstr "Gama tabulka video karty"
