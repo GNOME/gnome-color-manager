@@ -34,11 +34,6 @@ static void     gcm_x11_output_finalize	(GObject     *object);
 
 #define GCM_X11_OUTPUT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_X11_OUTPUT, GcmX11OutputPrivate))
 
-/**
- * GcmX11OutputPrivate:
- *
- * Private #GcmX11Output data
- **/
 struct _GcmX11OutputPrivate
 {
 	gchar				*display_name;
@@ -64,13 +59,6 @@ enum {
 
 G_DEFINE_TYPE (GcmX11Output, gcm_x11_output, G_TYPE_OBJECT)
 
-/**
- * gcm_x11_output_set_name:
- * @output: a valid %GcmX11Output instance
- * @display: the #Display
- *
- * Sets the display.
- **/
 void
 gcm_x11_output_set_display (GcmX11Output *output, gpointer display)
 {
@@ -78,13 +66,6 @@ gcm_x11_output_set_display (GcmX11Output *output, gpointer display)
 	output->priv->display = display;
 }
 
-/**
- * gcm_x11_output_set_name:
- * @output: a valid %GcmX11Output instance
- * @name: the display name, for instance "lvds"
- *
- * Sets the interal panel name.
- **/
 void
 gcm_x11_output_set_name (GcmX11Output *output, const gchar *name)
 {
@@ -92,14 +73,6 @@ gcm_x11_output_set_name (GcmX11Output *output, const gchar *name)
 	output->priv->name = g_strdup (name);
 }
 
-/**
- * gcm_x11_output_get_name:
- * @output: a valid %GcmX11Output instance
- *
- * Gets the panel name.
- *
- * Return value: the panel name
- **/
 const gchar *
 gcm_x11_output_get_name (GcmX11Output *output)
 {
@@ -107,14 +80,6 @@ gcm_x11_output_get_name (GcmX11Output *output)
 	return output->priv->name;
 }
 
-/**
- * gcm_x11_output_get_id:
- * @output: a valid %GcmX11Output instance
- *
- * Gets the panel id.
- *
- * Return value: the panel id
- **/
 guint
 gcm_x11_output_get_id (GcmX11Output *output)
 {
@@ -122,13 +87,6 @@ gcm_x11_output_get_id (GcmX11Output *output)
 	return output->priv->id;
 }
 
-/**
- * gcm_x11_output_set_id:
- * @output: a valid %GcmX11Output instance
- * @id: the xrandr ID for the output
- *
- * Sets the ID of the output.
- **/
 void
 gcm_x11_output_set_id (GcmX11Output *output, guint id)
 {
@@ -136,13 +94,6 @@ gcm_x11_output_set_id (GcmX11Output *output, guint id)
 	output->priv->id = id;
 }
 
-/**
- * gcm_x11_output_set_crtc_id:
- * @output: a valid %GcmX11Output instance
- * @crtc_id: the CRCT id
- *
- * Sets the CRTC (specific control on an output) id.
- **/
 void
 gcm_x11_output_set_crtc_id (GcmX11Output *output, guint crtc_id)
 {
@@ -150,13 +101,6 @@ gcm_x11_output_set_crtc_id (GcmX11Output *output, guint crtc_id)
 	output->priv->crtc_id = crtc_id;
 }
 
-/**
- * gcm_x11_output_set_gamma_size:
- * @output: a valid %GcmX11Output instance
- * @gamma_size: the size of the gamma ramp.
- *
- * Sets the size of the gamma ramp.
- **/
 void
 gcm_x11_output_set_gamma_size (GcmX11Output *output, guint gamma_size)
 {
@@ -164,14 +108,6 @@ gcm_x11_output_set_gamma_size (GcmX11Output *output, guint gamma_size)
 	output->priv->gamma_size = gamma_size;
 }
 
-/**
- * gcm_x11_output_get_gamma_size:
- * @output: a valid %GcmX11Output instance
- *
- * Gets the size of the gamma ramps.
- *
- * Return value: the size. This is normally 256 or 1024.
- **/
 guint
 gcm_x11_output_get_gamma_size (GcmX11Output *output)
 {
@@ -179,13 +115,6 @@ gcm_x11_output_get_gamma_size (GcmX11Output *output)
 	return output->priv->gamma_size;
 }
 
-/**
- * gcm_x11_output_set_primary:
- * @output: a valid %GcmX11Output instance
- * @primary: if the panel is the primary screen
- *
- * Sets if the panel is the most important primary screen.
- **/
 void
 gcm_x11_output_set_primary (GcmX11Output *output, gboolean primary)
 {
@@ -193,15 +122,6 @@ gcm_x11_output_set_primary (GcmX11Output *output, gboolean primary)
 	output->priv->primary = primary;
 }
 
-/**
- * gcm_x11_output_get_primary:
- * @output: a valid %GcmX11Output instance
- *
- * Gets if the panel is the primary most important screen.
- * There should only ever be one primary screen in a #GcmX11Screen.
- *
- * Return value: %TRUE for the primary screen.
- **/
 gboolean
 gcm_x11_output_get_primary (GcmX11Output *output)
 {
@@ -209,15 +129,11 @@ gcm_x11_output_get_primary (GcmX11Output *output)
 	return output->priv->primary;
 }
 
-/**
- * gcm_x11_output_set_connected:
- * @output: a valid %GcmX11Output instance
- * @connected: the devices connected state
- *
+/*
  * Sets if the device is connected, i.e. has an actual physical device
  * plugged into the port.
  * NOTE: a device can be conncted even if it is powered off or in sleep mode.
- **/
+ */
 void
 gcm_x11_output_set_connected (GcmX11Output *output, gboolean connected)
 {
@@ -225,16 +141,11 @@ gcm_x11_output_set_connected (GcmX11Output *output, gboolean connected)
 	output->priv->connected = connected;
 }
 
-/**
- * gcm_x11_output_get_connected:
- * @output: a valid %GcmX11Output instance
- *
+/*
  * Gets if the output is connected. This function should return %TRUE
  * most of the time as non-connected outputs should not have been added
  * to the #GcmX11Screen.
- *
- * Return value: if the device is connected.
- **/
+ */
 gboolean
 gcm_x11_output_get_connected (GcmX11Output *output)
 {
@@ -242,15 +153,6 @@ gcm_x11_output_get_connected (GcmX11Output *output)
 	return output->priv->connected;
 }
 
-/**
- * gcm_x11_output_set_position:
- * @output: a valid %GcmX11Output instance
- * @x: the x cordinate
- * @y: the y cordinate
- *
- * Sets the position of the display relative to the absolute size of all
- * the #GcmX11Output's.
- **/
 void
 gcm_x11_output_set_position (GcmX11Output *output, guint x, guint y)
 {
@@ -259,15 +161,6 @@ gcm_x11_output_set_position (GcmX11Output *output, guint x, guint y)
 	output->priv->y = y;
 }
 
-/**
- * gcm_x11_output_get_position:
- * @output: a valid %GcmX11Output instance
- * @x: the returned x cordinate, or %NULL
- * @y: the returned y cordinate, or %NULL
- *
- * Gets the position of the panel relative to the absolute size of all
- * the #GcmX11Output's.
- **/
 void
 gcm_x11_output_get_position (GcmX11Output *output, guint *x, guint *y)
 {
@@ -278,14 +171,6 @@ gcm_x11_output_get_position (GcmX11Output *output, guint *x, guint *y)
 		*y = output->priv->y;
 }
 
-/**
- * gcm_x11_output_set_size:
- * @output: a valid %GcmX11Output instance
- * @width: the output width in pixels
- * @height: the output height in pixels
- *
- * Sets the size of the output.
- **/
 void
 gcm_x11_output_set_size (GcmX11Output *output, guint width, guint height)
 {
@@ -294,14 +179,6 @@ gcm_x11_output_set_size (GcmX11Output *output, guint width, guint height)
 	output->priv->height = height;
 }
 
-/**
- * gcm_x11_output_get_size:
- * @output: a valid %GcmX11Output instance
- * @width: the returned output width in pixels, or %NULL
- * @height: the returned output height in pixels, or %NULL
- *
- * Gets the output size.
- **/
 void
 gcm_x11_output_get_size (GcmX11Output *output, guint *width, guint *height)
 {
@@ -312,9 +189,6 @@ gcm_x11_output_get_size (GcmX11Output *output, guint *width, guint *height)
 		*height = output->priv->height;
 }
 
-/**
- * gcm_x11_output_get_property_atom:
- **/
 static guint8 *
 gcm_x11_output_get_property_atom (GcmX11Output *output, Atom atom, gint *len)
 {
@@ -344,17 +218,6 @@ out:
 	return result;
 }
 
-/**
- * gcm_x11_output_get_edid_data:
- * @output: a valid %GcmX11Output instance
- * @data: the returned data, free with g_free()
- * @length: the size of the returned @data in bytes
- * @error: A #GError, or %NULL
- *
- * Gets the EDID data for the output.
- *
- * Return value: %TRUE for success.
- **/
 GcmEdid *
 gcm_x11_output_get_edid (GcmX11Output *output,
 			 GError **error)
@@ -406,19 +269,6 @@ out:
 	return edid;
 }
 
-/**
- * gcm_x11_output_set_gamma:
- * @output: a valid %GcmX11Output instance
- * @length: the data arrays length, or %NULL.
- * @red: the red channel data array
- * @green: the red channel data array
- * @blue: the red channel data array
- * @error: a %GError, or %NULL
- *
- * Sets the gamma ramps for the given output.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_x11_output_set_gamma (GcmX11Output *output,
 			  guint length,
@@ -464,9 +314,6 @@ gcm_x11_output_set_gamma (GcmX11Output *output,
 	return TRUE;
 }
 
-/**
- * gcm_x11_output_set_gamma_from_clut:
- **/
 gboolean
 gcm_x11_output_set_gamma_from_clut (GcmX11Output *output,
 				    GcmClut *clut,
@@ -522,19 +369,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_x11_output_get_gamma:
- * @output: a valid %GcmX11Output instance
- * @length: the returned data arrays size, or %NULL.
- * @red: the returned red channel data array, or %NULL. Free with g_free().
- * @green: the returned red channel data array, or %NULL. Free with g_free().
- * @blue: the returned red channel data array, or %NULL. Free with g_free().
- * @error: a %GError, or %NULL
- *
- * Gets the gamma ramps for the given output.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_x11_output_get_gamma (GcmX11Output *output,
 			  guint *length,
@@ -582,17 +416,6 @@ gcm_x11_output_get_gamma (GcmX11Output *output,
 	return TRUE;
 }
 
-/**
- * gcm_x11_output_get_profile_data:
- * @output: a valid %GcmX11Output instance
- * @data: the data that is returned from the XServer. Free with g_free()
- * @length: the size of the returned data, or %NULL if you don't care
- * @error: a %GError that is set in the result of an error, or %NULL
- *
- * Gets the ICC profile data from the specified output.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_x11_output_get_profile_data (GcmX11Output *output,
 				 guint8 **data,
@@ -652,16 +475,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_x11_output_set_profile:
- * @output: a valid %GcmX11Output instance
- * @filename: the filename of the ICC profile
- * @error: a %GError that is set in the result of an error, or %NULL
- *
- * Sets the ICC profile data to the specified output.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_x11_output_set_profile (GcmX11Output *output,
 			    const gchar *filename,
@@ -690,17 +503,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_x11_output_set_profile_data:
- * @output: a valid %GcmX11Output instance
- * @data: the data that is to be set to the XServer
- * @length: the size of the data
- * @error: a %GError that is set in the result of an error, or %NULL
- *
- * Sets the ICC profile data to the specified output.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_x11_output_set_profile_data (GcmX11Output *output, const guint8 *data, gsize length, GError **error)
 {
@@ -734,15 +536,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_x11_output_remove_profile:
- * @output: a valid %GcmX11Output instance
- * @error: a %GError that is set in the result of an error, or %NULL
- *
- * Sets the ICC profile data to the specified output.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_x11_output_remove_profile (GcmX11Output *output, GError **error)
 {
@@ -771,9 +564,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_x11_output_get_property:
- **/
 static void
 gcm_x11_output_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
@@ -790,9 +580,6 @@ gcm_x11_output_get_property (GObject *object, guint prop_id, GValue *value, GPar
 	}
 }
 
-/**
- * gcm_x11_output_set_property:
- **/
 static void
 gcm_x11_output_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
@@ -810,9 +597,6 @@ gcm_x11_output_set_property (GObject *object, guint prop_id, const GValue *value
 	}
 }
 
-/**
- * gcm_x11_output_class_init:
- **/
 static void
 gcm_x11_output_class_init (GcmX11OutputClass *klass)
 {
@@ -833,9 +617,6 @@ gcm_x11_output_class_init (GcmX11OutputClass *klass)
 	g_type_class_add_private (klass, sizeof (GcmX11OutputPrivate));
 }
 
-/**
- * gcm_x11_output_init:
- **/
 static void
 gcm_x11_output_init (GcmX11Output *output)
 {
@@ -843,9 +624,6 @@ gcm_x11_output_init (GcmX11Output *output)
 	output->priv->display_name = NULL;
 }
 
-/**
- * gcm_x11_output_finalize:
- **/
 static void
 gcm_x11_output_finalize (GObject *object)
 {
@@ -859,11 +637,6 @@ gcm_x11_output_finalize (GObject *object)
 	G_OBJECT_CLASS (gcm_x11_output_parent_class)->finalize (object);
 }
 
-/**
- * gcm_x11_output_new:
- *
- * Return value: a new GcmX11Output object.
- **/
 GcmX11Output *
 gcm_x11_output_new (void)
 {

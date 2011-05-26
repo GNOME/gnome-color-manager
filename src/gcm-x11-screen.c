@@ -33,11 +33,6 @@ static void     gcm_x11_screen_finalize	(GObject     *object);
 
 #define GCM_X11_SCREEN_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_X11_SCREEN, GcmX11ScreenPrivate))
 
-/**
- * GcmX11ScreenPrivate:
- *
- * Private #GcmX11Screen data
- **/
 struct _GcmX11ScreenPrivate
 {
 	GdkScreen			*gdk_screen;
@@ -62,9 +57,6 @@ static guint signals[SIGNAL_LAST] = { 0 };
 static gpointer gcm_x11_screen_object = NULL;
 G_DEFINE_TYPE (GcmX11Screen, gcm_x11_screen, G_TYPE_OBJECT)
 
-/**
- * gcm_x11_screen_on_event_cb:
- **/
 static GdkFilterReturn
 gcm_x11_screen_on_event_cb (GdkXEvent *xevent, GdkEvent *event, gpointer data)
 {
@@ -87,9 +79,6 @@ gcm_x11_screen_on_event_cb (GdkXEvent *xevent, GdkEvent *event, gpointer data)
 	return GDK_FILTER_CONTINUE;
 }
 
-/**
- * gcm_x11_screen_get_output_for_id:
- **/
 static GcmX11Output *
 gcm_x11_screen_get_output_for_id (GcmX11Screen *screen, guint id)
 {
@@ -109,9 +98,6 @@ gcm_x11_screen_get_output_for_id (GcmX11Screen *screen, guint id)
 	return output;
 }
 
-/**
- * gcm_x11_screen_refresh:
- **/
 gboolean
 gcm_x11_screen_refresh (GcmX11Screen *screen, GError **error)
 {
@@ -230,16 +216,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_x11_screen_assign:
- * @screen: a valid %GcmX11Screen instance
- * @gdk_screen: a #GdkScreen
- * @error: a %GError or %NULL
- *
- * Assigns a #GdkScreen to this instance.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_x11_screen_assign (GcmX11Screen *screen, GdkScreen *gdk_screen, GError **error)
 {
@@ -312,15 +288,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_x11_screen_get_outputs:
- * @screen: a valid %GcmX11Screen instance
- * @error: a %GError or %NULL
- *
- * Gets the list of outputs.
- *
- * Return value: A #GPtrArray of #GcmX11Output's. Free with g_ptr_array_unref() when done.
- **/
 GPtrArray *
 gcm_x11_screen_get_outputs (GcmX11Screen *screen, GError **error)
 {
@@ -337,16 +304,6 @@ gcm_x11_screen_get_outputs (GcmX11Screen *screen, GError **error)
 	return g_ptr_array_ref (priv->outputs);
 }
 
-/**
- * gcm_x11_screen_get_output_by_name:
- * @screen: a valid %GcmX11Screen instance
- * @name: an output name, e.g. "lvds1"
- * @error: a %GError or %NULL
- *
- * Gets a specified output.
- *
- * Return value: A #GcmX11Output, or %NULL if nothing matched.
- **/
 GcmX11Output *
 gcm_x11_screen_get_output_by_name (GcmX11Screen *screen,
 				   const gchar *name,
@@ -376,16 +333,6 @@ gcm_x11_screen_get_output_by_name (GcmX11Screen *screen,
 	return NULL;
 }
 
-/**
- * gcm_x11_screen_get_output_by_name:
- * @screen: a valid %GcmX11Screen instance
- * @edid_md5: an output hash
- * @error: a %GError or %NULL
- *
- * Gets a specified output.
- *
- * Return value: A #GcmX11Output, or %NULL if nothing matched.
- **/
 GcmX11Output *
 gcm_x11_screen_get_output_by_edid (GcmX11Screen *screen,
 				   const gchar *edid_md5,
@@ -424,9 +371,6 @@ out:
 	return output;
 }
 
-/**
- * cd_x11_screen_get_output_coverage:
- **/
 static gfloat
 cd_x11_screen_get_output_coverage (gint x, gint y,
 					    gint width, gint height,
@@ -470,9 +414,6 @@ out:
 	return covered;
 }
 
-/**
- * cd_x11_screen_get_output_by_window:
- **/
 GcmX11Output *
 cd_x11_screen_get_output_by_window (GcmX11Screen *screen,
 				    GdkWindow *window)
@@ -539,17 +480,6 @@ out:
 	return output_best;
 }
 
-/**
- * gcm_x11_screen_get_profile_data:
- * @screen: a valid %GcmX11Screen instance
- * @data: the data that is returned from the XServer. Free with g_free()
- * @length: the size of the returned data, or %NULL if you don't care
- * @error: a %GError that is set in the result of an error, or %NULL
- *
- * Gets the ICC profile data from the XServer.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_x11_screen_get_profile_data (GcmX11Screen *screen,
 				 guint8 **data,
@@ -603,16 +533,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_x11_screen_set_profile:
- * @screen: a valid %GcmX11Screen instance
- * @filename: the filename of the ICC profile
- * @error: a %GError that is set in the result of an error, or %NULL
- *
- * Sets the ICC profile data to the XServer.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_x11_screen_set_profile (GcmX11Screen *screen, const gchar *filename, GError **error)
 {
@@ -639,17 +559,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_x11_screen_set_profile_data:
- * @screen: a valid %GcmX11Screen instance
- * @data: the data that is to be set to the XServer
- * @length: the size of the data
- * @error: a %GError that is set in the result of an error, or %NULL
- *
- * Sets the ICC profile data to the XServer.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_x11_screen_set_profile_data (GcmX11Screen *screen, const guint8 *data, gsize length, GError **error)
 {
@@ -684,17 +593,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_x11_screen_set_protocol_version:
- * @screen: a valid %GcmX11Screen instance
- * @major: the major version
- * @minor: the minor version
- * @error: a %GError that is set in the result of an error, or %NULL
- *
- * Sets the ICC Profiles in X supported version to the XServer.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_x11_screen_set_protocol_version (GcmX11Screen *screen, guint major, guint minor, GError **error)
 {
@@ -731,15 +629,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_x11_screen_remove_protocol_version:
- * @screen: a valid %GcmX11Screen instance
- * @error: a %GError that is set in the result of an error, or %NULL
- *
- * Removes the ICC profile version data from the XServer.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_x11_screen_remove_protocol_version (GcmX11Screen *screen, GError **error)
 {
@@ -772,17 +661,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_x11_screen_get_protocol_version:
- * @screen: a valid %GcmX11Screen instance
- * @major: the major version
- * @minor: the minor version
- * @error: a %GError that is set in the result of an error, or %NULL
- *
- * Gets the ICC profile data from the XServer.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_x11_screen_get_protocol_version (GcmX11Screen *screen, guint *major, guint *minor, GError **error)
 {
@@ -831,15 +709,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_x11_screen_remove_profile:
- * @screen: a valid %GcmX11Screen instance
- * @error: a %GError that is set in the result of an error, or %NULL
- *
- * Removes the ICC profile data from the XServer.
- *
- * Return value: %TRUE for success.
- **/
 gboolean
 gcm_x11_screen_remove_profile (GcmX11Screen *screen, GError **error)
 {
@@ -872,14 +741,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_x11_screen_get_randr_version:
- * @screen: a valid %GcmX11Screen instance
- * @major: the returned XRandR version major, or %NULL
- * @minor: the returned XRandR version minor, or %NULL
- *
- * Gets the XRandR version from the server.
- **/
 void
 gcm_x11_screen_get_randr_version (GcmX11Screen *screen, guint *major, guint *minor)
 {
@@ -890,36 +751,24 @@ gcm_x11_screen_get_randr_version (GcmX11Screen *screen, guint *major, guint *min
 		*minor = screen->priv->rr_minor_version;
 }
 
-/**
- * gcm_x11_screen_class_init:
- **/
 static void
 gcm_x11_screen_class_init (GcmX11ScreenClass *klass)
 {
 	GObjectClass *object_class = G_OBJECT_CLASS (klass);
 	object_class->finalize = gcm_x11_screen_finalize;
 
-	/**
-	 * GcmX11Screen::changed:
-	 **/
 	signals[SIGNAL_CHANGED] =
 		g_signal_new ("changed",
 			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (GcmX11ScreenClass, changed),
 			      NULL, NULL, g_cclosure_marshal_VOID__VOID,
 			      G_TYPE_NONE, 0);
-	/**
-	 * GcmX11Screen::added:
-	 **/
 	signals[SIGNAL_ADDED] =
 		g_signal_new ("added",
 			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
 			      G_STRUCT_OFFSET (GcmX11ScreenClass, added),
 			      NULL, NULL, g_cclosure_marshal_VOID__OBJECT,
 			      G_TYPE_NONE, 1, GCM_TYPE_X11_OUTPUT);
-	/**
-	 * GcmX11Screen::removed:
-	 **/
 	signals[SIGNAL_REMOVED] =
 		g_signal_new ("removed",
 			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
@@ -930,9 +779,6 @@ gcm_x11_screen_class_init (GcmX11ScreenClass *klass)
 	g_type_class_add_private (klass, sizeof (GcmX11ScreenPrivate));
 }
 
-/**
- * gcm_x11_screen_init:
- **/
 static void
 gcm_x11_screen_init (GcmX11Screen *screen)
 {
@@ -940,9 +786,6 @@ gcm_x11_screen_init (GcmX11Screen *screen)
 	screen->priv->outputs = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
 }
 
-/**
- * gcm_x11_screen_finalize:
- **/
 static void
 gcm_x11_screen_finalize (GObject *object)
 {
@@ -955,11 +798,6 @@ gcm_x11_screen_finalize (GObject *object)
 	G_OBJECT_CLASS (gcm_x11_screen_parent_class)->finalize (object);
 }
 
-/**
- * gcm_x11_screen_new:
- *
- * Return value: a new #GcmX11Screen object.
- **/
 GcmX11Screen *
 gcm_x11_screen_new (void)
 {
