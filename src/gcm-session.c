@@ -1086,13 +1086,29 @@ out:
 		g_object_unref (profile);
 }
 
-/**
- * gcm_session_add_x11_output:
- **/
+static void
+gcm_session_create_device_cb (GObject *object,
+			      GAsyncResult *res,
+			      gpointer user_data)
+{
+	CdDevice *device;
+	GError *error = NULL;
+
+	device = cd_client_create_device_finish (CD_CLIENT (object),
+						 res,
+						 &error);
+	if (device == NULL) {
+		g_warning ("failed to create device: %s",
+			   error->message);
+		g_error_free (error);
+		return;
+	}
+	g_object_unref (device);
+}
+
 static void
 gcm_session_add_x11_output (GcmSessionPrivate *priv, GcmX11Output *output)
 {
-	CdDevice *device = NULL;
 	const gchar *model;
 	const gchar *serial;
 	const gchar *vendor;
@@ -1153,24 +1169,17 @@ gcm_session_add_x11_output (GcmSessionPrivate *priv, GcmX11Output *output)
 	g_hash_table_insert (device_props,
 			     (gpointer) CD_DEVICE_METADATA_XRANDR_NAME,
 			     (gpointer) gcm_x11_output_get_name (output));
-	device = cd_client_create_device_sync (priv->client,
-					       device_id,
-					       CD_OBJECT_SCOPE_TEMP,
-					       device_props,
-					       NULL,
-					       &error);
-	if (device == NULL) {
-		g_warning ("failed to create device: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
+	cd_client_create_device (priv->client,
+				 device_id,
+				 CD_OBJECT_SCOPE_TEMP,
+				 device_props,
+				 NULL,
+				 gcm_session_create_device_cb,
+				 priv);
 out:
 	g_free (device_id);
 	if (device_props != NULL)
 		g_hash_table_unref (device_props);
-	if (device != NULL)
-		g_object_unref (device);
 	if (edid != NULL)
 		g_object_unref (edid);
 }
@@ -1214,6 +1223,31 @@ out:
 	return;
 }
 
+static void
+gcm_session_get_devices_cb (GObject *object, GAsyncResult *res, gpointer user_data)
+{
+	CdDevice *device;
+	GError *error = NULL;
+	GPtrArray *array;
+	guint i;
+	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
+
+	array = cd_client_get_devices_sync (CD_CLIENT (object), NULL, &error);
+	if (array == NULL) {
+		g_warning ("failed to get devices: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+	for (i=0; i<array->len; i++) {
+		device = g_ptr_array_index (array, i);
+		gcm_session_device_assign (priv, device);
+	}
+out:
+	if (array != NULL)
+		g_ptr_array_unref (array);
+}
+
 /**
  * gcm_session_client_connect_cb:
  **/
@@ -1224,10 +1258,8 @@ gcm_session_client_connect_cb (GObject *source_object,
 {
 	gboolean ret;
 	GError *error = NULL;
-	GPtrArray *array = NULL;
 	GPtrArray *outputs = NULL;
 	guint i;
-	CdDevice *device;
 	GcmX11Output *output;
 	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
 
@@ -1272,20 +1304,11 @@ gcm_session_client_connect_cb (GObject *source_object,
 	gcm_profile_store_search (priv->profile_store);
 
 	/* set for each device that already exist */
-	array = cd_client_get_devices_sync (priv->client, NULL, &error);
-	if (array == NULL) {
-		g_warning ("failed to get devices: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-	for (i=0; i<array->len; i++) {
-		device = g_ptr_array_index (array, i);
-		gcm_session_device_assign (priv, device);
-	}
+	cd_client_get_devices (priv->client, NULL,
+			       gcm_session_get_devices_cb,
+			       priv);
 out:
-	if (array != NULL)
-		g_ptr_array_unref (array);
+	return;
 }
 
 /**
