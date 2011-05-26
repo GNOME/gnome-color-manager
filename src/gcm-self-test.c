@@ -29,7 +29,6 @@
 #include "gcm-brightness.h"
 #include "gcm-calibrate-dialog.h"
 #include "gcm-calibrate.h"
-#include "gcm-calibrate-manual.h"
 #include "gcm-calibrate-native.h"
 #include "gcm-cie-widget.h"
 #include "gcm-clut.h"
@@ -764,29 +763,6 @@ gcm_test_calibrate_native_func (void)
 }
 
 static void
-gcm_test_calibrate_manual_func (void)
-{
-	GcmCalibrate *calibrate;
-	gboolean ret;
-	GError *error = NULL;
-
-	calibrate = gcm_calibrate_manual_new ();
-	g_assert (calibrate != NULL);
-
-	/* set to avoid a critical warning */
-	g_object_set (calibrate,
-		      "output-name", "lvds1",
-		      NULL);
-
-	/* calibrate display manually */
-	ret = gcm_calibrate_display (calibrate, NULL, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	g_object_unref (calibrate);
-}
-
-static void
 gcm_test_cie_widget_func (void)
 {
 	GtkWidget *widget;
@@ -1155,7 +1131,6 @@ main (int argc, char **argv)
 	}
 	if (g_test_slow ()) {
 		g_test_add_func ("/color/print", gcm_test_print_func);
-		g_test_add_func ("/color/calibrate_manual", gcm_test_calibrate_manual_func);
 	}
 
 	return g_test_run ();

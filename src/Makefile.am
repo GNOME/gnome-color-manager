@@ -93,8 +93,6 @@ gcm_prefs_SOURCES =					\
 	gcm-calibrate-dialog.c				\
 	gcm-calibrate-dialog.h				\
 	gcm-calibrate.h					\
-	gcm-calibrate-manual.c				\
-	gcm-calibrate-manual.h				\
 	gcm-calibrate-native.c				\
 	gcm-calibrate-native.h				\
 	gcm-cell-renderer-profile-text.c		\
