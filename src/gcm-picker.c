@@ -32,14 +32,12 @@
 #include <lcms2.h>
 #include <colord.h>
 
-#include "gcm-calibrate-argyll.h"
 #include "gcm-utils.h"
 #include "gcm-debug.h"
 
 static CdClient *client = NULL;
 static const gchar *profile_filename = NULL;
 static gboolean done_measure = FALSE;
-static GcmCalibrate *calibrate = NULL;
 static CdColorXYZ last_sample;
 static CdSensor *sensor = NULL;
 static gdouble last_ambient = -1.0f;
@@ -254,7 +252,6 @@ gcm_picker_got_results (void)
 static void
 gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 {
-	GtkWindow *window;
 	gboolean ret;
 	GError *error = NULL;
 
@@ -262,92 +259,56 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "image_preview"));
 	gtk_image_set_from_file (GTK_IMAGE (widget), DATADIR "/icons/hicolor/64x64/apps/gnome-color-manager.png");
 
-	if (cd_sensor_get_native (sensor)) {
-
-		/* lock */
-		ret = cd_sensor_lock_sync (sensor,
-					   NULL,
-					   &error);
-		if (!ret) {
-			g_warning ("failed to lock: %s", error->message);
-			g_error_free (error);
-			goto out;
-		}
-
-		/* get color */
-		ret = cd_sensor_get_sample_sync (sensor,
-						 CD_SENSOR_CAP_LCD,
-						 &last_sample,
-						 NULL,
-						 NULL,
-						 &error);
-		if (!ret) {
-			g_warning ("failed to get ambient: %s", error->message);
-			g_error_free (error);
-			goto out;
-		}
-
-		/* get ambient */
-		ret = cd_sensor_get_sample_sync (sensor,
-						 CD_SENSOR_CAP_AMBIENT,
-						 NULL,
-						 &last_ambient,
-						 NULL,
-						 &error);
-		if (!ret) {
-			g_warning ("failed to get ambient: %s", error->message);
-			g_error_free (error);
-			goto out;
-		}
-
-		/* unlock */
-		ret = cd_sensor_unlock_sync (sensor,
-					     NULL,
-					     &error);
-		if (!ret) {
-			g_warning ("failed to lock: %s", error->message);
-			g_error_free (error);
-			goto out;
-		}
-
-		gcm_picker_refresh_results ();
-		gcm_picker_got_results ();
-	} else {
-		/* get value */
-		window = GTK_WINDOW (gtk_builder_get_object (builder, "dialog_picker"));
-		ret = gcm_calibrate_spotread (calibrate, window, &error);
-		if (!ret) {
-			g_warning ("failed to get spot color: %s", error->message);
-			g_error_free (error);
-			goto out;
-		}
+	/* lock */
+	ret = cd_sensor_lock_sync (sensor,
+				   NULL,
+				   &error);
+	if (!ret) {
+		g_warning ("failed to lock: %s", error->message);
+		g_error_free (error);
+		goto out;
 	}
-out:
-	return;
-}
 
-/**
- * gcm_picker_xyz_notify_cb:
- **/
-static void
-gcm_picker_xyz_notify_cb (GcmCalibrate *calibrate_,
-			  GParamSpec *pspec,
-			  gpointer user_data)
-{
-	CdColorXYZ *xyz;
+	/* get color */
+	ret = cd_sensor_get_sample_sync (sensor,
+					 CD_SENSOR_CAP_LCD,
+					 &last_sample,
+					 NULL,
+					 NULL,
+					 &error);
+	if (!ret) {
+		g_warning ("failed to get ambient: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
-	/* get new value */
-	g_object_get (calibrate, "xyz", &xyz, NULL);
+	/* get ambient */
+	ret = cd_sensor_get_sample_sync (sensor,
+					 CD_SENSOR_CAP_AMBIENT,
+					 NULL,
+					 &last_ambient,
+					 NULL,
+					 &error);
+	if (!ret) {
+		g_warning ("failed to get ambient: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
-	g_object_get (xyz,
-		      "cie-x", &last_sample.X,
-		      "cie-y", &last_sample.Y,
-		      "cie-z", &last_sample.Z,
-		      NULL);
+	/* unlock */
+	ret = cd_sensor_unlock_sync (sensor,
+				     NULL,
+				     &error);
+	if (!ret) {
+		g_warning ("failed to lock: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	gcm_picker_refresh_results ();
 	gcm_picker_got_results ();
-	cd_color_xyz_free (xyz);
+out:
+	return;
 }
 
 /**
@@ -405,14 +366,12 @@ gcm_picker_sensor_client_setup_ui (void)
 	}
 	sensor = g_object_ref (g_ptr_array_index (sensors, 0));
 
-#ifndef HAVE_VTE
 	if (!cd_sensor_get_native (sensor)) {
 		 /* TRANSLATORS: this is displayed if VTE support is not enabled */
 		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label),
-				     _("This application was compiled without VTE support."));
+				     _("The sensor has no native driver."));
 		goto out;
 	}
-#endif
 
 #if 0
 	/* no support */
@@ -717,11 +676,6 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), xid);
 	}
 
-	/* use argyll */
-	calibrate = GCM_CALIBRATE (gcm_calibrate_argyll_new ());
-	g_signal_connect (calibrate, "notify::xyz",
-			  G_CALLBACK (gcm_picker_xyz_notify_cb), NULL);
-
 	/* use an info bar if there is no device, or the wrong device */
 	info_bar_hardware = gtk_info_bar_new ();
 	info_bar_hardware_label = gtk_label_new (NULL);
@@ -826,8 +780,6 @@ main (int argc, char *argv[])
 	g_object_unref (application);
 	if (client != NULL)
 		g_object_unref (client);
-	if (calibrate != NULL)
-		g_object_unref (calibrate);
 	if (builder != NULL)
 		g_object_unref (builder);
 	return status;

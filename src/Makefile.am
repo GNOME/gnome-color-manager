@@ -181,14 +181,6 @@ gcm_viewer_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_picker_SOURCES =					\
-	gcm-brightness.c				\
-	gcm-brightness.h				\
-	gcm-calibrate-argyll.c				\
-	gcm-calibrate-argyll.h				\
-	gcm-calibrate.c					\
-	gcm-calibrate-dialog.c				\
-	gcm-calibrate-dialog.h				\
-	gcm-calibrate.h					\
 	gcm-picker.c
 
 gcm_picker_LDADD =					\
