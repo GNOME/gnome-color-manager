@@ -295,6 +295,7 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 		goto out;
 	}
 #endif
+
 	/* unlock */
 	ret = cd_sensor_unlock_sync (sensor,
 				     NULL,
