@@ -221,6 +221,7 @@ gcm_viewer_update_profile_list (GcmViewerPrivate *viewer)
 	CdProfile *profile;
 	guint i;
 	const gchar *filename = NULL;
+	gboolean ret;
 	gchar *sort = NULL;
 	GPtrArray *profile_array = NULL;
 	GError *error = NULL;
@@ -244,6 +245,15 @@ gcm_viewer_update_profile_list (GcmViewerPrivate *viewer)
 	/* update each list */
 	for (i=0; i<profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
+
+		/* connect to the profile */
+		ret = cd_profile_connect_sync (profile, NULL, &error);
+		if (!ret) {
+			g_warning ("failed to connect to profile: %s",
+				   error->message);
+			g_error_free (error);
+			goto out;
+		}
 
 		profile_kind = cd_profile_get_kind (profile);
 		icon_name = gcm_viewer_profile_kind_to_icon_name (profile_kind);
