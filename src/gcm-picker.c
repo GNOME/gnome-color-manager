@@ -534,6 +534,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 	gboolean has_profile = FALSE;
 	gboolean has_vcgt;
 	gchar *text = NULL;
+	gboolean ret;
 	GError *error = NULL;
 	GPtrArray *devices = NULL;
 	GPtrArray *profile_array = NULL;
@@ -555,6 +556,15 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 	/* update each list */
 	for (i=0; i<profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
+
+		/* connect to the profile */
+		ret = cd_profile_connect_sync (profile, NULL, &error);
+		if (!ret) {
+			g_warning ("failed to connect to profile: %s",
+				   error->message);
+			g_error_free (error);
+			goto out;
+		}
 
 		/* only for correct kind */
 		has_vcgt = cd_profile_get_has_vcgt (profile);
@@ -579,9 +589,28 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 						      &error);
 	for (i=0; i<devices->len; i++) {
 		device_tmp = g_ptr_array_index (devices, i);
+
+		/* connect to the device */
+		ret = cd_device_connect_sync (device_tmp, NULL, &error);
+		if (!ret) {
+			g_warning ("failed to connect to device: %s",
+				   error->message);
+			g_error_free (error);
+			goto out;
+		}
+
 		profile = cd_device_get_default_profile (device_tmp);
 		if (profile == NULL)
 			continue;
+
+		/* connect to the profile */
+		ret = cd_profile_connect_sync (profile, NULL, &error);
+		if (!ret) {
+			g_warning ("failed to connect to profile: %s",
+				   error->message);
+			g_error_free (error);
+			goto out;
+		}
 
 		/* add device profile */
 		gcm_prefs_combobox_add_profile (widget, profile, NULL);
