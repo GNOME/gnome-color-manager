@@ -253,6 +253,7 @@ static void
 gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 {
 	gboolean ret;
+	CdColorXYZ *tmp = NULL;
 	GError *error = NULL;
 
 	/* reset the image */
@@ -270,18 +271,17 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 	}
 
 	/* get color */
-	ret = cd_sensor_get_sample_sync (sensor,
+	tmp = cd_sensor_get_sample_sync (sensor,
 					 CD_SENSOR_CAP_LCD,
-					 &last_sample,
-					 NULL,
 					 NULL,
 					 &error);
-	if (!ret) {
-		g_warning ("failed to get ambient: %s", error->message);
+	if (tmp == NULL) {
+		g_warning ("failed to get sample: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
-
+	cd_color_copy_xyz (tmp, &last_sample);
+#if 0
 	/* get ambient */
 	ret = cd_sensor_get_sample_sync (sensor,
 					 CD_SENSOR_CAP_AMBIENT,
@@ -294,7 +294,7 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 		g_error_free (error);
 		goto out;
 	}
-
+#endif
 	/* unlock */
 	ret = cd_sensor_unlock_sync (sensor,
 				     NULL,
@@ -308,6 +308,8 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 	gcm_picker_refresh_results ();
 	gcm_picker_got_results ();
 out:
+	if (tmp != NULL)
+		cd_color_xyz_free (tmp);
 	return;
 }
 

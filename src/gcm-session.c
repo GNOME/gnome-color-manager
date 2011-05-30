@@ -100,13 +100,22 @@ gcm_session_profile_added_notify_cb (CdClient *client,
 				     CdProfile *profile,
 				     GcmSessionPrivate *priv)
 {
-	GHashTable *metadata;
+	GHashTable *metadata = NULL;
 	const gchar *edid_md5;
 	GcmX11Output *output = NULL;
 	GError *error = NULL;
 	CdDevice *device = NULL;
 	gchar *device_id = NULL;
 	gboolean ret;
+
+	/* get properties */
+	ret = cd_profile_connect_sync (profile, NULL, &error);
+	if (!ret) {
+		g_warning ("cannot connect to profile: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	/* does the profile have EDID metadata? */
 	metadata = cd_profile_get_metadata (profile);
@@ -135,6 +144,15 @@ gcm_session_profile_added_notify_cb (CdClient *client,
 	if (device == NULL) {
 		g_warning ("not found device %s which should have been added: %s",
 			   device_id,
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* get properties */
+	ret = cd_device_connect_sync (device, NULL, &error);
+	if (!ret) {
+		g_warning ("cannot connect to device: %s",
 			   error->message);
 		g_error_free (error);
 		goto out;
@@ -386,6 +404,15 @@ gcm_session_device_assign (GcmSessionPrivate *priv, CdDevice *device)
 	const gchar *qualifier_default[] = { "*", NULL};
 	const gchar *xrandr_id;
 
+	/* get properties */
+	ret = cd_device_connect_sync (device, NULL, &error);
+	if (!ret) {
+		g_warning ("failed to connect to device: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
 	/* check we care */
 	kind = cd_device_get_kind (device);
 	if (kind != CD_DEVICE_KIND_DISPLAY)
@@ -481,6 +508,15 @@ gcm_session_device_assign (GcmSessionPrivate *priv, CdDevice *device)
 		goto out;
 	}
 
+	/* get properties */
+	ret = cd_profile_connect_sync (profile, NULL, &error);
+	if (!ret) {
+		g_warning ("failed to connect to profile: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
 	/* get the filename */
 	filename = cd_profile_get_filename (profile);
 	g_assert (filename != NULL);
@@ -560,7 +596,7 @@ gcm_session_device_changed_assign_cb (CdClient *client,
 				      CdDevice *device,
 				      GcmSessionPrivate *priv)
 {
-	g_debug ("%s changed", cd_device_get_id (device));
+	g_debug ("%s changed", cd_device_get_object_path (device));
 	gcm_session_device_assign (priv, device);
 }
 
@@ -1041,11 +1077,16 @@ gcm_x11_screen_output_removed_cb (GcmX11Screen *screen_,
 {
 	gboolean ret;
 	GError *error = NULL;
+	CdDevice *device;
 
 	g_debug ("output %s removed",
 		 gcm_x11_output_get_name (output));
+	device = cd_client_find_device_sync (priv->client,
+					     gcm_x11_output_get_name (output),
+					     NULL,
+					     &error);
 	ret = cd_client_delete_device_sync (priv->client,
-					    gcm_x11_output_get_name (output),
+					    device,
 					    NULL,
 					    &error);
 	if (!ret) {
@@ -1055,7 +1096,7 @@ gcm_x11_screen_output_removed_cb (GcmX11Screen *screen_,
 		goto out;
 	}
 out:
-	return;
+	g_object_unref (device);
 }
 
 static void

@@ -58,9 +58,9 @@ gcm_list_store_refresh_profiles (GtkListStore *list_store)
 		profile = g_ptr_array_index (profiles, i);
 
 		/* find the profile relationship */
-		relation = cd_device_get_profile_relation (priv->device,
-							   profile,
-							   NULL, NULL);
+		relation = cd_device_get_profile_relation_sync (priv->device,
+								profile,
+								NULL, NULL);
 
 		gtk_list_store_append (list_store, &iter);
 		gtk_list_store_set (list_store, &iter,

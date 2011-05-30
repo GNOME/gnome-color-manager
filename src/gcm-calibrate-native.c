@@ -77,16 +77,12 @@ static void
 gcm_calibrate_native_sample_measure (CdSensor *sensor, GCancellable *cancellable, GcmColorSample *sample)
 {
 	GError *error = NULL;
-	gboolean ret;
 
-	ret = cd_sensor_get_sample_sync (sensor,
+	sample->result = cd_sensor_get_sample_sync (sensor,
 					 CD_SENSOR_CAP_LCD,
-					 sample->result,
-					 NULL,
 					 cancellable,
 					 &error);
 	g_assert_no_error (error);
-	g_assert (ret);
 }
 
 /**

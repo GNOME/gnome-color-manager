@@ -1229,7 +1229,7 @@ gcm_prefs_delete_cb (GtkWidget *widget, GcmPrefsPriv *prefs)
 
 	/* try to delete device */
 	ret = cd_client_delete_device_sync (prefs->client,
-					    cd_device_get_id (prefs->current_device),
+					    prefs->current_device,
 					    prefs->cancellable,
 					    &error);
 	if (!ret) {
