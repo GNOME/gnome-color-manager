@@ -7,7 +7,7 @@ Release:   0.#BUILD#%{?alphatag}%{?dist}
 License:   GPLv2+
 Group:     Applications/System
 URL:       http://projects.gnome.org/gnome-color-manager/
-Source0:   http://download.gnome.org/sources/gnome-color-manager/3.0/%{name}-%{version}.tar.gz
+Source0:   http://download.gnome.org/sources/gnome-color-manager/3.0/%{name}-%{version}.tar.xz
 
 Requires:  color-filesystem >= 1-7
 Requires:  gnome-icon-theme
@@ -108,9 +108,6 @@ gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
 %{_datadir}/applications/gcm-*.desktop
 %{_sysconfdir}/xdg/autostart/*.desktop
 %{_datadir}/dbus-1/services/org.gnome.ColorManager.service
-%{_datadir}/glib-2.0/schemas/org.gnome.color-manager.gschema.xml
-%{_datadir}/glib-2.0/schemas/org.gnome.settings-daemon.plugins.color.gschema.xml
-%{_datadir}/GConf/gsettings/org.gnome.color-manager.gschema.migrate
 %{_datadir}/dbus-1/interfaces/org.gnome.ColorManager.xml
 
 %changelog
