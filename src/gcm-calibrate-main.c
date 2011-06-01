@@ -504,8 +504,7 @@ gcm_calib_add_page_para (GtkWidget *vbox, const gchar *text)
 			  NULL);
 	gtk_label_set_markup (GTK_LABEL (label), text);
 	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
-//	gtk_label_set_max_width_chars (GTK_LABEL (label), 120);
-//	gtk_label_set_width_chars (GTK_LABEL (label), 120);
+	gtk_label_set_width_chars (GTK_LABEL (label), 40);
 	gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.0f);
 
 	/* make left aligned */
@@ -1625,7 +1624,6 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *calib)
 
 	/* show main UI */
 	calib->main_window = GTK_WINDOW (gtk_assistant_new ());
-	gtk_window_set_default_size (calib->main_window, 640, 480);
 	gtk_window_set_resizable (calib->main_window, TRUE);
 	gtk_window_set_title (calib->main_window, "");
 	gtk_container_set_border_width (GTK_CONTAINER (calib->main_window), 12);
