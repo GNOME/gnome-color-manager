@@ -32,8 +32,6 @@
 #include "gcm-cie-widget.h"
 #include "gcm-clut.h"
 #include "gcm-debug.h"
-#include "gcm-dmi.h"
-#include "gcm-edid.h"
 #include "gcm-exif.h"
 #include "gcm-gamma-widget.h"
 #include "gcm-hull.h"
@@ -42,123 +40,8 @@
 #include "gcm-print.h"
 #include "gcm-profile.h"
 #include "gcm-sample-window.h"
-#include "gcm-tables.h"
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
-#include "gcm-x11-output.h"
-#include "gcm-x11-screen.h"
-
-#define TEST_MAIN_OUTPUT	"LVDS1"
-
-typedef struct {
-	const gchar *monitor_name;
-	const gchar *vendor_name;
-	const gchar *serial_number;
-	const gchar *eisa_id;
-	const gchar *checksum;
-	const gchar *pnp_id;
-	guint width;
-	guint height;
-	gfloat gamma;
-} GcmEdidTestData;
-
-static void
-gcm_test_edid_test_parse_edid_file (GcmEdid *edid, const gchar *filename, GcmEdidTestData *test_data)
-{
-	gchar *data;
-	gfloat mygamma;
-	gboolean ret;
-	GError *error = NULL;
-	gsize length = 0;
-
-	ret = g_file_get_contents (filename, &data, &length, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	ret = gcm_edid_parse (edid, (const guint8 *) data, length, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	g_assert_cmpstr (gcm_edid_get_monitor_name (edid), ==, test_data->monitor_name);
-	g_assert_cmpstr (gcm_edid_get_vendor_name (edid), ==, test_data->vendor_name);
-	g_assert_cmpstr (gcm_edid_get_serial_number (edid), ==, test_data->serial_number);
-	g_assert_cmpstr (gcm_edid_get_eisa_id (edid), ==, test_data->eisa_id);
-	g_assert_cmpstr (gcm_edid_get_checksum (edid), ==, test_data->checksum);
-	g_assert_cmpstr (gcm_edid_get_pnp_id (edid), ==, test_data->pnp_id);
-	g_assert_cmpint (gcm_edid_get_height (edid), ==, test_data->height);
-	g_assert_cmpint (gcm_edid_get_width (edid), ==, test_data->width);
-	mygamma = gcm_edid_get_gamma (edid);
-	g_assert_cmpfloat (mygamma, >=, test_data->gamma - 0.01);
-	g_assert_cmpfloat (mygamma, <, test_data->gamma + 0.01);
-
-	g_free (data);
-}
-
-static void
-gcm_test_edid_func (void)
-{
-	GcmEdid *edid;
-	GcmEdidTestData test_data;
-
-	edid = gcm_edid_new ();
-	g_assert (edid != NULL);
-
-	/* LG 21" LCD panel */
-	test_data.monitor_name = "L225W";
-	test_data.vendor_name = "Goldstar Company Ltd";
-	test_data.serial_number = "34398";
-	test_data.eisa_id = NULL;
-	test_data.checksum = "80b7dda4c74b06366abb8fa23e71d645";
-	test_data.pnp_id = "GSM";
-	test_data.height = 30;
-	test_data.width = 47;
-	test_data.gamma = 2.2f;
-	gcm_test_edid_test_parse_edid_file (edid, TESTDATADIR "/LG-L225W-External.bin", &test_data);
-
-	/* Lenovo T61 Intel Panel */
-	test_data.monitor_name = NULL;
-	test_data.vendor_name = "IBM France";
-	test_data.serial_number = NULL;
-	test_data.eisa_id = "LTN154P2-L05";
-	test_data.checksum = "c585d9e80adc65c54f0a52597e850f83";
-	test_data.pnp_id = "IBM";
-	test_data.height = 21;
-	test_data.width = 33;
-	test_data.gamma = 2.2f;
-	gcm_test_edid_test_parse_edid_file (edid, TESTDATADIR "/Lenovo-T61-Internal.bin", &test_data);
-
-	g_object_unref (edid);
-}
-
-static void
-gcm_test_tables_func (void)
-{
-	GcmTables *tables;
-	GError *error = NULL;
-	gchar *vendor;
-
-	tables = gcm_tables_new ();
-	g_assert (tables != NULL);
-
-	vendor = gcm_tables_get_pnp_id (tables, "IBM", &error);
-	g_assert_no_error (error);
-	g_assert (vendor != NULL);
-	g_assert_cmpstr (vendor, ==, "IBM France");
-	g_free (vendor);
-
-	vendor = gcm_tables_get_pnp_id (tables, "MIL", &error);
-	g_assert_no_error (error);
-	g_assert (vendor != NULL);
-	g_assert_cmpstr (vendor, ==, "Marconi Instruments Ltd");
-	g_free (vendor);
-
-	vendor = gcm_tables_get_pnp_id (tables, "XXX", &error);
-	g_assert_error (error, 1, 0);
-	g_assert_cmpstr (vendor, ==, NULL);
-	g_free (vendor);
-
-	g_object_unref (tables);
-}
 
 static void
 gcm_test_hull_func (void)
@@ -372,8 +255,6 @@ gcm_test_clut_func (void)
 	/* set some initial properties */
 	g_object_set (clut,
 		      "size", 3,
-		      "contrast", 100.0f,
-		      "brightness", 0.0f,
 		      NULL);
 
 	array = gcm_clut_get_array (clut);
@@ -396,68 +277,7 @@ gcm_test_clut_func (void)
 
 	g_ptr_array_unref (array);
 
-	/* set some initial properties */
-	g_object_set (clut,
-		      "contrast", 99.0f,
-		      "brightness", 0.0f,
-		      NULL);
-
-	array = gcm_clut_get_array (clut);
-	g_assert_cmpint (array->len, ==, 3);
-
-	data = g_ptr_array_index (array, 0);
-	g_assert_cmpint (data->red, ==, 0);
-	g_assert_cmpint (data->green, ==, 0);
-	g_assert_cmpint (data->blue, ==, 0);
-	data = g_ptr_array_index (array, 1);
-	g_assert_cmpint (data->red, ==, 32439);
-	g_assert_cmpint (data->green, ==, 32439);
-	g_assert_cmpint (data->blue, ==, 32439);
-	data = g_ptr_array_index (array, 2);
-	g_assert_cmpint (data->red, ==, 64879);
-	g_assert_cmpint (data->green, ==, 64879);
-	g_assert_cmpint (data->blue, ==, 64879);
-
-	g_ptr_array_unref (array);
-
-	/* set some initial properties */
-	g_object_set (clut,
-		      "contrast", 100.0f,
-		      "brightness", 1.0f,
-		      NULL);
-
-	array = gcm_clut_get_array (clut);
-	g_assert_cmpint (array->len, ==, 3);
-
-	data = g_ptr_array_index (array, 0);
-	g_assert_cmpint (data->red, ==, 655);
-	g_assert_cmpint (data->green, ==, 655);
-	g_assert_cmpint (data->blue, ==, 655);
-	data = g_ptr_array_index (array, 1);
-	g_assert_cmpint (data->red, ==, 33094);
-	g_assert_cmpint (data->green, ==, 33094);
-	g_assert_cmpint (data->blue, ==, 33094);
-	data = g_ptr_array_index (array, 2);
-	g_assert_cmpint (data->red, ==, 65535);
-	g_assert_cmpint (data->green, ==, 65535);
-	g_assert_cmpint (data->blue, ==, 65535);
-
-	g_ptr_array_unref (array);
-
 	g_object_unref (clut);
-}
-
-static void
-gcm_test_dmi_func (void)
-{
-	GcmDmi *dmi;
-
-	dmi = gcm_dmi_new ();
-	g_assert (dmi != NULL);
-	g_assert (gcm_dmi_get_name (dmi) != NULL);
-//	g_assert (gcm_dmi_get_version (dmi) != NULL);
-	g_assert (gcm_dmi_get_vendor (dmi) != NULL);
-	g_object_unref (dmi);
 }
 
 static void
@@ -557,84 +377,11 @@ gcm_test_image_func (void)
 	gtk_widget_destroy (dialog);
 }
 
-static void
-gcm_test_x11_func (void)
-{
-	GcmX11Screen *screen;
-	GcmX11Output *output;
-	guint x, y;
-	guint width, height;
-	GError *error = NULL;
-	gboolean ret;
-
-	/* new object */
-	screen = gcm_x11_screen_new ();
-	ret = gcm_x11_screen_assign (screen, NULL, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* get object */
-	output = gcm_x11_screen_get_output_by_name (screen, TEST_MAIN_OUTPUT, &error);
-	g_assert_no_error (error);
-	g_assert (output != NULL);
-
-	/* check parameters */
-	gcm_x11_output_get_position (output, &x, &y);
-//	g_assert_cmpint (x, ==, 0);
-//	g_assert_cmpint (y, ==, 0);
-	gcm_x11_output_get_size (output, &width, &height);
-	g_assert_cmpint (width, >, 0);
-	g_assert_cmpint (height, >, 0);
-	g_assert (gcm_x11_output_get_connected (output));
-
-	g_object_unref (output);
-	g_object_unref (screen);
-}
-
 static gboolean
 gcm_test_sample_window_loop_cb (GMainLoop *loop)
 {
 	g_main_loop_quit (loop);
 	return FALSE;
-}
-
-static void
-gcm_test_sample_window_move_window (GtkWindow *window, const gchar *output_name)
-{
-	GcmX11Screen *screen;
-	GcmX11Output *output = NULL;
-	guint x, y;
-	guint width, height;
-	gint window_width, window_height;
-	GError *error = NULL;
-	gboolean ret;
-
-	/* get new screen */
-	screen = gcm_x11_screen_new ();
-	ret = gcm_x11_screen_assign (screen, NULL, &error);
-	if (!ret) {
-		g_warning ("failed to assign screen: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* get output */
-	output = gcm_x11_screen_get_output_by_name (screen, output_name, &error);
-	if (output == NULL) {
-		g_warning ("failed to get output: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* center the window on this output */
-	gcm_x11_output_get_position (output, &x, &y);
-	gcm_x11_output_get_size (output, &width, &height);
-	gtk_window_get_size (window, &window_width, &window_height);
-	gtk_window_move (window, x + ((width - window_width) / 2), y + ((height - window_height) / 2));
-out:
-	if (output != NULL)
-		g_object_unref (output);
-	g_object_unref (screen);
 }
 
 static void
@@ -653,7 +400,6 @@ gcm_test_sample_window_func (void)
 	gcm_sample_window_set_percentage (GCM_SAMPLE_WINDOW (window), GCM_SAMPLE_WINDOW_PERCENTAGE_PULSE);
 
 	/* move to the center of device lvds1 */
-	gcm_test_sample_window_move_window (window, TEST_MAIN_OUTPUT);
 	gtk_window_present (window);
 
 	loop = g_main_loop_new (NULL, FALSE);
@@ -1039,12 +785,8 @@ main (int argc, char **argv)
 	g_test_add_func ("/color/exif", gcm_test_exif_func);
 	g_test_add_func ("/color/utils", gcm_test_utils_func);
 	g_test_add_func ("/color/hull", gcm_test_hull_func);
-	g_test_add_func ("/color/edid", gcm_test_edid_func);
-	g_test_add_func ("/color/tables", gcm_test_tables_func);
 	g_test_add_func ("/color/profile", gcm_test_profile_func);
 	g_test_add_func ("/color/clut", gcm_test_clut_func);
-	g_test_add_func ("/color/dmi", gcm_test_dmi_func);
-	g_test_add_func ("/color/x11", gcm_test_x11_func);
 	g_test_add_func ("/color/sample-window", gcm_test_sample_window_func);
 	if (g_test_thorough ()) {
 		g_test_add_func ("/color/brightness", gcm_test_brightness_func);

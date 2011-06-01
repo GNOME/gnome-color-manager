@@ -36,7 +36,6 @@
 
 #include "gcm-calibrate-argyll.h"
 #include "gcm-utils.h"
-#include "gcm-x11-screen.h"
 #include "gcm-print.h"
 
 #define FIXED_ARGYLL
@@ -66,7 +65,6 @@ struct _GcmCalibrateArgyllPrivate
 	GtkWidget			*terminal;
 	pid_t				 child_pid;
 	GtkResponseType			 response;
-	GcmX11Screen			*screen;
 	glong				 vte_previous_row;
 	glong				 vte_previous_col;
 	gboolean			 already_on_window;
@@ -402,7 +400,6 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	gchar kind;
 	gchar *command = NULL;
 	gchar **argv = NULL;
-	GcmX11Output *output;
 	GPtrArray *array = NULL;
 	gchar *basename = NULL;
 	const gchar *output_name;
@@ -425,13 +422,6 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 						   CD_DEVICE_METADATA_XRANDR_NAME);
 	display = gcm_calibrate_argyll_get_display (output_name, error);
 	if (display == G_MAXUINT) {
-		ret = FALSE;
-		goto out;
-	}
-
-	/* get the device */
-	output = gcm_x11_screen_get_output_by_name (priv->screen, output_name, error);
-	if (output == NULL) {
 		ret = FALSE;
 		goto out;
 	}
@@ -2738,10 +2728,6 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 	g_signal_connect (calibrate_argyll->priv->print, "status-changed",
 			  G_CALLBACK (gcm_calibrate_argyll_status_changed_cb), calibrate_argyll);
 
-	/* get screen */
-	calibrate_argyll->priv->screen = gcm_x11_screen_new ();
-	gcm_x11_screen_assign (calibrate_argyll->priv->screen, NULL, NULL);
-
 	/* add vte widget */
 #ifdef HAVE_VTE
 	calibrate_argyll->priv->terminal = vte_terminal_new ();
@@ -2785,7 +2771,6 @@ gcm_calibrate_argyll_finalize (GObject *object)
 		g_source_remove (priv->keypress_id);
 
 	g_main_loop_unref (priv->loop);
-	g_object_unref (priv->screen);
 	g_object_unref (priv->print);
 
 	G_OBJECT_CLASS (gcm_calibrate_argyll_parent_class)->finalize (object);

@@ -27,8 +27,6 @@
 
 #include "gcm-utils.h"
 #include "gcm-profile.h"
-#include "gcm-x11-output.h"
-#include "gcm-x11-screen.h"
 #include "gcm-debug.h"
 
 /**
@@ -64,6 +62,108 @@ out:
 	return ret;
 }
 
+static gboolean
+gcm_inspect_get_screen_protocol_version (GdkWindow *gdk_window,
+					 guint *major,
+					 guint *minor,
+					 GError **error)
+{
+	gboolean ret;
+	gint length;
+	gint rc;
+	guchar *data_tmp = NULL;
+
+	/* get the value */
+	gdk_error_trap_push ();
+	ret = gdk_property_get (gdk_window,
+				gdk_atom_intern_static_string ("_ICC_PROFILE_IN_X_VERSION"),
+				gdk_atom_intern_static_string ("CARDINAL"),
+				0,
+				G_MAXLONG,
+				FALSE,
+				NULL,
+				NULL,
+				&length,
+				&data_tmp);
+	if (!ret) {
+		g_set_error_literal (error, 1, 0, "failed to get property");
+		goto out;
+	}
+	rc = gdk_error_trap_pop ();
+	if (rc != 0) {
+		ret = FALSE;
+		g_set_error (error, 1, 0, "failed to get atom: %i", rc);
+		goto out;
+	}
+
+	/* was nothing found */
+	if (length == 0) {
+		ret = FALSE;
+		g_set_error (error, 1, 0, "icc profile atom has not been set");
+		goto out;
+	}
+
+	/* set total */
+	*major = (guint) data_tmp[0] / 100;
+	*minor = (guint) data_tmp[0] % 100;
+
+	/* success */
+	ret = TRUE;
+out:
+	if (data_tmp != NULL)
+		g_free (data_tmp);
+	return ret;
+}
+
+static gboolean
+gcm_inspect_get_screen_profile_data (GdkWindow *gdk_window,
+				     guint8 **data,
+				     gsize *length,
+				     GError **error)
+{
+	gboolean ret;
+	gint rc;
+	gint length_tmp;
+
+	/* get the value */
+	gdk_error_trap_push ();
+	ret = gdk_property_get (gdk_window,
+				gdk_atom_intern_static_string ("_ICC_PROFILE"),
+				gdk_atom_intern_static_string ("CARDINAL"),
+				0,
+				G_MAXLONG,
+				FALSE,
+				NULL,
+				NULL,
+				&length_tmp,
+				(guchar **) data);
+	if (!ret) {
+		g_set_error_literal (error, 1, 0, "failed to get property");
+		goto out;
+	}
+	rc = gdk_error_trap_pop ();
+	if (rc != 0) {
+		ret = FALSE;
+		g_set_error (error, 1, 0, "failed to get icc profile atom: %i", rc);
+		goto out;
+	}
+
+	/* was nothing found */
+	if (length_tmp == 0) {
+		ret = FALSE;
+		g_set_error (error, 1, 0, "icc profile atom has not been set");
+		goto out;
+	}
+
+	/* proxy size */
+	*length = length_tmp;
+
+	/* success */
+	ret = TRUE;
+out:
+	return ret;
+}
+
 /**
  * gcm_inspect_show_x11_atoms:
  **/
@@ -72,23 +172,17 @@ gcm_inspect_show_x11_atoms (void)
 {
 	gboolean ret;
 	guint8 *data = NULL;
-	gsize length;
-	GcmX11Screen *screen = NULL;
+	gsize length = 0;
 	GError *error = NULL;
-	guint major;
-	guint minor;
+	guint major = -1;
+	guint minor = -1;
+	GdkWindow *gdk_window;
 
 	/* setup object to access X */
-	screen = gcm_x11_screen_new ();
-	ret = gcm_x11_screen_assign (screen, NULL, &error);
-	if (!ret) {
-		g_warning ("failed to get outputs: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
+	gdk_window = gdk_screen_get_root_window (gdk_screen_get_default ());
 
 	/* get profile from XServer */
-	ret = gcm_x11_screen_get_profile_data (screen, &data, &length, &error);
+	ret = gcm_inspect_get_screen_profile_data (gdk_window, &data, &length, &error);
 	if (!ret) {
 		g_warning ("failed to get XServer profile data: %s", error->message);
 		g_error_free (error);
@@ -100,7 +194,7 @@ gcm_inspect_show_x11_atoms (void)
 	}
 
 	/* get profile from XServer */
-	ret = gcm_x11_screen_get_protocol_version (screen, &major, &minor, &error);
+	ret = gcm_inspect_get_screen_protocol_version (gdk_window, &major, &minor, &error);
 	if (!ret) {
 		g_warning ("failed to get XServer protocol version: %s", error->message);
 		g_error_free (error);
@@ -110,10 +204,7 @@ gcm_inspect_show_x11_atoms (void)
 		/* TRANSLATORS: the root window of all the screens */
 		g_print ("%s %i.%i\n", _("Root window protocol version:"), major, minor);
 	}
-out:
 	g_free (data);
-	if (screen != NULL)
-		g_object_unref (screen);
 	return ret;
 }
 

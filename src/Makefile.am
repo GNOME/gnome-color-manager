@@ -35,10 +35,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-clut.h					\
 	gcm-debug.c					\
 	gcm-debug.h					\
-	gcm-dmi.c					\
-	gcm-dmi.h					\
-	gcm-edid.c					\
-	gcm-edid.h					\
 	gcm-exif.c					\
 	gcm-exif.h					\
 	gcm-image.c					\
@@ -49,16 +45,10 @@ libgcmshared_a_SOURCES =				\
 	gcm-profile.h					\
 	gcm-named-color.c				\
 	gcm-named-color.h				\
-	gcm-tables.c					\
-	gcm-tables.h					\
 	gcm-trc-widget.c				\
 	gcm-trc-widget.h				\
 	gcm-utils.c					\
-	gcm-utils.h					\
-	gcm-x11-output.c				\
-	gcm-x11-output.h				\
-	gcm-x11-screen.c				\
-	gcm-x11-screen.h
+	gcm-utils.h
 
 if HAVE_CLUTTER
 libgcmshared_a_SOURCES +=				\

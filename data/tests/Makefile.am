@@ -12,9 +12,7 @@ TEST_FILES =						\
 	image-widget-nonembed.png			\
 	image-widget-output.png				\
 	image-widget.png				\
-	trc-widget.png					\
-	Lenovo-T61-Internal.bin				\
-	LG-L225W-External.bin
+	trc-widget.png
 
 EXTRA_DIST =						\
 	$(TEST_FILES)
