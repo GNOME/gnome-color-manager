@@ -728,7 +728,6 @@ gcm_calib_setup_page_action (GcmCalibratePriv *calib)
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Action"));
 	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
-	gtk_assistant_commit (assistant);
 	g_ptr_array_add (calib->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
