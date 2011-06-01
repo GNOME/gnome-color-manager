@@ -1701,10 +1701,22 @@ gcm_calib_image_changed_cb (GcmCalibrate *calibrate,
 			    const gchar *filename,
 			    GcmCalibratePriv *calib)
 {
+	gchar *path;
+	GdkPixbuf *pixbuf;
+	GError *error;
+
 	if (filename != NULL) {
-		gtk_image_set_from_file (GTK_IMAGE (calib->action_image),
-					 filename);
-		gtk_widget_show (calib->action_image);
+		path = g_build_filename (GCM_DATA, "icons", filename, NULL);
+		pixbuf = gdk_pixbuf_new_from_file_at_size (path, 200, 400, &error);
+		if (pixbuf == NULL) {
+			g_warning ("failed to load image: %s", error->message);
+			g_error_free (error);
+			gtk_widget_hide (calib->action_image);
+		} else {
+			gtk_image_set_from_pixbuf (GTK_IMAGE (calib->action_image), pixbuf);
+			gtk_widget_show (calib->action_image);
+		}
+		g_free (path);
 	} else {
 		gtk_widget_hide (calib->action_image);
 	}
