@@ -615,6 +615,7 @@ gcm_session_get_profile_for_window (GcmSessionPrivate *priv,
 	GcmX11Output *output = NULL;
 	GdkWindow *window;
 	GError *error_local = NULL;
+	gboolean ret;
 
 	g_debug ("getting profile for %i", xid);
 
@@ -652,6 +653,11 @@ gcm_session_get_profile_for_window (GcmSessionPrivate *priv,
 		goto out;
 	}
 
+	/* get properties */
+	ret = cd_device_connect_sync (device, NULL, error);
+	if (!ret)
+		goto out;
+
 	/* get the default profile for the device */
 	profile = cd_device_get_default_profile (device);
 	if (filename == NULL) {
@@ -660,6 +666,11 @@ gcm_session_get_profile_for_window (GcmSessionPrivate *priv,
 			     device_id);
 		goto out;
 	}
+
+	/* get properties */
+	ret = cd_profile_connect_sync (profile, NULL, error);
+	if (!ret)
+		goto out;
 
 	/* get the filename */
 	filename = cd_profile_get_filename (profile);
