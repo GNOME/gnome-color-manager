@@ -1333,7 +1333,7 @@ gcm_calibrate_argyll_display (GcmCalibrate *calibrate, CdDevice *device, CdSenso
 	expander = gtk_expander_new (NULL);
 	gtk_container_add (GTK_CONTAINER (expander),
 			   calibrate_argyll->priv->terminal);
-	gtk_expander_set_expanded (GTK_EXPANDER (expander), TRUE);
+	gtk_expander_set_expanded (GTK_EXPANDER (expander), FALSE);
 
 	/* pack the expander in the content area */
 	vbox = gcm_calibrate_get_content_widget (GCM_CALIBRATE (calibrate_argyll));

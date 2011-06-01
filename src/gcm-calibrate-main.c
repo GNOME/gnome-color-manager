@@ -68,8 +68,8 @@ typedef struct {
 	GtkWidget	*action_title;
 	GtkWidget	*action_message;
 	GtkWidget	*action_image;
-	GtkWidget	*interaction_button;
-	GtkWidget	*abort_button;
+	gboolean	 has_pending_interaction;
+	gboolean	 started_calibration;
 	GcmCalibrateDisplayKind		 display_kind;
 	GcmCalibrateReferenceKind	 reference_kind;
 	GcmCalibratePrintKind		 print_kind;
@@ -123,6 +123,7 @@ gcm_calib_confirm_quit_cb (GtkDialog *dialog,
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 		return;
 	}
+	gcm_calibrate_interaction (calib->calibrate, GTK_RESPONSE_CANCEL);
 	g_application_release (G_APPLICATION (calib->application));
 }
 
@@ -330,6 +331,7 @@ gcm_calib_start_idle_cb (gpointer user_data)
 		      NULL);
 
 	/* actuall do the action */
+	calib->started_calibration = TRUE;
 	ret = gcm_calibrate_display (calib->calibrate,
 				     calib->device,
 				     calib->main_window,
@@ -407,6 +409,32 @@ out:
 	return FALSE;
 }
 
+static gint
+gcm_calib_assistant_page_forward_cb (gint current_page, gpointer user_data)
+{
+	GtkWidget *vbox;
+	GcmCalibratePriv *calib = (GcmCalibratePriv *) user_data;
+
+	/* shouldn't happen... */
+	if (calib->current_page != GCM_CALIBRATE_PAGE_ACTION)
+		return current_page + 1;
+
+	if (!calib->has_pending_interaction)
+		return current_page;
+
+	/* continue calibration */
+	gcm_calibrate_interaction (calib->calibrate, GTK_RESPONSE_OK);
+
+	/* no longer allow forward */
+	vbox = gcm_calib_get_vbox_for_page (calib,
+					    GCM_CALIBRATE_PAGE_ACTION);
+
+
+	gtk_assistant_set_page_complete (GTK_ASSISTANT (calib->main_window),
+					 vbox, FALSE);
+	return current_page;
+}
+
 /**
  * gcm_calib_assistant_prepare_cb:
  **/
@@ -427,17 +455,29 @@ gcm_calib_assistant_prepare_cb (GtkAssistant *assistant, GtkWidget *page_widget,
 		break;
 	case GCM_CALIBRATE_PAGE_ACTION:
 		g_debug ("lights! camera! action!");
-		g_idle_add (gcm_calib_start_idle_cb, calib);
+		if (!calib->started_calibration)
+			g_idle_add (gcm_calib_start_idle_cb, calib);
 		break;
 	default:
 		break;
 	}
 
+	/* forward on the action page just unsticks the calibration */
+	if (calib->current_page == GCM_CALIBRATE_PAGE_ACTION) {
+		gtk_assistant_set_forward_page_func (assistant,
+						     gcm_calib_assistant_page_forward_cb,
+						     calib,
+						     NULL);
+	} else {
+		gtk_assistant_set_forward_page_func (assistant,
+						     NULL, NULL, NULL);
+	}
+
 	/* use the default on each page */
 	switch (calib->current_page) {
 	case GCM_CALIBRATE_PAGE_INSTALL_ARGYLLCMS:
-	case GCM_CALIBRATE_PAGE_ACTION:
 	case GCM_CALIBRATE_PAGE_SENSOR:
+	case GCM_CALIBRATE_PAGE_ACTION:
 		break;
 	default:
 		gtk_assistant_set_page_complete (assistant, page_widget, TRUE);
@@ -654,22 +694,6 @@ gcm_calib_setup_page_summary (GcmCalibratePriv *calib)
 	gtk_widget_show_all (vbox);
 }
 
-static void
-gcm_calib_interaction_continue_cb (GtkButton *button, GcmCalibratePriv *calib)
-{
-	gcm_calibrate_interaction (calib->calibrate, GTK_RESPONSE_OK);
-	gtk_widget_hide (calib->interaction_button);
-	gtk_widget_hide (calib->abort_button);
-}
-
-static void
-gcm_calib_interaction_abort_cb (GtkButton *button, GcmCalibratePriv *calib)
-{
-	gcm_calibrate_interaction (calib->calibrate, GTK_RESPONSE_CANCEL);
-	gtk_widget_hide (calib->interaction_button);
-	gtk_widget_hide (calib->abort_button);
-}
-
 /**
  * gcm_calib_setup_page_action:
  **/
@@ -680,7 +704,6 @@ gcm_calib_setup_page_action (GcmCalibratePriv *calib)
 	GtkWidget *content;
 	GList *list;
 	GList *list2;
-	GtkWidget *hbox;
 	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
 
 	/* TRANSLATORS: this is the page title */
@@ -702,29 +725,14 @@ gcm_calib_setup_page_action (GcmCalibratePriv *calib)
 	/* add image for success */
 	calib->action_image = gtk_image_new ();
 	gtk_image_set_from_icon_name (GTK_IMAGE (calib->action_image), "face-frown", GTK_ICON_SIZE_DIALOG);
-	gtk_box_pack_start (GTK_BOX (vbox), calib->action_image, FALSE, FALSE, 0);
-
-	/* add button for interaction */
-	hbox = gtk_hbox_new (FALSE, 6);
-	calib->interaction_button = gtk_button_new_with_label ("Hello dave");
-	g_signal_connect (calib->interaction_button, "clicked",
-			  G_CALLBACK (gcm_calib_interaction_continue_cb), calib);
-	gtk_box_pack_start (GTK_BOX (hbox), calib->interaction_button, FALSE, FALSE, 0);
-
-	/* add button for interaction */
-	calib->abort_button = gtk_button_new_with_label ("Abort");
-	g_signal_connect (calib->abort_button, "clicked",
-			  G_CALLBACK (gcm_calib_interaction_abort_cb), calib);
-	gtk_box_pack_start (GTK_BOX (hbox), calib->abort_button, FALSE, FALSE, 0);
-
-	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
+	gtk_box_pack_start (GTK_BOX (content), calib->action_image, FALSE, FALSE, 0);
 
 	/* add content widget */
-	gcm_calibrate_set_content_widget (calib->calibrate, content);
+	gcm_calibrate_set_content_widget (calib->calibrate, vbox);
 
 	/* add to assistant */
 	gtk_assistant_append_page (assistant, vbox);
-	gtk_assistant_set_page_type (assistant, vbox, GTK_ASSISTANT_PAGE_PROGRESS);
+	gtk_assistant_set_page_type (assistant, vbox, GTK_ASSISTANT_PAGE_CONTENT);
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Action"));
 	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
@@ -736,8 +744,6 @@ gcm_calib_setup_page_action (GcmCalibratePriv *calib)
 	/* show page */
 	gtk_widget_show_all (vbox);
 	gtk_widget_hide (calib->action_image);
-	gtk_widget_hide (calib->interaction_button);
-	gtk_widget_hide (calib->abort_button);
 }
 
 /**
@@ -1726,15 +1732,12 @@ gcm_calib_interaction_required_cb (GcmCalibrate *calibrate,
 				   const gchar *button_text,
 				   GcmCalibratePriv *calib)
 {
-	if (button_text != NULL) {
-		gtk_button_set_label (GTK_BUTTON (calib->interaction_button),
-				      button_text);
-		gtk_widget_show (calib->interaction_button);
-		gtk_widget_show (calib->abort_button);
-	} else {
-		gtk_widget_hide (calib->interaction_button);
-		gtk_widget_hide (calib->abort_button);
-	}
+	GtkWidget *vbox;
+	vbox = gcm_calib_get_vbox_for_page (calib,
+					    GCM_CALIBRATE_PAGE_ACTION);
+	gtk_assistant_set_page_complete (GTK_ASSISTANT (calib->main_window),
+					 vbox, TRUE);
+	calib->has_pending_interaction = TRUE;
 }
 
 /**
