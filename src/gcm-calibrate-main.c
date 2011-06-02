@@ -446,7 +446,6 @@ gcm_calib_assistant_prepare_cb (GtkAssistant *assistant, GtkWidget *page_widget,
 	switch (calib->current_page) {
 	case GCM_CALIBRATE_PAGE_INTRO:
 		g_debug ("now intro page");
-		gcm_calib_device_inihibit (calib);
 		break;
 	case GCM_CALIBRATE_PAGE_LAST:
 		g_debug ("now last page");
@@ -455,8 +454,10 @@ gcm_calib_assistant_prepare_cb (GtkAssistant *assistant, GtkWidget *page_widget,
 		break;
 	case GCM_CALIBRATE_PAGE_ACTION:
 		g_debug ("lights! camera! action!");
-		if (!calib->started_calibration)
+		if (!calib->started_calibration) {
+			gcm_calib_device_inihibit (calib);
 			g_idle_add (gcm_calib_start_idle_cb, calib);
+		}
 		break;
 	default:
 		break;
