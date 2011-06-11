@@ -503,11 +503,11 @@ gcm_calib_add_page_title (GcmCalibratePriv *calib, const gchar *text)
 	gtk_label_set_markup (GTK_LABEL (label), markup);
 
 	/* make left aligned */
-	hbox = gtk_hbox_new (FALSE, 0);
+	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 0);
 
 	/* header */
-	vbox = gtk_vbox_new (FALSE, 20);
+	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 20);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
 
 	g_free (markup);
@@ -549,7 +549,7 @@ gcm_calib_add_page_para (GtkWidget *vbox, const gchar *text)
 	gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.0f);
 
 	/* make left aligned */
-	hbox = gtk_hbox_new (FALSE, 0);
+	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
 	gtk_box_pack_start (GTK_BOX (hbox), label, FALSE, TRUE, 0);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
 	return label;
@@ -599,7 +599,7 @@ gcm_calib_setup_page_intro (GcmCalibratePriv *calib)
 	}
 
 	/* main contents */
-	content = gtk_vbox_new (FALSE, 6);
+	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
 	/* TRANSLATORS: this is intro page text */
@@ -645,7 +645,7 @@ gcm_calib_setup_page_summary (GcmCalibratePriv *calib)
 	vbox = gcm_calib_add_page_title (calib, _("All done!"));
 
 	/* main contents */
-	content = gtk_vbox_new (FALSE, 6);
+	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
 	switch (calib->device_kind) {
@@ -718,7 +718,7 @@ gcm_calib_setup_page_action (GcmCalibratePriv *calib)
 	g_list_free (list2);
 
 	/* main contents */
-	content = gtk_vbox_new (FALSE, 6);
+	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
 	calib->action_message = gcm_calib_add_page_para (content, _("Calibration is about to start"));
@@ -761,7 +761,7 @@ gcm_calib_setup_page_display_configure_wait (GcmCalibratePriv *calib)
 	vbox = gcm_calib_add_page_title (calib, _("Calibration checklist"));
 
 	/* main contents */
-	content = gtk_vbox_new (FALSE, 6);
+	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
 	/* TRANSLATORS: this is intro page text */
@@ -854,7 +854,7 @@ gcm_calib_setup_page_install_argyllcms (GcmCalibratePriv *calib)
 	vbox = gcm_calib_add_page_title (calib, _("More software is required!"));
 
 	/* main contents */
-	content = gtk_vbox_new (FALSE, 6);
+	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
 	/* TRANSLATORS: this is intro page text */
@@ -932,7 +932,7 @@ gcm_calib_setup_page_install_targets (GcmCalibratePriv *calib)
 	vbox = gcm_calib_add_page_title (calib, _("Optional data files available"));
 
 	/* main contents */
-	content = gtk_vbox_new (FALSE, 6);
+	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
 	/* TRANSLATORS: this is intro page text */
@@ -1103,7 +1103,7 @@ gcm_calib_setup_page_target_kind (GcmCalibratePriv *calib)
 	vbox = gcm_calib_add_page_title (calib, _("What target type do you have?"));
 
 	/* main contents */
-	content = gtk_vbox_new (FALSE, 6);
+	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
 	/* TRANSLATORS: this is intro page text */
@@ -1169,7 +1169,7 @@ gcm_calib_setup_page_display_kind (GcmCalibratePriv *calib)
 	vbox = gcm_calib_add_page_title (calib, _("Choose your display type"));
 
 	/* main contents */
-	content = gtk_vbox_new (FALSE, 6);
+	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
 	/* TRANSLATORS: this is intro page text */
@@ -1251,7 +1251,7 @@ gcm_calib_setup_page_print_kind (GcmCalibratePriv *calib)
 	vbox = gcm_calib_add_page_title (calib, _("Choose profiling mode"));
 
 	/* main contents */
-	content = gtk_vbox_new (FALSE, 6);
+	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
 	/* TRANSLATORS: this is intro page text */
@@ -1325,7 +1325,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 	vbox = gcm_calib_add_page_title (calib, _("Choose calibration quality"));
 
 	/* main contents */
-	content = gtk_vbox_new (FALSE, 6);
+	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
 	/* TRANSLATORS: this is intro page text */
@@ -1423,7 +1423,7 @@ gcm_calib_setup_page_sensor (GcmCalibratePriv *calib)
 	vbox = gcm_calib_add_page_title (calib, _("Insert sensor hardware"));
 
 	/* main contents */
-	content = gtk_vbox_new (FALSE, 6);
+	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
 	/* TRANSLATORS: this is intro page text */
@@ -1458,7 +1458,7 @@ gcm_calib_setup_page_failure (GcmCalibratePriv *calib)
 	vbox = gcm_calib_add_page_title (calib, _("Failed to calibrate"));
 
 	/* main contents */
-	content = gtk_vbox_new (FALSE, 6);
+	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
 	/* TRANSLATORS: this is intro page text */
