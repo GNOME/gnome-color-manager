@@ -2,21 +2,23 @@
 # Copyright (C) 2010, Miloš Popović
 # This file is distributed under the same license as the gnome-color-manager package.
 # Miloš Popović <gpopac@gmail.com>, 2010.
-#
+# Miroslav Nikolić <miroslavnikolic@rocketmail.com>, 2011.
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
-"color-manager\n"
-"POT-Creation-Date: 2010-08-09 10:07+0000\n"
-"PO-Revision-Date: 2010-08-18 14:43+0200\n"
-"Last-Translator: Miloš Popović <gpopac@gmail.com>\n"
+"color-manager&keywords=I18N+L10N\n"
+"POT-Creation-Date: 2011-04-10 15:22+0000\n"
+"PO-Revision-Date: 2011-05-30 21:52+0200\n"
+"Last-Translator: Miroslav Nikolić <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4;    plural=n==1? 3 : n%10==1 && n%100!=11 ? 0 :    n"
-"%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;\n"
+"Language: Serbian (sr)\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%"
+"10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Virtaal 0.5.2\n"
 
 #: ../data/gcm-apply.desktop.in.h:1
 msgid "Applies device profile settings at session startup"
@@ -225,13 +227,18 @@ msgstr "Opcije za traženje grešaka"
 msgid "Show debugging options"
 msgstr "Prikazuje opcije za nalaženje grešaka"
 
+#. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
+#: ../src/gcm-apply.c:54
+msgid "Do not attempt to clear previously applied settings"
+msgstr "Ne pokušavaj da opozoveš prethodno primenjena podešavanja"
+
 #. TRANSLATORS: title, default paramters needed to calibrate_argyll
-#: ../src/gcm-calibrate-argyll.c:433
+#: ../src/gcm-calibrate-argyll.c:453
 msgid "Getting default parameters"
 msgstr "Prikupljam podrazumevane parametre"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:436
+#: ../src/gcm-calibrate-argyll.c:456
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -240,32 +247,32 @@ msgstr ""
 "koji se onda detektuju preko kalibratora."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:524
+#: ../src/gcm-calibrate-argyll.c:545
 msgid "Reading the patches"
 msgstr "Čitam šablon"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:526
+#: ../src/gcm-calibrate-argyll.c:547
 msgid "Reading the patches using the color measuring instrument."
 msgstr "Čitam šablon pomoću kalibratora boja."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:609
+#: ../src/gcm-calibrate-argyll.c:633
 msgid "Generating the patches"
 msgstr "Obrazujem šablon"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:611
+#: ../src/gcm-calibrate-argyll.c:635
 msgid "Generating the patches that will be measured with the color instrument."
 msgstr "Obrazujem šablon koji će biti izmeren na kalibratoru boja."
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:713
+#: ../src/gcm-calibrate-argyll.c:738
 msgid "Drawing the patches"
 msgstr "Iscrtavam šablon"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:715
+#: ../src/gcm-calibrate-argyll.c:740
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
@@ -274,72 +281,72 @@ msgstr ""
 
 #. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" - YOU NEED TO STICK TO ASCII
 #. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands"
-#: ../src/gcm-calibrate-argyll.c:820 ../src/gcm-calibrate-argyll.c:1153
+#: ../src/gcm-calibrate-argyll.c:846 ../src/gcm-calibrate-argyll.c:1181
 msgid "Copyright (c)"
 msgstr "Sva prava su zadržana (c)"
 
 #. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:823 ../src/gcm-calibrate-argyll.c:1156
+#: ../src/gcm-calibrate-argyll.c:849 ../src/gcm-calibrate-argyll.c:1184
 msgid "Generating the profile"
 msgstr "Obrazujem profil"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:825
+#: ../src/gcm-calibrate-argyll.c:851
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "Obrazujem ICC profil za upotrebu na priključenom ekranu."
 
 #. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:958
+#: ../src/gcm-calibrate-argyll.c:985
 msgid "Copying files"
 msgstr "Kopiram datoteke"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:960
+#: ../src/gcm-calibrate-argyll.c:987
 msgid "Copying source image, chart data and CIE reference values."
 msgstr "Kopiram izvorne slike, grafike i CIE referentne vrednosti."
 
 #. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:1035
+#: ../src/gcm-calibrate-argyll.c:1062
 msgid "Measuring the patches"
 msgstr "Merim šablone"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1037
+#: ../src/gcm-calibrate-argyll.c:1064
 msgid "Detecting the reference patches and measuring them."
 msgstr "Tražim referentne šablone i merim njihove vrednosti."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1158
+#: ../src/gcm-calibrate-argyll.c:1186
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "Obrazujem ICC profil koji se može koristiti sa ovim uređajem."
 
 #. TRANSLATORS: title, hardware refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:1344
+#: ../src/gcm-calibrate-argyll.c:1373
 msgid "Set up display"
 msgstr "Podešavam ekran"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1347
+#: ../src/gcm-calibrate-argyll.c:1376
 msgid "Setting up display device for use…"
 msgstr "Podešavam ekran za upotrebu…"
 
 #. TRANSLATORS: title, patches are specific colors used in calibration
-#: ../src/gcm-calibrate-argyll.c:1446
+#: ../src/gcm-calibrate-argyll.c:1475
 msgid "Printing patches"
 msgstr "Štampam šablone"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1449
+#: ../src/gcm-calibrate-argyll.c:1478
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "Iscrtavam šablone za izabrani papir i mastilo."
 
 #. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:1784
+#: ../src/gcm-calibrate-argyll.c:1814
 msgid "Wait for the ink to dry"
 msgstr "Sačekajte da se mastilo osuši"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1787
+#: ../src/gcm-calibrate-argyll.c:1817
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -348,19 +355,19 @@ msgstr ""
 "papira može da ošteti kalibrator."
 
 #. TRANSLATORS: the supplied image contains an alpha channel which we have to strip out
-#: ../src/gcm-calibrate-argyll.c:1929
+#: ../src/gcm-calibrate-argyll.c:1959
 msgid "Image is not suitable without conversion"
 msgstr "Slika nije odgovarajuća ukoliko ne promenite format"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1932
+#: ../src/gcm-calibrate-argyll.c:1962
 msgid ""
 "The supplied image contains an alpha channel which the profiling tools do "
 "not understand."
 msgstr "Slika sadrži alfa kanal koji ne čitaju alati za pravljenje profila."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1936
+#: ../src/gcm-calibrate-argyll.c:1966
 msgid ""
 "It is normally safe to convert the image, although you should ensure that "
 "the generated profile is valid."
@@ -369,27 +376,27 @@ msgstr ""
 "ispravnost profila."
 
 #. TRANSLATORS: button text to convert the RGBA image into RGB
-#: ../src/gcm-calibrate-argyll.c:1943
+#: ../src/gcm-calibrate-argyll.c:1973
 msgid "Convert"
 msgstr "Prevedi"
 
 #. TRANSLATORS: title, instrument refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:2001
+#: ../src/gcm-calibrate-argyll.c:2031
 msgid "Set up instrument"
 msgstr "Podesi instrument"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2004
+#: ../src/gcm-calibrate-argyll.c:2034
 msgid "Setting up the instrument for use…"
 msgstr "Podešavam instrument za upotrebu..."
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2097
+#: ../src/gcm-calibrate-argyll.c:2127
 msgid "Please attach instrument"
 msgstr "Prikačite instrument"
 
 #. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate-argyll.c:2105
+#: ../src/gcm-calibrate-argyll.c:2135
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square like the image below."
@@ -398,44 +405,44 @@ msgstr ""
 "prikazano na slici."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate-argyll.c:2108
+#: ../src/gcm-calibrate-argyll.c:2138
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square."
 msgstr "Prikačite kalibrator na center ekrana, unutar sivog kvadrata."
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2121 ../src/gcm-calibrate-argyll.c:2175
-#: ../src/gcm-calibrate-argyll.c:2227
+#: ../src/gcm-calibrate-argyll.c:2151 ../src/gcm-calibrate-argyll.c:2205
+#: ../src/gcm-calibrate-argyll.c:2257
 msgid "Continue"
 msgstr "Nastavi"
 
 #. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2131 ../src/gcm-calibrate-argyll.c:2181
-#: ../src/gcm-calibrate-argyll.c:2233 ../src/gcm-calibrate-argyll.c:2309
-#: ../src/gcm-calibrate-argyll.c:2369 ../src/gcm-calibrate-argyll.c:2410
+#: ../src/gcm-calibrate-argyll.c:2161 ../src/gcm-calibrate-argyll.c:2211
+#: ../src/gcm-calibrate-argyll.c:2263 ../src/gcm-calibrate-argyll.c:2342
+#: ../src/gcm-calibrate-argyll.c:2402 ../src/gcm-calibrate-argyll.c:2443
 #: ../src/gcm-prefs.c:819 ../src/gcm-prefs.c:1987
 msgid "GNOME Color Manager"
 msgstr "Gnomov upravnik bojama"
 
 #. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2152 ../src/gcm-calibrate-argyll.c:2204
+#: ../src/gcm-calibrate-argyll.c:2182 ../src/gcm-calibrate-argyll.c:2234
 msgid "Please configure instrument"
 msgstr "Podesite kalibrator"
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2162
+#: ../src/gcm-calibrate-argyll.c:2192
 msgid ""
 "Please set the measuring instrument to calibration mode like the image below."
 msgstr "Postavite uređaj u režim za kalibraciju kao što je prikazano na slici."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2165
+#: ../src/gcm-calibrate-argyll.c:2195
 msgid "Please set the measuring instrument to calibration mode."
 msgstr "Postavite uređaj u režim za kalibraciju."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2214
+#: ../src/gcm-calibrate-argyll.c:2244
 msgid ""
 "Please set the measuring instrument to screen mode like the image below, and "
 "ensure it is attached to the screen."
@@ -444,7 +451,7 @@ msgstr ""
 "kalibrator prikačen na ekran."
 
 #. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2217
+#: ../src/gcm-calibrate-argyll.c:2247
 msgid ""
 "Please set the measuring instrument to screen mode, and ensure it is "
 "attached to the screen."
@@ -453,27 +460,27 @@ msgstr ""
 "na ekran."
 
 #. TRANSLATORS: title, the calibration failed
-#: ../src/gcm-calibrate-argyll.c:2288 ../src/gcm-calibrate-argyll.c:2336
+#: ../src/gcm-calibrate-argyll.c:2321 ../src/gcm-calibrate-argyll.c:2369
 msgid "Calibration error"
 msgstr "Greška pri kalibraciji"
 
 #. TRANSLATORS: message, the sample was not read correctly
-#: ../src/gcm-calibrate-argyll.c:2291
+#: ../src/gcm-calibrate-argyll.c:2324
 msgid "The sample could not be read at this time."
 msgstr "Trenutno ne mogu da očitam uzorak."
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2299
+#: ../src/gcm-calibrate-argyll.c:2332
 msgid "Try again"
 msgstr "Pokušaj ponovo"
 
 #. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2340
+#: ../src/gcm-calibrate-argyll.c:2373
 msgid "No firmware is installed for this instrument."
 msgstr "Nije instaliran firmver za ovaj uređaj."
 
 #. TRANSLATORS: message, the image wasn't good enough
-#: ../src/gcm-calibrate-argyll.c:2343
+#: ../src/gcm-calibrate-argyll.c:2376
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
@@ -482,7 +489,7 @@ msgstr ""
 "kalibraciju."
 
 #. TRANSLATORS: message, the sensor got no readings
-#: ../src/gcm-calibrate-argyll.c:2347
+#: ../src/gcm-calibrate-argyll.c:2380
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
@@ -491,7 +498,7 @@ msgstr ""
 "potpuno otvorena."
 
 #. TRANSLATORS: message, the colorimeter has got confused
-#: ../src/gcm-calibrate-argyll.c:2350
+#: ../src/gcm-calibrate-argyll.c:2383
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -500,33 +507,33 @@ msgstr ""
 "i ponovo ga priključite."
 
 #. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-argyll.c:2388
+#: ../src/gcm-calibrate-argyll.c:2421
 msgid "Reading target"
 msgstr "Čitam metu"
 
 #. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2391
+#: ../src/gcm-calibrate-argyll.c:2424
 msgid "Failed to read the strip correctly."
 msgstr "Ne mogu da ispravno očitam traku."
 
 #. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2400
+#: ../src/gcm-calibrate-argyll.c:2433
 msgid "Retry"
 msgstr "Ponovi"
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2423
+#: ../src/gcm-calibrate-argyll.c:2456
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "Pročitaj traku %s pre nego %s!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2428
+#: ../src/gcm-calibrate-argyll.c:2461
 msgid "It looks like you've measured the wrong strip."
 msgstr "Izgleda da ste izmerili pogrešnu traku."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2432
+#: ../src/gcm-calibrate-argyll.c:2465
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
@@ -535,18 +542,18 @@ msgstr ""
 "neobičan papir."
 
 #. TRANSLATORS: button
-#: ../src/gcm-calibrate-argyll.c:2442
+#: ../src/gcm-calibrate-argyll.c:2475
 msgid "Use anyway"
 msgstr "Ipak upotrebi"
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2454
+#: ../src/gcm-calibrate-argyll.c:2487
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "Spreman za čitanje trake %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2459
+#: ../src/gcm-calibrate-argyll.c:2492
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
@@ -554,7 +561,7 @@ msgstr ""
 "Postavite kolorimetar na belu oblast pored slova i držite prekidač za merenje."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2463
+#: ../src/gcm-calibrate-argyll.c:2496
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -563,7 +570,7 @@ msgstr ""
 "kraj stranice."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2467
+#: ../src/gcm-calibrate-argyll.c:2500
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -571,7 +578,7 @@ msgstr ""
 "Proverite da li sredina uređaja stoji ravno u odnosu na red koji merite."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2471
+#: ../src/gcm-calibrate-argyll.c:2504
 msgid ""
 "If you make a mistake just release the switch and you'll get a chance to try "
 "again."
@@ -580,32 +587,32 @@ msgstr ""
 "merenje."
 
 #. TRANSLATORS: title, printing reference files to media
-#: ../src/gcm-calibrate-argyll.c:2609
+#: ../src/gcm-calibrate-argyll.c:2642
 msgid "Printing"
 msgstr "Štampa"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2616
+#: ../src/gcm-calibrate-argyll.c:2649
 msgid "Preparing the data for the printer."
 msgstr "Pripremam podatke za štampač."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2622
+#: ../src/gcm-calibrate-argyll.c:2655
 msgid "Sending the targets to the printer."
 msgstr "Šaljem mete na štampač."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2626
+#: ../src/gcm-calibrate-argyll.c:2659
 msgid "Printing the targets..."
 msgstr "Štampam mete..."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2630
+#: ../src/gcm-calibrate-argyll.c:2663
 msgid "The printing has finished."
 msgstr "Štampa je završena."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2634
+#: ../src/gcm-calibrate-argyll.c:2667
 msgid "The print was aborted."
 msgstr "Štampa je prekinuta."
 
@@ -1732,27 +1739,27 @@ msgid "Color Management D-Bus Service"
 msgstr "Dbas upravljački program za boje"
 
 #. TRANSLATORS: this is the profile creation date strftime format
-#: ../src/gcm-utils.c:514
+#: ../src/gcm-utils.c:520
 msgid "%B %e %Y, %I:%M:%S %p"
 msgstr "%e. %B %Y, %H:%M:%S"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:527
+#: ../src/gcm-utils.c:533
 msgid "Perceptual"
 msgstr "Čulno"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:531
+#: ../src/gcm-utils.c:537
 msgid "Relative colormetric"
 msgstr "Relativno kolorimetrijski"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:535
+#: ../src/gcm-utils.c:541
 msgid "Saturation"
 msgstr "Zasićenost"
 
 #. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:539
+#: ../src/gcm-utils.c:545
 msgid "Absolute colormetric"
 msgstr "Apsolutno kolorimetrijski"
 
