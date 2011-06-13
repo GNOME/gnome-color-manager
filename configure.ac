@@ -93,9 +93,9 @@ dnl ---------------------------------------------------------------------------
 PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.14.0 gobject-2.0 gthread-2.0 gio-2.0 >= 2.25.9)
 PKG_CHECK_MODULES(XORG, xrandr)
 PKG_CHECK_MODULES(GTK, gtk+-3.0 >= 2.91.0)
-PKG_CHECK_MODULES(LCMS, lcms2)
+PKG_CHECK_MODULES(LCMS, lcms2 >= 2.2)
 PKG_CHECK_MODULES(X11, x11)
-PKG_CHECK_MODULES(COLORD, colord >= 0.1.6)
+PKG_CHECK_MODULES(COLORD, colord >= 0.1.9)
 
 PKG_CHECK_MODULES(CLUTTER, clutter-gtk-1.0 mash-0.1, has_clutter=yes, has_clutter=no)
 AM_CONDITIONAL(HAVE_CLUTTER, test x$has_clutter = xyes)

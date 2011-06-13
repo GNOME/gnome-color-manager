@@ -28,6 +28,8 @@
 #include <locale.h>
 #include <canberra-gtk.h>
 #include <colord.h>
+#include <lcms2.h>
+#include <stdlib.h>
 
 #include "gcm-utils.h"
 #include "gcm-debug.h"
@@ -310,6 +312,82 @@ gcm_calib_get_vbox_for_page (GcmCalibratePriv *calib,
 	return NULL;
 }
 
+static cmsBool
+_cmsDictAddEntryAscii (cmsHANDLE dict,
+		       const gchar *key,
+		       const gchar *value)
+{
+	cmsBool ret;
+	wchar_t mb_key[1024];
+	wchar_t mb_value[1024];
+	mbstowcs (mb_key, key, sizeof (mb_key));
+	mbstowcs (mb_value, value, sizeof (mb_value));
+	ret = cmsDictAddEntry (dict, mb_key, mb_value, NULL, NULL);
+	return ret;
+}
+
+static gboolean
+gcm_calib_set_extra_metadata (const gchar *filename, GError **error)
+{
+	cmsHANDLE dict = NULL;
+	cmsHPROFILE lcms_profile;
+	gboolean ret = TRUE;
+	gchar *data = NULL;
+	gsize len;
+
+	/* parse */
+	ret = g_file_get_contents (filename, &data, &len, error);
+	if (!ret)
+		goto out;
+	lcms_profile = cmsOpenProfileFromMem (data, len);
+	if (lcms_profile == NULL) {
+		g_set_error_literal (error, 1, 0,
+				     "failed to open profile");
+		ret = FALSE;
+		goto out;
+	}
+
+	/* just create a new dict */
+	dict = cmsDictAlloc (NULL);
+	_cmsDictAddEntryAscii (dict,
+			       CD_PROFILE_METADATA_CMF_PRODUCT,
+			       PACKAGE_NAME);
+	_cmsDictAddEntryAscii (dict,
+			       CD_PROFILE_METADATA_CMF_BINARY,
+			       "gcm-calibrate");
+	_cmsDictAddEntryAscii (dict,
+			       CD_PROFILE_METADATA_CMF_VERSION,
+			       PACKAGE_VERSION);
+	_cmsDictAddEntryAscii (dict,
+			       CD_PROFILE_METADATA_DATA_SOURCE,
+			       CD_PROFILE_METADATA_DATA_SOURCE_CALIB);
+
+	/* just write dict */
+	ret = cmsWriteTag (lcms_profile, cmsSigMetaTag, dict);
+	if (!ret) {
+		g_set_error_literal (error, 1, 0,
+				     "cannot write metadata");
+		goto out;
+	}
+
+	/* write profile id */
+	ret = cmsMD5computeID (lcms_profile);
+	if (!ret) {
+		g_set_error_literal (error, 1, 0,
+				     "failed to write profile id");
+		goto out;
+	}
+
+	/* save, TODO: get error */
+	cmsSaveProfileToFile (lcms_profile, filename);
+	ret = TRUE;
+out:
+	g_free (data);
+	if (dict != NULL)
+		cmsDictFree (dict);
+	return ret;
+}
+
 static gboolean
 gcm_calib_start_idle_cb (gpointer user_data)
 {
@@ -355,6 +433,15 @@ gcm_calib_start_idle_cb (gpointer user_data)
 	filename = gcm_calibrate_get_filename_result (calib->calibrate);
 	if (filename == NULL) {
 		g_warning ("failed to get filename from calibration");
+		goto out;
+	}
+
+	/* set some private properties */
+	ret = gcm_calib_set_extra_metadata (filename, &error);
+	if (!ret) {
+		g_warning ("failed to set extra metadata: %s",
+			   error->message);
+		g_error_free (error);
 		goto out;
 	}
 
