@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2011 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -693,6 +693,36 @@ out:
 	return ret;
 }
 
+struct {
+	const gchar *key;
+	const gchar *localised;
+} metadata_keys[] = {
+	{ CD_PROFILE_METADATA_STANDARD_SPACE,		N_("Standard space") },
+	{ CD_PROFILE_METADATA_EDID_MD5,			N_("Display checksum") },
+	{ CD_PROFILE_METADATA_EDID_MODEL,		N_("Display model") },
+	{ CD_PROFILE_METADATA_EDID_SERIAL,		N_("Display serial number") },
+	{ CD_PROFILE_METADATA_EDID_MNFT,		N_("Display PNPID") },
+	{ CD_PROFILE_METADATA_EDID_VENDOR,		N_("Display vendor") },
+	{ CD_PROFILE_METADATA_FILE_CHECKSUM,		N_("File checksum") },
+	{ CD_PROFILE_METADATA_CMF_PRODUCT,		N_("Framework product") },
+	{ CD_PROFILE_METADATA_CMF_BINARY,		N_("Framework program") },
+	{ CD_PROFILE_METADATA_CMF_VERSION,		N_("Framework version") },
+	{ CD_PROFILE_METADATA_DATA_SOURCE,		N_("Data source type") },
+	{ CD_PROFILE_METADATA_MAPPING_FORMAT,		N_("Mapping format") },
+	{ CD_PROFILE_METADATA_MAPPING_QUALIFIER,	N_("Mapping qualifier") },
+	{ NULL, NULL }
+};
+
+static const gchar *
+gcm_viewer_get_localised_metadata_key (const gchar *key)
+{
+	guint i;
+	for (i = 0; metadata_keys[i].key != NULL; i++) {
+		if (g_strcmp0 (key, metadata_keys[i].key) == 0)
+			return metadata_keys[i].localised;
+	}
+	return key;
+}
 
 /**
  * gcm_viewer_add_metadata:
@@ -708,6 +738,7 @@ gcm_viewer_add_metadata (GcmViewerPrivate *viewer,
 	GList *l;
 	GtkTreeIter iter;
 	const gchar *value;
+	const gchar *key;
 
 	/* clear existing */
 	gtk_list_store_clear (viewer->liststore_metadata);
@@ -725,13 +756,14 @@ gcm_viewer_add_metadata (GcmViewerPrivate *viewer,
 	if (keys == NULL)
 		goto out;
 	for (l = keys; l != NULL; l = l->next) {
+		key = gcm_viewer_get_localised_metadata_key ((gchar *) l->data);
 		value = g_hash_table_lookup (metadata, l->data);
 		g_debug ("Adding '%s', '%s'",
-			 (const gchar *) l->data, value);
+			 key, value);
 		gtk_list_store_append (viewer->liststore_metadata, &iter);
 		gtk_list_store_set (viewer->liststore_metadata,
 				    &iter,
-				    GCM_METADATA_COLUMN_KEY, l->data,
+				    GCM_METADATA_COLUMN_KEY, key,
 				    GCM_METADATA_COLUMN_VALUE, value,
 				    -1);
 	}
