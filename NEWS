@@ -1,3 +1,40 @@
+Version 3.1.2
+~~~~~~~~~~~~~
+Released: 2011-06-13
+
+* Notes:
+ - The preferences panel has been moved to gnome-control-center.
+ - The device and profile registration module has been moved to
+   gnome-settings-daemon and the gcm-session process is now optional.
+
+* Translations
+ - Updated Czech translation (Milan Knizek)
+ - Updated Brazilian Portuguese translation (Djavan Fagundes)
+ - Updated German help translation (Christian Kirbach)
+ - Updated Norwegian bokmål translation (Kjartan Maraas)
+
+* New Features:
+ - Save extra metadata in the ICC profile after calibration (Richard Hughes)
+ - Translate the metadata key names in the profile viewer (Richard Hughes)
+
+* Removed features
+ - Remove all the rendering intent and default properties (Richard Hughes)
+ - Remove support for non-native drivers in the color picker (Richard Hughes)
+ - Remove the device registration functionality (Richard Hughes)
+ - Remove the GSettings schema (Richard Hughes)
+ - Remove the notification for out of date devices (Richard Hughes)
+ - Remove the preferences panel and create a calibration wizard (Richard Hughes)
+ - Remove the profile store functionality (Richard Hughes)
+ - Remove the sensor plug action and sound (Richard Hughes)
+ - Remove the vendor and model quirk fixups (Richard Hughes)
+ - Remove the 'Working Spaces' tab from gcm-prefs (Richard Hughes)
+ - Remove the X11 xrandr-output output property (Richard Hughes)
+
+* Bugfix:
+ - Do not reload when colord appears on the bus (Richard Hughes)
+ - Don't crash when we click on a PPD virtual profile (Richard Hughes)
+ - Don't show profiles without filenames in gcm-viewer (Richard Hughes)
+
 Version 3.1.1
 ~~~~~~~~~~~~~
 Released: 2011-05-06
