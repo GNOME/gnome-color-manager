@@ -28,10 +28,10 @@ gcm_dump_profile_SOURCES =				\
 	gcm-dump-profile.c
 
 gcm_dump_profile_LDADD =				\
+	$(top_builddir)/src/libgcmshared.a		\
 	$(GLIB_LIBS)					\
 	$(COLORD_LIBS)					\
 	$(LCMS_LIBS)					\
-	$(top_builddir)/src/libgcmshared.a		\
 	-lm
 
 gcm_dump_profile_CFLAGS =				\
