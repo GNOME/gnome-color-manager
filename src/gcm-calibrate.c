@@ -26,7 +26,6 @@ struct _GcmCalibratePrivate
 	GcmCalibrateReferenceKind	 reference_kind;
 	CdSensor			*sensor;
 	CdDeviceKind			 device_kind;
-	CdColorXYZ			*xyz;
 	gchar				*output_name;
 	gchar				*filename_source;
 	gchar				*filename_reference;
@@ -63,7 +62,6 @@ enum {
 	PROP_FILENAME_RESULT,
 	PROP_WORKING_PATH,
 	PROP_PRECISION,
-	PROP_XYZ,
 	PROP_TARGET_WHITEPOINT,
 	PROP_LAST
 };
@@ -429,32 +427,6 @@ gcm_calibrate_set_working_path (GcmCalibrate *calibrate, GError **error)
 	ret = gcm_calibrate_mkdir_with_parents (priv->working_path, error);
 	g_free (timespec);
 	g_free (folder);
-	return ret;
-}
-
-/**
- * gcm_calibrate_spotread:
- **/
-gboolean
-gcm_calibrate_spotread (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *window, GError **error)
-{
-	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
-	GcmCalibratePrivate *priv = calibrate->priv;
-	gboolean ret;
-
-	/* coldplug source */
-	if (klass->calibrate_spotread == NULL) {
-		ret = FALSE;
-		g_set_error_literal (error,
-				     GCM_CALIBRATE_ERROR,
-				     GCM_CALIBRATE_ERROR_INTERNAL,
-				     "no klass support");
-		goto out;
-	}
-
-	/* proxy */
-	ret = klass->calibrate_spotread (calibrate, device, priv->sensor, window, error);
-out:
 	return ret;
 }
 
@@ -930,9 +902,6 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 	case PROP_PRECISION:
 		g_value_set_uint (value, priv->precision);
 		break;
-	case PROP_XYZ:
-		g_value_set_boxed (value, g_boxed_copy (CD_TYPE_COLOR_XYZ, priv->xyz));
-		break;
 	case PROP_TARGET_WHITEPOINT:
 		g_value_set_uint (value, priv->target_whitepoint);
 		break;
@@ -1006,11 +975,6 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 	case PROP_WORKING_PATH:
 		g_free (priv->working_path);
 		priv->working_path = g_strdup (g_value_get_string (value));
-		break;
-	case PROP_XYZ:
-		if (priv->xyz != NULL)
-			cd_color_xyz_free (priv->xyz);
-		priv->xyz = g_boxed_copy (CD_TYPE_COLOR_XYZ, value);
 		break;
 	case PROP_TARGET_WHITEPOINT:
 		priv->target_whitepoint = g_value_get_uint (value);
@@ -1118,11 +1082,6 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 				   G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_PRECISION, pspec);
 
-	pspec = g_param_spec_boxed ("xyz", NULL, NULL,
-				    CD_TYPE_COLOR_XYZ,
-				    G_PARAM_READWRITE);
-	g_object_class_install_property (object_class, PROP_XYZ, pspec);
-
 	pspec = g_param_spec_uint ("target-whitepoint", NULL, NULL,
 				   0, G_MAXUINT, 0,
 				   G_PARAM_READWRITE);
@@ -1163,8 +1122,6 @@ static void
 gcm_calibrate_init (GcmCalibrate *calibrate)
 {
 	calibrate->priv = GCM_CALIBRATE_GET_PRIVATE (calibrate);
-	calibrate->priv->xyz = cd_color_xyz_new ();
-
 	calibrate->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_UNKNOWN;
 	calibrate->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
 	calibrate->priv->precision = GCM_CALIBRATE_PRECISION_UNKNOWN;
@@ -1195,7 +1152,6 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->device);
 	g_free (priv->serial);
 	g_free (priv->working_path);
-	cd_color_xyz_free (priv->xyz);
 	g_ptr_array_unref (calibrate->priv->old_title);
 	g_ptr_array_unref (calibrate->priv->old_message);
 

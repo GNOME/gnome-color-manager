@@ -64,11 +64,6 @@ struct _GcmCalibrateClass
 							 CdSensor	*sensor,
 							 GtkWindow	*window,
 							 GError		**error);
-	gboolean	 (*calibrate_spotread)		(GcmCalibrate	*calibrate,
-							 CdDevice	*device,
-							 CdSensor	*sensor,
-							 GtkWindow	*window,
-							 GError		**error);
 	void		 (*interaction)			(GcmCalibrate	*calibrate,
 							 GtkResponseType response);
 
@@ -141,10 +136,6 @@ gboolean	 gcm_calibrate_device			(GcmCalibrate	*calibrate,
 							 GtkWindow	*window,
 							 GError		**error);
 gboolean	 gcm_calibrate_printer			(GcmCalibrate	*calibrate,
-							 CdDevice	*device,
-							 GtkWindow	*window,
-							 GError		**error);
-gboolean	 gcm_calibrate_spotread			(GcmCalibrate	*calibrate,
 							 CdDevice	*device,
 							 GtkWindow	*window,
 							 GError		**error);

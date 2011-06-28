@@ -1373,108 +1373,6 @@ out:
 }
 
 /**
- * gcm_calibrate_argyll_spotread_read_chart:
- **/
-static gboolean
-gcm_calibrate_argyll_spotread_read_chart (GcmCalibrateArgyll *calibrate_argyll, GError **error)
-{
-	gboolean ret = TRUE;
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-	gchar *command = NULL;
-	gchar **argv = NULL;
-	GPtrArray *array = NULL;
-
-	/* get correct name of the command */
-	command = gcm_calibrate_argyll_get_tool_filename ("spotread", error);
-	if (command == NULL) {
-		ret = FALSE;
-		goto out;
-	}
-
-	/* TRANSLATORS: title, setting up the photospectromiter */
-	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Setting up device"));
-	/* TRANSLATORS: dialog message */
-	gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Setting up the device to read a spot color…"));
-
-	/* reset flag so we exit after the single spotread */
-	priv->done_spot_read = FALSE;
-
-	/* argument array */
-	array = g_ptr_array_new_with_free_func (g_free);
-
-	/* setup the command */
-#ifdef FIXED_ARGYLL
-	g_ptr_array_add (array, g_strdup (command));
-#endif
-	g_ptr_array_add (array, g_strdup ("-v"));
-	if (priv->done_calibrate)
-		g_ptr_array_add (array, g_strdup ("-N"));
-	argv = gcm_utils_ptr_array_to_strv (array);
-	gcm_calibrate_argyll_debug_argv (command, argv);
-
-	/* start up the command */
-	ret = gcm_calibrate_argyll_fork_command (calibrate_argyll, argv, error);
-	if (!ret)
-		goto out;
-
-	/* wait until finished */
-	g_main_loop_run (priv->loop);
-
-	/* get result */
-	if (priv->response == GTK_RESPONSE_CANCEL) {
-		g_set_error_literal (error,
-				     GCM_CALIBRATE_ERROR,
-				     GCM_CALIBRATE_ERROR_USER_ABORT,
-				     "calibration was cancelled");
-		ret = FALSE;
-		goto out;
-	}
-#ifdef HAVE_VTE
-	if (priv->response == GTK_RESPONSE_REJECT) {
-		gchar *vte_text;
-		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
-		g_set_error (error,
-			     GCM_CALIBRATE_ERROR,
-			     GCM_CALIBRATE_ERROR_INTERNAL,
-			     "command failed to run successfully: %s", vte_text);
-		g_free (vte_text);
-		ret = FALSE;
-		goto out;
-	}
-#endif
-out:
-	if (array != NULL)
-		g_ptr_array_unref (array);
-	g_free (command);
-	g_strfreev (argv);
-	return ret;
-}
-
-/**
- * gcm_calibrate_argyll_spotread:
- **/
-static gboolean
-gcm_calibrate_argyll_spotread (GcmCalibrate *calibrate, CdDevice *device, CdSensor *sensor, GtkWindow *window, GError **error)
-{
-	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
-	gboolean ret;
-
-	/* step 3 */
-	ret = gcm_calibrate_argyll_spotread_read_chart (calibrate_argyll, error);
-	if (!ret)
-		goto out;
-
-	/* step 5 */
-	ret = gcm_calibrate_argyll_remove_temp_files (calibrate_argyll, error);
-	if (!ret)
-		goto out;
-out:
-	return ret;
-}
-
-/**
  * gcm_calibrate_argyll_interaction:
  **/
 static void
@@ -2708,7 +2606,6 @@ gcm_calibrate_argyll_class_init (GcmCalibrateArgyllClass *klass)
 	parent_class->calibrate_display = gcm_calibrate_argyll_display;
 	parent_class->calibrate_device = gcm_calibrate_argyll_device;
 	parent_class->calibrate_printer = gcm_calibrate_argyll_printer;
-	parent_class->calibrate_spotread = gcm_calibrate_argyll_spotread;
 	parent_class->interaction = gcm_calibrate_argyll_interaction;
 
 	g_type_class_add_private (klass, sizeof (GcmCalibrateArgyllPrivate));
