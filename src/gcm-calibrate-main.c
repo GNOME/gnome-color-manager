@@ -44,6 +44,7 @@ typedef enum {
 	GCM_CALIBRATE_PAGE_DISPLAY_CONFIG,
 	GCM_CALIBRATE_PAGE_INSTALL_ARGYLLCMS,
 	GCM_CALIBRATE_PAGE_INSTALL_TARGETS,
+	GCM_CALIBRATE_PAGE_PRECISION,
 	GCM_CALIBRATE_PAGE_PRINT_KIND,
 	GCM_CALIBRATE_PAGE_TARGET_KIND,
 	GCM_CALIBRATE_PAGE_SENSOR,
@@ -516,7 +517,6 @@ gcm_calib_assistant_page_forward_cb (gint current_page, gpointer user_data)
 	/* no longer allow forward */
 	vbox = gcm_calib_get_vbox_for_page (calib,
 					    GCM_CALIBRATE_PAGE_ACTION);
-
 
 	gtk_assistant_set_page_complete (GTK_ASSISTANT (calib->main_window),
 					 vbox, FALSE);
@@ -1586,7 +1586,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 	g_ptr_array_add (calib->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
-			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_DISPLAY_KIND));
+			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_PRECISION));
 	g_strfreev (labels);
 
 	/* show page */
