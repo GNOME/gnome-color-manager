@@ -40,6 +40,7 @@
 typedef enum {
 	GCM_CALIBRATE_PAGE_INTRO,
 	GCM_CALIBRATE_PAGE_DISPLAY_KIND,
+	GCM_CALIBRATE_PAGE_DISPLAY_TEMPERATURE,
 	GCM_CALIBRATE_PAGE_DISPLAY_CONFIG,
 	GCM_CALIBRATE_PAGE_INSTALL_ARGYLLCMS,
 	GCM_CALIBRATE_PAGE_INSTALL_TARGETS,
@@ -1313,6 +1314,102 @@ gcm_calib_setup_page_display_kind (GcmCalibratePriv *calib)
 }
 
 static void
+gcm_calib_display_temp_toggled_cb (GtkToggleButton *togglebutton,
+				   GcmCalibratePriv *calib)
+{
+	guint display_temp;
+	if (!gtk_toggle_button_get_active (togglebutton))
+		return;
+	display_temp = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (togglebutton),
+							    "GcmCalib::display-temp"));
+	g_object_set (calib->calibrate,
+		      "target-whitepoint", display_temp,
+		      NULL);
+}
+
+/**
+ * gcm_calib_setup_page_display_temp:
+ **/
+static void
+gcm_calib_setup_page_display_temp (GcmCalibratePriv *calib)
+{
+	GtkWidget *vbox;
+	GtkWidget *content;
+	GtkWidget *widget;
+	GSList *list;
+	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+
+	/* TRANSLATORS: this is the page title */
+	vbox = gcm_calib_add_page_title (calib, _("Choose your display target white point"));
+
+	/* main contents */
+	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
+	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
+
+	/* TRANSLATORS: this is intro page text */
+	gcm_calib_add_page_para (content, _("Most displays should be calibrated to a CIE D65 illuminant for general usage."));
+
+	widget = gtk_radio_button_new_with_label (NULL, _("CIE D50 (Printing and publishing)"));
+	g_object_set_data (G_OBJECT (widget),
+			   "GcmCalib::display-temp",
+			   GUINT_TO_POINTER (5000));
+	g_signal_connect (widget, "toggled",
+			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), calib);
+	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
+
+	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
+	widget = gtk_radio_button_new_with_label (list, _("CIE D55"));
+	g_object_set_data (G_OBJECT (widget),
+			   "GcmCalib::display-temp",
+			   GUINT_TO_POINTER (5500));
+	g_signal_connect (widget, "toggled",
+			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), calib);
+	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
+
+	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
+	widget = gtk_radio_button_new_with_label (list, _("CIE D65 (Photography and graphics)"));
+	g_object_set_data (G_OBJECT (widget),
+			   "GcmCalib::display-temp",
+			   GUINT_TO_POINTER (6500));
+	g_signal_connect (widget, "toggled",
+			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), calib);
+	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
+
+	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
+	widget = gtk_radio_button_new_with_label (list, _("CIE D75"));
+	g_object_set_data (G_OBJECT (widget),
+			   "GcmCalib::display-temp",
+			   GUINT_TO_POINTER (7500));
+	g_signal_connect (widget, "toggled",
+			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), calib);
+	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
+
+	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
+	widget = gtk_radio_button_new_with_label (list, _("Native (Already set manually)"));
+	g_object_set_data (G_OBJECT (widget),
+			   "GcmCalib::display-temp",
+			   GUINT_TO_POINTER (0));
+	g_signal_connect (widget, "toggled",
+			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), calib);
+	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
+
+	/* add to assistant */
+	gtk_assistant_append_page (assistant, vbox);
+	gtk_assistant_set_page_type (assistant, vbox, GTK_ASSISTANT_PAGE_CONTENT);
+	/* TRANSLATORS: this is the calibration wizard page title */
+	gtk_assistant_set_page_title (assistant, vbox, _("Choose Display Whitepoint"));
+	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
+	g_ptr_array_add (calib->pages, vbox);
+	g_object_set_data (G_OBJECT (vbox),
+			   "GcmCalibrateMain::Index",
+			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_DISPLAY_TEMPERATURE));
+
+	/* show page */
+	gtk_widget_show_all (vbox);
+}
+
+static void
 gcm_calib_print_kind_toggled_cb (GtkToggleButton *togglebutton,
 				   GcmCalibratePriv *calib)
 {
@@ -1653,6 +1750,7 @@ gcm_calib_add_pages (GcmCalibratePriv *calib)
 			gcm_calib_setup_page_display_kind (calib);
 		else
 			calib->display_kind = GCM_CALIBRATE_DEVICE_KIND_LCD;
+		gcm_calib_setup_page_display_temp (calib);
 	} else if (calib->device_kind == CD_DEVICE_KIND_PRINTER) {
 		gcm_calib_setup_page_print_kind (calib);
 	} else {

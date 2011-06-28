@@ -404,10 +404,12 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	gchar *basename = NULL;
 	const gchar *output_name;
 	guint display;
+	guint target_whitepoint;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "target-whitepoint", &target_whitepoint,
 		      NULL);
 
 	/* get correct name of the command */
@@ -447,6 +449,8 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 	g_ptr_array_add (array, g_strdup ("-v"));
 	g_ptr_array_add (array, g_strdup ("-ql"));
 	g_ptr_array_add (array, g_strdup ("-m"));
+	if (target_whitepoint > 0)
+		g_ptr_array_add (array, g_strdup_printf ("-t%i", target_whitepoint));
 	g_ptr_array_add (array, g_strdup_printf ("-d%i", display));
 	g_ptr_array_add (array, g_strdup_printf ("-y%c", kind));
 	g_ptr_array_add (array, g_strdup ("-P 0.5,0.5,1.2"));

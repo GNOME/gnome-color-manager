@@ -38,11 +38,11 @@ struct _GcmCalibratePrivate
 	gchar				*serial;
 	gchar				*device;
 	gchar				*working_path;
+	guint				 target_whitepoint;
 	GtkWidget			*content_widget;
 	GPtrArray			*old_message;
 	GPtrArray			*old_title;
 };
-
 
 enum {
 	PROP_0,
@@ -64,6 +64,7 @@ enum {
 	PROP_WORKING_PATH,
 	PROP_PRECISION,
 	PROP_XYZ,
+	PROP_TARGET_WHITEPOINT,
 	PROP_LAST
 };
 
@@ -932,6 +933,9 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 	case PROP_XYZ:
 		g_value_set_boxed (value, g_boxed_copy (CD_TYPE_COLOR_XYZ, priv->xyz));
 		break;
+	case PROP_TARGET_WHITEPOINT:
+		g_value_set_uint (value, priv->target_whitepoint);
+		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
 		break;
@@ -1007,6 +1011,9 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 		if (priv->xyz != NULL)
 			cd_color_xyz_free (priv->xyz);
 		priv->xyz = g_boxed_copy (CD_TYPE_COLOR_XYZ, value);
+		break;
+	case PROP_TARGET_WHITEPOINT:
+		priv->target_whitepoint = g_value_get_uint (value);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -1115,6 +1122,11 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 				    CD_TYPE_COLOR_XYZ,
 				    G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_XYZ, pspec);
+
+	pspec = g_param_spec_uint ("target-whitepoint", NULL, NULL,
+				   0, G_MAXUINT, 0,
+				   G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_TARGET_WHITEPOINT, pspec);
 
 	signals[SIGNAL_TITLE_CHANGED] =
 		g_signal_new ("title-changed",
