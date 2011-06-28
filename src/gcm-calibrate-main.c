@@ -50,6 +50,7 @@ typedef enum {
 	GCM_CALIBRATE_PAGE_SENSOR,
 	GCM_CALIBRATE_PAGE_ACTION,
 	GCM_CALIBRATE_PAGE_FAILURE,
+	GCM_CALIBRATE_PAGE_TITLE,
 	GCM_CALIBRATE_PAGE_LAST
 } GcmCalibratePage;
 
@@ -74,11 +75,7 @@ typedef struct {
 	GtkWidget	*action_image;
 	gboolean	 has_pending_interaction;
 	gboolean	 started_calibration;
-	GcmCalibrateDisplayKind		 display_kind;
-	GcmCalibrateReferenceKind	 reference_kind;
-	GcmCalibratePrintKind		 print_kind;
-	GcmCalibratePrecision		 precision;
-	GcmCalibratePage		 current_page;
+	GcmCalibratePage current_page;
 } GcmCalibratePriv;
 
 /**
@@ -413,11 +410,6 @@ gcm_calib_start_idle_cb (gpointer user_data)
 	GcmCalibratePriv *calib = (GcmCalibratePriv *) user_data;
 	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
 
-	g_object_set (calib->calibrate,
-		      "display-kind", calib->display_kind,
-		      "precision", calib->precision,
-		      NULL);
-
 	/* actuall do the action */
 	calib->started_calibration = TRUE;
 	ret = gcm_calibrate_display (calib->calibrate,
@@ -541,16 +533,14 @@ gcm_calib_assistant_page_forward_cb (gint current_page, gpointer user_data)
  * gcm_calib_assistant_prepare_cb:
  **/
 static gboolean
-gcm_calib_assistant_prepare_cb (GtkAssistant *assistant, GtkWidget *page_widget, GcmCalibratePriv *calib)
+gcm_calib_assistant_prepare_cb (GtkAssistant *assistant,
+				GtkWidget *page_widget,
+				GcmCalibratePriv *calib)
 {
 	calib->current_page = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (page_widget),
 								   "GcmCalibrateMain::Index"));
 	switch (calib->current_page) {
-	case GCM_CALIBRATE_PAGE_INTRO:
-		g_debug ("now intro page");
-		break;
 	case GCM_CALIBRATE_PAGE_LAST:
-		g_debug ("now last page");
 		gcm_calib_device_uninihibit (calib);
 		gcm_calib_play_sound (calib);
 		break;
@@ -563,6 +553,15 @@ gcm_calib_assistant_prepare_cb (GtkAssistant *assistant, GtkWidget *page_widget,
 		break;
 	default:
 		break;
+	}
+
+	/* ensure we cancel argyllcms if the user clicks back */
+	if (calib->current_page != GCM_CALIBRATE_PAGE_ACTION &&
+	    calib->started_calibration) {
+		gcm_calibrate_interaction (calib->calibrate,
+					   GTK_RESPONSE_CANCEL);
+		gcm_calib_device_uninihibit (calib);
+		calib->started_calibration = FALSE;
 	}
 
 	/* forward on the action page just unsticks the calibration */
@@ -1150,10 +1149,11 @@ gcm_calib_reference_kind_combobox_cb (GtkComboBox *combo_box,
 {
 	const gchar *filename;
 	gchar *path;
+	GcmCalibrateReferenceKind reference_kind;
 
 	/* not sorted so we can just use the index */
-	calib->reference_kind = gtk_combo_box_get_active (GTK_COMBO_BOX (combo_box));
-	filename = gcm_calib_reference_kind_to_image_filename (calib->reference_kind);
+	reference_kind = gtk_combo_box_get_active (GTK_COMBO_BOX (combo_box));
+	filename = gcm_calib_reference_kind_to_image_filename (reference_kind);
 
 	/* fallback */
 	if (filename == NULL)
@@ -1249,10 +1249,15 @@ static void
 gcm_calib_display_kind_toggled_cb (GtkToggleButton *togglebutton,
 				   GcmCalibratePriv *calib)
 {
+	GcmCalibrateDisplayKind	 display_kind;
+
 	if (!gtk_toggle_button_get_active (togglebutton))
 		return;
-	calib->display_kind = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (togglebutton),
-								   "GcmCalib::display-kind"));
+	display_kind = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (togglebutton),
+							    "GcmCalib::display-kind"));
+	g_object_set (calib->calibrate,
+		      "display-kind", display_kind,
+		      NULL);
 }
 
 /**
@@ -1427,10 +1432,14 @@ static void
 gcm_calib_print_kind_toggled_cb (GtkToggleButton *togglebutton,
 				   GcmCalibratePriv *calib)
 {
+	GcmCalibratePrintKind print_kind;
 	if (!gtk_toggle_button_get_active (togglebutton))
 		return;
-	calib->print_kind = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (togglebutton),
-								   "GcmCalib::print-kind"));
+	print_kind = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (togglebutton),
+							  "GcmCalib::print-kind"));
+	g_object_set (calib->calibrate,
+		      "print-kind", print_kind,
+		      NULL);
 }
 
 /**
@@ -1500,10 +1509,14 @@ static void
 gcm_calib_precision_toggled_cb (GtkToggleButton *togglebutton,
 				GcmCalibratePriv *calib)
 {
+	GcmCalibratePrecision precision;
 	if (!gtk_toggle_button_get_active (togglebutton))
 		return;
-	calib->precision = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (togglebutton),
-								"GcmCalib::precision"));
+	precision = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (togglebutton),
+							 "GcmCalib::precision"));
+	g_object_set (calib->calibrate,
+		      "precision", precision,
+		      NULL);
 }
 
 /**
@@ -1602,6 +1615,67 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_PRECISION));
 	g_strfreev (labels);
+
+	/* show page */
+	gtk_widget_show_all (vbox);
+}
+
+static void
+gcm_calib_text_changed_cb (GtkEntry *entry,
+			   GcmCalibratePriv *calib)
+{
+	g_object_set (calib->calibrate,
+		      "description", gtk_entry_get_text (entry),
+		      NULL);
+}
+
+/**
+ * gcm_calib_setup_page_profile_title:
+ **/
+static void
+gcm_calib_setup_page_profile_title (GcmCalibratePriv *calib)
+{
+	GtkWidget *vbox;
+	GtkWidget *content;
+	GtkWidget *widget;
+	gchar *tmp = NULL;
+	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+
+	/* TRANSLATORS: this is the page title */
+	vbox = gcm_calib_add_page_title (calib, _("Profile title"));
+
+	/* main contents */
+	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
+	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
+
+	/* TRANSLATORS: this is intro page text */
+	gcm_calib_add_page_para (content, _("Choose a title to identify the profile on your system."));
+
+	widget = gtk_entry_new ();
+	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
+	gtk_entry_set_max_length (GTK_ENTRY (widget), 128);
+
+	/* set the current title */
+	g_object_get (calib->calibrate,
+		      "description", &tmp,
+		      NULL);
+	gtk_entry_set_text (GTK_ENTRY (widget), tmp);
+	g_free (tmp);
+
+	/* watch for changes */
+	g_signal_connect (GTK_EDITABLE (widget), "changed",
+			  G_CALLBACK (gcm_calib_text_changed_cb), calib);
+
+	/* add to assistant */
+	gtk_assistant_append_page (assistant, vbox);
+	gtk_assistant_set_page_type (assistant, vbox, GTK_ASSISTANT_PAGE_CONTENT);
+	/* TRANSLATORS: this is the calibration wizard page title */
+	gtk_assistant_set_page_title (assistant, vbox, _("Profile Title"));
+	gtk_assistant_set_page_complete (assistant, vbox, TRUE);
+	g_ptr_array_add (calib->pages, vbox);
+	g_object_set_data (G_OBJECT (vbox),
+			   "GcmCalibrateMain::Index",
+			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_TITLE));
 
 	/* show page */
 	gtk_widget_show_all (vbox);
@@ -1760,10 +1834,13 @@ gcm_calib_add_pages (GcmCalibratePriv *calib)
 	gcm_calib_setup_page_precision (calib);
 
 	if (calib->device_kind == CD_DEVICE_KIND_DISPLAY) {
-		if (!calib->internal_lcd)
+		if (!calib->internal_lcd) {
 			gcm_calib_setup_page_display_kind (calib);
-		else
-			calib->display_kind = GCM_CALIBRATE_DEVICE_KIND_LCD;
+		} else {
+			g_object_set (calib->calibrate,
+				      "display-kind", GCM_CALIBRATE_DEVICE_KIND_LCD,
+				      NULL);
+		}
 		gcm_calib_setup_page_display_temp (calib);
 	} else if (calib->device_kind == CD_DEVICE_KIND_PRINTER) {
 		gcm_calib_setup_page_print_kind (calib);
@@ -1774,6 +1851,7 @@ gcm_calib_add_pages (GcmCalibratePriv *calib)
 			gcm_calib_setup_page_install_targets (calib);
 	}
 
+	gcm_calib_setup_page_profile_title (calib);
 	gcm_calib_setup_page_action (calib);
 
 	gcm_calib_setup_page_summary (calib);
@@ -1806,7 +1884,14 @@ gcm_calib_sensor_added_cb (CdClient *client, CdSensor *sensor, GcmCalibratePriv 
 static void
 gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *calib)
 {
+	const gchar *description;
+	const gchar *manufacturer;
+	const gchar *model;
+	const gchar *native_device;
+	const gchar *serial;
+	gchar *copyright = NULL;
 	gboolean ret;
+	GDateTime *dt = NULL;
 	GError *error = NULL;
 
 	/* add application specific icons to search path */
@@ -1873,12 +1958,68 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *calib)
 		goto out;
 	}
 
-	/* get the device kind */
+	/* get the device properties */
 	calib->device_kind = cd_device_get_kind (calib->device);
+
+	/* set, with fallbacks */
+	serial = cd_device_get_serial (calib->device);
+	if (serial == NULL) {
+		/* TRANSLATORS: this is saved in the profile */
+		serial = _("Unknown serial");
+	}
+	model = cd_device_get_model (calib->device);
+	if (model == NULL) {
+		/* TRANSLATORS: this is saved in the profile */
+		model = _("Unknown model");
+	}
+	description = cd_device_get_model (calib->device);
+	if (description == NULL) {
+		/* TRANSLATORS: this is saved in the profile */
+		description = _("Unknown description");
+	}
+	manufacturer = cd_device_get_vendor (calib->device);
+	if (manufacturer == NULL) {
+		/* TRANSLATORS: this is saved in the profile */
+		manufacturer = _("Unknown manufacturer");
+	}
+
+	dt = g_date_time_new_now_local ();
+	/* TRANSLATORS: this is the copyright string, where it might be
+	 * "Copyright (c) 2009 Edward Scissorhands"
+	 * BIG RED FLASHING NOTE: YOU NEED TO USE ASCII ONLY */
+	copyright = g_strdup_printf ("%s %04i %s", _("Copyright (c)"),
+				     g_date_time_get_year (dt),
+				     g_get_real_name ());
+
+	/* set the proper values */
+	g_object_set (calib->calibrate,
+		      "device-kind", calib->device_kind,
+		      "model", model,
+		      "description", description,
+		      "manufacturer", manufacturer,
+		      "serial", serial,
+		      "copyright", copyright,
+		      NULL);
+
+	/* display specific properties */
+	if (calib->device_kind == CD_DEVICE_KIND_DISPLAY) {
+		native_device = cd_device_get_metadata_item (calib->device,
+							     CD_DEVICE_METADATA_XRANDR_NAME);
+		if (native_device == NULL) {
+			g_warning ("failed to get output");
+			goto out;
+		}
+		g_object_set (calib->calibrate,
+			      "output-name", native_device,
+			      NULL);
+	}
 out:
 	/* add different pages depending on the device kind */
 	gcm_calib_add_pages (calib);
 	gtk_assistant_set_current_page (GTK_ASSISTANT (calib->main_window), 0);
+	if (dt != NULL)
+		g_date_time_unref (dt);
+	g_free (copyright);
 }
 
 static void
@@ -1985,7 +2126,6 @@ main (int argc, char **argv)
 	calib->brightness = gcm_brightness_new ();
 	calib->calibrate = gcm_calibrate_argyll_new ();
 	calib->device_kind = CD_DEVICE_KIND_UNKNOWN;
-	calib->display_kind = GCM_CALIBRATE_DEVICE_KIND_UNKNOWN;
 	g_signal_connect (calib->calibrate, "title-changed",
 			  G_CALLBACK (gcm_calib_title_changed_cb), calib);
 	g_signal_connect (calib->calibrate, "message-changed",

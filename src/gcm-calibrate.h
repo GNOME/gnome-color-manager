@@ -145,10 +145,6 @@ void		 gcm_calibrate_interaction		(GcmCalibrate	*calibrate,
 							 GtkResponseType response);
 
 /* designed for super-classes to call */
-gchar		*gcm_calibrate_get_profile_copyright	(GcmCalibrate	*calibrate);
-gchar		*gcm_calibrate_get_profile_description	(GcmCalibrate	*calibrate);
-gchar		*gcm_calibrate_get_profile_model	(GcmCalibrate	*calibrate);
-gchar		*gcm_calibrate_get_profile_manufacturer	(GcmCalibrate	*calibrate);
 void		 gcm_calibrate_set_sensor		(GcmCalibrate	*calibrate,
 							 CdSensor	*sensor);
 void		 gcm_calibrate_set_title		(GcmCalibrate	*calibrate,
@@ -163,10 +159,6 @@ void		 gcm_calibrate_interaction_required	(GcmCalibrate	*calibrate,
 GtkWidget	*gcm_calibrate_get_content_widget	(GcmCalibrate	*calibrate);
 
 /* JUNK */
-gboolean	 gcm_calibrate_set_from_device		(GcmCalibrate	*calibrate,
-							 CdDevice	*device,
-							 CdSensor	*sensor,
-							 GError		**error);
 gboolean	 gcm_calibrate_set_from_exif		(GcmCalibrate	*calibrate,
 							 const gchar	*filename,
 							 GError		**error);

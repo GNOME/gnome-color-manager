@@ -806,13 +806,11 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "copyright", &copyright,
+		      "description", &description,
+		      "model", &model,
+		      "manufacturer", &manufacturer,
 		      NULL);
-
-	/* get profile text data */
-	copyright = gcm_calibrate_get_profile_copyright (GCM_CALIBRATE (calibrate_argyll));
-	description = gcm_calibrate_get_profile_description (GCM_CALIBRATE (calibrate_argyll));
-	model = gcm_calibrate_get_profile_model (GCM_CALIBRATE (calibrate_argyll));
-	manufacturer = gcm_calibrate_get_profile_manufacturer (GCM_CALIBRATE (calibrate_argyll));
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("colprof", error);
@@ -1117,14 +1115,12 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	/* get shared data */
 	g_object_get (calibrate_argyll,
 		      "basename", &basename,
+		      "copyright", &copyright,
+		      "description", &description,
+		      "model", &model,
+		      "manufacturer", &manufacturer,
 		      "reference-kind", &reference_kind,
 		      NULL);
-
-	/* get profile text data */
-	copyright = gcm_calibrate_get_profile_copyright (GCM_CALIBRATE (calibrate_argyll));
-	description = gcm_calibrate_get_profile_description (GCM_CALIBRATE (calibrate_argyll));
-	model = gcm_calibrate_get_profile_model (GCM_CALIBRATE (calibrate_argyll));
-	manufacturer = gcm_calibrate_get_profile_manufacturer (GCM_CALIBRATE (calibrate_argyll));
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("colprof", error);

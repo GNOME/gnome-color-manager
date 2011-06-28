@@ -137,81 +137,6 @@ out:
 }
 
 /**
- * gcm_calibrate_get_device_fallback:
- **/
-gchar *
-gcm_calibrate_get_profile_copyright (GcmCalibrate *calibrate)
-{
-	gchar *text;
-	GDate *date = NULL;
-
-	/* create date and set it to now */
-	date = g_date_new ();
-	g_date_set_time_t (date, time (NULL));
-
-	/* TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" - YOU NEED TO USE ASCII ONLY */
-	text = g_strdup_printf ("%s %04i %s", _("Copyright (c)"), date->year, g_get_real_name ());
-
-	g_date_free (date);
-	return text;
-}
-
-/**
- * gcm_calibrate_get_device_fallback:
- **/
-gchar *
-gcm_calibrate_get_profile_description (GcmCalibrate *calibrate)
-{
-	gchar *text;
-	const gchar *description;
-	GcmCalibratePrivate *priv = calibrate->priv;
-
-	/* we've got something set */
-	if (priv->description != NULL) {
-		description = priv->description;
-	} else {
-		/* TRANSLATORS: this is saved in the profile */
-		description = _("Unknown description");
-	}
-
-	/* get description */
-	text = g_strdup_printf ("%s, %s", priv->device, description);
-	return text;
-}
-
-/**
- * gcm_calibrate_get_device_fallback:
- **/
-gchar *
-gcm_calibrate_get_profile_model (GcmCalibrate *calibrate)
-{
-	GcmCalibratePrivate *priv = calibrate->priv;
-
-	/* we've got something set */
-	if (priv->model != NULL)
-		return g_strdup (priv->model);
-
-	/* TRANSLATORS: this is saved in the profile */
-	return g_strdup (_("Unknown model"));
-}
-
-/**
- * gcm_calibrate_get_device_fallback:
- **/
-gchar *
-gcm_calibrate_get_profile_manufacturer (GcmCalibrate *calibrate)
-{
-	GcmCalibratePrivate *priv = calibrate->priv;
-
-	/* we've got something set */
-	if (priv->manufacturer != NULL)
-		return g_strdup (priv->manufacturer);
-
-	/* TRANSLATORS: this is saved in the profile */
-	return g_strdup (_("Unknown manufacturer"));
-}
-
-/**
  * gcm_calibrate_get_time:
  **/
 static gchar *
@@ -303,65 +228,6 @@ gcm_calibrate_set_basename (GcmCalibrate *calibrate)
 	g_free (model);
 	g_free (timespec);
 	g_string_free (basename, TRUE);
-}
-
-/**
- * gcm_calibrate_set_from_device:
- **/
-gboolean
-gcm_calibrate_set_from_device (GcmCalibrate *calibrate,
-			       CdDevice *device,
-			       CdSensor *sensor,
-			       GError **error)
-{
-	gboolean ret = TRUE;
-	const gchar *native_device = NULL;
-	const gchar *manufacturer = NULL;
-	const gchar *model = NULL;
-	const gchar *description = NULL;
-	const gchar *serial = NULL;
-	CdDeviceKind kind;
-
-	/* get the device */
-	kind = cd_device_get_kind (device);
-	serial = cd_device_get_serial (device);
-	model = cd_device_get_model (device);
-	description = cd_device_get_model (device);
-	manufacturer = cd_device_get_vendor (device);
-
-	/* do not refcount */
-	calibrate->priv->sensor = sensor;
-
-	/* set the proper values */
-	g_object_set (calibrate,
-		      "device-kind", kind,
-		      "model", model,
-		      "description", description,
-		      "manufacturer", manufacturer,
-		      "serial", serial,
-		      NULL);
-
-	/* get a filename based on calibration attributes we've just set */
-	gcm_calibrate_set_basename (calibrate);
-
-	/* display specific properties */
-	if (kind == CD_DEVICE_KIND_DISPLAY) {
-		native_device = cd_device_get_metadata_item (device, CD_DEVICE_METADATA_XRANDR_NAME);
-		if (native_device == NULL) {
-			g_set_error (error,
-				     GCM_CALIBRATE_ERROR,
-				     GCM_CALIBRATE_ERROR_INTERNAL,
-				     "failed to get output");
-			ret = FALSE;
-			goto out;
-		}
-		g_object_set (calibrate,
-			      "output-name", native_device,
-			      NULL);
-	}
-
-out:
-	return ret;
 }
 
 /**
@@ -481,16 +347,6 @@ gcm_calibrate_display (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *win
 
 	/* set basename */
 	gcm_calibrate_set_basename (calibrate);
-#if 0
-	const gchar *hardware_device;
-	/* get device, harder */
-	hardware_device = cd_sensor_get_model (priv->sensor);
-	if (hardware_device == NULL) {
-		/* TRANSLATORS: this is the formattted custom profile description.
-		 * "Custom" refers to the fact that it's user generated */
-		hardware_device = _("Custom");
-	}
-#endif
 
 	/* coldplug source */
 	if (klass->calibrate_display == NULL) {

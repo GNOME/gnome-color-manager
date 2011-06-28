@@ -671,6 +671,10 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, CdDevice *device, CdSenso
 	/* get the number of steps to use */
 	g_object_get (calibrate,
 		      "precision", &precision,
+		      "copyright", &copyright,
+		      "description", &description,
+		      "model", &model,
+		      "manufacturer", &manufacturer,
 		      NULL);
 	if (precision == GCM_CALIBRATE_PRECISION_SHORT)
 		steps = 10;
@@ -681,12 +685,6 @@ gcm_calibrate_native_display (GcmCalibrate *calibrate, CdDevice *device, CdSenso
 
 	g_debug ("creating %s", filename_it8);
 	gcm_calibrate_native_create_it8_file (calibrate_native, sensor, filename_it8, steps);
-
-	/* get profile text data */
-	copyright = gcm_calibrate_get_profile_copyright (calibrate);
-	description = gcm_calibrate_get_profile_description (calibrate);
-	model = gcm_calibrate_get_profile_model (calibrate);
-	manufacturer = gcm_calibrate_get_profile_manufacturer (calibrate);
 
 	/* create basic profile */
 	profile = gcm_profile_new ();
@@ -719,30 +717,6 @@ out:
 }
 
 /**
- * gcm_calibrate_native_spotread:
- **/
-static gboolean
-gcm_calibrate_native_spotread (GcmCalibrate *calibrate, CdDevice *device, CdSensor *sensor, GtkWindow *window, GError **error)
-{
-//	GcmCalibrateNative *calibrate_native = GCM_CALIBRATE_NATIVE(calibrate);
-//	GcmCalibrateNativePrivate *priv = calibrate_native->priv;
-	gboolean ret = TRUE;
-	const gchar *title;
-	const gchar *message;
-
-	/* TRANSLATORS: title, setting up the photospectromiter */
-	title = _("Setting up device");
-	/* TRANSLATORS: dialog message */
-	message = _("Setting up the device to read a spot color…");
-
-	/* push new messages into the UI */
-	g_debug ("title=%s, message=%s", title, message);
-
-//out:
-	return ret;
-}
-
-/**
  * gcm_calibrate_native_class_init:
  **/
 static void
@@ -754,7 +728,6 @@ gcm_calibrate_native_class_init (GcmCalibrateNativeClass *klass)
 
 	/* setup klass links */
 	parent_class->calibrate_display = gcm_calibrate_native_display;
-	parent_class->calibrate_spotread = gcm_calibrate_native_spotread;
 
 	g_type_class_add_private (klass, sizeof (GcmCalibrateNativePrivate));
 }
