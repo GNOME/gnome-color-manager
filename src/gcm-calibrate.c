@@ -1,3 +1,24 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+ *
+ * Copyright (C) 2009-2011 Richard Hughes <richard@hughsie.com>
+ *
+ * Licensed under the GNU General Public License Version 2
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
 #include "config.h"
 
 #include <glib/gi18n.h>
@@ -31,6 +52,7 @@ struct _GcmCalibratePrivate
 	gchar				*filename_reference;
 	gchar				*filename_result;
 	gchar				*basename;
+	gchar				*copyright;
 	gchar				*manufacturer;
 	gchar				*model;
 	gchar				*description;
@@ -46,6 +68,7 @@ struct _GcmCalibratePrivate
 enum {
 	PROP_0,
 	PROP_BASENAME,
+	PROP_COPYRIGHT,
 	PROP_MODEL,
 	PROP_DESCRIPTION,
 	PROP_SERIAL,
@@ -881,6 +904,9 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 	case PROP_BASENAME:
 		g_value_set_string (value, priv->basename);
 		break;
+	case PROP_COPYRIGHT:
+		g_value_set_string (value, priv->copyright);
+		break;
 	case PROP_MODEL:
 		g_value_set_string (value, priv->model);
 		break;
@@ -942,6 +968,10 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 		g_free (priv->basename);
 		priv->basename = g_strdup (g_value_get_string (value));
 		gcm_utils_ensure_sensible_filename (priv->basename);
+		break;
+	case PROP_COPYRIGHT:
+		g_free (priv->copyright);
+		priv->copyright = g_strdup (g_value_get_string (value));
 		break;
 	case PROP_MODEL:
 		g_free (priv->model);
@@ -1046,6 +1076,11 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 				     NULL,
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_BASENAME, pspec);
+
+	pspec = g_param_spec_string ("copyright", NULL, NULL,
+				     NULL,
+				     G_PARAM_READWRITE);
+	g_object_class_install_property (object_class, PROP_COPYRIGHT, pspec);
 
 	pspec = g_param_spec_string ("model", NULL, NULL,
 				     NULL,
