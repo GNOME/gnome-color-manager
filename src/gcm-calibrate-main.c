@@ -391,6 +391,13 @@ out:
 }
 
 static gboolean
+gcm_calib_wait_for_daemon_cb (gpointer user_data)
+{
+	g_main_loop_quit ((GMainLoop *) user_data);
+	return FALSE;
+}
+
+static gboolean
 gcm_calib_start_idle_cb (gpointer user_data)
 {
 	CdProfile *profile = NULL;
@@ -401,6 +408,7 @@ gcm_calib_start_idle_cb (gpointer user_data)
 	GError *error = NULL;
 	GFile *dest = NULL;
 	GFile *file = NULL;
+	GMainLoop *loop;
 	GtkWidget *vbox;
 	GcmCalibratePriv *calib = (GcmCalibratePriv *) user_data;
 	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
@@ -456,6 +464,12 @@ gcm_calib_start_idle_cb (gpointer user_data)
 		g_error_free (error);
 		goto out;
 	}
+
+	/* wait for gnome-settings-daemon to pickup the new file */
+	loop = g_main_loop_new (NULL, FALSE);
+	g_timeout_add_seconds (3, gcm_calib_wait_for_daemon_cb, loop);
+	g_main_loop_run (loop);
+	g_main_loop_unref (loop);
 
 	/* add the new profile as the default */
 	filename_dest = g_file_get_path (dest);
