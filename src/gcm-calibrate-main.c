@@ -1558,7 +1558,10 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 	GtkWidget *content;
 	GtkWidget *widget;
 	GSList *list;
-	gchar **labels;
+	GString *labels[3];
+	guint i;
+	guint values_printer[] = { 20, 10, 4}; /* sheets */
+	guint values_display[] = { 20, 10, 4}; /* minutes */
 	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
 
 	/* TRANSLATORS: this is the page title */
@@ -1585,29 +1588,38 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 	}
 #endif
 
-	labels = g_new0 (gchar *, 4);
+	/* TRANSLATORS: radio options for calibration precision */
+	labels[0] = g_string_new (_("Accurate"));
+	labels[1] = g_string_new (_("Normal"));
+	labels[2] = g_string_new (_("Quick"));
 	switch (calib->device_kind) {
 	case CD_DEVICE_KIND_PRINTER:
-		/* TRANSLATORS: radio options for calibration precision */
-		labels[0] = g_strdup_printf (_("Accurate (about %i sheets of paper)"), 20);
-		labels[1] = g_strdup_printf (_("Normal (about %i sheets of paper)"), 10);
-		labels[2] = g_strdup_printf (_("Quick (about %i sheets of paper)"), 4);
+		for (i=0; i<3; i++) {
+			g_string_append (labels[i], " ");
+			/* TRANSLATORS: radio options for calibration precision */
+			g_string_append_printf (labels[i], ngettext (
+						"(about %i sheet of paper)",
+						"(about %i sheets of paper)",
+						values_printer[i]),
+						values_printer[i]);
+		}
 		break;
 	case CD_DEVICE_KIND_DISPLAY:
-		/* TRANSLATORS: radio options for calibration precision */
-		labels[0] = g_strdup_printf (_("Accurate (about %i minutes)"), 20);
-		labels[1] = g_strdup_printf (_("Normal (about %i minutes)"), 10);
-		labels[2] = g_strdup_printf (_("Quick (about %i minutes)"), 4);
+		for (i=0; i<3; i++) {
+			g_string_append (labels[i], " ");
+			/* TRANSLATORS: radio options for calibration precision */
+			g_string_append_printf (labels[i], ngettext (
+						"(about %i minute)",
+						"(about %i minutes)",
+						values_display[i]),
+						values_display[i]);
+		}
 		break;
 	default:
-		/* TRANSLATORS: radio options for calibration precision */
-		labels[0] = g_strdup (_("Accurate"));
-		labels[1] = g_strdup (_("Normal"));
-		labels[2] = g_strdup (_("Quick"));
 		break;
 	}
 
-	widget = gtk_radio_button_new_with_label (NULL, labels[0]);
+	widget = gtk_radio_button_new_with_label (NULL, labels[0]->str);
 	g_object_set_data (G_OBJECT (widget),
 			   "GcmCalib::precision",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PRECISION_LONG));
@@ -1616,7 +1628,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
-	widget = gtk_radio_button_new_with_label (list, labels[1]);
+	widget = gtk_radio_button_new_with_label (list, labels[1]->str);
 	g_object_set_data (G_OBJECT (widget),
 			   "GcmCalib::precision",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PRECISION_NORMAL));
@@ -1625,7 +1637,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
-	widget = gtk_radio_button_new_with_label (list, labels[2]);
+	widget = gtk_radio_button_new_with_label (list, labels[2]->str);
 	g_object_set_data (G_OBJECT (widget),
 			   "GcmCalib::precision",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PRECISION_SHORT));
@@ -1643,7 +1655,9 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_PRECISION));
-	g_strfreev (labels);
+
+	for (i=0; i<3; i++)
+		g_string_free (labels[i], TRUE);
 
 	/* show page */
 	gtk_widget_show_all (vbox);
