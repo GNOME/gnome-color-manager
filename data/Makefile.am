@@ -21,7 +21,6 @@ $(service_DATA): $(service_in_files) Makefile
 	@sed -e "s|\@servicedir\@|$(bindir)|" $< > $@
 
 pkgdata_DATA =						\
-	gcm-spawn.ui					\
 	gcm-picker.ui					\
 	gcm-viewer.ui
 
