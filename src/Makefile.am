@@ -63,7 +63,6 @@ bin_PROGRAMS =						\
 	gcm-inspect					\
 	gcm-viewer					\
 	gcm-calibrate					\
-	gcm-session					\
 	gcm-picker					\
 	gcm-import
 
@@ -186,24 +185,6 @@ gcm_picker_LDADD =					\
 	-lm
 
 gcm_picker_CFLAGS =					\
-	$(WARNINGFLAGS_C)
-
-gcm_session_SOURCES =					\
-	gcm-session.c
-
-gcm_session_LDADD =					\
-	libgcmshared.a					\
-	$(GLIB_LIBS)					\
-	$(X11_LIBS)					\
-	$(XORG_LIBS)					\
-	$(GTK_LIBS)					\
-	$(TIFF_LIBS)					\
-	$(EXIF_LIBS)					\
-	$(LCMS_LIBS)					\
-	$(COLORD_LIBS)					\
-	-lm
-
-gcm_session_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 if HAVE_TESTS

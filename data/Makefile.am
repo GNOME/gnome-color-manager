@@ -13,11 +13,6 @@ desktop_in_files =					\
 	gcm-import.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
-@INTLTOOL_DESKTOP_RULE@
-autostartdir = $(sysconfdir)/xdg/autostart
-autostart_in_files = gcm-session.desktop.in
-autostart_DATA = $(autostart_in_files:.desktop.in=.desktop)
-
 servicedir       = $(datadir)/dbus-1/services
 service_in_files = org.gnome.ColorManager.service.in
 service_DATA     = $(service_in_files:.service.in=.service)
@@ -41,7 +36,6 @@ clean-local :
 
 DISTCLEANFILES =					\
 	org.gnome.ColorManager.service			\
-	gcm-session.desktop				\
 	gcm-calibrate.desktop				\
 	gcm-picker.desktop				\
 	gcm-viewer.desktop				\
