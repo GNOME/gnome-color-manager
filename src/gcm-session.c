@@ -121,43 +121,6 @@ out:
 }
 
 /**
- * gcm_session_get_profiles_for_device:
- **/
-static GPtrArray *
-gcm_session_get_profiles_for_device (GcmSessionPrivate *priv,
-				     const gchar *device_id_with_prefix,
-				     GError **error)
-{
-	CdDevice *device;
-	gchar *device_id;
-	GPtrArray *profiles = NULL;
-
-	/* reformat to the device-and-profile-naming-spec */
-	device_id = g_strdup (device_id_with_prefix);
-	if (g_str_has_prefix (device_id_with_prefix, "sane:"))
-		device_id[4] = '-';
-
-	/* get list */
-	g_debug ("query=%s", device_id);
-	device = cd_client_find_device_sync (priv->client,
-					     device_id,
-					     NULL,
-					     error);
-	if (device == NULL)
-		goto out;
-	profiles = cd_device_get_profiles (device);
-	if (profiles->len == 0) {
-		g_set_error_literal (error, 1, 0, "No profiles were found.");
-		goto out;
-	}
-out:
-	g_free (device_id);
-	if (device != NULL)
-		g_object_unref (device);
-	return profiles;
-}
-
-/**
  * gcm_session_handle_method_call:
  **/
 static void
@@ -168,37 +131,11 @@ gcm_session_handle_method_call (GDBusConnection *connection_, const gchar *sende
 {
 	GVariant *tuple = NULL;
 	GVariant *value = NULL;
-	gchar *device_id = NULL;
 	gchar *filename = NULL;
 	gchar *hints = NULL;
-	gchar *type = NULL;
 	GPtrArray *array = NULL;
-	gchar **devices = NULL;
 	GError *error = NULL;
 	GcmSessionPrivate *priv = (GcmSessionPrivate *) user_data;
-
-	/* return 'a(ss)' */
-	if (g_strcmp0 (method_name, "GetProfilesForDevice") == 0) {
-		g_variant_get (parameters, "(ss)", &device_id, &hints);
-
-		/* get array of profile filenames */
-		array = gcm_session_get_profiles_for_device (priv,
-							     device_id,
-							     &error);
-		if (array == NULL) {
-			g_dbus_method_invocation_return_dbus_error (invocation,
-								    "org.gnome.ColorManager.Failed",
-								    error->message);
-			g_error_free (error);
-			goto out;
-		}
-
-		/* format the value */
-		value = gcm_session_variant_from_profile_array (array);
-		tuple = g_variant_new_tuple (&value, 1);
-		g_dbus_method_invocation_return_value (invocation, tuple);
-		goto out;
-	}
 
 	/* return 'a(ss)' */
 	if (g_strcmp0 (method_name, "GetProfilesForFile") == 0) {
@@ -229,11 +166,8 @@ out:
 		g_variant_unref (tuple);
 	if (value != NULL)
 		g_variant_unref (value);
-	g_free (device_id);
-	g_free (type);
 	g_free (filename);
 	g_free (hints);
-	g_strfreev (devices);
 	return;
 }
 
