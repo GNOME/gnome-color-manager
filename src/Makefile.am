@@ -22,9 +22,6 @@ INCLUDES =						\
 	-DGCM_SYSTEM_PROFILES_DIR="\"$(GCM_SYSTEM_PROFILES_DIR)"\" \
 	-DGCM_DATA=\"$(pkgdatadir)\"
 
-introspectiondir = $(datadir)/dbus-1/interfaces
-dist_introspection_DATA = org.gnome.ColorManager.xml
-
 noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\
 	gcm-hull.c					\
