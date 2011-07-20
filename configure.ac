@@ -97,7 +97,13 @@ PKG_CHECK_MODULES(LCMS, lcms2 >= 2.2)
 PKG_CHECK_MODULES(X11, x11)
 PKG_CHECK_MODULES(COLORD, colord >= 0.1.9)
 
-PKG_CHECK_MODULES(CLUTTER, clutter-gtk-1.0 mash-0.1, has_clutter=yes, has_clutter=no)
+dnl **** Check for clutter ****
+AC_ARG_ENABLE(clutter, AS_HELP_STRING([--enable-clutter],[Enable clutter for 3D support]), enable_clutter=$enableval, enable_clutter=yes)
+if test x$enable_clutter != xno; then
+	PKG_CHECK_MODULES(CLUTTER, clutter-gtk-1.0 mash-0.1, has_clutter=yes, has_clutter=no)
+else
+	has_clutter=no
+fi
 AM_CONDITIONAL(HAVE_CLUTTER, test x$has_clutter = xyes)
 if test x$has_clutter = xyes; then
 	AC_DEFINE(HAVE_CLUTTER,1,[has clutter support])
