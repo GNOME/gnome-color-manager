@@ -81,8 +81,6 @@ gcm_calibrate_SOURCES =					\
 	gcm-calibrate-native.h				\
 	gcm-cell-renderer-profile-text.c		\
 	gcm-cell-renderer-profile-text.h		\
-	gcm-cell-renderer-profile-date.c		\
-	gcm-cell-renderer-profile-date.h		\
 	gcm-gamma-widget.c				\
 	gcm-gamma-widget.h				\
 	gcm-list-store-profiles.c			\
