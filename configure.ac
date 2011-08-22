@@ -92,7 +92,7 @@ PKG_CHECK_MODULES(XORG, xrandr)
 PKG_CHECK_MODULES(GTK, gtk+-3.0 >= 2.91.0)
 PKG_CHECK_MODULES(LCMS, lcms2 >= 2.2)
 PKG_CHECK_MODULES(X11, x11)
-PKG_CHECK_MODULES(COLORD, colord >= 0.1.9)
+PKG_CHECK_MODULES(COLORD, colord >= 0.1.12)
 
 dnl **** Check for clutter ****
 AC_ARG_ENABLE(clutter, AS_HELP_STRING([--enable-clutter],[Enable clutter for 3D support]), enable_clutter=$enableval, enable_clutter=yes)

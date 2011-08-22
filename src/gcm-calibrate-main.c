@@ -417,24 +417,13 @@ out:
 }
 
 static gboolean
-gcm_calib_wait_for_daemon_cb (gpointer user_data)
-{
-	g_main_loop_quit ((GMainLoop *) user_data);
-	return FALSE;
-}
-
-static gboolean
 gcm_calib_start_idle_cb (gpointer user_data)
 {
 	CdProfile *profile = NULL;
 	const gchar *filename;
 	gboolean ret;
-	gchar *destination = NULL;
-	gchar *filename_dest = NULL;
 	GError *error = NULL;
-	GFile *dest = NULL;
 	GFile *file = NULL;
-	GMainLoop *loop;
 	GtkWidget *vbox;
 	GcmCalibratePriv *calib = (GcmCalibratePriv *) user_data;
 	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
@@ -478,26 +467,10 @@ gcm_calib_start_idle_cb (gpointer user_data)
 
 	/* copy the ICC file to the proper location */
 	file = g_file_new_for_path (filename);
-	dest = gcm_utils_get_profile_destination (file);
-	ret = gcm_utils_mkdir_and_copy (file, dest, &error);
-	if (!ret) {
-		g_warning ("failed to calibrate: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* wait for gnome-settings-daemon to pickup the new file */
-	loop = g_main_loop_new (NULL, FALSE);
-	g_timeout_add_seconds (3, gcm_calib_wait_for_daemon_cb, loop);
-	g_main_loop_run (loop);
-	g_main_loop_unref (loop);
-
-	/* add the new profile as the default */
-	filename_dest = g_file_get_path (dest);
-	profile = cd_client_find_profile_by_filename_sync (calib->client,
-							   filename_dest,
-							   calib->cancellable,
-							   &error);
+	profile = cd_client_import_profile_sync (calib->client,
+						 file,
+						 calib->cancellable,
+						 &error);
 	if (profile == NULL) {
 		g_warning ("failed to find calibration profile: %s",
 			   error->message);
@@ -522,14 +495,10 @@ gcm_calib_start_idle_cb (gpointer user_data)
 	g_unlink (filename);
 
 out:
-	g_free (destination);
-	g_free (filename_dest);
 	if (profile != NULL)
 		g_object_unref (profile);
 	if (file != NULL)
 		g_object_unref (file);
-	if (dest != NULL)
-		g_object_unref (dest);
 	return FALSE;
 }
 
