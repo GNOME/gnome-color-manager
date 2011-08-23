@@ -61,6 +61,7 @@ typedef struct {
 	GtkWidget	*preview_widget_output;
 	guint		 example_index;
 	gchar		*profile_id;
+	gchar		*filename;
 	guint		 xid;
 	GtkListStore	*liststore_nc;
 	GtkListStore	*liststore_metadata;
@@ -1234,6 +1235,96 @@ gcm_viewer_named_color_treeview_clicked (GtkTreeSelection *selection, GcmViewerP
 }
 
 /**
+ * gcm_viewer_show_single_profile_by_filename:
+ **/
+static void
+gcm_viewer_show_single_profile_by_filename (GcmViewerPrivate *viewer,
+					    const gchar *filename)
+{
+	CdProfile *profile;
+	gboolean ret;
+	gchar *checksum = NULL;
+	gchar *data = NULL;
+	GError *error = NULL;
+	GHashTable *properties = NULL;
+	gsize len;
+
+	/* compute checksum */
+	ret = g_file_get_contents (viewer->filename,
+				   &data, &len, &error);
+	if (!ret) {
+		g_warning ("failed to read file %s: %s",
+			   viewer->filename,
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+	checksum = g_compute_checksum_for_data (G_CHECKSUM_MD5,
+						(const guchar *) data,
+						len);
+
+
+
+	properties = g_hash_table_new_full (g_str_hash, g_str_equal,
+					    NULL, NULL);
+	g_hash_table_insert (properties,
+			     (gpointer) CD_PROFILE_PROPERTY_FILENAME,
+			     viewer->filename);
+	g_hash_table_insert (properties,
+			     (gpointer) CD_PROFILE_METADATA_FILE_CHECKSUM,
+			     checksum);
+
+	/* create a temp profile */
+	profile = cd_client_create_profile_sync (viewer->client,
+						 checksum,
+						 CD_OBJECT_SCOPE_TEMP,
+						 properties,
+						 NULL,
+						 &error);
+	if (profile == NULL) {
+		g_warning ("failed to create profile %s: %s",
+			   viewer->filename,
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+	gcm_viewer_set_profile (viewer, profile);
+out:
+	g_free (data);
+	g_free (checksum);
+	if (properties != NULL)
+		g_hash_table_unref (properties);
+}
+
+/**
+ * gcm_viewer_show_single_profile_by_id:
+ **/
+static void
+gcm_viewer_show_single_profile_by_id (GcmViewerPrivate *viewer,
+				      const gchar *id)
+{
+	CdProfile *profile;
+	GError *error = NULL;
+
+	/* select a specific profile only */
+	profile = cd_client_find_profile_sync (viewer->client,
+					       id,
+					       NULL,
+					       &error);
+	if (profile == NULL) {
+		g_warning ("failed to get profile %s: %s",
+			   viewer->profile_id,
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+	gcm_viewer_set_profile (viewer, profile);
+out:
+	if (profile != NULL)
+		g_object_unref (profile);
+}
+
+/**
  * gcm_viewer_startup_cb:
  **/
 static void
@@ -1296,7 +1387,8 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	gtk_tree_view_columns_autosize (GTK_TREE_VIEW (widget));
 
 	/* hide the profiles pane */
-	if (viewer->profile_id != NULL) {
+	if (viewer->profile_id != NULL ||
+	    viewer->filename != NULL) {
 		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
 				     "vbox_profiles"));
 		gtk_widget_hide (widget);
@@ -1470,25 +1562,22 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), viewer->xid);
 	}
 
-	/* do all this after the window has been set up */
-	if (viewer->profile_id == NULL) {
-		g_idle_add ((GSourceFunc) gcm_viewer_startup_phase1_idle_cb, viewer);
+	/* specified an ID */
+	if (viewer->profile_id != NULL) {
+		gcm_viewer_show_single_profile_by_id (viewer,
+						      viewer->profile_id);
 		goto out;
 	}
 
-	/* select a specific profile only */
-	profile = cd_client_find_profile_sync (viewer->client,
-					       viewer->profile_id,
-					       NULL,
-					       &error);
-	if (profile == NULL) {
-		g_warning ("failed to get profile %s: %s",
-			   viewer->profile_id,
-			   error->message);
-		g_error_free (error);
+	/* specified a filename */
+	if (viewer->filename != NULL) {
+		gcm_viewer_show_single_profile_by_filename (viewer,
+							    viewer->filename);
 		goto out;
 	}
-	gcm_viewer_set_profile (viewer, profile);
+
+	/* do all this after the window has been set up */
+	g_idle_add ((GSourceFunc) gcm_viewer_startup_phase1_idle_cb, viewer);
 out:
 	if (profile != NULL)
 		g_object_unref (profile);
@@ -1502,10 +1591,13 @@ int
 main (int argc, char **argv)
 {
 	gchar *profile_id = NULL;
+	gchar *filename = NULL;
 	GcmViewerPrivate *viewer;
 	GOptionContext *context;
 	guint xid;
 	int status = 0;
+	gboolean ret;
+	GError *error = NULL;
 
 	const GOptionEntry options[] = {
 		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
@@ -1514,6 +1606,9 @@ main (int argc, char **argv)
 		{ "profile", 'f', 0, G_OPTION_ARG_STRING, &profile_id,
 		  /* TRANSLATORS: show just the one profile, rather than all */
 		  _("Set the specific profile to show"), NULL },
+		{ "file", '\0', 0, G_OPTION_ARG_STRING, &filename,
+		  /* TRANSLATORS: show just the one filename, rather than all */
+		  _("Set the specific file to show"), NULL },
 		{ NULL}
 	};
 
@@ -1532,12 +1627,17 @@ main (int argc, char **argv)
 	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_add_group (context, gcm_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
-	g_option_context_parse (context, &argc, &argv, NULL);
+	ret = g_option_context_parse (context, &argc, &argv, &error);
+	if (!ret) {
+		g_warning ("failed to parse options: %s", error->message);
+		g_error_free (error);
+	}
 	g_option_context_free (context);
 
 	viewer = g_new0 (GcmViewerPrivate, 1);
 	viewer->xid = xid;
 	viewer->profile_id = profile_id;
+	viewer->filename = filename;
 
 	/* ensure single instance */
 	viewer->application = gtk_application_new ("org.gnome.ColorManager.Viewer", 0);
@@ -1554,8 +1654,8 @@ main (int argc, char **argv)
 		g_object_unref (viewer->builder);
 	if (viewer->client != NULL)
 		g_object_unref (viewer->client);
-	if (viewer->profile_id != NULL)
-		g_free (viewer->profile_id);
+	g_free (viewer->profile_id);
+	g_free (viewer->filename);
 	g_free (viewer);
 	return status;
 }
