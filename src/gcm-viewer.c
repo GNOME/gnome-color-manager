@@ -773,7 +773,7 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 {
 	GtkWidget *widget;
 	GFile *file;
-	GcmProfile *gcm_profile;
+	GcmProfile *gcm_profile = NULL;
 	GcmClut *clut_trc = NULL;
 	GcmClut *clut_vcgt = NULL;
 	const gchar *profile_copyright;
@@ -794,6 +794,16 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	guint temperature;
 	guint filesize;
 	gboolean show_section = FALSE;
+	GError *error = NULL;
+
+	/* connect to the profile */
+	ret = cd_profile_connect_sync (profile, NULL, &error);
+	if (!ret) {
+		g_warning ("failed to connect to profile: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
 
 	gcm_profile = gcm_profile_new ();
 	file = g_file_new_for_path (cd_profile_get_filename (profile));
@@ -1032,6 +1042,7 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_from_srgb"));
 	gtk_widget_set_visible (widget, show_section);
 
+out:
 	if (gcm_profile != NULL)
 		g_object_unref (gcm_profile);
 	if (clut_trc != NULL)
