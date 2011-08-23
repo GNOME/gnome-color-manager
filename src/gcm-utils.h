@@ -50,7 +50,6 @@ void		 gcm_utils_ensure_sensible_filename	(gchar			*string);
 CdProfileKind	 gcm_utils_device_kind_to_profile_kind	(CdDeviceKind		 kind);
 gboolean	 gcm_utils_install_package		(const gchar		*package_name,
 							 GtkWindow		*window);
-gboolean	 gcm_utils_is_icc_profile		(GFile			*file);
 gchar		*gcm_utils_linkify			(const gchar		*text);
 const gchar	*cd_rendering_intent_to_localized_text		(CdRenderingIntent	 intent);
 const gchar	*cd_rendering_intent_to_localized_description	(CdRenderingIntent	 intent);

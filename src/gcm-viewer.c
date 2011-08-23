@@ -396,16 +396,9 @@ gcm_viewer_file_chooser_get_icc_profile (GcmViewerPrivate *viewer)
 static gboolean
 gcm_viewer_profile_import_file (GcmViewerPrivate *viewer, GFile *file)
 {
-	gboolean ret;
+	gboolean ret = FALSE;
 	GError *error = NULL;
 	CdProfile *profile_tmp = NULL;
-
-	/* check if correct type */
-	ret = gcm_utils_is_icc_profile (file);
-	if (!ret) {
-		g_debug ("not a ICC profile");
-		goto out;
-	}
 
 	/* copy icc file to users profile path */
 	profile_tmp = cd_client_import_profile_sync (viewer->client,
@@ -416,6 +409,9 @@ gcm_viewer_profile_import_file (GcmViewerPrivate *viewer, GFile *file)
 		g_error_free (error);
 		goto out;
 	}
+
+	/* success */
+	ret = TRUE;
 out:
 	if (profile_tmp != NULL)
 		g_object_unref (profile_tmp);

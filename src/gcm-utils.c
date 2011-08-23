@@ -82,58 +82,6 @@ gcm_utils_linkify (const gchar *hostile_text)
 }
 
 /**
- * gcm_utils_is_icc_profile:
- **/
-gboolean
-gcm_utils_is_icc_profile (GFile *file)
-{
-	GFileInfo *info;
-	const gchar *type;
-	GError *error = NULL;
-	gboolean ret = FALSE;
-	gchar *filename = NULL;
-
-	/* get content type for file */
-	filename = g_file_get_uri (file);
-	if (filename == NULL)
-		filename = g_file_get_path (file);
-	info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE, G_FILE_QUERY_INFO_NONE, NULL, &error);
-	if (info != NULL) {
-		type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
-		if (g_strcmp0 (type, "application/vnd.iccprofile") == 0) {
-			ret = TRUE;
-			goto out;
-		}
-	} else {
-		g_warning ("failed to get content type of %s: %s", filename, error->message);
-		g_error_free (error);
-	}
-
-	/* fall back if we have not got a new enought s-m-i */
-	if (g_str_has_suffix (filename, ".icc")) {
-		ret = TRUE;
-		goto out;
-	}
-	if (g_str_has_suffix (filename, ".icm")) {
-		ret = TRUE;
-		goto out;
-	}
-	if (g_str_has_suffix (filename, ".ICC")) {
-		ret = TRUE;
-		goto out;
-	}
-	if (g_str_has_suffix (filename, ".ICM")) {
-		ret = TRUE;
-		goto out;
-	}
-out:
-	if (info != NULL)
-		g_object_unref (info);
-	g_free (filename);
-	return ret;
-}
-
-/**
  * gcm_utils_install_package:
  **/
 gboolean

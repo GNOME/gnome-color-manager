@@ -673,7 +673,6 @@ gcm_test_utils_func (void)
 	gboolean ret;
 	gchar *text;
 	gchar *filename;
-	GFile *file;
 	GFile *dest;
 
 	text = gcm_utils_linkify ("http://www.dave.org is text http://www.hughsie.com that needs to be linked to http://www.bbc.co.uk really");
@@ -689,11 +688,6 @@ gcm_test_utils_func (void)
 	g_free (filename);
 	g_object_unref (file);
 	g_object_unref (dest);
-
-	file = g_file_new_for_path (TESTDATADIR "/bluish.icc");
-	ret = gcm_utils_is_icc_profile (file);
-	g_assert (ret);
-	g_object_unref (file);
 
 	ret = gcm_utils_output_is_lcd_internal ("LVDS1");
 	g_assert (ret);
