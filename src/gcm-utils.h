@@ -40,9 +40,6 @@
 
 gboolean	 gcm_utils_mkdir_for_filename		(const gchar		*filename,
 							 GError			**error);
-gboolean	 gcm_utils_mkdir_and_copy		(GFile			*source,
-							 GFile			*destination,
-							 GError			**error);
 GFile		*gcm_utils_get_profile_destination	(GFile			*file);
 gchar		**gcm_utils_ptr_array_to_strv		(GPtrArray		*array);
 gboolean	 gcm_gnome_help				(const gchar		*link_id);

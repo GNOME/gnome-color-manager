@@ -398,7 +398,7 @@ gcm_viewer_profile_import_file (GcmViewerPrivate *viewer, GFile *file)
 {
 	gboolean ret;
 	GError *error = NULL;
-	GFile *destination = NULL;
+	CdProfile *profile_tmp = NULL;
 
 	/* check if correct type */
 	ret = gcm_utils_is_icc_profile (file);
@@ -407,18 +407,18 @@ gcm_viewer_profile_import_file (GcmViewerPrivate *viewer, GFile *file)
 		goto out;
 	}
 
-	/* copy icc file to ~/.color/icc */
-	destination = gcm_utils_get_profile_destination (file);
-	ret = gcm_utils_mkdir_and_copy (file, destination, &error);
-	if (!ret) {
+	/* copy icc file to users profile path */
+	profile_tmp = cd_client_import_profile_sync (viewer->client,
+						     file, NULL, &error);
+	if (profile_tmp == NULL) {
 		/* TRANSLATORS: could not read file */
 		gcm_viewer_error_dialog (viewer, _("Failed to copy file"), error->message);
 		g_error_free (error);
 		goto out;
 	}
 out:
-	if (destination != NULL)
-		g_object_unref (destination);
+	if (profile_tmp != NULL)
+		g_object_unref (profile_tmp);
 	return ret;
 }
 

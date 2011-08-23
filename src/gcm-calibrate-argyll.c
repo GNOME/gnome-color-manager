@@ -918,6 +918,37 @@ gcm_calibrate_argyll_reference_kind_to_filename (GcmCalibrateReferenceKind kind)
 }
 
 /**
+ * gcm_utils_mkdir_and_copy:
+ **/
+static gboolean
+gcm_utils_mkdir_and_copy (GFile *source, GFile *destination, GError **error)
+{
+	gboolean ret;
+	GFile *parent;
+
+	g_return_val_if_fail (source != NULL, FALSE);
+	g_return_val_if_fail (destination != NULL, FALSE);
+
+	/* get parent */
+	parent = g_file_get_parent (destination);
+
+	/* create directory */
+	if (!g_file_query_exists (parent, NULL)) {
+		ret = g_file_make_directory_with_parents (parent, NULL, error);
+		if (!ret)
+			goto out;
+	}
+
+	/* do the copy */
+	ret = g_file_copy (source, destination, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, error);
+	if (!ret)
+		goto out;
+out:
+	g_object_unref (parent);
+	return ret;
+}
+
+/**
  * gcm_calibrate_argyll_device_copy:
  **/
 static gboolean
