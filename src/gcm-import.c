@@ -218,10 +218,10 @@ main (int argc, char **argv)
 		goto out;
 
 	/* copy icc file to users profile path */
-	ret = gcm_utils_mkdir_and_copy (file, destination, &error);
-	if (!ret) {
+	profile_tmp = cd_client_import_profile_sync (client, file, NULL, &error);
+	if (profile_tmp == NULL) {
 		/* TRANSLATORS: could not read file */
-		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Failed to copy file"));
+		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Failed to import file"));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", error->message);
 		gtk_dialog_run (GTK_DIALOG (dialog));
