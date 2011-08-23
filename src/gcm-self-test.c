@@ -710,9 +710,6 @@ gcm_test_utils_func (void)
 	gcm_utils_ensure_sensible_filename (filename);
 	g_assert_cmpstr (filename, ==, "Hel lo__Wo-(r)ld_");
 	g_free (filename);
-
-	g_assert (gcm_utils_device_kind_to_profile_kind (CD_DEVICE_KIND_SCANNER) == CD_PROFILE_KIND_INPUT_DEVICE);
-	g_assert (gcm_utils_device_kind_to_profile_kind (CD_DEVICE_KIND_UNKNOWN) == CD_PROFILE_KIND_UNKNOWN);
 }
 
 static void

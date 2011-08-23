@@ -193,47 +193,6 @@ gcm_utils_output_is_lcd (const gchar *output_name)
 }
 
 /**
- * gcm_utils_mkdir_for_filename:
- **/
-gboolean
-gcm_utils_mkdir_for_filename (const gchar *filename, GError **error)
-{
-	gboolean ret = FALSE;
-	GFile *file;
-	GFile *parent_dir = NULL;
-
-	/* get a file from the URI / path */
-	file = g_file_new_for_path (filename);
-	if (file == NULL)
-		file = g_file_new_for_uri (filename);
-	if (file == NULL) {
-		g_set_error (error, 1, 0, "could not resolve file for %s", filename);
-		goto out;
-	}
-
-	/* get parent */
-	parent_dir = g_file_get_parent (file);
-	if (parent_dir == NULL) {
-		g_set_error (error, 1, 0, "could not get parent dir %s", filename);
-		goto out;
-	}
-
-	/* ensure desination exists */
-	ret = g_file_query_exists (parent_dir, NULL);
-	if (!ret) {
-		ret = g_file_make_directory_with_parents (parent_dir, NULL, error);
-		if (!ret)
-			goto out;
-	}
-out:
-	if (file != NULL)
-		g_object_unref (file);
-	if (parent_dir != NULL)
-		g_object_unref (parent_dir);
-	return ret;
-}
-
-/**
  * gcm_utils_get_profile_destination:
  **/
 GFile *
@@ -356,80 +315,6 @@ gcm_utils_ensure_sensible_filename (gchar *data)
 		    !g_ascii_isalnum (data[i]))
 			data[i] = '_';
 	}
-}
-
-/**
- * gcm_utils_device_kind_to_profile_kind:
- **/
-CdProfileKind
-gcm_utils_device_kind_to_profile_kind (CdDeviceKind kind)
-{
-	CdProfileKind profile_kind;
-	switch (kind) {
-	case CD_DEVICE_KIND_DISPLAY:
-		profile_kind = CD_PROFILE_KIND_DISPLAY_DEVICE;
-		break;
-	case CD_DEVICE_KIND_CAMERA:
-	case CD_DEVICE_KIND_SCANNER:
-		profile_kind = CD_PROFILE_KIND_INPUT_DEVICE;
-		break;
-	case CD_DEVICE_KIND_PRINTER:
-		profile_kind = CD_PROFILE_KIND_OUTPUT_DEVICE;
-		break;
-	default:
-		profile_kind = CD_PROFILE_KIND_UNKNOWN;
-	}
-	return profile_kind;
-}
-
-/**
- * cd_rendering_intent_to_localized_text:
- **/
-const gchar *
-cd_rendering_intent_to_localized_text (CdRenderingIntent intent)
-{
-	if (intent == CD_RENDERING_INTENT_PERCEPTUAL) {
-		/* TRANSLATORS: rendering intent: you probably want to google this */
-		return _("Perceptual");
-	}
-	if (intent == CD_RENDERING_INTENT_RELATIVE_COLORIMETRIC) {
-		/* TRANSLATORS: rendering intent: you probably want to google this */
-		return _("Relative Colorimetric");
-	}
-	if (intent == CD_RENDERING_INTENT_SATURATION) {
-		/* TRANSLATORS: rendering intent: you probably want to google this */
-		return _("Saturation");
-	}
-	if (intent == CD_RENDERING_INTENT_ABSOLUTE_COLORIMETRIC) {
-		/* TRANSLATORS: rendering intent: you probably want to google this */
-		return _("Absolute Colorimetric");
-	}
-	return "unknown";
-}
-
-/**
- * cd_rendering_intent_to_localized_description:
- **/
-const gchar *
-cd_rendering_intent_to_localized_description (CdRenderingIntent intent)
-{
-	if (intent == CD_RENDERING_INTENT_PERCEPTUAL) {
-		/* TRANSLATORS: rendering intent: you probably want to google this */
-		return _("High quality photography");
-	}
-	if (intent == CD_RENDERING_INTENT_RELATIVE_COLORIMETRIC) {
-		/* TRANSLATORS: rendering intent: you probably want to google this */
-		return _("Precise color matching");
-	}
-	if (intent == CD_RENDERING_INTENT_SATURATION) {
-		/* TRANSLATORS: rendering intent: you probably want to google this */
-		return _("Graphs and presentations");
-	}
-	if (intent == CD_RENDERING_INTENT_ABSOLUTE_COLORIMETRIC) {
-		/* TRANSLATORS: rendering intent: you probably want to google this */
-		return _("Proofing devices");
-	}
-	return "unknown";
 }
 
 /**
