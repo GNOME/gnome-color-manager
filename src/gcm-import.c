@@ -148,6 +148,8 @@ main (int argc, char **argv)
 	if (copyright != NULL) {
 		if (g_str_has_prefix (copyright, "Copyright "))
 			copyright += 10;
+		if (g_str_has_prefix (copyright, "Copyright, "))
+			copyright += 11;
 		/* TRANSLATORS: message text */
 		g_string_append_printf (string, "\n%s %s", _("Profile copyright:"), copyright);
 	}
