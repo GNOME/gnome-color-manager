@@ -369,6 +369,15 @@ gcm_picker_sensor_client_setup_ui (void)
 	}
 	sensor = g_object_ref (g_ptr_array_index (sensors, 0));
 
+	/* connect to the profile */
+	ret = cd_sensor_connect_sync (sensor, NULL, &error);
+	if (!ret) {
+		g_warning ("failed to connect to sensor: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
 	if (!cd_sensor_get_native (sensor)) {
 		 /* TRANSLATORS: this is displayed if VTE support is not enabled */
 		gtk_label_set_label (GTK_LABEL (info_bar_hardware_label),
