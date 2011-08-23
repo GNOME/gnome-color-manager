@@ -567,6 +567,11 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 			goto out;
 		}
 
+		/* is a printer profile */
+		filename = cd_profile_get_filename (profile);
+		if (filename == NULL)
+			continue;
+
 		/* only for correct kind */
 		has_vcgt = cd_profile_get_has_vcgt (profile);
 		has_colorspace_description = gcm_profile_has_colorspace_description (profile);
@@ -576,7 +581,6 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 			gcm_prefs_combobox_add_profile (widget, profile, &iter);
 
 			/* set active option */
-			filename = cd_profile_get_filename (profile);
 			if (g_strcmp0 (filename, profile_filename) == 0)
 				gtk_combo_box_set_active_iter (GTK_COMBO_BOX (widget), &iter);
 			has_profile = TRUE;
