@@ -23,31 +23,38 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#include <gdk/gdkx.h>
 #include <math.h>
 #include <locale.h>
 #include <colord.h>
 
 #include "gcm-profile.h"
 #include "gcm-utils.h"
-#include "gcm-cie-widget.h"
 #include "gcm-debug.h"
 
 /**
- * gcm_import_add_cie_widget:
+ * gcm_import_show_details:
  **/
-static void
-gcm_import_add_cie_widget (GtkDialog *dialog, GtkWidget *cie_widget)
+static gboolean
+gcm_import_show_details (GtkWindow *window, const gchar *filename)
 {
-	GtkWidget *aspect;
-	GtkWidget *vbox;
+	gboolean ret;
+	gchar *cmdline;
+	guint xid;
+	GError *error = NULL;
 
-	vbox = gtk_dialog_get_content_area (GTK_DIALOG (dialog));
-	aspect = gtk_aspect_frame_new (NULL, 0.0f, 0.0f, 1.0f, FALSE);
-	gtk_frame_set_shadow_type (GTK_FRAME(aspect), GTK_SHADOW_NONE);
-	gtk_container_add (GTK_CONTAINER(aspect), cie_widget);
-	gtk_box_pack_end (GTK_BOX(vbox), aspect, TRUE, TRUE, 12);
-	gtk_widget_show (cie_widget);
-	gtk_widget_show (aspect);
+	xid = gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET(window)));
+	cmdline = g_strdup_printf ("%s/%s --parent-window %u --file %s",
+				   BINDIR,
+				   "gcm-viewer",
+				   xid,
+				   filename);
+	ret = g_spawn_command_line_sync (cmdline, NULL, NULL, NULL, &error);
+	if (!ret) {
+		g_warning ("failed to spawn viewer: %s", error->message);
+		g_error_free (error);
+	}
+	return ret;
 }
 
 /**
@@ -57,7 +64,6 @@ int
 main (int argc, char **argv)
 {
 	CdClient *client = NULL;
-	CdColorspace colorspace;
 	CdProfile *profile_tmp = NULL;
 	const gchar *copyright;
 	const gchar *description;
@@ -70,7 +76,7 @@ main (int argc, char **argv)
 	GOptionContext *context;
 	GString *string = NULL;
 	GtkResponseType response;
-	GtkWidget *cie_widget = NULL;
+	GtkWidget *image = NULL;
 	GtkWidget *dialog;
 	guint retval = 1;
 
@@ -125,25 +131,36 @@ main (int argc, char **argv)
 	/* get data */
 	description = gcm_profile_get_description (profile);
 	copyright = gcm_profile_get_copyright (profile);
-	colorspace = gcm_profile_get_colorspace (profile);
 
-	/* use CIE widget */
-	cie_widget = gcm_cie_widget_new ();
-	g_object_set (cie_widget,
-		      "use-grid", FALSE,
-		      "use-whitepoint", FALSE,
-		      NULL);
-	gtk_widget_set_size_request (cie_widget, 200, 200);
-	gcm_cie_widget_set_from_profile (cie_widget, profile);
+	/* use the same icon as the color control panel */
+	image = gtk_image_new_from_icon_name ("preferences-color",
+					      GTK_ICON_SIZE_DIALOG);
+	gtk_misc_set_alignment (GTK_MISC (image), 0.5, 0.0);
+	gtk_widget_show (image);
+
+	/* create message */
+	string = g_string_new ("");
+	/* TRANSLATORS: message text */
+	g_string_append_printf (string, _("Profile description: %s"),
+				description != NULL ? description : files[0]);
+
+	/* add copyright */
+	if (copyright != NULL) {
+		if (g_str_has_prefix (copyright, "Copyright "))
+			copyright += 10;
+		/* TRANSLATORS: message text */
+		g_string_append_printf (string, "\n%s %s", _("Profile copyright:"), copyright);
+	}
 
 	/* check file does't already exist as a file */
 	destination = gcm_utils_get_profile_destination (file);
 	ret = g_file_query_exists (destination, NULL);
 	if (ret) {
 		/* TRANSLATORS: color profile already been installed */
-		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_CLOSE, _("ICC profile already installed"));
+		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Color profile is already imported"));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s\n%s", description, copyright);
+		gtk_message_dialog_set_image (GTK_MESSAGE_DIALOG (dialog), image);
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 		goto out;
@@ -172,6 +189,7 @@ main (int argc, char **argv)
 						 GTK_BUTTONS_CLOSE,
 						 _("ICC profile already installed system-wide"));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+		gtk_message_dialog_set_image (GTK_MESSAGE_DIALOG (dialog), image);
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
 							  "%s\n%s",
 							  description,
@@ -181,36 +199,25 @@ main (int argc, char **argv)
 		goto out;
 	}
 
-	/* create message */
-	string = g_string_new ("");
-	if (description != NULL) {
-		/* TRANSLATORS: message text */
-		g_string_append_printf (string, _("Import ICC color profile %s?"), description);
-	} else {
-		/* TRANSLATORS: message text */
-		g_string_append (string, _("Import ICC color profile?"));
-	}
-
-	/* add copyright */
-	if (copyright != NULL)
-		g_string_append_printf (string, "\n%s", copyright);
-
 	/* ask confirmation */
-	dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_QUESTION, GTK_BUTTONS_CLOSE, "%s", _("Import ICC profile"));
+	dialog = gtk_message_dialog_new (NULL,
+					 GTK_DIALOG_MODAL,
+					 GTK_MESSAGE_INFO,
+					 GTK_BUTTONS_CANCEL,
+					 "%s",
+					 _("Import color profile?"));
+	gtk_message_dialog_set_image (GTK_MESSAGE_DIALOG (dialog), image);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
 	/* TRANSLATORS: button text */
-	gtk_dialog_add_button (GTK_DIALOG (dialog), _("Install"), GTK_RESPONSE_OK);
-
-	/* add cie widget */
-	gcm_import_add_cie_widget (GTK_DIALOG(dialog), cie_widget);
-
-	/* only show the cie widget if we have RGB data */
-	if (colorspace != CD_COLORSPACE_RGB)
-		gtk_widget_hide (cie_widget);
-
-	gtk_window_set_resizable (GTK_WINDOW (dialog), TRUE);
+	gtk_dialog_add_button (GTK_DIALOG (dialog), _("Import"), GTK_RESPONSE_OK);
+	gtk_dialog_add_button (GTK_DIALOG (dialog), _("Show Details"), GTK_RESPONSE_HELP);
+try_harder:
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
+	if (response == GTK_RESPONSE_HELP) {
+		gcm_import_show_details (GTK_WINDOW (dialog), files[0]);
+		goto try_harder;
+	}
 	gtk_widget_destroy (dialog);
 
 	/* not the correct response */
