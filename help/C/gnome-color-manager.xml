@@ -149,22 +149,21 @@
 <section id="using">
   <title>Usage</title>
   <para>
-    <application>&app;</application> is usually started at GNOME start-up, but
-    you can manually start <application>&app;</application> using:
+    <application>gnome-settings-daemon</application> is automatically
+    started at GNOME session start-up which runs a plugin to create
+    devices and apply profiles.
+  </para>
+  <para>
+    A color preferences panel is usually started from the System Settings
+    program, but you can start this manually using:
   </para>
   <screen>
-    <prompt>bash$ </prompt><userinput>gcm-apply <parameter>--verbose</parameter></userinput>
+    <prompt>bash$ </prompt><userinput>gnome-control-center <parameter>color</parameter></userinput>
   </screen>
   <para>
-    <application>&app;</application> preferences dialog can be started from
-    the GNOME Preferences Menu, but you can start this using:
-  </para>
-  <screen>
-    <prompt>bash$ </prompt><userinput>gcm-prefs <parameter>--verbose</parameter></userinput>
-  </screen>
-  <para>
-    ICC profiles should be imported into the <application>&app;</application>
-    by selecting a file in a nautilus window. You can also import the file using:
+    ICC profiles can be imported by double clicking the file in a file
+    manager window.
+    You can also import the file using:
   </para>
   <screen>
     <prompt>bash$ </prompt><userinput>gcm-import <filename><![CDATA[<filepath>]]></filename></userinput>
@@ -192,7 +191,7 @@
     </figure>
     <note>
       <para>
-        The install button will not show if the profile has been already installed.
+        The Import button will not show if the profile has been already installed.
       </para>
     </note>
   </section>
@@ -201,23 +200,8 @@
 <section id="preferences">
   <title>Preferences</title>
 
-  <para>The preferences window allows you to control:</para>
-
-  <itemizedlist>
-    <listitem>
-      <para>
-        A device profile.
-      </para>
-    </listitem>
-    <listitem>
-      <para>
-        The gamma, brightness and contrast.
-      </para>
-    </listitem>
-  </itemizedlist>
-
   <section id="preferences-basic">
-    <title>Basic Preferences</title>
+    <title>Preferences</title>
     <figure id="prefs-basic">
       <title>&app; basic tab</title>
       <screenshot>
@@ -280,61 +264,6 @@
         assign a profile to.
       </para>
     </note>
-  </section>
-
-  <section id="preferences-advanced">
-    <title>Advanced Preferences</title>
-    <figure id="prefs-advanced">
-      <title>&app; advanced tab</title>
-      <screenshot>
-        <mediaobject>
-          <imageobject>
-            <imagedata fileref="figures/gcm-adjust.png" format="PNG"/>
-          </imageobject>
-        </mediaobject>
-      </screenshot>
-    </figure>
-    <para>
-      This allows you to adjust a calibrated device or generated profile.
-    </para>
-    <tip>
-      <para>
-        The Fine Tuning Option is only available if you configure GConf
-        to enable it (
-        <menuchoice>
-          <guimenu>apps</guimenu>
-          <guisubmenu>gnome-color-manager</guisubmenu>
-          <guimenuitem>show-fine-tuning</guimenuitem>
-        </menuchoice>).
-      </para>
-    </tip>
-    <para>
-      CRT monitors have native gamma around 2.4 - 2.5 and LCD monitors
-      usually emulate the same value.
-    </para>
-    <para>
-      Traditionally, Linux and MS Windows operating systems use image encoding
-      of 1/2.2 and do not apply any gamma adjustment to the image or video
-      card LUT. Therefore the overall gamma is expected to be around 1.1
-      (which is useful to allow for dim viewing conditions at home
-      environment).
-    </para>
-    <para>
-      Apple used to use image encoding gamma close to 1/1.8 to naturally match
-      the native gamma of printing devices (and therefore internally applied
-      gamma adjustment of 1/1.45 before displaying images on monitor so that
-      the images displayed correctly).
-    </para>
-    <para>
-      Nonetheless, since OS X (v10.6 Snow Leopard) the default image encoding
-      gamma has also the value of 1/2.2 to meet the requirements of consumer
-      imaging industry.
-    </para>
-    <para>
-      Before fine tuning the gamma in &app;, you should know what your monitor
-      native gamma is, what display gamma you want to reach and then do the
-      math yourself.
-    </para>
   </section>
 
   <section id="preferences-profiles">
