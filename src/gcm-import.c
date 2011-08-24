@@ -105,8 +105,13 @@ main (int argc, char **argv)
 	/* nothing sent */
 	if (files == NULL) {
 		/* TRANSLATORS: nothing was specified on the command line */
-		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("No filename specified"));
-		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+		dialog = gtk_message_dialog_new (NULL,
+						 0,
+						 GTK_MESSAGE_ERROR,
+						 GTK_BUTTONS_CLOSE,
+						 _("No filename specified"));
+		gtk_window_set_icon_name (GTK_WINDOW (dialog),
+					  GCM_STOCK_ICON);
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
 		goto out;
@@ -118,10 +123,17 @@ main (int argc, char **argv)
 	ret = gcm_profile_parse (profile, file, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */
-		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Failed to open ICC profile"));
-		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
+		dialog = gtk_message_dialog_new (NULL,
+						 0,
+						 GTK_MESSAGE_ERROR,
+						 GTK_BUTTONS_CLOSE,
+						 _("Failed to open ICC profile"));
+		gtk_window_set_icon_name (GTK_WINDOW (dialog),
+					  GCM_STOCK_ICON);
 		/* TRANSLATORS: parsing error */
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), _("Failed to parse file: %s"), error->message);
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+							  _("Failed to parse file: %s"),
+							  error->message);
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		g_error_free (error);
 		gtk_widget_destroy (dialog);
@@ -159,7 +171,11 @@ main (int argc, char **argv)
 	ret = g_file_query_exists (destination, NULL);
 	if (ret) {
 		/* TRANSLATORS: color profile already been installed */
-		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, _("Color profile is already imported"));
+		dialog = gtk_message_dialog_new (NULL,
+						 0,
+						 GTK_MESSAGE_INFO,
+						 GTK_BUTTONS_OK,
+						 _("Color profile is already imported"));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 		gtk_message_dialog_set_image (GTK_MESSAGE_DIALOG (dialog), image);
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
@@ -186,7 +202,7 @@ main (int argc, char **argv)
 	if (profile_tmp != NULL) {
 		/* TRANSLATORS: color profile already been installed */
 		dialog = gtk_message_dialog_new (NULL,
-						 GTK_DIALOG_MODAL,
+						 0,
 						 GTK_MESSAGE_INFO,
 						 GTK_BUTTONS_CLOSE,
 						 _("ICC profile already installed system-wide"));
@@ -203,7 +219,7 @@ main (int argc, char **argv)
 
 	/* ask confirmation */
 	dialog = gtk_message_dialog_new (NULL,
-					 GTK_DIALOG_MODAL,
+					 0,
 					 GTK_MESSAGE_INFO,
 					 GTK_BUTTONS_CANCEL,
 					 "%s",
@@ -230,7 +246,11 @@ try_harder:
 	profile_tmp = cd_client_import_profile_sync (client, file, NULL, &error);
 	if (profile_tmp == NULL) {
 		/* TRANSLATORS: could not read file */
-		dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL, GTK_MESSAGE_ERROR, GTK_BUTTONS_CLOSE, _("Failed to import file"));
+		dialog = gtk_message_dialog_new (NULL,
+						 0,
+						 GTK_MESSAGE_ERROR,
+						 GTK_BUTTONS_CLOSE,
+						 _("Failed to import file"));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", error->message);
 		gtk_dialog_run (GTK_DIALOG (dialog));
