@@ -67,6 +67,7 @@ main (int argc, char **argv)
 	CdProfile *profile_tmp = NULL;
 	const gchar *copyright;
 	const gchar *description;
+	const gchar *title;
 	gboolean ret;
 	gchar **files = NULL;
 	GcmProfile *profile = NULL;
@@ -217,13 +218,33 @@ main (int argc, char **argv)
 		goto out;
 	}
 
+	/* get correct title */
+	switch (gcm_profile_get_kind (profile)) {
+	case CD_PROFILE_KIND_DISPLAY_DEVICE:
+		/* TRANSLATORS: the profile type */
+		title = _("Import display color profile?");
+		break;
+	case CD_PROFILE_KIND_OUTPUT_DEVICE:
+		/* TRANSLATORS: the profile type */
+		title = _("Import device color profile?");
+		break;
+	case CD_PROFILE_KIND_NAMED_COLOR:
+		/* TRANSLATORS: the profile type */
+		title = _("Import named color profile?");
+		break;
+	default:
+		/* TRANSLATORS: the profile type */
+		title = _("Import color profile?");
+		break;
+	}
+
 	/* ask confirmation */
 	dialog = gtk_message_dialog_new (NULL,
 					 0,
 					 GTK_MESSAGE_INFO,
 					 GTK_BUTTONS_CANCEL,
 					 "%s",
-					 _("Import color profile?"));
+					 title);
 	gtk_message_dialog_set_image (GTK_MESSAGE_DIALOG (dialog), image);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
@@ -243,7 +264,10 @@ try_harder:
 		goto out;
 
 	/* copy icc file to users profile path */
-	profile_tmp = cd_client_import_profile_sync (client, file, NULL, &error);
+	profile_tmp = cd_client_import_profile_sync (client,
+						     file,
+						     NULL,
+						     &error);
 	if (profile_tmp == NULL) {
 		/* TRANSLATORS: could not read file */
 		dialog = gtk_message_dialog_new (NULL,
