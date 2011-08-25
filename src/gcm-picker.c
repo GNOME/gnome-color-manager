@@ -325,15 +325,6 @@ gcm_picker_close_cb (GtkWidget *widget, gpointer data)
 }
 
 /**
- * gcm_picker_help_cb:
- **/
-static void
-gcm_picker_help_cb (GtkWidget *widget, gpointer data)
-{
-	gcm_gnome_help ("picker");
-}
-
-/**
  * gcm_picker_delete_event_cb:
  **/
 static gboolean
@@ -697,9 +688,6 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_picker_close_cb), application);
 
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_help"));
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_picker_help_cb), NULL);
 
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_measure"));
 	g_signal_connect (widget, "clicked",
