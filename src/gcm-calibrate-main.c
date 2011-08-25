@@ -2149,10 +2149,8 @@ main (int argc, char **argv)
 
 	/* nothing specified */
 	if (calib->device_id == NULL) {
-		g_print ("did not specify a device ID\n");
-//		calib->device_id = g_strdup ("sysfs-Chicony_Electronics_Co.__Ltd.-Integrated_Camera");
-		calib->device_id = g_strdup ("xrandr-Lenovo Group Limited");
-if(0)		goto out;
+		g_print ("%s\n", _("No device was specified!"));
+		goto out;
 	}
 
 	/* ensure single instance */
