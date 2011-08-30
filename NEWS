@@ -1,3 +1,33 @@
+Version 3.1.90
+~~~~~~~~~~~~~~
+Released: 2011-08-30
+
+* Translations
+ - Added Basque language (Inaki Larranaga Murgoitio)
+ - Updated Russian translation (Alexandre Prokoudine)
+ - Updated Serbian translation (Мирослав Николић)
+ - Update Simplified Chinese (zh_CN) translation (Yinghua Wang)
+
+* New Features:
+ - Add a --file argument to gcm-viewer to show files (Richard Hughes)
+ - Allow the profile title to be changed in gcm-calibrate (Richard Hughes)
+ - Ask the user for the target whitepoint when creating a profile (Richard Hughes)
+ - Make importing color profiles sexy (Richard Hughes)
+ - Move the help files to gnome-user-docs (Richard Hughes)
+ - Remove gcm-session, it's not required anymore (Richard Hughes)
+ - Use cd_client_import_profile_sync() when generating profiles (Richard Hughes)
+
+* Bugfix:
+ - Allow writing dictionary items of longer then 512 bytes (Richard Hughes)
+ - Correctly use plural forms in the calibration wizard. Fixes #654247 (Richard Hughes)
+ - Do not build with G_DISABLE_DEPRECATED for our future sanity (Richard Hughes)
+ - Fix a crash in gcm-picker when a color sensor is plugged in (Richard Hughes)
+ - Fix a critical warning in gcm-picker when CUPS printers are installed (Richard Hughes)
+ - Fix linking with -Wl,--as-needed (Dominique Leuenberger)
+ - Fix the profile list sorting when the user has virtual profiles from CUPS (Richard Hughes)
+ - Make the clutter and mash dependency non-automagic (Alexandre Rostovtsev)
+ - Remove the GetProfilesForDevice() DBus method call (Richard Hughes)
+
 Version 3.1.2
 ~~~~~~~~~~~~~
 Released: 2011-06-13
