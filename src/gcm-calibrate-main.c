@@ -494,6 +494,15 @@ gcm_calib_start_idle_cb (gpointer user_data)
 	/* remove temporary file */
 	g_unlink (filename);
 
+	/* allow forward */
+	vbox = gcm_calib_get_vbox_for_page (calib,
+					    GCM_CALIBRATE_PAGE_ACTION);
+	gtk_assistant_set_page_complete (assistant,
+					 vbox, TRUE);
+
+	/* set to summary page */
+	gtk_assistant_set_current_page (assistant,
+					gtk_assistant_get_n_pages (assistant) - 1);
 out:
 	if (profile != NULL)
 		g_object_unref (profile);
