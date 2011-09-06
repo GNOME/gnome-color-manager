@@ -1,9 +1,32 @@
+/* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
+ *
+ * Copyright (C) 2009-2011 Richard Hughes <richard@hughsie.com>
+ *
+ * Licensed under the GNU General Public License Version 2
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ */
+
+#define COGL_ENABLE_EXPERIMENTAL_API
+#include <cogl/cogl.h>
 #include <clutter/clutter.h>
 #include <lcms2.h>
 
 #define TESTDATADIR "../data/tests"
 
-//gcc -o gcm-glsl-demo gcm-glsl-demo.c `pkg-config --cflags --libs gtk+-2.0 clutter-x11-1.0 lcms2` -Wall -Wuninitialized -lm -Werror -g -fexceptions && ./gcm-glsl-demo
+//gcc -o gcm-glsl-demo gcm-glsl-demo.c `pkg-config --cflags --libs gtk+-2.0 cogl-1.0 clutter-x11-1.0 lcms2` -Wall -Wuninitialized -lm -Werror -g -fexceptions && ./gcm-glsl-demo
 
 /* the texture will be 16x16x16 and 3bpp */
 #define GCM_GLSL_LOOKUP_SIZE 	16
@@ -122,7 +145,8 @@ main (int argc, char **argv)
 	/* modify this material so we can add the 3D color data */
 	material = clutter_texture_get_cogl_material (CLUTTER_TEXTURE (actor));
 
-	color_data = gcm_glsl_generate_cogl_color_data (TESTDATADIR "/microsoft-blue-green-reverse.icc", &error);
+	color_data = gcm_glsl_generate_cogl_color_data ("/usr/share/color/icc/FakeBRG.icc",
+							&error);
 	if (color_data == COGL_INVALID_HANDLE) {
 		g_warning ("Error creating lookup texture: %s", error->message);
 		g_clear_error (&error);
