@@ -1,21 +1,29 @@
 EXTRA_DIST =						\
-	gcm-apply.sgml					\
-	gcm-prefs.sgml					\
-	gcm-import.sgml
+	gcm-calibrate.sgml				\
+	gcm-import.sgml					\
+	gcm-inspect.sgml				\
+	gcm-picker.sgml					\
+	gcm-viewer.sgml
 
 if HAVE_DOCBOOK2MAN
 man_MANS =						\
-	gcm-apply.1					\
-	gcm-prefs.1					\
-	gcm-import.1
+	gcm-calibrate.1					\
+	gcm-import.1					\
+	gcm-inspect.1					\
+	gcm-picker.1					\
+	gcm-viewer.1
 endif
 
 if HAVE_DOCBOOK2MAN
-gcm-apply.1: gcm-apply.sgml
-	docbook2man $? > /dev/null
-gcm-prefs.1: gcm-prefs.sgml
+gcm-calibrate.1: gcm-calibrate.sgml
 	docbook2man $? > /dev/null
 gcm-import.1: gcm-import.sgml
+	docbook2man $? > /dev/null
+gcm-inspect.1: gcm-inspect.sgml
+	docbook2man $? > /dev/null
+gcm-picker.1: gcm-picker.sgml
+	docbook2man $? > /dev/null
+gcm-viewer.1: gcm-viewer.sgml
 	docbook2man $? > /dev/null
 endif
 
