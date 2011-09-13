@@ -248,6 +248,12 @@ gcm_viewer_update_profile_list (GcmViewerPrivate *viewer)
 			goto out;
 		}
 
+#if CD_CHECK_VERSION(0,1,13)
+		/* ignore profiles from other user accounts */
+		if (!cd_profile_has_access (profile))
+			continue;
+#endif
+
 		profile_kind = cd_profile_get_kind (profile);
 		icon_name = gcm_viewer_profile_kind_to_icon_name (profile_kind);
 		filename = cd_profile_get_filename (profile);
