@@ -508,6 +508,8 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
 		g_warning ("failed to get parent window");
 		return;
 	}
+
+	gtk_widget_realize (GTK_WIDGET (window));
 	our_window = gtk_widget_get_window (GTK_WIDGET (window));
 	if (our_window == NULL) {
 		g_warning ("failed to get our window");
