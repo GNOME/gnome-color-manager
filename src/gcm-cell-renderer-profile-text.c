@@ -63,6 +63,7 @@ gcm_cell_renderer_get_profile_text (CdProfile *profile)
 {
 	CdColorspace colorspace;
 	const gchar *id;
+	gchar *markup = NULL;
 	GString *string;
 
 	if (profile == NULL) {
@@ -74,7 +75,8 @@ gcm_cell_renderer_get_profile_text (CdProfile *profile)
 	/* add profile description */
 	id = cd_profile_get_title (profile);
 	if (id != NULL && id[0] != '\0') {
-		string = g_string_new (id);
+		markup = g_markup_escape_text (id, -1);
+		string = g_string_new (markup);
 		goto out;
 	}
 
@@ -91,6 +93,7 @@ gcm_cell_renderer_get_profile_text (CdProfile *profile)
 	/* fall back to ID, ick */
 	string = g_string_new (cd_profile_get_id (profile));
 out:
+	g_free (markup);
 	return string;
 }
 

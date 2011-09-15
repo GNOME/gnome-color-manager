@@ -1007,7 +1007,9 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	} else {
 		gtk_widget_show (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_profile_model"));
-		gtk_label_set_label (GTK_LABEL(widget), profile_model);
+		temp = g_markup_escape_text (profile_model, -1);
+		gtk_label_set_label (GTK_LABEL(widget), temp);
+		g_free (temp);
 	}
 
 	/* set new datetime */
