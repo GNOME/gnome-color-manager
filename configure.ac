@@ -97,7 +97,16 @@ PKG_CHECK_MODULES(COLORD, colord >= 0.1.12)
 dnl **** Check for clutter ****
 AC_ARG_ENABLE(clutter, AS_HELP_STRING([--enable-clutter],[Enable clutter for 3D support]), enable_clutter=$enableval, enable_clutter=yes)
 if test x$enable_clutter != xno; then
-	PKG_CHECK_MODULES(CLUTTER, clutter-gtk-1.0 mash-0.1, has_clutter=yes, has_clutter=no)
+	# test for new mash
+	PKG_CHECK_MODULES(CLUTTER,
+			  clutter-gtk-1.0 mash-0.2,
+			  has_clutter=yes, has_clutter=no)
+	if test x$has_clutter == xno; then
+		# test for old mash
+		PKG_CHECK_MODULES(CLUTTER,
+				  clutter-gtk-1.0 mash-0.1,
+				  has_clutter=yes, has_clutter=no)
+	fi
 else
 	has_clutter=no
 fi
