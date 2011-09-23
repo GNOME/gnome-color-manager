@@ -2504,7 +2504,7 @@ g_debug ("title=%s, message=%s", title_str, string->str);
 		g_string_append (string, "\n\n");
 
 		/* TRANSLATORS: dialog message, just follow the hardware instructions */
-		g_string_append (string, _("If you make a mistake just release the switch and you'll get a chance to try again."));
+		g_string_append (string, _("If you make a mistake, just release the switch, and you'll get a chance to try again."));
 
 		/* push new messages into the UI */
 		gcm_calibrate_set_image (GCM_CALIBRATE (calibrate_argyll), "scan-target.svg");
