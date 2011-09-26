@@ -2,7 +2,7 @@ PackageKit Release Notes
 
 1. Write NEWS entries for gnome-color-manager in the same format as usual.
 
-Version 3.2.0
+Version 3.3.1
 ~~~~~~~~~~~~~
 Released: 2011-xx-xx
 
@@ -10,12 +10,12 @@ Released: 2011-xx-xx
 * New Features:
 * Bugfix:
 
-git shortlog GNOME_COLOR_MANAGER_3_1_92.. | grep -i -v trivial | grep -v Merge | uniq > NEWS.new
+git shortlog GNOME_COLOR_MANAGER_3_3_0.. | grep -i -v trivial | grep -v Merge | uniq > NEWS.new
 
 3. Commit changes in gnome-color-manager git:
 
-git commit -a -m "Release version 3.2.0"
-git tag -s GNOME_COLOR_MANAGER_3_2_0 -m "==== Version 3.2.0 ===="
+git commit -a -m "Release version 3.3.1"
+git tag -s GNOME_COLOR_MANAGER_3_3_1 -m "==== Version 3.3.1 ===="
 <enter password>
 git push --tags
 git push
@@ -40,7 +40,7 @@ ftpadmin install gnome-color-manager-*.tar.xz
 git commit -a -m "trivial: Post release version bump"
 git push
 
-9. Send an email to gnome-color-manager-list@gnome.org, gnome-announce-list@gnome.org, gnome-doc-list@gnome.org, gnome-i18n@gnome.org
+9. Send an email to gnome-color-manager-list@gnome.org
 
 gnome-color-manager is a session program that makes it easy to manage, install
 and generate color profiles in the GNOME desktop.
