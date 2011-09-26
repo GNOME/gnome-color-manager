@@ -721,6 +721,33 @@ gcm_viewer_get_localised_metadata_key (const gchar *key)
 	return key;
 }
 
+/* other CMS's add keys that we don't want to show */
+static gboolean
+gcm_viewer_is_blacklisted_metadata_key (const gchar *key)
+{
+	guint i;
+	const gchar *blacklist[] = { "prefix",
+				     "EDID_blue_x",
+				     "EDID_blue_y",
+				     "EDID_date",
+				     "EDID_gamma",
+				     "EDID_green_x",
+				     "EDID_green_y",
+				     "EDID_mnft_id",
+				     "EDID_model_id",
+				     "EDID_red_x",
+				     "EDID_red_y",
+				     "EDID_white_x",
+				     "EDID_white_y",
+				     "vcgt",
+				     NULL };
+	for (i = 0; blacklist[i] != NULL; i++) {
+		if (g_strcmp0 (blacklist[i], key) == 0)
+			return FALSE;
+	}
+	return TRUE;
+}
+
 /**
  * gcm_viewer_add_metadata:
  **/
@@ -753,6 +780,9 @@ gcm_viewer_add_metadata (GcmViewerPrivate *viewer,
 	if (keys == NULL)
 		goto out;
 	for (l = keys; l != NULL; l = l->next) {
+		ret = gcm_viewer_is_blacklisted_metadata_key (l->data);
+		if (!ret)
+			continue;
 		key = gcm_viewer_get_localised_metadata_key ((gchar *) l->data);
 		value = g_hash_table_lookup (metadata, l->data);
 		g_debug ("Adding '%s', '%s'",
