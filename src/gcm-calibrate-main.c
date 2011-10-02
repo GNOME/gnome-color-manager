@@ -2072,7 +2072,7 @@ gcm_calib_image_changed_cb (GcmCalibrate *calibrate,
 {
 	gchar *path;
 	GdkPixbuf *pixbuf;
-	GError *error;
+	GError *error = NULL;
 
 	if (filename != NULL) {
 		path = g_build_filename (GCM_DATA, "icons", filename, NULL);
