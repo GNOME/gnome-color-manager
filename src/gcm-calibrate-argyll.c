@@ -2087,7 +2087,7 @@ gcm_calibrate_argyll_exit_cb (VteTerminal *terminal, GcmCalibrateArgyll *calibra
 static gboolean
 gcm_calibrate_argyll_timeout_cb (GcmCalibrateArgyll *calibrate_argyll)
 {
-	vte_terminal_feed_child (VTE_TERMINAL(calibrate_argyll->priv->terminal), " ", 1);
+	vte_terminal_feed_child (VTE_TERMINAL(calibrate_argyll->priv->terminal), "\n", 1);
 	return FALSE;
 }
 
@@ -2134,7 +2134,7 @@ gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 	gcm_calibrate_interaction_required (GCM_CALIBRATE (calibrate_argyll), _("Continue"));
 
 	/* set state */
-	priv->argyllcms_ok = " ";
+	priv->argyllcms_ok = "\n";
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN,
 
 	/* play sound from the naming spec */
@@ -2194,7 +2194,7 @@ gcm_calibrate_argyll_interaction_calibrate (GcmCalibrateArgyll *calibrate_argyll
 	priv->done_calibrate = TRUE;
 
 	/* set state */
-	priv->argyllcms_ok = " ";
+	priv->argyllcms_ok = "\n";
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
 	gcm_calibrate_interaction_required (GCM_CALIBRATE (calibrate_argyll), _("Continue"));
 }
@@ -2240,7 +2240,7 @@ gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 	priv->already_on_window = FALSE;
 
 	/* set state */
-	priv->argyllcms_ok = " ";
+	priv->argyllcms_ok = "\n";
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
 	gcm_calibrate_interaction_required (GCM_CALIBRATE (calibrate_argyll), _("Continue"));
 }
@@ -2296,7 +2296,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 
 
 		/* set state */
-		priv->argyllcms_ok = " ";
+		priv->argyllcms_ok = "\n";
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
 		gcm_calibrate_interaction_required (GCM_CALIBRATE (calibrate_argyll), _("Retry"));
 
@@ -2413,7 +2413,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 					   _("Failed to read the strip correctly."));
 
 		/* set state */
-		priv->argyllcms_ok = " ";
+		priv->argyllcms_ok = "\n";
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
 		gcm_calibrate_interaction_required (GCM_CALIBRATE (calibrate_argyll), _("Retry"));
 
