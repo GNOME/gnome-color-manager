@@ -188,6 +188,10 @@ gcm_calibrate_argyll_get_sensor_image_attach (GcmCalibrateArgyll *calibrate_argy
 		return "i1-pro-attach.svg";
 	if (sensor_kind == CD_SENSOR_KIND_DTP94)
 		return "dtp94-attach.svg";
+#if CD_CHECK_VERSION(0,1,14)
+	if (sensor_kind == CD_SENSOR_KIND_I1_DISPLAY3)
+		return "i1-display3-attach.svg";
+#endif
 	return NULL;
 }
 
