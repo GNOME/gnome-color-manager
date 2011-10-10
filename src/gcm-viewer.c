@@ -156,16 +156,6 @@ gcm_viewer_image_prev_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 }
 
 /**
- * gcm_viewer_delete_event_cb:
- **/
-static gboolean
-gcm_viewer_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmViewerPrivate *viewer)
-{
-	g_application_release (G_APPLICATION (viewer->application));
-	return FALSE;
-}
-
-/**
  * gcm_viewer_profile_kind_to_icon_name:
  **/
 static const gchar *
@@ -1440,8 +1430,6 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	/* Hide window first so that the dialogue resizes itself without redrawing */
 	gtk_widget_hide (main_window);
 	gtk_window_set_icon_name (GTK_WINDOW (main_window), GCM_STOCK_ICON);
-	g_signal_connect (main_window, "delete_event",
-			  G_CALLBACK (gcm_viewer_delete_event_cb), viewer);
 	g_signal_connect (main_window, "drag-data-received",
 			  G_CALLBACK (gcm_viewer_drag_data_received_cb), viewer);
 	gcm_viewer_setup_drag_and_drop (GTK_WIDGET(main_window));
