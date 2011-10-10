@@ -14,9 +14,9 @@ icons_DATA = 	 			\
 	scan-target.svg			\
 	scan-target-good.svg		\
 	scan-target-bad.svg		\
-	i1-attach.svg			\
+	i1-pro-attach.svg		\
 	huey-attach.svg			\
-	dtp94-attach.svg			\
+	dtp94-attach.svg		\
 	hcfr-attach.svg			\
 	spyder-attach.svg		\
 	munki-ambient.svg		\
