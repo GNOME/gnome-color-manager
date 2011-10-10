@@ -192,29 +192,96 @@ gcm_viewer_profile_get_sort_string (CdProfileKind kind)
 }
 
 /**
- * gcm_viewer_update_profile_list:
+ * gcm_viewer_update_profile_connect_cb:
  **/
 static void
-gcm_viewer_update_profile_list (GcmViewerPrivate *viewer)
+gcm_viewer_update_profile_connect_cb (GObject *source_object,
+				      GAsyncResult *res,
+				      gpointer user_data)
 {
-	GtkTreeIter iter;
+	CdProfileKind profile_kind;
 	const gchar *description;
+	const gchar *filename;
 	const gchar *icon_name;
-	CdProfileKind profile_kind = CD_PROFILE_KIND_UNKNOWN;
-	CdProfile *profile;
-	guint i;
-	const gchar *filename = NULL;
 	gboolean ret;
 	gchar *sort = NULL;
-	GPtrArray *profile_array = NULL;
 	GError *error = NULL;
+	GtkTreeIter iter;
+	GtkTreePath *path;
+	GtkTreeSelection *selection;
+	GtkWidget *widget;
+	CdProfile *profile = CD_PROFILE (source_object);
+	GcmViewerPrivate *viewer = (GcmViewerPrivate *) user_data;
+
+	/* connect to the profile */
+	ret = cd_profile_connect_finish (profile,
+					 res,
+					 &error);
+	if (!ret) {
+		g_warning ("failed to connect to profile: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+#if CD_CHECK_VERSION(0,1,13)
+	/* ignore profiles from other user accounts */
+	if (!cd_profile_has_access (profile))
+		goto out;
+#endif
+
+	profile_kind = cd_profile_get_kind (profile);
+	icon_name = gcm_viewer_profile_kind_to_icon_name (profile_kind);
+	filename = cd_profile_get_filename (profile);
+	if (filename == NULL)
+		goto out;
+	description = cd_profile_get_title (profile);
+	sort = g_strdup_printf ("%s%s",
+				gcm_viewer_profile_get_sort_string (profile_kind),
+				description);
+	g_debug ("add %s to profiles list", filename);
+	gtk_list_store_append (viewer->list_store_profiles, &iter);
+	gtk_list_store_set (viewer->list_store_profiles, &iter,
+			    GCM_PROFILES_COLUMN_ID, filename,
+			    GCM_PROFILES_COLUMN_SORT, sort,
+			    GCM_PROFILES_COLUMN_ICON, icon_name,
+			    GCM_PROFILES_COLUMN_PROFILE, profile,
+			    -1);
+
+	/* select a profile to display if nothing already selected */
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "treeview_profiles"));
+	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
+
+	ret = gtk_tree_selection_get_selected (selection, NULL, NULL);
+	if (!ret) {
+		path = gtk_tree_path_new_from_string ("0");
+		gtk_tree_selection_select_path (selection, path);
+		gtk_tree_path_free (path);
+	}
+out:
+	g_free (sort);
+}
+
+/**
+ * gcm_viewer_update_get_profiles_cb:
+ **/
+static void
+gcm_viewer_update_get_profiles_cb (GObject *source_object,
+				   GAsyncResult *res,
+				   gpointer user_data)
+{
+	CdProfile *profile;
+	GError *error = NULL;
+	GPtrArray *profile_array = NULL;
+	guint i;
+	GcmViewerPrivate *viewer = (GcmViewerPrivate *) user_data;
 
 	g_debug ("updating profile list");
 
 	/* get new list */
-	profile_array = cd_client_get_profiles_sync (viewer->client,
-						     NULL,
-						     &error);
+	profile_array = cd_client_get_profiles_finish (CD_CLIENT (source_object),
+						       res,
+						       &error);
 	if (profile_array == NULL) {
 		g_warning ("failed to get profiles: %s",
 			   error->message);
@@ -228,45 +295,29 @@ gcm_viewer_update_profile_list (GcmViewerPrivate *viewer)
 	/* update each list */
 	for (i=0; i<profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
-
-		/* connect to the profile */
-		ret = cd_profile_connect_sync (profile, NULL, &error);
-		if (!ret) {
-			g_warning ("failed to connect to profile: %s",
-				   error->message);
-			g_error_free (error);
-			goto out;
-		}
-
-#if CD_CHECK_VERSION(0,1,13)
-		/* ignore profiles from other user accounts */
-		if (!cd_profile_has_access (profile))
-			continue;
-#endif
-
-		profile_kind = cd_profile_get_kind (profile);
-		icon_name = gcm_viewer_profile_kind_to_icon_name (profile_kind);
-		filename = cd_profile_get_filename (profile);
-		if (filename == NULL)
-			continue;
-		description = cd_profile_get_title (profile);
-		sort = g_strdup_printf ("%s%s",
-					gcm_viewer_profile_get_sort_string (profile_kind),
-					description);
-		g_debug ("add %s to profiles list", filename);
-		gtk_list_store_append (viewer->list_store_profiles, &iter);
-		gtk_list_store_set (viewer->list_store_profiles, &iter,
-				    GCM_PROFILES_COLUMN_ID, filename,
-				    GCM_PROFILES_COLUMN_SORT, sort,
-				    GCM_PROFILES_COLUMN_ICON, icon_name,
-				    GCM_PROFILES_COLUMN_PROFILE, profile,
-				    -1);
-
-		g_free (sort);
+		cd_profile_connect (profile,
+				    NULL,
+				    gcm_viewer_update_profile_connect_cb,
+				    viewer);
 	}
 out:
 	if (profile_array != NULL)
 		g_ptr_array_unref (profile_array);
+}
+
+/**
+ * gcm_viewer_update_profile_list:
+ **/
+static void
+gcm_viewer_update_profile_list (GcmViewerPrivate *viewer)
+{
+	g_debug ("updating profile list");
+
+	/* get new list */
+	cd_client_get_profiles (viewer->client,
+				NULL,
+				gcm_viewer_update_get_profiles_cb,
+				viewer);
 }
 
 /**
@@ -1106,37 +1157,6 @@ gcm_viewer_client_profile_removed_cb (CdClient *client,
 }
 
 /**
- * gcm_viewer_startup_phase1_idle_cb:
- **/
-static gboolean
-gcm_viewer_startup_phase1_idle_cb (GcmViewerPrivate *viewer)
-{
-	GtkWidget *widget;
-	GtkTreeSelection *selection;
-	GtkTreePath *path;
-
-	/* search the disk for profiles */
-	g_signal_connect (viewer->client, "profile-added",
-			  G_CALLBACK (gcm_viewer_client_profile_added_cb),
-			  viewer);
-	g_signal_connect (viewer->client, "profile-removed",
-			  G_CALLBACK (gcm_viewer_client_profile_removed_cb),
-			  viewer);
-
-	/* update list of profiles */
-	gcm_viewer_update_profile_list (viewer);
-
-	/* select a profile to display */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "treeview_profiles"));
-	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
-	path = gtk_tree_path_new_from_string ("0");
-	gtk_tree_selection_select_path (selection, path);
-	gtk_tree_path_free (path);
-
-	return FALSE;
-}
-
-/**
  * gcm_viewer_setup_drag_and_drop:
  **/
 static void
@@ -1575,7 +1595,15 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	}
 
 	/* do all this after the window has been set up */
-	g_idle_add ((GSourceFunc) gcm_viewer_startup_phase1_idle_cb, viewer);
+	g_signal_connect (viewer->client, "profile-added",
+			  G_CALLBACK (gcm_viewer_client_profile_added_cb),
+			  viewer);
+	g_signal_connect (viewer->client, "profile-removed",
+			  G_CALLBACK (gcm_viewer_client_profile_removed_cb),
+			  viewer);
+
+	/* update list of profiles */
+	gcm_viewer_update_profile_list (viewer);
 out:
 	if (profile != NULL)
 		g_object_unref (profile);
