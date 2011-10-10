@@ -19,6 +19,7 @@ icons_DATA = 	 			\
 	dtp94-attach.svg		\
 	hcfr-attach.svg			\
 	spyder-attach.svg		\
+	i1-display3-attach.svg		\
 	munki-ambient.svg		\
 	munki-attach.svg		\
 	munki-calibrate.svg		\
