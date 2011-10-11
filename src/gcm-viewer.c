@@ -1306,6 +1306,10 @@ gcm_viewer_show_single_profile_by_filename (GcmViewerPrivate *viewer,
 		g_warning ("failed to read file %s: %s",
 			   viewer->filename,
 			   error->message);
+		gcm_viewer_error_dialog (viewer,
+					 _("Failed to open ICC profile"),
+					 error->message);
+		g_application_release (G_APPLICATION (viewer->application));
 		g_error_free (error);
 		goto out;
 	}
@@ -1335,6 +1339,10 @@ gcm_viewer_show_single_profile_by_filename (GcmViewerPrivate *viewer,
 		g_warning ("failed to create profile %s: %s",
 			   viewer->filename,
 			   error->message);
+		gcm_viewer_error_dialog (viewer,
+					 _("Failed to import file"),
+					 error->message);
+		g_application_release (G_APPLICATION (viewer->application));
 		g_error_free (error);
 		goto out;
 	}
