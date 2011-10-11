@@ -2172,6 +2172,7 @@ gcm_calibrate_argyll_interaction_calibrate (GcmCalibrateArgyll *calibrate_argyll
 
 	/* get the image, if we have one */
 	filename = gcm_calibrate_argyll_get_sensor_image_calibrate (calibrate_argyll);
+	gcm_calibrate_set_image (GCM_CALIBRATE (calibrate_argyll), filename);
 
 	if (filename != NULL) {
 		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
@@ -2221,6 +2222,7 @@ gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 
 	/* get the image, if we have one */
 	filename = gcm_calibrate_argyll_get_sensor_image_screen (calibrate_argyll);
+	gcm_calibrate_set_image (GCM_CALIBRATE (calibrate_argyll), filename);
 
 	if (filename != NULL) {
 		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
