@@ -1040,7 +1040,7 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	} else {
 		gtk_widget_show (widget);
 		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_size"));
-		size_text = g_format_size_for_display (filesize);
+		size_text = g_format_size (filesize);
 		gtk_label_set_label (GTK_LABEL (widget), size_text);
 	}
 
