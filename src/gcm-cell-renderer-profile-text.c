@@ -93,6 +93,28 @@ gcm_cell_renderer_get_profile_text (CdProfile *profile)
 	/* fall back to ID, ick */
 	string = g_string_new (cd_profile_get_id (profile));
 out:
+
+	/* any source prefix? */
+	id = cd_profile_get_metadata_item (profile,
+					   CD_PROFILE_METADATA_DATA_SOURCE);
+	if (g_strcmp0 (id, CD_PROFILE_METADATA_DATA_SOURCE_EDID) == 0) {
+		/* TRANSLATORS: this is a profile prefix to signify the
+		 * profile has been auto-generated for this hardware */
+		g_string_prepend (string, _("Default: "));
+	}
+#if CD_CHECK_VERSION(0,1,14)
+	if (g_strcmp0 (id, CD_PROFILE_METADATA_DATA_SOURCE_STANDARD) == 0) {
+		/* TRANSLATORS: this is a profile prefix to signify the
+		 * profile his a standard space like AdobeRGB */
+		g_string_prepend (string, _("Colorspace: "));
+	}
+	if (g_strcmp0 (id, CD_PROFILE_METADATA_DATA_SOURCE_TEST) == 0) {
+		/* TRANSLATORS: this is a profile prefix to signify the
+		 * profile is a test profile */
+		g_string_prepend (string, _("Test profile: "));
+	}
+#endif
+
 	g_free (markup);
 	return string;
 }
