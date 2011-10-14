@@ -180,15 +180,44 @@ gcm_viewer_profile_kind_to_icon_name (CdProfileKind kind)
  * gcm_viewer_profile_get_sort_string:
  **/
 static const gchar *
-gcm_viewer_profile_get_sort_string (CdProfileKind kind)
+gcm_viewer_profile_get_sort_string (CdProfile *profile)
 {
+	const gchar *id;
+	static gchar sort[] = {'\0', '\0', '\0'};
+	CdProfileKind kind;
+
+	/* first order, profile kind */
+	kind = cd_profile_get_kind (profile);
 	if (kind == CD_PROFILE_KIND_DISPLAY_DEVICE)
-		return "1";
-	if (kind == CD_PROFILE_KIND_INPUT_DEVICE)
-		return "2";
-	if (kind == CD_PROFILE_KIND_OUTPUT_DEVICE)
-		return "3";
-	return "4";
+		sort[0] = '1';
+	else if (kind == CD_PROFILE_KIND_INPUT_DEVICE)
+		sort[0] = '2';
+	else if (kind == CD_PROFILE_KIND_OUTPUT_DEVICE)
+		sort[0] = '3';
+	else if (kind == CD_PROFILE_KIND_NAMED_COLOR)
+		sort[0] = '4';
+	else if (kind == CD_PROFILE_KIND_ABSTRACT)
+		sort[0] = '5';
+	else
+		sort[0] = '9';
+
+	/* second order, profile data source */
+	id = cd_profile_get_metadata_item (profile,
+					   CD_PROFILE_METADATA_DATA_SOURCE);
+	if (g_strcmp0 (id, CD_PROFILE_METADATA_DATA_SOURCE_CALIB) == 0)
+		sort[1] = '1';
+	else if (g_strcmp0 (id, CD_PROFILE_METADATA_DATA_SOURCE_EDID) == 0)
+		sort[1] = '2';
+#if CD_CHECK_VERSION(0,1,14)
+	else if (g_strcmp0 (id, CD_PROFILE_METADATA_DATA_SOURCE_STANDARD) == 0)
+		sort[1] = '3';
+	else if (g_strcmp0 (id, CD_PROFILE_METADATA_DATA_SOURCE_TEST) == 0)
+		sort[1] = '4';
+#endif
+	else
+		sort[1] = '0';
+
+	return sort;
 }
 
 /**
@@ -237,7 +266,7 @@ gcm_viewer_update_profile_connect_cb (GObject *source_object,
 		goto out;
 	description = cd_profile_get_title (profile);
 	sort = g_strdup_printf ("%s%s",
-				gcm_viewer_profile_get_sort_string (profile_kind),
+				gcm_viewer_profile_get_sort_string (profile),
 				description);
 	g_debug ("add %s to profiles list", filename);
 	gtk_list_store_append (viewer->list_store_profiles, &iter);
