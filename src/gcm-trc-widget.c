@@ -134,7 +134,6 @@ gcm_trc_widget_class_init (GcmTrcWidgetClass *class)
 static void
 gcm_trc_widget_init (GcmTrcWidget *trc)
 {
-	PangoFontMap *fontmap;
 	PangoContext *context;
 	PangoFontDescription *desc;
 
@@ -143,8 +142,7 @@ gcm_trc_widget_init (GcmTrcWidget *trc)
 	trc->priv->clut = NULL;
 
 	/* do pango stuff */
-	fontmap = pango_cairo_font_map_get_default ();
-	context = pango_cairo_font_map_create_context (PANGO_CAIRO_FONT_MAP (fontmap));
+	context = gtk_widget_get_pango_context (GTK_WIDGET (trc));
 	pango_context_set_base_gravity (context, PANGO_GRAVITY_AUTO);
 
 	trc->priv->layout = pango_layout_new (context);
@@ -159,12 +157,9 @@ gcm_trc_widget_init (GcmTrcWidget *trc)
 static void
 gcm_trc_widget_finalize (GObject *object)
 {
-	PangoContext *context;
 	GcmTrcWidget *trc = (GcmTrcWidget*) object;
 
-	context = pango_layout_get_context (trc->priv->layout);
 	g_object_unref (trc->priv->layout);
-	g_object_unref (context);
 	if (trc->priv->clut != NULL)
 		g_object_unref (trc->priv->clut);
 	G_OBJECT_CLASS (gcm_trc_widget_parent_class)->finalize (object);

@@ -556,7 +556,6 @@ gcm_cie_widget_set_from_profile (GtkWidget *widget, GcmProfile *profile)
 static void
 gcm_cie_widget_init (GcmCieWidget *cie)
 {
-	PangoFontMap *fontmap;
 	PangoContext *context;
 	PangoFontDescription *desc;
 
@@ -581,8 +580,7 @@ gcm_cie_widget_init (GcmCieWidget *cie)
 	cie->priv->gamma = 0.0;
 
 	/* do pango stuff */
-	fontmap = pango_cairo_font_map_get_default ();
-	context = pango_cairo_font_map_create_context (PANGO_CAIRO_FONT_MAP (fontmap));
+	context =  gtk_widget_get_pango_context (GTK_WIDGET (cie));
 	pango_context_set_base_gravity (context, PANGO_GRAVITY_AUTO);
 
 	cie->priv->layout = pango_layout_new (context);
@@ -597,16 +595,13 @@ gcm_cie_widget_init (GcmCieWidget *cie)
 static void
 gcm_cie_widget_finalize (GObject *object)
 {
-	PangoContext *context;
 	GcmCieWidget *cie = (GcmCieWidget*) object;
 
-	context = pango_layout_get_context (cie->priv->layout);
 	g_object_unref (cie->priv->layout);
 	cd_color_yxy_free (cie->priv->white);
 	cd_color_yxy_free (cie->priv->red);
 	cd_color_yxy_free (cie->priv->green);
 	cd_color_yxy_free (cie->priv->blue);
-	g_object_unref (context);
 	g_ptr_array_unref (cie->priv->tongue_buffer);
 	G_OBJECT_CLASS (gcm_cie_widget_parent_class)->finalize (object);
 }
