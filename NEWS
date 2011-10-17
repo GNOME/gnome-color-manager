@@ -1,3 +1,26 @@
+Version 3.2.1
+~~~~~~~~~~~~~
+Released: 2011-10-17
+
+* Translations
+ - Updated German translation (Wolfgang Stöggl)
+ - Updated Japanese translation (Ryo Fujita)
+ - Updated Spanish translation (Jorge González)
+ - Updated Swedish translation (Daniel Nylander)
+
+* New Features:
+ - Add a calibrate attach image for the 'i1 Display 3' sensor device (Richard Hughes)
+ - Show an error if we can't open the file passed to gcm-viewer --file (Richard Hughes)
+ - Speed up the profile viewer loading when scanning a large number of profiles (Richard Hughes)
+
+* Bugfix:
+ - Do not send 'space' when argyllcms asks the user to press any key (Richard Hughes)
+ - Do not use g_application_release() manually (Richard Hughes)
+ - Don't use the deprecated g_format_size_for_display() (Richard Hughes)
+ - Don't use the deprecated pango_cairo_font_map_create_context() (Richard Hughes)
+ - Ensure we always set a calibration image if one exists (Richard Hughes)
+ - Fix a crash when calibrating (Michael Hamann)
+
 Version 3.2.0
 ~~~~~~~~~~~~~
 Released: 2011-09-26
