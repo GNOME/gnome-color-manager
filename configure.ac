@@ -229,6 +229,7 @@ data/icons/scalable/Makefile
 data/tests/Makefile
 data/targets/Makefile
 data/figures/Makefile
+data/ti1/Makefile
 man/Makefile
 po/Makefile.in
 src/Makefile

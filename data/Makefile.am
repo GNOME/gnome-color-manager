@@ -1,4 +1,5 @@
 SUBDIRS = 						\
+	ti1						\
 	tests						\
 	targets						\
 	figures						\
