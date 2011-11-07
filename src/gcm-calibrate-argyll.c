@@ -109,63 +109,6 @@ gcm_calibrate_argyll_get_quality_arg (GcmCalibrateArgyll *calibrate_argyll)
 	return "-qm";
 }
 
-/**
- * gcm_calibrate_argyll_display_get_patches:
- **/
-static guint
-gcm_calibrate_argyll_display_get_patches (GcmCalibrateArgyll *calibrate_argyll)
-{
-	guint patches = 250;
-	GcmCalibratePrecision precision;
-
-	/* get kind */
-	g_object_get (calibrate_argyll,
-		      "precision", &precision,
-		      NULL);
-
-	if (precision == GCM_CALIBRATE_PRECISION_SHORT)
-		patches = 100;
-	else if (precision == GCM_CALIBRATE_PRECISION_NORMAL)
-		patches = 250;
-	else if (precision == GCM_CALIBRATE_PRECISION_LONG)
-		patches = 500;
-	return patches;
-}
-
-/**
- * gcm_calibrate_argyll_printer_get_patches:
- **/
-static guint
-gcm_calibrate_argyll_printer_get_patches (GcmCalibrateArgyll *calibrate_argyll)
-{
-	guint patches = 180;
-	CdSensorKind sensor_kind;
-	GcmCalibratePrecision precision;
-
-	/* we care about the kind */
-	g_object_get (calibrate_argyll,
-		      "sensor-kind", &sensor_kind,
-		      "precision", &precision,
-		      NULL);
-
-	if (precision == GCM_CALIBRATE_PRECISION_SHORT)
-		patches = 90;
-	else if (precision == GCM_CALIBRATE_PRECISION_NORMAL)
-		patches = 180;
-	else if (precision == GCM_CALIBRATE_PRECISION_LONG)
-		patches = 360;
-
-#ifdef USE_DOUBLE_DENSITY
-	/* using double density, so we can double the patch count */
-	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI ||
-	    sensor_kind == CD_SENSOR_KIND_SPECTRO_SCAN) {
-		patches *= 2;
-	}
-#endif
-
-	return patches;
-}
-
 #ifdef HAVE_VTE
 /**
  * gcm_calibrate_argyll_get_sensor_image_attach:
@@ -543,108 +486,6 @@ gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll, G
 	g_ptr_array_add (array, g_strdup ("-v"));
 	if (priv->done_calibrate)
 		g_ptr_array_add (array, g_strdup ("-N"));
-	g_ptr_array_add (array, g_strdup (basename));
-	argv = gcm_utils_ptr_array_to_strv (array);
-	gcm_calibrate_argyll_debug_argv (command, argv);
-
-	/* start up the command */
-	ret = gcm_calibrate_argyll_fork_command (calibrate_argyll, argv, error);
-	if (!ret)
-		goto out;
-
-	/* wait until finished */
-	g_main_loop_run (priv->loop);
-
-	/* get result */
-	if (priv->response == GTK_RESPONSE_CANCEL) {
-		g_set_error_literal (error,
-				     GCM_CALIBRATE_ERROR,
-				     GCM_CALIBRATE_ERROR_USER_ABORT,
-				     "calibration was cancelled");
-		ret = FALSE;
-		goto out;
-	}
-#ifdef HAVE_VTE
-	if (priv->response == GTK_RESPONSE_REJECT) {
-		gchar *vte_text;
-		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
-		g_set_error (error,
-			     GCM_CALIBRATE_ERROR,
-			     GCM_CALIBRATE_ERROR_INTERNAL,
-			     "command failed to run successfully: %s", vte_text);
-		g_free (vte_text);
-		ret = FALSE;
-		goto out;
-	}
-#endif
-out:
-	if (array != NULL)
-		g_ptr_array_unref (array);
-	g_free (basename);
-	g_free (command);
-	g_strfreev (argv);
-	return ret;
-}
-
-/**
- * gcm_calibrate_argyll_display_generate_patches:
- **/
-static gboolean
-gcm_calibrate_argyll_display_generate_patches (GcmCalibrateArgyll *calibrate_argyll, GError **error)
-{
-	gboolean ret = TRUE;
-	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-	gchar *command = NULL;
-	gchar **argv = NULL;
-	GPtrArray *array = NULL;
-	gchar *basename = NULL;
-	CdDeviceKind device_kind;
-
-	/* get shared data */
-	g_object_get (calibrate_argyll,
-		      "basename", &basename,
-		      "device-kind", &device_kind,
-		      NULL);
-
-	/* get correct name of the command */
-	command = gcm_calibrate_argyll_get_tool_filename ("targen", error);
-	if (command == NULL) {
-		ret = FALSE;
-		goto out;
-	}
-
-	/* TRANSLATORS: title, patches are specific colours used in calibration */
-	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Generating the patches"));
-	/* TRANSLATORS: dialog message */
-	gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Generating the patches that will be measured with the color instrument."));
-
-	/* argument array */
-	array = g_ptr_array_new_with_free_func (g_free);
-
-	/* setup the command */
-#ifdef FIXED_ARGYLL
-	g_ptr_array_add (array, g_strdup (command));
-#endif
-	g_ptr_array_add (array, g_strdup ("-v"));
-	if (device_kind == CD_DEVICE_KIND_PRINTER) {
-		/* print RGB */
-		g_ptr_array_add (array, g_strdup ("-d2"));
-
-		/* Grey axis RGB steps */
-		g_ptr_array_add (array, g_strdup ("-g20"));
-	} else {
-		/* video RGB */
-		g_ptr_array_add (array, g_strdup ("-d3"));
-	}
-
-	/* get number of patches */
-	if (device_kind == CD_DEVICE_KIND_DISPLAY)
-		g_ptr_array_add (array, g_strdup_printf ("-f%i", gcm_calibrate_argyll_display_get_patches (calibrate_argyll)));
-	else if (device_kind == CD_DEVICE_KIND_PRINTER)
-		g_ptr_array_add (array, g_strdup_printf ("-f%i", gcm_calibrate_argyll_printer_get_patches (calibrate_argyll)));
-
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
@@ -1376,11 +1217,6 @@ gcm_calibrate_argyll_display (GcmCalibrate *calibrate, CdDevice *device, CdSenso
 	if (!ret)
 		goto out;
 
-	/* step 2 */
-	ret = gcm_calibrate_argyll_display_generate_patches (calibrate_argyll, error);
-	if (!ret)
-		goto out;
-
 	/* step 3 */
 	ret = gcm_calibrate_argyll_display_draw_and_measure (calibrate_argyll, error);
 	if (!ret)
@@ -1813,14 +1649,6 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, CdDevice *device, CdSenso
 		      "print-kind", &print_kind,
 		      NULL);
 	working_path = gcm_calibrate_get_working_path (GCM_CALIBRATE (calibrate_argyll));
-
-	/* step 1 */
-	if (print_kind == GCM_CALIBRATE_PRINT_KIND_LOCAL ||
-	    print_kind == GCM_CALIBRATE_PRINT_KIND_GENERATE) {
-		ret = gcm_calibrate_argyll_display_generate_patches (calibrate_argyll, error);
-		if (!ret)
-			goto out;
-	}
 
 	/* print */
 	if (print_kind == GCM_CALIBRATE_PRINT_KIND_LOCAL) {

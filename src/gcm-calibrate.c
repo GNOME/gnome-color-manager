@@ -336,17 +336,68 @@ gcm_calibrate_interaction (GcmCalibrate *calibrate, GtkResponseType response)
 }
 
 /**
+ * gcm_calibrate_copy_file:
+ **/
+static gboolean
+gcm_calibrate_copy_file (const gchar *src,
+			 const gchar *dest,
+			 GError **error)
+{
+	gboolean ret;
+	GFile *file_src;
+	GFile *file_dest;
+
+	g_debug ("copying from %s to %s", src, dest);
+	file_src = g_file_new_for_path (src);
+	file_dest = g_file_new_for_path (dest);
+	ret = g_file_copy (file_src,
+			   file_dest,
+			   G_FILE_COPY_NONE,
+			   NULL,
+			   NULL,
+			   NULL,
+			   error);
+	g_object_unref (file_src);
+	g_object_unref (file_dest);
+	return ret;
+}
+
+/**
  * gcm_calibrate_display:
  **/
-gboolean
+static gboolean
 gcm_calibrate_display (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *window, GError **error)
 {
+	const gchar *filename_tmp;
 	gboolean ret = TRUE;
+	gchar *dest_ti1;
+	gchar *src_ti1;
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
 	GcmCalibratePrivate *priv = calibrate->priv;
 
-	/* set basename */
-	gcm_calibrate_set_basename (calibrate);
+	/* get a ti1 file suitable for the calibration */
+	dest_ti1 = g_strdup_printf ("%s/%s.ti1",
+				    calibrate->priv->working_path,
+				    calibrate->priv->basename);
+
+	/* copy a pre-generated file into the working path */
+	switch (priv->precision) {
+	case GCM_CALIBRATE_PRECISION_SHORT:
+		filename_tmp = "display-short.ti1";
+		break;
+	case GCM_CALIBRATE_PRECISION_NORMAL:
+		filename_tmp = "display-normal.ti1";
+		break;
+	case GCM_CALIBRATE_PRECISION_LONG:
+		filename_tmp = "display-long.ti1";
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+	src_ti1 = g_build_filename (GCM_DATA, "ti1", filename_tmp, NULL);
+	ret = gcm_calibrate_copy_file (src_ti1, dest_ti1, error);
+	if (!ret)
+		goto out;
 
 	/* coldplug source */
 	if (klass->calibrate_display == NULL) {
@@ -361,14 +412,16 @@ gcm_calibrate_display (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *win
 	/* proxy */
 	ret = klass->calibrate_display (calibrate, device, priv->sensor, window, error);
 out:
+	g_free (src_ti1);
+	g_free (dest_ti1);
 	return ret;
 }
 
 /**
- * gcm_calibrate_device_get_reference_image:
+ * gcm_calibrate_camera_get_reference_image:
  **/
 static gchar *
-gcm_calibrate_device_get_reference_image (const gchar *directory, GtkWindow *window)
+gcm_calibrate_camera_get_reference_image (const gchar *directory, GtkWindow *window)
 {
 	gchar *filename = NULL;
 	GtkWidget *dialog;
@@ -412,10 +465,10 @@ gcm_calibrate_device_get_reference_image (const gchar *directory, GtkWindow *win
 }
 
 /**
- * gcm_calibrate_device_get_reference_data:
+ * gcm_calibrate_camera_get_reference_data:
  **/
 static gchar *
-gcm_calibrate_device_get_reference_data (const gchar *directory, GtkWindow *window)
+gcm_calibrate_camera_get_reference_data (const gchar *directory, GtkWindow *window)
 {
 	gchar *filename = NULL;
 	GtkWidget *dialog;
@@ -540,25 +593,47 @@ gcm_calibrate_file_chooser_get_working_path (GcmCalibrate *calibrate, GtkWindow 
 /**
  * gcm_calibrate_printer:
  **/
-gboolean
+static gboolean
 gcm_calibrate_printer (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *window, GError **error)
 {
 	gboolean ret = FALSE;
 	gchar *ptr;
 	GtkWindow *window_tmp = NULL;
 	gchar *precision = NULL;
+	const gchar *filename_tmp;
+	gchar *dest_ti1;
+	gchar *src_ti1;
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
 	GcmCalibratePrivate *priv = calibrate->priv;
+
+	/* get a ti1 file suitable for the calibration */
+	dest_ti1 = g_strdup_printf ("%s/%s.ti1",
+				    calibrate->priv->working_path,
+				    calibrate->priv->basename);
+
+	/* copy a pre-generated file into the working path */
+	switch (priv->precision) {
+	case GCM_CALIBRATE_PRECISION_SHORT:
+		filename_tmp = "printer-short.ti1";
+		break;
+	case GCM_CALIBRATE_PRECISION_NORMAL:
+		filename_tmp = "printer-normal.ti1";
+		break;
+	case GCM_CALIBRATE_PRECISION_LONG:
+		filename_tmp = "printer-long.ti1";
+		break;
+	default:
+		g_assert_not_reached ();
+	}
+	src_ti1 = g_build_filename (GCM_DATA, "ti1", filename_tmp, NULL);
+	ret = gcm_calibrate_copy_file (src_ti1, dest_ti1, error);
+	if (!ret)
+		goto out;
 
 	/* copy */
 	g_object_get (NULL, "print-kind", &priv->print_kind, NULL);
 
-	if (priv->print_kind != GCM_CALIBRATE_PRINT_KIND_ANALYZE) {
-		/* set the per-profile filename */
-		ret = gcm_calibrate_set_working_path (calibrate, error);
-		if (!ret)
-			goto out;
-	} else {
+	if (priv->print_kind == GCM_CALIBRATE_PRINT_KIND_ANALYZE) {
 
 		/* remove previously set value (if any) */
 		g_free (priv->working_path);
@@ -597,15 +672,17 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *win
 	/* proxy */
 	ret = klass->calibrate_printer (calibrate, device, priv->sensor, window, error);
 out:
+	g_free (src_ti1);
+	g_free (dest_ti1);
 	g_free (precision);
 	return ret;
 }
 
 /**
- * gcm_calibrate_device:
+ * gcm_calibrate_camera:
  **/
-gboolean
-gcm_calibrate_device (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *window, GError **error)
+static gboolean
+gcm_calibrate_camera (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *window, GError **error)
 {
 	gboolean ret = FALSE;
 	gboolean has_shared_targets = TRUE;
@@ -623,7 +700,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *wind
 
 	/* get scanned image */
 	directory = g_get_home_dir ();
-	reference_image = gcm_calibrate_device_get_reference_image (directory, window_tmp);
+	reference_image = gcm_calibrate_camera_get_reference_image (directory, window_tmp);
 	if (reference_image == NULL) {
 		g_set_error_literal (error,
 				     GCM_CALIBRATE_ERROR,
@@ -640,7 +717,7 @@ gcm_calibrate_device (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *wind
 
 	/* get reference data */
 	directory = has_shared_targets ? "/usr/share/color/targets" : "/media";
-	reference_data = gcm_calibrate_device_get_reference_data (directory, window_tmp);
+	reference_data = gcm_calibrate_camera_get_reference_data (directory, window_tmp);
 	if (reference_data == NULL) {
 		g_set_error_literal (error,
 				     GCM_CALIBRATE_ERROR,
@@ -680,6 +757,47 @@ out:
 	g_free (device_str);
 	g_free (reference_image);
 	g_free (reference_data);
+	return ret;
+}
+
+/**
+ * gcm_calibrate_device:
+ **/
+gboolean
+gcm_calibrate_device (GcmCalibrate *calibrate,
+		      CdDevice *device,
+		      GtkWindow *window,
+		      GError **error)
+{
+	gboolean ret = TRUE;
+
+	/* set up some initial parameters */
+	gcm_calibrate_set_basename (calibrate);
+	ret = gcm_calibrate_set_working_path (calibrate, error);
+	if (!ret)
+		goto out;
+
+	switch (cd_device_get_kind (device)) {
+	case CD_DEVICE_KIND_DISPLAY:
+		ret = gcm_calibrate_display (calibrate,
+					     device,
+					     window,
+					     error);
+		break;
+	case CD_DEVICE_KIND_PRINTER:
+		ret = gcm_calibrate_printer (calibrate,
+					     device,
+					     window,
+					     error);
+		break;
+	default:
+		ret = gcm_calibrate_camera (calibrate,
+					    device,
+					    window,
+					    error);
+		break;
+	}
+out:
 	return ret;
 }
 

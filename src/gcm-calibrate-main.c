@@ -432,10 +432,10 @@ gcm_calib_start_idle_cb (gpointer user_data)
 
 	/* actuall do the action */
 	calib->started_calibration = TRUE;
-	ret = gcm_calibrate_display (calib->calibrate,
-				     calib->device,
-				     calib->main_window,
-				     &error);
+	ret = gcm_calibrate_device (calib->calibrate,
+				    calib->device,
+				    calib->main_window,
+				    &error);
 	if (!ret) {
 		gcm_calibrate_set_title (calib->calibrate, _("Failed to calibrate"));
 		gcm_calibrate_set_message (calib->calibrate, error->message);

@@ -127,15 +127,7 @@ GType		 gcm_calibrate_get_type			(void);
 GcmCalibrate	*gcm_calibrate_new			(void);
 
 /* designed for gcm-calibrate to call */
-gboolean	 gcm_calibrate_display			(GcmCalibrate	*calibrate,
-							 CdDevice	*device,
-							 GtkWindow	*window,
-							 GError		**error);
 gboolean	 gcm_calibrate_device			(GcmCalibrate	*calibrate,
-							 CdDevice	*device,
-							 GtkWindow	*window,
-							 GError		**error);
-gboolean	 gcm_calibrate_printer			(GcmCalibrate	*calibrate,
 							 CdDevice	*device,
 							 GtkWindow	*window,
 							 GError		**error);
