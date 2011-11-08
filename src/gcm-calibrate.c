@@ -24,11 +24,13 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <colord.h>
+#include <lcms2.h>
 
 #include "gcm-calibrate.h"
 #include "gcm-utils.h"
 #include "gcm-brightness.h"
 #include "gcm-exif.h"
+#include "gcm-sample-window.h"
 
 static void     gcm_calibrate_finalize	(GObject     *object);
 
@@ -61,6 +63,7 @@ struct _GcmCalibratePrivate
 	gchar				*working_path;
 	guint				 target_whitepoint;
 	GtkWidget			*content_widget;
+	GtkWindow			*sample_window;
 	GPtrArray			*old_message;
 	GPtrArray			*old_title;
 };
@@ -364,22 +367,214 @@ gcm_calibrate_copy_file (const gchar *src,
 }
 
 /**
+ * gcm_calibrate_lcms_error_cb:
+ **/
+static void
+gcm_calibrate_lcms_error_cb (cmsContext ContextID,
+			     cmsUInt32Number error_code,
+			     const char *text)
+{
+	g_warning ("LCMS: %s", text);
+}
+
+/**
+ * gcm_calibrate_display_characterize:
+ **/
+gboolean
+gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
+				    const gchar *ti1_fn,
+				    const gchar *ti3_fn,
+				    CdDevice *device,
+				    GtkWindow *window,
+				    GError **error)
+{
+	CdColorRGB rgb;
+	CdColorXYZ *xyz;
+	cmsHANDLE ti1 = NULL;
+	cmsHANDLE ti3 = NULL;
+	const gchar *sample_id;
+	const gchar *tmp;
+	gboolean is_spectral;
+	gboolean ret;
+	gchar *found_lcms2_bodge;
+	gchar *ti1_data = NULL;
+	gsize ti1_size;
+	guint col;
+	guint i;
+	guint number_of_sets = 0;
+	guint table_count;
+	GcmCalibratePrivate *priv = calibrate->priv;
+
+	/* open ti1 file as input */
+	g_debug ("loading %s", ti3_fn);
+	ret = g_file_get_contents (ti1_fn, &ti1_data, &ti1_size, error);
+	if (!ret)
+		goto out;
+
+	/* hack to fix lcms2 */
+	found_lcms2_bodge = g_strstr_len (ti1_data, ti1_size, "END_DATA\n");
+	if (found_lcms2_bodge != NULL)
+		found_lcms2_bodge[9] = '\0';
+
+	/* load the ti1 data */
+	cmsSetLogErrorHandler (gcm_calibrate_lcms_error_cb);
+	ti1 = cmsIT8LoadFromMem (NULL, ti1_data, ti1_size);
+	if (ti1 == NULL) {
+		ret = FALSE;
+		g_set_error (error, 1, 0, "Cannot open %s", ti1_fn);
+		goto out;
+	}
+
+	/* select correct sheet */
+	table_count = cmsIT8TableCount (ti1);
+	g_debug ("selecting sheet %i of %i (%s)",
+		 0, table_count,
+		 cmsIT8GetSheetType (ti1));
+	cmsIT8SetTable (ti1, 0);
+
+	/* check color format */
+	tmp = cmsIT8GetProperty (ti1, "COLOR_REP");
+	if (g_strcmp0 (tmp, "RGB") != 0) {
+		ret = FALSE;
+		g_set_error (error, 1, 0, "Invalid format: %s", tmp);
+		goto out;
+	}
+	number_of_sets = cmsIT8GetPropertyDbl (ti1, "NUMBER_OF_SETS");
+
+	/* setup the measure window */
+	gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (priv->sample_window), &rgb);
+	gcm_sample_window_set_percentage (GCM_SAMPLE_WINDOW (priv->sample_window), 0);
+	gtk_window_set_modal (priv->sample_window, TRUE);
+	gtk_window_stick (priv->sample_window);
+	gtk_window_present (priv->sample_window);
+
+	/* write to a ti3 file as output */
+	ti3 = cmsIT8Alloc (NULL);
+	cmsIT8SetSheetType (ti3, "CTI3");
+	cmsIT8SetPropertyStr (ti3, "DESCRIPTOR",
+			      "Calibration Target chart information 3");
+	cmsIT8SetPropertyStr (ti3, "ORIGINATOR",
+			      "GNOME Color Manager");
+	cmsIT8SetPropertyStr (ti3, "CREATED",
+			      "now");//fixme
+	cmsIT8SetPropertyStr (ti3, "DEVICE_CLASS",
+			      "DISPLAY");
+	cmsIT8SetPropertyStr (ti3, "COLOR_REP",
+			      "RGB_XYZ");
+	cmsIT8SetPropertyStr (ti3, "TARGET_INSTRUMENT",
+			      cd_sensor_get_model (priv->sensor));
+	is_spectral = cd_sensor_has_cap (priv->sensor,
+					 CD_SENSOR_CAP_SPOT);
+	cmsIT8SetPropertyStr (ti3, "INSTRUMENT_TYPE_SPECTRAL",
+			      is_spectral ? "YES" : "NO");
+	cmsIT8SetPropertyStr (ti3, "LUMINANCE_XYZ_CDM2",
+			      "132.922451 129.524179 165.093861");
+	cmsIT8SetPropertyStr (ti3, "NORMALIZED_TO_Y_100", "NO");
+	cmsIT8SetPropertyDbl (ti3, "NUMBER_OF_FIELDS", 7);
+	cmsIT8SetPropertyDbl (ti3, "NUMBER_OF_SETS", number_of_sets);
+	cmsIT8SetDataFormat (ti3, 0, "SAMPLE_ID");
+	cmsIT8SetDataFormat (ti3, 1, "RGB_R");
+	cmsIT8SetDataFormat (ti3, 2, "RGB_G");
+	cmsIT8SetDataFormat (ti3, 3, "RGB_B");
+	cmsIT8SetDataFormat (ti3, 4, "XYZ_X");
+	cmsIT8SetDataFormat (ti3, 5, "XYZ_Y");
+	cmsIT8SetDataFormat (ti3, 6, "XYZ_Z");
+
+	/* lock the sensor */
+	ret = cd_sensor_lock_sync (calibrate->priv->sensor,
+				   NULL,
+				   error);
+	if (!ret)
+		goto out;
+
+	/* capture all the source colors */
+	for (i = 0; i < number_of_sets; i++) {
+
+		/* get the source color */
+		col = cmsIT8FindDataFormat(ti1, "SAMPLE_ID");
+		sample_id = cmsIT8GetDataRowCol(ti1, i, col);
+		col = cmsIT8FindDataFormat(ti1, "RGB_R");
+		rgb.R = cmsIT8GetDataRowColDbl(ti1, i, col);
+		col = cmsIT8FindDataFormat(ti1, "RGB_G");
+		rgb.G = cmsIT8GetDataRowColDbl(ti1, i, col);
+		col = cmsIT8FindDataFormat(ti1, "RGB_B");
+		rgb.B = cmsIT8GetDataRowColDbl(ti1, i, col);
+
+		/* set the window color */
+		gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (priv->sample_window), &rgb);
+		gcm_sample_window_set_percentage (GCM_SAMPLE_WINDOW (priv->sample_window),
+						  100 * i / number_of_sets);
+
+		/* wait for the refresh to set the new color */
+		g_usleep (50000);
+
+		/* get the sample from the hardware */
+		xyz = cd_sensor_get_sample_sync (calibrate->priv->sensor,
+						 CD_SENSOR_CAP_LCD,
+						 NULL,
+						 error);
+		if (xyz == NULL) {
+			ret = FALSE;
+			goto out;
+		}
+		g_debug ("sampled %f,%f,%f as %f,%f,%f",
+			 rgb.R, rgb.G, rgb.B,
+			 xyz->X, xyz->Y, xyz->Z);
+
+		/* write to the ti3 file */
+		cmsIT8SetDataRowCol(ti3, i, 0, sample_id);
+		cmsIT8SetDataRowColDbl(ti3, i, 1, rgb.R);
+		cmsIT8SetDataRowColDbl(ti3, i, 2, rgb.G);
+		cmsIT8SetDataRowColDbl(ti3, i, 3, rgb.B);
+		cmsIT8SetDataRowColDbl(ti3, i, 4, xyz->X);
+		cmsIT8SetDataRowColDbl(ti3, i, 5, xyz->Y);
+		cmsIT8SetDataRowColDbl(ti3, i, 6, xyz->Z);
+		cd_color_xyz_free (xyz);
+	}
+
+	/* write the file */
+	g_debug ("writing %s", ti3_fn);
+	cmsIT8SaveToFile (ti3, ti3_fn);
+
+	/* unlock the sensor */
+	ret = cd_sensor_unlock_sync (calibrate->priv->sensor,
+				     NULL,
+				     error);
+	if (!ret)
+		goto out;
+out:
+	/* hide the sample window */
+	gtk_widget_hide (GTK_WIDGET (priv->sample_window));
+
+	if (ti1 != NULL)
+		cmsIT8Free (ti1);
+	if (ti3 != NULL)
+		cmsIT8Free (ti3);
+	g_free (ti1_data);
+	return ret;
+}
+
+/**
  * gcm_calibrate_display:
  **/
 static gboolean
-gcm_calibrate_display (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *window, GError **error)
+gcm_calibrate_display (GcmCalibrate *calibrate,
+		       CdDevice *device,
+		       GtkWindow *window,
+		       GError **error)
 {
 	const gchar *filename_tmp;
 	gboolean ret = TRUE;
-	gchar *dest_ti1;
-	gchar *src_ti1;
+	gchar *ti1_dest_fn = NULL;
+	gchar *ti1_src_fn = NULL;
+	gchar *ti3_fn = NULL;
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
 	GcmCalibratePrivate *priv = calibrate->priv;
 
 	/* get a ti1 file suitable for the calibration */
-	dest_ti1 = g_strdup_printf ("%s/%s.ti1",
-				    calibrate->priv->working_path,
-				    calibrate->priv->basename);
+	ti1_dest_fn = g_strdup_printf ("%s/%s.ti1",
+				       calibrate->priv->working_path,
+				       calibrate->priv->basename);
 
 	/* copy a pre-generated file into the working path */
 	switch (priv->precision) {
@@ -395,10 +590,24 @@ gcm_calibrate_display (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *win
 	default:
 		g_assert_not_reached ();
 	}
-	src_ti1 = g_build_filename (GCM_DATA, "ti1", filename_tmp, NULL);
-	ret = gcm_calibrate_copy_file (src_ti1, dest_ti1, error);
+	ti1_src_fn = g_build_filename (GCM_DATA, "ti1", filename_tmp, NULL);
+	ret = gcm_calibrate_copy_file (ti1_src_fn, ti1_dest_fn, error);
 	if (!ret)
 		goto out;
+
+	/* if sensor is native, then take some measurements */
+	if (cd_sensor_get_native (calibrate->priv->sensor) &&
+	    cd_sensor_get_kind (calibrate->priv->sensor) == CD_SENSOR_KIND_COLORHUG) {
+		ti3_fn = g_strdup_printf ("%s/%s.ti3",
+					  priv->working_path,
+					  priv->basename);
+		ret = gcm_calibrate_display_characterize (calibrate,
+							  ti1_dest_fn,
+							  ti3_fn,
+							  device,
+							  window,
+							  error);
+	}
 
 	/* coldplug source */
 	if (klass->calibrate_display == NULL) {
@@ -413,8 +622,9 @@ gcm_calibrate_display (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *win
 	/* proxy */
 	ret = klass->calibrate_display (calibrate, device, priv->sensor, window, error);
 out:
-	g_free (src_ti1);
-	g_free (dest_ti1);
+	g_free (ti1_src_fn);
+	g_free (ti1_dest_fn);
+	g_free (ti3_fn);
 	return ret;
 }
 
@@ -602,13 +812,13 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *win
 	GtkWindow *window_tmp = NULL;
 	gchar *precision = NULL;
 	const gchar *filename_tmp;
-	gchar *dest_ti1;
-	gchar *src_ti1;
+	gchar *ti1_dest_fn = NULL;
+	gchar *ti1_src_fn = NULL;
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
 	GcmCalibratePrivate *priv = calibrate->priv;
 
 	/* get a ti1 file suitable for the calibration */
-	dest_ti1 = g_strdup_printf ("%s/%s.ti1",
+	ti1_dest_fn = g_strdup_printf ("%s/%s.ti1",
 				    calibrate->priv->working_path,
 				    calibrate->priv->basename);
 
@@ -626,8 +836,8 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *win
 	default:
 		g_assert_not_reached ();
 	}
-	src_ti1 = g_build_filename (GCM_DATA, "ti1", filename_tmp, NULL);
-	ret = gcm_calibrate_copy_file (src_ti1, dest_ti1, error);
+	ti1_src_fn = g_build_filename (GCM_DATA, "ti1", filename_tmp, NULL);
+	ret = gcm_calibrate_copy_file (ti1_src_fn, ti1_dest_fn, error);
 	if (!ret)
 		goto out;
 
@@ -673,8 +883,8 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *win
 	/* proxy */
 	ret = klass->calibrate_printer (calibrate, device, priv->sensor, window, error);
 out:
-	g_free (src_ti1);
-	g_free (dest_ti1);
+	g_free (ti1_src_fn);
+	g_free (ti1_dest_fn);
 	g_free (precision);
 	return ret;
 }
@@ -1153,6 +1363,7 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_UNKNOWN;
 	calibrate->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
 	calibrate->priv->precision = GCM_CALIBRATE_PRECISION_UNKNOWN;
+	calibrate->priv->sample_window = gcm_sample_window_new ();
 
 	// FIXME: this has to be per-run specific
 	calibrate->priv->working_path = g_strdup ("/tmp");
@@ -1182,6 +1393,7 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->working_path);
 	g_ptr_array_unref (calibrate->priv->old_title);
 	g_ptr_array_unref (calibrate->priv->old_message);
+	gtk_widget_destroy (GTK_WIDGET (calibrate->priv->sample_window));
 
 	G_OBJECT_CLASS (gcm_calibrate_parent_class)->finalize (object);
 }
