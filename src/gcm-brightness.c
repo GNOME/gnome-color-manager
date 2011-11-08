@@ -44,9 +44,9 @@ enum {
 
 G_DEFINE_TYPE (GcmBrightness, gcm_brightness, G_TYPE_OBJECT)
 
-#define	GPM_DBUS_SERVICE		"org.gnome.PowerManager"
-#define	GPM_DBUS_INTERFACE_BACKLIGHT	"org.gnome.PowerManager.Backlight"
-#define	GPM_DBUS_PATH_BACKLIGHT		"/org/gnome/PowerManager/Backlight"
+#define	GPM_DBUS_SERVICE		"org.gnome.SettingsDaemon"
+#define	GPM_DBUS_INTERFACE_BACKLIGHT	"org.gnome.SettingsDaemon.Power.Screen"
+#define	GPM_DBUS_PATH_BACKLIGHT		"/org/gnome/SettingsDaemon/Power"
 
 gboolean
 gcm_brightness_set_percentage (GcmBrightness *brightness, guint percentage, GError **error)
@@ -72,7 +72,7 @@ gcm_brightness_set_percentage (GcmBrightness *brightness, guint percentage, GErr
 						GPM_DBUS_SERVICE,
 						GPM_DBUS_PATH_BACKLIGHT,
 						GPM_DBUS_INTERFACE_BACKLIGHT,
-						"SetBrightness",
+						"SetPercentage",
 						args,
 						NULL,
 						G_DBUS_CALL_FLAGS_NONE,
@@ -111,7 +111,7 @@ gcm_brightness_get_percentage (GcmBrightness *brightness, guint *percentage, GEr
 						GPM_DBUS_SERVICE,
 						GPM_DBUS_PATH_BACKLIGHT,
 						GPM_DBUS_INTERFACE_BACKLIGHT,
-						"GetBrightness",
+						"GetPercentage",
 						NULL,
 						G_VARIANT_TYPE ("(u)"),
 						G_DBUS_CALL_FLAGS_NONE,
