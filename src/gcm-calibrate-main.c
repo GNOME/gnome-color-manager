@@ -73,6 +73,7 @@ typedef struct {
 	GtkWidget	*action_title;
 	GtkWidget	*action_message;
 	GtkWidget	*action_image;
+	GtkWidget	*action_progress;
 	gboolean	 has_pending_interaction;
 	gboolean	 started_calibration;
 	GcmCalibratePage current_page;
@@ -837,6 +838,10 @@ gcm_calib_setup_page_action (GcmCalibratePriv *calib)
 	calib->action_image = gtk_image_new ();
 	gtk_image_set_from_icon_name (GTK_IMAGE (calib->action_image), "face-frown", GTK_ICON_SIZE_DIALOG);
 	gtk_box_pack_start (GTK_BOX (content), calib->action_image, FALSE, FALSE, 0);
+
+	/* add progress marker */
+	calib->action_progress = gtk_progress_bar_new ();
+	gtk_box_pack_start (GTK_BOX (content), calib->action_progress, FALSE, FALSE, 0);
 
 	/* add content widget */
 	gcm_calibrate_set_content_widget (calib->calibrate, vbox);
@@ -2066,6 +2071,15 @@ gcm_calib_message_changed_cb (GcmCalibrate *calibrate,
 }
 
 static void
+gcm_calib_progress_changed_cb (GcmCalibrate *calibrate,
+			       guint percentage,
+			       GcmCalibratePriv *calib)
+{
+	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (calib->action_progress),
+				       percentage / 100.0f);
+}
+
+static void
 gcm_calib_image_changed_cb (GcmCalibrate *calibrate,
 			    const gchar *filename,
 			    GcmCalibratePriv *calib)
@@ -2148,6 +2162,9 @@ main (int argc, char **argv)
 	calib->old_brightness = G_MAXUINT;
 	calib->brightness = gcm_brightness_new ();
 	calib->calibrate = gcm_calibrate_argyll_new ();
+	g_object_set (calib->calibrate,
+		      "precision", GCM_CALIBRATE_PRECISION_LONG,
+		      NULL);
 	calib->device_kind = CD_DEVICE_KIND_UNKNOWN;
 	g_signal_connect (calib->calibrate, "title-changed",
 			  G_CALLBACK (gcm_calib_title_changed_cb), calib);
@@ -2155,6 +2172,8 @@ main (int argc, char **argv)
 			  G_CALLBACK (gcm_calib_message_changed_cb), calib);
 	g_signal_connect (calib->calibrate, "image-changed",
 			  G_CALLBACK (gcm_calib_image_changed_cb), calib);
+	g_signal_connect (calib->calibrate, "progress-changed",
+			  G_CALLBACK (gcm_calib_progress_changed_cb), calib);
 	g_signal_connect (calib->calibrate, "interaction-required",
 			  G_CALLBACK (gcm_calib_interaction_required_cb), calib);
 

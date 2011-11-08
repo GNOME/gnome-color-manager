@@ -74,6 +74,8 @@ struct _GcmCalibrateClass
 							 const gchar	*message);
 	void		(* image_changed)		(GcmCalibrate	*calibrate,
 							 const gchar	*filename);
+	void		(* progress_changed)		(GcmCalibrate	*calibrate,
+							 guint		 percentage);
 	void		(* interaction_required)	(GcmCalibrate	*calibrate,
 							 const gchar	*button_text);
 };
@@ -145,6 +147,8 @@ void		 gcm_calibrate_set_message		(GcmCalibrate	*calibrate,
 							 const gchar	*message);
 void		 gcm_calibrate_set_image		(GcmCalibrate	*calibrate,
 							 const gchar	*filename);
+void		 gcm_calibrate_set_progress		(GcmCalibrate	*calibrate,
+							 guint		 percentage);
 void		 gcm_calibrate_pop			(GcmCalibrate	*calibrate);
 void		 gcm_calibrate_interaction_required	(GcmCalibrate	*calibrate,
 							 const gchar	*button_text);

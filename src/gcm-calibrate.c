@@ -93,6 +93,7 @@ enum {
 	SIGNAL_TITLE_CHANGED,
 	SIGNAL_MESSAGE_CHANGED,
 	SIGNAL_IMAGE_CHANGED,
+	SIGNAL_PROGRESS_CHANGED,
 	SIGNAL_INTERACTION_REQUIRED,
 	SIGNAL_LAST
 };
@@ -777,6 +778,9 @@ gcm_calibrate_device (GcmCalibrate *calibrate,
 	if (!ret)
 		goto out;
 
+	/* set progress */
+	gcm_calibrate_set_progress (calibrate, 0);
+
 	switch (cd_device_get_kind (device)) {
 	case CD_DEVICE_KIND_DISPLAY:
 		ret = gcm_calibrate_display (calibrate,
@@ -797,6 +801,9 @@ gcm_calibrate_device (GcmCalibrate *calibrate,
 					    error);
 		break;
 	}
+
+	/* set progress */
+	gcm_calibrate_set_progress (calibrate, 100);
 out:
 	return ret;
 }
@@ -819,6 +826,12 @@ void
 gcm_calibrate_set_image (GcmCalibrate *calibrate, const gchar *filename)
 {
 	g_signal_emit (calibrate, signals[SIGNAL_IMAGE_CHANGED], 0, filename);
+}
+
+void
+gcm_calibrate_set_progress (GcmCalibrate *calibrate, guint percentage)
+{
+	g_signal_emit (calibrate, signals[SIGNAL_PROGRESS_CHANGED], 0, percentage);
 }
 
 void
@@ -1114,6 +1127,12 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 			      G_STRUCT_OFFSET (GcmCalibrateClass, image_changed),
 			      NULL, NULL, g_cclosure_marshal_VOID__STRING,
 			      G_TYPE_NONE, 1, G_TYPE_STRING);
+	signals[SIGNAL_PROGRESS_CHANGED] =
+		g_signal_new ("progress-changed",
+			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,
+			      G_STRUCT_OFFSET (GcmCalibrateClass, progress_changed),
+			      NULL, NULL, g_cclosure_marshal_VOID__UINT,
+			      G_TYPE_NONE, 1, G_TYPE_UINT);
 	signals[SIGNAL_INTERACTION_REQUIRED] =
 		g_signal_new ("interaction-required",
 			      G_TYPE_FROM_CLASS (object_class), G_SIGNAL_RUN_LAST,

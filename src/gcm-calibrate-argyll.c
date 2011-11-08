@@ -1217,15 +1217,24 @@ gcm_calibrate_argyll_display (GcmCalibrate *calibrate, CdDevice *device, CdSenso
 	if (!ret)
 		goto out;
 
+	/* set progress */
+	gcm_calibrate_set_progress (calibrate, 30);
+
 	/* step 3 */
 	ret = gcm_calibrate_argyll_display_draw_and_measure (calibrate_argyll, error);
 	if (!ret)
 		goto out;
 
+	/* set progress */
+	gcm_calibrate_set_progress (calibrate, 40);
+
 	/* step 4 */
 	ret = gcm_calibrate_argyll_display_generate_profile (calibrate_argyll, error);
 	if (!ret)
 		goto out;
+
+	/* set progress */
+	gcm_calibrate_set_progress (calibrate, 80);
 
 	/* step 5 */
 	ret = gcm_calibrate_argyll_remove_temp_files (calibrate_argyll, error);
@@ -1693,6 +1702,9 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, CdDevice *device, CdSenso
 
 	}
 
+	/* set progress */
+	gcm_calibrate_set_progress (calibrate, 30);
+
 	/* we need to read the ti2 file to set the device used for calibration */
 	if (print_kind == GCM_CALIBRATE_PRINT_KIND_ANALYZE) {
 		filename = g_strdup_printf ("%s/%s.ti2", working_path, basename);
@@ -1709,10 +1721,16 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, CdDevice *device, CdSenso
 			goto out;
 	}
 
+	/* set progress */
+	gcm_calibrate_set_progress (calibrate, 60);
+
 	/* step 3 */
 	ret = gcm_calibrate_argyll_display_read_chart (calibrate_argyll, error);
 	if (!ret)
 		goto out;
+
+	/* set progress */
+	gcm_calibrate_set_progress (calibrate, 80);
 
 	/* step 4 */
 	ret = gcm_calibrate_argyll_device_generate_profile (calibrate_argyll, error);
@@ -1865,20 +1883,32 @@ gcm_calibrate_argyll_device (GcmCalibrate *calibrate, CdDevice *device, CdSensor
 	if (!ret)
 		goto out;
 
+	/* set progress */
+	gcm_calibrate_set_progress (calibrate, 10);
+
 	/* step 2 */
 	ret = gcm_calibrate_argyll_device_measure (calibrate_argyll, error);
 	if (!ret)
 		goto out;
+
+	/* set progress */
+	gcm_calibrate_set_progress (calibrate, 70);
 
 	/* step 3 */
 	ret = gcm_calibrate_argyll_device_generate_profile (calibrate_argyll, error);
 	if (!ret)
 		goto out;
 
+	/* set progress */
+	gcm_calibrate_set_progress (calibrate, 80);
+
 	/* step 4 */
 	ret = gcm_calibrate_argyll_remove_temp_files (calibrate_argyll, error);
 	if (!ret)
 		goto out;
+
+	/* set progress */
+	gcm_calibrate_set_progress (calibrate, 90);
 
 	/* step 5 */
 	ret = gcm_calibrate_argyll_set_filename_result (calibrate_argyll, error);
