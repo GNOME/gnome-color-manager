@@ -44,16 +44,15 @@ enum {
 
 G_DEFINE_TYPE (GcmBrightness, gcm_brightness, G_TYPE_OBJECT)
 
-#define	GPM_DBUS_SERVICE		"org.gnome.PowerManager"
-#define	GPM_DBUS_INTERFACE_BACKLIGHT	"org.gnome.PowerManager.Backlight"
-#define	GPM_DBUS_PATH_BACKLIGHT		"/org/gnome/PowerManager/Backlight"
+#define	GPM_DBUS_SERVICE		"org.gnome.SettingsDaemon"
+#define	GPM_DBUS_INTERFACE_BACKLIGHT	"org.gnome.SettingsDaemon.Power.Screen"
+#define	GPM_DBUS_PATH_BACKLIGHT		"/org/gnome/SettingsDaemon/Power"
 
 gboolean
 gcm_brightness_set_percentage (GcmBrightness *brightness, guint percentage, GError **error)
 {
 	GcmBrightnessPrivate *priv = brightness->priv;
 	gboolean ret = FALSE;
-	GVariant *args = NULL;
 	GVariant *response = NULL;
 
 	g_return_val_if_fail (GCM_IS_BRIGHTNESS (brightness), FALSE);
@@ -67,13 +66,12 @@ gcm_brightness_set_percentage (GcmBrightness *brightness, guint percentage, GErr
 	}
 
 	/* execute sync method */
-	args = g_variant_new ("(u)", percentage),
 	response = g_dbus_connection_call_sync (priv->connection,
 						GPM_DBUS_SERVICE,
 						GPM_DBUS_PATH_BACKLIGHT,
 						GPM_DBUS_INTERFACE_BACKLIGHT,
-						"SetBrightness",
-						args,
+						"SetPercentage",
+						g_variant_new ("(u)", percentage),
 						NULL,
 						G_DBUS_CALL_FLAGS_NONE,
 						-1, NULL, error);
@@ -83,8 +81,6 @@ gcm_brightness_set_percentage (GcmBrightness *brightness, guint percentage, GErr
 	/* success */
 	ret = TRUE;
 out:
-	if (args != NULL)
-		g_variant_unref (args);
 	if (response != NULL)
 		g_variant_unref (response);
 	return ret;
@@ -111,7 +107,7 @@ gcm_brightness_get_percentage (GcmBrightness *brightness, guint *percentage, GEr
 						GPM_DBUS_SERVICE,
 						GPM_DBUS_PATH_BACKLIGHT,
 						GPM_DBUS_INTERFACE_BACKLIGHT,
-						"GetBrightness",
+						"GetPercentage",
 						NULL,
 						G_VARIANT_TYPE ("(u)"),
 						G_DBUS_CALL_FLAGS_NONE,
