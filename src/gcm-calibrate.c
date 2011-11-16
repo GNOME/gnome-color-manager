@@ -378,6 +378,30 @@ gcm_calibrate_lcms_error_cb (cmsContext ContextID,
 }
 
 /**
+ * gcm_calibrate_delay_cb:
+ **/
+static gboolean
+gcm_calibrate_delay_cb (gpointer user_data)
+{
+	GMainLoop *loop = (GMainLoop *) user_data;
+	g_main_loop_quit (loop);
+	return FALSE;
+}
+
+/**
+ * gcm_calibrate_delay:
+ **/
+static void
+gcm_calibrate_delay (guint ms)
+{
+	GMainLoop *loop;
+	loop = g_main_loop_new (NULL, FALSE);
+	g_timeout_add (ms, gcm_calibrate_delay_cb, loop);
+	g_main_loop_run (loop);
+	g_main_loop_unref (loop);
+}
+
+/**
  * gcm_calibrate_display_characterize:
  **/
 gboolean
@@ -509,7 +533,9 @@ gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 						  100 * i / number_of_sets);
 
 		/* wait for the refresh to set the new color */
-		g_usleep (50000);
+		if (i == 0)
+			gcm_calibrate_delay (3000);
+		gcm_calibrate_delay (1000);
 
 		/* get the sample from the hardware */
 		xyz = cd_sensor_get_sample_sync (calibrate->priv->sensor,
