@@ -494,11 +494,14 @@ gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 		col = cmsIT8FindDataFormat(ti1, "SAMPLE_ID");
 		sample_id = cmsIT8GetDataRowCol(ti1, i, col);
 		col = cmsIT8FindDataFormat(ti1, "RGB_R");
-		rgb.R = cmsIT8GetDataRowColDbl(ti1, i, col);
+		rgb.R = cmsIT8GetDataRowColDbl(ti1, i, col) / 100.0f;
 		col = cmsIT8FindDataFormat(ti1, "RGB_G");
-		rgb.G = cmsIT8GetDataRowColDbl(ti1, i, col);
+		rgb.G = cmsIT8GetDataRowColDbl(ti1, i, col) / 100.0f;
 		col = cmsIT8FindDataFormat(ti1, "RGB_B");
-		rgb.B = cmsIT8GetDataRowColDbl(ti1, i, col);
+		rgb.B = cmsIT8GetDataRowColDbl(ti1, i, col) / 100.0f;
+
+		g_debug ("Using source color %f,%f,%f",
+			 rgb.R, rgb.G, rgb.B);
 
 		/* set the window color */
 		gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (priv->sample_window), &rgb);
