@@ -420,6 +420,7 @@ gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 	const gchar *tmp;
 	gboolean is_spectral;
 	gboolean ret;
+	gdouble normalize = 0.0f;
 	gchar *found_lcms2_bodge;
 	gchar *ti1_data = NULL;
 	gsize ti1_size;
@@ -493,7 +494,7 @@ gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 			      is_spectral ? "YES" : "NO");
 	cmsIT8SetPropertyStr (ti3, "LUMINANCE_XYZ_CDM2",
 			      "132.922451 129.524179 165.093861");
-	cmsIT8SetPropertyStr (ti3, "NORMALIZED_TO_Y_100", "NO");
+	cmsIT8SetPropertyStr (ti3, "NORMALIZED_TO_Y_100", "YES");
 	cmsIT8SetPropertyDbl (ti3, "NUMBER_OF_FIELDS", 7);
 	cmsIT8SetPropertyDbl (ti3, "NUMBER_OF_SETS", number_of_sets);
 	cmsIT8SetDataFormat (ti3, 0, "SAMPLE_ID");
@@ -550,14 +551,20 @@ gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 			 rgb.R, rgb.G, rgb.B,
 			 xyz->X, xyz->Y, xyz->Z);
 
+		if (i == 0) {
+			normalize = 100.0f / xyz->Y;
+			g_debug ("normalizing with %f",
+				 normalize);
+		}
+
 		/* write to the ti3 file */
 		cmsIT8SetDataRowCol(ti3, i, 0, sample_id);
-		cmsIT8SetDataRowColDbl(ti3, i, 1, rgb.R);
-		cmsIT8SetDataRowColDbl(ti3, i, 2, rgb.G);
-		cmsIT8SetDataRowColDbl(ti3, i, 3, rgb.B);
-		cmsIT8SetDataRowColDbl(ti3, i, 4, xyz->X);
-		cmsIT8SetDataRowColDbl(ti3, i, 5, xyz->Y);
-		cmsIT8SetDataRowColDbl(ti3, i, 6, xyz->Z);
+		cmsIT8SetDataRowColDbl(ti3, i, 1, rgb.R * 100.0f);
+		cmsIT8SetDataRowColDbl(ti3, i, 2, rgb.G * 100.0f);
+		cmsIT8SetDataRowColDbl(ti3, i, 3, rgb.B * 100.0f);
+		cmsIT8SetDataRowColDbl(ti3, i, 4, xyz->X * normalize);
+		cmsIT8SetDataRowColDbl(ti3, i, 5, xyz->Y * normalize);
+		cmsIT8SetDataRowColDbl(ti3, i, 6, xyz->Z * normalize);
 		cd_color_xyz_free (xyz);
 	}
 
