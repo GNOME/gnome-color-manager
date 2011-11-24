@@ -1713,7 +1713,8 @@ main (int argc, char **argv)
 
 	gtk_init (&argc, &argv);
 #ifdef HAVE_CLUTTER
-	gtk_clutter_init (&argc, &argv);
+	if (gtk_clutter_init (&argc, &argv) != CLUTTER_INIT_SUCCESS)
+		return 1;
 #endif
 
 	context = g_option_context_new ("gnome-color-manager profile viewer");
