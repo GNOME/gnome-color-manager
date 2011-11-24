@@ -536,7 +536,7 @@ gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 		/* wait for the refresh to set the new color */
 		if (i == 0)
 			gcm_calibrate_delay (3000);
-		gcm_calibrate_delay (1000);
+		gcm_calibrate_delay (100);
 
 		/* get the sample from the hardware */
 		xyz = cd_sensor_get_sample_sync (calibrate->priv->sensor,
