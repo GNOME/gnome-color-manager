@@ -165,6 +165,7 @@ const gchar	*gcm_calibrate_get_basename		(GcmCalibrate	*calibrate);
 /* for gcm-calibrate-helper */
 gboolean	 gcm_calibrate_display_characterize	(GcmCalibrate	*calibrate,
 							 const gchar	*ti1_fn,
+							 const gchar	*cal_fn,
 							 const gchar	*ti3_fn,
 							 CdDevice	*device,
 							 GtkWindow	*window,

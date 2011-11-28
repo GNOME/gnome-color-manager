@@ -520,6 +520,7 @@ gcm_calibrate_normalize_to_y (GPtrArray *samples_xyz, gdouble scale)
 gboolean
 gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 				    const gchar *ti1_fn,
+				    const gchar *cal_fn,
 				    const gchar *ti3_fn,
 				    CdDevice *device,
 				    GtkWindow *window,
@@ -748,6 +749,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate,
 {
 	const gchar *filename_tmp;
 	gboolean ret = TRUE;
+	gchar *cal_fn = NULL;
 	gchar *ti1_dest_fn = NULL;
 	gchar *ti1_src_fn = NULL;
 	gchar *ti3_fn = NULL;
@@ -784,11 +786,15 @@ gcm_calibrate_display (GcmCalibrate *calibrate,
 	/* if sensor is native, then take some measurements */
 	if (cd_sensor_get_native (calibrate->priv->sensor) &&
 	    cd_sensor_get_kind (calibrate->priv->sensor) == CD_SENSOR_KIND_COLORHUG) {
+		cal_fn = g_strdup_printf ("%s/%s.cal",
+					  priv->working_path,
+					  priv->basename);
 		ti3_fn = g_strdup_printf ("%s/%s.ti3",
 					  priv->working_path,
 					  priv->basename);
 		ret = gcm_calibrate_display_characterize (calibrate,
 							  ti1_dest_fn,
+							  cal_fn,
 							  ti3_fn,
 							  device,
 							  window,
@@ -813,6 +819,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate,
 out:
 	/* unset brightness */
 	gcm_calibrate_unset_brightness (calibrate, device);
+	g_free (cal_fn);
 	g_free (ti1_src_fn);
 	g_free (ti1_dest_fn);
 	g_free (ti3_fn);

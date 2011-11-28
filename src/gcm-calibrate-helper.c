@@ -29,26 +29,18 @@
 #include "gcm-calibrate.h"
 
 /**
- * gcm_calibrate_helper_ti1_to_ti3:
+ * gcm_calibrate_setup_sensor:
  **/
 static gboolean
-gcm_calibrate_helper_ti1_to_ti3 (const gchar *device_id,
-				 const gchar *ti1_fn,
-				 const gchar *ti3_fn,
-				 GError **error)
+gcm_calibrate_setup_sensor (CdClient *client,
+			    GcmCalibrate *calibrate,
+			    GError **error)
 {
-	CdClient *client = NULL;
 	CdSensor *sensor_tmp;
 	gboolean ret;
-	GcmCalibrate *calibrate = NULL;
 	GPtrArray *sensors = NULL;
 
 	/* get sensor */
-	client = cd_client_new ();
-	ret = cd_client_connect_sync (client, NULL, error);
-	if (!ret)
-		goto out;
-
 	sensors = cd_client_get_sensors_sync (client, NULL, error);
 	if (sensors == NULL) {
 		ret = FALSE;
@@ -57,7 +49,7 @@ gcm_calibrate_helper_ti1_to_ti3 (const gchar *device_id,
 	if (sensors->len == 0) {
 		ret = FALSE;
 		g_set_error_literal (error, 1, 0,
-				     "No sensors plugged in!");
+				     "No native sensors plugged in!");
 		goto out;
 	}
 	sensor_tmp = g_ptr_array_index (sensors, 0);
@@ -66,26 +58,10 @@ gcm_calibrate_helper_ti1_to_ti3 (const gchar *device_id,
 		goto out;
 
 	/* set sensor */
-	calibrate = gcm_calibrate_new ();
 	gcm_calibrate_set_sensor (calibrate, sensor_tmp);
-
-	/* convert the ti1 file to a ti3 file */
-	ret = gcm_calibrate_display_characterize (calibrate,
-						  ti1_fn,
-						  ti3_fn,
-						  NULL, /* device */
-						  NULL, /* window */
-						  error);
-	if (!ret)
-		goto out;
-
-	/* success */
-	g_print ("%s: %s\n", _("Wrote file"), ti3_fn);
 out:
 	if (sensors != NULL)
 		g_ptr_array_unref (sensors);
-	if (calibrate != NULL)
-		g_object_unref (calibrate);
 	return ret;
 }
 
@@ -95,15 +71,18 @@ out:
 int
 main (int argc, char **argv)
 {
+	CdClient *client = NULL;
+	CdDevice *device = NULL;
 	gboolean ret;
 	gchar *device_id = NULL;
+	GcmCalibrate *calibrate = NULL;
 	GError *error = NULL;
 	GOptionContext *context;
 	guint retval = 1;
 	guint xid = 0;
 
 	const GOptionEntry options[] = {
-		{ "device", '\0', 0, G_OPTION_ARG_INT, &device_id,
+		{ "device", '\0', 0, G_OPTION_ARG_STRING, &device_id,
 			/* TRANSLATORS: command line option */
 			_("Use this device for profiling"), NULL },
 		{ "xid", '\0', 0, G_OPTION_ARG_INT, &xid,
@@ -125,33 +104,96 @@ main (int argc, char **argv)
 	g_option_context_add_main_entries (context, options, NULL);
 	g_option_context_add_group (context, gcm_debug_get_option_group ());
 	g_option_context_add_group (context, gtk_get_option_group (TRUE));
-	g_option_context_parse (context, &argc, &argv, NULL);
-	g_option_context_free (context);
+	ret = g_option_context_parse (context, &argc, &argv, &error);
+	if (!ret)
+		goto out;
 
-	/* correct arguments */
-	if (argc == 3 &&
-	    g_str_has_suffix (argv[1], "ti1") &&
-	    g_str_has_suffix (argv[2], "ti3")) {
-		ret = gcm_calibrate_helper_ti1_to_ti3 (device_id,
-						       argv[1],
-						       argv[2],
-						       &error);
-	} else {
-		ret = FALSE;
-		g_print ("%s\n", _("Specify one of:"));
-		g_print ("file.ti1 file.ti3\n");
+	/* get client */
+	client = cd_client_new ();
+	ret = cd_client_connect_sync (client, NULL, &error);
+	if (!ret)
+		goto out;
+
+	/* check device */
+	if (device_id == NULL) {
+		g_print ("No device-id specified\n");
 		goto out;
 	}
+	device = cd_client_find_device_sync (client,
+					     device_id,
+					     NULL,
+					     &error);
+	if (device == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+	ret = cd_device_connect_sync (device,
+				      NULL,
+				      &error);
+	if (!ret)
+		goto out;
+
+	/* correct arguments */
+	if (argc == 4 &&
+	    g_str_has_suffix (argv[1], "ti1") &&
+	    g_str_has_suffix (argv[2], "cal") &&
+	    g_str_has_suffix (argv[3], "ti3")) {
+
+		/* setup calibration */
+		calibrate = gcm_calibrate_new ();
+		ret = gcm_calibrate_setup_sensor (client,
+						  calibrate,
+						  &error);
+		if (!ret)
+			goto out;
+
+		/* mark device to be profiled in colord */
+		ret = cd_device_profiling_inhibit_sync (device,
+							NULL,
+							&error);
+		if (!ret)
+			goto out;
+
+		/* convert the ti1 file to a ti3 file */
+		ret = gcm_calibrate_display_characterize (calibrate,
+							  argv[1],
+							  argv[2],
+							  argv[3],
+							  device,
+							  NULL, /* window */
+							  &error);
+		if (!ret)
+			goto out;
+
+		/* success */
+		g_print ("%s: %s\n", _("Wrote file"), argv[2]);
+
+	} else {
+		ret = FALSE;
+		g_set_error_literal (&error, 1, 0,
+				     "Specify one of:\n"
+				     "file.ti1 file.ti3\n"
+				     "file.cal");
+		goto out;
+	}
+out:
 	if (!ret) {
 		g_print ("%s: %s\n",
 			 _("Failed to calibrate"),
 			 error->message);
 		g_error_free (error);
-		goto out;
 	}
 
+	/* success */
 	retval = 0;
-out:
+
+	g_option_context_free (context);
+	if (device != NULL)
+		g_object_unref (device);
+	if (client != NULL)
+		g_object_unref (client);
+	if (calibrate != NULL)
+		g_object_unref (calibrate);
 	g_free (device_id);
 	return retval;
 }
