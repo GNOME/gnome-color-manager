@@ -92,6 +92,7 @@ PKG_CHECK_MODULES(XORG, xrandr)
 PKG_CHECK_MODULES(GTK, gtk+-3.0 >= 2.91.0)
 PKG_CHECK_MODULES(LCMS, lcms2 >= 2.2)
 PKG_CHECK_MODULES(X11, x11)
+PKG_CHECK_MODULES(GNOME_DESKTOP, gnome-desktop-3.0)
 PKG_CHECK_MODULES(COLORD, colord >= 0.1.12)
 
 dnl **** Check for clutter ****

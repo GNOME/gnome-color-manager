@@ -7,6 +7,7 @@ INCLUDES =						\
 	$(TIFF_CFLAGS)					\
 	$(EXIF_CFLAGS)					\
 	$(EXIV_CFLAGS)					\
+	$(GNOME_DESKTOP_CFLAGS)				\
 	$(COLORD_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
 	$(CLUTTER_CFLAGS)				\
@@ -104,6 +105,7 @@ gcm_calibrate_LDADD =					\
 	$(VTE_LIBS)					\
 	$(X11_LIBS)					\
 	$(XORG_LIBS)					\
+	$(GNOME_DESKTOP_LIBS)				\
 	-lm
 
 gcm_calibrate_CFLAGS =					\
@@ -145,6 +147,7 @@ gcm_calibrate_helper_LDADD =				\
 	$(EXIF_LIBS)					\
 	$(TIFF_LIBS)					\
 	$(COLORD_LIBS)					\
+	$(GNOME_DESKTOP_LIBS)				\
 	-lm
 
 gcm_calibrate_helper_CFLAGS =				\
@@ -244,6 +247,7 @@ gcm_self_test_LDADD =					\
 	$(EXIF_LIBS)					\
 	$(VTE_LIBS)					\
 	$(CANBERRA_LIBS)				\
+	$(GNOME_DESKTOP_LIBS)				\
 	-lm
 
 gcm_self_test_CFLAGS = $(AM_CFLAGS) $(WARNINGFLAGS_C)
