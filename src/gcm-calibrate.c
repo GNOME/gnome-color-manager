@@ -943,6 +943,93 @@ out:
 }
 
 /**
+ * gcm_calibrate_convert_xyz_to_rgb:
+ **/
+static gboolean
+gcm_calibrate_convert_xyz_to_rgb (GPtrArray *samples_xyz,
+				  GPtrArray *samples_primaries,
+				  GPtrArray *results_rgb,
+				  GError **error)
+{
+	CdColorRGB *rgb;
+	CdColorXYZ *xyz;
+	cmsCIExyYTRIPLE primaries;
+	cmsCIExyY whitepoint;
+	cmsHPROFILE conversion_profile = NULL;
+	cmsHPROFILE xyz_profile = NULL;
+	cmsHTRANSFORM transform = NULL;
+	cmsToneCurve *transfer_curve[3] = { NULL, NULL, NULL };
+	gdouble target_gamma;
+	gboolean ret = TRUE;
+	gdouble temperature;
+	guint i;
+
+	/* hardcode the gamma */
+	target_gamma = 2.4f;
+
+	/* calculate the native whitepoint */
+	xyz = g_ptr_array_index (samples_primaries, 3);
+	cmsXYZ2xyY (&whitepoint, (cmsCIEXYZ*) xyz);
+	cmsTempFromWhitePoint (&temperature, &whitepoint);
+	g_debug ("native whitepoint=%f,%f [scale:%f] (%fK)",
+		 whitepoint.x, whitepoint.y, whitepoint.Y, temperature);
+
+	/* get the primaries */
+	xyz = g_ptr_array_index (samples_primaries, 0);
+	cmsXYZ2xyY (&primaries.Red, (cmsCIEXYZ*) xyz);
+	xyz = g_ptr_array_index (samples_primaries, 1);
+	cmsXYZ2xyY (&primaries.Green, (cmsCIEXYZ*) xyz);
+	xyz = g_ptr_array_index (samples_primaries, 2);
+	cmsXYZ2xyY (&primaries.Blue, (cmsCIEXYZ*) xyz);
+	g_debug ("red=%f,%f green=%f,%f blue=%f,%f",
+		 primaries.Red.x, primaries.Red.y,
+		 primaries.Green.x, primaries.Green.y,
+		 primaries.Blue.x, primaries.Blue.y);
+
+	/* setup transform */
+	transfer_curve[0] = transfer_curve[1] = transfer_curve[2] = cmsBuildGamma (NULL, target_gamma);
+	conversion_profile = cmsCreateRGBProfile (&whitepoint,
+						  &primaries,
+						  transfer_curve);
+	if (conversion_profile == NULL) {
+		ret = FALSE;
+		g_set_error_literal (error, 1, 0,
+				     "Failed to create conversion profile");
+		goto out;
+	}
+	xyz_profile = cmsCreateXYZProfile ();
+	transform = cmsCreateTransform (xyz_profile, TYPE_XYZ_DBL,
+					conversion_profile, TYPE_RGB_DBL,
+					INTENT_RELATIVE_COLORIMETRIC, 0);
+	if (transform == NULL) {
+		ret = FALSE;
+		g_set_error_literal (error, 1, 0,
+				     "Failed to create transform");
+		goto out;
+	}
+
+	/* convert samples */
+	for (i = 0; i < samples_xyz->len; i++) {
+		xyz = g_ptr_array_index (samples_xyz, i);
+		rgb = cd_color_rgb_new ();
+		cmsDoTransform (transform, xyz, rgb, 1);
+		g_debug ("%f,%f,%f -> %f,%f,%f",
+			 xyz->X, xyz->Y, xyz->Z,
+			 rgb->R, rgb->G, rgb->B);
+		g_ptr_array_add (results_rgb, rgb);
+	}
+
+	/* done */
+out:
+	cmsFreeToneCurve (*transfer_curve);
+	cmsCloseProfile (xyz_profile);
+	cmsCloseProfile (conversion_profile);
+	if (transform != NULL)
+		cmsDeleteTransform (transform);
+	return ret;
+}
+
+/**
  * gcm_calibrate_get_primaries:
  **/
 static gboolean
@@ -1011,6 +1098,7 @@ gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
 	gboolean ret;
 	gdouble frac = 0.0f;
 	gdouble native_gamma = 0.0f;
+	GPtrArray *results_rgb = NULL;
 	GPtrArray *samples_rgb = NULL;
 	GPtrArray *samples_primaries = NULL;
 	GPtrArray *samples_xyz = NULL;
@@ -1065,6 +1153,15 @@ gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
 	if (!ret)
 		goto out;
 	g_debug ("Native Gamma: %f", native_gamma);
+
+	/* convert from XYZ to RGB */
+	results_rgb = g_ptr_array_new_with_free_func ((GDestroyNotify) cd_color_rgb_free);
+	ret = gcm_calibrate_convert_xyz_to_rgb (samples_xyz,
+						samples_primaries,
+						results_rgb,
+						error);
+	if (!ret)
+		goto out;
 
 out:
 	if (samples_rgb != NULL)
