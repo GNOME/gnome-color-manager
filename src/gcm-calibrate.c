@@ -1083,6 +1083,46 @@ out:
 }
 
 /**
+ * gcm_calibrate_array_remove_offset:
+ **/
+static void
+gcm_calibrate_array_remove_offset (GPtrArray *array)
+{
+	CdColorRGB offset;
+	CdColorRGB *rgb;
+	guint i;
+
+	/* remove the backlight leakage */
+	cd_color_set_rgb (&offset,
+			  G_MAXDOUBLE,
+			  G_MAXDOUBLE,
+			  G_MAXDOUBLE);
+	for (i = 0; i < array->len; i++) {
+		rgb = g_ptr_array_index (array, i);
+		if (rgb->R < offset.R)
+			offset.R = rgb->R;
+		if (rgb->G < offset.G)
+			offset.G = rgb->G;
+		if (rgb->B < offset.B)
+			offset.B = rgb->B;
+	}
+	for (i = 0; i < array->len; i++) {
+		rgb = g_ptr_array_index (array, i);
+		rgb->R -= offset.R;
+		rgb->G -= offset.G;
+		rgb->B -= offset.B;
+		if (rgb->R < 0.0f)
+			rgb->R = 0.0f;
+		if (rgb->G < 0.0f)
+			rgb->G = 0.0f;
+		if (rgb->B < 0.0f)
+			rgb->B = 0.0f;
+	}
+	g_debug ("removed offset = %f,%f,%f",
+		 offset.R, offset.G, offset.B);
+}
+
+/**
  * gcm_calibrate_display_calibration:
  **/
 gboolean
@@ -1162,6 +1202,9 @@ gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
 						error);
 	if (!ret)
 		goto out;
+
+	/* bias the values to zero */
+	gcm_calibrate_array_remove_offset (results_rgb);
 
 out:
 	if (samples_rgb != NULL)
