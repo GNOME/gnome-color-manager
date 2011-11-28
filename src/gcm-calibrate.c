@@ -1123,6 +1123,40 @@ gcm_calibrate_array_remove_offset (GPtrArray *array)
 }
 
 /**
+ * gcm_calibrate_array_scale:
+ **/
+static void
+gcm_calibrate_array_scale (GPtrArray *array, gdouble value)
+{
+	CdColorRGB *rgb;
+	CdColorRGB scale;
+	guint i;
+
+	/* scale all values */
+	cd_color_set_rgb (&scale,
+			  G_MINDOUBLE,
+			  G_MINDOUBLE,
+			  G_MINDOUBLE);
+	for (i = 0; i < array->len; i++) {
+		rgb = g_ptr_array_index (array, i);
+		if (rgb->R > scale.R)
+			scale.R = rgb->R;
+		if (rgb->G > scale.G)
+			scale.G = rgb->G;
+		if (rgb->B > scale.B)
+			scale.B = rgb->B;
+	}
+	for (i = 0; i < array->len; i++) {
+		rgb = g_ptr_array_index (array, i);
+		rgb->R /= scale.R;
+		rgb->G /= scale.G;
+		rgb->B /= scale.B;
+	}
+	g_debug ("scaled to 1.0 using = %f,%f,%f",
+		 scale.R, scale.G, scale.B);
+}
+
+/**
  * gcm_calibrate_display_calibration:
  **/
 gboolean
@@ -1205,6 +1239,9 @@ gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
 
 	/* bias the values to zero */
 	gcm_calibrate_array_remove_offset (results_rgb);
+
+	/* scale the largest number to 1.0 */
+	gcm_calibrate_array_scale (results_rgb, 1.0f);
 
 out:
 	if (samples_rgb != NULL)
