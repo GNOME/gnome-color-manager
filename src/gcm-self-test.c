@@ -28,7 +28,6 @@
 
 #include "gcm-brightness.h"
 #include "gcm-calibrate.h"
-#include "gcm-calibrate-native.h"
 #include "gcm-cie-widget.h"
 #include "gcm-clut.h"
 #include "gcm-debug.h"

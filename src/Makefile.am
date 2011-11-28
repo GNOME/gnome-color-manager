@@ -81,8 +81,6 @@ gcm_calibrate_SOURCES =					\
 	gcm-calibrate-argyll.h				\
 	gcm-calibrate.c					\
 	gcm-calibrate.h					\
-	gcm-calibrate-native.c				\
-	gcm-calibrate-native.h				\
 	gcm-cell-renderer-profile-text.c		\
 	gcm-cell-renderer-profile-text.h		\
 	gcm-gamma-widget.c				\
@@ -227,8 +225,6 @@ gcm_self_test_SOURCES =					\
 	gcm-calibrate-argyll.h				\
 	gcm-calibrate.c					\
 	gcm-calibrate.h					\
-	gcm-calibrate-native.c				\
-	gcm-calibrate-native.h				\
 	gcm-gamma-widget.c				\
 	gcm-gamma-widget.h				\
 	gcm-named-color.c				\
