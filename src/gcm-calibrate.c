@@ -515,6 +515,114 @@ gcm_calibrate_normalize_to_y (GPtrArray *samples_xyz, gdouble scale)
 }
 
 /**
+ * gcm_calibrate_set_calibration_to_device:
+ **/
+static gboolean
+gcm_calibrate_set_calibration_to_device (const gchar *cal_fn,
+					 CdDevice *device,
+					 GError **error)
+{
+	CdColorRGB *rgb;
+	cmsHANDLE cal = NULL;
+	const gchar *tmp;
+	gboolean ret;
+	gchar *cal_data = NULL;
+	GnomeRRCrtc *crtc;
+	GnomeRROutput *output;
+	GnomeRRScreen *screen = NULL;
+	GPtrArray *samples_rgb = NULL;
+	gsize cal_size;
+	guint col;
+	guint i;
+	guint number_of_sets = 0;
+	gushort blue[256];
+	gushort green[256];
+	gushort red[256];
+
+	/* open .cal file */
+	g_debug ("loading %s", cal_fn);
+	ret = g_file_get_contents (cal_fn, &cal_data, &cal_size, error);
+	if (!ret)
+		goto out;
+
+	/* load the cal data */
+	cal = cmsIT8LoadFromMem (NULL, cal_data, cal_size);
+	if (cal == NULL) {
+		ret = FALSE;
+		g_set_error (error, 1, 0, "Cannot open %s", cal_fn);
+		goto out;
+	}
+
+	/* check color format */
+	tmp = cmsIT8GetProperty (cal, "COLOR_REP");
+	if (g_strcmp0 (tmp, "RGB") != 0) {
+		ret = FALSE;
+		g_set_error (error, 1, 0, "Invalid format: %s", tmp);
+		goto out;
+	}
+	number_of_sets = cmsIT8GetPropertyDbl (cal, "NUMBER_OF_SETS");
+	if (number_of_sets != 256) {
+		ret = FALSE;
+		g_set_error (error, 1, 0, "Invalid cal size: %i", number_of_sets);
+		goto out;
+	}
+
+	/* get data */
+	samples_rgb = g_ptr_array_new_with_free_func ((GDestroyNotify) cd_color_rgb_free);
+	for (i = 0; i < number_of_sets; i++) {
+		rgb = cd_color_rgb_new ();
+		col = cmsIT8FindDataFormat(cal, "RGB_R");
+		rgb->R = cmsIT8GetDataRowColDbl(cal, i, col) / 100.0f;
+		col = cmsIT8FindDataFormat(cal, "RGB_G");
+		rgb->G = cmsIT8GetDataRowColDbl(cal, i, col) / 100.0f;
+		col = cmsIT8FindDataFormat(cal, "RGB_B");
+		rgb->B = cmsIT8GetDataRowColDbl(cal, i, col) / 100.0f;
+		g_ptr_array_add (samples_rgb, rgb);
+	}
+
+	/* send it to the screen */
+	screen = gnome_rr_screen_new (gdk_screen_get_default (), error);
+	if (screen == NULL) {
+		ret = FALSE;
+		goto out;
+	}
+	output = gnome_rr_screen_get_output_by_name (screen, "LVDS1");
+	if (output == NULL) {
+		ret = FALSE;
+		g_set_error (error, 1, 0,
+			     "No display with name %s",
+			     "LVDS1");
+	}
+	crtc = gnome_rr_output_get_crtc (output);
+	if (crtc == NULL) {
+		ret = FALSE;
+		g_set_error (error, 1, 0,
+			     "No crtc with for output %s",
+			     gnome_rr_output_get_name (output));
+	}
+	for (i = 0; i < samples_rgb->len; i++) {
+		rgb = g_ptr_array_index (samples_rgb, i);
+		red[0] = rgb->R * 0xffff;
+		green[0] = rgb->G * 0xffff;
+		blue[0] = rgb->B * 0xffff;
+	}
+	gnome_rr_crtc_set_gamma (crtc,
+				 samples_rgb->len,
+				 red,
+				 green,
+				 blue);
+out:
+	g_free (cal_data);
+	if (cal != NULL)
+		cmsIT8Free (cal);
+	if (samples_rgb != NULL)
+		g_ptr_array_unref (samples_rgb);
+	if (screen != NULL)
+		g_object_unref (screen);
+	return ret;
+}
+
+/**
  * gcm_calibrate_display_characterize:
  **/
 gboolean
@@ -546,6 +654,13 @@ gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 	guint number_of_sets = 0;
 	guint table_count;
 	GcmCalibratePrivate *priv = calibrate->priv;
+
+	/* need to set cal to the gamma ramps */
+	ret = gcm_calibrate_set_calibration_to_device (cal_fn,
+						       device,
+						       error);
+	if (!ret)
+		goto out;
 
 	/* open ti1 file as input */
 	g_debug ("loading %s", ti1_fn);
