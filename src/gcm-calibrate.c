@@ -868,10 +868,16 @@ gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
 				   GtkWindow *window,
 				   GError **error)
 {
+	CdColorRGB *rgb;
 	CdColorXYZ *xyz_black;
 	CdColorXYZ *xyz_white;
 	gboolean ret;
+	gdouble frac = 0.0f;
+	GPtrArray *samples_rgb = NULL;
 	GPtrArray *samples_primaries = NULL;
+	GPtrArray *samples_xyz = NULL;
+	guint i;
+	guint vcgt_size = 32;
 
 	/* this is global, ick */
 	cmsSetLogErrorHandler (gcm_calibrate_lcms_error_cb);
@@ -893,9 +899,33 @@ gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
 				     "Invalid read, is sensor attached to the screen?");
 		goto out;
 	}
+
+	/* get the gamma values */
+	samples_rgb = g_ptr_array_new_with_free_func ((GDestroyNotify) cd_color_rgb_free);
+	for (i = 0; i < vcgt_size; i++) {
+		rgb = cd_color_rgb_new ();
+		frac = (1.0f * (gdouble) i) / (gdouble) (vcgt_size - 1);
+		rgb->R = frac;
+		rgb->G = frac;
+		rgb->B = frac;
+		g_ptr_array_add (samples_rgb, rgb);
+	}
+
+	/* actually get samples from the hardware */
+	samples_xyz = g_ptr_array_new_with_free_func ((GDestroyNotify) cd_color_xyz_free);
+	ret = gcm_calibrate_get_samples (calibrate,
+					 samples_rgb,
+					 samples_xyz,
+					 error);
+	if (!ret)
+		goto out;
 out:
+	if (samples_rgb != NULL)
+		g_ptr_array_unref (samples_rgb);
 	if (samples_primaries != NULL)
 		g_ptr_array_unref (samples_primaries);
+	if (samples_xyz != NULL)
+		g_ptr_array_unref (samples_xyz);
 	return ret;
 }
 
