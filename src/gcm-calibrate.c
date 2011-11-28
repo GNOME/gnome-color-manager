@@ -892,6 +892,57 @@ out:
 }
 
 /**
+ * gcm_calibrate_calculate_native_gamma:
+ **/
+static gboolean
+gcm_calibrate_calculate_native_gamma (GPtrArray *samples_xyz,
+				      gdouble *native_gamma,
+				      GError **error)
+{
+	CdColorXYZ *xyz;
+	cmsFloat32Number values[256];
+	cmsToneCurve *curve;
+	gboolean ret = TRUE;
+	gdouble largest = G_MINDOUBLE;
+	gdouble smallest = G_MAXDOUBLE;
+	gdouble tmp;
+	guint i;
+
+	/* scale from 0.0 to 1.0 */
+	for (i = 0; i < samples_xyz->len; i++) {
+		xyz = g_ptr_array_index (samples_xyz, i);
+		if (xyz->Y < smallest)
+			smallest = xyz->Y;
+		if (xyz->Y > largest)
+			largest = xyz->Y;
+	}
+	for (i = 0; i < samples_xyz->len; i++) {
+		xyz = g_ptr_array_index (samples_xyz, i);
+		values[i] = (xyz->Y - smallest) * 1.0f / (largest - smallest);
+	}
+
+	/* find estimate */
+	curve = cmsBuildTabulatedToneCurveFloat (NULL,
+						 samples_xyz->len,
+						 values);
+	tmp = cmsEstimateGamma (curve, 1000.1f);
+	if (tmp < 0) {
+		ret = FALSE;
+		g_set_error_literal (error, 1, 0,
+				     "Failed to calculate native gamma");
+		goto out;
+	}
+
+	/* success */
+	ret = TRUE;
+	if (native_gamma != NULL)
+		*native_gamma = tmp;
+out:
+	cmsFreeToneCurve (curve);
+	return ret;
+}
+
+/**
  * gcm_calibrate_get_primaries:
  **/
 static gboolean
@@ -959,6 +1010,7 @@ gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
 	CdColorXYZ *xyz_white;
 	gboolean ret;
 	gdouble frac = 0.0f;
+	gdouble native_gamma = 0.0f;
 	GPtrArray *samples_rgb = NULL;
 	GPtrArray *samples_primaries = NULL;
 	GPtrArray *samples_xyz = NULL;
@@ -1005,6 +1057,15 @@ gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
 					 error);
 	if (!ret)
 		goto out;
+
+	/* calculate the native gamma */
+	ret = gcm_calibrate_calculate_native_gamma (samples_xyz,
+						    &native_gamma,
+						    error);
+	if (!ret)
+		goto out;
+	g_debug ("Native Gamma: %f", native_gamma);
+
 out:
 	if (samples_rgb != NULL)
 		g_ptr_array_unref (samples_rgb);
