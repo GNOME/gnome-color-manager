@@ -1210,6 +1210,7 @@ gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
 	CdColorRGB *rgb;
 	CdColorXYZ *xyz_black;
 	CdColorXYZ *xyz_white;
+	cmsHANDLE cal = NULL;
 	gboolean ret;
 	gdouble frac = 0.0f;
 	gdouble native_gamma = 0.0f;
@@ -1289,7 +1290,39 @@ gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
 	results_vcgt = g_ptr_array_new_with_free_func ((GDestroyNotify) cd_color_rgb_free);
 	gcm_calibrate_resize_results (results_rgb, results_vcgt, 256);
 
+	/* write to a cal file as calibration */
+	cal = cmsIT8Alloc (NULL);
+	cmsIT8SetSheetType (cal, "CAL");
+	cmsIT8SetPropertyStr (cal, "DESCRIPTOR",
+			      "Device Calibration State");
+	cmsIT8SetPropertyStr (cal, "ORIGINATOR",
+			      "GNOME Color Manager");
+	cmsIT8SetPropertyStr (cal, "DEVICE_CLASS",
+			      "DISPLAY");
+	cmsIT8SetPropertyStr (cal, "COLOR_REP",
+			      "RGB");
+	cmsIT8SetPropertyDbl (cal, "NUMBER_OF_FIELDS", 4);
+	cmsIT8SetPropertyDbl (cal, "NUMBER_OF_SETS", results_vcgt->len);
+	cmsIT8SetDataFormat (cal, 0, "RGB_I");
+	cmsIT8SetDataFormat (cal, 1, "RGB_R");
+	cmsIT8SetDataFormat (cal, 2, "RGB_G");
+	cmsIT8SetDataFormat (cal, 3, "RGB_B");
+	for (i = 0; i < results_vcgt->len; i++) {
+		frac = (1.0f * (gdouble) i) / (gdouble) (results_vcgt->len - 1);
+		rgb = g_ptr_array_index (results_vcgt, i);
+		cmsIT8SetDataRowColDbl(cal, i, 0, frac);
+		cmsIT8SetDataRowColDbl(cal, i, 1, rgb->R);
+		cmsIT8SetDataRowColDbl(cal, i, 2, rgb->G);
+		cmsIT8SetDataRowColDbl(cal, i, 3, rgb->B);
+	}
+
+	/* write the file */
+	ret = cmsIT8SaveToFile (cal, cal_fn);
+	if (!ret)
+		g_assert_not_reached ();
 out:
+	if (cal != NULL)
+		cmsIT8Free (cal);
 	if (results_rgb != NULL)
 		g_ptr_array_unref (results_rgb);
 	if (results_vcgt != NULL)
@@ -1426,6 +1459,13 @@ gcm_calibrate_display (GcmCalibrate *calibrate,
 		cal_fn = g_strdup_printf ("%s/%s.cal",
 					  priv->working_path,
 					  priv->basename);
+		ret = gcm_calibrate_display_calibration (calibrate,
+							 cal_fn,
+							 device,
+							 window,
+							 error);
+		if (!ret)
+			goto out;
 		ti3_fn = g_strdup_printf ("%s/%s.ti3",
 					  priv->working_path,
 					  priv->basename);
