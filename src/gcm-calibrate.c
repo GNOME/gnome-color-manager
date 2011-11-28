@@ -533,11 +533,14 @@ gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 	const gchar *tmp;
 	gboolean is_spectral;
 	gboolean ret;
+	gchar *data_cal = NULL;
+	gchar *data_patches = NULL;
 	gchar *found_lcms2_bodge;
 	gchar *ti1_data = NULL;
 	GPtrArray *samples_rgb = NULL;
 	GPtrArray *samples_xyz = NULL;
 	gsize ti1_size;
+	GString *string = NULL;
 	guint col;
 	guint i;
 	guint number_of_sets = 0;
@@ -653,6 +656,23 @@ gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 	if (!ret)
 		g_assert_not_reached ();
 
+	/* get the patches data */
+	ret = g_file_get_contents (ti3_fn, &data_patches, NULL, error);
+	if (!ret)
+		goto out;
+
+	/* get the cal data */
+	ret = g_file_get_contents (cal_fn, &data_cal, NULL, error);
+	if (!ret)
+		goto out;
+
+	/* write new ti3 file with cal file appended */
+	string = g_string_new ("");
+	g_string_append (string, data_patches);
+	g_string_append (string, data_cal);
+	ret = g_file_set_contents (ti3_fn, string->str, -1, error);
+	if (!ret)
+		goto out;
 out:
 	if (ti1 != NULL)
 		cmsIT8Free (ti1);
@@ -662,7 +682,11 @@ out:
 		g_ptr_array_unref (samples_rgb);
 	if (samples_xyz != NULL)
 		g_ptr_array_unref (samples_xyz);
+	if (string != NULL)
+		g_string_free (string, TRUE);
 	g_free (ti1_data);
+	g_free (data_patches);
+	g_free (data_cal);
 	return ret;
 }
 
