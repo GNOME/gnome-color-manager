@@ -134,6 +134,8 @@ gcm_calibrate_helper_SOURCES =				\
 	gcm-utils.h					\
 	gcm-exif.c					\
 	gcm-exif.h					\
+	gcm-brightness.c				\
+	gcm-brightness.h				\
 	gcm-calibrate.c					\
 	gcm-calibrate.h					\
 	gcm-sample-window.c				\

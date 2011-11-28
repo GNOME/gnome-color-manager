@@ -46,6 +46,7 @@ static void     gcm_calibrate_finalize	(GObject     *object);
  **/
 struct _GcmCalibratePrivate
 {
+	GcmBrightness			*brightness;
 	GcmCalibrateDisplayKind		 display_kind;
 	GcmCalibratePrintKind		 print_kind;
 	GcmCalibratePrecision		 precision;
@@ -64,6 +65,7 @@ struct _GcmCalibratePrivate
 	gchar				*serial;
 	gchar				*device;
 	gchar				*working_path;
+	guint				 old_brightness;
 	guint				 target_whitepoint;
 	GtkWidget			*content_widget;
 	GtkWindow			*sample_window;
@@ -434,7 +436,7 @@ gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 	GcmCalibratePrivate *priv = calibrate->priv;
 
 	/* open ti1 file as input */
-	g_debug ("loading %s", ti3_fn);
+	g_debug ("loading %s", ti1_fn);
 	ret = g_file_get_contents (ti1_fn, &ti1_data, &ti1_size, error);
 	if (!ret)
 		goto out;
@@ -594,6 +596,78 @@ out:
 }
 
 /**
+ * gcm_calibrate_set_brightness:
+ **/
+static void
+gcm_calibrate_set_brightness (GcmCalibrate *calibrate, CdDevice *device)
+{
+	const gchar *xrandr_name;
+	gboolean ret;
+	GError *error = NULL;
+
+	/* is this a laptop */
+	xrandr_name = cd_device_get_metadata_item (device,
+						   CD_DEVICE_METADATA_XRANDR_NAME);
+	if (xrandr_name == NULL)
+		return;
+	ret = gcm_utils_output_is_lcd_internal (xrandr_name);
+	if (!ret)
+		return;
+
+	/* set the brightness to max */
+	ret = gcm_brightness_get_percentage (calibrate->priv->brightness,
+					     &calibrate->priv->old_brightness,
+					     &error);
+	if (!ret) {
+		g_warning ("failed to get brightness: %s",
+			   error->message);
+		g_clear_error (&error);
+	}
+	ret = gcm_brightness_set_percentage (calibrate->priv->brightness,
+					     100,
+					     &error);
+	if (!ret) {
+		g_warning ("failed to set brightness: %s",
+			   error->message);
+		g_error_free (error);
+	}
+}
+
+/**
+ * gcm_calibrate_unset_brightness:
+ **/
+static void
+gcm_calibrate_unset_brightness (GcmCalibrate *calibrate, CdDevice *device)
+{
+	const gchar *xrandr_name;
+	gboolean ret;
+	GError *error = NULL;
+
+	/* is this a laptop */
+	xrandr_name = cd_device_get_metadata_item (device,
+						   CD_DEVICE_METADATA_XRANDR_NAME);
+	if (xrandr_name == NULL)
+		return;
+	ret = gcm_utils_output_is_lcd_internal (xrandr_name);
+	if (!ret)
+		return;
+
+	/* never set */
+	if (calibrate->priv->old_brightness == G_MAXUINT)
+		return;
+
+	/* reset the brightness to what it was before */
+	ret = gcm_brightness_set_percentage (calibrate->priv->brightness,
+					     calibrate->priv->old_brightness,
+					     &error);
+	if (!ret) {
+		g_warning ("failed to set brightness: %s",
+			   error->message);
+		g_error_free (error);
+	}
+}
+
+/**
  * gcm_calibrate_display:
  **/
 static gboolean
@@ -609,6 +683,9 @@ gcm_calibrate_display (GcmCalibrate *calibrate,
 	gchar *ti3_fn = NULL;
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
 	GcmCalibratePrivate *priv = calibrate->priv;
+
+	/* set brightness */
+	gcm_calibrate_set_brightness (calibrate, device);
 
 	/* get a ti1 file suitable for the calibration */
 	ti1_dest_fn = g_strdup_printf ("%s/%s.ti1",
@@ -661,6 +738,8 @@ gcm_calibrate_display (GcmCalibrate *calibrate,
 	/* proxy */
 	ret = klass->calibrate_display (calibrate, device, priv->sensor, window, error);
 out:
+	/* unset brightness */
+	gcm_calibrate_unset_brightness (calibrate, device);
 	g_free (ti1_src_fn);
 	g_free (ti1_dest_fn);
 	g_free (ti3_fn);
@@ -1027,6 +1106,13 @@ gcm_calibrate_device (GcmCalibrate *calibrate,
 	if (!ret)
 		goto out;
 
+	/* mark device to be profiled in colord */
+	ret = cd_device_profiling_inhibit_sync (device,
+						NULL,
+						error);
+	if (!ret)
+		goto out;
+
 	/* set progress */
 	gcm_calibrate_set_progress (calibrate, 0);
 
@@ -1036,20 +1122,33 @@ gcm_calibrate_device (GcmCalibrate *calibrate,
 					     device,
 					     window,
 					     error);
+		if (!ret)
+			goto out;
 		break;
 	case CD_DEVICE_KIND_PRINTER:
 		ret = gcm_calibrate_printer (calibrate,
 					     device,
 					     window,
 					     error);
+		if (!ret)
+			goto out;
 		break;
 	default:
 		ret = gcm_calibrate_camera (calibrate,
 					    device,
 					    window,
 					    error);
+		if (!ret)
+			goto out;
 		break;
 	}
+
+	/* device back to normal */
+	ret = cd_device_profiling_uninhibit_sync (device,
+						  NULL,
+						  error);
+	if (!ret)
+		goto out;
 
 	/* set progress */
 	gcm_calibrate_set_progress (calibrate, 100);
@@ -1403,6 +1502,8 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
 	calibrate->priv->precision = GCM_CALIBRATE_PRECISION_UNKNOWN;
 	calibrate->priv->sample_window = gcm_sample_window_new ();
+	calibrate->priv->old_brightness = G_MAXUINT;
+	calibrate->priv->brightness = gcm_brightness_new ();
 
 	// FIXME: this has to be per-run specific
 	calibrate->priv->working_path = g_strdup ("/tmp");
@@ -1433,6 +1534,7 @@ gcm_calibrate_finalize (GObject *object)
 	g_ptr_array_unref (calibrate->priv->old_title);
 	g_ptr_array_unref (calibrate->priv->old_message);
 	gtk_widget_destroy (GTK_WIDGET (calibrate->priv->sample_window));
+	g_object_unref (priv->brightness);
 
 	G_OBJECT_CLASS (gcm_calibrate_parent_class)->finalize (object);
 }

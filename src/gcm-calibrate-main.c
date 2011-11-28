@@ -33,7 +33,6 @@
 
 #include "gcm-utils.h"
 #include "gcm-debug.h"
-#include "gcm-brightness.h"
 #include "gcm-calibrate.h"
 #include "gcm-calibrate-argyll.h"
 
@@ -66,8 +65,6 @@ typedef struct {
 	guint		 xid;
 	GtkWindow	*main_window;
 	GPtrArray	*pages;
-	GcmBrightness	*brightness;
-	guint		 old_brightness;
 	gboolean	 internal_lcd;
 	GtkWidget	*reference_preview;
 	GtkWidget	*action_title;
@@ -191,89 +188,6 @@ static void
 gcm_calib_assistant_close_cb (GtkAssistant *assistant, GcmCalibratePriv *calib)
 {
 	g_application_release (G_APPLICATION (calib->application));
-}
-
-/**
- * gcm_calib_device_inihibit:
- **/
-static void
-gcm_calib_device_inihibit (GcmCalibratePriv *calib)
-{
-	gboolean ret;
-	GError *error = NULL;
-
-	/* invalid */
-	if (calib->device == NULL)
-		return;
-
-	/* mark device to be profiled in colord */
-	ret = cd_device_profiling_inhibit_sync (calib->device,
-						calib->cancellable,
-						&error);
-	if (!ret) {
-		g_warning ("failed to inhibit device: %s",
-			   error->message);
-		g_clear_error (&error);
-	}
-
-	/* set the brightness to max */
-	if (calib->device_kind == CD_DEVICE_KIND_DISPLAY &&
-	    calib->internal_lcd) {
-		ret = gcm_brightness_get_percentage (calib->brightness,
-						     &calib->old_brightness,
-						     &error);
-		if (!ret) {
-			g_warning ("failed to get brightness: %s",
-				   error->message);
-			g_clear_error (&error);
-		}
-		ret = gcm_brightness_set_percentage (calib->brightness,
-						     100,
-						     &error);
-		if (!ret) {
-			g_warning ("failed to set brightness: %s",
-				   error->message);
-			g_error_free (error);
-		}
-	}
-}
-
-/**
- * gcm_calib_device_uninihibit:
- **/
-static void
-gcm_calib_device_uninihibit (GcmCalibratePriv *calib)
-{
-	gboolean ret;
-	GError *error = NULL;
-
-	/* invalid */
-	if (calib->device == NULL)
-		return;
-
-	/* mark device to be profiled in colord */
-	ret = cd_device_profiling_uninhibit_sync (calib->device,
-						  calib->cancellable,
-						  &error);
-	if (!ret) {
-		g_warning ("failed to uninhibit device: %s",
-			   error->message);
-		g_clear_error (&error);
-	}
-
-	/* reset the brightness to what it was before */
-	if (calib->device_kind == CD_DEVICE_KIND_DISPLAY &&
-	    calib->old_brightness != G_MAXUINT &&
-	    calib->internal_lcd) {
-		ret = gcm_brightness_set_percentage (calib->brightness,
-						     calib->old_brightness,
-						     &error);
-		if (!ret) {
-			g_warning ("failed to set brightness: %s",
-				   error->message);
-			g_error_free (error);
-		}
-	}
 }
 
 /**
@@ -551,15 +465,12 @@ gcm_calib_assistant_prepare_cb (GtkAssistant *assistant,
 								   "GcmCalibrateMain::Index"));
 	switch (calib->current_page) {
 	case GCM_CALIBRATE_PAGE_LAST:
-		gcm_calib_device_uninihibit (calib);
 		gcm_calib_play_sound (calib);
 		break;
 	case GCM_CALIBRATE_PAGE_ACTION:
 		g_debug ("lights! camera! action!");
-		if (!calib->started_calibration) {
-			gcm_calib_device_inihibit (calib);
+		if (!calib->started_calibration)
 			g_idle_add (gcm_calib_start_idle_cb, calib);
-		}
 		break;
 	default:
 		break;
@@ -570,7 +481,6 @@ gcm_calib_assistant_prepare_cb (GtkAssistant *assistant,
 	    calib->started_calibration) {
 		gcm_calibrate_interaction (calib->calibrate,
 					   GTK_RESPONSE_CANCEL);
-		gcm_calib_device_uninihibit (calib);
 		calib->started_calibration = FALSE;
 	}
 
@@ -2159,8 +2069,6 @@ main (int argc, char **argv)
 	calib->pages = g_ptr_array_new ();
 	calib->xid = xid;
 	calib->device_id = device_id;
-	calib->old_brightness = G_MAXUINT;
-	calib->brightness = gcm_brightness_new ();
 	calib->calibrate = gcm_calibrate_argyll_new ();
 	g_object_set (calib->calibrate,
 		      "precision", GCM_CALIBRATE_PRECISION_LONG,
@@ -2195,7 +2103,6 @@ main (int argc, char **argv)
 
 	g_ptr_array_unref (calib->pages);
 	g_object_unref (calib->application);
-	g_object_unref (calib->brightness);
 	g_object_unref (calib->calibrate);
 	if (calib->client != NULL)
 		g_object_unref (calib->client);
