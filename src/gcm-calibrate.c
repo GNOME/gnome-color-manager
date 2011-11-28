@@ -465,6 +465,35 @@ gcm_calibrate_delay (guint ms)
 }
 
 /**
+ * gcm_calibrate_interaction_attach_sensor:
+ **/
+static void
+gcm_calibrate_interaction_attach_sensor (GcmCalibrate *calibrate)
+{
+	const gchar *filename;
+	const gchar *message;
+
+	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
+	gcm_calibrate_set_title (calibrate, _("Please attach instrument"));
+
+	/* different messages with or without image */
+	filename = gcm_calibrate_get_sensor_image_attach (calibrate);
+	if (filename != NULL) {
+		/* TRANSLATORS: dialog message, ask user to attach device, and there's an example image */
+		message = _("Please attach the measuring instrument to the center of the screen on the gray square like the image below.");
+	} else {
+		/* TRANSLATORS: dialog message, ask user to attach device */
+		message = _("Please attach the measuring instrument to the center of the screen on the gray square.");
+	}
+	gcm_calibrate_set_message (calibrate, message);
+	gcm_calibrate_set_image (calibrate, filename);
+	gcm_calibrate_interaction_required (calibrate, _("Continue"));
+
+	//FIXME
+	gcm_calibrate_delay (3000);
+}
+
+/**
  * gcm_calibrate_get_samples:
  **/
 static gboolean
@@ -512,7 +541,7 @@ gcm_calibrate_get_samples (GcmCalibrate *calibrate,
 
 		/* wait for the refresh to set the new color */
 		if (i == 0 && !priv->sensor_on_screen) {
-			gcm_calibrate_delay (3000);
+			gcm_calibrate_interaction_attach_sensor (calibrate);
 			priv->sensor_on_screen = TRUE;
 		}
 		gcm_calibrate_delay (100);
