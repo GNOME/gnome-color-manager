@@ -71,6 +71,7 @@ struct _GcmCalibratePrivate
 	GtkWindow			*sample_window;
 	GPtrArray			*old_message;
 	GPtrArray			*old_title;
+	gboolean			 sensor_on_screen;
 };
 
 enum {
@@ -407,6 +408,113 @@ gcm_calibrate_delay (guint ms)
 }
 
 /**
+ * gcm_calibrate_get_samples:
+ **/
+static gboolean
+gcm_calibrate_get_samples (GcmCalibrate *calibrate,
+			   GPtrArray *samples_rgb,
+			   GPtrArray *samples_xyz,
+			   GError **error)
+{
+	CdColorRGB *rgb;
+	CdColorRGB rgb_tmp;
+	CdColorXYZ *xyz;
+	gboolean ret;
+	guint i;
+	GcmCalibratePrivate *priv = calibrate->priv;
+
+	/* setup the measure window */
+	cd_color_set_rgb (&rgb_tmp, 1.0f, 1.0f, 1.0f);
+	gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (priv->sample_window), &rgb_tmp);
+	gcm_sample_window_set_percentage (GCM_SAMPLE_WINDOW (priv->sample_window), 0);
+	gtk_window_set_modal (priv->sample_window, TRUE);
+	gtk_window_stick (priv->sample_window);
+	gtk_window_present (priv->sample_window);
+
+	/* lock the sensor */
+	ret = cd_sensor_lock_sync (calibrate->priv->sensor,
+				   NULL,
+				   error);
+	if (!ret)
+		goto out;
+
+	/* capture all the source colors */
+	for (i = 0; i < samples_rgb->len; i++) {
+
+		/* get the source color */
+		rgb = g_ptr_array_index (samples_rgb, i);
+		xyz = g_ptr_array_index (samples_xyz, i);
+
+		g_debug ("Using source color %f,%f,%f",
+			 rgb->R, rgb->G, rgb->B);
+
+		/* set the window color */
+		gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (priv->sample_window), rgb);
+		gcm_sample_window_set_percentage (GCM_SAMPLE_WINDOW (priv->sample_window),
+						  100 * i / samples_rgb->len);
+
+		/* wait for the refresh to set the new color */
+		if (i == 0 && !priv->sensor_on_screen) {
+			gcm_calibrate_delay (3000);
+			priv->sensor_on_screen = TRUE;
+		}
+		gcm_calibrate_delay (100);
+
+		/* get the sample from the hardware */
+		xyz = cd_sensor_get_sample_sync (priv->sensor,
+						 CD_SENSOR_CAP_LCD,
+						 NULL,
+						 error);
+		if (xyz == NULL) {
+			ret = FALSE;
+			goto out;
+		}
+		g_debug ("sampled %f,%f,%f as %f,%f,%f",
+			 rgb->R, rgb->G, rgb->B,
+			 xyz->X, xyz->Y, xyz->Z);
+		g_ptr_array_add (samples_xyz, xyz);
+	}
+
+	/* unlock the sensor */
+	ret = cd_sensor_unlock_sync (calibrate->priv->sensor,
+				     NULL,
+				     error);
+	if (!ret)
+		goto out;
+out:
+	/* hide the sample window */
+	gtk_widget_hide (GTK_WIDGET (priv->sample_window));
+	return ret;
+}
+
+/**
+ * gcm_calibrate_normalize_to_y:
+ **/
+static void
+gcm_calibrate_normalize_to_y (GPtrArray *samples_xyz, gdouble scale)
+{
+	CdColorXYZ *xyz;
+	guint i;
+	gdouble normalize = 0.0f;
+
+	/* first, find largest */
+	for (i = 0; i < samples_xyz->len; i++) {
+		xyz = g_ptr_array_index (samples_xyz, i);
+		if (xyz->Y > normalize)
+			normalize = xyz->Y;
+	}
+
+	/* scale all the readings to 100 */
+	normalize = scale / normalize;
+	for (i = 0; i < samples_xyz->len; i++) {
+		xyz = g_ptr_array_index (samples_xyz, i);
+		xyz->X *= normalize;
+		xyz->Y *= normalize;
+		xyz->Z *= normalize;
+	}
+}
+
+/**
  * gcm_calibrate_display_characterize:
  **/
 gboolean
@@ -417,17 +525,17 @@ gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 				    GtkWindow *window,
 				    GError **error)
 {
-	CdColorRGB rgb;
+	CdColorRGB *rgb;
 	CdColorXYZ *xyz;
 	cmsHANDLE ti1 = NULL;
 	cmsHANDLE ti3 = NULL;
-	const gchar *sample_id;
 	const gchar *tmp;
 	gboolean is_spectral;
 	gboolean ret;
-	gdouble normalize = 0.0f;
 	gchar *found_lcms2_bodge;
 	gchar *ti1_data = NULL;
+	GPtrArray *samples_rgb = NULL;
+	GPtrArray *samples_xyz = NULL;
 	gsize ti1_size;
 	guint col;
 	guint i;
@@ -471,13 +579,6 @@ gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 	}
 	number_of_sets = cmsIT8GetPropertyDbl (ti1, "NUMBER_OF_SETS");
 
-	/* setup the measure window */
-	gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (priv->sample_window), &rgb);
-	gcm_sample_window_set_percentage (GCM_SAMPLE_WINDOW (priv->sample_window), 0);
-	gtk_window_set_modal (priv->sample_window, TRUE);
-	gtk_window_stick (priv->sample_window);
-	gtk_window_present (priv->sample_window);
-
 	/* write to a ti3 file as output */
 	ti3 = cmsIT8Alloc (NULL);
 	cmsIT8SetSheetType (ti3, "CTI3");
@@ -485,8 +586,6 @@ gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 			      "Calibration Target chart information 3");
 	cmsIT8SetPropertyStr (ti3, "ORIGINATOR",
 			      "GNOME Color Manager");
-	cmsIT8SetPropertyStr (ti3, "CREATED",
-			      "now");//fixme
 	cmsIT8SetPropertyStr (ti3, "DEVICE_CLASS",
 			      "DISPLAY");
 	cmsIT8SetPropertyStr (ti3, "COLOR_REP",
@@ -510,87 +609,58 @@ gcm_calibrate_display_characterize (GcmCalibrate *calibrate,
 	cmsIT8SetDataFormat (ti3, 5, "XYZ_Y");
 	cmsIT8SetDataFormat (ti3, 6, "XYZ_Z");
 
-	/* lock the sensor */
-	ret = cd_sensor_lock_sync (calibrate->priv->sensor,
-				   NULL,
-				   error);
+	/* work out what colors to show */
+	samples_rgb = g_ptr_array_new_with_free_func ((GDestroyNotify) cd_color_rgb_free);
+	for (i = 0; i < number_of_sets; i++) {
+		rgb = cd_color_rgb_new ();
+		col = cmsIT8FindDataFormat(ti1, "RGB_R");
+		rgb->R = cmsIT8GetDataRowColDbl(ti1, i, col) / 100.0f;
+		col = cmsIT8FindDataFormat(ti1, "RGB_G");
+		rgb->G = cmsIT8GetDataRowColDbl(ti1, i, col) / 100.0f;
+		col = cmsIT8FindDataFormat(ti1, "RGB_B");
+		rgb->B = cmsIT8GetDataRowColDbl(ti1, i, col) / 100.0f;
+		g_ptr_array_add (samples_rgb, rgb);
+	}
+
+	/* actually get samples from the hardware */
+	samples_xyz = g_ptr_array_new_with_free_func ((GDestroyNotify) cd_color_xyz_free);
+	ret = gcm_calibrate_get_samples (calibrate,
+					 samples_rgb,
+					 samples_xyz,
+					 error);
 	if (!ret)
 		goto out;
 
-	/* capture all the source colors */
-	for (i = 0; i < number_of_sets; i++) {
+	/* normalize */
+	gcm_calibrate_normalize_to_y (samples_xyz, 100.0f);
 
-		/* get the source color */
-		col = cmsIT8FindDataFormat(ti1, "SAMPLE_ID");
-		sample_id = cmsIT8GetDataRowCol(ti1, i, col);
-		col = cmsIT8FindDataFormat(ti1, "RGB_R");
-		rgb.R = cmsIT8GetDataRowColDbl(ti1, i, col) / 100.0f;
-		col = cmsIT8FindDataFormat(ti1, "RGB_G");
-		rgb.G = cmsIT8GetDataRowColDbl(ti1, i, col) / 100.0f;
-		col = cmsIT8FindDataFormat(ti1, "RGB_B");
-		rgb.B = cmsIT8GetDataRowColDbl(ti1, i, col) / 100.0f;
-
-		g_debug ("Using source color %f,%f,%f",
-			 rgb.R, rgb.G, rgb.B);
-
-		/* set the window color */
-		gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (priv->sample_window), &rgb);
-		gcm_sample_window_set_percentage (GCM_SAMPLE_WINDOW (priv->sample_window),
-						  100 * i / number_of_sets);
-
-		/* wait for the refresh to set the new color */
-		if (i == 0)
-			gcm_calibrate_delay (3000);
-		gcm_calibrate_delay (100);
-
-		/* get the sample from the hardware */
-		xyz = cd_sensor_get_sample_sync (calibrate->priv->sensor,
-						 CD_SENSOR_CAP_LCD,
-						 NULL,
-						 error);
-		if (xyz == NULL) {
-			ret = FALSE;
-			goto out;
-		}
-		g_debug ("sampled %f,%f,%f as %f,%f,%f",
-			 rgb.R, rgb.G, rgb.B,
-			 xyz->X, xyz->Y, xyz->Z);
-
-		if (i == 0) {
-			normalize = 100.0f / xyz->Y;
-			g_debug ("normalizing with %f",
-				 normalize);
-		}
-
-		/* write to the ti3 file */
-		cmsIT8SetDataRowCol(ti3, i, 0, sample_id);
-		cmsIT8SetDataRowColDbl(ti3, i, 1, rgb.R * 100.0f);
-		cmsIT8SetDataRowColDbl(ti3, i, 2, rgb.G * 100.0f);
-		cmsIT8SetDataRowColDbl(ti3, i, 3, rgb.B * 100.0f);
-		cmsIT8SetDataRowColDbl(ti3, i, 4, xyz->X * normalize);
-		cmsIT8SetDataRowColDbl(ti3, i, 5, xyz->Y * normalize);
-		cmsIT8SetDataRowColDbl(ti3, i, 6, xyz->Z * normalize);
-		cd_color_xyz_free (xyz);
+	/* write to the ti3 file */
+	for (i = 0; i < samples_rgb->len; i++) {
+		rgb = g_ptr_array_index (samples_rgb, i);
+		xyz = g_ptr_array_index (samples_xyz, i);
+		cmsIT8SetDataRowColDbl(ti3, i, 0, i + 1);
+		cmsIT8SetDataRowColDbl(ti3, i, 1, rgb->R * 100.0f);
+		cmsIT8SetDataRowColDbl(ti3, i, 2, rgb->G * 100.0f);
+		cmsIT8SetDataRowColDbl(ti3, i, 3, rgb->B * 100.0f);
+		cmsIT8SetDataRowColDbl(ti3, i, 4, xyz->X);
+		cmsIT8SetDataRowColDbl(ti3, i, 5, xyz->Y);
+		cmsIT8SetDataRowColDbl(ti3, i, 6, xyz->Z);
 	}
 
 	/* write the file */
-	g_debug ("writing %s", ti3_fn);
-	cmsIT8SaveToFile (ti3, ti3_fn);
-
-	/* unlock the sensor */
-	ret = cd_sensor_unlock_sync (calibrate->priv->sensor,
-				     NULL,
-				     error);
+	ret = cmsIT8SaveToFile (ti3, ti3_fn);
 	if (!ret)
-		goto out;
-out:
-	/* hide the sample window */
-	gtk_widget_hide (GTK_WIDGET (priv->sample_window));
+		g_assert_not_reached ();
 
+out:
 	if (ti1 != NULL)
 		cmsIT8Free (ti1);
 	if (ti3 != NULL)
 		cmsIT8Free (ti3);
+	if (samples_rgb != NULL)
+		g_ptr_array_unref (samples_rgb);
+	if (samples_xyz != NULL)
+		g_ptr_array_unref (samples_xyz);
 	g_free (ti1_data);
 	return ret;
 }
@@ -723,6 +793,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate,
 							  device,
 							  window,
 							  error);
+		goto out;
 	}
 
 	/* coldplug source */
@@ -737,6 +808,8 @@ gcm_calibrate_display (GcmCalibrate *calibrate,
 
 	/* proxy */
 	ret = klass->calibrate_display (calibrate, device, priv->sensor, window, error);
+	if (!ret)
+		goto out;
 out:
 	/* unset brightness */
 	gcm_calibrate_unset_brightness (calibrate, device);
