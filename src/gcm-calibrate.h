@@ -170,6 +170,11 @@ gboolean	 gcm_calibrate_display_characterize	(GcmCalibrate	*calibrate,
 							 CdDevice	*device,
 							 GtkWindow	*window,
 							 GError		**error);
+gboolean	 gcm_calibrate_display_calibration	(GcmCalibrate	*calibrate,
+							 const gchar	*cal_fn,
+							 CdDevice	*device,
+							 GtkWindow	*window,
+							 GError		**error);
 
 G_END_DECLS
 

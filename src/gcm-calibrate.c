@@ -805,6 +805,20 @@ out:
 	return ret;
 }
 
+
+/**
+ * gcm_calibrate_display_calibration:
+ **/
+gboolean
+gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
+				   const gchar *cal_fn,
+				   CdDevice *device,
+				   GtkWindow *window,
+				   GError **error)
+{
+	return TRUE;
+}
+
 /**
  * gcm_calibrate_set_brightness:
  **/

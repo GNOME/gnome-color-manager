@@ -168,6 +168,35 @@ main (int argc, char **argv)
 		/* success */
 		g_print ("%s: %s\n", _("Wrote file"), argv[2]);
 
+	} else if (argc == 2 &&
+	    g_str_has_suffix (argv[1], "cal")) {
+
+		/* setup calibration */
+		calibrate = gcm_calibrate_new ();
+		ret = gcm_calibrate_setup_sensor (client,
+						  calibrate,
+						  &error);
+		if (!ret)
+			goto out;
+
+		/* mark device to be profiled in colord */
+		ret = cd_device_profiling_inhibit_sync (device,
+							NULL,
+							&error);
+		if (!ret)
+			goto out;
+
+		/* create a .cal file */
+		ret = gcm_calibrate_display_calibration (calibrate,
+							 argv[1],
+							 device,
+							 NULL, /* window */
+							 &error);
+		if (!ret)
+			goto out;
+
+		/* success */
+		g_print ("%s: %s\n", _("Wrote file"), argv[1]);
 	} else {
 		ret = FALSE;
 		g_set_error_literal (&error, 1, 0,
