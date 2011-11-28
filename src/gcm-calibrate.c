@@ -23,6 +23,7 @@
 
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
+#include <math.h>
 #include <colord.h>
 #include <lcms2.h>
 
@@ -1083,6 +1084,46 @@ out:
 }
 
 /**
+ * gcm_calibrate_resize_results:
+ *
+ * Linearly interpolate an array of data into a differently sized array.
+ **/
+static void
+gcm_calibrate_resize_results (GPtrArray *src_array,
+			      GPtrArray *dest_array,
+			      guint new_size)
+{
+	gdouble amount;
+	gdouble div;
+	guint i;
+	guint reg1, reg2;
+	CdColorRGB *dest;
+	CdColorRGB *src1;
+	CdColorRGB *src2;
+
+	/* gcm_calibrate_native_ */
+	for (i = 0; i < new_size; i++) {
+		div = i * ((src_array->len - 1) / (gdouble) (new_size - 1));
+		reg1 = floor (div);
+		reg2 = ceil (div);
+		dest = cd_color_rgb_new ();
+		if (reg1 == reg2) {
+			/* no interpolation reqd */
+			src1 = g_ptr_array_index (src_array, reg1);
+			cd_color_copy_rgb (src1, dest);
+		} else {
+			amount = div - (gdouble) reg1;
+			src1 = g_ptr_array_index (src_array, reg1);
+			src2 = g_ptr_array_index (src_array, reg2);
+			dest->R = src1->R * (1.0f - amount) + src2->R * amount;
+			dest->G = src1->G * (1.0f - amount) + src2->G * amount;
+			dest->B = src1->B * (1.0f - amount) + src2->B * amount;
+		}
+		g_ptr_array_add (dest_array, dest);
+	}
+}
+
+/**
  * gcm_calibrate_array_remove_offset:
  **/
 static void
@@ -1173,6 +1214,7 @@ gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
 	gdouble frac = 0.0f;
 	gdouble native_gamma = 0.0f;
 	GPtrArray *results_rgb = NULL;
+	GPtrArray *results_vcgt = NULL;
 	GPtrArray *samples_rgb = NULL;
 	GPtrArray *samples_primaries = NULL;
 	GPtrArray *samples_xyz = NULL;
@@ -1243,7 +1285,15 @@ gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
 	/* scale the largest number to 1.0 */
 	gcm_calibrate_array_scale (results_rgb, 1.0f);
 
+	/* interpolate new array with correct size */
+	results_vcgt = g_ptr_array_new_with_free_func ((GDestroyNotify) cd_color_rgb_free);
+	gcm_calibrate_resize_results (results_rgb, results_vcgt, 256);
+
 out:
+	if (results_rgb != NULL)
+		g_ptr_array_unref (results_rgb);
+	if (results_vcgt != NULL)
+		g_ptr_array_unref (results_vcgt);
 	if (samples_rgb != NULL)
 		g_ptr_array_unref (samples_rgb);
 	if (samples_primaries != NULL)
