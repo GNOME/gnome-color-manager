@@ -1198,6 +1198,29 @@ gcm_calibrate_array_scale (GPtrArray *array, gdouble value)
 }
 
 /**
+ * gcm_calibrate_array_ensure_monotonic:
+ **/
+static void
+gcm_calibrate_array_ensure_monotonic (GPtrArray *array)
+{
+	CdColorRGB *rgb;
+	CdColorRGB *rgb_last;
+	guint i;
+
+	/* check each is going up compared to last reading */
+	for (i = 1; i <array->len; i++) {
+		rgb_last = g_ptr_array_index (array, i - 1);
+		rgb = g_ptr_array_index (array, i);
+		if (rgb->R < rgb_last->R)
+			rgb->R = rgb_last->R;
+		if (rgb->G < rgb_last->G)
+			rgb->G = rgb_last->G;
+		if (rgb->B < rgb_last->B)
+			rgb->B = rgb_last->B;
+	}
+}
+
+/**
  * gcm_calibrate_display_calibration:
  **/
 gboolean
@@ -1285,6 +1308,9 @@ gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
 
 	/* scale the largest number to 1.0 */
 	gcm_calibrate_array_scale (results_rgb, 1.0f);
+
+	/* ensure results are monotonic */
+	gcm_calibrate_array_ensure_monotonic (results_rgb);
 
 	/* interpolate new array with correct size */
 	results_vcgt = g_ptr_array_new_with_free_func ((GDestroyNotify) cd_color_rgb_free);
