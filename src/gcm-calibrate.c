@@ -346,6 +346,63 @@ gcm_calibrate_interaction (GcmCalibrate *calibrate, GtkResponseType response)
 }
 
 /**
+ * gcm_calibrate_get_sensor_image_attach:
+ **/
+const gchar *
+gcm_calibrate_get_sensor_image_attach (GcmCalibrate *calibrate)
+{
+	switch (cd_sensor_get_kind (calibrate->priv->sensor)) {
+	case CD_SENSOR_KIND_HUEY:
+		return "huey-attach.svg";
+	case CD_SENSOR_KIND_COLOR_MUNKI:
+		return "munki-attach.svg";
+	case CD_SENSOR_KIND_SPYDER:
+		return "spyder-attach.svg";
+	case CD_SENSOR_KIND_COLORIMTRE_HCFR:
+		return "hcfr-attach.svg";
+	case CD_SENSOR_KIND_I1_PRO:
+		return "i1-pro-attach.svg";
+	case CD_SENSOR_KIND_DTP94:
+		return "dtp94-attach.svg";
+#if CD_CHECK_VERSION(0,1,14)
+	case CD_SENSOR_KIND_I1_DISPLAY3:
+		return "i1-display3-attach.svg";
+#endif
+	default:
+		break;
+	}
+	return NULL;
+}
+
+/**
+ * gcm_calibrate_get_sensor_image_calibrate:
+ **/
+const gchar *
+gcm_calibrate_get_sensor_image_calibrate (GcmCalibrate *calibrate)
+{
+	CdSensorKind sensor_kind;
+
+	sensor_kind = cd_sensor_get_kind (calibrate->priv->sensor);
+	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI)
+		return "munki-calibrate.svg";
+	return NULL;
+}
+
+/**
+ * gcm_calibrate_get_sensor_image_screen:
+ **/
+const gchar *
+gcm_calibrate_get_sensor_image_screen (GcmCalibrate *calibrate)
+{
+	CdSensorKind sensor_kind;
+
+	sensor_kind = cd_sensor_get_kind (calibrate->priv->sensor);
+	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI)
+		return "munki-screen.svg";
+	return NULL;
+}
+
+/**
  * gcm_calibrate_copy_file:
  **/
 static gboolean

@@ -34,6 +34,7 @@
 #endif
 #include <canberra-gtk.h>
 
+#include "gcm-calibrate.h"
 #include "gcm-calibrate-argyll.h"
 #include "gcm-utils.h"
 #include "gcm-print.h"
@@ -108,64 +109,6 @@ gcm_calibrate_argyll_get_quality_arg (GcmCalibrateArgyll *calibrate_argyll)
 		return "-qh";
 	return "-qm";
 }
-
-#ifdef HAVE_VTE
-/**
- * gcm_calibrate_argyll_get_sensor_image_attach:
- **/
-static const gchar *
-gcm_calibrate_argyll_get_sensor_image_attach (GcmCalibrateArgyll *calibrate_argyll)
-{
-	CdSensorKind sensor_kind;
-
-	g_object_get (calibrate_argyll, "sensor-kind", &sensor_kind, NULL);
-	if (sensor_kind == CD_SENSOR_KIND_HUEY)
-		return "huey-attach.svg";
-	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI)
-		return "munki-attach.svg";
-	if (sensor_kind == CD_SENSOR_KIND_SPYDER)
-		return "spyder-attach.svg";
-	if (sensor_kind == CD_SENSOR_KIND_COLORIMTRE_HCFR)
-		return "hcfr-attach.svg";
-	if (sensor_kind == CD_SENSOR_KIND_I1_PRO)
-		return "i1-pro-attach.svg";
-	if (sensor_kind == CD_SENSOR_KIND_DTP94)
-		return "dtp94-attach.svg";
-#if CD_CHECK_VERSION(0,1,14)
-	if (sensor_kind == CD_SENSOR_KIND_I1_DISPLAY3)
-		return "i1-display3-attach.svg";
-#endif
-	return NULL;
-}
-
-/**
- * gcm_calibrate_argyll_get_sensor_image_calibrate:
- **/
-static const gchar *
-gcm_calibrate_argyll_get_sensor_image_calibrate (GcmCalibrateArgyll *calibrate_argyll)
-{
-	CdSensorKind sensor_kind;
-
-	g_object_get (calibrate_argyll, "sensor-kind", &sensor_kind, NULL);
-	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI)
-		return "munki-calibrate.svg";
-	return NULL;
-}
-
-/**
- * gcm_calibrate_argyll_get_sensor_image_screen:
- **/
-static const gchar *
-gcm_calibrate_argyll_get_sensor_image_screen (GcmCalibrateArgyll *calibrate_argyll)
-{
-	CdSensorKind sensor_kind;
-
-	g_object_get (calibrate_argyll, "sensor-kind", &sensor_kind, NULL);
-	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI)
-		return "munki-screen.svg";
-	return NULL;
-}
-#endif
 
 /**
  * gcm_calibrate_argyll_get_display:
@@ -1977,7 +1920,7 @@ gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 				 _("Please attach instrument"));
 
 	/* get the image, if we have one */
-	filename = gcm_calibrate_argyll_get_sensor_image_attach (calibrate_argyll);
+	filename = gcm_calibrate_get_sensor_image_attach (GCM_CALIBRATE (calibrate_argyll));
 	gcm_calibrate_set_image (GCM_CALIBRATE (calibrate_argyll), filename);
 
 	/* different messages with or without image */
@@ -2029,7 +1972,7 @@ gcm_calibrate_argyll_interaction_calibrate (GcmCalibrateArgyll *calibrate_argyll
 	g_debug ("blocking waiting for user input");
 
 	/* get the image, if we have one */
-	filename = gcm_calibrate_argyll_get_sensor_image_calibrate (calibrate_argyll);
+	filename = gcm_calibrate_get_sensor_image_calibrate (GCM_CALIBRATE (calibrate_argyll));
 	gcm_calibrate_set_image (GCM_CALIBRATE (calibrate_argyll), filename);
 
 	if (filename != NULL) {
@@ -2079,7 +2022,7 @@ gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 	g_debug ("blocking waiting for user input");
 
 	/* get the image, if we have one */
-	filename = gcm_calibrate_argyll_get_sensor_image_screen (calibrate_argyll);
+	filename = gcm_calibrate_get_sensor_image_screen (GCM_CALIBRATE (calibrate_argyll));
 	gcm_calibrate_set_image (GCM_CALIBRATE (calibrate_argyll), filename);
 
 	if (filename != NULL) {

@@ -153,6 +153,9 @@ void		 gcm_calibrate_pop			(GcmCalibrate	*calibrate);
 void		 gcm_calibrate_interaction_required	(GcmCalibrate	*calibrate,
 							 const gchar	*button_text);
 GtkWidget	*gcm_calibrate_get_content_widget	(GcmCalibrate	*calibrate);
+const gchar	*gcm_calibrate_get_sensor_image_attach	(GcmCalibrate	*calibrate);
+const gchar	*gcm_calibrate_get_sensor_image_calibrate (GcmCalibrate	*calibrate);
+const gchar	*gcm_calibrate_get_sensor_image_screen	(GcmCalibrate	*calibrate);
 
 /* JUNK */
 gboolean	 gcm_calibrate_set_from_exif		(GcmCalibrate	*calibrate,
