@@ -805,6 +805,58 @@ out:
 	return ret;
 }
 
+/**
+ * gcm_calibrate_get_primaries:
+ **/
+static gboolean
+gcm_calibrate_get_primaries (GcmCalibrate *calibrate,
+			     GPtrArray *samples_primaries,
+			     GError **error)
+{
+	CdColorRGB *rgb;
+	gboolean ret;
+	GPtrArray *samples_rgb = NULL;
+
+	/* add primaries to array */
+	samples_rgb = g_ptr_array_new_with_free_func ((GDestroyNotify) cd_color_rgb_free);
+
+	/* red */
+	rgb = cd_color_rgb_new ();
+	cd_color_set_rgb (rgb, 1.0f, 0.0f, 0.0f);
+	g_ptr_array_add (samples_rgb, rgb);
+
+	/* green */
+	rgb = cd_color_rgb_new ();
+	cd_color_set_rgb (rgb, 0.0f, 1.0f, 0.0f);
+	g_ptr_array_add (samples_rgb, rgb);
+
+	/* blue */
+	rgb = cd_color_rgb_new ();
+	cd_color_set_rgb (rgb, 0.0f, 0.0f, 1.0f);
+	g_ptr_array_add (samples_rgb, rgb);
+
+	/* white */
+	rgb = cd_color_rgb_new ();
+	cd_color_set_rgb (rgb, 1.0f, 1.0f, 1.0f);
+	g_ptr_array_add (samples_rgb, rgb);
+
+	/* black */
+	rgb = cd_color_rgb_new ();
+	cd_color_set_rgb (rgb, 0.0f, 0.0f, 0.0f);
+	g_ptr_array_add (samples_rgb, rgb);
+
+	/* measure */
+	ret = gcm_calibrate_get_samples (calibrate,
+					 samples_rgb,
+					 samples_primaries,
+					 error);
+	if (!ret)
+		goto out;
+out:
+	if (samples_rgb != NULL)
+		g_ptr_array_unref (samples_rgb);
+	return ret;
+}
 
 /**
  * gcm_calibrate_display_calibration:
@@ -816,7 +868,35 @@ gcm_calibrate_display_calibration (GcmCalibrate *calibrate,
 				   GtkWindow *window,
 				   GError **error)
 {
-	return TRUE;
+	CdColorXYZ *xyz_black;
+	CdColorXYZ *xyz_white;
+	gboolean ret;
+	GPtrArray *samples_primaries = NULL;
+
+	/* this is global, ick */
+	cmsSetLogErrorHandler (gcm_calibrate_lcms_error_cb);
+
+	/* get the primaries */
+	samples_primaries = g_ptr_array_new_with_free_func ((GDestroyNotify) cd_color_yxy_free);
+	ret = gcm_calibrate_get_primaries (calibrate,
+					   samples_primaries,
+					   error);
+	if (!ret)
+		goto out;
+
+	/* check this was sane */
+	xyz_white = g_ptr_array_index (samples_primaries, 3);
+	xyz_black = g_ptr_array_index (samples_primaries, 4);
+	if (xyz_white->X / xyz_black->X < 3) {
+		ret = FALSE;
+		g_set_error_literal (error, 1, 0,
+				     "Invalid read, is sensor attached to the screen?");
+		goto out;
+	}
+out:
+	if (samples_primaries != NULL)
+		g_ptr_array_unref (samples_primaries);
+	return ret;
 }
 
 /**
