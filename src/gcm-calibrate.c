@@ -1480,8 +1480,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate,
 		goto out;
 
 	/* if sensor is native, then take some measurements */
-	if (cd_sensor_get_native (calibrate->priv->sensor) &&
-	    cd_sensor_get_kind (calibrate->priv->sensor) == CD_SENSOR_KIND_COLORHUG) {
+	if (FALSE && cd_sensor_get_native (calibrate->priv->sensor)) {
 		cal_fn = g_strdup_printf ("%s/%s.cal",
 					  priv->working_path,
 					  priv->basename);
