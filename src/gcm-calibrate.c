@@ -370,6 +370,10 @@ gcm_calibrate_get_sensor_image_attach (GcmCalibrate *calibrate)
 	case CD_SENSOR_KIND_I1_DISPLAY3:
 		return "i1-display3-attach.svg";
 #endif
+#if CD_CHECK_VERSION(0,1,15)
+	case CD_SENSOR_KIND_COLORHUG:
+		return "colorhug-attach.svg";
+#endif
 #if CD_CHECK_VERSION(0,1,16)
 	case CD_SENSOR_KIND_SPYDER2:
 		return "spyder2-attach.svg";
@@ -494,6 +498,14 @@ gcm_calibrate_interaction_attach (GcmCalibrate *calibrate)
 		/* TRANSLATORS: dialog message, ask user to attach device */
 		g_string_append (message, _("Please attach the measuring instrument to the center of the screen on the gray square."));
 	}
+
+	/* this hardware doesn't suck :) */
+	if (cd_sensor_get_kind (calibrate->priv->sensor) == CD_SENSOR_KIND_COLORHUG) {
+		g_string_append (message, "\n\n");
+		/* TRANSLATORS: dialog message, ask user to attach device */
+		g_string_append (message, _("You will need to hold the device on the screen for the duration of the calibration."));
+	}
+
 	gcm_calibrate_set_message (calibrate, message->str);
 	gcm_calibrate_set_image (calibrate, filename);
 	gcm_calibrate_interaction_required (calibrate, _("Continue"));

@@ -11,6 +11,7 @@ icons_DATA = 	 			\
 	calibration-normal.svg		\
 	calibration-short.svg		\
 	clock.svg			\
+	colorhug-attach.svg		\
 	dtp94-attach.svg		\
 	hcfr-attach.svg			\
 	huey-attach.svg			\
