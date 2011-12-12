@@ -7,24 +7,26 @@ figures_DATA = 	 			\
 
 iconsdir = $(datadir)/gnome-color-manager/icons
 icons_DATA = 	 			\
-	clock.svg			\
-	calibration-short.svg		\
-	calibration-normal.svg		\
 	calibration-long.svg		\
-	scan-target.svg			\
-	scan-target-good.svg		\
-	scan-target-bad.svg		\
-	i1-pro-attach.svg		\
-	huey-attach.svg			\
+	calibration-normal.svg		\
+	calibration-short.svg		\
+	clock.svg			\
 	dtp94-attach.svg		\
 	hcfr-attach.svg			\
-	spyder-attach.svg		\
+	huey-attach.svg			\
 	i1-display3-attach.svg		\
+	i1-monitor-attach.svg		\
+	i1-pro-attach.svg		\
 	munki-ambient.svg		\
 	munki-attach.svg		\
 	munki-calibrate.svg		\
 	munki-projector.svg		\
-	munki-screen.svg
+	munki-screen.svg		\
+	scan-target-bad.svg		\
+	scan-target-good.svg		\
+	scan-target.svg			\
+	spyder2-attach.svg		\
+	spyder3-attach.svg
 
 EXTRA_DIST =				\
 	$(icons_DATA)			\

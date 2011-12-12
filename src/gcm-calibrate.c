@@ -358,7 +358,7 @@ gcm_calibrate_get_sensor_image_attach (GcmCalibrate *calibrate)
 	case CD_SENSOR_KIND_COLOR_MUNKI:
 		return "munki-attach.svg";
 	case CD_SENSOR_KIND_SPYDER:
-		return "spyder-attach.svg";
+		return "spyder2-attach.svg";
 	case CD_SENSOR_KIND_COLORIMTRE_HCFR:
 		return "hcfr-attach.svg";
 	case CD_SENSOR_KIND_I1_PRO:
@@ -368,6 +368,12 @@ gcm_calibrate_get_sensor_image_attach (GcmCalibrate *calibrate)
 #if CD_CHECK_VERSION(0,1,14)
 	case CD_SENSOR_KIND_I1_DISPLAY3:
 		return "i1-display3-attach.svg";
+#endif
+#if CD_CHECK_VERSION(0,1,16)
+	case CD_SENSOR_KIND_SPYDER2:
+		return "spyder2-attach.svg";
+	case CD_SENSOR_KIND_SPYDER3:
+		return "spyder3-attach.svg";
 #endif
 	default:
 		break;
