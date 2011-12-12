@@ -1902,7 +1902,6 @@ gcm_calibrate_argyll_timeout_cb (GcmCalibrateArgyll *calibrate_argyll)
 static void
 gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 {
-	const gchar *filename;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
 	/* different tools assume the device is not on the screen */
@@ -1915,39 +1914,13 @@ gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 		goto out;
 	}
 
-	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
-	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Please attach instrument"));
-
-	/* get the image, if we have one */
-	filename = gcm_calibrate_get_sensor_image_attach (GCM_CALIBRATE (calibrate_argyll));
-	gcm_calibrate_set_image (GCM_CALIBRATE (calibrate_argyll), filename);
-
-	/* different messages with or without image */
-	if (filename != NULL) {
-		/* TRANSLATORS: dialog message, ask user to attach device, and there's an example image */
-		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Please attach the measuring instrument to the center of the screen on the gray square like the image below."));
-	} else {
-		/* TRANSLATORS: dialog message, ask user to attach device */
-		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Please attach the measuring instrument to the center of the screen on the gray square."));
-	}
+	/* tell the user to attach the sensor */
+	gcm_calibrate_interaction_attach (GCM_CALIBRATE (calibrate_argyll));
 
 	/* block for a response */
 	g_debug ("blocking waiting for user input");
-	gcm_calibrate_interaction_required (GCM_CALIBRATE (calibrate_argyll), _("Continue"));
-
-	/* set state */
 	priv->argyllcms_ok = "\n";
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN,
-
-	/* play sound from the naming spec */
-	ca_context_play (ca_gtk_context_get (), 0,
-			 CA_PROP_EVENT_ID, "dialog-information",
-			 /* TRANSLATORS: this is the application name for libcanberra */
-			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
-			 CA_PROP_EVENT_DESCRIPTION, "interaction required", NULL);
 
 	/* save as we know the device is on the screen now */
 	priv->already_on_window = TRUE;
@@ -1961,48 +1934,21 @@ out:
 static void
 gcm_calibrate_argyll_interaction_calibrate (GcmCalibrateArgyll *calibrate_argyll)
 {
-	const gchar *filename;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
-	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
-	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Please configure instrument"));
+	/* standard dialog */
+	gcm_calibrate_interaction_calibrate (GCM_CALIBRATE (calibrate_argyll));
 
 	/* block for a response */
 	g_debug ("blocking waiting for user input");
-
-	/* get the image, if we have one */
-	filename = gcm_calibrate_get_sensor_image_calibrate (GCM_CALIBRATE (calibrate_argyll));
-	gcm_calibrate_set_image (GCM_CALIBRATE (calibrate_argyll), filename);
-
-	if (filename != NULL) {
-		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
-		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Please set the measuring instrument to calibration mode like the image below."));
-	} else {
-		/* TRANSLATORS: this is when the user has to change a setting on the sensor */
-		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Please set the measuring instrument to calibration mode."));
-	}
-
-
-	/* play sound from the naming spec */
-	ca_context_play (ca_gtk_context_get (), 0,
-			 CA_PROP_EVENT_ID, "dialog-information",
-			 /* TRANSLATORS: this is the application name for libcanberra */
-			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
-			 CA_PROP_EVENT_DESCRIPTION, "setup calibration tool", NULL);
 
 	/* assume it's no longer on the window */
 	priv->already_on_window = FALSE;
 
 	/* assume it was done correctly */
 	priv->done_calibrate = TRUE;
-
-	/* set state */
 	priv->argyllcms_ok = "\n";
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
-	gcm_calibrate_interaction_required (GCM_CALIBRATE (calibrate_argyll), _("Continue"));
 }
 
 /**
@@ -2011,37 +1957,13 @@ gcm_calibrate_argyll_interaction_calibrate (GcmCalibrateArgyll *calibrate_argyll
 static void
 gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 {
-	const gchar *filename;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
-	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
-	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Please configure instrument"));
+	/* standard dialog */
+	gcm_calibrate_interaction_screen (GCM_CALIBRATE (calibrate_argyll));
 
 	/* block for a response */
 	g_debug ("blocking waiting for user input");
-
-	/* get the image, if we have one */
-	filename = gcm_calibrate_get_sensor_image_screen (GCM_CALIBRATE (calibrate_argyll));
-	gcm_calibrate_set_image (GCM_CALIBRATE (calibrate_argyll), filename);
-
-	if (filename != NULL) {
-		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
-		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Please set the measuring instrument to screen mode like the image below."));
-	} else {
-		/* TRANSLATORS: this is when the user has to change a setting on the sensor */
-		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Please set the measuring instrument to screen mode."));
-	}
-
-
-	/* play sound from the naming spec */
-	ca_context_play (ca_gtk_context_get (), 0,
-			 CA_PROP_EVENT_ID, "dialog-information",
-			 /* TRANSLATORS: this is the application name for libcanberra */
-			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
-			 CA_PROP_EVENT_DESCRIPTION, "correct hardware state", NULL);
 
 	/* assume it's no longer on the window */
 	priv->already_on_window = FALSE;
@@ -2049,7 +1971,6 @@ gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 	/* set state */
 	priv->argyllcms_ok = "\n";
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
-	gcm_calibrate_interaction_required (GCM_CALIBRATE (calibrate_argyll), _("Continue"));
 }
 
 /**

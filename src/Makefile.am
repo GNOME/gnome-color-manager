@@ -148,6 +148,7 @@ gcm_calibrate_helper_LDADD =				\
 	$(TIFF_LIBS)					\
 	$(COLORD_LIBS)					\
 	$(GNOME_DESKTOP_LIBS)				\
+	$(CANBERRA_LIBS)				\
 	-lm
 
 gcm_calibrate_helper_CFLAGS =				\

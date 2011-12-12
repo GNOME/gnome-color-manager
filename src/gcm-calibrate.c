@@ -26,6 +26,7 @@
 #include <math.h>
 #include <colord.h>
 #include <lcms2.h>
+#include <canberra-gtk.h>
 
 #define GNOME_DESKTOP_USE_UNSTABLE_API
 #include <libgnome-desktop/gnome-rr.h>
@@ -349,7 +350,7 @@ gcm_calibrate_interaction (GcmCalibrate *calibrate, GtkResponseType response)
 /**
  * gcm_calibrate_get_sensor_image_attach:
  **/
-const gchar *
+static const gchar *
 gcm_calibrate_get_sensor_image_attach (GcmCalibrate *calibrate)
 {
 	switch (cd_sensor_get_kind (calibrate->priv->sensor)) {
@@ -384,7 +385,7 @@ gcm_calibrate_get_sensor_image_attach (GcmCalibrate *calibrate)
 /**
  * gcm_calibrate_get_sensor_image_calibrate:
  **/
-const gchar *
+static const gchar *
 gcm_calibrate_get_sensor_image_calibrate (GcmCalibrate *calibrate)
 {
 	CdSensorKind sensor_kind;
@@ -398,7 +399,7 @@ gcm_calibrate_get_sensor_image_calibrate (GcmCalibrate *calibrate)
 /**
  * gcm_calibrate_get_sensor_image_screen:
  **/
-const gchar *
+static const gchar *
 gcm_calibrate_get_sensor_image_screen (GcmCalibrate *calibrate)
 {
 	CdSensorKind sensor_kind;
@@ -472,32 +473,110 @@ gcm_calibrate_delay (guint ms)
 }
 
 /**
- * gcm_calibrate_interaction_attach_sensor:
+ * gcm_calibrate_interaction_attach:
  **/
-static void
-gcm_calibrate_interaction_attach_sensor (GcmCalibrate *calibrate)
+void
+gcm_calibrate_interaction_attach (GcmCalibrate *calibrate)
 {
 	const gchar *filename;
-	const gchar *message;
+	GString *message;
 
 	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
 	gcm_calibrate_set_title (calibrate, _("Please attach instrument"));
 
 	/* different messages with or without image */
+	message = g_string_new ("");
 	filename = gcm_calibrate_get_sensor_image_attach (calibrate);
 	if (filename != NULL) {
 		/* TRANSLATORS: dialog message, ask user to attach device, and there's an example image */
-		message = _("Please attach the measuring instrument to the center of the screen on the gray square like the image below.");
+		g_string_append (message, _("Please attach the measuring instrument to the center of the screen on the gray square like the image below."));
 	} else {
 		/* TRANSLATORS: dialog message, ask user to attach device */
-		message = _("Please attach the measuring instrument to the center of the screen on the gray square.");
+		g_string_append (message, _("Please attach the measuring instrument to the center of the screen on the gray square."));
 	}
-	gcm_calibrate_set_message (calibrate, message);
+	gcm_calibrate_set_message (calibrate, message->str);
 	gcm_calibrate_set_image (calibrate, filename);
 	gcm_calibrate_interaction_required (calibrate, _("Continue"));
 
-	//FIXME
-	gcm_calibrate_delay (3000);
+	/* play sound from the naming spec */
+	ca_context_play (ca_gtk_context_get (), 0,
+			 CA_PROP_EVENT_ID, "dialog-information",
+			 /* TRANSLATORS: this is the application name for libcanberra */
+			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+			 CA_PROP_EVENT_DESCRIPTION, "interaction required", NULL);
+
+	g_string_free (message, TRUE);
+}
+
+/**
+ * gcm_calibrate_interaction_screen:
+ **/
+void
+gcm_calibrate_interaction_screen (GcmCalibrate *calibrate)
+{
+	const gchar *filename;
+
+	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
+	gcm_calibrate_set_title (calibrate,
+				 _("Please configure instrument"));
+
+	/* get the image, if we have one */
+	filename = gcm_calibrate_get_sensor_image_screen (calibrate);
+	gcm_calibrate_set_image (calibrate, filename);
+	gcm_calibrate_interaction_required (calibrate, _("Continue"));
+	if (filename != NULL) {
+		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
+		gcm_calibrate_set_message (calibrate,
+				   _("Please set the measuring instrument to screen mode like the image below."));
+	} else {
+		/* TRANSLATORS: this is when the user has to change a setting on the sensor */
+		gcm_calibrate_set_message (calibrate,
+				   _("Please set the measuring instrument to screen mode."));
+	}
+
+	/* play sound from the naming spec */
+	ca_context_play (ca_gtk_context_get (), 0,
+			 CA_PROP_EVENT_ID, "dialog-information",
+			 /* TRANSLATORS: this is the application name for libcanberra */
+			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+			 CA_PROP_EVENT_DESCRIPTION, "correct hardware state", NULL);
+}
+
+/**
+ * gcm_calibrate_interaction_calibrate:
+ **/
+void
+gcm_calibrate_interaction_calibrate (GcmCalibrate *calibrate)
+{
+	const gchar *filename;
+
+	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
+	gcm_calibrate_set_title (calibrate,
+				 _("Please configure instrument"));
+
+	/* block for a response */
+	g_debug ("blocking waiting for user input");
+
+	/* get the image, if we have one */
+	filename = gcm_calibrate_get_sensor_image_calibrate (calibrate);
+	gcm_calibrate_set_image (calibrate, filename);
+	gcm_calibrate_interaction_required (calibrate, _("Continue"));
+	if (filename != NULL) {
+		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
+		gcm_calibrate_set_message (calibrate,
+				   _("Please set the measuring instrument to calibration mode like the image below."));
+	} else {
+		/* TRANSLATORS: this is when the user has to change a setting on the sensor */
+		gcm_calibrate_set_message (calibrate,
+				   _("Please set the measuring instrument to calibration mode."));
+	}
+
+	/* play sound from the naming spec */
+	ca_context_play (ca_gtk_context_get (), 0,
+			 CA_PROP_EVENT_ID, "dialog-information",
+			 /* TRANSLATORS: this is the application name for libcanberra */
+			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+			 CA_PROP_EVENT_DESCRIPTION, "setup calibration tool", NULL);
 }
 
 /**
@@ -548,7 +627,9 @@ gcm_calibrate_get_samples (GcmCalibrate *calibrate,
 
 		/* wait for the refresh to set the new color */
 		if (i == 0 && !priv->sensor_on_screen) {
-			gcm_calibrate_interaction_attach_sensor (calibrate);
+			gcm_calibrate_interaction_attach (calibrate);
+			//FIXME
+			gcm_calibrate_delay (3000);
 			priv->sensor_on_screen = TRUE;
 		}
 		gcm_calibrate_delay (100);
