@@ -89,14 +89,17 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING NEWS README
 %{_bindir}/gcm-*
-%{_libexecdir}/gcm-helper-exiv
+%{_libexecdir}/gcm-*
 %dir %{_datadir}/gnome-color-manager
 %{_datadir}/gnome-color-manager/gcm-*.ui
 %dir %{_datadir}/gnome-color-manager/targets
 %dir %{_datadir}/gnome-color-manager/icons
+%dir %{_datadir}/gnome-color-manager/figures
+%dir %{_datadir}/gnome-color-manager/ti1
 %{_datadir}/gnome-color-manager/targets
 %{_datadir}/gnome-color-manager/icons
 %{_datadir}/gnome-color-manager/figures
+%{_datadir}/gnome-color-manager/ti1
 %{_datadir}/man/man1/*.1.gz
 %{_datadir}/icons/hicolor/*/*/*.png
 %{_datadir}/icons/hicolor/scalable/*/*.svg*
