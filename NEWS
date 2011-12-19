@@ -1,3 +1,51 @@
+Version 3.3.3
+~~~~~~~~~~~~~
+Released: 2011-12-19
+
+* Translations
+ - Add Esperanto translation (Kristjan SCHMIDT)
+ - Add Latvian translation (Rudolfs Mazurs)
+ - Updated Czech translation (Milan Knížek)
+ - Updated German translation (Mario Blättermann, Wolfgang Stöggl)
+ - Updated Japanese translation (Ryo Fujita)
+ - Updated Korean translation (Seong-ho, Cho)
+ - Updated Lithuanian translation (Aurimas Černius)
+ - Updated Norwegian bokmål translation (Kjartan Maraas)
+ - Updated Slovenian translation (Matej Urbančič)
+ - Updated Spanish translation (Daniel Mustieles, Jorge González)
+ - Updated Swedish translation (Daniel Nylander)
+
+* New Features:
+ - Add a calibrate attach image for the 'i1 Display 3' sensor device (Richard Hughes)
+ - Add an ICC profile metadata blacklist (Richard Hughes)
+ - Add a ColorHug attach image and customised calibration message (Richard Hughes)
+ - Get the primaries when calibrating the screen (Richard Hughes)
+ - Prefix some profile titles with 'Colorspace' or 'Test Profile' (Richard Hughes)
+ - Show a progress bar on the calibration action page (Richard Hughes)
+ - Split out the display characterization and add a helper program to test it (Richard Hughes)
+
+* Bugfix:
+ - Add accessible descriptions to the next/prev buttons in gcm-viewer (Richard Hughes)
+ - Add the the mnemonic-widget property to labels in the profile viewer (Richard Hughes)
+ - Before converting a .ti1 file into a .ti3 file load the display calibration (Richard Hughes)
+ - Connect to GSD to change the brightness, not GPM (Richard Hughes)
+ - Do not send 'space' when argyllcms asks the user to press any key (Richard Hughes)
+ - Do not use g_application_release() manually (Richard Hughes)
+ - Don't use the deprecated g_format_size_for_display (Richard Hughes)
+ - Don't use the deprecated pango_cairo_font_map_create_context (Richard Hughes)
+ - Ensure we always set a calibration image if one exists (Richard Hughes)
+ - Fix compile with newer versions of clutter (Richard Hughes)
+ - Force the CIE 1931 diagram to be square (Richard Hughes)
+ - Initialize error pointer for gdk_pixbuf_new_from_file_at_size (Michael Hamann)
+ - Move the brightness and inhibit functionality to the calibration module (Richard Hughes)
+ - Normalize the ti3 calibration values (Richard Hughes)
+ - Ship some pregenerated ti1 files (Richard Hughes)
+ - Show an error if we can't open the file passed to gcm-viewer --file (Richard Hughes)
+ - Show an interaction dialog for native samples (Richard Hughes)
+ - Sort the standard and test profiles lower in the profile viewer (Richard Hughes)
+ - Speed up the profile viewer loading when scanning a large number of profiles (Richard Hughes)
+ - Update colorimeter artwork (Lapo Calamandrei, Jakub Steiner)
+
 Version 3.2.0
 ~~~~~~~~~~~~~
 Released: 2011-09-26
