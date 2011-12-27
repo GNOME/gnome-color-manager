@@ -1,5 +1,6 @@
 #
 # Jorge González <jorgegonz@svn.gnome.org>, 2009, 2010, 2011.
+# Nicolás Satragno <nicoymatu9@hotmail.com>, 2011.
 # Daniel Mustieles <daniel.mustieles@gmail.com>, 2011.
 #
 msgid ""
@@ -7,8 +8,8 @@ msgstr ""
 "Project-Id-Version: gnome-color-manager.master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager&keywords=I18N+L10N\n"
-"POT-Creation-Date: 2011-11-28 21:34+0000\n"
-"PO-Revision-Date: 2011-12-06 20:07+0100\n"
+"POT-Creation-Date: 2011-12-19 16:02+0000\n"
+"PO-Revision-Date: 2011-12-27 12:17+0100\n"
 "Last-Translator: Daniel Mustieles <daniel.mustieles@gmail.com>\n"
 "Language-Team: Español <gnome-es-list@gnome.org>\n"
 "MIME-Version: 1.0\n"
@@ -43,6 +44,56 @@ msgstr "Selector de color"
 msgid "Use the color sensor to sample spot colors"
 msgstr "Use el sensor de color para muestrear los puntos de color"
 
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:2
+msgid "Ambient:"
+msgstr "Ambiente:"
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:6
+msgid "Color Temperature:"
+msgstr "Temperatura del color:"
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#: ../data/gcm-picker.ui.h:8
+msgid "Colorspace:"
+msgstr "Espacio de color:"
+
+#. This shows the error in the conversion to RGB.
+#: ../data/gcm-picker.ui.h:10
+msgid "Error:"
+msgstr "Error:"
+
+#. Lab is the color representation and D50 is the white point
+#: ../data/gcm-picker.ui.h:12
+msgid "Lab (D50):"
+msgstr "Lab (D50):"
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:14
+msgid "Media whitepoint:"
+msgstr "Punto blanco del medio:"
+
+#. These are the values of the chosen color in Red, Green, Blue encoding
+#: ../data/gcm-picker.ui.h:16
+msgid "RGB:"
+msgstr "RGB:"
+
+#. Expander title, the results from the color picker
+#: ../data/gcm-picker.ui.h:18
+msgid "Results"
+msgstr "Resultados"
+
+#. the color representation
+#: ../data/gcm-picker.ui.h:20
+msgid "XYZ:"
+msgstr "XYZ:"
+
+#. Button text, to get a single sample of color
+#: ../data/gcm-picker.ui.h:22
+msgid "_Measure"
+msgstr "_Medida"
+
 #: ../data/gcm-viewer.desktop.in.h:1 ../data/gcm-viewer.ui.h:7
 msgid "Color Profile Viewer"
 msgstr "Visor de perfiles de color"
@@ -58,16 +109,21 @@ msgstr "Gama 3D"
 #: ../data/gcm-viewer.ui.h:2
 msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
 msgstr ""
+"Un diagrama CIE 1931 muestra una representación plana de la gama del perfil"
 
 #: ../data/gcm-viewer.ui.h:3
 msgid ""
 "A tone reproduction curve is the mapping of scene luminance to display "
 "luminance"
 msgstr ""
+"Una curva de reproducción tonal es el mapeo de la luminosidad de la escena a "
+"la luminosidad del monitor"
 
 #: ../data/gcm-viewer.ui.h:4
 msgid "A video card gamma table shows the curves loaded into the display"
 msgstr ""
+"Una tabla de gamma de la tarjeta de vídeo muestra las curvas cargadas en el "
+"monitor"
 
 #: ../data/gcm-viewer.ui.h:5
 msgid "Add a profile for the device"
@@ -177,7 +233,7 @@ msgstr "TRC"
 
 #: ../data/gcm-viewer.ui.h:38
 msgid "This 3D hull is what the profile looks like in Lab space"
-msgstr ""
+msgstr "Este 3D es a lo que se parece el perfil en el espacio Lab"
 
 #: ../data/gcm-viewer.ui.h:39
 msgid "This shows what an image would look like if opened with the profile"
@@ -242,13 +298,11 @@ msgstr "Leyendo los parches"
 msgid "Reading the patches using the color measuring instrument."
 msgstr "Leyendo los parches usando el instrumento de medición de color."
 
-#. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:517 ../src/gcm-calibrate-native.c:661
+#: ../src/gcm-calibrate-argyll.c:517
 msgid "Drawing the patches"
 msgstr "Dibujando los parches"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:520 ../src/gcm-calibrate-native.c:664
+#: ../src/gcm-calibrate-argyll.c:520
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
@@ -314,89 +368,32 @@ msgstr "Configurar instrumento"
 msgid "Setting up the instrument for use…"
 msgstr "Configurando el instrumento para su uso…"
 
-#. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:1920 ../src/gcm-calibrate.c:478
-#: ../src/gcm-calibrate-native.c:636
-msgid "Please attach instrument"
-msgstr "Conecte un instrumento"
+#: ../src/gcm-calibrate-argyll.c:2019 ../src/gcm-calibrate-argyll.c:2083
+msgid "Calibration error"
+msgstr "Error de calibración"
 
-#. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate-argyll.c:1930 ../src/gcm-calibrate.c:484
-#: ../src/gcm-calibrate-native.c:644
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square like the image below."
-msgstr ""
-"Conecte el instrumento de medición en el centro de la pantalla en el cuadro "
-"gris como en la imagen inferior."
+#: ../src/gcm-calibrate-argyll.c:2023
+msgid "The sample could not be read at this time."
+msgstr "En este momento no se pudo leer el ejemplo."
 
-#. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate-argyll.c:1934 ../src/gcm-calibrate.c:487
-#: ../src/gcm-calibrate-native.c:647
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square."
-msgstr ""
-"Conecte el instrumento de medición en el centro de la pantalla en el cuadro "
-"gris."
-
-#: ../src/gcm-calibrate-argyll.c:1939 ../src/gcm-calibrate-argyll.c:2005
-#: ../src/gcm-calibrate-argyll.c:2052 ../src/gcm-calibrate.c:491
-msgid "Continue"
-msgstr "Continuar"
+#: ../src/gcm-calibrate-argyll.c:2029 ../src/gcm-calibrate-argyll.c:2146
+#: ../src/gcm-calibrate-argyll.c:2185 ../src/gcm-calibrate-argyll.c:2210
+msgid "Retry"
+msgstr "Reintentar"
 
 #. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:1949 ../src/gcm-calibrate-argyll.c:1993
-#: ../src/gcm-calibrate-argyll.c:2043 ../src/gcm-calibrate-argyll.c:2114
-#: ../src/gcm-calibrate-argyll.c:2196 ../src/gcm-calibrate-argyll.c:2231
+#: ../src/gcm-calibrate-argyll.c:2035 ../src/gcm-calibrate-argyll.c:2117
+#: ../src/gcm-calibrate-argyll.c:2152 ../src/gcm-calibrate.c:517
+#: ../src/gcm-calibrate.c:553 ../src/gcm-calibrate.c:590
 #: ../src/gcm-calibrate-main.c:203
 msgid "GNOME Color Manager"
 msgstr "Gestor de color de GNOME"
 
-#: ../src/gcm-calibrate-argyll.c:1969 ../src/gcm-calibrate-argyll.c:2019
-msgid "Please configure instrument"
-msgstr "Configure el instrumento"
-
-#: ../src/gcm-calibrate-argyll.c:1981
-msgid ""
-"Please set the measuring instrument to calibration mode like the image below."
-msgstr ""
-"Establezca el instrumento de medición en el modo de calibración según la "
-"imagen inferior."
-
-#: ../src/gcm-calibrate-argyll.c:1985
-msgid "Please set the measuring instrument to calibration mode."
-msgstr "Establezca el instrumento de medición para el modo de calibración."
-
-#: ../src/gcm-calibrate-argyll.c:2031
-msgid ""
-"Please set the measuring instrument to screen mode like the image below."
-msgstr ""
-"Establezca el instrumento de medición en el modo de pantalla según la imagen "
-"inferior."
-
-#: ../src/gcm-calibrate-argyll.c:2035
-msgid "Please set the measuring instrument to screen mode."
-msgstr "Establezca el instrumento de medición en el modo de pantalla."
-
-#: ../src/gcm-calibrate-argyll.c:2098 ../src/gcm-calibrate-argyll.c:2162
-msgid "Calibration error"
-msgstr "Error de calibración"
-
-#: ../src/gcm-calibrate-argyll.c:2102
-msgid "The sample could not be read at this time."
-msgstr "En este momento no se pudo leer el ejemplo."
-
-#: ../src/gcm-calibrate-argyll.c:2108 ../src/gcm-calibrate-argyll.c:2225
-#: ../src/gcm-calibrate-argyll.c:2264 ../src/gcm-calibrate-argyll.c:2289
-msgid "Retry"
-msgstr "Reintentar"
-
-#: ../src/gcm-calibrate-argyll.c:2167
+#: ../src/gcm-calibrate-argyll.c:2088
 msgid "No firmware is installed for this instrument."
 msgstr "No existe firmware instalado para este instrumento."
 
-#: ../src/gcm-calibrate-argyll.c:2171
+#: ../src/gcm-calibrate-argyll.c:2092
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
@@ -404,7 +401,7 @@ msgstr ""
 "La coincidencia del patrón no era suficientemente buena. Asegúrese de que ha "
 "corregido el tipo de objetivo seleccionado."
 
-#: ../src/gcm-calibrate-argyll.c:2176
+#: ../src/gcm-calibrate-argyll.c:2097
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
@@ -412,7 +409,7 @@ msgstr ""
 "El instrumento de medición no obtuvo lecturas válidas. Asegúrese de que la "
 "apertura está completamente abierta."
 
-#: ../src/gcm-calibrate-argyll.c:2180
+#: ../src/gcm-calibrate-argyll.c:2101
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -420,27 +417,27 @@ msgstr ""
 "El instrumento de medición está ocupado y no está iniciándose. Quite el "
 "conector USB y reinsértelo antes de intentar usar este dispositivo."
 
-#: ../src/gcm-calibrate-argyll.c:2216
+#: ../src/gcm-calibrate-argyll.c:2137
 msgid "Reading target"
 msgstr "Leyendo el objetivo"
 
-#: ../src/gcm-calibrate-argyll.c:2220
+#: ../src/gcm-calibrate-argyll.c:2141
 msgid "Failed to read the strip correctly."
 msgstr "Falló al leer la franja."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2244
+#: ../src/gcm-calibrate-argyll.c:2165
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "Leer la franja %s en lugar de la %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2249
+#: ../src/gcm-calibrate-argyll.c:2170
 msgid "It looks like you've measured the wrong strip."
 msgstr "Parece que ha medido la franja incorrecta."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2253
+#: ../src/gcm-calibrate-argyll.c:2174
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
@@ -448,22 +445,22 @@ msgstr ""
 "Si realmente ha medido la correcta puede estar correctamente, puede que "
 "simplemente sea papel inusual."
 
-#: ../src/gcm-calibrate-argyll.c:2280
+#: ../src/gcm-calibrate-argyll.c:2201
 msgid "Device Error"
 msgstr "Error del dispositivo"
 
-#: ../src/gcm-calibrate-argyll.c:2284
+#: ../src/gcm-calibrate-argyll.c:2205
 msgid "The device could not measure the color spot correctly."
 msgstr "El dispositivo no pudo medir el punto de color correctamente."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2297
+#: ../src/gcm-calibrate-argyll.c:2218
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "Preparado para leer la franja %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2302
+#: ../src/gcm-calibrate-argyll.c:2223
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
@@ -472,7 +469,7 @@ msgstr ""
 "pulsado el control de medición."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2306
+#: ../src/gcm-calibrate-argyll.c:2227
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -481,7 +478,7 @@ msgstr ""
 "control cuando llegue al final de la página."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2310
+#: ../src/gcm-calibrate-argyll.c:2231
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -490,47 +487,44 @@ msgstr ""
 "la fila que está intentando medir."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2314
-#| msgid ""
-#| "If you make a mistake just release the switch and you'll get a chance to "
-#| "try again."
+#: ../src/gcm-calibrate-argyll.c:2235
 msgid ""
 "If you make a mistake, just release the switch, and you'll get a chance to "
 "try again."
 msgstr ""
 "Si comete un error simplemente suelte el control y podrá intentarlo de nuevo."
 
-#: ../src/gcm-calibrate-argyll.c:2393
+#: ../src/gcm-calibrate-argyll.c:2314
 msgid "Printing"
 msgstr "Impresión"
 
-#: ../src/gcm-calibrate-argyll.c:2401
+#: ../src/gcm-calibrate-argyll.c:2322
 msgid "Preparing the data for the printer."
 msgstr "Preparando los datos para la impresora."
 
-#: ../src/gcm-calibrate-argyll.c:2408
+#: ../src/gcm-calibrate-argyll.c:2329
 msgid "Sending the targets to the printer."
 msgstr "Enviando los objetivos a la impresora."
 
-#: ../src/gcm-calibrate-argyll.c:2413
+#: ../src/gcm-calibrate-argyll.c:2334
 msgid "Printing the targets..."
 msgstr "Imprimiendo los objetivos…"
 
-#: ../src/gcm-calibrate-argyll.c:2418
+#: ../src/gcm-calibrate-argyll.c:2339
 msgid "The printing has finished."
 msgstr "Finalizó la impresión."
 
-#: ../src/gcm-calibrate-argyll.c:2423
+#: ../src/gcm-calibrate-argyll.c:2344
 msgid "The print was aborted."
 msgstr "Se canceló la impresión."
 
 #. TRANSLATORS: title, the hardware calibration device does not support projectors
-#: ../src/gcm-calibrate.c:295
+#: ../src/gcm-calibrate.c:296
 msgid "Could not calibrate and profile using this color measuring instrument"
 msgstr "No se pudo calibrar usando este instrumento de medición"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:298
+#: ../src/gcm-calibrate.c:299
 msgid ""
 "This color measuring instrument is not designed to support calibration and "
 "profiling projectors."
@@ -538,54 +532,114 @@ msgstr ""
 "Este instrumento de medición no está diseñado para soportar perfilado de "
 "proyectores."
 
+#. TRANSLATORS: title, instrument is a hardware color calibration sensor
+#: ../src/gcm-calibrate.c:489
+msgid "Please attach instrument"
+msgstr "Conecte un instrumento"
+
+#. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
+#: ../src/gcm-calibrate.c:496
+msgid ""
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square like the image below."
+msgstr ""
+"Conecte el instrumento de medición en el centro de la pantalla en el cuadro "
+"gris como en la imagen inferior."
+
+#. TRANSLATORS: dialog message, ask user to attach device
+#: ../src/gcm-calibrate.c:499
+msgid ""
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square."
+msgstr ""
+"Conecte el instrumento de medición en el centro de la pantalla en el cuadro "
+"gris."
+
+#. TRANSLATORS: dialog message, ask user to attach device
+#: ../src/gcm-calibrate.c:506
+msgid ""
+"You will need to hold the device on the screen for the duration of the "
+"calibration."
+msgstr "Mantenga el dispositivo sobre la pantalla durante la calibración."
+
+#: ../src/gcm-calibrate.c:511 ../src/gcm-calibrate.c:538
+#: ../src/gcm-calibrate.c:575
+msgid "Continue"
+msgstr "Continuar"
+
+#: ../src/gcm-calibrate.c:533 ../src/gcm-calibrate.c:567
+msgid "Please configure instrument"
+msgstr "Configure el instrumento"
+
+#: ../src/gcm-calibrate.c:542
+msgid ""
+"Please set the measuring instrument to screen mode like the image below."
+msgstr ""
+"Establezca el instrumento de medición en el modo de pantalla según la imagen "
+"inferior."
+
+#: ../src/gcm-calibrate.c:546
+msgid "Please set the measuring instrument to screen mode."
+msgstr "Establezca el instrumento de medición en el modo de pantalla."
+
+#: ../src/gcm-calibrate.c:579
+msgid ""
+"Please set the measuring instrument to calibration mode like the image below."
+msgstr ""
+"Establezca el instrumento de medición en el modo de calibración según la "
+"imagen inferior."
+
+#: ../src/gcm-calibrate.c:583
+msgid "Please set the measuring instrument to calibration mode."
+msgstr "Establezca el instrumento de medición para el modo de calibración."
+
 #. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
 #. * aquired image of the calibration target, e.g. an image file that looks
 #. * a bit like this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:1545
+#: ../src/gcm-calibrate.c:1643
 msgid "Select calibration target image"
 msgstr "Seleccionar la imagen objetivo de la calibración"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:1558
+#: ../src/gcm-calibrate.c:1656
 msgid "Supported images files"
 msgstr "Archivos de imagen soportados"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:1565 ../src/gcm-calibrate.c:1617
+#: ../src/gcm-calibrate.c:1663 ../src/gcm-calibrate.c:1715
 #: ../src/gcm-viewer.c:456
 msgid "All files"
 msgstr "Todos los archivos"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:1590
+#: ../src/gcm-calibrate.c:1688
 msgid "Select CIE reference values file"
 msgstr "Seleccionar el archivo de valores de refenrecia CIE"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:1610
+#: ../src/gcm-calibrate.c:1708
 msgid "CIE values"
 msgstr "Valores CIE"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:1683 ../src/gcm-viewer.c:428
+#: ../src/gcm-calibrate.c:1781 ../src/gcm-viewer.c:428
 msgid "Select ICC Profile File"
 msgstr "Seleccionar archivo de perfil ICC"
 
-#: ../src/gcm-calibrate.c:1686
+#: ../src/gcm-calibrate.c:1784
 msgid "Open"
 msgstr "Abrir"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-calibrate-helper.c:87
-#, fuzzy
 #| msgid "Import device color profile?"
 msgid "Use this device for profiling"
-msgstr "¿Importar el perfil de color del dispositivo?"
+msgstr "Usar este dispositivo para crear el perfil"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-calibrate-helper.c:90
 msgid "Make the window modal to this XID"
-msgstr ""
+msgstr "Hacer la ventana modal para este XID"
 
 #. TRANSLATORS: just dumps the EDID to disk
 #: ../src/gcm-calibrate-helper.c:103
@@ -594,10 +648,8 @@ msgstr "gcm-dispread"
 
 #. success
 #: ../src/gcm-calibrate-helper.c:169 ../src/gcm-calibrate-helper.c:199
-#, fuzzy
-#| msgid "Profiles"
 msgid "Wrote file"
-msgstr "Perfiles"
+msgstr "Archivo escrito"
 
 #. TRANSLATORS: this is the page title
 #: ../src/gcm-calibrate-helper.c:211 ../src/gcm-calibrate-main.c:355
@@ -652,11 +704,14 @@ msgid ""
 "Any existing screen correction will be temporarily turned off and the "
 "brightness set to maximum."
 msgstr ""
+"Cualquier corrección de pantalla existente se desactivará temporalmente y el "
+"brillo se subirá al máximo"
 
 #. TRANSLATORS: this is the final intro page text
 #: ../src/gcm-calibrate-main.c:637
 msgid "You can cancel this process at any stage by pressing the cancel button."
 msgstr ""
+"Puede detener este proceso en cualquier momento pulsando el botón «Cancelar»."
 
 #. TRANSLATORS: this is the calibration wizard page title
 #: ../src/gcm-calibrate-main.c:643
@@ -666,7 +721,7 @@ msgstr "Introducción"
 #. TRANSLATORS: this is the page title
 #: ../src/gcm-calibrate-main.c:666
 msgid "All done!"
-msgstr "Todo correcto."
+msgstr "Terminado."
 
 #. TRANSLATORS: this is the final summary
 #: ../src/gcm-calibrate-main.c:676
@@ -680,7 +735,7 @@ msgstr "La pantalla se ha calibrado correctamente."
 
 #: ../src/gcm-calibrate-main.c:681
 msgid "You may notice the screen is a slightly different color."
-msgstr ""
+msgstr "Quizás note que la pantalla posee un color ligeramente distinto."
 
 #. TRANSLATORS: this is the final summary
 #: ../src/gcm-calibrate-main.c:685
@@ -690,6 +745,8 @@ msgstr "La impresora se ha calibrado correctamente."
 #: ../src/gcm-calibrate-main.c:686
 msgid "Documents printed from this device will be color managed."
 msgstr ""
+"El color de los documentos impresos mediante este dispositivo se "
+"administrará."
 
 #. TRANSLATORS: this is the final summary
 #: ../src/gcm-calibrate-main.c:690
@@ -702,6 +759,8 @@ msgid ""
 "To view details about the new profile or to undo the calibration visit the "
 "<a href=\"control-center://color\">control center</a>."
 msgstr ""
+"Para ver detalles del nuevo perfil, o deshacer la calibración visite el <a "
+"href=\"control-center://color\">centro de control</a>."
 
 #. TRANSLATORS: this is the calibration wizard page title
 #: ../src/gcm-calibrate-main.c:708 ../src/gcm-calibrate-main.c:1681
@@ -724,10 +783,8 @@ msgstr "Acción"
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate-main.c:786
-#, fuzzy
-#| msgid "Calibration error"
 msgid "Calibration checklist"
-msgstr "Error de calibración"
+msgstr "Lista de verificación de la calibración"
 
 #. TRANSLATORS: this is intro page text
 #: ../src/gcm-calibrate-main.c:793
@@ -919,7 +976,6 @@ msgstr ""
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate-main.c:1113
-#, fuzzy
 #| msgid ""
 #| "Ensure that the contrast and brightness are not changed and color "
 #| "correction profiles are not applied."
@@ -950,10 +1006,9 @@ msgstr ""
 
 #. TRANSLATORS: this is the message body for the chart selection
 #: ../src/gcm-calibrate-main.c:1126
-#, fuzzy
 #| msgid "Please select a calibration target"
 msgid "Please select the calibration target type."
-msgstr "Seleccionar un destino de calibración"
+msgstr "Seleccione el tipo de objetivo de la calibración."
 
 #. TRANSLATORS: this is the page title
 #: ../src/gcm-calibrate-main.c:1129
@@ -999,17 +1054,19 @@ msgstr "Seleccionar el tipo de dispositivo"
 #. TRANSLATORS: this is the page title
 #: ../src/gcm-calibrate-main.c:1286
 msgid "Choose your display target white point"
-msgstr ""
+msgstr "Elegir el punto blanco del monitor objetivo"
 
 #. TRANSLATORS: this is intro page text
 #: ../src/gcm-calibrate-main.c:1293
 msgid ""
 "Most displays should be calibrated to a CIE D65 illuminant for general usage."
 msgstr ""
+"La mayoría de los monitores se calibran al iluminante CIE D65 para uso "
+"general."
 
 #: ../src/gcm-calibrate-main.c:1295
 msgid "CIE D50 (Printing and publishing)"
-msgstr ""
+msgstr "CIE D50 (Impresiones y publicaciones)"
 
 #: ../src/gcm-calibrate-main.c:1304
 msgid "CIE D55"
@@ -1017,7 +1074,7 @@ msgstr "CIE D55"
 
 #: ../src/gcm-calibrate-main.c:1313
 msgid "CIE D65 (Photography and graphics)"
-msgstr ""
+msgstr "CIE D65 (Fotografía y gráficos)"
 
 #: ../src/gcm-calibrate-main.c:1323
 msgid "CIE D75"
@@ -1030,7 +1087,7 @@ msgstr "Nativo (a establecido manualmente)"
 #. TRANSLATORS: this is the calibration wizard page title
 #: ../src/gcm-calibrate-main.c:1344
 msgid "Choose Display Whitepoint"
-msgstr ""
+msgstr "Elegir el punto blanco del monitor"
 
 #. TRANSLATORS: this is the page title
 #: ../src/gcm-calibrate-main.c:1382
@@ -1060,6 +1117,8 @@ msgstr "Seleccionar la calidad de la calibración"
 #: ../src/gcm-calibrate-main.c:1470
 msgid "Higher quality calibration requires many color samples and more time."
 msgstr ""
+"Una calidad de calibración mayor requiere muchas pruebas de color y más "
+"tiempo."
 
 #. TRANSLATORS: this is the message body for the chart selection
 #: ../src/gcm-calibrate-main.c:1474
@@ -1085,7 +1144,7 @@ msgstr "Los perfiles de alta precisión también necesitan más papel y tinta."
 #. TRANSLATORS: radio options for calibration precision
 #: ../src/gcm-calibrate-main.c:1487
 msgid "Accurate"
-msgstr ""
+msgstr "Precisa"
 
 #: ../src/gcm-calibrate-main.c:1488
 msgid "Normal"
@@ -1099,15 +1158,15 @@ msgstr "Rápida"
 #, c-format
 msgid "(about %i sheet of paper)"
 msgid_plural "(about %i sheets of paper)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(Aprox. %i hoja de papel)"
+msgstr[1] "(Aprox. %i hojas de papel)"
 
 #: ../src/gcm-calibrate-main.c:1507
 #, c-format
 msgid "(about %i minute)"
 msgid_plural "(about %i minutes)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(Aprox. %i minuto)"
+msgstr[1] "(Aprox. %i minutos)"
 
 #. TRANSLATORS: this is the calibration wizard page title
 #: ../src/gcm-calibrate-main.c:1547
@@ -1131,7 +1190,6 @@ msgstr "Título del perfil"
 
 #. TRANSLATORS: this is the page title
 #: ../src/gcm-calibrate-main.c:1633
-#| msgid "Setup hardware"
 msgid "Insert sensor hardware"
 msgstr "Insertar sensor hardware"
 
@@ -1142,10 +1200,9 @@ msgstr "Debe insertar un sensor hardware para continuar."
 
 #. TRANSLATORS: this is the calibration wizard page title
 #: ../src/gcm-calibrate-main.c:1646
-#, fuzzy
 #| msgid "Color Checker"
 msgid "Sensor Check"
-msgstr "Comprobador de color"
+msgstr "Verificar el sensor"
 
 #. TRANSLATORS: this is intro page text
 #: ../src/gcm-calibrate-main.c:1675
@@ -1203,7 +1260,6 @@ msgstr "Sin perfil"
 
 #: ../src/gcm-cell-renderer-profile-text.c:88
 #, c-format
-#| msgid "Defaults"
 msgid "Default %s"
 msgstr "Predeterminado %s"
 
@@ -1551,22 +1607,18 @@ msgid "Display checksum"
 msgstr "Mostrar suma de verificación"
 
 #: ../src/gcm-viewer.c:769
-#| msgid "Display device"
 msgid "Display model"
 msgstr "Modelo de la pantalla"
 
 #: ../src/gcm-viewer.c:770
-#| msgid "Serial number"
 msgid "Display serial number"
 msgstr "Número de serie de la pantalla"
 
 #: ../src/gcm-viewer.c:771
-#| msgid "Display"
 msgid "Display PNPID"
 msgstr "PNPID de la pantalla"
 
 #: ../src/gcm-viewer.c:772
-#| msgid "Display device"
 msgid "Display vendor"
 msgstr "Fabricante de la pantalla"
 
@@ -1576,15 +1628,15 @@ msgstr "Suma de verificación del archivo"
 
 #: ../src/gcm-viewer.c:774
 msgid "Framework product"
-msgstr ""
+msgstr "Producto de marco de trabajo"
 
 #: ../src/gcm-viewer.c:775
 msgid "Framework program"
-msgstr ""
+msgstr "Programa de marco de trabajo"
 
 #: ../src/gcm-viewer.c:776
 msgid "Framework version"
-msgstr ""
+msgstr "Versión del «framework»"
 
 #: ../src/gcm-viewer.c:777
 msgid "Data source type"
@@ -1592,11 +1644,11 @@ msgstr "Tipo de fuente de datos"
 
 #: ../src/gcm-viewer.c:778
 msgid "Mapping format"
-msgstr ""
+msgstr "Formato de mapeado"
 
 #: ../src/gcm-viewer.c:779
 msgid "Mapping qualifier"
-msgstr ""
+msgstr "Índice de mapeado"
 
 #. TRANSLATORS: if the device has a VCGT profile
 #: ../src/gcm-viewer.c:1029
@@ -1627,56 +1679,6 @@ msgstr "Establecer el perfil específico que mostrar"
 #: ../src/gcm-viewer.c:1704
 msgid "Set the specific file to show"
 msgstr "Establecer el archivo específico que mostrar"
-
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:2
-msgid "Ambient:"
-msgstr "Ambiente:"
-
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:6
-msgid "Color Temperature:"
-msgstr "Temperatura del color:"
-
-#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#: ../data/gcm-picker.ui.h:8
-msgid "Colorspace:"
-msgstr "Espacio de color:"
-
-#. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:10
-msgid "Error:"
-msgstr "Error:"
-
-#. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:12
-msgid "Lab (D50):"
-msgstr "Lab (D50):"
-
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:14
-msgid "Media whitepoint:"
-msgstr ""
-
-#. These are the values of the chosen color in Red, Green, Blue encoding
-#: ../data/gcm-picker.ui.h:16
-msgid "RGB:"
-msgstr "RGB:"
-
-#. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:18
-msgid "Results"
-msgstr "Resultados"
-
-#. the color representation
-#: ../data/gcm-picker.ui.h:20
-msgid "XYZ:"
-msgstr "XYZ:"
-
-#. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:22
-msgid "_Measure"
-msgstr "_Medida"
 
 #~ msgid "Generating the patches"
 #~ msgstr "Generando los parches"
@@ -2531,9 +2533,9 @@ msgstr "_Medida"
 #~ "profile. Use 'ask' if you want the user to choose."
 #~ msgstr ""
 #~ "La longitud de la calibración, ya que es proporcional a la precisión. La "
-#~ "opción «corta» crea un perfil rápido, «normal» un perfil regular y "
-#~ "«larga» lleva mucho tiempo pero es más precisa y crea un mejor perfil. "
-#~ "Use «preguntar» si quiere que el usuario elija."
+#~ "opción «corta» crea un perfil rápido, «normal» un perfil regular y «larga» "
+#~ "lleva mucho tiempo pero es más precisa y crea un mejor perfil. Use "
+#~ "«preguntar» si quiere que el usuario elija."
 
 #~ msgid "The rendering intent to use for softproofs, e.g. 'perceptual'"
 #~ msgstr ""
