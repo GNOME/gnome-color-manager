@@ -858,6 +858,9 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 	case PROP_DISPLAY_KIND:
 		priv->display_kind = g_value_get_uint (value);
 		break;
+	case PROP_REFERENCE_KIND:
+		priv->reference_kind = g_value_get_uint (value);
+		break;
 	case PROP_WORKING_PATH:
 		g_free (priv->working_path);
 		priv->working_path = g_strdup (g_value_get_string (value));
@@ -885,7 +888,7 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 
 	pspec = g_param_spec_uint ("reference-kind", NULL, NULL,
 				   0, G_MAXUINT, 0,
-				   G_PARAM_READABLE);
+				   G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_REFERENCE_KIND, pspec);
 
 	pspec = g_param_spec_uint ("display-kind", NULL, NULL,

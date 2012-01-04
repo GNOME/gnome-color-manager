@@ -1162,6 +1162,9 @@ gcm_calib_reference_kind_combobox_cb (GtkComboBox *combo_box,
 
 	/* not sorted so we can just use the index */
 	reference_kind = gtk_combo_box_get_active (GTK_COMBO_BOX (combo_box));
+	g_object_set (calib->calibrate,
+		      "reference-kind", reference_kind,
+		      NULL);
 	filename = gcm_calib_reference_kind_to_image_filename (reference_kind);
 
 	/* fallback */
