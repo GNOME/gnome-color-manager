@@ -432,10 +432,31 @@ gcm_calib_start_idle_cb (gpointer user_data)
 
 	/* actuall do the action */
 	calib->started_calibration = TRUE;
-	ret = gcm_calibrate_display (calib->calibrate,
-				     calib->device,
-				     calib->main_window,
-				     &error);
+
+	switch (calib->device_kind) {
+	case CD_DEVICE_KIND_CAMERA:
+	case CD_DEVICE_KIND_WEBCAM:
+		ret = gcm_calibrate_device (calib->calibrate,
+					    calib->device,
+					    calib->main_window,
+					    &error);
+		break;
+	case CD_DEVICE_KIND_DISPLAY:
+		ret = gcm_calibrate_display (calib->calibrate,
+					     calib->device,
+					     calib->main_window,
+					     &error);
+		break;
+	case CD_DEVICE_KIND_PRINTER:
+		ret = gcm_calibrate_printer (calib->calibrate,
+					     calib->device,
+					     calib->main_window,
+					     &error);
+		break;
+	default:
+		g_assert_not_reached ();
+		break;
+	}
 	if (!ret) {
 		gcm_calibrate_set_title (calib->calibrate, _("Failed to calibrate"));
 		gcm_calibrate_set_message (calib->calibrate, error->message);
