@@ -7,7 +7,7 @@ Release:   0.#BUILD#%{?alphatag}%{?dist}
 License:   GPLv2+
 Group:     Applications/System
 URL:       http://projects.gnome.org/gnome-color-manager/
-Source0:   http://download.gnome.org/sources/gnome-color-manager/3.1/%{name}-%{version}.tar.xz
+Source0:   http://download.gnome.org/sources/gnome-color-manager/3.3/%{name}-%{version}.tar.xz
 
 Requires:  color-filesystem >= 1-7
 Requires:  gnome-icon-theme
@@ -34,9 +34,10 @@ BuildRequires: exiv2-devel
 BuildRequires: libcanberra-devel
 BuildRequires: glib2-devel >= 2.25.9-2
 BuildRequires: docbook-utils
-BuildRequires: colord-devel
+BuildRequires: colord-devel >= 0.1.12
 BuildRequires: libmash-devel
 BuildRequires: clutter-gtk-devel
+BuildRequires: gnome-desktop3-devel
 
 Requires(post):   /usr/bin/gtk-update-icon-cache
 Requires(postun): /usr/bin/gtk-update-icon-cache
