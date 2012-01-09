@@ -855,6 +855,8 @@ gcm_viewer_add_metadata (GcmViewerPrivate *viewer,
 			continue;
 		key = gcm_viewer_get_localised_metadata_key ((gchar *) l->data);
 		value = g_hash_table_lookup (metadata, l->data);
+		if (value == NULL || value[0] == '\0')
+			continue;
 		g_debug ("Adding '%s', '%s'",
 			 key, value);
 		gtk_list_store_append (viewer->liststore_metadata, &iter);
