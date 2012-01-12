@@ -272,7 +272,9 @@ out:
 }
 
 static gboolean
-gcm_calib_set_extra_metadata (const gchar *filename, GError **error)
+gcm_calib_set_extra_metadata (GcmCalibratePriv *calib,
+			      const gchar *filename,
+			      GError **error)
 {
 	cmsHANDLE dict = NULL;
 	cmsHPROFILE lcms_profile;
@@ -306,6 +308,9 @@ gcm_calib_set_extra_metadata (const gchar *filename, GError **error)
 	_cmsDictAddEntryAscii (dict,
 			       CD_PROFILE_METADATA_DATA_SOURCE,
 			       CD_PROFILE_METADATA_DATA_SOURCE_CALIB);
+	_cmsDictAddEntryAscii (dict,
+			       CD_PROFILE_METADATA_MEASUREMENT_DEVICE,
+			       cd_sensor_kind_to_string (cd_sensor_get_kind (calib->sensor)));
 
 	/* just write dict */
 	ret = cmsWriteTag (lcms_profile, cmsSigMetaTag, dict);
@@ -374,7 +379,7 @@ gcm_calib_start_idle_cb (gpointer user_data)
 	}
 
 	/* set some private properties */
-	ret = gcm_calib_set_extra_metadata (filename, &error);
+	ret = gcm_calib_set_extra_metadata (calib, filename, &error);
 	if (!ret) {
 		g_warning ("failed to set extra metadata: %s",
 			   error->message);
