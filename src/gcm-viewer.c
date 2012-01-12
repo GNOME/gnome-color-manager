@@ -779,6 +779,7 @@ struct {
 	{ CD_PROFILE_METADATA_MAPPING_QUALIFIER,	N_("Mapping qualifier") },
 	{ CD_PROFILE_METADATA_MEASUREMENT_DEVICE,	N_("Calibration device") },
 	{ CD_PROFILE_METADATA_SCREEN_SURFACE,		N_("Screen surface finish") },
+	{ CD_PROFILE_METADATA_CONNECTION_TYPE,		N_("Connection type") },
 	{ NULL, NULL }
 };
 
