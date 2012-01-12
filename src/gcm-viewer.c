@@ -803,23 +803,23 @@ gcm_viewer_is_blacklisted_metadata_key (const gchar *key)
 {
 	guint i;
 	const gchar *blacklist[] = { "prefix",
-				     "EDID_blue_x",
-				     "EDID_blue_y",
+				     "EDID_blue*",
 				     "EDID_date",
 				     "EDID_gamma",
-				     "EDID_green_x",
-				     "EDID_green_y",
+				     "EDID_green*",
 				     "EDID_mnft_id",
 				     "EDID_model_id",
-				     "EDID_red_x",
-				     "EDID_red_y",
-				     "EDID_white_x",
-				     "EDID_white_y",
+				     "EDID_red*",
+				     "EDID_white*",
+				     "OSD_*",			/* OSD controls... */
 				     "vcgt",
+				     "model",
 				     NULL };
 	for (i = 0; blacklist[i] != NULL; i++) {
-		if (g_strcmp0 (blacklist[i], key) == 0)
+		if (g_regex_match_simple (blacklist[i],
+					  key, 0, 0)) {
 			return FALSE;
+		}
 	}
 	return TRUE;
 }
