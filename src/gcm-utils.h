@@ -35,6 +35,9 @@
 #ifndef CD_PROFILE_METADATA_MEASUREMENT_DEVICE
 #define CD_PROFILE_METADATA_MEASUREMENT_DEVICE		"MEASUREMENT_device"
 #endif
+#ifndef CD_PROFILE_METADATA_SCREEN_SURFACE
+#define CD_PROFILE_METADATA_SCREEN_SURFACE		"SCREEN_surface"
+#endif
 
 /* DISTROS: you will have to patch if you have changed the name of these packages */
 #define GCM_PREFS_PACKAGE_NAME_SHARED_COLOR_TARGETS	"shared-color-targets"
