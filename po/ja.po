@@ -1,25 +1,25 @@
 # Japanese translation of gnome-color-manager
-# Copyright (C) 2009-2011 gnome-color-manager's COPYRIGHT HOLDER
+# Copyright (C) 2009-2012 gnome-color-manager's COPYRIGHT HOLDER
 # This file is distributed under the gnome-color-manager package.
 # Ryo Fujita <rfujita@redhat.com>, 2010, 2011.
 # Takayuki KUSANO <AE5AT-KSN@asahi-net.or.jp>, 2010.
 # OKANO Takayoshi <kano@na.rim.or.jp>, 2010.
 # Nishibori Kiyotaka <ml.nishibori.kiyotaka@gmail.com>, 2011.
-# Jiro Matsuzawa <matsuzawa.jr@gmail.com>, 2011.
+# Jiro Matsuzawa <jmatsuzawa@src.gnome.org>, 2011, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager&keywords=I18N+L10N\n"
-"POT-Creation-Date: 2011-10-14 13:49+0000\n"
-"PO-Revision-Date: 2011-05-18 23:47+0900\n"
-"Last-Translator: Ryo Fujita <rfujita@redhat.com>\n"
+"POT-Creation-Date: 2012-01-13 14:11+0000\n"
+"PO-Revision-Date: 2012-01-14 00:44+0900\n"
+"Last-Translator: Jiro Matsuzawa <jmatsuzawa@src.gnome.org>\n"
 "Language-Team: Japanese <rfujita@redhat.com>\n"
-"Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: ja\n"
 "X-Poedit-Language: Japanese\n"
 "X-Poedit-Country: JAPAN\n"
 
@@ -34,7 +34,7 @@ msgstr "デバイスのキャリブレーション"
 
 #: ../data/gcm-import.desktop.in.h:1
 msgid "ICC Profile Installer"
-msgstr "ICCプロファイルのインストーラ"
+msgstr "ICCプロファイルのインストーラー"
 
 #: ../data/gcm-import.desktop.in.h:2
 msgid "Install ICC profiles"
@@ -48,6 +48,56 @@ msgstr "Color Picker"
 #: ../data/gcm-picker.desktop.in.h:2
 msgid "Use the color sensor to sample spot colors"
 msgstr "特色を読み取る測色計を使う"
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:2
+msgid "Ambient:"
+msgstr "環境光:"
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:6
+msgid "Color Temperature:"
+msgstr "色温度:"
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#: ../data/gcm-picker.ui.h:8
+msgid "Colorspace:"
+msgstr "色空間:"
+
+#. This shows the error in the conversion to RGB.
+#: ../data/gcm-picker.ui.h:10
+msgid "Error:"
+msgstr "エラー:"
+
+#. Lab is the color representation and D50 is the white point
+#: ../data/gcm-picker.ui.h:12
+msgid "Lab (D50):"
+msgstr "Lab (D50):"
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:14
+msgid "Media whitepoint:"
+msgstr "メディアの白色点:"
+
+#. These are the values of the chosen color in Red, Green, Blue encoding
+#: ../data/gcm-picker.ui.h:16
+msgid "RGB:"
+msgstr "RGB:"
+
+#. Expander title, the results from the color picker
+#: ../data/gcm-picker.ui.h:18
+msgid "Results"
+msgstr "結果"
+
+#. the color representation
+#: ../data/gcm-picker.ui.h:20
+msgid "XYZ:"
+msgstr "XYZ:"
+
+#. Button text, to get a single sample of color
+#: ../data/gcm-picker.ui.h:22
+msgid "_Measure"
+msgstr "_Measure"
 
 #: ../data/gcm-viewer.desktop.in.h:1 ../data/gcm-viewer.ui.h:7
 msgid "Color Profile Viewer"
@@ -159,84 +209,92 @@ msgstr "特色"
 msgid "Named colors are specific colors that are defined in the profile"
 msgstr ""
 
-#. The type of profile, e.g. display, scanner, etc.
+#: ../data/gcm-viewer.ui.h:30
+msgid "Next Image"
+msgstr ""
+
 #: ../data/gcm-viewer.ui.h:31
+msgid "Previous Image"
+msgstr ""
+
+#. The type of profile, e.g. display, scanner, etc.
+#: ../data/gcm-viewer.ui.h:33
 #, fuzzy
 msgid "Profile type"
 msgstr "プロファイルのタイプ:"
 
-#: ../data/gcm-viewer.ui.h:32
+#: ../data/gcm-viewer.ui.h:34
 msgid "Remove a profile from the device"
 msgstr "デバイスからプロファイルを削除"
 
-#: ../data/gcm-viewer.ui.h:33
+#: ../data/gcm-viewer.ui.h:35
 msgid "Response in"
 msgstr ""
 
-#: ../data/gcm-viewer.ui.h:34
+#: ../data/gcm-viewer.ui.h:36
 msgid "Response out"
 msgstr ""
 
-#: ../data/gcm-viewer.ui.h:35
+#: ../data/gcm-viewer.ui.h:37
 msgid "TRC"
 msgstr ""
 
-#: ../data/gcm-viewer.ui.h:36
+#: ../data/gcm-viewer.ui.h:38
 msgid "This 3D hull is what the profile looks like in Lab space"
 msgstr ""
 
-#: ../data/gcm-viewer.ui.h:37
+#: ../data/gcm-viewer.ui.h:39
 msgid "This shows what an image would look like if opened with the profile"
 msgstr ""
 
-#: ../data/gcm-viewer.ui.h:38
+#: ../data/gcm-viewer.ui.h:40
 msgid "This shows what an image would look like if saved with the profile"
 msgstr ""
 
-#: ../data/gcm-viewer.ui.h:39
+#: ../data/gcm-viewer.ui.h:41
 #, fuzzy
 msgid "To sRGB"
 msgstr "RGB"
 
-#: ../data/gcm-viewer.ui.h:40
+#: ../data/gcm-viewer.ui.h:42
 msgid "VCGT"
 msgstr ""
 
 #. The version of the profile
-#: ../data/gcm-viewer.ui.h:42
+#: ../data/gcm-viewer.ui.h:44
 #, fuzzy
 msgid "Version"
 msgstr "精度"
 
-#: ../data/gcm-viewer.ui.h:43
+#: ../data/gcm-viewer.ui.h:45
 #, fuzzy
 msgid "Video card out"
 msgstr "ビデオカードのガンマテーブル"
 
 #. The basename (the last section of the filename) of the profile
-#: ../data/gcm-viewer.ui.h:45
+#: ../data/gcm-viewer.ui.h:47
 #, fuzzy
 msgid "White point"
 msgstr "メディアの白色点:"
 
 #. This is an example image that is saved in sRGB gamut
-#: ../data/gcm-viewer.ui.h:47
+#: ../data/gcm-viewer.ui.h:49
 msgid "sRGB example"
 msgstr ""
 
-#: ../data/gcm-viewer.ui.h:48
+#: ../data/gcm-viewer.ui.h:50
 msgid "x"
 msgstr ""
 
-#: ../data/gcm-viewer.ui.h:49
+#: ../data/gcm-viewer.ui.h:51
 msgid "y"
 msgstr ""
 
-#: ../src/gcm-calibrate-argyll.c:440
+#: ../src/gcm-calibrate-argyll.c:326
 msgid "Getting default parameters"
-msgstr "デフォルトパラメータを取得中"
+msgstr "デフォルトパラメーターを取得中"
 
-#: ../src/gcm-calibrate-argyll.c:444
+#: ../src/gcm-calibrate-argyll.c:330
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -244,75 +302,65 @@ msgstr ""
 "画面に表示したカラーパッチをハードウェアで計測することで、画面を事前にキャリ"
 "ブレートします。"
 
-#: ../src/gcm-calibrate-argyll.c:531
+#: ../src/gcm-calibrate-argyll.c:417
 msgid "Reading the patches"
 msgstr "パッチを読取中"
 
-#: ../src/gcm-calibrate-argyll.c:534
+#: ../src/gcm-calibrate-argyll.c:420
 msgid "Reading the patches using the color measuring instrument."
 msgstr "測色計によりパッチを読取中"
 
-#: ../src/gcm-calibrate-argyll.c:618
-msgid "Generating the patches"
-msgstr "パッチを生成中"
-
-#: ../src/gcm-calibrate-argyll.c:621
-msgid "Generating the patches that will be measured with the color instrument."
-msgstr "測色計で読み取るパッチを生成中"
-
-#. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:733 ../src/gcm-calibrate-native.c:661
+#: ../src/gcm-calibrate-argyll.c:517
 msgid "Drawing the patches"
 msgstr "パッチを描画中"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:736 ../src/gcm-calibrate-native.c:664
+#: ../src/gcm-calibrate-argyll.c:520
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
 msgstr "ハードウェアで計測する生成したパッチを画面に描画中"
 
-#: ../src/gcm-calibrate-argyll.c:829 ../src/gcm-calibrate-argyll.c:1170
+#: ../src/gcm-calibrate-argyll.c:613 ../src/gcm-calibrate-argyll.c:954
 msgid "Generating the profile"
 msgstr "プロファイルを生成中"
 
-#: ../src/gcm-calibrate-argyll.c:832
+#: ../src/gcm-calibrate-argyll.c:616
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "この画面で用いることの出来るICCカラープロファイルを生成中"
 
-#: ../src/gcm-calibrate-argyll.c:992
+#: ../src/gcm-calibrate-argyll.c:776
 msgid "Copying files"
 msgstr "ファイルをコピー中"
 
-#: ../src/gcm-calibrate-argyll.c:995
+#: ../src/gcm-calibrate-argyll.c:779
 msgid "Copying source image, chart data and CIE reference values."
 msgstr "元のイメージとチャートのデータ、CIEリファレンス値をコピー中"
 
-#: ../src/gcm-calibrate-argyll.c:1064
+#: ../src/gcm-calibrate-argyll.c:848
 msgid "Measuring the patches"
 msgstr "パッチを計測中"
 
-#: ../src/gcm-calibrate-argyll.c:1067
+#: ../src/gcm-calibrate-argyll.c:851
 msgid "Detecting the reference patches and measuring them."
 msgstr "リファレンスパッチを検出・計測中"
 
-#: ../src/gcm-calibrate-argyll.c:1173
+#: ../src/gcm-calibrate-argyll.c:957
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "このデバイスで利用可能なICCカラープロファイルを生成中"
 
-#: ../src/gcm-calibrate-argyll.c:1526
+#: ../src/gcm-calibrate-argyll.c:1314
 msgid "Printing patches"
 msgstr "パッチを印刷中"
 
-#: ../src/gcm-calibrate-argyll.c:1530
+#: ../src/gcm-calibrate-argyll.c:1318
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "選択した紙とインク用のパッチをレンダリング"
 
-#: ../src/gcm-calibrate-argyll.c:1860
+#: ../src/gcm-calibrate-argyll.c:1640
 msgid "Wait for the ink to dry"
 msgstr "インクが乾くのを待ちます"
 
-#: ../src/gcm-calibrate-argyll.c:1864
+#: ../src/gcm-calibrate-argyll.c:1644
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -320,86 +368,40 @@ msgstr ""
 "インクが乾くのを数分間待ってください。乾いていないインクをプロファイルする"
 "と、良くないプロファイルが作られ、測色計にダメージを与えることがあります。"
 
-#: ../src/gcm-calibrate-argyll.c:2023
+#: ../src/gcm-calibrate-argyll.c:1812
 msgid "Set up instrument"
 msgstr "計測器を設定"
 
-#: ../src/gcm-calibrate-argyll.c:2027
+#: ../src/gcm-calibrate-argyll.c:1816
 msgid "Setting up the instrument for use…"
 msgstr "利用する計測器を設定中..."
 
-#. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2119 ../src/gcm-calibrate-native.c:636
-msgid "Please attach instrument"
-msgstr "計測器を置いてください"
-
-#. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate-argyll.c:2129 ../src/gcm-calibrate-native.c:644
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square like the image below."
-msgstr "下の画像のような画面上の灰色の長方形の中心に測色計を置いてください。"
-
-#. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate-argyll.c:2133 ../src/gcm-calibrate-native.c:647
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square."
-msgstr "画面上の灰色の長方形の中心に測色計を置いてください。"
-
-#: ../src/gcm-calibrate-argyll.c:2138 ../src/gcm-calibrate-argyll.c:2204
-#: ../src/gcm-calibrate-argyll.c:2251
-msgid "Continue"
-msgstr "続き"
-
-#. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2148 ../src/gcm-calibrate-argyll.c:2192
-#: ../src/gcm-calibrate-argyll.c:2242 ../src/gcm-calibrate-argyll.c:2313
-#: ../src/gcm-calibrate-argyll.c:2395 ../src/gcm-calibrate-argyll.c:2430
-#: ../src/gcm-calibrate-main.c:288
-msgid "GNOME Color Manager"
-msgstr "GNOME Color Manager"
-
-#: ../src/gcm-calibrate-argyll.c:2168 ../src/gcm-calibrate-argyll.c:2218
-msgid "Please configure instrument"
-msgstr "計測器を設定してください"
-
-#: ../src/gcm-calibrate-argyll.c:2180
-msgid ""
-"Please set the measuring instrument to calibration mode like the image below."
-msgstr "下の画像のような画面上の灰色の長方形の中心に測色計を置いてください。"
-
-#: ../src/gcm-calibrate-argyll.c:2184
-msgid "Please set the measuring instrument to calibration mode."
-msgstr "計測器をキャリブレーションモードに設定してください。"
-
-#: ../src/gcm-calibrate-argyll.c:2230
-msgid ""
-"Please set the measuring instrument to screen mode like the image below."
-msgstr "下の画像のように計測器をスクリーンモードに設定してください。"
-
-#: ../src/gcm-calibrate-argyll.c:2234
-msgid "Please set the measuring instrument to screen mode."
-msgstr "計測器をスクリーンモードに設定してください。"
-
-#: ../src/gcm-calibrate-argyll.c:2297 ../src/gcm-calibrate-argyll.c:2361
+#: ../src/gcm-calibrate-argyll.c:2019 ../src/gcm-calibrate-argyll.c:2083
 msgid "Calibration error"
 msgstr "キャリブレーションエラー"
 
-#: ../src/gcm-calibrate-argyll.c:2301
+#: ../src/gcm-calibrate-argyll.c:2023
 msgid "The sample could not be read at this time."
 msgstr "今回はサンプルを読み込むことが出来ませんでした。"
 
-#: ../src/gcm-calibrate-argyll.c:2307 ../src/gcm-calibrate-argyll.c:2424
-#: ../src/gcm-calibrate-argyll.c:2463 ../src/gcm-calibrate-argyll.c:2488
+#: ../src/gcm-calibrate-argyll.c:2029 ../src/gcm-calibrate-argyll.c:2146
+#: ../src/gcm-calibrate-argyll.c:2185 ../src/gcm-calibrate-argyll.c:2210
 msgid "Retry"
 msgstr "再試行"
 
-#: ../src/gcm-calibrate-argyll.c:2366
+#. TRANSLATORS: this is the application name for libcanberra
+#: ../src/gcm-calibrate-argyll.c:2035 ../src/gcm-calibrate-argyll.c:2117
+#: ../src/gcm-calibrate-argyll.c:2152 ../src/gcm-calibrate.c:517
+#: ../src/gcm-calibrate.c:553 ../src/gcm-calibrate.c:590
+#: ../src/gcm-calibrate-main.c:203
+msgid "GNOME Color Manager"
+msgstr "GNOME Color Manager"
+
+#: ../src/gcm-calibrate-argyll.c:2088
 msgid "No firmware is installed for this instrument."
 msgstr "この計測器にインストールできるファームウェアはありません。"
 
-#: ../src/gcm-calibrate-argyll.c:2370
+#: ../src/gcm-calibrate-argyll.c:2092
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
@@ -407,7 +409,7 @@ msgstr ""
 "充分にパターンが一致しませんでした。正しく色見本の種類を選んだか確認してくだ"
 "さい。"
 
-#: ../src/gcm-calibrate-argyll.c:2375
+#: ../src/gcm-calibrate-argyll.c:2097
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
@@ -415,7 +417,7 @@ msgstr ""
 "計測器が有効に読み取り出来ませんでした。開口部が完全に開いていることを確認し"
 "てください。"
 
-#: ../src/gcm-calibrate-argyll.c:2379
+#: ../src/gcm-calibrate-argyll.c:2101
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -423,56 +425,56 @@ msgstr ""
 "計測器が使用中で起動しませんでした。USBプラグを抜き、このデバイスを使う前に再"
 "度接続してください。"
 
-#: ../src/gcm-calibrate-argyll.c:2415
+#: ../src/gcm-calibrate-argyll.c:2137
 msgid "Reading target"
 msgstr "色見本を読取中"
 
-#: ../src/gcm-calibrate-argyll.c:2419
+#: ../src/gcm-calibrate-argyll.c:2141
 msgid "Failed to read the strip correctly."
 msgstr "ストリップを正しく読み取ることが出来ませんでした。"
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2443
+#: ../src/gcm-calibrate-argyll.c:2165
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "ストリップ%sをストリップ%sの代わりに読みます!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2448
+#: ../src/gcm-calibrate-argyll.c:2170
 msgid "It looks like you've measured the wrong strip."
 msgstr "違うストリップを計測したようです。"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2452
+#: ../src/gcm-calibrate-argyll.c:2174
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
 msgstr ""
 "確実に正しい方を計測したのであれば問題ありません。通常の紙ではないようです。"
 
-#: ../src/gcm-calibrate-argyll.c:2479
+#: ../src/gcm-calibrate-argyll.c:2201
 msgid "Device Error"
 msgstr "デバイスエラー"
 
-#: ../src/gcm-calibrate-argyll.c:2483
+#: ../src/gcm-calibrate-argyll.c:2205
 msgid "The device could not measure the color spot correctly."
 msgstr "デバイスが色を正確に計測出来ませんでした。"
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2496
+#: ../src/gcm-calibrate-argyll.c:2218
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "ストリップ%sを読み取る準備が出来ました"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2501
+#: ../src/gcm-calibrate-argyll.c:2223
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
 msgstr "文字の隣の白い領域に測色計を置き、計測スイッチを押し続けてください。"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2505
+#: ../src/gcm-calibrate-argyll.c:2227
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -481,7 +483,7 @@ msgstr ""
 "を離してください。"
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2509
+#: ../src/gcm-calibrate-argyll.c:2231
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -490,229 +492,306 @@ msgstr ""
 "さい。"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2513
+#: ../src/gcm-calibrate-argyll.c:2235
 #, fuzzy
 msgid ""
 "If you make a mistake, just release the switch, and you'll get a chance to "
 "try again."
 msgstr "スイッチを離すのを失敗しただけであれば、再度試すことが出来ます。"
 
-#: ../src/gcm-calibrate-argyll.c:2592
+#: ../src/gcm-calibrate-argyll.c:2314
 msgid "Printing"
 msgstr "印刷中"
 
-#: ../src/gcm-calibrate-argyll.c:2600
+#: ../src/gcm-calibrate-argyll.c:2322
 msgid "Preparing the data for the printer."
-msgstr "プリンタ用のデータを準備中"
+msgstr "プリンター用のデータを準備中"
 
-#: ../src/gcm-calibrate-argyll.c:2607
+#: ../src/gcm-calibrate-argyll.c:2329
 msgid "Sending the targets to the printer."
-msgstr "プリンタに色見本を送信中"
+msgstr "プリンターに色見本を送信中"
 
-#: ../src/gcm-calibrate-argyll.c:2612
+#: ../src/gcm-calibrate-argyll.c:2334
 msgid "Printing the targets..."
 msgstr "色見本を印刷中..."
 
-#: ../src/gcm-calibrate-argyll.c:2617
+#: ../src/gcm-calibrate-argyll.c:2339
 msgid "The printing has finished."
 msgstr "印刷が終了しました。"
 
-#: ../src/gcm-calibrate-argyll.c:2622
+#: ../src/gcm-calibrate-argyll.c:2344
 msgid "The print was aborted."
 msgstr "印刷は中断されました。"
 
 #. TRANSLATORS: title, the hardware calibration device does not support projectors
-#: ../src/gcm-calibrate.c:284
+#: ../src/gcm-calibrate.c:296
 msgid "Could not calibrate and profile using this color measuring instrument"
 msgstr "測色計によるキャリブレート及びプロファイルが出来ません"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:287
+#: ../src/gcm-calibrate.c:299
 msgid ""
 "This color measuring instrument is not designed to support calibration and "
 "profiling projectors."
 msgstr ""
-"この測色計はプロジェクタのキャリブレーションおよびプロファイリングをサポート"
-"していません。"
+"この測色計はプロジェクターのキャリブレーションおよびプロファイリングをサポー"
+"トしていません。"
+
+#. TRANSLATORS: title, instrument is a hardware color calibration sensor
+#: ../src/gcm-calibrate.c:489
+msgid "Please attach instrument"
+msgstr "計測器を置いてください"
+
+#. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
+#: ../src/gcm-calibrate.c:496
+msgid ""
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square like the image below."
+msgstr "下の画像のような画面上の灰色の長方形の中心に測色計を置いてください。"
+
+#. TRANSLATORS: dialog message, ask user to attach device
+#: ../src/gcm-calibrate.c:499
+msgid ""
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square."
+msgstr "画面上の灰色の長方形の中心に測色計を置いてください。"
+
+#. TRANSLATORS: dialog message, ask user to attach device
+#: ../src/gcm-calibrate.c:506
+msgid ""
+"You will need to hold the device on the screen for the duration of the "
+"calibration."
+msgstr ""
+
+#: ../src/gcm-calibrate.c:511 ../src/gcm-calibrate.c:538
+#: ../src/gcm-calibrate.c:575
+msgid "Continue"
+msgstr "続き"
+
+#: ../src/gcm-calibrate.c:533 ../src/gcm-calibrate.c:567
+msgid "Please configure instrument"
+msgstr "計測器を設定してください"
+
+#: ../src/gcm-calibrate.c:542
+msgid ""
+"Please set the measuring instrument to screen mode like the image below."
+msgstr "下の画像のように計測器をスクリーンモードに設定してください。"
+
+#: ../src/gcm-calibrate.c:546
+msgid "Please set the measuring instrument to screen mode."
+msgstr "計測器をスクリーンモードに設定してください。"
+
+#: ../src/gcm-calibrate.c:579
+msgid ""
+"Please set the measuring instrument to calibration mode like the image below."
+msgstr "下の画像のような画面上の灰色の長方形の中心に測色計を置いてください。"
+
+#: ../src/gcm-calibrate.c:583
+msgid "Please set the measuring instrument to calibration mode."
+msgstr "計測器をキャリブレーションモードに設定してください。"
 
 #. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
 #. * aquired image of the calibration target, e.g. an image file that looks
 #. * a bit like this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:380
+#: ../src/gcm-calibrate.c:1643
 msgid "Select calibration target image"
 msgstr "キャリブレーション対象の画像を選択してください"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:393
+#: ../src/gcm-calibrate.c:1656
 msgid "Supported images files"
 msgstr "サポートされている画像ファイル"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:400 ../src/gcm-calibrate.c:452
+#: ../src/gcm-calibrate.c:1663 ../src/gcm-calibrate.c:1715
 #: ../src/gcm-viewer.c:456
 msgid "All files"
 msgstr "すべてのファイル"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:425
+#: ../src/gcm-calibrate.c:1688
 msgid "Select CIE reference values file"
 msgstr "CIEリファレンス値のファイルを選択"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:445
+#: ../src/gcm-calibrate.c:1708
 msgid "CIE values"
 msgstr "CIE値"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:518 ../src/gcm-viewer.c:428
+#: ../src/gcm-calibrate.c:1781 ../src/gcm-viewer.c:428
 msgid "Select ICC Profile File"
 msgstr "ICCプロファイルのファイルを選択"
 
-#: ../src/gcm-calibrate.c:521
+#: ../src/gcm-calibrate.c:1784
 msgid "Open"
 msgstr "開く"
 
-#: ../src/gcm-calibrate-main.c:149
-msgid "Calibration is not complete"
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:152
-msgid "Are you sure you want to cancel the calibration?"
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:155
+#. TRANSLATORS: command line option
+#: ../src/gcm-calibrate-helper.c:87
 #, fuzzy
-msgid "Continue calibration"
-msgstr "デバイスのキャリブレーション"
+msgid "Use this device for profiling"
+msgstr "ICCカラープロファイルを読み込みますか?"
 
-#: ../src/gcm-calibrate-main.c:159
-msgid "Cancel and close"
+#. TRANSLATORS: command line option
+#: ../src/gcm-calibrate-helper.c:90
+msgid "Make the window modal to this XID"
 msgstr ""
 
-#. TRANSLATORS: this is the sound description
-#: ../src/gcm-calibrate-main.c:290
-msgid "Profiling completed"
-msgstr "プロファイルが完了"
+#. TRANSLATORS: just dumps the EDID to disk
+#: ../src/gcm-calibrate-helper.c:103
+msgid "gcm-dispread"
+msgstr ""
+
+#. success
+#: ../src/gcm-calibrate-helper.c:169 ../src/gcm-calibrate-helper.c:199
+#, fuzzy
+#| msgid "Create _Profile"
+msgid "Wrote file"
+msgstr "プロファイルを作成(_P)"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:440 ../src/gcm-calibrate-main.c:1753
+#: ../src/gcm-calibrate-helper.c:211 ../src/gcm-calibrate-main.c:363
+#: ../src/gcm-calibrate-main.c:1679
 #, fuzzy
 msgid "Failed to calibrate"
 msgstr "デバイスのキャリブレーションに失敗"
 
+#: ../src/gcm-calibrate-main.c:147
+msgid "Calibration is not complete"
+msgstr ""
+
+#: ../src/gcm-calibrate-main.c:150
+msgid "Are you sure you want to cancel the calibration?"
+msgstr ""
+
+#: ../src/gcm-calibrate-main.c:153
+#, fuzzy
+msgid "Continue calibration"
+msgstr "デバイスのキャリブレーション"
+
+#: ../src/gcm-calibrate-main.c:157
+msgid "Cancel and close"
+msgstr ""
+
+#. TRANSLATORS: this is the sound description
+#: ../src/gcm-calibrate-main.c:205
+msgid "Profiling completed"
+msgstr "プロファイルが完了"
+
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:695
+#: ../src/gcm-calibrate-main.c:614
 #, fuzzy
 msgid "Calibrate your camera"
 msgstr "デバイスのキャリブレート"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:699
+#: ../src/gcm-calibrate-main.c:618
 #, fuzzy
 msgid "Calibrate your display"
 msgstr "デバイスのキャリブレート"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:703
+#: ../src/gcm-calibrate-main.c:622
 #, fuzzy
 msgid "Calibrate your printer"
-msgstr "プリンタのキャリブレーションに失敗"
+msgstr "プリンターのキャリブレーションに失敗"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:707
+#: ../src/gcm-calibrate-main.c:626
 #, fuzzy
 msgid "Calibrate your device"
 msgstr "デバイスのキャリブレート"
 
 #. TRANSLATORS: this is the final intro page text
-#: ../src/gcm-calibrate-main.c:719
+#: ../src/gcm-calibrate-main.c:638
 msgid ""
 "Any existing screen correction will be temporarily turned off and the "
 "brightness set to maximum."
 msgstr ""
 
 #. TRANSLATORS: this is the final intro page text
-#: ../src/gcm-calibrate-main.c:726
+#: ../src/gcm-calibrate-main.c:645
 msgid "You can cancel this process at any stage by pressing the cancel button."
 msgstr ""
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:732
+#: ../src/gcm-calibrate-main.c:651
 msgid "Introduction"
 msgstr ""
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:755
+#: ../src/gcm-calibrate-main.c:674
 msgid "All done!"
 msgstr ""
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:765
+#: ../src/gcm-calibrate-main.c:684
 msgid "The camera has been calibrated successfully."
 msgstr ""
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:769
+#: ../src/gcm-calibrate-main.c:688
 #, fuzzy
 msgid "The display has been calibrated successfully."
 msgstr "すぐにディスプレイ '%s' をキャリブレーションし直すべきです。"
 
-#: ../src/gcm-calibrate-main.c:770
+#: ../src/gcm-calibrate-main.c:689
 msgid "You may notice the screen is a slightly different color."
 msgstr ""
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:774
+#: ../src/gcm-calibrate-main.c:693
 #, fuzzy
 msgid "The printer has been calibrated successfully."
-msgstr "すぐにプリンタ '%s' をキャリブレーションし直すべきです。"
+msgstr "すぐにプリンター '%s' をキャリブレーションし直すべきです。"
 
-#: ../src/gcm-calibrate-main.c:775
+#: ../src/gcm-calibrate-main.c:694
 msgid "Documents printed from this device will be color managed."
 msgstr ""
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:779
+#: ../src/gcm-calibrate-main.c:698
 #, fuzzy
 msgid "The device has been calibrated successfully."
 msgstr "デバイスIDに利用できない文字があります。"
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:786
+#: ../src/gcm-calibrate-main.c:705
 msgid ""
 "To view details about the new profile or to undo the calibration visit the "
 "<a href=\"control-center://color\">control center</a>."
 msgstr ""
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:797 ../src/gcm-calibrate-main.c:1766
+#: ../src/gcm-calibrate-main.c:716 ../src/gcm-calibrate-main.c:1692
 msgid "Summary"
 msgstr "要約"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:821
+#: ../src/gcm-calibrate-main.c:740
 #, fuzzy
 msgid "Performing calibration"
 msgstr "デバイスのキャリブレーション"
 
-#: ../src/gcm-calibrate-main.c:834
+#: ../src/gcm-calibrate-main.c:753
 #, fuzzy
 msgid "Calibration is about to start"
 msgstr "キャリブレーションエラー"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:848
+#: ../src/gcm-calibrate-main.c:771
 msgid "Action"
 msgstr ""
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:871
+#: ../src/gcm-calibrate-main.c:794
 #, fuzzy
 msgid "Calibration checklist"
 msgstr "キャリブレーションエラー"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:878
+#: ../src/gcm-calibrate-main.c:801
 msgid ""
 "Before calibrating the display, it is recommended to configure your display "
 "with the following settings to get optimal results."
@@ -721,7 +800,7 @@ msgstr ""
 "ングでディスプレイを設定することをお勧めします。"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:881
+#: ../src/gcm-calibrate-main.c:804
 msgid ""
 "You may want to consult the owner's manual for your display on how to "
 "achieve these settings."
@@ -729,18 +808,18 @@ msgstr ""
 "設定の方法については、ディスプレイの取扱説明書を参照するのが良いでしょう。"
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:884
+#: ../src/gcm-calibrate-main.c:807
 msgid "Reset your display to the factory defaults."
 msgstr "工場出荷時の設定にディスプレイをリセットしてください。"
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:887
+#: ../src/gcm-calibrate-main.c:810
 msgid "Disable dynamic contrast if your display has this feature."
 msgstr ""
 "ディスプレイにダイナミックコントラスト機能がある場合、無効にしてください。"
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:890
+#: ../src/gcm-calibrate-main.c:813
 msgid ""
 "Configure your display with custom color settings and ensure the RGB "
 "channels are set to the same values."
@@ -749,18 +828,18 @@ msgstr ""
 "認してください。"
 
 #. TRANSLATORS: dialog message, addition to bullet item
-#: ../src/gcm-calibrate-main.c:893
+#: ../src/gcm-calibrate-main.c:816
 msgid "If custom color is not available then use a 6500K color temperature."
 msgstr "カスタムの色設定が出来ない場合は、6500Kの色温度を使ってください。"
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:896
+#: ../src/gcm-calibrate-main.c:819
 msgid ""
 "Adjust the display brightness to a comfortable level for prolonged viewing."
 msgstr "ディスプレイの輝度を長時間の利用時でも快適なレベルに調節します。"
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate-main.c:901
+#: ../src/gcm-calibrate-main.c:824
 msgid ""
 "For best results, the display should have been powered for at least 15 "
 "minutes before starting the calibration."
@@ -769,123 +848,124 @@ msgstr ""
 "と、最良の結果が得られます。"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:907
+#: ../src/gcm-calibrate-main.c:830
 msgid "Check Settings"
 msgstr ""
 
-#: ../src/gcm-calibrate-main.c:958
+#: ../src/gcm-calibrate-main.c:881
 msgid "Calibration and profiling software is not installed."
 msgstr ""
 "キャリブレーションとプロファイルのソフトウェアがインストールされていません。"
 
-#: ../src/gcm-calibrate-main.c:961
+#: ../src/gcm-calibrate-main.c:884
 msgid "These tools are required to build color profiles for devices."
 msgstr "デバイス用のカラープロファイルを作成するにはこれらのツールが必要です。"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:964
+#: ../src/gcm-calibrate-main.c:887
 msgid "More software is required!"
 msgstr ""
 
-#: ../src/gcm-calibrate-main.c:973
+#: ../src/gcm-calibrate-main.c:896
 msgid "Install required software"
 msgstr ""
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:983
+#: ../src/gcm-calibrate-main.c:906
 #, fuzzy
 msgid "Install Tools"
 msgstr "すぐにインストール"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate-main.c:1033
+#: ../src/gcm-calibrate-main.c:956
 msgid "Common color target files are not installed on this computer."
-msgstr "このコンピュータには汎用の色見本ファイルがインストールされていません。"
+msgstr ""
+"このコンピューターには汎用の色見本ファイルがインストールされていません。"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate-main.c:1035
+#: ../src/gcm-calibrate-main.c:958
 msgid "Color target files are needed to convert the image to a color profile."
 msgstr "画像をカラープロファイルに変換するには色見本ファイルが必要です。"
 
 #. TRANSLATORS: dialog message, asking if it's okay to install them
-#: ../src/gcm-calibrate-main.c:1037
+#: ../src/gcm-calibrate-main.c:960
 msgid "Do you want them to be installed?"
 msgstr "これらをインストールしますか?"
 
 #. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
-#: ../src/gcm-calibrate-main.c:1039
+#: ../src/gcm-calibrate-main.c:962
 msgid "If you already have the correct file, you can skip this step."
 msgstr "適切なファイルが既にあれば、この手順はスキップできます。"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1042
+#: ../src/gcm-calibrate-main.c:965
 msgid "Optional data files available"
 msgstr ""
 
-#: ../src/gcm-calibrate-main.c:1051
+#: ../src/gcm-calibrate-main.c:974
 #, fuzzy
 msgid "Install Now"
 msgstr "すぐにインストール"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1062
+#: ../src/gcm-calibrate-main.c:985
 #, fuzzy
 msgid "Install Targets"
 msgstr "インストール"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1082
+#: ../src/gcm-calibrate-main.c:1005
 msgid "CMP Digital Target 3"
 msgstr "CMP Digital Target 3"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1086
+#: ../src/gcm-calibrate-main.c:1009
 msgid "CMP DT 003"
 msgstr "CMP DT 003"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1090
+#: ../src/gcm-calibrate-main.c:1013
 msgid "Color Checker"
 msgstr "Color Checker"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1094
+#: ../src/gcm-calibrate-main.c:1017
 msgid "Color Checker DC"
 msgstr "Color Checker DC"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1098
+#: ../src/gcm-calibrate-main.c:1021
 msgid "Color Checker SG"
 msgstr "Color Checker SG"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1102
+#: ../src/gcm-calibrate-main.c:1025
 msgid "Hutchcolor"
 msgstr "Hutchcolor"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1106
+#: ../src/gcm-calibrate-main.c:1029
 msgid "i1 RGB Scan 1.4"
 msgstr "i1 RGB Scan 1.4"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1110
+#: ../src/gcm-calibrate-main.c:1033
 msgid "IT8.7/2"
 msgstr "IT8.7/2"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1114
+#: ../src/gcm-calibrate-main.c:1037
 msgid "Laser Soft DC Pro"
 msgstr "Laser Soft DC Pro"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1118
+#: ../src/gcm-calibrate-main.c:1041
 msgid "QPcard 201"
 msgstr "QPcard 201"
 
 #. TRANSLATORS: dialog message, preface. A calibration target looks like
 #. * this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate-main.c:1193
+#: ../src/gcm-calibrate-main.c:1119
 msgid ""
 "Before profiling the device, you have to manually capture an image of a "
 "calibration target and save it as a TIFF image file."
@@ -894,7 +974,7 @@ msgstr ""
 "で取り込み、TIFF画像ファイルとして保存しなければなりません。"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1198
+#: ../src/gcm-calibrate-main.c:1124
 msgid ""
 "Ensure that the contrast and brightness are not changed and color correction "
 "profiles have not been applied."
@@ -903,7 +983,7 @@ msgstr ""
 "いことを確認してください。"
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate-main.c:1201
+#: ../src/gcm-calibrate-main.c:1127
 msgid ""
 "The device sensor should have been cleaned prior to scanning and the output "
 "file resolution should be at least 200dpi."
@@ -912,7 +992,7 @@ msgstr ""
 "200dpi以上であることが推奨されます。"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1207
+#: ../src/gcm-calibrate-main.c:1133
 msgid ""
 "Ensure that the white-balance has not been modified by the camera and that "
 "the lens is clean."
@@ -921,122 +1001,122 @@ msgstr ""
 "してください。"
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1211
+#: ../src/gcm-calibrate-main.c:1137
 msgid "Please select the calibration target type."
 msgstr "キャリブレーションターゲットの種類を選択してください。"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1214
+#: ../src/gcm-calibrate-main.c:1140
 msgid "What target type do you have?"
 msgstr ""
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1246
+#: ../src/gcm-calibrate-main.c:1172
 msgid "Select Target"
 msgstr ""
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1285
+#: ../src/gcm-calibrate-main.c:1211
 msgid "Choose your display type"
 msgstr ""
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1292
+#: ../src/gcm-calibrate-main.c:1218
 msgid "Select the monitor type that is attached to your computer."
 msgstr ""
 
-#: ../src/gcm-calibrate-main.c:1294
+#: ../src/gcm-calibrate-main.c:1220
 msgid "LCD"
 msgstr "LCD"
 
-#: ../src/gcm-calibrate-main.c:1303
+#: ../src/gcm-calibrate-main.c:1229
 msgid "CRT"
 msgstr "CRT"
 
-#: ../src/gcm-calibrate-main.c:1312
+#: ../src/gcm-calibrate-main.c:1238
 msgid "Plasma"
 msgstr ""
 
-#: ../src/gcm-calibrate-main.c:1321
+#: ../src/gcm-calibrate-main.c:1247
 msgid "Projector"
-msgstr "プロジェクタ"
+msgstr "プロジェクター"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1333
+#: ../src/gcm-calibrate-main.c:1259
 msgid "Choose Display Type"
 msgstr ""
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1371
+#: ../src/gcm-calibrate-main.c:1297
 msgid "Choose your display target white point"
 msgstr ""
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1378
+#: ../src/gcm-calibrate-main.c:1304
 msgid ""
 "Most displays should be calibrated to a CIE D65 illuminant for general usage."
 msgstr ""
 
-#: ../src/gcm-calibrate-main.c:1380
+#: ../src/gcm-calibrate-main.c:1306
 msgid "CIE D50 (Printing and publishing)"
 msgstr ""
 
-#: ../src/gcm-calibrate-main.c:1389
+#: ../src/gcm-calibrate-main.c:1315
 msgid "CIE D55"
 msgstr ""
 
-#: ../src/gcm-calibrate-main.c:1398
+#: ../src/gcm-calibrate-main.c:1324
 msgid "CIE D65 (Photography and graphics)"
 msgstr ""
 
-#: ../src/gcm-calibrate-main.c:1408
+#: ../src/gcm-calibrate-main.c:1334
 msgid "CIE D75"
 msgstr ""
 
-#: ../src/gcm-calibrate-main.c:1417
+#: ../src/gcm-calibrate-main.c:1343
 msgid "Native (Already set manually)"
 msgstr ""
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1429
+#: ../src/gcm-calibrate-main.c:1355
 #, fuzzy
 msgid "Choose Display Whitepoint"
 msgstr "メディアの白色点:"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1467
+#: ../src/gcm-calibrate-main.c:1393
 #, fuzzy
 msgid "Choose profiling mode"
 msgstr "プロファイルのモードを選んでください"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1474
+#: ../src/gcm-calibrate-main.c:1400
 msgid ""
 "Please indicate if you want to profile a local printer, generate some test "
 "patches, or profile using existing test patches."
 msgstr ""
-"接続されたプリンタをプロファイルするのか、テストパッチを生成するのか、既存の"
-"テストパッチを使ってプロファイルするのかを指定してください。"
+"接続されたプリンターをプロファイルするのか、テストパッチを生成するのか、既存"
+"のテストパッチを使ってプロファイルするのかを指定してください。"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1506
+#: ../src/gcm-calibrate-main.c:1432
 #, fuzzy
 msgid "Calibration Mode"
 msgstr "キャリブレーションエラー"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1548
+#: ../src/gcm-calibrate-main.c:1474
 #, fuzzy
 msgid "Choose calibration quality"
 msgstr "再キャリブレーションが必要"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1555
+#: ../src/gcm-calibrate-main.c:1481
 msgid "Higher quality calibration requires many color samples and more time."
 msgstr ""
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1559
+#: ../src/gcm-calibrate-main.c:1485
 msgid ""
 "A higher precision profile provides higher accuracy in color matching but "
 "requires more time for reading the color patches."
@@ -1045,36 +1125,36 @@ msgstr ""
 "取るためのより長い時間も必要です。"
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1562
+#: ../src/gcm-calibrate-main.c:1488
 msgid "For a typical workflow, a normal precision profile is sufficient."
 msgstr "典型的な作業手順では、通常の精度で充分です。"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1567
+#: ../src/gcm-calibrate-main.c:1493
 msgid "The high precision profile also requires more paper and printer ink."
 msgstr "高精度のプロファイルでは、より多くの紙とインクも必要です。"
 
 #. TRANSLATORS: radio options for calibration precision
-#: ../src/gcm-calibrate-main.c:1572
+#: ../src/gcm-calibrate-main.c:1498
 msgid "Accurate"
 msgstr ""
 
-#: ../src/gcm-calibrate-main.c:1573
+#: ../src/gcm-calibrate-main.c:1499
 msgid "Normal"
 msgstr "Normal"
 
-#: ../src/gcm-calibrate-main.c:1574
+#: ../src/gcm-calibrate-main.c:1500
 msgid "Quick"
 msgstr ""
 
-#: ../src/gcm-calibrate-main.c:1581
+#: ../src/gcm-calibrate-main.c:1507
 #, c-format
 msgid "(about %i sheet of paper)"
 msgid_plural "(about %i sheets of paper)"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../src/gcm-calibrate-main.c:1592
+#: ../src/gcm-calibrate-main.c:1518
 #, c-format
 msgid "(about %i minute)"
 msgid_plural "(about %i minutes)"
@@ -1082,90 +1162,90 @@ msgstr[0] ""
 msgstr[1] ""
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1632
+#: ../src/gcm-calibrate-main.c:1558
 #, fuzzy
 msgid "Calibration Quality"
 msgstr "キャリブレーションエラー"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1668
+#: ../src/gcm-calibrate-main.c:1594
 #, fuzzy
 msgid "Profile title"
 msgstr "プロファイルのタイプ:"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1675
+#: ../src/gcm-calibrate-main.c:1601
 msgid "Choose a title to identify the profile on your system."
 msgstr ""
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1696
+#: ../src/gcm-calibrate-main.c:1622
 #, fuzzy
 msgid "Profile Title"
 msgstr "プロファイルのタイプ:"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1718
+#: ../src/gcm-calibrate-main.c:1644
 msgid "Insert sensor hardware"
 msgstr ""
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1725
+#: ../src/gcm-calibrate-main.c:1651
 msgid "You need to insert sensor hardware to continue."
 msgstr ""
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1731
+#: ../src/gcm-calibrate-main.c:1657
 #, fuzzy
 msgid "Sensor Check"
-msgstr "追加されたセンサ"
+msgstr "追加されたセンサー"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1760
+#: ../src/gcm-calibrate-main.c:1686
 msgid "The device could not be found. Ensure it is plugged in and turned on."
 msgstr ""
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:1991
+#: ../src/gcm-calibrate-main.c:1917
 #, fuzzy
 msgid "Unknown serial"
 msgstr "不明なモデル"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:1996
+#: ../src/gcm-calibrate-main.c:1922
 msgid "Unknown model"
 msgstr "不明なモデル"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2001
+#: ../src/gcm-calibrate-main.c:1927
 msgid "Unknown description"
 msgstr "不明な説明"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2006
+#: ../src/gcm-calibrate-main.c:1932
 msgid "Unknown manufacturer"
 msgstr "不明な製造元"
 
 #. TRANSLATORS: this is the copyright string, where it might be
 #. * "Copyright (c) 2009 Edward Scissorhands"
 #. * BIG RED FLASHING NOTE: YOU NEED TO USE ASCII ONLY
-#: ../src/gcm-calibrate-main.c:2013
+#: ../src/gcm-calibrate-main.c:1939
 msgid "Copyright (c)"
 msgstr "Copyright (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2122 ../src/gcm-picker.c:785
-#: ../src/gcm-viewer.c:1698
+#: ../src/gcm-calibrate-main.c:2057 ../src/gcm-picker.c:785
+#: ../src/gcm-viewer.c:1707
 msgid "Set the parent window to make this modal"
 msgstr "親ウインドウをモーダルにします"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-calibrate-main.c:2125
+#: ../src/gcm-calibrate-main.c:2060
 #, fuzzy
 msgid "Set the specific device to calibrate"
 msgstr "表示する特定のプロファイルを設定"
 
-#: ../src/gcm-calibrate-main.c:2163
+#: ../src/gcm-calibrate-main.c:2101
 #, fuzzy
 msgid "No device was specified!"
 msgstr "ファイル名が指定されていません"
@@ -1223,7 +1303,7 @@ msgstr "インストールするICCプロファイル"
 msgid "No filename specified"
 msgstr "ファイル名が指定されていません"
 
-#: ../src/gcm-import.c:131 ../src/gcm-viewer.c:1339
+#: ../src/gcm-import.c:131 ../src/gcm-viewer.c:1348
 msgid "Failed to open ICC profile"
 msgstr "ICCプロファイルを開けません"
 
@@ -1287,7 +1367,7 @@ msgstr "インポート"
 msgid "Show Details"
 msgstr "詳細"
 
-#: ../src/gcm-import.c:277 ../src/gcm-viewer.c:1372
+#: ../src/gcm-import.c:277 ../src/gcm-viewer.c:1381
 #, fuzzy
 msgid "Failed to import file"
 msgstr "ファイルのコピーに失敗"
@@ -1340,7 +1420,7 @@ msgstr "このウインドウのICCプロファイルがありません"
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:365
 msgid "Show xserver properties"
-msgstr "Xサーバの設定を表示"
+msgstr "Xサーバーの設定を表示"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:368
@@ -1581,86 +1661,76 @@ msgstr ""
 msgid "Mapping qualifier"
 msgstr ""
 
+#: ../src/gcm-viewer.c:780
+#, fuzzy
+#| msgid "Proofing devices"
+msgid "Mapping device"
+msgstr "デバイスの試験"
+
+#: ../src/gcm-viewer.c:781
+msgid "Delta-E average"
+msgstr ""
+
+#: ../src/gcm-viewer.c:782
+msgid "Delta-E maximum"
+msgstr ""
+
+#: ../src/gcm-viewer.c:783
+msgid "Delta-E RMS"
+msgstr ""
+
+#: ../src/gcm-viewer.c:784
+#, fuzzy
+msgid "Calibration device"
+msgstr "キャリブレーションエラー"
+
+#: ../src/gcm-viewer.c:785
+msgid "Screen surface finish"
+msgstr ""
+
+#: ../src/gcm-viewer.c:786
+#, fuzzy
+#| msgid "Continue"
+msgid "Connection type"
+msgstr "続き"
+
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1029
+#: ../src/gcm-viewer.c:1038
 msgid "Yes"
 msgstr "Yes"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1032
+#: ../src/gcm-viewer.c:1041
 msgid "No"
 msgstr "No"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:1144
+#: ../src/gcm-viewer.c:1153
 msgid "Delete this profile"
 msgstr "このプロファイルを削除"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:1147
+#: ../src/gcm-viewer.c:1156
 msgid "This profile cannot be deleted"
 msgstr "このプロファイルは削除できません"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-viewer.c:1701
+#: ../src/gcm-viewer.c:1710
 msgid "Set the specific profile to show"
 msgstr "表示する特定のプロファイルを設定"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: ../src/gcm-viewer.c:1704
+#: ../src/gcm-viewer.c:1713
 #, fuzzy
 msgid "Set the specific file to show"
 msgstr "表示する特定のプロファイルを設定"
 
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:2
-msgid "Ambient:"
-msgstr "環境光:"
+#~ msgid "Generating the patches"
+#~ msgstr "パッチを生成中"
 
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:6
-msgid "Color Temperature:"
-msgstr "色温度:"
-
-#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#: ../data/gcm-picker.ui.h:8
-msgid "Colorspace:"
-msgstr "色空間:"
-
-#. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:10
-msgid "Error:"
-msgstr "エラー:"
-
-#. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:12
-msgid "Lab (D50):"
-msgstr "Lab (D50):"
-
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:14
-msgid "Media whitepoint:"
-msgstr "メディアの白色点:"
-
-#. These are the values of the chosen color in Red, Green, Blue encoding
-#: ../data/gcm-picker.ui.h:16
-msgid "RGB:"
-msgstr "RGB:"
-
-#. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:18
-msgid "Results"
-msgstr "結果"
-
-#. the color representation
-#: ../data/gcm-picker.ui.h:20
-msgid "XYZ:"
-msgstr "XYZ:"
-
-#. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:22
-msgid "_Measure"
-msgstr "_Measure"
+#~ msgid ""
+#~ "Generating the patches that will be measured with the color instrument."
+#~ msgstr "測色計で読み取るパッチを生成中"
 
 #~ msgid "Applies device profile settings at session startup"
 #~ msgstr "セッションスタート時にデバイスプロファイルを適用"
@@ -1900,9 +1970,6 @@ msgstr "_Measure"
 
 #~ msgid "Graphs and presentations"
 #~ msgstr "グラフと見た目"
-
-#~ msgid "Proofing devices"
-#~ msgstr "デバイスの試験"
 
 #~ msgid "Blue:"
 #~ msgstr "ブルー:"
@@ -2186,9 +2253,6 @@ msgstr "_Measure"
 
 #~ msgid "Contrast:"
 #~ msgstr "コントラスト:"
-
-#~ msgid "Create _Profile"
-#~ msgstr "プロファイルを作成(_P)"
 
 #~ msgid "Do full screen correction"
 #~ msgstr "全画面の修正を実行"
