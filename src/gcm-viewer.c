@@ -777,6 +777,7 @@ struct {
 	{ CD_PROFILE_METADATA_DATA_SOURCE,		N_("Data source type") },
 	{ CD_PROFILE_METADATA_MAPPING_FORMAT,		N_("Mapping format") },
 	{ CD_PROFILE_METADATA_MAPPING_QUALIFIER,	N_("Mapping qualifier") },
+	{ CD_PROFILE_METADATA_MAPPING_DEVICE_ID,	N_("Mapping device") },
 	{ CD_PROFILE_METADATA_ACCURACY_DE76_AVG,	N_("Delta-E average") },
 	{ CD_PROFILE_METADATA_ACCURACY_DE76_MAX,	N_("Delta-E maximum") },
 	{ CD_PROFILE_METADATA_ACCURACY_DE76_RMS,	N_("Delta-E RMS") },

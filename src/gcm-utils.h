@@ -50,6 +50,9 @@
 #ifndef CD_PROFILE_METADATA_ACCURACY_DE76_RMS
 #define CD_PROFILE_METADATA_ACCURACY_DE76_RMS		"ACCURACY_dE76_rms"
 #endif
+#ifndef CD_PROFILE_METADATA_MAPPING_DEVICE_ID
+#define CD_PROFILE_METADATA_MAPPING_DEVICE_ID		"MAPPING_device_id"
+#endif
 
 /* DISTROS: you will have to patch if you have changed the name of these packages */
 #define GCM_PREFS_PACKAGE_NAME_SHARED_COLOR_TARGETS	"shared-color-targets"

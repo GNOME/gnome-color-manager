@@ -311,6 +311,9 @@ gcm_calib_set_extra_metadata (GcmCalibratePriv *calib,
 	_cmsDictAddEntryAscii (dict,
 			       CD_PROFILE_METADATA_MEASUREMENT_DEVICE,
 			       cd_sensor_kind_to_string (cd_sensor_get_kind (calib->sensor)));
+	_cmsDictAddEntryAscii (dict,
+			       CD_PROFILE_METADATA_MAPPING_DEVICE_ID,
+			       cd_device_get_id (calib->device));
 
 	/* just write dict */
 	ret = cmsWriteTag (lcms_profile, cmsSigMetaTag, dict);
