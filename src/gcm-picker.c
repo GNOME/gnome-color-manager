@@ -277,8 +277,8 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 					 &error);
 	if (tmp == NULL) {
 		g_warning ("failed to get sample: %s", error->message);
-		g_error_free (error);
-		goto out;
+		g_clear_error (&error);
+		goto out_unlock;
 	}
 	cd_color_copy_xyz (tmp, &last_sample);
 #if 0
@@ -291,17 +291,17 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 					 &error);
 	if (!ret) {
 		g_warning ("failed to get ambient: %s", error->message);
-		g_error_free (error);
-		goto out;
+		g_clear_error (&error);
+		goto out_unlock;
 	}
 #endif
-
+out_unlock:
 	/* unlock */
 	ret = cd_sensor_unlock_sync (sensor,
 				     NULL,
 				     &error);
 	if (!ret) {
-		g_warning ("failed to lock: %s", error->message);
+		g_warning ("failed to unlock: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
@@ -311,7 +311,6 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 out:
 	if (tmp != NULL)
 		cd_color_xyz_free (tmp);
-	return;
 }
 
 /**
