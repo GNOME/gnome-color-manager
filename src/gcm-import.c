@@ -39,21 +39,30 @@ static gboolean
 gcm_import_show_details (GtkWindow *window, const gchar *filename)
 {
 	gboolean ret;
-	gchar *cmdline;
-	guint xid;
 	GError *error = NULL;
+	GPtrArray *argv;
+	guint xid;
 
+	/* spawn new viewer async and modal to this dialog */
+	argv = g_ptr_array_new_with_free_func (g_free);
 	xid = gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET(window)));
-	cmdline = g_strdup_printf ("%s/%s --parent-window %u --file %s",
-				   BINDIR,
-				   "gcm-viewer",
-				   xid,
-				   filename);
-	ret = g_spawn_command_line_sync (cmdline, NULL, NULL, NULL, &error);
+	g_ptr_array_add (argv, g_build_filename (BINDIR, "gcm-viewer", NULL));
+	g_ptr_array_add (argv, g_strdup_printf ("--parent-window=%u", xid));
+	g_ptr_array_add (argv, g_strdup_printf ("--file=%s", filename));
+	g_ptr_array_add (argv, NULL);
+	ret = g_spawn_async (NULL,
+			     (gchar **) argv->pdata,
+			     NULL,
+			     0,
+			     NULL, NULL,
+			     NULL,
+			     &error);
+
 	if (!ret) {
 		g_warning ("failed to spawn viewer: %s", error->message);
 		g_error_free (error);
 	}
+	g_ptr_array_unref (argv);
 	return ret;
 }
 
