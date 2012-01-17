@@ -50,7 +50,6 @@ gcm_import_show_details (GtkWindow *window, const gchar *filename)
 	g_ptr_array_add (argv, g_strdup_printf ("--parent-window=%u", xid));
 	g_ptr_array_add (argv, g_strdup_printf ("--file=%s", filename));
 	g_ptr_array_add (argv, NULL);
-	g_debug ("spawning %s", cmdline);
 	ret = g_spawn_async (NULL,
 			     (gchar **) argv->pdata,
 			     NULL,
