@@ -63,8 +63,7 @@ gcm_hull_widget_clear (GcmHullWidget *hull_widget)
 
 	for (i=0; i<hull_widget->priv->models->len; i++) {
 		model = g_ptr_array_index (hull_widget->priv->models, i);
-		clutter_container_remove_actor (CLUTTER_CONTAINER (hull_widget->priv->stage),
-						model);
+		clutter_actor_remove_child (hull_widget->priv->stage, model);
 	}
 	g_ptr_array_set_size (hull_widget->priv->models, 0);
 }
@@ -125,8 +124,7 @@ gcm_hull_widget_add (GcmHullWidget *hull_widget,
 	gcm_hull_widget_set_actor_position (hull_widget, model);
 
 	/* add the actor to the stage */
-	clutter_container_add_actor (CLUTTER_CONTAINER (hull_widget->priv->stage),
-				     model);
+	clutter_actor_add_child (hull_widget->priv->stage, model);
 	g_ptr_array_add (hull_widget->priv->models,
 			 g_object_ref (model));
 
