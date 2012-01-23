@@ -890,6 +890,7 @@ static void
 gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 {
 	GtkWidget *widget;
+	GtkWindow *window;
 	GFile *file;
 	GcmProfile *gcm_profile = NULL;
 	GcmClut *clut_trc = NULL;
@@ -898,6 +899,7 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	const gchar *profile_manufacturer;
 	const gchar *profile_model ;
 	const gchar *profile_datetime;
+	const gchar *profile_title;
 	gchar *temp;
 	const gchar *filename;
 	gchar *basename = NULL;
@@ -1040,6 +1042,11 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 		/* TRANSLATORS: if the device has a VCGT profile */
 		gtk_label_set_label (GTK_LABEL (widget), _("No"));
 	}
+
+	/* set title */
+	window = GTK_WINDOW (gtk_builder_get_object (viewer->builder, "dialog_viewer"));
+	profile_title = cd_profile_get_title (profile);
+	gtk_window_set_title (window, profile_title);
 
 	/* set basename */
 	filename = cd_profile_get_filename (profile);
