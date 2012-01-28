@@ -164,6 +164,7 @@ gboolean	 gcm_calibrate_set_from_exif		(GcmCalibrate	*calibrate,
 const gchar	*gcm_calibrate_get_filename_result	(GcmCalibrate	*calibrate);
 const gchar	*gcm_calibrate_get_working_path		(GcmCalibrate	*calibrate);
 const gchar	*gcm_calibrate_get_basename		(GcmCalibrate	*calibrate);
+guint		 gcm_calibrate_get_screen_brightness	(GcmCalibrate	*calibrate);
 
 /* for gcm-calibrate-helper */
 gboolean	 gcm_calibrate_display_characterize	(GcmCalibrate	*calibrate,

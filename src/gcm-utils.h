@@ -53,6 +53,9 @@
 #ifndef CD_PROFILE_METADATA_MAPPING_DEVICE_ID
 #define CD_PROFILE_METADATA_MAPPING_DEVICE_ID		"MAPPING_device_id"
 #endif
+#ifndef CD_PROFILE_METADATA_SCREEN_BRIGHTNESS
+#define CD_PROFILE_METADATA_SCREEN_BRIGHTNESS		"SCREEN_brightness"
+#endif
 
 /* DISTROS: you will have to patch if you have changed the name of these packages */
 #define GCM_PREFS_PACKAGE_NAME_SHARED_COLOR_TARGETS	"shared-color-targets"

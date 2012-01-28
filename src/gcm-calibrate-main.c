@@ -280,7 +280,9 @@ gcm_calib_set_extra_metadata (GcmCalibratePriv *calib,
 	cmsHPROFILE lcms_profile;
 	gboolean ret = TRUE;
 	gchar *data = NULL;
+	gchar *screen_brightness_str = NULL;
 	gsize len;
+	guint percentage;
 
 	/* parse */
 	ret = g_file_get_contents (filename, &data, &len, error);
@@ -315,6 +317,15 @@ gcm_calib_set_extra_metadata (GcmCalibratePriv *calib,
 			       CD_PROFILE_METADATA_MAPPING_DEVICE_ID,
 			       cd_device_get_id (calib->device));
 
+	/* add the calibration brightness if an internal panel */
+	percentage = gcm_calibrate_get_screen_brightness (calib->calibrate);
+	if (percentage > 0) {
+		screen_brightness_str = g_strdup_printf ("%i", percentage);
+		_cmsDictAddEntryAscii (dict,
+				       CD_PROFILE_METADATA_SCREEN_BRIGHTNESS,
+				       screen_brightness_str);
+	}
+
 	/* just write dict */
 	ret = cmsWriteTag (lcms_profile, cmsSigMetaTag, dict);
 	if (!ret) {
@@ -335,6 +346,7 @@ gcm_calib_set_extra_metadata (GcmCalibratePriv *calib,
 	cmsSaveProfileToFile (lcms_profile, filename);
 	ret = TRUE;
 out:
+	g_free (screen_brightness_str);
 	g_free (data);
 	if (dict != NULL)
 		cmsDictFree (dict);

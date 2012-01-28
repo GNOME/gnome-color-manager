@@ -68,6 +68,7 @@ struct _GcmCalibratePrivate
 	gchar				*device;
 	gchar				*working_path;
 	guint				 old_brightness;
+	guint				 new_brightness;
 	guint				 target_whitepoint;
 	GtkWidget			*content_widget;
 	GtkWindow			*sample_window;
@@ -191,6 +192,15 @@ const gchar *
 gcm_calibrate_get_basename (GcmCalibrate *calibrate)
 {
 	return calibrate->priv->basename;
+}
+
+/**
+ * gcm_calibrate_get_screen_brightness:
+ **/
+guint
+gcm_calibrate_get_screen_brightness (GcmCalibrate *calibrate)
+{
+	return calibrate->priv->new_brightness;
 }
 
 /**
@@ -1489,8 +1499,10 @@ gcm_calibrate_set_brightness (GcmCalibrate *calibrate, CdDevice *device)
 			   error->message);
 		g_clear_error (&error);
 	}
+	/* FIXME: allow the user to set this */
+	calibrate->priv->new_brightness = 100;
 	ret = gcm_brightness_set_percentage (calibrate->priv->brightness,
-					     100,
+					     calibrate->priv->new_brightness,
 					     &error);
 	if (!ret) {
 		g_warning ("failed to set brightness: %s",
