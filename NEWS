@@ -1,3 +1,34 @@
+Version 3.3.5
+~~~~~~~~~~~~~
+Released: 2012-02-06
+
+* Translations
+ - Updated Japanese translation (Jiro Matsuzawa)
+ - Updated Slovenian translation (Matej Urbančič)
+ - Updated Spanish translation (Daniel Mustieles)
+ - Updated Spanish translation (Nicolás Satragno)
+ - Updated Traditional Chinese translation(Hong Kong and Taiwan) (Cheng-Chia Tseng)
+
+* New Features:
+ - Add ACCURACY_x to the list of translated metadata keys (Richard Hughes)
+ - Add CONNECTION_type to the list of translated metadata keys (Richard Hughes)
+ - Add SCREEN_surface to the list of translated metadata keys (Richard Hughes)
+ - Add support for MAPPING_device_id (Richard Hughes)
+ - Include the sensor type in the profile metadata (Richard Hughes)
+ - Save the internal panel brightness in the ICC profile (Richard Hughes)
+
+* Bugfix:
+ - Correctly spawn profiles with spaces in the filename when using gcm-import (Richard Hughes)
+ - Do not show blank metadata in the profile viewer (Richard Hughes)
+ - Do not use deprecated clutter API (Richard Hughes)
+ - Ensure the sensor is unlocked after failing to get a sample in gcm-picker (Richard Hughes)
+ - Limit display profiles to Single shaper matrix, to keep greyscale neutral (Pascal de Bruijn)
+ - Make the profile metadata accept regular expressions and add the OSD_x keys (Richard Hughes)
+ - Remove the final vestiges of gcm-session (Richard Hughes)
+ - Set the reference kind when calibrating a camera device (Richard Hughes)
+ - Show the profile title as the gcm-viewer window title (Richard Hughes)
+ - Smaller/faster display calibration target sets (Pascal de Bruijn)
+
 Version 3.3.3
 ~~~~~~~~~~~~~
 Released: 2011-12-19
