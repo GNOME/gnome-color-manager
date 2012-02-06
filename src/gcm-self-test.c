@@ -426,8 +426,12 @@ gcm_test_calibrate_func (void)
 	ret = gcm_calibrate_set_from_exif (GCM_CALIBRATE(calibrate), TESTDATADIR "/test.tif", &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	model = gcm_calibrate_get_profile_model (calibrate);
-	manufacturer = gcm_calibrate_get_profile_manufacturer (calibrate);
+
+	/* get device properties */
+	g_object_get (calibrate,
+		      "manufacturer", &manufacturer,
+		      "model", &model,
+		      NULL);
 	g_assert_cmpstr (model, ==, "NIKON D60");
 	g_assert_cmpstr (manufacturer, ==, "NIKON CORPORATION");
 	g_free (model);
@@ -673,6 +677,7 @@ gcm_test_utils_func (void)
 	gboolean ret;
 	gchar *text;
 	gchar *filename;
+	GFile *file;
 	GFile *dest;
 
 	text = gcm_utils_linkify ("http://www.dave.org is text http://www.hughsie.com that needs to be linked to http://www.bbc.co.uk really");
@@ -763,8 +768,6 @@ gcm_test_named_color_func (void)
 int
 main (int argc, char **argv)
 {
-	if (! g_thread_supported ())
-		g_thread_init (NULL);
 	gtk_init (&argc, &argv);
 	g_test_init (&argc, &argv, NULL);
 
