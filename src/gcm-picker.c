@@ -674,9 +674,9 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 
 	/* get UI */
 	builder = gtk_builder_new ();
-	retval = gtk_builder_add_from_file (builder,
-					    GCM_DATA "/gcm-picker.ui",
-					    &error);
+	retval = gtk_builder_add_from_resource (builder,
+						"/org/gnome/color-manager/gcm-picker.ui",
+						&error);
 	if (retval == 0) {
 		g_warning ("failed to load ui: %s", error->message);
 		g_error_free (error);

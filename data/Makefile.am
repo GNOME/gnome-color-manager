@@ -14,7 +14,7 @@ desktop_in_files =					\
 	gcm-import.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
-pkgdata_DATA =						\
+UI_FILES =						\
 	gcm-picker.ui					\
 	gcm-viewer.ui
 
@@ -22,7 +22,7 @@ EXTRA_DIST =						\
 	$(service_in_files)				\
 	$(autostart_in_files)				\
 	$(desktop_in_files)				\
-	$(pkgdata_DATA)
+	$(UI_FILES)
 
 clean-local :
 	rm -f *~

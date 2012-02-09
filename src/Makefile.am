@@ -175,6 +175,8 @@ gcm_viewer_SOURCES =					\
 	gcm-cell-renderer-profile-text.h		\
 	gcm-cell-renderer-color.c			\
 	gcm-cell-renderer-color.h			\
+	gcm-viewer-resources.c				\
+	gcm-viewer-resources.h				\
 	gcm-viewer.c
 
 gcm_viewer_LDADD =					\
@@ -195,6 +197,8 @@ gcm_viewer_CFLAGS =					\
 	$(WARNINGFLAGS_C)
 
 gcm_picker_SOURCES =					\
+	gcm-picker-resources.c				\
+	gcm-picker-resources.h				\
 	gcm-picker.c
 
 gcm_picker_LDADD =					\
@@ -254,6 +258,27 @@ gcm_self_test_CFLAGS = $(AM_CFLAGS) $(WARNINGFLAGS_C)
 TESTS = gcm-self-test
 
 endif
+
+gcm-picker-resources.c: gcm-picker.gresource.xml ../data/gcm-picker.ui
+	glib-compile-resources --target=$@ --sourcedir=$(top_srcdir)/data --generate-source --c-name gcm $(srcdir)/gcm-picker.gresource.xml
+gcm-picker-resources.h: gcm-picker.gresource.xml
+	glib-compile-resources --target=$@ --sourcedir=$(top_srcdir)/data --generate-header --c-name gcm $(srcdir)/gcm-picker.gresource.xml
+
+gcm-viewer-resources.c: gcm-viewer.gresource.xml ../data/gcm-viewer.ui
+	glib-compile-resources --target=$@ --sourcedir=$(top_srcdir)/data --generate-source --c-name gcm $(srcdir)/gcm-viewer.gresource.xml
+gcm-viewer-resources.h: gcm-viewer.gresource.xml
+	glib-compile-resources --target=$@ --sourcedir=$(top_srcdir)/data --generate-header --c-name gcm $(srcdir)/gcm-viewer.gresource.xml
+
+BUILT_SOURCES =						\
+	gcm-picker-resources.c				\
+	gcm-picker-resources.h				\
+	gcm-viewer-resources.c				\
+	gcm-viewer-resources.h				\
+	$(NULL)
+
+EXTRA_DIST =						\
+	gcm-picker.gresource.xml			\
+	gcm-viewer.gresource.xml
 
 clean-local:
 	rm -f *~

@@ -1444,9 +1444,9 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 
 	/* get UI */
 	viewer->builder = gtk_builder_new ();
-	retval = gtk_builder_add_from_file (viewer->builder,
-					    GCM_DATA "/gcm-viewer.ui",
-					    &error);
+	retval = gtk_builder_add_from_resource (viewer->builder,
+						"/org/gnome/color-manager/gcm-viewer.ui",
+						&error);
 	if (retval == 0) {
 		g_warning ("failed to load ui: %s",
 			   error->message);
