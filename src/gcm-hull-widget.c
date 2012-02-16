@@ -328,7 +328,7 @@ gcm_hull_widget_init (GcmHullWidget *hull_widget)
 	color.green = 120;
 	color.blue = 120;
 	color.alpha = 0;
-	clutter_stage_set_color (CLUTTER_STAGE (hull_widget->priv->stage), &color);
+	clutter_actor_set_background_color (CLUTTER_ACTOR (hull_widget->priv->stage), &color);
 	g_signal_connect (hull_widget->priv->stage, "allocation-changed",
 			  G_CALLBACK (gcm_hull_widget_stage_allocation_changed_cb),
 			  hull_widget);

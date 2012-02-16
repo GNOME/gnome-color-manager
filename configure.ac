@@ -100,12 +100,12 @@ AC_ARG_ENABLE(clutter, AS_HELP_STRING([--enable-clutter],[Enable clutter for 3D 
 if test x$enable_clutter != xno; then
 	# test for new mash
 	PKG_CHECK_MODULES(CLUTTER,
-			  clutter-1.0 >= 1.9.4 clutter-gtk-1.0 mash-0.2,
+			  clutter-1.0 >= 1.9.11 clutter-gtk-1.0 mash-0.2,
 			  has_clutter=yes, has_clutter=no)
 	if test x$has_clutter == xno; then
 		# test for old mash
 		PKG_CHECK_MODULES(CLUTTER,
-				  clutter-1.0 >= 1.9.4 clutter-gtk-1.0 mash-0.1,
+				  clutter-1.0 >= 1.9.11 clutter-gtk-1.0 mash-0.1,
 				  has_clutter=yes, has_clutter=no)
 	fi
 else
