@@ -2239,6 +2239,23 @@ g_debug ("title=%s, message=%s", title_str, string->str);
 		goto out;
 	}
 
+	/* update the percentage bar */
+	if (g_str_has_prefix (line, "patch ")) {
+		guint total;
+		guint current;
+		split = g_strsplit (line, " ", -1);
+		if (g_strv_length (split) != 4) {
+			g_warning ("invalid update format: %s", line);
+			goto out;
+		}
+		current = atoi (split[1]);
+		total = atoi (split[3]);
+		if (total > 0) {
+			gcm_calibrate_set_progress (GCM_CALIBRATE (calibrate_argyll),
+						    total * current / 100);
+		}
+	}
+
 	/* report a warning so friendly people report bugs */
 	g_warning ("VTE: could not screenscrape: %s", line);
 out:
