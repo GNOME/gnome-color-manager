@@ -372,8 +372,12 @@ gcm_calib_start_idle_cb (gpointer user_data)
 				    calib->main_window,
 				    &error);
 	if (!ret) {
-		gcm_calibrate_set_title (calib->calibrate, _("Failed to calibrate"));
-		gcm_calibrate_set_message (calib->calibrate, error->message);
+		gcm_calibrate_set_title (calib->calibrate,
+					 _("Failed to calibrate"),
+					 GCM_CALIBRATE_UI_ERROR);
+		gcm_calibrate_set_message (calib->calibrate,
+					   error->message,
+					   GCM_CALIBRATE_UI_ERROR);
 		gcm_calibrate_set_image (calib->calibrate, NULL);
 
 		g_warning ("failed to calibrate: %s",

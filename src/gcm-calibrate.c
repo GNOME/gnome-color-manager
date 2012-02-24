@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2011 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2012 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -72,8 +72,8 @@ struct _GcmCalibratePrivate
 	guint				 target_whitepoint;
 	GtkWidget			*content_widget;
 	GtkWindow			*sample_window;
-	GPtrArray			*old_message;
-	GPtrArray			*old_title;
+	gchar				*old_message;
+	gchar				*old_title;
 	gboolean			 sensor_on_screen;
 };
 
@@ -349,6 +349,23 @@ gcm_calibrate_interaction (GcmCalibrate *calibrate, GtkResponseType response)
 {
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
 
+	/* restore old status */
+	if (response == GTK_RESPONSE_OK) {
+		if (calibrate->priv->old_title != NULL) {
+			gcm_calibrate_set_title (calibrate,
+						 calibrate->priv->old_title,
+						 GCM_CALIBRATE_UI_POST_INTERACTION);
+		}
+		if (calibrate->priv->old_message != NULL) {
+			gcm_calibrate_set_message (calibrate,
+						   calibrate->priv->old_message,
+						   GCM_CALIBRATE_UI_POST_INTERACTION);
+		}
+
+		/* ensure the picture is cleared */
+		gcm_calibrate_set_image (calibrate, NULL);
+	}
+
 	/* coldplug source */
 	if (klass->interaction == NULL)
 		return;
@@ -496,7 +513,9 @@ gcm_calibrate_interaction_attach (GcmCalibrate *calibrate)
 	GString *message;
 
 	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
-	gcm_calibrate_set_title (calibrate, _("Please attach instrument"));
+	gcm_calibrate_set_title (calibrate,
+				 _("Please attach instrument"),
+				 GCM_CALIBRATE_UI_INTERACTION);
 
 	/* different messages with or without image */
 	message = g_string_new ("");
@@ -516,7 +535,9 @@ gcm_calibrate_interaction_attach (GcmCalibrate *calibrate)
 		g_string_append (message, _("You will need to hold the device on the screen for the duration of the calibration."));
 	}
 
-	gcm_calibrate_set_message (calibrate, message->str);
+	gcm_calibrate_set_message (calibrate,
+				   message->str,
+				   GCM_CALIBRATE_UI_INTERACTION);
 	gcm_calibrate_set_image (calibrate, filename);
 	gcm_calibrate_interaction_required (calibrate, _("Continue"));
 
@@ -540,7 +561,8 @@ gcm_calibrate_interaction_screen (GcmCalibrate *calibrate)
 
 	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
 	gcm_calibrate_set_title (calibrate,
-				 _("Please configure instrument"));
+				 _("Please configure instrument"),
+				 GCM_CALIBRATE_UI_INTERACTION);
 
 	/* get the image, if we have one */
 	filename = gcm_calibrate_get_sensor_image_screen (calibrate);
@@ -549,11 +571,13 @@ gcm_calibrate_interaction_screen (GcmCalibrate *calibrate)
 	if (filename != NULL) {
 		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
 		gcm_calibrate_set_message (calibrate,
-				   _("Please set the measuring instrument to screen mode like the image below."));
+					   _("Please set the measuring instrument to screen mode like the image below."),
+					   GCM_CALIBRATE_UI_INTERACTION);
 	} else {
 		/* TRANSLATORS: this is when the user has to change a setting on the sensor */
 		gcm_calibrate_set_message (calibrate,
-				   _("Please set the measuring instrument to screen mode."));
+					   _("Please set the measuring instrument to screen mode."),
+					   GCM_CALIBRATE_UI_INTERACTION);
 	}
 
 	/* play sound from the naming spec */
@@ -574,7 +598,8 @@ gcm_calibrate_interaction_calibrate (GcmCalibrate *calibrate)
 
 	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
 	gcm_calibrate_set_title (calibrate,
-				 _("Please configure instrument"));
+				 _("Please configure instrument"),
+				 GCM_CALIBRATE_UI_INTERACTION);
 
 	/* block for a response */
 	g_debug ("blocking waiting for user input");
@@ -586,11 +611,13 @@ gcm_calibrate_interaction_calibrate (GcmCalibrate *calibrate)
 	if (filename != NULL) {
 		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
 		gcm_calibrate_set_message (calibrate,
-				   _("Please set the measuring instrument to calibration mode like the image below."));
+					   _("Please set the measuring instrument to calibration mode like the image below."),
+					   GCM_CALIBRATE_UI_INTERACTION);
 	} else {
 		/* TRANSLATORS: this is when the user has to change a setting on the sensor */
 		gcm_calibrate_set_message (calibrate,
-				   _("Please set the measuring instrument to calibration mode."));
+					   _("Please set the measuring instrument to calibration mode."),
+					   GCM_CALIBRATE_UI_INTERACTION);
 	}
 
 	/* play sound from the naming spec */
@@ -2050,21 +2077,32 @@ out:
 }
 
 void
-gcm_calibrate_set_title (GcmCalibrate *calibrate, const gchar *title)
+gcm_calibrate_set_title (GcmCalibrate *calibrate,
+			 const gchar *title,
+			 GcmCalibrateUiType ui_type)
 {
 	g_signal_emit (calibrate, signals[SIGNAL_TITLE_CHANGED], 0, title);
-	g_ptr_array_add (calibrate->priv->old_title, g_strdup (title));
+	if (ui_type == GCM_CALIBRATE_UI_STATUS && title != NULL) {
+		g_free (calibrate->priv->old_title);
+		calibrate->priv->old_title = g_strdup (title);
+	}
 }
 
 void
-gcm_calibrate_set_message (GcmCalibrate *calibrate, const gchar *message)
+gcm_calibrate_set_message (GcmCalibrate *calibrate,
+			   const gchar *message,
+			   GcmCalibrateUiType ui_type)
 {
 	g_signal_emit (calibrate, signals[SIGNAL_MESSAGE_CHANGED], 0, message);
-	g_ptr_array_add (calibrate->priv->old_message, g_strdup (message));
+	if (ui_type == GCM_CALIBRATE_UI_STATUS && message != NULL) {
+		g_free (calibrate->priv->old_message);
+		calibrate->priv->old_message = g_strdup (message);
+	}
 }
 
 void
-gcm_calibrate_set_image (GcmCalibrate *calibrate, const gchar *filename)
+gcm_calibrate_set_image (GcmCalibrate *calibrate,
+			 const gchar *filename)
 {
 	g_signal_emit (calibrate, signals[SIGNAL_IMAGE_CHANGED], 0, filename);
 }
@@ -2079,16 +2117,6 @@ void
 gcm_calibrate_interaction_required (GcmCalibrate *calibrate, const gchar *button_text)
 {
 	g_signal_emit (calibrate, signals[SIGNAL_INTERACTION_REQUIRED], 0, button_text);
-}
-
-void
-gcm_calibrate_pop (GcmCalibrate *calibrate)
-{
-	const gchar *tmp;
-	tmp = g_ptr_array_index (calibrate->priv->old_title, calibrate->priv->old_title->len - 2);
-	g_signal_emit (calibrate, signals[SIGNAL_TITLE_CHANGED], 0, tmp);
-	tmp = g_ptr_array_index (calibrate->priv->old_message, calibrate->priv->old_message->len - 2);
-	g_signal_emit (calibrate, signals[SIGNAL_MESSAGE_CHANGED], 0, tmp);
 }
 
 /**
@@ -2403,8 +2431,6 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 
 	// FIXME: this has to be per-run specific
 	calibrate->priv->working_path = g_strdup ("/tmp");
-	calibrate->priv->old_title = g_ptr_array_new_with_free_func (g_free);
-	calibrate->priv->old_message = g_ptr_array_new_with_free_func (g_free);
 }
 
 /**
@@ -2427,8 +2453,8 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (priv->device);
 	g_free (priv->serial);
 	g_free (priv->working_path);
-	g_ptr_array_unref (calibrate->priv->old_title);
-	g_ptr_array_unref (calibrate->priv->old_message);
+	g_free (calibrate->priv->old_title);
+	g_free (calibrate->priv->old_message);
 	gtk_widget_destroy (GTK_WIDGET (calibrate->priv->sample_window));
 	g_object_unref (priv->brightness);
 

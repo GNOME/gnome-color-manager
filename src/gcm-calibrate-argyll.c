@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2012 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -323,11 +323,13 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, G
 
 	/* TRANSLATORS: title, default paramters needed to calibrate_argyll */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Getting default parameters"));
+				 _("Getting default parameters"),
+				 GCM_CALIBRATE_UI_STATUS);
 
 	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("This pre-calibrates the screen by sending colored and gray patches to your screen and measuring them with the hardware device."));
+				   _("This pre-calibrates the screen by sending colored and gray patches to your screen and measuring them with the hardware device."),
+				   GCM_CALIBRATE_UI_STATUS);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -414,10 +416,13 @@ gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll, G
 
 	/* TRANSLATORS: title, patches are specific colours used in calibration */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Reading the patches"));
+				 _("Reading the patches"),
+				 GCM_CALIBRATE_UI_STATUS);
+
 	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Reading the patches using the color measuring instrument."));
+				   _("Reading the patches using the color measuring instrument."),
+				   GCM_CALIBRATE_UI_STATUS);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -514,10 +519,13 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 
 	/* TRANSLATORS: title, drawing means painting to the screen */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Drawing the patches"));
+				 _("Drawing the patches"),
+				 GCM_CALIBRATE_UI_STATUS);
+
 	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Drawing the generated patches to the screen, which will then be measured by the hardware device."));
+				   _("Drawing the generated patches to the screen, which will then be measured by the hardware device."),
+				   GCM_CALIBRATE_UI_STATUS);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -610,10 +618,13 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 
 	/* TRANSLATORS: title, a profile is a ICC file */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Generating the profile"));
+				 _("Generating the profile"),
+				 GCM_CALIBRATE_UI_STATUS);
+
 	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Generating the ICC color profile that can be used with this screen."));
+				   _("Generating the ICC color profile that can be used with this screen."),
+				   GCM_CALIBRATE_UI_STATUS);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -773,10 +784,13 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError *
 
 	/* TRANSLATORS: title, a profile is a ICC file */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Copying files"));
+				 _("Copying files"),
+				 GCM_CALIBRATE_UI_STATUS);
+
 	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Copying source image, chart data and CIE reference values."));
+				   _("Copying source image, chart data and CIE reference values."),
+				   GCM_CALIBRATE_UI_STATUS);
 
 	/* build filenames */
 	filename = g_strdup_printf ("%s.tif", basename);
@@ -845,10 +859,13 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GErro
 
 	/* TRANSLATORS: title, drawing means painting to the screen */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Measuring the patches"));
+				 _("Measuring the patches"),
+				 GCM_CALIBRATE_UI_STATUS);
+
 	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Detecting the reference patches and measuring them."));
+				   _("Detecting the reference patches and measuring them."),
+				   GCM_CALIBRATE_UI_STATUS);
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("scanin", error);
@@ -951,10 +968,13 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 
 	/* TRANSLATORS: title, a profile is a ICC file */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Generating the profile"));
+				 _("Generating the profile"),
+				 GCM_CALIBRATE_UI_STATUS);
+
 	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Generating the ICC color profile that can be used with this device."));
+				   _("Generating the ICC color profile that can be used with this device."),
+				   GCM_CALIBRATE_UI_STATUS);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -1213,7 +1233,6 @@ gcm_calibrate_argyll_interaction (GcmCalibrate *calibrate, GtkResponseType respo
 #ifdef HAVE_VTE
 			vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), priv->argyllcms_ok, 1);
 #endif
-			gcm_calibrate_pop (calibrate);
 			priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 		}
 
@@ -1222,7 +1241,6 @@ gcm_calibrate_argyll_interaction (GcmCalibrate *calibrate, GtkResponseType respo
 			g_main_loop_quit (priv->loop);
 			priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 		}
-
 		goto out;
 	}
 
@@ -1311,11 +1329,13 @@ gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_arg
 
 	/* TRANSLATORS: title, patches are specific colors used in calibration */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Printing patches"));
+				 _("Printing patches"),
+				 GCM_CALIBRATE_UI_STATUS);
 
 	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Rendering the patches for the selected paper and ink."));
+				   _("Rendering the patches for the selected paper and ink."),
+				   GCM_CALIBRATE_UI_STATUS);
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -1637,11 +1657,13 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, CdDevice *device, CdSenso
 	if (print_kind == GCM_CALIBRATE_PRINT_KIND_LOCAL) {
 		/* TRANSLATORS: title, patches are specific colours used in calibration */
 		gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-					 _("Wait for the ink to dry"));
+					 _("Wait for the ink to dry"),
+					 GCM_CALIBRATE_UI_STATUS);
 
 		/* TRANSLATORS: dialog message */
 		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-					   _("Please wait a few minutes for the ink to dry. Profiling damp ink will produce a poor profile and may damage your color measuring instrument."));
+					   _("Please wait a few minutes for the ink to dry. Profiling damp ink will produce a poor profile and may damage your color measuring instrument."),
+					   GCM_CALIBRATE_UI_STATUS);
 
 	}
 
@@ -1809,11 +1831,13 @@ gcm_calibrate_argyll_device (GcmCalibrate *calibrate, CdDevice *device, CdSensor
 
 	/* TRANSLATORS: title, instrument refers to a calibration device */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Set up instrument"));
+				 _("Set up instrument"),
+				 GCM_CALIBRATE_UI_STATUS);
 
 	/* TRANSLATORS: dialog message */
 	gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("Setting up the instrument for use…"));
+				   _("Setting up the instrument for use…"),
+				   GCM_CALIBRATE_UI_STATUS);
 
 
 	/* step 1 */
@@ -2016,11 +2040,13 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	if (g_strstr_len (line, -1, "Measurement misread") != NULL) {
 		/* TRANSLATORS: title, the calibration failed */
 		gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-					 _("Calibration error"));
+					 _("Calibration error"),
+					 GCM_CALIBRATE_UI_ERROR);
 
 		/* TRANSLATORS: message, the sample was not read correctly */
 		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-					   _("The sample could not be read at this time."));
+					   _("The sample could not be read at this time."),
+					   GCM_CALIBRATE_UI_ERROR);
 
 
 		/* set state */
@@ -2080,28 +2106,34 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 
 		/* TRANSLATORS: title, the calibration failed */
 		gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-					 _("Calibration error"));
+					 _("Calibration error"),
+					 GCM_CALIBRATE_UI_ERROR);
 
 		if (g_strstr_len (line, -1, "No PLD firmware pattern is available") != NULL) {
 			/* TRANSLATORS: message, no firmware is available */
 			gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("No firmware is installed for this instrument."));
+						   _("No firmware is installed for this instrument."),
+						   GCM_CALIBRATE_UI_ERROR);
 		} else if (g_strstr_len (line, -1, "Pattern match wasn't good enough") != NULL) {
 			/* TRANSLATORS: message, the image wasn't good enough */
 			gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("The pattern match wasn't good enough. Ensure you have the correct type of target selected."));
+						   _("The pattern match wasn't good enough. Ensure you have the correct type of target selected."),
+						   GCM_CALIBRATE_UI_ERROR);
 		} else if (g_strstr_len (line, -1, "Aprox. fwd matrix unexpectedly singular") != NULL ||
 			   g_strstr_len (line, -1, "Inverting aprox. fwd matrix failed") != NULL) {
 			/* TRANSLATORS: message, the sensor got no readings */
 			gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("The measuring instrument got no valid readings. Please ensure the aperture is fully open."));
+						   _("The measuring instrument got no valid readings. Please ensure the aperture is fully open."),
+						   GCM_CALIBRATE_UI_ERROR);
 		} else if (g_strstr_len (line, -1, "Device or resource busy") != NULL) {
 			/* TRANSLATORS: message, the colorimeter has got confused */
 			gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   _("The measuring instrument is busy and is not starting up. Please remove the USB plug and re-insert before trying to use this device."));
+						   _("The measuring instrument is busy and is not starting up. Please remove the USB plug and re-insert before trying to use this device."),
+						   GCM_CALIBRATE_UI_ERROR);
 		} else {
 			gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-				   found + 8);
+						   found + 8,
+						   GCM_CALIBRATE_UI_ERROR);
 		}
 
 
@@ -2134,11 +2166,13 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	if (g_str_has_prefix (line, "Strip read failed due to misread")) {
 		/* TRANSLATORS: dialog title */
 		gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-					 _("Reading target"));
+					 _("Reading target"),
+					 GCM_CALIBRATE_UI_ERROR);
 
 		/* TRANSLATORS: message, no firmware is available */
 		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-					   _("Failed to read the strip correctly."));
+					   _("Failed to read the strip correctly."),
+					   GCM_CALIBRATE_UI_ERROR);
 
 		/* set state */
 		priv->argyllcms_ok = "\n";
@@ -2158,11 +2192,13 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 	if (g_str_has_prefix (line, "Sample read failed due to misread")) {
 		/* TRANSLATORS: dialog title */
 		gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-					 _("Reading sample"));
+					 _("Reading sample"),
+					 GCM_CALIBRATE_UI_ERROR);
 
 		/* TRANSLATORS: message, no firmware is available */
 		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-					   _("Failed to read the color sample correctly."));
+					   _("Failed to read the color sample correctly."),
+					   GCM_CALIBRATE_UI_ERROR);
 
 		/* set state */
 		priv->argyllcms_ok = "\n";
@@ -2198,8 +2234,6 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		g_string_append (string, _("If you've really measured the right one, it's okay, it could just be unusual paper."));
 		g_string_append (string, "\n\n");
 
-g_debug ("title=%s, message=%s", title_str, string->str);
-
 		/* push new messages into the UI */
 		gcm_calibrate_set_image (GCM_CALIBRATE (calibrate_argyll), "scan-target-bad.svg");
 
@@ -2222,11 +2256,13 @@ g_debug ("title=%s, message=%s", title_str, string->str);
 
 		/* TRANSLATORS: title, the calibration failed */
 		gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-					 _("Device Error"));
+					 _("Device Error"),
+					 GCM_CALIBRATE_UI_ERROR);
 
 		/* TRANSLATORS: message, the sample was not read correctly */
 		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-					   _("The device could not measure the color spot correctly."));
+					   _("The device could not measure the color spot correctly."),
+					   GCM_CALIBRATE_UI_ERROR);
 
 		/* set state */
 		priv->argyllcms_ok = " ";
@@ -2276,12 +2312,13 @@ g_debug ("title=%s, message=%s", title_str, string->str);
 		total = atoi (split[3]);
 		if (total > 0) {
 			gcm_calibrate_set_progress (GCM_CALIBRATE (calibrate_argyll),
-						    total * current / 100);
+						    current * 100 / total);
 		}
+		goto out;
 	}
 
 	/* report a warning so friendly people report bugs */
-	g_warning ("VTE: could not screenscrape: %s", line);
+	g_warning ("VTE: could not screenscrape: '%s'", line);
 out:
 	g_free (title_str);
 	g_strfreev (split);
@@ -2352,7 +2389,8 @@ gcm_calibrate_argyll_status_changed_cb (GcmPrint *print, GtkPrintStatus status, 
 {
 	/* TRANSLATORS: title, printing reference files to media */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
-				 _("Printing"));
+				 _("Printing"),
+				 GCM_CALIBRATE_UI_STATUS);
 
 	switch (status) {
 	case GTK_PRINT_STATUS_INITIAL:
@@ -2360,29 +2398,34 @@ gcm_calibrate_argyll_status_changed_cb (GcmPrint *print, GtkPrintStatus status, 
 	case GTK_PRINT_STATUS_GENERATING_DATA:
 		/* TRANSLATORS: dialog message */
 		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-					   _("Preparing the data for the printer."));
+					   _("Preparing the data for the printer."),
+					   GCM_CALIBRATE_UI_STATUS);
 		break;
 	case GTK_PRINT_STATUS_SENDING_DATA:
 	case GTK_PRINT_STATUS_PENDING:
 	case GTK_PRINT_STATUS_PENDING_ISSUE:
 		/* TRANSLATORS: dialog message */
 		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-					   _("Sending the targets to the printer."));
+					   _("Sending the targets to the printer."),
+					   GCM_CALIBRATE_UI_STATUS);
 		break;
 	case GTK_PRINT_STATUS_PRINTING:
 		/* TRANSLATORS: dialog message */
 		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-					   _("Printing the targets..."));
+					   _("Printing the targets..."),
+					   GCM_CALIBRATE_UI_STATUS);
 		break;
 	case GTK_PRINT_STATUS_FINISHED:
 		/* TRANSLATORS: dialog message */
 		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-					   _("The printing has finished."));
+					   _("The printing has finished."),
+					   GCM_CALIBRATE_UI_STATUS);
 		break;
 	case GTK_PRINT_STATUS_FINISHED_ABORTED:
 		/* TRANSLATORS: dialog message */
 		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-					   _("The print was aborted."));
+					   _("The print was aborted."),
+					   GCM_CALIBRATE_UI_STATUS);
 		break;
 	default:
 		break;

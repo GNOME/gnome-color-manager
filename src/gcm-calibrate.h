@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2012 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -125,6 +125,14 @@ typedef enum {
 	GCM_CALIBRATE_PRECISION_UNKNOWN
 } GcmCalibratePrecision;
 
+typedef enum {
+	GCM_CALIBRATE_UI_INTERACTION,
+	GCM_CALIBRATE_UI_STATUS,
+	GCM_CALIBRATE_UI_ERROR,
+	GCM_CALIBRATE_UI_POST_INTERACTION,
+	GCM_CALIBRATE_UI_UNKNOWN
+} GcmCalibrateUiType;
+
 GType		 gcm_calibrate_get_type			(void);
 GcmCalibrate	*gcm_calibrate_new			(void);
 
@@ -142,14 +150,15 @@ void		 gcm_calibrate_interaction		(GcmCalibrate	*calibrate,
 void		 gcm_calibrate_set_sensor		(GcmCalibrate	*calibrate,
 							 CdSensor	*sensor);
 void		 gcm_calibrate_set_title		(GcmCalibrate	*calibrate,
-							 const gchar	*title);
+							 const gchar	*title,
+							 GcmCalibrateUiType ui_type);
 void		 gcm_calibrate_set_message		(GcmCalibrate	*calibrate,
-							 const gchar	*message);
+							 const gchar	*message,
+							 GcmCalibrateUiType ui_type);
 void		 gcm_calibrate_set_image		(GcmCalibrate	*calibrate,
 							 const gchar	*filename);
 void		 gcm_calibrate_set_progress		(GcmCalibrate	*calibrate,
 							 guint		 percentage);
-void		 gcm_calibrate_pop			(GcmCalibrate	*calibrate);
 void		 gcm_calibrate_interaction_required	(GcmCalibrate	*calibrate,
 							 const gchar	*button_text);
 GtkWidget	*gcm_calibrate_get_content_widget	(GcmCalibrate	*calibrate);
