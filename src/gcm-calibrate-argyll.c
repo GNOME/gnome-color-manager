@@ -2061,6 +2061,9 @@ out:
 }
 
 #ifdef HAVE_VTE
+
+static void gcm_calibrate_argyll_flush_vte (GcmCalibrateArgyll *calibrate_argyll);
+
 /**
  * gcm_calibrate_argyll_exit_cb:
  **/
@@ -2069,6 +2072,9 @@ gcm_calibrate_argyll_exit_cb (VteTerminal *terminal, GcmCalibrateArgyll *calibra
 {
 	gint exit_status;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+
+	/* flush the VTE output */
+	gcm_calibrate_argyll_flush_vte (calibrate_argyll);
 
 	/* get the child exit status */
 	exit_status = vte_terminal_get_child_exit_status (terminal);
@@ -2540,10 +2546,10 @@ gcm_calibrate_argyll_selection_func_cb (VteTerminal *terminal, glong column, glo
 }
 
 /**
- * gcm_calibrate_argyll_cursor_moved_cb:
+ * gcm_calibrate_argyll_flush_vte:
  **/
 static void
-gcm_calibrate_argyll_cursor_moved_cb (VteTerminal *terminal, GcmCalibrateArgyll *calibrate_argyll)
+gcm_calibrate_argyll_flush_vte (GcmCalibrateArgyll *calibrate_argyll)
 {
 	gchar *output;
 	gchar **split;
@@ -2552,6 +2558,7 @@ gcm_calibrate_argyll_cursor_moved_cb (VteTerminal *terminal, GcmCalibrateArgyll 
 	glong col;
 	gboolean ret;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	VteTerminal *terminal = VTE_TERMINAL (priv->terminal);
 
 	/* select the text we've got since last time */
 	vte_terminal_get_cursor_position (terminal, &col, &row);
@@ -2579,6 +2586,17 @@ gcm_calibrate_argyll_cursor_moved_cb (VteTerminal *terminal, GcmCalibrateArgyll 
 	g_free (output);
 	g_strfreev (split);
 }
+
+/**
+ * gcm_calibrate_argyll_cursor_moved_cb:
+ **/
+static void
+gcm_calibrate_argyll_cursor_moved_cb (VteTerminal *terminal,
+				      GcmCalibrateArgyll *calibrate_argyll)
+{
+	gcm_calibrate_argyll_flush_vte (calibrate_argyll);
+}
+
 #endif
 
 /**
