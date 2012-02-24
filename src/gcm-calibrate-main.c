@@ -550,6 +550,7 @@ gcm_calib_assistant_page_forward_cb (gint current_page, gpointer user_data)
 
 	/* continue calibration */
 	gcm_calibrate_interaction (calib->calibrate, GTK_RESPONSE_OK);
+	calib->has_pending_interaction = FALSE;
 
 	/* no longer allow forward */
 	vbox = gcm_calib_get_vbox_for_page (calib,
