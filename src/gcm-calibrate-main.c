@@ -387,6 +387,7 @@ gcm_calib_start_idle_cb (gpointer user_data)
 		/* mark this box as the end */
 		vbox = gcm_calib_get_vbox_for_page (calib, GCM_CALIBRATE_PAGE_ACTION);
 		gtk_assistant_set_page_type (assistant, vbox, GTK_ASSISTANT_PAGE_SUMMARY);
+		gtk_assistant_set_page_complete (assistant, vbox, TRUE);
 		goto out;
 	}
 
