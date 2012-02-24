@@ -53,7 +53,6 @@ gcm_brightness_set_percentage (GcmBrightness *brightness, guint percentage, GErr
 {
 	GcmBrightnessPrivate *priv = brightness->priv;
 	gboolean ret = FALSE;
-	GVariant *args = NULL;
 	GVariant *response = NULL;
 
 	g_return_val_if_fail (GCM_IS_BRIGHTNESS (brightness), FALSE);
@@ -67,13 +66,12 @@ gcm_brightness_set_percentage (GcmBrightness *brightness, guint percentage, GErr
 	}
 
 	/* execute sync method */
-	args = g_variant_new ("(u)", percentage),
 	response = g_dbus_connection_call_sync (priv->connection,
 						GPM_DBUS_SERVICE,
 						GPM_DBUS_PATH_BACKLIGHT,
 						GPM_DBUS_INTERFACE_BACKLIGHT,
 						"SetPercentage",
-						args,
+						g_variant_new ("(u)", percentage),
 						NULL,
 						G_DBUS_CALL_FLAGS_NONE,
 						-1, NULL, error);
@@ -83,8 +81,6 @@ gcm_brightness_set_percentage (GcmBrightness *brightness, guint percentage, GErr
 	/* success */
 	ret = TRUE;
 out:
-	if (args != NULL)
-		g_variant_unref (args);
 	if (response != NULL)
 		g_variant_unref (response);
 	return ret;
