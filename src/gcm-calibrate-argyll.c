@@ -2154,6 +2154,30 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, c
 		goto out;
 	}
 
+	/* reading sample */
+	if (g_str_has_prefix (line, "Sample read failed due to misread")) {
+		/* TRANSLATORS: dialog title */
+		gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
+					 _("Reading sample"));
+
+		/* TRANSLATORS: message, no firmware is available */
+		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
+					   _("Failed to read the color sample correctly."));
+
+		/* set state */
+		priv->argyllcms_ok = "\n";
+		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
+		gcm_calibrate_interaction_required (GCM_CALIBRATE (calibrate_argyll), _("Retry"));
+
+		/* play sound from the naming spec */
+		ca_context_play (ca_gtk_context_get (), 0,
+				 CA_PROP_EVENT_ID, "dialog-warning",
+				 /* TRANSLATORS: this is the application name for libcanberra */
+				 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
+				 CA_PROP_EVENT_DESCRIPTION, "failed to read sample", NULL);
+		goto out;
+	}
+
 	/* reading strip */
 	if (g_str_has_prefix (line, "(Warning) Seem to have read strip pass ")) {
 
