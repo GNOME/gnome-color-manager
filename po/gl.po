@@ -1,23 +1,22 @@
 # Galician translations for gnome-color-manag er package.
 # Copyright (C) 2010 Fran Diéguez
 # This file is distributed under the same license as the gnome-color-manager package.
-# Fran Dieguez <frandieguez@ubuntu.com>, 2010.
 # Fran Diéguez <frandieguez@ubuntu.com>, 2010.
 # Xosé M. Lamas <correo.xmgz@gmail.com>, 2011.
+# Fran Dieguez <frandieguez@gnome.org>, 2010, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
-"color-manager&keywords=I18N+L10N\n"
-"POT-Creation-Date: 2012-01-28 21:56+0000\n"
-"PO-Revision-Date: 2010-11-13 01:33+0100\n"
-"Last-Translator: Xosé M. Lamas <correo.xmgz@gmail.com>\n"
-"Language-Team: Galician <gnome-gl-list@gnome.org>\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2012-02-26 16:22+0100\n"
+"PO-Revision-Date: 2012-02-26 16:31+0100\n"
+"Last-Translator: Fran Dieguez <frandieguez@gnome.org>\n"
+"Language-Team: Galician <gnome-l10n-gl@gnome.org>\n"
+"Language: gl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: gl\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
 
 #: ../data/gcm-calibrate.desktop.in.h:1
@@ -25,10 +24,8 @@ msgid "Color"
 msgstr "Cor"
 
 #: ../data/gcm-calibrate.desktop.in.h:2
-#, fuzzy
-#| msgid "Device Calibration"
 msgid "Color Calibration"
-msgstr "Calibración do dispositivo"
+msgstr "Calibración de cor"
 
 #: ../data/gcm-import.desktop.in.h:1
 msgid "ICC Profile Installer"
@@ -39,69 +36,65 @@ msgid "Install ICC profiles"
 msgstr "Instalar perfiles ICC"
 
 #. Window title, where the user can pick spot colors using a measuring device
-#: ../data/gcm-picker.desktop.in.h:1 ../data/gcm-picker.ui.h:4
+#: ../data/gcm-picker.desktop.in.h:1 ../data/gcm-picker.ui.h:2
 msgid "Color Picker"
 msgstr "Selector de cor"
 
 #: ../data/gcm-picker.desktop.in.h:2
-#, fuzzy
-#| msgid "The attached colorimeter is not capable of reading a spot color."
 msgid "Use the color sensor to sample spot colors"
-msgstr "O colorímetro anexado non é capaz de ler un punto de cor."
+msgstr "Uso do sensor de cor para mostrear os puntos de cor"
 
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:2
-msgid "Ambient:"
-msgstr "Ambiente:"
+#. Button text, to get a single sample of color
+#: ../data/gcm-picker.ui.h:4
+msgid "_Measure"
+msgstr "_Medida"
 
-#. This refers to the amount of ambient light on the sensor
+#. the color representation
 #: ../data/gcm-picker.ui.h:6
-#, fuzzy
-#| msgid "Colorspace:"
-msgid "Color Temperature:"
-msgstr "Espazo de cor:"
-
-#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#: ../data/gcm-picker.ui.h:8
-msgid "Colorspace:"
-msgstr "Espazo de cor:"
-
-#. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:10
-msgid "Error:"
-msgstr "Erro:"
+msgid "XYZ:"
+msgstr "XYZ:"
 
 #. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:12
+#: ../data/gcm-picker.ui.h:8
 msgid "Lab (D50):"
 msgstr "Lab (D50):"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:14
+#: ../data/gcm-picker.ui.h:10
 msgid "Media whitepoint:"
 msgstr "Punto blanco do ambiente:"
 
-#. These are the values of the chosen color in Red, Green, Blue encoding
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:12
+msgid "Color Temperature:"
+msgstr "Temperatura da cor:"
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:14
+msgid "Ambient:"
+msgstr "Ambiente:"
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
 #: ../data/gcm-picker.ui.h:16
+msgid "Colorspace:"
+msgstr "Espazo de cor:"
+
+#. These are the values of the chosen color in Red, Green, Blue encoding
+#: ../data/gcm-picker.ui.h:18
 msgid "RGB:"
 msgstr "RGB:"
 
+#. This shows the error in the conversion to RGB.
+#: ../data/gcm-picker.ui.h:20
+msgid "Error:"
+msgstr "Erro:"
+
 #. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:18
+#: ../data/gcm-picker.ui.h:22
 msgid "Results"
 msgstr "Resultados"
 
-#. the color representation
-#: ../data/gcm-picker.ui.h:20
-msgid "XYZ:"
-msgstr "XYZ:"
-
-#. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:22
-msgid "_Measure"
-msgstr "_Medida"
-
-#: ../data/gcm-viewer.desktop.in.h:1 ../data/gcm-viewer.ui.h:7
+#: ../data/gcm-viewer.desktop.in.h:1 ../data/gcm-viewer.ui.h:1
 msgid "Color Profile Viewer"
 msgstr "Visor de perfiles de cor"
 
@@ -109,15 +102,106 @@ msgstr "Visor de perfiles de cor"
 msgid "Inspect and compare installed color profiles"
 msgstr "Inspeccionar e comparar perfiles de cor instalados"
 
-#: ../data/gcm-viewer.ui.h:1
-msgid "3D Gamut"
-msgstr "3D Gamut"
-
 #: ../data/gcm-viewer.ui.h:2
+msgid "Add a profile for the device"
+msgstr "Engaidr un perfíl para o dispositivo"
+
+#: ../data/gcm-viewer.ui.h:3
+msgid "Remove a profile from the device"
+msgstr "Quitar un perfil do dispositivo"
+
+#. The type of profile, e.g. display, scanner, etc.
+#: ../data/gcm-viewer.ui.h:5
+msgid "Profile type"
+msgstr "Tipo de perfil"
+
+#. The profile colorspace, e.g. RGB
+#: ../data/gcm-viewer.ui.h:7
+msgid "Colorspace"
+msgstr "Espazo de cor"
+
+#. When the profile was created
+#: ../data/gcm-viewer.ui.h:9
+msgid "Created"
+msgstr "Creado"
+
+#. The version of the profile
+#: ../data/gcm-viewer.ui.h:11
+msgid "Version"
+msgstr "Versión"
+
+#. The manufacturer of the profile
+#: ../data/gcm-viewer.ui.h:13
+msgid "Device manufacturer"
+msgstr "Fabricante do dispositivo"
+
+#. The manufacturer of the profile
+#: ../data/gcm-viewer.ui.h:15
+msgid "Device model"
+msgstr "Modelo do dispositivo"
+
+#. If the profile contains a display correction table
+#: ../data/gcm-viewer.ui.h:17
+msgid "Display correction"
+msgstr "Corrección de pantalla"
+
+#. The basename (the last section of the filename) of the profile
+#: ../data/gcm-viewer.ui.h:19
+msgid "White point"
+msgstr "Punto blanco"
+
+#. The licence of the profile, normally non-free
+#: ../data/gcm-viewer.ui.h:21
+msgid "License"
+msgstr "Licenza"
+
+#. The file size in bytes of the profile
+#: ../data/gcm-viewer.ui.h:23
+msgid "File size"
+msgstr "Tamaño de ficheiro"
+
+#. The basename (the last section of the filename) of the profile
+#: ../data/gcm-viewer.ui.h:25
+msgid "Filename"
+msgstr "Nome do ficheiro"
+
+#: ../data/gcm-viewer.ui.h:26
+msgid "Information"
+msgstr "Información"
+
+#: ../data/gcm-viewer.ui.h:27
+msgid "y"
+msgstr "y"
+
+#: ../data/gcm-viewer.ui.h:28
+msgid "x"
+msgstr "x"
+
+#: ../data/gcm-viewer.ui.h:29
 msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
 msgstr "Un diagrama CIE 1931 mostra unha representación 2D do perfil gamut"
 
-#: ../data/gcm-viewer.ui.h:3
+#: ../data/gcm-viewer.ui.h:30
+msgid "CIE 1931"
+msgstr "CIE 1931"
+
+#: ../data/gcm-viewer.ui.h:31
+msgid "This 3D hull is what the profile looks like in Lab space"
+msgstr "Este casco en 3D amosa cómo aparenta o perfil no laboratorio espacial"
+
+#: ../data/gcm-viewer.ui.h:32
+msgid "3D Gamut"
+msgstr "3D Gamut"
+
+#: ../data/gcm-viewer.ui.h:33
+msgid "Response out"
+msgstr "Resposta de saída"
+
+#: ../data/gcm-viewer.ui.h:34
+msgid "Response in"
+msgstr "Resposta de entrada"
+
+#: ../data/gcm-viewer.ui.h:35
 msgid ""
 "A tone reproduction curve is the mapping of scene luminance to display "
 "luminance"
@@ -125,195 +209,76 @@ msgstr ""
 "Unha curva de reprodución do tono é a plasmación da luminancia da escena "
 "para mostrar a luminancia"
 
-#: ../data/gcm-viewer.ui.h:4
+#: ../data/gcm-viewer.ui.h:36
+msgid "TRC"
+msgstr "TRC"
+
+#: ../data/gcm-viewer.ui.h:37
+msgid "Video card out"
+msgstr "Saída da tarxeta de vídeo"
+
+#: ../data/gcm-viewer.ui.h:38
 msgid "A video card gamma table shows the curves loaded into the display"
 msgstr ""
 "Unha táboa gamma da tarxeta de vídeo mostra as curvas cargadas na pantalla"
 
-#: ../data/gcm-viewer.ui.h:5
-#, fuzzy
-#| msgid "Create a profile for the device"
-msgid "Add a profile for the device"
-msgstr "Crear un perfil para o dispositivo"
+#: ../data/gcm-viewer.ui.h:39
+msgid "VCGT"
+msgstr "VCGT"
 
-#: ../data/gcm-viewer.ui.h:6
-#, fuzzy
-#| msgid "CIE 1931 xy"
-msgid "CIE 1931"
-msgstr "CIE 1931 xy"
+#: ../data/gcm-viewer.ui.h:40
+msgid "Previous Image"
+msgstr "Imaxe anterior"
 
-#. The profile colorspace, e.g. RGB
-#: ../data/gcm-viewer.ui.h:9
-#, fuzzy
-#| msgid "Colorspace:"
-msgid "Colorspace"
-msgstr "Espazo de cor:"
+#. This is an example image that is saved in sRGB gamut
+#: ../data/gcm-viewer.ui.h:42
+msgid "sRGB example"
+msgstr "exemplo sRGB"
 
-#. When the profile was created
-#: ../data/gcm-viewer.ui.h:11
-#, fuzzy
-#| msgid "Created:"
-msgid "Created"
-msgstr "Creado:"
+#: ../data/gcm-viewer.ui.h:43
+msgid "Next Image"
+msgstr "Seguinte imaxe"
 
-#. The manufacturer of the profile
-#: ../data/gcm-viewer.ui.h:13
-#, fuzzy
-#| msgid "Device manufacturer:"
-msgid "Device manufacturer"
-msgstr "Fabricante do dispositivo:"
+#: ../data/gcm-viewer.ui.h:44
+msgid "This shows what an image would look like if saved with the profile"
+msgstr "Mostra qué aspecto tería unha imaxe se a gardásemos co perfi"
 
-#. The manufacturer of the profile
-#: ../data/gcm-viewer.ui.h:15
-#, fuzzy
-#| msgid "Device model:"
-msgid "Device model"
-msgstr "Modelo do dispositivo:"
-
-#. If the profile contains a display correction table
-#: ../data/gcm-viewer.ui.h:17
-#, fuzzy
-#| msgid "Display correction:"
-msgid "Display correction"
-msgstr "Corrección de pantalla:"
-
-#. The file size in bytes of the profile
-#: ../data/gcm-viewer.ui.h:19
-#, fuzzy
-#| msgid "File size:"
-msgid "File size"
-msgstr "Tamaño de ficheiro:"
-
-#. The basename (the last section of the filename) of the profile
-#: ../data/gcm-viewer.ui.h:21
-#, fuzzy
-#| msgid "Filename:"
-msgid "Filename"
-msgstr "Nome do ficheiro:"
-
-#: ../data/gcm-viewer.ui.h:22
+#: ../data/gcm-viewer.ui.h:45
 msgid "From sRGB"
 msgstr "Desde sRGB"
 
-#: ../data/gcm-viewer.ui.h:23
-#, fuzzy
-#| msgid "More Information"
-msgid "Information"
-msgstr "Máis información"
+#: ../data/gcm-viewer.ui.h:46
+msgid "This shows what an image would look like if opened with the profile"
+msgstr "Mostra qué aspecto tería unha imaxe se a abrísemos co perfil"
 
-#. The licence of the profile, normally non-free
-#: ../data/gcm-viewer.ui.h:25
-#, fuzzy
-#| msgid "License:"
-msgid "License"
-msgstr "Licencia:"
+#: ../data/gcm-viewer.ui.h:47
+msgid "To sRGB"
+msgstr "A sRGB"
 
-#: ../data/gcm-viewer.ui.h:26
-msgid "Metadata"
-msgstr "Metadatos"
+#: ../data/gcm-viewer.ui.h:48
+msgid "Named colors are specific colors that are defined in the profile"
+msgstr "Cores con Nome son cores concretas que están definidas no perfil"
 
-#: ../data/gcm-viewer.ui.h:27
+#: ../data/gcm-viewer.ui.h:49
+msgid "Named Colors"
+msgstr "Cores con nome"
+
+#: ../data/gcm-viewer.ui.h:50
 msgid ""
 "Metadata is additional information stored in the profile for programs to use."
 msgstr ""
 "Os metadatos son información adicional almacenada no perfil para uso dos "
 "programas."
 
-#: ../data/gcm-viewer.ui.h:28
-#, fuzzy
-#| msgid "Named color"
-msgid "Named Colors"
-msgstr "Cores nombrados"
-
-#: ../data/gcm-viewer.ui.h:29
-msgid "Named colors are specific colors that are defined in the profile"
-msgstr "Cores con Nome son cores concretas que están definidas no perfil"
-
-#: ../data/gcm-viewer.ui.h:30
-msgid "Next Image"
-msgstr ""
-
-#: ../data/gcm-viewer.ui.h:31
-msgid "Previous Image"
-msgstr ""
-
-#. The type of profile, e.g. display, scanner, etc.
-#: ../data/gcm-viewer.ui.h:33
-#, fuzzy
-#| msgid "Profile type:"
-msgid "Profile type"
-msgstr "Tipo de perfil:"
-
-#: ../data/gcm-viewer.ui.h:34
-#, fuzzy
-#| msgid "Remove a color profile for this device"
-msgid "Remove a profile from the device"
-msgstr "Quitar un perfil de cor para este dispositivo"
-
-#: ../data/gcm-viewer.ui.h:35
-msgid "Response in"
-msgstr "Resposta de entrada"
-
-#: ../data/gcm-viewer.ui.h:36
-msgid "Response out"
-msgstr "Resposta de saída"
-
-#: ../data/gcm-viewer.ui.h:37
-msgid "TRC"
-msgstr "TRC"
-
-#: ../data/gcm-viewer.ui.h:38
-msgid "This 3D hull is what the profile looks like in Lab space"
-msgstr "Este casco en 3D amosa cómo aparenta o perfil no laboratorio espacial"
-
-#: ../data/gcm-viewer.ui.h:39
-msgid "This shows what an image would look like if opened with the profile"
-msgstr "Mostra qué aspecto tería unha imaxe se a abrísemos co perfil"
-
-#: ../data/gcm-viewer.ui.h:40
-msgid "This shows what an image would look like if saved with the profile"
-msgstr "Mostra qué aspecto tería unha imaxe se a gardásemos co perfi"
-
-#: ../data/gcm-viewer.ui.h:41
-msgid "To sRGB"
-msgstr "A sRGB"
-
-#: ../data/gcm-viewer.ui.h:42
-msgid "VCGT"
-msgstr "VCGT"
-
-#. The version of the profile
-#: ../data/gcm-viewer.ui.h:44
-msgid "Version"
-msgstr "Versión"
-
-#: ../data/gcm-viewer.ui.h:45
-msgid "Video card out"
-msgstr "Saída da tarxeta de vídeo"
-
-#. The basename (the last section of the filename) of the profile
-#: ../data/gcm-viewer.ui.h:47
-msgid "White point"
-msgstr "Punto blanco"
-
-#. This is an example image that is saved in sRGB gamut
-#: ../data/gcm-viewer.ui.h:49
-msgid "sRGB example"
-msgstr "exemplo sRGB"
-
-#: ../data/gcm-viewer.ui.h:50
-msgid "x"
-msgstr "x"
-
 #: ../data/gcm-viewer.ui.h:51
-msgid "y"
-msgstr "y"
+msgid "Metadata"
+msgstr "Metadatos"
 
 #: ../src/gcm-calibrate-argyll.c:326
 msgid "Getting default parameters"
 msgstr "Obtendo os parámetros predefinidos"
 
-#: ../src/gcm-calibrate-argyll.c:330
+#: ../src/gcm-calibrate-argyll.c:331
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -321,19 +286,19 @@ msgstr ""
 "Isto precalibra a pantalla enviando parches de cor e grises á súa pantalla e "
 "medíndoos co dispositivo hardware."
 
-#: ../src/gcm-calibrate-argyll.c:417
+#: ../src/gcm-calibrate-argyll.c:419
 msgid "Reading the patches"
 msgstr "Lendo os parches"
 
-#: ../src/gcm-calibrate-argyll.c:420
+#: ../src/gcm-calibrate-argyll.c:424
 msgid "Reading the patches using the color measuring instrument."
 msgstr "Lendo os parches usando o instrumento de medición de cor."
 
-#: ../src/gcm-calibrate-argyll.c:517
+#: ../src/gcm-calibrate-argyll.c:522
 msgid "Drawing the patches"
 msgstr "Debuxando os parches"
 
-#: ../src/gcm-calibrate-argyll.c:520
+#: ../src/gcm-calibrate-argyll.c:527
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
@@ -341,49 +306,49 @@ msgstr ""
 "Debuxando na pantalla os parches xerados que despois será medidos polo "
 "dispositivo hardware."
 
-#: ../src/gcm-calibrate-argyll.c:613 ../src/gcm-calibrate-argyll.c:954
+#: ../src/gcm-calibrate-argyll.c:621 ../src/gcm-calibrate-argyll.c:971
 msgid "Generating the profile"
 msgstr "Xerando o perfil"
 
-#: ../src/gcm-calibrate-argyll.c:616
+#: ../src/gcm-calibrate-argyll.c:626
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "Xerando o perfil de cor ICC que se usará con esta pantalla."
 
-#: ../src/gcm-calibrate-argyll.c:776
+#: ../src/gcm-calibrate-argyll.c:787
 msgid "Copying files"
 msgstr "Copiando ficheiros"
 
-#: ../src/gcm-calibrate-argyll.c:779
+#: ../src/gcm-calibrate-argyll.c:792
 msgid "Copying source image, chart data and CIE reference values."
 msgstr ""
 "Copiando a imaxe de orixe, os datos de gráficos e os valores de referencia "
 "CIE."
 
-#: ../src/gcm-calibrate-argyll.c:848
+#: ../src/gcm-calibrate-argyll.c:862
 msgid "Measuring the patches"
 msgstr "Medindo os parches"
 
-#: ../src/gcm-calibrate-argyll.c:851
+#: ../src/gcm-calibrate-argyll.c:867
 msgid "Detecting the reference patches and measuring them."
 msgstr "Detectando os parches de referencia e medíndoos."
 
-#: ../src/gcm-calibrate-argyll.c:957
+#: ../src/gcm-calibrate-argyll.c:976
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "Xerando o perfil de cor ICC que se poderá usar con este dispositivo."
 
-#: ../src/gcm-calibrate-argyll.c:1314
+#: ../src/gcm-calibrate-argyll.c:1332
 msgid "Printing patches"
 msgstr "Imprimindo os parches"
 
-#: ../src/gcm-calibrate-argyll.c:1318
+#: ../src/gcm-calibrate-argyll.c:1337
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "Renderizando os parches para o papel e tinta seleccionados."
 
-#: ../src/gcm-calibrate-argyll.c:1640
+#: ../src/gcm-calibrate-argyll.c:1660
 msgid "Wait for the ink to dry"
 msgstr "Espera a que se seque a tinta"
 
-#: ../src/gcm-calibrate-argyll.c:1644
+#: ../src/gcm-calibrate-argyll.c:1665
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -391,40 +356,41 @@ msgstr ""
 "Espere uns minutos para que se seque a tinta. A tinta de perfilado húmeda "
 "producirá un perfíl pobre e pode danar o seu instrumento de medición."
 
-#: ../src/gcm-calibrate-argyll.c:1812
+#: ../src/gcm-calibrate-argyll.c:1834
 msgid "Set up instrument"
 msgstr "Configurar o instrumento"
 
-#: ../src/gcm-calibrate-argyll.c:1816
+#: ../src/gcm-calibrate-argyll.c:1839
 msgid "Setting up the instrument for use…"
 msgstr "Configurando o instrumento para o seu uso..."
 
-#: ../src/gcm-calibrate-argyll.c:2019 ../src/gcm-calibrate-argyll.c:2083
+#: ../src/gcm-calibrate-argyll.c:2049 ../src/gcm-calibrate-argyll.c:2115
 msgid "Calibration error"
 msgstr "Erro de calibración"
 
-#: ../src/gcm-calibrate-argyll.c:2023
+#: ../src/gcm-calibrate-argyll.c:2054
 msgid "The sample could not be read at this time."
 msgstr "Neste momento non foi posíbel ler o exemplo."
 
-#: ../src/gcm-calibrate-argyll.c:2029 ../src/gcm-calibrate-argyll.c:2146
-#: ../src/gcm-calibrate-argyll.c:2185 ../src/gcm-calibrate-argyll.c:2210
+#: ../src/gcm-calibrate-argyll.c:2061 ../src/gcm-calibrate-argyll.c:2186
+#: ../src/gcm-calibrate-argyll.c:2212 ../src/gcm-calibrate-argyll.c:2249
+#: ../src/gcm-calibrate-argyll.c:2276
 msgid "Retry"
 msgstr "Reintentar"
 
 #. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2035 ../src/gcm-calibrate-argyll.c:2117
-#: ../src/gcm-calibrate-argyll.c:2152 ../src/gcm-calibrate.c:527
-#: ../src/gcm-calibrate.c:563 ../src/gcm-calibrate.c:600
-#: ../src/gcm-calibrate-main.c:203
+#: ../src/gcm-calibrate-argyll.c:2067 ../src/gcm-calibrate-argyll.c:2155
+#: ../src/gcm-calibrate-argyll.c:2192 ../src/gcm-calibrate-argyll.c:2218
+#: ../src/gcm-calibrate.c:548 ../src/gcm-calibrate.c:587
+#: ../src/gcm-calibrate.c:627 ../src/gcm-calibrate-main.c:203
 msgid "GNOME Color Manager"
 msgstr "Xestor de cor de GNOME"
 
-#: ../src/gcm-calibrate-argyll.c:2088
+#: ../src/gcm-calibrate-argyll.c:2121
 msgid "No firmware is installed for this instrument."
 msgstr "Non existe un firmware instalado para este instrumento."
 
-#: ../src/gcm-calibrate-argyll.c:2092
+#: ../src/gcm-calibrate-argyll.c:2126
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
@@ -432,7 +398,7 @@ msgstr ""
 "A coincidencia do patrón non era suficientemente boa. Asegúrese de que "
 "corrixiu o tipo de obxectivo seleccionado."
 
-#: ../src/gcm-calibrate-argyll.c:2097
+#: ../src/gcm-calibrate-argyll.c:2132
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
@@ -440,7 +406,7 @@ msgstr ""
 "O instrumento de medición non obtivo lecturas válidas. Asegúrese de que a "
 "apertura está completamente aberta."
 
-#: ../src/gcm-calibrate-argyll.c:2101
+#: ../src/gcm-calibrate-argyll.c:2137
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -448,27 +414,37 @@ msgstr ""
 "O instrumento de medición está ocupado e non está iniciándose. Extraia o "
 "conector USB e reinsérteo antes de tentar usar este dispositivo."
 
-#: ../src/gcm-calibrate-argyll.c:2137
+#: ../src/gcm-calibrate-argyll.c:2175
 msgid "Reading target"
 msgstr "Lendo o obxectivo"
 
-#: ../src/gcm-calibrate-argyll.c:2141
+#: ../src/gcm-calibrate-argyll.c:2180
 msgid "Failed to read the strip correctly."
 msgstr "Produciuse un fallo ao ler a franxa."
 
+#: ../src/gcm-calibrate-argyll.c:2201
+#, fuzzy
+msgid "Reading sample"
+msgstr "Lendo o obxectivo"
+
+#: ../src/gcm-calibrate-argyll.c:2206
+#, fuzzy
+msgid "Failed to read the color sample correctly."
+msgstr "Produciuse un fallo ao ler a franxa."
+
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2165
+#: ../src/gcm-calibrate-argyll.c:2231
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "Ler a franxa %s no lugar de %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2170
+#: ../src/gcm-calibrate-argyll.c:2236
 msgid "It looks like you've measured the wrong strip."
 msgstr "Semella que mediu a franxa incorrecta"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2174
+#: ../src/gcm-calibrate-argyll.c:2240
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
@@ -476,22 +452,22 @@ msgstr ""
 "Se realmente mediu a correcta, está ben, pode que simplemente sexa papel "
 "inusual."
 
-#: ../src/gcm-calibrate-argyll.c:2201
+#: ../src/gcm-calibrate-argyll.c:2265
 msgid "Device Error"
 msgstr "Erro do dispositivo"
 
-#: ../src/gcm-calibrate-argyll.c:2205
+#: ../src/gcm-calibrate-argyll.c:2270
 msgid "The device could not measure the color spot correctly."
 msgstr "O dispositivo non puido medir o punto de cor correctamente."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2218
+#: ../src/gcm-calibrate-argyll.c:2284
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "Preparado para ler a franxa %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2223
+#: ../src/gcm-calibrate-argyll.c:2289
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
@@ -500,7 +476,7 @@ msgstr ""
 "pulsado o control de medición."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2227
+#: ../src/gcm-calibrate-argyll.c:2293
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -509,7 +485,7 @@ msgstr ""
 "dando chegue ao final da páxina."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2231
+#: ../src/gcm-calibrate-argyll.c:2297
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -518,34 +494,34 @@ msgstr ""
 "fila que está tentando medir."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2235
+#: ../src/gcm-calibrate-argyll.c:2301
 msgid ""
 "If you make a mistake, just release the switch, and you'll get a chance to "
 "try again."
 msgstr ""
 "Se comete un erro simplemente solte o control e poderá tentalo de novo."
 
-#: ../src/gcm-calibrate-argyll.c:2314
+#: ../src/gcm-calibrate-argyll.c:2410
 msgid "Printing"
 msgstr "Imprimindo"
 
-#: ../src/gcm-calibrate-argyll.c:2322
+#: ../src/gcm-calibrate-argyll.c:2419
 msgid "Preparing the data for the printer."
 msgstr "Preparando os datos para a impresora"
 
-#: ../src/gcm-calibrate-argyll.c:2329
+#: ../src/gcm-calibrate-argyll.c:2427
 msgid "Sending the targets to the printer."
 msgstr "Enviando os obxectivos á impresora."
 
-#: ../src/gcm-calibrate-argyll.c:2334
+#: ../src/gcm-calibrate-argyll.c:2433
 msgid "Printing the targets..."
 msgstr "Imprimindo os obxectivos..."
 
-#: ../src/gcm-calibrate-argyll.c:2339
+#: ../src/gcm-calibrate-argyll.c:2439
 msgid "The printing has finished."
 msgstr "Finalizou a impresión."
 
-#: ../src/gcm-calibrate-argyll.c:2344
+#: ../src/gcm-calibrate-argyll.c:2445
 msgid "The print was aborted."
 msgstr "Cancelouse a impresión."
 
@@ -563,13 +539,12 @@ msgstr ""
 "Este instrumento de medición non está deseñado para admitir perfilado de "
 "proxectores."
 
-#. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate.c:499
+#: ../src/gcm-calibrate.c:517
 msgid "Please attach instrument"
 msgstr "Conecte un instrumento"
 
 #. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate.c:506
+#: ../src/gcm-calibrate.c:525
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square like the image below."
@@ -578,114 +553,110 @@ msgstr ""
 "na imaxe inferior."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate.c:509
+#: ../src/gcm-calibrate.c:528
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square."
 msgstr "Conecte o instrumento de medición no centro da pantalla no cadro gris."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate.c:516
+#: ../src/gcm-calibrate.c:535
 msgid ""
 "You will need to hold the device on the screen for the duration of the "
 "calibration."
-msgstr ""
+msgstr "Manteña o dispositivo sobre a pantalla durante a calibración"
 
-#: ../src/gcm-calibrate.c:521 ../src/gcm-calibrate.c:548
-#: ../src/gcm-calibrate.c:585
+#: ../src/gcm-calibrate.c:542 ../src/gcm-calibrate.c:570
+#: ../src/gcm-calibrate.c:610
 msgid "Continue"
 msgstr "Continuar."
 
-#: ../src/gcm-calibrate.c:543 ../src/gcm-calibrate.c:577
+#: ../src/gcm-calibrate.c:564 ../src/gcm-calibrate.c:601
 msgid "Please configure instrument"
 msgstr "Configure o dispositivo"
 
-#: ../src/gcm-calibrate.c:552
+#: ../src/gcm-calibrate.c:574
 msgid ""
 "Please set the measuring instrument to screen mode like the image below."
 msgstr ""
 "Estableza o instrumento de medición no modo de pantalla segundo a imaxe "
 "inferior."
 
-#: ../src/gcm-calibrate.c:556
+#: ../src/gcm-calibrate.c:579
 msgid "Please set the measuring instrument to screen mode."
 msgstr "Estabeleza o instrumento de medición no modo de pantalla."
 
-#: ../src/gcm-calibrate.c:589
+#: ../src/gcm-calibrate.c:614
 msgid ""
 "Please set the measuring instrument to calibration mode like the image below."
 msgstr ""
 "Estabeleza un instrumento de medición no modo de calibración segundo a imaxe "
 "inferior."
 
-#: ../src/gcm-calibrate.c:593
+#: ../src/gcm-calibrate.c:619
 msgid "Please set the measuring instrument to calibration mode."
 msgstr "Estabeleza un instrumento de medición para o modo de calibración."
 
 #. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
 #. * aquired image of the calibration target, e.g. an image file that looks
 #. * a bit like this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:1655
+#: ../src/gcm-calibrate.c:1682
 msgid "Select calibration target image"
 msgstr "Seleccione a imaxe de destino de calibración"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:1668
+#: ../src/gcm-calibrate.c:1695
 msgid "Supported images files"
 msgstr "Ficheiros de imaxe admitidos"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:1675 ../src/gcm-calibrate.c:1727
+#: ../src/gcm-calibrate.c:1702 ../src/gcm-calibrate.c:1754
 #: ../src/gcm-viewer.c:456
 msgid "All files"
 msgstr "Todos os ficheiros"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:1700
+#: ../src/gcm-calibrate.c:1727
 msgid "Select CIE reference values file"
 msgstr "Seleccionar o ficheiro de valores de referencia CIE"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:1720
+#: ../src/gcm-calibrate.c:1747
 msgid "CIE values"
 msgstr "Valores CIE"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:1793 ../src/gcm-viewer.c:428
+#: ../src/gcm-calibrate.c:1820 ../src/gcm-viewer.c:428
 msgid "Select ICC Profile File"
 msgstr "Seleccionar o ficheiro de perfíl ICC"
 
-#: ../src/gcm-calibrate.c:1796
+#: ../src/gcm-calibrate.c:1823
 msgid "Open"
 msgstr "Abrir"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-calibrate-helper.c:87
-#, fuzzy
-#| msgid "Import ICC color profile?"
 msgid "Use this device for profiling"
-msgstr "Desexa importar o perfil de cor ICC?"
+msgstr "Usar este dispositivo para crear o perfil"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-calibrate-helper.c:90
 msgid "Make the window modal to this XID"
-msgstr ""
+msgstr "Facer a xanela modal para este XID"
 
 #. TRANSLATORS: just dumps the EDID to disk
 #: ../src/gcm-calibrate-helper.c:103
 msgid "gcm-dispread"
-msgstr ""
+msgstr "gcm-dispread"
 
 #. success
 #: ../src/gcm-calibrate-helper.c:169 ../src/gcm-calibrate-helper.c:199
-#, fuzzy
-#| msgid "Profiles"
 msgid "Wrote file"
-msgstr "Perfiles"
+msgstr "Ficheiro escrito"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-helper.c:211 ../src/gcm-calibrate-main.c:375
-#: ../src/gcm-calibrate-main.c:1691
+#: ../src/gcm-calibrate-helper.c:211 ../src/gcm-calibrate-main.c:376
+#: ../src/gcm-calibrate-main.c:1697
 msgid "Failed to calibrate"
 msgstr "Fallou a calibración"
 
@@ -711,27 +682,27 @@ msgid "Profiling completed"
 msgstr "Perfilado completado"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:626
+#: ../src/gcm-calibrate-main.c:632
 msgid "Calibrate your camera"
 msgstr "Calibre a súa cámara"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:630
+#: ../src/gcm-calibrate-main.c:636
 msgid "Calibrate your display"
 msgstr "Calibre a pantalla"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:634
+#: ../src/gcm-calibrate-main.c:640
 msgid "Calibrate your printer"
 msgstr "Calibre a súa impresora"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:638
+#: ../src/gcm-calibrate-main.c:644
 msgid "Calibrate your device"
 msgstr "Calibre o seu dispositivo"
 
 #. TRANSLATORS: this is the final intro page text
-#: ../src/gcm-calibrate-main.c:650
+#: ../src/gcm-calibrate-main.c:656
 msgid ""
 "Any existing screen correction will be temporarily turned off and the "
 "brightness set to maximum."
@@ -740,51 +711,51 @@ msgstr ""
 "brillo establecerase ao máximo."
 
 #. TRANSLATORS: this is the final intro page text
-#: ../src/gcm-calibrate-main.c:657
+#: ../src/gcm-calibrate-main.c:663
 msgid "You can cancel this process at any stage by pressing the cancel button."
 msgstr ""
 "Pode cancelar este proceso en calquer momento premendo no botón de cancelar."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:663
+#: ../src/gcm-calibrate-main.c:669
 msgid "Introduction"
 msgstr "Introdución"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:686
+#: ../src/gcm-calibrate-main.c:692
 msgid "All done!"
 msgstr "Feito!"
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:696
+#: ../src/gcm-calibrate-main.c:702
 msgid "The camera has been calibrated successfully."
 msgstr "A cámara calibrouse con éxito."
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:700
+#: ../src/gcm-calibrate-main.c:706
 msgid "The display has been calibrated successfully."
 msgstr "A pantalla foi calibrada exitosamente."
 
-#: ../src/gcm-calibrate-main.c:701
+#: ../src/gcm-calibrate-main.c:707
 msgid "You may notice the screen is a slightly different color."
 msgstr "Pode que perciba que a pantalla ten unha cor lixeiramente diferente."
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:705
+#: ../src/gcm-calibrate-main.c:711
 msgid "The printer has been calibrated successfully."
 msgstr "A impresora foi calibrada con éxito."
 
-#: ../src/gcm-calibrate-main.c:706
+#: ../src/gcm-calibrate-main.c:712
 msgid "Documents printed from this device will be color managed."
 msgstr "Os documentos impresos dende este dispositivo terán a cor controlada."
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:710
+#: ../src/gcm-calibrate-main.c:716
 msgid "The device has been calibrated successfully."
 msgstr "O dispositivo foi calibrado con éxito."
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:717
+#: ../src/gcm-calibrate-main.c:723
 msgid ""
 "To view details about the new profile or to undo the calibration visit the "
 "<a href=\"control-center://color\">control center</a>."
@@ -793,31 +764,31 @@ msgstr ""
 "href=\"control-center://color\">centro de control</a>."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:728 ../src/gcm-calibrate-main.c:1704
+#: ../src/gcm-calibrate-main.c:734 ../src/gcm-calibrate-main.c:1710
 msgid "Summary"
 msgstr "Resumo"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:752
+#: ../src/gcm-calibrate-main.c:758
 msgid "Performing calibration"
 msgstr "Realizando a calibración"
 
-#: ../src/gcm-calibrate-main.c:765
+#: ../src/gcm-calibrate-main.c:771
 msgid "Calibration is about to start"
 msgstr "Vai comezar a calibración"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:783
+#: ../src/gcm-calibrate-main.c:789
 msgid "Action"
 msgstr "Acción"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:806
+#: ../src/gcm-calibrate-main.c:812
 msgid "Calibration checklist"
 msgstr "Lista de comprobación da calibración"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:813
+#: ../src/gcm-calibrate-main.c:819
 msgid ""
 "Before calibrating the display, it is recommended to configure your display "
 "with the following settings to get optimal results."
@@ -826,7 +797,7 @@ msgstr ""
 "seguintes axustes para obter uns resultados óptimos."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:816
+#: ../src/gcm-calibrate-main.c:822
 msgid ""
 "You may want to consult the owner's manual for your display on how to "
 "achieve these settings."
@@ -835,18 +806,18 @@ msgstr ""
 "como lograr estas configuracións."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:819
+#: ../src/gcm-calibrate-main.c:825
 msgid "Reset your display to the factory defaults."
 msgstr "Reiniciar o seu dispositivo aos valores predefinidos de fábrica."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:822
+#: ../src/gcm-calibrate-main.c:828
 msgid "Disable dynamic contrast if your display has this feature."
 msgstr ""
 "Desactive o contraste dinámico se a súa pantalla ten esta característica."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:825
+#: ../src/gcm-calibrate-main.c:831
 msgid ""
 "Configure your display with custom color settings and ensure the RGB "
 "channels are set to the same values."
@@ -855,14 +826,14 @@ msgstr ""
 "que as canles RGB están configuradas cos mesmos valores."
 
 #. TRANSLATORS: dialog message, addition to bullet item
-#: ../src/gcm-calibrate-main.c:828
+#: ../src/gcm-calibrate-main.c:834
 msgid "If custom color is not available then use a 6500K color temperature."
 msgstr ""
 "Se a cor personalizada non está dispoñíbel, use unha temperatura de cor de "
 "65000K"
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:831
+#: ../src/gcm-calibrate-main.c:837
 msgid ""
 "Adjust the display brightness to a comfortable level for prolonged viewing."
 msgstr ""
@@ -870,7 +841,7 @@ msgstr ""
 "prolongada."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate-main.c:836
+#: ../src/gcm-calibrate-main.c:842
 msgid ""
 "For best results, the display should have been powered for at least 15 "
 "minutes before starting the calibration."
@@ -879,124 +850,122 @@ msgstr ""
 "minutos antes de comenzar la calibración."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:842
+#: ../src/gcm-calibrate-main.c:848
 msgid "Check Settings"
 msgstr "Comprobe as preferencias"
 
-#: ../src/gcm-calibrate-main.c:893
+#: ../src/gcm-calibrate-main.c:899
 msgid "Calibration and profiling software is not installed."
 msgstr "O software de calibración e perfilado non está instalado."
 
-#: ../src/gcm-calibrate-main.c:896
+#: ../src/gcm-calibrate-main.c:902
 msgid "These tools are required to build color profiles for devices."
 msgstr ""
 "Requírense estas ferramentas para construír perfiles de cor para dispositivos"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:899
+#: ../src/gcm-calibrate-main.c:905
 msgid "More software is required!"
 msgstr "Necesítase máis software"
 
-#: ../src/gcm-calibrate-main.c:908
+#: ../src/gcm-calibrate-main.c:914
 msgid "Install required software"
 msgstr "Instalar o software necesario"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:918
-#, fuzzy
-#| msgid "Install now"
+#: ../src/gcm-calibrate-main.c:924
 msgid "Install Tools"
-msgstr "Instalar ahora"
+msgstr "Instalar ferramentas"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate-main.c:968
+#: ../src/gcm-calibrate-main.c:974
 msgid "Common color target files are not installed on this computer."
 msgstr "Os ficheiros obxectivo de cor común non están instalados neste equipo."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate-main.c:970
+#: ../src/gcm-calibrate-main.c:976
 msgid "Color target files are needed to convert the image to a color profile."
 msgstr ""
 "Necesítanse ficheiros de obxectivos de cores para converter a imaxe a un "
 "perfil de cor."
 
 #. TRANSLATORS: dialog message, asking if it's okay to install them
-#: ../src/gcm-calibrate-main.c:972
+#: ../src/gcm-calibrate-main.c:978
 msgid "Do you want them to be installed?"
 msgstr "Quere que se instalen?"
 
 #. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
-#: ../src/gcm-calibrate-main.c:974
+#: ../src/gcm-calibrate-main.c:980
 msgid "If you already have the correct file, you can skip this step."
 msgstr "Pode omitir este paso se xa corrixiu o ficheiro."
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:977
+#: ../src/gcm-calibrate-main.c:983
 msgid "Optional data files available"
 msgstr "Ficheiros de datos opcionais están disponibles"
 
-#: ../src/gcm-calibrate-main.c:986
+#: ../src/gcm-calibrate-main.c:992
 msgid "Install Now"
 msgstr "Instalar agora"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:997
+#: ../src/gcm-calibrate-main.c:1003
 msgid "Install Targets"
 msgstr "Instalar Obxetivos de calibración"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1017
+#: ../src/gcm-calibrate-main.c:1023
 msgid "CMP Digital Target 3"
 msgstr "CMP Digital Target 3"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1021
+#: ../src/gcm-calibrate-main.c:1027
 msgid "CMP DT 003"
 msgstr "CMP DT 003"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1025
+#: ../src/gcm-calibrate-main.c:1031
 msgid "Color Checker"
 msgstr "Comprobador de cor"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1029
+#: ../src/gcm-calibrate-main.c:1035
 msgid "Color Checker DC"
 msgstr "Comprobador de cor DC"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1033
+#: ../src/gcm-calibrate-main.c:1039
 msgid "Color Checker SG"
 msgstr "Comprobador de cor SG"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1037
+#: ../src/gcm-calibrate-main.c:1043
 msgid "Hutchcolor"
 msgstr "Hutchcolor"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1041
+#: ../src/gcm-calibrate-main.c:1047
 msgid "i1 RGB Scan 1.4"
 msgstr "i1 RGB Scan 1.4"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1045
+#: ../src/gcm-calibrate-main.c:1051
 msgid "IT8.7/2"
 msgstr "IT8.7/2"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1049
+#: ../src/gcm-calibrate-main.c:1055
 msgid "Laser Soft DC Pro"
 msgstr "Laser Soft DC Pro"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1053
+#: ../src/gcm-calibrate-main.c:1059
 msgid "QPcard 201"
 msgstr "QPcard 201"
 
 #. TRANSLATORS: dialog message, preface. A calibration target looks like
 #. * this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate-main.c:1131
+#: ../src/gcm-calibrate-main.c:1137
 msgid ""
 "Before profiling the device, you have to manually capture an image of a "
 "calibration target and save it as a TIFF image file."
@@ -1005,7 +974,7 @@ msgstr ""
 "obxectivo de calibración e gardala como un ficheiro de imaxe TIFF."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1136
+#: ../src/gcm-calibrate-main.c:1142
 msgid ""
 "Ensure that the contrast and brightness are not changed and color correction "
 "profiles have not been applied."
@@ -1014,7 +983,7 @@ msgstr ""
 "perfiles de corrección de cor."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate-main.c:1139
+#: ../src/gcm-calibrate-main.c:1145
 msgid ""
 "The device sensor should have been cleaned prior to scanning and the output "
 "file resolution should be at least 200dpi."
@@ -1023,7 +992,7 @@ msgstr ""
 "resolución do ficheiro de saída debería ser cando menos 200dpi."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1145
+#: ../src/gcm-calibrate-main.c:1151
 msgid ""
 "Ensure that the white-balance has not been modified by the camera and that "
 "the lens is clean."
@@ -1032,96 +1001,96 @@ msgstr ""
 "está limpa."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1149
+#: ../src/gcm-calibrate-main.c:1155
 msgid "Please select the calibration target type."
 msgstr "Seleccione o tipo de obxetivo a calibrar."
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1152
+#: ../src/gcm-calibrate-main.c:1158
 msgid "What target type do you have?"
 msgstr "Qué tipo de obxectivo tes?"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1184
+#: ../src/gcm-calibrate-main.c:1190
 msgid "Select Target"
 msgstr "Seleccionar Obxetivo de calibración"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1223
+#: ../src/gcm-calibrate-main.c:1229
 msgid "Choose your display type"
 msgstr "Escolla o seu tipo de pantalla"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1230
+#: ../src/gcm-calibrate-main.c:1236
 msgid "Select the monitor type that is attached to your computer."
 msgstr "Seleccione o tipo de monitor que está anexado a súa computadora."
 
-#: ../src/gcm-calibrate-main.c:1232
+#: ../src/gcm-calibrate-main.c:1238
 msgid "LCD"
 msgstr "LCD"
 
-#: ../src/gcm-calibrate-main.c:1241
+#: ../src/gcm-calibrate-main.c:1247
 msgid "CRT"
 msgstr "CRT"
 
-#: ../src/gcm-calibrate-main.c:1250
+#: ../src/gcm-calibrate-main.c:1256
 msgid "Plasma"
 msgstr "Plasma"
 
-#: ../src/gcm-calibrate-main.c:1259
+#: ../src/gcm-calibrate-main.c:1265
 msgid "Projector"
 msgstr "Proxector"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1271
+#: ../src/gcm-calibrate-main.c:1277
 msgid "Choose Display Type"
 msgstr "Escolla tipo de Pantalla"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1309
+#: ../src/gcm-calibrate-main.c:1315
 msgid "Choose your display target white point"
 msgstr "Escolla o punto blanco do obxetivo de calibración"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1316
+#: ../src/gcm-calibrate-main.c:1322
 msgid ""
 "Most displays should be calibrated to a CIE D65 illuminant for general usage."
 msgstr ""
 "A maioría das pantallas deberíran ser calibrados segundo o iluminante CIE "
 "D65 para propósito xeral."
 
-#: ../src/gcm-calibrate-main.c:1318
+#: ../src/gcm-calibrate-main.c:1324
 msgid "CIE D50 (Printing and publishing)"
 msgstr "CIE D50 (Imprimir e publicar)"
 
-#: ../src/gcm-calibrate-main.c:1327
+#: ../src/gcm-calibrate-main.c:1333
 msgid "CIE D55"
 msgstr "CIE D55"
 
-#: ../src/gcm-calibrate-main.c:1336
+#: ../src/gcm-calibrate-main.c:1342
 msgid "CIE D65 (Photography and graphics)"
 msgstr "CIE D65 (Fotografía e gráficos)"
 
-#: ../src/gcm-calibrate-main.c:1346
+#: ../src/gcm-calibrate-main.c:1352
 msgid "CIE D75"
 msgstr "CIE D75"
 
-#: ../src/gcm-calibrate-main.c:1355
+#: ../src/gcm-calibrate-main.c:1361
 msgid "Native (Already set manually)"
 msgstr "Nativo (Xa establecido manualmente)"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1367
+#: ../src/gcm-calibrate-main.c:1373
 msgid "Choose Display Whitepoint"
 msgstr "Elixa punto blanco da pantalla"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1405
+#: ../src/gcm-calibrate-main.c:1411
 msgid "Choose profiling mode"
 msgstr "Seleccione un modo de perfilado"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1412
+#: ../src/gcm-calibrate-main.c:1418
 msgid ""
 "Please indicate if you want to profile a local printer, generate some test "
 "patches, or profile using existing test patches."
@@ -1130,24 +1099,24 @@ msgstr ""
 "proba ou perfilar usando parches de referencia existentes."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1444
+#: ../src/gcm-calibrate-main.c:1450
 msgid "Calibration Mode"
 msgstr "Modo de Calibración"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1486
+#: ../src/gcm-calibrate-main.c:1492
 msgid "Choose calibration quality"
 msgstr "Escolla calidade da calibración"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1493
+#: ../src/gcm-calibrate-main.c:1499
 msgid "Higher quality calibration requires many color samples and more time."
 msgstr ""
 "Unha calidade de calibración superior require máis mostras de cor e máis "
 "tempo."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1497
+#: ../src/gcm-calibrate-main.c:1503
 msgid ""
 "A higher precision profile provides higher accuracy in color matching but "
 "requires more time for reading the color patches."
@@ -1156,124 +1125,124 @@ msgstr ""
 "de cores pero necesita máis tempo para ler os parches de cor."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1500
+#: ../src/gcm-calibrate-main.c:1506
 msgid "For a typical workflow, a normal precision profile is sufficient."
 msgstr ""
 "Para un fluxo de traballo normal é suficiente con un perfil de precisión "
 "normal."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1505
+#: ../src/gcm-calibrate-main.c:1511
 msgid "The high precision profile also requires more paper and printer ink."
 msgstr "Os perfiles de alta precisión tamén precisan máis papel e tinta."
 
 #. TRANSLATORS: radio options for calibration precision
-#: ../src/gcm-calibrate-main.c:1510
+#: ../src/gcm-calibrate-main.c:1516
 msgid "Accurate"
 msgstr "Preciso"
 
-#: ../src/gcm-calibrate-main.c:1511
+#: ../src/gcm-calibrate-main.c:1517
 msgid "Normal"
 msgstr "Normal"
 
-#: ../src/gcm-calibrate-main.c:1512
+#: ../src/gcm-calibrate-main.c:1518
 msgid "Quick"
 msgstr "Rápido"
 
-#: ../src/gcm-calibrate-main.c:1519
+#: ../src/gcm-calibrate-main.c:1525
 #, c-format
 msgid "(about %i sheet of paper)"
 msgid_plural "(about %i sheets of paper)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(Aprox. %i folla de papel)"
+msgstr[1] "(Aprox. %i follas de papel)"
 
-#: ../src/gcm-calibrate-main.c:1530
+#: ../src/gcm-calibrate-main.c:1536
 #, c-format
 msgid "(about %i minute)"
 msgid_plural "(about %i minutes)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(Aprox. %i minuto)"
+msgstr[1] "(Aprox. %i minutos)"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1570
+#: ../src/gcm-calibrate-main.c:1576
 msgid "Calibration Quality"
 msgstr "Calidade da Calibración"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1606
+#: ../src/gcm-calibrate-main.c:1612
 msgid "Profile title"
 msgstr "Tipo de perfil:"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1613
+#: ../src/gcm-calibrate-main.c:1619
 msgid "Choose a title to identify the profile on your system."
 msgstr "Escolla un título para idenficar o perfil no seu sistema."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1634
+#: ../src/gcm-calibrate-main.c:1640
 msgid "Profile Title"
 msgstr "Título do perfil"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1656
+#: ../src/gcm-calibrate-main.c:1662
 msgid "Insert sensor hardware"
 msgstr "Inserir sensor"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1663
+#: ../src/gcm-calibrate-main.c:1669
 msgid "You need to insert sensor hardware to continue."
 msgstr "Necesitase inserir o sensor do hardware para continuar."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1669
+#: ../src/gcm-calibrate-main.c:1675
 msgid "Sensor Check"
 msgstr "Comprobador sensor"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1698
+#: ../src/gcm-calibrate-main.c:1704
 msgid "The device could not be found. Ensure it is plugged in and turned on."
 msgstr ""
 "O dispositivo non foi atopado. Asegúrese de que está conectado e acendido."
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:1929
+#: ../src/gcm-calibrate-main.c:1935
 msgid "Unknown serial"
 msgstr "Serie descoñecida"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:1934
+#: ../src/gcm-calibrate-main.c:1940
 msgid "Unknown model"
 msgstr "Modelo descoñecido"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:1939
+#: ../src/gcm-calibrate-main.c:1945
 msgid "Unknown description"
 msgstr "Descrición descoñecida"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:1944
+#: ../src/gcm-calibrate-main.c:1950
 msgid "Unknown manufacturer"
 msgstr "Fabricante descoñecido"
 
 #. TRANSLATORS: this is the copyright string, where it might be
 #. * "Copyright (c) 2009 Edward Scissorhands"
 #. * BIG RED FLASHING NOTE: YOU NEED TO USE ASCII ONLY
-#: ../src/gcm-calibrate-main.c:1951
+#: ../src/gcm-calibrate-main.c:1957
 msgid "Copyright (c)"
 msgstr "Copyright (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2069 ../src/gcm-picker.c:784
+#: ../src/gcm-calibrate-main.c:2075 ../src/gcm-picker.c:784
 #: ../src/gcm-viewer.c:1714
 msgid "Set the parent window to make this modal"
 msgstr "Estabelecer a xanela pai para facelo modal"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-calibrate-main.c:2072
+#: ../src/gcm-calibrate-main.c:2078
 msgid "Set the specific device to calibrate"
 msgstr "Establecer o dispositivo a calibrar"
 
-#: ../src/gcm-calibrate-main.c:2113
+#: ../src/gcm-calibrate-main.c:2119
 msgid "No device was specified!"
 msgstr "Non se especificou ningún dispositivo!"
 
@@ -1338,23 +1307,18 @@ msgstr "Produciuse un fallo ao analizar o ficheiro %s"
 
 #. TRANSLATORS: message text
 #: ../src/gcm-import.c:166
-#, fuzzy, c-format
-#| msgid "Profile Precision"
+#, c-format
 msgid "Profile description: %s"
-msgstr "Precisión do perfil"
+msgstr "Descrición do perfil: %s"
 
 #. TRANSLATORS: message text
 #: ../src/gcm-import.c:176
-#, fuzzy
-#| msgid "Profile type:"
 msgid "Profile copyright:"
-msgstr "Tipo de perfil:"
+msgstr "Copyright do perfil:"
 
 #: ../src/gcm-import.c:188
-#, fuzzy
-#| msgid "ICC profile already installed"
 msgid "Color profile is already imported"
-msgstr "Perfil ICC xa instalado"
+msgstr "O perfil de cor xa se importou"
 
 #: ../src/gcm-import.c:218
 msgid "ICC profile already installed system-wide"
@@ -1362,31 +1326,23 @@ msgstr "O perfil ICC xa está instalado en todo o sistema"
 
 #. TRANSLATORS: the profile type
 #: ../src/gcm-import.c:234
-#, fuzzy
-#| msgid "Import ICC color profile?"
 msgid "Import display color profile?"
-msgstr "Desexa importar o perfil de cor ICC?"
+msgstr "Desexa importar o perfil de cor da pantalla?"
 
 #. TRANSLATORS: the profile type
 #: ../src/gcm-import.c:238
-#, fuzzy
-#| msgid "Import ICC color profile?"
 msgid "Import device color profile?"
-msgstr "Desexa importar o perfil de cor ICC?"
+msgstr "Desexa importar o perfil de cor do dispositivo?"
 
 #. TRANSLATORS: the profile type
 #: ../src/gcm-import.c:242
-#, fuzzy
-#| msgid "Import ICC color profile?"
 msgid "Import named color profile?"
-msgstr "Desexa importar o perfil de cor ICC?"
+msgstr "Desexa importar o perfil de cor con nome?"
 
 #. TRANSLATORS: the profile type
 #: ../src/gcm-import.c:246
-#, fuzzy
-#| msgid "Import ICC color profile?"
 msgid "Import color profile?"
-msgstr "Desexa importar o perfil de cor ICC?"
+msgstr "Desexa importar o perfil de cor?"
 
 #. TRANSLATORS: button text
 #: ../src/gcm-import.c:261 ../src/gcm-viewer.c:431
@@ -1394,16 +1350,12 @@ msgid "Import"
 msgstr "Importar"
 
 #: ../src/gcm-import.c:262
-#, fuzzy
-#| msgid "Details"
 msgid "Show Details"
-msgstr "Detalles"
+msgstr "Mostrar detalles"
 
 #: ../src/gcm-import.c:286 ../src/gcm-viewer.c:1388
-#, fuzzy
-#| msgid "Failed to copy file"
 msgid "Failed to import file"
-msgstr "Produciuse un fallo ao copiar o ficheiro"
+msgstr "Produciuse un fallo ao importar o ficheiro"
 
 #. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
 #: ../src/gcm-inspect.c:55
@@ -1687,43 +1639,36 @@ msgid "Mapping format"
 msgstr "Formato da mostraxe"
 
 #: ../src/gcm-viewer.c:779
-#, fuzzy
 msgid "Mapping qualifier"
-msgstr "Calificador da mostraxe"
+msgstr "Índice de mapeado"
 
 #: ../src/gcm-viewer.c:780
-#, fuzzy
-#| msgid "Proofing devices"
 msgid "Mapping device"
-msgstr "Corrección de dispositivos"
+msgstr "Mapeando dispositivo"
 
 #: ../src/gcm-viewer.c:781
 msgid "Delta-E average"
-msgstr ""
+msgstr "Delta-E media"
 
 #: ../src/gcm-viewer.c:782
 msgid "Delta-E maximum"
-msgstr ""
+msgstr "Delta-E máxima"
 
 #: ../src/gcm-viewer.c:783
 msgid "Delta-E RMS"
-msgstr ""
+msgstr "Delta-E RMS"
 
 #: ../src/gcm-viewer.c:784
-#, fuzzy
-#| msgid "Calibration Mode"
 msgid "Calibration device"
-msgstr "Modo de Calibración"
+msgstr "Dispositivo de calibración"
 
 #: ../src/gcm-viewer.c:785
 msgid "Screen surface finish"
-msgstr ""
+msgstr "Fin da superficie da pantalla"
 
 #: ../src/gcm-viewer.c:786
-#, fuzzy
-#| msgid "Continue"
 msgid "Connection type"
-msgstr "Continuar."
+msgstr "Tipo de conexión"
 
 #. TRANSLATORS: if the device has a VCGT profile
 #: ../src/gcm-viewer.c:1040
