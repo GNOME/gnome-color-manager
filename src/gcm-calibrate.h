@@ -149,6 +149,7 @@ void		 gcm_calibrate_interaction		(GcmCalibrate	*calibrate,
 /* designed for super-classes to call */
 void		 gcm_calibrate_set_sensor		(GcmCalibrate	*calibrate,
 							 CdSensor	*sensor);
+CdSensor	*gcm_calibrate_get_sensor		(GcmCalibrate	*calibrate);
 void		 gcm_calibrate_set_title		(GcmCalibrate	*calibrate,
 							 const gchar	*title,
 							 GcmCalibrateUiType ui_type);

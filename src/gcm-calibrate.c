@@ -313,8 +313,14 @@ out:
 void
 gcm_calibrate_set_sensor (GcmCalibrate *calibrate, CdSensor *sensor)
 {
+	calibrate->priv->sensor = g_object_ref (sensor);
+}
+
+CdSensor *
+gcm_calibrate_get_sensor (GcmCalibrate *calibrate)
+{
 	/* do not refcount */
-	calibrate->priv->sensor = sensor;
+	return calibrate->priv->sensor;
 }
 
 /**
@@ -2472,6 +2478,8 @@ gcm_calibrate_finalize (GObject *object)
 	g_free (calibrate->priv->old_message);
 	gtk_widget_destroy (GTK_WIDGET (calibrate->priv->sample_window));
 	g_object_unref (priv->brightness);
+	if (priv->sensor != NULL)
+		g_object_unref (priv->sensor);
 
 	G_OBJECT_CLASS (gcm_calibrate_parent_class)->finalize (object);
 }

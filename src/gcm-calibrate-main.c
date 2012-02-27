@@ -60,7 +60,6 @@ typedef struct {
 	CdDevice	*device;
 	CdDeviceKind	 device_kind;
 	GCancellable	*cancellable;
-	CdSensor	*sensor;
 	gchar		*device_id;
 	guint		 xid;
 	GtkWindow	*main_window;
@@ -283,6 +282,7 @@ gcm_calib_set_extra_metadata (GcmCalibratePriv *calib,
 	gchar *screen_brightness_str = NULL;
 	gsize len;
 	guint percentage;
+	CdSensor *sensor;
 
 	/* parse */
 	ret = g_file_get_contents (filename, &data, &len, error);
@@ -310,9 +310,10 @@ gcm_calib_set_extra_metadata (GcmCalibratePriv *calib,
 	_cmsDictAddEntryAscii (dict,
 			       CD_PROFILE_METADATA_DATA_SOURCE,
 			       CD_PROFILE_METADATA_DATA_SOURCE_CALIB);
+	sensor = gcm_calibrate_get_sensor (calib->calibrate);
 	_cmsDictAddEntryAscii (dict,
 			       CD_PROFILE_METADATA_MEASUREMENT_DEVICE,
-			       cd_sensor_kind_to_string (cd_sensor_get_kind (calib->sensor)));
+			       cd_sensor_kind_to_string (cd_sensor_get_kind (sensor)));
 	_cmsDictAddEntryAscii (dict,
 			       CD_PROFILE_METADATA_MAPPING_DEVICE_ID,
 			       cd_device_get_id (calib->device));
@@ -1727,6 +1728,7 @@ gcm_calib_get_sensors_cb (GObject *object,
 			  gpointer user_data)
 {
 	CdClient *client = CD_CLIENT (object);
+	CdSensor *sensor_tmp;
 	GcmCalibratePriv *calib = (GcmCalibratePriv *) user_data;
 	GError *error = NULL;
 	GPtrArray *sensors;
@@ -1744,9 +1746,9 @@ gcm_calib_get_sensors_cb (GObject *object,
 
 	/* hide the sensors screen */
 	if (sensors->len > 0) {
-		calib->sensor = g_object_ref (g_ptr_array_index (sensors, 0));
+		sensor_tmp = g_ptr_array_index (sensors, 0);
 
-		ret = cd_sensor_connect_sync (calib->sensor, NULL, &error);
+		ret = cd_sensor_connect_sync (sensor_tmp, NULL, &error);
 		if (!ret) {
 			g_warning ("failed to connect to sensor: %s",
 				   error->message);
@@ -1754,7 +1756,7 @@ gcm_calib_get_sensors_cb (GObject *object,
 			goto out;
 		}
 
-		gcm_calibrate_set_sensor (calib->calibrate, calib->sensor);
+		gcm_calibrate_set_sensor (calib->calibrate, sensor_tmp);
 		vbox = gcm_calib_get_vbox_for_page (calib,
 						    GCM_CALIBRATE_PAGE_SENSOR);
 		gtk_widget_hide (vbox);
@@ -1836,13 +1838,31 @@ gcm_calib_add_pages (GcmCalibratePriv *calib)
 static void
 gcm_calib_sensor_added_cb (CdClient *client, CdSensor *sensor, GcmCalibratePriv *calib)
 {
+	gboolean ret;
+	GError *error = NULL;
 	GtkWidget *vbox;
 
 	g_debug ("sensor inserted");
-	calib->sensor = g_object_ref (sensor);
+
+	/* connect */
+	ret = cd_sensor_connect_sync (sensor, NULL, &error);
+	if (!ret) {
+		g_warning ("failed to connect to sensor: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+
+	/* fix up UI */
+	gcm_calibrate_set_sensor (calib->calibrate, sensor);
 	vbox = gcm_calib_get_vbox_for_page (calib,
 					    GCM_CALIBRATE_PAGE_SENSOR);
+	gtk_assistant_set_page_complete (GTK_ASSISTANT (calib->main_window),
+					 vbox, TRUE);
 	gtk_widget_hide (vbox);
+	gtk_assistant_next_page (GTK_ASSISTANT (calib->main_window));
+out:
+	return;
 }
 
 /**
