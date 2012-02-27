@@ -2042,24 +2042,39 @@ gcm_calibrate_device (GcmCalibrate *calibrate,
 					     device,
 					     window,
 					     error);
-		if (!ret)
+		if (!ret) {
+			/* we don't care about the success or error */
+			cd_device_profiling_uninhibit_sync (device,
+							    NULL,
+							    NULL);
 			goto out;
+		}
 		break;
 	case CD_DEVICE_KIND_PRINTER:
 		ret = gcm_calibrate_printer (calibrate,
 					     device,
 					     window,
 					     error);
-		if (!ret)
+		if (!ret) {
+			/* we don't care about the success or error */
+			cd_device_profiling_uninhibit_sync (device,
+							    NULL,
+							    NULL);
 			goto out;
+		}
 		break;
 	default:
 		ret = gcm_calibrate_camera (calibrate,
 					    device,
 					    window,
 					    error);
-		if (!ret)
+		if (!ret) {
+			/* we don't care about the success or error */
+			cd_device_profiling_uninhibit_sync (device,
+							    NULL,
+							    NULL);
 			goto out;
+		}
 		break;
 	}
 
