@@ -114,7 +114,8 @@ gcm_calibrate_argyll_get_quality_arg (GcmCalibrateArgyll *calibrate_argyll)
  * gcm_calibrate_argyll_get_display:
  **/
 static guint
-gcm_calibrate_argyll_get_display (const gchar *output_name, GError **error)
+gcm_calibrate_argyll_get_display (const gchar *output_name,
+				  GError **error)
 {
 	gboolean ret;
 	gchar *data = NULL;
@@ -199,7 +200,8 @@ gcm_calibrate_argyll_debug_argv (const gchar *program, gchar **argv)
  * gcm_calibrate_argyll_get_tool_filename:
  **/
 static gchar *
-gcm_calibrate_argyll_get_tool_filename (const gchar *command, GError **error)
+gcm_calibrate_argyll_get_tool_filename (const gchar *command,
+					GError **error)
 {
 	gboolean ret;
 	gchar *filename;
@@ -239,7 +241,9 @@ out:
  * gcm_calibrate_argyll_fork_command:
  **/
 static gboolean
-gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll, gchar **argv, GError **error)
+gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll,
+				   gchar **argv,
+				   GError **error)
 {
 	gboolean ret = FALSE;
 #ifdef HAVE_VTE
@@ -283,7 +287,8 @@ out:
  * gcm_calibrate_argyll_display_neutralise:
  **/
 static gboolean
-gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll,
+					 GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
@@ -393,7 +398,8 @@ out:
  * gcm_calibrate_argyll_display_read_chart:
  **/
 static gboolean
-gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll,
+					 GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
@@ -481,7 +487,8 @@ out:
  * gcm_calibrate_argyll_display_draw_and_measure:
  **/
 static gboolean
-gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_argyll,
+					       GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
@@ -587,7 +594,8 @@ out:
  * gcm_calibrate_argyll_display_generate_profile:
  **/
 static gboolean
-gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_argyll,
+					       GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
@@ -721,7 +729,9 @@ gcm_calibrate_argyll_reference_kind_to_filename (GcmCalibrateReferenceKind kind)
  * gcm_utils_mkdir_and_copy:
  **/
 static gboolean
-gcm_utils_mkdir_and_copy (GFile *source, GFile *destination, GError **error)
+gcm_utils_mkdir_and_copy (GFile *source,
+			  GFile *destination,
+			  GError **error)
 {
 	gboolean ret;
 	GFile *parent;
@@ -740,7 +750,13 @@ gcm_utils_mkdir_and_copy (GFile *source, GFile *destination, GError **error)
 	}
 
 	/* do the copy */
-	ret = g_file_copy (source, destination, G_FILE_COPY_OVERWRITE, NULL, NULL, NULL, error);
+	ret = g_file_copy (source,
+			   destination,
+			   G_FILE_COPY_OVERWRITE,
+			   NULL,
+			   NULL,
+			   NULL,
+			   error);
 	if (!ret)
 		goto out;
 out:
@@ -752,7 +768,8 @@ out:
  * gcm_calibrate_argyll_device_copy:
  **/
 static gboolean
-gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll,
+				  GError **error)
 {
 	gboolean ret;
 	gchar *device = NULL;
@@ -842,7 +859,8 @@ out:
  * gcm_calibrate_argyll_device_measure:
  **/
 static gboolean
-gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll,
+				     GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
@@ -935,7 +953,8 @@ out:
  * gcm_calibrate_argyll_device_generate_profile:
  **/
 static gboolean
-gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argyll,
+					      GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
@@ -1046,7 +1065,8 @@ out:
  * gcm_calibrate_argyll_set_filename_result:
  **/
 static gboolean
-gcm_calibrate_argyll_set_filename_result (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+gcm_calibrate_argyll_set_filename_result (GcmCalibrateArgyll *calibrate_argyll,
+					  GError **error)
 {
 	gchar *filename = NULL;
 	gboolean ret = TRUE;
@@ -1096,7 +1116,8 @@ out:
  * gcm_calibrate_argyll_remove_temp_files:
  **/
 static gboolean
-gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll,
+					GError **error)
 {
 	gchar *filename_tmp;
 	guint i;
@@ -1147,7 +1168,11 @@ gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll, GE
  * gcm_calibrate_argyll_display:
  **/
 static gboolean
-gcm_calibrate_argyll_display (GcmCalibrate *calibrate, CdDevice *device, CdSensor *sensor, GtkWindow *window, GError **error)
+gcm_calibrate_argyll_display (GcmCalibrate *calibrate,
+			      CdDevice *device,
+			      CdSensor *sensor,
+			      GtkWindow *window,
+			      GError **error)
 {
 	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
@@ -1301,10 +1326,13 @@ gcm_calibrate_argyll_get_sensor_target (GcmCalibrateArgyll *calibrate_argyll)
 }
 
 /**
- * gcm_calibrate_argyll_display_generate_targets:
+ * gcm_calibrate_argyll_printer_generate_targets:
  **/
 static gboolean
-gcm_calibrate_argyll_display_generate_targets (GcmCalibrateArgyll *calibrate_argyll, gdouble width, gdouble height, GError **error)
+gcm_calibrate_argyll_printer_generate_targets (GcmCalibrateArgyll *calibrate_argyll,
+					       gdouble width,
+					       gdouble height,
+					       GError **error)
 {
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
@@ -1410,7 +1438,10 @@ out:
  * gcm_calibrate_argyll_render_cb:
  **/
 static GPtrArray *
-gcm_calibrate_argyll_render_cb (GcmPrint *print, GtkPageSetup *page_setup, GcmCalibrate *calibrate, GError **error)
+gcm_calibrate_argyll_render_cb (GcmPrint *print,
+				GtkPageSetup *page_setup,
+				GcmCalibrate *calibrate,
+				GError **error)
 {
 	gboolean ret = TRUE;
 	GPtrArray *array = NULL;
@@ -1433,7 +1464,10 @@ gcm_calibrate_argyll_render_cb (GcmPrint *print, GtkPageSetup *page_setup, GcmCa
 	height = gtk_paper_size_get_height (paper_size, GTK_UNIT_MM);
 
 	/* generate the tiff files */
-	ret = gcm_calibrate_argyll_display_generate_targets (GCM_CALIBRATE_ARGYLL (calibrate), width, height, error);
+	ret = gcm_calibrate_argyll_printer_generate_targets (GCM_CALIBRATE_ARGYLL (calibrate),
+							     width,
+							     height,
+							     error);
 	if (!ret)
 		goto out;
 
@@ -1465,7 +1499,9 @@ out:
  * gcm_calibrate_argyll_set_device_from_ti2:
  **/
 static gboolean
-gcm_calibrate_argyll_set_device_from_ti2 (GcmCalibrate *calibrate, const gchar *filename, GError **error)
+gcm_calibrate_argyll_set_device_from_ti2 (GcmCalibrate *calibrate,
+					  const gchar *filename,
+					  GError **error)
 {
 	gboolean ret;
 	gchar *contents = NULL;
@@ -1543,7 +1579,8 @@ out:
  * gcm_calibrate_argyll_printer_convert_jpeg:
  **/
 static gboolean
-gcm_calibrate_argyll_printer_convert_jpeg (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+gcm_calibrate_argyll_printer_convert_jpeg (GcmCalibrateArgyll *calibrate_argyll,
+					   GError **error)
 {
 	GDir *dir;
 	const gchar *filename;
@@ -1583,7 +1620,13 @@ gcm_calibrate_argyll_printer_convert_jpeg (GcmCalibrateArgyll *calibrate_argyll,
 			}
 
 			/* try to save new file */
-			ret = gdk_pixbuf_save (pixbuf, filename_jpg, "jpeg", error, "quality", "100", NULL);
+			ret = gdk_pixbuf_save (pixbuf,
+					       filename_jpg,
+					       "jpeg",
+					       error,
+					       "quality",
+					       "100",
+					       NULL);
 			if (!ret)
 				goto out;
 			g_object_unref (pixbuf);
@@ -1602,7 +1645,11 @@ out:
  * gcm_calibrate_argyll_printer:
  **/
 static gboolean
-gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, CdDevice *device, CdSensor *sensor, GtkWindow *window, GError **error)
+gcm_calibrate_argyll_printer (GcmCalibrate *calibrate,
+			      CdDevice *device,
+			      CdSensor *sensor,
+			      GtkWindow *window,
+			      GError **error)
 {
 	gboolean ret;
 	gchar *cmdline = NULL;
@@ -1624,7 +1671,11 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, CdDevice *device, CdSenso
 
 	/* print */
 	if (print_kind == GCM_CALIBRATE_PRINT_KIND_LOCAL) {
-		ret = gcm_print_with_render_callback (priv->print, window, (GcmPrintRenderCb) gcm_calibrate_argyll_render_cb, calibrate, error);
+		ret = gcm_print_with_render_callback (priv->print,
+						      window,
+						      (GcmPrintRenderCb) gcm_calibrate_argyll_render_cb,
+						      calibrate,
+						      error);
 		if (!ret)
 			goto out;
 	}
@@ -1638,12 +1689,16 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, CdDevice *device, CdSenso
 		height = gtk_paper_size_get_height (paper_size, GTK_UNIT_MM);
 
 		/* generate the tiff files */
-		ret = gcm_calibrate_argyll_display_generate_targets (GCM_CALIBRATE_ARGYLL (calibrate), width, height, error);
+		ret = gcm_calibrate_argyll_printer_generate_targets (GCM_CALIBRATE_ARGYLL (calibrate),
+								     width,
+								     height,
+								     error);
 		if (!ret)
 			goto out;
 
 		/* convert to jpegs */
-		ret = gcm_calibrate_argyll_printer_convert_jpeg (GCM_CALIBRATE_ARGYLL (calibrate), error);
+		ret = gcm_calibrate_argyll_printer_convert_jpeg (GCM_CALIBRATE_ARGYLL (calibrate),
+								 error);
 		if (!ret)
 			goto out;
 
@@ -1698,20 +1753,23 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate, CdDevice *device, CdSenso
 	gcm_calibrate_set_progress (calibrate, 80);
 
 	/* step 4 */
-	ret = gcm_calibrate_argyll_device_generate_profile (calibrate_argyll, error);
+	ret = gcm_calibrate_argyll_device_generate_profile (calibrate_argyll,
+							    error);
 	if (!ret)
 		goto out;
 
 	/* only delete state if we are doing a local printer */
 	if (print_kind == GCM_CALIBRATE_PRINT_KIND_LOCAL) {
 		/* step 5 */
-		ret = gcm_calibrate_argyll_remove_temp_files (calibrate_argyll, error);
+		ret = gcm_calibrate_argyll_remove_temp_files (calibrate_argyll,
+							      error);
 		if (!ret)
 			goto out;
 	}
 
 	/* step 6 */
-	ret = gcm_calibrate_argyll_set_filename_result (calibrate_argyll, error);
+	ret = gcm_calibrate_argyll_set_filename_result (calibrate_argyll,
+							error);
 	if (!ret)
 		goto out;
 out:
@@ -1762,7 +1820,8 @@ out:
  * gcm_calibrate_argyll_check_and_remove_alpha:
  **/
 static gboolean
-gcm_calibrate_argyll_check_and_remove_alpha (GcmCalibrateArgyll *calibrate_argyll, GError **error)
+gcm_calibrate_argyll_check_and_remove_alpha (GcmCalibrateArgyll *calibrate_argyll,
+					     GError **error)
 {
 	const gchar *working_path;
 	gboolean ret = TRUE;
@@ -1824,7 +1883,11 @@ out:
  * gcm_calibrate_argyll_device:
  **/
 static gboolean
-gcm_calibrate_argyll_device (GcmCalibrate *calibrate, CdDevice *device, CdSensor *sensor, GtkWindow *window, GError **error)
+gcm_calibrate_argyll_device (GcmCalibrate *calibrate,
+			     CdDevice *device,
+			     CdSensor *sensor,
+			     GtkWindow *window,
+			     GError **error)
 {
 	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
 	gboolean ret;
@@ -1893,7 +1956,8 @@ static void gcm_calibrate_argyll_flush_vte (GcmCalibrateArgyll *calibrate_argyll
  * gcm_calibrate_argyll_exit_cb:
  **/
 static void
-gcm_calibrate_argyll_exit_cb (VteTerminal *terminal, GcmCalibrateArgyll *calibrate_argyll)
+gcm_calibrate_argyll_exit_cb (VteTerminal *terminal,
+			      GcmCalibrateArgyll *calibrate_argyll)
 {
 	gint exit_status;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
@@ -2009,7 +2073,8 @@ gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
  * Return value: if FALSE then abort processing input
  **/
 static gboolean
-gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll, const gchar *line)
+gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
+					 const gchar *line)
 {
 	gchar *title_str = NULL;
 	GString *string = NULL;
@@ -2339,7 +2404,10 @@ out:
  * gcm_calibrate_argyll_selection_func_cb:
  **/
 static gboolean
-gcm_calibrate_argyll_selection_func_cb (VteTerminal *terminal, glong column, glong row, gpointer data)
+gcm_calibrate_argyll_selection_func_cb (VteTerminal *terminal,
+					glong column,
+					glong row,
+					gpointer data)
 {
 	/* just select everything */
 	return TRUE;
@@ -2403,7 +2471,9 @@ gcm_calibrate_argyll_cursor_moved_cb (VteTerminal *terminal,
  * gcm_calibrate_argyll_status_changed_cb:
  **/
 static void
-gcm_calibrate_argyll_status_changed_cb (GcmPrint *print, GtkPrintStatus status, GcmCalibrateArgyll *calibrate_argyll)
+gcm_calibrate_argyll_status_changed_cb (GcmPrint *print,
+					GtkPrintStatus status,
+					GcmCalibrateArgyll *calibrate_argyll)
 {
 	/* TRANSLATORS: title, printing reference files to media */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
