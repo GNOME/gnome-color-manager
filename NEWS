@@ -1,3 +1,30 @@
+Version 3.3.91
+~~~~~~~~~~~~~
+Released: 2012-03-14
+
+* Translations
+ - Updated Galician translations (Fran Diéguez)
+ - Updated Portuguese translation (António Lima)
+ - Updated Slovenian translation (Matej Urbančič)
+ - Updated Spanish translation (Daniel Mustieles)
+ - Updated Swedish translation (Daniel Nylander)
+ - Updated Traditional Chinese translation (Cheng-Chia Tseng)
+
+* New Features:
+ - Compile the GtkBuilder files as a GResources to speed up startup (Richard Hughes)
+ - Show the calibration progress bar level for new versions of Argyllcms (Richard Hughes)
+
+* Bugfix:
+ - Allow the calibration to ask more than one interaction question (Richard Hughes)
+ - Correctly restore the calibration status panel after asking the user a question (Richard Hughes)
+ - Detect an sample misread from argyllcms and try to recover (Richard Hughes)
+ - Do not show a critical warning if we re-try a failed calibration (Richard Hughes)
+ - Don't assume dispcal is /usr/bin/dispcal (Alexandre Rostovtsev)
+ - Ensure the user can quit if the calibration fails (Richard Hughes)
+ - Ensure the VTE is flushed when the spawned program exits (Richard Hughes)
+ - Fix a critial warning when setting the brightness (Richard Hughes)
+ - Replace use of deprecated clutter api (Javier Jardón)
+
 Version 3.3.5
 ~~~~~~~~~~~~~
 Released: 2012-02-06
