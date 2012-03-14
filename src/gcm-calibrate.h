@@ -64,6 +64,7 @@ struct _GcmCalibrateClass
 							 CdSensor	*sensor,
 							 GtkWindow	*window,
 							 GError		**error);
+	gboolean	 (*get_enabled)	(GcmCalibrate	*calibrate);
 	void		 (*interaction)			(GcmCalibrate	*calibrate,
 							 GtkResponseType response);
 
@@ -189,6 +190,7 @@ gboolean	 gcm_calibrate_display_calibration	(GcmCalibrate	*calibrate,
 							 CdDevice	*device,
 							 GtkWindow	*window,
 							 GError		**error);
+gboolean	 gcm_calibrate_get_enabled		(GcmCalibrate	*calibrate);
 
 G_END_DECLS
 

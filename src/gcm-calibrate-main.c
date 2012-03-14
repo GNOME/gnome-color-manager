@@ -1789,7 +1789,7 @@ gcm_calib_add_pages (GcmCalibratePriv *calib)
 		gcm_calib_setup_page_sensor (calib);
 
 	/* find whether argyllcms is installed using a tool which should exist */
-	ret = g_file_test ("/usr/bin/dispcal", G_FILE_TEST_EXISTS);
+	ret = gcm_calibrate_get_enabled (calib->calibrate);
 	if (!ret)
 		gcm_calib_setup_page_install_argyllcms (calib);
 

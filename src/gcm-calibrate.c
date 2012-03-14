@@ -1934,6 +1934,18 @@ out:
 }
 
 /**
+ * gcm_calibrate_get_enabled:
+ **/
+gboolean
+gcm_calibrate_get_enabled (GcmCalibrate *calibrate)
+{
+	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
+	if (klass->get_enabled != NULL)
+		return klass->get_enabled (calibrate);
+	return TRUE;
+}
+
+/**
  * gcm_calibrate_camera:
  **/
 static gboolean

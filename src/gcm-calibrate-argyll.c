@@ -1446,6 +1446,29 @@ out:
 }
 
 /**
+ * gcm_calibrate_argyll_get_enabled:
+ **/
+static gboolean
+gcm_calibrate_argyll_get_enabled (GcmCalibrate *calibrate)
+{
+	gboolean ret = TRUE;
+	gchar *command;
+	GError *error = NULL;
+
+	/* get correct name of the command */
+	command = gcm_calibrate_argyll_get_tool_filename ("dispcal", &error);
+	if (command == NULL) {
+		g_debug ("Failed to find dispcal: %s", error->message);
+		g_error_free (error);
+		ret = FALSE;
+		goto out;
+	}
+out:
+	g_free (command);
+	return ret;
+}
+
+/**
  * gcm_calibrate_argyll_render_cb:
  **/
 static GPtrArray *
@@ -2545,6 +2568,7 @@ gcm_calibrate_argyll_class_init (GcmCalibrateArgyllClass *klass)
 	parent_class->calibrate_display = gcm_calibrate_argyll_display;
 	parent_class->calibrate_device = gcm_calibrate_argyll_device;
 	parent_class->calibrate_printer = gcm_calibrate_argyll_printer;
+	parent_class->get_enabled = gcm_calibrate_argyll_get_enabled;
 	parent_class->interaction = gcm_calibrate_argyll_interaction;
 
 	g_type_class_add_private (klass, sizeof (GcmCalibrateArgyllPrivate));
