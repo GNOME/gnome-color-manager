@@ -111,92 +111,6 @@ gcm_calibrate_argyll_get_quality_arg (GcmCalibrateArgyll *calibrate_argyll)
 }
 
 /**
- * gcm_calibrate_argyll_get_display:
- **/
-static guint
-gcm_calibrate_argyll_get_display (const gchar *output_name,
-				  GError **error)
-{
-	gboolean ret;
-	gchar *data = NULL;
-	gchar **split = NULL;
-	gint exit_status;
-	guint display = G_MAXUINT;
-	guint i;
-	gchar *name;
-
-	/* execute it and capture stderr */
-	ret = g_spawn_command_line_sync ("dispcal", NULL, &data, &exit_status, error);
-	if (!ret)
-		goto out;
-
-	/* split it into lines */
-	split = g_strsplit (data, "\n", -1);
-	for (i=0; split[i] != NULL; i++) {
-		if (g_strstr_len (split[i], -1, "XRandR 1.2 is faulty") != NULL) {
-			g_set_error_literal (error,
-					     GCM_CALIBRATE_ERROR,
-					     GCM_CALIBRATE_ERROR_INTERNAL,
-					     "failed to match display as RandR is faulty");
-			goto out;
-		}
-		name = g_strdup (split[i]);
-		g_strdelimit (name, " ", '\0');
-		if (g_strcmp0 (output_name, &name[26]) == 0) {
-			display = atoi (&name[4]);
-			g_debug ("found %s mapped to %i", output_name, display);
-		}
-		g_free (name);
-	}
-
-	/* nothing found */
-	if (display == G_MAXUINT) {
-		g_set_error_literal (error,
-				     GCM_CALIBRATE_ERROR,
-				     GCM_CALIBRATE_ERROR_INTERNAL,
-				     "failed to match display");
-		goto out;
-	}
-out:
-	g_free (data);
-	g_strfreev (split);
-	return display;
-}
-
-/**
- * gcm_calibrate_argyll_get_display_kind:
- **/
-static gchar
-gcm_calibrate_argyll_get_display_kind (GcmCalibrateArgyll *calibrate_argyll)
-{
-	GcmCalibrateDisplayKind device_kind;
-
-	g_object_get (calibrate_argyll,
-		      "display-kind", &device_kind,
-		      NULL);
-
-	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_LCD)
-		return 'l';
-	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_CRT)
-		return 'c';
-	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_PROJECTOR)
-		return 'p';
-	return '\0';
-}
-
-/**
- * gcm_calibrate_argyll_debug_argv:
- **/
-static void
-gcm_calibrate_argyll_debug_argv (const gchar *program, gchar **argv)
-{
-	gchar *join;
-	join = g_strjoinv ("  ", argv);
-	g_debug ("running %s  %s", program, join);
-	g_free (join);
-}
-
-/**
  * gcm_calibrate_argyll_get_tool_filename:
  **/
 static gchar *
@@ -235,6 +149,103 @@ gcm_calibrate_argyll_get_tool_filename (const gchar *command,
 		     "failed to get filename for %s", command);
 out:
 	return filename;
+}
+
+/**
+ * gcm_calibrate_argyll_get_display:
+ **/
+static guint
+gcm_calibrate_argyll_get_display (const gchar *output_name,
+				  GError **error)
+{
+	gboolean ret = FALSE;
+	gchar *command = NULL;
+	gchar *data = NULL;
+	gchar *name;
+	gchar **split = NULL;
+	gint exit_status;
+	guint display = G_MAXUINT;
+	guint i;
+
+	/* get correct name of the command */
+	command = gcm_calibrate_argyll_get_tool_filename ("dispcal", error);
+	if (command == NULL)
+		goto out;
+
+	/* execute it and capture stderr */
+	ret = g_spawn_command_line_sync (command,
+					 NULL,
+					 &data,
+					 &exit_status,
+					 error);
+	if (!ret)
+		goto out;
+
+	/* split it into lines */
+	split = g_strsplit (data, "\n", -1);
+	for (i=0; split[i] != NULL; i++) {
+		if (g_strstr_len (split[i], -1, "XRandR 1.2 is faulty") != NULL) {
+			g_set_error_literal (error,
+					     GCM_CALIBRATE_ERROR,
+					     GCM_CALIBRATE_ERROR_INTERNAL,
+					     "failed to match display as RandR is faulty");
+			goto out;
+		}
+		name = g_strdup (split[i]);
+		g_strdelimit (name, " ", '\0');
+		if (g_strcmp0 (output_name, &name[26]) == 0) {
+			display = atoi (&name[4]);
+			g_debug ("found %s mapped to %i", output_name, display);
+		}
+		g_free (name);
+	}
+
+	/* nothing found */
+	if (display == G_MAXUINT) {
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_INTERNAL,
+				     "failed to match display");
+		goto out;
+	}
+out:
+	g_free (command);
+	g_free (data);
+	g_strfreev (split);
+	return display;
+}
+
+/**
+ * gcm_calibrate_argyll_get_display_kind:
+ **/
+static gchar
+gcm_calibrate_argyll_get_display_kind (GcmCalibrateArgyll *calibrate_argyll)
+{
+	GcmCalibrateDisplayKind device_kind;
+
+	g_object_get (calibrate_argyll,
+		      "display-kind", &device_kind,
+		      NULL);
+
+	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_LCD)
+		return 'l';
+	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_CRT)
+		return 'c';
+	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_PROJECTOR)
+		return 'p';
+	return '\0';
+}
+
+/**
+ * gcm_calibrate_argyll_debug_argv:
+ **/
+static void
+gcm_calibrate_argyll_debug_argv (const gchar *program, gchar **argv)
+{
+	gchar *join;
+	join = g_strjoinv ("  ", argv);
+	g_debug ("running %s  %s", program, join);
+	g_free (join);
 }
 
 /**
