@@ -764,25 +764,43 @@ struct {
 	const gchar *key;
 	const gchar *localised;
 } metadata_keys[] = {
+	/* TRANSLATORS: e.g. sRGB or adbode RGB */
 	{ CD_PROFILE_METADATA_STANDARD_SPACE,		N_("Standard space") },
+	/* TRANSLATORS: the raw EDID MD5 of the display device */
 	{ CD_PROFILE_METADATA_EDID_MD5,			N_("Display checksum") },
 	{ CD_PROFILE_METADATA_EDID_MODEL,		N_("Display model") },
 	{ CD_PROFILE_METADATA_EDID_SERIAL,		N_("Display serial number") },
+	/* TRANSLATORS: the PNPID is a three letter code, e.g. DEL */
 	{ CD_PROFILE_METADATA_EDID_MNFT,		N_("Display PNPID") },
+	/* TRANSLATORS: who made the display */
 	{ CD_PROFILE_METADATA_EDID_VENDOR,		N_("Display vendor") },
+	/* TRANSLATORS: the raw profile MD5 */
 	{ CD_PROFILE_METADATA_FILE_CHECKSUM,		N_("File checksum") },
+	/* TRANSLATORS: the color framework, e.g. 'colord' */
 	{ CD_PROFILE_METADATA_CMF_PRODUCT,		N_("Framework product") },
+	/* TRANSLATORS: the framework binary, e.g. gcm-viewer */
 	{ CD_PROFILE_METADATA_CMF_BINARY,		N_("Framework program") },
+	/* TRANSLATORS: the framework release, e.g. '1.22' */
 	{ CD_PROFILE_METADATA_CMF_VERSION,		N_("Framework version") },
+	/* TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard' */
 	{ CD_PROFILE_METADATA_DATA_SOURCE,		N_("Data source type") },
+	/* TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI' */
 	{ CD_PROFILE_METADATA_MAPPING_FORMAT,		N_("Mapping format") },
+	/* TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi' */
 	{ CD_PROFILE_METADATA_MAPPING_QUALIFIER,	N_("Mapping qualifier") },
+	/* TRANSLATORS: The original device the profile was made for */
 	{ CD_PROFILE_METADATA_MAPPING_DEVICE_ID,	N_("Mapping device") },
+	/* TRANSLATORS: The average error when making the profile */
 	{ CD_PROFILE_METADATA_ACCURACY_DE76_AVG,	N_("Delta-E average") },
+	/* TRANSLATORS: the maximum error when making the profile */
 	{ CD_PROFILE_METADATA_ACCURACY_DE76_MAX,	N_("Delta-E maximum") },
+	/* TRANSLATORS: the RMS error when making the profile */
 	{ CD_PROFILE_METADATA_ACCURACY_DE76_RMS,	N_("Delta-E RMS") },
+	/* TRANSLATORS: The device name, e.g. 'huey' */
 	{ CD_PROFILE_METADATA_MEASUREMENT_DEVICE,	N_("Calibration device") },
+	/* TRANSLATORS: screen type e.g. 'glossy' or 'matte' */
 	{ CD_PROFILE_METADATA_SCREEN_SURFACE,		N_("Screen surface finish") },
+	/* TRANSLATORS: e.g. DVI or VGA */
 	{ CD_PROFILE_METADATA_CONNECTION_TYPE,		N_("Connection type") },
 	{ NULL, NULL }
 };
