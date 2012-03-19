@@ -258,7 +258,9 @@ gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll,
 {
 	gboolean ret = FALSE;
 #ifdef HAVE_VTE
-	const gchar *envp[] = { "ARGYLL_NOT_INTERACTIVE", NULL };
+	const gchar *envp[] = { "ARGYLL_NOT_INTERACTIVE",
+				"ENABLE_COLORHUG=1",
+				NULL };
 	const gchar *working_directory;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
