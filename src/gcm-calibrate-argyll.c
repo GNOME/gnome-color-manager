@@ -2302,7 +2302,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 					 _("Reading sample"),
 					 GCM_CALIBRATE_UI_ERROR);
 
-		/* TRANSLATORS: message, no firmware is available */
+		/* TRANSLATORS: message, the sample read failed due to misread */
 		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
 					   _("Failed to read the color sample correctly."),
 					   GCM_CALIBRATE_UI_ERROR);
