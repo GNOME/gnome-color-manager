@@ -764,11 +764,60 @@ gcm_calib_setup_page_intro (GcmCalibratePriv *calib)
 }
 
 /**
+ * gcm_calibrate_is_livecd:
+ **/
+static gboolean
+gcm_calibrate_is_livecd (void)
+{
+	gboolean ret;
+	gchar *data = NULL;
+	GError *error = NULL;
+
+	/* get the kernel commandline */
+	ret = g_file_get_contents ("/proc/cmdline", &data, NULL, &error);
+	if (!ret) {
+		g_warning ("failed to get kernel command line: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+	ret = g_strstr_len (data, -1, "liveimg") != NULL;
+out:
+	g_free (data);
+	return ret;
+}
+
+/**
+ * gcm_calibrate_show_profile_location:
+ **/
+static void
+gcm_calibrate_show_profile_location (void)
+{
+	gboolean ret;
+	gchar *command_line;
+	GError *error = NULL;
+
+	/* just hardcode nautilus to open the folder */
+	command_line = g_strdup_printf ("nautilus %s/%s",
+					g_get_user_data_dir (),
+					"icc");
+	ret = g_spawn_command_line_async (command_line, &error);
+	if (!ret) {
+		g_warning ("failed to show profile: %s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+out:
+	g_free (command_line);
+}
+
+/**
  * gcm_calib_setup_page_summary:
  **/
 static void
 gcm_calib_setup_page_summary (GcmCalibratePriv *calib)
 {
+	gboolean ret;
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GtkWidget *image;
@@ -823,6 +872,11 @@ gcm_calib_setup_page_summary (GcmCalibratePriv *calib)
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_LAST));
+
+	/* show the user the profile to copy off the live system */
+	ret = gcm_calibrate_is_livecd ();
+	if (ret)
+		gcm_calibrate_show_profile_location ();
 
 	/* show page */
 	gtk_widget_show_all (vbox);
