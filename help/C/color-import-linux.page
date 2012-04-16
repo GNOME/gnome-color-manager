@@ -1,0 +1,31 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic" style="task"
+      id="color-import-linux">
+
+  <info>
+    <link type="guide" xref="color#problems"/>
+    <link type="seealso" xref="color-whatisprofile"/>
+    <link type="seealso" xref="color-gettingprofiles"/>
+    <desc>How to import an existing ICC profile using a Linux system.</desc>
+    <credit type="author">
+      <name>Richard Hughes</name>
+      <email>richard@hughsie.com</email>
+    </credit>
+    <include href="legal.xml" xmlns="http://www.w3.org/2001/XInclude"/>
+  </info>
+
+  <title>Installing an ICC profile on Linux</title>
+  <p>
+    If you have <cmd>gnome-color-manager</cmd> or <cmd>colord-kde</cmd>
+    installed then just double click the <file>.icc</file> profile
+    and click <gui>Import</gui>.
+    You can then assign the new profile to an existing device using the
+    <guiseq><gui>System Settings</gui><gui>Color</gui></guiseq> panel.
+  </p>
+  <p>
+    Profile calibration curves are automatically loaded at login, or can
+    be loaded for all users at at startup if the <gui>Set for all
+    users</gui> button is clicked.
+  </p>
+
+</page>

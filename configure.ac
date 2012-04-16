@@ -17,6 +17,7 @@ AC_PROG_RANLIB
 LT_INIT
 AM_PROG_CC_C_O
 IT_PROG_INTLTOOL([0.35.0])
+YELP_HELP_INIT
 
 GNOME_COMPILE_WARNINGS(error)
 GNOME_DOC_INIT
@@ -231,6 +232,7 @@ data/tests/Makefile
 data/targets/Makefile
 data/figures/Makefile
 data/ti1/Makefile
+help/Makefile
 man/Makefile
 po/Makefile.in
 src/Makefile

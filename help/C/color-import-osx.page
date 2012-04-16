@@ -1,0 +1,29 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic" style="task"
+      id="color-import-osx">
+
+  <info>
+    <link type="guide" xref="color#problems"/>
+    <link type="seealso" xref="color-whatisprofile"/>
+    <link type="seealso" xref="color-gettingprofiles"/>
+    <desc>How to import an existing ICC profile using an OS X system.</desc>
+    <credit type="author">
+      <name>Richard Hughes</name>
+      <email>richard@hughsie.com</email>
+    </credit>
+    <include href="legal.xml" xmlns="http://www.w3.org/2001/XInclude"/>
+  </info>
+
+  <title>Installing an ICC profile on Apple OS X</title>
+  <p>
+    Apple OS X supports a similar scheme to Linux, in that profiles can
+    be installed system-wide or specific to the user.
+    System wide profiles are stored in <file>/Library/ColorSync/Profiles</file>
+    and user-specific profiles are stored in <file>~/Library/ColorSync/Profiles</file>.
+  </p>
+  <p>
+    Use the <guiseq><gui>System Preferences</gui><gui>Displays</gui><gui>Color</gui></guiseq>
+    tool to import the file and assign the profile to the correct device.
+  </p>
+
+</page>

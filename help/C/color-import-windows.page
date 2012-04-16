@@ -1,0 +1,94 @@
+<page xmlns="http://projectmallard.org/1.0/"
+      type="topic" style="task"
+      id="color-import-windows">
+
+  <info>
+    <link type="guide" xref="color#problems"/>
+    <link type="seealso" xref="color-whatisprofile"/>
+    <link type="seealso" xref="color-gettingprofiles"/>
+    <desc>How to import an existing ICC profile using a Windows system.</desc>
+    <credit type="author">
+      <name>Richard Hughes</name>
+      <email>richard@hughsie.com</email>
+    </credit>
+    <include href="legal.xml" xmlns="http://www.w3.org/2001/XInclude"/>
+  </info>
+
+  <title>Installing an ICC profile on Microsoft Windows</title>
+  <p>
+    The method for assigning the profile to a device and also using the
+    embedded calibration curves is different for each version of
+    Microsoft Windows.
+  </p>
+  <section id="xp">
+    <title>Windows XP</title>
+    <p>
+    Right click on the profile in Windows Explorer and click <gui>Install profile</gui>.
+    This copies the profile to the correct directory automatically.
+    </p>
+    <p>
+      Then open <guiseq><gui>Control Center</gui><gui>Color</gui></guiseq>
+      and add the profile to the device.
+    </p>
+    <note style="warning">
+      <p>
+        If you are replacing an existing profile in Windows XP, the
+        above shortcut does not work.
+        The profiles must be manually copied to
+        <file>C:\Windows\system32\spool\drivers\color</file> for the
+        original profile to be replaced.
+      </p>
+    </note>
+    <p>
+      Windows XP requires a program to be run at startup to copy the
+      profile calibration curves into the video card.
+      This can be done using <app>Adobe Gamma</app>, <app>LUT Loader</app>
+      or by using the free <app href="https://www.microsoft.com/download/en/details.aspx?displaylang=en&amp;id=12714">
+      Microsoft Color Control Panel Applet</app>.
+      Using the latter adds a new <gui>Color</gui> item to the control
+      panel and allows the calibration curves from default profile to be
+      easily set at each startup.
+    </p>
+  </section>
+
+  <section id="vista">
+    <title>Windows Vista</title>
+    <p>
+      Microsoft Windows Vista mistakenly removes calibration curves from
+      the video LUT after logon, after suspend, and when the UAC screen
+      appears.
+      This means you may have to manually reload the ICC profile
+      calibration curves.
+      If you are using profiles with embedded calibration curves you have
+      to be very careful the calibration state has not been cleared.
+    </p>
+  </section>
+
+  <section id="7">
+    <title>Windows 7</title>
+    <p>
+      Windows 7 supports a similar scheme to Linux, in that profiles can
+      be installed system-wide or specific to the user.
+      They are however stored in the same place.
+      Right click on the profile in Windows Explorer and click <gui>Install profile</gui>
+      or copy the .icc profile to <file>C:\Windows\system32\spool\drivers\color</file>.
+    </p>
+    <p>
+      Open <guiseq><gui>Control Center</gui><gui>Color Management</gui></guiseq>
+      and then add the profile to the system by clicking the
+      <gui>Add</gui> button.
+      Click on the <gui>Advanced</gui> tab and look for <gui>Display Calibration</gui>.
+      Calibration curve loading is enabled by the <gui>Use Windows display
+      calibration</gui> checkbox but it is not sensitive.
+      This can be enabled by clicking on <gui>Change system defaults</gui>
+      and then returning to the <gui>Advanced</gui> tab and then clicking
+      the checkbox.
+    </p>
+    <p>
+      Close the dialog and click <gui>Reload current calibrations</gui> to
+      set the gamma ramps.
+      The profile calibration curves should now be set for every boot.
+    </p>
+  </section>
+
+</page>
