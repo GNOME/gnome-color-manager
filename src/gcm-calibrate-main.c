@@ -703,10 +703,11 @@ out:
 }
 
 /**
- * gcm_calibrate_show_profile_location:
+ * gcm_calib_show_profile_button_clicked_cb:
  **/
 static void
-gcm_calibrate_show_profile_location (void)
+gcm_calib_show_profile_button_clicked_cb (GtkButton *button,
+					  GcmCalibratePriv *calib)
 {
 	gboolean ret;
 	gchar *command_line;
@@ -724,6 +725,42 @@ gcm_calibrate_show_profile_location (void)
 	}
 out:
 	g_free (command_line);
+}
+
+/**
+ * gcm_calib_get_show_profile_button:
+ **/
+static GtkWidget *
+gcm_calib_get_show_profile_button (GcmCalibratePriv *calib)
+{
+	GtkStyleContext *context;
+	GtkWidget *button;
+	GtkWidget *image;
+	GtkWidget *label;
+	GtkWidget *vbox;
+
+	/* add button to show profile */
+	button = gtk_button_new ();
+	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
+	image = gtk_image_new_from_icon_name ("folder-publicshare-symbolic",
+					      GTK_ICON_SIZE_DIALOG);
+
+	/* make image have a gray foreground */
+	context = gtk_widget_get_style_context (image);
+	gtk_style_context_add_class (context, GTK_STYLE_CLASS_IMAGE);
+
+	gtk_box_pack_start (GTK_BOX (vbox), image, FALSE, FALSE, 0);
+	label = gtk_label_new (_("Show File"));
+	gtk_box_pack_start (GTK_BOX (vbox), label, FALSE, FALSE, 0);
+	gtk_container_add (GTK_CONTAINER (button), vbox);
+	gtk_widget_set_tooltip_text (button, _("Click here to show the profile"));
+	g_signal_connect (button, "clicked",
+			  G_CALLBACK (gcm_calib_show_profile_button_clicked_cb),
+			  calib);
+	gtk_container_set_border_width (GTK_CONTAINER (vbox), 15);
+	gtk_widget_set_halign (button, GTK_ALIGN_CENTER);
+	gtk_widget_show_all (button);
+	return button;
 }
 
 /**
@@ -770,10 +807,20 @@ gcm_calib_setup_page_summary (GcmCalibratePriv *calib)
 		/* TRANSLATORS: this is the final summary */
 		gcm_calib_add_page_para (content, _("To view details about the new profile or to undo the calibration visit the <a href=\"control-center://color\">control center</a>."));
 	}
-	/* add image for success */
-	image = gtk_image_new ();
-	gtk_image_set_from_icon_name (GTK_IMAGE (image), "face-smile", GTK_ICON_SIZE_DIALOG);
-	gtk_box_pack_start (GTK_BOX (vbox), image, FALSE, FALSE, 0);
+
+	/* show the user the profile to copy off the live system */
+	ret = gcm_calibrate_is_livecd ();
+	if (ret) {
+		/* show button to copy profile */
+		image = gcm_calib_get_show_profile_button (calib);
+		gtk_box_pack_start (GTK_BOX (content), image, FALSE, FALSE, 30);
+		gcm_calib_add_page_para (content, _("You can use the profile with <a href=\"import-linux\">Linux</a>, <a href=\"import-osx\">Apple OS X</a> and <a href=\"import-windows\">Microsoft  Windows</a> systems."));
+	} else {
+		/* add image for success */
+		image = gtk_image_new ();
+		gtk_image_set_from_icon_name (GTK_IMAGE (image), "face-smile", GTK_ICON_SIZE_DIALOG);
+		gtk_box_pack_start (GTK_BOX (content), image, FALSE, FALSE, 0);
+	}
 
 	/* add to assistant */
 	gtk_assistant_append_page (assistant, vbox);
@@ -785,11 +832,6 @@ gcm_calib_setup_page_summary (GcmCalibratePriv *calib)
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_LAST));
-
-	/* show the user the profile to copy off the live system */
-	ret = gcm_calibrate_is_livecd ();
-	if (ret)
-		gcm_calibrate_show_profile_location ();
 
 	/* show page */
 	gtk_widget_show_all (vbox);
