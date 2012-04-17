@@ -754,12 +754,10 @@ gcm_calib_setup_page_summary (GcmCalibratePriv *calib)
 	case CD_DEVICE_KIND_DISPLAY:
 		/* TRANSLATORS: this is the final summary */
 		gcm_calib_add_page_para (content, _("The display has been calibrated successfully."));
-		gcm_calib_add_page_para (content, _("You may notice the screen is a slightly different color."));
 		break;
 	case CD_DEVICE_KIND_PRINTER:
 		/* TRANSLATORS: this is the final summary */
 		gcm_calib_add_page_para (content, _("The printer has been calibrated successfully."));
-		gcm_calib_add_page_para (content, _("Documents printed from this device will be color managed."));
 		break;
 	default:
 		/* TRANSLATORS: this is the final summary */
