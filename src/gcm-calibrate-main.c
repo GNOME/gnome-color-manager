@@ -814,7 +814,7 @@ gcm_calib_setup_page_summary (GcmCalibratePriv *calib)
 		/* show button to copy profile */
 		image = gcm_calib_get_show_profile_button (calib);
 		gtk_box_pack_start (GTK_BOX (content), image, FALSE, FALSE, 30);
-		gcm_calib_add_page_para (content, _("You can use the profile with <a href=\"import-linux\">Linux</a>, <a href=\"import-osx\">Apple OS X</a> and <a href=\"import-windows\">Microsoft  Windows</a> systems."));
+		gcm_calib_add_page_para (content, _("You can use the profile with <a href=\"import-linux\">Linux</a>, <a href=\"import-osx\">Apple OS X</a> and <a href=\"import-windows\">Microsoft Windows</a> systems."));
 	} else {
 		/* add image for success */
 		image = gtk_image_new ();
