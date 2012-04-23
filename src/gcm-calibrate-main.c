@@ -354,6 +354,73 @@ out:
 	return ret;
 }
 
+#if CD_CHECK_VERSION(0,1,20)
+/**
+ * gcm_calib_set_sensor_options_cb:
+ **/
+static void
+gcm_calib_set_sensor_options_cb (GObject *object,
+				 GAsyncResult *res,
+				 gpointer user_data)
+{
+	CdSensor *sensor = CD_SENSOR (object);
+	gboolean ret;
+	GError *error = NULL;
+
+	/* get return value */
+	ret = cd_sensor_set_options_finish (sensor, res, &error);
+	if (!ret) {
+		g_warning ("Failed to set sensor option: %s",
+			   error->message);
+		g_error_free (error);
+	}
+}
+#endif
+
+static void
+gcm_calib_set_sensor_options (GcmCalibratePriv *calib,
+			      const gchar *filename)
+{
+#if CD_CHECK_VERSION(0,1,20)
+	CdSensor *sensor;
+	gboolean ret;
+	gchar *data;
+	gchar *sha1 = NULL;
+	GError *error = NULL;
+	GHashTable *hash;
+	gsize len;
+
+	/* get ChSensor */
+	sensor = gcm_calibrate_get_sensor (calib->calibrate);
+
+	/* set the remote profile hash */
+	hash = g_hash_table_new_full (g_str_hash,
+				      g_str_equal,
+				      g_free,
+				      (GDestroyNotify) g_variant_unref);
+	ret = g_file_get_contents (filename, &data, &len, &error);
+	if (!ret) {
+		g_warning ("Failed to get SHA1 hash: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+	sha1 = g_compute_checksum_for_data (G_CHECKSUM_SHA1,
+					    (const guchar *) data,
+					    len);
+	g_hash_table_insert (hash,
+			     g_strdup ("remote-profile-hash"),
+			     g_variant_ref_sink (g_variant_new_string (sha1)));
+	cd_sensor_set_options (sensor, hash, NULL,
+			       gcm_calib_set_sensor_options_cb,
+			       calib);
+out:
+	g_free (data);
+	g_free (sha1);
+	g_hash_table_unref (hash);
+#endif
+}
+
 static gboolean
 gcm_calib_start_idle_cb (gpointer user_data)
 {
@@ -407,6 +474,9 @@ gcm_calib_start_idle_cb (gpointer user_data)
 		g_error_free (error);
 		goto out;
 	}
+
+	/* inform the sensor about the last successful profile */
+	gcm_calib_set_sensor_options (calib, filename);
 
 	/* copy the ICC file to the proper location */
 	file = g_file_new_for_path (filename);
