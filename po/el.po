@@ -1,31 +1,35 @@
 # Michael Kotsarinis <mk73628@hotmail.com>, 2010.
 # Simos Xenitellis <simos@gnome.org>, 2010.
 # Michael Kotsarinis <mk73628@gmail.com>, 2011.
+# Chris Triantafillis <christriant1995@gmail.com>, 2011.
+# Efstathios Iosifidis <diamond_gr@freemail.gr>, 2011.
+#
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-01-13 12:20+0200\n"
-"PO-Revision-Date: 2011-01-13 11:23+0300\n"
-"Last-Translator: Michael Kotsarinis <mk73628@gmail.com>\n"
-"Language-Team: team@gnome.gr\n"
-"Language: el\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
+"color-manager&keywords=I18N+L10N\n"
+"POT-Creation-Date: 2011-12-12 18:18+0000\n"
+"PO-Revision-Date: 2011-12-23 23:05+0200\n"
+"Last-Translator: Efstathios Iosifidis <diamond_gr@freemail.gr>\n"
+"Language-Team: Ελληνικά, Σύγχρονα <opensuse-translation-el@opensuse.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Content-Transfer-Encoding: 8bits\n"
+"Language: el\n"
+"Plural-Forms: nplurals=2; plural=(n!=1);\n"
 "X-Generator: Virtaal 0.6.1\n"
 "X-Poedit-Language: Greek\n"
 "X-Poedit-Country: GREECE\n"
 
-#: ../data/gcm-apply.desktop.in.h:1
-msgid "Applies device profile settings at session startup"
-msgstr ""
-"Εφαρμόζει τις ρυθμίσεις προφίλ της συσκευής κατά την έναρξη της συνεδρίας"
+#: ../data/gcm-calibrate.desktop.in.h:1
+msgid "Color"
+msgstr "Χρώμα"
 
-#: ../data/gcm-apply.desktop.in.h:2
-msgid "Load device color profiles"
-msgstr "Φόρτωση προφίλ χρωμάτων συσκευής"
+#: ../data/gcm-calibrate.desktop.in.h:2
+#| msgid "Device Calibration"
+msgid "Color Calibration"
+msgstr "Ρύθμιση χρωμάτων"
 
 #: ../data/gcm-import.desktop.in.h:1
 msgid "ICC Profile Installer"
@@ -35,15 +39,68 @@ msgstr "Εγκαταστάτης προφίλ ICC"
 msgid "Install ICC profiles"
 msgstr "Εγκατάσταση προφίλ ICC"
 
-#: ../data/gcm-prefs.desktop.in.h:1
-msgid "Color"
-msgstr "Χρώμα"
+#. Window title, where the user can pick spot colors using a measuring device
+#: ../data/gcm-picker.desktop.in.h:1 ../data/gcm-picker.ui.h:4
+msgid "Color Picker"
+msgstr "Επιλογή χρώματος"
 
-#: ../data/gcm-prefs.desktop.in.h:2
-msgid "Manage ICC color profiles"
-msgstr "Διαχείριση προφίλ χρωμάτων ICC"
+#: ../data/gcm-picker.desktop.in.h:2
+#| msgid "The attached colorimeter is not capable of reading a spot color."
+msgid "Use the color sensor to sample spot colors"
+msgstr "Χρησιμοποιείστε τον αισθητήτα χρωμάτων για να δοκιμάσετε χρώματα"
 
-#: ../data/gcm-viewer.desktop.in.h:1
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:2
+msgid "Ambient:"
+msgstr "Φωτισμός περιβάλλοντος:"
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:6
+#| msgid "Colorspace:"
+msgid "Color Temperature:"
+msgstr "Θερμοκρασία χρώματος:"
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#: ../data/gcm-picker.ui.h:8
+msgid "Colorspace:"
+msgstr "Χρωματικός χώρος:"
+
+#. This shows the error in the conversion to RGB.
+#: ../data/gcm-picker.ui.h:10
+msgid "Error:"
+msgstr "Σφάλμα:"
+
+#. Lab is the color representation and D50 is the white point
+#: ../data/gcm-picker.ui.h:12
+msgid "Lab (D50):"
+msgstr "Lab (D50):"
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:14
+msgid "Media whitepoint:"
+msgstr "Media whitepoint:"
+
+#. These are the values of the chosen color in Red, Green, Blue encoding
+#: ../data/gcm-picker.ui.h:16
+msgid "RGB:"
+msgstr "RGB:"
+
+#. Expander title, the results from the color picker
+#: ../data/gcm-picker.ui.h:18
+msgid "Results"
+msgstr "Αποτελέσματα"
+
+#. the color representation
+#: ../data/gcm-picker.ui.h:20
+msgid "XYZ:"
+msgstr "XYZ:"
+
+#. Button text, to get a single sample of color
+#: ../data/gcm-picker.ui.h:22
+msgid "_Measure"
+msgstr "_Μέτρηση"
+
+#: ../data/gcm-viewer.desktop.in.h:1 ../data/gcm-viewer.ui.h:7
 msgid "Color Profile Viewer"
 msgstr "Προβολή χρωματικών προφίλ"
 
@@ -51,300 +108,201 @@ msgstr "Προβολή χρωματικών προφίλ"
 msgid "Inspect and compare installed color profiles"
 msgstr "Επιθεώρηση και σύγκριση εγκατεστημένων προφίλ χρώματος"
 
-#. TRANSLATORS: turn on all debugging
-#: ../libcolor-glib/gcm-debug.c:104
-msgid "Show debugging information for all files"
-msgstr "Εμφάνιση πληροφοριών αποσφαλμάτωσης για όλα τα αρχεία"
+#: ../data/gcm-viewer.ui.h:1
+msgid "3D Gamut"
+msgstr "3D Γκάμα (Gamut)"
 
-#: ../libcolor-glib/gcm-debug.c:161
-msgid "Debugging Options"
-msgstr "Επιλογές αποσφαλμάτωσης"
-
-#: ../libcolor-glib/gcm-debug.c:161
-msgid "Show debugging options"
-msgstr "Εμφάνιση επιλογών αποσφαλμάτωσης"
-
-#. TRANSLATORS: this is where the ICC profile has no description
-#: ../libcolor-glib/gcm-profile.c:172
-msgid "Missing description"
-msgstr "Απουσιάζει η περιγραφή"
-
-#. TRANSLATORS: this is the profile creation date strftime format
-#: ../libcolor-glib/gcm-profile.c:681
-msgid "%B %e %Y, %I:%M:%S %p"
-msgstr "%B %e %Y, %I:%M:%S %p"
-
-#: ../policy/org.gnome.color.policy.in.h:1
-msgid "Authentication is required to install the color profile for all users"
+#: ../data/gcm-viewer.ui.h:2
+msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
 msgstr ""
-"Απαιτείται πιστοποίηση για εγκατάσταση προφίλ χρώματος για όλους τους χρήστες"
+"Ένα διάγραμμα CIE 1931 δείχνει μια 2D αναπαράσταση της γκάμας (gamut) προφίλ"
 
-#. SECURITY:
-#. - Normal users require admin authentication to install files system
-#. wide to apply color profiles for sessions that have not explicitly
-#. chosen profiles to apply.
-#. - This should not be set to 'yes' as unprivileged users could then
-#. set a profile set to all-white or all-black and thus make the
-#. other sessions unusable.
-#.
-#: ../policy/org.gnome.color.policy.in.h:10
-msgid "Install system color profiles"
-msgstr "Εγκατάσταση προφίλ χρώματος συστήματος"
-
-#. TRANSLATORS: could not save for all users
-#: ../src/cc-color-panel.c:147
-msgid "Failed to save defaults for all users"
-msgstr "Αποτυχία αποθήκευσης προεπιλογών για όλους τους χρήστες"
-
-#. TRANSLATORS: this is where the user can click and import a profile
-#: ../src/cc-color-panel.c:175
-msgid "Other profile…"
-msgstr "Άλλο προφίλ…"
-
-#. TRANSLATORS: could not calibrate
-#: ../src/cc-color-panel.c:332
-msgid "Failed to calibrate device"
-msgstr "Αποτυχία βαθμονόμησης της συσκευής"
-
-#. TRANSLATORS: could not calibrate
-#: ../src/cc-color-panel.c:367
-msgid "Failed to calibrate printer"
-msgstr "Αποτυχία της βαθμονόμησης του εκτυπωτή"
-
-#. TRANSLATORS: dialog for file->open dialog
-#: ../src/cc-color-panel.c:392 ../src/gcm-calibrate.c:913
-#: ../src/gcm-viewer.c:340
-msgid "Select ICC Profile File"
-msgstr "Επιλέξτε αρχείο προφίλ ICC"
-
-#: ../src/cc-color-panel.c:395 ../src/gcm-viewer.c:343
-msgid "Import"
-msgstr "Εισαγωγή"
-
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/cc-color-panel.c:413 ../src/gcm-viewer.c:361
-msgid "Supported ICC profiles"
-msgstr "Υποστηριζόμενα προφίλ ICC"
-
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/cc-color-panel.c:420 ../src/gcm-calibrate.c:795
-#: ../src/gcm-calibrate.c:847 ../src/gcm-viewer.c:368
-msgid "All files"
-msgstr "Όλα τα αρχεία"
-
-#. TRANSLATORS: could not read file
-#: ../src/cc-color-panel.c:456 ../src/gcm-import.c:207 ../src/gcm-viewer.c:404
-msgid "Failed to copy file"
-msgstr "Αποτυχία αντιγραφής αρχείου"
-
-#: ../src/cc-color-panel.c:484
-msgid "Failed to get metadata from image"
-msgstr "Αποτυχία λήψης μεταδεδομένων από την εικόνα"
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:501 ../src/cc-color-panel.c:1123
-msgid "Failed to create virtual device"
-msgstr "Αποτυχία δημιουργίας εικονικής συσκευής"
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:509 ../src/cc-color-panel.c:1131
-msgid "Failed to save virtual device"
-msgstr "Αποτυχία αποθήκευσης εικονικής συσκευής"
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/cc-color-panel.c:518 ../src/cc-color-panel.c:1140
-msgid "Failed to add virtual device"
-msgstr "Αποτυχία προσθήκης εικονικής συσκευής"
-
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/cc-color-panel.c:700
-msgid "Install calibration and profiling software?"
-msgstr "Να γίνει εγκατάσταση λογισμικού βαθμονόμησης και δημιουργίας προφίλ;"
-
-#. TRANSLATORS: dialog message saying the argyllcms is not installed
-#: ../src/cc-color-panel.c:704
-msgid "Calibration and profiling software is not installed."
-msgstr "Δεν έχει εγκατασταθεί λογισμικό βαθμονόμησης και δημιουργίας προφίλ."
-
-#. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/cc-color-panel.c:706
-msgid "These tools are required to build color profiles for devices."
-msgstr ""
-"Αυτά τα εργαλεία απαιτούνται για τη δημιουργία προφίλ χρώματος για τις "
-"συσκευές."
-
-#. TRANSLATORS: button, skip installing a package
-#: ../src/cc-color-panel.c:711 ../src/gcm-calibrate.c:1082
-msgid "Do not install"
-msgstr "Να μη γίνει εγκατάσταση"
-
-#. TRANSLATORS: button, install a package
-#. TRANSLATORS: button text
-#: ../src/cc-color-panel.c:713 ../src/gcm-calibrate.c:1084
-#: ../src/gcm-import.c:186
-msgid "Install"
-msgstr "Εγκατάσταση"
-
-#. TRANSLATORS: this is the application name for libcanberra
-#: ../src/cc-color-panel.c:830 ../src/cc-color-panel.c:1799
-#: ../src/gcm-calibrate-argyll.c:2284 ../src/gcm-calibrate-argyll.c:2334
-#: ../src/gcm-calibrate-argyll.c:2389 ../src/gcm-calibrate-argyll.c:2465
-#: ../src/gcm-calibrate-argyll.c:2546 ../src/gcm-calibrate-argyll.c:2587
-msgid "GNOME Color Manager"
-msgstr "Διαχείριση χρώματος του GNOME"
-
-#. TRANSLATORS: this is the sound description
-#: ../src/cc-color-panel.c:832
-msgid "Profiling completed"
-msgstr "Ολοκλήρωση δημιουργίας προφίλ"
-
-#. TRANSLATORS: could not read file
-#: ../src/cc-color-panel.c:1266
-msgid "Failed to delete file"
-msgstr "Αποτυχία διαγραφής αρχείου"
-
-#. TRANSLATORS: this is when the button is sensitive
-#: ../src/cc-color-panel.c:1346
-msgid "Create a color profile for the selected device"
-msgstr "Δημιουργία προφίλ χρώματος για την επιλεγμένη συσκευή"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1351
-msgid "Cannot create profile: No device is selected"
-msgstr "Αδύνατη η δημιουργία προφίλ: Δεν έχει επιλεχθεί συσκευή"
-
-#. TRANSLATORS: this is when the button is insensitive because the distro compiled GCM without VTE
-#: ../src/cc-color-panel.c:1362
-msgid "Cannot create profile: Virtual console support is missing"
-msgstr "Αδυναμία δημιουργίας προφίλ: Λείπει η υποστήριξη εικονικής κονσόλας"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1374
-msgid "Cannot create profile: The display device is not connected"
-msgstr ""
-"Αδύνατη η δημιουργία προφίλ: Η συσκευή απεικόνισης δεν είναι συνδεδεμένη"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1382
-msgid "Cannot create profile: The display driver does not support XRandR 1.3"
-msgstr ""
-"Αδύνατη η δημιουργία προφίλ: Ο οδηγός της οθόνης δεν υποστηρίζει το XRandR "
-"1.3"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1390 ../src/cc-color-panel.c:1405
-msgid "Cannot create profile: The measuring instrument is not plugged in"
-msgstr "Αδύνατη η δημιουργία προφίλ: Το όργανο μέτρησης δεν έχει συνδεθεί"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1413
+#: ../data/gcm-viewer.ui.h:3
 msgid ""
-"Cannot create profile: The measuring instrument does not support printer "
-"profiling"
+"A tone reproduction curve is the mapping of scene luminance to display "
+"luminance"
 msgstr ""
-"Αδύνατη η δημιουργία προφίλ: το όργανο μέτρησης δεν υποστηρίζει δημιουργία "
-"προφίλ εκτυπωτών"
+"Μια συμπαγής καμπύλη αναπαράστασης της χαρτογράφησης της σκηνής φωτεινότητας "
+"για την εμφάνιση της φωτεινότητας"
 
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/cc-color-panel.c:1420
-msgid "Cannot create a profile for this type of device"
-msgstr "Αδύνατη η δημιουργία προφίλ για αυτόν τον τύπο συσκευής"
+#: ../data/gcm-viewer.ui.h:4
+msgid "A video card gamma table shows the curves loaded into the display"
+msgstr ""
+"Ένας πίνακας κάρτας γραφικών γάμμα δείχνει την καμπύλες που είναι φορτωμένες"
 
-#: ../src/cc-color-panel.c:1479
-msgid "Per-device settings not supported. Check your display driver."
-msgstr "Δεν υποστηρίζονται ρυθμίσεις κατά συσκευή. Ελέγξτε τον οδηγό."
+#: ../data/gcm-viewer.ui.h:5
+msgid "Add a profile for the device"
+msgstr "Προσθήκη προφίλ για τη συσκευή"
 
-#. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/cc-color-panel.c:1628
-msgid "No hardware support"
-msgstr "Χωρίς υποστήριξη υλικού"
+#: ../data/gcm-viewer.ui.h:6
+#| msgid "CIE 1931 xy"
+msgid "CIE 1931"
+msgstr "CIE 1931"
 
-#. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/cc-color-panel.c:1632 ../src/cc-color-panel.c:1851
-msgid "disconnected"
-msgstr "αποσυνδεδεμένο"
+#. The profile colorspace, e.g. RGB
+#: ../data/gcm-viewer.ui.h:9
+#| msgid "Colorspace:"
+msgid "Colorspace"
+msgstr "Χρωματικός χώρος:"
 
-#. TRANSLATORS: the profile was of the wrong sort for this device
-#: ../src/cc-color-panel.c:1751
-msgid "Could not import profile"
-msgstr "Αδύνατη η εισαγωγή προφίλ"
+#. When the profile was created
+#: ../data/gcm-viewer.ui.h:11
+#| msgid "Created:"
+msgid "Created"
+msgstr "Δημιουργήθηκε:"
 
-#: ../src/cc-color-panel.c:1752
-msgid "The profile was of the wrong type for this device"
-msgstr "Το προφίλ δεν ήταν σωστού τύπου για αυτή τη συσκευή"
+#. The manufacturer of the profile
+#: ../data/gcm-viewer.ui.h:13
+#| msgid "Device manufacturer:"
+msgid "Device manufacturer"
+msgstr "Κατασκευαστής συσκευής:"
 
-#. TRANSLATORS: this is a sound description
-#: ../src/cc-color-panel.c:1787
-msgid "Device added"
-msgstr "Συσκευή προστέθηκε"
+#. The manufacturer of the profile
+#: ../data/gcm-viewer.ui.h:15
+#| msgid "Device model:"
+msgid "Device model"
+msgstr "Μοντέλο συσκευής:"
 
-#. TRANSLATORS: this is a sound description
-#: ../src/cc-color-panel.c:1791
-msgid "Device removed"
-msgstr "Συσκευή αφαιρέθηκε"
+#. If the profile contains a display correction table
+#: ../data/gcm-viewer.ui.h:17
+#| msgid "Display correction:"
+msgid "Display correction"
+msgstr "Διόρθωση απεικόνισης:"
 
-#. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
-#: ../src/cc-color-panel.c:2016 ../src/gcm-picker.c:519
-#, c-format
-msgid "No %s color spaces available"
-msgstr "Δεν υπάρχουν διαθέσιμοι %s χρωματικοί χώροι"
+#. The file size in bytes of the profile
+#: ../data/gcm-viewer.ui.h:19
+#| msgid "File size:"
+msgid "File size"
+msgstr "Μέγεθος αρχείου:"
 
-#. TRANSLATORS: the DBus method failed
-#: ../src/cc-color-panel.c:2127 ../src/gcm-inspect.c:196
-#: ../src/gcm-inspect.c:265 ../src/gcm-inspect.c:332 ../src/gcm-inspect.c:394
-#: ../src/gcm-inspect.c:464 ../src/gcm-utils.c:192
-msgid "The request failed:"
-msgstr "Το αίτημα απέτυχε:"
+#. The basename (the last section of the filename) of the profile
+#: ../data/gcm-viewer.ui.h:21
+#| msgid "Filename:"
+msgid "Filename"
+msgstr "Όνομα αρχείου:"
 
-#. TRANSLATORS: no DBus session bus
-#: ../src/cc-color-panel.c:2161 ../src/gcm-inspect.c:178
-#: ../src/gcm-inspect.c:247 ../src/gcm-inspect.c:315 ../src/gcm-inspect.c:376
-#: ../src/gcm-inspect.c:446 ../src/gcm-utils.c:168
-msgid "Failed to connect to session bus:"
-msgstr "Αποτυχία σύνδεσης στο δίαυλο συνεδρίας:"
+#: ../data/gcm-viewer.ui.h:22
+msgid "From sRGB"
+msgstr "Από το sRGB"
 
-#. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2366
-msgid "Display"
-msgstr "Οθόνη"
+#: ../data/gcm-viewer.ui.h:23
+#| msgid "More Information"
+msgid "Information"
+msgstr "Πληροφορίες"
 
-#. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2370
-msgid "Scanner"
-msgstr "Σαρωτής"
+#. The licence of the profile, normally non-free
+#: ../data/gcm-viewer.ui.h:25
+#| msgid "License:"
+msgid "License"
+msgstr "Άδεια:"
 
-#. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2374
-msgid "Printer"
-msgstr "Εκτυπωτής"
+#: ../data/gcm-viewer.ui.h:26
+msgid "Metadata"
+msgstr "Μεταδεδομένα"
 
-#. TRANSLATORS: device type
-#: ../src/cc-color-panel.c:2378
-msgid "Camera"
-msgstr "Κάμερα"
+#: ../data/gcm-viewer.ui.h:27
+msgid ""
+"Metadata is additional information stored in the profile for programs to use."
+msgstr ""
+"Τα μεταδεδομένα είναι επιπλέον πληροφορίες αποθηκευμένες σε ένα προφίλ για "
+"τα χρησιμοποιηθούν από τα προγράμματα."
 
-#. TRANSLATORS: button to install extra profiles
-#: ../src/cc-color-panel.c:2624
-msgid "Install now"
-msgstr "Εγκατάσταση τώρα"
+#: ../data/gcm-viewer.ui.h:28
+#| msgid "Named color"
+msgid "Named Colors"
+msgstr "Ονομαζόμενα χρώματα"
 
-#. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/cc-color-panel.c:2627
-msgid "More color profiles could be automatically installed."
-msgstr "Περισσότερα προφίλ χρώματος θα μπορούσαν να εγκατασταθούν αυτόματα."
+#: ../data/gcm-viewer.ui.h:29
+msgid "Named colors are specific colors that are defined in the profile"
+msgstr ""
+"Τα ονομαζόμενα χρώματα είναι συγκεκριμένα χρώματα που ορίζονται στο προφίλ"
 
-#. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
-#: ../src/gcm-apply.c:115
-msgid "Do not attempt to clear previously applied settings"
-msgstr "Μην προσπαθήσετε να καθαρίσετε τις προηγουμένως εφαρμοσμένες ρυθμίσεις"
+#: ../data/gcm-viewer.ui.h:30
+msgid "Next Image"
+msgstr "Επόμενη εικόνα"
 
-#. TRANSLATORS: title, default paramters needed to calibrate_argyll
-#: ../src/gcm-calibrate-argyll.c:453
+#: ../data/gcm-viewer.ui.h:31
+msgid "Previous Image"
+msgstr "Προηγούμενη εικόνα"
+
+#. The type of profile, e.g. display, scanner, etc.
+#: ../data/gcm-viewer.ui.h:33
+#| msgid "Profile type:"
+msgid "Profile type"
+msgstr "Τύπος προφίλ"
+
+#: ../data/gcm-viewer.ui.h:34
+msgid "Remove a profile from the device"
+msgstr "Αφαίρεση προφίλ από την συσκευή"
+
+#: ../data/gcm-viewer.ui.h:35
+msgid "Response in"
+msgstr "Response in"
+
+#: ../data/gcm-viewer.ui.h:36
+msgid "Response out"
+msgstr "Response out"
+
+#: ../data/gcm-viewer.ui.h:37
+msgid "TRC"
+msgstr "TRC"
+
+#: ../data/gcm-viewer.ui.h:38
+msgid "This 3D hull is what the profile looks like in Lab space"
+msgstr "Αυτό το 3D σχήμα είναι πως μοιάζει το προφίλ σε χώρο εργαστηρίου"
+
+#: ../data/gcm-viewer.ui.h:39
+msgid "This shows what an image would look like if opened with the profile"
+msgstr "Αυτό δείχνει πως θα έμοιαζε μια εικόνας αν είχε ανοιχθεί με το προφίλ"
+
+#: ../data/gcm-viewer.ui.h:40
+msgid "This shows what an image would look like if saved with the profile"
+msgstr ""
+"Αυτό δείχνει πως θα έμοιαζε μια εικόνα αν είχε αποθηκευτεί με το προφίλ"
+
+#: ../data/gcm-viewer.ui.h:41
+#| msgid "RGB"
+msgid "To sRGB"
+msgstr "Στο sRGB"
+
+#: ../data/gcm-viewer.ui.h:42
+msgid "VCGT"
+msgstr "VCGT"
+
+#. The version of the profile
+#: ../data/gcm-viewer.ui.h:44
+#| msgid "precision"
+msgid "Version"
+msgstr "Έκδοση"
+
+#: ../data/gcm-viewer.ui.h:45
+#| msgid "Video card gamma table"
+msgid "Video card out"
+msgstr "Κάρτας γραφικών"
+
+#. The basename (the last section of the filename) of the profile
+#: ../data/gcm-viewer.ui.h:47
+msgid "White point"
+msgstr "White point"
+
+#. This is an example image that is saved in sRGB gamut
+#: ../data/gcm-viewer.ui.h:49
+msgid "sRGB example"
+msgstr "Παράδειγμα sRGB"
+
+#: ../data/gcm-viewer.ui.h:50
+msgid "x"
+msgstr "χ"
+
+#: ../data/gcm-viewer.ui.h:51
+msgid "y"
+msgstr "y"
+
+#: ../src/gcm-calibrate-argyll.c:326
 msgid "Getting default parameters"
 msgstr "Λήψη προεπιλεγμένων παραμέτρων"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:456
+#: ../src/gcm-calibrate-argyll.c:330
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -352,37 +310,21 @@ msgstr ""
 "Αυτό προ-βαθμονομεί την οθόνη στέλνοντας έγχρωμες και γκρίζες περιοχές στην "
 "οθόνη σας και μετρώντας τες με την ειδική συσκευή."
 
-#. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:548
+#: ../src/gcm-calibrate-argyll.c:417
 msgid "Reading the patches"
 msgstr "Ανάγνωση περιοχών"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:550
+#: ../src/gcm-calibrate-argyll.c:420
 msgid "Reading the patches using the color measuring instrument."
 msgstr ""
 "Ανάγνωση των περιοχών με χρήση του οργάνου μέτρησης χρώματος "
 "(φασματοφωτόμετρο)."
 
-#. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:640
-msgid "Generating the patches"
-msgstr "Δημιουργία των περιοχών"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:642
-msgid "Generating the patches that will be measured with the color instrument."
-msgstr ""
-"Δημιουργία των περιοχών που θα μετρηθούν με το όργανο χρώματος "
-"(φασματοφωτόμετρο)."
-
-#. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:749 ../src/gcm-calibrate-native.c:695
+#: ../src/gcm-calibrate-argyll.c:517
 msgid "Drawing the patches"
 msgstr "Σχεδίαση των περιοχών"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:751 ../src/gcm-calibrate-native.c:698
+#: ../src/gcm-calibrate-argyll.c:520
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
@@ -390,82 +332,51 @@ msgstr ""
 "Σχεδίαση των παραγόμενων περιοχών στην οθόνη, οι οποίες μετά θα μετρηθούν "
 "από το όργανο."
 
-#. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:851 ../src/gcm-calibrate-argyll.c:1179
+#: ../src/gcm-calibrate-argyll.c:613 ../src/gcm-calibrate-argyll.c:954
 msgid "Generating the profile"
 msgstr "Δημιουργία του προφίλ"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:853
+#: ../src/gcm-calibrate-argyll.c:616
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr ""
 "Δημιουργία του προφίλ ICC που μπορεί να χρησιμοποιηθεί με αυτή την οθόνη."
 
-#. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:989
+#: ../src/gcm-calibrate-argyll.c:776
 msgid "Copying files"
 msgstr "Αντιγραφή αρχείων"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:991
+#: ../src/gcm-calibrate-argyll.c:779
 msgid "Copying source image, chart data and CIE reference values."
 msgstr ""
 "Αντιγραφή εικόνας προέλευσης, δεδομένων διαγράμματος και τιμών αναφοράς CIE."
 
-#. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:1066
+#: ../src/gcm-calibrate-argyll.c:848
 msgid "Measuring the patches"
 msgstr "Μέτρηση των περιοχών"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1068
+#: ../src/gcm-calibrate-argyll.c:851
 msgid "Detecting the reference patches and measuring them."
 msgstr "Ανίχνευση των περιοχών αναφοράς και μέτρησή τους."
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1181
+#: ../src/gcm-calibrate-argyll.c:957
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr ""
 "Δημιουργία του προφίλ χρώματος ICC που μπορεί να χρησιμοποιηθεί με αυτή τη "
 "συσκευή."
 
-#. TRANSLATORS: title, hardware refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:1372
-msgid "Set up display"
-msgstr "Προετοιμασία οθόνης"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1375
-msgid "Setting up display device for use…"
-msgstr "Προετοιμασία συσκευής απεικόνισης προς χρήση…"
-
-#. TRANSLATORS: title, setting up the photospectromiter
-#: ../src/gcm-calibrate-argyll.c:1437 ../src/gcm-calibrate-native.c:774
-msgid "Setting up device"
-msgstr "Προετοιμασία συσκευής"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1439 ../src/gcm-calibrate-native.c:776
-msgid "Setting up the device to read a spot color…"
-msgstr "Προετοιμασία συσκευής για ανάγνωση σημείου χρώματος…"
-
-#. TRANSLATORS: title, patches are specific colors used in calibration
-#: ../src/gcm-calibrate-argyll.c:1586
+#: ../src/gcm-calibrate-argyll.c:1314
 msgid "Printing patches"
 msgstr "Εκτύπωση περιοχών"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1589
+#: ../src/gcm-calibrate-argyll.c:1318
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "Απόδοση των περιοχών για το επιλεγμένο χαρτί και μελάνι."
 
-#. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:1931
+#: ../src/gcm-calibrate-argyll.c:1640
 msgid "Wait for the ink to dry"
 msgstr "Αναμονή για να στεγνώσει το μελάνι"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1934
+#: ../src/gcm-calibrate-argyll.c:1644
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -474,125 +385,40 @@ msgstr ""
 "γίνει όσο το μελάνι είναι υγρό θα παραχθεί κακής ποιότητας προφίλ και μπορεί "
 "να γίνει ζημιά στο όργανο μέτρησης χρώματος."
 
-#. TRANSLATORS: the supplied image contains an alpha channel which we have to strip out
-#: ../src/gcm-calibrate-argyll.c:2076
-msgid "Image is not suitable without conversion"
-msgstr "Η εικόνα δεν είναι κατάλληλη χωρίς μετατροπή"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2079
-msgid ""
-"The supplied image contains an alpha channel which the profiling tools do "
-"not understand."
-msgstr ""
-"Η παρεχόμενη εικόνα περιέχει ένα κανάλι άλφα το οποίο δεν καταλαβαίνουν τα "
-"εργαλεία δημιουργίας προφίλ."
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2083
-msgid ""
-"It is normally safe to convert the image, although you should ensure that "
-"the generated profile is valid."
-msgstr ""
-"Κανονικά είναι ασφαλές να μετατρέπεται η εικόνα αν και θα πρέπει να "
-"επιβεβαιώσετε ότι το παραγόμενο προφίλ είναι έγκυρο."
-
-#. TRANSLATORS: button text to convert the RGBA image into RGB
-#: ../src/gcm-calibrate-argyll.c:2090
-msgid "Convert"
-msgstr "Μετατροπή"
-
-#. TRANSLATORS: title, instrument refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:2148
+#: ../src/gcm-calibrate-argyll.c:1812
 msgid "Set up instrument"
 msgstr "Ρύθμιση οργάνου"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2151
+#: ../src/gcm-calibrate-argyll.c:1816
 msgid "Setting up the instrument for use…"
 msgstr "Προετοιμασία του οργάνου προς χρήση…"
 
-#. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2250 ../src/gcm-calibrate-native.c:655
-msgid "Please attach instrument"
-msgstr "Παρακαλώ τοποθετήστε το όργανο"
-
-#. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate-argyll.c:2258 ../src/gcm-calibrate-native.c:663
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square like the image below."
-msgstr ""
-"Παρακαλώ τοποθετήστε το όργανο μέτρησης στο κέντρο της οθόνης στο γκρίζο "
-"τετράγωνο όπως στην ακόλουθη εικόνα."
-
-#. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate-argyll.c:2261 ../src/gcm-calibrate-native.c:666
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square."
-msgstr ""
-"Παρακαλώ τοποθετήστε το όργανο μέτρησης στο κέντρο της οθόνης στο γκρίζο "
-"τετράγωνο."
-
-#. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2274 ../src/gcm-calibrate-argyll.c:2328
-#: ../src/gcm-calibrate-argyll.c:2383 ../src/gcm-calibrate-native.c:680
-msgid "Continue"
-msgstr "Συνέχεια"
-
-#. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2305 ../src/gcm-calibrate-argyll.c:2360
-msgid "Please configure instrument"
-msgstr "Παρακαλώ ρυθμίστε το όργανο"
-
-#. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2315
-msgid ""
-"Please set the measuring instrument to calibration mode like the image below."
-msgstr ""
-"Παρακαλώ βάλτε το όργανο σε κατάσταση βαθμονόμησης όπως στην ακόλουθη εικόνα."
-
-#. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2318
-msgid "Please set the measuring instrument to calibration mode."
-msgstr "Παρακαλώ βάλτε το όργανο σε κατάσταση βαθμονόμησης."
-
-#. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2370
-msgid ""
-"Please set the measuring instrument to screen mode like the image below."
-msgstr ""
-"Παρακαλώ βάλτε το όργανο μέτρησης σε λειτουργία οθόνης όπως στην ακόλουθη "
-"εικόνα."
-
-#. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2373
-msgid "Please set the measuring instrument to screen mode."
-msgstr "Παρακαλώ βάλτε το όργανο σε λειτουργία οθόνης."
-
-#. TRANSLATORS: title, the calibration failed
-#: ../src/gcm-calibrate-argyll.c:2444 ../src/gcm-calibrate-argyll.c:2513
+#: ../src/gcm-calibrate-argyll.c:2019 ../src/gcm-calibrate-argyll.c:2083
 msgid "Calibration error"
 msgstr "Σφάλμα βαθμονόμησης"
 
-#. TRANSLATORS: message, the sample was not read correctly
-#: ../src/gcm-calibrate-argyll.c:2447
+#: ../src/gcm-calibrate-argyll.c:2023
 msgid "The sample could not be read at this time."
 msgstr "Δεν ήταν δυνατή η ανάγνωση του δείγματος αυτή τη φορά."
 
-#. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2455
-msgid "Try again"
-msgstr "Προσπαθήστε ξανά"
+#: ../src/gcm-calibrate-argyll.c:2029 ../src/gcm-calibrate-argyll.c:2146
+#: ../src/gcm-calibrate-argyll.c:2185 ../src/gcm-calibrate-argyll.c:2210
+msgid "Retry"
+msgstr "Επανάληψη"
 
-#. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2517
+#. TRANSLATORS: this is the application name for libcanberra
+#: ../src/gcm-calibrate-argyll.c:2035 ../src/gcm-calibrate-argyll.c:2117
+#: ../src/gcm-calibrate-argyll.c:2152 ../src/gcm-calibrate.c:517
+#: ../src/gcm-calibrate.c:553 ../src/gcm-calibrate.c:590
+#: ../src/gcm-calibrate-main.c:203
+msgid "GNOME Color Manager"
+msgstr "Διαχείριση χρώματος του GNOME"
+
+#: ../src/gcm-calibrate-argyll.c:2088
 msgid "No firmware is installed for this instrument."
 msgstr "Δεν υπάρχει εγκατεστημένο σταθερισμικό (firmware) για αυτό το όργανο."
 
-#. TRANSLATORS: message, the image wasn't good enough
-#: ../src/gcm-calibrate-argyll.c:2520
+#: ../src/gcm-calibrate-argyll.c:2092
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
@@ -600,8 +426,7 @@ msgstr ""
 "Το ταίριασμα του μοτίβου δεν ήταν αρκετά καλό. Σιγουρευτείτε ότι έχετε "
 "επιλέξει το σωστό τύπο προορισμού."
 
-#. TRANSLATORS: message, the sensor got no readings
-#: ../src/gcm-calibrate-argyll.c:2524
+#: ../src/gcm-calibrate-argyll.c:2097
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
@@ -609,8 +434,7 @@ msgstr ""
 "Το όργανο μέτρησης δεν πήρε έγκυρες μετρήσεις. Παρακαλώ βεβαιωθείτε ότι το "
 "διάφραγμα είναι τελείως ανοιχτό."
 
-#. TRANSLATORS: message, the colorimeter has got confused
-#: ../src/gcm-calibrate-argyll.c:2527
+#: ../src/gcm-calibrate-argyll.c:2101
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -619,35 +443,27 @@ msgstr ""
 "από την υποδοχή USB και επανασυνδέστε πριν προσπαθήσετε να χρησιμοποιήσετε "
 "τη συσκευή."
 
-#. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-argyll.c:2565
+#: ../src/gcm-calibrate-argyll.c:2137
 msgid "Reading target"
 msgstr "Ανάγνωση στόχου"
 
-#. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2568
+#: ../src/gcm-calibrate-argyll.c:2141
 msgid "Failed to read the strip correctly."
 msgstr "Αποτυχία στη σωστή ανάγνωση της ακολουθίας."
 
-#. TRANSLATORS: button text
-#. TRANSLATORS: button
-#: ../src/gcm-calibrate-argyll.c:2577 ../src/gcm-calibrate-argyll.c:2650
-msgid "Retry"
-msgstr "Επανάληψη"
-
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2600
+#: ../src/gcm-calibrate-argyll.c:2165
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "Μετρήστε την ακολουθία %s αντί για την %s!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2605
+#: ../src/gcm-calibrate-argyll.c:2170
 msgid "It looks like you've measured the wrong strip."
 msgstr "Φαίνεται ότι μετρήσατε λάθος ακολουθία."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2609
+#: ../src/gcm-calibrate-argyll.c:2174
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
@@ -655,29 +471,22 @@ msgstr ""
 "Αν είστε σίγουροι ότι μετρήσατε τη σωστή, δεν υπάρχει πρόβλημα, μπορεί το "
 "χαρτί να είναι ασυνήθιστο."
 
-#. TRANSLATORS: button
-#: ../src/gcm-calibrate-argyll.c:2619
-msgid "Use anyway"
-msgstr "Χρήση έτσι κι αλλιώς"
-
-#. TRANSLATORS: title, the calibration failed
-#: ../src/gcm-calibrate-argyll.c:2639
+#: ../src/gcm-calibrate-argyll.c:2201
 msgid "Device Error"
 msgstr "Σφάλμα συσκευής"
 
-#. TRANSLATORS: message, the sample was not read correctly
-#: ../src/gcm-calibrate-argyll.c:2642
+#: ../src/gcm-calibrate-argyll.c:2205
 msgid "The device could not measure the color spot correctly."
 msgstr "Η συσκευή δεν μπόρεσε να μετρήσει το χρωματικό σημείο σωστά."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2662
+#: ../src/gcm-calibrate-argyll.c:2218
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "Έτοιμο για ανάγνωση ακολουθίας %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2667
+#: ../src/gcm-calibrate-argyll.c:2223
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
@@ -686,7 +495,7 @@ msgstr ""
 "και πατήστε και κρατήστε πατημένο το διακόπτη μέτρησης."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2671
+#: ../src/gcm-calibrate-argyll.c:2227
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -695,7 +504,7 @@ msgstr ""
 "διακόπτη όταν φτάσετε στο τέλος της σελίδας."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2675
+#: ../src/gcm-calibrate-argyll.c:2231
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -704,87 +513,50 @@ msgstr ""
 "σειρά που προσπαθείτε να μετρήσετε."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2679
+#: ../src/gcm-calibrate-argyll.c:2235
+#| msgid ""
+#| "If you make a mistake just release the switch and you'll get a chance to "
+#| "try again."
 msgid ""
-"If you make a mistake just release the switch and you'll get a chance to try "
-"again."
+"If you make a mistake, just release the switch, and you'll get a chance to "
+"try again."
 msgstr ""
 "Αν κάνετε λάθος, απλώς απελευθερώστε το διακόπτη και θα μπορέσετε να "
 "ξαναπροσπαθήσετε."
 
-#. TRANSLATORS: title, printing reference files to media
-#: ../src/gcm-calibrate-argyll.c:2827
+#: ../src/gcm-calibrate-argyll.c:2314
 msgid "Printing"
 msgstr "Εκτύπωση"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2834
+#: ../src/gcm-calibrate-argyll.c:2322
 msgid "Preparing the data for the printer."
 msgstr "Προετοιμασία δεδομένων για τον εκτυπωτή."
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2840
+#: ../src/gcm-calibrate-argyll.c:2329
 msgid "Sending the targets to the printer."
 msgstr "Αποστολή των στόχων στον εκτυπωτή."
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2844
+#: ../src/gcm-calibrate-argyll.c:2334
 msgid "Printing the targets..."
 msgstr "Εκτύπωση των στόχων…"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2848
+#: ../src/gcm-calibrate-argyll.c:2339
 msgid "The printing has finished."
 msgstr "Η εκτύπωση ολοκληρώθηκε."
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2852
+#: ../src/gcm-calibrate-argyll.c:2344
 msgid "The print was aborted."
 msgstr "Η εκτύπωση ακυρώθηκε."
 
-#. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" - YOU NEED TO USE ASCII ONLY
-#: ../src/gcm-calibrate.c:141
-msgid "Copyright (c)"
-msgstr "Copyright ©"
-
-#. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:167
-msgid "Unknown description"
-msgstr "Άγνωστη περιγραφή"
-
-#. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:190
-msgid "Unknown model"
-msgstr "Άγνωστο μοντέλο"
-
-#. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:206
-msgid "Unknown manufacturer"
-msgstr "Άγνωστος κατασκευαστής"
-
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-calibrate.c:427
-msgid "Could not detect screen type"
-msgstr "Δεν ήταν δυνατή η αναγνώριση του τύπου της οθόνης"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:430
-msgid ""
-"Please indicate if the screen you are trying to profile is an LCD, CRT or a "
-"projector."
-msgstr ""
-"Παρακαλώ υποδείξτε αν η οθόνη για την οποία φτιάχνετε το προφίλ είναι LCD, "
-"CRT ή προβολέας."
-
 #. TRANSLATORS: title, the hardware calibration device does not support projectors
-#: ../src/gcm-calibrate.c:455
+#: ../src/gcm-calibrate.c:296
 msgid "Could not calibrate and profile using this color measuring instrument"
 msgstr ""
 "Δεν ήταν δυνατή η βαθμονόμηση και δημιουργία προφίλ με αυτό το όργανο "
 "μέτρησης."
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:458
+#: ../src/gcm-calibrate.c:299
 msgid ""
 "This color measuring instrument is not designed to support calibration and "
 "profiling projectors."
@@ -792,40 +564,278 @@ msgstr ""
 "Αυτό το όργανο μέτρησης δεν έχει σχεδιασθεί να υποστηρίζει τη βαθμονόμηση "
 "και δημιουργία προφίλ σε προβολείς."
 
-#. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate.c:518
-msgid "Profile Precision"
-msgstr "Ακρίβεια προφίλ"
+#. TRANSLATORS: title, instrument is a hardware color calibration sensor
+#: ../src/gcm-calibrate.c:489
+msgid "Please attach instrument"
+msgstr "Παρακαλώ τοποθετήστε το όργανο"
 
-#. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:521
+#. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
+#: ../src/gcm-calibrate.c:496
 msgid ""
-"A higher precision profile provides higher accuracy in color matching but "
-"requires more time for reading the color patches."
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square like the image below."
 msgstr ""
-"Ένα προφίλ υψηλότερης ακρίβειας παρέχει μεγαλύτερη ακρίβεια στο ταίριασμα "
-"των χρωμάτων αλλά απαιτεί περισσότερο χρόνο για την ανάγνωση των χρωματικών "
-"περιοχών."
+"Παρακαλώ τοποθετήστε το όργανο μέτρησης στο κέντρο της οθόνης στο γκρίζο "
+"τετράγωνο όπως στην ακόλουθη εικόνα."
 
-#. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:524
-msgid "For a typical workflow, a normal precision profile is sufficient."
-msgstr "Για τις συνήθεις εργασίες, μια κανονική ακρίβεια είναι αρκετή."
+#. TRANSLATORS: dialog message, ask user to attach device
+#: ../src/gcm-calibrate.c:499
+msgid ""
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square."
+msgstr ""
+"Παρακαλώ τοποθετήστε το όργανο μέτρησης στο κέντρο της οθόνης στο γκρίζο "
+"τετράγωνο."
+
+#. TRANSLATORS: dialog message, ask user to attach device
+#: ../src/gcm-calibrate.c:506
+msgid ""
+"You will need to hold the device on the screen for the duration of the "
+"calibration."
+msgstr ""
+"Θα χρειαστεί να κρατήσετε την συσκευή στην οθόνη για την διάρκεια της "
+"βαθμονίμησης."
+
+#: ../src/gcm-calibrate.c:511 ../src/gcm-calibrate.c:538
+#: ../src/gcm-calibrate.c:575
+msgid "Continue"
+msgstr "Συνέχεια"
+
+#: ../src/gcm-calibrate.c:533 ../src/gcm-calibrate.c:567
+msgid "Please configure instrument"
+msgstr "Παρακαλώ ρυθμίστε το όργανο"
+
+#: ../src/gcm-calibrate.c:542
+msgid ""
+"Please set the measuring instrument to screen mode like the image below."
+msgstr ""
+"Παρακαλώ βάλτε το όργανο μέτρησης σε λειτουργία οθόνης όπως στην ακόλουθη "
+"εικόνα."
+
+#: ../src/gcm-calibrate.c:546
+msgid "Please set the measuring instrument to screen mode."
+msgstr "Παρακαλώ βάλτε το όργανο σε λειτουργία οθόνης."
+
+#: ../src/gcm-calibrate.c:579
+msgid ""
+"Please set the measuring instrument to calibration mode like the image below."
+msgstr ""
+"Παρακαλώ βάλτε το όργανο σε κατάσταση βαθμονόμησης όπως στην ακόλουθη εικόνα."
+
+#: ../src/gcm-calibrate.c:583
+msgid "Please set the measuring instrument to calibration mode."
+msgstr "Παρακαλώ βάλτε το όργανο σε κατάσταση βαθμονόμησης."
+
+#. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
+#. * aquired image of the calibration target, e.g. an image file that looks
+#. * a bit like this: http://www.colorreference.de/targets/target.jpg
+#: ../src/gcm-calibrate.c:1643
+msgid "Select calibration target image"
+msgstr "Επιλέξτε εικόνα βαθμονόμησης"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: ../src/gcm-calibrate.c:1656
+msgid "Supported images files"
+msgstr "Υποστηριζόμενοι τύποι αρχείων"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: ../src/gcm-calibrate.c:1663 ../src/gcm-calibrate.c:1715
+#: ../src/gcm-viewer.c:456
+msgid "All files"
+msgstr "Όλα τα αρχεία"
+
+#. TRANSLATORS: dialog for file->open dialog
+#: ../src/gcm-calibrate.c:1688
+msgid "Select CIE reference values file"
+msgstr "Επιλέξτε αρχείο τιμών αναφοράς CIE"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: ../src/gcm-calibrate.c:1708
+msgid "CIE values"
+msgstr "Τιμές CIE"
+
+#. TRANSLATORS: dialog for file->open dialog
+#: ../src/gcm-calibrate.c:1781 ../src/gcm-viewer.c:428
+msgid "Select ICC Profile File"
+msgstr "Επιλέξτε αρχείο προφίλ ICC"
+
+#: ../src/gcm-calibrate.c:1784
+msgid "Open"
+msgstr "Άνοιγμα"
+
+#. TRANSLATORS: command line option
+#: ../src/gcm-calibrate-helper.c:87
+#| msgid "Load device color profiles"
+msgid "Use this device for profiling"
+msgstr "Χρησιμοποιείστε αυτή τη συσκευή για profiling"
+
+#. TRANSLATORS: command line option
+#: ../src/gcm-calibrate-helper.c:90
+msgid "Make the window modal to this XID"
+msgstr "Κάντε το σχηματικό παράθυρο σε αυτό XID"
+
+#. TRANSLATORS: just dumps the EDID to disk
+#: ../src/gcm-calibrate-helper.c:103
+msgid "gcm-dispread"
+msgstr "gcm-dispread"
+
+#. success
+#: ../src/gcm-calibrate-helper.c:169 ../src/gcm-calibrate-helper.c:199
+#| msgid "Profiles"
+msgid "Wrote file"
+msgstr "Γραμμένο προφίλ"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-helper.c:211 ../src/gcm-calibrate-main.c:355
+#: ../src/gcm-calibrate-main.c:1668
+#| msgid "Failed to calibrate device"
+msgid "Failed to calibrate"
+msgstr "Αποτυχία βαθμονόμησης της συσκευής"
+
+#: ../src/gcm-calibrate-main.c:147
+msgid "Calibration is not complete"
+msgstr "Η βαθμονόμηση δεν ολοκληρώθηκε"
+
+#: ../src/gcm-calibrate-main.c:150
+msgid "Are you sure you want to cancel the calibration?"
+msgstr "Είστε σίγουρος ότι θέλετε να ακυρώσετε την βαθμονόμηση;"
+
+#: ../src/gcm-calibrate-main.c:153
+#| msgid "Device Calibration"
+msgid "Continue calibration"
+msgstr "Συνέχεια βαθμονόμησης"
+
+#: ../src/gcm-calibrate-main.c:157
+msgid "Cancel and close"
+msgstr "Ακύρωση και κλείσιμο"
+
+#. TRANSLATORS: this is the sound description
+#: ../src/gcm-calibrate-main.c:205
+msgid "Profiling completed"
+msgstr "Ολοκλήρωση δημιουργίας προφίλ"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:606
+#| msgid "Calibration error"
+msgid "Calibrate your camera"
+msgstr "Βαθμονομήστε την κάμερα σας"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:610
+#| msgid "Set up display"
+msgid "Calibrate your display"
+msgstr "Βαθμονομήστε την οθόνη σας"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:614
+#| msgid "Failed to calibrate printer"
+msgid "Calibrate your printer"
+msgstr "Βαθμονομήστε των εκτυπωτή σας"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:618
+#| msgid "Failed to calibrate device"
+msgid "Calibrate your device"
+msgstr "Βαθμονομήστε την συσκευή σας"
+
+#. TRANSLATORS: this is the final intro page text
+#: ../src/gcm-calibrate-main.c:630
+msgid ""
+"Any existing screen correction will be temporarily turned off and the "
+"brightness set to maximum."
+msgstr ""
+"Οποιαδήποτε υπάρχουσα διόρθωση οθόνης θα απενεργοποιηθεί προσωρινά και η "
+"φωτεινότητα θα αυξηθεί στο μέγιστο."
+
+#. TRANSLATORS: this is the final intro page text
+#: ../src/gcm-calibrate-main.c:637
+msgid "You can cancel this process at any stage by pressing the cancel button."
+msgstr ""
+"Μπορείτε να ακυρώσετε την διεργασία σε οποιοδήποτε στάδιο πατώντας το κουμπί "
+"ακύρωση."
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:643
+msgid "Introduction"
+msgstr "Εισαγωγή"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:666
+msgid "All done!"
+msgstr "Όλα ολοκληρώθηκαν!"
+
+#. TRANSLATORS: this is the final summary
+#: ../src/gcm-calibrate-main.c:676
+msgid "The camera has been calibrated successfully."
+msgstr "Ολοκληρώθηκε η βαθμονόμηση της κάμερας."
+
+#. TRANSLATORS: this is the final summary
+#: ../src/gcm-calibrate-main.c:680
+#| msgid "The display '%s' should be recalibrated soon."
+msgid "The display has been calibrated successfully."
+msgstr "Ολοκληρώθηκε η βαθμονόμηση της οθόνης"
+
+#: ../src/gcm-calibrate-main.c:681
+msgid "You may notice the screen is a slightly different color."
+msgstr "Ίσως παρατηρήσετε μια μικρή διαφορά στα χρώματα της οθόνης."
+
+#. TRANSLATORS: this is the final summary
+#: ../src/gcm-calibrate-main.c:685
+#| msgid "The printer '%s' should be recalibrated soon."
+msgid "The printer has been calibrated successfully."
+msgstr "Ολοκληρώθηκε η βαθμονόμηση του εκτυπωτή."
+
+#: ../src/gcm-calibrate-main.c:686
+msgid "Documents printed from this device will be color managed."
+msgstr ""
+"Τα έγγραφα που θα εκτυπώνονται από αυτή τη συσκευή θα είναι χρωματικά "
+"διαχειρισμένα."
+
+#. TRANSLATORS: this is the final summary
+#: ../src/gcm-calibrate-main.c:690
+#| msgid "The device ID has invalid characters."
+msgid "The device has been calibrated successfully."
+msgstr "Ολοκληρώθηκε η βαθμονόμηση αυτής της συσκευής."
+
+#. TRANSLATORS: this is the final summary
+#: ../src/gcm-calibrate-main.c:697
+msgid ""
+"To view details about the new profile or to undo the calibration visit the "
+"<a href=\"control-center://color\">control center</a>."
+msgstr ""
+"Για να δείτε πληροφορίες για το νέο προφίλ ή για να αναιρέσεττε την "
+"βαθμονόμηση επισκεφθείτε το <a href=\"control-center://color\">control "
+"center</a>."
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:708 ../src/gcm-calibrate-main.c:1681
+msgid "Summary"
+msgstr "Περίληψη"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:732
+#| msgid "Device Calibration"
+msgid "Performing calibration"
+msgstr "Εκτέλεση βαθμονόμησης"
+
+#: ../src/gcm-calibrate-main.c:745
+#| msgid "Calibration error"
+msgid "Calibration is about to start"
+msgstr "Η βαθμονόμηση είναι έτοιμη να ξεκινήσει"
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:763
+msgid "Action"
+msgstr "Ενέργεια"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:529
-msgid "The high precision profile also requires more paper and printer ink."
-msgstr ""
-"Το προφίλ υψηλής ακρίβειας απαιτεί επίσης περισσότερο χαρτί και μελάνι "
-"εκτύπωσης."
+#: ../src/gcm-calibrate-main.c:786
+#| msgid "Calibration error"
+msgid "Calibration checklist"
+msgstr "Λίστα ελέγχου βαθμονόμησης"
 
-#. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated
-#: ../src/gcm-calibrate.c:643
-msgid "Custom"
-msgstr "Προσαρμοσμένο"
-
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:674
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:793
 msgid ""
 "Before calibrating the display, it is recommended to configure your display "
 "with the following settings to get optimal results."
@@ -834,7 +844,7 @@ msgstr ""
 "ρυθμίσεις στην οθόνη σας για να πάρετε βέλτιστα αποτελέσματα."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:677
+#: ../src/gcm-calibrate-main.c:796
 msgid ""
 "You may want to consult the owner's manual for your display on how to "
 "achieve these settings."
@@ -843,19 +853,19 @@ msgstr ""
 "κάνετε τις ρυθμίσεις."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:680
+#: ../src/gcm-calibrate-main.c:799
 msgid "Reset your display to the factory defaults."
 msgstr "Επαναφέρετε την οθόνη στις εργοστασιακές προεπιλογές."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:683
+#: ../src/gcm-calibrate-main.c:802
 msgid "Disable dynamic contrast if your display has this feature."
 msgstr ""
 "Απενεργοποιήστε τη δυναμική αντίθεση (κοντράστ) αν η οθόνη διαθέτει αυτό το "
 "χαρακτηριστικό."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:686
+#: ../src/gcm-calibrate-main.c:805
 msgid ""
 "Configure your display with custom color settings and ensure the RGB "
 "channels are set to the same values."
@@ -864,20 +874,20 @@ msgstr ""
 "ότι τα κανάλια RGB είναι στις ίδιες τιμές."
 
 #. TRANSLATORS: dialog message, addition to bullet item
-#: ../src/gcm-calibrate.c:689
+#: ../src/gcm-calibrate-main.c:808
 msgid "If custom color is not available then use a 6500K color temperature."
 msgstr ""
 "Αν δεν υπάρχει η δυνατότητα προσαρμοσμένων ρυθμίσεων χρώματος τότε επιλέξτε "
 "θερμοκρασία χρώματος 6500Κ."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:692
+#: ../src/gcm-calibrate-main.c:811
 msgid ""
 "Adjust the display brightness to a comfortable level for prolonged viewing."
 msgstr "Ρυθμίστε τη φωτεινότητα της οθόνης άνετο επίπεδο για μακρόχρονη θέαση."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:695
+#: ../src/gcm-calibrate-main.c:816
 msgid ""
 "For best results, the display should have been powered for at least 15 "
 "minutes before starting the calibration."
@@ -885,89 +895,126 @@ msgstr ""
 "Για άριστα αποτελέσματα, η οθόνη θα πρέπει να είναι σε λειτουργία "
 "τουλάχιστον 15 λεπτά πριν την έναρξη της βαθμονόμησης."
 
-#: ../src/gcm-calibrate.c:699
-msgid "Display setup"
-msgstr "Ρύθμιση οθόνης"
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:822
+msgid "Check Settings"
+msgstr "Ρυθμίσεις ελέγχου"
 
-#. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
-#. * aquired image of the calibration target, e.g. an image file that looks
-#. * a bit like this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:775
-msgid "Select calibration target image"
-msgstr "Επιλέξτε εικόνα βαθμονόμησης"
+#: ../src/gcm-calibrate-main.c:873
+msgid "Calibration and profiling software is not installed."
+msgstr "Δεν έχει εγκατασταθεί λογισμικό βαθμονόμησης και δημιουργίας προφίλ."
 
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:788
-msgid "Supported images files"
-msgstr "Υποστηριζόμενοι τύποι αρχείων"
-
-#. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:820
-msgid "Select CIE reference values file"
-msgstr "Επιλέξτε αρχείο τιμών αναφοράς CIE"
-
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:840
-msgid "CIE values"
-msgstr "Τιμές CIE"
-
-#: ../src/gcm-calibrate.c:916
-msgid "Open"
-msgstr "Άνοιγμα"
-
-#. TRANSLATORS: title, you can profile all at once, or in steps
-#: ../src/gcm-calibrate.c:952
-msgid "Please choose a profiling mode"
-msgstr "Παρακαλώ επιλέξτε τρόπο δημιουργίας προφίλ"
-
-#. TRANSLATORS: dialog message. Test patches are pages of colored squares
-#. * that are printed with a printer, and then read in with a calibration
-#. * device to create a profile
-#: ../src/gcm-calibrate.c:957
-msgid ""
-"Please indicate if you want to profile a local printer, generate some test "
-"patches, or profile using existing test patches."
+#: ../src/gcm-calibrate-main.c:876
+msgid "These tools are required to build color profiles for devices."
 msgstr ""
-"Παρακαλώ υποδείξτε αν επιθυμείτε να δημιουργήσετε προφίλ για ένα τοπικό "
-"εκτυπωτή, να δημιουργήσετε μερικά δοκίμια ή να δημιουργήσετε προφίλ "
-"χρησιμοποιώντας υπάρχοντα δοκίμια."
+"Αυτά τα εργαλεία απαιτούνται για τη δημιουργία προφίλ χρώματος για τις "
+"συσκευές."
 
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-calibrate.c:1068
-msgid "Install missing files?"
-msgstr "Εγκατάσταση των αρχείων που λείπουν;"
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:879
+msgid "More software is required!"
+msgstr "Απαιτείται περισσότερο λογισμικό!"
+
+#: ../src/gcm-calibrate-main.c:888
+msgid "Install required software"
+msgstr "Εγκατάσταση απαιτούμενου λογισμικού"
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:898
+#| msgid "Install now"
+msgid "Install Tools"
+msgstr "Εγκατάσταση εργαλείων"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate.c:1071
+#: ../src/gcm-calibrate-main.c:948
 msgid "Common color target files are not installed on this computer."
 msgstr "Σε αυτό τον υπολογιστή δεν έχουν εγκατασταθεί κοινά αρχεία χρωμάτων."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate.c:1073
+#: ../src/gcm-calibrate-main.c:950
 msgid "Color target files are needed to convert the image to a color profile."
 msgstr ""
 "Τα αρχεία χρωμάτων χρειάζονται για να μετατραπεί η εικόνα σε προφίλ χρώματος."
 
 #. TRANSLATORS: dialog message, asking if it's okay to install them
-#: ../src/gcm-calibrate.c:1075
+#: ../src/gcm-calibrate-main.c:952
 msgid "Do you want them to be installed?"
 msgstr "Επιθυμείτε να εγκατασταθούν;"
 
 #. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
-#: ../src/gcm-calibrate.c:1077
+#: ../src/gcm-calibrate-main.c:954
 msgid "If you already have the correct file, you can skip this step."
 msgstr "Αν έχετε ήδη το σωστό αρχείο, μπορείτε να παραλείψετε αυτό το βήμα."
 
-#. TRANSLATORS: this is the window title for when the user selects the calibration target.
-#. * A calibration target is an accuratly printed grid of colors, for instance:
-#. * the IT 8.7 targets available here: http://www.targets.coloraid.de/
-#: ../src/gcm-calibrate.c:1099
-msgid "Please select a calibration target"
-msgstr "Παρακαλώ επιλέξτε το αντικείμενο της βαθμονόμησης"
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:957
+msgid "Optional data files available"
+msgstr "Διαθέσιμα προαιρετικά αρχεία δεδομένων"
+
+#: ../src/gcm-calibrate-main.c:966
+#| msgid "Install now"
+msgid "Install Now"
+msgstr "Εγκατάσταση τώρα"
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:977
+#| msgid "Install"
+msgid "Install Targets"
+msgstr "Εγκατάσταση αντικειμένων"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:997
+msgid "CMP Digital Target 3"
+msgstr "CMP Digital Target 3"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1001
+msgid "CMP DT 003"
+msgstr "CMP DT 003"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1005
+msgid "Color Checker"
+msgstr "Color Checker"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1009
+msgid "Color Checker DC"
+msgstr "Color Checker DC"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1013
+msgid "Color Checker SG"
+msgstr "Color Checker SG"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1017
+msgid "Hutchcolor"
+msgstr "Hutchcolor"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1021
+msgid "i1 RGB Scan 1.4"
+msgstr "i1 RGB Scan 1.4"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1025
+msgid "IT8.7/2"
+msgstr "IT8.7/2"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1029
+msgid "Laser Soft DC Pro"
+msgstr "Laser Soft DC Pro"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1033
+msgid "QPcard 201"
+msgstr "QPcard 201"
 
 #. TRANSLATORS: dialog message, preface. A calibration target looks like
 #. * this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:1104
+#: ../src/gcm-calibrate-main.c:1108
 msgid ""
 "Before profiling the device, you have to manually capture an image of a "
 "calibration target and save it as a TIFF image file."
@@ -977,16 +1024,19 @@ msgstr ""
 "τύπου TIFF."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:1109
+#: ../src/gcm-calibrate-main.c:1113
+#| msgid ""
+#| "Ensure that the contrast and brightness are not changed and color "
+#| "correction profiles are not applied."
 msgid ""
 "Ensure that the contrast and brightness are not changed and color correction "
-"profiles are not applied."
+"profiles have not been applied."
 msgstr ""
-"Βεβαιωθείτε ότι η αντίθεση και η φωτεινότητα δεν θα αλλαχθούν και δεν θα "
-"εφαρμοσθούν προφίλ διόρθωσης χρώματος."
+"Βεβαιωθείτε ότι η αντίθεση και η φωτεινότητα δεν θα αλλαχθούν και δεν "
+"εφαρμόστηκαν προφίλ διόρθωσης χρώματος."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:1112
+#: ../src/gcm-calibrate-main.c:1116
 msgid ""
 "The device sensor should have been cleaned prior to scanning and the output "
 "file resolution should be at least 200dpi."
@@ -995,7 +1045,7 @@ msgstr ""
 "ανάλυση του εξαγόμενου αρχείου θα πρέπει να είναι τουλάχιστον 200dpi."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:1118
+#: ../src/gcm-calibrate-main.c:1122
 msgid ""
 "Ensure that the white-balance has not been modified by the camera and that "
 "the lens is clean."
@@ -1003,556 +1053,528 @@ msgstr ""
 "Βεβαιωθείτε ότι η ισορροπία λευκού δεν έχει τροποποιηθεί από την κάμερα και "
 "ότι ο φακός είναι καθαρός."
 
-#. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:1122
+#. TRANSLATORS: this is the message body for the chart selection
+#: ../src/gcm-calibrate-main.c:1126
+#| msgid "Please select a calibration target"
+msgid "Please select the calibration target type."
+msgstr "Παρακαλώ επιλέξτε τον τύπου του αντικείμενο της βαθμονόμησης."
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1129
+msgid "What target type do you have?"
+msgstr "Τι τύπο αντικειμένου χρειάζεστε;"
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1161
+msgid "Select Target"
+msgstr "Επιλέξτε αντικείμενο"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1200
+msgid "Choose your display type"
+msgstr "Επιλέξτε τον τύπο προβολή σας"
+
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1207
+msgid "Select the monitor type that is attached to your computer."
+msgstr "Επιλέξτε τον τύπο του monitor που έχει ο υπολογιστής σας."
+
+#: ../src/gcm-calibrate-main.c:1209
+msgid "LCD"
+msgstr "LCD"
+
+#: ../src/gcm-calibrate-main.c:1218
+msgid "CRT"
+msgstr "CRT"
+
+#: ../src/gcm-calibrate-main.c:1227
+msgid "Plasma"
+msgstr "Plasma"
+
+#: ../src/gcm-calibrate-main.c:1236
+msgid "Projector"
+msgstr "Προβολέας"
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1248
+msgid "Choose Display Type"
+msgstr "Επιλέξτε τύπο προβολής"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1286
+msgid "Choose your display target white point"
+msgstr "Επιλέξτε το αντικείμενο προβολής"
+
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1293
 msgid ""
-"For best results, the reference target should also be less than two years "
-"old."
+"Most displays should be calibrated to a CIE D65 illuminant for general usage."
 msgstr ""
-"Για βέλτιστα αποτελέσματα, το δοκίμιο αναφοράς θα πρέπει να είναι λιγότερο "
-"από δύο χρόνια παλιό."
+"Οι περισσότερες οθόνες θα βαθμονομηθούν σε φωτισμό CIE D65 για γενική χρήση."
+
+#: ../src/gcm-calibrate-main.c:1295
+msgid "CIE D50 (Printing and publishing)"
+msgstr "CIE D50 (Εκτύπωση και δημοσίευση)"
+
+#: ../src/gcm-calibrate-main.c:1304
+msgid "CIE D55"
+msgstr "CIE D55"
+
+#: ../src/gcm-calibrate-main.c:1313
+msgid "CIE D65 (Photography and graphics)"
+msgstr "CIE D65 (Φωτογραφία και γραφικά)"
+
+#: ../src/gcm-calibrate-main.c:1323
+msgid "CIE D75"
+msgstr "CIE D75"
+
+#: ../src/gcm-calibrate-main.c:1332
+msgid "Native (Already set manually)"
+msgstr "Εγγενής (Ήδη ρυθμισμένο χειροκίνητα)"
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1344
+msgid "Choose Display Whitepoint"
+msgstr "Επιλέξτε την οθόνη"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1382
+#| msgid "Please choose a profiling mode"
+msgid "Choose profiling mode"
+msgstr "Επιλέξτε λειτουργία profiling"
+
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1389
+msgid ""
+"Please indicate if you want to profile a local printer, generate some test "
+"patches, or profile using existing test patches."
+msgstr ""
+"Παρακαλώ υποδείξτε αν επιθυμείτε να δημιουργήσετε προφίλ για ένα τοπικό "
+"εκτυπωτή, να δημιουργήσετε μερικά δοκίμια ή να δημιουργήσετε προφίλ "
+"χρησιμοποιώντας υπάρχοντα δοκίμια."
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1421
+#| msgid "Calibration error"
+msgid "Calibration Mode"
+msgstr "Λειτουργία βαθμονόμησης"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1463
+#| msgid "Recalibration required"
+msgid "Choose calibration quality"
+msgstr "Επιλέξτε την ποιότητα της βαθμονόμησης"
+
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1470
+msgid "Higher quality calibration requires many color samples and more time."
+msgstr ""
+"Υψηλότερη ποιότητα βαθμονόμησης απαιτεί πολύ δείγματα χρωμάτων και "
+"περισσότερο χρόνο."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:1125
+#: ../src/gcm-calibrate-main.c:1474
 msgid ""
-"Please select the calibration target type which corresponds to your "
-"reference file."
+"A higher precision profile provides higher accuracy in color matching but "
+"requires more time for reading the color patches."
 msgstr ""
-"Παρακαλώ επιλέξτε το τύπο του δοκιμίου βαθμονόμησης που ανταποκρίνεται στο "
-"αρχείο αναφοράς σας."
+"Ένα προφίλ υψηλότερης ακρίβειας παρέχει μεγαλύτερη ακρίβεια στο ταίριασμα "
+"των χρωμάτων αλλά απαιτεί περισσότερο χρόνο για την ανάγνωση των χρωματικών "
+"περιοχών."
 
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:567
-msgid "CMP Digital Target 3"
-msgstr "CMP Digital Target 3"
+#. TRANSLATORS: this is the message body for the chart selection
+#: ../src/gcm-calibrate-main.c:1477
+msgid "For a typical workflow, a normal precision profile is sufficient."
+msgstr "Για τις συνήθεις εργασίες, μια κανονική ακρίβεια είναι αρκετή."
 
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:571
-msgid "CMP DT 003"
-msgstr "CMP DT 003"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:575
-msgid "Color Checker"
-msgstr "Color Checker"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:579
-msgid "Color Checker DC"
-msgstr "Color Checker DC"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:583
-msgid "Color Checker SG"
-msgstr "Color Checker SG"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:587
-msgid "Hutchcolor"
-msgstr "Hutchcolor"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:591
-msgid "i1 RGB Scan 1.4"
-msgstr "i1 RGB Scan 1.4"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:595
-msgid "IT8.7/2"
-msgstr "IT8.7/2"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:599
-msgid "Laser Soft DC Pro"
-msgstr "Laser Soft DC Pro"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:603
-msgid "QPcard 201"
-msgstr "QPcard 201"
-
-#. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:195
-msgid "Introduction to display calibration"
-msgstr "Εισαγωγή στη βαθμονόμηση οθόνης"
-
-#. TRANSLATORS: message text, an ICC profile is a file that characterizes the device
-#: ../src/gcm-calibrate-manual.c:217
-msgid ""
-"This dialog will help calibrate your display and create a custom ICC profile."
+#. TRANSLATORS: dialog message, preface
+#: ../src/gcm-calibrate-main.c:1482
+msgid "The high precision profile also requires more paper and printer ink."
 msgstr ""
-"Αυτό το παράθυρο διαλόγου θα σας βοηθήσει να βαθμονομήσετε την οθόνη σας και "
-"να δημιουργήσετε ένα προσαρμοσμένο προφίλ ICC."
+"Το προφίλ υψηλής ακρίβειας απαιτεί επίσης περισσότερο χαρτί και μελάνι "
+"εκτύπωσης."
 
-#. TRANSLATORS: message text, telling the user they are in for the long haul
-#: ../src/gcm-calibrate-manual.c:220
-msgid ""
-"The calibration will involve several steps so that an accurate profile can "
-"be obtained."
-msgstr ""
-"Η βαθμονόμηση περιλαμβάνει πολλά βήματα ώστε να παραχθεί ένα ακριβές προφίλ."
+#. TRANSLATORS: radio options for calibration precision
+#: ../src/gcm-calibrate-main.c:1487
+msgid "Accurate"
+msgstr "Ακριβές"
 
-#. TRANSLATORS: message text, this is a lie. It will take more than a few minutes, but we don't want to scare the hapless user
-#: ../src/gcm-calibrate-manual.c:223
-msgid "It should only take a few minutes."
-msgstr "Θα χρειαστούν λίγα μόνο λεπτά."
+#: ../src/gcm-calibrate-main.c:1488
+msgid "Normal"
+msgstr "Κανονική"
 
-#. TRANSLATORS: message text, when you're comparing colors, it helps if the image is a bit out of focus otherwise the
-#. * fovea (center bit of the eye) tries to 'pick out' a colour, rather than take the average reading
-#: ../src/gcm-calibrate-manual.c:234
-msgid ""
-"It may help to sit further from the screen or to squint at the calibration "
-"images in order to accurately compare the colors."
-msgstr ""
-"Μπορεί να βοηθήσει αν καθίσετε μακρύτερα από την οθόνη ή αν αλληθωρίσετε "
-"λίγο κοιτώντας τις εικόνες ώστε να συγκρίνετε με ακρίβεια τα χρώματα."
+#: ../src/gcm-calibrate-main.c:1489
+msgid "Quick"
+msgstr "Γρήγορο"
 
-#. TRANSLATORS: message text, tell the use that they can go back and forwards, as the human eye sucks
-#: ../src/gcm-calibrate-manual.c:237
-msgid "You can repeat the calibration steps as many times as you want."
-msgstr "Μπορείτε να επαναλάβετε τα βήματα της βαθμονόμησης όσες φορές θέλετε."
-
-#. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:249
+#: ../src/gcm-calibrate-main.c:1496
 #, c-format
-msgid "Create table item %i/%i"
-msgstr "Δημιουργία πίνακα %i/%i"
+msgid "(about %i sheet of paper)"
+msgid_plural "(about %i sheets of paper)"
+msgstr[0] "(περίπου %i φύλλο χαρτιού)"
+msgstr[1] "(περίπου %i φύλλα χαρτιού)"
 
-#. TRANSLATORS: message text
-#: ../src/gcm-calibrate-manual.c:270
-msgid ""
-"Please try to match up the gray square with the surrounding alternating "
-"bars. You should match the brightness first, and then if required change the "
-"color tint so it looks plain gray."
+#: ../src/gcm-calibrate-main.c:1507
+#, c-format
+msgid "(about %i minute)"
+msgid_plural "(about %i minutes)"
+msgstr[0] "(περίπου %i λεπτό)"
+msgstr[1] "(περίπου %i λεπτά)"
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1547
+#| msgid "Calibration error"
+msgid "Calibration Quality"
+msgstr "Ποιότητα βαθμονόμησης"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1583
+#| msgid "Profile type:"
+msgid "Profile title"
+msgstr "Τίτλος προφίλ:"
+
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1590
+msgid "Choose a title to identify the profile on your system."
+msgstr "Επιλέξτε έναν τίτλο για αναγνώριση του προφίλ στο σύστημα σας."
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1611
+#| msgid "Profile type:"
+msgid "Profile Title"
+msgstr "Τίτλος προφίλ:"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1633
+msgid "Insert sensor hardware"
+msgstr "Εισάγετε υλικό αισθητήρων"
+
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1640
+msgid "You need to insert sensor hardware to continue."
+msgstr "Πρέπει να εισάγετε υλικό αισθητήρων για να συνεχίσετε."
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1646
+#| msgid "Color Checker"
+msgid "Sensor Check"
+msgstr "Έλεγχος αισθητήρα"
+
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1675
+msgid "The device could not be found. Ensure it is plugged in and turned on."
 msgstr ""
-"Παρακαλώ προσπαθήστε να ταιριάξετε το γκρίζο τετράγωνο με τις περιβάλλουσες "
-"εναλλασσόμενες μπάρες. Θα πρέπει να ταιριάξετε πρώτα τη φωτεινότητα και μετά "
-"αν απαιτείται να αλλάξετε τη χροιά του χρώματος ώστε να φαίνεται απλό γκρίζο."
+"Η σύσκευη δεν βρέθηκε. Βεβαιωθείτε ότι είναι συνδεδεμένη και ενεργοποιημένη."
 
-#. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:367
-msgid "Summary"
-msgstr "Περίληψη"
+#. TRANSLATORS: this is saved in the profile
+#: ../src/gcm-calibrate-main.c:1906
+#| msgid "Unknown model"
+msgid "Unknown serial"
+msgstr "Άγνωστη σειριακή (serial)"
 
-#. TRANSLATORS: message text
-#: ../src/gcm-calibrate-manual.c:386
-msgid ""
-"This display is now calibrated. You can change the current profile using the "
-"Color Profiles program."
-msgstr ""
-"Η οθόνη είναι τώρα βαθμονομημένη. Μπορείτε να αλλάξετε το τρέχον προφίλ "
-"χρησιμοποιώντας το πρόγραμμα Προφίλ χρώματος."
+#. TRANSLATORS: this is saved in the profile
+#: ../src/gcm-calibrate-main.c:1911
+msgid "Unknown model"
+msgstr "Άγνωστο μοντέλο"
+
+#. TRANSLATORS: this is saved in the profile
+#: ../src/gcm-calibrate-main.c:1916
+msgid "Unknown description"
+msgstr "Άγνωστη περιγραφή"
+
+#. TRANSLATORS: this is saved in the profile
+#: ../src/gcm-calibrate-main.c:1921
+msgid "Unknown manufacturer"
+msgstr "Άγνωστος κατασκευαστής"
+
+#. TRANSLATORS: this is the copyright string, where it might be
+#. * "Copyright (c) 2009 Edward Scissorhands"
+#. * BIG RED FLASHING NOTE: YOU NEED TO USE ASCII ONLY
+#: ../src/gcm-calibrate-main.c:1928
+msgid "Copyright (c)"
+msgstr "Copyright ©"
+
+#. TRANSLATORS: we can make this modal (stay on top of) another window
+#: ../src/gcm-calibrate-main.c:2046 ../src/gcm-picker.c:785
+#: ../src/gcm-viewer.c:1698
+msgid "Set the parent window to make this modal"
+msgstr "Ορίστε το γονικό παράθυρο για να βρίσκεται αυτό πάντα στην κορυφή."
+
+#. TRANSLATORS: show just the one profile, rather than all
+#: ../src/gcm-calibrate-main.c:2049
+#| msgid "Get the profiles for a specific device type"
+msgid "Set the specific device to calibrate"
+msgstr "Ορίστε μια συγκεκριμένη συσκευή για βαθμονόμηση"
+
+#: ../src/gcm-calibrate-main.c:2090
+#| msgid "No filename specified"
+msgid "No device was specified!"
+msgstr "Δεν ορίσθηκε συσκευή!"
 
 #. TRANSLATORS: this is when there is no profile for the device
-#: ../src/gcm-cell-renderer-profile-text.c:69
+#: ../src/gcm-cell-renderer-profile-text.c:71
 msgid "No profile"
 msgstr "Δεν υπάρχει προφίλ"
 
-#: ../src/gcm-cell-renderer-profile-text.c:79
-msgid "Default"
-msgstr "Προεπιλογή"
+#: ../src/gcm-cell-renderer-profile-text.c:88
+#, c-format
+#| msgid "Defaults"
+msgid "Default %s"
+msgstr "Προεπιλογές %s"
 
-#. TRANSLATORS: this is the name of the internal panel
-#: ../src/gcm-device-xrandr.c:136
-msgid "Laptop LCD"
-msgstr "LCD φορητού"
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile has been auto-generated for this hardware
+#: ../src/gcm-cell-renderer-profile-text.c:103
+#| msgid "Default"
+msgid "Default: "
+msgstr "Προεπιλογή:"
 
-#. TRANSLATORS: this is prepended to the device title to let the use know it was generated by us automatically
-#: ../src/gcm-device-xrandr.c:422
-msgid "Automatic"
-msgstr "Αυτόματα"
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile his a standard space like AdobeRGB
+#: ../src/gcm-cell-renderer-profile-text.c:109
+#| msgid "Colorspace:"
+msgid "Colorspace: "
+msgstr "Χρωματικός χώρος:"
 
-#. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/gcm-list-store-profiles.c:51
-msgid ""
-"This profile does not have the information required for whole-screen color "
-"correction."
-msgstr ""
-"Αυτό το προφίλ δεν έχει τις πληροφορίες που απαιτούνται για διόρθωση "
-"χρώματος πλήρους οθόνης."
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile is a test profile
+#: ../src/gcm-cell-renderer-profile-text.c:114
+#| msgid "No profile"
+msgid "Test profile: "
+msgstr "Έλεγχος προφίλ:"
+
+#. TRANSLATORS: turn on all debugging
+#: ../src/gcm-debug.c:105
+msgid "Show debugging information for all files"
+msgstr "Εμφάνιση πληροφοριών αποσφαλμάτωσης για όλα τα αρχεία"
+
+#: ../src/gcm-debug.c:162
+msgid "Debugging Options"
+msgstr "Επιλογές αποσφαλμάτωσης"
+
+#: ../src/gcm-debug.c:162
+msgid "Show debugging options"
+msgstr "Εμφάνιση επιλογών αποσφαλμάτωσης"
 
 #. TRANSLATORS: command line option: a list of catalogs to install
-#. TRANSLATORS: command line option: a list of files to install
-#: ../src/gcm-import.c:81 ../src/gcm-install-system-wide.c:126
+#: ../src/gcm-import.c:87
 msgid "ICC profile to install"
 msgstr "ICC προφίλ προς εγκατάσταση"
 
-#. TRANSLATORS: nothing was specified on the command line
-#: ../src/gcm-import.c:103
+#: ../src/gcm-import.c:113
 msgid "No filename specified"
 msgstr "Δεν ορίσθηκε όνομα αρχείου"
 
-#. TRANSLATORS: could not read file
-#: ../src/gcm-import.c:116
+#: ../src/gcm-import.c:131 ../src/gcm-viewer.c:1339
 msgid "Failed to open ICC profile"
 msgstr "Αποτυχία ανοίγματος προφίλ ICC"
 
-#. TRANSLATORS: parsing error
-#: ../src/gcm-import.c:119
+#: ../src/gcm-import.c:136
 #, c-format
 msgid "Failed to parse file: %s"
 msgstr "Αποτυχία ανάλυσης αρχείου: %s"
 
-#. TRANSLATORS: color profile already been installed
-#: ../src/gcm-import.c:145
-msgid "ICC profile already installed"
-msgstr "Το προφίλ ICC είναι ήδη εγκατεστημένο"
+#. TRANSLATORS: message text
+#: ../src/gcm-import.c:157
+#, c-format
+#| msgid "Profile Precision"
+msgid "Profile description: %s"
+msgstr "Περιγραφή προφίλ: %s"
 
-#. TRANSLATORS: color profile already been installed
-#: ../src/gcm-import.c:159
+#. TRANSLATORS: message text
+#: ../src/gcm-import.c:167
+#| msgid "Profile type:"
+msgid "Profile copyright:"
+msgstr "Copyright προφίλ:"
+
+#: ../src/gcm-import.c:179
+#| msgid "ICC profile already installed"
+msgid "Color profile is already imported"
+msgstr "Το προφίλ χρώματος είναι ήδη εισαγμένο"
+
+#: ../src/gcm-import.c:209
 msgid "ICC profile already installed system-wide"
 msgstr "Το προφίλ ICC είναι ήδη εγκατεστημένο για όλο το σύστημα"
 
-#. TRANSLATORS: message text
-#: ../src/gcm-import.c:171
-#, c-format
-msgid "Import ICC color profile %s?"
-msgstr "Εισαγωγή προφίλ χρώματος ICC %s;"
+#. TRANSLATORS: the profile type
+#: ../src/gcm-import.c:225
+#| msgid "Import ICC color profile?"
+msgid "Import display color profile?"
+msgstr "Εισαγωγή προφίλ χρώματος οθόνης;"
 
-#. TRANSLATORS: message text
-#: ../src/gcm-import.c:174
-msgid "Import ICC color profile?"
-msgstr "Εισαγωγή προφίλ χρώματος ICC;"
+#. TRANSLATORS: the profile type
+#: ../src/gcm-import.c:229
+#| msgid "Import ICC color profile?"
+msgid "Import device color profile?"
+msgstr "Εισαγωγή προφίλ χρώματος συσκευή;"
 
-#. ask confirmation
-#: ../src/gcm-import.c:182
-msgid "Import ICC profile"
-msgstr "Εισαγωγή προφίλ ICC"
+#. TRANSLATORS: the profile type
+#: ../src/gcm-import.c:233
+#| msgid "Import ICC color profile?"
+msgid "Import named color profile?"
+msgstr "Εισαγωγή ονομαζόμενου προφίλ χρώματος;"
+
+#. TRANSLATORS: the profile type
+#: ../src/gcm-import.c:237
+#| msgid "Import ICC color profile?"
+msgid "Import color profile?"
+msgstr "Εισαγωγή προφίλ χρώματος;"
+
+#. TRANSLATORS: button text
+#: ../src/gcm-import.c:252 ../src/gcm-viewer.c:431
+msgid "Import"
+msgstr "Εισαγωγή"
+
+#: ../src/gcm-import.c:253
+#| msgid "Details"
+msgid "Show Details"
+msgstr "Εμφάνιση λεπτομερειών"
+
+#: ../src/gcm-import.c:277 ../src/gcm-viewer.c:1372
+#| msgid "Failed to copy file"
+msgid "Failed to import file"
+msgstr "Αποτυχία εισαγωγής αρχείου"
 
 #. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
-#: ../src/gcm-inspect.c:57
+#: ../src/gcm-inspect.c:55
 msgid "Description:"
 msgstr "Περιγραφή:"
 
 #. TRANSLATORS: this is the ICC profile copyright
-#: ../src/gcm-inspect.c:60
+#: ../src/gcm-inspect.c:58
 msgid "Copyright:"
 msgstr "Πνευματικά δικαιώματα:"
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:105
+#: ../src/gcm-inspect.c:193
 msgid "Root window profile:"
 msgstr "Προφίλ γονικού παραθύρου:"
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:117
+#: ../src/gcm-inspect.c:205
 msgid "Root window protocol version:"
 msgstr "Έκδοση πρωτοκόλλου γονικού παραθύρου:"
 
-#: ../src/gcm-inspect.c:133
-#, c-format
-msgid "Output profile '%s':"
-msgstr "Εξαγωγή προφίλ «%s»:"
+#. TRANSLATORS: no DBus session bus
+#: ../src/gcm-inspect.c:230 ../src/gcm-inspect.c:299 ../src/gcm-utils.c:117
+msgid "Failed to connect to session bus:"
+msgstr "Αποτυχία σύνδεσης στο δίαυλο συνεδρίας:"
 
-#. TRANSLATORS: this is when the profile has not been set
-#: ../src/gcm-inspect.c:140
-msgid "not set"
-msgstr "δεν ορίσθηκε"
-
-#. TRANSLATORS: no profile has been asigned to this device
-#: ../src/gcm-inspect.c:205
-msgid "There are no ICC profiles for this device"
-msgstr "Δεν υπάρχουν προφίλ ICC για αυτή τη συσκευή"
-
-#. TRANSLATORS: this is a list of profiles suitable for the device
-#: ../src/gcm-inspect.c:210 ../src/gcm-inspect.c:279 ../src/gcm-inspect.c:411
-#: ../src/gcm-inspect.c:478
-msgid "Suitable profiles for:"
-msgstr "Κατάλληλα προφίλ για:"
+#. TRANSLATORS: the DBus method failed
+#: ../src/gcm-inspect.c:248 ../src/gcm-inspect.c:317 ../src/gcm-utils.c:141
+msgid "The request failed:"
+msgstr "Το αίτημα απέτυχε:"
 
 #. TRANSLATORS: no profile has been asigned to this device
-#: ../src/gcm-inspect.c:274
+#: ../src/gcm-inspect.c:257
 msgid "There are no ICC profiles assigned to this file"
 msgstr "Δεν έχουν ορισθεί προφίλ ICC για αυτή τη συσκευή"
 
+#. TRANSLATORS: this is a list of profiles suitable for the device
+#: ../src/gcm-inspect.c:262 ../src/gcm-inspect.c:334
+msgid "Suitable profiles for:"
+msgstr "Κατάλληλα προφίλ για:"
+
 #. TRANSLATORS: no profile has been asigned to this window
-#: ../src/gcm-inspect.c:406
+#: ../src/gcm-inspect.c:329
 msgid "There are no ICC profiles for this window"
 msgstr "Δεν υπάρχουν προφίλ ICC για αυτό το παράθυρο"
 
-#. TRANSLATORS: no profile has been asigned to this device
-#: ../src/gcm-inspect.c:473
-msgid "There are no ICC profiles for this device type"
-msgstr "Δεν υπάρχουν προφίλ ICC για αυτό τον τύπο συσκευής"
-
-#. TRANSLATORS: the DBus method failed
-#: ../src/gcm-inspect.c:517
-msgid "The request failed"
-msgstr "Το αίτημα απέτυχε"
-
-#. TRANSLATORS: this is the rendering intent of the output
-#: ../src/gcm-inspect.c:526
-msgid "Rendering intent (display):"
-msgstr "Στόχος απόδοσης (οθόνη):"
-
-#. TRANSLATORS: this is the rendering intent of the printer
-#: ../src/gcm-inspect.c:532
-msgid "Rendering intent (softproof):"
-msgstr "Στόχος απόδοσης (εικονικό δοκίμιο):"
-
-#. TRANSLATORS: this is the rendering intent of the output
-#: ../src/gcm-inspect.c:540
-msgid "RGB Colorspace:"
-msgstr "Χρωματικός χώρος RGB:"
-
-#. TRANSLATORS: this is the rendering intent of the printer
-#: ../src/gcm-inspect.c:546
-msgid "CMYK Colorspace:"
-msgstr "Χρωματικός χώρος CMYK:"
-
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:574
+#: ../src/gcm-inspect.c:365
 msgid "Show xserver properties"
 msgstr "Εμφάνιση ιδιοτήτων του xserver"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:577
-msgid "Get the profiles for a specific device"
-msgstr "Ανάκτηση προφίλ για μια συγκεκριμένη συσκευή"
-
-#. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:580
+#: ../src/gcm-inspect.c:368
 msgid "Get the profiles for a specific file"
 msgstr "Ανάκτηση προφίλ για ένα συγκεκριμένο αρχείο"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:583
+#: ../src/gcm-inspect.c:371
 msgid "Get the profile for a specific window"
 msgstr "Ανάκτηση προφίλ για ένα συγκεκριμένο παράθυρο"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:586
-msgid "Get the profiles for a specific device type"
-msgstr "Ανάκτηση προφίλ για συγκεκριμένο τύπο συσκευής"
-
-#. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:589
+#: ../src/gcm-inspect.c:374
 msgid "Dump all details about this system"
 msgstr "Ανακτά όλες τις πληροφορίες για αυτό το σύστημα"
 
 #. TRANSLATORS: just dumps the EDID to disk
-#: ../src/gcm-inspect.c:602
+#: ../src/gcm-inspect.c:387
 msgid "EDID inspect program"
 msgstr "Πρόγραμμα εξέτασης EDID"
 
-#. TRANSLATORS: this is when the user does --type=mickeymouse
-#: ../src/gcm-inspect.c:621
-msgid "Device or profile type not recognized, recognised types are:"
-msgstr ""
-"Ο τύπος της συσκευής ή του προφίλ δεν αναγνωρίσθηκε, οι αναγνωριζόμενοι "
-"τύποι είναι:"
-
-#. command line argument, the ID of the device
-#: ../src/gcm-install-system-wide.c:123
-msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
-msgstr "Ταυτότητα (ID) συσκευής, π.χ. «xrandr_ibm_france_ltn154p2_l05»"
-
-#. TRANSLATORS: tool that is used when copying profiles system-wide
-#: ../src/gcm-install-system-wide.c:141
-msgid "GNOME Color Manager ICC profile system-wide installer"
-msgstr ""
-"Εγκαταστάτης για όλο το σύστημα του προφίλ ICC της Διαχείρισης χρώματος του "
-"GNOME"
-
-#. TRANSLATORS: user did not specify a valid filename
-#: ../src/gcm-install-system-wide.c:149
-msgid "You need to specify exactly one ICC profile filename."
-msgstr "Πρέπει να καθορίσετε το όνομα ακριβώς ενός αρχείου προφίλ ICC."
-
-#. TRANSLATORS: user did not specify a valid device ID
-#: ../src/gcm-install-system-wide.c:157
-msgid "You need to specify exactly one device ID."
-msgstr "Πρέπει να καθορίσετε μόνο μία ταυτότητα (ID) συσκευής."
-
-#. TRANSLATORS: user did not specify a valid device ID
-#: ../src/gcm-install-system-wide.c:166
-msgid "The device ID has invalid characters."
-msgstr "Η ταυτότητα (ID) της συσκευής περιλαμβάνει μη έγκυρους χαρακτήρες."
-
-#. TRANSLATORS: only able to install profiles as root
-#: ../src/gcm-install-system-wide.c:176
-msgid "This program can only be used by the root user."
-msgstr ""
-"Αυτό το πρόγραμμα μπορεί να χρησιμοποιηθεί μόνο από το διαχειριστή (root)."
-
-#. TRANSLATORS: only able to install profiles with an absolute path
-#: ../src/gcm-install-system-wide.c:185
-msgid "The source filename must be absolute."
-msgstr "Το όνομα αρχείου προέλευσης πρέπει να δοθεί με απόλυτη διαδρομή."
-
-#. TRANSLATORS: error details
-#: ../src/gcm-install-system-wide.c:196
-msgid "Failed to get content type:"
-msgstr "Αποτυχία ανάκτησης περιεχομένου τύπου:"
-
-#. TRANSLATORS: the content type is the detected type of file
-#: ../src/gcm-install-system-wide.c:206
-msgid "Content type was incorrect:"
-msgstr "Ο τύπος του περιεχομένου ήταν εσφαλμένος:"
-
-#. TRANSLATORS: the program must never be directly run
-#: ../src/gcm-install-system-wide.c:215
-msgid "This program must only be run through pkexec."
-msgstr "Αυτό το πρόγραμμα πρέπει να εκτελείται μόνο μέσω της pkexec."
-
-#. TRANSLATORS: PolicyKit has gone all insane on us, and we refuse to parse junk
-#: ../src/gcm-install-system-wide.c:224
-msgid "PKEXEC_UID must be set to an integer value."
-msgstr "Το PKEXEC_UID πρέπει να έχει ακέραια τιμή."
-
-#. TRANSLATORS: we are complaining that a file must be really owned by the user who called this program
-#: ../src/gcm-install-system-wide.c:233
-msgid "The ICC profile must be owned by the user."
-msgstr "Ο χρήστης πρέπει να έχει δικαιώματα ιδιοκτήτη στο προφίλ ICC."
-
-#. TRANSLATORS: only able to install profiles with an absolute path
-#: ../src/gcm-install-system-wide.c:246
-msgid "The destination filename must be absolute."
-msgstr "Η διαδρομή για το αρχείο προορισμού πρέπει να είναι απόλυτη."
-
-#. TRANSLATORS: error details
-#: ../src/gcm-install-system-wide.c:256
-msgid "Failed to copy:"
-msgstr "Αποτυχία αντιγραφής:"
-
+#. TRANSLATORS: this is when the error is invalid
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:175 ../src/gcm-viewer.c:576 ../src/gcm-viewer.c:626
+#: ../src/gcm-picker.c:204 ../src/gcm-picker.c:211 ../src/gcm-viewer.c:666
+#: ../src/gcm-viewer.c:716
 msgid "Unknown"
 msgstr "Άγνωστο"
 
-#. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:325
+#: ../src/gcm-picker.c:358
 msgid "No colorimeter is attached."
 msgstr "Δεν έχει συνδεθεί χρωματόμετρο."
 
-#. TRANSLATORS: this is displayed if VTE support is not enabled
-#: ../src/gcm-picker.c:332
-msgid "This application was compiled without VTE support."
-msgstr "Η εφαρμογή μεταγλωττίσθηκε χωρίς υποστήριξη VTE."
+#: ../src/gcm-picker.c:375
+msgid "The sensor has no native driver."
+msgstr "Ο αισθητήρας δεν έχει εγγενές οδηγό."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:342
+#: ../src/gcm-picker.c:384
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr ""
 "Το συνδεδεμένο χρωματόμετρο δεν έχει τη δυνατότητα να διαβάσει χρωματικό "
 "σημείο."
 
-#. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-picker.c:663 ../src/gcm-viewer.c:1219
-msgid "Set the parent window to make this modal"
-msgstr "Ορίστε το γονικό παράθυρο για να βρίσκεται αυτό πάντα στην κορυφή."
+#. TRANSLATORS: this is when there are no profiles that can be used;
+#. * the search term is either "RGB" or "CMYK"
+#: ../src/gcm-picker.c:635
+#, c-format
+msgid "No %s color spaces available"
+msgstr "Δεν υπάρχουν διαθέσιμοι %s χρωματικοί χώροι"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:681
+#: ../src/gcm-picker.c:803
 msgid "GNOME Color Manager Color Picker"
 msgstr "Επιλογή χρώματος της διαχείρισης χρώματος του GNOME"
 
-#. TRANSLATORS: button: this is to open GCM
-#: ../src/gcm-session.c:108
-msgid "Recalibrate now"
-msgstr "Επαναβαθμονόμηση τώρα"
+#. TRANSLATORS: this is where the ICC profile has no description
+#: ../src/gcm-profile.c:162
+msgid "Missing description"
+msgstr "Απουσιάζει η περιγραφή"
 
-#. TRANSLATORS: button: this is to ignore the recalibrate notifications
-#: ../src/gcm-session.c:111
-msgid "Ignore"
-msgstr "Αγνόηση"
-
-#. TRANSLATORS: this is when the device has not been recalibrated in a while
-#: ../src/gcm-session.c:138
-msgid "Recalibration required"
-msgstr "Απαιτείται επαναβαθμονόμηση"
-
-#. TRANSLATORS: this is when the display has not been recalibrated in a while
-#: ../src/gcm-session.c:148
-#, c-format
-msgid "The display '%s' should be recalibrated soon."
-msgstr "Η οθόνη «%s» θα πρέπει να επαναβαθμονομηθεί σύντομα."
-
-#. TRANSLATORS: this is when the printer has not been recalibrated in a while
-#: ../src/gcm-session.c:155
-#, c-format
-msgid "The printer '%s' should be recalibrated soon."
-msgstr "Ο εκτυπωτής «%s» θα πρέπει να επαναβαθμονομηθεί σύντομα."
-
-#: ../src/gcm-session.c:706
-msgid "Do not exit after the request has been processed"
-msgstr "Να μη γίνει έξοδος μετά την επεξεργασία του αιτήματος"
-
-#. TRANSLATORS: program name, a session wide daemon to watch for updates and changing system state
-#: ../src/gcm-session.c:722 ../data/gcm-prefs.ui.h:9
-msgid "Color Management"
-msgstr "Διαχείριση χρώματος"
-
-#: ../src/gcm-session.c:724
-msgid "Color Management D-Bus Service"
-msgstr "Υπηρεσία D-Bus Διαχείρισης χρώματος"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:494
-msgid "Perceptual"
-msgstr "Αντιληπτικό (Perceptual)"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:498
-msgid "Relative"
-msgstr "Σχετικό"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:502
-msgid "Saturation"
-msgstr "Κορεσμός (Saturation)"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:506
-msgid "Absolute"
-msgstr "Απόλυτο"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:519
-msgid "High quality photography"
-msgstr "Φωτογραφία υψηλής ποιότητας"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:523
-msgid "Precise color matching"
-msgstr "Ακριβές ταίριασμα χρώματος"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:527
-msgid "Graphs and presentations"
-msgstr "Γραφήματα και παρουσιάσεις"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:531
-msgid "Proofing devices"
-msgstr "Συσκευές δοκιμίων"
+#. TRANSLATORS: this is the profile creation date strftime format
+#: ../src/gcm-profile.c:583
+msgid "%B %e %Y, %I:%M:%S %p"
+msgstr "%B %e %Y, %I:%M:%S %p"
 
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:544 ../src/gcm-viewer.c:607 ../data/gcm-prefs.ui.h:32
+#: ../src/gcm-utils.c:328 ../src/gcm-viewer.c:697
 msgid "RGB"
 msgstr "RGB"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:548 ../src/gcm-viewer.c:619 ../data/gcm-prefs.ui.h:6
+#: ../src/gcm-utils.c:332 ../src/gcm-viewer.c:709
 msgid "CMYK"
 msgstr "CMYK"
 
 #. TRANSLATORS: this is the colorspace type
-#: ../src/gcm-utils.c:552
+#: ../src/gcm-utils.c:336
 msgid "gray"
 msgstr "gray"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:289
+#: ../src/gcm-viewer.c:374
 msgid "Permanently delete profile?"
 msgstr "Μόνιμη διαγραφή προφίλ;"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:292
+#: ../src/gcm-viewer.c:377
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr ""
@@ -1560,392 +1582,694 @@ msgstr ""
 "σύστημά σας;"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:295
+#: ../src/gcm-viewer.c:380
 msgid "Delete"
 msgstr "Διαγραφή"
 
+#. TRANSLATORS: filter name on the file->open dialog
+#: ../src/gcm-viewer.c:449
+msgid "Supported ICC profiles"
+msgstr "Υποστηριζόμενα προφίλ ICC"
+
+#. TRANSLATORS: could not read file
+#: ../src/gcm-viewer.c:485
+msgid "Failed to copy file"
+msgstr "Αποτυχία αντιγραφής αρχείου"
+
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:549
+#: ../src/gcm-viewer.c:639
 msgid "Input device"
 msgstr "Συσκευή εισόδου"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:553
+#: ../src/gcm-viewer.c:643
 msgid "Display device"
 msgstr "Συσκευή απεικόνισης"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:557
+#: ../src/gcm-viewer.c:647
 msgid "Output device"
 msgstr "Συσκευή εξόδου"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:561
+#: ../src/gcm-viewer.c:651
 msgid "Devicelink"
 msgstr "Devicelink"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:565
+#: ../src/gcm-viewer.c:655
 msgid "Colorspace conversion"
 msgstr "Μετατροπή χρωματικού χώρου (Colorspace conversion)"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:569
+#: ../src/gcm-viewer.c:659
 msgid "Abstract"
 msgstr "Αφηρημένο (Abstract)"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:573
+#: ../src/gcm-viewer.c:663
 msgid "Named color"
 msgstr "Καθορισμένο χρώμα (Named color)"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:587
+#: ../src/gcm-viewer.c:677
 msgid "XYZ"
 msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:591
+#: ../src/gcm-viewer.c:681
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:595
+#: ../src/gcm-viewer.c:685
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:599
+#: ../src/gcm-viewer.c:689
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:603
+#: ../src/gcm-viewer.c:693
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:611
+#: ../src/gcm-viewer.c:701
 msgid "Gray"
 msgstr "Gray"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:615
+#: ../src/gcm-viewer.c:705
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:623
+#: ../src/gcm-viewer.c:713
 msgid "CMY"
 msgstr "CMY"
 
+#: ../src/gcm-viewer.c:767
+msgid "Standard space"
+msgstr "Κανονικός χώρος"
+
+#: ../src/gcm-viewer.c:768
+#| msgid "Display setup"
+msgid "Display checksum"
+msgstr "Εμφάνιση αθροίσματος ελέγχου"
+
+#: ../src/gcm-viewer.c:769
+#| msgid "Display device"
+msgid "Display model"
+msgstr "Εμφάνιση μοντέλου"
+
+#: ../src/gcm-viewer.c:770
+#| msgid "Serial number"
+msgid "Display serial number"
+msgstr "Εμφάνιση σειριακού αριθμού"
+
+#: ../src/gcm-viewer.c:771
+#| msgid "Display"
+msgid "Display PNPID"
+msgstr "Εμφάνιση PNPID"
+
+#: ../src/gcm-viewer.c:772
+#| msgid "Display device"
+msgid "Display vendor"
+msgstr "Εμφάνιση κατασκευαστή"
+
+#: ../src/gcm-viewer.c:773
+msgid "File checksum"
+msgstr "Έλεγχος αθροίσματος αρχείου"
+
+#: ../src/gcm-viewer.c:774
+msgid "Framework product"
+msgstr "Προϊόν Framework"
+
+#: ../src/gcm-viewer.c:775
+msgid "Framework program"
+msgstr "Πρόγραμμα Framework"
+
+#: ../src/gcm-viewer.c:776
+msgid "Framework version"
+msgstr "Έκδοση Framework"
+
+#: ../src/gcm-viewer.c:777
+msgid "Data source type"
+msgstr "Τύπος πηγής δεδομένων"
+
+#: ../src/gcm-viewer.c:778
+msgid "Mapping format"
+msgstr "Χαρτογράφηση διαμόρφωσης"
+
+#: ../src/gcm-viewer.c:779
+msgid "Mapping qualifier"
+msgstr "Χαρτογράφηση πιστοποίησης"
+
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:755
+#: ../src/gcm-viewer.c:1029
 msgid "Yes"
 msgstr "Ναι"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:758
+#: ../src/gcm-viewer.c:1032
 msgid "No"
 msgstr "Όχι"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:844
+#: ../src/gcm-viewer.c:1144
 msgid "Delete this profile"
 msgstr "Διαγραφή αυτού του προφίλ"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:847
+#: ../src/gcm-viewer.c:1147
 msgid "This profile cannot be deleted"
 msgstr "Αυτό το προφίλ δεν μπορεί να διαγραφεί"
 
-#. TRANSLATORS: combo-entry, no graph selected to be shown
-#: ../src/gcm-viewer.c:1005
-msgid "None"
-msgstr "Κανένα"
+#. TRANSLATORS: show just the one profile, rather than all
+#: ../src/gcm-viewer.c:1701
+#| msgid "Debug these specific modules"
+msgid "Set the specific profile to show"
+msgstr "Ορίστε τα συγκεκριμένα προφίλ για εμφάνιση"
 
-#. TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...)
-#: ../src/gcm-viewer.c:1008
-msgid "CIE 1931 xy"
-msgstr "CIE 1931 xy"
+#. TRANSLATORS: show just the one filename, rather than all
+#: ../src/gcm-viewer.c:1704
+#| msgid "Debug these specific functions"
+msgid "Set the specific file to show"
+msgstr "Ορίστε τα συγκεκριμένα αρχεία για εμφάνιση"
 
-#. TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out)
-#: ../src/gcm-viewer.c:1011
-msgid "Transfer response curve"
-msgstr "Καμπύλη μεταφοράς απόκρισης"
+#~ msgid "Applies device profile settings at session startup"
+#~ msgstr ""
+#~ "Εφαρμόζει τις ρυθμίσεις προφίλ της συσκευής κατά την έναρξη της συνεδρίας"
 
-#. TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card)
-#: ../src/gcm-viewer.c:1014
-msgid "Video card gamma table"
-msgstr "Πίνακας γάμμα κάρτας γραφικών"
+#~ msgid "Manage ICC color profiles"
+#~ msgstr "Διαχείριση προφίλ χρωμάτων ICC"
 
-#. TRANSLATORS: combo-entry, this is a preview image of what the profile looks like
-#: ../src/gcm-viewer.c:1017
-msgid "Image preview (from sRGB)"
-msgstr "Προεπισκόπηση εικόνας (από sRGB)"
+#~ msgid ""
+#~ "Authentication is required to install the color profile for all users"
+#~ msgstr ""
+#~ "Απαιτείται πιστοποίηση για εγκατάσταση προφίλ χρώματος για όλους τους "
+#~ "χρήστες"
 
-#: ../src/gcm-viewer.c:1018
-msgid "Image preview (to sRGB)"
-msgstr "Προεπισκόπηση εικόνας (σε sRGB)"
+#~ msgid "Install system color profiles"
+#~ msgstr "Εγκατάσταση προφίλ χρώματος συστήματος"
 
-#: ../data/gcm-calibrate.ui.h:1
-msgid "Blue:"
-msgstr "Μπλε:"
+#~ msgid "Failed to save defaults for all users"
+#~ msgstr "Αποτυχία αποθήκευσης προεπιλογών για όλους τους χρήστες"
 
-#: ../data/gcm-calibrate.ui.h:2
-msgid "Brightness:"
-msgstr "Φωτεινότητα:"
+#~ msgid "Other profile…"
+#~ msgstr "Άλλο προφίλ…"
 
-#: ../data/gcm-calibrate.ui.h:3
-msgid "CRT"
-msgstr "CRT"
+#~ msgid "Failed to get metadata from image"
+#~ msgstr "Αποτυχία λήψης μεταδεδομένων από την εικόνα"
 
-#. The user wants to create images suitable to send to a photo-processing lab
-#: ../data/gcm-calibrate.ui.h:5
-msgid "Create images for printing"
-msgstr "Δημιουργία εικόνων για εκτύπωση"
+#~ msgid "Failed to create virtual device"
+#~ msgstr "Αποτυχία δημιουργίας εικονικής συσκευής"
 
-#. Expander label, for use when the user wants to see the VTE widget and what the calibration tool is actually doing
-#: ../data/gcm-calibrate.ui.h:6 ../data/gcm-spawn.ui.h:2
-msgid "Details"
-msgstr "Λεπτομέρειες"
+#~ msgid "Failed to save virtual device"
+#~ msgstr "Αποτυχία αποθήκευσης εικονικής συσκευής"
 
-#. window title
-#: ../data/gcm-calibrate.ui.h:8
-msgid "Device Calibration"
-msgstr "Βαθμονόμηση συσκευής"
+#~ msgid "Failed to add virtual device"
+#~ msgstr "Αποτυχία προσθήκης εικονικής συσκευής"
 
-#. The user wants to analyse images that have been printed by a photo-processing lab
-#: ../data/gcm-calibrate.ui.h:10
-msgid "Generate profile from printed images"
-msgstr "Δημιουργία προφίλ από εκτυπωμένες εικόνες"
+#~ msgid "Install calibration and profiling software?"
+#~ msgstr ""
+#~ "Να γίνει εγκατάσταση λογισμικού βαθμονόμησης και δημιουργίας προφίλ;"
 
-#: ../data/gcm-calibrate.ui.h:11
-msgid "Green:"
-msgstr "Πράσινο:"
+#~ msgid "Do not install"
+#~ msgstr "Να μη γίνει εγκατάσταση"
 
-#. The precision of the calibration
-#: ../data/gcm-calibrate.ui.h:13
-msgid "High"
-msgstr "Υψηλή"
+#~ msgid "Failed to delete file"
+#~ msgstr "Αποτυχία διαγραφής αρχείου"
 
-#: ../data/gcm-calibrate.ui.h:14
-msgid "LCD"
-msgstr "LCD"
+#~ msgid "Create a color profile for the selected device"
+#~ msgstr "Δημιουργία προφίλ χρώματος για την επιλεγμένη συσκευή"
 
-#. The precision of the calibration
-#: ../data/gcm-calibrate.ui.h:16
-msgid "Low"
-msgstr "Χαμηλή"
+#~ msgid "Cannot create profile: No device is selected"
+#~ msgstr "Αδύνατη η δημιουργία προφίλ: Δεν έχει επιλεχθεί συσκευή"
 
-#. The length of the translation
-#: ../data/gcm-calibrate.ui.h:18
-msgid "Normal"
-msgstr "Κανονική"
+#~ msgid "Cannot create profile: Virtual console support is missing"
+#~ msgstr "Αδυναμία δημιουργίας προφίλ: Λείπει η υποστήριξη εικονικής κονσόλας"
 
-#. The user is trying to create an ICC profile of a printer that is connected to the computer
-#: ../data/gcm-calibrate.ui.h:20
-msgid "Profile locally attached printer"
-msgstr "Προφίλ τοπικού εκτυπωτή"
+#~ msgid "Cannot create profile: The display device is not connected"
+#~ msgstr ""
+#~ "Αδύνατη η δημιουργία προφίλ: Η συσκευή απεικόνισης δεν είναι συνδεδεμένη"
 
-#: ../data/gcm-calibrate.ui.h:21
-msgid "Projector"
-msgstr "Προβολέας"
+#~ msgid ""
+#~ "Cannot create profile: The display driver does not support XRandR 1.3"
+#~ msgstr ""
+#~ "Αδύνατη η δημιουργία προφίλ: Ο οδηγός της οθόνης δεν υποστηρίζει το "
+#~ "XRandR 1.3"
 
-#: ../data/gcm-calibrate.ui.h:22
-msgid "Red:"
-msgstr "Κόκκινο:"
+#~ msgid "Cannot create profile: The measuring instrument is not plugged in"
+#~ msgstr "Αδύνατη η δημιουργία προφίλ: Το όργανο μέτρησης δεν έχει συνδεθεί"
 
-#: ../data/gcm-calibrate.ui.h:23
-msgid "precision"
-msgstr "ακρίβεια"
+#~ msgid ""
+#~ "Cannot create profile: The measuring instrument does not support printer "
+#~ "profiling"
+#~ msgstr ""
+#~ "Αδύνατη η δημιουργία προφίλ: το όργανο μέτρησης δεν υποστηρίζει "
+#~ "δημιουργία προφίλ εκτυπωτών"
 
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:2
-msgid "Ambient:"
-msgstr "Φωτισμός περιβάλλοντος:"
+#~ msgid "Cannot create a profile for this type of device"
+#~ msgstr "Αδύνατη η δημιουργία προφίλ για αυτόν τον τύπο συσκευής"
 
-#. Window title, where the user can pick spot colors using a measuring device
-#: ../data/gcm-picker.ui.h:4
-msgid "Color Picker"
-msgstr "Επιλογή χρώματος"
+#~ msgid "Per-device settings not supported. Check your display driver."
+#~ msgstr "Δεν υποστηρίζονται ρυθμίσεις κατά συσκευή. Ελέγξτε τον οδηγό."
 
-#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#: ../data/gcm-picker.ui.h:6
-msgid "Colorspace:"
-msgstr "Χρωματικός χώρος:"
+#~ msgid "No hardware support"
+#~ msgstr "Χωρίς υποστήριξη υλικού"
 
-#. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:8
-msgid "Error:"
-msgstr "Σφάλμα:"
+#~ msgid "disconnected"
+#~ msgstr "αποσυνδεδεμένο"
 
-#. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:10
-msgid "Lab (D50):"
-msgstr "Lab (D50):"
+#~ msgid "Could not import profile"
+#~ msgstr "Αδύνατη η εισαγωγή προφίλ"
 
-#. These are the values of the chosen color in Red, Green, Blue encoding
-#. What mode to use for display rendering intent
-#: ../data/gcm-picker.ui.h:12 ../data/gcm-prefs.ui.h:34
-msgid "RGB:"
-msgstr "RGB:"
+#~ msgid "The profile was of the wrong type for this device"
+#~ msgstr "Το προφίλ δεν ήταν σωστού τύπου για αυτή τη συσκευή"
 
-#. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:14
-msgid "Results"
-msgstr "Αποτελέσματα"
+#~ msgid "Device added"
+#~ msgstr "Συσκευή προστέθηκε"
 
-#. the color representation
-#: ../data/gcm-picker.ui.h:16
-msgid "XYZ:"
-msgstr "XYZ:"
+#~ msgid "Device removed"
+#~ msgstr "Συσκευή αφαιρέθηκε"
 
-#. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:18
-msgid "_Measure"
-msgstr "_Μέτρηση"
+#~ msgid "Scanner"
+#~ msgstr "Σαρωτής"
 
-#: ../data/gcm-prefs.ui.h:1
-msgid ""
-"A working space is a default colorspace that is not associated with a "
-"specific device."
-msgstr ""
-"Ο χώρος εργασίας είναι ένας προεπιλεγμένος χρωματικός χώρος που δεν "
-"σχετίζεται με μια συγκεκριμένη συσκευή."
+#~ msgid "Printer"
+#~ msgstr "Εκτυπωτής"
 
-#. This is a button to add a virtual device
-#: ../data/gcm-prefs.ui.h:3
-msgid "Add d_evice…"
-msgstr "_Προσθήκη συσκευής…"
+#~ msgid "Camera"
+#~ msgstr "Κάμερα"
 
-#. Profiles that can be added to the device
-#: ../data/gcm-prefs.ui.h:5
-msgid "Available Profiles"
-msgstr "Διαθέσιμα προφίλ"
+#~ msgid "More color profiles could be automatically installed."
+#~ msgstr "Περισσότερα προφίλ χρώματος θα μπορούσαν να εγκατασταθούν αυτόματα."
 
-#. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:8
-msgid "CMYK:"
-msgstr "CMYK:"
+#~ msgid "Do not attempt to clear previously applied settings"
+#~ msgstr ""
+#~ "Μην προσπαθήσετε να καθαρίσετε τις προηγουμένως εφαρμοσμένες ρυθμίσεις"
 
-#. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
-#: ../data/gcm-prefs.ui.h:11
-msgid "Create _Profile"
-msgstr "_Δημιουργία προφίλ"
+#~ msgid "Generating the patches"
+#~ msgstr "Δημιουργία των περιοχών"
 
-#: ../data/gcm-prefs.ui.h:12
-msgid "Device type:"
-msgstr "Τύπος συσκευής:"
+#~ msgid ""
+#~ "Generating the patches that will be measured with the color instrument."
+#~ msgstr ""
+#~ "Δημιουργία των περιοχών που θα μετρηθούν με το όργανο χρώματος "
+#~ "(φασματοφωτόμετρο)."
 
-#. Tab title, currently connected or saved devices
-#: ../data/gcm-prefs.ui.h:14
-msgid "Devices"
-msgstr "Συσκευές"
+#~ msgid "Setting up display device for use…"
+#~ msgstr "Προετοιμασία συσκευής απεικόνισης προς χρήση…"
 
-#. What mode to use for display rendering intent
-#: ../data/gcm-prefs.ui.h:16
-msgid "Display:"
-msgstr "Απεικόνιση:"
+#~ msgid "Setting up device"
+#~ msgstr "Προετοιμασία συσκευής"
 
-#: ../data/gcm-prefs.ui.h:17
-msgid ""
-"For a color managed workflow, each connected device should have one or more "
-"color profiles associated with it."
-msgstr ""
-"Για σειρά εργασιών με διαχείριση χρώματος, κάθε συνδεδεμένη συσκευή θα "
-"πρέπει να έχει ένα ή περισσότερα χρωματικά προφίλ που σχετίζονται με αυτή."
+#~ msgid "Setting up the device to read a spot color…"
+#~ msgstr "Προετοιμασία συσκευής για ανάγνωση σημείου χρώματος…"
 
-#. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:19
-msgid "Gray:"
-msgstr "Gray:"
+#~ msgid "Image is not suitable without conversion"
+#~ msgstr "Η εικόνα δεν είναι κατάλληλη χωρίς μετατροπή"
 
-#: ../data/gcm-prefs.ui.h:20
-msgid ""
-"Image files can be dragged on this window to auto-complete the above fields."
-msgstr ""
-"Αρχεία εικόνων μπορούν να μεταφερθούν σε αυτό το παράθυρο για αυτόματη "
-"συμπλήρωση των παραπάνω πεδίων."
+#~ msgid ""
+#~ "The supplied image contains an alpha channel which the profiling tools do "
+#~ "not understand."
+#~ msgstr ""
+#~ "Η παρεχόμενη εικόνα περιέχει ένα κανάλι άλφα το οποίο δεν καταλαβαίνουν "
+#~ "τα εργαλεία δημιουργίας προφίλ."
 
-#: ../data/gcm-prefs.ui.h:21
-msgid "Make default"
-msgstr "Ορισμός ως προεπιλογή"
+#~ msgid ""
+#~ "It is normally safe to convert the image, although you should ensure that "
+#~ "the generated profile is valid."
+#~ msgstr ""
+#~ "Κανονικά είναι ασφαλές να μετατρέπεται η εικόνα αν και θα πρέπει να "
+#~ "επιβεβαιώσετε ότι το παραγόμενο προφίλ είναι έγκυρο."
 
-#: ../data/gcm-prefs.ui.h:22
-msgid "Manufacturer:"
-msgstr "Κατασκευαστής:"
+#~ msgid "Convert"
+#~ msgstr "Μετατροπή"
 
-#: ../data/gcm-prefs.ui.h:23
-msgid "Model:"
-msgstr "Μοντέλο:"
+#~ msgid "Try again"
+#~ msgstr "Προσπαθήστε ξανά"
 
-#: ../data/gcm-prefs.ui.h:24
-msgid "More details"
-msgstr "Περισσότερες λεπτομέρειες"
+#~ msgid "Use anyway"
+#~ msgstr "Χρήση έτσι κι αλλιώς"
 
-#. Some profiles are not compatible with some devices
-#: ../data/gcm-prefs.ui.h:26
-msgid "Only profiles that are compatible with the device will be listed above."
-msgstr "Μόνο προφίλ που είναι συμβατά με τη συσκευή θα απαριθμηθούν παραπάνω."
+#~ msgid "Could not detect screen type"
+#~ msgstr "Δεν ήταν δυνατή η αναγνώριση του τύπου της οθόνης"
 
-#: ../data/gcm-prefs.ui.h:27
-msgid "Open the documentation"
-msgstr "Άνοιγμα τεκμηρίωσης"
+#~ msgid ""
+#~ "Please indicate if the screen you are trying to profile is an LCD, CRT or "
+#~ "a projector."
+#~ msgstr ""
+#~ "Παρακαλώ υποδείξτε αν η οθόνη για την οποία φτιάχνετε το προφίλ είναι "
+#~ "LCD, CRT ή προβολέας."
 
-#. Button to view installed profiles
-#: ../data/gcm-prefs.ui.h:29
-msgid "Pr_ofile Viewer"
-msgstr "Προ_βολή προφίλ"
+#~ msgid "Custom"
+#~ msgstr "Προσαρμοσμένο"
 
-#. The rendering intent for the print preview
-#: ../data/gcm-prefs.ui.h:31
-msgid "Print Preview:"
-msgstr "Προεπισκόπηση εκτύπωσης:"
+#~ msgid "Install missing files?"
+#~ msgstr "Εγκατάσταση των αρχείων που λείπουν;"
 
-#. This is a button to delete the saved or virtual device
-#: ../data/gcm-prefs.ui.h:36
-msgid "Remove de_vice"
-msgstr "Αφαίρεση συ_σκευής"
+#~ msgid ""
+#~ "For best results, the reference target should also be less than two years "
+#~ "old."
+#~ msgstr ""
+#~ "Για βέλτιστα αποτελέσματα, το δοκίμιο αναφοράς θα πρέπει να είναι "
+#~ "λιγότερο από δύο χρόνια παλιό."
 
-#. Tab title, the way colors should be converted from one colorspace to another
-#: ../data/gcm-prefs.ui.h:38
-msgid "Rendering Intents"
-msgstr "Στόχος απόδοσης χρωμάτων"
+#~ msgid ""
+#~ "Please select the calibration target type which corresponds to your "
+#~ "reference file."
+#~ msgstr ""
+#~ "Παρακαλώ επιλέξτε το τύπο του δοκιμίου βαθμονόμησης που ανταποκρίνεται "
+#~ "στο αρχείο αναφοράς σας."
 
-#: ../data/gcm-prefs.ui.h:39
-msgid "Save these profiles for all users"
-msgstr "Αποθήκευση αυτών των προφίλ για όλους τους χρήστες"
+#~ msgid "Introduction to display calibration"
+#~ msgstr "Εισαγωγή στη βαθμονόμηση οθόνης"
 
-#: ../data/gcm-prefs.ui.h:40
-msgid ""
-"The rendering intent defines how color should be transformed from one "
-"colorspace to another."
-msgstr ""
-"Ο στόχος της απόδοσης καθορίζει πως το χρώμα θα πρέπει να μετατρέπεται από "
-"ένα χρωματικό χώρο σε ένα άλλο."
+#~ msgid ""
+#~ "This dialog will help calibrate your display and create a custom ICC "
+#~ "profile."
+#~ msgstr ""
+#~ "Αυτό το παράθυρο διαλόγου θα σας βοηθήσει να βαθμονομήσετε την οθόνη σας "
+#~ "και να δημιουργήσετε ένα προσαρμοσμένο προφίλ ICC."
 
-#. Tab title, icc color spaces to use for different defaults
-#: ../data/gcm-prefs.ui.h:42
-msgid "Working Spaces"
-msgstr "Χρωματικοί χώροι εργασίας"
+#~ msgid ""
+#~ "The calibration will involve several steps so that an accurate profile "
+#~ "can be obtained."
+#~ msgstr ""
+#~ "Η βαθμονόμηση περιλαμβάνει πολλά βήματα ώστε να παραχθεί ένα ακριβές "
+#~ "προφίλ."
 
-#. This is when the settings are set for all users, unless they have per-user settings themselves
-#: ../data/gcm-prefs.ui.h:44
-msgid "_Set System Default"
-msgstr "Ο_ρισμός προεπιλογών για το σύστημα"
+#~ msgid "It should only take a few minutes."
+#~ msgstr "Θα χρειαστούν λίγα μόνο λεπτά."
 
-#~ msgid "More Information"
-#~ msgstr "Περισσότερες πληροφορίες"
+#~ msgid ""
+#~ "It may help to sit further from the screen or to squint at the "
+#~ "calibration images in order to accurately compare the colors."
+#~ msgstr ""
+#~ "Μπορεί να βοηθήσει αν καθίσετε μακρύτερα από την οθόνη ή αν αλληθωρίσετε "
+#~ "λίγο κοιτώντας τις εικόνες ώστε να συγκρίνετε με ακρίβεια τα χρώματα."
+
+#~ msgid "You can repeat the calibration steps as many times as you want."
+#~ msgstr ""
+#~ "Μπορείτε να επαναλάβετε τα βήματα της βαθμονόμησης όσες φορές θέλετε."
+
+#~ msgid "Create table item %i/%i"
+#~ msgstr "Δημιουργία πίνακα %i/%i"
+
+#~ msgid ""
+#~ "Please try to match up the gray square with the surrounding alternating "
+#~ "bars. You should match the brightness first, and then if required change "
+#~ "the color tint so it looks plain gray."
+#~ msgstr ""
+#~ "Παρακαλώ προσπαθήστε να ταιριάξετε το γκρίζο τετράγωνο με τις "
+#~ "περιβάλλουσες εναλλασσόμενες μπάρες. Θα πρέπει να ταιριάξετε πρώτα τη "
+#~ "φωτεινότητα και μετά αν απαιτείται να αλλάξετε τη χροιά του χρώματος ώστε "
+#~ "να φαίνεται απλό γκρίζο."
+
+#~ msgid ""
+#~ "This display is now calibrated. You can change the current profile using "
+#~ "the Color Profiles program."
+#~ msgstr ""
+#~ "Η οθόνη είναι τώρα βαθμονομημένη. Μπορείτε να αλλάξετε το τρέχον προφίλ "
+#~ "χρησιμοποιώντας το πρόγραμμα Προφίλ χρώματος."
+
+#~ msgid "Laptop LCD"
+#~ msgstr "LCD φορητού"
+
+#~ msgid "Automatic"
+#~ msgstr "Αυτόματα"
+
+#~ msgid ""
+#~ "This profile does not have the information required for whole-screen "
+#~ "color correction."
+#~ msgstr ""
+#~ "Αυτό το προφίλ δεν έχει τις πληροφορίες που απαιτούνται για διόρθωση "
+#~ "χρώματος πλήρους οθόνης."
+
+#~ msgid "Import ICC color profile %s?"
+#~ msgstr "Εισαγωγή προφίλ χρώματος ICC %s;"
+
+#~ msgid "Import ICC profile"
+#~ msgstr "Εισαγωγή προφίλ ICC"
+
+#~ msgid "Output profile '%s':"
+#~ msgstr "Εξαγωγή προφίλ «%s»:"
+
+#~ msgid "not set"
+#~ msgstr "δεν ορίσθηκε"
+
+#~ msgid "There are no ICC profiles for this device"
+#~ msgstr "Δεν υπάρχουν προφίλ ICC για αυτή τη συσκευή"
+
+#~ msgid "There are no ICC profiles for this device type"
+#~ msgstr "Δεν υπάρχουν προφίλ ICC για αυτό τον τύπο συσκευής"
+
+#~ msgid "The request failed"
+#~ msgstr "Το αίτημα απέτυχε"
+
+#~ msgid "Rendering intent (display):"
+#~ msgstr "Στόχος απόδοσης (οθόνη):"
+
+#~ msgid "Rendering intent (softproof):"
+#~ msgstr "Στόχος απόδοσης (εικονικό δοκίμιο):"
+
+#~ msgid "RGB Colorspace:"
+#~ msgstr "Χρωματικός χώρος RGB:"
+
+#~ msgid "CMYK Colorspace:"
+#~ msgstr "Χρωματικός χώρος CMYK:"
+
+#~ msgid "Get the profiles for a specific device"
+#~ msgstr "Ανάκτηση προφίλ για μια συγκεκριμένη συσκευή"
+
+#~ msgid "Device or profile type not recognized, recognised types are:"
+#~ msgstr ""
+#~ "Ο τύπος της συσκευής ή του προφίλ δεν αναγνωρίσθηκε, οι αναγνωριζόμενοι "
+#~ "τύποι είναι:"
+
+#~ msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
+#~ msgstr "Ταυτότητα (ID) συσκευής, π.χ. «xrandr_ibm_france_ltn154p2_l05»"
+
+#~ msgid "GNOME Color Manager ICC profile system-wide installer"
+#~ msgstr ""
+#~ "Εγκαταστάτης για όλο το σύστημα του προφίλ ICC της Διαχείρισης χρώματος "
+#~ "του GNOME"
+
+#~ msgid "You need to specify exactly one ICC profile filename."
+#~ msgstr "Πρέπει να καθορίσετε το όνομα ακριβώς ενός αρχείου προφίλ ICC."
+
+#~ msgid "You need to specify exactly one device ID."
+#~ msgstr "Πρέπει να καθορίσετε μόνο μία ταυτότητα (ID) συσκευής."
+
+#~ msgid "This program can only be used by the root user."
+#~ msgstr ""
+#~ "Αυτό το πρόγραμμα μπορεί να χρησιμοποιηθεί μόνο από το διαχειριστή (root)."
+
+#~ msgid "The source filename must be absolute."
+#~ msgstr "Το όνομα αρχείου προέλευσης πρέπει να δοθεί με απόλυτη διαδρομή."
+
+#~ msgid "Failed to get content type:"
+#~ msgstr "Αποτυχία ανάκτησης περιεχομένου τύπου:"
+
+#~ msgid "Content type was incorrect:"
+#~ msgstr "Ο τύπος του περιεχομένου ήταν εσφαλμένος:"
+
+#~ msgid "This program must only be run through pkexec."
+#~ msgstr "Αυτό το πρόγραμμα πρέπει να εκτελείται μόνο μέσω της pkexec."
+
+#~ msgid "PKEXEC_UID must be set to an integer value."
+#~ msgstr "Το PKEXEC_UID πρέπει να έχει ακέραια τιμή."
+
+#~ msgid "The ICC profile must be owned by the user."
+#~ msgstr "Ο χρήστης πρέπει να έχει δικαιώματα ιδιοκτήτη στο προφίλ ICC."
+
+#~ msgid "The destination filename must be absolute."
+#~ msgstr "Η διαδρομή για το αρχείο προορισμού πρέπει να είναι απόλυτη."
+
+#~ msgid "Failed to copy:"
+#~ msgstr "Αποτυχία αντιγραφής:"
+
+#~ msgid "This application was compiled without VTE support."
+#~ msgstr "Η εφαρμογή μεταγλωττίσθηκε χωρίς υποστήριξη VTE."
+
+#~ msgid "Recalibrate now"
+#~ msgstr "Επαναβαθμονόμηση τώρα"
+
+#~ msgid "Ignore"
+#~ msgstr "Αγνόηση"
+
+#~ msgid "Do not exit after the request has been processed"
+#~ msgstr "Να μη γίνει έξοδος μετά την επεξεργασία του αιτήματος"
+
+#~ msgid "Color Management"
+#~ msgstr "Διαχείριση χρώματος"
+
+#~ msgid "Color Management D-Bus Service"
+#~ msgstr "Υπηρεσία D-Bus Διαχείρισης χρώματος"
+
+#~ msgid "Perceptual"
+#~ msgstr "Αντιληπτικό (Perceptual)"
+
+#~ msgid "Relative"
+#~ msgstr "Σχετικό"
+
+#~ msgid "Saturation"
+#~ msgstr "Κορεσμός (Saturation)"
+
+#~ msgid "Absolute"
+#~ msgstr "Απόλυτο"
+
+#~ msgid "High quality photography"
+#~ msgstr "Φωτογραφία υψηλής ποιότητας"
+
+#~ msgid "Precise color matching"
+#~ msgstr "Ακριβές ταίριασμα χρώματος"
+
+#~ msgid "Graphs and presentations"
+#~ msgstr "Γραφήματα και παρουσιάσεις"
+
+#~ msgid "Proofing devices"
+#~ msgstr "Συσκευές δοκιμίων"
+
+#~ msgid "None"
+#~ msgstr "Κανένα"
+
+#~ msgid "Transfer response curve"
+#~ msgstr "Καμπύλη μεταφοράς απόκρισης"
+
+#~ msgid "Image preview (from sRGB)"
+#~ msgstr "Προεπισκόπηση εικόνας (από sRGB)"
+
+#~ msgid "Image preview (to sRGB)"
+#~ msgstr "Προεπισκόπηση εικόνας (σε sRGB)"
+
+#~ msgid "Blue:"
+#~ msgstr "Μπλε:"
+
+#~ msgid "Brightness:"
+#~ msgstr "Φωτεινότητα:"
+
+#~ msgid "Create images for printing"
+#~ msgstr "Δημιουργία εικόνων για εκτύπωση"
+
+#~ msgid "Generate profile from printed images"
+#~ msgstr "Δημιουργία προφίλ από εκτυπωμένες εικόνες"
+
+#~ msgid "Green:"
+#~ msgstr "Πράσινο:"
+
+#~ msgid "High"
+#~ msgstr "Υψηλή"
+
+#~ msgid "Low"
+#~ msgstr "Χαμηλή"
+
+#~ msgid "Profile locally attached printer"
+#~ msgstr "Προφίλ τοπικού εκτυπωτή"
+
+#~ msgid "Red:"
+#~ msgstr "Κόκκινο:"
+
+#~ msgid ""
+#~ "A working space is a default colorspace that is not associated with a "
+#~ "specific device."
+#~ msgstr ""
+#~ "Ο χώρος εργασίας είναι ένας προεπιλεγμένος χρωματικός χώρος που δεν "
+#~ "σχετίζεται με μια συγκεκριμένη συσκευή."
+
+#~ msgid "Add d_evice…"
+#~ msgstr "_Προσθήκη συσκευής…"
+
+#~ msgid "Available Profiles"
+#~ msgstr "Διαθέσιμα προφίλ"
+
+#~ msgid "CMYK:"
+#~ msgstr "CMYK:"
+
+#~ msgid "Create _Profile"
+#~ msgstr "_Δημιουργία προφίλ"
+
+#~ msgid "Device type:"
+#~ msgstr "Τύπος συσκευής:"
+
+#~ msgid "Devices"
+#~ msgstr "Συσκευές"
+
+#~ msgid "Display:"
+#~ msgstr "Απεικόνιση:"
+
+#~ msgid ""
+#~ "For a color managed workflow, each connected device should have one or "
+#~ "more color profiles associated with it."
+#~ msgstr ""
+#~ "Για σειρά εργασιών με διαχείριση χρώματος, κάθε συνδεδεμένη συσκευή θα "
+#~ "πρέπει να έχει ένα ή περισσότερα χρωματικά προφίλ που σχετίζονται με αυτή."
+
+#~ msgid "Gray:"
+#~ msgstr "Gray:"
+
+#~ msgid ""
+#~ "Image files can be dragged on this window to auto-complete the above "
+#~ "fields."
+#~ msgstr ""
+#~ "Αρχεία εικόνων μπορούν να μεταφερθούν σε αυτό το παράθυρο για αυτόματη "
+#~ "συμπλήρωση των παραπάνω πεδίων."
+
+#~ msgid "Make default"
+#~ msgstr "Ορισμός ως προεπιλογή"
+
+#~ msgid "Manufacturer:"
+#~ msgstr "Κατασκευαστής:"
+
+#~ msgid "Model:"
+#~ msgstr "Μοντέλο:"
+
+#~ msgid "More details"
+#~ msgstr "Περισσότερες λεπτομέρειες"
+
+#~ msgid ""
+#~ "Only profiles that are compatible with the device will be listed above."
+#~ msgstr ""
+#~ "Μόνο προφίλ που είναι συμβατά με τη συσκευή θα απαριθμηθούν παραπάνω."
+
+#~ msgid "Open the documentation"
+#~ msgstr "Άνοιγμα τεκμηρίωσης"
+
+#~ msgid "Pr_ofile Viewer"
+#~ msgstr "Προ_βολή προφίλ"
+
+#~ msgid "Print Preview:"
+#~ msgstr "Προεπισκόπηση εκτύπωσης:"
+
+#~ msgid "Remove de_vice"
+#~ msgstr "Αφαίρεση συ_σκευής"
+
+#~ msgid "Rendering Intents"
+#~ msgstr "Στόχος απόδοσης χρωμάτων"
+
+#~ msgid "Save these profiles for all users"
+#~ msgstr "Αποθήκευση αυτών των προφίλ για όλους τους χρήστες"
+
+#~ msgid ""
+#~ "The rendering intent defines how color should be transformed from one "
+#~ "colorspace to another."
+#~ msgstr ""
+#~ "Ο στόχος της απόδοσης καθορίζει πως το χρώμα θα πρέπει να μετατρέπεται "
+#~ "από ένα χρωματικό χώρο σε ένα άλλο."
+
+#~ msgid "Working Spaces"
+#~ msgstr "Χρωματικοί χώροι εργασίας"
+
+#~ msgid "_Set System Default"
+#~ msgstr "Ο_ρισμός προεπιλογών για το σύστημα"
 
 #~ msgid "Loading list of devices…"
 #~ msgstr "Φόρτωση λίστας συσκευών…"
-
-#~ msgid "Debug these specific modules"
-#~ msgstr "Αποσφαλμάτωση των συγκεκριμένων αρθρωμάτων"
-
-#~ msgid "Debug these specific functions"
-#~ msgstr "Αποσφαλμάτωση των συγκεκριμένων λειτουργιών"
 
 #~ msgid "Log debugging data to a file"
 #~ msgstr "Καταγραφή δεδομένων αποσφαλμάτωσης σε αρχείο"
@@ -1972,13 +2296,6 @@ msgstr "Ο_ρισμός προεπιλογών για το σύστημα"
 #~ msgid "Contrast:"
 #~ msgstr "Αντίθεση:"
 
-#, fuzzy
-#~ msgid "Create a profile for the device"
-#~ msgstr "Δημιουργία _προφίλ για τη συσκευή"
-
-#~ msgid "Defaults"
-#~ msgstr "Προεπιλογές"
-
 #~ msgid ""
 #~ "Delete the disconnected device - if you reconnect the device it will "
 #~ "reappear in the list"
@@ -1998,10 +2315,6 @@ msgstr "Ο_ρισμός προεπιλογών για το σύστημα"
 #~ msgstr ""
 #~ "Προγραμματισμός της κάρτας γραφικών με τις προσαρμοσμένες τιμές χρώματος "
 #~ "έτσι ώστε όλα τα παράθυρα να έχουν χρωματική διόρθωση"
-
-#, fuzzy
-#~ msgid "Remove a color profile for this device"
-#~ msgstr "Δημιουργία προφίλ χρώματος για την επιλεγμένη συσκευή"
 
 #, fuzzy
 #~ msgid "Reset the sliders to the default values"
@@ -2226,9 +2539,6 @@ msgstr "Ο_ρισμός προεπιλογών για το σύστημα"
 #~ msgid "Vendor name"
 #~ msgstr "Όνομα κατασκευαστή"
 
-#~ msgid "Serial number"
-#~ msgstr "Σειριακός αριθμός"
-
 #~ msgid "Text string"
 #~ msgstr "Ακολουθία κειμένου"
 
@@ -2289,44 +2599,17 @@ msgstr "Ο_ρισμός προεπιλογών για το σύστημα"
 #~ msgid "Close this dialog"
 #~ msgstr "Κλείσιμο αυτού του παραθύρου"
 
-#~ msgid "Created:"
-#~ msgstr "Δημιουργήθηκε:"
-
 #~ msgid "Delete the currently selected color profile"
 #~ msgstr "Διαγραφή του πειλεγμένου προφίλ χρώματος"
 
 #~ msgid "Device"
 #~ msgstr "Συσκευή:"
 
-#~ msgid "Device manufacturer:"
-#~ msgstr "Κατασκευαστής συσκευής:"
-
-#~ msgid "Device model:"
-#~ msgstr "Μοντέλο συσκευής:"
-
-#~ msgid "Display correction:"
-#~ msgstr "Διόρθωση απεικόνισης:"
-
-#~ msgid "File size:"
-#~ msgstr "Μέγεθος αρχείου:"
-
-#~ msgid "Filename:"
-#~ msgstr "Όνομα αρχείου:"
-
 #~ msgid "Import an ICC file from another location"
 #~ msgstr "Εισαγωγή προφίλ ICC από άλλη τοποθεσία"
 
-#~ msgid "License:"
-#~ msgstr "Άδεια:"
-
 #~ msgid "Profile Graphs"
 #~ msgstr "Διαγράμματα προφίλ"
-
-#~ msgid "Profile type:"
-#~ msgstr "Τύπος προφίλ:"
-
-#~ msgid "Profiles"
-#~ msgstr "Προφίλ"
 
 #~ msgid "Softproof:"
 #~ msgstr "Εικονικό δοκίμιο (Softproof):"
