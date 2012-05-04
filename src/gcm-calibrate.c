@@ -1744,6 +1744,8 @@ gcm_calibrate_camera_get_reference_data (const gchar *directory, GtkWindow *wind
 	gtk_file_filter_add_mime_type (filter, "application/x-it87");
 
 	/* we can remove this when we depend on a new shared-mime-info */
+	gtk_file_filter_add_pattern (filter, "*.cie");
+	gtk_file_filter_add_pattern (filter, "*.CIE");
 	gtk_file_filter_add_pattern (filter, "*.txt");
 	gtk_file_filter_add_pattern (filter, "*.TXT");
 	gtk_file_filter_add_pattern (filter, "*.it8");
