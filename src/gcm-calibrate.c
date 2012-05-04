@@ -1948,6 +1948,21 @@ gcm_calibrate_get_enabled (GcmCalibrate *calibrate)
 }
 
 /**
+ * gcm_calibrate_get_reference_cie:
+ **/
+static const gchar *
+gcm_calibrate_get_reference_cie (GcmCalibrateReferenceKind kind)
+{
+	if (kind == GCM_CALIBRATE_REFERENCE_KIND_CMP_DIGITAL_TARGET_3)
+		return "CMP_Digital_Target-3.cie";
+	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER)
+		return "ColorChecker.cie";
+	if (kind == GCM_CALIBRATE_REFERENCE_KIND_QPCARD_201)
+		return "QPcard_201.cie";
+	return NULL;
+}
+
+/**
  * gcm_calibrate_camera:
  **/
 static gboolean
@@ -1959,6 +1974,7 @@ gcm_calibrate_camera (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *wind
 	gchar *reference_data = NULL;
 	gchar *device_str = NULL;
 	const gchar *directory;
+	const gchar *tmp;
 	GString *string;
 	GtkWindow *window_tmp = NULL;
 	gchar *precision = NULL;
@@ -1985,15 +2001,25 @@ gcm_calibrate_camera (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *wind
 		g_debug ("no EXIF data, so using device attributes");
 
 	/* get reference data */
-	directory = has_shared_targets ? "/usr/share/color/targets" : "/media";
-	reference_data = gcm_calibrate_camera_get_reference_data (directory, window_tmp);
-	if (reference_data == NULL) {
-		g_set_error_literal (error,
-				     GCM_CALIBRATE_ERROR,
-				     GCM_CALIBRATE_ERROR_USER_ABORT,
-				     "could not get reference target");
-		ret = FALSE;
-		goto out;
+	tmp = gcm_calibrate_get_reference_cie (priv->reference_kind);
+	if (tmp != NULL) {
+		/* some references don't have custom CIE files available
+		 * to them and instead rely on a fixed reference */
+		reference_data = g_build_filename ("/usr/share/color/argyll/ref",
+						   tmp,
+						   NULL);
+	} else {
+		/* ask the user to find the profile */
+		directory = has_shared_targets ? "/usr/share/color/targets" : "/media";
+		reference_data = gcm_calibrate_camera_get_reference_data (directory, window_tmp);
+		if (reference_data == NULL) {
+			g_set_error_literal (error,
+					     GCM_CALIBRATE_ERROR,
+					     GCM_CALIBRATE_ERROR_USER_ABORT,
+					     "could not get reference target");
+			ret = FALSE;
+			goto out;
+		}
 	}
 
 	/* use the ORIGINATOR in the it8 file */
