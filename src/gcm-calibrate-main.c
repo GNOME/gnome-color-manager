@@ -311,9 +311,11 @@ gcm_calib_set_extra_metadata (GcmCalibratePriv *calib,
 			       CD_PROFILE_METADATA_DATA_SOURCE,
 			       CD_PROFILE_METADATA_DATA_SOURCE_CALIB);
 	sensor = gcm_calibrate_get_sensor (calib->calibrate);
-	_cmsDictAddEntryAscii (dict,
-			       CD_PROFILE_METADATA_MEASUREMENT_DEVICE,
-			       cd_sensor_kind_to_string (cd_sensor_get_kind (sensor)));
+	if (sensor != NULL) {
+		_cmsDictAddEntryAscii (dict,
+				       CD_PROFILE_METADATA_MEASUREMENT_DEVICE,
+				       cd_sensor_kind_to_string (cd_sensor_get_kind (sensor)));
+	}
 	_cmsDictAddEntryAscii (dict,
 			       CD_PROFILE_METADATA_MAPPING_DEVICE_ID,
 			       cd_device_get_id (calib->device));
@@ -384,14 +386,16 @@ gcm_calib_set_sensor_options (GcmCalibratePriv *calib,
 #if CD_CHECK_VERSION(0,1,20)
 	CdSensor *sensor;
 	gboolean ret;
-	gchar *data;
+	gchar *data = NULL;
 	gchar *sha1 = NULL;
 	GError *error = NULL;
-	GHashTable *hash;
+	GHashTable *hash = NULL;
 	gsize len;
 
 	/* get ChSensor */
 	sensor = gcm_calibrate_get_sensor (calib->calibrate);
+	if (sensor == NULL)
+		goto out;
 
 	/* set the remote profile hash */
 	hash = g_hash_table_new_full (g_str_hash,
@@ -417,7 +421,8 @@ gcm_calib_set_sensor_options (GcmCalibratePriv *calib,
 out:
 	g_free (data);
 	g_free (sha1);
-	g_hash_table_unref (hash);
+	if (hash != NULL)
+		g_hash_table_unref (hash);
 #endif
 }
 
