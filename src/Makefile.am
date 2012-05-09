@@ -64,11 +64,8 @@ bin_PROGRAMS =						\
 	gcm-picker					\
 	gcm-import
 
-libexec_PROGRAMS =						\
-	gcm-calibrate-helper
-
 if HAVE_EXIV
-libexec_PROGRAMS += gcm-helper-exiv
+libexec_PROGRAMS = gcm-helper-exiv
 gcm_helper_exiv_SOURCES = gcm-helper-exiv.cpp
 gcm_helper_exiv_LDADD = $(EXIV_LIBS) $(GLIB_LIBS)
 gcm_helper_exiv_CXXFLAGS = -Wall
@@ -121,33 +118,6 @@ gcm_inspect_LDADD =					\
 	-lm
 
 gcm_inspect_CFLAGS =					\
-	$(WARNINGFLAGS_C)
-
-gcm_calibrate_helper_SOURCES =				\
-	gcm-debug.c					\
-	gcm-debug.h					\
-	gcm-utils.c					\
-	gcm-utils.h					\
-	gcm-exif.c					\
-	gcm-exif.h					\
-	gcm-brightness.c				\
-	gcm-brightness.h				\
-	gcm-calibrate.c					\
-	gcm-calibrate.h					\
-	gcm-calibrate-helper.c
-
-gcm_calibrate_helper_LDADD =				\
-	$(GLIB_LIBS)					\
-	$(GTK_LIBS)					\
-	$(LCMS_LIBS)					\
-	$(EXIF_LIBS)					\
-	$(TIFF_LIBS)					\
-	$(COLORD_LIBS)					\
-	$(GNOME_DESKTOP_LIBS)				\
-	$(CANBERRA_LIBS)				\
-	-lm
-
-gcm_calibrate_helper_CFLAGS =				\
 	$(WARNINGFLAGS_C)
 
 gcm_import_SOURCES =					\
