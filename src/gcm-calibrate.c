@@ -24,7 +24,7 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <math.h>
-#include <colord.h>
+#include <colord-gtk.h>
 #include <lcms2.h>
 #include <canberra-gtk.h>
 
@@ -35,7 +35,6 @@
 #include "gcm-utils.h"
 #include "gcm-brightness.h"
 #include "gcm-exif.h"
-#include "gcm-sample-window.h"
 
 static void     gcm_calibrate_finalize	(GObject     *object);
 
@@ -652,8 +651,8 @@ gcm_calibrate_get_samples (GcmCalibrate *calibrate,
 
 	/* setup the measure window */
 	cd_color_set_rgb (&rgb_tmp, 1.0f, 1.0f, 1.0f);
-	gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (priv->sample_window), &rgb_tmp);
-	gcm_sample_window_set_percentage (GCM_SAMPLE_WINDOW (priv->sample_window), 0);
+	cd_sample_window_set_color (CD_SAMPLE_WINDOW (priv->sample_window), &rgb_tmp);
+	cd_sample_window_set_fraction (CD_SAMPLE_WINDOW (priv->sample_window), 0.0f);
 	gtk_window_set_modal (priv->sample_window, TRUE);
 	gtk_window_stick (priv->sample_window);
 	gtk_window_present (priv->sample_window);
@@ -676,9 +675,9 @@ gcm_calibrate_get_samples (GcmCalibrate *calibrate,
 			 rgb->R, rgb->G, rgb->B);
 
 		/* set the window color */
-		gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (priv->sample_window), rgb);
-		gcm_sample_window_set_percentage (GCM_SAMPLE_WINDOW (priv->sample_window),
-						  100 * i / samples_rgb->len);
+		cd_sample_window_set_color (CD_SAMPLE_WINDOW (priv->sample_window), rgb);
+		cd_sample_window_set_fraction (CD_SAMPLE_WINDOW (priv->sample_window),
+					       i / samples_rgb->len);
 
 		/* wait for the refresh to set the new color */
 		if (i == 0 && !priv->sensor_on_screen) {
@@ -2486,7 +2485,7 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	calibrate->priv->print_kind = GCM_CALIBRATE_PRINT_KIND_UNKNOWN;
 	calibrate->priv->reference_kind = GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN;
 	calibrate->priv->precision = GCM_CALIBRATE_PRECISION_UNKNOWN;
-	calibrate->priv->sample_window = gcm_sample_window_new ();
+	calibrate->priv->sample_window = cd_sample_window_new ();
 	calibrate->priv->old_brightness = G_MAXUINT;
 	calibrate->priv->brightness = gcm_brightness_new ();
 

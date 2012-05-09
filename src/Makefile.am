@@ -87,8 +87,6 @@ gcm_calibrate_SOURCES =					\
 	gcm-gamma-widget.h				\
 	gcm-list-store-profiles.c			\
 	gcm-list-store-profiles.h			\
-	gcm-sample-window.c				\
-	gcm-sample-window.h				\
 	gcm-calibrate-main.c
 
 gcm_calibrate_LDADD =					\
@@ -136,8 +134,6 @@ gcm_calibrate_helper_SOURCES =				\
 	gcm-brightness.h				\
 	gcm-calibrate.c					\
 	gcm-calibrate.h					\
-	gcm-sample-window.c				\
-	gcm-sample-window.h				\
 	gcm-calibrate-helper.c
 
 gcm_calibrate_helper_LDADD =				\
@@ -234,8 +230,6 @@ gcm_self_test_SOURCES =					\
 	gcm-gamma-widget.h				\
 	gcm-named-color.c				\
 	gcm-named-color.h				\
-	gcm-sample-window.c				\
-	gcm-sample-window.h				\
 	gcm-self-test.c
 
 gcm_self_test_LDADD =					\

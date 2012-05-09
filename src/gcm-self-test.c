@@ -38,7 +38,6 @@
 #include "gcm-named-color.h"
 #include "gcm-print.h"
 #include "gcm-profile.h"
-#include "gcm-sample-window.h"
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
 
@@ -374,39 +373,6 @@ gcm_test_image_func (void)
 	g_assert ((response == GTK_RESPONSE_YES));
 
 	gtk_widget_destroy (dialog);
-}
-
-static gboolean
-gcm_test_sample_window_loop_cb (GMainLoop *loop)
-{
-	g_main_loop_quit (loop);
-	return FALSE;
-}
-
-static void
-gcm_test_sample_window_func (void)
-{
-	GtkWindow *window;
-	GMainLoop *loop;
-	CdColorRGB source;
-
-	window = gcm_sample_window_new ();
-	g_assert (window != NULL);
-	source.R = 1.0f;
-	source.G = 1.0f;
-	source.B = 0.0f;
-	gcm_sample_window_set_color (GCM_SAMPLE_WINDOW (window), &source);
-	gcm_sample_window_set_percentage (GCM_SAMPLE_WINDOW (window), GCM_SAMPLE_WINDOW_PERCENTAGE_PULSE);
-
-	/* move to the center of device lvds1 */
-	gtk_window_present (window);
-
-	loop = g_main_loop_new (NULL, FALSE);
-	g_timeout_add_seconds (2, (GSourceFunc) gcm_test_sample_window_loop_cb, loop);
-	g_main_loop_run (loop);
-
-	g_main_loop_unref (loop);
-	gtk_widget_destroy (GTK_WIDGET (window));
 }
 
 static void
@@ -780,7 +746,6 @@ main (int argc, char **argv)
 	g_test_add_func ("/color/hull", gcm_test_hull_func);
 	g_test_add_func ("/color/profile", gcm_test_profile_func);
 	g_test_add_func ("/color/clut", gcm_test_clut_func);
-	g_test_add_func ("/color/sample-window", gcm_test_sample_window_func);
 	if (g_test_thorough ()) {
 		g_test_add_func ("/color/brightness", gcm_test_brightness_func);
 		g_test_add_func ("/color/image", gcm_test_image_func);
