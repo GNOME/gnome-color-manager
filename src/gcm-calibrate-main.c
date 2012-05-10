@@ -1855,6 +1855,48 @@ gcm_calib_setup_page_failure (GcmCalibratePriv *calib)
 }
 
 /**
+ * gcm_calib_got_sensor:
+ **/
+static void
+gcm_calib_got_sensor (GcmCalibratePriv *calib, CdSensor *sensor)
+{
+	gboolean is_photospectrometer = FALSE;
+	gboolean ret;
+	GError *error = NULL;
+	GtkWidget *vbox;
+
+	/* connect to sensor */
+	ret = cd_sensor_connect_sync (sensor, NULL, &error);
+	if (!ret) {
+		g_warning ("failed to connect to sensor: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
+	calib->sensor = g_object_ref (sensor);
+	gcm_calibrate_set_sensor (calib->calibrate, sensor);
+
+	/* hide the prompt for the user to insert a sensor */
+	vbox = gcm_calib_get_vbox_for_page (calib,
+					    GCM_CALIBRATE_PAGE_SENSOR);
+	gtk_widget_hide (vbox);
+
+	/* if the device is a simple colorimeter, hide the temperature
+	 * chooser. Only expensive accurate spectrophotometers are
+	 * accurate enough to do a good job without a color cast */
+	if (cd_sensor_get_kind (sensor) == CD_SENSOR_KIND_I1_PRO ||
+	    cd_sensor_get_kind (sensor) == CD_SENSOR_KIND_COLOR_MUNKI ||
+	    cd_sensor_get_kind (sensor) == CD_SENSOR_KIND_I1_DISPLAY3) {
+		is_photospectrometer = TRUE;
+	}
+	vbox = gcm_calib_get_vbox_for_page (calib,
+					    GCM_CALIBRATE_PAGE_DISPLAY_TEMPERATURE);
+	gtk_widget_set_visible (vbox, is_photospectrometer);
+out:
+	return;
+}
+
+/**
  * gcm_calib_get_sensors_cb:
  **/
 static void
@@ -1863,11 +1905,10 @@ gcm_calib_get_sensors_cb (GObject *object,
 			  gpointer user_data)
 {
 	CdClient *client = CD_CLIENT (object);
+	CdSensor *sensor_tmp;
 	GcmCalibratePriv *calib = (GcmCalibratePriv *) user_data;
 	GError *error = NULL;
 	GPtrArray *sensors;
-	GtkWidget *vbox;
-	gboolean ret;
 
 	/* get the result */
 	sensors = cd_client_get_sensors_finish (client, res, &error);
@@ -1878,22 +1919,10 @@ gcm_calib_get_sensors_cb (GObject *object,
 		goto out;
 	}
 
-	/* hide the sensors screen */
-	if (sensors->len > 0) {
-		calib->sensor = g_object_ref (g_ptr_array_index (sensors, 0));
-
-		ret = cd_sensor_connect_sync (calib->sensor, NULL, &error);
-		if (!ret) {
-			g_warning ("failed to connect to sensor: %s",
-				   error->message);
-			g_error_free (error);
-			goto out;
-		}
-
-		gcm_calibrate_set_sensor (calib->calibrate, calib->sensor);
-		vbox = gcm_calib_get_vbox_for_page (calib,
-						    GCM_CALIBRATE_PAGE_SENSOR);
-		gtk_widget_hide (vbox);
+	/* we've got a sensor */
+	if (sensors->len != 0) {
+		sensor_tmp = g_ptr_array_index (sensors, 0);
+		gcm_calib_got_sensor (calib, sensor_tmp);
 	}
 out:
 	if (sensors != NULL)
@@ -1972,13 +2001,9 @@ gcm_calib_add_pages (GcmCalibratePriv *calib)
 static void
 gcm_calib_sensor_added_cb (CdClient *client, CdSensor *sensor, GcmCalibratePriv *calib)
 {
-	GtkWidget *vbox;
-
 	g_debug ("sensor inserted");
-	calib->sensor = g_object_ref (sensor);
-	vbox = gcm_calib_get_vbox_for_page (calib,
-					    GCM_CALIBRATE_PAGE_SENSOR);
-	gtk_widget_hide (vbox);
+	gcm_calib_got_sensor (calib, sensor);
+	gtk_assistant_next_page (GTK_ASSISTANT (calib->main_window));
 }
 
 /**
