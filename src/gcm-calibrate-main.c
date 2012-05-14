@@ -738,7 +738,6 @@ gcm_calib_setup_page_intro (GcmCalibratePriv *calib)
 static void
 gcm_calib_setup_page_summary (GcmCalibratePriv *calib)
 {
-	gboolean ret;
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GtkWidget *image;
