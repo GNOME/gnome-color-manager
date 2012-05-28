@@ -530,6 +530,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 	CdDevice *device_tmp;
 	CdProfile *profile;
 	const gchar *filename;
+	const gchar *tmp;
 	gboolean has_colorspace_description;
 	gboolean has_profile = FALSE;
 	gboolean has_vcgt;
@@ -586,8 +587,11 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 			gcm_prefs_combobox_add_profile (widget, profile, &iter);
 
 			/* set active option */
-			if (g_strcmp0 (filename, profile_filename) == 0)
+			tmp = cd_profile_get_metadata_item (profile, CD_PROFILE_METADATA_STANDARD_SPACE);
+			if (g_strcmp0 (tmp, "adobe-rgb") == 0) {
+				profile_filename = filename;
 				gtk_combo_box_set_active_iter (GTK_COMBO_BOX (widget), &iter);
+			}
 			has_profile = TRUE;
 		}
 	}
@@ -744,9 +748,6 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 
 	/* disable some ui if no hardware */
 	gcm_picker_sensor_client_setup_ui ();
-
-	/* default to AdobeRGB */
-	profile_filename = "/usr/share/color/icc/Argyll/ClayRGB1998.icm";
 
 	/* setup RGB combobox */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "combobox_colorspace"));
