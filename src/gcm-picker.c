@@ -109,6 +109,10 @@ gcm_picker_refresh_results (void)
 	GtkImage *image;
 	GtkLabel *label;
 
+	/* nothing set yet */
+	if (profile_filename == NULL)
+		goto out;
+
 	/* copy as we're modifying the value */
 	cd_color_copy_xyz (&last_sample, &color_xyz);
 
@@ -129,12 +133,18 @@ gcm_picker_refresh_results (void)
 	transform_rgb = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL,
 					    profile_rgb, TYPE_RGB_8,
 					    INTENT_PERCEPTUAL, 0);
+	if (transform_rgb == NULL)
+		goto out;
 	transform_lab = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL,
 					    profile_lab, TYPE_Lab_DBL,
 					    INTENT_PERCEPTUAL, 0);
+	if (transform_lab == NULL)
+		goto out;
 	transform_error = cmsCreateTransform (profile_rgb, TYPE_RGB_8,
 					      profile_xyz, TYPE_XYZ_DBL,
 					      INTENT_PERCEPTUAL, 0);
+	if (transform_error == NULL)
+		goto out;
 
 	cmsDoTransform (transform_rgb, &color_xyz, &color_rgb, 1);
 	cmsDoTransform (transform_lab, &color_xyz, &color_lab, 1);
@@ -217,7 +227,7 @@ gcm_picker_refresh_results (void)
 	/* set image */
 	image = GTK_IMAGE (gtk_builder_get_object (builder, "image_preview"));
 	gtk_image_set_from_pixbuf (image, pixbuf);
-
+out:
 	g_free (text_ambient);
 	g_free (text_error);
 	g_free (text_lab);
