@@ -1922,9 +1922,11 @@ gcm_calib_got_sensor (GcmCalibratePriv *calib, CdSensor *sensor)
 	    cd_sensor_get_kind (sensor) == CD_SENSOR_KIND_I1_DISPLAY3) {
 		is_photospectrometer = TRUE;
 	}
-	vbox = gcm_calib_get_vbox_for_page (calib,
-					    GCM_CALIBRATE_PAGE_DISPLAY_TEMPERATURE);
-	gtk_widget_set_visible (vbox, is_photospectrometer);
+	if (calib->device_kind == CD_DEVICE_KIND_DISPLAY) {
+		vbox = gcm_calib_get_vbox_for_page (calib,
+						    GCM_CALIBRATE_PAGE_DISPLAY_TEMPERATURE);
+		gtk_widget_set_visible (vbox, is_photospectrometer);
+	}
 out:
 	return;
 }

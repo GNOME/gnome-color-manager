@@ -1887,8 +1887,6 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *win
 		goto out;
 
 	/* copy */
-	g_object_get (NULL, "print-kind", &priv->print_kind, NULL);
-
 	if (priv->print_kind == GCM_CALIBRATE_PRINT_KIND_ANALYZE) {
 
 		/* remove previously set value (if any) */
