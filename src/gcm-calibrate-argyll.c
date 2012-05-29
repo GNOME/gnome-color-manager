@@ -1703,6 +1703,7 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate,
 		      "basename", &basename,
 		      "print-kind", &print_kind,
 		      NULL);
+	g_assert (print_kind != GCM_CALIBRATE_PRINT_KIND_UNKNOWN);
 	working_path = gcm_calibrate_get_working_path (GCM_CALIBRATE (calibrate_argyll));
 
 	/* print */

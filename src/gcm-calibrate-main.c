@@ -1613,6 +1613,11 @@ gcm_calib_setup_page_print_kind (GcmCalibratePriv *calib)
 			  G_CALLBACK (gcm_calib_print_kind_toggled_cb), calib);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
+	/* sync the default */
+	g_object_set (calib->calibrate,
+		      "print-kind", GCM_CALIBRATE_PRINT_KIND_LOCAL,
+		      NULL);
+
 	/* add to assistant */
 	gtk_assistant_append_page (assistant, vbox);
 	gtk_assistant_set_page_type (assistant, vbox, GTK_ASSISTANT_PAGE_CONTENT);

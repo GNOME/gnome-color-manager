@@ -2316,6 +2316,9 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 	case PROP_DISPLAY_KIND:
 		priv->display_kind = g_value_get_uint (value);
 		break;
+	case PROP_PRINT_KIND:
+		priv->print_kind = g_value_get_uint (value);
+		break;
 	case PROP_REFERENCE_KIND:
 		priv->reference_kind = g_value_get_uint (value);
 		break;
@@ -2356,7 +2359,7 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 
 	pspec = g_param_spec_uint ("print-kind", NULL, NULL,
 				   0, G_MAXUINT, 0,
-				   G_PARAM_READABLE);
+				   G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_PRINT_KIND, pspec);
 
 	pspec = g_param_spec_uint ("device-kind", NULL, NULL,
