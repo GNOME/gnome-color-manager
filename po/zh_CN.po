@@ -5,19 +5,22 @@
 # Eleanor Chen <chenyueg@gmail.com>, 2010.
 # Aron Xu <aronxu@gnome.org>, 2010.
 # YunQiang Su <wzssyqa@gmail.com>, 2011.
+# Cheng Lu <chenglu1990@gmail.com>, 2012.
+# Wylmer Wang <wantinghard@gmail.com>, 2012.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager&keywords=I18N+L10N\n"
-"POT-Creation-Date: 2011-08-25 12:32+0000\n"
-"PO-Revision-Date: 2011-08-30 17:35+0800\n"
-"Last-Translator: YunQiang Su <wzssyqa@gmail.com>\n"
-"Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
+"POT-Creation-Date: 2012-07-09 12:40+0000\n"
+"PO-Revision-Date: 2012-07-21 21:17+0800\n"
+"Last-Translator: Wylmer Wang <wantinghard@gmail.com>\n"
+"Language-Team: Chinese (China) <i18n-zh@googlegroups.com>\n"
+"Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bits\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #: ../data/gcm-calibrate.desktop.in.h:1
@@ -25,9 +28,8 @@ msgid "Color"
 msgstr "色彩"
 
 #: ../data/gcm-calibrate.desktop.in.h:2
-#| msgid "Device Calibration"
 msgid "Color Calibration"
-msgstr "颜色校准"
+msgstr "色彩校准"
 
 #: ../data/gcm-import.desktop.in.h:1
 msgid "ICC Profile Installer"
@@ -38,104 +40,308 @@ msgid "Install ICC profiles"
 msgstr "安装 ICC 配置文件"
 
 #. Window title, where the user can pick spot colors using a measuring device
-#: ../data/gcm-picker.desktop.in.h:1 ../data/gcm-picker.ui.h:4
+#: ../data/gcm-picker.desktop.in.h:1 ../data/gcm-picker.ui.h:2
 msgid "Color Picker"
 msgstr "色彩拾取器"
 
 #: ../data/gcm-picker.desktop.in.h:2
 msgid "Use the color sensor to sample spot colors"
-msgstr "使用颜色传感器对点颜色进行采样"
+msgstr "使用色彩传感器对点颜色进行采样"
 
-#: ../data/gcm-viewer.desktop.in.h:1
-#| msgid "Pr_ofile Viewer"
+#. Button text, to get a single sample of color
+#: ../data/gcm-picker.ui.h:4
+msgid "_Measure"
+msgstr "测量(_M)"
+
+#. the color representation
+#: ../data/gcm-picker.ui.h:6
+msgid "XYZ:"
+msgstr "XYZ："
+
+#. Lab is the color representation and D50 is the white point
+#: ../data/gcm-picker.ui.h:8
+msgid "Lab (D50):"
+msgstr "Lab (D50)："
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:10
+msgid "Media whitepoint:"
+msgstr "媒体白点："
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:12
+msgid "Color Temperature:"
+msgstr "色温："
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:14
+msgid "Ambient:"
+msgstr "环境："
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#: ../data/gcm-picker.ui.h:16
+msgid "Colorspace:"
+msgstr "色彩空间："
+
+#. These are the values of the chosen color in Red, Green, Blue encoding
+#: ../data/gcm-picker.ui.h:18
+msgid "RGB:"
+msgstr "RGB："
+
+#. This shows the error in the conversion to RGB.
+#: ../data/gcm-picker.ui.h:20
+msgid "Error:"
+msgstr "错误："
+
+#. Expander title, the results from the color picker
+#: ../data/gcm-picker.ui.h:22
+msgid "Results"
+msgstr "结果"
+
+#: ../data/gcm-viewer.desktop.in.h:1 ../data/gcm-viewer.ui.h:1
 msgid "Color Profile Viewer"
 msgstr "配置查看器"
 
 #: ../data/gcm-viewer.desktop.in.h:2
-#, fuzzy
-#| msgid "Install system color profiles"
 msgid "Inspect and compare installed color profiles"
-msgstr "安装系统色彩配置文件"
+msgstr "检查并比较已安装的色彩配置文件"
 
-#: ../src/gcm-calibrate-argyll.c:436
+#: ../data/gcm-viewer.ui.h:2
+msgid "Add a profile for the device"
+msgstr "为设备添加配置文件"
+
+#: ../data/gcm-viewer.ui.h:3
+msgid "Remove a profile from the device"
+msgstr "移除这个设备的配置文件"
+
+#. The type of profile, e.g. display, scanner, etc.
+#: ../data/gcm-viewer.ui.h:5
+msgid "Profile type"
+msgstr "配置文件类型"
+
+#. The profile colorspace, e.g. RGB
+#: ../data/gcm-viewer.ui.h:7
+msgid "Colorspace"
+msgstr "色彩空间"
+
+#. When the profile was created
+#: ../data/gcm-viewer.ui.h:9
+msgid "Created"
+msgstr "已创建"
+
+#. The version of the profile
+#: ../data/gcm-viewer.ui.h:11
+msgid "Version"
+msgstr "版本"
+
+#. The manufacturer of the profile
+#: ../data/gcm-viewer.ui.h:13
+msgid "Device manufacturer"
+msgstr "设备制造商"
+
+#. The manufacturer of the profile
+#: ../data/gcm-viewer.ui.h:15
+msgid "Device model"
+msgstr "设备型号"
+
+#. If the profile contains a display correction table
+#: ../data/gcm-viewer.ui.h:17
+msgid "Display correction"
+msgstr "显示校正"
+
+#. The basename (the last section of the filename) of the profile
+#: ../data/gcm-viewer.ui.h:19
+msgid "White point"
+msgstr "白点"
+
+#. The licence of the profile, normally non-free
+#: ../data/gcm-viewer.ui.h:21
+msgid "License"
+msgstr "许可证"
+
+#. The file size in bytes of the profile
+#: ../data/gcm-viewer.ui.h:23
+msgid "File size"
+msgstr "文件大小"
+
+#. The basename (the last section of the filename) of the profile
+#: ../data/gcm-viewer.ui.h:25
+msgid "Filename"
+msgstr "文件名"
+
+#: ../data/gcm-viewer.ui.h:26
+msgid "Information"
+msgstr "信息"
+
+#: ../data/gcm-viewer.ui.h:27
+msgid "y"
+msgstr "y"
+
+#: ../data/gcm-viewer.ui.h:28
+msgid "x"
+msgstr "x"
+
+#: ../data/gcm-viewer.ui.h:29
+msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
+msgstr "CIE 1931 图表显示配置文件色域的一个平面表示"
+
+#: ../data/gcm-viewer.ui.h:30
+msgid "CIE 1931"
+msgstr "CIE 1931"
+
+#: ../data/gcm-viewer.ui.h:31
+msgid "This 3D hull is what the profile looks like in Lab space"
+msgstr "这个 3D 船型图是配置文件在 Lab 空间里的样貌"
+
+#: ../data/gcm-viewer.ui.h:32
+msgid "3D Gamut"
+msgstr "3D 色域"
+
+#: ../data/gcm-viewer.ui.h:33
+msgid "Response out"
+msgstr "输出响应"
+
+#: ../data/gcm-viewer.ui.h:34
+msgid "Response in"
+msgstr "输入响应"
+
+#: ../data/gcm-viewer.ui.h:35
+msgid ""
+"A tone reproduction curve is the mapping of scene luminance to display "
+"luminance"
+msgstr "色调重绘曲线是场景亮度到显示亮度的映射"
+
+#: ../data/gcm-viewer.ui.h:36
+msgid "TRC"
+msgstr "TRC"
+
+#: ../data/gcm-viewer.ui.h:37
+msgid "Video card out"
+msgstr "视频卡输出"
+
+#: ../data/gcm-viewer.ui.h:38
+msgid "A video card gamma table shows the curves loaded into the display"
+msgstr "视频卡 gamma 表显示已载入显示的曲线"
+
+#: ../data/gcm-viewer.ui.h:39
+msgid "VCGT"
+msgstr "VCGT"
+
+#: ../data/gcm-viewer.ui.h:40
+msgid "Previous Image"
+msgstr "上一个图像"
+
+#. This is an example image that is saved in sRGB gamut
+#: ../data/gcm-viewer.ui.h:42
+msgid "sRGB example"
+msgstr "sRGB 样本"
+
+#: ../data/gcm-viewer.ui.h:43
+msgid "Next Image"
+msgstr "下一个图像"
+
+#: ../data/gcm-viewer.ui.h:44
+msgid "This shows what an image would look like if saved with the profile"
+msgstr "这会显示一个图像以该配置文件储存会是什么样"
+
+#: ../data/gcm-viewer.ui.h:45
+msgid "From sRGB"
+msgstr "从 sRGB"
+
+#: ../data/gcm-viewer.ui.h:46
+msgid "This shows what an image would look like if opened with the profile"
+msgstr "这会显示一个图像以该配置文件打开会是什么样"
+
+#: ../data/gcm-viewer.ui.h:47
+msgid "To sRGB"
+msgstr "至 sRGB"
+
+#: ../data/gcm-viewer.ui.h:48
+msgid "Named colors are specific colors that are defined in the profile"
+msgstr "已命名的色彩是配置文件中已定义的特定色彩"
+
+#: ../data/gcm-viewer.ui.h:49
+msgid "Named Colors"
+msgstr "已命名的色彩"
+
+#: ../data/gcm-viewer.ui.h:50
+msgid ""
+"Metadata is additional information stored in the profile for programs to use."
+msgstr "元数据是储存在配置文件中供程序使用的额外信息。"
+
+#: ../data/gcm-viewer.ui.h:51
+msgid "Metadata"
+msgstr "元数据"
+
+#: ../src/gcm-calibrate-argyll.c:344
 msgid "Getting default parameters"
 msgstr "正在获取默认参数"
 
-#: ../src/gcm-calibrate-argyll.c:440
+#: ../src/gcm-calibrate-argyll.c:349
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
 msgstr "通过发送彩色和灰色的色块到你的屏幕并与硬件设备做比较可以预校准该屏幕。"
 
-#: ../src/gcm-calibrate-argyll.c:527
+#: ../src/gcm-calibrate-argyll.c:438
 msgid "Reading the patches"
 msgstr "正在读取色块"
 
-#: ../src/gcm-calibrate-argyll.c:530
+#: ../src/gcm-calibrate-argyll.c:443
 msgid "Reading the patches using the color measuring instrument."
 msgstr "正在使用色彩测量仪器读取色块。"
 
-#: ../src/gcm-calibrate-argyll.c:614
-msgid "Generating the patches"
-msgstr "正在生成色块"
-
-#: ../src/gcm-calibrate-argyll.c:617
-msgid "Generating the patches that will be measured with the color instrument."
-msgstr "正在生成要用色彩仪器进行测量的色块。"
-
-#. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:729 ../src/gcm-calibrate-native.c:661
+#: ../src/gcm-calibrate-argyll.c:542
 msgid "Drawing the patches"
 msgstr "正在绘制色块"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:732 ../src/gcm-calibrate-native.c:664
+#: ../src/gcm-calibrate-argyll.c:547
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
 msgstr "正在绘制生成的色块到屏幕，以便随后可用硬件设备进行测量。"
 
-#: ../src/gcm-calibrate-argyll.c:824 ../src/gcm-calibrate-argyll.c:1165
+#: ../src/gcm-calibrate-argyll.c:642 ../src/gcm-calibrate-argyll.c:1003
 msgid "Generating the profile"
 msgstr "正在生成配置文件"
 
-#: ../src/gcm-calibrate-argyll.c:827
+#: ../src/gcm-calibrate-argyll.c:647
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "正在生成可用于该屏幕的 ICC 色彩配置文件"
 
-#: ../src/gcm-calibrate-argyll.c:987
+#: ../src/gcm-calibrate-argyll.c:817
 msgid "Copying files"
 msgstr "正在复制文件"
 
-#: ../src/gcm-calibrate-argyll.c:990
+#: ../src/gcm-calibrate-argyll.c:822
 msgid "Copying source image, chart data and CIE reference values."
 msgstr "正在复制源图像，图表数据和 CIE 参考值"
 
-#: ../src/gcm-calibrate-argyll.c:1059
+#: ../src/gcm-calibrate-argyll.c:893
 msgid "Measuring the patches"
 msgstr "正在测算色块"
 
-#: ../src/gcm-calibrate-argyll.c:1062
+#: ../src/gcm-calibrate-argyll.c:898
 msgid "Detecting the reference patches and measuring them."
 msgstr "正在探测参考色块并进行测量。"
 
-#: ../src/gcm-calibrate-argyll.c:1168
+#: ../src/gcm-calibrate-argyll.c:1008
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "正在创建能够使用于该设备的 ICC 色彩配置文件"
 
-#: ../src/gcm-calibrate-argyll.c:1521
+#: ../src/gcm-calibrate-argyll.c:1373
 msgid "Printing patches"
 msgstr "正在打印色块"
 
-#: ../src/gcm-calibrate-argyll.c:1525
+#: ../src/gcm-calibrate-argyll.c:1378
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "为选择的纸张和墨水渲染色块。"
 
-#: ../src/gcm-calibrate-argyll.c:1855
+#: ../src/gcm-calibrate-argyll.c:1752
 msgid "Wait for the ink to dry"
 msgstr "等待墨水晾干"
 
-#: ../src/gcm-calibrate-argyll.c:1859
+#: ../src/gcm-calibrate-argyll.c:1757
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -143,869 +349,853 @@ msgstr ""
 "请等待几分钟让墨水晾干。对未干的墨迹进行量化测量会产生不准确的配置并可能损坏"
 "您的色彩测试仪器。"
 
-#: ../src/gcm-calibrate-argyll.c:2018
+#: ../src/gcm-calibrate-argyll.c:1934
 msgid "Set up instrument"
 msgstr "设置仪器"
 
-#: ../src/gcm-calibrate-argyll.c:2022
+#: ../src/gcm-calibrate-argyll.c:1939
 msgid "Setting up the instrument for use…"
 msgstr "正在设置仪器，为使用作准备..."
 
-#. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2114 ../src/gcm-calibrate-native.c:636
-msgid "Please attach instrument"
-msgstr "请连接仪器"
-
-#. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate-argyll.c:2124 ../src/gcm-calibrate-native.c:644
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square like the image below."
-msgstr "请将测量仪器贴到屏幕中央的灰色方块区域上，如下图所示。"
-
-#. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate-argyll.c:2128 ../src/gcm-calibrate-native.c:647
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square."
-msgstr "请将测量仪器贴到屏幕中央的灰色方块区域上。"
-
-#: ../src/gcm-calibrate-argyll.c:2133 ../src/gcm-calibrate-argyll.c:2198
-#: ../src/gcm-calibrate-argyll.c:2244
-msgid "Continue"
-msgstr "继续"
-
-#. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2143 ../src/gcm-calibrate-argyll.c:2186
-#: ../src/gcm-calibrate-argyll.c:2235 ../src/gcm-calibrate-argyll.c:2306
-#: ../src/gcm-calibrate-argyll.c:2388 ../src/gcm-calibrate-argyll.c:2423
-#: ../src/gcm-calibrate-main.c:286
-msgid "GNOME Color Manager"
-msgstr "GNOME 色彩管理器"
-
-#: ../src/gcm-calibrate-argyll.c:2163 ../src/gcm-calibrate-argyll.c:2212
-msgid "Please configure instrument"
-msgstr "请配置仪器"
-
-#: ../src/gcm-calibrate-argyll.c:2174
-msgid ""
-"Please set the measuring instrument to calibration mode like the image below."
-msgstr "请按照下图将仪器设为校准模式。"
-
-#: ../src/gcm-calibrate-argyll.c:2178
-msgid "Please set the measuring instrument to calibration mode."
-msgstr "请将测量仪器设为校准模式。"
-
-#: ../src/gcm-calibrate-argyll.c:2223
-msgid ""
-"Please set the measuring instrument to screen mode like the image below."
-msgstr "请按照下图将测量仪器设为屏幕模式。"
-
-#: ../src/gcm-calibrate-argyll.c:2227
-msgid "Please set the measuring instrument to screen mode."
-msgstr "请将测量仪器设为屏幕模式。"
-
-#: ../src/gcm-calibrate-argyll.c:2290 ../src/gcm-calibrate-argyll.c:2354
+#: ../src/gcm-calibrate-argyll.c:2151 ../src/gcm-calibrate-argyll.c:2217
 msgid "Calibration error"
 msgstr "校准出错"
 
-#: ../src/gcm-calibrate-argyll.c:2294
+#: ../src/gcm-calibrate-argyll.c:2156
 msgid "The sample could not be read at this time."
 msgstr "此时无法读取采样。"
 
-#: ../src/gcm-calibrate-argyll.c:2300 ../src/gcm-calibrate-argyll.c:2417
-#: ../src/gcm-calibrate-argyll.c:2456 ../src/gcm-calibrate-argyll.c:2481
+#: ../src/gcm-calibrate-argyll.c:2163 ../src/gcm-calibrate-argyll.c:2288
+#: ../src/gcm-calibrate-argyll.c:2314 ../src/gcm-calibrate-argyll.c:2351
+#: ../src/gcm-calibrate-argyll.c:2378
 msgid "Retry"
 msgstr "重试"
 
-#: ../src/gcm-calibrate-argyll.c:2359
+#. TRANSLATORS: this is the application name for libcanberra
+#: ../src/gcm-calibrate-argyll.c:2169 ../src/gcm-calibrate-argyll.c:2257
+#: ../src/gcm-calibrate-argyll.c:2294 ../src/gcm-calibrate-argyll.c:2320
+#: ../src/gcm-calibrate.c:553 ../src/gcm-calibrate.c:592
+#: ../src/gcm-calibrate.c:632 ../src/gcm-calibrate-main.c:202
+msgid "GNOME Color Manager"
+msgstr "GNOME 色彩管理器"
+
+#: ../src/gcm-calibrate-argyll.c:2223
 msgid "No firmware is installed for this instrument."
 msgstr "没有为此仪器安装固件。"
 
-#: ../src/gcm-calibrate-argyll.c:2363
+#: ../src/gcm-calibrate-argyll.c:2228
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
 msgstr "模式匹配并不足够好。确定您选择的目标有正确的类型。"
 
-#: ../src/gcm-calibrate-argyll.c:2368
+#: ../src/gcm-calibrate-argyll.c:2234
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
 msgstr "测试仪器读不到有效数据。请确认光圈已经完全打开。"
 
-#: ../src/gcm-calibrate-argyll.c:2372
+#: ../src/gcm-calibrate-argyll.c:2239
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
 msgstr "测量仪器忙，无法开始。请拔出 USB 插头并重新插入，以使用此设备。"
 
-#: ../src/gcm-calibrate-argyll.c:2408
+#: ../src/gcm-calibrate-argyll.c:2277
 msgid "Reading target"
 msgstr "正在读取目标"
 
-#: ../src/gcm-calibrate-argyll.c:2412
+#: ../src/gcm-calibrate-argyll.c:2282
 msgid "Failed to read the strip correctly."
-msgstr "正确读取色带失败。"
+msgstr "无法正确地读取色带。"
+
+#: ../src/gcm-calibrate-argyll.c:2303
+msgid "Reading sample"
+msgstr "正在读取样本"
+
+#: ../src/gcm-calibrate-argyll.c:2308
+msgid "Failed to read the color sample correctly."
+msgstr "无法正确地读取色彩样本。"
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2436
+#: ../src/gcm-calibrate-argyll.c:2333
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "读取的是 %s 色带而非 %s！"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2441
+#: ../src/gcm-calibrate-argyll.c:2338
 msgid "It looks like you've measured the wrong strip."
 msgstr "您似乎测量的是错误的色带。"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2445
+#: ../src/gcm-calibrate-argyll.c:2342
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
 msgstr "如果您真的测量的是正确的色带，没关系，那可能就是纸张不正常。"
 
-#: ../src/gcm-calibrate-argyll.c:2472
+#: ../src/gcm-calibrate-argyll.c:2367
 msgid "Device Error"
 msgstr "设备错误"
 
-#: ../src/gcm-calibrate-argyll.c:2476
+#: ../src/gcm-calibrate-argyll.c:2372
 msgid "The device could not measure the color spot correctly."
 msgstr "设备无法正确测量颜色点。"
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2489
+#: ../src/gcm-calibrate-argyll.c:2386
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "读取 %s 色带就绪"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2494
+#: ../src/gcm-calibrate-argyll.c:2391
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
-msgstr ""
+msgstr "将色度计放在文字旁的白色区域，点击并按住测量开关。"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2498
+#: ../src/gcm-calibrate-argyll.c:2395
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
 msgstr "从左至右缓慢扫描目标行, 当到达页末时释放开关。"
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2502
+#: ../src/gcm-calibrate-argyll.c:2399
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
 msgstr "确保设备的中心与所要测量的行正确对齐的。"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2506
+#: ../src/gcm-calibrate-argyll.c:2403
 msgid ""
-"If you make a mistake just release the switch and you'll get a chance to try "
-"again."
+"If you make a mistake, just release the switch, and you'll get a chance to "
+"try again."
 msgstr "如果操作失误，只需松开开关，就可以重新尝试。"
 
-#: ../src/gcm-calibrate-argyll.c:2585
-#| msgid "Printer"
+#: ../src/gcm-calibrate-argyll.c:2517
 msgid "Printing"
 msgstr "正在打印"
 
-#: ../src/gcm-calibrate-argyll.c:2593
+#: ../src/gcm-calibrate-argyll.c:2526
 msgid "Preparing the data for the printer."
 msgstr "正在为打印机准备数据。"
 
-#: ../src/gcm-calibrate-argyll.c:2600
+#: ../src/gcm-calibrate-argyll.c:2534
 msgid "Sending the targets to the printer."
-msgstr ""
+msgstr "正在传送目标至打印机。"
 
-#: ../src/gcm-calibrate-argyll.c:2605
-#, fuzzy
-#| msgid "Printing patches"
+#: ../src/gcm-calibrate-argyll.c:2540
 msgid "Printing the targets..."
-msgstr "正在打印色块"
+msgstr "正在打印目标…"
 
-#: ../src/gcm-calibrate-argyll.c:2610
+#: ../src/gcm-calibrate-argyll.c:2546
 msgid "The printing has finished."
 msgstr "打印已经完成。"
 
-#: ../src/gcm-calibrate-argyll.c:2615
+#: ../src/gcm-calibrate-argyll.c:2552
 msgid "The print was aborted."
 msgstr "打印已经退出。"
 
 #. TRANSLATORS: title, the hardware calibration device does not support projectors
-#: ../src/gcm-calibrate.c:284
-#, fuzzy
-#| msgid "Reading the patches using the color measuring instrument."
+#: ../src/gcm-calibrate.c:305
 msgid "Could not calibrate and profile using this color measuring instrument"
-msgstr "正在使用色彩测量仪器读取色块。"
+msgstr "无法使用该色彩测量仪器校准和分析"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:287
+#: ../src/gcm-calibrate.c:308
 msgid ""
 "This color measuring instrument is not designed to support calibration and "
 "profiling projectors."
-msgstr ""
+msgstr "该色彩测量仪器设计时不支持校准和分析投影仪。"
+
+#: ../src/gcm-calibrate.c:522
+msgid "Please attach instrument"
+msgstr "请连接仪器"
+
+#. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
+#: ../src/gcm-calibrate.c:530
+msgid ""
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square like the image below."
+msgstr "请将测量仪器贴到屏幕中央的灰色方块区域上，如下图所示。"
+
+#. TRANSLATORS: dialog message, ask user to attach device
+#: ../src/gcm-calibrate.c:533
+msgid ""
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square."
+msgstr "请将测量仪器贴到屏幕中央的灰色方块区域上。"
+
+#. TRANSLATORS: dialog message, ask user to attach device
+#: ../src/gcm-calibrate.c:540
+msgid ""
+"You will need to hold the device on the screen for the duration of the "
+"calibration."
+msgstr "在校准期间，您需要稳住设备对准屏幕。"
+
+#: ../src/gcm-calibrate.c:547 ../src/gcm-calibrate.c:575
+#: ../src/gcm-calibrate.c:615
+msgid "Continue"
+msgstr "继续"
+
+#: ../src/gcm-calibrate.c:569 ../src/gcm-calibrate.c:606
+msgid "Please configure instrument"
+msgstr "请配置仪器"
+
+#: ../src/gcm-calibrate.c:579
+msgid ""
+"Please set the measuring instrument to screen mode like the image below."
+msgstr "请按照下图将测量仪器设为屏幕模式。"
+
+#: ../src/gcm-calibrate.c:584
+msgid "Please set the measuring instrument to screen mode."
+msgstr "请将测量仪器设为屏幕模式。"
+
+#: ../src/gcm-calibrate.c:619
+msgid ""
+"Please set the measuring instrument to calibration mode like the image below."
+msgstr "请按照下图将仪器设为校准模式。"
+
+#: ../src/gcm-calibrate.c:624
+msgid "Please set the measuring instrument to calibration mode."
+msgstr "请将测量仪器设为校准模式。"
 
 #. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
 #. * aquired image of the calibration target, e.g. an image file that looks
 #. * a bit like this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:380
-#, fuzzy
-#| msgid "Recalibration required"
+#: ../src/gcm-calibrate.c:1687
 msgid "Select calibration target image"
-msgstr "需要重新校准"
+msgstr "选择校准目标图像"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:393
-#| msgid "Supported ICC profiles"
+#: ../src/gcm-calibrate.c:1700
 msgid "Supported images files"
 msgstr "支持的图像文件"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:400 ../src/gcm-calibrate.c:452
-#: ../src/gcm-viewer.c:380
+#: ../src/gcm-calibrate.c:1707 ../src/gcm-calibrate.c:1761
+#: ../src/gcm-viewer.c:456
 msgid "All files"
 msgstr "全部文件"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:425
-#, fuzzy
+#: ../src/gcm-calibrate.c:1732
 msgid "Select CIE reference values file"
-msgstr "请选择已扫描的参考文件"
+msgstr "选择 CIE 参考值文件"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:445
+#: ../src/gcm-calibrate.c:1754
 msgid "CIE values"
 msgstr "CIE 值"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:518 ../src/gcm-viewer.c:352
+#: ../src/gcm-calibrate.c:1827 ../src/gcm-viewer.c:428
 msgid "Select ICC Profile File"
 msgstr "选择 ICC 配置文件"
 
-#: ../src/gcm-calibrate.c:521
+#: ../src/gcm-calibrate.c:1830
 msgid "Open"
 msgstr "打开"
 
-#: ../src/gcm-calibrate-main.c:147
+#: ../src/gcm-calibrate-main.c:146
 msgid "Calibration is not complete"
 msgstr "未完成校准"
 
-#: ../src/gcm-calibrate-main.c:150
+#: ../src/gcm-calibrate-main.c:149
 msgid "Are you sure you want to cancel the calibration?"
 msgstr "确定要取消校准吗？"
 
-#: ../src/gcm-calibrate-main.c:153
-#| msgid "Device Calibration"
+#: ../src/gcm-calibrate-main.c:152
 msgid "Continue calibration"
 msgstr "继续校准"
 
-#: ../src/gcm-calibrate-main.c:157
+#: ../src/gcm-calibrate-main.c:156
 msgid "Cancel and close"
 msgstr "取消并关闭"
 
 #. TRANSLATORS: this is the sound description
-#: ../src/gcm-calibrate-main.c:288
+#: ../src/gcm-calibrate-main.c:204
 msgid "Profiling completed"
 msgstr "测量配置完成"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:438 ../src/gcm-calibrate-main.c:1742
-#| msgid "Failed to calibrate device"
+#: ../src/gcm-calibrate-main.c:449 ../src/gcm-calibrate-main.c:1872
 msgid "Failed to calibrate"
 msgstr "校准失败"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:684
-#, fuzzy
-#| msgid "Calibration error"
+#: ../src/gcm-calibrate-main.c:708
 msgid "Calibrate your camera"
-msgstr "校准出错"
+msgstr "校准相机"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:688
-#| msgid "Set up display"
+#: ../src/gcm-calibrate-main.c:712
 msgid "Calibrate your display"
-msgstr "设置显示器"
+msgstr "校准显示器"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:692
-#| msgid "Failed to calibrate printer"
+#: ../src/gcm-calibrate-main.c:716
 msgid "Calibrate your printer"
 msgstr "校准打印机"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:696
-#| msgid "Failed to calibrate device"
+#: ../src/gcm-calibrate-main.c:720
 msgid "Calibrate your device"
 msgstr "校准设备"
 
 #. TRANSLATORS: this is the final intro page text
-#: ../src/gcm-calibrate-main.c:708
+#: ../src/gcm-calibrate-main.c:732
 msgid ""
 "Any existing screen correction will be temporarily turned off and the "
 "brightness set to maximum."
-msgstr ""
+msgstr "任何现有的屏幕修正即将暂时关闭，并且亮度会设为最大值。"
 
 #. TRANSLATORS: this is the final intro page text
-#: ../src/gcm-calibrate-main.c:715
+#: ../src/gcm-calibrate-main.c:739
 msgid "You can cancel this process at any stage by pressing the cancel button."
-msgstr ""
+msgstr "您可以在任何阶段按下 取消 按钮来取消此过程。"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:721
+#: ../src/gcm-calibrate-main.c:745
 msgid "Introduction"
-msgstr ""
+msgstr "简介"
+
+#: ../src/gcm-calibrate-main.c:828
+msgid "Show File"
+msgstr "显示文件"
+
+#: ../src/gcm-calibrate-main.c:831
+msgid "Click here to show the profile"
+msgstr "点击这里显示色彩配置文件"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:744
+#: ../src/gcm-calibrate-main.c:854
 msgid "All done!"
 msgstr "全部完成"
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:754
+#: ../src/gcm-calibrate-main.c:864
 msgid "The camera has been calibrated successfully."
-msgstr ""
+msgstr "相机已成功校准。"
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:758
-#, fuzzy
-#| msgid "The display '%s' should be recalibrated soon."
+#: ../src/gcm-calibrate-main.c:868
 msgid "The display has been calibrated successfully."
-msgstr "即将重新校准显示“%s”。"
-
-#: ../src/gcm-calibrate-main.c:759
-msgid "You may notice the screen is a slightly different color."
-msgstr ""
+msgstr "显示器已成功校准。"
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:763
-#, fuzzy
-#| msgid "The printer '%s' should be recalibrated soon."
+#: ../src/gcm-calibrate-main.c:872
 msgid "The printer has been calibrated successfully."
-msgstr "即将重新校准打印机“%s”。"
-
-#: ../src/gcm-calibrate-main.c:764
-msgid "Docments printed from this device will be color managed."
-msgstr ""
+msgstr "打印机已成功校准。"
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:768
-#, fuzzy
-#| msgid "The device ID has invalid characters."
+#: ../src/gcm-calibrate-main.c:876
 msgid "The device has been calibrated successfully."
-msgstr "设备标识符中有无效字符。"
+msgstr "设备已成功校准。"
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:775
+#: ../src/gcm-calibrate-main.c:883
 msgid ""
 "To view details about the new profile or to undo the calibration visit the "
 "<a href=\"control-center://color\">control center</a>."
 msgstr ""
+"若要查看有关新配置文件的详细资料，或是取消校准，请访问 <a href=\"control-"
+"center://color\">控制中心</a>。"
+
+#: ../src/gcm-calibrate-main.c:892
+msgid ""
+"You can use the profile with <a href=\"import-linux\">Linux</a>, <a href="
+"\"import-osx\">Apple OS X</a> and <a href=\"import-windows\">Microsoft "
+"Windows</a> systems."
+msgstr ""
+"你可以在 <a href=\"import-linux\">Linux</a>、<a href=\"import-osx\">Apple OS "
+"X</a> 和 <a href=\"import-windows\">Microsoft Windows</a> 系统上使用色彩配置"
+"文件。"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:786 ../src/gcm-calibrate-main.c:1755
+#: ../src/gcm-calibrate-main.c:904 ../src/gcm-calibrate-main.c:1885
 msgid "Summary"
 msgstr "总结"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:810
-#, fuzzy
-#| msgid "Device Calibration"
+#: ../src/gcm-calibrate-main.c:928
 msgid "Performing calibration"
-msgstr "设备校准"
+msgstr "正在进行校准"
 
-#: ../src/gcm-calibrate-main.c:823
-#, fuzzy
-#| msgid "Calibration error"
+#: ../src/gcm-calibrate-main.c:941
 msgid "Calibration is about to start"
-msgstr "校准出错"
+msgstr "即将开始校准"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:837
+#: ../src/gcm-calibrate-main.c:959
 msgid "Action"
-msgstr ""
+msgstr "动作"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:860
-#, fuzzy
-#| msgid "Calibration error"
+#: ../src/gcm-calibrate-main.c:982
 msgid "Calibration checklist"
-msgstr "校准出错"
+msgstr "校准检查清单"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:867
+#: ../src/gcm-calibrate-main.c:989
 msgid ""
 "Before calibrating the display, it is recommended to configure your display "
 "with the following settings to get optimal results."
-msgstr ""
+msgstr "在校准显示器之前，建议通过下列设定值来配置您的显示器以取得最佳效果。"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:870
+#: ../src/gcm-calibrate-main.c:992
 msgid ""
 "You may want to consult the owner's manual for your display on how to "
 "achieve these settings."
-msgstr ""
+msgstr "您可能需要参考显示器的使用手册来了解如何完成这些设置。"
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:873
-#, fuzzy
+#: ../src/gcm-calibrate-main.c:995
 msgid "Reset your display to the factory defaults."
-msgstr "恢复显示器为出厂默认设置。"
+msgstr "将显示器重设为出厂默认设置。"
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:876
+#: ../src/gcm-calibrate-main.c:998
 msgid "Disable dynamic contrast if your display has this feature."
-msgstr ""
+msgstr "如果您的显示器有动态对比功能请禁用它。"
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:879
+#: ../src/gcm-calibrate-main.c:1001
 msgid ""
 "Configure your display with custom color settings and ensure the RGB "
 "channels are set to the same values."
-msgstr ""
+msgstr "将您的显示器设置为自定义色彩的设定，并确定 RGB 通道都设定为相同的值。"
 
 #. TRANSLATORS: dialog message, addition to bullet item
-#: ../src/gcm-calibrate-main.c:882
+#: ../src/gcm-calibrate-main.c:1004
 msgid "If custom color is not available then use a 6500K color temperature."
-msgstr ""
+msgstr "如果无法使用自定义色彩，那就使用 6500K 色温。"
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:885
+#: ../src/gcm-calibrate-main.c:1007
 msgid ""
 "Adjust the display brightness to a comfortable level for prolonged viewing."
-msgstr ""
+msgstr "调整显示器亮度至舒适的等级以便长时间观看。"
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate-main.c:890
+#: ../src/gcm-calibrate-main.c:1012
 msgid ""
 "For best results, the display should have been powered for at least 15 "
 "minutes before starting the calibration."
-msgstr ""
+msgstr "为达到最佳效果，在开始校准之前显示器应该开启至少 15 分钟。"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:896
+#: ../src/gcm-calibrate-main.c:1018
 msgid "Check Settings"
-msgstr ""
+msgstr "检查设置"
 
-#: ../src/gcm-calibrate-main.c:947
-#, fuzzy
+#: ../src/gcm-calibrate-main.c:1069
 msgid "Calibration and profiling software is not installed."
-msgstr "该计算机上没有安装校准和测量配置软件。"
+msgstr "尚未安装校准和分析软件。"
 
-#: ../src/gcm-calibrate-main.c:950
+#: ../src/gcm-calibrate-main.c:1072
 msgid "These tools are required to build color profiles for devices."
 msgstr "需要这些工具来创建设备的色彩配置文件。"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:953
-#, fuzzy
-#| msgid "No software support"
+#: ../src/gcm-calibrate-main.c:1075
 msgid "More software is required!"
-msgstr "没有软件支持"
+msgstr "需要更多软件！"
 
-#: ../src/gcm-calibrate-main.c:962
+#: ../src/gcm-calibrate-main.c:1084
 msgid "Install required software"
 msgstr "安装需要的软件"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:972
-#| msgid "Install now"
+#: ../src/gcm-calibrate-main.c:1094
 msgid "Install Tools"
 msgstr "安装工具"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate-main.c:1022
+#: ../src/gcm-calibrate-main.c:1144
 msgid "Common color target files are not installed on this computer."
-msgstr ""
+msgstr "该计算机中尚未安装常用色彩目标文件。"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate-main.c:1024
+#: ../src/gcm-calibrate-main.c:1146
 msgid "Color target files are needed to convert the image to a color profile."
-msgstr ""
+msgstr "将图像转化为色彩配置文件需要色彩目标文件。"
 
 #. TRANSLATORS: dialog message, asking if it's okay to install them
-#: ../src/gcm-calibrate-main.c:1026
+#: ../src/gcm-calibrate-main.c:1148
 msgid "Do you want them to be installed?"
 msgstr "想要安装它们吗？"
 
 #. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
-#: ../src/gcm-calibrate-main.c:1028
+#: ../src/gcm-calibrate-main.c:1150
 msgid "If you already have the correct file, you can skip this step."
 msgstr "如果已经有了正确的文件，可以跳过这一步。"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1031
+#: ../src/gcm-calibrate-main.c:1153
 msgid "Optional data files available"
-msgstr ""
+msgstr "有可选数据文件可用"
 
-#: ../src/gcm-calibrate-main.c:1040
-#| msgid "Install now"
+#: ../src/gcm-calibrate-main.c:1162
 msgid "Install Now"
 msgstr "现在安装"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1051
-#, fuzzy
-#| msgid "Install"
+#: ../src/gcm-calibrate-main.c:1173
 msgid "Install Targets"
-msgstr "安装"
+msgstr "安装目标"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1071
+#: ../src/gcm-calibrate-main.c:1193
 msgid "CMP Digital Target 3"
-msgstr ""
+msgstr "CMP Digital Target 3"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1075
+#: ../src/gcm-calibrate-main.c:1197
 msgid "CMP DT 003"
-msgstr ""
+msgstr "CMP DT 003"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1079
-#, fuzzy
-#| msgid "Color Picker"
+#: ../src/gcm-calibrate-main.c:1201
 msgid "Color Checker"
-msgstr "色彩拾取器"
+msgstr "色彩检查器"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1083
-#, fuzzy
-#| msgid "Color Picker"
+#: ../src/gcm-calibrate-main.c:1205
 msgid "Color Checker DC"
-msgstr "色彩拾取器"
+msgstr "色彩检查器 DC"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1087
-#, fuzzy
-#| msgid "Color Picker"
+#: ../src/gcm-calibrate-main.c:1209
 msgid "Color Checker SG"
-msgstr "色彩拾取器"
+msgstr "色彩检查器 SG"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1091
+#: ../src/gcm-calibrate-main.c:1213
 msgid "Hutchcolor"
-msgstr ""
+msgstr "Hutchcolor"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1095
+#: ../src/gcm-calibrate-main.c:1217
 msgid "i1 RGB Scan 1.4"
-msgstr ""
+msgstr "i1 RGB Scan 1.4"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1099
+#: ../src/gcm-calibrate-main.c:1221
 msgid "IT8.7/2"
-msgstr ""
+msgstr "IT8.7/2"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1103
+#: ../src/gcm-calibrate-main.c:1225
 msgid "Laser Soft DC Pro"
-msgstr ""
+msgstr "Laser Soft DC Pro"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1107
+#: ../src/gcm-calibrate-main.c:1229
 msgid "QPcard 201"
-msgstr ""
+msgstr "QPcard 201"
 
 #. TRANSLATORS: dialog message, preface. A calibration target looks like
 #. * this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate-main.c:1182
+#: ../src/gcm-calibrate-main.c:1307
 msgid ""
 "Before profiling the device, you have to manually capture an image of a "
 "calibration target and save it as a TIFF image file."
 msgstr ""
+"在分析该设备之前，您必须手动截取一张校准目标的图片并将它保存为 TIFF 图片文"
+"件。"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1187
+#: ../src/gcm-calibrate-main.c:1312
 msgid ""
 "Ensure that the contrast and brightness are not changed and color correction "
 "profiles have not been applied."
-msgstr ""
+msgstr "请确定对比度和亮度都没有改变，而且尚未应用色彩校正配置文件。"
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate-main.c:1190
+#: ../src/gcm-calibrate-main.c:1315
 msgid ""
 "The device sensor should have been cleaned prior to scanning and the output "
 "file resolution should be at least 200dpi."
-msgstr ""
+msgstr "设备的传感器应该在扫描前完成清洁，输出文件的分辨率应该至少有 200dpi。"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1196
+#: ../src/gcm-calibrate-main.c:1321
 msgid ""
 "Ensure that the white-balance has not been modified by the camera and that "
 "the lens is clean."
-msgstr ""
+msgstr "请确定白平衡没有被相机修改并且镜头是干净的。"
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1200
-#, fuzzy
+#: ../src/gcm-calibrate-main.c:1325
 msgid "Please select the calibration target type."
-msgstr "请将测量仪器设为校准模式。"
+msgstr "请选择校准目标类型。"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1203
+#: ../src/gcm-calibrate-main.c:1328
 msgid "What target type do you have?"
-msgstr ""
+msgstr "您有什么目标类型？"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1235
+#: ../src/gcm-calibrate-main.c:1360
 msgid "Select Target"
-msgstr ""
+msgstr "选择目标"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1274
+#: ../src/gcm-calibrate-main.c:1399
 msgid "Choose your display type"
 msgstr "选择显示类型"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1281
+#: ../src/gcm-calibrate-main.c:1406
 msgid "Select the monitor type that is attached to your computer."
 msgstr "选择连接到计算机的显示器的类型"
 
-#: ../src/gcm-calibrate-main.c:1283
+#: ../src/gcm-calibrate-main.c:1408
 msgid "LCD"
 msgstr "LCD(液晶显示器)"
 
-#: ../src/gcm-calibrate-main.c:1292
+#: ../src/gcm-calibrate-main.c:1417
 msgid "CRT"
 msgstr "CRT(阴极射线管显示器)"
 
-#: ../src/gcm-calibrate-main.c:1301
+#: ../src/gcm-calibrate-main.c:1426
 msgid "Plasma"
 msgstr "等离子"
 
-#: ../src/gcm-calibrate-main.c:1310
+#: ../src/gcm-calibrate-main.c:1435
 msgid "Projector"
 msgstr "投影仪"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1322
+#: ../src/gcm-calibrate-main.c:1447
 msgid "Choose Display Type"
 msgstr "选择显示器类型"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1360
+#: ../src/gcm-calibrate-main.c:1485
 msgid "Choose your display target white point"
-msgstr ""
+msgstr "选择您的显示器目标白点"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1367
+#: ../src/gcm-calibrate-main.c:1492
 msgid ""
 "Most displays should be calibrated to a CIE D65 illuminant for general usage."
-msgstr ""
+msgstr "对大部分显示器，一般用途应该以 CIE D65 光源来校准。"
 
-#: ../src/gcm-calibrate-main.c:1369
+#: ../src/gcm-calibrate-main.c:1494
 msgid "CIE D50 (Printing and publishing)"
 msgstr "CIE D50 (打印和出版)"
 
-#: ../src/gcm-calibrate-main.c:1378
+#: ../src/gcm-calibrate-main.c:1503
 msgid "CIE D55"
 msgstr "CIE D55"
 
-#: ../src/gcm-calibrate-main.c:1387
+#: ../src/gcm-calibrate-main.c:1512
 msgid "CIE D65 (Photography and graphics)"
-msgstr ""
+msgstr "CIE D65 (摄影和制图)"
 
-#: ../src/gcm-calibrate-main.c:1397
+#: ../src/gcm-calibrate-main.c:1522
 msgid "CIE D75"
 msgstr "CIE D75"
 
-#: ../src/gcm-calibrate-main.c:1406
+#: ../src/gcm-calibrate-main.c:1531
 msgid "Native (Already set manually)"
-msgstr ""
+msgstr "原生 (已经手动设置)"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1418
+#: ../src/gcm-calibrate-main.c:1543
 msgid "Choose Display Whitepoint"
-msgstr ""
+msgstr "选择显示器白点"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1456
+#: ../src/gcm-calibrate-main.c:1581
 msgid "Choose profiling mode"
-msgstr ""
+msgstr "选择分析模式"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1463
+#: ../src/gcm-calibrate-main.c:1588
 msgid ""
 "Please indicate if you want to profile a local printer, generate some test "
 "patches, or profile using existing test patches."
 msgstr ""
+"请指出您是否需要分析本机打印机，产生一些测试色块，或者使用现有的测试色块进行"
+"分析。"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1495
-#| msgid "Calibration error"
+#: ../src/gcm-calibrate-main.c:1625
 msgid "Calibration Mode"
 msgstr "校准模式"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1537
-#| msgid "Recalibration required"
+#: ../src/gcm-calibrate-main.c:1667
 msgid "Choose calibration quality"
 msgstr "选择校准质量"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1544
+#: ../src/gcm-calibrate-main.c:1674
 msgid "Higher quality calibration requires many color samples and more time."
-msgstr ""
+msgstr "较高质量的校准需要许多色彩样本和更多的时间。"
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1548
+#: ../src/gcm-calibrate-main.c:1678
 msgid ""
 "A higher precision profile provides higher accuracy in color matching but "
 "requires more time for reading the color patches."
 msgstr ""
+"较高精准度的配置文件在配色时提供较高的精准度，但是这需要更多的时间来读取色"
+"块。"
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1551
+#: ../src/gcm-calibrate-main.c:1681
 msgid "For a typical workflow, a normal precision profile is sufficient."
-msgstr ""
+msgstr "在典型的工作流程中，普通精准度的配置文件就足够了。"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1556
+#: ../src/gcm-calibrate-main.c:1686
 msgid "The high precision profile also requires more paper and printer ink."
-msgstr ""
+msgstr "高精准度的配置文件同样需要更多的纸张和打印机墨水。"
 
 #. TRANSLATORS: radio options for calibration precision
-#: ../src/gcm-calibrate-main.c:1561
+#: ../src/gcm-calibrate-main.c:1691
 msgid "Accurate"
-msgstr ""
+msgstr "精确"
 
-#: ../src/gcm-calibrate-main.c:1562
+#: ../src/gcm-calibrate-main.c:1692
 msgid "Normal"
 msgstr "正常"
 
-#: ../src/gcm-calibrate-main.c:1563
+#: ../src/gcm-calibrate-main.c:1693
 msgid "Quick"
 msgstr "快速"
 
-#: ../src/gcm-calibrate-main.c:1570
+#: ../src/gcm-calibrate-main.c:1700
 #, c-format
 msgid "(about %i sheet of paper)"
 msgid_plural "(about %i sheets of paper)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(大约 %i 张纸)"
 
-#: ../src/gcm-calibrate-main.c:1581
+#: ../src/gcm-calibrate-main.c:1711
 #, c-format
 msgid "(about %i minute)"
 msgid_plural "(about %i minutes)"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "(大约 %i 分钟)"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1621
-#, fuzzy
-#| msgid "Calibration error"
+#: ../src/gcm-calibrate-main.c:1751
 msgid "Calibration Quality"
-msgstr "校准出错"
+msgstr "校准质量"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1657
-#, fuzzy
-#| msgid "Profile type:"
+#: ../src/gcm-calibrate-main.c:1787
 msgid "Profile title"
-msgstr "配置文件类型："
+msgstr "配置文件标题"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1664
+#: ../src/gcm-calibrate-main.c:1794
 msgid "Choose a title to identify the profile on your system."
-msgstr ""
+msgstr "选择一个标题来识别您系统中的配置文件。"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1685
-#, fuzzy
-#| msgid "Profile type:"
+#: ../src/gcm-calibrate-main.c:1815
 msgid "Profile Title"
-msgstr "配置文件类型："
+msgstr "配置文件标题"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1707
+#: ../src/gcm-calibrate-main.c:1837
 msgid "Insert sensor hardware"
 msgstr "插入传感器硬件"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1714
+#: ../src/gcm-calibrate-main.c:1844
 msgid "You need to insert sensor hardware to continue."
 msgstr "需要插入传感器硬件，以便继续。"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1720
+#: ../src/gcm-calibrate-main.c:1850
 msgid "Sensor Check"
-msgstr ""
+msgstr "传感器检查"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1749
+#: ../src/gcm-calibrate-main.c:1879
 msgid "The device could not be found. Ensure it is plugged in and turned on."
 msgstr "无法发现此设备。确保正确插入并且已经打开。"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:1980
-#, fuzzy
-#| msgid "Unknown device"
+#: ../src/gcm-calibrate-main.c:2136
 msgid "Unknown serial"
-msgstr "未知设备"
+msgstr "未知序列号"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:1985
-#, fuzzy
-#| msgid "Unknown device"
+#: ../src/gcm-calibrate-main.c:2141
 msgid "Unknown model"
-msgstr "未知设备"
+msgstr "未知型号"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:1990
-#, fuzzy
-#| msgid "Missing description"
+#: ../src/gcm-calibrate-main.c:2146
 msgid "Unknown description"
-msgstr "缺少描述"
+msgstr "未知描述"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:1995
-#, fuzzy
-#| msgid "Manufacturer:"
+#: ../src/gcm-calibrate-main.c:2151
 msgid "Unknown manufacturer"
-msgstr "制造商："
+msgstr "未知制造商"
 
 #. TRANSLATORS: this is the copyright string, where it might be
 #. * "Copyright (c) 2009 Edward Scissorhands"
 #. * BIG RED FLASHING NOTE: YOU NEED TO USE ASCII ONLY
-#: ../src/gcm-calibrate-main.c:2002
-#| msgid "Copyright:"
+#: ../src/gcm-calibrate-main.c:2158
 msgid "Copyright (c)"
 msgstr "版权 (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2111 ../src/gcm-picker.c:779
-#: ../src/gcm-viewer.c:1605
+#: ../src/gcm-calibrate-main.c:2276 ../src/gcm-picker.c:795
+#: ../src/gcm-viewer.c:1732
 msgid "Set the parent window to make this modal"
 msgstr "设定父窗口使用此模式"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-calibrate-main.c:2114
-#, fuzzy
-#| msgid "Get the profiles for a specific device type"
+#: ../src/gcm-calibrate-main.c:2279
 msgid "Set the specific device to calibrate"
-msgstr "为指定的设备类型获得配置文件"
+msgstr "设置要校准的特定设备"
 
-#: ../src/gcm-calibrate-main.c:2152
-#| msgid "No filename specified"
+#: ../src/gcm-calibrate-main.c:2320
 msgid "No device was specified!"
 msgstr "没有指定设备"
 
 #. TRANSLATORS: this is when there is no profile for the device
-#: ../src/gcm-cell-renderer-profile-text.c:70
-#| msgid "Color Profiles"
+#: ../src/gcm-cell-renderer-profile-text.c:71
 msgid "No profile"
 msgstr "无色彩配置文件"
 
-#: ../src/gcm-cell-renderer-profile-text.c:86
+#: ../src/gcm-cell-renderer-profile-text.c:88
 #, c-format
-#| msgid "Defaults"
 msgid "Default %s"
 msgstr "默认 %s"
+
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile has been auto-generated for this hardware
+#: ../src/gcm-cell-renderer-profile-text.c:103
+msgid "Default: "
+msgstr "默认："
+
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile his a standard space like AdobeRGB
+#: ../src/gcm-cell-renderer-profile-text.c:109
+msgid "Colorspace: "
+msgstr "色彩空间："
+
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile is a test profile
+#: ../src/gcm-cell-renderer-profile-text.c:114
+msgid "Test profile: "
+msgstr "测试配置文件："
 
 #. TRANSLATORS: turn on all debugging
 #: ../src/gcm-debug.c:105
@@ -1021,82 +1211,72 @@ msgid "Show debugging options"
 msgstr "显示调试选项"
 
 #. TRANSLATORS: command line option: a list of catalogs to install
-#: ../src/gcm-import.c:87
+#: ../src/gcm-import.c:96
 msgid "ICC profile to install"
 msgstr "要安装的 ICC 配置文件"
 
-#: ../src/gcm-import.c:113
+#: ../src/gcm-import.c:122
 msgid "No filename specified"
 msgstr "没有指定文件名"
 
-#: ../src/gcm-import.c:131
+#: ../src/gcm-import.c:140 ../src/gcm-viewer.c:1373
 msgid "Failed to open ICC profile"
 msgstr "无法打开 ICC 配置文件"
 
-#: ../src/gcm-import.c:136
+#: ../src/gcm-import.c:145
 #, c-format
 msgid "Failed to parse file: %s"
 msgstr "无法解析文件：%s"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:157
-#, fuzzy, c-format
-#| msgid "Description:"
+#: ../src/gcm-import.c:166
+#, c-format
 msgid "Profile description: %s"
-msgstr "描述："
+msgstr "配置文件描述：%s"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:167
-#| msgid "Profile type:"
+#: ../src/gcm-import.c:176
 msgid "Profile copyright:"
 msgstr "配置文件版权："
 
-#: ../src/gcm-import.c:179
-#| msgid "ICC profile already installed"
+#: ../src/gcm-import.c:188
 msgid "Color profile is already imported"
 msgstr "色彩配置文件已经导入"
 
-#: ../src/gcm-import.c:209
+#: ../src/gcm-import.c:218
 msgid "ICC profile already installed system-wide"
 msgstr "ICC 配置已经安装到系统范围"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:225
-#| msgid "Import ICC color profile?"
+#: ../src/gcm-import.c:234
 msgid "Import display color profile?"
 msgstr "导入显示器色彩配置文件？"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:229
-#| msgid "Import ICC color profile?"
+#: ../src/gcm-import.c:238
 msgid "Import device color profile?"
 msgstr "导入设备色彩配置文件？"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:233
-#, fuzzy
-#| msgid "Import ICC color profile?"
+#: ../src/gcm-import.c:242
 msgid "Import named color profile?"
-msgstr "导入 ICC 色彩配置文件？"
+msgstr "导入已命名色彩配置文件？"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:237
-#| msgid "Import ICC color profile?"
+#: ../src/gcm-import.c:246
 msgid "Import color profile?"
 msgstr "导入色彩配置文件？"
 
 #. TRANSLATORS: button text
-#: ../src/gcm-import.c:252 ../src/gcm-viewer.c:355
+#: ../src/gcm-import.c:261 ../src/gcm-viewer.c:431
 msgid "Import"
 msgstr "导入"
 
-#: ../src/gcm-import.c:253
-#| msgid "Details"
+#: ../src/gcm-import.c:262
 msgid "Show Details"
 msgstr "显示细节"
 
-#: ../src/gcm-import.c:277
-#| msgid "Failed to copy file"
+#: ../src/gcm-import.c:286 ../src/gcm-viewer.c:1406
 msgid "Failed to import file"
 msgstr "导入文件失败"
 
@@ -1152,19 +1332,18 @@ msgstr "显示 xserver 属性"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:368
-#, fuzzy
 msgid "Get the profiles for a specific file"
-msgstr "为特定的文件获得配置"
+msgstr "取得特定文件的配置文件"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:371
 msgid "Get the profile for a specific window"
-msgstr "为特定窗口获得配置文件"
+msgstr "取得指定窗口的配置文件"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:374
 msgid "Dump all details about this system"
-msgstr "贮存该系统的所有细节"
+msgstr "转储该系统的所有详细信息"
 
 #. TRANSLATORS: just dumps the EDID to disk
 #: ../src/gcm-inspect.c:387
@@ -1175,33 +1354,33 @@ msgstr "EDID 检查程序"
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:204 ../src/gcm-picker.c:211 ../src/gcm-viewer.c:588
-#: ../src/gcm-viewer.c:638
+#: ../src/gcm-picker.c:214 ../src/gcm-picker.c:221 ../src/gcm-viewer.c:666
+#: ../src/gcm-viewer.c:716
 msgid "Unknown"
 msgstr "未知的"
 
-#: ../src/gcm-picker.c:358
+#: ../src/gcm-picker.c:367
 msgid "No colorimeter is attached."
-msgstr ""
+msgstr "未连接色度计。"
 
-#: ../src/gcm-picker.c:375
+#: ../src/gcm-picker.c:384
 msgid "The sensor has no native driver."
 msgstr "传感器没有本地驱动程序。"
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:384
+#: ../src/gcm-picker.c:393
 msgid "The attached colorimeter is not capable of reading a spot color."
-msgstr ""
+msgstr "连接的色度计无法读取颜色点。"
 
 #. TRANSLATORS: this is when there are no profiles that can be used;
 #. * the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:629
+#: ../src/gcm-picker.c:648
 #, c-format
 msgid "No %s color spaces available"
-msgstr "没有 %s 颜色空间可用"
+msgstr "没有 %s 色彩空间可用"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:797
+#: ../src/gcm-picker.c:813
 msgid "GNOME Color Manager Color Picker"
 msgstr "GNOME 色彩管理器色彩拾取器"
 
@@ -1217,13 +1396,13 @@ msgstr "%B %e %Y, %I:%M:%S %p"
 
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:328 ../src/gcm-viewer.c:619
+#: ../src/gcm-utils.c:328 ../src/gcm-viewer.c:697
 msgid "RGB"
 msgstr "RGB"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:332 ../src/gcm-viewer.c:631
+#: ../src/gcm-utils.c:332 ../src/gcm-viewer.c:709
 msgid "CMYK"
 msgstr "CMYK"
 
@@ -1233,249 +1412,240 @@ msgid "gray"
 msgstr "灰度"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:298
+#: ../src/gcm-viewer.c:374
 msgid "Permanently delete profile?"
 msgstr "永久删除配置？"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:301
+#: ../src/gcm-viewer.c:377
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr "你确定想从系统中永久删除该配置？"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:304
+#: ../src/gcm-viewer.c:380
 msgid "Delete"
 msgstr "删除"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-viewer.c:373
+#: ../src/gcm-viewer.c:449
 msgid "Supported ICC profiles"
 msgstr "支持的 ICC 配置文件"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-viewer.c:409
+#: ../src/gcm-viewer.c:485
 msgid "Failed to copy file"
 msgstr "复制文件失败"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:561
+#: ../src/gcm-viewer.c:639
 msgid "Input device"
 msgstr "输入设备"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:565
+#: ../src/gcm-viewer.c:643
 msgid "Display device"
 msgstr "显示设备"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:569
+#: ../src/gcm-viewer.c:647
 msgid "Output device"
 msgstr "输出设备"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:573
+#: ../src/gcm-viewer.c:651
 msgid "Devicelink"
 msgstr "设备连接"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:577
+#: ../src/gcm-viewer.c:655
 msgid "Colorspace conversion"
 msgstr "色彩空间转换"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:581
+#: ../src/gcm-viewer.c:659
 msgid "Abstract"
 msgstr "摘要"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:585
+#: ../src/gcm-viewer.c:663
 msgid "Named color"
 msgstr "已命名的色彩"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:599
+#: ../src/gcm-viewer.c:677
 msgid "XYZ"
 msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:603
+#: ../src/gcm-viewer.c:681
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:607
+#: ../src/gcm-viewer.c:685
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:611
+#: ../src/gcm-viewer.c:689
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:615
+#: ../src/gcm-viewer.c:693
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:623
+#: ../src/gcm-viewer.c:701
 msgid "Gray"
 msgstr "灰度"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:627
+#: ../src/gcm-viewer.c:705
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:635
+#: ../src/gcm-viewer.c:713
 msgid "CMY"
 msgstr "CMY"
 
-#: ../src/gcm-viewer.c:689
+#. TRANSLATORS: e.g. sRGB or adbode RGB
+#: ../src/gcm-viewer.c:768
 msgid "Standard space"
 msgstr "标准空间"
 
-#: ../src/gcm-viewer.c:690
-#| msgid "Display device"
+#. TRANSLATORS: the raw EDID MD5 of the display device
+#: ../src/gcm-viewer.c:770
 msgid "Display checksum"
 msgstr "显示器检验"
 
-#: ../src/gcm-viewer.c:691
-#| msgid "Display device"
+#: ../src/gcm-viewer.c:771
 msgid "Display model"
 msgstr "显示器型号"
 
-#: ../src/gcm-viewer.c:692
-#| msgid "Serial number"
+#: ../src/gcm-viewer.c:772
 msgid "Display serial number"
 msgstr "显示器序列号"
 
-#: ../src/gcm-viewer.c:693
-#, fuzzy
-#| msgid "Display"
+#. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
+#: ../src/gcm-viewer.c:774
 msgid "Display PNPID"
-msgstr "显示"
+msgstr "显示器 PNPID"
 
-#: ../src/gcm-viewer.c:694
-#| msgid "Display device"
+#. TRANSLATORS: who made the display
+#: ../src/gcm-viewer.c:776
 msgid "Display vendor"
 msgstr "显示器制造商"
 
-#: ../src/gcm-viewer.c:695
+#. TRANSLATORS: the raw profile MD5
+#: ../src/gcm-viewer.c:778
 msgid "File checksum"
 msgstr "文件校验"
 
-#: ../src/gcm-viewer.c:696
+#. TRANSLATORS: the color framework, e.g. 'colord'
+#: ../src/gcm-viewer.c:780
 msgid "Framework product"
-msgstr ""
+msgstr "框架产品"
 
-#: ../src/gcm-viewer.c:697
+#. TRANSLATORS: the framework binary, e.g. gcm-viewer
+#: ../src/gcm-viewer.c:782
 msgid "Framework program"
-msgstr ""
+msgstr "框架程序"
 
-#: ../src/gcm-viewer.c:698
+#. TRANSLATORS: the framework release, e.g. '1.22'
+#: ../src/gcm-viewer.c:784
 msgid "Framework version"
-msgstr ""
+msgstr "框架版本"
 
-#: ../src/gcm-viewer.c:699
+#. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
+#: ../src/gcm-viewer.c:786
 msgid "Data source type"
 msgstr "数据源类型"
 
-#: ../src/gcm-viewer.c:700
+#. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
+#: ../src/gcm-viewer.c:788
 msgid "Mapping format"
-msgstr ""
+msgstr "映射格式"
 
-#: ../src/gcm-viewer.c:701
+#. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
+#: ../src/gcm-viewer.c:790
 msgid "Mapping qualifier"
-msgstr ""
+msgstr "映射限定符"
+
+#. TRANSLATORS: The original device the profile was made for
+#: ../src/gcm-viewer.c:792
+msgid "Mapping device"
+msgstr "映射设备"
+
+#. TRANSLATORS: The average error when making the profile
+#: ../src/gcm-viewer.c:794
+msgid "Delta-E average"
+msgstr "Delta-E 平均值"
+
+#. TRANSLATORS: the maximum error when making the profile
+#: ../src/gcm-viewer.c:796
+msgid "Delta-E maximum"
+msgstr "Delta-E 最大值"
+
+#. TRANSLATORS: the RMS error when making the profile
+#: ../src/gcm-viewer.c:798
+msgid "Delta-E RMS"
+msgstr "Delta-E RMS"
+
+#. TRANSLATORS: The device name, e.g. 'huey'
+#: ../src/gcm-viewer.c:800
+msgid "Calibration device"
+msgstr "校准设备"
+
+#. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
+#: ../src/gcm-viewer.c:802
+msgid "Screen surface finish"
+msgstr "屏幕表面完成"
+
+#. TRANSLATORS: e.g. DVI or VGA
+#: ../src/gcm-viewer.c:804
+msgid "Connection type"
+msgstr "连接类型"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:921
+#: ../src/gcm-viewer.c:1058
 msgid "Yes"
 msgstr "是"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:924
+#: ../src/gcm-viewer.c:1061
 msgid "No"
 msgstr "否"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:1034
+#: ../src/gcm-viewer.c:1178
 msgid "Delete this profile"
 msgstr "删除此配置"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:1037
+#: ../src/gcm-viewer.c:1181
 msgid "This profile cannot be deleted"
 msgstr "无法删除此配置"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-viewer.c:1608
-#, fuzzy
-#| msgid "Debug these specific modules"
+#: ../src/gcm-viewer.c:1735
 msgid "Set the specific profile to show"
-msgstr "调试这些指定的型号"
+msgstr "设置要显示的特定配置文件"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: ../src/gcm-viewer.c:1611
-#, fuzzy
-#| msgid "Debug these specific functions"
+#: ../src/gcm-viewer.c:1738
 msgid "Set the specific file to show"
-msgstr "调试这些指定的功能"
+msgstr "设置要显示的特定文件"
 
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:2
-msgid "Ambient:"
-msgstr "环境："
+#~ msgid "Generating the patches"
+#~ msgstr "正在生成色块"
 
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:6
-#, fuzzy
-#| msgid "Colorspace:"
-msgid "Color Temperature:"
-msgstr "色彩空间："
-
-#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#: ../data/gcm-picker.ui.h:8
-msgid "Colorspace:"
-msgstr "色彩空间："
-
-#. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:10
-msgid "Error:"
-msgstr "错误："
-
-#. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:12
-msgid "Lab (D50):"
-msgstr "Lab (D50)："
-
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:14
-msgid "Media whitepoint:"
-msgstr "媒体白点："
-
-#. These are the values of the chosen color in Red, Green, Blue encoding
-#: ../data/gcm-picker.ui.h:16
-msgid "RGB:"
-msgstr "RGB："
-
-#. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:18
-msgid "Results"
-msgstr "结果"
-
-#. the color representation
-#: ../data/gcm-picker.ui.h:20
-msgid "XYZ:"
-msgstr "XYZ："
-
-#. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:22
-msgid "_Measure"
-msgstr "测量(_M)"
+#~ msgid ""
+#~ "Generating the patches that will be measured with the color instrument."
+#~ msgstr "正在生成要用色彩仪器进行测量的色块。"
 
 #~ msgid "Applies device profile settings at session startup"
 #~ msgstr "进程开始时应用设备配置文件设定"
@@ -1737,18 +1907,8 @@ msgstr "测量(_M)"
 #~ msgid "Graphs and presentations"
 #~ msgstr "图形和演示"
 
-#, fuzzy
-#~ msgid "Proofing devices"
-#~ msgstr "正在测验设备"
-
 #~ msgid "None"
 #~ msgstr "无"
-
-#~ msgid "CIE 1931 xy"
-#~ msgstr "CIE 1931 xy"
-
-#~ msgid "Video card gamma table"
-#~ msgstr "视频卡伽马表"
 
 #~ msgid "Image preview (from sRGB)"
 #~ msgstr "图像预览(来自 sRGB)"
@@ -1782,9 +1942,6 @@ msgstr "测量(_M)"
 
 #~ msgid "Red:"
 #~ msgstr "红色："
-
-#~ msgid "precision"
-#~ msgstr "精度"
 
 #, fuzzy
 #~ msgid ""
@@ -1913,9 +2070,6 @@ msgstr "测量(_M)"
 #~ msgid "_Set System Default"
 #~ msgstr "设置系统默认(_S)"
 
-#~ msgid "More Information"
-#~ msgstr "更多信息"
-
 #~ msgid "Loading list of devices…"
 #~ msgstr "正在加载设备清单..."
 
@@ -1930,18 +2084,10 @@ msgstr "测量(_M)"
 #~ msgid "Adds a virtual device that is not connected."
 #~ msgstr "添加的是一个未连接的虚拟设备。"
 
-#, fuzzy
-#~ msgid "Create a profile for the device"
-#~ msgstr "为设备创建配置文件(_P)"
-
 #~ msgid ""
 #~ "Delete the disconnected device - if you reconnect the device it will "
 #~ "reappear in the list"
 #~ msgstr "删除断开连接的设备 - 如果您重新连接设备，它将出现在列表中"
-
-#, fuzzy
-#~ msgid "Remove a color profile for this device"
-#~ msgstr "为选择的设备创建配置文件"
 
 #~ msgid "Serial number:"
 #~ msgstr "序列号："
@@ -2124,9 +2270,6 @@ msgstr "测量(_M)"
 #~ msgid "The copyright of the profile"
 #~ msgstr "配置文件的版权"
 
-#~ msgid "The model of the profile"
-#~ msgstr "配置文件的型号"
-
 #~ msgid "The manufacturer of the profile"
 #~ msgstr "配置文件的制造商"
 
@@ -2151,35 +2294,14 @@ msgstr "测量(_M)"
 #~ msgid "Close this dialog"
 #~ msgstr "关闭此对话框"
 
-#~ msgid "Created:"
-#~ msgstr "创建于："
-
 #~ msgid "Delete the currently selected color profile"
 #~ msgstr "删除当前选择的颜色配置文件"
 
 #~ msgid "Device"
 #~ msgstr "设备"
 
-#~ msgid "Device manufacturer:"
-#~ msgstr "设备制造商："
-
-#~ msgid "Device model:"
-#~ msgstr "设备型号："
-
-#~ msgid "Display correction:"
-#~ msgstr "显示修正："
-
-#~ msgid "File size:"
-#~ msgstr "文件大小："
-
-#~ msgid "Filename:"
-#~ msgstr "文件名："
-
 #~ msgid "Import an ICC file from another location"
 #~ msgstr "从其它位置加载一个 ICC 文件"
-
-#~ msgid "License:"
-#~ msgstr "许可证："
 
 #~ msgid "Profile Graphs"
 #~ msgstr "配置图表"
