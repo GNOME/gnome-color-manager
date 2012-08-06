@@ -22,17 +22,8 @@ YELP_HELP_INIT
 GNOME_COMPILE_WARNINGS(error)
 GNOME_DOC_INIT
 
-dnl ---------------------------------------------------------------------------
-dnl - Use strict options (default enabled for devs, disabled in releases)
-dnl ---------------------------------------------------------------------------
-if test -d ".git"; then
-	default_strict=yes
-else
-	default_strict=no
-fi
-
 AC_ARG_ENABLE(strict, AS_HELP_STRING([--enable-strict],[Enable strict compilation options]), enable_strict=$enableval,
-					enable_strict=$default_strict)
+					enable_strict=no)
 if test x$enable_strict != xno; then
 	if test "$GCC" = "yes"; then
 		CPPFLAGS="$CPPFLAGS -Werror"
