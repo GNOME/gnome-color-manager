@@ -138,11 +138,10 @@ gcm_hull_widget_add (GcmHullWidget *hull_widget,
 			       G_CONNECT_AFTER | G_CONNECT_SWAPPED);
 
 	/* set the old rotation */
-	clutter_actor_set_rotation (model,
-				    CLUTTER_Y_AXIS,
-				    hull_widget->priv->existing_rotation,
-				    clutter_actor_get_width (hull_widget->priv->stage) * 0.35f,
-				    0.0, 0.0);
+	clutter_actor_set_pivot_point (model, 0.5, 0.5);
+	clutter_actor_set_rotation_angle (model,
+					  CLUTTER_Y_AXIS,
+					  hull_widget->priv->existing_rotation);
 
 	/* success */
 	clutter_actor_set_opacity (model, 240);
@@ -211,18 +210,15 @@ gcm_hull_widget_motion_notify_cb (GtkWidget *widget,
 	/* get old rotation of primary model */
 	model = g_ptr_array_index (hull_widget->priv->models, 0);
 	hull_widget->priv->existing_rotation =
-		clutter_actor_get_rotation (model,
-					    CLUTTER_Y_AXIS,
-					    NULL, NULL, NULL);
+		clutter_actor_get_rotation_angle (model,
+						  CLUTTER_Y_AXIS);
 
 	/* rotate all the models on the stage */
 	for (i=0; i<hull_widget->priv->models->len; i++) {
 		model = g_ptr_array_index (hull_widget->priv->models, i);
-		clutter_actor_set_rotation (model,
-					    CLUTTER_Y_AXIS,
-					    hull_widget->priv->existing_rotation + angle_x,
-					    clutter_actor_get_width (hull_widget->priv->stage) * 0.35f,
-					    0.0, 0.0);
+		clutter_actor_set_rotation_angle (model,
+						  CLUTTER_Y_AXIS,
+						  hull_widget->priv->existing_rotation + angle_x);
 	}
 out:
 	hull_widget->priv->old_x = motion->x;
