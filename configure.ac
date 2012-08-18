@@ -20,7 +20,6 @@ IT_PROG_INTLTOOL([0.35.0])
 YELP_HELP_INIT
 
 GNOME_COMPILE_WARNINGS(error)
-GNOME_DOC_INIT
 
 AC_ARG_ENABLE(strict, AS_HELP_STRING([--enable-strict],[Enable strict compilation options]), enable_strict=$enableval,
 					enable_strict=no)
