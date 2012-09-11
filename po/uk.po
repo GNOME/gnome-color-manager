@@ -1,14 +1,14 @@
-# Ukrainian translation for gnome-color-manager.
-# Copyright (C) 2010 Free Software Foundation
-# This file is distributed under the same license as the gnome-color-manager package.
-# Maxim V. Dziumanenko <dziumanenko@gmail.com>, 2010.
-# Daniel <ted.korostiled@gmail.com>, 2012.
+# Ukrainian translation for gnome-keyring
+# Copyright (C) 2003 Free Software Foundation, Inc.
+# This file is distributed under the same license as the gnome-keyring package.
+# Maxim Dzumanenko <dziumanenko@gmail.com>, 2004-2008
+# Korostil Daniel <ted.korostiled@gmail.com>, 2011, 2012.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnome-color-manager master\n"
+"Project-Id-Version: gnome-keyring\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2012-09-04 22:08+0300\n"
-"PO-Revision-Date: 2012-09-05 08:33-0700\n"
+"POT-Creation-Date: 2012-09-07 21:59+0300\n"
+"PO-Revision-Date: 2012-09-11 07:08-0700\n"
 "Last-Translator: Daniel <ted.korostiled@gmail.com>\n"
 "Language-Team: translation@linux.org.ua\n"
 "Language: uk\n"
@@ -20,2366 +20,1066 @@ msgstr ""
 "X-Generator: Virtaal 0.7.0\n"
 "X-Project-Style: gnome\n"
 
-#: ../data/gcm-calibrate.desktop.in.h:1
-msgid "Color"
-msgstr "Колір"
-
-#: ../data/gcm-calibrate.desktop.in.h:2
-msgid "Color Calibration"
-msgstr "Калібрування кольорів"
-
-#: ../data/gcm-import.desktop.in.h:1
-msgid "ICC Profile Installer"
-msgstr "Встановлення профілів ICC"
-
-#: ../data/gcm-import.desktop.in.h:2
-msgid "Install ICC profiles"
-msgstr "Встановити профілі ICC"
-
-#. Window title, where the user can pick spot colors using a measuring device
-#: ../data/gcm-picker.desktop.in.h:1 ../data/gcm-picker.ui.h:2
-msgid "Color Picker"
-msgstr "Вибір кольору"
-
-#: ../data/gcm-picker.desktop.in.h:2
-msgid "Use the color sensor to sample spot colors"
-msgstr "Використовувати сенсор кольору для кольорів заливання зразків"
-
-#. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:4
-msgid "_Measure"
-msgstr "_Виміряти"
-
-#. the color representation
-#: ../data/gcm-picker.ui.h:6
-msgid "XYZ:"
-msgstr "XYZ:"
-
-#. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:8
-msgid "Lab (D50):"
-msgstr "Lab (D50):"
-
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:10
-msgid "Media whitepoint:"
-msgstr "Відмітка білого матеріалу:"
-
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:12
-msgid "Color Temperature:"
-msgstr "Кольорова температура:"
-
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:14
-msgid "Ambient:"
-msgstr "Обволікання:"
-
-#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#: ../data/gcm-picker.ui.h:16
-msgid "Colorspace:"
-msgstr "Простір кольорів:"
-
-#. These are the values of the chosen color in Red, Green, Blue encoding
-#: ../data/gcm-picker.ui.h:18
-msgid "RGB:"
-msgstr "RGB:"
-
-#. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:20
-msgid "Error:"
-msgstr "Помилка:"
-
-#. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:22
-msgid "Results"
-msgstr "Результати"
-
-#: ../data/gcm-viewer.desktop.in.h:1 ../data/gcm-viewer.ui.h:1
-msgid "Color Profile Viewer"
-msgstr "Переглядача профілів кольору"
-
-#: ../data/gcm-viewer.desktop.in.h:2
-msgid "Inspect and compare installed color profiles"
-msgstr "Перевірити і порівняти встановлені профілі кольорів"
-
-#: ../data/gcm-viewer.ui.h:2
-msgid "Add a profile for the device"
-msgstr "Додати профіль для пристрою"
-
-#: ../data/gcm-viewer.ui.h:3
-msgid "Remove a profile from the device"
-msgstr "Вилучити профіль з пристрою"
-
-#. The type of profile, e.g. display, scanner, etc.
-#: ../data/gcm-viewer.ui.h:5
-msgid "Profile type"
-msgstr "Типу профілю"
-
-#. The profile colorspace, e.g. RGB
-#: ../data/gcm-viewer.ui.h:7
-msgid "Colorspace"
-msgstr "Простір кольорів"
-
-#. When the profile was created
-#: ../data/gcm-viewer.ui.h:9
-msgid "Created"
-msgstr "Створено"
-
-#. The version of the profile
-#: ../data/gcm-viewer.ui.h:11
-msgid "Version"
-msgstr "Версія"
-
-#. The manufacturer of the profile
-#: ../data/gcm-viewer.ui.h:13
-msgid "Device manufacturer"
-msgstr "Виробник пристрою"
-
-#. The manufacturer of the profile
-#: ../data/gcm-viewer.ui.h:15
-msgid "Device model"
-msgstr "Модель пристрою"
-
-#. If the profile contains a display correction table
-#: ../data/gcm-viewer.ui.h:17
-msgid "Display correction"
-msgstr "Коригування екрана"
-
-#. The basename (the last section of the filename) of the profile
-#: ../data/gcm-viewer.ui.h:19
-msgid "White point"
-msgstr "Відмітка білого"
-
-#. The licence of the profile, normally non-free
-#: ../data/gcm-viewer.ui.h:21
-msgid "License"
-msgstr "Ліцензія"
-
-#. The file size in bytes of the profile
-#: ../data/gcm-viewer.ui.h:23
-msgid "File size"
-msgstr "Розмір файла"
-
-#. The basename (the last section of the filename) of the profile
-#: ../data/gcm-viewer.ui.h:25
-msgid "Filename"
-msgstr "Назва файла"
-
-#: ../data/gcm-viewer.ui.h:26
-msgid "Information"
-msgstr "Докладніше"
-
-#: ../data/gcm-viewer.ui.h:27
-msgid "y"
-msgstr "y"
-
-#: ../data/gcm-viewer.ui.h:28
-msgid "x"
-msgstr "x"
-
-#: ../data/gcm-viewer.ui.h:29
-msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
-msgstr "Діаграма CIE 1931 показує двовимірне представлення гами профілю"
-
-#: ../data/gcm-viewer.ui.h:30
-msgid "CIE 1931"
-msgstr "CIE 1931"
-
-#: ../data/gcm-viewer.ui.h:31
-msgid "This 3D hull is what the profile looks like in Lab space"
-msgstr "Ця просторова оболонка — те, як профіль виглядає у просторі Lab"
-
-#: ../data/gcm-viewer.ui.h:32
-msgid "3D Gamut"
-msgstr "Просторова гама"
-
-#: ../data/gcm-viewer.ui.h:33
-msgid "Response out"
-msgstr "Відповісти з"
-
-#: ../data/gcm-viewer.ui.h:34
-msgid "Response in"
-msgstr "Відповісти в"
-
-#: ../data/gcm-viewer.ui.h:35
-msgid ""
-"A tone reproduction curve is the mapping of scene luminance to display "
-"luminance"
-msgstr ""
-
-#: ../data/gcm-viewer.ui.h:36
-msgid "TRC"
-msgstr ""
-
-#: ../data/gcm-viewer.ui.h:37
-msgid "Video card out"
-msgstr ""
-
-#: ../data/gcm-viewer.ui.h:38
-msgid "A video card gamma table shows the curves loaded into the display"
-msgstr ""
-
-#: ../data/gcm-viewer.ui.h:39
-msgid "VCGT"
-msgstr ""
-
-#: ../data/gcm-viewer.ui.h:40
-msgid "Previous Image"
-msgstr ""
-
-#. This is an example image that is saved in sRGB gamut
-#: ../data/gcm-viewer.ui.h:42
-msgid "sRGB example"
-msgstr ""
-
-#: ../data/gcm-viewer.ui.h:43
-msgid "Next Image"
-msgstr ""
-
-#: ../data/gcm-viewer.ui.h:44
-msgid "This shows what an image would look like if saved with the profile"
-msgstr ""
-
-#: ../data/gcm-viewer.ui.h:45
-msgid "From sRGB"
-msgstr ""
-
-#: ../data/gcm-viewer.ui.h:46
-msgid "This shows what an image would look like if opened with the profile"
-msgstr ""
-
-#: ../data/gcm-viewer.ui.h:47
-msgid "To sRGB"
-msgstr ""
-
-#: ../data/gcm-viewer.ui.h:48
-msgid "Named colors are specific colors that are defined in the profile"
-msgstr ""
-
-#: ../data/gcm-viewer.ui.h:49
-#, fuzzy
-msgid "Named Colors"
-msgstr "Іменований колір"
-
-#: ../data/gcm-viewer.ui.h:50
-msgid ""
-"Metadata is additional information stored in the profile for programs to use."
-msgstr ""
-
-#: ../data/gcm-viewer.ui.h:51
-msgid "Metadata"
-msgstr ""
-
-#: ../src/gcm-calibrate-argyll.c:344
-msgid "Getting default parameters"
-msgstr "Отримання типових параметрів"
-
-#: ../src/gcm-calibrate-argyll.c:349
-msgid ""
-"This pre-calibrates the screen by sending colored and gray patches to your "
-"screen and measuring them with the hardware device."
-msgstr ""
-"Виконується попереднє профілювання монітору шляхом надсилання на цього "
-"кольорових та сірих квадратів з подальшим їх виміром."
-
-#: ../src/gcm-calibrate-argyll.c:438
-msgid "Reading the patches"
-msgstr ""
-
-#: ../src/gcm-calibrate-argyll.c:443
-msgid "Reading the patches using the color measuring instrument."
-msgstr ""
-
-#: ../src/gcm-calibrate-argyll.c:542
-msgid "Drawing the patches"
-msgstr "Виконується креслення полів"
-
-#: ../src/gcm-calibrate-argyll.c:547
-msgid ""
-"Drawing the generated patches to the screen, which will then be measured by "
-"the hardware device."
-msgstr ""
-"Виконується креслення полів на екрані, які потім будуть заміряні пристроєм "
-"виміру."
-
-#: ../src/gcm-calibrate-argyll.c:642 ../src/gcm-calibrate-argyll.c:1003
-msgid "Generating the profile"
-msgstr "Створюється профіль"
-
-#: ../src/gcm-calibrate-argyll.c:647
-msgid "Generating the ICC color profile that can be used with this screen."
-msgstr "Створюється колірний профіль для використання з цим монітором."
-
-#: ../src/gcm-calibrate-argyll.c:817
-msgid "Copying files"
-msgstr "Копіювання файлів"
-
-#: ../src/gcm-calibrate-argyll.c:822
-msgid "Copying source image, chart data and CIE reference values."
-msgstr "Копіюється початкове зображення, дані графіку та зразкові значення CIE"
-
-#: ../src/gcm-calibrate-argyll.c:893
-msgid "Measuring the patches"
-msgstr "Вимірюються поля"
-
-#: ../src/gcm-calibrate-argyll.c:898
-msgid "Detecting the reference patches and measuring them."
-msgstr "Виконується визначення та зміна полів мішені"
-
-#: ../src/gcm-calibrate-argyll.c:1008
-msgid "Generating the ICC color profile that can be used with this device."
-msgstr "Створюється колірний профіль для використання з цим пристроєм"
-
-#: ../src/gcm-calibrate-argyll.c:1373
-#, fuzzy
-msgid "Printing patches"
-msgstr "Виконується креслення полів"
-
-#: ../src/gcm-calibrate-argyll.c:1378
-msgid "Rendering the patches for the selected paper and ink."
-msgstr ""
-
-#: ../src/gcm-calibrate-argyll.c:1752
-msgid "Wait for the ink to dry"
-msgstr "Зачекайте, доки висохне фарба"
-
-#: ../src/gcm-calibrate-argyll.c:1757
-msgid ""
-"Please wait a few minutes for the ink to dry. Profiling damp ink will "
-"produce a poor profile and may damage your color measuring instrument."
-msgstr ""
-"Зачекайте кілька хвилин, доки висохне фарба. Спроба створити профіль з "
-"вологою фарбою призведе до неякісного профілю, а колориметр може бути "
-"пошкоджений."
-
-#: ../src/gcm-calibrate-argyll.c:1934
-msgid "Set up instrument"
-msgstr "Налаштовувати пристрій"
-
-#: ../src/gcm-calibrate-argyll.c:1939
-msgid "Setting up the instrument for use…"
-msgstr "Налаштовується вимірювальний пристрій…"
-
-#: ../src/gcm-calibrate-argyll.c:2151 ../src/gcm-calibrate-argyll.c:2217
-msgid "Calibration error"
-msgstr "Помилка при калибруванні"
-
-#: ../src/gcm-calibrate-argyll.c:2156
-msgid "The sample could not be read at this time."
-msgstr "Наразі неможливо прочитати зразок."
-
-#: ../src/gcm-calibrate-argyll.c:2163 ../src/gcm-calibrate-argyll.c:2288
-#: ../src/gcm-calibrate-argyll.c:2314 ../src/gcm-calibrate-argyll.c:2351
-#: ../src/gcm-calibrate-argyll.c:2378
-msgid "Retry"
-msgstr "Повторити"
-
-#. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2169 ../src/gcm-calibrate-argyll.c:2257
-#: ../src/gcm-calibrate-argyll.c:2294 ../src/gcm-calibrate-argyll.c:2320
-#: ../src/gcm-calibrate.c:553 ../src/gcm-calibrate.c:592
-#: ../src/gcm-calibrate.c:632 ../src/gcm-calibrate-main.c:202
-msgid "GNOME Color Manager"
-msgstr "Керування кольором у GNOME"
-
-#: ../src/gcm-calibrate-argyll.c:2223
-msgid "No firmware is installed for this instrument."
-msgstr "Програмне забезпечення для цього пристрою не встановлено."
-
-#: ../src/gcm-calibrate-argyll.c:2228
-msgid ""
-"The pattern match wasn't good enough. Ensure you have the correct type of "
-"target selected."
-msgstr ""
-"Зразки не досить добре збігаються. Перевірте, що обрали правильний тип цілі."
-
-#: ../src/gcm-calibrate-argyll.c:2234
-msgid ""
-"The measuring instrument got no valid readings. Please ensure the aperture "
-"is fully open."
-msgstr ""
-"Інструмент виміру не прочитав коректних даних. Перевірте, що діафрагму "
-"повністю відкрито."
-
-#: ../src/gcm-calibrate-argyll.c:2239
-msgid ""
-"The measuring instrument is busy and is not starting up. Please remove the "
-"USB plug and re-insert before trying to use this device."
-msgstr ""
-"Інструмент виміру зайнятий та не запускається. Витягніть його USB роз'єм та "
-"вставте знову перед повторною спробою використати цей пристрій."
-
-#: ../src/gcm-calibrate-argyll.c:2277
-msgid "Reading target"
-msgstr "Читання цілі"
-
-#: ../src/gcm-calibrate-argyll.c:2282
-msgid "Failed to read the strip correctly."
-msgstr "Помилка при читанні смуги."
-
-#: ../src/gcm-calibrate-argyll.c:2303
-#, fuzzy
-msgid "Reading sample"
-msgstr "Читання цілі"
-
-#: ../src/gcm-calibrate-argyll.c:2308
-#, fuzzy
-msgid "Failed to read the color sample correctly."
-msgstr "Помилка при читанні смуги."
-
-#. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2333
+#: ../egg/egg-oid.c:41
+msgid "Domain Component"
+msgstr "Область назв"
+
+#: ../egg/egg-oid.c:43 ../gcr/gcr-gnupg-renderer.c:409
+#: ../gcr/gcr-gnupg-renderer.c:578
+msgid "User ID"
+msgstr "Ідентифікатор користувача"
+
+#: ../egg/egg-oid.c:46
+msgid "Email Address"
+msgstr "Електронна адреса"
+
+#: ../egg/egg-oid.c:54
+msgid "Date of Birth"
+msgstr "Дата народження"
+
+#: ../egg/egg-oid.c:56
+msgid "Place of Birth"
+msgstr "Місце народження"
+
+#: ../egg/egg-oid.c:58
+msgid "Gender"
+msgstr "Стать"
+
+#: ../egg/egg-oid.c:60
+msgid "Country of Citizenship"
+msgstr "Громадянство"
+
+#: ../egg/egg-oid.c:62
+msgid "Country of Residence"
+msgstr "Країна проживання"
+
+#: ../egg/egg-oid.c:65
+msgid "Common Name"
+msgstr "Звичайне ім'я"
+
+#: ../egg/egg-oid.c:67
+msgid "Surname"
+msgstr "Прізвище"
+
+#: ../egg/egg-oid.c:69 ../gcr/gcr-certificate-renderer.c:557
+msgid "Serial Number"
+msgstr "Серійний номер"
+
+#: ../egg/egg-oid.c:71
+msgid "Country"
+msgstr "Країна"
+
+#: ../egg/egg-oid.c:73
+msgid "Locality"
+msgstr "Місцевість"
+
+#: ../egg/egg-oid.c:75
+msgid "State"
+msgstr "Область"
+
+#: ../egg/egg-oid.c:77
+msgid "Street"
+msgstr "Вулиця"
+
+#: ../egg/egg-oid.c:79
+msgid "Organization"
+msgstr "Організація"
+
+#: ../egg/egg-oid.c:81
+msgid "Organizational Unit"
+msgstr "Підрозділ"
+
+#: ../egg/egg-oid.c:83
+msgid "Title"
+msgstr "Назва"
+
+#: ../egg/egg-oid.c:85
+msgid "Telephone Number"
+msgstr "Номер телефону"
+
+#: ../egg/egg-oid.c:87
+msgid "Given Name"
+msgstr "Ім'я"
+
+#: ../egg/egg-oid.c:89
+msgid "Initials"
+msgstr "Ініціали"
+
+#: ../egg/egg-oid.c:91
+msgid "Generation Qualifier"
+msgstr "Позначка покоління"
+
+#: ../egg/egg-oid.c:93
+msgid "DN Qualifier"
+msgstr "Позначка розрізнюваного мені"
+
+#: ../egg/egg-oid.c:95
+msgid "Pseudonym"
+msgstr "Псевдонім"
+
+#: ../egg/egg-oid.c:98 ../gcr/gcr-gnupg-renderer.c:200
+#: ../gcr/gcr-key-renderer.c:429
+msgid "RSA"
+msgstr "RSA"
+
+#: ../egg/egg-oid.c:99
+msgid "MD2 with RSA"
+msgstr "MD2 з ключем RSA"
+
+#: ../egg/egg-oid.c:100
+msgid "MD5 with RSA"
+msgstr "MD5 з ключем RSA"
+
+#: ../egg/egg-oid.c:101
+msgid "SHA1 with RSA"
+msgstr "SHA1 з ключем RSA"
+
+#: ../egg/egg-oid.c:103 ../gcr/gcr-gnupg-renderer.c:204
+#: ../gcr/gcr-key-renderer.c:431
+msgid "DSA"
+msgstr "DSA"
+
+#: ../egg/egg-oid.c:104
+msgid "SHA1 with DSA"
+msgstr "SHA1 з ключем DSA"
+
+#. Extended Key Usages
+#: ../egg/egg-oid.c:107
+msgid "Server Authentication"
+msgstr "Автентифікація сервера"
+
+#: ../egg/egg-oid.c:108
+msgid "Client Authentication"
+msgstr "Автентифікація клієнта"
+
+#: ../egg/egg-oid.c:109
+msgid "Code Signing"
+msgstr "Підписування коду"
+
+#: ../egg/egg-oid.c:110
+msgid "Email Protection"
+msgstr "Захист пошти"
+
+#: ../egg/egg-oid.c:111
+msgid "Time Stamping"
+msgstr "Часове штампування"
+
+#: ../gck/gck-module.c:352
 #, c-format
-msgid "Read strip %s rather than %s!"
-msgstr "Читати смугу %s а не %s!"
+msgid "Error loading PKCS#11 module: %s"
+msgstr "Помилка завантаження модуля PKCS#11: %s"
 
-#. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2338
-msgid "It looks like you've measured the wrong strip."
-msgstr "Схоже, ви виміряли не ту смугу."
-
-#. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2342
-msgid ""
-"If you've really measured the right one, it's okay, it could just be unusual "
-"paper."
-msgstr ""
-
-#: ../src/gcm-calibrate-argyll.c:2367
-#, fuzzy
-msgid "Device Error"
-msgstr "Пристрій видалено"
-
-#: ../src/gcm-calibrate-argyll.c:2372
-msgid "The device could not measure the color spot correctly."
-msgstr ""
-
-#. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2386
+#: ../gck/gck-module.c:359
 #, c-format
-msgid "Ready to read strip %s"
-msgstr "Готов прочитати смугу %s"
+msgid "Invalid PKCS#11 module: %s"
+msgstr "Неправильний модуль PKCS#11: %s"
 
-#. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2391
-msgid ""
-"Place the colorimeter on the area of white next to the letter and click and "
-"hold the measure switch."
-msgstr ""
-"Помістіть колориметр у білу область за символом та натисніть і утримуйте "
-"кнопку вимірювання."
-
-#. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2395
-msgid ""
-"Slowly scan the target line from left to right and release the switch when "
-"you get to the end of the page."
-msgstr ""
-
-#. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2399
-msgid ""
-"Ensure the center of the device is properly aligned with the row you are "
-"trying to measure."
-msgstr ""
-"Перевірте, що центр пристрою правильно вирівняний за рядком, який ви "
-"намагаєтесь виміряти."
-
-#. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2403
-#, fuzzy
-msgid ""
-"If you make a mistake, just release the switch, and you'll get a chance to "
-"try again."
-msgstr ""
-"Якщо ви зробили помилку, просто відпустіть кнопку і у вас буде можливість "
-"спробувати знову."
-
-#: ../src/gcm-calibrate-argyll.c:2517
-msgid "Printing"
-msgstr "Друк"
-
-#: ../src/gcm-calibrate-argyll.c:2526
-msgid "Preparing the data for the printer."
-msgstr "Підготовка даних для принтера"
-
-#: ../src/gcm-calibrate-argyll.c:2534
-msgid "Sending the targets to the printer."
-msgstr "Мішені надсилаються на принтер..."
-
-#: ../src/gcm-calibrate-argyll.c:2540
-msgid "Printing the targets..."
-msgstr "Виконується друк мішеней..."
-
-#: ../src/gcm-calibrate-argyll.c:2546
-msgid "The printing has finished."
-msgstr "Друг завершено."
-
-#: ../src/gcm-calibrate-argyll.c:2552
-msgid "The print was aborted."
-msgstr "Друк скасовано."
-
-#. TRANSLATORS: title, the hardware calibration device does not support projectors
-#: ../src/gcm-calibrate.c:305
-msgid "Could not calibrate and profile using this color measuring instrument"
-msgstr "Не вдається виконати калібрування та профілювання"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:308
-msgid ""
-"This color measuring instrument is not designed to support calibration and "
-"profiling projectors."
-msgstr ""
-"Цей вимірювальний пристрій не створено для калібрування та профілювання "
-"проекторів."
-
-#: ../src/gcm-calibrate.c:522
-msgid "Please attach instrument"
-msgstr "Приєднайте пристрій"
-
-#. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate.c:530
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square like the image below."
-msgstr ""
-"Розташуйте вимірювальний пристрій у центрі екрану на сірому квадраті, як "
-"показано нижче."
-
-#. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate.c:533
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square."
-msgstr "Розташуйте вимірювальний пристрій у центрі екрану на сірому квадраті."
-
-#. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate.c:540
-msgid ""
-"You will need to hold the device on the screen for the duration of the "
-"calibration."
-msgstr ""
-
-#: ../src/gcm-calibrate.c:547 ../src/gcm-calibrate.c:575
-#: ../src/gcm-calibrate.c:615
-msgid "Continue"
-msgstr "Продовжити"
-
-#: ../src/gcm-calibrate.c:569 ../src/gcm-calibrate.c:606
-msgid "Please configure instrument"
-msgstr "Налаштуйте пристрій виміру"
-
-#: ../src/gcm-calibrate.c:579
-#, fuzzy
-msgid ""
-"Please set the measuring instrument to screen mode like the image below."
-msgstr ""
-"Переведіть інструмент виміру у режим калібрування, як показано на екрані."
-
-#: ../src/gcm-calibrate.c:584
-#, fuzzy
-msgid "Please set the measuring instrument to screen mode."
-msgstr "Переведіть інструмент виміру у режим калібрування."
-
-#: ../src/gcm-calibrate.c:619
-msgid ""
-"Please set the measuring instrument to calibration mode like the image below."
-msgstr ""
-"Переведіть інструмент виміру у режим калібрування, як показано на екрані."
-
-#: ../src/gcm-calibrate.c:624
-msgid "Please set the measuring instrument to calibration mode."
-msgstr "Переведіть інструмент виміру у режим калібрування."
-
-#. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
-#. * aquired image of the calibration target, e.g. an image file that looks
-#. * a bit like this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:1687
-#, fuzzy
-msgid "Select calibration target image"
-msgstr "Потрібна рекалібрація"
-
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:1700
-msgid "Supported images files"
-msgstr "Підтримувані файли зображень"
-
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:1707 ../src/gcm-calibrate.c:1761
-#: ../src/gcm-viewer.c:456
-msgid "All files"
-msgstr "Усі файли"
-
-#. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:1732
-msgid "Select CIE reference values file"
-msgstr "Виберіть файл із зразкові значеннями CIE"
-
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:1754
-msgid "CIE values"
-msgstr "Значення CIE"
-
-#. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:1827 ../src/gcm-viewer.c:428
-msgid "Select ICC Profile File"
-msgstr "Виберіть колірний профіль"
-
-#: ../src/gcm-calibrate.c:1830
-msgid "Open"
-msgstr "Відкрити"
-
-#: ../src/gcm-calibrate-main.c:146
-#, fuzzy
-msgid "Calibration is not complete"
-msgstr "Калібрування неможливе: немає приєднаних пристроїв"
-
-#: ../src/gcm-calibrate-main.c:149
-msgid "Are you sure you want to cancel the calibration?"
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:152
-#, fuzzy
-msgid "Continue calibration"
-msgstr "Калібрування пристрою"
-
-#: ../src/gcm-calibrate-main.c:156
-msgid "Cancel and close"
-msgstr ""
-
-#. TRANSLATORS: this is the sound description
-#: ../src/gcm-calibrate-main.c:204
-msgid "Profiling completed"
-msgstr "Профілювання завершено"
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:449 ../src/gcm-calibrate-main.c:1872
-#, fuzzy
-msgid "Failed to calibrate"
-msgstr "Не вдається відкалібрувати пристрій"
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:708
-#, fuzzy
-msgid "Calibrate your camera"
-msgstr "Помилка при калибруванні"
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:712
-#, fuzzy
-msgid "Calibrate your display"
-msgstr "Налаштувати відображення"
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:716
-#, fuzzy
-msgid "Calibrate your printer"
-msgstr "Не вдається відкалібрувати принтер"
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:720
-#, fuzzy
-msgid "Calibrate your device"
-msgstr "Не вдається відкалібрувати пристрій"
-
-#. TRANSLATORS: this is the final intro page text
-#: ../src/gcm-calibrate-main.c:732
-msgid ""
-"Any existing screen correction will be temporarily turned off and the "
-"brightness set to maximum."
-msgstr ""
-
-#. TRANSLATORS: this is the final intro page text
-#: ../src/gcm-calibrate-main.c:739
-msgid "You can cancel this process at any stage by pressing the cancel button."
-msgstr ""
-
-#. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:745
-msgid "Introduction"
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:828
-msgid "Show File"
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:831
-#, fuzzy
-msgid "Click here to show the profile"
-msgstr "Модель, вказана у профілі"
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:854
-msgid "All done!"
-msgstr ""
-
-#. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:864
-msgid "The camera has been calibrated successfully."
-msgstr ""
-
-#. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:868
-#, fuzzy
-msgid "The display has been calibrated successfully."
-msgstr "Незабаром потрібно відкалібрувати монітор '%s'."
-
-#. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:872
-#, fuzzy
-msgid "The printer has been calibrated successfully."
-msgstr "Незабаром потрібно відкалібрувати принтер '%s'."
-
-#. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:876
-#, fuzzy
-msgid "The device has been calibrated successfully."
-msgstr "Ідентифікатор пристрою містить некоректний символ"
-
-#. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:883
-msgid ""
-"To view details about the new profile or to undo the calibration visit the "
-"<a href=\"control-center://color\">control center</a>."
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:892
-msgid ""
-"You can use the profile with <a href=\"import-linux\">Linux</a>, <a href="
-"\"import-osx\">Apple OS X</a> and <a href=\"import-windows\">Microsoft "
-"Windows</a> systems."
-msgstr ""
-
-#. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:904 ../src/gcm-calibrate-main.c:1885
-msgid "Summary"
-msgstr "Зведення"
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:928
-#, fuzzy
-msgid "Performing calibration"
-msgstr "Калібрування пристрою"
-
-#: ../src/gcm-calibrate-main.c:941
-#, fuzzy
-msgid "Calibration is about to start"
-msgstr "Помилка при калибруванні"
-
-#. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:959
-msgid "Action"
-msgstr ""
-
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:982
-#, fuzzy
-msgid "Calibration checklist"
-msgstr "Помилка при калибруванні"
-
-#. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:989
-msgid ""
-"Before calibrating the display, it is recommended to configure your display "
-"with the following settings to get optimal results."
-msgstr ""
-"Перед створенням профілю рекомендується калібрувати монітор, тобто привести "
-"його у певний типовий стан."
-
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:992
-msgid ""
-"You may want to consult the owner's manual for your display on how to "
-"achieve these settings."
-msgstr ""
-"Ймовірно, потрібно прочитати посібник користувача до монітора, щоб "
-"дізнатись, як саме налаштувати монітор. В цілому, потрібно зробити наступне:"
-
-#. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:995
-msgid "Reset your display to the factory defaults."
-msgstr "Скинути параметри роботи монітору до початкових заводських"
-
-#. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:998
-msgid "Disable dynamic contrast if your display has this feature."
-msgstr "Вимкнути динамічний контраст, якщо монітор підтримує цю функцію"
-
-#. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:1001
-msgid ""
-"Configure your display with custom color settings and ensure the RGB "
-"channels are set to the same values."
-msgstr ""
-"Вручну змінити параметри кольору, встановивши одинакові значення каналів RGB."
-
-#. TRANSLATORS: dialog message, addition to bullet item
-#: ../src/gcm-calibrate-main.c:1004
-msgid "If custom color is not available then use a 6500K color temperature."
-msgstr "Якщо можливо, слід встановити кольорову температуру 6500К."
-
-#. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:1007
-msgid ""
-"Adjust the display brightness to a comfortable level for prolonged viewing."
-msgstr ""
-"Скоригувати яскравість монітору до рівня, комфортного для тривалої роботи."
-
-#. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate-main.c:1012
-msgid ""
-"For best results, the display should have been powered for at least 15 "
-"minutes before starting the calibration."
-msgstr ""
-"Для отримання якісного результату потрібно, щоб монітор був увімкнений не "
-"менше ніж 15 хвилин."
-
-#. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1018
-msgid "Check Settings"
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:1069
-#, fuzzy
-msgid "Calibration and profiling software is not installed."
-msgstr "Програмне забезпечення для створення профілів не встановлено."
-
-#: ../src/gcm-calibrate-main.c:1072
-msgid "These tools are required to build color profiles for devices."
-msgstr ""
-"Для створення колірного профілю до такого пристрою потрібен файл описану "
-"мішені."
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1075
-msgid "More software is required!"
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:1084
-msgid "Install required software"
-msgstr ""
-
-#. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1094
-#, fuzzy
-msgid "Install Tools"
-msgstr "Встановити"
-
-#. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate-main.c:1144
-msgid "Common color target files are not installed on this computer."
-msgstr "Файли описів типових калібровочних мішеней не встановлені."
-
-#. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate-main.c:1146
-msgid "Color target files are needed to convert the image to a color profile."
-msgstr ""
-"Потрібні файл описів мішеней для створення колірного профілю із знімка/скан-"
-"копії мішені."
-
-#. TRANSLATORS: dialog message, asking if it's okay to install them
-#: ../src/gcm-calibrate-main.c:1148
-msgid "Do you want them to be installed?"
-msgstr "Встановити їх?"
-
-#. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
-#: ../src/gcm-calibrate-main.c:1150
-msgid "If you already have the correct file, you can skip this step."
-msgstr "Якщо у вас вже є потрібний файл, цей крок можна пропустити."
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1153
-msgid "Optional data files available"
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:1162
-#, fuzzy
-msgid "Install Now"
-msgstr "Встановити"
-
-#. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1173
-#, fuzzy
-msgid "Install Targets"
-msgstr "Встановити"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1193
-msgid "CMP Digital Target 3"
-msgstr "CMP Digital Target 3"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1197
-msgid "CMP DT 003"
-msgstr "CMP DT 003"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1201
-msgid "Color Checker"
-msgstr "Color Checker"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1205
-msgid "Color Checker DC"
-msgstr "Color Checker DC"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1209
-msgid "Color Checker SG"
-msgstr "Color Checker SG"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1213
-msgid "Hutchcolor"
-msgstr "Hutchcolor"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1217
-msgid "i1 RGB Scan 1.4"
-msgstr "i1 RGB Scan 1.4"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1221
-msgid "IT8.7/2"
-msgstr "IT8.7/2"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1225
-msgid "Laser Soft DC Pro"
-msgstr "Laser Soft DC Pro"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1229
-msgid "QPcard 201"
-msgstr "QPcard 201"
-
-#. TRANSLATORS: dialog message, preface. A calibration target looks like
-#. * this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate-main.c:1307
-#, fuzzy
-msgid ""
-"Before profiling the device, you have to manually capture an image of a "
-"calibration target and save it as a TIFF image file."
-msgstr ""
-"Перед профілюванням пристрою потрібно самостійно отримати зображення мішені "
-"та зберегти його у форматі TIFF."
-
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1312
-#, fuzzy
-msgid ""
-"Ensure that the contrast and brightness are not changed and color correction "
-"profiles have not been applied."
-msgstr ""
-"Перевірте, що контраст та яскравість не змінені, а колірні профілі не "
-"застосовані."
-
-#. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate-main.c:1315
-msgid ""
-"The device sensor should have been cleaned prior to scanning and the output "
-"file resolution should be at least 200dpi."
-msgstr ""
-"Перед скануванням треба очистити сенсор пристрою, а роздільна здатність "
-"кінцевого файлу має бути не менша ніж 200dpi."
-
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1321
-msgid ""
-"Ensure that the white-balance has not been modified by the camera and that "
-"the lens is clean."
-msgstr ""
-"Перевірте, що баланс білого не було змінено камерою і що лінза є чистою."
-
-#. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1325
-#, fuzzy
-msgid "Please select the calibration target type."
-msgstr "Виберіть тип мішені"
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1328
-msgid "What target type do you have?"
-msgstr ""
-
-#. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1360
-msgid "Select Target"
-msgstr ""
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1399
-msgid "Choose your display type"
-msgstr ""
-
-#. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1406
-msgid "Select the monitor type that is attached to your computer."
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:1408
-msgid "LCD"
-msgstr "LCD"
-
-#: ../src/gcm-calibrate-main.c:1417
-msgid "CRT"
-msgstr "Електронна трубка"
-
-#: ../src/gcm-calibrate-main.c:1426
-msgid "Plasma"
-msgstr "Плазма"
-
-#: ../src/gcm-calibrate-main.c:1435
-msgid "Projector"
-msgstr "Проектор"
-
-#. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1447
-msgid "Choose Display Type"
-msgstr "Вибрати тип екрана"
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1485
-msgid "Choose your display target white point"
-msgstr "Вибрати "
-
-#. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1492
-msgid ""
-"Most displays should be calibrated to a CIE D65 illuminant for general usage."
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:1494
-msgid "CIE D50 (Printing and publishing)"
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:1503
-msgid "CIE D55"
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:1512
-msgid "CIE D65 (Photography and graphics)"
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:1522
-msgid "CIE D75"
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:1531
-msgid "Native (Already set manually)"
-msgstr ""
-
-#. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1543
-msgid "Choose Display Whitepoint"
-msgstr ""
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1581
-#, fuzzy
-msgid "Choose profiling mode"
-msgstr "Виберіть режим профілювання"
-
-#. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1588
-#, fuzzy
-msgid ""
-"Please indicate if you want to profile a local printer, generate some test "
-"patches, or profile using existing test patches."
-msgstr ""
-"Вкажіть, ви хочете профілювати локальний принтер, створити зразкові "
-"зображення чи обробити зразкові зображення."
-
-#. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1625
-#, fuzzy
-msgid "Calibration Mode"
-msgstr "Помилка при калибруванні"
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1667
-#, fuzzy
-msgid "Choose calibration quality"
-msgstr "Потрібна рекалібрація"
-
-#. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1674
-msgid "Higher quality calibration requires many color samples and more time."
-msgstr ""
-
-#. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1678
-#, fuzzy
-msgid ""
-"A higher precision profile provides higher accuracy in color matching but "
-"requires more time for reading the color patches."
-msgstr "На створення високоточних профілів також витрачається більше часу."
-
-#. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1681
-msgid "For a typical workflow, a normal precision profile is sufficient."
-msgstr ""
-"Для типового робочого процесу звичайної точності профілю цілком достатньо."
-
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1686
-#, fuzzy
-msgid "The high precision profile also requires more paper and printer ink."
-msgstr ""
-"Для створення високоточних профілів також потрібно більше паперу, і на їх "
-"створення витрачається більше часу."
-
-#. TRANSLATORS: radio options for calibration precision
-#: ../src/gcm-calibrate-main.c:1691
-msgid "Accurate"
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:1692
-msgid "Normal"
-msgstr "Звичайна"
-
-#: ../src/gcm-calibrate-main.c:1693
-msgid "Quick"
-msgstr ""
-
-#: ../src/gcm-calibrate-main.c:1700
+#: ../gck/gck-module.c:368
 #, c-format
-msgid "(about %i sheet of paper)"
-msgid_plural "(about %i sheets of paper)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgid "Couldn't setup PKCS#11 module: %s"
+msgstr "Неможливо налаштувати PKCS#11: %s"
 
-#: ../src/gcm-calibrate-main.c:1711
+#: ../gck/gck-module.c:384
 #, c-format
-msgid "(about %i minute)"
-msgid_plural "(about %i minutes)"
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgid "Couldn't initialize PKCS#11 module: %s"
+msgstr "Неможливо запустити модуль PKCS#11: %s"
 
-#. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1751
-#, fuzzy
-msgid "Calibration Quality"
-msgstr "Помилка при калибруванні"
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1787
-#, fuzzy
-msgid "Profile title"
-msgstr "Типу профілю:"
-
-#. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1794
-msgid "Choose a title to identify the profile on your system."
-msgstr ""
-
-#. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1815
-#, fuzzy
-msgid "Profile Title"
-msgstr "Типу профілю:"
-
-#. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1837
-msgid "Insert sensor hardware"
-msgstr ""
-
-#. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1844
-msgid "You need to insert sensor hardware to continue."
-msgstr ""
-
-#. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1850
-#, fuzzy
-msgid "Sensor Check"
-msgstr "Color Checker"
-
-#. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1879
-msgid "The device could not be found. Ensure it is plugged in and turned on."
-msgstr ""
-
-#. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2136
-#, fuzzy
-msgid "Unknown serial"
-msgstr "Невідома модель"
-
-#. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2141
-msgid "Unknown model"
-msgstr "Невідома модель"
-
-#. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2146
-msgid "Unknown description"
-msgstr "Невідомий опис"
-
-#. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2151
-msgid "Unknown manufacturer"
-msgstr "Невідомий виробник"
-
-#. TRANSLATORS: this is the copyright string, where it might be
-#. * "Copyright (c) 2009 Edward Scissorhands"
-#. * BIG RED FLASHING NOTE: YOU NEED TO USE ASCII ONLY
-#: ../src/gcm-calibrate-main.c:2158
-msgid "Copyright (c)"
-msgstr "Авторські права ©"
-
-#. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2276 ../src/gcm-picker.c:795
-#: ../src/gcm-viewer.c:1732
-msgid "Set the parent window to make this modal"
-msgstr "Зробити це вікно модальним"
-
-#. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-calibrate-main.c:2279
-#, fuzzy
-msgid "Set the specific device to calibrate"
-msgstr "Отримати профілі для певного типу пристроїв"
-
-#: ../src/gcm-calibrate-main.c:2320
-#, fuzzy
-msgid "No device was specified!"
-msgstr "Не вказано назву файлу"
-
-#. TRANSLATORS: this is when there is no profile for the device
-#: ../src/gcm-cell-renderer-profile-text.c:71
-#, fuzzy
-msgid "No profile"
-msgstr "Колірний профіль"
-
-#: ../src/gcm-cell-renderer-profile-text.c:88
-#, fuzzy, c-format
-msgid "Default %s"
-msgstr "Типово"
-
-#. TRANSLATORS: this is a profile prefix to signify the
-#. * profile has been auto-generated for this hardware
-#: ../src/gcm-cell-renderer-profile-text.c:103
-#, fuzzy
-msgid "Default: "
-msgstr "Типово"
-
-#. TRANSLATORS: this is a profile prefix to signify the
-#. * profile his a standard space like AdobeRGB
-#: ../src/gcm-cell-renderer-profile-text.c:109
-#, fuzzy
-msgid "Colorspace: "
-msgstr "Простір кольорів:"
-
-#. TRANSLATORS: this is a profile prefix to signify the
-#. * profile is a test profile
-#: ../src/gcm-cell-renderer-profile-text.c:114
-#, fuzzy
-msgid "Test profile: "
-msgstr "Вида_лити профіль"
-
-#. TRANSLATORS: turn on all debugging
-#: ../src/gcm-debug.c:105
-msgid "Show debugging information for all files"
-msgstr "Показати налагоджувальну інформацію для всіх файлів"
-
-#: ../src/gcm-debug.c:162
-msgid "Debugging Options"
-msgstr "Параметри налагодження"
-
-#: ../src/gcm-debug.c:162
-msgid "Show debugging options"
-msgstr "Показати параметри налагодження"
-
-#. TRANSLATORS: command line option: a list of catalogs to install
-#: ../src/gcm-import.c:96
-msgid "ICC profile to install"
-msgstr "Профіль ICC для встановлення"
-
-#: ../src/gcm-import.c:122
-msgid "No filename specified"
-msgstr "Не вказано назву файлу"
-
-#: ../src/gcm-import.c:140 ../src/gcm-viewer.c:1373
-msgid "Failed to open ICC profile"
-msgstr "Не вдається відкрити профіль ICC"
-
-#: ../src/gcm-import.c:145
+#: ../gck/gck-modules.c:67
 #, c-format
-msgid "Failed to parse file: %s"
-msgstr "Не вдається розібрати файл: %s"
+msgid "Couldn't initialize registered PKCS#11 modules: %s"
+msgstr "Неможливо запустити зареєстровані модулі PKCS#11: %s"
 
-#. TRANSLATORS: message text
-#: ../src/gcm-import.c:166
-#, fuzzy, c-format
-msgid "Profile description: %s"
-msgstr "Опис:"
-
-#. TRANSLATORS: message text
-#: ../src/gcm-import.c:176
-#, fuzzy
-msgid "Profile copyright:"
-msgstr "Типу профілю:"
-
-#: ../src/gcm-import.c:188
-#, fuzzy
-msgid "Color profile is already imported"
-msgstr "Колірний профіль вже встановлено"
-
-#: ../src/gcm-import.c:218
-#, fuzzy
-msgid "ICC profile already installed system-wide"
-msgstr "Колірний профіль вже встановлено"
-
-#. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:234
-#, fuzzy
-msgid "Import display color profile?"
-msgstr "Імпортувати профіль ICC?"
-
-#. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:238
-#, fuzzy
-msgid "Import device color profile?"
-msgstr "Імпортувати профіль ICC?"
-
-#. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:242
-#, fuzzy
-msgid "Import named color profile?"
-msgstr "Імпортувати профіль ICC?"
-
-#. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:246
-#, fuzzy
-msgid "Import color profile?"
-msgstr "Імпортувати профіль ICC?"
-
-#. TRANSLATORS: button text
-#: ../src/gcm-import.c:261 ../src/gcm-viewer.c:431
-msgid "Import"
-msgstr "Імпортувати"
-
-#: ../src/gcm-import.c:262
-#, fuzzy
-msgid "Show Details"
-msgstr "Подробиці"
-
-#: ../src/gcm-import.c:286 ../src/gcm-viewer.c:1406
-#, fuzzy
-msgid "Failed to import file"
-msgstr "Помилка при копіюванні файлу"
-
-#. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
-#: ../src/gcm-inspect.c:55
-msgid "Description:"
-msgstr "Опис:"
-
-#. TRANSLATORS: this is the ICC profile copyright
-#: ../src/gcm-inspect.c:58
-msgid "Copyright:"
-msgstr "Авторські права:"
-
-#. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:193
-msgid "Root window profile:"
-msgstr "Профіль головного вікна:"
-
-#. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:205
-msgid "Root window protocol version:"
-msgstr "Версія протоколу головного вікна:"
-
-#. TRANSLATORS: no DBus session bus
-#: ../src/gcm-inspect.c:230 ../src/gcm-inspect.c:299 ../src/gcm-utils.c:117
-#, fuzzy
-msgid "Failed to connect to session bus:"
-msgstr "Не вдається отримати тип даних"
-
-#. TRANSLATORS: the DBus method failed
-#: ../src/gcm-inspect.c:248 ../src/gcm-inspect.c:317 ../src/gcm-utils.c:141
-#, fuzzy
-msgid "The request failed:"
-msgstr "Не вдається виконати запит"
-
-#. TRANSLATORS: no profile has been asigned to this device
-#: ../src/gcm-inspect.c:257
-#, fuzzy
-msgid "There are no ICC profiles assigned to this file"
-msgstr "Для цього пристрою немає колірних профілів"
-
-#. TRANSLATORS: this is a list of profiles suitable for the device
-#: ../src/gcm-inspect.c:262 ../src/gcm-inspect.c:334
-msgid "Suitable profiles for:"
-msgstr "Придатні профілі для:"
-
-#. TRANSLATORS: no profile has been asigned to this window
-#: ../src/gcm-inspect.c:329
-msgid "There are no ICC profiles for this window"
-msgstr "Для цього вікна немає колірних профілів"
-
-#. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:365
-#, fuzzy
-msgid "Show xserver properties"
-msgstr "Показати властивості X11"
-
-#. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:368
-#, fuzzy
-msgid "Get the profiles for a specific file"
-msgstr "Отримати профілі для певного пристрою"
-
-#. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:371
-msgid "Get the profile for a specific window"
-msgstr "Отримати профілі для певного вікна"
-
-#. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:374
-msgid "Dump all details about this system"
-msgstr "Скинути всі подробиці про цю систему"
-
-#. TRANSLATORS: just dumps the EDID to disk
-#: ../src/gcm-inspect.c:387
-msgid "EDID inspect program"
-msgstr "Інспектор EDID"
-
-#. TRANSLATORS: this is when the error is invalid
-#. TRANSLATORS: this is when the ambient light level is unknown
-#. TRANSLATORS: this the ICC profile type
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:214 ../src/gcm-picker.c:221 ../src/gcm-viewer.c:666
-#: ../src/gcm-viewer.c:716
-msgid "Unknown"
-msgstr "Невідомий"
-
-#: ../src/gcm-picker.c:367
-msgid "No colorimeter is attached."
-msgstr "Не приєднано колориметр."
-
-#: ../src/gcm-picker.c:384
-msgid "The sensor has no native driver."
-msgstr "Сенсор не має рідного драйвера."
-
-#. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:393
-msgid "The attached colorimeter is not capable of reading a spot color."
-msgstr "Приєднаний колориметр не може прочитати кольорову точку."
-
-#. TRANSLATORS: this is when there are no profiles that can be used;
-#. * the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:648
+#: ../gck/gck-uri.c:224
 #, c-format
-msgid "No %s color spaces available"
-msgstr "Немає доступних колірних просторів %s"
+msgid "The URI has invalid encoding."
+msgstr "URI має неправильне кодування."
 
-#. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:813
-msgid "GNOME Color Manager Color Picker"
-msgstr "Вибір кольору у менеджері кольорів GNOME"
+#: ../gck/gck-uri.c:228
+msgid "The URI does not have the 'pkcs11' scheme."
+msgstr "URI не має схеми «pkcs11»."
 
-#. TRANSLATORS: this is where the ICC profile has no description
-#: ../src/gcm-profile.c:162
-msgid "Missing description"
-msgstr "Опис відсутній"
+#: ../gck/gck-uri.c:232
+msgid "The URI has bad syntax."
+msgstr "URI має незграбний синтаксис."
 
-#. TRANSLATORS: this is the profile creation date strftime format
-#: ../src/gcm-profile.c:583
-msgid "%B %e %Y, %I:%M:%S %p"
-msgstr "%B %e %Y, %I:%M:%S %p"
+#: ../gck/gck-uri.c:236
+msgid "The URI has a bad version number."
+msgstr "URI має поганий номер версії."
 
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:328 ../src/gcm-viewer.c:697
-msgid "RGB"
-msgstr "RGB"
+#: ../gcr/gcr-callback-output-stream.c:64
+#: ../gcr/gcr-callback-output-stream.c:81
+#, c-format
+msgid "The stream was closed"
+msgstr "Потік закрито"
 
-#. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:332 ../src/gcm-viewer.c:709
-msgid "CMYK"
-msgstr "CMYK"
+#. later
+#. later
+#: ../gcr/gcr-certificate.c:308 ../gcr/gcr-gnupg-key.c:432
+msgctxt "column"
+msgid "Name"
+msgstr "Назва"
 
-#. TRANSLATORS: this is the colorspace type
-#: ../src/gcm-utils.c:336
-msgid "gray"
-msgstr "сірий"
+#: ../gcr/gcr-certificate.c:310
+msgctxt "column"
+msgid "Issued By"
+msgstr "Виданий"
 
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:374
-msgid "Permanently delete profile?"
-msgstr "Видалити профіль остаточно?"
+#. later
+#: ../gcr/gcr-certificate.c:312
+msgctxt "column"
+msgid "Expires"
+msgstr "Строк"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:377
+#: ../gcr/gcr-certificate.c:1133 ../gcr/gcr-certificate-exporter.c:463
+#: ../gcr/gcr-certificate-renderer.c:102 ../gcr/gcr-parser.c:322
+msgid "Certificate"
+msgstr "Сертифікат"
+
+#: ../gcr/gcr-certificate-exporter.c:225
 msgid ""
-"Are you sure you want to remove this profile from your system permanently?"
-msgstr "Дійсно остаточно видалити цей профіль з системи?"
+"<b>A file already exists with this name.</b>\n"
+"\n"
+"Do you want to replace it with a new file?"
+msgstr ""
+"<b>Файл з такою назвою вже існує.</b>\n"
+"\n"
+"Замінити його новим файлом?"
 
-#. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:380
-msgid "Delete"
-msgstr "Видалити"
+#: ../gcr/gcr-certificate-exporter.c:228
+msgid "_Replace"
+msgstr "_Замінити"
 
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-viewer.c:449
-msgid "Supported ICC profiles"
-msgstr "Підтримувані колірні профілі"
+#: ../gcr/gcr-certificate-exporter.c:258
+#, c-format
+msgid "The operation was cancelled."
+msgstr "Операцію скасовано."
 
-#. TRANSLATORS: could not read file
-#: ../src/gcm-viewer.c:485
-msgid "Failed to copy file"
-msgstr "Помилка при копіюванні файлу"
+#: ../gcr/gcr-certificate-exporter.c:302
+msgid "Export certificate"
+msgstr "Експортувати сертифікат"
 
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:639
-msgid "Input device"
-msgstr "Пристрій вводу"
+#: ../gcr/gcr-certificate-exporter.c:314
+msgid "Certificate files"
+msgstr "Файли сертифікатів"
 
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:643
-msgid "Display device"
-msgstr "Пристрій відображення"
+#: ../gcr/gcr-certificate-exporter.c:325
+msgid "PEM files"
+msgstr "Файли PEM"
 
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:647
-msgid "Output device"
-msgstr "Пристрій виводу"
+#: ../gcr/gcr-certificate-extensions.c:178
+msgid "Other Name"
+msgstr "Інші назви"
 
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:651
-msgid "Devicelink"
-msgstr "Devicelink"
+#: ../gcr/gcr-certificate-extensions.c:188
+msgid "XMPP Addr"
+msgstr "XMPP Addr"
 
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:655
-msgid "Colorspace conversion"
-msgstr "Перетворення простору кольорів"
+#: ../gcr/gcr-certificate-extensions.c:192
+msgid "DNS SRV"
+msgstr "DNS SRV"
 
-#. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:659
-msgid "Abstract"
-msgstr "Абстрактний"
+#: ../gcr/gcr-certificate-extensions.c:204 ../gcr/gcr-gnupg-renderer.c:422
+#: ../gcr/gcr-gnupg-renderer.c:704
+msgid "Email"
+msgstr "Пошта"
 
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:663
-msgid "Named color"
-msgstr "Іменований колір"
+#: ../gcr/gcr-certificate-extensions.c:212
+msgid "DNS"
+msgstr "DNS"
 
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:677
-msgid "XYZ"
-msgstr "XYZ"
+#: ../gcr/gcr-certificate-extensions.c:220
+msgid "X400 Address"
+msgstr "Адреса X400"
 
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:681
-msgid "LAB"
-msgstr "LAB"
+#: ../gcr/gcr-certificate-extensions.c:227
+msgid "Directory Name"
+msgstr "Назва каталогу"
 
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:685
-msgid "LUV"
-msgstr "LUV"
+#: ../gcr/gcr-certificate-extensions.c:235
+msgid "EDI Party Name"
+msgstr "Часткова назва EDI"
 
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:689
-msgid "YCbCr"
-msgstr "YCbCr"
+#: ../gcr/gcr-certificate-extensions.c:242
+msgid "URI"
+msgstr "URI"
 
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:693
-msgid "Yxy"
-msgstr "Yxy"
+#: ../gcr/gcr-certificate-extensions.c:250
+msgid "IP Address"
+msgstr "Адреса IP"
 
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:701
-msgid "Gray"
-msgstr "Gray"
+#: ../gcr/gcr-certificate-extensions.c:258
+msgid "Registered ID"
+msgstr "Зареєстрований ID"
 
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:705
-msgid "HSV"
-msgstr "HSV"
+#: ../gcr/gcr-certificate-renderer.c:117
+msgid "Basic Constraints"
+msgstr "Основні обмеження"
 
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:713
-msgid "CMY"
-msgstr "CMY"
+#: ../gcr/gcr-certificate-renderer.c:119
+msgid "Certificate Authority"
+msgstr "Видавець сертифіката"
 
-#. TRANSLATORS: e.g. sRGB or adbode RGB
-#: ../src/gcm-viewer.c:768
-msgid "Standard space"
-msgstr "Стандартний простір"
-
-#. TRANSLATORS: the raw EDID MD5 of the display device
-#: ../src/gcm-viewer.c:770
-msgid "Display checksum"
-msgstr "Показати контрольну суму"
-
-#: ../src/gcm-viewer.c:771
-msgid "Display model"
-msgstr "Показати модель"
-
-#: ../src/gcm-viewer.c:772
-msgid "Display serial number"
-msgstr "Показати серійний номер"
-
-#. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
-#: ../src/gcm-viewer.c:774
-msgid "Display PNPID"
-msgstr "Показати PNPID"
-
-#. TRANSLATORS: who made the display
-#: ../src/gcm-viewer.c:776
-msgid "Display vendor"
-msgstr "Показати виробника"
-
-#. TRANSLATORS: the raw profile MD5
-#: ../src/gcm-viewer.c:778
-msgid "File checksum"
-msgstr "Контрольна сума файла"
-
-#. TRANSLATORS: the color framework, e.g. 'colord'
-#: ../src/gcm-viewer.c:780
-msgid "Framework product"
-msgstr "Продукт оболонки"
-
-#. TRANSLATORS: the framework binary, e.g. gcm-viewer
-#: ../src/gcm-viewer.c:782
-msgid "Framework program"
-msgstr "Програма оболонки"
-
-#. TRANSLATORS: the framework release, e.g. '1.22'
-#: ../src/gcm-viewer.c:784
-msgid "Framework version"
-msgstr "Версія оболонки"
-
-#. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
-#: ../src/gcm-viewer.c:786
-msgid "Data source type"
-msgstr "Тип джерела даних"
-
-#. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
-#: ../src/gcm-viewer.c:788
-msgid "Mapping format"
-msgstr "Формат відбиття"
-
-#. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
-#: ../src/gcm-viewer.c:790
-msgid "Mapping qualifier"
-msgstr "Визначник відбиття"
-
-#. TRANSLATORS: The original device the profile was made for
-#: ../src/gcm-viewer.c:792
-msgid "Mapping device"
-msgstr "Пристрій відбиття"
-
-#. TRANSLATORS: The average error when making the profile
-#: ../src/gcm-viewer.c:794
-msgid "Delta-E average"
-msgstr "Середня дельта E"
-
-#. TRANSLATORS: the maximum error when making the profile
-#: ../src/gcm-viewer.c:796
-msgid "Delta-E maximum"
-msgstr "Максимальна дельта E"
-
-#. TRANSLATORS: the RMS error when making the profile
-#: ../src/gcm-viewer.c:798
-msgid "Delta-E RMS"
-msgstr "Дельта E RMS"
-
-#. TRANSLATORS: The device name, e.g. 'huey'
-#: ../src/gcm-viewer.c:800
-msgid "Calibration device"
-msgstr "Пристрій калібрування"
-
-#. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
-#: ../src/gcm-viewer.c:802
-msgid "Screen surface finish"
-msgstr "Поверхня екрана"
-
-#. TRANSLATORS: e.g. DVI or VGA
-#: ../src/gcm-viewer.c:804
-msgid "Connection type"
-msgstr "Тип з'єднання"
-
-#. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1058
+#: ../gcr/gcr-certificate-renderer.c:120 ../gcr/gcr-certificate-renderer.c:961
 msgid "Yes"
 msgstr "Так"
 
-#. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1061
+#: ../gcr/gcr-certificate-renderer.c:120 ../gcr/gcr-certificate-renderer.c:961
 msgid "No"
-msgstr "Немає"
+msgstr "Ні"
 
-#. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:1178
-msgid "Delete this profile"
-msgstr "Вилучити цей профіль"
+#: ../gcr/gcr-certificate-renderer.c:123
+msgid "Max Path Length"
+msgstr "Максимальна довжина шляху"
 
-#. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:1181
-msgid "This profile cannot be deleted"
-msgstr "Цей профіль неможливо вилучити"
+#: ../gcr/gcr-certificate-renderer.c:124
+msgid "Unlimited"
+msgstr "Необмежено"
 
-#. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-viewer.c:1735
-msgid "Set the specific profile to show"
-msgstr "Вказати інший профіль для показу"
+#: ../gcr/gcr-certificate-renderer.c:143
+msgid "Extended Key Usage"
+msgstr "Розширене використання ключа"
 
-#. TRANSLATORS: show just the one filename, rather than all
-#: ../src/gcm-viewer.c:1738
-msgid "Set the specific file to show"
-msgstr "Вказати інший файл для показу"
+#: ../gcr/gcr-certificate-renderer.c:154
+msgid "Allowed Purposes"
+msgstr "Дозволені цілі"
 
-#~ msgid "Applies device profile settings at session startup"
-#~ msgstr "Застосовувати параметри профілю пристрою під час запуску сеансу"
+#: ../gcr/gcr-certificate-renderer.c:174
+msgid "Subject Key Identifier"
+msgstr "Ідентифікатор ключа теми"
 
-#~ msgid "Load device color profiles"
-#~ msgstr "Завантаження колірних профілів пристроїв"
+#: ../gcr/gcr-certificate-renderer.c:175
+msgid "Key Identifier"
+msgstr "Ідентифікатор ключа"
 
-#~ msgid "ICC profile installer"
-#~ msgstr "Встановлення колірних профілів"
+#: ../gcr/gcr-certificate-renderer.c:186
+msgid "Digital signature"
+msgstr "Цифровий підпис"
 
-#~ msgid "Color Profiles"
-#~ msgstr "Колірні профілі"
+#: ../gcr/gcr-certificate-renderer.c:187
+msgid "Key encipherment"
+msgstr "Шифрування ключа"
 
-#~ msgid "Manage ICC color profiles"
-#~ msgstr "Керування колірними профілями"
+#: ../gcr/gcr-certificate-renderer.c:188
+msgid "Data encipherment"
+msgstr "Шифрування даних"
 
-#~ msgid ""
-#~ "If set to TRUE then the fine tuning controls are visible. This allows the "
-#~ "user to change the display profile outside of what the ICC profile "
-#~ "suggests and is only recommended for advanced users."
-#~ msgstr ""
-#~ "Якщо увімкнено, у інтерфейсі аплету виводяться регулятори уточнення "
-#~ "параметрів для моніторів, що дозволяють додатково коригувати вже "
-#~ "скоригований профілем вивід на монітор. Рекомендується лише досвідченим "
-#~ "користувачам."
+#: ../gcr/gcr-certificate-renderer.c:189
+msgid "Key agreement"
+msgstr "Договір ключа"
 
-#~ msgid "If set to TRUE then the video LUT is set with the display profile"
-#~ msgstr ""
-#~ "Якщо увімкнено, довідникова таблиця відповідності кольорів (LUT) "
-#~ "відеоадаптера змінюється за цим профілем."
+#: ../gcr/gcr-certificate-renderer.c:190
+msgid "Certificate signature"
+msgstr "Підпис сертифіката"
 
-#~ msgid "Set the _ICC_PROFILE hint for applications."
-#~ msgstr "Встановити підказку _ICC_PROFILE для програм."
+#: ../gcr/gcr-certificate-renderer.c:191
+msgid "Revocation list signature"
+msgstr "Анулювання підпису списку"
 
-#~ msgid "Show the fine tuning controls for display devices."
-#~ msgstr "Показувати регулятори уточнення параметрів для моніторів."
+#: ../gcr/gcr-certificate-renderer.c:216
+msgid "Key Usage"
+msgstr "Використання ключа"
 
-#~ msgid "The CMYK profile filename to be used by applications by default."
-#~ msgstr ""
-#~ "Назва файлу профілю CMYK, який програми мають типово використовувати."
+#: ../gcr/gcr-certificate-renderer.c:217
+msgid "Usages"
+msgstr "Використання"
 
-#~ msgid "The RGB profile filename to be used by applications by default."
-#~ msgstr ""
-#~ "Назва файлу профілю RGB, який програми мають типово використовувати."
+#: ../gcr/gcr-certificate-renderer.c:237
+msgid "Subject Alternative Names"
+msgstr "Альтернативні назви тем"
 
-#~ msgid "The default CMYK profile."
-#~ msgstr "Типовий профіль CMYK."
+#: ../gcr/gcr-certificate-renderer.c:264
+msgid "Extension"
+msgstr "Розширення"
 
-#~ msgid "The default RGB profile."
-#~ msgstr "Типовий профіль RGB."
+#: ../gcr/gcr-certificate-renderer.c:268
+msgid "Identifier"
+msgstr "Ідентифікатор"
 
-#~ msgid "The default calibration length."
-#~ msgstr "Типова тривалість профілювання."
+#: ../gcr/gcr-certificate-renderer.c:269
+#: ../gcr/gcr-certificate-request-renderer.c:272
+#: ../gcr/gcr-gnupg-renderer.c:413 ../gcr/gcr-gnupg-renderer.c:430
+msgid "Value"
+msgstr "Значення"
 
-#~ msgid "The duration between sending notifications to recalibrate a display."
-#~ msgstr "Тривалість між надсиланням сповіщення на рекалібрування монітора."
+#: ../gcr/gcr-certificate-renderer.c:294
+msgid "Couldn't export the certificate."
+msgstr "Неможливо експортувати сертифікат."
 
-#~ msgid "The duration between sending notifications to recalibrate a printer."
-#~ msgstr "Тривалість між надсиланням сповіщення на рекалібрування принтера."
+#: ../gcr/gcr-certificate-renderer.c:519
+#: ../gcr/gcr-certificate-request-renderer.c:313
+msgid "Identity"
+msgstr "Профіль"
 
-#~ msgid "The rendering intent to use for softproofs, e.g. 'perceptual'."
-#~ msgstr "Тип передачі кольору виводу кольоропроби, наприклад, 'perceptual'."
+#: ../gcr/gcr-certificate-renderer.c:523
+msgid "Verified by"
+msgstr "Перевірено"
 
-#~ msgid "The rendering intent to use for the display, e.g. 'perceptual'."
-#~ msgstr "Тип передачі кольору виводу для монітора, наприклад, 'perceptual'."
+#: ../gcr/gcr-certificate-renderer.c:530 ../gcr/gcr-gnupg-renderer.c:718
+msgid "Expires"
+msgstr "Строк дії"
 
-#~ msgid ""
-#~ "Whether the display should be globally corrected or left to applications."
-#~ msgstr ""
-#~ "Чи має екран коригуватися глобально, або ж це має бути залишено програмам."
+#. The subject
+#: ../gcr/gcr-certificate-renderer.c:537
+#: ../gcr/gcr-certificate-request-renderer.c:319
+msgid "Subject Name"
+msgstr "Ім'я отримувача"
 
-#~ msgid ""
-#~ "Authentication is required to install the color profile for all users"
-#~ msgstr "Встановлення профілю для усіх користувачів вимагає автентифікації"
+#. The Issuer
+#: ../gcr/gcr-certificate-renderer.c:542
+msgid "Issuer Name"
+msgstr "Ім'я видавця"
 
-#~ msgid "Log debugging data to a file"
-#~ msgstr "Записати журнал налагодження у файл"
+#. The Issued Parameters
+#: ../gcr/gcr-certificate-renderer.c:547
+msgid "Issued Certificate"
+msgstr "Виданий сертифікат"
 
-#~ msgid "Generating the patches"
-#~ msgstr "Виконується створення полів"
+#: ../gcr/gcr-certificate-renderer.c:552
+#: ../gcr/gcr-certificate-request-renderer.c:330
+msgid "Version"
+msgstr "Версія"
+
+#: ../gcr/gcr-certificate-renderer.c:566
+msgid "Not Valid Before"
+msgstr "Не дійсний до"
+
+#: ../gcr/gcr-certificate-renderer.c:571
+msgid "Not Valid After"
+msgstr "Не дійсний після"
+
+#. Fingerprints
+#: ../gcr/gcr-certificate-renderer.c:576
+msgid "Certificate Fingerprints"
+msgstr "Відбитки сертифікатів"
+
+#. Public Key Info
+#: ../gcr/gcr-certificate-renderer.c:582
+#: ../gcr/gcr-certificate-request-renderer.c:333
+#: ../gcr/gcr-certificate-request-renderer.c:379
+msgid "Public Key Info"
+msgstr "Інформація про відкритий ключ"
+
+#. Signature
+#: ../gcr/gcr-certificate-renderer.c:597 ../gcr/gcr-certificate-renderer.c:918
+#: ../gcr/gcr-certificate-request-renderer.c:349
+#: ../gcr/gcr-certificate-request-renderer.c:386
+#: ../gcr/gcr-gnupg-renderer.c:559
+msgid "Signature"
+msgstr "Підпис"
+
+#: ../gcr/gcr-certificate-renderer.c:864
+msgid "Key Algorithm"
+msgstr "Алгоритм ключа"
+
+#: ../gcr/gcr-certificate-renderer.c:869
+msgid "Key Parameters"
+msgstr "Параметри ключа"
+
+#: ../gcr/gcr-certificate-renderer.c:877 ../gcr/gcr-gnupg-renderer.c:352
+msgid "Key Size"
+msgstr "Розмір ключа"
+
+#: ../gcr/gcr-certificate-renderer.c:885
+msgid "Key SHA1 Fingerprint"
+msgstr "Відбиток ключа SHA1"
+
+#: ../gcr/gcr-certificate-renderer.c:890 ../gcr/gcr-gnupg-renderer.c:737
+#: ../gcr/gcr-key-renderer.c:414 ../gcr/gcr-parser.c:325
+msgid "Public Key"
+msgstr "Публічний ключ"
+
+#: ../gcr/gcr-certificate-renderer.c:907
+msgid "Signature Algorithm"
+msgstr "Алгоритм підпису"
+
+#: ../gcr/gcr-certificate-renderer.c:911
+msgid "Signature Parameters"
+msgstr "Параметри підпису"
+
+#: ../gcr/gcr-certificate-renderer.c:960
+msgid "Critical"
+msgstr "Критичний"
+
+#: ../gcr/gcr-certificate-request.c:418
+#, c-format
+msgid "Unsupported key type for certificate request"
+msgstr "Непідтримуваний тип ключа для запиту сертифіката"
+
+#: ../gcr/gcr-certificate-request.c:505 ../gcr/gcr-certificate-request.c:590
+#, c-format
+msgid "The key cannot be used to sign the request"
+msgstr "Ключ неможливо використати для підписання запиту"
+
+#. The certificate request type
+#: ../gcr/gcr-certificate-request-renderer.c:95
+#: ../gcr/gcr-certificate-request-renderer.c:308
+#: ../gcr/gcr-certificate-request-renderer.c:323
+#: ../gcr/gcr-certificate-request-renderer.c:366
+#: ../gcr/gcr-certificate-request-renderer.c:371
+msgid "Certificate request"
+msgstr "Запит сертифіката"
+
+#: ../gcr/gcr-certificate-request-renderer.c:261
+msgid "Attribute"
+msgstr "Атрибут"
+
+#: ../gcr/gcr-certificate-request-renderer.c:265
+#: ../gcr/gcr-certificate-request-renderer.c:324
+#: ../gcr/gcr-certificate-request-renderer.c:372
+#: ../gcr/gcr-gnupg-renderer.c:590 ../gcr/gcr-gnupg-renderer.c:592
+msgid "Type"
+msgstr "Тип"
+
+#: ../gcr/gcr-certificate-request-renderer.c:376
+msgid "Challenge"
+msgstr "Випробування"
+
+#: ../gcr/gcr-display-view.c:319
+msgid "_Details"
+msgstr "П_одробиці"
+
+#: ../gcr/gcr-failure-renderer.c:160
+#, c-format
+msgid "Could not display '%s'"
+msgstr "Неможливо показати «%s»"
+
+#: ../gcr/gcr-failure-renderer.c:162
+msgid "Could not display file"
+msgstr "Неможливо показати файл"
+
+#: ../gcr/gcr-failure-renderer.c:167
+msgid "Reason"
+msgstr "Причина"
+
+#: ../gcr/gcr-failure-renderer.c:217
+#, c-format
+msgid "Cannot display a file of this type."
+msgstr "Неможливо показати файл цього типу."
+
+#: ../gcr/gcr-gnupg-importer.c:96
+msgid "GnuPG Keyring"
+msgstr "Сховище ключів GnuPG"
+
+#: ../gcr/gcr-gnupg-importer.c:98
+#, c-format
+msgid "GnuPG Keyring: %s"
+msgstr "Сховище ключів GnuPG: %s"
+
+#: ../gcr/gcr-gnupg-key.c:145 ../gcr/gcr-gnupg-renderer.c:88
+#: ../gcr/gcr-parser.c:328
+msgid "PGP Key"
+msgstr "Ключ PGP"
+
+#: ../gcr/gcr-gnupg-key.c:434
+msgctxt "column"
+msgid "Key ID"
+msgstr "Ідентифікатор ключа"
+
+#: ../gcr/gcr-gnupg-process.c:866
+#, c-format
+msgid "Gnupg process exited with code: %d"
+msgstr "Процес Gnupg покинуто з кодом: %d"
+
+#: ../gcr/gcr-gnupg-process.c:873
+#, c-format
+msgid "Gnupg process was terminated with signal: %d"
+msgstr "Процес Gnupg завершено зі сигналом: %d"
+
+#: ../gcr/gcr-gnupg-process.c:927 ../gcr/gcr-parser.c:2424
+#: ../gcr/gcr-parser.c:2917
+msgid "The operation was cancelled"
+msgstr "Операцію скасовано"
+
+#: ../gcr/gcr-gnupg-renderer.c:202
+msgid "Elgamal"
+msgstr "Elgamal"
+
+#: ../gcr/gcr-gnupg-renderer.c:215
+msgid "Encrypt"
+msgstr "Зашифрувати"
+
+#: ../gcr/gcr-gnupg-renderer.c:217
+msgid "Sign"
+msgstr "Підписати"
+
+#: ../gcr/gcr-gnupg-renderer.c:219
+msgid "Certify"
+msgstr "Сертифікувати"
+
+#: ../gcr/gcr-gnupg-renderer.c:221
+msgid "Authenticate"
+msgstr "Автентифікувати"
+
+#: ../gcr/gcr-gnupg-renderer.c:223 ../gcr/gcr-gnupg-renderer.c:258
+msgid "Disabled"
+msgstr "Вимкнено"
+
+#: ../gcr/gcr-gnupg-renderer.c:254 ../gcr/gcr-gnupg-renderer.c:413
+#: ../gcr/gcr-key-renderer.c:433 ../gcr/gcr-key-renderer.c:438
+msgid "Unknown"
+msgstr "Невідомо"
+
+#: ../gcr/gcr-gnupg-renderer.c:256
+msgid "Invalid"
+msgstr "Неправильно"
+
+#: ../gcr/gcr-gnupg-renderer.c:260
+msgid "Revoked"
+msgstr "Відкликано"
+
+#: ../gcr/gcr-gnupg-renderer.c:262
+msgid "Expired"
+msgstr "Вичерпано"
+
+#: ../gcr/gcr-gnupg-renderer.c:264
+msgid "Undefined trust"
+msgstr "Невизначена довіра"
+
+#: ../gcr/gcr-gnupg-renderer.c:266
+msgid "Distrusted"
+msgstr "Сумнівна довіра"
+
+#: ../gcr/gcr-gnupg-renderer.c:268
+msgid "Marginally trusted"
+msgstr "Неповну довіра"
+
+#: ../gcr/gcr-gnupg-renderer.c:270
+msgid "Fully trusted"
+msgstr "Повну довіра"
+
+#: ../gcr/gcr-gnupg-renderer.c:272
+msgid "Ultimately trusted"
+msgstr "Безмежна довіра"
+
+#: ../gcr/gcr-gnupg-renderer.c:286
+msgid "The information in this key has not yet been verified"
+msgstr "Інформацію в цьому ключі ще не перевірено"
+
+#: ../gcr/gcr-gnupg-renderer.c:289
+msgid "This key is invalid"
+msgstr "Цей ключ неправильний"
+
+#: ../gcr/gcr-gnupg-renderer.c:292
+msgid "This key has been disabled"
+msgstr "Цей ключ вимкнено"
+
+#: ../gcr/gcr-gnupg-renderer.c:295
+msgid "This key has been revoked"
+msgstr "Цей ключ відкинуто"
+
+#: ../gcr/gcr-gnupg-renderer.c:298
+msgid "This key has expired"
+msgstr "Цей ключ вичерпано"
+
+#: ../gcr/gcr-gnupg-renderer.c:303
+msgid "This key is distrusted"
+msgstr "Цей ключ є підозрілим"
+
+#: ../gcr/gcr-gnupg-renderer.c:306
+msgid "This key is marginally trusted"
+msgstr "Цей ключ частково довірений"
+
+#: ../gcr/gcr-gnupg-renderer.c:309
+msgid "This key is fully trusted"
+msgstr "Цей ключ повністю довірений"
+
+#: ../gcr/gcr-gnupg-renderer.c:312
+msgid "This key is ultimately trusted"
+msgstr "Цей ключ однозначно довірено"
+
+#: ../gcr/gcr-gnupg-renderer.c:337 ../gcr/gcr-gnupg-renderer.c:563
+msgid "Key ID"
+msgstr "Ідентифікатор ключа"
+
+#: ../gcr/gcr-gnupg-renderer.c:345 ../gcr/gcr-gnupg-renderer.c:571
+#: ../gcr/gcr-gnupg-renderer.c:618 ../gcr/gcr-key-renderer.c:434
+msgid "Algorithm"
+msgstr "Алгоритм"
+
+#: ../gcr/gcr-gnupg-renderer.c:360 ../gcr/gcr-gnupg-renderer.c:437
+#: ../gcr/gcr-gnupg-renderer.c:480
+msgid "Created"
+msgstr "Створено"
+
+#: ../gcr/gcr-gnupg-renderer.c:369 ../gcr/gcr-gnupg-renderer.c:446
+#: ../gcr/gcr-gnupg-renderer.c:489
+msgid "Expiry"
+msgstr "Строк"
+
+#: ../gcr/gcr-gnupg-renderer.c:378
+msgid "Capabilities"
+msgstr "Можливості"
+
+#: ../gcr/gcr-gnupg-renderer.c:391
+msgid "Owner trust"
+msgstr "Довіра до власника"
+
+#: ../gcr/gcr-gnupg-renderer.c:419
+msgid "Name"
+msgstr "Назва"
+
+#: ../gcr/gcr-gnupg-renderer.c:425 ../gcr/gcr-gnupg-renderer.c:707
+msgid "Comment"
+msgstr "Коментар"
+
+#: ../gcr/gcr-gnupg-renderer.c:465
+msgid "User Attribute"
+msgstr "Атрибут користувача"
+
+#: ../gcr/gcr-gnupg-renderer.c:472 ../gcr/gcr-key-renderer.c:441
+msgid "Size"
+msgstr "Розмір"
+
+#: ../gcr/gcr-gnupg-renderer.c:507
+msgid "Signature of a binary document"
+msgstr "Підпис бінарного документа"
+
+#: ../gcr/gcr-gnupg-renderer.c:509
+msgid "Signature of a canonical text document"
+msgstr "Підпис текстового документа"
+
+#: ../gcr/gcr-gnupg-renderer.c:511
+msgid "Standalone signature"
+msgstr "Самостійний підпис"
+
+#: ../gcr/gcr-gnupg-renderer.c:513
+msgid "Generic certification of key"
+msgstr "Загальний сертифікат ключа"
+
+#: ../gcr/gcr-gnupg-renderer.c:515
+msgid "Persona certification of key"
+msgstr "Особистий сертифікат ключа"
+
+#: ../gcr/gcr-gnupg-renderer.c:517
+msgid "Casual certification of key"
+msgstr "Нерегулярний сертифікат ключ"
+
+#: ../gcr/gcr-gnupg-renderer.c:519
+msgid "Positive certification of key"
+msgstr "Певний сертифікат ключа"
+
+#: ../gcr/gcr-gnupg-renderer.c:521
+msgid "Subkey binding signature"
+msgstr "Підпис в'язки підключа"
+
+#: ../gcr/gcr-gnupg-renderer.c:523
+msgid "Primary key binding signature"
+msgstr "Основний підпис в'язки ключа "
+
+#: ../gcr/gcr-gnupg-renderer.c:525
+msgid "Signature directly on key"
+msgstr "Підпис прямо на ключі"
+
+#: ../gcr/gcr-gnupg-renderer.c:527
+msgid "Key revocation signature"
+msgstr "Анулювальний підпис ключа"
+
+#: ../gcr/gcr-gnupg-renderer.c:529
+msgid "Subkey revocation signature"
+msgstr "Анулювальний підпис підключа"
+
+#: ../gcr/gcr-gnupg-renderer.c:531
+msgid "Certification revocation signature"
+msgstr "Анулювальний підпис сертифіката"
+
+#: ../gcr/gcr-gnupg-renderer.c:533
+msgid "Timestamp signature"
+msgstr "Підпис часового штампу"
+
+#: ../gcr/gcr-gnupg-renderer.c:535
+msgid "Third-party confirmation signature"
+msgstr "Підпис підтвердження третьою стороною"
+
+#: ../gcr/gcr-gnupg-renderer.c:588 ../gcr/gcr-gnupg-renderer.c:596
+msgid "Class"
+msgstr "Клас"
+
+#: ../gcr/gcr-gnupg-renderer.c:590
+msgid "Local only"
+msgstr "Лише локальні"
+
+#: ../gcr/gcr-gnupg-renderer.c:592
+msgid "Exportable"
+msgstr "Експортні "
+
+#: ../gcr/gcr-gnupg-renderer.c:610
+msgid "Revocation Key"
+msgstr "Анулювальний ключ"
+
+#: ../gcr/gcr-gnupg-renderer.c:624 ../gcr/gcr-gnupg-renderer.c:648
+#: ../gcr/gcr-gnupg-renderer.c:650
+msgid "Fingerprint"
+msgstr "Відбитки"
+
+#: ../gcr/gcr-gnupg-renderer.c:739
+msgid "Public Subkey"
+msgstr "Відкритий підключ"
+
+#: ../gcr/gcr-gnupg-renderer.c:741
+msgid "Secret Key"
+msgstr "Таємний ключ"
+
+#: ../gcr/gcr-gnupg-renderer.c:743
+msgid "Secret Subkey"
+msgstr "Таємний підключ"
+
+#: ../gcr/gcr-import-button.c:111
+msgid "Initializing..."
+msgstr "Започаткування…"
+
+#: ../gcr/gcr-import-button.c:119
+msgid "Import is in progress..."
+msgstr "Імпортування триває…"
+
+#: ../gcr/gcr-import-button.c:126
+#, c-format
+msgid "Imported to: %s"
+msgstr "Імпортовано у: %s"
+
+#: ../gcr/gcr-import-button.c:146
+#, c-format
+msgid "Import to: %s"
+msgstr "Імпортувати у: %s"
+
+#: ../gcr/gcr-import-button.c:159
+msgid "Cannot import because there are no compatible importers"
+msgstr "Неможливо імпортувати, бо немає сумісного імпортера"
+
+#: ../gcr/gcr-import-button.c:168
+msgid "No data to import"
+msgstr "Немає даних для імпортування"
+
+#: ../gcr/gcr-key-renderer.c:89
+msgid "Key"
+msgstr "Ключ"
+
+#: ../gcr/gcr-key-renderer.c:403
+msgid "Private RSA Key"
+msgstr "Закритий ключ RSA"
+
+#: ../gcr/gcr-key-renderer.c:405
+msgid "Private DSA Key"
+msgstr "Закритий ключ DSA"
+
+#: ../gcr/gcr-key-renderer.c:407 ../gcr/gcr-parser.c:319
+msgid "Private Key"
+msgstr "Закритий ключ"
+
+#: ../gcr/gcr-key-renderer.c:410 ../gcr/gcr-key-renderer.c:412
+msgid "Public DSA Key"
+msgstr "Відкритий ключ DSA"
+
+#: ../gcr/gcr-key-renderer.c:421
+#, c-format
+msgid "%d bit"
+msgid_plural "%d bits"
+msgstr[0] "%d біт"
+msgstr[1] "%d біти"
+msgstr[2] "%d бітів"
+
+#: ../gcr/gcr-key-renderer.c:422
+msgid "Strength"
+msgstr "Міцність"
+
+#. Fingerprints
+#: ../gcr/gcr-key-renderer.c:445
+msgid "Fingerprints"
+msgstr "Відбитки"
+
+#: ../gcr/gcr-key-renderer.c:449
+msgid "SHA1"
+msgstr "SHA1"
+
+#: ../gcr/gcr-key-renderer.c:454
+msgid "SHA256"
+msgstr "SHA256"
+
+#: ../gcr/gcr-parser.c:331
+msgid "Certificate Request"
+msgstr "Запит сертифіката"
+
+#: ../gcr/gcr-parser.c:2427
+msgid "Unrecognized or unsupported data."
+msgstr "Нерозпізнані чи непідтримувані дані."
+
+#: ../gcr/gcr-parser.c:2430
+msgid "Could not parse invalid or corrupted data."
+msgstr "Не вдалось розібрати некоректні чи пошкоджені дані."
+
+#: ../gcr/gcr-parser.c:2433
+msgid "The data is locked"
+msgstr "Дані заблоковано"
+
+#: ../gcr/gcr-pkcs11-import-dialog.c:187
+msgid "Automatically chosen"
+msgstr "Автоматично вибрати"
+
+#: ../gcr/gcr-pkcs11-import-dialog.c:271
+#: ../gcr/gcr-pkcs11-import-interaction.c:153
+#: ../gcr/gcr-pkcs11-import-interaction.c:171
+#, c-format
+msgid "The user cancelled the operation"
+msgstr "Користувач скасував операцію"
+
+#: ../gcr/gcr-pkcs11-import-dialog.ui.h:1
+msgid "In order to import, please enter the password."
+msgstr "Введіть пароль, щоб імпортувати."
+
+#. The password label
+#: ../gcr/gcr-pkcs11-import-dialog.ui.h:2 ../gcr/gcr-prompt-dialog.c:559
+msgid "Password:"
+msgstr "Пароль:"
+
+#: ../gcr/gcr-pkcs11-import-dialog.ui.h:3
+msgid "Token:"
+msgstr "Ознака:"
+
+#: ../gcr/gcr-pkcs11-import-dialog.ui.h:4
+msgid "Label"
+msgstr "Мітка"
+
+#: ../gcr/gcr-pkcs11-import-dialog.ui.h:5 ../gcr/gcr-unlock-renderer.c:71
+#: ../gcr/gcr-unlock-renderer.c:128
+msgid "Unlock"
+msgstr "Розблокувати"
+
+#: ../gcr/gcr-pkcs11-import-dialog.ui.h:6
+msgid "Label:"
+msgstr "Мітка:"
+
+#: ../gcr/gcr-pkcs11-import-dialog.ui.h:7
+msgid "Import settings"
+msgstr "Імпортувати параметри"
+
+#: ../gcr/gcr-prompt.c:218
+msgid "Continue"
+msgstr "Продовжити"
+
+#: ../gcr/gcr-prompt.c:227
+msgid "Cancel"
+msgstr "Скасувати"
+
+#. The confirm label
+#: ../gcr/gcr-prompt-dialog.c:576
+msgid "Confirm:"
+msgstr "Підтвердження:"
+
+#: ../gcr/gcr-prompt-dialog.c:643
+msgid "Passwords do not match."
+msgstr "Паролі не збігаються."
+
+#: ../gcr/gcr-prompt-dialog.c:650
+msgid "Password cannot be blank"
+msgstr "Пароль не може бути порожнім"
+
+#: ../gcr/gcr-prompter.desktop.in.in.h:1
+msgid "Access Prompt"
+msgstr "Спроба доступитись"
+
+#: ../gcr/gcr-prompter.desktop.in.in.h:2
+msgid "Unlock access to passwords and other secrets"
+msgstr "Заблокувати доступ до паролів й інших таємниць"
+
+#: ../gcr/gcr-subject-public-key.c:345
+msgid "Unrecognized or unavailable attributes for key"
+msgstr "Нерозпізнані або недоступні атрибути для ключа"
+
+#: ../gcr/gcr-subject-public-key.c:429 ../gcr/gcr-subject-public-key.c:515
+msgid "Couldn't build public key"
+msgstr "Неможливо зібрати відкритий ключ"
+
+#: ../gcr/gcr-system-prompt.c:749
+msgid "Another prompt is already in progress"
+msgstr "Уже триває інакша спроба "
+
+#. Translators: A pinned certificate is an exception which
+#. trusts a given certificate explicitly for a purpose and
+#. communication with a certain peer.
+#: ../gcr/gcr-trust.c:370
+#, c-format
+msgid "Couldn't find a place to store the pinned certificate"
+msgstr "Неможливо знайти місце для збереження утриманих сертифікатів"
+
+#: ../gcr/gcr-unlock-options-widget.ui.h:1
+msgid "Automatically unlock this keyring whenever I'm logged in"
+msgstr "Автоматично розблоковувати цю в'язку ключів після входу у сеанс"
+
+#: ../gcr/gcr-unlock-options-widget.ui.h:2
+msgid "Lock this keyring when I log out"
+msgstr "Автоматично блокувати в'язку ключів при завершенні сеансу"
+
+#: ../gcr/gcr-unlock-options-widget.ui.h:3
+msgid "Lock this keyring after"
+msgstr "Блокувати в'язку ключів після"
+
+#: ../gcr/gcr-unlock-options-widget.ui.h:4
+msgid "Lock this keyring if idle for"
+msgstr "Блокувати в'язку при простої"
+
+#. Translators: The 'minutes' from 'Lock this keyring if idle for x minutes'.
+#: ../gcr/gcr-unlock-options-widget.ui.h:6
+msgid "minutes"
+msgstr "хвилин"
+
+#: ../gcr/gcr-unlock-renderer.c:69
+#, c-format
+msgid "Unlock: %s"
+msgstr "Розблокувати: %s"
+
+#: ../gcr/gcr-unlock-renderer.c:125
+msgid "Password"
+msgstr "Пароль"
+
+#: ../gcr/gcr-unlock-renderer.c:278
+#, c-format
+msgid ""
+"The contents of '%s' are locked. In order to view the contents, enter the "
+"correct password."
+msgstr ""
+"Вміст «%s» заблоковано. Введіть правильний пароль, щоб переглянути вміст."
+
+#: ../gcr/gcr-unlock-renderer.c:281
+msgid ""
+"The contents are locked. In order to view the contents, enter the correct "
+"password."
+msgstr "Вміст заблоковано. Введіть правильний пароль, щоб переглянути вміст."
+
+#: ../gcr/gcr-viewer-tool.c:41
+msgid "GCR Certificate and Key Viewer"
+msgstr "Переглядач сертифікатів GCR і ключів"
+
+#: ../gcr/gcr-viewer-tool.c:48
+msgid "Show the application's version"
+msgstr "Показати версію програми"
+
+#: ../gcr/gcr-viewer-tool.c:50
+msgid "[file...]"
+msgstr "[файл…]"
+
+#: ../gcr/gcr-viewer-tool.c:103
+msgid "- View certificate and key files"
+msgstr "— Переглянути файли сертифікатів і ключів"
+
+#: ../gcr/gcr-viewer-tool.c:117 ../gcr/gcr-viewer-widget.c:635
+msgid "Certificate Viewer"
+msgstr "Переглядач сертифікатів"
+
+#: ../gcr/gcr-viewer-widget.c:203
+msgid "The password was incorrect"
+msgstr "Пароль неправильний"
+
+#: ../gcr/gcr-viewer-window.c:76
+msgid "Imported"
+msgstr "Імпортовано"
+
+#: ../gcr/gcr-viewer-window.c:80
+msgid "Import failed"
+msgstr "Не вдалось імпортувати"
+
+#: ../gcr/gcr-viewer-window.c:108
+msgid "Import"
+msgstr "Імпортувати"
 
 #, fuzzy
-#~ msgid ""
-#~ "Generating the patches that will be measured with the color instrument."
-#~ msgstr ""
-#~ "Виконується створення полів, які потім будуть заміряні пристроєм виміру."
-
-#~ msgid "Setting up display device for use…"
-#~ msgstr "Виконується налаштовування пристрою відображення…"
-
-#~ msgid "Image is not suitable without conversion"
-#~ msgstr "Зображення потрібно перетворити"
-
-#~ msgid ""
-#~ "The supplied image contains an alpha channel which the profiling tools do "
-#~ "not understand."
-#~ msgstr ""
-#~ "Наданий файл зображення містить альфа-канал, який засоби створення "
-#~ "профілів не сприймають."
-
-#~ msgid ""
-#~ "It is normally safe to convert the image, although you should ensure that "
-#~ "the generated profile is valid."
-#~ msgstr ""
-#~ "Зазвичай конвертація зображення є безпечною, хоча слід перевірити "
-#~ "коректність створеного профілю."
-
-#~ msgid "Convert"
-#~ msgstr "Перетворити"
-
-#~ msgid ""
-#~ "Please set the measuring instrument to screen mode like the image below, "
-#~ "and ensure it is attached to the screen."
-#~ msgstr ""
-#~ "Переведіть інструмент виміру у режим екрану, як показано нижче, та "
-#~ "перевірте що він приєднаний до екрану."
-
-#~ msgid ""
-#~ "Please set the measuring instrument to screen mode, and ensure it is "
-#~ "attached to the screen."
-#~ msgstr ""
-#~ "Переведіть інструмент виміру у режим екрану, та перевірте що він "
-#~ "приєднаний до екрану."
-
-#~ msgid "Try again"
-#~ msgstr "Спробувати знову"
-
-#~ msgid "Use anyway"
-#~ msgstr "Використовувати попри все"
-
-#~ msgid "Unknown device"
-#~ msgstr "Невідомий пристрій"
-
-#~ msgid "Could not detect screen type"
-#~ msgstr "Не вдається визначити тип екрану"
-
-#~ msgid ""
-#~ "Please indicate if the screen you are trying to profile is an LCD, CRT or "
-#~ "a projector."
-#~ msgstr ""
-#~ "Вкажіть тип екрану монітору, який збираєтесь калібрувати та профілювати: "
-#~ "LCD, , CRT(електронна трубка) чи проектор"
-
-#~ msgid "Choose the precision of the profile"
-#~ msgstr "Виберіть точність створюваного профілю"
-
-#~ msgid "Please choose the profile precision."
-#~ msgstr "Виберіть точність профілювання."
-
-#~ msgid ""
-#~ "High precision profiles provide higher accuracy in color matching. "
-#~ "Correspondingly, low precision profiles result in lower quality."
-#~ msgstr ""
-#~ "Високоточні профілі забезпечують більшу якість. Відповідно, менш точні "
-#~ "профілі забезпечують менш високу якість."
-
-#~ msgid "Custom"
-#~ msgstr "Створений користувачем"
-
-#~ msgid "Select reference image"
-#~ msgstr "Виберіть зображення мішені"
-
-#~ msgid "Install missing files?"
-#~ msgstr "Встановити відсутні файли?"
-
-#~ msgid "Do not install"
-#~ msgstr "Не встановлювати"
-
-#~ msgid ""
-#~ "For best results, the reference target should also be less than two years "
-#~ "old."
-#~ msgstr "При можливості, використовуйте мішень, яка не старше двох років."
-
-#~ msgid ""
-#~ "Please select the chart type which corresponds to your reference file."
-#~ msgstr "Виберіть тип мішені, що відповідає вашому зразковому файлу."
-
-#~ msgid "Introduction to display calibration"
-#~ msgstr "Вступ до калібрування монітора"
-
-#~ msgid ""
-#~ "This dialog will help calibrate your display and create a custom ICC "
-#~ "profile."
-#~ msgstr ""
-#~ "Цей діалог допоможе відкалібрувати ваш монітор та створти власний профіль "
-#~ "ICC."
-
-#~ msgid ""
-#~ "The calibration will involve several steps so that an accurate profile "
-#~ "can be obtained."
-#~ msgstr ""
-#~ "Для отримання точного профілю калібрування може складатися з кількох "
-#~ "кроків."
-
-#~ msgid "It should only take a few minutes."
-#~ msgstr "Це триватиме лише пару хвилин."
-
-#~ msgid ""
-#~ "It may help to sit further from the screen or to squint at the "
-#~ "calibration images in order to accurately compare the colors."
-#~ msgstr ""
-#~ "Може допомогти сісти далі від екрану або поглянути скоса на калібровочне "
-#~ "зображення у випадку точного порівняння кольорів."
-
-#~ msgid "You can repeat the calibration steps as many times as you want."
-#~ msgstr ""
-#~ "Можете повторити кроки калібрування стільки разів, скільки потрбіно."
-
-#~ msgid "Create table item %i/%i"
-#~ msgstr "Створити елемент таблиці %i/%i"
-
-#~ msgid ""
-#~ "This display is now calibrated. You can change the current profile using "
-#~ "the Color Profiles program."
-#~ msgstr ""
-#~ "Профілювання цього монітору успішно завершено. Можете змінити поточний "
-#~ "профіль у аплеті керування кольоровим профілем."
-
-#~ msgid "This device already exists"
-#~ msgstr "Цей пристрій вже існує"
-
-#~ msgid "Measuring instrument not recognized"
-#~ msgstr "Вимірювальний пристрій не розпізнаний"
-
-#~ msgid "Laptop LCD"
-#~ msgstr "LCD-екран ноутбука"
-
-#~ msgid "Cannot load file contents"
-#~ msgstr "Неможливо завантажити зміст файлу"
-
-#~ msgid "Cannot parse EDID contents"
-#~ msgstr "Неможливо розібрати зміст EDID"
-
-#~ msgid "Monitor name"
-#~ msgstr "Модель монітора"
-
-#~ msgid "Vendor name"
-#~ msgstr "Виробник"
-
-#~ msgid "Text string"
-#~ msgstr "Текстовий рядок"
-
-#~ msgid "PNP identifier"
-#~ msgstr "Ідентифікатор PNP"
-
-#~ msgid "Size"
-#~ msgstr "Розмір"
-
-#~ msgid "Gamma"
-#~ msgstr "Гамма"
-
-#~ msgid "EDID dumps to parse"
-#~ msgstr "Скинуті дані EDID для розбору"
-
-#~ msgid "EDID dump"
-#~ msgstr "Скинуті дані EDID"
-
-#~ msgid "Saved %i bytes to %s"
-#~ msgstr "Збережено %i байтів у файл %s"
-
-#~ msgid "Failed to save EDID to %s"
-#~ msgstr "Не вдається зберегти EDID у %s"
-
-#~ msgid "Profiles to view"
-#~ msgstr "Профілі для перегляду"
-
-#~ msgid "ICC profile dump program"
-#~ msgstr "Програма для скидання даних профілю"
-
-#~ msgid "The description of the profile"
-#~ msgstr "Опис профілю"
-
-#~ msgid "The copyright of the profile"
-#~ msgstr "Авторські права на профіль"
-
-#~ msgid "The manufacturer of the profile"
-#~ msgstr "Виробник профілю"
-
-#~ msgid "Profiles to fix"
-#~ msgstr "Профілі, що виправляються"
-
-#~ msgid "ICC profile fix program"
-#~ msgstr "Програма виправлення профілю ICC"
-
-#~ msgid "Import ICC color profile %s?"
-#~ msgstr "Імпортувати колірний профіль %s?"
-
-#~ msgid "Import ICC profile"
-#~ msgstr "Імпорт колірного профілю"
-
-#~ msgid "Output profile '%s':"
-#~ msgstr "Профіль виводу '%s':"
-
-#~ msgid "not set"
-#~ msgstr "не встановлено"
-
-#~ msgid "There are no ICC profiles for this device type"
-#~ msgstr "Для цього типа пристрою немає колірних профілів"
-
-#~ msgid "Rendering intent (display):"
-#~ msgstr "Передача кольору (монітор):"
-
-#~ msgid "Rendering intent (softproof):"
-#~ msgstr "Передача кольору (кольоропроба):"
-
-#~ msgid "RGB Colorspace:"
-#~ msgstr "Простір кольорів RGB:"
-
-#~ msgid "CMYK Colorspace:"
-#~ msgstr "Простір кольорів CMYK:"
-
-#~ msgid "Device type not recognized"
-#~ msgstr "Тип пристрою не розпізнаний"
-
-#~ msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
-#~ msgstr "Ідентифікатор пристрою, наприклад, 'xrandr_ibm_france_ltn154p2_l05'"
-
-#~ msgid "GNOME Color Manager ICC profile system-wide installer"
-#~ msgstr "Загальносистемний параметр профілів ICC для GNOME Color Manager"
-
-#~ msgid "You need to specify exactly one ICC profile filename"
-#~ msgstr "Потрібно вказати точно одну назву файлу колірного профілю"
-
-#~ msgid "You need to specify exactly one device ID"
-#~ msgstr "Потрібно вказати точно один ідентифікатор пристрою"
-
-#~ msgid "This program can only be used by the root user"
-#~ msgstr "Ця програма може виконуватись лише суперкористувачем"
-
-#~ msgid "The source filename must be absolute"
-#~ msgstr "Назва файлу джерела має бути абсолютною"
-
-#~ msgid "Content type was incorrect"
-#~ msgstr "Тип вмісту виявився некоректним"
-
-#~ msgid "This program must only be run through pkexec"
-#~ msgstr "Ця програма може виконуватись лише суперкористувачем"
-
-#~ msgid "PKEXEC_UID must be set to an integer value"
-#~ msgstr "PKEXEC_UID повинен мати цілочислове значення"
-
-#~ msgid "The ICC profile must be owned by you"
-#~ msgstr "Ви маєте бути власником профілю ICC "
-
-#~ msgid "The destination filename must be absolute"
-#~ msgstr "Назва цільового файлу має бути абсолютною"
-
-#~ msgid "Failed to copy"
-#~ msgstr "Помилка при копіюванні"
-
-#~ msgid "Failed to save defaults for all users"
-#~ msgstr "Помилка при збереженні типових параметрів для усіх користувачів"
-
-#~ msgid "None"
-#~ msgstr "Немає"
-
-#~ msgid "Other profile…"
-#~ msgstr "Інший профіль…"
-
-#~ msgid "Install missing calibration and profiling software?"
-#~ msgstr "Встановити відсутнє ПЗ для калібрування та профілювання?"
-
-#~ msgid "Do you want them to be automatically installed?"
-#~ msgstr "Встановити автоматично?"
-
-#~ msgid "Failed to create virtual device"
-#~ msgstr "Помилка при створенні віртуального пристрою"
-
-#~ msgid "Failed to save virtual device"
-#~ msgstr "Не вдається створити віртуальний пристрій"
-
-#~ msgid "Failed to add virtual device"
-#~ msgstr "Не вдається додати віртуальний пристрій"
-
-#~ msgid "Failed to delete file"
-#~ msgstr "Не вдається видалити файл"
-
-#~ msgid "Create a color profile for the selected device"
-#~ msgstr "Створити колірний профіль для обраного пристрою"
-
-#~ msgid "Cannot profile: No device is selected"
-#~ msgstr "Профілювання неможливе: немає обраних пристроїв"
-
-#~ msgid "Cannot calibrate: The display driver does not support XRandR 1.3"
-#~ msgstr "Калібрування неможливе: драйвер монітору не підтримує XRandR 1.3"
-
-#~ msgid "Cannot calibrate: The measuring instrument is not plugged in"
-#~ msgstr "Калібрування неможливе: колориметр не підключено"
-
-#~ msgid "Cannot profile: The measuring instrument is not plugged in"
-#~ msgstr "Профілювання неможливе: колориметр не підключено"
-
-#~ msgid ""
-#~ "Cannot profile: The measuring instrument does not support printer "
-#~ "profiling"
-#~ msgstr ""
-#~ "Профілювання неможливе: колориметр не підтримує профілювання принтерів"
-
-#~ msgid "Cannot profile this type of device"
-#~ msgstr "Цей тип пристрою не профілюється"
-
-#~ msgid "Per-device settings not supported. Check your display driver."
-#~ msgstr ""
-#~ "Параметри вказані для окремого пристрою не підтримуються. Перевірте "
-#~ "драйвер дисплею."
-
-#~ msgid "No hardware support"
-#~ msgstr "No hardware support"
-
-#~ msgid "disconnected"
-#~ msgstr "вимкнено"
-
-#~ msgid "Could not import profile"
-#~ msgstr "не вдається імпортувати профіль"
-
-#~ msgid "The profile was of the wrong type for this device"
-#~ msgstr "Обраний профіль не підходить для цього пристрою"
-
-#~ msgid "Device added"
-#~ msgstr "Пристрій додано"
-
-#~ msgid "Scanner"
-#~ msgstr "Сканер"
-
-#~ msgid "Printer"
-#~ msgstr "Принтер"
-
-#~ msgid "Camera"
-#~ msgstr "Камера"
-
-#~ msgid "Loading list of devices…"
-#~ msgstr "Завантажується список пристроїв…"
-
-#~ msgid ""
-#~ "This profile does not have the information required for whole-screen "
-#~ "color correction."
-#~ msgstr ""
-#~ "Цей профіль неможливо використовувати для корекції виводу на дисплей."
-
-#~ msgid "Recalibrate now"
-#~ msgstr "Рекалібрувати"
-
-#~ msgid "Ignore"
-#~ msgstr "Ігнорувати"
-
-#~ msgid "Do not exit after the request has been processed"
-#~ msgstr "Не виходити після обробки запиту"
-
-#~ msgid "Color Management"
-#~ msgstr "Керування кольором"
-
-#~ msgid "Color Management D-Bus Service"
-#~ msgstr "Служба D-BUS для керування кольором"
-
-#~ msgid "Perceptual"
-#~ msgstr "Перцепційна"
-
-#~ msgid "Relative colormetric"
-#~ msgstr "Відносна колориметрична"
-
-#~ msgid "Saturation"
-#~ msgstr "Насичена"
-
-#~ msgid "Absolute colormetric"
-#~ msgstr "Абсолютна колориметрична"
-
-#~ msgid "Blue:"
-#~ msgstr "Синій:"
-
-#~ msgid "Brightness:"
-#~ msgstr "Яскравість:"
-
-#~ msgid "Create images for printing"
-#~ msgstr "Створити зображення для друку"
-
-#~ msgid "Generate profile from printed images"
-#~ msgstr "Створити профіль з друкованого зображення"
-
-#~ msgid "Green:"
-#~ msgstr "Зелений:"
-
-#~ msgid "High"
-#~ msgstr "Висока"
-
-#~ msgid "Low"
-#~ msgstr "Низька"
-
-#~ msgid "Profile locally attached printer"
-#~ msgstr "Профіль локального принтера"
-
-#~ msgid "Red:"
-#~ msgstr "Червоний:"
-
-#~ msgid "LAB:"
-#~ msgstr "LAB:"
-
-#~ msgid ""
-#~ "A working space is the range of colors that can be encoded into an image."
-#~ msgstr "Колірний простір — це всі кольори, які можна записати у зображення."
-
-#~ msgid "Add Virtual Device"
-#~ msgstr "Додати віртуальний пристрій"
-
-#~ msgid "Adds a virtual device that is not connected."
-#~ msgstr "Додати віртуальний пристрій, не приєднаний до комп'ютера"
-
-#~ msgid "CMYK:"
-#~ msgstr "CMYK:"
-
-#~ msgid "Close this dialog"
-#~ msgstr "Закрити цей діалог"
-
-#~ msgid "Contrast:"
-#~ msgstr "Контраст:"
-
-#~ msgid "Create _Profile for Device"
-#~ msgstr "_Створити профіль для пристрою"
-
-#~ msgid "Delete the currently selected color profile"
-#~ msgstr "Видалити вибраний колірний профіль"
-
-#~ msgid ""
-#~ "Delete the disconnected device - if you reconnect the device it will "
-#~ "reappear in the list"
-#~ msgstr ""
-#~ "Видалити від'єднаий пристрій — він знову з'явиться у списку, якщо його "
-#~ "приєднати ще раз"
-
-#~ msgid "Device"
-#~ msgstr "Пристрій"
-
-#~ msgid "Device type:"
-#~ msgstr "Тип пристрою:"
-
-#~ msgid "Devices"
-#~ msgstr "Пристрої"
-
-#~ msgid "Display:"
-#~ msgstr "Монітор:"
-
-#~ msgid "Fine tuning"
-#~ msgstr "Уточнення параметрів"
-
-#~ msgid "Gamma:"
-#~ msgstr "Гама:"
-
-#~ msgid "Import an ICC file from another location"
-#~ msgstr "Імпортувати файл ICC з іншого місця"
-
-#~ msgid "Manufacturer:"
-#~ msgstr "Виробник:"
-
-#~ msgid "Model:"
-#~ msgstr "Модель:"
-
-#~ msgid "More details"
-#~ msgstr "Подробиці"
-
-#~ msgid "Open the documentation"
-#~ msgstr "Відкрити документацію"
-
-#~ msgid "Profile Graphs"
-#~ msgstr "Графіки профілю"
-
-#~ msgid "Profiles"
-#~ msgstr "Профілі"
-
-#~ msgid ""
-#~ "Program the video card with the adjusted color values so all windows are "
-#~ "color corrected"
-#~ msgstr ""
-#~ "Запрограмувати відеокарту зміненими значеннями кольорів, щоб кольори всіх "
-#~ "вікон були скориговані"
-
-#~ msgid "Rendering intent"
-#~ msgstr "Передача кольору"
-
-#~ msgid "Save these profiles for all users"
-#~ msgstr "Зберегти ці профілі для усіх користувачів"
-
-#~ msgid "Serial number:"
-#~ msgstr "Серійний номер:"
-
-#~ msgid ""
-#~ "Set a property on the system so applications use the default display "
-#~ "profile"
-#~ msgstr ""
-#~ "Встановити властивість у системі, щоб програми використовувати типовий "
-#~ "профіль монітору"
-
-#~ msgid "Softproof:"
-#~ msgstr "Кольоропроба:"
-
-#~ msgid "The rendering intent is how one gamut size is mapped to another."
-#~ msgstr ""
-#~ "Тип кольоропередачі — це спосіб переносу одного колірного охоплення у "
-#~ "інший."
-
-#~ msgid ""
-#~ "The rendering intent to use when transforming from the image gamut to the "
-#~ "device output gamut"
-#~ msgstr ""
-#~ "Тип передачі кольору для адаптації колірного охоплення зображення до "
-#~ "пристрою виводу"
-
-#~ msgid ""
-#~ "The rendering intent to use when transforming from the image gamut to the "
-#~ "display gamut"
-#~ msgstr ""
-#~ "Тип передачі кольору для адаптації колірного охоплення зображення монітору"
-
-#~ msgid ""
-#~ "These settings control how color management is applied to your desktop."
-#~ msgstr ""
-#~ "Тут вказується, як саме керування кольором працює на вашому комп'ютері."
-
-#~ msgid "This is the default CMYK working space to use in applications"
-#~ msgstr ""
-#~ "Це простір кольорів CMYK, який має типово використовуватись у програмах"
-
-#~ msgid "This is the default RGB working space to use in applications"
-#~ msgstr ""
-#~ "Це простір кольорів RGB, який має типово використовуватись у програмах"
-
-#~ msgid "Working space"
-#~ msgstr "Робочий колірний простір"
-
-#~ msgid "_Add Device"
-#~ msgstr "_Додати пристрій"
-
-#~ msgid "_Apply display correction"
-#~ msgstr "_Виконувати корекцію кольору глобально"
-
-#~ msgid "_Delete Device"
-#~ msgstr "В_идалити пристрій"
-
-#~ msgid "_Import Profile"
-#~ msgstr "_Імпортувати профіль"
-
-#~ msgid "_Make Default"
-#~ msgstr "Зробити _типовим"
-
-#~ msgid "_Reset to defaults"
-#~ msgstr "С_кинути на типове"
-
-#~ msgid "_Set profile for color managed applications"
-#~ msgstr "_Встановлювати профіль для колірнокерованих програм"
+#~ msgid "<b>Unlock</b>"
+#~ msgstr "Розблокувати"
