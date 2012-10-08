@@ -36,7 +36,9 @@
  * gcm_import_show_details:
  **/
 static gboolean
-gcm_import_show_details (GtkWindow *window, const gchar *filename)
+gcm_import_show_details (GtkWindow *window,
+			 gboolean is_profile_id,
+			 const gchar *data)
 {
 	gboolean ret;
 	GError *error = NULL;
@@ -48,7 +50,10 @@ gcm_import_show_details (GtkWindow *window, const gchar *filename)
 	xid = gdk_x11_window_get_xid (gtk_widget_get_window (GTK_WIDGET(window)));
 	g_ptr_array_add (argv, g_build_filename (BINDIR, "gcm-viewer", NULL));
 	g_ptr_array_add (argv, g_strdup_printf ("--parent-window=%u", xid));
-	g_ptr_array_add (argv, g_strdup_printf ("--file=%s", filename));
+	if (is_profile_id)
+		g_ptr_array_add (argv, g_strdup_printf ("--profile=%s", data));
+	else
+		g_ptr_array_add (argv, g_strdup_printf ("--file=%s", data));
 	g_ptr_array_add (argv, NULL);
 	ret = g_spawn_async (NULL,
 			     (gchar **) argv->pdata,
@@ -221,19 +226,33 @@ main (int argc, char **argv)
 						   NULL);
 #endif
 	if (profile_tmp != NULL) {
+		ret = cd_profile_connect_sync (profile_tmp,
+					       NULL,
+					       &error);
+		if (!ret) {
+			g_warning ("failed to connect to profile %s: %s",
+				   cd_profile_get_object_path (profile_tmp),
+				   error->message);
+			g_error_free (error);
+			goto out;
+		}
 		/* TRANSLATORS: color profile already been installed */
 		dialog = gtk_message_dialog_new (NULL,
 						 0,
 						 GTK_MESSAGE_INFO,
 						 GTK_BUTTONS_CLOSE,
-						 _("ICC profile already installed system-wide"));
+						 _("Color profile is already imported"));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 		gtk_message_dialog_set_image (GTK_MESSAGE_DIALOG (dialog), image);
-		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
-							  "%s\n%s",
-							  description,
-							  copyright);
-		gtk_dialog_run (GTK_DIALOG (dialog));
+		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
+		gtk_dialog_add_button (GTK_DIALOG (dialog), _("Show Details"), GTK_RESPONSE_HELP);
+		response = gtk_dialog_run (GTK_DIALOG (dialog));
+		if (response == GTK_RESPONSE_HELP) {
+			gcm_import_show_details (GTK_WINDOW (dialog),
+						 TRUE,
+						 cd_profile_get_id (profile_tmp));
+			goto try_harder;
+		}
 		gtk_widget_destroy (dialog);
 		goto out;
 	}
@@ -274,7 +293,7 @@ main (int argc, char **argv)
 try_harder:
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	if (response == GTK_RESPONSE_HELP) {
-		gcm_import_show_details (GTK_WINDOW (dialog), files[0]);
+		gcm_import_show_details (GTK_WINDOW (dialog), FALSE, files[0]);
 		goto try_harder;
 	}
 	gtk_widget_destroy (dialog);
