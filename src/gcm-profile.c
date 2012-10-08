@@ -586,6 +586,36 @@ gcm_utils_format_date_time (const struct tm *created)
 }
 
 /**
+ * gcm_profile_get_precooked_md5:
+ **/
+static gchar *
+gcm_profile_get_precooked_md5 (cmsHPROFILE lcms_profile)
+{
+	cmsUInt8Number profile_id[16];
+	gboolean md5_precooked = FALSE;
+	guint i;
+	gchar *md5 = NULL;
+
+	/* check to see if we have a pre-cooked MD5 */
+	cmsGetHeaderProfileID (lcms_profile, profile_id);
+	for (i=0; i<16; i++) {
+		if (profile_id[i] != 0) {
+			md5_precooked = TRUE;
+			break;
+		}
+	}
+	if (!md5_precooked)
+		goto out;
+
+	/* convert to a hex string */
+	md5 = g_new0 (gchar, 32 + 1);
+	for (i=0; i<16; i++)
+		g_snprintf (md5 + i*2, 3, "%02x", profile_id[i]);
+out:
+	return md5;
+}
+
+/**
  * gcm_profile_parse_data:
  * @profile: A valid #GcmProfile
  * @data: the data to parse
@@ -838,8 +868,13 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	/* success */
 	ret = TRUE;
 
-	/* generate and set checksum */
-	checksum = g_compute_checksum_for_data (G_CHECKSUM_MD5, (const guchar *) data, length);
+	/* get precooked, or generate and set checksum */
+	checksum = gcm_profile_get_precooked_md5 (priv->lcms_profile);
+	if (checksum == NULL) {
+		checksum = g_compute_checksum_for_data (G_CHECKSUM_MD5,
+							(const guchar *) data,
+							length);
+	}
 	gcm_profile_set_checksum (profile, checksum);
 out:
 	g_free (text);
