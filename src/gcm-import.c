@@ -176,6 +176,7 @@ main (int argc, char **argv)
 		g_string_append_printf (string, "\n%s %s", _("Profile copyright:"), copyright);
 	}
 
+#if !CD_CHECK_VERSION(0,1,24)
 	/* check file does't already exist as a file */
 	destination = gcm_utils_get_profile_destination (file);
 	ret = g_file_query_exists (destination, NULL);
@@ -193,6 +194,7 @@ main (int argc, char **argv)
 		gtk_widget_destroy (dialog);
 		goto out;
 	}
+#endif
 
 	/* check file does't already exist as system-wide */
 	client = cd_client_new ();
@@ -205,10 +207,19 @@ main (int argc, char **argv)
 		g_error_free (error);
 		goto out;
 	}
+#if CD_CHECK_VERSION(0,1,24)
+	profile_tmp = cd_client_find_profile_by_property_sync (client,
+							      CD_PROFILE_METADATA_FILE_CHECKSUM,
+							      gcm_profile_get_checksum (profile),
+							      NULL,
+							      NULL);
+#else
+	/* FIXME: this isn't supported by the daemon */
 	profile_tmp = cd_client_find_profile_sync (client,
 						   gcm_profile_get_checksum (profile),
 						   NULL,
 						   NULL);
+#endif
 	if (profile_tmp != NULL) {
 		/* TRANSLATORS: color profile already been installed */
 		dialog = gtk_message_dialog_new (NULL,
