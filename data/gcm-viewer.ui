@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <interface>
-  <requires lib="gtk+" version="2.16"/>
+  <requires lib="gtk+" version="3.0"/>
   <object class="GtkWindow" id="dialog_viewer">
     <property name="can_focus">False</property>
     <property name="border_width">5</property>
@@ -809,6 +809,71 @@
                         <property name="position">10</property>
                       </packing>
                     </child>
+                    <child>
+                      <object class="GtkHBox" id="hbox_warnings">
+                        <property name="visible">True</property>
+                        <property name="can_focus">False</property>
+                        <property name="spacing">12</property>
+                        <child>
+                          <object class="GtkHBox" id="hbox332">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkLabel" id="label_title_warnings">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="valign">start</property>
+                                <property name="label" translatable="yes" comments="warnings for the profile">Warnings</property>
+                                <property name="mnemonic_widget">label_warnings</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="pack_type">end</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">0</property>
+                          </packing>
+                        </child>
+                        <child>
+                          <object class="GtkHBox" id="hbox472">
+                            <property name="visible">True</property>
+                            <property name="can_focus">False</property>
+                            <child>
+                              <object class="GtkLabel" id="label_warnings">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="use_markup">True</property>
+                                <property name="wrap">True</property>
+                                <property name="wrap_mode">char</property>
+                                <property name="selectable">True</property>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">0</property>
+                              </packing>
+                            </child>
+                          </object>
+                          <packing>
+                            <property name="expand">False</property>
+                            <property name="fill">True</property>
+                            <property name="position">1</property>
+                          </packing>
+                        </child>
+                      </object>
+                      <packing>
+                        <property name="expand">False</property>
+                        <property name="fill">False</property>
+                        <property name="padding">3</property>
+                        <property name="position">11</property>
+                      </packing>
+                    </child>
                   </object>
                 </child>
                 <child type="tab">
@@ -1552,6 +1617,7 @@
   <object class="GtkSizeGroup" id="sizegroup_profiles">
     <widgets>
       <widget name="hbox33"/>
+      <widget name="hbox332"/>
       <widget name="hbox31"/>
       <widget name="hbox12"/>
       <widget name="hbox48"/>
