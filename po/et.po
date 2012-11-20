@@ -12,10 +12,10 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Gnome-color-manager\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
-"color-manager\n"
-"POT-Creation-Date: 2010-12-14 11:10+0000\n"
-"PO-Revision-Date: 2010-12-10 12:19+0200\n"
-"Last-Translator: Ivar Smolin <okul@linux.ee>\n"
+"color-manager&keywords=I18N+L10N\n"
+"POT-Creation-Date: 2012-10-14 14:11+0000\n"
+"PO-Revision-Date: 2012-10-29 23:27+0300\n"
+"Last-Translator: Mattias Põldaru <mahfiaz@gmail.com>\n"
 "Language-Team: Gnome Estonian Translation Team <gnome-et@linux.ee>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
@@ -25,11 +25,11 @@ msgstr ""
 "X-Poedit-Language: Estonian\n"
 "X-Poedit-Country: Estonia\n"
 
-msgid "Applies device profile settings at session startup"
-msgstr "Seadme profiilisätted rakendatakse seansi alustamisel"
+msgid "Color"
+msgstr "Värvus"
 
-msgid "Load device color profiles"
-msgstr "Seadme värviprofiilide laadimine"
+msgid "Color Calibration"
+msgstr "Värvuskalibreerimine"
 
 msgid "ICC Profile Installer"
 msgstr "ICC-profiilide paigaldaja"
@@ -37,11 +37,53 @@ msgstr "ICC-profiilide paigaldaja"
 msgid "Install ICC profiles"
 msgstr "ICC-profiilide paigaldamine"
 
-msgid "Color"
-msgstr "Värvus"
+#. Window title, where the user can pick spot colors using a measuring device
+msgid "Color Picker"
+msgstr "Värvivalija"
 
-msgid "Manage ICC color profiles"
-msgstr "ICC-värviprofiilide haldus"
+msgid "Use the color sensor to sample spot colors"
+msgstr "Värvisensori kasutamine punktvärvide lugemiseks."
+
+#. Button text, to get a single sample of color
+msgid "_Measure"
+msgstr "_Mõõda"
+
+#. the color representation
+msgid "XYZ:"
+msgstr "XYZ:"
+
+#. Lab is the color representation and D50 is the white point
+msgid "Lab (D50):"
+msgstr "Lab (D50):"
+
+#. This refers to the amount of ambient light on the sensor
+msgid "Media whitepoint:"
+msgstr "Meediumi valgepunkt:"
+
+#. This refers to the amount of ambient light on the sensor
+msgid "Color Temperature:"
+msgstr "Värvustemperatuur:"
+
+# tõlkekommentaar tundub kohatu
+#. This refers to the amount of ambient light on the sensor
+msgid "Ambient:"
+msgstr "Ümbrus:"
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+msgid "Colorspace:"
+msgstr "Värviruum:"
+
+#. These are the values of the chosen color in Red, Green, Blue encoding
+msgid "RGB:"
+msgstr "RGB:"
+
+#. This shows the error in the conversion to RGB.
+msgid "Error:"
+msgstr "Viga:"
+
+#. Expander title, the results from the color picker
+msgid "Results"
+msgstr "Tulemused"
 
 msgid "Color Profile Viewer"
 msgstr "Värviprofiilide näitaja"
@@ -49,230 +91,141 @@ msgstr "Värviprofiilide näitaja"
 msgid "Inspect and compare installed color profiles"
 msgstr "Paigaldatud värviprofiilide vaatamine ja võrdlemine"
 
-#. TRANSLATORS: turn on all debugging
-msgid "Show debugging information for all files"
-msgstr "Silumisteavet kuvatakse kõigile failidele"
+msgid "Add a profile for the device"
+msgstr "Seadmele profiili lisamine"
 
-msgid "Debugging Options"
-msgstr "Silumise valikud"
+msgid "Remove a profile from the device"
+msgstr "Seadmest profiili eemaldamine"
 
-msgid "Show debugging options"
-msgstr "Silumisvalikute kuvamine"
+#. The type of profile, e.g. display, scanner, etc.
+msgid "Profile type"
+msgstr "Profiili liik"
 
-#. TRANSLATORS: this is where the ICC profile has no description
-msgid "Missing description"
-msgstr "Kirjeldus puudub"
+#. The profile colorspace, e.g. RGB
+msgid "Colorspace"
+msgstr "Värviruum"
 
-#. TRANSLATORS: this is the profile creation date strftime format
-msgid "%B %e %Y, %I:%M:%S %p"
-msgstr "%e. %B %Y, %H:%M:%S"
+#. When the profile was created
+msgid "Created"
+msgstr "Loodud"
 
-msgid "Authentication is required to install the color profile for all users"
-msgstr ""
-"Värviprofiilide paigaldamiseks kõigile kasutajatele on vajalik autentimine"
+#. The version of the profile
+msgid "Version"
+msgstr "Versioon"
 
-#. SECURITY:
-#. - Normal users require admin authentication to install files system
-#. wide to apply color profiles for sessions that have not explicitly
-#. chosen profiles to apply.
-#. - This should not be set to 'yes' as unprivileged users could then
-#. set a profile set to all-white or all-black and thus make the
-#. other sessions unusable.
-#.
-msgid "Install system color profiles"
-msgstr "Süsteemi värviprofiilide paigaldamine"
+#. The manufacturer of the profile
+msgid "Device manufacturer"
+msgstr "Seadme tootja"
 
-#. TRANSLATORS: could not save for all users
-msgid "Failed to save defaults for all users"
-msgstr "Vaikesätete salvestamine kõigi kasutajate jaoks nurjus"
+#. The manufacturer of the profile
+msgid "Device model"
+msgstr "Seadme mudel"
 
-#. TRANSLATORS: this is where the user can click and import a profile
-msgid "Other profile…"
-msgstr "Muu profiil…"
+#. If the profile contains a display correction table
+msgid "Display correction"
+msgstr "Kuvaparandus"
 
-#. TRANSLATORS: could not calibrate
-msgid "Failed to calibrate device"
-msgstr "Seadme kalibreerimine nurjus"
+#. The basename (the last section of the filename) of the profile
+msgid "White point"
+msgstr "Valgepunkt"
 
-#. TRANSLATORS: could not calibrate
-msgid "Failed to calibrate printer"
-msgstr "Printeri kalibreerimine nurjus"
+#. The licence of the profile, normally non-free
+msgid "License"
+msgstr "Litsents"
 
-#. TRANSLATORS: dialog for file->open dialog
-msgid "Select ICC Profile File"
-msgstr "ICC-profiili faili avamine"
+#. The file size in bytes of the profile
+msgid "File size"
+msgstr "Faili suurus"
 
-msgid "Import"
-msgstr "Impordi"
+#. The basename (the last section of the filename) of the profile
+msgid "Filename"
+msgstr "Faili nimi"
 
-#. TRANSLATORS: filter name on the file->open dialog
-msgid "Supported ICC profiles"
-msgstr "Toetatud ICC-profiilid"
+msgid "Information"
+msgstr "Andmed"
 
-#. TRANSLATORS: filter name on the file->open dialog
-msgid "All files"
-msgstr "Kõik failid"
+msgid "y"
+msgstr "y"
 
-#. TRANSLATORS: could not read file
-msgid "Failed to copy file"
-msgstr "Faili kopeerimine nurjus"
+msgid "x"
+msgstr "x"
 
-msgid "Failed to get metadata from image"
-msgstr "Metaandmete hankimine pildist nurjus"
+msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
+msgstr "CIE 1931 diagramm kuvab profiili ulatuse (gamut) taasesituse 2D pinnal"
 
-#. TRANSLATORS: could not add virtual device
-msgid "Failed to create virtual device"
-msgstr "Virtuaalse seadme loomine nurjus"
+msgid "CIE 1931"
+msgstr "CIE 1931"
 
-#. TRANSLATORS: could not add virtual device
-msgid "Failed to save virtual device"
-msgstr "Virtuaalse seadme salvestamine nurjus"
+msgid "This 3D hull is what the profile looks like in Lab space"
+msgstr "See 3D kaetus (hull) näitab, kuidas profiil paistab Lab värviruumis"
 
-#. TRANSLATORS: could not add virtual device
-msgid "Failed to add virtual device"
-msgstr "Virtuaalse seadme lisamine nurjus"
+msgid "3D Gamut"
+msgstr "3D ulatus (gamut)"
 
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-msgid "Install calibration and profiling software?"
-msgstr "Kas paigaldada kalibreerimis- ja profiili loomise tarkvara?"
+msgid "Response out"
+msgstr "Vastus välja"
 
-#. TRANSLATORS: dialog message saying the argyllcms is not installed
-msgid "Calibration and profiling software is not installed."
-msgstr "Kalibreerimis- ja profiili loomise tarkvara pole paigaldatud."
+msgid "Response in"
+msgstr "Vastus sisse"
 
-#. TRANSLATORS: dialog message saying the color targets are not installed
-msgid "These tools are required to build color profiles for devices."
-msgstr "Need tööriistad on vajalikud seadmete jaoks värviprofiilide loomiseks."
-
-#. TRANSLATORS: button, skip installing a package
-msgid "Do not install"
-msgstr "Ära paigalda"
-
-#. TRANSLATORS: button, install a package
-#. TRANSLATORS: button text
-msgid "Install"
-msgstr "Paigalda"
-
-#. TRANSLATORS: this is the application name for libcanberra
-msgid "GNOME Color Manager"
-msgstr "GNOME värvihaldus"
-
-#. TRANSLATORS: this is the sound description
-msgid "Profiling completed"
-msgstr "Profiili loomine lõpetatud"
-
-#. TRANSLATORS: could not read file
-msgid "Failed to delete file"
-msgstr "Faili kustutamine nurjus"
-
-#. TRANSLATORS: this is when the button is sensitive
-msgid "Create a color profile for the selected device"
-msgstr "Valitud seadme jaoks värviprofiili loomine"
-
-#. TRANSLATORS: this is when the button is insensitive
-msgid "Cannot create profile: No device is selected"
-msgstr "Profiili pole võimalik luua: ühtegi seadet pole valitud"
-
-#. TRANSLATORS: this is when the button is insensitive because the distro compiled GCM without VTE
-msgid "Cannot create profile: Virtual console support is missing"
-msgstr "Profiili pole võimalik luua: virtuaalse konsooli tugi puudub"
-
-#. TRANSLATORS: this is when the button is insensitive
-msgid "Cannot create profile: The display device is not connected"
-msgstr "Profiili pole võimalik luua: kuvar pole ühendatud"
-
-#. TRANSLATORS: this is when the button is insensitive
-msgid "Cannot create profile: The display driver does not support XRandR 1.3"
-msgstr "Profiili pole võimalik luua: kuvadraiver ei toeta XRandR 1.3-e"
-
-#. TRANSLATORS: this is when the button is insensitive
-msgid "Cannot create profile: The measuring instrument is not plugged in"
-msgstr "Profiili pole võimalik luua: mõõteseade pole ühendatud"
-
-#. TRANSLATORS: this is when the button is insensitive
 msgid ""
-"Cannot create profile: The measuring instrument does not support printer "
-"profiling"
+"A tone reproduction curve is the mapping of scene luminance to display "
+"luminance"
 msgstr ""
-"Profiili pole võimalik luua: mõõteseade ei toeta printeritele profiili "
-"loomist"
+"Tooni taasesituskurv (TRC) on pildi valgsuse vastendamine kuva valgsusega"
 
-#. TRANSLATORS: this is when the button is insensitive
-msgid "Cannot create a profile for this type of device"
-msgstr "Seda liiki seadme jaoks pole võimalik profiili luua"
+msgid "TRC"
+msgstr "TRC"
 
-msgid "Per-device settings not supported. Check your display driver."
-msgstr "Seadme kohta käivad sätted pole toetatud. Kontrolli kuva draiverit."
+msgid "Video card out"
+msgstr "Videokaardi väljund"
 
-#. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-msgid "No hardware support"
-msgstr "Raudvara tugi puudub"
+msgid "A video card gamma table shows the curves loaded into the display"
+msgstr "Videokaardi gammatabel (VCGT) näitab kuvari jaoks laaditud kurve"
 
-#. TRANSLATORS: this is where the device has been setup but is not connected
-msgid "disconnected"
-msgstr "pole ühendatud"
+msgid "VCGT"
+msgstr "VCGT"
 
-#. TRANSLATORS: the profile was of the wrong sort for this device
-msgid "Could not import profile"
-msgstr "Profiili ei suudetud importida"
+msgid "Previous Image"
+msgstr "Eelmine pilt"
 
-msgid "The profile was of the wrong type for this device"
-msgstr "See profiil ei sobi seda liiki seadmele"
+#. This is an example image that is saved in sRGB gamut
+msgid "sRGB example"
+msgstr "sRGB näidis"
 
-#. TRANSLATORS: this is a sound description
-msgid "Device added"
-msgstr "Seadme lisamine"
+msgid "Next Image"
+msgstr "Järgmine pilt"
 
-#. TRANSLATORS: this is a sound description
-msgid "Device removed"
-msgstr "Seadme eemaldamine"
+msgid "This shows what an image would look like if saved with the profile"
+msgstr ""
+"See näitab, kuidas pilt paistaks, kui see oleks salvestatud antud profiiliga"
 
-#. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
-#, c-format
-msgid "No %s color spaces available"
-msgstr "Ühtegi %s värviruumi pole saadaval"
+msgid "From sRGB"
+msgstr "sRGB-st"
 
-#. TRANSLATORS: the DBus method failed
-msgid "The request failed:"
-msgstr "Päring nurjus:"
+msgid "This shows what an image would look like if opened with the profile"
+msgstr "See näitab, kuidas pilt paistaks selle profiiliga avades"
 
-#. TRANSLATORS: no DBus session bus
-msgid "Failed to connect to session bus:"
-msgstr "Seansi siiniga ühendumine nurjus:"
+msgid "To sRGB"
+msgstr "sRGB-sse"
 
-#. TRANSLATORS: device type
-msgid "Display"
-msgstr "Kuva"
+msgid "Named colors are specific colors that are defined in the profile"
+msgstr "Nimelised värvid on profiilis defineeritud erivärvid"
 
-#. TRANSLATORS: device type
-msgid "Scanner"
-msgstr "Skanner"
+msgid "Named Colors"
+msgstr "Nimelised värvid"
 
-#. TRANSLATORS: device type
-msgid "Printer"
-msgstr "Printer"
+msgid ""
+"Metadata is additional information stored in the profile for programs to use."
+msgstr ""
+"Metaandmed on lisaandmed, mis salvestatakse profiili sisse rakenduste jaoks."
 
-#. TRANSLATORS: device type
-msgid "Camera"
-msgstr "Kaamera"
+msgid "Metadata"
+msgstr "Metaandmed"
 
-#. TRANSLATORS: button to install extra profiles
-msgid "Install now"
-msgstr "Paigalda kohe"
-
-#. TRANSLATORS: this is displayed when the profile is crap
-msgid "More color profiles could be automatically installed."
-msgstr "Veel värviprofiile saaks paigaldada automaatselt."
-
-#. TRANSLATORS: we use this mode at login as we're sure there are no previous settings to clear
-msgid "Do not attempt to clear previously applied settings"
-msgstr "Ära ürita puhastada eelnevalt rakendatud sätteid"
-
-#. TRANSLATORS: title, default paramters needed to calibrate_argyll
 msgid "Getting default parameters"
 msgstr "Vaikimisi parameetrite hankimine"
 
-#. TRANSLATORS: dialog message
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -280,28 +233,15 @@ msgstr ""
 "Eelkalibreerimine, kuvades ekraanil värvilisi ja halle kujundeid ning mõõtes "
 "neid kalibreerimisseadmega."
 
-#. TRANSLATORS: title, patches are specific colours used in calibration
 msgid "Reading the patches"
 msgstr "Näidisalade mõõdistamine"
 
-#. TRANSLATORS: dialog message
 msgid "Reading the patches using the color measuring instrument."
 msgstr "Näidisalade mõõdistamine värvimõõteseadmega."
 
-#. TRANSLATORS: title, patches are specific colours used in calibration
-msgid "Generating the patches"
-msgstr "Näidisalade genereerimine"
-
-#. TRANSLATORS: dialog message
-msgid "Generating the patches that will be measured with the color instrument."
-msgstr ""
-"Näidisalade genereerimine, mida hiljem mõõdetakse kalibreerimisseadmega."
-
-#. TRANSLATORS: title, drawing means painting to the screen
 msgid "Drawing the patches"
 msgstr "Näidisalade joonistamine"
 
-#. TRANSLATORS: dialog message
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
@@ -309,63 +249,36 @@ msgstr ""
 "Genereeritud näidisalade kuvamine ekraanile, mida seejärel mõõdetakse "
 "kalibreerimisseadmega."
 
-#. TRANSLATORS: title, a profile is a ICC file
 msgid "Generating the profile"
 msgstr "Profiili genereerimine"
 
-#. TRANSLATORS: dialog message
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "ICC-värviprofiili genereerimine selle ekraaniga kasutamiseks."
 
-#. TRANSLATORS: title, a profile is a ICC file
 msgid "Copying files"
 msgstr "Failide kopeerimine"
 
-#. TRANSLATORS: dialog message
 msgid "Copying source image, chart data and CIE reference values."
 msgstr "Lähtepildi, tabeliandmete ja CIE-etalonväärtuste kopeerimine."
 
-#. TRANSLATORS: title, drawing means painting to the screen
 msgid "Measuring the patches"
 msgstr "Näidisalade mõõdistamine"
 
-#. TRANSLATORS: dialog message
 msgid "Detecting the reference patches and measuring them."
 msgstr "Näidisalade tuvastamine ja mõõdistamine."
 
-#. TRANSLATORS: dialog message
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "ICC-värviprofiili genereerimine selle seadmega kasutamiseks."
 
-#. TRANSLATORS: title, hardware refers to a calibration device
-msgid "Set up display"
-msgstr "Kuva seadistamine"
-
-#. TRANSLATORS: dialog message
-msgid "Setting up display device for use…"
-msgstr "Kuvaseadme häälestamine kasutamiseks…"
-
-#. TRANSLATORS: title, setting up the photospectromiter
-msgid "Setting up device"
-msgstr "Seadme häälestamine"
-
-#. TRANSLATORS: dialog message
-msgid "Setting up the device to read a spot color…"
-msgstr "Seadme häälestamine spot-värvi lugemiseks…"
-
-#. TRANSLATORS: title, patches are specific colors used in calibration
 msgid "Printing patches"
 msgstr "Näidisalade printimine"
 
-#. TRANSLATORS: dialog message
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "Valitud paberi ja tindi jaoks näidisalade renderdamine."
 
-#. TRANSLATORS: title, patches are specific colours used in calibration
 msgid "Wait for the ink to dry"
 msgstr "Tindi kuivamise järel ootamine"
 
-#. TRANSLATORS: dialog message
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -373,102 +286,28 @@ msgstr ""
 "Palun oota paar minutit tindi kuivamist. Märja tindiga loodud profiil on "
 "kehv, lisaks võib märg tint kahjustada mõõteseadet."
 
-#. TRANSLATORS: the supplied image contains an alpha channel which we have to strip out
-msgid "Image is not suitable without conversion"
-msgstr "Pilt ei sobi ilma teisendamata kasutamiseks"
-
-#. TRANSLATORS: dialog message
-msgid ""
-"The supplied image contains an alpha channel which the profiling tools do "
-"not understand."
-msgstr ""
-"Etteantud pilt sisaldab alfakanalit, mida profiili loomise tööriistad ei "
-"oska kasutada."
-
-#. TRANSLATORS: dialog message
-msgid ""
-"It is normally safe to convert the image, although you should ensure that "
-"the generated profile is valid."
-msgstr ""
-"Tavaliselt on pildi teisendamine turvaline, kuigi sa peaksid veenduma, et "
-"genereeritud profiil on õige."
-
-#. TRANSLATORS: button text to convert the RGBA image into RGB
-msgid "Convert"
-msgstr "Teisenda"
-
-#. TRANSLATORS: title, instrument refers to a calibration device
 msgid "Set up instrument"
 msgstr "Seadme häälestamine"
 
-#. TRANSLATORS: dialog message
 msgid "Setting up the instrument for use…"
 msgstr "Kalibreerimisseadme kasutamiseks häälestamine…"
 
-#. TRANSLATORS: title, instrument is a hardware color calibration sensor
-msgid "Please attach instrument"
-msgstr "Palun paigalda kalibreerimisseade"
-
-#. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square like the image below."
-msgstr ""
-"Palun kinnita mõõteseade ekraani keskel asuva halli ruudu kohale, nagu "
-"alumisel pildil."
-
-#. TRANSLATORS: dialog message, ask user to attach device
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square."
-msgstr "Palun kinnita mõõteseade ekraani keskel asuva halli ruudu kohale."
-
-#. TRANSLATORS: button text
-msgid "Continue"
-msgstr "Edasi"
-
-#. TRANSLATORS: title, instrument is a hardware color calibration sensor
-msgid "Please configure instrument"
-msgstr "Kalibreerimisseadme häälestamine"
-
-#. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-msgid ""
-"Please set the measuring instrument to calibration mode like the image below."
-msgstr ""
-"Palun lülita mõõteseade kalibreerimisrežiimile, nagu on näidatud alumisel "
-"pildil."
-
-#. TRANSLATORS: this is when the user has to change a setting on the sensor
-msgid "Please set the measuring instrument to calibration mode."
-msgstr "Palun lülita mõõteseade kalibreerimisrežiimile."
-
-#. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-msgid ""
-"Please set the measuring instrument to screen mode like the image below."
-msgstr ""
-"Palun lülita mõõteseade ekraanirežiimile, nagu on näidatud alumisel pildil."
-
-#. TRANSLATORS: this is when the user has to change a setting on the sensor
-msgid "Please set the measuring instrument to screen mode."
-msgstr "Palun lülita mõõteseade ekraanirežiimile."
-
-#. TRANSLATORS: title, the calibration failed
 msgid "Calibration error"
 msgstr "Viga kalibreerimisel"
 
-#. TRANSLATORS: message, the sample was not read correctly
 msgid "The sample could not be read at this time."
 msgstr "Sel korral ei suudetud näidist lugeda."
 
-#. TRANSLATORS: button text
-msgid "Try again"
+msgid "Retry"
 msgstr "Proovi uuesti"
 
-#. TRANSLATORS: message, no firmware is available
+#. TRANSLATORS: this is the application name for libcanberra
+msgid "GNOME Color Manager"
+msgstr "GNOME värvihaldus"
+
 msgid "No firmware is installed for this instrument."
 msgstr "Selle kalibreerimisseadme püsivara pole paigaldatud."
 
-#. TRANSLATORS: message, the image wasn't good enough
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
@@ -476,13 +315,11 @@ msgstr ""
 "Mustrite kattuvus ei olnud piisavalt hea. Veendu, et valisid õiget tüüpi "
 "testtabeli."
 
-#. TRANSLATORS: message, the sensor got no readings
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
 msgstr "Mõõteseade ei andnud ühtegi sobivat lugemit. Veendu, et ava on lahti."
 
-#. TRANSLATORS: message, the colorimeter has got confused
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -490,18 +327,17 @@ msgstr ""
 "Mõõteseade on hõivatud ja ei käivitu. Enne uuesti proovimist palun eemalda "
 "ning ühenda USB juhe."
 
-#. TRANSLATORS: dialog title
 msgid "Reading target"
 msgstr "Testtabeli lugemine"
 
-#. TRANSLATORS: message, no firmware is available
 msgid "Failed to read the strip correctly."
 msgstr "Riba ei suudetud õigesti lugeda."
 
-#. TRANSLATORS: button text
-#. TRANSLATORS: button
-msgid "Retry"
-msgstr "Proovi uuesti"
+msgid "Reading sample"
+msgstr "Värvinäidise lugemine"
+
+msgid "Failed to read the color sample correctly."
+msgstr "Värviriba ei suudetud õigesti lugeda."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
 #, c-format
@@ -519,15 +355,9 @@ msgid ""
 msgstr ""
 "Kui sa tõesti mõõtsid õiget riba, siis las olla, paber võib olla ebaharilik."
 
-#. TRANSLATORS: button
-msgid "Use anyway"
-msgstr "Kasuta ikkagi"
-
-#. TRANSLATORS: title, the calibration failed
 msgid "Device Error"
 msgstr "Seadme tõrge"
 
-#. TRANSLATORS: message, the sample was not read correctly
 msgid "The device could not measure the color spot correctly."
 msgstr "Seade ei suutnud värvitäppi õigesti mõõta."
 
@@ -560,61 +390,27 @@ msgstr "Veendu, et seadme keskkoht on mõõdetava rea keskel."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
 msgid ""
-"If you make a mistake just release the switch and you'll get a chance to try "
-"again."
+"If you make a mistake, just release the switch, and you'll get a chance to "
+"try again."
 msgstr "Kui sa teed vea, vabasta nupp ning saad võimaluse uuesti proovida."
 
-#. TRANSLATORS: title, printing reference files to media
 msgid "Printing"
 msgstr "Printimine"
 
-#. TRANSLATORS: dialog message
 msgid "Preparing the data for the printer."
 msgstr "Andmete ettevalmistamine printimiseks."
 
-#. TRANSLATORS: dialog message
 msgid "Sending the targets to the printer."
 msgstr "Näidisalade saatmine printerile."
 
-#. TRANSLATORS: dialog message
 msgid "Printing the targets..."
 msgstr "Näidisalade printimine..."
 
-#. TRANSLATORS: dialog message
 msgid "The printing has finished."
 msgstr "Printimine lõpetati."
 
-#. TRANSLATORS: dialog message
 msgid "The print was aborted."
 msgstr "Printimine katkestati."
-
-#. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" - YOU NEED TO USE ASCII ONLY
-msgid "Copyright (c)"
-msgstr "Copyright (c)"
-
-#. TRANSLATORS: this is saved in the profile
-msgid "Unknown description"
-msgstr "Kirjeldus puudub"
-
-#. TRANSLATORS: this is saved in the profile
-msgid "Unknown model"
-msgstr "Tundmatu mudel"
-
-#. TRANSLATORS: this is saved in the profile
-msgid "Unknown manufacturer"
-msgstr "Tundmatu tootja"
-
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-msgid "Could not detect screen type"
-msgstr "Ekraani liiki ei suudetud automaatselt tuvastada"
-
-#. TRANSLATORS: dialog message
-msgid ""
-"Please indicate if the screen you are trying to profile is an LCD, CRT or a "
-"projector."
-msgstr ""
-"Määra kas ekraan, millele üritad profiili luua, on LCD (õhuke "
-"vedelkristallpaneel), CRT (harilik katoodkuvar) või projektor."
 
 #. TRANSLATORS: title, the hardware calibration device does not support projectors
 msgid "Could not calibrate and profile using this color measuring instrument"
@@ -628,31 +424,196 @@ msgstr ""
 "See värvimõõteseade ei ole loodud projektorite kalibreerimiseks ja neile "
 "profiilide loomiseks."
 
-#. TRANSLATORS: dialog title
-msgid "Profile Precision"
-msgstr "Profiili täpsus"
+msgid "Please attach instrument"
+msgstr "Palun paigalda kalibreerimisseade"
 
-#. TRANSLATORS: this is the message body for the chart selection
+#. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
 msgid ""
-"A higher precision profile provides higher accuracy in color matching but "
-"requires more time for reading the color patches."
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square like the image below."
 msgstr ""
-"Kõrgtäpne profiil tagab värvide vastavuse suurema täpsuse, kuid värvide "
-"mõõtmiseks kulub rohkem aega."
+"Palun kinnita mõõteseade ekraani keskel asuva halli ruudu kohale, nagu "
+"alumisel pildil."
 
-#. TRANSLATORS: this is the message body for the chart selection
-msgid "For a typical workflow, a normal precision profile is sufficient."
-msgstr "Tavaliseks tööks on normaaltäpsusega profiil piisav."
+#. TRANSLATORS: dialog message, ask user to attach device
+msgid ""
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square."
+msgstr "Palun kinnita mõõteseade ekraani keskel asuva halli ruudu kohale."
+
+#. TRANSLATORS: dialog message, ask user to attach device
+msgid ""
+"You will need to hold the device on the screen for the duration of the "
+"calibration."
+msgstr "Pead hoidma seadet kalibreerimise ajal ekraani vastu."
+
+msgid "Continue"
+msgstr "Edasi"
+
+msgid "Please configure instrument"
+msgstr "Kalibreerimisseadme häälestamine"
+
+msgid ""
+"Please set the measuring instrument to screen mode like the image below."
+msgstr ""
+"Palun lülita mõõteseade ekraanirežiimile, nagu on näidatud alumisel pildil."
+
+msgid "Please set the measuring instrument to screen mode."
+msgstr "Palun lülita mõõteseade ekraanirežiimile."
+
+msgid ""
+"Please set the measuring instrument to calibration mode like the image below."
+msgstr ""
+"Palun lülita mõõteseade kalibreerimisrežiimile, nagu on näidatud alumisel "
+"pildil."
+
+msgid "Please set the measuring instrument to calibration mode."
+msgstr "Palun lülita mõõteseade kalibreerimisrežiimile."
+
+#. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
+#. * aquired image of the calibration target, e.g. an image file that looks
+#. * a bit like this: http://www.colorreference.de/targets/target.jpg
+msgid "Select calibration target image"
+msgstr "Kalibreerimise testtabeli valimine"
+
+#. TRANSLATORS: filter name on the file->open dialog
+msgid "Supported images files"
+msgstr "Toetatud pildifailid"
+
+#. TRANSLATORS: filter name on the file->open dialog
+msgid "All files"
+msgstr "Kõik failid"
+
+#. TRANSLATORS: dialog for file->open dialog
+msgid "Select CIE reference values file"
+msgstr "Vali CIE etalonväärtuste fail"
+
+#. TRANSLATORS: filter name on the file->open dialog
+msgid "CIE values"
+msgstr "CIE-väärtused"
+
+#. TRANSLATORS: dialog for file->open dialog
+msgid "Select ICC Profile File"
+msgstr "ICC-profiili faili avamine"
+
+msgid "Open"
+msgstr "Ava"
+
+msgid "Calibration is not complete"
+msgstr "Kalibreerimine pole valmis"
+
+msgid "Are you sure you want to cancel the calibration?"
+msgstr "Kas sa oled kindel, et tahad kalibreerimise katkestada?"
+
+msgid "Continue calibration"
+msgstr "Jätka kalibreerimist"
+
+msgid "Cancel and close"
+msgstr "Loobu ja sulge"
+
+#. TRANSLATORS: this is the sound description
+msgid "Profiling completed"
+msgstr "Profiili loomine lõpetatud"
+
+#. TRANSLATORS: this is the page title
+msgid "Failed to calibrate"
+msgstr "Kalibreerimine nurjus"
+
+#. TRANSLATORS: this is the page title
+msgid "Calibrate your camera"
+msgstr "Kaamera kalibreerimine"
+
+#. TRANSLATORS: this is the page title
+msgid "Calibrate your display"
+msgstr "Kuvari kalibreerimine"
+
+#. TRANSLATORS: this is the page title
+msgid "Calibrate your printer"
+msgstr "Printeri kalibreerimine"
+
+#. TRANSLATORS: this is the page title
+msgid "Calibrate your device"
+msgstr "Seadme kalibreerimine"
+
+#. TRANSLATORS: this is the final intro page text
+msgid ""
+"Any existing screen correction will be temporarily turned off and the "
+"brightness set to maximum."
+msgstr ""
+"Olemasolev ekraaniparandaja lülitatakse ajutiselt välja ja heledus "
+"määratakse maksimumile."
+
+#. TRANSLATORS: this is the final intro page text
+msgid "You can cancel this process at any stage by pressing the cancel button."
+msgstr "Seda protsessi saab katkestada igal hetkel vajutades nupule loobu."
+
+#. TRANSLATORS: this is the calibration wizard page title
+msgid "Introduction"
+msgstr "Sissejuhatus"
+
+msgid "Show File"
+msgstr "Faili kuvamine"
+
+msgid "Click here to show the profile"
+msgstr "Profiili nägemiseks klõpsa siia"
+
+#. TRANSLATORS: this is the page title
+msgid "All done!"
+msgstr "Kõik on valmis!"
+
+#. TRANSLATORS: this is the final summary
+msgid "The camera has been calibrated successfully."
+msgstr "Kaamera on edukalt kalibreeritud."
+
+#. TRANSLATORS: this is the final summary
+msgid "The display has been calibrated successfully."
+msgstr "Kuva on edukalt kalibreeritud."
+
+#. TRANSLATORS: this is the final summary
+msgid "The printer has been calibrated successfully."
+msgstr "Printer on edukalt kalibreeritud."
+
+#. TRANSLATORS: this is the final summary
+msgid "The device has been calibrated successfully."
+msgstr "Seade on edukalt kalibreeritud."
+
+#. TRANSLATORS: this is the final summary
+msgid ""
+"To view details about the new profile or to undo the calibration visit the "
+"<a href=\"control-center://color\">control center</a>."
+msgstr ""
+"Et kuvada uue profiiliga seotud üksikasju või kalibreerimist tagasi võtta, "
+"vaata <a href=\"control-center://color\">süsteemi sätteid</a>."
+
+msgid ""
+"You can use the profile with <a href=\"import-linux\">Linux</a>, <a href="
+"\"import-osx\">Apple OS X</a> and <a href=\"import-windows\">Microsoft "
+"Windows</a> systems."
+msgstr ""
+"Profiili võid kasutada <a href=\"import-linux\">Linuxi</a>, <a href=\"import-"
+"osx\">Apple OS X'i</a> ja <a href=\"import-windows\">Microsoft Windows</a> "
+"süsteemidega."
+
+#. TRANSLATORS: this is the calibration wizard page title
+msgid "Summary"
+msgstr "Kokkuvõte"
+
+#. TRANSLATORS: this is the page title
+msgid "Performing calibration"
+msgstr "Kalibreerimine"
+
+msgid "Calibration is about to start"
+msgstr "Kalibreerimine algab kohe"
+
+#. TRANSLATORS: this is the calibration wizard page title
+msgid "Action"
+msgstr "Tegevus"
 
 #. TRANSLATORS: dialog message, preface
-msgid "The high precision profile also requires more paper and printer ink."
-msgstr "Täpsema profiili loomiseks kulub lisaks ka rohkem paberit ja tinti."
+msgid "Calibration checklist"
+msgstr "Kalibreerimise kontrollnimekiri"
 
-#. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated
-msgid "Custom"
-msgstr "Kohandatud"
-
-#. TRANSLATORS: dialog message, preface
+#. TRANSLATORS: this is intro page text
 msgid ""
 "Before calibrating the display, it is recommended to configure your display "
 "with the following settings to get optimal results."
@@ -702,47 +663,26 @@ msgstr ""
 "Parimate tulemuste saavutamiseks peaks monitor olema enne kalibreerimise "
 "algust töötanud vähemalt 15 minutit."
 
-msgid "Display setup"
-msgstr "Kuva sätted"
+#. TRANSLATORS: this is the calibration wizard page title
+msgid "Check Settings"
+msgstr "Sätete kontroll"
 
-#. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
-#. * aquired image of the calibration target, e.g. an image file that looks
-#. * a bit like this: http://www.colorreference.de/targets/target.jpg
-msgid "Select calibration target image"
-msgstr "Kalibreerimise testtabeli valimine"
+msgid "Calibration and profiling software is not installed."
+msgstr "Kalibreerimis- ja profiili loomise tarkvara pole paigaldatud."
 
-#. TRANSLATORS: filter name on the file->open dialog
-msgid "Supported images files"
-msgstr "Toetatud pildifailid"
+msgid "These tools are required to build color profiles for devices."
+msgstr "Need tööriistad on vajalikud seadmete jaoks värviprofiilide loomiseks."
 
-#. TRANSLATORS: dialog for file->open dialog
-msgid "Select CIE reference values file"
-msgstr "Vali CIE etalonväärtuste fail"
+#. TRANSLATORS: this is the page title
+msgid "More software is required!"
+msgstr "Vajalik on lisatarkvara!"
 
-#. TRANSLATORS: filter name on the file->open dialog
-msgid "CIE values"
-msgstr "CIE-väärtused"
+msgid "Install required software"
+msgstr "Nõutud tarkvara paigaldamine"
 
-msgid "Open"
-msgstr "Ava"
-
-#. TRANSLATORS: title, you can profile all at once, or in steps
-msgid "Please choose a profiling mode"
-msgstr "Profiili loomise režiimi valimine"
-
-#. TRANSLATORS: dialog message. Test patches are pages of colored squares
-#. * that are printed with a printer, and then read in with a calibration
-#. * device to create a profile
-msgid ""
-"Please indicate if you want to profile a local printer, generate some test "
-"patches, or profile using existing test patches."
-msgstr ""
-"Määra, kas tahad profiili luua kohalikule printerile, genereerida näidisalad "
-"või luua profiil kasutades testpilte."
-
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-msgid "Install missing files?"
-msgstr "Kas paigaldada puuduvad failid?"
+#. TRANSLATORS: this is the calibration wizard page title
+msgid "Install Tools"
+msgstr "Tööriistade paigaldamine"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
 msgid "Common color target files are not installed on this computer."
@@ -762,56 +702,16 @@ msgstr "Kas tahad need paigaldada?"
 msgid "If you already have the correct file, you can skip this step."
 msgstr "Kui sul juba on õige fail, võid selle sammu vahele jätta."
 
-#. TRANSLATORS: this is the window title for when the user selects the calibration target.
-#. * A calibration target is an accuratly printed grid of colors, for instance:
-#. * the IT 8.7 targets available here: http://www.targets.coloraid.de/
-msgid "Please select a calibration target"
-msgstr "Palun vali kalibreerimise testtabel"
+#. TRANSLATORS: this is the page title
+msgid "Optional data files available"
+msgstr "Saadaval on lisaandmefailid"
 
-#. TRANSLATORS: dialog message, preface. A calibration target looks like
-#. * this: http://www.colorreference.de/targets/target.jpg
-msgid ""
-"Before profiling the device, you have to manually capture an image of a "
-"calibration target and save it as a TIFF image file."
-msgstr ""
-"Enne seadme jaoks profiili loomist pead käsitsi tegema kalibreeritud "
-"värvinäidistest pildi ja salvestama selle TIFF-vormingus pildifailina."
+msgid "Install Now"
+msgstr "Paigalda kohe"
 
-#. TRANSLATORS: dialog message, preface
-msgid ""
-"Ensure that the contrast and brightness are not changed and color correction "
-"profiles are not applied."
-msgstr ""
-"Kontrolli, et kontrastsust ja heledust pole muudetud ja "
-"värviparandusprofiile ei rakendata."
-
-#. TRANSLATORS: dialog message, suffix
-msgid ""
-"The device sensor should have been cleaned prior to scanning and the output "
-"file resolution should be at least 200dpi."
-msgstr ""
-"Seadme sensor peaks olema enne skaneerimist puhastatud ja väljundfaili "
-"lahutus peaks olema vähemalt 200dpi."
-
-#. TRANSLATORS: dialog message, preface
-msgid ""
-"Ensure that the white-balance has not been modified by the camera and that "
-"the lens is clean."
-msgstr ""
-"Veendu, et valge tasakaalu kaameras ei ole muudetud ning läätsed on puhtad."
-
-#. TRANSLATORS: dialog message, suffix
-msgid ""
-"For best results, the reference target should also be less than two years "
-"old."
-msgstr ""
-"Parima tulemuse saavutamiseks ei tohiks testtabel olla vanem kui kaks aastat."
-
-#. TRANSLATORS: this is the message body for the chart selection
-msgid ""
-"Please select the calibration target type which corresponds to your "
-"reference file."
-msgstr "Palun vali testtabeli tüüp, mis vastab näidisfailile."
+#. TRANSLATORS: this is the calibration wizard page title
+msgid "Install Targets"
+msgstr "Sihtkohtade paigaldamine"
 
 #. TRANSLATORS: this is probably a brand name
 msgid "CMP Digital Target 3"
@@ -853,127 +753,316 @@ msgstr "Laser Soft DC Pro"
 msgid "QPcard 201"
 msgstr "QPcard 201"
 
-#. TRANSLATORS: dialog title
-msgid "Introduction to display calibration"
-msgstr "Sissejuhatus kuva kalibreerimisse"
-
-#. TRANSLATORS: message text, an ICC profile is a file that characterizes the device
+#. TRANSLATORS: dialog message, preface. A calibration target looks like
+#. * this: http://www.colorreference.de/targets/target.jpg
 msgid ""
-"This dialog will help calibrate your display and create a custom ICC profile."
+"Before profiling the device, you have to manually capture an image of a "
+"calibration target and save it as a TIFF image file."
 msgstr ""
-"See dialoog aitab sul kalibreerida kuva ning luua kohandatud ICC-profiili."
+"Enne seadme jaoks profiili loomist pead käsitsi tegema kalibreeritud "
+"värvinäidistest pildi ja salvestama selle TIFF-vormingus pildifailina."
 
-#. TRANSLATORS: message text, telling the user they are in for the long haul
+#. TRANSLATORS: dialog message, preface
 msgid ""
-"The calibration will involve several steps so that an accurate profile can "
-"be obtained."
+"Ensure that the contrast and brightness are not changed and color correction "
+"profiles have not been applied."
 msgstr ""
-"Kalibreerimine sisaldab mitut sammu, mis on vajalikud täpse profiili "
-"loomiseks."
+"Kontrolli, et kontrastsust ja heledust pole muudetud ja "
+"värviparandusprofiile ei rakendata."
 
-#. TRANSLATORS: message text, this is a lie. It will take more than a few minutes, but we don't want to scare the hapless user
-msgid "It should only take a few minutes."
-msgstr "Selleks peaks kuluma ainult mõni minut."
-
-#. TRANSLATORS: message text, when you're comparing colors, it helps if the image is a bit out of focus otherwise the
-#. * fovea (center bit of the eye) tries to 'pick out' a colour, rather than take the average reading
+#. TRANSLATORS: dialog message, suffix
 msgid ""
-"It may help to sit further from the screen or to squint at the calibration "
-"images in order to accurately compare the colors."
+"The device sensor should have been cleaned prior to scanning and the output "
+"file resolution should be at least 200dpi."
 msgstr ""
-"Värvide tõeseks võrdlemiseks võib olla kasulik istuda ekraanist kaugemale "
-"või kissitada kalibreerimispilte vaadates silmi."
+"Seadme sensor peaks olema enne skaneerimist puhastatud ja väljundfaili "
+"lahutus peaks olema vähemalt 200dpi."
 
-#. TRANSLATORS: message text, tell the use that they can go back and forwards, as the human eye sucks
-msgid "You can repeat the calibration steps as many times as you want."
-msgstr "Sa võid korrata kalibreerimissamme nii mitu korda, kui soovid."
+#. TRANSLATORS: dialog message, preface
+msgid ""
+"Ensure that the white-balance has not been modified by the camera and that "
+"the lens is clean."
+msgstr ""
+"Veendu, et valge tasakaalu kaameras ei ole muudetud ning läätsed on puhtad."
 
-#. TRANSLATORS: dialog title
+#. TRANSLATORS: this is the message body for the chart selection
+msgid "Please select the calibration target type."
+msgstr "Palun vali kalibreerimise sihtkoha liik."
+
+#. TRANSLATORS: this is the page title
+msgid "What target type do you have?"
+msgstr "Mis sihtkoha liik sul on?"
+
+#. TRANSLATORS: this is the calibration wizard page title
+msgid "Select Target"
+msgstr "Sihtkoha valimine"
+
+#. TRANSLATORS: this is the page title
+msgid "Choose your display type"
+msgstr "Vali kuva liik"
+
+#. TRANSLATORS: this is intro page text
+msgid "Select the monitor type that is attached to your computer."
+msgstr "Vali, mis liiki monitor on su arvutiga ühendatud."
+
+msgid "LCD"
+msgstr "LCD"
+
+msgid "CRT"
+msgstr "CRT"
+
+msgid "Plasma"
+msgstr "Plasma"
+
+msgid "Projector"
+msgstr "Projektor"
+
+#. TRANSLATORS: this is the calibration wizard page title
+msgid "Choose Display Type"
+msgstr "Kuvari liigi valimine"
+
+#. TRANSLATORS: this is the page title
+msgid "Choose your display target white point"
+msgstr "Vali kuvari valgepunkt"
+
+#. TRANSLATORS: this is intro page text
+msgid ""
+"Most displays should be calibrated to a CIE D65 illuminant for general usage."
+msgstr ""
+"Enamik tavakasutuse kuvareid peaks olema häälestatud CIE D65 valguse jaoks."
+
+msgid "CIE D50 (Printing and publishing)"
+msgstr "CIE D50 (trükkimine)"
+
+msgid "CIE D55"
+msgstr "CIE D55"
+
+msgid "CIE D65 (Photography and graphics)"
+msgstr "CIE D65 (fotograafia ja graafika)"
+
+msgid "CIE D75"
+msgstr "CIE D75"
+
+msgid "Native (Already set manually)"
+msgstr "Natiivne (juba käsitsi määratud)"
+
+#. TRANSLATORS: this is the calibration wizard page title
+msgid "Choose Display Whitepoint"
+msgstr "Kuvari valgepunkti valimine"
+
+#. TRANSLATORS: this is the page title
+msgid "Choose profiling mode"
+msgstr "Profiili loomise režiimi valimine"
+
+#. TRANSLATORS: this is intro page text
+msgid ""
+"Please indicate if you want to profile a local printer, generate some test "
+"patches, or profile using existing test patches."
+msgstr ""
+"Määra, kas tahad profiili luua kohalikule printerile, genereerida näidisalad "
+"või luua profiil kasutades testpilte."
+
+#. TRANSLATORS: this is the calibration wizard page title
+msgid "Calibration Mode"
+msgstr "Kalibreerimisrežiim"
+
+#. TRANSLATORS: this is the page title
+msgid "Choose calibration quality"
+msgstr "Kalibreerimise kvaliteedi valimine"
+
+#. TRANSLATORS: this is intro page text
+msgid "Higher quality calibration requires many color samples and more time."
+msgstr ""
+"Parema kvaliteediga kalibreerimise jaoks läheb rohkem sämpleid ja rohkem "
+"aega."
+
+#. TRANSLATORS: this is the message body for the chart selection
+msgid ""
+"A higher precision profile provides higher accuracy in color matching but "
+"requires more time for reading the color patches."
+msgstr ""
+"Kõrgtäpne profiil tagab värvide vastavuse suurema täpsuse, kuid värvide "
+"mõõtmiseks kulub rohkem aega."
+
+#. TRANSLATORS: this is the message body for the chart selection
+msgid "For a typical workflow, a normal precision profile is sufficient."
+msgstr "Tavaliseks tööks on normaaltäpsusega profiil piisav."
+
+#. TRANSLATORS: dialog message, preface
+msgid "The high precision profile also requires more paper and printer ink."
+msgstr "Täpsema profiili loomiseks kulub lisaks ka rohkem paberit ja tinti."
+
+#. TRANSLATORS: radio options for calibration precision
+msgid "Accurate"
+msgstr "Täpne"
+
+msgid "Normal"
+msgstr "Tavaline"
+
+msgid "Quick"
+msgstr "Kiire"
+
 #, c-format
-msgid "Create table item %i/%i"
-msgstr "Tabeli loomine %i / %i"
+msgid "(about %i sheet of paper)"
+msgid_plural "(about %i sheets of paper)"
+msgstr[0] "(umbes %i paberileht)"
+msgstr[1] "(umbes %i paberilehte)"
 
-#. TRANSLATORS: message text
-msgid ""
-"Please try to match up the gray square with the surrounding alternating "
-"bars. You should match the brightness first, and then if required change the "
-"color tint so it looks plain gray."
-msgstr ""
-"Proovi leida hallile ruudule vastavat tooni riba kõrvalt. Kõigepealt peaks "
-"leidma sobiva heleduse ning seejärel vajadusel kohandama värvust, et see "
-"paistaks täiesti hall."
+#, c-format
+msgid "(about %i minute)"
+msgid_plural "(about %i minutes)"
+msgstr[0] "(umbes %i minut)"
+msgstr[1] "(umbes %i minutit)"
 
-#. TRANSLATORS: dialog title
-msgid "Summary"
-msgstr "Kokkuvõte"
+#. TRANSLATORS: this is the calibration wizard page title
+msgid "Calibration Quality"
+msgstr "Kalibreerimise kvaliteet"
 
-#. TRANSLATORS: message text
-msgid ""
-"This display is now calibrated. You can change the current profile using the "
-"Color Profiles program."
-msgstr ""
-"Kuva on nüüd kalibreeritud. Sa võid muuta praegust profiili värviprofiilide "
-"rakendusest."
+#. TRANSLATORS: this is the page title
+msgid "Profile title"
+msgstr "Profiili pealkiri"
+
+#. TRANSLATORS: this is intro page text
+msgid "Choose a title to identify the profile on your system."
+msgstr "Vali pealkiri, mille järgi tunned selle profiili süsteemis ära."
+
+#. TRANSLATORS: this is the calibration wizard page title
+msgid "Profile Title"
+msgstr "Profiili pealkiri"
+
+#. TRANSLATORS: this is the page title
+msgid "Insert sensor hardware"
+msgstr "Ühenda sensori raudvara"
+
+#. TRANSLATORS: this is intro page text
+msgid "You need to insert sensor hardware to continue."
+msgstr "Jätkamiseks tuleb ühendada sensorseade."
+
+#. TRANSLATORS: this is the calibration wizard page title
+msgid "Sensor Check"
+msgstr "Sensori kontroll"
+
+#. TRANSLATORS: this is intro page text
+msgid "The device could not be found. Ensure it is plugged in and turned on."
+msgstr "Seadet ei leitud. Veendu, et see on ühendatud ja sisse lülitatud."
+
+#. TRANSLATORS: this is saved in the profile
+msgid "Unknown serial"
+msgstr "Tundmatu seerianumber"
+
+#. TRANSLATORS: this is saved in the profile
+msgid "Unknown model"
+msgstr "Tundmatu mudel"
+
+#. TRANSLATORS: this is saved in the profile
+msgid "Unknown description"
+msgstr "Kirjeldus puudub"
+
+#. TRANSLATORS: this is saved in the profile
+msgid "Unknown manufacturer"
+msgstr "Tundmatu tootja"
+
+#. TRANSLATORS: this is the copyright string, where it might be
+#. * "Copyright (c) 2009 Edward Scissorhands"
+#. * BIG RED FLASHING NOTE: YOU NEED TO USE ASCII ONLY
+msgid "Copyright (c)"
+msgstr "Copyright (c)"
+
+#. TRANSLATORS: we can make this modal (stay on top of) another window
+msgid "Set the parent window to make this modal"
+msgstr "Määra, millise akna peal see peab asuma"
+
+#. TRANSLATORS: show just the one profile, rather than all
+msgid "Set the specific device to calibrate"
+msgstr "Määra seade, mida kalibreerida"
+
+msgid "No device was specified!"
+msgstr "Ühtegi seadet pole määratud!"
 
 #. TRANSLATORS: this is when there is no profile for the device
 msgid "No profile"
 msgstr "Profiili pole"
 
-msgid "Default"
-msgstr "Vaikimisi"
+#, c-format
+msgid "Default %s"
+msgstr "Vaikimisi %s"
 
-#. TRANSLATORS: this is the name of the internal panel
-msgid "Laptop LCD"
-msgstr "Sülearvuti LCD"
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile has been auto-generated for this hardware
+msgid "Default: "
+msgstr "Vaikimisi:"
 
-#. TRANSLATORS: this is prepended to the device title to let the use know it was generated by us automatically
-msgid "Automatic"
-msgstr "Automaatne"
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile his a standard space like AdobeRGB
+msgid "Colorspace: "
+msgstr "Värvusruum:"
 
-#. TRANSLATORS: this is displayed when the profile is crap
-msgid ""
-"This profile does not have the information required for whole-screen color "
-"correction."
-msgstr "See profiil ei sisalda kogu-ekraani värviparanduseks vajalikku teavet."
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile is a test profile
+msgid "Test profile: "
+msgstr "Testprofiil:"
+
+#. TRANSLATORS: turn on all debugging
+msgid "Show debugging information for all files"
+msgstr "Silumisteavet kuvatakse kõigile failidele"
+
+msgid "Debugging Options"
+msgstr "Silumise valikud"
+
+msgid "Show debugging options"
+msgstr "Silumisvalikute kuvamine"
 
 #. TRANSLATORS: command line option: a list of catalogs to install
-#. TRANSLATORS: command line option: a list of files to install
 msgid "ICC profile to install"
 msgstr "Paigaldatav ICC-profiil"
 
-#. TRANSLATORS: nothing was specified on the command line
 msgid "No filename specified"
 msgstr "Failinimi pole määratud"
 
-#. TRANSLATORS: could not read file
 msgid "Failed to open ICC profile"
 msgstr "ICC-profiili avamine nurjus"
 
-#. TRANSLATORS: parsing error
 #, c-format
 msgid "Failed to parse file: %s"
 msgstr "Faili parsimine nurjus: %s"
 
-#. TRANSLATORS: color profile already been installed
-msgid "ICC profile already installed"
-msgstr "ICC-profiil on juba paigaldatud"
-
-#. TRANSLATORS: color profile already been installed
-msgid "ICC profile already installed system-wide"
-msgstr "ICC-profiil on juba paigaldatud kogu süsteemile"
-
 #. TRANSLATORS: message text
 #, c-format
-msgid "Import ICC color profile %s?"
-msgstr "Kas importida ICC-värviprofiil %s?"
+msgid "Profile description: %s"
+msgstr "Profiili kirjeldus: %s"
 
 #. TRANSLATORS: message text
-msgid "Import ICC color profile?"
-msgstr "Kas importida ICC-värviprofiil?"
+msgid "Profile copyright:"
+msgstr "Profiili autoriõigus:"
 
-#. ask confirmation
-msgid "Import ICC profile"
-msgstr "Impordi ICC-profiil"
+msgid "Color profile is already imported"
+msgstr "Värvusprofiil on juba imporditud"
+
+msgid "Show Details"
+msgstr "Üksikasjade kuvamine"
+
+#. TRANSLATORS: the profile type
+msgid "Import display color profile?"
+msgstr "Kas importida kuvari värvusprofiil?"
+
+#. TRANSLATORS: the profile type
+msgid "Import device color profile?"
+msgstr "Kas importida seadme värvusprofiil?"
+
+#. TRANSLATORS: the profile type
+msgid "Import named color profile?"
+msgstr "Kas importida nimeline värvusprofiil?"
+
+#. TRANSLATORS: the profile type
+msgid "Import color profile?"
+msgstr "Kas importida värvusprofiil?"
+
+#. TRANSLATORS: button text
+msgid "Import"
+msgstr "Impordi"
+
+msgid "Failed to import file"
+msgstr "Faili importimine nurjus"
 
 #. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
 msgid "Description:"
@@ -991,61 +1080,29 @@ msgstr "Juurakna profiil:"
 msgid "Root window protocol version:"
 msgstr "Juurakna protokolli versioon:"
 
-#, c-format
-msgid "Output profile '%s':"
-msgstr "Väljundprofiil '%s':"
+#. TRANSLATORS: no DBus session bus
+msgid "Failed to connect to session bus:"
+msgstr "Seansi siiniga ühendumine nurjus:"
 
-#. TRANSLATORS: this is when the profile has not been set
-msgid "not set"
-msgstr "pole määratud"
-
-#. TRANSLATORS: no profile has been asigned to this device
-msgid "There are no ICC profiles for this device"
-msgstr "Sellele seadmele pole määratud ühtegi ICC-profiili"
-
-#. TRANSLATORS: this is a list of profiles suitable for the device
-msgid "Suitable profiles for:"
-msgstr "Sobivad profiilid seadmele:"
+#. TRANSLATORS: the DBus method failed
+msgid "The request failed:"
+msgstr "Päring nurjus:"
 
 #. TRANSLATORS: no profile has been asigned to this device
 msgid "There are no ICC profiles assigned to this file"
 msgstr "Selle failiga pole seotud ühtegi ICC-profiili"
 
+#. TRANSLATORS: this is a list of profiles suitable for the device
+msgid "Suitable profiles for:"
+msgstr "Sobivad profiilid seadmele:"
+
 #. TRANSLATORS: no profile has been asigned to this window
 msgid "There are no ICC profiles for this window"
 msgstr "Sellele aknale pole määratud ühtegi ICC-profiili"
 
-#. TRANSLATORS: no profile has been asigned to this device
-msgid "There are no ICC profiles for this device type"
-msgstr "Seda liiki seadmele pole ühtegi ICC-profiili"
-
-#. TRANSLATORS: the DBus method failed
-msgid "The request failed"
-msgstr "Päring nurjus"
-
-#. TRANSLATORS: this is the rendering intent of the output
-msgid "Rendering intent (display):"
-msgstr "Renderdamisviis (kuva):"
-
-#. TRANSLATORS: this is the rendering intent of the printer
-msgid "Rendering intent (softproof):"
-msgstr "Renderdamisviis (väljundvaade):"
-
-#. TRANSLATORS: this is the rendering intent of the output
-msgid "RGB Colorspace:"
-msgstr "RGB värviruum:"
-
-#. TRANSLATORS: this is the rendering intent of the printer
-msgid "CMYK Colorspace:"
-msgstr "CMYK värviruum:"
-
 #. TRANSLATORS: command line option
 msgid "Show xserver properties"
 msgstr "xserveri omaduste kuvamine"
-
-#. TRANSLATORS: command line option
-msgid "Get the profiles for a specific device"
-msgstr "Määratud seadme profiilide hankimine"
 
 #. TRANSLATORS: command line option
 msgid "Get the profiles for a specific file"
@@ -1056,10 +1113,6 @@ msgid "Get the profile for a specific window"
 msgstr "Määratud akna profiilide hankimine"
 
 #. TRANSLATORS: command line option
-msgid "Get the profiles for a specific device type"
-msgstr "Määratud liiki seadme profiilide hankimine"
-
-#. TRANSLATORS: command line option
 msgid "Dump all details about this system"
 msgstr "Selle süsteemi teabe tõmmis"
 
@@ -1067,155 +1120,40 @@ msgstr "Selle süsteemi teabe tõmmis"
 msgid "EDID inspect program"
 msgstr "EDID-i inspekteerimise programm"
 
-#. TRANSLATORS: this is when the user does --type=mickeymouse
-msgid "Device or profile type not recognized, recognised types are:"
-msgstr "Seadme või profiili liiki ei tuntud ära, tuntud liigid on:"
-
-#. command line argument, the ID of the device
-msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
-msgstr "Seadme ID, nt 'xrandr_ibm_france_ltn154p2_l05'"
-
-#. TRANSLATORS: tool that is used when copying profiles system-wide
-msgid "GNOME Color Manager ICC profile system-wide installer"
-msgstr "GNOME värvihalduri ICC-profiili kogule süsteemile paigaldaja"
-
-#. TRANSLATORS: user did not specify a valid filename
-msgid "You need to specify exactly one ICC profile filename."
-msgstr "Pead määrama täpselt ühe ICC-profiili failinime."
-
-#. TRANSLATORS: user did not specify a valid device ID
-msgid "You need to specify exactly one device ID."
-msgstr "Pead määrama täpselt ühe seadme ID."
-
-#. TRANSLATORS: user did not specify a valid device ID
-msgid "The device ID has invalid characters."
-msgstr "Seadme ID sisaldab sobimatuid märke."
-
-#. TRANSLATORS: only able to install profiles as root
-msgid "This program can only be used by the root user."
-msgstr "Seda rakendust saab kasutada ainult juurkasutaja."
-
-#. TRANSLATORS: only able to install profiles with an absolute path
-msgid "The source filename must be absolute."
-msgstr "Lähtefaili asukoht peab olema absoluutne."
-
-#. TRANSLATORS: error details
-msgid "Failed to get content type:"
-msgstr "Sisutüübi hankimine nurjus:"
-
-#. TRANSLATORS: the content type is the detected type of file
-msgid "Content type was incorrect:"
-msgstr "Sisutüüp oli vale:"
-
-#. TRANSLATORS: the program must never be directly run
-msgid "This program must only be run through pkexec."
-msgstr "See programm tuleb käivitada pkexec-i kaudu."
-
-#. TRANSLATORS: PolicyKit has gone all insane on us, and we refuse to parse junk
-msgid "PKEXEC_UID must be set to an integer value."
-msgstr "PKEXEC_UID väärtus peab olema täisarv."
-
-#. TRANSLATORS: we are complaining that a file must be really owned by the user who called this program
-msgid "The ICC profile must be owned by the user."
-msgstr "ICC-profiil peab kuuluma kasutajale."
-
-#. TRANSLATORS: only able to install profiles with an absolute path
-msgid "The destination filename must be absolute."
-msgstr "Sihtfaili nimi peab olema absoluutne."
-
-#. TRANSLATORS: error details
-msgid "Failed to copy:"
-msgstr "Kopeerimine nurjus:"
-
+#. TRANSLATORS: this is when the error is invalid
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
 msgid "Unknown"
 msgstr "Tundmatu"
 
-#. TRANSLATORS: this is displayed the user has not got suitable hardware
 msgid "No colorimeter is attached."
 msgstr "Kolorimeeter pole ühendatud."
 
-#. TRANSLATORS: this is displayed if VTE support is not enabled
-msgid "This application was compiled without VTE support."
-msgstr "Rakendus on kompileeritud ilma VTE toeta."
+msgid "The sensor has no native driver."
+msgstr "Sensoril pole natiivset draiverit."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "Ühendatud kolorimeeter ei sobi punktvärvide lugemiseks."
 
-#. TRANSLATORS: we can make this modal (stay on top of) another window
-msgid "Set the parent window to make this modal"
-msgstr "Määra, millise akna peal see peab asuma"
+#. TRANSLATORS: this is when there are no profiles that can be used;
+#. * the search term is either "RGB" or "CMYK"
+#, c-format
+msgid "No %s color spaces available"
+msgstr "Ühtegi %s värviruumi pole saadaval"
 
 #. TRANSLATORS: tool that is used to pick colors
 msgid "GNOME Color Manager Color Picker"
 msgstr "GNOME värvihalduri värvivalija"
 
-#. TRANSLATORS: button: this is to open GCM
-msgid "Recalibrate now"
-msgstr "Kalibreeri kohe uuesti"
+#. TRANSLATORS: this is where the ICC profile has no description
+msgid "Missing description"
+msgstr "Kirjeldus puudub"
 
-#. TRANSLATORS: button: this is to ignore the recalibrate notifications
-msgid "Ignore"
-msgstr "Eira"
-
-#. TRANSLATORS: this is when the device has not been recalibrated in a while
-msgid "Recalibration required"
-msgstr "Korduskalibreerimine on vajalik"
-
-#. TRANSLATORS: this is when the display has not been recalibrated in a while
-#, c-format
-msgid "The display '%s' should be recalibrated soon."
-msgstr "Kuva '%s' tuleks peatselt uuesti kalibreerida."
-
-#. TRANSLATORS: this is when the printer has not been recalibrated in a while
-#, c-format
-msgid "The printer '%s' should be recalibrated soon."
-msgstr "Printer '%s' tuleks peatselt uuesti kalibreerida."
-
-msgid "Do not exit after the request has been processed"
-msgstr "Pärast päringu sooritamist ei lõpetata tööd"
-
-#. TRANSLATORS: program name, a session wide daemon to watch for updates and changing system state
-msgid "Color Management"
-msgstr "Värvihaldus"
-
-msgid "Color Management D-Bus Service"
-msgstr "Värvihalduse DBus-i teenus"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-msgid "Perceptual"
-msgstr "Pertseptuaalne"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-msgid "Relative"
-msgstr "Suhteline"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-msgid "Saturation"
-msgstr "Küllastus"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-msgid "Absolute"
-msgstr "Absoluutne"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-msgid "High quality photography"
-msgstr "Kõrgkvaliteetne fotograafia"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-msgid "Precise color matching"
-msgstr "Täpne värvivastavus"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-msgid "Graphs and presentations"
-msgstr "Graafikud ja esitlused"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-msgid "Proofing devices"
-msgstr "Kontrollseadmed"
+#. TRANSLATORS: this is the profile creation date strftime format
+msgid "%B %e %Y, %I:%M:%S %p"
+msgstr "%e. %B %Y, %H:%M:%S"
 
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
@@ -1244,6 +1182,14 @@ msgstr ""
 #. TRANSLATORS: button, delete a profile
 msgid "Delete"
 msgstr "Kustuta"
+
+#. TRANSLATORS: filter name on the file->open dialog
+msgid "Supported ICC profiles"
+msgstr "Toetatud ICC-profiilid"
+
+#. TRANSLATORS: could not read file
+msgid "Failed to copy file"
+msgstr "Faili kopeerimine nurjus"
 
 #. TRANSLATORS: this the ICC profile type
 msgid "Input device"
@@ -1305,6 +1251,84 @@ msgstr "HSV"
 msgid "CMY"
 msgstr "CMY"
 
+#. TRANSLATORS: e.g. sRGB or adbode RGB
+msgid "Standard space"
+msgstr "Standardne ruum"
+
+#. TRANSLATORS: the raw EDID MD5 of the display device
+msgid "Display checksum"
+msgstr "Kuvari kontrollsumma"
+
+msgid "Display model"
+msgstr "Kuvari mudel"
+
+msgid "Display serial number"
+msgstr "Kuvari seerianumber"
+
+#. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
+msgid "Display PNPID"
+msgstr "Kuvari PNPID"
+
+#. TRANSLATORS: who made the display
+msgid "Display vendor"
+msgstr "Kuvari tootja"
+
+#. TRANSLATORS: the raw profile MD5
+msgid "File checksum"
+msgstr "Faili kontrollsumma"
+
+#. TRANSLATORS: the color framework, e.g. 'colord'
+msgid "Framework product"
+msgstr "Raamistiktoode"
+
+#. TRANSLATORS: the framework binary, e.g. gcm-viewer
+msgid "Framework program"
+msgstr "Raamistikrakendus"
+
+#. TRANSLATORS: the framework release, e.g. '1.22'
+msgid "Framework version"
+msgstr "Raamistiku versioon"
+
+#. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
+msgid "Data source type"
+msgstr "Andmete allika liik"
+
+#. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
+msgid "Mapping format"
+msgstr "Vastenduse (mapping) vorming"
+
+#. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
+msgid "Mapping qualifier"
+msgstr "Vastenduse kvalifikaator"
+
+#. TRANSLATORS: The original device the profile was made for
+msgid "Mapping device"
+msgstr "Vastendusseade (mapping device)"
+
+#. TRANSLATORS: The average error when making the profile
+msgid "Delta-E average"
+msgstr "Delta-E keskmine"
+
+#. TRANSLATORS: the maximum error when making the profile
+msgid "Delta-E maximum"
+msgstr "Delta-E maksimum"
+
+#. TRANSLATORS: the RMS error when making the profile
+msgid "Delta-E RMS"
+msgstr "Delta-E RMS"
+
+#. TRANSLATORS: The device name, e.g. 'huey'
+msgid "Calibration device"
+msgstr "Kalibreerimisseade"
+
+#. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
+msgid "Screen surface finish"
+msgstr "Ekraanipinna kate"
+
+#. TRANSLATORS: e.g. DVI or VGA
+msgid "Connection type"
+msgstr "Ühenduse liik"
+
 #. TRANSLATORS: if the device has a VCGT profile
 msgid "Yes"
 msgstr "Jah"
@@ -1321,227 +1345,525 @@ msgstr "Selle profiili kustutamine"
 msgid "This profile cannot be deleted"
 msgstr "Seda profiili pole võimalik kustutada"
 
-#. TRANSLATORS: combo-entry, no graph selected to be shown
-msgid "None"
-msgstr "Puudub"
+#. TRANSLATORS: show just the one profile, rather than all
+msgid "Set the specific profile to show"
+msgstr "Kuvamiseks kindla profiili valimine"
 
-#. TRANSLATORS: combo-entry, this is a graph plot type (look it up on google...)
-msgid "CIE 1931 xy"
-msgstr "CIE 1931 xy"
+#. TRANSLATORS: show just the one filename, rather than all
+msgid "Set the specific file to show"
+msgstr "Kuvamiseks kindla faili määramine"
 
-#. TRANSLATORS: combo-entry, this is a graph plot type (what goes in, v.s. what goes out)
-msgid "Transfer response curve"
-msgstr "Kõvera teisendus"
+#~ msgid "ICC profile already installed system-wide"
+#~ msgstr "ICC-profiil on juba paigaldatud kogu süsteemile"
 
-#. TRANSLATORS: combo-entry, this is a graph plot type (what data we snd the graphics card)
-msgid "Video card gamma table"
-msgstr "Videokaardi gammatabel"
+#, fuzzy
+#~ msgid "Use this device for profiling"
+#~ msgstr "Kas importida ICC-värviprofiil?"
 
-#. TRANSLATORS: combo-entry, this is a preview image of what the profile looks like
-msgid "Image preview (from sRGB)"
-msgstr "Pildi eelvaade (sRGB-st)"
+#, fuzzy
+#~ msgid "Wrote file"
+#~ msgstr "_Loo värviprofiil"
 
-msgid "Image preview (to sRGB)"
-msgstr "Pildi eelvaade (sRGB-sse)"
+#~ msgid "Generating the patches"
+#~ msgstr "Näidisalade genereerimine"
 
-msgid "Blue:"
-msgstr "Sinine:"
+#~ msgid ""
+#~ "Generating the patches that will be measured with the color instrument."
+#~ msgstr ""
+#~ "Näidisalade genereerimine, mida hiljem mõõdetakse kalibreerimisseadmega."
 
-msgid "Brightness:"
-msgstr "Heledus:"
+#~ msgid "Applies device profile settings at session startup"
+#~ msgstr "Seadme profiilisätted rakendatakse seansi alustamisel"
 
-msgid "CRT"
-msgstr "CRT"
+#~ msgid "Load device color profiles"
+#~ msgstr "Seadme värviprofiilide laadimine"
 
-#. The user wants to create images suitable to send to a photo-processing lab
-msgid "Create images for printing"
-msgstr "Printimiseks piltide loomine"
+#~ msgid "Color Management"
+#~ msgstr "Värvihaldus"
 
-#. Expander label, for use when the user wants to see the VTE widget and what the calibration tool is actually doing
-msgid "Details"
-msgstr "Üksikasjad"
+#~ msgid "Manage ICC color profiles"
+#~ msgstr "ICC-värviprofiilide haldus"
 
-#. window title
-msgid "Device Calibration"
-msgstr "Seadme kalibreerimine"
+#~ msgid "Other profile…"
+#~ msgstr "Muu profiil…"
 
-#. The user wants to analyse images that have been printed by a photo-processing lab
-msgid "Generate profile from printed images"
-msgstr "Profiili genereerimine prinditud piltidest"
+#~ msgid "Install calibration and profiling software?"
+#~ msgstr "Kas paigaldada kalibreerimis- ja profiili loomise tarkvara?"
 
-msgid "Green:"
-msgstr "Roheline:"
+#~ msgid "Do not install"
+#~ msgstr "Ära paigalda"
 
-#. The precision of the calibration
-msgid "High"
-msgstr "Täpne"
+#, fuzzy
+#~ msgid "Failed to add create virtual device"
+#~ msgstr "Virtuaalse seadme loomine nurjus"
 
-msgid "LCD"
-msgstr "LCD"
+#, fuzzy
+#~ msgid "Failed to delete device"
+#~ msgstr "Faili kustutamine nurjus"
 
-#. The precision of the calibration
-msgid "Low"
-msgstr "Ebatäpne"
+#~ msgid "Create a color profile for the selected device"
+#~ msgstr "Valitud seadme jaoks värviprofiili loomine"
 
-#. The length of the translation
-msgid "Normal"
-msgstr "Tavaline"
+#~ msgid "Cannot create profile: No device is selected"
+#~ msgstr "Profiili pole võimalik luua: ühtegi seadet pole valitud"
 
-#. The user is trying to create an ICC profile of a printer that is connected to the computer
-msgid "Profile locally attached printer"
-msgstr "Loo profiil arvuti külge ühendatud printerile"
+#~ msgid "Cannot create profile: Virtual console support is missing"
+#~ msgstr "Profiili pole võimalik luua: virtuaalse konsooli tugi puudub"
 
-msgid "Projector"
-msgstr "Projektor"
+#~ msgid "Cannot create profile: The measuring instrument is not plugged in"
+#~ msgstr "Profiili pole võimalik luua: mõõteseade pole ühendatud"
 
-msgid "Red:"
-msgstr "Punane:"
+#~ msgid ""
+#~ "Cannot create profile: The measuring instrument does not support printer "
+#~ "profiling"
+#~ msgstr ""
+#~ "Profiili pole võimalik luua: mõõteseade ei toeta printeritele profiili "
+#~ "loomist"
 
-msgid "precision"
-msgstr "täpsus"
+#~ msgid "Cannot create a profile for this type of device"
+#~ msgstr "Seda liiki seadme jaoks pole võimalik profiili luua"
 
-# tõlkekommentaar tundub kohatu
-#. This refers to the amount of ambient light on the sensor
-msgid "Ambient:"
-msgstr "Ümbrus:"
+#~ msgid "Device added"
+#~ msgstr "Seadme lisamine"
 
-#. Window title, where the user can pick spot colors using a measuring device
-msgid "Color Picker"
-msgstr "Värvivalija"
+#~ msgid "Scanner"
+#~ msgstr "Skanner"
 
-#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-msgid "Colorspace:"
-msgstr "Värviruum:"
+#~ msgid "Printer"
+#~ msgstr "Printer"
 
-#. This shows the error in the conversion to RGB.
-msgid "Error:"
-msgstr "Viga:"
+#~ msgid "Camera"
+#~ msgstr "Kaamera"
 
-#. Lab is the color representation and D50 is the white point
-msgid "Lab (D50):"
-msgstr "Lab (D50):"
+#, fuzzy
+#~ msgid "Compare profiles..."
+#~ msgstr "Profiili pole"
 
-#. These are the values of the chosen color in Red, Green, Blue encoding
-#. What mode to use for display rendering intent
-msgid "RGB:"
-msgstr "RGB:"
+#~ msgid "More color profiles could be automatically installed."
+#~ msgstr "Veel värviprofiile saaks paigaldada automaatselt."
 
-#. Expander title, the results from the color picker
-msgid "Results"
-msgstr "Tulemused"
+#~ msgid "Set up display"
+#~ msgstr "Kuva seadistamine"
 
-#. the color representation
-msgid "XYZ:"
-msgstr "XYZ:"
+#~ msgid "Setting up display device for use…"
+#~ msgstr "Kuvaseadme häälestamine kasutamiseks…"
 
-#. Button text, to get a single sample of color
-msgid "_Measure"
-msgstr "_Mõõda"
+#~ msgid "Setting up device"
+#~ msgstr "Seadme häälestamine"
 
-msgid ""
-"A working space is a default colorspace that is not associated with a "
-"specific device."
-msgstr "Tööruum on vaikimisi värviruum, mis ei ole seotud kindla seadmega."
+#~ msgid "Setting up the device to read a spot color…"
+#~ msgstr "Seadme häälestamine spot-värvi lugemiseks…"
 
-#. This is a button to add a virtual device
-msgid "Add d_evice…"
-msgstr "_Lisa seade…"
+#~ msgid "Try again"
+#~ msgstr "Proovi uuesti"
 
-#. Profiles that can be added to the device
-msgid "Available Profiles"
-msgstr "Saadaolevad profiilid"
+#~ msgid "Use anyway"
+#~ msgstr "Kasuta ikkagi"
 
-#. Technical color word for softproof rendering intent
-msgid "CMYK:"
-msgstr "CMYK:"
+#~ msgid "Could not detect screen type"
+#~ msgstr "Ekraani liiki ei suudetud automaatselt tuvastada"
 
-#. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
-msgid "Create _Profile"
-msgstr "_Loo värviprofiil"
+#~ msgid ""
+#~ "Please indicate if the screen you are trying to profile is an LCD, CRT or "
+#~ "a projector."
+#~ msgstr ""
+#~ "Määra kas ekraan, millele üritad profiili luua, on LCD (õhuke "
+#~ "vedelkristallpaneel), CRT (harilik katoodkuvar) või projektor."
 
-msgid "Device type:"
-msgstr "Seadme tüüp:"
+#~ msgid "Custom"
+#~ msgstr "Kohandatud"
 
-#. Tab title, currently connected or saved devices
-msgid "Devices"
-msgstr "Seadmed"
+#~ msgid "Install missing files?"
+#~ msgstr "Kas paigaldada puuduvad failid?"
 
-#. What mode to use for display rendering intent
-msgid "Display:"
-msgstr "Kuva:"
+#~ msgid ""
+#~ "For best results, the reference target should also be less than two years "
+#~ "old."
+#~ msgstr ""
+#~ "Parima tulemuse saavutamiseks ei tohiks testtabel olla vanem kui kaks "
+#~ "aastat."
 
-msgid ""
-"For a color managed workflow, each connected device should have one or more "
-"color profiles associated with it."
-msgstr ""
-"Värvihaldusega töövoo jaoks peab iga seadmega olema seotud vähemalt üks "
-"värviprofiil."
+#~ msgid ""
+#~ "Please select the calibration target type which corresponds to your "
+#~ "reference file."
+#~ msgstr "Palun vali testtabeli tüüp, mis vastab näidisfailile."
 
-#. Technical color word for softproof rendering intent
-msgid "Gray:"
-msgstr "Halltoonid:"
+#~ msgid "Introduction to display calibration"
+#~ msgstr "Sissejuhatus kuva kalibreerimisse"
 
-msgid ""
-"Image files can be dragged on this window to auto-complete the above fields."
-msgstr ""
-"Ülalasuvate väljade automaatseks täitmiseks võib siia aknasse lohistada "
-"pildifaile."
+#~ msgid ""
+#~ "This dialog will help calibrate your display and create a custom ICC "
+#~ "profile."
+#~ msgstr ""
+#~ "See dialoog aitab sul kalibreerida kuva ning luua kohandatud ICC-profiili."
 
-msgid "Make default"
-msgstr "Määra väikesätteks"
+#~ msgid ""
+#~ "The calibration will involve several steps so that an accurate profile "
+#~ "can be obtained."
+#~ msgstr ""
+#~ "Kalibreerimine sisaldab mitut sammu, mis on vajalikud täpse profiili "
+#~ "loomiseks."
 
-msgid "Manufacturer:"
-msgstr "Tootja:"
+#~ msgid "It should only take a few minutes."
+#~ msgstr "Selleks peaks kuluma ainult mõni minut."
 
-msgid "Model:"
-msgstr "Mudel:"
+#~ msgid ""
+#~ "It may help to sit further from the screen or to squint at the "
+#~ "calibration images in order to accurately compare the colors."
+#~ msgstr ""
+#~ "Värvide tõeseks võrdlemiseks võib olla kasulik istuda ekraanist kaugemale "
+#~ "või kissitada kalibreerimispilte vaadates silmi."
 
-msgid "More details"
-msgstr "Üksikasjad"
+#~ msgid "You can repeat the calibration steps as many times as you want."
+#~ msgstr "Sa võid korrata kalibreerimissamme nii mitu korda, kui soovid."
 
-#. Some profiles are not compatible with some devices
-msgid "Only profiles that are compatible with the device will be listed above."
-msgstr ""
-"Ülemises loendis näidatakse ainult profiile, mis ühilduvad selle seadmega."
+#~ msgid "Create table item %i/%i"
+#~ msgstr "Tabeli loomine %i / %i"
 
-msgid "Open the documentation"
-msgstr "Dokumentatsiooni avamine"
+#~ msgid ""
+#~ "Please try to match up the gray square with the surrounding alternating "
+#~ "bars. You should match the brightness first, and then if required change "
+#~ "the color tint so it looks plain gray."
+#~ msgstr ""
+#~ "Proovi leida hallile ruudule vastavat tooni riba kõrvalt. Kõigepealt "
+#~ "peaks leidma sobiva heleduse ning seejärel vajadusel kohandama värvust, "
+#~ "et see paistaks täiesti hall."
 
-#. Button to view installed profiles
-msgid "Pr_ofile Viewer"
-msgstr "Pr_ofiilide näitaja"
+#~ msgid ""
+#~ "This display is now calibrated. You can change the current profile using "
+#~ "the Color Profiles program."
+#~ msgstr ""
+#~ "Kuva on nüüd kalibreeritud. Sa võid muuta praegust profiili "
+#~ "värviprofiilide rakendusest."
 
-#. The rendering intent for the print preview
-msgid "Print Preview:"
-msgstr "Printimise eelvaatlus:"
+#~ msgid ""
+#~ "This profile does not have the information required for whole-screen "
+#~ "color correction."
+#~ msgstr ""
+#~ "See profiil ei sisalda kogu-ekraani värviparanduseks vajalikku teavet."
 
-#. This is a button to delete the saved or virtual device
-msgid "Remove de_vice"
-msgstr "_Eemalda seade"
+#~ msgid "Import ICC color profile %s?"
+#~ msgstr "Kas importida ICC-värviprofiil %s?"
 
-#. Tab title, the way colors should be converted from one colorspace to another
-msgid "Rendering Intents"
-msgstr "Renderdamisviisid"
+#~ msgid "Import ICC profile"
+#~ msgstr "Impordi ICC-profiil"
 
-msgid "Save these profiles for all users"
-msgstr "Nende profiilide salvestamine kõigile kasutajatele"
+#~ msgid "Output profile '%s':"
+#~ msgstr "Väljundprofiil '%s':"
 
-msgid ""
-"The rendering intent defines how color should be transformed from one "
-"colorspace to another."
-msgstr ""
-"Renderdusviis määrab, kuidas värve teisendatakse ühest värviruumist teise."
+#~ msgid "not set"
+#~ msgstr "pole määratud"
 
-#. Tab title, icc color spaces to use for different defaults
-msgid "Working Spaces"
-msgstr "Tööruumid"
+#~ msgid "There are no ICC profiles for this device type"
+#~ msgstr "Seda liiki seadmele pole ühtegi ICC-profiili"
 
-#. This is when the settings are set for all users, unless they have per-user settings themselves
-msgid "_Set System Default"
-msgstr "_Süsteemi vaikesätte määramine"
+#~ msgid "The request failed"
+#~ msgstr "Päring nurjus"
 
-#~ msgid "Debug these specific modules"
-#~ msgstr "Määratud moodulite silumine"
+#~ msgid "Rendering intent (display):"
+#~ msgstr "Renderdamisviis (kuva):"
+
+#~ msgid "Rendering intent (softproof):"
+#~ msgstr "Renderdamisviis (väljundvaade):"
+
+#~ msgid "RGB Colorspace:"
+#~ msgstr "RGB värviruum:"
+
+#~ msgid "CMYK Colorspace:"
+#~ msgstr "CMYK värviruum:"
+
+#~ msgid "Get the profiles for a specific device"
+#~ msgstr "Määratud seadme profiilide hankimine"
+
+#~ msgid "Get the profiles for a specific device type"
+#~ msgstr "Määratud liiki seadme profiilide hankimine"
+
+#~ msgid "Device or profile type not recognized, recognised types are:"
+#~ msgstr "Seadme või profiili liiki ei tuntud ära, tuntud liigid on:"
+
+#~ msgid "This application was compiled without VTE support."
+#~ msgstr "Rakendus on kompileeritud ilma VTE toeta."
+
+#~ msgid "Recalibrate now"
+#~ msgstr "Kalibreeri kohe uuesti"
+
+#~ msgid "Ignore"
+#~ msgstr "Eira"
+
+#~ msgid "Automatic"
+#~ msgstr "Automaatne"
+
+#~ msgid "Do not attempt to clear previously applied settings"
+#~ msgstr "Ära ürita puhastada eelnevalt rakendatud sätteid"
+
+#~ msgid "Color Management D-Bus Service"
+#~ msgstr "Värvihalduse DBus-i teenus"
+
+#~ msgid "Perceptual"
+#~ msgstr "Pertseptuaalne"
+
+#~ msgid "Saturation"
+#~ msgstr "Küllastus"
+
+#~ msgid "High quality photography"
+#~ msgstr "Kõrgkvaliteetne fotograafia"
+
+#~ msgid "Precise color matching"
+#~ msgstr "Täpne värvivastavus"
+
+#~ msgid "Graphs and presentations"
+#~ msgstr "Graafikud ja esitlused"
+
+#~ msgid "Blue:"
+#~ msgstr "Sinine:"
+
+#~ msgid "Brightness:"
+#~ msgstr "Heledus:"
+
+#~ msgid "Create images for printing"
+#~ msgstr "Printimiseks piltide loomine"
+
+#~ msgid "Generate profile from printed images"
+#~ msgstr "Profiili genereerimine prinditud piltidest"
+
+#~ msgid "Green:"
+#~ msgstr "Roheline:"
+
+#~ msgid "High"
+#~ msgstr "Täpne"
+
+#~ msgid "Low"
+#~ msgstr "Ebatäpne"
+
+#~ msgid "Profile locally attached printer"
+#~ msgstr "Loo profiil arvuti külge ühendatud printerile"
+
+#~ msgid "Red:"
+#~ msgstr "Punane:"
+
+#~ msgid ""
+#~ "A working space is a default colorspace that is not associated with a "
+#~ "specific device."
+#~ msgstr "Tööruum on vaikimisi värviruum, mis ei ole seotud kindla seadmega."
+
+#~ msgid "Available Profiles"
+#~ msgstr "Saadaolevad profiilid"
+
+#~ msgid "CMYK:"
+#~ msgstr "CMYK:"
+
+#, fuzzy
+#~ msgid "Calibrate"
+#~ msgstr "Viga kalibreerimisel"
+
+#~ msgid "Device type:"
+#~ msgstr "Seadme tüüp:"
+
+#~ msgid "Devices"
+#~ msgstr "Seadmed"
+
+#~ msgid "Display:"
+#~ msgstr "Kuva:"
+
+#~ msgid ""
+#~ "For a color managed workflow, each connected device should have one or "
+#~ "more color profiles associated with it."
+#~ msgstr ""
+#~ "Värvihaldusega töövoo jaoks peab iga seadmega olema seotud vähemalt üks "
+#~ "värviprofiil."
+
+#~ msgid "Gray:"
+#~ msgstr "Halltoonid:"
+
+#~ msgid ""
+#~ "Image files can be dragged on this window to auto-complete the above "
+#~ "fields."
+#~ msgstr ""
+#~ "Ülalasuvate väljade automaatseks täitmiseks võib siia aknasse lohistada "
+#~ "pildifaile."
+
+#~ msgid "Model:"
+#~ msgstr "Mudel:"
+
+#~ msgid "More details"
+#~ msgstr "Üksikasjad"
+
+#~ msgid ""
+#~ "Only profiles that are compatible with the device will be listed above."
+#~ msgstr ""
+#~ "Ülemises loendis näidatakse ainult profiile, mis ühilduvad selle seadmega."
+
+#~ msgid "Print Preview:"
+#~ msgstr "Printimise eelvaatlus:"
+
+#, fuzzy
+#~ msgid "Remove"
+#~ msgstr "_Eemalda seade"
+
+#~ msgid "Rendering Intents"
+#~ msgstr "Renderdamisviisid"
+
+#, fuzzy
+#~ msgid "Set as default"
+#~ msgstr "Määra väikesätteks"
+
+#, fuzzy
+#~ msgid "Set for all users"
+#~ msgstr "Nende profiilide salvestamine kõigile kasutajatele"
+
+#, fuzzy
+#~ msgid "Show details about this profile"
+#~ msgstr "Selle süsteemi teabe tõmmis"
+
+#~ msgid ""
+#~ "The rendering intent defines how color should be transformed from one "
+#~ "colorspace to another."
+#~ msgstr ""
+#~ "Renderdusviis määrab, kuidas värve teisendatakse ühest värviruumist teise."
+
+#, fuzzy
+#~ msgid "View details"
+#~ msgstr "Üksikasjad"
+
+#~ msgid "Working Spaces"
+#~ msgstr "Tööruumid"
+
+#~ msgid "Relative"
+#~ msgstr "Suhteline"
+
+#~ msgid "Absolute"
+#~ msgstr "Absoluutne"
+
+#~ msgid "Save these profiles for all users"
+#~ msgstr "Nende profiilide salvestamine kõigile kasutajatele"
+
+#~ msgid ""
+#~ "Authentication is required to install the color profile for all users"
+#~ msgstr ""
+#~ "Värviprofiilide paigaldamiseks kõigile kasutajatele on vajalik autentimine"
+
+#~ msgid "Install system color profiles"
+#~ msgstr "Süsteemi värviprofiilide paigaldamine"
+
+#~ msgid "Failed to save defaults for all users"
+#~ msgstr "Vaikesätete salvestamine kõigi kasutajate jaoks nurjus"
+
+#~ msgid "Failed to get metadata from image"
+#~ msgstr "Metaandmete hankimine pildist nurjus"
+
+#~ msgid "Failed to save virtual device"
+#~ msgstr "Virtuaalse seadme salvestamine nurjus"
+
+#~ msgid "Failed to add virtual device"
+#~ msgstr "Virtuaalse seadme lisamine nurjus"
+
+#~ msgid "Cannot create profile: The display device is not connected"
+#~ msgstr "Profiili pole võimalik luua: kuvar pole ühendatud"
+
+#~ msgid ""
+#~ "Cannot create profile: The display driver does not support XRandR 1.3"
+#~ msgstr "Profiili pole võimalik luua: kuvadraiver ei toeta XRandR 1.3-e"
+
+#~ msgid "Per-device settings not supported. Check your display driver."
+#~ msgstr "Seadme kohta käivad sätted pole toetatud. Kontrolli kuva draiverit."
+
+#~ msgid "No hardware support"
+#~ msgstr "Raudvara tugi puudub"
+
+#~ msgid "disconnected"
+#~ msgstr "pole ühendatud"
+
+#~ msgid "Could not import profile"
+#~ msgstr "Profiili ei suudetud importida"
+
+#~ msgid "The profile was of the wrong type for this device"
+#~ msgstr "See profiil ei sobi seda liiki seadmele"
+
+#~ msgid "Image is not suitable without conversion"
+#~ msgstr "Pilt ei sobi ilma teisendamata kasutamiseks"
+
+#~ msgid ""
+#~ "The supplied image contains an alpha channel which the profiling tools do "
+#~ "not understand."
+#~ msgstr ""
+#~ "Etteantud pilt sisaldab alfakanalit, mida profiili loomise tööriistad ei "
+#~ "oska kasutada."
+
+#~ msgid ""
+#~ "It is normally safe to convert the image, although you should ensure that "
+#~ "the generated profile is valid."
+#~ msgstr ""
+#~ "Tavaliselt on pildi teisendamine turvaline, kuigi sa peaksid veenduma, et "
+#~ "genereeritud profiil on õige."
+
+#~ msgid "Convert"
+#~ msgstr "Teisenda"
+
+#~ msgid "Laptop LCD"
+#~ msgstr "Sülearvuti LCD"
+
+#~ msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
+#~ msgstr "Seadme ID, nt 'xrandr_ibm_france_ltn154p2_l05'"
+
+#~ msgid "GNOME Color Manager ICC profile system-wide installer"
+#~ msgstr "GNOME värvihalduri ICC-profiili kogule süsteemile paigaldaja"
+
+#~ msgid "You need to specify exactly one ICC profile filename."
+#~ msgstr "Pead määrama täpselt ühe ICC-profiili failinime."
+
+#~ msgid "You need to specify exactly one device ID."
+#~ msgstr "Pead määrama täpselt ühe seadme ID."
+
+#~ msgid "This program can only be used by the root user."
+#~ msgstr "Seda rakendust saab kasutada ainult juurkasutaja."
+
+#~ msgid "The source filename must be absolute."
+#~ msgstr "Lähtefaili asukoht peab olema absoluutne."
+
+#~ msgid "Failed to get content type:"
+#~ msgstr "Sisutüübi hankimine nurjus:"
+
+#~ msgid "Content type was incorrect:"
+#~ msgstr "Sisutüüp oli vale:"
+
+#~ msgid "This program must only be run through pkexec."
+#~ msgstr "See programm tuleb käivitada pkexec-i kaudu."
+
+#~ msgid "PKEXEC_UID must be set to an integer value."
+#~ msgstr "PKEXEC_UID väärtus peab olema täisarv."
+
+#~ msgid "The ICC profile must be owned by the user."
+#~ msgstr "ICC-profiil peab kuuluma kasutajale."
+
+#~ msgid "The destination filename must be absolute."
+#~ msgstr "Sihtfaili nimi peab olema absoluutne."
+
+#~ msgid "Failed to copy:"
+#~ msgstr "Kopeerimine nurjus:"
+
+#~ msgid "Do not exit after the request has been processed"
+#~ msgstr "Pärast päringu sooritamist ei lõpetata tööd"
+
+#~ msgid "None"
+#~ msgstr "Puudub"
+
+#~ msgid "Transfer response curve"
+#~ msgstr "Kõvera teisendus"
+
+#~ msgid "Image preview (from sRGB)"
+#~ msgstr "Pildi eelvaade (sRGB-st)"
+
+#~ msgid "Image preview (to sRGB)"
+#~ msgstr "Pildi eelvaade (sRGB-sse)"
+
+#~ msgid "Add d_evice…"
+#~ msgstr "_Lisa seade…"
+
+#~ msgid "Open the documentation"
+#~ msgstr "Dokumentatsiooni avamine"
+
+#~ msgid "_Set System Default"
+#~ msgstr "_Süsteemi vaikesätte määramine"
 
 #~ msgid "Debug these specific functions"
 #~ msgstr "Määratud funktsioonide silumine"
@@ -1595,6 +1917,3 @@ msgstr "_Süsteemi vaikesätte määramine"
 #~ "See võimaldab kogu ekraani värvihalduse, milleks on vaja kaasaegset 3D "
 #~ "graafikakaarti raudvaralise shaderi toega. See võib suurendada CPU "
 #~ "kasutust ning arvuti voolukulu."
-
-#~ msgid "_Apply basic display correction"
-#~ msgstr "_Peamise värvusparanduse rakendamine"

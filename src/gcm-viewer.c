@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2011 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2012 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -802,6 +802,8 @@ struct {
 	{ CD_PROFILE_METADATA_SCREEN_SURFACE,		N_("Screen surface finish") },
 	/* TRANSLATORS: e.g. DVI or VGA */
 	{ CD_PROFILE_METADATA_CONNECTION_TYPE,		N_("Connection type") },
+	/* TRANSLATORS: e.g. Screen brightness in percent */
+	{ CD_PROFILE_METADATA_SCREEN_BRIGHTNESS,	N_("Screen brightness") },
 	{ NULL, NULL }
 };
 
@@ -901,6 +903,64 @@ out:
 	return ret;
 }
 
+#if CD_CHECK_VERSION(0,1,25)
+/**
+ * gcm_profile_warning_to_string:
+ **/
+static const gchar *
+gcm_profile_warning_to_string (CdProfileWarning kind_enum)
+{
+	const gchar *kind = NULL;
+	switch (kind_enum) {
+	case CD_PROFILE_WARNING_DESCRIPTION_MISSING:
+		/* TRANSLATORS: the profile is broken */
+		kind = _("No description has been set");
+		break;
+	case CD_PROFILE_WARNING_COPYRIGHT_MISSING:
+		/* TRANSLATORS: the profile is broken */
+		kind = _("No copyright has been set");
+		break;
+	case CD_PROFILE_WARNING_VCGT_NON_MONOTONIC:
+		/* TRANSLATORS: the profile is broken */
+		kind = _("The display compensation table is invalid");
+		break;
+	case CD_PROFILE_WARNING_SCUM_DOT:
+		/* TRANSLATORS: the profile is broken */
+		kind = _("A scum dot is present for media white");
+		break;
+	case CD_PROFILE_WARNING_GRAY_AXIS_INVALID:
+		/* TRANSLATORS: the profile is broken */
+		kind = _("The gray axis contains significant amounts of color");
+		break;
+	case CD_PROFILE_WARNING_GRAY_AXIS_NON_MONOTONIC:
+		/* TRANSLATORS: the profile is broken */
+		kind = _("The gray axis is non-monotonic");
+		break;
+	case CD_PROFILE_WARNING_PRIMARIES_INVALID:
+		/* TRANSLATORS: the profile is broken */
+		kind = _("One or more of the primaries are invalid");
+		break;
+	case CD_PROFILE_WARNING_PRIMARIES_NON_ADDITIVE:
+		/* TRANSLATORS: the profile is broken */
+		kind = _("The primaries do not add to white");
+		break;
+	case CD_PROFILE_WARNING_PRIMARIES_UNLIKELY:
+		/* TRANSLATORS: the profile is broken */
+		kind = _("One or more of the primaries is unlikely");
+		break;
+	case CD_PROFILE_WARNING_WHITEPOINT_INVALID:
+		/* TRANSLATORS: the profile is broken */
+		kind = _("The white is not D50 white");
+		break;
+	default:
+		/* TRANSLATORS: the profile is broken */
+		kind = _("Unknown warning type");
+		break;
+	}
+	return kind;
+}
+#endif
+
 /**
  * gcm_viewer_set_profile:
  **/
@@ -933,6 +993,12 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	guint filesize;
 	gboolean show_section = FALSE;
 	GError *error = NULL;
+#if CD_CHECK_VERSION(0,1,25)
+	gchar **warnings;
+	guint i;
+	CdProfileWarning warning;
+	GString *str;
+#endif
 
 	/* connect to the profile */
 	ret = cd_profile_connect_sync (profile, NULL, &error);
@@ -1073,6 +1139,35 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	temp = g_markup_escape_text (basename, -1);
 	gtk_label_set_label (GTK_LABEL (widget), temp);
 	g_free (temp);
+
+	/* set warnings */
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_warnings"));
+#if CD_CHECK_VERSION(0,1,25)
+	warnings = cd_profile_get_warnings (profile);
+	size = g_strv_length (warnings);
+	if (size == 0) {
+		gtk_widget_set_visible (widget, FALSE);
+	} else {
+		gtk_widget_set_visible (widget, TRUE);
+		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_warnings"));
+		str = g_string_new ("");
+		/* TRANSLATORS: profiles that have warnings are useable,
+		 * but may not be any good */
+		g_string_append_printf (str, "%s\n", _("The profile has the following problems:"));
+		for (i = 0; i < size; i++) {
+			g_debug ("warnings[i]=%s", warnings[i]);
+			warning = cd_profile_warning_from_string (warnings[i]);
+			g_string_append_printf (str, "• %s\n",
+						gcm_profile_warning_to_string (warning));
+		}
+		if (str->len > 0)
+			g_string_set_size (str, str->len - 1);
+		gtk_label_set_label (GTK_LABEL (widget), str->str);
+		g_string_free (str, TRUE);
+	}
+#else
+	gtk_widget_set_visible (widget, FALSE);
+#endif
 
 	/* set profile version */
 	filename = gcm_profile_get_version (gcm_profile);
@@ -1665,6 +1760,10 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	gtk_style_context_add_class (context, "dim-label");
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
 						     "label_title_filename"));
+	context = gtk_widget_get_style_context (widget);
+	gtk_style_context_add_class (context, "dim-label");
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
+						     "label_title_warnings"));
 	context = gtk_widget_get_style_context (widget);
 	gtk_style_context_add_class (context, "dim-label");
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
