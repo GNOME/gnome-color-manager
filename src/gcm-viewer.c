@@ -802,6 +802,8 @@ struct {
 	{ CD_PROFILE_METADATA_SCREEN_SURFACE,		N_("Screen surface finish") },
 	/* TRANSLATORS: e.g. DVI or VGA */
 	{ CD_PROFILE_METADATA_CONNECTION_TYPE,		N_("Connection type") },
+	/* TRANSLATORS: e.g. Screen brightness in percent */
+	{ CD_PROFILE_METADATA_SCREEN_BRIGHTNESS,	N_("Screen brightness") },
 	{ NULL, NULL }
 };
 
