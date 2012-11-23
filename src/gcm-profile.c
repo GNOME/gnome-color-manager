@@ -616,6 +616,70 @@ out:
 }
 
 /**
+ * gcm_profile_calc_whitepoint:
+ **/
+static gboolean
+gcm_profile_calc_whitepoint (GcmProfile *profile)
+{
+	cmsBool bpc[2] = { FALSE, FALSE };
+	cmsCIExyY tmp;
+	cmsCIEXYZ whitepoint;
+	cmsFloat64Number adaption[2] = { 0, 0 };
+	cmsHPROFILE profiles[2];
+	cmsHTRANSFORM transform;
+	cmsUInt32Number intents[2] = { INTENT_ABSOLUTE_COLORIMETRIC,
+				       INTENT_ABSOLUTE_COLORIMETRIC };
+	gboolean ret;
+	gdouble temp_float;
+	guint8 data[3] = { 255, 255, 255 };
+	GcmProfilePrivate *priv = profile->priv;
+
+	/* do Lab to RGB transform to get primaries */
+	profiles[0] = priv->lcms_profile;
+	profiles[1] = cmsCreateXYZProfile ();
+	transform = cmsCreateExtendedTransform (NULL,
+						2,
+						profiles,
+						bpc,
+						intents,
+						adaption,
+						NULL, 0, /* gamut profile */
+						TYPE_RGB_8,
+						TYPE_XYZ_DBL,
+						cmsFLAGS_NOOPTIMIZE);
+	if (transform == NULL) {
+		ret = FALSE;
+		g_warning ("failed to setup RGB -> XYZ transform");
+		goto out;
+	}
+
+	/* Run white through the transform */
+	cmsDoTransform (transform, data, &whitepoint, 1);
+
+	/* convert to lcms xyY values */
+	cd_color_set_xyz (priv->white,
+			  whitepoint.X, whitepoint.Y, whitepoint.Z);
+	cmsXYZ2xyY (&tmp, &whitepoint);
+	g_debug ("whitepoint = %f,%f [%f]", tmp.x, tmp.y, tmp.Y);
+
+	/* get temperature */
+	ret = cmsTempFromWhitePoint (&temp_float, &tmp);
+	if (ret) {
+		/* round to nearest 100K */
+		priv->temperature = (((guint) temp_float) / 100) * 100;
+		g_debug ("color temperature = %i", priv->temperature);
+	} else {
+		priv->temperature = 0;
+	}
+out:
+	if (profiles[1] != NULL)
+		cmsCloseProfile (profiles[1]);
+	if (transform != NULL)
+		cmsDeleteTransform (transform);
+	return ret;
+}
+
+/**
  * gcm_profile_parse_data:
  * @profile: A valid #GcmProfile
  * @data: the data to parse
@@ -667,32 +731,9 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	}
 
 	/* get white point */
-	cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigMediaWhitePointTag);
-	if (cie_xyz != NULL) {
-		cmsCIExyY xyY;
-		gdouble temp_float;
-		cd_color_set_xyz (priv->white,
-				   cie_xyz->X, cie_xyz->Y, cie_xyz->Z);
-
-		/* convert to lcms xyY values */
-		cmsXYZ2xyY (&xyY, cie_xyz);
-		g_debug ("whitepoint = %f,%f [%f]", xyY.x, xyY.y, xyY.Y);
-
-		/* get temperature */
-		ret = cmsTempFromWhitePoint (&temp_float, &xyY);
-		if (ret) {
-			/* round to nearest 100K */
-			priv->temperature = (((guint) temp_float) / 100) * 100;
-			g_debug ("color temperature = %i", priv->temperature);
-		} else {
-			priv->temperature = 0;
-			g_warning ("failed to get color temperature");
-		}
-	} else {
-		/* this is no big suprise, some profiles don't have these */
+	ret = gcm_profile_calc_whitepoint (profile);
+	if (!ret)
 		cd_color_clear_xyz (priv->white);
-		g_debug ("failed to get white point");
-	}
 
 	/* get the profile kind */
 	profile_class = cmsGetDeviceClass (priv->lcms_profile);
