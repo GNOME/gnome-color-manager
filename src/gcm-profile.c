@@ -598,7 +598,7 @@ gcm_profile_get_precooked_md5 (cmsHPROFILE lcms_profile)
 
 	/* check to see if we have a pre-cooked MD5 */
 	cmsGetHeaderProfileID (lcms_profile, profile_id);
-	for (i=0; i<16; i++) {
+	for (i = 0; i < 16; i++) {
 		if (profile_id[i] != 0) {
 			md5_precooked = TRUE;
 			break;
@@ -609,7 +609,7 @@ gcm_profile_get_precooked_md5 (cmsHPROFILE lcms_profile)
 
 	/* convert to a hex string */
 	md5 = g_new0 (gchar, 32 + 1);
-	for (i=0; i<16; i++)
+	for (i = 0; i < 16; i++)
 		g_snprintf (md5 + i*2, 3, "%02x", profile_id[i]);
 out:
 	return md5;
@@ -1305,7 +1305,7 @@ gcm_profile_guess_and_add_vcgt (GcmProfile *profile, GError **error)
 
 	/* populate with data */
 	divamount = 1.0f / (gfloat) (size - 1);
-	for (i=0; i<size; i++) {
+	for (i = 0; i < size; i++) {
 		divadd = divamount * (gfloat) i;
 
 		/* grey component */
@@ -1328,14 +1328,14 @@ gcm_profile_guess_and_add_vcgt (GcmProfile *profile, GError **error)
 	cmsDoTransform (transform, values_in, values_out, size);
 
 	/* unroll the data */
-	for (i=0; i<size; i++) {
+	for (i = 0; i < size; i++) {
 		rawdata[0][i] = values_out[(i * 3)+0] * 0xffff;
 		rawdata[1][i] = values_out[(i * 3)+1] * 0xffff;
 		rawdata[2][i] = values_out[(i * 3)+2] * 0xffff;
 	}
 
 	/* build tone curves */
-	for (i=0; i<3; i++)
+	for (i = 0; i < 3; i++)
 		transfer_curve[i] = cmsBuildTabulatedToneCurve16 (NULL, 256, rawdata[i]);
 
 	/* write to VCGT */
@@ -1384,7 +1384,7 @@ gcm_profile_generate_vcgt (GcmProfile *profile, guint size)
 
 	/* create array */
 	array = g_ptr_array_new_with_free_func (g_free);
-	for (i=0; i<size; i++) {
+	for (i = 0; i < size; i++) {
 		in = (gdouble) i / (gdouble) (size - 1);
 		tmp = g_new0 (GcmClutData, 1);
 		tmp->red = cmsEvalToneCurveFloat(vcgt[0], in) * (gdouble) 0xffff;
@@ -1427,7 +1427,7 @@ gcm_profile_set_vcgt_from_data (GcmProfile *profile, guint16 *red, guint16 *gree
 		priv->lcms_profile = cmsCreateProfilePlaceholder (NULL);
 
 	/* check monotonic */
-	for (i=0; i<size-1; i++) {
+	for (i = 0; i < size-1; i++) {
 		if (red[i] > red[i+1] ||
 		    green[i] > green[i+1] ||
 		    blue[i] > blue[i+1]) {
@@ -1442,12 +1442,12 @@ gcm_profile_set_vcgt_from_data (GcmProfile *profile, guint16 *red, guint16 *gree
 	vcgt_curve[2] = cmsBuildTabulatedToneCurve16 (NULL, size, blue);
 
 	/* smooth it */
-	for (i=0; i<3; i++)
+	for (i = 0; i < 3; i++)
 		cmsSmoothToneCurve (vcgt_curve[i], 5);
 
 	/* write the tag */
 	ret = cmsWriteTag (priv->lcms_profile, cmsSigVcgtType, vcgt_curve);
-	for (i=0; i<3; i++)
+	for (i = 0; i < 3; i++)
 		cmsFreeToneCurve (vcgt_curve[i]);
 	if (!ret) {
 		g_set_error_literal (error, 1, 0, "Failed to set vcgt");
@@ -1496,7 +1496,7 @@ gcm_profile_generate_curve (GcmProfile *profile, guint size)
 		/* create input array */
 		values_in = g_new0 (gdouble, size * 3 * component_width);
 		divamount = 1.0f / (gfloat) (size - 1);
-		for (i=0; i<size; i++) {
+		for (i = 0; i < size; i++) {
 			divadd = divamount * (gfloat) i;
 
 			/* red component */
@@ -1533,7 +1533,7 @@ gcm_profile_generate_curve (GcmProfile *profile, guint size)
 		/* create output array */
 		array = g_ptr_array_new_with_free_func (g_free);
 
-		for (i=0; i<size; i++) {
+		for (i = 0; i < size; i++) {
 			data = g_new0 (GcmClutData, 1);
 
 			/* default values */
@@ -2044,7 +2044,7 @@ gcm_profile_get_named_colors (GcmProfile *profile, GError **error)
 		goto out;
 	}
 	array = g_ptr_array_new_with_free_func ((GDestroyNotify) g_object_unref);
-	for (i=0; i<count; i++) {
+	for (i = 0; i < count; i++) {
 
 		/* parse title */
 		string = g_string_new ("");
@@ -2068,7 +2068,7 @@ gcm_profile_get_named_colors (GcmProfile *profile, GError **error)
 		ret = g_utf8_validate (string->str, string->len, NULL);
 		if (!ret) {
 			g_warning ("invalid 7 bit ASCII / UTF8, repairing");
-			for (j=0; j<string->len; j++) {
+			for (j = 0; j < string->len; j++) {
 				tmp = (guchar) string->str[j];
 
 				/* (R) */
@@ -2089,7 +2089,7 @@ gcm_profile_get_named_colors (GcmProfile *profile, GError **error)
 		ret = g_utf8_validate (string->str, string->len, NULL);
 		if (!ret) {
 			g_warning ("failed to fix: skipping entry");
-			for (j=0; j<string->len; j++)
+			for (j = 0; j < string->len; j++)
 				g_print ("'%c' (%x)\n", string->str[j], (gchar)string->str[j]);
 			continue;
 		}
