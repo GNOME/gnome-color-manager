@@ -2537,7 +2537,7 @@ gcm_calibrate_argyll_status_changed_cb (GcmPrint *print,
 	case GTK_PRINT_STATUS_PRINTING:
 		/* TRANSLATORS: dialog message */
 		gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-					   _("Printing the targets..."),
+					   _("Printing the targets…"),
 					   GCM_CALIBRATE_UI_STATUS);
 		break;
 	case GTK_PRINT_STATUS_FINISHED:
