@@ -2051,6 +2051,9 @@ gcm_calib_sensor_added_cb (CdClient *client, CdSensor *sensor, GcmCalibratePriv 
 static void
 gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *calib)
 {
+	const gint window_width  = 640;
+	const gint window_height = 440;
+
 	const gchar *description;
 	const gchar *manufacturer;
 	const gchar *model;
@@ -2081,6 +2084,7 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *calib)
 
 	/* show main UI */
 	calib->main_window = GTK_WINDOW (gtk_assistant_new ());
+	gtk_window_set_default_size (calib->main_window, window_width, window_height);
 	gtk_window_set_resizable (calib->main_window, TRUE);
 	gtk_window_set_title (calib->main_window, "");
 	gtk_container_set_border_width (GTK_CONTAINER (calib->main_window), 12);
