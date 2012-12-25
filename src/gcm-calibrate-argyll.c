@@ -574,6 +574,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	g_ptr_array_add (array, g_strdup_printf ("%s.cal", basename));
 	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI) {
 		g_ptr_array_add (array, g_strdup ("-H"));
+		g_ptr_array_add (array, g_strdup ("-N"));
 	}
 	g_ptr_array_add (array, g_strdup ("-P 0.5,0.5,0.8"));
 	g_ptr_array_add (array, g_strdup (basename));
