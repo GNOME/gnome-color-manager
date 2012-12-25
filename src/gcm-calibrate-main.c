@@ -2132,6 +2132,14 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *calib)
 	/* get the device properties */
 	calib->device_kind = cd_device_get_kind (calib->device);
 
+	/* for display calibration move the window to lower right area to
+         * limit argyll from obscuring the window (too much) */
+	if (calib->device_kind == CD_DEVICE_KIND_DISPLAY) {
+		gtk_window_set_gravity (calib->main_window, GDK_GRAVITY_SOUTH_EAST);
+		gtk_window_move (calib->main_window, gdk_screen_width()  - window_width,
+						     gdk_screen_height() - window_height);
+	}
+
 	/* set, with fallbacks */
 	serial = cd_device_get_serial (calib->device);
 	if (serial == NULL) {
