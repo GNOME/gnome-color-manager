@@ -329,6 +329,8 @@ gcm_hull_widget_init (GcmHullWidget *hull_widget)
 			  G_CALLBACK (gcm_hull_widget_stage_allocation_changed_cb),
 			  hull_widget);
 
+	hull_widget->priv->existing_rotation = 270.0f;
+
 	/* allow user to rotate */
 	gtk_widget_add_events (GTK_WIDGET (hull_widget),
 			       GDK_KEY_PRESS_MASK | GDK_KEY_RELEASE_MASK |
