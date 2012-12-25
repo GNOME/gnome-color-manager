@@ -313,6 +313,11 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll,
 	const gchar *output_name;
 	guint display;
 	guint target_whitepoint;
+	CdSensorKind sensor_kind;
+
+	g_object_get (calibrate_argyll,
+		      "sensor-kind", &sensor_kind,
+		      NULL);
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
@@ -363,6 +368,9 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll,
 		g_ptr_array_add (array, g_strdup_printf ("-t%i", target_whitepoint));
 	g_ptr_array_add (array, g_strdup_printf ("-d%i", display));
 	g_ptr_array_add (array, g_strdup_printf ("-y%c", kind));
+	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI) {
+		g_ptr_array_add (array, g_strdup ("-H"));
+	}
 	g_ptr_array_add (array, g_strdup ("-P 0.5,0.5,0.8"));
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
@@ -512,6 +520,11 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	gchar *basename = NULL;
 	const gchar *output_name;
 	guint display;
+	CdSensorKind sensor_kind;
+
+	g_object_get (calibrate_argyll,
+		      "sensor-kind", &sensor_kind,
+		      NULL);
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
@@ -559,6 +572,9 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	g_ptr_array_add (array, g_strdup_printf ("-y%c", kind));
 	g_ptr_array_add (array, g_strdup ("-k"));
 	g_ptr_array_add (array, g_strdup_printf ("%s.cal", basename));
+	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI) {
+		g_ptr_array_add (array, g_strdup ("-H"));
+	}
 	g_ptr_array_add (array, g_strdup ("-P 0.5,0.5,0.8"));
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
