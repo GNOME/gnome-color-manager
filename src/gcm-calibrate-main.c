@@ -1900,7 +1900,7 @@ gcm_calib_setup_page_failure (GcmCalibratePriv *calib)
 static void
 gcm_calib_got_sensor (GcmCalibratePriv *calib, CdSensor *sensor)
 {
-	gboolean is_photospectrometer = FALSE;
+	gboolean is_lowend = FALSE;
 	gboolean ret;
 	GError *error = NULL;
 	GtkWidget *vbox;
@@ -1923,15 +1923,13 @@ gcm_calib_got_sensor (GcmCalibratePriv *calib, CdSensor *sensor)
 	/* if the device is a simple colorimeter, hide the temperature
 	 * chooser. Only expensive accurate spectrophotometers are
 	 * accurate enough to do a good job without a color cast */
-	if (cd_sensor_get_kind (sensor) == CD_SENSOR_KIND_I1_PRO ||
-	    cd_sensor_get_kind (sensor) == CD_SENSOR_KIND_COLOR_MUNKI ||
-	    cd_sensor_get_kind (sensor) == CD_SENSOR_KIND_I1_DISPLAY3) {
-		is_photospectrometer = TRUE;
+	if (cd_sensor_get_kind (sensor) == CD_SENSOR_KIND_COLORHUG) {
+		is_lowend = TRUE;
 	}
 	if (calib->device_kind == CD_DEVICE_KIND_DISPLAY) {
 		vbox = gcm_calib_get_vbox_for_page (calib,
 						    GCM_CALIBRATE_PAGE_DISPLAY_TEMPERATURE);
-		gtk_widget_set_visible (vbox, is_photospectrometer);
+		gtk_widget_set_visible (vbox, !is_lowend);
 	}
 out:
 	return;
