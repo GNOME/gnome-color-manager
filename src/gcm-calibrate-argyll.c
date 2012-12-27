@@ -357,7 +357,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll,
 	g_ptr_array_add (array, g_strdup (command));
 #endif
 	g_ptr_array_add (array, g_strdup ("-v"));
-	g_ptr_array_add (array, g_strdup ("-ql"));
+	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_get_quality_arg (calibrate_argyll)));
 	g_ptr_array_add (array, g_strdup ("-m"));
 	if (target_whitepoint > 0)
 		g_ptr_array_add (array, g_strdup_printf ("-t%i", target_whitepoint));
