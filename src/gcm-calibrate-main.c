@@ -771,7 +771,8 @@ gcm_calibrate_is_livecd (void)
 		g_error_free (error);
 		goto out;
 	}
-	ret = g_strstr_len (data, -1, "liveimg") != NULL;
+	ret = (g_strstr_len (data, -1, "liveimg") != NULL ||
+	       g_strstr_len (data, -1, "casper") != NULL);
 out:
 	g_free (data);
 	return ret;
