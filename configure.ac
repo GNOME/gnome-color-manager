@@ -226,7 +226,6 @@ help/Makefile
 man/Makefile
 po/Makefile.in
 src/Makefile
-tools/Makefile
 ])
 AC_OUTPUT
 

@@ -3,8 +3,7 @@ SUBDIRS =						\
 	data						\
 	help						\
 	man						\
-	po						\
-	tools
+	po
 
 snapshot:
 	$(MAKE) dist distdir=$(PACKAGE)-$(VERSION)-`date +"%Y%m%d"`
