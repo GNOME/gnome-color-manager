@@ -83,8 +83,6 @@ gcm_calibrate_SOURCES =					\
 	gcm-cell-renderer-profile-text.h		\
 	gcm-gamma-widget.c				\
 	gcm-gamma-widget.h				\
-	gcm-list-store-profiles.c			\
-	gcm-list-store-profiles.h			\
 	gcm-calibrate-main.c
 
 gcm_calibrate_LDADD =					\
