@@ -114,7 +114,7 @@ gcm_picker_refresh_results (void)
 		goto out;
 
 	/* copy as we're modifying the value */
-	cd_color_copy_xyz (&last_sample, &color_xyz);
+	cd_color_xyz_copy (&last_sample, &color_xyz);
 
 	/* create new pixbuf of the right size */
 	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 200, 200);
@@ -290,7 +290,7 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 		g_clear_error (&error);
 		goto out_unlock;
 	}
-	cd_color_copy_xyz (tmp, &last_sample);
+	cd_color_xyz_copy (tmp, &last_sample);
 #if 0
 	/* get ambient */
 	ret = cd_sensor_get_sample_sync (sensor,

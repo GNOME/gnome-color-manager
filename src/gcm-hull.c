@@ -90,8 +90,8 @@ gcm_hull_add_vertex (GcmHull *hull,
 {
 	GcmHullVertex *new;
 	new = g_slice_new (GcmHullVertex);
-	cd_color_copy_xyz (xyz, &new->xyz);
-	cd_color_copy_rgb (color, &new->color);
+	cd_color_xyz_copy (xyz, &new->xyz);
+	cd_color_rgb_copy (color, &new->color);
 	g_ptr_array_add (hull->priv->vertices, new);
 }
 
@@ -138,7 +138,7 @@ gcm_hull_export_to_ply (GcmHull *hull)
 
 	for (i=0; i<hull->priv->vertices->len; i++) {
 		vertex = g_ptr_array_index (hull->priv->vertices, i);
-		cd_color_convert_rgb_to_rgb8 (&vertex->color, &tmp);
+		cd_color_rgb_to_rgb8 (&vertex->color, &tmp);
 		g_string_append_printf (string, "%lf %lf %lf %i %i %i\n",
 					vertex->xyz.X,
 					vertex->xyz.Y,

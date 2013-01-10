@@ -21,6 +21,7 @@ INCLUDES =						\
 	-DLOCALEDIR=\""$(localedir)"\"			\
 	-DTESTDATADIR=\""$(top_srcdir)/data/tests"\"	\
 	-DGCM_SYSTEM_PROFILES_DIR="\"$(GCM_SYSTEM_PROFILES_DIR)"\" \
+	-DCD_DISABLE_DEPRECATED				\
 	-DGCM_DATA=\"$(pkgdatadir)\"
 
 noinst_LIBRARIES = libgcmshared.a

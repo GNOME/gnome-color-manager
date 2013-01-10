@@ -439,16 +439,16 @@ gcm_cie_set_property (GObject *object, guint prop_id, const GValue *value, GPara
 		cie->priv->use_whitepoint = g_value_get_boolean (value);
 		break;
 	case PROP_RED:
-		cd_color_copy_yxy (g_value_get_boxed (value), priv->red);
+		cd_color_yxy_copy (g_value_get_boxed (value), priv->red);
 		break;
 	case PROP_GREEN:
-		cd_color_copy_yxy (g_value_get_boxed (value), priv->green);
+		cd_color_yxy_copy (g_value_get_boxed (value), priv->green);
 		break;
 	case PROP_BLUE:
-		cd_color_copy_yxy (g_value_get_boxed (value), priv->blue);
+		cd_color_yxy_copy (g_value_get_boxed (value), priv->blue);
 		break;
 	case PROP_WHITE:
-		cd_color_copy_yxy (g_value_get_boxed (value), priv->white);
+		cd_color_yxy_copy (g_value_get_boxed (value), priv->white);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
@@ -530,10 +530,10 @@ gcm_cie_widget_set_from_profile (GtkWidget *widget, GcmProfile *profile)
 		      NULL);
 
 	/* copy into this widget */
-	cd_color_convert_xyz_to_yxy (white, cie->priv->white);
-	cd_color_convert_xyz_to_yxy (red, cie->priv->red);
-	cd_color_convert_xyz_to_yxy (green, cie->priv->green);
-	cd_color_convert_xyz_to_yxy (blue, cie->priv->blue);
+	cd_color_xyz_to_yxy (white, cie->priv->white);
+	cd_color_xyz_to_yxy (red, cie->priv->red);
+	cd_color_xyz_to_yxy (green, cie->priv->green);
+	cd_color_xyz_to_yxy (blue, cie->priv->blue);
 
 	/* hide if we have no data */
 	if (cie->priv->white->x > 0.001) {

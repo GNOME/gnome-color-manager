@@ -145,7 +145,7 @@ gcm_test_profile_func (void)
 		      "red", &xyz,
 		      NULL);
 	g_assert (xyz != NULL);
-	cd_color_convert_xyz_to_yxy (xyz, &yxy);
+	cd_color_xyz_to_yxy (xyz, &yxy);
 	g_assert_cmpfloat (fabs (yxy.x - 0.648454), <, 0.01);
 
 	cd_color_xyz_free (xyz);
@@ -437,10 +437,10 @@ gcm_test_cie_widget_func (void)
 		      NULL);
 	g_object_unref (file);
 
-	cd_color_convert_xyz_to_yxy (white, &white_Yxy);
-	cd_color_convert_xyz_to_yxy (red, &red_Yxy);
-	cd_color_convert_xyz_to_yxy (green, &green_Yxy);
-	cd_color_convert_xyz_to_yxy (blue, &blue_Yxy);
+	cd_color_xyz_to_yxy (white, &white_Yxy);
+	cd_color_xyz_to_yxy (red, &red_Yxy);
+	cd_color_xyz_to_yxy (green, &green_Yxy);
+	cd_color_xyz_to_yxy (blue, &blue_Yxy);
 
 	g_object_set (widget,
 		      "red", &red_Yxy,
@@ -698,7 +698,7 @@ gcm_test_named_color_func (void)
 	xyz = cd_color_xyz_new ();
 
 	/* use setters */
-	cd_color_set_xyz (xyz, 0.1, 0.2, 0.3);
+	cd_color_xyz_set (xyz, 0.1, 0.2, 0.3);
 	gcm_named_color_set_value (nc, xyz);
 
 	/* test getters */
@@ -709,7 +709,7 @@ gcm_test_named_color_func (void)
 	g_assert_cmpfloat (abs (xyz_new->Z - 0.3), <, 0.01);
 
 	/* overwrite using properties */
-	cd_color_set_xyz (xyz, 0.4, 0.5, 0.6);
+	cd_color_xyz_set (xyz, 0.4, 0.5, 0.6);
 	g_object_set (nc,
 		      "title", "dave",
 		      "value", xyz,

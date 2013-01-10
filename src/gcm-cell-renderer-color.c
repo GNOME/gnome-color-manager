@@ -118,7 +118,7 @@ gcm_cell_renderer_color_set_property (GObject *object, guint param_id,
 
 	switch (param_id) {
 	case PROP_COLOR:
-		cd_color_copy_xyz (g_value_get_boxed (value), renderer->color);
+		cd_color_xyz_copy (g_value_get_boxed (value), renderer->color);
 		gcm_cell_renderer_set_color (renderer);
 		break;
 	case PROP_PROFILE:

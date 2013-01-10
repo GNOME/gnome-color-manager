@@ -388,7 +388,7 @@ gcm_calibrate_get_sensor_image_attach (GcmCalibrate *calibrate)
 	switch (cd_sensor_get_kind (calibrate->priv->sensor)) {
 	case CD_SENSOR_KIND_HUEY:
 		return "huey-attach.svg";
-	case CD_SENSOR_KIND_COLOR_MUNKI:
+	case CD_SENSOR_KIND_COLOR_MUNKI_PHOTO:
 		return "munki-attach.svg";
 	case CD_SENSOR_KIND_SPYDER:
 		return "spyder2-attach.svg";
@@ -427,7 +427,7 @@ gcm_calibrate_get_sensor_image_calibrate (GcmCalibrate *calibrate)
 	CdSensorKind sensor_kind;
 
 	sensor_kind = cd_sensor_get_kind (calibrate->priv->sensor);
-	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI)
+	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI_PHOTO)
 		return "munki-calibrate.svg";
 	return NULL;
 }
@@ -441,7 +441,7 @@ gcm_calibrate_get_sensor_image_screen (GcmCalibrate *calibrate)
 	CdSensorKind sensor_kind;
 
 	sensor_kind = cd_sensor_get_kind (calibrate->priv->sensor);
-	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI)
+	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI_PHOTO)
 		return "munki-screen.svg";
 	return NULL;
 }
@@ -650,7 +650,7 @@ gcm_calibrate_get_samples (GcmCalibrate *calibrate,
 	GcmCalibratePrivate *priv = calibrate->priv;
 
 	/* setup the measure window */
-	cd_color_set_rgb (&rgb_tmp, 1.0f, 1.0f, 1.0f);
+	cd_color_rgb_set (&rgb_tmp, 1.0f, 1.0f, 1.0f);
 	cd_sample_window_set_color (CD_SAMPLE_WINDOW (priv->sample_window), &rgb_tmp);
 	cd_sample_window_set_fraction (CD_SAMPLE_WINDOW (priv->sample_window), 0.0f);
 	gtk_window_set_modal (priv->sample_window, TRUE);
@@ -1188,27 +1188,27 @@ gcm_calibrate_get_primaries (GcmCalibrate *calibrate,
 
 	/* red */
 	rgb = cd_color_rgb_new ();
-	cd_color_set_rgb (rgb, 1.0f, 0.0f, 0.0f);
+	cd_color_rgb_set (rgb, 1.0f, 0.0f, 0.0f);
 	g_ptr_array_add (samples_rgb, rgb);
 
 	/* green */
 	rgb = cd_color_rgb_new ();
-	cd_color_set_rgb (rgb, 0.0f, 1.0f, 0.0f);
+	cd_color_rgb_set (rgb, 0.0f, 1.0f, 0.0f);
 	g_ptr_array_add (samples_rgb, rgb);
 
 	/* blue */
 	rgb = cd_color_rgb_new ();
-	cd_color_set_rgb (rgb, 0.0f, 0.0f, 1.0f);
+	cd_color_rgb_set (rgb, 0.0f, 0.0f, 1.0f);
 	g_ptr_array_add (samples_rgb, rgb);
 
 	/* white */
 	rgb = cd_color_rgb_new ();
-	cd_color_set_rgb (rgb, 1.0f, 1.0f, 1.0f);
+	cd_color_rgb_set (rgb, 1.0f, 1.0f, 1.0f);
 	g_ptr_array_add (samples_rgb, rgb);
 
 	/* black */
 	rgb = cd_color_rgb_new ();
-	cd_color_set_rgb (rgb, 0.0f, 0.0f, 0.0f);
+	cd_color_rgb_set (rgb, 0.0f, 0.0f, 0.0f);
 	g_ptr_array_add (samples_rgb, rgb);
 
 	/* measure */
@@ -1251,7 +1251,7 @@ gcm_calibrate_resize_results (GPtrArray *src_array,
 		if (reg1 == reg2) {
 			/* no interpolation reqd */
 			src1 = g_ptr_array_index (src_array, reg1);
-			cd_color_copy_rgb (src1, dest);
+			cd_color_rgb_copy (src1, dest);
 		} else {
 			amount = div - (gdouble) reg1;
 			src1 = g_ptr_array_index (src_array, reg1);
@@ -1275,7 +1275,7 @@ gcm_calibrate_array_remove_offset (GPtrArray *array)
 	guint i;
 
 	/* remove the backlight leakage */
-	cd_color_set_rgb (&offset,
+	cd_color_rgb_set (&offset,
 			  G_MAXDOUBLE,
 			  G_MAXDOUBLE,
 			  G_MAXDOUBLE);
@@ -1315,7 +1315,7 @@ gcm_calibrate_array_scale (GPtrArray *array, gdouble value)
 	guint i;
 
 	/* scale all values */
-	cd_color_set_rgb (&scale,
+	cd_color_rgb_set (&scale,
 			  G_MINDOUBLE,
 			  G_MINDOUBLE,
 			  G_MINDOUBLE);

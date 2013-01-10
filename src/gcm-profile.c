@@ -657,7 +657,7 @@ gcm_profile_calc_whitepoint (GcmProfile *profile)
 	cmsDoTransform (transform, data, &whitepoint, 1);
 
 	/* convert to lcms xyY values */
-	cd_color_set_xyz (priv->white,
+	cd_color_xyz_set (priv->white,
 			  whitepoint.X, whitepoint.Y, whitepoint.Z);
 	cmsXYZ2xyY (&tmp, &whitepoint);
 	g_debug ("whitepoint = %f,%f [%f]", tmp.x, tmp.y, tmp.Y);
@@ -733,7 +733,7 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 	/* get white point */
 	ret = gcm_profile_calc_whitepoint (profile);
 	if (!ret)
-		cd_color_clear_xyz (priv->white);
+		cd_color_xyz_clear (priv->white);
 
 	/* get the profile kind */
 	profile_class = cmsGetDeviceClass (priv->lcms_profile);
@@ -807,11 +807,11 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 		cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigRedMatrixColumnTag);
 		if (cie_xyz != NULL) {
 			/* assume that if red is present, the green and blue are too */
-			cd_color_copy_xyz ((CdColorXYZ *) cie_xyz, (CdColorXYZ *) &cie_illum.Red);
+			cd_color_xyz_copy ((CdColorXYZ *) cie_xyz, (CdColorXYZ *) &cie_illum.Red);
 			cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigGreenMatrixColumnTag);
-			cd_color_copy_xyz ((CdColorXYZ *) cie_xyz, (CdColorXYZ *) &cie_illum.Green);
+			cd_color_xyz_copy ((CdColorXYZ *) cie_xyz, (CdColorXYZ *) &cie_illum.Green);
 			cie_xyz = cmsReadTag (priv->lcms_profile, cmsSigBlueMatrixColumnTag);
-			cd_color_copy_xyz ((CdColorXYZ *) cie_xyz, (CdColorXYZ *) &cie_illum.Blue);
+			cd_color_xyz_copy ((CdColorXYZ *) cie_xyz, (CdColorXYZ *) &cie_illum.Blue);
 			got_illuminants = TRUE;
 		} else {
 			g_debug ("failed to get illuminants");
@@ -858,17 +858,17 @@ gcm_profile_parse_data (GcmProfile *profile, const guint8 *data, gsize length, G
 
 	/* we've got valid values */
 	if (got_illuminants) {
-		cd_color_set_xyz (priv->red,
+		cd_color_xyz_set (priv->red,
 				   cie_illum.Red.X, cie_illum.Red.Y, cie_illum.Red.Z);
-		cd_color_set_xyz (priv->green,
+		cd_color_xyz_set (priv->green,
 				   cie_illum.Green.X, cie_illum.Green.Y, cie_illum.Green.Z);
-		cd_color_set_xyz (priv->blue,
+		cd_color_xyz_set (priv->blue,
 				   cie_illum.Blue.X, cie_illum.Blue.Y, cie_illum.Blue.Z);
 	} else {
 		g_debug ("failed to get luminance values");
-		cd_color_clear_xyz (priv->red);
-		cd_color_clear_xyz (priv->green);
-		cd_color_clear_xyz (priv->blue);
+		cd_color_xyz_clear (priv->red);
+		cd_color_xyz_clear (priv->green);
+		cd_color_xyz_clear (priv->blue);
 	}
 
 	/* get the profile created time and date */
@@ -1009,7 +1009,7 @@ gcm_profile_set_whitepoint (GcmProfile *profile, const CdColorXYZ *whitepoint, G
 		priv->lcms_profile = cmsCreateProfilePlaceholder (NULL);
 
 	/* copy */
-	cd_color_copy_xyz (whitepoint, priv->white);
+	cd_color_xyz_copy (whitepoint, priv->white);
 
 	/* write tag */
 	ret = cmsWriteTag (priv->lcms_profile, cmsSigMediaWhitePointTag, priv->white);
@@ -1048,9 +1048,9 @@ gcm_profile_set_primaries (GcmProfile *profile,
 		priv->lcms_profile = cmsCreateProfilePlaceholder (NULL);
 
 	/* copy */
-	cd_color_copy_xyz (red, priv->red);
-	cd_color_copy_xyz (green, priv->green);
-	cd_color_copy_xyz (blue, priv->blue);
+	cd_color_xyz_copy (red, priv->red);
+	cd_color_xyz_copy (green, priv->green);
+	cd_color_xyz_copy (blue, priv->blue);
 
 	/* write tags */
 	ret = cmsWriteTag (priv->lcms_profile, cmsSigRedMatrixColumnTag, priv->red);
@@ -2251,16 +2251,16 @@ gcm_profile_set_property (GObject *object, guint prop_id, const GValue *value, G
 		gcm_profile_set_size (profile, g_value_get_uint (value));
 		break;
 	case PROP_WHITE:
-		cd_color_copy_xyz (g_value_get_boxed (value), priv->white);
+		cd_color_xyz_copy (g_value_get_boxed (value), priv->white);
 		break;
 	case PROP_RED:
-		cd_color_copy_xyz (g_value_get_boxed (value), priv->red);
+		cd_color_xyz_copy (g_value_get_boxed (value), priv->red);
 		break;
 	case PROP_GREEN:
-		cd_color_copy_xyz (g_value_get_boxed (value), priv->green);
+		cd_color_xyz_copy (g_value_get_boxed (value), priv->green);
 		break;
 	case PROP_BLUE:
-		cd_color_copy_xyz (g_value_get_boxed (value), priv->blue);
+		cd_color_xyz_copy (g_value_get_boxed (value), priv->blue);
 		break;
 	default:
 		G_OBJECT_WARN_INVALID_PROPERTY_ID (object, prop_id, pspec);
