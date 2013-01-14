@@ -1,4 +1,4 @@
-INCLUDES =						\
+AM_CPPFLAGS =						\
 	$(GLIB_CFLAGS)					\
 	$(X11_CFLAGS)					\
 	$(GTK_CFLAGS)					\
