@@ -380,73 +380,6 @@ gcm_calibrate_interaction (GcmCalibrate *calibrate, GtkResponseType response)
 }
 
 /**
- * gcm_calibrate_get_sensor_image_attach:
- **/
-static const gchar *
-gcm_calibrate_get_sensor_image_attach (GcmCalibrate *calibrate)
-{
-	switch (cd_sensor_get_kind (calibrate->priv->sensor)) {
-	case CD_SENSOR_KIND_HUEY:
-		return "huey-attach.svg";
-	case CD_SENSOR_KIND_COLOR_MUNKI_PHOTO:
-		return "munki-attach.svg";
-	case CD_SENSOR_KIND_SPYDER:
-		return "spyder2-attach.svg";
-	case CD_SENSOR_KIND_COLORIMTRE_HCFR:
-		return "hcfr-attach.svg";
-	case CD_SENSOR_KIND_I1_PRO:
-		return "i1-pro-attach.svg";
-	case CD_SENSOR_KIND_DTP94:
-		return "dtp94-attach.svg";
-#if CD_CHECK_VERSION(0,1,14)
-	case CD_SENSOR_KIND_I1_DISPLAY3:
-		return "i1-display3-attach.svg";
-#endif
-#if CD_CHECK_VERSION(0,1,15)
-	case CD_SENSOR_KIND_COLORHUG:
-		return "colorhug-attach.svg";
-#endif
-#if CD_CHECK_VERSION(0,1,16)
-	case CD_SENSOR_KIND_SPYDER2:
-		return "spyder2-attach.svg";
-	case CD_SENSOR_KIND_SPYDER3:
-		return "spyder3-attach.svg";
-#endif
-	default:
-		break;
-	}
-	return NULL;
-}
-
-/**
- * gcm_calibrate_get_sensor_image_calibrate:
- **/
-static const gchar *
-gcm_calibrate_get_sensor_image_calibrate (GcmCalibrate *calibrate)
-{
-	CdSensorKind sensor_kind;
-
-	sensor_kind = cd_sensor_get_kind (calibrate->priv->sensor);
-	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI_PHOTO)
-		return "munki-calibrate.svg";
-	return NULL;
-}
-
-/**
- * gcm_calibrate_get_sensor_image_screen:
- **/
-static const gchar *
-gcm_calibrate_get_sensor_image_screen (GcmCalibrate *calibrate)
-{
-	CdSensorKind sensor_kind;
-
-	sensor_kind = cd_sensor_get_kind (calibrate->priv->sensor);
-	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI_PHOTO)
-		return "munki-screen.svg";
-	return NULL;
-}
-
-/**
  * gcm_calibrate_copy_file:
  **/
 static gboolean
@@ -524,7 +457,8 @@ gcm_calibrate_interaction_attach (GcmCalibrate *calibrate)
 
 	/* different messages with or without image */
 	message = g_string_new ("");
-	filename = gcm_calibrate_get_sensor_image_attach (calibrate);
+	filename = cd_sensor_get_metadata_item (calibrate->priv->sensor,
+						CD_SENSOR_METADATA_IMAGE_ATTACH);
 	if (filename != NULL) {
 		/* TRANSLATORS: dialog message, ask user to attach device, and there's an example image */
 		g_string_append (message, _("Please attach the measuring instrument to the center of the screen on the gray square like the image below."));
@@ -570,7 +504,8 @@ gcm_calibrate_interaction_screen (GcmCalibrate *calibrate)
 				 GCM_CALIBRATE_UI_INTERACTION);
 
 	/* get the image, if we have one */
-	filename = gcm_calibrate_get_sensor_image_screen (calibrate);
+	filename = cd_sensor_get_metadata_item (calibrate->priv->sensor,
+						CD_SENSOR_METADATA_IMAGE_CALIBRATE);
 	gcm_calibrate_set_image (calibrate, filename);
 	gcm_calibrate_interaction_required (calibrate, _("Continue"));
 	if (filename != NULL) {
@@ -610,7 +545,8 @@ gcm_calibrate_interaction_calibrate (GcmCalibrate *calibrate)
 	g_debug ("blocking waiting for user input");
 
 	/* get the image, if we have one */
-	filename = gcm_calibrate_get_sensor_image_calibrate (calibrate);
+	filename = cd_sensor_get_metadata_item (calibrate->priv->sensor,
+						CD_SENSOR_METADATA_IMAGE_CALIBRATE);
 	gcm_calibrate_set_image (calibrate, filename);
 	gcm_calibrate_interaction_required (calibrate, _("Continue"));
 	if (filename != NULL) {
