@@ -356,7 +356,6 @@ out:
 	return ret;
 }
 
-#if CD_CHECK_VERSION(0,1,20)
 /**
  * gcm_calib_set_sensor_options_cb:
  **/
@@ -377,13 +376,11 @@ gcm_calib_set_sensor_options_cb (GObject *object,
 		g_error_free (error);
 	}
 }
-#endif
 
 static void
 gcm_calib_set_sensor_options (GcmCalibratePriv *calib,
 			      const gchar *filename)
 {
-#if CD_CHECK_VERSION(0,1,20)
 	CdSensor *sensor;
 	gboolean ret;
 	gchar *data = NULL;
@@ -423,7 +420,6 @@ out:
 	g_free (sha1);
 	if (hash != NULL)
 		g_hash_table_unref (hash);
-#endif
 }
 
 static gboolean

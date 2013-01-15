@@ -208,12 +208,10 @@ gcm_viewer_profile_get_sort_string (CdProfile *profile)
 		sort[1] = '1';
 	else if (g_strcmp0 (id, CD_PROFILE_METADATA_DATA_SOURCE_EDID) == 0)
 		sort[1] = '2';
-#if CD_CHECK_VERSION(0,1,14)
 	else if (g_strcmp0 (id, CD_PROFILE_METADATA_DATA_SOURCE_STANDARD) == 0)
 		sort[1] = '3';
 	else if (g_strcmp0 (id, CD_PROFILE_METADATA_DATA_SOURCE_TEST) == 0)
 		sort[1] = '4';
-#endif
 	else
 		sort[1] = '0';
 
@@ -253,11 +251,9 @@ gcm_viewer_update_profile_connect_cb (GObject *source_object,
 		goto out;
 	}
 
-#if CD_CHECK_VERSION(0,1,13)
 	/* ignore profiles from other user accounts */
 	if (!cd_profile_has_access (profile))
 		goto out;
-#endif
 
 	profile_kind = cd_profile_get_kind (profile);
 	icon_name = gcm_viewer_profile_kind_to_icon_name (profile_kind);
@@ -903,7 +899,6 @@ out:
 	return ret;
 }
 
-#if CD_CHECK_VERSION(0,1,25)
 /**
  * gcm_profile_warning_to_string:
  **/
@@ -959,7 +954,6 @@ gcm_profile_warning_to_string (CdProfileWarning kind_enum)
 	}
 	return kind;
 }
-#endif
 
 /**
  * gcm_viewer_set_profile:
@@ -993,12 +987,10 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	guint filesize;
 	gboolean show_section = FALSE;
 	GError *error = NULL;
-#if CD_CHECK_VERSION(0,1,25)
 	gchar **warnings;
 	guint i;
 	CdProfileWarning warning;
 	GString *str;
-#endif
 
 	/* connect to the profile */
 	ret = cd_profile_connect_sync (profile, NULL, &error);
@@ -1142,7 +1134,6 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 
 	/* set warnings */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_warnings"));
-#if CD_CHECK_VERSION(0,1,25)
 	warnings = cd_profile_get_warnings (profile);
 	size = g_strv_length (warnings);
 	if (size == 0) {
@@ -1165,9 +1156,6 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 		gtk_label_set_label (GTK_LABEL (widget), str->str);
 		g_string_free (str, TRUE);
 	}
-#else
-	gtk_widget_set_visible (widget, FALSE);
-#endif
 
 	/* set profile version */
 	filename = gcm_profile_get_version (gcm_profile);

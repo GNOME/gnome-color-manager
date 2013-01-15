@@ -102,7 +102,6 @@ out:
 		 * profile has been auto-generated for this hardware */
 		g_string_prepend (string, _("Default: "));
 	}
-#if CD_CHECK_VERSION(0,1,14)
 	if (g_strcmp0 (id, CD_PROFILE_METADATA_DATA_SOURCE_STANDARD) == 0) {
 		/* TRANSLATORS: this is a profile prefix to signify the
 		 * profile his a standard space like AdobeRGB */
@@ -113,7 +112,6 @@ out:
 		 * profile is a test profile */
 		g_string_prepend (string, _("Test profile: "));
 	}
-#endif
 
 	g_free (markup);
 	return string;

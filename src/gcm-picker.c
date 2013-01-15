@@ -577,11 +577,9 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 			goto out;
 		}
 
-#if CD_CHECK_VERSION(0,1,13)
 		/* ignore profiles from other user accounts */
 		if (!cd_profile_has_access (profile))
 			continue;
-#endif
 
 		/* is a printer profile */
 		filename = cd_profile_get_filename (profile);
