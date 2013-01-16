@@ -11,23 +11,9 @@ icons_DATA = 	 			\
 	calibration-normal.svg		\
 	calibration-short.svg		\
 	clock.svg			\
-	colorhug-attach.svg		\
-	dtp94-attach.svg		\
-	hcfr-attach.svg			\
-	huey-attach.svg			\
-	i1-display3-attach.svg		\
-	i1-monitor-attach.svg		\
-	i1-pro-attach.svg		\
-	munki-ambient.svg		\
-	munki-attach.svg		\
-	munki-calibrate.svg		\
-	munki-projector.svg		\
-	munki-screen.svg		\
 	scan-target-bad.svg		\
 	scan-target-good.svg		\
-	scan-target.svg			\
-	spyder2-attach.svg		\
-	spyder3-attach.svg
+	scan-target.svg
 
 EXTRA_DIST =				\
 	$(icons_DATA)			\
