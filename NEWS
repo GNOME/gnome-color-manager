@@ -1,3 +1,64 @@
+Version 3.7.5
+~~~~~~~~~~~~~
+Released: 2012-02-05
+
+* Translations
+ - Added Bengali India Translation (Sayak Sarkar)
+ - Added Slovak translation (Roman Mátyus)
+ - Updated Assamese translation (Nilamdyuti Goswami)
+ - Updated Brazilian Portuguese Translation (Rafael Ferreira)
+ - Updated Bulgarian translation (Alexander Shopov)
+ - Updated Bulgarian translation (Ivaylo Valkov)
+ - Updated Catalan translation (Gil Forcada)
+ - Updated Catalan (Valencian) translation (Carles Ferrando)
+ - Updated Estonian translation (Mattias Põldaru)
+ - Updated Galician translations (Fran Diéguez)
+ - Updated Greek translation (Dimitris Spingos)
+ - Updated Hebrew translation (Yaron Shahrabani)
+ - Updated Italian translation. (Milo Casagrande)
+ - Updated Kannada Translations (Shankar Prasad)
+ - Updated Latvian translation (Rūdolfs Mazurs)
+ - Updated Lithuanian translation (Aurimas Černius)
+ - Updated Norwegian bokmål translation (Kjartan Maraas)
+ - Updated Odia Translation with FUEL implementation (ManojKumar Giri)
+ - Updated Polish translation (Piotr Drąg)
+ - Updated Russian translation (Alexandre Prokoudine)
+ - Updated Slovak translation (Pavol Klačanský)
+ - Updated Slovenian translation (Matej Urbančič)
+ - Updated Spanish translation (Daniel Mustieles)
+ - Updated Telugu Translations (Krishnababu Krothapalli)
+ - Updated Traditional Chinese translation(Hong Kong and Taiwan) (Cheng-Chia Tseng)
+ - Updated Uyghur translation (Gheyret Kenji)
+
+* New Features:
+ - Get the ICC profile pre-cooked MD5 value if it is available (Richard Hughes)
+ - Show the profile problems in the viewer application (Richard Hughes)
+ - Use the new sensor metadata to avoid duplicating data tables (Richard Hughes)
+
+* Bugfix:
+ - Add a missing metadata title to the profile viewer (Richard Hughes)
+ - Add a 'Show details' button for already-installed profiles (Richard Hughes)
+ - Better initial orientation for the Lab hull (Pascal de Bruijn)
+ - Calculate the profile whitepoint using the profile transform (Richard Hughes)
+ - Correct sheet/minutes counts in the calibration dailog (Pascal de Bruijn)
+ - Default to normal calibration (Pascal de Bruijn)
+ - Detect Ubuntu casper based livecd's as well (Pascal de Bruijn)
+ - Do not use deprecated symbols from colord (Richard Hughes)
+ - Don't use the deprecated INCLUDES in Makefile.am (Richard Hughes)
+ - For dispread skip instrument recalibration for the ColorMunki (Pascal de Bruijn)
+ - For the ColorMunki use high resolution measurement mode (Pascal de Bruijn)
+ - Honour precision for dispcal (Pascal de Bruijn)
+ - Large default window size, to prevent mid operation automatic resizing (Pascal de Bruijn)
+ - Move gcm-calibrate to lower right of the screen (Pascal de Bruijn)
+ - Remove gcm-dump-profile, it's no longer used (Richard Hughes)
+ - Remove the device figures now we depend on a version of colord that installs them (Richard Hughes)
+ - Remove the native calibration code (Richard Hughes)
+ - Remove the obsolete docs (Richard Hughes)
+ - Show temperature page for more devices (Pascal de Bruijn)
+ - Use a 0.8 instead of 1.2 sized test window for Argyll (Pascal de Bruijn)
+ - Use cd_client_find_profile_by_property_sync() where available (Richard Hughes)
+ - Use the UTF-8 '…' rather than '...' in UI code (Richard Hughes)
+
 Version 3.6.0
 ~~~~~~~~~~~~~
 Released: 2012-09-25
