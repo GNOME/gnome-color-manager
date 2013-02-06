@@ -974,7 +974,6 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	const gchar *profile_title;
 	gchar *temp;
 	const gchar *filename;
-	gchar *basename = NULL;
 	gchar *size_text = NULL;
 	CdProfileKind profile_kind;
 	CdColorspace profile_colorspace;
@@ -1124,11 +1123,10 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	profile_title = cd_profile_get_title (profile);
 	gtk_window_set_title (window, profile_title);
 
-	/* set basename */
+	/* set filename */
 	filename = cd_profile_get_filename (profile);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_filename"));
-	basename = g_path_get_basename (filename);
-	temp = g_markup_escape_text (basename, -1);
+	temp = g_markup_escape_text (filename, -1);
 	gtk_label_set_label (GTK_LABEL (widget), temp);
 	g_free (temp);
 
@@ -1278,7 +1276,6 @@ out:
 	if (clut_vcgt != NULL)
 		g_object_unref (clut_vcgt);
 	g_free (size_text);
-	g_free (basename);
 }
 
 /**
