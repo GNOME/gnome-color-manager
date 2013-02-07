@@ -1,0 +1,127 @@
+# Brazilian Portuguese translation for gnome-color-manager.
+# Copyright (C) 2013 gnome-color-manager's COPYRIGHT HOLDER
+# This file is distributed under the same license as the gnome-color-manager package.
+# Enrico Nicoletto <liverig@gmail.com>, 2013.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-color-manager master\n"
+"POT-Creation-Date: 2013-01-21 10:22+0000\n"
+"PO-Revision-Date: 2013-02-07 11:54-0300\n"
+"Last-Translator: Enrico Nicoletto <liverig@gmail.com>\n"
+"Language-Team: Brazilian Portuguese <gnome-pt_br-list@gnome.org>\n"
+"Language: pt_BR\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+#: C/legal.xml:3(p/link)
+msgid "Creative Commons Attribution-ShareAlike 3.0 Unported License"
+msgstr "Licença Creative Commons Atribuição-Compartilhada Igual 3.0"
+
+#: C/legal.xml:3(license/p)
+msgid "This work is licensed under a <_:link-1/>."
+msgstr "Esta obra está licenciada sobre uma <_:link-1/>."
+
+#. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
+msgctxt "_"
+msgid "translator-credits"
+msgstr "Enrico Nicoletto <liverig@gmail.com>, 2013"
+
+#: C/color-import-linux.page:9(info/desc)
+msgid "How to import an existing ICC profile using a Linux system."
+msgstr "Como importar um perfil ICC já existente utilizando um sistema Linux."
+
+#: C/color-import-linux.page:11(credit/name)
+#: C/color-import-windows.page:11(credit/name)
+#: C/color-import-osx.page:11(credit/name)
+msgid "Richard Hughes"
+msgstr "Richard Hughes"
+
+#: C/color-import-linux.page:17(page/title)
+msgid "Installing an ICC profile on Linux"
+msgstr "Instalando um perfil ICC no Linux"
+
+#: C/color-import-linux.page:18(page/p)
+msgid "If you have <cmd>gnome-color-manager</cmd> or <cmd>colord-kde</cmd> installed then just double click the <file>.icc</file> profile and click <gui>Import</gui>. You can then assign the new profile to an existing device using the <guiseq><gui>System Settings</gui><gui>Color</gui></guiseq> panel."
+msgstr "Se você possui o <cmd>gnome-color-manager</cmd> ou o <cmd>colord-kde</cmd> instalados, então apenas dê um duplo clique no perfil <file>.icc</file> e clique em <gui>Importar</gui>. Desta forma você poderá atribuir o novo perfil para um dispositivo já existente utilizando o painel <guiseq><gui>Configurações do sistema</gui><gui>Cor</gui></guiseq>."
+
+#: C/color-import-linux.page:25(page/p)
+msgid "Profile calibration curves are automatically loaded at login, or can be loaded for all users at startup if the <gui>Set for all users</gui> button is clicked."
+msgstr "As curvas de perfil de calibração são automaticamente carregadas no ínicio da sessão, ou podem ser carregadas para todos os usuários na inicialização ao clicar no botão <gui>Definir para todos os usuários</gui>."
+
+#: C/color-import-windows.page:9(info/desc)
+msgid "How to import an existing ICC profile using a Windows system."
+msgstr "Como importar um perfil ICC já existente utilizando um sistema Windows."
+
+#: C/color-import-windows.page:17(page/title)
+msgid "Installing an ICC profile on Microsoft Windows"
+msgstr "Instalando um perfil ICC no Microsoft Windows"
+
+#: C/color-import-windows.page:18(page/p)
+msgid "The method for assigning the profile to a device and also using the embedded calibration curves is different for each version of Microsoft Windows."
+msgstr "O método para atribuir o perfil a um dispositivo e ainda utilizar curvas de calibração incorporadas é diferente para cada versão do Microsoft Windows."
+
+#: C/color-import-windows.page:24(section/title)
+msgid "Windows XP"
+msgstr "Windows XP"
+
+# Por se tratar de Windows, directory foi traduzido como pasta e não como diretório (termo para Unix)
+#: C/color-import-windows.page:25(section/p)
+msgid "Right click on the profile in Windows Explorer and click <gui>Install profile</gui>. This copies the profile to the correct directory automatically."
+msgstr "Dê um clique com o botão direito do mouse no perfil no Windows Explorer e clique em <gui>Instalar perfil</gui>. Isto faz com que o perfil seja copiado automaticamente para a pasta correta."
+
+#: C/color-import-windows.page:29(section/p)
+msgid "Then open <guiseq><gui>Control Center</gui><gui>Color</gui></guiseq> and add the profile to the device."
+msgstr "Então abra o <guiseq><gui>Centro de controle</gui><gui>Cor</gui></guiseq> e adicione o perfil ao dispositivo."
+
+#: C/color-import-windows.page:34(note/p)
+msgid "If you are replacing an existing profile in Windows XP, the above shortcut does not work. The profiles must be manually copied to <file>C:\\Windows\\system32\\spool\\drivers\\color</file> for the original profile to be replaced."
+msgstr "Se você está substituindo um perfil já existente no Windows XP, o atalho acima não irá funcionar. Os perfis precisam ser copiados manualmente para <file>C:\\Windows\\system32\\spool\\drivers\\color</file>, para que o perfil original seja substituído. (Nota do tradutor: Caso sua instalação do Windows não esteja na unidade <file>C:\\</file>, substitua pela letra correta da sua unidade de sistema, ex: <file>D:\\</file>, <file>E:\\</file>, etc...)"
+
+# Neste contexto, startup refere-se ao termo Inicialização de Programas, onde um conjunto de programas e serviços iniciam junto ao sistema operacional proprietário.
+#: C/color-import-windows.page:42(section/p)
+msgid "Windows XP requires a program to be run at startup to copy the profile calibration curves into the video card. This can be done using <app>Adobe Gamma</app>, <app>LUT Loader</app> or by using the free <app href=\"https://www.microsoft.com/download/en/details.aspx?displaylang=en&amp;id=12714\"> Microsoft Color Control Panel Applet</app>. Using the latter adds a new <gui>Color</gui> item to the control panel and allows the calibration curves from default profile to be easily set at each startup."
+msgstr "O Windows XP precisa de um programa a ser executado na inicialização de programas para copiar o perfil de curvas de calibração para a placa de vídeo. Isto pode ser feito usando o aplicativo <app>Adobe Gamma</app>, <app>LUT Loader</app> ou usando o <app href=\"https://www.microsoft.com/en-us/download/details.aspx?id=12714\">Miniaplicativo \"Cores\" do Painel de Controle</app>, gratuito da Microsoft. Ao utilizar o último, adiciona-se um novo ítem <gui>Cores</gui> ao painel de controle e permite que as curvas de calibração do perfil padrão sejam facilmente definidas a cada inicialização."
+
+#: C/color-import-windows.page:55(section/title)
+msgid "Windows Vista"
+msgstr "Windows Vista"
+
+#: C/color-import-windows.page:56(section/p)
+msgid "Microsoft Windows Vista mistakenly removes calibration curves from the video LUT after logon, after suspend, and when the UAC screen appears. This means you may have to manually reload the ICC profile calibration curves. If you are using profiles with embedded calibration curves you have to be very careful the calibration state has not been cleared."
+msgstr "Por engano, o Microsoft Windows Vista remove as curvas de calibração de vídeo do LUT após fazer logon, suspender e quando a tela de UAC aparece. Isto significa que você precisa recarregar manualmente o perfil ICC de curvas de calibração. Se você está usando perfis com curvas de calibração incorporadas, você precisa ser bem cuidadoso para que o estado de calibração não seja apagado."
+
+#: C/color-import-windows.page:68(section/title)
+msgid "Windows 7"
+msgstr "Windows 7"
+
+#: C/color-import-windows.page:69(section/p)
+msgid "Windows 7 supports a similar scheme to Linux, in that profiles can be installed system-wide or specific to the user. They are however stored in the same place. Right click on the profile in Windows Explorer and click <gui>Install profile</gui> or copy the .icc profile to <file>C:\\Windows\\system32\\spool\\drivers\\color</file>."
+msgstr "O WIndows 7 suporta um esquema parecido com o Linux, estes perfis podem ser instalados em todo o sistema ou especificamente para o usuário. Contudo, eles são armazenados no mesmo local. Clique com o botão direito sob o perfil no Windows Explorer e clique em <gui>Instalar perfil</gui> ou copie o perfil .icc para <file>C:\\Windows\\system32\\spool\\drivers\\color</file>. Nota do tradutor: Caso seu Windows não esteja em <file>C:\\</file>, basta substituir pela letra correta de sua unidade de sistema."
+
+#: C/color-import-windows.page:76(section/p)
+msgid "Open <guiseq><gui>Control Center</gui><gui>Color Management</gui></guiseq> and then add the profile to the system by clicking the <gui>Add</gui> button. Click on the <gui>Advanced</gui> tab and look for <gui>Display Calibration</gui>. Calibration curve loading is enabled by the <gui>Use Windows display calibration</gui> checkbox but it is not sensitive. This can be enabled by clicking on <gui>Change system defaults</gui> and then returning to the <gui>Advanced</gui> tab and then clicking the checkbox."
+msgstr "Abra o <guiseq><gui>Centro de controle</gui><gui>Gerenciamento de cores</gui></guiseq> e então adicione o perfil ao sistema, clicando no botão <gui>Adicionar</gui>. Clique na aba <gui>Avançado</gui> e procure por <gui>Calibragem de vídeo</gui>. O carregamento da curva de calibração é ativado pela caixa de seleção <gui>Usar a calibragem de vídeo do Windows</gui>, porém ela não é sensível. Ela pode ser ativada ao clicar em <gui>Alterar configurações do sistema</gui> e então retornar a aba <gui>Avançado</gui> e por fim clicar na caixa de seleção."
+
+#: C/color-import-windows.page:87(section/p)
+msgid "Close the dialog and click <gui>Reload current calibrations</gui> to set the gamma ramps. The profile calibration curves should now be set for every boot."
+msgstr "Feche a janela de diálogo e clique em <gui>Recarregar calibragens atuais</gui> para definir as curvas de gama. Agora, as curvas de calibração do perfil foram ajustadas para cada inicialização."
+
+#: C/color-import-osx.page:9(info/desc)
+msgid "How to import an existing ICC profile using an OS X system."
+msgstr "Como importar um perfil ICC já existente utilizando um sistema OS X."
+
+#: C/color-import-osx.page:17(page/title)
+msgid "Installing an ICC profile on Apple OS X"
+msgstr "Instalando um perfil ICC no Apple OS X"
+
+#: C/color-import-osx.page:18(page/p)
+msgid "Apple OS X supports a similar scheme to Linux, in that profiles can be installed system-wide or specific to the user. System wide profiles are stored in <file>/Library/ColorSync/Profiles</file> and user-specific profiles are stored in <file>~/Library/ColorSync/Profiles</file>."
+msgstr "Apple OS X suporta um esquema parecido com o Linux, estes perfis podem ser instalados em todo o sistema ou especificamente para o usuário. Os perfis gerais do sistema são armazenados em <file>/Library/ColorSync/Profiles</file> e os perfis específicos de usuários são armazenados em <file>~/Library/ColorSync/Profiles</file>."
+
+#: C/color-import-osx.page:24(page/p)
+msgid "Use the <guiseq><gui>System Preferences</gui><gui>Displays</gui><gui>Color</gui></guiseq> tool to import the file and assign the profile to the correct device."
+msgstr "Utilize a ferramenta através de <guiseq><gui>Preferências do sistema</gui><gui>Vídeos</gui><gui>Cor</gui></guiseq> para importar o arquivo e atribuir o perfil ao dispositivo correto."
+
