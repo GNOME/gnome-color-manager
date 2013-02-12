@@ -124,9 +124,24 @@ static void
 gcm_viewer_set_example_image (GcmViewerPrivate *viewer, GtkImage *image)
 {
 	gchar *filename;
-	filename = g_strdup_printf ("%s/figures/viewer-example-%02i.png", GCM_DATA, viewer->example_index);
-	gtk_image_set_from_file (image, filename);
+	gchar *path;
+	GdkPixbuf *pixbuf;
+	GError *error = NULL;
+
+	filename = g_strdup_printf ("viewer-example-%02i.png", viewer->example_index);
+	path = g_build_filename (GCM_DATA, "figures", filename, NULL);
+	pixbuf = gdk_pixbuf_new_from_file (path, &error);
+	if (pixbuf == NULL) {
+		g_warning ("failed to load %s: %s", filename, error->message);
+		g_error_free (error);
+		goto out;
+	}
+	gtk_image_set_from_pixbuf (image, pixbuf);
+out:
 	g_free (filename);
+	g_free (path);
+	if (pixbuf != NULL)
+		g_object_unref (pixbuf);
 }
 
 /**
