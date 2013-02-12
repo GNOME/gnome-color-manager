@@ -1768,14 +1768,14 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	context = gtk_widget_get_style_context (widget);
 	gtk_style_context_add_class (context, "dim-label");
 
-	/* show main UI */
-	gtk_widget_show (main_window);
-
 	/* set the parent window if it is specified */
 	if (viewer->xid != 0) {
 		g_debug ("Setting xid %i", viewer->xid);
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), viewer->xid);
 	}
+
+	/* show main UI */
+	gtk_widget_show (main_window);
 
 	/* specified an ID */
 	if (viewer->profile_id != NULL) {
