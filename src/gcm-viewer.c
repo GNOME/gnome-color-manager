@@ -156,6 +156,15 @@ gcm_viewer_image_prev_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 }
 
 /**
+ * gcm_viewer_button_close_cb:
+ **/
+static void
+gcm_viewer_button_close_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
+{
+	g_application_release (G_APPLICATION (viewer->application));
+}
+
+/**
  * gcm_viewer_profile_kind_to_icon_name:
  **/
 static const gchar *
@@ -1626,6 +1635,9 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_image_prev1"));
 	g_signal_connect (widget, "clicked",
 			  G_CALLBACK (gcm_viewer_image_prev_cb), viewer);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "button_close"));
+	g_signal_connect (widget, "clicked",
+			  G_CALLBACK (gcm_viewer_button_close_cb), viewer);
 
 	/* use named colors */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
