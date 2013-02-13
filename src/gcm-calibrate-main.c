@@ -110,37 +110,37 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
  * gcm_calib_activate_cb:
  **/
 static void
-gcm_calib_activate_cb (GApplication *application, GcmCalibratePriv *calib)
+gcm_calib_activate_cb (GApplication *application, GcmCalibratePriv *priv)
 {
-	gtk_window_present (calib->main_window);
+	gtk_window_present (priv->main_window);
 }
 
 static void
 gcm_calib_confirm_quit_cb (GtkDialog *dialog,
 			   gint response_id,
-			   GcmCalibratePriv *calib)
+			   GcmCalibratePriv *priv)
 {
 	if (response_id != GTK_RESPONSE_CLOSE) {
 		gtk_widget_destroy (GTK_WIDGET (dialog));
 		return;
 	}
-	gcm_calibrate_interaction (calib->calibrate, GTK_RESPONSE_CANCEL);
-	g_application_release (G_APPLICATION (calib->application));
+	gcm_calibrate_interaction (priv->calibrate, GTK_RESPONSE_CANCEL);
+	g_application_release (G_APPLICATION (priv->application));
 }
 
 /**
  * gcm_calib_confirm_quit:
  **/
 static void
-gcm_calib_confirm_quit (GcmCalibratePriv *calib)
+gcm_calib_confirm_quit (GcmCalibratePriv *priv)
 {
 	GtkWidget *dialog;
 
 	/* do not ask for confirmation on the initial page */
-	if (calib->current_page == GCM_CALIBRATE_PAGE_INTRO)
-		g_application_release (G_APPLICATION (calib->application));
+	if (priv->current_page == GCM_CALIBRATE_PAGE_INTRO)
+		g_application_release (G_APPLICATION (priv->application));
 
-	dialog = gtk_message_dialog_new (GTK_WINDOW (calib->main_window),
+	dialog = gtk_message_dialog_new (GTK_WINDOW (priv->main_window),
 					 GTK_DIALOG_MODAL,
 					 GTK_MESSAGE_QUESTION,
 					 GTK_BUTTONS_NONE,
@@ -158,7 +158,7 @@ gcm_calib_confirm_quit (GcmCalibratePriv *calib)
 			       GTK_RESPONSE_CLOSE);
 	g_signal_connect (dialog, "response",
 			  G_CALLBACK (gcm_calib_confirm_quit_cb),
-			  calib);
+			  priv);
 	gtk_widget_show (dialog);
 }
 
@@ -166,9 +166,9 @@ gcm_calib_confirm_quit (GcmCalibratePriv *calib)
  * gcm_calib_delete_event_cb:
  **/
 static gboolean
-gcm_calib_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmCalibratePriv *calib)
+gcm_calib_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmCalibratePriv *priv)
 {
-	gcm_calib_confirm_quit (calib);
+	gcm_calib_confirm_quit (priv);
 	return FALSE;
 }
 
@@ -176,25 +176,25 @@ gcm_calib_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmCalibratePriv 
  * gcm_calib_assistant_cancel_cb:
  **/
 static void
-gcm_calib_assistant_cancel_cb (GtkAssistant *assistant, GcmCalibratePriv *calib)
+gcm_calib_assistant_cancel_cb (GtkAssistant *assistant, GcmCalibratePriv *priv)
 {
-	gcm_calib_confirm_quit (calib);
+	gcm_calib_confirm_quit (priv);
 }
 
 /**
  * gcm_calib_assistant_close_cb:
  **/
 static void
-gcm_calib_assistant_close_cb (GtkAssistant *assistant, GcmCalibratePriv *calib)
+gcm_calib_assistant_close_cb (GtkAssistant *assistant, GcmCalibratePriv *priv)
 {
-	g_application_release (G_APPLICATION (calib->application));
+	g_application_release (G_APPLICATION (priv->application));
 }
 
 /**
  * gcm_calib_play_sound:
  **/
 static void
-gcm_calib_play_sound (GcmCalibratePriv *calib)
+gcm_calib_play_sound (GcmCalibratePriv *priv)
 {
 	/* play sound from the naming spec */
 	ca_context_play (ca_gtk_context_get (), 0,
@@ -211,15 +211,15 @@ gcm_calib_play_sound (GcmCalibratePriv *calib)
  * gcm_calib_get_vbox_for_page:
  **/
 static GtkWidget *
-gcm_calib_get_vbox_for_page (GcmCalibratePriv *calib,
+gcm_calib_get_vbox_for_page (GcmCalibratePriv *priv,
 			     GcmCalibratePage page)
 {
 	guint i;
 	GtkWidget *tmp;
 	GcmCalibratePage page_tmp;
 
-	for (i=0; i<calib->pages->len; i++) {
-		tmp = g_ptr_array_index (calib->pages, i);
+	for (i=0; i<priv->pages->len; i++) {
+		tmp = g_ptr_array_index (priv->pages, i);
 		page_tmp = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (tmp),
 								"GcmCalibrateMain::Index"));
 		if (page_tmp == page)
@@ -272,7 +272,7 @@ out:
 }
 
 static gboolean
-gcm_calib_set_extra_metadata (GcmCalibratePriv *calib,
+gcm_calib_set_extra_metadata (GcmCalibratePriv *priv,
 			      const gchar *filename,
 			      GError **error)
 {
@@ -311,7 +311,7 @@ gcm_calib_set_extra_metadata (GcmCalibratePriv *calib,
 	_cmsDictAddEntryAscii (dict,
 			       CD_PROFILE_METADATA_DATA_SOURCE,
 			       CD_PROFILE_METADATA_DATA_SOURCE_CALIB);
-	sensor = gcm_calibrate_get_sensor (calib->calibrate);
+	sensor = gcm_calibrate_get_sensor (priv->calibrate);
 	if (sensor != NULL) {
 		_cmsDictAddEntryAscii (dict,
 				       CD_PROFILE_METADATA_MEASUREMENT_DEVICE,
@@ -319,10 +319,10 @@ gcm_calib_set_extra_metadata (GcmCalibratePriv *calib,
 	}
 	_cmsDictAddEntryAscii (dict,
 			       CD_PROFILE_METADATA_MAPPING_DEVICE_ID,
-			       cd_device_get_id (calib->device));
+			       cd_device_get_id (priv->device));
 
 	/* add the calibration brightness if an internal panel */
-	percentage = gcm_calibrate_get_screen_brightness (calib->calibrate);
+	percentage = gcm_calibrate_get_screen_brightness (priv->calibrate);
 	if (percentage > 0) {
 		screen_brightness_str = g_strdup_printf ("%i", percentage);
 		_cmsDictAddEntryAscii (dict,
@@ -379,7 +379,7 @@ gcm_calib_set_sensor_options_cb (GObject *object,
 }
 
 static void
-gcm_calib_set_sensor_options (GcmCalibratePriv *calib,
+gcm_calib_set_sensor_options (GcmCalibratePriv *priv,
 			      const gchar *filename)
 {
 	CdSensor *sensor;
@@ -391,7 +391,7 @@ gcm_calib_set_sensor_options (GcmCalibratePriv *calib,
 	gsize len;
 
 	/* get ChSensor */
-	sensor = gcm_calibrate_get_sensor (calib->calibrate);
+	sensor = gcm_calibrate_get_sensor (priv->calibrate);
 	if (sensor == NULL)
 		goto out;
 
@@ -415,7 +415,7 @@ gcm_calib_set_sensor_options (GcmCalibratePriv *calib,
 			     g_variant_ref_sink (g_variant_new_string (sha1)));
 	cd_sensor_set_options (sensor, hash, NULL,
 			       gcm_calib_set_sensor_options_cb,
-			       calib);
+			       priv);
 out:
 	g_free (data);
 	g_free (sha1);
@@ -544,24 +544,24 @@ static gint
 gcm_calib_assistant_page_forward_cb (gint current_page, gpointer user_data)
 {
 	GtkWidget *vbox;
-	GcmCalibratePriv *calib = (GcmCalibratePriv *) user_data;
+	GcmCalibratePriv *priv = (GcmCalibratePriv *) user_data;
 
 	/* shouldn't happen... */
-	if (calib->current_page != GCM_CALIBRATE_PAGE_ACTION)
+	if (priv->current_page != GCM_CALIBRATE_PAGE_ACTION)
 		return current_page + 1;
 
-	if (!calib->has_pending_interaction)
+	if (!priv->has_pending_interaction)
 		return current_page;
 
 	/* continue calibration */
-	gcm_calibrate_interaction (calib->calibrate, GTK_RESPONSE_OK);
-	calib->has_pending_interaction = FALSE;
+	gcm_calibrate_interaction (priv->calibrate, GTK_RESPONSE_OK);
+	priv->has_pending_interaction = FALSE;
 
 	/* no longer allow forward */
-	vbox = gcm_calib_get_vbox_for_page (calib,
+	vbox = gcm_calib_get_vbox_for_page (priv,
 					    GCM_CALIBRATE_PAGE_ACTION);
 
-	gtk_assistant_set_page_complete (GTK_ASSISTANT (calib->main_window),
+	gtk_assistant_set_page_complete (GTK_ASSISTANT (priv->main_window),
 					 vbox, FALSE);
 	return current_page;
 }
@@ -572,36 +572,36 @@ gcm_calib_assistant_page_forward_cb (gint current_page, gpointer user_data)
 static gboolean
 gcm_calib_assistant_prepare_cb (GtkAssistant *assistant,
 				GtkWidget *page_widget,
-				GcmCalibratePriv *calib)
+				GcmCalibratePriv *priv)
 {
-	calib->current_page = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (page_widget),
+	priv->current_page = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (page_widget),
 								   "GcmCalibrateMain::Index"));
-	switch (calib->current_page) {
+	switch (priv->current_page) {
 	case GCM_CALIBRATE_PAGE_LAST:
-		gcm_calib_play_sound (calib);
+		gcm_calib_play_sound (priv);
 		break;
 	case GCM_CALIBRATE_PAGE_ACTION:
 		g_debug ("lights! camera! action!");
-		if (!calib->started_calibration)
-			g_idle_add (gcm_calib_start_idle_cb, calib);
+		if (!priv->started_calibration)
+			g_idle_add (gcm_calib_start_idle_cb, priv);
 		break;
 	default:
 		break;
 	}
 
 	/* ensure we cancel argyllcms if the user clicks back */
-	if (calib->current_page != GCM_CALIBRATE_PAGE_ACTION &&
-	    calib->started_calibration) {
-		gcm_calibrate_interaction (calib->calibrate,
+	if (priv->current_page != GCM_CALIBRATE_PAGE_ACTION &&
+	    priv->started_calibration) {
+		gcm_calibrate_interaction (priv->calibrate,
 					   GTK_RESPONSE_CANCEL);
-		calib->started_calibration = FALSE;
+		priv->started_calibration = FALSE;
 	}
 
 	/* forward on the action page just unsticks the calibration */
-	if (calib->current_page == GCM_CALIBRATE_PAGE_ACTION) {
+	if (priv->current_page == GCM_CALIBRATE_PAGE_ACTION) {
 		gtk_assistant_set_forward_page_func (assistant,
 						     gcm_calib_assistant_page_forward_cb,
-						     calib,
+						     priv,
 						     NULL);
 	} else {
 		gtk_assistant_set_forward_page_func (assistant,
@@ -609,7 +609,7 @@ gcm_calib_assistant_prepare_cb (GtkAssistant *assistant,
 	}
 
 	/* use the default on each page */
-	switch (calib->current_page) {
+	switch (priv->current_page) {
 	case GCM_CALIBRATE_PAGE_INSTALL_ARGYLLCMS:
 	case GCM_CALIBRATE_PAGE_SENSOR:
 	case GCM_CALIBRATE_PAGE_ACTION:
@@ -625,7 +625,7 @@ gcm_calib_assistant_prepare_cb (GtkAssistant *assistant,
  * gcm_calib_add_page_title:
  **/
 static GtkWidget *
-gcm_calib_add_page_title (GcmCalibratePriv *calib, const gchar *text)
+gcm_calib_add_page_title (GcmCalibratePriv *priv, const gchar *text)
 {
 	GtkWidget *label;
 	GtkWidget *hbox;
@@ -651,7 +651,7 @@ gcm_calib_add_page_title (GcmCalibratePriv *calib, const gchar *text)
 static gboolean
 gcm_calib_label_activate_link_cb (GtkLabel *label,
 				  gchar *uri,
-				  GcmCalibratePriv *calib)
+				  GcmCalibratePriv *priv)
 {
 	gboolean ret;
 	GError *error = NULL;
@@ -705,30 +705,30 @@ gcm_calib_add_page_bullet (GtkWidget *vbox, const gchar *text)
  * gcm_calib_setup_page_intro:
  **/
 static void
-gcm_calib_setup_page_intro (GcmCalibratePriv *calib)
+gcm_calib_setup_page_intro (GcmCalibratePriv *priv)
 {
 	GtkWidget *vbox;
 	GtkWidget *content;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	/* TRANSLATORS: this is intro page text */
-	switch (calib->device_kind) {
+	switch (priv->device_kind) {
 	case CD_DEVICE_KIND_CAMERA:
 	case CD_DEVICE_KIND_WEBCAM:
 		/* TRANSLATORS: this is the page title */
-		vbox = gcm_calib_add_page_title (calib, _("Calibrate your camera"));
+		vbox = gcm_calib_add_page_title (priv, _("Calibrate your camera"));
 		break;
 	case CD_DEVICE_KIND_DISPLAY:
 		/* TRANSLATORS: this is the page title */
-		vbox = gcm_calib_add_page_title (calib, _("Calibrate your display"));
+		vbox = gcm_calib_add_page_title (priv, _("Calibrate your display"));
 		break;
 	case CD_DEVICE_KIND_PRINTER:
 		/* TRANSLATORS: this is the page title */
-		vbox = gcm_calib_add_page_title (calib, _("Calibrate your printer"));
+		vbox = gcm_calib_add_page_title (priv, _("Calibrate your printer"));
 		break;
 	default:
 		/* TRANSLATORS: this is the page title */
-		vbox = gcm_calib_add_page_title (calib, _("Calibrate your device"));
+		vbox = gcm_calib_add_page_title (priv, _("Calibrate your device"));
 		break;
 	}
 
@@ -737,7 +737,7 @@ gcm_calib_setup_page_intro (GcmCalibratePriv *calib)
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
 	/* TRANSLATORS: this is intro page text */
-	switch (calib->device_kind) {
+	switch (priv->device_kind) {
 	case CD_DEVICE_KIND_DISPLAY:
 		/* TRANSLATORS: this is the final intro page text */
 		gcm_calib_add_page_para (content, _("Any existing screen correction will be temporarily turned off and the brightness set to maximum."));
@@ -755,7 +755,7 @@ gcm_calib_setup_page_intro (GcmCalibratePriv *calib)
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Introduction"));
 	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
-	g_ptr_array_add (calib->pages, vbox);
+	g_ptr_array_add (priv->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_INTRO));
@@ -794,7 +794,7 @@ out:
  **/
 static void
 gcm_calib_show_profile_button_clicked_cb (GtkButton *button,
-					  GcmCalibratePriv *calib)
+					  GcmCalibratePriv *priv)
 {
 	gboolean ret;
 	gchar *command_line;
@@ -818,7 +818,7 @@ out:
  * gcm_calib_get_show_profile_button:
  **/
 static GtkWidget *
-gcm_calib_get_show_profile_button (GcmCalibratePriv *calib)
+gcm_calib_get_show_profile_button (GcmCalibratePriv *priv)
 {
 	GtkStyleContext *context;
 	GtkWidget *button;
@@ -843,7 +843,7 @@ gcm_calib_get_show_profile_button (GcmCalibratePriv *calib)
 	gtk_widget_set_tooltip_text (button, _("Click here to show the profile"));
 	g_signal_connect (button, "clicked",
 			  G_CALLBACK (gcm_calib_show_profile_button_clicked_cb),
-			  calib);
+			  priv);
 	gtk_container_set_border_width (GTK_CONTAINER (vbox), 15);
 	gtk_widget_set_halign (button, GTK_ALIGN_CENTER);
 	gtk_widget_show_all (button);
@@ -854,22 +854,22 @@ gcm_calib_get_show_profile_button (GcmCalibratePriv *calib)
  * gcm_calib_setup_page_summary:
  **/
 static void
-gcm_calib_setup_page_summary (GcmCalibratePriv *calib)
+gcm_calib_setup_page_summary (GcmCalibratePriv *priv)
 {
 	gboolean ret;
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GtkWidget *image;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	/* TRANSLATORS: this is the page title */
-	vbox = gcm_calib_add_page_title (calib, _("All done!"));
+	vbox = gcm_calib_add_page_title (priv, _("All done!"));
 
 	/* main contents */
 	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
-	switch (calib->device_kind) {
+	switch (priv->device_kind) {
 	case CD_DEVICE_KIND_CAMERA:
 	case CD_DEVICE_KIND_WEBCAM:
 		/* TRANSLATORS: this is the final summary */
@@ -890,7 +890,7 @@ gcm_calib_setup_page_summary (GcmCalibratePriv *calib)
 	}
 
 	/* only display the backlink if not launched from the control center itself */
-	if (calib->xid == 0) {
+	if (priv->xid == 0) {
 		/* TRANSLATORS: this is the final summary */
 		gcm_calib_add_page_para (content, _("To view details about the new profile or to undo the calibration visit the <a href=\"control-center://color\">control center</a>."));
 	}
@@ -899,7 +899,7 @@ gcm_calib_setup_page_summary (GcmCalibratePriv *calib)
 	ret = gcm_calibrate_is_livecd ();
 	if (ret) {
 		/* show button to copy profile */
-		image = gcm_calib_get_show_profile_button (calib);
+		image = gcm_calib_get_show_profile_button (priv);
 		gtk_box_pack_start (GTK_BOX (content), image, FALSE, FALSE, 30);
 		gcm_calib_add_page_para (content, _("You can use the profile with <a href=\"import-linux\">Linux</a>, <a href=\"import-osx\">Apple OS X</a> and <a href=\"import-windows\">Microsoft Windows</a> systems."));
 	} else {
@@ -915,7 +915,7 @@ gcm_calib_setup_page_summary (GcmCalibratePriv *calib)
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Summary"));
 	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
-	g_ptr_array_add (calib->pages, vbox);
+	g_ptr_array_add (priv->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_LAST));
@@ -928,21 +928,21 @@ gcm_calib_setup_page_summary (GcmCalibratePriv *calib)
  * gcm_calib_setup_page_action:
  **/
 static void
-gcm_calib_setup_page_action (GcmCalibratePriv *calib)
+gcm_calib_setup_page_action (GcmCalibratePriv *priv)
 {
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GList *list;
 	GList *list2;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	/* TRANSLATORS: this is the page title */
-	vbox = gcm_calib_add_page_title (calib, _("Performing calibration"));
+	vbox = gcm_calib_add_page_title (priv, _("Performing calibration"));
 
 	/* grab title */
 	list = gtk_container_get_children (GTK_CONTAINER (vbox));
 	list2 = gtk_container_get_children (GTK_CONTAINER (list->data));
-	calib->action_title = list2->data;
+	priv->action_title = list2->data;
 	g_list_free (list);
 	g_list_free (list2);
 
@@ -950,19 +950,19 @@ gcm_calib_setup_page_action (GcmCalibratePriv *calib)
 	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
 	gtk_box_pack_start (GTK_BOX (vbox), content, FALSE, FALSE, 0);
 
-	calib->action_message = gcm_calib_add_page_para (content, _("Calibration is about to start"));
+	priv->action_message = gcm_calib_add_page_para (content, _("Calibration is about to start"));
 
 	/* add image for success */
-	calib->action_image = gtk_image_new ();
-	gtk_image_set_from_icon_name (GTK_IMAGE (calib->action_image), "face-frown", GTK_ICON_SIZE_DIALOG);
-	gtk_box_pack_start (GTK_BOX (content), calib->action_image, FALSE, FALSE, 0);
+	priv->action_image = gtk_image_new ();
+	gtk_image_set_from_icon_name (GTK_IMAGE (priv->action_image), "face-frown", GTK_ICON_SIZE_DIALOG);
+	gtk_box_pack_start (GTK_BOX (content), priv->action_image, FALSE, FALSE, 0);
 
 	/* add progress marker */
-	calib->action_progress = gtk_progress_bar_new ();
-	gtk_box_pack_start (GTK_BOX (content), calib->action_progress, FALSE, FALSE, 0);
+	priv->action_progress = gtk_progress_bar_new ();
+	gtk_box_pack_start (GTK_BOX (content), priv->action_progress, FALSE, FALSE, 0);
 
 	/* add content widget */
-	gcm_calibrate_set_content_widget (calib->calibrate, vbox);
+	gcm_calibrate_set_content_widget (priv->calibrate, vbox);
 
 	/* add to assistant */
 	gtk_assistant_append_page (assistant, vbox);
@@ -970,28 +970,28 @@ gcm_calib_setup_page_action (GcmCalibratePriv *calib)
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Action"));
 	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
-	g_ptr_array_add (calib->pages, vbox);
+	g_ptr_array_add (priv->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_ACTION));
 
 	/* show page */
 	gtk_widget_show_all (vbox);
-	gtk_widget_hide (calib->action_image);
+	gtk_widget_hide (priv->action_image);
 }
 
 /**
  * gcm_calib_setup_page_display_configure_wait:
  **/
 static void
-gcm_calib_setup_page_display_configure_wait (GcmCalibratePriv *calib)
+gcm_calib_setup_page_display_configure_wait (GcmCalibratePriv *priv)
 {
 	GtkWidget *vbox;
 	GtkWidget *content;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	/* TRANSLATORS: dialog message, preface */
-	vbox = gcm_calib_add_page_title (calib, _("Calibration checklist"));
+	vbox = gcm_calib_add_page_title (priv, _("Calibration checklist"));
 
 	/* main contents */
 	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -1029,7 +1029,7 @@ if(0)	gcm_calib_add_page_bullet (content, _("Adjust the display brightness to a 
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Check Settings"));
 	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
-	g_ptr_array_add (calib->pages, vbox);
+	g_ptr_array_add (priv->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_DISPLAY_CONFIG));
@@ -1042,17 +1042,17 @@ if(0)	gcm_calib_add_page_bullet (content, _("Adjust the display brightness to a 
  * gcm_calib_button_clicked_install_argyllcms_cb:
  **/
 static void
-gcm_calib_button_clicked_install_argyllcms_cb (GtkButton *button, GcmCalibratePriv *calib)
+gcm_calib_button_clicked_install_argyllcms_cb (GtkButton *button, GcmCalibratePriv *priv)
 {
 	gboolean ret;
 	GtkWidget *vbox;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	ret = gcm_utils_install_package (GCM_PREFS_PACKAGE_NAME_ARGYLLCMS,
-					 calib->main_window);
+					 priv->main_window);
 	/* we can continue now */
 	if (TRUE || ret) {
-		vbox = gcm_calib_get_vbox_for_page (calib,
+		vbox = gcm_calib_get_vbox_for_page (priv,
 						    GCM_CALIBRATE_PAGE_INSTALL_ARGYLLCMS);
 		gtk_assistant_set_page_complete (assistant, vbox, TRUE);
 		gtk_assistant_next_page (assistant);
@@ -1066,13 +1066,13 @@ gcm_calib_button_clicked_install_argyllcms_cb (GtkButton *button, GcmCalibratePr
  * gcm_calib_setup_page_install_argyllcms:
  **/
 static void
-gcm_calib_setup_page_install_argyllcms (GcmCalibratePriv *calib)
+gcm_calib_setup_page_install_argyllcms (GcmCalibratePriv *priv)
 {
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GtkWidget *button;
 	GString *string;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	string = g_string_new ("");
 
@@ -1084,7 +1084,7 @@ gcm_calib_setup_page_install_argyllcms (GcmCalibratePriv *calib)
 				_("These tools are required to build color profiles for devices."));
 
 	/* TRANSLATORS: this is the page title */
-	vbox = gcm_calib_add_page_title (calib, _("More software is required!"));
+	vbox = gcm_calib_add_page_title (priv, _("More software is required!"));
 
 	/* main contents */
 	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -1096,7 +1096,7 @@ gcm_calib_setup_page_install_argyllcms (GcmCalibratePriv *calib)
 	button = gtk_button_new_with_label (_("Install required software"));
 	g_signal_connect (button, "clicked",
 			  G_CALLBACK (gcm_calib_button_clicked_install_argyllcms_cb),
-			  calib);
+			  priv);
 	gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
 
 	/* add to assistant */
@@ -1105,7 +1105,7 @@ gcm_calib_setup_page_install_argyllcms (GcmCalibratePriv *calib)
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Install Tools"));
 	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
-	g_ptr_array_add (calib->pages, vbox);
+	g_ptr_array_add (priv->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_INSTALL_ARGYLLCMS));
@@ -1119,17 +1119,17 @@ gcm_calib_setup_page_install_argyllcms (GcmCalibratePriv *calib)
  * gcm_calib_button_clicked_install_targets_cb:
  **/
 static void
-gcm_calib_button_clicked_install_targets_cb (GtkButton *button, GcmCalibratePriv *calib)
+gcm_calib_button_clicked_install_targets_cb (GtkButton *button, GcmCalibratePriv *priv)
 {
 	gboolean ret;
 	GtkWidget *vbox;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	ret = gcm_utils_install_package (GCM_PREFS_PACKAGE_NAME_SHARED_COLOR_TARGETS,
-					 calib->main_window);
+					 priv->main_window);
 	/* we can continue now */
 	if (ret) {
-		vbox = gcm_calib_get_vbox_for_page (calib,
+		vbox = gcm_calib_get_vbox_for_page (priv,
 						    GCM_CALIBRATE_PAGE_INSTALL_TARGETS);
 		gtk_assistant_next_page (assistant);
 
@@ -1142,13 +1142,13 @@ gcm_calib_button_clicked_install_targets_cb (GtkButton *button, GcmCalibratePriv
  * gcm_calib_setup_page_install_targets:
  **/
 static void
-gcm_calib_setup_page_install_targets (GcmCalibratePriv *calib)
+gcm_calib_setup_page_install_targets (GcmCalibratePriv *priv)
 {
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GtkWidget *button;
 	GString *string;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	string = g_string_new ("");
 
@@ -1162,7 +1162,7 @@ gcm_calib_setup_page_install_targets (GcmCalibratePriv *calib)
 	g_string_append_printf (string, "%s", _("If you already have the correct file, you can skip this step."));
 
 	/* TRANSLATORS: this is the page title */
-	vbox = gcm_calib_add_page_title (calib, _("Optional data files available"));
+	vbox = gcm_calib_add_page_title (priv, _("Optional data files available"));
 
 	/* main contents */
 	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -1174,7 +1174,7 @@ gcm_calib_setup_page_install_targets (GcmCalibratePriv *calib)
 	button = gtk_button_new_with_label (_("Install Now"));
 	g_signal_connect (button, "clicked",
 			  G_CALLBACK (gcm_calib_button_clicked_install_targets_cb),
-			  calib);
+			  priv);
 	gtk_box_pack_start (GTK_BOX (vbox), button, FALSE, FALSE, 0);
 
 	/* add to assistant */
@@ -1183,7 +1183,7 @@ gcm_calib_setup_page_install_targets (GcmCalibratePriv *calib)
 	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Install Targets"));
-	g_ptr_array_add (calib->pages, vbox);
+	g_ptr_array_add (priv->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_INSTALL_TARGETS));
@@ -1277,7 +1277,7 @@ gcm_calib_reference_kind_to_image_filename (GcmCalibrateReferenceKind kind)
  **/
 static void
 gcm_calib_reference_kind_combobox_cb (GtkComboBox *combo_box,
-				      GcmCalibratePriv *calib)
+				      GcmCalibratePriv *priv)
 {
 	const gchar *filename;
 	gchar *path;
@@ -1285,7 +1285,7 @@ gcm_calib_reference_kind_combobox_cb (GtkComboBox *combo_box,
 
 	/* not sorted so we can just use the index */
 	reference_kind = gtk_combo_box_get_active (GTK_COMBO_BOX (combo_box));
-	g_object_set (calib->calibrate,
+	g_object_set (priv->calibrate,
 		      "reference-kind", reference_kind,
 		      NULL);
 	filename = gcm_calib_reference_kind_to_image_filename (reference_kind);
@@ -1295,7 +1295,7 @@ gcm_calib_reference_kind_combobox_cb (GtkComboBox *combo_box,
 		filename = "unknown.png";
 
 	path = g_build_filename (GCM_DATA, "targets", filename, NULL);
-	gtk_image_set_from_file (GTK_IMAGE (calib->reference_preview), path);
+	gtk_image_set_from_file (GTK_IMAGE (priv->reference_preview), path);
 	g_free (path);
 }
 
@@ -1303,14 +1303,14 @@ gcm_calib_reference_kind_combobox_cb (GtkComboBox *combo_box,
  * gcm_calib_setup_page_target_kind:
  **/
 static void
-gcm_calib_setup_page_target_kind (GcmCalibratePriv *calib)
+gcm_calib_setup_page_target_kind (GcmCalibratePriv *priv)
 {
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GtkWidget *combo;
 	GString *string;
 	guint i;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	string = g_string_new ("");
 
@@ -1319,7 +1319,7 @@ gcm_calib_setup_page_target_kind (GcmCalibratePriv *calib)
 	g_string_append_printf (string, "%s\n", _("Before profiling the device, you have to manually capture an image of a calibration target and save it as a TIFF image file."));
 
 	/* scanner specific options */
-	if (calib->device_kind == CD_DEVICE_KIND_SCANNER) {
+	if (priv->device_kind == CD_DEVICE_KIND_SCANNER) {
 		/* TRANSLATORS: dialog message, preface */
 		g_string_append_printf (string, "%s\n", _("Ensure that the contrast and brightness are not changed and color correction profiles have not been applied."));
 
@@ -1328,7 +1328,7 @@ gcm_calib_setup_page_target_kind (GcmCalibratePriv *calib)
 	}
 
 	/* camera specific options */
-	if (calib->device_kind == CD_DEVICE_KIND_CAMERA) {
+	if (priv->device_kind == CD_DEVICE_KIND_CAMERA) {
 		/* TRANSLATORS: dialog message, preface */
 		g_string_append_printf (string, "%s\n", _("Ensure that the white-balance has not been modified by the camera and that the lens is clean."));
 	}
@@ -1337,7 +1337,7 @@ gcm_calib_setup_page_target_kind (GcmCalibratePriv *calib)
 	g_string_append_printf (string, "\n%s", _("Please select the calibration target type."));
 
 	/* TRANSLATORS: this is the page title */
-	vbox = gcm_calib_add_page_title (calib, _("What target type do you have?"));
+	vbox = gcm_calib_add_page_title (priv, _("What target type do you have?"));
 
 	/* main contents */
 	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -1347,8 +1347,8 @@ gcm_calib_setup_page_target_kind (GcmCalibratePriv *calib)
 	gcm_calib_add_page_para (content, string->str);
 
 	/* pack in a preview image */
-	calib->reference_preview = gtk_image_new ();
-	gtk_box_pack_start (GTK_BOX (vbox), calib->reference_preview, FALSE, FALSE, 0);
+	priv->reference_preview = gtk_image_new ();
+	gtk_box_pack_start (GTK_BOX (vbox), priv->reference_preview, FALSE, FALSE, 0);
 
 	combo = gtk_combo_box_text_new ();
 	for (i=0; i<GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN; i++) {
@@ -1357,7 +1357,7 @@ gcm_calib_setup_page_target_kind (GcmCalibratePriv *calib)
 	}
 	g_signal_connect (combo, "changed",
 			  G_CALLBACK (gcm_calib_reference_kind_combobox_cb),
-			  calib);
+			  priv);
 
 	/* use IT8 by default */
 	gtk_combo_box_set_active (GTK_COMBO_BOX (combo), GCM_CALIBRATE_REFERENCE_KIND_IT8);
@@ -1370,7 +1370,7 @@ gcm_calib_setup_page_target_kind (GcmCalibratePriv *calib)
 	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Select Target"));
-	g_ptr_array_add (calib->pages, vbox);
+	g_ptr_array_add (priv->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_TARGET_KIND));
@@ -1382,7 +1382,7 @@ gcm_calib_setup_page_target_kind (GcmCalibratePriv *calib)
 
 static void
 gcm_calib_display_kind_toggled_cb (GtkToggleButton *togglebutton,
-				   GcmCalibratePriv *calib)
+				   GcmCalibratePriv *priv)
 {
 	GcmCalibrateDisplayKind	 display_kind;
 
@@ -1390,7 +1390,7 @@ gcm_calib_display_kind_toggled_cb (GtkToggleButton *togglebutton,
 		return;
 	display_kind = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (togglebutton),
 							    "GcmCalib::display-kind"));
-	g_object_set (calib->calibrate,
+	g_object_set (priv->calibrate,
 		      "display-kind", display_kind,
 		      NULL);
 }
@@ -1399,16 +1399,16 @@ gcm_calib_display_kind_toggled_cb (GtkToggleButton *togglebutton,
  * gcm_calib_setup_page_display_kind:
  **/
 static void
-gcm_calib_setup_page_display_kind (GcmCalibratePriv *calib)
+gcm_calib_setup_page_display_kind (GcmCalibratePriv *priv)
 {
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GtkWidget *widget;
 	GSList *list;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	/* TRANSLATORS: this is the page title */
-	vbox = gcm_calib_add_page_title (calib, _("Choose your display type"));
+	vbox = gcm_calib_add_page_title (priv, _("Choose your display type"));
 
 	/* main contents */
 	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -1422,7 +1422,7 @@ gcm_calib_setup_page_display_kind (GcmCalibratePriv *calib)
 			   "GcmCalib::display-kind",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_DEVICE_KIND_LCD));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_display_kind_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_display_kind_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
@@ -1431,7 +1431,7 @@ gcm_calib_setup_page_display_kind (GcmCalibratePriv *calib)
 			   "GcmCalib::display-kind",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_DEVICE_KIND_CRT));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_display_kind_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_display_kind_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
@@ -1440,7 +1440,7 @@ gcm_calib_setup_page_display_kind (GcmCalibratePriv *calib)
 			   "GcmCalib::display-kind",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_DEVICE_KIND_CRT));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_display_kind_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_display_kind_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
@@ -1449,7 +1449,7 @@ gcm_calib_setup_page_display_kind (GcmCalibratePriv *calib)
 			   "GcmCalib::display-kind",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_DEVICE_KIND_PROJECTOR));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_display_kind_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_display_kind_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	/* add to assistant */
@@ -1458,7 +1458,7 @@ gcm_calib_setup_page_display_kind (GcmCalibratePriv *calib)
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Choose Display Type"));
 	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
-	g_ptr_array_add (calib->pages, vbox);
+	g_ptr_array_add (priv->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_DISPLAY_KIND));
@@ -1469,14 +1469,14 @@ gcm_calib_setup_page_display_kind (GcmCalibratePriv *calib)
 
 static void
 gcm_calib_display_temp_toggled_cb (GtkToggleButton *togglebutton,
-				   GcmCalibratePriv *calib)
+				   GcmCalibratePriv *priv)
 {
 	guint display_temp;
 	if (!gtk_toggle_button_get_active (togglebutton))
 		return;
 	display_temp = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (togglebutton),
 							    "GcmCalib::display-temp"));
-	g_object_set (calib->calibrate,
+	g_object_set (priv->calibrate,
 		      "target-whitepoint", display_temp,
 		      NULL);
 }
@@ -1485,16 +1485,16 @@ gcm_calib_display_temp_toggled_cb (GtkToggleButton *togglebutton,
  * gcm_calib_setup_page_display_temp:
  **/
 static void
-gcm_calib_setup_page_display_temp (GcmCalibratePriv *calib)
+gcm_calib_setup_page_display_temp (GcmCalibratePriv *priv)
 {
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GtkWidget *widget;
 	GSList *list;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	/* TRANSLATORS: this is the page title */
-	vbox = gcm_calib_add_page_title (calib, _("Choose your display target white point"));
+	vbox = gcm_calib_add_page_title (priv, _("Choose your display target white point"));
 
 	/* main contents */
 	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -1508,7 +1508,7 @@ gcm_calib_setup_page_display_temp (GcmCalibratePriv *calib)
 			   "GcmCalib::display-temp",
 			   GUINT_TO_POINTER (5000));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
@@ -1517,7 +1517,7 @@ gcm_calib_setup_page_display_temp (GcmCalibratePriv *calib)
 			   "GcmCalib::display-temp",
 			   GUINT_TO_POINTER (5500));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
@@ -1526,7 +1526,7 @@ gcm_calib_setup_page_display_temp (GcmCalibratePriv *calib)
 			   "GcmCalib::display-temp",
 			   GUINT_TO_POINTER (6500));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
 
@@ -1536,7 +1536,7 @@ gcm_calib_setup_page_display_temp (GcmCalibratePriv *calib)
 			   "GcmCalib::display-temp",
 			   GUINT_TO_POINTER (7500));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
@@ -1545,7 +1545,7 @@ gcm_calib_setup_page_display_temp (GcmCalibratePriv *calib)
 			   "GcmCalib::display-temp",
 			   GUINT_TO_POINTER (0));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_display_temp_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	/* add to assistant */
@@ -1554,7 +1554,7 @@ gcm_calib_setup_page_display_temp (GcmCalibratePriv *calib)
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Choose Display Whitepoint"));
 	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
-	g_ptr_array_add (calib->pages, vbox);
+	g_ptr_array_add (priv->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_DISPLAY_TEMPERATURE));
@@ -1565,14 +1565,14 @@ gcm_calib_setup_page_display_temp (GcmCalibratePriv *calib)
 
 static void
 gcm_calib_print_kind_toggled_cb (GtkToggleButton *togglebutton,
-				   GcmCalibratePriv *calib)
+				   GcmCalibratePriv *priv)
 {
 	GcmCalibratePrintKind print_kind;
 	if (!gtk_toggle_button_get_active (togglebutton))
 		return;
 	print_kind = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (togglebutton),
 							  "GcmCalib::print-kind"));
-	g_object_set (calib->calibrate,
+	g_object_set (priv->calibrate,
 		      "print-kind", print_kind,
 		      NULL);
 }
@@ -1581,16 +1581,16 @@ gcm_calib_print_kind_toggled_cb (GtkToggleButton *togglebutton,
  * gcm_calib_setup_page_print_kind:
  **/
 static void
-gcm_calib_setup_page_print_kind (GcmCalibratePriv *calib)
+gcm_calib_setup_page_print_kind (GcmCalibratePriv *priv)
 {
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GtkWidget *widget;
 	GSList *list;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	/* TRANSLATORS: this is the page title */
-	vbox = gcm_calib_add_page_title (calib, _("Choose profiling mode"));
+	vbox = gcm_calib_add_page_title (priv, _("Choose profiling mode"));
 
 	/* main contents */
 	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -1604,7 +1604,7 @@ gcm_calib_setup_page_print_kind (GcmCalibratePriv *calib)
 			   "GcmCalib::print-kind",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PRINT_KIND_LOCAL));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_print_kind_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_print_kind_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
@@ -1613,7 +1613,7 @@ gcm_calib_setup_page_print_kind (GcmCalibratePriv *calib)
 			   "GcmCalib::print-kind",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PRINT_KIND_GENERATE));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_print_kind_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_print_kind_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
@@ -1622,11 +1622,11 @@ gcm_calib_setup_page_print_kind (GcmCalibratePriv *calib)
 			   "GcmCalib::print-kind",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PRINT_KIND_ANALYZE));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_print_kind_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_print_kind_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	/* sync the default */
-	g_object_set (calib->calibrate,
+	g_object_set (priv->calibrate,
 		      "print-kind", GCM_CALIBRATE_PRINT_KIND_LOCAL,
 		      NULL);
 
@@ -1636,7 +1636,7 @@ gcm_calib_setup_page_print_kind (GcmCalibratePriv *calib)
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Calibration Mode"));
 	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
-	g_ptr_array_add (calib->pages, vbox);
+	g_ptr_array_add (priv->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_PRINT_KIND));
@@ -1647,14 +1647,14 @@ gcm_calib_setup_page_print_kind (GcmCalibratePriv *calib)
 
 static void
 gcm_calib_precision_toggled_cb (GtkToggleButton *togglebutton,
-				GcmCalibratePriv *calib)
+				GcmCalibratePriv *priv)
 {
 	GcmCalibratePrecision precision;
 	if (!gtk_toggle_button_get_active (togglebutton))
 		return;
 	precision = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (togglebutton),
 							 "GcmCalib::precision"));
-	g_object_set (calib->calibrate,
+	g_object_set (priv->calibrate,
 		      "precision", precision,
 		      NULL);
 }
@@ -1663,7 +1663,7 @@ gcm_calib_precision_toggled_cb (GtkToggleButton *togglebutton,
  * gcm_calib_setup_page_precision:
  **/
 static void
-gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
+gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 {
 	GtkWidget *vbox;
 	GtkWidget *content;
@@ -1673,10 +1673,10 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 	guint i;
 	guint values_printer[] = { 6, 4, 2}; /* sheets */
 	guint values_display[] = { 30, 20, 10}; /* minutes */
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	/* TRANSLATORS: this is the page title */
-	vbox = gcm_calib_add_page_title (calib, _("Choose calibration quality"));
+	vbox = gcm_calib_add_page_title (priv, _("Choose calibration quality"));
 
 	/* main contents */
 	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -1693,7 +1693,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 	g_string_append_printf (string, "\n%s", _("For a typical workflow, a normal precision profile is sufficient."));
 
 	/* printer specific options */
-	if (calib->device_kind == CD_DEVICE_KIND_PRINTER) {
+	if (priv->device_kind == CD_DEVICE_KIND_PRINTER) {
 		/* TRANSLATORS: dialog message, preface */
 		g_string_append_printf (string, "\n%s", _("The high precision profile also requires more paper and printer ink."));
 	}
@@ -1703,7 +1703,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 	labels[0] = g_string_new (_("Accurate"));
 	labels[1] = g_string_new (_("Normal"));
 	labels[2] = g_string_new (_("Quick"));
-	switch (calib->device_kind) {
+	switch (priv->device_kind) {
 	case CD_DEVICE_KIND_PRINTER:
 		for (i=0; i<3; i++) {
 			g_string_append (labels[i], " ");
@@ -1735,7 +1735,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 			   "GcmCalib::precision",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PRECISION_LONG));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_precision_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_precision_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
@@ -1744,7 +1744,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 			   "GcmCalib::precision",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PRECISION_NORMAL));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_precision_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_precision_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
 
@@ -1754,7 +1754,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 			   "GcmCalib::precision",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PRECISION_SHORT));
 	g_signal_connect (widget, "toggled",
-			  G_CALLBACK (gcm_calib_precision_toggled_cb), calib);
+			  G_CALLBACK (gcm_calib_precision_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
 
 	/* add to assistant */
@@ -1763,7 +1763,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Calibration Quality"));
 	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
-	g_ptr_array_add (calib->pages, vbox);
+	g_ptr_array_add (priv->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_PRECISION));
@@ -1777,9 +1777,9 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *calib)
 
 static void
 gcm_calib_text_changed_cb (GtkEntry *entry,
-			   GcmCalibratePriv *calib)
+			   GcmCalibratePriv *priv)
 {
-	g_object_set (calib->calibrate,
+	g_object_set (priv->calibrate,
 		      "description", gtk_entry_get_text (entry),
 		      NULL);
 }
@@ -1788,16 +1788,16 @@ gcm_calib_text_changed_cb (GtkEntry *entry,
  * gcm_calib_setup_page_profile_title:
  **/
 static void
-gcm_calib_setup_page_profile_title (GcmCalibratePriv *calib)
+gcm_calib_setup_page_profile_title (GcmCalibratePriv *priv)
 {
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GtkWidget *widget;
 	gchar *tmp = NULL;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	/* TRANSLATORS: this is the page title */
-	vbox = gcm_calib_add_page_title (calib, _("Profile title"));
+	vbox = gcm_calib_add_page_title (priv, _("Profile title"));
 
 	/* main contents */
 	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -1811,7 +1811,7 @@ gcm_calib_setup_page_profile_title (GcmCalibratePriv *calib)
 	gtk_entry_set_max_length (GTK_ENTRY (widget), 128);
 
 	/* set the current title */
-	g_object_get (calib->calibrate,
+	g_object_get (priv->calibrate,
 		      "description", &tmp,
 		      NULL);
 	gtk_entry_set_text (GTK_ENTRY (widget), tmp);
@@ -1819,7 +1819,7 @@ gcm_calib_setup_page_profile_title (GcmCalibratePriv *calib)
 
 	/* watch for changes */
 	g_signal_connect (GTK_EDITABLE (widget), "changed",
-			  G_CALLBACK (gcm_calib_text_changed_cb), calib);
+			  G_CALLBACK (gcm_calib_text_changed_cb), priv);
 
 	/* add to assistant */
 	gtk_assistant_append_page (assistant, vbox);
@@ -1827,7 +1827,7 @@ gcm_calib_setup_page_profile_title (GcmCalibratePriv *calib)
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Profile Title"));
 	gtk_assistant_set_page_complete (assistant, vbox, TRUE);
-	g_ptr_array_add (calib->pages, vbox);
+	g_ptr_array_add (priv->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_TITLE));
@@ -1840,14 +1840,14 @@ gcm_calib_setup_page_profile_title (GcmCalibratePriv *calib)
  * gcm_calib_setup_page_sensor:
  **/
 static void
-gcm_calib_setup_page_sensor (GcmCalibratePriv *calib)
+gcm_calib_setup_page_sensor (GcmCalibratePriv *priv)
 {
 	GtkWidget *vbox;
 	GtkWidget *content;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	/* TRANSLATORS: this is the page title */
-	vbox = gcm_calib_add_page_title (calib, _("Insert sensor hardware"));
+	vbox = gcm_calib_add_page_title (priv, _("Insert sensor hardware"));
 
 	/* main contents */
 	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -1862,7 +1862,7 @@ gcm_calib_setup_page_sensor (GcmCalibratePriv *calib)
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Sensor Check"));
 	gtk_assistant_set_page_complete (assistant, vbox, FALSE);
-	g_ptr_array_add (calib->pages, vbox);
+	g_ptr_array_add (priv->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_SENSOR));
@@ -1875,14 +1875,14 @@ gcm_calib_setup_page_sensor (GcmCalibratePriv *calib)
  * gcm_calib_setup_page_failure:
  **/
 static void
-gcm_calib_setup_page_failure (GcmCalibratePriv *calib)
+gcm_calib_setup_page_failure (GcmCalibratePriv *priv)
 {
 	GtkWidget *vbox;
 	GtkWidget *content;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	/* TRANSLATORS: this is the page title */
-	vbox = gcm_calib_add_page_title (calib, _("Failed to calibrate"));
+	vbox = gcm_calib_add_page_title (priv, _("Failed to calibrate"));
 
 	/* main contents */
 	content = gtk_box_new (GTK_ORIENTATION_VERTICAL, 6);
@@ -1897,7 +1897,7 @@ gcm_calib_setup_page_failure (GcmCalibratePriv *calib)
 	/* TRANSLATORS: this is the calibration wizard page title */
 	gtk_assistant_set_page_title (assistant, vbox, _("Summary"));
 	gtk_assistant_set_page_complete (assistant, vbox, TRUE);
-	g_ptr_array_add (calib->pages, vbox);
+	g_ptr_array_add (priv->pages, vbox);
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_FAILURE));
@@ -1910,7 +1910,7 @@ gcm_calib_setup_page_failure (GcmCalibratePriv *calib)
  * gcm_calib_got_sensor:
  **/
 static void
-gcm_calib_got_sensor (GcmCalibratePriv *calib, CdSensor *sensor)
+gcm_calib_got_sensor (GcmCalibratePriv *priv, CdSensor *sensor)
 {
 	gboolean is_lowend = FALSE;
 	gboolean ret;
@@ -1925,10 +1925,10 @@ gcm_calib_got_sensor (GcmCalibratePriv *calib, CdSensor *sensor)
 		g_error_free (error);
 		goto out;
 	}
-	gcm_calibrate_set_sensor (calib->calibrate, sensor);
+	gcm_calibrate_set_sensor (priv->calibrate, sensor);
 
 	/* hide the prompt for the user to insert a sensor */
-	vbox = gcm_calib_get_vbox_for_page (calib,
+	vbox = gcm_calib_get_vbox_for_page (priv,
 					    GCM_CALIBRATE_PAGE_SENSOR);
 	gtk_widget_hide (vbox);
 
@@ -1938,8 +1938,8 @@ gcm_calib_got_sensor (GcmCalibratePriv *calib, CdSensor *sensor)
 	if (cd_sensor_get_kind (sensor) == CD_SENSOR_KIND_COLORHUG) {
 		is_lowend = TRUE;
 	}
-	if (calib->device_kind == CD_DEVICE_KIND_DISPLAY) {
-		vbox = gcm_calib_get_vbox_for_page (calib,
+	if (priv->device_kind == CD_DEVICE_KIND_DISPLAY) {
+		vbox = gcm_calib_get_vbox_for_page (priv,
 						    GCM_CALIBRATE_PAGE_DISPLAY_TEMPERATURE);
 		gtk_widget_set_visible (vbox, !is_lowend);
 	}
@@ -1957,7 +1957,7 @@ gcm_calib_get_sensors_cb (GObject *object,
 {
 	CdClient *client = CD_CLIENT (object);
 	CdSensor *sensor_tmp;
-	GcmCalibratePriv *calib = (GcmCalibratePriv *) user_data;
+	GcmCalibratePriv *priv = (GcmCalibratePriv *) user_data;
 	GError *error = NULL;
 	GPtrArray *sensors;
 
@@ -1973,7 +1973,7 @@ gcm_calib_get_sensors_cb (GObject *object,
 	/* we've got a sensor */
 	if (sensors->len != 0) {
 		sensor_tmp = g_ptr_array_index (sensors, 0);
-		gcm_calib_got_sensor (calib, sensor_tmp);
+		gcm_calib_got_sensor (priv, sensor_tmp);
 	}
 out:
 	if (sensors != NULL)
@@ -1984,84 +1984,84 @@ out:
  * gcm_calib_add_pages:
  **/
 static void
-gcm_calib_add_pages (GcmCalibratePriv *calib)
+gcm_calib_add_pages (GcmCalibratePriv *priv)
 {
 	gboolean ret;
 	const gchar *xrandr_name;
 
 	/* device not found */
-	if (calib->device_kind == CD_DEVICE_KIND_UNKNOWN) {
-		gcm_calib_setup_page_failure (calib);
-		gtk_widget_show_all (GTK_WIDGET (calib->main_window));
+	if (priv->device_kind == CD_DEVICE_KIND_UNKNOWN) {
+		gcm_calib_setup_page_failure (priv);
+		gtk_widget_show_all (GTK_WIDGET (priv->main_window));
 		return;
 	}
 
-	gcm_calib_setup_page_intro (calib);
+	gcm_calib_setup_page_intro (priv);
 
-	if (calib->device_kind == CD_DEVICE_KIND_DISPLAY ||
-	    calib->device_kind == CD_DEVICE_KIND_PRINTER)
-		gcm_calib_setup_page_sensor (calib);
+	if (priv->device_kind == CD_DEVICE_KIND_DISPLAY ||
+	    priv->device_kind == CD_DEVICE_KIND_PRINTER)
+		gcm_calib_setup_page_sensor (priv);
 
 	/* find whether argyllcms is installed using a tool which should exist */
-	ret = gcm_calibrate_get_enabled (calib->calibrate);
+	ret = gcm_calibrate_get_enabled (priv->calibrate);
 	if (!ret)
-		gcm_calib_setup_page_install_argyllcms (calib);
+		gcm_calib_setup_page_install_argyllcms (priv);
 
-	xrandr_name = cd_device_get_metadata_item (calib->device,
+	xrandr_name = cd_device_get_metadata_item (priv->device,
 						   CD_DEVICE_METADATA_XRANDR_NAME);
 	if (xrandr_name != NULL)
-		calib->internal_lcd = gcm_utils_output_is_lcd_internal (xrandr_name);
-	if (!calib->internal_lcd && calib->device_kind == CD_DEVICE_KIND_DISPLAY)
-		gcm_calib_setup_page_display_configure_wait (calib);
+		priv->internal_lcd = gcm_utils_output_is_lcd_internal (xrandr_name);
+	if (!priv->internal_lcd && priv->device_kind == CD_DEVICE_KIND_DISPLAY)
+		gcm_calib_setup_page_display_configure_wait (priv);
 
-	gcm_calib_setup_page_precision (calib);
+	gcm_calib_setup_page_precision (priv);
 
-	if (calib->device_kind == CD_DEVICE_KIND_DISPLAY) {
-		if (!calib->internal_lcd) {
-			gcm_calib_setup_page_display_kind (calib);
+	if (priv->device_kind == CD_DEVICE_KIND_DISPLAY) {
+		if (!priv->internal_lcd) {
+			gcm_calib_setup_page_display_kind (priv);
 		} else {
-			g_object_set (calib->calibrate,
+			g_object_set (priv->calibrate,
 				      "display-kind", GCM_CALIBRATE_DEVICE_KIND_LCD,
 				      NULL);
 		}
-		gcm_calib_setup_page_display_temp (calib);
-	} else if (calib->device_kind == CD_DEVICE_KIND_PRINTER) {
-		gcm_calib_setup_page_print_kind (calib);
+		gcm_calib_setup_page_display_temp (priv);
+	} else if (priv->device_kind == CD_DEVICE_KIND_PRINTER) {
+		gcm_calib_setup_page_print_kind (priv);
 	} else {
-		gcm_calib_setup_page_target_kind (calib);
+		gcm_calib_setup_page_target_kind (priv);
 		ret = g_file_test ("/usr/share/shared-color-targets", G_FILE_TEST_IS_DIR);
-		if (!ret) 
-			gcm_calib_setup_page_install_targets (calib);
+		if (!ret)
+			gcm_calib_setup_page_install_targets (priv);
 	}
 
-	gcm_calib_setup_page_profile_title (calib);
-	gcm_calib_setup_page_action (calib);
+	gcm_calib_setup_page_profile_title (priv);
+	gcm_calib_setup_page_action (priv);
 
-	gcm_calib_setup_page_summary (calib);
+	gcm_calib_setup_page_summary (priv);
 
 	/* see if we can hide the sensor check */
-	cd_client_get_sensors (calib->client,
+	cd_client_get_sensors (priv->client,
 			       NULL,
 			       gcm_calib_get_sensors_cb,
-			       calib);
+			       priv);
 }
 
 /**
  * gcm_calib_sensor_added_cb:
  **/
 static void
-gcm_calib_sensor_added_cb (CdClient *client, CdSensor *sensor, GcmCalibratePriv *calib)
+gcm_calib_sensor_added_cb (CdClient *client, CdSensor *sensor, GcmCalibratePriv *priv)
 {
 	g_debug ("sensor inserted");
-	gcm_calib_got_sensor (calib, sensor);
-	gtk_assistant_next_page (GTK_ASSISTANT (calib->main_window));
+	gcm_calib_got_sensor (priv, sensor);
+	gtk_assistant_next_page (GTK_ASSISTANT (priv->main_window));
 }
 
 /**
  * gcm_calib_startup_cb:
  **/
 static void
-gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *calib)
+gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *priv)
 {
 	const gint window_width  = 640;
 	const gint window_height = 440;
@@ -2081,10 +2081,10 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *calib)
 					   GCM_DATA G_DIR_SEPARATOR_S "icons");
 
 	/* connect to colord */
-	calib->client = cd_client_new ();
-	g_signal_connect (calib->client, "sensor-added",
-			  G_CALLBACK (gcm_calib_sensor_added_cb), calib);
-	ret = cd_client_connect_sync (calib->client,
+	priv->client = cd_client_new ();
+	g_signal_connect (priv->client, "sensor-added",
+			  G_CALLBACK (gcm_calib_sensor_added_cb), priv);
+	ret = cd_client_connect_sync (priv->client,
 				      NULL,
 				      &error);
 	if (!ret) {
@@ -2095,43 +2095,43 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *calib)
 	}
 
 	/* show main UI */
-	calib->main_window = GTK_WINDOW (gtk_assistant_new ());
-	gtk_window_set_default_size (calib->main_window, window_width, window_height);
-	gtk_window_set_resizable (calib->main_window, TRUE);
-	gtk_window_set_title (calib->main_window, "");
-	gtk_container_set_border_width (GTK_CONTAINER (calib->main_window), 12);
-	g_signal_connect (calib->main_window, "delete_event",
-			  G_CALLBACK (gcm_calib_delete_event_cb), calib);
-	g_signal_connect (calib->main_window, "close",
-			  G_CALLBACK (gcm_calib_assistant_close_cb), calib);
-	g_signal_connect (calib->main_window, "cancel",
-			  G_CALLBACK (gcm_calib_assistant_cancel_cb), calib);
-	g_signal_connect (calib->main_window, "prepare",
-			  G_CALLBACK (gcm_calib_assistant_prepare_cb), calib);
-	gtk_application_add_window (calib->application,
-				    calib->main_window);
+	priv->main_window = GTK_WINDOW (gtk_assistant_new ());
+	gtk_window_set_default_size (priv->main_window, window_width, window_height);
+	gtk_window_set_resizable (priv->main_window, TRUE);
+	gtk_window_set_title (priv->main_window, "");
+	gtk_container_set_border_width (GTK_CONTAINER (priv->main_window), 12);
+	g_signal_connect (priv->main_window, "delete_event",
+			  G_CALLBACK (gcm_calib_delete_event_cb), priv);
+	g_signal_connect (priv->main_window, "close",
+			  G_CALLBACK (gcm_calib_assistant_close_cb), priv);
+	g_signal_connect (priv->main_window, "cancel",
+			  G_CALLBACK (gcm_calib_assistant_cancel_cb), priv);
+	g_signal_connect (priv->main_window, "prepare",
+			  G_CALLBACK (gcm_calib_assistant_prepare_cb), priv);
+	gtk_application_add_window (priv->application,
+				    priv->main_window);
 
 	/* set the parent window if it is specified */
-	if (calib->xid != 0) {
-		g_debug ("Setting xid %i", calib->xid);
-		gcm_window_set_parent_xid (GTK_WINDOW (calib->main_window), calib->xid);
+	if (priv->xid != 0) {
+		g_debug ("Setting xid %i", priv->xid);
+		gcm_window_set_parent_xid (GTK_WINDOW (priv->main_window), priv->xid);
 	}
 
 	/* select a specific profile only */
-	calib->device = cd_client_find_device_sync (calib->client,
-						    calib->device_id,
+	priv->device = cd_client_find_device_sync (priv->client,
+						    priv->device_id,
 						    NULL,
 						    &error);
-	if (calib->device == NULL) {
+	if (priv->device == NULL) {
 		g_warning ("failed to get device %s: %s",
-			   calib->device_id,
+			   priv->device_id,
 			   error->message);
 		g_error_free (error);
 		goto out;
 	}
 
 	/* connect to the device */
-	ret = cd_device_connect_sync (calib->device,
+	ret = cd_device_connect_sync (priv->device,
 				      NULL,
 				      &error);
 	if (!ret) {
@@ -2142,33 +2142,33 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *calib)
 	}
 
 	/* get the device properties */
-	calib->device_kind = cd_device_get_kind (calib->device);
+	priv->device_kind = cd_device_get_kind (priv->device);
 
 	/* for display calibration move the window to lower right area to
          * limit argyll from obscuring the window (too much) */
-	if (calib->device_kind == CD_DEVICE_KIND_DISPLAY) {
-		gtk_window_set_gravity (calib->main_window, GDK_GRAVITY_SOUTH_EAST);
-		gtk_window_move (calib->main_window, gdk_screen_width()  - window_width,
+	if (priv->device_kind == CD_DEVICE_KIND_DISPLAY) {
+		gtk_window_set_gravity (priv->main_window, GDK_GRAVITY_SOUTH_EAST);
+		gtk_window_move (priv->main_window, gdk_screen_width()  - window_width,
 						     gdk_screen_height() - window_height);
 	}
 
 	/* set, with fallbacks */
-	serial = cd_device_get_serial (calib->device);
+	serial = cd_device_get_serial (priv->device);
 	if (serial == NULL) {
 		/* TRANSLATORS: this is saved in the profile */
 		serial = _("Unknown serial");
 	}
-	model = cd_device_get_model (calib->device);
+	model = cd_device_get_model (priv->device);
 	if (model == NULL) {
 		/* TRANSLATORS: this is saved in the profile */
 		model = _("Unknown model");
 	}
-	description = cd_device_get_model (calib->device);
+	description = cd_device_get_model (priv->device);
 	if (description == NULL) {
 		/* TRANSLATORS: this is saved in the profile */
 		description = _("Unknown description");
 	}
-	manufacturer = cd_device_get_vendor (calib->device);
+	manufacturer = cd_device_get_vendor (priv->device);
 	if (manufacturer == NULL) {
 		/* TRANSLATORS: this is saved in the profile */
 		manufacturer = _("Unknown manufacturer");
@@ -2183,8 +2183,8 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *calib)
 				     g_get_real_name ());
 
 	/* set the proper values */
-	g_object_set (calib->calibrate,
-		      "device-kind", calib->device_kind,
+	g_object_set (priv->calibrate,
+		      "device-kind", priv->device_kind,
 		      "model", model,
 		      "description", description,
 		      "manufacturer", manufacturer,
@@ -2193,21 +2193,21 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *calib)
 		      NULL);
 
 	/* display specific properties */
-	if (calib->device_kind == CD_DEVICE_KIND_DISPLAY) {
-		native_device = cd_device_get_metadata_item (calib->device,
+	if (priv->device_kind == CD_DEVICE_KIND_DISPLAY) {
+		native_device = cd_device_get_metadata_item (priv->device,
 							     CD_DEVICE_METADATA_XRANDR_NAME);
 		if (native_device == NULL) {
 			g_warning ("failed to get output");
 			goto out;
 		}
-		g_object_set (calib->calibrate,
+		g_object_set (priv->calibrate,
 			      "output-name", native_device,
 			      NULL);
 	}
 out:
 	/* add different pages depending on the device kind */
-	gcm_calib_add_pages (calib);
-	gtk_assistant_set_current_page (GTK_ASSISTANT (calib->main_window), 0);
+	gcm_calib_add_pages (priv);
+	gtk_assistant_set_current_page (GTK_ASSISTANT (priv->main_window), 0);
 	if (dt != NULL)
 		g_date_time_unref (dt);
 	g_free (copyright);
@@ -2216,36 +2216,36 @@ out:
 static void
 gcm_calib_title_changed_cb (GcmCalibrate *calibrate,
 			    const gchar *title,
-			    GcmCalibratePriv *calib)
+			    GcmCalibratePriv *priv)
 {
 	gchar *markup;
 
 	markup = g_strdup_printf ("<span size=\"large\" font_weight=\"bold\">%s</span>", title);
-	gtk_label_set_markup (GTK_LABEL (calib->action_title), markup);
+	gtk_label_set_markup (GTK_LABEL (priv->action_title), markup);
 	g_free (markup);
 }
 
 static void
 gcm_calib_message_changed_cb (GcmCalibrate *calibrate,
 			      const gchar *title,
-			      GcmCalibratePriv *calib)
+			      GcmCalibratePriv *priv)
 {
-	gtk_label_set_label (GTK_LABEL (calib->action_message), title);
+	gtk_label_set_label (GTK_LABEL (priv->action_message), title);
 }
 
 static void
 gcm_calib_progress_changed_cb (GcmCalibrate *calibrate,
 			       guint percentage,
-			       GcmCalibratePriv *calib)
+			       GcmCalibratePriv *priv)
 {
-	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (calib->action_progress),
+	gtk_progress_bar_set_fraction (GTK_PROGRESS_BAR (priv->action_progress),
 				       percentage / 100.0f);
 }
 
 static void
 gcm_calib_image_changed_cb (GcmCalibrate *calibrate,
 			    const gchar *filename,
-			    GcmCalibratePriv *calib)
+			    GcmCalibratePriv *priv)
 {
 	gchar *path;
 	GdkPixbuf *pixbuf;
@@ -2257,28 +2257,28 @@ gcm_calib_image_changed_cb (GcmCalibrate *calibrate,
 		if (pixbuf == NULL) {
 			g_warning ("failed to load image: %s", error->message);
 			g_error_free (error);
-			gtk_widget_hide (calib->action_image);
+			gtk_widget_hide (priv->action_image);
 		} else {
-			gtk_image_set_from_pixbuf (GTK_IMAGE (calib->action_image), pixbuf);
-			gtk_widget_show (calib->action_image);
+			gtk_image_set_from_pixbuf (GTK_IMAGE (priv->action_image), pixbuf);
+			gtk_widget_show (priv->action_image);
 		}
 		g_free (path);
 	} else {
-		gtk_widget_hide (calib->action_image);
+		gtk_widget_hide (priv->action_image);
 	}
 }
 
 static void
 gcm_calib_interaction_required_cb (GcmCalibrate *calibrate,
 				   const gchar *button_text,
-				   GcmCalibratePriv *calib)
+				   GcmCalibratePriv *priv)
 {
 	GtkWidget *vbox;
-	vbox = gcm_calib_get_vbox_for_page (calib,
+	vbox = gcm_calib_get_vbox_for_page (priv,
 					    GCM_CALIBRATE_PAGE_ACTION);
-	gtk_assistant_set_page_complete (GTK_ASSISTANT (calib->main_window),
+	gtk_assistant_set_page_complete (GTK_ASSISTANT (priv->main_window),
 					 vbox, TRUE);
-	calib->has_pending_interaction = TRUE;
+	priv->has_pending_interaction = TRUE;
 }
 
 /**
@@ -2288,7 +2288,7 @@ int
 main (int argc, char **argv)
 {
 	gchar *device_id = NULL;
-	GcmCalibratePriv *calib;
+	GcmCalibratePriv *priv;
 	GOptionContext *context;
 	guint xid = 0;
 	int status = 0;
@@ -2318,52 +2318,52 @@ main (int argc, char **argv)
 	g_option_context_parse (context, &argc, &argv, NULL);
 	g_option_context_free (context);
 
-	calib = g_new0 (GcmCalibratePriv, 1);
-	calib->pages = g_ptr_array_new ();
-	calib->xid = xid;
-	calib->device_id = device_id;
-	calib->calibrate = gcm_calibrate_argyll_new ();
-	g_object_set (calib->calibrate,
+	priv = g_new0 (GcmCalibratePriv, 1);
+	priv->pages = g_ptr_array_new ();
+	priv->xid = xid;
+	priv->device_id = device_id;
+	priv->calibrate = gcm_calibrate_argyll_new ();
+	g_object_set (priv->calibrate,
 		      "precision", GCM_CALIBRATE_PRECISION_LONG,
 		      NULL);
-	calib->device_kind = CD_DEVICE_KIND_UNKNOWN;
-	g_signal_connect (calib->calibrate, "title-changed",
-			  G_CALLBACK (gcm_calib_title_changed_cb), calib);
-	g_signal_connect (calib->calibrate, "message-changed",
-			  G_CALLBACK (gcm_calib_message_changed_cb), calib);
-	g_signal_connect (calib->calibrate, "image-changed",
-			  G_CALLBACK (gcm_calib_image_changed_cb), calib);
-	g_signal_connect (calib->calibrate, "progress-changed",
-			  G_CALLBACK (gcm_calib_progress_changed_cb), calib);
-	g_signal_connect (calib->calibrate, "interaction-required",
-			  G_CALLBACK (gcm_calib_interaction_required_cb), calib);
+	priv->device_kind = CD_DEVICE_KIND_UNKNOWN;
+	g_signal_connect (priv->calibrate, "title-changed",
+			  G_CALLBACK (gcm_calib_title_changed_cb), priv);
+	g_signal_connect (priv->calibrate, "message-changed",
+			  G_CALLBACK (gcm_calib_message_changed_cb), priv);
+	g_signal_connect (priv->calibrate, "image-changed",
+			  G_CALLBACK (gcm_calib_image_changed_cb), priv);
+	g_signal_connect (priv->calibrate, "progress-changed",
+			  G_CALLBACK (gcm_calib_progress_changed_cb), priv);
+	g_signal_connect (priv->calibrate, "interaction-required",
+			  G_CALLBACK (gcm_calib_interaction_required_cb), priv);
 
 	/* nothing specified */
-	if (calib->device_id == NULL) {
+	if (priv->device_id == NULL) {
 		g_print ("%s\n", _("No device was specified!"));
 		goto out;
 	}
 
 	/* ensure single instance */
-	calib->application = gtk_application_new ("org.gnome.ColorManager.Calibration", 0);
-	g_signal_connect (calib->application, "startup",
-			  G_CALLBACK (gcm_calib_startup_cb), calib);
-	g_signal_connect (calib->application, "activate",
-			  G_CALLBACK (gcm_calib_activate_cb), calib);
+	priv->application = gtk_application_new ("org.gnome.ColorManager.Calibration", 0);
+	g_signal_connect (priv->application, "startup",
+			  G_CALLBACK (gcm_calib_startup_cb), priv);
+	g_signal_connect (priv->application, "activate",
+			  G_CALLBACK (gcm_calib_activate_cb), priv);
 
 	/* wait */
-	status = g_application_run (G_APPLICATION (calib->application), argc, argv);
+	status = g_application_run (G_APPLICATION (priv->application), argc, argv);
 
-	g_ptr_array_unref (calib->pages);
-	g_object_unref (calib->application);
-	g_object_unref (calib->calibrate);
-	if (calib->client != NULL)
-		g_object_unref (calib->client);
-	if (calib->device_id != NULL)
-		g_free (calib->device_id);
-	if (calib->device != NULL)
-		g_object_unref (calib->device);
-	g_free (calib);
+	g_ptr_array_unref (priv->pages);
+	g_object_unref (priv->application);
+	g_object_unref (priv->calibrate);
+	if (priv->client != NULL)
+		g_object_unref (priv->client);
+	if (priv->device_id != NULL)
+		g_free (priv->device_id);
+	if (priv->device != NULL)
+		g_object_unref (priv->device);
+	g_free (priv);
 out:
 	return status;
 }
