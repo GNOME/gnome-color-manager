@@ -73,6 +73,7 @@ typedef struct {
 	gboolean	 has_pending_interaction;
 	gboolean	 started_calibration;
 	GcmCalibratePage current_page;
+	gint		 inhibit_cookie;
 } GcmCalibratePriv;
 
 /**
@@ -428,47 +429,57 @@ gcm_calib_start_idle_cb (gpointer user_data)
 	CdProfile *profile = NULL;
 	const gchar *filename;
 	gboolean ret;
+	GcmCalibratePriv *priv = (GcmCalibratePriv *) user_data;
 	GError *error = NULL;
 	GFile *file = NULL;
+	gint inhibit_cookie;
+	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 	GtkWidget *vbox;
-	GcmCalibratePriv *calib = (GcmCalibratePriv *) user_data;
-	GtkAssistant *assistant = GTK_ASSISTANT (calib->main_window);
 
-	/* actuall do the action */
-	calib->started_calibration = TRUE;
-	ret = gcm_calibrate_device (calib->calibrate,
-				    calib->device,
-				    calib->main_window,
+	/* inhibit */
+	inhibit_cookie = gtk_application_inhibit (priv->application,
+						  priv->main_window,
+						  GTK_APPLICATION_INHIBIT_LOGOUT |
+						  GTK_APPLICATION_INHIBIT_SWITCH |
+						  GTK_APPLICATION_INHIBIT_SUSPEND |
+						  GTK_APPLICATION_INHIBIT_IDLE,
+						  "Calibration in progress");
+
+	/* actually do the action */
+	priv->started_calibration = TRUE;
+	ret = gcm_calibrate_device (priv->calibrate,
+				    priv->device,
+				    priv->main_window,
 				    &error);
 	if (!ret) {
-		gcm_calibrate_set_title (calib->calibrate,
+		gcm_calibrate_set_title (priv->calibrate,
 					 _("Failed to calibrate"),
 					 GCM_CALIBRATE_UI_ERROR);
-		gcm_calibrate_set_message (calib->calibrate,
+		gcm_calibrate_set_message (priv->calibrate,
 					   error->message,
 					   GCM_CALIBRATE_UI_ERROR);
-		gcm_calibrate_set_image (calib->calibrate, NULL);
+		gcm_calibrate_set_image (priv->calibrate, NULL);
 
 		g_warning ("failed to calibrate: %s",
 			   error->message);
 		g_error_free (error);
 
 		/* mark this box as the end */
-		vbox = gcm_calib_get_vbox_for_page (calib, GCM_CALIBRATE_PAGE_ACTION);
+		vbox = gcm_calib_get_vbox_for_page (priv, GCM_CALIBRATE_PAGE_ACTION);
 		gtk_assistant_set_page_type (assistant, vbox, GTK_ASSISTANT_PAGE_SUMMARY);
 		gtk_assistant_set_page_complete (assistant, vbox, TRUE);
 		goto out;
 	}
 
 	/* get profile */
-	filename = gcm_calibrate_get_filename_result (calib->calibrate);
+	filename = gcm_calibrate_get_filename_result (priv->calibrate);
 	if (filename == NULL) {
 		g_warning ("failed to get filename from calibration");
 		goto out;
 	}
 
 	/* set some private properties */
-	ret = gcm_calib_set_extra_metadata (calib, filename, &error);
+	ret = gcm_calib_set_extra_metadata (priv, filename, &error);
 	if (!ret) {
 		g_warning ("failed to set extra metadata: %s",
 			   error->message);
@@ -477,13 +488,13 @@ gcm_calib_start_idle_cb (gpointer user_data)
 	}
 
 	/* inform the sensor about the last successful profile */
-	gcm_calib_set_sensor_options (calib, filename);
+	gcm_calib_set_sensor_options (priv, filename);
 
 	/* copy the ICC file to the proper location */
 	file = g_file_new_for_path (filename);
-	profile = cd_client_import_profile_sync (calib->client,
+	profile = cd_client_import_profile_sync (priv->client,
 						 file,
-						 calib->cancellable,
+						 priv->cancellable,
 						 &error);
 	if (profile == NULL) {
 		g_warning ("failed to find calibration profile: %s",
@@ -491,15 +502,15 @@ gcm_calib_start_idle_cb (gpointer user_data)
 		g_error_free (error);
 		goto out;
 	}
-	ret = cd_device_add_profile_sync (calib->device,
+	ret = cd_device_add_profile_sync (priv->device,
 					  CD_DEVICE_RELATION_HARD,
 					  profile,
-					  calib->cancellable,
+					  priv->cancellable,
 					  &error);
 	if (!ret) {
 		g_warning ("failed to add %s to %s: %s",
 			   cd_profile_get_object_path (profile),
-			   cd_device_get_object_path (calib->device),
+			   cd_device_get_object_path (priv->device),
 			   error->message);
 		g_error_free (error);
 		goto out;
@@ -509,7 +520,7 @@ gcm_calib_start_idle_cb (gpointer user_data)
 	g_unlink (filename);
 
 	/* allow forward */
-	vbox = gcm_calib_get_vbox_for_page (calib,
+	vbox = gcm_calib_get_vbox_for_page (priv,
 					    GCM_CALIBRATE_PAGE_ACTION);
 	gtk_assistant_set_page_complete (assistant,
 					 vbox, TRUE);
@@ -518,6 +529,10 @@ gcm_calib_start_idle_cb (gpointer user_data)
 	gtk_assistant_set_current_page (assistant,
 					gtk_assistant_get_n_pages (assistant) - 1);
 out:
+	if (inhibit_cookie != 0) {
+		gtk_application_uninhibit (priv->application,
+					   priv->inhibit_cookie);
+	}
 	if (profile != NULL)
 		g_object_unref (profile);
 	if (file != NULL)
