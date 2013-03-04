@@ -824,6 +824,12 @@ struct {
 	{ CD_PROFILE_METADATA_CONNECTION_TYPE,		N_("Connection type") },
 	/* TRANSLATORS: e.g. Screen brightness in percent */
 	{ CD_PROFILE_METADATA_SCREEN_BRIGHTNESS,	N_("Screen brightness") },
+	/* TRANSLATORS: e.g. the 3D volume of the gamut graph */
+	{ "GAMUT_volume",				N_("Gamut volume") },
+	/* TRANSLATORS: e.g. what proportion of sRGB is covered */
+	{ "GAMUT_coverage(srgb)",			N_("sRGB coverage") },
+	/* TRANSLATORS: e.g. what proportion of AdobeRGB is covered */
+	{ "GAMUT_coverage(adobe-rgb)",			N_("Adobe RGB coverage") },
 	{ NULL, NULL }
 };
 
