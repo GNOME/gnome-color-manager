@@ -855,6 +855,7 @@ gcm_viewer_is_blacklisted_metadata_key (const gchar *key)
 				     "OSD_*",			/* OSD controls... */
 				     "vcgt",
 				     "model",
+				     "OPENICC_automatic_generated",
 				     NULL };
 	for (i = 0; blacklist[i] != NULL; i++) {
 		if (g_regex_match_simple (blacklist[i],
