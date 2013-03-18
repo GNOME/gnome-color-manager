@@ -176,10 +176,10 @@ gcm_test_profile_func (void)
 	profile = gcm_profile_new ();
 
 	/* from my T61 */
-	cd_color_set_yxy (&red, 1.0f, 0.569336f, 0.332031f);
-	cd_color_set_yxy (&green, 1.0f, 0.311523f, 0.543945f);
-	cd_color_set_yxy (&blue, 1.0f, 0.149414f, 0.131836f);
-	cd_color_set_yxy (&white, 1.0f, 0.313477f, 0.329102f);
+	cd_color_yxy_set (&red, 1.0f, 0.569336f, 0.332031f);
+	cd_color_yxy_set (&green, 1.0f, 0.311523f, 0.543945f);
+	cd_color_yxy_set (&blue, 1.0f, 0.149414f, 0.131836f);
+	cd_color_yxy_set (&white, 1.0f, 0.313477f, 0.329102f);
 
 	/* create from chroma */
 	ret = gcm_profile_create_from_chroma (profile, 2.2f, &red, &green, &blue, &white, &error);
@@ -210,7 +210,7 @@ gcm_test_profile_func (void)
 	g_assert_cmpstr (gcm_profile_get_description (profile), ==, "RGB built-in");
 	g_assert_cmpint (gcm_profile_get_kind (profile), ==, CD_PROFILE_KIND_DISPLAY_DEVICE);
 	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, CD_COLORSPACE_RGB);
-	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 5000);
+	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 6400);
 
 	/* delete temp file */
 	ret = g_file_delete (file, NULL, &error);
