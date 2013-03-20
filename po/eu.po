@@ -2,245 +2,292 @@
 # Basque translation for gnome-color-manager.
 # Copyright (C) 2010 gnome-color-manager's COPYRIGHT HOLDER
 # This file is distributed under the same license as the gnome-color-manager package.
-# Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2011.
+# Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2011, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager_eu\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2011-06-17 11:23+0200\n"
-"PO-Revision-Date: 2011-06-17 11:40+0200\n"
-"Last-Translator: \n"
-"Language-Team: American English <kde-i18n-doc@kde.org>\n"
+"POT-Creation-Date: 2013-03-20 09:56+0100\n"
+"PO-Revision-Date: 2013-03-20 10:19+0100\n"
+"Last-Translator: Iñaki Larrañaga Murgoitio <dooteo@zundan.com>\n"
+"Language-Team: Basque <itzulpena@euskalgnu.org>\n"
 "Language: eu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.0\n"
+"X-Generator: Lokalize 1.4\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: ../data/gcm-apply.desktop.in.h:1
-msgid "Applies device profile settings at session startup"
-msgstr "Gailuaren profilaren ezarpenak aplikatzen ditu saioa hastean"
+#: ../data/gcm-calibrate.desktop.in.h:1
+msgid "Color"
+msgstr "Kolorea"
 
-#: ../data/gcm-apply.desktop.in.h:2
-msgid "Load device color profiles"
-msgstr "Kargatu gailuaren kolore-profilak"
+#: ../data/gcm-calibrate.desktop.in.h:2
+msgid "Color Calibration"
+msgstr "Koloreen kalibrazioa"
 
 #: ../data/gcm-import.desktop.in.h:1
 msgid "ICC Profile Installer"
 msgstr "ICC profilen instalatzailea"
 
 #: ../data/gcm-import.desktop.in.h:2
-msgid "ICC profile installer"
-msgstr "ICC profilen instalatzailea"
-
-#: ../data/gcm-import.desktop.in.h:3
 msgid "Install ICC profiles"
 msgstr "Instalatu ICC profilak"
 
-#: ../data/gcm-prefs.desktop.in.h:1
-msgid "Color Profiles"
-msgstr "Kolore-profilak"
+#. Window title, where the user can pick spot colors using a measuring device
+#: ../data/gcm-picker.desktop.in.h:1 ../data/gcm-picker.ui.h:2
+msgid "Color Picker"
+msgstr "Kolore-hautatzailea"
 
-#: ../data/gcm-prefs.desktop.in.h:2
-msgid "Manage ICC color profiles"
-msgstr "Kudeatu ICC kolore-profilak"
+#: ../data/gcm-picker.desktop.in.h:2
+msgid "Use the color sensor to sample spot colors"
+msgstr "Erabili koloreen sentsorea koloreen puntuak lagintzeko"
 
-#: ../data/gnome-color-manager.schemas.in.h:1
+#. Button text, to get a single sample of color
+#: ../data/gcm-picker.ui.h:4
+msgid "_Measure"
+msgstr "_Neurtu"
+
+#. the color representation
+#: ../data/gcm-picker.ui.h:6
+msgid "XYZ:"
+msgstr "XYZ:"
+
+#. Lab is the color representation and D50 is the white point
+#: ../data/gcm-picker.ui.h:8
+msgid "Lab (D50):"
+msgstr "Lab (D50):"
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:10
+msgid "Media whitepoint:"
+msgstr "Euskarriaren puntu zuria:"
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:12
+msgid "Color Temperature:"
+msgstr "Kolorearen tenperatura:"
+
+#. This refers to the amount of ambient light on the sensor
+#: ../data/gcm-picker.ui.h:14
+msgid "Ambient:"
+msgstr "Giroa:"
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#: ../data/gcm-picker.ui.h:16
+msgid "Colorspace:"
+msgstr "Kolore-espazioa:"
+
+#. These are the values of the chosen color in Red, Green, Blue encoding
+#: ../data/gcm-picker.ui.h:18
+msgid "RGB:"
+msgstr "GBU:"
+
+#. This shows the error in the conversion to RGB.
+#: ../data/gcm-picker.ui.h:20
+msgid "Error:"
+msgstr "Errorea:"
+
+#. Expander title, the results from the color picker
+#: ../data/gcm-picker.ui.h:22
+msgid "Results"
+msgstr "Emaitzak"
+
+#: ../data/gcm-viewer.desktop.in.h:1 ../data/gcm-viewer.ui.h:1
+msgid "Color Profile Viewer"
+msgstr "Kolore-profilaren ikustailea"
+
+#: ../data/gcm-viewer.desktop.in.h:2
+msgid "Inspect and compare installed color profiles"
+msgstr "Gainbegiratu eta konparatu instalatutako kolore-profilak"
+
+#: ../data/gcm-viewer.ui.h:2
+msgid "Add a profile for the device"
+msgstr "Gehitu profila gailuarentzako"
+
+#: ../data/gcm-viewer.ui.h:3
+msgid "Remove a profile from the device"
+msgstr "Kendu profil bat gailutik"
+
+#. The type of profile, e.g. display, scanner, etc.
+#: ../data/gcm-viewer.ui.h:5
+msgid "Profile type"
+msgstr "Profil mota"
+
+#. The profile colorspace, e.g. RGB
+#: ../data/gcm-viewer.ui.h:7
+msgid "Colorspace"
+msgstr "Kolore-espazioa"
+
+#. When the profile was created
+#: ../data/gcm-viewer.ui.h:9
+msgid "Created"
+msgstr "Sortze-data"
+
+#. The version of the profile
+#: ../data/gcm-viewer.ui.h:11
+msgid "Version"
+msgstr "Bertsioa"
+
+#. The manufacturer of the profile
+#: ../data/gcm-viewer.ui.h:13
+msgid "Device manufacturer"
+msgstr "Gailuaren fabrikatzailea"
+
+#. The manufacturer of the profile
+#: ../data/gcm-viewer.ui.h:15
+msgid "Device model"
+msgstr "Gailuaren modeloa"
+
+#. If the profile contains a display correction table
+#: ../data/gcm-viewer.ui.h:17
+msgid "Display correction"
+msgstr "Pantailaren zuzenketa"
+
+#. The basename (the last section of the filename) of the profile
+#: ../data/gcm-viewer.ui.h:19
+msgid "White point"
+msgstr "Zuria puntua"
+
+#. The licence of the profile, normally non-free
+#: ../data/gcm-viewer.ui.h:21
+msgid "License"
+msgstr "Lizentzia"
+
+#. The file size in bytes of the profile
+#: ../data/gcm-viewer.ui.h:23
+msgid "File size"
+msgstr "Fitxategiaren tamaina"
+
+#. The basename (the last section of the filename) of the profile
+#: ../data/gcm-viewer.ui.h:25
+msgid "Filename"
+msgstr "Fitxategi-izena"
+
+#. warnings for the profile
+#: ../data/gcm-viewer.ui.h:27
+msgid "Warnings"
+msgstr "Abisuak"
+
+#: ../data/gcm-viewer.ui.h:28
+msgid "Information"
+msgstr "Informazioa"
+
+#: ../data/gcm-viewer.ui.h:29
+msgid "y"
+msgstr "y"
+
+#: ../data/gcm-viewer.ui.h:30
+msgid "x"
+msgstr "x"
+
+#: ../data/gcm-viewer.ui.h:31
+msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
+msgstr "CIE 1931 diagramak profilaren gamaren 2D adierazpen bat erakusten du"
+
+#: ../data/gcm-viewer.ui.h:32
+msgid "CIE 1931"
+msgstr "CIE 1931"
+
+#: ../data/gcm-viewer.ui.h:33
+msgid "This 3D hull is what the profile looks like in Lab space"
+msgstr "3D konkorra profilak Lab espazioan duen itxura da"
+
+#: ../data/gcm-viewer.ui.h:34
+msgid "3D Gamut"
+msgstr "3D gama"
+
+#: ../data/gcm-viewer.ui.h:35
+msgid "Response out"
+msgstr "Erantzunaren irteera"
+
+#: ../data/gcm-viewer.ui.h:36
+msgid "Response in"
+msgstr "Erantzunaren sarrera"
+
+#: ../data/gcm-viewer.ui.h:37
 msgid ""
-"Gamma is adjusted to affect the color of the attached monitor. Traditionally "
-"Linux has used a gamma value of 1.0, but this makes monitors look washed out "
-"compared Windows XP or OS X. Apple traditionally used a value of 1.8 for a "
-"long time, but now use the same value as Microsoft. Microsoft has always "
-"used a value of 2.2."
+"A tone reproduction curve is the mapping of scene luminance to display "
+"luminance"
 msgstr ""
-"Gamma doitzen da, erantsitako monitorearen koloreari eragiteko. Iraganean "
-"1.0 gamma-balioa erabili izan du Linux-ek, baina horrek kolorgetu-itxura "
-"ematen dio monitoreari Windows XP edo OS Xrekin konparatuta. Apple-k 1.8 "
-"balioa erabili izan du iraganean, baina orain Microsoft-en balio bera "
-"erabiltzen du. Microsoft-ek 2.2 balioa erabili izan du beti."
+"Tonuaren erreprodukzio-kurba (TRC) eszenaren luminantziaren mapatzea da "
+"luminantzia bistaratzeko "
 
-#: ../data/gnome-color-manager.schemas.in.h:2
+#: ../data/gcm-viewer.ui.h:38
+msgid "TRC"
+msgstr "TRC"
+
+#: ../data/gcm-viewer.ui.h:39
+msgid "Video card out"
+msgstr "Bideo-txartelaren irteera"
+
+#: ../data/gcm-viewer.ui.h:40
+msgid "A video card gamma table shows the curves loaded into the display"
+msgstr ""
+"Bideo-txartelaren gamma taulak (VCGT) pantailan kargatutako kurbak erakusten "
+"du"
+
+#: ../data/gcm-viewer.ui.h:41
+msgid "VCGT"
+msgstr "VCGT"
+
+#: ../data/gcm-viewer.ui.h:42
+msgid "Previous Image"
+msgstr "Aurreko irudia"
+
+#. This is an example image that is saved in sRGB gamut
+#: ../data/gcm-viewer.ui.h:44
+msgid "sRGB example"
+msgstr "sGBU adibidea"
+
+#: ../data/gcm-viewer.ui.h:45
+msgid "Next Image"
+msgstr "Hurrengo irudia"
+
+#: ../data/gcm-viewer.ui.h:46
+msgid "This shows what an image would look like if saved with the profile"
+msgstr ""
+"Irudi batek zer nolako itxura edukiko duen profilarekin gordez gero "
+"erakusten du honek"
+
+#: ../data/gcm-viewer.ui.h:47
+msgid "From sRGB"
+msgstr "sGBU-tik"
+
+#: ../data/gcm-viewer.ui.h:48
+msgid "This shows what an image would look like if opened with the profile"
+msgstr ""
+"Irudi batek zer nolako itxura edukiko duen profilarekin irekiz gero "
+"erakusten du honek"
+
+#: ../data/gcm-viewer.ui.h:49
+msgid "To sRGB"
+msgstr "sGBU-ra"
+
+#: ../data/gcm-viewer.ui.h:50
+msgid "Named colors are specific colors that are defined in the profile"
+msgstr "Izendatutako koloreak profilean definitutako kolore zehatzak dira"
+
+#: ../data/gcm-viewer.ui.h:51
+msgid "Named Colors"
+msgstr "Izendatutako koloreak"
+
+#: ../data/gcm-viewer.ui.h:52
 msgid ""
-"If set to TRUE then external disks are searched for device ICC profiles at "
-"startup, for instance looking in the OSX library folder or Windows XP system "
-"folders. This may increase startup time if disks need to be spun up to be "
-"searched."
+"Metadata is additional information stored in the profile for programs to use."
 msgstr ""
-"EGIAZKO gisa ezartzen bada, abioan gailuen ICC profilak bilatuko dira "
-"kanpoko diskoetan, OSX liburutegi-karpetan edo Windows XPren sistema-"
-"karpetetan, esaterako. Horren ondorioz agian denbora gehiago beharko da "
-"abiarazteko, diskoak bilaketarako prestatu behar badira."
+"Metadatuak profilean gordetako informazio gehigarria da programek "
+"erabiltzeko."
 
-#: ../data/gnome-color-manager.schemas.in.h:3
-msgid ""
-"If set to TRUE then the __ICC_PROFILE hint will be set, which applications "
-"use to convert true color to screen color."
-msgstr ""
-"EGIAZKO gisa ezarriz gero,  __ICC_PROFILE argibidea ezarriko da; horixe "
-"erabiltzen dute aplikazioek egiazko kolorea pantaila-kolore bihurtzeko."
+#: ../data/gcm-viewer.ui.h:53
+msgid "Metadata"
+msgstr "Metadatuak"
 
-#: ../data/gnome-color-manager.schemas.in.h:4
-msgid ""
-"If set to TRUE then the fine tuning controls are visible. This allows the "
-"user to change the display profile outside of what the ICC profile suggests "
-"and is only recommended for advanced users."
-msgstr ""
-"EGIAZKO gisa ezarriz gero, doitze finaren kontrolak ikusgai egongo dira. "
-"Horrela, erabiltzaileak pantaila-profila aldatu ahal izango du ICC profilak "
-"iradokitakotik at; erabiltzaile aurreratuentzat soilik gomendatzen da."
-
-#: ../data/gnome-color-manager.schemas.in.h:5
-msgid "If set to TRUE then the video LUT is set with the display profile"
-msgstr ""
-"EGIAZKO gisa ezartzen bada, orduan bideoaren LUT pantaila-profilarekin "
-"ezartzen da."
-
-#: ../data/gnome-color-manager.schemas.in.h:6
-msgid "Set the _ICC_PROFILE hint for applications."
-msgstr "Ezarri _ICC_PROFILE argibidea aplikazioetarako."
-
-#: ../data/gnome-color-manager.schemas.in.h:7
-msgid "Show the fine tuning controls for display devices."
-msgstr "Erakutsi doitze finaren kontrolak pantaila-gailuetarako."
-
-#: ../data/gnome-color-manager.schemas.in.h:8
-msgid "The CMYK profile filename to be used by applications by default."
-msgstr ""
-"Aplikazioek lehenespenez erabili beharreko CMYK profilaren fitxategi-izena."
-
-#: ../data/gnome-color-manager.schemas.in.h:9
-msgid "The RGB profile filename to be used by applications by default."
-msgstr ""
-"Aplikazioek lehenespenez erabili beharreko GBU profilaren fitxategi-izena."
-
-#: ../data/gnome-color-manager.schemas.in.h:10
-msgid "The default CMYK profile."
-msgstr "CMYK profil lehenetsia."
-
-#: ../data/gnome-color-manager.schemas.in.h:11
-msgid "The default RGB profile."
-msgstr "GBU profil lehenetsia."
-
-#: ../data/gnome-color-manager.schemas.in.h:12
-msgid "The default calibration length."
-msgstr "Kalibrazio-luzera lehenetsia."
-
-#: ../data/gnome-color-manager.schemas.in.h:13
-msgid "The default gamma to use for monitors with no previous value set."
-msgstr ""
-"Aurrez baliorik ezarri gabeko monitoreetarako erabili beharreko gamma "
-"lehenetsia."
-
-#: ../data/gnome-color-manager.schemas.in.h:14
-msgid "The duration between sending notifications to recalibrate a display."
-msgstr "Pantaila bat birkalibratzeko jakinarazpenak bidaltzeko denbora-tartea."
-
-#: ../data/gnome-color-manager.schemas.in.h:15
-msgid "The duration between sending notifications to recalibrate a printer."
-msgstr ""
-"Inprimagailu bat birkalibratzeko jakinarazpenak bidaltzeko denbora-tartea."
-
-#: ../data/gnome-color-manager.schemas.in.h:16
-msgid ""
-"The length of calibration, as this is proportional to the accuracy. The "
-"option 'short' creates a quick profile, 'normal' a regular one, and 'long' "
-"takes a really long time, but is more precise and creates a better profile. "
-"Use 'ask' if you want the user to choose."
-msgstr ""
-"Kalibrazioaren luzera, zehaztasunarekiko proportzionala izaten baita. "
-"'Luzea' aukerak profil bikor bat sortzen du, 'normala' aukerak profil "
-"arrunta, eta 'luzea' aukerak denbora asko hartzen du, baina zehatzagoa da, "
-"eta profil hobea sortzen du. Erabili 'galdetu', erabiltzaileak aukeratzea "
-"nahi baduzu."
-
-#: ../data/gnome-color-manager.schemas.in.h:17
-msgid "The rendering intent to use for softproofs, e.g. 'perceptual'."
-msgstr ""
-"Softproof-etarako erabiltzeko errendatze-saiakera. Adib.: 'pertzeptuala'."
-
-#: ../data/gnome-color-manager.schemas.in.h:18
-msgid "The rendering intent to use for the display, e.g. 'perceptual'."
-msgstr "Pantailarako erabiltzeko errendatze-saiakera. Adib.: 'pertzeptuala'."
-
-#: ../data/gnome-color-manager.schemas.in.h:19
-msgid ""
-"This is the number of seconds in between notifying the user to recalibrate "
-"each display device. Set to 0 to disable the notification."
-msgstr ""
-"Erabiltzaileari pantaila-gailu bakoitza birkalibratzeko jakinarazteko igaro "
-"beharreko tartea (segundotan). Ezarri 0 jakinarazpena desgaitzeko."
-
-#: ../data/gnome-color-manager.schemas.in.h:20
-msgid ""
-"This is the number of seconds in between notifying the user to recalibrate "
-"each printer device. Set to 0 to disable the notification."
-msgstr ""
-"Erabiltzaileari inprimagailu bakoitza birkalibratzeko jakinarazteko igaro "
-"beharreko tartea (segundotan). Ezarri 0 jakinarazpena desgaitzeko."
-
-#: ../data/gnome-color-manager.schemas.in.h:21
-msgid "Whether ICC profiles should be loaded from external disks."
-msgstr "ICC profillak kanpoko diskoetatik kargatu behar diren edo ez."
-
-#: ../data/gnome-color-manager.schemas.in.h:22
-msgid ""
-"Whether the display should be globally corrected or left to applications."
-msgstr "Pantaila globalki zuzendu behar den edo aplikazioei utzi behar zaien."
-
-#: ../policy/org.gnome.color.policy.in.h:1
-msgid "Authentication is required to install the color profile for all users"
-msgstr ""
-"Autentifikazioa beharrezkoa da erabiltzaile guztientzako kolore-profila "
-"instalatzeko"
-
-#. SECURITY:
-#. - Normal users require admin authentication to install files system
-#. wide to apply color profiles for sessions that have not explicitly
-#. chosen profiles to apply.
-#. - This should not be set to 'yes' as unprivileged users could then
-#. set a profile set to all-white or all-black and thus make the
-#. other sessions unusable.
-#.
-#: ../policy/org.gnome.color.policy.in.h:10
-msgid "Install system color profiles"
-msgstr "Instalatu sistemaren kolore-profilak"
-
-#. TRANSLATORS: turn on all debugging
-#: ../src/egg-debug.c:390
-msgid "Show debugging information for all files"
-msgstr "Erakutsi fitxategi guztietarako arazketa-informazioa"
-
-#. TRANSLATORS: a list of modules to debug
-#: ../src/egg-debug.c:461
-msgid "Debug these specific modules"
-msgstr "Araztu modulu espezifiko hauek"
-
-#. TRANSLATORS: a list of functions to debug
-#: ../src/egg-debug.c:464
-msgid "Debug these specific functions"
-msgstr "Araztu funtzio espezifiko hauek"
-
-#. TRANSLATORS: save to a log
-#: ../src/egg-debug.c:467
-msgid "Log debugging data to a file"
-msgstr "Erregistratu arazketa-datuak fitxategi batean"
-
-#: ../src/egg-debug.c:471
-msgid "Debugging Options"
-msgstr "Arazketa-aukerak"
-
-#: ../src/egg-debug.c:471
-msgid "Show debugging options"
-msgstr "Erakutsi arazketa-aukerak"
-
-#. TRANSLATORS: title, default paramters needed to calibrate_argyll
-#: ../src/gcm-calibrate-argyll.c:402
+#: ../src/gcm-calibrate-argyll.c:349
 msgid "Getting default parameters"
 msgstr "Parametro lehenetsiak eskuratzen"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:405
+#: ../src/gcm-calibrate-argyll.c:354
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -248,33 +295,19 @@ msgstr ""
 "Honek aurrez kalibratzen du pantaila, koloretako adabakiak eta adabaki "
 "grisak bidaliz zure pantailara, eta hardware-gailu batekin neurtuz."
 
-#. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:496
+#: ../src/gcm-calibrate-argyll.c:446
 msgid "Reading the patches"
 msgstr "Adabakiak irakurtzea"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:498
+#: ../src/gcm-calibrate-argyll.c:451
 msgid "Reading the patches using the color measuring instrument."
-msgstr "Kolorea neurtzeko tresna bat erabilz adabakiak irakurtzea"
+msgstr "Adabakiak irakurtzea kolorea neurtzeko tresna bat erabiliz."
 
-#. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:584
-msgid "Generating the patches"
-msgstr "Adabakiak sortzea"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:586
-msgid "Generating the patches that will be measured with the color instrument."
-msgstr "Kolore tresnarekin neurtuko diren adabakiak sortzea"
-
-#. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:691
+#: ../src/gcm-calibrate-argyll.c:555
 msgid "Drawing the patches"
 msgstr "Adabakiak marraztea"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:693
+#: ../src/gcm-calibrate-argyll.c:560
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
@@ -282,212 +315,91 @@ msgstr ""
 "Sortutako adabakiak pantailarako marraztea; ondoren hardware-gailuak "
 "neurtuko ditu."
 
-#. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands" - YOU NEED TO STICK TO ASCII
-#. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands"
-#: ../src/gcm-calibrate-argyll.c:801 ../src/gcm-calibrate-argyll.c:1141
-msgid "Copyright (c)"
-msgstr "Copyright (c)"
-
-#. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:804 ../src/gcm-calibrate-argyll.c:1144
+#: ../src/gcm-calibrate-argyll.c:659 ../src/gcm-calibrate-argyll.c:1020
 msgid "Generating the profile"
 msgstr "Profila sortzea"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:806
+#: ../src/gcm-calibrate-argyll.c:664
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "Pantaila honekin erabiltzeko moduko ICC kolore-profila sortzea."
 
-#. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate-argyll.c:940
+#: ../src/gcm-calibrate-argyll.c:834
 msgid "Copying files"
 msgstr "Fitxategiak kopiatzea"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:942
+#: ../src/gcm-calibrate-argyll.c:839
 msgid "Copying source image, chart data and CIE reference values."
 msgstr ""
 "Sorburuko irudia, grafikoaren datuak eta CIE erreferentzia-balioak kopiatzea."
 
-#. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate-argyll.c:1020
+#: ../src/gcm-calibrate-argyll.c:910
 msgid "Measuring the patches"
 msgstr "Adabakiak neurtzea"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1022
+#: ../src/gcm-calibrate-argyll.c:915
 msgid "Detecting the reference patches and measuring them."
 msgstr "Erreferentzia-adabakiak detektatzea eta neurtzea."
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1146
+#: ../src/gcm-calibrate-argyll.c:1025
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "Gailu honekin erabiltzeko moduko ICC kolore-profila sortzea."
 
-#. TRANSLATORS: title, hardware refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:1335
-msgid "Set up display"
-msgstr "Konfiguratu pantaila"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1338
-msgid "Setting up display device for use…"
-msgstr "Konfiguratu pantaila-gailua erabiltzeko..."
-
-#. TRANSLATORS: title, patches are specific colors used in calibration
-#: ../src/gcm-calibrate-argyll.c:1439
+#: ../src/gcm-calibrate-argyll.c:1390
 msgid "Printing patches"
 msgstr "Inprimatze-adabakiak"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1442
+#: ../src/gcm-calibrate-argyll.c:1395
 msgid "Rendering the patches for the selected paper and ink."
-msgstr "Hautatutako paperarentzako eta tindarentzako adabakiak errendatzea."
+msgstr "Hautatutako paperarentzako eta tintarentzako adabakiak errendatzea."
 
-#. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate-argyll.c:1783
+#: ../src/gcm-calibrate-argyll.c:1769
 msgid "Wait for the ink to dry"
-msgstr "Itxaron tinda lehortu arte"
+msgstr "Itxaron tinta lehortu arte"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1786
+#: ../src/gcm-calibrate-argyll.c:1774
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
 msgstr ""
-"Itxaron minutu batzuk tinda lehortu arte. Tinda bustiaren profila egiten "
+"Itxaron minutu batzuk tinta lehortu arte. Tinta bustiaren profila egiten "
 "baduzu, profil eskasa lortuko duzu, eta agian kalte egingo dio neurtzeko "
 "tresnari."
 
-#. TRANSLATORS: the supplied image contains an alpha channel which we have to strip out
-#: ../src/gcm-calibrate-argyll.c:1929
-msgid "Image is not suitable without conversion"
-msgstr "Irudia ez da egokia bihurketarik gabe."
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1932
-msgid ""
-"The supplied image contains an alpha channel which the profiling tools do "
-"not understand."
-msgstr ""
-"Emandako irudiak alfa kanal bat dauka, eta kanal hori ez dute ulertzen "
-"profil-tresnek."
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:1936
-msgid ""
-"It is normally safe to convert the image, although you should ensure that "
-"the generated profile is valid."
-msgstr ""
-"Normalean segurua izaten da irudia bihurtzea, baina sortutako profila "
-"baliozkoa dela ziurtatu behar zenuke."
-
-#. TRANSLATORS: button text to convert the RGBA image into RGB
-#: ../src/gcm-calibrate-argyll.c:1943
-msgid "Convert"
-msgstr "Bihurtu"
-
-#. TRANSLATORS: title, instrument refers to a calibration device
-#: ../src/gcm-calibrate-argyll.c:2002
+#: ../src/gcm-calibrate-argyll.c:1951
 msgid "Set up instrument"
 msgstr "Konfiguratu tresna"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2005
+#: ../src/gcm-calibrate-argyll.c:1956
 msgid "Setting up the instrument for use…"
 msgstr "Tresna erabiltzeko konfiguratzen..."
 
-#. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2098
-msgid "Please attach instrument"
-msgstr "Erantsi tresna"
-
-#. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate-argyll.c:2106
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square like the image below."
-msgstr ""
-"Erantsi neurtzeko tresna pantailaren erdiko lauki grisean, beheko irudian "
-"bezala. "
-
-#. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate-argyll.c:2109
-msgid ""
-"Please attach the measuring instrument to the center of the screen on the "
-"gray square."
-msgstr "Erantsi neurtzeko tresna pantailaren erdiko lauki grisean. "
-
-#. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2122 ../src/gcm-calibrate-argyll.c:2176
-#: ../src/gcm-calibrate-argyll.c:2228
-msgid "Continue"
-msgstr "Jarraitu"
-
-#. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2132 ../src/gcm-calibrate-argyll.c:2182
-#: ../src/gcm-calibrate-argyll.c:2234 ../src/gcm-calibrate-argyll.c:2310
-#: ../src/gcm-calibrate-argyll.c:2370 ../src/gcm-calibrate-argyll.c:2411
-#: ../src/gcm-prefs.c:819 ../src/gcm-prefs.c:1987
-msgid "GNOME Color Manager"
-msgstr "GNOME kolore-kudeatzailea"
-
-#. TRANSLATORS: title, instrument is a hardware color calibration sensor
-#: ../src/gcm-calibrate-argyll.c:2153 ../src/gcm-calibrate-argyll.c:2205
-msgid "Please configure instrument"
-msgstr "Konfiguratu tresna"
-
-#. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2163
-msgid ""
-"Please set the measuring instrument to calibration mode like the image below."
-msgstr "Ezarri neurtzeko tresna kalibrazio moduan, beheko irudian bezala."
-
-#. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2166
-msgid "Please set the measuring instrument to calibration mode."
-msgstr "Ezarri neurketa tresna kalibrazio moduan."
-
-#. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
-#: ../src/gcm-calibrate-argyll.c:2215
-msgid ""
-"Please set the measuring instrument to screen mode like the image below, and "
-"ensure it is attached to the screen."
-msgstr ""
-"Ezarri neurtzeko tresna pantaila moduan, beheko irudian bezala, eta ziurtatu "
-"pantailari erantsita dagoela."
-
-#. TRANSLATORS: this is when the user has to change a setting on the sensor
-#: ../src/gcm-calibrate-argyll.c:2218
-msgid ""
-"Please set the measuring instrument to screen mode, and ensure it is "
-"attached to the screen."
-msgstr ""
-"Ezarri neurtzeko tresna pantaila moduan, eta ziurtatu pantailari erantsita "
-"dagoela."
-
-#. TRANSLATORS: title, the calibration failed
-#: ../src/gcm-calibrate-argyll.c:2289 ../src/gcm-calibrate-argyll.c:2337
+#: ../src/gcm-calibrate-argyll.c:2168 ../src/gcm-calibrate-argyll.c:2234
 msgid "Calibration error"
 msgstr "Kalibrazio-errorea"
 
-#. TRANSLATORS: message, the sample was not read correctly
-#: ../src/gcm-calibrate-argyll.c:2292
+#: ../src/gcm-calibrate-argyll.c:2173
 msgid "The sample could not be read at this time."
 msgstr "Adibidea ezin izan da irakurri oraingoan."
 
-#. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2300
-msgid "Try again"
+#: ../src/gcm-calibrate-argyll.c:2180 ../src/gcm-calibrate-argyll.c:2305
+#: ../src/gcm-calibrate-argyll.c:2331 ../src/gcm-calibrate-argyll.c:2368
+#: ../src/gcm-calibrate-argyll.c:2395
+msgid "Retry"
 msgstr "Saiatu berriro"
 
-#. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2341
+#. TRANSLATORS: this is the application name for libcanberra
+#: ../src/gcm-calibrate-argyll.c:2186 ../src/gcm-calibrate-argyll.c:2274
+#: ../src/gcm-calibrate-argyll.c:2311 ../src/gcm-calibrate-argyll.c:2337
+#: ../src/gcm-calibrate.c:440 ../src/gcm-calibrate.c:480
+#: ../src/gcm-calibrate.c:521 ../src/gcm-calibrate-main.c:203
+msgid "GNOME Color Manager"
+msgstr "GNOME kolore-kudeatzailea"
+
+#: ../src/gcm-calibrate-argyll.c:2240
 msgid "No firmware is installed for this instrument."
 msgstr "Ez dago tresna honentzako firmwarerik instalatuta."
 
-#. TRANSLATORS: message, the image wasn't good enough
-#: ../src/gcm-calibrate-argyll.c:2344
+#: ../src/gcm-calibrate-argyll.c:2245
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
@@ -495,8 +407,7 @@ msgstr ""
 "Ez da lortu behar bezala ereduarekin bat etortzea. Ziurtatu helburu mota "
 "egokia hautatu duzula."
 
-#. TRANSLATORS: message, the sensor got no readings
-#: ../src/gcm-calibrate-argyll.c:2348
+#: ../src/gcm-calibrate-argyll.c:2251
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
@@ -504,8 +415,7 @@ msgstr ""
 "Neurtzeko tresnak ez du baliozko irakurketarik jaso. Ziurtatu irekidura "
 "erabat irekita dagoela."
 
-#. TRANSLATORS: message, the colorimeter has got confused
-#: ../src/gcm-calibrate-argyll.c:2351
+#: ../src/gcm-calibrate-argyll.c:2256
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -513,34 +423,35 @@ msgstr ""
 "Neurtzeko tresna lanpetuta dago, eta ez da abiaraziko. Deskonektatu USBa, "
 "eta konektatu berriro, gailu hau erabiltzen saiatu aurretik."
 
-#. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-argyll.c:2389
+#: ../src/gcm-calibrate-argyll.c:2294
 msgid "Reading target"
 msgstr "Helburua irakurtzea"
 
-#. TRANSLATORS: message, no firmware is available
-#: ../src/gcm-calibrate-argyll.c:2392
+#: ../src/gcm-calibrate-argyll.c:2299
 msgid "Failed to read the strip correctly."
 msgstr "Huts egin du zerrenda behar bezala irakurtzean."
 
-#. TRANSLATORS: button text
-#: ../src/gcm-calibrate-argyll.c:2401
-msgid "Retry"
-msgstr "Saiatu berriro"
+#: ../src/gcm-calibrate-argyll.c:2320
+msgid "Reading sample"
+msgstr "Irakurketaren lagina"
+
+#: ../src/gcm-calibrate-argyll.c:2325
+msgid "Failed to read the color sample correctly."
+msgstr "Huts egin du kolore lagina behar bezala irakurtzean."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2424
+#: ../src/gcm-calibrate-argyll.c:2350
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "Irakurri %s zerrenda %s zerrendaren ordez."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2429
+#: ../src/gcm-calibrate-argyll.c:2355
 msgid "It looks like you've measured the wrong strip."
 msgstr "Badirudi okerreko zerrenda neurtu duzula."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2433
+#: ../src/gcm-calibrate-argyll.c:2359
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
@@ -548,19 +459,22 @@ msgstr ""
 "Zerrenda egokia neurtu baduzu benetan, paper berezia izan daiteke, besterik "
 "gabe."
 
-#. TRANSLATORS: button
-#: ../src/gcm-calibrate-argyll.c:2443
-msgid "Use anyway"
-msgstr "Erabili edozein kasutan"
+#: ../src/gcm-calibrate-argyll.c:2384
+msgid "Device Error"
+msgstr "Gailuaren errorea"
+
+#: ../src/gcm-calibrate-argyll.c:2389
+msgid "The device could not measure the color spot correctly."
+msgstr "Gailuak ezin izan du kolorearen puntua behar bezala neurtu."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2455
+#: ../src/gcm-calibrate-argyll.c:2403
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "%s zerrenda irakurtzeko prest"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2460
+#: ../src/gcm-calibrate-argyll.c:2408
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
@@ -569,7 +483,7 @@ msgstr ""
 "neurketa-kontrola."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2464
+#: ../src/gcm-calibrate-argyll.c:2412
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -578,7 +492,7 @@ msgstr ""
 "orriaren amaierara heltzen zarenean."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2468
+#: ../src/gcm-calibrate-argyll.c:2416
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -587,144 +501,275 @@ msgstr ""
 "duzun errenkadarekin."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2472
+#: ../src/gcm-calibrate-argyll.c:2420
 msgid ""
-"If you make a mistake just release the switch and you'll get a chance to try "
-"again."
+"If you make a mistake, just release the switch, and you'll get a chance to "
+"try again."
 msgstr ""
 "Akatsen bat egiten baduzu, askatu kontrola, eta berriro saiatu ahal izango "
 "zara."
 
-#. TRANSLATORS: title, printing reference files to media
-#: ../src/gcm-calibrate-argyll.c:2610
+#: ../src/gcm-calibrate-argyll.c:2534
 msgid "Printing"
 msgstr "Inprimatzea"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2617
+#: ../src/gcm-calibrate-argyll.c:2543
 msgid "Preparing the data for the printer."
 msgstr "Datuak inprimagailurako prestatzea."
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2623
+#: ../src/gcm-calibrate-argyll.c:2551
 msgid "Sending the targets to the printer."
 msgstr "Helburuak inprimagailura bidaltzea."
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2627
-msgid "Printing the targets..."
+#: ../src/gcm-calibrate-argyll.c:2557
+msgid "Printing the targets…"
 msgstr "Helburuak inprimatzen..."
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2631
+#: ../src/gcm-calibrate-argyll.c:2563
 msgid "The printing has finished."
 msgstr "Inprimatzea amaitu da."
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate-argyll.c:2635
+#: ../src/gcm-calibrate-argyll.c:2569
 msgid "The print was aborted."
 msgstr "Inprimatzea abortatu egin da."
 
-#. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:134
-msgid "Unknown model"
-msgstr "Modelo ezezaguna"
+#: ../src/gcm-calibrate.c:408
+msgid "Please attach instrument"
+msgstr "Erantsi tresna"
 
-#. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:148
-msgid "Unknown description"
-msgstr "Azalpen ezezaguna"
-
-#. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:162
-msgid "Unknown manufacturer"
-msgstr "Fabrikatzaile ezezaguna"
-
-#. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate.c:176
-msgid "Unknown device"
-msgstr "Gailu ezezaguna"
-
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-calibrate.c:382
-msgid "Could not detect screen type"
-msgstr "Ezin izan da pantaila mota detektatu"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:385
+#. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
+#: ../src/gcm-calibrate.c:417
 msgid ""
-"Please indicate if the screen you are trying to profile is an LCD, CRT or a "
-"projector."
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square like the image below."
 msgstr ""
-"Adierazi profila zehaztu nahi diozun pantaila LCD, CRT edo proiektorea den."
+"Erantsi neurtzeko tresna pantailaren erdiko lauki grisean, beheko irudian "
+"bezala. "
 
-#. TRANSLATORS: title, the hardware calibration device does not support projectors
-#: ../src/gcm-calibrate.c:410
-msgid "Could not calibrate and profile using this color measuring instrument"
-msgstr ""
-"Ezin izan da kalibratu eta profila egin kolorea neurtzeko tresna hau erabiliz"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:413
+#. TRANSLATORS: dialog message, ask user to attach device
+#: ../src/gcm-calibrate.c:420
 msgid ""
-"This color measuring instrument is not designed to support calibration and "
-"profiling projectors."
-msgstr ""
-"Kolorea neurtzeko tresna hau ez dago diseinatuta proiektoreen kalibrazioa "
-"eta profilak bideratzeko."
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square."
+msgstr "Erantsi neurtzeko tresna pantailaren erdiko lauki grisean. "
 
-#. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate.c:474
-msgid "Choose the precision of the profile"
-msgstr "Aukeratu profilaren doitasuna"
-
-#. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:477
-msgid "Please choose the profile precision."
-msgstr "Aukeratu profilaren doitasuna."
-
-#. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:480
-msgid "For a typical workflow, a normal precision profile is sufficient."
-msgstr ""
-"Ohiko lan-fluxu baterako, nahikoa izaten da doitasun normaleko profila."
-
-#. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:483
+#. TRANSLATORS: dialog message, ask user to attach device
+#: ../src/gcm-calibrate.c:427
 msgid ""
-"High precision profiles provide higher accuracy in color matching. "
-"Correspondingly, low precision profiles result in lower quality."
+"You will need to hold the device on the screen for the duration of the "
+"calibration."
 msgstr ""
-"Doitasun handiko profilak zehaztasun handiagoa ematen du kolorearekin bat-"
-"etortzeari dagokionez. Era berean, doitasun baxuko profilek kalitate "
-"baxuagoa "
-"sortzen dute."
+"Gailua pantailan eduki beharko duzu kalibrazioak irauten duen bitartean."
+
+#: ../src/gcm-calibrate.c:434 ../src/gcm-calibrate.c:463
+#: ../src/gcm-calibrate.c:504
+msgid "Continue"
+msgstr "Jarraitu"
+
+#: ../src/gcm-calibrate.c:456 ../src/gcm-calibrate.c:494
+msgid "Please configure instrument"
+msgstr "Konfiguratu tresna"
+
+#: ../src/gcm-calibrate.c:467
+msgid ""
+"Please set the measuring instrument to screen mode like the image below."
+msgstr "Ezarri neurtzeko tresna pantaila moduan, beheko irudian bezala."
+
+#: ../src/gcm-calibrate.c:472
+msgid "Please set the measuring instrument to screen mode."
+msgstr "Ezarri neurketa tresna pantaila moduan."
+
+#: ../src/gcm-calibrate.c:508
+msgid ""
+"Please set the measuring instrument to calibration mode like the image below."
+msgstr "Ezarri neurtzeko tresna kalibrazio moduan, beheko irudian bezala."
+
+#: ../src/gcm-calibrate.c:513
+msgid "Please set the measuring instrument to calibration mode."
+msgstr "Ezarri neurketa tresna kalibrazio moduan."
+
+#. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
+#. * aquired image of the calibration target, e.g. an image file that looks
+#. * a bit like this: http://www.colorreference.de/targets/target.jpg
+#: ../src/gcm-calibrate.c:681
+msgid "Select calibration target image"
+msgstr "Hautatu kalibrazio-helburuaren irudia"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: ../src/gcm-calibrate.c:694
+msgid "Supported images files"
+msgstr "Onartutako irudi-fitxategiak"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: ../src/gcm-calibrate.c:701 ../src/gcm-calibrate.c:755
+#: ../src/gcm-viewer.c:476
+msgid "All files"
+msgstr "Fitxategi guztiak"
+
+#. TRANSLATORS: dialog for file->open dialog
+#: ../src/gcm-calibrate.c:726
+msgid "Select CIE reference values file"
+msgstr "Hautatu CIE erreferentzia-balioen fitxategia"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: ../src/gcm-calibrate.c:748
+msgid "CIE values"
+msgstr "CIE balioak"
+
+#. TRANSLATORS: dialog for file->open dialog
+#: ../src/gcm-calibrate.c:821 ../src/gcm-viewer.c:448
+msgid "Select ICC Profile File"
+msgstr "Hautatu ICC profil-fitxategia"
+
+#: ../src/gcm-calibrate.c:824
+msgid "Open"
+msgstr "Ireki"
+
+#: ../src/gcm-calibrate-main.c:147
+msgid "Calibration is not complete"
+msgstr "Kalibrazioa ez da osatu"
+
+#: ../src/gcm-calibrate-main.c:150
+msgid "Are you sure you want to cancel the calibration?"
+msgstr "Ziur zaude kalibrazioa bertan behera uztea nahi duzula?"
+
+#: ../src/gcm-calibrate-main.c:153
+msgid "Continue calibration"
+msgstr "Jarraitu kalibrazioa"
+
+#: ../src/gcm-calibrate-main.c:157
+msgid "Cancel and close"
+msgstr "Utzi eta itxi"
+
+#. TRANSLATORS: this is the sound description
+#: ../src/gcm-calibrate-main.c:205
+msgid "Profiling completed"
+msgstr "Profila amaitu da"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:456 ../src/gcm-calibrate-main.c:1885
+msgid "Failed to calibrate"
+msgstr "Huts egin du kalibratzean"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:719
+msgid "Calibrate your camera"
+msgstr "Kalibratu kamera"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:723
+msgid "Calibrate your display"
+msgstr "Kalibratu pantaila"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:727
+msgid "Calibrate your printer"
+msgstr "Kalibratu inprimagailua"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:731
+msgid "Calibrate your device"
+msgstr "Kalibratu gailua"
+
+#. TRANSLATORS: this is the final intro page text
+#: ../src/gcm-calibrate-main.c:743
+msgid ""
+"Any existing screen correction will be temporarily turned off and the "
+"brightness set to maximum."
+msgstr ""
+"Edozein pantaila-zuzenketa aldi baterako desaktibatu egingo da eta distira "
+"gehienekora ezarriko da."
+
+#. TRANSLATORS: this is the final intro page text
+#: ../src/gcm-calibrate-main.c:750
+msgid "You can cancel this process at any stage by pressing the cancel button."
+msgstr ""
+"Prozesu hau edozein urratsetan bertan behera utz dezakezu 'Utzi' botoian "
+"klik eginez."
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:756
+msgid "Introduction"
+msgstr "Sarrera"
+
+#: ../src/gcm-calibrate-main.c:840
+msgid "Show File"
+msgstr "Erakutsi fitxategia"
+
+#: ../src/gcm-calibrate-main.c:843
+msgid "Click here to show the profile"
+msgstr "Egin klik hemen profila erakusteko"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:866
+msgid "All done!"
+msgstr "Eginda."
+
+#. TRANSLATORS: this is the final summary
+#: ../src/gcm-calibrate-main.c:876
+msgid "The camera has been calibrated successfully."
+msgstr "Kamera ongi kalibratu da."
+
+#. TRANSLATORS: this is the final summary
+#: ../src/gcm-calibrate-main.c:880
+msgid "The display has been calibrated successfully."
+msgstr "Pantaila ongi kalibratu da."
+
+#. TRANSLATORS: this is the final summary
+#: ../src/gcm-calibrate-main.c:884
+msgid "The printer has been calibrated successfully."
+msgstr "Inprimagailua ongi kalibratu da."
+
+#. TRANSLATORS: this is the final summary
+#: ../src/gcm-calibrate-main.c:888
+msgid "The device has been calibrated successfully."
+msgstr "Gailua ongi kalibratu da."
+
+#. TRANSLATORS: this is the final summary
+#: ../src/gcm-calibrate-main.c:895
+msgid ""
+"To view details about the new profile or to undo the calibration visit the "
+"<a href=\"control-center://color\">control center</a>."
+msgstr ""
+"Profil berriari buruzko xehetasunak  ikusteko edo kalibrazioa desegiteko "
+"begiratu <a href=\"control-center://color\">kontrol-zentroa</a>."
+
+#: ../src/gcm-calibrate-main.c:904
+msgid ""
+"You can use the profile with <a href=\"import-linux\">Linux</a>, <a href="
+"\"import-osx\">Apple OS X</a> and <a href=\"import-windows\">Microsoft "
+"Windows</a> systems."
+msgstr ""
+"Profila <a href=\"import-linux\">Linux</a>, <a href=\"import-osx\">Apple OS "
+"X</a> eta <a href=\"import-windows\">Microsoft Windows</a> sistemekin erabil "
+"dezakezu."
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:916 ../src/gcm-calibrate-main.c:1898
+msgid "Summary"
+msgstr "Laburpena"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:940
+msgid "Performing calibration"
+msgstr "Kalibrazioa egiten"
+
+#: ../src/gcm-calibrate-main.c:953
+msgid "Calibration is about to start"
+msgstr "Kalibrazioa hastera doa"
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:971
+msgid "Action"
+msgstr "Ekintza"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:488
-msgid ""
-"The high precision profiles also require more paper and time for reading the "
-"color swatches."
-msgstr ""
-"Doitasun handiko profilak paper eta denbora gehiago behar izaten dute "
-"kolore-laginak irakurtzeko."
+#: ../src/gcm-calibrate-main.c:994
+msgid "Calibration checklist"
+msgstr "Kalibrazioaren egiaztapen-zerrenda"
 
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:494
-msgid ""
-"The high precision profiles also require more time for reading the color "
-"swatches."
-msgstr ""
-"Doitasun handiko profilak ere denbora gehiago behar izaten dute "
-"kolore-laginak irakurtzeko."
-
-#. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated
-#: ../src/gcm-calibrate.c:568
-msgid "Custom"
-msgstr "Pertsonalizatu"
-
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:600
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1001
 msgid ""
 "Before calibrating the display, it is recommended to configure your display "
 "with the following settings to get optimal results."
@@ -733,7 +778,7 @@ msgstr ""
 "gomendatzen da, emaitza optimoak lortzeko."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:603
+#: ../src/gcm-calibrate-main.c:1004
 msgid ""
 "You may want to consult the owner's manual for your display on how to "
 "achieve these settings."
@@ -742,17 +787,17 @@ msgstr ""
 "agian, ezarpen horiek nola lortu ikusteko."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:606
+#: ../src/gcm-calibrate-main.c:1007
 msgid "Reset your display to the factory defaults."
 msgstr "Berrezarri pantaila fabrikatik etorritako lehenespenen arabera."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:609
+#: ../src/gcm-calibrate-main.c:1010
 msgid "Disable dynamic contrast if your display has this feature."
 msgstr "Desgaitu kontraste dinamikoa, pantailak eginbide hori badauka."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:612
+#: ../src/gcm-calibrate-main.c:1013
 msgid ""
 "Configure your display with custom color settings and ensure the RGB "
 "channels are set to the same values."
@@ -761,14 +806,14 @@ msgstr ""
 "balio berdinekin ezarri direla."
 
 #. TRANSLATORS: dialog message, addition to bullet item
-#: ../src/gcm-calibrate.c:615
+#: ../src/gcm-calibrate-main.c:1016
 msgid "If custom color is not available then use a 6500K color temperature."
 msgstr ""
 "Kolore pertsonalizatua ez badago erabilgarri, erabili 6500K kolore-"
 "tenperatura."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:618
+#: ../src/gcm-calibrate-main.c:1019
 msgid ""
 "Adjust the display brightness to a comfortable level for prolonged viewing."
 msgstr ""
@@ -776,7 +821,7 @@ msgstr ""
 "jartzeko."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:621
+#: ../src/gcm-calibrate-main.c:1024
 msgid ""
 "For best results, the display should have been powered for at least 15 "
 "minutes before starting the calibration."
@@ -784,1377 +829,1692 @@ msgstr ""
 "Emaitza hobeak lortzeko, pantaila piztuta eduki beharko zenuke 15 minutuz "
 "kalibrazioari ekin aurretik."
 
-#: ../src/gcm-calibrate.c:625
-msgid "Display setup"
-msgstr "Pantailaren konfigurazioa"
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1030
+msgid "Check Settings"
+msgstr "Egiaztatu ezarpenak"
 
-#. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:700
-msgid "Select reference image"
-msgstr "Hautatu erreferentziako irudia"
+#: ../src/gcm-calibrate-main.c:1081
+msgid "Calibration and profiling software is not installed."
+msgstr "Kalibrazio eta profilen softwarea ez dago instalatuta."
 
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:713
-msgid "Supported images files"
-msgstr "Onartutako irudi-fitxategiak"
+#: ../src/gcm-calibrate-main.c:1084
+msgid "These tools are required to build color profiles for devices."
+msgstr "Gailuetarako kolore-profilak sortzeko beharrezkoak dira tresna hauek."
 
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:720 ../src/gcm-calibrate.c:772
-#: ../src/gcm-prefs.c:543
-msgid "All files"
-msgstr "Fitxategi guztiak"
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1087
+msgid "More software is required!"
+msgstr "Software gehiago behar da."
 
-#. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:745
-msgid "Select CIE reference values file"
-msgstr "Hautatu CIE erreferentzia-balioen fitxategia"
+#: ../src/gcm-calibrate-main.c:1096
+msgid "Install required software"
+msgstr "Instalatu beharrezko softwarea"
 
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:765
-msgid "CIE values"
-msgstr "CIE balioak"
-
-#. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:838 ../src/gcm-prefs.c:515
-msgid "Select ICC Profile File"
-msgstr "Hautatu ICC profil-fitxategia"
-
-#: ../src/gcm-calibrate.c:841
-msgid "Open"
-msgstr "Ireki"
-
-#. TRANSLATORS: title, you can profile all at once, or in steps
-#: ../src/gcm-calibrate.c:877
-msgid "Please choose a profiling mode"
-msgstr "Aukeratu profil modu bat"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:880
-msgid ""
-"Please indicate if you want to profile a local printer, generate some "
-"reference images, or process some reference images."
-msgstr ""
-"Adierazi inprimagailu lokal baten profila egin nahi duzun, erreferentziako "
-"irudi batzuk sortu nahi dituzun, edo erreferentziako irudi batzuk "
-"prozesatzea "
-"nahi dituzun."
-
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-calibrate.c:992
-msgid "Install missing files?"
-msgstr "Instalatu falta diren fitxategiak?"
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1106
+msgid "Install Tools"
+msgstr "Instalatu tresnak"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate.c:995
+#: ../src/gcm-calibrate-main.c:1156
 msgid "Common color target files are not installed on this computer."
 msgstr ""
 "Ohiko koloreen helburuko fitxategiak ez daude instalatuta ordenagailu "
 "honetan."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate.c:997
+#: ../src/gcm-calibrate-main.c:1158
 msgid "Color target files are needed to convert the image to a color profile."
 msgstr ""
 "Koloreen helburuko fitxategiak behar dira irudia kolore-profil batera "
 "bihurtzeko."
 
 #. TRANSLATORS: dialog message, asking if it's okay to install them
-#: ../src/gcm-calibrate.c:999
+#: ../src/gcm-calibrate-main.c:1160
 msgid "Do you want them to be installed?"
 msgstr "Instalatu nahi dituzu?"
 
 #. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
-#: ../src/gcm-calibrate.c:1001
+#: ../src/gcm-calibrate-main.c:1162
 msgid "If you already have the correct file, you can skip this step."
 msgstr "Dagoeneko fitxategi egokia badaukazu, urrats hau salta dezakezu."
 
-#. TRANSLATORS: button, skip installing a package
-#: ../src/gcm-calibrate.c:1006 ../src/gcm-prefs.c:702
-msgid "Do not install"
-msgstr "Ez instalatu"
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1165
+msgid "Optional data files available"
+msgstr "Datuen aukerako fitxategiak erabilgarri"
 
-#. TRANSLATORS: button, install a package
-#. TRANSLATORS: button text
-#. TRANSLATORS: button, install a package
-#: ../src/gcm-calibrate.c:1008 ../src/gcm-import.c:188 ../src/gcm-prefs.c:700
-msgid "Install"
-msgstr "Instalatuta"
+#: ../src/gcm-calibrate-main.c:1174
+msgid "Install Now"
+msgstr "Instalatu orain"
 
-#. TRANSLATORS: this is the window title for when the user selects the chart type.
-#. A chart is a type of reference image the user has purchased.
-#: ../src/gcm-calibrate.c:1022
-msgid "Please select chart type"
-msgstr "Hautatu grafiko mota"
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1185
+msgid "Install Targets"
+msgstr "Instalatu helburuak"
 
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:1026
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1205
+msgid "CMP Digital Target 3"
+msgstr "CMP 3 helburu digitala"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1209
+msgid "CMP DT 003"
+msgstr "CMP DT 003"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1213
+msgid "Color Checker"
+msgstr "Kolore-egiaztatzailea"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1217
+msgid "Color Checker DC"
+msgstr "DC kolore-egiaztatzailea"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1221
+msgid "Color Checker SG"
+msgstr "SG kolore-egiaztatzailea"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1225
+msgid "Hutchcolor"
+msgstr "Hutchcolor"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1229
+msgid "i1 RGB Scan 1.4"
+msgstr "i1 RGB 1.4 digitalizazioa"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1233
+msgid "IT8.7/2"
+msgstr "IT8.7/2"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1237
+msgid "Laser Soft DC Pro"
+msgstr "Laser Soft DC Pro"
+
+#. TRANSLATORS: this is probably a brand name
+#: ../src/gcm-calibrate-main.c:1241
+msgid "QPcard 201"
+msgstr "QPcard 201"
+
+#. TRANSLATORS: dialog message, preface. A calibration target looks like
+#. * this: http://www.colorreference.de/targets/target.jpg
+#: ../src/gcm-calibrate-main.c:1319
 msgid ""
 "Before profiling the device, you have to manually capture an image of a "
-"calibrated target and save it as a TIFF image file."
+"calibration target and save it as a TIFF image file."
 msgstr ""
 "Gailuaren profila egin baino lehen, kalibratutako helburu baten irudia eskuz "
-"hartu behar duzu, eta TIFF irudi gisa gorde."
+"hartu behar duzu, eta gorde TIFF irudi gisa."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:1031
+#: ../src/gcm-calibrate-main.c:1324
 msgid ""
 "Ensure that the contrast and brightness are not changed and color correction "
-"profiles are not applied."
+"profiles have not been applied."
 msgstr ""
 "Ziurtatu kontrastea eta distira ez direla aldatu, kolorea zuzentzeko "
-"profilak ez direla aplikatu."
+"profilak ez dira aplikatu."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:1034
+#: ../src/gcm-calibrate-main.c:1327
 msgid ""
 "The device sensor should have been cleaned prior to scanning and the output "
 "file resolution should be at least 200dpi."
 msgstr ""
-"Gailuaren sensorea garbitu egin beharko litzateke eskaneatu aurretik, "
+"Gailuaren sentsorea garbitu egin beharko litzateke eskaneatu aurretik, "
 "irteerako fitxategi-bereizmenak 200 dpi-koa izan beharko luke gutxienez."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:1040
+#: ../src/gcm-calibrate-main.c:1333
 msgid ""
 "Ensure that the white-balance has not been modified by the camera and that "
 "the lens is clean."
 msgstr ""
 "Ziurtatu zurien balantzea ez duela aldatu kamerak, eta leiarra garbi dagoela."
 
-#. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:1044
+#. TRANSLATORS: this is the message body for the chart selection
+#: ../src/gcm-calibrate-main.c:1337
+msgid "Please select the calibration target type."
+msgstr "Hautatu kalibrazio-helburu mota."
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1340
+msgid "What target type do you have?"
+msgstr "Zer helburu mota daukazu?"
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1372
+msgid "Select Target"
+msgstr "Hautatu helburua"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1411
+msgid "Choose your display type"
+msgstr "Aukeratu pantaila mota"
+
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1418
+msgid "Select the monitor type that is attached to your computer."
+msgstr "Hautatu ordenagailuarekin konektatuta dagoen pantaila mota"
+
+#: ../src/gcm-calibrate-main.c:1420
+msgid "LCD"
+msgstr "LCD"
+
+#: ../src/gcm-calibrate-main.c:1429
+msgid "CRT"
+msgstr "CRT"
+
+#: ../src/gcm-calibrate-main.c:1438
+msgid "Plasma"
+msgstr "Plasma"
+
+#: ../src/gcm-calibrate-main.c:1447
+msgid "Projector"
+msgstr "Proiektorea"
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1459
+msgid "Choose Display Type"
+msgstr "Aukeratu pantaila mota"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1497
+msgid "Choose your display target white point"
+msgstr "Aukeratu pantaila motaren puntu zuria"
+
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1504
 msgid ""
-"For best results, the reference target should also be less than two years "
-"old."
+"Most displays should be calibrated to a CIE D65 illuminant for general usage."
 msgstr ""
-"Emaitza onak lortzeko, erreferentzia-helburuak ere bi urte baino gutxiago "
-"izan behar lituzke."
+"Pantaila gehienak CIE D65en luminantziara kalibratu beharko lirateke "
+"erabilera orokorrera."
+
+#: ../src/gcm-calibrate-main.c:1506
+msgid "CIE D50 (Printing and publishing)"
+msgstr "CIE D50 (inprimaketa eta argitalpena)"
+
+#: ../src/gcm-calibrate-main.c:1515
+msgid "CIE D55"
+msgstr "CIE D55"
+
+#: ../src/gcm-calibrate-main.c:1524
+msgid "CIE D65 (Photography and graphics)"
+msgstr "CIE D65 (argazkigintza eta grafikoak)"
+
+#: ../src/gcm-calibrate-main.c:1534
+msgid "CIE D75"
+msgstr "CIE D75"
+
+#: ../src/gcm-calibrate-main.c:1543
+msgid "Native (Already set manually)"
+msgstr "Jatorrizkoa (jadanik eskuz ezarrita)"
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1555
+msgid "Choose Display Whitepoint"
+msgstr "Aukeratu pantailaren puntu zuria"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1593
+msgid "Choose profiling mode"
+msgstr "Aukeratu profilaren modua"
+
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1600
+msgid ""
+"Please indicate if you want to profile a local printer, generate some test "
+"patches, or profile using existing test patches."
+msgstr ""
+"Adierazi inprimagailu lokal baten profila egin, probako adabaki batzuk sortu "
+"edo dauden probako adabaki batzuk prozesatzea nahi dituzun."
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1637
+msgid "Calibration Mode"
+msgstr "Kalibrazio-modua"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1679
+msgid "Choose calibration quality"
+msgstr "Aukeratu kalibrazio-kalitatea"
+
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1686
+msgid "Higher quality calibration requires many color samples and more time."
+msgstr ""
+"Kalibrazio maila altuagoak kolore-lagin eta denbora gehiago eskatzen du"
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate.c:1047
-msgid "Please select the chart type which corresponds to your reference file."
-msgstr "Hautatu zure erreferentzia-fitxategiari dagokion grafiko mota."
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:556
-msgid "CMP Digital Target 3"
-msgstr "CMP Digital Target 3"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:560
-msgid "CMP DT 003"
-msgstr "CMP DT 003"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:564
-msgid "Color Checker"
-msgstr "Color Checker"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:568
-msgid "Color Checker DC"
-msgstr "Color Checker DC"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:572
-msgid "Color Checker SG"
-msgstr "Color Checker SG"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:576
-msgid "Hutchcolor"
-msgstr "Hutchcolor"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:580
-msgid "i1 RGB Scan 1.4"
-msgstr "i1 RGB Scan 1.4"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:584
-msgid "IT8.7/2"
-msgstr "IT8.7/2"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:588
-msgid "Laser Soft DC Pro"
-msgstr "Laser Soft DC Pro"
-
-#. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-dialog.c:592
-msgid "QPcard 201"
-msgstr "QPcard 201"
-
-#. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:200
-msgid "Introduction to display calibration"
-msgstr "Pantaila-kalibrazioaren sarrera"
-
-#. TRANSLATORS: message text, an ICC profile is a file that characterizes the device
-#: ../src/gcm-calibrate-manual.c:222
+#: ../src/gcm-calibrate-main.c:1690
 msgid ""
-"This dialog will help calibrate your display and create a custom ICC profile."
+"A higher precision profile provides higher accuracy in color matching but "
+"requires more time for reading the color patches."
 msgstr ""
-"Elkarrizketa-koadro honek pantaila kalibratzen eta ICC profil pertsonalizatu "
-"bat sortzen lagunduko dizu."
+"Xehetasun altuagoko profilak doitasun altuagoa eskaintzen du koloreak "
+"parekatzean, baina denbora gehiago behar izaten dute kolore-laginak "
+"irakurtzeko."
 
-#. TRANSLATORS: message text, telling the user they are in for the long haul
-#: ../src/gcm-calibrate-manual.c:225
-msgid ""
-"The calibration will involve several steps so that an accurate profile can "
-"be obtained."
+#. TRANSLATORS: this is the message body for the chart selection
+#: ../src/gcm-calibrate-main.c:1693
+msgid "For a typical workflow, a normal precision profile is sufficient."
 msgstr ""
-"Kalibrazioak hainbat urrats izango ditu, profil zehatz bat lortu ahal "
-"izateko."
+"Ohiko lan-fluxu baterako, nahikoa izaten da doitasun normaleko profila."
 
-#. TRANSLATORS: message text, this is a lie. It will take more than a few minutes, but we don't want to scare the hapless user
-#: ../src/gcm-calibrate-manual.c:228
-msgid "It should only take a few minutes."
-msgstr "Minutu batzuk nahikoa izan beharko lirateke."
+#. TRANSLATORS: dialog message, preface
+#: ../src/gcm-calibrate-main.c:1698
+msgid "The high precision profile also requires more paper and printer ink."
+msgstr "Doitasun handiko profilak paper eta tinta gehiago behar izaten du."
 
-#. TRANSLATORS: message text, when you're comparing colors, it helps if the image is a bit out of focus otherwise the
-#. * fovea (center bit of the eye) tries to 'pick out' a colour, rather than take the average reading
-#: ../src/gcm-calibrate-manual.c:239
-msgid ""
-"It may help to sit further from the screen or to squint at the calibration "
-"images in order to accurately compare the colors."
-msgstr ""
-"Ondo etor liteke pantailatik urrunago esertzea, edo begiak pixka bat ixtea "
-"kalibrazio irudien aurrean, koloreak zehaztasunez konparatzeko."
+#. TRANSLATORS: radio options for calibration precision
+#: ../src/gcm-calibrate-main.c:1703
+msgid "Accurate"
+msgstr "Doitasuna"
 
-#. TRANSLATORS: message text, tell the use that they can go back and forwards, as the human eye sucks
-#: ../src/gcm-calibrate-manual.c:242
-msgid "You can repeat the calibration steps as many times as you want."
-msgstr "Kalibrazio-urratsak errepika ditzakezu, nahi bezainbestetan."
+#: ../src/gcm-calibrate-main.c:1704
+msgid "Normal"
+msgstr "Normala"
 
-#. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:254
+#: ../src/gcm-calibrate-main.c:1705
+msgid "Quick"
+msgstr "Bizkorra"
+
+#: ../src/gcm-calibrate-main.c:1712
 #, c-format
-msgid "Create table item %i/%i"
-msgstr "Sortu %i/%i taula-elementua"
+msgid "(about %i sheet of paper)"
+msgid_plural "(about %i sheets of paper)"
+msgstr[0] "(paper %i)"
+msgstr[1] "(%i paper)"
 
-#. TRANSLATORS: message text
-#: ../src/gcm-calibrate-manual.c:275
-msgid ""
-"Please try to match up the gray square with the surrounding alternating "
-"bars. You should match the brightness first, and then if required change the "
-"color tint so it looks plain gray."
-msgstr ""
-"Saiatu koadro grisa inguruko barren arabera doitzen. Distira doitu beharko "
-"zenuke lehendabizi, eta ondoren, beharrezkoa bada, kolore-tinda aldatu, gris "
-"soila izan dadin."
-
-#. TRANSLATORS: dialog title
-#: ../src/gcm-calibrate-manual.c:372
-msgid "Summary"
-msgstr "Laburpena"
-
-#. TRANSLATORS: message text
-#: ../src/gcm-calibrate-manual.c:391
-msgid ""
-"This display is now calibrated. You can change the current profile using the "
-"Color Profiles program."
-msgstr ""
-"Pantaila kalibratuta dago orain. Uneko profila alda dezakezu Kolore-profilen "
-"programa erabiliz."
-
-#. TRANSLATORS: error message
-#: ../src/gcm-client.c:1103
-msgid "This device already exists"
-msgstr "Gailu hau badago lehendik ere."
-
-#. TRANSLATORS: this is when the device is not recognized
-#: ../src/gcm-colorimeter.c:391
-msgid "Measuring instrument not recognized"
-msgstr "Neurtzeko tresna ez da ezagutzen"
-
-#. TRANSLATORS: this is the name of the internal panel
-#: ../src/gcm-device-xrandr.c:128
-msgid "Laptop LCD"
-msgstr "Eramangarriaren LCD pantaila"
-
-#. TRANSLATORS: this is when the EDID file cannot be read
-#: ../src/gcm-dump-edid.c:58
-msgid "Cannot load file contents"
-msgstr "Ezin da kargatu fitxategi-edukia"
-
-#. TRANSLATORS: this is when the EDID cannot be parsed
-#: ../src/gcm-dump-edid.c:67
-msgid "Cannot parse EDID contents"
-msgstr "Ezin da analizatu EDID edukia"
-
-#. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:75
-msgid "Monitor name"
-msgstr "Monitorearen izena"
-
-#. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:80
-msgid "Vendor name"
-msgstr "Hornitzailearen izena"
-
-#. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:85
-msgid "Serial number"
-msgstr "Serie-zenbakia"
-
-#. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:90
-msgid "Text string"
-msgstr "Testu-katea"
-
-#. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:95
-msgid "PNP identifier"
-msgstr "PNP identifikatzailea"
-
-#. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:101
-msgid "Size"
-msgstr "Tamaina"
-
-#. TRANSLATORS: this is debugging output for the supplied EDID file
-#: ../src/gcm-dump-edid.c:106
-msgid "Gamma"
-msgstr "Gamma"
-
-#. TRANSLATORS: command line option: a list of files to parse
-#: ../src/gcm-dump-edid.c:136
-msgid "EDID dumps to parse"
-msgstr "Analizatzeko EDID iraulketak"
-
-#. TRANSLATORS: this is the filename we are displaying
-#: ../src/gcm-dump-edid.c:159
-msgid "EDID dump"
-msgstr "EDID iraulketa"
-
-#. TRANSLATORS: we saved the EDID to a file - second parameter is a filename
-#: ../src/gcm-dump-edid.c:196
+#: ../src/gcm-calibrate-main.c:1723
 #, c-format
-msgid "Saved %i bytes to %s"
-msgstr "%i byte gorde dira hemen: %s"
+msgid "(about %i minute)"
+msgid_plural "(about %i minutes)"
+msgstr[0] "(minutu %i)"
+msgstr[1] "(%i minutu)"
 
-#. TRANSLATORS: we saved the EDID to a file - parameter is a filename
-#: ../src/gcm-dump-edid.c:201
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1764
+msgid "Calibration Quality"
+msgstr "Kalibrazio-kalitatea"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1800
+msgid "Profile title"
+msgstr "Profilaren titulua"
+
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1807
+msgid "Choose a title to identify the profile on your system."
+msgstr "Aukeratu titulu bat sistemaren profila identifikatzeko."
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1828
+msgid "Profile Title"
+msgstr "Profilaren titulua"
+
+#. TRANSLATORS: this is the page title
+#: ../src/gcm-calibrate-main.c:1850
+msgid "Insert sensor hardware"
+msgstr "Txertatu sentsorearen hardwarea"
+
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1857
+msgid "You need to insert sensor hardware to continue."
+msgstr "Sentsorearen hardwarea txertatu behar duzu aurrera jarraitzeko."
+
+#. TRANSLATORS: this is the calibration wizard page title
+#: ../src/gcm-calibrate-main.c:1863
+msgid "Sensor Check"
+msgstr "Sentsorearen egiaztaketa"
+
+#. TRANSLATORS: this is intro page text
+#: ../src/gcm-calibrate-main.c:1892
+msgid "The device could not be found. Ensure it is plugged in and turned on."
+msgstr ""
+"Ezin izan da gailua aukeratu. Ziurtatu konektatuta eta piztuta dagoela."
+
+#. TRANSLATORS: this is saved in the profile
+#: ../src/gcm-calibrate-main.c:2159
+msgid "Unknown serial"
+msgstr "Serie ezezaguna"
+
+#. TRANSLATORS: this is saved in the profile
+#: ../src/gcm-calibrate-main.c:2164
+msgid "Unknown model"
+msgstr "Modelo ezezaguna"
+
+#. TRANSLATORS: this is saved in the profile
+#: ../src/gcm-calibrate-main.c:2169
+msgid "Unknown description"
+msgstr "Azalpen ezezaguna"
+
+#. TRANSLATORS: this is saved in the profile
+#: ../src/gcm-calibrate-main.c:2174
+msgid "Unknown manufacturer"
+msgstr "Fabrikatzaile ezezaguna"
+
+#. TRANSLATORS: this is the copyright string, where it might be
+#. * "Copyright (c) 2009 Edward Scissorhands"
+#. * BIG RED FLASHING NOTE: YOU NEED TO USE ASCII ONLY
+#: ../src/gcm-calibrate-main.c:2181
+msgid "Copyright (c)"
+msgstr "Copyright (c)"
+
+#. TRANSLATORS: we can make this modal (stay on top of) another window
+#: ../src/gcm-calibrate-main.c:2299 ../src/gcm-picker.c:793
+#: ../src/gcm-viewer.c:1850
+msgid "Set the parent window to make this modal"
+msgstr "Ezarri leiho gurasoa hau modal bihurtzeko"
+
+#. TRANSLATORS: show just the one profile, rather than all
+#: ../src/gcm-calibrate-main.c:2302
+msgid "Set the specific device to calibrate"
+msgstr "Ezarri gailu zehatza kalibratzeko"
+
+#: ../src/gcm-calibrate-main.c:2343
+msgid "No device was specified!"
+msgstr "Ez da gailurik zehaztu."
+
+#. TRANSLATORS: this is when there is no profile for the device
+#: ../src/gcm-cell-renderer-profile-text.c:71
+msgid "No profile"
+msgstr "Profilik ez"
+
+#: ../src/gcm-cell-renderer-profile-text.c:88
 #, c-format
-msgid "Failed to save EDID to %s"
-msgstr "Huts egin du EDID gordetzean hemen: %s"
+msgid "Default %s"
+msgstr "Lehenetsia %s"
 
-#. TRANSLATORS: command line option: a list of files to install
-#: ../src/gcm-dump-profile.c:108
-msgid "Profiles to view"
-msgstr "Ikusteko profilak"
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile has been auto-generated for this hardware
+#: ../src/gcm-cell-renderer-profile-text.c:103
+msgid "Default: "
+msgstr "Lehenetsia: "
 
-#. TRANSLATORS: this just dumps the profile to the screen
-#: ../src/gcm-dump-profile.c:121
-msgid "ICC profile dump program"
-msgstr "ICC profilak iraultzeko programa"
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile his a standard space like AdobeRGB
+#: ../src/gcm-cell-renderer-profile-text.c:108
+msgid "Colorspace: "
+msgstr "Kolore-espazioa: "
 
-#. TRANSLATORS: command line option
-#: ../src/gcm-fix-profile.c:124
-msgid "The description of the profile"
-msgstr "Profilaren azalpena"
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile is a test profile
+#: ../src/gcm-cell-renderer-profile-text.c:113
+msgid "Test profile: "
+msgstr "Probako profila: "
 
-#. TRANSLATORS: command line option
-#: ../src/gcm-fix-profile.c:127
-msgid "The copyright of the profile"
-msgstr "Profilaren copyrighta"
+#. TRANSLATORS: turn on all debugging
+#: ../src/gcm-debug.c:105
+msgid "Show debugging information for all files"
+msgstr "Erakutsi fitxategi guztietarako arazketa-informazioa"
 
-#. TRANSLATORS: command line option
-#: ../src/gcm-fix-profile.c:130
-msgid "The model of the profile"
-msgstr "Profilaren modeloa"
+#: ../src/gcm-debug.c:162
+msgid "Debugging Options"
+msgstr "Arazketa-aukerak"
 
-#. TRANSLATORS: command line option
-#: ../src/gcm-fix-profile.c:133
-msgid "The manufacturer of the profile"
-msgstr "Profilaren fabrikatzailea"
-
-#. TRANSLATORS: command line option: a list of icc files to fix
-#: ../src/gcm-fix-profile.c:136
-msgid "Profiles to fix"
-msgstr "Konpontzeko profilak"
-
-#. TRANSLATORS: this fixes broken profiles
-#: ../src/gcm-fix-profile.c:147
-msgid "ICC profile fix program"
-msgstr "ICC profilak konpontzeko programa"
+#: ../src/gcm-debug.c:162
+msgid "Show debugging options"
+msgstr "Erakutsi arazketa-aukerak"
 
 #. TRANSLATORS: command line option: a list of catalogs to install
-#. TRANSLATORS: command line option: a list of files to install
-#: ../src/gcm-import.c:83 ../src/gcm-install-system-wide.c:126
+#: ../src/gcm-import.c:101
 msgid "ICC profile to install"
 msgstr "Instalatzeko ICC profila"
 
-#. TRANSLATORS: nothing was specified on the command line
-#: ../src/gcm-import.c:105
+#: ../src/gcm-import.c:127
 msgid "No filename specified"
 msgstr "Ez da fitxategi-izenik zehaztu"
 
-#. TRANSLATORS: could not read file
-#: ../src/gcm-import.c:118
+#: ../src/gcm-import.c:145 ../src/gcm-viewer.c:1484
 msgid "Failed to open ICC profile"
 msgstr "Huts egin du ICC profila irekitzean"
 
-#. TRANSLATORS: parsing error
-#: ../src/gcm-import.c:121
+#: ../src/gcm-import.c:150
 #, c-format
 msgid "Failed to parse file: %s"
 msgstr "Huts egin du fitxategia analizatzean: %s"
 
-#. TRANSLATORS: color profile already been installed
-#: ../src/gcm-import.c:156
-msgid "ICC profile already installed"
-msgstr "ICC profila instalatuta dago lehendik."
-
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:173
+#: ../src/gcm-import.c:171
 #, c-format
-msgid "Import ICC color profile %s?"
-msgstr "Inportatu %s ICC kolore-profila?"
+msgid "Profile description: %s"
+msgstr "Profilaren azalpena: %s"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:176
-msgid "Import ICC color profile?"
-msgstr "Inportatu ICC kolore-profila?"
+#: ../src/gcm-import.c:181
+msgid "Profile copyright:"
+msgstr "Profilaren copyright-a:"
 
-#. ask confirmation
-#: ../src/gcm-import.c:184
-msgid "Import ICC profile"
-msgstr "Inportatu ICC profila"
+#: ../src/gcm-import.c:217
+msgid "Color profile is already imported"
+msgstr "Kolore-profila jadanik inportatuta dago."
 
-#. TRANSLATORS: could not read file
-#: ../src/gcm-import.c:209 ../src/gcm-prefs.c:572
-msgid "Failed to copy file"
-msgstr "Huts egin du fitxategia kopiatzean"
+#: ../src/gcm-import.c:221 ../src/gcm-import.c:265
+msgid "Show Details"
+msgstr "Erakutsi xehetasunak"
+
+#. TRANSLATORS: the profile type
+#: ../src/gcm-import.c:237
+msgid "Import display color profile?"
+msgstr "Inportatu pantailaren kolore-profila?"
+
+#. TRANSLATORS: the profile type
+#: ../src/gcm-import.c:241
+msgid "Import device color profile?"
+msgstr "Inportatu gailuaren kolore-profila?"
+
+#. TRANSLATORS: the profile type
+#: ../src/gcm-import.c:245
+msgid "Import named color profile?"
+msgstr "Inportatu izendatutako kolore-profila?"
+
+#. TRANSLATORS: the profile type
+#: ../src/gcm-import.c:249
+msgid "Import color profile?"
+msgstr "Inportatu kolore-profila?"
+
+#. TRANSLATORS: button text
+#: ../src/gcm-import.c:264 ../src/gcm-viewer.c:451
+msgid "Import"
+msgstr "Inportatu"
+
+#: ../src/gcm-import.c:289 ../src/gcm-viewer.c:1517
+msgid "Failed to import file"
+msgstr "Huts egin du fitxategia inportatzean"
 
 #. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
-#: ../src/gcm-inspect.c:60
+#: ../src/gcm-inspect.c:55
 msgid "Description:"
 msgstr "Azalpena:"
 
 #. TRANSLATORS: this is the ICC profile copyright
-#: ../src/gcm-inspect.c:63
+#: ../src/gcm-inspect.c:58
 msgid "Copyright:"
 msgstr "Copyrighta:"
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:102
+#: ../src/gcm-inspect.c:193
 msgid "Root window profile:"
 msgstr "Erro-leihoaren profila:"
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:114
+#: ../src/gcm-inspect.c:205
 msgid "Root window protocol version:"
 msgstr "Erro-leihoaren protokoloaren bertsioa:"
 
-#: ../src/gcm-inspect.c:130
-#, c-format
-msgid "Output profile '%s':"
-msgstr "'%s' irteerako profila:"
-
-#. TRANSLATORS: this is when the profile has not been set
-#: ../src/gcm-inspect.c:137
-msgid "not set"
-msgstr "ezarri gabe"
+#. TRANSLATORS: no DBus session bus
+#: ../src/gcm-inspect.c:230 ../src/gcm-inspect.c:299 ../src/gcm-utils.c:117
+msgid "Failed to connect to session bus:"
+msgstr "Huts egin du saioaren bus/arekin konektatzean:"
 
 #. TRANSLATORS: the DBus method failed
-#: ../src/gcm-inspect.c:200 ../src/gcm-inspect.c:269 ../src/gcm-inspect.c:315
-#: ../src/gcm-inspect.c:379 ../src/gcm-inspect.c:472
-msgid "The request failed"
-msgstr "Eskaerak huts egin du"
+#: ../src/gcm-inspect.c:248 ../src/gcm-inspect.c:317 ../src/gcm-utils.c:141
+msgid "The request failed:"
+msgstr "Eskaerak huts egin du:"
 
-#. TRANSLATORS: no rofile has been asigned to this device
-#: ../src/gcm-inspect.c:208
-msgid "There are no ICC profiles for this device"
-msgstr "Ez dago ICC profilik gailu honetarako"
+#. TRANSLATORS: no profile has been asigned to this device
+#: ../src/gcm-inspect.c:257
+msgid "There are no ICC profiles assigned to this file"
+msgstr "Ez dago ICC profilik fitxategi honetara esleituta"
 
 #. TRANSLATORS: this is a list of profiles suitable for the device
-#: ../src/gcm-inspect.c:213 ../src/gcm-inspect.c:328 ../src/gcm-inspect.c:392
+#: ../src/gcm-inspect.c:262 ../src/gcm-inspect.c:334
 msgid "Suitable profiles for:"
 msgstr "Honetarako profil egokiak:"
 
 #. TRANSLATORS: no profile has been asigned to this window
-#: ../src/gcm-inspect.c:323
+#: ../src/gcm-inspect.c:329
 msgid "There are no ICC profiles for this window"
 msgstr "Ez dago ICC profilik leiho honetarako"
 
-#. TRANSLATORS: no rofile has been asigned to this device type
-#: ../src/gcm-inspect.c:387
-msgid "There are no ICC profiles for this device type"
-msgstr "Ez dago ICC profilik gailu mota honetarako"
-
-#. TRANSLATORS: this is the rendering intent of the output
-#: ../src/gcm-inspect.c:427
-msgid "Rendering intent (display):"
-msgstr "Errendatze-ahalegina (pantaila):"
-
-#. TRANSLATORS: this is the rendering intent of the printer
-#: ../src/gcm-inspect.c:430
-msgid "Rendering intent (softproof):"
-msgstr "Errendatze-ahalegina (errendatze-saiakera):"
-
-#. TRANSLATORS: this is filename of the default colorspace
-#: ../src/gcm-inspect.c:433
-msgid "RGB Colorspace:"
-msgstr "GBU kolore-espazioa:"
-
-#. TRANSLATORS: this is filename of the default colorspace
-#: ../src/gcm-inspect.c:436
-msgid "CMYK Colorspace:"
-msgstr "CMYK kolore-espazioa:"
+#. TRANSLATORS: command line option
+#: ../src/gcm-inspect.c:365
+msgid "Show xserver properties"
+msgstr "Erakutsi xserver-en propietateak"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:506
-msgid "Show X11 properties"
-msgstr "Erakutsi X11 propietateak"
+#: ../src/gcm-inspect.c:368
+msgid "Get the profiles for a specific file"
+msgstr "Eskuratu fitxategi zehatz baterako profilak"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:509
-msgid "Get the profiles for a specific device"
-msgstr "Eskuratu gailu espezifiko baterako profilak"
-
-#. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:512
+#: ../src/gcm-inspect.c:371
 msgid "Get the profile for a specific window"
 msgstr "Eskuratu leiho espezifiko baterako profila"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:515
-msgid "Get the profiles for a specific device type"
-msgstr "Eskuratu gailu mota espezifiko baterako profilak"
-
-#. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:518
+#: ../src/gcm-inspect.c:374
 msgid "Dump all details about this system"
 msgstr "Irauli sistema honi buruzko xehetasun guztiak"
 
 #. TRANSLATORS: just dumps the EDID to disk
-#: ../src/gcm-inspect.c:531
+#: ../src/gcm-inspect.c:387
 msgid "EDID inspect program"
 msgstr "EDID ikuskatzeen programa"
 
-#. TRANSLATORS: this is when the user does --type=mickeymouse
-#: ../src/gcm-inspect.c:548
-msgid "Device type not recognized"
-msgstr "Gailu mota ez da ezagutzen"
+#. TRANSLATORS: this is when the error is invalid
+#. TRANSLATORS: this is when the ambient light level is unknown
+#. TRANSLATORS: this the ICC profile type
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-picker.c:214 ../src/gcm-picker.c:221 ../src/gcm-viewer.c:686
+#: ../src/gcm-viewer.c:736
+msgid "Unknown"
+msgstr "Ezezaguna"
 
-#. command line argument, the ID of the device
-#: ../src/gcm-install-system-wide.c:123
-msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
-msgstr "Gailuaren IDa, adibidez: 'xrandr_ibm_france_ltn154p2_l05'"
+#: ../src/gcm-picker.c:367
+msgid "No colorimeter is attached."
+msgstr "Kolorimetroa ez dago erantsita."
 
-#. TRANSLATORS: tool that is used when copying profiles system-wide
-#: ../src/gcm-install-system-wide.c:141
-msgid "GNOME Color Manager ICC profile system-wide installer"
-msgstr ""
-"GNOME kolore-kudeatzailearen ICC profilaren instalatzailea, sistema osokoa"
+#: ../src/gcm-picker.c:384
+msgid "The sensor has no native driver."
+msgstr "Sentsoreak ez dauka jatorrizko kontrolatzailerik."
 
-#. TRANSLATORS: user did not specify a valid filename
-#: ../src/gcm-install-system-wide.c:149
-msgid "You need to specify exactly one ICC profile filename"
-msgstr "Zehazki ICC profil baten fitxategi-izen bat zehaztu behar duzu"
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
+#: ../src/gcm-picker.c:393
+msgid "The attached colorimeter is not capable of reading a spot color."
+msgstr "Erantsitako kolorimetroa ez da puntuaren kolorea irakurtzeko gai. "
 
-#. TRANSLATORS: user did not specify a valid device ID
-#: ../src/gcm-install-system-wide.c:157
-msgid "You need to specify exactly one device ID"
-msgstr "Zehazki gailu ID bat zehaztu behar duzu"
+#. TRANSLATORS: this is when there are no profiles that can be used;
+#. * the search term is either "RGB" or "CMYK"
+#: ../src/gcm-picker.c:646
+#, c-format
+msgid "No %s color spaces available"
+msgstr "Ez dago %s kolore-espaziorik erabilgarri"
 
-#. TRANSLATORS: user did not specify a valid device ID
-#: ../src/gcm-install-system-wide.c:166
-msgid "The device ID has invalid characters"
-msgstr "Gailu IDak karaktere baliogabeak ditu"
+#. TRANSLATORS: tool that is used to pick colors
+#: ../src/gcm-picker.c:811
+msgid "GNOME Color Manager Color Picker"
+msgstr "GNOME kolore-kudeatzailearen kolore-hautatzailea"
 
-#. TRANSLATORS: only able to install profiles as root
-#: ../src/gcm-install-system-wide.c:176
-msgid "This program can only be used by the root user"
-msgstr "Root erabiltzaileak bakarrik erabil dezake programa hau"
+#. TRANSLATORS: this is where the ICC profile has no description
+#: ../src/gcm-profile.c:162
+msgid "Missing description"
+msgstr "Azalpena falta da"
 
-#. TRANSLATORS: only able to install profiles with an absolute path
-#: ../src/gcm-install-system-wide.c:185
-msgid "The source filename must be absolute"
-msgstr "Ituruburuko fitxategi-izenak absolutua izan behar du"
+#. TRANSLATORS: this is the profile creation date strftime format
+#: ../src/gcm-profile.c:583
+msgid "%B %e %Y, %I:%M:%S %p"
+msgstr "%Y-%e-%B, %I:%M:%S %p"
 
-#. TRANSLATORS: error details
-#: ../src/gcm-install-system-wide.c:196
-msgid "Failed to get content type"
-msgstr "Huts egin du eduki mota eskuratzean"
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-utils.c:328 ../src/gcm-viewer.c:717
+msgid "RGB"
+msgstr "GBU"
 
-#. TRANSLATORS: the content type is the detected type of file
-#: ../src/gcm-install-system-wide.c:206
-msgid "Content type was incorrect"
-msgstr "Eduki mota ez da zuzena"
+#. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-utils.c:332 ../src/gcm-viewer.c:729
+msgid "CMYK"
+msgstr "CMYK"
 
-#. TRANSLATORS: the program must never be directly run
-#: ../src/gcm-install-system-wide.c:215
-msgid "This program must only be run through pkexec"
-msgstr "Programa hau pkexec bidez bakarrik exekutatu behar da"
-
-#. TRANSLATORS: PolicyKit has gone all insane on us, and we refuse to parse junk
-#: ../src/gcm-install-system-wide.c:224
-msgid "PKEXEC_UID must be set to an integer value"
-msgstr "Osoko balio bat ezarri behar da PKEXEC_UID gisa"
-
-#. TRANSLATORS: we are complaining that a file must be really owned by the user who called this program
-#: ../src/gcm-install-system-wide.c:233
-msgid "The ICC profile must be owned by you"
-msgstr "ICC profilaren jabea izan behar zara"
-
-#. TRANSLATORS: only able to install profiles with an absolute path
-#: ../src/gcm-install-system-wide.c:246
-msgid "The destination filename must be absolute"
-msgstr "Helburuko fitxategi-izenak absolutua izan behar du"
-
-#. TRANSLATORS: error details
-#: ../src/gcm-install-system-wide.c:256
-msgid "Failed to copy"
-msgstr "Huts egin du kopiatzean"
-
-#. TRANSLATORS: could not save for all users
-#: ../src/gcm-prefs.c:152
-msgid "Failed to save defaults for all users"
-msgstr "Huts egin du erabiltzaile guztien lehenespenak gordetzean"
-
-#. TRANSLATORS: this is where no profile is selected
-#: ../src/gcm-prefs.c:180
-msgid "None"
-msgstr "Bat ere ez"
-
-#. TRANSLATORS: this is where the user can click and import a profile
-#: ../src/gcm-prefs.c:184
-msgid "Other profile…"
-msgstr "Beste profil bat..."
-
-#. TRANSLATORS: could not calibrate
-#: ../src/gcm-prefs.c:318
-msgid "Failed to calibrate device"
-msgstr "Huts egin du gailua kalibratzean"
-
-#. TRANSLATORS: could not calibrate
-#: ../src/gcm-prefs.c:353
-msgid "Failed to calibrate printer"
-msgstr "Huts egin du inprimagailua kalibratzean"
+#. TRANSLATORS: this is the colorspace type
+#: ../src/gcm-utils.c:336
+msgid "gray"
+msgstr "grisa"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-prefs.c:467
+#: ../src/gcm-viewer.c:394
 msgid "Permanently delete profile?"
 msgstr "Betiko ezabatu profila?"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-prefs.c:470
+#: ../src/gcm-viewer.c:397
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr "Ziur zaude profil hau sistematik kendu nahi dituzula betiko?"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-prefs.c:473
+#: ../src/gcm-viewer.c:400
 msgid "Delete"
 msgstr "Ezabatu"
 
-#: ../src/gcm-prefs.c:518
-msgid "Import"
-msgstr "Inportatu"
-
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-prefs.c:536
+#: ../src/gcm-viewer.c:469
 msgid "Supported ICC profiles"
 msgstr "Onartutako ICC profilak"
 
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-prefs.c:687
-msgid "Install missing calibration and profiling software?"
-msgstr "Instalatu falta den kalibrazio eta profilen softwarea?"
-
-#. TRANSLATORS: dialog message saying the argyllcms is not installed
-#: ../src/gcm-prefs.c:691
-msgid "Calibration and profiling software is not installed on this computer."
-msgstr ""
-"Kalibrazio eta profilen softwarea ez dago instalatuta ordenagailu honetan."
-
-#. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-prefs.c:693
-msgid "These tools are required to build color profiles for devices."
-msgstr "Gailuetarako kolore-profilak sortzeko beharrezkoak dira tresna hauek."
-
-#. TRANSLATORS: dialog message, asking if it's okay to install it
-#: ../src/gcm-prefs.c:695
-msgid "Do you want them to be automatically installed?"
-msgstr "Automatikoki instalatu nahi dituzu?"
-
-#. TRANSLATORS: this is the sound description
-#: ../src/gcm-prefs.c:821
-msgid "Profiling completed"
-msgstr "Profila amaitu da"
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:877
-msgid "Failed to create virtual device"
-msgstr "Huts egin du gailu birtuala sortzean"
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:885
-msgid "Failed to save virtual device"
-msgstr "Huts egin du gailu birtuala gordetzean"
-
-#. TRANSLATORS: could not add virtual device
-#: ../src/gcm-prefs.c:894
-msgid "Failed to add virtual device"
-msgstr "Huts egin du gailu birtuala gehitzean"
-
 #. TRANSLATORS: could not read file
-#: ../src/gcm-prefs.c:938
-msgid "Failed to delete file"
-msgstr "Huts egin du fitxategia ezabatzean"
-
-#. TRANSLATORS: this is when the button is sensitive
-#: ../src/gcm-prefs.c:1069
-msgid "Create a color profile for the selected device"
-msgstr "Sortu kolore-profil bat hautatutako gailuarentzat"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1074
-msgid "Cannot profile: No device is selected"
-msgstr "Ezin da profila egin: ez da gailurik hautatu"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1086
-msgid "Cannot calibrate: The device is not connected"
-msgstr "Ezin da kalibratu: gailua ez dago konektatuta"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1094
-msgid "Cannot calibrate: The display driver does not support XRandR 1.3"
-msgstr "Ezin da kalibratu: pantaila-kontrolatzaileak ez du onartzen XRandR 1.3"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1102
-msgid "Cannot calibrate: The measuring instrument is not plugged in"
-msgstr "Ezin da kalibratu: neurtzeko tresna ez dago konektatuta"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1117
-msgid "Cannot profile: The measuring instrument is not plugged in"
-msgstr "Ezin da profila egin: neurtzeko tresna ez dago konektatuta"
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1125
-msgid ""
-"Cannot profile: The measuring instrument does not support printer profiling"
-msgstr ""
-"Ezin da profila egin: neurtzeko tresnak ez du onartzen inprimagailu-profila."
-
-#. TRANSLATORS: this is when the button is insensitive
-#: ../src/gcm-prefs.c:1132
-msgid "Cannot profile this type of device"
-msgstr "Ezin da mota honetako gailuen profilik egin."
-
-#. TRANSLATORS: Some shitty binary drivers do not support per-head gamma controls.
-#. * Whilst this does not matter if you only have one monitor attached, it means you
-#. * can't color correct additional monitors or projectors.
-#: ../src/gcm-prefs.c:1296
-msgid "Per-device settings not supported. Check your display driver."
-msgstr ""
-"Gailukako ezarpenak ez dira onartzen. Egiaztatu pantailaren kontrolatzailea."
+#: ../src/gcm-viewer.c:505
+msgid "Failed to copy file"
+msgstr "Huts egin du fitxategia kopiatzean"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1381
+#: ../src/gcm-viewer.c:659
 msgid "Input device"
 msgstr "Sarrerako gailua"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1385
+#: ../src/gcm-viewer.c:663
 msgid "Display device"
 msgstr "Pantaila-gailua"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1389
+#: ../src/gcm-viewer.c:667
 msgid "Output device"
 msgstr "Irteerako gailua"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1393
+#: ../src/gcm-viewer.c:671
 msgid "Devicelink"
 msgstr "Gailu-esteka"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1397
+#: ../src/gcm-viewer.c:675
 msgid "Colorspace conversion"
 msgstr "Kolore-espazioaren bihurketa"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-prefs.c:1401
+#: ../src/gcm-viewer.c:679
 msgid "Abstract"
 msgstr "Abstraktua"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1405
+#: ../src/gcm-viewer.c:683
 msgid "Named color"
 msgstr "Kolore izenduna"
 
-#. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1408 ../src/gcm-prefs.c:1458
-msgid "Unknown"
-msgstr "Ezezaguna"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1419
+#: ../src/gcm-viewer.c:697
 msgid "XYZ"
 msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1423
+#: ../src/gcm-viewer.c:701
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1427
+#: ../src/gcm-viewer.c:705
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1431
+#: ../src/gcm-viewer.c:709
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1435
+#: ../src/gcm-viewer.c:713
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#: ../src/gcm-prefs.c:1439 ../src/gcm-prefs.c:2204 ../data/gcm-prefs.ui.h:59
-msgid "RGB"
-msgstr "GBU"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1443
+#: ../src/gcm-viewer.c:721
 msgid "Gray"
 msgstr "Grisa"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1447
+#: ../src/gcm-viewer.c:725
 msgid "HSV"
 msgstr "ÑSB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
-#: ../src/gcm-prefs.c:1451 ../src/gcm-prefs.c:2208 ../data/gcm-prefs.ui.h:5
-msgid "CMYK"
-msgstr "CMYK"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-prefs.c:1455
+#: ../src/gcm-viewer.c:733
 msgid "CMY"
 msgstr "CMY"
 
+#. TRANSLATORS: e.g. sRGB or adbode RGB
+#: ../src/gcm-viewer.c:788
+msgid "Standard space"
+msgstr "Espazio estandarra"
+
+#. TRANSLATORS: the raw EDID MD5 of the display device
+#: ../src/gcm-viewer.c:790
+msgid "Display checksum"
+msgstr "Pantailaren kontrol-batura"
+
+#: ../src/gcm-viewer.c:791
+msgid "Display model"
+msgstr "Pantailaren eredua"
+
+#: ../src/gcm-viewer.c:792
+msgid "Display serial number"
+msgstr "Pantailaren serie-zenbakia"
+
+#. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
+#: ../src/gcm-viewer.c:794
+msgid "Display PNPID"
+msgstr "Pantailaren PNPIDa"
+
+#. TRANSLATORS: who made the display
+#: ../src/gcm-viewer.c:796
+msgid "Display vendor"
+msgstr "Pantailaren saltzailea"
+
+#. TRANSLATORS: the raw profile MD5
+#: ../src/gcm-viewer.c:798
+msgid "File checksum"
+msgstr "Fitxategiaren kontrol-batura"
+
+#. TRANSLATORS: the color framework, e.g. 'colord'
+#: ../src/gcm-viewer.c:800
+msgid "Framework product"
+msgstr "Lan-markoaren produktua"
+
+#. TRANSLATORS: the framework binary, e.g. gcm-viewer
+#: ../src/gcm-viewer.c:802
+msgid "Framework program"
+msgstr "Lan-markoaren programa"
+
+#. TRANSLATORS: the framework release, e.g. '1.22'
+#: ../src/gcm-viewer.c:804
+msgid "Framework version"
+msgstr "Lan-markoaren bertsioa"
+
+#. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
+#: ../src/gcm-viewer.c:806
+msgid "Data source type"
+msgstr "Datuen iturburu mota"
+
+#. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
+#: ../src/gcm-viewer.c:808
+msgid "Mapping format"
+msgstr "Mapaketaren formatua"
+
+#. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
+#: ../src/gcm-viewer.c:810
+msgid "Mapping qualifier"
+msgstr "Mapaketaren kalifikatzailea"
+
+#. TRANSLATORS: The original device the profile was made for
+#: ../src/gcm-viewer.c:812
+msgid "Mapping device"
+msgstr "Mapaketaren gailua"
+
+#. TRANSLATORS: The average error when making the profile
+#: ../src/gcm-viewer.c:814
+msgid "Delta-E average"
+msgstr "Delta-E batez bestekoa"
+
+#. TRANSLATORS: the maximum error when making the profile
+#: ../src/gcm-viewer.c:816
+msgid "Delta-E maximum"
+msgstr "Delta-E gehienezkoa"
+
+#. TRANSLATORS: the RMS error when making the profile
+#: ../src/gcm-viewer.c:818
+msgid "Delta-E RMS"
+msgstr "Delta-E RMS"
+
+#. TRANSLATORS: The device name, e.g. 'huey'
+#: ../src/gcm-viewer.c:820
+msgid "Calibration device"
+msgstr "Kalibrazio-gailua"
+
+#. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
+#: ../src/gcm-viewer.c:822
+msgid "Screen surface finish"
+msgstr "Pantailaren gainazala amaituta"
+
+#. TRANSLATORS: e.g. DVI or VGA
+#: ../src/gcm-viewer.c:824
+msgid "Connection type"
+msgstr "Konexio mota"
+
+#. TRANSLATORS: e.g. Screen brightness in percent
+#: ../src/gcm-viewer.c:826
+msgid "Screen brightness"
+msgstr "Pantailaren distira"
+
+#. TRANSLATORS: e.g. the 3D volume of the gamut graph
+#: ../src/gcm-viewer.c:828
+msgid "Gamut volume"
+msgstr "Gamaren bolumena"
+
+#. TRANSLATORS: e.g. what proportion of sRGB is covered
+#: ../src/gcm-viewer.c:830
+msgid "sRGB coverage"
+msgstr "sGBU estalkia"
+
+#. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
+#: ../src/gcm-viewer.c:832
+msgid "Adobe RGB coverage"
+msgstr "Adobe GBU estalkia"
+
+#. TRANSLATORS: the profile is broken
+#: ../src/gcm-viewer.c:943
+msgid "No description has been set"
+msgstr "Ez da azalpenik ezarri"
+
+#. TRANSLATORS: the profile is broken
+#: ../src/gcm-viewer.c:947
+msgid "No copyright has been set"
+msgstr "Ez da copyright-ik ezarri"
+
+#. TRANSLATORS: the profile is broken
+#: ../src/gcm-viewer.c:951
+msgid "The display compensation table is invalid"
+msgstr "Pantailaren konpentsazioaren taula baliogabea da"
+
+#. TRANSLATORS: the profile is broken
+#: ../src/gcm-viewer.c:955
+msgid "A scum dot is present for media white"
+msgstr "Zabor-puntua ageri da euskarriaren zurian"
+
+#. TRANSLATORS: the profile is broken
+#: ../src/gcm-viewer.c:959
+msgid "The gray axis contains significant amounts of color"
+msgstr "Ardatz gris batek kolore kopuru nabarmena dauka"
+
+#. TRANSLATORS: the profile is broken
+#: ../src/gcm-viewer.c:963
+msgid "The gray axis is non-monotonic"
+msgstr "Ardatz gris bat ez da monotonikoa"
+
+#. TRANSLATORS: the profile is broken
+#: ../src/gcm-viewer.c:967
+msgid "One or more of the primaries are invalid"
+msgstr "Oinarrizko bat edo gehiago baliogabeak dira"
+
+#. TRANSLATORS: the profile is broken
+#: ../src/gcm-viewer.c:971
+msgid "The primaries do not add to white"
+msgstr "Oinarrizkoak ez zaio zuriari gehitzen"
+
+#. TRANSLATORS: the profile is broken
+#: ../src/gcm-viewer.c:975
+msgid "One or more of the primaries is unlikely"
+msgstr "Oinarrizko bat edo gehiago ez dirudi izan daitezkeenik"
+
+#. TRANSLATORS: the profile is broken
+#: ../src/gcm-viewer.c:979
+msgid "The white is not D50 white"
+msgstr "Zuria ez da D50 zuria"
+
+#. TRANSLATORS: the profile is broken
+#: ../src/gcm-viewer.c:983
+msgid "Unknown warning type"
+msgstr "Abisu mota ezezaguna"
+
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-prefs.c:1576
+#: ../src/gcm-viewer.c:1146
 msgid "Yes"
 msgstr "Bai"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-prefs.c:1579
+#: ../src/gcm-viewer.c:1149
 msgid "No"
 msgstr "Ez"
 
-#. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/gcm-prefs.c:1723
-msgid "No hardware support"
-msgstr "Ez dago hardware-euskarririk"
-
-#. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/gcm-prefs.c:1727 ../src/gcm-prefs.c:2039
-msgid "disconnected"
-msgstr "deskonektatuta"
-
-#. TRANSLATORS: the profile was of the wrong sort for this device
-#: ../src/gcm-prefs.c:1839
-msgid "Could not import profile"
-msgstr "Ezin izan da profila inportatu"
-
-#: ../src/gcm-prefs.c:1839
-msgid "The profile was of the wrong type for this device"
-msgstr "Profilaren mota okerra da gailu honentzat"
-
-#. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:1975
-msgid "Device added"
-msgstr "Gailua gehitu da"
-
-#. TRANSLATORS: this is a sound description
-#: ../src/gcm-prefs.c:1979
-msgid "Device removed"
-msgstr "Gailua kendu da"
-
-#. TRANSLATORS: this is when there are no profiles that can be used; the search term is either "RGB" or "CMYK"
-#: ../src/gcm-prefs.c:2261
-#, c-format
-msgid "No %s color spaces available"
-msgstr "Ez dago %s kolore-espaziorik erabilgarri"
-
-#. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2616 ../data/gcm-prefs.ui.h:32
-msgid "Display"
-msgstr "Pantaila"
-
-#. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2620
-msgid "Scanner"
-msgstr "Eskanerra"
-
-#. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2624
-msgid "Printer"
-msgstr "Inprimagailua"
-
-#. TRANSLATORS: device type
-#: ../src/gcm-prefs.c:2628
-msgid "Camera"
-msgstr "Kamera"
-
-#. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-prefs.c:2695
-msgid "Set the parent window to make this modal"
-msgstr "Ezarri leiho gurasoa hau modal bihurtzeko"
-
-#. TRANSLATORS: button for more details about the vcgt failure
-#: ../src/gcm-prefs.c:2991
-msgid "More Information"
-msgstr "Informazio gehiago"
-
-#. TRANSLATORS: this is displayed while the devices are being probed
-#: ../src/gcm-prefs.c:2994
-msgid "Loading list of devices…"
-msgstr "Gailuen zerrenda kargatzen..."
-
-#. TRANSLATORS: this is displayed when the profile is crap
-#: ../src/gcm-prefs.c:3001
-msgid ""
-"This profile does not have the information required for whole-screen color "
-"correction."
-msgstr ""
-"Profil honek ez dauka pantaila osoko kolore-zuzenketarako behar den "
-"informazioa."
-
-#. TRANSLATORS: this is where the ICC profile_lcms1 has no description
-#: ../src/gcm-profile.c:130
-msgid "Missing description"
-msgstr "Azalpena falta da"
-
-#. TRANSLATORS: button: this is to open GCM
-#: ../src/gcm-session.c:153
-msgid "Recalibrate now"
-msgstr "Birkalibratu orain"
-
-#. TRANSLATORS: button: this is to ignore the recalibrate notifications
-#: ../src/gcm-session.c:156
-msgid "Ignore"
-msgstr "Ez ikusi egin"
-
-#. TRANSLATORS: this is when the device has not been recalibrated in a while
-#: ../src/gcm-session.c:183
-msgid "Recalibration required"
-msgstr "Birkalibratu behar da"
-
-#. TRANSLATORS: this is when the display has not been recalibrated in a while
-#: ../src/gcm-session.c:193
-#, c-format
-msgid "The display '%s' should be recalibrated soon."
-msgstr "'%s' pantaila laster birkalibratu behar litzateke."
-
-#. TRANSLATORS: this is when the printer has not been recalibrated in a while
-#: ../src/gcm-session.c:200
-#, c-format
-msgid "The printer '%s' should be recalibrated soon."
-msgstr "'%s' inprimagailua laster birkalibratu behar litzateke."
-
-#: ../src/gcm-session.c:263
-msgid "Do not exit after the request has been processed"
-msgstr "Ez irten eskaera prozesatu ondoren."
-
-#. TRANSLATORS: program name, a session wide daemon to watch for updates and changing system state
-#: ../src/gcm-session.c:280 ../data/gcm-prefs.ui.h:9
-msgid "Color Management"
-msgstr "Kolore-kudeatzailea"
-
-#: ../src/gcm-session.c:282
-msgid "Color Management D-Bus Service"
-msgstr "Kolore-kudeatzailearen D-Bus zerbitzua"
-
-#. TRANSLATORS: this is the profile creation date strftime format
-#: ../src/gcm-utils.c:514
-msgid "%B %e %Y, %I:%M:%S %p"
-msgstr "%Y-%e-%B, %I:%M:%S %p"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:527
-msgid "Perceptual"
-msgstr "Pertzepziokoa"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:531
-msgid "Relative colormetric"
-msgstr "Koloremetria erlatiboa"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:535
-msgid "Saturation"
-msgstr "Saturazioa"
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-utils.c:539
-msgid "Absolute colormetric"
-msgstr "Koloremetria absolutua"
-
-#: ../data/gcm-calibrate.ui.h:1
-msgid "Blue:"
-msgstr "Urdina:"
-
-#: ../data/gcm-calibrate.ui.h:2 ../data/gcm-prefs.ui.h:4
-msgid "Brightness:"
-msgstr "Distira:"
-
-#: ../data/gcm-calibrate.ui.h:3
-msgid "CRT"
-msgstr "CRT"
-
-#. The user wants to create images suitable to send to a photo-processing lab
-#: ../data/gcm-calibrate.ui.h:5
-msgid "Create images for printing"
-msgstr "Sortu inprimatzeko irudiak"
-
-#. Expander label, for use when the user wants to see the VTE widget and what the calibration tool is actually doing
-#: ../data/gcm-calibrate.ui.h:6 ../data/gcm-spawn.ui.h:2
-msgid "Details"
-msgstr "Xehetasunak"
-
-#. window title
-#: ../data/gcm-calibrate.ui.h:8
-msgid "Device Calibration"
-msgstr "Gailu-kalibrazioa"
-
-#. The user wants to analyse images that have been printed by a photo-processing lab
-#: ../data/gcm-calibrate.ui.h:10
-msgid "Generate profile from printed images"
-msgstr "Sortu profila inprimatutako irudietatik"
-
-#: ../data/gcm-calibrate.ui.h:11
-msgid "Green:"
-msgstr "Berdea:"
-
-#. The precision of the calibration
-#: ../data/gcm-calibrate.ui.h:13
-msgid "High"
-msgstr "Handia"
-
-#: ../data/gcm-calibrate.ui.h:14
-msgid "LCD"
-msgstr "LCD"
-
-#. The precision of the calibration
-#: ../data/gcm-calibrate.ui.h:16
-msgid "Low"
-msgstr "Txikia"
-
-#. The length of the translation
-#: ../data/gcm-calibrate.ui.h:18
-msgid "Normal"
-msgstr "Normala"
-
-#. The user is trying to create an ICC profile of a printer that is connected to the computer
-#: ../data/gcm-calibrate.ui.h:20
-msgid "Profile locally attached printer"
-msgstr "Egin lokalki konektatutako inprimagailuaren profila"
-
-#: ../data/gcm-calibrate.ui.h:21
-msgid "Projector"
-msgstr "Proiektorea"
-
-#: ../data/gcm-calibrate.ui.h:22
-msgid "Red:"
-msgstr "Gorria:"
-
-#: ../data/gcm-calibrate.ui.h:23
-msgid "precision"
-msgstr "doitasuna"
-
-#: ../data/gcm-prefs.ui.h:1
-msgid ""
-"A working space is the range of colors that can be encoded into an image."
-msgstr "Laneko espazio bat irudi gisa kodetu daitekeen kolore-barruti bat da."
-
-#: ../data/gcm-prefs.ui.h:2
-msgid "Add Virtual Device"
-msgstr "Gehitu gailu birtuala"
-
-#: ../data/gcm-prefs.ui.h:3
-msgid "Adds a virtual device that is not connected."
-msgstr "Konektatuta ez dagoen gailu birtual bat gehitzen du."
-
-#. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:7
-msgid "CMYK:"
-msgstr "CMYK:"
-
-#: ../data/gcm-prefs.ui.h:8
-msgid "Close this dialog"
-msgstr "Itxi elkarrizketa-koadro hau"
-
-#. Section heading for device profile settings
-#: ../data/gcm-prefs.ui.h:11
-msgid "Color Profile"
-msgstr "Kolore-profila"
-
-#. The profile colorspace, e.g. RGB
-#: ../data/gcm-prefs.ui.h:13
-msgid "Colorspace:"
-msgstr "Kolore-espazioa:"
-
-#: ../data/gcm-prefs.ui.h:14
-msgid "Contrast:"
-msgstr "Kontrastea:"
-
-#. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
-#: ../data/gcm-prefs.ui.h:16
-msgid "Create _Profile for Device"
-msgstr "Sortu _Gailuaren profila"
-
-#. When the profile was created
-#: ../data/gcm-prefs.ui.h:18
-msgid "Created:"
-msgstr "Sortze-data:"
-
-#. Tab title, system wide defaults to use
-#: ../data/gcm-prefs.ui.h:20
-msgid "Defaults"
-msgstr "Lehenespenak"
-
-#: ../data/gcm-prefs.ui.h:21
-msgid "Delete the currently selected color profile"
-msgstr "Ezabatu une honetan hautatutako kolore-profila"
-
-#: ../data/gcm-prefs.ui.h:22
-msgid ""
-"Delete the disconnected device - if you reconnect the device it will "
-"reappear in the list"
-msgstr ""
-"Ezabatu deskonektatutako gailua - gailua berriro konektatzen baduzu, berriro "
-"agertuko da zerrendan"
-
-#. Section heading for device settings
-#: ../data/gcm-prefs.ui.h:24
-msgid "Device"
-msgstr "Gailua"
-
-#. The manufacturer of the profile
-#: ../data/gcm-prefs.ui.h:26
-msgid "Device manufacturer:"
-msgstr "Gailuaren fabrikatzailea:"
-
-#. The manufacturer of the profile
-#: ../data/gcm-prefs.ui.h:28
-msgid "Device model:"
-msgstr "Gailuaren modeloa:"
-
-#: ../data/gcm-prefs.ui.h:29
-msgid "Device type:"
-msgstr "Gailuaren mota:"
-
-#. Tab title, currently connected or saved devices
-#: ../data/gcm-prefs.ui.h:31
-msgid "Devices"
-msgstr "Gailuak"
-
-#. If the profile contains a display correction table
-#: ../data/gcm-prefs.ui.h:34
-msgid "Display correction:"
-msgstr "Pantailaren zuzenketa:"
-
-#. What mode to use for display rendering intent
-#: ../data/gcm-prefs.ui.h:36
-msgid "Display:"
-msgstr "Pantaila:"
-
-#. The file size in bytes of the profile
-#: ../data/gcm-prefs.ui.h:38
-msgid "File size:"
-msgstr "Fitxategiaren tamaina:"
-
-#. The basename (the last section of the filename) of the profile
-#: ../data/gcm-prefs.ui.h:40
-msgid "Filename:"
-msgstr "Fitxategi-izena:"
-
-#. Settings that users don't normally have to touch
-#: ../data/gcm-prefs.ui.h:42
-msgid "Fine tuning"
-msgstr "Doitze fina"
-
-#: ../data/gcm-prefs.ui.h:43
-msgid "Gamma:"
-msgstr "Gamma:"
-
-#: ../data/gcm-prefs.ui.h:44
-msgid "Import an ICC file from another location"
-msgstr "Inportatu ICC fitxategi bat beste kokaleku batetik"
-
-#. The licence of the profile, normally non-free
-#: ../data/gcm-prefs.ui.h:46
-msgid "License:"
-msgstr "Lizentzia:"
-
-#. The manufacturer of the device
-#: ../data/gcm-prefs.ui.h:48
-msgid "Manufacturer:"
-msgstr "Fabrikatzailea:"
-
-#. The model of the device
-#: ../data/gcm-prefs.ui.h:50
-msgid "Model:"
-msgstr "Modeloa:"
-
-#: ../data/gcm-prefs.ui.h:51
-msgid "More details"
-msgstr "Xehetasun gehiago"
-
-#: ../data/gcm-prefs.ui.h:52
-msgid "Open the documentation"
-msgstr "Ireki dokumentazioa"
-
-#: ../data/gcm-prefs.ui.h:53
-msgid "Profile Graphs"
-msgstr "Profil-grafoak"
-
-#. The type of profile, e.g. display, scanner, etc.
-#: ../data/gcm-prefs.ui.h:55
-msgid "Profile type:"
-msgstr "Profil mota:"
-
-#. Tab title, currently installed profiles
-#: ../data/gcm-prefs.ui.h:57
-msgid "Profiles"
-msgstr "Profilak"
-
-#: ../data/gcm-prefs.ui.h:58
-msgid ""
-"Program the video card with the adjusted color values so all windows are "
-"color corrected"
-msgstr ""
-"Programatu bideo-txartela doitutako kolore-balioekin, leiho guztietako "
-"koloreak zuzentzeko"
-
-#. What mode to use for display rendering intent
-#: ../data/gcm-prefs.ui.h:61
-msgid "RGB:"
-msgstr "GBU:"
-
-#: ../data/gcm-prefs.ui.h:62
-msgid "Rendering intent"
-msgstr "Errendatzeko ahalegina"
-
-#: ../data/gcm-prefs.ui.h:63
-msgid "Save these profiles for all users"
-msgstr "Gorde erabiltzaile guztientzako profilak"
-
-#. The serial number of the device
-#: ../data/gcm-prefs.ui.h:65
-msgid "Serial number:"
-msgstr "Serie-zenbakia:"
-
-#: ../data/gcm-prefs.ui.h:66
-msgid ""
-"Set a property on the system so applications use the default display profile"
-msgstr ""
-"Ezarri propietate bat sisteman, aplikazioek pantaila-profil lehenetsia "
-"erabil dezaten."
-
-#. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:68
-msgid "Softproof:"
-msgstr "Inprimatzeko aurrebista:"
-
-#: ../data/gcm-prefs.ui.h:69
-msgid "The rendering intent is how one gamut size is mapped to another."
-msgstr ""
-"Espektro-tamaina bat beste batera nola mapatzen den zehazten du errendatzeko "
-"ahaleginak. "
-
-#: ../data/gcm-prefs.ui.h:70
-msgid ""
-"The rendering intent to use when transforming from the image gamut to the "
-"device output gamut"
-msgstr ""
-"Irudi-espektrotik gailuaren irteerako espektrora eraldatzeko erabili "
-"beharreko errendatzeko ahalegina."
-
-#: ../data/gcm-prefs.ui.h:71
-msgid ""
-"The rendering intent to use when transforming from the image gamut to the "
-"display gamut"
-msgstr ""
-"Irudi-espektrotik gailuaren pantailaren espektrora eraldatzeko erabili "
-"beharreko errendatzeko ahalegina."
-
-#: ../data/gcm-prefs.ui.h:72
-msgid "These settings control how color management is applied to your desktop."
-msgstr ""
-"Ezarpen hauek kontrolatzen dute kolore-kudeaketa nola aplikatzen zaion "
-"mahaigainari."
-
-#: ../data/gcm-prefs.ui.h:73
-msgid "This is the default CMYK working space to use in applications"
-msgstr "Hau da aplikazioetan erabiltzeko CMYK laneko espazio lehenetsia"
-
-#: ../data/gcm-prefs.ui.h:74
-msgid "This is the default RGB working space to use in applications"
-msgstr "Hau da aplikazioetan erabiltzeko GBU laneko espazio lehenetsia"
-
-#: ../data/gcm-prefs.ui.h:75
-msgid "Working space"
-msgstr "Laneko espazioa"
-
-#. This is a button to add a virtual device
-#: ../data/gcm-prefs.ui.h:77
-msgid "_Add Device"
-msgstr "_Gehitu gailua"
-
-#: ../data/gcm-prefs.ui.h:78
-msgid "_Apply display correction"
-msgstr "_Aplikatu pantaila-zuzenketa"
-
-#. This is a button to delete the saved or virtual device
-#: ../data/gcm-prefs.ui.h:80
-msgid "_Delete Device"
-msgstr "_Ezabatu gailua"
-
-#: ../data/gcm-prefs.ui.h:81
-msgid "_Delete Profile"
-msgstr "_Ezabatu profila"
-
-#: ../data/gcm-prefs.ui.h:82
-msgid "_Import Profile"
-msgstr "_Inportatu profila"
-
-#: ../data/gcm-prefs.ui.h:83
-msgid "_Make Default"
-msgstr "_Bihurtu lehenetsi"
-
-#. This resets the device to it's defaults, and removes any user tweaked settings.
-#: ../data/gcm-prefs.ui.h:85
-msgid "_Reset to defaults"
-msgstr "_Berrezarri lehenespenak"
-
-#: ../data/gcm-prefs.ui.h:86
-msgid "_Set profile for color managed applications"
-msgstr "_Ezarri kolore-kudeaketa duten aplikazioen profila"
+#. TRANSLATORS: profiles that have warnings are useable,
+#. * but may not be any good
+#: ../src/gcm-viewer.c:1176
+msgid "The profile has the following problems:"
+msgstr "Profilak arazo hauek ditu:"
+
+#. TRANSLATORS: this is the tooltip when the profile can be deleted
+#: ../src/gcm-viewer.c:1290
+msgid "Delete this profile"
+msgstr "Ezabatu profil hau"
+
+#. TRANSLATORS: this is the tooltip when the profile cannot be deleted
+#: ../src/gcm-viewer.c:1293
+msgid "This profile cannot be deleted"
+msgstr "Profila hau ezin da ezabatu"
+
+#. TRANSLATORS: show just the one profile, rather than all
+#: ../src/gcm-viewer.c:1853
+msgid "Set the specific profile to show"
+msgstr "Ezarri profil zehatza erakusteko"
+
+#. TRANSLATORS: show just the one filename, rather than all
+#: ../src/gcm-viewer.c:1856
+msgid "Set the specific file to show"
+msgstr "Ezarri fitxategi zehatza erakusteko"
+
+#~ msgid "Applies device profile settings at session startup"
+#~ msgstr "Gailuaren profilaren ezarpenak aplikatzen ditu saioa hastean"
+
+#~ msgid "Load device color profiles"
+#~ msgstr "Kargatu gailuaren kolore-profilak"
+
+#~ msgid "ICC profile installer"
+#~ msgstr "ICC profilen instalatzailea"
+
+#~ msgid "Color Profiles"
+#~ msgstr "Kolore-profilak"
+
+#~ msgid "Manage ICC color profiles"
+#~ msgstr "Kudeatu ICC kolore-profilak"
+
+#~ msgid ""
+#~ "Gamma is adjusted to affect the color of the attached monitor. "
+#~ "Traditionally Linux has used a gamma value of 1.0, but this makes "
+#~ "monitors look washed out compared Windows XP or OS X. Apple traditionally "
+#~ "used a value of 1.8 for a long time, but now use the same value as "
+#~ "Microsoft. Microsoft has always used a value of 2.2."
+#~ msgstr ""
+#~ "Gamma doitzen da, erantsitako monitorearen koloreari eragiteko. Iraganean "
+#~ "1.0 gamma-balioa erabili izan du Linux-ek, baina horrek kolorgetu-itxura "
+#~ "ematen dio monitoreari Windows XP edo OS Xrekin konparatuta. Apple-k 1.8 "
+#~ "balioa erabili izan du iraganean, baina orain Microsoft-en balio bera "
+#~ "erabiltzen du. Microsoft-ek 2.2 balioa erabili izan du beti."
+
+#~ msgid ""
+#~ "If set to TRUE then external disks are searched for device ICC profiles "
+#~ "at startup, for instance looking in the OSX library folder or Windows XP "
+#~ "system folders. This may increase startup time if disks need to be spun "
+#~ "up to be searched."
+#~ msgstr ""
+#~ "EGIAZKO gisa ezartzen bada, abioan gailuen ICC profilak bilatuko dira "
+#~ "kanpoko diskoetan, OSX liburutegi-karpetan edo Windows XPren sistema-"
+#~ "karpetetan, esaterako. Horren ondorioz agian denbora gehiago beharko da "
+#~ "abiarazteko, diskoak bilaketarako prestatu behar badira."
+
+#~ msgid ""
+#~ "If set to TRUE then the __ICC_PROFILE hint will be set, which "
+#~ "applications use to convert true color to screen color."
+#~ msgstr ""
+#~ "EGIAZKO gisa ezarriz gero,  __ICC_PROFILE argibidea ezarriko da; horixe "
+#~ "erabiltzen dute aplikazioek egiazko kolorea pantaila-kolore bihurtzeko."
+
+#~ msgid ""
+#~ "If set to TRUE then the fine tuning controls are visible. This allows the "
+#~ "user to change the display profile outside of what the ICC profile "
+#~ "suggests and is only recommended for advanced users."
+#~ msgstr ""
+#~ "EGIAZKO gisa ezarriz gero, doitze finaren kontrolak ikusgai egongo dira. "
+#~ "Horrela, erabiltzaileak pantaila-profila aldatu ahal izango du ICC "
+#~ "profilak iradokitakotik at; erabiltzaile aurreratuentzat soilik "
+#~ "gomendatzen da."
+
+#~ msgid "If set to TRUE then the video LUT is set with the display profile"
+#~ msgstr ""
+#~ "EGIAZKO gisa ezartzen bada, orduan bideoaren LUT pantaila-profilarekin "
+#~ "ezartzen da."
+
+#~ msgid "Set the _ICC_PROFILE hint for applications."
+#~ msgstr "Ezarri _ICC_PROFILE argibidea aplikazioetarako."
+
+#~ msgid "Show the fine tuning controls for display devices."
+#~ msgstr "Erakutsi doitze finaren kontrolak pantaila-gailuetarako."
+
+#~ msgid "The CMYK profile filename to be used by applications by default."
+#~ msgstr ""
+#~ "Aplikazioek lehenespenez erabili beharreko CMYK profilaren fitxategi-"
+#~ "izena."
+
+#~ msgid "The RGB profile filename to be used by applications by default."
+#~ msgstr ""
+#~ "Aplikazioek lehenespenez erabili beharreko GBU profilaren fitxategi-izena."
+
+#~ msgid "The default CMYK profile."
+#~ msgstr "CMYK profil lehenetsia."
+
+#~ msgid "The default RGB profile."
+#~ msgstr "GBU profil lehenetsia."
+
+#~ msgid "The default calibration length."
+#~ msgstr "Kalibrazio-luzera lehenetsia."
+
+#~ msgid "The default gamma to use for monitors with no previous value set."
+#~ msgstr ""
+#~ "Aurrez baliorik ezarri gabeko monitoreetarako erabili beharreko gamma "
+#~ "lehenetsia."
+
+#~ msgid "The duration between sending notifications to recalibrate a display."
+#~ msgstr ""
+#~ "Pantaila bat birkalibratzeko jakinarazpenak bidaltzeko denbora-tartea."
+
+#~ msgid "The duration between sending notifications to recalibrate a printer."
+#~ msgstr ""
+#~ "Inprimagailu bat birkalibratzeko jakinarazpenak bidaltzeko denbora-tartea."
+
+#~ msgid ""
+#~ "The length of calibration, as this is proportional to the accuracy. The "
+#~ "option 'short' creates a quick profile, 'normal' a regular one, and "
+#~ "'long' takes a really long time, but is more precise and creates a better "
+#~ "profile. Use 'ask' if you want the user to choose."
+#~ msgstr ""
+#~ "Kalibrazioaren luzera, zehaztasunarekiko proportzionala izaten baita. "
+#~ "'Luzea' aukerak profil bikor bat sortzen du, 'normala' aukerak profil "
+#~ "arrunta, eta 'luzea' aukerak denbora asko hartzen du, baina zehatzagoa "
+#~ "da, eta profil hobea sortzen du. Erabili 'galdetu', erabiltzaileak "
+#~ "aukeratzea nahi baduzu."
+
+#~ msgid "The rendering intent to use for softproofs, e.g. 'perceptual'."
+#~ msgstr ""
+#~ "Softproof-etarako erabiltzeko errendatze-saiakera. Adib.: 'pertzeptuala'."
+
+#~ msgid "The rendering intent to use for the display, e.g. 'perceptual'."
+#~ msgstr ""
+#~ "Pantailarako erabiltzeko errendatze-saiakera. Adib.: 'pertzeptuala'."
+
+#~ msgid ""
+#~ "This is the number of seconds in between notifying the user to "
+#~ "recalibrate each display device. Set to 0 to disable the notification."
+#~ msgstr ""
+#~ "Erabiltzaileari pantaila-gailu bakoitza birkalibratzeko jakinarazteko "
+#~ "igaro beharreko tartea (segundotan). Ezarri 0 jakinarazpena desgaitzeko."
+
+#~ msgid ""
+#~ "This is the number of seconds in between notifying the user to "
+#~ "recalibrate each printer device. Set to 0 to disable the notification."
+#~ msgstr ""
+#~ "Erabiltzaileari inprimagailu bakoitza birkalibratzeko jakinarazteko igaro "
+#~ "beharreko tartea (segundotan). Ezarri 0 jakinarazpena desgaitzeko."
+
+#~ msgid "Whether ICC profiles should be loaded from external disks."
+#~ msgstr "ICC profillak kanpoko diskoetatik kargatu behar diren edo ez."
+
+#~ msgid ""
+#~ "Whether the display should be globally corrected or left to applications."
+#~ msgstr ""
+#~ "Pantaila globalki zuzendu behar den edo aplikazioei utzi behar zaien."
+
+#~ msgid ""
+#~ "Authentication is required to install the color profile for all users"
+#~ msgstr ""
+#~ "Autentifikazioa beharrezkoa da erabiltzaile guztientzako kolore-profila "
+#~ "instalatzeko"
+
+#~ msgid "Log debugging data to a file"
+#~ msgstr "Erregistratu arazketa-datuak fitxategi batean"
+
+#~ msgid "Generating the patches"
+#~ msgstr "Adabakiak sortzea"
+
+#~ msgid ""
+#~ "Generating the patches that will be measured with the color instrument."
+#~ msgstr "Kolore tresnarekin neurtuko diren adabakiak sortzea"
+
+#~ msgid "Setting up display device for use…"
+#~ msgstr "Konfiguratu pantaila-gailua erabiltzeko..."
+
+#~ msgid "Image is not suitable without conversion"
+#~ msgstr "Irudia ez da egokia bihurketarik gabe."
+
+#~ msgid ""
+#~ "The supplied image contains an alpha channel which the profiling tools do "
+#~ "not understand."
+#~ msgstr ""
+#~ "Emandako irudiak alfa kanal bat dauka, eta kanal hori ez dute ulertzen "
+#~ "profil-tresnek."
+
+#~ msgid ""
+#~ "It is normally safe to convert the image, although you should ensure that "
+#~ "the generated profile is valid."
+#~ msgstr ""
+#~ "Normalean segurua izaten da irudia bihurtzea, baina sortutako profila "
+#~ "baliozkoa dela ziurtatu behar zenuke."
+
+#~ msgid "Convert"
+#~ msgstr "Bihurtu"
+
+#~ msgid ""
+#~ "Please set the measuring instrument to screen mode like the image below, "
+#~ "and ensure it is attached to the screen."
+#~ msgstr ""
+#~ "Ezarri neurtzeko tresna pantaila moduan, beheko irudian bezala, eta "
+#~ "ziurtatu pantailari erantsita dagoela."
+
+#~ msgid ""
+#~ "Please set the measuring instrument to screen mode, and ensure it is "
+#~ "attached to the screen."
+#~ msgstr ""
+#~ "Ezarri neurtzeko tresna pantaila moduan, eta ziurtatu pantailari "
+#~ "erantsita dagoela."
+
+#~ msgid "Try again"
+#~ msgstr "Saiatu berriro"
+
+#~ msgid "Use anyway"
+#~ msgstr "Erabili edozein kasutan"
+
+#~ msgid "Unknown device"
+#~ msgstr "Gailu ezezaguna"
+
+#~ msgid "Could not detect screen type"
+#~ msgstr "Ezin izan da pantaila mota detektatu"
+
+#~ msgid ""
+#~ "Please indicate if the screen you are trying to profile is an LCD, CRT or "
+#~ "a projector."
+#~ msgstr ""
+#~ "Adierazi profila zehaztu nahi diozun pantaila LCD, CRT edo proiektorea "
+#~ "den."
+
+#~ msgid ""
+#~ "Could not calibrate and profile using this color measuring instrument"
+#~ msgstr ""
+#~ "Ezin izan da kalibratu eta profila egin kolorea neurtzeko tresna hau "
+#~ "erabiliz"
+
+#~ msgid ""
+#~ "This color measuring instrument is not designed to support calibration "
+#~ "and profiling projectors."
+#~ msgstr ""
+#~ "Kolorea neurtzeko tresna hau ez dago diseinatuta proiektoreen kalibrazioa "
+#~ "eta profilak bideratzeko."
+
+#~ msgid "Choose the precision of the profile"
+#~ msgstr "Aukeratu profilaren doitasuna"
+
+#~ msgid "Please choose the profile precision."
+#~ msgstr "Aukeratu profilaren doitasuna."
+
+#~ msgid ""
+#~ "High precision profiles provide higher accuracy in color matching. "
+#~ "Correspondingly, low precision profiles result in lower quality."
+#~ msgstr ""
+#~ "Doitasun handiko profilak zehaztasun handiagoa ematen du kolorearekin bat-"
+#~ "etortzeari dagokionez. Era berean, doitasun baxuko profilek kalitate "
+#~ "baxuagoa sortzen dute."
+
+#~ msgid "Custom"
+#~ msgstr "Pertsonalizatu"
+
+#~ msgid "Select reference image"
+#~ msgstr "Hautatu erreferentziako irudia"
+
+#~ msgid "Install missing files?"
+#~ msgstr "Instalatu falta diren fitxategiak?"
+
+#~ msgid "Do not install"
+#~ msgstr "Ez instalatu"
+
+#~ msgid "Please select chart type"
+#~ msgstr "Hautatu grafiko mota"
+
+#~ msgid ""
+#~ "For best results, the reference target should also be less than two years "
+#~ "old."
+#~ msgstr ""
+#~ "Emaitza onak lortzeko, erreferentzia-helburuak ere bi urte baino gutxiago "
+#~ "izan behar lituzke."
+
+#~ msgid ""
+#~ "Please select the chart type which corresponds to your reference file."
+#~ msgstr "Hautatu zure erreferentzia-fitxategiari dagokion grafiko mota."
+
+#~ msgid "Introduction to display calibration"
+#~ msgstr "Pantaila-kalibrazioaren sarrera"
+
+#~ msgid ""
+#~ "This dialog will help calibrate your display and create a custom ICC "
+#~ "profile."
+#~ msgstr ""
+#~ "Elkarrizketa-koadro honek pantaila kalibratzen eta ICC profil "
+#~ "pertsonalizatu bat sortzen lagunduko dizu."
+
+#~ msgid ""
+#~ "The calibration will involve several steps so that an accurate profile "
+#~ "can be obtained."
+#~ msgstr ""
+#~ "Kalibrazioak hainbat urrats izango ditu, profil zehatz bat lortu ahal "
+#~ "izateko."
+
+#~ msgid "It should only take a few minutes."
+#~ msgstr "Minutu batzuk nahikoa izan beharko lirateke."
+
+#~ msgid ""
+#~ "It may help to sit further from the screen or to squint at the "
+#~ "calibration images in order to accurately compare the colors."
+#~ msgstr ""
+#~ "Ondo etor liteke pantailatik urrunago esertzea, edo begiak pixka bat "
+#~ "ixtea kalibrazio irudien aurrean, koloreak zehaztasunez konparatzeko."
+
+#~ msgid "You can repeat the calibration steps as many times as you want."
+#~ msgstr "Kalibrazio-urratsak errepika ditzakezu, nahi bezainbestetan."
+
+#~ msgid "Create table item %i/%i"
+#~ msgstr "Sortu %i/%i taula-elementua"
+
+#~ msgid ""
+#~ "Please try to match up the gray square with the surrounding alternating "
+#~ "bars. You should match the brightness first, and then if required change "
+#~ "the color tint so it looks plain gray."
+#~ msgstr ""
+#~ "Saiatu koadro grisa inguruko barren arabera doitzen. Distira doitu "
+#~ "beharko zenuke lehendabizi, eta ondoren, beharrezkoa bada, kolore-tinta "
+#~ "aldatu, gris soila izan dadin."
+
+#~ msgid ""
+#~ "This display is now calibrated. You can change the current profile using "
+#~ "the Color Profiles program."
+#~ msgstr ""
+#~ "Pantaila kalibratuta dago orain. Uneko profila alda dezakezu Kolore-"
+#~ "profilen programa erabiliz."
+
+#~ msgid "This device already exists"
+#~ msgstr "Gailu hau badago lehendik ere."
+
+#~ msgid "Measuring instrument not recognized"
+#~ msgstr "Neurtzeko tresna ez da ezagutzen"
+
+#~ msgid "Laptop LCD"
+#~ msgstr "Eramangarriaren LCD pantaila"
+
+#~ msgid "Cannot load file contents"
+#~ msgstr "Ezin da kargatu fitxategi-edukia"
+
+#~ msgid "Cannot parse EDID contents"
+#~ msgstr "Ezin da analizatu EDID edukia"
+
+#~ msgid "Monitor name"
+#~ msgstr "Monitorearen izena"
+
+#~ msgid "Vendor name"
+#~ msgstr "Hornitzailearen izena"
+
+#~ msgid "Text string"
+#~ msgstr "Testu-katea"
+
+#~ msgid "PNP identifier"
+#~ msgstr "PNP identifikatzailea"
+
+#~ msgid "Size"
+#~ msgstr "Tamaina"
+
+#~ msgid "Gamma"
+#~ msgstr "Gamma"
+
+#~ msgid "EDID dumps to parse"
+#~ msgstr "Analizatzeko EDID iraulketak"
+
+#~ msgid "EDID dump"
+#~ msgstr "EDID iraulketa"
+
+#~ msgid "Saved %i bytes to %s"
+#~ msgstr "%i byte gorde dira hemen: %s"
+
+#~ msgid "Failed to save EDID to %s"
+#~ msgstr "Huts egin du EDID gordetzean hemen: %s"
+
+#~ msgid "Profiles to view"
+#~ msgstr "Ikusteko profilak"
+
+#~ msgid "ICC profile dump program"
+#~ msgstr "ICC profilak iraultzeko programa"
+
+#~ msgid "The description of the profile"
+#~ msgstr "Profilaren azalpena"
+
+#~ msgid "The copyright of the profile"
+#~ msgstr "Profilaren copyrighta"
+
+#~ msgid "The manufacturer of the profile"
+#~ msgstr "Profilaren fabrikatzailea"
+
+#~ msgid "Profiles to fix"
+#~ msgstr "Konpontzeko profilak"
+
+#~ msgid "ICC profile fix program"
+#~ msgstr "ICC profilak konpontzeko programa"
+
+#~ msgid "Import ICC color profile %s?"
+#~ msgstr "Inportatu %s ICC kolore-profila?"
+
+#~ msgid "Import ICC profile"
+#~ msgstr "Inportatu ICC profila"
+
+#~ msgid "Output profile '%s':"
+#~ msgstr "'%s' irteerako profila:"
+
+#~ msgid "not set"
+#~ msgstr "ezarri gabe"
+
+#~ msgid "There are no ICC profiles for this device type"
+#~ msgstr "Ez dago ICC profilik gailu mota honetarako"
+
+#~ msgid "Rendering intent (display):"
+#~ msgstr "Errendatze-ahalegina (pantaila):"
+
+#~ msgid "Rendering intent (softproof):"
+#~ msgstr "Errendatze-ahalegina (errendatze-saiakera):"
+
+#~ msgid "RGB Colorspace:"
+#~ msgstr "GBU kolore-espazioa:"
+
+#~ msgid "CMYK Colorspace:"
+#~ msgstr "CMYK kolore-espazioa:"
+
+#~ msgid "Device type not recognized"
+#~ msgstr "Gailu mota ez da ezagutzen"
+
+#~ msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
+#~ msgstr "Gailuaren IDa, adibidez: 'xrandr_ibm_france_ltn154p2_l05'"
+
+#~ msgid "GNOME Color Manager ICC profile system-wide installer"
+#~ msgstr ""
+#~ "GNOME kolore-kudeatzailearen ICC profilaren instalatzailea, sistema osokoa"
+
+#~ msgid "You need to specify exactly one ICC profile filename"
+#~ msgstr "Zehazki ICC profil baten fitxategi-izen bat zehaztu behar duzu"
+
+#~ msgid "You need to specify exactly one device ID"
+#~ msgstr "Zehazki gailu ID bat zehaztu behar duzu"
+
+#~ msgid "This program can only be used by the root user"
+#~ msgstr "Root erabiltzaileak bakarrik erabil dezake programa hau"
+
+#~ msgid "The source filename must be absolute"
+#~ msgstr "Ituruburuko fitxategi-izenak absolutua izan behar du"
+
+#~ msgid "Content type was incorrect"
+#~ msgstr "Eduki mota ez da zuzena"
+
+#~ msgid "This program must only be run through pkexec"
+#~ msgstr "Programa hau pkexec bidez bakarrik exekutatu behar da"
+
+#~ msgid "PKEXEC_UID must be set to an integer value"
+#~ msgstr "Osoko balio bat ezarri behar da PKEXEC_UID gisa"
+
+#~ msgid "The ICC profile must be owned by you"
+#~ msgstr "ICC profilaren jabea izan behar zara"
+
+#~ msgid "The destination filename must be absolute"
+#~ msgstr "Helburuko fitxategi-izenak absolutua izan behar du"
+
+#~ msgid "Failed to copy"
+#~ msgstr "Huts egin du kopiatzean"
+
+#~ msgid "Failed to save defaults for all users"
+#~ msgstr "Huts egin du erabiltzaile guztien lehenespenak gordetzean"
+
+#~ msgid "None"
+#~ msgstr "Bat ere ez"
+
+#~ msgid "Other profile…"
+#~ msgstr "Beste profil bat..."
+
+#~ msgid "Install missing calibration and profiling software?"
+#~ msgstr "Instalatu falta den kalibrazio eta profilen softwarea?"
+
+#~ msgid "Do you want them to be automatically installed?"
+#~ msgstr "Automatikoki instalatu nahi dituzu?"
+
+#~ msgid "Failed to create virtual device"
+#~ msgstr "Huts egin du gailu birtuala sortzean"
+
+#~ msgid "Failed to save virtual device"
+#~ msgstr "Huts egin du gailu birtuala gordetzean"
+
+#~ msgid "Failed to add virtual device"
+#~ msgstr "Huts egin du gailu birtuala gehitzean"
+
+#~ msgid "Failed to delete file"
+#~ msgstr "Huts egin du fitxategia ezabatzean"
+
+#~ msgid "Create a color profile for the selected device"
+#~ msgstr "Sortu kolore-profil bat hautatutako gailuarentzat"
+
+#~ msgid "Cannot profile: No device is selected"
+#~ msgstr "Ezin da profila egin: ez da gailurik hautatu"
+
+#~ msgid "Cannot calibrate: The display driver does not support XRandR 1.3"
+#~ msgstr ""
+#~ "Ezin da kalibratu: pantaila-kontrolatzaileak ez du onartzen XRandR 1.3"
+
+#~ msgid "Cannot calibrate: The measuring instrument is not plugged in"
+#~ msgstr "Ezin da kalibratu: neurtzeko tresna ez dago konektatuta"
+
+#~ msgid "Cannot profile: The measuring instrument is not plugged in"
+#~ msgstr "Ezin da profila egin: neurtzeko tresna ez dago konektatuta"
+
+#~ msgid ""
+#~ "Cannot profile: The measuring instrument does not support printer "
+#~ "profiling"
+#~ msgstr ""
+#~ "Ezin da profila egin: neurtzeko tresnak ez du onartzen inprimagailu-"
+#~ "profila."
+
+#~ msgid "Cannot profile this type of device"
+#~ msgstr "Ezin da mota honetako gailuen profilik egin."
+
+#~ msgid "Per-device settings not supported. Check your display driver."
+#~ msgstr ""
+#~ "Gailukako ezarpenak ez dira onartzen. Egiaztatu pantailaren "
+#~ "kontrolatzailea."
+
+#~ msgid "No hardware support"
+#~ msgstr "Ez dago hardware-euskarririk"
+
+#~ msgid "disconnected"
+#~ msgstr "deskonektatuta"
+
+#~ msgid "Could not import profile"
+#~ msgstr "Ezin izan da profila inportatu"
+
+#~ msgid "The profile was of the wrong type for this device"
+#~ msgstr "Profilaren mota okerra da gailu honentzat"
+
+#~ msgid "Device added"
+#~ msgstr "Gailua gehitu da"
+
+#~ msgid "Scanner"
+#~ msgstr "Eskanerra"
+
+#~ msgid "Printer"
+#~ msgstr "Inprimagailua"
+
+#~ msgid "Camera"
+#~ msgstr "Kamera"
+
+#~ msgid "Loading list of devices…"
+#~ msgstr "Gailuen zerrenda kargatzen..."
+
+#~ msgid ""
+#~ "This profile does not have the information required for whole-screen "
+#~ "color correction."
+#~ msgstr ""
+#~ "Profil honek ez dauka pantaila osoko kolore-zuzenketarako behar den "
+#~ "informazioa."
+
+#~ msgid "Recalibrate now"
+#~ msgstr "Birkalibratu orain"
+
+#~ msgid "Ignore"
+#~ msgstr "Ez ikusi egin"
+
+#~ msgid "Do not exit after the request has been processed"
+#~ msgstr "Ez irten eskaera prozesatu ondoren."
+
+#~ msgid "Color Management"
+#~ msgstr "Kolore-kudeatzailea"
+
+#~ msgid "Color Management D-Bus Service"
+#~ msgstr "Kolore-kudeatzailearen D-Bus zerbitzua"
+
+#~ msgid "Perceptual"
+#~ msgstr "Pertzepziokoa"
+
+#~ msgid "Relative colormetric"
+#~ msgstr "Koloremetria erlatiboa"
+
+#~ msgid "Saturation"
+#~ msgstr "Saturazioa"
+
+#~ msgid "Absolute colormetric"
+#~ msgstr "Koloremetria absolutua"
+
+#~ msgid "Blue:"
+#~ msgstr "Urdina:"
+
+#~ msgid "Create images for printing"
+#~ msgstr "Sortu inprimatzeko irudiak"
+
+#~ msgid "Generate profile from printed images"
+#~ msgstr "Sortu profila inprimatutako irudietatik"
+
+#~ msgid "Green:"
+#~ msgstr "Berdea:"
+
+#~ msgid "High"
+#~ msgstr "Handia"
+
+#~ msgid "Low"
+#~ msgstr "Txikia"
+
+#~ msgid "Profile locally attached printer"
+#~ msgstr "Egin lokalki konektatutako inprimagailuaren profila"
+
+#~ msgid "Red:"
+#~ msgstr "Gorria:"
+
+#~ msgid ""
+#~ "A working space is the range of colors that can be encoded into an image."
+#~ msgstr ""
+#~ "Laneko espazio bat irudi gisa kodetu daitekeen kolore-barruti bat da."
+
+#~ msgid "Add Virtual Device"
+#~ msgstr "Gehitu gailu birtuala"
+
+#~ msgid "Adds a virtual device that is not connected."
+#~ msgstr "Konektatuta ez dagoen gailu birtual bat gehitzen du."
+
+#~ msgid "CMYK:"
+#~ msgstr "CMYK:"
+
+#~ msgid "Close this dialog"
+#~ msgstr "Itxi elkarrizketa-koadro hau"
+
+#~ msgid "Contrast:"
+#~ msgstr "Kontrastea:"
+
+#~ msgid "Create _Profile for Device"
+#~ msgstr "Sortu _Gailuaren profila"
+
+#~ msgid "Delete the currently selected color profile"
+#~ msgstr "Ezabatu une honetan hautatutako kolore-profila"
+
+#~ msgid ""
+#~ "Delete the disconnected device - if you reconnect the device it will "
+#~ "reappear in the list"
+#~ msgstr ""
+#~ "Ezabatu deskonektatutako gailua - gailua berriro konektatzen baduzu, "
+#~ "berriro agertuko da zerrendan"
+
+#~ msgid "Device"
+#~ msgstr "Gailua"
+
+#~ msgid "Device type:"
+#~ msgstr "Gailuaren mota:"
+
+#~ msgid "Devices"
+#~ msgstr "Gailuak"
+
+#~ msgid "Display:"
+#~ msgstr "Pantaila:"
+
+#~ msgid "Fine tuning"
+#~ msgstr "Doitze fina"
+
+#~ msgid "Gamma:"
+#~ msgstr "Gamma:"
+
+#~ msgid "Import an ICC file from another location"
+#~ msgstr "Inportatu ICC fitxategi bat beste kokaleku batetik"
+
+#~ msgid "Manufacturer:"
+#~ msgstr "Fabrikatzailea:"
+
+#~ msgid "Model:"
+#~ msgstr "Modeloa:"
+
+#~ msgid "More details"
+#~ msgstr "Xehetasun gehiago"
+
+#~ msgid "Open the documentation"
+#~ msgstr "Ireki dokumentazioa"
+
+#~ msgid "Profile Graphs"
+#~ msgstr "Profil-grafoak"
+
+#~ msgid "Profiles"
+#~ msgstr "Profilak"
+
+#~ msgid ""
+#~ "Program the video card with the adjusted color values so all windows are "
+#~ "color corrected"
+#~ msgstr ""
+#~ "Programatu bideo-txartela doitutako kolore-balioekin, leiho guztietako "
+#~ "koloreak zuzentzeko"
+
+#~ msgid "Rendering intent"
+#~ msgstr "Errendatzeko ahalegina"
+
+#~ msgid "Save these profiles for all users"
+#~ msgstr "Gorde erabiltzaile guztientzako profilak"
+
+#~ msgid "Serial number:"
+#~ msgstr "Serie-zenbakia:"
+
+#~ msgid ""
+#~ "Set a property on the system so applications use the default display "
+#~ "profile"
+#~ msgstr ""
+#~ "Ezarri propietate bat sisteman, aplikazioek pantaila-profil lehenetsia "
+#~ "erabil dezaten."
+
+#~ msgid "Softproof:"
+#~ msgstr "Inprimatzeko aurrebista:"
+
+#~ msgid "The rendering intent is how one gamut size is mapped to another."
+#~ msgstr ""
+#~ "Espektro-tamaina bat beste batera nola mapatzen den zehazten du "
+#~ "errendatzeko ahaleginak. "
+
+#~ msgid ""
+#~ "The rendering intent to use when transforming from the image gamut to the "
+#~ "device output gamut"
+#~ msgstr ""
+#~ "Irudi-espektrotik gailuaren irteerako espektrora eraldatzeko erabili "
+#~ "beharreko errendatzeko ahalegina."
+
+#~ msgid ""
+#~ "The rendering intent to use when transforming from the image gamut to the "
+#~ "display gamut"
+#~ msgstr ""
+#~ "Irudi-espektrotik gailuaren pantailaren espektrora eraldatzeko erabili "
+#~ "beharreko errendatzeko ahalegina."
+
+#~ msgid ""
+#~ "These settings control how color management is applied to your desktop."
+#~ msgstr ""
+#~ "Ezarpen hauek kontrolatzen dute kolore-kudeaketa nola aplikatzen zaion "
+#~ "mahaigainari."
+
+#~ msgid "This is the default CMYK working space to use in applications"
+#~ msgstr "Hau da aplikazioetan erabiltzeko CMYK laneko espazio lehenetsia"
+
+#~ msgid "This is the default RGB working space to use in applications"
+#~ msgstr "Hau da aplikazioetan erabiltzeko GBU laneko espazio lehenetsia"
+
+#~ msgid "Working space"
+#~ msgstr "Laneko espazioa"
+
+#~ msgid "_Add Device"
+#~ msgstr "_Gehitu gailua"
+
+#~ msgid "_Apply display correction"
+#~ msgstr "_Aplikatu pantaila-zuzenketa"
+
+#~ msgid "_Delete Device"
+#~ msgstr "_Ezabatu gailua"
+
+#~ msgid "_Import Profile"
+#~ msgstr "_Inportatu profila"
+
+#~ msgid "_Make Default"
+#~ msgstr "_Bihurtu lehenetsi"
+
+#~ msgid "_Reset to defaults"
+#~ msgstr "_Berrezarri lehenespenak"
+
+#~ msgid "_Set profile for color managed applications"
+#~ msgstr "_Ezarri kolore-kudeaketa duten aplikazioen profila"
 
 #~ msgid "Do not attempt to clear previously applied settings"
 #~ msgstr "Ez saiatu aurrez aplikatutako ezarpenak garbitzen"
-
-#~ msgid "Profile Precision"
-#~ msgstr "Profil-doitasuna"
-
-#~ msgid "Select calibration target image"
-#~ msgstr "Hautatu kalibrazio-helburuaren irudia"
