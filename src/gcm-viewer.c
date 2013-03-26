@@ -1115,25 +1115,24 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	}
 
 	/* set kind */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_type"));
 	profile_kind = cd_profile_get_kind (profile);
-	if (profile_kind == CD_PROFILE_KIND_UNKNOWN) {
-		gtk_widget_hide (widget);
-	} else {
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_type"));
+	gtk_widget_set_visible (widget, profile_kind != CD_PROFILE_KIND_UNKNOWN);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_type"));
+	gtk_widget_set_visible (widget, profile_kind != CD_PROFILE_KIND_UNKNOWN);
+	if (profile_kind != CD_PROFILE_KIND_UNKNOWN) {
 		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_type"));
 		profile_kind_text = gcm_viewer_profile_kind_to_string (profile_kind);
 		gtk_label_set_label (GTK_LABEL (widget), profile_kind_text);
 	}
 
 	/* set colorspace */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_colorspace"));
 	profile_colorspace = cd_profile_get_colorspace (profile);
-	if (profile_colorspace == CD_COLORSPACE_UNKNOWN) {
-		gtk_widget_hide (widget);
-	} else {
-		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_colorspace"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_colorspace"));
+	gtk_widget_set_visible (widget, profile_colorspace != CD_COLORSPACE_UNKNOWN);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_colorspace"));
+	gtk_widget_set_visible (widget, profile_colorspace != CD_COLORSPACE_UNKNOWN);
+	if (profile_colorspace != CD_COLORSPACE_UNKNOWN) {
 		profile_colorspace_text = gcm_viewer_profile_colorspace_to_string (profile_colorspace);
 		gtk_label_set_label (GTK_LABEL (widget), profile_colorspace_text);
 	}
@@ -1162,14 +1161,13 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	g_free (temp);
 
 	/* set warnings */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_warnings"));
 	warnings = cd_profile_get_warnings (profile);
 	size = g_strv_length (warnings);
-	if (size == 0) {
-		gtk_widget_set_visible (widget, FALSE);
-	} else {
-		gtk_widget_set_visible (widget, TRUE);
-		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_warnings"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_warnings"));
+	gtk_widget_set_visible (widget, size != 0);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_warnings"));
+	gtk_widget_set_visible (widget, size != 0);
+	if (size > 0) {
 		str = g_string_new ("");
 		/* TRANSLATORS: profiles that have warnings are useable,
 		 * but may not be any good */
@@ -1194,80 +1192,77 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 
 	/* set whitepoint */
 	temperature = gcm_profile_get_temperature (gcm_profile);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_temp"));
+	gtk_widget_set_visible (widget, temperature > 0);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_temp"));
-	if (fabs (temperature - 5000) < 10) {
-		temp = g_strdup_printf ("%i°K (D50)", temperature);
-	} else if (fabs (temperature - 6500) < 10) {
-		temp = g_strdup_printf ("%i°K (D65)", temperature);
-	} else {
-		temp = g_strdup_printf ("%i°K", temperature);
+	gtk_widget_set_visible (widget, temperature > 0);
+	if (temperature > 0) {
+		if (fabs (temperature - 5000) < 10) {
+			temp = g_strdup_printf ("%i°K (D50)", temperature);
+		} else if (fabs (temperature - 6500) < 10) {
+			temp = g_strdup_printf ("%i°K (D65)", temperature);
+		} else {
+			temp = g_strdup_printf ("%i°K", temperature);
+		}
+		gtk_label_set_label (GTK_LABEL (widget), temp);
+		g_free (temp);
 	}
-	gtk_label_set_label (GTK_LABEL (widget), temp);
-	g_free (temp);
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_temp"));
-	gtk_widget_set_visible (widget, (temperature > 0));
 
 	/* set size */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_size"));
 	filesize = gcm_profile_get_size (gcm_profile);
-	if (filesize == 0) {
-		gtk_widget_hide (widget);
-	} else {
-		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_size"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_size"));
+	gtk_widget_set_visible (widget, filesize > 0);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_size"));
+	gtk_widget_set_visible (widget, filesize > 0);
+	if (filesize > 0) {
 		size_text = g_format_size (filesize);
 		gtk_label_set_label (GTK_LABEL (widget), size_text);
 	}
 
 	/* set new copyright */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_copyright"));
 	profile_copyright = gcm_profile_get_copyright (gcm_profile);
-	if (profile_copyright == NULL) {
-		gtk_widget_hide (widget);
-	} else {
-		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_copyright"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_copyright"));
+	gtk_widget_set_visible (widget, profile_copyright != NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_copyright"));
+	gtk_widget_set_visible (widget, profile_copyright != NULL);
+	if (profile_copyright != NULL) {
 		temp = gcm_utils_linkify (profile_copyright);
 		gtk_label_set_label (GTK_LABEL (widget), temp);
 		g_free (temp);
 	}
 
 	/* set new manufacturer */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_profile_manufacturer"));
 	profile_manufacturer = gcm_profile_get_manufacturer (gcm_profile);
-	if (profile_manufacturer == NULL) {
-		gtk_widget_hide (widget);
-	} else {
-		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_profile_manufacturer"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_profile_manufacturer"));
+	gtk_widget_set_visible (widget, profile_manufacturer != NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_profile_manufacturer"));
+	gtk_widget_set_visible (widget, profile_manufacturer != NULL);
+	if (profile_manufacturer != NULL) {
 		temp = gcm_utils_linkify (profile_manufacturer);
 		gtk_label_set_label (GTK_LABEL (widget), temp);
 		g_free (temp);
 	}
 
 	/* set new model */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_profile_model"));
 	profile_model = gcm_profile_get_model (gcm_profile);
-	if (profile_model == NULL) {
-		gtk_widget_hide (widget);
-	} else {
-		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_profile_model"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_profile_model"));
+	gtk_widget_set_visible (widget, profile_model != NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_profile_model"));
+	gtk_widget_set_visible (widget, profile_model != NULL);
+	if (profile_model != NULL) {
 		temp = g_markup_escape_text (profile_model, -1);
 		gtk_label_set_label (GTK_LABEL(widget), temp);
 		g_free (temp);
 	}
 
 	/* set new datetime */
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "hbox_datetime"));
 	profile_datetime = gcm_profile_get_datetime (gcm_profile);
-	if (profile_datetime == NULL) {
-		gtk_widget_hide (widget);
-	} else {
-		gtk_widget_show (widget);
-		widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_datetime"));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_datetime"));
+	gtk_widget_set_visible (widget, profile_datetime != NULL);
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_datetime"));
+	gtk_widget_set_visible (widget, profile_datetime != NULL);
+	if (profile_datetime != NULL)
 		gtk_label_set_label (GTK_LABEL(widget), profile_datetime);
-	}
 
 	/* setup named color tab */
 	ret = FALSE;
