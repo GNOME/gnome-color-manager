@@ -35,9 +35,7 @@
 #include "gcm-gamma-widget.h"
 #include "gcm-hull.h"
 #include "gcm-image.h"
-#include "gcm-named-color.h"
 #include "gcm-print.h"
-#include "gcm-profile.h"
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
 
@@ -103,130 +101,37 @@ gcm_test_hull_func (void)
 static void
 gcm_test_profile_func (void)
 {
-	GcmProfile *profile;
+	CdIcc *profile;
 	GFile *file;
 	GcmClut *clut;
 	gboolean ret;
 	GError *error = NULL;
-	CdColorXYZ *xyz;
-	CdColorYxy yxy;
-	CdColorYxy red;
-	CdColorYxy green;
-	CdColorYxy blue;
-	CdColorYxy white;
 	GcmHull *hull;
 	gchar *data;
 
 	/* bluish test */
-	profile = gcm_profile_new ();
+	profile = cd_icc_new ();
 	file = g_file_new_for_path (TESTDATADIR "/bluish.icc");
-	ret = gcm_profile_parse (profile, file, &error);
+	ret = cd_icc_load_file (profile, file, CD_ICC_LOAD_FLAGS_NONE, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_object_unref (file);
 
 	/* get CLUT */
-	clut = gcm_profile_generate_vcgt (profile, 256);
+	clut = cd_icc_generate_vcgt (profile, 256);
 	g_assert (clut != NULL);
 	g_assert_cmpint (gcm_clut_get_size (clut), ==, 256);
 
-	g_assert_cmpstr (gcm_profile_get_copyright (profile), ==, "Copyright (c) 1998 Hewlett-Packard Company");
-	g_assert_cmpstr (gcm_profile_get_manufacturer (profile), ==, "IEC http://www.iec.ch");
-	g_assert_cmpstr (gcm_profile_get_model (profile), ==, "IEC 61966-2.1 Default RGB colour space - sRGB");
-	g_assert_cmpstr (gcm_profile_get_datetime (profile), ==, "February  9 1998, 06:49:00 AM");
-	g_assert_cmpstr (gcm_profile_get_description (profile), ==, "Blueish Test");
-	g_assert_cmpstr (gcm_profile_get_checksum (profile), ==, "8e2aed5dac6f8b5d8da75610a65b7f27");
-	g_assert_cmpint (gcm_profile_get_kind (profile), ==, CD_PROFILE_KIND_DISPLAY_DEVICE);
-	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, CD_COLORSPACE_RGB);
-	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 6500);
-
-	/* get extra data */
-	g_object_get (profile,
-		      "red", &xyz,
-		      NULL);
-	g_assert (xyz != NULL);
-	cd_color_xyz_to_yxy (xyz, &yxy);
-	g_assert_cmpfloat (fabs (yxy.x - 0.648454), <, 0.01);
-
-	cd_color_xyz_free (xyz);
 	g_object_unref (clut);
 	g_object_unref (profile);
 
-	/* Adobe test */
-	profile = gcm_profile_new ();
-	file = g_file_new_for_path (TESTDATADIR "/AdobeGammaTest.icm");
-	ret = gcm_profile_parse (profile, file, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-	g_object_unref (file);
-
-	g_assert_cmpstr (gcm_profile_get_copyright (profile), ==, "Copyright (c) 1998 Hewlett-Packard Company Modified using Adobe Gamma");
-	g_assert_cmpstr (gcm_profile_get_manufacturer (profile), ==, "IEC http://www.iec.ch");
-	g_assert_cmpstr (gcm_profile_get_model (profile), ==, "IEC 61966-2.1 Default RGB colour space - sRGB");
-	g_assert_cmpstr (gcm_profile_get_datetime (profile), ==, "August 16 2005, 09:49:54 PM");
-	g_assert_cmpstr (gcm_profile_get_description (profile), ==, "ADOBEGAMMA-Test");
-	g_assert_cmpstr (gcm_profile_get_checksum (profile), ==, "bd847723f676e2b846daaf6759330624");
-	g_assert_cmpint (gcm_profile_get_kind (profile), ==, CD_PROFILE_KIND_DISPLAY_DEVICE);
-	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, CD_COLORSPACE_RGB);
-	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 6500);
-
-	g_object_unref (profile);
-
-	/* create test */
-	profile = gcm_profile_new ();
-
-	/* from my T61 */
-	cd_color_yxy_set (&red, 1.0f, 0.569336f, 0.332031f);
-	cd_color_yxy_set (&green, 1.0f, 0.311523f, 0.543945f);
-	cd_color_yxy_set (&blue, 1.0f, 0.149414f, 0.131836f);
-	cd_color_yxy_set (&white, 1.0f, 0.313477f, 0.329102f);
-
-	/* create from chroma */
-	ret = gcm_profile_create_from_chroma (profile, 2.2f, &red, &green, &blue, &white, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* add vcgt */
-	ret = gcm_profile_guess_and_add_vcgt (profile, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	/* save */
-	gcm_profile_save (profile, "dave.icc", &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-	g_object_unref (profile);
-
-	/* verify values */
-	profile = gcm_profile_new ();
-	file = g_file_new_for_path ("dave.icc");
-	ret = gcm_profile_parse (profile, file, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	g_assert_cmpstr (gcm_profile_get_copyright (profile), ==, "No copyright, use freely");
-	g_assert_cmpstr (gcm_profile_get_manufacturer (profile), ==, NULL);
-	g_assert_cmpstr (gcm_profile_get_model (profile), ==, NULL);
-	g_assert_cmpstr (gcm_profile_get_description (profile), ==, "RGB built-in");
-	g_assert_cmpint (gcm_profile_get_kind (profile), ==, CD_PROFILE_KIND_DISPLAY_DEVICE);
-	g_assert_cmpint (gcm_profile_get_colorspace (profile), ==, CD_COLORSPACE_RGB);
-	g_assert_cmpint (gcm_profile_get_temperature (profile), ==, 6400);
-
-	/* delete temp file */
-	ret = g_file_delete (file, NULL, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-
-	g_object_unref (file);
-	g_object_unref (profile);
-
 	/* get gamut hull */
-	profile = gcm_profile_new ();
+	profile = cd_icc_new ();
 	file = g_file_new_for_path (TESTDATADIR "/ibm-t61.icc");
-	ret = gcm_profile_parse (profile, file, &error);
+	ret = cd_icc_load_file (profile, file, CD_ICC_LOAD_FLAGS_NONE, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-	hull = gcm_profile_generate_gamut_hull (profile, 12);
+	hull = cd_icc_generate_gamut_hull (profile, 12);
 	g_assert (hull != NULL);
 
 	/* save as PLY file */
@@ -320,7 +225,7 @@ gcm_test_image_func (void)
 	GtkWidget *vbox;
 	gint response;
 	gboolean ret;
-	GcmProfile *profile;
+	CdIcc *profile;
 	GFile *file;
 
 	image = gcm_image_new ();
@@ -361,9 +266,9 @@ gcm_test_image_func (void)
 		      NULL);
 
 	/* get test file */
-	profile = gcm_profile_new ();
+	profile = cd_icc_new ();
 	file = g_file_new_for_path (TESTDATADIR "/ibm-t61.icc");
-	ret = gcm_profile_parse (profile, file, NULL);
+	ret = cd_icc_load_file (profile, file, CD_ICC_LOAD_FLAGS_NONE, NULL, NULL);
 	g_object_unref (file);
 	g_assert (ret);
 	gcm_image_set_output_profile (image, profile);
@@ -411,7 +316,7 @@ gcm_test_cie_widget_func (void)
 	GtkWidget *image;
 	GtkWidget *dialog;
 	GtkWidget *vbox;
-	GcmProfile *profile;
+	CdIcc *profile;
 	CdColorXYZ *white;
 	CdColorXYZ *red;
 	CdColorXYZ *green;
@@ -426,9 +331,9 @@ gcm_test_cie_widget_func (void)
 	widget = gcm_cie_widget_new ();
 	g_assert (widget != NULL);
 
-	profile = gcm_profile_new ();
+	profile = cd_icc_new ();
 	file = g_file_new_for_path (TESTDATADIR "/bluish.icc");
-	gcm_profile_parse (profile, file, NULL);
+	cd_icc_load_file (profile, file, CD_ICC_LOAD_FLAGS_NONE, NULL, NULL);
 	g_object_get (profile,
 		      "white", &white,
 		      "red", &red,
@@ -599,17 +504,17 @@ gcm_test_trc_widget_func (void)
 	GtkWidget *dialog;
 	GtkWidget *vbox;
 	GcmClut *clut;
-	GcmProfile *profile;
+	CdIcc *profile;
 	gint response;
 	GFile *file;
 
 	widget = gcm_trc_widget_new ();
 	g_assert (widget != NULL);
 
-	profile = gcm_profile_new ();
+	profile = cd_icc_new ();
 	file = g_file_new_for_path (TESTDATADIR "/AdobeGammaTest.icm");
-	gcm_profile_parse (profile, file, NULL);
-	clut = gcm_profile_generate_vcgt (profile, 256);
+	cd_icc_load_file (profile, file, CD_ICC_LOAD_FLAGS_NONE, NULL, NULL);
+	clut = cd_icc_generate_vcgt (profile, 256);
 	g_object_set (widget,
 		      "clut", clut,
 		      NULL);
@@ -682,54 +587,6 @@ gcm_test_utils_func (void)
 	g_free (filename);
 }
 
-static void
-gcm_test_named_color_func (void)
-{
-	GcmNamedColor *nc;
-	CdColorXYZ *xyz;
-	CdColorXYZ *xyz2;
-	const CdColorXYZ *xyz_new;
-	gchar *tmp = NULL;
-
-	nc = gcm_named_color_new ();
-
-	gcm_named_color_set_title (nc, "Hello world");
-
-	xyz = cd_color_xyz_new ();
-
-	/* use setters */
-	cd_color_xyz_set (xyz, 0.1, 0.2, 0.3);
-	gcm_named_color_set_value (nc, xyz);
-
-	/* test getters */
-	g_assert_cmpstr (gcm_named_color_get_title (nc), ==, "Hello world");
-	xyz_new = gcm_named_color_get_value (nc);
-	g_assert_cmpfloat (abs (xyz_new->X - 0.1), <, 0.01);
-	g_assert_cmpfloat (abs (xyz_new->Y - 0.2), <, 0.01);
-	g_assert_cmpfloat (abs (xyz_new->Z - 0.3), <, 0.01);
-
-	/* overwrite using properties */
-	cd_color_xyz_set (xyz, 0.4, 0.5, 0.6);
-	g_object_set (nc,
-		      "title", "dave",
-		      "value", xyz,
-		      NULL);
-
-	/* test property getters */
-	g_object_get (nc,
-		      "title", &tmp,
-		      "value", &xyz2,
-		      NULL);
-	g_assert_cmpstr (gcm_named_color_get_title (nc), ==, "dave");
-	g_assert_cmpfloat (abs (xyz2->X - 0.4), <, 0.01);
-	g_assert_cmpfloat (abs (xyz2->Y - 0.5), <, 0.01);
-	g_assert_cmpfloat (abs (xyz2->Z - 0.6), <, 0.01);
-
-	g_free (tmp);
-	cd_color_xyz_free (xyz);
-	cd_color_xyz_free (xyz2);
-}
-
 int
 main (int argc, char **argv)
 {
@@ -739,7 +596,6 @@ main (int argc, char **argv)
 	/* setup manually as we have no GMainContext */
 	gcm_debug_setup (g_getenv ("VERBOSE") != NULL);
 
-	g_test_add_func ("/color/named-color", gcm_test_named_color_func);
 	g_test_add_func ("/color/calibrate", gcm_test_calibrate_func);
 	g_test_add_func ("/color/exif", gcm_test_exif_func);
 	g_test_add_func ("/color/utils", gcm_test_utils_func);

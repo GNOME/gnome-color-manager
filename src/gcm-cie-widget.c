@@ -513,7 +513,7 @@ gcm_cie_widget_class_init (GcmCieWidgetClass *class)
  * gcm_cie_widget_set_from_profile:
  **/
 void
-gcm_cie_widget_set_from_profile (GtkWidget *widget, GcmProfile *profile)
+gcm_cie_widget_set_from_profile (GtkWidget *widget, CdIcc *profile)
 {
 	GcmCieWidget *cie = GCM_CIE_WIDGET (widget);
 	CdColorXYZ *white;

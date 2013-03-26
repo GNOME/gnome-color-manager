@@ -28,7 +28,6 @@
 #include <locale.h>
 #include <colord.h>
 
-#include "gcm-profile.h"
 #include "gcm-utils.h"
 #include "gcm-debug.h"
 
@@ -82,9 +81,10 @@ main (int argc, char **argv)
 	const gchar *copyright;
 	const gchar *description;
 	const gchar *title;
+	const gchar *lang;
 	gboolean ret;
 	gchar **files = NULL;
-	GcmProfile *profile = NULL;
+	CdIcc *icc = NULL;
 	GError *error = NULL;
 	GFile *destination = NULL;
 	GFile *file = NULL;
@@ -133,9 +133,11 @@ main (int argc, char **argv)
 	}
 
 	/* load profile */
-	profile = gcm_profile_new ();
+	icc = cd_icc_new ();
 	file = g_file_new_for_path (files[0]);
-	ret = gcm_profile_parse (profile, file, &error);
+	ret = cd_icc_load_file (icc, file,
+				CD_ICC_LOAD_FLAGS_FALLBACK_MD5,
+				NULL, &error);
 	if (!ret) {
 		/* TRANSLATORS: could not read file */
 		dialog = gtk_message_dialog_new (NULL,
@@ -156,8 +158,9 @@ main (int argc, char **argv)
 	}
 
 	/* get data */
-	description = gcm_profile_get_description (profile);
-	copyright = gcm_profile_get_copyright (profile);
+	lang = g_getenv ("LANG");
+	description = cd_icc_get_description (icc, lang, NULL);
+	copyright = cd_icc_get_copyright (icc, lang, NULL);
 
 	/* use the same icon as the color control panel */
 	image = gtk_image_new_from_icon_name ("preferences-color",
@@ -195,7 +198,7 @@ main (int argc, char **argv)
 
 	profile_tmp = cd_client_find_profile_by_property_sync (client,
 							      CD_PROFILE_METADATA_FILE_CHECKSUM,
-							      gcm_profile_get_checksum (profile),
+							      cd_icc_get_checksum (icc),
 							      NULL,
 							      NULL);
 	if (profile_tmp != NULL) {
@@ -231,7 +234,7 @@ main (int argc, char **argv)
 	}
 
 	/* get correct title */
-	switch (gcm_profile_get_kind (profile)) {
+	switch (cd_icc_get_kind (icc)) {
 	case CD_PROFILE_KIND_DISPLAY_DEVICE:
 		/* TRANSLATORS: the profile type */
 		title = _("Import display color profile?");
@@ -299,8 +302,8 @@ out:
 		g_object_unref (file);
 	if (string != NULL)
 		g_string_free (string, TRUE);
-	if (profile != NULL)
-		g_object_unref (profile);
+	if (icc != NULL)
+		g_object_unref (icc);
 	if (client != NULL)
 		g_object_unref (client);
 	if (profile_tmp != NULL)

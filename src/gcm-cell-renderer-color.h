@@ -41,7 +41,7 @@ typedef struct _GcmCellRendererColorClass	GcmCellRendererColorClass;
 struct _GcmCellRendererColor
 {
 	GtkCellRendererPixbuf	 parent;
-	CdColorXYZ		*color;
+	CdColorLab		*color;
 	CdProfile		*profile;
 	gchar			*icon_name;
 };

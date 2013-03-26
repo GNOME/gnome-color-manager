@@ -26,7 +26,6 @@
 #include <math.h>
 
 #include "gcm-clut.h"
-#include "gcm-profile.h"
 #include "gcm-trc-widget.h"
 
 G_DEFINE_TYPE (GcmTrcWidget, gcm_trc_widget, GTK_TYPE_DRAWING_AREA);

@@ -38,10 +38,9 @@
 #include "gcm-cell-renderer-color.h"
 #include "gcm-cie-widget.h"
 #include "gcm-image.h"
-#include "gcm-profile.h"
 #include "gcm-trc-widget.h"
-#include "gcm-named-color.h"
 #include "gcm-utils.h"
+#include "gcm-clut.h"
 #include "gcm-debug.h"
 
 #ifdef HAVE_CLUTTER
@@ -63,6 +62,7 @@ typedef struct {
 	gchar		*profile_id;
 	gchar		*filename;
 	guint		 xid;
+	const gchar	*lang;
 	GtkListStore	*liststore_nc;
 	GtkListStore	*liststore_metadata;
 } GcmViewerPrivate;
@@ -740,44 +740,28 @@ gcm_viewer_profile_colorspace_to_string (CdColorspace colorspace)
  * gcm_viewer_add_named_colors:
  **/
 static gboolean
-gcm_viewer_add_named_colors (GcmViewerPrivate *viewer,
-			     GcmProfile *profile)
+gcm_viewer_add_named_colors (GcmViewerPrivate *viewer, CdIcc *icc)
 {
-	gboolean ret = FALSE;
-	GcmNamedColor *nc;
-	GError *error = NULL;
+	CdColorSwatch *nc;
 	GPtrArray *ncs = NULL;
 	GtkTreeIter iter;
 	guint i;
 
 	/* get profile named colors */
-	ncs = gcm_profile_get_named_colors (profile, &error);
-	if (ncs == NULL) {
-		g_warning ("failed to get named colors: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
-	}
-
-	/* add items */
 	gtk_list_store_clear (viewer->liststore_nc);
-	for (i=0; i<ncs->len; i++) {
+	ncs = cd_icc_get_named_colors (icc);
+	for (i = 0; i < ncs->len; i++) {
 		nc = g_ptr_array_index (ncs, i);
 		gtk_list_store_append (viewer->liststore_nc, &iter);
 		gtk_list_store_set (viewer->liststore_nc,
 				    &iter,
 				    GCM_NAMED_COLORS_COLUMN_SORT, "1",
-				    GCM_NAMED_COLORS_COLUMN_TITLE, gcm_named_color_get_title (nc),
-				    GCM_NAMED_COLORS_COLUMN_COLOR, gcm_named_color_get_value (nc),
+				    GCM_NAMED_COLORS_COLUMN_TITLE, cd_color_swatch_get_name (nc),
+				    GCM_NAMED_COLORS_COLUMN_COLOR, cd_color_swatch_get_value (nc),
 				    -1);
 	}
-
-	/* success */
-	ret= TRUE;
-out:
-	if (ncs != NULL)
-		g_ptr_array_unref (ncs);
-	return ret;
+	g_ptr_array_unref (ncs);
+	return TRUE;
 }
 
 struct {
@@ -931,10 +915,10 @@ out:
 }
 
 /**
- * gcm_profile_warning_to_string:
+ * cd_icc_warning_to_string:
  **/
 static const gchar *
-gcm_profile_warning_to_string (CdProfileWarning kind_enum)
+cd_icc_warning_to_string (CdProfileWarning kind_enum)
 {
 	const gchar *kind = NULL;
 	switch (kind_enum) {
@@ -994,14 +978,13 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 {
 	GtkWidget *widget;
 	GtkWindow *window;
-	GFile *file;
-	GcmProfile *gcm_profile = NULL;
+	CdIcc *icc = NULL;
 	GcmClut *clut_trc = NULL;
 	GcmClut *clut_vcgt = NULL;
 	const gchar *profile_copyright;
 	const gchar *profile_manufacturer;
 	const gchar *profile_model ;
-	const gchar *profile_datetime;
+	GDateTime *created;
 	const gchar *profile_title;
 	gchar *temp;
 	const gchar *filename;
@@ -1031,27 +1014,21 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 		goto out;
 	}
 
-	gcm_profile = gcm_profile_new ();
-	file = g_file_new_for_path (cd_profile_get_filename (profile));
-	gcm_profile_parse (gcm_profile,
-			   file,
-			   NULL);
-	g_object_unref (file);
-
 	/* set the preview widgets */
+	icc = cd_profile_load_icc (profile, CD_ICC_LOAD_FLAGS_ALL, NULL, NULL);
 	if (cd_profile_get_colorspace (profile) == CD_COLORSPACE_RGB &&
 	    cd_profile_get_kind (profile) != CD_PROFILE_KIND_NAMED_COLOR) {
-		gcm_image_set_input_profile (GCM_IMAGE(viewer->preview_widget_input), gcm_profile);
+		gcm_image_set_input_profile (GCM_IMAGE(viewer->preview_widget_input), icc);
 		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_input), NULL);
-		gcm_image_set_output_profile (GCM_IMAGE(viewer->preview_widget_output), gcm_profile);
+		gcm_image_set_output_profile (GCM_IMAGE(viewer->preview_widget_output), icc);
 		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_output), NULL);
 		show_section = TRUE;
 	} else if (cd_profile_get_colorspace (profile) == CD_COLORSPACE_LAB &&
 		   cd_profile_get_kind (profile) != CD_PROFILE_KIND_NAMED_COLOR) {
 		gcm_image_set_input_profile (GCM_IMAGE(viewer->preview_widget_input), NULL);
-		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_input), gcm_profile);
+		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_input), icc);
 		gcm_image_set_output_profile (GCM_IMAGE(viewer->preview_widget_output), NULL);
-		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_output), gcm_profile);
+		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_output), icc);
 		show_section = TRUE;
 	} else {
 		gcm_image_set_input_profile (GCM_IMAGE(viewer->preview_widget_input), NULL);
@@ -1065,14 +1042,14 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	if (cd_profile_get_colorspace (profile) == CD_COLORSPACE_RGB &&
 	    cd_profile_get_kind (profile) != CD_PROFILE_KIND_NAMED_COLOR) {
 		gcm_cie_widget_set_from_profile (viewer->cie_widget,
-						 gcm_profile);
+						 icc);
 		gtk_widget_show (widget);
 	} else {
 		gtk_widget_hide (widget);
 	}
 
 	/* get curve data */
-	clut_trc = gcm_profile_generate_curve (gcm_profile, 256);
+	clut_trc = cd_icc_generate_curve (icc, 256);
 
 	/* only show if there is useful information */
 	size = 0;
@@ -1092,13 +1069,13 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	/* show 3d gamut hull */
 	gtk_widget_show (viewer->hull_widget);
 	gcm_hull_widget_clear (GCM_HULL_WIDGET (viewer->hull_widget));
-	ret = gcm_hull_widget_add (GCM_HULL_WIDGET (viewer->hull_widget), gcm_profile);
+	ret = gcm_hull_widget_add (GCM_HULL_WIDGET (viewer->hull_widget), icc);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_3d"));
 	gtk_widget_set_visible (widget, ret);
 #endif
 
 	/* get vcgt data */
-	clut_vcgt = gcm_profile_generate_vcgt (gcm_profile, 256);
+	clut_vcgt = cd_icc_generate_vcgt (icc, 256);
 
 	/* only show if there is useful information */
 	size = 0;
@@ -1176,7 +1153,7 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 			g_debug ("warnings[i]=%s", warnings[i]);
 			warning = cd_profile_warning_from_string (warnings[i]);
 			g_string_append_printf (str, "• %s\n",
-						gcm_profile_warning_to_string (warning));
+						cd_icc_warning_to_string (warning));
 		}
 		if (str->len > 0)
 			g_string_set_size (str, str->len - 1);
@@ -1185,13 +1162,13 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	}
 
 	/* set profile version */
-	filename = gcm_profile_get_version (gcm_profile);
-	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder,
-			     "label_version"));
-	gtk_label_set_label (GTK_LABEL (widget), filename);
+	temp = g_strdup_printf ("%.1f", cd_icc_get_version (icc));
+	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_version"));
+	gtk_label_set_label (GTK_LABEL (widget), temp);
+	g_free (temp);
 
 	/* set whitepoint */
-	temperature = gcm_profile_get_temperature (gcm_profile);
+	temperature = cd_icc_get_temperature (icc);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_temp"));
 	gtk_widget_set_visible (widget, temperature > 0);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_temp"));
@@ -1209,7 +1186,7 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	}
 
 	/* set size */
-	filesize = gcm_profile_get_size (gcm_profile);
+	filesize = cd_icc_get_size (icc);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_size"));
 	gtk_widget_set_visible (widget, filesize > 0);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_size"));
@@ -1220,7 +1197,7 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	}
 
 	/* set new copyright */
-	profile_copyright = gcm_profile_get_copyright (gcm_profile);
+	profile_copyright = cd_icc_get_copyright (icc, viewer->lang, NULL);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_copyright"));
 	gtk_widget_set_visible (widget, profile_copyright != NULL);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_copyright"));
@@ -1232,7 +1209,7 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	}
 
 	/* set new manufacturer */
-	profile_manufacturer = gcm_profile_get_manufacturer (gcm_profile);
+	profile_manufacturer = cd_icc_get_manufacturer (icc, viewer->lang, NULL);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_profile_manufacturer"));
 	gtk_widget_set_visible (widget, profile_manufacturer != NULL);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_profile_manufacturer"));
@@ -1244,7 +1221,7 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	}
 
 	/* set new model */
-	profile_model = gcm_profile_get_model (gcm_profile);
+	profile_model = cd_icc_get_model (icc, viewer->lang, NULL);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_profile_model"));
 	gtk_widget_set_visible (widget, profile_model != NULL);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_profile_model"));
@@ -1256,18 +1233,22 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	}
 
 	/* set new datetime */
-	profile_datetime = gcm_profile_get_datetime (gcm_profile);
+	created = cd_icc_get_created  (icc);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_title_datetime"));
-	gtk_widget_set_visible (widget, profile_datetime != NULL);
+	gtk_widget_set_visible (widget, created != NULL);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "label_datetime"));
-	gtk_widget_set_visible (widget, profile_datetime != NULL);
-	if (profile_datetime != NULL)
-		gtk_label_set_label (GTK_LABEL(widget), profile_datetime);
+	gtk_widget_set_visible (widget, created != NULL);
+	if (created != NULL) {
+		/* TRANSLATORS: this is the icc creation date strftime format */
+		temp = g_date_time_format (created, _("%B %e %Y, %I:%M:%S %p"));
+		gtk_label_set_label (GTK_LABEL(widget), temp);
+		g_free (temp);
+	}
 
 	/* setup named color tab */
 	ret = FALSE;
 	if (profile_kind == CD_PROFILE_KIND_NAMED_COLOR)
-		ret = gcm_viewer_add_named_colors (viewer, gcm_profile);
+		ret = gcm_viewer_add_named_colors (viewer, icc);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_named_colors"));
 	gtk_widget_set_visible (widget, ret);
 
@@ -1277,7 +1258,7 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	gtk_widget_set_visible (widget, ret);
 
 	/* set delete sensitivity */
-	ret = gcm_profile_get_can_delete (gcm_profile);
+	ret = cd_icc_get_can_delete (icc);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "toolbutton_profile_delete"));
 	gtk_widget_set_sensitive (widget, ret);
 	if (ret) {
@@ -1295,8 +1276,8 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	gtk_widget_set_visible (widget, show_section);
 
 out:
-	if (gcm_profile != NULL)
-		g_object_unref (gcm_profile);
+	if (icc != NULL)
+		g_object_unref (icc);
 	if (clut_trc != NULL)
 		g_object_unref (clut_trc);
 	if (clut_vcgt != NULL)
@@ -1879,6 +1860,7 @@ main (int argc, char **argv)
 	viewer->xid = xid;
 	viewer->profile_id = profile_id;
 	viewer->filename = filename;
+	viewer->lang = g_getenv ("LANG");
 
 	/* ensure single instance */
 	viewer->application = gtk_application_new ("org.gnome.ColorManager.Viewer", 0);

@@ -28,6 +28,7 @@
 
 #include "gcm-hull.h"
 #include "gcm-hull-widget.h"
+#include "gcm-utils.h"
 
 G_DEFINE_TYPE (GcmHullWidget, gcm_hull_widget, GTK_CLUTTER_TYPE_EMBED);
 #define GCM_HULL_WIDGET_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_HULL_WIDGET, GcmHullWidgetPrivate))
@@ -89,7 +90,7 @@ gcm_hull_widget_set_actor_position (GcmHullWidget *hull_widget,
  **/
 gboolean
 gcm_hull_widget_add (GcmHullWidget *hull_widget,
-		     GcmProfile *profile)
+		     CdIcc *profile)
 {
 	ClutterActor *model = NULL;
 	gboolean ret = FALSE;
@@ -98,7 +99,7 @@ gcm_hull_widget_add (GcmHullWidget *hull_widget,
 	GError *error = NULL;
 
 	/* generate hull */
-	hull = gcm_profile_generate_gamut_hull (profile, 12);
+	hull = cd_icc_generate_gamut_hull (profile, 12);
 	if (hull == NULL)
 		goto out;
 

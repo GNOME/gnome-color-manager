@@ -24,8 +24,7 @@
 
 #include <glib-object.h>
 #include <gtk/gtk.h>
-
-#include "gcm-profile.h"
+#include <colord.h>
 
 G_BEGIN_DECLS
 
@@ -61,11 +60,11 @@ GType		 gcm_image_get_type		(void);
 GcmImage	*gcm_image_new		 	(void);
 
 void		 gcm_image_set_input_profile	(GcmImage	*image,
-						 GcmProfile	*profile);
+						 CdIcc		*profile);
 void		 gcm_image_set_output_profile	(GcmImage	*image,
-						 GcmProfile	*profile);
+						 CdIcc		*profile);
 void		 gcm_image_set_abstract_profile	(GcmImage	*image,
-						 GcmProfile	*profile);
+						 CdIcc		*profile);
 gboolean	 gcm_image_has_embedded_profile	(GcmImage	*image);
 void		 gcm_image_use_embedded_profile	(GcmImage	*image,
 						 gboolean	 use_embedded_profile);

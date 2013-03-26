@@ -24,8 +24,7 @@
 
 #include <gtk/gtk.h>
 #include <clutter-gtk/clutter-gtk.h>
-
-#include "gcm-profile.h"
+#include <colord.h>
 
 G_BEGIN_DECLS
 
@@ -55,7 +54,7 @@ GType		 gcm_hull_widget_get_type	(void);
 GtkWidget	*gcm_hull_widget_new		(void);
 void		 gcm_hull_widget_clear		(GcmHullWidget	*hull_widget);
 gboolean	 gcm_hull_widget_add		(GcmHullWidget	*hull_widget,
-						 GcmProfile	*profile);
+						 CdIcc	*profile);
 
 G_END_DECLS
 

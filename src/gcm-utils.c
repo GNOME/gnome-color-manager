@@ -25,6 +25,8 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <colord.h>
+#include <lcms2.h>
+#include <math.h>
 
 #include "gcm-utils.h"
 
@@ -339,7 +341,7 @@ cd_colorspace_to_localised_string (CdColorspace colorspace)
 }
 
 /**
- * gcm_profile_has_colorspace_description:
+ * cd_icc_has_colorspace_description:
  * @profile: A valid #CdProfile
  *
  * Finds out if the profile contains a colorspace description.
@@ -348,7 +350,7 @@ cd_colorspace_to_localised_string (CdColorspace colorspace)
  * e.g. "Adobe RGB" for %CD_COLORSPACE_RGB.
  **/
 gboolean
-gcm_profile_has_colorspace_description (CdProfile *profile)
+cd_icc_has_colorspace_description (CdProfile *profile)
 {
 	CdColorspace colorspace;
 	const gchar *description;
@@ -365,4 +367,593 @@ gcm_profile_has_colorspace_description (CdProfile *profile)
 
 	/* nothing */
 	return FALSE;
+}
+
+/**
+ * cd_icc_generate_vcgt:
+ * @icc: A valid #CdIcc
+ * @size: the size of the table to generate
+ *
+ * Generates a VCGT table of a specified size.
+ *
+ * Return value: A #GcmClut object, or %NULL. Free with g_object_unref()
+ **/
+GcmClut *
+cd_icc_generate_vcgt (CdIcc *icc, guint size)
+{
+	cmsFloat32Number in;
+	cmsHPROFILE lcms_profile;
+	const cmsToneCurve **vcgt;
+	GcmClut *clut = NULL;
+	GcmClutData *tmp;
+	GPtrArray *array = NULL;
+	guint i;
+
+	/* get tone curves from icc */
+	lcms_profile = cd_icc_get_handle (icc);
+	vcgt = cmsReadTag (lcms_profile, cmsSigVcgtType);
+	if (vcgt == NULL || vcgt[0] == NULL) {
+		g_debug ("icc does not have any VCGT data");
+		goto out;
+	}
+
+	/* create array */
+	array = g_ptr_array_new_with_free_func (g_free);
+	for (i = 0; i < size; i++) {
+		in = (gdouble) i / (gdouble) (size - 1);
+		tmp = g_new0 (GcmClutData, 1);
+		tmp->red = cmsEvalToneCurveFloat(vcgt[0], in) * (gdouble) 0xffff;
+		tmp->green = cmsEvalToneCurveFloat(vcgt[1], in) * (gdouble) 0xffff;
+		tmp->blue = cmsEvalToneCurveFloat(vcgt[2], in) * (gdouble) 0xffff;
+		g_ptr_array_add (array, tmp);
+	}
+
+	/* create new scaled CLUT */
+	clut = gcm_clut_new ();
+	gcm_clut_set_source_array (clut, array);
+out:
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	return clut;
+}
+
+/**
+ * cd_icc_generate_curve:
+ * @icc: A valid #CdIcc
+ * @size: the size of the curve to generate
+ *
+ * Generates a curve of a specified size.
+ *
+ * Return value: A #GcmClut object, or %NULL. Free with g_object_unref()
+ **/
+GcmClut *
+cd_icc_generate_curve (CdIcc *icc, guint size)
+{
+	GcmClut *clut = NULL;
+	gdouble *values_in = NULL;
+	gdouble *values_out = NULL;
+	guint i;
+	GcmClutData *data;
+	GPtrArray *array = NULL;
+	gfloat divamount;
+	gfloat divadd;
+	guint component_width;
+	cmsHPROFILE srgb_profile = NULL;
+	cmsHTRANSFORM transform = NULL;
+	guint type;
+	CdColorspace colorspace;
+	gdouble tmp;
+	cmsHPROFILE lcms_profile;
+
+	/* run through the icc */
+	colorspace = cd_icc_get_colorspace (icc);
+	if (colorspace == CD_COLORSPACE_RGB) {
+
+		/* RGB */
+		component_width = 3;
+		type = TYPE_RGB_DBL;
+
+		/* create input array */
+		values_in = g_new0 (gdouble, size * 3 * component_width);
+		divamount = 1.0f / (gfloat) (size - 1);
+		for (i = 0; i < size; i++) {
+			divadd = divamount * (gfloat) i;
+
+			/* red component */
+			values_in[(i * 3 * component_width)+0] = divadd;
+			values_in[(i * 3 * component_width)+1] = 0.0f;
+			values_in[(i * 3 * component_width)+2] = 0.0f;
+
+			/* green component */
+			values_in[(i * 3 * component_width)+3] = 0.0f;
+			values_in[(i * 3 * component_width)+4] = divadd;
+			values_in[(i * 3 * component_width)+5] = 0.0f;
+
+			/* blue component */
+			values_in[(i * 3 * component_width)+6] = 0.0f;
+			values_in[(i * 3 * component_width)+7] = 0.0f;
+			values_in[(i * 3 * component_width)+8] = divadd;
+		}
+	}
+
+	/* do each transform */
+	if (values_in != NULL) {
+		/* create output array */
+		values_out = g_new0 (gdouble, size * 3 * component_width);
+
+		/* create a transform from icc to sRGB */
+		srgb_profile = cmsCreate_sRGBProfile ();
+		lcms_profile = cd_icc_get_handle (icc);
+		transform = cmsCreateTransform (lcms_profile, type, srgb_profile, TYPE_RGB_DBL, INTENT_PERCEPTUAL, 0);
+		if (transform == NULL)
+			goto out;
+
+		/* do transform */
+		cmsDoTransform (transform, values_in, values_out, size * 3);
+
+		/* create output array */
+		array = g_ptr_array_new_with_free_func (g_free);
+
+		for (i = 0; i < size; i++) {
+			data = g_new0 (GcmClutData, 1);
+
+			/* default values */
+			data->red = 0;
+			data->green = 0;
+			data->blue = 0;
+
+			/* only save curve data if it is positive */
+			tmp = values_out[(i * 3 * component_width)+0] * (gfloat) 0xffff;
+			if (tmp > 0.0f)
+				data->red = tmp;
+			tmp = values_out[(i * 3 * component_width)+4] * (gfloat) 0xffff;
+			if (tmp > 0.0f)
+				data->green = tmp;
+			tmp = values_out[(i * 3 * component_width)+8] * (gfloat) 0xffff;
+			if (tmp > 0.0f)
+				data->blue = tmp;
+			g_ptr_array_add (array, data);
+		}
+		clut = gcm_clut_new ();
+		gcm_clut_set_source_array (clut, array);
+	}
+
+out:
+	g_free (values_in);
+	g_free (values_out);
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	if (transform != NULL)
+		cmsDeleteTransform (transform);
+	if (srgb_profile != NULL)
+		cmsCloseProfile (srgb_profile);
+	return clut;
+}
+
+#define HYP(a,b)		(sqrt((a)*(a) + (b)*(b)))
+
+/**
+ * cd_icc_create_lab_cube:
+ *
+ * The original code was taken from icc_examin,
+ *  Copyright 2004-2009 Kai-Uwe Behrmann <ku.b@gmx.de>
+ **/
+static gdouble *
+cd_icc_create_lab_cube (guint res)
+{
+	gdouble *lab = NULL;
+	gdouble max = 0.99;
+	gdouble min = 0.01;
+	gint area;
+	gint channels_n = 3;
+	gint pos;
+	gsize size;
+	guint x, y;
+
+	size = 4 * res * (res+1) + 2 * (res-1) * (res-1);
+	lab = g_new0 (gdouble, size * channels_n);
+	if (lab == NULL)
+		goto out;
+
+	g_debug ("created 2*%ix%i array", (guint)size, (guint)channels_n);
+
+	/* side squares */
+	for (y = 0; y <= res; ++y) {
+		for (x = 0; x < 4 * res; ++x) {
+			area = 0;
+			pos = (y * 4 * res + x) * channels_n;
+
+			lab[pos + 0] = pow(0.9999 - (gdouble)y / (gdouble)res, 2.0) + 0.0001;
+			if (area * res <= x && x < ++area * res) {
+				lab[pos + 1] = min + (x - (area - 1) * res) / (gdouble)res * (max-min);
+				lab[pos + 2] = min;
+			} else if (area * res <= x && x < ++area * res) {
+				lab[pos + 1] = max;
+				lab[pos + 2] = min + (x - (area - 1) * res) / (gdouble)res * (max-min);
+			} else if (area * res <= x && x < ++area * res) {
+				lab[pos + 1] = max - (x - (area - 1) * res) / (gdouble)res * (max-min);
+				lab[pos + 2] = max;
+			} else if (area * res <= x && x < ++area * res) {
+				lab[pos + 1] = min;
+				lab[pos + 2] = max - (x - (area - 1) * res) / (double)res * (max-min);
+			}
+		}
+	}
+
+	/* bottom and top square */
+	for (y = 0; y < (res - 1); ++y) {
+		for (x = 0; x < 2 * (res - 1); ++x) {
+			gint x_pos;
+			gint y_pos;
+			gdouble val;
+
+			pos = (4 * res * (res + 1) + y * 2 * (res - 1) + x) * channels_n;
+			area = 1;
+			x_pos = x + 1;
+			y_pos = y + 1;
+			val = (gdouble)y_pos/(gdouble)res * (max-min);
+
+			if (/*0 <= x &&*/ x < res - 1) {
+				lab[pos + 0] = 1.0;
+				lab[pos + 1] = min + (x_pos - (area - 1) * (res - 1)) / (gdouble)res * (max-min);
+				lab[pos + 2] = min + val;
+			} else if (res - 1 <= x && x < 2 * res - 2) {
+				++area;
+				lab[pos + 1] = min + (x_pos - (area - 1) * (res - 1)) / (gdouble)res * (max-min);
+				lab[pos + 2] = min + val;
+				lab[pos + 0] = HYP (lab[pos + 1] - 0.5, lab[pos + 2] - 0.5)/100.; /* 0.0 */
+			}
+		}
+	}
+out:
+	return lab;
+}
+
+/**
+ * cd_icc_create_hull_for_data:
+ *
+ * The original code was taken from icc_examin,
+ *  Copyright 2004-2009 Kai-Uwe Behrmann <ku.b@gmx.de>
+ **/
+static GcmHull *
+cd_icc_create_hull_for_data (guint res, gdouble *lab, gdouble *rgb)
+{
+	CdColorRGB color;
+	CdColorXYZ xyz;
+	GcmHull *hull = NULL;
+	gint channels_n = 3;
+	gint off;
+	gsize i;
+	gsize size;
+	guint face[3];
+	guint x, y;
+
+	size = 4 * res * (res+1) + 2 * (res-1) * (res-1);
+
+	hull = gcm_hull_new ();
+
+	/* collect colour points */
+	for (i = 0; i < size; ++i) {
+		xyz.X = lab[i*channels_n+0];
+		xyz.Y = lab[i*channels_n+1];
+		xyz.Z = lab[i*channels_n+2];
+		color.R = rgb[i*channels_n+0];
+		color.G = rgb[i*channels_n+1];
+		color.B = rgb[i*channels_n+2];
+		gcm_hull_add_vertex (hull, &xyz, &color);
+	}
+
+	for (y = 0; y < res; ++y) {
+		for (x = 0; x < 4 * res; ++x) {
+			gint x_ = x;
+			if (x == 4 * res - 1)
+				x_ = -1;
+			face[0] = y * 4*res+x;
+			face[1] = y * 4*res+x_+1;
+			face[2] = (y+1)*4*res+x;
+			gcm_hull_add_face (hull, face, 3);
+
+			face[0] = y * 4*res+x_+1;
+			face[1] = (y+1)*4*res+x_+1;
+			face[2] = (y+1)*4*res+x;
+			gcm_hull_add_face (hull, face, 3);
+		}
+	}
+
+	off = 4 * res * (res + 1);
+
+	/* 1 0 0 (L res b) */
+	face[0] = 4*res-1;
+	face[1] = off;
+	face[2] = 0;
+	gcm_hull_add_face (hull, face, 3);
+
+	face[0] = off;
+	face[2] = 0;
+	face[1] = 1;
+	gcm_hull_add_face (hull, face, 3);
+
+	/* 0 0 0 */
+	face[1] = off-1;
+	face[0] = off+res-1;
+	face[2] = off-4*res;
+	gcm_hull_add_face (hull, face, 3);
+
+	face[1] = off+res-1;
+	face[2] = off-4*res;
+	face[0] = off - 4*res+1;
+	gcm_hull_add_face (hull, face, 3);
+
+	/* 0 0 1 */
+	face[2] = off-res;
+	face[1] = off-res-1;
+	face[0] = off+2*(res-1)*(res-1)-res+1;
+	gcm_hull_add_face (hull, face, 3);
+
+	face[0] = off-res;
+	face[1] = off-res+1;
+	face[2] = off+2*(res-1)*(res-1)-res+1;
+	gcm_hull_add_face (hull, face, 3);
+
+	/* 0 1 1 */
+	face[0] = off-2*res+1;
+	face[2] = off-2*res;
+	face[1] = off+2*(res-1)*(res-1)-1;
+	gcm_hull_add_face (hull, face, 3);
+
+	face[1] = off-2*res;
+	face[2] = off+2*(res-1)*(res-1)-1;
+	face[0] = off-2*res-1;
+	gcm_hull_add_face (hull, face, 3);
+
+	/* 1 1 1 */
+	face[0] = 2*res-1;
+	face[2] = 2*res;
+	face[1] = off+2*(res-1)*(res-1)-res;
+	gcm_hull_add_face (hull, face, 3);
+
+	face[1] = 2*res;
+	face[2] = off+2*(res-1)*(res-1)-res;
+	face[0] = 2*res+1;
+	gcm_hull_add_face (hull, face, 3);
+
+	/* 1 0 1 */
+	face[2] = 3*res;
+	face[0] = 3*res-1;
+	face[1] = off+2*(res-1)*(res-1)-2*res+2;
+	gcm_hull_add_face (hull, face, 3);
+
+	face[2] = 3*res;
+	face[1] = 3*res+1;
+	face[0] = off+2*(res-1)*(res-1)-2*res+2;
+	gcm_hull_add_face (hull, face, 3);
+
+	/* 1 1 0 */
+	face[0] = off+res-2;
+	face[1] = res + 1;
+	face[2] = res - 1;
+	gcm_hull_add_face (hull, face, 3);
+
+	face[0] = res + 1;
+	face[2] = res - 1;
+	face[1] = res;
+	gcm_hull_add_face (hull, face, 3);
+
+	/* 0 1 0 */
+	face[0] = off+2*(res-1)-1;
+	face[1] = off-3*res-1;
+	face[2] = off-3*res;
+	gcm_hull_add_face (hull, face, 3);
+
+	face[1] = off+2*(res-1)-1;
+	face[0] = off-3*res+1;
+	face[2] = off-3*res+0;
+	gcm_hull_add_face (hull, face, 3);
+
+	for (y = 0; y < res; ++y) {
+		if (0 < y && y < res - 1) {
+			/* 0 0 . */
+			face[2] = off-y;
+			face[0] = off+(y+1)*2*(res-1)-res+1;
+			face[1] = off-y-1;
+			gcm_hull_add_face (hull, face, 3);
+
+			face[0] = off+(y+0)*2*(res-1)-res+1;
+			face[2] = off-y;
+			face[1] = off+(y+1)*2*(res-1)-res+1;
+			gcm_hull_add_face (hull, face, 3);
+
+			/* 0 1 . */
+			face[1] = off+(y+1)*2*(res-1)-1;
+			face[0] = off-3*res+y+1;
+			face[2] = off+(y)*2*(res-1)-1;
+			gcm_hull_add_face (hull, face, 3);
+
+			face[1] = off-3*res+y+1;
+			face[2] = off+(y)*2*(res-1)-1;
+			face[0] = off-3*res+y;
+			gcm_hull_add_face (hull, face, 3);
+
+			/* 1 0 . */
+			face[0] = off+2*(res-1)*(res-1)-(y+1)*2*(res-1);
+			face[1] = 3*res+y+1;
+			face[2] = off+2*(res-1)*(res-1)-y*2*(res-1);
+			gcm_hull_add_face (hull, face, 3);
+
+			face[0] = 3*res+y+1;
+			face[2] = off+2*(res-1)*(res-1)-y*2*(res-1);
+			face[1] = 3*res+y;
+			gcm_hull_add_face (hull, face, 3);
+
+			/* 1 1 . */
+			face[0] = off+2*(res-1)*(res-1)-(y+1)*2*(res-1)+res-2;
+			face[1] = off+2*(res-1)*(res-1)-(y+0)*2*(res-1)+res-2;
+			face[2] = 2*res-y;
+			gcm_hull_add_face (hull, face, 3);
+
+			face[0] = 2*res-y-1;
+			face[1] = off+2*(res-1)*(res-1)-(y+1)*2*(res-1)+res-2;
+			face[2] = 2*res-y;
+			gcm_hull_add_face (hull, face, 3);
+		}
+
+		for (x = 0; x < 2 * res; ++x) {
+			gint x_ = x + off;
+
+			/* lower border */
+			if ( y == 0 ) {
+				if (x == 0) {
+				} else if (x == res - 1) {
+				} else if (x < res - 1) {
+					/* 1 . 0 */
+					face[0] = off + x - 1;
+					face[1] = off + x;
+					face[2] = x;
+					gcm_hull_add_face (hull, face, 3);
+
+					face[0] = off + x;
+					face[2] = x;
+					face[1] = x + 1;
+					gcm_hull_add_face (hull, face, 3);
+
+					/* 0 . 1 */
+					face[0] = off-res-x;
+					face[2] = off-res-x-1;
+					face[1] = off+2*(res-1)*(res-1)-res+x;
+					gcm_hull_add_face (hull, face, 3);
+
+					face[2] = off-res-x-1;
+					face[0] = off+2*(res-1)*(res-1)-res+x;
+					face[1] = off+2*(res-1)*(res-1)-res+x+1;
+					gcm_hull_add_face (hull, face, 3);
+
+					/* 1 . 1 */
+					face[0] = 3*res - x;
+					face[1] = 3*res - x-1;
+					face[2] = off+2*(res-1)*(res-1)-2*(res-1)+x-1;
+					gcm_hull_add_face (hull, face, 3);
+
+					face[0] = 3*res - x-1;
+					face[2] = off+2*(res-1)*(res-1)-2*(res-1)+x-1;
+					face[1] = off+2*(res-1)*(res-1)-2*(res-1)+x;
+					gcm_hull_add_face (hull, face, 3);
+
+				} else if (x > res + 1) {
+					/* 0 . 0 */
+					face[0] = off+x-3;
+					face[2] = off+x-3+1;
+					face[1] = 4*res*(res+1)-4*res + x-res-1;
+					gcm_hull_add_face (hull, face, 3);
+
+					face[1] = off+x-3+1;
+					face[2] = 4*res*(res+1)-4*res + x-res-1;
+					face[0] = 4*res*(res+1)-4*res + x-res;
+					gcm_hull_add_face (hull, face, 3);
+				}
+
+			/* upper border */
+			} else if ( y == res - 1 ) {
+				if (x == 0) {
+				}
+			} else if (/*0 <= x &&*/ x < res - 1 - 1) {
+
+				/* upper middle field (*L=0.0) */
+				face[0] = (y-1) * 2*(res-1)+x_;
+				face[2] = (y-1)*2*(res-1)+x_+1;
+				face[1] = (y+0)*2*(res-1)+x_;
+				gcm_hull_add_face (hull, face, 3);
+
+				face[2] = (y-1)*2*(res-1)+x_+1;
+				face[0] = (y+0)*2*(res-1)+x_;
+				face[1] = (y+0)*2*(res-1)+x_+1;
+				gcm_hull_add_face (hull, face, 3);
+
+			} else if (res - 1 <= x && x < 2 * res - 2 - 1) {
+
+				/* lower middle field (*L=1.0) */
+				face[0] = (y-1) * 2*(res-1)+x_;
+				face[1] = (y-1)*2*(res-1)+x_+1;
+				face[2] = (y+0)*2*(res-1)+x_;
+				gcm_hull_add_face (hull, face, 3);
+
+				face[0] = (y-1)*2*(res-1)+x_+1;
+				face[2] = (y+0)*2*(res-1)+x_;
+				face[1] = (y+0)*2*(res-1)+x_+1;
+				gcm_hull_add_face (hull, face, 3);
+			}
+		}
+	}
+
+	return hull;
+}
+
+/**
+ * cd_icc_generate_gamut_hull:
+ * @icc: a #CdIcc
+ * @res: The resolution. 10 is quick, 20 is more precise. 12 is a good default.
+ *
+ * A cube from six squares with the range of the Lab cube will be
+ * transformed to a icc colour space and then converted to a
+ * mesh.
+ *
+ * The original code was taken from icc_examin,
+ *  Copyright 2004-2009 Kai-Uwe Behrmann <ku.b@gmx.de>
+ **/
+GcmHull *
+cd_icc_generate_gamut_hull (CdIcc *icc, guint res)
+{
+	cmsHPROFILE lab_profile = NULL;
+	cmsHPROFILE srgb_profile = NULL;
+	cmsHTRANSFORM lab_transform = NULL;
+	cmsHTRANSFORM srgb_transform = NULL;
+	cmsHPROFILE lcms_profile;
+	GcmHull *hull = NULL;
+	gdouble *lab = NULL;
+	gdouble *rgb = NULL;
+	gint channels_n = 3;
+	gsize size = 4 * res * (res+1) + 2 * (res-1) * (res-1);
+
+	/* create data array */
+	lab = cd_icc_create_lab_cube (res);
+	rgb = g_new0 (gdouble, size * channels_n);
+	if (rgb == NULL)
+		goto out;
+
+	/* run the cube through the Lab icc */
+	lab_profile = cmsCreateLab4Profile (cmsD50_xyY ());
+	lcms_profile = cd_icc_get_handle (icc);
+	lab_transform = cmsCreateTransform (lcms_profile, TYPE_RGB_DBL,
+					    lab_profile, TYPE_Lab_DBL,
+					    INTENT_ABSOLUTE_COLORIMETRIC, 0);
+	if (lab_transform == NULL) {
+		g_warning ("failed to create Lab transform");
+		goto out;
+	}
+	cmsDoTransform (lab_transform, lab, lab, size);
+
+	/* run the cube through the sRGB icc */
+	srgb_profile = cmsCreate_sRGBProfile ();
+	srgb_transform = cmsCreateTransform (lab_profile, TYPE_Lab_DBL,
+					     srgb_profile, TYPE_RGB_DBL,
+					     INTENT_ABSOLUTE_COLORIMETRIC, 0);
+	if (srgb_transform == NULL) {
+		g_warning ("failed to create sRGB transform");
+		goto out;
+	}
+	cmsDoTransform (srgb_transform, lab, rgb, size);
+
+	/* create gamut hull */
+	hull = cd_icc_create_hull_for_data (res, lab, rgb);
+out:
+	g_free (rgb);
+	g_free (lab);
+	if (lab_profile != NULL)
+		cmsCloseProfile (lab_profile);
+	if (srgb_profile != NULL)
+		cmsCloseProfile (srgb_profile);
+	if (lab_transform != NULL)
+		cmsDeleteTransform (lab_transform);
+	if (srgb_transform != NULL)
+		cmsDeleteTransform (srgb_transform);
+	return hull;
 }

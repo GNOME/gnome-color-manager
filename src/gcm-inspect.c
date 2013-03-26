@@ -24,9 +24,9 @@
 #include <glib/gi18n.h>
 #include <gtk/gtk.h>
 #include <locale.h>
+#include <colord.h>
 
 #include "gcm-utils.h"
-#include "gcm-profile.h"
 #include "gcm-debug.h"
 
 /**
@@ -35,13 +35,15 @@
 static gboolean
 gcm_inspect_print_data_info (const gchar *title, const guint8 *data, gsize length)
 {
-	GcmProfile *profile = NULL;
+	CdIcc *icc = NULL;
 	GError *error = NULL;
 	gboolean ret;
 
 	/* parse the data */
-	profile = gcm_profile_new ();
-	ret = gcm_profile_parse_data (profile, data, length, &error);
+	icc = cd_icc_new ();
+	ret = cd_icc_load_data (icc, data, length,
+				CD_ICC_LOAD_FLAGS_NONE,
+				&error);
 	if (!ret) {
 		g_warning ("failed to parse data: %s", error->message);
 		g_error_free (error);
@@ -52,13 +54,13 @@ gcm_inspect_print_data_info (const gchar *title, const guint8 *data, gsize lengt
 	g_print ("%s\n", title);
 
 	/* TRANSLATORS: this is the ICC profile description stored in an atom in the XServer */
-	g_print (" - %s %s\n", _("Description:"), gcm_profile_get_description (profile));
+	g_print (" - %s %s\n", _("Description:"), cd_icc_get_description (icc, NULL, NULL));
 
 	/* TRANSLATORS: this is the ICC profile copyright */
-	g_print (" - %s %s\n", _("Copyright:"), gcm_profile_get_copyright (profile));
+	g_print (" - %s %s\n", _("Copyright:"), cd_icc_get_copyright (icc, NULL, NULL));
 out:
-	if (profile != NULL)
-		g_object_unref (profile);
+	if (icc != NULL)
+		g_object_unref (icc);
 	return ret;
 }
 

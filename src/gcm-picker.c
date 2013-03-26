@@ -588,7 +588,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 
 		/* only for correct kind */
 		has_vcgt = cd_profile_get_has_vcgt (profile);
-		has_colorspace_description = gcm_profile_has_colorspace_description (profile);
+		has_colorspace_description = cd_icc_has_colorspace_description (profile);
 		colorspace = cd_profile_get_colorspace (profile);
 		if (!has_vcgt && has_colorspace_description &&
 		    colorspace == CD_COLORSPACE_RGB) {

@@ -40,10 +40,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-image.h					\
 	gcm-print.c					\
 	gcm-print.h					\
-	gcm-profile.c					\
-	gcm-profile.h					\
-	gcm-named-color.c				\
-	gcm-named-color.h				\
 	gcm-trc-widget.c				\
 	gcm-trc-widget.h				\
 	gcm-utils.c					\
@@ -197,8 +193,6 @@ gcm_self_test_SOURCES =					\
 	gcm-calibrate.h					\
 	gcm-gamma-widget.c				\
 	gcm-gamma-widget.h				\
-	gcm-named-color.c				\
-	gcm-named-color.h				\
 	gcm-self-test.c
 
 gcm_self_test_LDADD =					\

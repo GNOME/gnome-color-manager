@@ -39,9 +39,9 @@ struct _GcmImagePrivate
 {
 	gboolean			 has_embedded_profile;
 	gboolean			 use_embedded_profile;
-	GcmProfile			*output_profile;
-	GcmProfile			*input_profile;
-	GcmProfile			*abstract_profile;
+	CdIcc				*output_profile;
+	CdIcc				*input_profile;
+	CdIcc				*abstract_profile;
 	GdkPixbuf			*original_pixbuf;
 };
 
@@ -163,14 +163,14 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 	} else if (priv->input_profile != NULL) {
 
 		/* not RGB */
-		if (gcm_profile_get_colorspace (priv->input_profile) != CD_COLORSPACE_RGB) {
+		if (cd_icc_get_colorspace (priv->input_profile) != CD_COLORSPACE_RGB) {
 			g_warning ("input colorspace has to be RGB!");
 			goto out;
 		}
 
 		/* use built-in */
-		g_debug ("using input profile of %s", gcm_profile_get_filename (priv->input_profile));
-		profile_in = gcm_profile_get_handle (priv->input_profile);
+		g_debug ("using input profile of %s", cd_icc_get_filename (priv->input_profile));
+		profile_in = cd_icc_get_handle (priv->input_profile);
 		profile_close_input = FALSE;
 	} else {
 		g_debug ("no input profile, assume sRGB");
@@ -182,14 +182,14 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 	if (priv->output_profile != NULL) {
 
 		/* not RGB */
-		if (gcm_profile_get_colorspace (priv->output_profile) != CD_COLORSPACE_RGB) {
+		if (cd_icc_get_colorspace (priv->output_profile) != CD_COLORSPACE_RGB) {
 			g_warning ("output colorspace has to be RGB!");
 			goto out;
 		}
 
 		/* use built-in */
-		g_debug ("using output profile of %s", gcm_profile_get_filename (priv->output_profile));
-		profile_out = gcm_profile_get_handle (priv->output_profile);
+		g_debug ("using output profile of %s", cd_icc_get_filename (priv->output_profile));
+		profile_out = cd_icc_get_handle (priv->output_profile);
 		profile_close_output = FALSE;
 	} else {
 		g_debug ("no output profile, assume sRGB");
@@ -202,14 +202,14 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 		cmsHPROFILE profiles[3];
 
 		/* not LAB */
-		if (gcm_profile_get_colorspace (priv->abstract_profile) != CD_COLORSPACE_LAB) {
+		if (cd_icc_get_colorspace (priv->abstract_profile) != CD_COLORSPACE_LAB) {
 			g_warning ("abstract profile has to be LAB!");
 			goto out;
 		}
 
 		/* generate a devicelink */
 		profiles[0] = profile_in;
-		profiles[1] = gcm_profile_get_handle (priv->abstract_profile);
+		profiles[1] = cd_icc_get_handle (priv->abstract_profile);
 		profiles[2] = profile_out;
 		transform = cmsCreateMultiprofileTransform (profiles, 3, format, format, INTENT_PERCEPTUAL, 0);
 
@@ -295,7 +295,7 @@ out:
  * gcm_image_set_input_profile:
  **/
 void
-gcm_image_set_input_profile (GcmImage *image, GcmProfile *profile)
+gcm_image_set_input_profile (GcmImage *image, CdIcc *profile)
 {
 	GcmImagePrivate *priv = image->priv;
 	if (priv->input_profile != NULL) {
@@ -313,7 +313,7 @@ gcm_image_set_input_profile (GcmImage *image, GcmProfile *profile)
  * gcm_image_set_output_profile:
  **/
 void
-gcm_image_set_output_profile (GcmImage *image, GcmProfile *profile)
+gcm_image_set_output_profile (GcmImage *image, CdIcc *profile)
 {
 	GcmImagePrivate *priv = image->priv;
 	if (priv->output_profile != NULL) {
@@ -329,7 +329,7 @@ gcm_image_set_output_profile (GcmImage *image, GcmProfile *profile)
  * gcm_image_set_abstract_profile:
  **/
 void
-gcm_image_set_abstract_profile (GcmImage *image, GcmProfile *profile)
+gcm_image_set_abstract_profile (GcmImage *image, CdIcc *profile)
 {
 	GcmImagePrivate *priv = image->priv;
 	if (priv->abstract_profile != NULL) {
@@ -450,7 +450,7 @@ gcm_image_class_init (GcmImageClass *klass)
 	 * GcmImage:output-profile:
 	 */
 	pspec = g_param_spec_object ("output-profile", NULL, NULL,
-				     GCM_TYPE_PROFILE,
+				     CD_TYPE_ICC,
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_OUTPUT_PROFILE, pspec);
 
@@ -458,7 +458,7 @@ gcm_image_class_init (GcmImageClass *klass)
 	 * GcmImage:input-profile:
 	 */
 	pspec = g_param_spec_object ("input-profile", NULL, NULL,
-				     GCM_TYPE_PROFILE,
+				     CD_TYPE_ICC,
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_INPUT_PROFILE, pspec);
 
@@ -466,7 +466,7 @@ gcm_image_class_init (GcmImageClass *klass)
 	 * GcmImage:abstract-profile:
 	 */
 	pspec = g_param_spec_object ("abstract-profile", NULL, NULL,
-				     GCM_TYPE_PROFILE,
+				     CD_TYPE_ICC,
 				     G_PARAM_READWRITE);
 	g_object_class_install_property (object_class, PROP_ABSTRACT_PROFILE, pspec);
 

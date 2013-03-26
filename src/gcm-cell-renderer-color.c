@@ -70,7 +70,7 @@ gcm_cell_renderer_set_color (GcmCellRendererColor *renderer)
 	guchar *pixels;
 	guint pos;
 	cmsHPROFILE profile_srgb = NULL;
-	cmsHPROFILE profile_xyz = NULL;
+	cmsHPROFILE profile_lab = NULL;
 	cmsHTRANSFORM xform = NULL;
 
 	/* nothing set yet */
@@ -78,9 +78,9 @@ gcm_cell_renderer_set_color (GcmCellRendererColor *renderer)
 		goto out;
 
 	/* convert the color to sRGB */
-	profile_xyz = cmsCreateXYZProfile ();
+	profile_lab = cmsCreateLab2Profile (NULL);
 	profile_srgb = cmsCreate_sRGBProfile ();
-	xform = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL,
+	xform = cmsCreateTransform (profile_lab, TYPE_Lab_DBL,
 				    profile_srgb, TYPE_RGB_8,
 				    INTENT_ABSOLUTE_COLORIMETRIC, 0);
 	cmsDoTransform (xform, renderer->color, &rgb, 1);
@@ -102,8 +102,8 @@ out:
 	g_object_set (renderer, "pixbuf", pixbuf, NULL);
 	if (profile_srgb != NULL)
 		cmsCloseProfile (profile_srgb);
-	if (profile_xyz != NULL)
-		cmsCloseProfile (profile_xyz);
+	if (profile_lab != NULL)
+		cmsCloseProfile (profile_lab);
 	if (xform != NULL)
 		cmsDeleteTransform (xform);
 	if (pixbuf != NULL)
@@ -118,7 +118,7 @@ gcm_cell_renderer_color_set_property (GObject *object, guint param_id,
 
 	switch (param_id) {
 	case PROP_COLOR:
-		cd_color_xyz_copy (g_value_get_boxed (value), renderer->color);
+		cd_color_lab_copy (g_value_get_boxed (value), renderer->color);
 		gcm_cell_renderer_set_color (renderer);
 		break;
 	case PROP_PROFILE:
@@ -143,7 +143,7 @@ gcm_cell_renderer_finalize (GObject *object)
 	GcmCellRendererColor *renderer;
 	renderer = GCM_CELL_RENDERER_COLOR (object);
 	g_free (renderer->icon_name);
-	cd_color_xyz_free (renderer->color);
+	cd_color_lab_free (renderer->color);
 	if (renderer->profile != NULL)
 		g_object_unref (renderer->profile);
 	G_OBJECT_CLASS (parent_class)->finalize (object);
@@ -179,7 +179,7 @@ gcm_cell_renderer_color_class_init (GcmCellRendererColorClass *class)
 static void
 gcm_cell_renderer_color_init (GcmCellRendererColor *renderer)
 {
-	renderer->color = cd_color_xyz_new ();
+	renderer->color = cd_color_lab_new ();
 }
 
 /**

@@ -25,37 +25,13 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
-#include "gcm-profile.h"
+#include "gcm-clut.h"
+#include "gcm-hull.h"
 
 #define GCM_STOCK_ICON					"gnome-color-manager"
 #define GCM_DBUS_SERVICE				"org.gnome.ColorManager"
 #define GCM_DBUS_INTERFACE				"org.gnome.ColorManager"
 #define GCM_DBUS_PATH					"/org/gnome/ColorManager"
-
-#ifndef CD_PROFILE_METADATA_MEASUREMENT_DEVICE
-#define CD_PROFILE_METADATA_MEASUREMENT_DEVICE		"MEASUREMENT_device"
-#endif
-#ifndef CD_PROFILE_METADATA_SCREEN_SURFACE
-#define CD_PROFILE_METADATA_SCREEN_SURFACE		"SCREEN_surface"
-#endif
-#ifndef CD_PROFILE_METADATA_CONNECTION_TYPE
-#define CD_PROFILE_METADATA_CONNECTION_TYPE		"CONNECTION_type"
-#endif
-#ifndef CD_PROFILE_METADATA_ACCURACY_DE76_AVG
-#define CD_PROFILE_METADATA_ACCURACY_DE76_AVG		"ACCURACY_dE76_avg"
-#endif
-#ifndef CD_PROFILE_METADATA_ACCURACY_DE76_MAX
-#define CD_PROFILE_METADATA_ACCURACY_DE76_MAX		"ACCURACY_dE76_max"
-#endif
-#ifndef CD_PROFILE_METADATA_ACCURACY_DE76_RMS
-#define CD_PROFILE_METADATA_ACCURACY_DE76_RMS		"ACCURACY_dE76_rms"
-#endif
-#ifndef CD_PROFILE_METADATA_MAPPING_DEVICE_ID
-#define CD_PROFILE_METADATA_MAPPING_DEVICE_ID		"MAPPING_device_id"
-#endif
-#ifndef CD_PROFILE_METADATA_SCREEN_BRIGHTNESS
-#define CD_PROFILE_METADATA_SCREEN_BRIGHTNESS		"SCREEN_brightness"
-#endif
 
 /* DISTROS: you will have to patch if you have changed the name of these packages */
 #define GCM_PREFS_PACKAGE_NAME_SHARED_COLOR_TARGETS	"shared-color-targets"
@@ -73,8 +49,14 @@ void		 gcm_utils_ensure_sensible_filename	(gchar			*string);
 gboolean	 gcm_utils_install_package		(const gchar		*package_name,
 							 GtkWindow		*window);
 gchar		*gcm_utils_linkify			(const gchar		*text);
-const gchar	*cd_colorspace_to_localised_string	(CdColorspace	 colorspace);
-gboolean	 gcm_profile_has_colorspace_description	(CdProfile		*profile);
+const gchar	*cd_colorspace_to_localised_string	(CdColorspace		 colorspace);
+gboolean	 cd_icc_has_colorspace_description	(CdProfile		*profile);
+GcmClut		*cd_icc_generate_vcgt			(CdIcc			*profile,
+							 guint			 size);
+GcmClut		*cd_icc_generate_curve			(CdIcc			*icc,
+							 guint			 size);
+GcmHull		*cd_icc_generate_gamut_hull		(CdIcc			*icc,
+							 guint			 res);
 
 #endif /* __GCM_UTILS_H */
 
