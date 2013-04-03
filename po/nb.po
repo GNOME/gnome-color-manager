@@ -5,10 +5,10 @@
 # Torstein Adolf Winterseth <kvikende@fsfe.org>, 2010.
 msgid ""
 msgstr ""
-"Project-Id-Version: gnome-color-manager 3.7.x\n"
+"Project-Id-Version: gnome-color-manager 3.8.x\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-02-25 18:01+0100\n"
-"PO-Revision-Date: 2013-01-21 11:22+0100\n"
+"POT-Creation-Date: 2013-04-03 14:08+0200\n"
+"PO-Revision-Date: 2013-04-03 14:09+0200\n"
 "Last-Translator: Kjartan Maraas <kmaraas@gnome.org>\n"
 "Language-Team: Norwegian Bokmål <i18n-nb@lister.ping.uio.no>\n"
 "Language: nb\n"
@@ -1182,7 +1182,7 @@ msgstr "Opphavsrett ©"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
 #: ../src/gcm-calibrate-main.c:2299 ../src/gcm-picker.c:793
-#: ../src/gcm-viewer.c:1843
+#: ../src/gcm-viewer.c:1850
 msgid "Set the parent window to make this modal"
 msgstr "Sett opphavsvindu for å gjøre dette modalt"
 
@@ -1245,7 +1245,7 @@ msgstr "ICC-profil som skal installeres"
 msgid "No filename specified"
 msgstr "Filnavn ikke oppgitt"
 
-#: ../src/gcm-import.c:145 ../src/gcm-viewer.c:1477
+#: ../src/gcm-import.c:145 ../src/gcm-viewer.c:1484
 msgid "Failed to open ICC profile"
 msgstr "Klarte ikke å åpne ICC-profil"
 
@@ -1298,7 +1298,7 @@ msgstr "Importer fargeprofil?"
 msgid "Import"
 msgstr "Importer"
 
-#: ../src/gcm-import.c:289 ../src/gcm-viewer.c:1510
+#: ../src/gcm-import.c:289 ../src/gcm-viewer.c:1517
 msgid "Failed to import file"
 msgstr "Klarte ikke å importere filen"
 
@@ -1637,93 +1637,108 @@ msgstr "Tilkoblingstype"
 msgid "Screen brightness"
 msgstr "Lysstyrke for skjerm"
 
+#. TRANSLATORS: e.g. the 3D volume of the gamut graph
+#: ../src/gcm-viewer.c:828
+msgid "Gamut volume"
+msgstr "Gamut-volum"
+
+#. TRANSLATORS: e.g. what proportion of sRGB is covered
+#: ../src/gcm-viewer.c:830
+msgid "sRGB coverage"
+msgstr "sRGB-dekning"
+
+#. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
+#: ../src/gcm-viewer.c:832
+msgid "Adobe RGB coverage"
+msgstr "Adobe RGB dekning"
+
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:936
+#: ../src/gcm-viewer.c:943
 msgid "No description has been set"
 msgstr "Ingen beskrivelse er satt"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:940
+#: ../src/gcm-viewer.c:947
 msgid "No copyright has been set"
 msgstr "Ingen opphavsrett er satt"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:944
+#: ../src/gcm-viewer.c:951
 msgid "The display compensation table is invalid"
 msgstr "Kompensasjonstabell for skjermen er ugyldig"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:948
+#: ../src/gcm-viewer.c:955
 msgid "A scum dot is present for media white"
 msgstr ""
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:952
+#: ../src/gcm-viewer.c:959
 msgid "The gray axis contains significant amounts of color"
-msgstr ""
+msgstr "Grå akse inneholder betydelige mengder farge"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:956
+#: ../src/gcm-viewer.c:963
 msgid "The gray axis is non-monotonic"
 msgstr "Grå akse er ikke monoton"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:960
+#: ../src/gcm-viewer.c:967
 msgid "One or more of the primaries are invalid"
 msgstr ""
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:964
+#: ../src/gcm-viewer.c:971
 msgid "The primaries do not add to white"
 msgstr ""
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:968
+#: ../src/gcm-viewer.c:975
 msgid "One or more of the primaries is unlikely"
 msgstr ""
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:972
+#: ../src/gcm-viewer.c:979
 msgid "The white is not D50 white"
 msgstr "Hvit er ikke D50 hvit"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:976
+#: ../src/gcm-viewer.c:983
 msgid "Unknown warning type"
 msgstr "Ukjent type advarsel"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1139
+#: ../src/gcm-viewer.c:1146
 msgid "Yes"
 msgstr "Ja"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1142
+#: ../src/gcm-viewer.c:1149
 msgid "No"
 msgstr "Nei"
 
 #. TRANSLATORS: profiles that have warnings are useable,
 #. * but may not be any good
-#: ../src/gcm-viewer.c:1169
+#: ../src/gcm-viewer.c:1176
 msgid "The profile has the following problems:"
 msgstr "Profilen har følgende problemer:"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:1283
+#: ../src/gcm-viewer.c:1290
 msgid "Delete this profile"
 msgstr "Slett denne profilen"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:1286
+#: ../src/gcm-viewer.c:1293
 msgid "This profile cannot be deleted"
 msgstr "Denne profilen kan ikke slettes"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-viewer.c:1846
+#: ../src/gcm-viewer.c:1853
 msgid "Set the specific profile to show"
 msgstr "Angi spesifikk profil som skal vises"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: ../src/gcm-viewer.c:1849
+#: ../src/gcm-viewer.c:1856
 msgid "Set the specific file to show"
 msgstr "Sett spesifikk fil som skal vises"
