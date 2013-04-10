@@ -3,19 +3,21 @@
 # This file is distributed under the same license as the gnome-color-manager package.
 #
 # Gabor Kelemen <kelemeng at gnome dot hu>, 2010, 2011, 2012, 2013.
+# Balázs Úr <urbalazs at gmail dot com>, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager gnome-3-0\n"
-"Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-03-20 23:55+0100\n"
-"PO-Revision-Date: 2013-03-20 23:55+0100\n"
-"Last-Translator: Gabor Kelemen <kelemeng at gnome dot hu>\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
+"color-manager&keywords=I18N+L10N\n"
+"POT-Creation-Date: 2013-04-05 20:15+0000\n"
+"PO-Revision-Date: 2013-04-10 23:35+0200\n"
+"Last-Translator: Balázs Úr <urbalazs at gmail dot com>\n"
 "Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.4\n"
+"X-Generator: Lokalize 1.2\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
 #: ../data/gcm-calibrate.desktop.in.h:1
@@ -131,13 +133,15 @@ msgstr "Verzió"
 
 #. The manufacturer of the profile
 #: ../data/gcm-viewer.ui.h:13
-msgid "Device manufacturer"
-msgstr "Eszköz gyártója"
+#| msgid "Device manufacturer"
+msgid "Manufacturer"
+msgstr "Gyártó"
 
 #. The manufacturer of the profile
 #: ../data/gcm-viewer.ui.h:15
-msgid "Device model"
-msgstr "Eszköz típusa"
+#| msgid "Model:"
+msgid "Model"
+msgstr "Modell"
 
 #. If the profile contains a display correction table
 #: ../data/gcm-viewer.ui.h:17
@@ -151,8 +155,9 @@ msgstr "Fehér pont"
 
 #. The licence of the profile, normally non-free
 #: ../data/gcm-viewer.ui.h:21
-msgid "License"
-msgstr "Licenc"
+#| msgid "Copyright:"
+msgid "Copyright"
+msgstr "Copyright"
 
 #. The file size in bytes of the profile
 #: ../data/gcm-viewer.ui.h:23
@@ -1198,7 +1203,7 @@ msgstr "Copyright (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
 #: ../src/gcm-calibrate-main.c:2299 ../src/gcm-picker.c:793
-#: ../src/gcm-viewer.c:1850
+#: ../src/gcm-viewer.c:1826
 msgid "Set the parent window to make this modal"
 msgstr "A szülőablak beállítása kizárólagosra"
 
@@ -1261,130 +1266,130 @@ msgstr "Telepítendő ICC-profil"
 msgid "No filename specified"
 msgstr "Nincs megadva fájlnév"
 
-#: ../src/gcm-import.c:145 ../src/gcm-viewer.c:1484
+#: ../src/gcm-import.c:147 ../src/gcm-viewer.c:1460
 msgid "Failed to open ICC profile"
 msgstr "Az ICC-profil megnyitása meghiúsult"
 
-#: ../src/gcm-import.c:150
+#: ../src/gcm-import.c:152
 #, c-format
 msgid "Failed to parse file: %s"
 msgstr "A fájl feldolgozása meghiúsult: %s"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:171
+#: ../src/gcm-import.c:174
 #, c-format
 msgid "Profile description: %s"
 msgstr "Profil leírása: %s"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:181
+#: ../src/gcm-import.c:184
 msgid "Profile copyright:"
 msgstr "Profil szerzői joga:"
 
-#: ../src/gcm-import.c:217
+#: ../src/gcm-import.c:220
 msgid "Color profile is already imported"
 msgstr "A színprofil már importálva van"
 
-#: ../src/gcm-import.c:221 ../src/gcm-import.c:265
+#: ../src/gcm-import.c:224 ../src/gcm-import.c:268
 msgid "Show Details"
 msgstr "Részletek megjelenítése"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:237
+#: ../src/gcm-import.c:240
 msgid "Import display color profile?"
 msgstr "Importálja a kijelző színprofilját?"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:241
+#: ../src/gcm-import.c:244
 msgid "Import device color profile?"
 msgstr "Importálja az eszköz színprofilját?"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:245
+#: ../src/gcm-import.c:248
 msgid "Import named color profile?"
 msgstr "Importálja a megnevezett színprofilt?"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:249
+#: ../src/gcm-import.c:252
 msgid "Import color profile?"
 msgstr "Importálja a színprofilt?"
 
 #. TRANSLATORS: button text
-#: ../src/gcm-import.c:264 ../src/gcm-viewer.c:451
+#: ../src/gcm-import.c:267 ../src/gcm-viewer.c:451
 msgid "Import"
 msgstr "Importálás"
 
-#: ../src/gcm-import.c:289 ../src/gcm-viewer.c:1517
+#: ../src/gcm-import.c:292 ../src/gcm-viewer.c:1493
 msgid "Failed to import file"
 msgstr "A fájl importálása sikertelen"
 
 #. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
-#: ../src/gcm-inspect.c:55
+#: ../src/gcm-inspect.c:57
 msgid "Description:"
 msgstr "Leírás:"
 
 #. TRANSLATORS: this is the ICC profile copyright
-#: ../src/gcm-inspect.c:58
+#: ../src/gcm-inspect.c:60
 msgid "Copyright:"
 msgstr "Copyright:"
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:193
+#: ../src/gcm-inspect.c:195
 msgid "Root window profile:"
 msgstr "Gyökérablak profilja:"
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:205
+#: ../src/gcm-inspect.c:207
 msgid "Root window protocol version:"
 msgstr "Gyökérablak protokollverziója:"
 
 #. TRANSLATORS: no DBus session bus
-#: ../src/gcm-inspect.c:230 ../src/gcm-inspect.c:299 ../src/gcm-utils.c:117
+#: ../src/gcm-inspect.c:232 ../src/gcm-inspect.c:301 ../src/gcm-utils.c:119
 msgid "Failed to connect to session bus:"
 msgstr "A munkamenetbuszhoz csatlakozás meghiúsult:"
 
 #. TRANSLATORS: the DBus method failed
-#: ../src/gcm-inspect.c:248 ../src/gcm-inspect.c:317 ../src/gcm-utils.c:141
+#: ../src/gcm-inspect.c:250 ../src/gcm-inspect.c:319 ../src/gcm-utils.c:143
 msgid "The request failed:"
 msgstr "A kérés meghiúsult:"
 
 #. TRANSLATORS: no profile has been asigned to this device
-#: ../src/gcm-inspect.c:257
+#: ../src/gcm-inspect.c:259
 msgid "There are no ICC profiles assigned to this file"
 msgstr "Nincsenek ICC-profilok társítva a fájlhoz"
 
 #. TRANSLATORS: this is a list of profiles suitable for the device
-#: ../src/gcm-inspect.c:262 ../src/gcm-inspect.c:334
+#: ../src/gcm-inspect.c:264 ../src/gcm-inspect.c:336
 msgid "Suitable profiles for:"
 msgstr "Megfelelő profilok ehhez:"
 
 #. TRANSLATORS: no profile has been asigned to this window
-#: ../src/gcm-inspect.c:329
+#: ../src/gcm-inspect.c:331
 msgid "There are no ICC profiles for this window"
 msgstr "Nincsenek ICC-profilok az ablakhoz"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:365
+#: ../src/gcm-inspect.c:367
 msgid "Show xserver properties"
 msgstr "X-kiszolgáló tulajdonságok megjelenítése"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:368
+#: ../src/gcm-inspect.c:370
 msgid "Get the profiles for a specific file"
 msgstr "Adott fájl profiljainak lekérése"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:371
+#: ../src/gcm-inspect.c:373
 msgid "Get the profile for a specific window"
 msgstr "Adott ablak profiljának lekérése"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:374
+#: ../src/gcm-inspect.c:376
 msgid "Dump all details about this system"
 msgstr "Minden részlet kiírása a rendszerről"
 
 #. TRANSLATORS: just dumps the EDID to disk
-#: ../src/gcm-inspect.c:387
+#: ../src/gcm-inspect.c:389
 msgid "EDID inspect program"
 msgstr "EDID-vizsgáló program"
 
@@ -1422,30 +1427,20 @@ msgstr "Nem érhetők el %s színterek"
 msgid "GNOME Color Manager Color Picker"
 msgstr "GNOME színkezelő színválasztó"
 
-#. TRANSLATORS: this is where the ICC profile has no description
-#: ../src/gcm-profile.c:162
-msgid "Missing description"
-msgstr "Hiányzó leírás"
-
-#. TRANSLATORS: this is the profile creation date strftime format
-#: ../src/gcm-profile.c:583
-msgid "%B %e %Y, %I:%M:%S %p"
-msgstr "%Y. %B %d, %l.%M.%S %p"
-
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:328 ../src/gcm-viewer.c:717
+#: ../src/gcm-utils.c:330 ../src/gcm-viewer.c:717
 msgid "RGB"
 msgstr "RGB"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:332 ../src/gcm-viewer.c:729
+#: ../src/gcm-utils.c:334 ../src/gcm-viewer.c:729
 msgid "CMYK"
 msgstr "CMYK"
 
 #. TRANSLATORS: this is the colorspace type
-#: ../src/gcm-utils.c:336
+#: ../src/gcm-utils.c:338
 msgid "gray"
 msgstr "szürke"
 
@@ -1552,213 +1547,227 @@ msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: e.g. sRGB or adbode RGB
-#: ../src/gcm-viewer.c:788
+#: ../src/gcm-viewer.c:772
 msgid "Standard space"
 msgstr "Szabványos színtér"
 
 #. TRANSLATORS: the raw EDID MD5 of the display device
-#: ../src/gcm-viewer.c:790
+#: ../src/gcm-viewer.c:774
 msgid "Display checksum"
 msgstr "Kijelző ellenőrzőösszege"
 
-#: ../src/gcm-viewer.c:791
+#: ../src/gcm-viewer.c:775
 msgid "Display model"
 msgstr "Kijelző típusa"
 
-#: ../src/gcm-viewer.c:792
+#: ../src/gcm-viewer.c:776
 msgid "Display serial number"
 msgstr "Kijelző sorozatszáma"
 
 #. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
-#: ../src/gcm-viewer.c:794
+#: ../src/gcm-viewer.c:778
 msgid "Display PNPID"
 msgstr "Kijelző PNPID-ja"
 
 #. TRANSLATORS: who made the display
-#: ../src/gcm-viewer.c:796
+#: ../src/gcm-viewer.c:780
 msgid "Display vendor"
 msgstr "Kijelző szállítója"
 
 #. TRANSLATORS: the raw profile MD5
-#: ../src/gcm-viewer.c:798
+#: ../src/gcm-viewer.c:782
 msgid "File checksum"
 msgstr "Fájl-ellenőrzőösszeg"
 
 #. TRANSLATORS: the color framework, e.g. 'colord'
-#: ../src/gcm-viewer.c:800
+#: ../src/gcm-viewer.c:784
 msgid "Framework product"
 msgstr "Keretrendszer termék"
 
 #. TRANSLATORS: the framework binary, e.g. gcm-viewer
-#: ../src/gcm-viewer.c:802
+#: ../src/gcm-viewer.c:786
 msgid "Framework program"
 msgstr "Keretrendszer program"
 
 #. TRANSLATORS: the framework release, e.g. '1.22'
-#: ../src/gcm-viewer.c:804
+#: ../src/gcm-viewer.c:788
 msgid "Framework version"
 msgstr "Keretrendszer verzió"
 
 #. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
-#: ../src/gcm-viewer.c:806
+#: ../src/gcm-viewer.c:790
 msgid "Data source type"
 msgstr "Adatforrás típusa"
 
 #. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
-#: ../src/gcm-viewer.c:808
+#: ../src/gcm-viewer.c:792
 msgid "Mapping format"
 msgstr "Leképezési formátum"
 
 #. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
-#: ../src/gcm-viewer.c:810
+#: ../src/gcm-viewer.c:794
 msgid "Mapping qualifier"
 msgstr "Leképezési minősítő"
 
 #. TRANSLATORS: The original device the profile was made for
-#: ../src/gcm-viewer.c:812
+#: ../src/gcm-viewer.c:796
 msgid "Mapping device"
 msgstr "Leképezési eszköz"
 
 #. TRANSLATORS: The average error when making the profile
-#: ../src/gcm-viewer.c:814
+#: ../src/gcm-viewer.c:798
 msgid "Delta-E average"
 msgstr "Delta-E átlaga"
 
 #. TRANSLATORS: the maximum error when making the profile
-#: ../src/gcm-viewer.c:816
+#: ../src/gcm-viewer.c:800
 msgid "Delta-E maximum"
 msgstr "Delta-E maximuma"
 
 #. TRANSLATORS: the RMS error when making the profile
-#: ../src/gcm-viewer.c:818
+#: ../src/gcm-viewer.c:802
 msgid "Delta-E RMS"
 msgstr "Delta-E RMS"
 
 #. TRANSLATORS: The device name, e.g. 'huey'
-#: ../src/gcm-viewer.c:820
+#: ../src/gcm-viewer.c:804
 msgid "Calibration device"
 msgstr "Kalibrálóeszköz"
 
 #. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
-#: ../src/gcm-viewer.c:822
+#: ../src/gcm-viewer.c:806
 msgid "Screen surface finish"
 msgstr "Képernyőfelület típusa"
 
 #. TRANSLATORS: e.g. DVI or VGA
-#: ../src/gcm-viewer.c:824
+#: ../src/gcm-viewer.c:808
 msgid "Connection type"
 msgstr "Kapcsolattípus"
 
 #. TRANSLATORS: e.g. Screen brightness in percent
-#: ../src/gcm-viewer.c:826
+#: ../src/gcm-viewer.c:810
 msgid "Screen brightness"
 msgstr "Képernyő fényereje"
 
 #. TRANSLATORS: e.g. the 3D volume of the gamut graph
-#: ../src/gcm-viewer.c:828
+#: ../src/gcm-viewer.c:812
 msgid "Gamut volume"
 msgstr "Színskála térfogata"
 
 #. TRANSLATORS: e.g. what proportion of sRGB is covered
-#: ../src/gcm-viewer.c:830
+#: ../src/gcm-viewer.c:814
 msgid "sRGB coverage"
 msgstr "sRGB lefedettség"
 
 #. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
-#: ../src/gcm-viewer.c:832
+#: ../src/gcm-viewer.c:816
 msgid "Adobe RGB coverage"
 msgstr "Adobe RGB lefedettség"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:943
+#: ../src/gcm-viewer.c:927
 msgid "No description has been set"
 msgstr "Nincs beállítva leírás"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:947
+#: ../src/gcm-viewer.c:931
 msgid "No copyright has been set"
 msgstr "Nincsenek megadva szerzői jogi információk"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:951
+#: ../src/gcm-viewer.c:935
 msgid "The display compensation table is invalid"
 msgstr "A kijelzőkompenzációs tábla érvénytelen"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:955
+#: ../src/gcm-viewer.c:939
 msgid "A scum dot is present for media white"
 msgstr "Egy piszokfolt található a média fehérhez"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:959
+#: ../src/gcm-viewer.c:943
 msgid "The gray axis contains significant amounts of color"
 msgstr "A szürke tengely jelentős mennyiségű színt tartalmaz"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:963
+#: ../src/gcm-viewer.c:947
 msgid "The gray axis is non-monotonic"
 msgstr "A szürke tengely nem monoton"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:967
+#: ../src/gcm-viewer.c:951
 msgid "One or more of the primaries are invalid"
 msgstr "Legalább egy alapszín érvénytelen"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:971
+#: ../src/gcm-viewer.c:955
 msgid "The primaries do not add to white"
 msgstr "Az alapszínek nem eredményeznek fehéret"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:975
+#: ../src/gcm-viewer.c:959
 msgid "One or more of the primaries is unlikely"
 msgstr "Legalább egy alapszín valószínűtlen"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:979
+#: ../src/gcm-viewer.c:963
 msgid "The white is not D50 white"
 msgstr "A fehér nem D50 fehér"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:983
+#: ../src/gcm-viewer.c:967
 msgid "Unknown warning type"
 msgstr "Ismeretlen figyelmeztetéstípus"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1146
+#: ../src/gcm-viewer.c:1122
 msgid "Yes"
 msgstr "Igen"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1149
+#: ../src/gcm-viewer.c:1125
 msgid "No"
 msgstr "Nem"
 
 #. TRANSLATORS: profiles that have warnings are useable,
 #. * but may not be any good
-#: ../src/gcm-viewer.c:1176
+#: ../src/gcm-viewer.c:1151
 msgid "The profile has the following problems:"
 msgstr "A profillal a következő problémák vannak:"
 
+#. TRANSLATORS: this is the icc creation date strftime format
+#: ../src/gcm-viewer.c:1243
+msgid "%B %e %Y, %I:%M:%S %p"
+msgstr "%Y. %B %d, %l.%M.%S %p"
+
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:1290
+#: ../src/gcm-viewer.c:1266
 msgid "Delete this profile"
 msgstr "Profil törlése"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:1293
+#: ../src/gcm-viewer.c:1269
 msgid "This profile cannot be deleted"
 msgstr "A profil nem törölhető"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-viewer.c:1853
+#: ../src/gcm-viewer.c:1829
 msgid "Set the specific profile to show"
 msgstr "A megjelenítendő profil beállítása"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: ../src/gcm-viewer.c:1856
+#: ../src/gcm-viewer.c:1832
 msgid "Set the specific file to show"
 msgstr "A megjelenítendő fájl beállítása"
+
+#~ msgid "Device model"
+#~ msgstr "Eszköz típusa"
+
+#~ msgid "License"
+#~ msgstr "Licenc"
+
+#~ msgid "Missing description"
+#~ msgstr "Hiányzó leírás"
 
 #~ msgid ""
 #~ "Could not calibrate and profile using this color measuring instrument"
@@ -2199,9 +2208,6 @@ msgstr "A megjelenítendő fájl beállítása"
 
 #~ msgid "Make default"
 #~ msgstr "Legyen alapértelmezett"
-
-#~ msgid "Model:"
-#~ msgstr "Modell:"
 
 #~ msgid "More details"
 #~ msgstr "További részletek"
