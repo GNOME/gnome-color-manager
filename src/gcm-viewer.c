@@ -1204,7 +1204,7 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	gtk_widget_set_visible (widget, profile_copyright != NULL);
 	if (profile_copyright != NULL) {
 		temp = gcm_utils_linkify (profile_copyright);
-		gtk_label_set_label (GTK_LABEL (widget), temp);
+		gtk_label_set_label (GTK_LABEL (widget), profile_copyright);
 		g_free (temp);
 	}
 

@@ -116,6 +116,7 @@ gcm_hull_add_face (GcmHull *hull,
 gchar *
 gcm_hull_export_to_ply (GcmHull *hull)
 {
+	gchar xyz_str[3][G_ASCII_DTOSTR_BUF_SIZE];
 	GString *string;
 	guint i;
 	GcmHullFace *face;
@@ -139,10 +140,13 @@ gcm_hull_export_to_ply (GcmHull *hull)
 	for (i=0; i<hull->priv->vertices->len; i++) {
 		vertex = g_ptr_array_index (hull->priv->vertices, i);
 		cd_color_rgb_to_rgb8 (&vertex->color, &tmp);
-		g_string_append_printf (string, "%lf %lf %lf %i %i %i\n",
-					vertex->xyz.X,
-					vertex->xyz.Y,
-					vertex->xyz.Z,
+		g_ascii_dtostr (xyz_str[0], G_ASCII_DTOSTR_BUF_SIZE, vertex->xyz.X);
+		g_ascii_dtostr (xyz_str[1], G_ASCII_DTOSTR_BUF_SIZE, vertex->xyz.Y);
+		g_ascii_dtostr (xyz_str[2], G_ASCII_DTOSTR_BUF_SIZE, vertex->xyz.Z);
+		g_string_append_printf (string, "%s %s %s %i %i %i\n",
+					xyz_str[0],
+					xyz_str[1],
+					xyz_str[2],
 					tmp.R,
 					tmp.G,
 					tmp.B);
