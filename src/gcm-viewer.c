@@ -962,6 +962,10 @@ cd_icc_warning_to_string (CdProfileWarning kind_enum)
 		/* TRANSLATORS: the profile is broken */
 		kind = _("The white is not D50 white");
 		break;
+	case CD_PROFILE_WARNING_WHITEPOINT_UNLIKELY:
+		/* TRANSLATORS: the profile is broken */
+		kind = _("The whitepoint temperature is unlikely");
+		break;
 	default:
 		/* TRANSLATORS: the profile is broken */
 		kind = _("Unknown warning type");
