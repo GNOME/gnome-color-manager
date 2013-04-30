@@ -30,8 +30,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-hull.h					\
 	gcm-cie-widget.c				\
 	gcm-cie-widget.h				\
-	gcm-clut.c					\
-	gcm-clut.h					\
 	gcm-debug.c					\
 	gcm-debug.h					\
 	gcm-exif.c					\

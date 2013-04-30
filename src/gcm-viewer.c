@@ -40,7 +40,6 @@
 #include "gcm-image.h"
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
-#include "gcm-clut.h"
 #include "gcm-debug.h"
 
 #ifdef HAVE_CLUTTER
@@ -975,28 +974,6 @@ cd_icc_warning_to_string (CdProfileWarning kind_enum)
 }
 
 /**
- * cd_icc_generate_vcgt:
- **/
-static GcmClut *
-cd_icc_generate_vcgt (CdIcc *icc, guint size)
-{
-	GcmClut *clut = NULL;
-	GPtrArray *array = NULL;
-
-	array = cd_icc_get_vcgt (icc, size, NULL);
-	if (array == NULL) {
-		g_debug ("icc does not have any VCGT data");
-		goto out;
-	}
-	clut = gcm_clut_new ();
-	gcm_clut_set_source_array (clut, array);
-out:
-	if (array != NULL)
-		g_ptr_array_unref (array);
-	return clut;
-}
-
-/**
  * gcm_viewer_set_profile:
  **/
 static void
@@ -1005,8 +982,8 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	GtkWidget *widget;
 	GtkWindow *window;
 	CdIcc *icc = NULL;
-	GcmClut *clut_trc = NULL;
-	GcmClut *clut_vcgt = NULL;
+	GPtrArray *clut_trc = NULL;
+	GPtrArray *clut_vcgt = NULL;
 	const gchar *profile_copyright;
 	const gchar *profile_manufacturer;
 	const gchar *profile_model ;
@@ -1075,16 +1052,11 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	}
 
 	/* get curve data */
-	clut_trc = cd_icc_generate_curve (icc, 256);
-
-	/* only show if there is useful information */
-	size = 0;
-	if (clut_trc != NULL)
-		size = gcm_clut_get_size (clut_trc);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_trc"));
-	if (size > 0) {
+	clut_trc = cd_icc_generate_curve (icc, 256);
+	if (clut_trc != NULL) {
 		g_object_set (viewer->trc_widget,
-			      "clut", clut_trc,
+			      "data", clut_trc,
 			      NULL);
 		gtk_widget_show (widget);
 	} else {
@@ -1101,16 +1073,11 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 #endif
 
 	/* get vcgt data */
-	clut_vcgt = cd_icc_generate_vcgt (icc, 256);
-
-	/* only show if there is useful information */
-	size = 0;
-	if (clut_vcgt != NULL)
-		size = gcm_clut_get_size (clut_vcgt);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_vcgt"));
-	if (size > 0) {
+	clut_vcgt = cd_icc_get_vcgt (icc, 256, NULL);
+	if (clut_vcgt != NULL) {
 		g_object_set (viewer->vcgt_widget,
-			      "clut", clut_vcgt,
+			      "data", clut_vcgt,
 			      NULL);
 		gtk_widget_show (widget);
 	} else {
@@ -1305,9 +1272,9 @@ out:
 	if (icc != NULL)
 		g_object_unref (icc);
 	if (clut_trc != NULL)
-		g_object_unref (clut_trc);
+		g_ptr_array_unref (clut_trc);
 	if (clut_vcgt != NULL)
-		g_object_unref (clut_vcgt);
+		g_ptr_array_unref (clut_vcgt);
 	g_free (size_text);
 }
 

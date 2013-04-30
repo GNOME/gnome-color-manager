@@ -25,7 +25,6 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
-#include "gcm-clut.h"
 #include "gcm-hull.h"
 
 #define GCM_STOCK_ICON					"gnome-color-manager"
@@ -51,7 +50,7 @@ gboolean	 gcm_utils_install_package		(const gchar		*package_name,
 gchar		*gcm_utils_linkify			(const gchar		*text);
 const gchar	*cd_colorspace_to_localised_string	(CdColorspace		 colorspace);
 gboolean	 cd_icc_has_colorspace_description	(CdProfile		*profile);
-GcmClut		*cd_icc_generate_curve			(CdIcc			*icc,
+GPtrArray	*cd_icc_generate_curve			(CdIcc			*icc,
 							 guint			 size);
 GcmHull		*cd_icc_generate_gamut_hull		(CdIcc			*icc,
 							 guint			 res);

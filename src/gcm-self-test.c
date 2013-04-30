@@ -29,7 +29,6 @@
 #include "gcm-brightness.h"
 #include "gcm-calibrate.h"
 #include "gcm-cie-widget.h"
-#include "gcm-clut.h"
 #include "gcm-debug.h"
 #include "gcm-exif.h"
 #include "gcm-gamma-widget.h"
@@ -103,7 +102,6 @@ gcm_test_profile_func (void)
 {
 	CdIcc *profile;
 	GFile *file;
-	GcmClut *clut;
 	gboolean ret;
 	GError *error = NULL;
 	GcmHull *hull;
@@ -136,44 +134,6 @@ gcm_test_profile_func (void)
 	g_object_unref (hull);
 	g_object_unref (file);
 	g_object_unref (profile);
-}
-
-static void
-gcm_test_clut_func (void)
-{
-	GcmClut *clut;
-	GPtrArray *array;
-	const GcmClutData *data;
-
-	clut = gcm_clut_new ();
-	g_assert (clut != NULL);
-
-	/* set some initial properties */
-	g_object_set (clut,
-		      "size", 3,
-		      NULL);
-
-	array = gcm_clut_get_array (clut);
-	g_assert_cmpint (array->len, ==, 3);
-
-	data = g_ptr_array_index (array, 0);
-	g_assert_cmpint (data->red, ==, 0);
-	g_assert_cmpint (data->green, ==, 0);
-	g_assert_cmpint (data->blue, ==, 0);
-
-	data = g_ptr_array_index (array, 1);
-	g_assert_cmpint (data->red, ==, 32767);
-	g_assert_cmpint (data->green, ==, 32767);
-	g_assert_cmpint (data->blue, ==, 32767);
-
-	data = g_ptr_array_index (array, 2);
-	g_assert_cmpint (data->red, ==, 65535);
-	g_assert_cmpint (data->green, ==, 65535);
-	g_assert_cmpint (data->blue, ==, 65535);
-
-	g_ptr_array_unref (array);
-
-	g_object_unref (clut);
 }
 
 static void
@@ -496,7 +456,7 @@ gcm_test_trc_widget_func (void)
 	GtkWidget *image;
 	GtkWidget *dialog;
 	GtkWidget *vbox;
-	GcmClut *clut;
+	GPtrArray *clut;
 	CdIcc *profile;
 	gint response;
 	GFile *file;
@@ -507,6 +467,10 @@ gcm_test_trc_widget_func (void)
 	profile = cd_icc_new ();
 	file = g_file_new_for_path (TESTDATADIR "/AdobeGammaTest.icm");
 	cd_icc_load_file (profile, file, CD_ICC_LOAD_FLAGS_NONE, NULL, NULL);
+	clut = cd_icc_get_vcgt (profile, 256, NULL);
+	g_object_set (widget,
+		      "data", clut,
+		      NULL);
 	g_object_unref (file);
 
 	/* show in a dialog as an example */
@@ -526,7 +490,7 @@ gcm_test_trc_widget_func (void)
 
 	gtk_widget_destroy (dialog);
 
-	g_object_unref (clut);
+	g_ptr_array_unref (clut);
 	g_object_unref (profile);
 }
 
@@ -590,7 +554,6 @@ main (int argc, char **argv)
 	g_test_add_func ("/color/utils", gcm_test_utils_func);
 	g_test_add_func ("/color/hull", gcm_test_hull_func);
 	g_test_add_func ("/color/profile", gcm_test_profile_func);
-	g_test_add_func ("/color/clut", gcm_test_clut_func);
 	if (g_test_thorough ()) {
 		g_test_add_func ("/color/brightness", gcm_test_brightness_func);
 		g_test_add_func ("/color/image", gcm_test_image_func);

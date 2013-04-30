@@ -376,16 +376,15 @@ cd_icc_has_colorspace_description (CdProfile *profile)
  *
  * Generates a curve of a specified size.
  *
- * Return value: A #GcmClut object, or %NULL. Free with g_object_unref()
+ * Return value: A #GPtrArray object, or %NULL. Free with g_object_unref()
  **/
-GcmClut *
+GPtrArray *
 cd_icc_generate_curve (CdIcc *icc, guint size)
 {
-	GcmClut *clut = NULL;
 	gdouble *values_in = NULL;
 	gdouble *values_out = NULL;
 	guint i;
-	GcmClutData *data;
+	CdColorRGB *data;
 	GPtrArray *array = NULL;
 	gfloat divamount;
 	gfloat divadd;
@@ -447,39 +446,35 @@ cd_icc_generate_curve (CdIcc *icc, guint size)
 		array = g_ptr_array_new_with_free_func (g_free);
 
 		for (i = 0; i < size; i++) {
-			data = g_new0 (GcmClutData, 1);
+			data = g_new0 (CdColorRGB, 1);
 
 			/* default values */
-			data->red = 0;
-			data->green = 0;
-			data->blue = 0;
+			data->R = 0.0f;
+			data->G = 0.0f;
+			data->B = 0.0f;
 
 			/* only save curve data if it is positive */
-			tmp = values_out[(i * 3 * component_width)+0] * (gfloat) 0xffff;
+			tmp = values_out[(i * 3 * component_width)+0];
 			if (tmp > 0.0f)
-				data->red = tmp;
-			tmp = values_out[(i * 3 * component_width)+4] * (gfloat) 0xffff;
+				data->R = tmp;
+			tmp = values_out[(i * 3 * component_width)+4];
 			if (tmp > 0.0f)
-				data->green = tmp;
-			tmp = values_out[(i * 3 * component_width)+8] * (gfloat) 0xffff;
+				data->G = tmp;
+			tmp = values_out[(i * 3 * component_width)+8];
 			if (tmp > 0.0f)
-				data->blue = tmp;
+				data->B = tmp;
 			g_ptr_array_add (array, data);
 		}
-		clut = gcm_clut_new ();
-		gcm_clut_set_source_array (clut, array);
 	}
 
 out:
 	g_free (values_in);
 	g_free (values_out);
-	if (array != NULL)
-		g_ptr_array_unref (array);
 	if (transform != NULL)
 		cmsDeleteTransform (transform);
 	if (srgb_profile != NULL)
 		cmsCloseProfile (srgb_profile);
-	return clut;
+	return array;
 }
 
 #define HYP(a,b)		(sqrt((a)*(a) + (b)*(b)))
