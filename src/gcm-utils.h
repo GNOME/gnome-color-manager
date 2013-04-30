@@ -49,7 +49,6 @@ gboolean	 gcm_utils_install_package		(const gchar		*package_name,
 							 GtkWindow		*window);
 gchar		*gcm_utils_linkify			(const gchar		*text);
 const gchar	*cd_colorspace_to_localised_string	(CdColorspace		 colorspace);
-gboolean	 cd_icc_has_colorspace_description	(CdProfile		*profile);
 GcmHull		*cd_icc_generate_gamut_hull		(CdIcc			*icc,
 							 guint			 res);
 

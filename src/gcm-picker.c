@@ -541,7 +541,6 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 	CdProfile *profile;
 	const gchar *filename;
 	const gchar *tmp;
-	gboolean has_colorspace_description;
 	gboolean has_profile = FALSE;
 	gboolean has_vcgt;
 	gchar *text = NULL;
@@ -588,14 +587,13 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 
 		/* only for correct kind */
 		has_vcgt = cd_profile_get_has_vcgt (profile);
-		has_colorspace_description = cd_icc_has_colorspace_description (profile);
+		tmp = cd_profile_get_metadata_item (profile, CD_PROFILE_METADATA_STANDARD_SPACE);
 		colorspace = cd_profile_get_colorspace (profile);
-		if (!has_vcgt && has_colorspace_description &&
+		if (!has_vcgt && tmp != NULL &&
 		    colorspace == CD_COLORSPACE_RGB) {
 			gcm_prefs_combobox_add_profile (widget, profile, &iter);
 
 			/* set active option */
-			tmp = cd_profile_get_metadata_item (profile, CD_PROFILE_METADATA_STANDARD_SPACE);
 			if (g_strcmp0 (tmp, "adobe-rgb") == 0) {
 				profile_filename = filename;
 				gtk_combo_box_set_active_iter (GTK_COMBO_BOX (widget), &iter);
