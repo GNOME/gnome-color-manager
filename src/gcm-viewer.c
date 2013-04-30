@@ -1053,7 +1053,7 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 
 	/* get curve data */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_trc"));
-	clut_trc = cd_icc_generate_curve (icc, 256);
+	clut_trc = cd_icc_get_response (icc, 256, NULL);
 	if (clut_trc != NULL) {
 		g_object_set (viewer->trc_widget,
 			      "data", clut_trc,
