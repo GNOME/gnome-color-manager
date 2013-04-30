@@ -975,6 +975,28 @@ cd_icc_warning_to_string (CdProfileWarning kind_enum)
 }
 
 /**
+ * cd_icc_generate_vcgt:
+ **/
+static GcmClut *
+cd_icc_generate_vcgt (CdIcc *icc, guint size)
+{
+	GcmClut *clut = NULL;
+	GPtrArray *array = NULL;
+
+	array = cd_icc_get_vcgt (icc, size, NULL);
+	if (array == NULL) {
+		g_debug ("icc does not have any VCGT data");
+		goto out;
+	}
+	clut = gcm_clut_new ();
+	gcm_clut_set_source_array (clut, array);
+out:
+	if (array != NULL)
+		g_ptr_array_unref (array);
+	return clut;
+}
+
+/**
  * gcm_viewer_set_profile:
  **/
 static void

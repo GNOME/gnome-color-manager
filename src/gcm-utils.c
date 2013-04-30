@@ -370,54 +370,6 @@ cd_icc_has_colorspace_description (CdProfile *profile)
 }
 
 /**
- * cd_icc_generate_vcgt:
- * @icc: A valid #CdIcc
- * @size: the size of the table to generate
- *
- * Generates a VCGT table of a specified size.
- *
- * Return value: A #GcmClut object, or %NULL. Free with g_object_unref()
- **/
-GcmClut *
-cd_icc_generate_vcgt (CdIcc *icc, guint size)
-{
-	cmsFloat32Number in;
-	cmsHPROFILE lcms_profile;
-	const cmsToneCurve **vcgt;
-	GcmClut *clut = NULL;
-	GcmClutData *tmp;
-	GPtrArray *array = NULL;
-	guint i;
-
-	/* get tone curves from icc */
-	lcms_profile = cd_icc_get_handle (icc);
-	vcgt = cmsReadTag (lcms_profile, cmsSigVcgtType);
-	if (vcgt == NULL || vcgt[0] == NULL) {
-		g_debug ("icc does not have any VCGT data");
-		goto out;
-	}
-
-	/* create array */
-	array = g_ptr_array_new_with_free_func (g_free);
-	for (i = 0; i < size; i++) {
-		in = (gdouble) i / (gdouble) (size - 1);
-		tmp = g_new0 (GcmClutData, 1);
-		tmp->red = cmsEvalToneCurveFloat(vcgt[0], in) * (gdouble) 0xffff;
-		tmp->green = cmsEvalToneCurveFloat(vcgt[1], in) * (gdouble) 0xffff;
-		tmp->blue = cmsEvalToneCurveFloat(vcgt[2], in) * (gdouble) 0xffff;
-		g_ptr_array_add (array, tmp);
-	}
-
-	/* create new scaled CLUT */
-	clut = gcm_clut_new ();
-	gcm_clut_set_source_array (clut, array);
-out:
-	if (array != NULL)
-		g_ptr_array_unref (array);
-	return clut;
-}
-
-/**
  * cd_icc_generate_curve:
  * @icc: A valid #CdIcc
  * @size: the size of the curve to generate

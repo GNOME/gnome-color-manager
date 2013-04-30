@@ -116,13 +116,6 @@ gcm_test_profile_func (void)
 	g_assert_no_error (error);
 	g_assert (ret);
 	g_object_unref (file);
-
-	/* get CLUT */
-	clut = cd_icc_generate_vcgt (profile, 256);
-	g_assert (clut != NULL);
-	g_assert_cmpint (gcm_clut_get_size (clut), ==, 256);
-
-	g_object_unref (clut);
 	g_object_unref (profile);
 
 	/* get gamut hull */
@@ -514,10 +507,6 @@ gcm_test_trc_widget_func (void)
 	profile = cd_icc_new ();
 	file = g_file_new_for_path (TESTDATADIR "/AdobeGammaTest.icm");
 	cd_icc_load_file (profile, file, CD_ICC_LOAD_FLAGS_NONE, NULL, NULL);
-	clut = cd_icc_generate_vcgt (profile, 256);
-	g_object_set (widget,
-		      "clut", clut,
-		      NULL);
 	g_object_unref (file);
 
 	/* show in a dialog as an example */
