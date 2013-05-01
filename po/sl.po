@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager&keywords=I18N+L10N\n"
-"POT-Creation-Date: 2013-03-07 02:52+0000\n"
-"PO-Revision-Date: 2013-03-07 17:42+0100\n"
+"POT-Creation-Date: 2013-04-30 14:26+0000\n"
+"PO-Revision-Date: 2013-05-01 20:17+0100\n"
 "Last-Translator: Matej Urbančič <mateju@svn.gnome.org>\n"
 "Language-Team: Slovenian <gnome-si@googlegroups.com>\n"
 "Language: sl\n"
@@ -136,13 +136,13 @@ msgstr "Različica"
 
 #. The manufacturer of the profile
 #: ../data/gcm-viewer.ui.h:13
-msgid "Device manufacturer"
-msgstr "Proizvajalec naprave"
+msgid "Manufacturer"
+msgstr "Proizvajalec"
 
 #. The manufacturer of the profile
 #: ../data/gcm-viewer.ui.h:15
-msgid "Device model"
-msgstr "Model naprave"
+msgid "Model"
+msgstr "Model"
 
 #. If the profile contains a display correction table
 #: ../data/gcm-viewer.ui.h:17
@@ -156,8 +156,8 @@ msgstr "Bela točka"
 
 #. The licence of the profile, normally non-free
 #: ../data/gcm-viewer.ui.h:21
-msgid "License"
-msgstr "Dovoljenje"
+msgid "Copyright"
+msgstr "Avtorske pravice"
 
 #. The file size in bytes of the profile
 #: ../data/gcm-viewer.ui.h:23
@@ -596,7 +596,7 @@ msgstr "Podprte slikovne datoteke"
 
 #. TRANSLATORS: filter name on the file->open dialog
 #: ../src/gcm-calibrate.c:701 ../src/gcm-calibrate.c:755
-#: ../src/gcm-viewer.c:476
+#: ../src/gcm-viewer.c:475
 msgid "All files"
 msgstr "Vse datoteke"
 
@@ -611,7 +611,7 @@ msgid "CIE values"
 msgstr "Vrednosti CIE"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:821 ../src/gcm-viewer.c:448
+#: ../src/gcm-calibrate.c:821 ../src/gcm-viewer.c:447
 msgid "Select ICC Profile File"
 msgstr "Izbor datoteke profila ICC"
 
@@ -1199,8 +1199,8 @@ msgid "Copyright (c)"
 msgstr "Avtorske pravice (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2299 ../src/gcm-picker.c:793
-#: ../src/gcm-viewer.c:1850
+#: ../src/gcm-calibrate-main.c:2299 ../src/gcm-picker.c:791
+#: ../src/gcm-viewer.c:1819
 msgid "Set the parent window to make this modal"
 msgstr "Določi glavno okno kot vedno na vrhu"
 
@@ -1263,130 +1263,130 @@ msgstr "Profil ICC za namestitev"
 msgid "No filename specified"
 msgstr "Ime datoteke ni določeno"
 
-#: ../src/gcm-import.c:145 ../src/gcm-viewer.c:1484
+#: ../src/gcm-import.c:147 ../src/gcm-viewer.c:1453
 msgid "Failed to open ICC profile"
 msgstr "Odpiranje profila ICC je spodletelo"
 
-#: ../src/gcm-import.c:150
+#: ../src/gcm-import.c:152
 #, c-format
 msgid "Failed to parse file: %s"
 msgstr "Razčlenitev datoteke je spodletela: %s"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:171
+#: ../src/gcm-import.c:174
 #, c-format
 msgid "Profile description: %s"
 msgstr "Opis profila: %s"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:181
+#: ../src/gcm-import.c:184
 msgid "Profile copyright:"
 msgstr "Avtorske pravice profila:"
 
-#: ../src/gcm-import.c:217
+#: ../src/gcm-import.c:220
 msgid "Color profile is already imported"
 msgstr "Barvni profil je že uvožen"
 
-#: ../src/gcm-import.c:221 ../src/gcm-import.c:265
+#: ../src/gcm-import.c:224 ../src/gcm-import.c:268
 msgid "Show Details"
 msgstr "Pokaži podrobnosti"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:237
+#: ../src/gcm-import.c:240
 msgid "Import display color profile?"
 msgstr "Ali želite uvoziti barvni profil zaslona?"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:241
+#: ../src/gcm-import.c:244
 msgid "Import device color profile?"
 msgstr "Ali želite uvoziti barvni profil naprave?"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:245
+#: ../src/gcm-import.c:248
 msgid "Import named color profile?"
 msgstr "Ali želite uvoziti imenovani barvni profil?"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:249
+#: ../src/gcm-import.c:252
 msgid "Import color profile?"
 msgstr "ALi želite uvoziti barvni profil?"
 
 #. TRANSLATORS: button text
-#: ../src/gcm-import.c:264 ../src/gcm-viewer.c:451
+#: ../src/gcm-import.c:267 ../src/gcm-viewer.c:450
 msgid "Import"
 msgstr "Uvozi"
 
-#: ../src/gcm-import.c:289 ../src/gcm-viewer.c:1517
+#: ../src/gcm-import.c:292 ../src/gcm-viewer.c:1486
 msgid "Failed to import file"
 msgstr "Uvoz datoteke je spodletel"
 
 #. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
-#: ../src/gcm-inspect.c:55
+#: ../src/gcm-inspect.c:57
 msgid "Description:"
 msgstr "Opis:"
 
 #. TRANSLATORS: this is the ICC profile copyright
-#: ../src/gcm-inspect.c:58
+#: ../src/gcm-inspect.c:60
 msgid "Copyright:"
 msgstr "Avtorske pravice:"
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:193
+#: ../src/gcm-inspect.c:195
 msgid "Root window profile:"
 msgstr "Profil korenskega okna:"
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:205
+#: ../src/gcm-inspect.c:207
 msgid "Root window protocol version:"
 msgstr "Različica protokola korenskega okna:"
 
 #. TRANSLATORS: no DBus session bus
-#: ../src/gcm-inspect.c:230 ../src/gcm-inspect.c:299 ../src/gcm-utils.c:117
+#: ../src/gcm-inspect.c:232 ../src/gcm-inspect.c:301 ../src/gcm-utils.c:119
 msgid "Failed to connect to session bus:"
 msgstr "Povezovanje z vodilom seje je spodletelo:"
 
 #. TRANSLATORS: the DBus method failed
-#: ../src/gcm-inspect.c:248 ../src/gcm-inspect.c:317 ../src/gcm-utils.c:141
+#: ../src/gcm-inspect.c:250 ../src/gcm-inspect.c:319 ../src/gcm-utils.c:143
 msgid "The request failed:"
 msgstr "Zahteva je spodletela:"
 
 #. TRANSLATORS: no profile has been asigned to this device
-#: ../src/gcm-inspect.c:257
+#: ../src/gcm-inspect.c:259
 msgid "There are no ICC profiles assigned to this file"
 msgstr "Tej datoteki profil ICC ni dodeljen"
 
 #. TRANSLATORS: this is a list of profiles suitable for the device
-#: ../src/gcm-inspect.c:262 ../src/gcm-inspect.c:334
+#: ../src/gcm-inspect.c:264 ../src/gcm-inspect.c:336
 msgid "Suitable profiles for:"
 msgstr "Primerni profili za:"
 
 #. TRANSLATORS: no profile has been asigned to this window
-#: ../src/gcm-inspect.c:329
+#: ../src/gcm-inspect.c:331
 msgid "There are no ICC profiles for this window"
 msgstr "Za to okno ni profilov ICC"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:365
+#: ../src/gcm-inspect.c:367
 msgid "Show xserver properties"
 msgstr "Pokaži lastnosti strežnika xserver"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:368
+#: ../src/gcm-inspect.c:370
 msgid "Get the profiles for a specific file"
 msgstr "Pridobi profile za določeno datoteko"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:371
+#: ../src/gcm-inspect.c:373
 msgid "Get the profile for a specific window"
 msgstr "Pridobi profil za določeno okno"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:374
+#: ../src/gcm-inspect.c:376
 msgid "Dump all details about this system"
 msgstr "Izpis vseh podrobnosti o sistemu"
 
 #. TRANSLATORS: just dumps the EDID to disk
-#: ../src/gcm-inspect.c:387
+#: ../src/gcm-inspect.c:389
 msgid "EDID inspect program"
 msgstr "Preiskovalni program EDID"
 
@@ -1394,8 +1394,8 @@ msgstr "Preiskovalni program EDID"
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:214 ../src/gcm-picker.c:221 ../src/gcm-viewer.c:686
-#: ../src/gcm-viewer.c:736
+#: ../src/gcm-picker.c:214 ../src/gcm-picker.c:221 ../src/gcm-viewer.c:685
+#: ../src/gcm-viewer.c:735
 msgid "Unknown"
 msgstr "Neznana"
 
@@ -1414,352 +1414,361 @@ msgstr "Priklopljeni kolorimeter ni zmožen branja točke barve."
 
 #. TRANSLATORS: this is when there are no profiles that can be used;
 #. * the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:646
+#: ../src/gcm-picker.c:644
 #, c-format
 msgid "No %s color spaces available"
 msgstr "Barvni prostori %s niso na voljo"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:811
+#: ../src/gcm-picker.c:809
 msgid "GNOME Color Manager Color Picker"
 msgstr "Izbirnik barv upravljalnika barv GNOME"
 
-#. TRANSLATORS: this is where the ICC profile has no description
-#: ../src/gcm-profile.c:162
-msgid "Missing description"
-msgstr "Manjka opis"
-
-#. TRANSLATORS: this is the profile creation date strftime format
-#: ../src/gcm-profile.c:583
-msgid "%B %e %Y, %I:%M:%S %p"
-msgstr "%e.%m.%Y, %H.%M.%S"
-
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:328 ../src/gcm-viewer.c:717
+#: ../src/gcm-utils.c:330 ../src/gcm-viewer.c:716
 msgid "RGB"
 msgstr "RGB"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:332 ../src/gcm-viewer.c:729
+#: ../src/gcm-utils.c:334 ../src/gcm-viewer.c:728
 msgid "CMYK"
 msgstr "CMYK"
 
 #. TRANSLATORS: this is the colorspace type
-#: ../src/gcm-utils.c:336
+#: ../src/gcm-utils.c:338
 msgid "gray"
 msgstr "siva"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:394
+#: ../src/gcm-viewer.c:393
 msgid "Permanently delete profile?"
 msgstr "Ali naj se trajno izbriše profil?"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:397
+#: ../src/gcm-viewer.c:396
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr "Ali ste prepričani, da želite ta profil trajno odstraniti s sistema?"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:400
+#: ../src/gcm-viewer.c:399
 msgid "Delete"
 msgstr "Izbriši"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-viewer.c:469
+#: ../src/gcm-viewer.c:468
 msgid "Supported ICC profiles"
 msgstr "Podprti profili ICC"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-viewer.c:505
+#: ../src/gcm-viewer.c:504
 msgid "Failed to copy file"
 msgstr "Kopiranje datoteke je spodletelo"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:659
+#: ../src/gcm-viewer.c:658
 msgid "Input device"
 msgstr "Vhodna naprava"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:663
+#: ../src/gcm-viewer.c:662
 msgid "Display device"
 msgstr "Naprava zaslona"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:667
+#: ../src/gcm-viewer.c:666
 msgid "Output device"
 msgstr "Odvodna naprava"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:671
+#: ../src/gcm-viewer.c:670
 msgid "Devicelink"
 msgstr "Povezava naprave"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:675
+#: ../src/gcm-viewer.c:674
 msgid "Colorspace conversion"
 msgstr "Pretvorba barvnega prostora"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:679
+#: ../src/gcm-viewer.c:678
 msgid "Abstract"
 msgstr "Izvleček"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:683
+#: ../src/gcm-viewer.c:682
 msgid "Named color"
 msgstr "Imenovana barva"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:697
+#: ../src/gcm-viewer.c:696
 msgid "XYZ"
 msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:701
+#: ../src/gcm-viewer.c:700
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:705
+#: ../src/gcm-viewer.c:704
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:709
+#: ../src/gcm-viewer.c:708
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:713
+#: ../src/gcm-viewer.c:712
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:721
+#: ../src/gcm-viewer.c:720
 msgid "Gray"
 msgstr "Siva"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:725
+#: ../src/gcm-viewer.c:724
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:733
+#: ../src/gcm-viewer.c:732
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: e.g. sRGB or adbode RGB
-#: ../src/gcm-viewer.c:788
+#: ../src/gcm-viewer.c:771
 msgid "Standard space"
 msgstr "Navadni prostor"
 
 #. TRANSLATORS: the raw EDID MD5 of the display device
-#: ../src/gcm-viewer.c:790
+#: ../src/gcm-viewer.c:773
 msgid "Display checksum"
 msgstr "Nadzorna vsota zaslona"
 
-#: ../src/gcm-viewer.c:791
+#: ../src/gcm-viewer.c:774
 msgid "Display model"
 msgstr "Model zaslona"
 
-#: ../src/gcm-viewer.c:792
+#: ../src/gcm-viewer.c:775
 msgid "Display serial number"
 msgstr "Zaporedna številka zaslona"
 
 #. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
-#: ../src/gcm-viewer.c:794
+#: ../src/gcm-viewer.c:777
 msgid "Display PNPID"
 msgstr "PNPID zaslona"
 
 #. TRANSLATORS: who made the display
-#: ../src/gcm-viewer.c:796
+#: ../src/gcm-viewer.c:779
 msgid "Display vendor"
 msgstr "Ponudnik zaslona"
 
 #. TRANSLATORS: the raw profile MD5
-#: ../src/gcm-viewer.c:798
+#: ../src/gcm-viewer.c:781
 msgid "File checksum"
 msgstr "Nadzorna vsota datoteke"
 
 #. TRANSLATORS: the color framework, e.g. 'colord'
-#: ../src/gcm-viewer.c:800
+#: ../src/gcm-viewer.c:783
 msgid "Framework product"
 msgstr "Izdelek ogrodja"
 
 #. TRANSLATORS: the framework binary, e.g. gcm-viewer
-#: ../src/gcm-viewer.c:802
+#: ../src/gcm-viewer.c:785
 msgid "Framework program"
 msgstr "Program ogrodja"
 
 #. TRANSLATORS: the framework release, e.g. '1.22'
-#: ../src/gcm-viewer.c:804
+#: ../src/gcm-viewer.c:787
 msgid "Framework version"
 msgstr "Različica ogrodja"
 
 #. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
-#: ../src/gcm-viewer.c:806
+#: ../src/gcm-viewer.c:789
 msgid "Data source type"
 msgstr "Vrsta vira podatkov"
 
 #. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
-#: ../src/gcm-viewer.c:808
+#: ../src/gcm-viewer.c:791
 msgid "Mapping format"
 msgstr "Oblika preslikave"
 
 #. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
-#: ../src/gcm-viewer.c:810
+#: ../src/gcm-viewer.c:793
 msgid "Mapping qualifier"
 msgstr "Uvrščevalnik preslikove"
 
 #. TRANSLATORS: The original device the profile was made for
-#: ../src/gcm-viewer.c:812
+#: ../src/gcm-viewer.c:795
 msgid "Mapping device"
 msgstr "Preslikovanje naprav"
 
 #. TRANSLATORS: The average error when making the profile
-#: ../src/gcm-viewer.c:814
+#: ../src/gcm-viewer.c:797
 msgid "Delta-E average"
 msgstr "Delta-E povprečje"
 
 #. TRANSLATORS: the maximum error when making the profile
-#: ../src/gcm-viewer.c:816
+#: ../src/gcm-viewer.c:799
 msgid "Delta-E maximum"
 msgstr "Delta-E največja vrednost"
 
 #. TRANSLATORS: the RMS error when making the profile
-#: ../src/gcm-viewer.c:818
+#: ../src/gcm-viewer.c:801
 msgid "Delta-E RMS"
 msgstr "Delta-E RMS"
 
 #. TRANSLATORS: The device name, e.g. 'huey'
-#: ../src/gcm-viewer.c:820
+#: ../src/gcm-viewer.c:803
 msgid "Calibration device"
 msgstr "Naprava za umerjanje"
 
 #. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
-#: ../src/gcm-viewer.c:822
+#: ../src/gcm-viewer.c:805
 msgid "Screen surface finish"
 msgstr "Površina zaslona"
 
 #. TRANSLATORS: e.g. DVI or VGA
-#: ../src/gcm-viewer.c:824
+#: ../src/gcm-viewer.c:807
 msgid "Connection type"
 msgstr "Vrsta povezave"
 
 #. TRANSLATORS: e.g. Screen brightness in percent
-#: ../src/gcm-viewer.c:826
+#: ../src/gcm-viewer.c:809
 msgid "Screen brightness"
 msgstr "Svetlost zaslona"
 
 #. TRANSLATORS: e.g. the 3D volume of the gamut graph
-#: ../src/gcm-viewer.c:828
+#: ../src/gcm-viewer.c:811
 msgid "Gamut volume"
 msgstr "Prostornina diagrama Gamut"
 
 #. TRANSLATORS: e.g. what proportion of sRGB is covered
-#: ../src/gcm-viewer.c:830
+#: ../src/gcm-viewer.c:813
 msgid "sRGB coverage"
 msgstr "Pokritost sRGB"
 
 #. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
-#: ../src/gcm-viewer.c:832
+#: ../src/gcm-viewer.c:815
 msgid "Adobe RGB coverage"
 msgstr "Pokritost Adobe RGB"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:943
+#: ../src/gcm-viewer.c:926
 msgid "No description has been set"
 msgstr "Ni nastavljenega opisa"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:947
+#: ../src/gcm-viewer.c:930
 msgid "No copyright has been set"
 msgstr "Ni nastavljenih avtorskih pravic"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:951
+#: ../src/gcm-viewer.c:934
 msgid "The display compensation table is invalid"
 msgstr "Nadomestilna razpredelnica zaslona ni veljavna"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:955
+#: ../src/gcm-viewer.c:938
 msgid "A scum dot is present for media white"
 msgstr "Zaznana je robna sivina pri tiskanju belin"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:959
+#: ../src/gcm-viewer.c:942
 msgid "The gray axis contains significant amounts of color"
 msgstr "Os sivin vsebuje znatno količino barve"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:963
+#: ../src/gcm-viewer.c:946
 msgid "The gray axis is non-monotonic"
 msgstr "Osi sivin ne določa monotona funkcija"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:967
+#: ../src/gcm-viewer.c:950
 msgid "One or more of the primaries are invalid"
 msgstr "Ena ali več osnovnih vrednosti je neveljavnih"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:971
+#: ../src/gcm-viewer.c:954
 msgid "The primaries do not add to white"
 msgstr "Osnovne barve se se seštejejo v belo"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:975
+#: ../src/gcm-viewer.c:958
 msgid "One or more of the primaries is unlikely"
 msgstr "Ena ali več osnovnih barv ni verjetna"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:979
+#: ../src/gcm-viewer.c:962
 msgid "The white is not D50 white"
 msgstr "Bela ni bela D50"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:983
+#: ../src/gcm-viewer.c:966
+msgid "The whitepoint temperature is unlikely"
+msgstr "Temperatura bele točke ni verjetna"
+
+#. TRANSLATORS: the profile is broken
+#: ../src/gcm-viewer.c:970
 msgid "Unknown warning type"
 msgstr "Neznana vrsta opozorila"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1146
+#: ../src/gcm-viewer.c:1115
 msgid "Yes"
 msgstr "Da"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1149
+#: ../src/gcm-viewer.c:1118
 msgid "No"
 msgstr "Ne"
 
 #. TRANSLATORS: profiles that have warnings are useable,
 #. * but may not be any good
-#: ../src/gcm-viewer.c:1176
+#: ../src/gcm-viewer.c:1144
 msgid "The profile has the following problems:"
 msgstr "V profilu so zaznane naslednje težave:"
 
+#. TRANSLATORS: this is the icc creation date strftime format
+#: ../src/gcm-viewer.c:1236
+msgid "%B %e %Y, %I:%M:%S %p"
+msgstr "%e.%m.%Y, %H.%M.%S"
+
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:1290
+#: ../src/gcm-viewer.c:1259
 msgid "Delete this profile"
 msgstr "Izbriši ta profil"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:1293
+#: ../src/gcm-viewer.c:1262
 msgid "This profile cannot be deleted"
 msgstr "Profila ni mogoče izbrisati"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-viewer.c:1853
+#: ../src/gcm-viewer.c:1822
 msgid "Set the specific profile to show"
 msgstr "Določite profil za prikaz"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: ../src/gcm-viewer.c:1856
+#: ../src/gcm-viewer.c:1825
 msgid "Set the specific file to show"
 msgstr "Določite datoteko za prikaz"
+
+#~ msgid "Device model"
+#~ msgstr "Model naprave"
+
+#~ msgid "License"
+#~ msgstr "Dovoljenje"
+
+#~ msgid "Missing description"
+#~ msgstr "Manjka opis"
 
 #~ msgid ""
 #~ "Could not calibrate and profile using this color measuring instrument"
