@@ -774,6 +774,7 @@ gcm_calib_setup_page_intro (GcmCalibratePriv *calib)
 static gboolean
 gcm_calibrate_is_livecd (void)
 {
+#ifdef __linux__
 	gboolean ret;
 	gchar *data = NULL;
 	GError *error = NULL;
@@ -791,6 +792,9 @@ gcm_calibrate_is_livecd (void)
 out:
 	g_free (data);
 	return ret;
+#else
+	return FALSE;
+#endif
 }
 
 /**
