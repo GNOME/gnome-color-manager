@@ -1198,11 +1198,11 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	gtk_widget_set_visible (widget, temperature > 0);
 	if (temperature > 0) {
 		if (fabs (temperature - 5000) < 10) {
-			temp = g_strdup_printf ("%i°K (D50)", temperature);
+			temp = g_strdup_printf ("%iK (D50)", temperature);
 		} else if (fabs (temperature - 6500) < 10) {
-			temp = g_strdup_printf ("%i°K (D65)", temperature);
+			temp = g_strdup_printf ("%iK (D65)", temperature);
 		} else {
-			temp = g_strdup_printf ("%i°K", temperature);
+			temp = g_strdup_printf ("%iK", temperature);
 		}
 		gtk_label_set_label (GTK_LABEL (widget), temp);
 		g_free (temp);
