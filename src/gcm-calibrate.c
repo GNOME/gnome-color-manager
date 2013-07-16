@@ -680,8 +680,8 @@ gcm_calibrate_camera_get_reference_image (const gchar *directory, GtkWindow *win
 	 * a bit like this: http://www.colorreference.de/targets/target.jpg */
 	dialog = gtk_file_chooser_dialog_new (_("Select calibration target image"), window,
 					       GTK_FILE_CHOOSER_ACTION_OPEN,
-					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					       _("_Cancel"), GTK_RESPONSE_CANCEL,
+					       _("_Open"), GTK_RESPONSE_ACCEPT,
 					      NULL);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), directory);
@@ -725,8 +725,8 @@ gcm_calibrate_camera_get_reference_data (const gchar *directory, GtkWindow *wind
 	/* TRANSLATORS: dialog for file->open dialog */
 	dialog = gtk_file_chooser_dialog_new (_("Select CIE reference values file"), window,
 					       GTK_FILE_CHOOSER_ACTION_OPEN,
-					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					       GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+					       _("_Cancel"), GTK_RESPONSE_CANCEL,
+					       _("_Open"), GTK_RESPONSE_ACCEPT,
 					      NULL);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), directory);
@@ -820,8 +820,8 @@ gcm_calibrate_file_chooser_get_working_path (GcmCalibrate *calibrate, GtkWindow 
 	/* TRANSLATORS: dialog for file->open dialog */
 	dialog = gtk_file_chooser_dialog_new (_("Select ICC Profile File"), window,
 					       GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER,
-					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					       _("Open"), GTK_RESPONSE_ACCEPT,
+					       _("_Cancel"), GTK_RESPONSE_CANCEL,
+					       _("_Open"), GTK_RESPONSE_ACCEPT,
 					      NULL);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), current_folder);

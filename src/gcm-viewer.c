@@ -446,8 +446,8 @@ gcm_viewer_file_chooser_get_icc_profile (GcmViewerPrivate *viewer)
 	/* TRANSLATORS: dialog for file->open dialog */
 	dialog = gtk_file_chooser_dialog_new (_("Select ICC Profile File"), window,
 					       GTK_FILE_CHOOSER_ACTION_OPEN,
-					       GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-					       _("Import"), GTK_RESPONSE_ACCEPT,
+					       _("_Cancel"), GTK_RESPONSE_CANCEL,
+					       _("_Import"), GTK_RESPONSE_ACCEPT,
 					      NULL);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 	gtk_file_chooser_set_current_folder (GTK_FILE_CHOOSER(dialog), g_get_home_dir ());
