@@ -198,14 +198,23 @@ static gboolean
 gcm_exif_parse_exiv (GcmExif *exif, const gchar *filename, GError **error)
 {
 	gboolean ret;
-	gchar *command_line;
 	gint exit_status = 0;
 	gchar *standard_output = NULL;
 	gchar **split = NULL;
 	GcmExifPrivate *priv = exif->priv;
+	const gchar *argv[] = { LIBEXECDIR "/gcm-helper-exiv",
+			  filename,
+			  NULL };
 
-	command_line = g_strdup_printf (LIBEXECDIR "/gcm-helper-exiv \"%s\"", filename);
-	ret = g_spawn_command_line_sync (command_line, &standard_output, NULL, &exit_status, error);
+	ret = g_spawn_sync (NULL,
+			    (gchar **) argv,
+			    NULL,
+			    G_SPAWN_STDERR_TO_DEV_NULL,
+			    NULL, NULL,
+			    &standard_output,
+			    NULL,
+			    &exit_status,
+			    error);
 	if (!ret)
 		goto out;
 
@@ -248,7 +257,6 @@ gcm_exif_parse_exiv (GcmExif *exif, const gchar *filename, GError **error)
 
 out:
 	g_free (standard_output);
-	g_free (command_line);
 	g_strfreev (split);
 	return ret;
 }

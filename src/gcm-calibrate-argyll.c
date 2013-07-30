@@ -166,6 +166,7 @@ gcm_calibrate_argyll_get_display (const gchar *output_name,
 	gint exit_status;
 	guint display = G_MAXUINT;
 	guint i;
+	const gchar *argv[] = { "dispcal", NULL };
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("dispcal", error);
@@ -173,11 +174,16 @@ gcm_calibrate_argyll_get_display (const gchar *output_name,
 		goto out;
 
 	/* execute it and capture stderr */
-	ret = g_spawn_command_line_sync (command,
-					 NULL,
-					 &data,
-					 &exit_status,
-					 error);
+	argv[0] = command;
+	ret = g_spawn_sync (NULL,
+			    (gchar **) argv,
+			    NULL,
+			    G_SPAWN_STDERR_TO_DEV_NULL,
+			    NULL, NULL,
+			    &data,
+			    NULL,
+			    &exit_status,
+			    error);
 	if (!ret)
 		goto out;
 
@@ -1736,6 +1742,7 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate,
 
 	/* page setup, and then we're done */
 	if (print_kind == GCM_CALIBRATE_PRINT_KIND_GENERATE) {
+		const gchar *argv[] = { BINDIR "/nautilus", "", NULL };
 
 		/* get the paper size */
 		paper_size = gcm_calibrate_argyll_get_paper_size (calibrate, window);
@@ -1756,9 +1763,15 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate,
 		if (!ret)
 			goto out;
 
-		cmdline = g_strdup_printf ("nautilus \"%s\"", working_path);
-		g_debug ("we need to open the directory we're using: %s", cmdline);
-		ret = g_spawn_command_line_async (cmdline, error);
+		g_debug ("we need to open the directory we're using: %s", working_path);
+		argv[1] = working_path;
+		ret = g_spawn_async (NULL,
+				     (gchar **) argv,
+				     NULL,
+				     0,
+				     NULL, NULL,
+				     NULL,
+				     error);
 		goto out;
 	}
 

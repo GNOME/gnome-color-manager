@@ -655,7 +655,16 @@ gcm_calib_label_activate_link_cb (GtkLabel *label,
 {
 	gboolean ret;
 	GError *error = NULL;
-	ret = g_spawn_command_line_async (BINDIR "/gnome-control-center color", &error);
+	const gchar *argv[] = { BINDIR "/gnome-control-center color",
+				"color",
+				NULL };
+	ret = g_spawn_async (NULL,
+			     (gchar **) argv,
+			     NULL,
+			     0,
+			     NULL, NULL,
+			     NULL,
+			     &error);
 	if (!ret) {
 		g_warning ("failed to launch the control center: %s",
 			   error->message);
@@ -800,22 +809,28 @@ static void
 gcm_calib_show_profile_button_clicked_cb (GtkButton *button,
 					  GcmCalibratePriv *priv)
 {
+	const gchar *argv[] = { BINDIR "/nautilus", "", NULL };
 	gboolean ret;
-	gchar *command_line;
+	gchar *path;
 	GError *error = NULL;
 
 	/* just hardcode nautilus to open the folder */
-	command_line = g_strdup_printf ("nautilus %s/%s",
-					g_get_user_data_dir (),
-					"icc");
-	ret = g_spawn_command_line_async (command_line, &error);
+	path = g_build_filename (g_get_user_data_dir (), "icc", NULL);
+	argv[1] = path;
+	ret = g_spawn_async (NULL,
+			     (gchar **) argv,
+			     NULL,
+			     0,
+			     NULL, NULL,
+			     NULL,
+			     &error);
 	if (!ret) {
 		g_warning ("failed to show profile: %s", error->message);
 		g_error_free (error);
 		goto out;
 	}
 out:
-	g_free (command_line);
+	g_free (path);
 }
 
 /**
