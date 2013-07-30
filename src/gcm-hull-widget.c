@@ -97,15 +97,24 @@ gcm_hull_widget_add (GcmHullWidget *hull_widget,
 	gchar *ply_data = NULL;
 	GcmHull *hull = NULL;
 	GError *error = NULL;
+	gchar *temp_file = NULL;
+	gint fd = -1;
 
 	/* generate hull */
 	hull = cd_icc_generate_gamut_hull (profile, 12);
 	if (hull == NULL)
 		goto out;
 
+	fd = g_file_open_tmp ("gnome-color-manager-XXXXXX.icc", &temp_file, &error);
+	if (fd < 0) {
+		g_warning ("%s", error->message);
+		g_error_free (error);
+		goto out;
+	}
+
 	/* save as PLY file */
 	ply_data = gcm_hull_export_to_ply (hull);
-	ret = g_file_set_contents ("/tmp/gamut.ply", ply_data, -1, &error);
+	ret = g_file_set_contents (temp_file, ply_data, -1, &error);
 	if (!ret) {
 		g_warning ("%s", error->message);
 		g_error_free (error);
@@ -113,7 +122,7 @@ gcm_hull_widget_add (GcmHullWidget *hull_widget,
 	}
 
 	/* load model: TODO: use mash_model_new_from_data() */
-	model = mash_model_new_from_file (MASH_DATA_NONE, "/tmp/gamut.ply",
+	model = mash_model_new_from_file (MASH_DATA_NONE, temp_file,
 					  &error);
 	if (model == NULL) {
 		g_warning ("%s", error->message);
@@ -149,6 +158,11 @@ gcm_hull_widget_add (GcmHullWidget *hull_widget,
 	clutter_actor_show (model);
 	ret = TRUE;
 out:
+	if (fd >= 0)
+		close (fd);
+	if (temp_file != NULL)
+		g_unlink (temp_file);
+	g_free (temp_file);
 	g_free (ply_data);
 	if (hull != NULL)
 		g_object_unref (hull);
