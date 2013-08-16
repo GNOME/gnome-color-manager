@@ -2251,13 +2251,11 @@ gcm_calib_image_changed_cb (GcmCalibrate *calibrate,
 			    const gchar *filename,
 			    GcmCalibratePriv *priv)
 {
-	gchar *path;
 	GdkPixbuf *pixbuf;
 	GError *error = NULL;
 
 	if (filename != NULL) {
-		path = g_build_filename (GCM_DATA, "icons", filename, NULL);
-		pixbuf = gdk_pixbuf_new_from_file_at_size (path, 200, 400, &error);
+		pixbuf = gdk_pixbuf_new_from_file_at_size (filename, 200, 400, &error);
 		if (pixbuf == NULL) {
 			g_warning ("failed to load image: %s", error->message);
 			g_error_free (error);
@@ -2266,7 +2264,6 @@ gcm_calib_image_changed_cb (GcmCalibrate *calibrate,
 			gtk_image_set_from_pixbuf (GTK_IMAGE (priv->action_image), pixbuf);
 			gtk_widget_show (priv->action_image);
 		}
-		g_free (path);
 	} else {
 		gtk_widget_hide (priv->action_image);
 	}
