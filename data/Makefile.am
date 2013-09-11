@@ -15,14 +15,13 @@ desktop_in_files =					\
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
 appdatadir = $(datadir)/appdata
-appdata_files = gcm-viewer.appdata.xml
+dist_appdata_DATA = gcm-viewer.appdata.xml
 
 UI_FILES =						\
 	gcm-picker.ui					\
 	gcm-viewer.ui
 
 EXTRA_DIST =						\
-	$(appdata_files)				\
 	$(service_in_files)				\
 	$(autostart_in_files)				\
 	$(desktop_in_files)				\
