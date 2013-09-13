@@ -1,3 +1,58 @@
+Version 3.9.92
+~~~~~~~~~~~~~~
+Released: 2013-09-13
+
+* translations
+ - Added Dutch translation (Cumulus007, Reinout van Schouwen)
+ - Updated Assamese translation (Nilamdyuti Goswami)
+ - Updated Brazilian Portuguese translation (Enrico Nicoletto)
+ - Updated Brazilian Portuguese translation (Rafael Ferreira)
+ - Updated British English translation (Bruce Cowan)
+ - Updated Catalan translation (Gil Forcada)
+ - Updated Chinese simplified translation (甘露(Gan Lu))
+ - Updated Czech translation (Marek Černocký)
+ - Updated Estonian translation (Mattias Põldaru)
+ - Updated Finnish translation (Jiri Grönroos)
+ - Updated French translation (Alexandre Franke)
+ - Updated Galician translations (Fran Diéguez)
+ - Updated German translation (Benjamin Steinwender)
+ - Updated Greek translation (Dimitris Spingos)
+ - Updated Hebrew translation (Yaron Shahrabani)
+ - Updated Hungarian translation (Balázs Úr)
+ - Updated Indonesian translation (Andika Triwidada)
+ - Updated Italian translation (Milo Casagrande)
+ - Updated Latvian translation (Rūdolfs Mazurs)
+ - Updated Lithuanian translation (Aurimas Černius)
+ - Updated Malayalam translation (Anish A)
+ - Updated Norwegian bokmål translation (Kjartan Maraas)
+ - Updated Polish translation (Piotr Drąg)
+ - Updated Russian translation (Stas Solovey)
+ - Updated Russian translation (Yuri Myasoedov)
+ - Updated Serbian translation (Мирослав Николић)
+ - Updated slovak translation (Dušan Kazik)
+ - Updated Slovenian translation (Matej Urbančič)
+ - Updated Spanish translation (Daniel Mustieles)
+ - Updated Tajik translation (Victor Ibragimov)
+ - Updated Traditional Chinese translation (Chao-Hsiung Liao, Cheng-Chia Tseng)
+
+* New Features:
+ - Add an AppData description for gcm-viewer (Richard Hughes)
+ - Use the new cd_icc_get_response() provided in colord 0.1.34 (Richard Hughes)
+ - Use the new cd_icc_get_vcgt() in colord 0.1.34 (Richard Hughes)
+
+* Bugfix:
+ - Disable GCM_DATA path prefixing for colord provided image paths (Pascal de Bruijn)
+ - Do not use a predictable name when saving the PLY temp file (Richard Hughes)
+ - Do not use g_spawn_command_line_sync() when spawning executables (Richard Hughes)
+ - gcm_calibrate_is_livecd() should be linux-only (Antoine Jacoutot)
+ - GtkStock is deprecated (Richard Hughes)
+ - Kelvin is not a graded scale (Richard Hughes)
+ - Make wrapping sensible when showing details about profiles (Richard Hughes)
+ - Tweak a few of the descriptions to reflect reality (Richard Hughes)
+ - Use CdIcc to load and save ICC profiles (Richard Hughes)
+ - Use g_ascii_dtostr() to avoid writing locale-specific floats in PLY files (Richard Hughes)
+ - We need at least clutter 1.12 to properly build with mash (Pascal de Bruijn)
+
 Version 3.8.0
 ~~~~~~~~~~~~~
 Released: 2013-03-26
