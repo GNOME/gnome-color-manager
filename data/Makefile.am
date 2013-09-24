@@ -14,8 +14,10 @@ desktop_in_files =					\
 	gcm-import.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
+@INTLTOOL_XML_NOMERGE_RULE@
 appdatadir = $(datadir)/appdata
-dist_appdata_DATA = gcm-viewer.appdata.xml
+dist_appdata_DATA = $(appdata_in_files:.xml.in=.xml)
+appdata_in_files = gcm-viewer.appdata.xml.in
 
 UI_FILES =						\
 	gcm-picker.ui					\
@@ -23,6 +25,7 @@ UI_FILES =						\
 
 EXTRA_DIST =						\
 	$(service_in_files)				\
+	$(appdata_in_files)				\
 	$(autostart_in_files)				\
 	$(desktop_in_files)				\
 	$(UI_FILES)
