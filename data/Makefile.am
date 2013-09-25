@@ -14,7 +14,7 @@ desktop_in_files =					\
 	gcm-import.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
-@INTLTOOL_XML_NOMERGE_RULE@
+@INTLTOOL_XML_RULE@
 appdatadir = $(datadir)/appdata
 dist_appdata_DATA = $(appdata_in_files:.xml.in=.xml)
 appdata_in_files = gcm-viewer.appdata.xml.in
