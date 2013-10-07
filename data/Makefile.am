@@ -16,7 +16,7 @@ desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
 @INTLTOOL_XML_RULE@
 appdatadir = $(datadir)/appdata
-dist_appdata_DATA = $(appdata_in_files:.xml.in=.xml)
+appdata_DATA = $(appdata_in_files:.xml.in=.xml)
 appdata_in_files = gcm-viewer.appdata.xml.in
 
 UI_FILES =						\
@@ -32,6 +32,9 @@ EXTRA_DIST =						\
 
 clean-local :
 	rm -f *~
+
+CLEANFILES =						\
+	$(appdata_DATA)
 
 DISTCLEANFILES =					\
 	org.gnome.ColorManager.service			\
