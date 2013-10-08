@@ -117,7 +117,10 @@ gcm_picker_refresh_results (void)
 	cd_color_xyz_copy (&last_sample, &color_xyz);
 
 	/* create new pixbuf of the right size */
-	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8, 200, 200);
+	image = GTK_IMAGE (gtk_builder_get_object (builder, "image_preview"));
+	pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8,
+				 gtk_widget_get_allocated_width (GTK_WIDGET (image)),
+				 gtk_widget_get_allocated_height (GTK_WIDGET (image)));
 
 	/* lcms scales these for some reason */
 	color_xyz.X /= 100.0f;
@@ -225,7 +228,6 @@ gcm_picker_refresh_results (void)
 	}
 
 	/* set image */
-	image = GTK_IMAGE (gtk_builder_get_object (builder, "image_preview"));
 	gtk_image_set_from_pixbuf (image, pixbuf);
 out:
 	g_free (text_ambient);
@@ -733,7 +735,7 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 	gtk_widget_show (info_bar_hardware_label);
 
 	/* add infobar to devices pane */
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "vbox1"));
+	widget = GTK_WIDGET (gtk_builder_get_object (builder, "box1"));
 	gtk_box_pack_start (GTK_BOX(widget), info_bar_hardware, FALSE, FALSE, 0);
 
 	/* maintain a list of profiles */
