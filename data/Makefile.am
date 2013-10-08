@@ -1,4 +1,5 @@
 SUBDIRS = 						\
+	appdata						\
 	ti1						\
 	tests						\
 	targets						\
@@ -14,27 +15,18 @@ desktop_in_files =					\
 	gcm-import.desktop.in
 desktop_DATA = $(desktop_in_files:.desktop.in=.desktop)
 
-@INTLTOOL_XML_RULE@
-appdatadir = $(datadir)/appdata
-appdata_DATA = $(appdata_in_files:.xml.in=.xml)
-appdata_in_files = gcm-viewer.appdata.xml.in
-
 UI_FILES =						\
 	gcm-picker.ui					\
 	gcm-viewer.ui
 
 EXTRA_DIST =						\
 	$(service_in_files)				\
-	$(appdata_in_files)				\
 	$(autostart_in_files)				\
 	$(desktop_in_files)				\
 	$(UI_FILES)
 
 clean-local :
 	rm -f *~
-
-CLEANFILES =						\
-	$(appdata_DATA)
 
 DISTCLEANFILES =					\
 	org.gnome.ColorManager.service			\
