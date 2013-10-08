@@ -27,8 +27,13 @@ gcm-viewer.1: gcm-viewer.sgml
 	docbook2man $? > /dev/null
 endif
 
+CLEANFILES =						\
+	*.1						\
+	manpage.*
+
 clean-local :
 	rm -f *~
 	rm -f *.1
 	rm -f manpage.*
 
+-include $(top_srcdir)/git.mk

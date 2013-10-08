@@ -35,3 +35,4 @@ DISTCLEANFILES =					\
 	gcm-viewer.desktop				\
 	gcm-import.desktop
 
+-include $(top_srcdir)/git.mk

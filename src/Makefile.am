@@ -238,9 +238,10 @@ EXTRA_DIST =						\
 clean-local:
 	rm -f *~
 
-CLEANFILES = $(BUILT_SOURCES)
+CLEANFILES = $(BUILT_SOURCES) *.a
 
 MAINTAINERCLEANFILES =					\
 	*~						\
 	Makefile.in
 
+-include $(top_srcdir)/git.mk

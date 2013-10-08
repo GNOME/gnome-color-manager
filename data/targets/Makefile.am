@@ -15,3 +15,4 @@ targets_DATA =					\
 EXTRA_DIST =					\
 	$(targets_DATA)
 
+-include $(top_srcdir)/git.mk

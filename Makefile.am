@@ -13,19 +13,23 @@ DISTCLEANFILES =					\
 
 MAINTAINERCLEANFILES =					\
 	*~						\
-	compile						\
-	configure					\
 	INSTALL						\
+	Makefile.in					\
+	aclocal.m4					\
+	compile						\
+	config.guess					\
+	config.h.*					\
+	config.sub					\
+	configure					\
+	depcomp						\
 	install-sh					\
+	ltmain.sh					\
 	missing						\
 	mkinstalldirs					\
-	config.guess					\
-	ltmain.sh					\
-	config.sub					\
-	depcomp						\
-	Makefile.in					\
-	config.h.*					\
-	aclocal.m4
+	test-driver
+
+CLEANFILES =						\
+	ChangeLog
 
 EXTRA_DIST =						\
 	COPYING						\
@@ -61,3 +65,4 @@ ChangeLog:
 
 .PHONY: ChangeLog
 
+-include $(top_srcdir)/git.mk

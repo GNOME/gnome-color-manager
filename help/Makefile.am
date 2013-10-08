@@ -13,3 +13,7 @@ HELP_FILES = \
 	color-import-linux.page		\
 	color-import-windows.page	\
 	color-import-osx.page
+
+CLEANFILES = */*.mo */*.stamp
+
+-include $(top_srcdir)/git.mk

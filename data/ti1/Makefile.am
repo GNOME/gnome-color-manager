@@ -9,3 +9,5 @@ ti1_DATA =					\
 
 EXTRA_DIST =					\
 	$(ti1_DATA)
+
+-include $(top_srcdir)/git.mk
