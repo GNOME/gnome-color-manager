@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-08-02 12:40+0200\n"
-"PO-Revision-Date: 2013-08-02 12:40+0200\n"
+"POT-Creation-Date: 2013-11-01 16:16+0100\n"
+"PO-Revision-Date: 2013-11-01 16:17+0200\n"
 "Last-Translator: Fran Dieguez <frandieguez@gnome.org>\n"
 "Language-Team: gnome-l10n-gl@gnome.org\n"
 "Language: gl\n"
@@ -54,49 +54,70 @@ msgid "_Measure"
 msgstr "_Medida"
 
 #. the color representation
-#: ../data/gcm-picker.ui.h:6
-msgid "XYZ:"
-msgstr "XYZ:"
+#. TRANSLATORS: this the ICC colorspace type
+#: ../data/gcm-picker.ui.h:6 ../src/gcm-viewer.c:696
+msgid "XYZ"
+msgstr "XYZ"
 
 #. Lab is the color representation and D50 is the white point
 #: ../data/gcm-picker.ui.h:8
-msgid "Lab (D50):"
-msgstr "Lab (D50):"
+msgid "Lab (D50)"
+msgstr "Lab (D50)"
 
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:10
-msgid "Media whitepoint:"
-msgstr "Punto blanco do ambiente:"
+msgid "Media whitepoint"
+msgstr "Punto branco medio"
 
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:12
-msgid "Color Temperature:"
-msgstr "Temperatura da cor:"
+msgid "Color Temperature"
+msgstr "Temperatura da cor"
 
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:14
-msgid "Ambient:"
-msgstr "Ambiente:"
+msgid "Ambient"
+msgstr "Ambiente"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#: ../data/gcm-picker.ui.h:16
-msgid "Colorspace:"
-msgstr "Espazo de cor:"
+#. The profile colorspace, e.g. RGB
+#: ../data/gcm-picker.ui.h:16 ../data/gcm-viewer.ui.h:7
+msgid "Colorspace"
+msgstr "Espazo de cor"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
-#: ../data/gcm-picker.ui.h:18
-msgid "RGB:"
-msgstr "RGB:"
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: ../data/gcm-picker.ui.h:18 ../src/gcm-utils.c:330 ../src/gcm-viewer.c:716
+msgid "RGB"
+msgstr "RGB"
 
 #. This shows the error in the conversion to RGB.
 #: ../data/gcm-picker.ui.h:20
-msgid "Error:"
-msgstr "Erro:"
+msgid "Error"
+msgstr "Erro"
 
 #. Expander title, the results from the color picker
 #: ../data/gcm-picker.ui.h:22
 msgid "Results"
 msgstr "Resultados"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:1
+msgid ""
+"GNOME Color Profile Viewer shows installed color profiles on your system and "
+"allows you to calibrate displays, printers and cameras using a wizard."
+msgstr ""
+"O visor de perfiles de cor de GNOME mostra os perfiles de cor instalados no "
+"seu sistema e permítelle calibrar pantallas, impresoras e cámaras usando un "
+"asistente."
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+msgid ""
+"This functionality is typically used by GNOME Control Center from the color "
+"panel although can be used on its own."
+msgstr ""
+"Esta funcionalidade é normalmente usada polo Centro de control de GNOME "
+"desde o panel de cor aínda que pode usarse por si mesma."
 
 #: ../data/gcm-viewer.desktop.in.h:1 ../data/gcm-viewer.ui.h:1
 msgid "Color Profile Viewer"
@@ -118,11 +139,6 @@ msgstr "Retirar un perfil do dispositivo"
 #: ../data/gcm-viewer.ui.h:5
 msgid "Profile type"
 msgstr "Tipo de perfil"
-
-#. The profile colorspace, e.g. RGB
-#: ../data/gcm-viewer.ui.h:7
-msgid "Colorspace"
-msgstr "Espazo de cor"
 
 #. When the profile was created
 #: ../data/gcm-viewer.ui.h:9
@@ -1220,17 +1236,17 @@ msgid "Copyright (c)"
 msgstr "Copyright (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2318 ../src/gcm-picker.c:791
+#: ../src/gcm-calibrate-main.c:2315 ../src/gcm-picker.c:793
 #: ../src/gcm-viewer.c:1819
 msgid "Set the parent window to make this modal"
 msgstr "Estabelecer a xanela pai para facelo modal"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-calibrate-main.c:2321
+#: ../src/gcm-calibrate-main.c:2318
 msgid "Set the specific device to calibrate"
 msgstr "Establecer o dispositivo a calibrar"
 
-#: ../src/gcm-calibrate-main.c:2362
+#: ../src/gcm-calibrate-main.c:2359
 msgid "No device was specified!"
 msgstr "Non se especificou ningún dispositivo!"
 
@@ -1415,41 +1431,35 @@ msgstr "Programa de inspección EDID"
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:214 ../src/gcm-picker.c:221 ../src/gcm-viewer.c:685
+#: ../src/gcm-picker.c:217 ../src/gcm-picker.c:224 ../src/gcm-viewer.c:685
 #: ../src/gcm-viewer.c:735
 msgid "Unknown"
 msgstr "Descoñecido"
 
-#: ../src/gcm-picker.c:367
+#: ../src/gcm-picker.c:369
 msgid "No colorimeter is attached."
 msgstr "Non hai ningún colorímetro conectado."
 
-#: ../src/gcm-picker.c:384
+#: ../src/gcm-picker.c:386
 msgid "The sensor has no native driver."
 msgstr "O sensor non ten controlador nativo."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:393
+#: ../src/gcm-picker.c:395
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "O colorímetro anexado non é capaz de ler un punto de cor."
 
 #. TRANSLATORS: this is when there are no profiles that can be used;
 #. * the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:644
+#: ../src/gcm-picker.c:646
 #, c-format
 msgid "No %s color spaces available"
 msgstr "Non existen espazos de cor %s dispoñíbeis"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:809
+#: ../src/gcm-picker.c:811
 msgid "GNOME Color Manager Color Picker"
 msgstr "Selector de cor do Xestor de cor de GNOME"
-
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:330 ../src/gcm-viewer.c:716
-msgid "RGB"
-msgstr "RGB"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
@@ -1527,11 +1537,6 @@ msgstr "Resumo"
 #: ../src/gcm-viewer.c:682
 msgid "Named color"
 msgstr "Cor co nome"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:696
-msgid "XYZ"
-msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
 #: ../src/gcm-viewer.c:700
@@ -1786,6 +1791,15 @@ msgstr "Establecer o perfil específico a mostrar"
 #: ../src/gcm-viewer.c:1825
 msgid "Set the specific file to show"
 msgstr "Establecer o ficheiro específico a mostrar"
+
+#~ msgid "XYZ:"
+#~ msgstr "XYZ:"
+
+#~ msgid "Colorspace:"
+#~ msgstr "Espazo de cor:"
+
+#~ msgid "RGB:"
+#~ msgstr "RGB:"
 
 #~ msgid "Device manufacturer"
 #~ msgstr "Fabricante do dispositivo"
