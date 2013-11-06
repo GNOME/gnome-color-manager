@@ -1229,15 +1229,15 @@ gcm_calib_reference_kind_to_localised_string (GcmCalibrateReferenceKind kind)
 	}
 	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER) {
 		/* TRANSLATORS: this is probably a brand name */
-		return _("Color Checker");
+		return _("ColorChecker");
 	}
 	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER_DC) {
 		/* TRANSLATORS: this is probably a brand name */
-		return _("Color Checker DC");
+		return _("ColorChecker DC");
 	}
 	if (kind == GCM_CALIBRATE_REFERENCE_KIND_COLOR_CHECKER_SG) {
 		/* TRANSLATORS: this is probably a brand name */
-		return _("Color Checker SG");
+		return _("ColorChecker SG");
 	}
 	if (kind == GCM_CALIBRATE_REFERENCE_KIND_HUTCHCOLOR) {
 		/* TRANSLATORS: this is probably a brand name */
