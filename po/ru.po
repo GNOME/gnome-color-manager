@@ -1,24 +1,25 @@
 # GNOME Color Manager 3.4 translation into Russian
-# Александр Прокудин <alexandre.prokoudine@gmail.com>, 2009, 2010, 2011, 2012, 2013
+#
+# Александр Прокудин <alexandre.prokoudine@gmail.com>, 2009, 2010, 2011, 2012, 2013.
 # Yuri Myasoedov <omerta13@yandex.ru>, 2012.
 # Stas Solovey <whats_up@tut.by>, 2013.
-#
+# JDronova <juliette.tux@gmail.com>, 2013.
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager 3.2\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager&keywords=I18N+L10N\n"
-"POT-Creation-Date: 2013-08-31 06:39+0000\n"
-"PO-Revision-Date: 2013-09-02 22:05+0300\n"
-"Last-Translator: Stas Solovey <whats_up@tut.by>\n"
-"Language-Team: Русский <gnome-cyr@gnome.org>\n"
+"POT-Creation-Date: 2013-11-06 16:59+0000\n"
+"PO-Revision-Date: 2013-11-07 16:14+0400\n"
+"Last-Translator: Yuri Myasoedov <ymyasoedov@yandex.ru>\n"
+"Language-Team: Russian <gnome-cyr@gnome.org>\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2)\n"
-"X-Generator: Gtranslator 2.91.6\n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Poedit 1.5.7\n"
 
 #: ../data/gcm-calibrate.desktop.in.h:1
 msgid "Color"
@@ -51,49 +52,70 @@ msgid "_Measure"
 msgstr "_Измерить"
 
 #. the color representation
-#: ../data/gcm-picker.ui.h:6
-msgid "XYZ:"
-msgstr "XYZ:"
+#. TRANSLATORS: this the ICC colorspace type
+#: ../data/gcm-picker.ui.h:6 ../src/gcm-viewer.c:696
+msgid "XYZ"
+msgstr "XYZ"
 
 #. Lab is the color representation and D50 is the white point
 #: ../data/gcm-picker.ui.h:8
-msgid "Lab (D50):"
-msgstr "Lab (D50):"
+msgid "Lab (D50)"
+msgstr "Lab (D50)"
 
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:10
-msgid "Media whitepoint:"
-msgstr "Белая точка носителя:"
+msgid "Media whitepoint"
+msgstr "Белая точка носителя"
 
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:12
-msgid "Color Temperature:"
-msgstr "Температура цвета:"
+msgid "Color Temperature"
+msgstr "Цветовая температура"
 
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:14
-msgid "Ambient:"
-msgstr "Окружающее освещение:"
+msgid "Ambient"
+msgstr "Окружающее освещение"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#: ../data/gcm-picker.ui.h:16
-msgid "Colorspace:"
-msgstr "Цветовое пространство:"
+#. The profile colorspace, e.g. RGB
+#: ../data/gcm-picker.ui.h:16 ../data/gcm-viewer.ui.h:7
+msgid "Colorspace"
+msgstr "Цветовое пространство"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
-#: ../data/gcm-picker.ui.h:18
-msgid "RGB:"
-msgstr "RGB:"
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: ../data/gcm-picker.ui.h:18 ../src/gcm-utils.c:330 ../src/gcm-viewer.c:716
+msgid "RGB"
+msgstr "RGB"
 
 #. This shows the error in the conversion to RGB.
 #: ../data/gcm-picker.ui.h:20
-msgid "Error:"
-msgstr "Ошибка:"
+msgid "Error"
+msgstr "Ошибка"
 
 #. Expander title, the results from the color picker
 #: ../data/gcm-picker.ui.h:22
 msgid "Results"
 msgstr "Результаты"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:1
+msgid ""
+"GNOME Color Profile Viewer shows installed color profiles on your system and "
+"allows you to calibrate displays, printers and cameras using a wizard."
+msgstr ""
+"Просмотрщик цветовых профилей для GNOME показывает установленные в системе "
+"цветовые профили и позволяет производить калибровку мониторов, принтеров и "
+"камер, используя мастер настройки."
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+msgid ""
+"This functionality is typically used by GNOME Control Center from the color "
+"panel although can be used on its own."
+msgstr ""
+"Этот функционал обычно используется в цветовой панели «Центра управления "
+"GNOME», но его можно использовать и отдельно."
 
 #: ../data/gcm-viewer.desktop.in.h:1 ../data/gcm-viewer.ui.h:1
 msgid "Color Profile Viewer"
@@ -101,7 +123,7 @@ msgstr "Просмотрщик цветовых профилей"
 
 #: ../data/gcm-viewer.desktop.in.h:2
 msgid "Inspect and compare installed color profiles"
-msgstr "Исследование и сравнивание установленных цветовых профилей"
+msgstr "Исследование и сравнение установленных цветовых профилей"
 
 #: ../data/gcm-viewer.ui.h:2
 msgid "Add a profile for the device"
@@ -109,17 +131,12 @@ msgstr "Добавить цветовой профиль к выбранному
 
 #: ../data/gcm-viewer.ui.h:3
 msgid "Remove a profile from the device"
-msgstr "Снять цветовой профиль с выбранного устройства"
+msgstr "Удалить цветовой профиль с выбранного устройства"
 
 #. The type of profile, e.g. display, scanner, etc.
 #: ../data/gcm-viewer.ui.h:5
 msgid "Profile type"
 msgstr "Тип профиля"
-
-#. The profile colorspace, e.g. RGB
-#: ../data/gcm-viewer.ui.h:7
-msgid "Colorspace"
-msgstr "Цветовое пространство"
 
 #. When the profile was created
 #: ../data/gcm-viewer.ui.h:9
@@ -247,7 +264,7 @@ msgstr "Следующее изображение"
 
 #: ../data/gcm-viewer.ui.h:46
 msgid "This shows what an image would look like if saved with the profile"
-msgstr "Как выглядит изображение, если его сохранить с этим профилем"
+msgstr "Так будет выглядеть изображение, если его сохранить с этим профилем"
 
 #: ../data/gcm-viewer.ui.h:47
 msgid "From sRGB"
@@ -255,7 +272,7 @@ msgstr "Из sRGB"
 
 #: ../data/gcm-viewer.ui.h:48
 msgid "This shows what an image would look like if opened with the profile"
-msgstr "Как выглядит изображение, если его открыть с этим профилем"
+msgstr "Так будет выглядеть изображение, если его открыть с этим профилем"
 
 #: ../data/gcm-viewer.ui.h:49
 msgid "To sRGB"
@@ -263,7 +280,7 @@ msgstr "В sRGB"
 
 #: ../data/gcm-viewer.ui.h:50
 msgid "Named colors are specific colors that are defined in the profile"
-msgstr "Именованные цвета — это специфические цвета, определённые в профиле"
+msgstr "Именованные цвета — это конкретные цвета, определённые в профиле"
 
 #: ../data/gcm-viewer.ui.h:51
 msgid "Named Colors"
@@ -638,7 +655,7 @@ msgstr "Калибровка не завершена"
 
 #: ../src/gcm-calibrate-main.c:150
 msgid "Are you sure you want to cancel the calibration?"
-msgstr "Вы действительно хотите отменить калибровку?"
+msgstr "Действительно отменить калибровку?"
 
 #: ../src/gcm-calibrate-main.c:153
 msgid "Continue calibration"
@@ -690,8 +707,7 @@ msgstr ""
 #. TRANSLATORS: this is the final intro page text
 #: ../src/gcm-calibrate-main.c:759
 msgid "You can cancel this process at any stage by pressing the cancel button."
-msgstr ""
-"Вы можете прекратить этот процесс в любой момент, нажав кнопку «Отменить»."
+msgstr "Этот процесс можно отменить в любой момент, нажав кнопку «Отменить»."
 
 #. TRANSLATORS: this is the calibration wizard page title
 #: ../src/gcm-calibrate-main.c:765
@@ -781,8 +797,8 @@ msgid ""
 "Before calibrating the display, it is recommended to configure your display "
 "with the following settings to get optimal results."
 msgstr ""
-"Перед созданием профиля рекомендуется откалибровать монитор, т.е. привести "
-"его в определённое типовое состояние."
+"Для получения оптимального результата, перед калибровкой рекомендуется "
+"настроить монитор со следующими параметрами."
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate-main.c:1023
@@ -790,9 +806,8 @@ msgid ""
 "You may want to consult the owner's manual for your display on how to "
 "achieve these settings."
 msgstr ""
-"Вероятно, вам необходимо прочитать руководство пользователя к монитору, "
-"чтобы узнать, как именно настроить монитор. В целом, необходимо сделать "
-"следующее:"
+"Вероятно, вам понадобится прочитать руководство пользователя к монитору, "
+"чтобы узнать, как именно выставить данные параметры."
 
 #. TRANSLATORS: dialog message, bullet item
 #: ../src/gcm-calibrate-main.c:1026
@@ -878,12 +893,12 @@ msgstr ""
 #. TRANSLATORS: dialog message, asking if it's okay to install them
 #: ../src/gcm-calibrate-main.c:1179
 msgid "Do you want them to be installed?"
-msgstr "Вы хотите, чтобы они были установлены?"
+msgstr "Установить их?"
 
 #. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
 #: ../src/gcm-calibrate-main.c:1181
 msgid "If you already have the correct file, you can skip this step."
-msgstr "Если у вас уже есть нужный файл, этот шаг можно пропустить."
+msgstr "Если нужный файл уже имеется, этот шаг можно пропустить."
 
 #. TRANSLATORS: this is the page title
 #: ../src/gcm-calibrate-main.c:1184
@@ -911,18 +926,18 @@ msgstr "CMP DT 003"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1232
-msgid "Color Checker"
-msgstr "Color Checker"
+msgid "ColorChecker"
+msgstr "ColorChecker"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1236
-msgid "Color Checker DC"
-msgstr "Color Checker DC"
+msgid "ColorChecker DC"
+msgstr "ColorChecker DC"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1240
-msgid "Color Checker SG"
-msgstr "Color Checker SG"
+msgid "ColorChecker SG"
+msgstr "ColorChecker SG"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1244
@@ -956,8 +971,8 @@ msgid ""
 "Before profiling the device, you have to manually capture an image of a "
 "calibration target and save it as a TIFF image file."
 msgstr ""
-"Перед профилированием устройства вам необходимо самостоятельно получить "
-"изображение мишени и сохранить его в файле формата TIFF."
+"Перед профилированием устройства необходимо вручную получить изображение "
+"мишени и сохранить его в файле формата TIFF."
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate-main.c:1343
@@ -994,7 +1009,7 @@ msgstr "Выберите тип калибровочной мишени."
 #. TRANSLATORS: this is the page title
 #: ../src/gcm-calibrate-main.c:1359
 msgid "What target type do you have?"
-msgstr "Какая у вас калибровочная мишень?"
+msgstr "Имеющийся у вас тип калибровочный мишени"
 
 #. TRANSLATORS: this is the calibration wizard page title
 #: ../src/gcm-calibrate-main.c:1391
@@ -1079,8 +1094,8 @@ msgid ""
 "Please indicate if you want to profile a local printer, generate some test "
 "patches, or profile using existing test patches."
 msgstr ""
-"Выберите, что хотите сделать: создать профиль для локального принтера, "
-"просто напечатать мишени или создать профиль по готовой мишени."
+"Что нужно сделать: создать профиль для локального принтера, создать тестовые "
+"мишени или создать профиль по готовой мишени?"
 
 #. TRANSLATORS: this is the calibration wizard page title
 #: ../src/gcm-calibrate-main.c:1656
@@ -1122,11 +1137,11 @@ msgstr "Для создания высокоточных профилей так
 #. TRANSLATORS: radio options for calibration precision
 #: ../src/gcm-calibrate-main.c:1722
 msgid "Accurate"
-msgstr "Аккуратная"
+msgstr "Тщательная"
 
 #: ../src/gcm-calibrate-main.c:1723
 msgid "Normal"
-msgstr "Обычная"
+msgstr "Стандартная"
 
 #: ../src/gcm-calibrate-main.c:1724
 msgid "Quick"
@@ -1217,7 +1232,7 @@ msgid "Copyright (c)"
 msgstr "Авторские права ©"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2315 ../src/gcm-picker.c:791
+#: ../src/gcm-calibrate-main.c:2315 ../src/gcm-picker.c:793
 #: ../src/gcm-viewer.c:1819
 msgid "Set the parent window to make this modal"
 msgstr "Сделать это окно модальным"
@@ -1225,7 +1240,7 @@ msgstr "Сделать это окно модальным"
 #. TRANSLATORS: show just the one profile, rather than all
 #: ../src/gcm-calibrate-main.c:2318
 msgid "Set the specific device to calibrate"
-msgstr "Выберите устройство для калибровки и профилирования"
+msgstr "Укажите конкретное устройство для калибровки и профилирования"
 
 #: ../src/gcm-calibrate-main.c:2359
 msgid "No device was specified!"
@@ -1391,12 +1406,12 @@ msgstr "Показать свойства сервера X"
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:370
 msgid "Get the profiles for a specific file"
-msgstr "Получить профили для определённого файла"
+msgstr "Получить профили для указанного файла"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:373
 msgid "Get the profile for a specific window"
-msgstr "Получить профиль для определённого окна"
+msgstr "Получить профиль для указанного окна"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:376
@@ -1412,41 +1427,35 @@ msgstr "Инспектор EDID"
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:214 ../src/gcm-picker.c:221 ../src/gcm-viewer.c:685
+#: ../src/gcm-picker.c:217 ../src/gcm-picker.c:224 ../src/gcm-viewer.c:685
 #: ../src/gcm-viewer.c:735
 msgid "Unknown"
 msgstr "Неизвестен"
 
-#: ../src/gcm-picker.c:367
+#: ../src/gcm-picker.c:369
 msgid "No colorimeter is attached."
 msgstr "Нет подключённого колориметра."
 
-#: ../src/gcm-picker.c:384
+#: ../src/gcm-picker.c:386
 msgid "The sensor has no native driver."
 msgstr "Нет собственного драйвера для этого сенсора."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:393
+#: ../src/gcm-picker.c:395
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "Подсоединённый колориметр не подходит для профилирования принтеров."
 
 #. TRANSLATORS: this is when there are no profiles that can be used;
 #. * the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:644
+#: ../src/gcm-picker.c:646
 #, c-format
 msgid "No %s color spaces available"
 msgstr "Нет доступных цветовых пространств %s"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:809
+#: ../src/gcm-picker.c:811
 msgid "GNOME Color Manager Color Picker"
 msgstr "Цветовая пипетка для апплета управления цветом в GNOME"
-
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:330 ../src/gcm-viewer.c:716
-msgid "RGB"
-msgstr "RGB"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
@@ -1468,7 +1477,7 @@ msgstr "Удалить профиль навсегда?"
 #: ../src/gcm-viewer.c:396
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
-msgstr "Вы действительно хотите удалить этот профиль из системы навсегда?"
+msgstr "Действительно удалить этот профиль из системы?"
 
 #. TRANSLATORS: button, delete a profile
 #: ../src/gcm-viewer.c:399
@@ -1523,11 +1532,6 @@ msgstr "Абстрактный"
 #: ../src/gcm-viewer.c:682
 msgid "Named color"
 msgstr "Именованный цвет"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:696
-msgid "XYZ"
-msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
 #: ../src/gcm-viewer.c:700
@@ -1776,9 +1780,18 @@ msgstr "Невозможно удалить этот профиль"
 #. TRANSLATORS: show just the one profile, rather than all
 #: ../src/gcm-viewer.c:1822
 msgid "Set the specific profile to show"
-msgstr "Показать ровно этот профиль"
+msgstr "Указать определённый профиль для показа"
 
 #. TRANSLATORS: show just the one filename, rather than all
 #: ../src/gcm-viewer.c:1825
 msgid "Set the specific file to show"
-msgstr "Показать ровно этот файл"
+msgstr "Указать определённый файл для показа"
+
+#~ msgid "XYZ:"
+#~ msgstr "XYZ:"
+
+#~ msgid "Colorspace:"
+#~ msgstr "Цветовое пространство:"
+
+#~ msgid "RGB:"
+#~ msgstr "RGB:"
