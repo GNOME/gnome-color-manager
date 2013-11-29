@@ -694,6 +694,7 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	g_ptr_array_add (array, g_strdup_printf ("-C%s", copyright));
 	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_get_quality_arg (calibrate_argyll)));
 	g_ptr_array_add (array, g_strdup ("-aG"));
+	g_ptr_array_add (array, g_strdup ("-Zp"));
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
