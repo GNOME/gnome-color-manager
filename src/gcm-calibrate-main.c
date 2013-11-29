@@ -1676,7 +1676,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 	GString *labels[3];
 	guint i;
 	guint values_printer[] = { 6, 4, 2}; /* sheets */
-	guint values_display[] = { 30, 20, 10}; /* minutes */
+	guint values_display[] = { 60, 40, 20}; /* minutes */
 	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	/* TRANSLATORS: this is the page title */
