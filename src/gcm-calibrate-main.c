@@ -1765,7 +1765,6 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 	g_signal_connect (widget, "toggled",
 			  G_CALLBACK (gcm_calib_precision_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
-	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
 
 	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
 	widget = gtk_radio_button_new_with_label (list, labels[2]->str);
@@ -1775,6 +1774,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 	g_signal_connect (widget, "toggled",
 			  G_CALLBACK (gcm_calib_precision_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
+	gtk_toggle_button_set_active (GTK_TOGGLE_BUTTON (widget), TRUE);
 
 	/* add to assistant */
 	gtk_assistant_append_page (assistant, vbox);
