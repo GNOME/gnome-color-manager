@@ -160,7 +160,9 @@ gcm_calibrate_argyll_get_display (const gchar *output_name,
 {
 	gboolean ret = FALSE;
 	gchar *command = NULL;
-	gchar *data = NULL;
+	const gchar *data;
+	gchar *data_stderr = NULL;
+	gchar *data_stdout = NULL;
 	gchar *name;
 	gchar **split = NULL;
 	gint exit_status;
@@ -178,14 +180,27 @@ gcm_calibrate_argyll_get_display (const gchar *output_name,
 	ret = g_spawn_sync (NULL,
 			    (gchar **) argv,
 			    NULL,
-			    G_SPAWN_STDERR_TO_DEV_NULL,
+			    0,
 			    NULL, NULL,
-			    &data,
-			    NULL,
+			    &data_stdout,
+			    &data_stderr,
 			    &exit_status,
 			    error);
 	if (!ret)
 		goto out;
+
+	/* recent versions of dispcal switched to stderr output */
+	if (data_stdout != NULL && data_stdout[0] != '\0') {
+		data = data_stdout;
+	} else if (data_stderr != NULL && data_stderr[0] != '\0') {
+		data = data_stderr;
+	} else {
+		g_set_error_literal (error,
+				     GCM_CALIBRATE_ERROR,
+				     GCM_CALIBRATE_ERROR_INTERNAL,
+				     "no sensible output from dispcal");
+		goto out;
+	}
 
 	/* split it into lines */
 	split = g_strsplit (data, "\n", -1);
@@ -216,7 +231,8 @@ gcm_calibrate_argyll_get_display (const gchar *output_name,
 	}
 out:
 	g_free (command);
-	g_free (data);
+	g_free (data_stdout);
+	g_free (data_stderr);
 	g_strfreev (split);
 	return display;
 }
