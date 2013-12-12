@@ -10,7 +10,6 @@ AM_CPPFLAGS =						\
 	$(GNOME_DESKTOP_CFLAGS)				\
 	$(COLORD_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
-	$(CLUTTER_CFLAGS)				\
 	-DG_LOG_DOMAIN=\"Gcm\"				\
 	-DBINDIR=\"$(bindir)\"				\
 	-DLIBEXECDIR=\"$(libexecdir)\"			\
@@ -26,8 +25,6 @@ AM_CPPFLAGS =						\
 
 noinst_LIBRARIES = libgcmshared.a
 libgcmshared_a_SOURCES =				\
-	gcm-hull.c					\
-	gcm-hull.h					\
 	gcm-cie-widget.c				\
 	gcm-cie-widget.h				\
 	gcm-debug.c					\
@@ -42,12 +39,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-trc-widget.h				\
 	gcm-utils.c					\
 	gcm-utils.h
-
-if HAVE_CLUTTER
-libgcmshared_a_SOURCES +=				\
-	gcm-hull-widget.c				\
-	gcm-hull-widget.h
-endif
 
 libgcmshared_a_CFLAGS =					\
 	$(WARNINGFLAGS_C)
@@ -149,7 +140,6 @@ gcm_viewer_LDADD =					\
 	$(LCMS_LIBS)					\
 	$(EXIF_LIBS)					\
 	$(COLORD_LIBS)					\
-	$(CLUTTER_LIBS)					\
 	-lm
 
 gcm_viewer_CFLAGS =					\

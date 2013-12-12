@@ -86,29 +86,6 @@ PKG_CHECK_MODULES(X11, x11)
 PKG_CHECK_MODULES(GNOME_DESKTOP, gnome-desktop-3.0)
 PKG_CHECK_MODULES(COLORD, colord >= 0.1.34 colord-gtk >= 0.1.20)
 
-dnl **** Check for clutter ****
-AC_ARG_ENABLE(clutter, AS_HELP_STRING([--enable-clutter],[Enable clutter for 3D support]), enable_clutter=$enableval, enable_clutter=yes)
-if test x$enable_clutter != xno; then
-	# test for new mash
-	PKG_CHECK_MODULES(CLUTTER,
-			  clutter-1.0 >= 1.12.0 clutter-gtk-1.0 mash-0.2,
-			  has_clutter=yes, has_clutter=no)
-	if test x$has_clutter == xno; then
-		# test for old mash
-		PKG_CHECK_MODULES(CLUTTER,
-				  clutter-1.0 >= 1.12.0 clutter-gtk-1.0 mash-0.1,
-				  has_clutter=yes, has_clutter=no)
-	fi
-else
-	has_clutter=no
-fi
-AM_CONDITIONAL(HAVE_CLUTTER, test x$has_clutter = xyes)
-if test x$has_clutter = xyes; then
-	AC_DEFINE(HAVE_CLUTTER,1,[has clutter support])
-else
-	AC_MSG_WARN([clutter-gtk and mash not found, no 3D support])
-fi
-
 dnl **** Check for VTE ****
 PKG_CHECK_MODULES(VTE, vte-2.90 >= 0.25.1, has_vte=yes, has_vte=no)
 AM_CONDITIONAL(HAVE_VTE, test x$has_vte = xyes)
@@ -243,7 +220,6 @@ echo "
         PackageKit integration:    ${enable_packagekit}
         RAW support:               ${enable_exiv}
         VTE support:               ${has_vte}
-        3D support:                ${has_clutter}
         building unit tests:       ${enable_tests}
 "
 

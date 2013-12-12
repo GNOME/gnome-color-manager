@@ -25,8 +25,6 @@
 #include <glib-object.h>
 #include <gtk/gtk.h>
 
-#include "gcm-hull.h"
-
 #define GCM_STOCK_ICON					"gnome-color-manager"
 #define GCM_DBUS_SERVICE				"org.gnome.ColorManager"
 #define GCM_DBUS_INTERFACE				"org.gnome.ColorManager"
@@ -49,8 +47,6 @@ gboolean	 gcm_utils_install_package		(const gchar		*package_name,
 							 GtkWindow		*window);
 gchar		*gcm_utils_linkify			(const gchar		*text);
 const gchar	*cd_colorspace_to_localised_string	(CdColorspace		 colorspace);
-GcmHull		*cd_icc_generate_gamut_hull		(CdIcc			*icc,
-							 guint			 res);
 
 #endif /* __GCM_UTILS_H */
 

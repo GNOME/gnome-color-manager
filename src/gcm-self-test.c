@@ -32,109 +32,10 @@
 #include "gcm-debug.h"
 #include "gcm-exif.h"
 #include "gcm-gamma-widget.h"
-#include "gcm-hull.h"
 #include "gcm-image.h"
 #include "gcm-print.h"
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
-
-static void
-gcm_test_hull_func (void)
-{
-	GcmHull *hull;
-	CdColorXYZ xyz;
-	CdColorRGB color;
-	guint faces[3];
-	gchar *data;
-
-	hull = gcm_hull_new ();
-	g_assert (hull != NULL);
-
-	gcm_hull_set_flags (hull, 8);
-	g_assert_cmpint (gcm_hull_get_flags (hull), ==, 8);
-
-	/* add a point */
-	xyz.X = 1.0;
-	xyz.Y = 2.0;
-	xyz.Z = 3.0;
-	color.R = 0.25;
-	color.G = 0.5;
-	color.B = 1.0;
-	gcm_hull_add_vertex (hull, &xyz, &color);
-
-	/* add another two */
-	xyz.Z = 2.0;
-	gcm_hull_add_vertex (hull, &xyz, &color);
-	xyz.X = 2.0;
-	gcm_hull_add_vertex (hull, &xyz, &color);
-
-	/* add a face */
-	faces[0] = 0;
-	faces[1] = 1;
-	faces[2] = 2;
-	gcm_hull_add_face (hull, faces, 3);
-
-	/* export to a PLY file */
-	data = gcm_hull_export_to_ply (hull);
-	g_assert_cmpstr (data, ==, "ply\n"
-				   "format ascii 1.0\n"
-				   "element vertex 3\n"
-				   "property float x\n"
-				   "property float y\n"
-				   "property float z\n"
-				   "property uchar red\n"
-				   "property uchar green\n"
-				   "property uchar blue\n"
-				   "element face 1\n"
-				   "property list uchar uint vertex_indices\n"
-				   "end_header\n"
-				   "1.000000 2.000000 3.000000 63 127 255\n"
-				   "1.000000 2.000000 2.000000 63 127 255\n"
-				   "2.000000 2.000000 2.000000 63 127 255\n"
-				   "3 0 1 2\n");
-	g_free (data);
-
-	g_object_unref (hull);
-}
-
-static void
-gcm_test_profile_func (void)
-{
-	CdIcc *profile;
-	GFile *file;
-	gboolean ret;
-	GError *error = NULL;
-	GcmHull *hull;
-	gchar *data;
-
-	/* bluish test */
-	profile = cd_icc_new ();
-	file = g_file_new_for_path (TESTDATADIR "/bluish.icc");
-	ret = cd_icc_load_file (profile, file, CD_ICC_LOAD_FLAGS_NONE, NULL, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-	g_object_unref (file);
-	g_object_unref (profile);
-
-	/* get gamut hull */
-	profile = cd_icc_new ();
-	file = g_file_new_for_path (TESTDATADIR "/ibm-t61.icc");
-	ret = cd_icc_load_file (profile, file, CD_ICC_LOAD_FLAGS_NONE, NULL, &error);
-	g_assert_no_error (error);
-	g_assert (ret);
-	hull = cd_icc_generate_gamut_hull (profile, 12);
-	g_assert (hull != NULL);
-
-	/* save as PLY file */
-	data = gcm_hull_export_to_ply (hull);
-	ret = g_file_set_contents ("/tmp/gamut.ply", data, -1, NULL);
-	g_assert (ret);
-
-	g_free (data);
-	g_object_unref (hull);
-	g_object_unref (file);
-	g_object_unref (profile);
-}
 
 static void
 gcm_test_brightness_func (void)
@@ -552,8 +453,6 @@ main (int argc, char **argv)
 	g_test_add_func ("/color/calibrate", gcm_test_calibrate_func);
 	g_test_add_func ("/color/exif", gcm_test_exif_func);
 	g_test_add_func ("/color/utils", gcm_test_utils_func);
-	g_test_add_func ("/color/hull", gcm_test_hull_func);
-	g_test_add_func ("/color/profile", gcm_test_profile_func);
 	if (g_test_thorough ()) {
 		g_test_add_func ("/color/brightness", gcm_test_brightness_func);
 		g_test_add_func ("/color/image", gcm_test_image_func);
