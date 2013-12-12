@@ -7,26 +7,18 @@ Release:   0.#BUILD#%{?alphatag}%{?dist}
 License:   GPLv2+
 Group:     Applications/System
 URL:       http://projects.gnome.org/gnome-color-manager/
-Source0:   http://download.gnome.org/sources/gnome-color-manager/3.4/%{name}-%{version}.tar.xz
+Source0:   http://download.gnome.org/sources/gnome-color-manager/3.11/%{name}-%{version}.tar.xz
 
-Requires:  color-filesystem >= 1-7
 Requires:  gnome-icon-theme
 Requires:  shared-mime-info
-Requires:  shared-color-profiles
-Requires:  dconf
-Requires:  yelp
 
 BuildRequires: gtk3-devel >= 3.0.0
-BuildRequires: scrollkeeper
 BuildRequires: gnome-doc-utils >= 0.3.2
 BuildRequires: desktop-file-utils
 BuildRequires: gettext
-BuildRequires: libtool
 BuildRequires: vte3-devel
 BuildRequires: gnome-doc-utils
 BuildRequires: intltool
-BuildRequires: libgudev1-devel
-BuildRequires: libXrandr-devel
 BuildRequires: lcms2-devel
 BuildRequires: libtiff-devel
 BuildRequires: libexif-devel
@@ -36,7 +28,7 @@ BuildRequires: glib2-devel >= 2.25.9-2
 BuildRequires: docbook-utils
 BuildRequires: colord-devel >= 0.1.12
 BuildRequires: colord-gtk-devel >= 0.1.22
-BuildRequires: gnome-desktop3-devel
+BuildRequires: itstool
 
 Requires(post):   /usr/bin/gtk-update-icon-cache
 Requires(postun): /usr/bin/gtk-update-icon-cache
@@ -52,17 +44,11 @@ and generate color profiles in the GNOME desktop.
 %setup -q
 
 %build
-%configure --disable-scrollkeeper --disable-schemas-install
+%configure
 make %{?_smp_mflags}
 
 %install
 make install DESTDIR=$RPM_BUILD_ROOT
-
-for i in gcm-calibrate gcm-import ; do
-  desktop-file-install --delete-original                                \
-    --dir=$RPM_BUILD_ROOT%{_datadir}/applications/                      \
-    $RPM_BUILD_ROOT%{_datadir}/applications/$i.desktop
-done
 
 %find_lang %name --with-gnome
 
@@ -89,15 +75,16 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %doc AUTHORS COPYING NEWS README
 %{_bindir}/gcm-*
 %{_libexecdir}/gcm-*
+%{_datadir}/appdata/*.appdata.xml
 %dir %{_datadir}/gnome-color-manager
 %dir %{_datadir}/gnome-color-manager/targets
 %dir %{_datadir}/gnome-color-manager/icons
 %dir %{_datadir}/gnome-color-manager/figures
 %dir %{_datadir}/gnome-color-manager/ti1
-%{_datadir}/gnome-color-manager/targets
-%{_datadir}/gnome-color-manager/icons
-%{_datadir}/gnome-color-manager/figures
-%{_datadir}/gnome-color-manager/ti1
+%{_datadir}/gnome-color-manager/targets/*
+%{_datadir}/gnome-color-manager/icons/*
+%{_datadir}/gnome-color-manager/figures/*
+%{_datadir}/gnome-color-manager/ti1/*
 %{_datadir}/man/man1/*.1.gz
 %{_datadir}/icons/hicolor/*/*/*.png
 %{_datadir}/icons/hicolor/scalable/*/*.svg*

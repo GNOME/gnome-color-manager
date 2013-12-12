@@ -1,13 +1,10 @@
 AM_CPPFLAGS =						\
 	$(GLIB_CFLAGS)					\
-	$(X11_CFLAGS)					\
 	$(GTK_CFLAGS)					\
 	$(VTE_CFLAGS)					\
-	$(XORG_CFLAGS)					\
 	$(TIFF_CFLAGS)					\
 	$(EXIF_CFLAGS)					\
 	$(EXIV_CFLAGS)					\
-	$(GNOME_DESKTOP_CFLAGS)				\
 	$(COLORD_CFLAGS)				\
 	$(CANBERRA_CFLAGS)				\
 	-DG_LOG_DOMAIN=\"Gcm\"				\
@@ -82,7 +79,6 @@ gcm_calibrate_LDADD =					\
 	$(VTE_LIBS)					\
 	$(X11_LIBS)					\
 	$(XORG_LIBS)					\
-	$(GNOME_DESKTOP_LIBS)				\
 	-lm
 
 gcm_calibrate_CFLAGS =					\
@@ -153,7 +149,6 @@ gcm_picker_SOURCES =					\
 gcm_picker_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
-	$(X11_LIBS)					\
 	$(VTE_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
@@ -186,7 +181,6 @@ gcm_self_test_SOURCES =					\
 gcm_self_test_LDADD =					\
 	libgcmshared.a					\
 	$(GLIB_LIBS)					\
-	$(X11_LIBS)					\
 	$(LCMS_LIBS)					\
 	$(XORG_LIBS)					\
 	$(GTK_LIBS)					\
@@ -195,7 +189,6 @@ gcm_self_test_LDADD =					\
 	$(EXIF_LIBS)					\
 	$(VTE_LIBS)					\
 	$(CANBERRA_LIBS)				\
-	$(GNOME_DESKTOP_LIBS)				\
 	-lm
 
 gcm_self_test_CFLAGS = $(AM_CFLAGS) $(WARNINGFLAGS_C)

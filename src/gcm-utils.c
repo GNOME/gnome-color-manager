@@ -25,7 +25,6 @@
 #include <gtk/gtk.h>
 #include <gdk/gdkx.h>
 #include <colord.h>
-#include <lcms2.h>
 #include <math.h>
 
 #include "gcm-utils.h"
