@@ -2072,13 +2072,7 @@ gcm_calib_add_pages (GcmCalibratePriv *priv)
 	gcm_calib_setup_page_precision (priv);
 
 	if (priv->device_kind == CD_DEVICE_KIND_DISPLAY) {
-		if (!priv->internal_lcd) {
-			gcm_calib_setup_page_display_kind (priv);
-		} else {
-			g_object_set (priv->calibrate,
-				      "display-kind", GCM_CALIBRATE_DEVICE_KIND_LCD_CCFL,
-				      NULL);
-		}
+		gcm_calib_setup_page_display_kind (priv);
 		gcm_calib_setup_page_display_temp (priv);
 	} else if (priv->device_kind == CD_DEVICE_KIND_PRINTER) {
 		gcm_calib_setup_page_print_kind (priv);
