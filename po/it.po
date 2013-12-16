@@ -18,8 +18,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2013-07-30 21:31+0200\n"
-"PO-Revision-Date: 2013-07-30 21:30+0200\n"
+"POT-Creation-Date: 2013-12-16 10:23+0100\n"
+"PO-Revision-Date: 2013-12-16 10:23+0100\n"
 "Last-Translator: Milo Casagrande <milo@ubuntu.com>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "Language: it\n"
@@ -60,50 +60,71 @@ msgid "_Measure"
 msgstr "_Misura"
 
 #. the color representation
-#: ../data/gcm-picker.ui.h:6
-msgid "XYZ:"
-msgstr "XYZ:"
+#. TRANSLATORS: this the ICC colorspace type
+#: ../data/gcm-picker.ui.h:6 ../src/gcm-viewer.c:687
+msgid "XYZ"
+msgstr "XYZ"
 
 #. Lab is the color representation and D50 is the white point
 #: ../data/gcm-picker.ui.h:8
-msgid "Lab (D50):"
-msgstr "Lab (D50):"
+msgid "Lab (D50)"
+msgstr "Lab (D50)"
 
 # (ndt) media white point describes the color if the unprinted paper when it is illuminate by a 5000K light source
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:10
-msgid "Media whitepoint:"
-msgstr "Punto di bianco del supporto:"
+msgid "Media whitepoint"
+msgstr "Punto di bianco del supporto"
 
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:12
-msgid "Color Temperature:"
-msgstr "Temperatura di colore:"
+msgid "Color Temperature"
+msgstr "Temperatura di colore"
 
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:14
-msgid "Ambient:"
-msgstr "Luce ambientale:"
+msgid "Ambient"
+msgstr "Ambiente"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#: ../data/gcm-picker.ui.h:16
-msgid "Colorspace:"
-msgstr "Spazio dei colori:"
+#. The profile colorspace, e.g. RGB
+#: ../data/gcm-picker.ui.h:16 ../data/gcm-viewer.ui.h:7
+msgid "Colorspace"
+msgstr "Spazio colori"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
-#: ../data/gcm-picker.ui.h:18
-msgid "RGB:"
-msgstr "RGB:"
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: ../data/gcm-picker.ui.h:18 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:707
+msgid "RGB"
+msgstr "RGB"
 
 #. This shows the error in the conversion to RGB.
 #: ../data/gcm-picker.ui.h:20
-msgid "Error:"
-msgstr "Errore:"
+msgid "Error"
+msgstr "Errore"
 
 #. Expander title, the results from the color picker
 #: ../data/gcm-picker.ui.h:22
 msgid "Results"
 msgstr "Risultati"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:1
+msgid ""
+"GNOME Color Profile Viewer shows installed color profiles on your system and "
+"allows you to calibrate displays, printers and cameras using a wizard."
+msgstr ""
+"Visualizzatore profili colore mostra i profili colore installati nel sistema "
+"e consente di calibrare schermi, stampanti e videocamere attraverso una "
+"procedura guidata."
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+msgid ""
+"This functionality is typically used by GNOME Control Center from the color "
+"panel although can be used on its own."
+msgstr ""
+"Questa funzionalità viene utilizzata attraverso il pannello di controllo di "
+"GNOME, ma può anche essere usata direttamente."
 
 #: ../data/gcm-viewer.desktop.in.h:1 ../data/gcm-viewer.ui.h:1
 msgid "Color Profile Viewer"
@@ -126,11 +147,6 @@ msgstr "Rimuove un profilo dal dispositivo"
 #: ../data/gcm-viewer.ui.h:5
 msgid "Profile type"
 msgstr "Tipo di profilo"
-
-#. The profile colorspace, e.g. RGB
-#: ../data/gcm-viewer.ui.h:7
-msgid "Colorspace"
-msgstr "Spazio colori"
 
 #. When the profile was created
 #: ../data/gcm-viewer.ui.h:9
@@ -204,22 +220,14 @@ msgid "CIE 1931"
 msgstr "CIE 1931"
 
 #: ../data/gcm-viewer.ui.h:33
-msgid "This 3D hull is what the profile looks like in Lab space"
-msgstr "Il grafico 3D è la rappresentazione del profilo nello spazio Lab"
-
-#: ../data/gcm-viewer.ui.h:34
-msgid "3D Gamut"
-msgstr "Gamut 3D"
-
-#: ../data/gcm-viewer.ui.h:35
 msgid "Response out"
 msgstr "Risposta in uscita"
 
-#: ../data/gcm-viewer.ui.h:36
+#: ../data/gcm-viewer.ui.h:34
 msgid "Response in"
 msgstr "Risposta in entrata"
 
-#: ../data/gcm-viewer.ui.h:37
+#: ../data/gcm-viewer.ui.h:35
 msgid ""
 "A tone reproduction curve is the mapping of scene luminance to display "
 "luminance"
@@ -227,76 +235,76 @@ msgstr ""
 "La curva di riproduzione della tonalità è la mappatura della luminanza della "
 "scena sulla luminanza dello schermo."
 
-#: ../data/gcm-viewer.ui.h:38
+#: ../data/gcm-viewer.ui.h:36
 msgid "TRC"
 msgstr "TRC"
 
-#: ../data/gcm-viewer.ui.h:39
+#: ../data/gcm-viewer.ui.h:37
 msgid "Video card out"
 msgstr "Uscita scheda video"
 
-#: ../data/gcm-viewer.ui.h:40
+#: ../data/gcm-viewer.ui.h:38
 msgid "A video card gamma table shows the curves loaded into the display"
 msgstr ""
 "La tabella gamma della scheda video mostra le curve caricate nello schermo"
 
-#: ../data/gcm-viewer.ui.h:41
+#: ../data/gcm-viewer.ui.h:39
 msgid "VCGT"
 msgstr "VCGT"
 
-#: ../data/gcm-viewer.ui.h:42
+#: ../data/gcm-viewer.ui.h:40
 msgid "Previous Image"
 msgstr "Immagine precedente"
 
 #. This is an example image that is saved in sRGB gamut
-#: ../data/gcm-viewer.ui.h:44
+#: ../data/gcm-viewer.ui.h:42
 msgid "sRGB example"
 msgstr "Esempio sRGB"
 
-#: ../data/gcm-viewer.ui.h:45
+#: ../data/gcm-viewer.ui.h:43
 msgid "Next Image"
 msgstr "Immagine successiva"
 
-#: ../data/gcm-viewer.ui.h:46
+#: ../data/gcm-viewer.ui.h:44
 msgid "This shows what an image would look like if saved with the profile"
 msgstr "Mostra come sarebbe un'immagine se salvata con il profilo"
 
-#: ../data/gcm-viewer.ui.h:47
+#: ../data/gcm-viewer.ui.h:45
 msgid "From sRGB"
 msgstr "Da sRGB"
 
-#: ../data/gcm-viewer.ui.h:48
+#: ../data/gcm-viewer.ui.h:46
 msgid "This shows what an image would look like if opened with the profile"
 msgstr "Mostra come sarebbe un'immagine se aperta con il profilo"
 
-#: ../data/gcm-viewer.ui.h:49
+#: ../data/gcm-viewer.ui.h:47
 msgid "To sRGB"
 msgstr "A sRGB"
 
-#: ../data/gcm-viewer.ui.h:50
+#: ../data/gcm-viewer.ui.h:48
 msgid "Named colors are specific colors that are defined in the profile"
 msgstr "I colori nominali sono specifici colori definiti nel profilo"
 
-#: ../data/gcm-viewer.ui.h:51
+#: ../data/gcm-viewer.ui.h:49
 msgid "Named Colors"
 msgstr "Colori nominali"
 
-#: ../data/gcm-viewer.ui.h:52
+#: ../data/gcm-viewer.ui.h:50
 msgid ""
 "Metadata is additional information stored in the profile for programs to use."
 msgstr ""
 "I meta-dati sono informazioni aggiuntive salvate nel profilo utilizzabili "
 "dai programmi."
 
-#: ../data/gcm-viewer.ui.h:53
+#: ../data/gcm-viewer.ui.h:51
 msgid "Metadata"
 msgstr "Meta-dati"
 
-#: ../src/gcm-calibrate-argyll.c:355
+#: ../src/gcm-calibrate-argyll.c:371
 msgid "Getting default parameters"
 msgstr "Recupero dei parametri predefiniti"
 
-#: ../src/gcm-calibrate-argyll.c:360
+#: ../src/gcm-calibrate-argyll.c:376
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -304,20 +312,20 @@ msgstr ""
 "Questo consente di pre-calibrare lo schermo inviandovi campioni di colore e "
 "di grigio, misurandoli con il dispositivo hardware."
 
-#: ../src/gcm-calibrate-argyll.c:452
+#: ../src/gcm-calibrate-argyll.c:468
 msgid "Reading the patches"
 msgstr "Lettura dei campioni di colore"
 
-#: ../src/gcm-calibrate-argyll.c:457
+#: ../src/gcm-calibrate-argyll.c:473
 msgid "Reading the patches using the color measuring instrument."
 msgstr ""
 "Lettura dei campioni di colore usando il dispositivo di calibrazione colore."
 
-#: ../src/gcm-calibrate-argyll.c:561
+#: ../src/gcm-calibrate-argyll.c:577
 msgid "Drawing the patches"
 msgstr "Stampa dei campioni di colore"
 
-#: ../src/gcm-calibrate-argyll.c:566
+#: ../src/gcm-calibrate-argyll.c:582
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
@@ -325,47 +333,47 @@ msgstr ""
 "Stampa sullo schermo i campioni di colore generati che saranno misurati dal "
 "dispositivo hardware."
 
-#: ../src/gcm-calibrate-argyll.c:665 ../src/gcm-calibrate-argyll.c:1026
+#: ../src/gcm-calibrate-argyll.c:681 ../src/gcm-calibrate-argyll.c:1043
 msgid "Generating the profile"
 msgstr "Generazione del profilo"
 
-#: ../src/gcm-calibrate-argyll.c:670
+#: ../src/gcm-calibrate-argyll.c:686
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "Generazione del profilo ICC da poter usare con questo schermo."
 
-#: ../src/gcm-calibrate-argyll.c:840
+#: ../src/gcm-calibrate-argyll.c:857
 msgid "Copying files"
 msgstr "Copia dei file"
 
-#: ../src/gcm-calibrate-argyll.c:845
+#: ../src/gcm-calibrate-argyll.c:862
 msgid "Copying source image, chart data and CIE reference values."
 msgstr "Copia immagine sorgente, dati del grafico e valori di riferimento CIE."
 
-#: ../src/gcm-calibrate-argyll.c:916
+#: ../src/gcm-calibrate-argyll.c:933
 msgid "Measuring the patches"
 msgstr "Misurazione dei campioni di colore"
 
-#: ../src/gcm-calibrate-argyll.c:921
+#: ../src/gcm-calibrate-argyll.c:938
 msgid "Detecting the reference patches and measuring them."
 msgstr "Rilevamento e misurazione dei campioni di colore di riferimento."
 
-#: ../src/gcm-calibrate-argyll.c:1031
+#: ../src/gcm-calibrate-argyll.c:1048
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "Generazione del profilo ICC da poter usare con questo dispositivo."
 
-#: ../src/gcm-calibrate-argyll.c:1396
+#: ../src/gcm-calibrate-argyll.c:1413
 msgid "Printing patches"
 msgstr "Stampa dei campioni di colore"
 
-#: ../src/gcm-calibrate-argyll.c:1401
+#: ../src/gcm-calibrate-argyll.c:1418
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "Resa dei campioni di colore per la carta e l'inchiostro selezionati."
 
-#: ../src/gcm-calibrate-argyll.c:1782
+#: ../src/gcm-calibrate-argyll.c:1799
 msgid "Wait for the ink to dry"
 msgstr "Attendere che l'inchiostro si asciughi"
 
-#: ../src/gcm-calibrate-argyll.c:1787
+#: ../src/gcm-calibrate-argyll.c:1804
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -374,41 +382,41 @@ msgstr ""
 "profiling con l'inchiostro umido produrrà un profilo scadente e potrebbe "
 "danneggiare il proprio dispositivo di calibrazione colore."
 
-#: ../src/gcm-calibrate-argyll.c:1964
+#: ../src/gcm-calibrate-argyll.c:1981
 msgid "Set up instrument"
 msgstr "Impostazione dispositivo di calibrazione"
 
-#: ../src/gcm-calibrate-argyll.c:1969
+#: ../src/gcm-calibrate-argyll.c:1986
 msgid "Setting up the instrument for use…"
 msgstr "Impostazione del dispositivo di calibrazione per l'uso…"
 
-#: ../src/gcm-calibrate-argyll.c:2181 ../src/gcm-calibrate-argyll.c:2247
+#: ../src/gcm-calibrate-argyll.c:2198 ../src/gcm-calibrate-argyll.c:2264
 msgid "Calibration error"
 msgstr "Errore nella calibrazione"
 
-#: ../src/gcm-calibrate-argyll.c:2186
+#: ../src/gcm-calibrate-argyll.c:2203
 msgid "The sample could not be read at this time."
 msgstr "Impossibile leggere il campione in questo momento."
 
-#: ../src/gcm-calibrate-argyll.c:2193 ../src/gcm-calibrate-argyll.c:2318
-#: ../src/gcm-calibrate-argyll.c:2344 ../src/gcm-calibrate-argyll.c:2381
-#: ../src/gcm-calibrate-argyll.c:2408
+#: ../src/gcm-calibrate-argyll.c:2210 ../src/gcm-calibrate-argyll.c:2335
+#: ../src/gcm-calibrate-argyll.c:2361 ../src/gcm-calibrate-argyll.c:2398
+#: ../src/gcm-calibrate-argyll.c:2425
 msgid "Retry"
 msgstr "Riprova"
 
 #. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2199 ../src/gcm-calibrate-argyll.c:2287
-#: ../src/gcm-calibrate-argyll.c:2324 ../src/gcm-calibrate-argyll.c:2350
-#: ../src/gcm-calibrate.c:440 ../src/gcm-calibrate.c:480
-#: ../src/gcm-calibrate.c:521 ../src/gcm-calibrate-main.c:203
+#: ../src/gcm-calibrate-argyll.c:2216 ../src/gcm-calibrate-argyll.c:2304
+#: ../src/gcm-calibrate-argyll.c:2341 ../src/gcm-calibrate-argyll.c:2367
+#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
+#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
 msgid "GNOME Color Manager"
 msgstr "GNOME Color Manager"
 
-#: ../src/gcm-calibrate-argyll.c:2253
+#: ../src/gcm-calibrate-argyll.c:2270
 msgid "No firmware is installed for this instrument."
 msgstr "Nessun firmware è installato per questo dispositivo di calibrazione."
 
-#: ../src/gcm-calibrate-argyll.c:2258
+#: ../src/gcm-calibrate-argyll.c:2275
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
@@ -416,7 +424,7 @@ msgstr ""
 "L'immagine catalogata non era abbastanza buona. Assicurarsi di aver "
 "selezionato il tipo corretto di immagine."
 
-#: ../src/gcm-calibrate-argyll.c:2264
+#: ../src/gcm-calibrate-argyll.c:2281
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
@@ -424,7 +432,7 @@ msgstr ""
 "Il dispositivo di calibrazione non ha ricevuto alcuna lettura valida. "
 "Assicurarsi che l'apertura sia completamente aperta."
 
-#: ../src/gcm-calibrate-argyll.c:2269
+#: ../src/gcm-calibrate-argyll.c:2286
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -432,35 +440,35 @@ msgstr ""
 "Il dispositivo di calibrazione è occupato e non è stato avviato. Scollegare "
 "il cavo USB e ricollegarlo prima di provare a usare il dispositivo."
 
-#: ../src/gcm-calibrate-argyll.c:2307
+#: ../src/gcm-calibrate-argyll.c:2324
 msgid "Reading target"
 msgstr "Lettura immagine"
 
-#: ../src/gcm-calibrate-argyll.c:2312
+#: ../src/gcm-calibrate-argyll.c:2329
 msgid "Failed to read the strip correctly."
 msgstr "Lettura del lembo non riuscito."
 
-#: ../src/gcm-calibrate-argyll.c:2333
+#: ../src/gcm-calibrate-argyll.c:2350
 msgid "Reading sample"
 msgstr "Lettura campione"
 
-#: ../src/gcm-calibrate-argyll.c:2338
+#: ../src/gcm-calibrate-argyll.c:2355
 msgid "Failed to read the color sample correctly."
 msgstr "Lettura del campione di colore non riuscita correttamente."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2363
+#: ../src/gcm-calibrate-argyll.c:2380
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "Letto il lembo %s anziché %s."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2368
+#: ../src/gcm-calibrate-argyll.c:2385
 msgid "It looks like you've measured the wrong strip."
 msgstr "Sembra che sia stato misurato il lembo errato."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2372
+#: ../src/gcm-calibrate-argyll.c:2389
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
@@ -468,22 +476,22 @@ msgstr ""
 "Se è stato misurato il lembo esatto, va bene. Potrebbe essere carta non "
 "comune."
 
-#: ../src/gcm-calibrate-argyll.c:2397
+#: ../src/gcm-calibrate-argyll.c:2414
 msgid "Device Error"
 msgstr "Errore del dispositivo"
 
-#: ../src/gcm-calibrate-argyll.c:2402
+#: ../src/gcm-calibrate-argyll.c:2419
 msgid "The device could not measure the color spot correctly."
 msgstr "Il dispositivo non è in grado di misurare i colori correttamente."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2416
+#: ../src/gcm-calibrate-argyll.c:2433
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "Pronto per leggere il lembo %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2421
+#: ../src/gcm-calibrate-argyll.c:2438
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
@@ -492,7 +500,7 @@ msgstr ""
 "tenere premuto il pulsante dell'apparecchio."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2425
+#: ../src/gcm-calibrate-argyll.c:2442
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -501,7 +509,7 @@ msgstr ""
 "a destra e rilasciare il pulsante quando si arriva alla fine della pagina."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2429
+#: ../src/gcm-calibrate-argyll.c:2446
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -510,42 +518,42 @@ msgstr ""
 "la riga che si sta tentando di misurare."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2433
+#: ../src/gcm-calibrate-argyll.c:2450
 msgid ""
 "If you make a mistake, just release the switch, and you'll get a chance to "
 "try again."
 msgstr "Nel caso di errore, rilasciare il pulsante per riprovare."
 
-#: ../src/gcm-calibrate-argyll.c:2547
+#: ../src/gcm-calibrate-argyll.c:2564
 msgid "Printing"
 msgstr "Stampa"
 
-#: ../src/gcm-calibrate-argyll.c:2556
+#: ../src/gcm-calibrate-argyll.c:2573
 msgid "Preparing the data for the printer."
 msgstr "Preparazione dei dati per la stampante."
 
-#: ../src/gcm-calibrate-argyll.c:2564
+#: ../src/gcm-calibrate-argyll.c:2581
 msgid "Sending the targets to the printer."
 msgstr "Invio delle immagini alla stampante."
 
-#: ../src/gcm-calibrate-argyll.c:2570
+#: ../src/gcm-calibrate-argyll.c:2587
 msgid "Printing the targets…"
 msgstr "Stampa delle immagini..."
 
-#: ../src/gcm-calibrate-argyll.c:2576
+#: ../src/gcm-calibrate-argyll.c:2593
 msgid "The printing has finished."
 msgstr "La stampa è terminata."
 
-#: ../src/gcm-calibrate-argyll.c:2582
+#: ../src/gcm-calibrate-argyll.c:2599
 msgid "The print was aborted."
 msgstr "La stampa è stata interrotta."
 
-#: ../src/gcm-calibrate.c:408
+#: ../src/gcm-calibrate.c:404
 msgid "Please attach instrument"
 msgstr "Collegare il dispositivo di calibrazione"
 
 #. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate.c:417
+#: ../src/gcm-calibrate.c:413
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square like the image below."
@@ -554,7 +562,7 @@ msgstr ""
 "riquadro grigio (come nell'immagine sottostante)."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate.c:420
+#: ../src/gcm-calibrate.c:416
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square."
@@ -563,7 +571,7 @@ msgstr ""
 "riquadro grigio."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate.c:427
+#: ../src/gcm-calibrate.c:423
 msgid ""
 "You will need to hold the device on the screen for the duration of the "
 "calibration."
@@ -571,77 +579,77 @@ msgstr ""
 "È necessario tenere il dispositivo sullo schermo per tutta la durata della "
 "calibrazione."
 
-#: ../src/gcm-calibrate.c:434 ../src/gcm-calibrate.c:463
-#: ../src/gcm-calibrate.c:504
+#: ../src/gcm-calibrate.c:430 ../src/gcm-calibrate.c:459
+#: ../src/gcm-calibrate.c:500
 msgid "Continue"
 msgstr "Continua"
 
-#: ../src/gcm-calibrate.c:456 ../src/gcm-calibrate.c:494
+#: ../src/gcm-calibrate.c:452 ../src/gcm-calibrate.c:490
 msgid "Please configure instrument"
 msgstr "Configura dispositivo di calibrazione"
 
-#: ../src/gcm-calibrate.c:467
+#: ../src/gcm-calibrate.c:463
 msgid ""
 "Please set the measuring instrument to screen mode like the image below."
 msgstr ""
 "Impostare il dispositivo di calibrazione alla modalità dello schermo (come "
 "nell'immagine sottostante)."
 
-#: ../src/gcm-calibrate.c:472
+#: ../src/gcm-calibrate.c:468
 msgid "Please set the measuring instrument to screen mode."
 msgstr "Impostare il dispositivo di calibrazione alla modalità dello schermo."
 
-#: ../src/gcm-calibrate.c:508
+#: ../src/gcm-calibrate.c:504
 msgid ""
 "Please set the measuring instrument to calibration mode like the image below."
 msgstr ""
 "Impostare il dispositivo di calibrazione al tipo di calibrazione (come "
 "nell'immagine sottostante)."
 
-#: ../src/gcm-calibrate.c:513
+#: ../src/gcm-calibrate.c:509
 msgid "Please set the measuring instrument to calibration mode."
 msgstr "Impostare il dispositivo di calibrazione in modalità calibrazione."
 
 #. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
 #. * aquired image of the calibration target, e.g. an image file that looks
 #. * a bit like this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:681
+#: ../src/gcm-calibrate.c:677
 msgid "Select calibration target image"
 msgstr "Seleziona l'immagine di calibrazione"
 
-#: ../src/gcm-calibrate.c:683 ../src/gcm-calibrate.c:728
-#: ../src/gcm-calibrate.c:823 ../src/gcm-viewer.c:449
+#: ../src/gcm-calibrate.c:679 ../src/gcm-calibrate.c:724
+#: ../src/gcm-calibrate.c:819 ../src/gcm-viewer.c:440
 msgid "_Cancel"
 msgstr "A_nnulla"
 
-#: ../src/gcm-calibrate.c:684 ../src/gcm-calibrate.c:729
-#: ../src/gcm-calibrate.c:824
+#: ../src/gcm-calibrate.c:680 ../src/gcm-calibrate.c:725
+#: ../src/gcm-calibrate.c:820
 msgid "_Open"
 msgstr "_Apri"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:694
+#: ../src/gcm-calibrate.c:690
 msgid "Supported images files"
 msgstr "File immagini supportati"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:701 ../src/gcm-calibrate.c:755
-#: ../src/gcm-viewer.c:475
+#: ../src/gcm-calibrate.c:697 ../src/gcm-calibrate.c:751
+#: ../src/gcm-viewer.c:466
 msgid "All files"
 msgstr "Tutti i file"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:726
+#: ../src/gcm-calibrate.c:722
 msgid "Select CIE reference values file"
 msgstr "Seleziona il file con i valori di riferimento CIE"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:748
+#: ../src/gcm-calibrate.c:744
 msgid "CIE values"
 msgstr "Valori CIE"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:821 ../src/gcm-viewer.c:447
+#: ../src/gcm-calibrate.c:817 ../src/gcm-viewer.c:438
 msgid "Select ICC Profile File"
 msgstr "Seleziona il file del profilo ICC"
 
@@ -930,18 +938,18 @@ msgstr "CMP DT 003"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1232
-msgid "Color Checker"
-msgstr "Color Checker"
+msgid "ColorChecker"
+msgstr "ColorChecker"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1236
-msgid "Color Checker DC"
-msgstr "Color Checker DC"
+msgid "ColorChecker DC"
+msgstr "ColorChecker DC"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1240
-msgid "Color Checker SG"
-msgstr "Color Checker SG"
+msgid "ColorChecker SG"
+msgstr "ColorChecker SG"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1244
@@ -1240,17 +1248,17 @@ msgid "Copyright (c)"
 msgstr "Copyright (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2318 ../src/gcm-picker.c:791
-#: ../src/gcm-viewer.c:1819
+#: ../src/gcm-calibrate-main.c:2315 ../src/gcm-picker.c:793
+#: ../src/gcm-viewer.c:1791
 msgid "Set the parent window to make this modal"
 msgstr "Imposta la finestra superiore per rendere questa modale"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-calibrate-main.c:2321
+#: ../src/gcm-calibrate-main.c:2318
 msgid "Set the specific device to calibrate"
 msgstr "Imposta il dispositivo da calibrare"
 
-#: ../src/gcm-calibrate-main.c:2362
+#: ../src/gcm-calibrate-main.c:2359
 msgid "No device was specified!"
 msgstr "Nessun è stato specificato alcun dispositivo."
 
@@ -1304,7 +1312,7 @@ msgstr "Profilo ICC da installare"
 msgid "No filename specified"
 msgstr "Non è stato specificato alcun nome di file"
 
-#: ../src/gcm-import.c:147 ../src/gcm-viewer.c:1453
+#: ../src/gcm-import.c:147 ../src/gcm-viewer.c:1435
 msgid "Failed to open ICC profile"
 msgstr "Apertura del profilo ICC non riuscita"
 
@@ -1357,7 +1365,7 @@ msgstr "Importare il profilo colore?"
 msgid "Import"
 msgstr "Importa"
 
-#: ../src/gcm-import.c:292 ../src/gcm-viewer.c:1486
+#: ../src/gcm-import.c:292 ../src/gcm-viewer.c:1468
 msgid "Failed to import file"
 msgstr "Importazione file non riuscita"
 
@@ -1382,12 +1390,12 @@ msgid "Root window protocol version:"
 msgstr "Versione del protocollo della finestra principale:"
 
 #. TRANSLATORS: no DBus session bus
-#: ../src/gcm-inspect.c:232 ../src/gcm-inspect.c:301 ../src/gcm-utils.c:119
+#: ../src/gcm-inspect.c:232 ../src/gcm-inspect.c:301 ../src/gcm-utils.c:118
 msgid "Failed to connect to session bus:"
 msgstr "Collegamento al bus di sessione non riuscito:"
 
 #. TRANSLATORS: the DBus method failed
-#: ../src/gcm-inspect.c:250 ../src/gcm-inspect.c:319 ../src/gcm-utils.c:143
+#: ../src/gcm-inspect.c:250 ../src/gcm-inspect.c:319 ../src/gcm-utils.c:142
 msgid "The request failed:"
 msgstr "La richiesta non è riuscita:"
 
@@ -1435,373 +1443,362 @@ msgstr "Programma d'ispezione dell'EDID"
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:214 ../src/gcm-picker.c:221 ../src/gcm-viewer.c:685
-#: ../src/gcm-viewer.c:735
+#: ../src/gcm-picker.c:217 ../src/gcm-picker.c:224 ../src/gcm-viewer.c:676
+#: ../src/gcm-viewer.c:726
 msgid "Unknown"
 msgstr "Sconosciuto"
 
-#: ../src/gcm-picker.c:367
+#: ../src/gcm-picker.c:369
 msgid "No colorimeter is attached."
 msgstr "Nessun colorimetro collegato."
 
-#: ../src/gcm-picker.c:384
+#: ../src/gcm-picker.c:386
 msgid "The sensor has no native driver."
 msgstr "Il sensore non ha alcun driver nativo."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:393
+#: ../src/gcm-picker.c:395
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "Il colorimetro collegato non è in grado di leggere il colore generato."
 
 #. TRANSLATORS: this is when there are no profiles that can be used;
 #. * the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:644
+#: ../src/gcm-picker.c:646
 #, c-format
 msgid "No %s color spaces available"
 msgstr "Nessuno spazio di colore %s disponibile"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:809
+#: ../src/gcm-picker.c:808
 msgid "GNOME Color Manager Color Picker"
 msgstr "Selettore colore GNOME Color Manager"
 
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:330 ../src/gcm-viewer.c:716
-msgid "RGB"
-msgstr "RGB"
-
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:334 ../src/gcm-viewer.c:728
+#: ../src/gcm-utils.c:333 ../src/gcm-viewer.c:719
 msgid "CMYK"
 msgstr "CMYK"
 
 #. TRANSLATORS: this is the colorspace type
-#: ../src/gcm-utils.c:338
+#: ../src/gcm-utils.c:337
 msgid "gray"
 msgstr "grigio"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:393
+#: ../src/gcm-viewer.c:384
 msgid "Permanently delete profile?"
 msgstr "Eliminare definitivamente il profilo?"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:396
+#: ../src/gcm-viewer.c:387
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr "Rimuovere questo profilo dal computer?"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:399
+#: ../src/gcm-viewer.c:390
 msgid "Delete"
 msgstr "Elimina"
 
-#: ../src/gcm-viewer.c:450
+#: ../src/gcm-viewer.c:441
 msgid "_Import"
 msgstr "I_mporta"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-viewer.c:468
+#: ../src/gcm-viewer.c:459
 msgid "Supported ICC profiles"
 msgstr "Profili ICC supportati"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-viewer.c:504
+#: ../src/gcm-viewer.c:495
 msgid "Failed to copy file"
 msgstr "Copia del file non riuscita"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:658
+#: ../src/gcm-viewer.c:649
 msgid "Input device"
 msgstr "Dispositivo di ingresso"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:662
+#: ../src/gcm-viewer.c:653
 msgid "Display device"
 msgstr "Dispositivo di visualizzazione"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:666
+#: ../src/gcm-viewer.c:657
 msgid "Output device"
 msgstr "Dispositivo di uscita"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:670
+#: ../src/gcm-viewer.c:661
 msgid "Devicelink"
 msgstr "Devicelink"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:674
+#: ../src/gcm-viewer.c:665
 msgid "Colorspace conversion"
 msgstr "Conversione spazio colore"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:678
+#: ../src/gcm-viewer.c:669
 msgid "Abstract"
 msgstr "Astratto"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:682
+#: ../src/gcm-viewer.c:673
 msgid "Named color"
 msgstr "Colore nominale"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:696
-msgid "XYZ"
-msgstr "XYZ"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:700
+#: ../src/gcm-viewer.c:691
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:704
+#: ../src/gcm-viewer.c:695
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:708
+#: ../src/gcm-viewer.c:699
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:712
+#: ../src/gcm-viewer.c:703
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:720
+#: ../src/gcm-viewer.c:711
 msgid "Gray"
 msgstr "Grigio"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:724
+#: ../src/gcm-viewer.c:715
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:732
+#: ../src/gcm-viewer.c:723
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: e.g. sRGB or adbode RGB
-#: ../src/gcm-viewer.c:771
+#: ../src/gcm-viewer.c:762
 msgid "Standard space"
 msgstr "Spazio standard"
 
 #. TRANSLATORS: the raw EDID MD5 of the display device
-#: ../src/gcm-viewer.c:773
+#: ../src/gcm-viewer.c:764
 msgid "Display checksum"
 msgstr "Checksum dello schermo"
 
-#: ../src/gcm-viewer.c:774
+#: ../src/gcm-viewer.c:765
 msgid "Display model"
 msgstr "Modello dello schermo"
 
-#: ../src/gcm-viewer.c:775
+#: ../src/gcm-viewer.c:766
 msgid "Display serial number"
 msgstr "Numero di serie dello schermo"
 
 #. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
-#: ../src/gcm-viewer.c:777
+#: ../src/gcm-viewer.c:768
 msgid "Display PNPID"
 msgstr "PNPID dello schermo"
 
 #. TRANSLATORS: who made the display
-#: ../src/gcm-viewer.c:779
+#: ../src/gcm-viewer.c:770
 msgid "Display vendor"
 msgstr "Produttore dello schermo"
 
 #. TRANSLATORS: the raw profile MD5
-#: ../src/gcm-viewer.c:781
+#: ../src/gcm-viewer.c:772
 msgid "File checksum"
 msgstr "Checksum del file"
 
 #. TRANSLATORS: the color framework, e.g. 'colord'
-#: ../src/gcm-viewer.c:783
+#: ../src/gcm-viewer.c:774
 msgid "Framework product"
 msgstr "Framework del prodotto"
 
 #. TRANSLATORS: the framework binary, e.g. gcm-viewer
-#: ../src/gcm-viewer.c:785
+#: ../src/gcm-viewer.c:776
 msgid "Framework program"
 msgstr "Programma del framework"
 
 #. TRANSLATORS: the framework release, e.g. '1.22'
-#: ../src/gcm-viewer.c:787
+#: ../src/gcm-viewer.c:778
 msgid "Framework version"
 msgstr "Versione del framework"
 
 #. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
-#: ../src/gcm-viewer.c:789
+#: ../src/gcm-viewer.c:780
 msgid "Data source type"
 msgstr "Tipo di sorgente dati"
 
 #. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
-#: ../src/gcm-viewer.c:791
+#: ../src/gcm-viewer.c:782
 msgid "Mapping format"
 msgstr "Formato mappatura"
 
 #. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
-#: ../src/gcm-viewer.c:793
+#: ../src/gcm-viewer.c:784
 msgid "Mapping qualifier"
 msgstr "Qualificatore mappatura"
 
 #. TRANSLATORS: The original device the profile was made for
-#: ../src/gcm-viewer.c:795
+#: ../src/gcm-viewer.c:786
 msgid "Mapping device"
 msgstr "Dispositivo assegnato"
 
 #. TRANSLATORS: The average error when making the profile
-#: ../src/gcm-viewer.c:797
+#: ../src/gcm-viewer.c:788
 msgid "Delta-E average"
 msgstr "Delta-E medio"
 
 #. TRANSLATORS: the maximum error when making the profile
-#: ../src/gcm-viewer.c:799
+#: ../src/gcm-viewer.c:790
 msgid "Delta-E maximum"
 msgstr "Delta-E massimo"
 
 #. TRANSLATORS: the RMS error when making the profile
-#: ../src/gcm-viewer.c:801
+#: ../src/gcm-viewer.c:792
 msgid "Delta-E RMS"
 msgstr "Delta-E RMS"
 
 #. TRANSLATORS: The device name, e.g. 'huey'
-#: ../src/gcm-viewer.c:803
+#: ../src/gcm-viewer.c:794
 msgid "Calibration device"
 msgstr "Dispositivo di calibrazione"
 
 #. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
-#: ../src/gcm-viewer.c:805
+#: ../src/gcm-viewer.c:796
 msgid "Screen surface finish"
 msgstr "Tipo superficie dello schermo"
 
 #. TRANSLATORS: e.g. DVI or VGA
-#: ../src/gcm-viewer.c:807
+#: ../src/gcm-viewer.c:798
 msgid "Connection type"
 msgstr "Tipo connettore"
 
 #. TRANSLATORS: e.g. Screen brightness in percent
-#: ../src/gcm-viewer.c:809
+#: ../src/gcm-viewer.c:800
 msgid "Screen brightness"
 msgstr "Luminosità schermo"
 
 #. TRANSLATORS: e.g. the 3D volume of the gamut graph
-#: ../src/gcm-viewer.c:811
+#: ../src/gcm-viewer.c:802
 msgid "Gamut volume"
 msgstr "Volume gamut"
 
 #. TRANSLATORS: e.g. what proportion of sRGB is covered
-#: ../src/gcm-viewer.c:813
+#: ../src/gcm-viewer.c:804
 msgid "sRGB coverage"
 msgstr "Copertura sRGB"
 
 #. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
-#: ../src/gcm-viewer.c:815
+#: ../src/gcm-viewer.c:806
 msgid "Adobe RGB coverage"
 msgstr "Copertura Adobe RGB"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:926
+#: ../src/gcm-viewer.c:917
 msgid "No description has been set"
 msgstr "Nessuna descrizione impostata"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:930
+#: ../src/gcm-viewer.c:921
 msgid "No copyright has been set"
 msgstr "Nessun copyright impostato"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:934
+#: ../src/gcm-viewer.c:925
 msgid "The display compensation table is invalid"
 msgstr "La tabella di compensazione dello schermo non è valida"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:938
+#: ../src/gcm-viewer.c:929
 msgid "A scum dot is present for media white"
 msgstr "Il bianco del supporto presenta delle macchie (scum dot)"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:942
+#: ../src/gcm-viewer.c:933
 msgid "The gray axis contains significant amounts of color"
 msgstr "L'asse del grigio contiene quantità significative di colore"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:946
+#: ../src/gcm-viewer.c:937
 msgid "The gray axis is non-monotonic"
 msgstr "L'asse del grigio non è monotono"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:950
+#: ../src/gcm-viewer.c:941
 msgid "One or more of the primaries are invalid"
 msgstr "Uno o più dei colori primari non è valido"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:954
+#: ../src/gcm-viewer.c:945
 msgid "The primaries do not add to white"
 msgstr "I colori primari non si sommano al bianco"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:958
+#: ../src/gcm-viewer.c:949
 msgid "One or more of the primaries is unlikely"
 msgstr "Uno o più dei colori primari non va bene"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:962
+#: ../src/gcm-viewer.c:953
 msgid "The white is not D50 white"
 msgstr "Il bianco non è un bianco D50"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:966
+#: ../src/gcm-viewer.c:957
 msgid "The whitepoint temperature is unlikely"
 msgstr "La temperatura del punto di bianco non va bene"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:970
+#: ../src/gcm-viewer.c:961
 msgid "Unknown warning type"
 msgstr "Tipo di avviso sconosciuto"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1115
+#: ../src/gcm-viewer.c:1097
 msgid "Yes"
 msgstr "Sì"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1118
+#: ../src/gcm-viewer.c:1100
 msgid "No"
 msgstr "No"
 
 #. TRANSLATORS: profiles that have warnings are useable,
 #. * but may not be any good
-#: ../src/gcm-viewer.c:1144
+#: ../src/gcm-viewer.c:1126
 msgid "The profile has the following problems:"
 msgstr "Il profilo presenta i seguenti problemi:"
 
 #. TRANSLATORS: this is the icc creation date strftime format
-#: ../src/gcm-viewer.c:1236
+#: ../src/gcm-viewer.c:1218
 msgid "%B %e %Y, %I:%M:%S %p"
 msgstr "%e %B %Y, %H.%M.%S"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:1259
+#: ../src/gcm-viewer.c:1241
 msgid "Delete this profile"
 msgstr "Elimina questo profilo"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:1262
+#: ../src/gcm-viewer.c:1244
 msgid "This profile cannot be deleted"
 msgstr "Impossibile eliminare questo profilo"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-viewer.c:1822
+#: ../src/gcm-viewer.c:1794
 msgid "Set the specific profile to show"
 msgstr "Imposta il profilo specifico da mostrare"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: ../src/gcm-viewer.c:1825
+#: ../src/gcm-viewer.c:1797
 msgid "Set the specific file to show"
 msgstr "Imposta il file specifico da mostrare"
