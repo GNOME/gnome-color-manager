@@ -249,8 +249,16 @@ gcm_calibrate_argyll_get_display_kind (GcmCalibrateArgyll *calibrate_argyll)
 		      "display-kind", &device_kind,
 		      NULL);
 
-	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_LCD)
+	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_LCD_CCFL)
 		return 'l';
+	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_LCD_LED_WHITE)
+		return 'e';
+	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_LCD_LED_RGB)
+		return 'b';
+        if (device_kind == GCM_CALIBRATE_DEVICE_KIND_LCD_LED_RGB_WIDE)
+                return 'B';
+	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_LCD_CCFL_WIDE)
+		return 'L';
 	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_CRT)
 		return 'c';
 	if (device_kind == GCM_CALIBRATE_DEVICE_KIND_PROJECTOR)

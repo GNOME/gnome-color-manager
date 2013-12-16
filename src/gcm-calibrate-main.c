@@ -1436,10 +1436,46 @@ gcm_calib_setup_page_display_kind (GcmCalibratePriv *priv)
 	/* TRANSLATORS: this is intro page text */
 	gcm_calib_add_page_para (content, _("Select the monitor type that is attached to your computer."));
 
-	widget = gtk_radio_button_new_with_label (NULL, _("LCD"));
+	widget = gtk_radio_button_new_with_label (NULL, _("LCD (CCFL backlight)"));
 	g_object_set_data (G_OBJECT (widget),
 			   "GcmCalib::display-kind",
-			   GUINT_TO_POINTER (GCM_CALIBRATE_DEVICE_KIND_LCD));
+			   GUINT_TO_POINTER (GCM_CALIBRATE_DEVICE_KIND_LCD_CCFL));
+	g_signal_connect (widget, "toggled",
+			  G_CALLBACK (gcm_calib_display_kind_toggled_cb), priv);
+	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
+
+	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
+	widget = gtk_radio_button_new_with_label (list, _("LCD (White LED backlight)"));
+	g_object_set_data (G_OBJECT (widget),
+			   "GcmCalib::display-kind",
+			   GUINT_TO_POINTER (GCM_CALIBRATE_DEVICE_KIND_LCD_LED_WHITE));
+	g_signal_connect (widget, "toggled",
+			  G_CALLBACK (gcm_calib_display_kind_toggled_cb), priv);
+	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
+
+	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
+	widget = gtk_radio_button_new_with_label (list, _("LCD (RGB LED backlight)"));
+	g_object_set_data (G_OBJECT (widget),
+			   "GcmCalib::display-kind",
+			   GUINT_TO_POINTER (GCM_CALIBRATE_DEVICE_KIND_LCD_LED_RGB));
+	g_signal_connect (widget, "toggled",
+			  G_CALLBACK (gcm_calib_display_kind_toggled_cb), priv);
+	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
+
+	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
+	widget = gtk_radio_button_new_with_label (list, _("LCD (Wide Gamut RGB LED backlight)"));
+	g_object_set_data (G_OBJECT (widget),
+			   "GcmCalib::display-kind",
+			   GUINT_TO_POINTER (GCM_CALIBRATE_DEVICE_KIND_LCD_LED_RGB_WIDE));
+	g_signal_connect (widget, "toggled",
+			  G_CALLBACK (gcm_calib_display_kind_toggled_cb), priv);
+	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
+
+	list = gtk_radio_button_get_group (GTK_RADIO_BUTTON (widget));
+	widget = gtk_radio_button_new_with_label (list, _("LCD (Wide Gamut CCFL backlight)"));
+	g_object_set_data (G_OBJECT (widget),
+			   "GcmCalib::display-kind",
+			   GUINT_TO_POINTER (GCM_CALIBRATE_DEVICE_KIND_LCD_CCFL_WIDE));
 	g_signal_connect (widget, "toggled",
 			  G_CALLBACK (gcm_calib_display_kind_toggled_cb), priv);
 	gtk_box_pack_start (GTK_BOX (content), widget, FALSE, FALSE, 0);
@@ -2040,7 +2076,7 @@ gcm_calib_add_pages (GcmCalibratePriv *priv)
 			gcm_calib_setup_page_display_kind (priv);
 		} else {
 			g_object_set (priv->calibrate,
-				      "display-kind", GCM_CALIBRATE_DEVICE_KIND_LCD,
+				      "display-kind", GCM_CALIBRATE_DEVICE_KIND_LCD_CCFL,
 				      NULL);
 		}
 		gcm_calib_setup_page_display_temp (priv);
