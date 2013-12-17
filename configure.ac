@@ -1,7 +1,7 @@
 # Copyright (C) 2010-2011 Richard Hughes <richard@hughsie.com>
 AC_PREREQ(2.63)
 
-AC_INIT([gnome-color-manager],[3.11.1],[http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager])
+AC_INIT([gnome-color-manager],[3.11.3],[http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager])
 AC_CONFIG_SRCDIR(src)
 AM_INIT_AUTOMAKE([1.11 no-dist-gzip dist-xz tar-ustar])
 AC_CONFIG_HEADERS([config.h])
