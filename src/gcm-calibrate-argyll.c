@@ -212,6 +212,8 @@ gcm_calibrate_argyll_get_display (const gchar *output_name,
 					     "failed to match display as RandR is faulty");
 			goto out;
 		}
+		if (strlen (split[i]) < 27)
+			continue;
 		name = g_strdup (split[i]);
 		g_strdelimit (name, " ", '\0');
 		if (g_strcmp0 (output_name, &name[26]) == 0) {
