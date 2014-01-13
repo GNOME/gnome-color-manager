@@ -1009,7 +1009,13 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	}
 
 	/* set the preview widgets */
-	icc = cd_profile_load_icc (profile, CD_ICC_LOAD_FLAGS_ALL, NULL, NULL);
+	icc = cd_profile_load_icc (profile, CD_ICC_LOAD_FLAGS_ALL, NULL, &error);
+	if (icc == NULL) {
+		g_warning ("failed to load ICC profile: %s",
+			   error->message);
+		g_error_free (error);
+		goto out;
+	}
 	if (cd_profile_get_colorspace (profile) == CD_COLORSPACE_RGB &&
 	    cd_profile_get_kind (profile) != CD_PROFILE_KIND_NAMED_COLOR) {
 		gcm_image_set_input_profile (GCM_IMAGE(viewer->preview_widget_input), icc);
