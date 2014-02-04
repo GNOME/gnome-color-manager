@@ -269,6 +269,32 @@ gcm_calibrate_argyll_get_display_kind (GcmCalibrateArgyll *calibrate_argyll)
 }
 
 /**
+ * gcm_calibrate_argyll_get_sensor_test_window_size:
+ **/
+static const gchar *
+gcm_calibrate_argyll_get_sensor_test_window_size (GcmCalibrateArgyll *calibrate_argyll)
+{
+	CdSensorKind sensor_kind;
+
+	g_object_get (calibrate_argyll,
+		      "sensor-kind", &sensor_kind,
+		      NULL);
+
+	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI_PHOTO)
+		return "0.5,0.5,0.7,1.3";
+	if (sensor_kind == CD_SENSOR_KIND_I1_DISPLAY3)
+		return "0.5,0.5,0.5,0.9";
+	if (sensor_kind == CD_SENSOR_KIND_I1_DISPLAY2)
+		return "0.5,0.5,0.8,1.1";
+	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI_SMILE)
+		return "0.5,0.5,0.8,1.1";
+	if (sensor_kind == CD_SENSOR_KIND_COLORHUG)
+		return "0.5,0.5,0.5,0.7";
+
+	return "0.5,0.5,1.0,1.0";
+}
+
+/**
  * gcm_calibrate_argyll_debug_argv:
  **/
 static void
@@ -403,7 +429,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll,
 	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI_PHOTO) {
 		g_ptr_array_add (array, g_strdup ("-H"));
 	}
-	g_ptr_array_add (array, g_strdup ("-P 0.5,0.5,0.8"));
+	g_ptr_array_add (array, g_strdup_printf ("-P %s", gcm_calibrate_argyll_get_sensor_test_window_size (calibrate_argyll)));
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
@@ -608,7 +634,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 		g_ptr_array_add (array, g_strdup ("-H"));
 		g_ptr_array_add (array, g_strdup ("-N"));
 	}
-	g_ptr_array_add (array, g_strdup ("-P 0.5,0.5,0.8"));
+	g_ptr_array_add (array, g_strdup_printf ("-P %s", gcm_calibrate_argyll_get_sensor_test_window_size (calibrate_argyll)));
 	g_ptr_array_add (array, g_strdup (basename));
 	argv = gcm_utils_ptr_array_to_strv (array);
 	gcm_calibrate_argyll_debug_argv (command, argv);
