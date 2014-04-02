@@ -114,11 +114,15 @@ static void
 gcm_cell_renderer_color_set_property (GObject *object, guint param_id,
 				      const GValue *value, GParamSpec *pspec)
 {
+	CdColorLab *tmp;
 	GcmCellRendererColor *renderer = GCM_CELL_RENDERER_COLOR (object);
 
 	switch (param_id) {
 	case PROP_COLOR:
-		cd_color_lab_copy (g_value_get_boxed (value), renderer->color);
+		tmp = g_value_get_boxed (value);
+		if (tmp == NULL)
+			return;
+		cd_color_lab_copy (tmp, renderer->color);
 		gcm_cell_renderer_set_color (renderer);
 		break;
 	case PROP_PROFILE:
