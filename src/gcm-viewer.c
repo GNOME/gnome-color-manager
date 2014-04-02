@@ -1313,7 +1313,7 @@ gcm_viewer_client_profile_removed_cb (CdClient *client,
 				      GcmViewerPrivate *viewer)
 {
 	g_debug ("%s removed, rescanning",
-		 cd_profile_get_id (profile));
+		 cd_profile_get_object_path (profile));
 	gcm_viewer_update_profile_list (viewer);
 }
 
@@ -1786,7 +1786,7 @@ main (int argc, char **argv)
 	gchar *filename = NULL;
 	GcmViewerPrivate *viewer;
 	GOptionContext *context;
-	guint xid;
+	guint xid = 0;
 	int status = 0;
 	gboolean ret;
 	GError *error = NULL;

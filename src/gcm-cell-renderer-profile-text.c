@@ -68,8 +68,7 @@ gcm_cell_renderer_get_profile_text (CdProfile *profile)
 
 	if (profile == NULL) {
 		/* TRANSLATORS: this is when there is no profile for the device */
-		string = g_string_new (_("No profile"));
-		goto out;
+		return g_string_new (_("No profile"));
 	}
 
 	/* add profile description */

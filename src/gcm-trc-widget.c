@@ -160,7 +160,7 @@ gcm_trc_widget_finalize (GObject *object)
 
 	g_object_unref (trc->priv->layout);
 	if (trc->priv->data != NULL)
-		g_object_unref (trc->priv->data);
+		g_ptr_array_unref (trc->priv->data);
 	G_OBJECT_CLASS (gcm_trc_widget_parent_class)->finalize (object);
 }
 
