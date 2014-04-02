@@ -55,6 +55,7 @@ typedef struct {
 	const gchar	*lang;
 	GtkListStore	*liststore_nc;
 	GtkListStore	*liststore_metadata;
+	gboolean	 clearing_store;
 } GcmViewerPrivate;
 
 typedef enum {
@@ -329,7 +330,9 @@ gcm_viewer_update_get_profiles_cb (GObject *source_object,
 	}
 
 	/* clear existing list */
+	viewer->clearing_store = TRUE;
 	gtk_list_store_clear (viewer->list_store_profiles);
+	viewer->clearing_store = FALSE;
 
 	/* update each list */
 	for (i=0; i<profile_array->len; i++) {
@@ -1276,6 +1279,10 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection,
 	GtkTreeModel *model;
 	GtkTreeIter iter;
 	CdProfile *profile;
+
+	/* ignore */
+	if (viewer->clearing_store)
+		return;
 
 	/* This will only work in single or browse selection mode! */
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
