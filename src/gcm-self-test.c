@@ -110,6 +110,7 @@ gcm_test_cie_widget_func (void)
 	CdColorXYZ *red;
 	CdColorXYZ *green;
 	CdColorXYZ *blue;
+	gboolean ret;
 	gint response;
 	GFile *file = NULL;
 	CdColorYxy white_Yxy;
@@ -122,7 +123,8 @@ gcm_test_cie_widget_func (void)
 
 	profile = cd_icc_new ();
 	file = g_file_new_for_path (TESTDATADIR "/bluish.icc");
-	cd_icc_load_file (profile, file, CD_ICC_LOAD_FLAGS_NONE, NULL, NULL);
+	ret = cd_icc_load_file (profile, file, CD_ICC_LOAD_FLAGS_NONE, NULL, NULL);
+	g_assert (ret);
 	g_object_get (profile,
 		      "white", &white,
 		      "red", &red,
@@ -294,6 +296,7 @@ gcm_test_trc_widget_func (void)
 	GtkWidget *vbox;
 	GPtrArray *clut;
 	CdIcc *profile;
+	gboolean ret;
 	gint response;
 	GFile *file;
 
@@ -302,7 +305,8 @@ gcm_test_trc_widget_func (void)
 
 	profile = cd_icc_new ();
 	file = g_file_new_for_path (TESTDATADIR "/AdobeGammaTest.icm");
-	cd_icc_load_file (profile, file, CD_ICC_LOAD_FLAGS_NONE, NULL, NULL);
+	ret = cd_icc_load_file (profile, file, CD_ICC_LOAD_FLAGS_NONE, NULL, NULL);
+	g_assert (ret);
 	clut = cd_icc_get_vcgt (profile, 256, NULL);
 	g_object_set (widget,
 		      "data", clut,
