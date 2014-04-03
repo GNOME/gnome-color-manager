@@ -236,8 +236,9 @@ gcm_image_cms_convert_pixbuf (GcmImage *image)
 
 	/* refresh widget */
 	if (gtk_widget_get_visible (GTK_WIDGET(image))) {
-		gtk_widget_set_visible (GTK_WIDGET(image), FALSE);
-		gtk_widget_set_visible (GTK_WIDGET(image), TRUE);
+		g_object_ref (pixbuf_cms);
+		gtk_image_set_from_pixbuf (GTK_IMAGE (image), pixbuf_cms);
+		g_object_unref (pixbuf_cms);
 	}
 out:
 	/* destroy lcms state */
