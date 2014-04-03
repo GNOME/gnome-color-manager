@@ -28,8 +28,6 @@ libgcmshared_a_SOURCES =				\
 	gcm-debug.h					\
 	gcm-exif.c					\
 	gcm-exif.h					\
-	gcm-image.c					\
-	gcm-image.h					\
 	gcm-print.c					\
 	gcm-print.h					\
 	gcm-trc-widget.c				\

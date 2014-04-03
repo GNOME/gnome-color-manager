@@ -47,6 +47,11 @@ gboolean	 gcm_utils_install_package		(const gchar		*package_name,
 							 GtkWindow		*window);
 gchar		*gcm_utils_linkify			(const gchar		*text);
 const gchar	*cd_colorspace_to_localised_string	(CdColorspace		 colorspace);
+gboolean	 gcm_utils_image_convert		(GtkImage		*image,
+							 CdIcc			*input,
+							 CdIcc			*abstract,
+							 CdIcc			*output,
+							 GError			**error);
 
 #endif /* __GCM_UTILS_H */
 

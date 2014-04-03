@@ -33,7 +33,6 @@
 #include "gcm-cell-renderer-profile-text.h"
 #include "gcm-cell-renderer-color.h"
 #include "gcm-cie-widget.h"
-#include "gcm-image.h"
 #include "gcm-trc-widget.h"
 #include "gcm-utils.h"
 #include "gcm-debug.h"
@@ -995,7 +994,8 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	guint size;
 	guint temperature;
 	guint filesize;
-	gboolean show_section = FALSE;
+	gboolean show_section_to = FALSE;
+	gboolean show_section_from = FALSE;
 	GError *error = NULL;
 	gchar **warnings;
 	guint i;
@@ -1019,25 +1019,24 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 		g_error_free (error);
 		goto out;
 	}
+
+	/* convert the image if required */
 	if (cd_profile_get_colorspace (profile) == CD_COLORSPACE_RGB &&
 	    cd_profile_get_kind (profile) != CD_PROFILE_KIND_NAMED_COLOR) {
-		gcm_image_set_input_profile (GCM_IMAGE(viewer->preview_widget_input), icc);
-		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_input), NULL);
-		gcm_image_set_output_profile (GCM_IMAGE(viewer->preview_widget_output), icc);
-		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_output), NULL);
-		show_section = TRUE;
+		show_section_to = TRUE;
+		show_section_from = TRUE;
+		/* profile -> sRGB */
+		gcm_utils_image_convert (GTK_IMAGE (viewer->preview_widget_input),
+					 icc, NULL, NULL, NULL);
+		/* sRGB -> profile */
+		gcm_utils_image_convert (GTK_IMAGE (viewer->preview_widget_output),
+					 NULL, NULL, icc, NULL);
 	} else if (cd_profile_get_colorspace (profile) == CD_COLORSPACE_LAB &&
 		   cd_profile_get_kind (profile) != CD_PROFILE_KIND_NAMED_COLOR) {
-		gcm_image_set_input_profile (GCM_IMAGE(viewer->preview_widget_input), NULL);
-		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_input), icc);
-		gcm_image_set_output_profile (GCM_IMAGE(viewer->preview_widget_output), NULL);
-		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_output), icc);
-		show_section = TRUE;
-	} else {
-		gcm_image_set_input_profile (GCM_IMAGE(viewer->preview_widget_input), NULL);
-		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_input), NULL);
-		gcm_image_set_output_profile (GCM_IMAGE(viewer->preview_widget_output), NULL);
-		gcm_image_set_abstract_profile (GCM_IMAGE(viewer->preview_widget_output), NULL);
+		/* sRGB -> profile -> sRGB */
+		gcm_utils_image_convert (GTK_IMAGE (viewer->preview_widget_input),
+					 NULL, icc, NULL, NULL);
+		show_section_to = TRUE;
 	}
 
 	/* setup cie widget */
@@ -1255,9 +1254,9 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 
 	/* should we show the image previews at all */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_to_srgb"));
-	gtk_widget_set_visible (widget, show_section);
+	gtk_widget_set_visible (widget, show_section_to);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_from_srgb"));
-	gtk_widget_set_visible (widget, show_section);
+	gtk_widget_set_visible (widget, show_section_from);
 
 out:
 	if (icc != NULL)
@@ -1669,14 +1668,14 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	gtk_box_reorder_child (GTK_BOX(widget), viewer->vcgt_widget, 0);
 
 	/* use preview input */
-	viewer->preview_widget_input = GTK_WIDGET (gcm_image_new ());
+	viewer->preview_widget_input = GTK_WIDGET (gtk_image_new ());
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_preview_input"));
 	gtk_box_pack_end (GTK_BOX(widget), viewer->preview_widget_input, FALSE, FALSE, 0);
 	gcm_viewer_set_example_image (viewer, GTK_IMAGE (viewer->preview_widget_input));
 	gtk_widget_set_visible (viewer->preview_widget_input, TRUE);
 
 	/* use preview output */
-	viewer->preview_widget_output = GTK_WIDGET (gcm_image_new ());
+	viewer->preview_widget_output = GTK_WIDGET (gtk_image_new ());
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_preview_output"));
 	gtk_box_pack_end (GTK_BOX(widget), viewer->preview_widget_output, FALSE, FALSE, 0);
 	gcm_viewer_set_example_image (viewer, GTK_IMAGE (viewer->preview_widget_output));
