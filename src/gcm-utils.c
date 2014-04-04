@@ -380,6 +380,7 @@ gcm_utils_image_convert (GtkImage *image,
 	GdkPixbuf *original_pixbuf;
 	gboolean ret = TRUE;
 	guchar *data;
+	guint bpp;
 
 	/* get pixbuf */
 	pixbuf = gtk_image_get_pixbuf (image);
@@ -422,12 +423,13 @@ gcm_utils_image_convert (GtkImage *image,
 	cd_transform_set_rendering_intent (transform, CD_RENDERING_INTENT_PERCEPTUAL);
 	cd_transform_set_input_pixel_format (transform, pixel_format);
 	cd_transform_set_output_pixel_format (transform, pixel_format);
+	bpp = gdk_pixbuf_get_rowstride (pixbuf) / gdk_pixbuf_get_width (pixbuf);
 	ret = cd_transform_process (transform,
 				    gdk_pixbuf_get_pixels (original_pixbuf),
 				    gdk_pixbuf_get_pixels (pixbuf),
 				    gdk_pixbuf_get_width (pixbuf),
 				    gdk_pixbuf_get_height (pixbuf),
-				    gdk_pixbuf_get_rowstride (pixbuf),
+				    gdk_pixbuf_get_rowstride (pixbuf) / bpp,
 				    NULL,
 				    error);
 	if (!ret)
