@@ -281,15 +281,15 @@ gcm_calibrate_argyll_get_sensor_test_window_size (GcmCalibrateArgyll *calibrate_
 		      NULL);
 
 	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI_PHOTO)
-		return "0.5,0.5,0.7,1.3";
+		return "0.5,0.5,0.8,1.5";
 	if (sensor_kind == CD_SENSOR_KIND_I1_DISPLAY3)
-		return "0.5,0.5,0.5,0.9";
+		return "0.5,0.5,0.6,1.0";
 	if (sensor_kind == CD_SENSOR_KIND_I1_DISPLAY2)
-		return "0.5,0.5,0.8,1.1";
+		return "0.5,0.4,0.9,1.2";
 	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI_SMILE)
-		return "0.5,0.5,0.8,1.1";
+		return "0.5,0.4,0.9,1.2";
 	if (sensor_kind == CD_SENSOR_KIND_COLORHUG)
-		return "0.5,0.5,0.5,0.7";
+		return "0.5,0.5,0.6,0.8";
 
 	return "0.5,0.5,1.0,1.0";
 }
