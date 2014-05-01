@@ -4,7 +4,7 @@ EXTRA_DIST = C/gnome-help.its
 
 HELP_ID = gnome-color-manager
 
-HELP_LINGUAS = cs de el es fr gl ml pt_BR zh_CN zh_HK zh_TW
+HELP_LINGUAS = cs de el es fi fr gl ml pt_BR zh_CN zh_HK zh_TW
 
 HELP_MEDIA = 
 
