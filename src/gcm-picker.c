@@ -45,6 +45,7 @@ static GtkBuilder *builder = NULL;
 static GtkWidget *info_bar_hardware_label = NULL;
 static GtkWidget *info_bar_hardware = NULL;
 static guint xid = 0;
+static guint unlock_timer = 0;
 
 enum {
 	GCM_PREFS_COMBO_COLUMN_TEXT,
@@ -259,6 +260,25 @@ gcm_picker_got_results (void)
 }
 
 /**
+ * gcm_picker_unlock_timeout_cb:
+ **/
+static gboolean
+gcm_picker_unlock_timeout_cb (gpointer user_data)
+{
+	gboolean ret;
+	GError *error = NULL;
+
+	/* unlock */
+	ret = cd_sensor_unlock_sync (sensor, NULL, &error);
+	if (!ret) {
+		g_warning ("failed to unlock: %s", error->message);
+		g_error_free (error);
+	}
+	unlock_timer = 0;
+	return FALSE;
+}
+
+/**
  * gcm_picker_measure_cb:
  **/
 static void
@@ -273,13 +293,21 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 	gtk_image_set_from_file (GTK_IMAGE (widget), DATADIR "/icons/hicolor/64x64/apps/gnome-color-manager.png");
 
 	/* lock */
-	ret = cd_sensor_lock_sync (sensor,
-				   NULL,
-				   &error);
-	if (!ret) {
-		g_warning ("failed to lock: %s", error->message);
-		g_error_free (error);
-		goto out;
+	if (!cd_sensor_get_locked (sensor)) {
+		ret = cd_sensor_lock_sync (sensor,
+					   NULL,
+					   &error);
+		if (!ret) {
+			g_warning ("failed to lock: %s", error->message);
+			g_error_free (error);
+			goto out;
+		}
+	}
+
+	/* cancel pending unlock */
+	if (unlock_timer != 0) {
+		g_source_remove (unlock_timer);
+		unlock_timer = 0;
 	}
 
 	/* get color */
@@ -308,16 +336,8 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 	}
 #endif
 out_unlock:
-	/* unlock */
-	ret = cd_sensor_unlock_sync (sensor,
-				     NULL,
-				     &error);
-	if (!ret) {
-		g_warning ("failed to unlock: %s", error->message);
-		g_error_free (error);
-		goto out;
-	}
-
+	/* unlock after a small delay */
+	unlock_timer = g_timeout_add_seconds (30, gcm_picker_unlock_timeout_cb, data);
 	gcm_picker_refresh_results ();
 	gcm_picker_got_results ();
 out:
