@@ -84,7 +84,7 @@ PKG_CHECK_MODULES(LCMS, lcms2 >= 2.2)
 PKG_CHECK_MODULES(COLORD, colord >= 0.1.34 colord-gtk >= 0.1.20)
 
 dnl **** Check for VTE ****
-PKG_CHECK_MODULES(VTE, vte-2.90 >= 0.25.1, has_vte=yes, has_vte=no)
+PKG_CHECK_MODULES(VTE, vte-2.91 >= 0.25.1, has_vte=yes, has_vte=no)
 AM_CONDITIONAL(HAVE_VTE, test x$has_vte = xyes)
 if test x$has_vte = xyes; then
 	AC_DEFINE(HAVE_VTE,1,[Use VTE terminal widget])

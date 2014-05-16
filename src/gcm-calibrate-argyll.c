@@ -328,17 +328,19 @@ gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll,
 
 	/* try to run */
 	working_directory = gcm_calibrate_get_working_path (GCM_CALIBRATE (calibrate_argyll));
-	ret = vte_terminal_fork_command_full (VTE_TERMINAL(priv->terminal),
-					      VTE_PTY_DEFAULT,
-					      working_directory,
-					      argv, (gchar**)envp,
+	ret = vte_terminal_spawn_sync (VTE_TERMINAL(priv->terminal),
+				       VTE_PTY_DEFAULT,
+				       working_directory,
+				       argv, (gchar**)envp,
 #ifdef FIXED_ARGYLL
-					      0,
+				       0,
 #else
-					      G_SPAWN_FILE_AND_ARGV_ZERO,
+				       G_SPAWN_FILE_AND_ARGV_ZERO,
 #endif
-					      NULL, NULL,
-					      &priv->child_pid, error);
+				       NULL, NULL,
+				       &priv->child_pid,
+				       NULL,
+				       error);
 	if (!ret)
 		goto out;
 
@@ -2077,16 +2079,14 @@ static void gcm_calibrate_argyll_flush_vte (GcmCalibrateArgyll *calibrate_argyll
  **/
 static void
 gcm_calibrate_argyll_exit_cb (VteTerminal *terminal,
+			      gint exit_status,
 			      GcmCalibrateArgyll *calibrate_argyll)
 {
-	gint exit_status;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 
 	/* flush the VTE output */
 	gcm_calibrate_argyll_flush_vte (calibrate_argyll);
 
-	/* get the child exit status */
-	exit_status = vte_terminal_get_child_exit_status (terminal);
 	g_debug ("child exit-status is %i", exit_status);
 	if (exit_status == 0)
 		priv->response = GTK_RESPONSE_ACCEPT;
