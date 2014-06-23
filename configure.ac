@@ -19,6 +19,9 @@ AM_PROG_CC_C_O
 IT_PROG_INTLTOOL([0.35.0])
 YELP_HELP_INIT
 
+# validate AppData
+APPSTREAM_XML
+
 GNOME_COMPILE_WARNINGS(error)
 
 AC_ARG_ENABLE(strict, AS_HELP_STRING([--enable-strict],[Enable strict compilation options]), enable_strict=$enableval,
