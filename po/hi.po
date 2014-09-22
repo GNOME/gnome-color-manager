@@ -4,14 +4,15 @@
 #
 # chandan kumar <chandankumar.093047@gmail.com>, 2012.
 # raj <raj>, 2013.
+# rajesh <rajesh>, 2014.
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager&keywords=I18N+L10N\n"
-"POT-Creation-Date: 2013-03-19 20:06+0000\n"
-"PO-Revision-Date: 2013-03-21 14:44+0530\n"
-"Last-Translator: raj <raj>\n"
+"POT-Creation-Date: 2014-09-19 18:20+0000\n"
+"PO-Revision-Date: 2014-09-22 19:03+0630\n"
+"Last-Translator: rajesh <rajesh>\n"
 "Language-Team: Hindi <kde-i18n-doc@kde.org>\n"
 "Language: hi\n"
 "MIME-Version: 1.0\n"
@@ -51,49 +52,74 @@ msgid "_Measure"
 msgstr "मापें (_M)"
 
 #. the color representation
-#: ../data/gcm-picker.ui.h:6
-msgid "XYZ:"
-msgstr "XYZ:"
+#. TRANSLATORS: this the ICC colorspace type
+#: ../data/gcm-picker.ui.h:6 ../src/gcm-viewer.c:689
+msgid "XYZ"
+msgstr "XYZ"
 
 #. Lab is the color representation and D50 is the white point
 #: ../data/gcm-picker.ui.h:8
-msgid "Lab (D50):"
-msgstr "लैब (D50):"
+#| msgid "Lab (D50):"
+msgid "Lab (D50)"
+msgstr "लैब (D50)"
 
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:10
-msgid "Media whitepoint:"
-msgstr "मीडिया श्वेतबिंदु:"
+#| msgid "Media whitepoint:"
+msgid "Media whitepoint"
+msgstr "मीडिया श्वेतबिंदु"
 
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:12
-msgid "Color Temperature:"
-msgstr "रंग का तापमान:"
+#| msgid "Color Temperature:"
+msgid "Color Temperature"
+msgstr "रंग का तापमान"
 
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:14
-msgid "Ambient:"
-msgstr "परिवेश:"
+#| msgid "Ambient:"
+msgid "Ambient"
+msgstr "एम्बिएंट"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#: ../data/gcm-picker.ui.h:16
-msgid "Colorspace:"
-msgstr "रंगस्थान:"
+#. The profile colorspace, e.g. RGB
+#: ../data/gcm-picker.ui.h:16 ../data/gcm-viewer.ui.h:7
+msgid "Colorspace"
+msgstr "रंगस्थान"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
-#: ../data/gcm-picker.ui.h:18
-msgid "RGB:"
-msgstr "आरजीबी:"
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: ../data/gcm-picker.ui.h:18 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:709
+msgid "RGB"
+msgstr "आरजीबी"
 
 #. This shows the error in the conversion to RGB.
 #: ../data/gcm-picker.ui.h:20
-msgid "Error:"
-msgstr "त्रुटि:"
+#| msgid "Error:"
+msgid "Error"
+msgstr "त्रुटि"
 
 #. Expander title, the results from the color picker
 #: ../data/gcm-picker.ui.h:22
 msgid "Results"
 msgstr "परिणाम"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:1
+msgid ""
+"GNOME Color Profile Viewer shows installed color profiles on your system and "
+"allows you to calibrate displays, printers and cameras using a wizard."
+msgstr ""
+"गनोम रंग प्रोफाइल प्रदर्शक आपके तंत्र पर रंग प्रोफाइल संस्थापित करती है और "
+"आपको प्रदर्शन कैलिब्रेट, प्रिंटर और कैमरा विजार्ड के उपयोग से करने देती है."
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+msgid ""
+"This functionality is typically used by GNOME Control Center from the color "
+"panel although can be used on its own."
+msgstr ""
+"यह कार्य खास रूप से गनोम कंट्रोल सेंटर के द्वारा प्रयोग किया जाता है रंग पटल "
+"से हालाँकि इसे खुद प्रयोग किया जा सकता है."
 
 #: ../data/gcm-viewer.desktop.in.h:1 ../data/gcm-viewer.ui.h:1
 msgid "Color Profile Viewer"
@@ -116,11 +142,6 @@ msgstr "युक्ति से एक प्रोफ़ाइल हटा�
 msgid "Profile type"
 msgstr "प्रोफाइल प्रकार"
 
-#. The profile colorspace, e.g. RGB
-#: ../data/gcm-viewer.ui.h:7
-msgid "Colorspace"
-msgstr "रंगस्थान"
-
 #. When the profile was created
 #: ../data/gcm-viewer.ui.h:9
 msgid "Created"
@@ -133,13 +154,14 @@ msgstr "संस्करण"
 
 #. The manufacturer of the profile
 #: ../data/gcm-viewer.ui.h:13
-msgid "Device manufacturer"
-msgstr "उपकरण निर्माता"
+#| msgid "Device manufacturer"
+msgid "Manufacturer"
+msgstr "उत्पादक"
 
 #. The manufacturer of the profile
 #: ../data/gcm-viewer.ui.h:15
-msgid "Device model"
-msgstr "युक्ति मॉडल"
+msgid "Model"
+msgstr "मॉडल"
 
 #. If the profile contains a display correction table
 #: ../data/gcm-viewer.ui.h:17
@@ -153,8 +175,9 @@ msgstr "श्वेत बिंदु"
 
 #. The licence of the profile, normally non-free
 #: ../data/gcm-viewer.ui.h:21
-msgid "License"
-msgstr "लाइसेंस"
+#| msgid "Copyright:"
+msgid "Copyright"
+msgstr "कॉपीराइट"
 
 #. The file size in bytes of the profile
 #: ../data/gcm-viewer.ui.h:23
@@ -192,85 +215,77 @@ msgid "CIE 1931"
 msgstr "सीआईई 1931"
 
 #: ../data/gcm-viewer.ui.h:33
-msgid "This 3D hull is what the profile looks like in Lab space"
-msgstr "यह 3 डी पतवार हैं जो लैब स्थान में प्रोफ़ाइल की तरह लग रहा है"
-
-#: ../data/gcm-viewer.ui.h:34
-msgid "3D Gamut"
-msgstr "3 डी गेमुट"
-
-#: ../data/gcm-viewer.ui.h:35
 msgid "Response out"
 msgstr "बाहरी प्रतिक्रिया"
 
-#: ../data/gcm-viewer.ui.h:36
+#: ../data/gcm-viewer.ui.h:34
 msgid "Response in"
 msgstr "अन्दर की प्रतिक्रिया"
 
-#: ../data/gcm-viewer.ui.h:37
+#: ../data/gcm-viewer.ui.h:35
 msgid ""
 "A tone reproduction curve is the mapping of scene luminance to display "
 "luminance"
 msgstr ""
 "चकासा को प्रदर्शित करने के लिए स्वर प्रजनन वक्र दृश्य चकासा का मानचित्रण हैं."
 
-#: ../data/gcm-viewer.ui.h:38
+#: ../data/gcm-viewer.ui.h:36
 msgid "TRC"
 msgstr "टीआरसी"
 
-#: ../data/gcm-viewer.ui.h:39
+#: ../data/gcm-viewer.ui.h:37
 msgid "Video card out"
 msgstr "वीडियो कार्ड बाहर"
 
-#: ../data/gcm-viewer.ui.h:40
+#: ../data/gcm-viewer.ui.h:38
 msgid "A video card gamma table shows the curves loaded into the display"
 msgstr ""
 " प्रदर्शन में वक्र लोड हो रहा हैं को वीडियो कार्ड गामा तालिका दिखाता है"
 
-#: ../data/gcm-viewer.ui.h:41
+#: ../data/gcm-viewer.ui.h:39
 msgid "VCGT"
 msgstr "VCGT"
 
-#: ../data/gcm-viewer.ui.h:42
+#: ../data/gcm-viewer.ui.h:40
 msgid "Previous Image"
 msgstr " पिछली छवि"
 
 #. This is an example image that is saved in sRGB gamut
-#: ../data/gcm-viewer.ui.h:44
+#: ../data/gcm-viewer.ui.h:42
 msgid "sRGB example"
 msgstr "sRGB उदाहरण"
 
-#: ../data/gcm-viewer.ui.h:45
+#: ../data/gcm-viewer.ui.h:43
 msgid "Next Image"
 msgstr "अगली छवि"
 
-#: ../data/gcm-viewer.ui.h:46
+#: ../data/gcm-viewer.ui.h:44
 msgid "This shows what an image would look like if saved with the profile"
 msgstr ""
 "इससे पता चलता है कि अगर प्रोफ़ाइल के साथ सहेजा गया तो छवि किस तरह दिखेगी "
 
-#: ../data/gcm-viewer.ui.h:47
+#: ../data/gcm-viewer.ui.h:45
 msgid "From sRGB"
 msgstr "sRGB से"
 
-#: ../data/gcm-viewer.ui.h:48
+#: ../data/gcm-viewer.ui.h:46
 msgid "This shows what an image would look like if opened with the profile"
 msgstr ""
 "इससे पता चलता है कि अगर प्रोफ़ाइल के साथ खोला गया तो छवि किस तरह दिखेगी "
 
-#: ../data/gcm-viewer.ui.h:49
+#: ../data/gcm-viewer.ui.h:47
 msgid "To sRGB"
 msgstr "sRGB को"
 
-#: ../data/gcm-viewer.ui.h:50
+#: ../data/gcm-viewer.ui.h:48
 msgid "Named colors are specific colors that are defined in the profile"
 msgstr "नामित रंग एक विशिष्ट रंग है जो प्रोफ़ाइल में परिभाषित किया जाता है."
 
-#: ../data/gcm-viewer.ui.h:51
+#: ../data/gcm-viewer.ui.h:49
 msgid "Named Colors"
 msgstr "नामांकित रंग "
 
-#: ../data/gcm-viewer.ui.h:52
+#: ../data/gcm-viewer.ui.h:50
 msgid ""
 "Metadata is additional information stored in the profile for programs to use."
 msgstr ""
@@ -278,15 +293,15 @@ msgstr ""
 "मेटाडाटा संग्रहीत "
 "है."
 
-#: ../data/gcm-viewer.ui.h:53
+#: ../data/gcm-viewer.ui.h:51
 msgid "Metadata"
 msgstr "मेटाडाटा"
 
-#: ../src/gcm-calibrate-argyll.c:349
+#: ../src/gcm-calibrate-argyll.c:409
 msgid "Getting default parameters"
 msgstr "मूलभूत मापदंडों पाना"
 
-#: ../src/gcm-calibrate-argyll.c:354
+#: ../src/gcm-calibrate-argyll.c:414
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -295,19 +310,19 @@ msgstr ""
 "हार्डवेयर उपकरण के साथ "
 "मापकर करता हैं."
 
-#: ../src/gcm-calibrate-argyll.c:446
+#: ../src/gcm-calibrate-argyll.c:506
 msgid "Reading the patches"
 msgstr "धब्बे को पढ़ें"
 
-#: ../src/gcm-calibrate-argyll.c:451
+#: ../src/gcm-calibrate-argyll.c:511
 msgid "Reading the patches using the color measuring instrument."
 msgstr "रंग माप उपकरण का उपयोग करते हुए धब्बे को पढ़ें"
 
-#: ../src/gcm-calibrate-argyll.c:555
+#: ../src/gcm-calibrate-argyll.c:615
 msgid "Drawing the patches"
 msgstr "धब्बे पर आरेखण बनायें"
 
-#: ../src/gcm-calibrate-argyll.c:560
+#: ../src/gcm-calibrate-argyll.c:620
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
@@ -315,51 +330,51 @@ msgstr ""
 "स्क्रीन पर उत्पन्न धब्बे का आरेखण बनायें, जो बाद में हार्डवेयर उपकरण द्वारा "
 "मापा जाता हैं."
 
-#: ../src/gcm-calibrate-argyll.c:659 ../src/gcm-calibrate-argyll.c:1020
+#: ../src/gcm-calibrate-argyll.c:719 ../src/gcm-calibrate-argyll.c:1081
 msgid "Generating the profile"
 msgstr "प्रोफ़ाइल उत्पन्न करें"
 
-#: ../src/gcm-calibrate-argyll.c:664
+#: ../src/gcm-calibrate-argyll.c:724
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr ""
 "आईसीसी रंग प्रोफाइल को उत्पन्न करें जो इस स्क्रीन के साथ इस्तेमाल किया जा "
 "सकता है."
 
-#: ../src/gcm-calibrate-argyll.c:834
+#: ../src/gcm-calibrate-argyll.c:895
 msgid "Copying files"
 msgstr "फाइलों की नक़ल करें"
 
-#: ../src/gcm-calibrate-argyll.c:839
+#: ../src/gcm-calibrate-argyll.c:900
 msgid "Copying source image, chart data and CIE reference values."
 msgstr "स्रोत छवि, चार्ट डेटा और CIE संदर्भ मानों की नक़ल करें."
 
-#: ../src/gcm-calibrate-argyll.c:910
+#: ../src/gcm-calibrate-argyll.c:971
 msgid "Measuring the patches"
 msgstr "धब्बे को मापें"
 
-#: ../src/gcm-calibrate-argyll.c:915
+#: ../src/gcm-calibrate-argyll.c:976
 msgid "Detecting the reference patches and measuring them."
 msgstr "संदर्भ धब्बे का पता लगायें और उन्हें मापें."
 
-#: ../src/gcm-calibrate-argyll.c:1025
+#: ../src/gcm-calibrate-argyll.c:1086
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr ""
 "आईसीसी रंग प्रोफाइल को उत्पन्न करें जो इस युक्ति के साथ इस्तेमाल किया जा सकता "
 "है."
 
-#: ../src/gcm-calibrate-argyll.c:1390
+#: ../src/gcm-calibrate-argyll.c:1451
 msgid "Printing patches"
 msgstr "धब्बे को मुद्रित करें."
 
-#: ../src/gcm-calibrate-argyll.c:1395
+#: ../src/gcm-calibrate-argyll.c:1456
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "चयनित कागज और स्याही के लिए धब्बे का प्रतिपादन करें."
 
-#: ../src/gcm-calibrate-argyll.c:1769
+#: ../src/gcm-calibrate-argyll.c:1837
 msgid "Wait for the ink to dry"
 msgstr "स्याही के सूखने तक इंतजार करें."
 
-#: ../src/gcm-calibrate-argyll.c:1774
+#: ../src/gcm-calibrate-argyll.c:1842
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -368,41 +383,41 @@ msgstr ""
 "ख़राब प्रोफ़ाइल का "
 "उत्पादन होगा और आपके रंग माप उपकरण को नुकसान पंहुचा सकता है."
 
-#: ../src/gcm-calibrate-argyll.c:1951
+#: ../src/gcm-calibrate-argyll.c:2019
 msgid "Set up instrument"
 msgstr "उपकरण सेट करें"
 
-#: ../src/gcm-calibrate-argyll.c:1956
+#: ../src/gcm-calibrate-argyll.c:2024
 msgid "Setting up the instrument for use…"
 msgstr "उपयोग करने के लिए उपकरण को सेट करें."
 
-#: ../src/gcm-calibrate-argyll.c:2168 ../src/gcm-calibrate-argyll.c:2234
+#: ../src/gcm-calibrate-argyll.c:2234 ../src/gcm-calibrate-argyll.c:2300
 msgid "Calibration error"
 msgstr "अंशांकन त्रुटि"
 
-#: ../src/gcm-calibrate-argyll.c:2173
+#: ../src/gcm-calibrate-argyll.c:2239
 msgid "The sample could not be read at this time."
 msgstr "नमूना को इस समय पढ़ा नहीं जा सकता हैं."
 
-#: ../src/gcm-calibrate-argyll.c:2180 ../src/gcm-calibrate-argyll.c:2305
-#: ../src/gcm-calibrate-argyll.c:2331 ../src/gcm-calibrate-argyll.c:2368
-#: ../src/gcm-calibrate-argyll.c:2395
+#: ../src/gcm-calibrate-argyll.c:2246 ../src/gcm-calibrate-argyll.c:2371
+#: ../src/gcm-calibrate-argyll.c:2397 ../src/gcm-calibrate-argyll.c:2434
+#: ../src/gcm-calibrate-argyll.c:2461
 msgid "Retry"
 msgstr "फिर कोशिश करें"
 
 #. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2186 ../src/gcm-calibrate-argyll.c:2274
-#: ../src/gcm-calibrate-argyll.c:2311 ../src/gcm-calibrate-argyll.c:2337
-#: ../src/gcm-calibrate.c:440 ../src/gcm-calibrate.c:480
-#: ../src/gcm-calibrate.c:521 ../src/gcm-calibrate-main.c:203
+#: ../src/gcm-calibrate-argyll.c:2252 ../src/gcm-calibrate-argyll.c:2340
+#: ../src/gcm-calibrate-argyll.c:2377 ../src/gcm-calibrate-argyll.c:2403
+#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
+#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
 msgid "GNOME Color Manager"
 msgstr "गनोम रंग प्रबंधक"
 
-#: ../src/gcm-calibrate-argyll.c:2240
+#: ../src/gcm-calibrate-argyll.c:2306
 msgid "No firmware is installed for this instrument."
 msgstr "कोई फर्मवेयर इस उपकरण के लिए संस्थापित नहीं है."
 
-#: ../src/gcm-calibrate-argyll.c:2245
+#: ../src/gcm-calibrate-argyll.c:2311
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
@@ -410,7 +425,7 @@ msgstr ""
 "स्वरूप का मिलान काफी अच्छा नहीं था.सुनिश्चित करें कि आपने लक्ष्य के सही "
 "प्रकार को चुना है."
 
-#: ../src/gcm-calibrate-argyll.c:2251
+#: ../src/gcm-calibrate-argyll.c:2317
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
@@ -419,7 +434,7 @@ msgstr ""
 "तरह से खुला "
 "है."
 
-#: ../src/gcm-calibrate-argyll.c:2256
+#: ../src/gcm-calibrate-argyll.c:2322
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -428,35 +443,35 @@ msgstr ""
 "और इस उपकरण "
 "का उपयोग करने की कोशिश करने से पहले पुनः डालें."
 
-#: ../src/gcm-calibrate-argyll.c:2294
+#: ../src/gcm-calibrate-argyll.c:2360
 msgid "Reading target"
 msgstr "लक्ष्य को पढ़ें"
 
-#: ../src/gcm-calibrate-argyll.c:2299
+#: ../src/gcm-calibrate-argyll.c:2365
 msgid "Failed to read the strip correctly."
 msgstr "पट्टी को सही ढंग से पढ़ने में असफल."
 
-#: ../src/gcm-calibrate-argyll.c:2320
+#: ../src/gcm-calibrate-argyll.c:2386
 msgid "Reading sample"
 msgstr "नमूना पढ़ें"
 
-#: ../src/gcm-calibrate-argyll.c:2325
+#: ../src/gcm-calibrate-argyll.c:2391
 msgid "Failed to read the color sample correctly."
 msgstr "नमूना रंग को सही ढंग से पढ़ने में असफल."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2350
+#: ../src/gcm-calibrate-argyll.c:2416
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "%s के बजाय %s पट्टी को पढ़ें!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2355
+#: ../src/gcm-calibrate-argyll.c:2421
 msgid "It looks like you've measured the wrong strip."
 msgstr "ऐसा लगता है कि आपने गलत पट्टी मापा है."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2359
+#: ../src/gcm-calibrate-argyll.c:2425
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
@@ -464,22 +479,22 @@ msgstr ""
 "यदि आप वास्तव में सही से मापा है, तो यह ठीक है, यह सिर्फ एक असामान्य कागज हो "
 "सकता है."
 
-#: ../src/gcm-calibrate-argyll.c:2384
+#: ../src/gcm-calibrate-argyll.c:2450
 msgid "Device Error"
 msgstr "उपकरण त्रुटि"
 
-#: ../src/gcm-calibrate-argyll.c:2389
+#: ../src/gcm-calibrate-argyll.c:2455
 msgid "The device could not measure the color spot correctly."
 msgstr "युक्ति रंग स्पॉट को सही ढंग से नहीं नाप सकता है."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2403
+#: ../src/gcm-calibrate-argyll.c:2469
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "पट्टी %s को पढ़ने के लिए तैयार"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2408
+#: ../src/gcm-calibrate-argyll.c:2474
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
@@ -488,7 +503,7 @@ msgstr ""
 "के स्विच पकड़ कर रखें."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2412
+#: ../src/gcm-calibrate-argyll.c:2478
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -498,7 +513,7 @@ msgstr ""
 "अंत मिल जाता हैं. "
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2416
+#: ../src/gcm-calibrate-argyll.c:2482
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -507,7 +522,7 @@ msgstr ""
 "किया है."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2420
+#: ../src/gcm-calibrate-argyll.c:2486
 msgid ""
 "If you make a mistake, just release the switch, and you'll get a chance to "
 "try again."
@@ -516,37 +531,36 @@ msgstr ""
 "आपको एक "
 "और मौका मिल जाएगा"
 
-#: ../src/gcm-calibrate-argyll.c:2534
+#: ../src/gcm-calibrate-argyll.c:2600
 msgid "Printing"
 msgstr "छप रहा है"
 
-#: ../src/gcm-calibrate-argyll.c:2543
+#: ../src/gcm-calibrate-argyll.c:2609
 msgid "Preparing the data for the printer."
 msgstr "प्रिंटर के लिए डाटा तैयार करें."
 
-#: ../src/gcm-calibrate-argyll.c:2551
+#: ../src/gcm-calibrate-argyll.c:2617
 msgid "Sending the targets to the printer."
 msgstr "मुद्रक के पास लक्ष्य को भेंजें."
 
-#: ../src/gcm-calibrate-argyll.c:2557
-#| msgid "Printing the targets..."
+#: ../src/gcm-calibrate-argyll.c:2623
 msgid "Printing the targets…"
 msgstr "लक्ष्य छप रहा हैं…"
 
-#: ../src/gcm-calibrate-argyll.c:2563
+#: ../src/gcm-calibrate-argyll.c:2629
 msgid "The printing has finished."
 msgstr "मुद्रण समाप्त हो गया है."
 
-#: ../src/gcm-calibrate-argyll.c:2569
+#: ../src/gcm-calibrate-argyll.c:2635
 msgid "The print was aborted."
 msgstr "मुद्रण रोका गया था"
 
-#: ../src/gcm-calibrate.c:408
+#: ../src/gcm-calibrate.c:404
 msgid "Please attach instrument"
 msgstr "कृपया उपकरण संलग्न करें"
 
 #. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate.c:417
+#: ../src/gcm-calibrate.c:413
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square like the image below."
@@ -555,82 +569,89 @@ msgstr ""
 "संलग्न करें."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate.c:420
+#: ../src/gcm-calibrate.c:416
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square."
 msgstr "कृपया भूरे वर्ग के स्क्रीन के केंद्र के लिए माप उपकरण संलग्न करें."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate.c:427
+#: ../src/gcm-calibrate.c:423
 msgid ""
 "You will need to hold the device on the screen for the duration of the "
 "calibration."
 msgstr "आपको अंशांकन की अवधि के लिए स्क्रीन युक्ति पर पकड़ की आवश्यकता होगी."
 
-#: ../src/gcm-calibrate.c:434 ../src/gcm-calibrate.c:463
-#: ../src/gcm-calibrate.c:504
+#: ../src/gcm-calibrate.c:430 ../src/gcm-calibrate.c:459
+#: ../src/gcm-calibrate.c:500
 msgid "Continue"
 msgstr "जारी रखें"
 
-#: ../src/gcm-calibrate.c:456 ../src/gcm-calibrate.c:494
+#: ../src/gcm-calibrate.c:452 ../src/gcm-calibrate.c:490
 msgid "Please configure instrument"
 msgstr "उपकरण कॉन्फ़िगर करें"
 
-#: ../src/gcm-calibrate.c:467
+#: ../src/gcm-calibrate.c:463
 msgid ""
 "Please set the measuring instrument to screen mode like the image below."
 msgstr "कृपया नीचे दी गई छवि की तरह स्क्रीन मोड पर माप उपकरण सेट करें "
 
-#: ../src/gcm-calibrate.c:472
+#: ../src/gcm-calibrate.c:468
 msgid "Please set the measuring instrument to screen mode."
 msgstr "कृपया स्क्रीन मोड पर माप उपकरण सेट करें "
 
-#: ../src/gcm-calibrate.c:508
+#: ../src/gcm-calibrate.c:504
 msgid ""
 "Please set the measuring instrument to calibration mode like the image below."
 msgstr "कृपया नीचे दी गई छवि की तरह अंशांकन मोड पर माप उपकरण सेट करें "
 
-#: ../src/gcm-calibrate.c:513
+#: ../src/gcm-calibrate.c:509
 msgid "Please set the measuring instrument to calibration mode."
 msgstr "कृपया अंशांकन मोड पर माप उपकरण सेट करें "
 
 #. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
 #. * aquired image of the calibration target, e.g. an image file that looks
 #. * a bit like this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:681
+#: ../src/gcm-calibrate.c:677
 msgid "Select calibration target image"
 msgstr "अंशांकन लक्षित छवि का चयन करें"
 
+#: ../src/gcm-calibrate.c:679 ../src/gcm-calibrate.c:724
+#: ../src/gcm-calibrate.c:819 ../src/gcm-viewer.c:442
+msgid "_Cancel"
+msgstr "रद्द करें (_C)"
+
+#: ../src/gcm-calibrate.c:680 ../src/gcm-calibrate.c:725
+#: ../src/gcm-calibrate.c:820
+#| msgid "Open"
+msgid "_Open"
+msgstr "खोलें (_O)"
+
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:694
+#: ../src/gcm-calibrate.c:690
 msgid "Supported images files"
 msgstr "समर्थित चित्र फ़ाइलें"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:701 ../src/gcm-calibrate.c:755
-#: ../src/gcm-viewer.c:476
+#: ../src/gcm-calibrate.c:697 ../src/gcm-calibrate.c:751
+#: ../src/gcm-viewer.c:468
 msgid "All files"
 msgstr "सभी फ़ाइलें"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:726
+#: ../src/gcm-calibrate.c:722
 msgid "Select CIE reference values file"
 msgstr "CIE संदर्भ मानों फ़ाइल का चयन करें"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:748
+#: ../src/gcm-calibrate.c:744
 msgid "CIE values"
 msgstr "CIE मान"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:821 ../src/gcm-viewer.c:448
+#: ../src/gcm-calibrate.c:817 ../src/gcm-viewer.c:440
 msgid "Select ICC Profile File"
 msgstr "आईसीसी प्रोफाइल फ़ाइल का चयन करें"
-
-#: ../src/gcm-calibrate.c:824
-msgid "Open"
-msgstr "खोलें"
 
 #: ../src/gcm-calibrate-main.c:147
 msgid "Calibration is not complete"
@@ -654,32 +675,32 @@ msgid "Profiling completed"
 msgstr "प्रोफाइलिंग पूरा किया"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:456 ../src/gcm-calibrate-main.c:1885
+#: ../src/gcm-calibrate-main.c:456 ../src/gcm-calibrate-main.c:1940
 msgid "Failed to calibrate"
 msgstr "कैलिब्रेट करने में विफल"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:719
+#: ../src/gcm-calibrate-main.c:728
 msgid "Calibrate your camera"
 msgstr "अपने कैमरा को कैलिब्रेट करें."
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:723
+#: ../src/gcm-calibrate-main.c:732
 msgid "Calibrate your display"
 msgstr "अपने प्रदर्शन को कैलिब्रेट करें."
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:727
+#: ../src/gcm-calibrate-main.c:736
 msgid "Calibrate your printer"
 msgstr "अपने प्रिंटर को कैलिब्रेट करें."
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:731
+#: ../src/gcm-calibrate-main.c:740
 msgid "Calibrate your device"
 msgstr "अपने युक्ति को कैलिब्रेट करें."
 
 #. TRANSLATORS: this is the final intro page text
-#: ../src/gcm-calibrate-main.c:743
+#: ../src/gcm-calibrate-main.c:752
 msgid ""
 "Any existing screen correction will be temporarily turned off and the "
 "brightness set to maximum."
@@ -689,50 +710,50 @@ msgstr ""
 "कर दिया जायेगा."
 
 #. TRANSLATORS: this is the final intro page text
-#: ../src/gcm-calibrate-main.c:750
+#: ../src/gcm-calibrate-main.c:759
 msgid "You can cancel this process at any stage by pressing the cancel button."
 msgstr "आपको किसी भी स्तर पर रद्द बटन दबाकर इस प्रक्रिया को रद्द कर सकते हैं."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:756
+#: ../src/gcm-calibrate-main.c:765
 msgid "Introduction"
 msgstr "परिचय"
 
-#: ../src/gcm-calibrate-main.c:840
+#: ../src/gcm-calibrate-main.c:859
 msgid "Show File"
 msgstr "फ़ाइल दिखाएँ"
 
-#: ../src/gcm-calibrate-main.c:843
+#: ../src/gcm-calibrate-main.c:862
 msgid "Click here to show the profile"
 msgstr "प्रोफ़ाइल दिखाने के लिए यहाँ क्लिक करें"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:866
+#: ../src/gcm-calibrate-main.c:885
 msgid "All done!"
 msgstr "सब संपन्न!"
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:876
+#: ../src/gcm-calibrate-main.c:895
 msgid "The camera has been calibrated successfully."
 msgstr "कैमरा का व्यास सफलतापूर्वक मापा गया."
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:880
+#: ../src/gcm-calibrate-main.c:899
 msgid "The display has been calibrated successfully."
 msgstr "प्रदर्शन का व्यास सफलतापूर्वक मापा गया."
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:884
+#: ../src/gcm-calibrate-main.c:903
 msgid "The printer has been calibrated successfully."
 msgstr "मुद्रक का व्यास सफलतापूर्वक मापा गया."
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:888
+#: ../src/gcm-calibrate-main.c:907
 msgid "The device has been calibrated successfully."
 msgstr "युक्ति का व्यास सफलतापूर्वक मापा गया."
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:895
+#: ../src/gcm-calibrate-main.c:914
 msgid ""
 "To view details about the new profile or to undo the calibration visit the "
 "<a href=\"control-center://color\">control center</a>."
@@ -741,7 +762,7 @@ msgstr ""
 "<a href="
 "\"control-center://color\">नियंत्रण केंद्र</a> पर जाएँ."
 
-#: ../src/gcm-calibrate-main.c:904
+#: ../src/gcm-calibrate-main.c:923
 msgid ""
 "You can use the profile with <a href=\"import-linux\">Linux</a>, <a href="
 "\"import-osx\">Apple OS X</a> and <a href=\"import-windows\">Microsoft "
@@ -753,31 +774,31 @@ msgstr ""
 "\">माइक्रोसॉफ्टविंडोज</a> तंत्र के साथ."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:916 ../src/gcm-calibrate-main.c:1898
+#: ../src/gcm-calibrate-main.c:935 ../src/gcm-calibrate-main.c:1953
 msgid "Summary"
 msgstr "सारांश"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:940
+#: ../src/gcm-calibrate-main.c:959
 msgid "Performing calibration"
 msgstr "कैलिब्रेशन किया जा रहा है"
 
-#: ../src/gcm-calibrate-main.c:953
+#: ../src/gcm-calibrate-main.c:972
 msgid "Calibration is about to start"
 msgstr "कैलिब्रेशन शुरू होने जा रहा हैं."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:971
+#: ../src/gcm-calibrate-main.c:990
 msgid "Action"
 msgstr "क्रिया"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:994
+#: ../src/gcm-calibrate-main.c:1013
 msgid "Calibration checklist"
 msgstr "कैलिब्रेशन जांचसूची"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1001
+#: ../src/gcm-calibrate-main.c:1020
 msgid ""
 "Before calibrating the display, it is recommended to configure your display "
 "with the following settings to get optimal results."
@@ -787,7 +808,7 @@ msgstr ""
 "परिणाम प्राप्त करने  के लिए कॉन्फ़िगर करने के लिए सिफारिश की करता हैं."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1004
+#: ../src/gcm-calibrate-main.c:1023
 msgid ""
 "You may want to consult the owner's manual for your display on how to "
 "achieve these settings."
@@ -797,17 +818,17 @@ msgstr ""
 "सकते हैं."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:1007
+#: ../src/gcm-calibrate-main.c:1026
 msgid "Reset your display to the factory defaults."
 msgstr "फैक्टरी तयशुदा के लिए अपने प्रदर्शन को रिसेट करें."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:1010
+#: ../src/gcm-calibrate-main.c:1029
 msgid "Disable dynamic contrast if your display has this feature."
 msgstr "अगर आपके प्रदर्शन को यह सुविधा है तो  गतिशील विपरीत अक्षम करें."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:1013
+#: ../src/gcm-calibrate-main.c:1032
 msgid ""
 "Configure your display with custom color settings and ensure the RGB "
 "channels are set to the same values."
@@ -817,18 +838,18 @@ msgstr ""
 "मानों के लिए सेट कर रहे हैं."
 
 #. TRANSLATORS: dialog message, addition to bullet item
-#: ../src/gcm-calibrate-main.c:1016
+#: ../src/gcm-calibrate-main.c:1035
 msgid "If custom color is not available then use a 6500K color temperature."
 msgstr "यदि कस्टम रंग उपलब्ध नहीं है तो 6500K रंग तापमान का उपयोग करें."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:1019
+#: ../src/gcm-calibrate-main.c:1038
 msgid ""
 "Adjust the display brightness to a comfortable level for prolonged viewing."
 msgstr "लंबे समय तक देखने के लिए एक सहज स्तर पर प्रदर्शन चमक समायोजित करें."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate-main.c:1024
+#: ../src/gcm-calibrate-main.c:1043
 msgid ""
 "For best results, the display should have been powered for at least 15 "
 "minutes before starting the calibration."
@@ -838,119 +859,122 @@ msgstr ""
 "संचालित करें."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1030
+#: ../src/gcm-calibrate-main.c:1049
 msgid "Check Settings"
 msgstr "सेटिंग्स की जाँच करें"
 
-#: ../src/gcm-calibrate-main.c:1081
+#: ../src/gcm-calibrate-main.c:1100
 msgid "Calibration and profiling software is not installed."
 msgstr "कैलिब्रेशन और रूपरेखा सॉफ्टवेयर संस्थापित नहीं है."
 
-#: ../src/gcm-calibrate-main.c:1084
+#: ../src/gcm-calibrate-main.c:1103
 msgid "These tools are required to build color profiles for devices."
 msgstr "उपकरणों के लिए रंग प्रोफाइल बनाने के लिए इन औज़ारों की आवश्यकता हैं."
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1087
+#: ../src/gcm-calibrate-main.c:1106
 msgid "More software is required!"
 msgstr "अधिक सॉफ्टवेयर की आवश्यकता है!"
 
-#: ../src/gcm-calibrate-main.c:1096
+#: ../src/gcm-calibrate-main.c:1115
 msgid "Install required software"
 msgstr "आवश्यक सॉफ्टवेयर स्थापित"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1106
+#: ../src/gcm-calibrate-main.c:1125
 msgid "Install Tools"
 msgstr "उपकरण स्थापित करें."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate-main.c:1156
+#: ../src/gcm-calibrate-main.c:1175
 msgid "Common color target files are not installed on this computer."
 msgstr "आम रंग लक्षित फ़ाइलें इस कंप्यूटर पर संस्थापित नहीं हैं."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate-main.c:1158
+#: ../src/gcm-calibrate-main.c:1177
 msgid "Color target files are needed to convert the image to a color profile."
 msgstr "रंग प्रोफ़ाइल छवि को बदलने के लिए रंग लक्षित फाइल की जरूरत है."
 
 #. TRANSLATORS: dialog message, asking if it's okay to install them
-#: ../src/gcm-calibrate-main.c:1160
+#: ../src/gcm-calibrate-main.c:1179
 msgid "Do you want them to be installed?"
 msgstr "क्या आप उन्हें संस्थापित किया जाना चहिए?"
 
 #. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
-#: ../src/gcm-calibrate-main.c:1162
+#: ../src/gcm-calibrate-main.c:1181
 msgid "If you already have the correct file, you can skip this step."
 msgstr "यदि आप के पास पहले से ही सही फ़ाइल है, तो आप इस चरण को छोड़ सकते हैं."
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1165
+#: ../src/gcm-calibrate-main.c:1184
 msgid "Optional data files available"
 msgstr "वैकल्पिक डाटा फाइलें उपलब्ध "
 
-#: ../src/gcm-calibrate-main.c:1174
+#: ../src/gcm-calibrate-main.c:1193
 msgid "Install Now"
 msgstr "अभी संस्थापित करें"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1185
+#: ../src/gcm-calibrate-main.c:1204
 msgid "Install Targets"
 msgstr "लक्ष्य स्थापित करें"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1205
+#: ../src/gcm-calibrate-main.c:1224
 msgid "CMP Digital Target 3"
 msgstr "सीएमपी डिजिटल लक्ष्य 3"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1209
+#: ../src/gcm-calibrate-main.c:1228
 msgid "CMP DT 003"
 msgstr "सीएमपी डीटी 003"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1213
-msgid "Color Checker"
-msgstr "रंग परीक्षक"
+#: ../src/gcm-calibrate-main.c:1232
+#| msgid "Color Checker"
+msgid "ColorChecker"
+msgstr "ColorChecker"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1217
-msgid "Color Checker DC"
-msgstr "रंग परीक्षक डीसी"
+#: ../src/gcm-calibrate-main.c:1236
+#| msgid "Color Checker DC"
+msgid "ColorChecker DC"
+msgstr "ColorChecker DC"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1221
-msgid "Color Checker SG"
+#: ../src/gcm-calibrate-main.c:1240
+#| msgid "Color Checker SG"
+msgid "ColorChecker SG"
 msgstr "रंग परीक्षक एसजी"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1225
+#: ../src/gcm-calibrate-main.c:1244
 msgid "Hutchcolor"
 msgstr "Hutchcolor"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1229
+#: ../src/gcm-calibrate-main.c:1248
 msgid "i1 RGB Scan 1.4"
 msgstr "i1 आरजीबी स्कैन 1.4 "
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1233
+#: ../src/gcm-calibrate-main.c:1252
 msgid "IT8.7/2"
 msgstr "IT8.7/2"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1237
+#: ../src/gcm-calibrate-main.c:1256
 msgid "Laser Soft DC Pro"
 msgstr "लेजर सॉफ्ट डीसी प्रो"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1241
+#: ../src/gcm-calibrate-main.c:1260
 msgid "QPcard 201"
 msgstr "QPcard 201"
 
 #. TRANSLATORS: dialog message, preface. A calibration target looks like
 #. * this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate-main.c:1319
+#: ../src/gcm-calibrate-main.c:1338
 msgid ""
 "Before profiling the device, you have to manually capture an image of a "
 "calibration target and save it as a TIFF image file."
@@ -960,7 +984,7 @@ msgstr ""
 "छवि फ़ाइल के रूप में सहेजें."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1324
+#: ../src/gcm-calibrate-main.c:1343
 msgid ""
 "Ensure that the contrast and brightness are not changed and color correction "
 "profiles have not been applied."
@@ -969,7 +993,7 @@ msgstr ""
 "नहीं हैं."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate-main.c:1327
+#: ../src/gcm-calibrate-main.c:1346
 msgid ""
 "The device sensor should have been cleaned prior to scanning and the output "
 "file resolution should be at least 200dpi."
@@ -979,7 +1003,7 @@ msgstr ""
 "200dpi होना चाहिए."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1333
+#: ../src/gcm-calibrate-main.c:1352
 msgid ""
 "Ensure that the white-balance has not been modified by the camera and that "
 "the lens is clean."
@@ -987,58 +1011,74 @@ msgstr ""
 "सुनिश्चित करें कि कैमरा द्वारा सफेद संतुलन संशोधित नहीं है और वो लेंस साफ है."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1337
+#: ../src/gcm-calibrate-main.c:1356
 msgid "Please select the calibration target type."
 msgstr "अंशांकन लक्ष्य प्रकार का चयन करें."
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1340
+#: ../src/gcm-calibrate-main.c:1359
 msgid "What target type do you have?"
 msgstr "आपके पास लक्ष्य प्रकार क्या हैं?"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1372
+#: ../src/gcm-calibrate-main.c:1391
 msgid "Select Target"
 msgstr "लक्ष्य का चयन करें"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1411
+#: ../src/gcm-calibrate-main.c:1430
 msgid "Choose your display type"
 msgstr "अपना प्रदर्शन प्रकार चुनें"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1418
+#: ../src/gcm-calibrate-main.c:1437
 msgid "Select the monitor type that is attached to your computer."
 msgstr "मॉनिटर प्रकार जो कंप्यूटर से जुड़ा हुआ है का चयन करें"
 
-#: ../src/gcm-calibrate-main.c:1420
-msgid "LCD"
-msgstr "एलसीडी"
+#: ../src/gcm-calibrate-main.c:1439
+msgid "LCD (CCFL backlight)"
+msgstr "LCD (CCFL बैकलाइट)"
 
-#: ../src/gcm-calibrate-main.c:1429
+#: ../src/gcm-calibrate-main.c:1448
+msgid "LCD (White LED backlight)"
+msgstr "LCD (सफेद LED बैकलाइट)"
+
+#: ../src/gcm-calibrate-main.c:1457
+msgid "LCD (RGB LED backlight)"
+msgstr "LCD (RGB LED बैकलाइट)"
+
+#: ../src/gcm-calibrate-main.c:1466
+msgid "LCD (Wide Gamut RGB LED backlight)"
+msgstr "LCD (Wide Gamut RGB LED बैकलाइट)"
+
+#: ../src/gcm-calibrate-main.c:1475
+msgid "LCD (Wide Gamut CCFL backlight)"
+msgstr "LCD (Wide Gamut CCFL बैकलाइट)"
+
+#: ../src/gcm-calibrate-main.c:1484
 msgid "CRT"
 msgstr "CRT"
 
-#: ../src/gcm-calibrate-main.c:1438
+#: ../src/gcm-calibrate-main.c:1493
 msgid "Plasma"
 msgstr "प्लासमा"
 
-#: ../src/gcm-calibrate-main.c:1447
+#: ../src/gcm-calibrate-main.c:1502
 msgid "Projector"
 msgstr "प्रोजेक्टर"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1459
+#: ../src/gcm-calibrate-main.c:1514
 msgid "Choose Display Type"
 msgstr "प्रदर्शन प्रकार चुनें"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1497
+#: ../src/gcm-calibrate-main.c:1552
 msgid "Choose your display target white point"
 msgstr "अपना प्रदर्शन लक्ष्य सफेद बिंदु चुनें"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1504
+#: ../src/gcm-calibrate-main.c:1559
 msgid ""
 "Most displays should be calibrated to a CIE D65 illuminant for general usage."
 msgstr ""
@@ -1046,38 +1086,38 @@ msgstr ""
 "जाना "
 "चाहिए."
 
-#: ../src/gcm-calibrate-main.c:1506
+#: ../src/gcm-calibrate-main.c:1561
 msgid "CIE D50 (Printing and publishing)"
 msgstr "CIE D50 (मुद्रण और प्रकाशन)"
 
-#: ../src/gcm-calibrate-main.c:1515
+#: ../src/gcm-calibrate-main.c:1570
 msgid "CIE D55"
 msgstr "सीआईई D55"
 
-#: ../src/gcm-calibrate-main.c:1524
+#: ../src/gcm-calibrate-main.c:1579
 msgid "CIE D65 (Photography and graphics)"
 msgstr "CIE D65 (फोटोग्राफी और ग्राफिक्स)"
 
-#: ../src/gcm-calibrate-main.c:1534
+#: ../src/gcm-calibrate-main.c:1589
 msgid "CIE D75"
 msgstr "CIE D75"
 
-#: ../src/gcm-calibrate-main.c:1543
+#: ../src/gcm-calibrate-main.c:1598
 msgid "Native (Already set manually)"
 msgstr "मूल (पहले से ही अपने आप निर्धारित)"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1555
+#: ../src/gcm-calibrate-main.c:1610
 msgid "Choose Display Whitepoint"
 msgstr "प्रदर्शन श्वेतबिंदु चुनें"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1593
+#: ../src/gcm-calibrate-main.c:1648
 msgid "Choose profiling mode"
 msgstr "रूपरेखा मोड चुनें"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1600
+#: ../src/gcm-calibrate-main.c:1655
 msgid ""
 "Please indicate if you want to profile a local printer, generate some test "
 "patches, or profile using existing test patches."
@@ -1087,23 +1127,23 @@ msgstr ""
 "कर कुछ परीक्षण पैच, या प्रोफ़ाइल उत्पन्न करते हैं."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1637
+#: ../src/gcm-calibrate-main.c:1692
 msgid "Calibration Mode"
 msgstr "अंशांकन मोड"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1679
+#: ../src/gcm-calibrate-main.c:1734
 msgid "Choose calibration quality"
 msgstr "अंशांकन गुणवत्ता चुनें"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1686
+#: ../src/gcm-calibrate-main.c:1741
 msgid "Higher quality calibration requires many color samples and more time."
 msgstr ""
 "उच्च गुणवत्ता अंशांकन के लिए कई रंग के नमूने और अधिक समय की आवश्यकता है."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1690
+#: ../src/gcm-calibrate-main.c:1745
 msgid ""
 "A higher precision profile provides higher accuracy in color matching but "
 "requires more time for reading the color patches."
@@ -1113,37 +1153,37 @@ msgstr ""
 "को पढ़ने के लिए अधिक समय की आवश्यकता है."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1693
+#: ../src/gcm-calibrate-main.c:1748
 msgid "For a typical workflow, a normal precision profile is sufficient."
 msgstr "विशिष्ट वर्कफ़्लो के लिए, एक सामान्य परिशुद्धता प्रोफ़ाइल पर्याप्त है."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1698
+#: ../src/gcm-calibrate-main.c:1753
 msgid "The high precision profile also requires more paper and printer ink."
 msgstr ""
 "उच्च परिशुद्धता प्रोफ़ाइल को भी अधिक कागज और प्रिंटर स्याही की आवश्यकता है."
 
 #. TRANSLATORS: radio options for calibration precision
-#: ../src/gcm-calibrate-main.c:1703
+#: ../src/gcm-calibrate-main.c:1758
 msgid "Accurate"
 msgstr "सटीक"
 
-#: ../src/gcm-calibrate-main.c:1704
+#: ../src/gcm-calibrate-main.c:1759
 msgid "Normal"
 msgstr "सामान्य"
 
-#: ../src/gcm-calibrate-main.c:1705
+#: ../src/gcm-calibrate-main.c:1760
 msgid "Quick"
 msgstr "जल्दी"
 
-#: ../src/gcm-calibrate-main.c:1712
+#: ../src/gcm-calibrate-main.c:1767
 #, c-format
 msgid "(about %i sheet of paper)"
 msgid_plural "(about %i sheets of paper)"
 msgstr[0] "(कागज के शीट %i के बारे में)"
 msgstr[1] "(कागज के शीट %i के बारे में)"
 
-#: ../src/gcm-calibrate-main.c:1723
+#: ../src/gcm-calibrate-main.c:1778
 #, c-format
 msgid "(about %i minute)"
 msgid_plural "(about %i minutes)"
@@ -1151,85 +1191,85 @@ msgstr[0] "(लगभग %i मिनट )"
 msgstr[1] "(लगभग %i मिनट )"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1764
+#: ../src/gcm-calibrate-main.c:1819
 msgid "Calibration Quality"
 msgstr "अंशांकन गुणवत्ता"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1800
+#: ../src/gcm-calibrate-main.c:1855
 msgid "Profile title"
 msgstr "प्रोफाइल शीर्षक"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1807
+#: ../src/gcm-calibrate-main.c:1862
 msgid "Choose a title to identify the profile on your system."
 msgstr "अपने तंत्र पर प्रोफ़ाइल की पहचान करने के लिए एक शीर्षक चुनें."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1828
+#: ../src/gcm-calibrate-main.c:1883
 msgid "Profile Title"
 msgstr "प्रोफाइल शीर्षक"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1850
+#: ../src/gcm-calibrate-main.c:1905
 msgid "Insert sensor hardware"
 msgstr "सेंसर हार्डवेयर सम्मिलित करें"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1857
+#: ../src/gcm-calibrate-main.c:1912
 msgid "You need to insert sensor hardware to continue."
 msgstr "आपको सेंसर हार्डवेयर सम्मिलित करने के लिए जारी रखने की जरूरत है."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1863
+#: ../src/gcm-calibrate-main.c:1918
 msgid "Sensor Check"
 msgstr "सेंसर की जाँच करें"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1892
+#: ../src/gcm-calibrate-main.c:1947
 msgid "The device could not be found. Ensure it is plugged in and turned on."
 msgstr ""
 "डिवाइस नहीं मिल सका.  सुनिश्चित करें कि यह लगाया गया हैं और चालू किया गया हैं."
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2159
+#: ../src/gcm-calibrate-main.c:2208
 msgid "Unknown serial"
 msgstr "अज्ञात सीरियल"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2164
+#: ../src/gcm-calibrate-main.c:2213
 msgid "Unknown model"
 msgstr "अज्ञात मॉडल"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2169
+#: ../src/gcm-calibrate-main.c:2218
 msgid "Unknown description"
 msgstr "अज्ञात वर्णन"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2174
+#: ../src/gcm-calibrate-main.c:2223
 msgid "Unknown manufacturer"
 msgstr "अज्ञात निर्माता"
 
 #. TRANSLATORS: this is the copyright string, where it might be
 #. * "Copyright (c) 2009 Edward Scissorhands"
 #. * BIG RED FLASHING NOTE: YOU NEED TO USE ASCII ONLY
-#: ../src/gcm-calibrate-main.c:2181
+#: ../src/gcm-calibrate-main.c:2230
 msgid "Copyright (c)"
 msgstr "स्वत्वाधिकार (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2299 ../src/gcm-picker.c:793
-#: ../src/gcm-viewer.c:1850
+#: ../src/gcm-calibrate-main.c:2345 ../src/gcm-picker.c:813
+#: ../src/gcm-viewer.c:1803
 msgid "Set the parent window to make this modal"
 msgstr "इस मोडल बनाने के लिए जनक विंडो सेट करें"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-calibrate-main.c:2302
+#: ../src/gcm-calibrate-main.c:2348
 msgid "Set the specific device to calibrate"
 msgstr "विशिष्ट युक्ति सेट करने के लिए जांचें "
 
-#: ../src/gcm-calibrate-main.c:2343
+#: ../src/gcm-calibrate-main.c:2389
 msgid "No device was specified!"
 msgstr "कोई युक्ति निर्दिष्ट नहीं!"
 
@@ -1238,26 +1278,26 @@ msgstr "कोई युक्ति निर्दिष्ट नहीं!"
 msgid "No profile"
 msgstr "कोई प्रोफ़ाइल नहीं"
 
-#: ../src/gcm-cell-renderer-profile-text.c:88
+#: ../src/gcm-cell-renderer-profile-text.c:87
 #, c-format
 msgid "Default %s"
 msgstr "तयशुदा %s"
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile has been auto-generated for this hardware
-#: ../src/gcm-cell-renderer-profile-text.c:103
+#: ../src/gcm-cell-renderer-profile-text.c:102
 msgid "Default: "
 msgstr "डिफ़ॉल्ट: "
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile his a standard space like AdobeRGB
-#: ../src/gcm-cell-renderer-profile-text.c:108
+#: ../src/gcm-cell-renderer-profile-text.c:107
 msgid "Colorspace: "
 msgstr "रंगस्थान: "
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile is a test profile
-#: ../src/gcm-cell-renderer-profile-text.c:113
+#: ../src/gcm-cell-renderer-profile-text.c:112
 msgid "Test profile: "
 msgstr "टेस्ट प्रोफ़ाइल: "
 
@@ -1283,130 +1323,130 @@ msgstr "आईसीसी प्रोफ़ाइल स्थापित क
 msgid "No filename specified"
 msgstr "कोई फ़ाइल नाम निर्दिष्ट नहीं "
 
-#: ../src/gcm-import.c:145 ../src/gcm-viewer.c:1484
+#: ../src/gcm-import.c:147 ../src/gcm-viewer.c:1447
 msgid "Failed to open ICC profile"
 msgstr "आईसीसी प्रोफ़ाइल खोलने में विफल"
 
-#: ../src/gcm-import.c:150
+#: ../src/gcm-import.c:152
 #, c-format
 msgid "Failed to parse file: %s"
 msgstr "फ़ाइल की व्याख्या करने में असफल: %s"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:171
+#: ../src/gcm-import.c:174
 #, c-format
 msgid "Profile description: %s"
 msgstr "प्रोफ़ाइल वर्णन: %s"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:181
+#: ../src/gcm-import.c:184
 msgid "Profile copyright:"
 msgstr "प्रोफाइल कॉपीराइट:"
 
-#: ../src/gcm-import.c:217
+#: ../src/gcm-import.c:220
 msgid "Color profile is already imported"
 msgstr "रंग प्रोफ़ाइल पहले से ही आयातित है"
 
-#: ../src/gcm-import.c:221 ../src/gcm-import.c:265
+#: ../src/gcm-import.c:224 ../src/gcm-import.c:268
 msgid "Show Details"
 msgstr "विवरण दिखाएँ"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:237
+#: ../src/gcm-import.c:240
 msgid "Import display color profile?"
 msgstr "प्रदर्शित रंग के प्रोफ़ाइल आयात करें?"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:241
+#: ../src/gcm-import.c:244
 msgid "Import device color profile?"
 msgstr "युक्ति रंग के प्रोफ़ाइल आयात करें?"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:245
+#: ../src/gcm-import.c:248
 msgid "Import named color profile?"
 msgstr "रंग प्रोफ़ाइल नाम आयात करें?"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:249
+#: ../src/gcm-import.c:252
 msgid "Import color profile?"
 msgstr "रंग प्रोफ़ाइल आयात करें?"
 
 #. TRANSLATORS: button text
-#: ../src/gcm-import.c:264 ../src/gcm-viewer.c:451
+#: ../src/gcm-import.c:267
 msgid "Import"
 msgstr "आयात"
 
-#: ../src/gcm-import.c:289 ../src/gcm-viewer.c:1517
+#: ../src/gcm-import.c:292 ../src/gcm-viewer.c:1480
 msgid "Failed to import file"
 msgstr "फ़ाइल आयात करने में विफल"
 
 #. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
-#: ../src/gcm-inspect.c:55
+#: ../src/gcm-inspect.c:57
 msgid "Description:"
 msgstr "वर्णनः"
 
 #. TRANSLATORS: this is the ICC profile copyright
-#: ../src/gcm-inspect.c:58
+#: ../src/gcm-inspect.c:60
 msgid "Copyright:"
 msgstr "सर्वाधिकार सुरक्षित:"
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:193
+#: ../src/gcm-inspect.c:195
 msgid "Root window profile:"
 msgstr "रूट विंडो प्रोफ़ाइल:"
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:205
+#: ../src/gcm-inspect.c:207
 msgid "Root window protocol version:"
 msgstr "रूट विंडो प्रोटोकॉल संस्करण:"
 
 #. TRANSLATORS: no DBus session bus
-#: ../src/gcm-inspect.c:230 ../src/gcm-inspect.c:299 ../src/gcm-utils.c:117
+#: ../src/gcm-inspect.c:232 ../src/gcm-inspect.c:301 ../src/gcm-utils.c:118
 msgid "Failed to connect to session bus:"
 msgstr "सत्र बस से कनेक्ट करने में विफल:"
 
 #. TRANSLATORS: the DBus method failed
-#: ../src/gcm-inspect.c:248 ../src/gcm-inspect.c:317 ../src/gcm-utils.c:141
+#: ../src/gcm-inspect.c:250 ../src/gcm-inspect.c:319 ../src/gcm-utils.c:142
 msgid "The request failed:"
 msgstr "निवेदन असफल:"
 
 #. TRANSLATORS: no profile has been asigned to this device
-#: ../src/gcm-inspect.c:257
+#: ../src/gcm-inspect.c:259
 msgid "There are no ICC profiles assigned to this file"
 msgstr "इस फाइल को कोई आईसीसी प्रोफाइल नहीं सौंपा गया."
 
 #. TRANSLATORS: this is a list of profiles suitable for the device
-#: ../src/gcm-inspect.c:262 ../src/gcm-inspect.c:334
+#: ../src/gcm-inspect.c:264 ../src/gcm-inspect.c:336
 msgid "Suitable profiles for:"
 msgstr "उपयुक्त प्रोफाइल:"
 
 #. TRANSLATORS: no profile has been asigned to this window
-#: ../src/gcm-inspect.c:329
+#: ../src/gcm-inspect.c:331
 msgid "There are no ICC profiles for this window"
 msgstr "इस विंडो के लिए कोई आईसीसी प्रोफाइल नहीं हैं."
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:365
+#: ../src/gcm-inspect.c:367
 msgid "Show xserver properties"
 msgstr "Xserver गुणों को दिखाएँ"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:368
+#: ../src/gcm-inspect.c:370
 msgid "Get the profiles for a specific file"
 msgstr "एक विशिष्ट फ़ाइल के लिए प्रोफाइल प्राप्त करें"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:371
+#: ../src/gcm-inspect.c:373
 msgid "Get the profile for a specific window"
 msgstr "विशेष विंडो के लिए प्रोफ़ाइल प्राप्त करें"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:374
+#: ../src/gcm-inspect.c:376
 msgid "Dump all details about this system"
 msgstr "इस प्रणाली के बारे में सभी जानकारी के डंप करें."
 
 #. TRANSLATORS: just dumps the EDID to disk
-#: ../src/gcm-inspect.c:387
+#: ../src/gcm-inspect.c:389
 msgid "EDID inspect program"
 msgstr "EDID निरीक्षण कार्यक्रम "
 
@@ -1414,70 +1454,54 @@ msgstr "EDID निरीक्षण कार्यक्रम "
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:214 ../src/gcm-picker.c:221 ../src/gcm-viewer.c:686
-#: ../src/gcm-viewer.c:736
+#: ../src/gcm-picker.c:218 ../src/gcm-picker.c:225 ../src/gcm-viewer.c:678
+#: ../src/gcm-viewer.c:728
 msgid "Unknown"
 msgstr "अज्ञात"
 
-#: ../src/gcm-picker.c:367
+#: ../src/gcm-picker.c:389
 msgid "No colorimeter is attached."
 msgstr "कोई वर्णमापक जुड़ा हुआ नहीं है."
 
-#: ../src/gcm-picker.c:384
+#: ../src/gcm-picker.c:406
 msgid "The sensor has no native driver."
 msgstr "सेंसर का कोई मूल ड्राइवर नहीं है."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:393
+#: ../src/gcm-picker.c:415
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "संलग्न वर्णमापक एक जगह रंग पढ़ने के लिए सक्षम नहीं है."
 
 #. TRANSLATORS: this is when there are no profiles that can be used;
 #. * the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:646
+#: ../src/gcm-picker.c:666
 #, c-format
 msgid "No %s color spaces available"
 msgstr "कोई भी %s रंग के लिए रिक्त स्थान उपलब्ध नहीं हैं."
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:811
+#: ../src/gcm-picker.c:828
 msgid "GNOME Color Manager Color Picker"
 msgstr "गनोम रंग प्रबंधक रंगचयनक"
 
-#. TRANSLATORS: this is where the ICC profile has no description
-#: ../src/gcm-profile.c:162
-msgid "Missing description"
-msgstr "विवरण गुम"
-
-#. TRANSLATORS: this is the profile creation date strftime format
-#: ../src/gcm-profile.c:583
-msgid "%B %e %Y, %I:%M:%S %p"
-msgstr "%B %e %Y, %I:%M:%S %p"
-
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:328 ../src/gcm-viewer.c:717
-msgid "RGB"
-msgstr "आरजीबी"
-
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:332 ../src/gcm-viewer.c:729
+#: ../src/gcm-utils.c:333 ../src/gcm-viewer.c:721
 msgid "CMYK"
 msgstr "सीएमवायके"
 
 #. TRANSLATORS: this is the colorspace type
-#: ../src/gcm-utils.c:336
+#: ../src/gcm-utils.c:337
 msgid "gray"
 msgstr "धूसर"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:394
+#: ../src/gcm-viewer.c:386
 msgid "Permanently delete profile?"
 msgstr "स्थायी रूप से प्रोफ़ाइल हटा सकते हैं?"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:397
+#: ../src/gcm-viewer.c:389
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr ""
@@ -1485,306 +1509,341 @@ msgstr ""
 "निकालना चाहते हैं?"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:400
+#: ../src/gcm-viewer.c:392
 msgid "Delete"
 msgstr "मिटाएँ"
 
+#: ../src/gcm-viewer.c:443
+#| msgid "Import"
+msgid "_Import"
+msgstr "आयात करें (_I)"
+
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-viewer.c:469
+#: ../src/gcm-viewer.c:461
 msgid "Supported ICC profiles"
 msgstr "समर्थित आईसीसी प्रोफाइल"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-viewer.c:505
+#: ../src/gcm-viewer.c:497
 msgid "Failed to copy file"
 msgstr "फ़ाइल की प्रतिलिपि बनाने में विफल"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:659
+#: ../src/gcm-viewer.c:651
 msgid "Input device"
 msgstr "इनपुट उपकरण"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:663
+#: ../src/gcm-viewer.c:655
 msgid "Display device"
 msgstr "युक्ति प्रदर्शित करें"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:667
+#: ../src/gcm-viewer.c:659
 msgid "Output device"
 msgstr "आउटपुट उपकरण"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:671
+#: ../src/gcm-viewer.c:663
 msgid "Devicelink"
 msgstr "युक्ति लिंक"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:675
+#: ../src/gcm-viewer.c:667
 msgid "Colorspace conversion"
 msgstr "कलरस्पेस रूपान्तरण"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:679
+#: ../src/gcm-viewer.c:671
 msgid "Abstract"
 msgstr "सार"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:683
+#: ../src/gcm-viewer.c:675
 msgid "Named color"
 msgstr "नामित रंग"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:697
-msgid "XYZ"
-msgstr "XYZ"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:701
+#: ../src/gcm-viewer.c:693
 msgid "LAB"
 msgstr "लैब"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:705
+#: ../src/gcm-viewer.c:697
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:709
+#: ../src/gcm-viewer.c:701
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:713
+#: ../src/gcm-viewer.c:705
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:721
+#: ../src/gcm-viewer.c:713
 msgid "Gray"
 msgstr "धूसर"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:725
+#: ../src/gcm-viewer.c:717
 msgid "HSV"
 msgstr "एचएसवी"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:733
+#: ../src/gcm-viewer.c:725
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: e.g. sRGB or adbode RGB
-#: ../src/gcm-viewer.c:788
+#: ../src/gcm-viewer.c:764
 msgid "Standard space"
 msgstr "मानक स्थान"
 
 #. TRANSLATORS: the raw EDID MD5 of the display device
-#: ../src/gcm-viewer.c:790
+#: ../src/gcm-viewer.c:766
 msgid "Display checksum"
 msgstr "चेकसम प्रदर्शित करें"
 
-#: ../src/gcm-viewer.c:791
+#: ../src/gcm-viewer.c:767
 msgid "Display model"
 msgstr "मॉडल प्रदर्शित करें"
 
-#: ../src/gcm-viewer.c:792
+#: ../src/gcm-viewer.c:768
 msgid "Display serial number"
 msgstr "क्रम संख्या प्रदर्शित करें"
 
 #. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
-#: ../src/gcm-viewer.c:794
+#: ../src/gcm-viewer.c:770
 msgid "Display PNPID"
 msgstr "PNPID प्रदर्शित करें"
 
 #. TRANSLATORS: who made the display
-#: ../src/gcm-viewer.c:796
+#: ../src/gcm-viewer.c:772
 msgid "Display vendor"
 msgstr "विक्रेता प्रदर्शित करें"
 
 #. TRANSLATORS: the raw profile MD5
-#: ../src/gcm-viewer.c:798
+#: ../src/gcm-viewer.c:774
 msgid "File checksum"
 msgstr "फ़ाइल चेकसम"
 
 #. TRANSLATORS: the color framework, e.g. 'colord'
-#: ../src/gcm-viewer.c:800
+#: ../src/gcm-viewer.c:776
 msgid "Framework product"
 msgstr "फ्रेमवर्क उत्पाद"
 
 #. TRANSLATORS: the framework binary, e.g. gcm-viewer
-#: ../src/gcm-viewer.c:802
+#: ../src/gcm-viewer.c:778
 msgid "Framework program"
 msgstr "फ्रेमवर्क कार्यक्रम"
 
 #. TRANSLATORS: the framework release, e.g. '1.22'
-#: ../src/gcm-viewer.c:804
+#: ../src/gcm-viewer.c:780
 msgid "Framework version"
 msgstr "फ्रेमवर्क संस्करण"
 
 #. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
-#: ../src/gcm-viewer.c:806
+#: ../src/gcm-viewer.c:782
 msgid "Data source type"
 msgstr "डेटा स्रोत प्रकार"
 
 #. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
-#: ../src/gcm-viewer.c:808
+#: ../src/gcm-viewer.c:784
 msgid "Mapping format"
 msgstr "मानचित्रण प्रारूप"
 
 #. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
-#: ../src/gcm-viewer.c:810
+#: ../src/gcm-viewer.c:786
 msgid "Mapping qualifier"
 msgstr "मानचित्रण उत्तीर्णकर्ता"
 
 #. TRANSLATORS: The original device the profile was made for
-#: ../src/gcm-viewer.c:812
+#: ../src/gcm-viewer.c:788
 msgid "Mapping device"
 msgstr "मानचित्रण युक्ति"
 
 #. TRANSLATORS: The average error when making the profile
-#: ../src/gcm-viewer.c:814
+#: ../src/gcm-viewer.c:790
 msgid "Delta-E average"
 msgstr "डेल्टा - ई औसत"
 
 #. TRANSLATORS: the maximum error when making the profile
-#: ../src/gcm-viewer.c:816
+#: ../src/gcm-viewer.c:792
 msgid "Delta-E maximum"
 msgstr "डेल्टा - ई अधिकतम"
 
 #. TRANSLATORS: the RMS error when making the profile
-#: ../src/gcm-viewer.c:818
+#: ../src/gcm-viewer.c:794
 msgid "Delta-E RMS"
 msgstr "डेल्टा - ई आरएमएस"
 
 #. TRANSLATORS: The device name, e.g. 'huey'
-#: ../src/gcm-viewer.c:820
+#: ../src/gcm-viewer.c:796
 msgid "Calibration device"
 msgstr "कैलिब्रेशन युक्ति"
 
 #. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
-#: ../src/gcm-viewer.c:822
+#: ../src/gcm-viewer.c:798
 msgid "Screen surface finish"
 msgstr "स्क्रीन की सतह खत्म"
 
 #. TRANSLATORS: e.g. DVI or VGA
-#: ../src/gcm-viewer.c:824
+#: ../src/gcm-viewer.c:800
 msgid "Connection type"
 msgstr "कनेक्शन क़िस्म"
 
 #. TRANSLATORS: e.g. Screen brightness in percent
-#: ../src/gcm-viewer.c:826
+#: ../src/gcm-viewer.c:802
 msgid "Screen brightness"
 msgstr "स्क्रीन चमकीलापन"
 
 #. TRANSLATORS: e.g. the 3D volume of the gamut graph
-#: ../src/gcm-viewer.c:828
+#: ../src/gcm-viewer.c:804
 msgid "Gamut volume"
 msgstr "Gamut आयतन"
 
 #. TRANSLATORS: e.g. what proportion of sRGB is covered
-#: ../src/gcm-viewer.c:830
-#| msgid "sRGB example"
+#: ../src/gcm-viewer.c:806
 msgid "sRGB coverage"
 msgstr "sRGB कवरेज"
 
 #. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
-#: ../src/gcm-viewer.c:832
+#: ../src/gcm-viewer.c:808
 msgid "Adobe RGB coverage"
 msgstr "RGB कवरेज के ऊपर"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:943
-#| msgid "Profile description: %s"
+#: ../src/gcm-viewer.c:919
 msgid "No description has been set"
 msgstr "कोई विवरण नहीं सेट किया गया है"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:947
+#: ../src/gcm-viewer.c:923
 msgid "No copyright has been set"
 msgstr "कोई कॉपीराइट नहीं सेट किया गया है"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:951
+#: ../src/gcm-viewer.c:927
 msgid "The display compensation table is invalid"
 msgstr "प्रदर्शन क्षतिपूर्ति सारणी अमान्य है"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:955
+#: ../src/gcm-viewer.c:931
 msgid "A scum dot is present for media white"
 msgstr "स्कम डॉट मीडिया सफ़ेद के लिए मौजूद है"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:959
+#: ../src/gcm-viewer.c:935
 msgid "The gray axis contains significant amounts of color"
 msgstr "ग्रे एक्सिस में रंग की महत्वपूर्ण मात्रा है"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:963
+#: ../src/gcm-viewer.c:939
 msgid "The gray axis is non-monotonic"
 msgstr "ग्रे एक्सिस मोनो-क्रोमैटिक है"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:967
+#: ../src/gcm-viewer.c:943
 msgid "One or more of the primaries are invalid"
 msgstr "प्राथिमकी का एकाधिक अमान्य है"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:971
+#: ../src/gcm-viewer.c:947
 msgid "The primaries do not add to white"
 msgstr "प्राथमिक सफेद में जुड़ता नहीं है"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:975
+#: ../src/gcm-viewer.c:951
 msgid "One or more of the primaries is unlikely"
 msgstr "एक या अधिक प्राथिमिकी की संभावना नहीं है"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:979
+#: ../src/gcm-viewer.c:955
 msgid "The white is not D50 white"
 msgstr "सफेद D50 सफेद नहीं है"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:983
-#| msgid "Unknown manufacturer"
+#: ../src/gcm-viewer.c:959
+#| msgid "One or more of the primaries is unlikely"
+msgid "The whitepoint temperature is unlikely"
+msgstr "व्बाइटपाइंट तापमान की संभावना नहीं है"
+
+#. TRANSLATORS: the profile is broken
+#: ../src/gcm-viewer.c:963
 msgid "Unknown warning type"
 msgstr "अज्ञात चेतावनी प्रकार"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1146
+#: ../src/gcm-viewer.c:1105
 msgid "Yes"
 msgstr "हाँ"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1149
+#: ../src/gcm-viewer.c:1108
 msgid "No"
 msgstr "नहीं"
 
 #. TRANSLATORS: profiles that have warnings are useable,
 #. * but may not be any good
-#: ../src/gcm-viewer.c:1176
+#: ../src/gcm-viewer.c:1134
 msgid "The profile has the following problems:"
 msgstr "प्रोफ़ाइल में निम्नलिखित समस्या है:"
 
+#. TRANSLATORS: this is the icc creation date strftime format
+#: ../src/gcm-viewer.c:1226
+msgid "%B %e %Y, %I:%M:%S %p"
+msgstr "%B %e %Y, %I:%M:%S %p"
+
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:1290
+#: ../src/gcm-viewer.c:1249
 msgid "Delete this profile"
 msgstr "प्रोफाइल हटायें"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:1293
+#: ../src/gcm-viewer.c:1252
 msgid "This profile cannot be deleted"
 msgstr "इस प्रोफाइल हटाया नहीं जा सकता"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-viewer.c:1853
+#: ../src/gcm-viewer.c:1806
 msgid "Set the specific profile to show"
 msgstr "विशिष्ट प्रोफ़ाइल को दिखाने के लिए सेट करें"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: ../src/gcm-viewer.c:1856
+#: ../src/gcm-viewer.c:1809
 msgid "Set the specific file to show"
 msgstr "विशिष्ट फ़ाइल को दिखाने के लिए सेट करें"
+
+#~ msgid "XYZ:"
+#~ msgstr "XYZ:"
+
+#~ msgid "Colorspace:"
+#~ msgstr "रंगस्थान:"
+
+#~ msgid "RGB:"
+#~ msgstr "आरजीबी:"
+
+#~ msgid "Device model"
+#~ msgstr "युक्ति मॉडल"
+
+#~ msgid "License"
+#~ msgstr "लाइसेंस"
+
+#~ msgid "This 3D hull is what the profile looks like in Lab space"
+#~ msgstr "यह 3 डी पतवार हैं जो लैब स्थान में प्रोफ़ाइल की तरह लग रहा है"
+
+#~ msgid "3D Gamut"
+#~ msgstr "3 डी गेमुट"
+
+#~ msgid "LCD"
+#~ msgstr "एलसीडी"
+
+#~ msgid "Missing description"
+#~ msgstr "विवरण गुम"
 
 #~ msgid ""
 #~ "Could not calibrate and profile using this color measuring instrument"
