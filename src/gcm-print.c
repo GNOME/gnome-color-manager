@@ -140,11 +140,7 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 	}
 
 	/* create a surface of the pixmap */
-	surface = cairo_image_surface_create_for_data (gdk_pixbuf_get_pixels (pixbuf),
-						       CAIRO_FORMAT_RGB24,
-						       gdk_pixbuf_get_width (pixbuf),
-						       gdk_pixbuf_get_height (pixbuf),
-						       gdk_pixbuf_get_rowstride (pixbuf));
+	surface = gdk_cairo_surface_create_from_pixbuf (pixbuf, 1, NULL);
 
 	/* scale image to fill the page, but preserve aspect */
 	scale = MIN (width / gdk_pixbuf_get_width (pixbuf), height / gdk_pixbuf_get_height (pixbuf));
