@@ -2,14 +2,16 @@
 # Copyright (C) 2010 gnome-color-manager's COPYRIGHT HOLDER
 # This file is distributed under the same license as the gnome-color-manager package.
 # narcissus <3006nol@gmail.com>, 2010.
-# Arash Mousavi <mousavi.arash@gmail.com>, 2012, 2013.
+# Arash Mousavi <mousavi.arash@gmail.com>, 2012, 2013, 2014.
+# Danial Behzadi <dani.behzi@ubuntu.com>, 2014.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager gnome-2-32\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager&keywords=I18N+L10N\n"
-"POT-Creation-Date: 2013-09-24 15:46+0000\n"
-"PO-Revision-Date: 2013-10-07 18:16+0330\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
+"color-manager&keywords=I18N+L10N\n"
+"POT-Creation-Date: 2014-05-16 14:09+0000\n"
+"PO-Revision-Date: 2014-10-10 21:44+0330\n"
 "Last-Translator: Arash Mousavi <mousavi.arash@gmail.com>\n"
 "Language-Team: Persian\n"
 "Language: fa\n"
@@ -17,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n!=1);\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Poedit 1.6.9\n"
 "X-Poedit-SourceCharset: UTF-8\n"
 
 #: ../data/gcm-calibrate.desktop.in.h:1
@@ -51,49 +53,70 @@ msgid "_Measure"
 msgstr "_اندازه‌گیری"
 
 #. the color representation
-#: ../data/gcm-picker.ui.h:6
-msgid "XYZ:"
-msgstr "XYZ:"
+#. TRANSLATORS: this the ICC colorspace type
+#: ../data/gcm-picker.ui.h:6 ../src/gcm-viewer.c:689
+msgid "XYZ"
+msgstr "XYZ"
 
 #. Lab is the color representation and D50 is the white point
 #: ../data/gcm-picker.ui.h:8
-msgid "Lab (D50):"
-msgstr "Lab (D50):"
+msgid "Lab (D50)"
+msgstr "Lab (D50)"
 
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:10
-msgid "Media whitepoint:"
-msgstr "نقطه‌سفید رسانه:"
+msgid "Media whitepoint"
+msgstr "نقطه‌سفید رسانه"
 
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:12
-msgid "Color Temperature:"
-msgstr "دما رنگ:"
+msgid "Color Temperature"
+msgstr "دمای رنگ"
 
 #. This refers to the amount of ambient light on the sensor
 #: ../data/gcm-picker.ui.h:14
-msgid "Ambient:"
-msgstr "محیط:"
+msgid "Ambient"
+msgstr "محیط"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#: ../data/gcm-picker.ui.h:16
-msgid "Colorspace:"
-msgstr "فضای رنگ :"
+#. The profile colorspace, e.g. RGB
+#: ../data/gcm-picker.ui.h:16 ../data/gcm-viewer.ui.h:7
+msgid "Colorspace"
+msgstr "فضای رنگ"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
-#: ../data/gcm-picker.ui.h:18
-msgid "RGB:"
-msgstr "RGB:"
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: ../data/gcm-picker.ui.h:18 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:709
+msgid "RGB"
+msgstr "RGB"
 
 #. This shows the error in the conversion to RGB.
 #: ../data/gcm-picker.ui.h:20
-msgid "Error:"
-msgstr "خطا:"
+msgid "Error"
+msgstr "خطا"
 
 #. Expander title, the results from the color picker
 #: ../data/gcm-picker.ui.h:22
 msgid "Results"
 msgstr "نتایج"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:1
+msgid ""
+"GNOME Color Profile Viewer shows installed color profiles on your system and "
+"allows you to calibrate displays, printers and cameras using a wizard."
+msgstr ""
+"نمایشگر مجموعه‌تنظیمات رنگ گنوم، مجموعه‌تنظیمات رنگ نصب‌شده روی سامانه‌ی شما را "
+"نشان می‌دهد و به شما اجازه می‌دهد که نمایشگرها، چاپگرها و دوربین‌ها را با "
+"استفاده از یک جادوگر کالیبره کنید."
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+msgid ""
+"This functionality is typically used by GNOME Control Center from the color "
+"panel although can be used on its own."
+msgstr ""
+"این قابلیت عموماً توسّط مرکز کنترل گنوم در قسمت تابلوی رنگ استفاده می‌شود، با "
+"این‌که می‌تواند به تنهایی نیز استفاده شود."
 
 #: ../data/gcm-viewer.desktop.in.h:1 ../data/gcm-viewer.ui.h:1
 msgid "Color Profile Viewer"
@@ -116,11 +139,6 @@ msgstr "حذف یک مجموعه‌تنظیمات از دستگاه"
 msgid "Profile type"
 msgstr "نوع پروفایل"
 
-#. The profile colorspace, e.g. RGB
-#: ../data/gcm-viewer.ui.h:7
-msgid "Colorspace"
-msgstr "فضای رنگ"
-
 #. When the profile was created
 #: ../data/gcm-viewer.ui.h:9
 msgid "Created"
@@ -133,13 +151,11 @@ msgstr "نسخه"
 
 #. The manufacturer of the profile
 #: ../data/gcm-viewer.ui.h:13
-#| msgid "Manufacturer:"
 msgid "Manufacturer"
 msgstr "تولید کننده"
 
 #. The manufacturer of the profile
 #: ../data/gcm-viewer.ui.h:15
-#| msgid "Model:"
 msgid "Model"
 msgstr "مدل"
 
@@ -155,7 +171,6 @@ msgstr "نقطه سفید"
 
 #. The licence of the profile, normally non-free
 #: ../data/gcm-viewer.ui.h:21
-#| msgid "Copyright:"
 msgid "Copyright"
 msgstr "مجوز"
 
@@ -195,375 +210,433 @@ msgid "CIE 1931"
 msgstr "CIE 1931"
 
 #: ../data/gcm-viewer.ui.h:33
-msgid "This 3D hull is what the profile looks like in Lab space"
-msgstr "این شکل سه بعدی نحوه نمایش مجموعه‌تنظیمات در فضای Lab است"
-
-#: ../data/gcm-viewer.ui.h:34
-msgid "3D Gamut"
-msgstr "وسعت سه بعدی"
-
-#: ../data/gcm-viewer.ui.h:35
 msgid "Response out"
 msgstr "پاسخ خارج"
 
-#: ../data/gcm-viewer.ui.h:36
+#: ../data/gcm-viewer.ui.h:34
 msgid "Response in"
 msgstr "پاسخ داخل"
 
-#: ../data/gcm-viewer.ui.h:37
-msgid "A tone reproduction curve is the mapping of scene luminance to display luminance"
+#: ../data/gcm-viewer.ui.h:35
+msgid ""
+"A tone reproduction curve is the mapping of scene luminance to display "
+"luminance"
 msgstr "منحنی بازتولید آهنگ، هدایت روشنایی صحنه است به روشنایی نمایشگر"
 
-#: ../data/gcm-viewer.ui.h:38
+#: ../data/gcm-viewer.ui.h:36
 msgid "TRC"
 msgstr "TRC"
 
-#: ../data/gcm-viewer.ui.h:39
+#: ../data/gcm-viewer.ui.h:37
 msgid "Video card out"
 msgstr "خروجی کارت ویدئو"
 
-#: ../data/gcm-viewer.ui.h:40
+#: ../data/gcm-viewer.ui.h:38
 msgid "A video card gamma table shows the curves loaded into the display"
 msgstr "جدول گاما یک کارت ویدئویی نشانگر منحنی‌های بار شده درون نمایشگر است"
 
-#: ../data/gcm-viewer.ui.h:41
+#: ../data/gcm-viewer.ui.h:39
 msgid "VCGT"
 msgstr "VCGT"
 
-#: ../data/gcm-viewer.ui.h:42
+#: ../data/gcm-viewer.ui.h:40
 msgid "Previous Image"
 msgstr "عکس قبلی"
 
 #. This is an example image that is saved in sRGB gamut
-#: ../data/gcm-viewer.ui.h:44
+#: ../data/gcm-viewer.ui.h:42
 msgid "sRGB example"
 msgstr "نمونه‌ی sRGB"
 
-#: ../data/gcm-viewer.ui.h:45
+#: ../data/gcm-viewer.ui.h:43
 msgid "Next Image"
 msgstr "عکس بعدی"
 
-#: ../data/gcm-viewer.ui.h:46
+#: ../data/gcm-viewer.ui.h:44
 msgid "This shows what an image would look like if saved with the profile"
-msgstr "این چگونگی نمایش پرونده در صورت ذخیره‌سازی با این مجموعه‌تنظیمات نشان می‌دهد"
+msgstr ""
+"این چگونگی نمایش پرونده در صورت ذخیره‌سازی با این مجموعه‌تنظیمات نشان می‌دهد"
 
-#: ../data/gcm-viewer.ui.h:47
+#: ../data/gcm-viewer.ui.h:45
 msgid "From sRGB"
 msgstr "از sRGB"
 
-#: ../data/gcm-viewer.ui.h:48
+#: ../data/gcm-viewer.ui.h:46
 msgid "This shows what an image would look like if opened with the profile"
-msgstr "این چگونگی نمایش پرونده در صورت باز کردن با این مجموعه‌تنظیمات نشان می‌دهد"
+msgstr ""
+"این چگونگی نمایش پرونده در صورت باز کردن با این مجموعه‌تنظیمات نشان می‌دهد"
 
-#: ../data/gcm-viewer.ui.h:49
+#: ../data/gcm-viewer.ui.h:47
 msgid "To sRGB"
 msgstr "به sRGB"
 
-#: ../data/gcm-viewer.ui.h:50
+#: ../data/gcm-viewer.ui.h:48
 msgid "Named colors are specific colors that are defined in the profile"
 msgstr "رنگ‌های نامیده شده رنگ‌های مشخصی هستند که در مجموعه‌تنظیمات تعریف شده‌اند"
 
-#: ../data/gcm-viewer.ui.h:51
+#: ../data/gcm-viewer.ui.h:49
 msgid "Named Colors"
 msgstr "رنگ‌های نامیده شده "
 
-#: ../data/gcm-viewer.ui.h:52
-msgid "Metadata is additional information stored in the profile for programs to use."
-msgstr "فراداده اطلاعات اضافی است که در مجموعه‌تنظیمات جهت استفاده‌ی برنامه‌ها ذخیره شده است."
+#: ../data/gcm-viewer.ui.h:50
+msgid ""
+"Metadata is additional information stored in the profile for programs to use."
+msgstr ""
+"فراداده اطلاعات اضافی است که در مجموعه‌تنظیمات جهت استفاده‌ی برنامه‌ها ذخیره "
+"شده است."
 
-#: ../data/gcm-viewer.ui.h:53
+#: ../data/gcm-viewer.ui.h:51
 msgid "Metadata"
 msgstr "فوق‌داده"
 
-#: ../src/gcm-calibrate-argyll.c:355
+#: ../src/gcm-calibrate-argyll.c:409
 msgid "Getting default parameters"
 msgstr "دریافت پارمترهای پیش‌فرض"
 
-#: ../src/gcm-calibrate-argyll.c:360
-msgid "This pre-calibrates the screen by sending colored and gray patches to your screen and measuring them with the hardware device."
-msgstr "این باعث پیش-درجه‌بندی صفحه با استفاده از ارسال تکه‌های رنگی و خاکستری به صفحه شما و اندازه‌گیری آنها با استفاده از دستگاه سخت‌افزاری می‌شود."
+#: ../src/gcm-calibrate-argyll.c:414
+msgid ""
+"This pre-calibrates the screen by sending colored and gray patches to your "
+"screen and measuring them with the hardware device."
+msgstr ""
+"این باعث پیش-درجه‌بندی صفحه با استفاده از ارسال تکه‌های رنگی و خاکستری به صفحه "
+"شما و اندازه‌گیری آنها با استفاده از دستگاه سخت‌افزاری می‌شود."
 
-#: ../src/gcm-calibrate-argyll.c:452
+#: ../src/gcm-calibrate-argyll.c:506
 msgid "Reading the patches"
 msgstr "خواندن patches"
 
-#: ../src/gcm-calibrate-argyll.c:457
+#: ../src/gcm-calibrate-argyll.c:511
 msgid "Reading the patches using the color measuring instrument."
 msgstr "خواندن تکه‌ها با استفاده از ابزار اندازه‌گیری رنگ"
 
-#: ../src/gcm-calibrate-argyll.c:561
+#: ../src/gcm-calibrate-argyll.c:615
 msgid "Drawing the patches"
 msgstr "رسم patches"
 
-#: ../src/gcm-calibrate-argyll.c:566
-msgid "Drawing the generated patches to the screen, which will then be measured by the hardware device."
-msgstr "کشیدن تکه‌های ایجاد شده بر روی صفحه، که پس از آن توسط دستگاه سخت‌افزار اندازه‌گیری می‌شود."
+#: ../src/gcm-calibrate-argyll.c:620
+msgid ""
+"Drawing the generated patches to the screen, which will then be measured by "
+"the hardware device."
+msgstr ""
+"کشیدن تکه‌های ایجاد شده بر روی صفحه، که پس از آن توسط دستگاه سخت‌افزار "
+"اندازه‌گیری می‌شود."
 
-#: ../src/gcm-calibrate-argyll.c:665 ../src/gcm-calibrate-argyll.c:1026
+#: ../src/gcm-calibrate-argyll.c:719 ../src/gcm-calibrate-argyll.c:1081
 msgid "Generating the profile"
 msgstr "ایجاد مشخصات"
 
-#: ../src/gcm-calibrate-argyll.c:670
+#: ../src/gcm-calibrate-argyll.c:724
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "درحال ایجاد مجموعه‌تنظیمات رنگ ICC که می‌تواند در این صفحه استفاده شود."
 
-#: ../src/gcm-calibrate-argyll.c:840
+#: ../src/gcm-calibrate-argyll.c:895
 msgid "Copying files"
 msgstr "کپی کردن فایل ها"
 
-#: ../src/gcm-calibrate-argyll.c:845
+#: ../src/gcm-calibrate-argyll.c:900
 msgid "Copying source image, chart data and CIE reference values."
 msgstr "درحال رونوشتِ تصویر منبع، داده‌های نمودار مقادیر مبنا CIE."
 
-#: ../src/gcm-calibrate-argyll.c:916
+#: ../src/gcm-calibrate-argyll.c:971
 msgid "Measuring the patches"
 msgstr "اندازه‌گیری وصله‌ها"
 
-#: ../src/gcm-calibrate-argyll.c:921
+#: ../src/gcm-calibrate-argyll.c:976
 msgid "Detecting the reference patches and measuring them."
 msgstr "درحال یافتن مبنا وصله‌ها و اندازه‌گیری آنها"
 
-#: ../src/gcm-calibrate-argyll.c:1031
+#: ../src/gcm-calibrate-argyll.c:1086
 msgid "Generating the ICC color profile that can be used with this device."
-msgstr "درحال ایجاد مجموعه‌تنظیمات رنگ ICC که می‌تواند در این دستگاه استفاده شود."
+msgstr ""
+"درحال ایجاد مجموعه‌تنظیمات رنگ ICC که می‌تواند در این دستگاه استفاده شود."
 
-#: ../src/gcm-calibrate-argyll.c:1396
+#: ../src/gcm-calibrate-argyll.c:1451
 msgid "Printing patches"
 msgstr "درحال چاپ وصله‌ها"
 
-#: ../src/gcm-calibrate-argyll.c:1401
+#: ../src/gcm-calibrate-argyll.c:1456
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "درحال رسم وصله‌ها برای کاغذ و جوهر انتخاب شده."
 
-#: ../src/gcm-calibrate-argyll.c:1782
+#: ../src/gcm-calibrate-argyll.c:1837
 msgid "Wait for the ink to dry"
 msgstr "صبر کنید تا جوهر خشک شود"
 
-#: ../src/gcm-calibrate-argyll.c:1787
-msgid "Please wait a few minutes for the ink to dry. Profiling damp ink will produce a poor profile and may damage your color measuring instrument."
-msgstr "لطفا چند دقیقه‌ای برای خشک شدن رنگ صبر کنید. تنظیم یک مجموعه‌تنظیمات بوسیله‌ی جوهر خیس باعث ایجاد مجموعه‌تنظیمات ضعیف می‌شود و ممکن است به ابزار اندازه‌گیری رنگ شما آسیب برساند."
+#: ../src/gcm-calibrate-argyll.c:1842
+msgid ""
+"Please wait a few minutes for the ink to dry. Profiling damp ink will "
+"produce a poor profile and may damage your color measuring instrument."
+msgstr ""
+"لطفا چند دقیقه‌ای برای خشک شدن رنگ صبر کنید. تنظیم یک مجموعه‌تنظیمات بوسیله‌ی "
+"جوهر خیس باعث ایجاد مجموعه‌تنظیمات ضعیف می‌شود و ممکن است به ابزار اندازه‌گیری "
+"رنگ شما آسیب برساند."
 
-#: ../src/gcm-calibrate-argyll.c:1964
+#: ../src/gcm-calibrate-argyll.c:2019
 msgid "Set up instrument"
 msgstr "نصب وسیله"
 
-#: ../src/gcm-calibrate-argyll.c:1969
+#: ../src/gcm-calibrate-argyll.c:2024
 msgid "Setting up the instrument for use…"
 msgstr "راه اندازی ابزار برای استفاده..."
 
-#: ../src/gcm-calibrate-argyll.c:2181 ../src/gcm-calibrate-argyll.c:2247
+#: ../src/gcm-calibrate-argyll.c:2234 ../src/gcm-calibrate-argyll.c:2300
 msgid "Calibration error"
 msgstr "خطا درجه‌بندی"
 
-#: ../src/gcm-calibrate-argyll.c:2186
+#: ../src/gcm-calibrate-argyll.c:2239
 msgid "The sample could not be read at this time."
 msgstr "درحال حاضر نمی‌توان از این نمونه را خواند."
 
-#: ../src/gcm-calibrate-argyll.c:2193 ../src/gcm-calibrate-argyll.c:2318
-#: ../src/gcm-calibrate-argyll.c:2344 ../src/gcm-calibrate-argyll.c:2381
-#: ../src/gcm-calibrate-argyll.c:2408
+#: ../src/gcm-calibrate-argyll.c:2246 ../src/gcm-calibrate-argyll.c:2371
+#: ../src/gcm-calibrate-argyll.c:2397 ../src/gcm-calibrate-argyll.c:2434
+#: ../src/gcm-calibrate-argyll.c:2461
 msgid "Retry"
 msgstr "دوباره سعی کنید"
 
 #. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2199 ../src/gcm-calibrate-argyll.c:2287
-#: ../src/gcm-calibrate-argyll.c:2324 ../src/gcm-calibrate-argyll.c:2350
-#: ../src/gcm-calibrate.c:440 ../src/gcm-calibrate.c:480
-#: ../src/gcm-calibrate.c:521 ../src/gcm-calibrate-main.c:203
+#: ../src/gcm-calibrate-argyll.c:2252 ../src/gcm-calibrate-argyll.c:2340
+#: ../src/gcm-calibrate-argyll.c:2377 ../src/gcm-calibrate-argyll.c:2403
+#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
+#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
 msgid "GNOME Color Manager"
 msgstr "مدیریت رنگ گنوم"
 
-#: ../src/gcm-calibrate-argyll.c:2253
+#: ../src/gcm-calibrate-argyll.c:2306
 msgid "No firmware is installed for this instrument."
 msgstr "برای این ابزار هیچ میان‌افزاری نصب نشده است."
 
-#: ../src/gcm-calibrate-argyll.c:2258
-msgid "The pattern match wasn't good enough. Ensure you have the correct type of target selected."
-msgstr "تطابق الگو به اندازه کافی خوب نبود. مطمئن شوید که نوع هدف صحیحی را انتخاب کرده‌اید."
+#: ../src/gcm-calibrate-argyll.c:2311
+msgid ""
+"The pattern match wasn't good enough. Ensure you have the correct type of "
+"target selected."
+msgstr ""
+"تطابق الگو به اندازه کافی خوب نبود. مطمئن شوید که نوع هدف صحیحی را انتخاب "
+"کرده‌اید."
 
-#: ../src/gcm-calibrate-argyll.c:2264
-msgid "The measuring instrument got no valid readings. Please ensure the aperture is fully open."
-msgstr "ابزار اندازه‌گیری هیچ خوانش معتبری دریافت نکرد. لطفا کنترل کنید که دهانه آن کاملا باز است."
+#: ../src/gcm-calibrate-argyll.c:2317
+msgid ""
+"The measuring instrument got no valid readings. Please ensure the aperture "
+"is fully open."
+msgstr ""
+"ابزار اندازه‌گیری هیچ خوانش معتبری دریافت نکرد. لطفا کنترل کنید که دهانه آن "
+"کاملا باز است."
 
-#: ../src/gcm-calibrate-argyll.c:2269
-msgid "The measuring instrument is busy and is not starting up. Please remove the USB plug and re-insert before trying to use this device."
-msgstr "ابزار اندازه‌گیری مشغول است و بالا نمی‌آید. لطفا قبل از استفاده از دستگاه، سیم USB را حذف و مجددا وارد کنید."
+#: ../src/gcm-calibrate-argyll.c:2322
+msgid ""
+"The measuring instrument is busy and is not starting up. Please remove the "
+"USB plug and re-insert before trying to use this device."
+msgstr ""
+"ابزار اندازه‌گیری مشغول است و بالا نمی‌آید. لطفا قبل از استفاده از دستگاه، سیم "
+"USB را حذف و مجددا وارد کنید."
 
-#: ../src/gcm-calibrate-argyll.c:2307
+#: ../src/gcm-calibrate-argyll.c:2360
 msgid "Reading target"
 msgstr "درحال خواندن هدف"
 
-#: ../src/gcm-calibrate-argyll.c:2312
+#: ../src/gcm-calibrate-argyll.c:2365
 msgid "Failed to read the strip correctly."
 msgstr "خواندن صحیح نوار شکست خورد."
 
-#: ../src/gcm-calibrate-argyll.c:2333
+#: ../src/gcm-calibrate-argyll.c:2386
 msgid "Reading sample"
 msgstr "درحال خواندن نمونه"
 
-#: ../src/gcm-calibrate-argyll.c:2338
+#: ../src/gcm-calibrate-argyll.c:2391
 msgid "Failed to read the color sample correctly."
 msgstr "خواندن صحیح نمونه رنگ شکست خورد."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2363
+#: ../src/gcm-calibrate-argyll.c:2416
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "نوار %s را به‌جای %s بخوان!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2368
+#: ../src/gcm-calibrate-argyll.c:2421
 msgid "It looks like you've measured the wrong strip."
 msgstr "به نظر می‌رسد شما نوار اشتباهی را اندازه گرفته‌اید."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2372
-msgid "If you've really measured the right one, it's okay, it could just be unusual paper."
-msgstr "اگر واقعا مورد درست را اندازه گرفته‌اید، مشکلی نیست، احتمالا فقط ورق نامعمول بوده است."
+#: ../src/gcm-calibrate-argyll.c:2425
+msgid ""
+"If you've really measured the right one, it's okay, it could just be unusual "
+"paper."
+msgstr ""
+"اگر واقعا مورد درست را اندازه گرفته‌اید، مشکلی نیست، احتمالا فقط ورق نامعمول "
+"بوده است."
 
-#: ../src/gcm-calibrate-argyll.c:2397
+#: ../src/gcm-calibrate-argyll.c:2450
 msgid "Device Error"
 msgstr "خطا دستگاه"
 
-#: ../src/gcm-calibrate-argyll.c:2402
+#: ../src/gcm-calibrate-argyll.c:2455
 msgid "The device could not measure the color spot correctly."
 msgstr "دستگاه نمی‌تواند منطقه رنگی را به درستی اندازه بگیرد."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2416
+#: ../src/gcm-calibrate-argyll.c:2469
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "آماده برای خواندن نوار %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2421
-msgid "Place the colorimeter on the area of white next to the letter and click and hold the measure switch."
-msgstr "‫colorimeter را در ناحیه سفید کنار حرف قرار دهید و کلید اندازه‌گیری را فشرده و نگاه دارید."
+#: ../src/gcm-calibrate-argyll.c:2474
+msgid ""
+"Place the colorimeter on the area of white next to the letter and click and "
+"hold the measure switch."
+msgstr ""
+"‫colorimeter را در ناحیه سفید کنار حرف قرار دهید و کلید اندازه‌گیری را فشرده و "
+"نگاه دارید."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2425
-msgid "Slowly scan the target line from left to right and release the switch when you get to the end of the page."
-msgstr "به آرامی هدف را از چپ به راست پویش کنید و هنگامی که به پایان صفحه رسیدید، کلید را آزاد کنید."
+#: ../src/gcm-calibrate-argyll.c:2478
+msgid ""
+"Slowly scan the target line from left to right and release the switch when "
+"you get to the end of the page."
+msgstr ""
+"به آرامی هدف را از چپ به راست پویش کنید و هنگامی که به پایان صفحه رسیدید، "
+"کلید را آزاد کنید."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2429
-msgid "Ensure the center of the device is properly aligned with the row you are trying to measure."
-msgstr "مطمئن شوید که وسط دستگاه به درستی با ردیفی که سعی دارید اندازه بگیرید، تنظیم شده است."
+#: ../src/gcm-calibrate-argyll.c:2482
+msgid ""
+"Ensure the center of the device is properly aligned with the row you are "
+"trying to measure."
+msgstr ""
+"مطمئن شوید که وسط دستگاه به درستی با ردیفی که سعی دارید اندازه بگیرید، تنظیم "
+"شده است."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2433
-msgid "If you make a mistake, just release the switch, and you'll get a chance to try again."
-msgstr "اگر اشتباه کردید، فقط کلید را آزاد کنید، سپس شما یک شانس دوباره برای آزمایش مجدد خواهید داشت."
+#: ../src/gcm-calibrate-argyll.c:2486
+msgid ""
+"If you make a mistake, just release the switch, and you'll get a chance to "
+"try again."
+msgstr ""
+"اگر اشتباه کردید، فقط کلید را آزاد کنید، سپس شما یک شانس دوباره برای آزمایش "
+"مجدد خواهید داشت."
 
-#: ../src/gcm-calibrate-argyll.c:2547
+#: ../src/gcm-calibrate-argyll.c:2600
 msgid "Printing"
 msgstr "چاپ"
 
-#: ../src/gcm-calibrate-argyll.c:2556
+#: ../src/gcm-calibrate-argyll.c:2609
 msgid "Preparing the data for the printer."
 msgstr "درحال آماده‌سازی اطلاعات جهت چاپ."
 
-#: ../src/gcm-calibrate-argyll.c:2564
+#: ../src/gcm-calibrate-argyll.c:2617
 msgid "Sending the targets to the printer."
 msgstr "درحال ارسال اهداف به چاپگر."
 
-#: ../src/gcm-calibrate-argyll.c:2570
+#: ../src/gcm-calibrate-argyll.c:2623
 msgid "Printing the targets…"
 msgstr "درحال چاپ اهداف..."
 
-#: ../src/gcm-calibrate-argyll.c:2576
+#: ../src/gcm-calibrate-argyll.c:2629
 msgid "The printing has finished."
 msgstr "چاپ پایان یافته است."
 
-#: ../src/gcm-calibrate-argyll.c:2582
+#: ../src/gcm-calibrate-argyll.c:2635
 msgid "The print was aborted."
 msgstr "چاپ لغو شده است."
 
-#: ../src/gcm-calibrate.c:408
+#: ../src/gcm-calibrate.c:404
 msgid "Please attach instrument"
 msgstr "لطفا ابزار را متصل کنید"
 
 #. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate.c:417
-msgid "Please attach the measuring instrument to the center of the screen on the gray square like the image below."
-msgstr "لطفا، مانند تصویر مقابل، ابزار اندازه‌گیری را به وسط صفحه‌نمایش بر روی مربع خاکستری نگاه دارید."
+#: ../src/gcm-calibrate.c:413
+msgid ""
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square like the image below."
+msgstr ""
+"لطفا، مانند تصویر مقابل، ابزار اندازه‌گیری را به وسط صفحه‌نمایش بر روی مربع "
+"خاکستری نگاه دارید."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate.c:420
-msgid "Please attach the measuring instrument to the center of the screen on the gray square."
-msgstr "لطفا ابزار اندازه‌گیری را به وسط صفحه‌نمایش بر روی مربع خاکستری نگاه دارید."
+#: ../src/gcm-calibrate.c:416
+msgid ""
+"Please attach the measuring instrument to the center of the screen on the "
+"gray square."
+msgstr ""
+"لطفا ابزار اندازه‌گیری را به وسط صفحه‌نمایش بر روی مربع خاکستری نگاه دارید."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate.c:427
-msgid "You will need to hold the device on the screen for the duration of the calibration."
-msgstr "شما لازم است که در طی مدت درجه‌بندی دستگاه را بر روی صفحه‌نمایش نگاه دارید."
+#: ../src/gcm-calibrate.c:423
+msgid ""
+"You will need to hold the device on the screen for the duration of the "
+"calibration."
+msgstr ""
+"شما لازم است که در طی مدت درجه‌بندی دستگاه را بر روی صفحه‌نمایش نگاه دارید."
 
-#: ../src/gcm-calibrate.c:434 ../src/gcm-calibrate.c:463
-#: ../src/gcm-calibrate.c:504
+#: ../src/gcm-calibrate.c:430 ../src/gcm-calibrate.c:459
+#: ../src/gcm-calibrate.c:500
 msgid "Continue"
 msgstr "ادامه دادن"
 
-#: ../src/gcm-calibrate.c:456 ../src/gcm-calibrate.c:494
+#: ../src/gcm-calibrate.c:452 ../src/gcm-calibrate.c:490
 msgid "Please configure instrument"
 msgstr "لطفا ابزار را پیکربندی کنید"
 
-#: ../src/gcm-calibrate.c:467
-msgid "Please set the measuring instrument to screen mode like the image below."
-msgstr "لطفا، مانند تصویر مقابل، ابزار اندازه‌گیری را در حالت نما (screen) قرار دهید."
+#: ../src/gcm-calibrate.c:463
+msgid ""
+"Please set the measuring instrument to screen mode like the image below."
+msgstr ""
+"لطفا، مانند تصویر مقابل، ابزار اندازه‌گیری را در حالت نما (screen) قرار دهید."
 
-#: ../src/gcm-calibrate.c:472
+#: ../src/gcm-calibrate.c:468
 msgid "Please set the measuring instrument to screen mode."
 msgstr "لطفا ابزار اندازه‌گیری را در حالت نما (screen) قرار دهید."
 
-#: ../src/gcm-calibrate.c:508
-msgid "Please set the measuring instrument to calibration mode like the image below."
-msgstr "لطفا، مانند تصویر مقابل، ابزار اندازه‌گیری را در حالت درجه‌بندی تنظیم کنید."
+#: ../src/gcm-calibrate.c:504
+msgid ""
+"Please set the measuring instrument to calibration mode like the image below."
+msgstr ""
+"لطفا، مانند تصویر مقابل، ابزار اندازه‌گیری را در حالت درجه‌بندی تنظیم کنید."
 
-#: ../src/gcm-calibrate.c:513
+#: ../src/gcm-calibrate.c:509
 msgid "Please set the measuring instrument to calibration mode."
 msgstr "لطفا ابزار اندازه‌گیری را در حالت درجه‌بندی تنظیم کنید."
 
 #. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
 #. * aquired image of the calibration target, e.g. an image file that looks
 #. * a bit like this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:681
+#: ../src/gcm-calibrate.c:677
 msgid "Select calibration target image"
 msgstr "انتخاب درجه‌بندی عکس هدف"
 
-#: ../src/gcm-calibrate.c:683 ../src/gcm-calibrate.c:728
-#: ../src/gcm-calibrate.c:823 ../src/gcm-viewer.c:449
+#: ../src/gcm-calibrate.c:679 ../src/gcm-calibrate.c:724
+#: ../src/gcm-calibrate.c:819 ../src/gcm-viewer.c:442
 msgid "_Cancel"
 msgstr "_لغو"
 
-#: ../src/gcm-calibrate.c:684 ../src/gcm-calibrate.c:729
-#: ../src/gcm-calibrate.c:824
-#| msgid "Open"
+#: ../src/gcm-calibrate.c:680 ../src/gcm-calibrate.c:725
+#: ../src/gcm-calibrate.c:820
 msgid "_Open"
 msgstr "_باز کردن"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:694
+#: ../src/gcm-calibrate.c:690
 msgid "Supported images files"
 msgstr "پرونده‌های عکس پشتیبانی شده"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:701 ../src/gcm-calibrate.c:755
-#: ../src/gcm-viewer.c:475
+#: ../src/gcm-calibrate.c:697 ../src/gcm-calibrate.c:751
+#: ../src/gcm-viewer.c:468
 msgid "All files"
 msgstr "تمام فایل ها"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:726
+#: ../src/gcm-calibrate.c:722
 msgid "Select CIE reference values file"
 msgstr "انتخاب پرونده مقادیر مبنا CIE"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:748
+#: ../src/gcm-calibrate.c:744
 msgid "CIE values"
 msgstr "مقادیر CIE"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:821 ../src/gcm-viewer.c:447
+#: ../src/gcm-calibrate.c:817 ../src/gcm-viewer.c:440
 msgid "Select ICC Profile File"
 msgstr "انتخاب پرونده‌ی مجموعه‌تنظیمات ICC"
 
@@ -589,7 +662,7 @@ msgid "Profiling completed"
 msgstr "تکمیل ساخت مجموعه‌تنظیمات"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:456 ../src/gcm-calibrate-main.c:1904
+#: ../src/gcm-calibrate-main.c:456 ../src/gcm-calibrate-main.c:1940
 msgid "Failed to calibrate"
 msgstr "درجه‌بندی شکست خورد"
 
@@ -615,8 +688,12 @@ msgstr "درجه‌بندی دستگاه خودتان"
 
 #. TRANSLATORS: this is the final intro page text
 #: ../src/gcm-calibrate-main.c:752
-msgid "Any existing screen correction will be temporarily turned off and the brightness set to maximum."
-msgstr "هر نوع اصلاح صفحه‌ی موجود به‌صورت موقت خاموش خواهد شد و روشنایی در حالت بیشینه تنظیم می‌شود."
+msgid ""
+"Any existing screen correction will be temporarily turned off and the "
+"brightness set to maximum."
+msgstr ""
+"هر نوع اصلاح صفحه‌ی موجود به‌صورت موقت خاموش خواهد شد و روشنایی در حالت بیشینه "
+"تنظیم می‌شود."
 
 #. TRANSLATORS: this is the final intro page text
 #: ../src/gcm-calibrate-main.c:759
@@ -663,15 +740,25 @@ msgstr "دستگاه با موفقیت درجه‌بندی شد."
 
 #. TRANSLATORS: this is the final summary
 #: ../src/gcm-calibrate-main.c:914
-msgid "To view details about the new profile or to undo the calibration visit the <a href=\"control-center://color\">control center</a>."
-msgstr "برای دیدن جزئیات مربوط به مجموعه‌تنظیمات جدید و یا برگردان درجه‌بندی از <a href=\"control-center://color\">مرکز کنترل</a> دیدن کنید."
+msgid ""
+"To view details about the new profile or to undo the calibration visit the "
+"<a href=\"control-center://color\">control center</a>."
+msgstr ""
+"برای دیدن جزئیات مربوط به مجموعه‌تنظیمات جدید و یا برگردان درجه‌بندی از <a "
+"href=\"control-center://color\">مرکز کنترل</a> دیدن کنید."
 
 #: ../src/gcm-calibrate-main.c:923
-msgid "You can use the profile with <a href=\"import-linux\">Linux</a>, <a href=\"import-osx\">Apple OS X</a> and <a href=\"import-windows\">Microsoft Windows</a> systems."
-msgstr "شما می‌توانید از مجموعه‌تنظیمات در سیستم‌های <a href=\"import-linux\">لینوکس</a>، <a href=\"import-osx\">اپل OS X</a> و <a href=\"import-windows\">مایکروسافت ویندوز</a> استفاده کنید."
+msgid ""
+"You can use the profile with <a href=\"import-linux\">Linux</a>, <a href="
+"\"import-osx\">Apple OS X</a> and <a href=\"import-windows\">Microsoft "
+"Windows</a> systems."
+msgstr ""
+"شما می‌توانید از مجموعه‌تنظیمات در سیستم‌های <a href=\"import-linux\">لینوکس</"
+"a>، <a href=\"import-osx\">اپل OS X</a> و <a href=\"import-windows"
+"\">مایکروسافت ویندوز</a> استفاده کنید."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:935 ../src/gcm-calibrate-main.c:1917
+#: ../src/gcm-calibrate-main.c:935 ../src/gcm-calibrate-main.c:1953
 msgid "Summary"
 msgstr "خلاصه"
 
@@ -696,13 +783,21 @@ msgstr "فهرست بررسی درجه‌بندی"
 
 #. TRANSLATORS: this is intro page text
 #: ../src/gcm-calibrate-main.c:1020
-msgid "Before calibrating the display, it is recommended to configure your display with the following settings to get optimal results."
-msgstr "پیش از درجه‌بندی نمایشگر، توصیه می‌شود جهت دریافت نتایج بهینه، نمایشگر خود را به‌شکل مقابل پیکربندی کنید."
+msgid ""
+"Before calibrating the display, it is recommended to configure your display "
+"with the following settings to get optimal results."
+msgstr ""
+"پیش از درجه‌بندی نمایشگر، توصیه می‌شود جهت دریافت نتایج بهینه، نمایشگر خود را "
+"به‌شکل مقابل پیکربندی کنید."
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate-main.c:1023
-msgid "You may want to consult the owner's manual for your display on how to achieve these settings."
-msgstr "ممکن است بخواهید از راهنمای مالک نمایشگر در خصوص چگونگی دستیابی به این تنظیمات، استفاده کنید."
+msgid ""
+"You may want to consult the owner's manual for your display on how to "
+"achieve these settings."
+msgstr ""
+"ممکن است بخواهید از راهنمای مالک نمایشگر در خصوص چگونگی دستیابی به این "
+"تنظیمات، استفاده کنید."
 
 #. TRANSLATORS: dialog message, bullet item
 #: ../src/gcm-calibrate-main.c:1026
@@ -716,8 +811,12 @@ msgstr "غیرفعال کردن سایه‌روشن پویا، چنانچه نم
 
 #. TRANSLATORS: dialog message, bullet item
 #: ../src/gcm-calibrate-main.c:1032
-msgid "Configure your display with custom color settings and ensure the RGB channels are set to the same values."
-msgstr "پیکربندی صفحه‌نمایش شما با تنظیمات رنگ سفارشی و اطمینان از اینکه کانال‌های RGB بر روی مقادیر مشابهی تنظیم شده‌اند."
+msgid ""
+"Configure your display with custom color settings and ensure the RGB "
+"channels are set to the same values."
+msgstr ""
+"پیکربندی صفحه‌نمایش شما با تنظیمات رنگ سفارشی و اطمینان از اینکه کانال‌های RGB "
+"بر روی مقادیر مشابهی تنظیم شده‌اند."
 
 #. TRANSLATORS: dialog message, addition to bullet item
 #: ../src/gcm-calibrate-main.c:1035
@@ -726,13 +825,18 @@ msgstr "اگر رنگ سفارشی موجود نبود، از دما رنگی 65
 
 #. TRANSLATORS: dialog message, bullet item
 #: ../src/gcm-calibrate-main.c:1038
-msgid "Adjust the display brightness to a comfortable level for prolonged viewing."
+msgid ""
+"Adjust the display brightness to a comfortable level for prolonged viewing."
 msgstr "تنظیم روشنایی نمایشگر در یک سطح مطلوب برای نمایش طولانی مدت."
 
 #. TRANSLATORS: dialog message, suffix
 #: ../src/gcm-calibrate-main.c:1043
-msgid "For best results, the display should have been powered for at least 15 minutes before starting the calibration."
-msgstr "برای بهترین نتایج، نمایشگر باید حداقل ۱۵ دقیقه قبل از شروع درجه‌بندی روشن شده باشد."
+msgid ""
+"For best results, the display should have been powered for at least 15 "
+"minutes before starting the calibration."
+msgstr ""
+"برای بهترین نتایج، نمایشگر باید حداقل ۱۵ دقیقه قبل از شروع درجه‌بندی روشن شده "
+"باشد."
 
 #. TRANSLATORS: this is the calibration wizard page title
 #: ../src/gcm-calibrate-main.c:1049
@@ -807,18 +911,18 @@ msgstr "CMP DT 003"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1232
-msgid "Color Checker"
-msgstr "جستجوگر رنگ "
+msgid "ColorChecker"
+msgstr "بررسی‌کننده‌ی رنگ "
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1236
-msgid "Color Checker DC"
-msgstr "جستجوگر DC رنگ "
+msgid "ColorChecker DC"
+msgstr "بررسی‌کننده‌ی رنگ DC"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1240
-msgid "Color Checker SG"
-msgstr "جستجوگر SG رنگ "
+msgid "ColorChecker SG"
+msgstr "بررسی‌کننده‌ی رنگ SG"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1244
@@ -848,22 +952,36 @@ msgstr "QPcard 201"
 #. TRANSLATORS: dialog message, preface. A calibration target looks like
 #. * this: http://www.colorreference.de/targets/target.jpg
 #: ../src/gcm-calibrate-main.c:1338
-msgid "Before profiling the device, you have to manually capture an image of a calibration target and save it as a TIFF image file."
-msgstr "پیش از ساخت مجموعه‌تنظیمات برای دستگاه، شما باید به‌طور دستی یک عکس از هدف درجه‌بندی بگیرید و آن را در یک پرونده تصویری TIFF ذخیره کنید."
+msgid ""
+"Before profiling the device, you have to manually capture an image of a "
+"calibration target and save it as a TIFF image file."
+msgstr ""
+"پیش از ساخت مجموعه‌تنظیمات برای دستگاه، شما باید به‌طور دستی یک عکس از هدف "
+"درجه‌بندی بگیرید و آن را در یک پرونده تصویری TIFF ذخیره کنید."
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate-main.c:1343
-msgid "Ensure that the contrast and brightness are not changed and color correction profiles have not been applied."
-msgstr "دقت کنید که سایه‌روشن و روشنایی تغییر نکرده‌اند و مجموعه‌های تنظیمات اصلاح رنگ اعمال نشده باشند."
+msgid ""
+"Ensure that the contrast and brightness are not changed and color correction "
+"profiles have not been applied."
+msgstr ""
+"دقت کنید که سایه‌روشن و روشنایی تغییر نکرده‌اند و مجموعه‌های تنظیمات اصلاح رنگ "
+"اعمال نشده باشند."
 
 #. TRANSLATORS: dialog message, suffix
 #: ../src/gcm-calibrate-main.c:1346
-msgid "The device sensor should have been cleaned prior to scanning and the output file resolution should be at least 200dpi."
-msgstr "حسگر دستگاه باید قبل از پویش تمیز شده باشد و پرونده خروجی باید حداقل تفکیک‌پذیری 200dpi را داشته باشد."
+msgid ""
+"The device sensor should have been cleaned prior to scanning and the output "
+"file resolution should be at least 200dpi."
+msgstr ""
+"حسگر دستگاه باید قبل از پویش تمیز شده باشد و پرونده خروجی باید حداقل "
+"تفکیک‌پذیری 200dpi را داشته باشد."
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate-main.c:1352
-msgid "Ensure that the white-balance has not been modified by the camera and that the lens is clean."
+msgid ""
+"Ensure that the white-balance has not been modified by the camera and that "
+"the lens is clean."
 msgstr "مطمئن شوید که توازن-سفید در دوربین تغییر نکرده باشد و لنز تمیز است."
 
 #. TRANSLATORS: this is the message body for the chart selection
@@ -892,122 +1010,148 @@ msgid "Select the monitor type that is attached to your computer."
 msgstr "نوع نمایشگری که به رایانه شما متصل است را انتخاب کنید."
 
 #: ../src/gcm-calibrate-main.c:1439
-msgid "LCD"
-msgstr "LCD"
+msgid "LCD (CCFL backlight)"
+msgstr "ال‌سی‌دی (نورپشتی CCFL)"
 
 #: ../src/gcm-calibrate-main.c:1448
+msgid "LCD (White LED backlight)"
+msgstr "ال‌سی‌دی (نورپشتی ال‌ای‌دی سفید)"
+
+#: ../src/gcm-calibrate-main.c:1457
+msgid "LCD (RGB LED backlight)"
+msgstr "ال‌سی‌دی (نورپشتی ال‌ای‌دی RGB)"
+
+#: ../src/gcm-calibrate-main.c:1466
+msgid "LCD (Wide Gamut RGB LED backlight)"
+msgstr "ال‌سی‌دی (نورپشتی ال‌ای‌دی Gamut RGB عریض)"
+
+#: ../src/gcm-calibrate-main.c:1475
+msgid "LCD (Wide Gamut CCFL backlight)"
+msgstr "ال‌سی‌دی (نورپشتی Gamut CCFL عریض)"
+
+#: ../src/gcm-calibrate-main.c:1484
 msgid "CRT"
 msgstr "CRT"
 
-#: ../src/gcm-calibrate-main.c:1457
+#: ../src/gcm-calibrate-main.c:1493
 msgid "Plasma"
 msgstr "پلاسما"
 
-#: ../src/gcm-calibrate-main.c:1466
+#: ../src/gcm-calibrate-main.c:1502
 msgid "Projector"
 msgstr "پروژکتور"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1478
+#: ../src/gcm-calibrate-main.c:1514
 msgid "Choose Display Type"
 msgstr "انتخاب نوع نمایشگر"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1516
+#: ../src/gcm-calibrate-main.c:1552
 msgid "Choose your display target white point"
 msgstr "نقطه سفید هدف نمایشگر خود را مشخص کنید"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1523
-msgid "Most displays should be calibrated to a CIE D65 illuminant for general usage."
-msgstr "اکثر نمایشگرها برای استفاده عمومی باید با یک منبع نور CIE D65 درجه‌بندی شوند."
+#: ../src/gcm-calibrate-main.c:1559
+msgid ""
+"Most displays should be calibrated to a CIE D65 illuminant for general usage."
+msgstr ""
+"اکثر نمایشگرها برای استفاده عمومی باید با یک منبع نور CIE D65 درجه‌بندی شوند."
 
-#: ../src/gcm-calibrate-main.c:1525
+#: ../src/gcm-calibrate-main.c:1561
 msgid "CIE D50 (Printing and publishing)"
 msgstr "CIE D50 (چاپ و انتشار)"
 
-#: ../src/gcm-calibrate-main.c:1534
+#: ../src/gcm-calibrate-main.c:1570
 msgid "CIE D55"
 msgstr "CIE D55"
 
-#: ../src/gcm-calibrate-main.c:1543
+#: ../src/gcm-calibrate-main.c:1579
 msgid "CIE D65 (Photography and graphics)"
 msgstr "CIE D65 (عکسبرداری و گرافیک)"
 
-#: ../src/gcm-calibrate-main.c:1553
+#: ../src/gcm-calibrate-main.c:1589
 msgid "CIE D75"
 msgstr "CIE D75"
 
-#: ../src/gcm-calibrate-main.c:1562
+#: ../src/gcm-calibrate-main.c:1598
 msgid "Native (Already set manually)"
 msgstr "محلی (از قبل به‌طور دستی تنظیم شده)"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1574
+#: ../src/gcm-calibrate-main.c:1610
 msgid "Choose Display Whitepoint"
 msgstr "انتخاب نقطه سفید نمایشگر"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1612
+#: ../src/gcm-calibrate-main.c:1648
 msgid "Choose profiling mode"
 msgstr "انتخاب حالت ساخت مجموعه‌تنظیمات"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1619
-msgid "Please indicate if you want to profile a local printer, generate some test patches, or profile using existing test patches."
-msgstr "لطفا اگر می‌خواهید یک چاپگر محلی را بسنجید، تعدادی قطعه رنگ تستی ایجاد کنید، یا بوسیله‌ی قطعه‌های تستی موجود سنجش را انجام دهید، از قبل مشخص کنید."
+#: ../src/gcm-calibrate-main.c:1655
+msgid ""
+"Please indicate if you want to profile a local printer, generate some test "
+"patches, or profile using existing test patches."
+msgstr ""
+"لطفا اگر می‌خواهید یک چاپگر محلی را بسنجید، تعدادی قطعه رنگ تستی ایجاد کنید، "
+"یا بوسیله‌ی قطعه‌های تستی موجود سنجش را انجام دهید، از قبل مشخص کنید."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1656
+#: ../src/gcm-calibrate-main.c:1692
 msgid "Calibration Mode"
 msgstr "حالت درجه‌بندی"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1698
+#: ../src/gcm-calibrate-main.c:1734
 msgid "Choose calibration quality"
 msgstr "کیفیت درجه‌بندی را انتخاب کنید"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1705
+#: ../src/gcm-calibrate-main.c:1741
 msgid "Higher quality calibration requires many color samples and more time."
 msgstr "درجه‌بندی‌های با دقت بالا به نمونه رنگ‌ها و زمان بیشتر احتیاج داد."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1709
-msgid "A higher precision profile provides higher accuracy in color matching but requires more time for reading the color patches."
-msgstr "یک مجموعه‌تنظیمات با دقت بالا، درستی بالاتری در تطابق رنگ‌ها دارد، اما احتیاج به زمان بیشتری برای خواندن تکه‌های رنگ نیز دارد."
+#: ../src/gcm-calibrate-main.c:1745
+msgid ""
+"A higher precision profile provides higher accuracy in color matching but "
+"requires more time for reading the color patches."
+msgstr ""
+"یک مجموعه‌تنظیمات با دقت بالا، درستی بالاتری در تطابق رنگ‌ها دارد، اما احتیاج "
+"به زمان بیشتری برای خواندن تکه‌های رنگ نیز دارد."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1712
+#: ../src/gcm-calibrate-main.c:1748
 msgid "For a typical workflow, a normal precision profile is sufficient."
 msgstr "برای یک گردش کاری عادی، یک مجموعه‌تنظیمات با دقت معمولی کافی است."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1717
+#: ../src/gcm-calibrate-main.c:1753
 msgid "The high precision profile also requires more paper and printer ink."
 msgstr "مجموعه‌تنظیمات با دقت بالا به ورق و جوهر چاپ بیشتری احتیاج دارد."
 
 #. TRANSLATORS: radio options for calibration precision
-#: ../src/gcm-calibrate-main.c:1722
+#: ../src/gcm-calibrate-main.c:1758
 msgid "Accurate"
 msgstr "دقیق"
 
-#: ../src/gcm-calibrate-main.c:1723
+#: ../src/gcm-calibrate-main.c:1759
 msgid "Normal"
 msgstr "معمولی"
 
-#: ../src/gcm-calibrate-main.c:1724
+#: ../src/gcm-calibrate-main.c:1760
 msgid "Quick"
 msgstr "سریع"
 
-#: ../src/gcm-calibrate-main.c:1731
+#: ../src/gcm-calibrate-main.c:1767
 #, c-format
 msgid "(about %i sheet of paper)"
 msgid_plural "(about %i sheets of paper)"
 msgstr[0] "(حدود %Ii ورق)"
 msgstr[1] "(حدود %Ii ورق)"
 
-#: ../src/gcm-calibrate-main.c:1742
+#: ../src/gcm-calibrate-main.c:1778
 #, c-format
 msgid "(about %i minute)"
 msgid_plural "(about %i minutes)"
@@ -1015,84 +1159,84 @@ msgstr[0] "(در حدود %Ii دقیقه)"
 msgstr[1] "(در حدود %Ii دقیقه)"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1783
+#: ../src/gcm-calibrate-main.c:1819
 msgid "Calibration Quality"
 msgstr "‌کیفیت درجه‌بندی"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1819
+#: ../src/gcm-calibrate-main.c:1855
 msgid "Profile title"
 msgstr "عنوان مجموعه‌تنظیمات"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1826
+#: ../src/gcm-calibrate-main.c:1862
 msgid "Choose a title to identify the profile on your system."
 msgstr "یک عنوان جهت شناسایی مجموعه‌تنظیمات در سیستم انتخاب کنید."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1847
+#: ../src/gcm-calibrate-main.c:1883
 msgid "Profile Title"
 msgstr "عنوان مجموعه‌تنظیمات"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1869
+#: ../src/gcm-calibrate-main.c:1905
 msgid "Insert sensor hardware"
 msgstr "سخت‌افزار حسگر را وارد کنید"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1876
+#: ../src/gcm-calibrate-main.c:1912
 msgid "You need to insert sensor hardware to continue."
 msgstr "لازم است برای ادامه، سخت‌افزار حسگر را وارد کنید."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1882
+#: ../src/gcm-calibrate-main.c:1918
 msgid "Sensor Check"
 msgstr "بررسی حسگر"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1911
+#: ../src/gcm-calibrate-main.c:1947
 msgid "The device could not be found. Ensure it is plugged in and turned on."
 msgstr "دستگاه پیدا نشد. مطمئن شوید که متصل شده و روشن است."
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2178
+#: ../src/gcm-calibrate-main.c:2208
 msgid "Unknown serial"
 msgstr "سریال ناشناخته"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2183
+#: ../src/gcm-calibrate-main.c:2213
 msgid "Unknown model"
 msgstr "مدل ناشناخته"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2188
+#: ../src/gcm-calibrate-main.c:2218
 msgid "Unknown description"
 msgstr "توصیف ناشناخته"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2193
+#: ../src/gcm-calibrate-main.c:2223
 msgid "Unknown manufacturer"
 msgstr "تولید کننده ناشناخته "
 
 #. TRANSLATORS: this is the copyright string, where it might be
 #. * "Copyright (c) 2009 Edward Scissorhands"
 #. * BIG RED FLASHING NOTE: YOU NEED TO USE ASCII ONLY
-#: ../src/gcm-calibrate-main.c:2200
+#: ../src/gcm-calibrate-main.c:2230
 msgid "Copyright (c)"
 msgstr "مجوز (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2315 ../src/gcm-picker.c:791
-#: ../src/gcm-viewer.c:1819
+#: ../src/gcm-calibrate-main.c:2345 ../src/gcm-picker.c:813
+#: ../src/gcm-viewer.c:1803
 msgid "Set the parent window to make this modal"
 msgstr "تنظیم پنجره والد برای ساخت این محاوره"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-calibrate-main.c:2318
+#: ../src/gcm-calibrate-main.c:2348
 msgid "Set the specific device to calibrate"
 msgstr "تنظیم دستگاه مشخص شده برای درجه‌بندی"
 
-#: ../src/gcm-calibrate-main.c:2359
+#: ../src/gcm-calibrate-main.c:2389
 msgid "No device was specified!"
 msgstr "هیچ دستگاهی مشخص نشده بود!"
 
@@ -1101,26 +1245,26 @@ msgstr "هیچ دستگاهی مشخص نشده بود!"
 msgid "No profile"
 msgstr "بدون مجموعه‌تنظیمات"
 
-#: ../src/gcm-cell-renderer-profile-text.c:88
+#: ../src/gcm-cell-renderer-profile-text.c:87
 #, c-format
 msgid "Default %s"
 msgstr "پیش فرض %s"
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile has been auto-generated for this hardware
-#: ../src/gcm-cell-renderer-profile-text.c:103
+#: ../src/gcm-cell-renderer-profile-text.c:102
 msgid "Default: "
 msgstr "پیش فرض:"
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile his a standard space like AdobeRGB
-#: ../src/gcm-cell-renderer-profile-text.c:108
+#: ../src/gcm-cell-renderer-profile-text.c:107
 msgid "Colorspace: "
 msgstr "فضای رنگ:"
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile is a test profile
-#: ../src/gcm-cell-renderer-profile-text.c:113
+#: ../src/gcm-cell-renderer-profile-text.c:112
 msgid "Test profile: "
 msgstr "مجموعه تنظیمات آزمایشی:"
 
@@ -1146,7 +1290,7 @@ msgstr "مجموعه‌تنظیمات ICC جهت نصب"
 msgid "No filename specified"
 msgstr "هیچ نام‌پرونده‌ای مشخص نشده است"
 
-#: ../src/gcm-import.c:147 ../src/gcm-viewer.c:1453
+#: ../src/gcm-import.c:147 ../src/gcm-viewer.c:1447
 msgid "Failed to open ICC profile"
 msgstr "بازکردن مجموعه‌تنظیمات ICC شکست خورد"
 
@@ -1199,7 +1343,7 @@ msgstr "وارد کردن مجموعه‌تنظیمات رنگ؟"
 msgid "Import"
 msgstr "وارد کردن"
 
-#: ../src/gcm-import.c:292 ../src/gcm-viewer.c:1486
+#: ../src/gcm-import.c:292 ../src/gcm-viewer.c:1480
 msgid "Failed to import file"
 msgstr "وارد کردن پرونده شکست خورد"
 
@@ -1224,12 +1368,12 @@ msgid "Root window protocol version:"
 msgstr "نسخع پروتکول پنجره ریشه :"
 
 #. TRANSLATORS: no DBus session bus
-#: ../src/gcm-inspect.c:232 ../src/gcm-inspect.c:301 ../src/gcm-utils.c:119
+#: ../src/gcm-inspect.c:232 ../src/gcm-inspect.c:301 ../src/gcm-utils.c:118
 msgid "Failed to connect to session bus:"
 msgstr "اتصال به گذرگاه نشست شکست خورد:"
 
 #. TRANSLATORS: the DBus method failed
-#: ../src/gcm-inspect.c:250 ../src/gcm-inspect.c:319 ../src/gcm-utils.c:143
+#: ../src/gcm-inspect.c:250 ../src/gcm-inspect.c:319 ../src/gcm-utils.c:142
 msgid "The request failed:"
 msgstr "درخواست شکست خورد:"
 
@@ -1277,377 +1421,385 @@ msgstr "برنامه بازرسی EDID"
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:214 ../src/gcm-picker.c:221 ../src/gcm-viewer.c:685
-#: ../src/gcm-viewer.c:735
+#: ../src/gcm-picker.c:218 ../src/gcm-picker.c:225 ../src/gcm-viewer.c:678
+#: ../src/gcm-viewer.c:728
 msgid "Unknown"
 msgstr "ناشناخته"
 
-#: ../src/gcm-picker.c:367
+#: ../src/gcm-picker.c:389
 msgid "No colorimeter is attached."
 msgstr "هیچ colorimeter متصل نشده است."
 
-#: ../src/gcm-picker.c:384
+#: ../src/gcm-picker.c:406
 msgid "The sensor has no native driver."
 msgstr "حسگر هیچ راه‌انداز محلی‌ای ندارد."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:393
+#: ../src/gcm-picker.c:415
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "‫colorimeter متصل شده قابلیت خواندن یک نقطه رنگی را ندارد."
 
 #. TRANSLATORS: this is when there are no profiles that can be used;
 #. * the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:644
+#: ../src/gcm-picker.c:666
 #, c-format
 msgid "No %s color spaces available"
 msgstr "هیچ فضا رنگی %s وجود ندارد"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:809
+#: ../src/gcm-picker.c:828
 msgid "GNOME Color Manager Color Picker"
 msgstr "انتخابگرِ رنگِ مدیرِ رنگِ گنوم"
 
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:330 ../src/gcm-viewer.c:716
-msgid "RGB"
-msgstr "RGB"
-
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:334 ../src/gcm-viewer.c:728
+#: ../src/gcm-utils.c:333 ../src/gcm-viewer.c:721
 msgid "CMYK"
 msgstr "CMYK"
 
 #. TRANSLATORS: this is the colorspace type
-#: ../src/gcm-utils.c:338
+#: ../src/gcm-utils.c:337
 msgid "gray"
 msgstr "خاکستری"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:393
+#: ../src/gcm-viewer.c:386
 msgid "Permanently delete profile?"
 msgstr "مجموعه‌تنظیمات برای همیشه حذف شود؟"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:396
-msgid "Are you sure you want to remove this profile from your system permanently?"
-msgstr "آیا مطمئنید که می‌خواهید این مجموعه تنظیمات را برای همیشه از سیستم خود پاک کنید؟"
+#: ../src/gcm-viewer.c:389
+msgid ""
+"Are you sure you want to remove this profile from your system permanently?"
+msgstr ""
+"آیا مطمئنید که می‌خواهید این مجموعه تنظیمات را برای همیشه از سیستم خود پاک "
+"کنید؟"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:399
+#: ../src/gcm-viewer.c:392
 msgid "Delete"
 msgstr "حذف"
 
-#: ../src/gcm-viewer.c:450
-#| msgid "Import"
+#: ../src/gcm-viewer.c:443
 msgid "_Import"
 msgstr "_وارد کردن"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-viewer.c:468
+#: ../src/gcm-viewer.c:461
 msgid "Supported ICC profiles"
 msgstr "پشتیبانی مشخصات ICC"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-viewer.c:504
+#: ../src/gcm-viewer.c:497
 msgid "Failed to copy file"
 msgstr "نا موفق در کپی فایل"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:658
+#: ../src/gcm-viewer.c:651
 msgid "Input device"
 msgstr "دستگاه ورودی"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:662
+#: ../src/gcm-viewer.c:655
 msgid "Display device"
 msgstr "نمایش دستگاه"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:666
+#: ../src/gcm-viewer.c:659
 msgid "Output device"
 msgstr "خروجی دستگاه"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:670
+#: ../src/gcm-viewer.c:663
 msgid "Devicelink"
 msgstr "دستگاه لینک"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:674
+#: ../src/gcm-viewer.c:667
 msgid "Colorspace conversion"
 msgstr "تبدیل فضا رنگ"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:678
+#: ../src/gcm-viewer.c:671
 msgid "Abstract"
 msgstr "انتزاعی"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:682
+#: ../src/gcm-viewer.c:675
 msgid "Named color"
 msgstr "رنگ نامیده شده "
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:696
-msgid "XYZ"
-msgstr "LAB"
-
-#. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:700
+#: ../src/gcm-viewer.c:693
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:704
+#: ../src/gcm-viewer.c:697
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:708
+#: ../src/gcm-viewer.c:701
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:712
+#: ../src/gcm-viewer.c:705
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:720
+#: ../src/gcm-viewer.c:713
 msgid "Gray"
 msgstr "Gray"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:724
+#: ../src/gcm-viewer.c:717
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:732
+#: ../src/gcm-viewer.c:725
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: e.g. sRGB or adbode RGB
-#: ../src/gcm-viewer.c:771
+#: ../src/gcm-viewer.c:764
 msgid "Standard space"
 msgstr "فضا استاندارد"
 
 #. TRANSLATORS: the raw EDID MD5 of the display device
-#: ../src/gcm-viewer.c:773
+#: ../src/gcm-viewer.c:766
 msgid "Display checksum"
 msgstr "نمایش checksum"
 
-#: ../src/gcm-viewer.c:774
+#: ../src/gcm-viewer.c:767
 msgid "Display model"
 msgstr "مدل نمایشگر"
 
-#: ../src/gcm-viewer.c:775
+#: ../src/gcm-viewer.c:768
 msgid "Display serial number"
 msgstr "نمایش شماره سریال"
 
 #. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
-#: ../src/gcm-viewer.c:777
+#: ../src/gcm-viewer.c:770
 msgid "Display PNPID"
 msgstr "نمایش PNPID"
 
 #. TRANSLATORS: who made the display
-#: ../src/gcm-viewer.c:779
+#: ../src/gcm-viewer.c:772
 msgid "Display vendor"
 msgstr "نمایش فروشنده"
 
 #. TRANSLATORS: the raw profile MD5
-#: ../src/gcm-viewer.c:781
+#: ../src/gcm-viewer.c:774
 msgid "File checksum"
 msgstr "‫checksum پرونده"
 
 #. TRANSLATORS: the color framework, e.g. 'colord'
-#: ../src/gcm-viewer.c:783
+#: ../src/gcm-viewer.c:776
 msgid "Framework product"
 msgstr "محصول چارچوب"
 
 #. TRANSLATORS: the framework binary, e.g. gcm-viewer
-#: ../src/gcm-viewer.c:785
+#: ../src/gcm-viewer.c:778
 msgid "Framework program"
 msgstr "برنامه چارچوب"
 
 #. TRANSLATORS: the framework release, e.g. '1.22'
-#: ../src/gcm-viewer.c:787
+#: ../src/gcm-viewer.c:780
 msgid "Framework version"
 msgstr "نسخه چارچوب"
 
 #. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
-#: ../src/gcm-viewer.c:789
+#: ../src/gcm-viewer.c:782
 msgid "Data source type"
 msgstr "نوع منبع داده‌ها"
 
 #. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
-#: ../src/gcm-viewer.c:791
+#: ../src/gcm-viewer.c:784
 msgid "Mapping format"
 msgstr "درحال هدایت قالب"
 
 #. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
-#: ../src/gcm-viewer.c:793
+#: ../src/gcm-viewer.c:786
 msgid "Mapping qualifier"
 msgstr "درحال هدایت توصیف کننده"
 
 #. TRANSLATORS: The original device the profile was made for
-#: ../src/gcm-viewer.c:795
+#: ../src/gcm-viewer.c:788
 msgid "Mapping device"
 msgstr "درحال هدایت دستگاه"
 
 #. TRANSLATORS: The average error when making the profile
-#: ../src/gcm-viewer.c:797
+#: ../src/gcm-viewer.c:790
 msgid "Delta-E average"
 msgstr "میانگین Delta-E "
 
 #. TRANSLATORS: the maximum error when making the profile
-#: ../src/gcm-viewer.c:799
+#: ../src/gcm-viewer.c:792
 msgid "Delta-E maximum"
 msgstr "بیشینه Delta-E "
 
 #. TRANSLATORS: the RMS error when making the profile
-#: ../src/gcm-viewer.c:801
+#: ../src/gcm-viewer.c:794
 msgid "Delta-E RMS"
 msgstr "Delta-E RMS"
 
 #. TRANSLATORS: The device name, e.g. 'huey'
-#: ../src/gcm-viewer.c:803
+#: ../src/gcm-viewer.c:796
 msgid "Calibration device"
 msgstr "درجه‌بندی دستگاه"
 
 #. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
-#: ../src/gcm-viewer.c:805
+#: ../src/gcm-viewer.c:798
 msgid "Screen surface finish"
 msgstr "سطح نمایش پایان یافت"
 
 #. TRANSLATORS: e.g. DVI or VGA
-#: ../src/gcm-viewer.c:807
+#: ../src/gcm-viewer.c:800
 msgid "Connection type"
 msgstr "نوع ارتباط"
 
 #. TRANSLATORS: e.g. Screen brightness in percent
-#: ../src/gcm-viewer.c:809
+#: ../src/gcm-viewer.c:802
 msgid "Screen brightness"
 msgstr "روشنایی صفحه‌نمایش"
 
 #. TRANSLATORS: e.g. the 3D volume of the gamut graph
-#: ../src/gcm-viewer.c:811
+#: ../src/gcm-viewer.c:804
 msgid "Gamut volume"
 msgstr "جلد Gamut"
 
 #. TRANSLATORS: e.g. what proportion of sRGB is covered
-#: ../src/gcm-viewer.c:813
+#: ../src/gcm-viewer.c:806
 msgid "sRGB coverage"
 msgstr "پوشش sRGB"
 
 #. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
-#: ../src/gcm-viewer.c:815
+#: ../src/gcm-viewer.c:808
 msgid "Adobe RGB coverage"
 msgstr "پوشش RGB ادوبی"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:926
+#: ../src/gcm-viewer.c:919
 msgid "No description has been set"
 msgstr "هیچ توضیحاتی تنظیم نشده است"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:930
+#: ../src/gcm-viewer.c:923
 msgid "No copyright has been set"
 msgstr "هیچ حق‌رونوشتی ثبت نشده است"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:934
+#: ../src/gcm-viewer.c:927
 msgid "The display compensation table is invalid"
 msgstr "جدول جبران نمایشگر نامعتبر است"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:938
+#: ../src/gcm-viewer.c:931
 msgid "A scum dot is present for media white"
 msgstr "یک نقطه‌ی سفیدی در سفید رسانه حاضر است"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:942
+#: ../src/gcm-viewer.c:935
 msgid "The gray axis contains significant amounts of color"
 msgstr "محور خاکستری شامل مقدار قابل توجهی رنگ است"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:946
+#: ../src/gcm-viewer.c:939
 msgid "The gray axis is non-monotonic"
 msgstr "محور خاکستری غیر-یک‌نواخت است (non-monotonic)"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:950
+#: ../src/gcm-viewer.c:943
 msgid "One or more of the primaries are invalid"
 msgstr "یک یا تعداد بیشتری از موارد اصلی نامعتبر هستند"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:954
+#: ../src/gcm-viewer.c:947
 msgid "The primaries do not add to white"
 msgstr "موارد اصلی به سفید اضافه نمی‌شوند"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:958
+#: ../src/gcm-viewer.c:951
 msgid "One or more of the primaries is unlikely"
 msgstr "یک یا تعداد بیشتری از موارد اصلی غیرمحتمل هستند"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:962
+#: ../src/gcm-viewer.c:955
 msgid "The white is not D50 white"
 msgstr "سفید همان سفید D50 نیست"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:966
-#| msgid "One or more of the primaries is unlikely"
+#: ../src/gcm-viewer.c:959
 msgid "The whitepoint temperature is unlikely"
 msgstr "دما نقطه‌سفید غیر محتمل است"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:970
+#: ../src/gcm-viewer.c:963
 msgid "Unknown warning type"
 msgstr "نوع هشدار ناشناس"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1115
+#: ../src/gcm-viewer.c:1105
 msgid "Yes"
 msgstr "بله"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1118
+#: ../src/gcm-viewer.c:1108
 msgid "No"
 msgstr "خیر"
 
 #. TRANSLATORS: profiles that have warnings are useable,
 #. * but may not be any good
-#: ../src/gcm-viewer.c:1144
+#: ../src/gcm-viewer.c:1134
 msgid "The profile has the following problems:"
 msgstr "مجموعه‌تنظیمات شامل مشکلات مقابل است:"
 
 #. TRANSLATORS: this is the icc creation date strftime format
-#: ../src/gcm-viewer.c:1236
+#: ../src/gcm-viewer.c:1226
 msgid "%B %e %Y, %I:%M:%S %p"
 msgstr "%B %e %Y, %I:%M:%S %p"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:1259
+#: ../src/gcm-viewer.c:1249
 msgid "Delete this profile"
 msgstr "پاک کردن این مجموعه‌تنظیمات"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:1262
+#: ../src/gcm-viewer.c:1252
 msgid "This profile cannot be deleted"
 msgstr "این مجموعه‌تنظیمات نمی‌تواند حذف شود"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-viewer.c:1822
+#: ../src/gcm-viewer.c:1806
 msgid "Set the specific profile to show"
 msgstr "تنظیم مجموعه‌تنظیمات مشخص برای نمایش"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: ../src/gcm-viewer.c:1825
+#: ../src/gcm-viewer.c:1809
 msgid "Set the specific file to show"
 msgstr "تنظیم پرونده خاص برای نمایش"
+
+#~ msgid "XYZ:"
+#~ msgstr "XYZ:"
+
+#~ msgid "Colorspace:"
+#~ msgstr "فضای رنگ :"
+
+#~ msgid "RGB:"
+#~ msgstr "RGB:"
+
+#~ msgid "This 3D hull is what the profile looks like in Lab space"
+#~ msgstr "این شکل سه بعدی نحوه نمایش مجموعه‌تنظیمات در فضای Lab است"
+
+#~ msgid "3D Gamut"
+#~ msgstr "وسعت سه بعدی"
+
+#~ msgid "LCD"
+#~ msgstr "LCD"
 
 #~ msgid "Device manufacturer"
 #~ msgstr "تولیدکننده‌ی دستگاه"
