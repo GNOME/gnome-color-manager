@@ -375,7 +375,7 @@ gcm_utils_image_convert (GtkImage *image,
 			 GError **error)
 {
 	CdPixelFormat pixel_format;
-	CdTransform *transform;
+	CdTransform *transform = NULL;
 	GdkPixbuf *pixbuf;
 	GdkPixbuf *original_pixbuf;
 	gboolean ret = TRUE;
