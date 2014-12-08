@@ -1,1 +1,1 @@
-ls *.po | cut -d. -f1 > LINGUAS 
+ls *.po | cut -d. -f1 | sort > LINGUAS
