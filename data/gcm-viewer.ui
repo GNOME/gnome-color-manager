@@ -18,11 +18,10 @@
             <property name="layout_style">end</property>
             <child>
               <object class="GtkButton" id="button_close">
-                <property name="label">gtk-close</property>
+                <property name="label">Close</property>
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
               </object>
               <packing>
                 <property name="expand">False</property>
@@ -556,18 +555,6 @@
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
                                 <child>
-                                  <object class="GtkImage" id="image1">
-                                    <property name="can_focus">False</property>
-                                    <property name="stock">gtk-apply</property>
-                                    <property name="icon-size">6</property>
-                                  </object>
-                                  <packing>
-                                    <property name="expand">True</property>
-                                    <property name="fill">True</property>
-                                    <property name="position">0</property>
-                                  </packing>
-                                </child>
-                                <child>
                                   <object class="GtkLabel" id="label5">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -652,18 +639,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkImage" id="image6">
-                                <property name="can_focus">False</property>
-                                <property name="stock">gtk-yes</property>
-                                <property name="icon-size">6</property>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkLabel" id="label6">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -746,18 +721,6 @@
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <child>
-                              <object class="GtkImage" id="image7">
-                                <property name="can_focus">False</property>
-                                <property name="stock">gtk-refresh</property>
-                                <property name="icon-size">6</property>
-                              </object>
-                              <packing>
-                                <property name="expand">True</property>
-                                <property name="fill">True</property>
-                                <property name="position">0</property>
-                              </packing>
-                            </child>
-                            <child>
                               <object class="GtkLabel" id="label16">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
@@ -829,6 +792,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="relief">none</property>
                             <child internal-child="accessible">
                               <object class="AtkObject" id="button_image_prev-atkobject">
                                 <property name="AtkObject::accessible-description" translatable="yes">Previous Image</property>
@@ -838,7 +802,7 @@
                               <object class="GtkImage" id="image2">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="stock">gtk-media-previous</property>
+                                <property name="icon_name">go-previous-symbolic</property>
                               </object>
                             </child>
                           </object>
@@ -877,6 +841,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="relief">none</property>
                             <child internal-child="accessible">
                               <object class="AtkObject" id="button_image_next-atkobject">
                                 <property name="AtkObject::accessible-description" translatable="yes">Next Image</property>
@@ -886,7 +851,7 @@
                               <object class="GtkImage" id="image3">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="stock">gtk-media-next</property>
+                                <property name="icon_name">go-next-symbolic</property>
                               </object>
                             </child>
                           </object>
@@ -949,6 +914,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="relief">none</property>
                             <child internal-child="accessible">
                               <object class="AtkObject" id="button_image_prev1-atkobject">
                                 <property name="AtkObject::accessible-description" translatable="yes">Previous Image</property>
@@ -958,7 +924,7 @@
                               <object class="GtkImage" id="image4">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="stock">gtk-media-previous</property>
+                                <property name="icon_name">go-previous-symbolic</property>
                               </object>
                             </child>
                           </object>
@@ -997,6 +963,7 @@
                             <property name="visible">True</property>
                             <property name="can_focus">True</property>
                             <property name="receives_default">True</property>
+                            <property name="relief">none</property>
                             <child internal-child="accessible">
                               <object class="AtkObject" id="button_image_next1-atkobject">
                                 <property name="AtkObject::accessible-description" translatable="yes">Next Image</property>
@@ -1006,7 +973,7 @@
                               <object class="GtkImage" id="image5">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="stock">gtk-media-next</property>
+                                <property name="icon_name">go-next-symbolic</property>
                               </object>
                             </child>
                           </object>
@@ -1082,18 +1049,6 @@
                             <property name="expand">True</property>
                             <property name="fill">True</property>
                             <property name="position">0</property>
-                          </packing>
-                        </child>
-                        <child>
-                          <object class="GtkImage" id="image_named_colors">
-                            <property name="can_focus">False</property>
-                            <property name="stock">gtk-cdrom</property>
-                            <property name="icon-size">6</property>
-                          </object>
-                          <packing>
-                            <property name="expand">False</property>
-                            <property name="fill">False</property>
-                            <property name="position">1</property>
                           </packing>
                         </child>
                       </object>
