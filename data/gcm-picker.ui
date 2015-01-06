@@ -23,10 +23,18 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
   <!-- interface-requires gtk+ 3.10 -->
   <object class="GtkDialog" id="dialog_picker">
     <property name="can_focus">False</property>
-    <property name="border_width">5</property>
+    <property name="border_width">3</property>
     <property name="title" translatable="yes" comments="Window title, where the user can pick spot colors using a measuring device">Color Picker</property>
     <property name="icon_name">gnome-color-manager</property>
     <property name="type_hint">dialog</property>
+    <child type="titlebar">
+      <object class="GtkHeaderBar" id="headerbar">
+        <property name="visible">True</property>
+        <property name="can_focus">False</property>
+        <property name="show-close-button">True</property>
+        <property name="title" translatable="yes">Color Picker</property>
+      </object>
+    </child>
     <child internal-child="vbox">
       <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
@@ -37,9 +45,6 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
           <object class="GtkBox" id="box1">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="margin_start">6</property>
-            <property name="margin_end">6</property>
-            <property name="margin_top">6</property>
             <property name="orientation">vertical</property>
             <property name="spacing">9</property>
             <child>
@@ -364,38 +369,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <property name="position">0</property>
           </packing>
         </child>
-        <child internal-child="action_area">
-          <object class="GtkButtonBox" id="dialog-action_area1">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-            <property name="layout_style">end</property>
-            <child>
-              <object class="GtkButton" id="button_close">
-                <property name="label">gtk-close</property>
-                <property name="use_action_appearance">False</property>
-                <property name="visible">True</property>
-                <property name="can_focus">True</property>
-                <property name="receives_default">True</property>
-                <property name="use_stock">True</property>
-              </object>
-              <packing>
-                <property name="expand">False</property>
-                <property name="fill">False</property>
-                <property name="position">0</property>
-              </packing>
-            </child>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="pack_type">end</property>
-            <property name="position">0</property>
-          </packing>
-        </child>
       </object>
     </child>
-    <action-widgets>
-      <action-widget response="0">button_close</action-widget>
-    </action-widgets>
   </object>
 </interface>
