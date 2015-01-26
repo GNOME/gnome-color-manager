@@ -8,8 +8,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-25 21:17+0200\n"
-"PO-Revision-Date: 2014-01-25 21:20+0200\n"
+"POT-Creation-Date: 2015-01-26 21:18+0200\n"
+"PO-Revision-Date: 2015-01-26 21:19+0200\n"
 "Last-Translator: Yosef Or Boczko <yoseforb@gmail.com>\n"
 "Language-Team: עברית <>\n"
 "Language: he_IL\n"
@@ -52,7 +52,7 @@ msgstr "_מדידה"
 
 #. the color representation
 #. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:6 ../src/gcm-viewer.c:687
+#: ../data/gcm-picker.ui.h:6 ../src/gcm-viewer.c:689
 msgid "XYZ"
 msgstr "XYZ"
 
@@ -85,7 +85,7 @@ msgstr "מרחב צבע"
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:18 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:707
+#: ../data/gcm-picker.ui.h:18 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:709
 msgid "RGB"
 msgstr "RGB"
 
@@ -99,7 +99,21 @@ msgstr "שגיאה"
 msgid "Results"
 msgstr "תוצאות"
 
+#. TRANSLATORS: this is the application name for libcanberra
 #: ../data/appdata/gcm-viewer.appdata.xml.in.h:1
+#: ../src/gcm-calibrate-argyll.c:2252 ../src/gcm-calibrate-argyll.c:2340
+#: ../src/gcm-calibrate-argyll.c:2377 ../src/gcm-calibrate-argyll.c:2403
+#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
+#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
+msgid "GNOME Color Manager"
+msgstr "מנהל הצבע של GNOME"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+#: ../data/gcm-viewer.desktop.in.h:2
+msgid "Inspect and compare installed color profiles"
+msgstr "ניתוח והשוואה של פרופילי הצבע המתוקנים"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:3
 msgid ""
 "GNOME Color Profile Viewer shows installed color profiles on your system and "
 "allows you to calibrate displays, printers and cameras using a wizard."
@@ -107,7 +121,7 @@ msgstr ""
 "‏GNOME מציג פרופילי צבע מציג פרופילי צבע מותקנים על המערכת שלך ומאפשר לך "
 "לכייל תצוגות, מדפסות ומצלמות באמצעות אשף."
 
-#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:4
 msgid ""
 "This functionality is typically used by GNOME Control Center from the color "
 "panel although can be used on its own."
@@ -119,9 +133,9 @@ msgstr ""
 msgid "Color Profile Viewer"
 msgstr "מציג פרופילי הצבע"
 
-#: ../data/gcm-viewer.desktop.in.h:2
-msgid "Inspect and compare installed color profiles"
-msgstr "ניתוח והשוואה של פרופילי הצבע המתוקנים"
+#: ../data/gcm-viewer.desktop.in.h:3
+msgid "Color;ICC;"
+msgstr "צבע;ICC;"
 
 #: ../data/gcm-viewer.ui.h:2
 msgid "Add a profile for the device"
@@ -282,11 +296,11 @@ msgstr "נתוני על הם פרטים נוספים שמאוחסנים בפרו
 msgid "Metadata"
 msgstr "נתוני על"
 
-#: ../src/gcm-calibrate-argyll.c:381
+#: ../src/gcm-calibrate-argyll.c:409
 msgid "Getting default parameters"
 msgstr "מתקבלים פרמטרי בררת המחדל"
 
-#: ../src/gcm-calibrate-argyll.c:386
+#: ../src/gcm-calibrate-argyll.c:414
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -294,65 +308,65 @@ msgstr ""
 "תהליך זה מהווה תהליך קדם כיול לצג על ידי שליחת טלאים צבעוניים ואפורים לצד "
 "שלך ומדידתם על ידי התקן חומרה."
 
-#: ../src/gcm-calibrate-argyll.c:478
+#: ../src/gcm-calibrate-argyll.c:506
 msgid "Reading the patches"
 msgstr "הטלאים נקראים"
 
-#: ../src/gcm-calibrate-argyll.c:483
+#: ../src/gcm-calibrate-argyll.c:511
 msgid "Reading the patches using the color measuring instrument."
 msgstr "הטלאים נקראים באמצעות כלי מדידת הצבע."
 
-#: ../src/gcm-calibrate-argyll.c:587
+#: ../src/gcm-calibrate-argyll.c:615
 msgid "Drawing the patches"
 msgstr "מתבצע ציור הטלאים"
 
-#: ../src/gcm-calibrate-argyll.c:592
+#: ../src/gcm-calibrate-argyll.c:620
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
 msgstr "מתבצע ציור הטלאים על הצד, שלאחר מכן ימדדו על ידי התקן החומרה."
 
-#: ../src/gcm-calibrate-argyll.c:691 ../src/gcm-calibrate-argyll.c:1053
+#: ../src/gcm-calibrate-argyll.c:719 ../src/gcm-calibrate-argyll.c:1081
 msgid "Generating the profile"
 msgstr "הפרופיל נוצר"
 
-#: ../src/gcm-calibrate-argyll.c:696
+#: ../src/gcm-calibrate-argyll.c:724
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "יצירת פרופיל הצבע מסוג ICC שבו ניתן להשתמש לצג זה."
 
-#: ../src/gcm-calibrate-argyll.c:867
+#: ../src/gcm-calibrate-argyll.c:895
 msgid "Copying files"
 msgstr "מתבצעת העתקת הקבצים"
 
-#: ../src/gcm-calibrate-argyll.c:872
+#: ../src/gcm-calibrate-argyll.c:900
 msgid "Copying source image, chart data and CIE reference values."
 msgstr "תמונת המקור יחד עם נתוני התרשים וערכי ההנחיה של ה־CIE מועתקים."
 
-#: ../src/gcm-calibrate-argyll.c:943
+#: ../src/gcm-calibrate-argyll.c:971
 msgid "Measuring the patches"
 msgstr "מתבצעת מדידת הטלאים"
 
-#: ../src/gcm-calibrate-argyll.c:948
+#: ../src/gcm-calibrate-argyll.c:976
 msgid "Detecting the reference patches and measuring them."
 msgstr "מתבצעים איתור ומדידה של של טלאי ההנחיה."
 
-#: ../src/gcm-calibrate-argyll.c:1058
+#: ../src/gcm-calibrate-argyll.c:1086
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "פרופילי הצבע מסוג ICC הניתנים לשימוש בהתקן זה נוצרים."
 
-#: ../src/gcm-calibrate-argyll.c:1423
+#: ../src/gcm-calibrate-argyll.c:1451
 msgid "Printing patches"
 msgstr "הטלאים מודפסים"
 
-#: ../src/gcm-calibrate-argyll.c:1428
+#: ../src/gcm-calibrate-argyll.c:1456
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "מתבצע עיבוד הטלאים עבור הדף והדיו הנבחרים."
 
-#: ../src/gcm-calibrate-argyll.c:1809
+#: ../src/gcm-calibrate-argyll.c:1837
 msgid "Wait for the ink to dry"
 msgstr "יש להמתין להתייבשות הדיו"
 
-#: ../src/gcm-calibrate-argyll.c:1814
+#: ../src/gcm-calibrate-argyll.c:1842
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -360,53 +374,45 @@ msgstr ""
 "יש להמתין מספר דקות להתייבשות הדיו. יצירת פרופיל עבור דיו לח תייצר פרופיל "
 "באיכות נמוכה ועלול להיגרם נזק לכלי מדידת הצבע שלך."
 
-#: ../src/gcm-calibrate-argyll.c:1991
+#: ../src/gcm-calibrate-argyll.c:2019
 msgid "Set up instrument"
 msgstr "הגדרת כלי"
 
-#: ../src/gcm-calibrate-argyll.c:1996
+#: ../src/gcm-calibrate-argyll.c:2024
 msgid "Setting up the instrument for use…"
 msgstr "מתבצעת הגדרת הכלי לשימוש..."
 
-#: ../src/gcm-calibrate-argyll.c:2208 ../src/gcm-calibrate-argyll.c:2274
+#: ../src/gcm-calibrate-argyll.c:2234 ../src/gcm-calibrate-argyll.c:2300
 msgid "Calibration error"
 msgstr "שגיאת כיול"
 
-#: ../src/gcm-calibrate-argyll.c:2213
+#: ../src/gcm-calibrate-argyll.c:2239
 msgid "The sample could not be read at this time."
 msgstr "לא ניתן לקרוא את הדגימה כרגע."
 
-#: ../src/gcm-calibrate-argyll.c:2220 ../src/gcm-calibrate-argyll.c:2345
-#: ../src/gcm-calibrate-argyll.c:2371 ../src/gcm-calibrate-argyll.c:2408
-#: ../src/gcm-calibrate-argyll.c:2435
+#: ../src/gcm-calibrate-argyll.c:2246 ../src/gcm-calibrate-argyll.c:2371
+#: ../src/gcm-calibrate-argyll.c:2397 ../src/gcm-calibrate-argyll.c:2434
+#: ../src/gcm-calibrate-argyll.c:2461
 msgid "Retry"
 msgstr "ניסיון חוזר"
 
-#. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2226 ../src/gcm-calibrate-argyll.c:2314
-#: ../src/gcm-calibrate-argyll.c:2351 ../src/gcm-calibrate-argyll.c:2377
-#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
-#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
-msgid "GNOME Color Manager"
-msgstr "מנהל הצבע של GNOME"
-
-#: ../src/gcm-calibrate-argyll.c:2280
+#: ../src/gcm-calibrate-argyll.c:2306
 msgid "No firmware is installed for this instrument."
 msgstr "לא מותקנת קושחה עבור כלי זה."
 
-#: ../src/gcm-calibrate-argyll.c:2285
+#: ../src/gcm-calibrate-argyll.c:2311
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
 msgstr "התאמת התבנית לא הייתה טובה מספיק. עליך לוודא שנבחר סוג יעד נכון."
 
-#: ../src/gcm-calibrate-argyll.c:2291
+#: ../src/gcm-calibrate-argyll.c:2317
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
 msgstr "כלי המדידה לא קיבלת קריאות תקפות. יש לוודא כי הצמצם פתוח לחלוטין."
 
-#: ../src/gcm-calibrate-argyll.c:2296
+#: ../src/gcm-calibrate-argyll.c:2322
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -414,56 +420,56 @@ msgstr ""
 "כלי המדידה עסוק ואינו מופעל. יש לנתק את חיבור ה־USB ולהכניסו מחדש בטרם "
 "ניסיון השימוש בתקן זה."
 
-#: ../src/gcm-calibrate-argyll.c:2334
+#: ../src/gcm-calibrate-argyll.c:2360
 msgid "Reading target"
 msgstr "מתבצעת קריאת היעד"
 
-#: ../src/gcm-calibrate-argyll.c:2339
+#: ../src/gcm-calibrate-argyll.c:2365
 msgid "Failed to read the strip correctly."
 msgstr "ארע כשל בקריאת הרצועה כראוי."
 
-#: ../src/gcm-calibrate-argyll.c:2360
+#: ../src/gcm-calibrate-argyll.c:2386
 msgid "Reading sample"
 msgstr "הדגימה נקראת"
 
-#: ../src/gcm-calibrate-argyll.c:2365
+#: ../src/gcm-calibrate-argyll.c:2391
 msgid "Failed to read the color sample correctly."
 msgstr "קריאת הצבע כראוי נכשלה."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2390
+#: ../src/gcm-calibrate-argyll.c:2416
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "קריאת רצועה %s על פני %s!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2395
+#: ../src/gcm-calibrate-argyll.c:2421
 msgid "It looks like you've measured the wrong strip."
 msgstr "נראה כאילו מדדת את הרצועה הלא נכונה."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2399
+#: ../src/gcm-calibrate-argyll.c:2425
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
 msgstr "אם מדדת את הנכונה, זה בסדר, יכול להיות שהנייר אינו רגיל."
 
-#: ../src/gcm-calibrate-argyll.c:2424
+#: ../src/gcm-calibrate-argyll.c:2450
 msgid "Device Error"
 msgstr "שגיאת התקן"
 
-#: ../src/gcm-calibrate-argyll.c:2429
+#: ../src/gcm-calibrate-argyll.c:2455
 msgid "The device could not measure the color spot correctly."
 msgstr "ההתקן לא הצליח למדוד את כתם הצבע כראוי."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2443
+#: ../src/gcm-calibrate-argyll.c:2469
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "מוכן לקריאת רצועה %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2448
+#: ../src/gcm-calibrate-argyll.c:2474
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
@@ -471,21 +477,21 @@ msgstr ""
 "יש להציב את מד הצבע על אזור לבן שליד האות וללחוץ ולהחזיק את מתג המדידה."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2452
+#: ../src/gcm-calibrate-argyll.c:2478
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
 msgstr "יש לסרוק את שורת היעד משמאל לימין ולשחרר את המתג עם ההגעה לסוף העמוד."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2456
+#: ../src/gcm-calibrate-argyll.c:2482
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
 msgstr "יש לוודא כי מרכז ההתקן מיושר כראוי עם השורה המיועדת למדידה."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2460
+#: ../src/gcm-calibrate-argyll.c:2486
 msgid ""
 "If you make a mistake, just release the switch, and you'll get a chance to "
 "try again."
@@ -493,27 +499,27 @@ msgstr ""
 "אם נעשתה טעות על ידיך עליך פשוט לשחרר את המתג ומיד תינתן לך האפשרות לנסות "
 "שוב."
 
-#: ../src/gcm-calibrate-argyll.c:2574
+#: ../src/gcm-calibrate-argyll.c:2600
 msgid "Printing"
 msgstr "הדפסה"
 
-#: ../src/gcm-calibrate-argyll.c:2583
+#: ../src/gcm-calibrate-argyll.c:2609
 msgid "Preparing the data for the printer."
 msgstr "הכנת הנתונים עבור המדפסת."
 
-#: ../src/gcm-calibrate-argyll.c:2591
+#: ../src/gcm-calibrate-argyll.c:2617
 msgid "Sending the targets to the printer."
 msgstr "שליחת היעדים אל המדפסת."
 
-#: ../src/gcm-calibrate-argyll.c:2597
+#: ../src/gcm-calibrate-argyll.c:2623
 msgid "Printing the targets…"
 msgstr "היעדים מודפסים…"
 
-#: ../src/gcm-calibrate-argyll.c:2603
+#: ../src/gcm-calibrate-argyll.c:2629
 msgid "The printing has finished."
 msgstr "ההדפסה הסתיימה."
 
-#: ../src/gcm-calibrate-argyll.c:2609
+#: ../src/gcm-calibrate-argyll.c:2635
 msgid "The print was aborted."
 msgstr "ההדפסה בוטלה."
 
@@ -577,7 +583,7 @@ msgid "Select calibration target image"
 msgstr "יש לבחור את תמונת היעד לכיול"
 
 #: ../src/gcm-calibrate.c:679 ../src/gcm-calibrate.c:724
-#: ../src/gcm-calibrate.c:819 ../src/gcm-viewer.c:440
+#: ../src/gcm-calibrate.c:819 ../src/gcm-viewer.c:442
 msgid "_Cancel"
 msgstr "_ביטול"
 
@@ -593,7 +599,7 @@ msgstr "קובצי תמונה נתמכים"
 
 #. TRANSLATORS: filter name on the file->open dialog
 #: ../src/gcm-calibrate.c:697 ../src/gcm-calibrate.c:751
-#: ../src/gcm-viewer.c:466
+#: ../src/gcm-viewer.c:468
 msgid "All files"
 msgstr "כל הקבצים"
 
@@ -608,7 +614,7 @@ msgid "CIE values"
 msgstr "ערכי CIE"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:817 ../src/gcm-viewer.c:438
+#: ../src/gcm-calibrate.c:817 ../src/gcm-viewer.c:440
 msgid "Select ICC Profile File"
 msgstr "יש לבחור קובץ פרופיל ICC"
 
@@ -1192,8 +1198,8 @@ msgid "Copyright (c)"
 msgstr "כל הזכויות שמורות (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2345 ../src/gcm-picker.c:793
-#: ../src/gcm-viewer.c:1797
+#: ../src/gcm-calibrate-main.c:2345 ../src/gcm-picker.c:813
+#: ../src/gcm-viewer.c:1803
 msgid "Set the parent window to make this modal"
 msgstr "הגדרת חלון ההורה כדי ליצור מודל זה"
 
@@ -1211,26 +1217,26 @@ msgstr "לא צוין התקן!"
 msgid "No profile"
 msgstr "אין פרופיל"
 
-#: ../src/gcm-cell-renderer-profile-text.c:88
+#: ../src/gcm-cell-renderer-profile-text.c:87
 #, c-format
 msgid "Default %s"
 msgstr "%s בררת מחדל"
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile has been auto-generated for this hardware
-#: ../src/gcm-cell-renderer-profile-text.c:103
+#: ../src/gcm-cell-renderer-profile-text.c:102
 msgid "Default: "
 msgstr "בררת מחדל:"
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile his a standard space like AdobeRGB
-#: ../src/gcm-cell-renderer-profile-text.c:108
+#: ../src/gcm-cell-renderer-profile-text.c:107
 msgid "Colorspace: "
 msgstr "מרחב צבעים:"
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile is a test profile
-#: ../src/gcm-cell-renderer-profile-text.c:113
+#: ../src/gcm-cell-renderer-profile-text.c:112
 msgid "Test profile: "
 msgstr "פרופיל הבדיקה:"
 
@@ -1256,7 +1262,7 @@ msgstr "פרופיל ICC להתקנה"
 msgid "No filename specified"
 msgstr "לא צוין שם קובץ"
 
-#: ../src/gcm-import.c:147 ../src/gcm-viewer.c:1441
+#: ../src/gcm-import.c:147 ../src/gcm-viewer.c:1447
 msgid "Failed to open ICC profile"
 msgstr "ארע כשל בפתיחת פרופיל ה־ICC"
 
@@ -1309,7 +1315,7 @@ msgstr "האם לייבא פרופיל צבע?"
 msgid "Import"
 msgstr "יבוא"
 
-#: ../src/gcm-import.c:292 ../src/gcm-viewer.c:1474
+#: ../src/gcm-import.c:292 ../src/gcm-viewer.c:1480
 msgid "Failed to import file"
 msgstr "יבוא הקובץ נכשל"
 
@@ -1387,39 +1393,39 @@ msgstr "תכנית חקירת ה־EDID"
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:217 ../src/gcm-picker.c:224 ../src/gcm-viewer.c:676
-#: ../src/gcm-viewer.c:726
+#: ../src/gcm-picker.c:218 ../src/gcm-picker.c:225 ../src/gcm-viewer.c:678
+#: ../src/gcm-viewer.c:728
 msgid "Unknown"
 msgstr "לא ידוע"
 
-#: ../src/gcm-picker.c:369
+#: ../src/gcm-picker.c:389
 msgid "No colorimeter is attached."
 msgstr "לא מחובר קולורימטר (מד צבע)."
 
-#: ../src/gcm-picker.c:386
+#: ../src/gcm-picker.c:406
 msgid "The sensor has no native driver."
 msgstr "לחיישן אין מנהל התקן טבעי."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:395
+#: ../src/gcm-picker.c:415
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "הקולורימטר (מד צבע) המחובר אינו תומך בקריאת צבע של כתם."
 
 #. TRANSLATORS: this is when there are no profiles that can be used;
 #. * the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:646
+#: ../src/gcm-picker.c:666
 #, c-format
 msgid "No %s color spaces available"
 msgstr "אין מרחבי צבע %s זמינים"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:808
+#: ../src/gcm-picker.c:828
 msgid "GNOME Color Manager Color Picker"
 msgstr "דוגם הצבע של מנהל הצבעים של GNOME"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:333 ../src/gcm-viewer.c:719
+#: ../src/gcm-utils.c:333 ../src/gcm-viewer.c:721
 msgid "CMYK"
 msgstr "CMYK"
 
@@ -1429,321 +1435,321 @@ msgid "gray"
 msgstr "אפור"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:384
+#: ../src/gcm-viewer.c:386
 msgid "Permanently delete profile?"
 msgstr "האם למחוק פרופיל זה לצמיתות?"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:387
+#: ../src/gcm-viewer.c:389
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr "האם ברצונך להסיר פרופיל זה מהמערכת שלך לצמיתות?"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:390
+#: ../src/gcm-viewer.c:392
 msgid "Delete"
 msgstr "מחיקה"
 
-#: ../src/gcm-viewer.c:441
+#: ../src/gcm-viewer.c:443
 msgid "_Import"
 msgstr "י_בוא"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-viewer.c:459
+#: ../src/gcm-viewer.c:461
 msgid "Supported ICC profiles"
 msgstr "התקני ICC נתמכים"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-viewer.c:495
+#: ../src/gcm-viewer.c:497
 msgid "Failed to copy file"
 msgstr "אירע כשל בהעתקת הקובץ"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:649
+#: ../src/gcm-viewer.c:651
 msgid "Input device"
 msgstr "התקן הקלט"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:653
+#: ../src/gcm-viewer.c:655
 msgid "Display device"
 msgstr "התקן התצוגה"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:657
+#: ../src/gcm-viewer.c:659
 msgid "Output device"
 msgstr "התקן הפלט"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:661
+#: ../src/gcm-viewer.c:663
 msgid "Devicelink"
 msgstr "קישור להתקן"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:665
+#: ../src/gcm-viewer.c:667
 msgid "Colorspace conversion"
 msgstr "המרה בין מרחבי צבע"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:669
+#: ../src/gcm-viewer.c:671
 msgid "Abstract"
 msgstr "מופשט"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:673
+#: ../src/gcm-viewer.c:675
 msgid "Named color"
 msgstr "צבע בעל שם"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:691
+#: ../src/gcm-viewer.c:693
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:695
+#: ../src/gcm-viewer.c:697
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:699
+#: ../src/gcm-viewer.c:701
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:703
+#: ../src/gcm-viewer.c:705
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:711
+#: ../src/gcm-viewer.c:713
 msgid "Gray"
 msgstr "אפור"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:715
+#: ../src/gcm-viewer.c:717
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:723
+#: ../src/gcm-viewer.c:725
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: e.g. sRGB or adbode RGB
-#: ../src/gcm-viewer.c:762
+#: ../src/gcm-viewer.c:764
 msgid "Standard space"
 msgstr "מרחב רגיל"
 
 #. TRANSLATORS: the raw EDID MD5 of the display device
-#: ../src/gcm-viewer.c:764
+#: ../src/gcm-viewer.c:766
 msgid "Display checksum"
 msgstr "סכום ביקורת של התצוגה"
 
-#: ../src/gcm-viewer.c:765
+#: ../src/gcm-viewer.c:767
 msgid "Display model"
 msgstr "דגם התצוגה"
 
-#: ../src/gcm-viewer.c:766
+#: ../src/gcm-viewer.c:768
 msgid "Display serial number"
 msgstr "המספר הסידורי של התצוגה"
 
 #. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
-#: ../src/gcm-viewer.c:768
+#: ../src/gcm-viewer.c:770
 msgid "Display PNPID"
 msgstr "ה־PNPID של התצוגה"
 
 #. TRANSLATORS: who made the display
-#: ../src/gcm-viewer.c:770
+#: ../src/gcm-viewer.c:772
 msgid "Display vendor"
 msgstr "ספק התצוגה"
 
 #. TRANSLATORS: the raw profile MD5
-#: ../src/gcm-viewer.c:772
+#: ../src/gcm-viewer.c:774
 msgid "File checksum"
 msgstr "סכום ביקורת של קובץ"
 
 #. TRANSLATORS: the color framework, e.g. 'colord'
-#: ../src/gcm-viewer.c:774
+#: ../src/gcm-viewer.c:776
 msgid "Framework product"
 msgstr "מוצר התשתית"
 
 #. TRANSLATORS: the framework binary, e.g. gcm-viewer
-#: ../src/gcm-viewer.c:776
+#: ../src/gcm-viewer.c:778
 msgid "Framework program"
 msgstr "תכנית התשתית"
 
 #. TRANSLATORS: the framework release, e.g. '1.22'
-#: ../src/gcm-viewer.c:778
+#: ../src/gcm-viewer.c:780
 msgid "Framework version"
 msgstr "גרסת התשתית"
 
 #. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
-#: ../src/gcm-viewer.c:780
+#: ../src/gcm-viewer.c:782
 msgid "Data source type"
 msgstr "סוג מקור הנתונים"
 
 #. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
-#: ../src/gcm-viewer.c:782
+#: ../src/gcm-viewer.c:784
 msgid "Mapping format"
 msgstr "תבנית המיפוי"
 
 #. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
-#: ../src/gcm-viewer.c:784
+#: ../src/gcm-viewer.c:786
 msgid "Mapping qualifier"
 msgstr "מגדיר מיפוי"
 
 #. TRANSLATORS: The original device the profile was made for
-#: ../src/gcm-viewer.c:786
+#: ../src/gcm-viewer.c:788
 msgid "Mapping device"
 msgstr "התקן מיפוי"
 
 #. TRANSLATORS: The average error when making the profile
-#: ../src/gcm-viewer.c:788
+#: ../src/gcm-viewer.c:790
 msgid "Delta-E average"
 msgstr "ממוצע Delta-E"
 
 #. TRANSLATORS: the maximum error when making the profile
-#: ../src/gcm-viewer.c:790
+#: ../src/gcm-viewer.c:792
 msgid "Delta-E maximum"
 msgstr "מרבי Delta-E"
 
 #. TRANSLATORS: the RMS error when making the profile
-#: ../src/gcm-viewer.c:792
+#: ../src/gcm-viewer.c:794
 msgid "Delta-E RMS"
 msgstr "Delta-E RMS"
 
 #. TRANSLATORS: The device name, e.g. 'huey'
-#: ../src/gcm-viewer.c:794
+#: ../src/gcm-viewer.c:796
 msgid "Calibration device"
 msgstr "התקן כיול"
 
 #. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
-#: ../src/gcm-viewer.c:796
+#: ../src/gcm-viewer.c:798
 msgid "Screen surface finish"
 msgstr "גימור משטח המסך"
 
 #. TRANSLATORS: e.g. DVI or VGA
-#: ../src/gcm-viewer.c:798
+#: ../src/gcm-viewer.c:800
 msgid "Connection type"
 msgstr "סוג חיבור"
 
 #. TRANSLATORS: e.g. Screen brightness in percent
-#: ../src/gcm-viewer.c:800
+#: ../src/gcm-viewer.c:802
 msgid "Screen brightness"
 msgstr "בהירות הצג"
 
 #. TRANSLATORS: e.g. the 3D volume of the gamut graph
-#: ../src/gcm-viewer.c:802
+#: ../src/gcm-viewer.c:804
 msgid "Gamut volume"
 msgstr "נפח גאמוט"
 
 #. TRANSLATORS: e.g. what proportion of sRGB is covered
-#: ../src/gcm-viewer.c:804
+#: ../src/gcm-viewer.c:806
 msgid "sRGB coverage"
 msgstr "כיסוי sRGB"
 
 #. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
-#: ../src/gcm-viewer.c:806
+#: ../src/gcm-viewer.c:808
 msgid "Adobe RGB coverage"
 msgstr "כיסוי RGB של Adobe"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:917
+#: ../src/gcm-viewer.c:919
 msgid "No description has been set"
 msgstr "לא הוגדר תיאור"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:921
+#: ../src/gcm-viewer.c:923
 msgid "No copyright has been set"
 msgstr "לא הוגדרו זכויות יוצרים"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:925
+#: ../src/gcm-viewer.c:927
 msgid "The display compensation table is invalid"
 msgstr "טבלת פיצוי התצוגה שגויה"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:929
+#: ../src/gcm-viewer.c:931
 msgid "A scum dot is present for media white"
 msgstr "קיימת נקודה מלוכלכת ללבן של המדיה"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:933
+#: ../src/gcm-viewer.c:935
 msgid "The gray axis contains significant amounts of color"
 msgstr "הציר האפור מכיל כמות נכבדת של צבע"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:937
+#: ../src/gcm-viewer.c:939
 msgid "The gray axis is non-monotonic"
 msgstr "הציר האפור אינו מונוטוני"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:941
+#: ../src/gcm-viewer.c:943
 msgid "One or more of the primaries are invalid"
 msgstr "אחד או יותר מהצבעים העיקריים שגויים"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:945
+#: ../src/gcm-viewer.c:947
 msgid "The primaries do not add to white"
 msgstr "הצבעים העיקריים אינם מתאספים לכדי לבן"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:949
+#: ../src/gcm-viewer.c:951
 msgid "One or more of the primaries is unlikely"
 msgstr "אחד או יותר מהצבעים העיקריים אינו סביר"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:953
+#: ../src/gcm-viewer.c:955
 msgid "The white is not D50 white"
 msgstr "הלבן אינו לבן D50"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:957
+#: ../src/gcm-viewer.c:959
 msgid "The whitepoint temperature is unlikely"
 msgstr "הטמפרטורה של הנקודה הלבנה אינה סבירה"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:961
+#: ../src/gcm-viewer.c:963
 msgid "Unknown warning type"
 msgstr "סוג האזהרה אינו ידוע"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1103
+#: ../src/gcm-viewer.c:1105
 msgid "Yes"
 msgstr "כן"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1106
+#: ../src/gcm-viewer.c:1108
 msgid "No"
 msgstr "לא"
 
 #. TRANSLATORS: profiles that have warnings are useable,
 #. * but may not be any good
-#: ../src/gcm-viewer.c:1132
+#: ../src/gcm-viewer.c:1134
 msgid "The profile has the following problems:"
 msgstr "לפרופיל יש את הבעיות הבאות:"
 
 #. TRANSLATORS: this is the icc creation date strftime format
-#: ../src/gcm-viewer.c:1224
+#: ../src/gcm-viewer.c:1226
 msgid "%B %e %Y, %I:%M:%S %p"
 msgstr "ה־%e ב%B %Y, H:%M:%S"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:1247
+#: ../src/gcm-viewer.c:1249
 msgid "Delete this profile"
 msgstr "מחיקת פרופיל זה"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:1250
+#: ../src/gcm-viewer.c:1252
 msgid "This profile cannot be deleted"
 msgstr "לא ניתן למחוק פרופיל זה"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-viewer.c:1800
+#: ../src/gcm-viewer.c:1806
 msgid "Set the specific profile to show"
 msgstr "יש להגדיר את הפרופיל המסוים להצגה"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: ../src/gcm-viewer.c:1803
+#: ../src/gcm-viewer.c:1809
 msgid "Set the specific file to show"
 msgstr "הגדרת הקובץ המסוים להצגה"
 
