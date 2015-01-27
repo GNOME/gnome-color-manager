@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2010-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -343,26 +343,6 @@ out_unlock:
 out:
 	if (tmp != NULL)
 		cd_color_xyz_free (tmp);
-}
-
-/**
- * gcm_picker_close_cb:
- **/
-static void
-gcm_picker_close_cb (GtkWidget *widget, gpointer data)
-{
-	GtkApplication *application = (GtkApplication *) data;
-	g_application_release (G_APPLICATION (application));
-}
-
-/**
- * gcm_picker_delete_event_cb:
- **/
-static gboolean
-gcm_picker_delete_event_cb (GtkWidget *widget, GdkEvent *event, gpointer data)
-{
-	gcm_picker_close_cb (widget, data);
-	return FALSE;
 }
 
 /**
@@ -718,13 +698,6 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 	main_window = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_picker"));
 	gtk_application_add_window (GTK_APPLICATION (application), GTK_WINDOW (main_window));
 	gtk_window_set_icon_name (GTK_WINDOW (main_window), GCM_STOCK_ICON);
-	g_signal_connect (main_window, "delete_event",
-			  G_CALLBACK (gcm_picker_delete_event_cb), application);
-
-	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_close"));
-	g_signal_connect (widget, "clicked",
-			  G_CALLBACK (gcm_picker_close_cb), application);
-
 
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_measure"));
 	g_signal_connect (widget, "clicked",
@@ -760,9 +733,7 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 
 	/* maintain a list of profiles */
 	client = cd_client_new ();
-	ret = cd_client_connect_sync (client,
-				      NULL,
-				      &error);
+	ret = cd_client_connect_sync (client, NULL, &error);
 	if (!ret) {
 		g_warning ("failed to connect to colord: %s",
 			   error->message);
@@ -783,9 +754,6 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 	gcm_prefs_setup_space_combobox (widget);
 	g_signal_connect (G_OBJECT (widget), "changed",
 			  G_CALLBACK (gcm_prefs_space_combo_changed_cb), NULL);
-
-	/* setup results expander */
-//	gcm_picker_refresh_results (NULL);
 
 	/* setup initial preview window */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "image_preview"));
