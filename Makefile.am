@@ -13,7 +13,6 @@ DISTCLEANFILES =					\
 
 MAINTAINERCLEANFILES =					\
 	*~						\
-	INSTALL						\
 	Makefile.in					\
 	aclocal.m4					\
 	compile						\
@@ -36,7 +35,6 @@ EXTRA_DIST =						\
 	COPYING						\
 	MAINTAINERS					\
 	AUTHORS						\
-	INSTALL						\
 	README						\
 	NEWS						\
         autogen.sh					\
@@ -65,7 +63,7 @@ ChangeLog:
 	  echo A git checkout and git-log is required to generate this file >> $@); \
 	fi
 
-NEWS: data/appdata/gcm-viewer.appdata.xml
+NEWS: data/appdata/*.appdata.xml
 	$(AM_V_GEN) \
 	if test -e $(APPSTREAM_UTIL); then \
 		$(APPSTREAM_UTIL) appdata-to-news $^ > $@; \
