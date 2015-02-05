@@ -1,8 +1,8 @@
-@APPSTREAM_XML_RULES@
 @INTLTOOL_XML_RULE@
-appstream_XML = $(appdata_in_files:.xml.in=.xml)
+appdatadir = $(datadir)/appdata
+appdata_DATA = $(appdata_in_files:.xml.in=.xml)
 appdata_in_files = gcm-viewer.appdata.xml.in
 EXTRA_DIST = $(appdata_in_files)
-CLEANFILES = $(appstream_XML)
+CLEANFILES = gcm-viewer.appdata.xml
 
 -include $(top_srcdir)/git.mk

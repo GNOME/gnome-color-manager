@@ -2,15 +2,8 @@ PackageKit Release Notes
 
 1. Write NEWS entries for gnome-color-manager in the same format as usual.
 
-Version 3.15.5
-~~~~~~~~~~~~~~~
-Released: 2015-xx-xx
-
-* Translations
-* New Features:
-* Bugfix:
-
-git shortlog GNOME_COLOR_MANAGER_3_15_4.. | grep -i -v trivial | grep -v Merge | uniq > NEWS.new
+git log --format="%s" GNOME_COLOR_MANAGER_3_15_4.. | grep -i -v trivial | grep -v Merge | uniq
+Add any user visible changes into data/appdata/gcm-viewer.appdata.xml.in
 
 3. Commit changes in gnome-color-manager git:
 

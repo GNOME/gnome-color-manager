@@ -85,6 +85,7 @@ PKG_CHECK_MODULES(GLIB, glib-2.0 >= 2.31.10 gobject-2.0 gthread-2.0 gio-2.0 >= 2
 PKG_CHECK_MODULES(GTK, gtk+-3.0 >= 2.91.0)
 PKG_CHECK_MODULES(LCMS, lcms2 >= 2.2)
 PKG_CHECK_MODULES(COLORD, colord >= 0.1.34 colord-gtk >= 0.1.20)
+AC_PATH_PROG(APPSTREAM_UTIL, [appstream-util], [unfound])
 
 dnl **** Check for VTE ****
 PKG_CHECK_MODULES(VTE, vte-2.91 >= 0.25.1, has_vte=yes, has_vte=no)
