@@ -1,14 +1,14 @@
-PackageKit Release Notes
+GNOME Color Manager Release Notes
 
 1. Write NEWS entries for gnome-color-manager in the same format as usual.
 
-git log --format="%s" GNOME_COLOR_MANAGER_3_15_4.. | grep -i -v trivial | grep -v Merge | uniq
+git log --format="%s" GNOME_COLOR_MANAGER_3_15_4.. | grep -i -v trivial | grep -v Merge | uniq | sort
 Add any user visible changes into data/appdata/gcm-viewer.appdata.xml.in
 
 3. Commit changes in gnome-color-manager git:
 
-git commit -a -m "Release version 3.15.5"
-git tag -s GNOME_COLOR_MANAGER_3_15_5 -m "==== Version 3.15.5 ===="
+git commit -a -m "Release version 3.15.90"
+git tag -s GNOME_COLOR_MANAGER_3_15_90 -m "==== Version 3.15.90 ===="
 <enter password>
 git push --tags
 git push
