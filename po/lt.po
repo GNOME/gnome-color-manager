@@ -2,15 +2,15 @@
 # Copyright (C) 2009 gnome-color-manager's COPYRIGHT HOLDER
 # This file is distributed under the same license as the gnome-color-manager package.
 # Žygimantas Beručka <zygis@gnome.org>, 2010.
-# Aurimas Černius <aurisc4@gmail.com>, 2009, 2010, 2013, 2014.
+# Aurimas Černius <aurisc4@gmail.com>, 2009, 2010, 2013, 2014, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager&keywords=I18N+L10N\n"
-"POT-Creation-Date: 2013-12-18 20:11+0000\n"
-"PO-Revision-Date: 2014-01-12 00:05+0200\n"
+"POT-Creation-Date: 2015-02-28 07:14+0000\n"
+"PO-Revision-Date: 2015-02-28 16:20+0200\n"
 "Last-Translator: Aurimas Černius <aurisc4@gmail.com>\n"
 "Language-Team: Lietuvių <gnome-lt@lists.akl.lt>\n"
 "Language: lt\n"
@@ -46,66 +46,75 @@ msgstr "Spalvos gavėjas"
 msgid "Use the color sensor to sample spot colors"
 msgstr "Naudoti spalvų jutiklį spalvų pavyzdžiams paimti"
 
-#. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:4
-msgid "_Measure"
-msgstr "_Matas"
-
 #. the color representation
 #. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:6 ../src/gcm-viewer.c:687
+#: ../data/gcm-picker.ui.h:4 ../src/gcm-viewer.c:689
 msgid "XYZ"
 msgstr "XYZ"
 
 #. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:8
-#| msgid "Lab (D50):"
+#: ../data/gcm-picker.ui.h:6
 msgid "Lab (D50)"
 msgstr "Lab (D50):"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:10
-#| msgid "Media whitepoint:"
+#: ../data/gcm-picker.ui.h:8
 msgid "Media whitepoint"
 msgstr "Laikmenos baltas taškas"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:12
-#| msgid "Color Temperature:"
+#: ../data/gcm-picker.ui.h:10
 msgid "Color Temperature"
 msgstr "Spalvų temperatūra"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:14
-#| msgid "Ambient:"
+#: ../data/gcm-picker.ui.h:12
 msgid "Ambient"
 msgstr "Supanti"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
 #. The profile colorspace, e.g. RGB
-#: ../data/gcm-picker.ui.h:16 ../data/gcm-viewer.ui.h:7
+#: ../data/gcm-picker.ui.h:14 ../data/gcm-viewer.ui.h:7
 msgid "Colorspace"
 msgstr "Spalvų erdvė"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:18 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:707
+#: ../data/gcm-picker.ui.h:16 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:709
 msgid "RGB"
 msgstr "RGB"
 
 #. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:20
-#| msgid "Error:"
+#: ../data/gcm-picker.ui.h:18
 msgid "Error"
 msgstr "Klaida"
 
 #. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:22
+#: ../data/gcm-picker.ui.h:20
 msgid "Results"
 msgstr "Rezultatai"
 
+#. Button text, to get a single sample of color
+#: ../data/gcm-picker.ui.h:22
+msgid "_Measure"
+msgstr "_Matas"
+
+#. TRANSLATORS: this is the application name for libcanberra
 #: ../data/appdata/gcm-viewer.appdata.xml.in.h:1
+#: ../src/gcm-calibrate-argyll.c:2252 ../src/gcm-calibrate-argyll.c:2340
+#: ../src/gcm-calibrate-argyll.c:2377 ../src/gcm-calibrate-argyll.c:2403
+#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
+#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
+msgid "GNOME Color Manager"
+msgstr "GNOME spalvų valdyklė"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+#: ../data/gcm-viewer.desktop.in.h:2
+msgid "Inspect and compare installed color profiles"
+msgstr "Tikrinti ir lyginti įdiegtus spalvų profilius"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:3
 msgid ""
 "GNOME Color Profile Viewer shows installed color profiles on your system and "
 "allows you to calibrate displays, printers and cameras using a wizard."
@@ -114,7 +123,7 @@ msgstr ""
 "bei leidžia kalibruoti vaizduoklius, spausdintuvus bei kameras naudojant "
 "vedlį."
 
-#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:4
 msgid ""
 "This functionality is typically used by GNOME Control Center from the color "
 "panel although can be used on its own."
@@ -126,9 +135,10 @@ msgstr ""
 msgid "Color Profile Viewer"
 msgstr "Spalvų profilio žiūryklė"
 
-#: ../data/gcm-viewer.desktop.in.h:2
-msgid "Inspect and compare installed color profiles"
-msgstr "Tikrinti ir lyginti įdiegtus spalvų profilius"
+#: ../data/gcm-viewer.desktop.in.h:3
+#| msgid "Color"
+msgid "Color;ICC;"
+msgstr "Spalva;ICC"
 
 #: ../data/gcm-viewer.ui.h:2
 msgid "Add a profile for the device"
@@ -289,11 +299,11 @@ msgstr "Meta-duomenys yra papildoma informacija, laikoma profilyje programoms."
 msgid "Metadata"
 msgstr "Meta-duomenys"
 
-#: ../src/gcm-calibrate-argyll.c:379
+#: ../src/gcm-calibrate-argyll.c:409
 msgid "Getting default parameters"
 msgstr "Gaunami numatytieji parametrai"
 
-#: ../src/gcm-calibrate-argyll.c:384
+#: ../src/gcm-calibrate-argyll.c:414
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -301,68 +311,68 @@ msgstr ""
 "Tai iš anksto kalibruoja ekraną išvedant spalvotas ir pilkas dėmes jūsų "
 "ekrane ir pamatuojant jas prietaisu."
 
-#: ../src/gcm-calibrate-argyll.c:476
+#: ../src/gcm-calibrate-argyll.c:506
 msgid "Reading the patches"
 msgstr "Matuojamos dėmės"
 
-#: ../src/gcm-calibrate-argyll.c:481
+#: ../src/gcm-calibrate-argyll.c:511
 msgid "Reading the patches using the color measuring instrument."
 msgstr "Matuojamos dėmės naudojant spalvų matavimo įrenginį."
 
-#: ../src/gcm-calibrate-argyll.c:585
+#: ../src/gcm-calibrate-argyll.c:615
 msgid "Drawing the patches"
 msgstr "Piešiamos dėmės"
 
-#: ../src/gcm-calibrate-argyll.c:590
+#: ../src/gcm-calibrate-argyll.c:620
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
 msgstr "Ekrane piešiamos sugeneruotos dėmės, kurios bus pamatuotos prietaisu."
 
-#: ../src/gcm-calibrate-argyll.c:689 ../src/gcm-calibrate-argyll.c:1051
+#: ../src/gcm-calibrate-argyll.c:719 ../src/gcm-calibrate-argyll.c:1081
 msgid "Generating the profile"
 msgstr "Generuojamas profilis"
 
-#: ../src/gcm-calibrate-argyll.c:694
+#: ../src/gcm-calibrate-argyll.c:724
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "Generuojamas ICC spalvų profilis, kurį galima naudoti šiam ekranui."
 
-#: ../src/gcm-calibrate-argyll.c:865
+#: ../src/gcm-calibrate-argyll.c:895
 msgid "Copying files"
 msgstr "Kopijuojami failai"
 
-#: ../src/gcm-calibrate-argyll.c:870
+#: ../src/gcm-calibrate-argyll.c:900
 msgid "Copying source image, chart data and CIE reference values."
 msgstr ""
 "Kopijuojamas šaltinio paveikslėlis, diagramos duomenys ir CIE pavyzdinės "
 "reikšmės."
 
-#: ../src/gcm-calibrate-argyll.c:941
+#: ../src/gcm-calibrate-argyll.c:971
 msgid "Measuring the patches"
 msgstr "Matuojamos dėmės"
 
-#: ../src/gcm-calibrate-argyll.c:946
+#: ../src/gcm-calibrate-argyll.c:976
 msgid "Detecting the reference patches and measuring them."
 msgstr "Nustatomos ir matuojamos pavyzdinės dėmės."
 
-#: ../src/gcm-calibrate-argyll.c:1056
+#: ../src/gcm-calibrate-argyll.c:1086
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr ""
 "Generuojamas ICC spalvų profilis, kurį galima naudoti su šiuo prietaisu."
 
-#: ../src/gcm-calibrate-argyll.c:1421
+#: ../src/gcm-calibrate-argyll.c:1451
 msgid "Printing patches"
 msgstr "Spausdinamos dėmės"
 
-#: ../src/gcm-calibrate-argyll.c:1426
+#: ../src/gcm-calibrate-argyll.c:1456
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "Piešiamos dėmės pasirinktam popieriui ir rašalui."
 
-#: ../src/gcm-calibrate-argyll.c:1807
+#: ../src/gcm-calibrate-argyll.c:1837
 msgid "Wait for the ink to dry"
 msgstr "Palaukite, kol rašalas išdžius"
 
-#: ../src/gcm-calibrate-argyll.c:1812
+#: ../src/gcm-calibrate-argyll.c:1842
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -370,41 +380,33 @@ msgstr ""
 "Palaukite keletą minučių, kol rašalas išdžius. Drėgno rašalo profiliavimas "
 "sukurs prastą profilį, be to, galite sugadinti spalvų matavimo įrenginį."
 
-#: ../src/gcm-calibrate-argyll.c:1989
+#: ../src/gcm-calibrate-argyll.c:2019
 msgid "Set up instrument"
 msgstr "Nustatomas įrenginys"
 
-#: ../src/gcm-calibrate-argyll.c:1994
+#: ../src/gcm-calibrate-argyll.c:2024
 msgid "Setting up the instrument for use…"
 msgstr "Įrenginys nustatomas naudojimui..."
 
-#: ../src/gcm-calibrate-argyll.c:2206 ../src/gcm-calibrate-argyll.c:2272
+#: ../src/gcm-calibrate-argyll.c:2234 ../src/gcm-calibrate-argyll.c:2300
 msgid "Calibration error"
 msgstr "Kalibravimo klaida"
 
-#: ../src/gcm-calibrate-argyll.c:2211
+#: ../src/gcm-calibrate-argyll.c:2239
 msgid "The sample could not be read at this time."
 msgstr "Pavyzdžio šiuo metu nepavyko nuskaityti."
 
-#: ../src/gcm-calibrate-argyll.c:2218 ../src/gcm-calibrate-argyll.c:2343
-#: ../src/gcm-calibrate-argyll.c:2369 ../src/gcm-calibrate-argyll.c:2406
-#: ../src/gcm-calibrate-argyll.c:2433
+#: ../src/gcm-calibrate-argyll.c:2246 ../src/gcm-calibrate-argyll.c:2371
+#: ../src/gcm-calibrate-argyll.c:2397 ../src/gcm-calibrate-argyll.c:2434
+#: ../src/gcm-calibrate-argyll.c:2461
 msgid "Retry"
 msgstr "Pakartoti"
 
-#. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2224 ../src/gcm-calibrate-argyll.c:2312
-#: ../src/gcm-calibrate-argyll.c:2349 ../src/gcm-calibrate-argyll.c:2375
-#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
-#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
-msgid "GNOME Color Manager"
-msgstr "GNOME spalvų valdyklė"
-
-#: ../src/gcm-calibrate-argyll.c:2278
+#: ../src/gcm-calibrate-argyll.c:2306
 msgid "No firmware is installed for this instrument."
 msgstr "Programinė įranga neįdiegta šiam prietaisui."
 
-#: ../src/gcm-calibrate-argyll.c:2283
+#: ../src/gcm-calibrate-argyll.c:2311
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
@@ -412,7 +414,7 @@ msgstr ""
 "Šablono atitikimas nebuvo pakankamai geras. Patikrinkite, ar pasirinkote "
 "teisingą tikslą."
 
-#: ../src/gcm-calibrate-argyll.c:2289
+#: ../src/gcm-calibrate-argyll.c:2317
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
@@ -420,7 +422,7 @@ msgstr ""
 "Matavimo įrenginys negavo tinkamų rezultatų. Patikrinkite ar anga visiškai "
 "atverta."
 
-#: ../src/gcm-calibrate-argyll.c:2294
+#: ../src/gcm-calibrate-argyll.c:2322
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -428,35 +430,35 @@ msgstr ""
 "Matavimo prietaisas yra užimtas ir nepasileidžia. Ištraukite USB jungtį ir "
 "vėl įjunkite prieš mėgindami naudoti šį prietaisą."
 
-#: ../src/gcm-calibrate-argyll.c:2332
+#: ../src/gcm-calibrate-argyll.c:2360
 msgid "Reading target"
 msgstr "Nuskaitomas tikslinis paveikslėlis"
 
-#: ../src/gcm-calibrate-argyll.c:2337
+#: ../src/gcm-calibrate-argyll.c:2365
 msgid "Failed to read the strip correctly."
 msgstr "Nepavyko tinkamai nuskaityti atraižų."
 
-#: ../src/gcm-calibrate-argyll.c:2358
+#: ../src/gcm-calibrate-argyll.c:2386
 msgid "Reading sample"
 msgstr "Skaitymo pavyzdys"
 
-#: ../src/gcm-calibrate-argyll.c:2363
+#: ../src/gcm-calibrate-argyll.c:2391
 msgid "Failed to read the color sample correctly."
 msgstr "Nepavyko tinkamai nuskaityti pavyzdžio."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2388
+#: ../src/gcm-calibrate-argyll.c:2416
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "Nuskaityti atraižą %s vietoj %s!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2393
+#: ../src/gcm-calibrate-argyll.c:2421
 msgid "It looks like you've measured the wrong strip."
 msgstr "Atrodo, kad jūs nuskaitėte ne tą atraižą."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2397
+#: ../src/gcm-calibrate-argyll.c:2425
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
@@ -464,22 +466,22 @@ msgstr ""
 "Jei jūs tikrai nuskaitėte teisingą, tuomet galbūt tai tiesiog neįprastinis "
 "popierius."
 
-#: ../src/gcm-calibrate-argyll.c:2422
+#: ../src/gcm-calibrate-argyll.c:2450
 msgid "Device Error"
 msgstr "Prietaiso klaida"
 
-#: ../src/gcm-calibrate-argyll.c:2427
+#: ../src/gcm-calibrate-argyll.c:2455
 msgid "The device could not measure the color spot correctly."
 msgstr "Prietaisas negali teisingai pamatuoti spalvos taško."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2441
+#: ../src/gcm-calibrate-argyll.c:2469
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "Pasiruošęs nuskaityti atraižą %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2446
+#: ../src/gcm-calibrate-argyll.c:2474
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
@@ -488,7 +490,7 @@ msgstr ""
 "laikykite matavimo jungiklį."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2450
+#: ../src/gcm-calibrate-argyll.c:2478
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -497,7 +499,7 @@ msgstr ""
 "pasieksite puslapio pabaigą."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2454
+#: ../src/gcm-calibrate-argyll.c:2482
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -506,7 +508,7 @@ msgstr ""
 "matuojate."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2458
+#: ../src/gcm-calibrate-argyll.c:2486
 msgid ""
 "If you make a mistake, just release the switch, and you'll get a chance to "
 "try again."
@@ -514,27 +516,27 @@ msgstr ""
 "Jei suklysite, tiesiog paleiskite jungiklį ir turėsite galimybę bandyti dar "
 "kartą."
 
-#: ../src/gcm-calibrate-argyll.c:2572
+#: ../src/gcm-calibrate-argyll.c:2600
 msgid "Printing"
 msgstr "Spausdinimas"
 
-#: ../src/gcm-calibrate-argyll.c:2581
+#: ../src/gcm-calibrate-argyll.c:2609
 msgid "Preparing the data for the printer."
 msgstr "Ruošiami duomenys spausdintuvui."
 
-#: ../src/gcm-calibrate-argyll.c:2589
+#: ../src/gcm-calibrate-argyll.c:2617
 msgid "Sending the targets to the printer."
 msgstr "Siunčiami spalvų tiksliniai paveikslėliai spausdintuvui."
 
-#: ../src/gcm-calibrate-argyll.c:2595
+#: ../src/gcm-calibrate-argyll.c:2623
 msgid "Printing the targets…"
 msgstr "Spausdinami spalvų tiksliniai paveikslėliai..."
 
-#: ../src/gcm-calibrate-argyll.c:2601
+#: ../src/gcm-calibrate-argyll.c:2629
 msgid "The printing has finished."
 msgstr "Spausdinimas baigtas."
 
-#: ../src/gcm-calibrate-argyll.c:2607
+#: ../src/gcm-calibrate-argyll.c:2635
 msgid "The print was aborted."
 msgstr "Spausdinimas atšauktas."
 
@@ -601,7 +603,7 @@ msgid "Select calibration target image"
 msgstr "Pasirinkite kalibravimo pavyzdinį paveikslėlį"
 
 #: ../src/gcm-calibrate.c:679 ../src/gcm-calibrate.c:724
-#: ../src/gcm-calibrate.c:819 ../src/gcm-viewer.c:440
+#: ../src/gcm-calibrate.c:819 ../src/gcm-viewer.c:442
 msgid "_Cancel"
 msgstr "At_sisakyti"
 
@@ -617,7 +619,7 @@ msgstr "Palaikomi paveikslėlių failai"
 
 #. TRANSLATORS: filter name on the file->open dialog
 #: ../src/gcm-calibrate.c:697 ../src/gcm-calibrate.c:751
-#: ../src/gcm-viewer.c:466
+#: ../src/gcm-viewer.c:468
 msgid "All files"
 msgstr "Visi failai"
 
@@ -632,7 +634,7 @@ msgid "CIE values"
 msgstr "CIE reikšmės"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:817 ../src/gcm-viewer.c:438
+#: ../src/gcm-calibrate.c:817 ../src/gcm-viewer.c:440
 msgid "Select ICC Profile File"
 msgstr "Pasirinkite ICC profilio failą"
 
@@ -912,19 +914,16 @@ msgstr "CMP DT 003"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1232
-#| msgid "Color Checker"
 msgid "ColorChecker"
 msgstr "ColorChecker"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1236
-#| msgid "Color Checker DC"
 msgid "ColorChecker DC"
 msgstr "ColorChecker DC"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1240
-#| msgid "Color Checker SG"
 msgid "ColorChecker SG"
 msgstr "ColorChecker SG"
 
@@ -1239,8 +1238,8 @@ msgid "Copyright (c)"
 msgstr "Autoriaus teisės ©"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2345 ../src/gcm-picker.c:793
-#: ../src/gcm-viewer.c:1791
+#: ../src/gcm-calibrate-main.c:2345 ../src/gcm-picker.c:781
+#: ../src/gcm-viewer.c:1803
 msgid "Set the parent window to make this modal"
 msgstr "Nustatyti tėvinį langą paverčiant šį modaliniu"
 
@@ -1258,26 +1257,26 @@ msgstr "Nenurodytas prietaisas!"
 msgid "No profile"
 msgstr "Nėra profilio"
 
-#: ../src/gcm-cell-renderer-profile-text.c:88
+#: ../src/gcm-cell-renderer-profile-text.c:87
 #, c-format
 msgid "Default %s"
 msgstr "Numatyta %s"
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile has been auto-generated for this hardware
-#: ../src/gcm-cell-renderer-profile-text.c:103
+#: ../src/gcm-cell-renderer-profile-text.c:102
 msgid "Default: "
 msgstr "Numatyta:"
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile his a standard space like AdobeRGB
-#: ../src/gcm-cell-renderer-profile-text.c:108
+#: ../src/gcm-cell-renderer-profile-text.c:107
 msgid "Colorspace: "
 msgstr "Spalvų erdvė:"
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile is a test profile
-#: ../src/gcm-cell-renderer-profile-text.c:113
+#: ../src/gcm-cell-renderer-profile-text.c:112
 msgid "Test profile: "
 msgstr "Testinis profilis:"
 
@@ -1303,7 +1302,7 @@ msgstr "Diegtinas ICC profilis"
 msgid "No filename specified"
 msgstr "Nenurodytas failo vardas"
 
-#: ../src/gcm-import.c:147 ../src/gcm-viewer.c:1435
+#: ../src/gcm-import.c:147 ../src/gcm-viewer.c:1447
 msgid "Failed to open ICC profile"
 msgstr "Nepavyko atverti ICC profilio"
 
@@ -1356,7 +1355,7 @@ msgstr "Importuoti spalvų profilį?"
 msgid "Import"
 msgstr "Importuoti"
 
-#: ../src/gcm-import.c:292 ../src/gcm-viewer.c:1468
+#: ../src/gcm-import.c:292 ../src/gcm-viewer.c:1480
 msgid "Failed to import file"
 msgstr "Nepavyko nukopijuoti failo"
 
@@ -1434,8 +1433,8 @@ msgstr "EDID tikrinimo programa"
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:217 ../src/gcm-picker.c:224 ../src/gcm-viewer.c:676
-#: ../src/gcm-viewer.c:726
+#: ../src/gcm-picker.c:218 ../src/gcm-picker.c:225 ../src/gcm-viewer.c:678
+#: ../src/gcm-viewer.c:728
 msgid "Unknown"
 msgstr "Nežinoma"
 
@@ -1460,13 +1459,13 @@ msgid "No %s color spaces available"
 msgstr "Nėra %s spalvų erdvių"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:808
+#: ../src/gcm-picker.c:796
 msgid "GNOME Color Manager Color Picker"
 msgstr "GNOME spalvų valdyklė spalvų gavėjas"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:333 ../src/gcm-viewer.c:719
+#: ../src/gcm-utils.c:333 ../src/gcm-viewer.c:721
 msgid "CMYK"
 msgstr "CMYK"
 
@@ -1476,321 +1475,320 @@ msgid "gray"
 msgstr "pilka"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:384
+#: ../src/gcm-viewer.c:386
 msgid "Permanently delete profile?"
 msgstr "Negrįžtamai ištrinti profilį?"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:387
+#: ../src/gcm-viewer.c:389
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr "Ar tikrai norite negrįžtamai pašalinti šį profilį iš sistemos?"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:390
+#: ../src/gcm-viewer.c:392
 msgid "Delete"
 msgstr "Ištrinti"
 
-#: ../src/gcm-viewer.c:441
+#: ../src/gcm-viewer.c:443
 msgid "_Import"
 msgstr "_Importuoti"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-viewer.c:459
+#: ../src/gcm-viewer.c:461
 msgid "Supported ICC profiles"
 msgstr "Palaikomi ICC profiliai"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-viewer.c:495
+#: ../src/gcm-viewer.c:497
 msgid "Failed to copy file"
 msgstr "Nepavyko nukopijuoti failo"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:649
+#: ../src/gcm-viewer.c:651
 msgid "Input device"
 msgstr "Įvesties įrenginys"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:653
+#: ../src/gcm-viewer.c:655
 msgid "Display device"
 msgstr "Vaizduoklio įrenginys"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:657
+#: ../src/gcm-viewer.c:659
 msgid "Output device"
 msgstr "Išvesties įrenginys"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:661
+#: ../src/gcm-viewer.c:663
 msgid "Devicelink"
 msgstr "Įrenginio jungtis"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:665
+#: ../src/gcm-viewer.c:667
 msgid "Colorspace conversion"
 msgstr "Spalvų erdvės konversija"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:669
+#: ../src/gcm-viewer.c:671
 msgid "Abstract"
 msgstr "Abstrakti"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:673
+#: ../src/gcm-viewer.c:675
 msgid "Named color"
 msgstr "Vardinė spalva"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:691
+#: ../src/gcm-viewer.c:693
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:695
+#: ../src/gcm-viewer.c:697
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:699
+#: ../src/gcm-viewer.c:701
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:703
+#: ../src/gcm-viewer.c:705
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:711
+#: ../src/gcm-viewer.c:713
 msgid "Gray"
 msgstr "Pilka"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:715
+#: ../src/gcm-viewer.c:717
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:723
+#: ../src/gcm-viewer.c:725
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: e.g. sRGB or adbode RGB
-#: ../src/gcm-viewer.c:762
+#: ../src/gcm-viewer.c:764
 msgid "Standard space"
 msgstr "Įprastinė erdvė"
 
 #. TRANSLATORS: the raw EDID MD5 of the display device
-#: ../src/gcm-viewer.c:764
+#: ../src/gcm-viewer.c:766
 msgid "Display checksum"
 msgstr "Rodyti kontrolinę sumą"
 
-#: ../src/gcm-viewer.c:765
+#: ../src/gcm-viewer.c:767
 msgid "Display model"
 msgstr "Ekrano modelis"
 
-#: ../src/gcm-viewer.c:766
+#: ../src/gcm-viewer.c:768
 msgid "Display serial number"
 msgstr "Ekrano serijos numeris"
 
 #. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
-#: ../src/gcm-viewer.c:768
+#: ../src/gcm-viewer.c:770
 msgid "Display PNPID"
 msgstr "Ekrano PNPID"
 
 #. TRANSLATORS: who made the display
-#: ../src/gcm-viewer.c:770
+#: ../src/gcm-viewer.c:772
 msgid "Display vendor"
 msgstr "Ekrano tiekėjas"
 
 #. TRANSLATORS: the raw profile MD5
-#: ../src/gcm-viewer.c:772
+#: ../src/gcm-viewer.c:774
 msgid "File checksum"
 msgstr "Failo kontrolinė suma"
 
 #. TRANSLATORS: the color framework, e.g. 'colord'
-#: ../src/gcm-viewer.c:774
+#: ../src/gcm-viewer.c:776
 msgid "Framework product"
 msgstr "Karkaso produktas"
 
 #. TRANSLATORS: the framework binary, e.g. gcm-viewer
-#: ../src/gcm-viewer.c:776
+#: ../src/gcm-viewer.c:778
 msgid "Framework program"
 msgstr "Karkaso programa"
 
 #. TRANSLATORS: the framework release, e.g. '1.22'
-#: ../src/gcm-viewer.c:778
+#: ../src/gcm-viewer.c:780
 msgid "Framework version"
 msgstr "Karkaso versija"
 
 #. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
-#: ../src/gcm-viewer.c:780
+#: ../src/gcm-viewer.c:782
 msgid "Data source type"
 msgstr "Duomenų šaltinio tipas"
 
 #. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
-#: ../src/gcm-viewer.c:782
+#: ../src/gcm-viewer.c:784
 msgid "Mapping format"
 msgstr "Pateikties formatas"
 
 #. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
-#: ../src/gcm-viewer.c:784
+#: ../src/gcm-viewer.c:786
 msgid "Mapping qualifier"
 msgstr "Pateikties kvalifikatorius"
 
 #. TRANSLATORS: The original device the profile was made for
-#: ../src/gcm-viewer.c:786
+#: ../src/gcm-viewer.c:788
 msgid "Mapping device"
 msgstr "Pateikties įrenginys"
 
 #. TRANSLATORS: The average error when making the profile
-#: ../src/gcm-viewer.c:788
+#: ../src/gcm-viewer.c:790
 msgid "Delta-E average"
 msgstr "Delta-E vidurkis"
 
 #. TRANSLATORS: the maximum error when making the profile
-#: ../src/gcm-viewer.c:790
+#: ../src/gcm-viewer.c:792
 msgid "Delta-E maximum"
 msgstr "Delta-E maksimumas"
 
 #. TRANSLATORS: the RMS error when making the profile
-#: ../src/gcm-viewer.c:792
+#: ../src/gcm-viewer.c:794
 msgid "Delta-E RMS"
 msgstr "Delta-E RMS"
 
 #. TRANSLATORS: The device name, e.g. 'huey'
-#: ../src/gcm-viewer.c:794
+#: ../src/gcm-viewer.c:796
 msgid "Calibration device"
 msgstr "Kalibravimo prietaisas"
 
 #. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
-#: ../src/gcm-viewer.c:796
+#: ../src/gcm-viewer.c:798
 msgid "Screen surface finish"
 msgstr "Ekrano paviršiaus pabaiga"
 
 #. TRANSLATORS: e.g. DVI or VGA
-#: ../src/gcm-viewer.c:798
+#: ../src/gcm-viewer.c:800
 msgid "Connection type"
 msgstr "Ryšio tipas"
 
 #. TRANSLATORS: e.g. Screen brightness in percent
-#: ../src/gcm-viewer.c:800
+#: ../src/gcm-viewer.c:802
 msgid "Screen brightness"
 msgstr "Ekrano ryškumas"
 
 #. TRANSLATORS: e.g. the 3D volume of the gamut graph
-#: ../src/gcm-viewer.c:802
+#: ../src/gcm-viewer.c:804
 msgid "Gamut volume"
 msgstr "Gamos intensyvumas"
 
 #. TRANSLATORS: e.g. what proportion of sRGB is covered
-#: ../src/gcm-viewer.c:804
+#: ../src/gcm-viewer.c:806
 msgid "sRGB coverage"
 msgstr "sRGB padengimas"
 
 #. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
-#: ../src/gcm-viewer.c:806
+#: ../src/gcm-viewer.c:808
 msgid "Adobe RGB coverage"
 msgstr "Adobe RGB padengimas"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:917
+#: ../src/gcm-viewer.c:919
 msgid "No description has been set"
 msgstr "Nenustatytas aprašymas"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:921
+#: ../src/gcm-viewer.c:923
 msgid "No copyright has been set"
 msgstr "Autorinės teisės nenustatytos"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:925
+#: ../src/gcm-viewer.c:927
 msgid "The display compensation table is invalid"
 msgstr "Vaizduoklio kompensacijos lentelė netinkama"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:929
+#: ../src/gcm-viewer.c:931
 msgid "A scum dot is present for media white"
 msgstr "Profilis sugadintas"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:933
+#: ../src/gcm-viewer.c:935
 msgid "The gray axis contains significant amounts of color"
 msgstr "Pilka ašis turi svarbias spalvos dalis"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:937
+#: ../src/gcm-viewer.c:939
 msgid "The gray axis is non-monotonic"
 msgstr "Pilka ašis yra nemonolitinė"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:941
+#: ../src/gcm-viewer.c:943
 msgid "One or more of the primaries are invalid"
 msgstr "Viena ar dagiau pirminių spalvų yra netinkamos"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:945
+#: ../src/gcm-viewer.c:947
 msgid "The primaries do not add to white"
 msgstr "Pirminės spalvos neprisideda prie baltos"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:949
+#: ../src/gcm-viewer.c:951
 msgid "One or more of the primaries is unlikely"
 msgstr "Viena ar daugiau pirminių spalvų yra abejotinos"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:953
+#: ../src/gcm-viewer.c:955
 msgid "The white is not D50 white"
 msgstr "Balta nėra D50 balta"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:957
+#: ../src/gcm-viewer.c:959
 msgid "The whitepoint temperature is unlikely"
 msgstr "Baltojo taško temperatūra yra abejotina"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:961
+#: ../src/gcm-viewer.c:963
 msgid "Unknown warning type"
 msgstr "Nežinomas įspėjimo tipas"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1097
+#: ../src/gcm-viewer.c:1105
 msgid "Yes"
 msgstr "Taip"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1100
+#: ../src/gcm-viewer.c:1108
 msgid "No"
 msgstr "Ne"
 
 #. TRANSLATORS: profiles that have warnings are useable,
 #. * but may not be any good
-#: ../src/gcm-viewer.c:1126
+#: ../src/gcm-viewer.c:1134
 msgid "The profile has the following problems:"
 msgstr "Profilis turi šias problemas:"
 
 #. TRANSLATORS: this is the icc creation date strftime format
-#: ../src/gcm-viewer.c:1218
+#: ../src/gcm-viewer.c:1226
 msgid "%B %e %Y, %I:%M:%S %p"
 msgstr "%Y %B %e, %H:%M:%S"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:1241
+#: ../src/gcm-viewer.c:1249
 msgid "Delete this profile"
 msgstr "Ištrinti šį profilį"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:1244
+#: ../src/gcm-viewer.c:1252
 msgid "This profile cannot be deleted"
 msgstr "Šio profilio negalima ištrinti"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-viewer.c:1794
+#: ../src/gcm-viewer.c:1806
 msgid "Set the specific profile to show"
 msgstr "Nustatyti konkretų rodomą profilį"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: ../src/gcm-viewer.c:1797
+#: ../src/gcm-viewer.c:1809
 msgid "Set the specific file to show"
 msgstr "Rodyti konkretų failą"
-
