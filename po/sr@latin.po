@@ -2,14 +2,14 @@
 # Copyright (C) 2010, Miloš Popović
 # This file is distributed under the same license as the gnome-color-manager package.
 # Miloš Popović <gpopac@gmail.com>, 2010.
-# Miroslav Nikolić <miroslavnikolic@rocketmail.com>, 2011—2014.
+# Miroslav Nikolić <miroslavnikolic@rocketmail.com>, 2011—2015.
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager&keywords=I18N+L10N\n"
-"POT-Creation-Date: 2014-09-19 06:13+0000\n"
-"PO-Revision-Date: 2014-09-19 19:06+0200\n"
+"POT-Creation-Date: 2015-03-03 19:13+0000\n"
+"PO-Revision-Date: 2015-03-03 20:20+0200\n"
 "Last-Translator: Miroslav Nikolić <miroslavnikolic@rocketmail.com>\n"
 "Language-Team: Serbian <gnom@prevod.org>\n"
 "Language: sr\n"
@@ -45,66 +45,75 @@ msgstr "Birač boja"
 msgid "Use the color sensor to sample spot colors"
 msgstr "Koristite senzor boje da uzorkujete boje mrlje"
 
-#. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:4
-msgid "_Measure"
-msgstr "_Merenje"
-
 #. the color representation
 #. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:6 ../src/gcm-viewer.c:689
+#: ../data/gcm-picker.ui.h:4 ../src/gcm-viewer.c:689
 msgid "XYZ"
 msgstr "XYZ"
 
 #. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:8
-#| msgid "Lab (D50):"
+#: ../data/gcm-picker.ui.h:6
 msgid "Lab (D50)"
 msgstr "Lab (D50)"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:10
-#| msgid "Media whitepoint:"
+#: ../data/gcm-picker.ui.h:8
 msgid "Media whitepoint"
 msgstr "Tačka belog"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:12
-#| msgid "Color Temperature:"
+#: ../data/gcm-picker.ui.h:10
 msgid "Color Temperature"
 msgstr "Temperatura boje"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:14
-#| msgid "Ambient:"
+#: ../data/gcm-picker.ui.h:12
 msgid "Ambient"
 msgstr "Ambijent"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
 #. The profile colorspace, e.g. RGB
-#: ../data/gcm-picker.ui.h:16 ../data/gcm-viewer.ui.h:7
+#: ../data/gcm-picker.ui.h:14 ../data/gcm-viewer.ui.h:7
 msgid "Colorspace"
 msgstr "Prostor boja"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:18 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:709
+#: ../data/gcm-picker.ui.h:16 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:709
 msgid "RGB"
 msgstr "RGB"
 
 #. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:20
-#| msgid "Error:"
+#: ../data/gcm-picker.ui.h:18
 msgid "Error"
 msgstr "Greška"
 
 #. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:22
+#: ../data/gcm-picker.ui.h:20
 msgid "Results"
 msgstr "Rezultati"
 
+#. Button text, to get a single sample of color
+#: ../data/gcm-picker.ui.h:22
+msgid "_Measure"
+msgstr "_Merenje"
+
+#. TRANSLATORS: this is the application name for libcanberra
 #: ../data/appdata/gcm-viewer.appdata.xml.in.h:1
+#: ../src/gcm-calibrate-argyll.c:2252 ../src/gcm-calibrate-argyll.c:2340
+#: ../src/gcm-calibrate-argyll.c:2377 ../src/gcm-calibrate-argyll.c:2403
+#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
+#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
+msgid "GNOME Color Manager"
+msgstr "Gnomov upravnik bojama"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+#: ../data/gcm-viewer.desktop.in.h:2
+msgid "Inspect and compare installed color profiles"
+msgstr "Proverite i uporedite instalirane profile boja"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:3
 msgid ""
 "GNOME Color Profile Viewer shows installed color profiles on your system and "
 "allows you to calibrate displays, printers and cameras using a wizard."
@@ -113,7 +122,7 @@ msgstr ""
 "sistemu i omogućava vam da kalibrišete ekrane, štampače i foto-aparate "
 "koristeći čarobnjaka."
 
-#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:4
 msgid ""
 "This functionality is typically used by GNOME Control Center from the color "
 "panel although can be used on its own."
@@ -125,9 +134,10 @@ msgstr ""
 msgid "Color Profile Viewer"
 msgstr "Pregledač profila boja"
 
-#: ../data/gcm-viewer.desktop.in.h:2
-msgid "Inspect and compare installed color profiles"
-msgstr "Proverite i uporedite instalirane profile boja"
+#: ../data/gcm-viewer.desktop.in.h:3
+#| msgid "Color"
+msgid "Color;ICC;"
+msgstr "boja;ICC;"
 
 #: ../data/gcm-viewer.ui.h:2
 msgid "Add a profile for the device"
@@ -394,14 +404,6 @@ msgstr "Trenutno ne mogu da očitam uzorak."
 #: ../src/gcm-calibrate-argyll.c:2461
 msgid "Retry"
 msgstr "Ponovi"
-
-#. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2252 ../src/gcm-calibrate-argyll.c:2340
-#: ../src/gcm-calibrate-argyll.c:2377 ../src/gcm-calibrate-argyll.c:2403
-#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
-#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
-msgid "GNOME Color Manager"
-msgstr "Gnomov upravnik bojama"
 
 #: ../src/gcm-calibrate-argyll.c:2306
 msgid "No firmware is installed for this instrument."
@@ -910,19 +912,16 @@ msgstr "CMP DT 003"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1232
-#| msgid "Color Checker"
 msgid "ColorChecker"
 msgstr "Proverivač boje"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1236
-#| msgid "Color Checker DC"
 msgid "ColorChecker DC"
 msgstr "Proverivač boje DC"
 
 #. TRANSLATORS: this is probably a brand name
 #: ../src/gcm-calibrate-main.c:1240
-#| msgid "Color Checker SG"
 msgid "ColorChecker SG"
 msgstr "Proverivač boje SG"
 
@@ -1234,7 +1233,7 @@ msgid "Copyright (c)"
 msgstr "Autorska prava (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2345 ../src/gcm-picker.c:813
+#: ../src/gcm-calibrate-main.c:2345 ../src/gcm-picker.c:781
 #: ../src/gcm-viewer.c:1803
 msgid "Set the parent window to make this modal"
 msgstr "Postavi roditeljski prozor da učiniš ovaj modalnim"
@@ -1434,28 +1433,28 @@ msgstr "Program za EDID proveru"
 msgid "Unknown"
 msgstr "Nepoznato"
 
-#: ../src/gcm-picker.c:389
+#: ../src/gcm-picker.c:369
 msgid "No colorimeter is attached."
 msgstr "Kolormetar nije priključen."
 
-#: ../src/gcm-picker.c:406
+#: ../src/gcm-picker.c:386
 msgid "The sensor has no native driver."
 msgstr "Senzor nema izvorni upravljački program."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:415
+#: ../src/gcm-picker.c:395
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "Priključeni kolormetar nije sposban da očita zamrljane boje."
 
 #. TRANSLATORS: this is when there are no profiles that can be used;
 #. * the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:666
+#: ../src/gcm-picker.c:646
 #, c-format
 msgid "No %s color spaces available"
 msgstr "Nije dostupan prostor %s boja"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:828
+#: ../src/gcm-picker.c:796
 msgid "GNOME Color Manager Color Picker"
 msgstr "Birač boje Gnomovog upravnika boje"
 
