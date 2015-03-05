@@ -4,15 +4,15 @@
 # Homin Lee <ff4500@gmail.com>, 2010.
 # sangu <sangu.gnome@gmail.com>, 2011.
 # Seong-ho Cho <darkcircle.0426@gmail.com>, 2011, 2012, 2014.
-# Changwoo Ryu <cwryu@debian.org>, 2010, 2013-2014.
+# Changwoo Ryu <cwryu@debian.org>, 2010, 2013-2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager&keywords=I18N+L10N\n"
-"POT-Creation-Date: 2014-09-17 06:16+0000\n"
-"PO-Revision-Date: 2014-10-05 19:46+0900\n"
+"POT-Creation-Date: 2015-03-05 07:14+0000\n"
+"PO-Revision-Date: 2015-03-05 21:04+0900\n"
 "Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
 "Language-Team: GNOME Korea <gnome-kr@googlegroups.com>\n"
 "Language: Korean\n"
@@ -46,61 +46,75 @@ msgstr "색 선택"
 msgid "Use the color sensor to sample spot colors"
 msgstr "색 센서를 사용하여 한 지점의 색을 가져옵니다"
 
-#. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:4
-msgid "_Measure"
-msgstr "측정(_M)"
-
 #. the color representation
 #. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:6 ../src/gcm-viewer.c:689
+#: ../data/gcm-picker.ui.h:4 ../src/gcm-viewer.c:689
 msgid "XYZ"
 msgstr "XYZ"
 
 #. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:8
+#: ../data/gcm-picker.ui.h:6
 msgid "Lab (D50)"
 msgstr "Lab(D50)"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:10
+#: ../data/gcm-picker.ui.h:8
 msgid "Media whitepoint"
 msgstr "미디어 화이트 포인트"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:12
+#: ../data/gcm-picker.ui.h:10
 msgid "Color Temperature"
 msgstr "색 온도"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:14
+#: ../data/gcm-picker.ui.h:12
 msgid "Ambient"
 msgstr "주변광"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
 #. The profile colorspace, e.g. RGB
-#: ../data/gcm-picker.ui.h:16 ../data/gcm-viewer.ui.h:7
+#: ../data/gcm-picker.ui.h:14 ../data/gcm-viewer.ui.h:7
 msgid "Colorspace"
 msgstr "색 영역"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:18 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:709
+#: ../data/gcm-picker.ui.h:16 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:709
 msgid "RGB"
 msgstr "RGB"
 
 #. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:20
+#: ../data/gcm-picker.ui.h:18
 msgid "Error"
 msgstr "오류"
 
 #. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:22
+#: ../data/gcm-picker.ui.h:20
 msgid "Results"
 msgstr "결과"
 
+#. Button text, to get a single sample of color
+#: ../data/gcm-picker.ui.h:22
+msgid "_Measure"
+msgstr "측정(_M)"
+
+#. TRANSLATORS: this is the application name for libcanberra
 #: ../data/appdata/gcm-viewer.appdata.xml.in.h:1
+#: ../src/gcm-calibrate-argyll.c:2252 ../src/gcm-calibrate-argyll.c:2340
+#: ../src/gcm-calibrate-argyll.c:2377 ../src/gcm-calibrate-argyll.c:2403
+#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
+#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
+msgid "GNOME Color Manager"
+msgstr "그놈 색 관리자"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+#: ../data/gcm-viewer.desktop.in.h:2
+msgid "Inspect and compare installed color profiles"
+msgstr "설치한 시스템 색 프로파일 점검 및 비교"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:3
 msgid ""
 "GNOME Color Profile Viewer shows installed color profiles on your system and "
 "allows you to calibrate displays, printers and cameras using a wizard."
@@ -108,21 +122,21 @@ msgstr ""
 "그놈 색 프로파일 보기에서는 시스템에 설치한 컬러 프로파일을 표시하고, 디스플"
 "레이/프린터/카메라의 색을 보정할 수 있습니다."
 
-#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:4
 msgid ""
 "This functionality is typically used by GNOME Control Center from the color "
 "panel although can be used on its own."
 msgstr ""
-"이 기능은 주로 그놈 제어 센터의 \"색\" 부분에서 사용하지만, 단독으로도 사용할 "
-"수 있습니다."
+"이 기능은 주로 그놈 제어 센터의 \"색\" 부분에서 사용하지만, 단독으로도 사용"
+"할 수 있습니다."
 
 #: ../data/gcm-viewer.desktop.in.h:1 ../data/gcm-viewer.ui.h:1
 msgid "Color Profile Viewer"
 msgstr "색 프로파일 보기"
 
-#: ../data/gcm-viewer.desktop.in.h:2
-msgid "Inspect and compare installed color profiles"
-msgstr "설치한 시스템 색 프로파일 점검 및 비교"
+#: ../data/gcm-viewer.desktop.in.h:3
+msgid "Color;ICC;"
+msgstr "Color;ICC;색;"
 
 #: ../data/gcm-viewer.ui.h:2
 msgid "Add a profile for the device"
@@ -220,8 +234,8 @@ msgid ""
 "A tone reproduction curve is the mapping of scene luminance to display "
 "luminance"
 msgstr ""
-"계조 재현 곡선(TRC, tone reproduction curve)은 장면의 밝기를 화면의 밝기로 매핑"
-"하는 곡선입니다"
+"계조 재현 곡선(TRC, tone reproduction curve)은 장면의 밝기를 화면의 밝기로 매"
+"핑하는 곡선입니다"
 
 #: ../data/gcm-viewer.ui.h:36
 msgid "TRC"
@@ -296,7 +310,9 @@ msgstr "기본 매개변수 값 가져오는 중"
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
-msgstr "화면에 대한 색 보정 및 회색 보정 패치를 보내어 화면을 미리 보정하고, 하드웨어 장치로 측정합니다."
+msgstr ""
+"화면에 대한 색 보정 및 회색 보정 패치를 보내어 화면을 미리 보정하고, 하드웨"
+"어 장치로 측정합니다."
 
 #: ../src/gcm-calibrate-argyll.c:506
 msgid "Reading the patches"
@@ -386,14 +402,6 @@ msgstr "지금은 샘플을 읽을 수 없습니다."
 msgid "Retry"
 msgstr "재시도"
 
-#. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2252 ../src/gcm-calibrate-argyll.c:2340
-#: ../src/gcm-calibrate-argyll.c:2377 ../src/gcm-calibrate-argyll.c:2403
-#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
-#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
-msgid "GNOME Color Manager"
-msgstr "그놈 색 관리자"
-
 #: ../src/gcm-calibrate-argyll.c:2306
 msgid "No firmware is installed for this instrument."
 msgstr "이 장비에 맞는 펌웨어를 설치하지 않았습니다."
@@ -403,7 +411,8 @@ msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
 msgstr ""
-"패턴 일치 여부가 충분하지 않았습니다. 대상 형식을 올바르게 설정했는지 확인하십시오."
+"패턴 일치 여부가 충분하지 않았습니다. 대상 형식을 올바르게 설정했는지 확인하"
+"십시오."
 
 #: ../src/gcm-calibrate-argyll.c:2317
 msgid ""
@@ -476,8 +485,8 @@ msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
 msgstr ""
-"colorimeter를 문자 옆 흰색 바탕에 두고 측정 버튼을 누른 뒤 떼지 말고 있"
-"으십시오."
+"colorimeter를 문자 옆 흰색 바탕에 두고 측정 버튼을 누른 뒤 떼지 말고 있으십시"
+"오."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
 #: ../src/gcm-calibrate-argyll.c:2478
@@ -735,8 +744,8 @@ msgid ""
 "Windows</a> systems."
 msgstr ""
 "<a href=\"import-linux\">리눅스</a>, <a href=\"import-osx\">애플 OS X</a> "
-"and <a href=\"import-windows\">마이크로소프트 윈도우</a>의 프로파일을 사용"
-"할 수 있습니다."
+"and <a href=\"import-windows\">마이크로소프트 윈도우</a>의 프로파일을 사용할 "
+"수 있습니다."
 
 #. TRANSLATORS: this is the calibration wizard page title
 #: ../src/gcm-calibrate-main.c:935 ../src/gcm-calibrate-main.c:1953
@@ -768,8 +777,8 @@ msgid ""
 "Before calibrating the display, it is recommended to configure your display "
 "with the following settings to get optimal results."
 msgstr ""
-"디스플레이를 보정하기 전에, 최적의 결과를 얻으려면 디스플레이를 다음 설정"
-"으로 맞추는게 좋습니다."
+"디스플레이를 보정하기 전에, 최적의 결과를 얻으려면 디스플레이를 다음 설정으"
+"로 맞추는게 좋습니다."
 
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate-main.c:1023
@@ -777,8 +786,7 @@ msgid ""
 "You may want to consult the owner's manual for your display on how to "
 "achieve these settings."
 msgstr ""
-"이 설정을 적용하려면 디스플레이 사용자 설명서를 살펴봐야 할 수 있습니"
-"다."
+"이 설정을 적용하려면 디스플레이 사용자 설명서를 살펴봐야 할 수 있습니다."
 
 #. TRANSLATORS: dialog message, bullet item
 #: ../src/gcm-calibrate-main.c:1026
@@ -796,8 +804,8 @@ msgid ""
 "Configure your display with custom color settings and ensure the RGB "
 "channels are set to the same values."
 msgstr ""
-"디스플레이를 사용자 색 설정으로 맞추고 RGB 채널을 같은 값으로 설정했는지 확"
-"인하십시오."
+"디스플레이를 사용자 색 설정으로 맞추고 RGB 채널을 같은 값으로 설정했는지 확인"
+"하십시오."
 
 #. TRANSLATORS: dialog message, addition to bullet item
 #: ../src/gcm-calibrate-main.c:1035
@@ -964,8 +972,8 @@ msgid ""
 "Ensure that the white-balance has not been modified by the camera and that "
 "the lens is clean."
 msgstr ""
-"카메라가 화이트-벨런스를 건드리지 않게 설정했는지 확인하고, 렌즈를 깨끗하"
-"게 닦으십시오."
+"카메라가 화이트-벨런스를 건드리지 않게 설정했는지 확인하고, 렌즈를 깨끗하게 "
+"닦으십시오."
 
 #. TRANSLATORS: this is the message body for the chart selection
 #: ../src/gcm-calibrate-main.c:1356
@@ -1101,7 +1109,9 @@ msgstr "높은 수준의 보정시 수많은 색 표본과 더 많은 시간이 
 msgid ""
 "A higher precision profile provides higher accuracy in color matching but "
 "requires more time for reading the color patches."
-msgstr "높은 정밀도의 프로파일으로 더 정확하게 색을 맞출 수 있지만 색 패치를 읽을 시간이 더 필요합니다."
+msgstr ""
+"높은 정밀도의 프로파일으로 더 정확하게 색을 맞출 수 있지만 색 패치를 읽을 시"
+"간이 더 필요합니다."
 
 #. TRANSLATORS: this is the message body for the chart selection
 #: ../src/gcm-calibrate-main.c:1748
@@ -1206,7 +1216,7 @@ msgid "Copyright (c)"
 msgstr "Copyright (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2345 ../src/gcm-picker.c:813
+#: ../src/gcm-calibrate-main.c:2345 ../src/gcm-picker.c:781
 #: ../src/gcm-viewer.c:1803
 msgid "Set the parent window to make this modal"
 msgstr "모달을 만들 부모 창 설정"
@@ -1406,28 +1416,28 @@ msgstr "EDID 검사 프로그램"
 msgid "Unknown"
 msgstr "알 수 없음"
 
-#: ../src/gcm-picker.c:389
+#: ../src/gcm-picker.c:369
 msgid "No colorimeter is attached."
 msgstr "설치한 colorimeter 없음."
 
-#: ../src/gcm-picker.c:406
+#: ../src/gcm-picker.c:386
 msgid "The sensor has no native driver."
 msgstr "센서에 자체 드라이버 없음."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:415
+#: ../src/gcm-picker.c:395
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "부착한 colorimeter는 한 지점의 색을 읽는 기능이 없습니다."
 
 #. TRANSLATORS: this is when there are no profiles that can be used;
 #. * the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:666
+#: ../src/gcm-picker.c:646
 #, c-format
 msgid "No %s color spaces available"
 msgstr "색 영역 %s을(를) 사용할 수 없습니다"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:828
+#: ../src/gcm-picker.c:796
 msgid "GNOME Color Manager Color Picker"
 msgstr "그놈 색 관리자 색 선택"
 
