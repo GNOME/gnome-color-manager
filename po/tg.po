@@ -1,15 +1,15 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Victor Ibragimov <victor.ibragimov@gmail.com>, 2013.
+# Victor Ibragimov <victor.ibragimov@gmail.com>, 2013, 2014, 2015
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: Tajik Gnome\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager&keywords=I18N+L10N\n"
-"POT-Creation-Date: 2013-12-18 20:11+0000\n"
-"PO-Revision-Date: 2013-12-19 14:08+0500\n"
+"POT-Creation-Date: 2015-03-11 19:15+0000\n"
+"PO-Revision-Date: 2015-03-12 11:48+0500\n"
 "Last-Translator: Victor Ibragimov <victor.ibragimov@gmail.com>\n"
 "Language-Team: \n"
 "Language: tg\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=1;\n"
-"X-Generator: Poedit 1.6.2\n"
+"X-Generator: Poedit 1.6.5\n"
 
 #: ../data/gcm-calibrate.desktop.in.h:1
 msgid "Color"
@@ -44,61 +44,75 @@ msgstr "Интихобкунандаи ранг"
 msgid "Use the color sensor to sample spot colors"
 msgstr "Истифодаи сенсори ранг барои гирифтани намунаи рангҳои нуқтавӣ"
 
-#. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:4
-msgid "_Measure"
-msgstr "_Андоза"
-
 #. the color representation
 #. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:6 ../src/gcm-viewer.c:687
+#: ../data/gcm-picker.ui.h:4 ../src/gcm-viewer.c:689
 msgid "XYZ"
 msgstr "XYZ"
 
 #. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:8
+#: ../data/gcm-picker.ui.h:6
 msgid "Lab (D50)"
 msgstr "Озмоишгоҳи (D50)"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:10
+#: ../data/gcm-picker.ui.h:8
 msgid "Media whitepoint"
 msgstr "Нуқтаи сафеди медиа"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:12
+#: ../data/gcm-picker.ui.h:10
 msgid "Color Temperature"
 msgstr "Ҳарорати ранг"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:14
+#: ../data/gcm-picker.ui.h:12
 msgid "Ambient"
 msgstr "Атроф"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
 #. The profile colorspace, e.g. RGB
-#: ../data/gcm-picker.ui.h:16 ../data/gcm-viewer.ui.h:7
+#: ../data/gcm-picker.ui.h:14 ../data/gcm-viewer.ui.h:7
 msgid "Colorspace"
 msgstr "Фазои ранг"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:18 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:707
+#: ../data/gcm-picker.ui.h:16 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:709
 msgid "RGB"
 msgstr "RGB"
 
 #. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:20
+#: ../data/gcm-picker.ui.h:18
 msgid "Error"
 msgstr "Хато"
 
 #. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:22
+#: ../data/gcm-picker.ui.h:20
 msgid "Results"
 msgstr "Натиҷаҳо"
 
+#. Button text, to get a single sample of color
+#: ../data/gcm-picker.ui.h:22
+msgid "_Measure"
+msgstr "_Андоза"
+
+#. TRANSLATORS: this is the application name for libcanberra
 #: ../data/appdata/gcm-viewer.appdata.xml.in.h:1
+#: ../src/gcm-calibrate-argyll.c:2252 ../src/gcm-calibrate-argyll.c:2340
+#: ../src/gcm-calibrate-argyll.c:2377 ../src/gcm-calibrate-argyll.c:2403
+#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
+#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
+msgid "GNOME Color Manager"
+msgstr "Мудири ранги GNOME"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+#: ../data/gcm-viewer.desktop.in.h:2
+msgid "Inspect and compare installed color profiles"
+msgstr "Тафтиш ва муқоисаи профилҳои ранги насбшуда"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:3
 msgid ""
 "GNOME Color Profile Viewer shows installed color profiles on your system and "
 "allows you to calibrate displays, printers and cameras using a wizard."
@@ -107,7 +121,7 @@ msgstr ""
 "шумо намоиш медиҳад ва ба шумо имкон медиҳад, то ки тавонед дисплейҳо, "
 "принтерҳо ва камераҳоро тавассути устод танзим кунед."
 
-#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:4
 msgid ""
 "This functionality is typically used by GNOME Control Center from the color "
 "panel although can be used on its own."
@@ -119,9 +133,10 @@ msgstr ""
 msgid "Color Profile Viewer"
 msgstr "Намоишгари профили ранг"
 
-#: ../data/gcm-viewer.desktop.in.h:2
-msgid "Inspect and compare installed color profiles"
-msgstr "Тафтиш ва муқоисаи профилҳои ранги насбшуда"
+#: ../data/gcm-viewer.desktop.in.h:3
+#| msgid "Color"
+msgid "Color;ICC;"
+msgstr "Ранг;ICC;"
 
 #: ../data/gcm-viewer.ui.h:2
 msgid "Add a profile for the device"
@@ -291,11 +306,11 @@ msgstr ""
 msgid "Metadata"
 msgstr "Метаиттилоот"
 
-#: ../src/gcm-calibrate-argyll.c:379
+#: ../src/gcm-calibrate-argyll.c:409
 msgid "Getting default parameters"
 msgstr "Дарёфти параметрҳои пешфарз"
 
-#: ../src/gcm-calibrate-argyll.c:384
+#: ../src/gcm-calibrate-argyll.c:414
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
@@ -303,19 +318,19 @@ msgstr ""
 "Ин  бо фиристодани ислоҳҳои ранга ва хокистаранг ба экрани шумо ва "
 "андозагирии онҳо бо дастгоҳи сахтафзор экранро саҳеҳсозӣ менамояд"
 
-#: ../src/gcm-calibrate-argyll.c:476
+#: ../src/gcm-calibrate-argyll.c:506
 msgid "Reading the patches"
 msgstr "Хондани ислоҳҳо"
 
-#: ../src/gcm-calibrate-argyll.c:481
+#: ../src/gcm-calibrate-argyll.c:511
 msgid "Reading the patches using the color measuring instrument."
 msgstr "Хондани ислоҳҳо бо истифода аз асбоби андозагирии ранг."
 
-#: ../src/gcm-calibrate-argyll.c:585
+#: ../src/gcm-calibrate-argyll.c:615
 msgid "Drawing the patches"
 msgstr "Кашидани ислоҳҳо"
 
-#: ../src/gcm-calibrate-argyll.c:590
+#: ../src/gcm-calibrate-argyll.c:620
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
@@ -323,48 +338,48 @@ msgstr ""
 "Кашидани ислоҳҳои эҷодшуда дар экран, сипас тавассути дастгоҳи сахтафзор чен "
 "карда мешавад."
 
-#: ../src/gcm-calibrate-argyll.c:689 ../src/gcm-calibrate-argyll.c:1051
+#: ../src/gcm-calibrate-argyll.c:719 ../src/gcm-calibrate-argyll.c:1081
 msgid "Generating the profile"
 msgstr "Эҷод кардани профил"
 
-#: ../src/gcm-calibrate-argyll.c:694
+#: ../src/gcm-calibrate-argyll.c:724
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "Эҷод кардани профили рангаи ICC, ки бо ин экран истифода мешавад."
 
-#: ../src/gcm-calibrate-argyll.c:865
+#: ../src/gcm-calibrate-argyll.c:895
 msgid "Copying files"
 msgstr "Нусхабардории файлҳо"
 
-#: ../src/gcm-calibrate-argyll.c:870
+#: ../src/gcm-calibrate-argyll.c:900
 msgid "Copying source image, chart data and CIE reference values."
 msgstr ""
 "Нусхабардории тасвири манбаъ, иттилооти диаграмма ва қиматҳои истинодии CIE."
 
-#: ../src/gcm-calibrate-argyll.c:941
+#: ../src/gcm-calibrate-argyll.c:971
 msgid "Measuring the patches"
 msgstr "Андозагирии ислоҳҳо"
 
-#: ../src/gcm-calibrate-argyll.c:946
+#: ../src/gcm-calibrate-argyll.c:976
 msgid "Detecting the reference patches and measuring them."
 msgstr "Ёфтани ислоҳҳои истинодӣ ва андозагирии онҳо."
 
-#: ../src/gcm-calibrate-argyll.c:1056
+#: ../src/gcm-calibrate-argyll.c:1086
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "Эҷоди профили рангаи ICC, ки бо ин дастгоҳ истифода мешавад."
 
-#: ../src/gcm-calibrate-argyll.c:1421
+#: ../src/gcm-calibrate-argyll.c:1451
 msgid "Printing patches"
 msgstr "Чопи ислоҳҳо"
 
-#: ../src/gcm-calibrate-argyll.c:1426
+#: ../src/gcm-calibrate-argyll.c:1456
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "Коркарди ислоҳҳо барои коғаз ва ранги интихобшуда."
 
-#: ../src/gcm-calibrate-argyll.c:1807
+#: ../src/gcm-calibrate-argyll.c:1837
 msgid "Wait for the ink to dry"
 msgstr "Хушк шудани рангро интизор шавед"
 
-#: ../src/gcm-calibrate-argyll.c:1812
+#: ../src/gcm-calibrate-argyll.c:1842
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -373,41 +388,33 @@ msgstr ""
 "намнок профили заиф ҳосил мекунад ва метавонад ба асбоби ченкунии шумо осеб "
 "расонад."
 
-#: ../src/gcm-calibrate-argyll.c:1989
+#: ../src/gcm-calibrate-argyll.c:2019
 msgid "Set up instrument"
 msgstr "Асбоби танзим"
 
-#: ../src/gcm-calibrate-argyll.c:1994
+#: ../src/gcm-calibrate-argyll.c:2024
 msgid "Setting up the instrument for use…"
 msgstr "Танзими асбоб барои истифодаи ..."
 
-#: ../src/gcm-calibrate-argyll.c:2206 ../src/gcm-calibrate-argyll.c:2272
+#: ../src/gcm-calibrate-argyll.c:2234 ../src/gcm-calibrate-argyll.c:2300
 msgid "Calibration error"
 msgstr "Хатои андозагароӣ"
 
-#: ../src/gcm-calibrate-argyll.c:2211
+#: ../src/gcm-calibrate-argyll.c:2239
 msgid "The sample could not be read at this time."
 msgstr "Дар ин лаҳза хондани намуна номумкин аст."
 
-#: ../src/gcm-calibrate-argyll.c:2218 ../src/gcm-calibrate-argyll.c:2343
-#: ../src/gcm-calibrate-argyll.c:2369 ../src/gcm-calibrate-argyll.c:2406
-#: ../src/gcm-calibrate-argyll.c:2433
+#: ../src/gcm-calibrate-argyll.c:2246 ../src/gcm-calibrate-argyll.c:2371
+#: ../src/gcm-calibrate-argyll.c:2397 ../src/gcm-calibrate-argyll.c:2434
+#: ../src/gcm-calibrate-argyll.c:2461
 msgid "Retry"
 msgstr "Такрор кардан"
 
-#. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2224 ../src/gcm-calibrate-argyll.c:2312
-#: ../src/gcm-calibrate-argyll.c:2349 ../src/gcm-calibrate-argyll.c:2375
-#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
-#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
-msgid "GNOME Color Manager"
-msgstr "Мудири ранги GNOME"
-
-#: ../src/gcm-calibrate-argyll.c:2278
+#: ../src/gcm-calibrate-argyll.c:2306
 msgid "No firmware is installed for this instrument."
 msgstr "Ягон миёнафзор барои ин дастгоҳ насб нашудааст."
 
-#: ../src/gcm-calibrate-argyll.c:2283
+#: ../src/gcm-calibrate-argyll.c:2311
 msgid ""
 "The pattern match wasn't good enough. Ensure you have the correct type of "
 "target selected."
@@ -415,14 +422,14 @@ msgstr ""
 "Муқоисаи шаклвора он қадар хуб набуд. Мутмаин шавед, ки навъи дурусти "
 "ҳадафро интихоб кардаед."
 
-#: ../src/gcm-calibrate-argyll.c:2289
+#: ../src/gcm-calibrate-argyll.c:2317
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
 msgstr ""
 "Асбоби андозагирӣ хуб хонда нашуд. Мутмаин шавед, ки сӯрохӣ пурра кушода аст."
 
-#: ../src/gcm-calibrate-argyll.c:2294
+#: ../src/gcm-calibrate-argyll.c:2322
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -430,35 +437,35 @@ msgstr ""
 "Асбоби андозагирӣ машғул аст ва ҳоло оғоз наёфтааст. Лутфан пеш аз кӯшиши "
 "истифодаи ин дастгоҳ дастаи USB-ро гирифта дубора халонед."
 
-#: ../src/gcm-calibrate-argyll.c:2332
+#: ../src/gcm-calibrate-argyll.c:2360
 msgid "Reading target"
 msgstr "Ҳадафи хондан"
 
-#: ../src/gcm-calibrate-argyll.c:2337
+#: ../src/gcm-calibrate-argyll.c:2365
 msgid "Failed to read the strip correctly."
 msgstr "Навор дуруст хонда нашуд."
 
-#: ../src/gcm-calibrate-argyll.c:2358
+#: ../src/gcm-calibrate-argyll.c:2386
 msgid "Reading sample"
 msgstr "Хондани намуна"
 
-#: ../src/gcm-calibrate-argyll.c:2363
+#: ../src/gcm-calibrate-argyll.c:2391
 msgid "Failed to read the color sample correctly."
 msgstr "Намунаи ранг дуруст хонда нашуд."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2388
+#: ../src/gcm-calibrate-argyll.c:2416
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "Хондани навор %s нисбат ба %s!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2393
+#: ../src/gcm-calibrate-argyll.c:2421
 msgid "It looks like you've measured the wrong strip."
 msgstr "Ба назар мерасад, ки шумо навори дигарро андозагирӣ кардаед."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2397
+#: ../src/gcm-calibrate-argyll.c:2425
 msgid ""
 "If you've really measured the right one, it's okay, it could just be unusual "
 "paper."
@@ -466,22 +473,22 @@ msgstr ""
 "Агар шумо дар ҳақиқат дурусташро чен карда бошед, бисёр хуб, шояд ин фақат "
 "коғази ғайриоддӣ бошад."
 
-#: ../src/gcm-calibrate-argyll.c:2422
+#: ../src/gcm-calibrate-argyll.c:2450
 msgid "Device Error"
 msgstr "Хатои дастгоҳ"
 
-#: ../src/gcm-calibrate-argyll.c:2427
+#: ../src/gcm-calibrate-argyll.c:2455
 msgid "The device could not measure the color spot correctly."
 msgstr "Дастгоҳ нуқтаи рангаро дуруст андозагирӣ карда натавонист."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2441
+#: ../src/gcm-calibrate-argyll.c:2469
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "Омодаи хондани навор %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2446
+#: ../src/gcm-calibrate-argyll.c:2474
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
@@ -490,7 +497,7 @@ msgstr ""
 "калиди ченакро нигоҳ доред."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2450
+#: ../src/gcm-calibrate-argyll.c:2478
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -499,7 +506,7 @@ msgstr ""
 "саҳифа мерасед калидро сар диҳед."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2454
+#: ../src/gcm-calibrate-argyll.c:2482
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -508,7 +515,7 @@ msgstr ""
 "мос шудааст."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2458
+#: ../src/gcm-calibrate-argyll.c:2486
 msgid ""
 "If you make a mistake, just release the switch, and you'll get a chance to "
 "try again."
@@ -516,27 +523,27 @@ msgstr ""
 "Аагр шумо хато кунед, калидро сар диҳед, ва шумо имкони такрори дубораро ба "
 "даст меоред."
 
-#: ../src/gcm-calibrate-argyll.c:2572
+#: ../src/gcm-calibrate-argyll.c:2600
 msgid "Printing"
 msgstr "Чопкунӣ"
 
-#: ../src/gcm-calibrate-argyll.c:2581
+#: ../src/gcm-calibrate-argyll.c:2609
 msgid "Preparing the data for the printer."
 msgstr "Омодасозии иттилоот барои принтер."
 
-#: ../src/gcm-calibrate-argyll.c:2589
+#: ../src/gcm-calibrate-argyll.c:2617
 msgid "Sending the targets to the printer."
 msgstr "Фиристодани ҳадафҳо барои принтер."
 
-#: ../src/gcm-calibrate-argyll.c:2595
+#: ../src/gcm-calibrate-argyll.c:2623
 msgid "Printing the targets…"
 msgstr "Чопи ҳадафҳо..."
 
-#: ../src/gcm-calibrate-argyll.c:2601
+#: ../src/gcm-calibrate-argyll.c:2629
 msgid "The printing has finished."
 msgstr "Чоп ба охир расид."
 
-#: ../src/gcm-calibrate-argyll.c:2607
+#: ../src/gcm-calibrate-argyll.c:2635
 msgid "The print was aborted."
 msgstr "Чоп қатъ карда шуд."
 
@@ -608,7 +615,7 @@ msgid "Select calibration target image"
 msgstr "Интихоби тасвири ҳадафи калибратсия"
 
 #: ../src/gcm-calibrate.c:679 ../src/gcm-calibrate.c:724
-#: ../src/gcm-calibrate.c:819 ../src/gcm-viewer.c:440
+#: ../src/gcm-calibrate.c:819 ../src/gcm-viewer.c:442
 msgid "_Cancel"
 msgstr "_Бекор кардан"
 
@@ -624,7 +631,7 @@ msgstr "Файлҳои тасвирҳои дастгиришуда"
 
 #. TRANSLATORS: filter name on the file->open dialog
 #: ../src/gcm-calibrate.c:697 ../src/gcm-calibrate.c:751
-#: ../src/gcm-viewer.c:466
+#: ../src/gcm-viewer.c:468
 msgid "All files"
 msgstr "Ҳамаи файлҳо"
 
@@ -639,7 +646,7 @@ msgid "CIE values"
 msgstr "Қиматҳои CIE"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:817 ../src/gcm-viewer.c:438
+#: ../src/gcm-calibrate.c:817 ../src/gcm-viewer.c:440
 msgid "Select ICC Profile File"
 msgstr "Интихоби файли профили ICC"
 
@@ -1243,8 +1250,8 @@ msgid "Copyright (c)"
 msgstr "Ҳуқуқи муаллиф (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2345 ../src/gcm-picker.c:793
-#: ../src/gcm-viewer.c:1791
+#: ../src/gcm-calibrate-main.c:2345 ../src/gcm-picker.c:781
+#: ../src/gcm-viewer.c:1803
 msgid "Set the parent window to make this modal"
 msgstr "Танзими равзанаи асосӣ барои сохтани ин шакл"
 
@@ -1262,26 +1269,26 @@ msgstr "Ҳеҷгуна дастгоҳ муайян нашуд!"
 msgid "No profile"
 msgstr "Бе профил"
 
-#: ../src/gcm-cell-renderer-profile-text.c:88
+#: ../src/gcm-cell-renderer-profile-text.c:87
 #, c-format
 msgid "Default %s"
 msgstr "Пешфарзи %s"
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile has been auto-generated for this hardware
-#: ../src/gcm-cell-renderer-profile-text.c:103
+#: ../src/gcm-cell-renderer-profile-text.c:102
 msgid "Default: "
 msgstr "Пешфарз:"
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile his a standard space like AdobeRGB
-#: ../src/gcm-cell-renderer-profile-text.c:108
+#: ../src/gcm-cell-renderer-profile-text.c:107
 msgid "Colorspace: "
 msgstr "Фазои ранг:"
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile is a test profile
-#: ../src/gcm-cell-renderer-profile-text.c:113
+#: ../src/gcm-cell-renderer-profile-text.c:112
 msgid "Test profile: "
 msgstr "Профили санҷиш:"
 
@@ -1307,7 +1314,7 @@ msgstr "Профили ICC барои насб кардан"
 msgid "No filename specified"
 msgstr "Ягон номи файл муайян нашудааст"
 
-#: ../src/gcm-import.c:147 ../src/gcm-viewer.c:1435
+#: ../src/gcm-import.c:147 ../src/gcm-viewer.c:1447
 msgid "Failed to open ICC profile"
 msgstr "Профили ICC кушода нашуд"
 
@@ -1360,7 +1367,7 @@ msgstr "Профили ранг ворид карда шавад?"
 msgid "Import"
 msgstr "Воридот"
 
-#: ../src/gcm-import.c:292 ../src/gcm-viewer.c:1468
+#: ../src/gcm-import.c:292 ../src/gcm-viewer.c:1480
 msgid "Failed to import file"
 msgstr "Файл ворид нашуд"
 
@@ -1438,8 +1445,8 @@ msgstr "Барномаи тафтишотии EDID"
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:217 ../src/gcm-picker.c:224 ../src/gcm-viewer.c:676
-#: ../src/gcm-viewer.c:726
+#: ../src/gcm-picker.c:218 ../src/gcm-picker.c:225 ../src/gcm-viewer.c:678
+#: ../src/gcm-viewer.c:728
 msgid "Unknown"
 msgstr "Номаълум"
 
@@ -1464,13 +1471,13 @@ msgid "No %s color spaces available"
 msgstr "Ягон %s фазои рангҳо дастрас нестанд"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:808
+#: ../src/gcm-picker.c:796
 msgid "GNOME Color Manager Color Picker"
 msgstr "GNOME Мудири ранг Гирандаи ранг"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:333 ../src/gcm-viewer.c:719
+#: ../src/gcm-utils.c:333 ../src/gcm-viewer.c:721
 msgid "CMYK"
 msgstr "CMYK"
 
@@ -1480,12 +1487,12 @@ msgid "gray"
 msgstr "хокистариранг"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:384
+#: ../src/gcm-viewer.c:386
 msgid "Permanently delete profile?"
 msgstr "Профил тамоман нест шавад?"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:387
+#: ../src/gcm-viewer.c:389
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr ""
@@ -1493,310 +1500,310 @@ msgstr ""
 "мехоҳед? "
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:390
+#: ../src/gcm-viewer.c:392
 msgid "Delete"
 msgstr "Нест кардан"
 
-#: ../src/gcm-viewer.c:441
+#: ../src/gcm-viewer.c:443
 msgid "_Import"
 msgstr "_Воридот"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-viewer.c:459
+#: ../src/gcm-viewer.c:461
 msgid "Supported ICC profiles"
 msgstr "Профилҳои ICC дастгиришаванда"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-viewer.c:495
+#: ../src/gcm-viewer.c:497
 msgid "Failed to copy file"
 msgstr "Файл нусхабардорӣ нашуд"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:649
+#: ../src/gcm-viewer.c:651
 msgid "Input device"
 msgstr "Дастгоҳи вуруд"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:653
+#: ../src/gcm-viewer.c:655
 msgid "Display device"
 msgstr "Дастгоҳи намоиш"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:657
+#: ../src/gcm-viewer.c:659
 msgid "Output device"
 msgstr "Дастгоҳи хуруҷ"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:661
+#: ../src/gcm-viewer.c:663
 msgid "Devicelink"
 msgstr "Пайванди дастгоҳ"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:665
+#: ../src/gcm-viewer.c:667
 msgid "Colorspace conversion"
 msgstr "Табдили фазои ранг"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:669
+#: ../src/gcm-viewer.c:671
 msgid "Abstract"
 msgstr "Фишурда"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:673
+#: ../src/gcm-viewer.c:675
 msgid "Named color"
 msgstr "Ранги номидашуда"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:691
+#: ../src/gcm-viewer.c:693
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:695
+#: ../src/gcm-viewer.c:697
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:699
+#: ../src/gcm-viewer.c:701
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:703
+#: ../src/gcm-viewer.c:705
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:711
+#: ../src/gcm-viewer.c:713
 msgid "Gray"
 msgstr "Хокистариранг"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:715
+#: ../src/gcm-viewer.c:717
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:723
+#: ../src/gcm-viewer.c:725
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: e.g. sRGB or adbode RGB
-#: ../src/gcm-viewer.c:762
+#: ../src/gcm-viewer.c:764
 msgid "Standard space"
 msgstr "Фазои стандартӣ"
 
 #. TRANSLATORS: the raw EDID MD5 of the display device
-#: ../src/gcm-viewer.c:764
+#: ../src/gcm-viewer.c:766
 msgid "Display checksum"
 msgstr "Намоиши ҷамъи санҷишҳо"
 
-#: ../src/gcm-viewer.c:765
+#: ../src/gcm-viewer.c:767
 msgid "Display model"
 msgstr "Модели дисплей"
 
-#: ../src/gcm-viewer.c:766
+#: ../src/gcm-viewer.c:768
 msgid "Display serial number"
 msgstr "рақами серияи дисплей"
 
 #. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
-#: ../src/gcm-viewer.c:768
+#: ../src/gcm-viewer.c:770
 msgid "Display PNPID"
 msgstr "Намоиши PNPID"
 
 #. TRANSLATORS: who made the display
-#: ../src/gcm-viewer.c:770
+#: ../src/gcm-viewer.c:772
 msgid "Display vendor"
 msgstr "Намоиши фурӯшанда"
 
 #. TRANSLATORS: the raw profile MD5
-#: ../src/gcm-viewer.c:772
+#: ../src/gcm-viewer.c:774
 msgid "File checksum"
 msgstr "Ҷамъи санҷишши файл"
 
 #. TRANSLATORS: the color framework, e.g. 'colord'
-#: ../src/gcm-viewer.c:774
+#: ../src/gcm-viewer.c:776
 msgid "Framework product"
 msgstr "Маҳсули сохтор"
 
 #. TRANSLATORS: the framework binary, e.g. gcm-viewer
-#: ../src/gcm-viewer.c:776
+#: ../src/gcm-viewer.c:778
 msgid "Framework program"
 msgstr "Барномаи сохтор"
 
 #. TRANSLATORS: the framework release, e.g. '1.22'
-#: ../src/gcm-viewer.c:778
+#: ../src/gcm-viewer.c:780
 msgid "Framework version"
 msgstr "Версияи сохтор"
 
 #. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
-#: ../src/gcm-viewer.c:780
+#: ../src/gcm-viewer.c:782
 msgid "Data source type"
 msgstr "Навъи манбаи иттилоот"
 
 #. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
-#: ../src/gcm-viewer.c:782
+#: ../src/gcm-viewer.c:784
 msgid "Mapping format"
 msgstr "Формати нақшакашӣ"
 
 #. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
-#: ../src/gcm-viewer.c:784
+#: ../src/gcm-viewer.c:786
 msgid "Mapping qualifier"
 msgstr "Тафсиргари нақшакашӣ"
 
 #. TRANSLATORS: The original device the profile was made for
-#: ../src/gcm-viewer.c:786
+#: ../src/gcm-viewer.c:788
 msgid "Mapping device"
 msgstr "Дастгоҳи нақшакашӣ"
 
 #. TRANSLATORS: The average error when making the profile
-#: ../src/gcm-viewer.c:788
+#: ../src/gcm-viewer.c:790
 msgid "Delta-E average"
 msgstr "Қимати миёнаи Delta-E"
 
 #. TRANSLATORS: the maximum error when making the profile
-#: ../src/gcm-viewer.c:790
+#: ../src/gcm-viewer.c:792
 msgid "Delta-E maximum"
 msgstr "Ҳадди аксари Delta-E"
 
 #. TRANSLATORS: the RMS error when making the profile
-#: ../src/gcm-viewer.c:792
+#: ../src/gcm-viewer.c:794
 msgid "Delta-E RMS"
 msgstr "RMS-и Delta-E"
 
 #. TRANSLATORS: The device name, e.g. 'huey'
-#: ../src/gcm-viewer.c:794
+#: ../src/gcm-viewer.c:796
 msgid "Calibration device"
 msgstr "Дастгоҳи андозагароӣ"
 
 #. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
-#: ../src/gcm-viewer.c:796
+#: ../src/gcm-viewer.c:798
 msgid "Screen surface finish"
 msgstr "Хотимаи сатҳи экран"
 
 #. TRANSLATORS: e.g. DVI or VGA
-#: ../src/gcm-viewer.c:798
+#: ../src/gcm-viewer.c:800
 msgid "Connection type"
 msgstr "Навъи пайваст"
 
 #. TRANSLATORS: e.g. Screen brightness in percent
-#: ../src/gcm-viewer.c:800
+#: ../src/gcm-viewer.c:802
 msgid "Screen brightness"
 msgstr "Дурахшандагии экран"
 
 #. TRANSLATORS: e.g. the 3D volume of the gamut graph
-#: ../src/gcm-viewer.c:802
+#: ../src/gcm-viewer.c:804
 msgid "Gamut volume"
 msgstr "Баландии садои спектр"
 
 #. TRANSLATORS: e.g. what proportion of sRGB is covered
-#: ../src/gcm-viewer.c:804
+#: ../src/gcm-viewer.c:806
 msgid "sRGB coverage"
 msgstr "Ҳудуди sRGB"
 
 #. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
-#: ../src/gcm-viewer.c:806
+#: ../src/gcm-viewer.c:808
 msgid "Adobe RGB coverage"
 msgstr "Ҳудуди Adobe RGB"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:917
+#: ../src/gcm-viewer.c:919
 msgid "No description has been set"
 msgstr "Ҳеҷгуна тавсиф насб нашудааст "
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:921
+#: ../src/gcm-viewer.c:923
 msgid "No copyright has been set"
 msgstr "Ҳеҷгуна ҳуқуқи муаллиф танзим нашудааст"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:925
+#: ../src/gcm-viewer.c:927
 msgid "The display compensation table is invalid"
 msgstr "Ҷадвали ҷуброни намоиш беэътибор аст"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:929
+#: ../src/gcm-viewer.c:931
 msgid "A scum dot is present for media white"
 msgstr "Доғи кафдор барои медиаи сафед мавҷуд аст"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:933
+#: ../src/gcm-viewer.c:935
 msgid "The gray axis contains significant amounts of color"
 msgstr "Меҳвари хокистаранг миқдори зиёди рангро дар бар мегирад"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:937
+#: ../src/gcm-viewer.c:939
 msgid "The gray axis is non-monotonic"
 msgstr "Меҳвари хокистаранг якхела нест"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:941
+#: ../src/gcm-viewer.c:943
 msgid "One or more of the primaries are invalid"
 msgstr "Як ё якчанд аввалияҳо беэътиборанд"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:945
+#: ../src/gcm-viewer.c:947
 msgid "The primaries do not add to white"
 msgstr "Аввалияҳо ба сафед илова намешаванд"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:949
+#: ../src/gcm-viewer.c:951
 msgid "One or more of the primaries is unlikely"
 msgstr "Як  ё якчанд аввалияҳо буда наметавонанд"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:953
+#: ../src/gcm-viewer.c:955
 msgid "The white is not D50 white"
 msgstr "Сафед, сафеди D50 нест"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:957
+#: ../src/gcm-viewer.c:959
 msgid "The whitepoint temperature is unlikely"
 msgstr "Ҳарорати нуқтаи сафед дар гумон аст"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:961
+#: ../src/gcm-viewer.c:963
 msgid "Unknown warning type"
 msgstr "Навъи огоҳии номаълум"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1097
+#: ../src/gcm-viewer.c:1105
 msgid "Yes"
 msgstr "Ҳа"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:1100
+#: ../src/gcm-viewer.c:1108
 msgid "No"
 msgstr "Не"
 
 #. TRANSLATORS: profiles that have warnings are useable,
 #. * but may not be any good
-#: ../src/gcm-viewer.c:1126
+#: ../src/gcm-viewer.c:1134
 msgid "The profile has the following problems:"
 msgstr "Профил мушкилоти зеринро дорад:"
 
 #. TRANSLATORS: this is the icc creation date strftime format
-#: ../src/gcm-viewer.c:1218
+#: ../src/gcm-viewer.c:1226
 msgid "%B %e %Y, %I:%M:%S %p"
 msgstr "%B %e %Y, %I:%M:%S %p"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:1241
+#: ../src/gcm-viewer.c:1249
 msgid "Delete this profile"
 msgstr "Ин профилро нест кунед"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:1244
+#: ../src/gcm-viewer.c:1252
 msgid "This profile cannot be deleted"
 msgstr "Ин профил нест намешавад"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-viewer.c:1794
+#: ../src/gcm-viewer.c:1806
 msgid "Set the specific profile to show"
 msgstr "Танзими профили махсус барои намоиш"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: ../src/gcm-viewer.c:1797
+#: ../src/gcm-viewer.c:1809
 msgid "Set the specific file to show"
 msgstr "Танзими файли махсус барои намоиш"
 
