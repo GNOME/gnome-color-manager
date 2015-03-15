@@ -1,16 +1,17 @@
 # Vietnamese translation for gnome-color-manager.
-# Copyright (C) 2014 gnome-color-manager's COPYRIGHT HOLDER
+# Bản dịch tiếng Việt dành cho gnome-color-manager.
+# Copyright (C) 2015 gnome-color-manager's COPYRIGHT HOLDER
 # This file is distributed under the same license as the gnome-color-manager package.
 # Nguyễn Thái Ngọc Duy <pclouds@gmail.com>, 2010, 2012.
-# Trần Ngọc Quân <vnwildman@gmail.com>, 2014.
+# Trần Ngọc Quân <vnwildman@gmail.com>, 2014, 2015.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager&keywords=I18N+L10N\n"
-"POT-Creation-Date: 2014-12-08 07:09+0000\n"
-"PO-Revision-Date: 2014-12-08 15:46+0700\n"
+"POT-Creation-Date: 2015-03-15 07:05+0000\n"
+"PO-Revision-Date: 2015-03-15 15:26+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <gnome-vi-list@gnome.org>\n"
 "Language: vi\n"
@@ -29,7 +30,7 @@ msgstr "Cân chỉnh màu"
 
 #: ../data/gcm-import.desktop.in.h:1
 msgid "ICC Profile Installer"
-msgstr "Trình cài đặt hồ sơ ICC"
+msgstr "Cài đặt hồ sơ ICC"
 
 #: ../data/gcm-import.desktop.in.h:2
 msgid "Install ICC profiles"
@@ -44,61 +45,75 @@ msgstr "Cái chọn màu"
 msgid "Use the color sensor to sample spot colors"
 msgstr "Đặt cảm biến màu để lấy mẫu màu điểm"
 
-#. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:4
-msgid "_Measure"
-msgstr "Đ_o"
-
 #. the color representation
 #. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:6 ../src/gcm-viewer.c:689
+#: ../data/gcm-picker.ui.h:4 ../src/gcm-viewer.c:689
 msgid "XYZ"
 msgstr "XYZ"
 
 #. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:8
+#: ../data/gcm-picker.ui.h:6
 msgid "Lab (D50)"
 msgstr "Lab (D50)"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:10
+#: ../data/gcm-picker.ui.h:8
 msgid "Media whitepoint"
 msgstr "Điểm trắng đa phương tiện"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:12
+#: ../data/gcm-picker.ui.h:10
 msgid "Color Temperature"
 msgstr "Nhiệt độ màu"
 
 #. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:14
+#: ../data/gcm-picker.ui.h:12
 msgid "Ambient"
 msgstr "Chung quanh"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
 #. The profile colorspace, e.g. RGB
-#: ../data/gcm-picker.ui.h:16 ../data/gcm-viewer.ui.h:7
+#: ../data/gcm-picker.ui.h:14 ../data/gcm-viewer.ui.h:7
 msgid "Colorspace"
 msgstr "Không gian màu"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:18 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:709
+#: ../data/gcm-picker.ui.h:16 ../src/gcm-utils.c:329 ../src/gcm-viewer.c:709
 msgid "RGB"
 msgstr "RGB"
 
 #. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:20
+#: ../data/gcm-picker.ui.h:18
 msgid "Error"
 msgstr "Lỗi"
 
 #. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:22
+#: ../data/gcm-picker.ui.h:20
 msgid "Results"
 msgstr "Kết quả"
 
+#. Button text, to get a single sample of color
+#: ../data/gcm-picker.ui.h:22
+msgid "_Measure"
+msgstr "Đ_o"
+
+#. TRANSLATORS: this is the application name for libcanberra
 #: ../data/appdata/gcm-viewer.appdata.xml.in.h:1
+#: ../src/gcm-calibrate-argyll.c:2252 ../src/gcm-calibrate-argyll.c:2340
+#: ../src/gcm-calibrate-argyll.c:2377 ../src/gcm-calibrate-argyll.c:2403
+#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
+#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
+msgid "GNOME Color Manager"
+msgstr "Quản lý màu GNOME"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+#: ../data/gcm-viewer.desktop.in.h:2
+msgid "Inspect and compare installed color profiles"
+msgstr "Xem xét và so sánh hồ sơ màu đã cài đặt"
+
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:3
 msgid ""
 "GNOME Color Profile Viewer shows installed color profiles on your system and "
 "allows you to calibrate displays, printers and cameras using a wizard."
@@ -107,7 +122,7 @@ msgstr ""
 "và cho phép bạn cân chỉnh màn hình, máy in và máy ảnh dùng một ứng dụng hỏi "
 "đáp."
 
-#: ../data/appdata/gcm-viewer.appdata.xml.in.h:2
+#: ../data/appdata/gcm-viewer.appdata.xml.in.h:4
 msgid ""
 "This functionality is typically used by GNOME Control Center from the color "
 "panel although can be used on its own."
@@ -119,9 +134,9 @@ msgstr ""
 msgid "Color Profile Viewer"
 msgstr "Xem hồ sơ màu"
 
-#: ../data/gcm-viewer.desktop.in.h:2
-msgid "Inspect and compare installed color profiles"
-msgstr "Xem xét và so sánh hồ sơ màu đã cài đặt"
+#: ../data/gcm-viewer.desktop.in.h:3
+msgid "Color;ICC;"
+msgstr "Color;Màu;ICC;"
 
 #: ../data/gcm-viewer.ui.h:2
 msgid "Add a profile for the device"
@@ -389,14 +404,6 @@ msgstr "Không thể đọc mẫu lúc này."
 msgid "Retry"
 msgstr "Thử lại"
 
-#. TRANSLATORS: this is the application name for libcanberra
-#: ../src/gcm-calibrate-argyll.c:2252 ../src/gcm-calibrate-argyll.c:2340
-#: ../src/gcm-calibrate-argyll.c:2377 ../src/gcm-calibrate-argyll.c:2403
-#: ../src/gcm-calibrate.c:436 ../src/gcm-calibrate.c:476
-#: ../src/gcm-calibrate.c:517 ../src/gcm-calibrate-main.c:203
-msgid "GNOME Color Manager"
-msgstr "Bộ quản lý màu GNOME"
-
 #: ../src/gcm-calibrate-argyll.c:2306
 msgid "No firmware is installed for this instrument."
 msgstr "Chưa cài firmware cho thiết bị đo này."
@@ -522,7 +529,7 @@ msgstr "In xong."
 
 #: ../src/gcm-calibrate-argyll.c:2635
 msgid "The print was aborted."
-msgstr "In bị huỷ."
+msgstr "In bị hủy."
 
 #: ../src/gcm-calibrate.c:404
 msgid "Please attach instrument"
@@ -628,7 +635,7 @@ msgstr "Cân chỉnh chưa hoàn tất"
 
 #: ../src/gcm-calibrate-main.c:150
 msgid "Are you sure you want to cancel the calibration?"
-msgstr "Bạn có chắc muốn huỷ cân chỉnh không?"
+msgstr "Bạn có chắc muốn hủy cân chỉnh không?"
 
 #: ../src/gcm-calibrate-main.c:153
 msgid "Continue calibration"
@@ -636,7 +643,7 @@ msgstr "Tiếp tục cân chỉnh"
 
 #: ../src/gcm-calibrate-main.c:157
 msgid "Cancel and close"
-msgstr "Huỷ và đóng"
+msgstr "Hủy và đóng"
 
 #. TRANSLATORS: this is the sound description
 #: ../src/gcm-calibrate-main.c:205
@@ -1210,7 +1217,7 @@ msgid "Copyright (c)"
 msgstr "Bản quyền (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2345 ../src/gcm-picker.c:813
+#: ../src/gcm-calibrate-main.c:2345 ../src/gcm-picker.c:781
 #: ../src/gcm-viewer.c:1803
 msgid "Set the parent window to make this modal"
 msgstr "Đặt cửa sổ cha để làm cho cái này thành ở trên cùng"
@@ -1259,11 +1266,11 @@ msgstr "Hiện thông tin tìm lỗi cho mọi tập tin"
 
 #: ../src/gcm-debug.c:162
 msgid "Debugging Options"
-msgstr "Tuỳ chọn tìm lỗi"
+msgstr "Tùy chọn tìm lỗi"
 
 #: ../src/gcm-debug.c:162
 msgid "Show debugging options"
-msgstr "Hiện tuỳ chọn tìm lỗi"
+msgstr "Hiện tùy chọn tìm lỗi"
 
 #. TRANSLATORS: command line option: a list of catalogs to install
 #: ../src/gcm-import.c:101
@@ -1384,12 +1391,12 @@ msgstr "Hiện thuộc tính xserver"
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:370
 msgid "Get the profiles for a specific file"
-msgstr "Lấy hồ sơ cho tập tin xác định"
+msgstr "Lấy hồ sơ cho tập tin đã cho"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:373
 msgid "Get the profile for a specific window"
-msgstr "Lấy hồ sơ cho cửa sổ xác định"
+msgstr "Lấy hồ sơ cho cửa sổ đã cho"
 
 #. TRANSLATORS: command line option
 #: ../src/gcm-inspect.c:376
@@ -1410,30 +1417,30 @@ msgstr "Chương trình kiểm tra EDID"
 msgid "Unknown"
 msgstr "Không biết"
 
-#: ../src/gcm-picker.c:389
+#: ../src/gcm-picker.c:369
 msgid "No colorimeter is attached."
 msgstr "Chưa gắn bộ đo màu."
 
-#: ../src/gcm-picker.c:406
+#: ../src/gcm-picker.c:386
 msgid "The sensor has no native driver."
 msgstr "Cảm biến này không cần trình điều khiển."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:415
+#: ../src/gcm-picker.c:395
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr "Bộ đo màu không có khả năng đọc màu điểm."
 
 #. TRANSLATORS: this is when there are no profiles that can be used;
 #. * the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:666
+#: ../src/gcm-picker.c:646
 #, c-format
 msgid "No %s color spaces available"
 msgstr "Không có không gian màu %s sẵn sàng"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:828
+#: ../src/gcm-picker.c:796
 msgid "GNOME Color Manager Color Picker"
-msgstr "Bộ chọn màu"
+msgstr "Bộ chọn màu ứng dụng quản lý màu GNOME"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
@@ -1449,18 +1456,18 @@ msgstr "xám"
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
 #: ../src/gcm-viewer.c:386
 msgid "Permanently delete profile?"
-msgstr "Xoá hồ sơ vĩnh viễn chứ?"
+msgstr "Xóa hồ sơ vĩnh viễn chứ?"
 
 #. TRANSLATORS: dialog message
 #: ../src/gcm-viewer.c:389
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
-msgstr "Bạn có chắc muốn xoá vĩnh viễn hồ sơ này khỏi hệ thống không?"
+msgstr "Bạn có chắc muốn xóa vĩnh viễn hồ sơ này khỏi hệ thống không?"
 
 #. TRANSLATORS: button, delete a profile
 #: ../src/gcm-viewer.c:392
 msgid "Delete"
-msgstr "Xoá"
+msgstr "Xóa"
 
 #: ../src/gcm-viewer.c:443
 msgid "_Import"
@@ -1597,7 +1604,7 @@ msgstr "Phiên bản khung"
 #. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
 #: ../src/gcm-viewer.c:782
 msgid "Data source type"
-msgstr "Loại nguồn dữ liệu"
+msgstr "Kiểu nguồn dữ liệu"
 
 #. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
 #: ../src/gcm-viewer.c:784
@@ -1748,12 +1755,12 @@ msgstr "%I:%M:%S %p, %e %B %Y"
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
 #: ../src/gcm-viewer.c:1249
 msgid "Delete this profile"
-msgstr "Xoá hồ sơ này"
+msgstr "Xóa hồ sơ này"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
 #: ../src/gcm-viewer.c:1252
 msgid "This profile cannot be deleted"
-msgstr "Không thể xoá hồ sơ này"
+msgstr "Không thể xóa hồ sơ này"
 
 #. TRANSLATORS: show just the one profile, rather than all
 #: ../src/gcm-viewer.c:1806
@@ -1763,7 +1770,7 @@ msgstr "Đặt hồ sơ cần xem"
 #. TRANSLATORS: show just the one filename, rather than all
 #: ../src/gcm-viewer.c:1809
 msgid "Set the specific file to show"
-msgstr "Đặt tập tin cần xem"
+msgstr "Đặt tập tin cụ thể muốn xem"
 
 #~ msgid "XYZ:"
 #~ msgstr "XYZ:"
