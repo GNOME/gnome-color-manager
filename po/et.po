@@ -5,7 +5,7 @@
 # This file is distributed under the same license as the gnome-color-manager
 # package.
 #
-# Mattias Põldaru <mahfiaz gmail com>, 2009-2010, 2013.
+# Mattias Põldaru <mahfiaz gmail com>, 2009-2010, 2013, 2015.
 # Ivar Smolin <mahfiaz gmail com>, 2010.
 #
 msgid ""
@@ -13,8 +13,8 @@ msgstr ""
 "Project-Id-Version: Gnome-color-manager\n"
 "Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
 "color-manager&keywords=I18N+L10N\n"
-"POT-Creation-Date: 2013-09-11 19:27+0000\n"
-"PO-Revision-Date: 2013-09-11 22:59+0300\n"
+"POT-Creation-Date: 2015-03-15 07:05+0000\n"
+"PO-Revision-Date: 2015-03-15 09:46+0300\n"
 "Last-Translator: Mattias Põldaru <mahfiaz@gmail.com>\n"
 "Language-Team: Gnome Estonian Translation Team <gnome-et@linux.ee>\n"
 "Language: et_EE\n"
@@ -43,52 +43,77 @@ msgstr "Värvivalija"
 msgid "Use the color sensor to sample spot colors"
 msgstr "Värvisensori kasutamine punktvärvide lugemiseks."
 
-#. Button text, to get a single sample of color
-msgid "_Measure"
-msgstr "_Mõõda"
-
 #. the color representation
-msgid "XYZ:"
-msgstr "XYZ:"
+#. TRANSLATORS: this the ICC colorspace type
+msgid "XYZ"
+msgstr "XYZ"
 
 #. Lab is the color representation and D50 is the white point
-msgid "Lab (D50):"
-msgstr "Lab (D50):"
+msgid "Lab (D50)"
+msgstr "Lab (D50)"
 
 #. This refers to the amount of ambient light on the sensor
-msgid "Media whitepoint:"
-msgstr "Meediumi valgepunkt:"
+msgid "Media whitepoint"
+msgstr "Meediumi valgepunkt"
 
 #. This refers to the amount of ambient light on the sensor
-msgid "Color Temperature:"
-msgstr "Värvustemperatuur:"
+msgid "Color Temperature"
+msgstr "Värvustemperatuur"
 
 # tõlkekommentaar tundub kohatu
 #. This refers to the amount of ambient light on the sensor
-msgid "Ambient:"
-msgstr "Ümbrus:"
+msgid "Ambient"
+msgstr "Ümbrus"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-msgid "Colorspace:"
-msgstr "Värviruum:"
+#. The profile colorspace, e.g. RGB
+msgid "Colorspace"
+msgstr "Värviruum"
 
 #. These are the values of the chosen color in Red, Green, Blue encoding
-msgid "RGB:"
-msgstr "RGB:"
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+msgid "RGB"
+msgstr "RGB"
 
 #. This shows the error in the conversion to RGB.
-msgid "Error:"
-msgstr "Viga:"
+msgid "Error"
+msgstr "Viga"
 
 #. Expander title, the results from the color picker
 msgid "Results"
 msgstr "Tulemused"
 
-msgid "Color Profile Viewer"
-msgstr "Värviprofiilide näitaja"
+#. Button text, to get a single sample of color
+msgid "_Measure"
+msgstr "_Mõõda"
+
+#. TRANSLATORS: this is the application name for libcanberra
+msgid "GNOME Color Manager"
+msgstr "GNOME värvihaldus"
 
 msgid "Inspect and compare installed color profiles"
 msgstr "Paigaldatud värviprofiilide vaatamine ja võrdlemine"
+
+msgid ""
+"GNOME Color Profile Viewer shows installed color profiles on your system and "
+"allows you to calibrate displays, printers and cameras using a wizard."
+msgstr ""
+"GNOME värviprofiilide näitaja kuvab süsteemi paigaldatud värviprofiile ja "
+"võimaldab kuvareid, printereid ja kaameraid nõustaja abil kalibreerida."
+
+msgid ""
+"This functionality is typically used by GNOME Control Center from the color "
+"panel although can be used on its own."
+msgstr ""
+"Seda funktsionaalsust kasutatakse tavaliselt GNOME juhtpuldi kaudu, kuigi "
+"seda saab kasutada ka eraldi."
+
+msgid "Color Profile Viewer"
+msgstr "Värviprofiilide näitaja"
+
+msgid "Color;ICC;"
+msgstr "Värvus;Värvid;ICC;Värvihaldus;"
 
 msgid "Add a profile for the device"
 msgstr "Seadmele profiili lisamine"
@@ -99,10 +124,6 @@ msgstr "Seadmest profiili eemaldamine"
 #. The type of profile, e.g. display, scanner, etc.
 msgid "Profile type"
 msgstr "Profiili liik"
-
-#. The profile colorspace, e.g. RGB
-msgid "Colorspace"
-msgstr "Värviruum"
 
 #. When the profile was created
 msgid "Created"
@@ -158,12 +179,6 @@ msgstr "CIE 1931 diagramm kuvab profiili ulatuse (gamut) taasesituse 2D pinnal"
 
 msgid "CIE 1931"
 msgstr "CIE 1931"
-
-msgid "This 3D hull is what the profile looks like in Lab space"
-msgstr "See 3D kaetus (hull) näitab, kuidas profiil paistab Lab värviruumis"
-
-msgid "3D Gamut"
-msgstr "3D ulatus (gamut)"
 
 msgid "Response out"
 msgstr "Vastus välja"
@@ -303,10 +318,6 @@ msgstr "Sel korral ei suudetud näidist lugeda."
 
 msgid "Retry"
 msgstr "Proovi uuesti"
-
-#. TRANSLATORS: this is the application name for libcanberra
-msgid "GNOME Color Manager"
-msgstr "GNOME värvihaldus"
 
 msgid "No firmware is installed for this instrument."
 msgstr "Selle kalibreerimisseadme püsivara pole paigaldatud."
@@ -716,15 +727,15 @@ msgid "CMP DT 003"
 msgstr "CMP DT 003"
 
 #. TRANSLATORS: this is probably a brand name
-msgid "Color Checker"
-msgstr "Color Checker"
+msgid "ColorChecker"
+msgstr "ColorChecker"
 
 #. TRANSLATORS: this is probably a brand name
-msgid "Color Checker DC"
+msgid "ColorChecker DC"
 msgstr "Color Checker DC"
 
 #. TRANSLATORS: this is probably a brand name
-msgid "Color Checker SG"
+msgid "ColorChecker SG"
 msgstr "Color Checker SG"
 
 #. TRANSLATORS: this is probably a brand name
@@ -799,8 +810,20 @@ msgstr "Vali kuva liik"
 msgid "Select the monitor type that is attached to your computer."
 msgstr "Vali, mis liiki monitor on su arvutiga ühendatud."
 
-msgid "LCD"
-msgstr "LCD"
+msgid "LCD (CCFL backlight)"
+msgstr "LCD (CCFL taustvalgus)"
+
+msgid "LCD (White LED backlight)"
+msgstr "LCD (valge LED taustvalgus)"
+
+msgid "LCD (RGB LED backlight)"
+msgstr "LCD (RGB LED taustvalgus)"
+
+msgid "LCD (Wide Gamut RGB LED backlight)"
+msgstr "LCD (Wide Gamut RGB LED taustvalgus)"
+
+msgid "LCD (Wide Gamut CCFL backlight)"
+msgstr "LCD (Wide Gamut CCFL taustvalgus)"
 
 msgid "CRT"
 msgstr "CRT"
@@ -1141,11 +1164,6 @@ msgstr "Ühtegi %s värviruumi pole saadaval"
 msgid "GNOME Color Manager Color Picker"
 msgstr "GNOME värvihalduri värvivalija"
 
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#. TRANSLATORS: this the ICC colorspace type
-msgid "RGB"
-msgstr "RGB"
-
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
 msgid "CMYK"
@@ -1207,10 +1225,6 @@ msgstr "Kokkuvõte"
 #. TRANSLATORS: this the ICC profile type
 msgid "Named color"
 msgstr "Värvuse nimi"
-
-#. TRANSLATORS: this the ICC colorspace type
-msgid "XYZ"
-msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
 msgid "LAB"
@@ -1414,6 +1428,24 @@ msgstr "Kuvamiseks kindla profiili valimine"
 #. TRANSLATORS: show just the one filename, rather than all
 msgid "Set the specific file to show"
 msgstr "Kuvamiseks kindla faili määramine"
+
+#~ msgid "XYZ:"
+#~ msgstr "XYZ:"
+
+#~ msgid "Colorspace:"
+#~ msgstr "Värviruum:"
+
+#~ msgid "RGB:"
+#~ msgstr "RGB:"
+
+#~ msgid "This 3D hull is what the profile looks like in Lab space"
+#~ msgstr "See 3D kaetus (hull) näitab, kuidas profiil paistab Lab värviruumis"
+
+#~ msgid "3D Gamut"
+#~ msgstr "3D ulatus (gamut)"
+
+#~ msgid "LCD"
+#~ msgstr "LCD"
 
 #~ msgid "Device model"
 #~ msgstr "Seadme mudel"
