@@ -27,6 +27,7 @@
 #include <math.h>
 #include <locale.h>
 #include <colord.h>
+#include <stdlib.h>
 
 #include "gcm-utils.h"
 #include "gcm-debug.h"
@@ -40,9 +41,9 @@ gcm_import_show_details (GtkWindow *window,
 			 const gchar *data)
 {
 	gboolean ret;
-	GError *error = NULL;
-	GPtrArray *argv;
 	guint xid;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GPtrArray) argv = NULL;
 
 	/* spawn new viewer async and modal to this dialog */
 	argv = g_ptr_array_new_with_free_func (g_free);
@@ -62,11 +63,8 @@ gcm_import_show_details (GtkWindow *window,
 			     NULL,
 			     &error);
 
-	if (!ret) {
+	if (!ret)
 		g_warning ("failed to spawn viewer: %s", error->message);
-		g_error_free (error);
-	}
-	g_ptr_array_unref (argv);
 	return ret;
 }
 
@@ -76,24 +74,23 @@ gcm_import_show_details (GtkWindow *window,
 int
 main (int argc, char **argv)
 {
-	CdClient *client = NULL;
-	CdProfile *profile_tmp = NULL;
+	g_autoptr(CdClient) client = NULL;
+	g_autoptr(CdProfile) profile_tmp = NULL;
 	const gchar *copyright;
 	const gchar *description;
 	const gchar *title;
 	const gchar *lang;
 	gboolean ret;
-	gchar **files = NULL;
-	CdIcc *icc = NULL;
-	GError *error = NULL;
-	GFile *destination = NULL;
-	GFile *file = NULL;
 	GOptionContext *context;
-	GString *string = NULL;
 	GtkResponseType response;
 	GtkWidget *image = NULL;
 	GtkWidget *dialog;
-	guint retval = 1;
+	g_autoptr(CdIcc) icc = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GFile) destination = NULL;
+	g_autoptr(GFile) file = NULL;
+	g_autoptr(GString) string = NULL;
+	g_auto(GStrv) files = NULL;
 
 	const GOptionEntry options[] = {
 		{ G_OPTION_REMAINING, '\0', 0, G_OPTION_ARG_FILENAME_ARRAY, &files,
@@ -129,7 +126,7 @@ main (int argc, char **argv)
 					  GCM_STOCK_ICON);
 		gtk_dialog_run (GTK_DIALOG (dialog));
 		gtk_widget_destroy (dialog);
-		goto out;
+		return EXIT_FAILURE;
 	}
 
 	/* load profile */
@@ -152,9 +149,8 @@ main (int argc, char **argv)
 							  _("Failed to parse file: %s"),
 							  error->message);
 		gtk_dialog_run (GTK_DIALOG (dialog));
-		g_error_free (error);
 		gtk_widget_destroy (dialog);
-		goto out;
+		return EXIT_FAILURE;
 	}
 
 	/* get data */
@@ -192,8 +188,7 @@ main (int argc, char **argv)
 	if (!ret) {
 		g_warning ("failed to connect to colord: %s",
 			   error->message);
-		g_error_free (error);
-		goto out;
+		return EXIT_FAILURE;
 	}
 
 	profile_tmp = cd_client_find_profile_by_property_sync (client,
@@ -209,8 +204,7 @@ main (int argc, char **argv)
 			g_warning ("failed to connect to profile %s: %s",
 				   cd_profile_get_object_path (profile_tmp),
 				   error->message);
-			g_error_free (error);
-			goto out;
+			return EXIT_FAILURE;
 		}
 		/* TRANSLATORS: color profile already been installed */
 		dialog = gtk_message_dialog_new (NULL,
@@ -230,7 +224,7 @@ main (int argc, char **argv)
 			goto try_harder;
 		}
 		gtk_widget_destroy (dialog);
-		goto out;
+		return EXIT_FAILURE;
 	}
 
 	/* get correct title */
@@ -276,7 +270,7 @@ try_harder:
 
 	/* not the correct response */
 	if (response != GTK_RESPONSE_OK)
-		goto out;
+		return EXIT_FAILURE;
 
 	/* copy icc file to users profile path */
 	profile_tmp = cd_client_import_profile_sync (client,
@@ -293,24 +287,9 @@ try_harder:
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", error->message);
 		gtk_dialog_run (GTK_DIALOG (dialog));
-		g_error_free (error);
 		gtk_widget_destroy (dialog);
-		goto out;
+		return EXIT_FAILURE;
 	}
-out:
-	if (file != NULL)
-		g_object_unref (file);
-	if (string != NULL)
-		g_string_free (string, TRUE);
-	if (icc != NULL)
-		g_object_unref (icc);
-	if (client != NULL)
-		g_object_unref (client);
-	if (profile_tmp != NULL)
-		g_object_unref (profile_tmp);
-	if (destination != NULL)
-		g_object_unref (destination);
-	g_strfreev (files);
-	return retval;
+	return EXIT_SUCCESS;
 }
 

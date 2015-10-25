@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2010-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -28,22 +28,8 @@
 
 G_BEGIN_DECLS
 
-#define GCM_TYPE_EXIF		(gcm_exif_get_type ())
-#define GCM_EXIF(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), GCM_TYPE_EXIF, GcmExif))
-#define GCM_EXIF_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), GCM_TYPE_EXIF, GcmExifClass))
-#define GCM_IS_EXIF(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), GCM_TYPE_EXIF))
-#define GCM_IS_EXIF_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), GCM_TYPE_EXIF))
-#define GCM_EXIF_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), GCM_TYPE_EXIF, GcmExifClass))
-
-typedef struct _GcmExifPrivate	GcmExifPrivate;
-typedef struct _GcmExif		GcmExif;
-typedef struct _GcmExifClass	GcmExifClass;
-
-struct _GcmExif
-{
-	 GObject		 parent;
-	 GcmExifPrivate		*priv;
-};
+#define GCM_TYPE_EXIF (gcm_exif_get_type ())
+G_DECLARE_DERIVABLE_TYPE (GcmExif, gcm_exif, GCM, EXIF, GObject)
 
 struct _GcmExifClass
 {

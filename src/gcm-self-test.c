@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2007-2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2007-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -39,7 +39,7 @@
 static void
 gcm_test_brightness_func (void)
 {
-	GcmBrightness *brightness;
+	g_autoptr(GcmBrightness) brightness = NULL;
 	gboolean ret;
 	GError *error = NULL;
 	guint orig_percentage;
@@ -65,18 +65,16 @@ gcm_test_brightness_func (void)
 	ret = gcm_brightness_set_percentage (brightness, orig_percentage, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-
-	g_object_unref (brightness);
 }
 
 static void
 gcm_test_calibrate_func (void)
 {
-	GcmCalibrate *calibrate;
 	gboolean ret;
 	GError *error = NULL;
-	gchar *model;
-	gchar *manufacturer;
+	g_autoptr(GcmCalibrate) calibrate = NULL;
+	g_autofree gchar *model = NULL;
+	g_autofree gchar *manufacturer = NULL;
 
 	calibrate = gcm_calibrate_new ();
 	g_assert (calibrate != NULL);
@@ -93,9 +91,6 @@ gcm_test_calibrate_func (void)
 		      NULL);
 	g_assert_cmpstr (model, ==, "NIKON D60");
 	g_assert_cmpstr (manufacturer, ==, "NIKON CORPORATION");
-	g_free (model);
-	g_free (manufacturer);
-	g_object_unref (calibrate);
 }
 
 static void
@@ -105,18 +100,18 @@ gcm_test_cie_widget_func (void)
 	GtkWidget *image;
 	GtkWidget *dialog;
 	GtkWidget *vbox;
-	CdIcc *profile;
-	CdColorXYZ *white;
-	CdColorXYZ *red;
-	CdColorXYZ *green;
-	CdColorXYZ *blue;
 	gboolean ret;
 	gint response;
-	GFile *file = NULL;
 	CdColorYxy white_Yxy;
 	CdColorYxy red_Yxy;
 	CdColorYxy green_Yxy;
 	CdColorYxy blue_Yxy;
+	g_autoptr(CdColorXYZ) blue = NULL;
+	g_autoptr(CdColorXYZ) green = NULL;
+	g_autoptr(CdColorXYZ) red = NULL;
+	g_autoptr(CdColorXYZ) white = NULL;
+	g_autoptr(CdIcc) profile = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	widget = gcm_cie_widget_new ();
 	g_assert (widget != NULL);
@@ -131,7 +126,6 @@ gcm_test_cie_widget_func (void)
 		      "green", &green,
 		      "blue", &blue,
 		      NULL);
-	g_object_unref (file);
 
 	cd_color_xyz_to_yxy (white, &white_Yxy);
 	cd_color_xyz_to_yxy (red, &red_Yxy);
@@ -161,21 +155,15 @@ gcm_test_cie_widget_func (void)
 	g_assert ((response == GTK_RESPONSE_YES));
 
 	gtk_widget_destroy (dialog);
-
-	g_object_unref (profile);
-	cd_color_xyz_free (white);
-	cd_color_xyz_free (red);
-	cd_color_xyz_free (green);
-	cd_color_xyz_free (blue);
 }
 
 static void
 gcm_test_exif_func (void)
 {
-	GcmExif *exif;
 	gboolean ret;
 	GError *error = NULL;
 	GFile *file;
+	g_autoptr(GcmExif) exif = NULL;
 
 	exif = gcm_exif_new ();
 	g_assert (exif != NULL);
@@ -219,8 +207,6 @@ gcm_test_exif_func (void)
 	g_object_unref (file);
 	g_assert_error (error, GCM_EXIF_ERROR, GCM_EXIF_ERROR_NO_SUPPORT);
 	g_assert (!ret);
-
-	g_object_unref (exif);
 }
 
 static void
@@ -294,11 +280,11 @@ gcm_test_trc_widget_func (void)
 	GtkWidget *image;
 	GtkWidget *dialog;
 	GtkWidget *vbox;
-	GPtrArray *clut;
-	CdIcc *profile;
 	gboolean ret;
 	gint response;
-	GFile *file;
+	g_autoptr(CdIcc) profile = NULL;
+    g_autoptr(GFile) file = NULL;
+	g_autoptr(GPtrArray) clut = NULL;
 
 	widget = gcm_trc_widget_new ();
 	g_assert (widget != NULL);
@@ -311,7 +297,6 @@ gcm_test_trc_widget_func (void)
 	g_object_set (widget,
 		      "data", clut,
 		      NULL);
-	g_object_unref (file);
 
 	/* show in a dialog as an example */
 	dialog = gtk_message_dialog_new (NULL, GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_QUESTION, GTK_BUTTONS_YES_NO, "Does TRC widget match\nthe picture below?");
@@ -329,9 +314,6 @@ gcm_test_trc_widget_func (void)
 	g_assert ((response == GTK_RESPONSE_YES));
 
 	gtk_widget_destroy (dialog);
-
-	g_ptr_array_unref (clut);
-	g_object_unref (profile);
 }
 
 static void
@@ -340,8 +322,8 @@ gcm_test_utils_func (void)
 	gboolean ret;
 	gchar *text;
 	gchar *filename;
-	GFile *file;
-	GFile *dest;
+	g_autoptr(GFile) file = NULL;
+	g_autoptr(GFile) dest = NULL;
 
 	text = gcm_utils_linkify ("http://www.dave.org is text http://www.hughsie.com that needs to be linked to http://www.bbc.co.uk really");
 	g_assert_cmpstr (text, ==, "<a href=\"http://www.dave.org\">http://www.dave.org</a> is text "
@@ -354,8 +336,6 @@ gcm_test_utils_func (void)
 	filename = g_file_get_path (dest);
 	g_assert (g_str_has_suffix (filename, "/.local/share/icc/dave.icc"));
 	g_free (filename);
-	g_object_unref (file);
-	g_object_unref (dest);
 
 	ret = gcm_utils_output_is_lcd_internal ("LVDS1");
 	g_assert (ret);

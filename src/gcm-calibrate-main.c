@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2011 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -218,7 +218,7 @@ gcm_calib_get_vbox_for_page (GcmCalibratePriv *priv,
 	GtkWidget *tmp;
 	GcmCalibratePage page_tmp;
 
-	for (i=0; i<priv->pages->len; i++) {
+	for (i = 0; i<priv->pages->len; i++) {
 		tmp = g_ptr_array_index (priv->pages, i);
 		page_tmp = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (tmp),
 								"GcmCalibrateMain::Index"));
@@ -254,21 +254,16 @@ _cmsDictAddEntryAscii (cmsHANDLE dict,
 		       const gchar *key,
 		       const gchar *value)
 {
-	cmsBool ret = FALSE;
-	wchar_t *mb_key = NULL;
-	wchar_t *mb_value = NULL;
+	g_autofree wchar_t *mb_key = NULL;
+	g_autofree wchar_t *mb_value = NULL;
 
 	mb_key = utf8_to_wchar_t (key);
 	if (mb_key == NULL)
-		goto out;
+		return FALSE;
 	mb_value = utf8_to_wchar_t (value);
 	if (mb_value == NULL)
-		goto out;
-	ret = cmsDictAddEntry (dict, mb_key, mb_value, NULL, NULL);
-out:
-	g_free (mb_key);
-	g_free (mb_value);
-	return ret;
+		return FALSE;
+	return cmsDictAddEntry (dict, mb_key, mb_value, NULL, NULL);
 }
 
 static gboolean
@@ -279,11 +274,11 @@ gcm_calib_set_extra_metadata (GcmCalibratePriv *priv,
 	cmsHANDLE dict = NULL;
 	cmsHPROFILE lcms_profile;
 	gboolean ret = TRUE;
-	gchar *data = NULL;
-	gchar *screen_brightness_str = NULL;
 	gsize len;
 	guint percentage;
 	CdSensor *sensor;
+	g_autofree gchar *data = NULL;
+	g_autofree gchar *screen_brightness_str = NULL;
 
 	/* parse */
 	ret = g_file_get_contents (filename, &data, &len, error);
@@ -350,8 +345,6 @@ gcm_calib_set_extra_metadata (GcmCalibratePriv *priv,
 	cmsSaveProfileToFile (lcms_profile, filename);
 	ret = TRUE;
 out:
-	g_free (screen_brightness_str);
-	g_free (data);
 	if (dict != NULL)
 		cmsDictFree (dict);
 	return ret;
@@ -367,14 +360,13 @@ gcm_calib_set_sensor_options_cb (GObject *object,
 {
 	CdSensor *sensor = CD_SENSOR (object);
 	gboolean ret;
-	GError *error = NULL;
+	g_autoptr(GError) error = NULL;
 
 	/* get return value */
 	ret = cd_sensor_set_options_finish (sensor, res, &error);
 	if (!ret) {
 		g_warning ("Failed to set sensor option: %s",
 			   error->message);
-		g_error_free (error);
 	}
 }
 
@@ -384,16 +376,16 @@ gcm_calib_set_sensor_options (GcmCalibratePriv *priv,
 {
 	CdSensor *sensor;
 	gboolean ret;
-	gchar *data = NULL;
-	gchar *sha1 = NULL;
-	GError *error = NULL;
-	GHashTable *hash = NULL;
 	gsize len;
+	g_autofree gchar *data = NULL;
+	g_autofree gchar *sha1 = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GHashTable) hash = NULL;
 
 	/* get ChSensor */
 	sensor = gcm_calibrate_get_sensor (priv->calibrate);
 	if (sensor == NULL)
-		goto out;
+		return;
 
 	/* set the remote profile hash */
 	hash = g_hash_table_new_full (g_str_hash,
@@ -404,8 +396,7 @@ gcm_calib_set_sensor_options (GcmCalibratePriv *priv,
 	if (!ret) {
 		g_warning ("Failed to get SHA1 hash: %s",
 			   error->message);
-		g_error_free (error);
-		goto out;
+		return;
 	}
 	sha1 = g_compute_checksum_for_data (G_CHECKSUM_SHA1,
 					    (const guchar *) data,
@@ -416,25 +407,20 @@ gcm_calib_set_sensor_options (GcmCalibratePriv *priv,
 	cd_sensor_set_options (sensor, hash, NULL,
 			       gcm_calib_set_sensor_options_cb,
 			       priv);
-out:
-	g_free (data);
-	g_free (sha1);
-	if (hash != NULL)
-		g_hash_table_unref (hash);
 }
 
 static gboolean
 gcm_calib_start_idle_cb (gpointer user_data)
 {
-	CdProfile *profile = NULL;
+	g_autoptr(CdProfile) profile = NULL;
 	const gchar *filename;
 	gboolean ret;
 	GcmCalibratePriv *priv = (GcmCalibratePriv *) user_data;
-	GError *error = NULL;
-	GFile *file = NULL;
 	gint inhibit_cookie;
 	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 	GtkWidget *vbox;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	/* inhibit */
 	inhibit_cookie = gtk_application_inhibit (priv->application,
@@ -462,7 +448,6 @@ gcm_calib_start_idle_cb (gpointer user_data)
 
 		g_warning ("failed to calibrate: %s",
 			   error->message);
-		g_error_free (error);
 
 		/* mark this box as the end */
 		vbox = gcm_calib_get_vbox_for_page (priv, GCM_CALIBRATE_PAGE_ACTION);
@@ -483,7 +468,6 @@ gcm_calib_start_idle_cb (gpointer user_data)
 	if (!ret) {
 		g_warning ("failed to set extra metadata: %s",
 			   error->message);
-		g_error_free (error);
 		goto out;
 	}
 
@@ -499,7 +483,6 @@ gcm_calib_start_idle_cb (gpointer user_data)
 	if (profile == NULL) {
 		g_warning ("failed to find calibration profile: %s",
 			   error->message);
-		g_error_free (error);
 		goto out;
 	}
 	ret = cd_device_add_profile_sync (priv->device,
@@ -512,7 +495,6 @@ gcm_calib_start_idle_cb (gpointer user_data)
 			   cd_profile_get_object_path (profile),
 			   cd_device_get_object_path (priv->device),
 			   error->message);
-		g_error_free (error);
 		goto out;
 	}
 
@@ -533,10 +515,6 @@ out:
 		gtk_application_uninhibit (priv->application,
 					   priv->inhibit_cookie);
 	}
-	if (profile != NULL)
-		g_object_unref (profile);
-	if (file != NULL)
-		g_object_unref (file);
 	return FALSE;
 }
 
@@ -630,7 +608,7 @@ gcm_calib_add_page_title (GcmCalibratePriv *priv, const gchar *text)
 	GtkWidget *label;
 	GtkWidget *hbox;
 	GtkWidget *vbox;
-	gchar *markup;
+	g_autofree gchar *markup = NULL;
 
 	markup = g_strdup_printf ("<span size=\"large\" font_weight=\"bold\">%s</span>", text);
 	label = gtk_label_new (NULL);
@@ -643,8 +621,6 @@ gcm_calib_add_page_title (GcmCalibratePriv *priv, const gchar *text)
 	/* header */
 	vbox = gtk_box_new (GTK_ORIENTATION_VERTICAL, 20);
 	gtk_box_pack_start (GTK_BOX (vbox), hbox, FALSE, FALSE, 0);
-
-	g_free (markup);
 	return vbox;
 }
 
@@ -654,7 +630,7 @@ gcm_calib_label_activate_link_cb (GtkLabel *label,
 				  GcmCalibratePriv *priv)
 {
 	gboolean ret;
-	GError *error = NULL;
+	g_autoptr(GError) error = NULL;
 	const gchar *argv[] = { BINDIR "/gnome-control-center color",
 				"color",
 				NULL };
@@ -668,7 +644,6 @@ gcm_calib_label_activate_link_cb (GtkLabel *label,
 	if (!ret) {
 		g_warning ("failed to launch the control center: %s",
 			   error->message);
-		g_error_free (error);
 	}
 	return ret;
 }
@@ -704,10 +679,9 @@ gcm_calib_add_page_para (GtkWidget *vbox, const gchar *text)
 static void
 gcm_calib_add_page_bullet (GtkWidget *vbox, const gchar *text)
 {
-	gchar *markup;
+	g_autofree gchar *markup = NULL;
 	markup = g_strdup_printf ("• %s", text);
 	gcm_calib_add_page_para (vbox, markup);
-	g_free (markup);
 }
 
 /**
@@ -780,23 +754,17 @@ static gboolean
 gcm_calibrate_is_livecd (void)
 {
 #ifdef __linux__
-	gboolean ret;
-	gchar *data = NULL;
-	GError *error = NULL;
+	g_autofree gchar *data = NULL;
+	g_autoptr(GError) error = NULL;
 
 	/* get the kernel commandline */
-	ret = g_file_get_contents ("/proc/cmdline", &data, NULL, &error);
-	if (!ret) {
+	if (!g_file_get_contents ("/proc/cmdline", &data, NULL, &error)) {
 		g_warning ("failed to get kernel command line: %s",
 			   error->message);
-		g_error_free (error);
-		goto out;
+		return FALSE;
 	}
-	ret = (g_strstr_len (data, -1, "liveimg") != NULL ||
-	       g_strstr_len (data, -1, "casper") != NULL);
-out:
-	g_free (data);
-	return ret;
+	return (g_strstr_len (data, -1, "liveimg") != NULL ||
+		g_strstr_len (data, -1, "casper") != NULL);
 #else
 	return FALSE;
 #endif
@@ -811,8 +779,8 @@ gcm_calib_show_profile_button_clicked_cb (GtkButton *button,
 {
 	const gchar *argv[] = { BINDIR "/nautilus", "", NULL };
 	gboolean ret;
-	gchar *path;
-	GError *error = NULL;
+	g_autofree gchar *path = NULL;
+	g_autoptr(GError) error = NULL;
 
 	/* just hardcode nautilus to open the folder */
 	path = g_build_filename (g_get_user_data_dir (), "icc", NULL);
@@ -826,11 +794,8 @@ gcm_calib_show_profile_button_clicked_cb (GtkButton *button,
 			     &error);
 	if (!ret) {
 		g_warning ("failed to show profile: %s", error->message);
-		g_error_free (error);
-		goto out;
+		return;
 	}
-out:
-	g_free (path);
 }
 
 /**
@@ -1090,8 +1055,8 @@ gcm_calib_setup_page_install_argyllcms (GcmCalibratePriv *priv)
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GtkWidget *button;
-	GString *string;
 	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
+	g_autoptr(GString) string = NULL;
 
 	string = g_string_new ("");
 
@@ -1128,7 +1093,6 @@ gcm_calib_setup_page_install_argyllcms (GcmCalibratePriv *priv)
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_INSTALL_ARGYLLCMS));
-	g_string_free (string, TRUE);
 
 	/* show page */
 	gtk_widget_show_all (vbox);
@@ -1166,8 +1130,8 @@ gcm_calib_setup_page_install_targets (GcmCalibratePriv *priv)
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GtkWidget *button;
-	GString *string;
 	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
+	g_autoptr(GString) string = NULL;
 
 	string = g_string_new ("");
 
@@ -1206,7 +1170,6 @@ gcm_calib_setup_page_install_targets (GcmCalibratePriv *priv)
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_INSTALL_TARGETS));
-	g_string_free (string, TRUE);
 
 	/* show page */
 	gtk_widget_show_all (vbox);
@@ -1299,8 +1262,8 @@ gcm_calib_reference_kind_combobox_cb (GtkComboBox *combo_box,
 				      GcmCalibratePriv *priv)
 {
 	const gchar *filename;
-	gchar *path;
 	GcmCalibrateReferenceKind reference_kind;
+	g_autofree gchar *path = NULL;
 
 	/* not sorted so we can just use the index */
 	reference_kind = gtk_combo_box_get_active (GTK_COMBO_BOX (combo_box));
@@ -1315,7 +1278,6 @@ gcm_calib_reference_kind_combobox_cb (GtkComboBox *combo_box,
 
 	path = g_build_filename (GCM_DATA, "targets", filename, NULL);
 	gtk_image_set_from_file (GTK_IMAGE (priv->reference_preview), path);
-	g_free (path);
 }
 
 /**
@@ -1327,9 +1289,9 @@ gcm_calib_setup_page_target_kind (GcmCalibratePriv *priv)
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GtkWidget *combo;
-	GString *string;
 	guint i;
 	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
+	g_autoptr(GString) string = NULL;
 
 	string = g_string_new ("");
 
@@ -1370,7 +1332,7 @@ gcm_calib_setup_page_target_kind (GcmCalibratePriv *priv)
 	gtk_box_pack_start (GTK_BOX (vbox), priv->reference_preview, FALSE, FALSE, 0);
 
 	combo = gtk_combo_box_text_new ();
-	for (i=0; i<GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN; i++) {
+	for (i = 0; i<GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN; i++) {
 		gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
 						gcm_calib_reference_kind_to_localised_string (i));
 	}
@@ -1393,7 +1355,6 @@ gcm_calib_setup_page_target_kind (GcmCalibratePriv *priv)
 	g_object_set_data (G_OBJECT (vbox),
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_TARGET_KIND));
-	g_string_free (string, TRUE);
 
 	/* show page */
 	gtk_widget_show_all (vbox);
@@ -1760,7 +1721,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 	labels[2] = g_string_new (_("Quick"));
 	switch (priv->device_kind) {
 	case CD_DEVICE_KIND_PRINTER:
-		for (i=0; i<3; i++) {
+		for (i = 0; i<3; i++) {
 			g_string_append (labels[i], " ");
 			/* TRANSLATORS: radio options for calibration precision */
 			g_string_append_printf (labels[i], ngettext (
@@ -1771,7 +1732,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 		}
 		break;
 	case CD_DEVICE_KIND_DISPLAY:
-		for (i=0; i<3; i++) {
+		for (i = 0; i<3; i++) {
 			g_string_append (labels[i], " ");
 			/* TRANSLATORS: radio options for calibration precision */
 			g_string_append_printf (labels[i], ngettext (
@@ -1823,7 +1784,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_PRECISION));
 
-	for (i=0; i<3; i++)
+	for (i = 0; i<3; i++)
 		g_string_free (labels[i], TRUE);
 
 	/* show page */
@@ -1968,17 +1929,14 @@ static void
 gcm_calib_got_sensor (GcmCalibratePriv *priv, CdSensor *sensor)
 {
 	gboolean is_lowend = FALSE;
-	gboolean ret;
-	GError *error = NULL;
 	GtkWidget *vbox;
+	g_autoptr(GError) error = NULL;
 
 	/* connect to sensor */
-	ret = cd_sensor_connect_sync (sensor, NULL, &error);
-	if (!ret) {
+	if (!cd_sensor_connect_sync (sensor, NULL, &error)) {
 		g_warning ("failed to connect to sensor: %s",
 			   error->message);
-		g_error_free (error);
-		goto out;
+		return;
 	}
 	gcm_calibrate_set_sensor (priv->calibrate, sensor);
 
@@ -1998,8 +1956,6 @@ gcm_calib_got_sensor (GcmCalibratePriv *priv, CdSensor *sensor)
 						    GCM_CALIBRATE_PAGE_DISPLAY_TEMPERATURE);
 		gtk_widget_set_visible (vbox, !is_lowend);
 	}
-out:
-	return;
 }
 
 /**
@@ -2013,16 +1969,15 @@ gcm_calib_get_sensors_cb (GObject *object,
 	CdClient *client = CD_CLIENT (object);
 	CdSensor *sensor_tmp;
 	GcmCalibratePriv *priv = (GcmCalibratePriv *) user_data;
-	GError *error = NULL;
-	GPtrArray *sensors;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GPtrArray) sensors = NULL;
 
 	/* get the result */
 	sensors = cd_client_get_sensors_finish (client, res, &error);
 	if (sensors == NULL) {
 		g_warning ("failed to get sensors: %s",
 			   error->message);
-		g_error_free (error);
-		goto out;
+		return;
 	}
 
 	/* we've got a sensor */
@@ -2030,9 +1985,6 @@ gcm_calib_get_sensors_cb (GObject *object,
 		sensor_tmp = g_ptr_array_index (sensors, 0);
 		gcm_calib_got_sensor (priv, sensor_tmp);
 	}
-out:
-	if (sensors != NULL)
-		g_ptr_array_unref (sensors);
 }
 
 /**
@@ -2114,16 +2066,15 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *priv)
 {
 	const gint window_width  = 640;
 	const gint window_height = 440;
-
 	const gchar *description;
 	const gchar *manufacturer;
 	const gchar *model;
 	const gchar *native_device;
 	const gchar *serial;
-	gchar *copyright = NULL;
 	gboolean ret;
-	GDateTime *dt = NULL;
-	GError *error = NULL;
+	g_autofree gchar *copyright = NULL;
+	g_autoptr(GDateTime) dt = NULL;
+	g_autoptr(GError) error = NULL;
 
 	/* add application specific icons to search path */
 	gtk_icon_theme_append_search_path (gtk_icon_theme_get_default (),
@@ -2137,9 +2088,7 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *priv)
 				      NULL,
 				      &error);
 	if (!ret) {
-		g_warning ("failed to connect to colord: %s",
-			   error->message);
-		g_error_free (error);
+		g_warning ("failed to connect to colord: %s", error->message);
 		goto out;
 	}
 
@@ -2175,7 +2124,6 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *priv)
 		g_warning ("failed to get device %s: %s",
 			   priv->device_id,
 			   error->message);
-		g_error_free (error);
 		goto out;
 	}
 
@@ -2186,7 +2134,6 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *priv)
 	if (!ret) {
 		g_warning ("failed to connect to device: %s",
 			   error->message);
-		g_error_free (error);
 		goto out;
 	}
 
@@ -2257,9 +2204,6 @@ out:
 	/* add different pages depending on the device kind */
 	gcm_calib_add_pages (priv);
 	gtk_assistant_set_current_page (GTK_ASSISTANT (priv->main_window), 0);
-	if (dt != NULL)
-		g_date_time_unref (dt);
-	g_free (copyright);
 }
 
 static void
@@ -2267,11 +2211,9 @@ gcm_calib_title_changed_cb (GcmCalibrate *calibrate,
 			    const gchar *title,
 			    GcmCalibratePriv *priv)
 {
-	gchar *markup;
-
+	g_autofree gchar *markup = NULL;
 	markup = g_strdup_printf ("<span size=\"large\" font_weight=\"bold\">%s</span>", title);
 	gtk_label_set_markup (GTK_LABEL (priv->action_title), markup);
-	g_free (markup);
 }
 
 static void
@@ -2296,14 +2238,13 @@ gcm_calib_image_changed_cb (GcmCalibrate *calibrate,
 			    const gchar *filename,
 			    GcmCalibratePriv *priv)
 {
-	GdkPixbuf *pixbuf;
-	GError *error = NULL;
+	g_autoptr(GError) error = NULL;
 
 	if (filename != NULL) {
+		g_autoptr(GdkPixbuf) pixbuf = NULL;
 		pixbuf = gdk_pixbuf_new_from_file_at_size (filename, 200, 400, &error);
 		if (pixbuf == NULL) {
 			g_warning ("failed to load image: %s", error->message);
-			g_error_free (error);
 			gtk_widget_hide (priv->action_image);
 		} else {
 			gtk_image_set_from_pixbuf (GTK_IMAGE (priv->action_image), pixbuf);

@@ -63,8 +63,8 @@ gcm_cell_renderer_get_profile_text (CdProfile *profile)
 {
 	CdColorspace colorspace;
 	const gchar *id;
-	gchar *markup = NULL;
 	GString *string;
+	g_autofree gchar *markup = NULL;
 
 	if (profile == NULL) {
 		/* TRANSLATORS: this is when there is no profile for the device */
@@ -111,8 +111,6 @@ out:
 		 * profile is a test profile */
 		g_string_prepend (string, _("Test profile: "));
 	}
-
-	g_free (markup);
 	return string;
 }
 

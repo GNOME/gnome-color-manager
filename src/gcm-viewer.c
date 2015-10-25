@@ -113,25 +113,19 @@ gcm_viewer_error_dialog (GcmViewerPrivate *viewer, const gchar *title, const gch
 static void
 gcm_viewer_set_example_image (GcmViewerPrivate *viewer, GtkImage *image)
 {
-	gchar *filename;
-	gchar *path;
-	GdkPixbuf *pixbuf;
-	GError *error = NULL;
+	g_autofree gchar *filename;
+	g_autofree gchar *path = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
+	g_autoptr(GError) error = NULL;
 
 	filename = g_strdup_printf ("viewer-example-%02i.png", viewer->example_index);
 	path = g_build_filename (GCM_DATA, "figures", filename, NULL);
 	pixbuf = gdk_pixbuf_new_from_file (path, &error);
 	if (pixbuf == NULL) {
 		g_warning ("failed to load %s: %s", filename, error->message);
-		g_error_free (error);
-		goto out;
+		return;
 	}
 	gtk_image_set_from_pixbuf (image, pixbuf);
-out:
-	g_free (filename);
-	g_free (path);
-	if (pixbuf != NULL)
-		g_object_unref (pixbuf);
 }
 
 /**
@@ -235,36 +229,30 @@ gcm_viewer_update_profile_connect_cb (GObject *source_object,
 	const gchar *description;
 	const gchar *filename;
 	const gchar *icon_name;
-	gboolean ret;
-	gchar *sort = NULL;
-	GError *error = NULL;
 	GtkTreeIter iter;
 	GtkTreePath *path;
 	GtkTreeSelection *selection;
 	GtkWidget *widget;
 	CdProfile *profile = CD_PROFILE (source_object);
 	GcmViewerPrivate *viewer = (GcmViewerPrivate *) user_data;
+	g_autoptr(GError) error = NULL;
+	g_autofree gchar *sort = NULL;
 
 	/* connect to the profile */
-	ret = cd_profile_connect_finish (profile,
-					 res,
-					 &error);
-	if (!ret) {
-		g_warning ("failed to connect to profile: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
+	if (!cd_profile_connect_finish (profile, res, &error)) {
+		g_warning ("failed to connect to profile: %s", error->message);
+		return;
 	}
 
 	/* ignore profiles from other user accounts */
 	if (!cd_profile_has_access (profile))
-		goto out;
+		return;
 
 	profile_kind = cd_profile_get_kind (profile);
 	icon_name = gcm_viewer_profile_kind_to_icon_name (profile_kind);
 	filename = cd_profile_get_filename (profile);
 	if (filename == NULL)
-		goto out;
+		return;
 	description = cd_profile_get_title (profile);
 	sort = g_strdup_printf ("%s%s",
 				gcm_viewer_profile_get_sort_string (profile),
@@ -282,14 +270,11 @@ gcm_viewer_update_profile_connect_cb (GObject *source_object,
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "treeview_profiles"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 
-	ret = gtk_tree_selection_get_selected (selection, NULL, NULL);
-	if (!ret) {
+	if (!gtk_tree_selection_get_selected (selection, NULL, NULL)) {
 		path = gtk_tree_path_new_from_string ("0");
 		gtk_tree_selection_select_path (selection, path);
 		gtk_tree_path_free (path);
 	}
-out:
-	g_free (sort);
 }
 
 /**
@@ -301,10 +286,10 @@ gcm_viewer_update_get_profiles_cb (GObject *source_object,
 				   gpointer user_data)
 {
 	CdProfile *profile;
-	GError *error = NULL;
-	GPtrArray *profile_array = NULL;
 	guint i;
 	GcmViewerPrivate *viewer = (GcmViewerPrivate *) user_data;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GPtrArray) profile_array = NULL;
 
 	g_debug ("updating profile list");
 
@@ -313,10 +298,8 @@ gcm_viewer_update_get_profiles_cb (GObject *source_object,
 						       res,
 						       &error);
 	if (profile_array == NULL) {
-		g_warning ("failed to get profiles: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
+		g_warning ("failed to get profiles: %s", error->message);
+		return;
 	}
 
 	/* clear existing list */
@@ -325,16 +308,13 @@ gcm_viewer_update_get_profiles_cb (GObject *source_object,
 	viewer->clearing_store = FALSE;
 
 	/* update each list */
-	for (i=0; i<profile_array->len; i++) {
+	for (i = 0; i<profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
 		cd_profile_connect (profile,
 				    NULL,
 				    gcm_viewer_update_profile_connect_cb,
 				    viewer);
 	}
-out:
-	if (profile_array != NULL)
-		g_ptr_array_unref (profile_array);
 }
 
 /**
@@ -359,16 +339,15 @@ static void
 gcm_viewer_profile_delete_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 {
 	CdProfile *profile;
-	gboolean ret;
 	const gchar *filename;
-	GError *error = NULL;
-	GFile *file = NULL;
 	GtkResponseType response;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	GtkTreeSelection *selection;
 	GtkWidget *dialog;
 	GtkWindow *window;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GFile) file = NULL;
 
 	/* ask the user to confirm */
 	window = GTK_WINDOW(gtk_builder_get_object (viewer->builder, "dialog_viewer"));
@@ -384,14 +363,14 @@ gcm_viewer_profile_delete_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 	response = gtk_dialog_run (GTK_DIALOG (dialog));
 	gtk_widget_destroy (dialog);
 	if (response != GTK_RESPONSE_YES)
-		goto out;
+		return;
 
 	/* get the selected row */
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "treeview_profiles"));
 	selection = gtk_tree_view_get_selection (GTK_TREE_VIEW (widget));
 	if (!gtk_tree_selection_get_selected (selection, &model, &iter)) {
 		g_debug ("no row selected");
-		goto out;
+		return;
 	}
 
 	/* get profile */
@@ -402,16 +381,10 @@ gcm_viewer_profile_delete_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 	/* try to remove file */
 	filename = cd_profile_get_filename (profile);
 	file = g_file_new_for_path (filename);
-	ret = g_file_delete (file, NULL, &error);
-	if (!ret) {
+	if (!g_file_delete (file, NULL, &error)) {
 		g_warning ("failed to be deleted: %s", error->message);
-		g_error_free (error);
-		goto out;
+		return;
 	}
-out:
-	if (file != NULL)
-		g_object_unref (file);
-	return;
 }
 
 /**
@@ -476,9 +449,8 @@ gcm_viewer_file_chooser_get_icc_profile (GcmViewerPrivate *viewer)
 static gboolean
 gcm_viewer_profile_import_file (GcmViewerPrivate *viewer, GFile *file)
 {
-	gboolean ret = FALSE;
-	GError *error = NULL;
-	CdProfile *profile_tmp = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(CdProfile) profile_tmp = NULL;
 
 	/* copy icc file to users profile path */
 	profile_tmp = cd_client_import_profile_sync (viewer->client,
@@ -486,16 +458,11 @@ gcm_viewer_profile_import_file (GcmViewerPrivate *viewer, GFile *file)
 	if (profile_tmp == NULL) {
 		/* TRANSLATORS: could not read file */
 		gcm_viewer_error_dialog (viewer, _("Failed to copy file"), error->message);
-		g_error_free (error);
-		goto out;
+		return FALSE;
 	}
 
 	/* success */
-	ret = TRUE;
-out:
-	if (profile_tmp != NULL)
-		g_object_unref (profile_tmp);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -504,20 +471,17 @@ out:
 static void
 gcm_viewer_profile_import_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 {
-	GFile *file;
+	g_autoptr(GFile) file = NULL;
 
 	/* get new file */
 	file = gcm_viewer_file_chooser_get_icc_profile (viewer);
 	if (file == NULL) {
 		g_warning ("failed to get filename");
-		goto out;
+		return;
 	}
 
 	/* import this */
 	gcm_viewer_profile_import_file (viewer, file);
-out:
-	if (file != NULL)
-		g_object_unref (file);
 }
 
 /**
@@ -543,7 +507,7 @@ gcm_viewer_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gi
 
 	/* split, as multiple drag targets are accepted */
 	filenames = g_strsplit_set ((const gchar *)filename, "\r\n", -1);
-	for (i=0; filenames[i]!=NULL; i++) {
+	for (i = 0; filenames[i]!=NULL; i++) {
 
 		/* blank entry */
 		if (filenames[i][0] == '\0')
@@ -846,14 +810,13 @@ static gboolean
 gcm_viewer_add_metadata (GcmViewerPrivate *viewer,
 			 CdProfile *profile)
 {
-	gboolean ret = FALSE;
-	GError *error = NULL;
-	GHashTable *metadata = NULL;
-	GList *keys = NULL;
 	GList *l;
 	GtkTreeIter iter;
 	const gchar *value;
 	const gchar *key;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GHashTable) metadata = NULL;
+	g_autoptr(GList) keys = NULL;
 
 	/* clear existing */
 	gtk_list_store_clear (viewer->liststore_metadata);
@@ -862,24 +825,21 @@ gcm_viewer_add_metadata (GcmViewerPrivate *viewer,
 	metadata = cd_profile_get_metadata (profile);
 	if (metadata == NULL) {
 		g_warning ("failed to get metadata");
-		g_error_free (error);
-		goto out;
+		return FALSE;
 	}
 
 	/* add items */
 	keys = g_hash_table_get_keys (metadata);
 	if (keys == NULL)
-		goto out;
+		return FALSE;
 	for (l = keys; l != NULL; l = l->next) {
-		ret = gcm_viewer_is_blacklisted_metadata_key (l->data);
-		if (!ret)
+		if (!gcm_viewer_is_blacklisted_metadata_key (l->data))
 			continue;
 		key = gcm_viewer_get_localised_metadata_key ((gchar *) l->data);
 		value = g_hash_table_lookup (metadata, l->data);
 		if (value == NULL || value[0] == '\0')
 			continue;
-		g_debug ("Adding '%s', '%s'",
-			 key, value);
+		g_debug ("Adding '%s', '%s'", key, value);
 		gtk_list_store_append (viewer->liststore_metadata, &iter);
 		gtk_list_store_set (viewer->liststore_metadata,
 				    &iter,
@@ -889,12 +849,7 @@ gcm_viewer_add_metadata (GcmViewerPrivate *viewer,
 	}
 
 	/* success */
-	ret = TRUE;
-out:
-	g_list_free (keys);
-	if (metadata != NULL)
-		g_hash_table_unref (metadata);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -965,9 +920,6 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 {
 	GtkWidget *widget;
 	GtkWindow *window;
-	CdIcc *icc = NULL;
-	GPtrArray *clut_trc = NULL;
-	GPtrArray *clut_vcgt = NULL;
 	const gchar *profile_copyright;
 	const gchar *profile_manufacturer;
 	const gchar *profile_model ;
@@ -975,7 +927,6 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	const gchar *profile_title;
 	gchar *temp;
 	const gchar *filename;
-	gchar *size_text = NULL;
 	CdProfileKind profile_kind;
 	CdColorspace profile_colorspace;
 	const gchar *profile_kind_text;
@@ -987,19 +938,22 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	guint filesize;
 	gboolean show_section_to = FALSE;
 	gboolean show_section_from = FALSE;
-	GError *error = NULL;
 	gchar **warnings;
 	guint i;
 	CdProfileWarning warning;
 	GString *str;
+	g_autofree gchar *size_text = NULL;
+	g_autoptr(CdIcc) icc = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GPtrArray) clut_trc = NULL;
+	g_autoptr(GPtrArray) clut_vcgt = NULL;
 
 	/* connect to the profile */
 	ret = cd_profile_connect_sync (profile, NULL, &error);
 	if (!ret) {
 		g_warning ("failed to connect to profile: %s",
 			   error->message);
-		g_error_free (error);
-		goto out;
+		return;
 	}
 
 	/* set the preview widgets */
@@ -1007,8 +961,7 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	if (icc == NULL) {
 		g_warning ("failed to load ICC profile: %s",
 			   error->message);
-		g_error_free (error);
-		goto out;
+		return;
 	}
 
 	/* convert the image if required */
@@ -1248,15 +1201,6 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	gtk_widget_set_visible (widget, show_section_to);
 	widget = GTK_WIDGET (gtk_builder_get_object (viewer->builder, "vbox_from_srgb"));
 	gtk_widget_set_visible (widget, show_section_from);
-
-out:
-	if (icc != NULL)
-		g_object_unref (icc);
-	if (clut_trc != NULL)
-		g_ptr_array_unref (clut_trc);
-	if (clut_vcgt != NULL)
-		g_ptr_array_unref (clut_vcgt);
-	g_free (size_text);
 }
 
 /**
@@ -1421,11 +1365,11 @@ gcm_viewer_show_single_profile_by_filename (GcmViewerPrivate *viewer,
 {
 	CdProfile *profile;
 	gboolean ret;
-	gchar *checksum = NULL;
-	gchar *data = NULL;
-	GError *error = NULL;
-	GHashTable *properties = NULL;
 	gsize len;
+	g_autofree gchar *checksum = NULL;
+	g_autofree gchar *data = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GHashTable) properties = NULL;
 
 	/* compute checksum */
 	ret = g_file_get_contents (viewer->filename,
@@ -1438,8 +1382,7 @@ gcm_viewer_show_single_profile_by_filename (GcmViewerPrivate *viewer,
 					 _("Failed to open ICC profile"),
 					 error->message);
 		g_application_release (G_APPLICATION (viewer->application));
-		g_error_free (error);
-		goto out;
+		return;
 	}
 	checksum = g_compute_checksum_for_data (G_CHECKSUM_MD5,
 						(const guchar *) data,
@@ -1471,15 +1414,9 @@ gcm_viewer_show_single_profile_by_filename (GcmViewerPrivate *viewer,
 					 _("Failed to import file"),
 					 error->message);
 		g_application_release (G_APPLICATION (viewer->application));
-		g_error_free (error);
-		goto out;
+		return;
 	}
 	gcm_viewer_set_profile (viewer, profile);
-out:
-	g_free (data);
-	g_free (checksum);
-	if (properties != NULL)
-		g_hash_table_unref (properties);
 }
 
 /**
@@ -1489,8 +1426,8 @@ static void
 gcm_viewer_show_single_profile_by_id (GcmViewerPrivate *viewer,
 				      const gchar *id)
 {
-	CdProfile *profile;
-	GError *error = NULL;
+	g_autoptr(CdProfile) profile = NULL;
+	g_autoptr(GError) error = NULL;
 
 	/* select a specific profile only */
 	profile = cd_client_find_profile_sync (viewer->client,
@@ -1501,13 +1438,9 @@ gcm_viewer_show_single_profile_by_id (GcmViewerPrivate *viewer,
 		g_warning ("failed to get profile %s: %s",
 			   viewer->profile_id,
 			   error->message);
-		g_error_free (error);
-		goto out;
+		return;
 	}
 	gcm_viewer_set_profile (viewer, profile);
-out:
-	if (profile != NULL)
-		g_object_unref (profile);
 }
 
 /**
@@ -1516,14 +1449,14 @@ out:
 static void
 gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 {
-	CdProfile *profile = NULL;
 	gboolean ret;
-	GError *error = NULL;
 	gint retval;
 	GtkStyleContext *context;
 	GtkTreeSelection *selection;
 	GtkWidget *main_window;
 	GtkWidget *widget;
+	g_autoptr(CdProfile) profile = NULL;
+	g_autoptr(GError) error = NULL;
 
 	/* get UI */
 	viewer->builder = gtk_builder_new ();
@@ -1531,10 +1464,8 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 						"/org/gnome/color-manager/gcm-viewer.ui",
 						&error);
 	if (retval == 0) {
-		g_warning ("failed to load ui: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
+		g_warning ("failed to load ui: %s", error->message);
+		return;
 	}
 
 	/* add application specific icons to search path */
@@ -1547,10 +1478,8 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 				      NULL,
 				      &error);
 	if (!ret) {
-		g_warning ("failed to connect to colord: %s",
-			   error->message);
-		g_error_free (error);
-		goto out;
+		g_warning ("failed to connect to colord: %s", error->message);
+		return;
 	}
 
 	/* create list stores */
@@ -1742,16 +1671,14 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 
 	/* specified an ID */
 	if (viewer->profile_id != NULL) {
-		gcm_viewer_show_single_profile_by_id (viewer,
-						      viewer->profile_id);
-		goto out;
+		gcm_viewer_show_single_profile_by_id (viewer, viewer->profile_id);
+		return;
 	}
 
 	/* specified a filename */
 	if (viewer->filename != NULL) {
-		gcm_viewer_show_single_profile_by_filename (viewer,
-							    viewer->filename);
-		goto out;
+		gcm_viewer_show_single_profile_by_filename (viewer, viewer->filename);
+		return;
 	}
 
 	/* do all this after the window has been set up */
@@ -1764,10 +1691,6 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 
 	/* update list of profiles */
 	gcm_viewer_update_profile_list (viewer);
-out:
-	if (profile != NULL)
-		g_object_unref (profile);
-	return;
 }
 
 /**

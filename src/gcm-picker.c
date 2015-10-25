@@ -94,25 +94,25 @@ gcm_picker_refresh_results (void)
 	cmsHTRANSFORM transform_lab;
 	cmsHTRANSFORM transform_rgb;
 	gboolean ret;
-	gchar *text_ambient = NULL;
-	gchar *text_error = NULL;
-	gchar *text_lab = NULL;
-	gchar *text_rgb = NULL;
-	gchar *text_temperature = NULL;
-	gchar *text_whitepoint = NULL;
-	gchar *text_xyz = NULL;
 	CdColorLab color_lab;
 	CdColorRGB8 color_rgb;
 	CdColorXYZ color_error;
 	CdColorXYZ color_xyz;
-	GdkPixbuf *pixbuf = NULL;
 	gdouble temperature = 0.0f;
 	GtkImage *image;
 	GtkLabel *label;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
+	g_autofree gchar *text_ambient = NULL;
+	g_autofree gchar *text_error = NULL;
+	g_autofree gchar *text_lab = NULL;
+	g_autofree gchar *text_rgb = NULL;
+	g_autofree gchar *text_temperature = NULL;
+	g_autofree gchar *text_whitepoint = NULL;
+	g_autofree gchar *text_xyz = NULL;
 
 	/* nothing set yet */
 	if (profile_filename == NULL)
-		goto out;
+		return;
 
 	/* copy as we're modifying the value */
 	cd_color_xyz_copy (&last_sample, &color_xyz);
@@ -138,17 +138,17 @@ gcm_picker_refresh_results (void)
 					    profile_rgb, TYPE_RGB_8,
 					    INTENT_PERCEPTUAL, 0);
 	if (transform_rgb == NULL)
-		goto out;
+		return;
 	transform_lab = cmsCreateTransform (profile_xyz, TYPE_XYZ_DBL,
 					    profile_lab, TYPE_Lab_DBL,
 					    INTENT_PERCEPTUAL, 0);
 	if (transform_lab == NULL)
-		goto out;
+		return;
 	transform_error = cmsCreateTransform (profile_rgb, TYPE_RGB_8,
 					      profile_xyz, TYPE_XYZ_DBL,
 					      INTENT_PERCEPTUAL, 0);
 	if (transform_error == NULL)
-		goto out;
+		return;
 
 	cmsDoTransform (transform_rgb, &color_xyz, &color_rgb, 1);
 	cmsDoTransform (transform_lab, &color_xyz, &color_lab, 1);
@@ -230,16 +230,6 @@ gcm_picker_refresh_results (void)
 
 	/* set image */
 	gtk_image_set_from_pixbuf (image, pixbuf);
-out:
-	g_free (text_ambient);
-	g_free (text_error);
-	g_free (text_lab);
-	g_free (text_rgb);
-	g_free (text_temperature);
-	g_free (text_whitepoint);
-	g_free (text_xyz);
-	if (pixbuf != NULL)
-		g_object_unref (pixbuf);
 }
 
 /**
@@ -265,15 +255,11 @@ gcm_picker_got_results (void)
 static gboolean
 gcm_picker_unlock_timeout_cb (gpointer user_data)
 {
-	gboolean ret;
-	GError *error = NULL;
+	g_autoptr(GError) error = NULL;
 
 	/* unlock */
-	ret = cd_sensor_unlock_sync (sensor, NULL, &error);
-	if (!ret) {
+	if (!cd_sensor_unlock_sync (sensor, NULL, &error))
 		g_warning ("failed to unlock: %s", error->message);
-		g_error_free (error);
-	}
 	unlock_timer = 0;
 	return FALSE;
 }
@@ -285,8 +271,8 @@ static void
 gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 {
 	gboolean ret;
-	CdColorXYZ *tmp = NULL;
-	GError *error = NULL;
+	g_autoptr(CdColorXYZ) tmp = NULL;
+	g_autoptr(GError) error = NULL;
 
 	/* reset the image */
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "image_preview"));
@@ -299,8 +285,7 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 					   &error);
 		if (!ret) {
 			g_warning ("failed to lock: %s", error->message);
-			g_error_free (error);
-			goto out;
+			return;
 		}
 	}
 
@@ -317,7 +302,6 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 					 &error);
 	if (tmp == NULL) {
 		g_warning ("failed to get sample: %s", error->message);
-		g_clear_error (&error);
 		goto out_unlock;
 	}
 	cd_color_xyz_copy (tmp, &last_sample);
@@ -331,7 +315,6 @@ gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 					 &error);
 	if (!ret) {
 		g_warning ("failed to get ambient: %s", error->message);
-		g_clear_error (&error);
 		goto out_unlock;
 	}
 #endif
@@ -340,9 +323,6 @@ out_unlock:
 	unlock_timer = g_timeout_add_seconds (30, gcm_picker_unlock_timeout_cb, data);
 	gcm_picker_refresh_results ();
 	gcm_picker_got_results ();
-out:
-	if (tmp != NULL)
-		cd_color_xyz_free (tmp);
 }
 
 /**
@@ -353,14 +333,13 @@ gcm_picker_sensor_client_setup_ui (void)
 {
 	gboolean ret = FALSE;
 	GtkWidget *widget;
-	GPtrArray *sensors;
-	GError *error = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GPtrArray) sensors;
 
 	/* no present */
 	sensors = cd_client_get_sensors_sync (client, NULL, &error);
 	if (sensors == NULL) {
 		g_warning ("%s", error->message);
-		g_error_free (error);
 		goto out;
 	}
 	if (sensors->len == 0) {
@@ -376,7 +355,6 @@ gcm_picker_sensor_client_setup_ui (void)
 	if (!ret) {
 		g_warning ("failed to connect to sensor: %s",
 			   error->message);
-		g_error_free (error);
 		goto out;
 	}
 
@@ -400,8 +378,6 @@ gcm_picker_sensor_client_setup_ui (void)
 #endif
 
 out:
-	if (sensors != NULL)
-		g_ptr_array_unref (sensors);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "button_measure"));
 	gtk_widget_set_sensitive (widget, ret);
 	widget = GTK_WIDGET (gtk_builder_get_object (builder, "expander_results"));
@@ -454,15 +430,13 @@ gcm_picker_error_cb (cmsContext ContextID, cmsUInt32Number errorcode, const char
 static void
 gcm_prefs_space_combo_changed_cb (GtkWidget *widget, gpointer data)
 {
-	gboolean ret;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
-	CdProfile *profile = NULL;
+	g_autoptr(CdProfile) profile = NULL;
 
 	/* no selection */
-	ret = gtk_combo_box_get_active_iter (GTK_COMBO_BOX(widget), &iter);
-	if (!ret)
-		goto out;
+	if (!gtk_combo_box_get_active_iter (GTK_COMBO_BOX(widget), &iter))
+		return;
 
 	/* get profile */
 	model = gtk_combo_box_get_model (GTK_COMBO_BOX(widget));
@@ -470,15 +444,12 @@ gcm_prefs_space_combo_changed_cb (GtkWidget *widget, gpointer data)
 			    GCM_PREFS_COMBO_COLUMN_PROFILE, &profile,
 			    -1);
 	if (profile == NULL)
-		goto out;
+		return;
 
 	profile_filename = cd_profile_get_filename (profile);
 	g_debug ("changed picker space %s", profile_filename);
 
 	gcm_picker_refresh_results ();
-out:
-	if (profile != NULL)
-		g_object_unref (profile);
 }
 
 /**
@@ -488,13 +459,12 @@ static void
 gcm_prefs_set_combo_simple_text (GtkWidget *combo_box)
 {
 	GtkCellRenderer *renderer;
-	GtkListStore *store;
+	g_autoptr(GtkListStore) store = NULL;
 
 	store = gtk_list_store_new (2, G_TYPE_STRING, CD_TYPE_PROFILE);
 	gtk_tree_sortable_set_sort_column_id (GTK_TREE_SORTABLE (store),
 					      GCM_PREFS_COMBO_COLUMN_TEXT, GTK_SORT_ASCENDING);
 	gtk_combo_box_set_model (GTK_COMBO_BOX (combo_box), GTK_TREE_MODEL (store));
-	g_object_unref (store);
 
 	renderer = gtk_cell_renderer_text_new ();
 	g_object_set (renderer,
@@ -545,14 +515,14 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 	const gchar *tmp;
 	gboolean has_profile = FALSE;
 	gboolean has_vcgt;
-	gchar *text = NULL;
 	gboolean ret;
-	GError *error = NULL;
-	GPtrArray *devices = NULL;
-	GPtrArray *profile_array = NULL;
 	GtkTreeIter iter;
 	GtkTreeModel *model;
 	guint i;
+	g_autofree gchar *text = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GPtrArray) devices = NULL;
+	g_autoptr(GPtrArray) profile_array = NULL;
 
 	/* get new list */
 	profile_array = cd_client_get_profiles_sync (client,
@@ -561,12 +531,11 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 	if (profile_array == NULL) {
 		g_warning ("failed to get profiles: %s",
 			   error->message);
-		g_error_free (error);
-		goto out;
+		return;
 	}
 
 	/* update each list */
-	for (i=0; i<profile_array->len; i++) {
+	for (i = 0; i<profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
 
 		/* connect to the profile */
@@ -574,8 +543,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 		if (!ret) {
 			g_warning ("failed to connect to profile: %s",
 				   error->message);
-			g_error_free (error);
-			goto out;
+			return;
 		}
 
 		/* ignore profiles from other user accounts */
@@ -609,7 +577,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 						      CD_DEVICE_KIND_DISPLAY,
 						      NULL,
 						      &error);
-	for (i=0; i<devices->len; i++) {
+	for (i = 0; i<devices->len; i++) {
 		device_tmp = g_ptr_array_index (devices, i);
 
 		/* connect to the device */
@@ -617,8 +585,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 		if (!ret) {
 			g_warning ("failed to connect to device: %s",
 				   error->message);
-			g_error_free (error);
-			goto out;
+			return;
 		}
 
 		profile = cd_device_get_default_profile (device_tmp);
@@ -630,8 +597,7 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 		if (!ret) {
 			g_warning ("failed to connect to profile: %s",
 				   error->message);
-			g_error_free (error);
-			goto out;
+			return;
 		}
 
 		/* add device profile */
@@ -653,12 +619,6 @@ gcm_prefs_setup_space_combobox (GtkWidget *widget)
 		gtk_combo_box_set_active (GTK_COMBO_BOX (widget), 0);
 		gtk_widget_set_sensitive (widget, FALSE);
 	}
-out:
-	if (devices != NULL)
-		g_ptr_array_unref (devices);
-	if (profile_array != NULL)
-		g_ptr_array_unref (profile_array);
-	g_free (text);
 }
 
 /**
@@ -679,10 +639,10 @@ static void
 gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 {
 	gboolean ret;
-	GError *error = NULL;
 	GtkWidget *main_window;
 	GtkWidget *widget;
 	guint retval = 0;
+	g_autoptr(GError) error = NULL;
 
 	/* get UI */
 	builder = gtk_builder_new ();
@@ -691,8 +651,7 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 						&error);
 	if (retval == 0) {
 		g_warning ("failed to load ui: %s", error->message);
-		g_error_free (error);
-		goto out;
+		return;
 	}
 
 	main_window = GTK_WIDGET (gtk_builder_get_object (builder, "dialog_picker"));
@@ -737,8 +696,7 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 	if (!ret) {
 		g_warning ("failed to connect to colord: %s",
 			   error->message);
-		g_error_free (error);
-		goto out;
+		return;
 	}
 	g_signal_connect (client, "sensor-added",
 			  G_CALLBACK (gcm_picker_sensor_client_changed_cb), NULL);
@@ -761,8 +719,6 @@ gcm_picker_startup_cb (GApplication *application, gpointer user_data)
 
 	/* wait */
 	gtk_widget_show (main_window);
-out:
-	return;
 }
 
 /**

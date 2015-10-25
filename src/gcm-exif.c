@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2010-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -30,20 +30,18 @@
 
 static void     gcm_exif_finalize	(GObject     *object);
 
-#define GCM_EXIF_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_EXIF, GcmExifPrivate))
-
 /**
  * GcmExifPrivate:
  *
  * Private #GcmExif data
  **/
-struct _GcmExifPrivate
+typedef struct
 {
 	gchar				*manufacturer;
 	gchar				*model;
 	gchar				*serial;
 	CdDeviceKind			 device_kind;
-};
+} GcmExifPrivate;
 
 enum {
 	PROP_0,
@@ -54,7 +52,8 @@ enum {
 	PROP_LAST
 };
 
-G_DEFINE_TYPE (GcmExif, gcm_exif, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_PRIVATE (GcmExif, gcm_exif, G_TYPE_OBJECT)
+#define GET_PRIVATE(o) (gcm_exif_get_instance_private (o))
 
 /**
  * gcm_exif_parse_tiff:
@@ -69,7 +68,7 @@ gcm_exif_parse_tiff (GcmExif *exif, const gchar *filename, GError **error)
 	const gchar *temp = NULL;
 	CdDeviceKind device_kind = CD_DEVICE_KIND_UNKNOWN;
 	TIFF *tiff;
-	GcmExifPrivate *priv = exif->priv;
+	GcmExifPrivate *priv = GET_PRIVATE (exif);
 
 	/* open file */
 	tiff = TIFFOpen (filename, "r");
@@ -121,7 +120,7 @@ static gboolean
 gcm_exif_parse_jpeg (GcmExif *exif, const gchar *filename, GError **error)
 {
 	gboolean ret = TRUE;
-	GcmExifPrivate *priv = exif->priv;
+	GcmExifPrivate *priv = GET_PRIVATE (exif);
 	ExifData *ed = NULL;
 	ExifEntry *entry;
 	CdDeviceKind device_kind = CD_DEVICE_KIND_UNKNOWN;
@@ -197,11 +196,11 @@ out:
 static gboolean
 gcm_exif_parse_exiv (GcmExif *exif, const gchar *filename, GError **error)
 {
+	GcmExifPrivate *priv = GET_PRIVATE (exif);
 	gboolean ret;
 	gint exit_status = 0;
-	gchar *standard_output = NULL;
-	gchar **split = NULL;
-	GcmExifPrivate *priv = exif->priv;
+	g_autofree gchar *standard_output = NULL;
+	g_auto(GStrv) split = NULL;
 	const gchar *argv[] = { LIBEXECDIR "/gcm-helper-exiv",
 			  filename,
 			  NULL };
@@ -216,23 +215,21 @@ gcm_exif_parse_exiv (GcmExif *exif, const gchar *filename, GError **error)
 			    &exit_status,
 			    error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* failed to sniff */
 	if (exit_status != 0) {
-		ret = FALSE;
 		g_set_error (error, GCM_EXIF_ERROR, GCM_EXIF_ERROR_NO_SUPPORT,
 			     "Failed to run: %s", standard_output);
-		goto out;
+		return FALSE;
 	}
 
 	/* get data */
 	split = g_strsplit (standard_output, "\n", -1);
 	if (g_strv_length (split) != 4) {
-		ret = FALSE;
 		g_set_error (error, GCM_EXIF_ERROR, GCM_EXIF_ERROR_NO_SUPPORT,
 			     "Unexpected output: %s", standard_output);
-		goto out;
+		return FALSE;
 	}
 
 	/* free old versions */
@@ -254,11 +251,7 @@ gcm_exif_parse_exiv (GcmExif *exif, const gchar *filename, GError **error)
 	else
 		priv->serial = NULL;
 	priv->device_kind = CD_DEVICE_KIND_CAMERA;
-
-out:
-	g_free (standard_output);
-	g_strfreev (split);
-	return ret;
+	return TRUE;
 }
 #endif
 
@@ -268,9 +261,8 @@ out:
 gboolean
 gcm_exif_parse (GcmExif *exif, GFile *file, GError **error)
 {
-	gboolean ret = FALSE;
-	gchar *filename = NULL;
-	GFileInfo *info = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autoptr(GFileInfo) info = NULL;
 	const gchar *content_type;
 
 	g_return_val_if_fail (GCM_IS_EXIF (exif), FALSE);
@@ -280,19 +272,17 @@ gcm_exif_parse (GcmExif *exif, GFile *file, GError **error)
 	info = g_file_query_info (file, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE,
 				  G_FILE_QUERY_INFO_NONE, NULL, error);
 	if (info == NULL)
-		goto out;
+		return FALSE;;
 
 	/* get EXIF data in different ways depending on content type */
 	content_type = g_file_info_get_attribute_string (info, G_FILE_ATTRIBUTE_STANDARD_CONTENT_TYPE);
 	if (g_strcmp0 (content_type, "image/tiff") == 0) {
 		filename = g_file_get_path (file);
-		ret = gcm_exif_parse_tiff (exif, filename, error);
-		goto out;
+		return gcm_exif_parse_tiff (exif, filename, error);
 	}
 	if (g_strcmp0 (content_type, "image/jpeg") == 0) {
 		filename = g_file_get_path (file);
-		ret = gcm_exif_parse_jpeg (exif, filename, error);
-		goto out;
+		return gcm_exif_parse_jpeg (exif, filename, error);
 	}
 
 #ifdef HAVE_EXIV
@@ -309,8 +299,7 @@ gcm_exif_parse (GcmExif *exif, GFile *file, GError **error)
 	    g_strcmp0 (content_type, "image/x-sigma-x3f") == 0 ||
 	    g_strcmp0 (content_type, "image/x-sony-arw") == 0) {
 		filename = g_file_get_path (file);
-		ret = gcm_exif_parse_exiv (exif, filename, error);
-		goto out;
+		return gcm_exif_parse_exiv (exif, filename, error);
 	}
 #endif
 
@@ -319,11 +308,7 @@ gcm_exif_parse (GcmExif *exif, GFile *file, GError **error)
 		     GCM_EXIF_ERROR,
 		     GCM_EXIF_ERROR_NO_SUPPORT,
 		     "No support for %s content type", content_type);
-out:
-	g_free (filename);
-	if (info != NULL)
-		g_object_unref (info);
-	return ret;
+	return FALSE;
 }
 
 /**
@@ -332,8 +317,8 @@ out:
 const gchar *
 gcm_exif_get_manufacturer (GcmExif *exif)
 {
-	g_return_val_if_fail (GCM_IS_EXIF (exif), NULL);
-	return exif->priv->manufacturer;
+	GcmExifPrivate *priv = GET_PRIVATE (exif);
+	return priv->manufacturer;
 }
 
 /**
@@ -342,8 +327,8 @@ gcm_exif_get_manufacturer (GcmExif *exif)
 const gchar *
 gcm_exif_get_model (GcmExif *exif)
 {
-	g_return_val_if_fail (GCM_IS_EXIF (exif), NULL);
-	return exif->priv->model;
+	GcmExifPrivate *priv = GET_PRIVATE (exif);
+	return priv->model;
 }
 
 /**
@@ -352,8 +337,8 @@ gcm_exif_get_model (GcmExif *exif)
 const gchar *
 gcm_exif_get_serial (GcmExif *exif)
 {
-	g_return_val_if_fail (GCM_IS_EXIF (exif), NULL);
-	return exif->priv->serial;
+	GcmExifPrivate *priv = GET_PRIVATE (exif);
+	return priv->serial;
 }
 
 /**
@@ -362,8 +347,8 @@ gcm_exif_get_serial (GcmExif *exif)
 CdDeviceKind
 gcm_exif_get_device_kind (GcmExif *exif)
 {
-	g_return_val_if_fail (GCM_IS_EXIF (exif), CD_DEVICE_KIND_UNKNOWN);
-	return exif->priv->device_kind;
+	GcmExifPrivate *priv = GET_PRIVATE (exif);
+	return priv->device_kind;
 }
 
 /**
@@ -373,7 +358,7 @@ static void
 gcm_exif_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
 	GcmExif *exif = GCM_EXIF (object);
-	GcmExifPrivate *priv = exif->priv;
+	GcmExifPrivate *priv = GET_PRIVATE (exif);
 
 	switch (prop_id) {
 	case PROP_MANUFACTURER:
@@ -436,8 +421,6 @@ gcm_exif_class_init (GcmExifClass *klass)
 				   0, G_MAXUINT, CD_DEVICE_KIND_UNKNOWN,
 				   G_PARAM_READABLE);
 	g_object_class_install_property (object_class, PROP_DEVICE_KIND, pspec);
-
-	g_type_class_add_private (klass, sizeof (GcmExifPrivate));
 }
 
 /**
@@ -446,11 +429,11 @@ gcm_exif_class_init (GcmExifClass *klass)
 static void
 gcm_exif_init (GcmExif *exif)
 {
-	exif->priv = GCM_EXIF_GET_PRIVATE (exif);
-	exif->priv->manufacturer = NULL;
-	exif->priv->model = NULL;
-	exif->priv->serial = NULL;
-	exif->priv->device_kind = CD_DEVICE_KIND_CAMERA;
+	GcmExifPrivate *priv = GET_PRIVATE (exif);
+	priv->manufacturer = NULL;
+	priv->model = NULL;
+	priv->serial = NULL;
+	priv->device_kind = CD_DEVICE_KIND_CAMERA;
 }
 
 /**
@@ -460,7 +443,7 @@ static void
 gcm_exif_finalize (GObject *object)
 {
 	GcmExif *exif = GCM_EXIF (object);
-	GcmExifPrivate *priv = exif->priv;
+	GcmExifPrivate *priv = GET_PRIVATE (exif);
 
 	g_free (priv->manufacturer);
 	g_free (priv->model);

@@ -122,9 +122,9 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 	gdouble width = 0.0f;
 	gdouble height = 0.0f;
 	const gchar *filename;
-	GdkPixbuf *pixbuf = NULL;
 	cairo_surface_t *surface = NULL;
 	gdouble scale;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
 	/* get the size of the page in _pixels_ */
 	width = gtk_print_context_get_width (context);
@@ -153,8 +153,6 @@ gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, 
 out:
 	if (surface != NULL)
 		cairo_surface_destroy (surface);
-	if (pixbuf != NULL)
-		g_object_unref (pixbuf);
 }
 
 /**
@@ -214,8 +212,8 @@ gcm_print_with_render_callback (GcmPrint *print, GtkWindow *window, GcmPrintRend
 	GcmPrintPrivate *priv = print->priv;
 	gboolean ret = TRUE;
 	GcmPrintTask *task;
-	GtkPrintOperation *operation;
 	GtkPrintOperationResult res;
+	g_autoptr(GtkPrintOperation) operation = NULL;
 
 	/* create temp object */
 	task = g_new0 (GcmPrintTask, 1);
@@ -282,7 +280,6 @@ out:
 	if (task->error != NULL)
 		g_error_free (task->error);
 	g_free (task);
-	g_object_unref (operation);
 	return ret;
 }
 

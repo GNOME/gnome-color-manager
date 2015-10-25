@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2012 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -28,22 +28,8 @@
 
 G_BEGIN_DECLS
 
-#define GCM_TYPE_CALIBRATE		(gcm_calibrate_get_type ())
-#define GCM_CALIBRATE(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), GCM_TYPE_CALIBRATE, GcmCalibrate))
-#define GCM_CALIBRATE_CLASS(k)		(G_TYPE_CHECK_CLASS_CAST((k), GCM_TYPE_CALIBRATE, GcmCalibrateClass))
-#define GCM_IS_CALIBRATE(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), GCM_TYPE_CALIBRATE))
-#define GCM_IS_CALIBRATE_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), GCM_TYPE_CALIBRATE))
-#define GCM_CALIBRATE_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), GCM_TYPE_CALIBRATE, GcmCalibrateClass))
-
-typedef struct _GcmCalibratePrivate	GcmCalibratePrivate;
-typedef struct _GcmCalibrate		GcmCalibrate;
-typedef struct _GcmCalibrateClass	GcmCalibrateClass;
-
-struct _GcmCalibrate
-{
-	 GObject			 parent;
-	 GcmCalibratePrivate		*priv;
-};
+#define GCM_TYPE_CALIBRATE (gcm_calibrate_get_type ())
+G_DECLARE_DERIVABLE_TYPE (GcmCalibrate, gcm_calibrate, GCM, CALIBRATE, GObject)
 
 struct _GcmCalibrateClass
 {

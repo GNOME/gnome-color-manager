@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -35,9 +35,9 @@
 static gboolean
 gcm_inspect_print_data_info (const gchar *title, const guint8 *data, gsize length)
 {
-	CdIcc *icc = NULL;
-	GError *error = NULL;
 	gboolean ret;
+	g_autoptr(CdIcc) icc = NULL;
+	g_autoptr(GError) error = NULL;
 
 	/* parse the data */
 	icc = cd_icc_new ();
@@ -46,8 +46,7 @@ gcm_inspect_print_data_info (const gchar *title, const guint8 *data, gsize lengt
 				&error);
 	if (!ret) {
 		g_warning ("failed to parse data: %s", error->message);
-		g_error_free (error);
-		goto out;
+		return FALSE;
 	}
 
 	/* print title */
@@ -58,10 +57,7 @@ gcm_inspect_print_data_info (const gchar *title, const guint8 *data, gsize lengt
 
 	/* TRANSLATORS: this is the ICC profile copyright */
 	g_print (" - %s %s\n", _("Copyright:"), cd_icc_get_copyright (icc, NULL, NULL));
-out:
-	if (icc != NULL)
-		g_object_unref (icc);
-	return ret;
+	return TRUE;
 }
 
 static gboolean
@@ -73,7 +69,7 @@ gcm_inspect_get_screen_protocol_version (GdkWindow *gdk_window,
 	gboolean ret;
 	gint length;
 	gint rc;
-	guchar *data_tmp = NULL;
+	g_autofree guchar *data_tmp = NULL;
 
 	/* get the value */
 	gdk_error_trap_push ();
@@ -89,20 +85,18 @@ gcm_inspect_get_screen_protocol_version (GdkWindow *gdk_window,
 				&data_tmp);
 	if (!ret) {
 		g_set_error_literal (error, 1, 0, "failed to get property");
-		goto out;
+		return FALSE;
 	}
 	rc = gdk_error_trap_pop ();
 	if (rc != 0) {
-		ret = FALSE;
 		g_set_error (error, 1, 0, "failed to get atom: %i", rc);
-		goto out;
+		return FALSE;
 	}
 
 	/* was nothing found */
 	if (length == 0) {
-		ret = FALSE;
 		g_set_error (error, 1, 0, "icc profile atom has not been set");
-		goto out;
+		return FALSE;
 	}
 
 	/* set total */
@@ -110,11 +104,7 @@ gcm_inspect_get_screen_protocol_version (GdkWindow *gdk_window,
 	*minor = (guint) data_tmp[0] % 100;
 
 	/* success */
-	ret = TRUE;
-out:
-	if (data_tmp != NULL)
-		g_free (data_tmp);
-	return ret;
+	return TRUE;
 }
 
 static gboolean
@@ -173,12 +163,12 @@ static gboolean
 gcm_inspect_show_x11_atoms (void)
 {
 	gboolean ret;
-	guint8 *data = NULL;
 	gsize length = 0;
 	GError *error = NULL;
 	guint major = -1;
 	guint minor = -1;
 	GdkWindow *gdk_window;
+	g_autofree guint8 *data = NULL;
 
 	/* setup object to access X */
 	gdk_window = gdk_screen_get_root_window (gdk_screen_get_default ());
@@ -206,7 +196,6 @@ gcm_inspect_show_x11_atoms (void)
 		/* TRANSLATORS: the root window of all the screens */
 		g_print ("%s %i.%i\n", _("Root window protocol version:"), major, minor);
 	}
-	g_free (data);
 	return ret;
 }
 
@@ -285,22 +274,20 @@ out:
 static gboolean
 gcm_inspect_show_profile_for_window (guint xid)
 {
-	gboolean ret = FALSE;
 	GDBusConnection *connection;
-	GError *error = NULL;
 	const gchar *profile;
-	GVariant *args = NULL;
-	GVariant *response = NULL;
 	GVariant *response_child = NULL;
-	GVariantIter *iter = NULL;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GVariant) args = NULL;
+	g_autoptr(GVariantIter) iter = NULL;
+	g_autoptr(GVariant) response = NULL;
 
 	/* get a session bus connection */
 	connection = g_bus_get_sync (G_BUS_TYPE_SESSION, NULL, &error);
 	if (connection == NULL) {
 		/* TRANSLATORS: no DBus session bus */
 		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
-		g_error_free (error);
-		goto out;
+		return FALSE;
 	}
 
 	/* execute sync method */
@@ -317,8 +304,7 @@ gcm_inspect_show_profile_for_window (guint xid)
 	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
 		g_print ("%s %s\n", _("The request failed:"), error->message);
-		g_error_free (error);
-		goto out;
+		return FALSE;
 	}
 
 	/* print each device */
@@ -329,7 +315,7 @@ gcm_inspect_show_profile_for_window (guint xid)
 	if (profile == NULL) {
 		/* TRANSLATORS: no profile has been asigned to this window */
 		g_print ("%s\n", _("There are no ICC profiles for this window"));
-		goto out;
+		return FALSE;
 	}
 
 	/* TRANSLATORS: this is a list of profiles suitable for the device */
@@ -337,15 +323,7 @@ gcm_inspect_show_profile_for_window (guint xid)
 	g_print ("1.\t%s\n\t%s\n", "this is a title", profile);
 
 	/* success */
-	ret = TRUE;
-out:
-	if (iter != NULL)
-		g_variant_iter_free (iter);
-	if (args != NULL)
-		g_variant_unref (args);
-	if (response != NULL)
-		g_variant_unref (response);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -357,9 +335,9 @@ main (int argc, char **argv)
 	gboolean x11 = FALSE;
 	gboolean dump = FALSE;
 	guint xid = 0;
-	gchar *filename = NULL;
 	guint retval = 0;
 	GOptionContext *context;
+	g_autofree gchar *filename = NULL;
 
 	const GOptionEntry options[] = {
 		{ "xserver", 'x', 0, G_OPTION_ARG_NONE, &x11,
@@ -400,7 +378,6 @@ main (int argc, char **argv)
 	if (xid != 0)
 		gcm_inspect_show_profile_for_window (xid);
 
-	g_free (filename);
 	return retval;
 }
 

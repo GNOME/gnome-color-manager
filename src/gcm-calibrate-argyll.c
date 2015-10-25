@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2012 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -204,7 +204,7 @@ gcm_calibrate_argyll_get_display (const gchar *output_name,
 
 	/* split it into lines */
 	split = g_strsplit (data, "\n", -1);
-	for (i=0; split[i] != NULL; i++) {
+	for (i = 0; split[i] != NULL; i++) {
 		if (g_strstr_len (split[i], -1, "XRandR 1.2 is faulty") != NULL) {
 			g_set_error_literal (error,
 					     GCM_CALIBRATE_ERROR,
@@ -824,35 +824,26 @@ gcm_utils_mkdir_and_copy (GFile *source,
 			  GFile *destination,
 			  GError **error)
 {
-	gboolean ret;
-	GFile *parent;
+	g_autoptr(GFile) parent = NULL;
 
 	g_return_val_if_fail (source != NULL, FALSE);
 	g_return_val_if_fail (destination != NULL, FALSE);
 
-	/* get parent */
-	parent = g_file_get_parent (destination);
-
 	/* create directory */
+	parent = g_file_get_parent (destination);
 	if (!g_file_query_exists (parent, NULL)) {
-		ret = g_file_make_directory_with_parents (parent, NULL, error);
-		if (!ret)
-			goto out;
+		if (!g_file_make_directory_with_parents (parent, NULL, error))
+			return FALSE;
 	}
 
 	/* do the copy */
-	ret = g_file_copy (source,
-			   destination,
-			   G_FILE_COPY_OVERWRITE,
-			   NULL,
-			   NULL,
-			   NULL,
-			   error);
-	if (!ret)
-		goto out;
-out:
-	g_object_unref (parent);
-	return ret;
+	return g_file_copy (source,
+			    destination,
+			    G_FILE_COPY_OVERWRITE,
+			    NULL,
+			    NULL,
+			    NULL,
+			    error);
 }
 
 /**
@@ -862,21 +853,20 @@ static gboolean
 gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll,
 				  GError **error)
 {
-	gboolean ret;
-	gchar *device = NULL;
-	gchar *destination_cht = NULL;
-	gchar *destination_ref = NULL;
-	gchar *filename = NULL;
-	gchar *basename = NULL;
-	gchar *filename_cht = NULL;
-	gchar *filename_source = NULL;
-	gchar *filename_reference = NULL;
-	GFile *file_cht = NULL;
-	GFile *file_source = NULL;
-	GFile *file_reference = NULL;
-	GFile *dest_cht = NULL;
-	GFile *dest_source = NULL;
-	GFile *dest_reference = NULL;
+	g_autofree gchar *device = NULL;
+	g_autofree gchar *destination_cht = NULL;
+	g_autofree gchar *destination_ref = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *filename_cht = NULL;
+	g_autofree gchar *filename_source = NULL;
+	g_autofree gchar *filename_reference = NULL;
+	g_autoptr(GFile) file_cht = NULL;
+	g_autoptr(GFile) file_source = NULL;
+	g_autoptr(GFile) file_reference = NULL;
+	g_autoptr(GFile) dest_cht = NULL;
+	g_autoptr(GFile) dest_source = NULL;
+	g_autoptr(GFile) dest_reference = NULL;
 	const gchar *working_path;
 	const gchar *filename_tmp;
 	GcmCalibrateReferenceKind reference_kind;
@@ -910,40 +900,20 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll,
 	filename_tmp = gcm_calibrate_argyll_reference_kind_to_filename (reference_kind);
 	filename_cht = g_build_filename ("/usr/share/color/argyll/ref", filename_tmp, NULL);
 
-	/* convert to GFile */
+	/* do the copies */
 	file_cht = g_file_new_for_path (filename_cht);
-	file_source = g_file_new_for_path (filename_source);
-	file_reference = g_file_new_for_path (filename_reference);
 	dest_cht = g_file_new_for_path (destination_cht);
+	if (!gcm_utils_mkdir_and_copy (file_cht, dest_cht, error))
+		return FALSE;
+	file_source = g_file_new_for_path (filename_source);
 	dest_source = g_file_new_for_path (device);
+	if (!gcm_utils_mkdir_and_copy (file_source, dest_source, error))
+		return FALSE;
+	file_reference = g_file_new_for_path (filename_reference);
 	dest_reference = g_file_new_for_path (destination_ref);
-
-	/* do the copy */
-	ret = gcm_utils_mkdir_and_copy (file_cht, dest_cht, error);
-	if (!ret)
-		goto out;
-	ret = gcm_utils_mkdir_and_copy (file_source, dest_source, error);
-	if (!ret)
-		goto out;
-	ret = gcm_utils_mkdir_and_copy (file_reference, dest_reference, error);
-	if (!ret)
-		goto out;
-out:
-	g_free (basename);
-	g_free (filename);
-	g_free (filename_cht);
-	g_free (filename_source);
-	g_free (filename_reference);
-	g_free (device);
-	g_free (destination_cht);
-	g_free (destination_ref);
-	g_object_unref (file_cht);
-	g_object_unref (file_source);
-	g_object_unref (file_reference);
-	g_object_unref (dest_cht);
-	g_object_unref (dest_source);
-	g_object_unref (dest_reference);
-	return ret;
+	if (!gcm_utils_mkdir_and_copy (file_reference, dest_reference, error))
+		return FALSE;
+        return TRUE;
 }
 
 /**
@@ -1226,7 +1196,7 @@ gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll,
 
 	/* remove all the temp files */
 	if (basename != NULL) {
-		for (i=0; exts[i] != NULL; i++) {
+		for (i = 0; exts[i] != NULL; i++) {
 			filename_tmp = g_strdup_printf ("%s/%s.%s", working_path, basename, exts[i]);
 			ret = g_file_test (filename_tmp, G_FILE_TEST_IS_REGULAR);
 			if (ret) {
@@ -1238,7 +1208,7 @@ gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll,
 	}
 
 	/* remove all the temp files */
-	for (i=0; filenames[i] != NULL; i++) {
+	for (i = 0; filenames[i] != NULL; i++) {
 		filename_tmp = g_strdup_printf ("%s/%s", working_path, filenames[i]);
 		ret = g_file_test (filename_tmp, G_FILE_TEST_IS_REGULAR);
 		if (ret) {
@@ -1531,21 +1501,16 @@ out:
 static gboolean
 gcm_calibrate_argyll_get_enabled (GcmCalibrate *calibrate)
 {
-	gboolean ret = TRUE;
-	gchar *command;
-	GError *error = NULL;
+	g_autofree gchar *command = NULL;
+	g_autoptr(GError) error = NULL;
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("dispcal", &error);
 	if (command == NULL) {
 		g_debug ("Failed to find dispcal: %s", error->message);
-		g_error_free (error);
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
-out:
-	g_free (command);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -1631,7 +1596,7 @@ gcm_calibrate_argyll_set_device_from_ti2 (GcmCalibrate *calibrate,
 
 	/* find the data */
 	lines = g_strsplit (contents, "\n", -1);
-	for (i=0; lines[i] != NULL; i++) {
+	for (i = 0; lines[i] != NULL; i++) {
 		if (g_str_has_prefix (lines[i], "TARGET_INSTRUMENT")) {
 			device = g_strdup (lines[i] + 18);
 			g_strdelimit (device, "\"", ' ');
@@ -1672,21 +1637,17 @@ out:
 static GtkPaperSize *
 gcm_calibrate_argyll_get_paper_size (GcmCalibrate *calibrate, GtkWindow *window)
 {
-	GtkPrintSettings *settings;
+	g_autoptr(GtkPrintSettings) settings = NULL;
 	GtkPageSetup *page_setup;
-	GtkPaperSize *paper_size = NULL;
 
 	/* find out the paper size */
 	settings = gtk_print_settings_new ();
 	page_setup = gtk_print_run_page_setup_dialog (window, NULL, settings);
 	if (page_setup == NULL)
-		goto out;
+		return NULL;
 
 	/* get paper size */
-	paper_size = gtk_page_setup_get_paper_size (page_setup);
-out:
-	g_object_unref (settings);
-	return paper_size;
+	return gtk_page_setup_get_paper_size (page_setup);
 }
 
 /**
@@ -1696,26 +1657,24 @@ static gboolean
 gcm_calibrate_argyll_printer_convert_jpeg (GcmCalibrateArgyll *calibrate_argyll,
 					   GError **error)
 {
-	GDir *dir;
+	g_autoptr(GDir) dir = NULL;
 	const gchar *filename;
-	gchar *filename_tiff;
-	gchar *filename_jpg;
 	guint len;
 	gboolean ret = TRUE;
 	const gchar *working_path;
-	GdkPixbuf *pixbuf;
 
 	/* need to ask if we are printing now, or using old data */
 	working_path = gcm_calibrate_get_working_path (GCM_CALIBRATE (calibrate_argyll));
 	dir = g_dir_open (working_path, 0, error);
-	if (dir == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (dir == NULL)
+		return FALSE;
 
 	filename = g_dir_read_name (dir);
 	while (filename != NULL) {
 		if (g_str_has_suffix (filename, ".tif")) {
+			g_autoptr(GdkPixbuf) pixbuf = NULL;
+			g_autofree gchar *filename_tiff = NULL;
+			g_autofree gchar *filename_jpg = NULL;
 
 			/* get both files */
 			filename_tiff = g_build_filename (working_path, filename, NULL);
@@ -1728,10 +1687,8 @@ gcm_calibrate_argyll_printer_convert_jpeg (GcmCalibrateArgyll *calibrate_argyll,
 			/* convert from tiff to jpg */
 			g_debug ("convert %s to %s", filename_tiff, filename_jpg);
 			pixbuf = gdk_pixbuf_new_from_file (filename_tiff, error);
-			if (pixbuf == NULL) {
-				ret = FALSE;
-				goto out;
-			}
+			if (pixbuf == NULL)
+				return FALSE;
 
 			/* try to save new file */
 			ret = gdk_pixbuf_save (pixbuf,
@@ -1742,17 +1699,11 @@ gcm_calibrate_argyll_printer_convert_jpeg (GcmCalibrateArgyll *calibrate_argyll,
 					       "100",
 					       NULL);
 			if (!ret)
-				goto out;
-			g_object_unref (pixbuf);
-			g_free (filename_tiff);
-			g_free (filename_jpg);
+				return FALSE;
 		}
 		filename = g_dir_read_name (dir);
 	}
-out:
-	if (dir != NULL)
-		g_dir_close (dir);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -1766,15 +1717,15 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate,
 			      GError **error)
 {
 	gboolean ret;
-	gchar *cmdline = NULL;
-	gchar *filename = NULL;
 	const gchar *working_path;
-	gchar *basename = NULL;
 	GtkPaperSize *paper_size;
 	gdouble width, height;
 	GcmCalibratePrintKind print_kind;
 	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *cmdline = NULL;
+	g_autofree gchar *filename = NULL;
 
 	/* need to ask if we are printing now, or using old data */
 	g_object_get (calibrate,
@@ -1792,7 +1743,7 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate,
 						      calibrate,
 						      error);
 		if (!ret)
-			goto out;
+			return FALSE;
 	}
 
 	/* page setup, and then we're done */
@@ -1810,13 +1761,13 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate,
 								     height,
 								     error);
 		if (!ret)
-			goto out;
+			return FALSE;
 
 		/* convert to jpegs */
 		ret = gcm_calibrate_argyll_printer_convert_jpeg (GCM_CALIBRATE_ARGYLL (calibrate),
 								 error);
 		if (!ret)
-			goto out;
+			return FALSE;
 
 		g_debug ("we need to open the directory we're using: %s", working_path);
 		argv[1] = working_path;
@@ -1827,7 +1778,7 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate,
 				     NULL, NULL,
 				     NULL,
 				     error);
-		goto out;
+		return FALSE;
 	}
 
 	/* wait */
@@ -1856,11 +1807,11 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate,
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_NO_DATA,
 				     "cannot find %s", filename);
-			goto out;
+			return FALSE;
 		}
 		ret = gcm_calibrate_argyll_set_device_from_ti2 (calibrate, filename, error);
 		if (!ret)
-			goto out;
+			return FALSE;
 	}
 
 	/* set progress */
@@ -1869,7 +1820,7 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate,
 	/* step 3 */
 	ret = gcm_calibrate_argyll_display_read_chart (calibrate_argyll, error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* set progress */
 	gcm_calibrate_set_progress (calibrate, 80);
@@ -1878,7 +1829,7 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate,
 	ret = gcm_calibrate_argyll_device_generate_profile (calibrate_argyll,
 							    error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* only delete state if we are doing a local printer */
 	if (print_kind == GCM_CALIBRATE_PRINT_KIND_LOCAL) {
@@ -1886,19 +1837,15 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate,
 		ret = gcm_calibrate_argyll_remove_temp_files (calibrate_argyll,
 							      error);
 		if (!ret)
-			goto out;
+			return FALSE;
 	}
 
 	/* step 6 */
 	ret = gcm_calibrate_argyll_set_filename_result (calibrate_argyll,
 							error);
 	if (!ret)
-		goto out;
-out:
-	g_free (filename);
-	g_free (basename);
-	g_free (cmdline);
-	return ret;
+		return FALSE;
+	return TRUE;
 }
 
 /**
@@ -1946,12 +1893,11 @@ gcm_calibrate_argyll_check_and_remove_alpha (GcmCalibrateArgyll *calibrate_argyl
 					     GError **error)
 {
 	const gchar *working_path;
-	gboolean ret = TRUE;
-	gchar *basename = NULL;
-	gchar *filename = NULL;
-	gchar *reference_image = NULL;
-	GdkPixbuf *pixbuf_new = NULL;
-	GdkPixbuf *pixbuf = NULL;
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autofree gchar *reference_image = NULL;
+	g_autoptr(GdkPixbuf) pixbuf_new = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
@@ -1965,14 +1911,12 @@ gcm_calibrate_argyll_check_and_remove_alpha (GcmCalibrateArgyll *calibrate_argyl
 
 	/* check to see if the file has any alpha channel */
 	pixbuf = gdk_pixbuf_new_from_file (reference_image, error);
-	if (pixbuf == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (pixbuf == NULL)
+		return FALSE;
 
 	/* plain RGB */
 	if (!gdk_pixbuf_get_has_alpha (pixbuf))
-		goto out;
+		return TRUE;
 
 	/* remove the alpha channel */
 	pixbuf_new = gcm_calibrate_argyll_pixbuf_remove_alpha (pixbuf);
@@ -1981,24 +1925,11 @@ gcm_calibrate_argyll_check_and_remove_alpha (GcmCalibrateArgyll *calibrate_argyl
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_INTERNAL,
 				     "failed to remove alpha channel");
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 
 	/* save */
-	ret = gdk_pixbuf_save (pixbuf_new, reference_image, "tiff", error, NULL);
-	if (!ret)
-		goto out;
-
-out:
-	g_free (filename);
-	g_free (basename);
-	g_free (reference_image);
-	if (pixbuf != NULL)
-		g_object_unref (pixbuf);
-	if (pixbuf_new != NULL)
-		g_object_unref (pixbuf_new);
-	return ret;
+	return gdk_pixbuf_save (pixbuf_new, reference_image, "tiff", error, NULL);
 }
 
 /**
@@ -2196,35 +2127,31 @@ static gboolean
 gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 					 const gchar *line)
 {
-	gchar *title_str = NULL;
-	GString *string = NULL;
 	gchar *found;
-	gchar **split = NULL;
-	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
+	g_autofree gchar *title_str = NULL;
+	g_auto(GStrv) split = NULL;
+	g_autoptr(GString) string = NULL;
 
 	/* attach device */
 	if (g_strcmp0 (line, "Place instrument on test window.") == 0) {
 		g_debug ("VTE: interaction required: %s", line);
 		gcm_calibrate_argyll_interaction_attach (calibrate_argyll);
-		ret = FALSE;
-		goto out;
+		return TRUE;
 	}
 
 	/* set to calibrate */
 	if (g_strcmp0 (line, "Set instrument sensor to calibration position,") == 0) {
 		g_debug ("VTE: interaction required, set to calibrate");
 		gcm_calibrate_argyll_interaction_calibrate (calibrate_argyll);
-		ret = FALSE;
-		goto out;
+		return TRUE;
 	}
 
 	/* set to calibrate */
 	if (g_strcmp0 (line, "(Sensor should be in surface position)") == 0) {
 		g_debug ("VTE: interaction required, set to surface");
 		gcm_calibrate_argyll_interaction_surface (calibrate_argyll);
-		ret = FALSE;
-		goto out;
+		return TRUE;
 	}
 
 	/* something went wrong with a measurement */
@@ -2251,7 +2178,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 				 /* TRANSLATORS: this is the application name for libcanberra */
 				 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
 				 CA_PROP_EVENT_DESCRIPTION, "unspecified error", NULL);
-		goto out;
+		return TRUE;
 	}
 
 	/* lines we're ignoring */
@@ -2268,13 +2195,13 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 	    g_str_has_prefix (line, "Perspective correction factors") ||
 	    g_str_has_suffix (line, "key to continue:")) {
 		g_debug ("VTE: ignore: %s", line);
-		goto out;
+		return TRUE;
 	}
 
 	/* spot read result */
 	found = g_strstr_len (line, -1, "Result is XYZ");
 	if (found != NULL) {
-		CdColorXYZ *xyz;
+		g_autoptr(CdColorXYZ) xyz = NULL;
 		g_warning ("line=%s", line);
 		split = g_strsplit (line, " ", -1);
 		xyz = cd_color_xyz_new ();
@@ -2287,8 +2214,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 			      "xyz", xyz,
 			      NULL);
 		priv->done_spot_read = TRUE;
-		cd_color_xyz_free (xyz);
-		goto out;
+		return TRUE;
 	}
 
 	/* error */
@@ -2342,7 +2268,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 
 		/* wait until finished */
 		g_main_loop_run (priv->loop);
-		goto out;
+		return TRUE;
 	}
 
 	/* all done */
@@ -2350,7 +2276,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 	if (found != NULL) {
 		gcm_calibrate_set_image (GCM_CALIBRATE (calibrate_argyll), "scan-target-good.svg");
 		vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), "d", 1);
-		goto out;
+		return TRUE;
 	}
 
 	/* reading strip */
@@ -2376,7 +2302,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 				 /* TRANSLATORS: this is the application name for libcanberra */
 				 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
 				 CA_PROP_EVENT_DESCRIPTION, "failed to read strip", NULL);
-		goto out;
+		return TRUE;
 	}
 
 	/* reading sample */
@@ -2402,7 +2328,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 				 /* TRANSLATORS: this is the application name for libcanberra */
 				 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
 				 CA_PROP_EVENT_DESCRIPTION, "failed to read sample", NULL);
-		goto out;
+		return TRUE;
 	}
 
 	/* reading strip */
@@ -2432,14 +2358,14 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 		priv->argyllcms_ok = "\n";
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
 		gcm_calibrate_interaction_required (GCM_CALIBRATE (calibrate_argyll), _("Retry"));
-		goto out;
+		return TRUE;
 	}
 
 	/* reading spot */
 	if (g_str_has_prefix (line, "Place instrument on spot to be measured")) {
 		if (!priv->done_spot_read)
 			vte_terminal_feed_child (VTE_TERMINAL(priv->terminal), " ", 1);
-		goto out;
+		return TRUE;
 	}
 
 	/* reading strip */
@@ -2459,7 +2385,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 		priv->argyllcms_ok = " ";
 		priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
 		gcm_calibrate_interaction_required (GCM_CALIBRATE (calibrate_argyll), _("Retry"));
-		goto out;
+		return TRUE;
 	}
 
 	/* reading strip */
@@ -2487,7 +2413,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 
 		/* push new messages into the UI */
 		gcm_calibrate_set_image (GCM_CALIBRATE (calibrate_argyll), "scan-target.svg");
-		goto out;
+		return TRUE;
 	}
 
 	/* update the percentage bar */
@@ -2505,17 +2431,12 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 			gcm_calibrate_set_progress (GCM_CALIBRATE (calibrate_argyll),
 						    current * 100 / total);
 		}
-		goto out;
+		return TRUE;
 	}
 
 	/* report a warning so friendly people report bugs */
 	g_warning ("VTE: could not screenscrape: '%s'", line);
-out:
-	g_free (title_str);
-	g_strfreev (split);
-	if (string != NULL)
-		g_string_free (string, TRUE);
-	return ret;
+	return TRUE;
 }
 #endif
 
@@ -2539,14 +2460,14 @@ gcm_calibrate_argyll_selection_func_cb (VteTerminal *terminal,
 static void
 gcm_calibrate_argyll_flush_vte (GcmCalibrateArgyll *calibrate_argyll)
 {
-	gchar *output;
-	gchar **split;
 	guint i;
 	glong row;
 	glong col;
 	gboolean ret;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 	VteTerminal *terminal = VTE_TERMINAL (priv->terminal);
+	g_autofree gchar *output = NULL;
+	g_auto(GStrv) split = NULL;
 
 	/* select the text we've got since last time */
 	vte_terminal_get_cursor_position (terminal, &col, &row);
@@ -2558,7 +2479,7 @@ gcm_calibrate_argyll_flush_vte (GcmCalibrateArgyll *calibrate_argyll)
 					      calibrate_argyll,
 					      NULL);
 	split = g_strsplit (output, "\n", -1);
-	for (i=0; split[i] != NULL; i++) {
+	for (i = 0; split[i] != NULL; i++) {
 		g_strchomp (split[i]);
 		if (split[i][0] == '\0')
 			continue;
@@ -2570,9 +2491,6 @@ gcm_calibrate_argyll_flush_vte (GcmCalibrateArgyll *calibrate_argyll)
 	/* save, so we don't re-process old text */
 	priv->vte_previous_row = row;
 	priv->vte_previous_col = col;
-
-	g_free (output);
-	g_strfreev (split);
 }
 
 /**

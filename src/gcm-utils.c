@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -44,7 +44,7 @@ gcm_utils_linkify (const gchar *hostile_text)
 	guint j = 0;
 	gboolean ret;
 	GString *string;
-	gchar *text;
+	g_autofree gchar *text = NULL;
 
 	/* Properly escape this as some profiles 'helpfully' put markup in like:
 	 * "Copyright (C) 2005-2010 Kai-Uwe Behrmann <www.behrmann.name>" */
@@ -78,7 +78,6 @@ gcm_utils_linkify (const gchar *hostile_text)
 			break;
 		}
 	}
-	g_free (text);
 	return g_string_free (string, FALSE);
 }
 
@@ -89,19 +88,18 @@ gboolean
 gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 {
 	GDBusConnection *connection;
-	GVariant *args = NULL;
-	GVariant *response = NULL;
-	GVariantBuilder *builder = NULL;
-	GError *error = NULL;
-	gboolean ret = FALSE;
 	guint32 xid = 0;
-	gchar **packages = NULL;
+	g_autoptr(GError) error = NULL;
+	g_auto(GStrv) packages = NULL;
+	g_autoptr(GVariant) args = NULL;
+	g_autoptr(GVariantBuilder) builder = NULL;
+	g_autoptr(GVariant) response = NULL;
 
 	g_return_val_if_fail (package_name != NULL, FALSE);
 
 #ifndef HAVE_PACKAGEKIT
 	g_warning ("cannot install %s: this package was not compiled with --enable-packagekit", package_name);
-	goto out;
+	return FALSE;
 #endif
 
 	/* get xid of this window */
@@ -116,8 +114,7 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 	if (connection == NULL) {
 		/* TRANSLATORS: no DBus session bus */
 		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
-		g_error_free (error);
-		goto out;
+		return FALSE;
 	}
 
 	/* create arguments */
@@ -140,21 +137,11 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
 		g_warning ("%s %s\n", _("The request failed:"), error->message);
-		g_error_free (error);
-		goto out;
+		return FALSE;
 	}
 
 	/* success */
-	ret = TRUE;
-out:
-	if (builder != NULL)
-		g_variant_builder_unref (builder);
-	if (args != NULL)
-		g_variant_unref (args);
-	if (response != NULL)
-		g_variant_unref (response);
-	g_strfreev (packages);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -199,20 +186,15 @@ gcm_utils_output_is_lcd (const gchar *output_name)
 GFile *
 gcm_utils_get_profile_destination (GFile *file)
 {
-	gchar *basename;
-	gchar *destination;
-	GFile *dest;
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *destination = NULL;
 
 	g_return_val_if_fail (file != NULL, NULL);
 
 	/* get destination filename for this source file */
 	basename = g_file_get_basename (file);
 	destination = g_build_filename (g_get_user_data_dir (), "icc", basename, NULL);
-	dest = g_file_new_for_path (destination);
-
-	g_free (basename);
-	g_free (destination);
-	return dest;
+	return g_file_new_for_path (destination);
 }
 
 /**
@@ -235,7 +217,7 @@ gcm_utils_ptr_array_to_strv (GPtrArray *array)
 
 	/* copy the array to a strv */
 	value = g_new0 (gchar *, array->len + 1);
-	for (i=0; i<array->len; i++) {
+	for (i = 0; i<array->len; i++) {
 		value_temp = (const gchar *) g_ptr_array_index (array, i);
 		value[i] = g_strdup (value_temp);
 	}
@@ -250,9 +232,8 @@ gcm_utils_ptr_array_to_strv (GPtrArray *array)
 gboolean
 gcm_gnome_help (const gchar *link_id)
 {
-	GError *error = NULL;
-	gchar *uri;
-	gboolean ret = TRUE;
+	g_autoptr(GError) error = NULL;
+	g_autofree gchar *uri = NULL;
 
 	if (link_id)
 		uri = g_strconcat ("help:gnome-color-manager?", link_id, NULL);
@@ -268,12 +249,9 @@ gcm_gnome_help (const gchar *link_id)
 					    GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", error->message);
 		gtk_dialog_run (GTK_DIALOG(d));
 		gtk_widget_destroy (d);
-		g_error_free (error);
-		ret = FALSE;
+		return FALSE;
 	}
-
-	g_free (uri);
-	return ret;
+	return TRUE;
 }
 
 /**
@@ -287,7 +265,7 @@ gcm_utils_alphanum_lcase (gchar *data)
 	g_return_if_fail (data != NULL);
 
 	/* replace unsafe chars, and make lowercase */
-	for (i=0; data[i] != '\0'; i++) {
+	for (i = 0; data[i] != '\0'; i++) {
 		if (!g_ascii_isalnum (data[i]))
 			data[i] = '_';
 		data[i] = g_ascii_tolower (data[i]);
@@ -305,7 +283,7 @@ gcm_utils_ensure_sensible_filename (gchar *data)
 	g_return_if_fail (data != NULL);
 
 	/* replace unsafe chars, and make lowercase */
-	for (i=0; data[i] != '\0'; i++) {
+	for (i = 0; data[i] != '\0'; i++) {
 		if (data[i] != ' ' &&
 		    data[i] != '-' &&
 		    data[i] != '(' &&
@@ -375,7 +353,7 @@ gcm_utils_image_convert (GtkImage *image,
 			 GError **error)
 {
 	CdPixelFormat pixel_format;
-	CdTransform *transform = NULL;
+	g_autoptr(CdTransform) transform = NULL;
 	GdkPixbuf *pixbuf;
 	GdkPixbuf *original_pixbuf;
 	gboolean ret = TRUE;
@@ -385,14 +363,14 @@ gcm_utils_image_convert (GtkImage *image,
 	/* get pixbuf */
 	pixbuf = gtk_image_get_pixbuf (image);
 	if (pixbuf == NULL)
-		goto out;
+		return FALSE;
 
 	/* work out the pixel format */
 	pixel_format = gcm_utils_get_pixel_format (pixbuf);
 	if (pixel_format == CD_PIXEL_FORMAT_UNKNOWN) {
 		ret = FALSE;
 		g_set_error_literal (error, 1, 0, "format not supported");
-		goto out;
+		return FALSE;
 	}
 
 	/* get a copy of the original image, *not* a ref */
@@ -433,14 +411,11 @@ gcm_utils_image_convert (GtkImage *image,
 				    NULL,
 				    error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* refresh */
 	g_object_ref (pixbuf);
 	gtk_image_set_from_pixbuf (image, pixbuf);
 	g_object_unref (pixbuf);
-out:
-	if (transform != NULL)
-		g_object_unref (transform);
-	return ret;
+	return TRUE;
 }

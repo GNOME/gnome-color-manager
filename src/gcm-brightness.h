@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2009-2010 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2009-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -26,22 +26,8 @@
 
 G_BEGIN_DECLS
 
-#define GCM_TYPE_BRIGHTNESS		(gcm_brightness_get_type ())
-#define GCM_BRIGHTNESS(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), GCM_TYPE_BRIGHTNESS, GcmBrightness))
-#define GCM_BRIGHTNESS_CLASS(k)		(G_TYPE_CHECK_CLASS_CAST((k), GCM_TYPE_BRIGHTNESS, GcmBrightnessClass))
-#define GCM_IS_BRIGHTNESS(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), GCM_TYPE_BRIGHTNESS))
-#define GCM_IS_BRIGHTNESS_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), GCM_TYPE_BRIGHTNESS))
-#define GCM_BRIGHTNESS_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), GCM_TYPE_BRIGHTNESS, GcmBrightnessClass))
-
-typedef struct _GcmBrightnessPrivate	GcmBrightnessPrivate;
-typedef struct _GcmBrightness		GcmBrightness;
-typedef struct _GcmBrightnessClass	GcmBrightnessClass;
-
-struct _GcmBrightness
-{
-	 GObject		 parent;
-	 GcmBrightnessPrivate	*priv;
-};
+#define GCM_TYPE_BRIGHTNESS (gcm_brightness_get_type ())
+G_DECLARE_DERIVABLE_TYPE (GcmBrightness, gcm_brightness, GCM, BRIGHTNESS, GObject)
 
 struct _GcmBrightnessClass
 {

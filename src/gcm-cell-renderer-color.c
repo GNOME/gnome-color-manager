@@ -1,6 +1,6 @@
 /* -*- Mode: C; tab-width: 8; indent-tabs-mode: t; c-basic-offset: 8 -*-
  *
- * Copyright (C) 2011 Richard Hughes <richard@hughsie.com>
+ * Copyright (C) 2011-2015 Richard Hughes <richard@hughsie.com>
  *
  * Licensed under the GNU General Public License Version 2
  *
@@ -63,7 +63,7 @@ static void
 gcm_cell_renderer_set_color (GcmCellRendererColor *renderer)
 {
 	CdColorRGB8 rgb;
-	GdkPixbuf *pixbuf = NULL;
+	g_autoptr(GdkPixbuf) pixbuf = NULL;
 	gint height = 26; /* TODO: needs to be a property */
 	gint width = 400; /* TODO: needs to be a property */
 	gint x, y;
@@ -106,8 +106,6 @@ out:
 		cmsCloseProfile (profile_lab);
 	if (xform != NULL)
 		cmsDeleteTransform (xform);
-	if (pixbuf != NULL)
-		g_object_unref (pixbuf);
 }
 
 static void
