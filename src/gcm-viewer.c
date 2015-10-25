@@ -308,7 +308,7 @@ gcm_viewer_update_get_profiles_cb (GObject *source_object,
 	viewer->clearing_store = FALSE;
 
 	/* update each list */
-	for (i = 0; i<profile_array->len; i++) {
+	for (i = 0; i < profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
 		cd_profile_connect (profile,
 				    NULL,

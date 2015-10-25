@@ -771,7 +771,7 @@ gcm_cie_widget_get_min_max_tongue (GcmCieWidget *cie)
 
 	/* add enough elements to the array */
 	g_ptr_array_set_size (priv->tongue_buffer, 0);
-	for (i = 0; i<priv->chart_height; i++) {
+	for (i = 0; i < priv->chart_height; i++) {
 		item = g_new0 (GcmCieWidgetBufferItem, 1);
 		g_ptr_array_add (priv->tongue_buffer, item);
 	}

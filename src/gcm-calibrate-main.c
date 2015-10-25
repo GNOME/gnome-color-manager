@@ -218,7 +218,7 @@ gcm_calib_get_vbox_for_page (GcmCalibratePriv *priv,
 	GtkWidget *tmp;
 	GcmCalibratePage page_tmp;
 
-	for (i = 0; i<priv->pages->len; i++) {
+	for (i = 0; i < priv->pages->len; i++) {
 		tmp = g_ptr_array_index (priv->pages, i);
 		page_tmp = GPOINTER_TO_UINT (g_object_get_data (G_OBJECT (tmp),
 								"GcmCalibrateMain::Index"));
@@ -1332,7 +1332,7 @@ gcm_calib_setup_page_target_kind (GcmCalibratePriv *priv)
 	gtk_box_pack_start (GTK_BOX (vbox), priv->reference_preview, FALSE, FALSE, 0);
 
 	combo = gtk_combo_box_text_new ();
-	for (i = 0; i<GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN; i++) {
+	for (i = 0; i < GCM_CALIBRATE_REFERENCE_KIND_UNKNOWN; i++) {
 		gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (combo),
 						gcm_calib_reference_kind_to_localised_string (i));
 	}
@@ -1721,7 +1721,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 	labels[2] = g_string_new (_("Quick"));
 	switch (priv->device_kind) {
 	case CD_DEVICE_KIND_PRINTER:
-		for (i = 0; i<3; i++) {
+		for (i = 0; i < 3; i++) {
 			g_string_append (labels[i], " ");
 			/* TRANSLATORS: radio options for calibration precision */
 			g_string_append_printf (labels[i], ngettext (
@@ -1732,7 +1732,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 		}
 		break;
 	case CD_DEVICE_KIND_DISPLAY:
-		for (i = 0; i<3; i++) {
+		for (i = 0; i < 3; i++) {
 			g_string_append (labels[i], " ");
 			/* TRANSLATORS: radio options for calibration precision */
 			g_string_append_printf (labels[i], ngettext (
@@ -1784,7 +1784,7 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 			   "GcmCalibrateMain::Index",
 			   GUINT_TO_POINTER (GCM_CALIBRATE_PAGE_PRECISION));
 
-	for (i = 0; i<3; i++)
+	for (i = 0; i < 3; i++)
 		g_string_free (labels[i], TRUE);
 
 	/* show page */

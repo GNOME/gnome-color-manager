@@ -539,7 +539,7 @@ gcm_prefs_setup_space_combobox (GcmPickerPrivate *priv, GtkWidget *widget)
 	}
 
 	/* update each list */
-	for (i = 0; i<profile_array->len; i++) {
+	for (i = 0; i < profile_array->len; i++) {
 		profile = g_ptr_array_index (profile_array, i);
 
 		/* connect to the profile */
@@ -581,7 +581,7 @@ gcm_prefs_setup_space_combobox (GcmPickerPrivate *priv, GtkWidget *widget)
 						      CD_DEVICE_KIND_DISPLAY,
 						      NULL,
 						      &error);
-	for (i = 0; i<devices->len; i++) {
+	for (i = 0; i < devices->len; i++) {
 		device_tmp = g_ptr_array_index (devices, i);
 
 		/* connect to the device */

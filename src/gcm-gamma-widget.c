@@ -210,7 +210,7 @@ gcm_gamma_widget_draw_lines (GcmGammaWidget *gama, cairo_t *cr)
 	cairo_set_line_width (cr, 1);
 
 	/* do horizontal lines */
-	for (i = 0; i<gama->priv->chart_height; i++) {
+	for (i = 0; i < gama->priv->chart_height; i++) {
 
 		/* set correct color */
 		if (i%2 == 0) {
