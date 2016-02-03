@@ -2423,7 +2423,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 		split = g_strsplit (line, " ", -1);
 		if (g_strv_length (split) != 4) {
 			g_warning ("invalid update format: %s", line);
-			goto out;
+			return TRUE;
 		}
 		current = atoi (split[1]);
 		total = atoi (split[3]);
