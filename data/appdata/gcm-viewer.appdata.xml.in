@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright 2013 Richard Hughes <richard@hughsie.com> -->
-<application>
-  <id type="desktop">gcm-viewer.desktop</id>
+<component type="desktop">
+  <id>gcm-viewer.desktop</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>GPL-2.0+</project_license>
   <_name>GNOME Color Manager</_name>
@@ -18,32 +18,48 @@
     </_p>
   </description>
   <screenshots>
-    <screenshot type="default">https://git.gnome.org/browse/gnome-color-manager/plain/data/appdata/ss-info.png</screenshot>
-    <screenshot>https://git.gnome.org/browse/gnome-color-manager/plain/data/appdata/ss-cie1931.png</screenshot>
-    <screenshot>https://git.gnome.org/browse/gnome-color-manager/plain/data/appdata/ss-calibrate.png</screenshot>
-    <screenshot>https://git.gnome.org/browse/gnome-color-manager/plain/data/appdata/ss-picker.png</screenshot>
+    <screenshot type="default">
+      <image>https://git.gnome.org/browse/gnome-color-manager/plain/data/appdata/ss-info.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://git.gnome.org/browse/gnome-color-manager/plain/data/appdata/ss-cie1931.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://git.gnome.org/browse/gnome-color-manager/plain/data/appdata/ss-calibrate.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://git.gnome.org/browse/gnome-color-manager/plain/data/appdata/ss-picker.png</image>
+    </screenshot>
   </screenshots>
+
   <!--
    Validate with `appstream-util validate *.appdata.xml`
-   Use `date -d "2010-10-02" "+%s"` to get the timestamp.
   -->
   <releases>
-    <release version="3.18.0" timestamp="1442827658">
+    <release version="3.19.90" date="2016-02-15">
+      <description>
+        <p>
+          This unstable release fixes some software center metadata, one profile
+          viewer crash and updates seven translations.
+        </p>
+      </description>
+    </release>
+    <release timestamp="1442827658" version="3.18.0">
       <description>
         <p>This is the first stable release for GNOME 3.18</p>
       </description>
     </release>
-    <release version="3.17.90" timestamp="1439990514">
+    <release timestamp="1439990514" version="3.17.90">
       <description>
         <p>This release only updates translations.</p>
       </description>
     </release>
-    <release version="3.16.0" timestamp="1427103917">
+    <release timestamp="1427103917" version="3.16.0">
       <description>
         <p>This stable release marks the release of GNOME 3.16!</p>
       </description>
     </release>
-    <release version="3.15.92" timestamp="1426498834">
+    <release timestamp="1426498834" version="3.15.92">
       <description>
         <p>
           This release changes the profile viewer to only show in the menu under
@@ -51,20 +67,20 @@
         </p>
       </description>
     </release>
-    <release version="3.15.91" timestamp="1425299116">
+    <release timestamp="1425299116" version="3.15.91">
       <description>
         <p>This release only updates translations.</p>
       </description>
     </release>
-    <release version="3.15.90" timestamp="1424076140">
+    <release timestamp="1424076140" version="3.15.90">
       <description>
-      <p>
+        <p>
         This release switches the profile viewer application to use a headerbar
         to match other GNOME3 applications.
       </p>
       </description>
     </release>
-    <release version="3.15.4" timestamp="1421625600">
+    <release timestamp="1421625600" version="3.15.4">
       <description>
         <p>This release fixes the following bug:</p>
         <ul>
@@ -79,7 +95,10 @@
     <kudo>UserDocs</kudo>
   </kudos>
   <url type="homepage">https://projects.gnome.org/gnome-color-manager/</url>
-  <updatecontact>richard_at_hughsie.com</updatecontact>
+  <url type="bugtracker">https://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager</url>
+  <url type="donation">http://www.gnome.org/friends/</url>
+  <url type="help">https://help.gnome.org/users/gnome-color-manager/stable/</url>
+  <update_contact>richard_at_hughsie.com</update_contact>
   <project_group>GNOME</project_group>
   <translation type="gettext">gnome-color-manager</translation>
-</application>
+</component>
