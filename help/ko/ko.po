@@ -1,0 +1,233 @@
+# Korean translation for gnome-color-manager.
+# This file is distributed under the same license as the gnome-color-manager package.
+# Seong-ho Cho <shcho@gnome.org>, 2016.
+# Changwoo Ryu <cwryu@debian.org>, 2016.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-color-manager master\n"
+"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-color-manager&keywords=I18N+L10N\n"
+"POT-Creation-Date: 2016-03-03 08:16+0000\n"
+"PO-Revision-Date: 2016-03-05 21:07+0900\n"
+"Last-Translator: Changwoo Ryu <cwryu@debian.org>\n"
+"Language-Team: GNOME Korea <gnome-kr@googlegroups.com>\n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+#. (itstool) path: p/link
+#: C/legal.xml:3
+msgid "Creative Commons Attribution-ShareAlike 3.0 Unported License"
+msgstr "크리에이티브 커먼즈 저작자표시-동일조건변경허락 3.0 Unported 라이선스"
+
+#. (itstool) path: license/p
+#: C/legal.xml:3
+msgid "This work is licensed under a <_:link-1/>."
+msgstr "이 문서는  <_:link-1/>에 따른 활용을 허가합니다."
+
+#. Put one translator per line, in the form NAME <EMAIL>, YEAR1, YEAR2
+msgctxt "_"
+msgid "translator-credits"
+msgstr "조성호 <shcho@gnome.org>, 2016."
+
+#. (itstool) path: info/desc
+#: C/color-import-linux.page:9
+msgid "How to import an existing ICC profile using a Linux system."
+msgstr "리눅스 시스템에서 기존의 ICC 프로파일을 가져오는 방법입니다."
+
+#. (itstool) path: credit/name
+#: C/color-import-linux.page:11 C/color-import-windows.page:11
+#: C/color-import-osx.page:11
+msgid "Richard Hughes"
+msgstr "Richard Hughes"
+
+#. (itstool) path: page/title
+#: C/color-import-linux.page:17
+msgid "Installing an ICC profile on Linux"
+msgstr "리눅스에 ICC 프로파일 설치하기"
+
+#. (itstool) path: page/p
+#: C/color-import-linux.page:18
+msgid ""
+"If you have <cmd>gnome-color-manager</cmd> or <cmd>colord-kde</cmd> "
+"installed then just double click the <file>.icc</file> profile and click "
+"<gui>Import</gui>. You can then assign the new profile to an existing device "
+"using the <guiseq><gui>System Settings</gui><gui>Color</gui></guiseq> panel."
+msgstr "<cmd>gnome-color-manager</cmd> 또는 <cmd>colord-kde</cmd>를 설치했다면 그냥 <file>.icc</file> 프로파일을 두번 누르신 후 <gui>가져오기</gui>를 누르십시오. <guiseq><gui>시스템 설정</gui><gui>색</gui></guiseq> 창을 활용하여 기존 장치에 새 프로파일을 할당할 수 있습니다."
+
+#. (itstool) path: page/p
+#: C/color-import-linux.page:25
+msgid ""
+"Profile calibration curves are automatically loaded at login, or can be "
+"loaded for all users at startup if the <gui>Set for all users</gui> button "
+"is clicked."
+msgstr "프로파일 보정 커브는 로그인할 때 자동으로 불러옵니다. <gui>모든 사용자에 대해 설정</gui> 단추를 누르면 시스템을 시작할 때 모든 사용자가 값을 불러올 수 있습니다."
+
+#. (itstool) path: info/desc
+#: C/color-import-windows.page:9
+msgid "How to import an existing ICC profile using a Windows system."
+msgstr "윈도우 시스템에서 기존의 ICC 프로파일을 가져오는 방법입니다."
+
+#. (itstool) path: page/title
+#: C/color-import-windows.page:17
+msgid "Installing an ICC profile on Microsoft Windows"
+msgstr "마이크로소프트 윈도우에 ICC 프로파일 설치하기"
+
+#. (itstool) path: page/p
+#: C/color-import-windows.page:18
+msgid ""
+"The method for assigning the profile to a device and also using the embedded "
+"calibration curves is different for each version of Microsoft Windows."
+msgstr ""
+"내장 보정 커브를 활용하여 프로파일을 장치에 할당하는 방법은 마이크로소프트 윈"
+"도우의 각 버전마다 다릅니다."
+
+#. (itstool) path: section/title
+#: C/color-import-windows.page:24
+msgid "Windows XP"
+msgstr "윈도우 XP"
+
+#. (itstool) path: section/p
+#: C/color-import-windows.page:25
+msgid ""
+"Right click on the profile in Windows Explorer and click <gui>Install "
+"profile</gui>. This copies the profile to the correct directory "
+"automatically."
+msgstr ""
+"윈도우 탐색기에서 마우스 오른쪽 단추를 누른 후 <gui>프로파일 설치</gui>를 누"
+"르십시오. 프로파일을 적절한 디렉터리에 자동으로 복사합니다."
+
+# 주의: 윈도우에서는 "색 관리"
+#. (itstool) path: section/p
+#: C/color-import-windows.page:29
+msgid ""
+"Then open <guiseq><gui>Control Center</gui><gui>Color</gui></guiseq> and add "
+"the profile to the device."
+msgstr "그 다음 <guiseq><gui>제어 센터</gui><gui>색 관리</gui></guiseq>를 여시고 장치에 프로파일을 추가하십시오."
+
+#. (itstool) path: note/p
+#: C/color-import-windows.page:34
+msgid ""
+"If you are replacing an existing profile in Windows XP, the above shortcut "
+"does not work. The profiles must be manually copied to <file>C:\\Windows"
+"\\system32\\spool\\drivers\\color</file> for the original profile to be "
+"replaced."
+msgstr ""
+"윈도우 XP의 기존 프로파일을 바꾼다면 위 바로 가기가 동작하지 않을지도 모릅니"
+"다. 기존 프로파일을 바꾸려면 프로파일을 <file>C:\\Windows\\system32\\spool"
+"\\drivers\\color</file>에 직접 복사해야 합니다."
+
+#. (itstool) path: section/p
+#: C/color-import-windows.page:42
+msgid ""
+"Windows XP requires a program to be run at startup to copy the profile "
+"calibration curves into the video card. This can be done using <app>Adobe "
+"Gamma</app>, <app>LUT Loader</app> or by using the free <app href=\"https://"
+"www.microsoft.com/download/en/details.aspx?displaylang=en&amp;id=12714\"> "
+"Microsoft Color Control Panel Applet</app>. Using the latter adds a new "
+"<gui>Color</gui> item to the control panel and allows the calibration curves "
+"from default profile to be easily set at each startup."
+msgstr "윈도우 XP에서는 비디오 카드에 프로파일 보정 커브를 복사할 프로그램을 시작프로그램에 넣고 실행해야합니다. <app>어도비 감마</app>, <app>LUT 로더</app>, 무료 <app href=\"https://www.microsoft.com/download/en/details.aspx?displaylang=en&amp;id=12714\">마이크로소프트 색상 제어판 애플릿</app>을 활용하실 수 있습니다. 마지막에 언급한 프로그램을 활용하시면 <gui>색 관리</gui> 항목을 제어판에 추가하여 윈도우를 매번 시작할 때마다 기본 프로파일 보정 커브를 쉽게 설정할 수 있습니다."
+
+#. (itstool) path: section/title
+#: C/color-import-windows.page:55
+msgid "Windows Vista"
+msgstr "윈도우 비스타"
+
+#. (itstool) path: section/p
+#: C/color-import-windows.page:56
+msgid ""
+"Microsoft Windows Vista mistakenly removes calibration curves from the video "
+"LUT after logon, after suspend, and when the UAC screen appears. This means "
+"you may have to manually reload the ICC profile calibration curves. If you "
+"are using profiles with embedded calibration curves you have to be very "
+"careful the calibration state has not been cleared."
+msgstr ""
+"마이크로소프트 윈도우 비스타는 실수로 보정 커브 기능을 로그인 한 다음, 대기 "
+"모드에 진입한 후, UAC 화면이 뜰 때 나타나는 비디오 LUT에서 뺐습니다. ICC 프로"
+"파일 보정 커브를 매번 직접 다시 불러와야 한다는 의미입니다. 내장 보정 커브 프"
+"로파일을 활용한다면 보정 상태가 완전하지 않으므로 조심스럽게 다루어야합니다."
+
+#. (itstool) path: section/title
+#: C/color-import-windows.page:68
+msgid "Windows 7"
+msgstr "윈도우 7"
+
+#. (itstool) path: section/p
+#: C/color-import-windows.page:69
+msgid ""
+"Windows 7 supports a similar scheme to Linux, in that profiles can be "
+"installed system-wide or specific to the user. They are however stored in "
+"the same place. Right click on the profile in Windows Explorer and click "
+"<gui>Install profile</gui> or copy the .icc profile to <file>C:\\Windows"
+"\\system32\\spool\\drivers\\color</file>."
+msgstr ""
+"윈도우 7에서는 리눅스와 비슷한 형태를 제공하며, 시스템 전체 또는 사용자별로 "
+"프로파일을 설치할 수 있습니다. 하지만 이 프로파일은 같은 곳에 있습니다. 윈도"
+"우 탐색기에서 마우스 오른쪽 단추를 누른 다음 <gui>프로파일 설치</gui>를 누르"
+"거나 <file>C:\\Windows\\system32\\spool\\drivers\\color</file>에 .icc 프로파"
+"일을 복사하십시오."
+
+#. (itstool) path: section/p
+#: C/color-import-windows.page:76
+msgid ""
+"Open <guiseq><gui>Control Center</gui><gui>Color Management</gui></guiseq> "
+"and then add the profile to the system by clicking the <gui>Add</gui> "
+"button. Click on the <gui>Advanced</gui> tab and look for <gui>Display "
+"Calibration</gui>. Calibration curve loading is enabled by the <gui>Use "
+"Windows display calibration</gui> checkbox but it is not sensitive. This can "
+"be enabled by clicking on <gui>Change system defaults</gui> and then "
+"returning to the <gui>Advanced</gui> tab and then clicking the checkbox."
+msgstr ""
+"<guiseq><gui>제어 센터</gui><gui>색 관리</gui></guiseq>를 여시고 <gui>추가</"
+"gui> 단추를 눌러 시스템에 프로파일을 추가하십시오. <gui>고급</gui> 탭을 누른 "
+"후 <gui>디스플레이 보정</gui>을 찾아보십시오. 보정 커브는 <gui>윈도우 디스플"
+"레이 보정 사용</gui> 확인 상자로 활성화하여 불러올 수 있지만 동작이 세밀하지 "
+"않습니다. <gui>시스템 기본값으로 변경</gui>를 누르신 후 <gui>고급</gui> 탭으"
+"로 돌아와서 확인 상자를 눌러 해결할 수 있습니다."
+
+#. (itstool) path: section/p
+#: C/color-import-windows.page:87
+msgid ""
+"Close the dialog and click <gui>Reload current calibrations</gui> to set the "
+"gamma ramps. The profile calibration curves should now be set for every boot."
+msgstr ""
+"대화 상자를 닫으신 후 <gui>현재 보정 다시 불러오기</gui>를 눌러 감마 경사 곡"
+"선을 설정하십시오. 이렇게 하면 매번 부팅할 때마다 프로파일 보정 커브를 설정합"
+"니다."
+
+#. (itstool) path: info/desc
+#: C/color-import-osx.page:9
+msgid "How to import an existing ICC profile using an OS X system."
+msgstr "OS X 시스템에서 기존의 ICC 프로파일을 가져오는 방법입니다."
+
+#. (itstool) path: page/title
+#: C/color-import-osx.page:17
+msgid "Installing an ICC profile on Apple OS X"
+msgstr "애플 OS X에 ICC 프로파일 설치하기"
+
+#. (itstool) path: page/p
+#: C/color-import-osx.page:18
+msgid ""
+"Apple OS X supports a similar scheme to Linux, in that profiles can be "
+"installed system-wide or specific to the user. System wide profiles are "
+"stored in <file>/Library/ColorSync/Profiles</file> and user-specific "
+"profiles are stored in <file>~/Library/ColorSync/Profiles</file>."
+msgstr ""
+"애플 OS X에서는 리눅스와 비슷한 형대를 제공하며, 시스템 전체 또는 사용자별로 "
+"프로파일을 설치할 수 있습니다. 시스템 전체 프로파일은 <file>/Library/"
+"ColorSync/Profiles</file>에 있으며 사용자별 프로파일은 <file>~/Library/"
+"ColorSync/Profiles</file>에 있습니다."
+
+# 주의: OS X 에서는 "색상"
+#. (itstool) path: page/p
+#: C/color-import-osx.page:24
+msgid ""
+"Use the <guiseq><gui>System Preferences</gui><gui>Displays</gui><gui>Color</"
+"gui></guiseq> tool to import the file and assign the profile to the correct "
+"device."
+msgstr ""
+"<guiseq><gui>시스템 설정</gui><gui>디스플레이</gui><gui>색상</gui></guiseq>  "
+"도구를 활용하여 파일을 가져온 후 프로파일을 올바른 장치에 할당하십시오."
