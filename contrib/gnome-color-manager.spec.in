@@ -40,6 +40,13 @@ Obsoletes: gnome-color-manager-devel <= 3.1.1
 gnome-color-manager is a session framework that makes it easy to manage, install
 and generate color profiles in the GNOME desktop.
 
+%package utils
+Summary: Extra utilities for color profiles
+Requires: %{name}-common%{?_isa} = %{version}-%{release}
+
+%description utils
+Extra utilities not normally required to calibrate.
+
 %prep
 %setup -q
 
@@ -73,9 +80,8 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %files -f %{name}.lang
 %defattr(-,root,root,-)
 %doc AUTHORS COPYING NEWS README
-%{_bindir}/gcm-*
-%{_libexecdir}/gcm-*
-%{_datadir}/appdata/*.appdata.xml
+%{_bindir}/gcm-calibrate
+%{_libexecdir}/gcm-helper-exiv
 %dir %{_datadir}/gnome-color-manager
 %dir %{_datadir}/gnome-color-manager/targets
 %dir %{_datadir}/gnome-color-manager/icons
@@ -85,10 +91,24 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %{_datadir}/gnome-color-manager/icons/*
 %{_datadir}/gnome-color-manager/figures/*
 %{_datadir}/gnome-color-manager/ti1/*
-%{_datadir}/man/man1/*.1.gz
+%{_datadir}/man/man1/gcm-calibrate.1.gz
+%{_datadir}/applications/gcm-calibrate.desktop
+
+%files utils
 %{_datadir}/icons/hicolor/*/*/*.png
 %{_datadir}/icons/hicolor/scalable/*/*.svg*
-%{_datadir}/applications/gcm-*.desktop
+%{_bindir}/gcm-import
+%{_bindir}/gcm-inspect
+%{_bindir}/gcm-picker
+%{_bindir}/gcm-viewer
+%{_datadir}/appdata/gcm-viewer.appdata.xml
+%{_datadir}/applications/gcm-import.desktop
+%{_datadir}/applications/gcm-picker.desktop
+%{_datadir}/applications/gcm-viewer.desktop
+%{_datadir}/man/man1/gcm-import.1.gz
+%{_datadir}/man/man1/gcm-inspect.1.gz
+%{_datadir}/man/man1/gcm-picker.1.gz
+%{_datadir}/man/man1/gcm-viewer.1.gz
 
 %changelog
 * #LONGDATE# Richard Hughes <richard@hughsie.com> #VERSION#-0.#BUILD##ALPHATAG#
