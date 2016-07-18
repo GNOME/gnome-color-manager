@@ -664,7 +664,8 @@ gcm_calib_add_page_para (GtkWidget *vbox, const gchar *text)
 	gtk_label_set_markup (GTK_LABEL (label), text);
 	gtk_label_set_line_wrap (GTK_LABEL (label), TRUE);
 	gtk_label_set_width_chars (GTK_LABEL (label), 40);
-	gtk_misc_set_alignment (GTK_MISC (label), 0.0f, 0.0f);
+	gtk_label_set_xalign (GTK_LABEL (label), 0.f);
+	gtk_label_set_yalign (GTK_LABEL (label), 0.f);
 
 	/* make left aligned */
 	hbox = gtk_box_new (GTK_ORIENTATION_HORIZONTAL, 0);
