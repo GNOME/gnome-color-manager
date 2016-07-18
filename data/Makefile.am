@@ -9,7 +9,7 @@ SUBDIRS = 						\
 @INTLTOOL_DESKTOP_RULE@
 desktopdir = $(datadir)/applications
 desktop_in_files =					\
-	gcm-viewer.desktop.in				\
+	org.gnome.ColorProfileViewer.desktop.in		\
 	gcm-picker.desktop.in				\
 	gcm-calibrate.desktop.in			\
 	gcm-import.desktop.in
