@@ -83,7 +83,6 @@ main (int argc, char **argv)
 	gboolean ret;
 	GOptionContext *context;
 	GtkResponseType response;
-	GtkWidget *image = NULL;
 	GtkWidget *dialog;
 	g_autoptr(CdIcc) icc = NULL;
 	g_autoptr(GError) error = NULL;
@@ -158,12 +157,6 @@ main (int argc, char **argv)
 	description = cd_icc_get_description (icc, lang, NULL);
 	copyright = cd_icc_get_copyright (icc, lang, NULL);
 
-	/* use the same icon as the color control panel */
-	image = gtk_image_new_from_icon_name ("preferences-color",
-					      GTK_ICON_SIZE_DIALOG);
-	gtk_misc_set_alignment (GTK_MISC (image), 0.5, 0.0);
-	gtk_widget_show (image);
-
 	/* create message */
 	string = g_string_new ("");
 	/* TRANSLATORS: message text */
@@ -213,7 +206,6 @@ main (int argc, char **argv)
 						 GTK_BUTTONS_CLOSE,
 						 _("Color profile is already imported"));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
-		gtk_message_dialog_set_image (GTK_MESSAGE_DIALOG (dialog), image);
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
 		gtk_dialog_add_button (GTK_DIALOG (dialog), _("Show Details"), GTK_RESPONSE_HELP);
 		response = gtk_dialog_run (GTK_DIALOG (dialog));
@@ -254,7 +246,6 @@ main (int argc, char **argv)
 					 GTK_BUTTONS_CANCEL,
 					 "%s",
 					 title);
-	gtk_message_dialog_set_image (GTK_MESSAGE_DIALOG (dialog), image);
 	gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
 	/* TRANSLATORS: button text */
