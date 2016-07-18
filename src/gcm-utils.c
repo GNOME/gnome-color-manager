@@ -34,9 +34,6 @@
 #define PK_DBUS_INTERFACE_QUERY				"org.freedesktop.PackageKit.Query"
 #define PK_DBUS_INTERFACE_MODIFY			"org.freedesktop.PackageKit.Modify"
 
-/**
- * gcm_utils_linkify:
- **/
 gchar *
 gcm_utils_linkify (const gchar *hostile_text)
 {
@@ -81,9 +78,6 @@ gcm_utils_linkify (const gchar *hostile_text)
 	return g_string_free (string, FALSE);
 }
 
-/**
- * gcm_utils_install_package:
- **/
 gboolean
 gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 {
@@ -180,9 +174,6 @@ gcm_utils_output_is_lcd (const gchar *output_name)
 	return FALSE;
 }
 
-/**
- * gcm_utils_get_profile_destination:
- **/
 GFile *
 gcm_utils_get_profile_destination (GFile *file)
 {
@@ -225,10 +216,6 @@ gcm_utils_ptr_array_to_strv (GPtrArray *array)
 	return value;
 }
 
-/**
- * gcm_gnome_help:
- * @link_id: Subsection of help file, or %NULL.
- **/
 gboolean
 gcm_gnome_help (const gchar *link_id)
 {
@@ -254,9 +241,6 @@ gcm_gnome_help (const gchar *link_id)
 	return TRUE;
 }
 
-/**
- * gcm_utils_alphanum_lcase:
- **/
 void
 gcm_utils_alphanum_lcase (gchar *data)
 {
@@ -272,9 +256,6 @@ gcm_utils_alphanum_lcase (gchar *data)
 	}
 }
 
-/**
- * gcm_utils_ensure_sensible_filename:
- **/
 void
 gcm_utils_ensure_sensible_filename (gchar *data)
 {
@@ -296,9 +277,6 @@ gcm_utils_ensure_sensible_filename (gchar *data)
 	}
 }
 
-/**
- * cd_colorspace_to_localised_string:
- **/
 const gchar *
 cd_colorspace_to_localised_string (CdColorspace colorspace)
 {
@@ -317,9 +295,6 @@ cd_colorspace_to_localised_string (CdColorspace colorspace)
 	return NULL;
 }
 
-/**
- * gcm_utils_get_pixel_format:
- **/
 static CdPixelFormat
 gcm_utils_get_pixel_format (GdkPixbuf *pixbuf)
 {
@@ -342,9 +317,6 @@ out:
 	return format;
 }
 
-/**
- * gcm_utils_image_convert:
- **/
 gboolean
 gcm_utils_image_convert (GtkImage *image,
 			 CdIcc *input,

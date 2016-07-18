@@ -55,9 +55,6 @@ enum
 	PROP_LAST
 };
 
-/**
- * dkp_gamma_get_property:
- **/
 static void
 dkp_gamma_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
@@ -84,9 +81,6 @@ dkp_gamma_get_property (GObject *object, guint prop_id, GValue *value, GParamSpe
 	}
 }
 
-/**
- * dkp_gamma_set_property:
- **/
 static void
 dkp_gamma_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
@@ -118,9 +112,6 @@ dkp_gamma_set_property (GObject *object, guint prop_id, const GValue *value, GPa
 	gtk_widget_show (GTK_WIDGET (gama));
 }
 
-/**
- * gcm_gamma_widget_class_init:
- **/
 static void
 gcm_gamma_widget_class_init (GcmGammaWidgetClass *class)
 {
@@ -162,9 +153,6 @@ gcm_gamma_widget_class_init (GcmGammaWidgetClass *class)
 							       G_PARAM_READWRITE));
 }
 
-/**
- * gcm_gamma_widget_init:
- **/
 static void
 gcm_gamma_widget_init (GcmGammaWidget *gama)
 {
@@ -182,9 +170,6 @@ gcm_gamma_widget_init (GcmGammaWidget *gama)
 	pango_context_set_base_gravity (context, PANGO_GRAVITY_AUTO);
 }
 
-/**
- * gcm_gamma_widget_finalize:
- **/
 static void
 gcm_gamma_widget_finalize (GObject *object)
 {
@@ -192,9 +177,6 @@ gcm_gamma_widget_finalize (GObject *object)
 	G_OBJECT_CLASS (gcm_gamma_widget_parent_class)->finalize (object);
 }
 
-/**
- * gcm_gamma_widget_draw_lines:
- **/
 static void
 gcm_gamma_widget_draw_lines (GcmGammaWidget *gama, cairo_t *cr)
 {
@@ -226,9 +208,6 @@ gcm_gamma_widget_draw_lines (GcmGammaWidget *gama, cairo_t *cr)
 	cairo_restore (cr);
 }
 
-/**
- * gcm_gamma_widget_draw_box:
- **/
 static void
 gcm_gamma_widget_draw_box (GcmGammaWidget *gama, cairo_t *cr)
 {
@@ -254,9 +233,6 @@ gcm_gamma_widget_draw_box (GcmGammaWidget *gama, cairo_t *cr)
 	cairo_restore (cr);
 }
 
-/**
- * gcm_gamma_widget_draw_bounding_box:
- **/
 static void
 gcm_gamma_widget_draw_bounding_box (cairo_t *cr, gint x, gint y, gint width, gint height)
 {
@@ -272,11 +248,6 @@ gcm_gamma_widget_draw_bounding_box (cairo_t *cr, gint x, gint y, gint width, gin
 	cairo_stroke (cr);
 }
 
-/**
- * gcm_gamma_widget_draw:
- *
- * Just repaint the entire gamma widget on expose.
- **/
 static gboolean
 gcm_gamma_widget_draw (GtkWidget *gamma_widget, cairo_t *cr)
 {
@@ -302,10 +273,6 @@ gcm_gamma_widget_draw (GtkWidget *gamma_widget, cairo_t *cr)
 	return FALSE;
 }
 
-/**
- * gcm_gamma_widget_new:
- * Return value: A new GcmGammaWidget object.
- **/
 GtkWidget *
 gcm_gamma_widget_new (void)
 {

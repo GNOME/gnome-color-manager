@@ -55,9 +55,6 @@ enum {
 	GCM_PREFS_COMBO_COLUMN_LAST
 };
 
-/**
- * gcm_picker_set_pixbuf_color:
- **/
 static void
 gcm_picker_set_pixbuf_color (GdkPixbuf *pixbuf, gchar red, gchar green, gchar blue)
 {
@@ -82,9 +79,6 @@ gcm_picker_set_pixbuf_color (GdkPixbuf *pixbuf, gchar red, gchar green, gchar bl
 	}
 }
 
-/**
- * gcm_picker_refresh_results:
- **/
 static void
 gcm_picker_refresh_results (GcmPickerPrivate *priv)
 {
@@ -234,9 +228,6 @@ gcm_picker_refresh_results (GcmPickerPrivate *priv)
 	gtk_image_set_from_pixbuf (image, pixbuf);
 }
 
-/**
- * gcm_picker_got_results:
- **/
 static void
 gcm_picker_got_results (GcmPickerPrivate *priv)
 {
@@ -251,9 +242,6 @@ gcm_picker_got_results (GcmPickerPrivate *priv)
 	priv->done_measure = TRUE;
 }
 
-/**
- * gcm_picker_unlock_timeout_cb:
- **/
 static gboolean
 gcm_picker_unlock_timeout_cb (gpointer user_data)
 {
@@ -267,9 +255,6 @@ gcm_picker_unlock_timeout_cb (gpointer user_data)
 	return FALSE;
 }
 
-/**
- * gcm_picker_measure_cb:
- **/
 static void
 gcm_picker_measure_cb (GtkWidget *widget, gpointer data)
 {
@@ -329,9 +314,6 @@ out_unlock:
 	gcm_picker_got_results (priv);
 }
 
-/**
- * gcm_picker_sensor_client_setup_ui:
- **/
 static void
 gcm_picker_sensor_client_setup_ui (GcmPickerPrivate *priv)
 {
@@ -389,9 +371,6 @@ out:
 	gtk_widget_set_visible (priv->info_bar_hardware, !ret);
 }
 
-/**
- * gcm_picker_sensor_client_changed_cb:
- **/
 static void
 gcm_picker_sensor_client_changed_cb (CdClient *_client,
 				     CdSensor *_sensor,
@@ -400,9 +379,6 @@ gcm_picker_sensor_client_changed_cb (CdClient *_client,
 	gcm_picker_sensor_client_setup_ui (priv);
 }
 
-/**
- * gcm_window_set_parent_xid:
- **/
 static void
 gcm_window_set_parent_xid (GtkWindow *window, guint32 _xid)
 {
@@ -419,18 +395,12 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 _xid)
 	gdk_window_set_transient_for (our_window, parent_window);
 }
 
-/**
- * gcm_picker_error_cb:
- **/
 static void
 gcm_picker_error_cb (cmsContext ContextID, cmsUInt32Number errorcode, const char *text)
 {
 	g_warning ("LCMS error %i: %s", errorcode, text);
 }
 
-/**
- * gcm_prefs_space_combo_changed_cb:
- **/
 static void
 gcm_prefs_space_combo_changed_cb (GtkWidget *widget, GcmPickerPrivate *priv)
 {
@@ -456,9 +426,6 @@ gcm_prefs_space_combo_changed_cb (GtkWidget *widget, GcmPickerPrivate *priv)
 	gcm_picker_refresh_results (priv);
 }
 
-/**
- * gcm_prefs_set_combo_simple_text:
- **/
 static void
 gcm_prefs_set_combo_simple_text (GtkWidget *combo_box)
 {
@@ -482,9 +449,6 @@ gcm_prefs_set_combo_simple_text (GtkWidget *combo_box)
 					NULL);
 }
 
-/**
- * gcm_prefs_combobox_add_profile:
- **/
 static void
 gcm_prefs_combobox_add_profile (GtkWidget *widget, CdProfile *profile, GtkTreeIter *iter)
 {
@@ -506,9 +470,6 @@ gcm_prefs_combobox_add_profile (GtkWidget *widget, CdProfile *profile, GtkTreeIt
 			    -1);
 }
 
-/**
- * gcm_prefs_setup_space_combobox:
- **/
 static void
 gcm_prefs_setup_space_combobox (GcmPickerPrivate *priv, GtkWidget *widget)
 {
@@ -625,9 +586,6 @@ gcm_prefs_setup_space_combobox (GcmPickerPrivate *priv, GtkWidget *widget)
 	}
 }
 
-/**
- * gcm_picker_activate_cb:
- **/
 static void
 gcm_picker_activate_cb (GApplication *application, GcmPickerPrivate *priv)
 {
@@ -636,9 +594,6 @@ gcm_picker_activate_cb (GApplication *application, GcmPickerPrivate *priv)
 	gtk_window_present (window);
 }
 
-/**
- * gcm_picker_startup_cb:
- **/
 static void
 gcm_picker_startup_cb (GApplication *application, GcmPickerPrivate *priv)
 {
@@ -725,9 +680,6 @@ gcm_picker_startup_cb (GApplication *application, GcmPickerPrivate *priv)
 	gtk_widget_show (main_window);
 }
 
-/**
- * main:
- **/
 int
 main (int argc, char *argv[])
 {

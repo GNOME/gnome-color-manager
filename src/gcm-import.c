@@ -32,9 +32,6 @@
 #include "gcm-utils.h"
 #include "gcm-debug.h"
 
-/**
- * gcm_import_show_details:
- **/
 static gboolean
 gcm_import_show_details (GtkWindow *window,
 			 gboolean is_profile_id,
@@ -68,9 +65,6 @@ gcm_import_show_details (GtkWindow *window,
 	return ret;
 }
 
-/**
- * main:
- **/
 int
 main (int argc, char **argv)
 {

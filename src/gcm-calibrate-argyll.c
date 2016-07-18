@@ -55,11 +55,6 @@ typedef enum {
 	GCM_CALIBRATE_ARGYLL_STATE_LAST
 } GcmCalibrateArgyllState;
 
-/**
- * GcmCalibrateArgyllPrivate:
- *
- * Private #GcmCalibrateArgyll data
- **/
 struct _GcmCalibrateArgyllPrivate
 {
 	GMainLoop			*loop;
@@ -80,9 +75,6 @@ struct _GcmCalibrateArgyllPrivate
 
 G_DEFINE_TYPE (GcmCalibrateArgyll, gcm_calibrate_argyll, GCM_TYPE_CALIBRATE)
 
-/**
- * gcm_calibrate_argyll_get_quality_arg:
- **/
 static const gchar *
 gcm_calibrate_argyll_get_quality_arg (GcmCalibrateArgyll *calibrate_argyll)
 {
@@ -110,9 +102,6 @@ gcm_calibrate_argyll_get_quality_arg (GcmCalibrateArgyll *calibrate_argyll)
 	return "-qm";
 }
 
-/**
- * gcm_calibrate_argyll_get_tool_filename:
- **/
 static gchar *
 gcm_calibrate_argyll_get_tool_filename (const gchar *command,
 					GError **error)
@@ -151,9 +140,6 @@ out:
 	return filename;
 }
 
-/**
- * gcm_calibrate_argyll_get_display:
- **/
 static guint
 gcm_calibrate_argyll_get_display (const gchar *output_name,
 				  GError **error)
@@ -239,9 +225,6 @@ out:
 	return display;
 }
 
-/**
- * gcm_calibrate_argyll_get_display_kind:
- **/
 static gchar
 gcm_calibrate_argyll_get_display_kind (GcmCalibrateArgyll *calibrate_argyll)
 {
@@ -268,9 +251,6 @@ gcm_calibrate_argyll_get_display_kind (GcmCalibrateArgyll *calibrate_argyll)
 	return '\0';
 }
 
-/**
- * gcm_calibrate_argyll_get_sensor_test_window_size:
- **/
 static const gchar *
 gcm_calibrate_argyll_get_sensor_test_window_size (GcmCalibrateArgyll *calibrate_argyll)
 {
@@ -294,9 +274,6 @@ gcm_calibrate_argyll_get_sensor_test_window_size (GcmCalibrateArgyll *calibrate_
 	return "0.5,0.5,1.0,1.0";
 }
 
-/**
- * gcm_calibrate_argyll_debug_argv:
- **/
 static void
 gcm_calibrate_argyll_debug_argv (const gchar *program, gchar **argv)
 {
@@ -306,9 +283,6 @@ gcm_calibrate_argyll_debug_argv (const gchar *program, gchar **argv)
 	g_free (join);
 }
 
-/**
- * gcm_calibrate_argyll_fork_command:
- **/
 static gboolean
 gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll,
 				   gchar **argv,
@@ -356,9 +330,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calibrate_argyll_display_neutralise:
- **/
 static gboolean
 gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll,
 					 GError **error)
@@ -475,9 +446,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calibrate_argyll_display_read_chart:
- **/
 static gboolean
 gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll,
 					 GError **error)
@@ -564,9 +532,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calibrate_argyll_display_draw_and_measure:
- **/
 static gboolean
 gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_argyll,
 					       GError **error)
@@ -680,9 +645,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calibrate_argyll_display_generate_profile:
- **/
 static gboolean
 gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_argyll,
 					       GError **error)
@@ -786,9 +748,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calibrate_argyll_reference_kind_to_filename:
- **/
 static const gchar *
 gcm_calibrate_argyll_reference_kind_to_filename (GcmCalibrateReferenceKind kind)
 {
@@ -816,9 +775,6 @@ gcm_calibrate_argyll_reference_kind_to_filename (GcmCalibrateReferenceKind kind)
 	return NULL;
 }
 
-/**
- * gcm_utils_mkdir_and_copy:
- **/
 static gboolean
 gcm_utils_mkdir_and_copy (GFile *source,
 			  GFile *destination,
@@ -846,9 +802,6 @@ gcm_utils_mkdir_and_copy (GFile *source,
 			    error);
 }
 
-/**
- * gcm_calibrate_argyll_device_copy:
- **/
 static gboolean
 gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll,
 				  GError **error)
@@ -916,9 +869,6 @@ gcm_calibrate_argyll_device_copy (GcmCalibrateArgyll *calibrate_argyll,
         return TRUE;
 }
 
-/**
- * gcm_calibrate_argyll_device_measure:
- **/
 static gboolean
 gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll,
 				     GError **error)
@@ -1010,9 +960,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calibrate_argyll_device_generate_profile:
- **/
 static gboolean
 gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argyll,
 					      GError **error)
@@ -1122,9 +1069,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calibrate_argyll_set_filename_result:
- **/
 static gboolean
 gcm_calibrate_argyll_set_filename_result (GcmCalibrateArgyll *calibrate_argyll,
 					  GError **error)
@@ -1173,9 +1117,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calibrate_argyll_remove_temp_files:
- **/
 static gboolean
 gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll,
 					GError **error)
@@ -1225,9 +1166,6 @@ gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll,
 	return ret;
 }
 
-/**
- * gcm_calibrate_argyll_display:
- **/
 static gboolean
 gcm_calibrate_argyll_display (GcmCalibrate *calibrate,
 			      CdDevice *device,
@@ -1298,9 +1236,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calibrate_argyll_interaction:
- **/
 static void
 gcm_calibrate_argyll_interaction (GcmCalibrate *calibrate, GtkResponseType response)
 {
@@ -1357,9 +1292,6 @@ out:
 	return;
 }
 
-/**
- * gcm_calibrate_argyll_get_sensor_target:
- **/
 static const gchar *
 gcm_calibrate_argyll_get_sensor_target (GcmCalibrateArgyll *calibrate_argyll)
 {
@@ -1386,9 +1318,6 @@ gcm_calibrate_argyll_get_sensor_target (GcmCalibrateArgyll *calibrate_argyll)
 	return NULL;
 }
 
-/**
- * gcm_calibrate_argyll_printer_generate_targets:
- **/
 static gboolean
 gcm_calibrate_argyll_printer_generate_targets (GcmCalibrateArgyll *calibrate_argyll,
 					       gdouble width,
@@ -1495,9 +1424,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calibrate_argyll_get_enabled:
- **/
 static gboolean
 gcm_calibrate_argyll_get_enabled (GcmCalibrate *calibrate)
 {
@@ -1513,9 +1439,6 @@ gcm_calibrate_argyll_get_enabled (GcmCalibrate *calibrate)
 	return TRUE;
 }
 
-/**
- * gcm_calibrate_argyll_render_cb:
- **/
 static GPtrArray *
 gcm_calibrate_argyll_render_cb (GcmPrint *print,
 				GtkPageSetup *page_setup,
@@ -1574,9 +1497,6 @@ out:
 	return array;
 }
 
-/**
- * gcm_calibrate_argyll_set_device_from_ti2:
- **/
 static gboolean
 gcm_calibrate_argyll_set_device_from_ti2 (GcmCalibrate *calibrate,
 					  const gchar *filename,
@@ -1631,9 +1551,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calibrate_argyll_get_paper_size:
- **/
 static GtkPaperSize *
 gcm_calibrate_argyll_get_paper_size (GcmCalibrate *calibrate, GtkWindow *window)
 {
@@ -1650,9 +1567,6 @@ gcm_calibrate_argyll_get_paper_size (GcmCalibrate *calibrate, GtkWindow *window)
 	return gtk_page_setup_get_paper_size (page_setup);
 }
 
-/**
- * gcm_calibrate_argyll_printer_convert_jpeg:
- **/
 static gboolean
 gcm_calibrate_argyll_printer_convert_jpeg (GcmCalibrateArgyll *calibrate_argyll,
 					   GError **error)
@@ -1706,9 +1620,6 @@ gcm_calibrate_argyll_printer_convert_jpeg (GcmCalibrateArgyll *calibrate_argyll,
 	return TRUE;
 }
 
-/**
- * gcm_calibrate_argyll_printer:
- **/
 static gboolean
 gcm_calibrate_argyll_printer (GcmCalibrate *calibrate,
 			      CdDevice *device,
@@ -1848,9 +1759,6 @@ gcm_calibrate_argyll_printer (GcmCalibrate *calibrate,
 	return TRUE;
 }
 
-/**
- * gcm_calibrate_argyll_pixbuf_remove_alpha:
- **/
 static GdkPixbuf *
 gcm_calibrate_argyll_pixbuf_remove_alpha (const GdkPixbuf *pixbuf)
 {
@@ -1885,9 +1793,6 @@ out:
 	return new_pixbuf;
 }
 
-/**
- * gcm_calibrate_argyll_check_and_remove_alpha:
- **/
 static gboolean
 gcm_calibrate_argyll_check_and_remove_alpha (GcmCalibrateArgyll *calibrate_argyll,
 					     GError **error)
@@ -1932,9 +1837,6 @@ gcm_calibrate_argyll_check_and_remove_alpha (GcmCalibrateArgyll *calibrate_argyl
 	return gdk_pixbuf_save (pixbuf_new, reference_image, "tiff", error, NULL);
 }
 
-/**
- * gcm_calibrate_argyll_device:
- **/
 static gboolean
 gcm_calibrate_argyll_device (GcmCalibrate *calibrate,
 			     CdDevice *device,
@@ -2005,9 +1907,6 @@ out:
 
 static void gcm_calibrate_argyll_flush_vte (GcmCalibrateArgyll *calibrate_argyll);
 
-/**
- * gcm_calibrate_argyll_exit_cb:
- **/
 static void
 gcm_calibrate_argyll_exit_cb (VteTerminal *terminal,
 			      gint exit_status,
@@ -2031,9 +1930,6 @@ gcm_calibrate_argyll_exit_cb (VteTerminal *terminal,
 	}
 }
 
-/**
- * gcm_calibrate_argyll_timeout_cb:
- **/
 static gboolean
 gcm_calibrate_argyll_timeout_cb (GcmCalibrateArgyll *calibrate_argyll)
 {
@@ -2041,9 +1937,6 @@ gcm_calibrate_argyll_timeout_cb (GcmCalibrateArgyll *calibrate_argyll)
 	return FALSE;
 }
 
-/**
- * gcm_calibrate_argyll_interaction_attach:
- **/
 static void
 gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 {
@@ -2073,9 +1966,6 @@ out:
 	return;
 }
 
-/**
- * gcm_calibrate_argyll_interaction_calibrate:
- **/
 static void
 gcm_calibrate_argyll_interaction_calibrate (GcmCalibrateArgyll *calibrate_argyll)
 {
@@ -2096,9 +1986,6 @@ gcm_calibrate_argyll_interaction_calibrate (GcmCalibrateArgyll *calibrate_argyll
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
 }
 
-/**
- * gcm_calibrate_argyll_interaction_surface:
- **/
 static void
 gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 {
@@ -2118,11 +2005,6 @@ gcm_calibrate_argyll_interaction_surface (GcmCalibrateArgyll *calibrate_argyll)
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_WAITING_FOR_STDIN;
 }
 
-/**
- * gcm_calibrate_argyll_process_output_cmd:
- *
- * Return value: if FALSE then abort processing input
- **/
 static gboolean
 gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 					 const gchar *line)
@@ -2441,9 +2323,6 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 #endif
 
 #ifdef HAVE_VTE
-/**
- * gcm_calibrate_argyll_selection_func_cb:
- **/
 static gboolean
 gcm_calibrate_argyll_selection_func_cb (VteTerminal *terminal,
 					glong column,
@@ -2454,9 +2333,6 @@ gcm_calibrate_argyll_selection_func_cb (VteTerminal *terminal,
 	return TRUE;
 }
 
-/**
- * gcm_calibrate_argyll_flush_vte:
- **/
 static void
 gcm_calibrate_argyll_flush_vte (GcmCalibrateArgyll *calibrate_argyll)
 {
@@ -2493,9 +2369,6 @@ gcm_calibrate_argyll_flush_vte (GcmCalibrateArgyll *calibrate_argyll)
 	priv->vte_previous_col = col;
 }
 
-/**
- * gcm_calibrate_argyll_cursor_moved_cb:
- **/
 static void
 gcm_calibrate_argyll_cursor_moved_cb (VteTerminal *terminal,
 				      GcmCalibrateArgyll *calibrate_argyll)
@@ -2505,9 +2378,6 @@ gcm_calibrate_argyll_cursor_moved_cb (VteTerminal *terminal,
 
 #endif
 
-/**
- * gcm_calibrate_argyll_status_changed_cb:
- **/
 static void
 gcm_calibrate_argyll_status_changed_cb (GcmPrint *print,
 					GtkPrintStatus status,
@@ -2558,9 +2428,6 @@ gcm_calibrate_argyll_status_changed_cb (GcmPrint *print,
 	}
 }
 
-/**
- * gcm_calibrate_argyll_class_init:
- **/
 static void
 gcm_calibrate_argyll_class_init (GcmCalibrateArgyllClass *klass)
 {
@@ -2578,9 +2445,6 @@ gcm_calibrate_argyll_class_init (GcmCalibrateArgyllClass *klass)
 	g_type_class_add_private (klass, sizeof (GcmCalibrateArgyllPrivate));
 }
 
-/**
- * gcm_calibrate_argyll_init:
- **/
 static void
 gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 {
@@ -2607,9 +2471,6 @@ gcm_calibrate_argyll_init (GcmCalibrateArgyll *calibrate_argyll)
 #endif
 }
 
-/**
- * gcm_calibrate_argyll_finalize:
- **/
 static void
 gcm_calibrate_argyll_finalize (GObject *object)
 {
@@ -2644,11 +2505,6 @@ gcm_calibrate_argyll_finalize (GObject *object)
 	G_OBJECT_CLASS (gcm_calibrate_argyll_parent_class)->finalize (object);
 }
 
-/**
- * gcm_calibrate_argyll_new:
- *
- * Return value: a new GcmCalibrateArgyll object.
- **/
 GcmCalibrate *
 gcm_calibrate_argyll_new (void)
 {

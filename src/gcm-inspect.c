@@ -29,9 +29,6 @@
 #include "gcm-utils.h"
 #include "gcm-debug.h"
 
-/**
- * gcm_inspect_print_data_info:
- **/
 static gboolean
 gcm_inspect_print_data_info (const gchar *title, const guint8 *data, gsize length)
 {
@@ -156,9 +153,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_inspect_show_x11_atoms:
- **/
 static gboolean
 gcm_inspect_show_x11_atoms (void)
 {
@@ -199,9 +193,6 @@ gcm_inspect_show_x11_atoms (void)
 	return ret;
 }
 
-/**
- * gcm_inspect_show_profiles_for_file:
- **/
 static gboolean
 gcm_inspect_show_profiles_for_file (const gchar *filename)
 {
@@ -268,9 +259,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_inspect_show_profile_for_window:
- **/
 static gboolean
 gcm_inspect_show_profile_for_window (guint xid)
 {
@@ -326,9 +314,6 @@ gcm_inspect_show_profile_for_window (guint xid)
 	return TRUE;
 }
 
-/**
- * main:
- **/
 int
 main (int argc, char **argv)
 {

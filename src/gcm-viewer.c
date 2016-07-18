@@ -90,9 +90,6 @@ enum {
 #define GCM_VIEWER_TREEVIEW_WIDTH		350 /* px */
 #define GCM_VIEWER_MAX_EXAMPLE_IMAGES		4
 
-/**
- * gcm_viewer_error_dialog:
- **/
 static void
 gcm_viewer_error_dialog (GcmViewerPrivate *viewer, const gchar *title, const gchar *message)
 {
@@ -107,9 +104,6 @@ gcm_viewer_error_dialog (GcmViewerPrivate *viewer, const gchar *title, const gch
 	gtk_widget_destroy (dialog);
 }
 
-/**
- * gcm_viewer_set_example_image:
- **/
 static void
 gcm_viewer_set_example_image (GcmViewerPrivate *viewer, GtkImage *image)
 {
@@ -128,9 +122,6 @@ gcm_viewer_set_example_image (GcmViewerPrivate *viewer, GtkImage *image)
 	gtk_image_set_from_pixbuf (image, pixbuf);
 }
 
-/**
- * gcm_viewer_image_next_cb:
- **/
 static void
 gcm_viewer_image_next_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 {
@@ -141,9 +132,6 @@ gcm_viewer_image_next_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 	gcm_viewer_set_example_image (viewer, GTK_IMAGE (viewer->preview_widget_output));
 }
 
-/**
- * gcm_viewer_image_prev_cb:
- **/
 static void
 gcm_viewer_image_prev_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 {
@@ -154,9 +142,6 @@ gcm_viewer_image_prev_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 	gcm_viewer_set_example_image (viewer, GTK_IMAGE (viewer->preview_widget_output));
 }
 
-/**
- * gcm_viewer_profile_kind_to_icon_name:
- **/
 static const gchar *
 gcm_viewer_profile_kind_to_icon_name (CdProfileKind kind)
 {
@@ -175,9 +160,6 @@ gcm_viewer_profile_kind_to_icon_name (CdProfileKind kind)
 	return "image-missing";
 }
 
-/**
- * gcm_viewer_profile_get_sort_string:
- **/
 static const gchar *
 gcm_viewer_profile_get_sort_string (CdProfile *profile)
 {
@@ -217,9 +199,6 @@ gcm_viewer_profile_get_sort_string (CdProfile *profile)
 	return sort;
 }
 
-/**
- * gcm_viewer_update_profile_connect_cb:
- **/
 static void
 gcm_viewer_update_profile_connect_cb (GObject *source_object,
 				      GAsyncResult *res,
@@ -277,9 +256,6 @@ gcm_viewer_update_profile_connect_cb (GObject *source_object,
 	}
 }
 
-/**
- * gcm_viewer_update_get_profiles_cb:
- **/
 static void
 gcm_viewer_update_get_profiles_cb (GObject *source_object,
 				   GAsyncResult *res,
@@ -317,9 +293,6 @@ gcm_viewer_update_get_profiles_cb (GObject *source_object,
 	}
 }
 
-/**
- * gcm_viewer_update_profile_list:
- **/
 static void
 gcm_viewer_update_profile_list (GcmViewerPrivate *viewer)
 {
@@ -332,9 +305,6 @@ gcm_viewer_update_profile_list (GcmViewerPrivate *viewer)
 				viewer);
 }
 
-/**
- * gcm_viewer_profile_delete_cb:
- **/
 static void
 gcm_viewer_profile_delete_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 {
@@ -387,9 +357,6 @@ gcm_viewer_profile_delete_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 	}
 }
 
-/**
- * gcm_viewer_file_chooser_get_icc_profile:
- **/
 static GFile *
 gcm_viewer_file_chooser_get_icc_profile (GcmViewerPrivate *viewer)
 {
@@ -443,9 +410,6 @@ gcm_viewer_file_chooser_get_icc_profile (GcmViewerPrivate *viewer)
 	return file;
 }
 
-/**
- * gcm_viewer_profile_import_file:
- **/
 static gboolean
 gcm_viewer_profile_import_file (GcmViewerPrivate *viewer, GFile *file)
 {
@@ -465,9 +429,6 @@ gcm_viewer_profile_import_file (GcmViewerPrivate *viewer, GFile *file)
 	return TRUE;
 }
 
-/**
- * gcm_viewer_profile_import_cb:
- **/
 static void
 gcm_viewer_profile_import_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 {
@@ -484,9 +445,6 @@ gcm_viewer_profile_import_cb (GtkWidget *widget, GcmViewerPrivate *viewer)
 	gcm_viewer_profile_import_file (viewer, file);
 }
 
-/**
- * gcm_viewer_drag_data_received_cb:
- **/
 static void
 gcm_viewer_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint _time, GcmViewerPrivate *viewer)
 {
@@ -529,9 +487,6 @@ out:
 	g_strfreev (filenames);
 }
 
-/**
- * gcm_window_set_parent_xid:
- **/
 static void
 gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
 {
@@ -559,9 +514,6 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
 	gtk_window_set_title (window, "");
 }
 
-/**
- * gcm_viewer_add_profiles_columns:
- **/
 static void
 gcm_viewer_add_profiles_columns (GcmViewerPrivate *viewer, GtkTreeView *treeview)
 {
@@ -595,9 +547,6 @@ gcm_viewer_add_profiles_columns (GcmViewerPrivate *viewer, GtkTreeView *treeview
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
 
-/**
- * gcm_viewer_profile_kind_to_string:
- **/
 static gchar *
 gcm_viewer_profile_kind_to_string (CdProfileKind kind)
 {
@@ -633,9 +582,6 @@ gcm_viewer_profile_kind_to_string (CdProfileKind kind)
 	return _("Unknown");
 }
 
-/**
- * gcm_viewer_profile_colorspace_to_string:
- **/
 static gchar *
 gcm_viewer_profile_colorspace_to_string (CdColorspace colorspace)
 {
@@ -683,9 +629,6 @@ gcm_viewer_profile_colorspace_to_string (CdColorspace colorspace)
 	return _("Unknown");
 }
 
-/**
- * gcm_viewer_add_named_colors:
- **/
 static gboolean
 gcm_viewer_add_named_colors (GcmViewerPrivate *viewer, CdIcc *icc)
 {
@@ -803,9 +746,6 @@ gcm_viewer_is_blacklisted_metadata_key (const gchar *key)
 	return TRUE;
 }
 
-/**
- * gcm_viewer_add_metadata:
- **/
 static gboolean
 gcm_viewer_add_metadata (GcmViewerPrivate *viewer,
 			 CdProfile *profile)
@@ -852,9 +792,6 @@ gcm_viewer_add_metadata (GcmViewerPrivate *viewer,
 	return TRUE;
 }
 
-/**
- * cd_icc_warning_to_string:
- **/
 static const gchar *
 cd_icc_warning_to_string (CdProfileWarning kind_enum)
 {
@@ -912,9 +849,6 @@ cd_icc_warning_to_string (CdProfileWarning kind_enum)
 	return kind;
 }
 
-/**
- * gcm_viewer_set_profile:
- **/
 static void
 gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 {
@@ -1203,9 +1137,6 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	gtk_widget_set_visible (widget, show_section_from);
 }
 
-/**
- * gcm_viewer_profiles_treeview_clicked_cb:
- **/
 static void
 gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection,
 					 GcmViewerPrivate *viewer)
@@ -1232,9 +1163,6 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection,
 	g_object_unref (profile);
 }
 
-/**
- * gcm_viewer_client_profile_added_cb:
- **/
 static void
 gcm_viewer_client_profile_added_cb (CdClient *client,
 				    CdProfile *profile,
@@ -1245,9 +1173,6 @@ gcm_viewer_client_profile_added_cb (CdClient *client,
 	gcm_viewer_update_profile_list (viewer);
 }
 
-/**
- * gcm_viewer_client_profile_removed_cb:
- **/
 static void
 gcm_viewer_client_profile_removed_cb (CdClient *client,
 				      CdProfile *profile,
@@ -1258,9 +1183,6 @@ gcm_viewer_client_profile_removed_cb (CdClient *client,
 	gcm_viewer_update_profile_list (viewer);
 }
 
-/**
- * gcm_viewer_setup_drag_and_drop:
- **/
 static void
 gcm_viewer_setup_drag_and_drop (GtkWidget *widget)
 {
@@ -1275,9 +1197,6 @@ gcm_viewer_setup_drag_and_drop (GtkWidget *widget)
 	g_free (entry.target);
 }
 
-/**
- * gcm_viewer_activate_cb:
- **/
 static void
 gcm_viewer_activate_cb (GApplication *application, GcmViewerPrivate *viewer)
 {
@@ -1347,18 +1266,12 @@ gcm_viewer_add_metadata_columns (GcmViewerPrivate *viewer,
 	gtk_tree_view_column_set_expand (column, TRUE);
 }
 
-/**
- * gcm_viewer_named_color_treeview_clicked:
- **/
 static void
 gcm_viewer_named_color_treeview_clicked (GtkTreeSelection *selection, GcmViewerPrivate *viewer)
 {
 	g_debug ("named color changed");
 }
 
-/**
- * gcm_viewer_show_single_profile_by_filename:
- **/
 static void
 gcm_viewer_show_single_profile_by_filename (GcmViewerPrivate *viewer,
 					    const gchar *filename)
@@ -1419,9 +1332,6 @@ gcm_viewer_show_single_profile_by_filename (GcmViewerPrivate *viewer,
 	gcm_viewer_set_profile (viewer, profile);
 }
 
-/**
- * gcm_viewer_show_single_profile_by_id:
- **/
 static void
 gcm_viewer_show_single_profile_by_id (GcmViewerPrivate *viewer,
 				      const gchar *id)
@@ -1443,9 +1353,6 @@ gcm_viewer_show_single_profile_by_id (GcmViewerPrivate *viewer,
 	gcm_viewer_set_profile (viewer, profile);
 }
 
-/**
- * gcm_viewer_startup_cb:
- **/
 static void
 gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 {
@@ -1693,9 +1600,6 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 	gcm_viewer_update_profile_list (viewer);
 }
 
-/**
- * main:
- **/
 int
 main (int argc, char **argv)
 {

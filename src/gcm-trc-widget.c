@@ -54,9 +54,6 @@ enum
 	PROP_LAST
 };
 
-/**
- * gcm_trc_widget_get_property:
- **/
 static void
 gcm_trc_widget_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
@@ -71,9 +68,6 @@ gcm_trc_widget_get_property (GObject *object, guint prop_id, GValue *value, GPar
 	}
 }
 
-/**
- * gcm_trc_widget_set_property:
- **/
 static void
 gcm_trc_widget_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
@@ -98,9 +92,6 @@ gcm_trc_widget_set_property (GObject *object, guint prop_id, const GValue *value
 	gtk_widget_show (GTK_WIDGET (trc));
 }
 
-/**
- * gcm_trc_widget_class_init:
- **/
 static void
 gcm_trc_widget_class_init (GcmTrcWidgetClass *class)
 {
@@ -127,9 +118,6 @@ gcm_trc_widget_class_init (GcmTrcWidgetClass *class)
 							     G_PARAM_WRITABLE));
 }
 
-/**
- * gcm_trc_widget_init:
- **/
 static void
 gcm_trc_widget_init (GcmTrcWidget *trc)
 {
@@ -150,9 +138,6 @@ gcm_trc_widget_init (GcmTrcWidget *trc)
 	pango_font_description_free (desc);
 }
 
-/**
- * gcm_trc_widget_finalize:
- **/
 static void
 gcm_trc_widget_finalize (GObject *object)
 {
@@ -164,11 +149,6 @@ gcm_trc_widget_finalize (GObject *object)
 	G_OBJECT_CLASS (gcm_trc_widget_parent_class)->finalize (object);
 }
 
-/**
- * gcm_trc_widget_draw_grid:
- *
- * Draw the 10x10 dotted grid onto the trc.
- **/
 static void
 gcm_trc_widget_draw_grid (GcmTrcWidget *trc, cairo_t *cr)
 {
@@ -202,9 +182,6 @@ gcm_trc_widget_draw_grid (GcmTrcWidget *trc, cairo_t *cr)
 	cairo_restore (cr);
 }
 
-/**
- * gcm_trc_widget_map_to_display:
- **/
 static void
 gcm_trc_widget_map_to_display (GcmTrcWidget *trc, gdouble x, gdouble y, gdouble *x_retval, gdouble *y_retval)
 {
@@ -214,9 +191,6 @@ gcm_trc_widget_map_to_display (GcmTrcWidget *trc, gdouble x, gdouble y, gdouble 
 	*y_retval = ((priv->chart_height - 1) - y * (priv->chart_height - 1)) - priv->y_offset;
 }
 
-/**
- * gcm_trc_widget_draw_line:
- **/
 static void
 gcm_trc_widget_draw_line (GcmTrcWidget *trc, cairo_t *cr)
 {
@@ -292,9 +266,6 @@ gcm_trc_widget_draw_line (GcmTrcWidget *trc, cairo_t *cr)
 	cairo_restore (cr);
 }
 
-/**
- * gcm_trc_widget_draw_bounding_box:
- **/
 static void
 gcm_trc_widget_draw_bounding_box (cairo_t *cr, gint x, gint y, gint width, gint height)
 {
@@ -310,11 +281,6 @@ gcm_trc_widget_draw_bounding_box (cairo_t *cr, gint x, gint y, gint width, gint 
 	cairo_stroke (cr);
 }
 
-/**
- * gcm_trc_widget_draw_trc:
- *
- * Draw the complete trc, with the box, the grid, the horseshoe and the shading.
- **/
 static void
 gcm_trc_widget_draw_trc (GtkWidget *trc_widget, cairo_t *cr)
 {
@@ -343,11 +309,6 @@ gcm_trc_widget_draw_trc (GtkWidget *trc_widget, cairo_t *cr)
 	cairo_restore (cr);
 }
 
-/**
- * gcm_trc_widget_draw:
- *
- * Just repaint the entire trc widget on expose.
- **/
 static gboolean
 gcm_trc_widget_draw (GtkWidget *trc, cairo_t *cr)
 {
@@ -355,10 +316,6 @@ gcm_trc_widget_draw (GtkWidget *trc, cairo_t *cr)
 	return FALSE;
 }
 
-/**
- * gcm_trc_widget_new:
- * Return value: A new GcmTrcWidget object.
- **/
 GtkWidget *
 gcm_trc_widget_new (void)
 {

@@ -135,10 +135,6 @@ gcm_cell_renderer_color_set_property (GObject *object, guint param_id,
 	}
 }
 
-/**
- * gcm_cell_renderer_finalize:
- * @object: The object to finalize
- **/
 static void
 gcm_cell_renderer_finalize (GObject *object)
 {
@@ -175,18 +171,12 @@ gcm_cell_renderer_color_class_init (GcmCellRendererColorClass *class)
 					 G_PARAM_READWRITE));
 }
 
-/**
- * gcm_cell_renderer_color_init:
- **/
 static void
 gcm_cell_renderer_color_init (GcmCellRendererColor *renderer)
 {
 	renderer->color = cd_color_lab_new ();
 }
 
-/**
- * gcm_cell_renderer_color_new:
- **/
 GtkCellRenderer *
 gcm_cell_renderer_color_new (void)
 {

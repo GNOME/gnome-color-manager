@@ -30,11 +30,6 @@
 
 static void     gcm_exif_finalize	(GObject     *object);
 
-/**
- * GcmExifPrivate:
- *
- * Private #GcmExif data
- **/
 typedef struct
 {
 	gchar				*manufacturer;
@@ -55,9 +50,6 @@ enum {
 G_DEFINE_TYPE_WITH_PRIVATE (GcmExif, gcm_exif, G_TYPE_OBJECT)
 #define GET_PRIVATE(o) (gcm_exif_get_instance_private (o))
 
-/**
- * gcm_exif_parse_tiff:
- **/
 static gboolean
 gcm_exif_parse_tiff (GcmExif *exif, const gchar *filename, GError **error)
 {
@@ -113,9 +105,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_exif_parse_jpeg:
- **/
 static gboolean
 gcm_exif_parse_jpeg (GcmExif *exif, const gchar *filename, GError **error)
 {
@@ -190,9 +179,6 @@ out:
 }
 
 #ifdef HAVE_EXIV
-/**
- * gcm_exif_parse_exiv:
- **/
 static gboolean
 gcm_exif_parse_exiv (GcmExif *exif, const gchar *filename, GError **error)
 {
@@ -255,9 +241,6 @@ gcm_exif_parse_exiv (GcmExif *exif, const gchar *filename, GError **error)
 }
 #endif
 
-/**
- * gcm_exif_parse:
- **/
 gboolean
 gcm_exif_parse (GcmExif *exif, GFile *file, GError **error)
 {
@@ -311,9 +294,6 @@ gcm_exif_parse (GcmExif *exif, GFile *file, GError **error)
 	return FALSE;
 }
 
-/**
- * gcm_exif_get_manufacturer:
- **/
 const gchar *
 gcm_exif_get_manufacturer (GcmExif *exif)
 {
@@ -321,9 +301,6 @@ gcm_exif_get_manufacturer (GcmExif *exif)
 	return priv->manufacturer;
 }
 
-/**
- * gcm_exif_get_model:
- **/
 const gchar *
 gcm_exif_get_model (GcmExif *exif)
 {
@@ -331,9 +308,6 @@ gcm_exif_get_model (GcmExif *exif)
 	return priv->model;
 }
 
-/**
- * gcm_exif_get_serial:
- **/
 const gchar *
 gcm_exif_get_serial (GcmExif *exif)
 {
@@ -341,9 +315,6 @@ gcm_exif_get_serial (GcmExif *exif)
 	return priv->serial;
 }
 
-/**
- * gcm_exif_get_device_kind:
- **/
 CdDeviceKind
 gcm_exif_get_device_kind (GcmExif *exif)
 {
@@ -351,9 +322,6 @@ gcm_exif_get_device_kind (GcmExif *exif)
 	return priv->device_kind;
 }
 
-/**
- * gcm_exif_get_property:
- **/
 static void
 gcm_exif_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
@@ -379,9 +347,6 @@ gcm_exif_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec
 	}
 }
 
-/**
- * gcm_exif_class_init:
- **/
 static void
 gcm_exif_class_init (GcmExifClass *klass)
 {
@@ -423,9 +388,6 @@ gcm_exif_class_init (GcmExifClass *klass)
 	g_object_class_install_property (object_class, PROP_DEVICE_KIND, pspec);
 }
 
-/**
- * gcm_exif_init:
- **/
 static void
 gcm_exif_init (GcmExif *exif)
 {
@@ -436,9 +398,6 @@ gcm_exif_init (GcmExif *exif)
 	priv->device_kind = CD_DEVICE_KIND_CAMERA;
 }
 
-/**
- * gcm_exif_finalize:
- **/
 static void
 gcm_exif_finalize (GObject *object)
 {
@@ -452,11 +411,6 @@ gcm_exif_finalize (GObject *object)
 	G_OBJECT_CLASS (gcm_exif_parent_class)->finalize (object);
 }
 
-/**
- * gcm_exif_new:
- *
- * Return value: a new GcmExif object.
- **/
 GcmExif *
 gcm_exif_new (void)
 {

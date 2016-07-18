@@ -157,10 +157,6 @@ gcm_cell_renderer_profile_text_set_property (GObject *object, guint param_id,
 	}
 }
 
-/**
- * gcm_cell_renderer_finalize:
- * @object: The object to finalize
- **/
 static void
 gcm_cell_renderer_finalize (GObject *object)
 {
@@ -191,9 +187,6 @@ gcm_cell_renderer_profile_text_class_init (GcmCellRendererProfileTextClass *clas
 					 "IS_DEFAULT", FALSE, G_PARAM_READWRITE));
 }
 
-/**
- * gcm_cell_renderer_profile_text_init:
- **/
 static void
 gcm_cell_renderer_profile_text_init (GcmCellRendererProfileText *renderer)
 {
@@ -202,9 +195,6 @@ gcm_cell_renderer_profile_text_init (GcmCellRendererProfileText *renderer)
 	renderer->markup = NULL;
 }
 
-/**
- * gcm_cell_renderer_profile_text_new:
- **/
 GtkCellRenderer *
 gcm_cell_renderer_profile_text_new (void)
 {

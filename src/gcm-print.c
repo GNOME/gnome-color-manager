@@ -30,11 +30,6 @@ static void     gcm_print_finalize	(GObject     *object);
 
 #define GCM_PRINT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_PRINT, GcmPrintPrivate))
 
-/**
- * GcmPrintPrivate:
- *
- * Private #GcmPrint data
- **/
 struct _GcmPrintPrivate
 {
 	GtkPrintSettings		*settings;
@@ -60,9 +55,6 @@ typedef struct {
 	GError			*error;
 } GcmPrintTask;
 
-/**
- * gcm_print_class_init:
- **/
 static void
 gcm_print_class_init (GcmPrintClass *klass)
 {
@@ -110,11 +102,6 @@ out:
 	return;
 }
 
-/**
- * gcm_print_draw_page_cb:
- *
- * Emitted for every page that is printed. The signal handler must render the page onto the cairo context
- **/
 static void
 gcm_print_draw_page_cb (GtkPrintOperation *operation, GtkPrintContext *context, gint page_nr, GcmPrintTask *task)
 {
@@ -155,9 +142,6 @@ out:
 		cairo_surface_destroy (surface);
 }
 
-/**
- * gcm_print_loop_quit_idle_cb:
- **/
 static gboolean
 gcm_print_loop_quit_idle_cb (GcmPrintTask *task)
 {
@@ -165,9 +149,6 @@ gcm_print_loop_quit_idle_cb (GcmPrintTask *task)
 	return FALSE;
 }
 
-/**
- * gcm_print_status_changed_cb:
- **/
 static void
 gcm_print_status_changed_cb (GtkPrintOperation *operation, GcmPrintTask *task)
 {
@@ -194,18 +175,12 @@ gcm_print_status_changed_cb (GtkPrintOperation *operation, GcmPrintTask *task)
 	}
 }
 
-/**
- * gcm_print_done_cb:
- **/
 static void
 gcm_print_done_cb (GtkPrintOperation *operation, GtkPrintOperationResult result, GcmPrintTask *task)
 {
 	g_debug ("we're done rendering...");
 }
 
-/**
- * gcm_print_with_render_callback:
- **/
 gboolean
 gcm_print_with_render_callback (GcmPrint *print, GtkWindow *window, GcmPrintRenderCb render_callback, gpointer user_data, GError **error)
 {
@@ -283,9 +258,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_print_init:
- **/
 static void
 gcm_print_init (GcmPrint *print)
 {
@@ -293,9 +265,6 @@ gcm_print_init (GcmPrint *print)
 	print->priv->settings = gtk_print_settings_new ();
 }
 
-/**
- * gcm_print_finalize:
- **/
 static void
 gcm_print_finalize (GObject *object)
 {
@@ -307,11 +276,6 @@ gcm_print_finalize (GObject *object)
 	G_OBJECT_CLASS (gcm_print_parent_class)->finalize (object);
 }
 
-/**
- * gcm_print_new:
- *
- * Return value: a new GcmPrint object.
- **/
 GcmPrint *
 gcm_print_new (void)
 {

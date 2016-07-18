@@ -36,11 +36,6 @@ static void     gcm_calibrate_finalize	(GObject     *object);
 
 #define GCM_CALIBRATE_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_CALIBRATE, GcmCalibratePrivate))
 
-/**
- * GcmCalibratePrivate:
- *
- * Private #GcmCalibrate data
- **/
 typedef struct
 {
 	GcmBrightness			*brightness;
@@ -124,9 +119,6 @@ gcm_calibrate_get_content_widget (GcmCalibrate *calibrate)
 	return priv->content_widget;
 }
 
-/**
- * gcm_calibrate_mkdir_with_parents:
- **/
 static gboolean
 gcm_calibrate_mkdir_with_parents (const gchar *filename, GError **error)
 {
@@ -141,9 +133,6 @@ gcm_calibrate_mkdir_with_parents (const gchar *filename, GError **error)
 	return TRUE;
 }
 
-/**
- * gcm_calibrate_get_time:
- **/
 static gchar *
 gcm_calibrate_get_time (void)
 {
@@ -159,9 +148,6 @@ gcm_calibrate_get_time (void)
 	return text;
 }
 
-/**
- * gcm_calibrate_get_filename_result:
- **/
 const gchar *
 gcm_calibrate_get_filename_result (GcmCalibrate *calibrate)
 {
@@ -169,9 +155,6 @@ gcm_calibrate_get_filename_result (GcmCalibrate *calibrate)
 	return priv->filename_result;
 }
 
-/**
- * gcm_calibrate_get_working_path:
- **/
 const gchar *
 gcm_calibrate_get_working_path (GcmCalibrate *calibrate)
 {
@@ -179,9 +162,6 @@ gcm_calibrate_get_working_path (GcmCalibrate *calibrate)
 	return priv->working_path;
 }
 
-/**
- * gcm_calibrate_get_basename:
- **/
 const gchar *
 gcm_calibrate_get_basename (GcmCalibrate *calibrate)
 {
@@ -189,9 +169,6 @@ gcm_calibrate_get_basename (GcmCalibrate *calibrate)
 	return priv->basename;
 }
 
-/**
- * gcm_calibrate_get_screen_brightness:
- **/
 guint
 gcm_calibrate_get_screen_brightness (GcmCalibrate *calibrate)
 {
@@ -199,9 +176,6 @@ gcm_calibrate_get_screen_brightness (GcmCalibrate *calibrate)
 	return priv->new_brightness;
 }
 
-/**
- * gcm_calibrate_set_basename:
- **/
 static void
 gcm_calibrate_set_basename (GcmCalibrate *calibrate)
 {
@@ -248,9 +222,6 @@ gcm_calibrate_set_basename (GcmCalibrate *calibrate)
 	g_string_free (basename, TRUE);
 }
 
-/**
- * gcm_calibrate_set_from_exif:
- **/
 gboolean
 gcm_calibrate_set_from_exif (GcmCalibrate *calibrate, const gchar *filename, GError **error)
 {
@@ -302,9 +273,6 @@ gcm_calibrate_get_sensor (GcmCalibrate *calibrate)
 	return priv->sensor;
 }
 
-/**
- * gcm_calibrate_set_working_path:
- **/
 static gboolean
 gcm_calibrate_set_working_path (GcmCalibrate *calibrate, GError **error)
 {
@@ -326,9 +294,6 @@ gcm_calibrate_set_working_path (GcmCalibrate *calibrate, GError **error)
 	return ret;
 }
 
-/**
- * gcm_calibrate_interaction:
- **/
 void
 gcm_calibrate_interaction (GcmCalibrate *calibrate, GtkResponseType response)
 {
@@ -360,9 +325,6 @@ gcm_calibrate_interaction (GcmCalibrate *calibrate, GtkResponseType response)
 	klass->interaction (calibrate, response);
 }
 
-/**
- * gcm_calibrate_copy_file:
- **/
 static gboolean
 gcm_calibrate_copy_file (const gchar *src,
 			 const gchar *dest,
@@ -383,9 +345,6 @@ gcm_calibrate_copy_file (const gchar *src,
 			    error);
 }
 
-/**
- * gcm_calibrate_interaction_attach:
- **/
 void
 gcm_calibrate_interaction_attach (GcmCalibrate *calibrate)
 {
@@ -433,9 +392,6 @@ gcm_calibrate_interaction_attach (GcmCalibrate *calibrate)
 	g_string_free (message, TRUE);
 }
 
-/**
- * gcm_calibrate_interaction_screen:
- **/
 void
 gcm_calibrate_interaction_screen (GcmCalibrate *calibrate)
 {
@@ -472,9 +428,6 @@ gcm_calibrate_interaction_screen (GcmCalibrate *calibrate)
 			 CA_PROP_EVENT_DESCRIPTION, "correct hardware state", NULL);
 }
 
-/**
- * gcm_calibrate_interaction_calibrate:
- **/
 void
 gcm_calibrate_interaction_calibrate (GcmCalibrate *calibrate)
 {
@@ -514,9 +467,6 @@ gcm_calibrate_interaction_calibrate (GcmCalibrate *calibrate)
 			 CA_PROP_EVENT_DESCRIPTION, "setup calibration tool", NULL);
 }
 
-/**
- * gcm_calibrate_set_brightness:
- **/
 static void
 gcm_calibrate_set_brightness (GcmCalibrate *calibrate, CdDevice *device)
 {
@@ -555,9 +505,6 @@ gcm_calibrate_set_brightness (GcmCalibrate *calibrate, CdDevice *device)
 	}
 }
 
-/**
- * gcm_calibrate_unset_brightness:
- **/
 static void
 gcm_calibrate_unset_brightness (GcmCalibrate *calibrate, CdDevice *device)
 {
@@ -586,9 +533,6 @@ gcm_calibrate_unset_brightness (GcmCalibrate *calibrate, CdDevice *device)
 		g_warning ("failed to set brightness: %s",  error->message);
 }
 
-/**
- * gcm_calibrate_display:
- **/
 static gboolean
 gcm_calibrate_display (GcmCalibrate *calibrate,
 		       CdDevice *device,
@@ -655,9 +599,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calibrate_camera_get_reference_image:
- **/
 static gchar *
 gcm_calibrate_camera_get_reference_image (const gchar *directory, GtkWindow *window)
 {
@@ -702,9 +643,6 @@ gcm_calibrate_camera_get_reference_image (const gchar *directory, GtkWindow *win
 	return filename;
 }
 
-/**
- * gcm_calibrate_camera_get_reference_data:
- **/
 static gchar *
 gcm_calibrate_camera_get_reference_data (const gchar *directory, GtkWindow *window)
 {
@@ -756,9 +694,6 @@ gcm_calibrate_camera_get_reference_data (const gchar *directory, GtkWindow *wind
 	return filename;
 }
 
-/**
- * gcm_calibrate_get_device_for_it8_file:
- **/
 static gchar *
 gcm_calibrate_get_device_for_it8_file (const gchar *filename)
 {
@@ -788,9 +723,6 @@ gcm_calibrate_get_device_for_it8_file (const gchar *filename)
 	return device;
 }
 
-/**
- * gcm_calibrate_file_chooser_get_working_path:
- **/
 static gchar *
 gcm_calibrate_file_chooser_get_working_path (GcmCalibrate *calibrate, GtkWindow *window)
 {
@@ -824,9 +756,6 @@ gcm_calibrate_file_chooser_get_working_path (GcmCalibrate *calibrate, GtkWindow 
 	return working_path;
 }
 
-/**
- * gcm_calibrate_printer:
- **/
 static gboolean
 gcm_calibrate_printer (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *window, GError **error)
 {
@@ -910,9 +839,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calibrate_get_enabled:
- **/
 gboolean
 gcm_calibrate_get_enabled (GcmCalibrate *calibrate)
 {
@@ -922,9 +848,6 @@ gcm_calibrate_get_enabled (GcmCalibrate *calibrate)
 	return TRUE;
 }
 
-/**
- * gcm_calibrate_get_reference_cie:
- **/
 static const gchar *
 gcm_calibrate_get_reference_cie (GcmCalibrateReferenceKind kind)
 {
@@ -937,9 +860,6 @@ gcm_calibrate_get_reference_cie (GcmCalibrateReferenceKind kind)
 	return NULL;
 }
 
-/**
- * gcm_calibrate_camera:
- **/
 static gboolean
 gcm_calibrate_camera (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *window, GError **error)
 {
@@ -1030,9 +950,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calibrate_device:
- **/
 gboolean
 gcm_calibrate_device (GcmCalibrate *calibrate,
 		      CdDevice *device,
@@ -1157,9 +1074,6 @@ gcm_calibrate_interaction_required (GcmCalibrate *calibrate, const gchar *button
 	g_signal_emit (calibrate, signals[SIGNAL_INTERACTION_REQUIRED], 0, button_text);
 }
 
-/**
- * gcm_calibrate_get_property:
- **/
 static void
 gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GParamSpec *pspec)
 {
@@ -1232,9 +1146,6 @@ gcm_calibrate_get_property (GObject *object, guint prop_id, GValue *value, GPara
 }
 
 
-/**
- * gcm_calibrate_set_property:
- **/
 static void
 gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value, GParamSpec *pspec)
 {
@@ -1315,9 +1226,6 @@ gcm_calibrate_set_property (GObject *object, guint prop_id, const GValue *value,
 	}
 }
 
-/**
- * gcm_calibrate_class_init:
- **/
 static void
 gcm_calibrate_class_init (GcmCalibrateClass *klass)
 {
@@ -1454,9 +1362,6 @@ gcm_calibrate_class_init (GcmCalibrateClass *klass)
 			      G_TYPE_NONE, 1, G_TYPE_STRING);
 }
 
-/**
- * gcm_calibrate_init:
- **/
 static void
 gcm_calibrate_init (GcmCalibrate *calibrate)
 {
@@ -1472,9 +1377,6 @@ gcm_calibrate_init (GcmCalibrate *calibrate)
 	priv->working_path = g_strdup ("/tmp");
 }
 
-/**
- * gcm_calibrate_finalize:
- **/
 static void
 gcm_calibrate_finalize (GObject *object)
 {
@@ -1502,11 +1404,6 @@ gcm_calibrate_finalize (GObject *object)
 	G_OBJECT_CLASS (gcm_calibrate_parent_class)->finalize (object);
 }
 
-/**
- * gcm_calibrate_new:
- *
- * Return value: a new GcmCalibrate object.
- **/
 GcmCalibrate *
 gcm_calibrate_new (void)
 {

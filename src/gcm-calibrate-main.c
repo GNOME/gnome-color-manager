@@ -76,9 +76,6 @@ typedef struct {
 	gint		 inhibit_cookie;
 } GcmCalibratePriv;
 
-/**
- * gcm_window_set_parent_xid:
- **/
 static void
 gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
 {
@@ -106,9 +103,6 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 xid)
 	gtk_window_set_title (window, "");
 }
 
-/**
- * gcm_calib_activate_cb:
- **/
 static void
 gcm_calib_activate_cb (GApplication *application, GcmCalibratePriv *priv)
 {
@@ -128,9 +122,6 @@ gcm_calib_confirm_quit_cb (GtkDialog *dialog,
 	g_application_release (G_APPLICATION (priv->application));
 }
 
-/**
- * gcm_calib_confirm_quit:
- **/
 static void
 gcm_calib_confirm_quit (GcmCalibratePriv *priv)
 {
@@ -162,9 +153,6 @@ gcm_calib_confirm_quit (GcmCalibratePriv *priv)
 	gtk_widget_show (dialog);
 }
 
-/**
- * gcm_calib_delete_event_cb:
- **/
 static gboolean
 gcm_calib_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmCalibratePriv *priv)
 {
@@ -172,27 +160,18 @@ gcm_calib_delete_event_cb (GtkWidget *widget, GdkEvent *event, GcmCalibratePriv 
 	return FALSE;
 }
 
-/**
- * gcm_calib_assistant_cancel_cb:
- **/
 static void
 gcm_calib_assistant_cancel_cb (GtkAssistant *assistant, GcmCalibratePriv *priv)
 {
 	gcm_calib_confirm_quit (priv);
 }
 
-/**
- * gcm_calib_assistant_close_cb:
- **/
 static void
 gcm_calib_assistant_close_cb (GtkAssistant *assistant, GcmCalibratePriv *priv)
 {
 	g_application_release (G_APPLICATION (priv->application));
 }
 
-/**
- * gcm_calib_play_sound:
- **/
 static void
 gcm_calib_play_sound (GcmCalibratePriv *priv)
 {
@@ -207,9 +186,6 @@ gcm_calib_play_sound (GcmCalibratePriv *priv)
 }
 
 
-/**
- * gcm_calib_get_vbox_for_page:
- **/
 static GtkWidget *
 gcm_calib_get_vbox_for_page (GcmCalibratePriv *priv,
 			     GcmCalibratePage page)
@@ -350,9 +326,6 @@ out:
 	return ret;
 }
 
-/**
- * gcm_calib_set_sensor_options_cb:
- **/
 static void
 gcm_calib_set_sensor_options_cb (GObject *object,
 				 GAsyncResult *res,
@@ -544,9 +517,6 @@ gcm_calib_assistant_page_forward_cb (gint current_page, gpointer user_data)
 	return current_page;
 }
 
-/**
- * gcm_calib_assistant_prepare_cb:
- **/
 static gboolean
 gcm_calib_assistant_prepare_cb (GtkAssistant *assistant,
 				GtkWidget *page_widget,
@@ -599,9 +569,6 @@ gcm_calib_assistant_prepare_cb (GtkAssistant *assistant,
 	return FALSE;
 }
 
-/**
- * gcm_calib_add_page_title:
- **/
 static GtkWidget *
 gcm_calib_add_page_title (GcmCalibratePriv *priv, const gchar *text)
 {
@@ -648,9 +615,6 @@ gcm_calib_label_activate_link_cb (GtkLabel *label,
 	return ret;
 }
 
-/**
- * gcm_calib_add_page_para:
- **/
 static GtkWidget *
 gcm_calib_add_page_para (GtkWidget *vbox, const gchar *text)
 {
@@ -674,9 +638,6 @@ gcm_calib_add_page_para (GtkWidget *vbox, const gchar *text)
 	return label;
 }
 
-/**
- * gcm_calib_add_page_bullet:
- **/
 static void
 gcm_calib_add_page_bullet (GtkWidget *vbox, const gchar *text)
 {
@@ -685,9 +646,6 @@ gcm_calib_add_page_bullet (GtkWidget *vbox, const gchar *text)
 	gcm_calib_add_page_para (vbox, markup);
 }
 
-/**
- * gcm_calib_setup_page_intro:
- **/
 static void
 gcm_calib_setup_page_intro (GcmCalibratePriv *priv)
 {
@@ -748,9 +706,6 @@ gcm_calib_setup_page_intro (GcmCalibratePriv *priv)
 	gtk_widget_show_all (vbox);
 }
 
-/**
- * gcm_calibrate_is_livecd:
- **/
 static gboolean
 gcm_calibrate_is_livecd (void)
 {
@@ -771,9 +726,6 @@ gcm_calibrate_is_livecd (void)
 #endif
 }
 
-/**
- * gcm_calib_show_profile_button_clicked_cb:
- **/
 static void
 gcm_calib_show_profile_button_clicked_cb (GtkButton *button,
 					  GcmCalibratePriv *priv)
@@ -799,9 +751,6 @@ gcm_calib_show_profile_button_clicked_cb (GtkButton *button,
 	}
 }
 
-/**
- * gcm_calib_get_show_profile_button:
- **/
 static GtkWidget *
 gcm_calib_get_show_profile_button (GcmCalibratePriv *priv)
 {
@@ -835,9 +784,6 @@ gcm_calib_get_show_profile_button (GcmCalibratePriv *priv)
 	return button;
 }
 
-/**
- * gcm_calib_setup_page_summary:
- **/
 static void
 gcm_calib_setup_page_summary (GcmCalibratePriv *priv)
 {
@@ -909,9 +855,6 @@ gcm_calib_setup_page_summary (GcmCalibratePriv *priv)
 	gtk_widget_show_all (vbox);
 }
 
-/**
- * gcm_calib_setup_page_action:
- **/
 static void
 gcm_calib_setup_page_action (GcmCalibratePriv *priv)
 {
@@ -965,9 +908,6 @@ gcm_calib_setup_page_action (GcmCalibratePriv *priv)
 	gtk_widget_hide (priv->action_image);
 }
 
-/**
- * gcm_calib_setup_page_display_configure_wait:
- **/
 static void
 gcm_calib_setup_page_display_configure_wait (GcmCalibratePriv *priv)
 {
@@ -1023,9 +963,6 @@ if(0)	gcm_calib_add_page_bullet (content, _("Adjust the display brightness to a 
 	gtk_widget_show_all (vbox);
 }
 
-/**
- * gcm_calib_button_clicked_install_argyllcms_cb:
- **/
 static void
 gcm_calib_button_clicked_install_argyllcms_cb (GtkButton *button, GcmCalibratePriv *priv)
 {
@@ -1047,9 +984,6 @@ gcm_calib_button_clicked_install_argyllcms_cb (GtkButton *button, GcmCalibratePr
 	}
 }
 
-/**
- * gcm_calib_setup_page_install_argyllcms:
- **/
 static void
 gcm_calib_setup_page_install_argyllcms (GcmCalibratePriv *priv)
 {
@@ -1099,9 +1033,6 @@ gcm_calib_setup_page_install_argyllcms (GcmCalibratePriv *priv)
 	gtk_widget_show_all (vbox);
 }
 
-/**
- * gcm_calib_button_clicked_install_targets_cb:
- **/
 static void
 gcm_calib_button_clicked_install_targets_cb (GtkButton *button, GcmCalibratePriv *priv)
 {
@@ -1122,9 +1053,6 @@ gcm_calib_button_clicked_install_targets_cb (GtkButton *button, GcmCalibratePriv
 	}
 }
 
-/**
- * gcm_calib_setup_page_install_targets:
- **/
 static void
 gcm_calib_setup_page_install_targets (GcmCalibratePriv *priv)
 {
@@ -1177,9 +1105,6 @@ gcm_calib_setup_page_install_targets (GcmCalibratePriv *priv)
 }
 
 
-/**
- * gcm_calib_reference_kind_to_localised_string:
- **/
 static const gchar *
 gcm_calib_reference_kind_to_localised_string (GcmCalibrateReferenceKind kind)
 {
@@ -1226,9 +1151,6 @@ gcm_calib_reference_kind_to_localised_string (GcmCalibrateReferenceKind kind)
 	return NULL;
 }
 
-/**
- * gcm_calib_reference_kind_to_image_filename:
- **/
 static const gchar *
 gcm_calib_reference_kind_to_image_filename (GcmCalibrateReferenceKind kind)
 {
@@ -1255,9 +1177,6 @@ gcm_calib_reference_kind_to_image_filename (GcmCalibrateReferenceKind kind)
 	return NULL;
 }
 
-/**
- * gcm_calib_reference_kind_combobox_cb:
- **/
 static void
 gcm_calib_reference_kind_combobox_cb (GtkComboBox *combo_box,
 				      GcmCalibratePriv *priv)
@@ -1281,9 +1200,6 @@ gcm_calib_reference_kind_combobox_cb (GtkComboBox *combo_box,
 	gtk_image_set_from_file (GTK_IMAGE (priv->reference_preview), path);
 }
 
-/**
- * gcm_calib_setup_page_target_kind:
- **/
 static void
 gcm_calib_setup_page_target_kind (GcmCalibratePriv *priv)
 {
@@ -1376,9 +1292,6 @@ gcm_calib_display_kind_toggled_cb (GtkToggleButton *togglebutton,
 		      NULL);
 }
 
-/**
- * gcm_calib_setup_page_display_kind:
- **/
 static void
 gcm_calib_setup_page_display_kind (GcmCalibratePriv *priv)
 {
@@ -1498,9 +1411,6 @@ gcm_calib_display_temp_toggled_cb (GtkToggleButton *togglebutton,
 		      NULL);
 }
 
-/**
- * gcm_calib_setup_page_display_temp:
- **/
 static void
 gcm_calib_setup_page_display_temp (GcmCalibratePriv *priv)
 {
@@ -1594,9 +1504,6 @@ gcm_calib_print_kind_toggled_cb (GtkToggleButton *togglebutton,
 		      NULL);
 }
 
-/**
- * gcm_calib_setup_page_print_kind:
- **/
 static void
 gcm_calib_setup_page_print_kind (GcmCalibratePriv *priv)
 {
@@ -1676,9 +1583,6 @@ gcm_calib_precision_toggled_cb (GtkToggleButton *togglebutton,
 		      NULL);
 }
 
-/**
- * gcm_calib_setup_page_precision:
- **/
 static void
 gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 {
@@ -1801,9 +1705,6 @@ gcm_calib_text_changed_cb (GtkEntry *entry,
 		      NULL);
 }
 
-/**
- * gcm_calib_setup_page_profile_title:
- **/
 static void
 gcm_calib_setup_page_profile_title (GcmCalibratePriv *priv)
 {
@@ -1853,9 +1754,6 @@ gcm_calib_setup_page_profile_title (GcmCalibratePriv *priv)
 	gtk_widget_show_all (vbox);
 }
 
-/**
- * gcm_calib_setup_page_sensor:
- **/
 static void
 gcm_calib_setup_page_sensor (GcmCalibratePriv *priv)
 {
@@ -1888,9 +1786,6 @@ gcm_calib_setup_page_sensor (GcmCalibratePriv *priv)
 	gtk_widget_show_all (vbox);
 }
 
-/**
- * gcm_calib_setup_page_failure:
- **/
 static void
 gcm_calib_setup_page_failure (GcmCalibratePriv *priv)
 {
@@ -1923,9 +1818,6 @@ gcm_calib_setup_page_failure (GcmCalibratePriv *priv)
 	gtk_widget_show_all (vbox);
 }
 
-/**
- * gcm_calib_got_sensor:
- **/
 static void
 gcm_calib_got_sensor (GcmCalibratePriv *priv, CdSensor *sensor)
 {
@@ -1959,9 +1851,6 @@ gcm_calib_got_sensor (GcmCalibratePriv *priv, CdSensor *sensor)
 	}
 }
 
-/**
- * gcm_calib_get_sensors_cb:
- **/
 static void
 gcm_calib_get_sensors_cb (GObject *object,
 			  GAsyncResult *res,
@@ -1988,9 +1877,6 @@ gcm_calib_get_sensors_cb (GObject *object,
 	}
 }
 
-/**
- * gcm_calib_add_pages:
- **/
 static void
 gcm_calib_add_pages (GcmCalibratePriv *priv)
 {
@@ -2048,9 +1934,6 @@ gcm_calib_add_pages (GcmCalibratePriv *priv)
 			       priv);
 }
 
-/**
- * gcm_calib_sensor_added_cb:
- **/
 static void
 gcm_calib_sensor_added_cb (CdClient *client, CdSensor *sensor, GcmCalibratePriv *priv)
 {
@@ -2059,9 +1942,6 @@ gcm_calib_sensor_added_cb (CdClient *client, CdSensor *sensor, GcmCalibratePriv 
 	gtk_assistant_next_page (GTK_ASSISTANT (priv->main_window));
 }
 
-/**
- * gcm_calib_startup_cb:
- **/
 static void
 gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *priv)
 {
@@ -2269,9 +2149,6 @@ gcm_calib_interaction_required_cb (GcmCalibrate *calibrate,
 	priv->has_pending_interaction = TRUE;
 }
 
-/**
- * main:
- **/
 int
 main (int argc, char **argv)
 {
