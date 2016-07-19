@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Generated with glade 3.18.1 
+<!-- Generated with glade 3.20.0 
 
 GNOME Color Manager
 Copyright (C) 2011-2013 Richard Hughes <richard@hughsie.com>
@@ -20,10 +20,10 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 -->
 <interface>
-  <requires lib="gtk+" version="3.10"/>
+  <requires lib="gtk+" version="3.18"/>
   <object class="GtkDialog" id="dialog_picker">
     <property name="can_focus">False</property>
-    <property name="border_width">3</property>
+    <property name="border_width">18</property>
     <property name="title" translatable="yes" comments="Window title, where the user can pick spot colors using a measuring device">Color Picker</property>
     <property name="icon_name">gnome-color-manager</property>
     <property name="type_hint">dialog</property>
@@ -31,12 +31,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
       <object class="GtkBox" id="dialog-vbox1">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
-        <property name="margin_left">12</property>
-        <property name="margin_right">12</property>
-        <property name="margin_top">12</property>
-        <property name="margin_bottom">12</property>
         <property name="orientation">vertical</property>
-        <property name="spacing">2</property>
+        <property name="spacing">18</property>
         <child internal-child="action_area">
           <object class="GtkButtonBox" id="dialog-action_area1">
             <property name="can_focus">False</property>
@@ -52,7 +48,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="orientation">vertical</property>
-            <property name="spacing">9</property>
+            <property name="spacing">18</property>
             <child>
               <object class="GtkImage" id="image_preview">
                 <property name="visible">True</property>
@@ -75,14 +71,14 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="halign">center</property>
-                    <property name="row_spacing">3</property>
+                    <property name="row_spacing">6</property>
                     <property name="column_spacing">12</property>
                     <child>
                       <object class="GtkLabel" id="label_xyz">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="selectable">True</property>
-                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -93,8 +89,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkLabel" id="label_xyz_title">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">end</property>
                         <property name="label" translatable="yes" comments="the color representation">XYZ</property>
-                        <property name="xalign">1</property>
                         <style>
                           <class name="dim-label"/>
                         </style>
@@ -108,8 +104,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkLabel" id="label_lab_title">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">end</property>
                         <property name="label" translatable="yes" comments="Lab is the color representation and D50 is the white point">Lab (D50)</property>
-                        <property name="xalign">1</property>
                         <style>
                           <class name="dim-label"/>
                         </style>
@@ -123,8 +119,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkLabel" id="label_whitepoint_title">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">end</property>
                         <property name="label" translatable="yes" comments="This refers to the amount of ambient light on the sensor">Media whitepoint</property>
-                        <property name="xalign">1</property>
                         <style>
                           <class name="dim-label"/>
                         </style>
@@ -138,8 +134,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkLabel" id="label_temperature_title">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">end</property>
                         <property name="label" translatable="yes" comments="This refers to the amount of ambient light on the sensor">Color Temperature</property>
-                        <property name="xalign">1</property>
                         <style>
                           <class name="dim-label"/>
                         </style>
@@ -153,8 +149,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkLabel" id="label_ambient_title">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">end</property>
                         <property name="label" translatable="yes" comments="This refers to the amount of ambient light on the sensor">Ambient</property>
-                        <property name="xalign">1</property>
                         <style>
                           <class name="dim-label"/>
                         </style>
@@ -168,8 +164,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkLabel" id="label_colorspace">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">end</property>
                         <property name="label" translatable="yes" comments="This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB">Colorspace</property>
-                        <property name="xalign">1</property>
                         <style>
                           <class name="dim-label"/>
                         </style>
@@ -183,8 +179,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkLabel" id="label_rgb_title">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">end</property>
                         <property name="label" translatable="yes" comments="These are the values of the chosen color in Red, Green, Blue encoding">RGB</property>
-                        <property name="xalign">1</property>
                         <style>
                           <class name="dim-label"/>
                         </style>
@@ -198,8 +194,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkLabel" id="label_error_title">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">end</property>
                         <property name="label" translatable="yes" comments="This shows the error in the conversion to RGB.">Error</property>
-                        <property name="xalign">1</property>
                         <style>
                           <class name="dim-label"/>
                         </style>
@@ -213,8 +209,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkLabel" id="label_lab">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="selectable">True</property>
-                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -225,8 +221,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkLabel" id="label_whitepoint">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="selectable">True</property>
-                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -237,8 +233,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkLabel" id="label_ambient">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="selectable">True</property>
-                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -249,6 +245,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkComboBox" id="combobox_colorspace">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -259,8 +256,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkLabel" id="label_rgb">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="selectable">True</property>
-                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -271,8 +268,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkLabel" id="label_temperature">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="selectable">True</property>
-                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -283,8 +280,8 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
                       <object class="GtkLabel" id="label_error">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
+                        <property name="halign">start</property>
                         <property name="selectable">True</property>
-                        <property name="xalign">0</property>
                       </object>
                       <packing>
                         <property name="left_attach">1</property>
@@ -307,6 +304,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
               <packing>
                 <property name="expand">False</property>
                 <property name="fill">False</property>
+                <property name="pack_type">end</property>
                 <property name="position">1</property>
               </packing>
             </child>
