@@ -449,8 +449,7 @@ static void
 gcm_viewer_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gint x, gint y, GtkSelectionData *data, guint _time, GcmViewerPrivate *viewer)
 {
 	const guchar *filename;
-	gchar **filenames = NULL;
-	GFile *file = NULL;
+	g_auto(GStrv) filenames = NULL;
 	guint i;
 	gboolean ret;
 	gboolean success = FALSE;
@@ -466,6 +465,7 @@ gcm_viewer_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gi
 	/* split, as multiple drag targets are accepted */
 	filenames = g_strsplit_set ((const gchar *)filename, "\r\n", -1);
 	for (i = 0; filenames[i]!=NULL; i++) {
+		g_autoptr(GFile) file = NULL;
 
 		/* blank entry */
 		if (filenames[i][0] == '\0')
@@ -478,13 +478,10 @@ gcm_viewer_drag_data_received_cb (GtkWidget *widget, GdkDragContext *context, gi
 		ret = gcm_viewer_profile_import_file (viewer, file);
 		if (ret)
 			success = TRUE;
-
-		g_object_unref (file);
 	}
 
 out:
 	gtk_drag_finish (context, success, FALSE, _time);
-	g_strfreev (filenames);
 }
 
 static void
@@ -1143,7 +1140,7 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection,
 {
 	GtkTreeModel *model;
 	GtkTreeIter iter;
-	CdProfile *profile;
+	g_autoptr(CdProfile) profile = NULL;
 
 	/* ignore */
 	if (viewer->clearing_store)
@@ -1160,7 +1157,6 @@ gcm_viewer_profiles_treeview_clicked_cb (GtkTreeSelection *selection,
 			    GCM_PROFILES_COLUMN_PROFILE, &profile,
 			    -1);
 	gcm_viewer_set_profile (viewer, profile);
-	g_object_unref (profile);
 }
 
 static void
@@ -1610,7 +1606,7 @@ main (int argc, char **argv)
 	guint xid = 0;
 	int status = 0;
 	gboolean ret;
-	GError *error = NULL;
+	g_autoptr(GError) error = NULL;
 
 	const GOptionEntry options[] = {
 		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
@@ -1640,7 +1636,6 @@ main (int argc, char **argv)
 	ret = g_option_context_parse (context, &argc, &argv, &error);
 	if (!ret) {
 		g_warning ("failed to parse options: %s", error->message);
-		g_error_free (error);
 	}
 	g_option_context_free (context);
 

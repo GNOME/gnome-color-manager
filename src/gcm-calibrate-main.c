@@ -1711,7 +1711,7 @@ gcm_calib_setup_page_profile_title (GcmCalibratePriv *priv)
 	GtkWidget *vbox;
 	GtkWidget *content;
 	GtkWidget *widget;
-	gchar *tmp = NULL;
+	g_autofree gchar *tmp = NULL;
 	GtkAssistant *assistant = GTK_ASSISTANT (priv->main_window);
 
 	/* TRANSLATORS: this is the page title */
@@ -1733,7 +1733,6 @@ gcm_calib_setup_page_profile_title (GcmCalibratePriv *priv)
 		      "description", &tmp,
 		      NULL);
 	gtk_entry_set_text (GTK_ENTRY (widget), tmp);
-	g_free (tmp);
 
 	/* watch for changes */
 	g_signal_connect (GTK_EDITABLE (widget), "changed",

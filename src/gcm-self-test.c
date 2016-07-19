@@ -41,7 +41,7 @@ gcm_test_brightness_func (void)
 {
 	g_autoptr(GcmBrightness) brightness = NULL;
 	gboolean ret;
-	GError *error = NULL;
+	g_autoptr(GError) error = NULL;
 	guint orig_percentage;
 	guint percentage;
 
@@ -71,7 +71,7 @@ static void
 gcm_test_calibrate_func (void)
 {
 	gboolean ret;
-	GError *error = NULL;
+	g_autoptr(GError) error = NULL;
 	g_autoptr(GcmCalibrate) calibrate = NULL;
 	g_autofree gchar *model = NULL;
 	g_autofree gchar *manufacturer = NULL;
@@ -161,7 +161,7 @@ static void
 gcm_test_exif_func (void)
 {
 	gboolean ret;
-	GError *error = NULL;
+	g_autoptr(GError) error = NULL;
 	GFile *file;
 	g_autoptr(GcmExif) exif = NULL;
 
@@ -261,16 +261,14 @@ static void
 gcm_test_print_func (void)
 {
 	gboolean ret;
-	GError *error = NULL;
-	GcmPrint *print;
+	g_autoptr(GError) error = NULL;
+	g_autoptr(GcmPrint) print = NULL;
 
 	print = gcm_print_new ();
 
 	ret = gcm_print_with_render_callback (print, NULL, gcm_print_test_render_cb, NULL, &error);
 	g_assert_no_error (error);
 	g_assert (ret);
-
-	g_object_unref (print);
 }
 
 static void

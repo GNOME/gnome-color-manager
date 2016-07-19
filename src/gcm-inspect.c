@@ -158,7 +158,7 @@ gcm_inspect_show_x11_atoms (void)
 {
 	gboolean ret;
 	gsize length = 0;
-	GError *error = NULL;
+	g_autoptr(GError) error = NULL;
 	guint major = -1;
 	guint minor = -1;
 	GdkWindow *gdk_window;
@@ -171,7 +171,6 @@ gcm_inspect_show_x11_atoms (void)
 	ret = gcm_inspect_get_screen_profile_data (gdk_window, &data, &length, &error);
 	if (!ret) {
 		g_warning ("failed to get XServer profile data: %s", error->message);
-		g_error_free (error);
 		/* non-fatal */
 		error = NULL;
 	} else {
@@ -183,7 +182,6 @@ gcm_inspect_show_x11_atoms (void)
 	ret = gcm_inspect_get_screen_protocol_version (gdk_window, &major, &minor, &error);
 	if (!ret) {
 		g_warning ("failed to get XServer protocol version: %s", error->message);
-		g_error_free (error);
 		/* non-fatal */
 		error = NULL;
 	} else {
@@ -200,7 +198,7 @@ gcm_inspect_show_profiles_for_file (const gchar *filename)
 	const gchar *description;
 	guint i = 0;
 	GDBusConnection *connection;
-	GError *error = NULL;
+	g_autoptr(GError) error = NULL;
 	GVariant *args = NULL;
 	GVariant *response = NULL;
 	GVariantIter *iter = NULL;
@@ -210,7 +208,6 @@ gcm_inspect_show_profiles_for_file (const gchar *filename)
 	if (connection == NULL) {
 		/* TRANSLATORS: no DBus session bus */
 		g_print ("%s %s\n", _("Failed to connect to session bus:"), error->message);
-		g_error_free (error);
 		goto out;
 	}
 
@@ -228,7 +225,6 @@ gcm_inspect_show_profiles_for_file (const gchar *filename)
 	if (response == NULL) {
 		/* TRANSLATORS: the DBus method failed */
 		g_print ("%s %s\n", _("The request failed:"), error->message);
-		g_error_free (error);
 		goto out;
 	}
 

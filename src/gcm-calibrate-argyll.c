@@ -106,38 +106,32 @@ static gchar *
 gcm_calibrate_argyll_get_tool_filename (const gchar *command,
 					GError **error)
 {
-	gboolean ret;
 	gchar *filename;
 
 	/* try the original argyllcms filename installed in /usr/local/bin */
 	filename = g_strdup_printf ("/usr/local/bin/%s", command);
-	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
-	if (ret)
-		goto out;
+	if (g_file_test (filename, G_FILE_TEST_EXISTS))
+		return filename;
 
 	/* try the debian filename installed in /usr/bin */
 	g_free (filename);
 	filename = g_strdup_printf ("/usr/bin/argyll-%s", command);
-	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
-	if (ret)
-		goto out;
+	if (g_file_test (filename, G_FILE_TEST_EXISTS))
+		return filename;
 
 	/* try the original argyllcms filename installed in /usr/bin */
 	g_free (filename);
 	filename = g_strdup_printf ("/usr/bin/%s", command);
-	ret = g_file_test (filename, G_FILE_TEST_EXISTS);
-	if (ret)
-		goto out;
+	if (g_file_test (filename, G_FILE_TEST_EXISTS))
+		return filename;
 
 	/* eek */
 	g_free (filename);
-	filename = NULL;
 	g_set_error (error,
 		     GCM_CALIBRATE_ERROR,
 		     GCM_CALIBRATE_ERROR_INTERNAL,
 		     "failed to get filename for %s", command);
-out:
-	return filename;
+	return NULL;
 }
 
 static guint
@@ -145,12 +139,11 @@ gcm_calibrate_argyll_get_display (const gchar *output_name,
 				  GError **error)
 {
 	gboolean ret = FALSE;
-	gchar *command = NULL;
+	g_autofree gchar *command = NULL;
 	const gchar *data;
-	gchar *data_stderr = NULL;
-	gchar *data_stdout = NULL;
-	gchar *name;
-	gchar **split = NULL;
+	g_autofree gchar *data_stderr = NULL;
+	g_autofree gchar *data_stdout = NULL;
+	g_auto(GStrv) split = NULL;
 	gint exit_status;
 	guint display = G_MAXUINT;
 	guint i;
@@ -159,7 +152,7 @@ gcm_calibrate_argyll_get_display (const gchar *output_name,
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("dispcal", error);
 	if (command == NULL)
-		goto out;
+		return G_MAXUINT;
 
 	/* execute it and capture stderr */
 	argv[0] = command;
@@ -173,7 +166,7 @@ gcm_calibrate_argyll_get_display (const gchar *output_name,
 			    &exit_status,
 			    error);
 	if (!ret)
-		goto out;
+		return G_MAXUINT;
 
 	/* recent versions of dispcal switched to stderr output */
 	if (data_stdout != NULL && data_stdout[0] != '\0') {
@@ -185,18 +178,19 @@ gcm_calibrate_argyll_get_display (const gchar *output_name,
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_INTERNAL,
 				     "no sensible output from dispcal");
-		goto out;
+		return G_MAXUINT;
 	}
 
 	/* split it into lines */
 	split = g_strsplit (data, "\n", -1);
 	for (i = 0; split[i] != NULL; i++) {
+		g_autofree gchar *name = NULL;
 		if (g_strstr_len (split[i], -1, "XRandR 1.2 is faulty") != NULL) {
 			g_set_error_literal (error,
 					     GCM_CALIBRATE_ERROR,
 					     GCM_CALIBRATE_ERROR_INTERNAL,
 					     "failed to match display as RandR is faulty");
-			goto out;
+			return G_MAXUINT;
 		}
 		if (strlen (split[i]) < 27)
 			continue;
@@ -206,7 +200,6 @@ gcm_calibrate_argyll_get_display (const gchar *output_name,
 			display = atoi (&name[4]);
 			g_debug ("found %s mapped to %i", output_name, display);
 		}
-		g_free (name);
 	}
 
 	/* nothing found */
@@ -215,13 +208,8 @@ gcm_calibrate_argyll_get_display (const gchar *output_name,
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_INTERNAL,
 				     "failed to match display");
-		goto out;
+		return G_MAXUINT;
 	}
-out:
-	g_free (command);
-	g_free (data_stdout);
-	g_free (data_stderr);
-	g_strfreev (split);
 	return display;
 }
 
@@ -277,10 +265,9 @@ gcm_calibrate_argyll_get_sensor_test_window_size (GcmCalibrateArgyll *calibrate_
 static void
 gcm_calibrate_argyll_debug_argv (const gchar *program, gchar **argv)
 {
-	gchar *join;
+	g_autofree gchar *join = NULL;
 	join = g_strjoinv ("  ", argv);
 	g_debug ("running %s  %s", program, join);
-	g_free (join);
 }
 
 static gboolean
@@ -320,7 +307,6 @@ gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll,
 
 	/* we're running */
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
-out:
 #else
 	g_set_error_literal (error,
 			     GCM_CALIBRATE_ERROR,
@@ -337,10 +323,10 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll,
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 	gchar kind;
-	gchar *command = NULL;
-	gchar **argv = NULL;
-	GPtrArray *array = NULL;
-	gchar *basename = NULL;
+	g_autofree gchar *command = NULL;
+	g_auto(GStrv) argv = NULL;
+	g_autoptr(GPtrArray) array = NULL;
+	g_autofree gchar *basename = NULL;
 	const gchar *output_name;
 	guint display;
 	guint target_whitepoint;
@@ -358,19 +344,15 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll,
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("dispcal", error);
-	if (command == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (command == NULL)
+		return FALSE;
 
 	/* match up the output name with the device number defined by dispcal */
 	output_name = cd_device_get_metadata_item (priv->device,
 						   CD_DEVICE_METADATA_XRANDR_NAME);
 	display = gcm_calibrate_argyll_get_display (output_name, error);
-	if (display == G_MAXUINT) {
-		ret = FALSE;
-		goto out;
-	}
+	if (display == G_MAXUINT)
+		return FALSE;
 
 	/* get l-cd or c-rt */
 	kind = gcm_calibrate_argyll_get_display_kind (calibrate_argyll);
@@ -410,7 +392,7 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll,
 	/* start up the command */
 	ret = gcm_calibrate_argyll_fork_command (calibrate_argyll, argv, error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -421,29 +403,20 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll,
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_USER_ABORT,
 				     "Calibration was cancelled");
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 #ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		gchar *vte_text;
+		g_autofree gchar *vte_text = NULL;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
 		g_set_error (error,
 			     GCM_CALIBRATE_ERROR,
 			     GCM_CALIBRATE_ERROR_INTERNAL,
 			     "Command failed to run successfully: %s", vte_text);
-		g_free (vte_text);
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 #endif
-out:
-	if (array != NULL)
-		g_ptr_array_unref (array);
-	g_free (basename);
-	g_free (command);
-	g_strfreev (argv);
-	return ret;
+	return TRUE;
 }
 
 static gboolean
@@ -452,10 +425,10 @@ gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll,
 {
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-	gchar *command = NULL;
-	gchar **argv = NULL;
-	GPtrArray *array = NULL;
-	gchar *basename = NULL;
+	g_autofree gchar *command = NULL;
+	g_auto(GStrv) argv = NULL;
+	g_autoptr(GPtrArray) array = NULL;
+	g_autofree gchar *basename = NULL;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
@@ -464,10 +437,8 @@ gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll,
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("chartread", error);
-	if (command == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (command == NULL)
+		return FALSE;
 
 	/* TRANSLATORS: title, patches are specific colours used in calibration */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
@@ -496,7 +467,7 @@ gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll,
 	/* start up the command */
 	ret = gcm_calibrate_argyll_fork_command (calibrate_argyll, argv, error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -507,29 +478,20 @@ gcm_calibrate_argyll_display_read_chart (GcmCalibrateArgyll *calibrate_argyll,
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_USER_ABORT,
 				     "calibration was cancelled");
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 #ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		gchar *vte_text;
+		g_autofree gchar *vte_text = NULL;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
 		g_set_error (error,
 			     GCM_CALIBRATE_ERROR,
 			     GCM_CALIBRATE_ERROR_INTERNAL,
 			     "command failed to run successfully: %s", vte_text);
-		g_free (vte_text);
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 #endif
-out:
-	if (array != NULL)
-		g_ptr_array_unref (array);
-	g_free (basename);
-	g_free (command);
-	g_strfreev (argv);
-	return ret;
+	return TRUE;
 }
 
 static gboolean
@@ -539,10 +501,10 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
 	gchar kind;
-	gchar *command = NULL;
-	gchar **argv = NULL;
-	GPtrArray *array = NULL;
-	gchar *basename = NULL;
+	g_autofree gchar *command = NULL;
+	g_auto(GStrv) argv = NULL;
+	g_autoptr(GPtrArray) array = NULL;
+	g_autofree gchar *basename = NULL;
 	const gchar *output_name;
 	guint display;
 	CdSensorKind sensor_kind;
@@ -558,19 +520,15 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("dispread", error);
-	if (command == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (command == NULL)
+		return FALSE;
 
 	/* match up the output name with the device number defined by dispcal */
 	output_name = cd_device_get_metadata_item (priv->device,
 						   CD_DEVICE_METADATA_XRANDR_NAME);
 	display = gcm_calibrate_argyll_get_display (output_name, error);
-	if (display == G_MAXUINT) {
-		ret = FALSE;
-		goto out;
-	}
+	if (display == G_MAXUINT)
+		return FALSE;
 
 	/* get l-cd or c-rt */
 	kind = gcm_calibrate_argyll_get_display_kind (calibrate_argyll);
@@ -609,7 +567,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	/* start up the command */
 	ret = gcm_calibrate_argyll_fork_command (calibrate_argyll, argv, error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -620,29 +578,20 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_USER_ABORT,
 				     "calibration was cancelled");
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 #ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		gchar *vte_text;
+		g_autofree gchar *vte_text = NULL;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
 		g_set_error (error,
 			     GCM_CALIBRATE_ERROR,
 			     GCM_CALIBRATE_ERROR_INTERNAL,
 			     "command failed to run successfully: %s", vte_text);
-		g_free (vte_text);
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 #endif
-out:
-	if (array != NULL)
-		g_ptr_array_unref (array);
-	g_free (basename);
-	g_free (command);
-	g_strfreev (argv);
-	return ret;
+	return TRUE;
 }
 
 static gboolean
@@ -651,14 +600,14 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 {
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-	gchar **argv = NULL;
-	gchar *copyright = NULL;
-	gchar *description = NULL;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
-	gchar *command = NULL;
-	gchar *basename = NULL;
-	GPtrArray *array = NULL;
+	g_auto(GStrv) argv = NULL;
+	g_autofree gchar *copyright = NULL;
+	g_autofree gchar *description = NULL;
+	g_autofree gchar *manufacturer = NULL;
+	g_autofree gchar *model = NULL;
+	g_autofree gchar *command = NULL;
+	g_autofree gchar *basename = NULL;
+	g_autoptr(GPtrArray) array = NULL;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
@@ -671,10 +620,8 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("colprof", error);
-	if (command == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (command == NULL)
+		return FALSE;
 
 	/* TRANSLATORS: title, a profile is a ICC file */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
@@ -708,7 +655,7 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 	/* start up the command */
 	ret = gcm_calibrate_argyll_fork_command (calibrate_argyll, argv, error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -719,8 +666,7 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_USER_ABORT,
 				     "calibration was cancelled");
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 #ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
@@ -731,21 +677,10 @@ gcm_calibrate_argyll_display_generate_profile (GcmCalibrateArgyll *calibrate_arg
 			     GCM_CALIBRATE_ERROR_INTERNAL,
 			     "command failed to run successfully: %s", vte_text);
 		g_free (vte_text);
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 #endif
-out:
-	if (array != NULL)
-		g_ptr_array_unref (array);
-	g_free (basename);
-	g_free (command);
-	g_free (copyright);
-	g_free (description);
-	g_free (manufacturer);
-	g_free (model);
-	g_strfreev (argv);
-	return ret;
+	return TRUE;
 }
 
 static const gchar *
@@ -875,11 +810,11 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll,
 {
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-	gchar **argv = NULL;
-	GPtrArray *array = NULL;
-	gchar *filename = NULL;
-	gchar *command = NULL;
-	gchar *basename = NULL;
+	g_auto(GStrv) argv = NULL;
+	g_autoptr(GPtrArray) array = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autofree gchar *command = NULL;
+	g_autofree gchar *basename = NULL;
 
 	/* get shared data */
 	g_object_get (calibrate_argyll,
@@ -898,10 +833,8 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll,
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("scanin", error);
-	if (command == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (command == NULL)
+		return FALSE;
 
 	/* argument array */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -923,7 +856,7 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll,
 	/* start up the command */
 	ret = gcm_calibrate_argyll_fork_command (calibrate_argyll, argv, error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -934,30 +867,20 @@ gcm_calibrate_argyll_device_measure (GcmCalibrateArgyll *calibrate_argyll,
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_USER_ABORT,
 				     "calibration was cancelled");
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 #ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		gchar *vte_text;
+		g_autofree gchar *vte_text = NULL;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
 		g_set_error (error,
 			     GCM_CALIBRATE_ERROR,
 			     GCM_CALIBRATE_ERROR_INTERNAL,
 			     "command failed to run successfully: %s", vte_text);
-		g_free (vte_text);
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 #endif
-out:
-	g_free (filename);
-	g_free (command);
-	g_free (basename);
-	if (array != NULL)
-		g_ptr_array_unref (array);
-	g_strfreev (argv);
-	return ret;
+	return TRUE;
 }
 
 static gboolean
@@ -966,14 +889,14 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 {
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-	gchar **argv = NULL;
-	GPtrArray *array = NULL;
-	gchar *command = NULL;
-	gchar *basename = NULL;
-	gchar *copyright = NULL;
-	gchar *description = NULL;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
+	g_auto(GStrv) argv = NULL;
+	g_autoptr(GPtrArray) array = NULL;
+	g_autofree gchar *command = NULL;
+	g_autofree gchar *basename = NULL;
+	g_autofree gchar *copyright = NULL;
+	g_autofree gchar *description = NULL;
+	g_autofree gchar *manufacturer = NULL;
+	g_autofree gchar *model = NULL;
 	GcmCalibrateReferenceKind reference_kind;
 
 	/* get shared data */
@@ -988,10 +911,8 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("colprof", error);
-	if (command == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (command == NULL)
+		return FALSE;
 
 	/* TRANSLATORS: title, a profile is a ICC file */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
@@ -1029,7 +950,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 	/* start up the command */
 	ret = gcm_calibrate_argyll_fork_command (calibrate_argyll, argv, error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -1040,8 +961,7 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_USER_ABORT,
 				     "calibration was cancelled");
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 #ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
@@ -1052,30 +972,18 @@ gcm_calibrate_argyll_device_generate_profile (GcmCalibrateArgyll *calibrate_argy
 			     GCM_CALIBRATE_ERROR_INTERNAL,
 			     "command failed to run successfully: %s", vte_text);
 		g_free (vte_text);
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 #endif
-out:
-	if (array != NULL)
-		g_ptr_array_unref (array);
-	g_free (copyright);
-	g_free (description);
-	g_free (manufacturer);
-	g_free (model);
-	g_free (basename);
-	g_free (command);
-	g_strfreev (argv);
-	return ret;
+	return TRUE;
 }
 
 static gboolean
 gcm_calibrate_argyll_set_filename_result (GcmCalibrateArgyll *calibrate_argyll,
 					  GError **error)
 {
-	gchar *filename = NULL;
-	gboolean ret = TRUE;
-	gchar *basename = NULL;
+	g_autofree gchar *filename = NULL;
+	g_autofree gchar *basename = NULL;
 	const gchar *working_path;
 
 	/* get shared data */
@@ -1086,12 +994,11 @@ gcm_calibrate_argyll_set_filename_result (GcmCalibrateArgyll *calibrate_argyll,
 
 	/* we can't have finished with success */
 	if (basename == NULL) {
-		ret = FALSE;
 		g_set_error_literal (error,
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_INTERNAL,
 				     "profile was not generated");
-		goto out;
+		return FALSE;
 	}
 
 	/* get the finished icc file */
@@ -1099,22 +1006,18 @@ gcm_calibrate_argyll_set_filename_result (GcmCalibrateArgyll *calibrate_argyll,
 
 	/* we never finished all the steps */
 	if (!g_file_test (filename, G_FILE_TEST_EXISTS)) {
-		ret = FALSE;
 		g_set_error_literal (error,
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_INTERNAL,
 				     "could not find completed profile");
-		goto out;
+		return FALSE;
 	}
 
 	/* success */
 	g_object_set (calibrate_argyll,
 		      "filename-result", filename,
 		      NULL);
-out:
-	g_free (basename);
-	g_free (filename);
-	return ret;
+	return TRUE;
 }
 
 static gboolean
@@ -1126,7 +1029,7 @@ gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll,
 	gboolean ret;
 	const gchar *exts[] = {"cal", "ti1", "ti3", "tif", NULL};
 	const gchar *filenames[] = {"scanin.cht", "scanin-ref.txt", NULL};
-	gchar *basename = NULL;
+	g_autofree gchar *basename = NULL;
 	const gchar *working_path;
 
 	/* get shared data */
@@ -1175,7 +1078,6 @@ gcm_calibrate_argyll_display (GcmCalibrate *calibrate,
 {
 	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-	gboolean ret;
 
 	priv->device = g_object_ref (device);
 
@@ -1200,40 +1102,34 @@ gcm_calibrate_argyll_display (GcmCalibrate *calibrate,
 }
 
 	/* step 1 */
-	ret = gcm_calibrate_argyll_display_neutralise (calibrate_argyll, error);
-	if (!ret)
-		goto out;
+	if (!gcm_calibrate_argyll_display_neutralise (calibrate_argyll, error))
+		return FALSE;
 
 	/* set progress */
 	gcm_calibrate_set_progress (calibrate, 30);
 
 	/* step 3 */
-	ret = gcm_calibrate_argyll_display_draw_and_measure (calibrate_argyll, error);
-	if (!ret)
-		goto out;
+	if (!gcm_calibrate_argyll_display_draw_and_measure (calibrate_argyll, error))
+		return FALSE;
 
 	/* set progress */
 	gcm_calibrate_set_progress (calibrate, 40);
 
 	/* step 4 */
-	ret = gcm_calibrate_argyll_display_generate_profile (calibrate_argyll, error);
-	if (!ret)
-		goto out;
+	if (!gcm_calibrate_argyll_display_generate_profile (calibrate_argyll, error))
+		return FALSE;
 
 	/* set progress */
 	gcm_calibrate_set_progress (calibrate, 80);
 
 	/* step 5 */
-	ret = gcm_calibrate_argyll_remove_temp_files (calibrate_argyll, error);
-	if (!ret)
-		goto out;
+	if (!gcm_calibrate_argyll_remove_temp_files (calibrate_argyll, error))
+		return FALSE;
 
 	/* step 6 */
-	ret = gcm_calibrate_argyll_set_filename_result (calibrate_argyll, error);
-	if (!ret)
-		goto out;
-out:
-	return ret;
+	if (!gcm_calibrate_argyll_set_filename_result (calibrate_argyll, error))
+		return FALSE;
+	return TRUE;
 }
 
 static void
@@ -1262,7 +1158,7 @@ gcm_calibrate_argyll_interaction (GcmCalibrate *calibrate, GtkResponseType respo
 			g_main_loop_quit (priv->loop);
 			priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
 		}
-		goto out;
+		return;
 	}
 
 	/* cancel */
@@ -1286,10 +1182,8 @@ gcm_calibrate_argyll_interaction (GcmCalibrate *calibrate, GtkResponseType respo
 		/* stop loop */
 		if (g_main_loop_is_running (priv->loop))
 			g_main_loop_quit (priv->loop);
-		goto out;
+		return;
 	}
-out:
-	return;
 }
 
 static const gchar *
@@ -1326,10 +1220,10 @@ gcm_calibrate_argyll_printer_generate_targets (GcmCalibrateArgyll *calibrate_arg
 {
 	gboolean ret = TRUE;
 	GcmCalibrateArgyllPrivate *priv = calibrate_argyll->priv;
-	gchar *command = NULL;
-	gchar **argv = NULL;
-	GPtrArray *array = NULL;
-	gchar *basename = NULL;
+	g_autofree gchar *command = NULL;
+	g_auto(GStrv) argv = NULL;
+	g_autoptr(GPtrArray) array = NULL;
+	g_autofree gchar *basename = NULL;
 	CdSensorKind sensor_kind;
 
 	/* get shared data */
@@ -1340,10 +1234,8 @@ gcm_calibrate_argyll_printer_generate_targets (GcmCalibrateArgyll *calibrate_arg
 
 	/* get correct name of the command */
 	command = gcm_calibrate_argyll_get_tool_filename ("printtarg", error);
-	if (command == NULL) {
-		ret = FALSE;
-		goto out;
-	}
+	if (command == NULL)
+		return FALSE;
 
 	/* TRANSLATORS: title, patches are specific colors used in calibration */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
@@ -1388,7 +1280,7 @@ gcm_calibrate_argyll_printer_generate_targets (GcmCalibrateArgyll *calibrate_arg
 	/* start up the command */
 	ret = gcm_calibrate_argyll_fork_command (calibrate_argyll, argv, error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* wait until finished */
 	g_main_loop_run (priv->loop);
@@ -1399,29 +1291,20 @@ gcm_calibrate_argyll_printer_generate_targets (GcmCalibrateArgyll *calibrate_arg
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_USER_ABORT,
 				     "target generation was cancelled");
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 #ifdef HAVE_VTE
 	if (priv->response == GTK_RESPONSE_REJECT) {
-		gchar *vte_text;
+		g_autofree gchar *vte_text = NULL;
 		vte_text = vte_terminal_get_text (VTE_TERMINAL(priv->terminal), NULL, NULL, NULL);
 		g_set_error (error,
 			     GCM_CALIBRATE_ERROR,
 			     GCM_CALIBRATE_ERROR_INTERNAL,
 			     "command failed to run successfully: %s", vte_text);
-		g_free (vte_text);
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 #endif
-out:
-	if (array != NULL)
-		g_ptr_array_unref (array);
-	g_free (basename);
-	g_free (command);
-	g_strfreev (argv);
-	return ret;
+	return TRUE;
 }
 
 static gboolean
@@ -1446,12 +1329,12 @@ gcm_calibrate_argyll_render_cb (GcmPrint *print,
 				GError **error)
 {
 	gboolean ret = TRUE;
-	GPtrArray *array = NULL;
+	g_autoptr(GPtrArray) array = NULL;
 	gdouble width, height;
 	GtkPaperSize *paper_size;
-	GDir *dir = NULL;
+	g_autoptr(GDir) dir = NULL;
 	const gchar *filename;
-	gchar *basename = NULL;
+	g_autofree gchar *basename = NULL;
 	gchar *filename_tmp;
 	const gchar *working_path;
 
@@ -1471,12 +1354,12 @@ gcm_calibrate_argyll_render_cb (GcmPrint *print,
 							     height,
 							     error);
 	if (!ret)
-		goto out;
+		return NULL;
 
 	/* list files */
 	dir = g_dir_open (working_path, 0, error);
 	if (dir == NULL)
-		goto out;
+		return NULL;
 
 	/* read in each file */
 	array = g_ptr_array_new_with_free_func (g_free);
@@ -1490,10 +1373,6 @@ gcm_calibrate_argyll_render_cb (GcmPrint *print,
 		}
 		filename = g_dir_read_name (dir);
 	}
-out:
-	g_free (basename);
-	if (dir != NULL)
-		g_dir_close (dir);
 	return array;
 }
 
@@ -1502,17 +1381,15 @@ gcm_calibrate_argyll_set_device_from_ti2 (GcmCalibrate *calibrate,
 					  const gchar *filename,
 					  GError **error)
 {
-	gboolean ret;
-	gchar *contents = NULL;
-	gchar *device = NULL;
+	g_autofree gchar *contents = NULL;
+	g_autofree gchar *device = NULL;
 	const gchar *device_ptr = NULL;
-	gchar **lines = NULL;
+	g_auto(GStrv) lines = NULL;
 	gint i;
 
 	/* get the contents of the file */
-	ret = g_file_get_contents (filename, &contents, NULL, error);
-	if (!ret)
-		goto out;
+	if (!g_file_get_contents (filename, &contents, NULL, error))
+		return FALSE;
 
 	/* find the data */
 	lines = g_strsplit (contents, "\n", -1);
@@ -1531,8 +1408,7 @@ gcm_calibrate_argyll_set_device_from_ti2 (GcmCalibrate *calibrate,
 			     GCM_CALIBRATE_ERROR,
 			     GCM_CALIBRATE_ERROR_NO_DATA,
 			     "cannot find TARGET_INSTRUMENT in %s", filename);
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 
 	/* remove vendor prefix */
@@ -1544,11 +1420,7 @@ gcm_calibrate_argyll_set_device_from_ti2 (GcmCalibrate *calibrate,
 	g_object_set (calibrate,
 		      "device", device_ptr,
 		      NULL);
-out:
-	g_free (device);
-	g_free (contents);
-	g_strfreev (lines);
-	return ret;
+	return TRUE;
 }
 
 static GtkPaperSize *
@@ -1767,10 +1639,8 @@ gcm_calibrate_argyll_pixbuf_remove_alpha (const GdkPixbuf *pixbuf)
 	guchar *src, *dest;
 
 	/* already no alpha */
-	if (!gdk_pixbuf_get_has_alpha (pixbuf)) {
-		new_pixbuf = gdk_pixbuf_copy (pixbuf);
-		goto out;
-	}
+	if (!gdk_pixbuf_get_has_alpha (pixbuf))
+		return gdk_pixbuf_copy (pixbuf);
 
 	/* create new image, and copy RGB */
 	new_pixbuf = gdk_pixbuf_new (GDK_COLORSPACE_RGB, FALSE, 8,
@@ -1789,7 +1659,6 @@ gcm_calibrate_argyll_pixbuf_remove_alpha (const GdkPixbuf *pixbuf)
 			dest += 3;
 		}
 	}
-out:
 	return new_pixbuf;
 }
 
@@ -1845,7 +1714,6 @@ gcm_calibrate_argyll_device (GcmCalibrate *calibrate,
 			     GError **error)
 {
 	GcmCalibrateArgyll *calibrate_argyll = GCM_CALIBRATE_ARGYLL(calibrate);
-	gboolean ret;
 
 	/* TRANSLATORS: title, instrument refers to a calibration device */
 	gcm_calibrate_set_title (GCM_CALIBRATE (calibrate_argyll),
@@ -1859,48 +1727,41 @@ gcm_calibrate_argyll_device (GcmCalibrate *calibrate,
 
 
 	/* step 1 */
-	ret = gcm_calibrate_argyll_device_copy (calibrate_argyll, error);
-	if (!ret)
-		goto out;
+	if (!gcm_calibrate_argyll_device_copy (calibrate_argyll, error))
+		return FALSE;
 
 	/* step 1.5 */
-	ret = gcm_calibrate_argyll_check_and_remove_alpha (calibrate_argyll, error);
-	if (!ret)
-		goto out;
+	if (!gcm_calibrate_argyll_check_and_remove_alpha (calibrate_argyll, error))
+		return FALSE;
 
 	/* set progress */
 	gcm_calibrate_set_progress (calibrate, 10);
 
 	/* step 2 */
-	ret = gcm_calibrate_argyll_device_measure (calibrate_argyll, error);
-	if (!ret)
-		goto out;
+	if (!gcm_calibrate_argyll_device_measure (calibrate_argyll, error))
+		return FALSE;
 
 	/* set progress */
 	gcm_calibrate_set_progress (calibrate, 70);
 
 	/* step 3 */
-	ret = gcm_calibrate_argyll_device_generate_profile (calibrate_argyll, error);
-	if (!ret)
-		goto out;
+	if (!gcm_calibrate_argyll_device_generate_profile (calibrate_argyll, error))
+		return FALSE;
 
 	/* set progress */
 	gcm_calibrate_set_progress (calibrate, 80);
 
 	/* step 4 */
-	ret = gcm_calibrate_argyll_remove_temp_files (calibrate_argyll, error);
-	if (!ret)
-		goto out;
+	if (!gcm_calibrate_argyll_remove_temp_files (calibrate_argyll, error))
+		return FALSE;
 
 	/* set progress */
 	gcm_calibrate_set_progress (calibrate, 90);
 
 	/* step 5 */
-	ret = gcm_calibrate_argyll_set_filename_result (calibrate_argyll, error);
-	if (!ret)
-		goto out;
-out:
-	return ret;
+	if (!gcm_calibrate_argyll_set_filename_result (calibrate_argyll, error))
+		return FALSE;
+	return TRUE;
 }
 
 #ifdef HAVE_VTE
@@ -1949,7 +1810,7 @@ gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 							   (GSourceFunc) gcm_calibrate_argyll_timeout_cb,
 							   calibrate_argyll);
 		g_source_set_name_by_id (priv->keypress_id, "[GcmCalibrateArgyll] keypress faker");
-		goto out;
+		return;
 	}
 
 	/* tell the user to attach the sensor */
@@ -1962,8 +1823,6 @@ gcm_calibrate_argyll_interaction_attach (GcmCalibrateArgyll *calibrate_argyll)
 
 	/* save as we know the device is on the screen now */
 	priv->already_on_window = TRUE;
-out:
-	return;
 }
 
 static void

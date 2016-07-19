@@ -179,12 +179,12 @@ gcm_calibrate_get_screen_brightness (GcmCalibrate *calibrate)
 static void
 gcm_calibrate_set_basename (GcmCalibrate *calibrate)
 {
-	gchar *serial = NULL;
-	gchar *manufacturer = NULL;
-	gchar *model = NULL;
-	gchar *timespec = NULL;
+	g_autofree gchar *serial = NULL;
+	g_autofree gchar *manufacturer = NULL;
+	g_autofree gchar *model = NULL;
+	g_autofree gchar *timespec = NULL;
 	GDate *date = NULL;
-	GString *basename;
+	g_autoptr(GString) basename = NULL;
 
 	/* get device properties */
 	g_object_get (calibrate,
@@ -215,11 +215,6 @@ gcm_calibrate_set_basename (GcmCalibrate *calibrate)
 	g_object_set (calibrate, "basename", basename->str, NULL);
 
 	g_date_free (date);
-	g_free (serial);
-	g_free (manufacturer);
-	g_free (model);
-	g_free (timespec);
-	g_string_free (basename, TRUE);
 }
 
 gboolean
@@ -276,9 +271,8 @@ gcm_calibrate_get_sensor (GcmCalibrate *calibrate)
 static gboolean
 gcm_calibrate_set_working_path (GcmCalibrate *calibrate, GError **error)
 {
-	gboolean ret = FALSE;
-	gchar *timespec = NULL;
-	gchar *folder = NULL;
+	g_autofree gchar *timespec = NULL;
+	g_autofree gchar *folder = NULL;
 	GcmCalibratePrivate *priv = GET_PRIVATE (calibrate);
 
 	/* remove old value */
@@ -288,10 +282,7 @@ gcm_calibrate_set_working_path (GcmCalibrate *calibrate, GError **error)
 	timespec = gcm_calibrate_get_time ();
 	folder = g_strjoin (" - ", priv->basename, timespec, NULL);
 	priv->working_path = g_build_filename (g_get_user_config_dir (), "gnome-color-manager", "calibration", folder, NULL);
-	ret = gcm_calibrate_mkdir_with_parents (priv->working_path, error);
-	g_free (timespec);
-	g_free (folder);
-	return ret;
+	return gcm_calibrate_mkdir_with_parents (priv->working_path, error);
 }
 
 void
@@ -350,7 +341,7 @@ gcm_calibrate_interaction_attach (GcmCalibrate *calibrate)
 {
 	GcmCalibratePrivate *priv = GET_PRIVATE (calibrate);
 	const gchar *filename;
-	GString *message;
+	g_autoptr(GString) message = NULL;
 
 	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
 	gcm_calibrate_set_title (calibrate,
@@ -388,8 +379,6 @@ gcm_calibrate_interaction_attach (GcmCalibrate *calibrate)
 			 /* TRANSLATORS: this is the application name for libcanberra */
 			 CA_PROP_APPLICATION_NAME, _("GNOME Color Manager"),
 			 CA_PROP_EVENT_DESCRIPTION, "interaction required", NULL);
-
-	g_string_free (message, TRUE);
 }
 
 void
@@ -473,7 +462,7 @@ gcm_calibrate_set_brightness (GcmCalibrate *calibrate, CdDevice *device)
 	GcmCalibratePrivate *priv = GET_PRIVATE (calibrate);
 	const gchar *xrandr_name;
 	gboolean ret;
-	GError *error = NULL;
+	g_autoptr(GError) error = NULL;
 
 	/* is this a laptop */
 	xrandr_name = cd_device_get_metadata_item (device,
@@ -501,7 +490,6 @@ gcm_calibrate_set_brightness (GcmCalibrate *calibrate, CdDevice *device)
 	if (!ret) {
 		g_warning ("failed to set brightness: %s",
 			   error->message);
-		g_error_free (error);
 	}
 }
 
@@ -541,10 +529,10 @@ gcm_calibrate_display (GcmCalibrate *calibrate,
 {
 	const gchar *filename_tmp;
 	gboolean ret = TRUE;
-	gchar *cal_fn = NULL;
-	gchar *ti1_dest_fn = NULL;
-	gchar *ti1_src_fn = NULL;
-	gchar *ti3_fn = NULL;
+	g_autofree gchar *cal_fn = NULL;
+	g_autofree gchar *ti1_dest_fn = NULL;
+	g_autofree gchar *ti1_src_fn = NULL;
+	g_autofree gchar *ti3_fn = NULL;
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
 	GcmCalibratePrivate *priv = GET_PRIVATE (calibrate);
 
@@ -592,10 +580,6 @@ gcm_calibrate_display (GcmCalibrate *calibrate,
 out:
 	/* unset brightness */
 	gcm_calibrate_unset_brightness (calibrate, device);
-	g_free (cal_fn);
-	g_free (ti1_src_fn);
-	g_free (ti1_dest_fn);
-	g_free (ti3_fn);
 	return ret;
 }
 
@@ -727,7 +711,7 @@ static gchar *
 gcm_calibrate_file_chooser_get_working_path (GcmCalibrate *calibrate, GtkWindow *window)
 {
 	GtkWidget *dialog;
-	gchar *current_folder;
+	g_autofree gchar *current_folder = NULL;
 	gchar *working_path = NULL;
 
 	/* start in the correct place */
@@ -752,20 +736,18 @@ gcm_calibrate_file_chooser_get_working_path (GcmCalibrate *calibrate, GtkWindow 
 	gtk_widget_destroy (dialog);
 
 	/* or NULL for missing */
-	g_free (current_folder);
 	return working_path;
 }
 
 static gboolean
 gcm_calibrate_printer (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *window, GError **error)
 {
-	gboolean ret = FALSE;
 	gchar *ptr;
 	GtkWindow *window_tmp = NULL;
-	gchar *precision = NULL;
+	g_autofree gchar *precision = NULL;
 	const gchar *filename_tmp;
-	gchar *ti1_dest_fn = NULL;
-	gchar *ti1_src_fn = NULL;
+	g_autofree gchar *ti1_dest_fn = NULL;
+	g_autofree gchar *ti1_src_fn = NULL;
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
 	GcmCalibratePrivate *priv = GET_PRIVATE (calibrate);
 
@@ -789,9 +771,8 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *win
 		g_assert_not_reached ();
 	}
 	ti1_src_fn = g_build_filename (GCM_DATA, "ti1", filename_tmp, NULL);
-	ret = gcm_calibrate_copy_file (ti1_src_fn, ti1_dest_fn, error);
-	if (!ret)
-		goto out;
+	if (!gcm_calibrate_copy_file (ti1_src_fn, ti1_dest_fn, error))
+		return FALSE;
 
 	/* copy */
 	if (priv->print_kind == GCM_CALIBRATE_PRINT_KIND_ANALYZE) {
@@ -807,8 +788,7 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *win
 					     GCM_CALIBRATE_ERROR,
 					     GCM_CALIBRATE_ERROR_USER_ABORT,
 					     "user did not choose folder");
-			ret = FALSE;
-			goto out;
+			return FALSE;
 		}
 
 		/* reprogram the basename */
@@ -827,16 +807,11 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *win
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_INTERNAL,
 				     "no klass support");
-		goto out;
+		return FALSE;
 	}
 
 	/* proxy */
-	ret = klass->calibrate_printer (calibrate, device, priv->sensor, window, error);
-out:
-	g_free (ti1_src_fn);
-	g_free (ti1_dest_fn);
-	g_free (precision);
-	return ret;
+	return klass->calibrate_printer (calibrate, device, priv->sensor, window, error);
 }
 
 gboolean
@@ -865,14 +840,14 @@ gcm_calibrate_camera (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *wind
 {
 	gboolean ret = FALSE;
 	gboolean has_shared_targets = TRUE;
-	gchar *reference_image = NULL;
-	gchar *reference_data = NULL;
-	gchar *device_str = NULL;
+	g_autofree gchar *reference_image = NULL;
+	g_autofree gchar *reference_data = NULL;
+	g_autofree gchar *device_str = NULL;
 	const gchar *directory;
 	const gchar *tmp;
-	GString *string;
+	g_autoptr(GString) string = NULL;
 	GtkWindow *window_tmp = NULL;
-	gchar *precision = NULL;
+	g_autofree gchar *precision = NULL;
 	GcmCalibratePrivate *priv = GET_PRIVATE (calibrate);
 	GcmCalibrateClass *klass = GCM_CALIBRATE_GET_CLASS (calibrate);
 
@@ -886,8 +861,7 @@ gcm_calibrate_camera (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *wind
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_USER_ABORT,
 				     "could not get calibration target image");
-		ret = FALSE;
-		goto out;
+		return FALSE;
 	}
 
 	/* use the exif data if there is any present */
@@ -912,8 +886,7 @@ gcm_calibrate_camera (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *wind
 					     GCM_CALIBRATE_ERROR,
 					     GCM_CALIBRATE_ERROR_USER_ABORT,
 					     "could not get reference target");
-			ret = FALSE;
-			goto out;
+			return FALSE;
 		}
 	}
 
@@ -935,19 +908,11 @@ gcm_calibrate_camera (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *wind
 				     GCM_CALIBRATE_ERROR,
 				     GCM_CALIBRATE_ERROR_INTERNAL,
 				     "no klass support");
-		goto out;
+		return FALSE;
 	}
 
 	/* proxy */
-	ret = klass->calibrate_device (calibrate, device, priv->sensor, window, error);
-out:
-	if (string != NULL)
-		g_string_free (string, TRUE);
-	g_free (precision);
-	g_free (device_str);
-	g_free (reference_image);
-	g_free (reference_data);
-	return ret;
+	return klass->calibrate_device (calibrate, device, priv->sensor, window, error);
 }
 
 gboolean
