@@ -32,12 +32,6 @@ G_DECLARE_DERIVABLE_TYPE (GcmBrightness, gcm_brightness, GCM, BRIGHTNESS, GObjec
 struct _GcmBrightnessClass
 {
 	GObjectClass	parent_class;
-	/* padding for future expansion */
-	void (*_gcm_reserved1) (void);
-	void (*_gcm_reserved2) (void);
-	void (*_gcm_reserved3) (void);
-	void (*_gcm_reserved4) (void);
-	void (*_gcm_reserved5) (void);
 };
 
 GType		 gcm_brightness_get_type		(void);

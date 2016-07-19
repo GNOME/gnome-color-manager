@@ -28,12 +28,10 @@
 
 static void     gcm_print_finalize	(GObject     *object);
 
-#define GCM_PRINT_GET_PRIVATE(o) (G_TYPE_INSTANCE_GET_PRIVATE ((o), GCM_TYPE_PRINT, GcmPrintPrivate))
-
-struct _GcmPrintPrivate
+typedef struct
 {
 	GtkPrintSettings		*settings;
-};
+} GcmPrintPrivate;
 
 enum {
 	SIGNAL_STATUS_CHANGED,
@@ -42,7 +40,8 @@ enum {
 
 static guint signals[SIGNAL_LAST] = { 0 };
 
-G_DEFINE_TYPE (GcmPrint, gcm_print, G_TYPE_OBJECT)
+G_DEFINE_TYPE_WITH_PRIVATE (GcmPrint, gcm_print, G_TYPE_OBJECT)
+#define GET_PRIVATE(o) (gcm_print_get_instance_private (o))
 
 /* temporary object so we can pass state */
 typedef struct {
@@ -182,7 +181,7 @@ gcm_print_done_cb (GtkPrintOperation *operation, GtkPrintOperationResult result,
 gboolean
 gcm_print_with_render_callback (GcmPrint *print, GtkWindow *window, GcmPrintRenderCb render_callback, gpointer user_data, GError **error)
 {
-	GcmPrintPrivate *priv = print->priv;
+	GcmPrintPrivate *priv = GET_PRIVATE (print);
 	gboolean ret = TRUE;
 	GcmPrintTask *task;
 	GtkPrintOperationResult res;
@@ -259,15 +258,15 @@ out:
 static void
 gcm_print_init (GcmPrint *print)
 {
-	print->priv = GCM_PRINT_GET_PRIVATE (print);
-	print->priv->settings = gtk_print_settings_new ();
+	GcmPrintPrivate *priv = GET_PRIVATE (print);
+	priv->settings = gtk_print_settings_new ();
 }
 
 static void
 gcm_print_finalize (GObject *object)
 {
 	GcmPrint *print = GCM_PRINT (object);
-	GcmPrintPrivate *priv = print->priv;
+	GcmPrintPrivate *priv = GET_PRIVATE (print);
 
 	g_object_unref (priv->settings);
 

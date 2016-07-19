@@ -26,22 +26,8 @@
 
 G_BEGIN_DECLS
 
-#define GCM_TYPE_PRINT		(gcm_print_get_type ())
-#define GCM_PRINT(o)		(G_TYPE_CHECK_INSTANCE_CAST ((o), GCM_TYPE_PRINT, GcmPrint))
-#define GCM_PRINT_CLASS(k)	(G_TYPE_CHECK_CLASS_CAST((k), GCM_TYPE_PRINT, GcmPrintClass))
-#define GCM_IS_PRINT(o)		(G_TYPE_CHECK_INSTANCE_TYPE ((o), GCM_TYPE_PRINT))
-#define GCM_IS_PRINT_CLASS(k)	(G_TYPE_CHECK_CLASS_TYPE ((k), GCM_TYPE_PRINT))
-#define GCM_PRINT_GET_CLASS(o)	(G_TYPE_INSTANCE_GET_CLASS ((o), GCM_TYPE_PRINT, GcmPrintClass))
-
-typedef struct _GcmPrintPrivate	GcmPrintPrivate;
-typedef struct _GcmPrint	GcmPrint;
-typedef struct _GcmPrintClass	GcmPrintClass;
-
-struct _GcmPrint
-{
-	 GObject			 parent;
-	 GcmPrintPrivate		*priv;
-};
+#define GCM_TYPE_PRINT (gcm_print_get_type ())
+G_DECLARE_DERIVABLE_TYPE (GcmPrint, gcm_print, GCM, PRINT, GObject)
 
 struct _GcmPrintClass
 {
