@@ -303,7 +303,7 @@ gcm_calibrate_argyll_fork_command (GcmCalibrateArgyll *calibrate_argyll,
 				       NULL,
 				       error);
 	if (!ret)
-		goto out;
+		return FALSE;
 
 	/* we're running */
 	priv->state = GCM_CALIBRATE_ARGYLL_STATE_RUNNING;
