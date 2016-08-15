@@ -112,7 +112,7 @@ gcm_viewer_set_example_image (GcmViewerPrivate *viewer, GtkImage *image)
 	g_autoptr(GdkPixbuf) pixbuf = NULL;
 	g_autoptr(GError) error = NULL;
 
-	filename = g_strdup_printf ("viewer-example-%02i.png", viewer->example_index);
+	filename = g_strdup_printf ("viewer-example-%02u.png", viewer->example_index);
 	path = g_build_filename (GCM_DATA, "figures", filename, NULL);
 	pixbuf = gdk_pixbuf_new_from_file (path, &error);
 	if (pixbuf == NULL) {
@@ -1033,11 +1033,11 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	gtk_widget_set_visible (widget, temperature > 0);
 	if (temperature > 0) {
 		if (fabs (temperature - 5000) < 10) {
-			temp = g_strdup_printf ("%iK (D50)", temperature);
+			temp = g_strdup_printf ("%uK (D50)", temperature);
 		} else if (fabs (temperature - 6500) < 10) {
-			temp = g_strdup_printf ("%iK (D65)", temperature);
+			temp = g_strdup_printf ("%uK (D65)", temperature);
 		} else {
-			temp = g_strdup_printf ("%iK", temperature);
+			temp = g_strdup_printf ("%uK", temperature);
 		}
 		gtk_label_set_label (GTK_LABEL (widget), temp);
 		g_free (temp);
@@ -1565,7 +1565,7 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 
 	/* set the parent window if it is specified */
 	if (viewer->xid != 0) {
-		g_debug ("Setting xid %i", viewer->xid);
+		g_debug ("Setting xid %u", viewer->xid);
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), viewer->xid);
 	}
 

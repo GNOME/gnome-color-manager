@@ -398,7 +398,7 @@ gcm_window_set_parent_xid (GtkWindow *window, guint32 _xid)
 static void
 gcm_picker_error_cb (cmsContext ContextID, cmsUInt32Number errorcode, const char *text)
 {
-	g_warning ("LCMS error %i: %s", errorcode, text);
+	g_warning ("LCMS error %u: %s", errorcode, text);
 }
 
 static void
@@ -633,7 +633,7 @@ gcm_picker_startup_cb (GApplication *application, GcmPickerPrivate *priv)
 
 	/* set the parent window if it is specified */
 	if (priv->xid != 0) {
-		g_debug ("Setting xid %i", priv->xid);
+		g_debug ("Setting xid %u", priv->xid);
 		gcm_window_set_parent_xid (GTK_WINDOW (main_window), priv->xid);
 	}
 

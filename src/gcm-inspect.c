@@ -186,7 +186,7 @@ gcm_inspect_show_x11_atoms (void)
 		error = NULL;
 	} else {
 		/* TRANSLATORS: the root window of all the screens */
-		g_print ("%s %i.%i\n", _("Root window protocol version:"), major, minor);
+		g_print ("%s %u.%u\n", _("Root window protocol version:"), major, minor);
 	}
 	return ret;
 }
@@ -241,7 +241,7 @@ gcm_inspect_show_profiles_for_file (const gchar *filename)
 
 	/* for each entry in the array */
 	while (g_variant_iter_loop (iter, "(ss)", &filename, &description))
-		g_print ("%i.\t%s\n\t%s\n", ++i, description, filename);
+		g_print ("%u.\t%s\n\t%s\n", ++i, description, filename);
 
 	/* success */
 	ret = TRUE;
@@ -303,7 +303,7 @@ gcm_inspect_show_profile_for_window (guint xid)
 	}
 
 	/* TRANSLATORS: this is a list of profiles suitable for the device */
-	g_print ("%s %i\n", _("Suitable profiles for:"), xid);
+	g_print ("%s %u\n", _("Suitable profiles for:"), xid);
 	g_print ("1.\t%s\n\t%s\n", "this is a title", profile);
 
 	/* success */

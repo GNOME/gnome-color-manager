@@ -95,7 +95,7 @@ gcm_print_begin_print_cb (GtkPrintOperation *operation, GtkPrintContext *context
 	}
 
 	/* setting the page count */
-	g_debug ("setting %i pages", task->filenames->len);
+	g_debug ("setting %u pages", task->filenames->len);
 	gtk_print_operation_set_n_pages (operation, task->filenames->len);
 }
 
@@ -153,7 +153,7 @@ gcm_print_status_changed_cb (GtkPrintOperation *operation, GcmPrintTask *task)
 
 	/* signal the status change */
 	status = gtk_print_operation_get_status (operation);
-	g_debug ("emit: status-changed: %i", status);
+	g_debug ("emit: status-changed: %u", status);
 	g_signal_emit (task->print, signals[SIGNAL_STATUS_CHANGED], 0, status);
 
 	/* done? */

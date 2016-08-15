@@ -198,7 +198,7 @@ gcm_calibrate_argyll_get_display (const gchar *output_name,
 		g_strdelimit (name, " ", '\0');
 		if (g_strcmp0 (output_name, &name[26]) == 0) {
 			display = atoi (&name[4]);
-			g_debug ("found %s mapped to %i", output_name, display);
+			g_debug ("found %s mapped to %u", output_name, display);
 		}
 	}
 
@@ -378,8 +378,8 @@ gcm_calibrate_argyll_display_neutralise (GcmCalibrateArgyll *calibrate_argyll,
 	g_ptr_array_add (array, g_strdup (gcm_calibrate_argyll_get_quality_arg (calibrate_argyll)));
 	g_ptr_array_add (array, g_strdup ("-m"));
 	if (target_whitepoint > 0)
-		g_ptr_array_add (array, g_strdup_printf ("-t%i", target_whitepoint));
-	g_ptr_array_add (array, g_strdup_printf ("-d%i", display));
+		g_ptr_array_add (array, g_strdup_printf ("-t%u", target_whitepoint));
+	g_ptr_array_add (array, g_strdup_printf ("-d%u", display));
 	g_ptr_array_add (array, g_strdup_printf ("-y%c", kind));
 	if (sensor_kind == CD_SENSOR_KIND_COLOR_MUNKI_PHOTO) {
 		g_ptr_array_add (array, g_strdup ("-H"));
@@ -551,7 +551,7 @@ gcm_calibrate_argyll_display_draw_and_measure (GcmCalibrateArgyll *calibrate_arg
 	g_ptr_array_add (array, g_strdup (command));
 #endif
 	g_ptr_array_add (array, g_strdup ("-v"));
-	g_ptr_array_add (array, g_strdup_printf ("-d%i", display));
+	g_ptr_array_add (array, g_strdup_printf ("-d%u", display));
 	g_ptr_array_add (array, g_strdup_printf ("-y%c", kind));
 	g_ptr_array_add (array, g_strdup ("-k"));
 	g_ptr_array_add (array, g_strdup_printf ("%s.cal", basename));

@@ -36,7 +36,7 @@ libgcmshared_a_SOURCES =				\
 	gcm-utils.h
 
 libgcmshared_a_CFLAGS =					\
-	$(WARNINGFLAGS_C)
+	$(WARN_CFLAGS)
 
 bin_PROGRAMS =						\
 	gcm-inspect					\
@@ -80,7 +80,7 @@ gcm_calibrate_LDADD =					\
 	-lm
 
 gcm_calibrate_CFLAGS =					\
-	$(WARNINGFLAGS_C)
+	$(WARN_CFLAGS)
 
 gcm_inspect_SOURCES =					\
 	gcm-inspect.c
@@ -96,7 +96,7 @@ gcm_inspect_LDADD =					\
 	-lm
 
 gcm_inspect_CFLAGS =					\
-	$(WARNINGFLAGS_C)
+	$(WARN_CFLAGS)
 
 gcm_import_SOURCES =					\
 	gcm-import.c
@@ -112,7 +112,7 @@ gcm_import_LDADD =					\
 	-lm
 
 gcm_import_CFLAGS =					\
-	$(WARNINGFLAGS_C)
+	$(WARN_CFLAGS)
 
 gcm_viewer_SOURCES =					\
 	gcm-cell-renderer-profile-text.c		\
@@ -137,7 +137,7 @@ gcm_viewer_LDADD =					\
 	-lm
 
 gcm_viewer_CFLAGS =					\
-	$(WARNINGFLAGS_C)
+	$(WARN_CFLAGS)
 
 gcm_picker_SOURCES =					\
 	gcm-picker-resources.c				\
@@ -158,7 +158,7 @@ gcm_picker_LDADD =					\
 	-lm
 
 gcm_picker_CFLAGS =					\
-	$(WARNINGFLAGS_C)
+	$(WARN_CFLAGS)
 
 if HAVE_TESTS
 
@@ -189,7 +189,7 @@ gcm_self_test_LDADD =					\
 	$(CANBERRA_LIBS)				\
 	-lm
 
-gcm_self_test_CFLAGS = $(AM_CFLAGS) $(WARNINGFLAGS_C)
+gcm_self_test_CFLAGS = $(AM_CFLAGS) $(WARN_CFLAGS)
 
 TESTS = gcm-self-test
 

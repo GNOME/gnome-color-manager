@@ -295,7 +295,7 @@ gcm_calib_set_extra_metadata (GcmCalibratePriv *priv,
 	/* add the calibration brightness if an internal panel */
 	percentage = gcm_calibrate_get_screen_brightness (priv->calibrate);
 	if (percentage > 0) {
-		screen_brightness_str = g_strdup_printf ("%i", percentage);
+		screen_brightness_str = g_strdup_printf ("%u", percentage);
 		_cmsDictAddEntryAscii (dict,
 				       CD_PROFILE_METADATA_SCREEN_BRIGHTNESS,
 				       screen_brightness_str);
@@ -1630,8 +1630,8 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 			g_string_append (labels[i], " ");
 			/* TRANSLATORS: radio options for calibration precision */
 			g_string_append_printf (labels[i], ngettext (
-						"(about %i sheet of paper)",
-						"(about %i sheets of paper)",
+						"(about %u sheet of paper)",
+						"(about %u sheets of paper)",
 						values_printer[i]),
 						values_printer[i]);
 		}
@@ -1641,8 +1641,8 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 			g_string_append (labels[i], " ");
 			/* TRANSLATORS: radio options for calibration precision */
 			g_string_append_printf (labels[i], ngettext (
-						"(about %i minute)",
-						"(about %i minutes)",
+						"(about %u minute)",
+						"(about %u minutes)",
 						values_display[i]),
 						values_display[i]);
 		}
@@ -1991,7 +1991,7 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *priv)
 
 	/* set the parent window if it is specified */
 	if (priv->xid != 0) {
-		g_debug ("Setting xid %i", priv->xid);
+		g_debug ("Setting xid %u", priv->xid);
 		gcm_window_set_parent_xid (GTK_WINDOW (priv->main_window), priv->xid);
 	}
 
