@@ -41,7 +41,6 @@ typedef GPtrArray	*(*GcmPrintRenderCb)		(GcmPrint		*print,
 							 gpointer		 user_data,
 							 GError			**error);
 
-GType			 gcm_print_get_type		(void);
 GcmPrint		*gcm_print_new			(void);
 gboolean		 gcm_print_with_render_callback	(GcmPrint		*print,
 							 GtkWindow		*window,

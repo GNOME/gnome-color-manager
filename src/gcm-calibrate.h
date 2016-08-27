@@ -124,7 +124,6 @@ typedef enum {
 	GCM_CALIBRATE_UI_UNKNOWN
 } GcmCalibrateUiType;
 
-GType		 gcm_calibrate_get_type			(void);
 GcmCalibrate	*gcm_calibrate_new			(void);
 
 /* designed for gcm-calibrate to call */

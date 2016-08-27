@@ -46,7 +46,6 @@ typedef enum
 /* dummy */
 #define GCM_EXIF_ERROR	1
 
-GType		 gcm_exif_get_type		  	(void);
 GcmExif		*gcm_exif_new				(void);
 
 const gchar	*gcm_exif_get_manufacturer		(GcmExif	*exif);

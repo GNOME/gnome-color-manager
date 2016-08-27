@@ -34,7 +34,6 @@ struct _GcmBrightnessClass
 	GObjectClass	parent_class;
 };
 
-GType		 gcm_brightness_get_type		(void);
 GcmBrightness	*gcm_brightness_new			(void);
 gboolean	 gcm_brightness_set_percentage		(GcmBrightness		*brightness,
 							 guint			 percentage,
