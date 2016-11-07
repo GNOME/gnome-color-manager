@@ -1969,7 +1969,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 		} else if (g_strstr_len (line, -1, "Pattern match wasn't good enough") != NULL) {
 			/* TRANSLATORS: message, the image wasn't good enough */
 			gcm_calibrate_set_message (GCM_CALIBRATE (calibrate_argyll),
-						   _("The pattern match wasn't good enough. Ensure you have the correct type of target selected."),
+						   _("The pattern match wasn’t good enough. Ensure you have the correct type of target selected."),
 						   GCM_CALIBRATE_UI_ERROR);
 		} else if (g_strstr_len (line, -1, "Aprox. fwd matrix unexpectedly singular") != NULL ||
 			   g_strstr_len (line, -1, "Inverting aprox. fwd matrix failed") != NULL) {
@@ -2079,11 +2079,11 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 		string = g_string_new ("");
 
 		/* TRANSLATORS: dialog message, just follow the hardware instructions */
-		g_string_append (string, _("It looks like you've measured the wrong strip."));
+		g_string_append (string, _("It looks like you’ve measured the wrong strip."));
 		g_string_append (string, "\n\n");
 
 		/* TRANSLATORS: dialog message, just follow the hardware instructions */
-		g_string_append (string, _("If you've really measured the right one, it's okay, it could just be unusual paper."));
+		g_string_append (string, _("If you’ve really measured the right one, it’s okay, it could just be unusual paper."));
 		g_string_append (string, "\n\n");
 
 		/* push new messages into the UI */
@@ -2144,7 +2144,7 @@ gcm_calibrate_argyll_process_output_cmd (GcmCalibrateArgyll *calibrate_argyll,
 		g_string_append (string, "\n\n");
 
 		/* TRANSLATORS: dialog message, just follow the hardware instructions */
-		g_string_append (string, _("If you make a mistake, just release the switch, and you'll get a chance to try again."));
+		g_string_append (string, _("If you make a mistake, just release the switch, and you’ll get a chance to try again."));
 
 		/* push new messages into the UI */
 		gcm_calibrate_set_image (GCM_CALIBRATE (calibrate_argyll), "scan-target.svg");

@@ -1098,7 +1098,7 @@ gcm_viewer_set_profile (GcmViewerPrivate *viewer, CdProfile *profile)
 	gtk_widget_set_visible (widget, created != NULL);
 	if (created != NULL) {
 		/* TRANSLATORS: this is the icc creation date strftime format */
-		temp = g_date_time_format (created, _("%B %e %Y, %I:%M:%S %p"));
+		temp = g_date_time_format (created, _("%B %e %Y, %I∶%M∶%S %p"));
 		gtk_label_set_label (GTK_LABEL(widget), temp);
 		g_free (temp);
 	}

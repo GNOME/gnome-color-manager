@@ -926,7 +926,7 @@ gcm_calib_setup_page_display_configure_wait (GcmCalibratePriv *priv)
 	gcm_calib_add_page_para (content, _("Before calibrating the display, it is recommended to configure your display with the following settings to get optimal results."));
 
 	/* TRANSLATORS: dialog message, preface */
-if(0)	gcm_calib_add_page_para (content, _("You may want to consult the owner's manual for your display on how to achieve these settings."));
+if(0)	gcm_calib_add_page_para (content, _("You may want to consult the owner’s manual for your display on how to achieve these settings."));
 
 	/* TRANSLATORS: dialog message, bullet item */
 if(0)	gcm_calib_add_page_bullet (content, _("Reset your display to the factory defaults."));
