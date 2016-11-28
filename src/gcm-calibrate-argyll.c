@@ -1026,7 +1026,6 @@ gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll,
 {
 	gchar *filename_tmp;
 	guint i;
-	gboolean ret;
 	const gchar *exts[] = {"cal", "ti1", "ti3", "tif", NULL};
 	const gchar *filenames[] = {"scanin.cht", "scanin-ref.txt", NULL};
 	g_autofree gchar *basename = NULL;
@@ -1042,8 +1041,7 @@ gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll,
 	if (basename != NULL) {
 		for (i = 0; exts[i] != NULL; i++) {
 			filename_tmp = g_strdup_printf ("%s/%s.%s", working_path, basename, exts[i]);
-			ret = g_file_test (filename_tmp, G_FILE_TEST_IS_REGULAR);
-			if (ret) {
+			if (g_file_test (filename_tmp, G_FILE_TEST_IS_REGULAR)) {
 				g_debug ("removing %s", filename_tmp);
 				g_unlink (filename_tmp);
 			}
@@ -1054,8 +1052,7 @@ gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll,
 	/* remove all the temp files */
 	for (i = 0; filenames[i] != NULL; i++) {
 		filename_tmp = g_strdup_printf ("%s/%s", working_path, filenames[i]);
-		ret = g_file_test (filename_tmp, G_FILE_TEST_IS_REGULAR);
-		if (ret) {
+		if (g_file_test (filename_tmp, G_FILE_TEST_IS_REGULAR)) {
 			g_debug ("removing %s", filename_tmp);
 			g_unlink (filename_tmp);
 		}
@@ -1063,10 +1060,7 @@ gcm_calibrate_argyll_remove_temp_files (GcmCalibrateArgyll *calibrate_argyll,
 	}
 
 	/* success */
-	ret = TRUE;
-
-	g_free (basename);
-	return ret;
+	return TRUE;
 }
 
 static gboolean
