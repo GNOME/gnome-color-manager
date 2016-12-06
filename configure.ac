@@ -16,7 +16,6 @@ AC_PROG_INSTALL
 AC_PROG_RANLIB
 LT_INIT
 AM_PROG_CC_C_O
-IT_PROG_INTLTOOL([0.35.0])
 YELP_HELP_INIT
 
 # validate AppData
@@ -72,11 +71,11 @@ AC_SUBST(WARN_CFLAGS)
 dnl ---------------------------------------------------------------------------
 dnl - gettext stuff
 dnl ---------------------------------------------------------------------------
+AM_GNU_GETTEXT([external])
+AM_GNU_GETTEXT_VERSION([0.19.7])
 GETTEXT_PACKAGE=AC_PACKAGE_NAME
 AC_SUBST(GETTEXT_PACKAGE)
 AC_DEFINE(GETTEXT_PACKAGE, "AC_PACKAGE_NAME", [foo])
-
-AM_GLIB_GNU_GETTEXT
 GLIB_GSETTINGS
 
 dnl ---------------------------------------------------------------------------

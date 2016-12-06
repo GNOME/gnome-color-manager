@@ -13,6 +13,8 @@ DISTCLEANFILES =					\
 
 MAINTAINERCLEANFILES =					\
 	*~						\
+	ABOUT-NLS					\
+	config.rpath					\
 	Makefile.in					\
 	aclocal.m4					\
 	compile						\

@@ -6,7 +6,9 @@ SUBDIRS = 						\
 	figures						\
 	icons
 
-@INTLTOOL_DESKTOP_RULE@
+%.desktop: %.desktop.in
+	$(AM_V_GEN) msgfmt --desktop -d $(top_srcdir)/po --template $< -o $@
+
 desktopdir = $(datadir)/applications
 desktop_in_files =					\
 	org.gnome.ColorProfileViewer.desktop.in		\
@@ -30,6 +32,7 @@ clean-local :
 
 DISTCLEANFILES =					\
 	org.gnome.ColorManager.service			\
+	org.gnome.ColorProfileViewer.desktop		\
 	gcm-calibrate.desktop				\
 	gcm-picker.desktop				\
 	gcm-viewer.desktop				\
