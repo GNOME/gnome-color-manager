@@ -343,8 +343,8 @@ gcm_calibrate_interaction_attach (GcmCalibrate *calibrate)
 	const gchar *filename;
 	g_autoptr(GString) message = NULL;
 
-	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
 	gcm_calibrate_set_title (calibrate,
+				 /* TRANSLATORS: title, instrument is a hardware color calibration sensor */
 				 _("Please attach instrument"),
 				 GCM_CALIBRATE_UI_INTERACTION);
 
@@ -387,8 +387,8 @@ gcm_calibrate_interaction_screen (GcmCalibrate *calibrate)
 	GcmCalibratePrivate *priv = GET_PRIVATE (calibrate);
 	const gchar *filename;
 
-	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
 	gcm_calibrate_set_title (calibrate,
+				 /* TRANSLATORS: title, instrument is a hardware color calibration sensor */
 				 _("Please configure instrument"),
 				 GCM_CALIBRATE_UI_INTERACTION);
 
@@ -398,13 +398,13 @@ gcm_calibrate_interaction_screen (GcmCalibrate *calibrate)
 	gcm_calibrate_set_image (calibrate, filename);
 	gcm_calibrate_interaction_required (calibrate, _("Continue"));
 	if (filename != NULL) {
-		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
 		gcm_calibrate_set_message (calibrate,
+					   /* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
 					   _("Please set the measuring instrument to screen mode like the image below."),
 					   GCM_CALIBRATE_UI_INTERACTION);
 	} else {
-		/* TRANSLATORS: this is when the user has to change a setting on the sensor */
 		gcm_calibrate_set_message (calibrate,
+					   /* TRANSLATORS: this is when the user has to change a setting on the sensor */
 					   _("Please set the measuring instrument to screen mode."),
 					   GCM_CALIBRATE_UI_INTERACTION);
 	}
@@ -423,8 +423,8 @@ gcm_calibrate_interaction_calibrate (GcmCalibrate *calibrate)
 	GcmCalibratePrivate *priv = GET_PRIVATE (calibrate);
 	const gchar *filename;
 
-	/* TRANSLATORS: title, instrument is a hardware color calibration sensor */
 	gcm_calibrate_set_title (calibrate,
+				 /* TRANSLATORS: title, instrument is a hardware color calibration sensor */
 				 _("Please configure instrument"),
 				 GCM_CALIBRATE_UI_INTERACTION);
 
@@ -437,13 +437,13 @@ gcm_calibrate_interaction_calibrate (GcmCalibrate *calibrate)
 	gcm_calibrate_set_image (calibrate, filename);
 	gcm_calibrate_interaction_required (calibrate, _("Continue"));
 	if (filename != NULL) {
-		/* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
 		gcm_calibrate_set_message (calibrate,
+					   /* TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture */
 					   _("Please set the measuring instrument to calibration mode like the image below."),
 					   GCM_CALIBRATE_UI_INTERACTION);
 	} else {
-		/* TRANSLATORS: this is when the user has to change a setting on the sensor */
 		gcm_calibrate_set_message (calibrate,
+					   /* TRANSLATORS: this is when the user has to change a setting on the sensor */
 					   _("Please set the measuring instrument to calibration mode."),
 					   GCM_CALIBRATE_UI_INTERACTION);
 	}

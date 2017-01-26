@@ -329,8 +329,8 @@ gcm_picker_sensor_client_setup_ui (GcmPickerPrivate *priv)
 		goto out;
 	}
 	if (sensors->len == 0) {
-		/* TRANSLATORS: this is displayed the user has not got suitable hardware */
 		gtk_label_set_label (GTK_LABEL (priv->info_bar_hardware_label),
+				    /* TRANSLATORS: this is displayed the user has not got suitable hardware */
 				    _("No colorimeter is attached."));
 		goto out;
 	}
@@ -345,8 +345,8 @@ gcm_picker_sensor_client_setup_ui (GcmPickerPrivate *priv)
 	}
 
 	if (!cd_sensor_get_native (priv->sensor)) {
-		 /* TRANSLATORS: this is displayed if VTE support is not enabled */
 		gtk_label_set_label (GTK_LABEL (priv->info_bar_hardware_label),
+				     /* TRANSLATORS: this is displayed if VTE support is not enabled */
 				     _("The sensor has no native driver."));
 		goto out;
 	}

@@ -109,11 +109,11 @@ main (int argc, char **argv)
 
 	/* nothing sent */
 	if (files == NULL) {
-		/* TRANSLATORS: nothing was specified on the command line */
 		dialog = gtk_message_dialog_new (NULL,
 						 0,
 						 GTK_MESSAGE_ERROR,
 						 GTK_BUTTONS_CLOSE,
+						 /* TRANSLATORS: nothing was specified on the command line */
 						 _("No filename specified"));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog),
 					  GCM_STOCK_ICON);
@@ -129,16 +129,16 @@ main (int argc, char **argv)
 				CD_ICC_LOAD_FLAGS_FALLBACK_MD5,
 				NULL, &error);
 	if (!ret) {
-		/* TRANSLATORS: could not read file */
 		dialog = gtk_message_dialog_new (NULL,
 						 0,
 						 GTK_MESSAGE_ERROR,
 						 GTK_BUTTONS_CLOSE,
+						 /* TRANSLATORS: could not read file */
 						 _("Failed to open ICC profile"));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog),
 					  GCM_STOCK_ICON);
-		/* TRANSLATORS: parsing error */
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
+							  /* TRANSLATORS: parsing error */
 							  _("Failed to parse file: %s"),
 							  error->message);
 		gtk_dialog_run (GTK_DIALOG (dialog));
@@ -193,11 +193,11 @@ main (int argc, char **argv)
 				   error->message);
 			return EXIT_FAILURE;
 		}
-		/* TRANSLATORS: color profile already been installed */
 		dialog = gtk_message_dialog_new (NULL,
 						 0,
 						 GTK_MESSAGE_INFO,
 						 GTK_BUTTONS_CLOSE,
+						 /* TRANSLATORS: color profile already been installed */
 						 _("Color profile is already imported"));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", string->str);
@@ -263,11 +263,11 @@ try_harder:
 						     NULL,
 						     &error);
 	if (profile_tmp == NULL) {
-		/* TRANSLATORS: could not read file */
 		dialog = gtk_message_dialog_new (NULL,
 						 0,
 						 GTK_MESSAGE_ERROR,
 						 GTK_BUTTONS_CLOSE,
+						 /* TRANSLATORS: could not read file */
 						 _("Failed to import file"));
 		gtk_window_set_icon_name (GTK_WINDOW (dialog), GCM_STOCK_ICON);
 		gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog), "%s", error->message);

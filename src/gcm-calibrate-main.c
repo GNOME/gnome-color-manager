@@ -139,12 +139,12 @@ gcm_calib_confirm_quit (GcmCalibratePriv *priv)
 	gtk_message_dialog_format_secondary_text (GTK_MESSAGE_DIALOG (dialog),
 						  "%s",
 						  _("Are you sure you want to cancel the calibration?"));
-	/* TRANSLATORS: button text */
 	gtk_dialog_add_button (GTK_DIALOG (dialog),
+			       /* TRANSLATORS: button text */
 			       _("Continue calibration"),
 			       GTK_RESPONSE_CANCEL);
-	/* TRANSLATORS: button text */
 	gtk_dialog_add_button (GTK_DIALOG (dialog),
+			       /* TRANSLATORS: button text */
 			       _("Cancel and close"),
 			       GTK_RESPONSE_CLOSE);
 	g_signal_connect (dialog, "response",
@@ -995,11 +995,11 @@ gcm_calib_setup_page_install_argyllcms (GcmCalibratePriv *priv)
 
 	string = g_string_new ("");
 
-	/* TRANSLATORS: dialog message saying the argyllcms is not installed */
 	g_string_append_printf (string, "%s\n",
+				/* TRANSLATORS: dialog message saying the argyllcms is not installed */
 				_("Calibration and profiling software is not installed."));
-	/* TRANSLATORS: dialog message saying the color targets are not installed */
 	g_string_append_printf (string, "%s",
+				/* TRANSLATORS: dialog message saying the color targets are not installed */
 				_("These tools are required to build color profiles for devices."));
 
 	/* TRANSLATORS: this is the page title */
@@ -1628,8 +1628,8 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 	case CD_DEVICE_KIND_PRINTER:
 		for (i = 0; i < 3; i++) {
 			g_string_append (labels[i], " ");
-			/* TRANSLATORS: radio options for calibration precision */
 			g_string_append_printf (labels[i], ngettext (
+						/* TRANSLATORS: radio options for calibration precision */
 						"(about %u sheet of paper)",
 						"(about %u sheets of paper)",
 						values_printer[i]),
@@ -1639,8 +1639,8 @@ gcm_calib_setup_page_precision (GcmCalibratePriv *priv)
 	case CD_DEVICE_KIND_DISPLAY:
 		for (i = 0; i < 3; i++) {
 			g_string_append (labels[i], " ");
-			/* TRANSLATORS: radio options for calibration precision */
 			g_string_append_printf (labels[i], ngettext (
+						/* TRANSLATORS: radio options for calibration precision */
 						"(about %u minute)",
 						"(about %u minutes)",
 						values_display[i]),
