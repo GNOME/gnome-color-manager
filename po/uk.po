@@ -3,14 +3,13 @@
 # This file is distributed under the same license as the gnome-color-manager package.
 # Maxim V. Dziumanenko <dziumanenko@gmail.com>, 2010.
 # Daniel <ted.korostiled@gmail.com>, 2012.
-# Daniel Korostil <ted.korostiled@gmail.com>, 2013, 2014, 2015, 2016.
+# Daniel Korostil <ted.korostiled@gmail.com>, 2013, 2014, 2015, 2016, 2017.
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
-"color-manager&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-08-15 10:01+0000\n"
-"PO-Revision-Date: 2016-09-17 17:19+0300\n"
+"Report-Msgid-Bugs-To: richard@hughsie.com\n"
+"POT-Creation-Date: 2017-03-20 13:37+0200\n"
+"PO-Revision-Date: 2017-03-20 13:43+0300\n"
 "Last-Translator: Daniel Korostil <ted.korostiled@gmail.com>\n"
 "Language-Team: linux.org.ua\n"
 "Language: uk\n"
@@ -22,291 +21,12 @@ msgstr ""
 "X-Generator: Virtaal 0.7.1\n"
 "X-Project-Style: gnome\n"
 
-#. TRANSLATORS: this is the application name for libcanberra
-#: ../data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in.h:1
-#: ../src/gcm-calibrate-argyll.c:1920 ../src/gcm-calibrate-argyll.c:2007
-#: ../src/gcm-calibrate-argyll.c:2044 ../src/gcm-calibrate-argyll.c:2070
-#: ../src/gcm-calibrate.c:380 ../src/gcm-calibrate.c:416
-#: ../src/gcm-calibrate.c:455 ../src/gcm-calibrate-main.c:182
-msgid "GNOME Color Manager"
-msgstr "Керування кольором у GNOME"
-
-#: ../data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in.h:2
-#: ../data/org.gnome.ColorProfileViewer.desktop.in.h:2
-msgid "Inspect and compare installed color profiles"
-msgstr "Перевірити і порівняти встановлені профілі кольорів"
-
-#: ../data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in.h:3
-msgid ""
-"GNOME Color Profile Viewer shows installed color profiles on your system and "
-"allows you to calibrate displays, printers and cameras using a wizard."
-msgstr ""
-"Переглядач профілів кольорів показує встановлені профілі кольорів на вашій "
-"системі та дозволяє відкалібрувати екрани, принтери і камери."
-
-#: ../data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in.h:4
-msgid ""
-"This functionality is typically used by GNOME Control Center from the color "
-"panel although can be used on its own."
-msgstr ""
-"Ці можливості типово є в центрі керування з панелі кольорів, хоча їх можна "
-"найти тут."
-
-#: ../data/gcm-calibrate.desktop.in.h:1
-msgid "Color"
-msgstr "Колір"
-
-#: ../data/gcm-calibrate.desktop.in.h:2
-msgid "Color Calibration"
-msgstr "Калібрування кольорів"
-
-#: ../data/gcm-import.desktop.in.h:1
-msgid "ICC Profile Installer"
-msgstr "Встановлення профілів ICC"
-
-#: ../data/gcm-import.desktop.in.h:2
-msgid "Install ICC profiles"
-msgstr "Встановити профілі ICC"
-
-#. Window title, where the user can pick spot colors using a measuring device
-#: ../data/gcm-picker.desktop.in.h:1 ../data/gcm-picker.ui.h:2
-msgid "Color Picker"
-msgstr "Вибір кольору"
-
-#: ../data/gcm-picker.desktop.in.h:2
-msgid "Use the color sensor to sample spot colors"
-msgstr "Використовувати сенсор кольору для кольорів заливання зразків"
-
-#. the color representation
-#. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:4 ../src/gcm-viewer.c:587
-msgid "XYZ"
-msgstr "XYZ"
-
-#. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:6
-msgid "Lab (D50)"
-msgstr "Lab (D50)"
-
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:8
-msgid "Media whitepoint"
-msgstr "Відмітка білого матеріалу"
-
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:10
-msgid "Color Temperature"
-msgstr "Кольорова температура"
-
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:12
-msgid "Ambient"
-msgstr "Обволікання"
-
-#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#. The profile colorspace, e.g. RGB
-#: ../data/gcm-picker.ui.h:14 ../data/gcm-viewer.ui.h:6
-msgid "Colorspace"
-msgstr "Простір кольорів"
-
-#. These are the values of the chosen color in Red, Green, Blue encoding
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:16 ../src/gcm-utils.c:285 ../src/gcm-viewer.c:607
-msgid "RGB"
-msgstr "RGB"
-
-#. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:18
-msgid "Error"
-msgstr "Помилка"
-
-#. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:20
-msgid "Results"
-msgstr "Результати"
-
-#. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:22
-msgid "_Measure"
-msgstr "_Виміряти"
-
-#: ../data/gcm-viewer.ui.h:1
-msgid "Add a profile for the device"
-msgstr "Додати профіль для пристрою"
-
-#: ../data/gcm-viewer.ui.h:2
-msgid "Remove a profile from the device"
-msgstr "Вилучити профіль з пристрою"
-
-#. The type of profile, e.g. display, scanner, etc.
-#: ../data/gcm-viewer.ui.h:4
-msgid "Profile type"
-msgstr "Типу профілю"
-
-#. When the profile was created
-#: ../data/gcm-viewer.ui.h:8
-msgid "Created"
-msgstr "Створено"
-
-#. The version of the profile
-#: ../data/gcm-viewer.ui.h:10
-msgid "Version"
-msgstr "Версія"
-
-#. The manufacturer of the profile
-#: ../data/gcm-viewer.ui.h:12
-msgid "Manufacturer"
-msgstr "Виробник"
-
-#. The manufacturer of the profile
-#: ../data/gcm-viewer.ui.h:14
-msgid "Model"
-msgstr "Модель"
-
-#. If the profile contains a display correction table
-#: ../data/gcm-viewer.ui.h:16
-msgid "Display correction"
-msgstr "Коригування екрана"
-
-#. The basename (the last section of the filename) of the profile
-#: ../data/gcm-viewer.ui.h:18
-msgid "White point"
-msgstr "Відмітка білого"
-
-#. The licence of the profile, normally non-free
-#: ../data/gcm-viewer.ui.h:20
-msgid "Copyright"
-msgstr "Авторські права"
-
-#. The file size in bytes of the profile
-#: ../data/gcm-viewer.ui.h:22
-msgid "File size"
-msgstr "Розмір файла"
-
-#. The basename (the last section of the filename) of the profile
-#: ../data/gcm-viewer.ui.h:24
-msgid "Filename"
-msgstr "Назва файла"
-
-#. warnings for the profile
-#: ../data/gcm-viewer.ui.h:26
-msgid "Warnings"
-msgstr "Зауваги"
-
-#: ../data/gcm-viewer.ui.h:27
-msgid "Information"
-msgstr "Докладніше"
-
-#: ../data/gcm-viewer.ui.h:28
-msgid "y"
-msgstr "y"
-
-#: ../data/gcm-viewer.ui.h:29
-msgid "x"
-msgstr "x"
-
-#: ../data/gcm-viewer.ui.h:30
-msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
-msgstr "Діаграма CIE 1931 показує двовимірне представлення гами профілю"
-
-#: ../data/gcm-viewer.ui.h:31
-msgid "CIE 1931"
-msgstr "CIE 1931"
-
-#: ../data/gcm-viewer.ui.h:32
-msgid "Response out"
-msgstr "Відповісти з"
-
-#: ../data/gcm-viewer.ui.h:33
-msgid "Response in"
-msgstr "Відповісти в"
-
-#: ../data/gcm-viewer.ui.h:34
-msgid ""
-"A tone reproduction curve is the mapping of scene luminance to display "
-"luminance"
-msgstr ""
-"Викривлення представлення тону — відбиття сцен яскравості для показування "
-"яскравості"
-
-#: ../data/gcm-viewer.ui.h:35
-msgid "TRC"
-msgstr "TRC"
-
-#: ../data/gcm-viewer.ui.h:36
-msgid "Video card out"
-msgstr "Вихід відеоплати"
-
-#: ../data/gcm-viewer.ui.h:37
-msgid "A video card gamma table shows the curves loaded into the display"
-msgstr "Таблиця гами відеоплати показує викривлення завантажені в екрані"
-
-#: ../data/gcm-viewer.ui.h:38
-msgid "VCGT"
-msgstr "VCGT"
-
-#: ../data/gcm-viewer.ui.h:39
-msgid "Previous Image"
-msgstr "Попереднє зображення"
-
-#. This is an example image that is saved in sRGB gamut
-#: ../data/gcm-viewer.ui.h:41
-msgid "sRGB example"
-msgstr "Приклад sRGB"
-
-#: ../data/gcm-viewer.ui.h:42
-msgid "Next Image"
-msgstr "Наступне зображення"
-
-#: ../data/gcm-viewer.ui.h:43
-msgid "This shows what an image would look like if saved with the profile"
-msgstr "Показує, як зображення виглядатиме, якщо зберегти з профілем"
-
-#: ../data/gcm-viewer.ui.h:44
-msgid "From sRGB"
-msgstr "З sRGB"
-
-#: ../data/gcm-viewer.ui.h:45
-msgid "This shows what an image would look like if opened with the profile"
-msgstr "Показує, як зображення виглядатиме, якщо відрито з профілем"
-
-#: ../data/gcm-viewer.ui.h:46
-msgid "To sRGB"
-msgstr "У sRGB"
-
-#: ../data/gcm-viewer.ui.h:47
-msgid "Named colors are specific colors that are defined in the profile"
-msgstr "Названі кольори є особливими, які визначено в профілі"
-
-#: ../data/gcm-viewer.ui.h:48
-msgid "Named Colors"
-msgstr "Названий колір"
-
-#: ../data/gcm-viewer.ui.h:49
-msgid ""
-"Metadata is additional information stored in the profile for programs to use."
-msgstr ""
-"Метадані — додаткова інформація, яка зберігається в профілі для використання "
-"програмами."
-
-#: ../data/gcm-viewer.ui.h:50
-msgid "Metadata"
-msgstr "Метадані"
-
-#: ../data/gcm-viewer.ui.h:51
-#: ../data/org.gnome.ColorProfileViewer.desktop.in.h:1
-msgid "Color Profile Viewer"
-msgstr "Переглядача профілів кольору"
-
-#: ../data/org.gnome.ColorProfileViewer.desktop.in.h:3
-msgid "Color;ICC;"
-msgstr "Колір;ICC;"
-
+#. TRANSLATORS: title, default paramters needed to calibrate_argyll
 #: ../src/gcm-calibrate-argyll.c:362
 msgid "Getting default parameters"
 msgstr "Одержання типових параметрів"
 
+#. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:367
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
@@ -315,18 +35,22 @@ msgstr ""
 "Це попереднє калібрування екрана надсиланням кольорових і сірих полів на ваш "
 "екран і їхнє вимірювання за допомогою пристрою."
 
+#. TRANSLATORS: title, patches are specific colours used in calibration
 #: ../src/gcm-calibrate-argyll.c:445
 msgid "Reading the patches"
 msgstr "Читання полів"
 
+#. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:450
 msgid "Reading the patches using the color measuring instrument."
 msgstr "Читання полів для інструментів вимірювання кольору."
 
+#. TRANSLATORS: title, drawing means painting to the screen
 #: ../src/gcm-calibrate-argyll.c:538
 msgid "Drawing the patches"
 msgstr "Креслення полів"
 
+#. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:543
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
@@ -335,49 +59,60 @@ msgstr ""
 "Виконується креслення полів на екрані, які потім будуть заміряні спеціальним "
 "пристроєм."
 
+#. TRANSLATORS: title, a profile is a ICC file
 #: ../src/gcm-calibrate-argyll.c:628 ../src/gcm-calibrate-argyll.c:919
 msgid "Generating the profile"
 msgstr "Породження профілю"
 
+#. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:633
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr ""
 "Породження профілю кольорів ICC, які потім можуть використовуватись з цим "
 "екраном."
 
+#. TRANSLATORS: title, a profile is a ICC file
 #: ../src/gcm-calibrate-argyll.c:773
 msgid "Copying files"
 msgstr "Копіювання файлів"
 
+#. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:778
 msgid "Copying source image, chart data and CIE reference values."
 msgstr "Копіюється початкове зображення, дані графіку та зразкові значення CIE"
 
+#. TRANSLATORS: title, drawing means painting to the screen
 #: ../src/gcm-calibrate-argyll.c:826
 msgid "Measuring the patches"
 msgstr "Вимірювання полів"
 
+#. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:831
 msgid "Detecting the reference patches and measuring them."
 msgstr "Визначення та вимірювання зразкових полів."
 
+#. TRANSLATORS: dialog message
 #: ../src/gcm-calibrate-argyll.c:924
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "Породження профілю кольорів ICC, які можна використати через пристрій."
 
-#: ../src/gcm-calibrate-argyll.c:1242
+#. TRANSLATORS: title, patches are specific colors used in calibration
+#: ../src/gcm-calibrate-argyll.c:1236
 msgid "Printing patches"
 msgstr "Друкування полів"
 
-#: ../src/gcm-calibrate-argyll.c:1247
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:1241
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "Відтворення полів для вибраного паперу і чорнила."
 
-#: ../src/gcm-calibrate-argyll.c:1571
+#. TRANSLATORS: title, patches are specific colours used in calibration
+#: ../src/gcm-calibrate-argyll.c:1565
 msgid "Wait for the ink to dry"
 msgstr "Зачекайте, доки висохне фарба"
 
-#: ../src/gcm-calibrate-argyll.c:1576
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:1570
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
@@ -386,40 +121,55 @@ msgstr ""
 "вологою фарбою призведе до неякісного профілю, а колориметр може бути "
 "пошкоджено."
 
-#: ../src/gcm-calibrate-argyll.c:1720
+#. TRANSLATORS: title, instrument refers to a calibration device
+#: ../src/gcm-calibrate-argyll.c:1714
 msgid "Set up instrument"
 msgstr "Налаштувати пристрій"
 
-#: ../src/gcm-calibrate-argyll.c:1725
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:1719
 msgid "Setting up the instrument for use…"
 msgstr "Налаштування вимірювального пристрою…"
 
-#: ../src/gcm-calibrate-argyll.c:1902 ../src/gcm-calibrate-argyll.c:1967
+#. TRANSLATORS: title, the calibration failed
+#: ../src/gcm-calibrate-argyll.c:1896 ../src/gcm-calibrate-argyll.c:1961
 msgid "Calibration error"
 msgstr "Помилка калібрування"
 
-#: ../src/gcm-calibrate-argyll.c:1907
+#. TRANSLATORS: message, the sample was not read correctly
+#: ../src/gcm-calibrate-argyll.c:1901
 msgid "The sample could not be read at this time."
 msgstr "Наразі неможливо прочитати зразок."
 
-#: ../src/gcm-calibrate-argyll.c:1914 ../src/gcm-calibrate-argyll.c:2038
-#: ../src/gcm-calibrate-argyll.c:2064 ../src/gcm-calibrate-argyll.c:2101
-#: ../src/gcm-calibrate-argyll.c:2128
+#: ../src/gcm-calibrate-argyll.c:1908 ../src/gcm-calibrate-argyll.c:2032
+#: ../src/gcm-calibrate-argyll.c:2058 ../src/gcm-calibrate-argyll.c:2095
+#: ../src/gcm-calibrate-argyll.c:2122
 msgid "Retry"
 msgstr "Повторити"
 
-#: ../src/gcm-calibrate-argyll.c:1973
+#. TRANSLATORS: this is the application name for libcanberra
+#: ../src/gcm-calibrate-argyll.c:1914 ../src/gcm-calibrate-argyll.c:2001
+#: ../src/gcm-calibrate-argyll.c:2038 ../src/gcm-calibrate-argyll.c:2064
+#: ../src/gcm-calibrate.c:380 ../src/gcm-calibrate.c:416
+#: ../src/gcm-calibrate.c:455 ../src/gcm-calibrate-main.c:182
+msgid "GNOME Color Manager"
+msgstr "Керування кольором у GNOME"
+
+#. TRANSLATORS: message, no firmware is available
+#: ../src/gcm-calibrate-argyll.c:1967
 msgid "No firmware is installed for this instrument."
 msgstr "Програмні засоби для цього пристрою не встановлено."
 
-#: ../src/gcm-calibrate-argyll.c:1978
+#. TRANSLATORS: message, the image wasn't good enough
+#: ../src/gcm-calibrate-argyll.c:1972
 msgid ""
-"The pattern match wasn't good enough. Ensure you have the correct type of "
+"The pattern match wasn’t good enough. Ensure you have the correct type of "
 "target selected."
 msgstr ""
 "Зразки не досить добре збігаються. Перевірте, що вибрали правильний тип цілі."
 
-#: ../src/gcm-calibrate-argyll.c:1984
+#. TRANSLATORS: message, the sensor got no readings
+#: ../src/gcm-calibrate-argyll.c:1978
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
@@ -427,7 +177,8 @@ msgstr ""
 "Інструмент вимірювання не прочитав коректних даних. Перевірте, чи діафрагму "
 "повністю відкрито."
 
-#: ../src/gcm-calibrate-argyll.c:1989
+#. TRANSLATORS: message, the colorimeter has got confused
+#: ../src/gcm-calibrate-argyll.c:1983
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
@@ -435,58 +186,64 @@ msgstr ""
 "Інструмент вимірювання зайнятий та не запускається. Витягніть його з роз'єму "
 "USB і вставте знову перед повторною спробою використати цей пристрій."
 
-#: ../src/gcm-calibrate-argyll.c:2027
+#. TRANSLATORS: dialog title
+#: ../src/gcm-calibrate-argyll.c:2021
 msgid "Reading target"
 msgstr "Читання цілі"
 
-#: ../src/gcm-calibrate-argyll.c:2032
+#. TRANSLATORS: message, no firmware is available
+#: ../src/gcm-calibrate-argyll.c:2026
 msgid "Failed to read the strip correctly."
 msgstr "Не вдалось правильно прочитати смуги."
 
-#: ../src/gcm-calibrate-argyll.c:2053
+#. TRANSLATORS: dialog title
+#: ../src/gcm-calibrate-argyll.c:2047
 msgid "Reading sample"
 msgstr "Читання зразка"
 
-#: ../src/gcm-calibrate-argyll.c:2058
+#. TRANSLATORS: message, the sample read failed due to misread
+#: ../src/gcm-calibrate-argyll.c:2052
 msgid "Failed to read the color sample correctly."
 msgstr "Не вдалось правильно прочитати зразок кольору."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2083
+#: ../src/gcm-calibrate-argyll.c:2077
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "Читати смугу %s, а не %s!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2088
-msgid "It looks like you've measured the wrong strip."
+#: ../src/gcm-calibrate-argyll.c:2082
+msgid "It looks like you’ve measured the wrong strip."
 msgstr "Схоже, ви виміряли не ту смугу."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2092
+#: ../src/gcm-calibrate-argyll.c:2086
 msgid ""
-"If you've really measured the right one, it's okay, it could just be unusual "
+"If you’ve really measured the right one, it’s okay, it could just be unusual "
 "paper."
 msgstr ""
 "Якщо ви виміряли справді ту, тоді все гаразд, може бути просто рідкісний "
 "папір."
 
-#: ../src/gcm-calibrate-argyll.c:2117
+#. TRANSLATORS: title, the calibration failed
+#: ../src/gcm-calibrate-argyll.c:2111
 msgid "Device Error"
 msgstr "Помилка пристрою"
 
-#: ../src/gcm-calibrate-argyll.c:2122
+#. TRANSLATORS: message, the sample was not read correctly
+#: ../src/gcm-calibrate-argyll.c:2116
 msgid "The device could not measure the color spot correctly."
 msgstr "Пристрій не може правильно виміряти колір цятки."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2136
+#: ../src/gcm-calibrate-argyll.c:2130
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "Готовий прочитати смугу %s"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2141
+#: ../src/gcm-calibrate-argyll.c:2135
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
@@ -495,7 +252,7 @@ msgstr ""
 "кнопку вимірювання."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2145
+#: ../src/gcm-calibrate-argyll.c:2139
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -504,7 +261,7 @@ msgstr ""
 "досягнете кінець сторінки."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2149
+#: ../src/gcm-calibrate-argyll.c:2143
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -513,38 +270,45 @@ msgstr ""
 "намагаєтесь виміряти."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2153
+#: ../src/gcm-calibrate-argyll.c:2147
 msgid ""
-"If you make a mistake, just release the switch, and you'll get a chance to "
+"If you make a mistake, just release the switch, and you’ll get a chance to "
 "try again."
 msgstr ""
 "Якщо ви зробили помилку, просто відпустіть кнопку і у вас буде можливість "
 "спробувати знову."
 
-#: ../src/gcm-calibrate-argyll.c:2247
+#. TRANSLATORS: title, printing reference files to media
+#: ../src/gcm-calibrate-argyll.c:2241
 msgid "Printing"
 msgstr "Друкування"
 
-#: ../src/gcm-calibrate-argyll.c:2256
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:2250
 msgid "Preparing the data for the printer."
 msgstr "Підготовлення даних для принтера."
 
-#: ../src/gcm-calibrate-argyll.c:2264
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:2258
 msgid "Sending the targets to the printer."
 msgstr "Надсилання цілей на принтер."
 
-#: ../src/gcm-calibrate-argyll.c:2270
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:2264
 msgid "Printing the targets…"
 msgstr "Друкування цілей…"
 
-#: ../src/gcm-calibrate-argyll.c:2276
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:2270
 msgid "The printing has finished."
 msgstr "Друкування завершено."
 
-#: ../src/gcm-calibrate-argyll.c:2282
+#. TRANSLATORS: dialog message
+#: ../src/gcm-calibrate-argyll.c:2276
 msgid "The print was aborted."
 msgstr "Друкування скасовано."
 
+#. TRANSLATORS: title, instrument is a hardware color calibration sensor
 #: ../src/gcm-calibrate.c:348
 msgid "Please attach instrument"
 msgstr "Під'єднайте пристрій"
@@ -577,10 +341,12 @@ msgstr "Потрібно утримувати пристрій на екрані
 msgid "Continue"
 msgstr "Продовжити"
 
+#. TRANSLATORS: title, instrument is a hardware color calibration sensor
 #: ../src/gcm-calibrate.c:392 ../src/gcm-calibrate.c:428
 msgid "Please configure instrument"
 msgstr "Налаштуйте пристрій"
 
+#. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
 #: ../src/gcm-calibrate.c:403
 msgid ""
 "Please set the measuring instrument to screen mode like the image below."
@@ -588,10 +354,12 @@ msgstr ""
 "Переведіть вимірювальний пристрій в екранний режим, як показано на малюнку "
 "нижче."
 
+#. TRANSLATORS: this is when the user has to change a setting on the sensor
 #: ../src/gcm-calibrate.c:408
 msgid "Please set the measuring instrument to screen mode."
 msgstr "Переведіть вимірювальний пристрій в екранний режим."
 
+#. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
 #: ../src/gcm-calibrate.c:442
 msgid ""
 "Please set the measuring instrument to calibration mode like the image below."
@@ -599,6 +367,7 @@ msgstr ""
 "Переведіть вимірювальний пристрій у режим калібрування, як показано на "
 "малюнку нижче."
 
+#. TRANSLATORS: this is when the user has to change a setting on the sensor
 #: ../src/gcm-calibrate.c:447
 msgid "Please set the measuring instrument to calibration mode."
 msgstr "Переведіть вимірювальний пристрій у режим калібрування."
@@ -654,10 +423,12 @@ msgstr "Калібрування не завершено"
 msgid "Are you sure you want to cancel the calibration?"
 msgstr "Скасувати калібрування?"
 
+#. TRANSLATORS: button text
 #: ../src/gcm-calibrate-main.c:144
 msgid "Continue calibration"
 msgstr "Продовжити калібрування"
 
+#. TRANSLATORS: button text
 #: ../src/gcm-calibrate-main.c:148
 msgid "Cancel and close"
 msgstr "Скасувати і закрити"
@@ -800,7 +571,7 @@ msgstr ""
 #. TRANSLATORS: dialog message, preface
 #: ../src/gcm-calibrate-main.c:929
 msgid ""
-"You may want to consult the owner's manual for your display on how to "
+"You may want to consult the owner’s manual for your display on how to "
 "achieve these settings."
 msgstr ""
 "Ймовірно ви забажаєте порадитись з посібником власника для вашого екрана, "
@@ -850,10 +621,12 @@ msgstr ""
 msgid "Check Settings"
 msgstr "Перевірити параметри"
 
+#. TRANSLATORS: dialog message saying the argyllcms is not installed
 #: ../src/gcm-calibrate-main.c:1000
 msgid "Calibration and profiling software is not installed."
 msgstr "Програмні засоби для профілювання не встановлено."
 
+#. TRANSLATORS: dialog message saying the color targets are not installed
 #: ../src/gcm-calibrate-main.c:1003
 msgid "These tools are required to build color profiles for devices."
 msgstr "Для створення колірного профілю пристрою потрібні ці засоби."
@@ -1156,20 +929,18 @@ msgstr "Звичайна"
 msgid "Quick"
 msgstr "Швидка"
 
+#. TRANSLATORS: radio options for calibration precision
 #: ../src/gcm-calibrate-main.c:1633
 #, c-format
-#| msgid "(about %i sheet of paper)"
-#| msgid_plural "(about %i sheets of paper)"
 msgid "(about %u sheet of paper)"
 msgid_plural "(about %u sheets of paper)"
 msgstr[0] "(близько %u аркуш паперу)"
 msgstr[1] "(близько %u аркуші паперу)"
 msgstr[2] "(близько %u аркушів паперу)"
 
+#. TRANSLATORS: radio options for calibration precision
 #: ../src/gcm-calibrate-main.c:1644
 #, c-format
-#| msgid "(about %i minute)"
-#| msgid_plural "(about %i minutes)"
 msgid "(about %u minute)"
 msgid_plural "(about %u minutes)"
 msgstr[0] "(близько %u хвилина)"
@@ -1305,14 +1076,17 @@ msgstr "Показати параметри зневадження"
 msgid "ICC profile to install"
 msgstr "Профіль ICC для встановлення"
 
+#. TRANSLATORS: nothing was specified on the command line
 #: ../src/gcm-import.c:117
 msgid "No filename specified"
 msgstr "Не вказано назви файла"
 
+#. TRANSLATORS: could not read file
 #: ../src/gcm-import.c:137 ../src/gcm-viewer.c:1291
 msgid "Failed to open ICC profile"
 msgstr "Не вдалося відкрити профіль ICC"
 
+#. TRANSLATORS: parsing error
 #: ../src/gcm-import.c:142
 #, c-format
 msgid "Failed to parse file: %s"
@@ -1329,6 +1103,7 @@ msgstr "Опис профілю: %s"
 msgid "Profile copyright:"
 msgstr "Авторські права профілю:"
 
+#. TRANSLATORS: color profile already been installed
 #: ../src/gcm-import.c:201
 msgid "Color profile is already imported"
 msgstr "Профіль кольорів уже імпортовано"
@@ -1362,6 +1137,7 @@ msgstr "Імпортувати профіль кольорів?"
 msgid "Import"
 msgstr "Імпортувати"
 
+#. TRANSLATORS: could not read file
 #: ../src/gcm-import.c:271 ../src/gcm-viewer.c:1323
 msgid "Failed to import file"
 msgstr "Не вдалось імпортувати файл"
@@ -1445,10 +1221,12 @@ msgstr "Інспектор EDID"
 msgid "Unknown"
 msgstr "Невідомий"
 
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
 #: ../src/gcm-picker.c:334
 msgid "No colorimeter is attached."
 msgstr "Не під'єднано колориметр."
 
+#. TRANSLATORS: this is displayed if VTE support is not enabled
 #: ../src/gcm-picker.c:350
 msgid "The sensor has no native driver."
 msgstr "Сенсор не має рідного драйвера."
@@ -1469,6 +1247,12 @@ msgstr "Немає доступних колірних просторів %s"
 #: ../src/gcm-picker.c:710
 msgid "GNOME Color Manager Color Picker"
 msgstr "Вибір кольору в менеджері кольорів GNOME"
+
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-utils.c:285 ../src/gcm-viewer.c:607
+msgid "RGB"
+msgstr "RGB"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
@@ -1545,6 +1329,11 @@ msgstr "Абстрактний"
 #: ../src/gcm-viewer.c:576
 msgid "Named color"
 msgstr "Названий колір"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: ../src/gcm-viewer.c:587
+msgid "XYZ"
+msgstr "XYZ"
 
 #. TRANSLATORS: this the ICC colorspace type
 #: ../src/gcm-viewer.c:591
@@ -1777,8 +1566,8 @@ msgstr "Профіль має такі проблеми:"
 
 #. TRANSLATORS: this is the icc creation date strftime format
 #: ../src/gcm-viewer.c:1101
-msgid "%B %e %Y, %I:%M:%S %p"
-msgstr "%B %e %Y, %I:%M:%S %p"
+msgid "%B %e %Y, %I∶%M∶%S %p"
+msgstr "%B %e %Y, %H:%M:%S"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
 #: ../src/gcm-viewer.c:1124
@@ -1799,6 +1588,187 @@ msgstr "Вказати інший профіль для показу"
 #: ../src/gcm-viewer.c:1620
 msgid "Set the specific file to show"
 msgstr "Вказати інший файл для показу"
+
+#~ msgid "Inspect and compare installed color profiles"
+#~ msgstr "Перевірити і порівняти встановлені профілі кольорів"
+
+#~ msgid ""
+#~ "GNOME Color Profile Viewer shows installed color profiles on your system "
+#~ "and allows you to calibrate displays, printers and cameras using a wizard."
+#~ msgstr ""
+#~ "Переглядач профілів кольорів показує встановлені профілі кольорів на "
+#~ "вашій системі та дозволяє відкалібрувати екрани, принтери і камери."
+
+#~ msgid ""
+#~ "This functionality is typically used by GNOME Control Center from the "
+#~ "color panel although can be used on its own."
+#~ msgstr ""
+#~ "Ці можливості типово є в центрі керування з панелі кольорів, хоча їх "
+#~ "можна найти тут."
+
+#~ msgid "Color"
+#~ msgstr "Колір"
+
+#~ msgid "Color Calibration"
+#~ msgstr "Калібрування кольорів"
+
+#~ msgid "ICC Profile Installer"
+#~ msgstr "Встановлення профілів ICC"
+
+#~ msgid "Install ICC profiles"
+#~ msgstr "Встановити профілі ICC"
+
+#~ msgid "Color Picker"
+#~ msgstr "Вибір кольору"
+
+#~ msgid "Use the color sensor to sample spot colors"
+#~ msgstr "Використовувати сенсор кольору для кольорів заливання зразків"
+
+#~ msgid "Lab (D50)"
+#~ msgstr "Lab (D50)"
+
+#~ msgid "Media whitepoint"
+#~ msgstr "Відмітка білого матеріалу"
+
+#~ msgid "Color Temperature"
+#~ msgstr "Кольорова температура"
+
+#~ msgid "Ambient"
+#~ msgstr "Обволікання"
+
+#~ msgid "Colorspace"
+#~ msgstr "Простір кольорів"
+
+#~ msgid "Error"
+#~ msgstr "Помилка"
+
+#~ msgid "Results"
+#~ msgstr "Результати"
+
+#~ msgid "_Measure"
+#~ msgstr "_Виміряти"
+
+#~ msgid "Add a profile for the device"
+#~ msgstr "Додати профіль для пристрою"
+
+#~ msgid "Remove a profile from the device"
+#~ msgstr "Вилучити профіль з пристрою"
+
+#~ msgid "Profile type"
+#~ msgstr "Типу профілю"
+
+#~ msgid "Created"
+#~ msgstr "Створено"
+
+#~ msgid "Version"
+#~ msgstr "Версія"
+
+#~ msgid "Manufacturer"
+#~ msgstr "Виробник"
+
+#~ msgid "Model"
+#~ msgstr "Модель"
+
+#~ msgid "Display correction"
+#~ msgstr "Коригування екрана"
+
+#~ msgid "White point"
+#~ msgstr "Відмітка білого"
+
+#~ msgid "Copyright"
+#~ msgstr "Авторські права"
+
+#~ msgid "File size"
+#~ msgstr "Розмір файла"
+
+#~ msgid "Filename"
+#~ msgstr "Назва файла"
+
+#~ msgid "Warnings"
+#~ msgstr "Зауваги"
+
+#~ msgid "Information"
+#~ msgstr "Докладніше"
+
+#~ msgid "y"
+#~ msgstr "y"
+
+#~ msgid "x"
+#~ msgstr "x"
+
+#~ msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
+#~ msgstr "Діаграма CIE 1931 показує двовимірне представлення гами профілю"
+
+#~ msgid "CIE 1931"
+#~ msgstr "CIE 1931"
+
+#~ msgid "Response out"
+#~ msgstr "Відповісти з"
+
+#~ msgid "Response in"
+#~ msgstr "Відповісти в"
+
+#~ msgid ""
+#~ "A tone reproduction curve is the mapping of scene luminance to display "
+#~ "luminance"
+#~ msgstr ""
+#~ "Викривлення представлення тону — відбиття сцен яскравості для показування "
+#~ "яскравості"
+
+#~ msgid "TRC"
+#~ msgstr "TRC"
+
+#~ msgid "Video card out"
+#~ msgstr "Вихід відеоплати"
+
+#~ msgid "A video card gamma table shows the curves loaded into the display"
+#~ msgstr "Таблиця гами відеоплати показує викривлення завантажені в екрані"
+
+#~ msgid "VCGT"
+#~ msgstr "VCGT"
+
+#~ msgid "Previous Image"
+#~ msgstr "Попереднє зображення"
+
+#~ msgid "sRGB example"
+#~ msgstr "Приклад sRGB"
+
+#~ msgid "Next Image"
+#~ msgstr "Наступне зображення"
+
+#~ msgid "This shows what an image would look like if saved with the profile"
+#~ msgstr "Показує, як зображення виглядатиме, якщо зберегти з профілем"
+
+#~ msgid "From sRGB"
+#~ msgstr "З sRGB"
+
+#~ msgid "This shows what an image would look like if opened with the profile"
+#~ msgstr "Показує, як зображення виглядатиме, якщо відрито з профілем"
+
+#~ msgid "To sRGB"
+#~ msgstr "У sRGB"
+
+#~ msgid "Named colors are specific colors that are defined in the profile"
+#~ msgstr "Названі кольори є особливими, які визначено в профілі"
+
+#~ msgid "Named Colors"
+#~ msgstr "Названий колір"
+
+#~ msgid ""
+#~ "Metadata is additional information stored in the profile for programs to "
+#~ "use."
+#~ msgstr ""
+#~ "Метадані — додаткова інформація, яка зберігається в профілі для "
+#~ "використання програмами."
+
+#~ msgid "Metadata"
+#~ msgstr "Метадані"
+
+#~ msgid "Color Profile Viewer"
+#~ msgstr "Переглядача профілів кольору"
+
+#~ msgid "Color;ICC;"
+#~ msgstr "Колір;ICC;"
 
 #~ msgid "XYZ:"
 #~ msgstr "XYZ:"
