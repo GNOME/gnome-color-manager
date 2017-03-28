@@ -69,8 +69,6 @@ gcm_print_class_init (GcmPrintClass *klass)
 			      G_STRUCT_OFFSET (GcmPrintClass, status_changed),
 			      NULL, NULL, g_cclosure_marshal_VOID__UINT,
 			      G_TYPE_NONE, 1, G_TYPE_UINT);
-
-	g_type_class_add_private (klass, sizeof (GcmPrintPrivate));
 }
 
 /**
