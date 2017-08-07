@@ -59,14 +59,14 @@ gcm_exif_parse_tiff (GcmExif *exif, const gchar *filename, GError **error)
 	const gchar *serial = NULL;
 	const gchar *temp = NULL;
 	CdDeviceKind device_kind = CD_DEVICE_KIND_UNKNOWN;
-	TIFF *tiff;
+	TIFF *libtiff;
 	GcmExifPrivate *priv = GET_PRIVATE (exif);
 
 	/* open file */
-	tiff = TIFFOpen (filename, "r");
-	TIFFGetField (tiff,TIFFTAG_MAKE, &manufacturer);
-	TIFFGetField (tiff,TIFFTAG_MODEL, &model);
-	TIFFGetField (tiff,TIFFTAG_CAMERASERIALNUMBER, &serial);
+	libtiff = TIFFOpen (filename, "r");
+	TIFFGetField (libtiff,TIFFTAG_MAKE, &manufacturer);
+	TIFFGetField (libtiff,TIFFTAG_MODEL, &model);
+	TIFFGetField (libtiff,TIFFTAG_CAMERASERIALNUMBER, &serial);
 
 	/* we failed to get data */
 	if (manufacturer == NULL || model == NULL) {
@@ -79,10 +79,10 @@ gcm_exif_parse_tiff (GcmExif *exif, const gchar *filename, GError **error)
 	}
 
 	/* these are all camera specific values */
-	TIFFGetField (tiff,EXIFTAG_FNUMBER, &temp);
+	TIFFGetField (libtiff,EXIFTAG_FNUMBER, &temp);
 	if (temp != NULL)
 		device_kind = CD_DEVICE_KIND_CAMERA;
-	TIFFGetField (tiff,TIFFTAG_LENSINFO, &temp);
+	TIFFGetField (libtiff,TIFFTAG_LENSINFO, &temp);
 	if (temp != NULL)
 		device_kind = CD_DEVICE_KIND_CAMERA;
 
@@ -101,7 +101,7 @@ gcm_exif_parse_tiff (GcmExif *exif, const gchar *filename, GError **error)
 	priv->serial = g_strdup (serial);
 	priv->device_kind = device_kind;
 out:
-	TIFFClose (tiff);
+	TIFFClose (libtiff);
 	return ret;
 }
 

@@ -1196,7 +1196,7 @@ gcm_calib_reference_kind_combobox_cb (GtkComboBox *combo_box,
 	if (filename == NULL)
 		filename = "unknown.png";
 
-	path = g_build_filename (GCM_DATA, "targets", filename, NULL);
+	path = g_build_filename (PKGDATADIR, "targets", filename, NULL);
 	gtk_image_set_from_file (GTK_IMAGE (priv->reference_preview), path);
 }
 
@@ -1958,7 +1958,7 @@ gcm_calib_startup_cb (GApplication *application, GcmCalibratePriv *priv)
 
 	/* add application specific icons to search path */
 	gtk_icon_theme_append_search_path (gtk_icon_theme_get_default (),
-					   GCM_DATA G_DIR_SEPARATOR_S "icons");
+					   PKGDATADIR G_DIR_SEPARATOR_S "icons");
 
 	/* connect to colord */
 	priv->client = cd_client_new ();
