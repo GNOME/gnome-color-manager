@@ -1,34 +1,22 @@
 GNOME Color Manager Release Notes
 
-1. Write NEWS entries for gnome-color-manager in the same format as usual.
+Write NEWS entries for gnome-color-manager in the same format as usual.
 
 git log --format="%s" GNOME_COLOR_MANAGER_3_24_0.. | grep -i -v trivial | grep -v Merge | uniq | sort
-Add any user visible changes into data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in
+Add any user visible changes into ../data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in
 
-3. Commit changes in gnome-color-manager git:
-
-git commit -a -m "Release version 3.24.1"
-git tag -s GNOME_COLOR_MANAGER_3_24_1 -m "==== Version 3.24.1 ===="
-<enter password>
+git commit -a -m "Release version 3.25.90"
+git tag -s GNOME_COLOR_MANAGER_3_25_90 -m "==== Version 3.25.90 ===="
+ninja dist
 git push --tags
 git push
 
-4. Create tarball
-
-make distcheck
-
-5. Upload tarballs:
-
 scp *.tar.xz rhughes@master.gnome.org:
-
-6. Install module
 
 ssh rhughes@master.gnome.org
 ftpadmin install gnome-color-manager-*.tar.xz
 
-7. Do post release version bump in configure.ac
-
-8. Commit trivial changes:
+Do post release version bump in meson.build
 
 git commit -a -m "trivial: Post release version bump"
 git push
