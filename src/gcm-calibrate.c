@@ -558,7 +558,7 @@ gcm_calibrate_display (GcmCalibrate *calibrate,
 	default:
 		g_assert_not_reached ();
 	}
-	ti1_src_fn = g_build_filename (GCM_DATA, "ti1", filename_tmp, NULL);
+	ti1_src_fn = g_build_filename (PKGDATADIR, "ti1", filename_tmp, NULL);
 	ret = gcm_calibrate_copy_file (ti1_src_fn, ti1_dest_fn, error);
 	if (!ret)
 		goto out;
@@ -770,7 +770,7 @@ gcm_calibrate_printer (GcmCalibrate *calibrate, CdDevice *device, GtkWindow *win
 	default:
 		g_assert_not_reached ();
 	}
-	ti1_src_fn = g_build_filename (GCM_DATA, "ti1", filename_tmp, NULL);
+	ti1_src_fn = g_build_filename (PKGDATADIR, "ti1", filename_tmp, NULL);
 	if (!gcm_calibrate_copy_file (ti1_src_fn, ti1_dest_fn, error))
 		return FALSE;
 

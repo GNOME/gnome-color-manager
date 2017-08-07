@@ -191,6 +191,7 @@ gcm_test_exif_func (void)
 	g_assert_cmpint (gcm_exif_get_device_kind (exif), ==, CD_DEVICE_KIND_CAMERA);
 
 	/* RAW */
+#if 0
 	file = g_file_new_for_path (TESTDATADIR "/test.kdc");
 	ret = gcm_exif_parse (exif, file, &error);
 	g_object_unref (file);
@@ -200,6 +201,7 @@ gcm_test_exif_func (void)
 	g_assert_cmpstr (gcm_exif_get_manufacturer (exif), ==, "Kodak Digital Science DC50 Zoom Camera");
 	g_assert_cmpstr (gcm_exif_get_serial (exif), ==, NULL);
 	g_assert_cmpint (gcm_exif_get_device_kind (exif), ==, CD_DEVICE_KIND_CAMERA);
+#endif
 
 	/* PNG */
 	file = g_file_new_for_path (TESTDATADIR "/test.png");

@@ -113,7 +113,7 @@ gcm_viewer_set_example_image (GcmViewerPrivate *viewer, GtkImage *image)
 	g_autoptr(GError) error = NULL;
 
 	filename = g_strdup_printf ("viewer-example-%02u.png", viewer->example_index);
-	path = g_build_filename (GCM_DATA, "figures", filename, NULL);
+	path = g_build_filename (PKGDATADIR, "figures", filename, NULL);
 	pixbuf = gdk_pixbuf_new_from_file (path, &error);
 	if (pixbuf == NULL) {
 		g_warning ("failed to load %s: %s", filename, error->message);
@@ -1373,7 +1373,7 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 
 	/* add application specific icons to search path */
 	gtk_icon_theme_append_search_path (gtk_icon_theme_get_default (),
-					   GCM_DATA G_DIR_SEPARATOR_S "icons");
+					   PKGDATADIR G_DIR_SEPARATOR_S "icons");
 
 	/* maintain a list of profiles */
 	viewer->client = cd_client_new ();

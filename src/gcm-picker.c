@@ -626,7 +626,7 @@ gcm_picker_startup_cb (GApplication *application, GcmPickerPrivate *priv)
 
 	/* add application specific icons to search path */
 	gtk_icon_theme_append_search_path (gtk_icon_theme_get_default (),
-	                                   GCM_DATA G_DIR_SEPARATOR_S "icons");
+	                                   PKGDATADIR G_DIR_SEPARATOR_S "icons");
 
 	/* create a last sample */
 	//cd_color_xyz_clear (&last_sample);

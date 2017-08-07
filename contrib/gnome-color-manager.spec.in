@@ -7,7 +7,7 @@ Release:   0.#BUILD#%{?alphatag}%{?dist}
 License:   GPLv2+
 Group:     Applications/System
 URL:       http://projects.gnome.org/gnome-color-manager/
-Source0:   http://download.gnome.org/sources/gnome-color-manager/3.11/%{name}-%{version}.tar.xz
+Source0:   http://download.gnome.org/sources/gnome-color-manager/3.25/%{name}-%{version}.tar.xz
 
 Requires:  gnome-icon-theme
 Requires:  shared-mime-info
@@ -28,6 +28,7 @@ BuildRequires: docbook-utils
 BuildRequires: colord-devel >= 0.1.12
 BuildRequires: colord-gtk-devel >= 0.1.22
 BuildRequires: itstool
+BuildRequires: meson
 
 Requires(post):   /usr/bin/gtk-update-icon-cache
 Requires(postun): /usr/bin/gtk-update-icon-cache
@@ -50,11 +51,11 @@ Extra utilities not normally required to calibrate.
 %setup -q
 
 %build
-%configure
-make %{?_smp_mflags}
+%meson
+%meson_build
 
 %install
-make install DESTDIR=$RPM_BUILD_ROOT
+%meson_install
 
 %find_lang %name --with-gnome
 
@@ -78,7 +79,7 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 
 %files -f %{name}.lang
 %defattr(-,root,root,-)
-%doc AUTHORS COPYING NEWS README
+%doc AUTHORS COPYING
 %{_bindir}/gcm-calibrate
 %{_libexecdir}/gcm-helper-exiv
 %dir %{_datadir}/gnome-color-manager
@@ -100,7 +101,7 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %{_bindir}/gcm-inspect
 %{_bindir}/gcm-picker
 %{_bindir}/gcm-viewer
-%{_datadir}/appdata/org.gnome.ColorProfileViewer.appdata.xml
+%{_datadir}/metainfo/org.gnome.ColorProfileViewer.appdata.xml
 %{_datadir}/applications/gcm-import.desktop
 %{_datadir}/applications/gcm-picker.desktop
 %{_datadir}/applications/org.gnome.ColorProfileViewer.desktop
