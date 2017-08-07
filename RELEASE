@@ -2,16 +2,16 @@ GNOME Color Manager Release Notes
 
 Write NEWS entries for gnome-color-manager in the same format as usual.
 
-git log --format="%s" GNOME_COLOR_MANAGER_3_24_0.. | grep -i -v trivial | grep -v Merge | uniq | sort
+git log --format="%s" GNOME_COLOR_MANAGER_3_25_90.. | grep -i -v trivial | grep -v Merge | uniq | sort
 Add any user visible changes into ../data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in
 
-git commit -a -m "Release version 3.25.90"
-git tag -s GNOME_COLOR_MANAGER_3_25_90 -m "==== Version 3.25.90 ===="
+git commit -a -m "Release version 3.25.91"
+git tag -s GNOME_COLOR_MANAGER_3_25_91 -m "==== Version 3.25.91 ===="
 ninja dist
 git push --tags
 git push
 
-scp *.tar.xz rhughes@master.gnome.org:
+scp meson-dist/*.tar.xz rhughes@master.gnome.org:
 
 ssh rhughes@master.gnome.org
 ftpadmin install gnome-color-manager-*.tar.xz
