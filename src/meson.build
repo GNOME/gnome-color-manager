@@ -29,7 +29,7 @@ if get_option('enable-exiv')
     ],
     c_args : cargs,
     install : true,
-    install_dir : get_option('libexecdir'),
+    install_dir : prefixed_libexecdir,
   )
 endif
 
@@ -74,7 +74,6 @@ executable(
   ],
   c_args : cargs,
   install : true,
-  install_dir : 'bin'
 )
 
 executable(
@@ -96,7 +95,6 @@ executable(
   ],
   c_args : cargs,
   install : true,
-  install_dir : 'bin'
 )
 
 executable(
@@ -118,7 +116,6 @@ executable(
   ],
   c_args : cargs,
   install : true,
-  install_dir : 'bin'
 )
 
 executable(
@@ -142,7 +139,6 @@ executable(
   ],
   c_args : cargs,
   install : true,
-  install_dir : 'bin'
 )
 
 executable(
@@ -169,7 +165,6 @@ executable(
   ],
   c_args : cargs,
   install : true,
-  install_dir : 'bin'
 )
 
 if get_option('enable-tests')

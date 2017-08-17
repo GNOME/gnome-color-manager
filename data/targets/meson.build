@@ -11,5 +11,5 @@ install_data([
   'QPcard_202.png',
   'unknown.png',
   ],
-  install_dir : 'share/gnome-color-manager/targets'
+  install_dir : join_paths(prefixed_datadir, 'gnome-color-manager/targets')
 )

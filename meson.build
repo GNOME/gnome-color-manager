@@ -80,6 +80,13 @@ add_global_link_arguments(
   language: 'c'
 )
 
+prefixed_bindir = join_paths(get_option('prefix'), get_option('bindir'))
+prefixed_localedir = join_paths(get_option('prefix'), get_option('localedir'))
+prefixed_libexecdir = join_paths(get_option('prefix'), get_option('libexecdir'))
+prefixed_mandir = join_paths(get_option('prefix'), get_option('mandir'))
+prefixed_datadir = join_paths(get_option('prefix'), get_option('datadir'))
+prefixed_pkgdatadir = join_paths(get_option('prefix'), get_option('datadir'), 'gnome-color-manager')
+
 libgio = dependency('gio-2.0', version : '>= 2.25.9')
 libgtk = dependency('gtk+-3.0', version : '>= 2.91.0')
 libexif = dependency('libexif')
@@ -109,22 +116,11 @@ gnome = import('gnome')
 i18n = import('i18n')
 
 conf.set_quoted('GETTEXT_PACKAGE', meson.project_name())
-conf.set_quoted('LOCALEDIR',
-                join_paths(get_option('prefix'),
-                           get_option('localedir')))
-conf.set_quoted('DATADIR',
-                join_paths(get_option('prefix'),
-                           get_option('datadir')))
-conf.set_quoted('PKGDATADIR',
-                join_paths(get_option('prefix'),
-                           get_option('datadir'),
-                           'gnome-color-manager'))
-conf.set_quoted('BINDIR',
-                join_paths(get_option('prefix'),
-                           get_option('bindir')))
-conf.set_quoted('LIBEXECDIR',
-                join_paths(get_option('prefix'),
-                           get_option('libexecdir')))
+conf.set_quoted('LOCALEDIR', prefixed_localedir)
+conf.set_quoted('DATADIR', prefixed_datadir)
+conf.set_quoted('PKGDATADIR', prefixed_pkgdatadir)
+conf.set_quoted('BINDIR', prefixed_bindir)
+conf.set_quoted('LIBEXECDIR', prefixed_libexecdir)
 configure_file(
   output : 'config.h',
   configuration : conf

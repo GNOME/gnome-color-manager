@@ -17,6 +17,6 @@ foreach desktop_file: desktop_files
     type: 'desktop',
     po_dir: join_paths(meson.source_root(), 'po'),
     install: true,
-    install_dir: join_paths(get_option('datadir'), 'applications')
+    install_dir: join_paths(prefixed_datadir, 'applications')
   )
 endforeach

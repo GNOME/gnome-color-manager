@@ -4,7 +4,7 @@ install_data([
   'viewer-example-02.png',
   'viewer-example-03.png',
   ],
-  install_dir : 'share/gnome-color-manager/figures'
+  install_dir : join_paths(prefixed_datadir, 'gnome-color-manager/figures')
 )
 
 install_data([
@@ -16,5 +16,5 @@ install_data([
   'scan-target-good.svg',
   'scan-target.svg',
   ],
-  install_dir : 'share/gnome-color-manager/icons'
+  install_dir : join_paths(prefixed_datadir, 'gnome-color-manager/icons')
 )

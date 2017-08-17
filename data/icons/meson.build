@@ -4,7 +4,7 @@ foreach size: icon_sizes
   install_data([
     size + '/gnome-color-manager.png',
     ],
-    install_dir : 'share/icons/hicolor/' + size + '/apps',
+    install_dir : join_paths(prefixed_datadir, 'icons/hicolor/' + size + '/apps'),
   )
 endforeach
 
@@ -12,7 +12,7 @@ endforeach
 install_data([
   'scalable/gnome-color-manager.svg',
   ],
-  install_dir : 'share/icons/hicolor/scalable/apps'
+  install_dir : join_paths(prefixed_datadir, 'icons/hicolor/scalable/apps')
 )
 
 install_data([
@@ -20,5 +20,5 @@ install_data([
   'scalable/crt.svg',
   'scalable/projector.svg',
   ],
-  install_dir : 'share/gnome-color-manager/icons/icons'
+  install_dir : join_paths(prefixed_datadir, 'gnome-color-manager/icons/icons')
 )

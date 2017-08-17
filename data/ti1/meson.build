@@ -6,5 +6,5 @@ install_data([
   'printer-normal.ti1',
   'printer-short.ti1',
   ],
-  install_dir : 'share/gnome-color-manager/ti1'
+  install_dir : join_paths(prefixed_datadir, 'gnome-color-manager/ti1')
 )
