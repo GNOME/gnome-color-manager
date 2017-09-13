@@ -29,7 +29,7 @@ if get_option('enable-exiv')
     ],
     c_args : cargs,
     install : true,
-    install_dir : 'libexec',
+    install_dir : get_option('libexecdir'),
   )
 endif
 
