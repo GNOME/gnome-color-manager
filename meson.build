@@ -118,7 +118,7 @@ conf.set_quoted('DATADIR',
 conf.set_quoted('PKGDATADIR',
                 join_paths(get_option('prefix'),
                            get_option('datadir'),
-                           'gnome-software'))
+                           'gnome-color-manager'))
 conf.set_quoted('BINDIR',
                 join_paths(get_option('prefix'),
                            get_option('bindir')))
