@@ -1,14 +1,14 @@
 # Scottish Gaelic translation for gnome-color-manager.
 # Copyright (C) 2016 gnome-color-manager's COPYRIGHT HOLDER
 # This file is distributed under the same license as the gnome-color-manager package.
-# GunChleoc <fios@foramnagaidhlig.net>, 2016, 2017.
+# GunChleoc <fios@foramnagaidhlig.net>, 2016, 2017, 2018.
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager gnome-3-20\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
-"color-manager&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-12-06 16:24+0000\n"
-"PO-Revision-Date: 2017-03-07 11:36+0100\n"
+"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?product"
+"=gnome-color-manager&keywords=I18N+L10N&component=general\n"
+"POT-Creation-Date: 2018-01-26 15:52+0000\n"
+"PO-Revision-Date: 2018-03-01 12:17+0100\n"
 "Last-Translator: GunChleoc <fios@foramnagaidhlig.net>\n"
 "Language-Team: Fòram na Gàidhlig\n"
 "Language: gd\n"
@@ -21,20 +21,20 @@ msgstr ""
 "X-Project-Style: gnome\n"
 
 #. TRANSLATORS: this is the application name for libcanberra
-#: ../data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in.h:1
-#: ../src/gcm-calibrate-argyll.c:1914 ../src/gcm-calibrate-argyll.c:2001
-#: ../src/gcm-calibrate-argyll.c:2038 ../src/gcm-calibrate-argyll.c:2064
-#: ../src/gcm-calibrate.c:380 ../src/gcm-calibrate.c:416
-#: ../src/gcm-calibrate.c:455 ../src/gcm-calibrate-main.c:182
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:7
+#: src/gcm-calibrate-argyll.c:1914 src/gcm-calibrate-argyll.c:2001
+#: src/gcm-calibrate-argyll.c:2038 src/gcm-calibrate-argyll.c:2064
+#: src/gcm-calibrate.c:380 src/gcm-calibrate.c:416 src/gcm-calibrate.c:455
+#: src/gcm-calibrate-main.c:182
 msgid "GNOME Color Manager"
 msgstr "Manaidsear dathan GNOME"
 
-#: ../data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in.h:2
-#: ../data/org.gnome.ColorProfileViewer.desktop.in.h:2
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:8
+#: data/org.gnome.ColorProfileViewer.desktop.in:4
 msgid "Inspect and compare installed color profiles"
 msgstr "Sgrùd is dèan coimeas eadar na pròifilean dhathan a chaidh a stàladh"
 
-#: ../data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in.h:3
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:10
 msgid ""
 "GNOME Color Profile Viewer shows installed color profiles on your system and "
 "allows you to calibrate displays, printers and cameras using a wizard."
@@ -43,7 +43,7 @@ msgstr ""
 "stàladh air an t-siostam agad agus leigidh e leat uidheaman-taisbeanaidh, "
 "clò-bhualadairean agus camarathan a chailbhreachadh le taic draoidh."
 
-#: ../data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in.h:4
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:15
 msgid ""
 "This functionality is typically used by GNOME Control Center from the color "
 "panel although can be used on its own."
@@ -51,454 +51,277 @@ msgstr ""
 "Thèid an gleus seo a chleachdadh le panail nan dathan aig Ionad smachd GNOME "
 "mar as trice ged a ghabhas a chleachdadh leis fhèin."
 
-#: ../data/gcm-calibrate.desktop.in.h:1
+#: data/gcm-calibrate.desktop.in:3
 msgid "Color"
 msgstr "Dath"
 
-#: ../data/gcm-calibrate.desktop.in.h:2
+#: data/gcm-calibrate.desktop.in:4
 msgid "Color Calibration"
 msgstr "Cailbhreachadh nan dathan"
 
-#: ../data/gcm-import.desktop.in.h:1
+#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+#: data/gcm-calibrate.desktop.in:6 data/gcm-picker.desktop.in:6
+#: data/org.gnome.ColorProfileViewer.desktop.in:6
+msgid "gnome-color-manager"
+msgstr "gnome-color-manager"
+
+#: data/gcm-import.desktop.in:3
 msgid "ICC Profile Installer"
 msgstr "Inneal-stàlaidh pròifilean ICC"
 
-#: ../data/gcm-import.desktop.in.h:2
+#: data/gcm-import.desktop.in:4
 msgid "Install ICC profiles"
 msgstr "Stàlaich pròifilean ICC"
 
+#. Translators: Do NOT translate or transliterate this text (this is an icon file name)!
+#: data/gcm-import.desktop.in:10
+msgid "application-vnd.iccprofile"
+msgstr "application-vnd.iccprofile"
+
 #. Window title, where the user can pick spot colors using a measuring device
-#: ../data/gcm-picker.desktop.in.h:1 ../data/gcm-picker.ui.h:2
+#: data/gcm-picker.desktop.in:3 src/gcm-picker.ui:27 src/gcm-picker.ui:324
 msgid "Color Picker"
 msgstr "Roghnaichear nan dathan"
 
-#: ../data/gcm-picker.desktop.in.h:2
+#: data/gcm-picker.desktop.in:4
 msgid "Use the color sensor to sample spot colors"
 msgstr ""
 "Cleachd mothaichear nan dathan gus buill-shampaill dhe bhadan datha fhaighinn"
 
-#. the color representation
-#. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:4 ../src/gcm-viewer.c:587
-msgid "XYZ"
-msgstr "XYZ"
-
-#. Lab is the color representation and D50 is the white point
-#: ../data/gcm-picker.ui.h:6
-msgid "Lab (D50)"
-msgstr "Lab (D50)"
-
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:8
-msgid "Media whitepoint"
-msgstr "Geal-phuing a' mheadhain"
-
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:10
-msgid "Color Temperature"
-msgstr "Teòthachd an datha"
-
-#. This refers to the amount of ambient light on the sensor
-#: ../data/gcm-picker.ui.h:12
-msgid "Ambient"
-msgstr "Cuairteach"
-
-#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#. The profile colorspace, e.g. RGB
-#: ../data/gcm-picker.ui.h:14 ../data/gcm-viewer.ui.h:6
-msgid "Colorspace"
-msgstr "Spàs datha"
-
-#. These are the values of the chosen color in Red, Green, Blue encoding
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#. TRANSLATORS: this the ICC colorspace type
-#: ../data/gcm-picker.ui.h:16 ../src/gcm-utils.c:285 ../src/gcm-viewer.c:607
-msgid "RGB"
-msgstr "RGB"
-
-#. This shows the error in the conversion to RGB.
-#: ../data/gcm-picker.ui.h:18
-msgid "Error"
-msgstr "Mearachd"
-
-#. Expander title, the results from the color picker
-#: ../data/gcm-picker.ui.h:20
-msgid "Results"
-msgstr "Toraidhean"
-
-#. Button text, to get a single sample of color
-#: ../data/gcm-picker.ui.h:22
-msgid "_Measure"
-msgstr "To_mhais"
-
-#: ../data/gcm-viewer.ui.h:1
-msgid "Add a profile for the device"
-msgstr "Cuir pròifil ris airson an uidheim"
-
-#: ../data/gcm-viewer.ui.h:2
-msgid "Remove a profile from the device"
-msgstr "Thoir pròifil air falbh on uidheam"
-
-#. The type of profile, e.g. display, scanner, etc.
-#: ../data/gcm-viewer.ui.h:4
-msgid "Profile type"
-msgstr "Seòrsa na pròifile"
-
-#. When the profile was created
-#: ../data/gcm-viewer.ui.h:8
-msgid "Created"
-msgstr "Air a cruthachadh"
-
-#. The version of the profile
-#: ../data/gcm-viewer.ui.h:10
-msgid "Version"
-msgstr "Tionndadh"
-
-#. The manufacturer of the profile
-#: ../data/gcm-viewer.ui.h:12
-msgid "Manufacturer"
-msgstr "Saothraiche"
-
-#. The manufacturer of the profile
-#: ../data/gcm-viewer.ui.h:14
-msgid "Model"
-msgstr "Modail"
-
-#. If the profile contains a display correction table
-#: ../data/gcm-viewer.ui.h:16
-msgid "Display correction"
-msgstr "Ceartachadh an taisbeanaidh"
-
-#. The basename (the last section of the filename) of the profile
-#: ../data/gcm-viewer.ui.h:18
-msgid "White point"
-msgstr "Geal-phuing"
-
-#. The licence of the profile, normally non-free
-#: ../data/gcm-viewer.ui.h:20
-msgid "Copyright"
-msgstr "Còir-lethbhreac"
-
-#. The file size in bytes of the profile
-#: ../data/gcm-viewer.ui.h:22
-msgid "File size"
-msgstr "Meud an fhaidhle"
-
-#. The basename (the last section of the filename) of the profile
-#: ../data/gcm-viewer.ui.h:24
-msgid "Filename"
-msgstr "Ainm an fhaidhle"
-
-#. warnings for the profile
-#: ../data/gcm-viewer.ui.h:26
-msgid "Warnings"
-msgstr "Rabhaidhean"
-
-#: ../data/gcm-viewer.ui.h:27
-msgid "Information"
-msgstr "Fiosrachadh"
-
-#: ../data/gcm-viewer.ui.h:28
-msgid "y"
-msgstr "y"
-
-#: ../data/gcm-viewer.ui.h:29
-msgid "x"
-msgstr "x"
-
-#: ../data/gcm-viewer.ui.h:30
-msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
-msgstr "Seallaidh diagram CIE 1931 riochdachadh 2D air rainse na pròifil"
-
-#: ../data/gcm-viewer.ui.h:31
-msgid "CIE 1931"
-msgstr "CIE 1931"
-
-#: ../data/gcm-viewer.ui.h:32
-msgid "Response out"
-msgstr "Freagairt a-mach"
-
-#: ../data/gcm-viewer.ui.h:33
-msgid "Response in"
-msgstr "Freagairt a-steach"
-
-#: ../data/gcm-viewer.ui.h:34
-msgid ""
-"A tone reproduction curve is the mapping of scene luminance to display "
-"luminance"
-msgstr ""
-"'S e mapadh o lùmanas seallaidh gu lùmanas uidheam-taisbeanaidh a th' ann an "
-"lùb ath-riochdachadh tòna"
-
-#: ../data/gcm-viewer.ui.h:35
-msgid "TRC"
-msgstr "TRC"
-
-#: ../data/gcm-viewer.ui.h:36
-msgid "Video card out"
-msgstr "Cairt video a-mach"
-
-#: ../data/gcm-viewer.ui.h:37
-msgid "A video card gamma table shows the curves loaded into the display"
-msgstr ""
-"Seallaidh clàr gamma cairt video na lùban 'gan luchdadh dhan uidheam-"
-"taisbeanaidh"
-
-#: ../data/gcm-viewer.ui.h:38
-msgid "VCGT"
-msgstr "VCGT"
-
-#: ../data/gcm-viewer.ui.h:39
-msgid "Previous Image"
-msgstr "An dealbh roimhe"
-
-#. This is an example image that is saved in sRGB gamut
-#: ../data/gcm-viewer.ui.h:41
-msgid "sRGB example"
-msgstr "Ball-eisimpleir sRGB"
-
-#: ../data/gcm-viewer.ui.h:42
-msgid "Next Image"
-msgstr "An ath-dhealbh"
-
-#: ../data/gcm-viewer.ui.h:43
-msgid "This shows what an image would look like if saved with the profile"
-msgstr ""
-"Seallaidh seo ciamar a bhiodh dealbh coltach nan rachadh a shàbhaladh leis "
-"a' phròifil"
-
-#: ../data/gcm-viewer.ui.h:44
-msgid "From sRGB"
-msgstr "O sRGB"
-
-#: ../data/gcm-viewer.ui.h:45
-msgid "This shows what an image would look like if opened with the profile"
-msgstr ""
-"Seallaidh seo ciamar a bhiodh dealbh coltach nan rachadh fhosgladh leis a' "
-"phròifil"
-
-#: ../data/gcm-viewer.ui.h:46
-msgid "To sRGB"
-msgstr "Gu sRGB"
-
-#: ../data/gcm-viewer.ui.h:47
-msgid "Named colors are specific colors that are defined in the profile"
-msgstr ""
-"'S e dathan sònraichte a chaidh a mhìneachadh sa phròifil a tha sna dathan "
-"ainmichte"
-
-#: ../data/gcm-viewer.ui.h:48
-msgid "Named Colors"
-msgstr "Dathan ainmichte"
-
-#: ../data/gcm-viewer.ui.h:49
-msgid ""
-"Metadata is additional information stored in the profile for programs to use."
-msgstr ""
-"'S e fiosrachadh a bharrachd a chaidh a stòradh sa phròifil ach an cleachd "
-"prògraman e a tha sa mheata-dàta."
-
-#: ../data/gcm-viewer.ui.h:50
-msgid "Metadata"
-msgstr "Meata-dàta"
-
-#: ../data/gcm-viewer.ui.h:51
-#: ../data/org.gnome.ColorProfileViewer.desktop.in.h:1
+#: data/org.gnome.ColorProfileViewer.desktop.in:3 src/gcm-viewer.ui:1133
 msgid "Color Profile Viewer"
 msgstr "Sealladair nam pròifilean dhathan"
 
-#: ../data/org.gnome.ColorProfileViewer.desktop.in.h:3
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.ColorProfileViewer.desktop.in:13
 msgid "Color;ICC;"
 msgstr "Color;ICC;dath;colour;"
 
-#: ../src/gcm-calibrate-argyll.c:362
+#. TRANSLATORS: title, default paramters needed to calibrate_argyll
+#: src/gcm-calibrate-argyll.c:362
 msgid "Getting default parameters"
-msgstr "A' faighinn nam paramadairean tùsail"
+msgstr "A’ faighinn nam paramadairean tùsail"
 
-#: ../src/gcm-calibrate-argyll.c:367
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:367
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
 "screen and measuring them with the hardware device."
 msgstr ""
-"Nì seo ro-chailbhreachadh air an sgrìn 's e a' cur brèidean dathte is liatha "
-"dhan sgrìn agad 's an tomhas leis an inneal bathair-chruaidh."
+"Nì seo ro-chailbhreachadh air an sgrìn ’s e a’ cur brèidean dathte is liatha "
+"dhan sgrìn agad ’s an tomhas leis an inneal bathair-chruaidh."
 
-#: ../src/gcm-calibrate-argyll.c:445
+#. TRANSLATORS: title, patches are specific colours used in calibration
+#: src/gcm-calibrate-argyll.c:445
 msgid "Reading the patches"
-msgstr "A' leughadh nam brèidean"
+msgstr "A’ leughadh nam brèidean"
 
-#: ../src/gcm-calibrate-argyll.c:450
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:450
 msgid "Reading the patches using the color measuring instrument."
-msgstr "A' leughadh nam brèidean leis an inneal tomhas dhathan."
+msgstr "A’ leughadh nam brèidean leis an inneal tomhas dhathan."
 
-#: ../src/gcm-calibrate-argyll.c:538
+#. TRANSLATORS: title, drawing means painting to the screen
+#: src/gcm-calibrate-argyll.c:538
 msgid "Drawing the patches"
-msgstr "A' tarraing nam brèidean"
+msgstr "A’ tarraing nam brèidean"
 
-#: ../src/gcm-calibrate-argyll.c:543
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:543
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
 "the hardware device."
 msgstr ""
-"A' tarraing nam brèidean a chaidh a ghintinn dhan sgrìn ach an dèan an t-"
-"inneal bathair-chruaidh tomhas orra."
+"A’ tarraing nam brèidean a chaidh a ghintinn dhan sgrìn ach an dèan an "
+"t-inneal bathair-chruaidh tomhas orra."
 
-#: ../src/gcm-calibrate-argyll.c:628 ../src/gcm-calibrate-argyll.c:919
+#. TRANSLATORS: title, a profile is a ICC file
+#: src/gcm-calibrate-argyll.c:628 src/gcm-calibrate-argyll.c:919
 msgid "Generating the profile"
-msgstr "A' gintinn na pròifil"
+msgstr "A’ gintinn na pròifil"
 
-#: ../src/gcm-calibrate-argyll.c:633
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:633
 msgid "Generating the ICC color profile that can be used with this screen."
-msgstr "A' gintinn pròifil dhathan ICC a ghabhas cleachdadh leis an sgrìn seo."
+msgstr "A’ gintinn pròifil dhathan ICC a ghabhas cleachdadh leis an sgrìn seo."
 
-#: ../src/gcm-calibrate-argyll.c:773
+#. TRANSLATORS: title, a profile is a ICC file
+#: src/gcm-calibrate-argyll.c:773
 msgid "Copying files"
-msgstr "A' dèanamh lethbhreac dhe na faidhlichean"
+msgstr "A’ dèanamh lethbhreac dhe na faidhlichean"
 
-#: ../src/gcm-calibrate-argyll.c:778
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:778
 msgid "Copying source image, chart data and CIE reference values."
 msgstr ""
-"A' dèanamh lethbhreac dhen dealbh tùsail, dàta cairte agus luachan iomraidh "
+"A’ dèanamh lethbhreac dhen dealbh tùsail, dàta cairte agus luachan iomraidh "
 "CIE."
 
-#: ../src/gcm-calibrate-argyll.c:826
+#. TRANSLATORS: title, drawing means painting to the screen
+#: src/gcm-calibrate-argyll.c:826
 msgid "Measuring the patches"
-msgstr "A' tomhas nam brèidean"
+msgstr "A’ tomhas nam brèidean"
 
-#: ../src/gcm-calibrate-argyll.c:831
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:831
 msgid "Detecting the reference patches and measuring them."
-msgstr "A' mothachadh dha na brèidean iomraidh agus 'gan tomhas."
+msgstr "A’ mothachadh dha na brèidean iomraidh agus ’gan tomhas."
 
-#: ../src/gcm-calibrate-argyll.c:924
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:924
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr ""
-"A' gintinn pròifil dhathan ICC a ghabhas cleachdadh leis an uidheam seo."
+"A’ gintinn pròifil dhathan ICC a ghabhas cleachdadh leis an uidheam seo."
 
-#: ../src/gcm-calibrate-argyll.c:1236
+#. TRANSLATORS: title, patches are specific colors used in calibration
+#: src/gcm-calibrate-argyll.c:1236
 msgid "Printing patches"
-msgstr "A' clò-bhualadh nam brèidean"
+msgstr "A’ clò-bhualadh nam brèidean"
 
-#: ../src/gcm-calibrate-argyll.c:1241
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:1241
 msgid "Rendering the patches for the selected paper and ink."
-msgstr ""
-"A' reandaradh nam brèidean airson a' phàipeir 's na h-ince a thagh thu."
+msgstr "A’ reandaradh nam brèidean airson a’ phàipeir ’s na h-ince a thagh thu."
 
-#: ../src/gcm-calibrate-argyll.c:1565
+#. TRANSLATORS: title, patches are specific colours used in calibration
+#: src/gcm-calibrate-argyll.c:1565
 msgid "Wait for the ink to dry"
-msgstr "A' feitheamh gus an tiormaich an inc"
+msgstr "A’ feitheamh gus an tiormaich an inc"
 
-#: ../src/gcm-calibrate-argyll.c:1570
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:1570
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 "produce a poor profile and may damage your color measuring instrument."
 msgstr ""
 "Fuirich ort beagan mhionaidean gus am bi an inc tioram. Ma nì thu pròifil le "
-"inc thais, chan fhaigh thu deagh phròifil às agus dh'fhaoidte gum mill e an "
+"inc thais, chan fhaigh thu deagh phròifil às agus dh’fhaoidte gum mill e an "
 "t-inneal tomhais dhathan agad."
 
-#: ../src/gcm-calibrate-argyll.c:1714
+#. TRANSLATORS: title, instrument refers to a calibration device
+#: src/gcm-calibrate-argyll.c:1714
 msgid "Set up instrument"
-msgstr "A' suidheachadh an inneil"
+msgstr "A’ suidheachadh an inneil"
 
-#: ../src/gcm-calibrate-argyll.c:1719
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:1719
 msgid "Setting up the instrument for use…"
-msgstr "A' suidheachadh an t-inneal ach an cleachd thu e…"
+msgstr "A’ suidheachadh an t-inneal ach an cleachd thu e…"
 
-#: ../src/gcm-calibrate-argyll.c:1896 ../src/gcm-calibrate-argyll.c:1961
+#. TRANSLATORS: title, the calibration failed
+#: src/gcm-calibrate-argyll.c:1896 src/gcm-calibrate-argyll.c:1961
 msgid "Calibration error"
 msgstr "Mearachd cailbhreachaidh"
 
-#: ../src/gcm-calibrate-argyll.c:1901
+#. TRANSLATORS: message, the sample was not read correctly
+#: src/gcm-calibrate-argyll.c:1901
 msgid "The sample could not be read at this time."
-msgstr "Cha b' urrainn dhuinn am ball-sampaill a leughadh aig an àm seo."
+msgstr "Cha b’ urrainn dhuinn am ball-sampaill a leughadh aig an àm seo."
 
-#: ../src/gcm-calibrate-argyll.c:1908 ../src/gcm-calibrate-argyll.c:2032
-#: ../src/gcm-calibrate-argyll.c:2058 ../src/gcm-calibrate-argyll.c:2095
-#: ../src/gcm-calibrate-argyll.c:2122
+#: src/gcm-calibrate-argyll.c:1908 src/gcm-calibrate-argyll.c:2032
+#: src/gcm-calibrate-argyll.c:2058 src/gcm-calibrate-argyll.c:2095
+#: src/gcm-calibrate-argyll.c:2122
 msgid "Retry"
 msgstr "Feuch ris a-rithist"
 
-#: ../src/gcm-calibrate-argyll.c:1967
+#. TRANSLATORS: message, no firmware is available
+#: src/gcm-calibrate-argyll.c:1967
 msgid "No firmware is installed for this instrument."
 msgstr "Cha deach bathar-an-sàs a stàladh airson an inneil seo."
 
-#: ../src/gcm-calibrate-argyll.c:1972
+#. TRANSLATORS: message, the image wasn't good enough
+#: src/gcm-calibrate-argyll.c:1972
+#| msgid ""
+#| "The pattern match wasn't good enough. Ensure you have the correct type of "
+#| "target selected."
 msgid ""
-"The pattern match wasn't good enough. Ensure you have the correct type of "
+"The pattern match wasn’t good enough. Ensure you have the correct type of "
 "target selected."
 msgstr ""
 "Cha deach am pàtran a mhaidseadh math gu leòr. Dèan cinnteach gun do thagh "
 "thu seòrsa ceart an amais."
 
-#: ../src/gcm-calibrate-argyll.c:1978
+#. TRANSLATORS: message, the sensor got no readings
+#: src/gcm-calibrate-argyll.c:1978
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
 "is fully open."
 msgstr ""
-"Cha d' fhuair an t-inneal tomhais leughadh dligheach. Dèan cinnteach gu "
+"Cha d’ fhuair an t-inneal tomhais leughadh dligheach. Dèan cinnteach gu "
 "bheil am fosgladh gu tur fosgailte."
 
-#: ../src/gcm-calibrate-argyll.c:1983
+#. TRANSLATORS: message, the colorimeter has got confused
+#: src/gcm-calibrate-argyll.c:1983
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
 "USB plug and re-insert before trying to use this device."
 msgstr ""
-"Tha an t-inneal tomhais trang agus chan eil e a' tòiseachadh. Thoir air "
-"falbh am pluga USB agus cuir a-steach e a-rithist mus fheuch thu ris an t-"
-"inneal seo a chleachdadh."
+"Tha an t-inneal tomhais trang agus chan eil e a’ tòiseachadh. Thoir air "
+"falbh am pluga USB agus cuir a-steach e a-rithist mus fheuch thu ris an "
+"t-inneal seo a chleachdadh."
 
-#: ../src/gcm-calibrate-argyll.c:2021
+#. TRANSLATORS: dialog title
+#: src/gcm-calibrate-argyll.c:2021
 msgid "Reading target"
-msgstr "A' leughadh an amais"
+msgstr "A’ leughadh an amais"
 
-#: ../src/gcm-calibrate-argyll.c:2026
+#. TRANSLATORS: message, no firmware is available
+#: src/gcm-calibrate-argyll.c:2026
 msgid "Failed to read the strip correctly."
 msgstr "Cha deach leinn an stiall a leughadh mar bu chòir."
 
-#: ../src/gcm-calibrate-argyll.c:2047
+#. TRANSLATORS: dialog title
+#: src/gcm-calibrate-argyll.c:2047
 msgid "Reading sample"
-msgstr "A' leughadh ball-sampaill"
+msgstr "A’ leughadh ball-sampaill"
 
-#: ../src/gcm-calibrate-argyll.c:2052
+#. TRANSLATORS: message, the sample read failed due to misread
+#: src/gcm-calibrate-argyll.c:2052
 msgid "Failed to read the color sample correctly."
 msgstr "Cha deach leinn am ball-sampaill dhathan a leughadh mar bu chòir."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2077
+#: src/gcm-calibrate-argyll.c:2077
 #, c-format
 msgid "Read strip %s rather than %s!"
 msgstr "Leugh stiall %s seach %s!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2082
-msgid "It looks like you've measured the wrong strip."
+#: src/gcm-calibrate-argyll.c:2082
+#| msgid "It looks like you've measured the wrong strip."
+msgid "It looks like you’ve measured the wrong strip."
 msgstr "Tha coltas gun do rinn thu tomhas air an stiall chearr."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2086
+#: src/gcm-calibrate-argyll.c:2086
+#| msgid ""
+#| "If you've really measured the right one, it's okay, it could just be "
+#| "unusual paper."
 msgid ""
-"If you've really measured the right one, it's okay, it could just be unusual "
+"If you’ve really measured the right one, it’s okay, it could just be unusual "
 "paper."
 msgstr ""
 "Mas ann gun do rinn thu tomhas air an fhear cheart, na gabh dragh, "
-"dh'fhaoidte gu bheil am pàipear caran annasach."
+"dh’fhaoidte gu bheil am pàipear caran annasach."
 
-#: ../src/gcm-calibrate-argyll.c:2111
+#. TRANSLATORS: title, the calibration failed
+#: src/gcm-calibrate-argyll.c:2111
 msgid "Device Error"
 msgstr "Mearachd an inneil"
 
-#: ../src/gcm-calibrate-argyll.c:2116
+#. TRANSLATORS: message, the sample was not read correctly
+#: src/gcm-calibrate-argyll.c:2116
 msgid "The device could not measure the color spot correctly."
-msgstr "Tha b' urrainn dhan inneal am bad datha a leughadh mar bu chòir."
+msgstr "Tha b’ urrainn dhan inneal am bad datha a leughadh mar bu chòir."
 
 #. TRANSLATORS: dialog title, where %s is a letter like 'A'
-#: ../src/gcm-calibrate-argyll.c:2130
+#: src/gcm-calibrate-argyll.c:2130
 #, c-format
 msgid "Ready to read strip %s"
 msgstr "Deiseil gus stiall %s a leughadh"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2135
+#: src/gcm-calibrate-argyll.c:2135
 msgid ""
 "Place the colorimeter on the area of white next to the letter and click and "
 "hold the measure switch."
@@ -507,7 +330,7 @@ msgstr ""
 "briog is cum sìos suidse an tomhais."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2139
+#: src/gcm-calibrate-argyll.c:2139
 msgid ""
 "Slowly scan the target line from left to right and release the switch when "
 "you get to the end of the page."
@@ -516,7 +339,7 @@ msgstr ""
 "às an t-suidse nuair a ruigeas tu deireadh na duilleige."
 
 #. TRANSLATORS: dialog message, the sensor has to be above the line
-#: ../src/gcm-calibrate-argyll.c:2143
+#: src/gcm-calibrate-argyll.c:2143
 msgid ""
 "Ensure the center of the device is properly aligned with the row you are "
 "trying to measure."
@@ -525,241 +348,254 @@ msgstr ""
 "airson tomhas mar bu chòir."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
-#: ../src/gcm-calibrate-argyll.c:2147
+#: src/gcm-calibrate-argyll.c:2147
+#| msgid ""
+#| "If you make a mistake, just release the switch, and you'll get a chance "
+#| "to try again."
 msgid ""
-"If you make a mistake, just release the switch, and you'll get a chance to "
+"If you make a mistake, just release the switch, and you’ll get a chance to "
 "try again."
 msgstr ""
 "Ma nì thu mearachd, cha leig thu leas ach an t-suidse a leigeil às agus "
 "gheibh thu oidhirp eile."
 
-#: ../src/gcm-calibrate-argyll.c:2241
+#. TRANSLATORS: title, printing reference files to media
+#: src/gcm-calibrate-argyll.c:2241
 msgid "Printing"
-msgstr "'Ga chlò-bhualadh"
+msgstr "’Ga chlò-bhualadh"
 
-#: ../src/gcm-calibrate-argyll.c:2250
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:2250
 msgid "Preparing the data for the printer."
-msgstr "Ag ullachadh an dàta airson a' chlò-bhualadair."
+msgstr "Ag ullachadh an dàta airson a’ chlò-bhualadair."
 
-#: ../src/gcm-calibrate-argyll.c:2258
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:2258
 msgid "Sending the targets to the printer."
-msgstr "A' cur nan amasan dhan chlò-bhualadair."
+msgstr "A’ cur nan amasan dhan chlò-bhualadair."
 
-#: ../src/gcm-calibrate-argyll.c:2264
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:2264
 msgid "Printing the targets…"
-msgstr "A' clò-bhualadh nan amasan…"
+msgstr "A’ clò-bhualadh nan amasan…"
 
-#: ../src/gcm-calibrate-argyll.c:2270
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:2270
 msgid "The printing has finished."
 msgstr "Tha an clò-bhualadh deiseil."
 
-#: ../src/gcm-calibrate-argyll.c:2276
+#. TRANSLATORS: dialog message
+#: src/gcm-calibrate-argyll.c:2276
 msgid "The print was aborted."
 msgstr "Chaidh sgur dhen chlò-bhualadh."
 
-#: ../src/gcm-calibrate.c:348
+#. TRANSLATORS: title, instrument is a hardware color calibration sensor
+#: src/gcm-calibrate.c:348
 msgid "Please attach instrument"
 msgstr "Ceangail an t-inneal"
 
 #. TRANSLATORS: dialog message, ask user to attach device, and there's an example image
-#: ../src/gcm-calibrate.c:357
+#: src/gcm-calibrate.c:357
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square like the image below."
 msgstr ""
-"Ceangail an t-inneal-tomhais ri meadhan na sgrìn air a' cheàrnag liath mar "
+"Ceangail an t-inneal-tomhais ri meadhan na sgrìn air a’ cheàrnag liath mar "
 "san dealbh gu h-ìosal."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate.c:360
+#: src/gcm-calibrate.c:360
 msgid ""
 "Please attach the measuring instrument to the center of the screen on the "
 "gray square."
-msgstr ""
-"Ceangail an t-inneal-tomhais ri meadhan na sgrìn air a' cheàrnag liath."
+msgstr "Ceangail an t-inneal-tomhais ri meadhan na sgrìn air a’ cheàrnag liath."
 
 #. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate.c:367
+#: src/gcm-calibrate.c:367
 msgid ""
 "You will need to hold the device on the screen for the duration of the "
 "calibration."
-msgstr "Feumaidh tu an t-inneal a chumail ris an sgrìn rè a' chailbhreachaidh."
+msgstr "Feumaidh tu an t-inneal a chumail ris an sgrìn rè a’ chailbhreachaidh."
 
-#: ../src/gcm-calibrate.c:374 ../src/gcm-calibrate.c:399
-#: ../src/gcm-calibrate.c:438
+#: src/gcm-calibrate.c:374 src/gcm-calibrate.c:399 src/gcm-calibrate.c:438
 msgid "Continue"
 msgstr "Air adhart"
 
-#: ../src/gcm-calibrate.c:392 ../src/gcm-calibrate.c:428
+#. TRANSLATORS: title, instrument is a hardware color calibration sensor
+#: src/gcm-calibrate.c:392 src/gcm-calibrate.c:428
 msgid "Please configure instrument"
 msgstr "Rèitich an t-inneal"
 
-#: ../src/gcm-calibrate.c:403
+#. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
+#: src/gcm-calibrate.c:403
 msgid ""
 "Please set the measuring instrument to screen mode like the image below."
 msgstr ""
-"Suidhich an t-inneal-tomhais air a' mhodh sgrìn mar san dealbh gu h-ìosal."
+"Suidhich an t-inneal-tomhais air a’ mhodh sgrìn mar san dealbh gu h-ìosal."
 
-#: ../src/gcm-calibrate.c:408
+#. TRANSLATORS: this is when the user has to change a setting on the sensor
+#: src/gcm-calibrate.c:408
 msgid "Please set the measuring instrument to screen mode."
-msgstr "Suidhich an t-inneal-tomhais air a' mhodh sgrìn."
+msgstr "Suidhich an t-inneal-tomhais air a’ mhodh sgrìn."
 
-#: ../src/gcm-calibrate.c:442
+#. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
+#: src/gcm-calibrate.c:442
 msgid ""
 "Please set the measuring instrument to calibration mode like the image below."
 msgstr ""
-"Suidhich an t-inneal-tomhais air a' mhodh chailbhreachaidh mar san dealbh gu "
+"Suidhich an t-inneal-tomhais air a’ mhodh chailbhreachaidh mar san dealbh gu "
 "h-ìosal."
 
-#: ../src/gcm-calibrate.c:447
+#. TRANSLATORS: this is when the user has to change a setting on the sensor
+#: src/gcm-calibrate.c:447
 msgid "Please set the measuring instrument to calibration mode."
-msgstr "Suidhich an t-inneal-tomhais air a' mhodh chailbhreachaidh."
+msgstr "Suidhich an t-inneal-tomhais air a’ mhodh chailbhreachaidh."
 
 #. TRANSLATORS: dialog for file->open dialog. A calibration target image is the
 #. * aquired image of the calibration target, e.g. an image file that looks
 #. * a bit like this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate.c:596
+#: src/gcm-calibrate.c:596
 msgid "Select calibration target image"
-msgstr "Tagh dealbh-amais a' chailbhreachaidh"
+msgstr "Tagh dealbh-amais a’ chailbhreachaidh"
 
-#: ../src/gcm-calibrate.c:598 ../src/gcm-calibrate.c:640
-#: ../src/gcm-calibrate.c:723 ../src/gcm-viewer.c:373
+#: src/gcm-calibrate.c:598 src/gcm-calibrate.c:640 src/gcm-calibrate.c:723
+#: src/gcm-viewer.c:373
 msgid "_Cancel"
 msgstr "S_guir dheth"
 
-#: ../src/gcm-calibrate.c:599 ../src/gcm-calibrate.c:641
-#: ../src/gcm-calibrate.c:724
+#: src/gcm-calibrate.c:599 src/gcm-calibrate.c:641 src/gcm-calibrate.c:724
 msgid "_Open"
 msgstr "F_osgail"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:609
+#: src/gcm-calibrate.c:609
 msgid "Supported images files"
 msgstr "Faidhlichean deilbh ris an cuirear taic"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:616 ../src/gcm-calibrate.c:667
-#: ../src/gcm-viewer.c:399
+#: src/gcm-calibrate.c:616 src/gcm-calibrate.c:667 src/gcm-viewer.c:399
 msgid "All files"
 msgstr "A h-uile faidhle"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:638
+#: src/gcm-calibrate.c:638
 msgid "Select CIE reference values file"
 msgstr "Tagh faidhle le luachan iomraidh CIE"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-calibrate.c:660
+#: src/gcm-calibrate.c:660
 msgid "CIE values"
 msgstr "Luachan CIE"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-calibrate.c:721 ../src/gcm-viewer.c:371
+#: src/gcm-calibrate.c:721 src/gcm-viewer.c:371
 msgid "Select ICC Profile File"
 msgstr "Tagh faidhle le pròifil ICC"
 
-#: ../src/gcm-calibrate-main.c:138
+#: src/gcm-calibrate-main.c:138
 msgid "Calibration is not complete"
 msgstr "Chan eil an cailbhreachadh coileanta"
 
-#: ../src/gcm-calibrate-main.c:141
+#: src/gcm-calibrate-main.c:141
 msgid "Are you sure you want to cancel the calibration?"
 msgstr "A bheil thu cinnteach gu bheil thu airson sgur dhen chailbhreachadh?"
 
-#: ../src/gcm-calibrate-main.c:144
+#. TRANSLATORS: button text
+#: src/gcm-calibrate-main.c:144
 msgid "Continue calibration"
-msgstr "Lean air adhart leis a' chailbhreachadh"
+msgstr "Lean air adhart leis a’ chailbhreachadh"
 
-#: ../src/gcm-calibrate-main.c:148
+#. TRANSLATORS: button text
+#: src/gcm-calibrate-main.c:148
 msgid "Cancel and close"
 msgstr "Sguir dheth is dùin"
 
 #. TRANSLATORS: this is the sound description
-#: ../src/gcm-calibrate-main.c:184
+#: src/gcm-calibrate-main.c:184
 msgid "Profiling completed"
-msgstr "Tha a' phròifil deiseil"
+msgstr "Tha a’ phròifil deiseil"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:415 ../src/gcm-calibrate-main.c:1796
+#: src/gcm-calibrate-main.c:415 src/gcm-calibrate-main.c:1796
 msgid "Failed to calibrate"
-msgstr "Dh'fhàillig leis a' chailbhreachadh"
+msgstr "Dh’fhàillig leis a’ chailbhreachadh"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:661
+#: src/gcm-calibrate-main.c:661
 msgid "Calibrate your camera"
 msgstr "Cailbhrich an camara agad"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:665
+#: src/gcm-calibrate-main.c:665
 msgid "Calibrate your display"
 msgstr "Cailbhrich an t-uidheam-taisbeanaidh agad"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:669
+#: src/gcm-calibrate-main.c:669
 msgid "Calibrate your printer"
 msgstr "Cailbhrich an clò-bhualadair agad"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:673
+#: src/gcm-calibrate-main.c:673
 msgid "Calibrate your device"
 msgstr "Cailbhrich an t-uidheam agad"
 
 #. TRANSLATORS: this is the final intro page text
-#: ../src/gcm-calibrate-main.c:685
+#: src/gcm-calibrate-main.c:685
 msgid ""
 "Any existing screen correction will be temporarily turned off and the "
 "brightness set to maximum."
 msgstr ""
-"Thèid ceartachadh-sgrìne sam bith a chur dheth rè seal agus an "
-"t-soillearachd a chur cho àrd sa ghabhas."
+"Thèid ceartachadh-sgrìne sam bith a chur dheth rè seal agus an t-"
+"soillearachd a chur cho àrd sa ghabhas."
 
 #. TRANSLATORS: this is the final intro page text
-#: ../src/gcm-calibrate-main.c:692
+#: src/gcm-calibrate-main.c:692
 msgid "You can cancel this process at any stage by pressing the cancel button."
 msgstr ""
-"'S urrainn dhut seo a chur dheth uair sam bith 's tu a' briogadh air a' "
-"phutan \"Sguir dheth.\""
+"’S urrainn dhut seo a chur dheth uair sam bith ’s tu a’ briogadh air a’ "
+"phutan “Sguir dheth”."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:698
+#: src/gcm-calibrate-main.c:698
 msgid "Introduction"
 msgstr "Ro-ràdh"
 
-#: ../src/gcm-calibrate-main.c:774
+#: src/gcm-calibrate-main.c:774
 msgid "Show File"
 msgstr "Seall am faidhle"
 
-#: ../src/gcm-calibrate-main.c:777
+#: src/gcm-calibrate-main.c:777
 msgid "Click here to show the profile"
-msgstr "Briog an-seo gus a' phròifil a shealltainn"
+msgstr "Briog an-seo gus a’ phròifil a shealltainn"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:797
+#: src/gcm-calibrate-main.c:797
 msgid "All done!"
 msgstr "Sin thu deiseil!"
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:807
+#: src/gcm-calibrate-main.c:807
 msgid "The camera has been calibrated successfully."
 msgstr "Chaidh an camara a chailbhreachadh."
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:811
+#: src/gcm-calibrate-main.c:811
 msgid "The display has been calibrated successfully."
 msgstr "Chaidh an t-uidheam-taisbeanaidh a chailbhreachadh."
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:815
+#: src/gcm-calibrate-main.c:815
 msgid "The printer has been calibrated successfully."
 msgstr "Chaidh an clò-bhualadair a chailbhreachadh."
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:819
+#: src/gcm-calibrate-main.c:819
 msgid "The device has been calibrated successfully."
 msgstr "Chaidh an t-uidheam a chailbhreachadh."
 
 #. TRANSLATORS: this is the final summary
-#: ../src/gcm-calibrate-main.c:826
+#: src/gcm-calibrate-main.c:826
 msgid ""
 "To view details about the new profile or to undo the calibration visit the "
 "<a href=\"control-center://color\">control center</a>."
@@ -768,42 +604,42 @@ msgstr ""
 "cailbhreachadh a neo-dhèanamh, tadhail air an <a href=\"control-"
 "center://color\">ionad-stiùiridh</a>."
 
-#: ../src/gcm-calibrate-main.c:835
+#: src/gcm-calibrate-main.c:835
 msgid ""
 "You can use the profile with <a href=\"import-linux\">Linux</a>, <a href="
 "\"import-osx\">Apple OS X</a> and <a href=\"import-windows\">Microsoft "
 "Windows</a> systems."
 msgstr ""
-"'S urrainn dhut a' phròifil a chleachdadh le siostaman <a href=\"import-"
+"’S urrainn dhut a’ phròifil a chleachdadh le siostaman <a href=\"import-"
 "linux\">Linux</a>, <a href=\"import-osx\">Apple OS X</a> agus <a href=\"import-"
 "windows\">Microsoft Windows</a>."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:847 ../src/gcm-calibrate-main.c:1809
+#: src/gcm-calibrate-main.c:847 src/gcm-calibrate-main.c:1809
 msgid "Summary"
 msgstr "Gearr-chunntas"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:868
+#: src/gcm-calibrate-main.c:868
 msgid "Performing calibration"
-msgstr "'Ga chailbhreachadh"
+msgstr "’Ga chailbhreachadh"
 
-#: ../src/gcm-calibrate-main.c:881
+#: src/gcm-calibrate-main.c:881
 msgid "Calibration is about to start"
 msgstr "Tha an cailbhreachadh gu bhith tòiseachadh"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:899
+#: src/gcm-calibrate-main.c:899
 msgid "Action"
 msgstr "Gnìomh"
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:919
+#: src/gcm-calibrate-main.c:919
 msgid "Calibration checklist"
-msgstr "Liosta-dhearbhaidh a' chailbhreachaidh"
+msgstr "Liosta-dhearbhaidh a’ chailbhreachaidh"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:926
+#: src/gcm-calibrate-main.c:926
 msgid ""
 "Before calibrating the display, it is recommended to configure your display "
 "with the following settings to get optimal results."
@@ -812,31 +648,34 @@ msgstr ""
 "thu e leis na roghainnean seo ach am faigh thu na toraidhean as fhearr."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:929
+#: src/gcm-calibrate-main.c:929
+#| msgid ""
+#| "You may want to consult the owner's manual for your display on how to "
+#| "achieve these settings."
 msgid ""
-"You may want to consult the owner's manual for your display on how to "
+"You may want to consult the owner’s manual for your display on how to "
 "achieve these settings."
 msgstr ""
-"Dh'fhaoidte gum b' feairrde thu sùil a thoirt air leabhar-mhìneachaidhean an "
+"Dh’fhaoidte gum b’ feairrde thu sùil a thoirt air leabhar-mhìneachaidhean an "
 "uidheim-thaisbeanaidh agad gus faighinn a-mach mar a thaghas tu na "
 "roghainnean seo."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:932
+#: src/gcm-calibrate-main.c:932
 msgid "Reset your display to the factory defaults."
 msgstr ""
 "Ath-shuidhich an t-uidheam-taisbeanaidh agad air bun-roghainnean an "
 "fhactaraidh."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:935
+#: src/gcm-calibrate-main.c:935
 msgid "Disable dynamic contrast if your display has this feature."
 msgstr ""
 "Cuir à comas an t-iom-sgaradh innsginneach ma tha an gleus seo aig an "
 "uidheam-taisbeanaidh agad."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:938
+#: src/gcm-calibrate-main.c:938
 msgid ""
 "Configure your display with custom color settings and ensure the RGB "
 "channels are set to the same values."
@@ -846,13 +685,13 @@ msgstr ""
 "luach."
 
 #. TRANSLATORS: dialog message, addition to bullet item
-#: ../src/gcm-calibrate-main.c:941
+#: src/gcm-calibrate-main.c:941
 msgid "If custom color is not available then use a 6500K color temperature."
 msgstr ""
 "Mur eil dathan gnàthaichte ri am faighinn, cleachd teothachd dhathan 6500K."
 
 #. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate-main.c:944
+#: src/gcm-calibrate-main.c:944
 msgid ""
 "Adjust the display brightness to a comfortable level for prolonged viewing."
 msgstr ""
@@ -860,145 +699,147 @@ msgstr ""
 "coimhead air ùine fhada."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate-main.c:949
+#: src/gcm-calibrate-main.c:949
 msgid ""
 "For best results, the display should have been powered for at least 15 "
 "minutes before starting the calibration."
 msgstr ""
 "Airson nan toraidhean as fhearr, cuir an t-uidheam-taisbeanaidh air co-dhiù "
-"cairteal na h-uarach mus tòisich thu air a' chailbhreachadh."
+"cairteal na h-uarach mus tòisich thu air a’ chailbhreachadh."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:955
+#: src/gcm-calibrate-main.c:955
 msgid "Check Settings"
 msgstr "Dearbhaich na roghainnean"
 
-#: ../src/gcm-calibrate-main.c:1000
+#. TRANSLATORS: dialog message saying the argyllcms is not installed
+#: src/gcm-calibrate-main.c:1000
 msgid "Calibration and profiling software is not installed."
-msgstr "Cha deach bathar-bog a' chailbhreachaidh 's nam pròifilean a stàladh."
+msgstr "Cha deach bathar-bog a’ chailbhreachaidh ’s nam pròifilean a stàladh."
 
-#: ../src/gcm-calibrate-main.c:1003
+#. TRANSLATORS: dialog message saying the color targets are not installed
+#: src/gcm-calibrate-main.c:1003
 msgid "These tools are required to build color profiles for devices."
 msgstr ""
 "Tha na h-innealan seo riatanach gus pròifilean dhathan a thogail dha "
-"dh'uidheaman."
+"dh’uidheaman."
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1006
+#: src/gcm-calibrate-main.c:1006
 msgid "More software is required!"
 msgstr "Tha feum air barrachd bathair-bhog!"
 
-#: ../src/gcm-calibrate-main.c:1015
+#: src/gcm-calibrate-main.c:1015
 msgid "Install required software"
 msgstr "Stàlaich am bathar-bog a tha a dhìth"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1025
+#: src/gcm-calibrate-main.c:1025
 msgid "Install Tools"
 msgstr "Stàlaich innealan"
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate-main.c:1068
+#: src/gcm-calibrate-main.c:1068
 msgid "Common color target files are not installed on this computer."
 msgstr ""
-"Cha deach faidhlichean amasan dhathan a stàladh air a' choimpiutair seo."
+"Cha deach faidhlichean amasan dhathan a stàladh air a’ choimpiutair seo."
 
 #. TRANSLATORS: dialog message saying the color targets are not installed
-#: ../src/gcm-calibrate-main.c:1070
+#: src/gcm-calibrate-main.c:1070
 msgid "Color target files are needed to convert the image to a color profile."
 msgstr ""
 "Tha feum air faidhlichean amasan dhathan gus an dealbh iompachadh gu pròifil "
 "dhathan."
 
 #. TRANSLATORS: dialog message, asking if it's okay to install them
-#: ../src/gcm-calibrate-main.c:1072
+#: src/gcm-calibrate-main.c:1072
 msgid "Do you want them to be installed?"
 msgstr "A bheil thu airson an stàladh?"
 
 #. TRANSLATORS: dialog message, if the user has the target file on a CDROM then there's no need for this package
-#: ../src/gcm-calibrate-main.c:1074
+#: src/gcm-calibrate-main.c:1074
 msgid "If you already have the correct file, you can skip this step."
 msgstr ""
-"Ma tha am faidhle ceart agad mar-thà, 's urrainn dhut leum a ghearradh thar "
-"a' cheuma seo."
+"Ma tha am faidhle ceart agad mar-thà, ’s urrainn dhut leum a ghearradh thar "
+"a’ cheuma seo."
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1077
+#: src/gcm-calibrate-main.c:1077
 msgid "Optional data files available"
 msgstr "Tha faidhlichean dàta roghainneil ri am faighinn"
 
-#: ../src/gcm-calibrate-main.c:1086
+#: src/gcm-calibrate-main.c:1086
 msgid "Install Now"
 msgstr "Stàlaich an-dràsta"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1097
+#: src/gcm-calibrate-main.c:1097
 msgid "Install Targets"
 msgstr "Stàlaich na h-amasan"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1113
+#: src/gcm-calibrate-main.c:1113
 msgid "CMP Digital Target 3"
 msgstr "CMP Digital Target 3"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1117
+#: src/gcm-calibrate-main.c:1117
 msgid "CMP DT 003"
 msgstr "CMP DT 003"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1121
+#: src/gcm-calibrate-main.c:1121
 msgid "ColorChecker"
 msgstr "ColorChecker"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1125
+#: src/gcm-calibrate-main.c:1125
 msgid "ColorChecker DC"
 msgstr "ColorChecker DC"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1129
+#: src/gcm-calibrate-main.c:1129
 msgid "ColorChecker SG"
 msgstr "ColorChecker SG"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1133
+#: src/gcm-calibrate-main.c:1133
 msgid "Hutchcolor"
 msgstr "Hutchcolor"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1137
+#: src/gcm-calibrate-main.c:1137
 msgid "i1 RGB Scan 1.4"
 msgstr "i1 RGB Scan 1.4"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1141
+#: src/gcm-calibrate-main.c:1141
 msgid "IT8.7/2"
 msgstr "IT8.7/2"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1145
+#: src/gcm-calibrate-main.c:1145
 msgid "Laser Soft DC Pro"
 msgstr "Laser Soft DC Pro"
 
 #. TRANSLATORS: this is probably a brand name
-#: ../src/gcm-calibrate-main.c:1149
+#: src/gcm-calibrate-main.c:1149
 msgid "QPcard 201"
 msgstr "QPcard 201"
 
 #. TRANSLATORS: dialog message, preface. A calibration target looks like
 #. * this: http://www.colorreference.de/targets/target.jpg
-#: ../src/gcm-calibrate-main.c:1217
+#: src/gcm-calibrate-main.c:1217
 msgid ""
 "Before profiling the device, you have to manually capture an image of a "
 "calibration target and save it as a TIFF image file."
 msgstr ""
 "Mur tòisich thu air pròifil an uidheim a chruthachadh, geumaidh tu dealbh "
-"dhen amas cailbhreachaidh a ghlacadh a làimh agus a shàbhaladh 'na fhaidhle "
+"dhen amas cailbhreachaidh a ghlacadh a làimh agus a shàbhaladh ’na fhaidhle "
 "dealbh TIFF."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1222
+#: src/gcm-calibrate-main.c:1222
 msgid ""
 "Ensure that the contrast and brightness are not changed and color correction "
 "profiles have not been applied."
@@ -1007,7 +848,7 @@ msgstr ""
 "atharrachadh agus nach deach pròifil ceartachadh dhathan a chur an sàs air."
 
 #. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate-main.c:1225
+#: src/gcm-calibrate-main.c:1225
 msgid ""
 "The device sensor should have been cleaned prior to scanning and the output "
 "file resolution should be at least 200dpi."
@@ -1017,123 +858,123 @@ msgstr ""
 "as lugha."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1231
+#: src/gcm-calibrate-main.c:1231
 msgid ""
 "Ensure that the white-balance has not been modified by the camera and that "
 "the lens is clean."
 msgstr ""
-"Dèan cinnteach nach deach cothromachadh na gile atharrachadh leis a' chamara "
+"Dèan cinnteach nach deach cothromachadh na gile atharrachadh leis a’ chamara "
 "agus gu bheil an lionsa glan."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1235
+#: src/gcm-calibrate-main.c:1235
 msgid "Please select the calibration target type."
-msgstr "Tagh seòrsa amais a' chailbhreachaidh."
+msgstr "Tagh seòrsa amais a’ chailbhreachaidh."
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1238
+#: src/gcm-calibrate-main.c:1238
 msgid "What target type do you have?"
-msgstr "Dè an seòrsa amais a th' agad?"
+msgstr "Dè an seòrsa amais a th’ agad?"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1270
+#: src/gcm-calibrate-main.c:1270
 msgid "Select Target"
 msgstr "Tagh amas"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1305
+#: src/gcm-calibrate-main.c:1305
 msgid "Choose your display type"
 msgstr "Tagh seòrsa an uidheim-thaisbeanaidh"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1312
+#: src/gcm-calibrate-main.c:1312
 msgid "Select the monitor type that is attached to your computer."
 msgstr ""
-"Tagh seòrsa an uidheim-thaisbeanaidh a tha ceangailte ris a' choimpiutair "
+"Tagh seòrsa an uidheim-thaisbeanaidh a tha ceangailte ris a’ choimpiutair "
 "agad."
 
-#: ../src/gcm-calibrate-main.c:1314
+#: src/gcm-calibrate-main.c:1314
 msgid "LCD (CCFL backlight)"
 msgstr "LCD (solas-cùil CCFL)"
 
-#: ../src/gcm-calibrate-main.c:1323
+#: src/gcm-calibrate-main.c:1323
 msgid "LCD (White LED backlight)"
 msgstr "LCD (solas-cùil LED geal)"
 
-#: ../src/gcm-calibrate-main.c:1332
+#: src/gcm-calibrate-main.c:1332
 msgid "LCD (RGB LED backlight)"
 msgstr "LCD (solas-cùil RGB LED)"
 
-#: ../src/gcm-calibrate-main.c:1341
+#: src/gcm-calibrate-main.c:1341
 msgid "LCD (Wide Gamut RGB LED backlight)"
 msgstr "LCD (solas-cùil RGB LED gleusa leathainn)"
 
-#: ../src/gcm-calibrate-main.c:1350
+#: src/gcm-calibrate-main.c:1350
 msgid "LCD (Wide Gamut CCFL backlight)"
 msgstr "LCD (solas-cùil CCFL gleusa leathainn)"
 
-#: ../src/gcm-calibrate-main.c:1359
+#: src/gcm-calibrate-main.c:1359
 msgid "CRT"
 msgstr "CRT"
 
-#: ../src/gcm-calibrate-main.c:1368
+#: src/gcm-calibrate-main.c:1368
 msgid "Plasma"
 msgstr "Plasma"
 
-#: ../src/gcm-calibrate-main.c:1377
+#: src/gcm-calibrate-main.c:1377
 msgid "Projector"
 msgstr "Proiseactar"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1389
+#: src/gcm-calibrate-main.c:1389
 msgid "Choose Display Type"
 msgstr "Tagh seòrsa an uidheim-thaisbeanaidh"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1424
+#: src/gcm-calibrate-main.c:1424
 msgid "Choose your display target white point"
 msgstr "Tagh geal-phuing amais an uidheim-thaisbeanaidh agad"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1431
+#: src/gcm-calibrate-main.c:1431
 msgid ""
 "Most displays should be calibrated to a CIE D65 illuminant for general usage."
 msgstr ""
 "Mar as trice, bu chòir uidheam-taisbeanaidh a chailbhreachadh le "
 "soillseachadh CIE D65 a chum cleachdaidh choitchinn."
 
-#: ../src/gcm-calibrate-main.c:1433
+#: src/gcm-calibrate-main.c:1433
 msgid "CIE D50 (Printing and publishing)"
 msgstr "CIE D50 (clò-bhualadh is foillseachadh)"
 
-#: ../src/gcm-calibrate-main.c:1442
+#: src/gcm-calibrate-main.c:1442
 msgid "CIE D55"
 msgstr "CIE D55"
 
-#: ../src/gcm-calibrate-main.c:1451
+#: src/gcm-calibrate-main.c:1451
 msgid "CIE D65 (Photography and graphics)"
 msgstr "CIE D65 (dealbhan-camara is grafaigeachd)"
 
-#: ../src/gcm-calibrate-main.c:1461
+#: src/gcm-calibrate-main.c:1461
 msgid "CIE D75"
 msgstr "CIE D75"
 
-#: ../src/gcm-calibrate-main.c:1470
+#: src/gcm-calibrate-main.c:1470
 msgid "Native (Already set manually)"
 msgstr "Tùsail (chaidh a shuidheachadh a làimh)"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1482
+#: src/gcm-calibrate-main.c:1482
 msgid "Choose Display Whitepoint"
 msgstr "Tagh geal-phuing an uidheim-thaisbeanaidh"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1517
+#: src/gcm-calibrate-main.c:1517
 msgid "Choose profiling mode"
 msgstr "Tagh modh na pròifil"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1524
+#: src/gcm-calibrate-main.c:1524
 msgid ""
 "Please indicate if you want to profile a local printer, generate some test "
 "patches, or profile using existing test patches."
@@ -1143,24 +984,24 @@ msgstr ""
 "deuchainn a tha ann."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1561
+#: src/gcm-calibrate-main.c:1561
 msgid "Calibration Mode"
-msgstr "Modh a' chailbhreachaidh"
+msgstr "Modh a’ chailbhreachaidh"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1600
+#: src/gcm-calibrate-main.c:1600
 msgid "Choose calibration quality"
-msgstr "Tagh càileachd a' chailbhreachaidh"
+msgstr "Tagh càileachd a’ chailbhreachaidh"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1607
+#: src/gcm-calibrate-main.c:1607
 msgid "Higher quality calibration requires many color samples and more time."
 msgstr ""
-"Feumaidh càileachd nas àirde a' chailbhreachaidh grunn shampallan dhathan is "
+"Feumaidh càileachd nas àirde a’ chailbhreachaidh grunn shampallan dhathan is "
 "ùine a bharrachd."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1611
+#: src/gcm-calibrate-main.c:1611
 msgid ""
 "A higher precision profile provides higher accuracy in color matching but "
 "requires more time for reading the color patches."
@@ -1169,31 +1010,32 @@ msgstr ""
 "dhut ach bheir e barrachd ùine gus paidseachan nan dathan a leughadh."
 
 #. TRANSLATORS: this is the message body for the chart selection
-#: ../src/gcm-calibrate-main.c:1614
+#: src/gcm-calibrate-main.c:1614
 msgid "For a typical workflow, a normal precision profile is sufficient."
 msgstr "Foghnaidh pròifil le pongalachd àbhaisteach mar as trice."
 
 #. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate-main.c:1619
+#: src/gcm-calibrate-main.c:1619
 msgid "The high precision profile also requires more paper and printer ink."
 msgstr ""
-"Caithidh a' phròifil le pongalachd àrd barrachd pàipeir is inc a' "
+"Caithidh a’ phròifil le pongalachd àrd barrachd pàipeir is inc a’ "
 "chlò-bhualadair cuideachd."
 
 #. TRANSLATORS: radio options for calibration precision
-#: ../src/gcm-calibrate-main.c:1624
+#: src/gcm-calibrate-main.c:1624
 msgid "Accurate"
 msgstr "Pongail"
 
-#: ../src/gcm-calibrate-main.c:1625
+#: src/gcm-calibrate-main.c:1625
 msgid "Normal"
 msgstr "Àbhaisteach"
 
-#: ../src/gcm-calibrate-main.c:1626
+#: src/gcm-calibrate-main.c:1626
 msgid "Quick"
 msgstr "Luath"
 
-#: ../src/gcm-calibrate-main.c:1633
+#. TRANSLATORS: radio options for calibration precision
+#: src/gcm-calibrate-main.c:1633
 #, c-format
 msgid "(about %u sheet of paper)"
 msgid_plural "(about %u sheets of paper)"
@@ -1202,7 +1044,8 @@ msgstr[1] "(mu %u thaobh-duilleige)"
 msgstr[2] "(mu %u taobhan-duilleige)"
 msgstr[3] "(mu %u taobh-duilleige)"
 
-#: ../src/gcm-calibrate-main.c:1644
+#. TRANSLATORS: radio options for calibration precision
+#: src/gcm-calibrate-main.c:1644
 #, c-format
 msgid "(about %u minute)"
 msgid_plural "(about %u minutes)"
@@ -1212,265 +1055,269 @@ msgstr[2] "(mu %u mionaidean)"
 msgstr[3] "(mu %u mionaid)"
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1685
+#: src/gcm-calibrate-main.c:1685
 msgid "Calibration Quality"
-msgstr "Càileachd a' chailbhreachaidh"
+msgstr "Càileachd a’ chailbhreachaidh"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1718
+#: src/gcm-calibrate-main.c:1718
 msgid "Profile title"
 msgstr "Tiotal na pròifile"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1725
+#: src/gcm-calibrate-main.c:1725
 msgid "Choose a title to identify the profile on your system."
-msgstr "Tagh tiotal gus a' phròifil aithneachadh air an t-siostam agad."
+msgstr "Tagh tiotal gus a’ phròifil aithneachadh air an t-siostam agad."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1745
+#: src/gcm-calibrate-main.c:1745
 msgid "Profile Title"
 msgstr "Tiotal na pròifile"
 
 #. TRANSLATORS: this is the page title
-#: ../src/gcm-calibrate-main.c:1764
+#: src/gcm-calibrate-main.c:1764
 msgid "Insert sensor hardware"
 msgstr "Cuir a-steach bathar-cruaidh mothachaidh"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1771
+#: src/gcm-calibrate-main.c:1771
 msgid "You need to insert sensor hardware to continue."
 msgstr ""
 "Feumaidh tu bathar-cruaidh mothachaidh a chur a-steach mus lean thu air "
 "adhart."
 
 #. TRANSLATORS: this is the calibration wizard page title
-#: ../src/gcm-calibrate-main.c:1777
+#: src/gcm-calibrate-main.c:1777
 msgid "Sensor Check"
-msgstr "Dearbhadh a' mhothaicheir"
+msgstr "Dearbhadh a’ mhothaicheir"
 
 #. TRANSLATORS: this is intro page text
-#: ../src/gcm-calibrate-main.c:1803
+#: src/gcm-calibrate-main.c:1803
 msgid "The device could not be found. Ensure it is plugged in and turned on."
 msgstr ""
 "Cha deach an t-uidheam a lorg. Dèan cinnteach gun do chuir thu a-steach is "
 "air e."
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2035
+#: src/gcm-calibrate-main.c:2035
 msgid "Unknown serial"
 msgstr "Àireamh shreathach nach aithne dhuinn"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2040
+#: src/gcm-calibrate-main.c:2040
 msgid "Unknown model"
 msgstr "Modal nach aithne dhuinn"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2045
+#: src/gcm-calibrate-main.c:2045
 msgid "Unknown description"
 msgstr "Tuairisgeul nach aithne dhuinn"
 
 #. TRANSLATORS: this is saved in the profile
-#: ../src/gcm-calibrate-main.c:2050
+#: src/gcm-calibrate-main.c:2050
 msgid "Unknown manufacturer"
 msgstr "Dèanadair nach aithne dhuinn"
 
 #. TRANSLATORS: this is the copyright string, where it might be
 #. * "Copyright (c) 2009 Edward Scissorhands"
 #. * BIG RED FLASHING NOTE: YOU NEED TO USE ASCII ONLY
-#: ../src/gcm-calibrate-main.c:2057
+#: src/gcm-calibrate-main.c:2057
 msgid "Copyright (c)"
 msgstr "Còir-lethbhreac (c)"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-calibrate-main.c:2163 ../src/gcm-picker.c:695
-#: ../src/gcm-viewer.c:1614
+#: src/gcm-calibrate-main.c:2163 src/gcm-picker.c:695 src/gcm-viewer.c:1614
 msgid "Set the parent window to make this modal"
 msgstr "Suidhich an uinneag-pàraint ach am fuirich seo os a cionn"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-calibrate-main.c:2166
+#: src/gcm-calibrate-main.c:2166
 msgid "Set the specific device to calibrate"
 msgstr "Suidhich an t-uidheam sònraichte ri chailbhreachadh"
 
-#: ../src/gcm-calibrate-main.c:2207
+#: src/gcm-calibrate-main.c:2207
 msgid "No device was specified!"
 msgstr "Cha deach uidheam a shònrachadh!"
 
 #. TRANSLATORS: this is when there is no profile for the device
-#: ../src/gcm-cell-renderer-profile-text.c:71
+#: src/gcm-cell-renderer-profile-text.c:71
 msgid "No profile"
 msgstr "Chan eil pròifil ann"
 
-#: ../src/gcm-cell-renderer-profile-text.c:87
+#: src/gcm-cell-renderer-profile-text.c:87
 #, c-format
 msgid "Default %s"
 msgstr "Bun-roghainn: %s"
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile has been auto-generated for this hardware
-#: ../src/gcm-cell-renderer-profile-text.c:102
+#: src/gcm-cell-renderer-profile-text.c:102
 msgid "Default: "
 msgstr "Bun-roghainn: "
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile his a standard space like AdobeRGB
-#: ../src/gcm-cell-renderer-profile-text.c:107
+#: src/gcm-cell-renderer-profile-text.c:107
 msgid "Colorspace: "
 msgstr "Spàs datha: "
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile is a test profile
-#: ../src/gcm-cell-renderer-profile-text.c:112
+#: src/gcm-cell-renderer-profile-text.c:112
 msgid "Test profile: "
 msgstr "Pròifil dheuchainneach: "
 
 #. TRANSLATORS: turn on all debugging
-#: ../src/gcm-debug.c:91
+#: src/gcm-debug.c:91
 msgid "Show debugging information for all files"
 msgstr "Seall fiosrachadh dì-bhugachaidh airson a h-uile faidhle"
 
-#: ../src/gcm-debug.c:142
+#: src/gcm-debug.c:142
 msgid "Debugging Options"
 msgstr "Roghainnean dì-bhugachaidh"
 
-#: ../src/gcm-debug.c:142
+#: src/gcm-debug.c:142
 msgid "Show debugging options"
 msgstr "Seall na roghainnean dì-bhugachaidh"
 
 #. TRANSLATORS: command line option: a list of catalogs to install
-#: ../src/gcm-import.c:91
+#: src/gcm-import.c:91
 msgid "ICC profile to install"
-msgstr "A' phròifil ICC ri a stàladh"
+msgstr "A’ phròifil ICC ri a stàladh"
 
-#: ../src/gcm-import.c:117
+#. TRANSLATORS: nothing was specified on the command line
+#: src/gcm-import.c:117
 msgid "No filename specified"
 msgstr "Cha deach ainm faidhle a shònrachadh"
 
-#: ../src/gcm-import.c:137 ../src/gcm-viewer.c:1291
+#. TRANSLATORS: could not read file
+#: src/gcm-import.c:137 src/gcm-viewer.c:1291
 msgid "Failed to open ICC profile"
-msgstr "Cha deach leinn a' phròifil ICC fhosgladh"
+msgstr "Cha deach leinn a’ phròifil ICC fhosgladh"
 
-#: ../src/gcm-import.c:142
+#. TRANSLATORS: parsing error
+#: src/gcm-import.c:142
 #, c-format
 msgid "Failed to parse file: %s"
-msgstr "Dh'fhàillig le parsadh an fhaidhle: %s"
+msgstr "Dh’fhàillig le parsadh an fhaidhle: %s"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:157
+#: src/gcm-import.c:157
 #, c-format
 msgid "Profile description: %s"
 msgstr "Tuairisgeul na pròifil: %s"
 
 #. TRANSLATORS: message text
-#: ../src/gcm-import.c:167
+#: src/gcm-import.c:167
 msgid "Profile copyright:"
 msgstr "Còir-lethbhreac na pròifil:"
 
-#: ../src/gcm-import.c:201
+#. TRANSLATORS: color profile already been installed
+#: src/gcm-import.c:201
 msgid "Color profile is already imported"
-msgstr "Chaidh a' phròifil dhathan ion-phortadh mar-thà"
+msgstr "Chaidh a’ phròifil dhathan ion-phortadh mar-thà"
 
-#: ../src/gcm-import.c:204 ../src/gcm-import.c:247
+#: src/gcm-import.c:204 src/gcm-import.c:247
 msgid "Show Details"
 msgstr "Seall am mion-fhiosrachadh"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:220
+#: src/gcm-import.c:220
 msgid "Import display color profile?"
 msgstr "A bheil thu airson pròifil dhathan uidheim-thaisbeanaidh ion-phortadh?"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:224
+#: src/gcm-import.c:224
 msgid "Import device color profile?"
 msgstr "A bheil thu airson pròifil dhathan uidheim ion-phortadh?"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:228
+#: src/gcm-import.c:228
 msgid "Import named color profile?"
 msgstr "A bheil thu airson pròifil dhathan ainmichte ion-phortadh?"
 
 #. TRANSLATORS: the profile type
-#: ../src/gcm-import.c:232
+#: src/gcm-import.c:232
 msgid "Import color profile?"
 msgstr "A bheil thu airson pròifil dhathan ion-phortadh?"
 
 #. TRANSLATORS: button text
-#: ../src/gcm-import.c:246
+#: src/gcm-import.c:246
 msgid "Import"
 msgstr "Ion-phortaich"
 
-#: ../src/gcm-import.c:271 ../src/gcm-viewer.c:1323
+#. TRANSLATORS: could not read file
+#: src/gcm-import.c:271 src/gcm-viewer.c:1323
 msgid "Failed to import file"
 msgstr "Cha deach leinn am faidhle ion-phortadh"
 
 #. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
-#: ../src/gcm-inspect.c:53
+#: src/gcm-inspect.c:53
 msgid "Description:"
 msgstr "Tuairisgeul:"
 
 #. TRANSLATORS: this is the ICC profile copyright
-#: ../src/gcm-inspect.c:56
+#: src/gcm-inspect.c:56
 msgid "Copyright:"
 msgstr "Còir-lethbhreac:"
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:178
+#: src/gcm-inspect.c:178
 msgid "Root window profile:"
 msgstr "Pròifil na h-uinneige freumha:"
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:189
+#: src/gcm-inspect.c:189
 msgid "Root window protocol version:"
 msgstr "Tionndadh pròtacal na h-uinneige freumha:"
 
 #. TRANSLATORS: no DBus session bus
-#: ../src/gcm-inspect.c:210 ../src/gcm-inspect.c:273 ../src/gcm-utils.c:110
+#: src/gcm-inspect.c:210 src/gcm-inspect.c:273 src/gcm-utils.c:110
 msgid "Failed to connect to session bus:"
-msgstr "Cha b' urrainn dhuinn ceangal ri bus an t-seisein:"
+msgstr "Cha b’ urrainn dhuinn ceangal ri bus an t-seisein:"
 
 #. TRANSLATORS: the DBus method failed
-#: ../src/gcm-inspect.c:227 ../src/gcm-inspect.c:290 ../src/gcm-utils.c:133
+#: src/gcm-inspect.c:227 src/gcm-inspect.c:290 src/gcm-utils.c:133
 msgid "The request failed:"
-msgstr "Dh'fhàillig leis an iarrtas:"
+msgstr "Dh’fhàillig leis an iarrtas:"
 
 #. TRANSLATORS: no profile has been asigned to this device
-#: ../src/gcm-inspect.c:235
+#: src/gcm-inspect.c:235
 msgid "There are no ICC profiles assigned to this file"
 msgstr "Cha deach pròifil ICC iomruineadh dhan fhaidhle seo"
 
 #. TRANSLATORS: this is a list of profiles suitable for the device
-#: ../src/gcm-inspect.c:240 ../src/gcm-inspect.c:306
+#: src/gcm-inspect.c:240 src/gcm-inspect.c:306
 msgid "Suitable profiles for:"
 msgstr "Pròifilean iomchaidh dha:"
 
 #. TRANSLATORS: no profile has been asigned to this window
-#: ../src/gcm-inspect.c:301
+#: src/gcm-inspect.c:301
 msgid "There are no ICC profiles for this window"
 msgstr "Chan eil pròifil ICC airson na h-uinneige seo ann"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:326
+#: src/gcm-inspect.c:326
 msgid "Show xserver properties"
 msgstr "Seall roghainnean xserver"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:329
+#: src/gcm-inspect.c:329
 msgid "Get the profiles for a specific file"
 msgstr "Faigh na pròifilean airson faidhle sònraichte"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:332
+#: src/gcm-inspect.c:332
 msgid "Get the profile for a specific window"
-msgstr "Faigh a' phròifil airson uinneag shònraichte"
+msgstr "Faigh a’ phròifil airson uinneag shònraichte"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:335
+#: src/gcm-inspect.c:335
 msgid "Dump all details about this system"
 msgstr "Seall gach mion-fhiosrachadh mun t-siostam seo"
 
 #. TRANSLATORS: just dumps the EDID to disk
-#: ../src/gcm-inspect.c:348
+#: src/gcm-inspect.c:348
 msgid "EDID inspect program"
 msgstr "Sgrùd prògram EDID"
 
@@ -1478,365 +1325,593 @@ msgstr "Sgrùd prògram EDID"
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-picker.c:214 ../src/gcm-picker.c:221 ../src/gcm-viewer.c:579
-#: ../src/gcm-viewer.c:626
+#: src/gcm-picker.c:214 src/gcm-picker.c:221 src/gcm-viewer.c:579
+#: src/gcm-viewer.c:626
 msgid "Unknown"
 msgstr "Chan eil fhios"
 
-#: ../src/gcm-picker.c:334
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
+#: src/gcm-picker.c:334
 msgid "No colorimeter is attached."
 msgstr "Cha deach meidheadair-dhathan a cheangal."
 
-#: ../src/gcm-picker.c:350
+#. TRANSLATORS: this is displayed if VTE support is not enabled
+#: src/gcm-picker.c:350
 msgid "The sensor has no native driver."
-msgstr "Chan eil draibhear tùsail aig a' mhothaichear."
+msgstr "Chan eil draibhear tùsail aig a’ mhothaichear."
 
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
-#: ../src/gcm-picker.c:359
+#: src/gcm-picker.c:359
 msgid "The attached colorimeter is not capable of reading a spot color."
 msgstr ""
-"Chan eil comas leughaidh bad datha aig a' mheidheadair dhathan cheangailte."
+"Chan eil comas leughaidh bad datha aig a’ mheidheadair dhathan cheangailte."
 
 #. TRANSLATORS: this is when there are no profiles that can be used;
 #. * the search term is either "RGB" or "CMYK"
-#: ../src/gcm-picker.c:577
+#: src/gcm-picker.c:577
 #, c-format
 msgid "No %s color spaces available"
 msgstr "Chan eil spàs datha %s ri fhaighinn"
 
 #. TRANSLATORS: tool that is used to pick colors
-#: ../src/gcm-picker.c:710
+#: src/gcm-picker.c:710
 msgid "GNOME Color Manager Color Picker"
 msgstr "Roghnaichear nan dathan air manaidsear dathan GNOME Color Manager"
 
+#. the color representation
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.ui:93 src/gcm-viewer.c:587
+msgid "XYZ"
+msgstr "XYZ"
+
+#. Lab is the color representation and D50 is the white point
+#: src/gcm-picker.ui:108
+msgid "Lab (D50)"
+msgstr "Lab (D50)"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:123
+msgid "Media whitepoint"
+msgstr "Geal-phuing a’ mheadhain"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:138
+msgid "Color Temperature"
+msgstr "Teòthachd an datha"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:153
+msgid "Ambient"
+msgstr "Cuairteach"
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#. The profile colorspace, e.g. RGB
+#: src/gcm-picker.ui:168 src/gcm-viewer.ui:122
+msgid "Colorspace"
+msgstr "Spàs datha"
+
+#. These are the values of the chosen color in Red, Green, Blue encoding
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.ui:183 src/gcm-utils.c:285 src/gcm-viewer.c:607
+msgid "RGB"
+msgstr "RGB"
+
+#. This shows the error in the conversion to RGB.
+#: src/gcm-picker.ui:198
+msgid "Error"
+msgstr "Mearachd"
+
+#. Expander title, the results from the color picker
+#: src/gcm-picker.ui:297
+msgid "Results"
+msgstr "Toraidhean"
+
+#. Button text, to get a single sample of color
+#: src/gcm-picker.ui:328
+msgid "_Measure"
+msgstr "To_mhais"
+
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-utils.c:289 ../src/gcm-viewer.c:619
+#: src/gcm-utils.c:289 src/gcm-viewer.c:619
 msgid "CMYK"
 msgstr "CMYK"
 
 #. TRANSLATORS: this is the colorspace type
-#: ../src/gcm-utils.c:293
+#: src/gcm-utils.c:293
 msgid "gray"
 msgstr "liath"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-viewer.c:326
+#: src/gcm-viewer.c:326
 msgid "Permanently delete profile?"
-msgstr "A bheil thu airson a' phròifil a sguabadh às gu buan?"
+msgstr "A bheil thu airson a’ phròifil a sguabadh às gu buan?"
 
 #. TRANSLATORS: dialog message
-#: ../src/gcm-viewer.c:329
+#: src/gcm-viewer.c:329
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr ""
-"A bheil thu cinnteach gu bheil thu airson a' phròifil seo a thoirt air falbh "
+"A bheil thu cinnteach gu bheil thu airson a’ phròifil seo a thoirt air falbh "
 "on t-siostam agad?"
 
 #. TRANSLATORS: button, delete a profile
-#: ../src/gcm-viewer.c:332
+#: src/gcm-viewer.c:332
 msgid "Delete"
 msgstr "Sguab às"
 
-#: ../src/gcm-viewer.c:374
+#: src/gcm-viewer.c:374
 msgid "_Import"
 msgstr "_Ion-phortaich"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-viewer.c:392
+#: src/gcm-viewer.c:392
 msgid "Supported ICC profiles"
 msgstr "Pròifilean ICC ris a bheil taic"
 
 #. TRANSLATORS: could not read file
-#: ../src/gcm-viewer.c:424
+#: src/gcm-viewer.c:424
 msgid "Failed to copy file"
 msgstr "Cha deach leinn lethbhreac dhen fhaidhle a dhèanamh"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:552
+#: src/gcm-viewer.c:552
 msgid "Input device"
 msgstr "Uidheam ion-chuir"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:556
+#: src/gcm-viewer.c:556
 msgid "Display device"
 msgstr "Uidheam taisbeanaidh"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:560
+#: src/gcm-viewer.c:560
 msgid "Output device"
 msgstr "Uidheam an às-chuir"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:564
+#: src/gcm-viewer.c:564
 msgid "Devicelink"
 msgstr "Ceangal uidheim"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:568
+#: src/gcm-viewer.c:568
 msgid "Colorspace conversion"
 msgstr "Iompachadh spàs datha"
 
 #. TRANSLATORS: this the ICC profile kind
-#: ../src/gcm-viewer.c:572
+#: src/gcm-viewer.c:572
 msgid "Abstract"
 msgstr "Eas-chruthach"
 
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-viewer.c:576
+#: src/gcm-viewer.c:576
 msgid "Named color"
 msgstr "Dath ainmichte"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:591
+#: src/gcm-viewer.c:591
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:595
+#: src/gcm-viewer.c:595
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:599
+#: src/gcm-viewer.c:599
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:603
+#: src/gcm-viewer.c:603
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:611
+#: src/gcm-viewer.c:611
 msgid "Gray"
 msgstr "Liath"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:615
+#: src/gcm-viewer.c:615
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: ../src/gcm-viewer.c:623
+#: src/gcm-viewer.c:623
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: e.g. sRGB or adbode RGB
-#: ../src/gcm-viewer.c:659
+#: src/gcm-viewer.c:659
 msgid "Standard space"
 msgstr "Spàs stannardach"
 
 #. TRANSLATORS: the raw EDID MD5 of the display device
-#: ../src/gcm-viewer.c:661
+#: src/gcm-viewer.c:661
 msgid "Display checksum"
 msgstr "Àireamh dearbhaidh an uidheim-thaisbeanaidh"
 
-#: ../src/gcm-viewer.c:662
+#: src/gcm-viewer.c:662
 msgid "Display model"
 msgstr "Modal an uidheim-thaisbeanaidh"
 
-#: ../src/gcm-viewer.c:663
+#: src/gcm-viewer.c:663
 msgid "Display serial number"
 msgstr "Àireamh shreathach an uidheim-thaisbeanaidh"
 
 #. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
-#: ../src/gcm-viewer.c:665
+#: src/gcm-viewer.c:665
 msgid "Display PNPID"
 msgstr "PNPID an uidheim-thaisbeanaidh"
 
 #. TRANSLATORS: who made the display
-#: ../src/gcm-viewer.c:667
+#: src/gcm-viewer.c:667
 msgid "Display vendor"
 msgstr "Reiceadair an uidheim-thaisbeanaidh"
 
 #. TRANSLATORS: the raw profile MD5
-#: ../src/gcm-viewer.c:669
+#: src/gcm-viewer.c:669
 msgid "File checksum"
 msgstr "Àireamh dearbhaidh an fhaidhle"
 
 #. TRANSLATORS: the color framework, e.g. 'colord'
-#: ../src/gcm-viewer.c:671
+#: src/gcm-viewer.c:671
 msgid "Framework product"
 msgstr "Bathar an fhrèam-obrach"
 
 #. TRANSLATORS: the framework binary, e.g. gcm-viewer
-#: ../src/gcm-viewer.c:673
+#: src/gcm-viewer.c:673
 msgid "Framework program"
 msgstr "Prògram an fhrèam-obrach"
 
 #. TRANSLATORS: the framework release, e.g. '1.22'
-#: ../src/gcm-viewer.c:675
+#: src/gcm-viewer.c:675
 msgid "Framework version"
 msgstr "Tionndadh an fhrèam-obrach"
 
 #. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
-#: ../src/gcm-viewer.c:677
+#: src/gcm-viewer.c:677
 msgid "Data source type"
 msgstr "Seòrsa an tùis-dhàta"
 
 #. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
-#: ../src/gcm-viewer.c:679
+#: src/gcm-viewer.c:679
 msgid "Mapping format"
-msgstr "Fòrmat a' mhapachaidh"
+msgstr "Fòrmat a’ mhapachaidh"
 
 #. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
-#: ../src/gcm-viewer.c:681
+#: src/gcm-viewer.c:681
 msgid "Mapping qualifier"
-msgstr "Càilichear a' mhapachaidh"
+msgstr "Càilichear a’ mhapachaidh"
 
 #. TRANSLATORS: The original device the profile was made for
-#: ../src/gcm-viewer.c:683
+#: src/gcm-viewer.c:683
 msgid "Mapping device"
-msgstr "Uidheam a' mhapachaidh"
+msgstr "Uidheam a’ mhapachaidh"
 
 #. TRANSLATORS: The average error when making the profile
-#: ../src/gcm-viewer.c:685
+#: src/gcm-viewer.c:685
 msgid "Delta-E average"
 msgstr "Cuibheas nam mearachd delta"
 
 #. TRANSLATORS: the maximum error when making the profile
-#: ../src/gcm-viewer.c:687
+#: src/gcm-viewer.c:687
 msgid "Delta-E maximum"
-msgstr "A' mhearachd delta as motha"
+msgstr "A’ mhearachd delta as motha"
 
 #. TRANSLATORS: the RMS error when making the profile
-#: ../src/gcm-viewer.c:689
+#: src/gcm-viewer.c:689
 msgid "Delta-E RMS"
 msgstr "Meadhan freumhan ceàrnagach nam mearachd delta"
 
 #. TRANSLATORS: The device name, e.g. 'huey'
-#: ../src/gcm-viewer.c:691
+#: src/gcm-viewer.c:691
 msgid "Calibration device"
-msgstr "Uidheam a' chailbhreachaidh"
+msgstr "Uidheam a’ chailbhreachaidh"
 
 #. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
-#: ../src/gcm-viewer.c:693
+#: src/gcm-viewer.c:693
 msgid "Screen surface finish"
 msgstr "Sgeadachadh uachdar na sgrìn"
 
 #. TRANSLATORS: e.g. DVI or VGA
-#: ../src/gcm-viewer.c:695
+#: src/gcm-viewer.c:695
 msgid "Connection type"
-msgstr "Seòrsa a' cheangail"
+msgstr "Seòrsa a’ cheangail"
 
 #. TRANSLATORS: e.g. Screen brightness in percent
-#: ../src/gcm-viewer.c:697
+#: src/gcm-viewer.c:697
 msgid "Screen brightness"
 msgstr "Soilleireachd na sgrìn"
 
 #. TRANSLATORS: e.g. the 3D volume of the gamut graph
-#: ../src/gcm-viewer.c:699
+#: src/gcm-viewer.c:699
 msgid "Gamut volume"
-msgstr "Graf a' ghleusa"
+msgstr "Graf a’ ghleusa"
 
 #. TRANSLATORS: e.g. what proportion of sRGB is covered
-#: ../src/gcm-viewer.c:701
+#: src/gcm-viewer.c:701
 msgid "sRGB coverage"
 msgstr "Còmhdachadh sRGB"
 
 #. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
-#: ../src/gcm-viewer.c:703
+#: src/gcm-viewer.c:703
 msgid "Adobe RGB coverage"
 msgstr "Còmhdachadh Adobe RGB"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:799
+#: src/gcm-viewer.c:799
 msgid "No description has been set"
 msgstr "Cha deach tuairisgeul a shuidheachadh"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:803
+#: src/gcm-viewer.c:803
 msgid "No copyright has been set"
 msgstr "Cha deach còir-lethbhreac a shuidheachadh"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:807
+#: src/gcm-viewer.c:807
 msgid "The display compensation table is invalid"
 msgstr "Chan eil clàr co-leasachadh an uidheim-thaisbeanaidh dligheach"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:811
+#: src/gcm-viewer.c:811
 msgid "A scum dot is present for media white"
-msgstr "Tha puing salchair air gile a' mheadhain"
+msgstr "Tha puing salchair air gile a’ mheadhain"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:815
+#: src/gcm-viewer.c:815
 msgid "The gray axis contains significant amounts of color"
 msgstr "Tha grunn dhathan air an aiseal liath"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:819
+#: src/gcm-viewer.c:819
 msgid "The gray axis is non-monotonic"
 msgstr "Chan eil an t-aiseal liath monotonach"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:823
+#: src/gcm-viewer.c:823
 msgid "One or more of the primaries are invalid"
 msgstr "Tha prìomh-àireamh mhì-dhligheach ann"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:827
+#: src/gcm-viewer.c:827
 msgid "The primaries do not add to white"
 msgstr "Chan eil na prìomh-àireamhan air an cur ri chèile geal"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:831
+#: src/gcm-viewer.c:831
 msgid "One or more of the primaries is unlikely"
 msgstr "Tha prìomh-àireamh mhì-choltach ann"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:835
+#: src/gcm-viewer.c:835
 msgid "The white is not D50 white"
-msgstr "Chan eil an geal 'na geal D50"
+msgstr "Chan eil an geal ’na geal D50"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:839
+#: src/gcm-viewer.c:839
 msgid "The whitepoint temperature is unlikely"
 msgstr "Cha teothachd na gil-phuinge mì-choltach"
 
 #. TRANSLATORS: the profile is broken
-#: ../src/gcm-viewer.c:843
+#: src/gcm-viewer.c:843
 msgid "Unknown warning type"
 msgstr "Seòrsa rabhaidh nach aithne dhuinn"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:980
+#: src/gcm-viewer.c:980
 msgid "Yes"
 msgstr "Tha"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: ../src/gcm-viewer.c:983
+#: src/gcm-viewer.c:983
 msgid "No"
 msgstr "Chan eil"
 
 #. TRANSLATORS: profiles that have warnings are useable,
 #. * but may not be any good
-#: ../src/gcm-viewer.c:1009
+#: src/gcm-viewer.c:1009
 msgid "The profile has the following problems:"
-msgstr "Tha na duilgheadasan seo aig a' phròifil:"
+msgstr "Tha na duilgheadasan seo aig a’ phròifil:"
 
 #. TRANSLATORS: this is the icc creation date strftime format
-#: ../src/gcm-viewer.c:1101
-msgid "%B %e %Y, %I:%M:%S %p"
+#: src/gcm-viewer.c:1101
+#| msgid "%B %e %Y, %I:%M:%S %p"
+msgid "%B %e %Y, %I∶%M∶%S %p"
 msgstr "%e %b %Y %l:%M:%S %P"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: ../src/gcm-viewer.c:1124
+#: src/gcm-viewer.c:1124
 msgid "Delete this profile"
-msgstr "Sguab às a' phròifil seo"
+msgstr "Sguab às a’ phròifil seo"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: ../src/gcm-viewer.c:1127
+#: src/gcm-viewer.c:1127
 msgid "This profile cannot be deleted"
-msgstr "Cha ghabh a' phròifil seo a sguabadh às"
+msgstr "Cha ghabh a’ phròifil seo a sguabadh às"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: ../src/gcm-viewer.c:1617
+#: src/gcm-viewer.c:1617
 msgid "Set the specific profile to show"
-msgstr "A' phròifil shònraichte ri a shealltainn"
+msgstr "A’ phròifil shònraichte ri a shealltainn"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: ../src/gcm-viewer.c:1620
+#: src/gcm-viewer.c:1620
 msgid "Set the specific file to show"
-msgstr "Tagh a' phròifil shònraichte a thèid a shealltainn"
+msgstr "Tagh a’ phròifil shònraichte a thèid a shealltainn"
+
+#: src/gcm-viewer.ui:52
+msgid "Add a profile for the device"
+msgstr "Cuir pròifil ris airson an uidheim"
+
+#: src/gcm-viewer.ui:67
+msgid "Remove a profile from the device"
+msgstr "Thoir pròifil air falbh on uidheam"
+
+#. The type of profile, e.g. display, scanner, etc.
+#: src/gcm-viewer.ui:106
+msgid "Profile type"
+msgstr "Seòrsa na pròifile"
+
+#. When the profile was created
+#: src/gcm-viewer.ui:138
+msgid "Created"
+msgstr "Air a cruthachadh"
+
+#. The version of the profile
+#: src/gcm-viewer.ui:155
+msgid "Version"
+msgstr "Tionndadh"
+
+#. The manufacturer of the profile
+#: src/gcm-viewer.ui:172
+msgid "Manufacturer"
+msgstr "Saothraiche"
+
+#. The manufacturer of the profile
+#: src/gcm-viewer.ui:189
+msgid "Model"
+msgstr "Modail"
+
+#. If the profile contains a display correction table
+#: src/gcm-viewer.ui:205
+msgid "Display correction"
+msgstr "Ceartachadh an taisbeanaidh"
+
+#. The basename (the last section of the filename) of the profile
+#: src/gcm-viewer.ui:221
+msgid "White point"
+msgstr "Geal-phuing"
+
+#. The licence of the profile, normally non-free
+#: src/gcm-viewer.ui:238
+msgid "Copyright"
+msgstr "Còir-lethbhreac"
+
+#. The file size in bytes of the profile
+#: src/gcm-viewer.ui:254
+msgid "File size"
+msgstr "Meud an fhaidhle"
+
+#. The basename (the last section of the filename) of the profile
+#: src/gcm-viewer.ui:271
+msgid "Filename"
+msgstr "Ainm an fhaidhle"
+
+#. warnings for the profile
+#: src/gcm-viewer.ui:288
+msgid "Warnings"
+msgstr "Rabhaidhean"
+
+#: src/gcm-viewer.ui:474
+msgid "Information"
+msgstr "Fiosrachadh"
+
+#: src/gcm-viewer.ui:502
+msgid "y"
+msgstr "y"
+
+#: src/gcm-viewer.ui:521
+msgid "x"
+msgstr "x"
+
+#: src/gcm-viewer.ui:552
+msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
+msgstr "Seallaidh diagram CIE 1931 riochdachadh 2D air rainse na pròifil"
+
+#: src/gcm-viewer.ui:569
+msgid "CIE 1931"
+msgstr "CIE 1931"
+
+#: src/gcm-viewer.ui:591
+msgid "Response out"
+msgstr "Freagairt a-mach"
+
+#: src/gcm-viewer.ui:611 src/gcm-viewer.ui:699
+msgid "Response in"
+msgstr "Freagairt a-steach"
+
+#: src/gcm-viewer.ui:640
+msgid ""
+"A tone reproduction curve is the mapping of scene luminance to display "
+"luminance"
+msgstr ""
+"’S e mapadh o lùmanas seallaidh gu lùmanas uidheam-taisbeanaidh a th’ ann an "
+"lùb ath-riochdachadh tòna"
+
+#: src/gcm-viewer.ui:657
+msgid "TRC"
+msgstr "TRC"
+
+#: src/gcm-viewer.ui:679
+msgid "Video card out"
+msgstr "Cairt video a-mach"
+
+#: src/gcm-viewer.ui:728
+msgid "A video card gamma table shows the curves loaded into the display"
+msgstr ""
+"Seallaidh clàr gamma cairt video na lùban ’gan luchdadh dhan uidheam-"
+"taisbeanaidh"
+
+#: src/gcm-viewer.ui:745
+msgid "VCGT"
+msgstr "VCGT"
+
+#: src/gcm-viewer.ui:780 src/gcm-viewer.ui:902
+msgid "Previous Image"
+msgstr "An dealbh roimhe"
+
+#. This is an example image that is saved in sRGB gamut
+#: src/gcm-viewer.ui:798 src/gcm-viewer.ui:920
+msgid "sRGB example"
+msgstr "Ball-eisimpleir sRGB"
+
+#: src/gcm-viewer.ui:829 src/gcm-viewer.ui:951
+msgid "Next Image"
+msgstr "An ath-dhealbh"
+
+#: src/gcm-viewer.ui:850
+msgid "This shows what an image would look like if saved with the profile"
+msgstr ""
+"Seallaidh seo ciamar a bhiodh dealbh coltach nan rachadh a shàbhaladh leis "
+"a’ phròifil"
+
+#: src/gcm-viewer.ui:867
+msgid "From sRGB"
+msgstr "O sRGB"
+
+#: src/gcm-viewer.ui:972
+msgid "This shows what an image would look like if opened with the profile"
+msgstr ""
+"Seallaidh seo ciamar a bhiodh dealbh coltach nan rachadh fhosgladh leis a’ "
+"phròifil"
+
+#: src/gcm-viewer.ui:989
+msgid "To sRGB"
+msgstr "Gu sRGB"
+
+#: src/gcm-viewer.ui:1040
+msgid "Named colors are specific colors that are defined in the profile"
+msgstr ""
+"’S e dathan sònraichte a chaidh a mhìneachadh sa phròifil a tha sna dathan "
+"ainmichte"
+
+#: src/gcm-viewer.ui:1057
+msgid "Named Colors"
+msgstr "Dathan ainmichte"
+
+#: src/gcm-viewer.ui:1096
+msgid ""
+"Metadata is additional information stored in the profile for programs to use."
+msgstr ""
+"’S e fiosrachadh a bharrachd a chaidh a stòradh sa phròifil ach an cleachd "
+"prògraman e a tha sa mheata-dàta."
+
+#: src/gcm-viewer.ui:1113
+msgid "Metadata"
+msgstr "Meata-dàta"
