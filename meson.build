@@ -102,12 +102,12 @@ if libvte.found()
   conf.set('HAVE_VTE', '1')
 endif
 
-if get_option('enable-exiv')
+if get_option('exiv')
   libexiv = dependency('exiv2')
   conf.set('HAVE_EXIV', '1')
 endif
 
-if get_option('enable-packagekit')
+if get_option('packagekit')
   libexiv = dependency('exiv2')
   conf.set('HAVE_PACKAGEKIT', '1')
 endif

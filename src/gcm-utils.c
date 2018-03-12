@@ -92,7 +92,7 @@ gcm_utils_install_package (const gchar *package_name, GtkWindow *window)
 	g_return_val_if_fail (package_name != NULL, FALSE);
 
 #ifndef HAVE_PACKAGEKIT
-	g_warning ("cannot install %s: this package was not compiled with --enable-packagekit", package_name);
+	g_warning ("cannot install %s: this package was not compiled with --packagekit", package_name);
 	return FALSE;
 #endif
 

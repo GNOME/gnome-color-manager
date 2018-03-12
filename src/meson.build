@@ -14,7 +14,7 @@ gcm_viewer_resources = gnome.compile_resources(
   c_name : 'gcm',
 )
 
-if get_option('enable-exiv')
+if get_option('exiv')
   executable(
     'gcm-helper-exiv',
     sources : [
@@ -167,7 +167,7 @@ executable(
   install : true,
 )
 
-if get_option('enable-tests')
+if get_option('tests')
   cargs += ['-DTESTDATADIR="' + join_paths(meson.current_source_dir(), '..', 'data', 'tests') + '"']
   e = executable(
     'gcm-self-test',
