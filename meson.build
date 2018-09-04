@@ -1,5 +1,5 @@
 project('gnome-color-manager', 'c', 'cpp',
-  version : '3.28.0',
+  version : '3.30.0',
   license : 'GPL-2.0+',
   default_options : ['warning_level=1'],
   meson_version : '>=0.37.0'
