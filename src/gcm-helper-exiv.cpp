@@ -24,6 +24,10 @@
 #include <iostream>
 #include <iomanip>
 
+#if EXIV2_MAJOR_VERSION >= 1 || (EXIV2_MAJOR_VERSION == 0 && EXIV2_MINOR_VERSION >= 27)
+#define HAVE_EXIV2_ERROR_CODE
+#endif
+
 int
 main (int argc, char* const argv[])
 {
@@ -51,7 +55,11 @@ main (int argc, char* const argv[])
 		if (argc == 2)
 			filename = argv[1];
 		if (filename.empty())
+#ifdef HAVE_EXIV2_ERROR_CODE
+			throw Exiv2::Error(Exiv2::kerErrorMessage, "No filename specified");
+#else
 			throw Exiv2::Error(1, "No filename specified");
+#endif
 		image = Exiv2::ImageFactory::open(filename);
 		image->readMetadata();
 
@@ -60,7 +68,11 @@ main (int argc, char* const argv[])
 		if (exifData.empty()) {
 			std::string error(argv[1]);
 			error += ": No Exif data found in the file";
+#ifdef HAVE_EXIV2_ERROR_CODE
+			throw Exiv2::Error(Exiv2::kerErrorMessage, error);
+#else
 			throw Exiv2::Error(1, error);
+#endif
 		}
 
 		/* try to find make, model and serial number */
