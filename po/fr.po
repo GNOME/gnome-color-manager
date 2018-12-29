@@ -7,23 +7,23 @@
 # Pablo Martin-Gomez <pablo.martin-gomez@laposte.net>, 2010.
 # Bruno Brouard <annoa.b@gmail.com>, 2011-2012
 # Alain Lojewski <allomervan@gmail.com>, 2012-2013
-# Charles Monzat <superboa@hotmail.fr>, 2017.
+# Charles Monzat <charles.monzat@numericable.fr>, 2017-2018.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
-"Report-Msgid-Bugs-To: https://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
-"color-manager&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2017-07-28 09:58+0000\n"
-"PO-Revision-Date: 2017-02-23 15:21+0100\n"
-"Last-Translator: Charles Monzat <superboa@hotmail.fr>\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/"
+"issues\n"
+"POT-Creation-Date: 2018-06-10 16:45+0000\n"
+"PO-Revision-Date: 2018-11-20 16:41+0100\n"
+"Last-Translator: Charles Monzat <charles.monzat@numericable.fr>\n"
 "Language-Team: français <gnomefr@traduc.org>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Gtranslator 2.91.7\n"
+"X-Generator: Gtranslator 3.30.0\n"
 
 #. TRANSLATORS: this is the application name for libcanberra
 #: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:7
@@ -85,7 +85,7 @@ msgid "application-vnd.iccprofile"
 msgstr "application-vnd.iccprofile"
 
 #. Window title, where the user can pick spot colors using a measuring device
-#: data/gcm-picker.desktop.in:3 data/gcm-picker.ui:27
+#: data/gcm-picker.desktop.in:3 src/gcm-picker.ui:27 src/gcm-picker.ui:324
 msgid "Color Picker"
 msgstr "Sélecteur de couleurs"
 
@@ -93,231 +93,7 @@ msgstr "Sélecteur de couleurs"
 msgid "Use the color sensor to sample spot colors"
 msgstr "Utilise le colorimètre pour échantillonner les couleurs de point"
 
-#. the color representation
-#. TRANSLATORS: this the ICC colorspace type
-#: data/gcm-picker.ui:93 src/gcm-viewer.c:587
-msgid "XYZ"
-msgstr "XYZ"
-
-#. Lab is the color representation and D50 is the white point
-#: data/gcm-picker.ui:108
-msgid "Lab (D50)"
-msgstr "Lab (D50)"
-
-#. This refers to the amount of ambient light on the sensor
-#: data/gcm-picker.ui:123
-msgid "Media whitepoint"
-msgstr "Point blanc du média"
-
-#. This refers to the amount of ambient light on the sensor
-#: data/gcm-picker.ui:138
-msgid "Color Temperature"
-msgstr "Température de couleur"
-
-#. This refers to the amount of ambient light on the sensor
-#: data/gcm-picker.ui:153
-msgid "Ambient"
-msgstr "Ambiance"
-
-#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#. The profile colorspace, e.g. RGB
-#: data/gcm-picker.ui:168 data/gcm-viewer.ui:122
-msgid "Colorspace"
-msgstr "Espace de couleur"
-
-#. These are the values of the chosen color in Red, Green, Blue encoding
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#. TRANSLATORS: this the ICC colorspace type
-#: data/gcm-picker.ui:183 src/gcm-utils.c:285 src/gcm-viewer.c:607
-msgid "RGB"
-msgstr "RVB"
-
-#. This shows the error in the conversion to RGB.
-#: data/gcm-picker.ui:198
-msgid "Error"
-msgstr "Erreur"
-
-#. Expander title, the results from the color picker
-#: data/gcm-picker.ui:297
-msgid "Results"
-msgstr "Résultats"
-
-#. Button text, to get a single sample of color
-#: data/gcm-picker.ui:328
-msgid "_Measure"
-msgstr "_Mesurer"
-
-#: data/gcm-viewer.ui:52
-msgid "Add a profile for the device"
-msgstr "Ajoute un profil pour le périphérique"
-
-#: data/gcm-viewer.ui:67
-msgid "Remove a profile from the device"
-msgstr "Supprime un profil pour le périphérique"
-
-#. The type of profile, e.g. display, scanner, etc.
-#: data/gcm-viewer.ui:106
-msgid "Profile type"
-msgstr "Type de profil"
-
-#. When the profile was created
-#: data/gcm-viewer.ui:138
-msgid "Created"
-msgstr "Créé"
-
-#. The version of the profile
-#: data/gcm-viewer.ui:155
-msgid "Version"
-msgstr "Version"
-
-#. The manufacturer of the profile
-#: data/gcm-viewer.ui:172
-msgid "Manufacturer"
-msgstr "Fabricant"
-
-#. The manufacturer of the profile
-#: data/gcm-viewer.ui:189
-msgid "Model"
-msgstr "Modèle"
-
-#. If the profile contains a display correction table
-#: data/gcm-viewer.ui:205
-msgid "Display correction"
-msgstr "Correction de l’écran"
-
-#. The basename (the last section of the filename) of the profile
-#: data/gcm-viewer.ui:221
-msgid "White point"
-msgstr "Point blanc"
-
-#. The licence of the profile, normally non-free
-#: data/gcm-viewer.ui:238
-msgid "Copyright"
-msgstr "Copyright"
-
-#. The file size in bytes of the profile
-#: data/gcm-viewer.ui:254
-msgid "File size"
-msgstr "Taille du fichier"
-
-#. The basename (the last section of the filename) of the profile
-#: data/gcm-viewer.ui:271
-msgid "Filename"
-msgstr "Nom du fichier"
-
-#. warnings for the profile
-#: data/gcm-viewer.ui:288
-msgid "Warnings"
-msgstr "Avertissements"
-
-#: data/gcm-viewer.ui:474
-msgid "Information"
-msgstr "Information"
-
-#: data/gcm-viewer.ui:502
-msgid "y"
-msgstr "y"
-
-#: data/gcm-viewer.ui:521
-msgid "x"
-msgstr "x"
-
-#: data/gcm-viewer.ui:552
-msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
-msgstr ""
-"Un diagramme CIE 1931 affiche une représentation en 2D du gamut du profil"
-
-#: data/gcm-viewer.ui:569
-msgid "CIE 1931"
-msgstr "CIE 1931"
-
-#: data/gcm-viewer.ui:591
-msgid "Response out"
-msgstr "Réponse sortante"
-
-#: data/gcm-viewer.ui:611 data/gcm-viewer.ui:699
-msgid "Response in"
-msgstr "Réponse entrante"
-
-#: data/gcm-viewer.ui:640
-msgid ""
-"A tone reproduction curve is the mapping of scene luminance to display "
-"luminance"
-msgstr ""
-"Une courbe de reproduction de la teinte est la carte de correspondance entre "
-"la luminance de la scène et celle de l’écran"
-
-#: data/gcm-viewer.ui:657
-msgid "TRC"
-msgstr "TRC"
-
-#: data/gcm-viewer.ui:679
-msgid "Video card out"
-msgstr "Sortie de la carte vidéo"
-
-#: data/gcm-viewer.ui:728
-msgid "A video card gamma table shows the curves loaded into the display"
-msgstr ""
-"Une table gamma de carte vidéo affiche les courbes chargées dans l’écran"
-
-#: data/gcm-viewer.ui:745
-msgid "VCGT"
-msgstr "VCGT"
-
-#: data/gcm-viewer.ui:780 data/gcm-viewer.ui:902
-msgid "Previous Image"
-msgstr "Image précédente"
-
-#. This is an example image that is saved in sRGB gamut
-#: data/gcm-viewer.ui:798 data/gcm-viewer.ui:920
-msgid "sRGB example"
-msgstr "Exemple de sRVB"
-
-#: data/gcm-viewer.ui:829 data/gcm-viewer.ui:951
-msgid "Next Image"
-msgstr "Image suivante"
-
-#: data/gcm-viewer.ui:850
-msgid "This shows what an image would look like if saved with the profile"
-msgstr ""
-"Ceci montre à quoi ressemblerait une image si elle était enregistrée avec le "
-"profil"
-
-#: data/gcm-viewer.ui:867
-msgid "From sRGB"
-msgstr "De sRVB"
-
-#: data/gcm-viewer.ui:972
-msgid "This shows what an image would look like if opened with the profile"
-msgstr ""
-"Ceci montre à quoi ressemblerait une image si elle était ouverte avec le "
-"profil"
-
-#: data/gcm-viewer.ui:989
-msgid "To sRGB"
-msgstr "Vers sRVB"
-
-#: data/gcm-viewer.ui:1040
-msgid "Named colors are specific colors that are defined in the profile"
-msgstr ""
-"Les couleurs nommées sont des couleurs spécifiques définies dans le profil"
-
-#: data/gcm-viewer.ui:1057
-msgid "Named Colors"
-msgstr "Couleurs nommées"
-
-#: data/gcm-viewer.ui:1096
-msgid ""
-"Metadata is additional information stored in the profile for programs to use."
-msgstr ""
-"Les métadonnées sont des informations supplémentaires enregistrées dans le "
-"profil à l’usage des applications."
-
-#: data/gcm-viewer.ui:1113
-msgid "Metadata"
-msgstr "Métadonnées"
-
-#: data/gcm-viewer.ui:1133 data/org.gnome.ColorProfileViewer.desktop.in:3
+#: data/org.gnome.ColorProfileViewer.desktop.in:3 src/gcm-viewer.ui:1133
 msgid "Color Profile Viewer"
 msgstr "Visionneur de profil de couleurs"
 
@@ -817,7 +593,7 @@ msgid ""
 "<a href=\"control-center://color\">control center</a>."
 msgstr ""
 "Pour afficher les détails sur le nouveau profil ou pour annuler "
-"l’étallonage, ouvrez le <a href=\"control-center://color\">centre de "
+"l’étalonnage, ouvrez le <a href=\"control-center://color\">centre de "
 "contrôle</a>."
 
 #: src/gcm-calibrate-main.c:835
@@ -891,7 +667,7 @@ msgid ""
 "channels are set to the same values."
 msgstr ""
 "Configurez votre écran avec les paramètres de couleur personnalisés et "
-"assurez-vous que les canaux RVB aient les même valeurs."
+"assurez-vous que les canaux RVB aient les mêmes valeurs."
 
 #. TRANSLATORS: dialog message, addition to bullet item
 #: src/gcm-calibrate-main.c:941
@@ -1558,6 +1334,60 @@ msgstr "Aucun espace de couleur %s disponible"
 msgid "GNOME Color Manager Color Picker"
 msgstr "Sélecteur de couleurs du gestionnaire colorimétrique de GNOME"
 
+#. the color representation
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.ui:93 src/gcm-viewer.c:587
+msgid "XYZ"
+msgstr "XYZ"
+
+#. Lab is the color representation and D50 is the white point
+#: src/gcm-picker.ui:108
+msgid "Lab (D50)"
+msgstr "Lab (D50)"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:123
+msgid "Media whitepoint"
+msgstr "Point blanc du média"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:138
+msgid "Color Temperature"
+msgstr "Température de couleur"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:153
+msgid "Ambient"
+msgstr "Ambiance"
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#. The profile colorspace, e.g. RGB
+#: src/gcm-picker.ui:168 src/gcm-viewer.ui:122
+msgid "Colorspace"
+msgstr "Espace de couleur"
+
+#. These are the values of the chosen color in Red, Green, Blue encoding
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.ui:183 src/gcm-utils.c:285 src/gcm-viewer.c:607
+msgid "RGB"
+msgstr "RVB"
+
+#. This shows the error in the conversion to RGB.
+#: src/gcm-picker.ui:198
+msgid "Error"
+msgstr "Erreur"
+
+#. Expander title, the results from the color picker
+#: src/gcm-picker.ui:297
+msgid "Results"
+msgstr "Résultats"
+
+#. Button text, to get a single sample of color
+#: src/gcm-picker.ui:328
+msgid "_Measure"
+msgstr "_Mesurer"
+
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
 #: src/gcm-utils.c:289 src/gcm-viewer.c:619
@@ -1888,3 +1718,173 @@ msgstr "Définir le profil spécifique à afficher"
 #: src/gcm-viewer.c:1620
 msgid "Set the specific file to show"
 msgstr "Définir le fichier spécifique à afficher"
+
+#: src/gcm-viewer.ui:52
+msgid "Add a profile for the device"
+msgstr "Ajoute un profil pour le périphérique"
+
+#: src/gcm-viewer.ui:67
+msgid "Remove a profile from the device"
+msgstr "Supprime un profil pour le périphérique"
+
+#. The type of profile, e.g. display, scanner, etc.
+#: src/gcm-viewer.ui:106
+msgid "Profile type"
+msgstr "Type de profil"
+
+#. When the profile was created
+#: src/gcm-viewer.ui:138
+msgid "Created"
+msgstr "Créé"
+
+#. The version of the profile
+#: src/gcm-viewer.ui:155
+msgid "Version"
+msgstr "Version"
+
+#. The manufacturer of the profile
+#: src/gcm-viewer.ui:172
+msgid "Manufacturer"
+msgstr "Fabricant"
+
+#. The manufacturer of the profile
+#: src/gcm-viewer.ui:189
+msgid "Model"
+msgstr "Modèle"
+
+#. If the profile contains a display correction table
+#: src/gcm-viewer.ui:205
+msgid "Display correction"
+msgstr "Correction de l’écran"
+
+#. The basename (the last section of the filename) of the profile
+#: src/gcm-viewer.ui:221
+msgid "White point"
+msgstr "Point blanc"
+
+#. The licence of the profile, normally non-free
+#: src/gcm-viewer.ui:238
+msgid "Copyright"
+msgstr "Copyright"
+
+#. The file size in bytes of the profile
+#: src/gcm-viewer.ui:254
+msgid "File size"
+msgstr "Taille du fichier"
+
+#. The basename (the last section of the filename) of the profile
+#: src/gcm-viewer.ui:271
+msgid "Filename"
+msgstr "Nom du fichier"
+
+#. warnings for the profile
+#: src/gcm-viewer.ui:288
+msgid "Warnings"
+msgstr "Avertissements"
+
+#: src/gcm-viewer.ui:474
+msgid "Information"
+msgstr "Information"
+
+#: src/gcm-viewer.ui:502
+msgid "y"
+msgstr "y"
+
+#: src/gcm-viewer.ui:521
+msgid "x"
+msgstr "x"
+
+#: src/gcm-viewer.ui:552
+msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
+msgstr ""
+"Un diagramme CIE 1931 affiche une représentation en 2D du gamut du profil"
+
+#: src/gcm-viewer.ui:569
+msgid "CIE 1931"
+msgstr "CIE 1931"
+
+#: src/gcm-viewer.ui:591
+msgid "Response out"
+msgstr "Réponse sortante"
+
+#: src/gcm-viewer.ui:611 src/gcm-viewer.ui:699
+msgid "Response in"
+msgstr "Réponse entrante"
+
+#: src/gcm-viewer.ui:640
+msgid ""
+"A tone reproduction curve is the mapping of scene luminance to display "
+"luminance"
+msgstr ""
+"Une courbe de reproduction de la teinte est la carte de correspondance entre "
+"la luminance de la scène et celle de l’écran"
+
+#: src/gcm-viewer.ui:657
+msgid "TRC"
+msgstr "TRC"
+
+#: src/gcm-viewer.ui:679
+msgid "Video card out"
+msgstr "Sortie de la carte vidéo"
+
+#: src/gcm-viewer.ui:728
+msgid "A video card gamma table shows the curves loaded into the display"
+msgstr ""
+"Une table gamma de carte vidéo affiche les courbes chargées dans l’écran"
+
+#: src/gcm-viewer.ui:745
+msgid "VCGT"
+msgstr "VCGT"
+
+#: src/gcm-viewer.ui:780 src/gcm-viewer.ui:902
+msgid "Previous Image"
+msgstr "Image précédente"
+
+#. This is an example image that is saved in sRGB gamut
+#: src/gcm-viewer.ui:798 src/gcm-viewer.ui:920
+msgid "sRGB example"
+msgstr "Exemple de sRVB"
+
+#: src/gcm-viewer.ui:829 src/gcm-viewer.ui:951
+msgid "Next Image"
+msgstr "Image suivante"
+
+#: src/gcm-viewer.ui:850
+msgid "This shows what an image would look like if saved with the profile"
+msgstr ""
+"Ceci montre à quoi ressemblerait une image si elle était enregistrée avec le "
+"profil"
+
+#: src/gcm-viewer.ui:867
+msgid "From sRGB"
+msgstr "De sRVB"
+
+#: src/gcm-viewer.ui:972
+msgid "This shows what an image would look like if opened with the profile"
+msgstr ""
+"Ceci montre à quoi ressemblerait une image si elle était ouverte avec le "
+"profil"
+
+#: src/gcm-viewer.ui:989
+msgid "To sRGB"
+msgstr "Vers sRVB"
+
+#: src/gcm-viewer.ui:1040
+msgid "Named colors are specific colors that are defined in the profile"
+msgstr ""
+"Les couleurs nommées sont des couleurs spécifiques définies dans le profil"
+
+#: src/gcm-viewer.ui:1057
+msgid "Named Colors"
+msgstr "Couleurs nommées"
+
+#: src/gcm-viewer.ui:1096
+msgid ""
+"Metadata is additional information stored in the profile for programs to use."
+msgstr ""
+"Les métadonnées sont des informations supplémentaires enregistrées dans le "
+"profil à l’usage des applications."
+
+#: src/gcm-viewer.ui:1113
+msgid "Metadata"
+msgstr "Métadonnées"
