@@ -1,23 +1,23 @@
 # Hungarian translation for gnome-color-manager.
-# Copyright (C) 2010-2016 Free Software Foundation, Inc.
+# Copyright (C) 2010, 2011, 2012, 2013, 2014, 2016, 2019 Free Software Foundation, Inc.
 # This file is distributed under the same license as the gnome-color-manager package.
 #
 # Gabor Kelemen <kelemeng at gnome dot hu>, 2010, 2011, 2012, 2013, 2014, 2016.
-# Balázs Úr <urbalazs at gmail dot com>, 2013, 2016.
+# Balázs Úr <urbalazs at gmail dot com>, 2013, 2016, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
-"color-manager&keywords=I18N+L10N&component=general\n"
-"POT-Creation-Date: 2016-12-06 16:55+0000\n"
-"PO-Revision-Date: 2016-12-08 22:44+0100\n"
-"Last-Translator: Gabor Kelemen <kelemeng at ubuntu dot com>\n"
-"Language-Team: Hungarian <openscope at googlegroups dot com>\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/"
+"issues\n"
+"POT-Creation-Date: 2018-06-10 16:45+0000\n"
+"PO-Revision-Date: 2019-02-03 16:23+0100\n"
+"Last-Translator: Balázs Úr <urbalazs@gmail.com>\n"
+"Language-Team: Hungarian <gnome-hu-list at gnome dot org>\n"
 "Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.5\n"
+"X-Generator: Lokalize 1.2\n"
 "Plural-Forms:  nplurals=2; plural=(n != 1);\n"
 
 #. TRANSLATORS: this is the application name for libcanberra
@@ -79,7 +79,7 @@ msgid "application-vnd.iccprofile"
 msgstr "application-vnd.iccprofile"
 
 #. Window title, where the user can pick spot colors using a measuring device
-#: data/gcm-picker.desktop.in:3 data/gcm-picker.ui:27
+#: data/gcm-picker.desktop.in:3 src/gcm-picker.ui:27 src/gcm-picker.ui:324
 msgid "Color Picker"
 msgstr "Színpipetta"
 
@@ -87,227 +87,7 @@ msgstr "Színpipetta"
 msgid "Use the color sensor to sample spot colors"
 msgstr "A színérzékelő használatával vegyen mintát a direktszínekből"
 
-#. the color representation
-#. TRANSLATORS: this the ICC colorspace type
-#: data/gcm-picker.ui:93 src/gcm-viewer.c:587
-msgid "XYZ"
-msgstr "XYZ"
-
-#. Lab is the color representation and D50 is the white point
-#: data/gcm-picker.ui:108
-msgid "Lab (D50)"
-msgstr "Lab (D50)"
-
-#. This refers to the amount of ambient light on the sensor
-#: data/gcm-picker.ui:123
-msgid "Media whitepoint"
-msgstr "Média fehér pontja"
-
-#. This refers to the amount of ambient light on the sensor
-#: data/gcm-picker.ui:138
-msgid "Color Temperature"
-msgstr "Színhőmérséklet"
-
-#. This refers to the amount of ambient light on the sensor
-#: data/gcm-picker.ui:153
-msgid "Ambient"
-msgstr "Környezeti"
-
-#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
-#. The profile colorspace, e.g. RGB
-#: data/gcm-picker.ui:168 data/gcm-viewer.ui:122
-msgid "Colorspace"
-msgstr "Színtér"
-
-#. These are the values of the chosen color in Red, Green, Blue encoding
-#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
-#. TRANSLATORS: this the ICC colorspace type
-#: data/gcm-picker.ui:183 src/gcm-utils.c:285 src/gcm-viewer.c:607
-msgid "RGB"
-msgstr "RGB"
-
-#. This shows the error in the conversion to RGB.
-#: data/gcm-picker.ui:198
-msgid "Error"
-msgstr "Hiba"
-
-#. Expander title, the results from the color picker
-#: data/gcm-picker.ui:297
-msgid "Results"
-msgstr "Eredmények"
-
-#. Button text, to get a single sample of color
-#: data/gcm-picker.ui:328
-msgid "_Measure"
-msgstr "_Mérés"
-
-#: data/gcm-viewer.ui:52
-msgid "Add a profile for the device"
-msgstr "Profil felvétele az eszközhöz"
-
-#: data/gcm-viewer.ui:67
-msgid "Remove a profile from the device"
-msgstr "Profil eltávolítása az eszközről"
-
-#. The type of profile, e.g. display, scanner, etc.
-#: data/gcm-viewer.ui:106
-msgid "Profile type"
-msgstr "Profiltípus"
-
-#. When the profile was created
-#: data/gcm-viewer.ui:138
-msgid "Created"
-msgstr "Létrehozva"
-
-#. The version of the profile
-#: data/gcm-viewer.ui:155
-msgid "Version"
-msgstr "Verzió"
-
-#. The manufacturer of the profile
-#: data/gcm-viewer.ui:172
-msgid "Manufacturer"
-msgstr "Gyártó"
-
-#. The manufacturer of the profile
-#: data/gcm-viewer.ui:189
-msgid "Model"
-msgstr "Modell"
-
-#. If the profile contains a display correction table
-#: data/gcm-viewer.ui:205
-msgid "Display correction"
-msgstr "Kijelző korrekciója"
-
-#. The basename (the last section of the filename) of the profile
-#: data/gcm-viewer.ui:221
-msgid "White point"
-msgstr "Fehér pont"
-
-#. The licence of the profile, normally non-free
-#: data/gcm-viewer.ui:238
-msgid "Copyright"
-msgstr "Copyright"
-
-#. The file size in bytes of the profile
-#: data/gcm-viewer.ui:254
-msgid "File size"
-msgstr "Fájlméret"
-
-#. The basename (the last section of the filename) of the profile
-#: data/gcm-viewer.ui:271
-msgid "Filename"
-msgstr "Fájlnév"
-
-#. warnings for the profile
-#: data/gcm-viewer.ui:288
-msgid "Warnings"
-msgstr "Figyelmeztetések"
-
-#: data/gcm-viewer.ui:474
-msgid "Information"
-msgstr "Információk"
-
-#: data/gcm-viewer.ui:502
-msgid "y"
-msgstr "y"
-
-#: data/gcm-viewer.ui:521
-msgid "x"
-msgstr "x"
-
-#: data/gcm-viewer.ui:552
-msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
-msgstr ""
-"A CIE 1931 diagram megjeleníti a profil színskálájának 2D reprezentációját"
-
-#: data/gcm-viewer.ui:569
-msgid "CIE 1931"
-msgstr "CIE 1931"
-
-#: data/gcm-viewer.ui:591
-msgid "Response out"
-msgstr "Válasz ki"
-
-#: data/gcm-viewer.ui:611 data/gcm-viewer.ui:699
-msgid "Response in"
-msgstr "Válasz be"
-
-#: data/gcm-viewer.ui:640
-msgid ""
-"A tone reproduction curve is the mapping of scene luminance to display "
-"luminance"
-msgstr ""
-"Az árnyalatreprodukciós görbe a jelenet fényességének leképezése a "
-"megjelenítő fényességére"
-
-#: data/gcm-viewer.ui:657
-msgid "TRC"
-msgstr "TRC"
-
-#: data/gcm-viewer.ui:679
-msgid "Video card out"
-msgstr "Videokártya ki"
-
-#: data/gcm-viewer.ui:728
-msgid "A video card gamma table shows the curves loaded into the display"
-msgstr ""
-"A videokártya gammatáblázata megjeleníti a kijelzőbe betöltött görbéket"
-
-#: data/gcm-viewer.ui:745
-msgid "VCGT"
-msgstr "VCGT"
-
-#: data/gcm-viewer.ui:780 data/gcm-viewer.ui:902
-msgid "Previous Image"
-msgstr "Előző kép"
-
-#. This is an example image that is saved in sRGB gamut
-#: data/gcm-viewer.ui:798 data/gcm-viewer.ui:920
-msgid "sRGB example"
-msgstr "sRGB példa"
-
-#: data/gcm-viewer.ui:829 data/gcm-viewer.ui:951
-msgid "Next Image"
-msgstr "Következő kép"
-
-#: data/gcm-viewer.ui:850
-msgid "This shows what an image would look like if saved with the profile"
-msgstr "Ez megjeleníti, hogy hogyan nézne ki egy kép, ha a profillal mentené"
-
-#: data/gcm-viewer.ui:867
-msgid "From sRGB"
-msgstr "sRGB-ből"
-
-#: data/gcm-viewer.ui:972
-msgid "This shows what an image would look like if opened with the profile"
-msgstr ""
-"Ez megjeleníti, hogy hogyan nézne ki egy kép, ha a profilból nyitná meg"
-
-#: data/gcm-viewer.ui:989
-msgid "To sRGB"
-msgstr "sRGB-be"
-
-#: data/gcm-viewer.ui:1040
-msgid "Named colors are specific colors that are defined in the profile"
-msgstr "A megnevezett színek a profilban definiált egyes színek"
-
-#: data/gcm-viewer.ui:1057
-msgid "Named Colors"
-msgstr "Megnevezett színek"
-
-#: data/gcm-viewer.ui:1096
-msgid ""
-"Metadata is additional information stored in the profile for programs to use."
-msgstr ""
-"A metaadatok a profilban tárolt, a programok által használható további "
-"információk."
-
-#: data/gcm-viewer.ui:1113
-msgid "Metadata"
-msgstr "Metaadatok"
-
-#: data/gcm-viewer.ui:1133 data/org.gnome.ColorProfileViewer.desktop.in:3
+#: data/org.gnome.ColorProfileViewer.desktop.in:3 src/gcm-viewer.ui:1133
 msgid "Color Profile Viewer"
 msgstr "Színprofil-megjelenítő"
 
@@ -316,10 +96,12 @@ msgstr "Színprofil-megjelenítő"
 msgid "Color;ICC;"
 msgstr "Szín;ICC;"
 
+#. TRANSLATORS: title, default paramters needed to calibrate_argyll
 #: src/gcm-calibrate-argyll.c:362
 msgid "Getting default parameters"
 msgstr "Alapértelmezett paraméterek lekérése"
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:367
 msgid ""
 "This pre-calibrates the screen by sending colored and gray patches to your "
@@ -328,18 +110,22 @@ msgstr ""
 "Ez előzetesen kalibrálja a képernyőt színes és szürke foltok képernyőre "
 "küldésével, majd azoknak a hardvereszközzel történő megmérésével."
 
+#. TRANSLATORS: title, patches are specific colours used in calibration
 #: src/gcm-calibrate-argyll.c:445
 msgid "Reading the patches"
 msgstr "Foltok olvasása"
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:450
 msgid "Reading the patches using the color measuring instrument."
 msgstr "Foltok olvasása a színmérő készülék használatával."
 
+#. TRANSLATORS: title, drawing means painting to the screen
 #: src/gcm-calibrate-argyll.c:538
 msgid "Drawing the patches"
 msgstr "Foltok rajzolása"
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:543
 msgid ""
 "Drawing the generated patches to the screen, which will then be measured by "
@@ -348,46 +134,57 @@ msgstr ""
 "Azon előállított foltok képernyőre rajzolása, amelyeket a hardvereszköz majd "
 "megmér."
 
+#. TRANSLATORS: title, a profile is a ICC file
 #: src/gcm-calibrate-argyll.c:628 src/gcm-calibrate-argyll.c:919
 msgid "Generating the profile"
 msgstr "A profil előállítása"
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:633
 msgid "Generating the ICC color profile that can be used with this screen."
 msgstr "A képernyővel használandó ICC színprofil előállítása."
 
+#. TRANSLATORS: title, a profile is a ICC file
 #: src/gcm-calibrate-argyll.c:773
 msgid "Copying files"
 msgstr "Fájlok másolása"
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:778
 msgid "Copying source image, chart data and CIE reference values."
 msgstr "Forráskép, diagramadatok és CIE referenciaértékek másolása."
 
+#. TRANSLATORS: title, drawing means painting to the screen
 #: src/gcm-calibrate-argyll.c:826
 msgid "Measuring the patches"
 msgstr "A foltok mérése"
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:831
 msgid "Detecting the reference patches and measuring them."
 msgstr "A referenciafoltok felismerése és mérése."
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:924
 msgid "Generating the ICC color profile that can be used with this device."
 msgstr "Az eszközzel használható ICC színprofil előállítása."
 
+#. TRANSLATORS: title, patches are specific colors used in calibration
 #: src/gcm-calibrate-argyll.c:1236
 msgid "Printing patches"
 msgstr "Foltok nyomtatása"
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:1241
 msgid "Rendering the patches for the selected paper and ink."
 msgstr "A foltok leképezése a kiválasztott papírhoz és tintához."
 
+#. TRANSLATORS: title, patches are specific colours used in calibration
 #: src/gcm-calibrate-argyll.c:1565
 msgid "Wait for the ink to dry"
 msgstr "Várakozás a festék száradására"
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:1570
 msgid ""
 "Please wait a few minutes for the ink to dry. Profiling damp ink will "
@@ -396,18 +193,22 @@ msgstr ""
 "Várjon pár percet a festék megszáradására. A nedves tinta profilozása gyenge "
 "profilt eredményez, és károsíthatja a színmérő készüléket."
 
+#. TRANSLATORS: title, instrument refers to a calibration device
 #: src/gcm-calibrate-argyll.c:1714
 msgid "Set up instrument"
 msgstr "Készülék beállítása"
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:1719
 msgid "Setting up the instrument for use…"
 msgstr "A készülék beállítása használathoz…"
 
+#. TRANSLATORS: title, the calibration failed
 #: src/gcm-calibrate-argyll.c:1896 src/gcm-calibrate-argyll.c:1961
 msgid "Calibration error"
 msgstr "Kalibrálási hiba"
 
+#. TRANSLATORS: message, the sample was not read correctly
 #: src/gcm-calibrate-argyll.c:1901
 msgid "The sample could not be read at this time."
 msgstr "A minta jelenleg nem olvasható."
@@ -418,14 +219,13 @@ msgstr "A minta jelenleg nem olvasható."
 msgid "Retry"
 msgstr "Újra"
 
+#. TRANSLATORS: message, no firmware is available
 #: src/gcm-calibrate-argyll.c:1967
 msgid "No firmware is installed for this instrument."
 msgstr "Nincs telepítve firmware ehhez a készülékhez."
 
+#. TRANSLATORS: message, the image wasn't good enough
 #: src/gcm-calibrate-argyll.c:1972
-#| msgid ""
-#| "The pattern match wasn't good enough. Ensure you have the correct type of "
-#| "target selected."
 msgid ""
 "The pattern match wasn’t good enough. Ensure you have the correct type of "
 "target selected."
@@ -433,6 +233,7 @@ msgstr ""
 "A minta megfelelése nem volt elég jó. Győződjön meg róla, hogy a megfelelő "
 "céltípust választotta ki."
 
+#. TRANSLATORS: message, the sensor got no readings
 #: src/gcm-calibrate-argyll.c:1978
 msgid ""
 "The measuring instrument got no valid readings. Please ensure the aperture "
@@ -441,6 +242,7 @@ msgstr ""
 "A mérőeszköz nem kapott érvényes értékeket. Győződjön meg róla, hogy az "
 "apertúra teljesen nyitva van."
 
+#. TRANSLATORS: message, the colorimeter has got confused
 #: src/gcm-calibrate-argyll.c:1983
 msgid ""
 "The measuring instrument is busy and is not starting up. Please remove the "
@@ -449,18 +251,22 @@ msgstr ""
 "A mérőeszköz foglalt, és nem indul el. Távolítsa el az USB csatlakozót, és "
 "csatlakoztassa újra az eszköz ismételt használatba vétele előtt."
 
+#. TRANSLATORS: dialog title
 #: src/gcm-calibrate-argyll.c:2021
 msgid "Reading target"
 msgstr "Cél olvasása"
 
+#. TRANSLATORS: message, no firmware is available
 #: src/gcm-calibrate-argyll.c:2026
 msgid "Failed to read the strip correctly."
 msgstr "A csík helyes olvasása meghiúsult."
 
+#. TRANSLATORS: dialog title
 #: src/gcm-calibrate-argyll.c:2047
 msgid "Reading sample"
 msgstr "Minta olvasása"
 
+#. TRANSLATORS: message, the sample read failed due to misread
 #: src/gcm-calibrate-argyll.c:2052
 msgid "Failed to read the color sample correctly."
 msgstr "A színminta helyes olvasása meghiúsult."
@@ -473,15 +279,11 @@ msgstr "A(z) %s csíkot olvastassa be a(z) %s helyett!"
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
 #: src/gcm-calibrate-argyll.c:2082
-#| msgid "It looks like you've measured the wrong strip."
 msgid "It looks like you’ve measured the wrong strip."
 msgstr "Úgy tűnik, rossz csíkot mért le."
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
 #: src/gcm-calibrate-argyll.c:2086
-#| msgid ""
-#| "If you've really measured the right one, it's okay, it could just be "
-#| "unusual paper."
 msgid ""
 "If you’ve really measured the right one, it’s okay, it could just be unusual "
 "paper."
@@ -489,10 +291,12 @@ msgstr ""
 "Ha valóban a jó csíkot mérte le, semmi gond, lehet hogy csak a papír "
 "szokatlan."
 
+#. TRANSLATORS: title, the calibration failed
 #: src/gcm-calibrate-argyll.c:2111
 msgid "Device Error"
 msgstr "Eszközhiba"
 
+#. TRANSLATORS: message, the sample was not read correctly
 #: src/gcm-calibrate-argyll.c:2116
 msgid "The device could not measure the color spot correctly."
 msgstr "Az eszköz nem tudta megfelelően mérni a színes foltot."
@@ -532,38 +336,42 @@ msgstr ""
 
 #. TRANSLATORS: dialog message, just follow the hardware instructions
 #: src/gcm-calibrate-argyll.c:2147
-#| msgid ""
-#| "If you make a mistake, just release the switch, and you'll get a chance "
-#| "to try again."
 msgid ""
 "If you make a mistake, just release the switch, and you’ll get a chance to "
 "try again."
 msgstr "Ha elrontotta, csak engedje fel a kapcsolót, és próbálja újra."
 
+#. TRANSLATORS: title, printing reference files to media
 #: src/gcm-calibrate-argyll.c:2241
 msgid "Printing"
 msgstr "Nyomtatás"
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:2250
 msgid "Preparing the data for the printer."
 msgstr "Az adatok előkészítése a nyomtató számára."
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:2258
 msgid "Sending the targets to the printer."
 msgstr "A célok elküldése a nyomtatónak."
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:2264
 msgid "Printing the targets…"
 msgstr "A célok nyomtatása…"
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:2270
 msgid "The printing has finished."
 msgstr "A nyomtatás befejeződött."
 
+#. TRANSLATORS: dialog message
 #: src/gcm-calibrate-argyll.c:2276
 msgid "The print was aborted."
 msgstr "A nyomtatás megszakítva."
 
+#. TRANSLATORS: title, instrument is a hardware color calibration sensor
 #: src/gcm-calibrate.c:348
 msgid "Please attach instrument"
 msgstr "Csatlakoztassa a készüléket"
@@ -595,24 +403,29 @@ msgstr "Az eszközt a képernyőn kell tartania a kalibrálás ideje alatt."
 msgid "Continue"
 msgstr "Folytatás"
 
+#. TRANSLATORS: title, instrument is a hardware color calibration sensor
 #: src/gcm-calibrate.c:392 src/gcm-calibrate.c:428
 msgid "Please configure instrument"
 msgstr "Konfigurálja a készüléket"
 
+#. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
 #: src/gcm-calibrate.c:403
 msgid ""
 "Please set the measuring instrument to screen mode like the image below."
 msgstr "Állítsa a mérőeszközt képernyő módba, a lenti képen látható módon."
 
+#. TRANSLATORS: this is when the user has to change a setting on the sensor
 #: src/gcm-calibrate.c:408
 msgid "Please set the measuring instrument to screen mode."
 msgstr "Állítsa a mérőeszközt képernyő módba."
 
+#. TRANSLATORS: this is when the user has to change a setting on the sensor, and we're showing a picture
 #: src/gcm-calibrate.c:442
 msgid ""
 "Please set the measuring instrument to calibration mode like the image below."
 msgstr "Állítsa a mérőeszközt kalibrálási módba, a lenti képen látható módon."
 
+#. TRANSLATORS: this is when the user has to change a setting on the sensor
 #: src/gcm-calibrate.c:447
 msgid "Please set the measuring instrument to calibration mode."
 msgstr "Állítsa a mérőeszközt kalibrálási módba."
@@ -666,10 +479,12 @@ msgstr "A kalibrálás nem készült el"
 msgid "Are you sure you want to cancel the calibration?"
 msgstr "Biztosan meg akarja szakítani a kalibrálást?"
 
+#. TRANSLATORS: button text
 #: src/gcm-calibrate-main.c:144
 msgid "Continue calibration"
 msgstr "Kalibrálás folytatása"
 
+#. TRANSLATORS: button text
 #: src/gcm-calibrate-main.c:148
 msgid "Cancel and close"
 msgstr "Megszakítás és bezárás"
@@ -811,9 +626,6 @@ msgstr ""
 
 #. TRANSLATORS: dialog message, preface
 #: src/gcm-calibrate-main.c:929
-#| msgid ""
-#| "You may want to consult the owner's manual for your display on how to "
-#| "achieve these settings."
 msgid ""
 "You may want to consult the owner’s manual for your display on how to "
 "achieve these settings."
@@ -868,10 +680,12 @@ msgstr ""
 msgid "Check Settings"
 msgstr "Beállítások ellenőrzése"
 
+#. TRANSLATORS: dialog message saying the argyllcms is not installed
 #: src/gcm-calibrate-main.c:1000
 msgid "Calibration and profiling software is not installed."
 msgstr "Nincsenek kalibrálási és profilozási szoftverek telepítve."
 
+#. TRANSLATORS: dialog message saying the color targets are not installed
 #: src/gcm-calibrate-main.c:1003
 msgid "These tools are required to build color profiles for devices."
 msgstr "Ezek az eszközök szükségesek színprofilok készítéséhez az eszközökhöz."
@@ -1173,6 +987,7 @@ msgstr "Normál"
 msgid "Quick"
 msgstr "Gyors"
 
+#. TRANSLATORS: radio options for calibration precision
 #: src/gcm-calibrate-main.c:1633
 #, c-format
 msgid "(about %u sheet of paper)"
@@ -1180,6 +995,7 @@ msgid_plural "(about %u sheets of paper)"
 msgstr[0] "(körülbelül %u papírlap)"
 msgstr[1] "(körülbelül %u papírlap)"
 
+#. TRANSLATORS: radio options for calibration precision
 #: src/gcm-calibrate-main.c:1644
 #, c-format
 msgid "(about %u minute)"
@@ -1316,14 +1132,17 @@ msgstr "Hibakeresési lehetőségek megjelenítése"
 msgid "ICC profile to install"
 msgstr "Telepítendő ICC-profil"
 
+#. TRANSLATORS: nothing was specified on the command line
 #: src/gcm-import.c:117
 msgid "No filename specified"
 msgstr "Nincs megadva fájlnév"
 
+#. TRANSLATORS: could not read file
 #: src/gcm-import.c:137 src/gcm-viewer.c:1291
 msgid "Failed to open ICC profile"
 msgstr "Az ICC-profil megnyitása meghiúsult"
 
+#. TRANSLATORS: parsing error
 #: src/gcm-import.c:142
 #, c-format
 msgid "Failed to parse file: %s"
@@ -1340,6 +1159,7 @@ msgstr "Profil leírása: %s"
 msgid "Profile copyright:"
 msgstr "Profil szerzői joga:"
 
+#. TRANSLATORS: color profile already been installed
 #: src/gcm-import.c:201
 msgid "Color profile is already imported"
 msgstr "A színprofil már importálva van"
@@ -1373,6 +1193,7 @@ msgstr "Importálja a színprofilt?"
 msgid "Import"
 msgstr "Importálás"
 
+#. TRANSLATORS: could not read file
 #: src/gcm-import.c:271 src/gcm-viewer.c:1323
 msgid "Failed to import file"
 msgstr "A fájl importálása sikertelen"
@@ -1456,10 +1277,12 @@ msgstr "EDID-vizsgáló program"
 msgid "Unknown"
 msgstr "Ismeretlen"
 
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
 #: src/gcm-picker.c:334
 msgid "No colorimeter is attached."
 msgstr "Nincs csatlakoztatva koloriméter."
 
+#. TRANSLATORS: this is displayed if VTE support is not enabled
 #: src/gcm-picker.c:350
 msgid "The sensor has no native driver."
 msgstr "Az érzékelőhöz nincs natív illesztőprogram."
@@ -1480,6 +1303,60 @@ msgstr "Nem érhetők el %s színterek"
 #: src/gcm-picker.c:710
 msgid "GNOME Color Manager Color Picker"
 msgstr "GNOME színkezelő színválasztó"
+
+#. the color representation
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.ui:93 src/gcm-viewer.c:587
+msgid "XYZ"
+msgstr "XYZ"
+
+#. Lab is the color representation and D50 is the white point
+#: src/gcm-picker.ui:108
+msgid "Lab (D50)"
+msgstr "Lab (D50)"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:123
+msgid "Media whitepoint"
+msgstr "Média fehér pontja"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:138
+msgid "Color Temperature"
+msgstr "Színhőmérséklet"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:153
+msgid "Ambient"
+msgstr "Környezeti"
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#. The profile colorspace, e.g. RGB
+#: src/gcm-picker.ui:168 src/gcm-viewer.ui:122
+msgid "Colorspace"
+msgstr "Színtér"
+
+#. These are the values of the chosen color in Red, Green, Blue encoding
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.ui:183 src/gcm-utils.c:285 src/gcm-viewer.c:607
+msgid "RGB"
+msgstr "RGB"
+
+#. This shows the error in the conversion to RGB.
+#: src/gcm-picker.ui:198
+msgid "Error"
+msgstr "Hiba"
+
+#. Expander title, the results from the color picker
+#: src/gcm-picker.ui:297
+msgid "Results"
+msgstr "Eredmények"
+
+#. Button text, to get a single sample of color
+#: src/gcm-picker.ui:328
+msgid "_Measure"
+msgstr "_Mérés"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
@@ -1789,9 +1666,8 @@ msgstr "A profillal a következő problémák vannak:"
 
 #. TRANSLATORS: this is the icc creation date strftime format
 #: src/gcm-viewer.c:1101
-#| msgid "%B %e %Y, %I:%M:%S %p"
 msgid "%B %e %Y, %I∶%M∶%S %p"
-msgstr "%Y. %B %d, %l.%M.%S %p"
+msgstr "%Y. %B %-e. %H:%M:%S"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
 #: src/gcm-viewer.c:1124
@@ -1813,501 +1689,169 @@ msgstr "A megjelenítendő profil beállítása"
 msgid "Set the specific file to show"
 msgstr "A megjelenítendő fájl beállítása"
 
-#~ msgid "XYZ:"
-#~ msgstr "XYZ:"
+#: src/gcm-viewer.ui:52
+msgid "Add a profile for the device"
+msgstr "Profil felvétele az eszközhöz"
+
+#: src/gcm-viewer.ui:67
+msgid "Remove a profile from the device"
+msgstr "Profil eltávolítása az eszközről"
+
+#. The type of profile, e.g. display, scanner, etc.
+#: src/gcm-viewer.ui:106
+msgid "Profile type"
+msgstr "Profiltípus"
+
+#. When the profile was created
+#: src/gcm-viewer.ui:138
+msgid "Created"
+msgstr "Létrehozva"
+
+#. The version of the profile
+#: src/gcm-viewer.ui:155
+msgid "Version"
+msgstr "Verzió"
+
+#. The manufacturer of the profile
+#: src/gcm-viewer.ui:172
+msgid "Manufacturer"
+msgstr "Gyártó"
+
+#. The manufacturer of the profile
+#: src/gcm-viewer.ui:189
+msgid "Model"
+msgstr "Modell"
+
+#. If the profile contains a display correction table
+#: src/gcm-viewer.ui:205
+msgid "Display correction"
+msgstr "Kijelző korrekciója"
+
+#. The basename (the last section of the filename) of the profile
+#: src/gcm-viewer.ui:221
+msgid "White point"
+msgstr "Fehér pont"
+
+#. The licence of the profile, normally non-free
+#: src/gcm-viewer.ui:238
+msgid "Copyright"
+msgstr "Copyright"
+
+#. The file size in bytes of the profile
+#: src/gcm-viewer.ui:254
+msgid "File size"
+msgstr "Fájlméret"
+
+#. The basename (the last section of the filename) of the profile
+#: src/gcm-viewer.ui:271
+msgid "Filename"
+msgstr "Fájlnév"
+
+#. warnings for the profile
+#: src/gcm-viewer.ui:288
+msgid "Warnings"
+msgstr "Figyelmeztetések"
+
+#: src/gcm-viewer.ui:474
+msgid "Information"
+msgstr "Információk"
+
+#: src/gcm-viewer.ui:502
+msgid "y"
+msgstr "y"
+
+#: src/gcm-viewer.ui:521
+msgid "x"
+msgstr "x"
+
+#: src/gcm-viewer.ui:552
+msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
+msgstr ""
+"A CIE 1931 diagram megjeleníti a profil színskálájának 2D reprezentációját"
+
+#: src/gcm-viewer.ui:569
+msgid "CIE 1931"
+msgstr "CIE 1931"
+
+#: src/gcm-viewer.ui:591
+msgid "Response out"
+msgstr "Válasz ki"
+
+#: src/gcm-viewer.ui:611 src/gcm-viewer.ui:699
+msgid "Response in"
+msgstr "Válasz be"
+
+#: src/gcm-viewer.ui:640
+msgid ""
+"A tone reproduction curve is the mapping of scene luminance to display "
+"luminance"
+msgstr ""
+"Az árnyalatreprodukciós görbe a jelenet fényességének leképezése a "
+"megjelenítő fényességére"
+
+#: src/gcm-viewer.ui:657
+msgid "TRC"
+msgstr "TRC"
+
+#: src/gcm-viewer.ui:679
+msgid "Video card out"
+msgstr "Videokártya ki"
+
+#: src/gcm-viewer.ui:728
+msgid "A video card gamma table shows the curves loaded into the display"
+msgstr ""
+"A videokártya gammatáblázata megjeleníti a kijelzőbe betöltött görbéket"
+
+#: src/gcm-viewer.ui:745
+msgid "VCGT"
+msgstr "VCGT"
+
+#: src/gcm-viewer.ui:780 src/gcm-viewer.ui:902
+msgid "Previous Image"
+msgstr "Előző kép"
+
+#. This is an example image that is saved in sRGB gamut
+#: src/gcm-viewer.ui:798 src/gcm-viewer.ui:920
+msgid "sRGB example"
+msgstr "sRGB példa"
+
+#: src/gcm-viewer.ui:829 src/gcm-viewer.ui:951
+msgid "Next Image"
+msgstr "Következő kép"
+
+#: src/gcm-viewer.ui:850
+msgid "This shows what an image would look like if saved with the profile"
+msgstr "Ez megjeleníti, hogy hogyan nézne ki egy kép, ha a profillal mentené"
+
+#: src/gcm-viewer.ui:867
+msgid "From sRGB"
+msgstr "sRGB-ből"
+
+#: src/gcm-viewer.ui:972
+msgid "This shows what an image would look like if opened with the profile"
+msgstr ""
+"Ez megjeleníti, hogy hogyan nézne ki egy kép, ha a profilból nyitná meg"
+
+#: src/gcm-viewer.ui:989
+msgid "To sRGB"
+msgstr "sRGB-be"
+
+#: src/gcm-viewer.ui:1040
+msgid "Named colors are specific colors that are defined in the profile"
+msgstr "A megnevezett színek a profilban definiált egyes színek"
+
+#: src/gcm-viewer.ui:1057
+msgid "Named Colors"
+msgstr "Megnevezett színek"
+
+#: src/gcm-viewer.ui:1096
+msgid ""
+"Metadata is additional information stored in the profile for programs to use."
+msgstr ""
+"A metaadatok a profilban tárolt, a programok által használható további "
+"információk."
+
+#: src/gcm-viewer.ui:1113
+msgid "Metadata"
+msgstr "Metaadatok"
 
-#~ msgid "Colorspace:"
-#~ msgstr "Színtér:"
-
-#~ msgid "RGB:"
-#~ msgstr "RGB:"
-
-#~ msgid "This 3D hull is what the profile looks like in Lab space"
-#~ msgstr "Ez a 3D felület képviseli a profil megjelenését a Lab térben"
-
-#~ msgid "3D Gamut"
-#~ msgstr "3D színtér"
-
-#~ msgid "LCD"
-#~ msgstr "LCD"
-
-#~ msgid "Device model"
-#~ msgstr "Eszköz típusa"
-
-#~ msgid "License"
-#~ msgstr "Licenc"
-
-#~ msgid "Missing description"
-#~ msgstr "Hiányzó leírás"
-
-#~ msgid ""
-#~ "Could not calibrate and profile using this color measuring instrument"
-#~ msgstr "Nem sikerült kalibrálni és profilozni ezen színmérő készülékkel"
-
-#~ msgid ""
-#~ "This color measuring instrument is not designed to support calibration "
-#~ "and profiling projectors."
-#~ msgstr ""
-#~ "Ezt a színmérő készüléket nem tervezték projektorok kalibrálására és "
-#~ "profilozására."
-
-#~ msgid "Use this device for profiling"
-#~ msgstr "Eszköz használata profilozásra"
-
-#~ msgid "Make the window modal to this XID"
-#~ msgstr "Az ablak kizárólagossá tétele ehhez az XID-hez"
-
-#~ msgid "gcm-dispread"
-#~ msgstr "gcm-dispread"
-
-#~ msgid "Wrote file"
-#~ msgstr "Fájl kiírva"
-
-#~ msgid "ICC profile already installed system-wide"
-#~ msgstr "Az ICC-profil már telepítve van rendszerszinten"
-
-#~ msgid "Applies device profile settings at session startup"
-#~ msgstr "Eszközprofil-beállítások alkalmazása a munkamenet indulásakor"
-
-#~ msgid "Manage ICC color profiles"
-#~ msgstr "ICC színprofilok kezelése"
-
-#~ msgid ""
-#~ "Authentication is required to install the color profile for all users"
-#~ msgstr ""
-#~ "Hitelesítés szükséges a színprofil minden felhasználó számára történő "
-#~ "telepítéséhez"
-
-#~ msgid "Install system color profiles"
-#~ msgstr "Színprofilok telepítése rendszerszinten"
-
-#~ msgid "Failed to save defaults for all users"
-#~ msgstr "Az alapértelmezések mentése meghiúsult minden felhasználónak"
-
-#~ msgid "Other profile…"
-#~ msgstr "Más profil…"
-
-#~ msgid "Failed to get metadata from image"
-#~ msgstr "A metaadatok lekérése a képből meghiúsult"
-
-#~ msgid "Failed to create virtual device"
-#~ msgstr "A virtuális eszköz létrehozása meghiúsult"
-
-#~ msgid "Failed to save virtual device"
-#~ msgstr "A virtuális eszköz mentése meghiúsult"
-
-#~ msgid "Failed to add virtual device"
-#~ msgstr "A virtuális eszköz hozzáadása meghiúsult"
-
-#~ msgid "Install calibration and profiling software?"
-#~ msgstr "Telepíti a kalibrálási és profilozási szoftvereket?"
-
-#~ msgid "Do not install"
-#~ msgstr "Nem telepítem"
-
-#~ msgid "Failed to delete file"
-#~ msgstr "A fájl törlése meghiúsult"
-
-#~ msgid "Create a color profile for the selected device"
-#~ msgstr "Színprofil létrehozása a kijelölt eszközhöz"
-
-#~ msgid "Cannot create profile: No device is selected"
-#~ msgstr "Nem hozható létre profil: nincs kiválasztva eszköz"
-
-#~ msgid "Cannot create profile: Virtual console support is missing"
-#~ msgstr "Nem hozható létre profil: a virtuális konzol támogatása hiányzik"
-
-#~ msgid "Cannot create profile: The display device is not connected"
-#~ msgstr "Nem hozható létre profil: a kijelzőeszköz nincs csatlakoztatva"
-
-#~ msgid ""
-#~ "Cannot create profile: The display driver does not support XRandR 1.3"
-#~ msgstr ""
-#~ "Nem hozható létre profil: a kijelző illesztőprogramja nem támogatja az "
-#~ "XRandR 1.3 verzióját"
-
-#~ msgid "Cannot create profile: The measuring instrument is not plugged in"
-#~ msgstr "Nem hozható létre profil: a mérőeszköz nincs csatlakoztatva"
-
-#~ msgid ""
-#~ "Cannot create profile: The measuring instrument does not support printer "
-#~ "profiling"
-#~ msgstr ""
-#~ "Nem hozható létre profil: a mérőeszköz nem támogatja nyomtatók "
-#~ "profilozását"
-
-#~ msgid "Cannot create a profile for this type of device"
-#~ msgstr "Nem hozható létre profil ehhez az eszköztípushoz"
-
-#~ msgid "Per-device settings not supported. Check your display driver."
-#~ msgstr ""
-#~ "Az eszközönkénti beállítások nem támogatottak. Ellenőrizze a kijelző "
-#~ "illesztőprogramját."
-
-#~ msgid "No hardware support"
-#~ msgstr "Nincs hardveres támogatás"
-
-#~ msgid "disconnected"
-#~ msgstr "leválasztva"
-
-#~ msgid "Could not import profile"
-#~ msgstr "Nem importálható a profil"
-
-#~ msgid "The profile was of the wrong type for this device"
-#~ msgstr "A profil nem megfelelő típusú ehhez az eszközhöz"
-
-#~ msgid "Device added"
-#~ msgstr "Eszköz hozzáadva"
-
-#~ msgid "Scanner"
-#~ msgstr "Szkenner"
-
-#~ msgid "Printer"
-#~ msgstr "Nyomtató"
-
-#~ msgid "Camera"
-#~ msgstr "Fényképezőgép"
-
-#~ msgid "More color profiles could be automatically installed."
-#~ msgstr "Automatikusan telepíthetők további színprofilok."
-
-#~ msgid "Do not attempt to clear previously applied settings"
-#~ msgstr "Ne próbálja a korábban alkalmazott beállításokat törölni"
-
-#~ msgid "Generating the patches"
-#~ msgstr "Foltok előállítása"
-
-#~ msgid ""
-#~ "Generating the patches that will be measured with the color instrument."
-#~ msgstr "A színmérő készülékkel mérendő foltok előállítása."
-
-#~ msgid "Setting up display device for use…"
-#~ msgstr "A használandó megjelenítőeszköz beállítása…"
-
-#~ msgid "Setting up device"
-#~ msgstr "Eszköz beállítása"
-
-#~ msgid "Setting up the device to read a spot color…"
-#~ msgstr "A direktszín olvasásához használandó eszköz beállítása…"
-
-#~ msgid "Try again"
-#~ msgstr "Próbálja újra"
-
-#~ msgid "Use anyway"
-#~ msgstr "Használat mindenképp"
-
-#~ msgid "Could not detect screen type"
-#~ msgstr "A képernyő típusa nem ismerhető fel"
-
-#~ msgid ""
-#~ "Please indicate if the screen you are trying to profile is an LCD, CRT or "
-#~ "a projector."
-#~ msgstr ""
-#~ "Adja meg, hogy a profilozni kívánt képernyő LCD, CRT vagy projektor."
-
-#~ msgid "Custom"
-#~ msgstr "Egyéni"
-
-#~ msgid "Install missing files?"
-#~ msgstr "Telepíti a hiányzó fájlokat?"
-
-#~ msgid ""
-#~ "For best results, the reference target should also be less than two years "
-#~ "old."
-#~ msgstr ""
-#~ "A legjobb eredmények érdekében a referencia cél sem lehet két évnél "
-#~ "régebbi."
-
-#~ msgid ""
-#~ "Please select the calibration target type which corresponds to your "
-#~ "reference file."
-#~ msgstr ""
-#~ "Válassza ki a kalibrálás céltípusát, amely megfelel a referenciafájljának."
-
-#~ msgid "Introduction to display calibration"
-#~ msgstr "A kijelző kalibrálásának ismertetése"
-
-#~ msgid ""
-#~ "This dialog will help calibrate your display and create a custom ICC "
-#~ "profile."
-#~ msgstr ""
-#~ "Ez az ablak segíteni fog kijelzője kalibrálásában, és egyéni ICC profil "
-#~ "létrehozásában."
-
-#~ msgid ""
-#~ "The calibration will involve several steps so that an accurate profile "
-#~ "can be obtained."
-#~ msgstr ""
-#~ "A kalibrálás több lépést foglal magába a pontos profil elkészítése "
-#~ "érdekében."
-
-#~ msgid "It should only take a few minutes."
-#~ msgstr "Ez csak pár percig fog tartani."
-
-#~ msgid ""
-#~ "It may help to sit further from the screen or to squint at the "
-#~ "calibration images in order to accurately compare the colors."
-#~ msgstr ""
-#~ "A színek pontos összehasonlításában segíthet az is, ha a képernyőtől "
-#~ "távolabb ül, vagy a kalibrációs képekre bandzsítva néz."
-
-#~ msgid "You can repeat the calibration steps as many times as you want."
-#~ msgstr "A kalibrálási lépéseket tetszőlegesen sokszor megismételheti."
-
-#~ msgid "Create table item %i/%i"
-#~ msgstr "%i/%i táblázatelem létrehozása"
-
-#~ msgid ""
-#~ "Please try to match up the gray square with the surrounding alternating "
-#~ "bars. You should match the brightness first, and then if required change "
-#~ "the color tint so it looks plain gray."
-#~ msgstr ""
-#~ "Próbálja meg a szürke négyzetet a környező váltakozó sávokhoz igazítani. "
-#~ "Először a fényerőt igazítsa, majd szükség esetén a színárnyalatot, hogy "
-#~ "egyszínű szürkének látsszon."
-
-#~ msgid ""
-#~ "This display is now calibrated. You can change the current profile using "
-#~ "the Color Profiles program."
-#~ msgstr ""
-#~ "A kijelző immár kalibrálva van. A Színprofilok program segítségével "
-#~ "módosíthatja a jelenlegi profilt."
-
-#~ msgid "Laptop LCD"
-#~ msgstr "Laptop LCD"
-
-#~ msgid "Automatic"
-#~ msgstr "Automatikus"
-
-#~ msgid ""
-#~ "This profile does not have the information required for whole-screen "
-#~ "color correction."
-#~ msgstr ""
-#~ "Ez a profil nem rendelkezik a teljes képernyős színkorrekcióhoz szükséges "
-#~ "információkkal."
-
-#~ msgid "Import ICC color profile %s?"
-#~ msgstr "Importálja az ICC-profilt (%s)?"
-
-#~ msgid "Import ICC profile"
-#~ msgstr "ICC-profil importálása"
-
-#~ msgid "Output profile '%s':"
-#~ msgstr "Kimeneti profil („%s”):"
-
-#~ msgid "not set"
-#~ msgstr "nincs beállítva"
-
-#~ msgid "There are no ICC profiles for this device type"
-#~ msgstr "Nincsenek ICC-profilok ehhez az eszköztípushoz"
-
-#~ msgid "The request failed"
-#~ msgstr "A kérés meghiúsult"
-
-#~ msgid "Rendering intent (display):"
-#~ msgstr "Megjelenítési cél (kijelző):"
-
-#~ msgid "Rendering intent (softproof):"
-#~ msgstr "Megjelenítési cél (ellenőrzés):"
-
-#~ msgid "RGB Colorspace:"
-#~ msgstr "RGB színtér:"
-
-#~ msgid "CMYK Colorspace:"
-#~ msgstr "CMYK színtér:"
-
-#~ msgid "Get the profiles for a specific device"
-#~ msgstr "Adott eszköz profiljainak lekérése"
-
-#~ msgid "Device or profile type not recognized, recognised types are:"
-#~ msgstr "Az eszköz- vagy profiltípus ismeretlen, az ismert típusok:"
-
-#~ msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
-#~ msgstr "Eszközazonosító, például: „xrandr_ibm_france_ltn154p2_l05”"
-
-#~ msgid "GNOME Color Manager ICC profile system-wide installer"
-#~ msgstr "GNOME színkezelő rendszerszintű ICC-profiltelepítő"
-
-#~ msgid "You need to specify exactly one ICC profile filename."
-#~ msgstr "Pontosan egy ICC-profil fájlnevét kell megadni."
-
-#~ msgid "You need to specify exactly one device ID."
-#~ msgstr "Pontosan egy eszközazonosítót kell megadni."
-
-#~ msgid "This program can only be used by the root user."
-#~ msgstr "Ezt a programot csak a root felhasználó használhatja."
-
-#~ msgid "The source filename must be absolute."
-#~ msgstr "A forrás fájlnévnek abszolútnak kell lennie."
-
-#~ msgid "Failed to get content type:"
-#~ msgstr "A tartalomtípus lekérése meghiúsult:"
-
-#~ msgid "Content type was incorrect:"
-#~ msgstr "A tartalomtípus helytelen volt:"
-
-#~ msgid "This program must only be run through pkexec."
-#~ msgstr "Ez a program csak pkexecen keresztül futtatható."
-
-#~ msgid "PKEXEC_UID must be set to an integer value."
-#~ msgstr "A PKEXEC_UID egész érték kell legyen."
-
-#~ msgid "The ICC profile must be owned by the user."
-#~ msgstr "Az ICC profilnak a felhasználó tulajdonában kell lennie."
-
-#~ msgid "The destination filename must be absolute."
-#~ msgstr "A cél fájlnévnek abszolútnak kell lennie."
-
-#~ msgid "Failed to copy:"
-#~ msgstr "A másolás meghiúsult:"
-
-#~ msgid "This application was compiled without VTE support."
-#~ msgstr "Ez az alkalmazás VTE-támogatás nélkül lett fordítva."
-
-#~ msgid "Recalibrate now"
-#~ msgstr "Újrakalibrálás most"
-
-#~ msgid "Ignore"
-#~ msgstr "Mellőzés"
-
-#~ msgid "Do not exit after the request has been processed"
-#~ msgstr "Ne lépjen ki a kérés feldolgozása után"
-
-#~ msgid "Color Management"
-#~ msgstr "Színkezelés"
-
-#~ msgid "Color Management D-Bus Service"
-#~ msgstr "Színkezelési D-Bus szolgáltatás"
-
-#~ msgid "Perceptual"
-#~ msgstr "Érzethelyes"
-
-#~ msgid "Relative"
-#~ msgstr "Relatív"
-
-#~ msgid "Saturation"
-#~ msgstr "Telítettség"
-
-#~ msgid "Absolute"
-#~ msgstr "Abszolút"
-
-#~ msgid "High quality photography"
-#~ msgstr "Magas minőségű fényképezés"
-
-#~ msgid "Precise color matching"
-#~ msgstr "Pontos színmegfeleltetés"
-
-#~ msgid "Graphs and presentations"
-#~ msgstr "Grafikonok és bemutatók"
-
-#~ msgid "None"
-#~ msgstr "Nincs"
-
-#~ msgid "Transfer response curve"
-#~ msgstr "Válaszátviteli görbe"
-
-#~ msgid "Image preview (from sRGB)"
-#~ msgstr "Kép előnézete (sRGB-ből)"
-
-#~ msgid "Image preview (to sRGB)"
-#~ msgstr "Kép előnézete (sRGB-be)"
-
-#~ msgid "Blue:"
-#~ msgstr "Kék:"
-
-#~ msgid "Create images for printing"
-#~ msgstr "Képek létrehozása nyomtatáshoz"
-
-#~ msgid "Generate profile from printed images"
-#~ msgstr "Profil készítése kinyomtatott képekből"
-
-#~ msgid "Green:"
-#~ msgstr "Zöld:"
-
-#~ msgid "High"
-#~ msgstr "Magas"
-
-#~ msgid "Low"
-#~ msgstr "Alacsony"
-
-#~ msgid "Profile locally attached printer"
-#~ msgstr "Helyileg csatlakoztatott nyomtató profilozása"
-
-#~ msgid "Red:"
-#~ msgstr "Vörös:"
-
-#~ msgid ""
-#~ "A working space is a default colorspace that is not associated with a "
-#~ "specific device."
-#~ msgstr ""
-#~ "A munkaterület a színek egy adott eszközhöz nem társított tartománya."
-
-#~ msgid "Add d_evice…"
-#~ msgstr "Eszköz hozzá_adása…"
-
-#~ msgid "Available Profiles"
-#~ msgstr "Elérhető profilok"
-
-#~ msgid "CMYK:"
-#~ msgstr "CMYK:"
-
-#~ msgid "Device type:"
-#~ msgstr "Eszköz típusa:"
-
-#~ msgid "Devices"
-#~ msgstr "Eszközök"
-
-#~ msgid "Display:"
-#~ msgstr "Kijelző:"
-
-#~ msgid ""
-#~ "For a color managed workflow, each connected device should have one or "
-#~ "more color profiles associated with it."
-#~ msgstr ""
-#~ "Színkezelt munkafolyamat használatához minden csatlakoztatott eszközhöz "
-#~ "társítani kell legalább egy színprofilt."
-
-#~ msgid "Gray:"
-#~ msgstr "Szürke:"
-
-#~ msgid ""
-#~ "Image files can be dragged on this window to auto-complete the above "
-#~ "fields."
-#~ msgstr ""
-#~ "Képfájlok ezen ablakba húzásával automatikusan kiegészíthetők a fenti "
-#~ "mezők."
-
-#~ msgid "Make default"
-#~ msgstr "Legyen alapértelmezett"
-
-#~ msgid "More details"
-#~ msgstr "További részletek"
-
-#~ msgid ""
-#~ "Only profiles that are compatible with the device will be listed above."
-#~ msgstr "Csak az eszközzel kompatibilis profilok kerülnek fent felsorolásra."
-
-#~ msgid "Open the documentation"
-#~ msgstr "A dokumentáció megnyitása"
-
-#~ msgid "Print Preview:"
-#~ msgstr "Nyomtatási előnézet:"
-
-#~ msgid "Remove de_vice"
-#~ msgstr "_Eszköz eltávolítása"
-
-#~ msgid "Rendering Intents"
-#~ msgstr "Megjelenítési célok"
-
-#~ msgid ""
-#~ "The rendering intent defines how color should be transformed from one "
-#~ "colorspace to another."
-#~ msgstr ""
-#~ "A megjelenítési cél a színek egyik színtérből a másikba való átalakítását "
-#~ "adja meg."
-
-#~ msgid "Working Spaces"
-#~ msgstr "Munkaterületek"
-
-#~ msgid "_Set System Default"
-#~ msgstr "_Rendszerszintű alapérték"
