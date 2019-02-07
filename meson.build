@@ -2,7 +2,7 @@ project('gnome-color-manager', 'c', 'cpp',
   version : '3.30.1',
   license : 'GPL-2.0+',
   default_options : ['warning_level=1'],
-  meson_version : '>=0.37.0'
+  meson_version : '>=0.46.0'
 )
 
 conf = configuration_data()
@@ -65,20 +65,15 @@ endforeach
 
 # enable full RELRO where possible
 # FIXME: until https://github.com/mesonbuild/meson/issues/1140 is fixed
-global_link_args = []
 test_link_args = [
   '-Wl,-z,relro',
   '-Wl,-z,now',
 ]
 foreach arg: test_link_args
-  if cc.has_argument(arg)
-    global_link_args += arg
+  if cc.has_link_argument(arg)
+    add_project_link_arguments(arg, language : 'c')
   endif
 endforeach
-add_global_link_arguments(
-  global_link_args,
-  language: 'c'
-)
 
 prefixed_bindir = join_paths(get_option('prefix'), get_option('bindir'))
 prefixed_localedir = join_paths(get_option('prefix'), get_option('localedir'))
