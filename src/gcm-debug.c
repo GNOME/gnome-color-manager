@@ -29,20 +29,6 @@
 static gboolean _verbose = FALSE;
 static gboolean _console = FALSE;
 
-gboolean
-gcm_debug_is_verbose (void)
-{
-	/* local first */
-	if (_verbose)
-		 return TRUE;
-
-	/* fall back to env variable */
-	if (g_getenv ("VERBOSE") != NULL)
-		 return TRUE;
-	return FALSE;
-}
-
-
 static void
 gcm_debug_ignore_cb (const gchar *log_domain, GLogLevelFlags log_level,
 		     const gchar *message, gpointer user_data)

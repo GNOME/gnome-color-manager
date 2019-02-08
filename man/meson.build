@@ -28,11 +28,4 @@ if docbook2man.found()
     install : true,
     install_dir : join_paths(prefixed_mandir, 'man1'),
   )
-  custom_target('gcm-viewer-man',
-    output : 'gcm-viewer.1',
-    input : 'gcm-viewer.sgml',
-    command : [docbook2man, '@INPUT@', '--output', 'man'],
-    install : true,
-    install_dir : join_paths(prefixed_mandir, 'man1'),
-  )
 endif

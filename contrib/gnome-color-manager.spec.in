@@ -59,37 +59,17 @@ Extra utilities not normally required to calibrate.
 
 %find_lang %name --with-gnome
 
-%post
-touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-update-mime-database %{_datadir}/mime &> /dev/null || :
-
-%postun
-if [ $1 -eq 0 ]; then
-    touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
-    gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
-    glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
-fi
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-update-mime-database %{_datadir}/mime &> /dev/null || :
-
-%posttrans
-gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
-glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
-
 %files -f %{name}.lang
-%defattr(-,root,root,-)
-%doc AUTHORS COPYING
+%license COPYING
+%doc AUTHORS README
 %{_bindir}/gcm-calibrate
 %{_libexecdir}/gcm-helper-exiv
 %dir %{_datadir}/gnome-color-manager
 %dir %{_datadir}/gnome-color-manager/targets
 %dir %{_datadir}/gnome-color-manager/icons
-%dir %{_datadir}/gnome-color-manager/figures
 %dir %{_datadir}/gnome-color-manager/ti1
 %{_datadir}/gnome-color-manager/targets/*
 %{_datadir}/gnome-color-manager/icons/*
-%{_datadir}/gnome-color-manager/figures/*
 %{_datadir}/gnome-color-manager/ti1/*
 %{_datadir}/man/man1/gcm-calibrate.1.gz
 %{_datadir}/applications/gcm-calibrate.desktop
@@ -100,15 +80,11 @@ glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
 %{_bindir}/gcm-import
 %{_bindir}/gcm-inspect
 %{_bindir}/gcm-picker
-%{_bindir}/gcm-viewer
-%{_datadir}/metainfo/org.gnome.ColorProfileViewer.appdata.xml
 %{_datadir}/applications/gcm-import.desktop
 %{_datadir}/applications/gcm-picker.desktop
-%{_datadir}/applications/org.gnome.ColorProfileViewer.desktop
 %{_datadir}/man/man1/gcm-import.1.gz
 %{_datadir}/man/man1/gcm-inspect.1.gz
 %{_datadir}/man/man1/gcm-picker.1.gz
-%{_datadir}/man/man1/gcm-viewer.1.gz
 
 %changelog
 * #LONGDATE# Richard Hughes <richard@hughsie.com> #VERSION#-0.#BUILD##ALPHATAG#

@@ -216,31 +216,6 @@ gcm_utils_ptr_array_to_strv (GPtrArray *array)
 	return value;
 }
 
-gboolean
-gcm_gnome_help (const gchar *link_id)
-{
-	g_autoptr(GError) error = NULL;
-	g_autofree gchar *uri = NULL;
-
-	if (link_id)
-		uri = g_strconcat ("help:gnome-color-manager?", link_id, NULL);
-	else
-		uri = g_strdup ("help:gnome-color-manager");
-	g_debug ("opening uri %s", uri);
-
-	gtk_show_uri (NULL, uri, GDK_CURRENT_TIME, &error);
-
-	if (error != NULL) {
-		GtkWidget *d;
-		d = gtk_message_dialog_new (NULL, GTK_DIALOG_MODAL | GTK_DIALOG_DESTROY_WITH_PARENT,
-					    GTK_MESSAGE_ERROR, GTK_BUTTONS_OK, "%s", error->message);
-		gtk_dialog_run (GTK_DIALOG(d));
-		gtk_widget_destroy (d);
-		return FALSE;
-	}
-	return TRUE;
-}
-
 void
 gcm_utils_alphanum_lcase (gchar *data)
 {
@@ -315,79 +290,4 @@ gcm_utils_get_pixel_format (GdkPixbuf *pixbuf)
 	}
 out:
 	return format;
-}
-
-gboolean
-gcm_utils_image_convert (GtkImage *image,
-			 CdIcc *input,
-			 CdIcc *abstract,
-			 CdIcc *output,
-			 GError **error)
-{
-	CdPixelFormat pixel_format;
-	g_autoptr(CdTransform) transform = NULL;
-	GdkPixbuf *pixbuf;
-	GdkPixbuf *original_pixbuf;
-	gboolean ret = TRUE;
-	guchar *data;
-	guint bpp;
-
-	/* get pixbuf */
-	pixbuf = gtk_image_get_pixbuf (image);
-	if (pixbuf == NULL)
-		return FALSE;
-
-	/* work out the pixel format */
-	pixel_format = gcm_utils_get_pixel_format (pixbuf);
-	if (pixel_format == CD_PIXEL_FORMAT_UNKNOWN) {
-		ret = FALSE;
-		g_set_error_literal (error, 1, 0, "format not supported");
-		return FALSE;
-	}
-
-	/* get a copy of the original image, *not* a ref */
-	original_pixbuf = g_object_get_data (G_OBJECT (pixbuf), "GcmImageOld");
-	if (original_pixbuf == NULL) {
-		data = g_memdup (gdk_pixbuf_get_pixels (pixbuf),
-				 gdk_pixbuf_get_bits_per_sample (pixbuf) *
-				 gdk_pixbuf_get_rowstride (pixbuf) *
-				 gdk_pixbuf_get_height (pixbuf) / 8);
-		original_pixbuf = gdk_pixbuf_new_from_data (data,
-			  gdk_pixbuf_get_colorspace (pixbuf),
-			  gdk_pixbuf_get_has_alpha (pixbuf),
-			  gdk_pixbuf_get_bits_per_sample (pixbuf),
-			  gdk_pixbuf_get_width (pixbuf),
-			  gdk_pixbuf_get_height (pixbuf),
-			  gdk_pixbuf_get_rowstride (pixbuf),
-			  (GdkPixbufDestroyNotify) g_free, NULL);
-		g_object_set_data_full (G_OBJECT (pixbuf), "GcmImageOld",
-					original_pixbuf,
-					(GDestroyNotify) g_object_unref);
-	}
-
-	/* convert in-place */
-	transform = cd_transform_new ();
-	cd_transform_set_input_icc (transform, input);
-	cd_transform_set_abstract_icc (transform, abstract);
-	cd_transform_set_output_icc (transform, output);
-	cd_transform_set_rendering_intent (transform, CD_RENDERING_INTENT_PERCEPTUAL);
-	cd_transform_set_input_pixel_format (transform, pixel_format);
-	cd_transform_set_output_pixel_format (transform, pixel_format);
-	bpp = gdk_pixbuf_get_rowstride (pixbuf) / gdk_pixbuf_get_width (pixbuf);
-	ret = cd_transform_process (transform,
-				    gdk_pixbuf_get_pixels (original_pixbuf),
-				    gdk_pixbuf_get_pixels (pixbuf),
-				    gdk_pixbuf_get_width (pixbuf),
-				    gdk_pixbuf_get_height (pixbuf),
-				    gdk_pixbuf_get_rowstride (pixbuf) / bpp,
-				    NULL,
-				    error);
-	if (!ret)
-		return FALSE;
-
-	/* refresh */
-	g_object_ref (pixbuf);
-	gtk_image_set_from_pixbuf (image, pixbuf);
-	g_object_unref (pixbuf);
-	return TRUE;
 }

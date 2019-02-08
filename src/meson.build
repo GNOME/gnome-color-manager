@@ -7,13 +7,6 @@ gcm_picker_resources = gnome.compile_resources(
   c_name : 'gcm',
 )
 
-gcm_viewer_resources = gnome.compile_resources(
-  'gcm-viewer-resources',
-  'gcm-viewer.gresource.xml',
-  source_dir : '.',
-  c_name : 'gcm',
-)
-
 if get_option('exiv')
   executable(
     'gcm-helper-exiv',
@@ -34,11 +27,9 @@ if get_option('exiv')
 endif
 
 shared_srcs = [
-  'gcm-cie-widget.c',
   'gcm-debug.c',
   'gcm-exif.c',
   'gcm-print.c',
-  'gcm-trc-widget.c',
   'gcm-utils.c',
 ]
 
@@ -51,10 +42,6 @@ executable(
     'gcm-calibrate-argyll.h',
     'gcm-calibrate.c',
     'gcm-calibrate.h',
-    'gcm-cell-renderer-profile-text.c',
-    'gcm-cell-renderer-profile-text.h',
-    'gcm-gamma-widget.c',
-    'gcm-gamma-widget.h',
     'gcm-calibrate-main.c',
     shared_srcs
   ],
@@ -141,32 +128,6 @@ executable(
   install : true,
 )
 
-executable(
-  'gcm-viewer',
-  gcm_viewer_resources,
-  sources : [
-    'gcm-cell-renderer-profile-text.c',
-    'gcm-cell-renderer-color.c',
-    'gcm-viewer.c',
-    shared_srcs
-  ],
-  include_directories : [
-    include_directories('..'),
-  ],
-  dependencies : [
-    libcanberra,
-    libtiff,
-    libcolord_gtk,
-    libm,
-    liblcms,
-    libexif,
-    libgio,
-    libgtk,
-  ],
-  c_args : cargs,
-  install : true,
-)
-
 if get_option('tests')
   cargs += ['-DTESTDATADIR="' + join_paths(meson.current_source_dir(), '..', 'data', 'tests') + '"']
   e = executable(
@@ -176,7 +137,6 @@ if get_option('tests')
       'gcm-brightness.c',
       'gcm-calibrate-argyll.c',
       'gcm-calibrate.c',
-      'gcm-gamma-widget.c',
       'gcm-self-test.c',
     ],
     include_directories : [
