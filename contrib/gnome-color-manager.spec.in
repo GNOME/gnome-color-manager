@@ -9,14 +9,14 @@ Group:     Applications/System
 URL:       http://projects.gnome.org/gnome-color-manager/
 Source0:   http://download.gnome.org/sources/gnome-color-manager/3.25/%{name}-%{version}.tar.xz
 
-Requires:  gnome-icon-theme
 Requires:  shared-mime-info
 
+BuildRequires: gcc
+BuildRequires: gcc-c++
 BuildRequires: gtk3-devel >= 3.0.0
 BuildRequires: gnome-doc-utils >= 0.3.2
 BuildRequires: desktop-file-utils
 BuildRequires: gettext
-BuildRequires: vte3-devel
 BuildRequires: gnome-doc-utils
 BuildRequires: lcms2-devel
 BuildRequires: libtiff-devel
@@ -29,6 +29,7 @@ BuildRequires: colord-devel >= 0.1.12
 BuildRequires: colord-gtk-devel >= 0.1.22
 BuildRequires: itstool
 BuildRequires: meson
+BuildRequires: vte291-devel
 
 Requires(post):   /usr/bin/gtk-update-icon-cache
 Requires(postun): /usr/bin/gtk-update-icon-cache
