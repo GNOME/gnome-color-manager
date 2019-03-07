@@ -21,12 +21,14 @@
 
 #include <exiv2/image.hpp>
 #include <exiv2/exif.hpp>
-#include <iostream>
-#include <iomanip>
 
 #if EXIV2_MAJOR_VERSION >= 1 || (EXIV2_MAJOR_VERSION == 0 && EXIV2_MINOR_VERSION >= 27)
 #define HAVE_EXIV2_ERROR_CODE
+#include <exiv2/error.hpp>
 #endif
+
+#include <iostream>
+#include <iomanip>
 
 int
 main (int argc, char* const argv[])
