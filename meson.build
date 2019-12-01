@@ -89,7 +89,7 @@ libtiff = dependency('libtiff-4')
 colord = dependency('colord', version : '>= 1.3.1')
 libcolord_gtk = dependency('colord-gtk', version : '>= 0.1.20')
 libcanberra = dependency('libcanberra-gtk3', version : '>= 0.10')
-libm = cc.find_library('libm', required: false)
+libm = cc.find_library('m', required: false)
 liblcms = dependency('lcms2', version : '>= 2.2')
 
 libvte = dependency('vte-2.91', version : '>= 0.25.1', required : false)
