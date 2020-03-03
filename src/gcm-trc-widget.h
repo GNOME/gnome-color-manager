@@ -19,12 +19,9 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __GCM_TRC_WIDGET_H__
-#define __GCM_TRC_WIDGET_H__
+#pragma once
 
 #include <gtk/gtk.h>
-
-G_BEGIN_DECLS
 
 #define GCM_TYPE_TRC_WIDGET		(gcm_trc_widget_get_type ())
 #define GCM_TRC_WIDGET(obj)		(G_TYPE_CHECK_INSTANCE_CAST ((obj), GCM_TYPE_TRC_WIDGET, GcmTrcWidget))
@@ -50,7 +47,3 @@ struct GcmTrcWidgetClass
 
 GType		 gcm_trc_widget_get_type		(void);
 GtkWidget	*gcm_trc_widget_new			(void);
-
-G_END_DECLS
-
-#endif

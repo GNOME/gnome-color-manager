@@ -19,8 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef GCM_CELL_RENDERER_COLOR_H
-#define GCM_CELL_RENDERER_COLOR_H
+#pragma once
 
 #include <glib-object.h>
 #include <gtk/gtk.h>
@@ -32,8 +31,6 @@
 #define GCM_IS_CELL_RENDERER_COLOR(obj)		(G_TYPE_CHECK_INSTANCE_TYPE((obj), GCM_TYPE_CELL_RENDERER_COLOR))
 #define GCM_IS_CELL_RENDERER_COLOR_CLASS(cls)	(G_TYPE_CHECK_CLASS_TYPE((cls), GCM_TYPE_CELL_RENDERER_COLOR))
 #define GCM_CELL_RENDERER_COLOR_GET_CLASS(obj)	(G_TYPE_INSTANCE_GET_CLASS((obj), GCM_TYPE_CELL_RENDERER_COLOR, GcmCellRendererColorClass))
-
-G_BEGIN_DECLS
 
 typedef struct _GcmCellRendererColor		GcmCellRendererColor;
 typedef struct _GcmCellRendererColorClass	GcmCellRendererColorClass;
@@ -53,8 +50,3 @@ struct _GcmCellRendererColorClass
 
 GType		 gcm_cell_renderer_color_get_type	(void);
 GtkCellRenderer	*gcm_cell_renderer_color_new		(void);
-
-G_END_DECLS
-
-#endif /* GCM_CELL_RENDERER_COLOR_H */
-

@@ -19,13 +19,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __GCM_DEBUG_H__
-#define __GCM_DEBUG_H__
+#pragma once
 
 #include <glib.h>
 
 gboolean	 gcm_debug_is_verbose		(void);
 GOptionGroup	*gcm_debug_get_option_group	(void);
 void		 gcm_debug_setup		(gboolean	 enabled);
-
-#endif /* __GCM_DEBUG_H__ */
