@@ -1,12 +1,5 @@
 docbook2man = find_program('docbook2man', required : false)
 if docbook2man.found()
-  custom_target('gcm-calibrate-man',
-    output : 'gcm-calibrate.1',
-    input : 'gcm-calibrate.sgml',
-    command : [docbook2man, '@INPUT@', '--output', 'man'],
-    install : true,
-    install_dir : join_paths(prefixed_mandir, 'man1'),
-  )
   custom_target('gcm-import-man',
     output : 'gcm-import.1',
     input : 'gcm-import.sgml',
