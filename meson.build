@@ -1,4 +1,4 @@
-project('gnome-color-manager', 'c', 'cpp',
+project('gnome-color-manager', 'c',
   version : '3.32.0',
   license : 'GPL-2.0+',
   default_options : ['warning_level=1'],
@@ -39,6 +39,8 @@ test_args = [
   '-Wno-strict-aliasing',
   '-Wno-suggest-attribute=format',
   '-Wno-unused-parameter',
+  '-Wno-cast-function-type',
+  '-Wno-deprecated-declarations',
   '-Wold-style-definition',
   '-Woverride-init',
   '-Wpacked',
@@ -84,28 +86,9 @@ prefixed_pkgdatadir = join_paths(get_option('prefix'), get_option('datadir'), 'g
 
 libgio = dependency('gio-2.0', version : '>= 2.25.9')
 libgtk = dependency('gtk+-3.0', version : '>= 2.91.0')
-libexif = dependency('libexif')
-libtiff = dependency('libtiff-4')
-colord = dependency('colord', version : '>= 1.3.1')
-libcolord_gtk = dependency('colord-gtk', version : '>= 0.1.20')
-libcanberra = dependency('libcanberra-gtk3', version : '>= 0.10')
+libcolord = dependency('colord', version : '>= 1.3.1')
 libm = cc.find_library('libm', required: false)
 liblcms = dependency('lcms2', version : '>= 2.2')
-
-libvte = dependency('vte-2.91', version : '>= 0.25.1', required : false)
-if libvte.found()
-  conf.set('HAVE_VTE', '1')
-endif
-
-if get_option('exiv')
-  libexiv = dependency('exiv2')
-  conf.set('HAVE_EXIV', '1')
-endif
-
-if get_option('packagekit')
-  libexiv = dependency('exiv2')
-  conf.set('HAVE_PACKAGEKIT', '1')
-endif
 
 gnome = import('gnome')
 i18n = import('i18n')
