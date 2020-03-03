@@ -15,11 +15,6 @@
 
 #include "gcm-utils.h"
 
-#define PK_DBUS_SERVICE					"org.freedesktop.PackageKit"
-#define PK_DBUS_PATH					"/org/freedesktop/PackageKit"
-#define PK_DBUS_INTERFACE_QUERY				"org.freedesktop.PackageKit.Query"
-#define PK_DBUS_INTERFACE_MODIFY			"org.freedesktop.PackageKit.Modify"
-
 gchar *
 gcm_utils_linkify (const gchar *hostile_text)
 {
