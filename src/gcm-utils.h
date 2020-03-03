@@ -19,8 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-#ifndef __GCM_UTILS_H
-#define __GCM_UTILS_H
+#pragma once
 
 #include <glib-object.h>
 #include <gtk/gtk.h>
@@ -43,6 +42,4 @@ gboolean	 gcm_utils_image_convert		(GtkImage		*image,
 							 CdIcc			*abstract,
 							 CdIcc			*output,
 							 GError			**error);
-
-#endif /* __GCM_UTILS_H */
 
