@@ -14,11 +14,3 @@ install_data([
   ],
   install_dir : join_paths(prefixed_datadir, 'icons/hicolor/scalable/apps')
 )
-
-install_data([
-  'scalable/lcd.svg',
-  'scalable/crt.svg',
-  'scalable/projector.svg',
-  ],
-  install_dir : join_paths(prefixed_datadir, 'gnome-color-manager/icons/icons')
-)

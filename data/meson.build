@@ -1,13 +1,10 @@
 subdir('appdata')
 subdir('figures')
 subdir('icons')
-subdir('targets')
-subdir('ti1')
 
 desktop_files = [
   'org.gnome.ColorProfileViewer.desktop',
   'gcm-picker.desktop',
-  'gcm-calibrate.desktop',
   'gcm-import.desktop',
 ]
 foreach desktop_file: desktop_files
