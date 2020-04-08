@@ -12,7 +12,6 @@
 #include <gdk/gdkx.h>
 #include <glib/gstdio.h>
 #include <locale.h>
-#include <canberra-gtk.h>
 #include <colord.h>
 #include <math.h>
 
