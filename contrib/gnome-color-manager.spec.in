@@ -1,22 +1,16 @@
 %define alphatag                        #ALPHATAG#
 
-Summary:   Color management tools for GNOME
 Name:      gnome-color-manager
 Version:   #VERSION#
 Release:   0.#BUILD#%{?alphatag}%{?dist}
+Summary:   Color management tools for GNOME
 License:   GPLv2+
-Group:     Applications/System
 URL:       https://gitlab.gnome.org/GNOME/gnome-color-manager
-Source0:   http://download.gnome.org/sources/gnome-color-manager/3.25/%{name}-%{version}.tar.xz
+Source0:   http://download.gnome.org/sources/gnome-color-manager/3.36/%{name}-%{version}.tar.xz
 
-Requires:  gnome-icon-theme
-Requires:  shared-mime-info
-
+BuildRequires: gcc
 BuildRequires: gtk3-devel >= 3.0.0
-BuildRequires: gnome-doc-utils >= 0.3.2
-BuildRequires: desktop-file-utils
 BuildRequires: gettext
-BuildRequires: gnome-doc-utils
 BuildRequires: lcms2-devel
 BuildRequires: glib2-devel >= 2.25.9-2
 BuildRequires: docbook-utils
@@ -24,22 +18,18 @@ BuildRequires: colord-devel >= 0.1.12
 BuildRequires: itstool
 BuildRequires: meson
 
+Requires: shared-mime-info
+
 # obsolete sub-package
 Obsoletes: gnome-color-manager-devel <= 3.1.1
+Provides: gnome-color-manager-devel
 
 %description
 gnome-color-manager is a session framework that makes it easy to manage, install
 and generate color profiles in the GNOME desktop.
 
-%package utils
-Summary: Extra utilities for color profiles
-Requires: %{name}%{?_isa} = %{version}-%{release}
-
-%description utils
-Extra utilities not normally required to calibrate.
-
 %prep
-%setup -q
+%autosetup -p1
 
 %build
 %meson
@@ -50,46 +40,19 @@ Extra utilities not normally required to calibrate.
 
 %find_lang %name --with-gnome
 
-%post
-touch --no-create %{_datadir}/icons/hicolor &>/dev/null || :
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-update-mime-database %{_datadir}/mime &> /dev/null || :
-
-%postun
-if [ $1 -eq 0 ]; then
-    touch --no-create %{_datadir}/icons/hicolor &> /dev/null || :
-    gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
-    glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
-fi
-update-desktop-database %{_datadir}/applications &> /dev/null || :
-update-mime-database %{_datadir}/mime &> /dev/null || :
-
-%posttrans
-gtk-update-icon-cache %{_datadir}/icons/hicolor &> /dev/null || :
-glib-compile-schemas %{_datadir}/glib-2.0/schemas &> /dev/null || :
-
 %files -f %{name}.lang
-%defattr(-,root,root,-)
-%doc AUTHORS COPYING
+%license COPYING
+%doc AUTHORS README
+%{_bindir}/gcm-*
+%{_datadir}/applications/gcm-*.desktop
+%{_datadir}/applications/org.gnome.ColorProfileViewer.desktop
 %dir %{_datadir}/gnome-color-manager
 %dir %{_datadir}/gnome-color-manager/figures
 %{_datadir}/gnome-color-manager/figures/*
-
-%files utils
 %{_datadir}/icons/hicolor/*/*/*.png
 %{_datadir}/icons/hicolor/scalable/*/*.svg*
-%{_bindir}/gcm-import
-%{_bindir}/gcm-inspect
-%{_bindir}/gcm-picker
-%{_bindir}/gcm-viewer
 %{_datadir}/metainfo/org.gnome.ColorProfileViewer.appdata.xml
-%{_datadir}/applications/gcm-import.desktop
-%{_datadir}/applications/gcm-picker.desktop
-%{_datadir}/applications/org.gnome.ColorProfileViewer.desktop
-%{_datadir}/man/man1/gcm-import.1.gz
-%{_datadir}/man/man1/gcm-inspect.1.gz
-%{_datadir}/man/man1/gcm-picker.1.gz
-%{_datadir}/man/man1/gcm-viewer.1.gz
+%{_mandir}/man1/*.1*
 
 %changelog
 * #LONGDATE# Richard Hughes <richard@hughsie.com> #VERSION#-0.#BUILD##ALPHATAG#
