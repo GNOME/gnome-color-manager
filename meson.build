@@ -85,7 +85,7 @@ prefixed_datadir = join_paths(get_option('prefix'), get_option('datadir'))
 prefixed_pkgdatadir = join_paths(get_option('prefix'), get_option('datadir'), 'gnome-color-manager')
 
 libgio = dependency('gio-2.0', version : '>= 2.25.9')
-libgtk = dependency('gtk+-3.0', version : '>= 2.91.0')
+libgtk = dependency('gtk+-3.0', version : '>= 3.4')
 libcolord = dependency('colord', version : '>= 1.3.1')
 libm = cc.find_library('m', required: false)
 liblcms = dependency('lcms2', version : '>= 2.2')
