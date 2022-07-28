@@ -1,21 +1,15 @@
-# Copyright (C) 2022 The Abkhazian language development fund named after Bagrat Shinkuba
-# This file is distributed under the same license as the gnome-color-manager package.
-# Нанба Наала <naala-nanba@rambler.ru>, 2022.
-#
-
 msgid ""
 msgstr ""
-"Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/"
 "issues\n"
 "POT-Creation-Date: 2022-07-17 17:52+0000\n"
-"PO-Revision-Date: 2022-07-22 16:00+0000\n"
 "Last-Translator: Нанба Наала <naala-nanba@rambler.ru>\n"
-"Language-Team: Abkhazian <LL@li.org>\n"
+"Language-Team: Abkhazian <ab@li.org>\n"
 "Language: ab\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:7
 msgid "GNOME Color Manager"
@@ -132,6 +126,7 @@ msgstr ""
 msgid "Profile description: %s"
 msgstr ""
 
+#. TRANSLATORS: message text
 #: src/gcm-import.c:153
 msgid "Profile copyright:"
 msgstr "Аԥҵаҩцәа рзинқәа аҷыдахәразы"
@@ -180,6 +175,7 @@ msgstr ""
 msgid "Description:"
 msgstr ""
 
+#. TRANSLATORS: this is the ICC profile copyright
 #: src/gcm-inspect.c:42
 msgid "Copyright:"
 msgstr "Аԥҵаҩцәа рзинқәа:"
@@ -285,10 +281,13 @@ msgstr ""
 msgid "GNOME Color Manager Color Picker"
 msgstr ""
 
-#: src/gcm-picker.ui:93+src/gcm-viewer.c:572
+#. the color representation
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.ui:93 src/gcm-viewer.c:572
 msgid "XYZ"
 msgstr "XYZ"
 
+#. Lab is the color representation and D50 is the white point
 #: src/gcm-picker.ui:108
 msgid "Lab (D50)"
 msgstr "Lab (D50)"
@@ -314,7 +313,10 @@ msgstr ""
 msgid "Colorspace"
 msgstr ""
 
-#: src/gcm-picker.ui:183+src/gcm-utils.c:67+src/gcm-viewer.c:592
+#. These are the values of the chosen color in Red, Green, Blue encoding
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.ui:183 src/gcm-utils.c:67 src/gcm-viewer.c:592
 msgid "RGB"
 msgstr "RGB"
 
@@ -333,7 +335,9 @@ msgstr ""
 msgid "_Measure"
 msgstr ""
 
-#: src/gcm-utils.c:71+src/gcm-viewer.c:604
+#. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-utils.c:71 src/gcm-viewer.c:604
 msgid "CMYK"
 msgstr "CMYK"
 
@@ -356,7 +360,7 @@ msgstr ""
 #. TRANSLATORS: button, delete a profile
 #: src/gcm-viewer.c:317
 msgid "Delete"
-msgstr ""
+msgstr "Delete"
 
 #. TRANSLATORS: dialog for file->open dialog
 #: src/gcm-viewer.c:356
@@ -401,6 +405,7 @@ msgstr ""
 msgid "Output device"
 msgstr ""
 
+#. TRANSLATORS: this the ICC profile type
 #: src/gcm-viewer.c:549
 msgid "Devicelink"
 msgstr "Devicelink"
@@ -410,6 +415,7 @@ msgstr "Devicelink"
 msgid "Colorspace conversion"
 msgstr ""
 
+#. TRANSLATORS: this the ICC profile kind
 #: src/gcm-viewer.c:557
 msgid "Abstract"
 msgstr "Абстракттә"
@@ -419,30 +425,37 @@ msgstr "Абстракттә"
 msgid "Named color"
 msgstr ""
 
+#. TRANSLATORS: this the ICC colorspace type
 #: src/gcm-viewer.c:576
 msgid "LAB"
 msgstr "LAB"
 
+#. TRANSLATORS: this the ICC colorspace type
 #: src/gcm-viewer.c:580
 msgid "LUV"
 msgstr "LUV"
 
+#. TRANSLATORS: this the ICC colorspace type
 #: src/gcm-viewer.c:584
 msgid "YCbCr"
 msgstr "YCbCr"
 
+#. TRANSLATORS: this the ICC colorspace type
 #: src/gcm-viewer.c:588
 msgid "Yxy"
 msgstr "Yxy"
 
+#. TRANSLATORS: this the ICC colorspace type
 #: src/gcm-viewer.c:596
 msgid "Gray"
 msgstr "Gray"
 
+#. TRANSLATORS: this the ICC colorspace type
 #: src/gcm-viewer.c:600
 msgid "HSV"
 msgstr "HSV"
 
+#. TRANSLATORS: this the ICC colorspace type
 #: src/gcm-viewer.c:608
 msgid "CMY"
 msgstr "CMY"
@@ -570,6 +583,7 @@ msgstr ""
 msgid "No description has been set"
 msgstr ""
 
+#. TRANSLATORS: the profile is broken
 #: src/gcm-viewer.c:788
 msgid "No copyright has been set"
 msgstr "Аԥҵаҩцәа рзинқәа арбаӡам"
@@ -624,6 +638,7 @@ msgstr ""
 msgid "Unknown warning type"
 msgstr ""
 
+#. TRANSLATORS: if the device has a VCGT profile
 #: src/gcm-viewer.c:965
 msgid "Yes"
 msgstr "Ааи"
@@ -707,9 +722,10 @@ msgstr ""
 msgid "White point"
 msgstr ""
 
+#. The licence of the profile, normally non-free
 #: src/gcm-viewer.ui:238
 msgid "Copyright"
-msgstr "Аԥҵаҩцәа рзинқәа"
+msgstr "аԥҵаҩы изин"
 
 #. The file size in bytes of the profile
 #: src/gcm-viewer.ui:254
