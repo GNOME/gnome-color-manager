@@ -6,663 +6,879 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
-"Report-Msgid-Bugs-To: http://bugzilla.gnome.org/enter_bug.cgi?product=gnome-"
-"color-manager\n"
-"POT-Creation-Date: 2009-11-25 23:03+0000\n"
-"PO-Revision-Date: 2009-11-27 11:30+0700\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/"
+"issues\n"
+"POT-Creation-Date: 2022-07-17 17:52+0000\n"
+"PO-Revision-Date: 2024-02-23 04:07+0700\n"
 "Last-Translator: Phondanai Khanti <phondanai@gmail.com>\n"
 "Language-Team: Thai <thai-l10n@googlegroups.com>\n"
 "Language: th\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.2\n"
 
-#. Expander label, for use when the user wants to see the VTE widget and what the calibration tool is actually doing
-#: ../data/gcm-calibrate.ui.h:2
-msgid "Details"
-msgstr "รายละเอียด"
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:7
+msgid "GNOME Color Manager"
+msgstr "โปรแกรมจัดการสีของ GNOME"
 
-#: ../data/gcm-apply.desktop.in.h:1
-msgid "Applies device profile settings at session startup"
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:8
+#: data/org.gnome.ColorProfileViewer.desktop.in:4
+msgid "Inspect and compare installed color profiles"
+msgstr "ตรวจสอบและเปรียบเทียบโปรไฟล์สีที่ติดตั้งไว้"
+
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:10
+msgid ""
+"GNOME Color Profile Viewer shows installed color profiles on your system and "
+"allows you to calibrate displays, printers and cameras using a wizard."
 msgstr ""
+"โปรแกรมดูโปรไฟล์สีของ GNOME แสดงโปรไฟล์สีที่ติดตั้งไว้ในระบบของคุณและให้คุณปรับเทียบจอภาพ "
+"เครื่องพิมพ์ และกล้องโดยใช้ตัวช่วยสร้างได้"
 
-#: ../data/gcm-apply.desktop.in.h:2
-msgid "Load device color profiles"
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:15
+msgid ""
+"This functionality is typically used by GNOME Control Center from the color "
+"panel although can be used on its own."
 msgstr ""
+"โดยปกติแล้วฟังก์ชันการทำงานนี้จะถูกใช้โดยศูนย์ควบคุมของ GNOME จากแผงสี "
+"ถึงแม้ว่าจะสามารถทำงานได้ด้วยตัวเองก็ตาม"
 
-#: ../data/gcm-import.desktop.in.h:1
+#: data/gcm-import.desktop.in:3
 msgid "ICC Profile Installer"
-msgstr ""
+msgstr "เครื่องมือติดตั้งโปรไฟล์ ICC"
 
-#: ../data/gcm-import.desktop.in.h:2
-msgid "ICC profile installer"
-msgstr ""
-
-#: ../data/gcm-import.desktop.in.h:3
+#: data/gcm-import.desktop.in:4
 msgid "Install ICC profiles"
-msgstr ""
+msgstr "ติดตั้งโปรไฟล์ ICC"
 
-#: ../data/gcm-prefs.desktop.in.h:1
-msgid "Color Profiles"
-msgstr "โพรไฟล์สี"
+#. Window title, where the user can pick spot colors using a measuring device
+#: data/gcm-picker.desktop.in:3 src/gcm-picker.ui:27 src/gcm-picker.ui:324
+msgid "Color Picker"
+msgstr "เครื่องมือเลือกสี"
 
-#: ../data/gcm-prefs.desktop.in.h:2
-msgid "Manage ICC color profiles"
-msgstr ""
+#: data/gcm-picker.desktop.in:4
+msgid "Use the color sensor to sample spot colors"
+msgstr "ใช้เซ็นเซอร์สีเพื่อสุ่มตัวอย่างสีสปอต"
 
-#. Radio buttons in the prefs dialog
-#: ../data/gcm-prefs.ui.h:2
-msgid "Apply _global display correction"
-msgstr ""
+#: data/org.gnome.ColorProfileViewer.desktop.in:3 src/gcm-viewer.ui:1133
+msgid "Color Profile Viewer"
+msgstr "โปรแกรมดูโปรไฟล์สี"
 
-#: ../data/gcm-prefs.ui.h:3
-msgid "Brightness:"
-msgstr "ความสว่าง:"
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.ColorProfileViewer.desktop.in:13
+msgid "Color;ICC;"
+msgstr "สี;ICC;"
 
-#. Section heading for device profile settings
-#: ../data/gcm-prefs.ui.h:5
-msgid "Color Profile:"
-msgstr "โพรไฟล์สี"
+#. TRANSLATORS: this is when there is no profile for the device
+#: src/gcm-cell-renderer-profile-text.c:57
+msgid "No profile"
+msgstr "ไม่มีโปรไฟล์"
 
-#: ../data/gcm-prefs.ui.h:6
-msgid "Color management"
-msgstr ""
+#: src/gcm-cell-renderer-profile-text.c:73
+#, c-format
+msgid "Default %s"
+msgstr "%s เริ่มต้น"
 
-#: ../data/gcm-prefs.ui.h:7
-msgid "Contrast:"
-msgstr "ความต่างระดับสี:"
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile has been auto-generated for this hardware
+#: src/gcm-cell-renderer-profile-text.c:88
+msgid "Default: "
+msgstr "ค่าเริ่มต้น: "
 
-#. Tab title, system wide defaults to use
-#: ../data/gcm-prefs.ui.h:9
-msgid "Defaults"
-msgstr ""
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile his a standard space like AdobeRGB
+#: src/gcm-cell-renderer-profile-text.c:93
+msgid "Colorspace: "
+msgstr "ห้วงสี: "
 
-#. Tab title, currently connected or saved devices
-#: ../data/gcm-prefs.ui.h:11
-msgid "Devices"
-msgstr ""
-
-#. What mode to use for display rendering intent
-#: ../data/gcm-prefs.ui.h:13
-msgid "Display:"
-msgstr ""
-
-#. Radio buttons in the prefs dialog
-#: ../data/gcm-prefs.ui.h:15
-msgid "Do global correction and set profile for color managed applications"
-msgstr ""
-
-#. Radio buttons in the prefs dialog
-#: ../data/gcm-prefs.ui.h:17
-msgid "Do not enable display correction"
-msgstr ""
-
-#. Settings that users don't normally have to touch
-#: ../data/gcm-prefs.ui.h:19
-msgid "Fine tuning:"
-msgstr ""
-
-#: ../data/gcm-prefs.ui.h:20
-msgid "Gamma:"
-msgstr "แกมมา:"
-
-#. The licence of the profile, normally non-free
-#: ../data/gcm-prefs.ui.h:22
-msgid "License:"
-msgstr "สัญญาอนุญาต:"
-
-#. The type of profile, e.g. display, scanner, etc.
-#: ../data/gcm-prefs.ui.h:24
-msgid "Profile type:"
-msgstr "ชนิดโพรไฟล์:"
-
-#: ../data/gcm-prefs.ui.h:25
-msgid "Rendering intent:"
-msgstr ""
-
-#. Technical color word for softproof rendering intent
-#: ../data/gcm-prefs.ui.h:27
-msgid "Softproof:"
-msgstr ""
-
-#. The manufacturer of the profile
-#: ../data/gcm-prefs.ui.h:29
-msgid "Vendor:"
-msgstr "ผู้ผลิต:"
-
-#. This is a button to calibrate the device by creating an ICC profile file using a hardware device or a reference image
-#: ../data/gcm-prefs.ui.h:31
-msgid "_Calibrate"
-msgstr ""
-
-#. This is a button to delete the saved device
-#: ../data/gcm-prefs.ui.h:33
-msgid "_Delete"
-msgstr "_ลบ"
-
-#. This resets the device to it's defaults, and removes any user tweaked settings.
-#: ../data/gcm-prefs.ui.h:35
-msgid "_Reset to defaults"
-msgstr "เปลี่ยนกลับเป็นค่า_ปริยาย"
-
-#. Radio buttons in the prefs dialog
-#: ../data/gcm-prefs.ui.h:37
-msgid "_Set profile only for color managed applications"
-msgstr ""
-
-#: ../data/gnome-color-manager.schemas.in.h:1
-msgid ""
-"Gamma is adjusted to affect the color of the attached monitor. Traditionally "
-"Linux has used a gamma value of 1.0, but this makes monitors look washed out "
-"compared Windows XP or OSX. Apple traditionally used a value of 1.8 for a "
-"long time, but now use the same value as Microsoft. Microsoft has always "
-"used a value of 2.2."
-msgstr ""
-
-#: ../data/gnome-color-manager.schemas.in.h:2
-msgid ""
-"If set to TRUE then the __ICC_PROFILE atom will be set, which applications "
-"use to convert true color to screen color."
-msgstr ""
-
-#: ../data/gnome-color-manager.schemas.in.h:3
-msgid "If set to TRUE then the video LUT is set with the display profile"
-msgstr ""
-
-#: ../data/gnome-color-manager.schemas.in.h:4
-msgid "If the display should be globally corrected or left to applications."
-msgstr ""
-
-#: ../data/gnome-color-manager.schemas.in.h:5
-msgid "Set the _ICC_PROFILE atom for applications."
-msgstr ""
-
-#: ../data/gnome-color-manager.schemas.in.h:6
-msgid "The default gamma to use for monitors with no previous selection."
-msgstr ""
-
-#: ../data/gnome-color-manager.schemas.in.h:7
-msgid "The output intent to use, e.g. 'perceptual'."
-msgstr ""
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile is a test profile
+#: src/gcm-cell-renderer-profile-text.c:98
+msgid "Test profile: "
+msgstr "โปรไฟล์ทดสอบ: "
 
 #. TRANSLATORS: turn on all debugging
-#: ../src/egg-debug.c:364
+#: src/gcm-debug.c:77
 msgid "Show debugging information for all files"
-msgstr ""
+msgstr "แสดงข้อมูลดีบั๊กสำหรับทุกไฟล์"
 
-#. TRANSLATORS: a list of modules to debug
-#: ../src/egg-debug.c:440
-msgid "Debug these specific modules"
-msgstr ""
-
-#. TRANSLATORS: a list of functions to debug
-#: ../src/egg-debug.c:443
-msgid "Debug these specific functions"
-msgstr ""
-
-#. TRANSLATORS: save to a log
-#: ../src/egg-debug.c:446
-msgid "Log debugging data to a file"
-msgstr ""
-
-#: ../src/egg-debug.c:450
+#: src/gcm-debug.c:128
 msgid "Debugging Options"
-msgstr ""
+msgstr "ตัวเลือกการดีบั๊ก"
 
-#: ../src/egg-debug.c:450
+#: src/gcm-debug.c:128
 msgid "Show debugging options"
-msgstr ""
+msgstr "แสดงตัวเลือกการดีบั๊ก"
 
-#. TRANSLATORS: title, hardware refers to a calibration device
-#: ../src/gcm-calibrate.c:201
-msgid "Setup hardware"
-msgstr ""
+#. TRANSLATORS: command line option: a list of catalogs to install
+#: src/gcm-import.c:77
+msgid "ICC profile to install"
+msgstr "โปรไฟล์ ICC ที่จะติดตั้ง"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:203
-msgid "Setting up hardware device for use..."
-msgstr ""
+#. TRANSLATORS: nothing was specified on the command line
+#: src/gcm-import.c:103
+msgid "No filename specified"
+msgstr "ไม่ได้ระบุชื่อไฟล์"
 
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: ../src/gcm-calibrate.c:238
-msgid "Could not auto-detect CRT or LCD"
-msgstr ""
+#. TRANSLATORS: could not read file
+#: src/gcm-import.c:123 src/gcm-viewer.c:1276
+msgid "Failed to open ICC profile"
+msgstr "ไม่สามารถเปิดโปรไฟล์ ICC"
 
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:241
-msgid ""
-"Please indicate if the screen you are trying to profile is a CRT (old type) "
-"or a LCD (digital flat panel)."
-msgstr ""
+#. TRANSLATORS: parsing error
+#: src/gcm-import.c:128
+#, c-format
+msgid "Failed to parse file: %s"
+msgstr "ไม่สามารถแจงไฟล์: %s"
 
-#. TRANSLATORS: button, Liquid Crystal Display
-#: ../src/gcm-calibrate.c:244
-msgid "LCD"
-msgstr ""
+#. TRANSLATORS: message text
+#: src/gcm-import.c:143
+#, c-format
+msgid "Profile description: %s"
+msgstr "คำอธิบายโปรไฟล์: %s"
 
-#. TRANSLATORS: button, Cathode Ray Tube
-#: ../src/gcm-calibrate.c:246
-msgid "CRT"
-msgstr ""
+#. TRANSLATORS: message text
+#: src/gcm-import.c:153
+msgid "Profile copyright:"
+msgstr "ข้อมูลลิขสิทธิ์โปรไฟล์: %s"
 
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:271
-msgid ""
-"Before calibrating the display, it is recommended to configure your display "
-"with the following settings to get optimal results."
-msgstr ""
+#. TRANSLATORS: color profile already been installed
+#: src/gcm-import.c:187
+msgid "Color profile is already imported"
+msgstr "นำเข้าโปรไฟล์สีไปแล้ว"
 
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:274
-msgid ""
-"You may want to consult the owner's manual for your display on how to "
-"achieve these settings."
-msgstr ""
+#: src/gcm-import.c:190 src/gcm-import.c:233
+msgid "Show Details"
+msgstr "แสดงรายละเอียด"
 
-#. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:277
-msgid "Reset your display to the factory defaults."
-msgstr ""
+#. TRANSLATORS: the profile type
+#: src/gcm-import.c:206
+msgid "Import display color profile?"
+msgstr "นำเข้าโปรไฟล์สีจอภาพหรือไม่?"
 
-#. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:280
-msgid "Disable dynamic contrast if your display has this feature."
-msgstr ""
+#. TRANSLATORS: the profile type
+#: src/gcm-import.c:210
+msgid "Import device color profile?"
+msgstr "นำเข้าโปรไฟล์สีอุปกรณ์หรือไม่?"
 
-#. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:283
-msgid ""
-"Configure your display with custom color settings and ensure the RGB "
-"channels are set to the same values."
-msgstr ""
+#. TRANSLATORS: the profile type
+#: src/gcm-import.c:214
+msgid "Import named color profile?"
+msgstr "นำเข้าโปรไฟล์สีมีชื่อหรือไม่?"
 
-#. TRANSLATORS: dialog message, addition to bullet item
-#: ../src/gcm-calibrate.c:286
-msgid "If custom color is not available then use a 6500K color temperature."
-msgstr ""
+#. TRANSLATORS: the profile type
+#: src/gcm-import.c:218
+msgid "Import color profile?"
+msgstr "นำเข้าโปรไฟล์สีหรือไม่?"
 
-#. TRANSLATORS: dialog message, bullet item
-#: ../src/gcm-calibrate.c:289
-msgid ""
-"Adjust the display brightness to a comfortable level for prolonged viewing."
-msgstr ""
+#. TRANSLATORS: button text
+#: src/gcm-import.c:232
+msgid "Import"
+msgstr "นำเข้า"
 
-#. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:292
-msgid ""
-"For best results, the display should have been powered for at least 15 "
-"minutes before starting the calibration."
-msgstr ""
-
-#. TRANSLATORS: title, device is a hardware color calibration sensor
-#: ../src/gcm-calibrate.c:380
-msgid "Please attach device"
-msgstr ""
-
-#. TRANSLATORS: dialog message, ask user to attach device
-#: ../src/gcm-calibrate.c:382
-msgid ""
-"Please attach the hardware device to the center of the screen on the gray "
-"square."
-msgstr ""
-
-#. TRANSLATORS: title, default paramters needed to calibrate
-#: ../src/gcm-calibrate.c:403
-msgid "Getting default parameters"
-msgstr ""
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:405
-msgid ""
-"This pre-calibrates the screen by sending colored and gray patches to your "
-"screen and measuring them with the hardware device."
-msgstr ""
-
-#. TRANSLATORS: title, patches are specific colours used in calibration
-#: ../src/gcm-calibrate.c:470
-msgid "Generating the patches"
-msgstr ""
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:472
-msgid "Generating the patches that will be measured with the hardware device."
-msgstr ""
-
-#. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate.c:533
-msgid "Drawing the patches"
-msgstr ""
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:535
-msgid ""
-"Drawing the generated patches to the screen, which will then be measured by "
-"the hardware device."
-msgstr ""
-
-#. TRANSLATORS: this is the formattted custom profile description. "Custom" refers to the fact that it's user generated"
-#: ../src/gcm-calibrate.c:585 ../src/gcm-calibrate.c:819
-msgid "Custom"
-msgstr "กำหนดเอง"
-
-#. TRANSLATORS: this is the copyright string, where it might be "Copyright (c) 2009 Edward Scissorhands"
-#: ../src/gcm-calibrate.c:588 ../src/gcm-calibrate.c:822
-msgid "Copyright (c)"
-msgstr "Copyright (c)"
-
-#. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate.c:614 ../src/gcm-calibrate.c:844
-msgid "Generating the profile"
-msgstr ""
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:616
-msgid "Generating the ICC color profile that can be used with this screen."
-msgstr ""
-
-#. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate.c:657
-msgid "Setting up scanner"
-msgstr ""
-
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:660
-msgid ""
-"Before calibrating the scanner, you have to manually scan a reference image "
-"and save it as a TIFF image file."
-msgstr ""
-
-#. TRANSLATORS: dialog message, preface
-#: ../src/gcm-calibrate.c:663
-msgid ""
-"Ensure that the contrast and brightness is not changed and color correction "
-"profiles are not applied."
-msgstr ""
-
-#. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:666
-msgid ""
-"The scanner glass should have been cleaned prior to scanning and the output "
-"file resolution should be at least 200dpi."
-msgstr ""
-
-#. TRANSLATORS: dialog message, suffix
-#: ../src/gcm-calibrate.c:669
-msgid ""
-"For best results, the reference image should also be less than two years old."
-msgstr ""
-
-#. TRANSLATORS: dialog question
-#: ../src/gcm-calibrate.c:672
-msgid "Do you have a scanned TIFF file of a IT8.7/2 reference image?"
-msgstr ""
-
-#. TRANSLATORS: title, a profile is a ICC file
-#: ../src/gcm-calibrate.c:709
-msgid "Copying files"
-msgstr "กำลังคัดลอกแฟ้ม"
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:711
-msgid "Copying source image, chart data and CIE reference values."
-msgstr ""
-
-#. TRANSLATORS: title, drawing means painting to the screen
-#: ../src/gcm-calibrate.c:766
-msgid "Measuring the patches"
-msgstr ""
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:768
-msgid "Detecting the reference patches and measuring them."
-msgstr ""
-
-#. TRANSLATORS: dialog message
-#: ../src/gcm-calibrate.c:846
-msgid "Generating the ICC color profile that can be used with this scanner."
-msgstr ""
-
-#. TRANSLATORS: this is the name of the internal panel
-#: ../src/gcm-client.c:366
-msgid "Laptop LCD"
-msgstr ""
+#. TRANSLATORS: could not read file
+#: src/gcm-import.c:257 src/gcm-viewer.c:1308
+msgid "Failed to import file"
+msgstr "ไม่สามารถนำเข้าไฟล์"
 
 #. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
-#: ../src/gcm-inspect.c:67
+#: src/gcm-inspect.c:39
 msgid "Description:"
 msgstr "คำอธิบาย:"
 
 #. TRANSLATORS: this is the ICC profile copyright
-#: ../src/gcm-inspect.c:70
+#: src/gcm-inspect.c:42
 msgid "Copyright:"
-msgstr "สงวนลิขสิทธิ์:"
+msgstr "ข้อมูลลิขสิทธิ์:"
 
 #. TRANSLATORS: the root window of all the screens
-#: ../src/gcm-inspect.c:109
-msgid "Root window profile (deprecated):"
-msgstr ""
+#: src/gcm-inspect.c:164
+msgid "Root window profile:"
+msgstr "โปรไฟล์ของหน้าต่าง Root:"
 
-#: ../src/gcm-inspect.c:126
-#, c-format
-msgid "Output profile '%s':"
-msgstr ""
+#. TRANSLATORS: the root window of all the screens
+#: src/gcm-inspect.c:175
+msgid "Root window protocol version:"
+msgstr "รุ่นโปรโตคอลของหน้าต่าง Root:"
 
-#. TRANSLATORS: this is when the profile has not been set
-#: ../src/gcm-inspect.c:133
-msgid "not set"
-msgstr ""
+#. TRANSLATORS: no DBus session bus
+#: src/gcm-inspect.c:196 src/gcm-inspect.c:259
+msgid "Failed to connect to session bus:"
+msgstr "ไม่สามารถเชื่อมต่อบัสวาระ:"
 
-#. TRANSLATORS: no rofile has been asigned to this device
-#: ../src/gcm-inspect.c:191
-msgid "There are no ICC profiles for this device"
-msgstr ""
+#. TRANSLATORS: the DBus method failed
+#: src/gcm-inspect.c:213 src/gcm-inspect.c:276
+msgid "The request failed:"
+msgstr "คำร้องขอล้มเหลว:"
+
+#. TRANSLATORS: no profile has been asigned to this device
+#: src/gcm-inspect.c:221
+msgid "There are no ICC profiles assigned to this file"
+msgstr "ไม่มีโปรไฟล์ ICC ที่กำหนดให้กับไฟล์นี้"
 
 #. TRANSLATORS: this is a list of profiles suitable for the device
-#: ../src/gcm-inspect.c:196
+#: src/gcm-inspect.c:226 src/gcm-inspect.c:292
 msgid "Suitable profiles for:"
-msgstr ""
+msgstr "โปรไฟล์ที่เหมาะสมกับ:"
 
-#. TRANSLATORS: this is the rendering intent of the output
-#: ../src/gcm-inspect.c:213
-msgid "Rendering intent (output):"
-msgstr ""
-
-#. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:279
-msgid "Show X11 properties"
-msgstr ""
+#. TRANSLATORS: no profile has been asigned to this window
+#: src/gcm-inspect.c:287
+msgid "There are no ICC profiles for this window"
+msgstr "ไม่มีโปรไฟล์ ICC สำหรับหน้าต่างนี้"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:282
-msgid "Get the profiles for a specific device"
-msgstr ""
+#: src/gcm-inspect.c:312
+msgid "Show xserver properties"
+msgstr "แสดงคุณสมบัติ xserver"
 
 #. TRANSLATORS: command line option
-#: ../src/gcm-inspect.c:285
+#: src/gcm-inspect.c:315
+msgid "Get the profiles for a specific file"
+msgstr "ขอโปรไฟล์สำหรับไฟล์ที่ระบุ"
+
+#. TRANSLATORS: command line option
+#: src/gcm-inspect.c:318
+msgid "Get the profile for a specific window"
+msgstr "ขอโปรไฟล์สำหรับหน้าต่างที่ระบุ"
+
+#. TRANSLATORS: command line option
+#: src/gcm-inspect.c:321
 msgid "Dump all details about this system"
-msgstr ""
+msgstr "ดั๊มพ์รายละเอียดทั้งหมดเกี่ยวกับระบบนี้"
 
-#. TRANSLATORS: command line option: a list of catalogs to install
-#: ../src/gcm-import.c:56
-msgid "ICC profile to install"
-msgstr ""
+#. TRANSLATORS: just dumps the EDID to disk
+#: src/gcm-inspect.c:334
+msgid "EDID inspect program"
+msgstr "โปรแกรมตรวจตรา EDID"
 
-#. TRANSLATORS: nothing was specified on the command line
-#: ../src/gcm-import.c:78
-msgid "No filename specified"
-msgstr ""
-
-#. TRANSLATORS: could not read file
-#: ../src/gcm-import.c:90
-msgid "Failed to open ICC profile"
-msgstr ""
-
-#. TRANSLATORS: parsing error
-#: ../src/gcm-import.c:93
-#, c-format
-msgid "Failed to parse file: %s"
-msgstr ""
-
-#. TRANSLATORS: color profile already been installed
-#: ../src/gcm-import.c:111
-msgid "ICC profile already installed"
-msgstr ""
-
-#. TRANSLATORS: message text
-#: ../src/gcm-import.c:123
-#, c-format
-msgid "Import ICC color profile %s?"
-msgstr ""
-
-#. TRANSLATORS: message text
-#: ../src/gcm-import.c:126
-msgid "Import ICC color profile?"
-msgstr ""
-
-#. ask confirmation
-#: ../src/gcm-import.c:134
-msgid "Import ICC profile"
-msgstr ""
-
-#. TRANSLATORS: button text
-#: ../src/gcm-import.c:138
-msgid "Install"
-msgstr "ติดตั้ง"
-
-#. TRANSLATORS: could not read file
-#: ../src/gcm-import.c:150
-msgid "Failed to copy file"
-msgstr "คัดลอกแฟ้มไม่สำเร็จ"
-
-#. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-prefs.c:258
-msgid "Select scanned reference file"
-msgstr ""
-
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-prefs.c:272
-msgid "Supported images files"
-msgstr ""
-
-#. TRANSLATORS: dialog for file->open dialog
-#: ../src/gcm-prefs.c:301
-msgid "Select CIE reference values file"
-msgstr ""
-
-#. TRANSLATORS: filter name on the file->open dialog
-#: ../src/gcm-prefs.c:315
-msgid "CIE values"
-msgstr ""
-
-#. add a clear entry
-#: ../src/gcm-prefs.c:791
-msgid "None"
-msgstr ""
-
-#. TRANSLATORS: this is where an output is not settable, but we are showing it in the UI
-#: ../src/gcm-prefs.c:952
-msgid "No hardware support"
-msgstr ""
-
-#. TRANSLATORS: this is where the device has been setup but is not connected
-#: ../src/gcm-prefs.c:956 ../src/gcm-prefs.c:1324
-msgid "disconnected"
-msgstr ""
-
+#. TRANSLATORS: this is when the error is invalid
+#. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1035
-msgid "Input device"
-msgstr ""
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1039
-msgid "Display device"
-msgstr ""
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1043
-msgid "Output device"
-msgstr ""
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1047
-msgid "Devicelink"
-msgstr ""
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1051
-msgid "Colorspace conversion"
-msgstr ""
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1055
-msgid "Abstract"
-msgstr ""
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1059
-msgid "Named color"
-msgstr ""
-
-#. TRANSLATORS: this the ICC profile type
-#: ../src/gcm-prefs.c:1062
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.c:200 src/gcm-picker.c:207 src/gcm-viewer.c:564
+#: src/gcm-viewer.c:611
 msgid "Unknown"
-msgstr ""
+msgstr "ไม่ทราบ"
 
-#. TRANSLATORS: this is where the required software has not been written yet
-#: ../src/gcm-prefs.c:1330
-msgid "No software support"
-msgstr ""
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
+#: src/gcm-picker.c:320
+msgid "No colorimeter is attached."
+msgstr "ไม่ได้ต่อเครื่องวัดสี"
 
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:1593
-msgid "Perceptual"
-msgstr ""
+#. TRANSLATORS: this is displayed if VTE support is not enabled
+#: src/gcm-picker.c:336
+msgid "The sensor has no native driver."
+msgstr "เซ็นเซอร์ไม่มีไดรเวอร์แบบเนทีฟ"
 
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:1596
-msgid "Relative colormetric"
-msgstr ""
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
+#: src/gcm-picker.c:345
+msgid "The attached colorimeter is not capable of reading a spot color."
+msgstr "เครื่องวัดสีที่ต่ออยู่ไม่สามารถอ่านค่าสีสปอตได้"
 
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:1599
-msgid "Saturation"
-msgstr ""
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:1602
-msgid "Absolute colormetric"
-msgstr ""
-
-#. TRANSLATORS: rendering intent: you probably want to google this
-#: ../src/gcm-prefs.c:1605
-msgid "Disable soft proofing"
-msgstr ""
+#. TRANSLATORS: this is when there are no profiles that can be used;
+#. * the search term is either "RGB" or "CMYK"
+#: src/gcm-picker.c:563
+#, c-format
+msgid "No %s color spaces available"
+msgstr "ไม่มีห้วงสี %s ที่สามารถใช้ได้"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: ../src/gcm-prefs.c:1631
+#: src/gcm-picker.c:681 src/gcm-viewer.c:1599
 msgid "Set the parent window to make this modal"
+msgstr "ให้หน้าต่างแม่กำหนดกล่องนี้เป็นกล่องโมดัล"
+
+#. TRANSLATORS: tool that is used to pick colors
+#: src/gcm-picker.c:696
+msgid "GNOME Color Manager Color Picker"
+msgstr "เครื่องมือเลือกสีของโปรแกรมจัดการสีของ GNOME"
+
+#. the color representation
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.ui:93 src/gcm-viewer.c:572
+msgid "XYZ"
+msgstr "XYZ"
+
+#. Lab is the color representation and D50 is the white point
+#: src/gcm-picker.ui:108
+msgid "Lab (D50)"
+msgstr "Lab (D50)"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:123
+msgid "Media whitepoint"
+msgstr "จุดสีขาวบนสื่อ"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:138
+msgid "Color Temperature"
+msgstr "อุณหภูมิสี"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:153
+msgid "Ambient"
+msgstr "แอมเบียนต์"
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#. The profile colorspace, e.g. RGB
+#: src/gcm-picker.ui:168 src/gcm-viewer.ui:122
+msgid "Colorspace"
+msgstr "ห้วงสี"
+
+#. These are the values of the chosen color in Red, Green, Blue encoding
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.ui:183 src/gcm-utils.c:67 src/gcm-viewer.c:592
+msgid "RGB"
+msgstr "RGB"
+
+#. This shows the error in the conversion to RGB.
+#: src/gcm-picker.ui:198
+msgid "Error"
+msgstr "ผิดพลาด"
+
+#. Expander title, the results from the color picker
+#: src/gcm-picker.ui:297
+msgid "Results"
+msgstr "ผลลัพธ์"
+
+#. Button text, to get a single sample of color
+#: src/gcm-picker.ui:328
+msgid "_Measure"
+msgstr "_วัด"
+
+#. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-utils.c:71 src/gcm-viewer.c:604
+msgid "CMYK"
+msgstr "CMYK"
+
+#. TRANSLATORS: this is the colorspace type
+#: src/gcm-utils.c:75
+msgid "gray"
+msgstr "เทา"
+
+#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#: src/gcm-viewer.c:311
+msgid "Permanently delete profile?"
+msgstr "ลบโปรไฟล์ถาวรหรือไม่?"
+
+#. TRANSLATORS: dialog message
+#: src/gcm-viewer.c:314
+msgid ""
+"Are you sure you want to remove this profile from your system permanently?"
+msgstr "คุณแน่ใจหรือไม่ว่าจะลบโปรไฟล์นี้ออกจากระบบถาวร?"
+
+#. TRANSLATORS: button, delete a profile
+#: src/gcm-viewer.c:317
+msgid "Delete"
+msgstr "ลบ"
+
+#. TRANSLATORS: dialog for file->open dialog
+#: src/gcm-viewer.c:356
+msgid "Select ICC Profile File"
+msgstr "เลือกไฟล์โปรไฟล์ ICC"
+
+#: src/gcm-viewer.c:358
+msgid "_Cancel"
+msgstr "_ยกเลิก"
+
+#: src/gcm-viewer.c:359
+msgid "_Import"
+msgstr "นำเ_ข้า"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: src/gcm-viewer.c:377
+msgid "Supported ICC profiles"
+msgstr "โปรไฟล์ ICC ที่รองรับ"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: src/gcm-viewer.c:384
+msgid "All files"
+msgstr "ทุกไฟล์"
+
+#. TRANSLATORS: could not read file
+#: src/gcm-viewer.c:409
+msgid "Failed to copy file"
+msgstr "คัดลอกไฟล์ไม่สำเร็จ"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:537
+msgid "Input device"
+msgstr "อุปกรณ์อินพุต"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:541
+msgid "Display device"
+msgstr "อุปกรณ์แสดงผล"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:545
+msgid "Output device"
+msgstr "อุปกรณ์เอาต์พุต"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:549
+msgid "Devicelink"
+msgstr "Devicelink"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:553
+msgid "Colorspace conversion"
+msgstr "การแปลงห้วงสี"
+
+#. TRANSLATORS: this the ICC profile kind
+#: src/gcm-viewer.c:557
+msgid "Abstract"
+msgstr "Abstract"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:561
+msgid "Named color"
+msgstr "สีมีชื่อ"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:576
+msgid "LAB"
+msgstr "LAB"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:580
+msgid "LUV"
+msgstr "LUV"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:584
+msgid "YCbCr"
+msgstr "YCbCr"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:588
+msgid "Yxy"
+msgstr "Yxy"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:596
+msgid "Gray"
+msgstr "เทา"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:600
+msgid "HSV"
+msgstr "HSV"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:608
+msgid "CMY"
+msgstr "CMY"
+
+#. TRANSLATORS: e.g. sRGB or adbode RGB
+#: src/gcm-viewer.c:644
+msgid "Standard space"
+msgstr "ห้วงสีมาตรฐาน"
+
+#. TRANSLATORS: the raw EDID MD5 of the display device
+#: src/gcm-viewer.c:646
+msgid "Display checksum"
+msgstr "ผลรวมตรวจสอบของจอภาพ"
+
+#: src/gcm-viewer.c:647
+msgid "Display model"
+msgstr "โมเดลของจอภาพ"
+
+#: src/gcm-viewer.c:648
+msgid "Display serial number"
+msgstr "หมายเลขซีเรียลของจอภาพ"
+
+#. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
+#: src/gcm-viewer.c:650
+msgid "Display PNPID"
+msgstr "PNPID ของจอภาพ"
+
+#. TRANSLATORS: who made the display
+#: src/gcm-viewer.c:652
+msgid "Display vendor"
+msgstr "ผู้ขายจอภาพ"
+
+#. TRANSLATORS: the raw profile MD5
+#: src/gcm-viewer.c:654
+msgid "File checksum"
+msgstr "ผลรวมตรวจสอบของไฟล์"
+
+#. TRANSLATORS: the color framework, e.g. 'colord'
+#: src/gcm-viewer.c:656
+msgid "Framework product"
+msgstr "ผลิตภัณฑ์ของกรอบงาน"
+
+#. TRANSLATORS: the framework binary, e.g. gcm-viewer
+#: src/gcm-viewer.c:658
+msgid "Framework program"
+msgstr "โปรแกรมของกรอบงาน"
+
+#. TRANSLATORS: the framework release, e.g. '1.22'
+#: src/gcm-viewer.c:660
+msgid "Framework version"
+msgstr "รุ่นของกรอบงาน"
+
+#. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
+#: src/gcm-viewer.c:662
+msgid "Data source type"
+msgstr "ชนิดแหล่งข้อมูล"
+
+#. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
+#: src/gcm-viewer.c:664
+msgid "Mapping format"
+msgstr "รูปแบบการแมป"
+
+#. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
+#: src/gcm-viewer.c:666
+msgid "Mapping qualifier"
+msgstr "ค่าคุณภาพการแมป"
+
+#. TRANSLATORS: The original device the profile was made for
+#: src/gcm-viewer.c:668
+msgid "Mapping device"
+msgstr "อุปกรณ์การแมป"
+
+#. TRANSLATORS: The average error when making the profile
+#: src/gcm-viewer.c:670
+msgid "Delta-E average"
+msgstr "ค่าเฉลี่ยของ Delta-E"
+
+#. TRANSLATORS: the maximum error when making the profile
+#: src/gcm-viewer.c:672
+msgid "Delta-E maximum"
+msgstr "ค่าสูงสุดของ Delta-E"
+
+#. TRANSLATORS: the RMS error when making the profile
+#: src/gcm-viewer.c:674
+msgid "Delta-E RMS"
+msgstr "ค่าเฉลี่ยกำลังสองของ Delta-E"
+
+#. TRANSLATORS: The device name, e.g. 'huey'
+#: src/gcm-viewer.c:676
+msgid "Calibration device"
+msgstr "อุปกรณ์ปรับเทียบ"
+
+#. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
+#: src/gcm-viewer.c:678
+msgid "Screen surface finish"
+msgstr "รูปแบบพื้นผิวของจอ"
+
+#. TRANSLATORS: e.g. DVI or VGA
+#: src/gcm-viewer.c:680
+msgid "Connection type"
+msgstr "ชนิดการเชื่อมต่อ"
+
+#. TRANSLATORS: e.g. Screen brightness in percent
+#: src/gcm-viewer.c:682
+msgid "Screen brightness"
+msgstr "ความสว่างจอ"
+
+#. TRANSLATORS: e.g. the 3D volume of the gamut graph
+#: src/gcm-viewer.c:684
+msgid "Gamut volume"
+msgstr "ปริมาณขอบเขตสี"
+
+#. TRANSLATORS: e.g. what proportion of sRGB is covered
+#: src/gcm-viewer.c:686
+msgid "sRGB coverage"
+msgstr "ความครอบคลุม sRGB"
+
+#. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
+#: src/gcm-viewer.c:688
+msgid "Adobe RGB coverage"
+msgstr "ความครอบคลุม Adobe RGB"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:784
+msgid "No description has been set"
+msgstr "ไม่ได้กำหนดคำอธิบายไว้"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:788
+msgid "No copyright has been set"
+msgstr "ไม่ได้กำหนดข้อมูลลิขสิทธิ์ไว้"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:792
+msgid "The display compensation table is invalid"
+msgstr "ตารางการชดเชยของจอภาพไม่ถูกต้อง"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:796
+msgid "A scum dot is present for media white"
+msgstr "จุดสกัม (scum) มีอยู่ในสีขาวบนสื่อ"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:800
+msgid "The gray axis contains significant amounts of color"
 msgstr ""
 
-#. TRANSLATORS: this is displayed while the devices are being probed
-#: ../src/gcm-prefs.c:1791
-msgid "Loading list of devices..."
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:804
+msgid "The gray axis is non-monotonic"
 msgstr ""
 
-#. TRANSLATORS: this is where the ICC profile has no description
-#: ../src/gcm-profile.c:666
-msgid "Missing description"
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:808
+msgid "One or more of the primaries are invalid"
 msgstr ""
 
-#: ../src/gcm-session.c:124
-msgid "Do not exit after the request has been processed"
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:812
+msgid "The primaries do not add to white"
 msgstr ""
 
-#. TRANSLATORS: program name, a session wide daemon to watch for updates and changing system state
-#: ../src/gcm-session.c:140
-msgid "Color Management"
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:816
+msgid "One or more of the primaries is unlikely"
 msgstr ""
 
-#: ../src/gcm-session.c:142
-msgid "Color Management DBus Service"
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:820
+msgid "The white is not D50 white"
 msgstr ""
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:824
+msgid "The whitepoint temperature is unlikely"
+msgstr ""
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:828
+msgid "Unknown warning type"
+msgstr ""
+
+#. TRANSLATORS: if the device has a VCGT profile
+#: src/gcm-viewer.c:965
+msgid "Yes"
+msgstr ""
+
+#. TRANSLATORS: if the device has a VCGT profile
+#: src/gcm-viewer.c:968
+msgid "No"
+msgstr ""
+
+#. TRANSLATORS: profiles that have warnings are useable,
+#. * but may not be any good
+#: src/gcm-viewer.c:994
+msgid "The profile has the following problems:"
+msgstr ""
+
+#. TRANSLATORS: this is the icc creation date strftime format
+#: src/gcm-viewer.c:1086
+msgid "%B %e %Y, %I∶%M∶%S %p"
+msgstr ""
+
+#. TRANSLATORS: this is the tooltip when the profile can be deleted
+#: src/gcm-viewer.c:1109
+msgid "Delete this profile"
+msgstr ""
+
+#. TRANSLATORS: this is the tooltip when the profile cannot be deleted
+#: src/gcm-viewer.c:1112
+msgid "This profile cannot be deleted"
+msgstr ""
+
+#. TRANSLATORS: show just the one profile, rather than all
+#: src/gcm-viewer.c:1602
+msgid "Set the specific profile to show"
+msgstr ""
+
+#. TRANSLATORS: show just the one filename, rather than all
+#: src/gcm-viewer.c:1605
+msgid "Set the specific file to show"
+msgstr ""
+
+#: src/gcm-viewer.ui:52
+msgid "Add a profile for the device"
+msgstr ""
+
+#: src/gcm-viewer.ui:67
+msgid "Remove a profile from the device"
+msgstr ""
+
+#. The type of profile, e.g. display, scanner, etc.
+#: src/gcm-viewer.ui:106
+#, fuzzy
+#| msgid "Profile type:"
+msgid "Profile type"
+msgstr "ชนิดโพรไฟล์:"
+
+#. When the profile was created
+#: src/gcm-viewer.ui:138
+msgid "Created"
+msgstr ""
+
+#. The version of the profile
+#: src/gcm-viewer.ui:155
+msgid "Version"
+msgstr ""
+
+#. The manufacturer of the profile
+#: src/gcm-viewer.ui:172
+msgid "Manufacturer"
+msgstr ""
+
+#. The manufacturer of the profile
+#: src/gcm-viewer.ui:189
+msgid "Model"
+msgstr ""
+
+#. If the profile contains a display correction table
+#: src/gcm-viewer.ui:205
+msgid "Display correction"
+msgstr ""
+
+#. The basename (the last section of the filename) of the profile
+#: src/gcm-viewer.ui:221
+msgid "White point"
+msgstr ""
+
+#. The licence of the profile, normally non-free
+#: src/gcm-viewer.ui:238
+#, fuzzy
+#| msgid "Copyright:"
+msgid "Copyright"
+msgstr "สงวนลิขสิทธิ์:"
+
+#. The file size in bytes of the profile
+#: src/gcm-viewer.ui:254
+msgid "File size"
+msgstr ""
+
+#. The basename (the last section of the filename) of the profile
+#: src/gcm-viewer.ui:271
+msgid "Filename"
+msgstr ""
+
+#. warnings for the profile
+#: src/gcm-viewer.ui:288
+msgid "Warnings"
+msgstr ""
+
+#: src/gcm-viewer.ui:474
+msgid "Information"
+msgstr ""
+
+#: src/gcm-viewer.ui:502
+msgid "y"
+msgstr ""
+
+#: src/gcm-viewer.ui:521
+msgid "x"
+msgstr ""
+
+#: src/gcm-viewer.ui:552
+msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
+msgstr ""
+
+#: src/gcm-viewer.ui:569
+msgid "CIE 1931"
+msgstr ""
+
+#: src/gcm-viewer.ui:591
+msgid "Response out"
+msgstr ""
+
+#: src/gcm-viewer.ui:611 src/gcm-viewer.ui:699
+msgid "Response in"
+msgstr ""
+
+#: src/gcm-viewer.ui:640
+msgid ""
+"A tone reproduction curve is the mapping of scene luminance to display "
+"luminance"
+msgstr ""
+
+#: src/gcm-viewer.ui:657
+msgid "TRC"
+msgstr ""
+
+#: src/gcm-viewer.ui:679
+msgid "Video card out"
+msgstr ""
+
+#: src/gcm-viewer.ui:728
+msgid "A video card gamma table shows the curves loaded into the display"
+msgstr ""
+
+#: src/gcm-viewer.ui:745
+msgid "VCGT"
+msgstr ""
+
+#: src/gcm-viewer.ui:780 src/gcm-viewer.ui:902
+msgid "Previous Image"
+msgstr ""
+
+#. This is an example image that is saved in sRGB gamut
+#: src/gcm-viewer.ui:798 src/gcm-viewer.ui:920
+msgid "sRGB example"
+msgstr ""
+
+#: src/gcm-viewer.ui:829 src/gcm-viewer.ui:951
+msgid "Next Image"
+msgstr ""
+
+#: src/gcm-viewer.ui:850
+msgid "This shows what an image would look like if saved with the profile"
+msgstr ""
+
+#: src/gcm-viewer.ui:867
+msgid "From sRGB"
+msgstr ""
+
+#: src/gcm-viewer.ui:972
+msgid "This shows what an image would look like if opened with the profile"
+msgstr ""
+
+#: src/gcm-viewer.ui:989
+msgid "To sRGB"
+msgstr ""
+
+#: src/gcm-viewer.ui:1040
+msgid "Named colors are specific colors that are defined in the profile"
+msgstr ""
+
+#: src/gcm-viewer.ui:1057
+msgid "Named Colors"
+msgstr ""
+
+#: src/gcm-viewer.ui:1096
+msgid ""
+"Metadata is additional information stored in the profile for programs to use."
+msgstr ""
+
+#: src/gcm-viewer.ui:1113
+msgid "Metadata"
+msgstr ""
+
+#~ msgid "Color Profile:"
+#~ msgstr "โพรไฟล์สี"
+
+#~ msgid "Contrast:"
+#~ msgstr "ความต่างระดับสี:"
+
+#~ msgid "Gamma:"
+#~ msgstr "แกมมา:"
+
+#~ msgid "License:"
+#~ msgstr "สัญญาอนุญาต:"
+
+#~ msgid "Vendor:"
+#~ msgstr "ผู้ผลิต:"
+
+#~ msgid "_Reset to defaults"
+#~ msgstr "เปลี่ยนกลับเป็นค่า_ปริยาย"
+
+#~ msgid "Custom"
+#~ msgstr "กำหนดเอง"
+
+#~ msgid "Copyright (c)"
+#~ msgstr "Copyright (c)"
+
+#~ msgid "Copying files"
+#~ msgstr "กำลังคัดลอกแฟ้ม"
+
+#~ msgid "Install"
+#~ msgstr "ติดตั้ง"
