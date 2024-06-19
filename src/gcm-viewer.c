@@ -1631,7 +1631,7 @@ main (int argc, char **argv)
 	viewer->lang = g_getenv ("LANG");
 
 	/* ensure single instance */
-	viewer->application = gtk_application_new ("org.gnome.ColorManager.Viewer", 0);
+	viewer->application = gtk_application_new ("org.gnome.ColorProfileViewer", 0);
 	g_signal_connect (viewer->application, "startup",
 			  G_CALLBACK (gcm_viewer_startup_cb), viewer);
 	g_signal_connect (viewer->application, "activate",
