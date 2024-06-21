@@ -72,6 +72,7 @@ enum {
 	GCM_PROFILES_COLUMN_LAST
 };
 
+#define GCM_VIEWER_APPLICATION_ID		"org.gnome.ColorProfileViewer"
 #define GCM_VIEWER_TREEVIEW_WIDTH		350 /* px */
 #define GCM_VIEWER_MAX_EXAMPLE_IMAGES		4
 
@@ -1612,6 +1613,8 @@ main (int argc, char **argv)
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
+	g_set_prgname (GCM_VIEWER_APPLICATION_ID);
+
 	gtk_init (&argc, &argv);
 
 	context = g_option_context_new ("gnome-color-manager profile viewer");
@@ -1631,7 +1634,7 @@ main (int argc, char **argv)
 	viewer->lang = g_getenv ("LANG");
 
 	/* ensure single instance */
-	viewer->application = gtk_application_new ("org.gnome.ColorProfileViewer", 0);
+	viewer->application = gtk_application_new (GCM_VIEWER_APPLICATION_ID, 0);
 	g_signal_connect (viewer->application, "startup",
 			  G_CALLBACK (gcm_viewer_startup_cb), viewer);
 	g_signal_connect (viewer->application, "activate",
