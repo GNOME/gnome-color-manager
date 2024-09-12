@@ -1613,8 +1613,6 @@ main (int argc, char **argv)
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
-	g_set_prgname (GCM_VIEWER_APPLICATION_ID);
-
 	gtk_init (&argc, &argv);
 
 	context = g_option_context_new ("gnome-color-manager profile viewer");
@@ -1626,6 +1624,8 @@ main (int argc, char **argv)
 		g_warning ("failed to parse options: %s", error->message);
 	}
 	g_option_context_free (context);
+
+	g_set_prgname (GCM_VIEWER_APPLICATION_ID);
 
 	viewer = g_new0 (GcmViewerPrivate, 1);
 	viewer->xid = xid;
