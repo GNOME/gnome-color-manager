@@ -4,21 +4,21 @@
 #
 # Volkan Yalçın <vlyalcin@gmail.com>, 2012.
 # Yusuf YILMAZ <hongis1982@gmail.com>, 2014.
-# Sabri Ünal <yakushabb@gmail.com>, 2014.
 # Elif Aydurmuş <elifaydrms@hotmail.com>, 2014.
 # Gökhan Gurbetoğlu <ggurbet@gmail.com>, 2014.
 # Muhammet Kara <muhammetk@gmail.com>, 2013, 2014, 2015.
 # Çağatay Yiğit Şahin <cyigitsahin@outlook.com>, 2017.
-# Emin Tufan Çetin <etcetin@gmail.com>, 2017.
+# Sabri Ünal <yakushabb@gmail.com>, 2014, 2024.
+# Emin Tufan Çetin <etcetin@gmail.com>, 2017, 2025.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/"
 "issues/\n"
-"POT-Creation-Date: 2024-07-19 15:18+0000\n"
-"PO-Revision-Date: 2024-05-07 11:42+0300\n"
-"Last-Translator: Sabri Ünal <yakushabb@gmail.com>\n"
+"POT-Creation-Date: 2025-01-31 09:54+0000\n"
+"PO-Revision-Date: 2025-02-01 08:00+0300\n"
+"Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
 "Language-Team: Türkçe <takim@gnome.org.tr>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
@@ -32,34 +32,38 @@ msgid "GNOME Color Manager"
 msgstr "GNOME Renk Yöneticisi"
 
 #: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:8
+msgid "The GNOME Project"
+msgstr "GNOME Projesi"
+
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:12
 #: data/org.gnome.ColorProfileViewer.desktop.in:4
 msgid "Inspect and compare installed color profiles"
-msgstr "Yüklü renk profillerini inceleyin ve karşılaştırın"
+msgstr "Kurulu renk profillerini incele ve karşılaştır"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:10
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:14
 msgid ""
 "GNOME Color Profile Viewer shows installed color profiles on your system and "
 "allows you to calibrate displays, printers and cameras using a wizard."
 msgstr ""
-"GNOME Renk Profili Görüntüleyicisi sisteminizde yüklü renk profillerini "
-"gösterir ve bir sihirbaz yardımıyla ekranlar, yazıcılar ve kameraları "
-"kalibre etmenize olanak sağlar."
+"GNOME Renk Profili Görüntüleyicisi sisteminizde kurulu renk profillerini "
+"gösterir ve sihirbaz yardımıyla ekran, yazıcı ve kameraları "
+"kalibre etmenizi sağlar."
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:15
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:19
 msgid ""
 "This functionality is typically used by GNOME Control Center from the color "
 "panel although can be used on its own."
 msgstr ""
-"Bu işlevsellik, genellikle GNOME Denetim Merkezindeki renk panelinden "
+"Bu işlev genellikle GNOME Denetim Merkezindeki renk bölümünden "
 "kullanılır. Ancak kendi başına da kullanılabilir."
 
 #: data/gcm-import.desktop.in:3
 msgid "ICC Profile Installer"
-msgstr "ICC Profil Yükleyici"
+msgstr "ICC Profil Kurucu"
 
 #: data/gcm-import.desktop.in:4
 msgid "Install ICC profiles"
-msgstr "ICC profilleri yükle"
+msgstr "ICC profilleri kur"
 
 #. Window title, where the user can pick spot colors using a measuring device
 #: data/gcm-picker.desktop.in:3 src/gcm-picker.ui:27 src/gcm-picker.ui:324
@@ -245,17 +249,17 @@ msgstr "xserver özelliklerini göster"
 #. TRANSLATORS: command line option
 #: src/gcm-inspect.c:315
 msgid "Get the profiles for a specific file"
-msgstr "Belirli bir dosyadaki profilleri alın"
+msgstr "Belirli dosya için profilleri al"
 
 #. TRANSLATORS: command line option
 #: src/gcm-inspect.c:318
 msgid "Get the profile for a specific window"
-msgstr "Belirli bir pencere profilini alın"
+msgstr "Belirli pencere için profil al"
 
 #. TRANSLATORS: command line option
 #: src/gcm-inspect.c:321
 msgid "Dump all details about this system"
-msgstr "Bu sistem hakkında tüm ayrıntıların dökümü"
+msgstr "Bu sistemle ilgili tüm ayrıntıları dök"
 
 #. TRANSLATORS: just dumps the EDID to disk
 #: src/gcm-inspect.c:334
@@ -284,7 +288,7 @@ msgstr "Algılayıcıda hiçbir yerel sürücüsü yok."
 #. TRANSLATORS: this is displayed the user has not got suitable hardware
 #: src/gcm-picker.c:345
 msgid "The attached colorimeter is not capable of reading a spot color."
-msgstr "Ekli renkölçer spot renk okuma yeteneğine sahip değil."
+msgstr "Takılı renkölçerin spot renk okuma yeteneği yok."
 
 #. TRANSLATORS: this is when there are no profiles that can be used;
 #. * the search term is either "RGB" or "CMYK"
@@ -396,7 +400,7 @@ msgstr "İ_ptal"
 
 #: src/gcm-viewer.c:360
 msgid "_Import"
-msgstr "_İçe Aktar"
+msgstr "İç_e Aktar"
 
 #. TRANSLATORS: filter name on the file->open dialog
 #: src/gcm-viewer.c:378
@@ -436,7 +440,7 @@ msgstr "Aygıt bağlantısı"
 #. TRANSLATORS: this the ICC profile type
 #: src/gcm-viewer.c:554
 msgid "Colorspace conversion"
-msgstr "Renk uzayı dönüştürme"
+msgstr "Renk uzayı dönüşümü"
 
 #. TRANSLATORS: this the ICC profile kind
 #: src/gcm-viewer.c:558
@@ -491,7 +495,7 @@ msgstr "Standart boşluk"
 #. TRANSLATORS: the raw EDID MD5 of the display device
 #: src/gcm-viewer.c:647
 msgid "Display checksum"
-msgstr "Ekran sağlaması"
+msgstr "Ekran özeti"
 
 #: src/gcm-viewer.c:648
 msgid "Display model"
@@ -514,22 +518,22 @@ msgstr "Ekran üreticisi"
 #. TRANSLATORS: the raw profile MD5
 #: src/gcm-viewer.c:655
 msgid "File checksum"
-msgstr "Dosya sağlaması"
+msgstr "Dosya özeti"
 
 #. TRANSLATORS: the color framework, e.g. 'colord'
 #: src/gcm-viewer.c:657
 msgid "Framework product"
-msgstr "Framework ürünü"
+msgstr "Çerçeve ürünü"
 
 #. TRANSLATORS: the framework binary, e.g. gcm-viewer
 #: src/gcm-viewer.c:659
 msgid "Framework program"
-msgstr "Framework programı"
+msgstr "Çerçeve programı"
 
 #. TRANSLATORS: the framework release, e.g. '1.22'
 #: src/gcm-viewer.c:661
 msgid "Framework version"
-msgstr "Framework sürümü"
+msgstr "Çerçeve sürümü"
 
 #. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
 #: src/gcm-viewer.c:663
@@ -695,20 +699,20 @@ msgstr "Bu profil silinemez"
 #. TRANSLATORS: show just the one profile, rather than all
 #: src/gcm-viewer.c:1603
 msgid "Set the specific profile to show"
-msgstr "Gösterilecek belirli bir profil seçin"
+msgstr "Gösterilecek belirli bir profil seç"
 
 #. TRANSLATORS: show just the one filename, rather than all
 #: src/gcm-viewer.c:1606
 msgid "Set the specific file to show"
-msgstr "Gösterilecek belirli bir dosya seçin"
+msgstr "Gösterilecek belirli bir dosya seç"
 
 #: src/gcm-viewer.ui:52
 msgid "Add a profile for the device"
-msgstr "Aygıt için bir profil ekle"
+msgstr "Aygıt için profil ekle"
 
 #: src/gcm-viewer.ui:67
 msgid "Remove a profile from the device"
-msgstr "Aygıttan bir profil kaldır"
+msgstr "Aygıttan profil kaldır"
 
 #. The type of profile, e.g. display, scanner, etc.
 #: src/gcm-viewer.ui:106
@@ -779,7 +783,7 @@ msgstr "x"
 
 #: src/gcm-viewer.ui:552
 msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
-msgstr "Bir CIE 1931 diyagramı, profil gamının 2D temsili gösterimidir"
+msgstr "CIE 1931 diyagramı, profil gamının 2D temsili gösterimidir"
 
 #: src/gcm-viewer.ui:569
 msgid "CIE 1931"
@@ -798,7 +802,7 @@ msgid ""
 "A tone reproduction curve is the mapping of scene luminance to display "
 "luminance"
 msgstr ""
-"Bir ton üreme eğrisi, sahne parlaklığının ekran parlaklığına eşleştirmesidir"
+"Ton üreme eğrisi, sahne parlaklığının ekran parlaklığına eşleştirmesidir"
 
 #: src/gcm-viewer.ui:657
 msgid "TRC"
@@ -810,9 +814,7 @@ msgstr "Ekran kartı çıkışı"
 
 #: src/gcm-viewer.ui:728
 msgid "A video card gamma table shows the curves loaded into the display"
-msgstr ""
-"Bir video kartı karşıtlık derecesi (gama) tablosu, ekran içerisine yüklenen "
-"eğrileri gösterir"
+msgstr "Video kartı gamma tablosu, ekran içerisine yüklenen eğrileri gösterir"
 
 #: src/gcm-viewer.ui:745
 msgid "VCGT"
@@ -834,7 +836,7 @@ msgstr "Sonraki Resim"
 #: src/gcm-viewer.ui:850
 msgid "This shows what an image would look like if saved with the profile"
 msgstr ""
-"Bu bir görüntünün, bu profil ile kaydedilirse neye benzeyeceğini gösterir"
+"Bu, bir görüntünün bu profil ile kaydedilirse neye benzeyeceğini gösterir"
 
 #: src/gcm-viewer.ui:867
 msgid "From sRGB"
@@ -842,7 +844,7 @@ msgstr "sRGB’den"
 
 #: src/gcm-viewer.ui:972
 msgid "This shows what an image would look like if opened with the profile"
-msgstr "Bu bir görüntünün, bu profil ile açılırsa neye benzeyeceğini gösterir"
+msgstr "Bu, bir görüntünün bu profil ile açılırsa neye benzeyeceğini gösterir"
 
 #: src/gcm-viewer.ui:989
 msgid "To sRGB"
@@ -860,7 +862,7 @@ msgstr "Adlandırılmış Renkler"
 msgid ""
 "Metadata is additional information stored in the profile for programs to use."
 msgstr ""
-"Üst veriler, programların kullanımı için bu profilde depolanan ek bilgilerdir"
+"Üst veriler, programların kullanımı için bu profilde saklanan ek bilgilerdir"
 
 #: src/gcm-viewer.ui:1113
 msgid "Metadata"
