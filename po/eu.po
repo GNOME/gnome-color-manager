@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the gnome-color-manager package.
 #
 # Iñaki Larrañaga Murgoitio <dooteo@zundan.com>, 2011, 2013, 2014, 2016, 2017.
-# Asier Sarasua Garmendia  <asiersarasua@ni.eus>, 2021.
+# Asier Saratsua Garmendia  <asiersarasua@ni.eus>, 2021, 2025.
 #
 msgid ""
 msgstr "Project-Id-Version:  gnome-color-manager master\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/issues\n"
-"POT-Creation-Date: 2020-07-15 13:53+0000\n"
-"PO-Revision-Date: 2021-04-30 10:00+0100\n"
-"Last-Translator: Asier Sarasua Garmendia <asiersarasua@ni.eus>\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/issues/\n"
+"POT-Creation-Date: 2025-01-31 09:54+0000\n"
+"PO-Revision-Date: 2025-03-02 10:00+0100\n"
+"Last-Translator: Asier Saratsua Garmendia <asiersarasua@ni.eus>\n"
 "Language-Team: Basque <librezale@librezale.eus>\n"
 "Language: eu\n"
 "MIME-Version: 1.0\n"
@@ -24,17 +24,21 @@ msgid "GNOME Color Manager"
 msgstr "GNOME kolore-kudeatzailea"
 
 #: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:8
+msgid "The GNOME Project"
+msgstr "GNOME proiektua"
+
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:12
 #: data/org.gnome.ColorProfileViewer.desktop.in:4
 msgid "Inspect and compare installed color profiles"
 msgstr "Gainbegiratu eta konparatu instalatutako kolore-profilak"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:10
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:14
 msgid ""
 "GNOME Color Profile Viewer shows installed color profiles on your system and "
 "allows you to calibrate displays, printers and cameras using a wizard."
 msgstr "GNOMEren kolore-profilen ikustaileak sisteman instalatutako kolore-profilak erakusten ditu eta pantailak, inprimagailuak eta kamerak morroi baten bidez kalibratzea uzten dizu."
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:15
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:19
 msgid ""
 "This functionality is typically used by GNOME Control Center from the color "
 "panel although can be used on its own."
@@ -118,7 +122,7 @@ msgid "No filename specified"
 msgstr "Ez da fitxategi-izenik zehaztu"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-import.c:123 src/gcm-viewer.c:1276
+#: src/gcm-import.c:123 src/gcm-viewer.c:1277
 msgid "Failed to open ICC profile"
 msgstr "Huts egin du ICC profila irekitzeak"
 
@@ -174,7 +178,7 @@ msgid "Import"
 msgstr "Inportatu"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-import.c:257 src/gcm-viewer.c:1308
+#: src/gcm-import.c:257 src/gcm-viewer.c:1309
 msgid "Failed to import file"
 msgstr "Huts egin du fitxategia inportatzeak"
 
@@ -252,8 +256,8 @@ msgstr "EDID ikuskatzeen programa"
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-picker.c:200 src/gcm-picker.c:207 src/gcm-viewer.c:564
-#: src/gcm-viewer.c:611
+#: src/gcm-picker.c:200 src/gcm-picker.c:207 src/gcm-viewer.c:565
+#: src/gcm-viewer.c:612
 msgid "Unknown"
 msgstr "Ezezaguna"
 
@@ -280,7 +284,7 @@ msgid "No %s color spaces available"
 msgstr "Ez dago %s kolore-espaziorik erabilgarri"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: src/gcm-picker.c:681 src/gcm-viewer.c:1599
+#: src/gcm-picker.c:681 src/gcm-viewer.c:1600
 msgid "Set the parent window to make this modal"
 msgstr "Ezarri leiho gurasoa hau modal bihurtzeko"
 
@@ -291,7 +295,7 @@ msgstr "GNOME kolore-kudeatzailearen kolore-hautatzailea"
 
 #. the color representation
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-picker.ui:93 src/gcm-viewer.c:572
+#: src/gcm-picker.ui:93 src/gcm-viewer.c:573
 msgid "XYZ"
 msgstr "XYZ"
 
@@ -324,7 +328,7 @@ msgstr "Kolore-espazioa"
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-picker.ui:183 src/gcm-utils.c:67 src/gcm-viewer.c:592
+#: src/gcm-picker.ui:183 src/gcm-utils.c:67 src/gcm-viewer.c:593
 msgid "RGB"
 msgstr "RGB"
 
@@ -345,7 +349,7 @@ msgstr "_Neurtu"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-utils.c:71 src/gcm-viewer.c:604
+#: src/gcm-utils.c:71 src/gcm-viewer.c:605
 msgid "CMYK"
 msgstr "CMYK"
 
@@ -355,335 +359,335 @@ msgid "gray"
 msgstr "grisa"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: src/gcm-viewer.c:311
+#: src/gcm-viewer.c:312
 msgid "Permanently delete profile?"
 msgstr "Betiko ezabatu profila?"
 
 #. TRANSLATORS: dialog message
-#: src/gcm-viewer.c:314
+#: src/gcm-viewer.c:315
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr "Ziur zaude profil hau sistematik kendu nahi dituzula betiko?"
 
 #. TRANSLATORS: button, delete a profile
-#: src/gcm-viewer.c:317
+#: src/gcm-viewer.c:318
 msgid "Delete"
 msgstr "Ezabatu"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: src/gcm-viewer.c:356
+#: src/gcm-viewer.c:357
 msgid "Select ICC Profile File"
 msgstr "Hautatu ICC profilaren fitxategia"
 
-#: src/gcm-viewer.c:358
+#: src/gcm-viewer.c:359
 msgid "_Cancel"
 msgstr "_Utzi"
 
-#: src/gcm-viewer.c:359
+#: src/gcm-viewer.c:360
 msgid "_Import"
 msgstr "I_nportatu"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: src/gcm-viewer.c:377
+#: src/gcm-viewer.c:378
 msgid "Supported ICC profiles"
 msgstr "Onartutako ICC profilak"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: src/gcm-viewer.c:384
+#: src/gcm-viewer.c:385
 msgid "All files"
 msgstr "Fitxategi guztiak"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-viewer.c:409
+#: src/gcm-viewer.c:410
 msgid "Failed to copy file"
 msgstr "Huts egin du fitxategia kopiatzeak"
 
 #. TRANSLATORS: this the ICC profile type
-#: src/gcm-viewer.c:537
+#: src/gcm-viewer.c:538
 msgid "Input device"
 msgstr "Sarrerako gailua"
 
 #. TRANSLATORS: this the ICC profile type
-#: src/gcm-viewer.c:541
+#: src/gcm-viewer.c:542
 msgid "Display device"
 msgstr "Pantaila-gailua"
 
 #. TRANSLATORS: this the ICC profile type
-#: src/gcm-viewer.c:545
+#: src/gcm-viewer.c:546
 msgid "Output device"
 msgstr "Irteerako gailua"
 
 #. TRANSLATORS: this the ICC profile type
-#: src/gcm-viewer.c:549
+#: src/gcm-viewer.c:550
 msgid "Devicelink"
 msgstr "Gailu-esteka"
 
 #. TRANSLATORS: this the ICC profile type
-#: src/gcm-viewer.c:553
+#: src/gcm-viewer.c:554
 msgid "Colorspace conversion"
 msgstr "Kolore-espazioaren bihurketa"
 
 #. TRANSLATORS: this the ICC profile kind
-#: src/gcm-viewer.c:557
+#: src/gcm-viewer.c:558
 msgid "Abstract"
 msgstr "Abstraktua"
 
 #. TRANSLATORS: this the ICC profile type
-#: src/gcm-viewer.c:561
+#: src/gcm-viewer.c:562
 msgid "Named color"
 msgstr "Kolore izenduna"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-viewer.c:576
+#: src/gcm-viewer.c:577
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-viewer.c:580
+#: src/gcm-viewer.c:581
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-viewer.c:584
+#: src/gcm-viewer.c:585
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-viewer.c:588
+#: src/gcm-viewer.c:589
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-viewer.c:596
+#: src/gcm-viewer.c:597
 msgid "Gray"
 msgstr "Grisa"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-viewer.c:600
+#: src/gcm-viewer.c:601
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-viewer.c:608
+#: src/gcm-viewer.c:609
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: e.g. sRGB or adbode RGB
-#: src/gcm-viewer.c:644
+#: src/gcm-viewer.c:645
 msgid "Standard space"
 msgstr "Espazio estandarra"
 
 #. TRANSLATORS: the raw EDID MD5 of the display device
-#: src/gcm-viewer.c:646
+#: src/gcm-viewer.c:647
 msgid "Display checksum"
 msgstr "Pantailaren kontrol-batura"
 
-#: src/gcm-viewer.c:647
+#: src/gcm-viewer.c:648
 msgid "Display model"
 msgstr "Pantailaren eredua"
 
-#: src/gcm-viewer.c:648
+#: src/gcm-viewer.c:649
 msgid "Display serial number"
 msgstr "Pantailaren serie-zenbakia"
 
 #. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
-#: src/gcm-viewer.c:650
+#: src/gcm-viewer.c:651
 msgid "Display PNPID"
 msgstr "Pantailaren PNPIDa"
 
 #. TRANSLATORS: who made the display
-#: src/gcm-viewer.c:652
+#: src/gcm-viewer.c:653
 msgid "Display vendor"
 msgstr "Pantailaren saltzailea"
 
 #. TRANSLATORS: the raw profile MD5
-#: src/gcm-viewer.c:654
+#: src/gcm-viewer.c:655
 msgid "File checksum"
 msgstr "Fitxategiaren kontrol-batura"
 
 #. TRANSLATORS: the color framework, e.g. 'colord'
-#: src/gcm-viewer.c:656
+#: src/gcm-viewer.c:657
 msgid "Framework product"
 msgstr "Lan-markoaren produktua"
 
 #. TRANSLATORS: the framework binary, e.g. gcm-viewer
-#: src/gcm-viewer.c:658
+#: src/gcm-viewer.c:659
 msgid "Framework program"
 msgstr "Lan-markoaren programa"
 
 #. TRANSLATORS: the framework release, e.g. '1.22'
-#: src/gcm-viewer.c:660
+#: src/gcm-viewer.c:661
 msgid "Framework version"
 msgstr "Lan-markoaren bertsioa"
 
 #. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
-#: src/gcm-viewer.c:662
+#: src/gcm-viewer.c:663
 msgid "Data source type"
 msgstr "Datuen iturburu mota"
 
 #. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
-#: src/gcm-viewer.c:664
+#: src/gcm-viewer.c:665
 msgid "Mapping format"
 msgstr "Mapaketaren formatua"
 
 #. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
-#: src/gcm-viewer.c:666
+#: src/gcm-viewer.c:667
 msgid "Mapping qualifier"
 msgstr "Mapaketaren kalifikatzailea"
 
 #. TRANSLATORS: The original device the profile was made for
-#: src/gcm-viewer.c:668
+#: src/gcm-viewer.c:669
 msgid "Mapping device"
 msgstr "Mapaketaren gailua"
 
 #. TRANSLATORS: The average error when making the profile
-#: src/gcm-viewer.c:670
+#: src/gcm-viewer.c:671
 msgid "Delta-E average"
 msgstr "Delta-E batez bestekoa"
 
 #. TRANSLATORS: the maximum error when making the profile
-#: src/gcm-viewer.c:672
+#: src/gcm-viewer.c:673
 msgid "Delta-E maximum"
 msgstr "Delta-E gehienekoa"
 
 #. TRANSLATORS: the RMS error when making the profile
-#: src/gcm-viewer.c:674
+#: src/gcm-viewer.c:675
 msgid "Delta-E RMS"
 msgstr "Delta-E RMS"
 
 #. TRANSLATORS: The device name, e.g. 'huey'
-#: src/gcm-viewer.c:676
+#: src/gcm-viewer.c:677
 msgid "Calibration device"
 msgstr "Kalibrazio-gailua"
 
 #. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
-#: src/gcm-viewer.c:678
+#: src/gcm-viewer.c:679
 msgid "Screen surface finish"
 msgstr "Pantailaren gainazala amaituta"
 
 #. TRANSLATORS: e.g. DVI or VGA
-#: src/gcm-viewer.c:680
+#: src/gcm-viewer.c:681
 msgid "Connection type"
 msgstr "Konexio mota"
 
 #. TRANSLATORS: e.g. Screen brightness in percent
-#: src/gcm-viewer.c:682
+#: src/gcm-viewer.c:683
 msgid "Screen brightness"
 msgstr "Pantailaren distira"
 
 #. TRANSLATORS: e.g. the 3D volume of the gamut graph
-#: src/gcm-viewer.c:684
+#: src/gcm-viewer.c:685
 msgid "Gamut volume"
 msgstr "Gamaren bolumena"
 
 #. TRANSLATORS: e.g. what proportion of sRGB is covered
-#: src/gcm-viewer.c:686
+#: src/gcm-viewer.c:687
 msgid "sRGB coverage"
 msgstr "sRGB estalkia"
 
 #. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
-#: src/gcm-viewer.c:688
+#: src/gcm-viewer.c:689
 msgid "Adobe RGB coverage"
 msgstr "Adobe RGB estalkia"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:784
+#: src/gcm-viewer.c:785
 msgid "No description has been set"
 msgstr "Ez da azalpenik ezarri"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:788
+#: src/gcm-viewer.c:789
 msgid "No copyright has been set"
 msgstr "Ez da copyright-ik ezarri"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:792
+#: src/gcm-viewer.c:793
 msgid "The display compensation table is invalid"
 msgstr "Pantailaren konpentsazioaren taula baliogabea da"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:796
+#: src/gcm-viewer.c:797
 msgid "A scum dot is present for media white"
 msgstr "Zabor-puntua ageri da euskarriaren zurian"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:800
+#: src/gcm-viewer.c:801
 msgid "The gray axis contains significant amounts of color"
 msgstr "Ardatz gris batek kolore kopuru nabarmena dauka"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:804
+#: src/gcm-viewer.c:805
 msgid "The gray axis is non-monotonic"
 msgstr "Ardatz gris bat ez da monotonikoa"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:808
+#: src/gcm-viewer.c:809
 msgid "One or more of the primaries are invalid"
 msgstr "Oinarrizko bat edo gehiago baliogabeak dira"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:812
+#: src/gcm-viewer.c:813
 msgid "The primaries do not add to white"
 msgstr "Oinarrizkoak ez zaio zuriari gehitzen"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:816
+#: src/gcm-viewer.c:817
 msgid "One or more of the primaries is unlikely"
 msgstr "Oinarrizko bat edo gehiago ez dirudi izan daitezkeenik"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:820
+#: src/gcm-viewer.c:821
 msgid "The white is not D50 white"
 msgstr "Zuria ez da D50 zuria"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:824
+#: src/gcm-viewer.c:825
 msgid "The whitepoint temperature is unlikely"
 msgstr "Puntu zuriaren tenperatura ez dirudi izan daitekeenik"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:828
+#: src/gcm-viewer.c:829
 msgid "Unknown warning type"
 msgstr "Abisu mota ezezaguna"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: src/gcm-viewer.c:965
+#: src/gcm-viewer.c:966
 msgid "Yes"
 msgstr "Bai"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: src/gcm-viewer.c:968
+#: src/gcm-viewer.c:969
 msgid "No"
 msgstr "Ez"
 
 #. TRANSLATORS: profiles that have warnings are useable,
 #. * but may not be any good
-#: src/gcm-viewer.c:994
+#: src/gcm-viewer.c:995
 msgid "The profile has the following problems:"
 msgstr "Profilak honako arazoak ditu:"
 
 #. TRANSLATORS: this is the icc creation date strftime format
-#: src/gcm-viewer.c:1086
+#: src/gcm-viewer.c:1087
 msgid "%B %e %Y, %I∶%M∶%S %p"
 msgstr "%Y-%e-%B, %I:%M:%S %p"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: src/gcm-viewer.c:1109
+#: src/gcm-viewer.c:1110
 msgid "Delete this profile"
 msgstr "Ezabatu profil hau"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: src/gcm-viewer.c:1112
+#: src/gcm-viewer.c:1113
 msgid "This profile cannot be deleted"
 msgstr "Profila hau ezin da ezabatu"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: src/gcm-viewer.c:1602
+#: src/gcm-viewer.c:1603
 msgid "Set the specific profile to show"
 msgstr "Ezarri profil zehatza erakusteko"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: src/gcm-viewer.c:1605
+#: src/gcm-viewer.c:1606
 msgid "Set the specific file to show"
 msgstr "Ezarri fitxategi zehatza erakusteko"
 
@@ -1185,9 +1189,9 @@ msgstr "Metadatuak"
 #~ "begiratu <a href=\"control-center://color\">kontrol-zentroa</a>."
 
 #~ msgid ""
-#~ "You can use the profile with <a href=\"import-linux\">Linux</a>, <a href="
-#~ "\"import-osx\">Apple OS X</a> and <a href=\"import-windows\">Microsoft "
-#~ "Windows</a> systems."
+#~ "You can use the profile with <a href=\"import-linux\">Linux</a>, <a "
+#~ "href=\"import-osx\">Apple OS X</a> and <a href=\"import-"
+#~ "windows\">Microsoft Windows</a> systems."
 #~ msgstr ""
 #~ "Profila <a href=\"import-linux\">Linux</a>, <a href=\"import-osx\">Apple "
 #~ "OS X</a> eta <a href=\"import-windows\">Microsoft Windows</a> sistemekin "
