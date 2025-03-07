@@ -7,9 +7,9 @@ msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/"
-"issues\n"
-"POT-Creation-Date: 2023-02-03 11:57+0000\n"
-"PO-Revision-Date: 2023-02-14 01:25+0300\n"
+"issues/\n"
+"POT-Creation-Date: 2025-01-31 09:54+0000\n"
+"PO-Revision-Date: 2025-03-07 11:57+0300\n"
 "Last-Translator: Yuras Shumovich <shumovichy@gmail.com>\n"
 "Language-Team: Belarusian <i18n-bel-gnome@googlegroups.com>\n"
 "Language: be\n"
@@ -18,18 +18,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.5\n"
 
 #: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:7
 msgid "GNOME Color Manager"
 msgstr "GNOME Color Manager"
 
 #: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:8
+msgid "The GNOME Project"
+msgstr "Праект GNOME"
+
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:12
 #: data/org.gnome.ColorProfileViewer.desktop.in:4
 msgid "Inspect and compare installed color profiles"
 msgstr "Праверыць і параўнаць усталяваныя колеравыя профілі"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:10
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:14
 msgid ""
 "GNOME Color Profile Viewer shows installed color profiles on your system and "
 "allows you to calibrate displays, printers and cameras using a wizard."
@@ -38,7 +42,7 @@ msgstr ""
 "колеравыя профілі і дазваляе праводзіць каліброўку дысплэяў, прынтараў і "
 "камер."
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:15
+#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:19
 msgid ""
 "This functionality is typically used by GNOME Control Center from the color "
 "panel although can be used on its own."
@@ -124,7 +128,7 @@ msgid "No filename specified"
 msgstr "Назва файла не вызначана"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-import.c:123 src/gcm-viewer.c:1276
+#: src/gcm-import.c:123 src/gcm-viewer.c:1277
 msgid "Failed to open ICC profile"
 msgstr "Не ўдалося адкрыць профіль ICC"
 
@@ -180,7 +184,7 @@ msgid "Import"
 msgstr "Імпартаваць"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-import.c:257 src/gcm-viewer.c:1308
+#: src/gcm-import.c:257 src/gcm-viewer.c:1309
 msgid "Failed to import file"
 msgstr "Не ўдалося імпартаваць файл"
 
@@ -258,8 +262,8 @@ msgstr "Праграма праверкі EDID"
 #. TRANSLATORS: this is when the ambient light level is unknown
 #. TRANSLATORS: this the ICC profile type
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-picker.c:200 src/gcm-picker.c:207 src/gcm-viewer.c:564
-#: src/gcm-viewer.c:611
+#: src/gcm-picker.c:200 src/gcm-picker.c:207 src/gcm-viewer.c:565
+#: src/gcm-viewer.c:612
 msgid "Unknown"
 msgstr "Невядома"
 
@@ -286,7 +290,7 @@ msgid "No %s color spaces available"
 msgstr "Няма даступных колеравых прастор %s"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: src/gcm-picker.c:681 src/gcm-viewer.c:1599
+#: src/gcm-picker.c:681 src/gcm-viewer.c:1600
 msgid "Set the parent window to make this modal"
 msgstr "Задаць бацькоўскае акно, каб зрабіць гэта акно мадальным"
 
@@ -297,7 +301,7 @@ msgstr "Сродак выбару колеру GNOME Color Manager"
 
 #. the color representation
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-picker.ui:93 src/gcm-viewer.c:572
+#: src/gcm-picker.ui:93 src/gcm-viewer.c:573
 msgid "XYZ"
 msgstr "XYZ"
 
@@ -330,7 +334,7 @@ msgstr "Колеравая прастора"
 #. These are the values of the chosen color in Red, Green, Blue encoding
 #. TRANSLATORS: this is the colorspace, e.g. red, green, blue
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-picker.ui:183 src/gcm-utils.c:67 src/gcm-viewer.c:592
+#: src/gcm-picker.ui:183 src/gcm-utils.c:67 src/gcm-viewer.c:593
 msgid "RGB"
 msgstr "RGB"
 
@@ -351,7 +355,7 @@ msgstr "_Змераць"
 
 #. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-utils.c:71 src/gcm-viewer.c:604
+#: src/gcm-utils.c:71 src/gcm-viewer.c:605
 msgid "CMYK"
 msgstr "CMYK"
 
@@ -361,335 +365,335 @@ msgid "gray"
 msgstr "gray"
 
 #. TRANSLATORS: title, usually we can tell based on the EDID data or output name
-#: src/gcm-viewer.c:311
+#: src/gcm-viewer.c:312
 msgid "Permanently delete profile?"
 msgstr "Выдаліць профіль незваротна?"
 
 #. TRANSLATORS: dialog message
-#: src/gcm-viewer.c:314
+#: src/gcm-viewer.c:315
 msgid ""
 "Are you sure you want to remove this profile from your system permanently?"
 msgstr "Сапраўды незваротна выдаліць гэты профіль з сістэмы?"
 
 #. TRANSLATORS: button, delete a profile
-#: src/gcm-viewer.c:317
+#: src/gcm-viewer.c:318
 msgid "Delete"
 msgstr "Выдаліць"
 
 #. TRANSLATORS: dialog for file->open dialog
-#: src/gcm-viewer.c:356
+#: src/gcm-viewer.c:357
 msgid "Select ICC Profile File"
 msgstr "Выберыце файл профілю ICC"
 
-#: src/gcm-viewer.c:358
+#: src/gcm-viewer.c:359
 msgid "_Cancel"
 msgstr "_Скасаваць"
 
-#: src/gcm-viewer.c:359
+#: src/gcm-viewer.c:360
 msgid "_Import"
 msgstr "І_мпартаваць"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: src/gcm-viewer.c:377
+#: src/gcm-viewer.c:378
 msgid "Supported ICC profiles"
 msgstr "Вядомыя профілі ICC"
 
 #. TRANSLATORS: filter name on the file->open dialog
-#: src/gcm-viewer.c:384
+#: src/gcm-viewer.c:385
 msgid "All files"
 msgstr "Усе файлы"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-viewer.c:409
+#: src/gcm-viewer.c:410
 msgid "Failed to copy file"
 msgstr "Не ўдалося скапіяваць файл"
 
 #. TRANSLATORS: this the ICC profile type
-#: src/gcm-viewer.c:537
+#: src/gcm-viewer.c:538
 msgid "Input device"
 msgstr "Прылада ўводу"
 
 #. TRANSLATORS: this the ICC profile type
-#: src/gcm-viewer.c:541
+#: src/gcm-viewer.c:542
 msgid "Display device"
 msgstr "Прылада адлюстравання"
 
 #. TRANSLATORS: this the ICC profile type
-#: src/gcm-viewer.c:545
+#: src/gcm-viewer.c:546
 msgid "Output device"
 msgstr "Прылада вываду"
 
 #. TRANSLATORS: this the ICC profile type
-#: src/gcm-viewer.c:549
+#: src/gcm-viewer.c:550
 msgid "Devicelink"
 msgstr "Devicelink"
 
 #. TRANSLATORS: this the ICC profile type
-#: src/gcm-viewer.c:553
+#: src/gcm-viewer.c:554
 msgid "Colorspace conversion"
 msgstr "Пераўтварэнне колеравай прасторы"
 
 #. TRANSLATORS: this the ICC profile kind
-#: src/gcm-viewer.c:557
+#: src/gcm-viewer.c:558
 msgid "Abstract"
 msgstr "Абстрактны"
 
 #. TRANSLATORS: this the ICC profile type
-#: src/gcm-viewer.c:561
+#: src/gcm-viewer.c:562
 msgid "Named color"
 msgstr "Названы колер"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-viewer.c:576
+#: src/gcm-viewer.c:577
 msgid "LAB"
 msgstr "LAB"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-viewer.c:580
+#: src/gcm-viewer.c:581
 msgid "LUV"
 msgstr "LUV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-viewer.c:584
+#: src/gcm-viewer.c:585
 msgid "YCbCr"
 msgstr "YCbCr"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-viewer.c:588
+#: src/gcm-viewer.c:589
 msgid "Yxy"
 msgstr "Yxy"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-viewer.c:596
+#: src/gcm-viewer.c:597
 msgid "Gray"
 msgstr "Gray"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-viewer.c:600
+#: src/gcm-viewer.c:601
 msgid "HSV"
 msgstr "HSV"
 
 #. TRANSLATORS: this the ICC colorspace type
-#: src/gcm-viewer.c:608
+#: src/gcm-viewer.c:609
 msgid "CMY"
 msgstr "CMY"
 
 #. TRANSLATORS: e.g. sRGB or adbode RGB
-#: src/gcm-viewer.c:644
+#: src/gcm-viewer.c:645
 msgid "Standard space"
 msgstr "Стандартная прастора"
 
 #. TRANSLATORS: the raw EDID MD5 of the display device
-#: src/gcm-viewer.c:646
+#: src/gcm-viewer.c:647
 msgid "Display checksum"
 msgstr "Кантрольная сума дысплэя"
 
-#: src/gcm-viewer.c:647
+#: src/gcm-viewer.c:648
 msgid "Display model"
 msgstr "Мадэль дысплэя"
 
-#: src/gcm-viewer.c:648
+#: src/gcm-viewer.c:649
 msgid "Display serial number"
 msgstr "Серыйны нумар дысплэя"
 
 #. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
-#: src/gcm-viewer.c:650
+#: src/gcm-viewer.c:651
 msgid "Display PNPID"
 msgstr "PNPID дысплэя"
 
 #. TRANSLATORS: who made the display
-#: src/gcm-viewer.c:652
+#: src/gcm-viewer.c:653
 msgid "Display vendor"
 msgstr "Вытворца дысплэя"
 
 #. TRANSLATORS: the raw profile MD5
-#: src/gcm-viewer.c:654
+#: src/gcm-viewer.c:655
 msgid "File checksum"
 msgstr "Кантрольная сума файла"
 
 #. TRANSLATORS: the color framework, e.g. 'colord'
-#: src/gcm-viewer.c:656
+#: src/gcm-viewer.c:657
 msgid "Framework product"
 msgstr "Фрэймворк"
 
 #. TRANSLATORS: the framework binary, e.g. gcm-viewer
-#: src/gcm-viewer.c:658
+#: src/gcm-viewer.c:659
 msgid "Framework program"
 msgstr "Праграма фрэймворка"
 
 #. TRANSLATORS: the framework release, e.g. '1.22'
-#: src/gcm-viewer.c:660
+#: src/gcm-viewer.c:661
 msgid "Framework version"
 msgstr "Версія фрэймворка"
 
 #. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
-#: src/gcm-viewer.c:662
+#: src/gcm-viewer.c:663
 msgid "Data source type"
 msgstr "Тып крыніцы даных"
 
 #. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
-#: src/gcm-viewer.c:664
+#: src/gcm-viewer.c:665
 msgid "Mapping format"
 msgstr "Фармат супастаўлення"
 
 #. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
-#: src/gcm-viewer.c:666
+#: src/gcm-viewer.c:667
 msgid "Mapping qualifier"
 msgstr "Кваліфікатар супастаўлення"
 
 #. TRANSLATORS: The original device the profile was made for
-#: src/gcm-viewer.c:668
+#: src/gcm-viewer.c:669
 msgid "Mapping device"
 msgstr "Прылада супастаўлення"
 
 #. TRANSLATORS: The average error when making the profile
-#: src/gcm-viewer.c:670
+#: src/gcm-viewer.c:671
 msgid "Delta-E average"
 msgstr "Delta-E сярэдняе"
 
 #. TRANSLATORS: the maximum error when making the profile
-#: src/gcm-viewer.c:672
+#: src/gcm-viewer.c:673
 msgid "Delta-E maximum"
 msgstr "Delta-E максімум"
 
 #. TRANSLATORS: the RMS error when making the profile
-#: src/gcm-viewer.c:674
+#: src/gcm-viewer.c:675
 msgid "Delta-E RMS"
 msgstr "Delta-E RMS"
 
 #. TRANSLATORS: The device name, e.g. 'huey'
-#: src/gcm-viewer.c:676
+#: src/gcm-viewer.c:677
 msgid "Calibration device"
 msgstr "Калібравальная прылада"
 
 #. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
-#: src/gcm-viewer.c:678
+#: src/gcm-viewer.c:679
 msgid "Screen surface finish"
 msgstr "Тып паверхні экрана"
 
 #. TRANSLATORS: e.g. DVI or VGA
-#: src/gcm-viewer.c:680
+#: src/gcm-viewer.c:681
 msgid "Connection type"
 msgstr "Тып падлучэння"
 
 #. TRANSLATORS: e.g. Screen brightness in percent
-#: src/gcm-viewer.c:682
+#: src/gcm-viewer.c:683
 msgid "Screen brightness"
 msgstr "Яркасць экрана"
 
 #. TRANSLATORS: e.g. the 3D volume of the gamut graph
-#: src/gcm-viewer.c:684
+#: src/gcm-viewer.c:685
 msgid "Gamut volume"
 msgstr "Колеравы дыяпазон"
 
 #. TRANSLATORS: e.g. what proportion of sRGB is covered
-#: src/gcm-viewer.c:686
+#: src/gcm-viewer.c:687
 msgid "sRGB coverage"
 msgstr "Ахоп колераў sRGB"
 
 #. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
-#: src/gcm-viewer.c:688
+#: src/gcm-viewer.c:689
 msgid "Adobe RGB coverage"
 msgstr "Ахоп колераў Adobe RGB"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:784
+#: src/gcm-viewer.c:785
 msgid "No description has been set"
 msgstr "Апісанне не ўказана"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:788
+#: src/gcm-viewer.c:789
 msgid "No copyright has been set"
 msgstr "Аўтарскія правы не ўказаны"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:792
+#: src/gcm-viewer.c:793
 msgid "The display compensation table is invalid"
 msgstr "Няправільная табліца кампенсацыі дысплэя"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:796
+#: src/gcm-viewer.c:797
 msgid "A scum dot is present for media white"
 msgstr "Для адлюстравання белага выкарыстоўваецца зацяненне кропкамі"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:800
+#: src/gcm-viewer.c:801
 msgid "The gray axis contains significant amounts of color"
 msgstr "Вось шэрага ўтрымлівае значную колькасць колеру"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:804
+#: src/gcm-viewer.c:805
 msgid "The gray axis is non-monotonic"
 msgstr "Вось шэрага не манатонная"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:808
+#: src/gcm-viewer.c:809
 msgid "One or more of the primaries are invalid"
 msgstr "Адзін або некалькі асноўных колераў памылковыя"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:812
+#: src/gcm-viewer.c:813
 msgid "The primaries do not add to white"
 msgstr "Асноўныя колеры не дададзены да белага"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:816
+#: src/gcm-viewer.c:817
 msgid "One or more of the primaries is unlikely"
 msgstr "Адзін або некалькі асноўных колераў непраўдападобныя"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:820
+#: src/gcm-viewer.c:821
 msgid "The white is not D50 white"
 msgstr "Белы не з'яўляецца белым D50"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:824
+#: src/gcm-viewer.c:825
 msgid "The whitepoint temperature is unlikely"
 msgstr "Тэмпература пункта белага непраўдападобная"
 
 #. TRANSLATORS: the profile is broken
-#: src/gcm-viewer.c:828
+#: src/gcm-viewer.c:829
 msgid "Unknown warning type"
 msgstr "Невядомы тып папярэджання"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: src/gcm-viewer.c:965
+#: src/gcm-viewer.c:966
 msgid "Yes"
 msgstr "Так"
 
 #. TRANSLATORS: if the device has a VCGT profile
-#: src/gcm-viewer.c:968
+#: src/gcm-viewer.c:969
 msgid "No"
 msgstr "Не"
 
 #. TRANSLATORS: profiles that have warnings are useable,
 #. * but may not be any good
-#: src/gcm-viewer.c:994
+#: src/gcm-viewer.c:995
 msgid "The profile has the following problems:"
 msgstr "Профіль мае наступныя праблемы:"
 
 #. TRANSLATORS: this is the icc creation date strftime format
-#: src/gcm-viewer.c:1086
+#: src/gcm-viewer.c:1087
 msgid "%B %e %Y, %I∶%M∶%S %p"
 msgstr "%e %B %Y, %H∶%M∶%S"
 
 #. TRANSLATORS: this is the tooltip when the profile can be deleted
-#: src/gcm-viewer.c:1109
+#: src/gcm-viewer.c:1110
 msgid "Delete this profile"
 msgstr "Выдаліць гэты профіль"
 
 #. TRANSLATORS: this is the tooltip when the profile cannot be deleted
-#: src/gcm-viewer.c:1112
+#: src/gcm-viewer.c:1113
 msgid "This profile cannot be deleted"
 msgstr "Немагчыма выдаліць гэты профіль"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: src/gcm-viewer.c:1602
+#: src/gcm-viewer.c:1603
 msgid "Set the specific profile to show"
 msgstr "Задаць пэўны профіль для паказу"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: src/gcm-viewer.c:1605
+#: src/gcm-viewer.c:1606
 msgid "Set the specific file to show"
 msgstr "Задаць пэўны файл для паказу"
 
