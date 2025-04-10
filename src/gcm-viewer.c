@@ -1585,23 +1585,20 @@ gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
 int
 main (int argc, char **argv)
 {
-	gchar *profile_id = NULL;
-	gchar *filename = NULL;
 	GcmViewerPrivate *viewer;
-	GOptionContext *context;
-	guint xid = 0;
 	int status = 0;
-	gboolean ret;
-	g_autoptr(GError) error = NULL;
+
+	viewer = g_new0 (GcmViewerPrivate, 1);
+	viewer->lang = g_getenv ("LANG");
 
 	const GOptionEntry options[] = {
-		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &xid,
+		{ "parent-window", 'p', 0, G_OPTION_ARG_INT, &viewer->xid,
 		  /* TRANSLATORS: we can make this modal (stay on top of) another window */
 		  _("Set the parent window to make this modal"), NULL },
-		{ "profile", 'f', 0, G_OPTION_ARG_STRING, &profile_id,
+		{ "profile", 'f', 0, G_OPTION_ARG_STRING, &viewer->profile_id,
 		  /* TRANSLATORS: show just the one profile, rather than all */
 		  _("Set the specific profile to show"), NULL },
-		{ "file", '\0', 0, G_OPTION_ARG_STRING, &filename,
+		{ "file", '\0', 0, G_OPTION_ARG_STRING, &viewer->filename,
 		  /* TRANSLATORS: show just the one filename, rather than all */
 		  _("Set the specific file to show"), NULL },
 		{ NULL}
@@ -1613,25 +1610,7 @@ main (int argc, char **argv)
 	bind_textdomain_codeset (GETTEXT_PACKAGE, "UTF-8");
 	textdomain (GETTEXT_PACKAGE);
 
-	gtk_init (&argc, &argv);
-
-	context = g_option_context_new ("gnome-color-manager profile viewer");
-	g_option_context_add_main_entries (context, options, NULL);
-	g_option_context_add_group (context, gcm_debug_get_option_group ());
-	g_option_context_add_group (context, gtk_get_option_group (TRUE));
-	ret = g_option_context_parse (context, &argc, &argv, &error);
-	if (!ret) {
-		g_warning ("failed to parse options: %s", error->message);
-	}
-	g_option_context_free (context);
-
 	g_set_prgname (GCM_VIEWER_APPLICATION_ID);
-
-	viewer = g_new0 (GcmViewerPrivate, 1);
-	viewer->xid = xid;
-	viewer->profile_id = profile_id;
-	viewer->filename = filename;
-	viewer->lang = g_getenv ("LANG");
 
 	/* ensure single instance */
 	viewer->application = gtk_application_new (GCM_VIEWER_APPLICATION_ID, 0);
@@ -1639,6 +1618,13 @@ main (int argc, char **argv)
 			  G_CALLBACK (gcm_viewer_startup_cb), viewer);
 	g_signal_connect (viewer->application, "activate",
 			  G_CALLBACK (gcm_viewer_activate_cb), viewer);
+
+	g_application_add_main_option_entries (G_APPLICATION (viewer->application), options);
+	g_application_set_option_context_summary (G_APPLICATION (viewer->application),
+	                                          /* TRANSLATORS: summary shown in the command-line help */
+	                                          _("GNOME Color Manager - Color Profile Viewer"));
+	g_application_add_option_group (G_APPLICATION (viewer->application),
+	                                gcm_debug_get_option_group ());
 
 	/* wait */
 	status = g_application_run (G_APPLICATION (viewer->application), argc, argv);
