@@ -1180,14 +1180,6 @@ gcm_viewer_setup_drag_and_drop (GtkWidget *widget)
 }
 
 static void
-gcm_viewer_activate_cb (GApplication *application, GcmViewerPrivate *viewer)
-{
-	GtkWindow *window;
-	window = GTK_WINDOW (gtk_builder_get_object (viewer->builder, "dialog_viewer"));
-	gtk_window_present (window);
-}
-
-static void
 gcm_viewer_add_named_colors_columns (GcmViewerPrivate *viewer,
 				     GtkTreeView *treeview)
 {
@@ -1336,16 +1328,23 @@ gcm_viewer_show_single_profile_by_id (GcmViewerPrivate *viewer,
 }
 
 static void
-gcm_viewer_startup_cb (GApplication *application, GcmViewerPrivate *viewer)
+gcm_viewer_activate_cb (GApplication *application, GcmViewerPrivate *viewer)
 {
 	gboolean ret;
 	gint retval;
 	GtkStyleContext *context;
 	GtkTreeSelection *selection;
-	GtkWidget *main_window;
+	GtkWidget *main_window = NULL;
 	GtkWidget *widget;
 	g_autoptr(CdProfile) profile = NULL;
 	g_autoptr(GError) error = NULL;
+
+	main_window = GTK_WIDGET (gtk_application_get_active_window (GTK_APPLICATION (application)));
+
+	if (main_window != NULL) {
+		gtk_window_present (GTK_WINDOW (main_window));
+		return;
+	}
 
 	/* get UI */
 	viewer->builder = gtk_builder_new ();
@@ -1614,8 +1613,6 @@ main (int argc, char **argv)
 
 	/* ensure single instance */
 	viewer->application = gtk_application_new (GCM_VIEWER_APPLICATION_ID, 0);
-	g_signal_connect (viewer->application, "startup",
-			  G_CALLBACK (gcm_viewer_startup_cb), viewer);
 	g_signal_connect (viewer->application, "activate",
 			  G_CALLBACK (gcm_viewer_activate_cb), viewer);
 
