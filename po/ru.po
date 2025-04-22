@@ -10,8 +10,8 @@ msgstr ""
 "Project-Id-Version: gnome-color-manager 3.2\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/"
 "issues/\n"
-"POT-Creation-Date: 2025-01-31 09:54+0000\n"
-"PO-Revision-Date: 2025-01-31 13:01+0300\n"
+"POT-Creation-Date: 2025-04-17 13:58+0000\n"
+"PO-Revision-Date: 2025-04-17 20:22+0300\n"
 "Last-Translator: Artur So <arturios2005@mail.ru>\n"
 "Language-Team: Russian <gnome-cyr@gnome.org>\n"
 "Language: ru\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
 #: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:7
 msgid "GNOME Color Manager"
@@ -92,13 +92,13 @@ msgstr "По умолчанию %s"
 #. * profile has been auto-generated for this hardware
 #: src/gcm-cell-renderer-profile-text.c:88
 msgid "Default: "
-msgstr "По умолчанию:"
+msgstr "По умолчанию: "
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile his a standard space like AdobeRGB
 #: src/gcm-cell-renderer-profile-text.c:93
 msgid "Colorspace: "
-msgstr "Цветовое пространство:"
+msgstr "Цветовое пространство: "
 
 #. TRANSLATORS: this is a profile prefix to signify the
 #. * profile is a test profile
@@ -130,7 +130,7 @@ msgid "No filename specified"
 msgstr "Имя файла не указано"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-import.c:123 src/gcm-viewer.c:1277
+#: src/gcm-import.c:123 src/gcm-viewer.c:1269
 msgid "Failed to open ICC profile"
 msgstr "Не удалось открыть профиль ICC"
 
@@ -186,7 +186,7 @@ msgid "Import"
 msgstr "Импортировать"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-import.c:257 src/gcm-viewer.c:1309
+#: src/gcm-import.c:257 src/gcm-viewer.c:1301
 msgid "Failed to import file"
 msgstr "Не удалось импортировать файл"
 
@@ -292,7 +292,7 @@ msgid "No %s color spaces available"
 msgstr "Нет доступных цветовых пространств %s"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: src/gcm-picker.c:681 src/gcm-viewer.c:1600
+#: src/gcm-picker.c:681 src/gcm-viewer.c:1596
 msgid "Set the parent window to make this modal"
 msgstr "Сделать это окно модальным"
 
@@ -690,14 +690,19 @@ msgid "This profile cannot be deleted"
 msgstr "Невозможно удалить этот профиль"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: src/gcm-viewer.c:1603
+#: src/gcm-viewer.c:1599
 msgid "Set the specific profile to show"
 msgstr "Указать определённый профиль для показа"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: src/gcm-viewer.c:1606
+#: src/gcm-viewer.c:1602
 msgid "Set the specific file to show"
 msgstr "Указать определённый файл для показа"
+
+#. TRANSLATORS: summary shown in the command-line help
+#: src/gcm-viewer.c:1622
+msgid "GNOME Color Manager - Color Profile Viewer"
+msgstr "Управление цветом в GNOME - Просмотрщик цветовых профилей"
 
 #: src/gcm-viewer.ui:52
 msgid "Add a profile for the device"
@@ -857,7 +862,7 @@ msgid ""
 "Metadata is additional information stored in the profile for programs to use."
 msgstr ""
 "Метаданные являются описанием профиля, доступным для пользователей и других "
-"приложений"
+"приложений."
 
 #: src/gcm-viewer.ui:1113
 msgid "Metadata"
