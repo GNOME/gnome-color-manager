@@ -17,3 +17,13 @@ foreach desktop_file: desktop_files
     install_dir: join_paths(prefixed_datadir, 'applications')
   )
 endforeach
+
+dbusconf = configuration_data()
+dbusconf.set('bindir', prefixed_bindir)
+configure_file(
+  input: 'org.gnome.ColorProfileViewer.service.in',
+  output: 'org.gnome.ColorProfileViewer.service',
+  configuration: dbusconf,
+  install: true,
+  install_dir: join_paths(prefixed_datadir, 'dbus-1', 'services'),
+)
