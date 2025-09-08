@@ -18,9 +18,10 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
-"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/issues/\n"
-"POT-Creation-Date: 2025-01-31 09:54+0000\n"
-"PO-Revision-Date: 2025-03-10 22:37+0100\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/"
+"issues/\n"
+"POT-Creation-Date: 2025-08-31 15:03+0000\n"
+"PO-Revision-Date: 2025-09-02 15:42+0200\n"
 "Last-Translator: Ask Hjorth Larsen <asklarsen@gmail.com>\n"
 "Language-Team: Danish <dansk@dansk-gruppen.dk>\n"
 "Language: da\n"
@@ -29,20 +30,20 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:7
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:7
 msgid "GNOME Color Manager"
 msgstr "GNOME Farvestyring"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:8
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:8
 msgid "The GNOME Project"
 msgstr "GNOME-projektet"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:12
-#: data/org.gnome.ColorProfileViewer.desktop.in:4
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:12
+#: data/org.gnome.ColorProfileViewer.desktop.in:3
 msgid "Inspect and compare installed color profiles"
 msgstr "Inspicér og sammenlign installerede farveprofiler"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:14
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:14
 msgid ""
 "GNOME Color Profile Viewer shows installed color profiles on your system and "
 "allows you to calibrate displays, printers and cameras using a wizard."
@@ -51,7 +52,7 @@ msgstr ""
 "system og giver dig mulighed for at kalibrere skærme, printere og kameraer "
 "ved hjælp af en guide."
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:19
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:19
 msgid ""
 "This functionality is typically used by GNOME Control Center from the color "
 "panel although can be used on its own."
@@ -59,29 +60,29 @@ msgstr ""
 "Denne funktionalitet benyttes typisk fra farvepanelet i GNOME Kontrolcenter, "
 "men kan også benyttes for sig selv."
 
-#: data/gcm-import.desktop.in:3
+#: data/gcm-import.desktop.in:2
 msgid "ICC Profile Installer"
 msgstr "ICC-profilinstallering"
 
-#: data/gcm-import.desktop.in:4
+#: data/gcm-import.desktop.in:3
 msgid "Install ICC profiles"
 msgstr "Installer ICC-profiler"
 
 #. Window title, where the user can pick spot colors using a measuring device
-#: data/gcm-picker.desktop.in:3 src/gcm-picker.ui:27 src/gcm-picker.ui:324
+#: data/gcm-picker.desktop.in:2 src/gcm-picker.ui:27 src/gcm-picker.ui:324
 msgid "Color Picker"
 msgstr "Farvevælger"
 
-#: data/gcm-picker.desktop.in:4
+#: data/gcm-picker.desktop.in:3
 msgid "Use the color sensor to sample spot colors"
 msgstr "Brug farvesensoren til at tage punktfarveprøver"
 
-#: data/org.gnome.ColorProfileViewer.desktop.in:3 src/gcm-viewer.ui:1133
+#: data/org.gnome.ColorProfileViewer.desktop.in:2 src/gcm-viewer.ui:1155
 msgid "Color Profile Viewer"
 msgstr "Farveprofilfremviser"
 
 #. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
-#: data/org.gnome.ColorProfileViewer.desktop.in:13
+#: data/org.gnome.ColorProfileViewer.desktop.in:12
 msgid "Color;ICC;"
 msgstr "Farve;ICC;"
 
@@ -137,7 +138,7 @@ msgid "No filename specified"
 msgstr "Intet filnavn angivet"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-import.c:123 src/gcm-viewer.c:1277
+#: src/gcm-import.c:123 src/gcm-viewer.c:1269
 msgid "Failed to open ICC profile"
 msgstr "Kunne ikke åbne ICC-profil"
 
@@ -193,7 +194,7 @@ msgid "Import"
 msgstr "Importér"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-import.c:257 src/gcm-viewer.c:1309
+#: src/gcm-import.c:257 src/gcm-viewer.c:1301
 msgid "Failed to import file"
 msgstr "Kunne ikke importere fil"
 
@@ -299,7 +300,7 @@ msgid "No %s color spaces available"
 msgstr "Ingen tilgængelige %s-farverum"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: src/gcm-picker.c:681 src/gcm-viewer.c:1600
+#: src/gcm-picker.c:681 src/gcm-viewer.c:1596
 msgid "Set the parent window to make this modal"
 msgstr "Angiv hovedvinduet for at gøre denne modal"
 
@@ -336,7 +337,7 @@ msgstr "Baggrund"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
 #. The profile colorspace, e.g. RGB
-#: src/gcm-picker.ui:168 src/gcm-viewer.ui:122
+#: src/gcm-picker.ui:168 src/gcm-viewer.ui:134
 msgid "Colorspace"
 msgstr "Farverum"
 
@@ -699,176 +700,181 @@ msgid "This profile cannot be deleted"
 msgstr "Denne profil kan ikke slettes"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: src/gcm-viewer.c:1603
+#: src/gcm-viewer.c:1599
 msgid "Set the specific profile to show"
 msgstr "Angiv den specifikke profil der skal vises"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: src/gcm-viewer.c:1606
+#: src/gcm-viewer.c:1602
 msgid "Set the specific file to show"
 msgstr "Angiv den specifikke fil der skal vises"
 
-#: src/gcm-viewer.ui:52
+#. TRANSLATORS: summary shown in the command-line help
+#: src/gcm-viewer.c:1622
+msgid "GNOME Color Manager - Color Profile Viewer"
+msgstr "GNOME Farvehåndtering — Farveprofilviser"
+
+#: src/gcm-viewer.ui:55
 msgid "Add a profile for the device"
 msgstr "Tilføj en profil for enheden"
 
-#: src/gcm-viewer.ui:67
+#: src/gcm-viewer.ui:70
 msgid "Remove a profile from the device"
 msgstr "Fjern en profil fra enheden"
 
 #. The type of profile, e.g. display, scanner, etc.
-#: src/gcm-viewer.ui:106
+#: src/gcm-viewer.ui:118
 msgid "Profile type"
 msgstr "Profiltype"
 
 #. When the profile was created
-#: src/gcm-viewer.ui:138
+#: src/gcm-viewer.ui:150
 msgid "Created"
 msgstr "Oprettet"
 
 #. The version of the profile
-#: src/gcm-viewer.ui:155
+#: src/gcm-viewer.ui:167
 msgid "Version"
 msgstr "Version"
 
 #. The manufacturer of the profile
-#: src/gcm-viewer.ui:172
+#: src/gcm-viewer.ui:184
 msgid "Manufacturer"
 msgstr "Producent"
 
 #. The manufacturer of the profile
-#: src/gcm-viewer.ui:189
+#: src/gcm-viewer.ui:201
 msgid "Model"
 msgstr "Model"
 
 #. If the profile contains a display correction table
-#: src/gcm-viewer.ui:205
+#: src/gcm-viewer.ui:217
 msgid "Display correction"
 msgstr "Skærmkorrektion"
 
 #. The basename (the last section of the filename) of the profile
-#: src/gcm-viewer.ui:221
+#: src/gcm-viewer.ui:233
 msgid "White point"
 msgstr "Hvidpunkt"
 
 #. The licence of the profile, normally non-free
-#: src/gcm-viewer.ui:238
+#: src/gcm-viewer.ui:250
 msgid "Copyright"
 msgstr "Ophavsret"
 
 #. The file size in bytes of the profile
-#: src/gcm-viewer.ui:254
+#: src/gcm-viewer.ui:266
 msgid "File size"
 msgstr "Filstørrelse"
 
 #. The basename (the last section of the filename) of the profile
-#: src/gcm-viewer.ui:271
+#: src/gcm-viewer.ui:283
 msgid "Filename"
 msgstr "Filnavn"
 
 #. warnings for the profile
-#: src/gcm-viewer.ui:288
+#: src/gcm-viewer.ui:300
 msgid "Warnings"
 msgstr "Advarsler"
 
-#: src/gcm-viewer.ui:474
+#: src/gcm-viewer.ui:490
 msgid "Information"
 msgstr "Information"
 
-#: src/gcm-viewer.ui:502
+#: src/gcm-viewer.ui:518
 msgid "y"
 msgstr "y"
 
-#: src/gcm-viewer.ui:521
+#: src/gcm-viewer.ui:537
 msgid "x"
 msgstr "x"
 
-#: src/gcm-viewer.ui:552
+#: src/gcm-viewer.ui:568
 msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
 msgstr "Et CIE 1931-diagram viser en 2D-representation af profilens gamut"
 
-#: src/gcm-viewer.ui:569
+#: src/gcm-viewer.ui:586
 msgid "CIE 1931"
 msgstr "CIE 1931"
 
-#: src/gcm-viewer.ui:591
+#: src/gcm-viewer.ui:608
 msgid "Response out"
 msgstr "Svar ud"
 
-#: src/gcm-viewer.ui:611 src/gcm-viewer.ui:699
+#: src/gcm-viewer.ui:628 src/gcm-viewer.ui:717
 msgid "Response in"
 msgstr "Svar ind"
 
-#: src/gcm-viewer.ui:640
+#: src/gcm-viewer.ui:657
 msgid ""
 "A tone reproduction curve is the mapping of scene luminance to display "
 "luminance"
 msgstr ""
 "En tonereproduktionskurve er afbildningen af sceneluminans til skærmluminans"
 
-#: src/gcm-viewer.ui:657
+#: src/gcm-viewer.ui:675
 msgid "TRC"
 msgstr "TRC"
 
-#: src/gcm-viewer.ui:679
+#: src/gcm-viewer.ui:697
 msgid "Video card out"
 msgstr "Videokort ud"
 
-#: src/gcm-viewer.ui:728
+#: src/gcm-viewer.ui:746
 msgid "A video card gamma table shows the curves loaded into the display"
 msgstr "En videokortgammatabel viser de kurver, som er indlæst i skærmen"
 
-#: src/gcm-viewer.ui:745
+#: src/gcm-viewer.ui:764
 msgid "VCGT"
 msgstr "VCGT"
 
-#: src/gcm-viewer.ui:780 src/gcm-viewer.ui:902
+#: src/gcm-viewer.ui:799 src/gcm-viewer.ui:922
 msgid "Previous Image"
 msgstr "Forrige billede"
 
 #. This is an example image that is saved in sRGB gamut
-#: src/gcm-viewer.ui:798 src/gcm-viewer.ui:920
+#: src/gcm-viewer.ui:817 src/gcm-viewer.ui:940
 msgid "sRGB example"
 msgstr "sRGB-eksempel"
 
-#: src/gcm-viewer.ui:829 src/gcm-viewer.ui:951
+#: src/gcm-viewer.ui:848 src/gcm-viewer.ui:971
 msgid "Next Image"
 msgstr "Næste billede"
 
-#: src/gcm-viewer.ui:850
+#: src/gcm-viewer.ui:869
 msgid "This shows what an image would look like if saved with the profile"
 msgstr ""
 "Dette viser hvordan et billede ville se ud, hvis det blev gemt med profilen"
 
-#: src/gcm-viewer.ui:867
+#: src/gcm-viewer.ui:887
 msgid "From sRGB"
 msgstr "Fra sRGB"
 
-#: src/gcm-viewer.ui:972
+#: src/gcm-viewer.ui:992
 msgid "This shows what an image would look like if opened with the profile"
 msgstr ""
 "Dette viser hvordan et billede ville se ud hvis det blev åbnet med profilen"
 
-#: src/gcm-viewer.ui:989
+#: src/gcm-viewer.ui:1010
 msgid "To sRGB"
 msgstr "Til sRGB"
 
-#: src/gcm-viewer.ui:1040
+#: src/gcm-viewer.ui:1061
 msgid "Named colors are specific colors that are defined in the profile"
 msgstr "Navngivne farver er specifikke farver, som er defineret i profilen"
 
-#: src/gcm-viewer.ui:1057
+#: src/gcm-viewer.ui:1079
 msgid "Named Colors"
 msgstr "Navngivne farver"
 
-#: src/gcm-viewer.ui:1096
+#: src/gcm-viewer.ui:1118
 msgid ""
 "Metadata is additional information stored in the profile for programs to use."
 msgstr ""
 "Metadata er yderligere oplysninger, som lagres i profilen for at programmer "
 "kan bruge dem."
 
-#: src/gcm-viewer.ui:1113
+#: src/gcm-viewer.ui:1136
 msgid "Metadata"
 msgstr "Metadata"
 
