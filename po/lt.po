@@ -9,9 +9,9 @@ msgstr ""
 "Project-Id-Version: gnome-color-manager master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/"
 "issues/\n"
-"POT-Creation-Date: 2025-01-31 09:54+0000\n"
-"PO-Revision-Date: 2025-03-01 23:02+0200\n"
-"Last-Translator: Moo\n"
+"POT-Creation-Date: 2025-07-13 23:38+0000\n"
+"PO-Revision-Date: 2026-02-12 22:37+0200\n"
+"Last-Translator: Aurimas Černius <aurimas.cernius@mailo.com>\n"
 "Language-Team: Lietuvių <gnome-lt@lists.akl.lt>\n"
 "Language: lt\n"
 "MIME-Version: 1.0\n"
@@ -19,22 +19,22 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "(n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.8\n"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:7
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:7
 msgid "GNOME Color Manager"
 msgstr "GNOME spalvų tvarkytuvė"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:8
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:8
 msgid "The GNOME Project"
 msgstr "GNOME projektas"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:12
-#: data/org.gnome.ColorProfileViewer.desktop.in:4
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:12
+#: data/org.gnome.ColorProfileViewer.desktop.in:3
 msgid "Inspect and compare installed color profiles"
 msgstr "Tikrinti ir lyginti įdiegtus spalvų profilius"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:14
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:14
 msgid ""
 "GNOME Color Profile Viewer shows installed color profiles on your system and "
 "allows you to calibrate displays, printers and cameras using a wizard."
@@ -43,7 +43,7 @@ msgstr ""
 "bei leidžia kalibruoti vaizduoklius, spausdintuvus bei kameras naudojant "
 "vedlį."
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:19
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:19
 msgid ""
 "This functionality is typically used by GNOME Control Center from the color "
 "panel although can be used on its own."
@@ -51,29 +51,29 @@ msgstr ""
 "Šį funkcionalumą paprastai naudoja GNOME valdymo centras iš spalvų skydelio, "
 "nors jį galima naudoti ir vieną."
 
-#: data/gcm-import.desktop.in:3
+#: data/gcm-import.desktop.in:2
 msgid "ICC Profile Installer"
 msgstr "ICC profilių diegiklis"
 
-#: data/gcm-import.desktop.in:4
+#: data/gcm-import.desktop.in:3
 msgid "Install ICC profiles"
 msgstr "Įdiegti ICC profilius"
 
 #. Window title, where the user can pick spot colors using a measuring device
-#: data/gcm-picker.desktop.in:3 src/gcm-picker.ui:27 src/gcm-picker.ui:324
+#: data/gcm-picker.desktop.in:2 src/gcm-picker.ui:27 src/gcm-picker.ui:324
 msgid "Color Picker"
 msgstr "Spalvos gavėjas"
 
-#: data/gcm-picker.desktop.in:4
+#: data/gcm-picker.desktop.in:3
 msgid "Use the color sensor to sample spot colors"
 msgstr "Naudoti spalvų jutiklį spalvų pavyzdžiams paimti"
 
-#: data/org.gnome.ColorProfileViewer.desktop.in:3 src/gcm-viewer.ui:1133
+#: data/org.gnome.ColorProfileViewer.desktop.in:2 src/gcm-viewer.ui:1155
 msgid "Color Profile Viewer"
 msgstr "Spalvų profilio žiūryklė"
 
 #. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
-#: data/org.gnome.ColorProfileViewer.desktop.in:13
+#: data/org.gnome.ColorProfileViewer.desktop.in:12
 msgid "Color;ICC;"
 msgstr "Spalva;ICC;"
 
@@ -129,7 +129,7 @@ msgid "No filename specified"
 msgstr "Nenurodytas failo vardas"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-import.c:123 src/gcm-viewer.c:1277
+#: src/gcm-import.c:123 src/gcm-viewer.c:1269
 msgid "Failed to open ICC profile"
 msgstr "Nepavyko atverti ICC profilio"
 
@@ -185,7 +185,7 @@ msgid "Import"
 msgstr "Importuoti"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-import.c:257 src/gcm-viewer.c:1309
+#: src/gcm-import.c:257 src/gcm-viewer.c:1301
 msgid "Failed to import file"
 msgstr "Nepavyko nukopijuoti failo"
 
@@ -291,7 +291,7 @@ msgid "No %s color spaces available"
 msgstr "Nėra %s spalvų erdvių"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: src/gcm-picker.c:681 src/gcm-viewer.c:1600
+#: src/gcm-picker.c:681 src/gcm-viewer.c:1596
 msgid "Set the parent window to make this modal"
 msgstr "Nustatyti tėvinį langą paverčiant šį modaliniu"
 
@@ -328,7 +328,7 @@ msgstr "Supanti"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
 #. The profile colorspace, e.g. RGB
-#: src/gcm-picker.ui:168 src/gcm-viewer.ui:122
+#: src/gcm-picker.ui:168 src/gcm-viewer.ui:134
 msgid "Colorspace"
 msgstr "Spalvų erdvė"
 
@@ -689,171 +689,176 @@ msgid "This profile cannot be deleted"
 msgstr "Šio profilio negalima ištrinti"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: src/gcm-viewer.c:1603
+#: src/gcm-viewer.c:1599
 msgid "Set the specific profile to show"
 msgstr "Nustatyti konkretų rodomą profilį"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: src/gcm-viewer.c:1606
+#: src/gcm-viewer.c:1602
 msgid "Set the specific file to show"
 msgstr "Rodyti konkretų failą"
 
-#: src/gcm-viewer.ui:52
+#. TRANSLATORS: summary shown in the command-line help
+#: src/gcm-viewer.c:1622
+msgid "GNOME Color Manager - Color Profile Viewer"
+msgstr "GNOME spalvų tvarkytuvė - spalvų profilio žiūryklė"
+
+#: src/gcm-viewer.ui:55
 msgid "Add a profile for the device"
 msgstr "Pridėti spalvų profilį šiam prietaisui"
 
-#: src/gcm-viewer.ui:67
+#: src/gcm-viewer.ui:70
 msgid "Remove a profile from the device"
 msgstr "Pašalinti prietaiso profilį"
 
 #. The type of profile, e.g. display, scanner, etc.
-#: src/gcm-viewer.ui:106
+#: src/gcm-viewer.ui:118
 msgid "Profile type"
 msgstr "Profilio tipas"
 
 #. When the profile was created
-#: src/gcm-viewer.ui:138
+#: src/gcm-viewer.ui:150
 msgid "Created"
 msgstr "Sukurta"
 
 #. The version of the profile
-#: src/gcm-viewer.ui:155
+#: src/gcm-viewer.ui:167
 msgid "Version"
 msgstr "Versija"
 
 #. The manufacturer of the profile
-#: src/gcm-viewer.ui:172
+#: src/gcm-viewer.ui:184
 msgid "Manufacturer"
 msgstr "Gamintojas"
 
 #. The manufacturer of the profile
-#: src/gcm-viewer.ui:189
+#: src/gcm-viewer.ui:201
 msgid "Model"
 msgstr "Modelis"
 
 #. If the profile contains a display correction table
-#: src/gcm-viewer.ui:205
+#: src/gcm-viewer.ui:217
 msgid "Display correction"
 msgstr "Vaizduoklio korekcija"
 
 #. The basename (the last section of the filename) of the profile
-#: src/gcm-viewer.ui:221
+#: src/gcm-viewer.ui:233
 msgid "White point"
 msgstr "Baltas taškas"
 
 #. The licence of the profile, normally non-free
-#: src/gcm-viewer.ui:238
+#: src/gcm-viewer.ui:250
 msgid "Copyright"
 msgstr "Autorinės teisės"
 
 #. The file size in bytes of the profile
-#: src/gcm-viewer.ui:254
+#: src/gcm-viewer.ui:266
 msgid "File size"
 msgstr "Failo dydis"
 
 #. The basename (the last section of the filename) of the profile
-#: src/gcm-viewer.ui:271
+#: src/gcm-viewer.ui:283
 msgid "Filename"
 msgstr "Failo vardas"
 
 #. warnings for the profile
-#: src/gcm-viewer.ui:288
+#: src/gcm-viewer.ui:300
 msgid "Warnings"
 msgstr "Įspėjimai"
 
-#: src/gcm-viewer.ui:474
+#: src/gcm-viewer.ui:490
 msgid "Information"
 msgstr "Plačiau"
 
-#: src/gcm-viewer.ui:502
+#: src/gcm-viewer.ui:518
 msgid "y"
 msgstr "y"
 
-#: src/gcm-viewer.ui:521
+#: src/gcm-viewer.ui:537
 msgid "x"
 msgstr "x"
 
-#: src/gcm-viewer.ui:552
+#: src/gcm-viewer.ui:568
 msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
 msgstr "A CIE 1931 diagrama sodo profilio diapazono 2D pateiktį"
 
-#: src/gcm-viewer.ui:569
+#: src/gcm-viewer.ui:586
 msgid "CIE 1931"
 msgstr "CIE 1931"
 
-#: src/gcm-viewer.ui:591
+#: src/gcm-viewer.ui:608
 msgid "Response out"
 msgstr "Išeinantis atsakas"
 
-#: src/gcm-viewer.ui:611 src/gcm-viewer.ui:699
+#: src/gcm-viewer.ui:628 src/gcm-viewer.ui:717
 msgid "Response in"
 msgstr "Įeinantis atsakas"
 
-#: src/gcm-viewer.ui:640
+#: src/gcm-viewer.ui:657
 msgid ""
 "A tone reproduction curve is the mapping of scene luminance to display "
 "luminance"
 msgstr "Tono atkartojimo kreivė nustato scenos apšvietimą jo pavaizdavimui"
 
-#: src/gcm-viewer.ui:657
+#: src/gcm-viewer.ui:675
 msgid "TRC"
 msgstr "TRC"
 
-#: src/gcm-viewer.ui:679
+#: src/gcm-viewer.ui:697
 msgid "Video card out"
 msgstr "Vaizdo kortos išvestis"
 
-#: src/gcm-viewer.ui:728
+#: src/gcm-viewer.ui:746
 msgid "A video card gamma table shows the curves loaded into the display"
 msgstr "Vaizdo kortos gama lentelė rodo ekrane rodomas kreives"
 
-#: src/gcm-viewer.ui:745
+#: src/gcm-viewer.ui:764
 msgid "VCGT"
 msgstr "VCGT"
 
-#: src/gcm-viewer.ui:780 src/gcm-viewer.ui:902
+#: src/gcm-viewer.ui:799 src/gcm-viewer.ui:922
 msgid "Previous Image"
 msgstr "Ankstesnis paveikslėlis"
 
 #. This is an example image that is saved in sRGB gamut
-#: src/gcm-viewer.ui:798 src/gcm-viewer.ui:920
+#: src/gcm-viewer.ui:817 src/gcm-viewer.ui:940
 msgid "sRGB example"
 msgstr "sRGB pavyzdys"
 
-#: src/gcm-viewer.ui:829 src/gcm-viewer.ui:951
+#: src/gcm-viewer.ui:848 src/gcm-viewer.ui:971
 msgid "Next Image"
 msgstr "Kitas paveikslėlis"
 
-#: src/gcm-viewer.ui:850
+#: src/gcm-viewer.ui:869
 msgid "This shows what an image would look like if saved with the profile"
 msgstr "Parodo, kaip paveikslėlis atrodytų, jei būtų išsaugotas su profiliu"
 
-#: src/gcm-viewer.ui:867
+#: src/gcm-viewer.ui:887
 msgid "From sRGB"
 msgstr "Iš sRGB"
 
-#: src/gcm-viewer.ui:972
+#: src/gcm-viewer.ui:992
 msgid "This shows what an image would look like if opened with the profile"
 msgstr "Parodo, kaip paveikslėlis atrodytų, jei būtų atvertas su profiliu"
 
-#: src/gcm-viewer.ui:989
+#: src/gcm-viewer.ui:1010
 msgid "To sRGB"
 msgstr "Į sRGB"
 
-#: src/gcm-viewer.ui:1040
+#: src/gcm-viewer.ui:1061
 msgid "Named colors are specific colors that are defined in the profile"
 msgstr "Vardinės spalvos yra tam tikros spalvos, apibrėžtos profilyje"
 
-#: src/gcm-viewer.ui:1057
+#: src/gcm-viewer.ui:1079
 msgid "Named Colors"
 msgstr "Vardinė spalva"
 
-#: src/gcm-viewer.ui:1096
+#: src/gcm-viewer.ui:1118
 msgid ""
 "Metadata is additional information stored in the profile for programs to use."
 msgstr "Meta-duomenys yra papildoma informacija, laikoma profilyje programoms."
 
-#: src/gcm-viewer.ui:1113
+#: src/gcm-viewer.ui:1136
 msgid "Metadata"
 msgstr "Meta-duomenys"
 
