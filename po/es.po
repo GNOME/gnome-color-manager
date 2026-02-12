@@ -1,41 +1,40 @@
-#
 # Jorge González <jorgegonz@svn.gnome.org>, 2009, 2010, 2011.
 # Nicolás Satragno <nicoymatu9@hotmail.com>, 2011.
 # Daniel Mustieles <daniel.mustieles@gmail.com>, 2011, 2012, 2013, 2014, 2016.
-# Daniel Mustieles García <daniel.mustieles@gmail.com>, 2025.
+# Daniel Mustieles García <daniel.mustieles@gmail.com>, 2025-2026.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager.master\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/"
 "issues/\n"
-"POT-Creation-Date: 2025-01-31 09:54+0000\n"
-"PO-Revision-Date: 2025-03-05 16:14+0100\n"
+"POT-Creation-Date: 2025-07-13 23:38+0000\n"
+"PO-Revision-Date: 2026-02-12 14:07+0100\n"
 "Last-Translator: Daniel Mustieles García <daniel.mustieles@gmail.com>\n"
 "Language-Team: Spanish - Spain <gnome-es-list@gnome.org>\n"
 "Language: es_ES\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Poedit-Language: Russian\n"
-"X-Poedit-Country: RUSSIAN FEDERATION\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
-"X-Generator: Gtranslator 47.1\n"
+"X-Generator: Gtranslator 49.0\n"
+"X-Poedit-Country: RUSSIAN FEDERATION\n"
+"X-Poedit-Language: Russian\n"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:7
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:7
 msgid "GNOME Color Manager"
 msgstr "Gestor de color de GNOME"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:8
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:8
 msgid "The GNOME Project"
 msgstr "El Proyecto GNOME"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:12
-#: data/org.gnome.ColorProfileViewer.desktop.in:4
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:12
+#: data/org.gnome.ColorProfileViewer.desktop.in:3
 msgid "Inspect and compare installed color profiles"
 msgstr "Inspeccionar y comparar perfiles de color instalados"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:14
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:14
 msgid ""
 "GNOME Color Profile Viewer shows installed color profiles on your system and "
 "allows you to calibrate displays, printers and cameras using a wizard."
@@ -44,7 +43,7 @@ msgstr ""
 "instalados en su sistema y le permite calibrar pantallas, impresoras y "
 "cámaras usando un asistente."
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:19
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:19
 msgid ""
 "This functionality is typically used by GNOME Control Center from the color "
 "panel although can be used on its own."
@@ -52,29 +51,30 @@ msgstr ""
 "Esta funcionalidad la usa generalmente el panel de control de GNOME, desde "
 "el panel de color, aunque se puede usar de manera individual."
 
-#: data/gcm-import.desktop.in:3
+#: data/gcm-import.desktop.in:2
 msgid "ICC Profile Installer"
 msgstr "Instalador de perfiles ICC"
 
-#: data/gcm-import.desktop.in:4
+#: data/gcm-import.desktop.in:3
 msgid "Install ICC profiles"
 msgstr "Instalar perfiles ICC"
 
 #. Window title, where the user can pick spot colors using a measuring device
-#: data/gcm-picker.desktop.in:3 src/gcm-picker.ui:27 src/gcm-picker.ui:324
+#: data/gcm-picker.desktop.in:2 src/gcm-picker.ui:27 src/gcm-picker.ui:324
 msgid "Color Picker"
 msgstr "Selector de color"
 
-#: data/gcm-picker.desktop.in:4
+#: data/gcm-picker.desktop.in:3
 msgid "Use the color sensor to sample spot colors"
 msgstr "Use el sensor de color para muestrear los puntos de color"
 
-#: data/org.gnome.ColorProfileViewer.desktop.in:3 src/gcm-viewer.ui:1133
+#: data/org.gnome.ColorProfileViewer.desktop.in:2 src/gcm-viewer.ui:1155
 msgid "Color Profile Viewer"
 msgstr "Visor de perfiles de color"
 
-#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
-#: data/org.gnome.ColorProfileViewer.desktop.in:13
+#. Translators: Search terms to find this application. Do NOT translate or
+#. localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.ColorProfileViewer.desktop.in:12
 msgid "Color;ICC;"
 msgstr "Color;ICC;"
 
@@ -130,7 +130,7 @@ msgid "No filename specified"
 msgstr "No se especificó ningún nombre de archivo"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-import.c:123 src/gcm-viewer.c:1277
+#: src/gcm-import.c:123 src/gcm-viewer.c:1269
 msgid "Failed to open ICC profile"
 msgstr "Falló al abrir el perfil ICC"
 
@@ -186,11 +186,12 @@ msgid "Import"
 msgstr "Importar"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-import.c:257 src/gcm-viewer.c:1309
+#: src/gcm-import.c:257 src/gcm-viewer.c:1301
 msgid "Failed to import file"
 msgstr "Falló al importar el archivo"
 
-#. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
+#. TRANSLATORS: this is the ICC profile description stored in an atom in the
+#. XServer
 #: src/gcm-inspect.c:39
 msgid "Description:"
 msgstr "Descripción:"
@@ -292,7 +293,7 @@ msgid "No %s color spaces available"
 msgstr "No existen espacios de color %s disponibles"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: src/gcm-picker.c:681 src/gcm-viewer.c:1600
+#: src/gcm-picker.c:681 src/gcm-viewer.c:1596
 msgid "Set the parent window to make this modal"
 msgstr "Establecer la ventana padre para hacerlo modal"
 
@@ -327,9 +328,10 @@ msgstr "Temperatura del color"
 msgid "Ambient"
 msgstr "Ambiente"
 
-#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#. This is the title to a combobox that switches the RGB conversion between
+#. different colorspaces such as Adobe RGB and sRGB
 #. The profile colorspace, e.g. RGB
-#: src/gcm-picker.ui:168 src/gcm-viewer.ui:122
+#: src/gcm-picker.ui:168 src/gcm-viewer.ui:134
 msgid "Colorspace"
 msgstr "Espacio de color"
 
@@ -366,7 +368,8 @@ msgstr "CMYK"
 msgid "gray"
 msgstr "gris"
 
-#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#. TRANSLATORS: title, usually we can tell based on the EDID data or output
+#. name
 #: src/gcm-viewer.c:312
 msgid "Permanently delete profile?"
 msgstr "¿Eliminar permanentemente el perfil?"
@@ -692,108 +695,113 @@ msgid "This profile cannot be deleted"
 msgstr "Este perfil no se puede eliminar"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: src/gcm-viewer.c:1603
+#: src/gcm-viewer.c:1599
 msgid "Set the specific profile to show"
 msgstr "Establecer el perfil específico que mostrar"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: src/gcm-viewer.c:1606
+#: src/gcm-viewer.c:1602
 msgid "Set the specific file to show"
 msgstr "Establecer el archivo específico que mostrar"
 
-#: src/gcm-viewer.ui:52
+#. TRANSLATORS: summary shown in the command-line help
+#: src/gcm-viewer.c:1622
+msgid "GNOME Color Manager - Color Profile Viewer"
+msgstr "Administrador de color de GNOME - Visor de perfiles de color"
+
+#: src/gcm-viewer.ui:55
 msgid "Add a profile for the device"
 msgstr "Añadir un perfil para el dispositivo"
 
-#: src/gcm-viewer.ui:67
+#: src/gcm-viewer.ui:70
 msgid "Remove a profile from the device"
 msgstr "Quitar un perfil del dispositivo"
 
 #. The type of profile, e.g. display, scanner, etc.
-#: src/gcm-viewer.ui:106
+#: src/gcm-viewer.ui:118
 msgid "Profile type"
 msgstr "Tipo de perfil"
 
 #. When the profile was created
-#: src/gcm-viewer.ui:138
+#: src/gcm-viewer.ui:150
 msgid "Created"
 msgstr "Creado"
 
 #. The version of the profile
-#: src/gcm-viewer.ui:155
+#: src/gcm-viewer.ui:167
 msgid "Version"
 msgstr "Versión"
 
 #. The manufacturer of the profile
-#: src/gcm-viewer.ui:172
+#: src/gcm-viewer.ui:184
 msgid "Manufacturer"
 msgstr "Fabricante"
 
 #. The manufacturer of the profile
-#: src/gcm-viewer.ui:189
+#: src/gcm-viewer.ui:201
 msgid "Model"
 msgstr "Modelo"
 
 #. If the profile contains a display correction table
-#: src/gcm-viewer.ui:205
+#: src/gcm-viewer.ui:217
 msgid "Display correction"
 msgstr "Corrección de pantalla"
 
 #. The basename (the last section of the filename) of the profile
-#: src/gcm-viewer.ui:221
+#: src/gcm-viewer.ui:233
 msgid "White point"
 msgstr "Punto blanco"
 
 #. The licence of the profile, normally non-free
-#: src/gcm-viewer.ui:238
+#: src/gcm-viewer.ui:250
 msgid "Copyright"
 msgstr "Copyright"
 
 #. The file size in bytes of the profile
-#: src/gcm-viewer.ui:254
+#: src/gcm-viewer.ui:266
 msgid "File size"
 msgstr "Tamaño del archivo"
 
 #. The basename (the last section of the filename) of the profile
-#: src/gcm-viewer.ui:271
+#: src/gcm-viewer.ui:283
 msgid "Filename"
 msgstr "Nombre del archivo"
 
 #. warnings for the profile
-#: src/gcm-viewer.ui:288
+#: src/gcm-viewer.ui:300
 msgid "Warnings"
 msgstr "Advertencias"
 
-#: src/gcm-viewer.ui:474
+#: src/gcm-viewer.ui:490
 msgid "Information"
 msgstr "Información"
 
-#: src/gcm-viewer.ui:502
+#: src/gcm-viewer.ui:518
 msgid "y"
 msgstr "y"
 
-#: src/gcm-viewer.ui:521
+#: src/gcm-viewer.ui:537
 msgid "x"
 msgstr "x"
 
-#: src/gcm-viewer.ui:552
+#: src/gcm-viewer.ui:568
 msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
 msgstr ""
 "Un diagrama CIE 1931 muestra una representación plana de la gama del perfil"
 
-#: src/gcm-viewer.ui:569
+#: src/gcm-viewer.ui:586
 msgid "CIE 1931"
 msgstr "CIE 1931"
 
-#: src/gcm-viewer.ui:591
+#: src/gcm-viewer.ui:608
 msgid "Response out"
 msgstr "Respuesta de salida"
 
-#: src/gcm-viewer.ui:611 src/gcm-viewer.ui:699
+#: src/gcm-viewer.ui:628 src/gcm-viewer.ui:717
 msgid "Response in"
 msgstr "Respuesta de entrada"
 
-#: src/gcm-viewer.ui:640
+#: src/gcm-viewer.ui:657
 msgid ""
 "A tone reproduction curve is the mapping of scene luminance to display "
 "luminance"
@@ -801,1833 +809,2257 @@ msgstr ""
 "Una curva de reproducción tonal es el mapeo de la luminancia de la escena a "
 "la luminancia del monitor"
 
-#: src/gcm-viewer.ui:657
+#: src/gcm-viewer.ui:675
 msgid "TRC"
 msgstr "TRC"
 
-#: src/gcm-viewer.ui:679
+#: src/gcm-viewer.ui:697
 msgid "Video card out"
 msgstr "Salida de la tarjeta de vídeo"
 
-#: src/gcm-viewer.ui:728
+#: src/gcm-viewer.ui:746
 msgid "A video card gamma table shows the curves loaded into the display"
 msgstr ""
 "Una tabla de gamma de la tarjeta de vídeo muestra las curvas cargadas en el "
 "monitor"
 
-#: src/gcm-viewer.ui:745
+#: src/gcm-viewer.ui:764
 msgid "VCGT"
 msgstr "VCGT"
 
-#: src/gcm-viewer.ui:780 src/gcm-viewer.ui:902
+#: src/gcm-viewer.ui:799 src/gcm-viewer.ui:922
 msgid "Previous Image"
 msgstr "Imagen anterior"
 
 #. This is an example image that is saved in sRGB gamut
-#: src/gcm-viewer.ui:798 src/gcm-viewer.ui:920
+#: src/gcm-viewer.ui:817 src/gcm-viewer.ui:940
 msgid "sRGB example"
 msgstr "Ejemplo sRGB"
 
-#: src/gcm-viewer.ui:829 src/gcm-viewer.ui:951
+#: src/gcm-viewer.ui:848 src/gcm-viewer.ui:971
 msgid "Next Image"
 msgstr "Siguiente imagen"
 
-#: src/gcm-viewer.ui:850
+#: src/gcm-viewer.ui:869
 msgid "This shows what an image would look like if saved with the profile"
 msgstr "Esto muestra cómo será una imagen si se guarda con el perfil"
 
-#: src/gcm-viewer.ui:867
+#: src/gcm-viewer.ui:887
 msgid "From sRGB"
 msgstr "Desde sRGB"
 
-#: src/gcm-viewer.ui:972
+#: src/gcm-viewer.ui:992
 msgid "This shows what an image would look like if opened with the profile"
 msgstr "Esto muestra cómo será una imagen si se abre con el perfil"
 
-#: src/gcm-viewer.ui:989
+#: src/gcm-viewer.ui:1010
 msgid "To sRGB"
 msgstr "A sRGB"
 
-#: src/gcm-viewer.ui:1040
+#: src/gcm-viewer.ui:1061
 msgid "Named colors are specific colors that are defined in the profile"
 msgstr ""
 "Los colores con nombre son colores específicos que están definidos en el "
 "perfil"
 
-#: src/gcm-viewer.ui:1057
+#: src/gcm-viewer.ui:1079
 msgid "Named Colors"
 msgstr "Colores con nombre"
 
-#: src/gcm-viewer.ui:1096
+#: src/gcm-viewer.ui:1118
 msgid ""
 "Metadata is additional information stored in the profile for programs to use."
 msgstr ""
 "Los metadatos son información adicional almacenada en el perfil para que lo "
 "usen los programas."
 
-#: src/gcm-viewer.ui:1113
+#: src/gcm-viewer.ui:1136
 msgid "Metadata"
 msgstr "Metadatos"
 
+#, fuzzy
 #~ msgid "Color"
 #~ msgstr "Color"
 
+#, fuzzy
 #~ msgid "Color Calibration"
-#~ msgstr "Calibración del color"
+#~ msgstr "Calibración de color"
 
+#, fuzzy
 #~ msgid "gnome-color-manager"
-#~ msgstr "gnome-color-manager"
+#~ msgstr "administrador-de-color-gnomo"
 
+#, fuzzy
 #~ msgid "application-vnd.iccprofile"
-#~ msgstr "application-vnd.iccprofile"
+#~ msgstr "aplicación-vnd.iccprofile"
 
+#, fuzzy
 #~ msgid "Getting default parameters"
 #~ msgstr "Obteniendo parámetros predeterminados"
 
+#, fuzzy
 #~ msgid ""
 #~ "This pre-calibrates the screen by sending colored and gray patches to "
 #~ "your screen and measuring them with the hardware device."
 #~ msgstr ""
-#~ "Esto precalibra la pantalla enviando parches de color y grises a su "
-#~ "pantalla y midiéndolos con el dispositivo hardware."
+#~ "Esto precalibra la pantalla enviando parches de colores y grises a la "
+#~ "pantalla y midiéndolos con el dispositivo de hardware."
 
+#, fuzzy
 #~ msgid "Reading the patches"
-#~ msgstr "Leyendo los parches"
+#~ msgstr "leyendo los parches"
 
+#, fuzzy
 #~ msgid "Reading the patches using the color measuring instrument."
-#~ msgstr "Leyendo los parches usando el instrumento de medición de color."
+#~ msgstr ""
+#~ "Lectura de los parches utilizando el instrumento de medición del color."
 
+#, fuzzy
 #~ msgid "Drawing the patches"
-#~ msgstr "Dibujando los parches"
+#~ msgstr "dibujando los parches"
 
+#, fuzzy
 #~ msgid ""
 #~ "Drawing the generated patches to the screen, which will then be measured "
 #~ "by the hardware device."
 #~ msgstr ""
-#~ "Dibujando en la pantalla los parches generados que después se medirá el "
-#~ "dispositivo hardware."
+#~ "Dibujar los parches generados en la pantalla, que luego serán medidos por "
+#~ "el dispositivo de hardware."
 
+#, fuzzy
 #~ msgid "Generating the profile"
 #~ msgstr "Generando el perfil"
 
+#, fuzzy
 #~ msgid "Generating the ICC color profile that can be used with this screen."
-#~ msgstr "Generando el perfil de color ICC que se usará con esta pantalla."
+#~ msgstr ""
+#~ "Generando el perfil de color ICC que se puede utilizar con esta pantalla."
 
+#, fuzzy
 #~ msgid "Copying files"
-#~ msgstr "Copiando archivos"
+#~ msgstr "Copiar archivos"
 
+#, fuzzy
 #~ msgid "Copying source image, chart data and CIE reference values."
 #~ msgstr ""
-#~ "Copiando imagen de origen, datos de gráficos y los valores de referencia "
-#~ "CIE."
+#~ "Copia de imagen de origen, datos de gráficos y valores de referencia CIE."
 
+#, fuzzy
 #~ msgid "Measuring the patches"
-#~ msgstr "Midiendo los parches"
+#~ msgstr "Medir los parches"
 
+#, fuzzy
 #~ msgid "Detecting the reference patches and measuring them."
-#~ msgstr "Detectando los parches de referencia y midiéndolos."
+#~ msgstr "Detectar los parches de referencia y medirlos."
 
+#, fuzzy
 #~ msgid "Generating the ICC color profile that can be used with this device."
 #~ msgstr ""
-#~ "Generando el perfil de color ICC que se podrá usar con este dispositivo."
+#~ "Generando el perfil de color ICC que se puede utilizar con este "
+#~ "dispositivo."
 
+#, fuzzy
 #~ msgid "Printing patches"
-#~ msgstr "Imprimiendo los parches"
+#~ msgstr "Imprimir parches"
 
+#, fuzzy
 #~ msgid "Rendering the patches for the selected paper and ink."
-#~ msgstr "Renderizando los parches para el papel y tinta seleccionados."
+#~ msgstr ""
+#~ "Representación de los parches para el papel y la tinta seleccionados."
 
+#, fuzzy
 #~ msgid "Wait for the ink to dry"
-#~ msgstr "Espere a que se seque la tinta"
+#~ msgstr "Espera a que se seque la tinta."
 
+#, fuzzy
 #~ msgid ""
 #~ "Please wait a few minutes for the ink to dry. Profiling damp ink will "
 #~ "produce a poor profile and may damage your color measuring instrument."
-#~ msgstr ""
-#~ "Espere unos minutos para que se seque la tinta. La tinta de perfilado "
-#~ "húmeda producirá un perfil pobre y puede dañar su instrumento de medición."
+#~ msgstr "Espere unos minutos hasta que se seque la tinta. "
 
+#, fuzzy
 #~ msgid "Set up instrument"
 #~ msgstr "Configurar instrumento"
 
+#, fuzzy
 #~ msgid "Setting up the instrument for use…"
-#~ msgstr "Configurando el instrumento para su uso…"
+#~ msgstr "Configurando el instrumento para su uso..."
 
+#, fuzzy
 #~ msgid "Calibration error"
 #~ msgstr "Error de calibración"
 
+#, fuzzy
 #~ msgid "The sample could not be read at this time."
-#~ msgstr "En este momento no se pudo leer el ejemplo."
+#~ msgstr "La muestra no se pudo leer en este momento."
 
+#, fuzzy
 #~ msgid "Retry"
-#~ msgstr "Reintentar"
+#~ msgstr "Rever"
 
+#, fuzzy
 #~ msgid "No firmware is installed for this instrument."
-#~ msgstr "No existe firmware instalado para este instrumento."
+#~ msgstr "No hay ningún firmware instalado para este instrumento."
 
-#~| msgid ""
-#~| "The pattern match wasn't good enough. Ensure you have the correct type "
-#~| "of target selected."
+#, fuzzy
 #~ msgid ""
 #~ "The pattern match wasn’t good enough. Ensure you have the correct type of "
 #~ "target selected."
-#~ msgstr ""
-#~ "La coincidencia del patrón no era suficientemente buena. Asegúrese de que "
-#~ "ha corregido el tipo de objetivo seleccionado."
+#~ msgstr "La coincidencia de patrones no fue lo suficientemente buena. "
 
+#, fuzzy
 #~ msgid ""
 #~ "The measuring instrument got no valid readings. Please ensure the "
 #~ "aperture is fully open."
-#~ msgstr ""
-#~ "El instrumento de medición no obtuvo lecturas válidas. Asegúrese de que "
-#~ "la apertura está completamente abierta."
+#~ msgstr "El instrumento de medición no obtuvo lecturas válidas. "
 
+#, fuzzy
 #~ msgid ""
 #~ "The measuring instrument is busy and is not starting up. Please remove "
 #~ "the USB plug and re-insert before trying to use this device."
-#~ msgstr ""
-#~ "El instrumento de medición está ocupado y no está iniciándose. Quite el "
-#~ "conector USB y reinsértelo antes de intentar usar este dispositivo."
+#~ msgstr "El instrumento de medición está ocupado y no arranca. "
 
+#, fuzzy
 #~ msgid "Reading target"
-#~ msgstr "Leyendo el objetivo"
+#~ msgstr "Objetivo de lectura"
 
+#, fuzzy
 #~ msgid "Failed to read the strip correctly."
-#~ msgstr "Falló al leer la franja."
+#~ msgstr "No se pudo leer la tira correctamente."
 
+#, fuzzy
 #~ msgid "Reading sample"
-#~ msgstr "Ejemplo de lectura"
+#~ msgstr "Muestra de lectura"
 
+#, fuzzy
 #~ msgid "Failed to read the color sample correctly."
-#~ msgstr "Falló al leer el color de ejemplo correctamente."
+#~ msgstr "No se pudo leer la muestra de color correctamente."
 
-#, c-format
+#, fuzzy, c-format
 #~ msgid "Read strip %s rather than %s!"
-#~ msgstr "Leer la franja %s en lugar de la %s."
+#~ msgstr "¡Lee la tira %s en lugar de %s!"
 
-#~| msgid "It looks like you've measured the wrong strip."
+#, fuzzy
 #~ msgid "It looks like you’ve measured the wrong strip."
-#~ msgstr "Parece que ha medido la franja incorrecta."
+#~ msgstr "Parece que has medido la tira equivocada."
 
-#~| msgid ""
-#~| "If you've really measured the right one, it's okay, it could just be "
-#~| "unusual paper."
+#, fuzzy
 #~ msgid ""
 #~ "If you’ve really measured the right one, it’s okay, it could just be "
 #~ "unusual paper."
 #~ msgstr ""
-#~ "Si realmente ha medido la correcta puede se correcta, puede que "
-#~ "simplemente sea papel inusual."
+#~ "Si realmente has medido el correcto, está bien, podría ser simplemente un "
+#~ "papel inusual."
 
+#, fuzzy
 #~ msgid "Device Error"
 #~ msgstr "Error del dispositivo"
 
+#, fuzzy
 #~ msgid "The device could not measure the color spot correctly."
-#~ msgstr "El dispositivo no pudo medir el punto de color correctamente."
+#~ msgstr "El dispositivo no pudo medir correctamente la mancha de color."
 
-#, c-format
+#, fuzzy, c-format
 #~ msgid "Ready to read strip %s"
-#~ msgstr "Preparado para leer la franja %s"
+#~ msgstr "Listo para leer la tira %s"
 
+#, fuzzy
 #~ msgid ""
 #~ "Place the colorimeter on the area of white next to the letter and click "
 #~ "and hold the measure switch."
 #~ msgstr ""
-#~ "Pónga el colorímetro en el área blanco junto a la letra y pulse y "
-#~ "mantenga pulsado el control de medición."
+#~ "Coloque el colorímetro en el área blanca al lado de la letra y haga clic "
+#~ "y mantenga presionado el interruptor de medición."
 
+#, fuzzy
 #~ msgid ""
 #~ "Slowly scan the target line from left to right and release the switch "
 #~ "when you get to the end of the page."
 #~ msgstr ""
-#~ "Analice lentamente la línea objetivo de izquierda a derecha y suelte el "
-#~ "control cuando llegue al final de la página."
+#~ "Escanee lentamente la línea de destino de izquierda a derecha y suelte el "
+#~ "interruptor cuando llegue al final de la página."
 
+#, fuzzy
 #~ msgid ""
 #~ "Ensure the center of the device is properly aligned with the row you are "
 #~ "trying to measure."
 #~ msgstr ""
-#~ "Asegúrese de que el centro del dispositivo está alineado apropiadamente "
+#~ "Asegúrese de que el centro del dispositivo esté correctamente alineado "
 #~ "con la fila que está intentando medir."
 
-#~| msgid ""
-#~| "If you make a mistake, just release the switch, and you'll get a chance "
-#~| "to try again."
+#, fuzzy
 #~ msgid ""
 #~ "If you make a mistake, just release the switch, and you’ll get a chance "
 #~ "to try again."
 #~ msgstr ""
-#~ "Si comete un error simplemente suelte el control y podrá intentarlo de "
-#~ "nuevo."
+#~ "Si comete un error, simplemente suelte el interruptor y tendrá la "
+#~ "oportunidad de volver a intentarlo."
 
+#, fuzzy
 #~ msgid "Printing"
 #~ msgstr "Impresión"
 
+#, fuzzy
 #~ msgid "Preparing the data for the printer."
 #~ msgstr "Preparando los datos para la impresora."
 
+#, fuzzy
 #~ msgid "Sending the targets to the printer."
-#~ msgstr "Enviando los objetivos a la impresora."
+#~ msgstr "Envío de los objetivos a la impresora."
 
+#, fuzzy
 #~ msgid "Printing the targets…"
-#~ msgstr "Imprimiendo los objetivos…"
+#~ msgstr "Imprimiendo los objetivos..."
 
+#, fuzzy
 #~ msgid "The printing has finished."
-#~ msgstr "Finalizó la impresión."
+#~ msgstr "La impresión ha terminado."
 
+#, fuzzy
 #~ msgid "The print was aborted."
-#~ msgstr "Se canceló la impresión."
+#~ msgstr "La impresión fue cancelada."
 
+#, fuzzy
 #~ msgid "Please attach instrument"
-#~ msgstr "Conecte un instrumento"
+#~ msgstr "Por favor adjunte el instrumento"
 
+#, fuzzy
 #~ msgid ""
 #~ "Please attach the measuring instrument to the center of the screen on the "
 #~ "gray square like the image below."
 #~ msgstr ""
-#~ "Conecte el instrumento de medición en el centro de la pantalla en el "
-#~ "cuadro gris como en la imagen inferior."
+#~ "Conecte el instrumento de medición al centro de la pantalla en el "
+#~ "cuadrado gris como se muestra en la imagen a continuación."
 
+#, fuzzy
 #~ msgid ""
 #~ "Please attach the measuring instrument to the center of the screen on the "
 #~ "gray square."
 #~ msgstr ""
-#~ "Conecte el instrumento de medición en el centro de la pantalla en el "
-#~ "cuadro gris."
+#~ "Conecte el instrumento de medición al centro de la pantalla en el "
+#~ "cuadrado gris."
 
+#, fuzzy
 #~ msgid ""
 #~ "You will need to hold the device on the screen for the duration of the "
 #~ "calibration."
-#~ msgstr "Mantenga el dispositivo sobre la pantalla durante la calibración."
+#~ msgstr ""
+#~ "Deberá mantener el dispositivo en la pantalla mientras dure la "
+#~ "calibración."
 
+#, fuzzy
 #~ msgid "Continue"
 #~ msgstr "Continuar"
 
+#, fuzzy
 #~ msgid "Please configure instrument"
-#~ msgstr "Configure el instrumento"
+#~ msgstr "Por favor configure el instrumento"
 
+#, fuzzy
 #~ msgid ""
 #~ "Please set the measuring instrument to screen mode like the image below."
 #~ msgstr ""
-#~ "Establezca el instrumento de medición en el modo de pantalla según la "
-#~ "imagen inferior."
+#~ "Configure el instrumento de medición en modo de pantalla como se muestra "
+#~ "en la imagen a continuación."
 
+#, fuzzy
 #~ msgid "Please set the measuring instrument to screen mode."
-#~ msgstr "Establezca el instrumento de medición en el modo de pantalla."
+#~ msgstr "Configure el instrumento de medición en modo pantalla."
 
+#, fuzzy
 #~ msgid ""
 #~ "Please set the measuring instrument to calibration mode like the image "
 #~ "below."
 #~ msgstr ""
-#~ "Establezca el instrumento de medición en el modo de calibración según la "
-#~ "imagen inferior."
+#~ "Configure el instrumento de medición en modo de calibración como se "
+#~ "muestra en la imagen a continuación."
 
+#, fuzzy
 #~ msgid "Please set the measuring instrument to calibration mode."
-#~ msgstr "Establezca el instrumento de medición para el modo de calibración."
+#~ msgstr "Configure el instrumento de medición en modo de calibración."
 
+#, fuzzy
 #~ msgid "Select calibration target image"
-#~ msgstr "Seleccionar la imagen objetivo de la calibración"
+#~ msgstr "Seleccione la imagen del objetivo de calibración"
 
+#, fuzzy
 #~ msgid "_Open"
-#~ msgstr "_Abrir"
+#~ msgstr "_Abierto"
 
+#, fuzzy
 #~ msgid "Supported images files"
-#~ msgstr "Archivos de imagen soportados"
+#~ msgstr "Archivos de imágenes compatibles"
 
+#, fuzzy
 #~ msgid "Select CIE reference values file"
-#~ msgstr "Seleccionar el archivo de valores de refenrecia CIE"
+#~ msgstr "Seleccionar archivo de valores de referencia CIE"
 
+#, fuzzy
 #~ msgid "CIE values"
-#~ msgstr "Valores CIE"
+#~ msgstr "valores CIE"
 
+#, fuzzy
 #~ msgid "Calibration is not complete"
 #~ msgstr "La calibración no está completa"
 
+#, fuzzy
 #~ msgid "Are you sure you want to cancel the calibration?"
-#~ msgstr "¿Está seguro de que quiere cancelar la calibración?"
+#~ msgstr "¿Está seguro de que desea cancelar la calibración?"
 
+#, fuzzy
 #~ msgid "Continue calibration"
-#~ msgstr "Continuar la calibración"
+#~ msgstr "Continuar calibración"
 
+#, fuzzy
 #~ msgid "Cancel and close"
 #~ msgstr "Cancelar y cerrar"
 
+#, fuzzy
 #~ msgid "Profiling completed"
 #~ msgstr "Perfilado completado"
 
+#, fuzzy
 #~ msgid "Failed to calibrate"
-#~ msgstr "Falló al calibrar"
+#~ msgstr "No se pudo calibrar"
 
+#, fuzzy
 #~ msgid "Calibrate your camera"
-#~ msgstr "Calibrar la cámara"
+#~ msgstr "Calibra tu cámara"
 
+#, fuzzy
 #~ msgid "Calibrate your display"
-#~ msgstr "Calibrar la pantalla"
+#~ msgstr "Calibra tu pantalla"
 
+#, fuzzy
 #~ msgid "Calibrate your printer"
-#~ msgstr "Calibrar la impresora"
+#~ msgstr "Calibra tu impresora"
 
+#, fuzzy
 #~ msgid "Calibrate your device"
-#~ msgstr "Calibrar el dispositivo"
+#~ msgstr "Calibra tu dispositivo"
 
+#, fuzzy
 #~ msgid ""
 #~ "Any existing screen correction will be temporarily turned off and the "
 #~ "brightness set to maximum."
 #~ msgstr ""
 #~ "Cualquier corrección de pantalla existente se desactivará temporalmente y "
-#~ "el brillo se subirá al máximo."
+#~ "el brillo se establecerá al máximo."
 
+#, fuzzy
 #~ msgid ""
 #~ "You can cancel this process at any stage by pressing the cancel button."
 #~ msgstr ""
-#~ "Puede detener este proceso en cualquier momento pulsando el botón "
-#~ "«Cancelar»."
+#~ "Puede cancelar este proceso en cualquier etapa presionando el botón "
+#~ "cancelar."
 
+#, fuzzy
 #~ msgid "Introduction"
-#~ msgstr "Introducción"
+#~ msgstr "Introducción"
 
+#, fuzzy
 #~ msgid "Show File"
 #~ msgstr "Mostrar archivo"
 
+#, fuzzy
 #~ msgid "Click here to show the profile"
-#~ msgstr "Pulse aquí para mostrar el perfil"
+#~ msgstr "Haga clic aquí para mostrar el perfil"
 
+#, fuzzy
 #~ msgid "All done!"
-#~ msgstr "Terminado."
+#~ msgstr "¡Todo listo!"
 
+#, fuzzy
 #~ msgid "The camera has been calibrated successfully."
-#~ msgstr "La cámara se ha calibrado correctamente."
+#~ msgstr "La cámara ha sido calibrada exitosamente."
 
+#, fuzzy
 #~ msgid "The display has been calibrated successfully."
 #~ msgstr "La pantalla se ha calibrado correctamente."
 
+#, fuzzy
 #~ msgid "The printer has been calibrated successfully."
 #~ msgstr "La impresora se ha calibrado correctamente."
 
+#, fuzzy
 #~ msgid "The device has been calibrated successfully."
-#~ msgstr "El dispositivo se ha calibrado correctamente."
+#~ msgstr "El dispositivo ha sido calibrado exitosamente."
 
+#, fuzzy
 #~ msgid ""
 #~ "To view details about the new profile or to undo the calibration visit "
 #~ "the <a href=\"control-center://color\">control center</a>."
 #~ msgstr ""
-#~ "Para ver detalles del nuevo perfil, o deshacer la calibración visite el "
-#~ "<a href=\"control-center://color\">centro de control</a>."
+#~ "Para ver detalles sobre el nuevo perfil o deshacer la calibración, visite "
+#~ "el <a href=\"control-center://color\">centro de control</a>."
 
+#, fuzzy
 #~ msgid ""
 #~ "You can use the profile with <a href=\"import-linux\">Linux</a>, <a "
 #~ "href=\"import-osx\">Apple OS X</a> and <a href=\"import-"
 #~ "windows\">Microsoft Windows</a> systems."
 #~ msgstr ""
-#~ "Puede usar el perfil con sistemas <a href=\"import-linux\">Linux</a>, <a "
-#~ "href=\"import-osx\">Apple OS X</a> y <a href=\"import-windows\">Microsoft "
-#~ "Windows</a>."
+#~ "Puede utilizar el perfil con los sistemas <a href=\"import-linux\">Linux</"
+#~ "a>, <a href=\"import-osx\">Apple OS X</a> y <a href=\"import-"
+#~ "windows\">Microsoft Windows</a>."
 
+#, fuzzy
 #~ msgid "Summary"
 #~ msgstr "Resumen"
 
+#, fuzzy
 #~ msgid "Performing calibration"
-#~ msgstr "Realizando calibración"
+#~ msgstr "Realizar calibración"
 
+#, fuzzy
 #~ msgid "Calibration is about to start"
-#~ msgstr "La calibración va a empezar"
+#~ msgstr "La calibración está a punto de comenzar"
 
+#, fuzzy
 #~ msgid "Action"
-#~ msgstr "Acción"
+#~ msgstr "Acción"
 
+#, fuzzy
 #~ msgid "Calibration checklist"
-#~ msgstr "Lista de verificación de la calibración"
+#~ msgstr "Lista de verificación de calibración"
 
+#, fuzzy
 #~ msgid ""
 #~ "Before calibrating the display, it is recommended to configure your "
 #~ "display with the following settings to get optimal results."
 #~ msgstr ""
-#~ "Antes de calibrar el dispositivo, se recomienda configurar su pantalla "
-#~ "con los siguientes ajustes para obtener unos resultados óptimos."
+#~ "Antes de calibrar la pantalla, se recomienda configurarla con los "
+#~ "siguientes ajustes para obtener resultados óptimos."
 
-#~| msgid ""
-#~| "You may want to consult the owner's manual for your display on how to "
-#~| "achieve these settings."
+#, fuzzy
 #~ msgid ""
 #~ "You may want to consult the owner’s manual for your display on how to "
 #~ "achieve these settings."
 #~ msgstr ""
-#~ "Puede querer consultar el manual del propietario para su pantalla para "
-#~ "saber cómo lograr estos ajustes."
+#~ "Es posible que desee consultar el manual del propietario de su pantalla "
+#~ "sobre cómo lograr estas configuraciones."
 
+#, fuzzy
 #~ msgid "Reset your display to the factory defaults."
-#~ msgstr "Reiniciar su dispositivo a los valores predeterminados de fábrica."
+#~ msgstr "Restablezca su pantalla a los valores predeterminados de fábrica."
 
+#, fuzzy
 #~ msgid "Disable dynamic contrast if your display has this feature."
-#~ msgstr ""
-#~ "Desactive el contraste dinámico si su pantalla tiene esta característica."
+#~ msgstr "Desactive el contraste dinámico si su pantalla tiene esta función."
 
+#, fuzzy
 #~ msgid ""
 #~ "Configure your display with custom color settings and ensure the RGB "
 #~ "channels are set to the same values."
 #~ msgstr ""
-#~ "Configure su pantalla con ajustes de color personalizados y asegúrese de "
-#~ "que los canales RGB están configurados con los mismos valores."
+#~ "Configure su pantalla con configuraciones de color personalizadas y "
+#~ "asegúrese de que los canales RGB estén configurados con los mismos "
+#~ "valores."
 
+#, fuzzy
 #~ msgid "If custom color is not available then use a 6500K color temperature."
 #~ msgstr ""
-#~ "Si el color personalizado no está disponible, use una temperatura de "
-#~ "color de 6500K."
+#~ "Si el color personalizado no está disponible, utilice una temperatura de "
+#~ "color de 6500 K."
 
+#, fuzzy
 #~ msgid ""
 #~ "Adjust the display brightness to a comfortable level for prolonged "
 #~ "viewing."
 #~ msgstr ""
-#~ "Ajuste el brillo de la pantalla a un nivel confortable para una visión "
+#~ "Ajuste el brillo de la pantalla a un nivel cómodo para una visualización "
 #~ "prolongada."
 
+#, fuzzy
 #~ msgid ""
 #~ "For best results, the display should have been powered for at least 15 "
 #~ "minutes before starting the calibration."
 #~ msgstr ""
-#~ "Para un mejor resultado, la pantalla debería estar conectada al menos 15 "
-#~ "minutos antes de comenzar la calibración."
+#~ "Para obtener mejores resultados, la pantalla debería haber estado "
+#~ "encendida durante al menos 15 minutos antes de comenzar la calibración."
 
+#, fuzzy
 #~ msgid "Check Settings"
-#~ msgstr "Comprobar configuración"
+#~ msgstr "Verificar configuración"
 
+#, fuzzy
 #~ msgid "Calibration and profiling software is not installed."
-#~ msgstr "El software de calibración y perfilado no está instalado."
+#~ msgstr ""
+#~ "El software de calibración y creación de perfiles no está instalado."
 
+#, fuzzy
 #~ msgid "These tools are required to build color profiles for devices."
 #~ msgstr ""
-#~ "Se requieren estas herramientas para construir perfiles de color para "
+#~ "Estas herramientas son necesarias para crear perfiles de color para "
 #~ "dispositivos."
 
+#, fuzzy
 #~ msgid "More software is required!"
-#~ msgstr "Se necesita más software."
+#~ msgstr "¡Se requiere más software!"
 
+#, fuzzy
 #~ msgid "Install required software"
-#~ msgstr "Instalar el software necesario"
+#~ msgstr "Instalar el software requerido"
 
+#, fuzzy
 #~ msgid "Install Tools"
 #~ msgstr "Instalar herramientas"
 
+#, fuzzy
 #~ msgid "Common color target files are not installed on this computer."
 #~ msgstr ""
-#~ "Los archivos objetivo de color común no están instalados en este equipo."
+#~ "Los archivos de destino de color comunes no están instalados en esta "
+#~ "computadora."
 
+#, fuzzy
 #~ msgid ""
 #~ "Color target files are needed to convert the image to a color profile."
 #~ msgstr ""
-#~ "Se necesitan archivos de objetivos de color para convertir la imagen a un "
+#~ "Se necesitan archivos de destino de color para convertir la imagen en un "
 #~ "perfil de color."
 
+#, fuzzy
 #~ msgid "Do you want them to be installed?"
-#~ msgstr "¿Quiere que se instalen?"
+#~ msgstr "¿Quieres que se instalen?"
 
+#, fuzzy
 #~ msgid "If you already have the correct file, you can skip this step."
-#~ msgstr "Puede omitir este paso si ya ha corregido el archivo."
+#~ msgstr "Si ya tiene el archivo correcto, puede omitir este paso."
 
+#, fuzzy
 #~ msgid "Optional data files available"
 #~ msgstr "Archivos de datos opcionales disponibles"
 
+#, fuzzy
 #~ msgid "Install Now"
 #~ msgstr "Instalar ahora"
 
+#, fuzzy
 #~ msgid "Install Targets"
 #~ msgstr "Instalar objetivos"
 
+#, fuzzy
 #~ msgid "CMP Digital Target 3"
-#~ msgstr "CMP Digital Target 3"
+#~ msgstr "Objetivo digital CMP 3"
 
+#, fuzzy
 #~ msgid "CMP DT 003"
 #~ msgstr "CMP DT 003"
 
+#, fuzzy
 #~ msgid "ColorChecker"
-#~ msgstr "Comprobador de color"
+#~ msgstr "ColorChecker"
 
+#, fuzzy
 #~ msgid "ColorChecker DC"
-#~ msgstr "Comprobador de color DC"
+#~ msgstr "Color Checker DC"
 
+#, fuzzy
 #~ msgid "ColorChecker SG"
-#~ msgstr "Comprobador de color SG"
+#~ msgstr "ColorChecker ES"
 
+#, fuzzy
 #~ msgid "Hutchcolor"
 #~ msgstr "Hutchcolor"
 
+#, fuzzy
 #~ msgid "i1 RGB Scan 1.4"
-#~ msgstr "i1 RGB Scan 1.4"
+#~ msgstr "Escaneo i1 RGB 1.4"
 
+#, fuzzy
 #~ msgid "IT8.7/2"
 #~ msgstr "IT8.7/2"
 
+#, fuzzy
 #~ msgid "Laser Soft DC Pro"
-#~ msgstr "Laser Soft DC Pro"
+#~ msgstr "Láser Suave DC Pro"
 
+#, fuzzy
 #~ msgid "QPcard 201"
-#~ msgstr "QPcard 201"
+#~ msgstr "Tarjeta QP 201"
 
+#, fuzzy
 #~ msgid ""
 #~ "Before profiling the device, you have to manually capture an image of a "
 #~ "calibration target and save it as a TIFF image file."
 #~ msgstr ""
-#~ "Antes de perfilar el dispositivo debe capturar manualmente una imagen de "
+#~ "Antes de perfilar el dispositivo, debe capturar manualmente una imagen de "
 #~ "un objetivo de calibración y guardarla como un archivo de imagen TIFF."
 
+#, fuzzy
 #~ msgid ""
 #~ "Ensure that the contrast and brightness are not changed and color "
 #~ "correction profiles have not been applied."
 #~ msgstr ""
-#~ "Asegúrese de que el contraste y brillo no se cambian y que no se aplican "
-#~ "perfiles de corrección de color."
+#~ "Asegúrese de que el contraste y el brillo no cambien y que no se hayan "
+#~ "aplicado perfiles de corrección de color."
 
+#, fuzzy
 #~ msgid ""
 #~ "The device sensor should have been cleaned prior to scanning and the "
 #~ "output file resolution should be at least 200dpi."
 #~ msgstr ""
-#~ "El sensor del dispositivo debería haberse limpiado antes del análisis y "
-#~ "la resolución del archivo de salida debería ser al menos 200dpi."
+#~ "El sensor del dispositivo debe haberse limpiado antes del escaneo y la "
+#~ "resolución del archivo de salida debe ser de al menos 200 ppp."
 
+#, fuzzy
 #~ msgid ""
 #~ "Ensure that the white-balance has not been modified by the camera and "
 #~ "that the lens is clean."
 #~ msgstr ""
-#~ "Asegúrese de que la cámara no ha modificado el balance de blancos y que "
-#~ "la lente está limpia."
+#~ "Asegúrese de que la cámara no haya modificado el balance de blancos y que "
+#~ "la lente esté limpia."
 
+#, fuzzy
 #~ msgid "Please select the calibration target type."
-#~ msgstr "Seleccione el tipo de objetivo de la calibración."
+#~ msgstr "Seleccione el tipo de objetivo de calibración."
 
+#, fuzzy
 #~ msgid "What target type do you have?"
-#~ msgstr "¿Qué tipo de objetivo tiene?"
+#~ msgstr "¿Qué tipo de objetivo tienes?"
 
+#, fuzzy
 #~ msgid "Select Target"
-#~ msgstr "Seleccionar objetivo"
+#~ msgstr "Seleccionar destino"
 
+#, fuzzy
 #~ msgid "Choose your display type"
-#~ msgstr "Seleccionar su tipo de dispositivo"
+#~ msgstr "Elija su tipo de visualización"
 
+#, fuzzy
 #~ msgid "Select the monitor type that is attached to your computer."
-#~ msgstr "Seleccione el tipo de pantalla conectada a su equipo."
+#~ msgstr "Seleccione el tipo de monitor que está conectado a su computadora."
 
+#, fuzzy
 #~ msgid "LCD (CCFL backlight)"
-#~ msgstr "LCD (CCFL retroiluminado)"
+#~ msgstr "LCD (retroiluminación CCFL)"
 
+#, fuzzy
 #~ msgid "LCD (White LED backlight)"
-#~ msgstr "LCD (LED blanco retroiluminado)"
+#~ msgstr "LCD (retroiluminación LED blanca)"
 
+#, fuzzy
 #~ msgid "LCD (RGB LED backlight)"
-#~ msgstr "LCD (RGB LED retroiluminado)"
+#~ msgstr "LCD (retroiluminación LED RGB)"
 
+#, fuzzy
 #~ msgid "LCD (Wide Gamut RGB LED backlight)"
-#~ msgstr "LCD (Wide Gamut RGB LED retroiluminado)"
+#~ msgstr "LCD (retroiluminación LED RGB de amplia gama)"
 
+#, fuzzy
 #~ msgid "LCD (Wide Gamut CCFL backlight)"
-#~ msgstr "LCD (Wide Gamut CCFL retroiluminado)"
+#~ msgstr "LCD (retroiluminación CCFL de amplia gama)"
 
+#, fuzzy
 #~ msgid "CRT"
 #~ msgstr "CRT"
 
+#, fuzzy
 #~ msgid "Plasma"
 #~ msgstr "Plasma"
 
+#, fuzzy
 #~ msgid "Projector"
 #~ msgstr "Proyector"
 
+#, fuzzy
 #~ msgid "Choose Display Type"
-#~ msgstr "Seleccionar el tipo de dispositivo"
+#~ msgstr "Elija el tipo de visualización"
 
+#, fuzzy
 #~ msgid "Choose your display target white point"
-#~ msgstr "Elegir el punto blanco del monitor objetivo"
+#~ msgstr "Elija el punto blanco de destino de su pantalla"
 
+#, fuzzy
 #~ msgid ""
 #~ "Most displays should be calibrated to a CIE D65 illuminant for general "
 #~ "usage."
 #~ msgstr ""
-#~ "La mayoría de los monitores se calibran al iluminante CIE D65 para uso "
-#~ "general."
+#~ "La mayoría de las pantallas deben calibrarse con un iluminante CIE D65 "
+#~ "para uso general."
 
+#, fuzzy
 #~ msgid "CIE D50 (Printing and publishing)"
-#~ msgstr "CIE D50 (Impresiones y publicaciones)"
+#~ msgstr "CIE D50 (Impresión y publicación)"
 
+#, fuzzy
 #~ msgid "CIE D55"
 #~ msgstr "CIE D55"
 
+#, fuzzy
 #~ msgid "CIE D65 (Photography and graphics)"
 #~ msgstr "CIE D65 (Fotografía y gráficos)"
 
+#, fuzzy
 #~ msgid "CIE D75"
 #~ msgstr "CIE D75"
 
+#, fuzzy
 #~ msgid "Native (Already set manually)"
-#~ msgstr "Nativo (a establecido manualmente)"
+#~ msgstr "Nativo (ya configurado manualmente)"
 
+#, fuzzy
 #~ msgid "Choose Display Whitepoint"
-#~ msgstr "Elegir el punto blanco del monitor"
+#~ msgstr "Elija Mostrar punto blanco"
 
+#, fuzzy
 #~ msgid "Choose profiling mode"
-#~ msgstr "Seleccionar un modo de perfilado"
+#~ msgstr "Elija el modo de creación de perfiles"
 
+#, fuzzy
 #~ msgid ""
 #~ "Please indicate if you want to profile a local printer, generate some "
 #~ "test patches, or profile using existing test patches."
 #~ msgstr ""
-#~ "Indique si quiere perfilar una impresora local, generar algunos parches "
-#~ "de prueba o perfilar usando los parches de prueba existentes."
+#~ "Indique si desea crear un perfil de una impresora local, generar algunos "
+#~ "parches de prueba o crear un perfil utilizando parches de prueba "
+#~ "existentes."
 
+#, fuzzy
 #~ msgid "Calibration Mode"
 #~ msgstr "Modo de calibración"
 
+#, fuzzy
 #~ msgid "Choose calibration quality"
-#~ msgstr "Seleccionar la calidad de la calibración"
+#~ msgstr "Elija la calidad de calibración"
 
+#, fuzzy
 #~ msgid ""
 #~ "Higher quality calibration requires many color samples and more time."
 #~ msgstr ""
-#~ "Una calidad de calibración mayor requiere muchas pruebas de color y más "
+#~ "Una calibración de mayor calidad requiere muchas muestras de color y más "
 #~ "tiempo."
 
+#, fuzzy
 #~ msgid ""
 #~ "A higher precision profile provides higher accuracy in color matching but "
 #~ "requires more time for reading the color patches."
 #~ msgstr ""
-#~ "Un perfil con más precisión proporciona mayor exactitud en la "
-#~ "coincidencia de colores pero necesita más tiempo para leer los parches de "
-#~ "color."
+#~ "Un perfil de mayor precisión proporciona una mayor precisión en la "
+#~ "coincidencia de colores, pero requiere más tiempo para leer las muestras "
+#~ "de color."
 
+#, fuzzy
 #~ msgid "For a typical workflow, a normal precision profile is sufficient."
 #~ msgstr ""
-#~ "Para un flujo de trabajo normal es suficiente con un perfil de precisión "
-#~ "normal."
+#~ "Para un flujo de trabajo típico, un perfil de precisión normal es "
+#~ "suficiente."
 
+#, fuzzy
 #~ msgid "The high precision profile also requires more paper and printer ink."
-#~ msgstr "Los perfiles de alta precisión también necesitan más papel y tinta."
+#~ msgstr ""
+#~ "El perfil de alta precisión también requiere más papel y tinta de "
+#~ "impresora."
 
+#, fuzzy
 #~ msgid "Accurate"
-#~ msgstr "Precisa"
+#~ msgstr "Preciso"
 
+#, fuzzy
 #~ msgid "Normal"
 #~ msgstr "Normal"
 
+#, fuzzy
 #~ msgid "Quick"
-#~ msgstr "Rápida"
+#~ msgstr "Rápido"
 
-#, c-format
+#, fuzzy, c-format
 #~ msgid "(about %u sheet of paper)"
 #~ msgid_plural "(about %u sheets of paper)"
-#~ msgstr[0] "(Aprox. %u hoja de papel)"
-#~ msgstr[1] "(Aprox. %u hojas de papel)"
+#~ msgstr[0] "(aproximadamente %u hoja de papel)"
+#~ msgstr[1] "(alrededor de %u hojas de papel)"
 
-#, c-format
+#, fuzzy, c-format
 #~ msgid "(about %u minute)"
 #~ msgid_plural "(about %u minutes)"
-#~ msgstr[0] "(Aprox. %u minuto)"
-#~ msgstr[1] "(Aprox. %u minutos)"
+#~ msgstr[0] "(aproximadamente %u minuto)"
+#~ msgstr[1] "(alrededor de %u minutos)"
 
+#, fuzzy
 #~ msgid "Calibration Quality"
-#~ msgstr "Calidad de la calibración"
+#~ msgstr "Calidad de calibración"
 
+#, fuzzy
 #~ msgid "Profile title"
 #~ msgstr "Título del perfil"
 
+#, fuzzy
 #~ msgid "Choose a title to identify the profile on your system."
 #~ msgstr "Elija un título para identificar el perfil en su sistema."
 
+#, fuzzy
 #~ msgid "Profile Title"
-#~ msgstr "Título del perfil"
+#~ msgstr "Título del perfil"
 
+#, fuzzy
 #~ msgid "Insert sensor hardware"
-#~ msgstr "Insertar sensor hardware"
+#~ msgstr "Insertar hardware del sensor"
 
+#, fuzzy
 #~ msgid "You need to insert sensor hardware to continue."
-#~ msgstr "Debe insertar un sensor hardware para continuar."
+#~ msgstr "Debe insertar el hardware del sensor para continuar."
 
+#, fuzzy
 #~ msgid "Sensor Check"
-#~ msgstr "Verificar el sensor"
+#~ msgstr "Comprobación de sensores"
 
+#, fuzzy
 #~ msgid ""
 #~ "The device could not be found. Ensure it is plugged in and turned on."
-#~ msgstr ""
-#~ "No se pudo encontrar el dispositivo. Asegúrese de que está conectado y "
-#~ "encendido."
+#~ msgstr "No se pudo encontrar el dispositivo. "
 
+#, fuzzy
 #~ msgid "Unknown serial"
-#~ msgstr "Número de serie desconocido"
+#~ msgstr "Serie desconocida"
 
+#, fuzzy
 #~ msgid "Unknown model"
 #~ msgstr "Modelo desconocido"
 
+#, fuzzy
 #~ msgid "Unknown description"
 #~ msgstr "Descripción desconocida"
 
+#, fuzzy
 #~ msgid "Unknown manufacturer"
 #~ msgstr "Fabricante desconocido"
 
+#, fuzzy
 #~ msgid "Copyright (c)"
-#~ msgstr "Copyright (c)"
+#~ msgstr "Derechos de autor (c)"
 
+#, fuzzy
 #~ msgid "Set the specific device to calibrate"
-#~ msgstr "Establecer el dispositivo específico que calibrar"
+#~ msgstr "Configurar el dispositivo específico para calibrar"
 
+#, fuzzy
 #~ msgid "No device was specified!"
-#~ msgstr "No se especificó ningún dispositivo."
+#~ msgstr "¡No se especificó ningún dispositivo!"
 
+#, fuzzy
 #~ msgid "This 3D hull is what the profile looks like in Lab space"
-#~ msgstr "Este 3D es a lo que se parece el perfil en el espacio Lab"
+#~ msgstr ""
+#~ "Este casco 3D es como se ve el perfil en el espacio del laboratorio."
 
+#, fuzzy
 #~ msgid "3D Gamut"
 #~ msgstr "Gama 3D"
 
+#, fuzzy
 #~ msgid "LCD"
 #~ msgstr "LCD"
 
+#, fuzzy
 #~ msgid "XYZ:"
 #~ msgstr "XYZ:"
 
+#, fuzzy
 #~ msgid "Colorspace:"
 #~ msgstr "Espacio de color:"
 
+#, fuzzy
 #~ msgid "RGB:"
 #~ msgstr "RGB:"
 
+#, fuzzy
 #~ msgid "Device manufacturer"
 #~ msgstr "Fabricante del dispositivo"
 
+#, fuzzy
 #~ msgid "Device model"
-#~ msgstr "Modelo del dispositivo"
+#~ msgstr "Modelo de dispositivo"
 
+#, fuzzy
 #~ msgid "License"
 #~ msgstr "Licencia"
 
+#, fuzzy
 #~ msgid "Missing description"
-#~ msgstr "Falta la descripción"
+#~ msgstr "Falta descripción"
 
+#, fuzzy
 #~ msgid ""
 #~ "Could not calibrate and profile using this color measuring instrument"
-#~ msgstr "No se pudo calibrar usando este instrumento de medición"
+#~ msgstr ""
+#~ "No se pudo calibrar ni perfilar usando este instrumento de medición de "
+#~ "color"
 
+#, fuzzy
 #~ msgid ""
 #~ "This color measuring instrument is not designed to support calibration "
 #~ "and profiling projectors."
 #~ msgstr ""
-#~ "Este instrumento de medición no está diseñado para soportar perfilado de "
-#~ "proyectores."
+#~ "Este instrumento de medición del color no está diseñado para admitir "
+#~ "proyectores de calibración y creación de perfiles."
 
+#, fuzzy
 #~ msgid "Use this device for profiling"
-#~ msgstr "Usar este dispositivo para crear el perfil"
+#~ msgstr "Utilice este dispositivo para perfilar"
 
+#, fuzzy
 #~ msgid "Make the window modal to this XID"
-#~ msgstr "Hacer la ventana modal para este XID"
+#~ msgstr "Haga que la ventana sea modal para este XID"
 
+#, fuzzy
 #~ msgid "gcm-dispread"
-#~ msgstr "gcm-dispread"
+#~ msgstr "gcm-difundido"
 
+#, fuzzy
 #~ msgid "Wrote file"
-#~ msgstr "Archivo escrito"
+#~ msgstr "Escribió el archivo"
 
+#, fuzzy
 #~ msgid "ICC profile already installed system-wide"
-#~ msgstr "El perfil ICC ya está instalado en todo el sistema"
+#~ msgstr "Perfil ICC ya instalado en todo el sistema"
 
+#, fuzzy
 #~ msgid "You may notice the screen is a slightly different color."
-#~ msgstr "Quizás note que la pantalla posee un color ligeramente distinto."
+#~ msgstr "Puede notar que la pantalla tiene un color ligeramente diferente."
 
+#, fuzzy
 #~ msgid "Documents printed from this device will be color managed."
 #~ msgstr ""
-#~ "El color de los documentos impresos mediante este dispositivo se "
-#~ "administrará."
+#~ "Los documentos impresos desde este dispositivo se gestionarán en color."
 
+#, fuzzy
 #~ msgid "Generating the patches"
 #~ msgstr "Generando los parches"
 
+#, fuzzy
 #~ msgid ""
 #~ "Generating the patches that will be measured with the color instrument."
 #~ msgstr ""
-#~ "Generando los parches que se medirán con el instrumento de medición de "
-#~ "color."
+#~ "Generando los parches que serán medidos con el instrumento de color."
 
+#, fuzzy
 #~ msgid "Applies device profile settings at session startup"
-#~ msgstr "Aplica ajustes de perfiles de dispositivos al inicio"
+#~ msgstr ""
+#~ "Aplica la configuración del perfil del dispositivo al inicio de la sesión"
 
+#, fuzzy
 #~ msgid "Load device color profiles"
-#~ msgstr "Cargar perfiles de color de dispositivos"
+#~ msgstr "Cargar perfiles de color del dispositivo"
 
+#, fuzzy
 #~ msgid "Manage ICC color profiles"
-#~ msgstr "Gestionar perfiles de color ICC"
+#~ msgstr "Administrar perfiles de color ICC"
 
+#, fuzzy
 #~ msgid "Activation of this plugin"
-#~ msgstr "Activación de este complemento"
+#~ msgstr "Activación de este complemento"
 
+#, fuzzy
 #~ msgid ""
 #~ "Whether this plugin would be activated by gnome-settings-daemon or not"
-#~ msgstr "Indica si gnome-settings-daemon activará este complemento o no"
+#~ msgstr "Si este complemento sería activado por gnome-settings-daemon o no"
 
+#, fuzzy
 #~ msgid ""
 #~ "Authentication is required to install the color profile for all users"
 #~ msgstr ""
-#~ "Se necesita autenticación para instalar perfiles de color para todos los "
-#~ "usuarios"
+#~ "Se requiere autenticación para instalar el perfil de color para todos los "
+#~ "usuarios."
 
+#, fuzzy
 #~ msgid "Install system color profiles"
 #~ msgstr "Instalar perfiles de color del sistema"
 
+#, fuzzy
 #~ msgid "Failed to save defaults for all users"
-#~ msgstr "Falló al guardar los predeterminados para todos los usuarios"
+#~ msgstr ""
+#~ "No se pudieron guardar los valores predeterminados para todos los usuarios"
 
+#, fuzzy
 #~ msgid "Other profile…"
 #~ msgstr "Otro perfil…"
 
+#, fuzzy
 #~ msgid "Failed to get metadata from image"
-#~ msgstr "Falló al obtener los metadatos de la imagen"
+#~ msgstr "No se pudieron obtener metadatos de la imagen"
 
+#, fuzzy
 #~ msgid "Failed to create virtual device"
-#~ msgstr "Falló al crear el dispositivo virtual"
+#~ msgstr "No se pudo crear el dispositivo virtual"
 
+#, fuzzy
 #~ msgid "Failed to save virtual device"
-#~ msgstr "Falló al guardar el dispositivo virtual"
+#~ msgstr "No se pudo guardar el dispositivo virtual"
 
+#, fuzzy
 #~ msgid "Failed to add virtual device"
-#~ msgstr "Falló al añadir el dispositivo virtual"
+#~ msgstr "No se pudo agregar el dispositivo virtual"
 
+#, fuzzy
 #~ msgid "Install calibration and profiling software?"
-#~ msgstr "¿Instalar software de calibración y perfilado?"
+#~ msgstr "¿Instalar software de calibración y creación de perfiles?"
 
+#, fuzzy
 #~ msgid "Do not install"
 #~ msgstr "No instalar"
 
+#, fuzzy
 #~ msgid "Failed to delete file"
-#~ msgstr "Falló al eliminar el archivo"
+#~ msgstr "No se pudo eliminar el archivo"
 
+#, fuzzy
 #~ msgid "Create a color profile for the selected device"
 #~ msgstr "Crear un perfil de color para el dispositivo seleccionado"
 
+#, fuzzy
 #~ msgid "Cannot create profile: No device is selected"
-#~ msgstr "No se puede crear el pefil: no hay ningún dispositivo seleccionado"
+#~ msgstr "No se puede crear el perfil: no hay ningún dispositivo seleccionado"
 
+#, fuzzy
 #~ msgid "Cannot create profile: Virtual console support is missing"
 #~ msgstr ""
-#~ "No se puede crear el pefil: falta el soporte para la consola virtual"
+#~ "No se puede crear el perfil: falta compatibilidad con la consola virtual"
 
+#, fuzzy
 #~ msgid "Cannot create profile: The display device is not connected"
 #~ msgstr ""
-#~ "No se puede crear el pefil: el dispositivo de pantalla no está conectado"
+#~ "No se puede crear el perfil: el dispositivo de visualización no está "
+#~ "conectado"
 
+#, fuzzy
 #~ msgid ""
 #~ "Cannot create profile: The display driver does not support XRandR 1.3"
 #~ msgstr ""
-#~ "No se puede crear el pefil: el controlador del dispositivo de pantalla no "
-#~ "soporta XRandR 1.3"
+#~ "No se puede crear el perfil: el controlador de pantalla no es compatible "
+#~ "con XRandR 1.3"
 
+#, fuzzy
 #~ msgid "Cannot create profile: The measuring instrument is not plugged in"
 #~ msgstr ""
-#~ "No se puede crear el pefil: el instrumento de medición no está conectado"
+#~ "No se puede crear el perfil: el instrumento de medición no está conectado"
 
+#, fuzzy
 #~ msgid ""
 #~ "Cannot create profile: The measuring instrument does not support printer "
 #~ "profiling"
 #~ msgstr ""
-#~ "No se puede crear el pefil: el instrumento de medición no soporta "
-#~ "perfilado de impresión"
+#~ "No se puede crear un perfil: el instrumento de medición no admite la "
+#~ "creación de perfiles de impresora"
 
+#, fuzzy
 #~ msgid "Cannot create a profile for this type of device"
 #~ msgstr "No se puede crear un perfil para este tipo de dispositivo"
 
+#, fuzzy
 #~ msgid "Per-device settings not supported. Check your display driver."
-#~ msgstr ""
-#~ "No se soportan los ajustes por dispositivo. Compruebe el controlador de "
-#~ "su pantalla."
+#~ msgstr "No se admiten configuraciones por dispositivo. "
 
+#, fuzzy
 #~ msgid "No hardware support"
-#~ msgstr "Sin soporte hardware"
+#~ msgstr "Sin soporte de hardware"
 
+#, fuzzy
 #~ msgid "disconnected"
 #~ msgstr "desconectado"
 
+#, fuzzy
 #~ msgid "Could not import profile"
-#~ msgstr "No se pudo importar el pefil"
+#~ msgstr "No se pudo importar el perfil"
 
+#, fuzzy
 #~ msgid "The profile was of the wrong type for this device"
-#~ msgstr "El perfil era del tipo erróneo para este dispositivo"
+#~ msgstr "El perfil era del tipo incorrecto para este dispositivo"
 
+#, fuzzy
 #~ msgid "Device added"
-#~ msgstr "Dispositivo añadido"
+#~ msgstr "Dispositivo agregado"
 
+#, fuzzy
 #~ msgid "Device removed"
-#~ msgstr "Dispositivo quitado"
+#~ msgstr "Dispositivo eliminado"
 
+#, fuzzy
 #~ msgid "Scanner"
 #~ msgstr "Escáner"
 
+#, fuzzy
 #~ msgid "Printer"
 #~ msgstr "Impresora"
 
+#, fuzzy
 #~ msgid "Camera"
 #~ msgstr "Cámara"
 
+#, fuzzy
 #~ msgid "More color profiles could be automatically installed."
-#~ msgstr "Se podrían instalar automáticamente más perfiles de color."
+#~ msgstr "Se podrían instalar más perfiles de color automáticamente."
 
+#, fuzzy
 #~ msgid "Do not attempt to clear previously applied settings"
-#~ msgstr "No intentar limpiar los ajustes previamente aplicados"
+#~ msgstr "No intente borrar la configuración aplicada anteriormente"
 
+#, fuzzy
 #~ msgid "Setting up display device for use…"
-#~ msgstr "Configurando el dispositivo de pantalla para su uso…"
+#~ msgstr "Configurando el dispositivo de visualización para su uso..."
 
+#, fuzzy
 #~ msgid "Setting up device"
-#~ msgstr "Configurando dispositivo"
+#~ msgstr "Configurando el dispositivo"
 
+#, fuzzy
 #~ msgid "Setting up the device to read a spot color…"
-#~ msgstr "Configurando el dispositivo para leer un punto de color…"
+#~ msgstr "Configurando el dispositivo para leer un color plano..."
 
+#, fuzzy
 #~ msgid "Image is not suitable without conversion"
-#~ msgstr "La imagen no es apropiada sin conversión"
+#~ msgstr "La imagen no es adecuada sin conversión."
 
+#, fuzzy
 #~ msgid ""
 #~ "The supplied image contains an alpha channel which the profiling tools do "
 #~ "not understand."
 #~ msgstr ""
-#~ "La imagen proporcionada contiene una canal alfa que las herramientas de "
-#~ "perfilado no entienden."
+#~ "La imagen proporcionada contiene un canal alfa que las herramientas de "
+#~ "creación de perfiles no comprenden."
 
+#, fuzzy
 #~ msgid ""
 #~ "It is normally safe to convert the image, although you should ensure that "
 #~ "the generated profile is valid."
 #~ msgstr ""
-#~ "Generalmente es seguro convertir la imagen, aunque debe asegurarse de que "
-#~ "el perfil generado es válido."
+#~ "Normalmente es seguro convertir la imagen, aunque debes asegurarte de que "
+#~ "el perfil generado sea válido."
 
+#, fuzzy
 #~ msgid "Convert"
 #~ msgstr "Convertir"
 
+#, fuzzy
 #~ msgid "Try again"
-#~ msgstr "Intentarlo de nuevo"
+#~ msgstr "Intentar otra vez"
 
+#, fuzzy
 #~ msgid "Use anyway"
-#~ msgstr "Usarlo de todas formas"
+#~ msgstr "Usar de todos modos"
 
+#, fuzzy
 #~ msgid "Could not detect screen type"
 #~ msgstr "No se pudo detectar el tipo de pantalla"
 
+#, fuzzy
 #~ msgid ""
 #~ "Please indicate if the screen you are trying to profile is an LCD, CRT or "
 #~ "a projector."
 #~ msgstr ""
-#~ "Indique si la pantalla que está intentando perfilar es LCD, CRT o un "
+#~ "Indique si la pantalla que está intentando perfilar es una LCD, CRT o un "
 #~ "proyector."
 
+#, fuzzy
 #~ msgid "Custom"
-#~ msgstr "Personalizado"
+#~ msgstr "Costumbre"
 
+#, fuzzy
 #~ msgid "Install missing files?"
-#~ msgstr "¿Instalar los archivos faltantes?"
+#~ msgstr "¿Instalar archivos faltantes?"
 
+#, fuzzy
 #~ msgid ""
 #~ "For best results, the reference target should also be less than two years "
 #~ "old."
 #~ msgstr ""
-#~ "Para un mejor resultado, el objetivo de referencia también deberá tener "
-#~ "menos de dos años de antigüedad."
+#~ "Para obtener mejores resultados, el objetivo de referencia también debe "
+#~ "tener menos de dos años."
 
+#, fuzzy
 #~ msgid ""
 #~ "Please select the calibration target type which corresponds to your "
 #~ "reference file."
 #~ msgstr ""
-#~ "Seleccionar el tipo de objetivo de calibración que corresponde con su "
+#~ "Seleccione el tipo de objetivo de calibración que corresponda a su "
 #~ "archivo de referencia."
 
+#, fuzzy
 #~ msgid "Introduction to display calibration"
-#~ msgstr "Introducción a la calibración de pantallas"
+#~ msgstr "Introducción a la calibración de pantalla"
 
+#, fuzzy
 #~ msgid ""
 #~ "This dialog will help calibrate your display and create a custom ICC "
 #~ "profile."
 #~ msgstr ""
-#~ "Este diálogo le ayudará a calibrar su pantalla y a crear un perfil ICC "
-#~ "personalizado."
+#~ "Este cuadro de diálogo le ayudará a calibrar su pantalla y crear un "
+#~ "perfil ICC personalizado."
 
+#, fuzzy
 #~ msgid ""
 #~ "The calibration will involve several steps so that an accurate profile "
 #~ "can be obtained."
 #~ msgstr ""
-#~ "La calibración involucra varios pasos para que se pueda obtener un perfil "
-#~ "tan preciso como sea posible."
+#~ "La calibración implicará varios pasos para poder obtener un perfil "
+#~ "preciso."
 
+#, fuzzy
 #~ msgid "It should only take a few minutes."
-#~ msgstr "Sólo debería llevar unos pocos minutos."
+#~ msgstr "Sólo debería tomar unos minutos."
 
+#, fuzzy
 #~ msgid ""
 #~ "It may help to sit further from the screen or to squint at the "
 #~ "calibration images in order to accurately compare the colors."
 #~ msgstr ""
-#~ "Puede ayudar sentarse más lejos de la pantalla o entornar los ojos en las "
-#~ "imágenes de calibración para comparar los colores con precisión."
+#~ "Puede ser útil sentarse más lejos de la pantalla o entrecerrar los ojos "
+#~ "ante las imágenes de calibración para comparar los colores con precisión."
 
+#, fuzzy
 #~ msgid "You can repeat the calibration steps as many times as you want."
-#~ msgstr "Puede repetir los pasos de calibración tantas veces como quiera."
+#~ msgstr "Puede repetir los pasos de calibración tantas veces como desee."
 
+#, fuzzy
 #~ msgid "Create table item %i/%i"
 #~ msgstr "Crear elemento de tabla %i/%i"
 
+#, fuzzy
 #~ msgid ""
 #~ "Please try to match up the gray square with the surrounding alternating "
 #~ "bars. You should match the brightness first, and then if required change "
 #~ "the color tint so it looks plain gray."
 #~ msgstr ""
-#~ "Intente que coincida el cuadrado gris con las barras alternantes. Debería "
-#~ "ajustar primero el brillo y después, si es necesario, cambiar el tinte "
-#~ "del color para que parezca gris plano."
+#~ "Intente hacer coincidir el cuadrado gris con las barras alternas "
+#~ "circundantes. "
 
+#, fuzzy
 #~ msgid ""
 #~ "This display is now calibrated. You can change the current profile using "
 #~ "the Color Profiles program."
-#~ msgstr ""
-#~ "Ahora esta pantalla está calibrada. Puede cambiar el perfil actual usando "
-#~ "el programa Perfiles de color."
+#~ msgstr "Esta pantalla ahora está calibrada. "
 
+#, fuzzy
 #~ msgid "Laptop LCD"
-#~ msgstr "LCD de portátil"
+#~ msgstr "LCD del ordenador portátil"
 
+#, fuzzy
 #~ msgid "Automatic"
-#~ msgstr "Automático"
+#~ msgstr "Automático"
 
+#, fuzzy
 #~ msgid ""
 #~ "This profile does not have the information required for whole-screen "
 #~ "color correction."
 #~ msgstr ""
-#~ "Este perfil no tiene la información necesaria para la corrección de color "
-#~ "de la pantalla entera."
+#~ "Este perfil no tiene la información necesaria para la corrección del "
+#~ "color de pantalla completa."
 
+#, fuzzy
 #~ msgid "Import ICC color profile %s?"
-#~ msgstr "¿Importar el perfil de color ICC %s?"
+#~ msgstr "¿Importar perfil de color ICC %s?"
 
+#, fuzzy
 #~ msgid "Import ICC profile"
 #~ msgstr "Importar perfil ICC"
 
+#, fuzzy
 #~ msgid "Output profile '%s':"
-#~ msgstr "Archivo de salido «%s»:"
+#~ msgstr "Perfil de salida '%s':"
 
+#, fuzzy
 #~ msgid "not set"
-#~ msgstr "sin establecer"
+#~ msgstr "no establecido"
 
+#, fuzzy
 #~ msgid "There are no ICC profiles for this device"
-#~ msgstr "No existen perfiles ICC para este dispositivo"
+#~ msgstr "No hay perfiles ICC para este dispositivo"
 
+#, fuzzy
 #~ msgid "There are no ICC profiles for this device type"
-#~ msgstr "No existen perfiles ICC para este tipo de dispositivo"
+#~ msgstr "No hay perfiles ICC para este tipo de dispositivo"
 
+#, fuzzy
 #~ msgid "The request failed"
-#~ msgstr "Falló la solicitud"
+#~ msgstr "La solicitud falló"
 
+#, fuzzy
 #~ msgid "Rendering intent (display):"
-#~ msgstr "Intento de renderizado (pantalla):"
+#~ msgstr "Intención de renderizado (visualización):"
 
+#, fuzzy
 #~ msgid "Rendering intent (softproof):"
-#~ msgstr "Intento de renderizado (prueba suave):"
+#~ msgstr "Intención de renderizado (prueba en pantalla):"
 
+#, fuzzy
 #~ msgid "RGB Colorspace:"
 #~ msgstr "Espacio de color RGB:"
 
+#, fuzzy
 #~ msgid "CMYK Colorspace:"
 #~ msgstr "Espacio de color CMYK:"
 
+#, fuzzy
 #~ msgid "Get the profiles for a specific device"
 #~ msgstr "Obtener los perfiles para un dispositivo específico"
 
+#, fuzzy
 #~ msgid "Device or profile type not recognized, recognised types are:"
 #~ msgstr ""
-#~ "No se reconoció el tipo de dispositivo o de perfil, los tipos reconocidos "
-#~ "son:"
+#~ "Tipo de dispositivo o perfil no reconocido, los tipos reconocidos son:"
 
+#, fuzzy
 #~ msgid "Device ID, e.g. 'xrandr_ibm_france_ltn154p2_l05'"
-#~ msgstr "ID del dispositivo, ej: «xrandr_ibm_france_ltn154p2_l05»"
+#~ msgstr "ID del dispositivo, p. "
 
+#, fuzzy
 #~ msgid "GNOME Color Manager ICC profile system-wide installer"
-#~ msgstr ""
-#~ "Instalador amplio del sistema de perfiles de color ICC del Gestor de "
-#~ "color de GNOME"
+#~ msgstr "Instalador de todo el sistema del perfil ICC de GNOME Color Manager"
 
+#, fuzzy
 #~ msgid "You need to specify exactly one ICC profile filename."
 #~ msgstr "Debe especificar exactamente un nombre de archivo de perfil ICC."
 
+#, fuzzy
 #~ msgid "You need to specify exactly one device ID."
-#~ msgstr "Debe especificar exactamente un ID de dispositivo."
+#~ msgstr "Debe especificar exactamente una ID de dispositivo."
 
+#, fuzzy
 #~ msgid "This program can only be used by the root user."
-#~ msgstr "Este programa sólo lo puede usar el superusuario."
+#~ msgstr "Este programa sólo puede ser utilizado por el usuario root."
 
+#, fuzzy
 #~ msgid "The source filename must be absolute."
-#~ msgstr "El nombre del archivo de origen debe ser absoluto."
+#~ msgstr "El nombre del archivo fuente debe ser absoluto."
 
+#, fuzzy
 #~ msgid "Failed to get content type:"
-#~ msgstr "Falló al obtener el tipo de contenido:"
+#~ msgstr "No se pudo obtener el tipo de contenido:"
 
+#, fuzzy
 #~ msgid "Content type was incorrect:"
 #~ msgstr "El tipo de contenido era incorrecto:"
 
+#, fuzzy
 #~ msgid "This program must only be run through pkexec."
-#~ msgstr "Este programa sólo se puede ejecutar a través de pkexec."
+#~ msgstr "Este programa sólo debe ejecutarse a través de pkexec."
 
+#, fuzzy
 #~ msgid "PKEXEC_UID must be set to an integer value."
-#~ msgstr "Se debe establecer PKEXEC_UID a un valor entero."
+#~ msgstr "PKEXEC_UID debe establecerse en un valor entero."
 
+#, fuzzy
 #~ msgid "The ICC profile must be owned by the user."
-#~ msgstr "El usuario debe ser el propietario del perfil ICC."
+#~ msgstr "El perfil ICC debe ser propiedad del usuario."
 
+#, fuzzy
 #~ msgid "The destination filename must be absolute."
 #~ msgstr "El nombre del archivo de destino debe ser absoluto."
 
+#, fuzzy
 #~ msgid "Failed to copy:"
-#~ msgstr "Falló al copiar:"
+#~ msgstr "No se pudo copiar:"
 
+#, fuzzy
 #~ msgid "This application was compiled without VTE support."
-#~ msgstr "Esta aplicación se compiló sin soporte para VTE."
+#~ msgstr "Esta aplicación fue compilada sin soporte VTE."
 
+#, fuzzy
 #~ msgid "Recalibrate now"
 #~ msgstr "Recalibrar ahora"
 
+#, fuzzy
 #~ msgid "Ignore"
 #~ msgstr "Ignorar"
 
+#, fuzzy
 #~ msgid "Do not exit after the request has been processed"
-#~ msgstr "No salir después de que se haya procesado la solicitud"
+#~ msgstr "No salir después de que la solicitud haya sido procesada."
 
+#, fuzzy
 #~ msgid "Color Management"
-#~ msgstr "Gestión de color"
+#~ msgstr "Gestión del color"
 
+#, fuzzy
 #~ msgid "Color Management D-Bus Service"
-#~ msgstr "Servicio D-Bus de gestión de color"
+#~ msgstr "Servicio D-Bus de gestión del color"
 
+#, fuzzy
 #~ msgid "Perceptual"
-#~ msgstr "De percepción"
+#~ msgstr "Perceptivo"
 
+#, fuzzy
 #~ msgid "Relative"
 #~ msgstr "Relativo"
 
+#, fuzzy
 #~ msgid "Saturation"
 #~ msgstr "Saturación"
 
+#, fuzzy
 #~ msgid "Absolute"
 #~ msgstr "Absoluto"
 
+#, fuzzy
 #~ msgid "High quality photography"
 #~ msgstr "Fotografía de alta calidad"
 
+#, fuzzy
 #~ msgid "Precise color matching"
-#~ msgstr "Coincidencia de color precisa"
+#~ msgstr "Coincidencia de colores precisa"
 
+#, fuzzy
 #~ msgid "Graphs and presentations"
-#~ msgstr "Gráficas y presentaciones"
+#~ msgstr "Gráficos y presentaciones."
 
+#, fuzzy
 #~ msgid "None"
-#~ msgstr "Ninguna"
+#~ msgstr "Ninguno"
 
+#, fuzzy
 #~ msgid "Transfer response curve"
 #~ msgstr "Curva de respuesta de transferencia"
 
+#, fuzzy
 #~ msgid "Video card gamma table"
-#~ msgstr "Tabla de gamma de la tarjeta gráfica"
+#~ msgstr "Tabla de gamma de tarjetas de video"
 
+#, fuzzy
 #~ msgid "Image preview (from sRGB)"
-#~ msgstr "Vista previa de imagen (de sRGB)"
+#~ msgstr "Vista previa de imagen (desde sRGB)"
 
+#, fuzzy
 #~ msgid "Image preview (to sRGB)"
-#~ msgstr "Vista previa de imagen (a SRGB)"
+#~ msgstr "Vista previa de la imagen (a sRGB)"
 
+#, fuzzy
 #~ msgid "Blue:"
 #~ msgstr "Azul:"
 
+#, fuzzy
 #~ msgid "Create images for printing"
-#~ msgstr "Crear imágenes para impresión"
+#~ msgstr "Crear imágenes para imprimir"
 
+#, fuzzy
 #~ msgid "Generate profile from printed images"
-#~ msgstr "Generar un perfil desde imágenes impresas"
+#~ msgstr "Generar perfil a partir de imágenes impresas"
 
+#, fuzzy
 #~ msgid "Green:"
 #~ msgstr "Verde:"
 
+#, fuzzy
 #~ msgid "High"
-#~ msgstr "Alta"
+#~ msgstr "Alto"
 
+#, fuzzy
 #~ msgid "Low"
-#~ msgstr "Baja"
+#~ msgstr "Bajo"
 
+#, fuzzy
 #~ msgid "Profile locally attached printer"
-#~ msgstr "Perfilar una impresora acoplada localmente"
+#~ msgstr "Perfil de impresora conectada localmente"
 
+#, fuzzy
 #~ msgid "Red:"
 #~ msgstr "Rojo:"
 
+#, fuzzy
 #~ msgid ""
 #~ "A working space is a default colorspace that is not associated with a "
 #~ "specific device."
 #~ msgstr ""
-#~ "Un espacio de trabajo es el espacio de color predeterminado que no está "
+#~ "Un espacio de trabajo es un espacio de color predeterminado que no está "
 #~ "asociado con un dispositivo específico."
 
+#, fuzzy
 #~ msgid "Add d_evice…"
-#~ msgstr "A_ñadir dispositivo…"
+#~ msgstr "Añadir d_evice..."
 
+#, fuzzy
 #~ msgid "Available Profiles"
 #~ msgstr "Perfiles disponibles"
 
+#, fuzzy
 #~ msgid "CMYK:"
 #~ msgstr "CMYK:"
 
+#, fuzzy
 #~ msgid "Contrast:"
 #~ msgstr "Contraste:"
 
+#, fuzzy
 #~ msgid "Create _Profile"
-#~ msgstr "Crear p_erfil"
+#~ msgstr "Crear _Perfil"
 
+#, fuzzy
 #~ msgid "Device type:"
 #~ msgstr "Tipo de dispositivo:"
 
+#, fuzzy
 #~ msgid "Devices"
 #~ msgstr "Dispositivos"
 
+#, fuzzy
 #~ msgid "Display:"
-#~ msgstr "Pantalla:"
+#~ msgstr "Mostrar:"
 
+#, fuzzy
 #~ msgid "Do full screen correction"
-#~ msgstr "Realizar corrección de pantalla completa"
+#~ msgstr "Hacer corrección de pantalla completa"
 
+#, fuzzy
 #~ msgid "Fine tuning"
-#~ msgstr "Ajuste fino"
+#~ msgstr "Sintonia FINA"
 
+#, fuzzy
 #~ msgid ""
 #~ "For a color managed workflow, each connected device should have one or "
 #~ "more color profiles associated with it."
 #~ msgstr ""
-#~ "Para una gestión del flujo de trabajo del color, cada dispositivo "
-#~ "conectado debería tener uno o más perfiles asociados."
+#~ "Para un flujo de trabajo con gestión del color, cada dispositivo "
+#~ "conectado debe tener uno o más perfiles de color asociados."
 
+#, fuzzy
 #~ msgid "Gamma:"
-#~ msgstr "Gamma:"
+#~ msgstr "Gama:"
 
+#, fuzzy
 #~ msgid "Gray:"
 #~ msgstr "Gris:"
 
+#, fuzzy
 #~ msgid ""
 #~ "Image files can be dragged on this window to auto-complete the above "
 #~ "fields."
 #~ msgstr ""
-#~ "Se pueden soltar archivos de imagen en esta ventana para autocompletar "
-#~ "los campos superiores."
+#~ "Los archivos de imagen se pueden arrastrar a esta ventana para completar "
+#~ "automáticamente los campos anteriores."
 
+#, fuzzy
 #~ msgid "Make default"
 #~ msgstr "Hacer predeterminado"
 
+#, fuzzy
 #~ msgid "More details"
 #~ msgstr "Más detalles"
 
+#, fuzzy
 #~ msgid ""
 #~ "Only profiles that are compatible with the device will be listed above."
-#~ msgstr "Debajo sólo se listarán perfiles compatibles con el dispositivo."
+#~ msgstr ""
+#~ "Arriba solo se enumerarán los perfiles que sean compatibles con el "
+#~ "dispositivo."
 
+#, fuzzy
 #~ msgid "Open the documentation"
 #~ msgstr "Abrir la documentación"
 
+#, fuzzy
 #~ msgid "Pr_ofile Viewer"
-#~ msgstr "Visor de per_files"
+#~ msgstr "Visor de perfiles"
 
+#, fuzzy
 #~ msgid "Print Preview:"
-#~ msgstr "Vista previa de impresión:"
+#~ msgstr "Vista previa de impresión:"
 
+#, fuzzy
 #~ msgid ""
 #~ "Program the video card with the adjusted color values so all windows are "
 #~ "color corrected"
 #~ msgstr ""
-#~ "Programar la tarjeta de vídeo con los valores de color ajustados para que "
-#~ "todas las ventanas tengan el color correcto"
+#~ "Programe la tarjeta de video con los valores de color ajustados para que "
+#~ "todas las ventanas tengan el color corregido"
 
+#, fuzzy
 #~ msgid "Remove de_vice"
-#~ msgstr "Quitar dispositi_vo"
+#~ msgstr "Quitar dispositivo_vice"
 
+#, fuzzy
 #~ msgid "Rendering Intents"
-#~ msgstr "Intentos de renderización"
+#~ msgstr "Intentos de renderizado"
 
+#, fuzzy
 #~ msgid "Rese_t"
-#~ msgstr "_Restablecer"
+#~ msgstr "Reiniciar"
 
+#, fuzzy
 #~ msgid "Save these profiles for all users"
-#~ msgstr "Guardar estos perfiles para todos los usuarios"
+#~ msgstr "Guarde estos perfiles para todos los usuarios"
 
+#, fuzzy
 #~ msgid ""
 #~ "Set a property on the system so applications use the default display "
 #~ "profile"
 #~ msgstr ""
-#~ "Establecer una propiedad en el sistema para que las aplicaciones usen el "
-#~ "perfil de mostrado predeterminado"
+#~ "Establecer una propiedad en el sistema para que las aplicaciones utilicen "
+#~ "el perfil de visualización predeterminado"
 
+#, fuzzy
 #~ msgid "Set profile for _color managed applications"
-#~ msgstr "Establecer el perfil de _color para las aplicaciones gestionadas"
+#~ msgstr "Establecer perfil para aplicaciones administradas por _color"
 
+#, fuzzy
 #~ msgid ""
 #~ "The rendering intent defines how color should be transformed from one "
 #~ "colorspace to another."
 #~ msgstr ""
-#~ "El modo de renderizado define cómo se debe transformar el color de un "
-#~ "espacio de color a otro."
+#~ "La intención de representación define cómo se debe transformar el color "
+#~ "de un espacio de color a otro."
 
+#, fuzzy
 #~ msgid ""
 #~ "These settings are applied for all displays attached to this computer, "
 #~ "even ones that are added later."
 #~ msgstr ""
-#~ "Estos ajustes se aplican para todas las pantallas conectadas en este "
-#~ "equipo, incluso las que se añaden posteriormente."
+#~ "Esta configuración se aplica a todas las pantallas conectadas a esta "
+#~ "computadora, incluso a las que se agregan más adelante."
 
+#, fuzzy
 #~ msgid ""
 #~ "This enables full screen color management which requires a modern 3D "
 #~ "graphics card with hardware shader support. This option may increase CPU "
 #~ "load and will increase the amount of power this computer uses."
 #~ msgstr ""
-#~ "Esto activa la gestión de color de la pantalla completa, lo que requiere "
-#~ "una tarjeta gráfica 3D moderna con soporte hardware de sombras. Esta "
-#~ "opción puede aumentar la carga de la CPU y aumentará el consumo de "
-#~ "energía del equipo."
+#~ "Esto permite la gestión del color de pantalla completa, lo que requiere "
+#~ "una tarjeta gráfica 3D moderna con soporte de sombreado de hardware. "
 
+#, fuzzy
 #~ msgid "Working Spaces"
 #~ msgstr "Espacios de trabajo"
 
+#, fuzzy
 #~ msgid "_Apply basic display correction"
-#~ msgstr "_Aplicar corrección básica de pantalla"
+#~ msgstr "_Aplicar corrección de visualización básica"
 
+#, fuzzy
 #~ msgid "_Set System Default"
-#~ msgstr "_Establecer los valores predeterminados del sistema"
+#~ msgstr "_Establecer sistema predeterminado"
 
+#, fuzzy
 #~ msgid "Log debugging data to a file"
-#~ msgstr "Registrar los datos de depuración en un archivo"
+#~ msgstr "Registrar datos de depuración en un archivo"
 
+#, fuzzy
 #~ msgid "Unknown device"
 #~ msgstr "Dispositivo desconocido"
 
+#, fuzzy
 #~ msgid "Loading list of devices…"
-#~ msgstr "Cargando la lista de dispositivos…"
+#~ msgstr "Cargando lista de dispositivos…"
 
+#, fuzzy
 #~ msgid ""
 #~ "A working space is the range of colors that can be encoded into an image."
 #~ msgstr ""
-#~ "Un espacio de trabajo es el rango de colores que se pueden codificar en "
+#~ "Un espacio de trabajo es la gama de colores que se pueden codificar en "
 #~ "una imagen."
 
+#, fuzzy
 #~ msgid "Adds a virtual device that is not connected."
-#~ msgstr "Añade un dispositivo virtual que no está conectado."
+#~ msgstr "Agrega un dispositivo virtual que no está conectado."
 
+#, fuzzy
 #~ msgid ""
 #~ "Delete the disconnected device - if you reconnect the device it will "
 #~ "reappear in the list"
 #~ msgstr ""
-#~ "Eliminar el dispositivo desconectado; si reconecta el dispositivo volverá "
-#~ "a aparecer en la lista"
+#~ "Elimine el dispositivo desconectado: si vuelve a conectar el dispositivo, "
+#~ "volverá a aparecer en la lista"
 
+#, fuzzy
 #~ msgid "EISA ID:"
-#~ msgstr "ID de EISA:"
+#~ msgstr "Identificación EISA:"
 
+#, fuzzy
 #~ msgid "Reset the sliders to the default values"
-#~ msgstr "Restablecer los deslizadores a los valores predeterminados"
+#~ msgstr "Restablecer los controles deslizantes a los valores predeterminados"
 
+#, fuzzy
 #~ msgid "Serial number:"
 #~ msgstr "Número de serie:"
 
+#, fuzzy
 #~ msgid "The rendering intent is how one gamut size is mapped to another."
-#~ msgstr "El modo de renderizado es cómo se mapea una gama de color a otra."
+#~ msgstr ""
+#~ "La intención de la representación es cómo se asigna un tamaño de gama a "
+#~ "otro."
 
+#, fuzzy
 #~ msgid ""
 #~ "The rendering intent to use when transforming from the image gamut to the "
 #~ "device output gamut"
 #~ msgstr ""
-#~ "El modo de renderizado que usar al transformar la gama de color de una "
-#~ "imagen a la gama de color del dispositivo de salida"
+#~ "La intención de representación que se utilizará al transformar de la gama "
+#~ "de imágenes a la gama de salida del dispositivo"
 
+#, fuzzy
 #~ msgid ""
 #~ "The rendering intent to use when transforming from the image gamut to the "
 #~ "display gamut"
 #~ msgstr ""
-#~ "El modo de renderizado que usar al transformar la gama de color de una "
-#~ "imagen a la gama de color de la pantalla"
+#~ "La intención de representación que se utilizará al transformar de la gama "
+#~ "de imágenes a la gama de visualización"
 
+#, fuzzy
 #~ msgid ""
 #~ "These settings control how color management is applied to your desktop."
 #~ msgstr ""
-#~ "Estos ajustes controlan cómo se aplica la gestión de color en su "
-#~ "escritorio."
+#~ "Estas configuraciones controlan cómo se aplica la administración del "
+#~ "color a su escritorio."
 
+#, fuzzy
 #~ msgid "This is the default CMYK working space to use in applications"
 #~ msgstr ""
-#~ "Este es el espacio de color CMYK predeterminado para usar en aplicaciones"
+#~ "Este es el espacio de trabajo CMYK predeterminado para usar en "
+#~ "aplicaciones."
 
+#, fuzzy
 #~ msgid "This is the default RGB working space to use in applications"
 #~ msgstr ""
-#~ "Este es el espacio de color RGB predeterminado para usar en aplicaciones"
+#~ "Este es el espacio de trabajo RGB predeterminado para usar en "
+#~ "aplicaciones."
 
+#, fuzzy
 #~ msgid "This is the default gray working space to use in applications"
 #~ msgstr ""
-#~ "Este es el espacio de color gris predeterminado para usar en aplicaciones"
+#~ "Este es el espacio de trabajo gris predeterminado para usar en "
+#~ "aplicaciones."
 
+#, fuzzy
 #~ msgid "Add a color profile to be used for this device"
-#~ msgstr "Añadir un perfil de color para usarlo con este dispositivo"
+#~ msgstr "Agregue un perfil de color para usar en este dispositivo"
 
+#, fuzzy
 #~ msgid "Color Profiles"
 #~ msgstr "Perfiles de color"
 
+#, fuzzy
 #~ msgid "Make the selected profile the default profile"
-#~ msgstr "Hacer del perfil seleccionado el predeterminado"
+#~ msgstr "Hacer que el perfil seleccionado sea el perfil predeterminado"
 
+#, fuzzy
 #~ msgid "ICC profile installer"
-#~ msgstr "Instalador de perfiles ICC"
+#~ msgstr "Instalador de perfil ICC"
 
+#, fuzzy
 #~ msgid "Measuring instrument not recognized"
-#~ msgstr "No se reconoció el instrumento de medición"
+#~ msgstr "Instrumento de medición no reconocido"
 
+#, fuzzy
 #~ msgid "Cannot load file contents:"
 #~ msgstr "No se puede cargar el contenido del archivo:"
 
+#, fuzzy
 #~ msgid "Cannot parse EDID contents:"
 #~ msgstr "No se puede analizar el contenido EDID:"
 
+#, fuzzy
 #~ msgid "Monitor name:"
 #~ msgstr "Nombre del monitor:"
 
+#, fuzzy
 #~ msgid "Vendor name:"
-#~ msgstr "Nombre del fabricante:"
+#~ msgstr "Nombre del proveedor:"
 
+#, fuzzy
 #~ msgid "PNP identifier:"
 #~ msgstr "Identificador PNP:"
 
+#, fuzzy
 #~ msgid "Size:"
 #~ msgstr "Tamaño:"
 
+#, fuzzy
 #~ msgid "EDID dumps to parse"
-#~ msgstr "Volcados EDID que analizar"
+#~ msgstr "Volcados EDID para analizar"
 
+#, fuzzy
 #~ msgid "EDID dump:"
 #~ msgstr "Volcado EDID:"
 
+#, fuzzy
 #~ msgid "Saved %i bytes to %s"
 #~ msgstr "%i bytes guardados en %s"
 
+#, fuzzy
 #~ msgid "Failed to save EDID to %s"
-#~ msgstr "Falló al guardar los datos EDID en %s"
+#~ msgstr "No se pudo guardar EDID en %s"
 
+#, fuzzy
 #~ msgid "Profiles to view"
 #~ msgstr "Perfiles para ver"
 
+#, fuzzy
 #~ msgid "ICC profile dump program"
-#~ msgstr "Programa para volcados de perfiles ICC"
+#~ msgstr "Programa de volcado de perfil ICC"
 
+#, fuzzy
 #~ msgid "The description of the profile"
-#~ msgstr "La descripción del perfil"
+#~ msgstr "La descripción del perfil."
 
+#, fuzzy
 #~ msgid "The copyright of the profile"
-#~ msgstr "El copyright del perfil"
+#~ msgstr "Los derechos de autor del perfil."
 
+#, fuzzy
 #~ msgid "The manufacturer of the profile"
-#~ msgstr "El fabricante del perfil"
+#~ msgstr "El fabricante del perfil."
 
+#, fuzzy
 #~ msgid "Profiles to fix"
-#~ msgstr "Perfiles que arreglar"
+#~ msgstr "Perfiles para arreglar"
 
+#, fuzzy
 #~ msgid "ICC profile fix program"
-#~ msgstr "Programa para arreglar perfiles ICC"
+#~ msgstr "Programa de reparación de perfiles ICC"
 
+#, fuzzy
 #~ msgid "Add d_evice&#x2026;"
-#~ msgstr "Añadir di_spositivo#x2026;"
+#~ msgstr "Añadir d_evice..."
 
+#, fuzzy
 #~ msgid "Softproof:"
-#~ msgstr "Prueba blanda:"
+#~ msgstr "Prueba en pantalla:"
 
+#, fuzzy
 #~ msgid "Add a new color profile"
-#~ msgstr "Añadir un perfil de color nuevo"
+#~ msgstr "Agregar un nuevo perfil de color"
 
+#, fuzzy
 #~ msgid "Close this dialog"
 #~ msgstr "Cerrar este diálogo"
 
+#, fuzzy
 #~ msgid "Graph:"
-#~ msgstr "Gráfico:"
+#~ msgstr "Gráfico:"
 
+#, fuzzy
 #~ msgid "_Add&#x2026;"
-#~ msgstr "_Añadir…"
+#~ msgstr "_Agregar…"
 
+#, fuzzy
 #~ msgid "_Remove"
-#~ msgstr "_Quitar"
+#~ msgstr "_Eliminar"
 
+#, fuzzy
 #~ msgid "Cannot calibrate: The measuring instrument is not plugged in"
-#~ msgstr "No se puede calibrar: el instrumento de medición no está conectado"
+#~ msgstr "No se puede calibrar: el instrumento de medición no está enchufado"
 
+#, fuzzy
 #~ msgid "Select reference image"
-#~ msgstr "Seleccionar la imagen de referencia"
+#~ msgstr "Seleccionar imagen de referencia"
 
+#, fuzzy
 #~ msgid "Device"
 #~ msgstr "Dispositivo"
 
+#, fuzzy
 #~ msgid "Profile Graphs"
-#~ msgstr "Gráficas de perfil"
+#~ msgstr "Gráficos de perfil"
 
+#, fuzzy
 #~ msgid "EISA ID"
-#~ msgstr "ID de EISA"
+#~ msgstr "Identificación EISA"
 
+#, fuzzy
 #~ msgid "Gamma"
-#~ msgstr "Gamma"
+#~ msgstr "Gama"
 
+#, fuzzy
 #~ msgid "Relative colormetric"
 #~ msgstr "Colorimetría relativa"
 
+#, fuzzy
 #~ msgid "Absolute colormetric"
 #~ msgstr "Colorimetría absoluta"
 
+#, fuzzy
 #~ msgid "This device already exists"
 #~ msgstr "Este dispositivo ya existe"
 
+#, fuzzy
 #~ msgid "Add Virtual Device"
-#~ msgstr "Añadir dispositivo virtual"
+#~ msgstr "Agregar dispositivo virtual"
 
+#, fuzzy
 #~ msgid ""
 #~ "Gamma is adjusted to affect the color of the attached monitor. "
 #~ "Traditionally Linux has used a gamma value of 1.0, but this makes "
 #~ "monitors look washed out compared Windows XP or OS X. Apple traditionally "
 #~ "used a value of 1.8 for a long time, but now use the same value as "
 #~ "Microsoft. Microsoft has always used a value of 2.2."
-#~ msgstr ""
-#~ "La gamma se ajusta para afectar al color del monitor adjunto. "
-#~ "Tradicionalmente Linux usaba un valor gamma de 1.0, pero esto hace que "
-#~ "los monitores parezcan desgastados en comparación con Windows XP u OS X. "
-#~ "Apple tradicionalmente usaba un valor de 1.8 durante mucho tiempo, pero "
-#~ "ahora usa el mismo valor que Microsoft. Microsoft siempre ha usado un "
-#~ "valor 2.2."
+#~ msgstr "Gamma se ajusta para afectar el color del monitor conectado. "
 
+#, fuzzy
 #~ msgid ""
 #~ "If set to TRUE then external disks are searched for device ICC profiles "
 #~ "at startup, for instance looking in the OSX library folder or Windows XP "
 #~ "system folders. This may increase startup time if disks need to be spun "
 #~ "up to be searched."
 #~ msgstr ""
-#~ "Si está establecido a cierto entonces se examinan los discos externos "
-#~ "buscando perfiles ICC al inicio, por ejemplo buscando en la carpeta de "
-#~ "bibliotecas de OS X o en las carpetas del sistema de Windows XP. Esto "
-#~ "puede aumentar el tiempo de inicio si el disco debe arrancarse para poder "
-#~ "examinarse."
+#~ "Si se establece en TRUE, se buscan perfiles ICC de dispositivo en los "
+#~ "discos externos al inicio, por ejemplo, buscando en la carpeta de la "
+#~ "biblioteca OSX o en las carpetas del sistema de Windows XP. "
 
+#, fuzzy
 #~ msgid ""
 #~ "If set to TRUE then the __ICC_PROFILE hint will be set, which "
 #~ "applications use to convert true color to screen color."
 #~ msgstr ""
-#~ "Si está establecido a cierto entonces se establecerá la sugerencia "
-#~ "__ICC_PROFILE que usan las aplicaciones para convertir el color real en "
-#~ "color en pantalla."
+#~ "Si se establece en TRUE, se establecerá la sugerencia __ICC_PROFILE, que "
+#~ "las aplicaciones utilizan para convertir el color verdadero en color de "
+#~ "pantalla."
 
+#, fuzzy
 #~ msgid ""
 #~ "If set to TRUE then the fine tuning controls are visible. This allows the "
 #~ "user to change the display profile outside of what the ICC profile "
 #~ "suggests and is only recommended for advanced users."
 #~ msgstr ""
-#~ "Si está establecido a cierto entonces los controles de ajuste fino están "
-#~ "visibles. Esto permite al usuario cambiar el perfil de mostrado fuera de "
-#~ "lo que sugiere el perfil ICC y sólo se recomienda para usuarios avanzados."
+#~ "Si se establece en TRUE, los controles de ajuste fino son visibles. "
 
+#, fuzzy
 #~ msgid "If set to TRUE then the video LUT is set with the display profile"
 #~ msgstr ""
-#~ "Si está establecido a cierto entonces el vídeo LUT está configurado con "
-#~ "el perfil de la pantalla"
+#~ "Si se establece en TRUE, entonces la LUT de vídeo se configura con el "
+#~ "perfil de visualización."
 
+#, fuzzy
 #~ msgid "Set the _ICC_PROFILE hint for applications"
 #~ msgstr "Establecer la sugerencia _ICC_PROFILE para aplicaciones"
 
+#, fuzzy
 #~ msgid "Show the fine tuning controls for display devices"
 #~ msgstr ""
-#~ "Mostrar los controles de ajuste fino para los dispositivos de pantalla"
+#~ "Mostrar los controles de ajuste fino para dispositivos de visualización"
 
+#, fuzzy
 #~ msgid "The CMYK profile filename to be used by applications by default."
 #~ msgstr ""
-#~ "El nombre de archivo del perfil CMYK que las aplicaciones deben usar de "
+#~ "El nombre de archivo del perfil CMYK que utilizarán las aplicaciones de "
 #~ "forma predeterminada."
 
+#, fuzzy
 #~ msgid "The RGB profile filename to be used by applications by default."
 #~ msgstr ""
-#~ "El nombre de archivo del perfil RGB que las aplicaciones deben usar de "
+#~ "El nombre de archivo del perfil RGB que utilizarán las aplicaciones de "
 #~ "forma predeterminada."
 
+#, fuzzy
 #~ msgid "The default CMYK profile"
 #~ msgstr "El perfil CMYK predeterminado"
 
+#, fuzzy
 #~ msgid "The default RGB profile"
 #~ msgstr "El perfil RGB predeterminado"
 
+#, fuzzy
 #~ msgid "The default calibration length"
 #~ msgstr "La longitud de calibración predeterminada"
 
+#, fuzzy
 #~ msgid "The default gamma to use for monitors with no previous value set"
 #~ msgstr ""
-#~ "La gamma predeterminada que usar con monitores sin valor previo "
-#~ "configurado"
+#~ "La gamma predeterminada que se usará para monitores sin ningún valor "
+#~ "previo establecido"
 
+#, fuzzy
 #~ msgid "The duration between sending notifications to recalibrate a display"
 #~ msgstr ""
-#~ "La duración entre el aviso de notificaciones para recalibrar una pantalla"
+#~ "La duración entre el envío de notificaciones para recalibrar una pantalla"
 
+#, fuzzy
 #~ msgid "The duration between sending notifications to recalibrate a printer"
 #~ msgstr ""
-#~ "La duración entre el aviso de notificaciones para recalibrar una impresora"
+#~ "La duración entre el envío de notificaciones para recalibrar una impresora"
 
+#, fuzzy
 #~ msgid ""
 #~ "The length of calibration, as this is proportional to the accuracy. The "
 #~ "option 'short' creates a quick profile, 'normal' a regular one, and "
 #~ "'long' takes a really long time, but is more precise and creates a better "
 #~ "profile. Use 'ask' if you want the user to choose."
 #~ msgstr ""
-#~ "La longitud de la calibración, ya que es proporcional a la precisión. La "
-#~ "opción «corta» crea un perfil rápido, «normal» un perfil regular y "
-#~ "«larga» lleva mucho tiempo pero es más precisa y crea un mejor perfil. "
-#~ "Use «preguntar» si quiere que el usuario elija."
+#~ "La duración de la calibración, ya que es proporcional a la precisión. "
 
+#, fuzzy
 #~ msgid "The rendering intent to use for softproofs, e.g. 'perceptual'"
 #~ msgstr ""
-#~ "El modo de renderizado que usar para pruebas blandas, ej. «de percepción»"
+#~ "La intención de renderizado a utilizar para pruebas en pantalla, p. "
 
+#, fuzzy
 #~ msgid "The rendering intent to use for softproofs, e.g. 'perceptual'."
 #~ msgstr ""
-#~ "El modo de renderizado que usar para pruebas blandas, ej. «de percepción»."
+#~ "La intención de renderizado a utilizar para pruebas en pantalla, p. "
 
+#, fuzzy
 #~ msgid "The rendering intent to use for the display, e.g. 'perceptual'"
 #~ msgstr ""
-#~ "El modo de renderizado que usar para la pantalla, ej. «de percepción»"
+#~ "La intención de representación que se utilizará para la visualización, p. "
 
+#, fuzzy
 #~ msgid "The rendering intent to use for the display, e.g. 'perceptual'."
 #~ msgstr ""
-#~ "El modo de renderizado que usar para la pantalla, ej. «de percepción»."
+#~ "La intención de representación que se utilizará para la visualización, p. "
 
+#, fuzzy
 #~ msgid ""
 #~ "This is the number of seconds in between notifying the user to "
 #~ "recalibrate each display device. Set to 0 to disable the notification."
 #~ msgstr ""
-#~ "Este es el número de segundos entre notificaciones al usuario para que "
-#~ "recalibre cada dispositivo de pantalla. Establézcalo a 0 para desactivar "
-#~ "la notificación."
+#~ "Esta es la cantidad de segundos entre la notificación al usuario para "
+#~ "recalibrar cada dispositivo de visualización. "
 
+#, fuzzy
 #~ msgid ""
 #~ "This is the number of seconds in between notifying the user to "
 #~ "recalibrate each printer device. Set to 0 to disable the notification."
 #~ msgstr ""
-#~ "Este es el número de segundos entre notificaciones al usuario para que "
-#~ "recalibre cada dispositivo de impresora. Establézcalo a 0 para desactivar "
-#~ "la notificación."
+#~ "Esta es la cantidad de segundos entre la notificación al usuario para "
+#~ "recalibrar cada dispositivo de impresora. "
 
+#, fuzzy
 #~ msgid "Whether ICC profiles should be loaded from external disks"
-#~ msgstr "Indica si los perfiles ICC se deben cargar desde discos externos"
+#~ msgstr "Si los perfiles ICC deben cargarse desde discos externos"
 
+#, fuzzy
 #~ msgid ""
 #~ "Whether the display should be globally corrected or left to applications"
 #~ msgstr ""
-#~ "Indica si la pantalla se debe corregir globalmente o se debe dejar a las "
-#~ "aplicaciones hacerlo"
+#~ "Si la visualización debe corregirse globalmente o dejarse en manos de las "
+#~ "aplicaciones"
 
+#, fuzzy
 #~ msgid "Text string"
 #~ msgstr "Cadena de texto"
 
+#, fuzzy
 #~ msgid ""
 #~ "Please set the measuring instrument to screen mode like the image below, "
 #~ "and ensure it is attached to the screen."
 #~ msgstr ""
-#~ "Establezca el instrumento de medición en el modo de pantalla según la "
-#~ "imagen inferior y asegúrese de que está acoplado a la pantalla."
+#~ "Configure el instrumento de medición en modo de pantalla como se muestra "
+#~ "en la imagen a continuación y asegúrese de que esté conectado a la "
+#~ "pantalla."
 
+#, fuzzy
 #~ msgid ""
 #~ "Please set the measuring instrument to screen mode, and ensure it is "
 #~ "attached to the screen."
 #~ msgstr ""
-#~ "Establezca el instrumento de medición en el modo de pantalla y asegúrese "
-#~ "de que está acoplado a la pantalla."
+#~ "Configure el instrumento de medición en modo de pantalla y asegúrese de "
+#~ "que esté conectado a la pantalla."
 
+#, fuzzy
 #~ msgid "LAB:"
-#~ msgstr "LAB:"
+#~ msgstr "LABORATORIO:"
 
+#, fuzzy
 #~ msgid "Choose the precision of the profile"
-#~ msgstr "Elegir la precisión del perfil"
+#~ msgstr "Elige la precisión del perfil"
 
+#, fuzzy
 #~ msgid "Please choose the profile precision."
 #~ msgstr "Elija la precisión del perfil."
 
+#, fuzzy
 #~ msgid ""
 #~ "High precision profiles provide higher accuracy in color matching. "
 #~ "Correspondingly, low precision profiles result in lower quality."
 #~ msgstr ""
-#~ "Una alta precisión proporciona una mayor exactitud en la correspondencia "
-#~ "de colores. De forma correspondiente, los perfiles bajos proporcionan una "
-#~ "calidad baja."
+#~ "Los perfiles de alta precisión proporcionan una mayor precisión en la "
+#~ "combinación de colores. "
 
+#, fuzzy
 #~ msgid "Do you want them to be automatically installed?"
-#~ msgstr "¿Quiere que se instalen automáticamente?"
+#~ msgstr "¿Quieres que se instalen automáticamente?"
 
+#, fuzzy
 #~ msgid "Delete the currently selected color profile"
-#~ msgstr "Eliminar el perfil de color actualmente seleccionado"
+#~ msgstr "Eliminar el perfil de color seleccionado actualmente"
 
+#, fuzzy
 #~ msgid "Import an ICC file from another location"
 #~ msgstr "Importar un archivo ICC desde otra ubicación"
 
+#, fuzzy
 #~ msgid "_Delete Device"
 #~ msgstr "_Eliminar dispositivo"
 
+#, fuzzy
 #~ msgid "_Import Profile"
 #~ msgstr "_Importar perfil"
 
+#, fuzzy
 #~ msgid "Measuring instrument not registered"
-#~ msgstr "El instrumento de medición no está registrado"
+#~ msgstr "Instrumento de medida no registrado"
 
+#, fuzzy
 #~ msgid "Analyze Print Shop Images"
-#~ msgstr "Analizar imágenes de tienda de impresión"
+#~ msgstr "Analizar imágenes de imprenta"
 
+#, fuzzy
 #~ msgid ""
 #~ "Short profiles are quick and easy, long profiles take longer to complete "
 #~ "but are more accurate."
 #~ msgstr ""
-#~ "Los perfiles cortos son fáciles y sencillos, los perfiles largos llevan "
-#~ "más tiempo para completarse pero son más precisos."
+#~ "Los perfiles cortos son rápidos y fáciles, los perfiles largos tardan más "
+#~ "en completarse pero son más precisos."
 
+#, fuzzy
 #~ msgid "The long calibration also uses up much more paper and ink."
-#~ msgstr "La calibración larga también usa mucho más papel y tinta."
+#~ msgstr "La calibración prolongada también consume mucho más papel y tinta."
 
+#, fuzzy
 #~ msgid "Colorimeter not recognised"
-#~ msgstr "No se reconoció el colorímetro"
+#~ msgstr "Colorímetro no reconocido"
 
+#, fuzzy
 #~ msgid "Long"
-#~ msgstr "Larga"
+#~ msgstr "Largo"
 
+#, fuzzy
 #~ msgid "Short"
-#~ msgstr "Corta"
+#~ msgstr "Corto"
 
-#~| msgid "Please set the device to calibration mode."
+#, fuzzy
 #~ msgid "Please set the device to screen mode."
-#~ msgstr "Establezca el dispositivo en el modo de pantalla."
+#~ msgstr "Configure el dispositivo en modo pantalla."
 
+#, fuzzy
 #~ msgid "Cannot calibrate this type of device (although support is planned)"
 #~ msgstr ""
-#~ "No se puede calibrar este tipo de dispositivo (aunque está planeado "
-#~ "soportarlo)"
+#~ "No se puede calibrar este tipo de dispositivo (aunque se planea soporte)"
 
+#, fuzzy
 #~ msgid "Color management"
-#~ msgstr "Gestión de color"
+#~ msgstr "Gestión del color"
 
+#, fuzzy
 #~ msgid "Use this type"
-#~ msgstr "Usar este tipo"
+#~ msgstr "Usa este tipo"
 
+#, fuzzy
 #~ msgid "I have already scanned in a file"
-#~ msgstr "Ya lo tengo escaneado en un archivo"
+#~ msgstr "Ya he escaneado en un archivo"
 
-#~| msgid "Do not enable display correction"
+#, fuzzy
 #~ msgid "Profile does not contain display correction information..."
-#~ msgstr "El perfil no contiene información de corrección de la pantalla…"
+#~ msgstr "El perfil no contiene información de corrección de visualización..."
 
+#, fuzzy
 #~ msgid "Manual calibration wizard"
 #~ msgstr "Asistente de calibración manual"
 
+#, fuzzy
 #~ msgid "Color Profile:"
 #~ msgstr "Perfil de color:"
 
+#, fuzzy
 #~ msgid "Message"
 #~ msgstr "Mensaje"
 
+#, fuzzy
 #~ msgid "Title"
 #~ msgstr "Título"
 
+#, fuzzy
 #~ msgid "Label"
 #~ msgstr "Etiqueta"
 
+#, fuzzy
 #~ msgid "Internal LCD"
-#~ msgstr "LCD interno"
+#~ msgstr "LCD interna"
 
+#, fuzzy
 #~ msgid "<b>Color Profile:</b>"
-#~ msgstr "<b>Цветовой профиль:</b>"
+#~ msgstr "<b>Perfil de color:</b>"
