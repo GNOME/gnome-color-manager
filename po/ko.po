@@ -4,15 +4,15 @@
 # Homin Lee <ff4500@gmail.com>, 2010.
 # sangu <sangu.gnome@gmail.com>, 2011.
 # Changwoo Ryu <cwryu@debian.org>, 2010, 2013-2015.
-# Seong-ho Cho <shcho@gnome.org>, 2011, 2012, 2014, 2016-2017, 2025.
+# Seong-ho Cho <shcho@gnome.org>, 2011-2012, 2014, 2016-2026.
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: gnome-color-manager\n"
 "Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/"
 "issues/\n"
-"POT-Creation-Date: 2025-01-31 09:54+0000\n"
-"PO-Revision-Date: 2025-03-01 04:13+0900\n"
+"POT-Creation-Date: 2025-07-13 23:38+0000\n"
+"PO-Revision-Date: 2026-02-22 21:31+0900\n"
 "Last-Translator: Seong-ho Cho <shcho@gnome.org>\n"
 "Language-Team: GNOME Korea <gnome-kr@googlegroups.com>\n"
 "Language: ko\n"
@@ -20,22 +20,22 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.7\n"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:7
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:7
 msgid "GNOME Color Manager"
 msgstr "그놈 색 관리자"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:8
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:8
 msgid "The GNOME Project"
 msgstr "그놈 프로젝트"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:12
-#: data/org.gnome.ColorProfileViewer.desktop.in:4
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:12
+#: data/org.gnome.ColorProfileViewer.desktop.in:3
 msgid "Inspect and compare installed color profiles"
 msgstr "설치한 시스템 색 프로파일 점검 및 비교"
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:14
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:14
 msgid ""
 "GNOME Color Profile Viewer shows installed color profiles on your system and "
 "allows you to calibrate displays, printers and cameras using a wizard."
@@ -43,7 +43,7 @@ msgstr ""
 "그놈 색 프로파일 보기에서는 시스템에 설치한 컬러 프로파일을 표시하고, 디스플"
 "레이/프린터/카메라의 색을 보정할 수 있습니다."
 
-#: data/appdata/org.gnome.ColorProfileViewer.appdata.xml.in:19
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:19
 msgid ""
 "This functionality is typically used by GNOME Control Center from the color "
 "panel although can be used on its own."
@@ -51,29 +51,29 @@ msgstr ""
 "이 기능은 주로 그놈 제어 센터의 \"색\" 부분에서 사용하지만, 단독으로도 사용"
 "할 수 있습니다."
 
-#: data/gcm-import.desktop.in:3
+#: data/gcm-import.desktop.in:2
 msgid "ICC Profile Installer"
 msgstr "ICC 프로파일 설치"
 
-#: data/gcm-import.desktop.in:4
+#: data/gcm-import.desktop.in:3
 msgid "Install ICC profiles"
 msgstr "ICC 프로파일 설치"
 
 #. Window title, where the user can pick spot colors using a measuring device
-#: data/gcm-picker.desktop.in:3 src/gcm-picker.ui:27 src/gcm-picker.ui:324
+#: data/gcm-picker.desktop.in:2 src/gcm-picker.ui:27 src/gcm-picker.ui:324
 msgid "Color Picker"
 msgstr "색 선택"
 
-#: data/gcm-picker.desktop.in:4
+#: data/gcm-picker.desktop.in:3
 msgid "Use the color sensor to sample spot colors"
 msgstr "색 센서를 사용하여 한 지점의 색을 가져옵니다"
 
-#: data/org.gnome.ColorProfileViewer.desktop.in:3 src/gcm-viewer.ui:1133
+#: data/org.gnome.ColorProfileViewer.desktop.in:2 src/gcm-viewer.ui:1155
 msgid "Color Profile Viewer"
 msgstr "색 프로파일 보기"
 
 #. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
-#: data/org.gnome.ColorProfileViewer.desktop.in:13
+#: data/org.gnome.ColorProfileViewer.desktop.in:12
 msgid "Color;ICC;"
 msgstr "Color;ICC;색;"
 
@@ -129,7 +129,7 @@ msgid "No filename specified"
 msgstr "파일 이름을 지정하지 않았습니다"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-import.c:123 src/gcm-viewer.c:1277
+#: src/gcm-import.c:123 src/gcm-viewer.c:1269
 msgid "Failed to open ICC profile"
 msgstr "ICC 프로파일 열기 실패"
 
@@ -185,7 +185,7 @@ msgid "Import"
 msgstr "가져오기"
 
 #. TRANSLATORS: could not read file
-#: src/gcm-import.c:257 src/gcm-viewer.c:1309
+#: src/gcm-import.c:257 src/gcm-viewer.c:1301
 msgid "Failed to import file"
 msgstr "파일 가져오기 실패"
 
@@ -291,7 +291,7 @@ msgid "No %s color spaces available"
 msgstr "색 영역 %s을(를) 사용할 수 없습니다"
 
 #. TRANSLATORS: we can make this modal (stay on top of) another window
-#: src/gcm-picker.c:681 src/gcm-viewer.c:1600
+#: src/gcm-picker.c:681 src/gcm-viewer.c:1596
 msgid "Set the parent window to make this modal"
 msgstr "모달을 만들 부모 창 설정"
 
@@ -328,7 +328,7 @@ msgstr "주변광"
 
 #. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
 #. The profile colorspace, e.g. RGB
-#: src/gcm-picker.ui:168 src/gcm-viewer.ui:122
+#: src/gcm-picker.ui:168 src/gcm-viewer.ui:134
 msgid "Colorspace"
 msgstr "색 영역"
 
@@ -689,107 +689,112 @@ msgid "This profile cannot be deleted"
 msgstr "이 프로파일을 삭제할 수 없습니다"
 
 #. TRANSLATORS: show just the one profile, rather than all
-#: src/gcm-viewer.c:1603
+#: src/gcm-viewer.c:1599
 msgid "Set the specific profile to show"
 msgstr "표시할 개별 프로파일을 지정합니다"
 
 #. TRANSLATORS: show just the one filename, rather than all
-#: src/gcm-viewer.c:1606
+#: src/gcm-viewer.c:1602
 msgid "Set the specific file to show"
 msgstr "표시할 개별 파일을 지정합니다"
 
-#: src/gcm-viewer.ui:52
+#. TRANSLATORS: summary shown in the command-line help
+#: src/gcm-viewer.c:1622
+msgid "GNOME Color Manager - Color Profile Viewer"
+msgstr "그놈 색 관리자 - 색 프로파일 보기"
+
+#: src/gcm-viewer.ui:55
 msgid "Add a profile for the device"
 msgstr "장치에 프로파일 추가"
 
-#: src/gcm-viewer.ui:67
+#: src/gcm-viewer.ui:70
 msgid "Remove a profile from the device"
 msgstr "장치에서 프로파일 제거"
 
 #. The type of profile, e.g. display, scanner, etc.
-#: src/gcm-viewer.ui:106
+#: src/gcm-viewer.ui:118
 msgid "Profile type"
 msgstr "프로파일 형식"
 
 #. When the profile was created
-#: src/gcm-viewer.ui:138
+#: src/gcm-viewer.ui:150
 msgid "Created"
 msgstr "만든 날짜"
 
 #. The version of the profile
-#: src/gcm-viewer.ui:155
+#: src/gcm-viewer.ui:167
 msgid "Version"
 msgstr "버전"
 
 #. The manufacturer of the profile
-#: src/gcm-viewer.ui:172
+#: src/gcm-viewer.ui:184
 msgid "Manufacturer"
 msgstr "제조사"
 
 #. The manufacturer of the profile
-#: src/gcm-viewer.ui:189
+#: src/gcm-viewer.ui:201
 msgid "Model"
 msgstr "모델"
 
 #. If the profile contains a display correction table
-#: src/gcm-viewer.ui:205
+#: src/gcm-viewer.ui:217
 msgid "Display correction"
 msgstr "디스플레이 보정"
 
 #. The basename (the last section of the filename) of the profile
-#: src/gcm-viewer.ui:221
+#: src/gcm-viewer.ui:233
 msgid "White point"
 msgstr "화이트 포인트"
 
 #. The licence of the profile, normally non-free
-#: src/gcm-viewer.ui:238
+#: src/gcm-viewer.ui:250
 msgid "Copyright"
 msgstr "저작권"
 
 #. The file size in bytes of the profile
-#: src/gcm-viewer.ui:254
+#: src/gcm-viewer.ui:266
 msgid "File size"
 msgstr "파일 크기"
 
 #. The basename (the last section of the filename) of the profile
-#: src/gcm-viewer.ui:271
+#: src/gcm-viewer.ui:283
 msgid "Filename"
 msgstr "파일 이름"
 
 #. warnings for the profile
-#: src/gcm-viewer.ui:288
+#: src/gcm-viewer.ui:300
 msgid "Warnings"
 msgstr "경고"
 
-#: src/gcm-viewer.ui:474
+#: src/gcm-viewer.ui:490
 msgid "Information"
 msgstr "정보"
 
-#: src/gcm-viewer.ui:502
+#: src/gcm-viewer.ui:518
 msgid "y"
 msgstr "Y"
 
-#: src/gcm-viewer.ui:521
+#: src/gcm-viewer.ui:537
 msgid "x"
 msgstr "X"
 
-#: src/gcm-viewer.ui:552
+#: src/gcm-viewer.ui:568
 msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
 msgstr "CIE 1931 다이어그램은 프로파일 색 영역의 평면 표현을 나타냅니다"
 
-#: src/gcm-viewer.ui:569
+#: src/gcm-viewer.ui:586
 msgid "CIE 1931"
 msgstr "CIE 1931"
 
-#: src/gcm-viewer.ui:591
+#: src/gcm-viewer.ui:608
 msgid "Response out"
 msgstr "응답 출력"
 
-#: src/gcm-viewer.ui:611 src/gcm-viewer.ui:699
+#: src/gcm-viewer.ui:628 src/gcm-viewer.ui:717
 msgid "Response in"
 msgstr "응답 입력"
 
-#: src/gcm-viewer.ui:640
+#: src/gcm-viewer.ui:657
 msgid ""
 "A tone reproduction curve is the mapping of scene luminance to display "
 "luminance"
@@ -797,68 +802,68 @@ msgstr ""
 "계조 재현 곡선(TRC, tone reproduction curve)은 장면의 밝기를 화면의 밝기로 매"
 "핑하는 곡선입니다"
 
-#: src/gcm-viewer.ui:657
+#: src/gcm-viewer.ui:675
 msgid "TRC"
 msgstr "TRC"
 
-#: src/gcm-viewer.ui:679
+#: src/gcm-viewer.ui:697
 msgid "Video card out"
 msgstr "비디오 카드 출력"
 
-#: src/gcm-viewer.ui:728
+#: src/gcm-viewer.ui:746
 msgid "A video card gamma table shows the curves loaded into the display"
 msgstr ""
 "비디오 카드 감마 테이블(VCGT, video card gamma table)은 디스플레이에 불러온 "
 "감마 곡선을 표시합니다"
 
-#: src/gcm-viewer.ui:745
+#: src/gcm-viewer.ui:764
 msgid "VCGT"
 msgstr "VCGT"
 
-#: src/gcm-viewer.ui:780 src/gcm-viewer.ui:902
+#: src/gcm-viewer.ui:799 src/gcm-viewer.ui:922
 msgid "Previous Image"
 msgstr "이전 사진"
 
 #. This is an example image that is saved in sRGB gamut
-#: src/gcm-viewer.ui:798 src/gcm-viewer.ui:920
+#: src/gcm-viewer.ui:817 src/gcm-viewer.ui:940
 msgid "sRGB example"
 msgstr "sRGB 예제"
 
-#: src/gcm-viewer.ui:829 src/gcm-viewer.ui:951
+#: src/gcm-viewer.ui:848 src/gcm-viewer.ui:971
 msgid "Next Image"
 msgstr "다음 사진"
 
-#: src/gcm-viewer.ui:850
+#: src/gcm-viewer.ui:869
 msgid "This shows what an image would look like if saved with the profile"
 msgstr "이 프로파일로 저장했을 때 사진이 어떻게 나타나는지 표시합니다"
 
-#: src/gcm-viewer.ui:867
+#: src/gcm-viewer.ui:887
 msgid "From sRGB"
 msgstr "sRGB에서"
 
-#: src/gcm-viewer.ui:972
+#: src/gcm-viewer.ui:992
 msgid "This shows what an image would look like if opened with the profile"
 msgstr "이 프로파일로 열었을 때 사진이 어떻게 나타나는지 표시합니다"
 
-#: src/gcm-viewer.ui:989
+#: src/gcm-viewer.ui:1010
 msgid "To sRGB"
 msgstr "sRGB로"
 
-#: src/gcm-viewer.ui:1040
+#: src/gcm-viewer.ui:1061
 msgid "Named colors are specific colors that are defined in the profile"
 msgstr "이름 붙은 색은 프로파일에 정의한 개별 색입니다"
 
-#: src/gcm-viewer.ui:1057
+#: src/gcm-viewer.ui:1079
 msgid "Named Colors"
 msgstr "이름 붙은 색"
 
-#: src/gcm-viewer.ui:1096
+#: src/gcm-viewer.ui:1118
 msgid ""
 "Metadata is additional information stored in the profile for programs to use."
 msgstr ""
 "메타데이터는 사용하려는 프로그램이 이 프로파일에 저장한 추가 정보입니다."
 
-#: src/gcm-viewer.ui:1113
+#: src/gcm-viewer.ui:1136
 msgid "Metadata"
 msgstr "메타데이터"
 
