@@ -1,0 +1,858 @@
+# Lao translation for gnome-color-manager.
+# Copyright (C) 2026 gnome-color-manager's COPYRIGHT HOLDER
+# This file is distributed under the same license as the gnome-color-manager package.
+# bone NI <bounkirdni@gmail.com>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-color-manager master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/"
+"issues/\n"
+"POT-Creation-Date: 2025-07-13 23:38+0000\n"
+"PO-Revision-Date: 2025-07-13 23:38+0000\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Lao <lo@li.org>\n"
+"Language: lo\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:7
+msgid "GNOME Color Manager"
+msgstr "ຕົວຈັດການສີ GNOME"
+
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:8
+msgid "The GNOME Project"
+msgstr "ໂຄງການ GNOME"
+
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:12
+#: data/org.gnome.ColorProfileViewer.desktop.in:3
+msgid "Inspect and compare installed color profiles"
+msgstr "ກວດສອບ ແລະ ປຽບທຽບໂປຣໄຟລ໌ສີທີ່ຕິດຕັ້ງໄວ້"
+
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:14
+msgid ""
+"GNOME Color Profile Viewer shows installed color profiles on your system and "
+"allows you to calibrate displays, printers and cameras using a wizard."
+msgstr ""
+"ຕົວເບິ່ງໂປຣໄຟລ໌ສີ GNOME ສະແດງໂປຣໄຟລ໌ສີທີ່ຕິດຕັ້ງຢູ່ໃນລະບົບຂອງທ່ານ ແລະ "
+"ຊ່ວຍໃຫ້ທ່ານສາມາດປັບທຽບໜ້າຈໍ, ເຄື່ອງພິມ ແລະ ກ້ອງຖ່າຍຮູບ ໂດຍໃຊ້ຕົວຊ່ວຍຕັ້ງຄ່າ."
+
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:19
+msgid ""
+"This functionality is typically used by GNOME Control Center from the color "
+"panel although can be used on its own."
+msgstr ""
+"ໂດຍປົກກະຕິແລ້ວ ຟັງຊັນນີ້ແມ່ນໃຊ້ໂດຍ ສູນຄວບຄຸມ GNOME ຈາກແຜງຄວບຄຸມສີ "
+"ເຖິງວ່າຈະສາມາດໃຊ້ງານໄດ້ດ້ວຍຕົວມັນເອງກໍຕາມ."
+
+#: data/gcm-import.desktop.in:2
+msgid "ICC Profile Installer"
+msgstr "ຕົວຕິດຕັ້ງໂປຣໄຟລ໌ ICC"
+
+#: data/gcm-import.desktop.in:3
+msgid "Install ICC profiles"
+msgstr "ຕິດຕັ້ງໂປຣໄຟລ໌ ICC"
+
+#. Window title, where the user can pick spot colors using a measuring device
+#: data/gcm-picker.desktop.in:2 src/gcm-picker.ui:27 src/gcm-picker.ui:324
+msgid "Color Picker"
+msgstr "ເຄື່ອງເລືອກສີ"
+
+#: data/gcm-picker.desktop.in:3
+msgid "Use the color sensor to sample spot colors"
+msgstr "ໃຊ້ເຊັນເຊີສີເພື່ອສຸ່ມຕົວຢ່າງສີສະເພາະຈຸດ"
+
+#: data/org.gnome.ColorProfileViewer.desktop.in:2 src/gcm-viewer.ui:1155
+msgid "Color Profile Viewer"
+msgstr "ຕົວເບິ່ງໂປຣໄຟລ໌ສີ"
+
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.ColorProfileViewer.desktop.in:12
+msgid "Color;ICC;"
+msgstr "ສີ;Color;ICC;"
+
+#. TRANSLATORS: this is when there is no profile for the device
+#: src/gcm-cell-renderer-profile-text.c:57
+msgid "No profile"
+msgstr "ບໍ່ມີໂປຣໄຟລ໌"
+
+#: src/gcm-cell-renderer-profile-text.c:73
+#, c-format
+msgid "Default %s"
+msgstr "ຄ່າມາດຕະຖານ %s"
+
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile has been auto-generated for this hardware
+#: src/gcm-cell-renderer-profile-text.c:88
+msgid "Default: "
+msgstr "ຄ່າມາດຕະຖານ: "
+
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile his a standard space like AdobeRGB
+#: src/gcm-cell-renderer-profile-text.c:93
+msgid "Colorspace: "
+msgstr "ພື້ນທີ່ສີ: "
+
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile is a test profile
+#: src/gcm-cell-renderer-profile-text.c:98
+msgid "Test profile: "
+msgstr "ໂປຣໄຟລ໌ທົດລອງ: "
+
+#. TRANSLATORS: turn on all debugging
+#: src/gcm-debug.c:77
+msgid "Show debugging information for all files"
+msgstr "ສະແດງຂໍ້ມູນການແກ້ໄຂຈຸດບົກພ່ອງສຳລັບທຸກໄຟລ໌"
+
+#: src/gcm-debug.c:128
+msgid "Debugging Options"
+msgstr "ຕົວເລືອກການແກ້ໄຂຈຸດບົກພ່ອງ"
+
+#: src/gcm-debug.c:128
+msgid "Show debugging options"
+msgstr "ສະແດງຕົວເລືອກການແກ້ໄຂຈຸດບົກພ່ອງ"
+
+#. TRANSLATORS: command line option: a list of catalogs to install
+#: src/gcm-import.c:77
+msgid "ICC profile to install"
+msgstr "ໂປຣໄຟລ໌ ICC ທີ່ຈະຕິດຕັ້ງ"
+
+#. TRANSLATORS: nothing was specified on the command line
+#: src/gcm-import.c:103
+msgid "No filename specified"
+msgstr "ບໍ່ໄດ້ລະບຸຊື່ໄຟລ໌"
+
+#. TRANSLATORS: could not read file
+#: src/gcm-import.c:123 src/gcm-viewer.c:1269
+msgid "Failed to open ICC profile"
+msgstr "ເປີດໂປຣໄຟລ໌ ICC ບໍ່ສຳເລັດ"
+
+#. TRANSLATORS: parsing error
+#: src/gcm-import.c:128
+#, c-format
+msgid "Failed to parse file: %s"
+msgstr "ວິເຄາະໄຟລ໌ບໍ່ສຳເລັດ: %s"
+
+#. TRANSLATORS: message text
+#: src/gcm-import.c:143
+#, c-format
+msgid "Profile description: %s"
+msgstr "ຄຳອະທິບາຍໂປຣໄຟລ໌: %s"
+
+#. TRANSLATORS: message text
+#: src/gcm-import.c:153
+msgid "Profile copyright:"
+msgstr "ລິຂະສິດໂປຣໄຟລ໌:"
+
+#. TRANSLATORS: color profile already been installed
+#: src/gcm-import.c:187
+msgid "Color profile is already imported"
+msgstr "ນຳເຂົ້າໂປຣໄຟລ໌ສີແລ້ວ"
+
+#: src/gcm-import.c:190 src/gcm-import.c:233
+msgid "Show Details"
+msgstr "ສະແດງລາຍລະອຽດ"
+
+#. TRANSLATORS: the profile type
+#: src/gcm-import.c:206
+msgid "Import display color profile?"
+msgstr "ນຳເຂົ້າໂປຣໄຟລ໌ສີຂອງໜ້າຈໍບໍ່?"
+
+#. TRANSLATORS: the profile type
+#: src/gcm-import.c:210
+msgid "Import device color profile?"
+msgstr "ນຳເຂົ້າໂປຣໄຟລ໌ສີຂອງອຸປະກອນບໍ່?"
+
+#. TRANSLATORS: the profile type
+#: src/gcm-import.c:214
+msgid "Import named color profile?"
+msgstr "ນຳເຂົ້າໂປຣໄຟລ໌ສີທີ່ມີຊື່ບໍ່?"
+
+#. TRANSLATORS: the profile type
+#: src/gcm-import.c:218
+msgid "Import color profile?"
+msgstr "ນຳເຂົ້າໂປຣໄຟລ໌ສີບໍ່?"
+
+#. TRANSLATORS: button text
+#: src/gcm-import.c:232
+msgid "Import"
+msgstr "ນຳເຂົ້າ"
+
+#. TRANSLATORS: could not read file
+#: src/gcm-import.c:257 src/gcm-viewer.c:1301
+msgid "Failed to import file"
+msgstr "ນຳເຂົ້າໄຟລ໌ບໍ່ສຳເລັດ"
+
+#. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
+#: src/gcm-inspect.c:39
+msgid "Description:"
+msgstr "ຄຳອະທິບາຍ:"
+
+#. TRANSLATORS: this is the ICC profile copyright
+#: src/gcm-inspect.c:42
+msgid "Copyright:"
+msgstr "ລິຂະສິດ:"
+
+#. TRANSLATORS: the root window of all the screens
+#: src/gcm-inspect.c:164
+msgid "Root window profile:"
+msgstr "ໂປຣໄຟລ໌ຂອງວິນໂດຫຼັກ (Root window):"
+
+#. TRANSLATORS: the root window of all the screens
+#: src/gcm-inspect.c:175
+msgid "Root window protocol version:"
+msgstr "ເວີຊັນໂປຣໂຕຄໍຂອງວິນໂດຫຼັກ:"
+
+#. TRANSLATORS: no DBus session bus
+#: src/gcm-inspect.c:196 src/gcm-inspect.c:259
+msgid "Failed to connect to session bus:"
+msgstr "ເຊື່ອມຕໍ່ກັບ session bus ບໍ່ສຳເລັດ:"
+
+#. TRANSLATORS: the DBus method failed
+#: src/gcm-inspect.c:213 src/gcm-inspect.c:276
+msgid "The request failed:"
+msgstr "ຄຳຮ້ອງຂໍບໍ່ສຳເລັດ:"
+
+#. TRANSLATORS: no profile has been asigned to this device
+#: src/gcm-inspect.c:221
+msgid "There are no ICC profiles assigned to this file"
+msgstr "ບໍ່ມີໂປຣໄຟລ໌ ICC ຖືກກຳນົດໃຫ້ກັບໄຟລ໌ນີ້"
+
+#. TRANSLATORS: this is a list of profiles suitable for the device
+#: src/gcm-inspect.c:226 src/gcm-inspect.c:292
+msgid "Suitable profiles for:"
+msgstr "ໂປຣໄຟລ໌ທີ່ເໝາະສົມສຳລັບ:"
+
+#. TRANSLATORS: no profile has been asigned to this window
+#: src/gcm-inspect.c:287
+msgid "There are no ICC profiles for this window"
+msgstr "ບໍ່ມີໂປຣໄຟລ໌ ICC ສຳລັບວິນໂດນີ້"
+
+#. TRANSLATORS: command line option
+#: src/gcm-inspect.c:312
+msgid "Show xserver properties"
+msgstr "ສະແດງຄຸນສົມບັດຂອງ xserver"
+
+#. TRANSLATORS: command line option
+#: src/gcm-inspect.c:315
+msgid "Get the profiles for a specific file"
+msgstr "ດຶງຂໍ້ມູນໂປຣໄຟລ໌ສຳລັບໄຟລ໌ສະເພາະ"
+
+#. TRANSLATORS: command line option
+#: src/gcm-inspect.c:318
+msgid "Get the profile for a specific window"
+msgstr "ດຶງຂໍ້ມູນໂປຣໄຟລ໌ສຳລັບວິນໂດສະເພາະ"
+
+#. TRANSLATORS: command line option
+#: src/gcm-inspect.c:321
+msgid "Dump all details about this system"
+msgstr "ສະແດງລາຍລະອຽດທັງໝົດກ່ຽວກັບລະບົບນີ້"
+
+#. TRANSLATORS: just dumps the EDID to disk
+#: src/gcm-inspect.c:334
+msgid "EDID inspect program"
+msgstr "ໂປຣແກຣມກວດສອບ EDID"
+
+#. TRANSLATORS: this is when the error is invalid
+#. TRANSLATORS: this is when the ambient light level is unknown
+#. TRANSLATORS: this the ICC profile type
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.c:200 src/gcm-picker.c:207 src/gcm-viewer.c:565
+#: src/gcm-viewer.c:612
+msgid "Unknown"
+msgstr "ບໍ່ຮູ້ຈັກ"
+
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
+#: src/gcm-picker.c:320
+msgid "No colorimeter is attached."
+msgstr "ບໍ່ມີເຄື່ອງວັດແທກສີ (colorimeter) ເຊື່ອມຕໍ່ຢູ່."
+
+#. TRANSLATORS: this is displayed if VTE support is not enabled
+#: src/gcm-picker.c:336
+msgid "The sensor has no native driver."
+msgstr "ເຊັນເຊີບໍ່ມີໄດຣເວີສະເພາະ."
+
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
+#: src/gcm-picker.c:345
+msgid "The attached colorimeter is not capable of reading a spot color."
+msgstr "ເຄື່ອງວັດແທກສີທີ່ເຊື່ອມຕໍ່ຢູ່ ບໍ່ສາມາດອ່ານສີສະເພາະຈຸດໄດ້."
+
+#. TRANSLATORS: this is when there are no profiles that can be used;
+#. * the search term is either "RGB" or "CMYK"
+#: src/gcm-picker.c:563
+#, c-format
+msgid "No %s color spaces available"
+msgstr "ບໍ່ມີພື້ນທີ່ສີ %s ໃຫ້ໃຊ້ງານ"
+
+#. TRANSLATORS: we can make this modal (stay on top of) another window
+#: src/gcm-picker.c:681 src/gcm-viewer.c:1596
+msgid "Set the parent window to make this modal"
+msgstr "ກຳນົດວິນໂດແມ່ແບບເພື່ອເຮັດໃຫ້ເປັນແບບໂມດໍ (modal)"
+
+#. TRANSLATORS: tool that is used to pick colors
+#: src/gcm-picker.c:696
+msgid "GNOME Color Manager Color Picker"
+msgstr "ເຄື່ອງເລືອກສີ ຂອງຕົວຈັດການສີ GNOME"
+
+#. the color representation
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.ui:93 src/gcm-viewer.c:573
+msgid "XYZ"
+msgstr "XYZ"
+
+#. Lab is the color representation and D50 is the white point
+#: src/gcm-picker.ui:108
+msgid "Lab (D50)"
+msgstr "Lab (D50)"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:123
+msgid "Media whitepoint"
+msgstr "ຈຸດຂາວຂອງສື່"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:138
+msgid "Color Temperature"
+msgstr "ອຸນຫະພູມສີ"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:153
+msgid "Ambient"
+msgstr "ສະພາບແວດລ້ອມ"
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#. The profile colorspace, e.g. RGB
+#: src/gcm-picker.ui:168 src/gcm-viewer.ui:134
+msgid "Colorspace"
+msgstr "ພື້ນທີ່ສີ"
+
+#. These are the values of the chosen color in Red, Green, Blue encoding
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.ui:183 src/gcm-utils.c:67 src/gcm-viewer.c:593
+msgid "RGB"
+msgstr "RGB"
+
+#. This shows the error in the conversion to RGB.
+#: src/gcm-picker.ui:198
+msgid "Error"
+msgstr "ຂໍ້ຜິດພາດ"
+
+#. Expander title, the results from the color picker
+#: src/gcm-picker.ui:297
+msgid "Results"
+msgstr "ຜົນລັດ"
+
+#. Button text, to get a single sample of color
+#: src/gcm-picker.ui:328
+msgid "_Measure"
+msgstr "_ວັດແທກ"
+
+#. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-utils.c:71 src/gcm-viewer.c:605
+msgid "CMYK"
+msgstr "CMYK"
+
+#. TRANSLATORS: this is the colorspace type
+#: src/gcm-utils.c:75
+msgid "gray"
+msgstr "ສີເທົາ"
+
+#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#: src/gcm-viewer.c:312
+msgid "Permanently delete profile?"
+msgstr "ລຶບໂປຣໄຟລ໌ແບບຖາວອນບໍ່?"
+
+#. TRANSLATORS: dialog message
+#: src/gcm-viewer.c:315
+msgid ""
+"Are you sure you want to remove this profile from your system permanently?"
+msgstr "ທ່ານແນ່ໃຈບໍ່ວ່າຕ້ອງການລຶບໂປຣໄຟລ໌ນີ້ອອກຈາກລະບົບແບບຖາວອນ?"
+
+#. TRANSLATORS: button, delete a profile
+#: src/gcm-viewer.c:318
+msgid "Delete"
+msgstr "ລຶບ"
+
+#. TRANSLATORS: dialog for file->open dialog
+#: src/gcm-viewer.c:357
+msgid "Select ICC Profile File"
+msgstr "ເລືອກໄຟລ໌ໂປຣໄຟລ໌ ICC"
+
+#: src/gcm-viewer.c:359
+msgid "_Cancel"
+msgstr "_ຍົກເລີກ"
+
+#: src/gcm-viewer.c:360
+msgid "_Import"
+msgstr "_ນຳເຂົ້າ"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: src/gcm-viewer.c:378
+msgid "Supported ICC profiles"
+msgstr "ໂປຣໄຟລ໌ ICC ທີ່ຮອງຮັບ"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: src/gcm-viewer.c:385
+msgid "All files"
+msgstr "ທຸກໄຟລ໌"
+
+#. TRANSLATORS: could not read file
+#: src/gcm-viewer.c:410
+msgid "Failed to copy file"
+msgstr "ຄັດລອກໄຟລ໌ບໍ່ສຳເລັດ"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:538
+msgid "Input device"
+msgstr "ອຸປະກອນນຳເຂົ້າ"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:542
+msgid "Display device"
+msgstr "ອຸປະກອນສະແດງຜົນ"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:546
+msgid "Output device"
+msgstr "ອຸປະກອນສົ່ງອອກ"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:550
+msgid "Devicelink"
+msgstr "ລິ້ງອຸປະກອນ"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:554
+msgid "Colorspace conversion"
+msgstr "ການແປງພື້ນທີ່ສີ"
+
+#. TRANSLATORS: this the ICC profile kind
+#: src/gcm-viewer.c:558
+msgid "Abstract"
+msgstr "ນາມມະທຳ (Abstract)"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:562
+msgid "Named color"
+msgstr "ສີທີ່ມີຊື່"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:577
+msgid "LAB"
+msgstr "LAB"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:581
+msgid "LUV"
+msgstr "LUV"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:585
+msgid "YCbCr"
+msgstr "YCbCr"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:589
+msgid "Yxy"
+msgstr "Yxy"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:597
+msgid "Gray"
+msgstr "ສີເທົາ"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:601
+msgid "HSV"
+msgstr "HSV"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:609
+msgid "CMY"
+msgstr "CMY"
+
+#. TRANSLATORS: e.g. sRGB or adbode RGB
+#: src/gcm-viewer.c:645
+msgid "Standard space"
+msgstr "ພື້ນທີ່ມາດຕະຖານ"
+
+#. TRANSLATORS: the raw EDID MD5 of the display device
+#: src/gcm-viewer.c:647
+msgid "Display checksum"
+msgstr "ເຊັກຊຳການສະແດງຜົນ (Display checksum)"
+
+#: src/gcm-viewer.c:648
+msgid "Display model"
+msgstr "ລຸ້ນຂອງໜ້າຈໍ"
+
+#: src/gcm-viewer.c:649
+msgid "Display serial number"
+msgstr "ໝາຍເລກຊີຣຽວຂອງໜ້າຈໍ"
+
+#. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
+#: src/gcm-viewer.c:651
+msgid "Display PNPID"
+msgstr "PNPID ຂອງໜ້າຈໍ"
+
+#. TRANSLATORS: who made the display
+#: src/gcm-viewer.c:653
+msgid "Display vendor"
+msgstr "ຜູ້ຜະລິດໜ້າຈໍ"
+
+#. TRANSLATORS: the raw profile MD5
+#: src/gcm-viewer.c:655
+msgid "File checksum"
+msgstr "ເຊັກຊຳຂອງໄຟລ໌"
+
+#. TRANSLATORS: the color framework, e.g. 'colord'
+#: src/gcm-viewer.c:657
+msgid "Framework product"
+msgstr "ຜະລິດຕະພັນເຟຣມເວີກ"
+
+#. TRANSLATORS: the framework binary, e.g. gcm-viewer
+#: src/gcm-viewer.c:659
+msgid "Framework program"
+msgstr "ໂປຣແກຣມເຟຣມເວີກ"
+
+#. TRANSLATORS: the framework release, e.g. '1.22'
+#: src/gcm-viewer.c:661
+msgid "Framework version"
+msgstr "ເວີຊັນເຟຣມເວີກ"
+
+#. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
+#: src/gcm-viewer.c:663
+msgid "Data source type"
+msgstr "ປະເພດແຫຼ່ງຂໍ້ມູນ"
+
+#. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
+#: src/gcm-viewer.c:665
+msgid "Mapping format"
+msgstr "ຮູບແບບການຈັບຄູ່ (Mapping format)"
+
+#. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
+#: src/gcm-viewer.c:667
+msgid "Mapping qualifier"
+msgstr "ຄຸນສົມບັດການຈັບຄູ່ (Mapping qualifier)"
+
+#. TRANSLATORS: The original device the profile was made for
+#: src/gcm-viewer.c:669
+msgid "Mapping device"
+msgstr "ອຸປະກອນການຈັບຄູ່ (Mapping device)"
+
+#. TRANSLATORS: The average error when making the profile
+#: src/gcm-viewer.c:671
+msgid "Delta-E average"
+msgstr "ຄ່າສະເລ່ຍ Delta-E"
+
+#. TRANSLATORS: the maximum error when making the profile
+#: src/gcm-viewer.c:673
+msgid "Delta-E maximum"
+msgstr "ຄ່າສູງສຸດ Delta-E"
+
+#. TRANSLATORS: the RMS error when making the profile
+#: src/gcm-viewer.c:675
+msgid "Delta-E RMS"
+msgstr "ຄ່າ Delta-E RMS"
+
+#. TRANSLATORS: The device name, e.g. 'huey'
+#: src/gcm-viewer.c:677
+msgid "Calibration device"
+msgstr "ອຸປະກອນປັບທຽບ"
+
+#. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
+#: src/gcm-viewer.c:679
+msgid "Screen surface finish"
+msgstr "ການເຄືອບຜິວໜ້າຈໍ"
+
+#. TRANSLATORS: e.g. DVI or VGA
+#: src/gcm-viewer.c:681
+msgid "Connection type"
+msgstr "ປະເພດການເຊື່ອມຕໍ່"
+
+#. TRANSLATORS: e.g. Screen brightness in percent
+#: src/gcm-viewer.c:683
+msgid "Screen brightness"
+msgstr "ຄວາມສະຫວ່າງໜ້າຈໍ"
+
+#. TRANSLATORS: e.g. the 3D volume of the gamut graph
+#: src/gcm-viewer.c:685
+msgid "Gamut volume"
+msgstr "ບໍລິມາດຂອງ Gamut"
+
+#. TRANSLATORS: e.g. what proportion of sRGB is covered
+#: src/gcm-viewer.c:687
+msgid "sRGB coverage"
+msgstr "ການກວມເອົາ sRGB"
+
+#. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
+#: src/gcm-viewer.c:689
+msgid "Adobe RGB coverage"
+msgstr "ການກວມເອົາ Adobe RGB"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:785
+msgid "No description has been set"
+msgstr "ບໍ່ມີການກຳນົດຄຳອະທິບາຍ"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:789
+msgid "No copyright has been set"
+msgstr "ບໍ່ມີການກຳນົດລິຂະສິດ"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:793
+msgid "The display compensation table is invalid"
+msgstr "ຕາຕະລາງການຊົດເຊີຍການສະແດງຜົນບໍ່ຖືກຕ້ອງ"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:797
+msgid "A scum dot is present for media white"
+msgstr "ມີ Scum dot ປະກົດຢູ່ໃນ media white"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:801
+msgid "The gray axis contains significant amounts of color"
+msgstr "ແກນສີເທົາມີປະລິມານສີຫຼາຍເກີນໄປ"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:805
+msgid "The gray axis is non-monotonic"
+msgstr "ແກນສີເທົາບໍ່ເປັນລຳດັບດຽວ (non-monotonic)"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:809
+msgid "One or more of the primaries are invalid"
+msgstr "ແມ່ສີໜຶ່ງ ຫຼື ຫຼາຍກວ່ານັ້ນບໍ່ຖືກຕ້ອງ"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:813
+msgid "The primaries do not add to white"
+msgstr "ແມ່ສີບໍ່ສາມາດຮວມກັນເປັນສີຂາວໄດ້"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:817
+msgid "One or more of the primaries is unlikely"
+msgstr "ແມ່ສີໜຶ່ງ ຫຼື ຫຼາຍກວ່ານັ້ນມີຄວາມຜິດປົກກະຕິ"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:821
+msgid "The white is not D50 white"
+msgstr "ສີຂາວບໍ່ແມ່ນສີຂາວ D50"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:825
+msgid "The whitepoint temperature is unlikely"
+msgstr "ອຸນຫະພູມຈຸດຂາວມີຄວາມຜິດປົກກະຕິ"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:829
+msgid "Unknown warning type"
+msgstr "ບໍ່ຮູ້ຈັກປະເພດຄຳເຕືອນ"
+
+#. TRANSLATORS: if the device has a VCGT profile
+#: src/gcm-viewer.c:966
+msgid "Yes"
+msgstr "ແມ່ນ"
+
+#. TRANSLATORS: if the device has a VCGT profile
+#: src/gcm-viewer.c:969
+msgid "No"
+msgstr "ບໍ່"
+
+#. TRANSLATORS: profiles that have warnings are useable,
+#. * but may not be any good
+#: src/gcm-viewer.c:995
+msgid "The profile has the following problems:"
+msgstr "ໂປຣໄຟລ໌ມີບັນຫາຕໍ່ໄປນີ້:"
+
+#. TRANSLATORS: this is the icc creation date strftime format
+#: src/gcm-viewer.c:1087
+msgid "%B %e %Y, %I∶%M∶%S %p"
+msgstr "%e %B %Y, %I∶%M∶%S %p"
+
+#. TRANSLATORS: this is the tooltip when the profile can be deleted
+#: src/gcm-viewer.c:1110
+msgid "Delete this profile"
+msgstr "ລຶບໂປຣໄຟລ໌ນີ້"
+
+#. TRANSLATORS: this is the tooltip when the profile cannot be deleted
+#: src/gcm-viewer.c:1113
+msgid "This profile cannot be deleted"
+msgstr "ໂປຣໄຟລ໌ນີ້ບໍ່ສາມາດລຶບໄດ້"
+
+#. TRANSLATORS: show just the one profile, rather than all
+#: src/gcm-viewer.c:1599
+msgid "Set the specific profile to show"
+msgstr "ກຳນົດໂປຣໄຟລ໌ສະເພາະທີ່ຈະສະແດງ"
+
+#. TRANSLATORS: show just the one filename, rather than all
+#: src/gcm-viewer.c:1602
+msgid "Set the specific file to show"
+msgstr "ກຳນົດໄຟລ໌ສະເພາະທີ່ຈະສະແດງ"
+
+#. TRANSLATORS: summary shown in the command-line help
+#: src/gcm-viewer.c:1622
+msgid "GNOME Color Manager - Color Profile Viewer"
+msgstr "ຕົວຈັດການສີ GNOME - ຕົວເບິ່ງໂປຣໄຟລ໌ສີ"
+
+#: src/gcm-viewer.ui:55
+msgid "Add a profile for the device"
+msgstr "ເພີ່ມໂປຣໄຟລ໌ໃຫ້ກັບອຸປະກອນ"
+
+#: src/gcm-viewer.ui:70
+msgid "Remove a profile from the device"
+msgstr "ລຶບໂປຣໄຟລ໌ອອກຈາກອຸປະກອນ"
+
+#. The type of profile, e.g. display, scanner, etc.
+#: src/gcm-viewer.ui:118
+msgid "Profile type"
+msgstr "ປະເພດໂປຣໄຟລ໌"
+
+#. When the profile was created
+#: src/gcm-viewer.ui:150
+msgid "Created"
+msgstr "ສ້າງເມື່ອ"
+
+#. The version of the profile
+#: src/gcm-viewer.ui:167
+msgid "Version"
+msgstr "ເວີຊັນ"
+
+#. The manufacturer of the profile
+#: src/gcm-viewer.ui:184
+msgid "Manufacturer"
+msgstr "ຜູ້ຜະລິດ"
+
+#. The manufacturer of the profile
+#: src/gcm-viewer.ui:201
+msgid "Model"
+msgstr "ລຸ້ນ"
+
+#. If the profile contains a display correction table
+#: src/gcm-viewer.ui:217
+msgid "Display correction"
+msgstr "ການແກ້ໄຂການສະແດງຜົນ"
+
+#. The basename (the last section of the filename) of the profile
+#: src/gcm-viewer.ui:233
+msgid "White point"
+msgstr "ຈຸດຂາວ"
+
+#. The licence of the profile, normally non-free
+#: src/gcm-viewer.ui:250
+msgid "Copyright"
+msgstr "ລິຂະສິດ"
+
+#. The file size in bytes of the profile
+#: src/gcm-viewer.ui:266
+msgid "File size"
+msgstr "ຂະໜາດໄຟລ໌"
+
+#. The basename (the last section of the filename) of the profile
+#: src/gcm-viewer.ui:283
+msgid "Filename"
+msgstr "ຊື່ໄຟລ໌"
+
+#. warnings for the profile
+#: src/gcm-viewer.ui:300
+msgid "Warnings"
+msgstr "ຄຳເຕືອນ"
+
+#: src/gcm-viewer.ui:490
+msgid "Information"
+msgstr "ຂໍ້ມູນ"
+
+#: src/gcm-viewer.ui:518
+msgid "y"
+msgstr "y"
+
+#: src/gcm-viewer.ui:537
+msgid "x"
+msgstr "x"
+
+#: src/gcm-viewer.ui:568
+msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
+msgstr "ແຜນວາດ CIE 1931 ສະແດງພາບ 2 ມິຕິຂອງ profile gamut"
+
+#: src/gcm-viewer.ui:586
+msgid "CIE 1931"
+msgstr "CIE 1931"
+
+#: src/gcm-viewer.ui:608
+msgid "Response out"
+msgstr "ຜົນຕອບສະໜອງຂາອອກ"
+
+#: src/gcm-viewer.ui:628 src/gcm-viewer.ui:717
+msgid "Response in"
+msgstr "ຜົນຕອບສະໜອງຂາເຂົ້າ"
+
+#: src/gcm-viewer.ui:657
+msgid ""
+"A tone reproduction curve is the mapping of scene luminance to display "
+"luminance"
+msgstr "Tone reproduction curve ແມ່ນການຈັບຄູ່ຄວາມສະຫວ່າງຂອງສາກ ກັບຄວາມສະຫວ່າງຂອງການສະແດງຜົນ"
+
+#: src/gcm-viewer.ui:675
+msgid "TRC"
+msgstr "TRC"
+
+#: src/gcm-viewer.ui:697
+msgid "Video card out"
+msgstr "ວິດີໂອກາດຂາອອກ"
+
+#: src/gcm-viewer.ui:746
+msgid "A video card gamma table shows the curves loaded into the display"
+msgstr "Video card gamma table ສະແດງເສັ້ນໂຄ້ງທີ່ໂຫຼດເຂົ້າໄປໃນການສະແດງຜົນ"
+
+#: src/gcm-viewer.ui:764
+msgid "VCGT"
+msgstr "VCGT"
+
+#: src/gcm-viewer.ui:799 src/gcm-viewer.ui:922
+msgid "Previous Image"
+msgstr "ຮູບກ່ອນໜ້າ"
+
+#. This is an example image that is saved in sRGB gamut
+#: src/gcm-viewer.ui:817 src/gcm-viewer.ui:940
+msgid "sRGB example"
+msgstr "ຕົວຢ່າງ sRGB"
+
+#: src/gcm-viewer.ui:848 src/gcm-viewer.ui:971
+msgid "Next Image"
+msgstr "ຮູບຖັດໄປ"
+
+#: src/gcm-viewer.ui:869
+msgid "This shows what an image would look like if saved with the profile"
+msgstr "ນີ້ສະແດງໃຫ້ເຫັນວ່າຮູບພາບຈະເປັນແນວໃດ ຖ້າບັນທຶກດ້ວຍໂປຣໄຟລ໌ນີ້"
+
+#: src/gcm-viewer.ui:887
+msgid "From sRGB"
+msgstr "ຈາກ sRGB"
+
+#: src/gcm-viewer.ui:992
+msgid "This shows what an image would look like if opened with the profile"
+msgstr "ນີ້ສະແດງໃຫ້ເຫັນວ່າຮູບພາບຈະເປັນແນວໃດ ຖ້າເປີດດ້ວຍໂປຣໄຟລ໌ນີ້"
+
+#: src/gcm-viewer.ui:1010
+msgid "To sRGB"
+msgstr "ໄປເປັນ sRGB"
+
+#: src/gcm-viewer.ui:1061
+msgid "Named colors are specific colors that are defined in the profile"
+msgstr "ສີທີ່ມີຊື່ ແມ່ນສີສະເພາະທີ່ຖືກກຳນົດໄວ້ໃນໂປຣໄຟລ໌"
+
+#: src/gcm-viewer.ui:1079
+msgid "Named Colors"
+msgstr "ສີທີ່ມີຊື່"
+
+#: src/gcm-viewer.ui:1118
+msgid ""
+"Metadata is additional information stored in the profile for programs to use."
+msgstr "Metadata ແມ່ນຂໍ້ມູນເພີ່ມເຕີມທີ່ເກັບໄວ້ໃນໂປຣໄຟລ໌ເພື່ອໃຫ້ໂປຣແກຣມໃຊ້ງານ."
+
+#: src/gcm-viewer.ui:1136
+msgid "Metadata"
+msgstr "ເມຕາດາຕາ"
