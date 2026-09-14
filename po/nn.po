@@ -1,0 +1,869 @@
+# Norwegian nynorsk translation of gnome-color-manager
+# Copyright (C) 2026 THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# Roy-Magne Mo <rmo@sunnmore.net>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: gnome-color-manager master\n"
+"Report-Msgid-Bugs-To: https://gitlab.gnome.org/GNOME/gnome-color-manager/"
+"issues/\n"
+"POT-Creation-Date: 2025-07-13 23:38+0000\n"
+"PO-Revision-Date: 2026-09-13 11:22+0200\n"
+"Last-Translator: Roy-Magne Mo <rmo@sunnmore.net>\n"
+"Language-Team: Norwegian Nynorsk <nn@li.org>\n"
+"Language: nn\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:7
+msgid "GNOME Color Manager"
+msgstr "GNOME fargehandsamar"
+
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:8
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:10
+msgid "The GNOME Project"
+msgstr "GNOME-prosjektet"
+
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:12
+#: data/org.gnome.ColorProfileViewer.desktop.in:3
+msgid "Inspect and compare installed color profiles"
+msgstr "Inspiser og samanlikn installerte fargeprofilar"
+
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:14
+msgid ""
+"GNOME Color Profile Viewer shows installed color profiles on your system and "
+"allows you to calibrate displays, printers and cameras using a wizard."
+msgstr ""
+"GNOME fargeprofilvisar viser fargeprofilane som er installerte på systemet, "
+"og lèt deg kalibrere skjermar, skrivarar og kamera med ein vegvisar."
+
+#: data/appdata/org.gnome.ColorProfileViewer.metainfo.xml.in:19
+msgid ""
+"This functionality is typically used by GNOME Control Center from the color "
+"panel although can be used on its own."
+msgstr ""
+"Denne funksjonen vert vanlegvis brukt av GNOME Kontrollsenter frå "
+"fargepanelet, men kan òg brukast åleine."
+
+#: data/gcm-import.desktop.in:2
+msgid "ICC Profile Installer"
+msgstr "Installering av ICC-profilar"
+
+#: data/gcm-import.desktop.in:3
+msgid "Install ICC profiles"
+msgstr "Installer ICC-profilar"
+
+#. Window title, where the user can pick spot colors using a measuring device
+#: data/gcm-picker.desktop.in:2 src/gcm-picker.ui:27 src/gcm-picker.ui:324
+msgid "Color Picker"
+msgstr "Fargeveljar"
+
+#: data/gcm-picker.desktop.in:3
+msgid "Use the color sensor to sample spot colors"
+msgstr "Bruk fargesensoren til å måle punktfargar"
+
+#: data/org.gnome.ColorProfileViewer.desktop.in:2 src/gcm-viewer.ui:1155
+msgid "Color Profile Viewer"
+msgstr "Fargeprofilvisar"
+
+#. Translators: Search terms to find this application. Do NOT translate or localize the semicolons! The list MUST also end with a semicolon!
+#: data/org.gnome.ColorProfileViewer.desktop.in:12
+msgid "Color;ICC;"
+msgstr "Farge;ICC;Color;"
+
+#. TRANSLATORS: this is when there is no profile for the device
+#: src/gcm-cell-renderer-profile-text.c:57
+msgid "No profile"
+msgstr "Ingen profil"
+
+#: src/gcm-cell-renderer-profile-text.c:73
+#, c-format
+msgid "Default %s"
+msgstr "Standard %s"
+
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile has been auto-generated for this hardware
+#: src/gcm-cell-renderer-profile-text.c:88
+msgid "Default: "
+msgstr "Standard: "
+
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile his a standard space like AdobeRGB
+#: src/gcm-cell-renderer-profile-text.c:93
+msgid "Colorspace: "
+msgstr "Fargerom: "
+
+#. TRANSLATORS: this is a profile prefix to signify the
+#. * profile is a test profile
+#: src/gcm-cell-renderer-profile-text.c:98
+msgid "Test profile: "
+msgstr "Testprofil: "
+
+#. TRANSLATORS: turn on all debugging
+#: src/gcm-debug.c:77
+msgid "Show debugging information for all files"
+msgstr "Vis feilsøkingsinformasjon for alle filer"
+
+#: src/gcm-debug.c:128
+msgid "Debugging Options"
+msgstr "Feilsøkingsval"
+
+#: src/gcm-debug.c:128
+msgid "Show debugging options"
+msgstr "Vis feilsøkingsval"
+
+#. TRANSLATORS: command line option: a list of catalogs to install
+#: src/gcm-import.c:77
+msgid "ICC profile to install"
+msgstr "ICC-profil som skal installerast"
+
+#. TRANSLATORS: nothing was specified on the command line
+#: src/gcm-import.c:103
+msgid "No filename specified"
+msgstr "Ikkje noko filnamn er oppgjeve"
+
+#. TRANSLATORS: could not read file
+#: src/gcm-import.c:123 src/gcm-viewer.c:1269
+msgid "Failed to open ICC profile"
+msgstr "Klarte ikkje opne ICC-profil"
+
+#. TRANSLATORS: parsing error
+#: src/gcm-import.c:128
+#, c-format
+msgid "Failed to parse file: %s"
+msgstr "Klarte ikkje tolke fil: %s"
+
+#. TRANSLATORS: message text
+#: src/gcm-import.c:143
+#, c-format
+msgid "Profile description: %s"
+msgstr "Profilskildring: %s"
+
+#. TRANSLATORS: message text
+#: src/gcm-import.c:153
+msgid "Profile copyright:"
+msgstr "Opphavsrett for profilen:"
+
+#. TRANSLATORS: color profile already been installed
+#: src/gcm-import.c:187
+msgid "Color profile is already imported"
+msgstr "Fargeprofilen er alt importert"
+
+#: src/gcm-import.c:190 src/gcm-import.c:233
+msgid "Show Details"
+msgstr "Vis detaljar"
+
+#. TRANSLATORS: the profile type
+#: src/gcm-import.c:206
+msgid "Import display color profile?"
+msgstr "Importer fargeprofil for skjermen?"
+
+#. TRANSLATORS: the profile type
+#: src/gcm-import.c:210
+msgid "Import device color profile?"
+msgstr "Importer fargeprofil for eininga?"
+
+#. TRANSLATORS: the profile type
+#: src/gcm-import.c:214
+msgid "Import named color profile?"
+msgstr "Importer namngjeven fargeprofil?"
+
+#. TRANSLATORS: the profile type
+#: src/gcm-import.c:218
+msgid "Import color profile?"
+msgstr "Importer fargeprofil?"
+
+#. TRANSLATORS: button text
+#: src/gcm-import.c:232
+msgid "Import"
+msgstr "Importer"
+
+#. TRANSLATORS: could not read file
+#: src/gcm-import.c:257 src/gcm-viewer.c:1301
+msgid "Failed to import file"
+msgstr "Klarte ikkje importere fil"
+
+#. TRANSLATORS: this is the ICC profile description stored in an atom in the XServer
+#: src/gcm-inspect.c:39
+msgid "Description:"
+msgstr "Skildring:"
+
+#. TRANSLATORS: this is the ICC profile copyright
+#: src/gcm-inspect.c:42
+msgid "Copyright:"
+msgstr "Opphavsrett:"
+
+#. TRANSLATORS: the root window of all the screens
+#: src/gcm-inspect.c:164
+msgid "Root window profile:"
+msgstr "Profil for rotvindauget:"
+
+#. TRANSLATORS: the root window of all the screens
+#: src/gcm-inspect.c:175
+msgid "Root window protocol version:"
+msgstr "Protokollversjon for rotvindauget:"
+
+#. TRANSLATORS: no DBus session bus
+#: src/gcm-inspect.c:196 src/gcm-inspect.c:259
+msgid "Failed to connect to session bus:"
+msgstr "Klarte ikkje kople til øktbussen:"
+
+#. TRANSLATORS: the DBus method failed
+#: src/gcm-inspect.c:213 src/gcm-inspect.c:276
+msgid "The request failed:"
+msgstr "Førespurnaden mislukkast:"
+
+#. TRANSLATORS: no profile has been asigned to this device
+#: src/gcm-inspect.c:221
+msgid "There are no ICC profiles assigned to this file"
+msgstr "Det er ingen ICC-profilar knytte til denne fila"
+
+#. TRANSLATORS: this is a list of profiles suitable for the device
+#: src/gcm-inspect.c:226 src/gcm-inspect.c:292
+msgid "Suitable profiles for:"
+msgstr "Passande profilar for:"
+
+#. TRANSLATORS: no profile has been asigned to this window
+#: src/gcm-inspect.c:287
+msgid "There are no ICC profiles for this window"
+msgstr "Det finst ingen ICC-profilar for dette vindauget"
+
+#. TRANSLATORS: command line option
+#: src/gcm-inspect.c:312
+msgid "Show xserver properties"
+msgstr "Vis xserver-eigenskapar"
+
+#. TRANSLATORS: command line option
+#: src/gcm-inspect.c:315
+msgid "Get the profiles for a specific file"
+msgstr "Hent profilar for ei bestemt fil"
+
+#. TRANSLATORS: command line option
+#: src/gcm-inspect.c:318
+msgid "Get the profile for a specific window"
+msgstr "Hent profilen for eit bestemt vindauge"
+
+#. TRANSLATORS: command line option
+#: src/gcm-inspect.c:321
+msgid "Dump all details about this system"
+msgstr "Dump alle detaljar om dette systemet"
+
+#. TRANSLATORS: just dumps the EDID to disk
+#: src/gcm-inspect.c:334
+msgid "EDID inspect program"
+msgstr "EDID-inspeksjonsverktøy"
+
+#. TRANSLATORS: this is when the error is invalid
+#. TRANSLATORS: this is when the ambient light level is unknown
+#. TRANSLATORS: this the ICC profile type
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.c:200 src/gcm-picker.c:207 src/gcm-viewer.c:565
+#: src/gcm-viewer.c:612
+msgid "Unknown"
+msgstr "Ukjend"
+
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
+#: src/gcm-picker.c:320
+msgid "No colorimeter is attached."
+msgstr "Ingen fargemålar er kopla til."
+
+#. TRANSLATORS: this is displayed if VTE support is not enabled
+#: src/gcm-picker.c:336
+msgid "The sensor has no native driver."
+msgstr "Sensoren har ingen innebygd drivar."
+
+#. TRANSLATORS: this is displayed the user has not got suitable hardware
+#: src/gcm-picker.c:345
+msgid "The attached colorimeter is not capable of reading a spot color."
+msgstr "Den tilkopla fargemålaren kan ikkje lese ein punktfarge."
+
+#. TRANSLATORS: this is when there are no profiles that can be used;
+#. * the search term is either "RGB" or "CMYK"
+#: src/gcm-picker.c:563
+#, c-format
+msgid "No %s color spaces available"
+msgstr "Ingen %s-fargerom er tilgjengelege"
+
+#. TRANSLATORS: we can make this modal (stay on top of) another window
+#: src/gcm-picker.c:681 src/gcm-viewer.c:1596
+msgid "Set the parent window to make this modal"
+msgstr "Set foreldrevindauget for å gjere dette til eit modalt vindauge"
+
+#. TRANSLATORS: tool that is used to pick colors
+#: src/gcm-picker.c:696
+msgid "GNOME Color Manager Color Picker"
+msgstr "Fargeveljar i GNOME fargehandsamar"
+
+#. the color representation
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.ui:93 src/gcm-viewer.c:573
+msgid "XYZ"
+msgstr "XYZ"
+
+#. Lab is the color representation and D50 is the white point
+#: src/gcm-picker.ui:108
+msgid "Lab (D50)"
+msgstr "Lab (D50)"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:123
+msgid "Media whitepoint"
+msgstr "Kvitpunkt for mediet"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:138
+msgid "Color Temperature"
+msgstr "Fargetemperatur"
+
+#. This refers to the amount of ambient light on the sensor
+#: src/gcm-picker.ui:153
+msgid "Ambient"
+msgstr "Omgjevnad"
+
+#. This is the title to a combobox that switches the RGB conversion between different colorspaces such as Adobe RGB and sRGB
+#. The profile colorspace, e.g. RGB
+#: src/gcm-picker.ui:168 src/gcm-viewer.ui:134
+msgid "Colorspace"
+msgstr "Fargerom"
+
+#. These are the values of the chosen color in Red, Green, Blue encoding
+#. TRANSLATORS: this is the colorspace, e.g. red, green, blue
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-picker.ui:183 src/gcm-utils.c:67 src/gcm-viewer.c:593
+msgid "RGB"
+msgstr "RGB"
+
+#. This shows the error in the conversion to RGB.
+#: src/gcm-picker.ui:198
+msgid "Error"
+msgstr "Feil"
+
+#. Expander title, the results from the color picker
+#: src/gcm-picker.ui:297
+msgid "Results"
+msgstr "Resultat"
+
+#. Button text, to get a single sample of color
+#: src/gcm-picker.ui:328
+msgid "_Measure"
+msgstr "_Mål"
+
+#. TRANSLATORS: this is the colorspace, e.g. cyan, magenta, yellow, black
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-utils.c:71 src/gcm-viewer.c:605
+msgid "CMYK"
+msgstr "CMYK"
+
+#. TRANSLATORS: this is the colorspace type
+#: src/gcm-utils.c:75
+msgid "gray"
+msgstr "grå"
+
+#. TRANSLATORS: title, usually we can tell based on the EDID data or output name
+#: src/gcm-viewer.c:312
+msgid "Permanently delete profile?"
+msgstr "Slett profilen for alltid?"
+
+#. TRANSLATORS: dialog message
+#: src/gcm-viewer.c:315
+msgid ""
+"Are you sure you want to remove this profile from your system permanently?"
+msgstr ""
+"Er du sikker på at du vil fjerne denne profilen frå systemet ditt permanent?"
+
+#. TRANSLATORS: button, delete a profile
+#: src/gcm-viewer.c:318
+msgid "Delete"
+msgstr "Slett"
+
+#. TRANSLATORS: dialog for file->open dialog
+#: src/gcm-viewer.c:357
+msgid "Select ICC Profile File"
+msgstr "Vel ICC-profilfil"
+
+#: src/gcm-viewer.c:359
+msgid "_Cancel"
+msgstr "_Avbryt"
+
+#: src/gcm-viewer.c:360
+msgid "_Import"
+msgstr "_Importer"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: src/gcm-viewer.c:378
+msgid "Supported ICC profiles"
+msgstr "Støtta ICC-profilar"
+
+#. TRANSLATORS: filter name on the file->open dialog
+#: src/gcm-viewer.c:385
+msgid "All files"
+msgstr "Alle filer"
+
+#. TRANSLATORS: could not read file
+#: src/gcm-viewer.c:410
+msgid "Failed to copy file"
+msgstr "Klarte ikkje kopiere fila"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:538
+msgid "Input device"
+msgstr "Inndataeining"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:542
+msgid "Display device"
+msgstr "Skjermeining"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:546
+msgid "Output device"
+msgstr "Utgangseining"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:550
+msgid "Devicelink"
+msgstr "Devicelink"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:554
+msgid "Colorspace conversion"
+msgstr "Omforming mellom fargerom"
+
+#. TRANSLATORS: this the ICC profile kind
+#: src/gcm-viewer.c:558
+msgid "Abstract"
+msgstr "Abstrakt"
+
+#. TRANSLATORS: this the ICC profile type
+#: src/gcm-viewer.c:562
+msgid "Named color"
+msgstr "Namngjeven farge"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:577
+msgid "LAB"
+msgstr "LAB"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:581
+msgid "LUV"
+msgstr "LUV"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:585
+msgid "YCbCr"
+msgstr "YCbCr"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:589
+msgid "Yxy"
+msgstr "Yxy"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:597
+msgid "Gray"
+msgstr "Grå"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:601
+msgid "HSV"
+msgstr "HSV"
+
+#. TRANSLATORS: this the ICC colorspace type
+#: src/gcm-viewer.c:609
+msgid "CMY"
+msgstr "CMY"
+
+#. TRANSLATORS: e.g. sRGB or adbode RGB
+#: src/gcm-viewer.c:645
+msgid "Standard space"
+msgstr "Standardfargerom"
+
+#. TRANSLATORS: the raw EDID MD5 of the display device
+#: src/gcm-viewer.c:647
+msgid "Display checksum"
+msgstr "Kontrollsum for skjermen"
+
+#: src/gcm-viewer.c:648
+msgid "Display model"
+msgstr "Skjermmodell"
+
+#: src/gcm-viewer.c:649
+msgid "Display serial number"
+msgstr "Serienummer for skjermen"
+
+#. TRANSLATORS: the PNPID is a three letter code, e.g. DEL
+#: src/gcm-viewer.c:651
+msgid "Display PNPID"
+msgstr "PNPID for skjermen"
+
+#. TRANSLATORS: who made the display
+#: src/gcm-viewer.c:653
+msgid "Display vendor"
+msgstr "Skjermleverandør"
+
+#. TRANSLATORS: the raw profile MD5
+#: src/gcm-viewer.c:655
+msgid "File checksum"
+msgstr "Kontrollsum for fila"
+
+#. TRANSLATORS: the color framework, e.g. 'colord'
+#: src/gcm-viewer.c:657
+msgid "Framework product"
+msgstr "Rammeverkprodukt"
+
+#. TRANSLATORS: the framework binary, e.g. gcm-viewer
+#: src/gcm-viewer.c:659
+msgid "Framework program"
+msgstr "Rammeverkprogram"
+
+#. TRANSLATORS: the framework release, e.g. '1.22'
+#: src/gcm-viewer.c:661
+msgid "Framework version"
+msgstr "Rammeverkversjon"
+
+#. TRANSLATORS: Where the profile data came from, e.g. 'test' or 'standard'
+#: src/gcm-viewer.c:663
+msgid "Data source type"
+msgstr "Datakjeldetype"
+
+#. TRANSLATORS: how the qualifier is formatted, e.g. 'ColorSpace.Paper.DPI'
+#: src/gcm-viewer.c:665
+msgid "Mapping format"
+msgstr "Avbildingsformat"
+
+#. TRANSLATORS: The qualifiers for the profile, e.g. 'RGB.Glossy.300dpi'
+#: src/gcm-viewer.c:667
+msgid "Mapping qualifier"
+msgstr "Avbildingskvalifikator"
+
+#. TRANSLATORS: The original device the profile was made for
+#: src/gcm-viewer.c:669
+msgid "Mapping device"
+msgstr "Avbildingseining"
+
+#. TRANSLATORS: The average error when making the profile
+#: src/gcm-viewer.c:671
+msgid "Delta-E average"
+msgstr "Delta-E-gjennomsnitt"
+
+#. TRANSLATORS: the maximum error when making the profile
+#: src/gcm-viewer.c:673
+msgid "Delta-E maximum"
+msgstr "Delta-E-maksimum"
+
+#. TRANSLATORS: the RMS error when making the profile
+#: src/gcm-viewer.c:675
+msgid "Delta-E RMS"
+msgstr "Delta-E RMS"
+
+#. TRANSLATORS: The device name, e.g. 'huey'
+#: src/gcm-viewer.c:677
+msgid "Calibration device"
+msgstr "Kalibreringseining"
+
+#. TRANSLATORS: screen type e.g. 'glossy' or 'matte'
+#: src/gcm-viewer.c:679
+msgid "Screen surface finish"
+msgstr "Overflatefinish på skjermen"
+
+#. TRANSLATORS: e.g. DVI or VGA
+#: src/gcm-viewer.c:681
+msgid "Connection type"
+msgstr "Tilkoplingstype"
+
+#. TRANSLATORS: e.g. Screen brightness in percent
+#: src/gcm-viewer.c:683
+msgid "Screen brightness"
+msgstr "Skjermlysstyrke"
+
+#. TRANSLATORS: e.g. the 3D volume of the gamut graph
+#: src/gcm-viewer.c:685
+msgid "Gamut volume"
+msgstr "Volum på fargespekteret"
+
+#. TRANSLATORS: e.g. what proportion of sRGB is covered
+#: src/gcm-viewer.c:687
+msgid "sRGB coverage"
+msgstr "sRGB-dekning"
+
+#. TRANSLATORS: e.g. what proportion of AdobeRGB is covered
+#: src/gcm-viewer.c:689
+msgid "Adobe RGB coverage"
+msgstr "Adobe RGB-dekning"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:785
+msgid "No description has been set"
+msgstr "Inga skildring er sett"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:789
+msgid "No copyright has been set"
+msgstr "Ingen opphavsrett er sett"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:793
+msgid "The display compensation table is invalid"
+msgstr "Kompensasjonstabellen for skjermen er ugyldig"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:797
+msgid "A scum dot is present for media white"
+msgstr "Det finst ein smussprikk for mediekvitt"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:801
+msgid "The gray axis contains significant amounts of color"
+msgstr "Den grå aksen inneheld betydelege mengder farge"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:805
+msgid "The gray axis is non-monotonic"
+msgstr "Den grå aksen er ikkje-monoton"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:809
+msgid "One or more of the primaries are invalid"
+msgstr "Éin eller fleire av primærfargane er ugyldige"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:813
+msgid "The primaries do not add to white"
+msgstr "Primærfargane summerer seg ikkje til kvitt"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:817
+msgid "One or more of the primaries is unlikely"
+msgstr "Éin eller fleire av primærfargane er usannsynlege"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:821
+msgid "The white is not D50 white"
+msgstr "Det kvite er ikkje D50-kvitt"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:825
+msgid "The whitepoint temperature is unlikely"
+msgstr "Kvitpunktstemperaturen er usannsynleg"
+
+#. TRANSLATORS: the profile is broken
+#: src/gcm-viewer.c:829
+msgid "Unknown warning type"
+msgstr "Ukjend åtvaringstype"
+
+#. TRANSLATORS: if the device has a VCGT profile
+#: src/gcm-viewer.c:966
+msgid "Yes"
+msgstr "Ja"
+
+#. TRANSLATORS: if the device has a VCGT profile
+#: src/gcm-viewer.c:969
+msgid "No"
+msgstr "Nei"
+
+#. TRANSLATORS: profiles that have warnings are useable,
+#. * but may not be any good
+#: src/gcm-viewer.c:995
+msgid "The profile has the following problems:"
+msgstr "Profilen har desse problema:"
+
+#. TRANSLATORS: this is the icc creation date strftime format
+#: src/gcm-viewer.c:1087
+msgid "%B %e %Y, %I∶%M∶%S %p"
+msgstr "%B %e %Y, %I∶%M∶%S %p"
+
+#. TRANSLATORS: this is the tooltip when the profile can be deleted
+#: src/gcm-viewer.c:1110
+msgid "Delete this profile"
+msgstr "Slett denne profilen"
+
+#. TRANSLATORS: this is the tooltip when the profile cannot be deleted
+#: src/gcm-viewer.c:1113
+msgid "This profile cannot be deleted"
+msgstr "Denne profilen kan ikkje slettast"
+
+#. TRANSLATORS: show just the one profile, rather than all
+#: src/gcm-viewer.c:1599
+msgid "Set the specific profile to show"
+msgstr "Vel profilen som skal visast"
+
+#. TRANSLATORS: show just the one filename, rather than all
+#: src/gcm-viewer.c:1602
+msgid "Set the specific file to show"
+msgstr "Vel fila som skal visast"
+
+#. TRANSLATORS: summary shown in the command-line help
+#: src/gcm-viewer.c:1622
+msgid "GNOME Color Manager - Color Profile Viewer"
+msgstr "GNOME fargehandsamar – fargeprofilvisar"
+
+#: src/gcm-viewer.ui:55
+msgid "Add a profile for the device"
+msgstr "Legg til ein profil for eininga"
+
+#: src/gcm-viewer.ui:70
+msgid "Remove a profile from the device"
+msgstr "Fjern ein profil frå eininga"
+
+#. The type of profile, e.g. display, scanner, etc.
+#: src/gcm-viewer.ui:118
+msgid "Profile type"
+msgstr "Profiltype"
+
+#. When the profile was created
+#: src/gcm-viewer.ui:150
+msgid "Created"
+msgstr "Oppretta"
+
+#. The version of the profile
+#: src/gcm-viewer.ui:167
+msgid "Version"
+msgstr "Versjon"
+
+#. The manufacturer of the profile
+#: src/gcm-viewer.ui:184
+msgid "Manufacturer"
+msgstr "Produsent"
+
+#. The manufacturer of the profile
+#: src/gcm-viewer.ui:201
+msgid "Model"
+msgstr "Modell"
+
+#. If the profile contains a display correction table
+#: src/gcm-viewer.ui:217
+msgid "Display correction"
+msgstr "Skjermkorreksjon"
+
+#. The basename (the last section of the filename) of the profile
+#: src/gcm-viewer.ui:233
+msgid "White point"
+msgstr "Kvitpunkt"
+
+#. The licence of the profile, normally non-free
+#: src/gcm-viewer.ui:250
+msgid "Copyright"
+msgstr "Opphavsrett"
+
+#. The file size in bytes of the profile
+#: src/gcm-viewer.ui:266
+msgid "File size"
+msgstr "Filstorleik"
+
+#. The basename (the last section of the filename) of the profile
+#: src/gcm-viewer.ui:283
+msgid "Filename"
+msgstr "Filnamn"
+
+#. warnings for the profile
+#: src/gcm-viewer.ui:300
+msgid "Warnings"
+msgstr "Åtvaringar"
+
+#: src/gcm-viewer.ui:490
+msgid "Information"
+msgstr "Informasjon"
+
+#: src/gcm-viewer.ui:518
+msgid "y"
+msgstr "y"
+
+#: src/gcm-viewer.ui:537
+msgid "x"
+msgstr "x"
+
+#: src/gcm-viewer.ui:568
+msgid "A CIE 1931 diagram shows a 2D representation of the profile gamut"
+msgstr ""
+"Eit CIE 1931-diagram viser fargespekteret til profilen i to dimensjonar"
+
+#: src/gcm-viewer.ui:586
+msgid "CIE 1931"
+msgstr "CIE 1931"
+
+#: src/gcm-viewer.ui:608
+msgid "Response out"
+msgstr "Respons ut"
+
+#: src/gcm-viewer.ui:628 src/gcm-viewer.ui:717
+msgid "Response in"
+msgstr "Respons inn"
+
+#: src/gcm-viewer.ui:657
+msgid ""
+"A tone reproduction curve is the mapping of scene luminance to display "
+"luminance"
+msgstr ""
+"Ei tonegjengjevingskurve viser korleis lysstyrken i motivet vert avbilda til"
+" lysstyrken på skjermen"
+
+#: src/gcm-viewer.ui:675
+msgid "TRC"
+msgstr "TRC"
+
+#: src/gcm-viewer.ui:697
+msgid "Video card out"
+msgstr "Grafikkort ut"
+
+#: src/gcm-viewer.ui:746
+msgid "A video card gamma table shows the curves loaded into the display"
+msgstr ""
+"Ein gammatabell for grafikkortet viser kurvene som er lasta inn i skjermen"
+
+#: src/gcm-viewer.ui:764
+msgid "VCGT"
+msgstr "VCGT"
+
+#: src/gcm-viewer.ui:799 src/gcm-viewer.ui:922
+msgid "Previous Image"
+msgstr "Førre bilete"
+
+#. This is an example image that is saved in sRGB gamut
+#: src/gcm-viewer.ui:817 src/gcm-viewer.ui:940
+msgid "sRGB example"
+msgstr "sRGB-døme"
+
+#: src/gcm-viewer.ui:848 src/gcm-viewer.ui:971
+msgid "Next Image"
+msgstr "Neste bilete"
+
+#: src/gcm-viewer.ui:869
+msgid "This shows what an image would look like if saved with the profile"
+msgstr ""
+"Dette viser korleis eit bilete ville ha sett ut om det vart lagra med "
+"profilen"
+
+#: src/gcm-viewer.ui:887
+msgid "From sRGB"
+msgstr "Frå sRGB"
+
+#: src/gcm-viewer.ui:992
+msgid "This shows what an image would look like if opened with the profile"
+msgstr ""
+"Dette viser korleis eit bilete ville ha sett ut om det vart opna med "
+"profilen"
+
+#: src/gcm-viewer.ui:1010
+msgid "To sRGB"
+msgstr "Til sRGB"
+
+#: src/gcm-viewer.ui:1061
+msgid "Named colors are specific colors that are defined in the profile"
+msgstr "Namngjevne fargar er bestemte fargar som er definerte i profilen"
+
+#: src/gcm-viewer.ui:1079
+msgid "Named Colors"
+msgstr "Namngjevne fargar"
+
+#: src/gcm-viewer.ui:1118
+msgid ""
+"Metadata is additional information stored in the profile for programs to use."
+msgstr ""
+"Metadata er tilleggsinformasjon som ligg i profilen, og som appar kan bruke."
+
+#: src/gcm-viewer.ui:1136
+msgid "Metadata"
+msgstr "Metadata"
